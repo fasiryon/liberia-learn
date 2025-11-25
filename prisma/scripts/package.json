@@ -1,0 +1,10 @@
+{
+	"scripts": {
+		"dev": "next dev",
+		"build": "next build",
+		"start": "next start",
+		"prisma:generate": "prisma generate",
+		"prisma:migrate": "prisma migrate dev",
+		"seed": "ts-node --transpile-only scripts/seed.ts"
+	}
+}
