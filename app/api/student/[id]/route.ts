@@ -1,6 +1,6 @@
 // app/api/student/[id]/route.ts
 import { NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
+import { prisma } from '@/lib/db';
 
 export async function GET(
   request: Request,
@@ -44,4 +44,3 @@ export async function GET(
     );
   }
 }
-

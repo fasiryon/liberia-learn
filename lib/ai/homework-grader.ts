@@ -1,6 +1,6 @@
 // lib/ai/homework-grader.ts
 import OpenAI from "openai";
-import { prisma } from "@/lib/prisma";
+import { prisma } from "@/lib/db";
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
@@ -258,4 +258,3 @@ export async function gradeHomeworkSubmission(
 ): Promise<GradingResult> {
   return HomeworkGrader.gradeSubmission(submissionId);
 }
-

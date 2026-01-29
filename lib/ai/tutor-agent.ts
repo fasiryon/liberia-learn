@@ -1,6 +1,6 @@
 // lib/ai/tutor-agent.ts
 import OpenAI from "openai";
-import { prisma } from "@/lib/prisma";
+import { prisma } from "@/lib/db";
 import { logger } from "@/lib/logger";
 
 const openai = new OpenAI({
@@ -264,4 +264,3 @@ Current student context:
     }
   }
 }
-

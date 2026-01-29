@@ -2,8 +2,8 @@
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
 
-import { authOptions } from "@/lib/auth-config";
-import { prisma } from "@/lib/prisma";
+import { authOptions } from "@/lib/auth";
+import { prisma } from "@/lib/db";
 import NewHomeworkForm from "./NewHomeworkForm";
 
 export default async function NewHomeworkPage() {
@@ -45,5 +45,3 @@ export default async function NewHomeworkPage() {
     </main>
   );
 }
-
-

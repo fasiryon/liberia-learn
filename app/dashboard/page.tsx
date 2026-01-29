@@ -3,8 +3,8 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getServerSession } from "next-auth";
 
-import { authOptions } from "@/lib/auth-config";
-import { prisma } from "@/lib/prisma";
+import { authOptions } from "@/lib/auth";
+import { prisma } from "@/lib/db";
 
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { StatCard } from "@/components/ui/Card";
@@ -58,6 +58,9 @@ export default async function DashboardPage() {
         },
         grades: {
           include: { Class: true },
+        },
+        placementTests: {
+          orderBy: { createdAt: "desc" },
           take: 5,
         },
       },
@@ -141,7 +144,7 @@ export default async function DashboardPage() {
 
   const latestPlacement = student.placementTests?.[0] ?? null;
   const placementGradeLabel = student.currentGrade
-    ? Grade +student.currentGrade+`
+    ? `Grade ${student.currentGrade}`
     : "Not set";
 
   // Fetch AI chat message count for this student
@@ -236,15 +239,15 @@ export default async function DashboardPage() {
               <div className="grid gap-3 md:grid-cols-5">
                 <StatCard
                   label="Average Grade"
-                  value={+avgGrade+%}
-                  subtitle={+grades.length+ assignments}
+                  value={`${avgGrade}%`}
+                  subtitle={`${grades.length} assignments`}
                 />
                 <StatCard
                   label="Placement Grade"
                   value={placementGradeLabel}
                   subtitle={
                     latestPlacement
-                      ? Last test: +latestPlacement.score+%
+                      ? `Last test: ${latestPlacement.score}%`
                       : "No test yet"
                   }
                   valueClassName="text-emerald-300"
@@ -252,12 +255,12 @@ export default async function DashboardPage() {
                 <StatCard
                   label="Classes"
                   value={student.enrollments.length || 1}
-                  subtitle={`${student?.community ?? ""}${student?.community && student?.county ? ", " : ""}${student?.county ?? ""}`}
+                  subtitle={`${community}, ${county}`}
                   valueClassName="text-amber-300"
                 />
                 <StatCard
                   label="Attendance"
-                  value={+attendancePercent+%}
+                  value={`${attendancePercent}%`}
                   subtitle="Excellent"
                   valueClassName="text-sky-300"
                 />
@@ -419,4 +422,3 @@ export default async function DashboardPage() {
     </ErrorBoundary>
   );
 }
-

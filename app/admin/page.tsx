@@ -3,7 +3,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getServerSession } from "next-auth";
 
-import { authOptions } from "@/lib/auth-config";
+import { authOptions } from "@/lib/auth";
 import SignOutButton from "@/components/SignOutButton";
 
 export const dynamic = "force-dynamic";
@@ -83,4 +83,3 @@ export default async function AdminDashboardPage() {
     </main>
   );
 }
-
