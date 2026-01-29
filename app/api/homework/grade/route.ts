@@ -1,71 +1,88 @@
+// app/api/homework/grade/route.ts
 import { NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";
-import { requireUser } from "@/lib/auth-config";
+import { prisma } from "@/lib/db";
 
 export async function POST(req: Request) {
   try {
-    const user = await requireUser();
-    if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    const body = await req.json();
+    const { submissionId, teacherScore, teacherNotes } = body;
 
-    const isTeacher = user.role === "TEACHER";
-    const isAdmin = user.role === "ADMIN";
-
-    if (!isTeacher && !isAdmin) {
-      return NextResponse.json({ error: "Only teachers/admins can grade" }, { status: 403 });
+    if (!submissionId || typeof teacherScore !== "number") {
+      return NextResponse.json(
+        { error: "submissionId and numeric teacherScore are required" },
+        { status: 400 }
+      );
     }
 
-    const body = await req.json().catch(() => null);
-    const submissionId = body?.submissionId as string | undefined;
-    const scoreRaw = body?.score as unknown;
-    const feedbackRaw = body?.feedback as unknown;
-
-    if (!submissionId) {
-      return NextResponse.json({ error: "submissionId is required" }, { status: 400 });
+    if (teacherScore < 0 || teacherScore > 100) {
+      return NextResponse.json(
+        { error: "teacherScore must be between 0 and 100" },
+        { status: 400 }
+      );
     }
 
-    const score =
-      typeof scoreRaw === "number" && Number.isFinite(scoreRaw) ? scoreRaw : undefined;
-
-    if (score !== undefined && (score < 0 || score > 100)) {
-      return NextResponse.json({ error: "score must be between 0 and 100" }, { status: 400 });
-    }
-
-    const feedback = typeof feedbackRaw === "string" ? feedbackRaw : undefined;
-
-    const sub = await prisma.homeworkSubmission.findUnique({
-      where: { id: submissionId },
-      select: {
-        id: true,
-        homeworkId: true,
-        homework: { select: { classId: true } },
-      },
-    });
-
-    if (!sub) return NextResponse.json({ error: "Submission not found" }, { status: 404 });
-    if (!sub.homework) return NextResponse.json({ error: "Homework not found" }, { status: 404 });
-
-    if (isTeacher) {
-      const cls = await prisma.class.findUnique({
-        where: { id: sub.homework.classId },
-        select: { teacherId: true },
-      });
-      if (!cls) return NextResponse.json({ error: "Class not found" }, { status: 404 });
-      if (cls.teacherId !== user.id) return NextResponse.json({ error: "Not your class" }, { status: 403 });
-    }
-
+    // Update submission + include homework for classId
     const updated = await prisma.homeworkSubmission.update({
       where: { id: submissionId },
       data: {
-        score: score ?? null,
-        feedback: feedback ?? null,
-        status: "GRADED",
-        gradedAt: new Date(),
-        gradedById: user.id,
+        teacherScore,
+        teacherNotes,
+      },
+      include: {
+        Homework: true,
       },
     });
 
-    return NextResponse.json({ submission: updated });
-  } catch (err: any) {
-    return NextResponse.json({ error: err?.message ?? "Failed" }, { status: 500 });
+    const classId = updated.Homework.classId;
+    const studentId = updated.studentId;
+
+    // Recompute Grade (per class per student)
+    const gradedSubs = await prisma.homeworkSubmission.findMany({
+      where: {
+        studentId,
+        teacherScore: { not: null },
+        Homework: { classId },
+      },
+      select: { teacherScore: true },
+    });
+
+    if (gradedSubs.length > 0) {
+      const avg =
+        gradedSubs.reduce(
+          (sum, s) => sum + (s.teacherScore ?? 0),
+          0
+        ) / gradedSubs.length;
+
+      const percent = Math.round(avg);
+
+      let letter = "F";
+      if (percent >= 90) letter = "A";
+      else if (percent >= 80) letter = "B";
+      else if (percent >= 70) letter = "C";
+      else if (percent >= 60) letter = "D";
+
+      const existing = await prisma.grade.findFirst({
+        where: { classId, studentId },
+      });
+
+      if (existing) {
+        await prisma.grade.update({
+          where: { id: existing.id },
+          data: { percent, letter },
+        });
+      } else {
+        await prisma.grade.create({
+          data: { classId, studentId, percent, letter },
+        });
+      }
+    }
+
+    return NextResponse.json({ success: true });
+  } catch (error: any) {
+    console.error("Grade homework error:", error);
+    return NextResponse.json(
+      { error: error.message || "Failed to save grade" },
+      { status: 500 }
+    );
   }
 }

@@ -3,8 +3,8 @@ import { redirect } from "next/navigation";
 import { getServerSession } from "next-auth";
 import Link from "next/link";
 
-import { authOptions } from "@/lib/auth-config";
-import { prisma } from "@/lib/prisma";
+import { authOptions } from "@/lib/auth";
+import { prisma } from "@/lib/db";
 
 export default async function StudentHomeworkList() {
   const session = await getServerSession(authOptions);
@@ -58,5 +58,3 @@ export default async function StudentHomeworkList() {
     </main>
   );
 }
-
-

@@ -1,53 +1,52 @@
+// app/api/homework/route.ts
 import { NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";
-import { requireUser } from "@/lib/auth-config";
+import { getServerSession } from "next-auth";
 
-export async function GET() {
-  try {
-    const user = await requireUser();
-    if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+import { authOptions } from "@/lib/auth";
+import { prisma } from "@/lib/db";
 
-    // Student feed: only show homework for classes student is enrolled in
-    if (user.role === "STUDENT") {
-      const student = await prisma.student.findUnique({ where: { userId: user.id } });
-      if (!student) return NextResponse.json({ items: [] });
+export async function POST(req: Request) {
+  const session = await getServerSession(authOptions);
 
-      const enrollments = await prisma.enrollment.findMany({
-        where: { studentId: student.id },
-        select: { classId: true },
-      });
-
-      const classIds = enrollments.map(e => e.classId);
-      if (classIds.length === 0) return NextResponse.json({ items: [] });
-
-      const items = await prisma.homework.findMany({
-        where: { classId: { in: classIds } },
-        orderBy: { createdAt: "desc" },
-        include: {
-          Class: { select: { id: true, name: true, subject: true } },
-          submissions: {
-            where: { studentId: student.id },
-            select: { id: true, status: true, score: true, feedback: true, gradedAt: true, updatedAt: true },
-          },
-        },
-      });
-
-      return NextResponse.json({ items });
-    }
-
-    // Teacher/Admin view: return recent homework they created
-    const items = await prisma.homework.findMany({
-      where: { createdById: user.id },
-      orderBy: { createdAt: "desc" },
-      include: {
-        Class: { select: { id: true, name: true, subject: true } },
-        _count: { select: { submissions: true } },
-      },
-    });
-
-    return NextResponse.json({ items });
-  } catch (err: any) {
-    return NextResponse.json({ error: err?.message ?? "Failed" }, { status: 500 });
+  // Only teachers can create homework
+  if (!session || (session.user as any).role !== "TEACHER") {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
-}
 
+  const { classId, title, instructions, questionsText, dueDate } =
+    await req.json();
+
+  if (!classId || !title) {
+    return NextResponse.json(
+      { error: "Class and title are required." },
+      { status: 400 }
+    );
+  }
+
+  // Simple “one question per line” parsing
+  const questions = (questionsText ?? "")
+    .split("\n")
+    .map((line: string) => line.trim())
+    .filter(Boolean)
+    .map((prompt: string, index: number) => ({
+      id: `q${index + 1}`,
+      type: "short_answer",
+      prompt,
+      points: 5,
+    }));
+
+  const parsedDueAt = dueDate ? new Date(dueDate) : null;
+
+  const homework = await prisma.homework.create({
+    data: {
+      classId,
+      title,
+      instructions: instructions ?? "",
+      questions,
+      dueAt: parsedDueAt,
+      // ⛔️ DO NOT put teacherId here – Homework model doesn’t have it
+    },
+  });
+
+  return NextResponse.json({ id: homework.id }, { status: 201 });
+}

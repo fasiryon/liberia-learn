@@ -1,74 +1,293 @@
-# 🇱🇷 LiberiaLearn
+# LiberiaLearn 🇱🇷
 
-> **A national K-12 learning platform for Liberia — teacher-first, mastery-based, and low-bandwidth.**
+**AI-Powered K-12 Learning Platform**
 
----
+LiberiaLearn is a full-stack, modern, AI-enhanced learning system designed to simulate a real national education platform. Built with Next.js 14 (App Router), Prisma, NextAuth, Anthropic Claude, and TailwindCSS, it provides:
 
-## 🌍 Vision
+* Student dashboards
+* Teacher dashboards
+* Assignments + grading
+* Placement testing
+* AI tutoring
+* School & data management
+* Real seeded Liberian schools
 
-LiberiaLearn is a **Grade 1–12 national education system** built to elevate Liberia’s academic standards to match those of Japan, Korea, and China.  
-It emphasizes **STEM mastery** while maintaining full coverage of literacy, civics, arts, and career readiness.
-
----
-
-## 🎯 Mission
-
-To produce **Africa’s most STEM-driven workforce** through technology, local language inclusion, and world-class pedagogy — ensuring every Liberian student can learn, even on low-cost Android devices or offline.
-
----
-
-## 📘 Core Principles
-
-- **Teacher-first design** – educators lead, AI assists  
-- **Mastery-based progression** – ≥ 85 % required to advance  
-- **Localized bilingual content** – English-LR + Koloqua  
-- **Low-bandwidth & offline-first** – works in rural areas  
-- **Data-driven improvement** – adaptive lessons & analytics  
+This is a complete, functioning platform with production-ready UI and backend.
 
 ---
 
-## ⚙️ Tech Stack
+## 🚀 Features
 
-| Layer | Tools / Frameworks |
-|-------|--------------------|
-| **Frontend** | Next.js (App Router) + TypeScript + Tailwind + shadcn/ui |
-| **Backend** | Postgres (Supabase / Neon) + Prisma ORM |
-| **Auth** | NextAuth (email + password) → upgrade path to National Edu-ID |
-| **Testing** | Playwright + Vitest / Jest |
-| **Validation & Security** | Zod schema validation + rate-limited auth |
-| **Locale & PWA** | Africa/Monrovia timezone · Offline shell · Data-Saver mode |
+### 🎓 Student Features
+* Personalized student dashboard
+* View all classes (`/classes`)
+* View all assignments (`/assignments`)
+* Detailed assignment pages with homework submission
+* Live placement test system
+* AI Tutor assistant on dashboard
+* Progress tracking (performance over time)
+
+### 👨🏽‍🏫 Teacher Features
+* Teacher dashboard with Homework tab
+* Create new homework
+* View all homework
+* View students in each class
+* Homework detail pages
+* Inline grading with feedback
+* Student profile pages
+* Placement test history per student
+
+### 🏫 Admin Features
+* Admin dashboard
+* Manage schools
+* Seed includes 8 Liberian schools
+* (Expandable into full School/Teacher management)
+
+### 🧠 AI Features
+* AI tutoring (context-aware chat)
+* AI homework scoring & feedback
+* AI placement grading logic
+* AI question generator foundation ready
+* Clean agent-based architecture
 
 ---
 
-## 🧱 Repository Structure
+## 🗂️ Tech Stack
 
-/app → Next.js routes & pages
-/components → Reusable UI blocks (PascalCase)
-/lib → Utilities & configs
-/prisma → Schema & migrations
-/curriculum → Lesson modules by grade
-/locales → en-LR and Koloqua files
-/scripts → Seeds & setup automation
-/docs → Specifications and educator resources
-
+* **Framework**: Next.js 14 (App Router)
+* **Language**: TypeScript
+* **Database**: Prisma ORM + SQLite (dev) / PostgreSQL (production)
+* **Auth**: NextAuth Credentials Provider
+* **UI**: TailwindCSS + custom styles
+* **Deployment**: Vercel
+* **AI**: Anthropic Claude API
 
 ---
 
-## 🚀 Quick Start
+## 📁 Project Structure
+```
+app/
+ ├── admin/              # Admin dashboard
+ ├── api/                # API routes
+ ├── assignments/        # Student assignments view
+ ├── classes/            # Class listings
+ ├── dashboard/          # Student dashboard
+ ├── login/              # Login page
+ ├── placement/          # Placement test
+ ├── progress/           # Progress tracking
+ ├── student/            # Student-specific pages
+ └── teacher/            # Teacher dashboard & tools
 
+components/
+ ├── AITutorChat.tsx            # AI chat interface
+ ├── GradeSubmissionForm.tsx    # Teacher grading form
+ ├── PlacementTest.tsx          # Adaptive placement test
+ ├── StudentSidebar.tsx         # Navigation sidebar
+ └── SubmitHomeworkForm.tsx     # Student submission form
+
+prisma/
+ ├── schema.prisma       # Database schema
+ ├── migrations/         # Database migrations
+ └── seed.ts             # Seed data (schools, users, etc.)
+
+lib/
+ ├── auth.ts             # NextAuth configuration
+ ├── db.ts               # Prisma client
+ └── ai/                 # AI agent logic
+```
+
+---
+
+## 📡 Key API Routes
+
+### Homework
+```
+POST /api/homework                    # Create homework
+GET  /api/homework/[id]               # Get homework details
+POST /api/homework/submit             # Submit homework
+POST /api/homework/grade              # Grade homework
+```
+
+### Student
+```
+GET  /api/student/[id]                      # Get student profile
+POST /api/student/homework/[id]/submit      # Submit homework
+GET  /api/student/placement                 # Get placement results
+```
+
+### Placement Test
+```
+POST /api/placement/generate-question       # Generate adaptive questions
+POST /api/placement/calculate-grade         # Calculate placement level
+```
+
+### AI
+```
+POST /api/ai/chat                     # AI tutor chat
+```
+
+### Admin
+```
+GET  /api/admin/schools               # List all schools
+```
+
+---
+
+## 🖥️ Local Installation
+
+### Prerequisites
+* Node.js 18+ 
+* npm or yarn
+* Git
+
+### Setup
+
+1. **Clone the repository**
 ```bash
-# 1. Clone
-git clone https://github.com/<your-username>/LiberiaLearn.git
-cd LiberiaLearn
+   git clone https://github.com/fasiryon/liberia-learn.git
+   cd liberia-learn
+```
 
-# 2. Install
-npm install
+2. **Install dependencies**
+```bash
+   npm install
+```
 
-# 3. Configure Environment
-cp .env.example .env.local
+3. **Set up environment variables**
+   
+   Create a `.env` file in the root directory:
+```env
+   DATABASE_URL="file:./prisma/dev.db"
+   NEXTAUTH_URL="http://localhost:3000"
+   NEXTAUTH_SECRET="your-secret-key-here"
+   ANTHROPIC_API_KEY="your-anthropic-api-key"
+```
 
-# 4. Migrate Database
-npx prisma migrate dev
+4. **Initialize the database**
+```bash
+   npx prisma generate
+   npx prisma db push
+   npx prisma db seed
+```
 
-# 5. Run Dev Server
-npm run dev
+5. **Run the development server**
+```bash
+   npm run dev
+```
+
+6. **Open your browser**
+   
+   Navigate to `http://localhost:3000`
+
+---
+
+## 🔐 Demo Accounts
+
+After seeding, use these credentials to explore:
+
+| Role      | Email                  | Password      |
+|-----------|------------------------|---------------|
+| Student   | student@school.lr      | password123   |
+| Teacher   | teacher@school.lr      | password123   |
+| Admin     | admin@school.lr        | password123   |
+
+---
+
+## 🗄️ Database Schema
+
+### Core Models
+* **User** - Base user with role (STUDENT, TEACHER, ADMIN)
+* **Student** - Student profile with placement data
+* **Teacher** - Teacher profile
+* **School** - School information
+* **Class** - Class/course
+* **Enrollment** - Student-class relationship
+* **Homework** - Assignments
+* **HomeworkSubmission** - Student submissions
+* **Grade** - Grade records
+* **PlacementTest** - Adaptive test results
+
+---
+
+4. **Deploy!**
+
+### Database for Production
+For production, switch from SQLite to PostgreSQL:
+- Use [Vercel Postgres](https://vercel.com/docs/storage/vercel-postgres)
+- Or [Supabase](https://supabase.com) (free tier available)
+- Update `DATABASE_URL` in Vercel environment variables
+- Run migrations: `npx prisma migrate deploy`
+
+---
+
+## 🛠️ Development
+
+### Available Scripts
+```bash
+npm run dev          # Start development server
+npm run build        # Build for production
+npm run start        # Start production server
+npm run lint         # Run ESLint
+```
+
+### Database Commands
+```bash
+npx prisma studio           # Open Prisma Studio (GUI)
+npx prisma generate         # Generate Prisma Client
+npx prisma db push          # Push schema changes
+npx prisma db seed          # Seed database
+npx prisma migrate dev      # Create new migration
+```
+
+---
+
+## 🎨 UI Design
+
+LiberiaLearn features a modern, dark-themed UI with:
+* Emerald green primary color (#22c55e)
+* Cyan accents (#06b6d4)
+* Slate dark backgrounds
+* Glassmorphism effects
+* Responsive design
+* Smooth animations
+
+---
+
+## 🤝 Contributing
+
+Contributions are welcome! Please:
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
+
+---
+
+## 👨‍💻 Author
+
+**Farquema Siryon**
+* GitHub: [@fasiryon](https://github.com/fasiryon)
+
+---
+
+## 🙏 Acknowledgments
+
+* Built for Liberian education system
+* Powered by Anthropic Claude AI
+* Next.js and Vercel for hosting
+* Prisma for database management
+
+---
+
+## 📞 Support
+
+For issues or questions:
+* Open an issue on GitHub
+* Email: [fasiryon@gmail.com]
+
+---
+
+**Live Demo**: [https://liberia-learn.vercel.app]
+
+**Repository**: https://github.com/fasiryon/liberia-learn
