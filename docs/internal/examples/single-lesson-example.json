@@ -1,0 +1,309 @@
+{
+    "metadata": {
+      "id": "LESSON-G10-MATH-001",
+      "version": "1.0.0",
+      "created_at": "2025-01-06T10:00:00Z",
+      "updated_at": "2025-01-06T10:00:00Z",
+      "status": "approved",
+      "approval_history": [
+        {
+          "approver": "john.doe@moe.gov.lr",
+          "timestamp": "2025-01-06T14:00:00Z",
+          "action": "approved",
+          "notes": "Excellent Liberian contextualization"
+        }
+      ]
+    },
+    
+    "educational_context": {
+      "grade": 10,
+      "subject": "MATH",
+      "cognitive_band": "SPECIALIZATION",
+      "term": 1,
+      "week": 3
+    },
+    
+    "standards_alignment": {
+      "liberia_moe": {
+        "standard_codes": ["MATH-G10-ALG-001", "MATH-G10-ALG-002"],
+        "learning_outcomes": [
+          "Students can graph linear functions",
+          "Students can interpret slope and y-intercept in context"
+        ]
+      },
+      "waec": {
+        "applicable": true,
+        "syllabus_ref": "WAEC Math Syllabus 2023 - Algebra",
+        "exam_topics": ["Linear equations", "Graphing"]
+      },
+      "global_benchmarks": {
+        "source_countries": ["Singapore", "Japan"],
+        "frameworks": ["Singapore Math", "Common Core Algebra 1"],
+        "adaptation_notes": "Used Singapore's visual approach to slope but replaced Western examples with Liberian contexts"
+      }
+    },
+    
+    "title": "Understanding Linear Functions",
+    "description": "Students learn to graph linear functions and interpret slope and y-intercept in real-world Liberian contexts",
+    "content_type": "LESSON",
+    
+    "prerequisites": [
+      "Students can plot points on a coordinate plane",
+      "Students understand basic algebraic expressions",
+      "Students can solve simple equations"
+    ],
+    
+    "learning_objectives": [
+      {
+        "id": "obj_1",
+        "statement": "Students will graph a linear function given in slope-intercept form (y = mx + b)",
+        "bloom_level": "APPLY",
+        "assessment_method": "Formative quiz with 5 graphing problems",
+        "success_criteria": [
+          "Correctly identifies slope and y-intercept",
+          "Plots y-intercept correctly",
+          "Uses slope to find second point",
+          "Draws accurate line through points"
+        ]
+      },
+      {
+        "id": "obj_2",
+        "statement": "Students will interpret slope and y-intercept in the context of a Liberian real-world problem",
+        "bloom_level": "ANALYZE",
+        "assessment_method": "Word problem analysis",
+        "success_criteria": [
+          "Explains what slope represents (rate of change)",
+          "Explains what y-intercept represents (starting value)",
+          "Connects to real-world scenario"
+        ]
+      }
+    ],
+    
+    "activities": [
+      {
+        "id": "act_1",
+        "type": "VISUAL",
+        "title": "Introduction: Market Stall Revenue",
+        "description": "Visual story of a market vendor's daily revenue to introduce the concept of linear change",
+        "duration_minutes": 10,
+        "offline_capable": true,
+        "instructions": {
+          "student": "Watch the animation showing Ma Fatu's cassava sales. Notice how her revenue grows steadily each hour.",
+          "teacher": "Present the market vendor scenario. Ask: 'How much does Ma Fatu earn per hour? How much did she start with?' Use this to introduce slope and y-intercept informally."
+        },
+        "materials": [
+          {
+            "name": "Market vendor animation",
+            "type": "digital",
+            "required": true,
+            "alternative": "Teacher can draw on board or use printed images"
+          }
+        ],
+        "interaction_pattern": "whole_class",
+        "differentiation": {
+          "struggling": "Use physical Liberian dollar bills to model the problem",
+          "advanced": "Ask students to predict revenue at hour 10",
+          "mixed_literacy": "Strong visual with minimal text, audio narration available"
+        }
+      },
+      {
+        "id": "act_2",
+        "type": "INTERACTIVE",
+        "title": "Graphing Practice",
+        "description": "Students graph 3 linear functions with immediate feedback",
+        "duration_minutes": 15,
+        "offline_capable": true,
+        "instructions": {
+          "student": "Graph each function on the coordinate plane. Use the slope and y-intercept to help you.",
+          "teacher": "Circulate and check for common errors: wrong y-intercept placement, incorrect use of slope. Provide hints, not answers."
+        },
+        "materials": [
+          {
+            "name": "Graph paper (digital or printed)",
+            "type": "digital",
+            "required": true,
+            "alternative": "Students can draw coordinate planes in notebooks"
+          }
+        ],
+        "interaction_pattern": "individual",
+        "differentiation": {
+          "struggling": "Provide pre-drawn axes with labeled points",
+          "advanced": "Challenge with negative slopes",
+          "mixed_literacy": "Step-by-step visual guide available"
+        }
+      },
+      {
+        "id": "act_3",
+        "type": "PRACTICE",
+        "title": "Real-World Application",
+        "description": "Students solve word problems about taxi fares, phone credit, and water usage",
+        "duration_minutes": 20,
+        "offline_capable": true,
+        "instructions": {
+          "student": "Read each problem carefully. Identify the slope (rate) and y-intercept (starting value). Write the equation and answer the question.",
+          "teacher": "Model the first problem together. Emphasize identifying what changes (slope) vs. what stays constant (y-intercept)."
+        },
+        "materials": [
+          {
+            "name": "Word problem worksheet",
+            "type": "digital",
+            "required": true,
+            "alternative": "Problems read aloud or written on board"
+          }
+        ],
+        "interaction_pattern": "pair",
+        "differentiation": {
+          "struggling": "Provide sentence frames: 'The slope is ___ because...'",
+          "advanced": "Add a problem with two linear functions to compare",
+          "mixed_literacy": "Problems use simple vocabulary, context is familiar (taxis, markets)"
+        }
+      }
+    ],
+    
+    "virtual_labs": [],
+    
+    "assessments": [
+      {
+        "id": "assess_formative_1",
+        "type": "FORMATIVE",
+        "format": "MCQ",
+        "time_limit_minutes": 10,
+        "mastery_threshold": 0.7,
+        "adaptive": false,
+        "questions": [
+          {
+            "id": "q1",
+            "question": "What is the slope of the line y = 3x + 5?",
+            "question_audio": "/assets/audio/q1.mp3",
+            "type": "MCQ",
+            "points": 1,
+            "difficulty": "D1",
+            "options": ["3", "5", "3x", "8"],
+            "correct_answer": "3",
+            "explanation": "In slope-intercept form y = mx + b, m is the slope. Here, m = 3.",
+            "hints": [
+              "Remember: y = mx + b, where m is the slope",
+              "The slope is the number in front of x"
+            ],
+            "ai_gradable": true
+          },
+          {
+            "id": "q2",
+            "question": "A taxi in Monrovia charges LD 50 to start, then LD 20 per kilometer. Which equation represents the total cost C after k kilometers?",
+            "type": "MCQ",
+            "points": 2,
+            "difficulty": "D2",
+            "options": [
+              "C = 20k + 50",
+              "C = 50k + 20",
+              "C = 70k",
+              "C = 50 + 20"
+            ],
+            "correct_answer": "C = 20k + 50",
+            "explanation": "The starting cost (LD 50) is the y-intercept. The per-kilometer charge (LD 20) is the slope. So C = 20k + 50.",
+            "hints": [
+              "What stays the same regardless of distance?",
+              "What changes as the kilometers increase?",
+              "Use the form: Total = (rate × distance) + starting cost"
+            ],
+            "ai_gradable": true
+          }
+        ],
+        "feedback": {
+          "correct": "Excellent work! You understand linear functions.",
+          "incorrect": "Not quite. Review the lesson and try again. You can do this!",
+          "partial": "You're on the right track. Check your work on questions {failed_ids}."
+        }
+      }
+    ],
+    
+    "projects": [],
+    
+    "cultural_context": {
+      "local_examples": [
+        "Ma Fatu's cassava market stall (revenue per hour)",
+        "Monrovia taxi fares (flat rate + per km)",
+        "Mobile phone credit (base cost + per minute)",
+        "Community well water collection (liters per trip)"
+      ],
+      "language_notes": "Use 'Liberian dollar (LD)' consistently. Pronounce 'kilometer' as 'kill-oh-meter' in audio.",
+      "real_world_applications": [
+        "Budgeting for transportation",
+        "Planning market sales",
+        "Managing mobile credit"
+      ],
+      "community_connections": [
+        "Students can interview local vendors about pricing",
+        "Compare taxi fares across different routes in Monrovia"
+      ],
+      "sensitive_topics": []
+    },
+    
+    "technical_metadata": {
+      "offline_capable": true,
+      "sync_required": "optional",
+      "estimated_storage_mb": 3.2,
+      "max_file_size_mb": 5,
+      "media_formats": ["jpg", "mp3", "json"],
+      "device_requirements": {
+        "min_screen_inches": 7,
+        "min_storage_mb": 50,
+        "touch_required": true
+      },
+      "performance_targets": {
+        "load_time_seconds": 2,
+        "min_fps": 30
+      },
+      "assets": [
+        {
+          "path": "/assets/lessons/g10-math-001/market_vendor.jpg",
+          "type": "image",
+          "size_kb": 120,
+          "format": "jpg",
+          "alt_text": "Ma Fatu selling cassava at her market stall"
+        },
+        {
+          "path": "/assets/lessons/g10-math-001/intro_audio.mp3",
+          "type": "audio",
+          "size_kb": 180,
+          "format": "mp3",
+          "alt_text": "Lesson introduction narration in Liberian English"
+        }
+      ]
+    },
+    
+    "ai_tutor_metadata": {
+      "hint_strategy": "progressive",
+      "common_misconceptions": [
+        {
+          "misconception": "Students think the y-intercept is the x-value where the line crosses the y-axis",
+          "correction": "The y-intercept is the y-value when x = 0. It's the height where the line crosses the y-axis."
+        },
+        {
+          "misconception": "Students confuse slope with y-intercept in word problems",
+          "correction": "Ask: 'What changes as x increases?' (slope) vs. 'What's the starting value?' (y-intercept)"
+        }
+      ],
+      "prerequisite_check": [
+        "Can plot points (x, y) on a coordinate plane",
+        "Knows what a variable represents"
+      ],
+      "adaptive_parameters": {
+        "difficulty_adjustment": true,
+        "pacing_flexible": true
+      }
+    },
+    
+    "lesson_plan": {
+      "opening": "Hook: Show market vendor visual. Ask 'How much does she earn per hour?' Connect to students' experiences with markets.",
+      "direct_instruction": "Teach slope-intercept form y = mx + b. Explain m = slope (rate of change), b = y-intercept (starting value). Show 2 examples on board.",
+      "guided_practice": "Work through graphing y = 2x + 3 together as a class. Think aloud: 'First, I plot the y-intercept at (0, 3). Then I use slope 2 to go up 2, right 1.'",
+      "independent_practice": "Students complete interactive graphing activity. Teacher circulates, provides hints.",
+      "closing": "Exit ticket: Graph one function and explain what slope/y-intercept mean in context.",
+      "extension": "Challenge: Can you write an equation for your family's monthly expenses?"
+    },
+    
+    "parent_summary": "This week, your child learned about linear functions in math. They practiced graphing lines and understanding how things change at a steady rate, like taxi fares or market sales. This skill helps with budgeting and planning.",
+    
+    "nested_content": []
+  }

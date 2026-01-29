@@ -1,0 +1,6 @@
+{
+    "projectRules": ["rules.md"],
+    "projectSpec": ["SPEC.md"],
+    "contributing": ["CONTRIBUTING.md"]
+  }
+  

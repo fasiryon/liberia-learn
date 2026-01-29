@@ -1,0 +1,14 @@
+?? Ingest wrapper starting...
+   EWO:        EWO-00005
+   Agent-1:    C:\Users\Farquema.Siryon\liberia-learn\FactoryArtifacts\Results\EWO-00005-Agent-1.json
+   Governance: C:\Users\Farquema.Siryon\liberia-learn\FactoryArtifacts\Results\EWO-00005-GovernanceDecision.json
+{
+  "ewoId": "EWO-00005",
+  "decision": "ACCEPT",
+  "schemaId": "LESSON-00005",
+  "curriculumContentId": "cmk4fbogx0000h7woz1w87u8v",
+  "governedArtifactId": "cmk4fbonm0001h7wozaoxqvib",
+  "agent5PathUsed": ".\\FactoryArtifacts\\Results\\EWO-00005-Agent-5.json",
+  "appliedPatch": false
+}
+? Ingest completed successfully for EWO-00005

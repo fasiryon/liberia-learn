@@ -1,0 +1,287 @@
+[
+  {
+    "EWO": "EWO-00001",
+    "Agent": "Agent-1",
+    "Status": "Success",
+    "Output": ".\\FactoryArtifacts\\Results\\EWO-00001-Agent-1.json",
+    "PSComputerName": "localhost",
+    "RunspaceId": "fe3957c8-fd8c-4b2a-8003-822bceeeacc3",
+    "PSShowComputerName": false
+  },
+  {
+    "EWO": "EWO-00001",
+    "Agent": "Agent-2",
+    "Status": "Success",
+    "Output": ".\\FactoryArtifacts\\Results\\EWO-00001-Agent-2.json",
+    "PSComputerName": "localhost",
+    "RunspaceId": "6084da83-b3ad-4c3e-9895-ae006ffc4b8b",
+    "PSShowComputerName": false
+  },
+  {
+    "EWO": "EWO-00001",
+    "Agent": "Agent-3",
+    "Status": "Success",
+    "Output": ".\\FactoryArtifacts\\Results\\EWO-00001-Agent-3.json",
+    "PSComputerName": "localhost",
+    "RunspaceId": "b8225b4c-1a59-4b22-acab-ef064f84292c",
+    "PSShowComputerName": false
+  },
+  {
+    "EWO": "EWO-00001",
+    "Agent": "Agent-4",
+    "Status": "Success",
+    "Output": ".\\FactoryArtifacts\\Results\\EWO-00001-Agent-4.json",
+    "PSComputerName": "localhost",
+    "RunspaceId": "ef3520b3-eb2c-4af9-998f-86552d8b201f",
+    "PSShowComputerName": false
+  },
+  {
+    "EWO": "EWO-00001",
+    "Agent": "Agent-5",
+    "Status": "Success",
+    "Output": ".\\FactoryArtifacts\\Results\\EWO-00001-Agent-5.json",
+    "PSComputerName": "localhost",
+    "RunspaceId": "1668921a-57c8-468e-b6a9-1d7edec8ed4b",
+    "PSShowComputerName": false
+  },
+  {
+    "EWO": "EWO-00001",
+    "Agent": "Governance",
+    "Status": "Success",
+    "Output": ".\\FactoryArtifacts\\Results\\EWO-00001-GovernanceDecision.json"
+  },
+  {
+    "EWO": "EWO-00001",
+    "Agent": "Ingest",
+    "Status": "Success",
+    "Output": ".\\FactoryArtifacts\\Results\\EWO-00001-Ingest.log"
+  },
+  {
+    "EWO": "EWO-00002",
+    "Agent": "Agent-1",
+    "Status": "Success",
+    "Output": ".\\FactoryArtifacts\\Results\\EWO-00002-Agent-1.json",
+    "PSComputerName": "localhost",
+    "RunspaceId": "67c4f1ad-b0cc-4190-be32-86f9f564deb2",
+    "PSShowComputerName": false
+  },
+  {
+    "EWO": "EWO-00002",
+    "Agent": "Agent-2",
+    "Status": "Success",
+    "Output": ".\\FactoryArtifacts\\Results\\EWO-00002-Agent-2.json",
+    "PSComputerName": "localhost",
+    "RunspaceId": "2657bcee-850d-4989-8880-52530d8a4f87",
+    "PSShowComputerName": false
+  },
+  {
+    "EWO": "EWO-00002",
+    "Agent": "Agent-3",
+    "Status": "Success",
+    "Output": ".\\FactoryArtifacts\\Results\\EWO-00002-Agent-3.json",
+    "PSComputerName": "localhost",
+    "RunspaceId": "6fe3887f-bd3f-4244-8b0e-92922521924b",
+    "PSShowComputerName": false
+  },
+  {
+    "EWO": "EWO-00002",
+    "Agent": "Agent-4",
+    "Status": "Success",
+    "Output": ".\\FactoryArtifacts\\Results\\EWO-00002-Agent-4.json",
+    "PSComputerName": "localhost",
+    "RunspaceId": "a78699ce-c622-4603-835a-c0e1ddc1c780",
+    "PSShowComputerName": false
+  },
+  {
+    "EWO": "EWO-00002",
+    "Agent": "Agent-5",
+    "Status": "Success",
+    "Output": ".\\FactoryArtifacts\\Results\\EWO-00002-Agent-5.json",
+    "PSComputerName": "localhost",
+    "RunspaceId": "777c441a-cad8-4547-abb2-999d2cfc1ed4",
+    "PSShowComputerName": false
+  },
+  {
+    "EWO": "EWO-00002",
+    "Agent": "Governance",
+    "Status": "Success",
+    "Output": ".\\FactoryArtifacts\\Results\\EWO-00002-GovernanceDecision.json"
+  },
+  {
+    "EWO": "EWO-00002",
+    "Agent": "Ingest",
+    "Status": "Success",
+    "Output": ".\\FactoryArtifacts\\Results\\EWO-00002-Ingest.log"
+  },
+  {
+    "EWO": "EWO-00003",
+    "Agent": "Agent-1",
+    "Status": "Success",
+    "Output": ".\\FactoryArtifacts\\Results\\EWO-00003-Agent-1.json",
+    "PSComputerName": "localhost",
+    "RunspaceId": "79645b60-cf01-41e9-bf82-38b1f0a3d32d",
+    "PSShowComputerName": false
+  },
+  {
+    "EWO": "EWO-00003",
+    "Agent": "Agent-2",
+    "Status": "Success",
+    "Output": ".\\FactoryArtifacts\\Results\\EWO-00003-Agent-2.json",
+    "PSComputerName": "localhost",
+    "RunspaceId": "8fded17d-e189-448f-8425-9eb607106874",
+    "PSShowComputerName": false
+  },
+  {
+    "EWO": "EWO-00003",
+    "Agent": "Agent-3",
+    "Status": "Success",
+    "Output": ".\\FactoryArtifacts\\Results\\EWO-00003-Agent-3.json",
+    "PSComputerName": "localhost",
+    "RunspaceId": "80a1a4d4-a9e3-46ae-9bb0-34eb3683b15e",
+    "PSShowComputerName": false
+  },
+  {
+    "EWO": "EWO-00003",
+    "Agent": "Agent-4",
+    "Status": "Success",
+    "Output": ".\\FactoryArtifacts\\Results\\EWO-00003-Agent-4.json",
+    "PSComputerName": "localhost",
+    "RunspaceId": "6a07dd18-e6d3-44f1-9523-a95f1c2b4b3d",
+    "PSShowComputerName": false
+  },
+  {
+    "EWO": "EWO-00003",
+    "Agent": "Agent-5",
+    "Status": "Success",
+    "Output": ".\\FactoryArtifacts\\Results\\EWO-00003-Agent-5.json",
+    "PSComputerName": "localhost",
+    "RunspaceId": "2066d893-ed9a-43a3-8001-cf3b46295934",
+    "PSShowComputerName": false
+  },
+  {
+    "EWO": "EWO-00003",
+    "Agent": "Governance",
+    "Status": "Success",
+    "Output": ".\\FactoryArtifacts\\Results\\EWO-00003-GovernanceDecision.json"
+  },
+  {
+    "EWO": "EWO-00003",
+    "Agent": "Ingest",
+    "Status": "Success",
+    "Output": ".\\FactoryArtifacts\\Results\\EWO-00003-Ingest.log"
+  },
+  {
+    "EWO": "EWO-00004",
+    "Agent": "Agent-1",
+    "Status": "Success",
+    "Output": ".\\FactoryArtifacts\\Results\\EWO-00004-Agent-1.json",
+    "PSComputerName": "localhost",
+    "RunspaceId": "9d4958cb-1f13-432b-8be8-e19106982bc5",
+    "PSShowComputerName": false
+  },
+  {
+    "EWO": "EWO-00004",
+    "Agent": "Agent-2",
+    "Status": "Success",
+    "Output": ".\\FactoryArtifacts\\Results\\EWO-00004-Agent-2.json",
+    "PSComputerName": "localhost",
+    "RunspaceId": "09e1a7b7-dc7a-4150-baec-b517439f3fa6",
+    "PSShowComputerName": false
+  },
+  {
+    "EWO": "EWO-00004",
+    "Agent": "Agent-3",
+    "Status": "Success",
+    "Output": ".\\FactoryArtifacts\\Results\\EWO-00004-Agent-3.json",
+    "PSComputerName": "localhost",
+    "RunspaceId": "42dd782d-17e5-4e17-824f-ed8cf194152b",
+    "PSShowComputerName": false
+  },
+  {
+    "EWO": "EWO-00004",
+    "Agent": "Agent-4",
+    "Status": "Success",
+    "Output": ".\\FactoryArtifacts\\Results\\EWO-00004-Agent-4.json",
+    "PSComputerName": "localhost",
+    "RunspaceId": "b882c04e-bff8-4e0a-b208-53a79f2708fb",
+    "PSShowComputerName": false
+  },
+  {
+    "EWO": "EWO-00004",
+    "Agent": "Agent-5",
+    "Status": "Success",
+    "Output": ".\\FactoryArtifacts\\Results\\EWO-00004-Agent-5.json",
+    "PSComputerName": "localhost",
+    "RunspaceId": "94e2036b-635f-41ba-8e17-203db040fea5",
+    "PSShowComputerName": false
+  },
+  {
+    "EWO": "EWO-00004",
+    "Agent": "Governance",
+    "Status": "Success",
+    "Output": ".\\FactoryArtifacts\\Results\\EWO-00004-GovernanceDecision.json"
+  },
+  {
+    "EWO": "EWO-00004",
+    "Agent": "Ingest",
+    "Status": "Success",
+    "Output": ".\\FactoryArtifacts\\Results\\EWO-00004-Ingest.log"
+  },
+  {
+    "EWO": "EWO-00005",
+    "Agent": "Agent-1",
+    "Status": "Success",
+    "Output": ".\\FactoryArtifacts\\Results\\EWO-00005-Agent-1.json",
+    "PSComputerName": "localhost",
+    "RunspaceId": "8ffb6aa3-3f95-4142-8d8c-88044e5f9aa8",
+    "PSShowComputerName": false
+  },
+  {
+    "EWO": "EWO-00005",
+    "Agent": "Agent-2",
+    "Status": "Success",
+    "Output": ".\\FactoryArtifacts\\Results\\EWO-00005-Agent-2.json",
+    "PSComputerName": "localhost",
+    "RunspaceId": "f8465599-67f7-4a14-bf56-4411fc8efce0",
+    "PSShowComputerName": false
+  },
+  {
+    "EWO": "EWO-00005",
+    "Agent": "Agent-3",
+    "Status": "Success",
+    "Output": ".\\FactoryArtifacts\\Results\\EWO-00005-Agent-3.json",
+    "PSComputerName": "localhost",
+    "RunspaceId": "a5da0f51-5199-4c14-80ca-9f3108ee9448",
+    "PSShowComputerName": false
+  },
+  {
+    "EWO": "EWO-00005",
+    "Agent": "Agent-4",
+    "Status": "Success",
+    "Output": ".\\FactoryArtifacts\\Results\\EWO-00005-Agent-4.json",
+    "PSComputerName": "localhost",
+    "RunspaceId": "34c79be2-bd9f-4664-b6c3-9dde524778df",
+    "PSShowComputerName": false
+  },
+  {
+    "EWO": "EWO-00005",
+    "Agent": "Agent-5",
+    "Status": "Success",
+    "Output": ".\\FactoryArtifacts\\Results\\EWO-00005-Agent-5.json",
+    "PSComputerName": "localhost",
+    "RunspaceId": "4d067dda-e8f4-4b7b-957a-c87aa9b13f4c",
+    "PSShowComputerName": false
+  },
+  {
+    "EWO": "EWO-00005",
+    "Agent": "Governance",
+    "Status": "Success",
+    "Output": ".\\FactoryArtifacts\\Results\\EWO-00005-GovernanceDecision.json"
+  },
+  {
+    "EWO": "EWO-00005",
+    "Agent": "Ingest",
+    "Status": "Success",
+    "Output": ".\\FactoryArtifacts\\Results\\EWO-00005-Ingest.log"
+  }
+]

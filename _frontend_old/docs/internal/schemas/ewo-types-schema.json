@@ -1,0 +1,459 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "title": "LiberiaLearn Education Work Order (EWO) Schema",
+    "version": "1.0.0",
+    "description": "Work order types for the LiberiaLearn Curriculum & Platform Engine (LCPE)",
+    
+    "definitions": {
+      "ewo_metadata": {
+        "type": "object",
+        "required": ["id", "created_at", "status", "priority"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^EWO-[0-9]{5}$",
+            "description": "Unique work order ID (e.g., EWO-00001)"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "IDEA",
+              "RESEARCH",
+              "RESEARCH_IN_PROGRESS",
+              "RESEARCH_COMPLETE",
+              "RESEARCH_BLOCKED",
+              "ARCHITECTURE",
+              "ARCHITECTURE_IN_PROGRESS",
+              "ARCHITECTURE_COMPLETE",
+              "ARCHITECTURE_BLOCKED",
+              "UI_DESIGN",
+              "UI_DESIGN_IN_PROGRESS",
+              "UI_DESIGN_COMPLETE",
+              "UI_DESIGN_BLOCKED",
+              "ENGINEERING",
+              "ENGINEERING_IN_PROGRESS",
+              "ENGINEERING_COMPLETE",
+              "ENGINEERING_BLOCKED",
+              "TESTING",
+              "TESTING_IN_PROGRESS",
+              "TESTING_COMPLETE",
+              "TESTING_FAILED",
+              "TESTING_CONDITIONAL",
+              "REVIEW",
+              "APPROVED",
+              "REVISION",
+              "REJECTED",
+              "PUBLISHED"
+            ]
+          },
+          "priority": {
+            "type": "string",
+            "enum": ["CRITICAL", "HIGH", "MEDIUM", "LOW"]
+          },
+          "initiator": {
+            "type": "string",
+            "description": "Who requested this (Teacher ID, MOE directive, Gap analysis)"
+          },
+          "deadline": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      
+      "target": {
+        "type": "object",
+        "required": ["grade", "subject"],
+        "properties": {
+          "grade": {
+            "type": "string",
+            "enum": [
+              "GRADE_1", "GRADE_2", "GRADE_3", "GRADE_4", "GRADE_5", "GRADE_6",
+              "GRADE_7", "GRADE_8", "GRADE_9", "GRADE_10", "GRADE_11", "GRADE_12"
+            ]
+          },
+          "subject": {
+            "type": "string",
+            "enum": [
+              "MATH", "ENGLISH", "SCIENCE", "PHYSICS", "CHEMISTRY", "BIOLOGY",
+              "COMPUTER_SCIENCE", "ICT", "HISTORY", "CIVICS", "GEOGRAPHY",
+              "ECONOMICS", "BUSINESS_STUDIES", "ARTS", "CREATIVITY", "PE", "LITERACY"
+            ]
+          },
+          "topic": {
+            "type": "string",
+            "description": "Specific topic (e.g., 'Fractions', 'Photosynthesis')"
+          },
+          "lesson_id": {
+            "type": "string",
+            "description": "For SINGLE_LESSON type (e.g., 'LESSON_02_01')"
+          },
+          "unit_id": {
+            "type": "string",
+            "description": "For UNIT type (e.g., 'UNIT_02')"
+          },
+          "term": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 3,
+            "description": "Academic term"
+          }
+        }
+      },
+      
+      "constraints": {
+        "type": "object",
+        "properties": {
+          "offline_first": {
+            "type": "boolean",
+            "default": true
+          },
+          "low_bandwidth": {
+            "type": "boolean",
+            "default": true
+          },
+          "device": {
+            "type": "string",
+            "enum": ["Android tablets", "Shared devices", "Any"],
+            "default": "Android tablets"
+          },
+          "target_region": {
+            "type": "string",
+            "description": "County name or 'National'"
+          },
+          "language": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": ["English", "Liberian English"]
+            },
+            "default": ["English", "Liberian English"]
+          },
+          "max_duration_minutes": {
+            "type": "integer",
+            "description": "For lessons/activities"
+          },
+          "virtual_labs_required": {
+            "type": "boolean",
+            "default": false
+          }
+        }
+      },
+      
+      "artifacts": {
+        "type": "object",
+        "properties": {
+          "research": {
+            "type": "object",
+            "description": "Research Agent output (JSON)"
+          },
+          "architecture": {
+            "type": "object",
+            "description": "Curriculum Architect output (JSON)"
+          },
+          "design": {
+            "type": "object",
+            "description": "UI/UX Agent output (JSON)"
+          },
+          "implementation": {
+            "type": "object",
+            "description": "Engineer Agent output (JSON + code references)"
+          },
+          "qa_report": {
+            "type": "object",
+            "description": "QA/Governance Agent output (JSON)"
+          }
+        }
+      },
+      
+      "history": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "timestamp": {"type": "string", "format": "date-time"},
+            "agent": {"type": "string"},
+            "action": {"type": "string"},
+            "status_before": {"type": "string"},
+            "status_after": {"type": "string"},
+            "notes": {"type": "string"},
+            "commit_hash": {"type": "string"},
+            "deployment_url": {"type": "string"}
+          }
+        }
+      }
+    },
+    
+    "oneOf": [
+      {
+        "title": "SINGLE_LESSON EWO",
+        "type": "object",
+        "required": ["metadata", "ewo_type", "target", "constraints", "required_agents"],
+        "properties": {
+          "metadata": {"$ref": "#/definitions/ewo_metadata"},
+          "ewo_type": {
+            "type": "string",
+            "const": "SINGLE_LESSON"
+          },
+          "target": {
+            "allOf": [
+              {"$ref": "#/definitions/target"},
+              {
+                "required": ["lesson_id"]
+              }
+            ]
+          },
+          "constraints": {"$ref": "#/definitions/constraints"},
+          "required_agents": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "research-agent",
+                "curriculum-architect",
+                "uiux-designer",
+                "engineer-agent",
+                "qa-governance-agent"
+              ]
+            },
+            "minItems": 2,
+            "description": "Minimum: research + curriculum-architect"
+          },
+          "artifacts": {"$ref": "#/definitions/artifacts"},
+          "history": {"$ref": "#/definitions/history"}
+        }
+      },
+      
+      {
+        "title": "UNIT EWO",
+        "type": "object",
+        "required": ["metadata", "ewo_type", "target", "constraints", "unit_rules", "required_agents"],
+        "properties": {
+          "metadata": {"$ref": "#/definitions/ewo_metadata"},
+          "ewo_type": {
+            "type": "string",
+            "const": "UNIT"
+          },
+          "target": {
+            "allOf": [
+              {"$ref": "#/definitions/target"},
+              {
+                "required": ["unit_id"]
+              }
+            ]
+          },
+          "constraints": {"$ref": "#/definitions/constraints"},
+          "unit_rules": {
+            "type": "object",
+            "properties": {
+              "lessons_expected": {
+                "type": "integer",
+                "minimum": 1,
+                "description": "Number of lessons in this unit"
+              },
+              "duration_weeks": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 4,
+                "description": "How many weeks this unit should span"
+              },
+              "assessments_required": {
+                "type": "boolean",
+                "default": true
+              },
+              "project_required": {
+                "type": "boolean",
+                "default": false
+              }
+            }
+          },
+          "required_agents": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "research-agent",
+                "curriculum-architect",
+                "uiux-designer",
+                "engineer-agent",
+                "qa-governance-agent"
+              ]
+            },
+            "minItems": 3
+          },
+          "artifacts": {"$ref": "#/definitions/artifacts"},
+          "history": {"$ref": "#/definitions/history"},
+          "child_ewos": {
+            "type": "array",
+            "items": {"type": "string"},
+            "description": "IDs of child SINGLE_LESSON EWOs generated from this unit"
+          }
+        }
+      },
+      
+      {
+        "title": "TERM EWO",
+        "type": "object",
+        "required": ["metadata", "ewo_type", "target", "constraints", "term_rules", "required_agents"],
+        "properties": {
+          "metadata": {"$ref": "#/definitions/ewo_metadata"},
+          "ewo_type": {
+            "type": "string",
+            "const": "TERM"
+          },
+          "target": {
+            "allOf": [
+              {"$ref": "#/definitions/target"},
+              {
+                "required": ["term"]
+              }
+            ]
+          },
+          "constraints": {"$ref": "#/definitions/constraints"},
+          "term_rules": {
+            "type": "object",
+            "properties": {
+              "units_expected": {
+                "type": "integer",
+                "minimum": 2,
+                "maximum": 6,
+                "description": "Number of units in this term"
+              },
+              "duration_weeks": {
+                "type": "integer",
+                "default": 12,
+                "description": "Standard term length"
+              },
+              "final_assessment_required": {
+                "type": "boolean",
+                "default": true
+              }
+            }
+          },
+          "required_agents": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "research-agent",
+                "curriculum-architect",
+                "uiux-designer",
+                "engineer-agent",
+                "qa-governance-agent"
+              ]
+            },
+            "minItems": 4
+          },
+          "artifacts": {"$ref": "#/definitions/artifacts"},
+          "history": {"$ref": "#/definitions/history"},
+          "child_ewos": {
+            "type": "array",
+            "items": {"type": "string"},
+            "description": "IDs of child UNIT EWOs generated from this term"
+          }
+        }
+      },
+      
+      {
+        "title": "FULL_SUBJECT EWO",
+        "type": "object",
+        "required": ["metadata", "ewo_type", "target", "constraints", "batch_rules", "required_agents"],
+        "properties": {
+          "metadata": {"$ref": "#/definitions/ewo_metadata"},
+          "ewo_type": {
+            "type": "string",
+            "const": "FULL_SUBJECT"
+          },
+          "target": {
+            "$ref": "#/definitions/target",
+            "description": "Grade and subject only - generates all terms/units/lessons"
+          },
+          "constraints": {"$ref": "#/definitions/constraints"},
+          "batch_rules": {
+            "type": "object",
+            "required": ["units_expected"],
+            "properties": {
+              "terms": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 3,
+                "default": 3,
+                "description": "Academic terms in school year"
+              },
+              "units_expected": {
+                "type": "integer",
+                "minimum": 3,
+                "maximum": 18,
+                "description": "Total units across all terms (e.g., 6 units)"
+              },
+              "lessons_per_unit_range": {
+                "type": "array",
+                "items": {"type": "integer"},
+                "minItems": 2,
+                "maxItems": 2,
+                "description": "[min, max] lessons per unit (e.g., [4, 6])"
+              },
+              "virtual_labs_required": {
+                "type": "boolean",
+                "default": false,
+                "description": "For Physics, Chemistry, Biology"
+              },
+              "projects_required": {
+                "type": "boolean",
+                "default": true
+              },
+              "global_sources": {
+                "type": "array",
+                "items": {"type": "string"},
+                "description": "Countries/frameworks to emulate (e.g., ['Singapore', 'Finland'])"
+              },
+              "waec_alignment_required": {
+                "type": "boolean",
+                "default": true,
+                "description": "For Grades 10-12"
+              }
+            }
+          },
+          "required_agents": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "research-agent",
+                "curriculum-architect",
+                "uiux-designer",
+                "engineer-agent",
+                "qa-governance-agent"
+              ]
+            },
+            "minItems": 4
+          },
+          "artifacts": {"$ref": "#/definitions/artifacts"},
+          "history": {"$ref": "#/definitions/history"},
+          "child_ewos": {
+            "type": "array",
+            "items": {"type": "string"},
+            "description": "IDs of child TERM EWOs generated from this full subject"
+          },
+          "batch_progress": {
+            "type": "object",
+            "properties": {
+              "total_lessons_expected": {"type": "integer"},
+              "lessons_completed": {"type": "integer"},
+              "lessons_in_progress": {"type": "integer"},
+              "lessons_blocked": {"type": "integer"},
+              "estimated_completion_date": {"type": "string", "format": "date"}
+            }
+          }
+        }
+      }
+    ]
+  }

@@ -1,0 +1,93 @@
+{
+  "hard_gates": {
+    "lesson": {
+      "objectives_min": 3,
+      "activities_min": 2,
+      "requires_practice_activity": true,
+      "assessments_min": 1,
+      "questions_per_assessment_min": 5,
+      "question_hints_min": 2,
+      "cultural_examples_min": 3,
+      "requires_ld_example": true,
+      "requires_geo_or_community_example": true,
+      "require_activity_fields": [
+        "duration_minutes",
+        "offline_capable",
+        "instructions.student",
+        "instructions.teacher",
+        "interaction_pattern",
+        "differentiation.struggling",
+        "differentiation.advanced",
+        "differentiation.mixed_literacy"
+      ],
+      "require_question_fields": [
+        "correct_answer",
+        "explanation",
+        "hints"
+      ],
+      "require_rubric_if_non_mcq": true,
+      "require_ai_tutor_metadata": true,
+      "stem_subjects_require_virtual_labs": true
+    },
+    "full_subject": {
+      "units_min": 5,
+      "units_max": 12,
+      "each_unit_requires_lessons": true
+    }
+  },
+  "soft_gates": {
+    "pedagogical_depth": [
+      "misconceptions.teacher_moves",
+      "misconceptions.common_mistakes",
+      "vocabulary.terms"
+    ],
+    "practical_support": [
+      "materials_list",
+      "accessibility_supports",
+      "answer_keys"
+    ],
+    "differentiation_global": [
+      "differentiation_global.struggling_learners",
+      "differentiation_global.advanced_learners",
+      "differentiation_global.low_literacy_supports"
+    ]
+  },
+  "scoring_rubric": {
+    "thresholds": {
+      "reject_max": 60,
+      "repair_max": 84,
+      "accept_min": 85
+    },
+    "categories": {
+      "structure_completeness": { "weight": 25 },
+      "objective_quality": { "weight": 20 },
+      "activity_quality": { "weight": 20 },
+      "assessment_quality": { "weight": 20 },
+      "liberia_localization": { "weight": 15 }
+    }
+  },
+  "repair_templates": {
+    "practice_activity": {
+      "type": "PRACTICE",
+      "title": "Guided Practice",
+      "description": "Students work through practice problems with teacher support.",
+      "duration_minutes": 15,
+      "offline_capable": true,
+      "instructions": {
+        "student": "Complete the practice problems in your notebook. Ask for help when you get stuck.",
+        "teacher": "Model the first example, then circulate. Pull small groups for support."
+      },
+      "interaction_pattern": "individual",
+      "differentiation": {
+        "struggling": "Provide worked examples and reduce numbers.",
+        "advanced": "Add extension problems with bigger numbers or mixed steps.",
+        "mixed_literacy": "Use visuals and short sentences; read prompts aloud."
+      }
+    },
+    "safe_local_examples": [
+      "Waterside Market (buying/selling and counting)",
+      "Liberian Dollar (LD) money examples",
+      "County/community references (Monrovia, Buchanan, Gbarnga, Kakata, Ganta, Zwedru)"
+    ]
+  }
+}

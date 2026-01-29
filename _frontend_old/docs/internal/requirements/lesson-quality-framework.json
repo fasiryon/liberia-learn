@@ -1,0 +1,116 @@
+{
+  "version": "1.0.0",
+  "hard_gates": {
+    "lesson": {
+      "units_min": 1,
+      "lessons_per_unit_min": 1,
+      "objectives_per_lesson_min": 3,
+      "activities_per_lesson_min": 2,
+      "activities_must_include_types": ["PRACTICE"],
+      "assessments_per_lesson_min": 1,
+      "questions_per_assessment_min": 5
+    },
+    "activity_completeness": {
+      "required_fields": [
+        "id",
+        "type",
+        "title",
+        "description",
+        "duration_minutes",
+        "offline_capable",
+        "instructions",
+        "materials",
+        "interaction_pattern",
+        "differentiation"
+      ],
+      "instructions_required_fields": ["student", "teacher"],
+      "duration_minutes_range": [10, 45]
+    },
+    "assessment_completeness": {
+      "per_question_required_fields": [
+        "id",
+        "question",
+        "type",
+        "points",
+        "difficulty",
+        "correct_answer",
+        "explanation",
+        "hints"
+      ],
+      "min_hints": 2,
+      "mcq_min_options": 4,
+      "rubric_required_for_types": ["SHORT_ANSWER", "OPEN_RESPONSE"]
+    },
+    "localization": {
+      "min_local_examples": 3,
+      "must_include": [
+        { "tag": "MONEY", "example_contains": ["LD", "Liberian Dollar"] },
+        { "tag": "COMMUNITY", "example_contains_any": ["county", "community", "district", "Monrovia", "Waterside", "Red Light"] }
+      ]
+    }
+  },
+  "soft_gates": {
+    "pedagogical_depth": {
+      "misconceptions_min": 2,
+      "teacher_moves_min": 2,
+      "vocabulary_terms_range": [5, 10]
+    },
+    "practical_support": {
+      "materials_with_alternatives": true,
+      "accessibility_supports": ["low_literacy", "hearing", "vision"],
+      "answer_keys": true
+    },
+    "differentiation": {
+      "must_cover": ["struggling_learners", "advanced_learners", "low_literacy"]
+    }
+  },
+  "scoring": {
+    "thresholds": {
+      "reject_max": 60,
+      "repair_max": 84,
+      "accept_min": 85
+    },
+    "weights": {
+      "structure_completeness": 25,
+      "objective_quality": 20,
+      "activity_quality": 20,
+      "assessment_quality": 20,
+      "liberia_localization": 15
+    }
+  },
+  "generation_scales": {
+    "SINGLE_LESSON": { "requires_full_lessons": 1 },
+    "UNIT_MINI": { "requires_full_lessons": 3, "requires_unit_overview": true },
+    "UNIT_STANDARD": { "requires_full_lessons": 2, "requires_stub_lessons": true, "stub_lessons_range": [3, 6], "requires_unit_overview": true },
+    "TERM_OVERVIEW": { "requires_scope_sequence_only": true },
+    "FULL_SUBJECT_SCOPE": { "requires_scope_sequence_only": true, "requires_year_map": true }
+  },
+  "repair_templates": {
+    "practice_activity": {
+      "id": "act_auto_practice_1",
+      "type": "PRACTICE",
+      "title": "Guided Practice",
+      "description": "Students work through practice problems with teacher support and gradual release.",
+      "duration_minutes": 15,
+      "offline_capable": true,
+      "instructions": {
+        "student": "Complete the practice problems in your notebook. Ask for help when stuck.",
+        "teacher": "Model the first example, then guide pairs, then independent practice. Circulate and support."
+      },
+      "materials": [
+        { "name": "Notebook and pencil", "type": "physical", "required": true, "alternative": "Use slate/sand writing if needed" }
+      ],
+      "interaction_pattern": "individual",
+      "differentiation": {
+        "struggling": "Provide worked examples and reduce problem set.",
+        "advanced": "Add challenge problems and require explanation.",
+        "mixed_literacy": "Use visuals and read instructions aloud."
+      }
+    },
+    "safe_local_examples": [
+      "Buying and selling at Waterside Market",
+      "Using Liberian Dollars (LD) for budgeting and change",
+      "Comparing distances between communities/counties in Liberia"
+    ]
+  }
+}

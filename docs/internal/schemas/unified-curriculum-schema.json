@@ -1,0 +1,189 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "LiberiaLearn Unified Curriculum Schema",
+  "description": "Single source of truth for LiberiaLearn curriculum content. Agents must output artifacts conforming to this schema.",
+  "type": "object",
+  "required": ["metadata", "educational_context", "title", "content_type", "scale", "units"],
+  "additionalProperties": false,
+
+  "definitions": {
+    "metadata": {
+      "type": "object",
+      "required": ["id", "version", "created_at", "updated_at", "status"],
+      "properties": {
+        "id": { "type": "string", "pattern": "^(LESSON|UNIT|TERM|SUBJECT)-[A-Z0-9]+$" },
+        "version": { "type": "string", "pattern": "^\\d+\\.\\d+\\.\\d+$" },
+        "created_at": { "type": "string", "format": "date-time" },
+        "updated_at": { "type": "string", "format": "date-time" },
+        "status": { "type": "string", "enum": ["draft", "review", "approved", "published", "archived"] },
+        "approval_history": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "approver": { "type": "string" },
+              "timestamp": { "type": "string", "format": "date-time" },
+              "action": { "type": "string", "enum": ["approved", "rejected", "revision_requested"] },
+              "notes": { "type": "string" }
+            },
+            "additionalProperties": false
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+
+    "educational_context": {
+      "type": "object",
+      "required": ["grade", "subject", "cognitive_band"],
+      "properties": {
+        "grade": { "type": "integer", "minimum": 1, "maximum": 12 },
+        "subject": {
+          "type": "string",
+          "enum": ["MATH", "ENGLISH", "SCIENCE", "PHYSICS", "CHEMISTRY", "BIOLOGY", "COMPUTER_SCIENCE", "ICT", "HISTORY", "CIVICS", "GEOGRAPHY", "ECONOMICS", "BUSINESS_STUDIES", "ARTS", "CREATIVITY", "PE", "LITERACY"]
+        },
+        "cognitive_band": { "type": "string", "enum": ["FOUNDATION", "CORE", "SPECIALIZATION"] },
+        "term": { "type": "integer", "minimum": 1, "maximum": 3 },
+        "week": { "type": "integer", "minimum": 1 }
+      },
+      "additionalProperties": false
+    },
+
+    "ai_tutor": {
+      "type": "object",
+      "required": ["hint_strategy", "common_misconceptions", "mastery_check"],
+      "properties": {
+        "hint_strategy": { "type": "string", "enum": ["progressive", "socratic", "direct", "example_based"] },
+        "common_misconceptions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["misconception", "correction"],
+            "properties": {
+              "misconception": { "type": "string" },
+              "correction": { "type": "string" }
+            },
+            "additionalProperties": false
+          }
+        },
+        "mastery_check": {
+          "type": "object",
+          "required": ["method", "threshold"],
+          "properties": {
+            "method": { "type": "string", "enum": ["exit_ticket", "mini_quiz", "oral_check", "performance_task"] },
+            "threshold": { "type": "number", "minimum": 0, "maximum": 1 }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+
+    "virtual_lab_agent1": {
+      "type": "object",
+      "required": ["lab_type", "learning_goal", "interaction_model", "offline_fallback"],
+      "properties": {
+        "lab_type": { "type": "string", "enum": ["SIMULATION", "GUIDED_EXPERIMENT", "DATA_ANALYSIS", "MODEL_BUILDING"] },
+        "learning_goal": { "type": "string" },
+        "interaction_model": { "type": "string", "enum": ["text_guided", "interactive_simulation", "full_3d"] },
+        "offline_fallback": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+
+    "lesson": {
+      "type": "object",
+      "required": ["lesson_id", "lesson_title", "lesson_content", "ai_tutor", "virtual_lab"],
+      "properties": {
+        "lesson_id": { "type": "string" },
+        "lesson_title": { "type": "string" },
+        "lesson_content": { "type": "string" },
+
+        "ai_tutor": { "$ref": "#/definitions/ai_tutor" },
+
+        "virtual_lab": {
+          "anyOf": [
+            { "$ref": "#/definitions/virtual_lab_agent1" },
+            { "type": "null" }
+          ]
+        },
+
+        "is_stem": { "type": "boolean", "default": true }
+      },
+      "additionalProperties": false
+    },
+
+    "unit": {
+      "type": "object",
+      "required": ["unit_id", "unit_title", "lessons"],
+      "properties": {
+        "unit_id": { "type": "string" },
+        "unit_title": { "type": "string" },
+        "unit_description": { "type": "string" },
+        "lessons": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/definitions/lesson" }
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+
+  "properties": {
+    "metadata": { "$ref": "#/definitions/metadata" },
+    "educational_context": { "$ref": "#/definitions/educational_context" },
+
+    "title": { "type": "string" },
+    "description": { "type": "string" },
+
+    "content_type": { "type": "string", "enum": ["LESSON", "UNIT", "TERM", "FULL_SUBJECT"] },
+
+    "scale": {
+      "type": "string",
+      "enum": ["SINGLE_LESSON", "UNIT_MINI", "UNIT_STANDARD", "TERM_OVERVIEW", "FULL_SUBJECT_SCOPE", "FULL_SUBJECT"]
+    },
+
+    "grade_range": {
+      "type": "object",
+      "required": ["from", "to"],
+      "properties": {
+        "from": { "type": "string", "enum": ["K", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"] },
+        "to":   { "type": "string", "enum": ["K", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"] }
+      },
+      "additionalProperties": false
+    },
+
+    "units": {
+      "type": "array",
+      "minItems": 5,
+      "maxItems": 12,
+      "items": { "$ref": "#/definitions/unit" }
+    }
+  },
+
+  "allOf": [
+    {
+      "if": {
+        "properties": { "educational_context": { "properties": { "subject": { "enum": ["MATH","SCIENCE","PHYSICS","CHEMISTRY","BIOLOGY","COMPUTER_SCIENCE","ICT"] } } } }
+      },
+      "then": {
+        "properties": {
+          "units": {
+            "items": {
+              "properties": {
+                "lessons": {
+                  "items": {
+                    "properties": {
+                      "virtual_lab": { "$ref": "#/definitions/virtual_lab_agent1" }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  ]
+}

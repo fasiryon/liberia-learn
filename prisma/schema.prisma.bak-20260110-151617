@@ -1,0 +1,1025 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+/// / ===== Core Identity & Organization =====
+model User {
+  id                      String                @id @default(cuid())
+  email                   String                @unique
+  emailVerified           DateTime?
+  hashedPwd               String?
+  name                    String?
+  role                    Role
+  createdAt               DateTime              @default(now())
+  updatedAt               DateTime              @updatedAt
+  accounts                Account[]
+  auditLogs               AuditLog[]
+  teacherOf               Class[]               @relation("TeacherClasses")
+  lockedGradableItems     GradableItem[]        @relation("GradableItemLockedBy")
+  resolvedGradeAppeals    GradeAppeal[]         @relation("GradeAuditFlagResolvedBy")
+  resolvedGradeAuditFlags GradeAuditFlag[]      @relation("GradeAuditFlagResolvedBy")
+  gradedGradeRecords      GradeRecord[]         @relation("GradeRecordGradedBy")
+  publishedGradeRecords   GradeRecord[]         @relation("GradeRecordPublishedBy")
+  gradeRevisions          GradeRevision[]       @relation("GradeRevisionRevisedBy")
+  messagesSent            Message[]             @relation("MessagesSent")
+  messagesReceived        Message[]             @relation("MessagesReceived")
+  sessions                Session[]
+  student                 Student?
+  guardianOf              StudentGuardian[]
+  StudentIntervention     StudentIntervention[]
+}
+
+model School {
+  id           String   @id @default(cuid())
+  name         String
+  timezone     String   @default("Africa/Monrovia")
+  primaryHex   String?
+  secondaryHex String?
+  accentHex    String?
+  logoUrl      String?
+  createdAt    DateTime @default(now())
+  classes      Class[]
+}
+
+model Class {
+  id               String            @id @default(cuid())
+  schoolId         String
+  name             String
+  subject          Subject
+  teacherId        String
+  createdAt        DateTime          @default(now())
+  assessments      Assessment[]
+  assignments      Assignment[]
+  School           School            @relation(fields: [schoolId], references: [id])
+  Teacher          User              @relation("TeacherClasses", fields: [teacherId], references: [id])
+  gradePolicy      ClassGradePolicy?
+  enrollments      Enrollment[]
+  gradableItems    GradableItem[]
+  grades           Grade[]
+  gradeCategories  GradeCategory[]
+  groupSubmissions GroupSubmission[]
+  meetings         Meeting[]
+  messages         Message[]
+}
+
+model Student {
+  id                       String                     @id @default(cuid())
+  userId                   String                     @unique
+  county                   String?
+  community                String?
+  createdAt                DateTime                   @default(now())
+  assignmentSubmissions    AssignmentSubmission[]
+  attendance               AttendanceRecord[]
+  capstoneProjects         CapstoneProject[]
+  chatMessages             ChatMessage[]
+  enrollments              Enrollment[]
+  gradableSubmissions      GradableSubmission[]
+  grades                   Grade[]
+  gradeAppeals             GradeAppeal[]
+  mastery                  MasteryRecord[]
+  ObjectiveMasterySnapshot ObjectiveMasterySnapshot[]
+  portfolioItems           PortfolioItem[]
+  reviews                  ReviewSchedule[]
+  user                     User                       @relation(fields: [userId], references: [id])
+  guardians                StudentGuardian[]
+  StudentIntervention      StudentIntervention[]
+  submissions              Submission[]
+}
+
+model StudentGuardian {
+  id         String  @id @default(cuid())
+  studentId  String
+  guardianId String
+  relation   String?
+  guardian   User    @relation(fields: [guardianId], references: [id])
+  student    Student @relation(fields: [studentId], references: [id])
+
+  @@unique([studentId, guardianId])
+}
+
+/// / ===== Scheduling & Enrollment =====
+model Enrollment {
+  id        String   @id @default(cuid())
+  studentId String
+  classId   String
+  createdAt DateTime @default(now())
+  Class     Class    @relation(fields: [classId], references: [id])
+  Student   Student  @relation(fields: [studentId], references: [id])
+
+  @@unique([studentId, classId])
+}
+
+model Meeting {
+  id         String             @id @default(cuid())
+  classId    String
+  startsAt   DateTime
+  endsAt     DateTime
+  attendance AttendanceRecord[]
+  Class      Class              @relation(fields: [classId], references: [id])
+}
+
+model AttendanceRecord {
+  id        String           @id @default(cuid())
+  meetingId String
+  studentId String
+  status    AttendanceStatus
+  markedAt  DateTime         @default(now())
+  Meeting   Meeting          @relation(fields: [meetingId], references: [id])
+  Student   Student          @relation(fields: [studentId], references: [id])
+
+  @@unique([meetingId, studentId], name: "meetingId_studentId")
+}
+
+/// / ===== Curriculum =====
+model Standard {
+  id                     String                  @id @default(cuid())
+  code                   String                  @unique
+  description            String
+  subject                Subject
+  band                   GradeBand
+  gradableItemObjectives GradableItemObjective[]
+  units                  Unit[]
+  skills                 Skill[]                 @relation("SkillToStandard")
+
+  @@index([subject, band])
+}
+
+model Skill {
+  id                       String                     @id @default(cuid())
+  subject                  Subject
+  band                     GradeBand
+  descriptor               String
+  examples                 Json?
+  CohortBenchmark          CohortBenchmark[]
+  gradableItemObjectives   GradableItemObjective[]
+  mastery                  MasteryRecord[]
+  ObjectiveMasterySnapshot ObjectiveMasterySnapshot[]
+  practice                 PracticeItem[]
+  reviews                  ReviewSchedule[]
+  StudentIntervention      StudentIntervention[]
+  standards                Standard[]                 @relation("SkillToStandard")
+}
+
+model Unit {
+  id          String       @id @default(cuid())
+  standardId  String?
+  subject     Subject
+  band        GradeBand
+  title       String
+  weeks       Int          @default(2)
+  assessments Assessment[]
+  lessons     Lesson[]
+  Standard    Standard?    @relation(fields: [standardId], references: [id])
+}
+
+model Lesson {
+  id           String @id @default(cuid())
+  unitId       String
+  title        String
+  objectives   Json
+  durationMins Int    @default(45)
+  Unit         Unit   @relation(fields: [unitId], references: [id])
+}
+
+model PracticeItem {
+  id             String           @id @default(cuid())
+  skillId        String
+  stimulus       String
+  itemType       ItemType
+  difficulty     Difficulty
+  answerKey      Json?
+  hints          Json?
+  AssessmentItem AssessmentItem[]
+  Skill          Skill            @relation(fields: [skillId], references: [id])
+}
+
+model Assessment {
+  id          String           @id @default(cuid())
+  classId     String?
+  unitId      String?
+  title       String
+  createdAt   DateTime         @default(now())
+  Class       Class?           @relation(fields: [classId], references: [id])
+  Unit        Unit?            @relation(fields: [unitId], references: [id])
+  items       AssessmentItem[]
+  submissions Submission[]
+}
+
+model AssessmentItem {
+  id             String        @id @default(cuid())
+  assessmentId   String
+  practiceItemId String?
+  rubric         Json?
+  points         Int           @default(1)
+  Assessment     Assessment    @relation(fields: [assessmentId], references: [id])
+  PracticeItem   PracticeItem? @relation(fields: [practiceItemId], references: [id])
+}
+
+model Submission {
+  id           String     @id @default(cuid())
+  assessmentId String
+  studentId    String
+  responses    Json
+  score        Int?
+  gradedAt     DateTime?
+  Assessment   Assessment @relation(fields: [assessmentId], references: [id])
+  Student      Student    @relation(fields: [studentId], references: [id])
+
+  @@unique([assessmentId, studentId])
+}
+
+model Grade {
+  id              String           @id @default(cuid())
+  classId         String
+  studentId       String
+  percent         Float
+  letter          String
+  computedAt      DateTime         @default(now())
+  Class           Class            @relation(fields: [classId], references: [id])
+  Student         Student          @relation(fields: [studentId], references: [id])
+  MasteryEvidence MasteryEvidence?
+
+  @@index([classId, studentId])
+}
+
+/// / ===== Mastery & Review =====
+model MasteryRecord {
+  id             String    @id @default(cuid())
+  studentId      String
+  skillId        String
+  level          Int       @default(0)
+  lastAssessedAt DateTime?
+  Skill          Skill     @relation(fields: [skillId], references: [id])
+  Student        Student   @relation(fields: [studentId], references: [id])
+
+  @@unique([studentId, skillId])
+}
+
+model ReviewSchedule {
+  id           String   @id @default(cuid())
+  studentId    String
+  skillId      String
+  nextAt       DateTime
+  intervalDays Int      @default(7)
+  Skill        Skill    @relation(fields: [skillId], references: [id])
+  Student      Student  @relation(fields: [studentId], references: [id])
+
+  @@unique([studentId, skillId])
+}
+
+/// / ===== Communication & Audit =====
+model Message {
+  id         String   @id @default(cuid())
+  classId    String?
+  fromUserId String
+  toUserId   String
+  body       String
+  createdAt  DateTime @default(now())
+  Class      Class?   @relation(fields: [classId], references: [id])
+  fromUser   User     @relation("MessagesSent", fields: [fromUserId], references: [id])
+  toUser     User     @relation("MessagesReceived", fields: [toUserId], references: [id])
+}
+
+model AuditLog {
+  id        String   @id @default(cuid())
+  userId    String?
+  action    String
+  details   Json?
+  createdAt DateTime @default(now())
+  user      User?    @relation(fields: [userId], references: [id])
+}
+
+/// / ===== Assignments =====
+model Assignment {
+  id          String                 @id @default(cuid())
+  classId     String
+  title       String
+  description String?
+  dueAt       DateTime?
+  points      Int                    @default(100)
+  createdAt   DateTime               @default(now())
+  Class       Class                  @relation(fields: [classId], references: [id])
+  submissions AssignmentSubmission[]
+}
+
+model AssignmentSubmission {
+  id           String     @id @default(cuid())
+  assignmentId String
+  studentId    String
+  turnedInAt   DateTime?
+  score        Int?
+  Assignment   Assignment @relation(fields: [assignmentId], references: [id])
+  Student      Student    @relation(fields: [studentId], references: [id])
+
+  @@unique([assignmentId, studentId])
+}
+
+/// / ===== Capstone / Portfolio / Partners =====
+model CapstoneProject {
+  id         String          @id @default(cuid())
+  studentId  String
+  title      String
+  summary    String?
+  repoUrl    String?
+  mentorId   String?
+  startedAt  DateTime        @default(now())
+  finishedAt DateTime?
+  status     String          @default("ACTIVE")
+  Student    Student         @relation(fields: [studentId], references: [id])
+  artifacts  PortfolioItem[]
+}
+
+model PortfolioItem {
+  id                String           @id @default(cuid())
+  studentId         String
+  kind              String
+  title             String
+  url               String?
+  thumbnail         String?
+  meta              Json?
+  createdAt         DateTime         @default(now())
+  capstoneProjectId String?
+  CapstoneProject   CapstoneProject? @relation(fields: [capstoneProjectId], references: [id])
+  Student           Student          @relation(fields: [studentId], references: [id])
+}
+
+model Partner {
+  id        String           @id @default(cuid())
+  name      String
+  kind      String
+  website   String?
+  createdAt DateTime         @default(now())
+  contacts  PartnerContact[]
+  programs  PartnerProgram[]
+}
+
+model PartnerContact {
+  id        String  @id @default(cuid())
+  partnerId String
+  name      String
+  email     String?
+  phone     String?
+  partner   Partner @relation(fields: [partnerId], references: [id])
+}
+
+model PartnerProgram {
+  id          String  @id @default(cuid())
+  partnerId   String
+  title       String
+  description String?
+  type        String
+  active      Boolean @default(true)
+  partner     Partner @relation(fields: [partnerId], references: [id])
+}
+
+model BlockScheduleTemplate {
+  id        String   @id @default(cuid())
+  name      String
+  slots     Json
+  level     String
+  createdAt DateTime @default(now())
+}
+
+/// / ===== AI Agents & Work Orders =====
+model Agent {
+  id        String        @id @default(cuid())
+  name      String
+  type      String
+  status    String        @default("idle")
+  config    Json?
+  lastRunAt DateTime?
+  createdAt DateTime      @default(now())
+  metrics   AgentMetric[]
+  tasks     AgentTask[]
+}
+
+model AgentTask {
+  id          String    @id @default(cuid())
+  agentId     String
+  taskType    String
+  status      String    @default("pending")
+  input       Json
+  output      Json?
+  error       String?
+  startedAt   DateTime  @default(now())
+  completedAt DateTime?
+  durationMs  Int?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  agent       Agent     @relation(fields: [agentId], references: [id])
+
+  @@index([agentId, status])
+  @@index([createdAt])
+}
+
+model AgentMetric {
+  id             String   @id @default(cuid())
+  agentId        String
+  tasksCompleted Int      @default(0)
+  tasksFailed    Int      @default(0)
+  avgDurationMs  Int      @default(0)
+  successRate    Float    @default(0)
+  timestamp      DateTime @default(now())
+  agent          Agent    @relation(fields: [agentId], references: [id])
+
+  @@index([agentId, timestamp])
+}
+
+model SystemEvent {
+  id         String    @id @default(cuid())
+  eventType  String
+  severity   String
+  source     String
+  message    String
+  metadata   Json?
+  resolvedBy String?
+  createdAt  DateTime  @default(now())
+  resolvedAt DateTime?
+
+  @@index([severity, createdAt])
+  @@index([source, eventType])
+}
+
+model ChatMessage {
+  id        String   @id @default(cuid())
+  studentId String
+  role      String
+  content   String
+  agentId   String?
+  createdAt DateTime @default(now())
+  student   Student  @relation(fields: [studentId], references: [id])
+
+  @@index([studentId, createdAt])
+}
+
+/// / ===== Education Work Orders =====
+model EducationWorkOrder {
+  id          String    @id @default(cuid())
+  ewoId       String    @unique
+  ewoType     String
+  status      String
+  priority    String
+  target      Json
+  constraints Json
+  batchRules  Json?
+  artifacts   Json
+  history     Json[]
+  childEwos   String[]
+  parentEwoId String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  deadline    DateTime?
+  initiator   String?
+
+  @@index([status])
+  @@index([ewoType])
+  @@index([priority])
+}
+
+/// / ===== Curriculum Storage =====
+model CurriculumContent {
+  id                String             @id @default(cuid())
+  contentId         String             @unique
+  contentType       String
+  grade             Int
+  subject           String
+  status            String
+  version           String
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+  hash              String?            @unique
+  payload           Json
+  CurriculumAsset   CurriculumAsset[]
+  governedArtifacts GovernedArtifact[] @relation("GovernedToContent")
+
+  @@index([grade, subject])
+  @@index([contentType, status])
+}
+
+model CurriculumAsset {
+  id         String            @id @default(cuid())
+  lessonId   String
+  path       String
+  type       String
+  sizeKb     Int
+  format     String
+  altText    String?
+  cached     Boolean           @default(false)
+  lastCached DateTime?
+  lesson     CurriculumContent @relation(fields: [lessonId], references: [contentId])
+
+  @@index([lessonId])
+  @@index([cached])
+}
+
+model GovernedArtifact {
+  id                  String             @id @default(cuid())
+  ewoId               String             @unique
+  schemaId            String
+  createdAt           DateTime           @default(now())
+  agent1Path          String?
+  agent5Path          String?
+  appliedPatch        Boolean            @default(false)
+  curriculumContentId String?
+  decision            String?
+  governanceModel     String?
+  governancePath      String?
+  governanceTimestamp DateTime           @default(now())
+  patchJson           Json?
+  reason              String?
+  updatedAt           DateTime?
+  artifactJson        Json
+  governanceDecision  String?
+  governanceReason    String?
+  curriculumContent   CurriculumContent? @relation("GovernedToContent", fields: [curriculumContentId], references: [id])
+
+  @@index([schemaId])
+  @@index([curriculumContentId])
+}
+
+model FactoryRun {
+  id        String   @id @default(cuid())
+  runId     String   @unique
+  createdAt DateTime @default(now())
+  note      String?
+}
+
+/// / ===== NextAuth =====
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+model GradeCategory {
+  id        String         @id @default(cuid())
+  classId   String
+  name      String
+  weight    Float          @default(0)
+  createdAt DateTime       @default(now())
+  updatedAt DateTime       @updatedAt
+  items     GradableItem[]
+  Class     Class          @relation(fields: [classId], references: [id])
+
+  @@unique([classId, name])
+  @@index([classId])
+}
+
+model ClassGradePolicy {
+  id         String   @id @default(cuid())
+  classId    String   @unique
+  term       Int      @default(1)
+  weights    Json
+  latePolicy Json?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  Class      Class    @relation(fields: [classId], references: [id])
+
+  @@unique([classId, term])
+  @@index([classId, term])
+}
+
+model GradableItem {
+  id                 String                  @id @default(cuid())
+  classId            String
+  title              String
+  description        String?
+  type               GradableItemType
+  scoringType        ScoringType
+  gradingMethod      GradingMethod
+  countsTowardGrade  Boolean                 @default(true)
+  categoryId         String?
+  maxPoints          Int?                    @default(100)
+  dueAt              DateTime?
+  checkpointSequence Int?
+  improvementPolicy  Json?
+  publishedToParents Boolean                 @default(false)
+  lockState          GradeLockState          @default(DRAFT)
+  lockedAt           DateTime?
+  lockedByUserId     String?
+  createdAt          DateTime                @default(now())
+  updatedAt          DateTime                @updatedAt
+  category           GradeCategory?          @relation(fields: [categoryId], references: [id])
+  Class              Class                   @relation(fields: [classId], references: [id])
+  lockedByUser       User?                   @relation("GradableItemLockedBy", fields: [lockedByUserId], references: [id])
+  objectives         GradableItemObjective[]
+  submissions        GradableSubmission[]
+  groupSubmissions   GroupSubmission[]
+
+  @@index([classId, type])
+  @@index([categoryId])
+  @@index([lockState])
+  @@index([dueAt])
+}
+
+model GradableItemObjective {
+  id             String       @id @default(cuid())
+  gradableItemId String
+  standardId     String?
+  skillId        String?
+  objectiveText  String?
+  createdAt      DateTime     @default(now())
+  item           GradableItem @relation(fields: [gradableItemId], references: [id])
+  Skill          Skill?       @relation(fields: [skillId], references: [id])
+  Standard       Standard?    @relation(fields: [standardId], references: [id])
+
+  @@index([gradableItemId])
+  @@index([standardId])
+  @@index([skillId])
+}
+
+model ExternalEvaluator {
+  id            String        @id @default(cuid())
+  name          String
+  organization  String?
+  credentialRef String?
+  active        Boolean       @default(true)
+  createdAt     DateTime      @default(now())
+  grades        GradeRecord[]
+}
+
+model GroupSubmission {
+  id             String               @id @default(cuid())
+  gradableItemId String
+  classId        String
+  members        Json
+  createdAt      DateTime             @default(now())
+  submissions    GradableSubmission[]
+  Class          Class                @relation(fields: [classId], references: [id])
+  item           GradableItem         @relation(fields: [gradableItemId], references: [id])
+
+  @@index([gradableItemId])
+  @@index([classId])
+}
+
+model GradableSubmission {
+  id                String           @id @default(cuid())
+  gradableItemId    String
+  studentId         String?
+  groupSubmissionId String?
+  attemptNumber     Int              @default(1)
+  submissionType    SubmissionType   @default(ONLINE)
+  payload           Json
+  recordedOffline   Boolean          @default(false)
+  timeSpentMinutes  Int?
+  excuseStatus      ExcuseStatus     @default(NONE)
+  status            SubmissionStatus @default(SUBMITTED)
+  turnedInAt        DateTime?
+  createdAt         DateTime         @default(now())
+  updatedAt         DateTime         @updatedAt
+  item              GradableItem     @relation(fields: [gradableItemId], references: [id])
+  group             GroupSubmission? @relation(fields: [groupSubmissionId], references: [id])
+  student           Student?         @relation(fields: [studentId], references: [id])
+  gradeRecord       GradeRecord?
+
+  @@index([gradableItemId])
+  @@index([studentId])
+  @@index([groupSubmissionId])
+  @@index([status])
+}
+
+model GradeRecord {
+  id                  String             @id @default(cuid())
+  submissionId        String             @unique
+  scorePoints         Int?
+  scorePercent        Float?
+  rubricResult        Json?
+  feedbackText        String?
+  gradedByUserId      String?
+  externalEvaluatorId String?
+  gradedAt            DateTime?          @default(now())
+  aiConfidence        Float?
+  humanReviewed       Boolean            @default(true)
+  publishedAt         DateTime?
+  publishedByUserId   String?
+  createdAt           DateTime           @default(now())
+  updatedAt           DateTime           @updatedAt
+  appeals             GradeAppeal[]
+  auditFlags          GradeAuditFlag[]
+  externalEvaluator   ExternalEvaluator? @relation(fields: [externalEvaluatorId], references: [id])
+  gradedBy            User?              @relation("GradeRecordGradedBy", fields: [gradedByUserId], references: [id])
+  publishedBy         User?              @relation("GradeRecordPublishedBy", fields: [publishedByUserId], references: [id])
+  submission          GradableSubmission @relation(fields: [submissionId], references: [id])
+  revisions           GradeRevision[]
+
+  @@index([gradedAt])
+  @@index([gradedByUserId])
+  @@index([externalEvaluatorId])
+}
+
+model GradeRevision {
+  id               String      @id @default(cuid())
+  gradeRecordId    String
+  previousSnapshot Json
+  newSnapshot      Json
+  revisedByUserId  String?
+  revisionReason   String
+  createdAt        DateTime    @default(now())
+  previousHash     String?
+  hash             String?
+  gradeRecord      GradeRecord @relation(fields: [gradeRecordId], references: [id])
+  revisedBy        User?       @relation("GradeRevisionRevisedBy", fields: [revisedByUserId], references: [id])
+
+  @@index([gradeRecordId, createdAt])
+  @@index([hash])
+}
+
+model GradeAppeal {
+  id               String                @id @default(cuid())
+  gradeRecordId    String
+  studentId        String
+  status           AppealStatus          @default(SUBMITTED)
+  resolutionType   AppealResolutionType?
+  claimText        String
+  evidence         Json?
+  createdAt        DateTime              @default(now())
+  updatedAt        DateTime              @updatedAt
+  resolvedAt       DateTime?
+  resolvedByUserId String?
+  resolutionNotes  String?
+  gradeRecord      GradeRecord           @relation(fields: [gradeRecordId], references: [id])
+  resolvedBy       User?                 @relation("GradeAuditFlagResolvedBy", fields: [resolvedByUserId], references: [id])
+  student          Student               @relation(fields: [studentId], references: [id])
+
+  @@index([gradeRecordId])
+  @@index([studentId])
+  @@index([status])
+}
+
+model GradeAuditFlag {
+  id               String      @id @default(cuid())
+  gradeRecordId    String
+  flagType         String
+  severity         String      @default("LOW")
+  details          Json?
+  createdAt        DateTime    @default(now())
+  resolvedAt       DateTime?
+  resolvedByUserId String?
+  gradeRecord      GradeRecord @relation(fields: [gradeRecordId], references: [id])
+  resolvedBy       User?       @relation("GradeAuditFlagResolvedBy", fields: [resolvedByUserId], references: [id])
+
+  @@index([flagType])
+  @@index([severity, createdAt])
+  @@index([gradeRecordId])
+}
+
+model ObjectiveMasterySnapshot {
+  id              String                 @id @default(cuid())
+  createdAt       DateTime               @default(now())
+  studentId       String
+  skillId         String
+  masteryLevel    Float
+  measuredAt      DateTime               @default(now())
+  measurementType MasteryMeasurementType
+  contextNote     String?
+  evidence        MasteryEvidence[]
+  skill           Skill                  @relation(fields: [skillId], references: [id])
+  student         Student                @relation(fields: [studentId], references: [id])
+
+  @@index([studentId, skillId, measuredAt])
+  @@index([measuredAt])
+}
+
+model MasteryEvidence {
+  id         String                   @id @default(cuid())
+  createdAt  DateTime                 @default(now())
+  snapshotId String
+  gradeId    String                   @unique
+  sourceType EvidenceSourceType
+  weight     Float?
+  recordedAt DateTime                 @default(now())
+  note       String?
+  grade      Grade                    @relation(fields: [gradeId], references: [id])
+  snapshot   ObjectiveMasterySnapshot @relation(fields: [snapshotId], references: [id])
+
+  @@index([snapshotId])
+  @@index([gradeId])
+}
+
+model StudentIntervention {
+  id               String               @id @default(cuid())
+  createdAt        DateTime             @default(now())
+  updatedAt        DateTime             @updatedAt
+  studentId        String
+  skillId          String
+  interventionType InterventionType
+  startedAt        DateTime             @default(now())
+  endedAt          DateTime?
+  notes            String?
+  assignedByUserId String?
+  outcome          InterventionOutcome?
+  assignedBy       User?                @relation(fields: [assignedByUserId], references: [id])
+  skill            Skill                @relation(fields: [skillId], references: [id])
+  student          Student              @relation(fields: [studentId], references: [id])
+
+  @@index([studentId, skillId, startedAt])
+}
+
+model InterventionOutcome {
+  interventionId    String              @id
+  masteryBefore     Float?
+  masteryAfter      Float?
+  measuredAfterDays Int?
+  improvement       Float?
+  success           Boolean?
+  notes             String?
+  intervention      StudentIntervention @relation(fields: [interventionId], references: [id])
+}
+
+model CohortBenchmark {
+  id            String     @id @default(cuid())
+  createdAt     DateTime   @default(now())
+  cohortType    CohortType
+  cohortId      String?
+  skillId       String
+  measuredAt    DateTime
+  medianMastery Float?
+  p25Mastery    Float?
+  p75Mastery    Float?
+  sampleSize    Int?
+  skill         Skill      @relation(fields: [skillId], references: [id])
+
+  @@index([cohortType, cohortId, skillId, measuredAt])
+}
+
+/// / ===== Enums for GradingOS =====
+enum GradableItemType {
+  ASSESSMENT
+  ASSIGNMENT
+  LAB
+  PROJECT
+  ORAL
+  PARTICIPATION
+  PORTFOLIO
+  OTHER
+}
+
+enum ScoringType {
+  POINTS
+  ANALYTIC_RUBRIC
+  HOLISTIC
+}
+
+enum GradingMethod {
+  TEACHER
+  AI_ASSISTED
+  PEER
+  SELF
+  COLLABORATIVE
+  EXTERNAL
+}
+
+enum GradeLockState {
+  DRAFT
+  PUBLISHED
+  LOCKED
+  ARCHIVED
+}
+
+enum SubmissionType {
+  ONLINE
+  OFFLINE
+  AUDIO
+  PHOTO
+  TEXT
+  LINK
+}
+
+enum SubmissionStatus {
+  SUBMITTED
+  MISSING
+  EXCUSED
+  EXTENDED
+  GRADED
+}
+
+enum ExcuseStatus {
+  NONE
+  EXCUSED
+  EXTENDED
+  PENDING_MAKEUP
+}
+
+enum AppealStatus {
+  SUBMITTED
+  UNDER_REVIEW
+  RESOLVED
+  ESCALATED
+}
+
+enum AppealResolutionType {
+  CHANGED
+  UPHELD
+  PARTIALLY_CHANGED
+}
+
+/// / ===== Enums =====
+enum Role {
+  TEACHER
+  STUDENT
+  GUARDIAN
+  ADMIN
+}
+
+enum GradeBand {
+  G1_3
+  G4_6
+  G7_9
+  G10_12
+}
+
+enum Subject {
+  MATH
+  SCIENCE
+  COMPUTER_SCIENCE
+  ENGINEERING
+  LITERACY
+  CIVICS
+  ARTS
+  PE
+  CAREER
+}
+
+enum AttendanceStatus {
+  PRESENT
+  ABSENT
+  LATE
+}
+
+enum ItemType {
+  MCQ
+  FR
+  CODE
+}
+
+enum Difficulty {
+  D1
+  D2
+  D3
+  D4
+  D5
+}
+
+enum MasteryMeasurementType {
+  FORMATIVE
+  SUMMATIVE
+}
+
+enum EvidenceSourceType {
+  ASSESSMENT
+  ASSIGNMENT
+  PROJECT
+  LAB
+  OBSERVATION
+  OTHER
+}
+
+enum InterventionType {
+  TUTORING
+  RETEACH
+  PEER_SUPPORT
+  RESOURCE
+  COUNSELING
+  OTHER
+}
+
+enum CohortType {
+  CLASS
+  GRADE_LEVEL
+  SCHOOL
+  COUNTY
+  NATIONAL
+}

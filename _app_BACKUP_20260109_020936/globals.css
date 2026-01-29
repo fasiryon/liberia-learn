@@ -1,0 +1,7 @@
+/* @tailwind */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root { color-scheme: light; }
+/* Body styles moved to layout via classNames */

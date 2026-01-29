@@ -1,0 +1,144 @@
+{
+  "metadata": {
+    "id": "SUBJECT-MATH-G05",
+    "version": "1.0.0",
+    "created_at": "2026-01-08T16:00:00Z",
+    "updated_at": "2026-01-08T16:00:00Z",
+    "status": "draft"
+  },
+  "title": "LiberiaLearn Mathematics – Grade 5 (CORE)",
+  "description": "Grade 5 Mathematics CORE curriculum. Canonical reference artifact defining mastery rules, instructional depth, AI tutor behavior, and localization patterns for LiberiaLearn.",
+  "content_type": "FULL_SUBJECT",
+  "educational_context": {
+    "grade": 5,
+    "subject": "MATH",
+    "cognitive_band": "CORE"
+  },
+  "standards_alignment": {
+    "global_benchmarks": {
+      "source_countries": ["Singapore", "Finland", "Japan"],
+      "frameworks": ["Common Core"],
+      "adaptation_notes": "Depth-over-breadth with mastery progression and productive struggle."
+    }
+  },
+  "ai_tutor_metadata": {
+    "hint_strategy": "socratic",
+    "adaptive_parameters": {
+      "difficulty_adjustment": true,
+      "pacing_flexible": true
+    }
+  },
+  "technical_metadata": {
+    "offline_capable": true,
+    "sync_required": "optional",
+    "estimated_storage_mb": 45
+  },
+  "cultural_context": {
+    "local_examples": [
+      "Market buying and selling",
+      "Transport distances between towns",
+      "Sharing food at home or school"
+    ],
+    "language_notes": "Clear Liberian English; AI may clarify using Liberian Koloqua when needed.",
+    "real_world_applications": [
+      "Budgeting",
+      "Measuring land and distance",
+      "Interpreting data in daily life"
+    ]
+  },
+  "nested_content": [
+    {
+      "metadata": {
+        "id": "UNIT-G05-MATH-01",
+        "version": "1.0.0",
+        "created_at": "2026-01-08T16:00:00Z",
+        "updated_at": "2026-01-08T16:00:00Z",
+        "status": "draft"
+      },
+      "title": "Whole Number Operations & Mental Math",
+      "description": "Fluency with multi-digit operations, estimation, and mental strategies using place value reasoning.",
+      "content_type": "UNIT",
+      "educational_context": {
+        "grade": 5,
+        "subject": "MATH",
+        "cognitive_band": "CORE"
+      },
+      "nested_content": [
+        {
+          "metadata": {
+            "id": "LESSON-G05-MATH-01-01",
+            "version": "1.0.0",
+            "created_at": "2026-01-08T16:00:00Z",
+            "updated_at": "2026-01-08T16:00:00Z",
+            "status": "draft"
+          },
+          "title": "Place Value to Millions and Rounding",
+          "description": "Understanding place value up to millions and using rounding to estimate and check reasonableness.",
+          "content_type": "LESSON",
+          "educational_context": {
+            "grade": 5,
+            "subject": "MATH",
+            "cognitive_band": "CORE"
+          },
+          "learning_objectives": [
+            {
+              "id": "LO-G05-MATH-01-01",
+              "statement": "Students can round whole numbers to a given place value and justify the estimate.",
+              "bloom_level": "APPLY",
+              "success_criteria": [
+                "Correctly identifies rounding digit",
+                "Explains why an estimate is reasonable"
+              ]
+            }
+          ],
+          "activities": [
+            {
+              "id": "ACT-G05-MATH-01-01-A1",
+              "type": "INTERACTIVE",
+              "title": "Rounding on a Number Line",
+              "description": "Students place numbers on a number line and decide which benchmark they are closest to.",
+              "duration_minutes": 15,
+              "offline_capable": true,
+              "interaction_pattern": "individual"
+            }
+          ],
+          "virtual_labs": [
+            {
+              "id": "VLAB-G05-MATH-01-01",
+              "type": "SIMULATION",
+              "title": "Number Line Rounding Simulator",
+              "implementation_level": "text_guided",
+              "steps": [
+                {
+                  "step_number": 1,
+                  "instruction": "Place the number on the number line.",
+                  "expected_observation": "The number sits between two benchmarks.",
+                  "ai_tutor_hint": "Which benchmark is closer?"
+                }
+              ],
+              "household_alternative": "Draw a number line on paper and mark benchmarks."
+            }
+          ],
+          "assessments": [
+            {
+              "id": "ASM-G05-MATH-01-01",
+              "type": "FORMATIVE",
+              "format": "SHORT_ANSWER",
+              "adaptive": true,
+              "mastery_threshold": 0.7,
+              "questions": [
+                {
+                  "id": "Q1",
+                  "question": "Round 4,683 to the nearest hundred and explain why.",
+                  "points": 2,
+                  "difficulty": "D2",
+                  "ai_gradable": true
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

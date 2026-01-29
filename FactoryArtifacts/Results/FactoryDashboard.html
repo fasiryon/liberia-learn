@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+<meta charset='UTF-8'>
+<title>LiberiaLearn Factory Dashboard</title>
+<meta http-equiv='refresh' content='5'>
+<style>
+body { font-family: Arial, sans-serif; background:#f0f0f0; padding: 20px; }
+h1 { color:#2c3e50; }
+h2 { color:#34495e; }
+table { border-collapse: collapse; width: 100%; margin-bottom:20px; }
+th, td { border: 1px solid #ccc; padding: 8px; text-align: left; vertical-align: top; }
+th { background-color:#34495e; color:white; }
+.success { background-color:#27ae60; color:white; }
+.failed { background-color:#c0392b; color:white; }
+.collapsible { cursor: pointer; padding: 5px; border: none; text-align: left; outline: none; font-size: 14px; }
+.content { padding: 10px; display: none; overflow: auto; background-color: #ecf0f1; max-height: 320px; }
+.summary { margin-bottom: 20px; font-weight: bold; }
+pre { white-space: pre-wrap; word-wrap: break-word; margin: 0; }
+</style>
+</head>
+<body>
+<h1>LiberiaLearn Factory CI/CD Dashboard</h1>
+<div class='summary'>
+Total EWOs: 5 | Success: 5 | Failed: 0
+</div><h2>EWO-00001</h2><table><tr><th>Agent</th><th>Status</th><th>Output</th></tr><tr class='success'><td>Agent-1</td><td>Success</td><td><button class='collapsible'>Show Output</button><div class='content'><pre>{
+  "content_type": "LESSON",
+  "educational_context": {
+    "language": "en-LR",
+    "country": "Liberia",
+    "subject": "MATH",
+    "grade": 10,
+    "cognitive_band": "CORE"
+  },
+  "metadata": {
+    "status": "draft",
+    "source": "AI_FACTORY",
+    "created_at": "2026-01-07T15:14:43.5166253-05:00",
+    "id": "LESSON-00001",
+    "version": "1.0.0",
+    "updated_at": "2026-01-07T15:14:43.5166253-05:00"
+  },
+  "title": "Grade 10 Math - Single Lesson (Placeholder)",
+  "schema_version": "1.0",
+  "units": [],
+  "scale": "SINGLE_LESSON"
+}
+</pre></div></td></tr>
+<tr class='success'><td>Agent-2</td><td>Success</td><td><button class='collapsible'>Show Output</button><div class='content'><pre>{
+  "agent": "Agent-2",
+  "note": "Placeholder agent output (non-curriculum artifact).",
+  "metadata": {
+    "created_at": "2026-01-07T15:14:43.9886963-05:00",
+    "source": "AI_FACTORY",
+    "id": "EWO-00001-Agent-2"
+  },
+  "status": "Success",
+  "ewo": "EWO-00001"
+}
+</pre></div></td></tr>
+<tr class='success'><td>Agent-3</td><td>Success</td><td><button class='collapsible'>Show Output</button><div class='content'><pre>{
+  "metadata": {
+    "source": "AI_FACTORY",
+    "id": "EWO-00001-Agent-3",
+    "created_at": "2026-01-07T15:14:44.4655366-05:00"
+  },
+  "note": "Placeholder agent output (non-curriculum artifact).",
+  "agent": "Agent-3",
+  "status": "Success",
+  "ewo": "EWO-00001"
+}
+</pre></div></td></tr>
+<tr class='success'><td>Agent-4</td><td>Success</td><td><button class='collapsible'>Show Output</button><div class='content'><pre>{
+  "agent": "Agent-4",
+  "metadata": {
+    "id": "EWO-00001-Agent-4",
+    "created_at": "2026-01-07T15:14:44.9650306-05:00",
+    "source": "AI_FACTORY"
+  },
+  "status": "Success",
+  "ewo": "EWO-00001",
+  "note": "Placeholder agent output (non-curriculum artifact)."
+}
+</pre></div></td></tr>
+<tr class='success'><td>Agent-5</td><td>Success</td><td><button class='collapsible'>Show Output</button><div class='content'><pre>{
+  "decision": "ACCEPT",
+  "reason": "The input JSON is well-formed, has all required top-level fields, and is internally consistent. It also adheres to the scale policy for lesson-level output.",
+  "patch": []
+}
+</pre></div></td></tr>
+<tr class='success'><td>Governance</td><td>Success</td><td><button class='collapsible'>Show Output</button><div class='content'><pre>Decision: ACCEPT
+Reason: The input JSON is well-formed, has all required top-level fields, and is internally consistent. It also adheres to the scale policy for lesson-level output.
+Timestamp: 01/07/2026 15:14:49
+File: .\FactoryArtifacts\Results\EWO-00001-GovernanceDecision.json</pre></div></td></tr>
+<tr class='success'><td>Ingest</td><td>Success</td><td><button class='collapsible'>Show Output</button><div class='content'><pre>?? Ingest wrapper starting...
+   EWO:        EWO-00001
+   Agent-1:    C:\Users\Farquema.Siryon\liberia-learn\FactoryArtifacts\Results\EWO-00001-Agent-1.json
+   Governance: C:\Users\Farquema.Siryon\liberia-learn\FactoryArtifacts\Results\EWO-00001-GovernanceDecision.json
+{
+  "ewoId": "EWO-00001",
+  "decision": "ACCEPT",
+  "schemaId": "LESSON-00001",
+  "curriculumContentId": "cmk4f6uzh0000h7rouyctgr20",
+  "governedArtifactId": "cmk4f6v3p0001h7rom40ftcb4",
+  "agent5PathUsed": ".\\FactoryArtifacts\\Results\\EWO-00001-Agent-5.json",
+  "appliedPatch": false
+}
+? Ingest completed successfully for EWO-00001
+</pre></div></td></tr>
+</table><h2>EWO-00002</h2><table><tr><th>Agent</th><th>Status</th><th>Output</th></tr><tr class='success'><td>Agent-1</td><td>Success</td><td><button class='collapsible'>Show Output</button><div class='content'><pre>{
+  "scale": "SINGLE_LESSON",
+  "metadata": {
+    "updated_at": "2026-01-07T15:14:56.4461473-05:00",
+    "created_at": "2026-01-07T15:14:56.4461473-05:00",
+    "source": "AI_FACTORY",
+    "status": "draft",
+    "version": "1.0.0",
+    "id": "LESSON-00002"
+  },
+  "content_type": "LESSON",
+  "title": "Grade 10 Math - Single Lesson (Placeholder)",
+  "schema_version": "1.0",
+  "educational_context": {
+    "country": "Liberia",
+    "language": "en-LR",
+    "grade": 10,
+    "cognitive_band": "CORE",
+    "subject": "MATH"
+  },
+  "units": []
+}
+</pre></div></td></tr>
+<tr class='success'><td>Agent-2</td><td>Success</td><td><button class='collapsible'>Show Output</button><div class='content'><pre>{
+  "status": "Success",
+  "agent": "Agent-2",
+  "note": "Placeholder agent output (non-curriculum artifact).",
+  "metadata": {
+    "id": "EWO-00002-Agent-2",
+    "created_at": "2026-01-07T15:14:57.3654050-05:00",
+    "source": "AI_FACTORY"
+  },
+  "ewo": "EWO-00002"
+}
+</pre></div></td></tr>
+<tr class='success'><td>Agent-3</td><td>Success</td><td><button class='collapsible'>Show Output</button><div class='content'><pre>{
+  "note": "Placeholder agent output (non-curriculum artifact).",
+  "agent": "Agent-3",
+  "metadata": {
+    "source": "AI_FACTORY",
+    "id": "EWO-00002-Agent-3",
+    "created_at": "2026-01-07T15:14:57.5026486-05:00"
+  },
+  "ewo": "EWO-00002",
+  "status": "Success"
+}
+</pre></div></td></tr>
+<tr class='success'><td>Agent-4</td><td>Success</td><td><button class='collapsible'>Show Output</button><div class='content'><pre>{
+  "note": "Placeholder agent output (non-curriculum artifact).",
+  "metadata": {
+    "id": "EWO-00002-Agent-4",
+    "created_at": "2026-01-07T15:14:57.8639696-05:00",
+    "source": "AI_FACTORY"
+  },
+  "agent": "Agent-4",
+  "status": "Success",
+  "ewo": "EWO-00002"
+}
+</pre></div></td></tr>
+<tr class='success'><td>Agent-5</td><td>Success</td><td><button class='collapsible'>Show Output</button><div class='content'><pre>{
+  "decision": "ACCEPT",
+  "reason": "The input JSON is well-formed, has all required top-level fields, and is internally consistent. The content type and scale are appropriate for a single lesson, and it's acceptable for units to be empty in this case.",
+  "patch": []
+}
+</pre></div></td></tr>
+<tr class='success'><td>Governance</td><td>Success</td><td><button class='collapsible'>Show Output</button><div class='content'><pre>Decision: ACCEPT
+Reason: The input JSON is well-formed, has all required top-level fields, and is internally consistent. The content type and scale are appropriate for a single lesson, and it's acceptable for units to be empty in this case.
+Timestamp: 01/07/2026 15:15:02
+File: .\FactoryArtifacts\Results\EWO-00002-GovernanceDecision.json</pre></div></td></tr>
+<tr class='success'><td>Ingest</td><td>Success</td><td><button class='collapsible'>Show Output</button><div class='content'><pre>?? Ingest wrapper starting...
+   EWO:        EWO-00002
+   Agent-1:    C:\Users\Farquema.Siryon\liberia-learn\FactoryArtifacts\Results\EWO-00002-Agent-1.json
+   Governance: C:\Users\Farquema.Siryon\liberia-learn\FactoryArtifacts\Results\EWO-00002-GovernanceDecision.json
+{
+  "ewoId": "EWO-00002",
+  "decision": "ACCEPT",
+  "schemaId": "LESSON-00002",
+  "curriculumContentId": "cmk4fato00000h7mo41fb0f33",
+  "governedArtifactId": "cmk4fatse0001h7motdu4ibv7",
+  "agent5PathUsed": ".\\FactoryArtifacts\\Results\\EWO-00002-Agent-5.json",
+  "appliedPatch": false
+}
+? Ingest completed successfully for EWO-00002
+</pre></div></td></tr>
+</table><h2>EWO-00003</h2><table><tr><th>Agent</th><th>Status</th><th>Output</th></tr><tr class='success'><td>Agent-1</td><td>Success</td><td><button class='collapsible'>Show Output</button><div class='content'><pre>{
+  "scale": "SINGLE_LESSON",
+  "content_type": "LESSON",
+  "schema_version": "1.0",
+  "metadata": {
+    "version": "1.0.0",
+    "id": "LESSON-00003",
+    "source": "AI_FACTORY",
+    "status": "draft",
+    "updated_at": "2026-01-07T15:15:09.1813577-05:00",
+    "created_at": "2026-01-07T15:15:09.1813577-05:00"
+  },
+  "title": "Grade 10 Math - Single Lesson (Placeholder)",
+  "educational_context": {
+    "subject": "MATH",
+    "grade": 10,
+    "language": "en-LR",
+    "cognitive_band": "CORE",
+    "country": "Liberia"
+  },
+  "units": []
+}
+</pre></div></td></tr>
+<tr class='success'><td>Agent-2</td><td>Success</td><td><button class='collapsible'>Show Output</button><div class='content'><pre>{
+  "agent": "Agent-2",
+  "note": "Placeholder agent output (non-curriculum artifact).",
+  "status": "Success",
+  "ewo": "EWO-00003",
+  "metadata": {
+    "id": "EWO-00003-Agent-2",
+    "created_at": "2026-01-07T15:15:09.9145748-05:00",
+    "source": "AI_FACTORY"
+  }
+}
+</pre></div></td></tr>
+<tr class='success'><td>Agent-3</td><td>Success</td><td><button class='collapsible'>Show Output</button><div class='content'><pre>{
+  "note": "Placeholder agent output (non-curriculum artifact).",
+  "metadata": {
+    "created_at": "2026-01-07T15:15:10.6550229-05:00",
+    "source": "AI_FACTORY",
+    "id": "EWO-00003-Agent-3"
+  },
+  "agent": "Agent-3",
+  "ewo": "EWO-00003",
+  "status": "Success"
+}
+</pre></div></td></tr>
+<tr class='success'><td>Agent-4</td><td>Success</td><td><button class='collapsible'>Show Output</button><div class='content'><pre>{
+  "note": "Placeholder agent output (non-curriculum artifact).",
+  "metadata": {
+    "source": "AI_FACTORY",
+    "id": "EWO-00003-Agent-4",
+    "created_at": "2026-01-07T15:15:11.3841209-05:00"
+  },
+  "agent": "Agent-4",
+  "ewo": "EWO-00003",
+  "status": "Success"
+}
+</pre></div></td></tr>
+<tr class='success'><td>Agent-5</td><td>Success</td><td><button class='collapsible'>Show Output</button><div class='content'><pre>{
+  "decision": "ACCEPT",
+  "reason": "The input JSON is well-formed, has all required top-level fields, and is internally consistent. The content type and scale are appropriate for a single lesson. The units field is empty, which is acceptable for a single lesson.",
+  "patch": []
+}
+</pre></div></td></tr>
+<tr class='success'><td>Governance</td><td>Success</td><td><button class='collapsible'>Show Output</button><div class='content'><pre>Decision: ACCEPT
+Reason: The input JSON is well-formed, has all required top-level fields, and is internally consistent. The content type and scale are appropriate for a single lesson. The units field is empty, which is acceptable for a single lesson.
+Timestamp: 01/07/2026 15:15:16
+File: .\FactoryArtifacts\Results\EWO-00003-GovernanceDecision.json</pre></div></td></tr>
+<tr class='success'><td>Ingest</td><td>Success</td><td><button class='collapsible'>Show Output</button><div class='content'><pre>?? Ingest wrapper starting...
+   EWO:        EWO-00003
+   Agent-1:    C:\Users\Farquema.Siryon\liberia-learn\FactoryArtifacts\Results\EWO-00003-Agent-1.json
+   Governance: C:\Users\Farquema.Siryon\liberia-learn\FactoryArtifacts\Results\EWO-00003-GovernanceDecision.json
+{
+  "ewoId": "EWO-00003",
+  "decision": "ACCEPT",
+  "schemaId": "LESSON-00003",
+  "curriculumContentId": "cmk4fb4gq0000h7u4npd1x1ij",
+  "governedArtifactId": "cmk4fb4mc0001h7u42ezzohvr",
+  "agent5PathUsed": ".\\FactoryArtifacts\\Results\\EWO-00003-Agent-5.json",
+  "appliedPatch": false
+}
+? Ingest completed successfully for EWO-00003
+</pre></div></td></tr>
+</table><h2>EWO-00004</h2><table><tr><th>Agent</th><th>Status</th><th>Output</th></tr><tr class='success'><td>Agent-1</td><td>Success</td><td><button class='collapsible'>Show Output</button><div class='content'><pre>{
+  "scale": "SINGLE_LESSON",
+  "title": "Grade 10 Math - Single Lesson (Placeholder)",
+  "units": [],
+  "schema_version": "1.0",
+  "educational_context": {
+    "country": "Liberia",
+    "subject": "MATH",
+    "cognitive_band": "CORE",
+    "grade": 10,
+    "language": "en-LR"
+  },
+  "metadata": {
+    "status": "draft",
+    "version": "1.0.0",
+    "created_at": "2026-01-07T15:15:23.0316998-05:00",
+    "source": "AI_FACTORY",
+    "updated_at": "2026-01-07T15:15:23.0316998-05:00",
+    "id": "LESSON-00004"
+  },
+  "content_type": "LESSON"
+}
+</pre></div></td></tr>
+<tr class='success'><td>Agent-2</td><td>Success</td><td><button class='collapsible'>Show Output</button><div class='content'><pre>{
+  "note": "Placeholder agent output (non-curriculum artifact).",
+  "ewo": "EWO-00004",
+  "metadata": {
+    "id": "EWO-00004-Agent-2",
+    "source": "AI_FACTORY",
+    "created_at": "2026-01-07T15:15:23.3154253-05:00"
+  },
+  "status": "Success",
+  "agent": "Agent-2"
+}
+</pre></div></td></tr>
+<tr class='success'><td>Agent-3</td><td>Success</td><td><button class='collapsible'>Show Output</button><div class='content'><pre>{
+  "ewo": "EWO-00004",
+  "note": "Placeholder agent output (non-curriculum artifact).",
+  "agent": "Agent-3",
+  "status": "Success",
+  "metadata": {
+    "created_at": "2026-01-07T15:15:23.7120315-05:00",
+    "id": "EWO-00004-Agent-3",
+    "source": "AI_FACTORY"
+  }
+}
+</pre></div></td></tr>
+<tr class='success'><td>Agent-4</td><td>Success</td><td><button class='collapsible'>Show Output</button><div class='content'><pre>{
+  "ewo": "EWO-00004",
+  "metadata": {
+    "id": "EWO-00004-Agent-4",
+    "created_at": "2026-01-07T15:15:24.4750389-05:00",
+    "source": "AI_FACTORY"
+  },
+  "note": "Placeholder agent output (non-curriculum artifact).",
+  "status": "Success",
+  "agent": "Agent-4"
+}
+</pre></div></td></tr>
+<tr class='success'><td>Agent-5</td><td>Success</td><td><button class='collapsible'>Show Output</button><div class='content'><pre>{
+  "decision": "ACCEPT",
+  "reason": "The input JSON is well-formed, has all required top-level fields, and is internally consistent. It also adheres to the scale policy for lesson-level output.",
+  "patch": []
+}
+</pre></div></td></tr>
+<tr class='success'><td>Governance</td><td>Success</td><td><button class='collapsible'>Show Output</button><div class='content'><pre>Decision: ACCEPT
+Reason: The input JSON is well-formed, has all required top-level fields, and is internally consistent. It also adheres to the scale policy for lesson-level output.
+Timestamp: 01/07/2026 15:15:27
+File: .\FactoryArtifacts\Results\EWO-00004-GovernanceDecision.json</pre></div></td></tr>
+<tr class='success'><td>Ingest</td><td>Success</td><td><button class='collapsible'>Show Output</button><div class='content'><pre>?? Ingest wrapper starting...
+   EWO:        EWO-00004
+   Agent-1:    C:\Users\Farquema.Siryon\liberia-learn\FactoryArtifacts\Results\EWO-00004-Agent-1.json
+   Governance: C:\Users\Farquema.Siryon\liberia-learn\FactoryArtifacts\Results\EWO-00004-GovernanceDecision.json
+{
+  "ewoId": "EWO-00004",
+  "decision": "ACCEPT",
+  "schemaId": "LESSON-00004",
+  "curriculumContentId": "cmk4fbdfb0000h7wc638nixa0",
+  "governedArtifactId": "cmk4fbdjd0001h7wci2xve0xb",
+  "agent5PathUsed": ".\\FactoryArtifacts\\Results\\EWO-00004-Agent-5.json",
+  "appliedPatch": false
+}
+? Ingest completed successfully for EWO-00004
+</pre></div></td></tr>
+</table><h2>EWO-00005</h2><table><tr><th>Agent</th><th>Status</th><th>Output</th></tr><tr class='success'><td>Agent-1</td><td>Success</td><td><button class='collapsible'>Show Output</button><div class='content'><pre>{
+  "units": [],
+  "schema_version": "1.0",
+  "metadata": {
+    "updated_at": "2026-01-07T15:15:34.8950664-05:00",
+    "id": "LESSON-00005",
+    "created_at": "2026-01-07T15:15:34.8950664-05:00",
+    "source": "AI_FACTORY",
+    "version": "1.0.0",
+    "status": "draft"
+  },
+  "title": "Grade 10 Math - Single Lesson (Placeholder)",
+  "scale": "SINGLE_LESSON",
+  "content_type": "LESSON",
+  "educational_context": {
+    "subject": "MATH",
+    "language": "en-LR",
+    "cognitive_band": "CORE",
+    "grade": 10,
+    "country": "Liberia"
+  }
+}
+</pre></div></td></tr>
+<tr class='success'><td>Agent-2</td><td>Success</td><td><button class='collapsible'>Show Output</button><div class='content'><pre>{
+  "status": "Success",
+  "agent": "Agent-2",
+  "metadata": {
+    "id": "EWO-00005-Agent-2",
+    "created_at": "2026-01-07T15:15:35.3234269-05:00",
+    "source": "AI_FACTORY"
+  },
+  "note": "Placeholder agent output (non-curriculum artifact).",
+  "ewo": "EWO-00005"
+}
+</pre></div></td></tr>
+<tr class='success'><td>Agent-3</td><td>Success</td><td><button class='collapsible'>Show Output</button><div class='content'><pre>{
+  "metadata": {
+    "created_at": "2026-01-07T15:15:36.2682943-05:00",
+    "id": "EWO-00005-Agent-3",
+    "source": "AI_FACTORY"
+  },
+  "agent": "Agent-3",
+  "status": "Success",
+  "ewo": "EWO-00005",
+  "note": "Placeholder agent output (non-curriculum artifact)."
+}
+</pre></div></td></tr>
+<tr class='success'><td>Agent-4</td><td>Success</td><td><button class='collapsible'>Show Output</button><div class='content'><pre>{
+  "ewo": "EWO-00005",
+  "note": "Placeholder agent output (non-curriculum artifact).",
+  "metadata": {
+    "source": "AI_FACTORY",
+    "id": "EWO-00005-Agent-4",
+    "created_at": "2026-01-07T15:15:36.5705553-05:00"
+  },
+  "status": "Success",
+  "agent": "Agent-4"
+}
+</pre></div></td></tr>
+<tr class='success'><td>Agent-5</td><td>Success</td><td><button class='collapsible'>Show Output</button><div class='content'><pre>{
+  "decision": "ACCEPT",
+  "reason": "The input JSON is well-formed, has all required top-level fields, and is internally consistent. It also adheres to the scale policy for a SINGLE_LESSON content type.",
+  "patch": []
+}
+</pre></div></td></tr>
+<tr class='success'><td>Governance</td><td>Success</td><td><button class='collapsible'>Show Output</button><div class='content'><pre>Decision: ACCEPT
+Reason: The input JSON is well-formed, has all required top-level fields, and is internally consistent. It also adheres to the scale policy for a SINGLE_LESSON content type.
+Timestamp: 01/07/2026 15:15:40
+File: .\FactoryArtifacts\Results\EWO-00005-GovernanceDecision.json</pre></div></td></tr>
+<tr class='success'><td>Ingest</td><td>Success</td><td><button class='collapsible'>Show Output</button><div class='content'><pre>?? Ingest wrapper starting...
+   EWO:        EWO-00005
+   Agent-1:    C:\Users\Farquema.Siryon\liberia-learn\FactoryArtifacts\Results\EWO-00005-Agent-1.json
+   Governance: C:\Users\Farquema.Siryon\liberia-learn\FactoryArtifacts\Results\EWO-00005-GovernanceDecision.json
+{
+  "ewoId": "EWO-00005",
+  "decision": "ACCEPT",
+  "schemaId": "LESSON-00005",
+  "curriculumContentId": "cmk4fbogx0000h7woz1w87u8v",
+  "governedArtifactId": "cmk4fbonm0001h7wozaoxqvib",
+  "agent5PathUsed": ".\\FactoryArtifacts\\Results\\EWO-00005-Agent-5.json",
+  "appliedPatch": false
+}
+? Ingest completed successfully for EWO-00005
+</pre></div></td></tr>
+</table><script>
+var coll = document.getElementsByClassName("collapsible");
+for (var i = 0; i < coll.length; i++) {
+  coll[i].addEventListener("click", function() {
+    var content = this.nextElementSibling;
+    content.style.display = (content.style.display === "block") ? "none" : "block";
+  });
+}
+</script>
+</body>
+</html>

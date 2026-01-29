@@ -1,0 +1,1098 @@
+{
+  "metadata": {
+    "created_at": "2026-01-08T18:52:09Z",
+    "updated_at": "2026-01-08T18:52:09Z",
+    "version": "0.1.0",
+    "status": "draft",
+    "id": "SUBJECT-BIOLOGYG12"
+  },
+  "title": "LiberiaLearn BIOLOGY — Grade 12 (SPECIALIZATION)",
+  "description": "Day-1 full-subject shell. Offline-capable by default. Expand units/lessons iteratively while keeping student access to all grades/subjects.",
+  "cultural_context": {
+    "community_connections": [
+      "Connect tasks to home, market, school, and community roles."
+    ],
+    "real_world_applications": [
+      "Household planning and saving",
+      "Community problem-solving",
+      "Reading data and making decisions"
+    ],
+    "language_notes": "Use clear Liberian English; allow optional short clarifications in Liberian Koloqua where appropriate.",
+    "local_examples": [
+      "Liberian markets and budgeting",
+      "Transport and distances",
+      "School life and community activities"
+    ]
+  },
+  "ai_tutor_metadata": {
+    "hint_strategy": "socratic",
+    "prerequisite_check": [
+      "Basic reading of numbers/terms for the grade band",
+      "Prior grade key skills where applicable"
+    ],
+    "adaptive_parameters": {
+      "difficulty_adjustment": true,
+      "pacing_flexible": true
+    },
+    "common_misconceptions": [
+      {
+        "correction": "Require a short explanation or model before final answer.",
+        "misconception": "Rushing to answers without explaining reasoning."
+      }
+    ]
+  },
+  "content_type": "FULL_SUBJECT",
+  "nested_content": [
+    {
+      "content_type": "UNIT",
+      "nested_content": [
+        {
+          "educational_context": {
+            "cognitive_band": "SPECIALIZATION",
+            "subject": "BIOLOGY",
+            "grade": 12
+          },
+          "title": "Lesson 1 (Unit 1) — BIOLOGY Grade 12",
+          "content_type": "LESSON",
+          "learning_objectives": [
+            {
+              "bloom_level": "APPLY",
+              "statement": "Students can demonstrate the key idea for Lesson 1 in Unit 1.",
+              "success_criteria": [
+                "Explains the concept in their own words",
+                "Solves at least 3 practice items accurately"
+              ],
+              "id": "LO-G12-BIOLOGY-U01L01"
+            }
+          ],
+          "description": "Day-1 lesson shell. Keep offline-capable. Expand with richer examples, practice, and teacher supports.",
+          "metadata": {
+            "created_at": "2026-01-08T18:52:09Z",
+            "updated_at": "2026-01-08T18:52:09Z",
+            "version": "0.1.0",
+            "status": "draft",
+            "id": "LESSON-G12BIOLOGYU01L01"
+          },
+          "virtual_labs": [
+            {
+              "type": "SIMULATION",
+              "implementation_level": "text_guided",
+              "title": "Offline-first Guided Simulation",
+              "id": "VLAB-G12-BIOLOGY-U01L01",
+              "household_alternative": "Use paper, pencil, and simple objects (bottle caps/beans) to model the idea.",
+              "description": "A lightweight simulation concept that can be implemented later as HTML5; text-guided today.",
+              "steps": [
+                {
+                  "ai_tutor_hint": "What changes? What stays the same?",
+                  "expected_observation": "You notice a pattern that supports the lesson idea.",
+                  "step_number": 1,
+                  "instruction": "Follow the guided steps to explore the concept."
+                }
+              ]
+            }
+          ],
+          "assessments": [
+            {
+              "type": "FORMATIVE",
+              "feedback": {
+                "partial": "You’re close — fix the reasoning on the highlighted step.",
+                "incorrect": "Let’s review the key step and try again.",
+                "correct": "Good work — you showed clear understanding."
+              },
+              "id": "ASM-G12-BIOLOGY-U01L01",
+              "mastery_threshold": 0.7,
+              "adaptive": true,
+              "format": "SHORT_ANSWER",
+              "questions": [
+                {
+                  "ai_gradable": true,
+                  "question": "Answer a core question that checks understanding for this lesson.",
+                  "difficulty": "D2",
+                  "points": 2,
+                  "id": "Q1"
+                },
+                {
+                  "ai_gradable": true,
+                  "question": "Solve one applied problem connected to real life.",
+                  "difficulty": "D3",
+                  "points": 3,
+                  "id": "Q2"
+                }
+              ]
+            }
+          ],
+          "activities": [
+            {
+              "offline_capable": true,
+              "type": "PRACTICE",
+              "differentiation": {
+                "mixed_literacy": "Read aloud option; use visuals; allow verbal explanation.",
+                "struggling": "Use simpler numbers/shorter text; provide worked example; reduce cognitive load.",
+                "advanced": "Add a challenge item with extension reasoning; ask for a second solution strategy."
+              },
+              "duration_minutes": 30,
+              "title": "Guided + Independent Practice",
+              "description": "Short guided examples followed by independent items. Teacher checks misconceptions and gives targeted feedback.",
+              "interaction_pattern": "individual",
+              "id": "ACT-G12-BIOLOGY-U01L01-A1"
+            }
+          ]
+        },
+        {
+          "educational_context": {
+            "cognitive_band": "SPECIALIZATION",
+            "subject": "BIOLOGY",
+            "grade": 12
+          },
+          "title": "Lesson 2 (Unit 1) — BIOLOGY Grade 12",
+          "content_type": "LESSON",
+          "learning_objectives": [
+            {
+              "bloom_level": "APPLY",
+              "statement": "Students can demonstrate the key idea for Lesson 2 in Unit 1.",
+              "success_criteria": [
+                "Explains the concept in their own words",
+                "Solves at least 3 practice items accurately"
+              ],
+              "id": "LO-G12-BIOLOGY-U01L02"
+            }
+          ],
+          "description": "Day-1 lesson shell. Keep offline-capable. Expand with richer examples, practice, and teacher supports.",
+          "metadata": {
+            "created_at": "2026-01-08T18:52:09Z",
+            "updated_at": "2026-01-08T18:52:09Z",
+            "version": "0.1.0",
+            "status": "draft",
+            "id": "LESSON-G12BIOLOGYU01L02"
+          },
+          "virtual_labs": [
+            {
+              "type": "SIMULATION",
+              "implementation_level": "text_guided",
+              "title": "Offline-first Guided Simulation",
+              "id": "VLAB-G12-BIOLOGY-U01L02",
+              "household_alternative": "Use paper, pencil, and simple objects (bottle caps/beans) to model the idea.",
+              "description": "A lightweight simulation concept that can be implemented later as HTML5; text-guided today.",
+              "steps": [
+                {
+                  "ai_tutor_hint": "What changes? What stays the same?",
+                  "expected_observation": "You notice a pattern that supports the lesson idea.",
+                  "step_number": 1,
+                  "instruction": "Follow the guided steps to explore the concept."
+                }
+              ]
+            }
+          ],
+          "assessments": [
+            {
+              "type": "FORMATIVE",
+              "feedback": {
+                "partial": "You’re close — fix the reasoning on the highlighted step.",
+                "incorrect": "Let’s review the key step and try again.",
+                "correct": "Good work — you showed clear understanding."
+              },
+              "id": "ASM-G12-BIOLOGY-U01L02",
+              "mastery_threshold": 0.7,
+              "adaptive": true,
+              "format": "SHORT_ANSWER",
+              "questions": [
+                {
+                  "ai_gradable": true,
+                  "question": "Answer a core question that checks understanding for this lesson.",
+                  "difficulty": "D2",
+                  "points": 2,
+                  "id": "Q1"
+                },
+                {
+                  "ai_gradable": true,
+                  "question": "Solve one applied problem connected to real life.",
+                  "difficulty": "D3",
+                  "points": 3,
+                  "id": "Q2"
+                }
+              ]
+            }
+          ],
+          "activities": [
+            {
+              "offline_capable": true,
+              "type": "PRACTICE",
+              "differentiation": {
+                "mixed_literacy": "Read aloud option; use visuals; allow verbal explanation.",
+                "struggling": "Use simpler numbers/shorter text; provide worked example; reduce cognitive load.",
+                "advanced": "Add a challenge item with extension reasoning; ask for a second solution strategy."
+              },
+              "duration_minutes": 30,
+              "title": "Guided + Independent Practice",
+              "description": "Short guided examples followed by independent items. Teacher checks misconceptions and gives targeted feedback.",
+              "interaction_pattern": "individual",
+              "id": "ACT-G12-BIOLOGY-U01L02-A1"
+            }
+          ]
+        }
+      ],
+      "title": "Unit 1 — BIOLOGY Grade 12",
+      "educational_context": {
+        "cognitive_band": "SPECIALIZATION",
+        "subject": "BIOLOGY",
+        "grade": 12
+      },
+      "description": "Day-1 unit shell. Expand into a full unit map with mastery checkpoints and local Liberia examples.",
+      "metadata": {
+        "created_at": "2026-01-08T18:52:09Z",
+        "updated_at": "2026-01-08T18:52:09Z",
+        "version": "0.1.0",
+        "status": "draft",
+        "id": "UNIT-G12BIOLOGYU01"
+      }
+    },
+    {
+      "content_type": "UNIT",
+      "nested_content": [
+        {
+          "educational_context": {
+            "cognitive_band": "SPECIALIZATION",
+            "subject": "BIOLOGY",
+            "grade": 12
+          },
+          "title": "Lesson 1 (Unit 2) — BIOLOGY Grade 12",
+          "content_type": "LESSON",
+          "learning_objectives": [
+            {
+              "bloom_level": "APPLY",
+              "statement": "Students can demonstrate the key idea for Lesson 1 in Unit 2.",
+              "success_criteria": [
+                "Explains the concept in their own words",
+                "Solves at least 3 practice items accurately"
+              ],
+              "id": "LO-G12-BIOLOGY-U02L01"
+            }
+          ],
+          "description": "Day-1 lesson shell. Keep offline-capable. Expand with richer examples, practice, and teacher supports.",
+          "metadata": {
+            "created_at": "2026-01-08T18:52:09Z",
+            "updated_at": "2026-01-08T18:52:09Z",
+            "version": "0.1.0",
+            "status": "draft",
+            "id": "LESSON-G12BIOLOGYU02L01"
+          },
+          "virtual_labs": [
+            {
+              "type": "SIMULATION",
+              "implementation_level": "text_guided",
+              "title": "Offline-first Guided Simulation",
+              "id": "VLAB-G12-BIOLOGY-U02L01",
+              "household_alternative": "Use paper, pencil, and simple objects (bottle caps/beans) to model the idea.",
+              "description": "A lightweight simulation concept that can be implemented later as HTML5; text-guided today.",
+              "steps": [
+                {
+                  "ai_tutor_hint": "What changes? What stays the same?",
+                  "expected_observation": "You notice a pattern that supports the lesson idea.",
+                  "step_number": 1,
+                  "instruction": "Follow the guided steps to explore the concept."
+                }
+              ]
+            }
+          ],
+          "assessments": [
+            {
+              "type": "FORMATIVE",
+              "feedback": {
+                "partial": "You’re close — fix the reasoning on the highlighted step.",
+                "incorrect": "Let’s review the key step and try again.",
+                "correct": "Good work — you showed clear understanding."
+              },
+              "id": "ASM-G12-BIOLOGY-U02L01",
+              "mastery_threshold": 0.7,
+              "adaptive": true,
+              "format": "SHORT_ANSWER",
+              "questions": [
+                {
+                  "ai_gradable": true,
+                  "question": "Answer a core question that checks understanding for this lesson.",
+                  "difficulty": "D2",
+                  "points": 2,
+                  "id": "Q1"
+                },
+                {
+                  "ai_gradable": true,
+                  "question": "Solve one applied problem connected to real life.",
+                  "difficulty": "D3",
+                  "points": 3,
+                  "id": "Q2"
+                }
+              ]
+            }
+          ],
+          "activities": [
+            {
+              "offline_capable": true,
+              "type": "PRACTICE",
+              "differentiation": {
+                "mixed_literacy": "Read aloud option; use visuals; allow verbal explanation.",
+                "struggling": "Use simpler numbers/shorter text; provide worked example; reduce cognitive load.",
+                "advanced": "Add a challenge item with extension reasoning; ask for a second solution strategy."
+              },
+              "duration_minutes": 30,
+              "title": "Guided + Independent Practice",
+              "description": "Short guided examples followed by independent items. Teacher checks misconceptions and gives targeted feedback.",
+              "interaction_pattern": "individual",
+              "id": "ACT-G12-BIOLOGY-U02L01-A1"
+            }
+          ]
+        },
+        {
+          "educational_context": {
+            "cognitive_band": "SPECIALIZATION",
+            "subject": "BIOLOGY",
+            "grade": 12
+          },
+          "title": "Lesson 2 (Unit 2) — BIOLOGY Grade 12",
+          "content_type": "LESSON",
+          "learning_objectives": [
+            {
+              "bloom_level": "APPLY",
+              "statement": "Students can demonstrate the key idea for Lesson 2 in Unit 2.",
+              "success_criteria": [
+                "Explains the concept in their own words",
+                "Solves at least 3 practice items accurately"
+              ],
+              "id": "LO-G12-BIOLOGY-U02L02"
+            }
+          ],
+          "description": "Day-1 lesson shell. Keep offline-capable. Expand with richer examples, practice, and teacher supports.",
+          "metadata": {
+            "created_at": "2026-01-08T18:52:09Z",
+            "updated_at": "2026-01-08T18:52:09Z",
+            "version": "0.1.0",
+            "status": "draft",
+            "id": "LESSON-G12BIOLOGYU02L02"
+          },
+          "virtual_labs": [
+            {
+              "type": "SIMULATION",
+              "implementation_level": "text_guided",
+              "title": "Offline-first Guided Simulation",
+              "id": "VLAB-G12-BIOLOGY-U02L02",
+              "household_alternative": "Use paper, pencil, and simple objects (bottle caps/beans) to model the idea.",
+              "description": "A lightweight simulation concept that can be implemented later as HTML5; text-guided today.",
+              "steps": [
+                {
+                  "ai_tutor_hint": "What changes? What stays the same?",
+                  "expected_observation": "You notice a pattern that supports the lesson idea.",
+                  "step_number": 1,
+                  "instruction": "Follow the guided steps to explore the concept."
+                }
+              ]
+            }
+          ],
+          "assessments": [
+            {
+              "type": "FORMATIVE",
+              "feedback": {
+                "partial": "You’re close — fix the reasoning on the highlighted step.",
+                "incorrect": "Let’s review the key step and try again.",
+                "correct": "Good work — you showed clear understanding."
+              },
+              "id": "ASM-G12-BIOLOGY-U02L02",
+              "mastery_threshold": 0.7,
+              "adaptive": true,
+              "format": "SHORT_ANSWER",
+              "questions": [
+                {
+                  "ai_gradable": true,
+                  "question": "Answer a core question that checks understanding for this lesson.",
+                  "difficulty": "D2",
+                  "points": 2,
+                  "id": "Q1"
+                },
+                {
+                  "ai_gradable": true,
+                  "question": "Solve one applied problem connected to real life.",
+                  "difficulty": "D3",
+                  "points": 3,
+                  "id": "Q2"
+                }
+              ]
+            }
+          ],
+          "activities": [
+            {
+              "offline_capable": true,
+              "type": "PRACTICE",
+              "differentiation": {
+                "mixed_literacy": "Read aloud option; use visuals; allow verbal explanation.",
+                "struggling": "Use simpler numbers/shorter text; provide worked example; reduce cognitive load.",
+                "advanced": "Add a challenge item with extension reasoning; ask for a second solution strategy."
+              },
+              "duration_minutes": 30,
+              "title": "Guided + Independent Practice",
+              "description": "Short guided examples followed by independent items. Teacher checks misconceptions and gives targeted feedback.",
+              "interaction_pattern": "individual",
+              "id": "ACT-G12-BIOLOGY-U02L02-A1"
+            }
+          ]
+        }
+      ],
+      "title": "Unit 2 — BIOLOGY Grade 12",
+      "educational_context": {
+        "cognitive_band": "SPECIALIZATION",
+        "subject": "BIOLOGY",
+        "grade": 12
+      },
+      "description": "Day-1 unit shell. Expand into a full unit map with mastery checkpoints and local Liberia examples.",
+      "metadata": {
+        "created_at": "2026-01-08T18:52:09Z",
+        "updated_at": "2026-01-08T18:52:09Z",
+        "version": "0.1.0",
+        "status": "draft",
+        "id": "UNIT-G12BIOLOGYU02"
+      }
+    },
+    {
+      "content_type": "UNIT",
+      "nested_content": [
+        {
+          "educational_context": {
+            "cognitive_band": "SPECIALIZATION",
+            "subject": "BIOLOGY",
+            "grade": 12
+          },
+          "title": "Lesson 1 (Unit 3) — BIOLOGY Grade 12",
+          "content_type": "LESSON",
+          "learning_objectives": [
+            {
+              "bloom_level": "APPLY",
+              "statement": "Students can demonstrate the key idea for Lesson 1 in Unit 3.",
+              "success_criteria": [
+                "Explains the concept in their own words",
+                "Solves at least 3 practice items accurately"
+              ],
+              "id": "LO-G12-BIOLOGY-U03L01"
+            }
+          ],
+          "description": "Day-1 lesson shell. Keep offline-capable. Expand with richer examples, practice, and teacher supports.",
+          "metadata": {
+            "created_at": "2026-01-08T18:52:09Z",
+            "updated_at": "2026-01-08T18:52:09Z",
+            "version": "0.1.0",
+            "status": "draft",
+            "id": "LESSON-G12BIOLOGYU03L01"
+          },
+          "virtual_labs": [
+            {
+              "type": "SIMULATION",
+              "implementation_level": "text_guided",
+              "title": "Offline-first Guided Simulation",
+              "id": "VLAB-G12-BIOLOGY-U03L01",
+              "household_alternative": "Use paper, pencil, and simple objects (bottle caps/beans) to model the idea.",
+              "description": "A lightweight simulation concept that can be implemented later as HTML5; text-guided today.",
+              "steps": [
+                {
+                  "ai_tutor_hint": "What changes? What stays the same?",
+                  "expected_observation": "You notice a pattern that supports the lesson idea.",
+                  "step_number": 1,
+                  "instruction": "Follow the guided steps to explore the concept."
+                }
+              ]
+            }
+          ],
+          "assessments": [
+            {
+              "type": "FORMATIVE",
+              "feedback": {
+                "partial": "You’re close — fix the reasoning on the highlighted step.",
+                "incorrect": "Let’s review the key step and try again.",
+                "correct": "Good work — you showed clear understanding."
+              },
+              "id": "ASM-G12-BIOLOGY-U03L01",
+              "mastery_threshold": 0.7,
+              "adaptive": true,
+              "format": "SHORT_ANSWER",
+              "questions": [
+                {
+                  "ai_gradable": true,
+                  "question": "Answer a core question that checks understanding for this lesson.",
+                  "difficulty": "D2",
+                  "points": 2,
+                  "id": "Q1"
+                },
+                {
+                  "ai_gradable": true,
+                  "question": "Solve one applied problem connected to real life.",
+                  "difficulty": "D3",
+                  "points": 3,
+                  "id": "Q2"
+                }
+              ]
+            }
+          ],
+          "activities": [
+            {
+              "offline_capable": true,
+              "type": "PRACTICE",
+              "differentiation": {
+                "mixed_literacy": "Read aloud option; use visuals; allow verbal explanation.",
+                "struggling": "Use simpler numbers/shorter text; provide worked example; reduce cognitive load.",
+                "advanced": "Add a challenge item with extension reasoning; ask for a second solution strategy."
+              },
+              "duration_minutes": 30,
+              "title": "Guided + Independent Practice",
+              "description": "Short guided examples followed by independent items. Teacher checks misconceptions and gives targeted feedback.",
+              "interaction_pattern": "individual",
+              "id": "ACT-G12-BIOLOGY-U03L01-A1"
+            }
+          ]
+        },
+        {
+          "educational_context": {
+            "cognitive_band": "SPECIALIZATION",
+            "subject": "BIOLOGY",
+            "grade": 12
+          },
+          "title": "Lesson 2 (Unit 3) — BIOLOGY Grade 12",
+          "content_type": "LESSON",
+          "learning_objectives": [
+            {
+              "bloom_level": "APPLY",
+              "statement": "Students can demonstrate the key idea for Lesson 2 in Unit 3.",
+              "success_criteria": [
+                "Explains the concept in their own words",
+                "Solves at least 3 practice items accurately"
+              ],
+              "id": "LO-G12-BIOLOGY-U03L02"
+            }
+          ],
+          "description": "Day-1 lesson shell. Keep offline-capable. Expand with richer examples, practice, and teacher supports.",
+          "metadata": {
+            "created_at": "2026-01-08T18:52:09Z",
+            "updated_at": "2026-01-08T18:52:09Z",
+            "version": "0.1.0",
+            "status": "draft",
+            "id": "LESSON-G12BIOLOGYU03L02"
+          },
+          "virtual_labs": [
+            {
+              "type": "SIMULATION",
+              "implementation_level": "text_guided",
+              "title": "Offline-first Guided Simulation",
+              "id": "VLAB-G12-BIOLOGY-U03L02",
+              "household_alternative": "Use paper, pencil, and simple objects (bottle caps/beans) to model the idea.",
+              "description": "A lightweight simulation concept that can be implemented later as HTML5; text-guided today.",
+              "steps": [
+                {
+                  "ai_tutor_hint": "What changes? What stays the same?",
+                  "expected_observation": "You notice a pattern that supports the lesson idea.",
+                  "step_number": 1,
+                  "instruction": "Follow the guided steps to explore the concept."
+                }
+              ]
+            }
+          ],
+          "assessments": [
+            {
+              "type": "FORMATIVE",
+              "feedback": {
+                "partial": "You’re close — fix the reasoning on the highlighted step.",
+                "incorrect": "Let’s review the key step and try again.",
+                "correct": "Good work — you showed clear understanding."
+              },
+              "id": "ASM-G12-BIOLOGY-U03L02",
+              "mastery_threshold": 0.7,
+              "adaptive": true,
+              "format": "SHORT_ANSWER",
+              "questions": [
+                {
+                  "ai_gradable": true,
+                  "question": "Answer a core question that checks understanding for this lesson.",
+                  "difficulty": "D2",
+                  "points": 2,
+                  "id": "Q1"
+                },
+                {
+                  "ai_gradable": true,
+                  "question": "Solve one applied problem connected to real life.",
+                  "difficulty": "D3",
+                  "points": 3,
+                  "id": "Q2"
+                }
+              ]
+            }
+          ],
+          "activities": [
+            {
+              "offline_capable": true,
+              "type": "PRACTICE",
+              "differentiation": {
+                "mixed_literacy": "Read aloud option; use visuals; allow verbal explanation.",
+                "struggling": "Use simpler numbers/shorter text; provide worked example; reduce cognitive load.",
+                "advanced": "Add a challenge item with extension reasoning; ask for a second solution strategy."
+              },
+              "duration_minutes": 30,
+              "title": "Guided + Independent Practice",
+              "description": "Short guided examples followed by independent items. Teacher checks misconceptions and gives targeted feedback.",
+              "interaction_pattern": "individual",
+              "id": "ACT-G12-BIOLOGY-U03L02-A1"
+            }
+          ]
+        }
+      ],
+      "title": "Unit 3 — BIOLOGY Grade 12",
+      "educational_context": {
+        "cognitive_band": "SPECIALIZATION",
+        "subject": "BIOLOGY",
+        "grade": 12
+      },
+      "description": "Day-1 unit shell. Expand into a full unit map with mastery checkpoints and local Liberia examples.",
+      "metadata": {
+        "created_at": "2026-01-08T18:52:09Z",
+        "updated_at": "2026-01-08T18:52:09Z",
+        "version": "0.1.0",
+        "status": "draft",
+        "id": "UNIT-G12BIOLOGYU03"
+      }
+    },
+    {
+      "content_type": "UNIT",
+      "nested_content": [
+        {
+          "educational_context": {
+            "cognitive_band": "SPECIALIZATION",
+            "subject": "BIOLOGY",
+            "grade": 12
+          },
+          "title": "Lesson 1 (Unit 4) — BIOLOGY Grade 12",
+          "content_type": "LESSON",
+          "learning_objectives": [
+            {
+              "bloom_level": "APPLY",
+              "statement": "Students can demonstrate the key idea for Lesson 1 in Unit 4.",
+              "success_criteria": [
+                "Explains the concept in their own words",
+                "Solves at least 3 practice items accurately"
+              ],
+              "id": "LO-G12-BIOLOGY-U04L01"
+            }
+          ],
+          "description": "Day-1 lesson shell. Keep offline-capable. Expand with richer examples, practice, and teacher supports.",
+          "metadata": {
+            "created_at": "2026-01-08T18:52:09Z",
+            "updated_at": "2026-01-08T18:52:09Z",
+            "version": "0.1.0",
+            "status": "draft",
+            "id": "LESSON-G12BIOLOGYU04L01"
+          },
+          "virtual_labs": [
+            {
+              "type": "SIMULATION",
+              "implementation_level": "text_guided",
+              "title": "Offline-first Guided Simulation",
+              "id": "VLAB-G12-BIOLOGY-U04L01",
+              "household_alternative": "Use paper, pencil, and simple objects (bottle caps/beans) to model the idea.",
+              "description": "A lightweight simulation concept that can be implemented later as HTML5; text-guided today.",
+              "steps": [
+                {
+                  "ai_tutor_hint": "What changes? What stays the same?",
+                  "expected_observation": "You notice a pattern that supports the lesson idea.",
+                  "step_number": 1,
+                  "instruction": "Follow the guided steps to explore the concept."
+                }
+              ]
+            }
+          ],
+          "assessments": [
+            {
+              "type": "FORMATIVE",
+              "feedback": {
+                "partial": "You’re close — fix the reasoning on the highlighted step.",
+                "incorrect": "Let’s review the key step and try again.",
+                "correct": "Good work — you showed clear understanding."
+              },
+              "id": "ASM-G12-BIOLOGY-U04L01",
+              "mastery_threshold": 0.7,
+              "adaptive": true,
+              "format": "SHORT_ANSWER",
+              "questions": [
+                {
+                  "ai_gradable": true,
+                  "question": "Answer a core question that checks understanding for this lesson.",
+                  "difficulty": "D2",
+                  "points": 2,
+                  "id": "Q1"
+                },
+                {
+                  "ai_gradable": true,
+                  "question": "Solve one applied problem connected to real life.",
+                  "difficulty": "D3",
+                  "points": 3,
+                  "id": "Q2"
+                }
+              ]
+            }
+          ],
+          "activities": [
+            {
+              "offline_capable": true,
+              "type": "PRACTICE",
+              "differentiation": {
+                "mixed_literacy": "Read aloud option; use visuals; allow verbal explanation.",
+                "struggling": "Use simpler numbers/shorter text; provide worked example; reduce cognitive load.",
+                "advanced": "Add a challenge item with extension reasoning; ask for a second solution strategy."
+              },
+              "duration_minutes": 30,
+              "title": "Guided + Independent Practice",
+              "description": "Short guided examples followed by independent items. Teacher checks misconceptions and gives targeted feedback.",
+              "interaction_pattern": "individual",
+              "id": "ACT-G12-BIOLOGY-U04L01-A1"
+            }
+          ]
+        },
+        {
+          "educational_context": {
+            "cognitive_band": "SPECIALIZATION",
+            "subject": "BIOLOGY",
+            "grade": 12
+          },
+          "title": "Lesson 2 (Unit 4) — BIOLOGY Grade 12",
+          "content_type": "LESSON",
+          "learning_objectives": [
+            {
+              "bloom_level": "APPLY",
+              "statement": "Students can demonstrate the key idea for Lesson 2 in Unit 4.",
+              "success_criteria": [
+                "Explains the concept in their own words",
+                "Solves at least 3 practice items accurately"
+              ],
+              "id": "LO-G12-BIOLOGY-U04L02"
+            }
+          ],
+          "description": "Day-1 lesson shell. Keep offline-capable. Expand with richer examples, practice, and teacher supports.",
+          "metadata": {
+            "created_at": "2026-01-08T18:52:09Z",
+            "updated_at": "2026-01-08T18:52:09Z",
+            "version": "0.1.0",
+            "status": "draft",
+            "id": "LESSON-G12BIOLOGYU04L02"
+          },
+          "virtual_labs": [
+            {
+              "type": "SIMULATION",
+              "implementation_level": "text_guided",
+              "title": "Offline-first Guided Simulation",
+              "id": "VLAB-G12-BIOLOGY-U04L02",
+              "household_alternative": "Use paper, pencil, and simple objects (bottle caps/beans) to model the idea.",
+              "description": "A lightweight simulation concept that can be implemented later as HTML5; text-guided today.",
+              "steps": [
+                {
+                  "ai_tutor_hint": "What changes? What stays the same?",
+                  "expected_observation": "You notice a pattern that supports the lesson idea.",
+                  "step_number": 1,
+                  "instruction": "Follow the guided steps to explore the concept."
+                }
+              ]
+            }
+          ],
+          "assessments": [
+            {
+              "type": "FORMATIVE",
+              "feedback": {
+                "partial": "You’re close — fix the reasoning on the highlighted step.",
+                "incorrect": "Let’s review the key step and try again.",
+                "correct": "Good work — you showed clear understanding."
+              },
+              "id": "ASM-G12-BIOLOGY-U04L02",
+              "mastery_threshold": 0.7,
+              "adaptive": true,
+              "format": "SHORT_ANSWER",
+              "questions": [
+                {
+                  "ai_gradable": true,
+                  "question": "Answer a core question that checks understanding for this lesson.",
+                  "difficulty": "D2",
+                  "points": 2,
+                  "id": "Q1"
+                },
+                {
+                  "ai_gradable": true,
+                  "question": "Solve one applied problem connected to real life.",
+                  "difficulty": "D3",
+                  "points": 3,
+                  "id": "Q2"
+                }
+              ]
+            }
+          ],
+          "activities": [
+            {
+              "offline_capable": true,
+              "type": "PRACTICE",
+              "differentiation": {
+                "mixed_literacy": "Read aloud option; use visuals; allow verbal explanation.",
+                "struggling": "Use simpler numbers/shorter text; provide worked example; reduce cognitive load.",
+                "advanced": "Add a challenge item with extension reasoning; ask for a second solution strategy."
+              },
+              "duration_minutes": 30,
+              "title": "Guided + Independent Practice",
+              "description": "Short guided examples followed by independent items. Teacher checks misconceptions and gives targeted feedback.",
+              "interaction_pattern": "individual",
+              "id": "ACT-G12-BIOLOGY-U04L02-A1"
+            }
+          ]
+        }
+      ],
+      "title": "Unit 4 — BIOLOGY Grade 12",
+      "educational_context": {
+        "cognitive_band": "SPECIALIZATION",
+        "subject": "BIOLOGY",
+        "grade": 12
+      },
+      "description": "Day-1 unit shell. Expand into a full unit map with mastery checkpoints and local Liberia examples.",
+      "metadata": {
+        "created_at": "2026-01-08T18:52:09Z",
+        "updated_at": "2026-01-08T18:52:09Z",
+        "version": "0.1.0",
+        "status": "draft",
+        "id": "UNIT-G12BIOLOGYU04"
+      }
+    },
+    {
+      "content_type": "UNIT",
+      "nested_content": [
+        {
+          "educational_context": {
+            "cognitive_band": "SPECIALIZATION",
+            "subject": "BIOLOGY",
+            "grade": 12
+          },
+          "title": "Lesson 1 (Unit 5) — BIOLOGY Grade 12",
+          "content_type": "LESSON",
+          "learning_objectives": [
+            {
+              "bloom_level": "APPLY",
+              "statement": "Students can demonstrate the key idea for Lesson 1 in Unit 5.",
+              "success_criteria": [
+                "Explains the concept in their own words",
+                "Solves at least 3 practice items accurately"
+              ],
+              "id": "LO-G12-BIOLOGY-U05L01"
+            }
+          ],
+          "description": "Day-1 lesson shell. Keep offline-capable. Expand with richer examples, practice, and teacher supports.",
+          "metadata": {
+            "created_at": "2026-01-08T18:52:09Z",
+            "updated_at": "2026-01-08T18:52:09Z",
+            "version": "0.1.0",
+            "status": "draft",
+            "id": "LESSON-G12BIOLOGYU05L01"
+          },
+          "virtual_labs": [
+            {
+              "type": "SIMULATION",
+              "implementation_level": "text_guided",
+              "title": "Offline-first Guided Simulation",
+              "id": "VLAB-G12-BIOLOGY-U05L01",
+              "household_alternative": "Use paper, pencil, and simple objects (bottle caps/beans) to model the idea.",
+              "description": "A lightweight simulation concept that can be implemented later as HTML5; text-guided today.",
+              "steps": [
+                {
+                  "ai_tutor_hint": "What changes? What stays the same?",
+                  "expected_observation": "You notice a pattern that supports the lesson idea.",
+                  "step_number": 1,
+                  "instruction": "Follow the guided steps to explore the concept."
+                }
+              ]
+            }
+          ],
+          "assessments": [
+            {
+              "type": "FORMATIVE",
+              "feedback": {
+                "partial": "You’re close — fix the reasoning on the highlighted step.",
+                "incorrect": "Let’s review the key step and try again.",
+                "correct": "Good work — you showed clear understanding."
+              },
+              "id": "ASM-G12-BIOLOGY-U05L01",
+              "mastery_threshold": 0.7,
+              "adaptive": true,
+              "format": "SHORT_ANSWER",
+              "questions": [
+                {
+                  "ai_gradable": true,
+                  "question": "Answer a core question that checks understanding for this lesson.",
+                  "difficulty": "D2",
+                  "points": 2,
+                  "id": "Q1"
+                },
+                {
+                  "ai_gradable": true,
+                  "question": "Solve one applied problem connected to real life.",
+                  "difficulty": "D3",
+                  "points": 3,
+                  "id": "Q2"
+                }
+              ]
+            }
+          ],
+          "activities": [
+            {
+              "offline_capable": true,
+              "type": "PRACTICE",
+              "differentiation": {
+                "mixed_literacy": "Read aloud option; use visuals; allow verbal explanation.",
+                "struggling": "Use simpler numbers/shorter text; provide worked example; reduce cognitive load.",
+                "advanced": "Add a challenge item with extension reasoning; ask for a second solution strategy."
+              },
+              "duration_minutes": 30,
+              "title": "Guided + Independent Practice",
+              "description": "Short guided examples followed by independent items. Teacher checks misconceptions and gives targeted feedback.",
+              "interaction_pattern": "individual",
+              "id": "ACT-G12-BIOLOGY-U05L01-A1"
+            }
+          ]
+        },
+        {
+          "educational_context": {
+            "cognitive_band": "SPECIALIZATION",
+            "subject": "BIOLOGY",
+            "grade": 12
+          },
+          "title": "Lesson 2 (Unit 5) — BIOLOGY Grade 12",
+          "content_type": "LESSON",
+          "learning_objectives": [
+            {
+              "bloom_level": "APPLY",
+              "statement": "Students can demonstrate the key idea for Lesson 2 in Unit 5.",
+              "success_criteria": [
+                "Explains the concept in their own words",
+                "Solves at least 3 practice items accurately"
+              ],
+              "id": "LO-G12-BIOLOGY-U05L02"
+            }
+          ],
+          "description": "Day-1 lesson shell. Keep offline-capable. Expand with richer examples, practice, and teacher supports.",
+          "metadata": {
+            "created_at": "2026-01-08T18:52:09Z",
+            "updated_at": "2026-01-08T18:52:09Z",
+            "version": "0.1.0",
+            "status": "draft",
+            "id": "LESSON-G12BIOLOGYU05L02"
+          },
+          "virtual_labs": [
+            {
+              "type": "SIMULATION",
+              "implementation_level": "text_guided",
+              "title": "Offline-first Guided Simulation",
+              "id": "VLAB-G12-BIOLOGY-U05L02",
+              "household_alternative": "Use paper, pencil, and simple objects (bottle caps/beans) to model the idea.",
+              "description": "A lightweight simulation concept that can be implemented later as HTML5; text-guided today.",
+              "steps": [
+                {
+                  "ai_tutor_hint": "What changes? What stays the same?",
+                  "expected_observation": "You notice a pattern that supports the lesson idea.",
+                  "step_number": 1,
+                  "instruction": "Follow the guided steps to explore the concept."
+                }
+              ]
+            }
+          ],
+          "assessments": [
+            {
+              "type": "FORMATIVE",
+              "feedback": {
+                "partial": "You’re close — fix the reasoning on the highlighted step.",
+                "incorrect": "Let’s review the key step and try again.",
+                "correct": "Good work — you showed clear understanding."
+              },
+              "id": "ASM-G12-BIOLOGY-U05L02",
+              "mastery_threshold": 0.7,
+              "adaptive": true,
+              "format": "SHORT_ANSWER",
+              "questions": [
+                {
+                  "ai_gradable": true,
+                  "question": "Answer a core question that checks understanding for this lesson.",
+                  "difficulty": "D2",
+                  "points": 2,
+                  "id": "Q1"
+                },
+                {
+                  "ai_gradable": true,
+                  "question": "Solve one applied problem connected to real life.",
+                  "difficulty": "D3",
+                  "points": 3,
+                  "id": "Q2"
+                }
+              ]
+            }
+          ],
+          "activities": [
+            {
+              "offline_capable": true,
+              "type": "PRACTICE",
+              "differentiation": {
+                "mixed_literacy": "Read aloud option; use visuals; allow verbal explanation.",
+                "struggling": "Use simpler numbers/shorter text; provide worked example; reduce cognitive load.",
+                "advanced": "Add a challenge item with extension reasoning; ask for a second solution strategy."
+              },
+              "duration_minutes": 30,
+              "title": "Guided + Independent Practice",
+              "description": "Short guided examples followed by independent items. Teacher checks misconceptions and gives targeted feedback.",
+              "interaction_pattern": "individual",
+              "id": "ACT-G12-BIOLOGY-U05L02-A1"
+            }
+          ]
+        }
+      ],
+      "title": "Unit 5 — BIOLOGY Grade 12",
+      "educational_context": {
+        "cognitive_band": "SPECIALIZATION",
+        "subject": "BIOLOGY",
+        "grade": 12
+      },
+      "description": "Day-1 unit shell. Expand into a full unit map with mastery checkpoints and local Liberia examples.",
+      "metadata": {
+        "created_at": "2026-01-08T18:52:09Z",
+        "updated_at": "2026-01-08T18:52:09Z",
+        "version": "0.1.0",
+        "status": "draft",
+        "id": "UNIT-G12BIOLOGYU05"
+      }
+    }
+  ],
+  "standards_alignment": {
+    "global_benchmarks": {
+      "adaptation_notes": "Depth-over-breadth with mastery progression; productive struggle; offline-first delivery.",
+      "frameworks": [
+        "Common Core"
+      ],
+      "source_countries": [
+        "Singapore",
+        "Finland",
+        "Japan"
+      ]
+    }
+  },
+  "technical_metadata": {
+    "offline_capable": true,
+    "performance_targets": {
+      "min_fps": 30,
+      "load_time_seconds": 2
+    },
+    "media_formats": [
+      "image",
+      "audio"
+    ],
+    "device_requirements": {
+      "min_screen_inches": 7,
+      "touch_required": false,
+      "min_storage_mb": 256
+    },
+    "estimated_storage_mb": 25,
+    "sync_required": "optional"
+  },
+  "educational_context": {
+    "cognitive_band": "SPECIALIZATION",
+    "subject": "BIOLOGY",
+    "grade": 12
+  }
+}

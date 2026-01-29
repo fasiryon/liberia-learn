@@ -1,0 +1,22 @@
+{
+  "scale": "SINGLE_LESSON",
+  "content_type": "LESSON",
+  "schema_version": "1.0",
+  "metadata": {
+    "version": "1.0.0",
+    "id": "LESSON-00003",
+    "source": "AI_FACTORY",
+    "status": "draft",
+    "updated_at": "2026-01-07T15:15:09.1813577-05:00",
+    "created_at": "2026-01-07T15:15:09.1813577-05:00"
+  },
+  "title": "Grade 10 Math - Single Lesson (Placeholder)",
+  "educational_context": {
+    "subject": "MATH",
+    "grade": 10,
+    "language": "en-LR",
+    "cognitive_band": "CORE",
+    "country": "Liberia"
+  },
+  "units": []
+}

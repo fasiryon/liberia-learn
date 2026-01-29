@@ -1,0 +1,5 @@
+{
+  "decision": "ACCEPT",
+  "reason": "The input JSON is well-formed, has all required top-level fields, and is internally consistent. The content type and scale are appropriate for a single lesson. The units field is empty, which is acceptable for a single lesson.",
+  "patch": []
+}

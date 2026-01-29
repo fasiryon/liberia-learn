@@ -1,0 +1,216 @@
+﻿{
+  "content_type": "FULL_SUBJECT",
+  "educational_context": {
+    "grade": 5,
+    "subject": "MATH",
+    "cognitive_band": "CORE"
+  },
+  "nested_content": [
+    {
+      "content_type": "UNIT",
+      "nested_content": [
+        {
+          "content_type": "LESSON",
+          "learning_objectives": [
+            {
+              "bloom_level": "Remember",
+              "success_criteria": "Recall basic multiplication facts"
+            },
+            {
+              "bloom_level": "Understand",
+              "success_criteria": "Understand the concept of multiplication as repeated addition"
+            },
+            {
+              "bloom_level": "Apply",
+              "success_criteria": "Apply multiplication facts in problem-solving situations"
+            }
+          ],
+          "activities": [
+            {
+              "duration_minutes": 30,
+              "offline_capable": true,
+              "instructions": {
+                "student": "Practice multiplication facts using flashcards",
+                "teacher": "Monitor students as they practice and provide feedback"
+              },
+              "differentiation": {
+                "struggling": "Provide additional practice with multiplication facts",
+                "advanced": "Introduce more complex multiplication problems",
+                "mixed_literacy": "Use visual aids to support understanding of multiplication"
+              },
+              "type": "PRACTICE"
+            },
+            {
+              "duration_minutes": 30,
+              "offline_capable": true,
+              "instructions": {
+                "student": "Solve multiplication word problems",
+                "teacher": "Guide students in applying multiplication facts to solve problems"
+              },
+              "differentiation": {
+                "struggling": "Provide additional support in understanding word problems",
+                "advanced": "Introduce word problems with multiple steps",
+                "mixed_literacy": "Use visual aids to support understanding of word problems"
+              },
+              "type": "INSTRUCTION"
+            }
+          ],
+          "assessments": [
+            {
+              "type": "FORMATIVE",
+              "questions": [
+                {
+                  "id": "Q1",
+                  "question": "What is 6 x 7?",
+                  "points": 1,
+                  "type": "MCQ",
+                  "difficulty": "Easy",
+                  "correct_answer": "42",
+                  "explanation": "6 times 7 equals 42",
+                  "hints": [
+                    "Think of 6 groups of 7",
+                    "Use your multiplication facts"
+                  ],
+                  "options": [
+                    "42",
+                    "49",
+                    "36",
+                    "35"
+                  ]
+                },
+                {
+                  "id": "Q2",
+                  "question": "What is 8 x 9?",
+                  "points": 1,
+                  "type": "MCQ",
+                  "difficulty": "Easy",
+                  "correct_answer": "72",
+                  "explanation": "8 times 9 equals 72",
+                  "hints": [
+                    "Think of 8 groups of 9",
+                    "Use your multiplication facts"
+                  ],
+                  "options": [
+                    "72",
+                    "81",
+                    "64",
+                    "77"
+                  ]
+                },
+                {
+                  "id": "Q3",
+                  "question": "What is 5 x 10?",
+                  "points": 1,
+                  "type": "MCQ",
+                  "difficulty": "Easy",
+                  "correct_answer": "50",
+                  "explanation": "5 times 10 equals 50",
+                  "hints": [
+                    "Think of 5 groups of 10",
+                    "Use your multiplication facts"
+                  ],
+                  "options": [
+                    "50",
+                    "60",
+                    "40",
+                    "55"
+                  ]
+                },
+                {
+                  "id": "Q4",
+                  "question": "What is 7 x 8?",
+                  "points": 1,
+                  "type": "MCQ",
+                  "difficulty": "Easy",
+                  "correct_answer": "56",
+                  "explanation": "7 times 8 equals 56",
+                  "hints": [
+                    "Think of 7 groups of 8",
+                    "Use your multiplication facts"
+                  ],
+                  "options": [
+                    "56",
+                    "64",
+                    "48",
+                    "63"
+                  ]
+                },
+                {
+                  "id": "Q5",
+                  "question": "What is 9 x 9?",
+                  "points": 1,
+                  "type": "MCQ",
+                  "difficulty": "Easy",
+                  "correct_answer": "81",
+                  "explanation": "9 times 9 equals 81",
+                  "hints": [
+                    "Think of 9 groups of 9",
+                    "Use your multiplication facts"
+                  ],
+                  "options": [
+                    "81",
+                    "90",
+                    "72",
+                    "99"
+                  ]
+                }
+              ]
+            }
+          ],
+          "cultural_context": {
+            "local_examples": [
+              "If you have 5 LD and you multiply it by 10, how much will you have?",
+              "If a market seller has 6 baskets of oranges and each basket has 7 oranges, how many oranges does she have in total?",
+              "If there are 8 counties in Liberia and each county has 9 towns, how many towns are there in total?"
+            ]
+          },
+          "technical_metadata": {
+            "offline_capable": true,
+            "estimated_storage_mb": 1
+          },
+          "virtual_labs": [
+            {
+              "id": "VL1",
+              "type": "Interactive",
+              "title": "Multiplication Facts Practice",
+              "implementation_level": "Full",
+              "steps": [
+                "Open the virtual lab",
+                "Select a multiplication fact to practice",
+                "Practice the multiplication fact",
+                "Check your answer"
+              ],
+              "household_alternative": "Use flashcards to practice multiplication facts"
+            }
+          ],
+          "ai_tutor_metadata": {
+            "hint_strategy": "progressive",
+            "common_misconceptions": [
+              {
+                "misconception": "Multiplication is the same as addition",
+                "correction": "Multiplication is repeated addition"
+              },
+              {
+                "misconception": "The order of numbers in multiplication doesn't matter",
+                "correction": "The order of numbers in multiplication can change the result"
+              },
+              {
+                "misconception": "Multiplication always results in a larger number",
+                "correction": "Multiplication by a number less than 1 can result in a smaller number"
+              }
+            ],
+            "prerequisite_check": [
+              "Understands the concept of multiplication",
+              "Can recall basic multiplication facts",
+              "Can apply multiplication facts in problem-solving situations"
+            ],
+            "adaptive_parameters": {
+              "pacing_flexible": true,
+              "difficulty_adjustment": true
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

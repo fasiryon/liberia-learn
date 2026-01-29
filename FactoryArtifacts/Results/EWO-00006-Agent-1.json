@@ -1,0 +1,316 @@
+{
+  "learning_objectives": [
+    {
+      "assessment_method": "Short answer + oral explanation",
+      "id": "LO-1",
+      "bloom_level": "UNDERSTAND",
+      "statement": "Explain the value of digits in a whole number up to 1,000,000 using place value.",
+      "success_criteria": [
+        "Correctly names each place value position",
+        "Explains why a digit’s value changes by position"
+      ]
+    },
+    {
+      "assessment_method": "Practice + formative quiz",
+      "id": "LO-2",
+      "bloom_level": "APPLY",
+      "statement": "Round whole numbers to the nearest 10, 100, and 1,000.",
+      "success_criteria": [
+        "Uses correct rounding rule based on next digit",
+        "Shows a number line or step explanation"
+      ]
+    },
+    {
+      "assessment_method": "Word problems",
+      "id": "LO-3",
+      "bloom_level": "APPLY",
+      "statement": "Solve real-world Liberia money problems using place value and rounding.",
+      "success_criteria": [
+        "Identifies important information in the problem",
+        "Computes and explains the final answer with units (LD)"
+      ]
+    }
+  ],
+  "lesson_plan": {
+    "opening": "Quick warm-up: read 3 large numbers aloud and identify the thousands place.",
+    "direct_instruction": "Teach place value using CPA. Then teach rounding rules with a number line.",
+    "guided_practice": "Work 2 examples together using LD market prices.",
+    "independent_practice": "Students complete rounding practice set and explain reasoning.",
+    "closing": "Exit ticket: one place value question + one rounding question.",
+    "extension": "Accessibility: allow oral answers; provide number line template; extra challenge: estimate totals for 5 market items."
+  },
+  "activities": [
+    {
+      "id": "ACT-1",
+      "duration_minutes": 12,
+      "instructions": {
+        "teacher": "Model one example on the board. Ask students to explain digit values using the chart.",
+        "student": "Draw a place value chart in your notebook (ones to hundred-thousands). Place digits from the teacher’s numbers into the chart."
+      },
+      "interaction_pattern": "whole_class",
+      "description": "Students build a place value chart and place digits into columns.",
+      "title": "Place Value Chart (CPA: Pictorial → Abstract)",
+      "offline_capable": true,
+      "differentiation": {
+        "advanced": "Include numbers up to 1,000,000 and ask for expanded form.",
+        "mixed_literacy": "Use visuals and read instructions aloud; allow oral responses.",
+        "struggling": "Use numbers up to 10,000 and provide a pre-drawn chart template."
+      },
+      "type": "VISUAL"
+    },
+    {
+      "id": "ACT-2",
+      "duration_minutes": 15,
+      "instructions": {
+        "teacher": "Model the first two. Then circulate and ask students 'Which digit decides?'",
+        "student": "Round each LD price to the nearest 10, 100, and 1,000. Write one sentence explaining your rounding choice."
+      },
+      "interaction_pattern": "individual",
+      "description": "Students round LD prices and explain why.",
+      "title": "Guided Practice: Rounding with Liberia Market Prices",
+      "offline_capable": true,
+      "differentiation": {
+        "advanced": "Add estimation: compare exact total vs rounded total for 5 items.",
+        "mixed_literacy": "Provide a worked example and allow verbal explanation.",
+        "struggling": "Start with rounding to nearest 10 only; use number lines."
+      },
+      "type": "PRACTICE"
+    }
+  ],
+  "virtual_labs": [
+    {
+      "id": "LAB-1",
+      "implementation_level": "text_guided",
+      "analysis_questions": [
+        "Why does the 'next digit' decide the rounding direction?",
+        "How does rounding help when shopping at the market?"
+      ],
+      "description": "Students simulate rounding using a number line and decision digit.",
+      "title": "Rounding Simulator (Text-Guided)",
+      "household_alternative": "Use bottle caps or beans on a drawn number line to show moving up/down.",
+      "steps": [
+        {
+          "step_number": 1,
+          "safety_note": "",
+          "expected_observation": "The rounding digit is identified.",
+          "ai_tutor_hint": "Look at the digit immediately to the right.",
+          "instruction": "Write the number and circle the rounding place (10/100/1000)."
+        },
+        {
+          "step_number": 2,
+          "safety_note": "",
+          "expected_observation": "Student chooses up or down correctly.",
+          "ai_tutor_hint": "5 or more means increase the rounding digit by 1.",
+          "instruction": "Check the next digit: 0–4 round down, 5–9 round up."
+        },
+        {
+          "step_number": 3,
+          "safety_note": "",
+          "expected_observation": "Final rounded number has zeros in correct positions.",
+          "ai_tutor_hint": "Digits after the rounding place become 0.",
+          "instruction": "Replace all digits to the right with zeros and write final answer."
+        }
+      ],
+      "materials_needed": [
+        "Notebook",
+        "Pencil",
+        "Optional: beans/bottle caps"
+      ],
+      "type": "SIMULATION"
+    }
+  ],
+  "cultural_context": {
+    "real_world_applications": [
+      "Estimating total cost when shopping with limited cash",
+      "Reading big numbers in school fees or transport fares"
+    ],
+    "local_examples": [
+      "Using Liberian Dollars (LD) at Waterside Market to estimate prices",
+      "Buying rice, pepper, and oil in a local community market",
+      "Comparing distances and towns in Montserrado County"
+    ],
+    "language_notes": "Use clear simple English; allow learners to explain in Liberian English/Koloqua style before formal phrasing.",
+    "community_connections": [
+      "Talk to a family member about how they estimate market prices",
+      "Find 3 prices at a local shop and practice rounding"
+    ]
+  },
+  "technical_metadata": {
+    "sync_required": "optional",
+    "offline_capable": true,
+    "performance_targets": {
+      "load_time_seconds": 2.0,
+      "min_fps": 30
+    },
+    "device_requirements": {
+      "min_screen_inches": 5.0,
+      "touch_required": false,
+      "min_storage_mb": 50
+    },
+    "media_formats": [
+      "text"
+    ],
+    "estimated_storage_mb": 1.2
+  },
+  "assessments": [
+    {
+      "questions": [
+        {
+          "id": "Q1",
+          "hints": [
+            "Find the place value column for 5.",
+            "Thousands means 1,000s."
+          ],
+          "question": "In the number 45,230, what is the value of the digit 5?",
+          "difficulty": "D2",
+          "explanation": "The digit 5 is in the thousands place, so it represents 5,000.",
+          "options": [
+            "5",
+            "50",
+            "500",
+            "5,000"
+          ],
+          "points": 1,
+          "ai_gradable": true,
+          "type": "MCQ",
+          "correct_answer": "5,000"
+        },
+        {
+          "id": "Q2",
+          "hints": [
+            "Circle the hundreds digit.",
+            "Check the tens digit to decide up/down."
+          ],
+          "question": "Round 6,742 to the nearest 100.",
+          "difficulty": "D2",
+          "explanation": "To round to the nearest 100, look at the tens digit (4). 4 rounds down.",
+          "options": [
+            "6,700",
+            "6,800",
+            "6,740",
+            "6,750"
+          ],
+          "points": 1,
+          "ai_gradable": true,
+          "type": "MCQ",
+          "correct_answer": "6,700"
+        },
+        {
+          "id": "Q3",
+          "hints": [
+            "Nearest 10 depends on the ones digit.",
+            "5 means round up."
+          ],
+          "question": "Waterside Market: Rice costs LD 1,985. Round to the nearest 10.",
+          "difficulty": "D2",
+          "explanation": "Nearest 10: look at the ones digit (5). 5 rounds up.",
+          "options": [
+            "LD 1,980",
+            "LD 1,990",
+            "LD 1,900",
+            "LD 2,000"
+          ],
+          "points": 1,
+          "ai_gradable": true,
+          "type": "MCQ",
+          "correct_answer": "LD 1,990"
+        },
+        {
+          "id": "Q4",
+          "hints": [
+            "Think: ones vs tens.",
+            "Same digit, different column."
+          ],
+          "question": "Which statement is TRUE about place value?",
+          "difficulty": "D1",
+          "explanation": "Place value means the position (ones, tens, hundreds…) changes a digit’s value.",
+          "options": [
+            "A digit always has the same value.",
+            "A digit’s value depends on its position in the number.",
+            "Only the first digit matters.",
+            "Zeros are never important."
+          ],
+          "points": 1,
+          "ai_gradable": true,
+          "type": "MCQ",
+          "correct_answer": "A digit’s value depends on its position in the number."
+        },
+        {
+          "id": "Q5",
+          "hints": [
+            "Circle the thousands digit.",
+            "Check the hundreds digit."
+          ],
+          "question": "Round 152,499 to the nearest 1,000.",
+          "difficulty": "D3",
+          "explanation": "Nearest 1,000: look at the hundreds digit (4). 4 rounds down.",
+          "options": [
+            "152,000",
+            "153,000",
+            "152,500",
+            "152,400"
+          ],
+          "points": 1,
+          "ai_gradable": true,
+          "type": "MCQ",
+          "correct_answer": "152,000"
+        }
+      ],
+      "adaptive": false,
+      "format": "MCQ",
+      "feedback": {
+        "incorrect": "Check the digit to the right of the rounding place and try again.",
+        "partial": "You’re close—show your place value reasoning.",
+        "correct": "Nice! You used place value and rounding correctly."
+      },
+      "id": "ASM-1",
+      "type": "FORMATIVE",
+      "time_limit_minutes": 10,
+      "mastery_threshold": 0.7
+    }
+  ],
+  "educational_context": {
+    "cognitive_band": "CORE",
+    "subject": "MATH",
+    "week": 1,
+    "grade": 5,
+    "term": 1
+  },
+  "metadata": {
+    "version": "1.0.0",
+    "updated_at": "2026-01-08T12:42:57.5953397-05:00",
+    "id": "LESSON-TEST001",
+    "status": "draft",
+    "created_at": "2026-01-08T12:42:57.5953397-05:00"
+  },
+  "description": "Offline-first mastery lesson using Liberian contexts (LD market examples).",
+  "content_type": "LESSON",
+  "parent_summary": "Today your child learned place value and how to round numbers. You can help by asking them to round LD prices at the market.",
+  "ai_tutor_metadata": {
+    "adaptive_parameters": {
+      "pacing_flexible": true,
+      "difficulty_adjustment": true
+    },
+    "prerequisite_check": [
+      "Read and write whole numbers up to 100,000",
+      "Understand tens and hundreds",
+      "Compare two numbers using >, <, ="
+    ],
+    "hint_strategy": "socratic",
+    "common_misconceptions": [
+      {
+        "misconception": "The digit 5 always means 5.",
+        "correction": "A digit’s value depends on place value (ones, tens, hundreds…)."
+      },
+      {
+        "misconception": "Rounding to the nearest 100 means look at the hundreds digit.",
+        "correction": "You look at the digit to the right (tens) to decide up or down."
+      },
+      {
+        "misconception": "If the next digit is 5, round down.",
+        "correction": "5 rounds up in standard rounding rules."
+      }
+    ]
+  },
+  "title": "Grade 5 Math - Place Value & Rounding (Test Lesson)"
+}

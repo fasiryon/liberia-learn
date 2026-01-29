@@ -1,0 +1,5 @@
+{
+  "decision": "ACCEPT",
+  "reason": "The provided curriculum JSON is schema compliant and passes all Level A gates. All required fields are present and correctly formatted. The content is consistent and adheres to the rules for the content_type 'LESSON'.",
+  "patch": []
+}

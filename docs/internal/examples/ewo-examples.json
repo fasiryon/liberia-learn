@@ -1,0 +1,311 @@
+{
+    "examples": [
+      {
+        "name": "SINGLE_LESSON: Grade 5 Fractions Introduction",
+        "ewo": {
+          "metadata": {
+            "id": "EWO-00001",
+            "created_at": "2025-01-06T10:00:00Z",
+            "updated_at": "2025-01-06T10:00:00Z",
+            "status": "IDEA",
+            "priority": "HIGH",
+            "initiator": "teacher-request-montserrado",
+            "deadline": "2025-02-01T00:00:00Z"
+          },
+          "ewo_type": "SINGLE_LESSON",
+          "target": {
+            "grade": "GRADE_5",
+            "subject": "MATH",
+            "topic": "Introduction to Fractions",
+            "lesson_id": "LESSON_02_01",
+            "term": 2
+          },
+          "constraints": {
+            "offline_first": true,
+            "low_bandwidth": true,
+            "device": "Android tablets",
+            "target_region": "Montserrado",
+            "language": ["English", "Liberian English"],
+            "max_duration_minutes": 45,
+            "virtual_labs_required": false
+          },
+          "required_agents": [
+            "research-agent",
+            "curriculum-architect",
+            "uiux-designer",
+            "qa-governance-agent"
+          ],
+          "artifacts": {},
+          "history": [
+            {
+              "timestamp": "2025-01-06T10:00:00Z",
+              "agent": "system",
+              "action": "EWO created from teacher request",
+              "status_before": null,
+              "status_after": "IDEA",
+              "notes": "Teacher at New Kru Town reported students struggling with fractions concept"
+            }
+          ]
+        }
+      },
+      
+      {
+        "name": "UNIT: Grade 7 Science - States of Matter",
+        "ewo": {
+          "metadata": {
+            "id": "EWO-00015",
+            "created_at": "2025-01-06T11:00:00Z",
+            "updated_at": "2025-01-06T11:00:00Z",
+            "status": "IDEA",
+            "priority": "MEDIUM",
+            "initiator": "curriculum-gap-analysis",
+            "deadline": "2025-03-01T00:00:00Z"
+          },
+          "ewo_type": "UNIT",
+          "target": {
+            "grade": "GRADE_7",
+            "subject": "SCIENCE",
+            "topic": "States of Matter",
+            "unit_id": "UNIT_01",
+            "term": 1
+          },
+          "constraints": {
+            "offline_first": true,
+            "low_bandwidth": true,
+            "device": "Android tablets",
+            "target_region": "National",
+            "language": ["English", "Liberian English"],
+            "virtual_labs_required": true
+          },
+          "unit_rules": {
+            "lessons_expected": 5,
+            "duration_weeks": 2,
+            "assessments_required": true,
+            "project_required": true
+          },
+          "required_agents": [
+            "research-agent",
+            "curriculum-architect",
+            "uiux-designer",
+            "engineer-agent",
+            "qa-governance-agent"
+          ],
+          "artifacts": {},
+          "history": [],
+          "child_ewos": []
+        }
+      },
+      
+      {
+        "name": "TERM: Grade 10 Mathematics - Term 1",
+        "ewo": {
+          "metadata": {
+            "id": "EWO-00042",
+            "created_at": "2025-01-06T12:00:00Z",
+            "updated_at": "2025-01-06T12:00:00Z",
+            "status": "IDEA",
+            "priority": "HIGH",
+            "initiator": "moe-directive-2025",
+            "deadline": "2025-06-01T00:00:00Z"
+          },
+          "ewo_type": "TERM",
+          "target": {
+            "grade": "GRADE_10",
+            "subject": "MATH",
+            "term": 1
+          },
+          "constraints": {
+            "offline_first": true,
+            "low_bandwidth": true,
+            "device": "Android tablets",
+            "target_region": "National",
+            "language": ["English", "Liberian English"],
+            "virtual_labs_required": false
+          },
+          "term_rules": {
+            "units_expected": 4,
+            "duration_weeks": 12,
+            "final_assessment_required": true
+          },
+          "required_agents": [
+            "research-agent",
+            "curriculum-architect",
+            "uiux-designer",
+            "engineer-agent",
+            "qa-governance-agent"
+          ],
+          "artifacts": {},
+          "history": [],
+          "child_ewos": []
+        }
+      },
+      
+      {
+        "name": "FULL_SUBJECT: Grade 9 Physics (Complete Year)",
+        "ewo": {
+          "metadata": {
+            "id": "EWO-00050",
+            "created_at": "2025-01-06T13:00:00Z",
+            "updated_at": "2025-01-06T13:00:00Z",
+            "status": "IDEA",
+            "priority": "CRITICAL",
+            "initiator": "liberia-2040-initiative",
+            "deadline": "2025-09-01T00:00:00Z"
+          },
+          "ewo_type": "FULL_SUBJECT",
+          "target": {
+            "grade": "GRADE_9",
+            "subject": "PHYSICS"
+          },
+          "constraints": {
+            "offline_first": true,
+            "low_bandwidth": true,
+            "device": "Android tablets",
+            "target_region": "National",
+            "language": ["English", "Liberian English"],
+            "virtual_labs_required": true
+          },
+          "batch_rules": {
+            "terms": 3,
+            "units_expected": 9,
+            "lessons_per_unit_range": [4, 6],
+            "virtual_labs_required": true,
+            "projects_required": true,
+            "global_sources": [
+              "China",
+              "Finland",
+              "Estonia",
+              "Singapore"
+            ],
+            "waec_alignment_required": false
+          },
+          "required_agents": [
+            "research-agent",
+            "curriculum-architect",
+            "uiux-designer",
+            "engineer-agent",
+            "qa-governance-agent"
+          ],
+          "artifacts": {},
+          "history": [
+            {
+              "timestamp": "2025-01-06T13:00:00Z",
+              "agent": "system",
+              "action": "FULL_SUBJECT EWO created from national initiative",
+              "status_before": null,
+              "status_after": "IDEA",
+              "notes": "Part of STEM education expansion for Liberia 2040. Will generate 9 units across 3 terms, approximately 45 lessons total."
+            }
+          ],
+          "child_ewos": [],
+          "batch_progress": {
+            "total_lessons_expected": 45,
+            "lessons_completed": 0,
+            "lessons_in_progress": 0,
+            "lessons_blocked": 0,
+            "estimated_completion_date": "2025-08-15"
+          }
+        }
+      },
+      
+      {
+        "name": "FULL_SUBJECT: Grade 10-12 Computer Science",
+        "ewo": {
+          "metadata": {
+            "id": "EWO-00099",
+            "created_at": "2025-01-06T14:00:00Z",
+            "updated_at": "2025-01-06T14:00:00Z",
+            "status": "IDEA",
+            "priority": "CRITICAL",
+            "initiator": "liberia-2040-initiative",
+            "deadline": "2025-12-01T00:00:00Z"
+          },
+          "ewo_type": "FULL_SUBJECT",
+          "target": {
+            "grade": "GRADE_10",
+            "subject": "COMPUTER_SCIENCE"
+          },
+          "constraints": {
+            "offline_first": true,
+            "low_bandwidth": true,
+            "device": "Android tablets",
+            "target_region": "National",
+            "language": ["English", "Liberian English"],
+            "virtual_labs_required": true
+          },
+          "batch_rules": {
+            "terms": 3,
+            "units_expected": 12,
+            "lessons_per_unit_range": [5, 8],
+            "virtual_labs_required": true,
+            "projects_required": true,
+            "global_sources": [
+              "USA",
+              "Estonia",
+              "Singapore"
+            ],
+            "waec_alignment_required": true
+          },
+          "required_agents": [
+            "research-agent",
+            "curriculum-architect",
+            "uiux-designer",
+            "engineer-agent",
+            "qa-governance-agent"
+          ],
+          "artifacts": {},
+          "history": [
+            {
+              "timestamp": "2025-01-06T14:00:00Z",
+              "agent": "system",
+              "action": "FULL_SUBJECT EWO created",
+              "status_before": null,
+              "status_after": "IDEA",
+              "notes": "Grade 10 CS curriculum. Will include: Python basics, algorithms, data structures, web development basics, AI/ML introduction. Aligned with CompTIA IT Fundamentals. Estimated 72 lessons total across 12 units."
+            }
+          ],
+          "child_ewos": [],
+          "batch_progress": {
+            "total_lessons_expected": 72,
+            "lessons_completed": 0,
+            "lessons_in_progress": 0,
+            "lessons_blocked": 0,
+            "estimated_completion_date": "2025-11-15"
+          }
+        }
+      }
+    ],
+    
+    "routing_logic": {
+      "description": "How the Factory Orchestrator handles different EWO types",
+      "rules": [
+        {
+          "ewo_type": "SINGLE_LESSON",
+          "behavior": "Linear pipeline through all required agents",
+          "parallelization": false,
+          "child_generation": false
+        },
+        {
+          "ewo_type": "UNIT",
+          "behavior": "Generate child SINGLE_LESSON EWOs after architecture stage",
+          "parallelization": true,
+          "child_generation": true,
+          "note": "Research + Architect run once for unit. Then spawn N lesson EWOs."
+        },
+        {
+          "ewo_type": "TERM",
+          "behavior": "Generate child UNIT EWOs after architecture stage",
+          "parallelization": true,
+          "child_generation": true,
+          "note": "Research + Architect run once for term. Then spawn N unit EWOs."
+        },
+        {
+          "ewo_type": "FULL_SUBJECT",
+          "behavior": "Generate child TERM EWOs after architecture stage",
+          "parallelization": true,
+          "child_generation": true,
+          "note": "Research + Architect run once for full subject. Then spawn N term EWOs. This triggers cascade: FULL_SUBJECT → TERMs → UNITs → LESSONs"
+        }
+      ]
+    }
+  }

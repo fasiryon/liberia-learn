@@ -1,0 +1,8 @@
+{
+  "sha256": "BED072CD4F1E17E3FE30F83DFC9942D1F96FB97E7D870BEDAFF2CC2B669E94A9",
+  "notes": "Schema v1 frozen. Any schema change requires bumping lock version + regenerating artifacts.",
+  "frozen_at": "2026-01-08T13:01:37.4773262-05:00",
+  "path": ".\\docs\\internal\\schemas\\unified-curriculum-schema.json",
+  "schema_id": "LiberiaLearn-Unified-Curriculum-Schema",
+  "version": "1.0.0"
+}

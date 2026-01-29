@@ -1,0 +1,1231 @@
+{
+  "generated_at": "2026-01-08T18:57:48Z",
+  "count": 204,
+  "items": [
+    {
+      "grade_folder": "G01",
+      "grade": 1,
+      "subject": "ARTS",
+      "path": "FactoryArtifacts/Subjects/G01/ARTS.json"
+    },
+    {
+      "grade_folder": "G01",
+      "grade": 1,
+      "subject": "BIOLOGY",
+      "path": "FactoryArtifacts/Subjects/G01/BIOLOGY.json"
+    },
+    {
+      "grade_folder": "G01",
+      "grade": 1,
+      "subject": "BUSINESS_STUDIES",
+      "path": "FactoryArtifacts/Subjects/G01/BUSINESS_STUDIES.json"
+    },
+    {
+      "grade_folder": "G01",
+      "grade": 1,
+      "subject": "CHEMISTRY",
+      "path": "FactoryArtifacts/Subjects/G01/CHEMISTRY.json"
+    },
+    {
+      "grade_folder": "G01",
+      "grade": 1,
+      "subject": "CIVICS",
+      "path": "FactoryArtifacts/Subjects/G01/CIVICS.json"
+    },
+    {
+      "grade_folder": "G01",
+      "grade": 1,
+      "subject": "COMPUTER_SCIENCE",
+      "path": "FactoryArtifacts/Subjects/G01/COMPUTER_SCIENCE.json"
+    },
+    {
+      "grade_folder": "G01",
+      "grade": 1,
+      "subject": "CREATIVITY",
+      "path": "FactoryArtifacts/Subjects/G01/CREATIVITY.json"
+    },
+    {
+      "grade_folder": "G01",
+      "grade": 1,
+      "subject": "ECONOMICS",
+      "path": "FactoryArtifacts/Subjects/G01/ECONOMICS.json"
+    },
+    {
+      "grade_folder": "G01",
+      "grade": 1,
+      "subject": "ENGLISH",
+      "path": "FactoryArtifacts/Subjects/G01/ENGLISH.json"
+    },
+    {
+      "grade_folder": "G01",
+      "grade": 1,
+      "subject": "GEOGRAPHY",
+      "path": "FactoryArtifacts/Subjects/G01/GEOGRAPHY.json"
+    },
+    {
+      "grade_folder": "G01",
+      "grade": 1,
+      "subject": "HISTORY",
+      "path": "FactoryArtifacts/Subjects/G01/HISTORY.json"
+    },
+    {
+      "grade_folder": "G01",
+      "grade": 1,
+      "subject": "ICT",
+      "path": "FactoryArtifacts/Subjects/G01/ICT.json"
+    },
+    {
+      "grade_folder": "G01",
+      "grade": 1,
+      "subject": "LITERACY",
+      "path": "FactoryArtifacts/Subjects/G01/LITERACY.json"
+    },
+    {
+      "grade_folder": "G01",
+      "grade": 1,
+      "subject": "MATH",
+      "path": "FactoryArtifacts/Subjects/G01/MATH.json"
+    },
+    {
+      "grade_folder": "G01",
+      "grade": 1,
+      "subject": "PE",
+      "path": "FactoryArtifacts/Subjects/G01/PE.json"
+    },
+    {
+      "grade_folder": "G01",
+      "grade": 1,
+      "subject": "PHYSICS",
+      "path": "FactoryArtifacts/Subjects/G01/PHYSICS.json"
+    },
+    {
+      "grade_folder": "G01",
+      "grade": 1,
+      "subject": "SCIENCE",
+      "path": "FactoryArtifacts/Subjects/G01/SCIENCE.json"
+    },
+    {
+      "grade_folder": "G02",
+      "grade": 2,
+      "subject": "ARTS",
+      "path": "FactoryArtifacts/Subjects/G02/ARTS.json"
+    },
+    {
+      "grade_folder": "G02",
+      "grade": 2,
+      "subject": "BIOLOGY",
+      "path": "FactoryArtifacts/Subjects/G02/BIOLOGY.json"
+    },
+    {
+      "grade_folder": "G02",
+      "grade": 2,
+      "subject": "BUSINESS_STUDIES",
+      "path": "FactoryArtifacts/Subjects/G02/BUSINESS_STUDIES.json"
+    },
+    {
+      "grade_folder": "G02",
+      "grade": 2,
+      "subject": "CHEMISTRY",
+      "path": "FactoryArtifacts/Subjects/G02/CHEMISTRY.json"
+    },
+    {
+      "grade_folder": "G02",
+      "grade": 2,
+      "subject": "CIVICS",
+      "path": "FactoryArtifacts/Subjects/G02/CIVICS.json"
+    },
+    {
+      "grade_folder": "G02",
+      "grade": 2,
+      "subject": "COMPUTER_SCIENCE",
+      "path": "FactoryArtifacts/Subjects/G02/COMPUTER_SCIENCE.json"
+    },
+    {
+      "grade_folder": "G02",
+      "grade": 2,
+      "subject": "CREATIVITY",
+      "path": "FactoryArtifacts/Subjects/G02/CREATIVITY.json"
+    },
+    {
+      "grade_folder": "G02",
+      "grade": 2,
+      "subject": "ECONOMICS",
+      "path": "FactoryArtifacts/Subjects/G02/ECONOMICS.json"
+    },
+    {
+      "grade_folder": "G02",
+      "grade": 2,
+      "subject": "ENGLISH",
+      "path": "FactoryArtifacts/Subjects/G02/ENGLISH.json"
+    },
+    {
+      "grade_folder": "G02",
+      "grade": 2,
+      "subject": "GEOGRAPHY",
+      "path": "FactoryArtifacts/Subjects/G02/GEOGRAPHY.json"
+    },
+    {
+      "grade_folder": "G02",
+      "grade": 2,
+      "subject": "HISTORY",
+      "path": "FactoryArtifacts/Subjects/G02/HISTORY.json"
+    },
+    {
+      "grade_folder": "G02",
+      "grade": 2,
+      "subject": "ICT",
+      "path": "FactoryArtifacts/Subjects/G02/ICT.json"
+    },
+    {
+      "grade_folder": "G02",
+      "grade": 2,
+      "subject": "LITERACY",
+      "path": "FactoryArtifacts/Subjects/G02/LITERACY.json"
+    },
+    {
+      "grade_folder": "G02",
+      "grade": 2,
+      "subject": "MATH",
+      "path": "FactoryArtifacts/Subjects/G02/MATH.json"
+    },
+    {
+      "grade_folder": "G02",
+      "grade": 2,
+      "subject": "PE",
+      "path": "FactoryArtifacts/Subjects/G02/PE.json"
+    },
+    {
+      "grade_folder": "G02",
+      "grade": 2,
+      "subject": "PHYSICS",
+      "path": "FactoryArtifacts/Subjects/G02/PHYSICS.json"
+    },
+    {
+      "grade_folder": "G02",
+      "grade": 2,
+      "subject": "SCIENCE",
+      "path": "FactoryArtifacts/Subjects/G02/SCIENCE.json"
+    },
+    {
+      "grade_folder": "G03",
+      "grade": 3,
+      "subject": "ARTS",
+      "path": "FactoryArtifacts/Subjects/G03/ARTS.json"
+    },
+    {
+      "grade_folder": "G03",
+      "grade": 3,
+      "subject": "BIOLOGY",
+      "path": "FactoryArtifacts/Subjects/G03/BIOLOGY.json"
+    },
+    {
+      "grade_folder": "G03",
+      "grade": 3,
+      "subject": "BUSINESS_STUDIES",
+      "path": "FactoryArtifacts/Subjects/G03/BUSINESS_STUDIES.json"
+    },
+    {
+      "grade_folder": "G03",
+      "grade": 3,
+      "subject": "CHEMISTRY",
+      "path": "FactoryArtifacts/Subjects/G03/CHEMISTRY.json"
+    },
+    {
+      "grade_folder": "G03",
+      "grade": 3,
+      "subject": "CIVICS",
+      "path": "FactoryArtifacts/Subjects/G03/CIVICS.json"
+    },
+    {
+      "grade_folder": "G03",
+      "grade": 3,
+      "subject": "COMPUTER_SCIENCE",
+      "path": "FactoryArtifacts/Subjects/G03/COMPUTER_SCIENCE.json"
+    },
+    {
+      "grade_folder": "G03",
+      "grade": 3,
+      "subject": "CREATIVITY",
+      "path": "FactoryArtifacts/Subjects/G03/CREATIVITY.json"
+    },
+    {
+      "grade_folder": "G03",
+      "grade": 3,
+      "subject": "ECONOMICS",
+      "path": "FactoryArtifacts/Subjects/G03/ECONOMICS.json"
+    },
+    {
+      "grade_folder": "G03",
+      "grade": 3,
+      "subject": "ENGLISH",
+      "path": "FactoryArtifacts/Subjects/G03/ENGLISH.json"
+    },
+    {
+      "grade_folder": "G03",
+      "grade": 3,
+      "subject": "GEOGRAPHY",
+      "path": "FactoryArtifacts/Subjects/G03/GEOGRAPHY.json"
+    },
+    {
+      "grade_folder": "G03",
+      "grade": 3,
+      "subject": "HISTORY",
+      "path": "FactoryArtifacts/Subjects/G03/HISTORY.json"
+    },
+    {
+      "grade_folder": "G03",
+      "grade": 3,
+      "subject": "ICT",
+      "path": "FactoryArtifacts/Subjects/G03/ICT.json"
+    },
+    {
+      "grade_folder": "G03",
+      "grade": 3,
+      "subject": "LITERACY",
+      "path": "FactoryArtifacts/Subjects/G03/LITERACY.json"
+    },
+    {
+      "grade_folder": "G03",
+      "grade": 3,
+      "subject": "MATH",
+      "path": "FactoryArtifacts/Subjects/G03/MATH.json"
+    },
+    {
+      "grade_folder": "G03",
+      "grade": 3,
+      "subject": "PE",
+      "path": "FactoryArtifacts/Subjects/G03/PE.json"
+    },
+    {
+      "grade_folder": "G03",
+      "grade": 3,
+      "subject": "PHYSICS",
+      "path": "FactoryArtifacts/Subjects/G03/PHYSICS.json"
+    },
+    {
+      "grade_folder": "G03",
+      "grade": 3,
+      "subject": "SCIENCE",
+      "path": "FactoryArtifacts/Subjects/G03/SCIENCE.json"
+    },
+    {
+      "grade_folder": "G04",
+      "grade": 4,
+      "subject": "ARTS",
+      "path": "FactoryArtifacts/Subjects/G04/ARTS.json"
+    },
+    {
+      "grade_folder": "G04",
+      "grade": 4,
+      "subject": "BIOLOGY",
+      "path": "FactoryArtifacts/Subjects/G04/BIOLOGY.json"
+    },
+    {
+      "grade_folder": "G04",
+      "grade": 4,
+      "subject": "BUSINESS_STUDIES",
+      "path": "FactoryArtifacts/Subjects/G04/BUSINESS_STUDIES.json"
+    },
+    {
+      "grade_folder": "G04",
+      "grade": 4,
+      "subject": "CHEMISTRY",
+      "path": "FactoryArtifacts/Subjects/G04/CHEMISTRY.json"
+    },
+    {
+      "grade_folder": "G04",
+      "grade": 4,
+      "subject": "CIVICS",
+      "path": "FactoryArtifacts/Subjects/G04/CIVICS.json"
+    },
+    {
+      "grade_folder": "G04",
+      "grade": 4,
+      "subject": "COMPUTER_SCIENCE",
+      "path": "FactoryArtifacts/Subjects/G04/COMPUTER_SCIENCE.json"
+    },
+    {
+      "grade_folder": "G04",
+      "grade": 4,
+      "subject": "CREATIVITY",
+      "path": "FactoryArtifacts/Subjects/G04/CREATIVITY.json"
+    },
+    {
+      "grade_folder": "G04",
+      "grade": 4,
+      "subject": "ECONOMICS",
+      "path": "FactoryArtifacts/Subjects/G04/ECONOMICS.json"
+    },
+    {
+      "grade_folder": "G04",
+      "grade": 4,
+      "subject": "ENGLISH",
+      "path": "FactoryArtifacts/Subjects/G04/ENGLISH.json"
+    },
+    {
+      "grade_folder": "G04",
+      "grade": 4,
+      "subject": "GEOGRAPHY",
+      "path": "FactoryArtifacts/Subjects/G04/GEOGRAPHY.json"
+    },
+    {
+      "grade_folder": "G04",
+      "grade": 4,
+      "subject": "HISTORY",
+      "path": "FactoryArtifacts/Subjects/G04/HISTORY.json"
+    },
+    {
+      "grade_folder": "G04",
+      "grade": 4,
+      "subject": "ICT",
+      "path": "FactoryArtifacts/Subjects/G04/ICT.json"
+    },
+    {
+      "grade_folder": "G04",
+      "grade": 4,
+      "subject": "LITERACY",
+      "path": "FactoryArtifacts/Subjects/G04/LITERACY.json"
+    },
+    {
+      "grade_folder": "G04",
+      "grade": 4,
+      "subject": "MATH",
+      "path": "FactoryArtifacts/Subjects/G04/MATH.json"
+    },
+    {
+      "grade_folder": "G04",
+      "grade": 4,
+      "subject": "PE",
+      "path": "FactoryArtifacts/Subjects/G04/PE.json"
+    },
+    {
+      "grade_folder": "G04",
+      "grade": 4,
+      "subject": "PHYSICS",
+      "path": "FactoryArtifacts/Subjects/G04/PHYSICS.json"
+    },
+    {
+      "grade_folder": "G04",
+      "grade": 4,
+      "subject": "SCIENCE",
+      "path": "FactoryArtifacts/Subjects/G04/SCIENCE.json"
+    },
+    {
+      "grade_folder": "G05",
+      "grade": 5,
+      "subject": "ARTS",
+      "path": "FactoryArtifacts/Subjects/G05/ARTS.json"
+    },
+    {
+      "grade_folder": "G05",
+      "grade": 5,
+      "subject": "BIOLOGY",
+      "path": "FactoryArtifacts/Subjects/G05/BIOLOGY.json"
+    },
+    {
+      "grade_folder": "G05",
+      "grade": 5,
+      "subject": "BUSINESS_STUDIES",
+      "path": "FactoryArtifacts/Subjects/G05/BUSINESS_STUDIES.json"
+    },
+    {
+      "grade_folder": "G05",
+      "grade": 5,
+      "subject": "CHEMISTRY",
+      "path": "FactoryArtifacts/Subjects/G05/CHEMISTRY.json"
+    },
+    {
+      "grade_folder": "G05",
+      "grade": 5,
+      "subject": "CIVICS",
+      "path": "FactoryArtifacts/Subjects/G05/CIVICS.json"
+    },
+    {
+      "grade_folder": "G05",
+      "grade": 5,
+      "subject": "COMPUTER_SCIENCE",
+      "path": "FactoryArtifacts/Subjects/G05/COMPUTER_SCIENCE.json"
+    },
+    {
+      "grade_folder": "G05",
+      "grade": 5,
+      "subject": "CREATIVITY",
+      "path": "FactoryArtifacts/Subjects/G05/CREATIVITY.json"
+    },
+    {
+      "grade_folder": "G05",
+      "grade": 5,
+      "subject": "ECONOMICS",
+      "path": "FactoryArtifacts/Subjects/G05/ECONOMICS.json"
+    },
+    {
+      "grade_folder": "G05",
+      "grade": 5,
+      "subject": "ENGLISH",
+      "path": "FactoryArtifacts/Subjects/G05/ENGLISH.json"
+    },
+    {
+      "grade_folder": "G05",
+      "grade": 5,
+      "subject": "GEOGRAPHY",
+      "path": "FactoryArtifacts/Subjects/G05/GEOGRAPHY.json"
+    },
+    {
+      "grade_folder": "G05",
+      "grade": 5,
+      "subject": "HISTORY",
+      "path": "FactoryArtifacts/Subjects/G05/HISTORY.json"
+    },
+    {
+      "grade_folder": "G05",
+      "grade": 5,
+      "subject": "ICT",
+      "path": "FactoryArtifacts/Subjects/G05/ICT.json"
+    },
+    {
+      "grade_folder": "G05",
+      "grade": 5,
+      "subject": "LITERACY",
+      "path": "FactoryArtifacts/Subjects/G05/LITERACY.json"
+    },
+    {
+      "grade_folder": "G05",
+      "grade": 5,
+      "subject": "MATH",
+      "path": "FactoryArtifacts/Subjects/G05/MATH.json"
+    },
+    {
+      "grade_folder": "G05",
+      "grade": 5,
+      "subject": "PE",
+      "path": "FactoryArtifacts/Subjects/G05/PE.json"
+    },
+    {
+      "grade_folder": "G05",
+      "grade": 5,
+      "subject": "PHYSICS",
+      "path": "FactoryArtifacts/Subjects/G05/PHYSICS.json"
+    },
+    {
+      "grade_folder": "G05",
+      "grade": 5,
+      "subject": "SCIENCE",
+      "path": "FactoryArtifacts/Subjects/G05/SCIENCE.json"
+    },
+    {
+      "grade_folder": "G06",
+      "grade": 6,
+      "subject": "ARTS",
+      "path": "FactoryArtifacts/Subjects/G06/ARTS.json"
+    },
+    {
+      "grade_folder": "G06",
+      "grade": 6,
+      "subject": "BIOLOGY",
+      "path": "FactoryArtifacts/Subjects/G06/BIOLOGY.json"
+    },
+    {
+      "grade_folder": "G06",
+      "grade": 6,
+      "subject": "BUSINESS_STUDIES",
+      "path": "FactoryArtifacts/Subjects/G06/BUSINESS_STUDIES.json"
+    },
+    {
+      "grade_folder": "G06",
+      "grade": 6,
+      "subject": "CHEMISTRY",
+      "path": "FactoryArtifacts/Subjects/G06/CHEMISTRY.json"
+    },
+    {
+      "grade_folder": "G06",
+      "grade": 6,
+      "subject": "CIVICS",
+      "path": "FactoryArtifacts/Subjects/G06/CIVICS.json"
+    },
+    {
+      "grade_folder": "G06",
+      "grade": 6,
+      "subject": "COMPUTER_SCIENCE",
+      "path": "FactoryArtifacts/Subjects/G06/COMPUTER_SCIENCE.json"
+    },
+    {
+      "grade_folder": "G06",
+      "grade": 6,
+      "subject": "CREATIVITY",
+      "path": "FactoryArtifacts/Subjects/G06/CREATIVITY.json"
+    },
+    {
+      "grade_folder": "G06",
+      "grade": 6,
+      "subject": "ECONOMICS",
+      "path": "FactoryArtifacts/Subjects/G06/ECONOMICS.json"
+    },
+    {
+      "grade_folder": "G06",
+      "grade": 6,
+      "subject": "ENGLISH",
+      "path": "FactoryArtifacts/Subjects/G06/ENGLISH.json"
+    },
+    {
+      "grade_folder": "G06",
+      "grade": 6,
+      "subject": "GEOGRAPHY",
+      "path": "FactoryArtifacts/Subjects/G06/GEOGRAPHY.json"
+    },
+    {
+      "grade_folder": "G06",
+      "grade": 6,
+      "subject": "HISTORY",
+      "path": "FactoryArtifacts/Subjects/G06/HISTORY.json"
+    },
+    {
+      "grade_folder": "G06",
+      "grade": 6,
+      "subject": "ICT",
+      "path": "FactoryArtifacts/Subjects/G06/ICT.json"
+    },
+    {
+      "grade_folder": "G06",
+      "grade": 6,
+      "subject": "LITERACY",
+      "path": "FactoryArtifacts/Subjects/G06/LITERACY.json"
+    },
+    {
+      "grade_folder": "G06",
+      "grade": 6,
+      "subject": "MATH",
+      "path": "FactoryArtifacts/Subjects/G06/MATH.json"
+    },
+    {
+      "grade_folder": "G06",
+      "grade": 6,
+      "subject": "PE",
+      "path": "FactoryArtifacts/Subjects/G06/PE.json"
+    },
+    {
+      "grade_folder": "G06",
+      "grade": 6,
+      "subject": "PHYSICS",
+      "path": "FactoryArtifacts/Subjects/G06/PHYSICS.json"
+    },
+    {
+      "grade_folder": "G06",
+      "grade": 6,
+      "subject": "SCIENCE",
+      "path": "FactoryArtifacts/Subjects/G06/SCIENCE.json"
+    },
+    {
+      "grade_folder": "G07",
+      "grade": 7,
+      "subject": "ARTS",
+      "path": "FactoryArtifacts/Subjects/G07/ARTS.json"
+    },
+    {
+      "grade_folder": "G07",
+      "grade": 7,
+      "subject": "BIOLOGY",
+      "path": "FactoryArtifacts/Subjects/G07/BIOLOGY.json"
+    },
+    {
+      "grade_folder": "G07",
+      "grade": 7,
+      "subject": "BUSINESS_STUDIES",
+      "path": "FactoryArtifacts/Subjects/G07/BUSINESS_STUDIES.json"
+    },
+    {
+      "grade_folder": "G07",
+      "grade": 7,
+      "subject": "CHEMISTRY",
+      "path": "FactoryArtifacts/Subjects/G07/CHEMISTRY.json"
+    },
+    {
+      "grade_folder": "G07",
+      "grade": 7,
+      "subject": "CIVICS",
+      "path": "FactoryArtifacts/Subjects/G07/CIVICS.json"
+    },
+    {
+      "grade_folder": "G07",
+      "grade": 7,
+      "subject": "COMPUTER_SCIENCE",
+      "path": "FactoryArtifacts/Subjects/G07/COMPUTER_SCIENCE.json"
+    },
+    {
+      "grade_folder": "G07",
+      "grade": 7,
+      "subject": "CREATIVITY",
+      "path": "FactoryArtifacts/Subjects/G07/CREATIVITY.json"
+    },
+    {
+      "grade_folder": "G07",
+      "grade": 7,
+      "subject": "ECONOMICS",
+      "path": "FactoryArtifacts/Subjects/G07/ECONOMICS.json"
+    },
+    {
+      "grade_folder": "G07",
+      "grade": 7,
+      "subject": "ENGLISH",
+      "path": "FactoryArtifacts/Subjects/G07/ENGLISH.json"
+    },
+    {
+      "grade_folder": "G07",
+      "grade": 7,
+      "subject": "GEOGRAPHY",
+      "path": "FactoryArtifacts/Subjects/G07/GEOGRAPHY.json"
+    },
+    {
+      "grade_folder": "G07",
+      "grade": 7,
+      "subject": "HISTORY",
+      "path": "FactoryArtifacts/Subjects/G07/HISTORY.json"
+    },
+    {
+      "grade_folder": "G07",
+      "grade": 7,
+      "subject": "ICT",
+      "path": "FactoryArtifacts/Subjects/G07/ICT.json"
+    },
+    {
+      "grade_folder": "G07",
+      "grade": 7,
+      "subject": "LITERACY",
+      "path": "FactoryArtifacts/Subjects/G07/LITERACY.json"
+    },
+    {
+      "grade_folder": "G07",
+      "grade": 7,
+      "subject": "MATH",
+      "path": "FactoryArtifacts/Subjects/G07/MATH.json"
+    },
+    {
+      "grade_folder": "G07",
+      "grade": 7,
+      "subject": "PE",
+      "path": "FactoryArtifacts/Subjects/G07/PE.json"
+    },
+    {
+      "grade_folder": "G07",
+      "grade": 7,
+      "subject": "PHYSICS",
+      "path": "FactoryArtifacts/Subjects/G07/PHYSICS.json"
+    },
+    {
+      "grade_folder": "G07",
+      "grade": 7,
+      "subject": "SCIENCE",
+      "path": "FactoryArtifacts/Subjects/G07/SCIENCE.json"
+    },
+    {
+      "grade_folder": "G08",
+      "grade": 8,
+      "subject": "ARTS",
+      "path": "FactoryArtifacts/Subjects/G08/ARTS.json"
+    },
+    {
+      "grade_folder": "G08",
+      "grade": 8,
+      "subject": "BIOLOGY",
+      "path": "FactoryArtifacts/Subjects/G08/BIOLOGY.json"
+    },
+    {
+      "grade_folder": "G08",
+      "grade": 8,
+      "subject": "BUSINESS_STUDIES",
+      "path": "FactoryArtifacts/Subjects/G08/BUSINESS_STUDIES.json"
+    },
+    {
+      "grade_folder": "G08",
+      "grade": 8,
+      "subject": "CHEMISTRY",
+      "path": "FactoryArtifacts/Subjects/G08/CHEMISTRY.json"
+    },
+    {
+      "grade_folder": "G08",
+      "grade": 8,
+      "subject": "CIVICS",
+      "path": "FactoryArtifacts/Subjects/G08/CIVICS.json"
+    },
+    {
+      "grade_folder": "G08",
+      "grade": 8,
+      "subject": "COMPUTER_SCIENCE",
+      "path": "FactoryArtifacts/Subjects/G08/COMPUTER_SCIENCE.json"
+    },
+    {
+      "grade_folder": "G08",
+      "grade": 8,
+      "subject": "CREATIVITY",
+      "path": "FactoryArtifacts/Subjects/G08/CREATIVITY.json"
+    },
+    {
+      "grade_folder": "G08",
+      "grade": 8,
+      "subject": "ECONOMICS",
+      "path": "FactoryArtifacts/Subjects/G08/ECONOMICS.json"
+    },
+    {
+      "grade_folder": "G08",
+      "grade": 8,
+      "subject": "ENGLISH",
+      "path": "FactoryArtifacts/Subjects/G08/ENGLISH.json"
+    },
+    {
+      "grade_folder": "G08",
+      "grade": 8,
+      "subject": "GEOGRAPHY",
+      "path": "FactoryArtifacts/Subjects/G08/GEOGRAPHY.json"
+    },
+    {
+      "grade_folder": "G08",
+      "grade": 8,
+      "subject": "HISTORY",
+      "path": "FactoryArtifacts/Subjects/G08/HISTORY.json"
+    },
+    {
+      "grade_folder": "G08",
+      "grade": 8,
+      "subject": "ICT",
+      "path": "FactoryArtifacts/Subjects/G08/ICT.json"
+    },
+    {
+      "grade_folder": "G08",
+      "grade": 8,
+      "subject": "LITERACY",
+      "path": "FactoryArtifacts/Subjects/G08/LITERACY.json"
+    },
+    {
+      "grade_folder": "G08",
+      "grade": 8,
+      "subject": "MATH",
+      "path": "FactoryArtifacts/Subjects/G08/MATH.json"
+    },
+    {
+      "grade_folder": "G08",
+      "grade": 8,
+      "subject": "PE",
+      "path": "FactoryArtifacts/Subjects/G08/PE.json"
+    },
+    {
+      "grade_folder": "G08",
+      "grade": 8,
+      "subject": "PHYSICS",
+      "path": "FactoryArtifacts/Subjects/G08/PHYSICS.json"
+    },
+    {
+      "grade_folder": "G08",
+      "grade": 8,
+      "subject": "SCIENCE",
+      "path": "FactoryArtifacts/Subjects/G08/SCIENCE.json"
+    },
+    {
+      "grade_folder": "G09",
+      "grade": 9,
+      "subject": "ARTS",
+      "path": "FactoryArtifacts/Subjects/G09/ARTS.json"
+    },
+    {
+      "grade_folder": "G09",
+      "grade": 9,
+      "subject": "BIOLOGY",
+      "path": "FactoryArtifacts/Subjects/G09/BIOLOGY.json"
+    },
+    {
+      "grade_folder": "G09",
+      "grade": 9,
+      "subject": "BUSINESS_STUDIES",
+      "path": "FactoryArtifacts/Subjects/G09/BUSINESS_STUDIES.json"
+    },
+    {
+      "grade_folder": "G09",
+      "grade": 9,
+      "subject": "CHEMISTRY",
+      "path": "FactoryArtifacts/Subjects/G09/CHEMISTRY.json"
+    },
+    {
+      "grade_folder": "G09",
+      "grade": 9,
+      "subject": "CIVICS",
+      "path": "FactoryArtifacts/Subjects/G09/CIVICS.json"
+    },
+    {
+      "grade_folder": "G09",
+      "grade": 9,
+      "subject": "COMPUTER_SCIENCE",
+      "path": "FactoryArtifacts/Subjects/G09/COMPUTER_SCIENCE.json"
+    },
+    {
+      "grade_folder": "G09",
+      "grade": 9,
+      "subject": "CREATIVITY",
+      "path": "FactoryArtifacts/Subjects/G09/CREATIVITY.json"
+    },
+    {
+      "grade_folder": "G09",
+      "grade": 9,
+      "subject": "ECONOMICS",
+      "path": "FactoryArtifacts/Subjects/G09/ECONOMICS.json"
+    },
+    {
+      "grade_folder": "G09",
+      "grade": 9,
+      "subject": "ENGLISH",
+      "path": "FactoryArtifacts/Subjects/G09/ENGLISH.json"
+    },
+    {
+      "grade_folder": "G09",
+      "grade": 9,
+      "subject": "GEOGRAPHY",
+      "path": "FactoryArtifacts/Subjects/G09/GEOGRAPHY.json"
+    },
+    {
+      "grade_folder": "G09",
+      "grade": 9,
+      "subject": "HISTORY",
+      "path": "FactoryArtifacts/Subjects/G09/HISTORY.json"
+    },
+    {
+      "grade_folder": "G09",
+      "grade": 9,
+      "subject": "ICT",
+      "path": "FactoryArtifacts/Subjects/G09/ICT.json"
+    },
+    {
+      "grade_folder": "G09",
+      "grade": 9,
+      "subject": "LITERACY",
+      "path": "FactoryArtifacts/Subjects/G09/LITERACY.json"
+    },
+    {
+      "grade_folder": "G09",
+      "grade": 9,
+      "subject": "MATH",
+      "path": "FactoryArtifacts/Subjects/G09/MATH.json"
+    },
+    {
+      "grade_folder": "G09",
+      "grade": 9,
+      "subject": "PE",
+      "path": "FactoryArtifacts/Subjects/G09/PE.json"
+    },
+    {
+      "grade_folder": "G09",
+      "grade": 9,
+      "subject": "PHYSICS",
+      "path": "FactoryArtifacts/Subjects/G09/PHYSICS.json"
+    },
+    {
+      "grade_folder": "G09",
+      "grade": 9,
+      "subject": "SCIENCE",
+      "path": "FactoryArtifacts/Subjects/G09/SCIENCE.json"
+    },
+    {
+      "grade_folder": "G10",
+      "grade": 10,
+      "subject": "ARTS",
+      "path": "FactoryArtifacts/Subjects/G10/ARTS.json"
+    },
+    {
+      "grade_folder": "G10",
+      "grade": 10,
+      "subject": "BIOLOGY",
+      "path": "FactoryArtifacts/Subjects/G10/BIOLOGY.json"
+    },
+    {
+      "grade_folder": "G10",
+      "grade": 10,
+      "subject": "BUSINESS_STUDIES",
+      "path": "FactoryArtifacts/Subjects/G10/BUSINESS_STUDIES.json"
+    },
+    {
+      "grade_folder": "G10",
+      "grade": 10,
+      "subject": "CHEMISTRY",
+      "path": "FactoryArtifacts/Subjects/G10/CHEMISTRY.json"
+    },
+    {
+      "grade_folder": "G10",
+      "grade": 10,
+      "subject": "CIVICS",
+      "path": "FactoryArtifacts/Subjects/G10/CIVICS.json"
+    },
+    {
+      "grade_folder": "G10",
+      "grade": 10,
+      "subject": "COMPUTER_SCIENCE",
+      "path": "FactoryArtifacts/Subjects/G10/COMPUTER_SCIENCE.json"
+    },
+    {
+      "grade_folder": "G10",
+      "grade": 10,
+      "subject": "CREATIVITY",
+      "path": "FactoryArtifacts/Subjects/G10/CREATIVITY.json"
+    },
+    {
+      "grade_folder": "G10",
+      "grade": 10,
+      "subject": "ECONOMICS",
+      "path": "FactoryArtifacts/Subjects/G10/ECONOMICS.json"
+    },
+    {
+      "grade_folder": "G10",
+      "grade": 10,
+      "subject": "ENGLISH",
+      "path": "FactoryArtifacts/Subjects/G10/ENGLISH.json"
+    },
+    {
+      "grade_folder": "G10",
+      "grade": 10,
+      "subject": "GEOGRAPHY",
+      "path": "FactoryArtifacts/Subjects/G10/GEOGRAPHY.json"
+    },
+    {
+      "grade_folder": "G10",
+      "grade": 10,
+      "subject": "HISTORY",
+      "path": "FactoryArtifacts/Subjects/G10/HISTORY.json"
+    },
+    {
+      "grade_folder": "G10",
+      "grade": 10,
+      "subject": "ICT",
+      "path": "FactoryArtifacts/Subjects/G10/ICT.json"
+    },
+    {
+      "grade_folder": "G10",
+      "grade": 10,
+      "subject": "LITERACY",
+      "path": "FactoryArtifacts/Subjects/G10/LITERACY.json"
+    },
+    {
+      "grade_folder": "G10",
+      "grade": 10,
+      "subject": "MATH",
+      "path": "FactoryArtifacts/Subjects/G10/MATH.json"
+    },
+    {
+      "grade_folder": "G10",
+      "grade": 10,
+      "subject": "PE",
+      "path": "FactoryArtifacts/Subjects/G10/PE.json"
+    },
+    {
+      "grade_folder": "G10",
+      "grade": 10,
+      "subject": "PHYSICS",
+      "path": "FactoryArtifacts/Subjects/G10/PHYSICS.json"
+    },
+    {
+      "grade_folder": "G10",
+      "grade": 10,
+      "subject": "SCIENCE",
+      "path": "FactoryArtifacts/Subjects/G10/SCIENCE.json"
+    },
+    {
+      "grade_folder": "G11",
+      "grade": 11,
+      "subject": "ARTS",
+      "path": "FactoryArtifacts/Subjects/G11/ARTS.json"
+    },
+    {
+      "grade_folder": "G11",
+      "grade": 11,
+      "subject": "BIOLOGY",
+      "path": "FactoryArtifacts/Subjects/G11/BIOLOGY.json"
+    },
+    {
+      "grade_folder": "G11",
+      "grade": 11,
+      "subject": "BUSINESS_STUDIES",
+      "path": "FactoryArtifacts/Subjects/G11/BUSINESS_STUDIES.json"
+    },
+    {
+      "grade_folder": "G11",
+      "grade": 11,
+      "subject": "CHEMISTRY",
+      "path": "FactoryArtifacts/Subjects/G11/CHEMISTRY.json"
+    },
+    {
+      "grade_folder": "G11",
+      "grade": 11,
+      "subject": "CIVICS",
+      "path": "FactoryArtifacts/Subjects/G11/CIVICS.json"
+    },
+    {
+      "grade_folder": "G11",
+      "grade": 11,
+      "subject": "COMPUTER_SCIENCE",
+      "path": "FactoryArtifacts/Subjects/G11/COMPUTER_SCIENCE.json"
+    },
+    {
+      "grade_folder": "G11",
+      "grade": 11,
+      "subject": "CREATIVITY",
+      "path": "FactoryArtifacts/Subjects/G11/CREATIVITY.json"
+    },
+    {
+      "grade_folder": "G11",
+      "grade": 11,
+      "subject": "ECONOMICS",
+      "path": "FactoryArtifacts/Subjects/G11/ECONOMICS.json"
+    },
+    {
+      "grade_folder": "G11",
+      "grade": 11,
+      "subject": "ENGLISH",
+      "path": "FactoryArtifacts/Subjects/G11/ENGLISH.json"
+    },
+    {
+      "grade_folder": "G11",
+      "grade": 11,
+      "subject": "GEOGRAPHY",
+      "path": "FactoryArtifacts/Subjects/G11/GEOGRAPHY.json"
+    },
+    {
+      "grade_folder": "G11",
+      "grade": 11,
+      "subject": "HISTORY",
+      "path": "FactoryArtifacts/Subjects/G11/HISTORY.json"
+    },
+    {
+      "grade_folder": "G11",
+      "grade": 11,
+      "subject": "ICT",
+      "path": "FactoryArtifacts/Subjects/G11/ICT.json"
+    },
+    {
+      "grade_folder": "G11",
+      "grade": 11,
+      "subject": "LITERACY",
+      "path": "FactoryArtifacts/Subjects/G11/LITERACY.json"
+    },
+    {
+      "grade_folder": "G11",
+      "grade": 11,
+      "subject": "MATH",
+      "path": "FactoryArtifacts/Subjects/G11/MATH.json"
+    },
+    {
+      "grade_folder": "G11",
+      "grade": 11,
+      "subject": "PE",
+      "path": "FactoryArtifacts/Subjects/G11/PE.json"
+    },
+    {
+      "grade_folder": "G11",
+      "grade": 11,
+      "subject": "PHYSICS",
+      "path": "FactoryArtifacts/Subjects/G11/PHYSICS.json"
+    },
+    {
+      "grade_folder": "G11",
+      "grade": 11,
+      "subject": "SCIENCE",
+      "path": "FactoryArtifacts/Subjects/G11/SCIENCE.json"
+    },
+    {
+      "grade_folder": "G12",
+      "grade": 12,
+      "subject": "ARTS",
+      "path": "FactoryArtifacts/Subjects/G12/ARTS.json"
+    },
+    {
+      "grade_folder": "G12",
+      "grade": 12,
+      "subject": "BIOLOGY",
+      "path": "FactoryArtifacts/Subjects/G12/BIOLOGY.json"
+    },
+    {
+      "grade_folder": "G12",
+      "grade": 12,
+      "subject": "BUSINESS_STUDIES",
+      "path": "FactoryArtifacts/Subjects/G12/BUSINESS_STUDIES.json"
+    },
+    {
+      "grade_folder": "G12",
+      "grade": 12,
+      "subject": "CHEMISTRY",
+      "path": "FactoryArtifacts/Subjects/G12/CHEMISTRY.json"
+    },
+    {
+      "grade_folder": "G12",
+      "grade": 12,
+      "subject": "CIVICS",
+      "path": "FactoryArtifacts/Subjects/G12/CIVICS.json"
+    },
+    {
+      "grade_folder": "G12",
+      "grade": 12,
+      "subject": "COMPUTER_SCIENCE",
+      "path": "FactoryArtifacts/Subjects/G12/COMPUTER_SCIENCE.json"
+    },
+    {
+      "grade_folder": "G12",
+      "grade": 12,
+      "subject": "CREATIVITY",
+      "path": "FactoryArtifacts/Subjects/G12/CREATIVITY.json"
+    },
+    {
+      "grade_folder": "G12",
+      "grade": 12,
+      "subject": "ECONOMICS",
+      "path": "FactoryArtifacts/Subjects/G12/ECONOMICS.json"
+    },
+    {
+      "grade_folder": "G12",
+      "grade": 12,
+      "subject": "ENGLISH",
+      "path": "FactoryArtifacts/Subjects/G12/ENGLISH.json"
+    },
+    {
+      "grade_folder": "G12",
+      "grade": 12,
+      "subject": "GEOGRAPHY",
+      "path": "FactoryArtifacts/Subjects/G12/GEOGRAPHY.json"
+    },
+    {
+      "grade_folder": "G12",
+      "grade": 12,
+      "subject": "HISTORY",
+      "path": "FactoryArtifacts/Subjects/G12/HISTORY.json"
+    },
+    {
+      "grade_folder": "G12",
+      "grade": 12,
+      "subject": "ICT",
+      "path": "FactoryArtifacts/Subjects/G12/ICT.json"
+    },
+    {
+      "grade_folder": "G12",
+      "grade": 12,
+      "subject": "LITERACY",
+      "path": "FactoryArtifacts/Subjects/G12/LITERACY.json"
+    },
+    {
+      "grade_folder": "G12",
+      "grade": 12,
+      "subject": "MATH",
+      "path": "FactoryArtifacts/Subjects/G12/MATH.json"
+    },
+    {
+      "grade_folder": "G12",
+      "grade": 12,
+      "subject": "PE",
+      "path": "FactoryArtifacts/Subjects/G12/PE.json"
+    },
+    {
+      "grade_folder": "G12",
+      "grade": 12,
+      "subject": "PHYSICS",
+      "path": "FactoryArtifacts/Subjects/G12/PHYSICS.json"
+    },
+    {
+      "grade_folder": "G12",
+      "grade": 12,
+      "subject": "SCIENCE",
+      "path": "FactoryArtifacts/Subjects/G12/SCIENCE.json"
+    }
+  ],
+  "root": "./FactoryArtifacts/Subjects"
+}

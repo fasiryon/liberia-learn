@@ -1,0 +1,390 @@
+{
+    "curriculum_overview": {
+      "title": "LiberiaLearn K-12 Mathematics Curriculum",
+      "description": "Complete mathematics curriculum for Grades 1-12, globally-inspired and Liberia-contextualized",
+      "version": "1.0.0",
+      "total_grades": 12,
+      "total_terms": 36,
+      "total_units": 108,
+      "estimated_total_lessons": 648,
+      "global_sources": {
+        "primary": "Singapore Math (visual, problem-solving approach)",
+        "secondary": ["Japan (deep conceptual understanding)", "Estonia (digital integration)"],
+        "adaptation_notes": "Singapore's visual bar models + Japan's careful progression + Liberian real-world contexts"
+      }
+    },
+    
+    "structure": {
+      "foundation_band": {
+        "grades": [1, 2, 3],
+        "focus": "Concrete manipulation, visual models, number sense, basic operations",
+        "pedagogy": "Play-based, hands-on, stories, songs, games"
+      },
+      "core_band": {
+        "grades": [4, 5, 6, 7, 8, 9],
+        "focus": "Abstract thinking, algebraic reasoning, geometry, data analysis",
+        "pedagogy": "Problem-solving, inquiry, real-world applications"
+      },
+      "specialization_band": {
+        "grades": [10, 11, 12],
+        "focus": "Advanced algebra, calculus intro, statistics, WAEC prep, career readiness",
+        "pedagogy": "Deep analysis, proofs, projects, test preparation"
+      }
+    },
+    
+    "sample_grade_breakdown": {
+      "grade_5": {
+        "metadata": {
+          "id": "FULL_SUBJECT-G05-MATH",
+          "version": "1.0.0",
+          "status": "published",
+          "created_at": "2025-01-06T00:00:00Z"
+        },
+        "educational_context": {
+          "grade": 5,
+          "subject": "MATH",
+          "cognitive_band": "CORE"
+        },
+        "title": "Grade 5 Mathematics (Complete Year)",
+        "content_type": "FULL_SUBJECT",
+        
+        "terms": [
+          {
+            "term": 1,
+            "title": "Term 1: Number Systems & Operations",
+            "duration_weeks": 12,
+            "units": [
+              {
+                "unit_id": "UNIT_01",
+                "title": "Place Value & Large Numbers",
+                "duration_weeks": 3,
+                "lessons": [
+                  {
+                    "lesson_id": "LESSON_01_01",
+                    "title": "Understanding Millions",
+                    "objectives": ["Read and write numbers up to 10 million", "Understand place value positions"],
+                    "duration_minutes": 45,
+                    "cultural_context": "Use Liberian population (5.5 million), national budget figures"
+                  },
+                  {
+                    "lesson_id": "LESSON_01_02",
+                    "title": "Comparing and Ordering Large Numbers",
+                    "objectives": ["Compare numbers up to 10 million", "Order numbers from least to greatest"],
+                    "duration_minutes": 45,
+                    "cultural_context": "Compare county populations, market revenues"
+                  },
+                  {
+                    "lesson_id": "LESSON_01_03",
+                    "title": "Rounding Large Numbers",
+                    "objectives": ["Round to nearest ten, hundred, thousand, ten thousand"],
+                    "duration_minutes": 45,
+                    "cultural_context": "Estimate market sales, school enrollment"
+                  }
+                ]
+              },
+              {
+                "unit_id": "UNIT_02",
+                "title": "Fractions Fundamentals",
+                "duration_weeks": 3,
+                "lessons": [
+                  {
+                    "lesson_id": "LESSON_02_01",
+                    "title": "Introduction to Fractions",
+                    "objectives": ["Understand fractions as parts of a whole", "Identify numerator and denominator"],
+                    "duration_minutes": 45,
+                    "cultural_context": "Sharing cassava among family members, dividing land plots"
+                  },
+                  {
+                    "lesson_id": "LESSON_02_02",
+                    "title": "Equivalent Fractions",
+                    "objectives": ["Find equivalent fractions", "Simplify fractions"],
+                    "duration_minutes": 45,
+                    "cultural_context": "Market measurements (1/2 cup rice = 2/4 cup)"
+                  },
+                  {
+                    "lesson_id": "LESSON_02_03",
+                    "title": "Adding Fractions (Like Denominators)",
+                    "objectives": ["Add fractions with same denominator"],
+                    "duration_minutes": 45,
+                    "cultural_context": "Combining portions of palm oil"
+                  },
+                  {
+                    "lesson_id": "LESSON_02_04",
+                    "title": "Subtracting Fractions (Like Denominators)",
+                    "objectives": ["Subtract fractions with same denominator"],
+                    "duration_minutes": 45,
+                    "cultural_context": "Using portions of stored rice"
+                  }
+                ]
+              },
+              {
+                "unit_id": "UNIT_03",
+                "title": "Decimals Introduction",
+                "duration_weeks": 2,
+                "lessons": [
+                  {
+                    "lesson_id": "LESSON_03_01",
+                    "title": "Understanding Decimals",
+                    "objectives": ["Understand tenths and hundredths", "Write decimals"],
+                    "duration_minutes": 45,
+                    "cultural_context": "Liberian Dollar decimals (LD 12.50)"
+                  },
+                  {
+                    "lesson_id": "LESSON_03_02",
+                    "title": "Comparing and Ordering Decimals",
+                    "objectives": ["Compare decimals", "Order decimals"],
+                    "duration_minutes": 45,
+                    "cultural_context": "Compare market prices"
+                  }
+                ]
+              },
+              {
+                "unit_id": "UNIT_04",
+                "title": "Multiplication & Division Strategies",
+                "duration_weeks": 4,
+                "lessons": [
+                  {
+                    "lesson_id": "LESSON_04_01",
+                    "title": "Multi-Digit Multiplication",
+                    "objectives": ["Multiply 2-digit by 2-digit numbers"],
+                    "duration_minutes": 45,
+                    "cultural_context": "Calculate total sales (25 bags × 18 LD per bag)"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "term": 2,
+            "title": "Term 2: Geometry & Measurement",
+            "duration_weeks": 12,
+            "units": [
+              {
+                "unit_id": "UNIT_05",
+                "title": "2D Shapes & Properties",
+                "duration_weeks": 3
+              },
+              {
+                "unit_id": "UNIT_06",
+                "title": "Area & Perimeter",
+                "duration_weeks": 3,
+                "lessons": [
+                  {
+                    "lesson_id": "LESSON_06_01",
+                    "title": "Finding Area of Rectangles",
+                    "cultural_context": "Calculate farm plot sizes, classroom floor area"
+                  }
+                ]
+              },
+              {
+                "unit_id": "UNIT_07",
+                "title": "Measurement Units",
+                "duration_weeks": 3,
+                "lessons": [
+                  {
+                    "lesson_id": "LESSON_07_01",
+                    "title": "Metric Units (Length, Mass, Volume)",
+                    "cultural_context": "Market measurements (kilograms of rice, liters of palm oil)"
+                  }
+                ]
+              },
+              {
+                "unit_id": "UNIT_08",
+                "title": "Time & Money",
+                "duration_weeks": 3,
+                "lessons": [
+                  {
+                    "lesson_id": "LESSON_08_01",
+                    "title": "Working with Liberian Dollars",
+                    "cultural_context": "Budget planning, making change at market"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "term": 3,
+            "title": "Term 3: Data & Problem Solving",
+            "duration_weeks": 12,
+            "units": [
+              {
+                "unit_id": "UNIT_09",
+                "title": "Data Collection & Graphs",
+                "duration_weeks": 4,
+                "lessons": [
+                  {
+                    "lesson_id": "LESSON_09_01",
+                    "title": "Bar Graphs",
+                    "cultural_context": "Graph school attendance, market sales data"
+                  }
+                ]
+              },
+              {
+                "unit_id": "UNIT_10",
+                "title": "Probability Basics",
+                "duration_weeks": 3,
+                "lessons": [
+                  {
+                    "lesson_id": "LESSON_10_01",
+                    "title": "Introduction to Probability",
+                    "cultural_context": "Weather patterns (rainy vs dry days), game outcomes"
+                  }
+                ]
+              },
+              {
+                "unit_id": "UNIT_11",
+                "title": "Word Problems & Real-World Applications",
+                "duration_weeks": 3,
+                "lessons": [
+                  {
+                    "lesson_id": "LESSON_11_01",
+                    "title": "Multi-Step Word Problems",
+                    "cultural_context": "Market scenarios, transportation costs, family budgets"
+                  }
+                ]
+              },
+              {
+                "unit_id": "UNIT_12",
+                "title": "End-of-Year Project",
+                "duration_weeks": 2,
+                "project": {
+                  "title": "Community Math Project",
+                  "description": "Students survey local market prices, create graphs, analyze trends",
+                  "duration_days": 10,
+                  "deliverables": ["Data collection table", "Graph poster", "Presentation"]
+                }
+              }
+            ]
+          }
+        ]
+      }
+    },
+    
+    "k12_scope": {
+      "grade_1": {
+        "focus": "Counting 1-100, addition/subtraction to 20, shapes, measurement intro",
+        "units": 8,
+        "lessons": 48
+      },
+      "grade_2": {
+        "focus": "Place value to 1000, addition/subtraction to 100, time, money",
+        "units": 9,
+        "lessons": 54
+      },
+      "grade_3": {
+        "focus": "Multiplication/division intro, fractions intro, area, measurement",
+        "units": 9,
+        "lessons": 54
+      },
+      "grade_4": {
+        "focus": "Multi-digit operations, factors/multiples, decimals intro, geometry",
+        "units": 9,
+        "lessons": 54
+      },
+      "grade_5": {
+        "focus": "Fractions operations, decimals, volume, coordinate plane intro",
+        "units": 12,
+        "lessons": 60
+      },
+      "grade_6": {
+        "focus": "Ratios, percents, negative numbers, expressions/equations intro",
+        "units": 10,
+        "lessons": 60
+      },
+      "grade_7": {
+        "focus": "Proportional reasoning, algebra foundations, geometry, statistics",
+        "units": 10,
+        "lessons": 60
+      },
+      "grade_8": {
+        "focus": "Linear equations, functions, Pythagorean theorem, transformations",
+        "units": 10,
+        "lessons": 60
+      },
+      "grade_9": {
+        "focus": "Algebra I, quadratic equations, exponential functions, data analysis",
+        "units": 9,
+        "lessons": 54,
+        "waec_prep": false
+      },
+      "grade_10": {
+        "focus": "Geometry, trigonometry intro, statistics, WAEC prep begins",
+        "units": 9,
+        "lessons": 54,
+        "waec_prep": true
+      },
+      "grade_11": {
+        "focus": "Advanced algebra, trigonometry, probability, WAEC intensive",
+        "units": 9,
+        "lessons": 54,
+        "waec_prep": true
+      },
+      "grade_12": {
+        "focus": "Calculus intro, statistics, financial math, career readiness",
+        "units": 8,
+        "lessons": 48,
+        "waec_prep": true
+      }
+    },
+    
+    "implementation_strategy": {
+      "phase_1_pilot": {
+        "grades": [5, 7, 10],
+        "duration_months": 6,
+        "schools": 10,
+        "rationale": "One grade per band, test full pipeline"
+      },
+      "phase_2_expansion": {
+        "grades": [4, 6, 8, 9, 11],
+        "duration_months": 6,
+        "schools": 50,
+        "rationale": "Fill in around pilot grades"
+      },
+      "phase_3_complete": {
+        "grades": [1, 2, 3, 12],
+        "duration_months": 6,
+        "schools": "All",
+        "rationale": "Foundation grades + graduation year"
+      }
+    },
+    
+    "global_adaptation_notes": {
+      "singapore_math": {
+        "adopted": [
+          "Concrete-Pictorial-Abstract (CPA) progression",
+          "Bar model for word problems",
+          "Number bonds for mental math",
+          "Systematic problem-solving heuristics"
+        ],
+        "adapted": [
+          "Singaporean food examples → Liberian foods",
+          "HDB flats → Liberian housing",
+          "Singapore dollars → Liberian dollars"
+        ]
+      },
+      "japanese_math": {
+        "adopted": [
+          "Deep exploration of fewer topics",
+          "Multiple solution methods encouraged",
+          "Class discussion of different approaches",
+          "Careful conceptual development"
+        ],
+        "adapted": [
+          "Japanese cultural contexts → Liberian contexts",
+          "Kanji number notation → Arabic numerals only"
+        ]
+      },
+      "estonian_digital": {
+        "adopted": [
+          "Offline-first digital tools",
+          "Gamification for motivation",
+          "Immediate feedback loops",
+          "Data-driven personalization"
+        ],
+        "adapted": [
+          "Requires internet → Offline by default",
+          "High-spec devices → Low-spec tablets"
+        ]
+      }
+    }
+  }

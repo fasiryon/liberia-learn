@@ -1,0 +1,18 @@
+{
+  "grade": 5,
+  "model": "gpt-4",
+  "subjects": [
+    "MATH",
+    "ENGLISH",
+    "SCIENCE",
+    "ICT",
+    "COMPUTER_SCIENCE",
+    "CIVICS",
+    "HISTORY",
+    "GEOGRAPHY",
+    "LITERACY",
+    "ARTS",
+    "CREATIVITY",
+    "PE"
+  ]
+}
