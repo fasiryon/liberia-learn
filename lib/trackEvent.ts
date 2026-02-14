@@ -1,38 +1,55 @@
 "use client";
 
-type TrackPayload = {
-  drugId?: string;
-  [key: string]: unknown;
-};
+export const EVENTS = {
+  LESSON_VIEW: "lesson_view",
+  LESSON_COMPLETE: "lesson_complete",
+  LESSON_PREFETCH: "lesson_prefetch",
+  HOMEWORK_START: "homework_start",
+  HOMEWORK_SUBMIT: "homework_submit",
+  HOMEWORK_SUBMIT_OFFLINE: "homework_submit_offline",
+  TUTOR_MESSAGE: "tutor_message",
+  TUTOR_OFFLINE: "tutor_offline",
+  PLACEMENT_START: "placement_start",
+  PLACEMENT_COMPLETE: "placement_complete",
+  LOGIN: "login",
+  LOGOUT: "logout",
+  SCHOOL_REGISTER: "school_register",
+  INVITE_ACCEPT: "invite_accept",
+} as const;
+
+export type EventType = (typeof EVENTS)[keyof typeof EVENTS];
+
+function getSessionId(): string | null {
+  if (typeof window === "undefined") return null;
+  try {
+    let sid = sessionStorage.getItem("ll-session-id");
+    if (!sid) {
+      sid = crypto.randomUUID();
+      sessionStorage.setItem("ll-session-id", sid);
+    }
+    return sid;
+  } catch {
+    return null;
+  }
+}
 
 export async function trackEvent(
-  eventType: string,
-  payload: TrackPayload = {}
+  eventType: EventType | string,
+  payload: Record<string, unknown> = {}
 ): Promise<void> {
   try {
-    await fetch('/api/track', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+    const { contentId, ...metadata } = payload;
+    await fetch("/api/track", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         eventType,
-        drugId: payload.drugId ?? null,
         sessionId: getSessionId(),
-        metadata: payload,
+        contentId: (contentId as string) ?? null,
+        metadata,
       }),
     });
-  } catch (error) {
-    console.warn('Analytics error:', error);
+  } catch {
+    // never throws — analytics must not break UX
   }
 }
-
-function getSessionId() {
-  if (typeof window === 'undefined') return null;
-  let sid = window.localStorage.getItem('nursing-pill-sid');
-  if (!sid) {
-    sid = crypto.randomUUID();
-    window.localStorage.setItem('nursing-pill-sid', sid);
-  }
-  return sid;
-}
-
-
