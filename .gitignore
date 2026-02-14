@@ -49,3 +49,9 @@ LL_AUDIT_DUMP*
 *.bak.*
 # --- optional: logs/temp ---
 *.log
+
+_frontend_old
+_frontend_old/**
+_app_backup_*
+LL_AUDIT_DUMP*.txt
+
