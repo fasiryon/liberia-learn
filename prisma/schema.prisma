@@ -75,7 +75,8 @@ model User {
   auditLogs        AuditLog[]
   accounts         Account[]
   sessions         Session[]
-  homework         Homework[]
+  homework             Homework[]
+  passwordResetTokens  PasswordResetToken[]
 }
 
 model School {
@@ -580,6 +581,17 @@ model ChatMessage {
   student Student @relation(fields: [studentId], references: [id])
 
   @@index([studentId, createdAt])
+}
+
+//// ===== Password Reset =====
+model PasswordResetToken {
+  id        String    @id @default(cuid())
+  token     String    @unique @default(cuid())
+  userId    String
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime  @default(now())
+  User      User      @relation(fields: [userId], references: [id])
 }
 
 //// ===== NextAuth tables =====
