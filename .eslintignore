@@ -1,0 +1,8 @@
+﻿
+
+_frontend_old
+_frontend_old/**
+_app_backup_*
+_patches/
+LL_AUDIT_DUMP*.txt
+

@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useEffect, useMemo, useState } from "react";
 
@@ -41,7 +41,12 @@ export default function AdminHomeworkPage() {
     setBusy(true);
     setStatus("Loading homework...");
     try {
-      const r = await fetch(/api/homework?classId=, { cache: "no-store" });
+      const _classId =
+  (typeof classId === "string" && classId) ||
+  (typeof selectedClassId === "string" && selectedClassId) ||
+  "";
+if (!_classId) throw new Error("Missing classId");
+const r = await fetch(`/api/homework?classId=${encodeURIComponent(_classId)}`, { cache: "no-store" });
       const j = await r.json();
       if (!r.ok) throw new Error(j?.error ?? "Failed");
       setRows((j?.homework ?? []) as HwRow[]);
@@ -86,7 +91,7 @@ export default function AdminHomeworkPage() {
           </label>
 
           <div className="text-xs text-white/60">
-            Selected: {selectedClass ? ${selectedClass.name} () : "—"}
+            Selected: {selectedClass ? `${selectedClass.name} (${selectedClass.subject})` : "—"}
           </div>
 
           <button
@@ -116,7 +121,7 @@ export default function AdminHomeworkPage() {
                   <div className="text-white/90 font-semibold">{h.title}</div>
                   {h.description && <div className="text-white/70 mt-1">desc: {h.description}</div>}
                   <div className="text-white/60 text-xs mt-1">
-                    id: {h.id} • due: {h.dueAt ? new Date(h.dueAt).toLocaleString() : "—"}
+                    id: {h.id} â€¢ due: {h.dueAt ? new Date(h.dueAt).toLocaleString() : "â€”"}
                   </div>
                 </div>
               ))}
