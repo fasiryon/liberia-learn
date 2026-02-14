@@ -14,7 +14,7 @@ export type QuestionFeedback = {
 };
 
 export type GradingResult = {
-  overallScore: number;         // 0–100
+  overallScore: number;         // 0â€“100
   overallFeedback: string;      // general comment
   questions: QuestionFeedback[];
 };
@@ -56,7 +56,19 @@ export class HomeworkGrader {
   ): Promise<GradingResult> {
     const agent = await getOrCreateGraderAgent();
 
-    const task = await prisma.agentTask.create({
+    const task = await await prisma.agent.upsert({
+  where: { id: agentId },
+  create: {
+    id: agentId,
+    name: "TutorAgent",
+    type: "TUTOR",
+    status: "ACTIVE",
+    lastRunAt: new Date(),
+  },
+  update: { lastRunAt: new Date() },
+});
+
+{
       data: {
         agentId: agent.id,
         taskType: "HOMEWORK_GRADE",

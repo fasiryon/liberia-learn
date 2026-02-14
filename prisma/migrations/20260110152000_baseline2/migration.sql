@@ -1,2 +1,0 @@
--- Baseline2 migration
--- Intentionally empty. Used only to align migration history.
