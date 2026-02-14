@@ -6,6 +6,8 @@ export default function AdminIndexPage() {
       <h1>Admin</h1>
       <ul>
         <li><Link href="/admin/homework">Homework</Link></li>
+        <li><Link href="/admin/analytics">Analytics</Link></li>
+        <li><Link href="/admin/guardian-link">Guardian Links</Link></li>
       </ul>
     </div>
   );
