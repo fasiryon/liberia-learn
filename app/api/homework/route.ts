@@ -1,5 +1,6 @@
 ﻿import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
+import { requireRole } from "@/lib/auth";
 import { requireTenant } from "@/lib/tenant";
 import { z } from "zod";
 
@@ -8,6 +9,7 @@ const QuerySchema = z.object({
 });
 
 export async function GET(req: Request) {
+  await requireRole("TEACHER", "ADMIN");
   const { schoolId } = await requireTenant();
 
   const url = new URL(req.url);

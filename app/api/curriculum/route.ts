@@ -1,11 +1,13 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { requireRole } from "@/lib/auth";
 
 export const dynamic = "force-dynamic";
 
 // GET /api/curriculum?grade=5&subject=MATH
 export async function GET(req: Request) {
   try {
+    await requireRole("STUDENT", "TEACHER", "ADMIN");
     const { searchParams } = new URL(req.url);
     const gradeParam = searchParams.get("grade");
     const subject = searchParams.get("subject");

@@ -1,16 +1,12 @@
 ﻿import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { requireUser } from "@/lib/auth-config";
-import { requireTenant } from "@/lib/tenant"
+import { requireRole } from "@/lib/auth";
+import { requireTenant } from "@/lib/tenant";
 
 export async function POST(req: Request) {
   const { schoolId } = await requireTenant();
   try {
-    const user = await requireUser();
-    if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    if (user.role !== "TEACHER" && user.role !== "ADMIN") {
-      return NextResponse.json({ error: "Only teachers/admins can create homework" }, { status: 403 });
-    }
+    const user = await requireRole("TEACHER", "ADMIN");
 
     const body = await req.json();
     const classId = body?.classId as string | undefined;

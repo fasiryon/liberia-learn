@@ -1,5 +1,6 @@
 // app/api/placement/generate-question/route.ts
 import { NextResponse } from "next/server";
+import { requireRole } from "@/lib/auth";
 import OpenAI from "openai";
 
 const openai = new OpenAI({
@@ -16,6 +17,7 @@ const difficultyDescriptions: Record<number, string> = {
 
 export async function POST(req: Request) {
   try {
+    await requireRole("STUDENT");
     if (!process.env.OPENAI_API_KEY) {
       throw new Error("OPENAI_API_KEY is not set in environment variables");
     }

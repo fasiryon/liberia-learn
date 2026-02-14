@@ -1,6 +1,7 @@
 ﻿// app/api/admin/classes/route.ts
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
+import { requireRole } from "@/lib/auth";
 import { requireTenant } from "@/lib/tenant";
 import { z } from "zod";
 
@@ -24,6 +25,7 @@ const Schema = z.object({
 });
 
 export async function GET() {
+  await requireRole("ADMIN");
   const { schoolId } = await requireTenant();
 
   const classes = await prisma.class.findMany({
@@ -36,6 +38,7 @@ export async function GET() {
 }
 
 export async function POST(req: Request) {
+  await requireRole("ADMIN");
   const { schoolId } = await requireTenant();
 
   const body = await req.json().catch(() => null);

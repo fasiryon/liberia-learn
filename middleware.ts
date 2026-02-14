@@ -45,6 +45,9 @@ export async function middleware(req: NextRequest) {
     const url = req.nextUrl.clone();
     url.pathname = "/login";
     url.searchParams.set("next", pathname);
+    if (req.nextUrl.pathname.startsWith("/api/")) {
+  return NextResponse.json({ ok: false, error: "Unauthorized" }, { status: 401 });
+}
     return NextResponse.redirect(url);
   }
 
@@ -54,3 +57,4 @@ export async function middleware(req: NextRequest) {
 export const config = {
   matcher: ["/((?!_next/static|_next/image|favicon.ico).*)"],
 };
+

@@ -4,7 +4,7 @@
 
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
-import { requireUser } from "@/lib/auth";
+import { requireRole } from "@/lib/auth";
 
 export const dynamic = "force-dynamic";
 
@@ -13,15 +13,7 @@ export async function GET(
   { params }: { params: { id: string } }
 ) {
   try {
-    const user = await requireUser();
-
-    // Students can only see themselves
-    if (user.role === "STUDENT") {
-      const self = await prisma.student.findFirst({ where: { userId: user.id } });
-      if (!self || self.id !== params.id) {
-        return NextResponse.json({ error: "Forbidden" }, { status: 403 });
-      }
-    }
+    const user = await requireRole("TEACHER", "ADMIN");
 
     const student = await prisma.student.findUnique({
       where: { id: params.id },

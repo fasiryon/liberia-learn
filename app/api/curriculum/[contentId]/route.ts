@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { requireRole } from "@/lib/auth";
 
 export const dynamic = "force-dynamic";
 
@@ -9,6 +10,7 @@ export async function GET(
   { params }: { params: { contentId: string } }
 ) {
   try {
+    await requireRole("STUDENT", "TEACHER", "ADMIN");
     const contentId = params.contentId;
 
     const row = await prisma.curriculumContent.findUnique({

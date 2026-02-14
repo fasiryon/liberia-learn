@@ -1,5 +1,6 @@
 // app/api/placement/calculate-grade/route.ts
 import { NextResponse } from "next/server";
+import { requireRole } from "@/lib/auth";
 
 interface Answer {
   questionId: string;
@@ -10,6 +11,7 @@ interface Answer {
 
 export async function POST(req: Request) {
   try {
+    await requireRole("STUDENT");
     const { answers }: { answers: Answer[] } = await req.json();
 
     if (!answers || answers.length === 0) {
