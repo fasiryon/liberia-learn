@@ -89,7 +89,8 @@ model School {
   logoUrl      String?
   createdAt    DateTime @default(now())
 
-  classes Class[]
+  classes      Class[]
+  inviteTokens InviteToken[]
 }
 
 model Class {
@@ -389,6 +390,7 @@ model Homework {
   createdBy     User   @relation(fields: [createdById], references: [id])
   instructions String?
   questions    Json? // nullable for db push; backfill later
+  rubricJson   Json?
   dueAt        DateTime?
   createdAt    DateTime  @default(now())
 
@@ -615,5 +617,37 @@ model VerificationToken {
   expires    DateTime
 
   @@unique([identifier, token])
+}
+
+//// ===== Invite Tokens =====
+model InviteToken {
+  id        String    @id @default(cuid())
+  token     String    @unique @default(cuid())
+  email     String?
+  role      String    @default("TEACHER")
+  schoolId  String
+  usedAt    DateTime?
+  expiresAt DateTime
+  createdAt DateTime  @default(now())
+  School    School    @relation(fields: [schoolId], references: [id])
+}
+
+//// ===== Curriculum Content =====
+model CurriculumContent {
+  id            String   @id @default(cuid())
+  contentId     String   @unique
+  grade         Int
+  subject       String
+  contentType   String
+  status        String
+  version       String
+  payload       Json
+  moeAlignments Json?
+  hash          String?  @unique
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([grade, subject])
+  @@index([contentType, status])
 }
 

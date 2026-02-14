@@ -101,3 +101,12 @@ export async function requireUser(): Promise<SessionUser> {
   if (!user) throw Object.assign(new Error("Unauthorized"), { status: 401 });
   return user;
 }
+
+/** Throws 401/403 if not authenticated or not in allowed roles. */
+export async function requireRole(...roles: string[]): Promise<SessionUser> {
+  const user = await requireUser();
+  if (!roles.includes(user.role)) {
+    throw Object.assign(new Error("Forbidden"), { status: 403 });
+  }
+  return user;
+}

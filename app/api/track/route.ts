@@ -1,42 +1,48 @@
-import { NextResponse } from 'next/server';
-import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs';
-import { cookies } from 'next/headers';
+// app/api/track/route.ts
+import { NextResponse } from "next/server";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
+import { prisma } from "@/lib/db";
+import { z } from "zod";
 
-type TrackBody = {
-  eventType: string;
-  drugId?: string | null;
-  sessionId?: string | null;
-  metadata?: Record<string, unknown>;
-};
+export const dynamic = "force-dynamic";
+
+const Schema = z.object({
+  eventType: z.string().min(1).max(80),
+  sessionId: z.string().optional().nullable(),
+  contentId: z.string().optional().nullable(),
+  metadata: z.record(z.unknown()).optional(),
+});
 
 export async function POST(req: Request) {
-  const supabase = createRouteHandlerClient({ cookies });
-  const body = (await req.json()) as TrackBody;
+  try {
+    const session = await getServerSession(authOptions);
+    const userId = (session?.user as any)?.id ?? null;
 
-  if (!body.eventType) {
-    return NextResponse.json(
-      { error: 'eventType is required' },
-      { status: 400 }
-    );
-  }
+    const body = await req.json();
+    const parsed = Schema.safeParse(body);
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+    if (!parsed.success) {
+      return NextResponse.json({ ok: true }); // analytics must never break UX
+    }
 
-  const { error } = await supabase.from('analytics_events').insert({
-    user_id: user?.id ?? null,
-    session_id: body.sessionId ?? null,
-    event_type: body.eventType,
-    drug_id: body.drugId ?? null,
-    metadata: body.metadata ?? {},
-  });
+    const { eventType, sessionId, contentId, metadata } = parsed.data;
 
-  if (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    await prisma.auditLog.create({
+      data: {
+        userId,
+        action: eventType,
+        details: {
+          sessionId: sessionId ?? null,
+          contentId: contentId ?? null,
+          userAgent: req.headers.get("user-agent") ?? null,
+          ...(metadata ?? {}),
+        },
+      },
+    });
+  } catch (_) {
+    // analytics must never break the user experience
   }
 
   return NextResponse.json({ ok: true });
 }
-
-
