@@ -1,6 +1,7 @@
 // lib/ai/homework-grader.ts
 import OpenAI from "openai";
 import { prisma } from "@/lib/db";
+const AGENT_ID = "homework-grader";
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
@@ -14,7 +15,7 @@ export type QuestionFeedback = {
 };
 
 export type GradingResult = {
-  overallScore: number;         // 0â€“100
+  overallScore: number;         // 0ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œ100
   overallFeedback: string;      // general comment
   questions: QuestionFeedback[];
 };
@@ -56,30 +57,17 @@ export class HomeworkGrader {
   ): Promise<GradingResult> {
     const agent = await getOrCreateGraderAgent();
 
-    const task = await await prisma.agent.upsert({
-  where: { id: agentId },
-  create: {
-    id: agentId,
-    name: "TutorAgent",
-    type: "TUTOR",
-    status: "ACTIVE",
-    lastRunAt: new Date(),
+// Create an AgentTask row (matches prisma.schema: agentId/taskType/status/input)
+const task = await prisma.agentTask.create({
+  data: {
+    agentId: agent.id,
+    taskType: "HOMEWORK_GRADE",
+    status: "running",
+    input: { submissionId },
   },
-  update: { lastRunAt: new Date() },
 });
 
-{
-      data: {
-        agentId: agent.id,
-        taskType: "HOMEWORK_GRADE",
-        status: "running",
-        input: { submissionId },
-      },
-    });
-
-    const started = Date.now();
-
-    try {
+const started = Date.now();try {
       // Load submission with related homework + student info
       const submission = await prisma.homeworkSubmission.findUnique({
         where: { id: submissionId },

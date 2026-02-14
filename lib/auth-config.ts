@@ -1,4 +1,4 @@
-﻿import type { NextAuthOptions } from "next-auth";
+import type { NextAuthOptions } from "next-auth";
 import { getServerSession } from "next-auth";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import CredentialsProvider from "next-auth/providers/credentials";
@@ -36,30 +36,20 @@ export const authOptions: NextAuthOptions = {
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
-        // @ts-expect-error custom field
         token.role = (user as any).role;
       }
       return token;
     },
     async session({ session, token }) {
       if (session.user) {
-        // @ts-expect-error custom fields
         session.user.role = (token as any).role;
         // NextAuth puts user id on token.sub for jwt sessions
-        // @ts-expect-error custom field
         session.user.id = token.sub;
       }
       return session;
     },
   },
   pages: { signIn: "/login" },
-};
-
-export type SessionUser = {
-  id: string;
-  email?: string | null;
-  name?: string | null;
-  role?: any;
 };
 
 export type SessionUser = {

@@ -5,7 +5,7 @@
 //  3) Pulls basic student context (grade + enrolled subjects).
 
 import { NextRequest, NextResponse } from "next/server";
-import { requireRole } from "@/lib/auth";
+import { requireUser } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { TutorAgent } from "@/lib/ai/tutor-agent";
 
@@ -28,7 +28,10 @@ function checkRateLimit(key: string): boolean {
 
 export async function POST(request: NextRequest) {
   try {
-    const user = await requireRole(["STUDENT","ADMIN"]);
+    const user = await requireUser();
+if (!["STUDENT", "ADMIN"].includes(user.role)) {
+  return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+}
 
     if (!checkRateLimit(user.id)) {
       return NextResponse.json(

@@ -6,7 +6,7 @@ import { z } from "zod";
 
 const CreateSchema = z.object({
   homeworkId: z.string().min(10),
-  content: z.string().max(20000).optional().nullable(),
+  answers: z.string().max(20000).optional().nullable(),
 });
 
 // GET /api/homework/submissions?homeworkId=...
@@ -22,7 +22,7 @@ export async function GET(req: Request) {
   }
 
   const hw = await prisma.homework.findFirst({
-    where: { id: homeworkId, class: { schoolId } },
+    where: { id: homeworkId, Class: { schoolId } },
     select: { id: true },
   });
   if (!hw) return NextResponse.json({ error: "Not found" }, { status: 404 });
@@ -34,10 +34,8 @@ export async function GET(req: Request) {
       id: true,
       homeworkId: true,
       studentId: true,
-      content: true,
+      answers: true,
       submittedAt: true,
-      createdAt: true,
-      updatedAt: true,
     },
   });
 
@@ -45,7 +43,7 @@ export async function GET(req: Request) {
 }
 
 // POST /api/homework/submissions
-// Body: { homeworkId, content? }
+// Body: { homeworkId, answers? }
 // Tenant-safe: verifies homework belongs to tenant schoolId.
 // Uses current user as "studentId" (MVP). Later we can enforce role=STUDENT.
 export async function POST(req: Request) {
@@ -61,10 +59,10 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Validation failed", issues: parsed.error.flatten() }, { status: 400 });
   }
 
-  const { homeworkId, content } = parsed.data;
+  const { homeworkId, answers } = parsed.data;
 
   const hw = await prisma.homework.findFirst({
-    where: { id: homeworkId, class: { schoolId } },
+    where: { id: homeworkId, Class: { schoolId } },
     select: { id: true },
   });
   if (!hw) return NextResponse.json({ error: "Not found" }, { status: 404 });
@@ -72,16 +70,14 @@ export async function POST(req: Request) {
   // Upsert so same student can re-submit (updates their submission)
   const sub = await prisma.homeworkSubmission.upsert({
     where: { homeworkId_studentId: { homeworkId, studentId: userId } },
-    update: { content: content ?? null, submittedAt: new Date() },
-    create: { homeworkId, studentId: userId, content: content ?? null },
+    update: { answers: answers ?? null, submittedAt: new Date() },
+    create: { homeworkId, studentId: userId, answers: answers ?? null },
     select: {
       id: true,
       homeworkId: true,
       studentId: true,
-      content: true,
+      answers: true,
       submittedAt: true,
-      createdAt: true,
-      updatedAt: true,
     },
   });
 

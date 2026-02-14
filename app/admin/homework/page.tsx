@@ -41,10 +41,7 @@ export default function AdminHomeworkPage() {
     setBusy(true);
     setStatus("Loading homework...");
     try {
-      const _classId =
-  (typeof classId === "string" && classId) ||
-  (typeof selectedClassId === "string" && selectedClassId) ||
-  "";
+      const _classId = (typeof classId === "string" && classId) ? classId : "";
 if (!_classId) throw new Error("Missing classId");
 const r = await fetch(`/api/homework?classId=${encodeURIComponent(_classId)}`, { cache: "no-store" });
       const j = await r.json();
@@ -91,7 +88,7 @@ const r = await fetch(`/api/homework?classId=${encodeURIComponent(_classId)}`, {
           </label>
 
           <div className="text-xs text-white/60">
-            Selected: {selectedClass ? `${selectedClass.name} (${selectedClass.subject})` : "—"}
+            Selected: {selectedClass ? `${selectedClass.name} (${selectedClass.subject})` : "â€”"}
           </div>
 
           <button
@@ -121,7 +118,7 @@ const r = await fetch(`/api/homework?classId=${encodeURIComponent(_classId)}`, {
                   <div className="text-white/90 font-semibold">{h.title}</div>
                   {h.description && <div className="text-white/70 mt-1">desc: {h.description}</div>}
                   <div className="text-white/60 text-xs mt-1">
-                    id: {h.id} â€¢ due: {h.dueAt ? new Date(h.dueAt).toLocaleString() : "â€”"}
+                    id: {h.id} Ã¢â‚¬Â¢ due: {h.dueAt ? new Date(h.dueAt).toLocaleString() : "Ã¢â‚¬â€"}
                   </div>
                 </div>
               ))}

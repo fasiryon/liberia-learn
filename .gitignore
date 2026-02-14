@@ -55,3 +55,20 @@ _frontend_old/**
 _app_backup_*
 LL_AUDIT_DUMP*.txt
 
+
+app.BACKUP-*
+app.BACKUP-*/**
+lib.BACKUP-*
+lib.BACKUP-*/**
+**/*.BACKUP-*
+
+
+_ARCHIVE_*/**
+
+
+_ARCHIVE_*
+
+
+LL_BUILD_DOCTOR_REPORT*.txt
+LL_BUILD_SNAPSHOT_*.txt
+

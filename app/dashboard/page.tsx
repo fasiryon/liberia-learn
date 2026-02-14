@@ -1,5 +1,5 @@
-﻿import AiTutorChat from "@/components/AiTutorChat";
-import LogoutButton from "/components/LogoutButton";
+import AiTutorChat from "@/components/AiTutorChat";
+import LogoutButton from "@/components/LogoutButton";
 
 // app/page.tsx (Student Dashboard)
 import Link from "next/link";
