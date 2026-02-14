@@ -1,7 +1,9 @@
 // lib/moe/alignment-engine.ts
 import OpenAI from "openai";
 import { prisma } from "@/lib/db";
-import type { GradeBand, Subject } from "@prisma/client";
+import type { $Enums } from "@prisma/client";
+type GradeBand = $Enums.GradeBand;
+type Subject = $Enums.Subject;
 
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY! });
 

@@ -11,7 +11,7 @@ const Schema = z.object({
   eventType: z.string().min(1).max(80),
   sessionId: z.string().optional().nullable(),
   contentId: z.string().optional().nullable(),
-  metadata: z.record(z.unknown()).optional(),
+  metadata: z.record(z.string(), z.unknown()).optional(),
 });
 
 export async function POST(req: Request) {
