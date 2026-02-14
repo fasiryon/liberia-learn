@@ -40,18 +40,24 @@ export default function AdminAnalyticsPage() {
   useEffect(() => {
     setLoading(true);
     fetch(`/api/admin/analytics?days=${days}`)
-      .then((r) => r.json())
-      .then((d) => setData(d))
-      .catch(() => setData(null))
+      .then((res) => {
+        if (!res.ok) {
+          setData({ summary: {}, dailyActive: [], topLessons: [] } as unknown as AnalyticsData);
+          setLoading(false);
+          return;
+        }
+        return res.json().then((d) => setData(d));
+      })
+      .catch(() => { setLoading(false); })
       .finally(() => setLoading(false));
   }, [days]);
 
   const cards = data
     ? [
-        { label: "Lesson Views", value: data.summary.lessonViews },
-        { label: "Homework Submitted", value: data.summary.homeworkSubmits },
-        { label: "AI Tutor Messages", value: data.summary.tutorMessages },
-        { label: "Homework Completed", value: data.summary.homeworkComplete },
+        { label: "Lesson Views", value: data?.summary?.lessonViews ?? 0 },
+        { label: "Homework Submitted", value: data?.summary?.homeworkSubmits ?? 0 },
+        { label: "AI Tutor Messages", value: data?.summary?.tutorMessages ?? 0 },
+        { label: "Homework Completed", value: data?.summary?.homeworkComplete ?? 0 },
       ]
     : null;
 
@@ -211,3 +217,4 @@ export default function AdminAnalyticsPage() {
     </div>
   );
 }
+
