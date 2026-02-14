@@ -1,6 +1,7 @@
 // app/api/homework/submissions/route.ts
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
+import { requireRole } from "@/lib/auth";
 import { requireTenant } from "@/lib/tenant";
 import { z } from "zod";
 
@@ -12,6 +13,7 @@ const CreateSchema = z.object({
 // GET /api/homework/submissions?homeworkId=...
 // Tenant-safe: verifies homework -> class -> schoolId
 export async function GET(req: Request) {
+  await requireRole("TEACHER", "ADMIN");
   const tenant = (await requireTenant()) as any;
   const schoolId: string = tenant.schoolId;
 
@@ -47,6 +49,7 @@ export async function GET(req: Request) {
 // Tenant-safe: verifies homework belongs to tenant schoolId.
 // Uses current user as "studentId" (MVP). Later we can enforce role=STUDENT.
 export async function POST(req: Request) {
+  await requireRole("TEACHER", "ADMIN");
   const tenant = (await requireTenant()) as any;
   const schoolId: string = tenant.schoolId;
   const userId: string | null = tenant.userId ?? tenant.currentUserId ?? null;
