@@ -1,3 +1,4 @@
+﻿import { requireTenant } from "@/lib/tenant"
 // app/api/student/homework/submit/route.ts
 import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
@@ -6,6 +7,7 @@ import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 
 export async function POST(req: Request) {
+  const { schoolId } = await requireTenant();
   const session = (await getServerSession(authOptions)) as any;
 
   if (!session?.user?.id || session.user.role !== "STUDENT") {
@@ -61,3 +63,4 @@ export async function POST(req: Request) {
 
   return NextResponse.redirect(new URL(redirectTo, req.url));
 }
+

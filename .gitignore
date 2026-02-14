@@ -43,3 +43,9 @@ next-env.d.ts
 # ignore nested node_modules
 **/node_modules/
 
+# --- local/dev artifacts ---
+_patches/
+LL_AUDIT_DUMP*
+*.bak.*
+# --- optional: logs/temp ---
+*.log

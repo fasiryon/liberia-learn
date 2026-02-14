@@ -1,10 +1,12 @@
-import { NextResponse } from "next/server";
+﻿import { NextResponse } from "next/server";
 import { PrismaClient } from "@prisma/client";
+import { requireTenant } from "@/lib/tenant"
 
 const prisma = new PrismaClient();
 const VERSION = "dup-guard-v1";
 
 export async function POST(req: Request) {
+  const { schoolId } = await requireTenant();
   try {
     const body = await req.json();
     const { studentId, skillId, gradeId, measurementType = "FORMATIVE", alpha = 0.35 } = body || {};
@@ -13,7 +15,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ ok: false, version: VERSION, error: "studentId, skillId, and gradeId are required" }, { status: 400 });
     }
 
-    // ✅ BLOCK duplicate grade usage BEFORE writing anything
+    // âœ… BLOCK duplicate grade usage BEFORE writing anything
     const existing = await prisma.masteryEvidence.findFirst({
       where: { gradeId },
       select: { id: true, snapshotId: true, recordedAt: true },
@@ -90,3 +92,4 @@ export async function POST(req: Request) {
     return NextResponse.json({ ok: false, version: VERSION, error: msg }, { status: 500 });
   }
 }
+

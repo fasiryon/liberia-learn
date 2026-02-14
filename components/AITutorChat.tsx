@@ -2,265 +2,101 @@
 
 import { useEffect, useRef, useState } from "react";
 
-interface Message {
-  role: "user" | "assistant";
-  content: string;
-  timestamp: Date;
-}
+type ChatMsg = { role: "user" | "assistant"; content: string };
 
-interface AITutorChatProps {
-  initialMessage?: string;
-}
-
-export function AITutorChat({ initialMessage }: AITutorChatProps) {
-  const [messages, setMessages] = useState<Message[]>([]);
+export default function AiTutorChat() {
   const [input, setInput] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
-  const messagesContainerRef = useRef<HTMLDivElement | null>(null);
-  const initializedRef = useRef(false);
+  const [msgs, setMsgs] = useState<ChatMsg[]>([
+    { role: "assistant", content: "Hi! I'm your LiberiaLearn tutor. Ask me anything." },
+  ]);
+  const [busy, setBusy] = useState(false);
+  const bottomRef = useRef<HTMLDivElement | null>(null);
 
-  const scrollToBottom = () => {
-    if (messagesContainerRef.current) {
-      const el = messagesContainerRef.current;
-      el.scrollTop = el.scrollHeight;
-    }
-  };
-
-  // Seed the chat with an initial message (once)
   useEffect(() => {
-    if (!initializedRef.current && initialMessage) {
-      initializedRef.current = true;
-      const now = new Date();
-      setMessages([
-        {
-          role: "assistant",
-          content:
-            "Tell me what you’re working on, and I’ll help you step by step.",
-          timestamp: now,
-        },
-        {
-          role: "user",
-          content: initialMessage,
-          timestamp: now,
-        },
-      ]);
-    }
-  }, [initialMessage]);
+    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [msgs.length]);
 
-  // Scroll chat body when messages change
-  useEffect(() => {
-    if (messages.length > 0) {
-      scrollToBottom();
-    }
-  }, [messages]);
+  async function send() {
+    const text = input.trim();
+    if (!text || busy) return;
 
-  const sendMessage = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!input.trim() || loading) return;
-
-    const userMessage = input.trim();
+    setMsgs((m) => [...m, { role: "user", content: text }]);
     setInput("");
-    setError("");
-    setLoading(true);
-
-    const newUserMessage: Message = {
-      role: "user",
-      content: userMessage,
-      timestamp: new Date(),
-    };
-
-    setMessages((prev) => [...prev, newUserMessage]);
+    setBusy(true);
 
     try {
       const res = await fetch("/api/ai/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message: userMessage }),
+        body: JSON.stringify({ message: text }),
       });
 
+      const data = await res.json().catch(() => ({}));
       if (!res.ok) {
-        throw new Error("Failed to get response");
+        const err = data?.error ? String(data.error) : "Internal server error";
+        setMsgs((m) => [...m, { role: "assistant", content: `Error: ${err}` }]);
+        return;
       }
 
-      const data = await res.json();
+      const reply =
+        data?.reply ??
+        data?.message ??
+        data?.content ??
+        data?.text ??
+        "(no reply)";
 
-      const aiMessage: Message = {
-        role: "assistant",
-        content: data.message,
-        timestamp: new Date(),
-      };
-
-      setMessages((prev) => [...prev, aiMessage]);
-    } catch (err) {
-      setError("I'm having trouble right now. Please try again in a moment.");
+      setMsgs((m) => [...m, { role: "assistant", content: String(reply) }]);
+    } catch (e: any) {
+      setMsgs((m) => [
+        ...m,
+        { role: "assistant", content: "I'm having trouble right now. Please try again in a moment." },
+      ]);
     } finally {
-      setLoading(false);
+      setBusy(false);
     }
-  };
-
-  const starterSuggestions = [
-    "Help me with fractions",
-    "Explain photosynthesis",
-    "What is a quadratic equation?",
-    "Tips for writing essays",
-  ];
+  }
 
   return (
-    <div className="flex h-[500px] flex-col overflow-hidden rounded-2xl border border-slate-800 bg-slate-900/80">
-      {/* Header */}
-      <div className="border-b border-slate-800 p-4">
-        <div className="flex items-center gap-2">
-          <div className="h-2 w-2 animate-pulse rounded-full bg-emerald-400" />
-          <p className="text-sm font-medium text-slate-200">AI Tutor</p>
-        </div>
-        <p className="mt-1 text-xs text-slate-400">
-          Ask me anything about your homework or classwork.
-        </p>
+    <div className="w-full max-w-4xl rounded-2xl border border-white/10 bg-white/5 shadow overflow-hidden">
+      <div className="p-4 border-b border-white/10">
+        <div className="text-white/90 font-semibold">LiberiaLearn AI Tutor</div>
+        <div className="text-white/60 text-sm">Ask in simple English (or we can add Koloqua later).</div>
       </div>
 
-      {/* Messages */}
-      <div
-        ref={messagesContainerRef}
-        className="flex-1 space-y-4 overflow-y-auto p-4"
-      >
-        {/* Empty State w/ Suggestions */}
-        {messages.length === 0 && (
-          <div className="py-8 text-center text-sm text-slate-500">
-            <p className="mb-2">👋 Hi! I'm your AI tutor.</p>
-            <p className="text-xs text-slate-400 mb-4">
-              Try asking me about:
-            </p>
-
-            <div className="flex flex-wrap gap-2 justify-center">
-              {starterSuggestions.map((s) => (
-                <button
-                  key={s}
-                  onClick={() => setInput(s)}
-                  className="text-xs px-3 py-2 rounded-lg bg-slate-800 text-slate-300 hover:bg-slate-700 hover:text-emerald-300 transition-colors"
-                >
-                  {s}
-                </button>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* Message List */}
-        {messages.map((msg, idx) => (
+      <div className="h-[62vh] overflow-auto p-4 space-y-3">
+        {msgs.map((m, idx) => (
           <div
             key={idx}
-            className={`flex ${
-              msg.role === "user" ? "justify-end" : "justify-start"
-            }`}
+            className={[
+              "max-w-[90%] rounded-2xl px-4 py-3 text-sm leading-relaxed",
+              m.role === "user"
+                ? "ml-auto bg-emerald-500 text-black"
+                : "bg-[#0b0d14] text-white border border-white/10",
+            ].join(" ")}
           >
-            <div
-              className={`max-w-[80%] rounded-2xl px-4 py-2 ${
-                msg.role === "user"
-                  ? "bg-emerald-500 text-slate-950"
-                  : "bg-slate-800 text-slate-100"
-              }`}
-            >
-              <p className="whitespace-pre-wrap text-sm">{msg.content}</p>
-
-              {/* Footer row: timestamp + copy + rating */}
-              <div className="mt-1 flex items-center gap-3 text-xs">
-                <span
-                  className={`${
-                    msg.role === "user"
-                      ? "text-slate-950/60"
-                      : "text-slate-400"
-                  }`}
-                >
-                  {msg.timestamp.toLocaleTimeString([], {
-                    hour: "2-digit",
-                    minute: "2-digit",
-                  })}
-                </span>
-
-                {msg.role === "assistant" && (
-                  <>
-                    {/* Copy Button */}
-                    <button
-                      onClick={() =>
-                        navigator.clipboard.writeText(msg.content)
-                      }
-                      className="text-slate-400 hover:text-slate-200"
-                      title="Copy"
-                    >
-                      📋
-                    </button>
-
-                    {/* Thumbs */}
-                    <button
-                      className="text-slate-400 hover:text-emerald-300"
-                      title="Helpful"
-                    >
-                      👍
-                    </button>
-                    <button
-                      className="text-slate-400 hover:text-red-300"
-                      title="Not helpful"
-                    >
-                      👎
-                    </button>
-                  </>
-                )}
-              </div>
-            </div>
+            {m.content}
           </div>
         ))}
-
-        {/* Typing indicator */}
-        {loading && (
-          <div className="flex justify-start">
-            <div className="max-w-[80%] rounded-2xl bg-slate-800 px-4 py-2">
-              <div className="flex gap-1">
-                <div className="h-2 w-2 animate-bounce rounded-full bg-slate-500" />
-                <div
-                  className="h-2 w-2 animate-bounce rounded-full bg-slate-500"
-                  style={{ animationDelay: "150ms" }}
-                />
-                <div
-                  className="h-2 w-2 animate-bounce rounded-full bg-slate-500"
-                  style={{ animationDelay: "300ms" }}
-                />
-              </div>
-            </div>
-          </div>
-        )}
+        <div ref={bottomRef} />
       </div>
 
-      {/* Input */}
-      <div className="border-t border-slate-800 p-4">
-        {error && (
-          <div className="mb-2 rounded-lg bg-red-500/10 px-3 py-2 text-xs text-red-400">
-            {error}
-          </div>
-        )}
-
-        <form onSubmit={sendMessage} className="flex gap-2">
-          <input
-            type="text"
-            value={input}
-            disabled={loading}
-            onChange={(e) => setInput(e.target.value)}
-            placeholder="Type your question..."
-            maxLength={1000}
-            className="flex-1 rounded-xl border border-slate-700 bg-slate-950/70 px-4 py-2 text-sm text-slate-100 placeholder:text-slate-500 focus:border-emerald-400 focus:outline-none focus:ring-1 focus:ring-emerald-400/60 disabled:opacity-50"
-          />
-          <button
-            type="submit"
-            disabled={loading || !input.trim()}
-            className="rounded-xl bg-emerald-500 px-4 py-2 text-sm font-semibold text-slate-950 hover:bg-emerald-400 disabled:cursor-not-allowed disabled:opacity-50"
-          >
-            Send
-          </button>
-        </form>
-
-        <p className="mt-2 text-xs text-slate-500">
-          {input.length}/1000 characters
-        </p>
+      <div className="p-4 border-t border-white/10 flex gap-3">
+        <input
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
+          placeholder="Ask a question (example: Explain fractions like I'm in Grade 4)"
+          className="flex-1 rounded-xl bg-[#0b0d14] border border-white/10 px-3 py-3 outline-none focus:border-emerald-500"
+          onKeyDown={(e) => {
+            if (e.key === "Enter") send();
+          }}
+        />
+        <button
+          onClick={send}
+          disabled={busy}
+          className="rounded-xl bg-emerald-500 hover:bg-emerald-400 disabled:opacity-60 text-black font-semibold px-5"
+        >
+          {busy ? "..." : "Send"}
+        </button>
       </div>
     </div>
   );

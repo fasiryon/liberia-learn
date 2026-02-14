@@ -1,52 +1,53 @@
-// app/api/homework/route.ts
-import { NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
-
-import { authOptions } from "@/lib/auth";
+﻿import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
+import { requireTenant } from "@/lib/tenant";
+import { z } from "zod";
 
-export async function POST(req: Request) {
-  const session = await getServerSession(authOptions);
+const QuerySchema = z.object({
+  classId: z.string().min(10),
+});
 
-  // Only teachers can create homework
-  if (!session || (session.user as any).role !== "TEACHER") {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
+export async function GET(req: Request) {
+  const { schoolId } = await requireTenant();
 
-  const { classId, title, instructions, questionsText, dueDate } =
-    await req.json();
+  const url = new URL(req.url);
+  const classId = url.searchParams.get("classId");
 
-  if (!classId || !title) {
+  const parsed = QuerySchema.safeParse({ classId });
+  if (!parsed.success) {
     return NextResponse.json(
-      { error: "Class and title are required." },
+      { ok: false, error: "Missing/invalid classId" },
       { status: 400 }
     );
   }
 
-  // Simple “one question per line” parsing
-  const questions = (questionsText ?? "")
-    .split("\n")
-    .map((line: string) => line.trim())
-    .filter(Boolean)
-    .map((prompt: string, index: number) => ({
-      id: `q${index + 1}`,
-      type: "short_answer",
-      prompt,
-      points: 5,
-    }));
+  // Tenant verification: class must belong to this schoolId
+  const cls = await prisma.class.findFirst({
+    where: { id: parsed.data.classId, schoolId },
+    select: { id: true },
+  });
 
-  const parsedDueAt = dueDate ? new Date(dueDate) : null;
+  if (!cls) {
+    return NextResponse.json(
+      { ok: false, error: "Class not found for tenant" },
+      { status: 404 }
+    );
+  }
 
-  const homework = await prisma.homework.create({
-    data: {
-      classId,
-      title,
-      instructions: instructions ?? "",
-      questions,
-      dueAt: parsedDueAt,
-      // ⛔️ DO NOT put teacherId here – Homework model doesn’t have it
+  const homework = await prisma.homework.findMany({
+    where: { classId: parsed.data.classId },
+    orderBy: { createdAt: "desc" },
+    select: {
+      id: true,
+      classId: true,
+      title: true,
+      description: true,
+      instructions: true,
+      dueAt: true,
+      createdAt: true,
+      createdById: true,
     },
   });
 
-  return NextResponse.json({ id: homework.id }, { status: 201 });
+  return NextResponse.json({ ok: true, homework });
 }

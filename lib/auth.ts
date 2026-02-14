@@ -1,72 +1,103 @@
-// lib/auth.ts
+﻿// lib/auth.ts
 import type { NextAuthOptions } from "next-auth";
-import NextAuth from "next-auth";
-import Credentials from "next-auth/providers/credentials";
+import { getServerSession } from "next-auth";
+import CredentialsProvider from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/db";
 
 export const authOptions: NextAuthOptions = {
+  session: { strategy: "jwt" },
+
   providers: [
-    Credentials({
+    CredentialsProvider({
       name: "Credentials",
       credentials: {
-        email: { label: "Email", type: "email" },
+        email:    { label: "Email", type: "email" },
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials) {
-        if (!credentials?.email || !credentials?.password) {
-          throw new Error("Missing email or password");
-        }
+        const email = credentials?.email?.trim().toLowerCase();
+        const password = credentials?.password ?? "";
+        if (!email || !password) return null;
 
         const user = await prisma.user.findUnique({
-          where: { email: credentials.email },
+          where: { email },
+          select: {
+            id: true,
+            email: true,
+            name: true,
+            role: true,
+            hashedPwd: true,
+            schoolId: true,
+          },
         });
 
-        if (!user || !user.hashedPwd) {
-          throw new Error("Invalid email or password");
-        }
+        if (!user?.hashedPwd) return null;
 
-        const isValid = await bcrypt.compare(
-          credentials.password,
-          user.hashedPwd
-        );
+        const ok = await bcrypt.compare(password, user.hashedPwd);
+        if (!ok) return null;
 
-        if (!isValid) {
-          throw new Error("Invalid email or password");
-        }
-
-        // Include id + role in returned user so we can put them on the token
+        // Return payload becomes `user` in jwt callback
         return {
           id: user.id,
           email: user.email,
-          name: user.name,
+          name: user.name ?? undefined,
           role: user.role,
+          schoolId: user.schoolId ?? null,
         } as any;
       },
     }),
   ],
-  pages: {
-    signIn: "/login",
-  },
+
   callbacks: {
-    async jwt({ token, user }: any) {
-      // First login: copy from user → token
+    async jwt({ token, user }) {
       if (user) {
         token.id = (user as any).id;
         token.role = (user as any).role;
+        token.schoolId = (user as any).schoolId ?? null;
       }
       return token;
     },
-    async session({ session, token }: any) {
-      // Every request: copy from token → session.user
+    async session({ session, token }) {
       if (session.user) {
-        (session.user as any).id = token.id;
-        (session.user as any).role = token.role;
+        (session.user as any).id = (token as any).id;
+        (session.user as any).role = (token as any).role;
+        (session.user as any).schoolId = (token as any).schoolId ?? null;
       }
       return session;
     },
   },
+
+  pages: { signIn: "/login" },
 };
 
-// Helper export for route handlers & server components (optional)
-export const auth = NextAuth(authOptions);
+// Typed helpers — use these in route handlers
+export type SessionUser = {
+  id: string;
+  email?: string | null;
+  name?: string | null;
+  role: "STUDENT" | "TEACHER" | "ADMIN" | "GUARDIAN";
+  schoolId?: string | null;
+};
+
+/** Returns null if not authenticated. Does NOT throw. */
+export async function getOptionalUser(): Promise<SessionUser | null> {
+  const session = await getServerSession(authOptions);
+  const u = session?.user as any;
+  if (!u?.id) return null;
+
+  return {
+    id: u.id,
+    email: u.email ?? null,
+    name: u.name ?? null,
+    role: (u.role ?? "STUDENT"),
+    schoolId: u.schoolId ?? null,
+  };
+}
+
+/** Throws 401 if not authenticated. */
+export async function requireUser(): Promise<SessionUser> {
+  const user = await getOptionalUser();
+  if (!user) throw Object.assign(new Error("Unauthorized"), { status: 401 });
+  return user;
+}

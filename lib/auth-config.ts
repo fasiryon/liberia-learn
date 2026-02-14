@@ -1,4 +1,4 @@
-import type { NextAuthOptions } from "next-auth";
+﻿import type { NextAuthOptions } from "next-auth";
 import { getServerSession } from "next-auth";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import CredentialsProvider from "next-auth/providers/credentials";
@@ -93,3 +93,4 @@ export async function requireUserId(): Promise<string> {
   if (!user.id) throw new Error("Unauthorized");
   return user.id;
 }
+

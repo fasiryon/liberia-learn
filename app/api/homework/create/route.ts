@@ -1,8 +1,10 @@
-import { NextResponse } from "next/server";
+﻿import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { requireUser } from "@/lib/auth-config";
+import { requireTenant } from "@/lib/tenant"
 
 export async function POST(req: Request) {
+  const { schoolId } = await requireTenant();
   try {
     const user = await requireUser();
     if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -42,6 +44,7 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: err?.message ?? "Failed" }, { status: 500 });
   }
 }
+
 
 
 
