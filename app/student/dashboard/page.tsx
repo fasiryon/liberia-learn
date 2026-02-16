@@ -1,4 +1,5 @@
 import React from 'react';
+import Link from 'next/link';
 
 export default function StudentDashboard() {
     return (
@@ -38,6 +39,18 @@ export default function StudentDashboard() {
             </div>
           </div>
   
+          {/* My Lessons */}
+          <div className="mb-8 rounded-xl bg-white p-6 shadow-lg">
+            <h2 className="mb-2 text-xl font-bold text-gray-900">My Lessons</h2>
+            <p className="mb-4 text-sm text-gray-600">Browse curriculum lessons for your grade level.</p>
+            <Link
+              href="/student/lessons"
+              className="inline-block rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-700"
+            >
+              View Lessons
+            </Link>
+          </div>
+
           {/* My Classes */}
           <div className="rounded-xl bg-white p-6 shadow-lg">
             <h2 className="mb-4 text-xl font-bold text-gray-900">My Classes</h2>
