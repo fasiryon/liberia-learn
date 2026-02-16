@@ -72,3 +72,11 @@ _ARCHIVE_*
 LL_BUILD_DOCTOR_REPORT*.txt
 LL_BUILD_SNAPSHOT_*.txt
 
+# Backups / archives (never deploy)
+_app_BACKUP_*
+app.BACKUP-*
+lib.BACKUP-*
+_frontend_old/
+_ARCHIVE_*/
+_patches/
+LL_AUDIT_DUMP*.txt
