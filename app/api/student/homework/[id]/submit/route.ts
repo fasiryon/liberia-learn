@@ -24,8 +24,8 @@ export async function POST(req: Request, context: RouteContext) {
 
     const homeworkId = context.params.id;
 
-    const homework = await prisma.homework.findUnique({
-      where: { id: homeworkId },
+    const homework = await prisma.homework.findFirst({
+      where: { id: homeworkId, Class: { schoolId: user.schoolId } },
     });
 
     if (!homework) {

@@ -21,8 +21,8 @@ export async function GET(
       );
     }
 
-    const homework = await prisma.homework.findUnique({
-      where: { id: params.id },
+    const homework = await prisma.homework.findFirst({
+      where: { id: params.id, Class: { schoolId: user.schoolId } },
       include: {
         Class: {
           include: { School: true },
