@@ -1,23 +1,15 @@
-﻿import { requireTenant } from "@/lib/tenant"
+import { requireTenant } from "@/lib/tenant"
 // app/api/student/homework/submit/route.ts
 import { NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
-
-import { authOptions } from "@/lib/auth";
+import { requireRole } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 
 export async function POST(req: Request) {
   const { schoolId } = await requireTenant();
-  const session = (await getServerSession(authOptions)) as any;
-
-  if (!session?.user?.id || session.user.role !== "STUDENT") {
-    return NextResponse.redirect(new URL("/login", req.url));
-  }
-
-  const userId = session.user.id as string;
+  const user = await requireRole("STUDENT");
 
   const student = await prisma.student.findFirst({
-    where: { userId },
+    where: { userId: user.id },
   });
 
   if (!student) {
@@ -63,4 +55,3 @@ export async function POST(req: Request) {
 
   return NextResponse.redirect(new URL(redirectTo, req.url));
 }
-
