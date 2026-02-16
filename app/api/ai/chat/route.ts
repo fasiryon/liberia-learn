@@ -70,15 +70,11 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json(response);
   } catch (err: any) {
-  const msg   = err?.message ?? String(err);
-  const stack = err?.stack ?? null;
-  console.error("Chat API error:", msg);
-  if (stack) console.error(stack);
+  console.error("Chat API error:", err?.message ?? String(err));
+  if (err?.stack) console.error(err.stack);
 
-  // DEV: return stack to client so we can fix fast (remove later)
-  const isDev = process.env.NODE_ENV !== "production";
   return NextResponse.json(
-    { error: "Internal server error", details: msg, stack: isDev ? stack : undefined },
+    { error: "Internal server error" },
     { status: err?.status ?? 500 }
   );
 }

@@ -1,18 +1,7 @@
 // app/api/student/homework/[id]/submit/route.ts
 import { NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
-
-import { authOptions } from "@/lib/auth";
+import { requireRole } from "@/lib/auth";
 import { prisma } from "@/lib/db";
-
-type AppSession = {
-  user?: {
-    id?: string;
-    role?: "STUDENT" | "TEACHER" | "ADMIN" | string;
-    email?: string | null;
-    name?: string | null;
-  };
-};
 
 type RouteContext = {
   params: { id: string };
@@ -20,25 +9,10 @@ type RouteContext = {
 
 export async function POST(req: Request, context: RouteContext) {
   try {
-    const rawSession = await getServerSession(authOptions);
-    const session = rawSession as AppSession | null;
-
-    if (!session?.user?.id) {
-      return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
-    }
-
-    if (session.user.role !== "STUDENT") {
-      return NextResponse.json(
-        { error: "Only students can submit homework" },
-        { status: 403 }
-      );
-    }
-
-    const userId = session.user.id as string;
-    const homeworkId = context.params.id;
+    const user = await requireRole("STUDENT");
 
     const student = await prisma.student.findFirst({
-      where: { userId },
+      where: { userId: user.id },
     });
 
     if (!student) {
@@ -47,6 +21,8 @@ export async function POST(req: Request, context: RouteContext) {
         { status: 404 }
       );
     }
+
+    const homeworkId = context.params.id;
 
     const homework = await prisma.homework.findUnique({
       where: { id: homeworkId },
@@ -93,7 +69,10 @@ export async function POST(req: Request, context: RouteContext) {
     return NextResponse.redirect(
       new URL(`/assignments/${homeworkId}`, req.url)
     );
-  } catch (err) {
+  } catch (err: any) {
+    if (err?.status === 401 || err?.status === 403) {
+      return NextResponse.json({ error: err.message }, { status: err.status });
+    }
     console.error("Homework submit error:", err);
     return NextResponse.json(
       { error: "Failed to submit homework" },
