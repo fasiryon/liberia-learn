@@ -1,0 +1,171 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import { useRouter, useParams } from "next/navigation";
+import Link from "next/link";
+import { trackEvent, EVENTS } from "@/lib/trackEvent";
+
+export default function LessonViewerPage() {
+  const router = useRouter();
+  const params = useParams();
+  const contentId = params.contentId as string;
+
+  const [loading, setLoading] = useState(true);
+  const [metadata, setMetadata] = useState<any>(null);
+  const [payload, setPayload] = useState<any>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [completed, setCompleted] = useState(false);
+
+  useEffect(() => {
+    if (!contentId) return;
+
+    trackEvent(EVENTS.LESSON_VIEW, { contentId });
+
+    fetch(`/api/curriculum/${contentId}`)
+      .then((res) => {
+        if (res.status === 401 || res.status === 403) {
+          router.push("/login");
+          return null;
+        }
+        if (!res.ok) throw new Error("Lesson not found");
+        return res.json();
+      })
+      .then((data) => {
+        if (data) {
+          setMetadata(data.metadata);
+          setPayload(data.payload);
+        }
+      })
+      .catch((err) => setError(err.message))
+      .finally(() => setLoading(false));
+  }, [contentId, router]);
+
+  const handleComplete = () => {
+    trackEvent(EVENTS.LESSON_COMPLETE, { contentId });
+    setCompleted(true);
+  };
+
+  if (loading) {
+    return (
+      <main className="flex min-h-screen items-center justify-center bg-slate-950 px-4 py-8">
+        <div className="w-full max-w-3xl space-y-4">
+          <div className="h-8 w-2/3 animate-pulse rounded-lg bg-slate-800" />
+          <div className="h-4 w-full animate-pulse rounded-lg bg-slate-800" />
+          <div className="h-4 w-5/6 animate-pulse rounded-lg bg-slate-800" />
+        </div>
+      </main>
+    );
+  }
+
+  if (error) {
+    return (
+      <main className="flex min-h-screen items-center justify-center bg-slate-950 px-4 py-8">
+        <div className="w-full max-w-3xl space-y-4 text-center">
+          <p className="text-sm text-red-400">{error}</p>
+          <Link href="/student/dashboard" className="text-sm text-emerald-300 hover:text-emerald-200">
+            Back to Dashboard
+          </Link>
+        </div>
+      </main>
+    );
+  }
+
+  const objectives: string[] = Array.isArray(payload?.objectives) ? payload.objectives : [];
+  const activities: string[] = Array.isArray(payload?.activities) ? payload.activities : [];
+  const bodyText: string = payload?.body ?? payload?.content ?? "";
+  const moeAlignments: string[] = Array.isArray(metadata?.moeAlignments) ? metadata.moeAlignments : [];
+
+  return (
+    <main className="min-h-screen bg-slate-950 px-4 py-8">
+      <div className="mx-auto max-w-3xl space-y-6">
+        {/* Back */}
+        <Link href="/student/dashboard" className="inline-block text-sm text-emerald-300 hover:text-emerald-200">
+          &larr; Back to Dashboard
+        </Link>
+
+        {/* Title + badges */}
+        <div className="space-y-3">
+          <h1 className="text-2xl font-bold text-slate-50">
+            {payload?.title ?? contentId}
+          </h1>
+          <div className="flex flex-wrap gap-2">
+            <span className="rounded-full bg-emerald-500/20 border border-emerald-400/30 px-3 py-0.5 text-xs font-medium text-emerald-300">
+              Grade {metadata?.grade}
+            </span>
+            <span className="rounded-full bg-emerald-500/20 border border-emerald-400/30 px-3 py-0.5 text-xs font-medium text-emerald-300">
+              {metadata?.subject}
+            </span>
+          </div>
+
+          {/* MOE alignment chips */}
+          {moeAlignments.length > 0 && (
+            <div className="flex flex-wrap gap-2">
+              {moeAlignments.map((a: string, i: number) => (
+                <span key={i} className="rounded-full bg-sky-500/20 border border-sky-400/30 px-3 py-0.5 text-xs text-sky-300">
+                  {a}
+                </span>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Learning Objectives */}
+        {objectives.length > 0 && (
+          <div className="rounded-2xl border border-white/10 bg-slate-900/70 p-5 space-y-3">
+            <h2 className="text-sm font-semibold text-slate-300 uppercase tracking-wide">Learning Objectives</h2>
+            <ul className="list-disc list-inside space-y-1 text-sm text-slate-300">
+              {objectives.map((obj: string, i: number) => (
+                <li key={i}>{obj}</li>
+              ))}
+            </ul>
+          </div>
+        )}
+
+        {/* Body Content */}
+        {bodyText && (
+          <div className="rounded-2xl border border-white/10 bg-slate-900/70 p-5">
+            <div className="prose prose-invert prose-sm max-w-none text-slate-300 leading-relaxed whitespace-pre-line">
+              {bodyText}
+            </div>
+          </div>
+        )}
+
+        {/* Activities */}
+        {activities.length > 0 && (
+          <div className="rounded-2xl border border-white/10 bg-slate-900/70 p-5 space-y-3">
+            <h2 className="text-sm font-semibold text-slate-300 uppercase tracking-wide">Activities</h2>
+            <ol className="list-decimal list-inside space-y-2 text-sm text-slate-300">
+              {activities.map((act: string, i: number) => (
+                <li key={i}>{act}</li>
+              ))}
+            </ol>
+          </div>
+        )}
+
+        {/* Mark Complete */}
+        <div className="flex items-center gap-3">
+          {completed ? (
+            <div className="flex items-center gap-2 text-emerald-400 text-sm font-medium">
+              <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+              </svg>
+              Lesson complete!
+            </div>
+          ) : (
+            <button
+              onClick={handleComplete}
+              className="rounded-xl bg-emerald-500 px-5 py-2.5 text-sm font-semibold text-slate-950 shadow-lg shadow-emerald-500/40 hover:bg-emerald-400"
+            >
+              Mark as Complete
+            </button>
+          )}
+        </div>
+
+        {/* Low bandwidth note */}
+        <p className="text-[11px] text-slate-500 text-center pb-4">
+          Saving data? This page works offline.
+        </p>
+      </div>
+    </main>
+  );
+}
