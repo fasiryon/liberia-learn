@@ -40,8 +40,8 @@ export async function POST(req: Request) {
     }
 
     // Verify homework exists and student is enrolled in that class
-    const homework = await prisma.homework.findUnique({
-      where: { id: homeworkId },
+    const homework = await prisma.homework.findFirst({
+      where: { id: homeworkId, Class: { schoolId } },
       include: {
         Class: {
           include: {
