@@ -3,6 +3,22 @@ import { NextResponse } from "next/server";
 import { requireRole } from "@/lib/auth";
 import OpenAI from "openai";
 
+const rateLimitMap = new Map<string, { count: number; resetAt: number }>();
+const RATE_LIMIT = 20;
+const WINDOW_MS  = 60_000;
+
+function checkRateLimit(key: string): boolean {
+  const now = Date.now();
+  const entry = rateLimitMap.get(key);
+  if (!entry || now > entry.resetAt) {
+    rateLimitMap.set(key, { count: 1, resetAt: now + WINDOW_MS });
+    return true;
+  }
+  if (entry.count >= RATE_LIMIT) return false;
+  entry.count++;
+  return true;
+}
+
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
@@ -17,7 +33,15 @@ const difficultyDescriptions: Record<number, string> = {
 
 export async function POST(req: Request) {
   try {
-    await requireRole("STUDENT");
+    const user = await requireRole("STUDENT");
+
+    if (!checkRateLimit(user.id)) {
+      return NextResponse.json(
+        { error: "Too many requests. Please wait." },
+        { status: 429 }
+      );
+    }
+
     if (!process.env.OPENAI_API_KEY) {
       throw new Error("OPENAI_API_KEY is not set in environment variables");
     }

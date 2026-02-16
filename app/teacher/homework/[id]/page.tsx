@@ -5,6 +5,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { GradeSubmissionForm } from "@/components/GradeSubmissionForm";
+import { AiReviewButton } from "@/components/AiReviewButton";
 
 export const dynamic = "force-dynamic";
 
@@ -229,15 +230,21 @@ export default async function TeacherHomeworkDetail({
                       </div>
 
                       {submission ? (
-                        <div className="flex-1 max-w-xl">
-                          <GradeSubmissionForm
+                        <div className="flex-1 max-w-xl space-y-3">
+                          <div className="flex items-center gap-3">
+                            <GradeSubmissionForm
+                              submissionId={submission.id}
+                              initialScore={
+                                submission.teacherScore !== null
+                                  ? submission.teacherScore
+                                  : null
+                              }
+                              initialNotes={submission.teacherNotes || null}
+                            />
+                          </div>
+                          <AiReviewButton
                             submissionId={submission.id}
-                            initialScore={
-                              submission.teacherScore !== null
-                                ? submission.teacherScore
-                                : null
-                            }
-                            initialNotes={submission.teacherNotes || null}
+                            alreadyReviewed={submission.aiReviewed}
                           />
                         </div>
                       ) : (
