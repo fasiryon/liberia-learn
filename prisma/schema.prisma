@@ -406,6 +406,7 @@ model HomeworkSubmission {
   answers      Json? // nullable for db push; backfill later
   aiScore      Float?
   aiFeedback   Json? // e.g. { overall: string, perQuestion: string[] }
+  aiReviewed   Boolean  @default(false)
   teacherScore Float?
   teacherNotes String?
   submittedAt  DateTime @default(now())

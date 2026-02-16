@@ -41,7 +41,16 @@ export async function GET(
       );
     }
 
-    const submission = homework.submissions[0] ?? null;
+    const rawSubmission = homework.submissions[0] ?? null;
+
+    // Gate AI feedback behind teacher review
+    const submission = rawSubmission
+      ? {
+          ...rawSubmission,
+          aiScore: rawSubmission.aiReviewed ? rawSubmission.aiScore : null,
+          aiFeedback: rawSubmission.aiReviewed ? rawSubmission.aiFeedback : null,
+        }
+      : null;
 
     return NextResponse.json({
       homework: {
