@@ -16,14 +16,17 @@ export async function POST(req: Request) {
     const body = await req.json();
     const parsed = CreateMeetingSchema.parse(body);
 
+    // Verify the class belongs to the user's school
+    const cls = await prisma.class.findFirst({
+      where: { id: parsed.classId, schoolId: user.schoolId },
+    });
+    if (!cls) {
+      return NextResponse.json({ error: "Class not found" }, { status: 404 });
+    }
+
     // If teacher, verify they own the class
-    if (user.role === "TEACHER") {
-      const cls = await prisma.class.findUnique({
-        where: { id: parsed.classId },
-      });
-      if (!cls || cls.teacherId !== user.id) {
-        return NextResponse.json({ error: "Forbidden" }, { status: 403 });
-      }
+    if (user.role === "TEACHER" && cls.teacherId !== user.id) {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
     // Get all enrolled students

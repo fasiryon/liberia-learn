@@ -15,8 +15,8 @@ export async function GET(
   try {
     const user = await requireRole("TEACHER", "ADMIN");
 
-    const student = await prisma.student.findUnique({
-      where: { id: params.id },
+    const student = await prisma.student.findFirst({
+      where: { id: params.id, user: { schoolId: user.schoolId } },
       include: {
         user: { select: { id: true, email: true, name: true, role: true } },
         enrollments: { include: { Class: { include: { School: true } } } },
@@ -25,11 +25,8 @@ export async function GET(
     });
 
     if (!student) {
-      return NextResponse.json({ error: "Student not found" }, { status: 404 });
+      return NextResponse.json({ error: "Not found" }, { status: 404 });
     }
-
-    // TEACHER scoping comes in Sprint 2 when User.schoolId exists.
-    // For Sprint 1, just prevent unauthenticated access.
 
     return NextResponse.json(student);
   } catch (err: any) {
