@@ -24,17 +24,14 @@ export async function PATCH(
     const body = await req.json();
     const parsed = Schema.parse(body);
 
-    // Find meeting and verify ownership
-    const meeting = await prisma.meeting.findUnique({
-      where: { id: meetingId },
+    // Verify the meeting belongs to the user's school
+    const meeting = await prisma.meeting.findFirst({
+      where: { id: meetingId, Class: { schoolId: user.schoolId } },
       include: { Class: true },
     });
 
     if (!meeting) {
-      return NextResponse.json(
-        { error: "Meeting not found" },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: "Meeting not found" }, { status: 404 });
     }
 
     if (user.role === "TEACHER" && meeting.Class.teacherId !== user.id) {

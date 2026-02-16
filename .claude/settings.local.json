@@ -1,0 +1,18 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm install:*)",
+      "Bash(npx prisma migrate dev:*)",
+      "Bash(npx prisma db push:*)",
+      "Bash(node scripts/generate-icons.mjs:*)",
+      "Bash(npm run build:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(npx ts-node:*)",
+      "Bash(npx tsc:*)",
+      "Bash(git push:*)",
+      "Bash(ls:*)",
+      "Bash(npm uninstall:*)"
+    ]
+  }
+}

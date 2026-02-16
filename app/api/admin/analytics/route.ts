@@ -16,35 +16,39 @@ export async function GET(req: Request) {
     const [lessonViews, homeworkSubmits, tutorMessages, homeworkComplete] =
       await Promise.all([
         prisma.auditLog.count({
-          where: { action: "lesson_view", createdAt: { gte: since } },
+          where: { action: "lesson_view", createdAt: { gte: since }, user: { schoolId: user.schoolId } },
         }),
         prisma.auditLog.count({
-          where: { action: "homework_submit", createdAt: { gte: since } },
+          where: { action: "homework_submit", createdAt: { gte: since }, user: { schoolId: user.schoolId } },
         }),
         prisma.auditLog.count({
-          where: { action: "tutor_message", createdAt: { gte: since } },
+          where: { action: "tutor_message", createdAt: { gte: since }, user: { schoolId: user.schoolId } },
         }),
         prisma.homeworkSubmission.count({
-          where: { submittedAt: { gte: since } },
+          where: { submittedAt: { gte: since }, Student: { user: { schoolId: user.schoolId } } },
         }),
       ]);
 
     const dailyActive: any[] = await prisma.$queryRaw`
-      SELECT DATE("createdAt") as date, COUNT(DISTINCT "userId") as users
-      FROM "AuditLog"
-      WHERE "action" IN ('lesson_view','homework_submit','tutor_message')
-        AND "createdAt" >= ${since}
-      GROUP BY DATE("createdAt")
+      SELECT DATE(a."createdAt") as date, COUNT(DISTINCT a."userId") as users
+      FROM "AuditLog" a
+      JOIN "User" u ON u."id" = a."userId"
+      WHERE a."action" IN ('lesson_view','homework_submit','tutor_message')
+        AND a."createdAt" >= ${since}
+        AND u."schoolId" = ${user.schoolId}
+      GROUP BY DATE(a."createdAt")
       ORDER BY date ASC
     `;
 
     const topLessons: any[] = await prisma.$queryRaw`
-      SELECT "details"->>'contentId' as "contentId", COUNT(*) as views
-      FROM "AuditLog"
-      WHERE "action" = 'lesson_view'
-        AND "createdAt" >= ${since}
-        AND "details"->>'contentId' IS NOT NULL
-      GROUP BY "details"->>'contentId'
+      SELECT a."details"->>'contentId' as "contentId", COUNT(*) as views
+      FROM "AuditLog" a
+      JOIN "User" u ON u."id" = a."userId"
+      WHERE a."action" = 'lesson_view'
+        AND a."createdAt" >= ${since}
+        AND a."details"->>'contentId' IS NOT NULL
+        AND u."schoolId" = ${user.schoolId}
+      GROUP BY a."details"->>'contentId'
       ORDER BY views DESC
       LIMIT 10
     `;
