@@ -1,12 +1,43 @@
 import { NextResponse } from "next/server";
 import { requireRole } from "@/lib/auth";
-import { requireTenant } from "@/lib/tenant";
 import { prisma } from "@/lib/db";
+
+const DEMO_SCHOOL_ID = "demo-school-monrovia";
 
 export async function POST() {
   try {
     const user = await requireRole("ADMIN");
-    const { schoolId } = await requireTenant();
+
+    // Determine schoolId: use session if present, else try DB, else fall back to demo school
+    let schoolId: string | null = (user.schoolId as string) ?? null;
+    if (!schoolId) {
+      const dbUser = await prisma.user.findUnique({
+        where: { id: user.id },
+        select: { schoolId: true },
+      });
+      schoolId = dbUser?.schoolId ?? null;
+    }
+    if (!schoolId) {
+      // Auto-attach to demo school if it exists
+      const demoSchool = await prisma.school.findUnique({
+        where: { id: DEMO_SCHOOL_ID },
+        select: { id: true },
+      });
+      if (demoSchool) {
+        await prisma.user.update({
+          where: { id: user.id },
+          data: { schoolId: DEMO_SCHOOL_ID },
+        });
+        schoolId = DEMO_SCHOOL_ID;
+      }
+    }
+
+    if (!schoolId) {
+      return NextResponse.json(
+        { error: "No schoolId and demo school not found. Run onboarding first." },
+        { status: 400 }
+      );
+    }
 
     const school = await prisma.school.findUnique({
       where: { id: schoolId },
@@ -18,6 +49,27 @@ export async function POST() {
 
     const logs: string[] = [];
     logs.push(`School: ${school.name} (${school.id})`);
+
+    // Fix null-schoolId demo users (idempotent)
+    const nullSchoolEmails = [
+      "admin@school.lr",
+      "teacher@school.lr",
+      "student@school.lr",
+      "admin@liberialearn.lr",
+    ];
+    for (const email of nullSchoolEmails) {
+      const u = await prisma.user.findUnique({
+        where: { email },
+        select: { id: true, schoolId: true },
+      });
+      if (u && !u.schoolId) {
+        await prisma.user.update({
+          where: { id: u.id },
+          data: { schoolId: school.id },
+        });
+        logs.push(`Attached ${email} to ${school.name}`);
+      }
+    }
 
     // Find teacher in this school
     const teacher = await prisma.user.findFirst({

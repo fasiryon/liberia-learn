@@ -20,6 +20,17 @@ function defaultRouteForRole(role: string): string {
   }
 }
 
+/** Check if a next URL is safe for the given role */
+function isNextUrlSafeForRole(url: string, role: string): boolean {
+  // Only allow relative paths
+  if (!url.startsWith("/")) return false;
+  // Block cross-role escalation
+  if (role === "STUDENT" && (url.startsWith("/admin") || url.startsWith("/teacher"))) return false;
+  if (role === "TEACHER" && url.startsWith("/admin")) return false;
+  if (role === "GUARDIAN" && (url.startsWith("/admin") || url.startsWith("/teacher"))) return false;
+  return true;
+}
+
 export default function LoginPage() {
   const router = useRouter();
 
@@ -60,8 +71,10 @@ export default function LoginPage() {
     const session = await getSession();
     const userRole = (session?.user as any)?.role ?? "STUDENT";
 
-    // If explicit next URL was provided, use it; otherwise route by role
-    const destination = nextUrl || defaultRouteForRole(userRole);
+    // If explicit next URL was provided AND it's safe for this role, use it;
+    // otherwise route by role default
+    const safeNext = nextUrl && isNextUrlSafeForRole(nextUrl, userRole) ? nextUrl : null;
+    const destination = safeNext || defaultRouteForRole(userRole);
     router.push(destination);
   };
 
