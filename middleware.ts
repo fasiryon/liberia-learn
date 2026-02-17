@@ -24,12 +24,16 @@ export async function middleware(req: NextRequest) {
   if (pathname === "/admin" || pathname.startsWith("/admin/")) {
     return NextResponse.next();
   }
-  // Allow Next internals/static
+  // Allow Next internals/static + health checks
   if (
     pathname.startsWith("/_next") ||
-    pathname.startsWith("/favicon.ico") ||
+    pathname === "/favicon.ico" ||
+    pathname === "/robots.txt" ||
+    pathname === "/sitemap.xml" ||
     pathname.startsWith("/assets") ||
-    pathname.startsWith("/public")
+    pathname.startsWith("/public") ||
+    pathname.startsWith("/api/health") ||
+    pathname === "/api/healthz"
   ) {
     return NextResponse.next();
   }

@@ -15,7 +15,7 @@ export type QuestionFeedback = {
 };
 
 export type GradingResult = {
-  overallScore: number;         // 0ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œ100
+  overallScore: number;         // 0–100
   overallFeedback: string;      // general comment
   questions: QuestionFeedback[];
 };
