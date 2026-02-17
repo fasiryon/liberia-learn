@@ -9,6 +9,9 @@ type GuardianLink = {
   studentEmail: string;
   guardianName: string;
   guardianEmail: string;
+  guardianPhone: string | null;
+  preferredChannel: string;
+  smsOptIn: boolean;
   relation: string | null;
 };
 
@@ -22,6 +25,10 @@ export default function GuardianLinkPage() {
   const [guardianEmail, setGuardianEmail] = useState("");
   const [guardianName, setGuardianName] = useState("");
   const [relation, setRelation] = useState("");
+  const [guardianCountryCode, setGuardianCountryCode] = useState("+231");
+  const [guardianPhone, setGuardianPhone] = useState("");
+  const [preferredChannel, setPreferredChannel] = useState("EMAIL");
+  const [smsOptIn, setSmsOptIn] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [success, setSuccess] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -54,7 +61,7 @@ export default function GuardianLinkPage() {
       const res = await fetch("/api/admin/guardian-link", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ studentId, guardianEmail, guardianName, relation }),
+        body: JSON.stringify({ studentId, guardianEmail, guardianName, relation, guardianPhone: guardianPhone || undefined, guardianCountryCode, preferredChannel, smsOptIn }),
       });
       const data = await res.json();
       if (!res.ok) {
@@ -64,6 +71,8 @@ export default function GuardianLinkPage() {
         setGuardianEmail("");
         setGuardianName("");
         setRelation("");
+        setGuardianPhone("");
+        setSmsOptIn(false);
         loadData();
       }
     } catch {
@@ -143,6 +152,57 @@ export default function GuardianLinkPage() {
               />
             </div>
 
+            <div className="space-y-1">
+              <label className="block text-xs font-medium text-slate-400">
+                Country Code
+              </label>
+              <input
+                type="text"
+                value={guardianCountryCode}
+                onChange={(e) => setGuardianCountryCode(e.target.value)}
+                className="w-full rounded-xl border border-slate-700 bg-slate-900/70 px-3 py-2 text-sm text-slate-50 outline-none placeholder:text-slate-500 focus:border-emerald-400"
+                placeholder="+231"
+              />
+            </div>
+
+            <div className="space-y-1">
+              <label className="block text-xs font-medium text-slate-400">
+                Phone Number
+              </label>
+              <input
+                type="tel"
+                value={guardianPhone}
+                onChange={(e) => setGuardianPhone(e.target.value)}
+                className="w-full rounded-xl border border-slate-700 bg-slate-900/70 px-3 py-2 text-sm text-slate-50 outline-none placeholder:text-slate-500 focus:border-emerald-400"
+                placeholder="077XXXXXXX"
+              />
+            </div>
+
+            <div className="space-y-1">
+              <label className="block text-xs font-medium text-slate-400">
+                Preferred Channel
+              </label>
+              <select
+                value={preferredChannel}
+                onChange={(e) => setPreferredChannel(e.target.value)}
+                className="w-full rounded-xl border border-slate-700 bg-slate-900/70 px-3 py-2 text-sm text-slate-50 outline-none focus:border-emerald-400"
+              >
+                <option value="EMAIL">Email</option>
+                <option value="SMS">SMS</option>
+                <option value="BOTH">Both</option>
+              </select>
+            </div>
+
+            <div className="flex items-center gap-2 pt-5">
+              <input
+                type="checkbox"
+                checked={smsOptIn}
+                onChange={(e) => setSmsOptIn(e.target.checked)}
+                className="h-4 w-4 rounded border-slate-600 bg-slate-900 text-emerald-500"
+              />
+              <label className="text-xs text-slate-400">SMS Opt-In</label>
+            </div>
+
             <div className="flex items-end">
               <button
                 type="submit"
@@ -190,6 +250,8 @@ export default function GuardianLinkPage() {
                     <th className="pb-2 pr-4">Student</th>
                     <th className="pb-2 pr-4">Guardian</th>
                     <th className="pb-2 pr-4">Email</th>
+                    <th className="pb-2 pr-4">Phone</th>
+                    <th className="pb-2 pr-4">Channel</th>
                     <th className="pb-2">Relation</th>
                   </tr>
                 </thead>
@@ -204,6 +266,12 @@ export default function GuardianLinkPage() {
                       </td>
                       <td className="py-2 pr-4 text-slate-400">
                         {l.guardianEmail}
+                      </td>
+                      <td className="py-2 pr-4 text-slate-400">
+                        {l.guardianPhone ?? "-"}
+                      </td>
+                      <td className="py-2 pr-4 text-slate-400">
+                        {l.preferredChannel ?? "EMAIL"}
                       </td>
                       <td className="py-2 text-slate-400">
                         {l.relation ?? "-"}
