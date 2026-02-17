@@ -165,6 +165,11 @@ $results += Test-Endpoint -Name "Student /student/dashboard redirect" -Url "$Bas
 $results += Test-Endpoint -Name "Admin /admin/school-branding" -Url "$BaseUrl/admin/school-branding" -Session $adminSession
 $results += Test-Endpoint -Name "Admin /admin/school-settings" -Url "$BaseUrl/admin/school-settings" -Session $adminSession
 
+# Phase 4: Platform admin pages (admin@mcs.edu.lr must have isPlatformAdmin=true)
+$platformSession = Get-AuthSession -Email "admin@mcs.edu.lr" -Password "Password123"
+$results += Test-Endpoint -Name "Platform /platform/security" -Url "$BaseUrl/platform/security" -Session $platformSession
+$results += Test-Endpoint -Name "Platform /platform/reports" -Url "$BaseUrl/platform/reports" -Session $platformSession
+
 # 4. Print results table
 Write-Host "`n--- Results ---" -ForegroundColor Yellow
 $results | Format-Table -AutoSize
