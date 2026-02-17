@@ -34,6 +34,7 @@ function statusBadge(status: string, payloadStatus?: string) {
 export default function AdminCurriculumPage() {
   const router = useRouter();
 
+  const [mode, setMode] = useState<"lesson" | "term_plan" | "unit_plan">("lesson");
   const [grade, setGrade] = useState(4);
   const [subject, setSubject] = useState("MATH");
   const [topic, setTopic] = useState("");
@@ -76,7 +77,7 @@ export default function AdminCurriculumPage() {
       const res = await fetch("/api/admin/curriculum/generate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ grade, subject, topic: topic.trim() }),
+        body: JSON.stringify({ grade, subject, topic: topic.trim(), mode }),
       });
       if (res.status === 401 || res.status === 403) { router.push("/login"); return; }
       const data = await res.json();
@@ -139,6 +140,24 @@ export default function AdminCurriculumPage() {
         >
           <h2 className="text-lg font-semibold">Run AI Factory &mdash; Generate Curriculum</h2>
 
+          {/* Mode selector */}
+          <div className="flex gap-2">
+            {(["lesson", "unit_plan", "term_plan"] as const).map((m) => (
+              <button
+                key={m}
+                type="button"
+                onClick={() => setMode(m)}
+                className={`rounded-full border px-3 py-1.5 text-xs capitalize ${
+                  mode === m
+                    ? "border-emerald-400 bg-emerald-500/20 text-emerald-200"
+                    : "border-slate-700 bg-slate-900/80 text-slate-300 hover:border-slate-500"
+                }`}
+              >
+                {m.replace(/_/g, " ")}
+              </button>
+            ))}
+          </div>
+
           <div className="grid gap-4 sm:grid-cols-3">
             <div>
               <label className="block text-xs font-medium text-slate-400 mb-1">Grade</label>
@@ -182,7 +201,7 @@ export default function AdminCurriculumPage() {
             disabled={loading || !topic.trim()}
             className="rounded-xl bg-emerald-500 px-6 py-3 text-sm font-semibold text-slate-950 shadow-lg shadow-emerald-500/30 hover:bg-emerald-400 disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {loading ? "Running AI Factory..." : "Run AI Factory - Generate Lesson + Labs"}
+            {loading ? "Running AI Factory..." : `Generate ${mode.replace(/_/g, " ")}`}
           </button>
         </form>
 

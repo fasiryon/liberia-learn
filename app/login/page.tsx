@@ -70,11 +70,12 @@ export default function LoginPage() {
     // Fetch session to get the actual role from the server
     const session = await getSession();
     const userRole = (session?.user as any)?.role ?? "STUDENT";
+    const isPlatformAdmin = (session?.user as any)?.isPlatformAdmin ?? false;
 
     // If explicit next URL was provided AND it's safe for this role, use it;
     // otherwise route by role default
     const safeNext = nextUrl && isNextUrlSafeForRole(nextUrl, userRole) ? nextUrl : null;
-    const destination = safeNext || defaultRouteForRole(userRole);
+    const destination = safeNext || (isPlatformAdmin ? "/platform" : defaultRouteForRole(userRole));
     router.push(destination);
   };
 

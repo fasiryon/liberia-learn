@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { requireRole } from "@/lib/auth";
 import { prisma } from "@/lib/db";
+import { logAudit } from "@/lib/audit";
 
 /**
  * POST /api/admin/curriculum/approve
@@ -39,6 +40,13 @@ export async function POST(req: Request) {
         status: "published",
         payload: updatedPayload,
       },
+    });
+
+    await logAudit({
+      userId: user.id,
+      action: "curriculum.approve",
+      resourceType: "curriculum",
+      resourceId: contentId,
     });
 
     return NextResponse.json({ ok: true, contentId, status: "published" });
