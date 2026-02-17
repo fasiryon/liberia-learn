@@ -80,3 +80,4 @@ _frontend_old/
 _ARCHIVE_*/
 _patches/
 LL_AUDIT_DUMP*.txt
+.env*.local
