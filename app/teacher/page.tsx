@@ -106,6 +106,12 @@ export default async function TeacherDashboardPage() {
           >
             Homework
           </Link>
+          <Link
+            href="/teacher/curriculum"
+            className="rounded-full bg-slate-900 px-4 py-1 text-xs font-semibold text-slate-200 border border-slate-700 hover:bg-slate-800"
+          >
+            Curriculum
+          </Link>
         </nav>
 
         {/* Overview stats */}

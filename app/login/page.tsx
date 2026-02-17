@@ -3,22 +3,33 @@
 
 import Link from "next/link";
 import { FormEvent, useEffect, useState } from "react";
-import { signIn } from "next-auth/react";
+import { signIn, getSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
+
+/** Map role to default landing page */
+function defaultRouteForRole(role: string): string {
+  switch (role) {
+    case "ADMIN":
+      return "/admin";
+    case "TEACHER":
+      return "/teacher";
+    case "GUARDIAN":
+      return "/guardian";
+    default:
+      return "/dashboard";
+  }
+}
 
 export default function LoginPage() {
   const router = useRouter();
 
-  // Callback URL (defaults to dashboard, but respects ?callbackUrl=... when present)
-  const [callbackUrl, setCallbackUrl] = useState("/dashboard");
+  // Explicit redirect target from ?next= or ?callbackUrl= (middleware uses "next")
+  const [nextUrl, setNextUrl] = useState<string | null>(null);
 
   useEffect(() => {
     if (typeof window !== "undefined") {
       const params = new URLSearchParams(window.location.search);
-      const cb = params.get("callbackUrl");
-      if (cb) {
-        setCallbackUrl(cb);
-      }
+      setNextUrl(params.get("next") || params.get("callbackUrl") || null);
     }
   }, []);
 
@@ -37,17 +48,21 @@ export default function LoginPage() {
       redirect: false,
       email,
       password,
-      callbackUrl,
     });
 
-    setLoading(false);
-
     if (res?.error) {
+      setLoading(false);
       setError(res.error);
       return;
     }
 
-    router.push(callbackUrl);
+    // Fetch session to get the actual role from the server
+    const session = await getSession();
+    const userRole = (session?.user as any)?.role ?? "STUDENT";
+
+    // If explicit next URL was provided, use it; otherwise route by role
+    const destination = nextUrl || defaultRouteForRole(userRole);
+    router.push(destination);
   };
 
   return (

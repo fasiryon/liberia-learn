@@ -88,7 +88,7 @@ const r = await fetch(`/api/homework?classId=${encodeURIComponent(_classId)}`, {
           </label>
 
           <div className="text-xs text-white/60">
-            Selected: {selectedClass ? `${selectedClass.name} (${selectedClass.subject})` : "â€”"}
+            Selected: {selectedClass ? `${selectedClass.name} (${selectedClass.subject})` : "--"}
           </div>
 
           <button
@@ -118,7 +118,7 @@ const r = await fetch(`/api/homework?classId=${encodeURIComponent(_classId)}`, {
                   <div className="text-white/90 font-semibold">{h.title}</div>
                   {h.description && <div className="text-white/70 mt-1">desc: {h.description}</div>}
                   <div className="text-white/60 text-xs mt-1">
-                    id: {h.id} Ã¢â‚¬Â¢ due: {h.dueAt ? new Date(h.dueAt).toLocaleString() : "Ã¢â‚¬â€"}
+                    id: {h.id} - due: {h.dueAt ? new Date(h.dueAt).toLocaleString() : "--"}
                   </div>
                 </div>
               ))}
