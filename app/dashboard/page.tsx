@@ -106,7 +106,7 @@ export default async function DashboardPage() {
                 href="/"
                 className="rounded-full border border-slate-700 px-3 py-1.5 text-xs text-slate-300 hover:text-slate-50"
               >
-                ÃƒÂ¢Ã‚Â¬Ã¢â‚¬Â¦ Back
+                &larr; Back
               </Link>
               <Link
                 href="/login"
@@ -185,14 +185,14 @@ export default async function DashboardPage() {
                 href="/"
                 className="hidden sm:inline-flex rounded-full border border-slate-700 px-3 py-1.5 text-slate-300 hover:text-slate-50"
               >
-                ÃƒÂ¢Ã‚Â¬Ã¢â‚¬Â¦ Home
+                &larr; Home
               </Link>
               <div className="flex items-center gap-2 rounded-full bg-slate-900/80 px-3 py-1.5">
                 <div className="h-7 w-7 rounded-full bg-gradient-to-br from-emerald-400 to-cyan-400" />
                 <div>
                   <p className="text-xs font-medium">{studentName}</p>
                   <p className="text-[10px] text-slate-400">
-                    {className} Ãƒâ€šÃ‚Â· {county}
+                    {className} &middot; {county}
                   </p>
                 </div>
               </div>
@@ -281,7 +281,7 @@ export default async function DashboardPage() {
                     </p>
                   </div>
                   <p className="text-xs text-slate-500 mt-2">
-                    Keep asking questions ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â learning grows with curiosity.
+                    Keep asking questions — learning grows with curiosity.
                   </p>
                 </div>
               </div>
@@ -299,8 +299,8 @@ export default async function DashboardPage() {
                 </p>
                 {latestPlacement ? (
                   <p className="text-xs text-slate-400 mt-1">
-                    Last placement test: {latestPlacement.track} Ãƒâ€šÃ‚Â· Grade{" "}
-                    {latestPlacement.grade} Ãƒâ€šÃ‚Â· {latestPlacement.score}% Ãƒâ€šÃ‚Â·{" "}
+                    Last placement test: {latestPlacement.track} · Grade{" "}
+                    {latestPlacement.grade} · {latestPlacement.score}% ·{" "}
                     {new Date(latestPlacement.createdAt).toLocaleString()}
                   </p>
                 ) : (
@@ -313,14 +313,14 @@ export default async function DashboardPage() {
                   href="/student/placement"
                   className="mt-2 inline-flex text-[11px] text-emerald-300 hover:text-emerald-200"
                 >
-                  View placement details ÃƒÂ¢Ã¢â‚¬Â Ã¢â‚¬â„¢
+                  View placement details →
                 </Link>
               </div>
 
               {/* Grades */}
               {grades.length === 0 ? (
                 <div className="rounded-2xl border border-slate-800 bg-slate-900/80 p-8 text-center">
-                  <p className="text-4xl mb-2">ÃƒÂ°Ã…Â¸Ã¢â‚¬Å“Ã…Â¡</p>
+                  <p className="text-4xl mb-2">📚</p>
                   <p className="text-sm font-medium mb-1">
                     No grades yet
                   </p>
@@ -372,18 +372,18 @@ export default async function DashboardPage() {
                 <div className="mt-3 space-y-2 text-xs text-slate-300">
                   {[
                     {
-                      time: "08:30 ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“ 09:15",
-                      title: "Mathematics Ãƒâ€šÃ‚Â· Fractions & Ratios",
+                      time: "08:30 – 09:15",
+                      title: "Mathematics · Fractions & Ratios",
                       tag: "AI plan ready",
                     },
                     {
-                      time: "09:30 ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“ 10:15",
-                      title: "Science Ãƒâ€šÃ‚Â· States of Matter",
+                      time: "09:30 – 10:15",
+                      title: "Science · States of Matter",
                       tag: "Slides prepared",
                     },
                     {
-                      time: "11:00 ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“ 11:45",
-                      title: "English Ãƒâ€šÃ‚Â· Reading comprehension",
+                      time: "11:00 – 11:45",
+                      title: "English · Reading comprehension",
                       tag: "Reading pack",
                     },
                   ].map((item, i) => (
