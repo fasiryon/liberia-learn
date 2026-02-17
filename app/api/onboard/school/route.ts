@@ -5,14 +5,21 @@
 import { NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/db";
+import { logAudit } from "@/lib/audit";
 import { z } from "zod";
 
 const Schema = z.object({
-  schoolName: z.string().min(3).max(100),
-  timezone:   z.string().default("Africa/Monrovia"),
-  adminName:  z.string().min(2).max(80),
-  adminEmail: z.string().email(),
-  password:   z.string().min(8),
+  schoolName:   z.string().min(3).max(100),
+  timezone:     z.string().default("Africa/Monrovia"),
+  county:       z.string().max(80).optional(),
+  district:     z.string().max(80).optional(),
+  contactName:  z.string().max(80).optional(),
+  contactEmail: z.string().email().optional(),
+  contactPhone: z.string().max(30).optional(),
+  motto:        z.string().max(200).optional(),
+  adminName:    z.string().min(2).max(80),
+  adminEmail:   z.string().email(),
+  password:     z.string().min(8),
 });
 
 export async function POST(req: Request) {
@@ -26,7 +33,7 @@ export async function POST(req: Request) {
       );
     }
 
-    const { schoolName, timezone, adminName, adminEmail, password } = parsed.data;
+    const { schoolName, timezone, county, district, contactName, contactEmail, contactPhone, motto, adminName, adminEmail, password } = parsed.data;
 
     const existing = await prisma.user.findUnique({ where: { email: adminEmail } });
     if (existing) {
@@ -37,7 +44,17 @@ export async function POST(req: Request) {
 
     const result = await prisma.$transaction(async (tx) => {
       const school = await tx.school.create({
-        data: { name: schoolName, timezone },
+        data: {
+          name: schoolName,
+          timezone,
+          status: "PENDING",
+          county: county ?? null,
+          district: district ?? null,
+          contactName: contactName ?? null,
+          contactEmail: contactEmail ?? null,
+          contactPhone: contactPhone ?? null,
+          motto: motto ?? null,
+        },
       });
 
       const admin = await tx.user.create({
@@ -51,6 +68,14 @@ export async function POST(req: Request) {
       });
 
       return { school, admin };
+    });
+
+    await logAudit({
+      userId: result.admin.id,
+      action: "school.onboard",
+      resourceType: "school",
+      resourceId: result.school.id,
+      details: { schoolName, county, district },
     });
 
     return NextResponse.json(

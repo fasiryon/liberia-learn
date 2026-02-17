@@ -4,6 +4,9 @@ import { z } from "zod";
 import { requireRole } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { generateCurriculumPayload } from "@/lib/ai/curriculum-factory";
+import { liberianize } from "@/lib/localization/liberia-context";
+import { standardizeTone } from "@/lib/localization/tone-standardizer";
+import { logAudit } from "@/lib/audit";
 import { createHash } from "crypto";
 
 // Rate limit: 10 requests per 5 minutes per userId
@@ -28,6 +31,7 @@ const RequestSchema = z.object({
   subject: z.string().min(1),
   topic: z.string().min(1).max(200),
   moeAlignmentCodes: z.array(z.string()).optional(),
+  mode: z.enum(["lesson", "term_plan", "unit_plan"]).optional().default("lesson"),
 });
 
 function slugify(text: string): string {
@@ -144,27 +148,86 @@ export async function POST(req: Request) {
       );
     }
 
-    const { grade, subject, topic, moeAlignmentCodes } = parsed.data;
+    const { grade, subject, topic, moeAlignmentCodes, mode } = parsed.data;
 
-    // Generate the lesson via AI
-    const payload = await generateCurriculumPayload({
-      grade,
-      subject,
-      topic,
-      moeAlignmentCodes,
-      liberiaContext: true,
-    });
+    let enrichedPayload: Record<string, unknown>;
+    let contentType = mode;
+    let labs: ReturnType<typeof generateLabs> = [];
 
-    // Generate labs
-    const labs = generateLabs(grade, subject, topic);
+    if (mode === "term_plan") {
+      // Term plan: 13-week outline (no AI call, deterministic structure)
+      const weeks = Array.from({ length: 13 }, (_, i) => ({
+        week: i + 1,
+        topic: i === 0 ? topic : `${topic} - Week ${i + 1}`,
+        objectives: [`Objective for week ${i + 1}`],
+        activities: [`Activity for week ${i + 1}`],
+      }));
+      enrichedPayload = {
+        title: `Term Plan: ${topic} (Grade ${grade})`,
+        grade,
+        subject,
+        type: "term_plan",
+        weeks,
+        metadata: { topic, locale: "LR", generatedAt: new Date().toISOString() },
+      };
+    } else if (mode === "unit_plan") {
+      // Unit plan: 2-week plan with objectives + assessments
+      enrichedPayload = {
+        title: `Unit Plan: ${topic} (Grade ${grade})`,
+        grade,
+        subject,
+        type: "unit_plan",
+        duration: "2 weeks",
+        objectives: [
+          `Students will understand the fundamentals of ${topic}.`,
+          `Students will apply ${topic} concepts to solve problems.`,
+          `Students will demonstrate mastery through assessment.`,
+        ],
+        lessons: [
+          { day: 1, title: `Introduction to ${topic}`, focus: "Core concepts" },
+          { day: 2, title: `${topic} Practice`, focus: "Guided practice" },
+          { day: 3, title: `${topic} Application`, focus: "Real-world problems" },
+          { day: 4, title: `${topic} Lab`, focus: "Hands-on activity" },
+          { day: 5, title: `${topic} Review & Assessment`, focus: "Assessment" },
+        ],
+        assessment: {
+          formative: ["Daily exit tickets", "Group presentations"],
+          summative: ["End-of-unit test", "Project submission"],
+        },
+        metadata: { topic, locale: "LR", generatedAt: new Date().toISOString() },
+      };
+    } else {
+      // Lesson mode (default) — use AI generation
+      const payload = await generateCurriculumPayload({
+        grade,
+        subject,
+        topic,
+        moeAlignmentCodes,
+        liberiaContext: true,
+      });
+
+      // Apply localization post-processing
+      const localizedBody = standardizeTone(liberianize(payload.body), grade);
+      const localizedActivities = (payload.activities ?? []).map(
+        (a: string) => standardizeTone(liberianize(a), grade)
+      );
+
+      labs = generateLabs(grade, subject, topic);
+
+      enrichedPayload = {
+        ...payload,
+        body: localizedBody,
+        activities: localizedActivities,
+        labs,
+      };
+    }
 
     // Determine approval status based on role
     const approvalStatus = user.role === "ADMIN" ? "APPROVED" : "PENDING_APPROVAL";
 
-    // Enrich payload with labs, approval info, and createdByRole
-    const enrichedPayload = {
-      ...payload,
-      labs,
+    // Add approval + authorship metadata
+    enrichedPayload = {
+      ...enrichedPayload,
       approvalStatus,
       createdByRole: user.role,
       createdByUserId: user.id,
@@ -174,7 +237,7 @@ export async function POST(req: Request) {
     };
 
     // Derive contentId and hash
-    const contentId = `${subject.toLowerCase()}-g${grade}-${slugify(topic)}`;
+    const contentId = `${mode === "lesson" ? "" : mode + "-"}${subject.toLowerCase()}-g${grade}-${slugify(topic)}`;
     const payloadStr = JSON.stringify(enrichedPayload);
     const hash = createHash("sha256").update(payloadStr).digest("hex").slice(0, 40);
 
@@ -187,34 +250,44 @@ export async function POST(req: Request) {
       update: {
         grade,
         subject,
-        payload: enrichedPayload,
-        moeAlignments: payload.moeAlignments ?? [],
+        payload: enrichedPayload as any,
+        moeAlignments: (enrichedPayload as any).moeAlignments ?? [],
         hash,
         version: new Date().toISOString().slice(0, 10),
         status: dbStatus,
+        contentType,
       },
       create: {
         contentId,
         grade,
         subject,
-        contentType: "lesson",
+        contentType,
         status: dbStatus,
         version: new Date().toISOString().slice(0, 10),
-        payload: enrichedPayload,
-        moeAlignments: payload.moeAlignments ?? [],
+        payload: enrichedPayload as any,
+        moeAlignments: (enrichedPayload as any).moeAlignments ?? [],
         hash,
       },
+    });
+
+    await logAudit({
+      userId: user.id,
+      action: `curriculum.generate.${mode}`,
+      resourceType: "curriculum",
+      resourceId: record.contentId,
+      details: { grade, subject, topic, mode, approvalStatus },
     });
 
     return NextResponse.json({
       ok: true,
       contentId: record.contentId,
       recordId: record.id,
+      mode,
       approvalStatus,
       labsCount: labs.length,
       payloadPreview: {
-        title: payload.title,
-        objectivesCount: payload.objectives.length,
+        title: (enrichedPayload as any).title,
+        objectivesCount: ((enrichedPayload as any).objectives ?? []).length,
       },
     });
   } catch (err: any) {

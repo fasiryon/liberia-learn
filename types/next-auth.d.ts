@@ -6,6 +6,7 @@ declare module "next-auth" {
       id: string;
       role?: string | null;
       schoolId?: string | null;
+      isPlatformAdmin?: boolean;
       name?: string | null;
       email?: string | null;
     };
@@ -16,5 +17,6 @@ declare module "next-auth/jwt" {
   interface JWT {
     role?: string | null;
     schoolId?: string | null;
+    isPlatformAdmin?: boolean;
   }
 }

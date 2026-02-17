@@ -20,8 +20,11 @@ function isPublicPath(pathname: string) {
 export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
 
-  // ALLOW_ADMIN_ROUTES: Let /admin pages render (still rely on server-side auth in the page itself)
+  // Let /admin and /platform pages render (rely on server-side auth in the page itself)
   if (pathname === "/admin" || pathname.startsWith("/admin/")) {
+    return NextResponse.next();
+  }
+  if (pathname === "/platform" || pathname.startsWith("/platform/")) {
     return NextResponse.next();
   }
   // Allow Next internals/static + health checks

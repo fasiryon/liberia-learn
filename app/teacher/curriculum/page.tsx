@@ -34,6 +34,7 @@ function statusBadge(status: string, payloadStatus?: string) {
 export default function TeacherCurriculumPage() {
   const router = useRouter();
 
+  const [mode, setMode] = useState<"lesson" | "term_plan" | "unit_plan">("lesson");
   const [grade, setGrade] = useState(5);
   const [subject, setSubject] = useState("MATH");
   const [topic, setTopic] = useState("");
@@ -87,6 +88,7 @@ export default function TeacherCurriculumPage() {
           grade,
           subject,
           topic: topic.trim(),
+          mode,
           ...(codes.length > 0 ? { moeAlignmentCodes: codes } : {}),
         }),
       });
@@ -158,7 +160,25 @@ export default function TeacherCurriculumPage() {
           onSubmit={handleGenerate}
           className="rounded-2xl border border-white/10 bg-slate-900/70 p-6 space-y-5"
         >
-          <h2 className="text-lg font-semibold">Run AI Factory &mdash; Generate Lesson + Labs</h2>
+          <h2 className="text-lg font-semibold">Run AI Factory &mdash; Generate Curriculum</h2>
+
+          {/* Mode selector */}
+          <div className="flex gap-2">
+            {(["lesson", "unit_plan", "term_plan"] as const).map((m) => (
+              <button
+                key={m}
+                type="button"
+                onClick={() => setMode(m)}
+                className={`rounded-full border px-3 py-1.5 text-xs capitalize ${
+                  mode === m
+                    ? "border-emerald-400 bg-emerald-500/20 text-emerald-200"
+                    : "border-slate-700 bg-slate-900/80 text-slate-300 hover:border-slate-500"
+                }`}
+              >
+                {m.replace(/_/g, " ")}
+              </button>
+            ))}
+          </div>
 
           <div className="grid gap-4 sm:grid-cols-2">
             <div>
@@ -218,7 +238,7 @@ export default function TeacherCurriculumPage() {
             disabled={loading || !topic.trim()}
             className="w-full rounded-xl bg-emerald-500 px-5 py-3 text-sm font-semibold text-slate-950 shadow-lg shadow-emerald-500/30 hover:bg-emerald-400 disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {loading ? "Running AI Factory..." : "Run AI Factory - Generate Lesson + Labs"}
+            {loading ? "Running AI Factory..." : `Generate ${mode.replace(/_/g, " ")}`}
           </button>
         </form>
 

@@ -29,6 +29,7 @@ export const authOptions: NextAuthOptions = {
             role: true,
             hashedPwd: true,
             schoolId: true,
+            isPlatformAdmin: true,
           },
         });
 
@@ -44,6 +45,7 @@ export const authOptions: NextAuthOptions = {
           name: user.name ?? undefined,
           role: user.role,
           schoolId: user.schoolId ?? null,
+          isPlatformAdmin: user.isPlatformAdmin,
         } as any;
       },
     }),
@@ -55,6 +57,7 @@ export const authOptions: NextAuthOptions = {
         token.id = (user as any).id;
         token.role = (user as any).role;
         token.schoolId = (user as any).schoolId ?? null;
+        token.isPlatformAdmin = (user as any).isPlatformAdmin ?? false;
       }
       return token;
     },
@@ -63,6 +66,7 @@ export const authOptions: NextAuthOptions = {
         (session.user as any).id = (token as any).id;
         (session.user as any).role = (token as any).role;
         (session.user as any).schoolId = (token as any).schoolId ?? null;
+        (session.user as any).isPlatformAdmin = (token as any).isPlatformAdmin ?? false;
       }
       return session;
     },
@@ -78,6 +82,7 @@ export type SessionUser = {
   name?: string | null;
   role: "STUDENT" | "TEACHER" | "ADMIN" | "GUARDIAN";
   schoolId?: string | null;
+  isPlatformAdmin?: boolean;
 };
 
 /** Returns null if not authenticated. Does NOT throw. */
@@ -92,6 +97,7 @@ export async function getOptionalUser(): Promise<SessionUser | null> {
     name: u.name ?? null,
     role: (u.role ?? "STUDENT"),
     schoolId: u.schoolId ?? null,
+    isPlatformAdmin: u.isPlatformAdmin ?? false,
   };
 }
 
@@ -107,6 +113,15 @@ export async function requireRole(...roles: string[]): Promise<SessionUser> {
   const user = await requireUser();
   if (!roles.includes(user.role)) {
     throw Object.assign(new Error("Forbidden"), { status: 403 });
+  }
+  return user;
+}
+
+/** Throws 401/403 if not a platform admin. */
+export async function requirePlatformAdmin(): Promise<SessionUser> {
+  const user = await requireUser();
+  if (!user.isPlatformAdmin) {
+    throw Object.assign(new Error("Forbidden — platform admin required"), { status: 403 });
   }
   return user;
 }
