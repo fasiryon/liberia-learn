@@ -1,0 +1,7 @@
+# Backups / archives (never deploy)
+_app_BACKUP_*
+app.BACKUP-*
+lib.BACKUP-*
+_frontend_old/
+_ARCHIVE_*/
+_patches/
