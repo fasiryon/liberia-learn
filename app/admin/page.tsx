@@ -3,8 +3,19 @@ import { redirect } from "next/navigation";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/db";
+import { AttachDemoSchoolButton } from "./AttachDemoSchoolButton";
 
 export const dynamic = "force-dynamic";
+
+const NAV_LINKS = [
+  { label: "Curriculum / AI Factory", href: "/admin/curriculum" },
+  { label: "Homework", href: "/admin/homework" },
+  { label: "Analytics", href: "/admin/analytics" },
+  { label: "Guardian Links", href: "/admin/guardian-link" },
+  { label: "Classes", href: "/admin/classes" },
+  { label: "Seed Demo Data", href: "/admin/seed" },
+  { label: "Schools", href: "/admin/schools" },
+];
 
 export default async function AdminConsolePage() {
   const session = await getServerSession(authOptions);
@@ -12,24 +23,69 @@ export default async function AdminConsolePage() {
   if (!user?.id) redirect("/login");
   if (user.role !== "ADMIN") redirect("/");
 
-  const schoolId = user.schoolId as string | null;
+  // Session JWT may have stale null schoolId. Check DB as fallback.
+  let schoolId = user.schoolId as string | null;
+  if (!schoolId) {
+    const dbUser = await prisma.user.findUnique({
+      where: { id: user.id },
+      select: { schoolId: true },
+    });
+    schoolId = dbUser?.schoolId ?? null;
+  }
+
+  // ---- No schoolId: show helpful CTA instead of dead-end ----
   if (!schoolId) {
     return (
-      <main className="min-h-screen bg-slate-950 text-slate-50 flex items-center justify-center">
-        <p>No school assigned to this admin account.</p>
+      <main className="min-h-screen bg-slate-950 text-slate-50">
+        <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_top,_#3b82f622,_transparent_60%)]" />
+        <div className="mx-auto max-w-2xl px-4 py-12 text-center space-y-6">
+          <p className="text-xs uppercase tracking-wide text-emerald-300">
+            LIBERIALEARN - ADMIN
+          </p>
+          <h1 className="text-2xl font-bold">No School Assigned</h1>
+          <p className="text-sm text-slate-400">
+            Your admin account ({user.email}) does not have a school attached yet.
+            Attach to the demo school to explore the platform, or log out and use the
+            primary demo admin account.
+          </p>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
+            <AttachDemoSchoolButton />
+            <Link
+              href="/api/auth/signout"
+              className="rounded-xl border border-slate-700 px-5 py-3 text-sm font-semibold hover:bg-slate-900"
+            >
+              Log out (use admin@mcs.edu.lr)
+            </Link>
+          </div>
+
+          {/* Still show nav links even without schoolId */}
+          <div className="pt-6 border-t border-slate-800">
+            <p className="text-xs text-slate-500 mb-3">Or navigate directly:</p>
+            <div className="flex flex-wrap justify-center gap-2">
+              {NAV_LINKS.map((l) => (
+                <Link
+                  key={l.href}
+                  href={l.href}
+                  className="rounded-full border border-slate-700 px-3 py-1.5 text-xs text-slate-300 hover:text-slate-50 hover:border-slate-500"
+                >
+                  {l.label}
+                </Link>
+              ))}
+            </div>
+          </div>
+        </div>
       </main>
     );
   }
 
+  // ---- Normal admin console with schoolId ----
   const [school, studentCount, teacherCount, classCount, homeworkCount] =
     await Promise.all([
       prisma.school.findUnique({ where: { id: schoolId }, select: { name: true } }),
       prisma.user.count({ where: { schoolId, role: "STUDENT" } }),
       prisma.user.count({ where: { schoolId, role: "TEACHER" } }),
       prisma.class.count({ where: { schoolId } }),
-      prisma.homework.count({
-        where: { Class: { schoolId } },
-      }),
+      prisma.homework.count({ where: { Class: { schoolId } } }),
     ]);
 
   const schoolName = school?.name ?? "Your School";
@@ -56,7 +112,7 @@ export default async function AdminConsolePage() {
 
       <div className="mx-auto max-w-6xl px-4 py-6">
         {/* Header */}
-        <header className="mb-8 flex items-center justify-between gap-4">
+        <header className="mb-6 flex items-center justify-between gap-4">
           <div>
             <p className="text-xs uppercase tracking-wide text-emerald-300 mb-1">
               LIBERIALEARN - ADMIN
@@ -86,6 +142,19 @@ export default async function AdminConsolePage() {
           </div>
         </header>
 
+        {/* Top nav links (preserved classic navigation) */}
+        <nav className="mb-6 flex flex-wrap gap-2 border-b border-slate-800 pb-3">
+          {NAV_LINKS.map((l) => (
+            <Link
+              key={l.href}
+              href={l.href}
+              className="rounded-full border border-slate-700 bg-slate-900/80 px-4 py-1.5 text-xs font-semibold text-slate-200 hover:bg-slate-800 hover:border-slate-500"
+            >
+              {l.label}
+            </Link>
+          ))}
+        </nav>
+
         {/* Stats cards */}
         <section className="mb-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {stats.map((s) => (
@@ -107,7 +176,7 @@ export default async function AdminConsolePage() {
               <Link
                 key={a.href}
                 href={a.href}
-                className={`flex items-center gap-3 rounded-2xl border border-slate-800 bg-slate-900/80 p-5 hover:bg-slate-800/80 transition-colors`}
+                className="flex items-center gap-3 rounded-2xl border border-slate-800 bg-slate-900/80 p-5 hover:bg-slate-800/80 transition-colors"
               >
                 <div
                   className={`h-10 w-10 rounded-xl ${a.bg} flex items-center justify-center text-slate-950 font-bold text-sm`}
