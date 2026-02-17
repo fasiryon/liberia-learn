@@ -34,7 +34,7 @@ function statusBadge(status: string, payloadStatus?: string) {
 export default function TeacherCurriculumPage() {
   const router = useRouter();
 
-  const [mode, setMode] = useState<"lesson" | "term_plan" | "unit_plan">("lesson");
+  const [mode, setMode] = useState<"lesson" | "term_plan" | "unit_plan" | "full_pack">("lesson");
   const [grade, setGrade] = useState(5);
   const [subject, setSubject] = useState("MATH");
   const [topic, setTopic] = useState("");
@@ -81,16 +81,16 @@ export default function TeacherCurriculumPage() {
         .map((c) => c.trim())
         .filter(Boolean);
 
-      const res = await fetch("/api/admin/curriculum/generate", {
+      const endpoint = mode === "full_pack"
+        ? "/api/admin/curriculum/generate-full-pack"
+        : "/api/admin/curriculum/generate";
+      const reqBody = mode === "full_pack"
+        ? { grade, subject, topic: topic.trim() }
+        : { grade, subject, topic: topic.trim(), mode, ...(codes.length > 0 ? { moeAlignmentCodes: codes } : {}) };
+      const res = await fetch(endpoint, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          grade,
-          subject,
-          topic: topic.trim(),
-          mode,
-          ...(codes.length > 0 ? { moeAlignmentCodes: codes } : {}),
-        }),
+        body: JSON.stringify(reqBody),
       });
 
       const data = await res.json();
@@ -105,8 +105,8 @@ export default function TeacherCurriculumPage() {
 
       setResult({
         contentId: data.contentId,
-        title: data.payloadPreview.title,
-        objectivesCount: data.payloadPreview.objectivesCount,
+        title: data.payloadPreview?.title ?? data.contentId,
+        objectivesCount: data.payloadPreview?.objectivesCount ?? 0,
         approvalStatus: data.approvalStatus ?? "PENDING_APPROVAL",
         labsCount: data.labsCount ?? 0,
       });
@@ -164,7 +164,7 @@ export default function TeacherCurriculumPage() {
 
           {/* Mode selector */}
           <div className="flex gap-2">
-            {(["lesson", "unit_plan", "term_plan"] as const).map((m) => (
+            {(["lesson", "unit_plan", "term_plan", "full_pack"] as const).map((m) => (
               <button
                 key={m}
                 type="button"

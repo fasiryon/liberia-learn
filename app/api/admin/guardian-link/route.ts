@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { requireRole } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { sendGuardianInvite } from "@/lib/email";
+import { normalizeToE164 } from "@/lib/phone";
 
 export const dynamic = "force-dynamic";
 
@@ -17,7 +18,7 @@ export async function GET() {
       },
       include: {
         student: { include: { user: { select: { name: true, email: true } } } },
-        guardian: { select: { id: true, name: true, email: true } },
+        guardian: { select: { id: true, name: true, email: true, guardianPhone: true, guardianPhoneE164: true, preferredChannel: true, smsOptIn: true } },
       },
       orderBy: { id: "desc" },
     });
@@ -28,6 +29,10 @@ export async function GET() {
       studentEmail: l.student.user.email,
       guardianName: l.guardian.name ?? l.guardian.email,
       guardianEmail: l.guardian.email,
+      guardianPhone: l.guardian.guardianPhone,
+      guardianPhoneE164: l.guardian.guardianPhoneE164,
+      preferredChannel: l.guardian.preferredChannel,
+      smsOptIn: l.guardian.smsOptIn,
       relation: l.relation,
     }));
 
@@ -43,7 +48,7 @@ export async function POST(req: Request) {
     const user = await requireRole("ADMIN");
     const body = await req.json();
 
-    const { studentId, guardianEmail, guardianName, relation } = body;
+    const { studentId, guardianEmail, guardianName, relation, guardianPhone, guardianCountryCode, preferredChannel, smsOptIn } = body;
 
     if (!studentId || !guardianEmail) {
       return NextResponse.json(
@@ -75,6 +80,26 @@ export async function POST(req: Request) {
           schoolId: user.schoolId,
         },
       });
+    }
+
+    // Update guardian phone/channel fields if provided
+    if (guardianPhone || preferredChannel || smsOptIn !== undefined) {
+      const phoneData: Record<string, unknown> = {};
+      if (guardianPhone) {
+        const cc = guardianCountryCode || "+231";
+        phoneData.guardianCountryCode = cc;
+        phoneData.guardianPhone = guardianPhone;
+        phoneData.guardianPhoneE164 = normalizeToE164(guardianPhone, cc);
+      }
+      if (preferredChannel && ["EMAIL", "SMS", "BOTH"].includes(preferredChannel)) {
+        phoneData.preferredChannel = preferredChannel;
+      }
+      if (typeof smsOptIn === "boolean") {
+        phoneData.smsOptIn = smsOptIn;
+      }
+      if (Object.keys(phoneData).length > 0) {
+        await prisma.user.update({ where: { id: guardian.id }, data: phoneData });
+      }
     }
 
     // Upsert StudentGuardian link

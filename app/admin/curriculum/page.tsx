@@ -34,7 +34,7 @@ function statusBadge(status: string, payloadStatus?: string) {
 export default function AdminCurriculumPage() {
   const router = useRouter();
 
-  const [mode, setMode] = useState<"lesson" | "term_plan" | "unit_plan">("lesson");
+  const [mode, setMode] = useState<"lesson" | "term_plan" | "unit_plan" | "full_pack">("lesson");
   const [grade, setGrade] = useState(4);
   const [subject, setSubject] = useState("MATH");
   const [topic, setTopic] = useState("");
@@ -74,20 +74,26 @@ export default function AdminCurriculumPage() {
     setError(null);
     setResult(null);
     try {
-      const res = await fetch("/api/admin/curriculum/generate", {
+      const endpoint = mode === "full_pack"
+        ? "/api/admin/curriculum/generate-full-pack"
+        : "/api/admin/curriculum/generate";
+      const payload = mode === "full_pack"
+        ? { grade, subject, topic: topic.trim() }
+        : { grade, subject, topic: topic.trim(), mode };
+      const res = await fetch(endpoint, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ grade, subject, topic: topic.trim(), mode }),
+        body: JSON.stringify(payload),
       });
       if (res.status === 401 || res.status === 403) { router.push("/login"); return; }
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Generation failed");
       setResult({
         contentId: data.contentId,
-        title: data.payloadPreview.title,
-        objectivesCount: data.payloadPreview.objectivesCount,
+        title: data.payloadPreview?.title ?? data.contentId,
+        objectivesCount: data.payloadPreview?.objectivesCount ?? 0,
         approvalStatus: data.approvalStatus,
-        labsCount: data.labsCount ?? 0,
+        labsCount: data.labsCount ?? data.packSummary?.labCount ?? 0,
       });
       loadItems();
     } catch (err: any) {
@@ -142,7 +148,7 @@ export default function AdminCurriculumPage() {
 
           {/* Mode selector */}
           <div className="flex gap-2">
-            {(["lesson", "unit_plan", "term_plan"] as const).map((m) => (
+            {(["lesson", "unit_plan", "term_plan", "full_pack"] as const).map((m) => (
               <button
                 key={m}
                 type="button"
@@ -291,12 +297,21 @@ export default function AdminCurriculumPage() {
                             {approving === item.contentId ? "..." : "Approve"}
                           </button>
                         )}
-                        <Link
-                          href={`/student/lesson/${item.contentId}`}
-                          className="rounded-lg border border-slate-700 px-3 py-1 text-xs text-slate-300 hover:text-slate-50"
-                        >
-                          Preview
-                        </Link>
+                        {item.contentType === "full_pack" ? (
+                          <Link
+                            href={`/admin/curriculum/${item.contentId}/review`}
+                            className="rounded-lg border border-blue-700 bg-blue-500/10 px-3 py-1 text-xs text-blue-300 hover:text-blue-50"
+                          >
+                            Review Pack
+                          </Link>
+                        ) : (
+                          <Link
+                            href={`/student/lesson/${item.contentId}`}
+                            className="rounded-lg border border-slate-700 px-3 py-1 text-xs text-slate-300 hover:text-slate-50"
+                          >
+                            Preview
+                          </Link>
+                        )}
                       </div>
                     </div>
 

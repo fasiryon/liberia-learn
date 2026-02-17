@@ -13,6 +13,10 @@ const NAV_LINKS = [
   { label: "Analytics", href: "/admin/analytics" },
   { label: "Guardian Links", href: "/admin/guardian-link" },
   { label: "Classes", href: "/admin/classes" },
+  { label: "School Branding", href: "/admin/school-branding" },
+  { label: "School Settings", href: "/admin/school-settings" },
+  { label: "Reports", href: "/admin/reports" },
+  { label: "Audit Log", href: "/admin/audit" },
   { label: "Seed Demo Data", href: "/admin/seed" },
   { label: "Schools", href: "/admin/schools" },
 ];
@@ -104,6 +108,8 @@ export default async function AdminConsolePage() {
     { label: "Guardian Links", href: "/admin/guardian-link", bg: "bg-amber-500" },
     { label: "Analytics", href: "/admin/analytics", bg: "bg-cyan-500" },
     { label: "Classes", href: "/admin/classes", bg: "bg-rose-500" },
+    { label: "School Branding", href: "/admin/school-branding", bg: "bg-pink-500" },
+    { label: "School Settings", href: "/admin/school-settings", bg: "bg-indigo-500" },
   ];
 
   return (

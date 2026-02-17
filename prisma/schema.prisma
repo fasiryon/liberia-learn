@@ -65,9 +65,14 @@ model User {
   hashedPwd       String?
   name            String?
   role            Role
-  isPlatformAdmin Boolean   @default(false)
-  createdAt       DateTime  @default(now())
-  updatedAt       DateTime  @updatedAt
+  isPlatformAdmin     Boolean  @default(false)
+  guardianCountryCode String   @default("+231")
+  guardianPhone       String?
+  guardianPhoneE164   String?
+  preferredChannel    String   @default("EMAIL") // EMAIL|SMS|BOTH
+  smsOptIn            Boolean  @default(false)
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
 
   teacherOf           Class[]              @relation("TeacherClasses")
   guardianOf          StudentGuardian[]
@@ -98,8 +103,11 @@ model School {
   primaryHex   String?
   secondaryHex String?
   accentHex    String?
-  logoUrl      String?
-  createdAt    DateTime @default(now())
+  logoUrl                String?
+  approvalRequired       Boolean  @default(true)
+  allowTeacherPublish    Boolean  @default(false)
+  allowBlueprintAdoption Boolean  @default(true)
+  createdAt              DateTime @default(now())
 
   classes      Class[]
   inviteTokens InviteToken[]
@@ -697,4 +705,28 @@ model CurriculumContent {
 
   @@index([grade, subject])
   @@index([contentType, status])
+}
+
+//// ===== Scheduled Work (Today's Work) =====
+model ScheduledWork {
+  id            String   @id @default(cuid())
+  contentId     String
+  classId       String
+  scheduledDate DateTime
+  createdById   String
+  createdAt     DateTime @default(now())
+
+  @@index([classId, scheduledDate])
+  @@index([contentId])
+}
+
+//// ===== Platform Transfer Tokens =====
+model PlatformTransferToken {
+  id        String    @id @default(cuid())
+  token     String    @unique @default(cuid())
+  createdBy String
+  expiresAt DateTime
+  usedAt    DateTime?
+  usedBy    String?
+  createdAt DateTime  @default(now())
 }

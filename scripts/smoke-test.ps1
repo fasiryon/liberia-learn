@@ -161,6 +161,10 @@ $results += Test-Endpoint -Name "Student /dashboard" -Url "$BaseUrl/dashboard" -
 # Student: /student/dashboard should redirect to /dashboard (check for 200 after redirect)
 $results += Test-Endpoint -Name "Student /student/dashboard redirect" -Url "$BaseUrl/student/dashboard" -Session $studentSession
 
+# Phase 4: New admin pages
+$results += Test-Endpoint -Name "Admin /admin/school-branding" -Url "$BaseUrl/admin/school-branding" -Session $adminSession
+$results += Test-Endpoint -Name "Admin /admin/school-settings" -Url "$BaseUrl/admin/school-settings" -Session $adminSession
+
 # 4. Print results table
 Write-Host "`n--- Results ---" -ForegroundColor Yellow
 $results | Format-Table -AutoSize
