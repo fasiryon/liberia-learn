@@ -1,8 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 const SUBJECTS = [
   "MATH", "SCIENCE", "LITERACY", "CIVICS",
@@ -20,13 +20,12 @@ type CurriculumItem = {
   createdAt: string;
 };
 
-export default function TeacherCurriculumPage() {
+export default function AdminCurriculumPage() {
   const router = useRouter();
 
-  const [grade, setGrade] = useState(5);
+  const [grade, setGrade] = useState(4);
   const [subject, setSubject] = useState("MATH");
   const [topic, setTopic] = useState("");
-  const [moeCodes, setMoeCodes] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<{
@@ -43,7 +42,7 @@ export default function TeacherCurriculumPage() {
       const res = await fetch("/api/curriculum?limit=10", { cache: "no-store" });
       if (res.status === 401) { router.push("/login"); return; }
       const data = await res.json();
-      setItems(data.items ?? []);
+      setItems(data.items ?? data.content ?? []);
     } catch {
       // ignore
     } finally {
@@ -58,39 +57,21 @@ export default function TeacherCurriculumPage() {
     setLoading(true);
     setError(null);
     setResult(null);
-
     try {
-      const codes = moeCodes
-        .split(",")
-        .map((c) => c.trim())
-        .filter(Boolean);
-
       const res = await fetch("/api/admin/curriculum/generate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          grade,
-          subject,
-          topic: topic.trim(),
-          ...(codes.length > 0 ? { moeAlignmentCodes: codes } : {}),
-        }),
+        body: JSON.stringify({ grade, subject, topic: topic.trim() }),
       });
-
+      if (res.status === 401 || res.status === 403) { router.push("/login"); return; }
       const data = await res.json();
-
-      if (res.status === 401 || res.status === 403) {
-        router.push("/login");
-        return;
-      }
-      if (!res.ok) {
-        throw new Error(data.error || "Generation failed");
-      }
-
+      if (!res.ok) throw new Error(data.error || "Generation failed");
       setResult({
         contentId: data.contentId,
         title: data.payloadPreview.title,
         objectivesCount: data.payloadPreview.objectivesCount,
       });
+      // Refresh the list
       loadItems();
     } catch (err: any) {
       setError(err.message || "Something went wrong");
@@ -100,27 +81,30 @@ export default function TeacherCurriculumPage() {
   }
 
   return (
-    <main className="min-h-screen bg-slate-950 px-4 py-8">
-      <div className="mx-auto max-w-3xl space-y-6">
-        <Link
-          href="/teacher"
-          className="inline-block text-sm text-emerald-300 hover:text-emerald-200"
-        >
-          &larr; Back to Teacher Dashboard
-        </Link>
+    <main className="min-h-screen bg-slate-950 text-slate-50">
+      <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_top,_#22c55e22,_transparent_60%)]" />
 
-        <h1 className="text-2xl font-bold text-slate-50">
-          Curriculum Generator
-        </h1>
-        <p className="text-sm text-slate-400">
-          Generate AI-powered lessons aligned to Liberian MOE standards.
-        </p>
+      <div className="mx-auto max-w-4xl px-4 py-6 space-y-8">
+        <div className="flex items-center justify-between">
+          <div>
+            <Link href="/admin" className="text-xs text-emerald-300 hover:text-emerald-200">
+              &larr; Back to Admin Console
+            </Link>
+            <h1 className="text-2xl font-bold mt-2">Curriculum &amp; AI Factory</h1>
+            <p className="text-sm text-slate-400 mt-1">
+              Generate AI-powered lessons aligned to Liberian MOE standards.
+            </p>
+          </div>
+        </div>
 
+        {/* Generate form */}
         <form
           onSubmit={handleGenerate}
           className="rounded-2xl border border-white/10 bg-slate-900/70 p-6 space-y-5"
         >
-          <div className="grid gap-4 sm:grid-cols-2">
+          <h2 className="text-lg font-semibold">Generate Curriculum for Grade / Subject</h2>
+
+          <div className="grid gap-4 sm:grid-cols-3">
             <div>
               <label className="block text-xs font-medium text-slate-400 mb-1">Grade</label>
               <select
@@ -133,7 +117,6 @@ export default function TeacherCurriculumPage() {
                 ))}
               </select>
             </div>
-
             <div>
               <label className="block text-xs font-medium text-slate-400 mb-1">Subject</label>
               <select
@@ -146,48 +129,36 @@ export default function TeacherCurriculumPage() {
                 ))}
               </select>
             </div>
-          </div>
-
-          <div>
-            <label className="block text-xs font-medium text-slate-400 mb-1">Topic</label>
-            <input
-              type="text"
-              value={topic}
-              onChange={(e) => setTopic(e.target.value)}
-              placeholder='e.g. "Fractions and Mixed Numbers"'
-              required
-              className="w-full rounded-lg bg-slate-950 border border-slate-700 px-3 py-2 text-sm text-slate-100 focus:outline-none focus:border-emerald-500"
-            />
-          </div>
-
-          <div>
-            <label className="block text-xs font-medium text-slate-400 mb-1">
-              MOE Alignment Codes (optional, comma-separated)
-            </label>
-            <input
-              type="text"
-              value={moeCodes}
-              onChange={(e) => setMoeCodes(e.target.value)}
-              placeholder="e.g. LR-MATH-G4_6-02, LR-MATH-G4_6-03"
-              className="w-full rounded-lg bg-slate-950 border border-slate-700 px-3 py-2 text-sm text-slate-100 focus:outline-none focus:border-emerald-500"
-            />
+            <div>
+              <label className="block text-xs font-medium text-slate-400 mb-1">Topic</label>
+              <input
+                type="text"
+                value={topic}
+                onChange={(e) => setTopic(e.target.value)}
+                placeholder='e.g. "Fractions and Mixed Numbers"'
+                required
+                className="w-full rounded-lg bg-slate-950 border border-slate-700 px-3 py-2 text-sm text-slate-100 focus:outline-none focus:border-emerald-500"
+              />
+            </div>
           </div>
 
           <button
             type="submit"
             disabled={loading || !topic.trim()}
-            className="w-full rounded-xl bg-emerald-500 px-5 py-3 text-sm font-semibold text-slate-950 shadow-lg shadow-emerald-500/30 hover:bg-emerald-400 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="rounded-xl bg-emerald-500 px-6 py-3 text-sm font-semibold text-slate-950 shadow-lg shadow-emerald-500/30 hover:bg-emerald-400 disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {loading ? "Generating..." : "Generate Lesson"}
+            {loading ? "Running AI Factory..." : "Run AI Factory - Generate Lesson"}
           </button>
         </form>
 
+        {/* Error */}
         {error && (
           <div className="rounded-2xl border border-red-500/30 bg-red-500/10 p-4 text-sm text-red-400">
             {error}
           </div>
         )}
 
+        {/* Result */}
         {result && (
           <div className="rounded-2xl border border-emerald-500/30 bg-emerald-500/10 p-5 space-y-3">
             <h2 className="text-lg font-semibold text-emerald-300">Lesson Generated</h2>
@@ -214,13 +185,24 @@ export default function TeacherCurriculumPage() {
           </div>
         )}
 
-        {/* Existing curriculum items */}
+        {/* Latest curriculum items */}
         <section className="rounded-2xl border border-white/10 bg-slate-900/70 p-6">
-          <h2 className="text-lg font-semibold text-slate-50 mb-4">Available Curriculum</h2>
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-lg font-semibold">Latest Curriculum Items</h2>
+            <button
+              onClick={loadItems}
+              className="text-xs text-emerald-300 hover:text-emerald-200"
+            >
+              Refresh
+            </button>
+          </div>
+
           {loadingItems ? (
             <p className="text-sm text-slate-400">Loading...</p>
           ) : items.length === 0 ? (
-            <p className="text-sm text-slate-400">No curriculum items yet. Generate one above or ask your admin.</p>
+            <div className="text-center py-8">
+              <p className="text-slate-400 text-sm">No curriculum yet -- generate one above.</p>
+            </div>
           ) : (
             <div className="space-y-3">
               {items.map((item) => (
@@ -233,14 +215,14 @@ export default function TeacherCurriculumPage() {
                       {item.payload?.title ?? item.contentId}
                     </p>
                     <p className="text-xs text-slate-400 mt-1">
-                      Grade {item.grade} - {item.subject} - {item.status}
+                      Grade {item.grade} - {item.subject} - {item.contentType} - {item.status}
                     </p>
                   </div>
                   <Link
                     href={`/student/lesson/${item.contentId}`}
                     className="rounded-lg border border-slate-700 px-3 py-1.5 text-xs text-slate-300 hover:text-slate-50 hover:border-slate-500"
                   >
-                    View
+                    Preview
                   </Link>
                 </div>
               ))}

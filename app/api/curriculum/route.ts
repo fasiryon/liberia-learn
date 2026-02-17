@@ -14,7 +14,8 @@ export async function GET(req: Request) {
     const takeParam = searchParams.get("take");
 
     const grade = gradeParam ? Number(gradeParam) : undefined;
-    const take = takeParam ? Number(takeParam) : 50;
+    const limitParam = searchParams.get("limit");
+    const take = limitParam ? Number(limitParam) : takeParam ? Number(takeParam) : 50;
 
     const rows = await prisma.curriculumContent.findMany({
       where: {
@@ -24,13 +25,14 @@ export async function GET(req: Request) {
       orderBy: { updatedAt: "desc" },
       take,
       select: {
+        id: true,
         contentId: true,
         grade: true,
         subject: true,
         contentType: true,
         status: true,
         version: true,
-        hash: true,
+        payload: true,
         createdAt: true,
         updatedAt: true,
       },
