@@ -8,6 +8,7 @@ const NAV = [
   { href: "/platform/audit", label: "Audit Log" },
   { href: "/platform/reports", label: "Reports" },
   { href: "/platform/security", label: "Security" },
+  { href: "/platform/demo", label: "Demo" },
 ];
 
 export default async function PlatformLayout({

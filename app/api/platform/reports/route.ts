@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { requirePlatformAdmin } from "@/lib/auth";
 import { prisma } from "@/lib/db";
+import { computePilotScore } from "@/lib/pilot-score";
 
 export const dynamic = "force-dynamic";
 
@@ -76,12 +77,23 @@ export async function GET(req: NextRequest) {
       ]);
     } else if (type === "readiness") {
       const schools = await prisma.school.findMany({
-        select: { id: true, name: true, county: true, primaryHex: true },
+        select: { id: true, name: true, county: true },
       });
-      data.headers = ["School", "County", "Branding Set", "Score"];
-      data.rows = schools.map((s) => [
-        s.name, s.county ?? "", s.primaryHex ? "Yes" : "No", "",
+      const scores = await Promise.all(
+        schools.map(async (s) => {
+          const result = await computePilotScore(s.id);
+          return { ...s, ...result };
+        })
+      );
+      data.headers = ["School", "County", "Total", "Grade", "Attendance", "Curriculum", "Engagement", "Guardians", "Setup"];
+      data.rows = scores.map((s) => [
+        s.name, s.county ?? "", String(s.total), s.grade,
+        ...s.components.map((c) => String(c.score)),
       ]);
+
+      if (format === "json") {
+        return NextResponse.json({ type, schools: scores });
+      }
     }
 
     if (format === "csv") {

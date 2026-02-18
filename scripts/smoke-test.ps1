@@ -164,6 +164,21 @@ $results += Test-Endpoint -Name "Student /student/dashboard redirect" -Url "$Bas
 # Phase 4: New admin pages
 $results += Test-Endpoint -Name "Admin /admin/school-branding" -Url "$BaseUrl/admin/school-branding" -Session $adminSession
 $results += Test-Endpoint -Name "Admin /admin/school-settings" -Url "$BaseUrl/admin/school-settings" -Session $adminSession
+$results += Test-Endpoint -Name "Admin /admin/onboarding" -Url "$BaseUrl/admin/onboarding" -Session $adminSession
+$results += Test-Endpoint -Name "GET /api/admin/onboarding" -Url "$BaseUrl/api/admin/onboarding" -Session $adminSession
+
+# Student lesson view + progress
+$results += Test-Endpoint -Name "Student /student/today" -Url "$BaseUrl/student/today" -Session $studentSession
+$results += Test-Endpoint -Name "GET /api/student/today" -Url "$BaseUrl/api/student/today" -Session $studentSession
+$results += Test-Endpoint -Name "Student /student/progress" -Url "$BaseUrl/student/progress" -Session $studentSession
+$results += Test-Endpoint -Name "GET /api/student/progress" -Url "$BaseUrl/api/student/progress" -Session $studentSession
+
+# Teacher students + schedule
+$results += Test-Endpoint -Name "Teacher /teacher/students" -Url "$BaseUrl/teacher/students" -Session $teacherSession
+$results += Test-Endpoint -Name "GET /api/teacher/students" -Url "$BaseUrl/api/teacher/students" -Session $teacherSession
+$results += Test-Endpoint -Name "Teacher /teacher/schedule" -Url "$BaseUrl/teacher/schedule" -Session $teacherSession
+$results += Test-Endpoint -Name "GET /api/teacher/schedule" -Url "$BaseUrl/api/teacher/schedule" -Session $teacherSession
+$results += Test-Endpoint -Name "GET /api/teacher/dashboard" -Url "$BaseUrl/api/teacher/dashboard" -Session $teacherSession
 
 # Phase 4: Platform admin pages (admin@mcs.edu.lr must have isPlatformAdmin=true)
 $platformSession = Get-AuthSession -Email "admin@mcs.edu.lr" -Password "Password123"
