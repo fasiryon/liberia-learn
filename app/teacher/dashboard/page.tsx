@@ -1,57 +1,96 @@
-export default function TeacherDashboard() {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-green-50">
-        {/* Navigation */}
-        <nav className="border-b bg-white/80 backdrop-blur-md">
-          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <div className="flex h-16 items-center justify-between">
-              <span className="text-2xl font-bold text-blue-600">🇱🇷 LiberiaLearn</span>
-              <div className="flex items-center gap-4">
-                <span className="text-sm text-gray-600">Ms. Johnson</span>
-                <button className="rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white hover:bg-red-700">
-                  Sign Out
-                </button>
+"use client";
+
+import { useEffect, useState } from "react";
+import Link from "next/link";
+
+type DashboardData = {
+  scheduledToday: number;
+  completionRateToday: number;
+  recentLessons: Array<{ contentId: string; title: string; status: string; createdAt: string }>;
+  classesWithoutLesson: string[];
+};
+
+export default function TeacherDashboardPage() {
+  const [data, setData] = useState<DashboardData | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetch("/api/teacher/dashboard")
+      .then((r) => r.json())
+      .then((d) => setData(d))
+      .finally(() => setLoading(false));
+  }, []);
+
+  return (
+    <div className="min-h-screen bg-slate-950 text-slate-50 px-4 py-8">
+      <div className="mx-auto max-w-4xl space-y-6">
+        <div>
+          <h1 className="text-2xl font-bold">Teacher Dashboard</h1>
+          <p className="text-sm text-slate-400 mt-1">
+            {new Date().toLocaleDateString("en-LR", { weekday: "long", month: "long", day: "numeric" })}
+          </p>
+        </div>
+
+        {loading ? (
+          <div className="space-y-3">{[1, 2, 3].map((i) => <div key={i} className="h-20 rounded-2xl bg-slate-800/50 animate-pulse" />)}</div>
+        ) : (
+          <>
+            {/* Alert banner */}
+            {data?.classesWithoutLesson && data.classesWithoutLesson.length > 0 && (
+              <div className="rounded-xl bg-amber-500/20 border border-amber-500/30 px-4 py-3 text-sm text-amber-300">
+                {data.classesWithoutLesson.length} class(es) have no lesson scheduled for today: {data.classesWithoutLesson.join(", ")}
+              </div>
+            )}
+
+            {/* Stats */}
+            <div className="grid grid-cols-2 gap-3">
+              <div className="rounded-2xl border border-white/10 bg-slate-900/70 p-4 text-center">
+                <p className="text-2xl font-bold text-emerald-400">{data?.scheduledToday || 0}</p>
+                <p className="text-xs text-slate-400">Lessons scheduled today</p>
+              </div>
+              <div className="rounded-2xl border border-white/10 bg-slate-900/70 p-4 text-center">
+                <p className="text-2xl font-bold text-violet-400">{data?.completionRateToday || 0}%</p>
+                <p className="text-xs text-slate-400">Completion rate today</p>
               </div>
             </div>
-          </div>
-        </nav>
-  
-        {/* Main Content */}
-        <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-          <h1 className="mb-8 text-3xl font-bold text-gray-900">Teacher Dashboard</h1>
-  
-          {/* Stats Cards */}
-          <div className="mb-8 grid gap-6 md:grid-cols-3">
-            <div className="rounded-xl bg-white p-6 shadow-lg">
-              <div className="mb-2 text-sm font-medium text-gray-600">Total Classes</div>
-              <div className="text-3xl font-bold text-blue-600">1</div>
+
+            {/* Quick actions */}
+            <div className="grid grid-cols-3 gap-3">
+              <Link href="/teacher/curriculum" className="rounded-2xl border border-white/10 bg-slate-900/70 p-4 text-center hover:border-emerald-500/30">
+                <p className="text-sm font-semibold text-emerald-400">Generate Lesson</p>
+              </Link>
+              <Link href="/teacher/students" className="rounded-2xl border border-white/10 bg-slate-900/70 p-4 text-center hover:border-emerald-500/30">
+                <p className="text-sm font-semibold text-violet-400">View Students</p>
+              </Link>
+              <Link href="/teacher/schedule" className="rounded-2xl border border-white/10 bg-slate-900/70 p-4 text-center hover:border-emerald-500/30">
+                <p className="text-sm font-semibold text-amber-400">Schedule Work</p>
+              </Link>
             </div>
-            <div className="rounded-xl bg-white p-6 shadow-lg">
-              <div className="mb-2 text-sm font-medium text-gray-600">Total Students</div>
-              <div className="text-3xl font-bold text-green-600">1</div>
-            </div>
-            <div className="rounded-xl bg-white p-6 shadow-lg">
-              <div className="mb-2 text-sm font-medium text-gray-600">Attendance Rate</div>
-              <div className="text-3xl font-bold text-purple-600">100%</div>
-            </div>
-          </div>
-  
-          {/* My Classes */}
-          <div className="rounded-xl bg-white p-6 shadow-lg">
-            <h2 className="mb-4 text-xl font-bold text-gray-900">My Classes</h2>
-            <div className="space-y-4">
-              <div className="flex items-center justify-between rounded-lg border border-gray-200 p-4 hover:bg-gray-50">
-                <div>
-                  <h3 className="font-semibold text-gray-900">JSS-7A Algebra</h3>
-                  <p className="text-sm text-gray-600">Mathematics • 1 student enrolled</p>
+
+            {/* Recent lessons */}
+            <section className="rounded-2xl border border-white/10 bg-slate-900/70 p-5">
+              <h2 className="text-sm font-semibold text-slate-300 mb-3">Recent Published Lessons</h2>
+              {(!data?.recentLessons || data.recentLessons.length === 0) ? (
+                <p className="text-xs text-slate-500">No published lessons yet. Generate your first lesson!</p>
+              ) : (
+                <div className="space-y-2">
+                  {data.recentLessons.slice(0, 5).map((l) => (
+                    <div key={l.contentId} className="flex items-center justify-between rounded-xl border border-slate-800 bg-slate-950/50 px-4 py-2">
+                      <div>
+                        <p className="text-sm text-slate-200">{l.title}</p>
+                        <p className="text-xs text-slate-500">{new Date(l.createdAt).toLocaleDateString()}</p>
+                      </div>
+                      <span className={`rounded-full px-2 py-0.5 text-[10px] ${l.status === "APPROVED" ? "bg-emerald-500/20 text-emerald-300" : "bg-amber-500/20 text-amber-300"}`}>
+                        {l.status}
+                      </span>
+                    </div>
+                  ))}
                 </div>
-                <button className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700">
-                  View Class
-                </button>
-              </div>
-            </div>
-          </div>
-        </main>
+              )}
+            </section>
+          </>
+        )}
       </div>
-    );
-  }
+    </div>
+  );
+}
