@@ -20,7 +20,19 @@
       "Bash(python3:*)",
       "Bash(PYTHONIOENCODING=utf-8 python3:*)",
       "Bash(npm run dev:*)",
-      "Bash(curl:*)"
+      "Bash(curl:*)",
+      "Bash(vercel env:*)",
+      "Bash(vercel deploy:*)",
+      "Bash(npx vercel:*)",
+      "Bash(powershell -ExecutionPolicy Bypass -File scripts/smoke-test.ps1:*)",
+      "Bash(wc:*)",
+      "Bash(npx vitest:*)",
+      "Bash(npx prisma db seed:*)",
+      "Bash(git reset:*)",
+      "Bash(git -C /c/Users/FA/liberia-learn log --oneline -20)",
+      "Bash(git -C /c/Users/FA/liberia-learn log 5ff4cbc -1 --format=\"%B\")",
+      "Bash(test:*)",
+      "Bash(taskkill:*)"
     ]
   }
 }

@@ -97,6 +97,13 @@ export default async function AdminConsolePage() {
 
   const schoolName = school?.name ?? "Your School";
 
+  // Check onboarding status
+  const schoolDetail = await prisma.school.findUnique({
+    where: { id: schoolId },
+    select: { onboardingStep: true },
+  });
+  const onboardingIncomplete = !schoolDetail?.onboardingStep || schoolDetail.onboardingStep < 5;
+
   const stats = [
     { label: "Total Students", value: studentCount, color: "text-emerald-300" },
     { label: "Total Teachers", value: teacherCount, color: "text-blue-300" },
@@ -150,6 +157,22 @@ export default async function AdminConsolePage() {
             </form>
           </div>
         </header>
+
+        {/* Onboarding banner */}
+        {onboardingIncomplete && (
+          <Link
+            href="/admin/onboarding"
+            className="mb-4 flex items-center gap-3 rounded-2xl border border-amber-500/30 bg-amber-500/10 p-4 hover:bg-amber-500/20 transition-colors"
+          >
+            <span className="text-2xl">&#9888;</span>
+            <div>
+              <p className="text-sm font-semibold text-amber-300">Complete School Onboarding</p>
+              <p className="text-xs text-amber-400/70">
+                Finish the 5-step setup wizard to improve your Pilot Readiness Score.
+              </p>
+            </div>
+          </Link>
+        )}
 
         {/* Top nav links (preserved classic navigation) */}
         <nav className="mb-6 flex flex-wrap gap-2 border-b border-slate-800 pb-3">
