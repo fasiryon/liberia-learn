@@ -181,15 +181,40 @@ GET  /api/admin/schools               # List all schools
 
 ---
 
+## MOE Pilot Sprint
+
+LiberiaLearn completed a 10-session MOE Pilot Sprint to prepare for the Ministry of Education national pilot:
+
+| Session | Feature |
+|---------|---------|
+| S1 | Student lesson view (today's work, content, mark complete) |
+| S2 | Student progress dashboard + teacher student monitoring |
+| S3 | Realistic Liberian seed data (3 schools, 75 students) |
+| S4 | 5-step school onboarding wizard with county selector |
+| S5 | Africa's Talking SMS for guardian notifications |
+| S6 | Offline sync with IndexedDB queue + auto-reconnect |
+| S7 | Pilot Readiness Score (5-component formula, admin breakdown) |
+| S8 | Teacher dashboard, weekly schedule, curriculum workflow |
+| S9 | Full smoke test suite + demo credential sheet |
+| S10 | MOE docs, demo mode, error boundaries, loading states |
+
+---
+
 ## 🔐 Demo Accounts
 
-After seeding, use these credentials to explore:
+After seeding (`npx prisma db seed`), use these credentials:
 
-| Role      | Email                  | Password      |
-|-----------|------------------------|---------------|
-| Student   | student@school.lr      | password123   |
-| Teacher   | teacher@school.lr      | password123   |
-| Admin     | admin@school.lr        | password123   |
+**All passwords: `Password123`**
+
+| Role | Email | School |
+|------|-------|--------|
+| Platform Admin | jkollie@mca.edu.lr | Monrovia Central Academy |
+| Teacher | mpewee@mca.edu.lr | MCA - Grade 7 Math |
+| Student | fatu.wreh@mca.edu.lr | MCA - Grade 7A |
+| School Admin | gtokpah@pcs.edu.lr | Paynesville Community School |
+| School Admin | mkarnga@krs.edu.lr | Kakata Rural School |
+
+See `scripts/demo-credentials.txt` for the full credential sheet.
 
 ---
 

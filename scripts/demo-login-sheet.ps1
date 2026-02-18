@@ -17,8 +17,8 @@ Write-Host "  Admin:    jkollie@mca.edu.lr"
 Write-Host "  Teacher:  mpewee@mca.edu.lr (Mary Pewee - Grade 7 Math)"
 Write-Host "  Teacher:  dnimely@mca.edu.lr (David Nimely - Grade 8 English)"
 Write-Host "  Teacher:  sflomo@mca.edu.lr (Sarah Flomo - Grade 7 SS)"
-Write-Host "  Student:  fatu.flomo@mca.edu.lr (Fatu Flomo - Grade 7A)"
-Write-Host "  Student:  david.nimely@mca.edu.lr (David Nimely - Grade 8B)"
+Write-Host "  Student:  fatu.wreh@mca.edu.lr (Fatu Wreh - Grade 7A)"
+Write-Host "  Student:  david.karnga@mca.edu.lr (David Karnga - Grade 8B)"
 Write-Host "  Guardian: +231 077 0000001`n"
 
 Write-Host "--- School 2: Paynesville Community School ---" -ForegroundColor Yellow
@@ -26,14 +26,14 @@ Write-Host "  County:   Montserrado"
 Write-Host "  Admin:    gtokpah@pcs.edu.lr (Grace Tokpah)"
 Write-Host "  Teacher:  esumo@pcs.edu.lr (Emmanuel Sumo - Grade 6)"
 Write-Host "  Teacher:  pwreh@pcs.edu.lr (Patience Wreh - Grade 9)"
-Write-Host "  Student:  fatu.kpaan@pcs.edu.lr`n"
+Write-Host "  Student:  alfred.flomo@pcs.edu.lr (Alfred Flomo)`n"
 
 Write-Host "--- School 3: Kakata Rural School ---" -ForegroundColor Red
 Write-Host "  County:   Margibi"
 Write-Host "  Admin:    mkarnga@krs.edu.lr (Moses Karnga)"
 Write-Host "  Teacher:  fkollie@krs.edu.lr (Fatu Kollie - Grade 5)"
 Write-Host "  Teacher:  abestman@krs.edu.lr (Augustine Bestman - Grade 10)"
-Write-Host "  Student:  fatu.gbowee@krs.edu.lr`n"
+Write-Host "  Student:  alfred.sumo@krs.edu.lr (Alfred Sumo)`n"
 
 Write-Host "--- Smoke Test Accounts (legacy) ---" -ForegroundColor DarkGray
 Write-Host "  Admin:    admin@mcs.edu.lr"
