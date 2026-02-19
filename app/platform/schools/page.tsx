@@ -7,6 +7,10 @@ type School = {
   id: string;
   name: string;
   status: string;
+  pilotStatus: string | null;
+  pilotCohort: string | null;
+  pilotStartDate: string | null;
+  pilotNotes: string | null;
   county: string | null;
   district: string | null;
   contactName: string | null;
@@ -35,6 +39,15 @@ export default function PlatformSchoolsPage() {
   });
   const [creating, setCreating] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [editingSchool, setEditingSchool] = useState<School | null>(null);
+  const [pilotForm, setPilotForm] = useState({
+    pilotStatus: "",
+    pilotCohort: "",
+    pilotStartDate: "",
+    pilotNotes: "",
+  });
+  const [savingPilot, setSavingPilot] = useState(false);
+  const [pilotError, setPilotError] = useState<string | null>(null);
 
   async function loadSchools() {
     setLoading(true);
@@ -93,6 +106,44 @@ export default function PlatformSchoolsPage() {
       loadSchools();
     } catch (err: any) {
       alert(err.message);
+    }
+  }
+
+  function openPilotEdit(school: School) {
+    setPilotError(null);
+    setEditingSchool(school);
+    setPilotForm({
+      pilotStatus: school.pilotStatus ?? "",
+      pilotCohort: school.pilotCohort ?? "",
+      pilotStartDate: school.pilotStartDate ? school.pilotStartDate.slice(0, 10) : "",
+      pilotNotes: school.pilotNotes ?? "",
+    });
+  }
+
+  async function handlePilotSave() {
+    if (!editingSchool) return;
+    setSavingPilot(true);
+    setPilotError(null);
+    try {
+      const res = await fetch("/api/platform/schools", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          id: editingSchool.id,
+          pilotStatus: pilotForm.pilotStatus.trim() || null,
+          pilotCohort: pilotForm.pilotCohort.trim() || null,
+          pilotStartDate: pilotForm.pilotStartDate || null,
+          pilotNotes: pilotForm.pilotNotes.trim() || null,
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Failed to save pilot metadata");
+      setEditingSchool(null);
+      loadSchools();
+    } catch (err: any) {
+      setPilotError(err.message);
+    } finally {
+      setSavingPilot(false);
     }
   }
 
@@ -176,6 +227,7 @@ export default function PlatformSchoolsPage() {
                   <th className="pb-2 pr-3">Users</th>
                   <th className="pb-2 pr-3">Classes</th>
                   <th className="pb-2 pr-3">Status</th>
+                  <th className="pb-2 pr-3">Pilot</th>
                   <th className="pb-2">Actions</th>
                 </tr>
               </thead>
@@ -215,8 +267,33 @@ export default function PlatformSchoolsPage() {
                         {s.status}
                       </span>
                     </td>
+                    <td className="py-3 pr-3 text-xs">
+                      {s.pilotStatus ? (
+                        <div>
+                          <span className="rounded-full bg-violet-500/20 px-2 py-0.5 text-[11px] text-violet-300">
+                            {s.pilotStatus}
+                          </span>
+                          {s.pilotCohort && (
+                            <span className="ml-2 text-slate-500">Cohort {s.pilotCohort}</span>
+                          )}
+                        </div>
+                      ) : (
+                        <span className="text-slate-500">--</span>
+                      )}
+                      {s.pilotStartDate && (
+                        <div className="text-[11px] text-slate-500 mt-1">
+                          Start: {new Date(s.pilotStartDate).toLocaleDateString()}
+                        </div>
+                      )}
+                    </td>
                     <td className="py-3">
                       <div className="flex gap-1">
+                        <button
+                          onClick={() => openPilotEdit(s)}
+                          className="rounded-lg bg-violet-500/20 px-2 py-1 text-[11px] text-violet-300 hover:bg-violet-500/30"
+                        >
+                          Edit Pilot
+                        </button>
                         {s.status !== "ACTIVE" && (
                           <button
                             onClick={() => handleStatusChange(s.id, "ACTIVE")}
@@ -242,6 +319,82 @@ export default function PlatformSchoolsPage() {
           </div>
         )}
       </section>
+
+      {editingSchool && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4">
+          <div className="w-full max-w-lg rounded-2xl border border-white/10 bg-slate-950 p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <h2 className="text-lg font-semibold">Pilot Metadata</h2>
+                <p className="text-xs text-slate-400 mt-1">{editingSchool.name}</p>
+              </div>
+              <button
+                onClick={() => setEditingSchool(null)}
+                className="text-xs text-slate-400 hover:text-slate-200"
+              >
+                Close
+              </button>
+            </div>
+
+            <div className="mt-4 space-y-3">
+              <div>
+                <label className="block text-xs font-medium text-slate-400 mb-1">Pilot Status</label>
+                <input
+                  value={pilotForm.pilotStatus}
+                  onChange={(e) => setPilotForm((f) => ({ ...f, pilotStatus: e.target.value }))}
+                  placeholder="e.g. PILOT, PAUSED, COMPLETED"
+                  className="w-full rounded-lg bg-slate-950 border border-slate-700 px-3 py-2 text-sm text-slate-100 focus:outline-none focus:border-violet-500"
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-medium text-slate-400 mb-1">Pilot Cohort</label>
+                <input
+                  value={pilotForm.pilotCohort}
+                  onChange={(e) => setPilotForm((f) => ({ ...f, pilotCohort: e.target.value }))}
+                  placeholder="e.g. 2026-A"
+                  className="w-full rounded-lg bg-slate-950 border border-slate-700 px-3 py-2 text-sm text-slate-100 focus:outline-none focus:border-violet-500"
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-medium text-slate-400 mb-1">Pilot Start Date</label>
+                <input
+                  type="date"
+                  value={pilotForm.pilotStartDate}
+                  onChange={(e) => setPilotForm((f) => ({ ...f, pilotStartDate: e.target.value }))}
+                  className="w-full rounded-lg bg-slate-950 border border-slate-700 px-3 py-2 text-sm text-slate-100 focus:outline-none focus:border-violet-500"
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-medium text-slate-400 mb-1">Pilot Notes</label>
+                <textarea
+                  value={pilotForm.pilotNotes}
+                  onChange={(e) => setPilotForm((f) => ({ ...f, pilotNotes: e.target.value }))}
+                  rows={3}
+                  className="w-full rounded-lg bg-slate-950 border border-slate-700 px-3 py-2 text-sm text-slate-100 focus:outline-none focus:border-violet-500"
+                />
+              </div>
+            </div>
+
+            {pilotError && <p className="mt-3 text-xs text-red-400">{pilotError}</p>}
+
+            <div className="mt-4 flex gap-2">
+              <button
+                onClick={() => setEditingSchool(null)}
+                className="flex-1 rounded-xl border border-slate-700 px-4 py-2 text-sm text-slate-300 hover:text-slate-100"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handlePilotSave}
+                disabled={savingPilot}
+                className="flex-1 rounded-xl bg-violet-500 px-4 py-2 text-sm font-semibold text-white hover:bg-violet-400 disabled:opacity-50"
+              >
+                {savingPilot ? "Saving..." : "Save Pilot Metadata"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
