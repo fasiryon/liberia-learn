@@ -57,22 +57,22 @@ enum Difficulty {
 
 //// ===== Core Identity & Org =====
 model User {
-  schoolId        String?
-  school          School?   @relation(fields: [schoolId], references: [id])
-  id              String    @id @default(cuid())
-  email           String    @unique
-  emailVerified   DateTime?
-  hashedPwd       String?
-  name            String?
-  role            Role
-  isPlatformAdmin     Boolean  @default(false)
-  guardianCountryCode String   @default("+231")
+  schoolId            String?
+  school              School?   @relation(fields: [schoolId], references: [id])
+  id                  String    @id @default(cuid())
+  email               String    @unique
+  emailVerified       DateTime?
+  hashedPwd           String?
+  name                String?
+  role                Role
+  isPlatformAdmin     Boolean   @default(false)
+  guardianCountryCode String    @default("+231")
   guardianPhone       String?
   guardianPhoneE164   String?
-  preferredChannel    String   @default("EMAIL") // EMAIL|SMS|BOTH
-  smsOptIn            Boolean  @default(false)
-  createdAt           DateTime @default(now())
-  updatedAt           DateTime @updatedAt
+  preferredChannel    String    @default("EMAIL") // EMAIL|SMS|BOTH
+  smsOptIn            Boolean   @default(false)
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
 
   teacherOf           Class[]              @relation("TeacherClasses")
   guardianOf          StudentGuardian[]
@@ -89,21 +89,25 @@ model User {
 }
 
 model School {
-  users        User[]
-  id           String   @id @default(cuid())
-  name         String
-  timezone     String   @default("Africa/Monrovia")
-  status       String   @default("ACTIVE") // PENDING, ACTIVE, SUSPENDED
-  county       String?
-  district     String?
-  contactName  String?
-  contactEmail String?
-  contactPhone String?
-  motto        String?
-  welcomeMsg   String?
-  primaryHex   String?
-  secondaryHex String?
-  accentHex    String?
+  users                  User[]
+  id                     String   @id @default(cuid())
+  name                   String
+  timezone               String   @default("Africa/Monrovia")
+  status                 String   @default("ACTIVE") // PENDING, ACTIVE, SUSPENDED
+  pilotStatus            String?
+  pilotCohort            String?
+  pilotStartDate         DateTime?
+  pilotNotes             String?
+  county                 String?
+  district               String?
+  contactName            String?
+  contactEmail           String?
+  contactPhone           String?
+  motto                  String?
+  welcomeMsg             String?
+  primaryHex             String?
+  secondaryHex           String?
+  accentHex              String?
   logoUrl                String?
   approvalRequired       Boolean  @default(true)
   allowTeacherPublish    Boolean  @default(false)
@@ -371,7 +375,7 @@ model AuditLog {
   userId       String?
   action       String
   details      Json?
-  resourceType String?  // "curriculum", "user", "school", "homework", etc.
+  resourceType String? // "curriculum", "user", "school", "homework", etc.
   resourceId   String?
   ipAddress    String?
   createdAt    DateTime @default(now())
@@ -677,8 +681,8 @@ model InviteToken {
 model NotificationLog {
   id        String   @id @default(cuid())
   userId    String
-  channel   String   // "email" | "sms"
-  recipient String   // email address or phone number
+  channel   String // "email" | "sms"
+  recipient String // email address or phone number
   subject   String?
   body      String
   status    String   @default("pending") // "pending" | "sent" | "failed"

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { requirePlatformAdmin } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { logAudit } from "@/lib/audit";
+import { computeFieldDiff } from "@/lib/audit-diff";
 
 export const dynamic = "force-dynamic";
 
@@ -15,6 +16,10 @@ export async function GET() {
         id: true,
         name: true,
         status: true,
+        pilotStatus: true,
+        pilotCohort: true,
+        pilotStartDate: true,
+        pilotNotes: true,
         county: true,
         district: true,
         contactName: true,
@@ -41,7 +46,7 @@ export async function GET() {
 /** POST: create a new school */
 export async function POST(req: NextRequest) {
   try {
-    await requirePlatformAdmin();
+    const user = await requirePlatformAdmin();
 
     const body = await req.json();
     const { name, county, district, contactName, contactEmail, contactPhone, motto, status } = body;
@@ -64,7 +69,7 @@ export async function POST(req: NextRequest) {
     });
 
     await logAudit({
-      userId: (await requirePlatformAdmin()).id,
+      userId: user.id,
       action: "school.create",
       resourceType: "school",
       resourceId: school.id,
@@ -83,7 +88,7 @@ export async function POST(req: NextRequest) {
 /** PATCH: update a school */
 export async function PATCH(req: NextRequest) {
   try {
-    await requirePlatformAdmin();
+    const user = await requirePlatformAdmin();
 
     const body = await req.json();
     const { id, ...updates } = body;
@@ -92,10 +97,82 @@ export async function PATCH(req: NextRequest) {
       return NextResponse.json({ error: "School id is required" }, { status: 400 });
     }
 
+    const allowedFields = [
+      "status",
+      "pilotStatus",
+      "pilotCohort",
+      "pilotStartDate",
+      "pilotNotes",
+    ] as const;
+
+    const updateData: Record<string, unknown> = {};
+    for (const key of allowedFields) {
+      if (Object.prototype.hasOwnProperty.call(updates, key)) {
+        updateData[key] = updates[key];
+      }
+    }
+
+    if (updateData.pilotStartDate) {
+      updateData.pilotStartDate = new Date(updateData.pilotStartDate as string);
+    } else if (Object.prototype.hasOwnProperty.call(updateData, "pilotStartDate")) {
+      updateData.pilotStartDate = null;
+    }
+
+    if (Object.keys(updateData).length === 0) {
+      return NextResponse.json({ error: "No updatable fields provided" }, { status: 400 });
+    }
+
+    const existing = await prisma.school.findUnique({
+      where: { id },
+      select: {
+        id: true,
+        name: true,
+        status: true,
+        pilotStatus: true,
+        pilotCohort: true,
+        pilotStartDate: true,
+        pilotNotes: true,
+      },
+    });
+
+    if (!existing) {
+      return NextResponse.json({ error: "School not found" }, { status: 404 });
+    }
+
     const school = await prisma.school.update({
       where: { id },
-      data: updates,
+      data: updateData,
+      select: {
+        id: true,
+        name: true,
+        status: true,
+        pilotStatus: true,
+        pilotCohort: true,
+        pilotStartDate: true,
+        pilotNotes: true,
+      },
     });
+
+    const diff = computeFieldDiff(existing, school, [
+      "status",
+      "pilotStatus",
+      "pilotCohort",
+      "pilotStartDate",
+      "pilotNotes",
+    ]);
+
+    if (Object.keys(diff).length > 0) {
+      await logAudit({
+        userId: user.id,
+        action: "school.update",
+        resourceType: "school",
+        resourceId: id,
+        details: {
+          schoolName: school.name,
+          changes: diff,
+        },
+      });
+    }
 
     return NextResponse.json({ school });
   } catch (err: any) {

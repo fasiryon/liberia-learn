@@ -1,4 +1,4 @@
-// prisma/seed.ts — Idempotent MOE demo seed data
+// prisma/seed.ts ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â Idempotent MOE demo seed data
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcryptjs";
 import { SCHEDULES } from "./seed-week-curriculum";
@@ -343,9 +343,22 @@ async function main() {
         },
       });
       contentCount++;
+// ScheduledWork with stable ID
+    // Resolve classId from schedule into real DB Class.id (FK-safe)
+const schedKey = (sched.classId ?? "").toString();
 
-      // ScheduledWork with stable ID
-      const swId = `sw_${sched.classId.replace("class_", "")}_${lesson.day}_p${lesson.periodNumber}`;
+// In this repo, Class appears to be keyed by `id` (no code/slug fields). Ensure it exists.
+let classRec = await prisma.class.findUnique({ where: { id: schedKey }, select: { id: true } });
+
+if (!classRec) {
+  try {
+    classRec = await prisma.class.create({ data: { id: schedKey }, select: { id: true } });
+    console.log("Created missing Class: " + schedKey);
+  } catch (e) {
+    console.warn("Class missing and could not be created for id=" + schedKey + ". Skipping schedule.", e);
+    continue;
+  }
+}const swId = `sw_${sched.classId.replace("class_", "")}_${lesson.day}_p${lesson.periodNumber}`;
       const scheduledDate = weekDates[lesson.day];
       await prisma.scheduledWork.upsert({
         where: { id: swId },
@@ -353,7 +366,7 @@ async function main() {
         create: {
           id: swId,
           contentId: lesson.contentId,
-          classId: sched.classId,
+          classId: classRec.id,
           scheduledDate,
           periodNumber: lesson.periodNumber,
           startTime: lesson.startTime,
@@ -367,7 +380,7 @@ async function main() {
   console.log(`  Created ${contentCount} curriculum content records, ${swCount} scheduled work entries`);
 
   // ========== MEETINGS (attendance markers) ==========
-  // MCA: all 5 days × 2 classes = 10, PCS: Mon-Wed × 2 = 6, KRS: Mon only × 2 = 2 → 18 total
+  // MCA: all 5 days ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â 2 classes = 10, PCS: Mon-Wed ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â 2 = 6, KRS: Mon only ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â 2 = 2 ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢ 18 total
   const meetingConfigs: { classIds: string[]; days: number[] }[] = [
     { classIds: [s1c1.id, s1c2.id], days: [0, 1, 2, 3, 4] }, // MCA all week
     { classIds: [s2c1.id, s2c2.id], days: [0, 1, 2] },        // PCS Mon-Wed
@@ -416,9 +429,9 @@ async function main() {
       // Find enrolled students for this class
       const enrollments = await prisma.enrollment.findMany({
         where: { classId: cls.id },
-        select: { student: { select: { userId: true } } },
+        select: { Student: { select: { userId: true } } },
       });
-      const userIds = enrollments.map(e => e.student.userId);
+      const userIds = enrollments.map(e => e.Student.userId);
 
       // Find all scheduled work for this class this week
       const allSw = await prisma.scheduledWork.findMany({
@@ -517,15 +530,15 @@ async function main() {
 
   console.log("\n=== MOE Demo Credentials (Password: Password123) ===");
   console.log("Platform Admin: jkollie@mca.edu.lr");
-  console.log("\nSchool 1 — Monrovia Central Academy:");
+  console.log("\nSchool 1 ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â Monrovia Central Academy:");
   console.log("  Admin:   jkollie@mca.edu.lr");
   console.log("  Teacher: mpewee@mca.edu.lr, dnimely@mca.edu.lr, sflomo@mca.edu.lr");
   console.log("  Student: fatu.flomo@mca.edu.lr");
-  console.log("\nSchool 2 — Paynesville Community School:");
+  console.log("\nSchool 2 ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â Paynesville Community School:");
   console.log("  Admin:   gtokpah@pcs.edu.lr");
   console.log("  Teacher: esumo@pcs.edu.lr, pwreh@pcs.edu.lr");
   console.log("  Student: fatu.kpaan@pcs.edu.lr");
-  console.log("\nSchool 3 — Kakata Rural School:");
+  console.log("\nSchool 3 ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â Kakata Rural School:");
   console.log("  Admin:   mkarnga@krs.edu.lr");
   console.log("  Teacher: fkollie@krs.edu.lr, abestman@krs.edu.lr");
   console.log("  Student: fatu.gbowee@krs.edu.lr");
