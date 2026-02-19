@@ -171,16 +171,29 @@ export async function PATCH(req: NextRequest) {
       "contactPhoneVerified",
     ]);
 
+    const pilotFields = ["pilotStatus", "pilotCohort", "pilotStartDate", "pilotNotes"];
+    const pilotChanges: Record<string, { from: unknown; to: unknown }> = {};
+    for (const field of pilotFields) {
+      if (diff[field]) pilotChanges[field] = diff[field];
+    }
+
     if (Object.keys(diff).length > 0) {
+      const hasPilotChanges = Object.keys(pilotChanges).length > 0;
+      const details: Record<string, unknown> = {
+        schoolName: school.name,
+        changes: diff,
+      };
+      if (hasPilotChanges) {
+        details.pilotChanges = pilotChanges;
+      }
+
       await logAudit({
         userId: user.id,
-        action: "school.update",
+        schoolId: id,
+        action: hasPilotChanges ? "pilot.update" : "school.update",
         resourceType: "school",
         resourceId: id,
-        details: {
-          schoolName: school.name,
-          changes: diff,
-        },
+        details,
       });
     }
 

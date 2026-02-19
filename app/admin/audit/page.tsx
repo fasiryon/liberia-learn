@@ -4,37 +4,36 @@ import { redirect } from "next/navigation";
 
 export const dynamic = "force-dynamic";
 
-export default async function AdminAuditPage() {
+export default async function AdminAuditPage({
+  searchParams,
+}: {
+  searchParams?: { action?: string };
+}) {
   const user = await requireRole("ADMIN").catch(() => null);
   if (!user) redirect("/login");
 
-  // Get school users to filter logs
+  const actionFilter =
+    typeof searchParams?.action === "string" ? searchParams.action.trim() : "";
   const schoolId = user.schoolId;
-  let logs;
-  if (schoolId) {
-    const schoolUsers = await prisma.user.findMany({
-      where: { schoolId },
-      select: { id: true },
-    });
-    const userIds = schoolUsers.map((u) => u.id);
-    logs = await prisma.auditLog.findMany({
-      where: { userId: { in: userIds } },
-      orderBy: { createdAt: "desc" },
-      take: 100,
-      include: {
-        user: { select: { email: true, name: true, role: true } },
-      },
-    });
-  } else {
-    logs = await prisma.auditLog.findMany({
-      where: { userId: user.id },
-      orderBy: { createdAt: "desc" },
-      take: 50,
-      include: {
-        user: { select: { email: true, name: true, role: true } },
-      },
-    });
+
+  const where: any = {};
+  if (actionFilter) {
+    where.action = actionFilter;
   }
+  if (schoolId) {
+    where.OR = [{ schoolId }, { user: { schoolId } }];
+  } else {
+    where.userId = user.id;
+  }
+
+  const logs = await prisma.auditLog.findMany({
+    where,
+    orderBy: { createdAt: "desc" },
+    take: 100,
+    include: {
+      user: { select: { email: true, name: true, role: true } },
+    },
+  });
 
   return (
     <main className="min-h-screen bg-slate-950 px-4 py-8 text-slate-50">
@@ -48,6 +47,29 @@ export default async function AdminAuditPage() {
         </p>
 
         <section className="rounded-2xl border border-white/10 bg-slate-900/70 p-6">
+          <form className="flex flex-wrap items-end gap-3 pb-4" method="GET">
+            <label className="flex flex-col gap-1 text-xs text-slate-400">
+              Action
+              <input
+                name="action"
+                defaultValue={actionFilter}
+                className="rounded-lg border border-slate-700/60 bg-slate-950 px-3 py-2 text-sm text-slate-100"
+                placeholder="onboarding.step_completed"
+              />
+            </label>
+            <button
+              type="submit"
+              className="rounded-lg bg-emerald-500/20 px-4 py-2 text-sm text-emerald-200 hover:bg-emerald-500/30"
+            >
+              Filter
+            </button>
+            <a
+              href="/admin/audit"
+              className="text-sm text-slate-400 hover:text-slate-200"
+            >
+              Clear
+            </a>
+          </form>
           {logs.length === 0 ? (
             <p className="text-sm text-slate-400">No audit entries yet.</p>
           ) : (

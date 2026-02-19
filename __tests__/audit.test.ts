@@ -16,6 +16,7 @@ describe("logAudit", () => {
   it("creates an audit log entry", async () => {
     await logAudit({
       userId: "user-1",
+      schoolId: "school-1",
       action: "test.action",
       resourceType: "test",
       resourceId: "res-1",
@@ -25,6 +26,7 @@ describe("logAudit", () => {
     expect(prisma.auditLog.create).toHaveBeenCalledWith({
       data: expect.objectContaining({
         userId: "user-1",
+        schoolId: "school-1",
         action: "test.action",
         resourceType: "test",
         resourceId: "res-1",
@@ -42,6 +44,7 @@ describe("logAudit", () => {
     expect(prisma.auditLog.create).toHaveBeenCalledWith({
       data: expect.objectContaining({
         userId: null,
+        schoolId: null,
         action: "system.startup",
       }),
     });

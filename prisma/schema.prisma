@@ -120,6 +120,7 @@ model School {
   classes      Class[]
   inviteTokens InviteToken[]
   pilotChecklistStatuses PilotChecklistStatus[]
+  auditLogs    AuditLog[]
 }
 
 model Class {
@@ -375,6 +376,7 @@ model Message {
 
 model AuditLog {
   id           String   @id @default(cuid())
+  schoolId     String?
   userId       String?
   action       String
   details      Json?
@@ -383,8 +385,10 @@ model AuditLog {
   ipAddress    String?
   createdAt    DateTime @default(now())
 
+  school School? @relation(fields: [schoolId], references: [id])
   user User? @relation(fields: [userId], references: [id])
 
+  @@index([schoolId, action, createdAt])
   @@index([resourceType, resourceId])
   @@index([userId, createdAt])
 }

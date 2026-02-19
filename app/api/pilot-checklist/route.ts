@@ -100,6 +100,7 @@ export async function PATCH(req: NextRequest) {
 
     await logAudit({
       userId: user.id,
+      schoolId,
       action: "pilot.checklist.update",
       resourceType: "school",
       resourceId: schoolId,

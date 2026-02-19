@@ -46,6 +46,16 @@ export async function PATCH(req: NextRequest) {
       return NextResponse.json({ error: "Invalid step" }, { status: 400 });
     }
 
+    const existing = await prisma.school.findUnique({
+      where: { id: user.schoolId },
+      select: { id: true, onboardingStep: true },
+    });
+
+    if (!existing) {
+      return NextResponse.json({ error: "School not found" }, { status: 404 });
+    }
+
+    const existingStep = existing.onboardingStep ?? 0;
     const updateData: any = {};
 
     // Step 1: School identity
@@ -81,20 +91,25 @@ export async function PATCH(req: NextRequest) {
       if (data.logoUrl !== undefined) updateData.logoUrl = data.logoUrl || null;
     }
 
-    // Step 5: Mark complete
-    if (step >= updateData.onboardingStep || step === 5) {
+    const shouldAdvance = step > existingStep || (step === 5 && existingStep < 5);
+    if (shouldAdvance) {
       updateData.onboardingStep = step;
     }
 
     await prisma.school.update({ where: { id: user.schoolId }, data: updateData });
 
-    await logAudit({
-      userId: user.id,
-      action: "onboarding.step_completed",
-      resourceType: "school",
-      resourceId: user.schoolId,
-      details: { step } as any,
-    });
+    if (shouldAdvance) {
+      await logAudit({
+        userId: user.id,
+        schoolId: user.schoolId,
+        action: "onboarding.step_completed",
+        resourceType: "school",
+        resourceId: user.schoolId,
+        details: {
+          step: { from: existingStep, to: step },
+        },
+      });
+    }
 
     return NextResponse.json({ success: true, step });
   } catch (err: any) {
