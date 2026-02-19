@@ -14,12 +14,52 @@ export type PilotScoreResult = {
   grade: "A" | "B" | "C" | "D" | "F";
 };
 
+export type PilotReadinessRule = {
+  name: string;
+  max: number;
+  definition: string;
+};
+
+const CHECKLIST_ENABLED = process.env.PILOT_CHECKLIST_ENABLED === "true";
+
 function toGrade(total: number): "A" | "B" | "C" | "D" | "F" {
   if (total >= 90) return "A";
   if (total >= 75) return "B";
   if (total >= 60) return "C";
   if (total >= 40) return "D";
   return "F";
+}
+
+export function getPilotReadinessRules(): PilotReadinessRule[] {
+  return [
+    {
+      name: "Attendance Coverage",
+      max: 20,
+      definition: "Attendance recorded for class meetings over the last 7 days (80%+ earns full points).",
+    },
+    {
+      name: "Curriculum Adoption",
+      max: 20,
+      definition: "Approved lessons scheduled across all classes within the last 14 days.",
+    },
+    {
+      name: "Student Engagement",
+      max: 20,
+      definition: "Completion rate of scheduled work over the last 7 days.",
+    },
+    {
+      name: "Guardian Connection",
+      max: 20,
+      definition: "Percentage of enrolled students linked to guardians (50%+ earns full points).",
+    },
+    {
+      name: "Platform Setup",
+      max: 20,
+      definition: CHECKLIST_ENABLED
+        ? "Pilot checklist completion percentage (feature-flagged)."
+        : "Branding, onboarding completion, at least 1 teacher, and at least 1 class with enrollments.",
+    },
+  ];
 }
 
 export async function computePilotScore(schoolId: string): Promise<PilotScoreResult> {
@@ -124,26 +164,37 @@ export async function computePilotScore(schoolId: string): Promise<PilotScoreRes
   let setupScore = 0;
   const setupParts: string[] = [];
 
-  // 5 pts: branding set
-  if (school?.primaryHex || school?.logoUrl) { setupScore += 5; setupParts.push("Branding set"); }
-  else setupParts.push("No branding");
+  if (CHECKLIST_ENABLED) {
+    const totalItems = await prisma.pilotChecklistItem.count({ where: { active: true } });
+    const completedItems = await prisma.pilotChecklistStatus.count({
+      where: { schoolId, completedAt: { not: null } },
+    });
 
-  // 5 pts: onboarding complete
-  if (school?.onboardingStep && school.onboardingStep >= 5) { setupScore += 5; setupParts.push("Onboarding complete"); }
-  else setupParts.push("Onboarding incomplete");
+    const pct = totalItems > 0 ? completedItems / totalItems : 0;
+    setupScore = Math.round(pct * 20);
+    setupParts.push(`${completedItems}/${totalItems} checklist items complete`);
+  } else {
+    // 5 pts: branding set
+    if (school?.primaryHex || school?.logoUrl) { setupScore += 5; setupParts.push("Branding set"); }
+    else setupParts.push("No branding");
 
-  // 5 pts: at least 1 teacher
-  const teacherCount = await prisma.user.count({ where: { schoolId, role: "TEACHER" } });
-  if (teacherCount > 0) { setupScore += 5; setupParts.push(`${teacherCount} teacher(s)`); }
-  else setupParts.push("No teachers");
+    // 5 pts: onboarding complete
+    if (school?.onboardingStep && school.onboardingStep >= 5) { setupScore += 5; setupParts.push("Onboarding complete"); }
+    else setupParts.push("Onboarding incomplete");
 
-  // 5 pts: at least 1 class with enrollments
-  const classesWithStudents = await prisma.enrollment.groupBy({
-    by: ["classId"],
-    where: { classId: { in: classIds } },
-  });
-  if (classesWithStudents.length > 0) { setupScore += 5; setupParts.push(`${classesWithStudents.length} class(es) with students`); }
-  else setupParts.push("No enrolled students");
+    // 5 pts: at least 1 teacher
+    const teacherCount = await prisma.user.count({ where: { schoolId, role: "TEACHER" } });
+    if (teacherCount > 0) { setupScore += 5; setupParts.push(`${teacherCount} teacher(s)`); }
+    else setupParts.push("No teachers");
+
+    // 5 pts: at least 1 class with enrollments
+    const classesWithStudents = await prisma.enrollment.groupBy({
+      by: ["classId"],
+      where: { classId: { in: classIds } },
+    });
+    if (classesWithStudents.length > 0) { setupScore += 5; setupParts.push(`${classesWithStudents.length} class(es) with students`); }
+    else setupParts.push("No enrolled students");
+  }
 
   components.push({ name: "Platform Setup", score: setupScore, max: 20, detail: setupParts.join(", ") });
 

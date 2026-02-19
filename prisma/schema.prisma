@@ -119,6 +119,7 @@ model School {
 
   classes      Class[]
   inviteTokens InviteToken[]
+  pilotChecklistStatuses PilotChecklistStatus[]
 }
 
 model Class {
@@ -716,6 +717,36 @@ model CurriculumContent {
 
   @@index([grade, subject])
   @@index([contentType, status])
+}
+
+//// ===== Pilot Checklist =====
+model PilotChecklistItem {
+  id          String   @id @default(cuid())
+  title       String
+  description String?
+  sortOrder   Int      @default(0)
+  active      Boolean  @default(true)
+  createdAt   DateTime @default(now())
+
+  statuses PilotChecklistStatus[]
+
+  @@index([active, sortOrder])
+}
+
+model PilotChecklistStatus {
+  id             String    @id @default(cuid())
+  schoolId       String
+  itemId         String
+  completedAt    DateTime?
+  completedById  String?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  school School @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+  item   PilotChecklistItem @relation(fields: [itemId], references: [id], onDelete: Cascade)
+
+  @@unique([schoolId, itemId])
+  @@index([schoolId, completedAt])
 }
 
 //// ===== Scheduled Work (Today's Work) =====
