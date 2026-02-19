@@ -28,6 +28,7 @@ describe("admin onboarding PATCH", () => {
   beforeEach(() => {
     vi.resetAllMocks();
     (requireRole as any).mockResolvedValue({ id: "u1", schoolId: "s1", role: "ADMIN" });
+    (prisma.school.findUnique as any).mockResolvedValue({ id: "s1", onboardingStep: 0 });
   });
 
   it("rejects missing required fields", async () => {
@@ -71,6 +72,41 @@ describe("admin onboarding PATCH", () => {
     expect(res.status).toBe(200);
     expect(json.success).toBe(true);
     expect(prisma.school.update).toHaveBeenCalled();
-    expect(logAudit).toHaveBeenCalled();
+    expect(logAudit).toHaveBeenCalledWith(
+      expect.objectContaining({
+        userId: "u1",
+        schoolId: "s1",
+        action: "onboarding.step_completed",
+        details: { step: { from: 0, to: 1 } },
+      })
+    );
+  });
+
+  it("does not log when step does not advance", async () => {
+    (prisma.school.findUnique as any).mockResolvedValue({ id: "s1", onboardingStep: 2 });
+    (prisma.school.update as any).mockResolvedValue({ id: "s1" });
+
+    const req = new Request("http://localhost/api/admin/onboarding", {
+      method: "PATCH",
+      body: JSON.stringify({
+        step: 1,
+        data: {
+          name: "Test School",
+          county: "Bong",
+          district: "Central",
+          contactEmail: "admin@test.edu.lr",
+          contactPhone: "+231770000000",
+        },
+      }),
+      headers: { "Content-Type": "application/json" },
+    });
+
+    const res = await PATCH(req as any);
+    const json = await res.json();
+
+    expect(res.status).toBe(200);
+    expect(json.success).toBe(true);
+    expect(prisma.school.update).toHaveBeenCalled();
+    expect(logAudit).not.toHaveBeenCalled();
   });
 });

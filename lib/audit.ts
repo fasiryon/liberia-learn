@@ -3,6 +3,7 @@ import { prisma } from "@/lib/db";
 
 export async function logAudit({
   userId,
+  schoolId,
   action,
   resourceType,
   resourceId,
@@ -10,6 +11,7 @@ export async function logAudit({
   ipAddress,
 }: {
   userId?: string | null;
+  schoolId?: string | null;
   action: string;
   resourceType?: string;
   resourceId?: string;
@@ -20,6 +22,7 @@ export async function logAudit({
     await prisma.auditLog.create({
       data: {
         userId: userId ?? null,
+        schoolId: schoolId ?? null,
         action,
         resourceType: resourceType ?? null,
         resourceId: resourceId ?? null,
