@@ -1,3 +1,0 @@
-﻿seed-week-curriculum.ts:17:  classId: string;
-seed-week-curriculum.ts:18:  teacherEmail: string;
-seed-week-curriculum.ts:19:  lessons: WeekLesson[];
