@@ -1,8 +1,18 @@
 // prisma/seed.ts — Idempotent MOE demo seed data
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcryptjs";
+import { SCHEDULES } from "./seed-week-curriculum";
 
 const prisma = new PrismaClient();
+
+/** Returns Mon-Fri dates of the current week (UTC midnight). */
+function getThisWeekDates(): Date[] {
+  const now = new Date();
+  const day = now.getUTCDay(); // 0=Sun..6=Sat
+  const mondayOffset = day === 0 ? -6 : 1 - day;
+  const monday = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() + mondayOffset));
+  return Array.from({ length: 5 }, (_, i) => new Date(monday.getTime() + i * 86400000));
+}
 
 const PASS = "Password123";
 
@@ -296,75 +306,180 @@ async function main() {
     });
   }
 
-  // ========== CURRICULUM CONTENT + SCHEDULED WORK ==========
+  // ========== FULL WEEK CURRICULUM CONTENT + SCHEDULED WORK ==========
+  const weekDates = getThisWeekDates();
+  const dayNames = ["Mon", "Tue", "Wed", "Thu", "Fri"];
   const today = new Date();
   today.setUTCHours(0, 0, 0, 0);
-  const yesterday = new Date(today.getTime() - 86400000);
-  const tomorrow = new Date(today.getTime() + 86400000);
+  const todayDayIndex = weekDates.findIndex(d => d.getTime() === today.getTime());
 
-  const lessons = [
-    { id: "lesson_mca_1", grade: 7, subject: "MATH", title: "Introduction to Fractions", body: "In Liberia, when we share a cup of rice among family members, we are using fractions. A fraction represents a part of a whole. Today we will explore how fractions work in everyday life, from market trading to sharing resources in our communities." },
-    { id: "lesson_mca_2", grade: 7, subject: "MATH", title: "Adding Fractions", body: "Building on our understanding of fractions, today we learn to add fractions with the same denominator and different denominators. Think about combining portions of cassava — if you have 1/4 of one batch and 1/2 of another, how much do you have in total?" },
-    { id: "lesson_mca_3", grade: 8, subject: "LITERACY", title: "Reading Comprehension: Community Stories", body: "Read the passage about a day in the life of a farmer in Bong County. Identify the main idea, supporting details, and the author's purpose. Discuss how community stories preserve Liberian heritage." },
-    { id: "lesson_pcs_1", grade: 6, subject: "SCIENCE", title: "Water and Living Things", body: "Water is essential for all living things. In Liberia, our rivers — the St. Paul, the St. John, the Cavalla — support entire communities. Today we study why water is vital for plant growth, animal survival, and human health." },
-    { id: "lesson_pcs_2", grade: 9, subject: "LITERACY", title: "Essay Writing: My Community", body: "Write a five-paragraph essay about your community. Include an introduction, three body paragraphs about community strengths, challenges, and your vision for the future, and a conclusion." },
-    { id: "lesson_krs_1", grade: 5, subject: "MATH", title: "Counting and Number Patterns", body: "We will explore number patterns found in nature and daily life. Count the seeds in a palm fruit, the legs on market tables, the steps from your house to school. Mathematics is all around us in Margibi County." },
+  // Resolve teacher IDs for each schedule
+  const teacherMap: Record<string, string> = {};
+  for (const sched of SCHEDULES) {
+    const teacher = await prisma.user.findUnique({ where: { email: sched.teacherEmail }, select: { id: true } });
+    if (teacher) teacherMap[sched.teacherEmail] = teacher.id;
+  }
+
+  // Create CurriculumContent + ScheduledWork for all 130 lessons
+  let contentCount = 0;
+  let swCount = 0;
+  for (const sched of SCHEDULES) {
+    const teacherId = teacherMap[sched.teacherEmail];
+    if (!teacherId) { console.warn(`Teacher not found: ${sched.teacherEmail}`); continue; }
+
+    for (const lesson of sched.lessons) {
+      // Upsert CurriculumContent
+      await prisma.curriculumContent.upsert({
+        where: { contentId: lesson.contentId },
+        update: { payload: lesson.payload as any },
+        create: {
+          contentId: lesson.contentId,
+          grade: lesson.grade,
+          subject: lesson.subject,
+          contentType: "lesson",
+          status: "APPROVED",
+          version: "1.0",
+          payload: lesson.payload as any,
+        },
+      });
+      contentCount++;
+
+      // ScheduledWork with stable ID
+      const swId = `sw_${sched.classId.replace("class_", "")}_${lesson.day}_p${lesson.periodNumber}`;
+      const scheduledDate = weekDates[lesson.day];
+      await prisma.scheduledWork.upsert({
+        where: { id: swId },
+        update: { periodNumber: lesson.periodNumber, startTime: lesson.startTime, endTime: lesson.endTime },
+        create: {
+          id: swId,
+          contentId: lesson.contentId,
+          classId: sched.classId,
+          scheduledDate,
+          periodNumber: lesson.periodNumber,
+          startTime: lesson.startTime,
+          endTime: lesson.endTime,
+          createdById: teacherId,
+        },
+      });
+      swCount++;
+    }
+  }
+  console.log(`  Created ${contentCount} curriculum content records, ${swCount} scheduled work entries`);
+
+  // ========== MEETINGS (attendance markers) ==========
+  // MCA: all 5 days × 2 classes = 10, PCS: Mon-Wed × 2 = 6, KRS: Mon only × 2 = 2 → 18 total
+  const meetingConfigs: { classIds: string[]; days: number[] }[] = [
+    { classIds: [s1c1.id, s1c2.id], days: [0, 1, 2, 3, 4] }, // MCA all week
+    { classIds: [s2c1.id, s2c2.id], days: [0, 1, 2] },        // PCS Mon-Wed
+    { classIds: [s3c1.id, s3c2.id], days: [0] },               // KRS Mon only
+  ];
+  let meetingCount = 0;
+  for (const mc of meetingConfigs) {
+    for (const classId of mc.classIds) {
+      for (const dayIdx of mc.days) {
+        const meetId = `meet_${classId.replace("class_", "")}_d${dayIdx}`;
+        const startsAt = new Date(weekDates[dayIdx].getTime() + 8 * 3600000); // 08:00
+        const endsAt = new Date(weekDates[dayIdx].getTime() + 12 * 3600000);  // 12:00
+        await prisma.meeting.upsert({
+          where: { id: meetId },
+          update: {},
+          create: { id: meetId, classId, startsAt, endsAt },
+        });
+        meetingCount++;
+      }
+    }
+  }
+  console.log(`  Created ${meetingCount} meeting records`);
+
+  // ========== STUDENT PROGRESS (story arc) ==========
+  // MCA: 85% completion on past days, 40% on today
+  // PCS: 55% on past days, 20% on today
+  // KRS: 25% on past days (krs5a), 35% (krs10a), 10% on today
+  const schoolStudents: { schoolCode: string; students: typeof s1Students; classes: { id: string; pct: number; todayPct: number }[] }[] = [
+    { schoolCode: "mca", students: s1Students, classes: [
+      { id: s1c1.id, pct: 0.85, todayPct: 0.40 },
+      { id: s1c2.id, pct: 0.85, todayPct: 0.40 },
+    ]},
+    { schoolCode: "pcs", students: [], classes: [
+      { id: s2c1.id, pct: 0.55, todayPct: 0.20 },
+      { id: s2c2.id, pct: 0.55, todayPct: 0.20 },
+    ]},
+    { schoolCode: "krs", students: [], classes: [
+      { id: s3c1.id, pct: 0.25, todayPct: 0.10 },
+      { id: s3c2.id, pct: 0.35, todayPct: 0.10 },
+    ]},
   ];
 
-  for (const l of lessons) {
-    await prisma.curriculumContent.upsert({
-      where: { contentId: l.id },
+  let progressCount = 0;
+  for (const cfg of schoolStudents) {
+    for (const cls of cfg.classes) {
+      // Find enrolled students for this class
+      const enrollments = await prisma.enrollment.findMany({
+        where: { classId: cls.id },
+        select: { student: { select: { userId: true } } },
+      });
+      const userIds = enrollments.map(e => e.student.userId);
+
+      // Find all scheduled work for this class this week
+      const allSw = await prisma.scheduledWork.findMany({
+        where: { classId: cls.id, scheduledDate: { gte: weekDates[0], lte: weekDates[4] } },
+        select: { id: true, scheduledDate: true },
+      });
+
+      for (const sw of allSw) {
+        const swDate = new Date(sw.scheduledDate);
+        swDate.setUTCHours(0, 0, 0, 0);
+        const isPast = swDate.getTime() < today.getTime();
+        const isToday = swDate.getTime() === today.getTime();
+        const pct = isPast ? cls.pct : isToday ? cls.todayPct : 0;
+        const numStudents = Math.round(userIds.length * pct);
+
+        for (let i = 0; i < numStudents && i < userIds.length; i++) {
+          const completedAt = isPast ? sw.scheduledDate : null;
+          const startedAt = isPast || isToday ? sw.scheduledDate : null;
+          if (!startedAt) continue;
+          await prisma.studentProgress.upsert({
+            where: { studentId_scheduledWorkId: { studentId: userIds[i], scheduledWorkId: sw.id } },
+            update: {},
+            create: {
+              studentId: userIds[i],
+              scheduledWorkId: sw.id,
+              startedAt,
+              completedAt,
+            },
+          });
+          progressCount++;
+        }
+      }
+    }
+  }
+  console.log(`  Created ${progressCount} student progress records`);
+
+  // ========== ADDITIONAL GUARDIAN LINKS (MCA needs 15 total for 50% of 30) ==========
+  for (let i = 5; i < 15; i++) {
+    const gName = `Guardian ${studentName(i + 50)}`;
+    const gEmail = `guardian${i + 1}@mca.edu.lr`;
+    const guardian = await prisma.user.upsert({
+      where: { email: gEmail },
       update: {},
       create: {
-        contentId: l.id,
-        grade: l.grade,
-        subject: l.subject,
-        contentType: "lesson",
-        status: "APPROVED",
-        version: "1.0",
-        payload: {
-          title: l.title,
-          body: l.body,
-          objectives: [`Understand ${l.title.toLowerCase()}`, "Apply concepts to daily life in Liberia", "Demonstrate understanding through practice"],
-          activities: ["Group discussion", "Practice worksheet", "Real-world application exercise"],
-          labs: l.subject === "SCIENCE" ? [{ title: "Hands-on Observation", description: "Observe and record findings from the local environment" }] : [],
-          durationMins: 45,
-        } as any,
+        email: gEmail, name: gName, role: "GUARDIAN" as const, hashedPwd: hashed,
+        schoolId: school1.id, guardianPhone: `077${String(i + 1).padStart(7, "0")}`,
+        guardianPhoneE164: `+231770${String(i + 100001).slice(1)}`,
+        guardianCountryCode: "+231", preferredChannel: "SMS", smsOptIn: true,
       },
     });
-  }
-
-  // Schedule work: yesterday/today/tomorrow for each school
-  const scheduleEntries = [
-    { id: "sw_mca_1", contentId: "lesson_mca_1", classId: s1c1.id, date: yesterday, createdById: s1Teachers[0].id },
-    { id: "sw_mca_2", contentId: "lesson_mca_2", classId: s1c1.id, date: today, createdById: s1Teachers[0].id },
-    { id: "sw_mca_3", contentId: "lesson_mca_3", classId: s1c2.id, date: tomorrow, createdById: s1Teachers[1].id },
-    { id: "sw_pcs_1", contentId: "lesson_pcs_1", classId: s2c1.id, date: yesterday, createdById: s2Teachers[0].id },
-    { id: "sw_pcs_2", contentId: "lesson_pcs_2", classId: s2c2.id, date: today, createdById: s2Teachers[1].id },
-    { id: "sw_krs_1", contentId: "lesson_krs_1", classId: s3c1.id, date: yesterday, createdById: s3Teachers[0].id },
-  ];
-
-  for (const sw of scheduleEntries) {
-    await prisma.scheduledWork.upsert({
-      where: { id: sw.id },
+    await prisma.studentGuardian.upsert({
+      where: { studentId_guardianId: { studentId: s1Students[i].student.id, guardianId: guardian.id } },
       update: {},
-      create: { id: sw.id, contentId: sw.contentId, classId: sw.classId, scheduledDate: sw.date, createdById: sw.createdById },
+      create: { studentId: s1Students[i].student.id, guardianId: guardian.id, relation: "Parent" },
     });
   }
+  console.log("  Added 10 more MCA guardian links (15 total, 50% of 30 students)");
 
-  // Student progress: some students completed yesterday's work
-  for (let i = 0; i < 10; i++) {
-    await prisma.studentProgress.upsert({
-      where: { studentId_scheduledWorkId: { studentId: s1Students[i].user.id, scheduledWorkId: "sw_mca_1" } },
-      update: {},
-      create: {
-        studentId: s1Students[i].user.id,
-        scheduledWorkId: "sw_mca_1",
-        startedAt: yesterday,
-        completedAt: yesterday,
-      },
-    });
-  }
+  // Update MCA school onboardingStep to 5
+  await prisma.school.update({ where: { id: school1.id }, data: { onboardingStep: 5 } });
+  console.log("  Updated MCA onboardingStep to 5");
 
   // Also keep old smoke-test compatible accounts
   await prisma.user.upsert({
@@ -387,6 +502,18 @@ async function main() {
     update: {},
     create: { userId: smokeStudent.id, county: "Montserrado" },
   });
+
+  // ========== WEEKLY SCHEDULE SUMMARY ==========
+  console.log("\n=== Weekly Schedule Summary ===");
+  for (const sched of SCHEDULES) {
+    console.log(`\n${sched.classId}:`);
+    for (let d = 0; d < 5; d++) {
+      const dayLessons = sched.lessons.filter(l => l.day === d);
+      const dateStr = weekDates[d].toISOString().slice(0, 10);
+      const lessonList = dayLessons.map(l => `P${l.periodNumber}:${l.subject}`).join(", ");
+      console.log(`  ${dayNames[d]} ${dateStr}: ${lessonList} (${dayLessons.length} periods)`);
+    }
+  }
 
   console.log("\n=== MOE Demo Credentials (Password: Password123) ===");
   console.log("Platform Admin: jkollie@mca.edu.lr");

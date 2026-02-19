@@ -718,6 +718,9 @@ model ScheduledWork {
   contentId     String
   classId       String
   scheduledDate DateTime
+  periodNumber  Int?
+  startTime     String?
+  endTime       String?
   createdById   String
   createdAt     DateTime @default(now())
 

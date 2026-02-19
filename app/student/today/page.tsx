@@ -9,6 +9,9 @@ type WorkItem = {
   subject: string;
   contentType: string;
   estimatedDuration: number;
+  periodNumber: number | null;
+  startTime: string | null;
+  endTime: string | null;
   status: "not_started" | "in_progress" | "completed";
   completedAt: string | null;
 };
@@ -65,7 +68,9 @@ export default function StudentTodayPage() {
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-semibold text-slate-100 truncate">{item.title}</p>
-                  <p className="text-xs text-slate-400">{item.subject} &middot; {item.estimatedDuration} min</p>
+                  <p className="text-xs text-slate-400">
+                    {item.periodNumber ? `P${item.periodNumber}` : ""}{item.startTime && item.endTime ? ` \u2022 ${item.startTime}\u2013${item.endTime}` : ""}{" \u2022 "}{item.subject} &middot; {item.estimatedDuration} min
+                  </p>
                 </div>
                 <span className={`rounded-full px-2.5 py-0.5 text-[10px] font-medium ${badge.cls}`}>
                   {badge.label}

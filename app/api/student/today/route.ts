@@ -48,7 +48,7 @@ export async function GET() {
           select: { completedAt: true, startedAt: true },
         },
       },
-      orderBy: { createdAt: "asc" },
+      orderBy: { periodNumber: "asc" },
     });
 
     const items = scheduledWork.map((sw) => {
@@ -64,6 +64,9 @@ export async function GET() {
         subject: sw.content.subject,
         contentType: sw.content.contentType,
         estimatedDuration: payload?.durationMins || 45,
+        periodNumber: sw.periodNumber,
+        startTime: sw.startTime,
+        endTime: sw.endTime,
         status,
         completedAt: progress?.completedAt || null,
       };
