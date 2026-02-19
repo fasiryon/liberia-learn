@@ -11,6 +11,8 @@ type School = {
   pilotCohort: string | null;
   pilotStartDate: string | null;
   pilotNotes: string | null;
+  contactEmailVerified: boolean;
+  contactPhoneVerified: boolean;
   county: string | null;
   district: string | null;
   contactName: string | null;
@@ -45,6 +47,8 @@ export default function PlatformSchoolsPage() {
     pilotCohort: "",
     pilotStartDate: "",
     pilotNotes: "",
+    contactEmailVerified: false,
+    contactPhoneVerified: false,
   });
   const [savingPilot, setSavingPilot] = useState(false);
   const [pilotError, setPilotError] = useState<string | null>(null);
@@ -117,6 +121,8 @@ export default function PlatformSchoolsPage() {
       pilotCohort: school.pilotCohort ?? "",
       pilotStartDate: school.pilotStartDate ? school.pilotStartDate.slice(0, 10) : "",
       pilotNotes: school.pilotNotes ?? "",
+      contactEmailVerified: school.contactEmailVerified ?? false,
+      contactPhoneVerified: school.contactPhoneVerified ?? false,
     });
   }
 
@@ -134,6 +140,8 @@ export default function PlatformSchoolsPage() {
           pilotCohort: pilotForm.pilotCohort.trim() || null,
           pilotStartDate: pilotForm.pilotStartDate || null,
           pilotNotes: pilotForm.pilotNotes.trim() || null,
+          contactEmailVerified: pilotForm.contactEmailVerified,
+          contactPhoneVerified: pilotForm.contactPhoneVerified,
         }),
       });
       const data = await res.json();
@@ -228,6 +236,7 @@ export default function PlatformSchoolsPage() {
                   <th className="pb-2 pr-3">Classes</th>
                   <th className="pb-2 pr-3">Status</th>
                   <th className="pb-2 pr-3">Pilot</th>
+                  <th className="pb-2 pr-3">Verified</th>
                   <th className="pb-2">Actions</th>
                 </tr>
               </thead>
@@ -285,6 +294,22 @@ export default function PlatformSchoolsPage() {
                           Start: {new Date(s.pilotStartDate).toLocaleDateString()}
                         </div>
                       )}
+                    </td>
+                    <td className="py-3 pr-3 text-xs">
+                      <div className="flex flex-col gap-1 text-[11px] text-slate-400">
+                        <span>
+                          Email:{" "}
+                          <span className={s.contactEmailVerified ? "text-emerald-300" : "text-amber-300"}>
+                            {s.contactEmailVerified ? "Verified" : "Unverified"}
+                          </span>
+                        </span>
+                        <span>
+                          Phone:{" "}
+                          <span className={s.contactPhoneVerified ? "text-emerald-300" : "text-amber-300"}>
+                            {s.contactPhoneVerified ? "Verified" : "Unverified"}
+                          </span>
+                        </span>
+                      </div>
                     </td>
                     <td className="py-3">
                       <div className="flex gap-1">
@@ -372,6 +397,31 @@ export default function PlatformSchoolsPage() {
                   rows={3}
                   className="w-full rounded-lg bg-slate-950 border border-slate-700 px-3 py-2 text-sm text-slate-100 focus:outline-none focus:border-violet-500"
                 />
+              </div>
+              <div className="rounded-lg border border-slate-800 bg-slate-900/40 p-3">
+                <p className="text-xs text-slate-400 mb-2">Contact Verification</p>
+                <label className="flex items-center gap-2 text-sm text-slate-200">
+                  <input
+                    type="checkbox"
+                    checked={pilotForm.contactEmailVerified}
+                    onChange={(e) =>
+                      setPilotForm((f) => ({ ...f, contactEmailVerified: e.target.checked }))
+                    }
+                    className="h-4 w-4 rounded border-slate-700 bg-slate-950"
+                  />
+                  Email verified
+                </label>
+                <label className="mt-2 flex items-center gap-2 text-sm text-slate-200">
+                  <input
+                    type="checkbox"
+                    checked={pilotForm.contactPhoneVerified}
+                    onChange={(e) =>
+                      setPilotForm((f) => ({ ...f, contactPhoneVerified: e.target.checked }))
+                    }
+                    className="h-4 w-4 rounded border-slate-700 bg-slate-950"
+                  />
+                  Phone verified
+                </label>
               </div>
             </div>
 

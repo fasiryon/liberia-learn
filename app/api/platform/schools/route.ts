@@ -20,6 +20,8 @@ export async function GET() {
         pilotCohort: true,
         pilotStartDate: true,
         pilotNotes: true,
+        contactEmailVerified: true,
+        contactPhoneVerified: true,
         county: true,
         district: true,
         contactName: true,
@@ -103,6 +105,8 @@ export async function PATCH(req: NextRequest) {
       "pilotCohort",
       "pilotStartDate",
       "pilotNotes",
+      "contactEmailVerified",
+      "contactPhoneVerified",
     ] as const;
 
     const updateData: Record<string, unknown> = {};
@@ -132,6 +136,8 @@ export async function PATCH(req: NextRequest) {
         pilotCohort: true,
         pilotStartDate: true,
         pilotNotes: true,
+        contactEmailVerified: true,
+        contactPhoneVerified: true,
       },
     });
 
@@ -150,6 +156,8 @@ export async function PATCH(req: NextRequest) {
         pilotCohort: true,
         pilotStartDate: true,
         pilotNotes: true,
+        contactEmailVerified: true,
+        contactPhoneVerified: true,
       },
     });
 
@@ -159,6 +167,8 @@ export async function PATCH(req: NextRequest) {
       "pilotCohort",
       "pilotStartDate",
       "pilotNotes",
+      "contactEmailVerified",
+      "contactPhoneVerified",
     ]);
 
     if (Object.keys(diff).length > 0) {

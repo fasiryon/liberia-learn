@@ -103,6 +103,8 @@ model School {
   contactName            String?
   contactEmail           String?
   contactPhone           String?
+  contactEmailVerified   Boolean  @default(false)
+  contactPhoneVerified   Boolean  @default(false)
   motto                  String?
   welcomeMsg             String?
   primaryHex             String?

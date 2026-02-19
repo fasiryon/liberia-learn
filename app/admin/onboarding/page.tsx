@@ -19,8 +19,12 @@ export default function OnboardingPage() {
   // Step 1 fields
   const [name, setName] = useState("");
   const [county, setCounty] = useState("");
+  const [district, setDistrict] = useState("");
   const [motto, setMotto] = useState("");
   const [principal, setPrincipal] = useState("");
+  const [contactEmail, setContactEmail] = useState("");
+  const [contactPhone, setContactPhone] = useState("");
+  const [step1Error, setStep1Error] = useState<string | null>(null);
 
   // Step 2 fields
   const [primaryHex, setPrimaryHex] = useState("#10b981");
@@ -44,8 +48,11 @@ export default function OnboardingPage() {
           setSchool(d.school);
           setName(d.school.name || "");
           setCounty(d.school.county || "");
+          setDistrict(d.school.district || "");
           setMotto(d.school.motto || "");
           setPrincipal(d.school.contactName || "");
+          setContactEmail(d.school.contactEmail || "");
+          setContactPhone(d.school.contactPhone || "");
           setPrimaryHex(d.school.primaryHex || "#10b981");
           setLogoUrl(d.school.logoUrl || "");
           setTeacherCount(d.teacherCount || 0);
@@ -78,7 +85,14 @@ export default function OnboardingPage() {
   }
 
   async function handleStep1() {
-    const ok = await saveStep(1, { name, county, motto, contactName: principal });
+    setStep1Error(null);
+    if (!name.trim()) { setStep1Error("School name is required"); return; }
+    if (!county.trim()) { setStep1Error("County is required"); return; }
+    if (!district.trim()) { setStep1Error("District is required"); return; }
+    if (!contactEmail.trim()) { setStep1Error("Contact email is required"); return; }
+    if (!/^\S+@\S+\.\S+$/.test(contactEmail.trim())) { setStep1Error("Contact email is invalid"); return; }
+    if (!contactPhone.trim()) { setStep1Error("Contact phone is required"); return; }
+    const ok = await saveStep(1, { name, county, district, motto, contactName: principal, contactEmail, contactPhone });
     if (ok) setStep(2);
   }
   async function handleStep2() {
@@ -161,6 +175,10 @@ export default function OnboardingPage() {
                 </select>
               </div>
               <div>
+                <label className="text-xs text-slate-400">District</label>
+                <input value={district} onChange={(e) => setDistrict(e.target.value)} className="w-full mt-1 rounded-xl border border-slate-700 bg-slate-950 px-4 py-2.5 text-sm text-slate-100" />
+              </div>
+              <div>
                 <label className="text-xs text-slate-400">School Motto</label>
                 <input value={motto} onChange={(e) => setMotto(e.target.value)} className="w-full mt-1 rounded-xl border border-slate-700 bg-slate-950 px-4 py-2.5 text-sm text-slate-100" />
               </div>
@@ -168,7 +186,16 @@ export default function OnboardingPage() {
                 <label className="text-xs text-slate-400">Principal Name</label>
                 <input value={principal} onChange={(e) => setPrincipal(e.target.value)} className="w-full mt-1 rounded-xl border border-slate-700 bg-slate-950 px-4 py-2.5 text-sm text-slate-100" />
               </div>
+              <div>
+                <label className="text-xs text-slate-400">Contact Email</label>
+                <input value={contactEmail} onChange={(e) => setContactEmail(e.target.value)} type="email" className="w-full mt-1 rounded-xl border border-slate-700 bg-slate-950 px-4 py-2.5 text-sm text-slate-100" />
+              </div>
+              <div>
+                <label className="text-xs text-slate-400">Contact Phone</label>
+                <input value={contactPhone} onChange={(e) => setContactPhone(e.target.value)} className="w-full mt-1 rounded-xl border border-slate-700 bg-slate-950 px-4 py-2.5 text-sm text-slate-100" />
+              </div>
             </div>
+            {step1Error && <p className="text-xs text-red-400">{step1Error}</p>}
             <button onClick={handleStep1} disabled={saving || !name} className="w-full rounded-xl bg-emerald-500 px-6 py-3 text-sm font-semibold text-white hover:bg-emerald-400 disabled:opacity-50">
               {saving ? "Saving..." : "Continue"}
             </button>

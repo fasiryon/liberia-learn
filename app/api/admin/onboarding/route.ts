@@ -13,7 +13,14 @@ export async function GET() {
     const school = await prisma.school.findUnique({
       where: { id: user.schoolId },
       select: {
-        id: true, name: true, county: true, motto: true, contactName: true,
+        id: true,
+        name: true,
+        county: true,
+        district: true,
+        contactName: true,
+        contactEmail: true,
+        contactPhone: true,
+        motto: true,
         primaryHex: true, logoUrl: true, onboardingStep: true,
       },
     });
@@ -43,8 +50,27 @@ export async function PATCH(req: NextRequest) {
 
     // Step 1: School identity
     if (step === 1) {
-      if (data.name) updateData.name = data.name;
-      if (data.county) updateData.county = data.county;
+      const name = data.name?.trim();
+      const county = data.county?.trim();
+      const district = data.district?.trim();
+      const contactEmail = data.contactEmail?.trim();
+      const contactPhone = data.contactPhone?.trim();
+
+      if (!name) return NextResponse.json({ error: "School name is required" }, { status: 400 });
+      if (!county) return NextResponse.json({ error: "County is required" }, { status: 400 });
+      if (!district) return NextResponse.json({ error: "District is required" }, { status: 400 });
+      if (!contactEmail) return NextResponse.json({ error: "Contact email is required" }, { status: 400 });
+      if (!contactPhone) return NextResponse.json({ error: "Contact phone is required" }, { status: 400 });
+
+      if (!/^\S+@\S+\.\S+$/.test(contactEmail)) {
+        return NextResponse.json({ error: "Contact email is invalid" }, { status: 400 });
+      }
+
+      updateData.name = name;
+      updateData.county = county;
+      updateData.district = district;
+      updateData.contactEmail = contactEmail;
+      updateData.contactPhone = contactPhone;
       if (data.motto) updateData.motto = data.motto;
       if (data.contactName) updateData.contactName = data.contactName;
     }
