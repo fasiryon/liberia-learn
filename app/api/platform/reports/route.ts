@@ -2,6 +2,17 @@ import { NextRequest, NextResponse } from "next/server";
 import { requirePlatformAdmin } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { computePilotScore } from "@/lib/pilot-score";
+import { logAudit } from "@/lib/audit";
+import {
+  buildPilotDashboardCsvRows,
+  getPilotDashboardRows,
+  pilotDashboardHeaders,
+} from "@/lib/pilot-dashboard";
+import {
+  buildTrainingReportCsvRows,
+  getTrainingReportRows,
+  trainingReportHeaders,
+} from "@/lib/training-report";
 
 export const dynamic = "force-dynamic";
 
@@ -14,13 +25,15 @@ function toCSV(headers: string[], rows: string[][]): string {
 
 export async function GET(req: NextRequest) {
   try {
-    await requirePlatformAdmin();
+    const user = await requirePlatformAdmin();
 
     const { searchParams } = new URL(req.url);
     const type = searchParams.get("type") ?? "attendance";
     const format = searchParams.get("format") ?? "json";
 
     let data: { headers: string[]; rows: string[][] } = { headers: [], rows: [] };
+    let pilotSchoolIds: string[] = [];
+    let trainingSchoolIds: string[] = [];
 
     if (type === "attendance") {
       const records = await prisma.attendanceRecord.findMany({
@@ -94,9 +107,64 @@ export async function GET(req: NextRequest) {
       if (format === "json") {
         return NextResponse.json({ type, schools: scores });
       }
+    } else if (type === "pilot") {
+      const rows = await getPilotDashboardRows();
+      pilotSchoolIds = rows.map((row) => row.id);
+      data.headers = pilotDashboardHeaders;
+      data.rows = buildPilotDashboardCsvRows(rows);
+
+      if (format === "json") {
+        return NextResponse.json({ type, rowCount: rows.length, headers: data.headers, rows });
+      }
+    } else if (type === "training") {
+      const schoolId = searchParams.get("schoolId");
+      const pilotOnlyParam = searchParams.get("pilotOnly");
+      const pilotOnly = pilotOnlyParam === null ? true : pilotOnlyParam !== "false";
+
+      const rows = await getTrainingReportRows({ schoolId, pilotOnly });
+      trainingSchoolIds = Array.from(
+        new Set(
+          rows
+            .map((row) => row.schoolId)
+            .filter((id): id is string => Boolean(id))
+        )
+      );
+      data.headers = trainingReportHeaders;
+      data.rows = buildTrainingReportCsvRows(rows);
+
+      if (format === "json") {
+        return NextResponse.json({
+          type,
+          rowCount: rows.length,
+          headers: data.headers,
+          rows,
+        });
+      }
     }
 
     if (format === "csv") {
+      if (type === "pilot") {
+        await logAudit({
+          userId: user.id,
+          action: "pilot.export",
+          resourceType: "report",
+          details: {
+            rowCount: data.rows.length,
+            schoolIds: pilotSchoolIds,
+          },
+        });
+      }
+      if (type === "training") {
+        await logAudit({
+          userId: user.id,
+          action: "training.export",
+          resourceType: "report",
+          details: {
+            rowCount: data.rows.length,
+            schoolIds: trainingSchoolIds,
+          },
+        });
+      }
       const csv = toCSV(data.headers, data.rows);
       return new NextResponse(csv, {
         headers: {
