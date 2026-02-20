@@ -1,0 +1,19 @@
+﻿model Class {
+  id        String   @id @default(cuid())
+  schoolId  String
+  name      String
+  subject   Subject
+  teacherId String?
+  createdAt DateTime @default(now())
+
+  School        School          @relation(fields: [schoolId], references: [id])
+  Teacher       User?           @relation("TeacherClasses", fields: [teacherId], references: [id])
+  enrollments   Enrollment[]
+  meetings      Meeting[]
+  assignments   Assignment[]
+  assessments   Assessment[]
+  messages      Message[]
+  grades        Grade[]
+  homework      Homework[]
+  scheduledWork ScheduledWork[]
+}
