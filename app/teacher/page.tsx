@@ -101,6 +101,18 @@ export default async function TeacherDashboardPage() {
             Overview
           </Link>
           <Link
+            href="/teacher/onboarding"
+            className="rounded-full bg-slate-900 px-4 py-1 text-xs font-semibold text-slate-200 border border-slate-700 hover:bg-slate-800"
+          >
+            Onboarding
+          </Link>
+          <Link
+            href="/teacher/training"
+            className="rounded-full bg-slate-900 px-4 py-1 text-xs font-semibold text-slate-200 border border-slate-700 hover:bg-slate-800"
+          >
+            Training
+          </Link>
+          <Link
             href="/teacher/homework"
             className="rounded-full bg-slate-900 px-4 py-1 text-xs font-semibold text-slate-200 border border-slate-700 hover:bg-slate-800"
           >

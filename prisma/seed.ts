@@ -481,6 +481,46 @@ async function main() {
   await prisma.school.update({ where: { id: school1.id }, data: { onboardingStep: 5 } });
   console.log("  Updated MCA onboardingStep to 5");
 
+  // ========== TRAINING MODULES (v1) ==========
+  const modules = [
+    {
+      id: "tm_intro",
+      title: "LiberiaLearn Overview",
+      description: "Core platform goals, roles, and teacher workflows.",
+      content: "Welcome to LiberiaLearn. This module introduces the platform and teacher responsibilities.",
+      sortOrder: 1,
+      estimatedMinutes: 15,
+      isActive: true,
+    },
+    {
+      id: "tm_classroom_setup",
+      title: "Classroom Setup",
+      description: "Creating classes, adding students, and scheduling lessons.",
+      content: "Learn how to set up classes and schedule content for your students.",
+      sortOrder: 2,
+      estimatedMinutes: 20,
+      isActive: true,
+    },
+    {
+      id: "tm_assessment_feedback",
+      title: "Assessment & Feedback",
+      description: "Reviewing work, grading, and providing feedback.",
+      content: "This module covers homework review and student feedback workflows.",
+      sortOrder: 3,
+      estimatedMinutes: 25,
+      isActive: true,
+    },
+  ];
+
+  for (const module of modules) {
+    await prisma.trainingModule.upsert({
+      where: { id: module.id },
+      update: module,
+      create: module,
+    });
+  }
+  console.log(`  Upserted ${modules.length} training modules`);
+
   // Also keep old smoke-test compatible accounts
   await prisma.user.upsert({
     where: { email: "admin@mcs.edu.lr" },
