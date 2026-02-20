@@ -4,11 +4,6 @@ import { prisma } from "@/lib/db";
 import { computePilotScore } from "@/lib/pilot-score";
 import { logAudit } from "@/lib/audit";
 import {
-  buildPilotDashboardCsvRows,
-  getPilotDashboardRows,
-  pilotDashboardHeaders,
-} from "@/lib/pilot-dashboard";
-import {
   buildTrainingReportCsvRows,
   getTrainingReportRows,
   trainingReportHeaders,
@@ -32,7 +27,6 @@ export async function GET(req: NextRequest) {
     const format = searchParams.get("format") ?? "json";
 
     let data: { headers: string[]; rows: string[][] } = { headers: [], rows: [] };
-    let pilotSchoolIds: string[] = [];
     let trainingSchoolIds: string[] = [];
 
     if (type === "attendance") {
@@ -107,15 +101,6 @@ export async function GET(req: NextRequest) {
       if (format === "json") {
         return NextResponse.json({ type, schools: scores });
       }
-    } else if (type === "pilot") {
-      const rows = await getPilotDashboardRows();
-      pilotSchoolIds = rows.map((row) => row.id);
-      data.headers = pilotDashboardHeaders;
-      data.rows = buildPilotDashboardCsvRows(rows);
-
-      if (format === "json") {
-        return NextResponse.json({ type, rowCount: rows.length, headers: data.headers, rows });
-      }
     } else if (type === "training") {
       const schoolId = searchParams.get("schoolId");
       const pilotOnlyParam = searchParams.get("pilotOnly");
@@ -143,17 +128,6 @@ export async function GET(req: NextRequest) {
     }
 
     if (format === "csv") {
-      if (type === "pilot") {
-        await logAudit({
-          userId: user.id,
-          action: "pilot.export",
-          resourceType: "report",
-          details: {
-            rowCount: data.rows.length,
-            schoolIds: pilotSchoolIds,
-          },
-        });
-      }
       if (type === "training") {
         await logAudit({
           userId: user.id,
