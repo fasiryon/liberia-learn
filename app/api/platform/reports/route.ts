@@ -2,6 +2,12 @@ import { NextRequest, NextResponse } from "next/server";
 import { requirePlatformAdmin } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { computePilotScore } from "@/lib/pilot-score";
+import { logAudit } from "@/lib/audit";
+import {
+  buildPilotDashboardCsvRows,
+  getPilotDashboardRows,
+  pilotDashboardHeaders,
+} from "@/lib/pilot-dashboard";
 
 export const dynamic = "force-dynamic";
 
@@ -14,13 +20,14 @@ function toCSV(headers: string[], rows: string[][]): string {
 
 export async function GET(req: NextRequest) {
   try {
-    await requirePlatformAdmin();
+    const user = await requirePlatformAdmin();
 
     const { searchParams } = new URL(req.url);
     const type = searchParams.get("type") ?? "attendance";
     const format = searchParams.get("format") ?? "json";
 
     let data: { headers: string[]; rows: string[][] } = { headers: [], rows: [] };
+    let pilotSchoolIds: string[] = [];
 
     if (type === "attendance") {
       const records = await prisma.attendanceRecord.findMany({
@@ -94,9 +101,30 @@ export async function GET(req: NextRequest) {
       if (format === "json") {
         return NextResponse.json({ type, schools: scores });
       }
+    } else if (type === "pilot") {
+      const rows = await getPilotDashboardRows();
+      pilotSchoolIds = rows.map((row) => row.id);
+      data.headers = pilotDashboardHeaders;
+      data.rows = buildPilotDashboardCsvRows(rows);
+
+      if (format === "json") {
+        return NextResponse.json({ type, rowCount: rows.length, headers: data.headers, rows });
+      }
     }
 
     if (format === "csv") {
+      if (type === "pilot") {
+        await logAudit({
+          userId: user.id,
+          schoolId: pilotSchoolIds.length === 1 ? pilotSchoolIds[0] : null,
+          action: "pilot.export",
+          resourceType: "report",
+          details: {
+            rowCount: data.rows.length,
+            schoolIds: pilotSchoolIds,
+          },
+        });
+      }
       const csv = toCSV(data.headers, data.rows);
       return new NextResponse(csv, {
         headers: {

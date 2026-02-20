@@ -5,6 +5,7 @@ import Link from "next/link";
 const NAV = [
   { href: "/platform", label: "Dashboard" },
   { href: "/platform/schools", label: "Schools" },
+  { href: "/platform/pilot-schools", label: "Pilot Schools" },
   { href: "/platform/audit", label: "Audit Log" },
   { href: "/platform/reports", label: "Reports" },
   { href: "/platform/security", label: "Security" },
