@@ -81,3 +81,4 @@ _ARCHIVE_*/
 _patches/
 LL_AUDIT_DUMP*.txt
 .env*.local
+_gold/
