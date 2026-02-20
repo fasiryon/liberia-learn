@@ -8,6 +8,11 @@ import {
   getPilotDashboardRows,
   pilotDashboardHeaders,
 } from "@/lib/pilot-dashboard";
+import {
+  buildTrainingReportCsvRows,
+  getTrainingReportRows,
+  trainingReportHeaders,
+} from "@/lib/training-report";
 
 export const dynamic = "force-dynamic";
 
@@ -28,6 +33,7 @@ export async function GET(req: NextRequest) {
 
     let data: { headers: string[]; rows: string[][] } = { headers: [], rows: [] };
     let pilotSchoolIds: string[] = [];
+    let trainingSchoolIds: string[] = [];
 
     if (type === "attendance") {
       const records = await prisma.attendanceRecord.findMany({
@@ -110,18 +116,52 @@ export async function GET(req: NextRequest) {
       if (format === "json") {
         return NextResponse.json({ type, rowCount: rows.length, headers: data.headers, rows });
       }
+    } else if (type === "training") {
+      const schoolId = searchParams.get("schoolId");
+      const pilotOnlyParam = searchParams.get("pilotOnly");
+      const pilotOnly = pilotOnlyParam === null ? true : pilotOnlyParam !== "false";
+
+      const rows = await getTrainingReportRows({ schoolId, pilotOnly });
+      trainingSchoolIds = Array.from(
+        new Set(
+          rows
+            .map((row) => row.schoolId)
+            .filter((id): id is string => Boolean(id))
+        )
+      );
+      data.headers = trainingReportHeaders;
+      data.rows = buildTrainingReportCsvRows(rows);
+
+      if (format === "json") {
+        return NextResponse.json({
+          type,
+          rowCount: rows.length,
+          headers: data.headers,
+          rows,
+        });
+      }
     }
 
     if (format === "csv") {
       if (type === "pilot") {
         await logAudit({
           userId: user.id,
-          schoolId: pilotSchoolIds.length === 1 ? pilotSchoolIds[0] : null,
           action: "pilot.export",
           resourceType: "report",
           details: {
             rowCount: data.rows.length,
             schoolIds: pilotSchoolIds,
+          },
+        });
+      }
+      if (type === "training") {
+        await logAudit({
+          userId: user.id,
+          action: "training.export",
+          resourceType: "report",
+          details: {
+            rowCount: data.rows.length,
+            schoolIds: trainingSchoolIds,
           },
         });
       }
