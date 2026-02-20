@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { addToQueue, isOnline } from "@/lib/offline-queue";
+import { cachePack, getCachedPack } from "@/lib/offline-cache";
 
 type LessonData = {
   id: string;
@@ -29,14 +30,36 @@ export default function ScheduledWorkPage() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    fetch(`/api/student/work/${scheduledWorkId}`)
-      .then((r) => r.json())
-      .then((d) => {
-        if (d.error) setError(d.error);
-        else setLesson(d);
-      })
-      .catch((e) => setError(e.message))
-      .finally(() => setLoading(false));
+    let cancelled = false;
+    (async () => {
+      try {
+        const r = await fetch(`/api/student/work/${scheduledWorkId}`);
+        const d = await r.json();
+        if (d.error) {
+          throw new Error(d.error);
+        }
+        if (!cancelled) {
+          setLesson(d);
+          setError(null);
+        }
+        await cachePack("scheduledWork", scheduledWorkId, "v1", d);
+      } catch (e: any) {
+        const cached = await getCachedPack<LessonData>("scheduledWork", scheduledWorkId);
+        if (cached) {
+          if (!cancelled) {
+            setLesson(cached);
+            setError(null);
+          }
+        } else if (!cancelled) {
+          setError(e.message ?? "Failed to load lesson");
+        }
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
   }, [scheduledWorkId]);
 
   const [offline, setOffline] = useState(false);
