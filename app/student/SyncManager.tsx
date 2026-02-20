@@ -6,19 +6,42 @@ import {
   markSyncFailure,
   markSyncSuccess,
   markSyncConflict,
-  getConflicts,
+  getQueueStats,
   retryConflicts,
   discardConflicts,
   clearQueue,
 } from "@/lib/offline-queue";
+import { getCacheStats, purgeExpiredPacks, purgePartitionPacks } from "@/lib/offline-cache";
+import { detectAndSetActiveSessionPartition, type SessionPartition } from "@/lib/offline-session";
 
 export default function SyncManager() {
   const [syncing, setSyncing] = useState(false);
   const [syncResult, setSyncResult] = useState<string | null>(null);
-  const [conflictCount, setConflictCount] = useState(0);
+  const [partition, setPartition] = useState<SessionPartition | null>(null);
+  const [stats, setStats] = useState({
+    queuePending: 0,
+    queueConflicts: 0,
+    cachePacksCount: 0,
+    cacheBytes: 0,
+  });
+
+  function formatBytes(bytes: number) {
+    if (bytes < 1024) return `${bytes} B`;
+    if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
+    return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+  }
+
+  async function refreshStats(currentPartition: SessionPartition | null) {
+    const queueStats = await getQueueStats(currentPartition ?? undefined);
+    const cacheStats = await getCacheStats(currentPartition ?? undefined);
+    setStats({
+      ...queueStats,
+      ...cacheStats,
+    });
+  }
 
   async function doSync() {
-    const queue = await getReadyQueue();
+    const queue = await getReadyQueue(partition ?? undefined);
     if (queue.length === 0) return;
 
     setSyncing(true);
@@ -46,43 +69,46 @@ export default function SyncManager() {
               clientState: r.clientState,
               resolutionHint: r.resolutionHint,
             }));
-          await markSyncSuccess(successIds);
-          await markSyncFailure(failedIds, "server_error");
-          await markSyncConflict(conflictItems);
+          await markSyncSuccess(successIds, partition ?? undefined);
+          await markSyncFailure(failedIds, "server_error", partition ?? undefined);
+          await markSyncConflict(conflictItems, partition ?? undefined);
         } else {
-          await clearQueue();
+          await clearQueue(partition ?? undefined);
         }
         setSyncResult(`${data.synced ?? 0} lesson(s) synced`);
         setTimeout(() => setSyncResult(null), 5000);
       }
     } catch {
-      await markSyncFailure(queue.map((q) => q.id), "network_error");
+      await markSyncFailure(queue.map((q) => q.id), "network_error", partition ?? undefined);
     } finally {
       setSyncing(false);
+      await refreshStats(partition);
     }
   }
 
   useEffect(() => {
-    // Sync on mount if online
+    detectAndSetActiveSessionPartition().then(async (detected) => {
+      setPartition(detected);
+      await purgeExpiredPacks(detected);
+      await refreshStats(detected);
+    });
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => {
+    // Sync on mount/partition change if online
     if (navigator.onLine) doSync();
 
     // Sync when coming back online
     const handler = () => doSync();
     window.addEventListener("online", handler);
     return () => window.removeEventListener("online", handler);
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [partition]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
-    let mounted = true;
-    getConflicts().then((items) => {
-      if (mounted) setConflictCount(items.length);
-    });
-    return () => {
-      mounted = false;
-    };
-  }, [syncing, syncResult]);
+    refreshStats(partition);
+  }, [syncing, syncResult, partition]);
 
-  if (!syncResult && !syncing && conflictCount === 0) return null;
+  const conflictCount = stats.queueConflicts;
 
   return (
     <div className="fixed bottom-4 right-4 z-50">
@@ -96,6 +122,22 @@ export default function SyncManager() {
           {syncResult}
         </div>
       )}
+      <div className="mt-2 rounded-xl bg-slate-900/90 border border-white/10 px-4 py-3 text-xs text-slate-300">
+        <div className="font-semibold text-slate-200">Offline stats</div>
+        <div className="mt-1">Queue pending: {stats.queuePending}</div>
+        <div>Queue conflicts: {stats.queueConflicts}</div>
+        <div>Cache packs: {stats.cachePacksCount}</div>
+        <div>Cache bytes: {formatBytes(stats.cacheBytes)}</div>
+        <button
+          className="mt-2 px-3 py-1 rounded-md bg-slate-700/60 hover:bg-slate-700 text-xs"
+          onClick={async () => {
+            await purgePartitionPacks(partition ?? undefined);
+            await refreshStats(partition);
+          }}
+        >
+          Purge cache
+        </button>
+      </div>
       {conflictCount > 0 && (
         <div className="mt-2 rounded-xl bg-red-500/20 border border-red-500/30 px-4 py-2 text-sm text-red-300">
           {conflictCount} conflict(s) need attention.
@@ -103,9 +145,8 @@ export default function SyncManager() {
             <button
               className="px-3 py-1 rounded-md bg-red-600/40 hover:bg-red-600/60 text-xs"
               onClick={async () => {
-                await retryConflicts();
-                const items = await getConflicts();
-                setConflictCount(items.length);
+                await retryConflicts(undefined, partition ?? undefined);
+                await refreshStats(partition);
                 if (navigator.onLine) doSync();
               }}
             >
@@ -114,9 +155,8 @@ export default function SyncManager() {
             <button
               className="px-3 py-1 rounded-md bg-slate-700/60 hover:bg-slate-700 text-xs"
               onClick={async () => {
-                await discardConflicts();
-                const items = await getConflicts();
-                setConflictCount(items.length);
+                await discardConflicts(undefined, partition ?? undefined);
+                await refreshStats(partition);
               }}
             >
               Discard
