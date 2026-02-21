@@ -1,16 +1,40 @@
-import { NextRequest, NextResponse } from "next/server";
+﻿import { NextRequest, NextResponse } from "next/server";
 import { requireRole } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { logAudit } from "@/lib/audit";
 import { resolveAttendance, resolveSubmission } from "@/lib/offline-sync/policies";
+import { recordMetricEvent } from "@/lib/metrics/events";
 
 export async function POST(req: NextRequest) {
   try {
     const user = await requireRole("STUDENT");
-    const { items } = await req.json();
+    const { items, queueStats } = await req.json();
 
     if (!Array.isArray(items) || items.length === 0) {
       return NextResponse.json({ synced: 0, skipped: 0 });
+    }
+
+    await recordMetricEvent(
+      "sync.attempt",
+      { count: items.length },
+      {
+        scope: "school",
+        scopeId: user.schoolId ?? null,
+        schoolId: user.schoolId ?? null,
+        severity: "info",
+        kind: "counter",
+        userId: user.id,
+      }
+    );
+    if (queueStats && typeof queueStats === "object") {
+      const pending = Number((queueStats as any).pending ?? 0);
+      const conflicts = Number((queueStats as any).conflicts ?? 0);
+      const deadLetter = Number((queueStats as any).deadLetter ?? 0);
+      await Promise.all([
+        recordMetricEvent("offline.queue.pending", { count: pending }, { scope: "school", scopeId: user.schoolId ?? null, schoolId: user.schoolId ?? null, kind: "gauge", userId: user.id }),
+        recordMetricEvent("offline.queue.conflicts", { count: conflicts }, { scope: "school", scopeId: user.schoolId ?? null, schoolId: user.schoolId ?? null, kind: "gauge", userId: user.id }),
+        recordMetricEvent("offline.queue.dead_letter", { count: deadLetter }, { scope: "school", scopeId: user.schoolId ?? null, schoolId: user.schoolId ?? null, kind: "gauge", userId: user.id }),
+      ]);
     }
 
     let synced = 0;
@@ -199,8 +223,38 @@ export async function POST(req: NextRequest) {
       details: { synced, skipped } as any,
     });
 
+    const conflicts = results.filter((r) => r.status === "conflict").length;
+    await recordMetricEvent(
+      "sync.result",
+      { synced, skipped, conflicts, processed: items.length },
+      {
+        scope: "school",
+        scopeId: user.schoolId ?? null,
+        schoolId: user.schoolId ?? null,
+        severity: conflicts > 0 ? "warning" : "info",
+        kind: "counter",
+        userId: user.id,
+      }
+    );
+
     return NextResponse.json({ synced, skipped, results });
   } catch (err: any) {
+    try {
+      await recordMetricEvent(
+        "sync.failure",
+        { error: err?.message ?? "unknown" },
+        {
+          scope: "school",
+          scopeId: null,
+          schoolId: null,
+          severity: "error",
+          kind: "counter",
+        }
+      );
+    } catch {
+      // Never fail request because metrics write failed.
+    }
     return NextResponse.json({ error: err.message }, { status: err?.status || 500 });
   }
 }
+

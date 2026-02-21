@@ -1,4 +1,4 @@
-// app/teacher/page.tsx
+﻿// app/teacher/page.tsx
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getServerSession } from "next-auth";
@@ -60,7 +60,7 @@ export default async function TeacherDashboardPage() {
         <header className="mb-6 flex items-center justify-between gap-4">
           <div>
             <p className="text-xs uppercase tracking-wide text-emerald-300 mb-1">
-              LIBERIALEARN · TEACHER
+              LIBERIALEARN Â· TEACHER
             </p>
             <h1 className="text-2xl md:text-3xl font-bold">
               {session.user.name || "Sample Teacher"}{" "}
@@ -78,7 +78,7 @@ export default async function TeacherDashboardPage() {
               href="/"
               className="rounded-full border border-slate-700 px-4 py-2 text-xs md:text-sm hover:bg-slate-900"
             >
-              ← Student demo / Login
+              â† Student demo / Login
             </Link>
 
             <form action="/api/auth/signout" method="post">
@@ -164,10 +164,10 @@ export default async function TeacherDashboardPage() {
                       </span>
                     </div>
                     <p className="text-xs text-slate-400 mb-2">
-                      {cls.subject} · {cls.School?.name || schoolName}
+                      {cls.subject} Â· {cls.School?.name || schoolName}
                     </p>
                     <p className="text-xs text-slate-500">
-                      Gradebook & detailed analytics coming – homework and
+                      Gradebook & detailed analytics coming â€“ homework and
                       student list are live now.
                     </p>
                   </div>
@@ -195,3 +195,4 @@ export default async function TeacherDashboardPage() {
     </main>
   );
 }
+

@@ -1,4 +1,4 @@
-// app/teacher/homework/page.tsx
+﻿// app/teacher/homework/page.tsx
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getServerSession } from "next-auth";
@@ -56,7 +56,7 @@ export default async function TeacherHomeworkList({
             homework.
           </p>
           <Link href="/teacher" className="text-sm text-blue-300 hover:underline">
-            ← Back to teacher dashboard
+            â† Back to teacher dashboard
           </Link>
         </div>
       </main>
@@ -94,7 +94,7 @@ export default async function TeacherHomeworkList({
               href="/teacher"
               className="mb-2 inline-block text-sm text-blue-300 hover:underline"
             >
-              ← Back to teacher dashboard
+              â† Back to teacher dashboard
             </Link>
             <h1 className="text-2xl font-bold">Homework Assignments</h1>
             <p className="text-sm text-slate-400">
@@ -136,7 +136,7 @@ export default async function TeacherHomeworkList({
         <div className="space-y-4">
           {homework.length === 0 ? (
             <div className="rounded-2xl border border-slate-800 bg-slate-900/80 p-12 text-center">
-              <p className="mb-3 text-4xl">📝</p>
+              <p className="mb-3 text-4xl">ðŸ“</p>
               <p className="mb-2 text-lg font-medium">No homework yet</p>
               <p className="mb-4 text-sm text-slate-400">
                 Create your first homework assignment for {selectedClassName}.
@@ -206,3 +206,4 @@ export default async function TeacherHomeworkList({
     </main>
   );
 }
+

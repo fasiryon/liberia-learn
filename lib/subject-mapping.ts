@@ -1,4 +1,4 @@
-// libs/subject-mapping.ts
+﻿// libs/subject-mapping.ts
 // Maps Unified Curriculum Schema subjects -> Prisma Subject enum
 // NOTE: Prisma Subject enum (currently) lacks ENGLISH, ICT, etc.
 // Strategy: map those into the closest Prisma categories for now.
@@ -80,3 +80,4 @@ export const prismaToSchemaSubjectDefaults: Record<PrismaSubject, SchemaSubject>
     PE: "PE",
     CAREER: "BUSINESS_STUDIES",
   };
+

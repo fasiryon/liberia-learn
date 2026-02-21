@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
+﻿import { describe, it, expect, vi, beforeEach } from "vitest";
 
 vi.mock("@/lib/auth", () => ({
   requireRole: vi.fn().mockResolvedValue({
@@ -27,6 +27,10 @@ vi.mock("@/lib/db", () => ({
 
 vi.mock("@/lib/audit", () => ({
   logAudit: vi.fn(),
+}));
+
+vi.mock("@/lib/metrics/events", () => ({
+  recordMetricEvent: vi.fn(),
 }));
 
 import { POST } from "@/app/api/student/sync/route";
@@ -65,3 +69,4 @@ describe("student sync conflict detection", () => {
     expect(prisma.studentProgress.upsert).not.toHaveBeenCalled();
   });
 });
+

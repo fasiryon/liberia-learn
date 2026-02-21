@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import React, { useMemo, useState } from 'react';
 import type { PracticeSession } from '../page';
@@ -87,7 +87,7 @@ export default function ProgressCoach({ sessions }: Props) {
                   </span>
                 </div>
                 <p className="mt-2 text-xs text-slate-400">
-                  Latest score {area.score}% • Schedule a refresher within 48 hours.
+                  Latest score {area.score}% â€¢ Schedule a refresher within 48 hours.
                 </p>
               </li>
             ))}
@@ -109,4 +109,5 @@ export default function ProgressCoach({ sessions }: Props) {
     </aside>
   );
 }
+
 

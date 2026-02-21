@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import React, { useMemo, useState } from 'react';
 import type { Pill } from '../page';
@@ -118,7 +118,7 @@ export default function PillExplorer({ pills }: Props) {
                 </p>
                 <div className="mt-2 flex flex-wrap gap-2 text-xs text-slate-300">
                   <span className="rounded-full bg-slate-800/70 px-2 py-1 font-semibold">
-                    {pill.color} • {pill.shape}
+                    {pill.color} â€¢ {pill.shape}
                   </span>
                   <span className="rounded-full bg-slate-800/70 px-2 py-1 font-semibold">
                     Imprint {pill.imprint}
@@ -153,4 +153,5 @@ export default function PillExplorer({ pills }: Props) {
     </div>
   );
 }
+
 

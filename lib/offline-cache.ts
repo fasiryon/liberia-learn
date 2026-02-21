@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { del, get, set } from "idb-keyval";
 import { resolveSessionPartition, type SessionPartitionInput } from "@/lib/offline-session";
@@ -192,4 +192,5 @@ export async function getCacheStats(partition?: SessionPartitionInput): Promise<
     cacheBytes: metas.reduce((acc, meta) => acc + meta.sizeBytes, 0),
   };
 }
+
 

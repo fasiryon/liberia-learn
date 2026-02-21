@@ -1,4 +1,4 @@
-// app/assignments/page.tsx
+﻿// app/assignments/page.tsx
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getServerSession } from "next-auth";
@@ -98,7 +98,7 @@ export default async function StudentAssignmentsPage() {
               Homework &amp; assignments
             </h1>
             <p className="text-xs text-slate-400">
-              {studentName} · {location}
+              {studentName} Â· {location}
             </p>
           </div>
 
@@ -106,7 +106,7 @@ export default async function StudentAssignmentsPage() {
             href="/dashboard"
             className="rounded-full border border-slate-700 px-4 py-2 text-xs text-slate-200 hover:bg-slate-900"
           >
-            ← Back to dashboard
+            â† Back to dashboard
           </Link>
         </header>
 
@@ -128,7 +128,7 @@ export default async function StudentAssignmentsPage() {
                       {hw.title}
                     </p>
                     <p className="text-xs text-slate-400">
-                      {hw.className} · {hw.schoolName}
+                      {hw.className} Â· {hw.schoolName}
                     </p>
                     <p className="mt-1 text-[11px] text-slate-500">
                       Due:{" "}
@@ -165,3 +165,4 @@ export default async function StudentAssignmentsPage() {
     </main>
   );
 }
+

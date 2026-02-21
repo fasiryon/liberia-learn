@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
+﻿import { describe, it, expect, vi, beforeEach } from "vitest";
 
 vi.mock("@/lib/db", () => ({
   prisma: {
@@ -39,7 +39,7 @@ describe("reporting scope", () => {
 
 describe("training aggregator", () => {
   beforeEach(() => {
-    vi.resetAllMocks();
+    vi.clearAllMocks();
   });
 
   it("returns stable totals and module breakdown", async () => {
@@ -117,4 +117,5 @@ describe("training aggregator", () => {
     );
   });
 });
+
 

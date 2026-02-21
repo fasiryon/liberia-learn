@@ -1,4 +1,4 @@
-import SyncManager from "./SyncManager";
+﻿import SyncManager from "./SyncManager";
 import OfflineBanner from "./OfflineBanner";
 
 export default function StudentLayout({
@@ -14,3 +14,4 @@ export default function StudentLayout({
     </>
   );
 }
+

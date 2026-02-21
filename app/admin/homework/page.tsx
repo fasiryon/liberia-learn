@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useEffect, useMemo, useState } from "react";
 
@@ -133,3 +133,4 @@ const r = await fetch(`/api/homework?classId=${encodeURIComponent(_classId)}`, {
     </main>
   );
 }
+

@@ -1,4 +1,4 @@
-// lib/offline-queue.ts — Client-side offline completion queue using IndexedDB
+﻿// lib/offline-queue.ts â€” Client-side offline completion queue using IndexedDB
 "use client";
 
 import { get, set, del } from "idb-keyval";
@@ -33,6 +33,7 @@ export type QueueItem = {
 export type QueueStats = {
   queuePending: number;
   queueConflicts: number;
+  queueDeadLetter: number;
 };
 
 function nowIso() {
@@ -202,9 +203,11 @@ export async function getQueueStats(partition?: SessionPartitionInput): Promise<
   return {
     queuePending: queue.filter((q) => q.status === "pending").length,
     queueConflicts: queue.filter((q) => q.status === "conflict").length,
+    queueDeadLetter: queue.filter((q) => q.status === "failed").length,
   };
 }
 
 export function isOnline(): boolean {
   return typeof navigator !== "undefined" ? navigator.onLine : true;
 }
+

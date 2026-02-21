@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
+﻿import { describe, it, expect, vi, beforeEach } from "vitest";
 
 vi.mock("@/lib/auth", () => ({
   requireRole: vi.fn().mockResolvedValue({
@@ -16,6 +16,10 @@ vi.mock("@/lib/db", () => ({
     exportRecord: { create: vi.fn() },
     auditLog: { create: vi.fn() },
   },
+}));
+
+vi.mock("@/lib/metrics/events", () => ({
+  recordMetricEvent: vi.fn(),
 }));
 
 import { GET } from "@/app/api/admin/training/export/route";
@@ -54,3 +58,4 @@ describe("training export route", () => {
     expect(prisma.auditLog.create).toHaveBeenCalled();
   });
 });
+

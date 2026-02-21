@@ -1,4 +1,4 @@
-// lib/ai/curriculum-factory.ts
+﻿// lib/ai/curriculum-factory.ts
 import { routedCompletion } from "@/lib/ai/router";
 import {
   CurriculumPayloadSchema,
@@ -22,7 +22,7 @@ export async function generateCurriculumPayload(
     : "";
 
   const liberiaHint = input.liberiaContext
-    ? `\nUse Liberian context throughout — reference local markets, rivers (St. Paul, Farmington), farms, cassava, palm oil, Liberian dollars, county names, and Liberian student names.`
+    ? `\nUse Liberian context throughout â€” reference local markets, rivers (St. Paul, Farmington), farms, cassava, palm oil, Liberian dollars, county names, and Liberian student names.`
     : "";
 
   const systemPrompt = `You are a curriculum content generator for LiberiaLearn, an educational platform for Liberian schools.
@@ -98,3 +98,4 @@ Rules:
 
   return parsed.data;
 }
+

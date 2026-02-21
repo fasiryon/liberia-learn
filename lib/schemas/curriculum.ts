@@ -1,4 +1,4 @@
-import { z } from 'zod';
+﻿import { z } from 'zod';
 
 // Convert JSON Schema to Zod
 export const LearningObjectiveSchema = z.object({
@@ -46,4 +46,5 @@ export const CurriculumSchema = z.object({
 });
 
 export type Curriculum = z.infer<typeof CurriculumSchema>;
+
 

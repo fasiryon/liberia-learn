@@ -1,4 +1,4 @@
-generator client {
+﻿generator client {
   provider = "prisma-client-js"
 }
 
@@ -32,6 +32,10 @@ model User {
   messagesSent        Message[]            @relation("MessagesSent")
   messagesReceived    Message[]            @relation("MessagesReceived")
   notificationLogs    NotificationLog[]
+  guardianConsents    GuardianConsent[]    @relation("GuardianConsentGuardian")
+  smsDeliveryLogs     SMSDeliveryLog[]     @relation("SMSDeliveryLogGuardian")
+  exportRecords       ExportRecord[]
+  metricEvents        MetricEvent[]
   passwordResetTokens PasswordResetToken[]
   sessions            Session[]
   student             Student?
@@ -75,6 +79,9 @@ model School {
   PilotChecklistStatus   PilotChecklistStatus[]
   TeacherProfile         TeacherProfile[]
   users                  User[]
+  guardianConsents       GuardianConsent[]
+  smsDeliveryLogs        SMSDeliveryLog[]
+  metricEvents           MetricEvent[]
 }
 
 model Class {
@@ -116,6 +123,8 @@ model Student {
   reviews               ReviewSchedule[]
   user                  User                   @relation(fields: [userId], references: [id])
   guardians             StudentGuardian[]
+  guardianConsents      GuardianConsent[]      @relation("GuardianConsentStudent")
+  smsDeliveryLogs       SMSDeliveryLog[]
   submissions           Submission[]
 }
 
@@ -631,6 +640,92 @@ model NotificationLog {
   @@index([status, createdAt])
 }
 
+model ExportRecord {
+  id         String   @id @default(cuid())
+  userId     String?
+  exportType String
+  scope      String
+  scopeId    String?
+  filters    Json?
+  format     String?
+  pilotOnly  Boolean  @default(true)
+  createdAt  DateTime @default(now())
+  user       User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([exportType, createdAt])
+  @@index([scope, scopeId, createdAt])
+  @@index([userId, createdAt])
+}
+
+model GuardianConsent {
+  id         String    @id @default(cuid())
+  schoolId   String
+  studentId  String
+  guardianId String
+  smsOptIn   Boolean   @default(false)
+  optedOutAt DateTime?
+  source     String?
+  pilotOnly  Boolean   @default(true)
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+  guardian   User      @relation("GuardianConsentGuardian", fields: [guardianId], references: [id])
+  school     School    @relation(fields: [schoolId], references: [id])
+  student    Student   @relation("GuardianConsentStudent", fields: [studentId], references: [id])
+
+  @@unique([schoolId, studentId, guardianId], name: "GuardianConsent_schoolId_studentId_guardianId_key")
+  @@index([schoolId, pilotOnly, createdAt])
+}
+
+model SmsDeliveryLog {
+  id                String            @id @default(cuid())
+  schoolId          String
+  studentId         String
+  guardianId        String
+  phoneE164         String
+  messageType       SMSMessageType
+  templateKey       String?
+  payloadJson       Json?
+  provider          String
+  providerMessageId String?
+  status            SMSDeliveryStatus @default(queued)
+  attempts          Int               @default(0)
+  lastError         String?
+  idempotencyKey    String
+  pilotOnly         Boolean           @default(true)
+  createdAt         DateTime          @default(now())
+  updatedAt         DateTime          @updatedAt
+  guardian          User              @relation("SMSDeliveryLogGuardian", fields: [guardianId], references: [id])
+  school            School            @relation(fields: [schoolId], references: [id])
+  student           Student           @relation(fields: [studentId], references: [id])
+
+  @@unique([guardianId, messageType, idempotencyKey], name: "SMSDeliveryLog_guardianId_messageType_idempotencyKey_key")
+  @@index([schoolId, createdAt])
+  @@index([status, createdAt])
+  @@index([messageType, createdAt])
+  @@map("SMSDeliveryLog")
+}
+
+model MetricEvent {
+  id          String   @id @default(cuid())
+  schoolId    String?
+  scope       String
+  scopeId     String?
+  kind        String
+  name        String
+  severity    String
+  payloadJson Json?
+  pilotOnly   Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  school      School?  @relation(fields: [schoolId], references: [id])
+  userId      String?
+  user        User?    @relation(fields: [userId], references: [id])
+
+  @@index([scope, scopeId, createdAt])
+  @@index([name, createdAt])
+  @@index([severity, createdAt])
+  @@index([schoolId, createdAt])
+}
+
 /// / ===== Curriculum Content =====
 model CurriculumContent {
   id            String          @id @default(cuid())
@@ -811,3 +906,20 @@ enum TrainingStatus {
   in_progress
   complete
 }
+
+enum SMSMessageType {
+  absence
+  at_risk
+  praise
+  custom
+}
+
+enum SMSDeliveryStatus {
+  queued
+  sent
+  delivered
+  failed
+  blocked
+  opted_out
+}
+

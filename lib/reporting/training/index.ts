@@ -1,4 +1,4 @@
-import { prisma } from "@/lib/db";
+﻿import { prisma } from "@/lib/db";
 import type { ReportScope } from "@/lib/reporting/scope";
 
 export type TrainingTotals = {
@@ -139,4 +139,5 @@ export async function getTrainingSummary({
     modules,
   };
 }
+
 

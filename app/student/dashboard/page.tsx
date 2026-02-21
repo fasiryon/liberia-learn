@@ -1,4 +1,4 @@
-import { redirect } from "next/navigation";
+﻿import { redirect } from "next/navigation";
 
 /**
  * Legacy white student dashboard.
@@ -7,3 +7,4 @@ import { redirect } from "next/navigation";
 export default function LegacyStudentDashboard() {
   redirect("/dashboard");
 }
+

@@ -1,10 +1,10 @@
-import { NextResponse } from "next/server";
+﻿import { NextResponse } from "next/server";
 import { requireRole } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 
 export const dynamic = "force-dynamic";
 
-/** GET /api/notifications/log — list notification history */
+/** GET /api/notifications/log â€” list notification history */
 export async function GET() {
   try {
     await requireRole("TEACHER", "ADMIN");
@@ -25,3 +25,4 @@ export async function GET() {
     );
   }
 }
+

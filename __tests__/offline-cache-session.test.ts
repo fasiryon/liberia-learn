@@ -1,4 +1,4 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+﻿import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 const store = new Map<string, any>();
 
@@ -84,4 +84,5 @@ describe("offline cache/session primitives", () => {
     expect(cacheAfterB.cachePacksCount).toBe(1);
   });
 });
+
 

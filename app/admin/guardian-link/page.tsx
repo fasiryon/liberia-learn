@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState, useEffect, FormEvent } from "react";
 
@@ -287,3 +287,4 @@ export default function GuardianLinkPage() {
     </div>
   );
 }
+

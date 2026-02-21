@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Normalize a phone number to E.164 format.
  * Default country code is +231 (Liberia).
  */
@@ -13,3 +13,4 @@ export function normalizeToE164(
   else cleaned = countryCode + cleaned.replace(/^0/, "");
   return /^\+\d{7,15}$/.test(cleaned) ? cleaned : null;
 }
+

@@ -1,4 +1,4 @@
-// app/progress/page.tsx
+﻿// app/progress/page.tsx
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getServerSession } from "next-auth";
@@ -112,7 +112,7 @@ export default async function ProgressPage() {
             href="/"
             className="rounded-full border border-slate-700 px-4 py-2 text-xs text-slate-300 hover:bg-slate-900"
           >
-            ← Back to dashboard
+            â† Back to dashboard
           </Link>
         </header>
 
@@ -121,7 +121,7 @@ export default async function ProgressPage() {
           <div className="rounded-2xl border border-slate-800 bg-slate-900/80 p-4 text-sm">
             <p className="text-xs text-slate-400 mb-1">Overall average</p>
             <p className="text-2xl font-semibold text-emerald-300">
-              {overallAvg ? `${overallAvg}%` : "—"}
+              {overallAvg ? `${overallAvg}%` : "â€”"}
             </p>
             <p className="text-[11px] text-slate-500">
               {student.grades.length} graded items
@@ -196,7 +196,7 @@ export default async function ProgressPage() {
                       {sub.Homework.title}
                     </p>
                     <p className="text-[11px] text-slate-400">
-                      {sub.Homework.Class.name} ·{" "}
+                      {sub.Homework.Class.name} Â·{" "}
                       {new Date(sub.submittedAt).toLocaleString()}
                     </p>
                   </div>
@@ -205,7 +205,7 @@ export default async function ProgressPage() {
                     <p className="text-lg font-semibold text-emerald-300">
                       {sub.teacherScore !== null
                         ? `${sub.teacherScore}%`
-                        : "—"}
+                        : "â€”"}
                     </p>
                   </div>
                 </div>
@@ -217,3 +217,4 @@ export default async function ProgressPage() {
     </main>
   );
 }
+

@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 export const EVENTS = {
   LESSON_VIEW: "lesson_view",
@@ -50,6 +50,7 @@ export async function trackEvent(
       }),
     });
   } catch {
-    // never throws — analytics must not break UX
+    // never throws â€” analytics must not break UX
   }
 }
+
