@@ -1,4 +1,4 @@
-// lib/ai/tutor-agent.ts
+﻿// lib/ai/tutor-agent.ts
 import { prisma } from "@/lib/db";
 import { logger } from "@/lib/logger";
 import { routedCompletion } from "@/lib/ai/router";
@@ -241,7 +241,7 @@ Student context:
 - Learning environment: low-bandwidth classroom in Liberia
 
 Your role:
-- Help with homework and classwork — guide the student, do not simply give answers.
+- Help with homework and classwork â€” guide the student, do not simply give answers.
 - Use simple, encouraging language appropriate for the student's grade level.
 - Keep responses concise (2-3 paragraphs max).
 - Relate concepts to everyday Liberian life and contexts where helpful (e.g., local markets, geography, culture).
@@ -249,3 +249,4 @@ Your role:
 - Always be patient, supportive, and culturally aware.`;
   }
 }
+

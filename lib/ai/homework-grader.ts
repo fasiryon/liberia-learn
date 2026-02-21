@@ -1,4 +1,4 @@
-// lib/ai/homework-grader.ts
+﻿// lib/ai/homework-grader.ts
 import OpenAI from "openai";
 import { prisma } from "@/lib/db";
 const AGENT_ID = "homework-grader";
@@ -15,7 +15,7 @@ export type QuestionFeedback = {
 };
 
 export type GradingResult = {
-  overallScore: number;         // 0–100
+  overallScore: number;         // 0â€“100
   overallFeedback: string;      // general comment
   questions: QuestionFeedback[];
 };
@@ -258,3 +258,4 @@ export async function gradeHomeworkSubmission(
 ): Promise<GradingResult> {
   return HomeworkGrader.gradeSubmission(submissionId);
 }
+

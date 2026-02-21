@@ -1,4 +1,4 @@
-import { describe, it, expect, vi } from "vitest";
+﻿import { describe, it, expect, vi } from "vitest";
 
 // Mock prisma
 vi.mock("@/lib/db", () => ({
@@ -35,3 +35,4 @@ describe("GET /api/healthz", () => {
     expect(body.db).toBe("error");
   });
 });
+

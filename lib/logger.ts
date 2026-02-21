@@ -1,4 +1,4 @@
-// lib/logger.ts
+﻿// lib/logger.ts
 type LogLevel = "info" | "warn" | "error";
 
 interface LogData {
@@ -52,3 +52,4 @@ class Logger {
 }
 
 export const logger = new Logger();
+

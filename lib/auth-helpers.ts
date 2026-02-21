@@ -1,4 +1,4 @@
-// lib/auth-helpers.ts
+﻿// lib/auth-helpers.ts
 import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
 import { authOptions } from "./auth";
@@ -39,3 +39,4 @@ export async function requireRole(allowedRoles: string[]) {
 
   return { session };
 }
+

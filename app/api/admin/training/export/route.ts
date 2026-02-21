@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from "next/server";
+﻿import { NextRequest, NextResponse } from "next/server";
 import { requireRole } from "@/lib/auth";
 import { buildTrainingExport } from "@/lib/exports/trainingExport";
 import { parsePilotOnly, resolveScopeParams } from "@/lib/reporting/scope";
@@ -42,4 +42,5 @@ export async function GET(req: NextRequest) {
     );
   }
 }
+
 

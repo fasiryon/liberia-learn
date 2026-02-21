@@ -1,4 +1,4 @@
-import { z } from 'zod';
+﻿import { z } from 'zod';
 
 export const EWOMetadataSchema = z.object({
   id: z.string().regex(/^EWO-[0-9]{5}$/),
@@ -46,3 +46,4 @@ export const SingleLessonEWOSchema = z.object({
 });
 
 export type SingleLessonEWO = z.infer<typeof SingleLessonEWOSchema>;
+

@@ -1,4 +1,4 @@
-// lib/progress-helpers.ts — Shared progress computation helpers
+﻿// lib/progress-helpers.ts â€” Shared progress computation helpers
 
 type ProgressRecord = {
   completedAt: Date | string | null;
@@ -56,3 +56,4 @@ export function groupBySubject(records: ProgressRecord[]): Record<string, { comp
 
   return map;
 }
+

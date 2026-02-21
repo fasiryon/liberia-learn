@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
+﻿import { describe, it, expect, vi, beforeEach } from "vitest";
 
 describe("sendSMS", () => {
   beforeEach(() => {
@@ -23,3 +23,4 @@ describe("sendSMS", () => {
     consoleSpy.mockRestore();
   });
 });
+

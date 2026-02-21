@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { Suspense, useState, FormEvent } from "react";
 import { useSearchParams } from "next/navigation";
@@ -91,7 +91,7 @@ function AcceptInviteForm() {
 
       setSuccess(true);
     } catch {
-      setError("Network error — please try again");
+      setError("Network error â€” please try again");
     } finally {
       setLoading(false);
     }
@@ -187,3 +187,4 @@ function AcceptInviteForm() {
     </main>
   );
 }
+

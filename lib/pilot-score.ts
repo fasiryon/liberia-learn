@@ -1,4 +1,4 @@
-// lib/pilot-score.ts — Defensible Pilot Readiness Score (0-100)
+﻿// lib/pilot-score.ts â€” Defensible Pilot Readiness Score (0-100)
 import { prisma } from "@/lib/db";
 
 export type ComponentScore = {
@@ -151,3 +151,4 @@ export async function computePilotScore(schoolId: string): Promise<PilotScoreRes
 
   return { total, components, grade: toGrade(total) };
 }
+

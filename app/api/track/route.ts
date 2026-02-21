@@ -1,4 +1,4 @@
-// app/api/track/route.ts
+﻿// app/api/track/route.ts
 import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
@@ -46,3 +46,4 @@ export async function POST(req: Request) {
 
   return NextResponse.json({ ok: true });
 }
+

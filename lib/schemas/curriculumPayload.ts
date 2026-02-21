@@ -1,4 +1,4 @@
-// lib/schemas/curriculumPayload.ts
+﻿// lib/schemas/curriculumPayload.ts
 import { z } from "zod";
 
 export const CurriculumPayloadSchema = z.object({
@@ -32,3 +32,4 @@ export const GenerateInputSchema = z.object({
 });
 
 export type GenerateInput = z.infer<typeof GenerateInputSchema>;
+

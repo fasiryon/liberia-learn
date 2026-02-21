@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 export type SessionPartitionInput = {
   userId?: string | null;
@@ -135,4 +135,5 @@ export function resolveSessionPartition(partition?: SessionPartitionInput): Sess
     key: `${principal}|s:${schoolId}|d:${deviceId}`,
   };
 }
+
 

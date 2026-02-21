@@ -1,4 +1,4 @@
-import { prisma } from "@/lib/db";
+﻿import { prisma } from "@/lib/db";
 import { logAudit } from "@/lib/audit";
 import { getTrainingSummary } from "@/lib/reporting/training";
 import type { ReportScope } from "@/lib/reporting/scope";
@@ -134,4 +134,5 @@ export async function buildTrainingExport({
     throw err;
   }
 }
+
 

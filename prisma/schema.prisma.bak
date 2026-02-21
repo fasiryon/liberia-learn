@@ -3,57 +3,104 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
-/// / ===== Core Identity & Organization =====
+/// / ===== Core Identity & Org =====
 model User {
-  id               String            @id @default(cuid())
-  email            String            @unique
-  emailVerified    DateTime?
-  hashedPwd        String?
-  name             String?
-  role             Role
-  createdAt        DateTime          @default(now())
-  updatedAt        DateTime          @updatedAt
-  accounts         Account[]
-  auditLogs        AuditLog[]
-  teacherOf        Class[]           @relation("TeacherClasses")
-  messagesSent     Message[]         @relation("MessagesSent")
-  messagesReceived Message[]         @relation("MessagesReceived")
-  sessions         Session[]
-  student          Student?
-  guardianOf       StudentGuardian[]
+  id                  String               @id @default(cuid())
+  email               String               @unique
+  emailVerified       DateTime?
+  hashedPwd           String?
+  name                String?
+  role                Role
+  createdAt           DateTime             @default(now())
+  updatedAt           DateTime             @updatedAt
+  schoolId            String?
+  isPlatformAdmin     Boolean              @default(false)
+  guardianCountryCode String               @default("+231")
+  guardianPhone       String?
+  guardianPhoneE164   String?
+  preferredChannel    String               @default("EMAIL")
+  smsOptIn            Boolean              @default(false)
+  accounts            Account[]
+  auditLogs           AuditLog[]
+  teacherOf           Class[]              @relation("TeacherClasses")
+  homework            Homework[]
+  messagesSent        Message[]            @relation("MessagesSent")
+  messagesReceived    Message[]            @relation("MessagesReceived")
+  notificationLogs    NotificationLog[]
+  guardianConsents    GuardianConsent[]    @relation("GuardianConsentGuardian")
+  smsDeliveryLogs     SMSDeliveryLog[]     @relation("SMSDeliveryLogGuardian")
+  exportRecords       ExportRecord[]
+  metricEvents        MetricEvent[]
+  passwordResetTokens PasswordResetToken[]
+  sessions            Session[]
+  student             Student?
+  guardianOf          StudentGuardian[]
+  studentProgress     StudentProgress[]
+  TeacherProfile      TeacherProfile?
+  TrainingProgress    TrainingProgress[]
+  school              School?              @relation(fields: [schoolId], references: [id])
 }
 
 model School {
-  id           String   @id @default(cuid())
-  name         String
-  timezone     String   @default("Africa/Monrovia")
-  primaryHex   String?
-  secondaryHex String?
-  accentHex    String?
-  logoUrl      String?
-  createdAt    DateTime @default(now())
-  classes      Class[]
+  id                     String                 @id @default(cuid())
+  name                   String
+  timezone               String                 @default("Africa/Monrovia")
+  primaryHex             String?
+  secondaryHex           String?
+  accentHex              String?
+  logoUrl                String?
+  createdAt              DateTime               @default(now())
+  contactEmail           String?
+  contactName            String?
+  contactPhone           String?
+  county                 String?
+  district               String?
+  motto                  String?
+  status                 String                 @default("ACTIVE")
+  welcomeMsg             String?
+  allowBlueprintAdoption Boolean                @default(true)
+  allowTeacherPublish    Boolean                @default(false)
+  approvalRequired       Boolean                @default(true)
+  onboardingStep         Int                    @default(0)
+  pilotStatus            String?
+  pilotCohort            String?
+  pilotStartDate         DateTime?
+  pilotNotes             String?
+  contactEmailVerified   Boolean                @default(false)
+  contactPhoneVerified   Boolean                @default(false)
+  AuditLog               AuditLog[]
+  classes                Class[]
+  inviteTokens           InviteToken[]
+  PilotChecklistStatus   PilotChecklistStatus[]
+  TeacherProfile         TeacherProfile[]
+  users                  User[]
+  guardianConsents       GuardianConsent[]
+  smsDeliveryLogs        SMSDeliveryLog[]
+  metricEvents           MetricEvent[]
 }
 
 model Class {
-  id          String       @id @default(cuid())
-  schoolId    String
-  name        String
-  subject     Subject
-  teacherId   String
-  createdAt   DateTime     @default(now())
-  assessments Assessment[]
-  assignments Assignment[]
-  School      School       @relation(fields: [schoolId], references: [id])
-  Teacher     User         @relation("TeacherClasses", fields: [teacherId], references: [id])
-  enrollments Enrollment[]
-  grades      Grade[]
-  meetings    Meeting[]
-  messages    Message[]
+  id            String          @id @default(cuid())
+  schoolId      String
+  name          String
+  subject       Subject
+  teacherId     String?
+  createdAt     DateTime        @default(now())
+  assessments   Assessment[]
+  assignments   Assignment[]
+  School        School          @relation(fields: [schoolId], references: [id])
+  Teacher       User?           @relation("TeacherClasses", fields: [teacherId], references: [id])
+  enrollments   Enrollment[]
+  grades        Grade[]
+  homework      Homework[]
+  meetings      Meeting[]
+  messages      Message[]
+  scheduledWork ScheduledWork[]
 }
 
 model Student {
@@ -62,17 +109,22 @@ model Student {
   county                String?
   community             String?
   createdAt             DateTime               @default(now())
+  currentGrade          Int?
   assignmentSubmissions AssignmentSubmission[]
   attendance            AttendanceRecord[]
   capstoneProjects      CapstoneProject[]
   chatMessages          ChatMessage[]
   enrollments           Enrollment[]
   grades                Grade[]
+  homeworkSubmissions   HomeworkSubmission[]
   mastery               MasteryRecord[]
+  placementTests        PlacementTest[]
   portfolioItems        PortfolioItem[]
   reviews               ReviewSchedule[]
   user                  User                   @relation(fields: [userId], references: [id])
   guardians             StudentGuardian[]
+  guardianConsents      GuardianConsent[]      @relation("GuardianConsentStudent")
+  smsDeliveryLogs       SMSDeliveryLog[]
   submissions           Submission[]
 }
 
@@ -226,7 +278,7 @@ model Grade {
   @@index([classId, studentId])
 }
 
-/// / ===== Mastery & Review =====
+/// / ===== Mastery & Spaced Review =====
 model MasteryRecord {
   id             String    @id @default(cuid())
   studentId      String
@@ -265,12 +317,36 @@ model Message {
 }
 
 model AuditLog {
-  id        String   @id @default(cuid())
-  userId    String?
-  action    String
-  details   Json?
-  createdAt DateTime @default(now())
-  user      User?    @relation(fields: [userId], references: [id])
+  id           String   @id @default(cuid())
+  userId       String?
+  action       String
+  details      Json?
+  createdAt    DateTime @default(now())
+  ipAddress    String?
+  resourceId   String?
+  resourceType String?
+  schoolId     String?
+  School       School?  @relation(fields: [schoolId], references: [id])
+  user         User?    @relation(fields: [userId], references: [id])
+
+  @@index([resourceType, resourceId])
+  @@index([userId, createdAt])
+  @@index([schoolId, action, createdAt])
+}
+
+model TrainingModule {
+  id               String             @id @default(cuid())
+  title            String
+  description      String?
+  content          String?
+  sortOrder        Int                @default(0)
+  estimatedMinutes Int                @default(0)
+  isActive         Boolean            @default(true)
+  createdAt        DateTime           @default(now())
+  code             String?            @unique
+  TrainingProgress TrainingProgress[]
+
+  @@index([isActive, sortOrder])
 }
 
 /// / ===== Assignments =====
@@ -296,6 +372,40 @@ model AssignmentSubmission {
   Student      Student    @relation(fields: [studentId], references: [id])
 
   @@unique([assignmentId, studentId])
+}
+
+/// / ===== Homework (AI + Teacher) =====
+model Homework {
+  id           String               @id @default(cuid())
+  classId      String
+  title        String
+  dueAt        DateTime?
+  createdAt    DateTime             @default(now())
+  instructions String?
+  questions    Json?
+  description  String?
+  createdById  String
+  rubricJson   Json?
+  Class        Class                @relation(fields: [classId], references: [id])
+  createdBy    User                 @relation(fields: [createdById], references: [id])
+  submissions  HomeworkSubmission[]
+}
+
+model HomeworkSubmission {
+  id           String   @id @default(cuid())
+  homeworkId   String
+  studentId    String
+  aiFeedback   Json?
+  aiScore      Float?
+  answers      Json?
+  submittedAt  DateTime @default(now())
+  teacherNotes String?
+  teacherScore Float?
+  aiReviewed   Boolean  @default(false)
+  Homework     Homework @relation(fields: [homeworkId], references: [id])
+  Student      Student  @relation(fields: [studentId], references: [id])
+
+  @@unique([homeworkId, studentId])
 }
 
 /// / ===== Capstone / Portfolio / Partners =====
@@ -364,7 +474,25 @@ model BlockScheduleTemplate {
   createdAt DateTime @default(now())
 }
 
-/// / ===== AI Agents & Work Orders =====
+/// / ===== Placement Tests (NEW) =====
+model PlacementTest {
+  id             String    @id @default(cuid())
+  studentId      String
+  band           GradeBand
+  levelLabel     String
+  estimatedGrade Int
+  rawScore       Int
+  totalQuestions Int
+  details        Json?
+  questions      Json?
+  answers        Json?
+  createdAt      DateTime  @default(now())
+  student        Student   @relation(fields: [studentId], references: [id])
+
+  @@index([studentId, createdAt])
+}
+
+/// / ===== AI AGENT MODELS (NEW) =====
 model Agent {
   id        String        @id @default(cuid())
   name      String
@@ -436,100 +564,18 @@ model ChatMessage {
   @@index([studentId, createdAt])
 }
 
-/// / ===== Education Work Orders =====
-model EducationWorkOrder {
-  id          String    @id @default(cuid())
-  ewoId       String    @unique
-  ewoType     String
-  status      String
-  priority    String
-  target      Json
-  constraints Json
-  batchRules  Json?
-  artifacts   Json
-  history     Json[]
-  childEwos   String[]
-  parentEwoId String?
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
-  deadline    DateTime?
-  initiator   String?
-
-  @@index([status])
-  @@index([ewoType])
-  @@index([priority])
+/// / ===== Password Reset =====
+model PasswordResetToken {
+  id        String    @id @default(cuid())
+  token     String    @unique @default(cuid())
+  userId    String
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime  @default(now())
+  User      User      @relation(fields: [userId], references: [id])
 }
 
-/// / ===== Curriculum Storage =====
-model CurriculumContent {
-  id                String             @id @default(cuid())
-  contentId String   @unique
-  contentId         String             @unique // metadata.id
-  grade             Int
-  subject           String
-  contentType       String
-  status            String
-  version           String
-  payload           Json
-  hash              String?            @unique
-  createdAt         DateTime           @default(now())
-  updatedAt         DateTime           @updatedAt
-  governedArtifacts GovernedArtifact[] @relation("GovernedToContent")
-
-  CurriculumAsset CurriculumAsset[]
-
-  @@index([grade, subject])
-  @@index([contentType, status])
-}
-
-model CurriculumAsset {
-  id         String            @id @default(cuid())
-  lessonId   String
-  path       String
-  type       String
-  sizeKb     Int
-  format     String
-  altText    String?
-  cached     Boolean           @default(false)
-  lastCached DateTime?
-  lesson     CurriculumContent @relation(fields: [lessonId], references: [contentId])
-
-  @@index([lessonId])
-  @@index([cached])
-}
-model GovernedArtifact {
-  id                  String   @id @default(cuid())
-  ewoId               String   @unique
-  schemaId            String
-
-  decision            String   // ACCEPT | REPAIR | REJECT
-  reason              String?
-  appliedPatch        Boolean  @default(false)
-  patchJson           Json?
-  governanceModel     String?
-  governanceTimestamp DateTime @default(now())
-
-  agent1Path          String?
-  agent5Path          String?
-  governancePath      String?
-
-  curriculumContentId String?
-  curriculumContent   CurriculumContent? @relation("GovernedToContent", fields: [curriculumContentId], references: [id])
-
-  createdAt           DateTime @default(now())
-  updatedAt           DateTime @updatedAt
-
-  @@index([decision])
-  @@index([ewoId])
-  @@index([governanceTimestamp])
-}model FactoryRun {
-  id        String   @id @default(cuid())
-  runId     String   @unique
-  createdAt DateTime @default(now())
-  note      String?
-}
-
-/// / ===== NextAuth =====
+/// / ===== NextAuth tables =====
 model Account {
   id                String  @id @default(cuid())
   userId            String
@@ -562,6 +608,249 @@ model VerificationToken {
   expires    DateTime
 
   @@unique([identifier, token])
+}
+
+/// / ===== Invite Tokens =====
+model InviteToken {
+  id        String    @id @default(cuid())
+  token     String    @unique @default(cuid())
+  email     String?
+  role      String    @default("TEACHER")
+  schoolId  String
+  usedAt    DateTime?
+  expiresAt DateTime
+  createdAt DateTime  @default(now())
+  School    School    @relation(fields: [schoolId], references: [id])
+}
+
+/// / ===== Notification Log =====
+model NotificationLog {
+  id        String   @id @default(cuid())
+  userId    String
+  channel   String
+  recipient String
+  subject   String?
+  body      String
+  status    String   @default("pending")
+  error     String?
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id])
+
+  @@index([userId, createdAt])
+  @@index([status, createdAt])
+}
+
+model ExportRecord {
+  id         String   @id @default(cuid())
+  userId     String?
+  exportType String
+  scope      String
+  scopeId    String?
+  filters    Json?
+  format     String?
+  pilotOnly  Boolean  @default(true)
+  createdAt  DateTime @default(now())
+  user       User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([exportType, createdAt])
+  @@index([scope, scopeId, createdAt])
+  @@index([userId, createdAt])
+}
+
+model GuardianConsent {
+  id         String    @id @default(cuid())
+  schoolId   String
+  studentId  String
+  guardianId String
+  smsOptIn   Boolean   @default(false)
+  optedOutAt DateTime?
+  source     String?
+  pilotOnly  Boolean   @default(true)
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+  guardian   User      @relation("GuardianConsentGuardian", fields: [guardianId], references: [id])
+  school     School    @relation(fields: [schoolId], references: [id])
+  student    Student   @relation("GuardianConsentStudent", fields: [studentId], references: [id])
+
+  @@unique([schoolId, studentId, guardianId], name: "GuardianConsent_schoolId_studentId_guardianId_key")
+  @@index([schoolId, pilotOnly, createdAt])
+}
+
+model SMSDeliveryLog {
+  id                String            @id @default(cuid())
+  schoolId          String
+  studentId         String
+  guardianId        String
+  phoneE164         String
+  messageType       SMSMessageType
+  templateKey       String?
+  payloadJson       Json?
+  provider          String
+  providerMessageId String?
+  status            SMSDeliveryStatus @default(queued)
+  attempts          Int               @default(0)
+  lastError         String?
+  idempotencyKey    String
+  pilotOnly         Boolean           @default(true)
+  createdAt         DateTime          @default(now())
+  updatedAt         DateTime          @updatedAt
+  guardian          User              @relation("SMSDeliveryLogGuardian", fields: [guardianId], references: [id])
+  school            School            @relation(fields: [schoolId], references: [id])
+  student           Student           @relation(fields: [studentId], references: [id])
+
+  @@unique([guardianId, messageType, idempotencyKey], name: "SMSDeliveryLog_guardianId_messageType_idempotencyKey_key")
+  @@index([schoolId, createdAt])
+  @@index([status, createdAt])
+  @@index([messageType, createdAt])
+}
+
+model MetricEvent {
+  id          String   @id @default(cuid())
+  schoolId    String?
+  scope       String
+  scopeId     String?
+  kind        String
+  name        String
+  severity    String
+  payloadJson Json?
+  pilotOnly   Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  school      School?  @relation(fields: [schoolId], references: [id])
+  userId      String?
+  user        User?    @relation(fields: [userId], references: [id])
+
+  @@index([scope, scopeId, createdAt])
+  @@index([name, createdAt])
+  @@index([severity, createdAt])
+  @@index([schoolId, createdAt])
+}
+
+/// / ===== Curriculum Content =====
+model CurriculumContent {
+  id            String          @id @default(cuid())
+  contentId     String          @unique
+  grade         Int
+  subject       String
+  contentType   String
+  status        String
+  version       String
+  payload       Json
+  moeAlignments Json?
+  hash          String?         @unique
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+  scheduledWork ScheduledWork[]
+
+  @@index([grade, subject])
+  @@index([contentType, status])
+}
+
+/// / ===== Scheduled Work (Today's Work) =====
+model ScheduledWork {
+  id            String            @id @default(cuid())
+  contentId     String
+  classId       String
+  scheduledDate DateTime
+  createdById   String
+  createdAt     DateTime          @default(now())
+  endTime       String?
+  periodNumber  Int?
+  startTime     String?
+  class         Class             @relation(fields: [classId], references: [id])
+  content       CurriculumContent @relation(fields: [contentId], references: [contentId])
+  progress      StudentProgress[]
+
+  @@index([classId, scheduledDate])
+  @@index([contentId])
+}
+
+/// / ===== Student Progress =====
+model StudentProgress {
+  id              String        @id @default(cuid())
+  studentId       String
+  scheduledWorkId String
+  completedAt     DateTime?
+  startedAt       DateTime?
+  createdAt       DateTime      @default(now())
+  scheduledWork   ScheduledWork @relation(fields: [scheduledWorkId], references: [id])
+  student         User          @relation(fields: [studentId], references: [id])
+
+  @@unique([studentId, scheduledWorkId])
+}
+
+/// / ===== Platform Transfer Tokens =====
+model PlatformTransferToken {
+  id        String    @id @default(cuid())
+  token     String    @unique @default(cuid())
+  createdBy String
+  expiresAt DateTime
+  usedAt    DateTime?
+  usedBy    String?
+  createdAt DateTime  @default(now())
+}
+
+model PilotChecklistItem {
+  id                   String                 @id
+  title                String
+  description          String?
+  sortOrder            Int                    @default(0)
+  active               Boolean                @default(true)
+  createdAt            DateTime               @default(now())
+  PilotChecklistStatus PilotChecklistStatus[]
+
+  @@index([active, sortOrder])
+}
+
+model PilotChecklistStatus {
+  id                 String             @id
+  schoolId           String
+  itemId             String
+  completedAt        DateTime?
+  completedById      String?
+  createdAt          DateTime           @default(now())
+  updatedAt          DateTime
+  PilotChecklistItem PilotChecklistItem @relation(fields: [itemId], references: [id], onDelete: Cascade)
+  School             School             @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+
+  @@unique([schoolId, itemId])
+  @@index([schoolId, completedAt])
+}
+
+model TeacherProfile {
+  id             String      @id
+  userId         String      @unique
+  schoolId       String
+  fullName       String
+  phone          String?
+  permissions    Json?
+  gradesTaught   GradeBand[]
+  subjectsTaught Subject[]
+  isOnboarded    Boolean     @default(false)
+  onboardedAt    DateTime?
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime
+  School         School      @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+  User           User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([schoolId])
+}
+
+model TrainingProgress {
+  id                 String         @id
+  teacherUserId      String
+  moduleId           String
+  status             TrainingStatus @default(not_started)
+  startedAt          DateTime?
+  completedAt        DateTime?
+  completionEvidence Json?
+  createdAt          DateTime       @default(now())
+  updatedAt          DateTime
+  TrainingModule     TrainingModule @relation(fields: [moduleId], references: [id], onDelete: Cascade)
+  User               User           @relation(fields: [teacherUserId], references: [id], onDelete: Cascade)
+
+  @@unique([teacherUserId, moduleId])
+  @@index([moduleId, status])
+  @@index([teacherUserId, status])
 }
 
 /// / ===== Enums =====
@@ -609,4 +898,26 @@ enum Difficulty {
   D3
   D4
   D5
+}
+
+enum TrainingStatus {
+  not_started
+  in_progress
+  complete
+}
+
+enum SMSMessageType {
+  absence
+  at_risk
+  praise
+  custom
+}
+
+enum SMSDeliveryStatus {
+  queued
+  sent
+  delivered
+  failed
+  blocked
+  opted_out
 }

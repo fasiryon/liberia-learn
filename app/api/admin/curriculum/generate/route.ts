@@ -1,4 +1,4 @@
-// app/api/admin/curriculum/generate/route.ts
+﻿// app/api/admin/curriculum/generate/route.ts
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { requireRole } from "@/lib/auth";
@@ -68,7 +68,7 @@ export async function POST(req: Request) {
     } else if (mode === "unit_plan") {
       enrichedPayload = generateUnitPlanPayload(grade, subject, topic);
     } else {
-      // Lesson mode (default) — use AI generation
+      // Lesson mode (default) â€” use AI generation
       const payload = await generateCurriculumPayload({
         grade,
         subject,
@@ -180,3 +180,4 @@ export async function POST(req: Request) {
     );
   }
 }
+

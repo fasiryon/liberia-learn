@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from "next/server";
+﻿import { NextRequest, NextResponse } from "next/server";
 import { requireRole } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { buildMetricScopeWhere } from "@/lib/metrics/events";
@@ -44,4 +44,5 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: err?.message ?? "Failed" }, { status: err?.status ?? 500 });
   }
 }
+
 

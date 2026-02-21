@@ -1,4 +1,4 @@
-import AiTutorChat from "@/components/AiTutorChat";
+﻿import AiTutorChat from "@/components/AiTutorChat";
 import LogoutButton from "@/components/LogoutButton";
 
 // app/page.tsx (Student Dashboard)
@@ -281,7 +281,7 @@ export default async function DashboardPage() {
                     </p>
                   </div>
                   <p className="text-xs text-slate-500 mt-2">
-                    Keep asking questions — learning grows with curiosity.
+                    Keep asking questions â€” learning grows with curiosity.
                   </p>
                 </div>
               </div>
@@ -299,8 +299,8 @@ export default async function DashboardPage() {
                 </p>
                 {latestPlacement ? (
                   <p className="text-xs text-slate-400 mt-1">
-                    Last placement test: {latestPlacement.track} · Grade{" "}
-                    {latestPlacement.grade} · {latestPlacement.score}% ·{" "}
+                    Last placement test: {latestPlacement.track} Â· Grade{" "}
+                    {latestPlacement.grade} Â· {latestPlacement.score}% Â·{" "}
                     {new Date(latestPlacement.createdAt).toLocaleString()}
                   </p>
                 ) : (
@@ -313,14 +313,14 @@ export default async function DashboardPage() {
                   href="/student/placement"
                   className="mt-2 inline-flex text-[11px] text-emerald-300 hover:text-emerald-200"
                 >
-                  View placement details →
+                  View placement details â†’
                 </Link>
               </div>
 
               {/* Grades */}
               {grades.length === 0 ? (
                 <div className="rounded-2xl border border-slate-800 bg-slate-900/80 p-8 text-center">
-                  <p className="text-4xl mb-2">📚</p>
+                  <p className="text-4xl mb-2">ðŸ“š</p>
                   <p className="text-sm font-medium mb-1">
                     No grades yet
                   </p>
@@ -372,18 +372,18 @@ export default async function DashboardPage() {
                 <div className="mt-3 space-y-2 text-xs text-slate-300">
                   {[
                     {
-                      time: "08:30 – 09:15",
-                      title: "Mathematics · Fractions & Ratios",
+                      time: "08:30 â€“ 09:15",
+                      title: "Mathematics Â· Fractions & Ratios",
                       tag: "AI plan ready",
                     },
                     {
-                      time: "09:30 – 10:15",
-                      title: "Science · States of Matter",
+                      time: "09:30 â€“ 10:15",
+                      title: "Science Â· States of Matter",
                       tag: "Slides prepared",
                     },
                     {
-                      time: "11:00 – 11:45",
-                      title: "English · Reading comprehension",
+                      time: "11:00 â€“ 11:45",
+                      title: "English Â· Reading comprehension",
                       tag: "Reading pack",
                     },
                   ].map((item, i) => (
@@ -424,4 +424,5 @@ export default async function DashboardPage() {
     </ErrorBoundary>
   );
 }
+
 

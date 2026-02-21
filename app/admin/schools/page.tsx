@@ -1,4 +1,4 @@
-// app/admin/schools/page.tsx
+﻿// app/admin/schools/page.tsx
 import { redirect } from "next/navigation";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
@@ -24,7 +24,7 @@ export default async function AdminSchoolsPage() {
         <header className="flex items-center justify-between rounded-2xl border border-slate-800 bg-slate-900/80 px-4 py-3">
           <div>
             <p className="text-[10px] uppercase text-emerald-300">
-              LiberiaLearn · Admin
+              LiberiaLearn Â· Admin
             </p>
             <h1 className="text-lg font-semibold">Schools</h1>
             <p className="text-[11px] text-slate-400">
@@ -35,7 +35,7 @@ export default async function AdminSchoolsPage() {
             href="/admin"
             className="rounded-full border border-slate-700 px-3 py-1.5 text-xs text-slate-300 hover:border-slate-500 hover:text-slate-50"
           >
-            ⬅ Back to admin home
+            â¬… Back to admin home
           </Link>
         </header>
 
@@ -52,7 +52,7 @@ export default async function AdminSchoolsPage() {
               <input
                 name="name"
                 required
-                placeholder="e.g. Zoe Louis School – Barnesville"
+                placeholder="e.g. Zoe Louis School â€“ Barnesville"
                 className="w-full rounded-xl border border-slate-700 bg-slate-950 px-3 py-2 text-sm text-slate-50 outline-none focus:border-emerald-400 focus:ring-1 focus:ring-emerald-400/60"
               />
             </div>
@@ -137,3 +137,4 @@ export default async function AdminSchoolsPage() {
     </main>
   );
 }
+

@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from "next/server";
+﻿import { NextRequest, NextResponse } from "next/server";
 import { requireRole } from "@/lib/auth";
 import { sendGuardianSMS } from "@/lib/guardian/sms-service";
 
@@ -49,4 +49,5 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: err?.message ?? "Failed" }, { status: err?.status ?? 500 });
   }
 }
+
 

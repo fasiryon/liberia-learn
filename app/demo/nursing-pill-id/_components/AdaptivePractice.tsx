@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import React, { useMemo, useState } from 'react';
 import type { PracticeSession } from '../page';
@@ -108,4 +108,5 @@ export default function AdaptivePractice({ sessions }: Props) {
     </div>
   );
 }
+
 

@@ -1,4 +1,4 @@
-// lib/localization/liberia-context.ts
+﻿// lib/localization/liberia-context.ts
 // Replaces foreign cultural references with Liberian equivalents in AI-generated content.
 
 const NAME_MAP: [RegExp, string][] = [
@@ -85,7 +85,7 @@ const UNIT_MAP: [RegExp, string][] = [
 
 /**
  * Replaces Western/American cultural references with Liberian equivalents.
- * Safe to run on any text — idempotent for already-Liberian content.
+ * Safe to run on any text â€” idempotent for already-Liberian content.
  */
 export function liberianize(text: string): string {
   let result = text;
@@ -99,3 +99,4 @@ export function liberianize(text: string): string {
 
   return result;
 }
+

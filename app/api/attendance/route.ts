@@ -1,4 +1,4 @@
-// app/api/attendance/route.ts
+﻿// app/api/attendance/route.ts
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { requireRole } from "@/lib/auth";
@@ -132,3 +132,4 @@ export async function GET(req: Request) {
     );
   }
 }
+

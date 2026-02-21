@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+﻿import { NextResponse } from "next/server";
 import { requireRole } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 
@@ -42,3 +42,4 @@ export async function GET() {
     return NextResponse.json({ error: err.message }, { status });
   }
 }
+
