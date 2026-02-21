@@ -33,6 +33,7 @@ export type QueueItem = {
 export type QueueStats = {
   queuePending: number;
   queueConflicts: number;
+  queueDeadLetter: number;
 };
 
 function nowIso() {
@@ -202,6 +203,7 @@ export async function getQueueStats(partition?: SessionPartitionInput): Promise<
   return {
     queuePending: queue.filter((q) => q.status === "pending").length,
     queueConflicts: queue.filter((q) => q.status === "conflict").length,
+    queueDeadLetter: queue.filter((q) => q.status === "failed").length,
   };
 }
 

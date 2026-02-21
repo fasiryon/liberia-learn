@@ -39,7 +39,7 @@ describe("reporting scope", () => {
 
 describe("training aggregator", () => {
   beforeEach(() => {
-    vi.resetAllMocks();
+    vi.clearAllMocks();
   });
 
   it("returns stable totals and module breakdown", async () => {
