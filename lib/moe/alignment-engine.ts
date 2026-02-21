@@ -1,4 +1,4 @@
-// lib/moe/alignment-engine.ts
+﻿// lib/moe/alignment-engine.ts
 import OpenAI from "openai";
 import { prisma } from "@/lib/db";
 import type { $Enums } from "@prisma/client";
@@ -234,3 +234,4 @@ export async function alignAllContent(
 
   return { success, failed };
 }
+

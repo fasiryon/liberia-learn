@@ -1,4 +1,4 @@
-// lib/sms.ts - Backward-compatible wrapper for SMS sending.
+﻿// lib/sms.ts - Backward-compatible wrapper for SMS sending.
 import { TwilioSMSProvider } from "@/lib/sms/twilio-provider";
 
 export async function sendSMS(to: string, body: string): Promise<{ ok: boolean; sid?: string; error?: string }> {
@@ -10,3 +10,4 @@ export async function sendSMS(to: string, body: string): Promise<{ ok: boolean; 
     error: result.error,
   };
 }
+

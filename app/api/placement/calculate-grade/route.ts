@@ -1,4 +1,4 @@
-// app/api/placement/calculate-grade/route.ts
+﻿// app/api/placement/calculate-grade/route.ts
 import { NextResponse } from "next/server";
 import { requireRole } from "@/lib/auth";
 
@@ -25,7 +25,7 @@ export async function POST(req: Request) {
     const correctAnswers = answers.filter((a) => a.correct).length;
     const accuracyRate = (correctAnswers / totalQuestions) * 100;
 
-    // Weighted by difficulty (1–5)
+    // Weighted by difficulty (1â€“5)
     let weightedScore = 0;
     let totalWeight = 0;
 
@@ -115,3 +115,4 @@ export async function POST(req: Request) {
     );
   }
 }
+

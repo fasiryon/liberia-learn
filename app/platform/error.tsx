@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 export default function PlatformError({ reset }: { error: Error; reset: () => void }) {
   return (
     <div className="min-h-[50vh] flex items-center justify-center">
@@ -13,3 +13,4 @@ export default function PlatformError({ reset }: { error: Error; reset: () => vo
     </div>
   );
 }
+

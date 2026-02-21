@@ -1,4 +1,4 @@
-// app/assignments/loading.tsx
+﻿// app/assignments/loading.tsx
 export default function LoadingAssignments() {
     return (
       <main className="min-h-screen bg-slate-950 text-slate-50">

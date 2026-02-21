@@ -1,4 +1,4 @@
-// app/student/homework/page.tsx
+﻿// app/student/homework/page.tsx
 import { redirect } from "next/navigation";
 import { getServerSession } from "next-auth";
 import Link from "next/link";
@@ -58,3 +58,4 @@ export default async function StudentHomeworkList() {
     </main>
   );
 }
+

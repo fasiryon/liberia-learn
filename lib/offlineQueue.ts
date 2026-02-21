@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { trackEvent, EVENTS } from "@/lib/trackEvent";
 
@@ -10,7 +10,7 @@ export async function offlineFetch(
     const res = await fetch(url, options);
     return res;
   } catch {
-    // Network error — dispatch event for UI listeners
+    // Network error â€” dispatch event for UI listeners
     if (typeof window !== "undefined") {
       window.dispatchEvent(new CustomEvent("ll:queued", { detail: { url } }));
     }
@@ -25,3 +25,4 @@ export async function offlineFetch(
     return { queued: true, offline: true };
   }
 }
+

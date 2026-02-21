@@ -1,4 +1,4 @@
-// lib/audit.ts — Immutable audit logging helper
+﻿// lib/audit.ts â€” Immutable audit logging helper
 import { prisma } from "@/lib/db";
 
 export async function logAudit({
@@ -32,3 +32,4 @@ export async function logAudit({
     console.error("[AUDIT] Failed to log:", err);
   }
 }
+

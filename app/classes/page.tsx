@@ -1,4 +1,4 @@
-// app/classes/page.tsx
+﻿// app/classes/page.tsx
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getServerSession } from "next-auth";
@@ -73,7 +73,7 @@ export default async function ClassesPage() {
             href="/"
             className="rounded-full border border-slate-700 px-4 py-2 text-xs text-slate-300 hover:bg-slate-900"
           >
-            ← Back to dashboard
+            â† Back to dashboard
           </Link>
         </header>
 
@@ -94,7 +94,7 @@ export default async function ClassesPage() {
                     {cls.name}
                   </h2>
                   <p className="text-xs text-slate-400 mt-1">
-                    {cls.subject} · {cls.School?.name || "School"}
+                    {cls.subject} Â· {cls.School?.name || "School"}
                   </p>
                   {cls.Teacher && (
                     <p className="text-[11px] text-slate-500 mt-1">
@@ -125,3 +125,4 @@ export default async function ClassesPage() {
     </main>
   );
 }
+

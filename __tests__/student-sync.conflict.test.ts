@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
+﻿import { describe, it, expect, vi, beforeEach } from "vitest";
 
 vi.mock("@/lib/auth", () => ({
   requireRole: vi.fn().mockResolvedValue({
@@ -69,3 +69,4 @@ describe("student sync conflict detection", () => {
     expect(prisma.studentProgress.upsert).not.toHaveBeenCalled();
   });
 });
+

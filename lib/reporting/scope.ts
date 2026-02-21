@@ -1,4 +1,4 @@
-import type { SessionUser } from "@/lib/auth";
+﻿import type { SessionUser } from "@/lib/auth";
 
 export type ReportScope = "school" | "county" | "district" | "national";
 
@@ -57,4 +57,5 @@ export function parsePilotOnly(param: string | null | undefined, user: SessionUs
   }
   return value;
 }
+
 

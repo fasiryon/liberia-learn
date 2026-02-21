@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it, vi } from "vitest";
+﻿import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const { requireRoleMock } = vi.hoisted(() => ({
   requireRoleMock: vi.fn(),
@@ -42,3 +42,4 @@ describe("ops metrics summary route", () => {
     expect(aggregateMetricsMock).not.toHaveBeenCalled();
   });
 });
+

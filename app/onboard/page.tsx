@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState } from "react";
 
@@ -23,7 +23,7 @@ export default function OnboardPage() {
       setStatus(data?.error ? `Error: ${data.error}` : "Error: Failed");
       return;
     }
-    setStatus(`✅ Created school "${data.schoolName}". Now sign in as admin.`);
+    setStatus(`âœ… Created school "${data.schoolName}". Now sign in as admin.`);
   }
 
   return (

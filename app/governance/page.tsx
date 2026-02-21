@@ -1,4 +1,4 @@
-export const dynamic = "force-dynamic";
+﻿export const dynamic = "force-dynamic";
 
 type Row = {
   id: string;
@@ -30,7 +30,7 @@ export default async function GovernancePage() {
 
   return (
     <div style={{ padding: 20, fontFamily: "Arial, sans-serif" }}>
-      <h1 style={{ fontSize: 22, marginBottom: 10 }}>Governance — Accepted Artifacts</h1>
+      <h1 style={{ fontSize: 22, marginBottom: 10 }}>Governance â€” Accepted Artifacts</h1>
       <div style={{ marginBottom: 12 }}>Showing {rows.length} latest ACCEPT decisions.</div>
 
       <table style={{ width: "100%", borderCollapse: "collapse" }}>
@@ -62,3 +62,4 @@ export default async function GovernancePage() {
     </div>
   );
 }
+

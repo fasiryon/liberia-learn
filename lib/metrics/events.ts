@@ -1,4 +1,4 @@
-import { prisma } from "@/lib/db";
+﻿import { prisma } from "@/lib/db";
 import type { ReportScope } from "@/lib/reporting/scope";
 
 type MetricEventScope = {
@@ -178,3 +178,4 @@ export async function aggregateMetrics({
     },
   };
 }
+

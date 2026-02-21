@@ -1,4 +1,4 @@
-import { describe, it, expect } from "vitest";
+﻿import { describe, it, expect } from "vitest";
 import { resolveAttendance, resolveSubmission } from "@/lib/offline-sync/policies";
 
 describe("offline sync policies", () => {
@@ -37,4 +37,5 @@ describe("offline sync policies", () => {
     expect(result).toEqual({ action: "conflict", hint: "submission_graded_server_wins" });
   });
 });
+
 

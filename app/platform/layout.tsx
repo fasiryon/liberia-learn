@@ -1,4 +1,4 @@
-import { redirect } from "next/navigation";
+﻿import { redirect } from "next/navigation";
 import { requireUser } from "@/lib/auth";
 import Link from "next/link";
 
@@ -55,3 +55,4 @@ export default async function PlatformLayout({
     </div>
   );
 }
+

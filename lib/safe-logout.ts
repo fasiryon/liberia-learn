@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { purgePartitionPacks } from "@/lib/offline-cache";
 import { purgeQueuePartition } from "@/lib/offline-queue";
@@ -30,4 +30,5 @@ export async function safeLogout(options?: SafeLogoutOptions): Promise<void> {
   clearActiveSessionPartition();
   clearStoredSessionIdentity();
 }
+
 

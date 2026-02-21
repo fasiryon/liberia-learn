@@ -1,4 +1,4 @@
-import AiTutorChat from "@/components/AiTutorChat";
+﻿import AiTutorChat from "@/components/AiTutorChat";
 
 export default function AiTutorPage() {
   return (

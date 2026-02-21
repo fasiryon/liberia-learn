@@ -1,4 +1,4 @@
-// lib/ai/rubric-generator.ts
+﻿// lib/ai/rubric-generator.ts
 import OpenAI from "openai";
 import { prisma } from "@/lib/db";
 import { HomeworkGrader } from "@/lib/ai/homework-grader";
@@ -118,7 +118,7 @@ export function scoreAnswerAgainstRubric(
   let feedback: string;
   if (ratio >= 0.8) feedback = "Excellent answer covering key concepts.";
   else if (ratio >= 0.5) feedback = "Good attempt but some key points missing.";
-  else if (ratio > 0) feedback = "Partial answer — review the key concepts.";
+  else if (ratio > 0) feedback = "Partial answer â€” review the key concepts.";
   else feedback = "Answer does not address the expected key points.";
 
   return { score, maxScore: rubricQ.maxPoints, feedback };
@@ -185,3 +185,4 @@ export async function gradeSubmissionWithRubric(
 
   return { overallScore, questions: questionResults, usedRubric: true };
 }
+

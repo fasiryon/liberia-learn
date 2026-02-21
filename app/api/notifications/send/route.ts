@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from "next/server";
+﻿import { NextRequest, NextResponse } from "next/server";
 import { requireRole } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import {
@@ -51,7 +51,7 @@ export async function POST(req: NextRequest) {
           dashboardUrl: data?.dashboardUrl ?? `${process.env.NEXTAUTH_URL}/dashboard`,
         });
       } else if (type === "custom" && target.email) {
-        // For custom, we'd need to add a generic send — for now log it
+        // For custom, we'd need to add a generic send â€” for now log it
         emailResult = { ok: true };
       }
 
@@ -103,3 +103,4 @@ export async function POST(req: NextRequest) {
     );
   }
 }
+

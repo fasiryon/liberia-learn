@@ -1,4 +1,4 @@
-// app/page.tsx
+﻿// app/page.tsx
 import Link from "next/link";
 
 export default function HomePage() {
@@ -39,7 +39,7 @@ export default function HomePage() {
         <div className="max-w-xl space-y-6">
           <span className="inline-flex items-center gap-2 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-3 py-1 text-xs font-medium text-emerald-300">
             <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
-            Liberia · Grade 1–12 · AI first
+            Liberia Â· Grade 1â€“12 Â· AI first
           </span>
 
           <h1 className="text-balance text-4xl font-semibold tracking-tight text-slate-50 sm:text-5xl lg:text-6xl">
@@ -52,7 +52,7 @@ export default function HomePage() {
 
           <p className="text-balance text-sm text-slate-300 sm:text-base">
             LiberiaLearn brings structured, mastery-based lessons, real-time
-            progress, and AI tutors together in one dashboard — designed for
+            progress, and AI tutors together in one dashboard â€” designed for
             low-bandwidth classrooms across Liberia.
           </p>
 
@@ -74,7 +74,7 @@ export default function HomePage() {
           <div className="rounded-3xl border border-white/10 bg-slate-900/60 p-5 shadow-2xl shadow-emerald-500/20 backdrop-blur">
             <div className="flex items-center justify-between">
               <span className="text-xs font-semibold uppercase tracking-wide text-slate-400">
-                Today’s snapshot
+                Todayâ€™s snapshot
               </span>
               <span className="rounded-full bg-emerald-500/10 px-2 py-0.5 text-[10px] font-semibold text-emerald-300">
                 demo preview
@@ -113,3 +113,4 @@ export default function HomePage() {
     </main>
   );
 }
+

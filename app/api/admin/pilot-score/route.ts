@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+﻿import { NextResponse } from "next/server";
 import { requireRole } from "@/lib/auth";
 import { computePilotScore } from "@/lib/pilot-score";
 
@@ -15,3 +15,4 @@ export async function GET() {
     return NextResponse.json({ error: err.message }, { status: err?.status || 500 });
   }
 }
+

@@ -1,4 +1,4 @@
-// lib/email.ts
+﻿// lib/email.ts
 import { Resend } from "resend";
 
 const resend = process.env.RESEND_API_KEY
@@ -8,7 +8,7 @@ const resend = process.env.RESEND_API_KEY
 const FROM =
   process.env.EMAIL_FROM ?? "LiberiaLearn <noreply@liberialearn.edu.lr>";
 
-// ── Internal helpers ──
+// â”€â”€ Internal helpers â”€â”€
 
 async function send(to: string, subject: string, html: string) {
   if (!resend) {
@@ -65,7 +65,7 @@ function base(content: string, schoolName = "LiberiaLearn") {
 </html>`;
 }
 
-// ── Exported email functions ──
+// â”€â”€ Exported email functions â”€â”€
 
 export async function sendTeacherInvite({
   to,
@@ -86,7 +86,7 @@ export async function sendTeacherInvite({
       p("This link expires in 7 days."),
     schoolName
   );
-  return send(to, `You're invited to ${schoolName} — LiberiaLearn`, html);
+  return send(to, `You're invited to ${schoolName} â€” LiberiaLearn`, html);
 }
 
 export async function sendStudentInvite({
@@ -108,7 +108,7 @@ export async function sendStudentInvite({
       p("This link expires in 7 days."),
     schoolName
   );
-  return send(to, `Welcome to ${schoolName} — LiberiaLearn`, html);
+  return send(to, `Welcome to ${schoolName} â€” LiberiaLearn`, html);
 }
 
 export async function sendGuardianInvite({
@@ -132,7 +132,7 @@ export async function sendGuardianInvite({
       p("This link expires in 7 days."),
     schoolName
   );
-  return send(to, `Guardian Invite — ${schoolName}`, html);
+  return send(to, `Guardian Invite â€” ${schoolName}`, html);
 }
 
 export async function sendPasswordReset({
@@ -150,7 +150,7 @@ export async function sendPasswordReset({
       `<p style="margin:24px 0;text-align:center">${btn("Reset Password", resetUrl)}</p>` +
       p("If you didn't request this, please ignore this email.")
   );
-  return send(to, "Password Reset — LiberiaLearn", html);
+  return send(to, "Password Reset â€” LiberiaLearn", html);
 }
 
 export async function sendHomeworkGraded({
@@ -220,5 +220,6 @@ export async function sendWeeklyProgressToGuardian({
       `<p style="margin:24px 0;text-align:center">${btn("View Full Dashboard", dashboardUrl)}</p>`,
     schoolName
   );
-  return send(to, `Weekly Progress: ${studentName} — ${schoolName}`, html);
+  return send(to, `Weekly Progress: ${studentName} â€” ${schoolName}`, html);
 }
+

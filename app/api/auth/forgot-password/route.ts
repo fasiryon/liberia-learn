@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+﻿import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { sendPasswordReset } from "@/lib/email";
 
@@ -47,3 +47,4 @@ export async function POST(req: Request) {
     );
   }
 }
+

@@ -1,4 +1,4 @@
-// lib/db.ts  —  canonical PrismaClient singleton
+﻿// lib/db.ts  â€”  canonical PrismaClient singleton
 import { PrismaClient } from "@prisma/client";
 
 const globalForPrisma = globalThis as unknown as {

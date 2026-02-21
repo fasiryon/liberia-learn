@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from "next/server";
+﻿import { NextRequest, NextResponse } from "next/server";
 import { requirePlatformAdmin } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { computePilotScore } from "@/lib/pilot-score";
@@ -114,3 +114,4 @@ export async function GET(req: NextRequest) {
     );
   }
 }
+

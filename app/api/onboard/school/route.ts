@@ -1,4 +1,4 @@
-// app/api/onboard/school/route.ts
+﻿// app/api/onboard/school/route.ts
 // Creates a new school + the first ADMIN user in one transaction.
 // No auth required (brand-new school onboarding).
 

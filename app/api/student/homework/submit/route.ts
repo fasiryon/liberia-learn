@@ -1,4 +1,4 @@
-import { requireTenant } from "@/lib/tenant"
+﻿import { requireTenant } from "@/lib/tenant"
 // app/api/student/homework/submit/route.ts
 import { NextResponse } from "next/server";
 import { requireRole } from "@/lib/auth";
@@ -55,3 +55,4 @@ export async function POST(req: Request) {
 
   return NextResponse.redirect(new URL(redirectTo, req.url));
 }
+

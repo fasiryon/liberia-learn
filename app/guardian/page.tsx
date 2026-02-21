@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
@@ -109,13 +109,13 @@ export default function GuardianDashboard() {
                   {s.name || "Unnamed Student"}
                 </h2>
                 <p className="text-xs text-slate-500">
-                  {s.relation ? `${s.relation} · ` : ""}
+                  {s.relation ? `${s.relation} Â· ` : ""}
                   {s.currentGrade ? `Grade ${s.currentGrade}` : "Grade not set"}
                 </p>
               </div>
               {s.placement && (
                 <span className="rounded-full bg-emerald-500/20 border border-emerald-400/30 px-3 py-0.5 text-xs font-medium text-emerald-300">
-                  {formatBand(s.placement.band)} · {s.placement.levelLabel}
+                  {formatBand(s.placement.band)} Â· {s.placement.levelLabel}
                 </span>
               )}
             </div>
@@ -159,3 +159,4 @@ export default function GuardianDashboard() {
     </main>
   );
 }
+

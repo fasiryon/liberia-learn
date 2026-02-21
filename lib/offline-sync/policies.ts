@@ -1,4 +1,4 @@
-export type ConflictPayload = {
+﻿export type ConflictPayload = {
   status: "conflict";
   opId?: string;
   entity: string;
@@ -68,4 +68,5 @@ export function resolveSubmission(
 
   return { action: "apply", submittedAt: new Date(client.clientUpdatedAt), answers: client.answers };
 }
+
 

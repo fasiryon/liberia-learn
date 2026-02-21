@@ -1,4 +1,4 @@
-// lib/notification-messages.ts — SMS templates (under 160 chars)
+﻿// lib/notification-messages.ts â€” SMS templates (under 160 chars)
 
 export function attendanceAbsent(studentName: string, date: string): string {
   return `LiberiaLearn: ${studentName} was marked absent on ${date}. Please contact the school if this is incorrect.`;
@@ -16,3 +16,4 @@ export function teacherFlag(studentName: string, teacherNote: string): string {
 export function weeklyReport(studentName: string, completed: number, total: number): string {
   return `LiberiaLearn: ${studentName} completed ${completed}/${total} lessons this week. Keep it up!`;
 }
+

@@ -1,4 +1,4 @@
-// lib/schedule-helpers.ts — Shared schedule utilities
+﻿// lib/schedule-helpers.ts â€” Shared schedule utilities
 
 export function getWeekDates(date: Date): Date[] {
   const d = new Date(date);
@@ -30,3 +30,4 @@ export function hasConflict(
     (s) => s.classId === classId && new Date(s.scheduledDate).toISOString().slice(0, 10) === dateStr
   );
 }
+

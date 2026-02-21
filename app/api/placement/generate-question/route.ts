@@ -1,4 +1,4 @@
-// app/api/placement/generate-question/route.ts
+﻿// app/api/placement/generate-question/route.ts
 import { NextResponse } from "next/server";
 import { requireRole } from "@/lib/auth";
 import OpenAI from "openai";
@@ -119,3 +119,4 @@ Rules:
     );
   }
 }
+

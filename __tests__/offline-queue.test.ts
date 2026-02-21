@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
+﻿import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
 
 const store = new Map<string, any>();
 
@@ -96,3 +96,4 @@ describe("offline queue", () => {
     expect(after[0].status).toBe("conflict");
   });
 });
+

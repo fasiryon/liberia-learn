@@ -1,4 +1,4 @@
-// lib/localization/tone-standardizer.ts
+﻿// lib/localization/tone-standardizer.ts
 // Adjusts reading level and tone based on grade level.
 
 /**
@@ -44,7 +44,7 @@ export function toneGuidance(grade: number): string {
 
 /**
  * Post-processes generated text to simplify vocabulary for lower grades.
- * Lightweight — for heavy lifting, use toneGuidance() in the prompt instead.
+ * Lightweight â€” for heavy lifting, use toneGuidance() in the prompt instead.
  */
 export function standardizeTone(text: string, grade: number): string {
   if (grade > 6) return text; // Only simplify for lower grades
@@ -91,3 +91,4 @@ export function standardizeTone(text: string, grade: number): string {
 
   return result;
 }
+

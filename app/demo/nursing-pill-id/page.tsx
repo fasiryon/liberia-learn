@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import React, { useMemo } from 'react';
 import PillExplorer from './_components/PillExplorer';
@@ -129,7 +129,7 @@ export default function NursingPillIdDemoPage() {
             <div>
               <p className="text-xs uppercase tracking-widest text-slate-400">Today&apos;s Signal</p>
               <p className="text-base font-semibold text-white">
-                Focus anticoagulants – mastery trending low ahead of your 12/12 exam.
+                Focus anticoagulants â€“ mastery trending low ahead of your 12/12 exam.
               </p>
             </div>
             <button className="rounded-xl border border-sky-500/60 bg-sky-500/10 px-4 py-2 text-sm font-semibold text-sky-300 hover:bg-sky-500/20">
@@ -149,4 +149,5 @@ export default function NursingPillIdDemoPage() {
     </div>
   );
 }
+
 

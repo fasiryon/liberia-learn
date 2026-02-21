@@ -1,4 +1,4 @@
-// app/teacher/homework/new/page.tsx
+﻿// app/teacher/homework/new/page.tsx
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
 
@@ -45,3 +45,4 @@ export default async function NewHomeworkPage() {
     </main>
   );
 }
+

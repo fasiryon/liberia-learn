@@ -1,4 +1,4 @@
-// app/api/moe/align/route.ts
+﻿// app/api/moe/align/route.ts
 import { NextResponse } from "next/server";
 import { requireRole } from "@/lib/auth";
 import {
@@ -140,3 +140,4 @@ export async function GET(req: Request) {
     );
   }
 }
+

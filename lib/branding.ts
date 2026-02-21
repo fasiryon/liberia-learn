@@ -1,4 +1,4 @@
-import { prisma } from "@/lib/db";
+﻿import { prisma } from "@/lib/db";
 
 const DEFAULTS = {
   primaryHex: "#10b981",
@@ -29,3 +29,4 @@ export async function getSchoolBranding(schoolId: string | null) {
     motto: school.motto || null,
   };
 }
+

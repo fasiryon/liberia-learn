@@ -1,4 +1,4 @@
-// lib/ai/router.ts
+﻿// lib/ai/router.ts
 import OpenAI from "openai";
 
 let _groq: any = null;
@@ -49,17 +49,17 @@ export function classifyMessage(message: string): {
   const trimmed = message.trim();
   const len = trimmed.length;
 
-  // Short messages matching simple patterns → fast
+  // Short messages matching simple patterns â†’ fast
   if (len < 60 && SIMPLE_PATTERNS.some((p) => p.test(trimmed))) {
     return { tier: "fast", reason: "short_simple_pattern" };
   }
 
-  // Long messages → smart
+  // Long messages â†’ smart
   if (len > 400) {
     return { tier: "smart", reason: "long_message" };
   }
 
-  // Complex keywords → smart
+  // Complex keywords â†’ smart
   const lower = trimmed.toLowerCase();
   for (const kw of COMPLEX_KEYWORDS) {
     if (lower.includes(kw)) {
@@ -173,3 +173,4 @@ export async function routedCompletion(
       result.outputTokens * COSTS.openai_output,
   };
 }
+

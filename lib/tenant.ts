@@ -18,3 +18,4 @@ export async function requireTenantOrPlatformAdmin() {
   if (!schoolId) throw Object.assign(new Error("Missing schoolId"), { status: 400 });
   return { user, schoolId };
 }
+

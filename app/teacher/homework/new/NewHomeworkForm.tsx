@@ -1,4 +1,4 @@
-// app/teacher/homework/new/NewHomeworkForm.tsx
+﻿// app/teacher/homework/new/NewHomeworkForm.tsx
 "use client";
 
 import { useState } from "react";
@@ -97,7 +97,7 @@ export default function NewHomeworkForm({ classes }: { classes: ClassOption[] })
           name="title"
           required
           className="w-full rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 text-sm text-slate-50"
-          placeholder="Homework 1 – Fractions practice"
+          placeholder="Homework 1 â€“ Fractions practice"
         />
       </div>
 
@@ -148,3 +148,4 @@ export default function NewHomeworkForm({ classes }: { classes: ClassOption[] })
     </form>
   );
 }
+

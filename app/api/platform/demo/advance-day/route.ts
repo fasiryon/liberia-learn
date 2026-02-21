@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+﻿import { NextResponse } from "next/server";
 import { requirePlatformAdmin } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 
@@ -23,3 +23,4 @@ export async function POST() {
     return NextResponse.json({ error: err.message }, { status: err?.status || 500 });
   }
 }
+

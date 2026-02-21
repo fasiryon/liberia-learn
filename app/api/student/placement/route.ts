@@ -1,4 +1,4 @@
-// app/api/student/placement/route.ts
+﻿// app/api/student/placement/route.ts
 import { NextResponse } from "next/server";
 import { requireRole } from "@/lib/auth";
 import { prisma } from "@/lib/db";
@@ -83,3 +83,4 @@ export async function POST(req: Request) {
     );
   }
 }
+

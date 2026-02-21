@@ -1,4 +1,4 @@
-// app/placement/page.tsx
+﻿// app/placement/page.tsx
 "use client";
 
 import { useState } from "react";
@@ -131,7 +131,7 @@ export default function PlacementTestPage() {
     }
   };
 
-  // ───────────────── Initial screen ─────────────────
+  // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ Initial screen â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   if (!testStarted) {
     return (
       <main className="min-h-screen bg-slate-950 text-slate-50 flex items-center justify-center px-4">
@@ -141,7 +141,7 @@ export default function PlacementTestPage() {
               L
             </div>
             <p className="text-xs font-semibold uppercase tracking-wide text-emerald-300 mb-2">
-              LIBERIALEARN · PLACEMENT
+              LIBERIALEARN Â· PLACEMENT
             </p>
             <h1 className="text-3xl font-bold mb-3">Grade placement check</h1>
             <p className="text-slate-400">
@@ -183,21 +183,21 @@ export default function PlacementTestPage() {
             href="/"
             className="block text-center text-sm text-slate-400 hover:text-emerald-300"
           >
-            ← Back to dashboard
+            â† Back to dashboard
           </Link>
         </div>
       </main>
     );
   }
 
-  // ───────────────── Results screen ─────────────────
+  // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ Results screen â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   if (testComplete && results) {
     return (
       <main className="min-h-screen bg-slate-950 text-slate-50 flex items-center justify-center px-4">
         <div className="max-w-2xl w-full">
           <div className="text-center mb-8">
             <div className="inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-emerald-500 text-2xl font-black text-slate-950 mb-4">
-              ✓
+              âœ“
             </div>
             <h1 className="text-3xl font-bold mb-3">Test complete!</h1>
             <p className="text-slate-400">
@@ -273,7 +273,7 @@ export default function PlacementTestPage() {
     );
   }
 
-  // ───────────────── Question screen ─────────────────
+  // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ Question screen â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   return (
     <main className="min-h-screen bg-slate-950 text-slate-50 flex items-center justify-center px-4">
       <div className="max-w-2xl w-full">
@@ -346,8 +346,8 @@ export default function PlacementTestPage() {
               >
                 <p className="font-semibold mb-2">
                   {selectedAnswer === currentQuestion.correctAnswer
-                    ? "✓ Correct!"
-                    : "✗ Incorrect"}
+                    ? "âœ“ Correct!"
+                    : "âœ— Incorrect"}
                 </p>
                 <p className="text-sm text-slate-300">
                   {currentQuestion.explanation}
@@ -370,7 +370,7 @@ export default function PlacementTestPage() {
               >
                 {questionNumber >= MAX_QUESTIONS
                   ? "View results"
-                  : "Next question →"}
+                  : "Next question â†’"}
               </button>
             )}
           </>
@@ -385,3 +385,4 @@ export default function PlacementTestPage() {
     </main>
   );
 }
+

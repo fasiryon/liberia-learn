@@ -1,4 +1,4 @@
-export type GuardianTemplateKey = "absence" | "at_risk" | "praise";
+﻿export type GuardianTemplateKey = "absence" | "at_risk" | "praise";
 export type GuardianMessageType = "absence" | "at_risk" | "praise" | "custom";
 
 export type GuardianTemplatePayload = Record<string, unknown>;
@@ -43,4 +43,5 @@ export function renderGuardianTemplate(templateKey: GuardianTemplateKey, payload
   }
   return template.render(payload);
 }
+
 

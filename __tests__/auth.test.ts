@@ -1,4 +1,4 @@
-import { describe, it, expect, vi } from "vitest";
+﻿import { describe, it, expect, vi } from "vitest";
 
 // Mock next-auth's getServerSession
 vi.mock("next-auth", () => ({
@@ -70,3 +70,4 @@ describe("auth helpers", () => {
     });
   });
 });
+

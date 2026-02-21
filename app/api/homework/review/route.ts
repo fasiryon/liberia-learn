@@ -1,4 +1,4 @@
-// app/api/homework/review/route.ts
+﻿// app/api/homework/review/route.ts
 // Teacher triggers AI grading + marks submission as reviewed.
 import { NextResponse } from "next/server";
 import { z } from "zod";
@@ -44,7 +44,7 @@ export async function POST(req: Request) {
     // School isolation check
     if (submission.Student.user.schoolId !== teacher.schoolId) {
       return NextResponse.json(
-        { error: "Forbidden — submission belongs to another school" },
+        { error: "Forbidden â€” submission belongs to another school" },
         { status: 403 }
       );
     }
@@ -58,7 +58,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ ok: true, submission: updated });
     }
 
-    // Not yet graded — invoke the AI grader
+    // Not yet graded â€” invoke the AI grader
     await HomeworkGrader.gradeSubmission(submissionId);
 
     // Mark reviewed in a separate update (grader doesn't set aiReviewed)
@@ -76,3 +76,4 @@ export async function POST(req: Request) {
     );
   }
 }
+

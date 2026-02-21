@@ -1,4 +1,4 @@
-// lib/counties.ts — All 15 Liberian counties
+﻿// lib/counties.ts â€” All 15 Liberian counties
 export const LIBERIAN_COUNTIES = [
   "Bomi",
   "Bong",
@@ -18,3 +18,4 @@ export const LIBERIAN_COUNTIES = [
 ] as const;
 
 export type LiberianCounty = (typeof LIBERIAN_COUNTIES)[number];
+

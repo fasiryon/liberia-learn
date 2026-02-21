@@ -1,4 +1,4 @@
-export type SMSProviderSendParams = {
+﻿export type SMSProviderSendParams = {
   to: string;
   body: string;
   idempotencyKey?: string;
@@ -23,4 +23,5 @@ export interface SMSProvider {
   lookupStatus?(providerMessageId: string): Promise<{ status: string } | null>;
   normalizeError(error: unknown): SMSProviderNormalizedError;
 }
+
 
