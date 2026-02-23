@@ -1,3 +1,4 @@
+﻿import { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/db";
 import type { ReportScope } from "@/lib/reporting/scope";
 
@@ -31,7 +32,7 @@ export async function recordMetricEvent(
       scopeId: scope.scopeId,
       schoolId: scope.schoolId ?? null,
       userId: scope.userId ?? null,
-      payloadJson: payload ?? undefined,
+      payloadJson: (payload ?? undefined) as Prisma.InputJsonValue | undefined,
       pilotOnly: scope.pilotOnly ?? true,
     },
   });

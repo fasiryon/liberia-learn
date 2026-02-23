@@ -12,6 +12,7 @@ const { prismaMock } = vi.hoisted(() => ({
     },
     guardianConsent: {
       findUnique: vi.fn(),
+      findFirst: vi.fn(),
     },
   },
 }));
@@ -52,7 +53,7 @@ describe("guardian SMS reliability", () => {
     vi.clearAllMocks();
     prismaMock.smsDeliveryLog.findUnique.mockResolvedValue(null);
     prismaMock.student.findUnique.mockResolvedValue(baseStudent());
-    prismaMock.guardianConsent.findUnique.mockResolvedValue(null);
+    prismaMock.guardianConsent.findFirst.mockResolvedValue(null);
     prismaMock.smsDeliveryLog.create.mockResolvedValue({ id: "log-1", status: "queued" });
     prismaMock.smsDeliveryLog.update.mockResolvedValue({ id: "log-1", status: "sent" });
     recordMetricEventMock.mockResolvedValue(undefined);
@@ -116,7 +117,7 @@ describe("guardian SMS reliability", () => {
   });
 
   it("respects opt-out consent and blocks without provider call", async () => {
-    prismaMock.guardianConsent.findUnique.mockResolvedValue({
+    prismaMock.guardianConsent.findFirst.mockResolvedValue({
       id: "consent-1",
       smsOptIn: false,
       optedOutAt: new Date("2026-02-19T00:00:00.000Z"),
@@ -124,7 +125,7 @@ describe("guardian SMS reliability", () => {
 
     const provider = {
       name: "twilio",
-      send: vi.fn(),
+      send: vi.fn().mockResolvedValue({ ok: true }),
       normalizeError: vi.fn(),
     };
 
@@ -155,7 +156,7 @@ describe("guardian SMS reliability", () => {
     });
     const provider = {
       name: "twilio",
-      send: vi.fn(),
+      send: vi.fn().mockResolvedValue({ ok: true }),
       normalizeError: vi.fn(),
     };
 
