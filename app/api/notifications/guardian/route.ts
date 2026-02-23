@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { requireRole } from "@/lib/auth";
 import { prisma } from "@/lib/db";
-import { sendSMS } from "@/lib/sms";
 import { attendanceAbsent, lessonCompleted, teacherFlag, weeklyReport } from "@/lib/notification-messages";
 import { logAudit } from "@/lib/audit";
+import { sendGuardianSMS } from "@/lib/guardian/sms-service";
 
 export async function POST(req: NextRequest) {
   try {
@@ -46,47 +46,67 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ sent: false, channel: "SKIPPED", reason: "No guardian linked" });
     }
 
-    // Check opt-in
-    if (!guardian.smsOptIn || !["SMS", "BOTH"].includes(guardian.preferredChannel)) {
-      return NextResponse.json({ sent: false, channel: "SKIPPED", reason: "SMS opt-out or email-only" });
-    }
-
-    if (!guardian.guardianPhoneE164) {
-      return NextResponse.json({ sent: false, channel: "SKIPPED", reason: "No phone number" });
-    }
-
     // Build message
     const studentName = student.user.name || "Your child";
-    let message = "";
+    let messageType: "absence" | "at_risk" | "praise" | "custom" = "custom";
+    let payload: Record<string, unknown> = {};
+    let templateKey: "absence" | "at_risk" | "praise" | null = null;
     switch (type) {
       case "absence":
-        message = attendanceAbsent(studentName, meta?.date || new Date().toLocaleDateString());
+        messageType = "absence";
+        templateKey = "absence";
+        payload = { studentName, date: meta?.date || new Date().toLocaleDateString() };
         break;
       case "completion":
-        message = lessonCompleted(studentName, meta?.lessonTitle || "a lesson");
+        messageType = "praise";
+        templateKey = "praise";
+        payload = { studentName, achievement: `completed ${meta?.lessonTitle || "a lesson"}` };
         break;
       case "flag":
-        message = teacherFlag(studentName, meta?.note || "needs attention");
+        messageType = "at_risk";
+        templateKey = "at_risk";
+        payload = { studentName, note: meta?.note || "needs attention" };
         break;
       case "weekly":
-        message = weeklyReport(studentName, meta?.completed || 0, meta?.total || 0);
+        messageType = "custom";
+        payload = {
+          message: weeklyReport(studentName, meta?.completed || 0, meta?.total || 0),
+          studentName,
+        };
         break;
       default:
         return NextResponse.json({ error: "Invalid type" }, { status: 400 });
     }
 
-    // Send SMS
-    const result = await sendSMS(guardian.guardianPhoneE164, message);
+    const messagePreview =
+      type === "absence"
+        ? attendanceAbsent(studentName, String(payload.date ?? ""))
+        : type === "completion"
+        ? lessonCompleted(studentName, String(meta?.lessonTitle || "a lesson"))
+        : type === "flag"
+        ? teacherFlag(studentName, String(meta?.note || "needs attention"))
+        : weeklyReport(studentName, Number(meta?.completed || 0), Number(meta?.total || 0));
 
-    // Log notification
+    const result = await sendGuardianSMS({
+      schoolId: user.schoolId ?? "",
+      studentId: student.id,
+      guardianId: guardian.id,
+      messageType,
+      templateKey,
+      payload,
+      actorUserId: user.id,
+      idempotencyKey: `${type}:${student.id}:${meta?.eventId ?? ""}:${meta?.date ?? ""}:${meta?.lessonTitle ?? ""}`,
+      eventId: meta?.eventId ?? null,
+    });
+
     await prisma.notificationLog.create({
       data: {
         userId: guardian.id,
         channel: "sms",
-        recipient: guardian.guardianPhoneE164,
-        body: message,
-        status: result.ok ? "sent" : "failed",
-        error: result.error || null,
+        recipient: guardian.guardianPhoneE164 ?? "",
+        body: messagePreview,
+        status: result.status === "sent" ? "sent" : "failed",
+        error: result.status === "failed" ? "provider_send_failed" : null,
       },
     });
 
@@ -95,13 +115,14 @@ export async function POST(req: NextRequest) {
       action: "notification.guardian_sms",
       resourceType: "student",
       resourceId: studentId,
-      details: { type, sent: result.ok } as any,
+      details: { type, sent: result.status === "sent", deliveryLogId: result.deliveryLogId } as any,
     });
 
     return NextResponse.json({
-      sent: result.ok,
+      sent: result.status === "sent",
       channel: "SMS",
-      reason: result.error || undefined,
+      reason: result.status,
+      deliveryLogId: result.deliveryLogId,
     });
   } catch (err: any) {
     return NextResponse.json({ error: err.message }, { status: err?.status || 500 });

@@ -29,6 +29,10 @@ vi.mock("@/lib/audit", () => ({
   logAudit: vi.fn(),
 }));
 
+vi.mock("@/lib/metrics/events", () => ({
+  recordMetricEvent: vi.fn(),
+}));
+
 import { POST } from "@/app/api/student/sync/route";
 import { prisma } from "@/lib/db";
 
