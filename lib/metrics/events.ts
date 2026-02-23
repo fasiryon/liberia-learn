@@ -141,6 +141,7 @@ export async function aggregateMetrics({
   const smsFailures = events.filter((e) => e.name === "sms.failed").length;
   const smsRetries = events.filter((e) => e.name === "sms.retry").length;
   const smsBlocked = events.filter((e) => e.name === "sms.blocked.opted_out").length;
+  const smsThrottled = events.filter((e) => e.name === "sms.throttled").length;
 
   const exportGenerated = events.filter((e) => e.name === "export.generated");
   const exportFailed = events.filter((e) => e.name === "export.failed").length;
@@ -169,6 +170,7 @@ export async function aggregateMetrics({
       failureRate: smsSent + smsFailures > 0 ? smsFailures / (smsSent + smsFailures) : 0,
       retryCount: smsRetries,
       optedOutBlockedCount: smsBlocked,
+      throttledCount: smsThrottled,
       trend: buildDailyTrend(events.filter((e) => e.name.startsWith("sms.")), days),
     },
     exports: {
