@@ -12,6 +12,7 @@ function getSmsDeliveryLogDelegate() {
     findUnique: Function;
     create: Function;
     update: Function;
+    count: Function;
   };
 }
 
@@ -37,15 +38,39 @@ type RetryPolicy = {
   baseBackoffMs: number;
 };
 
+/**
+ * SMS throttle rate limit policy.
+ * Controlled by feature flag SMS_THROTTLE_ENABLED (default: true).
+ * Prevents guardian inbox flooding from misconfigured event triggers.
+ *
+ * Env vars:
+ *   SMS_THROTTLE_ENABLED      — "false" to disable (default: enabled)
+ *   SMS_THROTTLE_WINDOW_HOURS — rolling window length in hours (default: 24)
+ *   SMS_THROTTLE_MAX_PER_WINDOW — max sent+queued messages per window (default: 3)
+ */
+type ThrottlePolicy = {
+  enabled: boolean;
+  windowHours: number;
+  maxPerWindow: number;
+};
+
 type ServiceDeps = {
   provider?: SMSProvider;
   retryPolicy?: Partial<RetryPolicy>;
+  throttlePolicy?: Partial<ThrottlePolicy>;
   sleep?: (ms: number) => Promise<void>;
 };
 
 const defaultRetryPolicy: RetryPolicy = {
   maxAttempts: Number(process.env.SMS_MAX_ATTEMPTS ?? 3),
   baseBackoffMs: Number(process.env.SMS_BASE_BACKOFF_MS ?? 250),
+};
+
+const defaultThrottlePolicy: ThrottlePolicy = {
+  // Default enabled — operators set SMS_THROTTLE_ENABLED=false to disable
+  enabled: process.env.SMS_THROTTLE_ENABLED !== "false",
+  windowHours: Number(process.env.SMS_THROTTLE_WINDOW_HOURS ?? 24),
+  maxPerWindow: Number(process.env.SMS_THROTTLE_MAX_PER_WINDOW ?? 3),
 };
 
 function defaultSleep(ms: number) {
@@ -64,10 +89,16 @@ export async function sendGuardianSMS(input: SendGuardianSMSInput, deps?: Servic
     maxAttempts: deps?.retryPolicy?.maxAttempts ?? defaultRetryPolicy.maxAttempts,
     baseBackoffMs: deps?.retryPolicy?.baseBackoffMs ?? defaultRetryPolicy.baseBackoffMs,
   };
+  const throttlePolicy: ThrottlePolicy = {
+    enabled: deps?.throttlePolicy?.enabled ?? defaultThrottlePolicy.enabled,
+    windowHours: deps?.throttlePolicy?.windowHours ?? defaultThrottlePolicy.windowHours,
+    maxPerWindow: deps?.throttlePolicy?.maxPerWindow ?? defaultThrottlePolicy.maxPerWindow,
+  };
   const sleep = deps?.sleep ?? defaultSleep;
   const idempotencyKey = toIdempotencyKey(input);
   const smsDeliveryLog = getSmsDeliveryLogDelegate();
 
+  // --- Idempotency: return existing log if already processed ---
   const existing = await smsDeliveryLog.findUnique({
     where: {
       guardianId_messageType_idempotencyKey: {
@@ -81,6 +112,7 @@ export async function sendGuardianSMS(input: SendGuardianSMSInput, deps?: Servic
     return { status: existing.status, deliveryLogId: existing.id, idempotent: true };
   }
 
+  // --- Tenant isolation: student must belong to the claimed school ---
   const student = await prisma.student.findUnique({
     where: { id: input.studentId },
     include: {
@@ -109,6 +141,7 @@ export async function sendGuardianSMS(input: SendGuardianSMSInput, deps?: Servic
   if (!link) throw Object.assign(new Error("Guardian not linked to student"), { status: 404 });
   const guardian = link.guardian;
 
+  // --- Tenant-scoped consent lookup ---
   const consent = await prisma.guardianConsent.findFirst({
     where: {
       schoolId: input.schoolId,
@@ -117,13 +150,33 @@ export async function sendGuardianSMS(input: SendGuardianSMSInput, deps?: Servic
     },
   });
 
+  // --- Opt-out / channel / phone checks ---
   const phoneE164 = guardian.guardianPhoneE164 ?? "";
   const explicitOptOut = Boolean(consent && (!consent.smsOptIn || consent.optedOutAt));
   const channelBlocked = !["SMS", "BOTH"].includes(guardian.preferredChannel);
   const noPhone = !phoneE164;
   const fallbackOptOut = !consent && !guardian.smsOptIn;
-  const blocked = explicitOptOut || fallbackOptOut || channelBlocked || noPhone;
+  const optOutBlocked = explicitOptOut || fallbackOptOut || channelBlocked || noPhone;
 
+  // --- Rate-limit throttle check (tenant-scoped; only when not already opt-out blocked) ---
+  let throttled = false;
+  if (!optOutBlocked && throttlePolicy.enabled) {
+    const windowStart = new Date(Date.now() - throttlePolicy.windowHours * 60 * 60 * 1000);
+    // Count recent sent/queued messages for this guardian within this school
+    const recentCount = await smsDeliveryLog.count({
+      where: {
+        schoolId: input.schoolId,
+        guardianId: input.guardianId,
+        status: { in: ["sent", "queued"] },
+        createdAt: { gte: windowStart },
+      },
+    });
+    throttled = recentCount >= throttlePolicy.maxPerWindow;
+  }
+
+  const blocked = optOutBlocked || throttled;
+
+  // --- Message rendering (validated before log creation) ---
   const templateKey = input.templateKey ?? getDefaultTemplateKey(input.messageType);
   const message =
     input.messageType === "custom"
@@ -136,6 +189,7 @@ export async function sendGuardianSMS(input: SendGuardianSMSInput, deps?: Servic
     throw Object.assign(new Error("Message body is empty"), { status: 400 });
   }
 
+  // --- Create delivery log with final initial status ---
   const deliveryLog = await smsDeliveryLog.create({
     data: {
       schoolId: input.schoolId,
@@ -146,14 +200,42 @@ export async function sendGuardianSMS(input: SendGuardianSMSInput, deps?: Servic
       templateKey: templateKey ?? null,
       payloadJson: input.payload ?? {},
       provider: provider.name,
-      status: blocked ? (explicitOptOut || fallbackOptOut ? "opted_out" : "blocked") : "queued",
+      status: throttled
+        ? "blocked"
+        : optOutBlocked
+          ? explicitOptOut || fallbackOptOut
+            ? "opted_out"
+            : "blocked"
+          : "queued",
       attempts: 0,
       idempotencyKey,
       pilotOnly: true,
     },
   });
 
-  if (blocked) {
+  // --- Handle blocked / throttled cases ---
+  if (throttled) {
+    await recordMetricEvent(
+      "sms.throttled",
+      {
+        messageType: input.messageType,
+        templateKey: templateKey ?? null,
+        windowHours: throttlePolicy.windowHours,
+        maxPerWindow: throttlePolicy.maxPerWindow,
+      },
+      {
+        scope: "school",
+        scopeId: input.schoolId,
+        schoolId: input.schoolId,
+        severity: "warning",
+        kind: "counter",
+        userId: input.actorUserId ?? null,
+      }
+    );
+    return { status: "blocked" as const, deliveryLogId: deliveryLog.id };
+  }
+
+  if (optOutBlocked) {
     await recordMetricEvent(
       "sms.blocked.opted_out",
       { messageType: input.messageType, templateKey: templateKey ?? null },
@@ -166,9 +248,13 @@ export async function sendGuardianSMS(input: SendGuardianSMSInput, deps?: Servic
         userId: input.actorUserId ?? null,
       }
     );
-    return { status: explicitOptOut || fallbackOptOut ? "opted_out" : "blocked", deliveryLogId: deliveryLog.id };
+    return {
+      status: (explicitOptOut || fallbackOptOut ? "opted_out" : "blocked") as const,
+      deliveryLogId: deliveryLog.id,
+    };
   }
 
+  // --- Retry send loop ---
   for (let attempt = 1; attempt <= retryPolicy.maxAttempts; attempt++) {
     const sendResult = await provider.send({ to: phoneE164, body: message, idempotencyKey });
     const normalizedResult = sendResult ?? { ok: false, error: "send_failed" };
@@ -216,7 +302,7 @@ export async function sendGuardianSMS(input: SendGuardianSMSInput, deps?: Servic
     );
 
     if (!retryable || attempt >= retryPolicy.maxAttempts) {
-      return { status: "failed", deliveryLogId: updated.id };
+      return { status: "failed" as const, deliveryLogId: updated.id };
     }
 
     await recordMetricEvent(
@@ -235,6 +321,5 @@ export async function sendGuardianSMS(input: SendGuardianSMSInput, deps?: Servic
     await sleep(backoffMs);
   }
 
-  return { status: "failed", deliveryLogId: deliveryLog.id };
+  return { status: "failed" as const, deliveryLogId: deliveryLog.id };
 }
-
