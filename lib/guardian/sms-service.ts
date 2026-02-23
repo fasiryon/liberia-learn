@@ -1,4 +1,20 @@
 import { prisma } from "@/lib/db";
+
+// Prisma can generate either smsDeliveryLog or sMSDeliveryLog depending on model naming.
+// Normalize to a single delegate without breaking TS builds.
+function getSmsDeliveryLogDelegate() {
+  const p = prisma as any;
+  const delegate = p.smsDeliveryLog ?? p.sMSDeliveryLog;
+  if (!delegate) {
+    throw new Error("Prisma client missing SMSDeliveryLog delegate (smsDeliveryLog/sMSDeliveryLog).");
+  }
+  return delegate as {
+    findUnique: Function;
+    create: Function;
+    update: Function;
+  };
+}
+
 import { recordMetricEvent } from "@/lib/metrics/events";
 import { renderGuardianTemplate, getDefaultTemplateKey, type GuardianMessageType, type GuardianTemplateKey } from "@/lib/guardian/sms-templates";
 import type { SMSProvider } from "@/lib/sms/provider";
@@ -50,8 +66,9 @@ export async function sendGuardianSMS(input: SendGuardianSMSInput, deps?: Servic
   };
   const sleep = deps?.sleep ?? defaultSleep;
   const idempotencyKey = toIdempotencyKey(input);
+  const smsDeliveryLog = getSmsDeliveryLogDelegate();
 
-  const existing = await prisma.smsDeliveryLog.findUnique({
+  const existing = await smsDeliveryLog.findUnique({
     where: {
       guardianId_messageType_idempotencyKey: {
         guardianId: input.guardianId,
@@ -92,13 +109,11 @@ export async function sendGuardianSMS(input: SendGuardianSMSInput, deps?: Servic
   if (!link) throw Object.assign(new Error("Guardian not linked to student"), { status: 404 });
   const guardian = link.guardian;
 
-  const consent = await prisma.guardianConsent.findUnique({
+  const consent = await prisma.guardianConsent.findFirst({
     where: {
-      schoolId_studentId_guardianId: {
-        schoolId: input.schoolId,
-        studentId: input.studentId,
-        guardianId: input.guardianId,
-      },
+      schoolId: input.schoolId,
+      studentId: input.studentId,
+      guardianId: input.guardianId,
     },
   });
 
@@ -121,7 +136,7 @@ export async function sendGuardianSMS(input: SendGuardianSMSInput, deps?: Servic
     throw Object.assign(new Error("Message body is empty"), { status: 400 });
   }
 
-  const deliveryLog = await prisma.smsDeliveryLog.create({
+  const deliveryLog = await smsDeliveryLog.create({
     data: {
       schoolId: input.schoolId,
       studentId: input.studentId,
@@ -156,15 +171,16 @@ export async function sendGuardianSMS(input: SendGuardianSMSInput, deps?: Servic
 
   for (let attempt = 1; attempt <= retryPolicy.maxAttempts; attempt++) {
     const sendResult = await provider.send({ to: phoneE164, body: message, idempotencyKey });
-    const success = sendResult.ok;
-    const lastError = success ? null : sendResult.error ?? "send_failed";
+    const normalizedResult = sendResult ?? { ok: false, error: "send_failed" };
+    const success = Boolean(normalizedResult.ok);
+    const lastError = success ? null : normalizedResult.error ?? "send_failed";
 
-    const updated = await prisma.smsDeliveryLog.update({
+    const updated = await smsDeliveryLog.update({
       where: { id: deliveryLog.id },
       data: {
         attempts: attempt,
         status: success ? "sent" : "failed",
-        providerMessageId: success ? sendResult.providerMessageId ?? null : undefined,
+        providerMessageId: success ? normalizedResult.providerMessageId ?? null : undefined,
         lastError,
       },
     });
@@ -185,7 +201,7 @@ export async function sendGuardianSMS(input: SendGuardianSMSInput, deps?: Servic
       return { status: updated.status, deliveryLogId: updated.id };
     }
 
-    const retryable = Boolean(sendResult.retryable);
+    const retryable = Boolean(normalizedResult.retryable);
     await recordMetricEvent(
       "sms.failed",
       { messageType: input.messageType, templateKey: templateKey ?? null, attempt, retryable },
