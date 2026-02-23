@@ -18,6 +18,10 @@ vi.mock("@/lib/db", () => ({
   },
 }));
 
+vi.mock("@/lib/metrics/events", () => ({
+  recordMetricEvent: vi.fn(),
+}));
+
 import { GET } from "@/app/api/admin/training/export/route";
 import { prisma } from "@/lib/db";
 

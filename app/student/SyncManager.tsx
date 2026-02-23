@@ -21,6 +21,7 @@ export default function SyncManager() {
   const [stats, setStats] = useState({
     queuePending: 0,
     queueConflicts: 0,
+    queueDeadLetter: 0,
     cachePacksCount: 0,
     cacheBytes: 0,
   });
@@ -49,7 +50,14 @@ export default function SyncManager() {
       const res = await fetch("/api/student/sync", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ items: queue }),
+        body: JSON.stringify({
+          items: queue,
+          queueStats: {
+            pending: stats.queuePending,
+            conflicts: stats.queueConflicts,
+            deadLetter: stats.queueDeadLetter,
+          },
+        }),
       });
       const data = await res.json();
       if (res.ok) {
@@ -126,6 +134,7 @@ export default function SyncManager() {
         <div className="font-semibold text-slate-200">Offline stats</div>
         <div className="mt-1">Queue pending: {stats.queuePending}</div>
         <div>Queue conflicts: {stats.queueConflicts}</div>
+        <div>Queue dead-letter: {stats.queueDeadLetter}</div>
         <div>Cache packs: {stats.cachePacksCount}</div>
         <div>Cache bytes: {formatBytes(stats.cacheBytes)}</div>
         <button
