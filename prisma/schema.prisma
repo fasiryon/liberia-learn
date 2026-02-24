@@ -36,6 +36,7 @@ model User {
   smsDeliveryLogs     SMSDeliveryLog[]     @relation("SMSDeliveryLogGuardian")
   exportRecords       ExportRecord[]
   metricEvents        MetricEvent[]
+  monthlyReports      MonthlyReport[]
   passwordResetTokens PasswordResetToken[]
   sessions            Session[]
   student             Student?
@@ -76,6 +77,7 @@ model School {
   AuditLog               AuditLog[]
   classes                Class[]
   inviteTokens           InviteToken[]
+  monthlyReports         MonthlyReport[]
   PilotChecklistStatus   PilotChecklistStatus[]
   TeacherProfile         TeacherProfile[]
   users                  User[]
@@ -951,7 +953,60 @@ model TrainingProgress {
   @@index([teacherUserId, status])
 }
 
+/// / ===== Block 8: Monthly Hybrid Reports =====
+
+/// Monthly performance report artifact.
+/// One row per scope × scopeId × month × subject (unique).
+/// subject = "__ALL__" means all subjects aggregated.
+/// IMPORTANT: tierCountsJson is INTERNAL ONLY (see ADR-0009).
+///   It must not be exposed on any public-facing endpoint.
+///   Public views expose system averages only, never per-school tiers.
+model MonthlyReport {
+  id                  String       @id @default(cuid())
+  /// Tenant isolation: schoolId is required when scope = "school".
+  schoolId            String?
+  /// Reporting scope: "school" | "county" | "district" | "national"
+  scope               String
+  /// Scope identifier (e.g. schoolId for school scope, "__NATIONAL__" for national).
+  scopeId             String?
+  /// Reporting period in "YYYY-MM" format (e.g. "2026-01").
+  month               String
+  /// Subject filter. "__ALL__" = all subjects aggregated.
+  subject             String       @default("__ALL__")
+  status              ReportStatus @default(pending)
+  /// Headline metrics (denormalised for fast list queries)
+  proficiencyRate     Float?
+  masteryRate         Float?
+  avgGrowthDelta      Float?
+  sustainabilityIndex Float?
+  aiRelianceRate      Float?
+  totalStudents       Int?
+  totalStrands        Int?
+  /// Internal tier counts — ADMIN-only; see ADR-0009.
+  tierCountsJson      Json?
+  /// Full report artifact including strandBreakdown with tier labels.
+  payloadJson         Json?
+  generatedAt         DateTime?
+  generatedBy         String?
+  errorMessage        String?
+  createdAt           DateTime     @default(now())
+  updatedAt           DateTime     @updatedAt
+  school              School?      @relation(fields: [schoolId], references: [id], onDelete: SetNull)
+  generator           User?        @relation(fields: [generatedBy], references: [id], onDelete: SetNull)
+
+  @@unique([scope, scopeId, month, subject], name: "MonthlyReport_scope_scopeId_month_subject_key")
+  @@index([scope, scopeId, month])
+  @@index([schoolId, month])
+  @@index([status, createdAt])
+}
+
 /// / ===== Enums =====
+enum ReportStatus {
+  pending
+  completed
+  failed
+}
+
 enum Role {
   TEACHER
   STUDENT
