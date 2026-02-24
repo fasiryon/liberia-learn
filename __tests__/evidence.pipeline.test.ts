@@ -28,6 +28,8 @@ const mockUpdateMasteryProfile            = vi.hoisted(() => vi.fn());
 const mockIsFeatureEnabled                = vi.hoisted(() => vi.fn());
 const mockStudentFindUnique               = vi.hoisted(() => vi.fn());
 const mockRecordMetricEvent               = vi.hoisted(() => vi.fn());
+const mockAttemptLogCreate                = vi.hoisted(() => vi.fn());
+const mockAttemptLogCount                 = vi.hoisted(() => vi.fn());
 
 vi.mock("@/lib/mastery/baselineService", () => ({
   recordEvidenceAndUpdateBaseline: mockRecordEvidenceAndUpdateBaseline,
@@ -43,6 +45,10 @@ vi.mock("@/lib/featureFlags", () => ({
 
 vi.mock("@/lib/db", () => ({
   prisma: {
+    attemptLog: {
+      create: mockAttemptLogCreate,
+      count:  mockAttemptLogCount,
+    },
     student: {
       findUnique: mockStudentFindUnique,
     },
@@ -101,6 +107,10 @@ beforeEach(() => {
 
   // Both flags on by default
   mockIsFeatureEnabled.mockReturnValue(true);
+
+  // AttemptLog — new attempt by default (no duplicate)
+  mockAttemptLogCreate.mockResolvedValue({ id: "log-1" });
+  mockAttemptLogCount.mockResolvedValue(1);
 
   // Baseline service returns a successful result by default
   mockRecordEvidenceAndUpdateBaseline.mockResolvedValue(BASELINE_RESULT);

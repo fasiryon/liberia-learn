@@ -13,7 +13,7 @@ const MAX_BACKOFF_MS = 5 * 60 * 1000;
 export type QueueItem = {
   id: string;
   opId?: string;
-  entity?: "studentProgress" | "attendance" | "submission";
+  entity?: "studentProgress" | "attendance" | "submission" | "evidence";
   scheduledWorkId: string;
   completedAt: string;
   attempts: number;
@@ -28,6 +28,10 @@ export type QueueItem = {
   } | null;
   createdAt: string;
   updatedAt: string;
+  /** Client-assigned idempotency key for evidence items. */
+  idempotencyKey?: string;
+  /** Evidence payload for entity="evidence" items. */
+  payload?: unknown;
 };
 
 export type QueueStats = {
@@ -205,6 +209,46 @@ export async function getQueueStats(partition?: SessionPartitionInput): Promise<
     queueConflicts: queue.filter((q) => q.status === "conflict").length,
     queueDeadLetter: queue.filter((q) => q.status === "failed").length,
   };
+}
+
+export async function enqueueEvidence(
+  evidencePayload: {
+    subject: string;
+    strandKey: string;
+    correct: number;
+    total: number;
+    difficulty?: number;
+    source: string;
+    wasAiAssisted?: boolean;
+    timeSpentSec?: number;
+  },
+  partition?: SessionPartitionInput
+): Promise<QueueItem> {
+  const queue = await getQueue(partition);
+  const key =
+    typeof crypto !== "undefined" && "randomUUID" in crypto
+      ? crypto.randomUUID()
+      : `${Date.now()}-${Math.random()}`;
+
+  const item: QueueItem = {
+    id: key,
+    opId: key,
+    entity: "evidence",
+    scheduledWorkId: key, // Repurposed as stable ID for type compat
+    idempotencyKey: key,
+    payload: evidencePayload,
+    completedAt: new Date().toISOString(),
+    attempts: 0,
+    nextRetryAt: null,
+    status: "pending",
+    lastError: null,
+    conflict: null,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  };
+  queue.push(item);
+  await set(queueKey(partition), queue);
+  return item;
 }
 
 export function isOnline(): boolean {
