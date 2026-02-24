@@ -26,6 +26,15 @@ export const EVENTS = {
   TRAINING_MODULE_COMPLETED: "training.module_completed",
   TRAINING_LEVEL_COMPLETED: "training.level_completed",
   TRAINING_BADGE_AWARDED: "training.badge_awarded",
+  // Ops Intelligence telemetry — Block 5 (NO PII; aggregate signals only)
+  // Envelope shape: { name, severity, actorRole, schoolId|null, windowHours? }
+  ONBOARDING_DISMISSED: "onboarding.dismissed",               // payload: { stepIndex, schoolId }
+  ONBOARDING_REOPENED: "onboarding.reopened",                 // payload: { schoolId }
+  TRAINING_MODULE_ABANDONED: "training.module_abandoned",     // payload: { moduleId, stepIndex, schoolId }
+  TRAINING_LEVEL_ABANDONED: "training.level_abandoned",       // payload: { level, schoolId }
+  OFFLINE_SYNC_CONFLICT_DETECTED: "offline.sync_conflict_detected", // payload: { count, schoolId }
+  OFFLINE_QUEUE_DEADLETTERED: "offline.queue_deadlettered",   // payload: { count, schoolId }
+  SMS_FAILED_RATE_COMPUTED: "sms.failed_rate_computed",       // payload: { rate, windowHours, schoolId }
 } as const;
 
 export type EventType = (typeof EVENTS)[keyof typeof EVENTS];

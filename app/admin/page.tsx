@@ -10,6 +10,7 @@ export const dynamic = "force-dynamic";
 const TRAINING_ENABLED = process.env.NEXT_PUBLIC_ENABLE_TRAINING_CENTER === "true";
 
 const BASE_NAV_LINKS = [
+  { label: "Ops Findings", href: "/admin/ops/findings" },
   { label: "Curriculum / AI Factory", href: "/admin/curriculum" },
   { label: "Homework", href: "/admin/homework" },
   { label: "Analytics", href: "/admin/analytics" },
@@ -119,6 +120,7 @@ export default async function AdminConsolePage() {
   ];
 
   const actions = [
+    { label: "Ops Findings", href: "/admin/ops/findings", bg: "bg-violet-500" },
     { label: "Curriculum / AI Factory", href: "/admin/curriculum", bg: "bg-emerald-500" },
     { label: "Seed Demo Data", href: "/admin/seed", bg: "bg-blue-500" },
     { label: "Homework", href: "/admin/homework", bg: "bg-purple-500" },

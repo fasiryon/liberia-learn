@@ -8,7 +8,8 @@ export default defineConfig({
     environment: "node",
     globals: true,
     maxWorkers: 2,
-    exclude: ["**/.claude/**"],
+    include: ["__tests__/**/*.{test,spec}.{ts,tsx}"],
+    exclude: ["**/node_modules/**", "**/.claude/**"],
   },
   resolve: {
     alias: {
