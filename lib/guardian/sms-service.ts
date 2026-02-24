@@ -249,7 +249,7 @@ export async function sendGuardianSMS(input: SendGuardianSMSInput, deps?: Servic
       }
     );
     return {
-      status: (explicitOptOut || fallbackOptOut ? "opted_out" : "blocked") as const,
+      status: (explicitOptOut || fallbackOptOut ? "opted_out" : "blocked") as "opted_out" | "blocked",
       deliveryLogId: deliveryLog.id,
     };
   }
