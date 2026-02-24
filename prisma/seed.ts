@@ -2,6 +2,7 @@
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcryptjs";
 import { SCHEDULES } from "./seed-week-curriculum";
+import { seedStrandCatalog } from "./seeds/strand-catalog";
 
 const prisma = new PrismaClient();
 
@@ -529,6 +530,11 @@ async function main() {
   console.log("  Admin:   mkarnga@krs.edu.lr");
   console.log("  Teacher: fkollie@krs.edu.lr, abestman@krs.edu.lr");
   console.log("  Student: fatu.gbowee@krs.edu.lr");
+
+  // ── Block 7A: Strand Catalog ──────────────────────────────────────────────
+  console.log("\nSeeding strand catalog (Block 7A — Mastery Engine)...");
+  await seedStrandCatalog();
+
   console.log("\nSeeding complete!");
 }
 
