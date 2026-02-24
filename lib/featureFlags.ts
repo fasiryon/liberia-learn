@@ -15,6 +15,8 @@
 export const FEATURE_FLAGS = {
   ENABLE_GUIDED_ONBOARDING: process.env.NEXT_PUBLIC_ENABLE_GUIDED_ONBOARDING === "true",
   ENABLE_ACCESSIBILITY_MODE: process.env.NEXT_PUBLIC_ENABLE_ACCESSIBILITY_MODE === "true",
+  /** Training Center — 8 micro-modules, progress tracking, badges, admin adoption view. */
+  ENABLE_TRAINING_CENTER: process.env.NEXT_PUBLIC_ENABLE_TRAINING_CENTER === "true",
 } as const;
 
 export type FeatureFlag = keyof typeof FEATURE_FLAGS;

@@ -5,8 +5,12 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { CollapsiblePanel } from "@/components/CollapsiblePanel";
+import { computeEarnedBadges } from "@/lib/training/badges";
+import type { ModuleProgressRecord } from "@/lib/training/progress";
 
 export const dynamic = "force-dynamic";
+
+const TRAINING_ENABLED = process.env.NEXT_PUBLIC_ENABLE_TRAINING_CENTER === "true";
 
 type AppSession = {
   user?: {
@@ -51,6 +55,24 @@ export default async function TeacherDashboardPage() {
     (sum, cls) => sum + cls.homework.length,
     0
   );
+
+  // ── Training badges (only query if flag is on) ────────────────────────────
+  let trainingBadges: ReturnType<typeof computeEarnedBadges> = [];
+  let trainingCompleted = 0;
+  if (TRAINING_ENABLED) {
+    const rawProgress = await prisma.trainingProgress.findMany({
+      where: { teacherUserId: teacherId },
+      select: { moduleId: true, status: true, startedAt: true, completedAt: true },
+    });
+    const progressRecords: ModuleProgressRecord[] = rawProgress.map((r) => ({
+      moduleId: r.moduleId,
+      status: r.status as "not_started" | "in_progress" | "complete",
+      startedAt: r.startedAt,
+      completedAt: r.completedAt,
+    }));
+    trainingBadges = computeEarnedBadges(progressRecords);
+    trainingCompleted = progressRecords.filter((p) => p.status === "complete").length;
+  }
 
   return (
     <main className="min-h-screen bg-slate-950 text-slate-50">
@@ -114,6 +136,14 @@ export default async function TeacherDashboardPage() {
           >
             Curriculum
           </Link>
+          {TRAINING_ENABLED && (
+            <Link
+              href="/teacher/training"
+              className="rounded-full bg-emerald-500/20 px-5 py-2 text-sm font-semibold text-emerald-300 border border-emerald-500/30 hover:bg-emerald-500/30 transition-colors"
+            >
+              🎓 Training
+            </Link>
+          )}
         </nav>
 
         {/* ── Overview stats — more padding, larger figures ────────────── */}
@@ -131,6 +161,52 @@ export default async function TeacherDashboardPage() {
             <p className="text-3xl font-bold text-slate-50">{totalHomework}</p>
           </div>
         </section>
+
+        {/* ── Training Center card (when flag is on) ────────────────────── */}
+        {TRAINING_ENABLED && (
+          <section className="mb-8">
+            <Link
+              href="/teacher/training"
+              className="block rounded-2xl border border-emerald-500/30 bg-emerald-500/10 p-6 hover:bg-emerald-500/15 transition-colors"
+            >
+              <div className="flex items-start justify-between gap-4">
+                <div>
+                  <div className="mb-2 flex items-center gap-2">
+                    <span className="text-2xl">🎓</span>
+                    <h2 className="text-lg font-bold text-emerald-300">Training Center</h2>
+                  </div>
+                  <p className="text-sm text-slate-400">
+                    Short lessons to help you use LiberiaLearn with confidence.
+                    Each module takes 5–7 minutes and can be done on your phone.
+                  </p>
+
+                  {/* Badges earned (small) */}
+                  {trainingBadges.length > 0 && (
+                    <div className="mt-3 flex flex-wrap gap-2">
+                      {trainingBadges.map((b) => (
+                        <span
+                          key={b.name}
+                          className="rounded-full border border-emerald-500/30 bg-emerald-500/20 px-3 py-1 text-xs font-semibold text-emerald-300"
+                        >
+                          {b.emoji} {b.label}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+
+                  {trainingCompleted > 0 && trainingBadges.length === 0 && (
+                    <p className="mt-2 text-xs text-slate-500">
+                      {trainingCompleted} module{trainingCompleted !== 1 ? "s" : ""} completed
+                    </p>
+                  )}
+                </div>
+                <span className="mt-1 text-slate-400 text-sm font-semibold shrink-0">
+                  Open →
+                </span>
+              </div>
+            </Link>
+          </section>
+        )}
 
         {/* ── Classes list ─────────────────────────────────────────────── */}
         <section className="mb-6">

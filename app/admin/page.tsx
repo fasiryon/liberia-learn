@@ -7,7 +7,9 @@ import { AttachDemoSchoolButton } from "./AttachDemoSchoolButton";
 
 export const dynamic = "force-dynamic";
 
-const NAV_LINKS = [
+const TRAINING_ENABLED = process.env.NEXT_PUBLIC_ENABLE_TRAINING_CENTER === "true";
+
+const BASE_NAV_LINKS = [
   { label: "Curriculum / AI Factory", href: "/admin/curriculum" },
   { label: "Homework", href: "/admin/homework" },
   { label: "Analytics", href: "/admin/analytics" },
@@ -23,6 +25,11 @@ const NAV_LINKS = [
   { label: "Seed Demo Data", href: "/admin/seed" },
   { label: "Schools", href: "/admin/schools" },
 ];
+
+// Training Adoption link only appears when ENABLE_TRAINING_CENTER is true
+const NAV_LINKS = TRAINING_ENABLED
+  ? [...BASE_NAV_LINKS, { label: "Training Adoption", href: "/admin/training/adoption" }]
+  : BASE_NAV_LINKS;
 
 export default async function AdminConsolePage() {
   const session = await getServerSession(authOptions);
@@ -120,6 +127,9 @@ export default async function AdminConsolePage() {
     { label: "Classes", href: "/admin/classes", bg: "bg-rose-500" },
     { label: "School Branding", href: "/admin/school-branding", bg: "bg-pink-500" },
     { label: "School Settings", href: "/admin/school-settings", bg: "bg-indigo-500" },
+    ...(TRAINING_ENABLED
+      ? [{ label: "Training Adoption", href: "/admin/training/adoption", bg: "bg-teal-500" }]
+      : []),
   ];
 
   return (
