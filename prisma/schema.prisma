@@ -82,6 +82,7 @@ model School {
   guardianConsents       GuardianConsent[]
   smsDeliveryLogs        SMSDeliveryLog[]
   metricEvents           MetricEvent[]
+  opsFindings            OpsFinding[]
 }
 
 model Class {
@@ -723,6 +724,57 @@ model MetricEvent {
   @@index([name, createdAt])
   @@index([severity, createdAt])
   @@index([schoolId, createdAt])
+}
+
+/// / ===== Ops Findings (Self-Healing Ops Agent) =====
+
+/// Deterministic findings produced by the rules engine.
+/// severity: info|warn|critical  category: sms|onboarding|training|offline|auth
+/// status:   open|ack|resolved
+/// No PII — aggregate signals only.
+model OpsFinding {
+  id                 String          @id @default(cuid())
+  schoolId           String?
+  severity           String          // info|warn|critical
+  category           String          // sms|onboarding|training|offline|auth
+  signalKey          String          // e.g. "sms.high_failure_rate"
+  windowHours        Int
+  baseline           Float?
+  current            Float?
+  deltaPct           Float?
+  recommendedActions Json            // string[]
+  recommendedFlags   Json            // { flag: string; setValue: string }[]
+  status             String          @default("open") // open|ack|resolved
+  createdAt          DateTime        @default(now())
+  updatedAt          DateTime        @updatedAt
+  ackedAt            DateTime?
+  resolvedAt         DateTime?
+  school             School?         @relation(fields: [schoolId], references: [id])
+  explanation        OpsExplanation?
+
+  @@index([schoolId, status])
+  @@index([severity, status])
+  @@index([category, status])
+  @@index([createdAt])
+}
+
+/// AI-generated explanation for an OpsFinding.
+/// Advisory only — must NOT mutate flags/config or send messages.
+/// No PII — promptHash is SHA-256 of the sanitized prompt.
+model OpsExplanation {
+  id          String     @id @default(cuid())
+  findingId   String     @unique
+  summary     String
+  hypotheses  Json       // string[]
+  checklist   Json       // string[]
+  monitorNext Json       // string[] (maps to monitor_next in model output)
+  modelUsed   String
+  promptHash  String     // SHA-256 of the sanitized prompt (no PII)
+  rawJson     Json       // full parsed response stored for audit
+  createdAt   DateTime   @default(now())
+  finding     OpsFinding @relation(fields: [findingId], references: [id])
+
+  @@index([findingId])
 }
 
 /// / ===== Curriculum Content =====

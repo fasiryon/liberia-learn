@@ -91,6 +91,42 @@ They remain active regardless of the flag to support tooling and future CLI scri
 
 ---
 
+---
+
+## Ops Intelligence (Block 5)
+
+Controls the Self-Healing Ops Agent — deterministic findings engine (Part A) and OpenAI-powered explanations (Part B).
+
+### Findings Engine (always on)
+The deterministic rules engine runs on demand via `POST /api/admin/ops/findings`. It reads MetricEvent, TrainingProgress, and other aggregate data — no flags required. Admin access only.
+
+### OpenAI Explain Endpoint (server-side flags)
+
+| Environment Variable | Type | Default | Description |
+|---|---|---|---|
+| `OPS_AI_EXPLANATIONS_ENABLED` | boolean | `false` | Set to `"true"` to enable the `/explain` endpoint. Without this, all explain requests return `403 feature_disabled`. |
+| `OPS_AI_MIN_SEVERITY` | string | `warn` | Minimum finding severity for AI explanation. Valid values: `info`, `warn`, `critical`. Findings below this threshold return `403 below_threshold`. |
+| `OPENAI_API_KEY` | string | — | OpenAI API key. Required when `OPS_AI_EXPLANATIONS_ENABLED=true`. Server-side only — never exposed to the browser. |
+
+**When `OPS_AI_EXPLANATIONS_ENABLED=false` (default):**
+- All requests to `/api/admin/ops/findings/*/explain` return `403 feature_disabled`.
+- The "Generate AI Explanation" button is hidden from the finding detail UI.
+- No OpenAI calls are made.
+
+**When `OPS_AI_EXPLANATIONS_ENABLED=true`:**
+- Admin can manually trigger an explanation on any finding that meets the severity threshold.
+- Explanations are advisory only — no flags or config are changed automatically.
+- Each explanation is stored in `OpsExplanation` with a `promptHash` for audit.
+
+**Guardrails (enforced regardless of flags):**
+- Prompts contain NO PII — only aggregate signal values.
+- AI output is validated as JSON before storage. Malformed responses return 502.
+- Second call to explain a finding returns the cached result without re-calling OpenAI.
+
+**Related ADR:** [ADR-0007 — Ops Agent Recommend-Only + No-PII Policy](../adr/0007-ops-agent-recommend-only.md)
+
+---
+
 ## Pilot-Only Data Isolation
 
 All SMS delivery logs, guardian consents, metric events, and export records carry a `pilotOnly` boolean (`true` by default). This isolates pilot-phase data from future production records and enables clean post-pilot analytics segmentation.
