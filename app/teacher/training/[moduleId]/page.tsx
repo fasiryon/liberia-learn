@@ -1,0 +1,46 @@
+/**
+ * app/teacher/training/[moduleId]/page.tsx  (Server Component)
+ *
+ * Module detail page.  Resolves the module from static definitions,
+ * then hands rendering off to the client ModulePlayer component.
+ *
+ * Feature-gated: redirects to /teacher when ENABLE_TRAINING_CENTER is false.
+ * Auth: TEACHER or ADMIN only.
+ */
+
+import { redirect, notFound } from "next/navigation";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
+import { getModuleById } from "@/lib/training/modules";
+import { ModulePlayer } from "./ModulePlayer";
+
+interface Props {
+  params: { moduleId: string };
+}
+
+export const dynamic = "force-dynamic";
+
+export default async function TrainingModulePage({ params }: Props) {
+  // ── Feature gate ──────────────────────────────────────────────────────────
+  if (process.env.NEXT_PUBLIC_ENABLE_TRAINING_CENTER !== "true") {
+    redirect("/teacher");
+  }
+
+  // ── Auth ──────────────────────────────────────────────────────────────────
+  const session = await getServerSession(authOptions);
+  const user = session?.user as { id?: string; role?: string } | undefined;
+
+  if (!user?.id) redirect("/login");
+  if (user.role !== "TEACHER" && user.role !== "ADMIN") redirect("/");
+
+  // ── Module lookup ─────────────────────────────────────────────────────────
+  const mod = getModuleById(params.moduleId);
+  if (!mod) notFound();
+
+  return (
+    <main className="min-h-screen bg-slate-950 text-slate-50">
+      <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_top,_#10b98122,_transparent_60%)]" />
+      <ModulePlayer module={mod} />
+    </main>
+  );
+}

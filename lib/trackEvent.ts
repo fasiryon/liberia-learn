@@ -20,6 +20,12 @@ export const EVENTS = {
   ONBOARDING_COMPLETED: "onboarding.completed",
   // Accessibility mode telemetry (ENABLE_ACCESSIBILITY_MODE feature flag)
   ACCESSIBILITY_MODE_TOGGLED: "accessibility.mode_toggled",
+  // Training Center telemetry (ENABLE_TRAINING_CENTER feature flag)
+  TRAINING_MODULE_OPENED: "training.module_opened",
+  TRAINING_MODULE_STEP_COMPLETED: "training.module_step_completed",
+  TRAINING_MODULE_COMPLETED: "training.module_completed",
+  TRAINING_LEVEL_COMPLETED: "training.level_completed",
+  TRAINING_BADGE_AWARDED: "training.badge_awarded",
 } as const;
 
 export type EventType = (typeof EVENTS)[keyof typeof EVENTS];

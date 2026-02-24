@@ -53,6 +53,44 @@ Controls exponential-backoff retry behaviour for transient provider failures.
 
 ---
 
+---
+
+## Training Center
+
+Enables the in-platform Micro Training & Adoption Engine (Block 4).
+Controls all UI surfaces and route access for the Training Center feature.
+
+| Environment Variable                    | Type    | Default | Description                                                                     |
+|-----------------------------------------|---------|---------|---------------------------------------------------------------------------------|
+| `NEXT_PUBLIC_ENABLE_TRAINING_CENTER`    | boolean | `false` | Set to `"true"` to show the Training Center on the teacher dashboard and enable `/teacher/training/*` and `/admin/training/adoption` routes. |
+
+**When `false`:**
+- No Training tab or card appears in the Teacher Dashboard.
+- `/teacher/training/*` routes redirect to `/teacher`.
+- `/admin/training/adoption` redirects to `/admin`.
+- Training Adoption link is hidden from Admin Console nav.
+
+**When `true`:**
+- `🎓 Training` tab appears in Teacher Dashboard nav.
+- Training Center card appears on Teacher Dashboard (shows earned badges when present).
+- `/teacher/training` shows Level 1–3 modules with progress indicators.
+- `/teacher/training/[moduleId]` shows step-by-step module player.
+- `/admin/training/adoption` shows school-wide teacher adoption counts.
+
+**API routes are NOT flag-gated** (`/api/teacher/training/*`, `/api/admin/training/adoption`).
+They remain active regardless of the flag to support tooling and future CLI scripts.
+
+**Telemetry events** (all emitted when training is active):
+- `training.module_opened` — school-scoped, severity: info
+- `training.module_step_completed` — client-side via `/api/track`
+- `training.module_completed` — school-scoped, severity: info
+- `training.level_completed` — school-scoped, severity: info
+- `training.badge_awarded` — school-scoped, severity: info
+
+**Related ADR:** [ADR-0006 — Training Center Architecture](../adr/0006-training-center.md)
+
+---
+
 ## Pilot-Only Data Isolation
 
 All SMS delivery logs, guardian consents, metric events, and export records carry a `pilotOnly` boolean (`true` by default). This isolates pilot-phase data from future production records and enables clean post-pilot analytics segmentation.
