@@ -17,6 +17,12 @@ export const FEATURE_FLAGS = {
   ENABLE_ACCESSIBILITY_MODE: process.env.NEXT_PUBLIC_ENABLE_ACCESSIBILITY_MODE === "true",
   /** Training Center — 8 micro-modules, progress tracking, badges, admin adoption view. */
   ENABLE_TRAINING_CENTER: process.env.NEXT_PUBLIC_ENABLE_TRAINING_CENTER === "true",
+  /**
+   * Mastery Engine (Block 7A) — strand taxonomy, question tagging, per-student mastery
+   * profiles, hybrid scoring by grade band, and mastery telemetry events.
+   * Does NOT include adaptive baseline (Block 7B).
+   */
+  ENABLE_MASTERY_ENGINE: process.env.NEXT_PUBLIC_ENABLE_MASTERY_ENGINE === "true",
 } as const;
 
 export type FeatureFlag = keyof typeof FEATURE_FLAGS;
