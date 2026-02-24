@@ -85,3 +85,13 @@ _patches/
 LL_AUDIT_DUMP*.txt
 .env*.local
 _gold/
+# local scaffolding (keep local, don't commit by default)
+docs/adr/_stubs/
+docs/adr/_templates/
+docs/pr-bodies/
+prompts/
+sprints/
+tests/
+scripts/init-queue.ps1
+scripts/run-block.ps1
+scripts/run-next.ps1
