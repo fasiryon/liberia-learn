@@ -30,6 +30,20 @@ export const FEATURE_FLAGS = {
    *           POST /api/student/baseline/evidence is a no-op (200, { disabled: true }).
    */
   ENABLE_ADAPTIVE_BASELINE: process.env.NEXT_PUBLIC_ENABLE_ADAPTIVE_BASELINE === "true",
+  /**
+   * Monthly Hybrid Reports (Block 8) — monthly performance report generation,
+   * storage, and retrieval at school/national scope.
+   * When off: POST /api/admin/reports/monthly/generate returns { disabled: true }.
+   *           Existing stored reports remain readable.
+   */
+  ENABLE_MONTHLY_REPORTS: process.env.NEXT_PUBLIC_ENABLE_MONTHLY_REPORTS === "true",
+  /**
+   * Report PDF Export (Block 8 stub) — PDF rendering for monthly reports.
+   * Requires a PDF generation library (not bundled). When off (default): PDF format
+   * requests return 501 Not Implemented with instructions to enable once the PDF
+   * library is installed and the flag is set.
+   */
+  ENABLE_REPORT_PDF_EXPORT: process.env.NEXT_PUBLIC_ENABLE_REPORT_PDF_EXPORT === "true",
 } as const;
 
 export type FeatureFlag = keyof typeof FEATURE_FLAGS;
