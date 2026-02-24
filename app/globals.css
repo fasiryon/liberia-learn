@@ -24,3 +24,33 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+/* ── Accessibility mode ─────────────────────────────────────────────────────
+   Applied when AccessibilityToggle sets data-a11y="true" on <html>.
+   Enlarges base font and increases button/link tap targets sitewide.
+   Controlled by ENABLE_ACCESSIBILITY_MODE feature flag.
+   ────────────────────────────────────────────────────────────────────────── */
+[data-a11y="true"] {
+  font-size: 112.5%; /* 18 px base instead of 16 px */
+}
+
+[data-a11y="true"] p,
+[data-a11y="true"] li,
+[data-a11y="true"] label,
+[data-a11y="true"] span {
+  line-height: 1.85;
+}
+
+[data-a11y="true"] button,
+[data-a11y="true"] a {
+  min-height: 2.75rem;    /* minimum 44 px tap target */
+  padding-top: 0.625rem;
+  padding-bottom: 0.625rem;
+  padding-left: 1.25rem;
+  padding-right: 1.25rem;
+  font-size: 1rem;
+}
+
+[data-a11y="true"] h1 { font-size: 2rem; }
+[data-a11y="true"] h2 { font-size: 1.5rem; }
+[data-a11y="true"] h3 { font-size: 1.25rem; }

@@ -15,6 +15,11 @@ export const EVENTS = {
   LOGOUT: "logout",
   SCHOOL_REGISTER: "school_register",
   INVITE_ACCEPT: "invite_accept",
+  // Guided onboarding telemetry (ENABLE_GUIDED_ONBOARDING feature flag)
+  ONBOARDING_STEP_COMPLETED: "onboarding.step_completed",
+  ONBOARDING_COMPLETED: "onboarding.completed",
+  // Accessibility mode telemetry (ENABLE_ACCESSIBILITY_MODE feature flag)
+  ACCESSIBILITY_MODE_TOGGLED: "accessibility.mode_toggled",
 } as const;
 
 export type EventType = (typeof EVENTS)[keyof typeof EVENTS];
