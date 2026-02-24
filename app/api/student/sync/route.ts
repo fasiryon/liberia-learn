@@ -4,6 +4,7 @@ import { prisma } from "@/lib/db";
 import { logAudit } from "@/lib/audit";
 import { resolveAttendance, resolveSubmission } from "@/lib/offline-sync/policies";
 import { recordMetricEvent } from "@/lib/metrics/events";
+import { processEvidence } from "@/lib/mastery/evidencePipeline";
 
 export async function POST(req: NextRequest) {
   try {
@@ -205,6 +206,44 @@ export async function POST(req: NextRequest) {
           });
           synced++;
           results.push({ opId: opKey, entity, status: "synced" });
+          continue;
+        }
+
+        if (entity === "evidence") {
+          const ep = (payload ?? {}) as any;
+          const { subject, strandKey, correct, total, difficulty, source, wasAiAssisted, timeSpentSec } = ep;
+          const idempotencyKey = (item as any).idempotencyKey ?? opKey;
+          const timestamp = completedAt ? new Date(completedAt) : new Date();
+
+          if (!subject || !strandKey || typeof correct !== "number" ||
+              typeof total !== "number" || !source) {
+            skipped++;
+            results.push({ opId: opKey, entity, status: "skipped" });
+            continue;
+          }
+
+          const result = await processEvidence({
+            schoolId: user.schoolId ?? "",
+            studentId: user.id,
+            subject,
+            strandKey,
+            correct,
+            total,
+            difficulty: typeof difficulty === "number" ? difficulty as 1 | 2 | 3 | 4 | 5 : undefined,
+            source,
+            wasAiAssisted: typeof wasAiAssisted === "boolean" ? wasAiAssisted : false,
+            timeSpentSec: typeof timeSpentSec === "number" ? timeSpentSec : undefined,
+            idempotencyKey,
+            timestamp,
+          });
+
+          if (result.idempotent) {
+            skipped++;
+            results.push({ opId: opKey, entity, status: "skipped" });
+          } else {
+            synced++;
+            results.push({ opId: opKey, entity, status: "synced" });
+          }
           continue;
         }
 

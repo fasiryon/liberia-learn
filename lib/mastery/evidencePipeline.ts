@@ -1,13 +1,14 @@
 /**
- * lib/mastery/evidencePipeline.ts — Block 7C: Baseline → Mastery Evidence Pipeline
+ * lib/mastery/evidencePipeline.ts — Block 7C/8A: Baseline → Mastery Evidence Pipeline
  *
  * Responsibilities:
  *   1. Accept structured evidence from any source (practice, assessment, manual).
  *   2. Derive computed values: correctness, assessmentWeight, gradeBand.
- *   3. Fan evidence out to both the adaptive baseline (Block 7B) and the mastery
+ *   3. Insert an AttemptLog row (idempotent via unique idempotencyKey constraint).
+ *   4. Fan evidence out to both the adaptive baseline (Block 7B) and the mastery
  *      engine (Block 7A), each behind their own feature flags.
- *   4. Emit a single telemetry event (no PII) after successful processing.
- *   5. Return the combined result so callers can surface feedback to the client.
+ *   5. Emit a single telemetry event (no PII) after successful processing.
+ *   6. Return the combined result so callers can surface feedback to the client.
  *
  * Tenant safety:
  *   - schoolId is required for telemetry scoping; it is never used as the sole DB
@@ -21,13 +22,14 @@
  *   - ENABLE_MASTERY_ENGINE — checked here before calling updateMasteryProfile();
  *     returns { disabled: true } for the mastery portion when off.
  *   - Both flags can be toggled independently.
+ *   - AttemptLog creation is unconditional — it runs before any flag checks.
  *
- * Known limitation (Block 7D):
- *   - totalAttempts / aiAssistedAttempts are approximated as 1 / (0 or 1) per call.
- *     Block 7D will introduce an AttemptLog table for accurate cumulative tracking.
- *     See docs/product/EVIDENCE_PIPELINE.md for details.
+ * AttemptLog (Block 8A):
+ *   - totalAttempts / aiAssistedAttempts are now computed from AttemptLog via COUNT(*).
+ *   - The Block 7C approximation (totalAttempts=1 per call) has been removed.
+ *   - Block 10 optimization path: replace COUNT(*) with a counter column.
  *
- * See docs/product/EVIDENCE_PIPELINE.md for the full product reference.
+ * See docs/product/EVIDENCE_PIPELINE.md and docs/product/OFFLINE_EVIDENCE.md.
  */
 
 import { prisma } from "@/lib/db";
@@ -66,18 +68,25 @@ export type EvidenceInput = {
   wasAiAssisted?: boolean;
   /**
    * Total attempts on this strand including this one.
-   * Default: 1. Block 7D will replace this with accurate cumulative counts from AttemptLog.
+   * @deprecated Ignored in Block 8A — cumulative count is derived from AttemptLog.
    */
   attemptCount?: number;
   /** Time spent on this attempt in seconds. Passed to baseline (stored for analytics). */
   timeSpentSec?: number;
-  /** Timestamp of the evidence event. Unused in calculations; reserved for audit. */
+  /** Timestamp of the evidence event. Stored in AttemptLog. */
   timestamp?: Date;
+  /**
+   * Client-assigned UUID for offline replay idempotency.
+   * Server generates a UUID when omitted.
+   */
+  idempotencyKey?: string;
 };
 
 export type EvidencePipelineResult = {
   baseline: RecordEvidenceResult | { disabled: true };
   mastery: MasteryUpdateResult | { disabled: true };
+  /** Present when a duplicate idempotencyKey was detected — downstream services were skipped. */
+  idempotent?: true;
 };
 
 // ─── Constants ────────────────────────────────────────────────────────────────
@@ -131,7 +140,6 @@ export async function processEvidence(
     difficulty = 3,
     source,
     wasAiAssisted = false,
-    attemptCount = 1,
     timeSpentSec,
   } = input;
 
@@ -141,8 +149,48 @@ export async function processEvidence(
     ? 0
     : Math.max(0, Math.min(1, correct / total));
 
+  // ── 1.5. Insert AttemptLog (unconditional — before any flag checks) ───────
+  const logKey = input.idempotencyKey
+    ?? (typeof crypto !== "undefined" && "randomUUID" in crypto
+        ? crypto.randomUUID()
+        : `${Date.now()}-${Math.random()}`);
+
+  let isNewAttempt = true;
+  try {
+    await (prisma as any).attemptLog.create({
+      data: {
+        studentId,
+        subject,
+        strandKey,
+        correct,
+        total,
+        source,
+        difficulty: difficulty ?? null,
+        wasAiAssisted,
+        timestamp: input.timestamp ?? new Date(),
+        idempotencyKey: logKey,
+      },
+    });
+  } catch (e: any) {
+    if (e?.code === "P2002") {
+      isNewAttempt = false;
+    } else {
+      throw e;
+    }
+  }
+
+  if (!isNewAttempt) {
+    return { baseline: { disabled: true }, mastery: { disabled: true }, idempotent: true };
+  }
+
   // ── 2. Map source → assessmentWeight ──────────────────────────────────────
   const assessmentWeight = EVIDENCE_WEIGHTS[source];
+
+  // ── 2.5. Compute cumulative counts from AttemptLog ────────────────────────
+  const [totalAttempts, aiAssistedAttempts] = await Promise.all([
+    (prisma as any).attemptLog.count({ where: { studentId, subject, strandKey } }),
+    (prisma as any).attemptLog.count({ where: { studentId, subject, strandKey, wasAiAssisted: true } }),
+  ]);
 
   // ── 3. Update adaptive baseline (flag checked inside service) ────────────
   const baseline = await recordEvidenceAndUpdateBaseline({
@@ -153,7 +201,7 @@ export async function processEvidence(
     evidence: {
       correctness,
       difficulty: difficulty as 1 | 2 | 3 | 4 | 5,
-      attemptCount,
+      attemptCount: totalAttempts,
       assessmentWeight,
       timeSpentSec,
     },
@@ -171,12 +219,6 @@ export async function processEvidence(
       select: { currentGrade: true },
     });
     const gradeBand = gradeBandFromGrade(student?.currentGrade ?? null);
-
-    // Block 7D note: totalAttempts / aiAssistedAttempts are approximated here.
-    // Each call contributes 1 attempt. Block 7D will introduce an AttemptLog
-    // table for accurate cumulative counts.
-    const totalAttempts = attemptCount;
-    const aiAssistedAttempts = wasAiAssisted ? 1 : 0;
 
     mastery = await updateMasteryProfile({
       studentId,

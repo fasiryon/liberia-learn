@@ -122,6 +122,7 @@ model Student {
   mastery               MasteryRecord[]
   masteryProfiles       StudentMasteryProfile[]
   baselineAbilities     StudentBaselineAbility[]
+  attemptLogs           AttemptLog[]
   placementTests        PlacementTest[]
   portfolioItems        PortfolioItem[]
   reviews               ReviewSchedule[]
@@ -308,6 +309,28 @@ model StudentBaselineAbility {
   @@index([schoolId])
   @@index([studentId])
   @@index([subject, strandKey])
+}
+
+/// Per-attempt evidence log. Cumulative attemptCount source for Block 8A+.
+/// idempotencyKey enforces offline replay idempotency.
+/// No FK to StrandCatalog — offline events may outlive strand lifecycle.
+model AttemptLog {
+  id             String   @id @default(cuid())
+  studentId      String
+  subject        Subject
+  strandKey      String
+  correct        Int
+  total          Int
+  source         String
+  difficulty     Int?
+  wasAiAssisted  Boolean  @default(false)
+  timestamp      DateTime
+  idempotencyKey String   @unique
+  createdAt      DateTime @default(now())
+  student        Student  @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  @@index([studentId])
+  @@index([studentId, subject, strandKey])
 }
 
 /// / ===== Mastery Engine — Block 7A =====
