@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/db";
+import { CollapsiblePanel } from "@/components/CollapsiblePanel";
 
 export const dynamic = "force-dynamic";
 
@@ -55,9 +56,9 @@ export default async function TeacherDashboardPage() {
     <main className="min-h-screen bg-slate-950 text-slate-50">
       <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_top,_#3b82f622,_transparent_60%)]" />
 
-      <div className="mx-auto max-w-6xl px-4 py-6">
-        {/* Top header */}
-        <header className="mb-6 flex items-center justify-between gap-4">
+      <div className="mx-auto max-w-6xl px-4 py-8">
+        {/* ── Top header ──────────────────────────────────────────────── */}
+        <header className="mb-8 flex items-center justify-between gap-4">
           <div>
             <p className="text-xs uppercase tracking-wide text-emerald-300 mb-1">
               LIBERIALEARN · TEACHER
@@ -73,18 +74,19 @@ export default async function TeacherDashboardPage() {
             </p>
           </div>
 
+          {/* Header buttons — increased padding (py-2.5 → was py-2, text-sm → was text-xs) */}
           <div className="flex items-center gap-3">
             <Link
               href="/"
-              className="rounded-full border border-slate-700 px-4 py-2 text-xs md:text-sm hover:bg-slate-900"
+              className="rounded-full border border-slate-700 px-5 py-2.5 text-sm hover:bg-slate-900 transition-colors"
             >
-              ← Student demo / Login
+              ← Home
             </Link>
 
             <form action="/api/auth/signout" method="post">
               <button
                 type="submit"
-                className="rounded-full bg-red-500 px-4 py-2 text-xs md:text-sm font-semibold text-slate-950 hover:bg-red-400"
+                className="rounded-full bg-red-500 px-5 py-2.5 text-sm font-semibold text-slate-950 hover:bg-red-400 transition-colors"
               >
                 Log out
               </button>
@@ -92,53 +94,47 @@ export default async function TeacherDashboardPage() {
           </div>
         </header>
 
-        {/* Simple nav tabs (both real links) */}
-        <nav className="mb-6 flex flex-wrap gap-2 border-b border-slate-800 pb-3">
+        {/* ── Nav tabs — enlarged tap targets ─────────────────────────── */}
+        <nav className="mb-8 flex flex-wrap gap-2 border-b border-slate-800 pb-4">
           <Link
             href="/teacher"
-            className="rounded-full bg-slate-100 text-slate-900 px-4 py-1 text-xs font-semibold"
+            className="rounded-full bg-slate-100 text-slate-900 px-5 py-2 text-sm font-semibold"
           >
             Overview
           </Link>
           <Link
             href="/teacher/homework"
-            className="rounded-full bg-slate-900 px-4 py-1 text-xs font-semibold text-slate-200 border border-slate-700 hover:bg-slate-800"
+            className="rounded-full bg-slate-900 px-5 py-2 text-sm font-semibold text-slate-200 border border-slate-700 hover:bg-slate-800 transition-colors"
           >
             Homework
           </Link>
           <Link
             href="/teacher/curriculum"
-            className="rounded-full bg-slate-900 px-4 py-1 text-xs font-semibold text-slate-200 border border-slate-700 hover:bg-slate-800"
+            className="rounded-full bg-slate-900 px-5 py-2 text-sm font-semibold text-slate-200 border border-slate-700 hover:bg-slate-800 transition-colors"
           >
             Curriculum
           </Link>
         </nav>
 
-        {/* Overview stats */}
-        <section className="mb-6 grid gap-4 md:grid-cols-3">
-          <div className="rounded-2xl border border-slate-800 bg-slate-900/80 p-4">
-            <p className="text-xs text-slate-400 mb-1">Classes you teach</p>
-            <p className="text-2xl font-bold text-slate-50">
-              {classes.length}
-            </p>
+        {/* ── Overview stats — more padding, larger figures ────────────── */}
+        <section className="mb-8 grid gap-4 md:grid-cols-3">
+          <div className="rounded-2xl border border-slate-800 bg-slate-900/80 p-5">
+            <p className="text-sm text-slate-400 mb-1">Classes you teach</p>
+            <p className="text-3xl font-bold text-slate-50">{classes.length}</p>
           </div>
-          <div className="rounded-2xl border border-slate-800 bg-slate-900/80 p-4">
-            <p className="text-xs text-slate-400 mb-1">Total students</p>
-            <p className="text-2xl font-bold text-slate-50">{totalStudents}</p>
+          <div className="rounded-2xl border border-slate-800 bg-slate-900/80 p-5">
+            <p className="text-sm text-slate-400 mb-1">Total students</p>
+            <p className="text-3xl font-bold text-slate-50">{totalStudents}</p>
           </div>
-          <div className="rounded-2xl border border-slate-800 bg-slate-900/80 p-4">
-            <p className="text-xs text-slate-400 mb-1">
-              Homework assignments
-            </p>
-            <p className="text-2xl font-bold text-slate-50">
-              {totalHomework}
-            </p>
+          <div className="rounded-2xl border border-slate-800 bg-slate-900/80 p-5">
+            <p className="text-sm text-slate-400 mb-1">Homework assignments</p>
+            <p className="text-3xl font-bold text-slate-50">{totalHomework}</p>
           </div>
         </section>
 
-        {/* Classes list */}
-        <section>
-          <h2 className="text-lg font-semibold mb-3">
+        {/* ── Classes list ─────────────────────────────────────────────── */}
+        <section className="mb-6">
+          <h2 className="text-lg font-semibold mb-4">
             Classes at {schoolName}
           </h2>
 
@@ -152,36 +148,35 @@ export default async function TeacherDashboardPage() {
               {classes.map((cls) => (
                 <div
                   key={cls.id}
-                  className="rounded-2xl border border-slate-800 bg-slate-900/80 p-5 flex flex-col justify-between"
+                  className="rounded-2xl border border-slate-800 bg-slate-900/80 p-6 flex flex-col justify-between"
                 >
                   <div>
-                    <div className="flex justify-between items-start mb-2">
-                      <h3 className="text-lg font-semibold">
-                        {cls.name}
-                      </h3>
-                      <span className="rounded-full bg-blue-500/20 text-blue-200 text-xs px-3 py-1">
+                    <div className="flex justify-between items-start mb-3">
+                      <h3 className="text-lg font-semibold">{cls.name}</h3>
+                      <span className="rounded-full bg-blue-500/20 text-blue-200 text-xs px-3 py-1.5">
                         {cls.enrollments.length} students
                       </span>
                     </div>
-                    <p className="text-xs text-slate-400 mb-2">
+                    <p className="text-sm text-slate-400 mb-1">
                       {cls.subject} · {cls.School?.name || schoolName}
                     </p>
                     <p className="text-xs text-slate-500">
-                      Gradebook & detailed analytics coming – homework and
+                      Gradebook & detailed analytics coming — homework and
                       student list are live now.
                     </p>
                   </div>
 
-                  <div className="mt-4 flex gap-2">
+                  {/* Primary actions — larger buttons (py-3 px-5 text-sm → was py-2 px-4 text-xs) */}
+                  <div className="mt-5 flex gap-3">
                     <Link
                       href={`/teacher/homework?classId=${cls.id}`}
-                      className="rounded-lg bg-emerald-500 px-4 py-2 text-xs font-semibold text-slate-950 hover:bg-emerald-400"
+                      className="rounded-xl bg-emerald-500 px-5 py-3 text-sm font-semibold text-slate-950 hover:bg-emerald-400 transition-colors"
                     >
                       Homework
                     </Link>
                     <Link
                       href={`/teacher/class/${cls.id}/students`}
-                      className="rounded-lg border border-slate-700 px-4 py-2 text-xs font-semibold text-slate-200 hover:bg-slate-800"
+                      className="rounded-xl border border-slate-700 px-5 py-3 text-sm font-semibold text-slate-200 hover:bg-slate-800 transition-colors"
                     >
                       View students
                     </Link>
@@ -191,6 +186,40 @@ export default async function TeacherDashboardPage() {
             </div>
           )}
         </section>
+
+        {/* ── Resources — collapsed by default (advanced / secondary) ─── */}
+        <CollapsiblePanel title="Resources &amp; quick links" defaultOpen={false}>
+          <div className="grid gap-3 sm:grid-cols-2">
+            <Link
+              href="/admin"
+              className="flex items-center gap-3 rounded-xl border border-slate-700 bg-slate-800/60 px-4 py-3 text-sm text-slate-300 hover:bg-slate-700 transition-colors"
+            >
+              <span>🏫</span>
+              <span>Admin console</span>
+            </Link>
+            <Link
+              href="/teacher/attendance"
+              className="flex items-center gap-3 rounded-xl border border-slate-700 bg-slate-800/60 px-4 py-3 text-sm text-slate-300 hover:bg-slate-700 transition-colors"
+            >
+              <span>📋</span>
+              <span>Attendance</span>
+            </Link>
+            <Link
+              href="/teacher/schedule"
+              className="flex items-center gap-3 rounded-xl border border-slate-700 bg-slate-800/60 px-4 py-3 text-sm text-slate-300 hover:bg-slate-700 transition-colors"
+            >
+              <span>📅</span>
+              <span>Schedule</span>
+            </Link>
+            <Link
+              href="/teacher/students"
+              className="flex items-center gap-3 rounded-xl border border-slate-700 bg-slate-800/60 px-4 py-3 text-sm text-slate-300 hover:bg-slate-700 transition-colors"
+            >
+              <span>👥</span>
+              <span>All students</span>
+            </Link>
+          </div>
+        </CollapsiblePanel>
       </div>
     </main>
   );
