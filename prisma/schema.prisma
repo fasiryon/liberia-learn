@@ -119,6 +119,7 @@ model Student {
   homeworkSubmissions   HomeworkSubmission[]
   mastery               MasteryRecord[]
   masteryProfiles       StudentMasteryProfile[]
+  baselineAbilities     StudentBaselineAbility[]
   placementTests        PlacementTest[]
   portfolioItems        PortfolioItem[]
   reviews               ReviewSchedule[]
@@ -280,6 +281,33 @@ model Grade {
   @@index([classId, studentId])
 }
 
+/// / ===== Mastery Engine — Block 7B: Adaptive Baseline =====
+
+/// Per-student, per-strand adaptive ability estimate.
+/// Ability is on the [-2, +2] scale (EMA-based, not raw score).
+/// schoolId enforces tenant isolation (required on every query).
+/// source tracks how the baseline was last established.
+model StudentBaselineAbility {
+  id            String         @id @default(cuid())
+  schoolId      String
+  studentId     String
+  subject       Subject
+  strandKey     String
+  ability       Float          @default(0)
+  lastUpdatedAt DateTime
+  source        BaselineSource @default(initial)
+  updatedBy     String?
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  student       Student        @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  StrandCatalog StrandCatalog  @relation(fields: [subject, strandKey], references: [subject, strandKey])
+
+  @@unique([schoolId, studentId, subject, strandKey], name: "StudentBaselineAbility_schoolId_studentId_subject_strandKey_key")
+  @@index([schoolId])
+  @@index([studentId])
+  @@index([subject, strandKey])
+}
+
 /// / ===== Mastery Engine — Block 7A =====
 
 /// Strand taxonomy — subject × strand × grade-band catalogue.
@@ -293,8 +321,9 @@ model StrandCatalog {
   waecRef        String?
   isActive       Boolean                @default(true)
   createdAt      DateTime               @default(now())
-  questionTags   QuestionTag[]
-  masteryProfiles StudentMasteryProfile[]
+  questionTags      QuestionTag[]
+  masteryProfiles   StudentMasteryProfile[]
+  baselineAbilities StudentBaselineAbility[]
 
   @@unique([subject, strandKey], name: "StrandCatalog_subject_strandKey_key")
   @@index([subject, gradeBand])
@@ -989,6 +1018,16 @@ enum SMSDeliveryStatus {
   failed
   blocked
   opted_out
+}
+
+/// Block 7B — Adaptive Baseline enum
+
+/// How a StudentBaselineAbility record was last set.
+enum BaselineSource {
+  initial    // First-write default (no evidence yet)
+  practice   // Updated from a practice attempt
+  assessment // Updated from a quiz or exam
+  manual     // Set explicitly by a teacher or admin
 }
 
 /// Block 7A — Mastery Engine enums

@@ -23,6 +23,13 @@ export const FEATURE_FLAGS = {
    * Does NOT include adaptive baseline (Block 7B).
    */
   ENABLE_MASTERY_ENGINE: process.env.NEXT_PUBLIC_ENABLE_MASTERY_ENGINE === "true",
+  /**
+   * Adaptive Baseline (Block 7B) — per-student EMA-based ability estimates per strand.
+   * Requires ENABLE_MASTERY_ENGINE to be meaningful, but is independently gated.
+   * When off: GET /api/student/baseline returns { ability: 0, disabled: true }.
+   *           POST /api/student/baseline/evidence is a no-op (200, { disabled: true }).
+   */
+  ENABLE_ADAPTIVE_BASELINE: process.env.NEXT_PUBLIC_ENABLE_ADAPTIVE_BASELINE === "true",
 } as const;
 
 export type FeatureFlag = keyof typeof FEATURE_FLAGS;
