@@ -118,6 +118,7 @@ model Student {
   grades                Grade[]
   homeworkSubmissions   HomeworkSubmission[]
   mastery               MasteryRecord[]
+  masteryProfiles       StudentMasteryProfile[]
   placementTests        PlacementTest[]
   portfolioItems        PortfolioItem[]
   reviews               ReviewSchedule[]
@@ -227,6 +228,7 @@ model PracticeItem {
   answerKey      Json?
   hints          Json?
   AssessmentItem AssessmentItem[]
+  QuestionTag    QuestionTag[]
   Skill          Skill            @relation(fields: [skillId], references: [id])
 }
 
@@ -276,6 +278,73 @@ model Grade {
   Student    Student  @relation(fields: [studentId], references: [id])
 
   @@index([classId, studentId])
+}
+
+/// / ===== Mastery Engine — Block 7A =====
+
+/// Strand taxonomy — subject × strand × grade-band catalogue.
+/// Seeded by prisma/seeds/strand-catalog.ts. WAEC refs are G10-12 only.
+model StrandCatalog {
+  id             String                 @id @default(cuid())
+  subject        Subject
+  strandKey      String
+  name           String
+  gradeBand      GradeBand
+  waecRef        String?
+  isActive       Boolean                @default(true)
+  createdAt      DateTime               @default(now())
+  questionTags   QuestionTag[]
+  masteryProfiles StudentMasteryProfile[]
+
+  @@unique([subject, strandKey], name: "StrandCatalog_subject_strandKey_key")
+  @@index([subject, gradeBand])
+  @@index([isActive, subject])
+}
+
+/// Tagging model linking question/item IDs to strand + difficulty metadata.
+model QuestionTag {
+  id             String        @id @default(cuid())
+  subject        Subject
+  strandKey      String
+  difficulty     Difficulty
+  itemType       ItemType
+  practiceItemId String?
+  createdAt      DateTime      @default(now())
+  PracticeItem   PracticeItem? @relation(fields: [practiceItemId], references: [id], onDelete: SetNull)
+  StrandCatalog  StrandCatalog @relation(fields: [subject, strandKey], references: [subject, strandKey])
+
+  @@index([subject, strandKey])
+  @@index([practiceItemId])
+}
+
+/// Per-student mastery state for a specific subject × strand.
+/// Pure-function metrics recomputed on every attempt write.
+/// baselineConfidence and baselineCompletedAt are optional (populated by Block 7B adaptive baseline).
+model StudentMasteryProfile {
+  id                   String           @id @default(cuid())
+  studentId            String
+  subject              Subject
+  strandKey            String
+  baselineScore        Float            @default(0)
+  currentScore         Float            @default(0)
+  proficiencyState     ProficiencyState @default(NOT_ASSESSED)
+  masteryState         MasteryState     @default(NOT_ASSESSED)
+  sustainabilityIndex  Float            @default(0)
+  decayRate            Float            @default(0)
+  aiRelianceRate       Float            @default(0)
+  lastAssessedAt       DateTime?
+  baselineConfidence   Float?
+  baselineCompletedAt  DateTime?
+  createdAt            DateTime         @default(now())
+  updatedAt            DateTime         @updatedAt
+  student              Student          @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  StrandCatalog        StrandCatalog    @relation(fields: [subject, strandKey], references: [subject, strandKey])
+
+  @@unique([studentId, subject, strandKey], name: "StudentMasteryProfile_studentId_subject_strandKey_key")
+  @@index([studentId])
+  @@index([subject, strandKey])
+  @@index([masteryState])
+  @@index([proficiencyState])
 }
 
 /// / ===== Mastery & Spaced Review =====
@@ -920,4 +989,26 @@ enum SMSDeliveryStatus {
   failed
   blocked
   opted_out
+}
+
+/// Block 7A — Mastery Engine enums
+
+/// Whether a student can independently apply a concept with ≥75% accuracy
+/// across varied question types without AI assistance.
+enum ProficiencyState {
+  NOT_ASSESSED
+  BELOW_PROFICIENT
+  APPROACHING
+  PROFICIENT
+}
+
+/// Sustained performance state across spaced assessments.
+/// MASTERED requires ≥85% accuracy + high sustainability index.
+/// DECAYING indicates prior mastery now declining.
+enum MasteryState {
+  NOT_ASSESSED
+  DEVELOPING
+  APPROACHING
+  MASTERED
+  DECAYING
 }
