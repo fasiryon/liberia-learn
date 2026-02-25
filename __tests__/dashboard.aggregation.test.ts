@@ -1,7 +1,7 @@
-/**
+﻿/**
  * __tests__/dashboard.aggregation.test.ts
  *
- * Tests for lib/reporting/dashboard/dashboardAggregator.ts — Block 9.
+ * Tests for lib/reporting/dashboard/dashboardAggregator.ts â€” Block 9.
  *
  * Verifies:
  *   1. Correct averages for mastery score and baseline growth.
@@ -16,7 +16,7 @@
 
 import { describe, it, expect, vi, beforeEach } from "vitest";
 
-// ─── Hoisted mocks ────────────────────────────────────────────────────────────
+// â”€â”€â”€ Hoisted mocks â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 const mockStudentFindMany             = vi.hoisted(() => vi.fn());
 const mockStudentCount                = vi.hoisted(() => vi.fn());
@@ -48,7 +48,7 @@ vi.mock("@/lib/db", () => ({
   },
 }));
 
-// ─── Import after mocks ───────────────────────────────────────────────────────
+// â”€â”€â”€ Import after mocks â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 import {
   computeSchoolDashboard,
@@ -56,7 +56,7 @@ import {
   classifyProfileTier,
 } from "@/lib/reporting/dashboard/dashboardAggregator";
 
-// ─── Fixtures ─────────────────────────────────────────────────────────────────
+// â”€â”€â”€ Fixtures â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 const SCHOOL_ID = "school-aaa";
 
@@ -92,7 +92,7 @@ const MASTERY_PROFILES = [
 
 const TEACHERS = [{ id: "t1" }, { id: "t2" }];
 
-// ─── Default school mock setup ─────────────────────────────────────────────
+// â”€â”€â”€ Default school mock setup â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 function setupSchoolMocks({
   students = STUDENTS,
@@ -124,20 +124,20 @@ beforeEach(() => {
   vi.clearAllMocks();
 });
 
-// ─── School: averages ─────────────────────────────────────────────────────────
+// â”€â”€â”€ School: averages â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
-describe("computeSchoolDashboard — averages", () => {
+describe("computeSchoolDashboard â€” averages", () => {
   it("computes correct avgMasteryScore", async () => {
     setupSchoolMocks();
     const result = await computeSchoolDashboard(SCHOOL_ID);
-    // (0.9 + 0.8 + 0.65) / 3 ≈ 0.7833
+    // (0.9 + 0.8 + 0.65) / 3 â‰ˆ 0.7833
     expect(result.avgMasteryScore).toBeCloseTo(0.7833, 3);
   });
 
   it("computes correct avgBaselineGrowth", async () => {
     setupSchoolMocks();
     const result = await computeSchoolDashboard(SCHOOL_ID);
-    // growth: (0.4 + 0.2 + 0.0) / 3 ≈ 0.2
+    // growth: (0.4 + 0.2 + 0.0) / 3 â‰ˆ 0.2
     expect(result.avgBaselineGrowth).toBeCloseTo(0.2, 5);
   });
 
@@ -148,9 +148,9 @@ describe("computeSchoolDashboard — averages", () => {
   });
 });
 
-// ─── School: empty dataset ────────────────────────────────────────────────────
+// â”€â”€â”€ School: empty dataset â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
-describe("computeSchoolDashboard — empty dataset", () => {
+describe("computeSchoolDashboard â€” empty dataset", () => {
   it("returns all-zero metrics when no students exist", async () => {
     mockStudentFindMany.mockResolvedValue([]);
 
@@ -160,7 +160,7 @@ describe("computeSchoolDashboard — empty dataset", () => {
     expect(result.avgBaselineGrowth).toBe(0);
     expect(result.totalStudents).toBe(0);
     expect(result.activeStudents).toBe(0);
-    expect(result.monthlyReportCompletionRate).toBe(0);
+    expect(result.monthlyReportExportShareLast90Days).toBe(0);
     expect(result.evidenceSubmissionRate).toBe(0);
     expect(result.trainingAdoptionRate).toBe(0);
     expect(result.tierDistribution).toEqual({
@@ -197,16 +197,16 @@ describe("computeSchoolDashboard — empty dataset", () => {
     expect(result.trainingAdoptionRate).toBe(0);
   });
 
-  it("returns monthlyReportCompletionRate=0 when no reports exist", async () => {
+  it("returns monthlyReportExportShareLast90Days=0 when no reports exist", async () => {
     setupSchoolMocks({ completedReports: 0, totalReports: 0 });
     const result = await computeSchoolDashboard(SCHOOL_ID);
-    expect(result.monthlyReportCompletionRate).toBe(0);
+    expect(result.monthlyReportExportShareLast90Days).toBe(0);
   });
 });
 
-// ─── School: tier distribution ────────────────────────────────────────────────
+// â”€â”€â”€ School: tier distribution â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
-describe("computeSchoolDashboard — tier distribution", () => {
+describe("computeSchoolDashboard â€” tier distribution", () => {
   it("tier distribution sums to total mastery profile count", async () => {
     setupSchoolMocks();
     const result = await computeSchoolDashboard(SCHOOL_ID);
@@ -214,25 +214,25 @@ describe("computeSchoolDashboard — tier distribution", () => {
     expect(total).toBe(MASTERY_PROFILES.length);
   });
 
-  it("MASTERED masteryState → platinum", async () => {
+  it("MASTERED masteryState â†’ platinum", async () => {
     setupSchoolMocks();
     const result = await computeSchoolDashboard(SCHOOL_ID);
     expect(result.tierDistribution.platinum).toBe(1);
   });
 
-  it("PROFICIENT proficiencyState + non-MASTERED masteryState → gold", async () => {
+  it("PROFICIENT proficiencyState + non-MASTERED masteryState â†’ gold", async () => {
     setupSchoolMocks();
     const result = await computeSchoolDashboard(SCHOOL_ID);
     expect(result.tierDistribution.gold).toBe(1);
   });
 
-  it("APPROACHING proficiencyState → silver", async () => {
+  it("APPROACHING proficiencyState â†’ silver", async () => {
     setupSchoolMocks();
     const result = await computeSchoolDashboard(SCHOOL_ID);
     expect(result.tierDistribution.silver).toBe(1);
   });
 
-  it("BELOW_PROFICIENT or NOT_ASSESSED proficiencyState → bronze", async () => {
+  it("BELOW_PROFICIENT or NOT_ASSESSED proficiencyState â†’ bronze", async () => {
     setupSchoolMocks({
       profiles: [
         {
@@ -261,9 +261,9 @@ describe("computeSchoolDashboard — tier distribution", () => {
   });
 });
 
-// ─── School: activity + rates ─────────────────────────────────────────────────
+// â”€â”€â”€ School: activity + rates â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
-describe("computeSchoolDashboard — activity and rates", () => {
+describe("computeSchoolDashboard â€” activity and rates", () => {
   it("activeStudents = count of distinct students with recent lastAssessedAt", async () => {
     setupSchoolMocks({ activeProfiles: [{ studentId: "s1" }, { studentId: "s2" }] });
     const result = await computeSchoolDashboard(SCHOOL_ID);
@@ -273,7 +273,7 @@ describe("computeSchoolDashboard — activity and rates", () => {
   it("evidenceSubmissionRate = profiled students / total students", async () => {
     setupSchoolMocks({ profiledStudents: [{ studentId: "s1" }, { studentId: "s2" }] });
     const result = await computeSchoolDashboard(SCHOOL_ID);
-    // 2 / 3 ≈ 0.6667
+    // 2 / 3 â‰ˆ 0.6667
     expect(result.evidenceSubmissionRate).toBeCloseTo(0.6667, 3);
   });
 
@@ -284,16 +284,16 @@ describe("computeSchoolDashboard — activity and rates", () => {
     expect(result.trainingAdoptionRate).toBeCloseTo(0.5, 2);
   });
 
-  it("monthlyReportCompletionRate = completed / total reports", async () => {
+  it("monthlyReportExportShareLast90Days = completed / total reports", async () => {
     setupSchoolMocks({ completedReports: 2, totalReports: 3 });
     const result = await computeSchoolDashboard(SCHOOL_ID);
-    expect(result.monthlyReportCompletionRate).toBeCloseTo(0.6667, 3);
+    expect(result.monthlyReportExportShareLast90Days).toBeCloseTo(0.6667, 3);
   });
 });
 
-// ─── National aggregation ─────────────────────────────────────────────────────
+// â”€â”€â”€ National aggregation â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
-describe("computeNationalDashboard — aggregates across all schools", () => {
+describe("computeNationalDashboard â€” aggregates across all schools", () => {
   function setupNationalMocks({
     totalStudents = 5,
     profiles = [
@@ -346,7 +346,7 @@ describe("computeNationalDashboard — aggregates across all schools", () => {
   it("aggregates avgMasteryScore across all schools' profiles", async () => {
     setupNationalMocks();
     const result = await computeNationalDashboard();
-    // 5 profiles: 0.9, 0.8, 0.65, 0.9, 0.3 → avg = 3.55/5 = 0.71
+    // 5 profiles: 0.9, 0.8, 0.65, 0.9, 0.3 â†’ avg = 3.55/5 = 0.71
     expect(result.avgMasteryScore).toBeCloseTo(0.71, 2);
   });
 
@@ -381,16 +381,16 @@ describe("computeNationalDashboard — aggregates across all schools", () => {
   });
 });
 
-// ─── classifyProfileTier unit tests ──────────────────────────────────────────
+// â”€â”€â”€ classifyProfileTier unit tests â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
-describe("classifyProfileTier — tier state mapping", () => {
-  it("MASTERED → platinum regardless of proficiencyState", () => {
+describe("classifyProfileTier â€” tier state mapping", () => {
+  it("MASTERED â†’ platinum regardless of proficiencyState", () => {
     expect(
       classifyProfileTier({ masteryState: "MASTERED", proficiencyState: "PROFICIENT" })
     ).toBe("platinum");
   });
 
-  it("PROFICIENT + non-MASTERED → gold", () => {
+  it("PROFICIENT + non-MASTERED â†’ gold", () => {
     expect(
       classifyProfileTier({ masteryState: "APPROACHING", proficiencyState: "PROFICIENT" })
     ).toBe("gold");
@@ -399,13 +399,13 @@ describe("classifyProfileTier — tier state mapping", () => {
     ).toBe("gold");
   });
 
-  it("APPROACHING proficiency → silver", () => {
+  it("APPROACHING proficiency â†’ silver", () => {
     expect(
       classifyProfileTier({ masteryState: "DEVELOPING", proficiencyState: "APPROACHING" })
     ).toBe("silver");
   });
 
-  it("BELOW_PROFICIENT → bronze", () => {
+  it("BELOW_PROFICIENT â†’ bronze", () => {
     expect(
       classifyProfileTier({
         masteryState: "DEVELOPING",
@@ -414,7 +414,7 @@ describe("classifyProfileTier — tier state mapping", () => {
     ).toBe("bronze");
   });
 
-  it("NOT_ASSESSED → bronze", () => {
+  it("NOT_ASSESSED â†’ bronze", () => {
     expect(
       classifyProfileTier({
         masteryState: "NOT_ASSESSED",
@@ -423,9 +423,10 @@ describe("classifyProfileTier — tier state mapping", () => {
     ).toBe("bronze");
   });
 
-  it("DECAYING masteryState + PROFICIENT → gold (not platinum)", () => {
+  it("DECAYING masteryState + PROFICIENT â†’ gold (not platinum)", () => {
     expect(
       classifyProfileTier({ masteryState: "DECAYING", proficiencyState: "PROFICIENT" })
     ).toBe("gold");
   });
 });
+

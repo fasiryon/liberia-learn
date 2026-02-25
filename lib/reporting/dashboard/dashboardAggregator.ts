@@ -1,14 +1,14 @@
-/**
- * lib/reporting/dashboard/dashboardAggregator.ts — Block 9: Dashboard Aggregation
+﻿/**
+ * lib/reporting/dashboard/dashboardAggregator.ts â€” Block 9: Dashboard Aggregation
  *
  * Computes leadership-ready dashboard metrics for school and national scopes.
- * No PII is returned — all outputs are aggregated counts and rates.
+ * No PII is returned â€” all outputs are aggregated counts and rates.
  *
  * Tier distribution source of truth:
  *   Derived from StudentMasteryProfile.proficiencyState and .masteryState,
  *   which are computed by lib/mastery/masteryService.ts using the thresholds
  *   in lib/mastery/compute.ts. Tier labels (bronze/silver/gold/platinum) map
- *   directly to these pre-computed states — no independent threshold values.
+ *   directly to these pre-computed states â€” no independent threshold values.
  *
  * Tenant isolation:
  *   - computeSchoolDashboard(schoolId) filters all queries to that school.
@@ -23,14 +23,14 @@
  *   - Evidence submission rate uses StudentMasteryProfile presence as proxy.
  *     Block 10 will use AttemptLog when that table is live in production.
  *   - Active students uses StudentMasteryProfile.lastAssessedAt (30d window).
- *   - monthlyReportCompletionRate uses ExportRecord as a proxy (no MonthlyReport
+ *   - monthlyReportExportShareLast90Days uses ExportRecord as a proxy (no MonthlyReport
  *     table exists yet). Rate = monthly_report exports / all school-scope exports.
  *     Block 10 will introduce a dedicated submission-tracking table.
  */
 
 import { prisma } from "@/lib/db";
 
-// ─── Types ────────────────────────────────────────────────────────────────────
+// â”€â”€â”€ Types â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 export type TierDistribution = {
   bronze: number;
@@ -45,12 +45,14 @@ export type DashboardMetrics = {
   tierDistribution: TierDistribution;
   totalStudents: number;
   activeStudents: number;
-  monthlyReportCompletionRate: number;
+  monthlyReportExportShareLast90Days: number;
+    // Proxy metric: (monthly_report exports in last 90 days) / (all school-scope exports in last 90 days).
+    // This is NOT a submission/completion rate. Block 10 will add explicit submission tracking with status.
   evidenceSubmissionRate: number;
   trainingAdoptionRate: number;
 };
 
-// ─── Helpers ──────────────────────────────────────────────────────────────────
+// â”€â”€â”€ Helpers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 function safeAvg(values: number[]): number {
   if (values.length === 0) return 0;
@@ -69,10 +71,10 @@ function safeRate(numerator: number, denominator: number): number {
  * lib/mastery/masteryService.ts using thresholds from lib/mastery/compute.ts.
  *
  * Tier definitions:
- *   Platinum — masteryState = MASTERED (sustained ≥85% across spaced assessments)
- *   Gold     — proficiencyState = PROFICIENT, masteryState ≠ MASTERED (≥75% accuracy)
- *   Silver   — proficiencyState = APPROACHING (≥60% accuracy)
- *   Bronze   — proficiencyState = BELOW_PROFICIENT or NOT_ASSESSED
+ *   Platinum â€” masteryState = MASTERED (sustained â‰¥85% across spaced assessments)
+ *   Gold     â€” proficiencyState = PROFICIENT, masteryState â‰  MASTERED (â‰¥75% accuracy)
+ *   Silver   â€” proficiencyState = APPROACHING (â‰¥60% accuracy)
+ *   Bronze   â€” proficiencyState = BELOW_PROFICIENT or NOT_ASSESSED
  */
 export function classifyProfileTier(profile: {
   proficiencyState: string;
@@ -101,13 +103,15 @@ function emptyMetrics(): DashboardMetrics {
     tierDistribution: { bronze: 0, silver: 0, gold: 0, platinum: 0 },
     totalStudents: 0,
     activeStudents: 0,
-    monthlyReportCompletionRate: 0,
+    monthlyReportExportShareLast90Days: 0
+    // Proxy metric: (monthly_report exports in last 90 days) / (all school-scope exports in last 90 days).
+    // This is NOT a submission/completion rate. Block 10 will add explicit submission tracking with status.,
     evidenceSubmissionRate: 0,
     trainingAdoptionRate: 0,
   };
 }
 
-// ─── School Aggregation ───────────────────────────────────────────────────────
+// â”€â”€â”€ School Aggregation â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 /**
  * Computes all dashboard metrics for a single school.
@@ -160,7 +164,7 @@ export async function computeSchoolDashboard(
       select: { studentId: true },
       distinct: ["studentId"],
     }),
-    // Evidence rate: students with any mastery profile (evidence processed ≥ once)
+    // Evidence rate: students with any mastery profile (evidence processed â‰¥ once)
     prisma.studentMasteryProfile.findMany({
       where: { studentId: { in: studentIds } },
       select: { studentId: true },
@@ -199,7 +203,7 @@ export async function computeSchoolDashboard(
   const tierDistribution = computeTierDistribution(masteryProfiles);
   const activeStudents = activeStudentResult.length;
   const evidenceSubmissionRate = safeRate(studentsWithEvidence.length, totalStudents);
-  const monthlyReportCompletionRate = safeRate(completedReportCount, totalReportCount);
+  const monthlyReportExportShareLast90Days = safeRate(completedReportCount, totalReportCount);
 
   // Step 3: training adoption (depends on teachers result from step 2)
   const teacherIds = teachers.map((t) => t.id);
@@ -221,17 +225,17 @@ export async function computeSchoolDashboard(
     tierDistribution,
     totalStudents,
     activeStudents,
-    monthlyReportCompletionRate,
+    monthlyReportExportShareLast90Days,
     evidenceSubmissionRate,
     trainingAdoptionRate,
   };
 }
 
-// ─── National Aggregation ─────────────────────────────────────────────────────
+// â”€â”€â”€ National Aggregation â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 /**
  * Computes dashboard metrics aggregated across all schools.
- * No PII — no school names or student identifiers in the output.
+ * No PII â€” no school names or student identifiers in the output.
  * Caller must hold isPlatformAdmin or DASHBOARD_NATIONAL_VIEW permission.
  */
 export async function computeNationalDashboard(): Promise<DashboardMetrics> {
@@ -307,7 +311,7 @@ export async function computeNationalDashboard(): Promise<DashboardMetrics> {
     teachersWithProgressResult.length,
     totalTeacherCount
   );
-  const monthlyReportCompletionRate = safeRate(completedReportCount, totalReportCount);
+  const monthlyReportExportShareLast90Days = safeRate(completedReportCount, totalReportCount);
 
   return {
     avgMasteryScore,
@@ -315,8 +319,9 @@ export async function computeNationalDashboard(): Promise<DashboardMetrics> {
     tierDistribution,
     totalStudents,
     activeStudents,
-    monthlyReportCompletionRate,
+    monthlyReportExportShareLast90Days,
     evidenceSubmissionRate,
     trainingAdoptionRate,
   };
 }
+
