@@ -47,7 +47,7 @@ export type DashboardMetrics = {
   activeStudents: number;
   monthlyReportExportShareLast90Days: number;
     // Proxy metric: (monthly_report exports in last 90 days) / (all school-scope exports in last 90 days).
-    // This is NOT a submission/completion rate. Block 10 will add explicit submission tracking with status.
+    // This is NOT a submission/completion rate. Block 10 will add explicit submission tracking with status. (placeholder)
   evidenceSubmissionRate: number;
   trainingAdoptionRate: number;
 };
@@ -105,7 +105,7 @@ function emptyMetrics(): DashboardMetrics {
     activeStudents: 0,
     monthlyReportExportShareLast90Days: 0,
     // Proxy metric: (monthly_report exports in last 90 days) / (all school-scope exports in last 90 days).
-    // This is NOT a submission/completion rate. Block 10 will add explicit submission tracking with status.
+    // This is NOT a submission/completion rate. Block 10 will add explicit submission tracking with status. (placeholder)
     evidenceSubmissionRate: 0,
     trainingAdoptionRate: 0,
   };
@@ -324,6 +324,4 @@ export async function computeNationalDashboard(): Promise<DashboardMetrics> {
     trainingAdoptionRate,
   };
 }
-
-
 
