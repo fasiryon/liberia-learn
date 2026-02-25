@@ -44,7 +44,7 @@ vi.mock("@/lib/db", () => ({
       create: vi.fn().mockResolvedValue({ id: "audit-1" }),
       findMany: vi.fn().mockResolvedValue([]),
     },
-    smsDeliveryLog: {
+    sMSDeliveryLog: {
       count: vi.fn().mockResolvedValue(0),
     },
     exportRecord: {

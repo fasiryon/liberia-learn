@@ -12,7 +12,7 @@ vi.mock("@/lib/auth", () => ({
 vi.mock("@/lib/db", () => ({
   prisma: {
     trainingModule: { findMany: vi.fn() },
-    teacherTrainingProgress: { findMany: vi.fn() },
+    trainingProgress: { findMany: vi.fn() },
     exportRecord: { create: vi.fn() },
     auditLog: { create: vi.fn() },
   },
@@ -34,8 +34,8 @@ describe("training export route", () => {
     (prisma.trainingModule.findMany as any).mockResolvedValue([
       { id: "m1", code: "W0", title: "Week 0" },
     ]);
-    (prisma.teacherTrainingProgress.findMany as any).mockResolvedValue([
-      { moduleId: "m1", status: "COMPLETED", teacherId: "t1" },
+    (prisma.trainingProgress.findMany as any).mockResolvedValue([
+      { moduleId: "m1", status: "complete", teacherUserId: "t1" },
     ]);
     (prisma.exportRecord.create as any).mockResolvedValue({ id: "exp-1" });
     (prisma.auditLog.create as any).mockResolvedValue({ id: "audit-1" });

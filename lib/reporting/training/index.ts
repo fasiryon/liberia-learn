@@ -58,16 +58,14 @@ export async function getTrainingSummary({
   pilotOnly: boolean;
 }): Promise<TrainingSummaryDTO> {
   const moduleList = await prisma.trainingModule.findMany({
-    where: { pilotOnly },
+    where: { isActive: true },
     select: { id: true, code: true, title: true },
     orderBy: { code: "asc" },
   });
 
-  const progress = await prisma.teacherTrainingProgress.findMany({
+  const progress = await prisma.trainingProgress.findMany({
     where: {
-      pilotOnly,
-      module: { pilotOnly },
-      teacher: {
+      User: {
         role: "TEACHER",
         ...getScopeFilter(scope, scopeId),
       },
@@ -75,12 +73,12 @@ export async function getTrainingSummary({
     select: {
       moduleId: true,
       status: true,
-      teacherId: true,
+      teacherUserId: true,
     },
   });
 
   const teacherSet = new Set<string>();
-  for (const row of progress) teacherSet.add(row.teacherId);
+  for (const row of progress) teacherSet.add(row.teacherUserId);
 
   const perModule = new Map<string, TrainingModuleBreakdown>();
   for (const mod of moduleList) {
@@ -100,8 +98,8 @@ export async function getTrainingSummary({
     const entry = perModule.get(row.moduleId);
     if (!entry) continue;
     entry.total += 1;
-    if (row.status === "COMPLETED") entry.completed += 1;
-    else if (row.status === "IN_PROGRESS") entry.inProgress += 1;
+    if (row.status === "complete") entry.completed += 1;
+    else if (row.status === "in_progress") entry.inProgress += 1;
     else entry.notStarted += 1;
   }
 
