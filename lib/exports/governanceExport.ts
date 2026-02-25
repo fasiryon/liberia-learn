@@ -370,8 +370,8 @@ export async function buildMonthlyReportExport({
   };
 
   const [smsDelivered, smsFailed] = await Promise.all([
-    prisma.smsDeliveryLog.count({ where: { ...smsWhere, status: "delivered" } }),
-    prisma.smsDeliveryLog.count({ where: { ...smsWhere, status: "failed" } }),
+    prisma.sMSDeliveryLog.count({ where: { ...smsWhere, status: "delivered" } }),
+    prisma.sMSDeliveryLog.count({ where: { ...smsWhere, status: "failed" } }),
   ]);
 
   const exportRecords = await prisma.exportRecord.findMany({
