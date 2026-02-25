@@ -38,6 +38,12 @@ export const PERMISSIONS = {
   OPS_FINDINGS_READ: "ops:findings:read",
   OPS_FINDINGS_MANAGE: "ops:findings:manage",
   OPS_AI_EXPLAIN: "ops:ai:explain",
+
+  // ── Performance Dashboards (Block 9) ─────────────────────────────────────
+  /** View the school-level performance dashboard (mastery, tiers, training). */
+  DASHBOARD_SCHOOL_VIEW: "dashboard:school:view",
+  /** View the national aggregate dashboard. Platform admin only. */
+  DASHBOARD_NATIONAL_VIEW: "dashboard:national:view",
 } as const;
 
 export type Permission = (typeof PERMISSIONS)[keyof typeof PERMISSIONS];
@@ -58,6 +64,8 @@ export const ROLE_PERMISSIONS: Record<string, ReadonlySet<Permission>> = {
     PERMISSIONS.OPS_FINDINGS_READ,
     PERMISSIONS.OPS_FINDINGS_MANAGE,
     PERMISSIONS.OPS_AI_EXPLAIN,
+    PERMISSIONS.DASHBOARD_SCHOOL_VIEW,
+    // DASHBOARD_NATIONAL_VIEW is NOT in this set — national view requires isPlatformAdmin
   ]),
   TEACHER: new Set<Permission>([]),
   STUDENT: new Set<Permission>([]),

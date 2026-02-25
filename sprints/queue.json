@@ -1,0 +1,76 @@
+﻿{
+    "blocks":  [
+                   {
+                       "id":  "block-5",
+                       "status":  "todo",
+                       "bodyFile":  "docs\\pr-bodies\\block-5-ops-intelligence.md",
+                       "branch":  "block-5-ops-intelligence",
+                       "promptFile":  "prompts\\block-5-ops-intelligence.txt",
+                       "title":  "Block 5: Ops Intelligence (Self-Healing A+B)",
+                       "adrStubFile":  "docs\\adr\\_stubs\\block-5-ops-intelligence-adr.md"
+                   },
+                   {
+                       "id":  "block-7a",
+                       "status":  "todo",
+                       "bodyFile":  "docs\\pr-bodies\\block-7a-performance-core.md",
+                       "branch":  "block-7a-performance-core",
+                       "promptFile":  "prompts\\block-7a-performance-core.txt",
+                       "title":  "Block 7A: Performance Engine Core (Schema + Mastery Core)",
+                       "adrStubFile":  "docs\\adr\\_stubs\\block-7a-performance-core-adr.md"
+                   },
+                   {
+                       "id":  "block-7b",
+                       "status":  "todo",
+                       "bodyFile":  "docs\\pr-bodies\\block-7b-adaptive-baseline.md",
+                       "branch":  "block-7b-adaptive-baseline",
+                       "promptFile":  "prompts\\block-7b-adaptive-baseline.txt",
+                       "title":  "Block 7B: Adaptive Baseline (C) + Baseline Capture",
+                       "adrStubFile":  "docs\\adr\\_stubs\\block-7b-adaptive-baseline-adr.md"
+                   },
+                   {
+                       "id":  "block-8",
+                       "status":  "todo",
+                       "bodyFile":  "docs\\pr-bodies\\block-8-hybrid-reporting.md",
+                       "branch":  "block-8-hybrid-reporting",
+                       "promptFile":  "prompts\\block-8-hybrid-reporting.txt",
+                       "title":  "Block 8: Hybrid Monthly Reporting",
+                       "adrStubFile":  "docs\\adr\\_stubs\\block-8-hybrid-reporting-adr.md"
+                   },
+                   {
+                       "id":  "block-6",
+                       "status":  "todo",
+                       "bodyFile":  "docs\\pr-bodies\\block-6-moe-governance.md",
+                       "branch":  "block-6-moe-governance",
+                       "promptFile":  "prompts\\block-6-moe-governance.txt",
+                       "title":  "Block 6: MOE Governance \u0026 National Controls",
+                       "adrStubFile":  "docs\\adr\\_stubs\\block-6-moe-governance-adr.md"
+                   },
+                   {
+                       "id":  "block-9",
+                       "status":  "todo",
+                       "bodyFile":  "docs\\pr-bodies\\block-9-ai-stabilization.md",
+                       "branch":  "block-9-ai-stabilization",
+                       "promptFile":  "prompts\\block-9-ai-stabilization.txt",
+                       "title":  "Block 9: AI Stabilization Layer (Tutor + Teacher Assist)",
+                       "adrStubFile":  "docs\\adr\\_stubs\\block-9-ai-stabilization-adr.md"
+                   },
+                   {
+                       "id":  "block-10",
+                       "status":  "todo",
+                       "bodyFile":  "docs\\pr-bodies\\block-10-national-scale.md",
+                       "branch":  "block-10-national-scale",
+                       "promptFile":  "prompts\\block-10-national-scale.txt",
+                       "title":  "Block 10: National Scale Infrastructure",
+                       "adrStubFile":  "docs\\adr\\_stubs\\block-10-national-scale-adr.md"
+                   },
+                   {
+                       "id":  "block-11",
+                       "status":  "todo",
+                       "bodyFile":  "docs\\pr-bodies\\block-11-labs3d.md",
+                       "branch":  "block-11-labs3d",
+                       "promptFile":  "prompts\\block-11-labs3d.txt",
+                       "title":  "Block 11: Labs3D Engine (Measured STEM)",
+                       "adrStubFile":  "docs\\adr\\_stubs\\block-11-labs3d-adr.md"
+                   }
+               ]
+}

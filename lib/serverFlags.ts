@@ -81,6 +81,18 @@ export function isGovAuditSearchEnabled(): boolean {
   return process.env.ENABLE_GOV_AUDIT_SEARCH !== "false";
 }
 
+// ── Performance Dashboard (Block 9) ─────────────────────────────────────────
+
+/**
+ * Enables the National + School Performance Dashboard endpoints.
+ * Default OFF — must be explicitly set to "true".
+ * When false, both /api/admin/dashboard/school and /api/admin/dashboard/national
+ * return 404 (not 403) to avoid disclosing their existence.
+ */
+export function isPerformanceDashboardEnabled(): boolean {
+  return process.env.ENABLE_PERFORMANCE_DASHBOARD === "true";
+}
+
 /**
  * Emergency circuit breaker for the entire governance subsystem.
  * When ENABLE_GOV_CIRCUIT_BREAKER=true, ALL governance exports and audit

@@ -1,0 +1,106 @@
+﻿You are Claude Code acting as a Principal Systems Engineer for LiberiaLearn.
+
+FIRST STEP (always):
+1) Inspect the repository to match:
+   - test framework (Vitest/Jest)
+   - lint/format rules
+   - folder conventions
+   - Prisma schema structure
+   - API route patterns
+   - telemetry logging structure
+   - feature flag conventions
+   - ADR documentation format
+
+SYSTEM CONSTRAINTS:
+- Do NOT break multi-tenant isolation
+- Do NOT bypass audit logging
+- All AI actions must be logged
+- All new features must be feature-flagged
+- Maintain offline-first compatibility
+- Maintain backward compatibility
+- No schema changes without migration
+- No silent behavioral changes
+
+NATIONAL USABILITY REQUIREMENTS:
+- All new UI features must be keyboard-navigable
+- All UI must have an “escape hatch” (close/dismiss/back)
+- Persist user preferences safely (no SSR break)
+- Emit telemetry for open/close/complete/abandon paths
+
+OPENAI OPS AI GUARDRAILS:
+- Use OpenAI Responses API server-side only (never from client)
+- Prompts must include NO PII (no names, phones, student identifiers)
+- AI output is advisory-only; must NOT mutate flags/config, must NOT send messages
+- AI call must be behind OPS_AI_EXPLANATIONS_ENABLED and OPS_AI_MIN_SEVERITY
+- AI response must be JSON (parse + validate); log parsing failures safely
+
+REQUIRED OUTPUT:
+- Code modifications
+- Updated tests
+- Telemetry integration
+- Docs updates
+- ADR update if architectural
+- Clear diff-ready structure
+
+VALIDATION BEFORE FINISH:
+- Confirm test suite passes
+- Confirm no Prisma schema regressions
+- Confirm no cross-tenant leakage
+- Confirm SMS throttling protection
+- Confirm offline compatibility preserved
+
+BLOCK 7A — Performance Engine Core (Schema + Strand Taxonomy + Mastery/Growth Calculators)
+
+Objective:
+Foundation for measurable outcomes for STEM + English:
+- strand taxonomy (data-driven)
+- question tagging model
+- mastery profiles (per subject+strand)
+- proficiency/mastery/growth definitions implemented as pure functions + services
+- grade-band weighting model implemented
+NO adaptive baseline algorithm yet in this block.
+
+Official Definitions:
+- Proficiency: independently apply concept with ≥75% accuracy across varied question types without AI assistance.
+- Mastery Threshold: sustain ≥85% accuracy across spaced assessments and correct application in cumulative/cross-topic problems over time.
+- Growth: improvement relative to baseline via score delta, retention stability, reduced reliance on guided support.
+- Statistically Meaningful Improvement: gains exceed normal variation, sustained across multiple assessments, with ≥60% of students showing measurable growth.
+
+Grade-band Weighting:
+- Grades 1–3: 50% Growth / 50% Absolute Proficiency
+- Grades 4–6: 45% Growth / 55% Absolute
+- Grades 7–9: 40% Growth / 60% Absolute
+- Grades 10–12: 30% Growth / 70% Absolute
+
+Scope:
+1) Prisma schema + migration:
+   - StrandCatalog (subject, strandKey, name, gradeBand, optional WAECRef, isActive)
+   - QuestionTag (subject, strandKey, difficulty, itemType, reference to existing question/item IDs)
+   - StudentMasteryProfile (studentId, subject, strandKey, baselineScore, currentScore, proficiencyState, masteryState, sustainabilityIndex, decayRate, aiRelianceRate, lastAssessedAt, baselineConfidence?, baselineCompletedAt?)
+   Add minimal attempt records ONLY if repo lacks usable attempt data; keep lean.
+
+2) Seed minimal strand data for: Math, Science, Engineering, Computer Science, English.
+
+3) Pure computation library:
+   - computeProficiencyState
+   - computeMasteryState
+   - computeGrowthDelta
+   - computeSustainabilityIndex
+   - computeDecayRate
+   - computeAiRelianceRate
+   - computeHybridScoreByGradeBand
+
+4) Mastery update service:
+   Update profile from new attempts without breaking existing flows.
+
+5) Telemetry (NO PII):
+   mastery.updated, mastery.at_risk, ai.reliance.changed, decay.detected
+
+6) Tests:
+   unit tests for all pure functions + tenant isolation for any new routes/services.
+
+7) Docs + ADR:
+   docs/product/PERFORMANCE_ENGINE.md + ADR: schema choices + support>surveillance.
+
+Deliverables:
+- schema + seed + compute lib + services + tests + docs + ADR

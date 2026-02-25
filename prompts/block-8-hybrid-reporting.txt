@@ -1,0 +1,91 @@
+﻿You are Claude Code acting as a Principal Systems Engineer for LiberiaLearn.
+
+FIRST STEP (always):
+1) Inspect the repository to match:
+   - test framework (Vitest/Jest)
+   - lint/format rules
+   - folder conventions
+   - Prisma schema structure
+   - API route patterns
+   - telemetry logging structure
+   - feature flag conventions
+   - ADR documentation format
+
+SYSTEM CONSTRAINTS:
+- Do NOT break multi-tenant isolation
+- Do NOT bypass audit logging
+- All AI actions must be logged
+- All new features must be feature-flagged
+- Maintain offline-first compatibility
+- Maintain backward compatibility
+- No schema changes without migration
+- No silent behavioral changes
+
+NATIONAL USABILITY REQUIREMENTS:
+- All new UI features must be keyboard-navigable
+- All UI must have an “escape hatch” (close/dismiss/back)
+- Persist user preferences safely (no SSR break)
+- Emit telemetry for open/close/complete/abandon paths
+
+OPENAI OPS AI GUARDRAILS:
+- Use OpenAI Responses API server-side only (never from client)
+- Prompts must include NO PII (no names, phones, student identifiers)
+- AI output is advisory-only; must NOT mutate flags/config, must NOT send messages
+- AI call must be behind OPS_AI_EXPLANATIONS_ENABLED and OPS_AI_MIN_SEVERITY
+- AI response must be JSON (parse + validate); log parsing failures safely
+
+REQUIRED OUTPUT:
+- Code modifications
+- Updated tests
+- Telemetry integration
+- Docs updates
+- ADR update if architectural
+- Clear diff-ready structure
+
+VALIDATION BEFORE FINISH:
+- Confirm test suite passes
+- Confirm no Prisma schema regressions
+- Confirm no cross-tenant leakage
+- Confirm SMS throttling protection
+- Confirm offline compatibility preserved
+
+BLOCK 8 — Hybrid Reporting Layer (Monthly, Class/School/National)
+
+Objective:
+Auto-generate monthly performance reports proving outcomes:
+- Proficiency Rate
+- Mastery Rate
+- Avg Growth Delta
+- Sustainability Index
+- AI Reliance Trend
+Internal performance tiers (A–D) for intervention only.
+
+Scope:
+1) Monthly aggregation by student/class/school/national (role-gated).
+2) Internal tiers:
+   A High Proficiency+High Growth
+   B High Growth, Low Baseline
+   C Low Growth, Low Proficiency
+   D High Baseline, Stagnant Growth
+   Never public ranking.
+
+3) Report generator:
+   - JSON artifacts
+   - PDF optional only if existing infra; otherwise feature-flag stub
+   - store report records; retrieval endpoints.
+
+4) Monthly run:
+   - safe manual trigger + scheduled hook scaffold
+   - idempotent.
+
+5) Telemetry:
+   report.generated, report.failed, report.exported
+
+6) Tests:
+   aggregation correctness, tier logic, access controls, idempotency
+
+7) Docs + ADR:
+   docs/product/MONTHLY_REPORTS.md + ADR: no public ranking; public = system averages only.
+
+Deliverables:
+- aggregation + storage + retrieval + triggers + tests + docs + ADR

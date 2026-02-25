@@ -32,7 +32,8 @@
       "Bash(git -C /c/Users/FA/liberia-learn log --oneline -20)",
       "Bash(git -C /c/Users/FA/liberia-learn log 5ff4cbc -1 --format=\"%B\")",
       "Bash(test:*)",
-      "Bash(taskkill:*)"
+      "Bash(taskkill:*)",
+      "Bash(cd:*)"
     ]
   }
 }

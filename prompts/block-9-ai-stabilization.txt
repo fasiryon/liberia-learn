@@ -1,0 +1,97 @@
+﻿You are Claude Code acting as a Principal Systems Engineer for LiberiaLearn.
+
+FIRST STEP (always):
+1) Inspect the repository to match:
+   - test framework (Vitest/Jest)
+   - lint/format rules
+   - folder conventions
+   - Prisma schema structure
+   - API route patterns
+   - telemetry logging structure
+   - feature flag conventions
+   - ADR documentation format
+
+SYSTEM CONSTRAINTS:
+- Do NOT break multi-tenant isolation
+- Do NOT bypass audit logging
+- All AI actions must be logged
+- All new features must be feature-flagged
+- Maintain offline-first compatibility
+- Maintain backward compatibility
+- No schema changes without migration
+- No silent behavioral changes
+
+NATIONAL USABILITY REQUIREMENTS:
+- All new UI features must be keyboard-navigable
+- All UI must have an “escape hatch” (close/dismiss/back)
+- Persist user preferences safely (no SSR break)
+- Emit telemetry for open/close/complete/abandon paths
+
+OPENAI OPS AI GUARDRAILS:
+- Use OpenAI Responses API server-side only (never from client)
+- Prompts must include NO PII (no names, phones, student identifiers)
+- AI output is advisory-only; must NOT mutate flags/config, must NOT send messages
+- AI call must be behind OPS_AI_EXPLANATIONS_ENABLED and OPS_AI_MIN_SEVERITY
+- AI response must be JSON (parse + validate); log parsing failures safely
+
+REQUIRED OUTPUT:
+- Code modifications
+- Updated tests
+- Telemetry integration
+- Docs updates
+- ADR update if architectural
+- Clear diff-ready structure
+
+VALIDATION BEFORE FINISH:
+- Confirm test suite passes
+- Confirm no Prisma schema regressions
+- Confirm no cross-tenant leakage
+- Confirm SMS throttling protection
+- Confirm offline compatibility preserved
+
+BLOCK 9 — AI Stabilization Layer (Teacher-Supported, AI-Augmented)
+
+Objective:
+AI stabilizes instruction quality (not replacement):
+- explain concepts
+- step-by-step tutoring
+- reinforcement exercises
+- instant feedback
+- tied to strand weaknesses from Performance Engine
+No punitive teacher scoring.
+
+Scope:
+1) Student AI Tutor:
+   - context: subject, strand, mastery state
+   - guided explanations + practice generation
+   - log every AI interaction (audit + telemetry)
+   - safe for minors; add guardrails
+
+2) Teacher Support Assistant:
+   - reinforcement suggestions for weak strands
+   - pacing suggestions
+   - supportive language only
+
+3) AI interaction metrics:
+   - usage per strand
+   - correlation with mastery improvement
+
+4) Feature flags + cost controls:
+   AI_TUTOR_ENABLED=false
+   AI_TEACHER_ASSIST_ENABLED=false
+   server-side rate limits and budget caps
+
+5) OpenAI Responses API:
+   - server-side only
+   - NO PII prompts
+   - strict JSON outputs for structured parts
+   - fallback on failure
+
+6) Tests:
+   prompt redaction, flags, fallback, audit logs
+
+7) Docs + ADR:
+   docs/product/AI_TUTOR.md + ADR: AI stabilizer policy.
+
+Deliverables:
+- tutor + teacher assist + metrics + flags + tests + docs + ADR
