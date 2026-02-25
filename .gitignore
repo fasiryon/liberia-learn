@@ -50,6 +50,7 @@ next-env.d.ts
 _patches/
 LL_AUDIT_DUMP*
 *.bak.*
+*.bak_*
 # --- optional: logs/temp ---
 *.log
 
