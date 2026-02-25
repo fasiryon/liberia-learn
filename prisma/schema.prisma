@@ -924,6 +924,31 @@ model TrainingProgress {
   @@index([teacherUserId, status])
 }
 
+model TrendSnapshot {
+  id        String   @id @default(cuid())
+
+  // "school" | "district" | "national"
+  scope     String
+
+  // For school scope: schoolId
+  // For district scope: districtId/region code
+  // For national scope: NULL
+  scopeKey  String?
+
+  // YYYY-MM (monthly) or YYYY-[Q] (quarterly later)
+  bucket    String
+
+  // Aggregated, non-PII, leadership-grade metrics
+  metrics   Json
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([scope, scopeKey, bucket])
+  @@index([bucket, scope])
+  @@index([scope, scopeKey])
+}
+
 /// / ===== Enums =====
 enum Role {
   TEACHER
