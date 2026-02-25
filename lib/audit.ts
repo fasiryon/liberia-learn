@@ -8,6 +8,8 @@ export async function logAudit({
   resourceId,
   details,
   ipAddress,
+  traceId,
+  schoolId,
 }: {
   userId?: string | null;
   action: string;
@@ -15,6 +17,10 @@ export async function logAudit({
   resourceId?: string;
   details?: Record<string, unknown>;
   ipAddress?: string;
+  /** Block 6: request-correlation trace ID. Pass randomUUID() at route entry. */
+  traceId?: string | null;
+  /** Block 6: tenant school ID for tenant-scoped audit queries. */
+  schoolId?: string | null;
 }) {
   try {
     await prisma.auditLog.create({
@@ -25,6 +31,8 @@ export async function logAudit({
         resourceId: resourceId ?? null,
         details: (details as any) ?? undefined,
         ipAddress: ipAddress ?? null,
+        traceId: traceId ?? null,
+        schoolId: schoolId ?? null,
       },
     });
   } catch (err) {

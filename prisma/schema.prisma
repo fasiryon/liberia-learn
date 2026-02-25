@@ -395,12 +395,14 @@ model AuditLog {
   resourceId   String?
   resourceType String?
   schoolId     String?
+  traceId      String?  // Block 6: request-correlation trace ID
   School       School?  @relation(fields: [schoolId], references: [id])
   user         User?    @relation(fields: [userId], references: [id])
 
   @@index([resourceType, resourceId])
   @@index([userId, createdAt])
   @@index([schoolId, action, createdAt])
+  @@index([traceId])
 }
 
 model TrainingModule {

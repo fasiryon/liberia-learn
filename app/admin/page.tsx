@@ -22,6 +22,8 @@ const BASE_NAV_LINKS = [
   { label: "Pilot Score", href: "/admin/pilot-score" },
   { label: "Onboarding", href: "/admin/onboarding" },
   { label: "Audit Log", href: "/admin/audit" },
+  { label: "Compliance", href: "/admin/compliance" },
+  { label: "Data Downloads", href: "/admin/governance/exports" },
   { label: "Seed Demo Data", href: "/admin/seed" },
   { label: "Schools", href: "/admin/schools" },
 ];
@@ -130,6 +132,8 @@ export default async function AdminConsolePage() {
     ...(TRAINING_ENABLED
       ? [{ label: "Training Adoption", href: "/admin/training/adoption", bg: "bg-teal-500" }]
       : []),
+    { label: "Compliance", href: "/admin/compliance", bg: "bg-orange-500" },
+    { label: "Data Downloads", href: "/admin/governance/exports", bg: "bg-fuchsia-600" },
   ];
 
   return (

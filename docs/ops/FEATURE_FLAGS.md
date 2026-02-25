@@ -94,3 +94,75 @@ They remain active regardless of the flag to support tooling and future CLI scri
 ## Pilot-Only Data Isolation
 
 All SMS delivery logs, guardian consents, metric events, and export records carry a `pilotOnly` boolean (`true` by default). This isolates pilot-phase data from future production records and enables clean post-pilot analytics segmentation.
+
+---
+
+## MOE Governance (Block 6)
+
+Controls the compliance audit log search, data export routes, and national aggregates.
+
+### Circuit Breaker Policy
+
+The governance circuit breaker is a single kill switch for the entire governance
+subsystem. When tripped, ALL governance exports and audit log search return `503`.
+
+**When to trip:** During a security incident where you suspect governance features
+may expose data inappropriately. Trip immediately, investigate, then clear.
+
+```
+ENABLE_GOV_CIRCUIT_BREAKER=true   # Trip — disable ALL governance features
+ENABLE_GOV_CIRCUIT_BREAKER=false  # Clear — re-enable governance features
+```
+
+The circuit breaker overrides all individual governance flags.
+
+### Runtime-Safe Flags (Governance)
+
+All governance flags are server-side only (no `NEXT_PUBLIC_` prefix).
+They are read at call-time, making them safe to change without a server restart
+in environments that support live environment variable updates.
+
+| Environment Variable | Type | Default | Description |
+|---------------------|------|---------|-------------|
+| `ENABLE_GOV_CIRCUIT_BREAKER` | boolean | `false` | **Emergency kill switch.** Disables all governance features instantly. Set to `"true"` during incidents. |
+| `ENABLE_GOV_EXPORTS` | boolean | `true` | Master switch for all governance export routes (student performance, class summary, monthly report). Set `"false"` to disable all. |
+| `ENABLE_GOV_NATIONAL_EXPORT` | boolean | `true` | Allows platform admins to request national-scope exports. Set `"false"` to restrict to school-scope only. |
+| `ENABLE_GOV_AUDIT_SEARCH` | boolean | `true` | Enables audit log search and CSV download at `/admin/compliance`. |
+| `ENABLE_GOV_STUDENT_PII_EXPORT` | boolean | `false` | **Safe default OFF.** Allows PII fields in exports. Must be explicitly `"true"`. Requires platform-admin role. |
+
+### Operational Runbook for Governance Flags
+
+**Disable all governance exports (incident response):**
+```bash
+ENABLE_GOV_CIRCUIT_BREAKER=true
+```
+
+**Disable only national exports (data concern):**
+```bash
+ENABLE_GOV_NATIONAL_EXPORT=false
+```
+
+**Enable PII exports (requires MOE authorization):**
+```bash
+ENABLE_GOV_STUDENT_PII_EXPORT=true  # Only after institutional approval
+```
+
+**Telemetry events (all server-side, no PII):**
+- `gov.export.generated` — counter, scoped to school or national
+- `gov.export.failed` — error counter (future)
+
+**Related ADR:** [ADR-0008 — MOE Governance Controls](../adr/0008-moe-governance-controls.md)
+
+---
+
+## OPS AI Explanations (Block 5)
+
+Controls the AI-powered ops findings explanation endpoint.
+
+| Environment Variable | Type | Default | Description |
+|---------------------|------|---------|-------------|
+| `OPS_AI_EXPLANATIONS_ENABLED` | boolean | `false` | Enables the AI explanation endpoint. Default OFF. |
+| `OPS_AI_MIN_SEVERITY` | string | `warn` | Minimum finding severity for AI explanations (`info`, `warn`, `critical`). |
+| `OPENAI_API_KEY` | string | — | Required when OPS AI is enabled. Never commit this value. |
+
+**Related ADR:** [ADR-0007 — Ops Agent Recommend-Only](../adr/0007-ops-agent-recommend-only.md)
