@@ -23,6 +23,9 @@
  *   - Evidence submission rate uses StudentMasteryProfile presence as proxy.
  *     Block 10 will use AttemptLog when that table is live in production.
  *   - Active students uses StudentMasteryProfile.lastAssessedAt (30d window).
+ *   - monthlyReportCompletionRate uses ExportRecord as a proxy (no MonthlyReport
+ *     table exists yet). Rate = monthly_report exports / all school-scope exports.
+ *     Block 10 will introduce a dedicated submission-tracking table.
  */
 
 import { prisma } from "@/lib/db";
@@ -167,15 +170,20 @@ export async function computeSchoolDashboard(
       where: { schoolId, role: "TEACHER" },
       select: { id: true },
     }),
-    prisma.monthlyReport.count({
+    // Monthly report completion proxy: ExportRecord tracks every generated
+    // monthly report export. "Completed" = exportType "monthly_report" was
+    // generated. "Total" = all school-scope exports in period.
+    // Block 10: replace with a dedicated MonthlyReportRecord table that tracks
+    // submission status independently of export generation.
+    prisma.exportRecord.count({
       where: {
+        exportType: "monthly_report",
         scope: "school",
         scopeId: schoolId,
-        status: "completed",
         createdAt: { gte: threeMonthsAgo },
       },
     }),
-    prisma.monthlyReport.count({
+    prisma.exportRecord.count({
       where: {
         scope: "school",
         scopeId: schoolId,
@@ -279,14 +287,15 @@ export async function computeNationalDashboard(): Promise<DashboardMetrics> {
       by: ["teacherUserId"],
       where: { status: { in: ["in_progress", "complete"] } },
     }),
-    prisma.monthlyReport.count({
+    // Same proxy as school scope: monthly_report exports / all school-scope exports.
+    prisma.exportRecord.count({
       where: {
+        exportType: "monthly_report",
         scope: "school",
-        status: "completed",
         createdAt: { gte: threeMonthsAgo },
       },
     }),
-    prisma.monthlyReport.count({
+    prisma.exportRecord.count({
       where: {
         scope: "school",
         createdAt: { gte: threeMonthsAgo },
