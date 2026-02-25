@@ -38,6 +38,13 @@ export const PERMISSIONS = {
   OPS_FINDINGS_READ: "ops:findings:read",
   OPS_FINDINGS_MANAGE: "ops:findings:manage",
   OPS_AI_EXPLAIN: "ops:ai:explain",
+
+  // ── Impact Analytics (Block 12A) ──────────────────────────────────────────
+  /** View school-level impact dashboard (proficiency/mastery/growth metrics). */
+  DASHBOARD_SCHOOL_IMPACT: "dashboard:school:impact",
+  /** View school-level intervention alerts (class aggregates only, no student IDs). */
+  DASHBOARD_SCHOOL_INTERVENTIONS: "dashboard:school:interventions",
+  // National impact: platform admin only — enforced via requirePlatformAdmin(), no separate permission.
 } as const;
 
 export type Permission = (typeof PERMISSIONS)[keyof typeof PERMISSIONS];
@@ -58,6 +65,9 @@ export const ROLE_PERMISSIONS: Record<string, ReadonlySet<Permission>> = {
     PERMISSIONS.OPS_FINDINGS_READ,
     PERMISSIONS.OPS_FINDINGS_MANAGE,
     PERMISSIONS.OPS_AI_EXPLAIN,
+    // Block 12
+    PERMISSIONS.DASHBOARD_SCHOOL_IMPACT,
+    PERMISSIONS.DASHBOARD_SCHOOL_INTERVENTIONS,
   ]),
   TEACHER: new Set<Permission>([]),
   STUDENT: new Set<Permission>([]),
