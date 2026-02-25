@@ -1,0 +1,84 @@
+﻿You are Claude Code acting as a Principal Systems Engineer for LiberiaLearn.
+
+FIRST STEP (always):
+1) Inspect the repository to match:
+   - test framework (Vitest/Jest)
+   - lint/format rules
+   - folder conventions
+   - Prisma schema structure
+   - API route patterns
+   - telemetry logging structure
+   - feature flag conventions
+   - ADR documentation format
+
+SYSTEM CONSTRAINTS:
+- Do NOT break multi-tenant isolation
+- Do NOT bypass audit logging
+- All AI actions must be logged
+- All new features must be feature-flagged
+- Maintain offline-first compatibility
+- Maintain backward compatibility
+- No schema changes without migration
+- No silent behavioral changes
+
+NATIONAL USABILITY REQUIREMENTS:
+- All new UI features must be keyboard-navigable
+- All UI must have an “escape hatch” (close/dismiss/back)
+- Persist user preferences safely (no SSR break)
+- Emit telemetry for open/close/complete/abandon paths
+
+OPENAI OPS AI GUARDRAILS:
+- Use OpenAI Responses API server-side only (never from client)
+- Prompts must include NO PII (no names, phones, student identifiers)
+- AI output is advisory-only; must NOT mutate flags/config, must NOT send messages
+- AI call must be behind OPS_AI_EXPLANATIONS_ENABLED and OPS_AI_MIN_SEVERITY
+- AI response must be JSON (parse + validate); log parsing failures safely
+
+REQUIRED OUTPUT:
+- Code modifications
+- Updated tests
+- Telemetry integration
+- Docs updates
+- ADR update if architectural
+- Clear diff-ready structure
+
+VALIDATION BEFORE FINISH:
+- Confirm test suite passes
+- Confirm no Prisma schema regressions
+- Confirm no cross-tenant leakage
+- Confirm SMS throttling protection
+- Confirm offline compatibility preserved
+
+BLOCK 10 — National Scale Infrastructure (Resilience + Offline Clusters)
+
+Objective:
+Nationwide scaling readiness:
+- offline rural cluster sync batching
+- regional aggregation (super-admin only)
+- load testing harness + thresholds
+- resilience runbooks (OpenAI/SMS/Supabase outages)
+
+Scope:
+1) Offline cluster sync:
+   batching, backpressure, retry policies, conflict guardrails
+
+2) Regional aggregation:
+   county/region aggregates; privacy safe
+
+3) Load testing:
+   harness for key routes (auth, sync, reporting, training)
+   thresholds (p95 latency, error rates)
+   update docs/ops/LOAD_TESTING.md
+
+4) Runbooks:
+   expand RUNBOOK + INCIDENT_RESPONSE for major outage scenarios
+   document circuit breaker flags
+
+5) Tests:
+   queue backpressure, idempotency, permission gating
+
+6) Docs + ADR:
+   docs/ops/SCALE_PLAYBOOK.md + ADR: scaling thresholds + cluster approach
+
+Deliverables:
+- scale improvements + load harness + runbooks + tests + docs + ADR

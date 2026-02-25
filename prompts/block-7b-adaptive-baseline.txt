@@ -1,0 +1,97 @@
+﻿You are Claude Code acting as a Principal Systems Engineer for LiberiaLearn.
+
+FIRST STEP (always):
+1) Inspect the repository to match:
+   - test framework (Vitest/Jest)
+   - lint/format rules
+   - folder conventions
+   - Prisma schema structure
+   - API route patterns
+   - telemetry logging structure
+   - feature flag conventions
+   - ADR documentation format
+
+SYSTEM CONSTRAINTS:
+- Do NOT break multi-tenant isolation
+- Do NOT bypass audit logging
+- All AI actions must be logged
+- All new features must be feature-flagged
+- Maintain offline-first compatibility
+- Maintain backward compatibility
+- No schema changes without migration
+- No silent behavioral changes
+
+NATIONAL USABILITY REQUIREMENTS:
+- All new UI features must be keyboard-navigable
+- All UI must have an “escape hatch” (close/dismiss/back)
+- Persist user preferences safely (no SSR break)
+- Emit telemetry for open/close/complete/abandon paths
+
+OPENAI OPS AI GUARDRAILS:
+- Use OpenAI Responses API server-side only (never from client)
+- Prompts must include NO PII (no names, phones, student identifiers)
+- AI output is advisory-only; must NOT mutate flags/config, must NOT send messages
+- AI call must be behind OPS_AI_EXPLANATIONS_ENABLED and OPS_AI_MIN_SEVERITY
+- AI response must be JSON (parse + validate); log parsing failures safely
+
+REQUIRED OUTPUT:
+- Code modifications
+- Updated tests
+- Telemetry integration
+- Docs updates
+- ADR update if architectural
+- Clear diff-ready structure
+
+VALIDATION BEFORE FINISH:
+- Confirm test suite passes
+- Confirm no Prisma schema regressions
+- Confirm no cross-tenant leakage
+- Confirm SMS throttling protection
+- Confirm offline compatibility preserved
+
+BLOCK 7B — Adaptive Baseline (C) + Baseline Capture + Integration Hooks (STEM + English)
+
+Objective:
+Implement deterministic adaptive baseline capture:
+- adjusts difficulty dynamically
+- ensures strand coverage per subject
+- produces baseline per strand + overall baseline
+- stores baseline confidence
+Integrate with Block 7A mastery profiles.
+
+Scope:
+1) Adaptive baseline algorithm (generic):
+   - start medium difficulty
+   - adjust up/down per correctness
+   - enforce strand coverage (configurable N strands)
+   - stop on max items OR confidence threshold
+   - output baseline per strand + overall + confidence
+
+2) Baseline APIs (or reuse repo patterns):
+   - start, answer, complete
+   Offline-friendly and idempotent.
+
+3) Item selection integration:
+   - Use question tags (subject/strand/difficulty/itemType)
+   - Deterministically choose next item based on adaptive state.
+
+4) Persistence:
+   - store baselineScore and baselineConfidence + completedAt
+   - do not overwrite baseline unless explicitly reset (admin-guarded).
+
+5) Telemetry (NO PII):
+   baseline.started, baseline.question_served, baseline.completed, baseline.abandoned
+
+6) Minimal UI hooks (feature-flagged):
+   NEXT_PUBLIC_ENABLE_BASELINE_ASSESSMENTS default off.
+   Student sees “Start baseline” CTA with escape hatch.
+
+7) Tests:
+   adaptive difficulty adjustment, strand coverage, idempotency, tenant isolation, SSR safety.
+
+8) Docs + ADR:
+   Update PERFORMANCE_ENGINE.md baseline section.
+   ADR: deterministic adaptive baseline + confidence computation.
+
+Deliverables:
+- adaptive baseline engine + APIs + persistence + minimal UI + tests + docs + ADR

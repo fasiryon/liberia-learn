@@ -1,0 +1,114 @@
+﻿You are Claude Code acting as a Principal Systems Engineer for LiberiaLearn.
+
+FIRST STEP (always):
+1) Inspect the repository to match:
+   - test framework (Vitest/Jest)
+   - lint/format rules
+   - folder conventions
+   - Prisma schema structure
+   - API route patterns
+   - telemetry logging structure
+   - feature flag conventions
+   - ADR documentation format
+
+SYSTEM CONSTRAINTS:
+- Do NOT break multi-tenant isolation
+- Do NOT bypass audit logging
+- All AI actions must be logged
+- All new features must be feature-flagged
+- Maintain offline-first compatibility
+- Maintain backward compatibility
+- No schema changes without migration
+- No silent behavioral changes
+
+NATIONAL USABILITY REQUIREMENTS:
+- All new UI features must be keyboard-navigable
+- All UI must have an “escape hatch” (close/dismiss/back)
+- Persist user preferences safely (no SSR break)
+- Emit telemetry for open/close/complete/abandon paths
+
+OPENAI OPS AI GUARDRAILS:
+- Use OpenAI Responses API server-side only (never from client)
+- Prompts must include NO PII (no names, phones, student identifiers)
+- AI output is advisory-only; must NOT mutate flags/config, must NOT send messages
+- AI call must be behind OPS_AI_EXPLANATIONS_ENABLED and OPS_AI_MIN_SEVERITY
+- AI response must be JSON (parse + validate); log parsing failures safely
+
+REQUIRED OUTPUT:
+- Code modifications
+- Updated tests
+- Telemetry integration
+- Docs updates
+- ADR update if architectural
+- Clear diff-ready structure
+
+VALIDATION BEFORE FINISH:
+- Confirm test suite passes
+- Confirm no Prisma schema regressions
+- Confirm no cross-tenant leakage
+- Confirm SMS throttling protection
+- Confirm offline compatibility preserved
+
+BLOCK 5 — Ops Intelligence (Self-Healing A+B, National)
+
+Objective:
+Implement a safe self-healing system where:
+(A) deterministic rules detect issues (authoritative),
+(B) OpenAI generates explanations + remediation plans (advisory only).
+
+Scope:
+1) Telemetry Expansion (NO PII)
+   Ensure events exist + emitted consistently:
+   - onboarding.dismissed (stepIndex)
+   - onboarding.reopened
+   - training.module_abandoned (moduleId)
+   - training.level_abandoned (level)
+   - offline.sync_conflict_detected
+   - offline.queue_deadlettered
+   - sms.failed_rate_computed (rate, windowHours)
+   Standardize event envelope: name, severity, actorRole, schoolId/global, windowHours.
+   Add tests asserting PII keys absent.
+
+2) Ops Aggregates
+   Extend ops metrics to compute:
+   - onboarding completion + abandon rates
+   - training completion (L1/L2/L3) + abandon rates
+   - SMS failure rate + throttled count
+   - offline conflicts + deadletters
+   Admin-only; tenant-safe.
+
+3) Deterministic Findings Engine (A)
+   Build rules-based detector that reads aggregates + emits OpsFindings:
+   - severity: info|warn|critical
+   - category: sms|onboarding|training|offline|auth
+   - signalKey, windowHours
+   - baseline/current/deltaPct
+   - recommendedActions + recommendedFlags (JSON), but DO NOT apply changes
+   Store findings with status: open|ack|resolved.
+   Include starter rules for spikes/drops. Add tests for triggers and tenant scoping.
+
+4) OpenAI Explanations (B) — advisory only
+   Admin-only endpoint: generate explanation for a finding.
+   - Use OpenAI Responses API server-side
+   - Input: ONLY safe finding JSON + aggregate context (NO PII)
+   - Output must be valid JSON:
+     { summary, hypotheses[], checklist[], monitor_next[] }
+   Store explanation linked to findingId.
+   Feature flags:
+     OPS_AI_EXPLANATIONS_ENABLED=false by default
+     OPS_AI_MIN_SEVERITY=warn by default
+   Add a prompt-redaction helper that whitelists allowed keys.
+   Tests: flag off, severity below, JSON invalid handling, PII redaction.
+
+5) Admin UI
+   Admin page: findings list + filters, detail view, actions ack/resolve/generate explanation.
+
+6) Docs + ADR
+   Update docs/ops/SELF_HEALING_OPS_AGENT.md and docs/architecture/TELEMETRY_OBSERVABILITY.md.
+   Add ADR: Ops Agent recommend-only; AI advisory and no-PII policy.
+
+Constraints:
+- No autonomous remediations.
+- AI explanations manual action only (no auto-explain by default).
+Deliverables:
+- telemetry + aggregates + findings + AI explain + UI + tests + docs + ADR
