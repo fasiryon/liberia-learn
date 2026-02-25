@@ -65,7 +65,7 @@ export default function GuardianDashboard() {
         <div>
           <h1 className="text-2xl font-bold text-slate-50">Guardian Dashboard</h1>
           <p className="text-sm text-slate-400 mt-1">
-            Monitor your child's learning progress.
+            Monitor your child&apos;s learning progress.
           </p>
         </div>
 

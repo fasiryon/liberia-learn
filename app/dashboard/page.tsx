@@ -84,7 +84,7 @@ export default async function DashboardPage() {
           <div className="max-w-md w-full text-center space-y-4">
             <h1 className="text-xl font-semibold">No student profile found</h1>
             <p className="text-sm text-slate-400">
-              You're signed in but there is no matching student row.
+              You&apos;re signed in but there is no matching student row.
             </p>
             <p className="text-xs text-slate-500">
               Demo login:{" "}
@@ -366,7 +366,7 @@ export default async function DashboardPage() {
               {/* Today's schedule */}
               <div className="rounded-2xl border border-slate-800 bg-slate-900/80 p-4">
                 <p className="text-[11px] uppercase tracking-wide text-slate-400">
-                  Today's schedule
+                  Today&apos;s schedule
                 </p>
 
                 <div className="mt-3 space-y-2 text-xs text-slate-300">

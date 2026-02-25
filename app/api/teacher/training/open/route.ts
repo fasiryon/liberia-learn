@@ -28,8 +28,8 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "moduleId is required" }, { status: 400 });
     }
 
-    const module = getModuleById(moduleId);
-    if (!module) {
+    const trainingModule = getModuleById(moduleId);
+    if (!trainingModule) {
       return NextResponse.json({ error: "Module not found" }, { status: 404 });
     }
 
@@ -37,7 +37,7 @@ export async function POST(req: NextRequest) {
 
     await recordMetricEvent(
       "training.module_opened",
-      { moduleId, level: module.level },
+      { moduleId, level: trainingModule.level },
       {
         scope: "school",
         scopeId: user.schoolId ?? null,
