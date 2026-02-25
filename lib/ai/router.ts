@@ -4,8 +4,7 @@ import OpenAI from "openai";
 let _groq: any = null;
 function getGroq() {
   if (!_groq) {
-    // eslint-disable-next-line @typescript-eslint/no-require-imports
-    const Groq = require("groq-sdk").default ?? require("groq-sdk");
+    const Groq = require("groq-sdk").default ?? require("groq-sdk"); // eslint-disable-line
     _groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
   }
   return _groq;

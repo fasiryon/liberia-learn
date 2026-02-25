@@ -158,7 +158,7 @@ export default function PlacementTestPage() {
               Recommended grade: <span className="font-bold">Not set yet</span>
             </p>
             <p className="text-sm text-slate-400">
-              You haven't taken a placement test yet. Click the button below to
+              You haven&apos;t taken a placement test yet. Click the button below to
               start your adaptive test.
             </p>
           </div>
@@ -168,7 +168,7 @@ export default function PlacementTestPage() {
               Start Test
             </h2>
             <p className="text-slate-300 mb-4">
-              We'll begin with easier questions and adjust difficulty based on
+              We&apos;ll begin with easier questions and adjust difficulty based on
               your answers. It takes about 10 questions.
             </p>
             <button

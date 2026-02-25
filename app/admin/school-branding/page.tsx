@@ -88,7 +88,7 @@ export default function SchoolBrandingPage() {
           </Link>
           <h1 className="text-2xl font-bold mt-2">School Branding</h1>
           <p className="text-sm text-slate-400 mt-1">
-            Customize your school's colors, logo, and messaging.
+            Customize your school&apos;s colors, logo, and messaging.
           </p>
         </div>
 

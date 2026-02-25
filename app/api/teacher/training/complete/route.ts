@@ -31,8 +31,8 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "moduleId is required" }, { status: 400 });
     }
 
-    const module = getModuleById(moduleId);
-    if (!module) {
+    const trainingModule = getModuleById(moduleId);
+    if (!trainingModule) {
       return NextResponse.json({ error: "Module not found" }, { status: 404 });
     }
 
@@ -48,26 +48,26 @@ export async function POST(req: NextRequest) {
 
     // Snapshot level state BEFORE completing this module
     const progressBefore = await getTeacherProgress(user.id);
-    const levelWasComplete = isLevelComplete(module.level, progressBefore);
+    const levelWasComplete = isLevelComplete(trainingModule.level, progressBefore);
 
     // Persist completion
     await markModuleComplete(user.id, moduleId);
 
     // Snapshot AFTER
     const progressAfter = await getTeacherProgress(user.id);
-    const levelNowComplete = isLevelComplete(module.level, progressAfter);
+    const levelNowComplete = isLevelComplete(trainingModule.level, progressAfter);
     const levelJustCompleted = !levelWasComplete && levelNowComplete;
 
     const badges = computeEarnedBadges(progressAfter);
 
     // Telemetry
-    await recordMetricEvent("training.module_completed", { moduleId, level: module.level }, metricScope);
+    await recordMetricEvent("training.module_completed", { moduleId, level: trainingModule.level }, metricScope);
 
     if (levelJustCompleted) {
-      await recordMetricEvent("training.level_completed", { level: module.level }, metricScope);
+      await recordMetricEvent("training.level_completed", { level: trainingModule.level }, metricScope);
       await recordMetricEvent(
         "training.badge_awarded",
-        { badgeName: LEVEL_BADGES[module.level].name, level: module.level },
+        { badgeName: LEVEL_BADGES[trainingModule.level].name, level: trainingModule.level },
         metricScope
       );
     }

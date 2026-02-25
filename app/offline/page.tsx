@@ -7,7 +7,7 @@ export default function OfflinePage() {
         <div className="text-5xl" aria-hidden="true">
           📶
         </div>
-        <h1 className="text-xl font-bold text-slate-50">You're offline</h1>
+        <h1 className="text-xl font-bold text-slate-50">You&apos;re offline</h1>
         <p className="text-sm text-slate-400 leading-relaxed">
           Your work has been saved and will sync when you reconnect.
         </p>
