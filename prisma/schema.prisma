@@ -946,6 +946,40 @@ model AiInteractionLog {
   @@index([schoolId, timestamp])
 }
 
+/// / ===== Block 12A: Impact Snapshots =====
+
+/// Persisted rollup of impact computation results for a tenant/period.
+/// Append-only — each computation stores a new row if ENABLE_IMPACT_SNAPSHOTS=true.
+/// No student identifiers — aggregates only.
+/// Query the latest row per (tenantId, schoolId, classId, period) for dashboards.
+model ImpactSnapshot {
+  id                      String   @id @default(cuid())
+  /// School that owns this snapshot (tenant boundary).
+  tenantId                String
+  /// NULL when snapshot covers the full school.
+  schoolId                String?
+  /// NULL when snapshot is school-scoped (not class-scoped).
+  classId                 String?
+  /// YYYY-MM format — corresponds to the `to` bound of the periodRange.
+  period                  String
+  proficiencyRate         Float
+  avgMasteryScore         Float
+  masteryDelta            Float
+  growthDelta             Float
+  /// Cohen's d effect size. NULL when insufficient data.
+  effectSize              Float?
+  statisticallyMeaningful Boolean
+  /// "low" | "medium" | "high"
+  confidenceLabel         String
+  sampleSize              Int      @default(0)
+  generatedAt             DateTime @default(now())
+
+  @@index([tenantId, period])
+  @@index([schoolId, period])
+  @@index([classId, period])
+  @@index([generatedAt])
+}
+
 /// / ===== Enums =====
 enum Role {
   TEACHER
