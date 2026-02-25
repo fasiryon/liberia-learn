@@ -24,7 +24,7 @@ const mockMasteryProfileFindMany      = vi.hoisted(() => vi.fn());
 const mockUserFindMany                = vi.hoisted(() => vi.fn());
 const mockUserCount                   = vi.hoisted(() => vi.fn());
 const mockTrainingProgressGroupBy     = vi.hoisted(() => vi.fn());
-const mockMonthlyReportCount          = vi.hoisted(() => vi.fn());
+const mockExportRecordCount           = vi.hoisted(() => vi.fn());
 
 vi.mock("@/lib/db", () => ({
   prisma: {
@@ -42,8 +42,8 @@ vi.mock("@/lib/db", () => ({
     trainingProgress: {
       groupBy: mockTrainingProgressGroupBy,
     },
-    monthlyReport: {
-      count: mockMonthlyReportCount,
+    exportRecord: {
+      count: mockExportRecordCount,
     },
   },
 }));
@@ -114,7 +114,7 @@ function setupSchoolMocks({
     .mockResolvedValueOnce(activeProfiles)
     .mockResolvedValueOnce(profiledStudents);
   mockUserFindMany.mockResolvedValue(teachers);
-  mockMonthlyReportCount
+  mockExportRecordCount
     .mockResolvedValueOnce(completedReports)
     .mockResolvedValueOnce(totalReports);
   mockTrainingProgressGroupBy.mockResolvedValue(teachersWithProgress);
@@ -332,7 +332,7 @@ describe("computeNationalDashboard — aggregates across all schools", () => {
       .mockResolvedValueOnce(profiledStudents); // students with any evidence
     mockUserCount.mockResolvedValue(totalTeachers);
     mockTrainingProgressGroupBy.mockResolvedValue(teachersWithProgress);
-    mockMonthlyReportCount
+    mockExportRecordCount
       .mockResolvedValueOnce(completedReports)
       .mockResolvedValueOnce(totalReports);
   }
