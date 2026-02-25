@@ -92,3 +92,46 @@ export function isGovAuditSearchEnabled(): boolean {
 export function isGovCircuitBreakerTripped(): boolean {
   return process.env.ENABLE_GOV_CIRCUIT_BREAKER === "true";
 }
+
+// ── AI Stabilization Flags (Block 10) ────────────────────────────────────────
+
+/**
+ * Student AI Tutor endpoint. DEFAULT OFF — must be explicitly enabled.
+ * Set AI_TUTOR_ENABLED=true to activate.
+ * When false, POST /api/student/tutor returns 404.
+ */
+export function isAiTutorEnabled(): boolean {
+  return process.env.AI_TUTOR_ENABLED === "true";
+}
+
+/**
+ * Teacher Support Assistant endpoint. DEFAULT OFF.
+ * Set AI_TEACHER_ASSIST_ENABLED=true to activate.
+ * When false, POST /api/teacher/assist returns 404.
+ */
+export function isAiTeacherAssistEnabled(): boolean {
+  return process.env.AI_TEACHER_ASSIST_ENABLED === "true";
+}
+
+/** Max AI tutor calls per authenticated user per day. Default 20. */
+export function getAiTutorDailyLimit(): number {
+  const raw = parseInt(process.env.AI_TUTOR_DAILY_LIMIT ?? "20", 10);
+  return Number.isFinite(raw) && raw > 0 ? raw : 20;
+}
+
+/** Max teacher assist calls per teacher per day. Default 50. */
+export function getAiTeacherAssistDailyLimit(): number {
+  const raw = parseInt(process.env.AI_TEACHER_ASSIST_DAILY_LIMIT ?? "50", 10);
+  return Number.isFinite(raw) && raw > 0 ? raw : 50;
+}
+
+/**
+ * Monthly AI spend cap in USD. Default $100.
+ * When cumulative estimatedCostUSD in AiInteractionLog for the current
+ * calendar month reaches this value, all AI endpoints return 503 gracefully.
+ * At 80% of cap an ai.budget.warning metric event is emitted.
+ */
+export function getAiBudgetMonthlyCap(): number {
+  const raw = parseFloat(process.env.AI_BUDGET_MONTHLY_CAP_USD ?? "100");
+  return Number.isFinite(raw) && raw > 0 ? raw : 100;
+}

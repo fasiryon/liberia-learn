@@ -924,6 +924,28 @@ model TrainingProgress {
   @@index([teacherUserId, status])
 }
 
+/// Aggregate AI interaction log. No studentId — no PII.
+/// One row per AI call (tutor or teacher assist).
+/// Used for: cost tracking, fallback rate, correlation with mastery.
+model AiInteractionLog {
+  id               String   @id @default(cuid())
+  /// School that the call originated from (null = national/unknown)
+  schoolId         String?
+  subject          String
+  strandKey        String
+  /// "explain" | "practice" | "step_by_step" | "reinforce" | "teacher_assist"
+  requestType      String
+  /// "light" | "moderate" | "intensive" | null (teacher_assist)
+  guidanceLevel    String?
+  hadFallback      Boolean  @default(false)
+  estimatedCostUSD Float    @default(0)
+  timestamp        DateTime @default(now())
+
+  @@index([timestamp])
+  @@index([subject, strandKey])
+  @@index([schoolId, timestamp])
+}
+
 /// / ===== Enums =====
 enum Role {
   TEACHER
