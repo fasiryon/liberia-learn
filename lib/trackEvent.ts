@@ -26,6 +26,11 @@ export const EVENTS = {
   TRAINING_MODULE_COMPLETED: "training.module_completed",
   TRAINING_LEVEL_COMPLETED: "training.level_completed",
   TRAINING_BADGE_AWARDED: "training.badge_awarded",
+  // MOE Governance telemetry (Block 6) — NO PII in payloads
+  GOV_COMPLIANCE_PAGE_OPENED: "gov.compliance_page.opened",
+  GOV_AUDIT_LOG_SEARCHED: "gov.audit_log.searched",
+  GOV_EXPORT_PAGE_OPENED: "gov.export_page.opened",
+  GOV_EXPORT_DOWNLOAD_CLICKED: "gov.export.download_clicked",
 } as const;
 
 export type EventType = (typeof EVENTS)[keyof typeof EVENTS];
