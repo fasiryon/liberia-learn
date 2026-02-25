@@ -125,6 +125,49 @@ export function getAiTeacherAssistDailyLimit(): number {
   return Number.isFinite(raw) && raw > 0 ? raw : 50;
 }
 
+// ── Block 12: Impact & Workflow Intelligence Flags ────────────────────────────
+
+/**
+ * Master switch for impact analytics dashboard routes (school + national).
+ * DEFAULT OFF. When false, all impact dashboard routes return 404.
+ */
+export function isImpactAnalyticsEnabled(): boolean {
+  return process.env.ENABLE_IMPACT_ANALYTICS === "true";
+}
+
+/**
+ * Enables persistent ImpactSnapshot storage after each impact computation.
+ * DEFAULT OFF. When false, impact is computed on-the-fly only (no DB write).
+ * When true, each GET /impact call stores a snapshot row for historical trend use.
+ */
+export function isImpactSnapshotsEnabled(): boolean {
+  return process.env.ENABLE_IMPACT_SNAPSHOTS === "true";
+}
+
+/**
+ * AI-powered tutor guidance embedded in assignment context (teacher-facing).
+ * DEFAULT OFF. When false, POST /api/teacher/assignment/tutor returns 404.
+ */
+export function isAssignmentTutorEnabled(): boolean {
+  return process.env.ENABLE_ASSIGNMENT_TUTOR === "true";
+}
+
+/**
+ * AI-assisted grading feedback loop (teacher-facing, advisory only).
+ * DEFAULT OFF. When false, POST /api/teacher/grading/assist returns 404.
+ */
+export function isAiGradingAssistEnabled(): boolean {
+  return process.env.ENABLE_AI_GRADING_ASSIST === "true";
+}
+
+/**
+ * Class-level intervention alert engine (aggregate signals, no student IDs).
+ * DEFAULT OFF. When false, GET /api/admin/dashboard/school/interventions returns 404.
+ */
+export function isInterventionAlertsEnabled(): boolean {
+  return process.env.ENABLE_INTERVENTION_ALERTS === "true";
+}
+
 /**
  * Monthly AI spend cap in USD. Default $100.
  * When cumulative estimatedCostUSD in AiInteractionLog for the current
