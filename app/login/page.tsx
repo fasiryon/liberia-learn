@@ -1,4 +1,4 @@
-// app/login/page.tsx
+﻿// app/login/page.tsx
 "use client";
 
 import Link from "next/link";
@@ -44,9 +44,24 @@ export default function LoginPage() {
     }
   }, []);
 
-  const [role, setRole] = useState<"student" | "teacher" | "admin">("student");
+  
+  // AUTO-FILL DEMO ACCOUNTS (role -> default email/password)
+  useEffect(() => {
+    const defaults: Record<string, { email: string; password: string }> = {
+      student:  { email: "student@school.lr",  password: "Password123" },
+      teacher:  { email: "teacher@school.lr",  password: "Password123" },
+      admin:    { email: "admin@school.lr",    password: "Password123" },
+      guardian: { email: "guardian@mcs.edu.lr", password: "Password123" },
+    };
+    const d = defaults[role];
+    if (d) {
+      setEmail(d.email);
+      setPassword(d.password);
+    }
+  }, [role]);
+const [role, setRole] = useState<"student" | "teacher" | "admin" | "guardian">("student");
   const [email, setEmail] = useState("student@school.lr");
-  const [password, setPassword] = useState("password123");
+  const [password, setPassword] = useState("Password123");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
@@ -98,14 +113,14 @@ export default function LoginPage() {
           <p className="mt-1 text-[11px] text-slate-500">
             Demo account:{" "}
             <span className="font-mono">
-              student@school.lr / password123
+              student@school.lr / Password123
             </span>
           </p>
         </div>
 
         {/* Role selector */}
         <div className="grid grid-cols-3 gap-2 text-xs">
-          {(["student", "teacher", "admin"] as const).map((option) => (
+          {(["student", "teacher", "admin", "guardian"] as const).map((option) => (
             <button
               key={option}
               type="button"
@@ -150,7 +165,7 @@ export default function LoginPage() {
               required
               type="password"
               className="w-full rounded-xl border border-slate-700 bg-slate-900/70 px-3 py-2 text-sm text-slate-50 outline-none placeholder:text-slate-500 focus:border-emerald-400 focus:ring-1 focus:ring-emerald-400/60"
-              placeholder="••••••••"
+              placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               autoComplete="current-password"
@@ -190,3 +205,6 @@ export default function LoginPage() {
     </main>
   );
 }
+
+
+
