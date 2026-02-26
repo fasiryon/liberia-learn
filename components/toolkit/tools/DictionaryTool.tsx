@@ -27,7 +27,7 @@ const BASE_WORDS: Entry[] = [
 
 const WORDS: Entry[] = [
   ...BASE_WORDS,
-  ...Array.from({ length: 520 }, (_, idx) => ({
+  ...Array.from({ length: 520 }, (_, idx): Entry => ({
     word: `word-${idx + 1}`,
     partOfSpeech: idx % 2 === 0 ? "noun" : "verb",
     definition: `Bundled classroom vocabulary entry ${idx + 1}.`,
@@ -78,3 +78,4 @@ export default function DictionaryTool({ onClose }: DictionaryToolProps) {
     </div>
   );
 }
+
