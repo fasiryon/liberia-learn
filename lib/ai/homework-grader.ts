@@ -20,6 +20,39 @@ export type GradingResult = {
   questions: QuestionFeedback[];
 };
 
+function scrubPII(value: unknown): unknown {
+  if (typeof value === "string") {
+    let s = value;
+    s = s.replace(
+      /\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}\b/gi,
+      "[REDACTED_EMAIL]"
+    );
+    s = s.replace(
+      /\b(?:\+?\d[\d\s\-().]{7,}\d)\b/g,
+      "[REDACTED_PHONE]"
+    );
+    s = s.replace(
+      /\b[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\b/gi,
+      "[REDACTED_ID]"
+    );
+    s = s.replace(/\bstudent\s*id\b/gi, "student");
+    s = s.replace(/\buser\s*id\b/gi, "user");
+    s = s.replace(/\bid\s*:\s*[A-Za-z0-9-]{6,}\b/g, "id: [REDACTED_ID]");
+    return s;
+  }
+  if (Array.isArray(value)) {
+    return value.map((v) => scrubPII(v));
+  }
+  if (value && typeof value === "object") {
+    const out: Record<string, unknown> = {};
+    for (const [k, v] of Object.entries(value as Record<string, unknown>)) {
+      out[k] = scrubPII(v);
+    }
+    return out;
+  }
+  return value;
+}
+
 async function getOrCreateGraderAgent() {
   const name = "HomeworkGrader";
 
@@ -92,8 +125,6 @@ const started = Date.now();try {
         );
       }
 
-      const student = submission.Student;
-
       const questions = (homework.questions as any[]) ?? [];
       const answers = (submission.answers as any[]) ?? [];
 
@@ -109,6 +140,7 @@ const started = Date.now();try {
           answers,
         },
       };
+      const scrubbedPayload = scrubPII(payload);
 
       // Ask the model to grade
       const completion = await openai.chat.completions.create({
@@ -138,7 +170,7 @@ const started = Date.now();try {
 }`,
               "",
               "Important: Return ONLY JSON. No backticks, no explanation, no prose. Here is the data:",
-              JSON.stringify(payload, null, 2),
+              JSON.stringify(scrubbedPayload, null, 2),
             ].join("\n"),
           },
         ],
