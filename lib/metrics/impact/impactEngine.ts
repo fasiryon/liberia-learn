@@ -1,5 +1,5 @@
-/**
- * lib/metrics/impact/impactEngine.ts — Block 12A: Proficiency + Growth Engine
+﻿/**
+ * lib/metrics/impact/impactEngine.ts â€” Block 12A: Proficiency + Growth Engine
  *
  * Computes defensible impact metrics from StudentMasteryProfile aggregates.
  *
@@ -20,6 +20,7 @@
 
 import { createHash } from "crypto";
 import { prisma } from "@/lib/db";
+import type { Prisma } from "@prisma/client";
 import {
   mean,
   computeEffectSize,
@@ -28,14 +29,14 @@ import {
   type ConfidenceLabel,
 } from "./statRules";
 
-// ─── Types ─────────────────────────────────────────────────────────────────────
+// â”€â”€â”€ Types â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 export type ImpactInput = {
   /** School ID of the requesting tenant. All queries are hard-scoped to this. */
   tenantId: string;
   /** Optional additional school filter (for platform admin multi-school views). */
   schoolId?: string | null;
-  /** Optional class filter — must belong to tenantId school. */
+  /** Optional class filter â€” must belong to tenantId school. */
   classId?: string | null;
   /** Inclusive period range in YYYY-MM format. */
   periodRange: { from: string; to: string };
@@ -55,13 +56,13 @@ export type TeacherEffectBucket = {
 };
 
 export type ImpactResult = {
-  /** Fraction of profiles at PROFICIENT state (0–1). */
+  /** Fraction of profiles at PROFICIENT state (0â€“1). */
   proficiencyRate: number;
-  /** Mean current mastery score across profiles (0–1). */
+  /** Mean current mastery score across profiles (0â€“1). */
   avgMasteryScore: number;
-  /** Mean(currentScore) − Mean(baselineScore) across profiles (−1 to +1). */
+  /** Mean(currentScore) âˆ’ Mean(baselineScore) across profiles (âˆ’1 to +1). */
   masteryDelta: number;
-  /** Mean per-profile growth delta: mean(currentScore − baselineScore). */
+  /** Mean per-profile growth delta: mean(currentScore âˆ’ baselineScore). */
   growthDelta: number;
   /** Cohen's d between baseline and current score distributions. Null if insufficient data. */
   effectSize: number | null;
@@ -73,12 +74,12 @@ export type ImpactResult = {
   sampleSize: number;
   /**
    * Teacher-level effect signals. Only populated when scope is school (not class).
-   * Uses hashed IDs — no raw teacherIds. Null when class-scoped or no class data.
+   * Uses hashed IDs â€” no raw teacherIds. Null when class-scoped or no class data.
    */
   teacherEffectSignals: TeacherEffectBucket[] | null;
 };
 
-// ─── YYYY-MM helpers ───────────────────────────────────────────────────────────
+// â”€â”€â”€ YYYY-MM helpers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 function parseMonthStart(yyyyMm: string): Date {
   const [y, m] = yyyyMm.split("-").map(Number);
@@ -95,7 +96,7 @@ export function isValidPeriod(s: string): boolean {
   return /^\d{4}-(0[1-9]|1[0-2])$/.test(s);
 }
 
-// ─── One-way teacher ID hashing ────────────────────────────────────────────────
+// â”€â”€â”€ One-way teacher ID hashing â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 function hashTeacherId(teacherId: string, tenantSalt: string): string {
   return createHash("sha256")
@@ -104,13 +105,13 @@ function hashTeacherId(teacherId: string, tenantSalt: string): string {
     .slice(0, 16);
 }
 
-// ─── Prisma query builder ─────────────────────────────────────────────────────
+// â”€â”€â”€ Prisma query builder â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 function buildWhere(
   input: ImpactInput,
   periodStart: Date,
   periodEnd: Date
-): Record<string, unknown> {
+): Prisma.StudentMasteryProfileWhereInput {
   const periodFilter = {
     lastAssessedAt: { gte: periodStart, lte: periodEnd },
   };
@@ -140,21 +141,32 @@ function buildWhere(
   };
 }
 
-// ─── Profile type (matches Prisma select shape) ────────────────────────────────
+// â”€â”€â”€ Profile type (matches Prisma select shape) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
-type RawProfile = {
-  baselineScore: number;
-  currentScore: number;
-  proficiencyState: string;
-  masteryState: string;
-  student: {
-    enrollments: Array<{
-      Class: { teacherId: string | null };
-    }>;
+type RawProfile = Prisma.StudentMasteryProfileGetPayload<{
+  select: {
+    baselineScore: true;
+    currentScore: true;
+    proficiencyState: true;
+    masteryState: true;
+    student: {
+      select: {
+        id: true;
+        enrollments: {
+          select: {
+            Class: {
+              select: {
+                teacherId: true;
+              };
+            };
+          };
+        };
+      };
+    };
   };
-};
+}>;
 
-// ─── Teacher effect computation (pure) ────────────────────────────────────────
+// â”€â”€â”€ Teacher effect computation (pure) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 function computeTeacherEffectSignals(
   profiles: RawProfile[],
@@ -183,11 +195,11 @@ function computeTeacherEffectSignals(
     });
   }
 
-  // Sort by delta DESC (most improvement first). Hashed IDs — not a ranking.
+  // Sort by delta DESC (most improvement first). Hashed IDs â€” not a ranking.
   return buckets.sort((a, b) => b.delta - a.delta);
 }
 
-// ─── Helpers ──────────────────────────────────────────────────────────────────
+// â”€â”€â”€ Helpers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 function round4(v: number): number {
   return Math.round(v * 10_000) / 10_000;
@@ -207,12 +219,12 @@ function emptyResult(): ImpactResult {
   };
 }
 
-// ─── Public API ───────────────────────────────────────────────────────────────
+// â”€â”€â”€ Public API â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 /**
  * Computes aggregate impact metrics for a tenant/school/class over a period.
  *
- * Deterministic: same inputs + same DB state → same output.
+ * Deterministic: same inputs + same DB state â†’ same output.
  * Tenant-safe: all queries are hard-scoped to tenantId.
  * PII-free: no student or teacher identifiers in the result.
  */
@@ -222,23 +234,24 @@ export async function computeImpact(input: ImpactInput): Promise<ImpactResult> {
   const where = buildWhere(input, periodStart, periodEnd);
 
   const profiles: RawProfile[] = await prisma.studentMasteryProfile.findMany({
-    where: where as any,
-    select: {
-      baselineScore: true,
-      currentScore: true,
-      proficiencyState: true,
-      masteryState: true,
-      student: {
-        select: {
-          enrollments: {
-            select: {
-              Class: { select: { teacherId: true } },
-            },
+  where,
+  select: {
+    baselineScore: true,
+    currentScore: true,
+    proficiencyState: true,
+    masteryState: true,
+    student: {
+      select: {
+        id: true,
+        enrollments: {
+          select: {
+            Class: { select: { teacherId: true } },
           },
         },
       },
     },
-  } as any);
+  },
+});
 
   const sampleSize = profiles.length;
   if (sampleSize === 0) return emptyResult();
@@ -280,7 +293,7 @@ export async function computeImpact(input: ImpactInput): Promise<ImpactResult> {
 }
 
 /**
- * National aggregate — queries ALL tenants without school filter.
+ * National aggregate â€” queries ALL tenants without school filter.
  * No teacher signals returned (cross-tenant correlation is not meaningful).
  * Platform-admin only; enforced by the calling route.
  */
@@ -290,27 +303,30 @@ export async function computeNationalImpact(input: {
   const periodStart = parseMonthStart(input.periodRange.from);
   const periodEnd = parseMonthEnd(input.periodRange.to);
 
-  const profiles = await prisma.studentMasteryProfile.findMany({
+  const profiles: Prisma.StudentMasteryProfileGetPayload<{
+    select: {
+      baselineScore: true;
+      currentScore: true;
+      proficiencyState: true;
+    };
+  }>[] = await prisma.studentMasteryProfile.findMany({
     where: {
       lastAssessedAt: { gte: periodStart, lte: periodEnd },
-    } as any,
+    },
     select: {
       baselineScore: true,
       currentScore: true,
       proficiencyState: true,
     },
-  } as any);
+  });
 
-  const sampleSize = (profiles as any[]).length;
+  const sampleSize = profiles.length;
   if (sampleSize === 0) {
-    return { ...emptyResult(), teacherEffectSignals: undefined } as any;
+    const { teacherEffectSignals: _unused, ...rest } = emptyResult();
+    return rest;
   }
 
-  const p = profiles as Array<{
-    baselineScore: number;
-    currentScore: number;
-    proficiencyState: string;
-  }>;
+  const p = profiles;
 
   const currentScores = p.map((x) => x.currentScore);
   const baselineScores = p.map((x) => x.baselineScore);
@@ -341,3 +357,6 @@ export async function computeNationalImpact(input: {
     sampleSize,
   };
 }
+
+
+
