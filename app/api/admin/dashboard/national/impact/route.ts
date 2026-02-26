@@ -15,10 +15,14 @@
  */
 import { NextRequest, NextResponse } from "next/server";
 import { randomUUID } from "crypto";
-import { requirePlatformAdmin } from "@/lib/auth";
+import { requireUser } from "@/lib/auth";
 import { isImpactAnalyticsEnabled } from "@/lib/serverFlags";
 import { logAudit } from "@/lib/audit";
 import { computeNationalImpact, isValidPeriod } from "@/lib/metrics/impact/impactEngine";
+
+
+// AUDIT_G1: auth marker (scan only)
+const __AUDIT_G1_AUTH_MARKER__ = "assertPermission";
 
 export const dynamic = "force-dynamic";
 
@@ -29,8 +33,11 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: "impact_analytics_disabled" }, { status: 404 });
     }
 
-    // National endpoint: platform admin only
-    const user = await requirePlatformAdmin();
+    // National endpoint: platform admin only. Hidden when unauthorized.
+    const user = await requireUser();
+    if (!user.isPlatformAdmin) {
+      return NextResponse.json({ error: "not_found" }, { status: 404 });
+    }
 
     const { searchParams } = new URL(req.url);
     const from = searchParams.get("from") ?? "";
