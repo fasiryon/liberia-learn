@@ -1,3 +1,19 @@
+// SILENCE_GRADING_ASSIST_LOGS
+// Prevent noisy stderr output during this test file.
+// Vitest provides beforeAll/afterAll globally in this repo.
+const __origConsoleError = console.error;
+const __origConsoleWarn  = console.warn;
+
+beforeAll(() => {
+  console.error = () => {};
+  console.warn  = () => {};
+});
+
+afterAll(() => {
+  console.error = __origConsoleError;
+  console.warn  = __origConsoleWarn;
+});
+
 /**
  * __tests__/workflow.gradingAssist.test.ts — Block 12B
  *
