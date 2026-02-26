@@ -5,7 +5,14 @@ import type { $Enums } from "@prisma/client";
 type GradeBand = $Enums.GradeBand;
 type Subject = $Enums.Subject;
 
-const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY! });
+let _openai: OpenAI | null = null;
+function getOpenAI() {
+  if (_openai) return _openai;
+  const apiKey = process.env.OPENAI_API_KEY;
+  if (!apiKey) return null;
+  _openai = new OpenAI({ apiKey });
+  return _openai;
+}
 
 export function gradeToBand(grade: number): GradeBand {
   if (grade <= 3) return "G1_3";
@@ -141,6 +148,10 @@ export async function alignContentToMOE(
     };
   } else {
     // Fall back to AI
+    const openai = getOpenAI();
+    if (!openai) {
+      throw new Error("OPENAI_API_KEY is not set");
+    }
     const candidateList = candidates
       .map((c) => `${c.code}: ${c.description}`)
       .join("\n");
