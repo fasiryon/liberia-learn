@@ -203,5 +203,40 @@ export function getAiBudgetMonthlyCap(): number {
   return Number.isFinite(raw) && raw > 0 ? raw : 100;
 }
 
+//  Block 21: Classroom Toolkit Flags 
+
+/** Master gate for Classroom Toolkit. DEFAULT OFF. */
+export function isClassroomToolkitEnabled(): boolean {
+  return process.env.ENABLE_CLASSROOM_TOOLKIT === "true";
+}
+
+/** Calculator tools gate. DEFAULT OFF. */
+export function isToolkitCalculatorEnabled(): boolean {
+  return process.env.ENABLE_TOOLKIT_CALCULATOR === "true";
+}
+
+/** Science tools gate. DEFAULT OFF. */
+export function isToolkitScienceToolsEnabled(): boolean {
+  return process.env.ENABLE_TOOLKIT_SCIENCE_TOOLS === "true";
+}
+
+/** Geometry tools gate. DEFAULT OFF. */
+export function isToolkitGeoToolsEnabled(): boolean {
+  return process.env.ENABLE_TOOLKIT_GEO_TOOLS === "true";
+}
+
+/** Timer tool gate. DEFAULT OFF. */
+export function isToolkitTimerEnabled(): boolean {
+  return process.env.ENABLE_TOOLKIT_TIMER === "true";
+}
+
+/**
+ * Longitudinal growth tracking (monthly snapshots).
+ * DEFAULT OFF. When false, growth routes return 404.
+ */
+export function isLongitudinalTrackingEnabled(): boolean {
+  return process.env.ENABLE_LONGITUDINAL_TRACKING === "true";
+}
+
 
 
