@@ -998,6 +998,32 @@ model ImpactSnapshot {
   @@index([generatedAt])
 }
 
+/// / ===== Block 15: Longitudinal Growth Snapshots =====
+///
+/// Monthly per-student mastery snapshots used for teacher class views and
+/// admin aggregate growth summaries.
+/// No PII fields are stored in this table.
+model LongitudinalSnapshot {
+  id             String   @id @default(cuid())
+  tenantId       String
+  schoolId       String
+  studentId      String
+  subject        Subject
+  strandKey      String?
+  periodStart    DateTime
+  periodType     String   @default("monthly")
+  score          Float
+  growthRate     Float    @default(0)
+  classification String
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  @@index([tenantId, schoolId, periodStart])
+  @@index([schoolId, studentId, periodStart])
+  @@index([subject, strandKey, periodStart])
+  @@index([classification, periodStart])
+}
+
 model InterventionLog {
   id                        String   @id @default(cuid())
   tenantId                  String

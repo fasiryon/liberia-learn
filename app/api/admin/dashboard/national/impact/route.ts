@@ -15,7 +15,7 @@
  */
 import { NextRequest, NextResponse } from "next/server";
 import { randomUUID } from "crypto";
-import { requireUser } from "@/lib/auth";
+import { requirePlatformAdmin } from "@/lib/auth";
 import { isImpactAnalyticsEnabled } from "@/lib/serverFlags";
 import { logAudit } from "@/lib/audit";
 import { computeNationalImpact, isValidPeriod } from "@/lib/metrics/impact/impactEngine";
@@ -33,11 +33,7 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: "impact_analytics_disabled" }, { status: 404 });
     }
 
-    // National endpoint: platform admin only. Hidden when unauthorized.
-    const user = await requireUser();
-    if (!user.isPlatformAdmin) {
-      return NextResponse.json({ error: "not_found" }, { status: 404 });
-    }
+    const user = await requirePlatformAdmin();
 
     const { searchParams } = new URL(req.url);
     const from = searchParams.get("from") ?? "";
