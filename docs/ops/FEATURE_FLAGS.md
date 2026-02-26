@@ -166,3 +166,14 @@ Controls the AI-powered ops findings explanation endpoint.
 | `OPENAI_API_KEY` | string | — | Required when OPS AI is enabled. Never commit this value. |
 
 **Related ADR:** [ADR-0007 — Ops Agent Recommend-Only](../adr/0007-ops-agent-recommend-only.md)
+
+---
+
+## Predictive Dropout Risk (Block 16)
+
+Controls access to dropout risk scoring endpoints.
+
+| Environment Variable | Type | Default | Description |
+|---------------------|------|---------|-------------|
+| `ENABLE_DROPOUT_RISK` | boolean | `false` | Master switch for dropout risk scoring routes. When false, risk endpoints return 404. |
+| `AI_DROPOUT_RISK_ENABLED` | boolean | `false` | Optional AI augmentation for dropout risk (advisory only). Requires explicit audit + telemetry if used. |
