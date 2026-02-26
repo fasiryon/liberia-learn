@@ -1,24 +1,24 @@
-/**
- * lib/serverFlags.ts — Server-side-only runtime flags
+﻿/**
+ * lib/serverFlags.ts  Server-side-only runtime flags
  *
  * Read at call-time (NOT module load) so tests can mutate process.env
  * between assertions without needing vi.resetModules().
  *
- * NEVER use NEXT_PUBLIC_ prefixes here — those go in lib/featureFlags.ts.
+ * NEVER use NEXT_PUBLIC_ prefixes here  those go in lib/featureFlags.ts.
  * NEVER import this file from client components.
  *
  * See docs/ops/FEATURE_FLAGS.md for the full flag catalogue.
  */
 
-// ── Ops Intelligence Flags (Block 5) ─────────────────────────────────────────
+//  Ops Intelligence Flags (Block 5) 
 
 export const SEVERITY_LEVELS = ["info", "warn", "critical"] as const;
 export type FindingSeverity = (typeof SEVERITY_LEVELS)[number];
 
 /**
  * Returns true if findingSeverity meets or exceeds minSeverity.
- * Unknown values are treated conservatively: unknown finding → info (0),
- * unknown min → warn (1) so nothing fires below warn by default.
+ * Unknown values are treated conservatively: unknown finding  info (0),
+ * unknown min  warn (1) so nothing fires below warn by default.
  */
 export function severityMeetsThreshold(
   findingSeverity: string,
@@ -42,7 +42,7 @@ export function getOpsAiMinSeverity(): FindingSeverity {
     : "warn";
 }
 
-// ── Governance Flags (Block 6) ────────────────────────────────────────────────
+//  Governance Flags (Block 6) 
 
 /**
  * Master switch for all governance export routes (student performance,
@@ -56,7 +56,7 @@ export function isGovExportsEnabled(): boolean {
 
 /**
  * Allows PII fields (e.g. student names) in exports.
- * DEFAULT OFF — safe by default. Must be explicitly set to "true".
+ * DEFAULT OFF  safe by default. Must be explicitly set to "true".
  * Requires platform-admin role AND this flag to export PII.
  */
 export function isGovStudentPiiExportEnabled(): boolean {
@@ -93,10 +93,10 @@ export function isGovCircuitBreakerTripped(): boolean {
   return process.env.ENABLE_GOV_CIRCUIT_BREAKER === "true";
 }
 
-// ── AI Stabilization Flags (Block 10) ────────────────────────────────────────
+//  AI Stabilization Flags (Block 10) 
 
 /**
- * Student AI Tutor endpoint. DEFAULT OFF — must be explicitly enabled.
+ * Student AI Tutor endpoint. DEFAULT OFF  must be explicitly enabled.
  * Set AI_TUTOR_ENABLED=true to activate.
  * When false, POST /api/student/tutor returns 404.
  */
@@ -125,7 +125,7 @@ export function getAiTeacherAssistDailyLimit(): number {
   return Number.isFinite(raw) && raw > 0 ? raw : 50;
 }
 
-// ── Block 12: Impact & Workflow Intelligence Flags ────────────────────────────
+//  Block 12: Impact & Workflow Intelligence Flags 
 
 /**
  * Master switch for impact analytics dashboard routes (school + national).
@@ -169,6 +169,30 @@ export function isInterventionAlertsEnabled(): boolean {
 }
 
 /**
+ * AI interventions recommendation engine (school + district).
+ * DEFAULT OFF. When false, interventions endpoints return 404.
+ */
+export function isAiInterventionsEnabled(): boolean {
+  return process.env.ENABLE_AI_INTERVENTIONS === "true";
+}
+
+/**
+ * Optional AI enhancement for interventions (augment deterministic rules).
+ * DEFAULT OFF. Requires OPENAI_API_KEY at request time.
+ */
+export function isAiInterventionsAiEnhanced(): boolean {
+  return process.env.AI_INTERVENTIONS_AI_ENHANCED === "true";
+}
+
+/**
+ * District intelligence dashboards (district aggregate views).
+ * DEFAULT OFF. When false, district endpoints return 404.
+ */
+export function isDistrictIntelligenceEnabled(): boolean {
+  return process.env.ENABLE_DISTRICT_INTELLIGENCE === "true";
+}
+
+/**
  * Monthly AI spend cap in USD. Default $100.
  * When cumulative estimatedCostUSD in AiInteractionLog for the current
  * calendar month reaches this value, all AI endpoints return 503 gracefully.
@@ -178,3 +202,6 @@ export function getAiBudgetMonthlyCap(): number {
   const raw = parseFloat(process.env.AI_BUDGET_MONTHLY_CAP_USD ?? "100");
   return Number.isFinite(raw) && raw > 0 ? raw : 100;
 }
+
+
+
