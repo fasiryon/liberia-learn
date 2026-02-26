@@ -20,6 +20,7 @@
 
 import { createHash } from "crypto";
 import { prisma } from "@/lib/db";
+import type { Prisma } from "@prisma/client";
 import {
   mean,
   computeEffectSize,
@@ -110,7 +111,7 @@ function buildWhere(
   input: ImpactInput,
   periodStart: Date,
   periodEnd: Date
-): Record<string, unknown> {
+): Prisma.StudentMasteryProfileWhereInput {
   const periodFilter = {
     lastAssessedAt: { gte: periodStart, lte: periodEnd },
   };
@@ -142,17 +143,33 @@ function buildWhere(
 
 // ─── Profile type (matches Prisma select shape) ────────────────────────────────
 
-type RawProfile = {
-  baselineScore: number;
-  currentScore: number;
-  proficiencyState: string;
-  masteryState: string;
-  student: {
-    enrollments: Array<{
-      Class: { teacherId: string | null };
-    }>;
+type RawProfile = Prisma.StudentMasteryProfileGetPayload<{
+  select: {
+    baselineScore: true;
+    currentScore: true;
+    proficiencyState: true;
+    masteryState: true;
+    student: {
+      select: {
+        id: true;
+        user: {
+          select: {
+            schoolId: true;
+          };
+        };
+        enrollments: {
+          select: {
+            Class: {
+              select: {
+                teacherId: true;
+              };
+            };
+          };
+        };
+      };
+    };
   };
-};
+}>;
 
 // ─── Teacher effect computation (pure) ────────────────────────────────────────
 
@@ -222,7 +239,7 @@ export async function computeImpact(input: ImpactInput): Promise<ImpactResult> {
   const where = buildWhere(input, periodStart, periodEnd);
 
   const profiles: RawProfile[] = await prisma.studentMasteryProfile.findMany({
-    where: where as any,
+    where,
     select: {
       baselineScore: true,
       currentScore: true,
@@ -230,6 +247,12 @@ export async function computeImpact(input: ImpactInput): Promise<ImpactResult> {
       masteryState: true,
       student: {
         select: {
+          id: true,
+          user: {
+            select: {
+              schoolId: true,
+            },
+          },
           enrollments: {
             select: {
               Class: { select: { teacherId: true } },
@@ -238,7 +261,7 @@ export async function computeImpact(input: ImpactInput): Promise<ImpactResult> {
         },
       },
     },
-  } as any);
+  });
 
   const sampleSize = profiles.length;
   if (sampleSize === 0) return emptyResult();

@@ -46,6 +46,21 @@ model User {
   school              School?              @relation(fields: [schoolId], references: [id])
 }
 
+model District {
+  id        String   @id @default(cuid())
+  tenantId  String
+  name      String
+  region    String
+  code      String?
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  schools   School[]
+  interventionLogs InterventionLog[]
+
+  @@index([tenantId])
+  @@index([isActive])
+}
+
 model School {
   id                     String                 @id @default(cuid())
   name                   String
@@ -60,6 +75,7 @@ model School {
   contactPhone           String?
   county                 String?
   district               String?
+  districtId             String?
   motto                  String?
   status                 String                 @default("ACTIVE")
   welcomeMsg             String?
@@ -82,6 +98,8 @@ model School {
   guardianConsents       GuardianConsent[]
   smsDeliveryLogs        SMSDeliveryLog[]
   metricEvents           MetricEvent[]
+  District               District?              @relation(fields: [districtId], references: [id])
+  interventionLogs       InterventionLog[]
 }
 
 model Class {
@@ -280,9 +298,9 @@ model Grade {
   @@index([classId, studentId])
 }
 
-/// / ===== Mastery Engine — Block 7A =====
+/// / ===== Mastery Engine  Block 7A =====
 
-/// Strand taxonomy — subject × strand × grade-band catalogue.
+/// Strand taxonomy  subject  strand  grade-band catalogue.
 /// Seeded by prisma/seeds/strand-catalog.ts. WAEC refs are G10-12 only.
 model StrandCatalog {
   id             String                 @id @default(cuid())
@@ -317,7 +335,7 @@ model QuestionTag {
   @@index([practiceItemId])
 }
 
-/// Per-student mastery state for a specific subject × strand.
+/// Per-student mastery state for a specific subject  strand.
 /// Pure-function metrics recomputed on every attempt write.
 /// baselineConfidence and baselineCompletedAt are optional (populated by Block 7B adaptive baseline).
 model StudentMasteryProfile {
@@ -924,7 +942,7 @@ model TrainingProgress {
   @@index([teacherUserId, status])
 }
 
-/// Aggregate AI interaction log. No studentId — no PII.
+/// Aggregate AI interaction log. No studentId  no PII.
 /// One row per AI call (tutor or teacher assist).
 /// Used for: cost tracking, fallback rate, correlation with mastery.
 model AiInteractionLog {
@@ -949,8 +967,8 @@ model AiInteractionLog {
 /// / ===== Block 12A: Impact Snapshots =====
 
 /// Persisted rollup of impact computation results for a tenant/period.
-/// Append-only — each computation stores a new row if ENABLE_IMPACT_SNAPSHOTS=true.
-/// No student identifiers — aggregates only.
+/// Append-only  each computation stores a new row if ENABLE_IMPACT_SNAPSHOTS=true.
+/// No student identifiers  aggregates only.
 /// Query the latest row per (tenantId, schoolId, classId, period) for dashboards.
 model ImpactSnapshot {
   id                      String   @id @default(cuid())
@@ -960,7 +978,7 @@ model ImpactSnapshot {
   schoolId                String?
   /// NULL when snapshot is school-scoped (not class-scoped).
   classId                 String?
-  /// YYYY-MM format — corresponds to the `to` bound of the periodRange.
+  /// YYYY-MM format  corresponds to the `to` bound of the periodRange.
   period                  String
   proficiencyRate         Float
   avgMasteryScore         Float
@@ -980,12 +998,33 @@ model ImpactSnapshot {
   @@index([generatedAt])
 }
 
+model InterventionLog {
+  id                        String   @id @default(cuid())
+  tenantId                  String
+  schoolId                  String
+  districtId                String?
+  interventionPriorityScore Float
+  growthRiskFlag            String
+  recommendedActionCount    Int
+  aiEnhanced                Boolean  @default(false)
+  generatedAt               DateTime @default(now())
+  outcomeCheckedAt          DateTime?
+  outcomeDelta              Float?
+  school                    School   @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+  district                  District? @relation(fields: [districtId], references: [id])
+
+  @@index([tenantId, generatedAt])
+  @@index([schoolId, generatedAt])
+  @@index([districtId, generatedAt])
+}
+
 /// / ===== Enums =====
 enum Role {
   TEACHER
   STUDENT
   GUARDIAN
   ADMIN
+  DISTRICT_ADMIN
 }
 
 enum GradeBand {
@@ -1049,9 +1088,9 @@ enum SMSDeliveryStatus {
   opted_out
 }
 
-/// Block 7A — Mastery Engine enums
+/// Block 7A  Mastery Engine enums
 
-/// Whether a student can independently apply a concept with ≥75% accuracy
+/// Whether a student can independently apply a concept with 75% accuracy
 /// across varied question types without AI assistance.
 enum ProficiencyState {
   NOT_ASSESSED
@@ -1061,7 +1100,7 @@ enum ProficiencyState {
 }
 
 /// Sustained performance state across spaced assessments.
-/// MASTERED requires ≥85% accuracy + high sustainability index.
+/// MASTERED requires 85% accuracy + high sustainability index.
 /// DECAYING indicates prior mastery now declining.
 enum MasteryState {
   NOT_ASSESSED
@@ -1070,3 +1109,5 @@ enum MasteryState {
   MASTERED
   DECAYING
 }
+
+
