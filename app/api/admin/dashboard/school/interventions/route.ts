@@ -1,89 +1,102 @@
-/**
+﻿/**
  * GET /api/admin/dashboard/school/interventions
  *
- * Class-level intervention alerts for a school.
- * Returns class aggregate signals — no student identifiers.
- * No school ranking — alerts are advisory only.
+ * School-level intervention recommendations (aggregate only).
+ * No student identifiers in inputs or outputs.
  *
- * Feature flag : ENABLE_INTERVENTION_ALERTS (default OFF → 404)
- * Auth         : ADMIN role + DASHBOARD_SCHOOL_INTERVENTIONS permission
+ * Feature flag : ENABLE_AI_INTERVENTIONS (default OFF -> 404)
+ * Auth         : ADMIN or DISTRICT_ADMIN + VIEW_SCHOOL_DASHBOARD
+ * Tenant scope : Non-platform admins are hard-scoped to their own schoolId
  *
- * Params:
- *   from=YYYY-MM  (required) period start
- *   to=YYYY-MM    (required) period end
- *   schoolId=<id> (platform admin only; otherwise inferred from session)
- *
- * Audit action : "dashboard.interventions.school.viewed"
+ * Audit action : "interventions.school.viewed"
  */
 import { NextRequest, NextResponse } from "next/server";
 import { randomUUID } from "crypto";
 import { requireRole } from "@/lib/auth";
 import { assertPermission, PERMISSIONS } from "@/lib/permissions";
-import { isInterventionAlertsEnabled } from "@/lib/serverFlags";
+import { isAiInterventionsEnabled, isAiInterventionsAiEnhanced } from "@/lib/serverFlags";
 import { logAudit } from "@/lib/audit";
-import {
-  fetchClassAggregatesForSchool,
-  computeInterventionAlerts,
-  isValidPeriod,
-} from "@/lib/signals/interventions/interventionEngine";
+import { computeRecommendations } from "@/lib/ai/interventions/recommendationEngine";
+import { recordIntervention } from "@/lib/ai/interventions/outcomeTracker";
+import { computeSchoolDashboard } from "@/lib/reporting/dashboard/dashboardAggregator";
+import { computeSchoolTrends } from "@/lib/reporting/trends/trendAggregator";
+import { fetchLatestImpactSnapshot } from "@/lib/metrics/impact/impactSnapshotRepo";
 
 export const dynamic = "force-dynamic";
 
 export async function GET(req: NextRequest) {
   const traceId = randomUUID();
   try {
-    if (!isInterventionAlertsEnabled()) {
-      return NextResponse.json({ error: "intervention_alerts_disabled" }, { status: 404 });
+    if (!isAiInterventionsEnabled()) {
+      return NextResponse.json({ error: "ai_interventions_disabled" }, { status: 404 });
     }
 
-    const user = await requireRole("ADMIN");
-    assertPermission(user, PERMISSIONS.DASHBOARD_SCHOOL_INTERVENTIONS);
+    const user = await requireRole("ADMIN", "DISTRICT_ADMIN");
+    assertPermission(user, PERMISSIONS.VIEW_SCHOOL_DASHBOARD);
 
     const { searchParams } = new URL(req.url);
-    const from = searchParams.get("from") ?? "";
-    const to = searchParams.get("to") ?? "";
+    const requestedSchoolId = searchParams.get("schoolId");
 
-    if (!isValidPeriod(from) || !isValidPeriod(to)) {
-      return NextResponse.json(
-        { error: "from and to must be YYYY-MM format" },
-        { status: 400 }
-      );
+    if (!user.isPlatformAdmin && requestedSchoolId && requestedSchoolId !== user.schoolId) {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
     const effectiveSchoolId = user.isPlatformAdmin
-      ? (searchParams.get("schoolId") ?? user.schoolId ?? null)
+      ? (requestedSchoolId ?? user.schoolId ?? null)
       : (user.schoolId ?? null);
 
     if (!effectiveSchoolId) {
       return NextResponse.json({ error: "schoolId required" }, { status: 400 });
     }
 
-    const classAggregates = await fetchClassAggregatesForSchool(
-      effectiveSchoolId,
-      { from, to }
-    );
-    const alerts = computeInterventionAlerts(classAggregates);
+    const currentMetrics = await computeSchoolDashboard({
+      tenantId: effectiveSchoolId,
+      schoolId: effectiveSchoolId,
+    });
+
+    const trends = await computeSchoolTrends({
+      tenantId: effectiveSchoolId,
+      schoolId: effectiveSchoolId,
+      period: "monthly",
+      lookbackMonths: 6,
+    });
+
+    const impactData = await fetchLatestImpactSnapshot({
+      tenantId: effectiveSchoolId,
+      schoolId: effectiveSchoolId,
+    });
+
+    const result = await computeRecommendations({
+      tenantId: effectiveSchoolId,
+      schoolId: effectiveSchoolId,
+      currentMetrics,
+      trends,
+      impactData,
+    });
+
+    const aiEnhanced = isAiInterventionsAiEnhanced() && !!process.env.OPENAI_API_KEY;
+    void recordIntervention({
+      tenantId: effectiveSchoolId,
+      schoolId: effectiveSchoolId,
+      result,
+      aiEnhanced,
+    });
 
     await logAudit({
       userId: user.id,
-      action: "dashboard.interventions.school.viewed",
-      resourceType: "intervention_alerts",
+      action: "interventions.school.viewed",
+      resourceType: "interventions",
       resourceId: effectiveSchoolId,
-      schoolId: user.schoolId,
+      schoolId: user.schoolId ?? null,
       traceId,
       details: {
-        from,
-        to,
-        classCount: classAggregates.length,
-        alertCount: alerts.length,
+        priorityScore: result.interventionPriorityScore,
+        growthRiskFlag: result.growthRiskFlag,
+        actionCount: result.recommendedActions.length,
       },
     });
 
-    return NextResponse.json({
-      alerts,
-      classCount: classAggregates.length,
-      period: { from, to },
-    });
+    return NextResponse.json(result);
   } catch (err: any) {
     return NextResponse.json(
       { error: err?.message ?? "Server error" },
@@ -91,3 +104,4 @@ export async function GET(req: NextRequest) {
     );
   }
 }
+

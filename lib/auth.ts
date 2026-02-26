@@ -80,7 +80,7 @@ export type SessionUser = {
   id: string;
   email?: string | null;
   name?: string | null;
-  role: "STUDENT" | "TEACHER" | "ADMIN" | "GUARDIAN";
+  role: "STUDENT" | "TEACHER" | "ADMIN" | "GUARDIAN" | "DISTRICT_ADMIN";
   schoolId?: string | null;
   isPlatformAdmin?: boolean;
 };

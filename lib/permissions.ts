@@ -1,5 +1,5 @@
-/**
- * lib/permissions.ts — Permissions Matrix (Block 6)
+﻿/**
+ * lib/permissions.ts  Permissions Matrix (Block 6)
  *
  * Single source of truth for role-based access control.
  * Mirrors docs/governance/PERMISSIONS_MATRIX.md.
@@ -13,13 +13,13 @@
  */
 
 export const PERMISSIONS = {
-  // ── Compliance & Audit ────────────────────────────────────────────────────
+  //  Compliance & Audit 
   /** View the paginated audit log for the admin's school (or all schools for platform admin). */
   COMPLIANCE_AUDIT_READ: "compliance:audit_log:read",
   /** Download the audit log as CSV. */
   COMPLIANCE_AUDIT_EXPORT: "compliance:audit_log:export",
 
-  // ── Data Governance Exports ───────────────────────────────────────────────
+  //  Data Governance Exports 
   /** Export aggregated school-level data (student performance, class summary, monthly report). */
   GOVERNANCE_EXPORT_SCHOOL: "governance:export:school",
   /** Export national-aggregate data across all schools. Platform admin only. */
@@ -27,24 +27,28 @@ export const PERMISSIONS = {
   /** Include PII fields in exports. Platform admin only + ENABLE_GOV_STUDENT_PII_EXPORT flag. */
   GOVERNANCE_EXPORT_PII: "governance:export:pii",
 
-  // ── School Management ──────────────────────────────────────────────────────
+  //  School Management 
   SCHOOL_SETTINGS_WRITE: "school:settings:write",
   SCHOOL_BRANDING_WRITE: "school:branding:write",
 
-  // ── Training ──────────────────────────────────────────────────────────────
+  //  Training 
   TRAINING_ADOPTION_READ: "training:adoption:read",
 
-  // ── Ops Intelligence (Block 5 compat) ─────────────────────────────────────
+  //  Ops Intelligence (Block 5 compat) 
   OPS_FINDINGS_READ: "ops:findings:read",
   OPS_FINDINGS_MANAGE: "ops:findings:manage",
   OPS_AI_EXPLAIN: "ops:ai:explain",
 
-  // ── Impact Analytics (Block 12A) ──────────────────────────────────────────
+  //  Impact Analytics (Block 12A) 
   /** View school-level impact dashboard (proficiency/mastery/growth metrics). */
   DASHBOARD_SCHOOL_IMPACT: "dashboard:school:impact",
   /** View school-level intervention alerts (class aggregates only, no student IDs). */
   DASHBOARD_SCHOOL_INTERVENTIONS: "dashboard:school:interventions",
-  // National impact: platform admin only — enforced via requirePlatformAdmin(), no separate permission.
+  /** View school-level dashboard (aggregate only). */
+  VIEW_SCHOOL_DASHBOARD: "view:school:dashboard",
+  /** View district-level dashboard (aggregate only). */
+  VIEW_DISTRICT_DASHBOARD: "view:district:dashboard",
+  // National impact: platform admin only  enforced via requirePlatformAdmin(), no separate permission.
 } as const;
 
 export type Permission = (typeof PERMISSIONS)[keyof typeof PERMISSIONS];
@@ -68,6 +72,13 @@ export const ROLE_PERMISSIONS: Record<string, ReadonlySet<Permission>> = {
     // Block 12
     PERMISSIONS.DASHBOARD_SCHOOL_IMPACT,
     PERMISSIONS.DASHBOARD_SCHOOL_INTERVENTIONS,
+    PERMISSIONS.VIEW_SCHOOL_DASHBOARD,
+  ]),
+  DISTRICT_ADMIN: new Set<Permission>([
+    PERMISSIONS.DASHBOARD_SCHOOL_IMPACT,
+    PERMISSIONS.DASHBOARD_SCHOOL_INTERVENTIONS,
+    PERMISSIONS.VIEW_SCHOOL_DASHBOARD,
+    PERMISSIONS.VIEW_DISTRICT_DASHBOARD,
   ]),
   TEACHER: new Set<Permission>([]),
   STUDENT: new Set<Permission>([]),
@@ -99,3 +110,5 @@ export function assertPermission(
     throw Object.assign(new Error("Forbidden"), { status: 403 });
   }
 }
+
+
