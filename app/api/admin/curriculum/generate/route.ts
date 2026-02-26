@@ -1,4 +1,4 @@
-// app/api/admin/curriculum/generate/route.ts
+﻿// app/api/admin/curriculum/generate/route.ts
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { requireRole } from "@/lib/auth";
@@ -9,6 +9,13 @@ import { standardizeTone } from "@/lib/localization/tone-standardizer";
 import { logAudit } from "@/lib/audit";
 import { createHash } from "crypto";
 import { slugify, generateLabs, generateTermPlanPayload, generateUnitPlanPayload } from "@/lib/curriculum-helpers";
+function getOpenAI() {
+  const apiKey = process.env.OPENAI_API_KEY;
+  if (!apiKey) return null;
+  const OpenAI = require("openai").default || require("openai");
+  return new OpenAI({ apiKey });
+}
+
 
 // Rate limit: 10 requests per 5 minutes per userId
 const rateLimitMap = new Map<string, { count: number; resetAt: number }>();
@@ -39,6 +46,10 @@ const RequestSchema = z.object({
 
 export async function POST(req: Request) {
   try {
+  const openai = getOpenAI();
+  if (!openai) {
+    return Response.json({ ok: false, hadFallback: true, error: 'AI unavailable (missing OPENAI_API_KEY)' }, { status: 503 });
+  }
     const user = await requireRole("TEACHER", "ADMIN");
 
     if (!checkRateLimit(user.id)) {
@@ -68,7 +79,7 @@ export async function POST(req: Request) {
     } else if (mode === "unit_plan") {
       enrichedPayload = generateUnitPlanPayload(grade, subject, topic);
     } else {
-      // Lesson mode (default) — use AI generation
+      // Lesson mode (default) â€” use AI generation
       const payload = await generateCurriculumPayload({
         grade,
         subject,
