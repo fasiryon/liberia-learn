@@ -2,9 +2,16 @@
 
 Date: 2026-02-26
 Status: Accepted
+Block: 13-14
+Authors: Platform Engineering
 
 ## Context
 LiberiaLearn requires aggregate-only intervention recommendations and district-level intelligence views. The system must remain governance-first: no PII, no cross-district access, and no auto-application of AI guidance.
+
+## Rationale
+- District dashboards introduce a new scope; explicit isolation prevents cross-district leakage.
+- Intervention recommendations must remain advisory to avoid automated changes to student data.
+- Governance-first defaults reduce privacy and policy risk during rollout.
 
 ## Decisions
 1. **Advisory-only recommendations**
@@ -26,3 +33,8 @@ LiberiaLearn requires aggregate-only intervention recommendations and district-l
 - Additional models (`District`, `InterventionLog`) and routes are introduced.
 - Feature flags default OFF to limit exposure until governance reviews are complete.
 - Tests explicitly cover cross-district isolation.
+
+## Rejected Alternatives
+- Make district endpoints a filtered national view. Rejected to avoid accidental cross-scope leakage.
+- Allow AI recommendations to auto-apply. Rejected to preserve human oversight.
+- Require non-null School.districtId immediately. Rejected to avoid breaking legacy data.

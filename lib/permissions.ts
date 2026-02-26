@@ -95,6 +95,9 @@ export function hasPermission(
   permission: Permission
 ): boolean {
   if (user.isPlatformAdmin) return true;
+  if (permission === PERMISSIONS.VIEW_NATIONAL_DASHBOARD) {
+    return false;
+  }
   const perms = ROLE_PERMISSIONS[user.role];
   return perms?.has(permission) ?? false;
 }
