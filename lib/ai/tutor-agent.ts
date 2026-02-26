@@ -2,6 +2,7 @@
 import { prisma } from "@/lib/db";
 import { logger } from "@/lib/logger";
 import { routedCompletion } from "@/lib/ai/router";
+import crypto from "crypto";
 
 const AGENT_ID = "tutor-agent";
 
@@ -33,10 +34,11 @@ export class TutorAgent {
   async chat(userMessage: string): Promise<TutorResponse> {
     const startTime = Date.now();
     let taskId = "";
+    const studentIdHash = this.hashId(this.studentId);
 
     try {
       logger.info("TutorAgent received message", {
-        studentId: this.studentId,
+        studentIdHash,
         grade: this.grade,
         messageLength: userMessage.length,
       });
@@ -65,7 +67,7 @@ export class TutorAgent {
           taskType: "chat_response",
           status: "running",
           input: {
-            studentId: this.studentId,
+            studentIdHash,
             grade: this.grade,
             messageLength: userMessage.length,
           },
@@ -168,7 +170,7 @@ export class TutorAgent {
     } catch (error: any) {
       const duration = Date.now() - startTime;
       logger.error("TutorAgent failed", {
-        studentId: this.studentId,
+        studentIdHash,
         error: error?.message,
       });
 
@@ -247,5 +249,9 @@ Your role:
 - Relate concepts to everyday Liberian life and contexts where helpful (e.g., local markets, geography, culture).
 - If you are unsure, say so honestly.
 - Always be patient, supportive, and culturally aware.`;
+  }
+
+  private hashId(value: string): string {
+    return crypto.createHash("sha256").update(value).digest("hex").slice(0, 8);
   }
 }
