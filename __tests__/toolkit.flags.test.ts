@@ -1,5 +1,13 @@
-import { afterEach, describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { getToolsForContext, type ToolContext } from "@/lib/toolkit/toolRegistry";
+
+vi.mock("@/lib/serverFlags", () => ({
+  isClassroomToolkitEnabled: () => process.env.ENABLE_CLASSROOM_TOOLKIT === "true",
+  isToolkitCalculatorEnabled: () => process.env.ENABLE_TOOLKIT_CALCULATOR === "true",
+  isToolkitScienceToolsEnabled: () => process.env.ENABLE_TOOLKIT_SCIENCE_TOOLS === "true",
+  isToolkitGeoToolsEnabled: () => process.env.ENABLE_TOOLKIT_GEO_TOOLS === "true",
+  isToolkitTimerEnabled: () => process.env.ENABLE_TOOLKIT_TIMER === "true",
+}));
 
 const context: ToolContext = { subject: "math", gradeBand: "7-9", lessonType: "assessment" };
 const enabledCategories = [
