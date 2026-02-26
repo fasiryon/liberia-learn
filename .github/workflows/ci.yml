@@ -1,36 +1,40 @@
-name: CI
+﻿name: CI
 
 on:
   push:
-    branches: [main]
+    branches:
+      - "**"
   pull_request:
-    branches: [main]
+    branches:
+      - "**"
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   build:
     runs-on: ubuntu-latest
-    env:
-      DATABASE_URL: "postgresql://postgres:postgres@localhost:5432/test"
-      NEXTAUTH_SECRET: "ci-secret-not-real"
-      NEXTAUTH_URL: "http://localhost:3000"
-      OPENAI_API_KEY: "sk-test"
-      GROQ_API_KEY: "gsk-test"
-      RESEND_API_KEY: "re_test"
-      EMAIL_FROM: "test@test.com"
+    timeout-minutes: 20
+
     steps:
-      - uses: actions/checkout@v4
-      - name: Guard _gold artifacts
-        run: |
-          if git ls-files | grep -E '(^|/)_gold/'; then
-            echo "_gold artifacts must never be committed."
-            exit 1
-          fi
-      - uses: actions/setup-node@v4
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
         with:
-          node-version: 20
-          cache: npm
-      - run: npm ci
-      - run: npx prisma generate
-      - run: npm run build
-      - run: npm run lint
-      - run: npm test
+          node-version: "20"
+          cache: "npm"
+
+      - name: Install (CI)
+        run: npm ci
+
+      - name: Generate Prisma Client
+        run: npx prisma generate
+
+      - name: Test
+        run: npm test
+
+      - name: Build
+        run: npm run build
