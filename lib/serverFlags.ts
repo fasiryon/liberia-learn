@@ -238,5 +238,20 @@ export function isLongitudinalTrackingEnabled(): boolean {
   return process.env.ENABLE_LONGITUDINAL_TRACKING === "true";
 }
 
+//  Block 16: Predictive Dropout Risk Flags
+
+/** Master switch for dropout risk scoring routes. DEFAULT OFF. */
+export function isDropoutRiskEnabled(): boolean {
+  return process.env.ENABLE_DROPOUT_RISK === "true";
+}
+
+/**
+ * Optional AI augmentation for dropout risk scoring (advisory only).
+ * DEFAULT OFF. Requires explicit enable + audit/telemetry if used.
+ */
+export function isDropoutRiskAiEnabled(): boolean {
+  return process.env.AI_DROPOUT_RISK_ENABLED === "true";
+}
+
 
 
