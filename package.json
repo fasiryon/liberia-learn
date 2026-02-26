@@ -20,7 +20,7 @@
         "bcryptjs": "^3.0.3",
         "groq-sdk": "^0.37.0",
         "idb-keyval": "^6.2.2",
-        "next": "14.2.5",
+        "next": "^14.2.35",
         "next-auth": "^4.24.7",
         "openai": "^6.9.1",
         "react": "18.3.1",
@@ -30,6 +30,7 @@
         "zod": "^4.1.12"
     },
     "devDependencies": {
+        "@next/eslint-plugin-next": "^14.2.35",
         "@tailwindcss/postcss": "^4.1.18",
         "@types/bcryptjs": "^2.4.6",
         "@types/node": "^20",
@@ -39,7 +40,7 @@
         "autoprefixer": "^10.4.24",
         "dotenv-cli": "^11.0.0",
         "eslint": "^8.57.1",
-        "eslint-config-next": "^14.2.5",
+        "eslint-config-next": "^14.2.35",
         "postcss": "^8.5.6",
         "prisma": "^6.19.0",
         "sharp": "^0.34.5",
