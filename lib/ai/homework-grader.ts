@@ -93,7 +93,6 @@ const started = Date.now();try {
       }
 
       const student = submission.Student;
-      const studentName = student?.user?.name ?? "Student";
 
       const questions = (homework.questions as any[]) ?? [];
       const answers = (submission.answers as any[]) ?? [];
@@ -106,7 +105,7 @@ const started = Date.now();try {
           questions,
         },
         submission: {
-          studentName,
+          studentLabel: "Student",
           answers,
         },
       };

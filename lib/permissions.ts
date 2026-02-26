@@ -1,4 +1,4 @@
-﻿/**
+/**
  * lib/permissions.ts  Permissions Matrix (Block 6)
  *
  * Single source of truth for role-based access control.
@@ -48,6 +48,7 @@ export const PERMISSIONS = {
   VIEW_SCHOOL_DASHBOARD: "view:school:dashboard",
   /** View district-level dashboard (aggregate only). */
   VIEW_DISTRICT_DASHBOARD: "view:district:dashboard",
+  VIEW_NATIONAL_DASHBOARD: "view:national:dashboard",
   // National impact: platform admin only  enforced via requirePlatformAdmin(), no separate permission.
 } as const;
 
