@@ -3,9 +3,14 @@ import OpenAI from "openai";
 import { prisma } from "@/lib/db";
 const AGENT_ID = "homework-grader";
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
+let _openai: OpenAI | null = null;
+function getOpenAI() {
+  if (_openai) return _openai;
+  const apiKey = process.env.OPENAI_API_KEY;
+  if (!apiKey) return null;
+  _openai = new OpenAI({ apiKey });
+  return _openai;
+}
 
 export type QuestionFeedback = {
   questionIndex: number;
@@ -56,6 +61,10 @@ export class HomeworkGrader {
     submissionId: string
   ): Promise<GradingResult> {
     const agent = await getOrCreateGraderAgent();
+    const openai = getOpenAI();
+    if (!openai) {
+      throw new Error("OPENAI_API_KEY is not set");
+    }
 
 // Create an AgentTask row (matches prisma.schema: agentId/taskType/status/input)
 const task = await prisma.agentTask.create({

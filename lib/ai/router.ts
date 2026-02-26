@@ -10,7 +10,14 @@ function getGroq() {
   return _groq;
 }
 
-const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY! });
+let _openai: OpenAI | null = null;
+function getOpenAI() {
+  if (_openai) return _openai;
+  const apiKey = process.env.OPENAI_API_KEY;
+  if (!apiKey) return null;
+  _openai = new OpenAI({ apiKey });
+  return _openai;
+}
 
 export type Tier = "fast" | "smart";
 
@@ -103,6 +110,10 @@ async function callOpenAI(
   messages: RouterOptions["messages"],
   maxTokens: number
 ): Promise<{ content: string; inputTokens: number; outputTokens: number }> {
+  const openai = getOpenAI();
+  if (!openai) {
+    throw new Error("OPENAI_API_KEY is not set");
+  }
   const completion = await openai.chat.completions.create({
     model: OPENAI_MODEL,
     messages,
