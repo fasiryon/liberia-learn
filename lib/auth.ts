@@ -67,6 +67,7 @@ export const authOptions: NextAuthOptions = {
         (session.user as any).role = (token as any).role;
         (session.user as any).schoolId = (token as any).schoolId ?? null;
         (session.user as any).isPlatformAdmin = (token as any).isPlatformAdmin ?? false;
+        (session.user as any).iat = (token as any).iat ?? null;
       }
       return session;
     },
@@ -83,6 +84,7 @@ export type SessionUser = {
   role: "STUDENT" | "TEACHER" | "ADMIN" | "GUARDIAN" | "DISTRICT_ADMIN";
   schoolId?: string | null;
   isPlatformAdmin?: boolean;
+  iat?: number | null;
 };
 
 /** Returns null if not authenticated. Does NOT throw. */
@@ -98,13 +100,28 @@ export async function getOptionalUser(): Promise<SessionUser | null> {
     role: (u.role ?? "STUDENT"),
     schoolId: u.schoolId ?? null,
     isPlatformAdmin: u.isPlatformAdmin ?? false,
+    iat: typeof u.iat === "number" ? u.iat : null,
   };
+}
+
+async function assertSessionFresh(userId: string, sessionIat?: number | null) {
+  if (!sessionIat) return;
+  const record = await prisma.user.findUnique({
+    where: { id: userId },
+    select: { passwordChangedAt: true },
+  });
+  if (!record?.passwordChangedAt) return;
+  const changedAtMs = record.passwordChangedAt.getTime();
+  if (sessionIat * 1000 < changedAtMs) {
+    throw Object.assign(new Error("Session expired"), { status: 401 });
+  }
 }
 
 /** Throws 401 if not authenticated. */
 export async function requireUser(): Promise<SessionUser> {
   const user = await getOptionalUser();
   if (!user) throw Object.assign(new Error("Unauthorized"), { status: 401 });
+  await assertSessionFresh(user.id, user.iat ?? null);
   return user;
 }
 

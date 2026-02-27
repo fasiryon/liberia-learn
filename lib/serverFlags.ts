@@ -332,5 +332,17 @@ export function isGuardianLinkingEnabled(): boolean {
   return process.env.ENABLE_GUARDIAN_LINKING === "true";
 }
 
+//  Block RR-1/RR-3: Enrollment Invites + Account Recovery Flags
+
+/** Enrollment invite APIs (admin + teacher). DEFAULT OFF. */
+export function isEnrollmentInvitesEnabled(): boolean {
+  return process.env.ENABLE_ENROLLMENT_INVITES === "true";
+}
+
+/** Account recovery APIs (forgot/reset password). DEFAULT OFF. */
+export function isAccountRecoveryEnabled(): boolean {
+  return process.env.ENABLE_ACCOUNT_RECOVERY === "true";
+}
+
 
 
