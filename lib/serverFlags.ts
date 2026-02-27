@@ -287,5 +287,15 @@ export function isGeoIntelligenceEnabled(): boolean {
   return process.env.ENABLE_GEO_INTELLIGENCE === "true";
 }
 
+//  Block 20: National Insights Flags
+
+/**
+ * National insights dashboard aggregates (county-level + curriculum).
+ * DEFAULT OFF. When false, national insights endpoint returns 404.
+ */
+export function isNationalInsightsEnabled(): boolean {
+  return process.env.ENABLE_NATIONAL_INSIGHTS === "true";
+}
+
 
 
