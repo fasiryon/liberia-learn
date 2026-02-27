@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import bcrypt from "bcryptjs";
 import { z } from "zod";
+import { parseGuardianLinkToken } from "@/lib/guardian/linkTokens";
 
 const Schema = z.object({
   token: z.string().min(1),
@@ -35,20 +36,72 @@ export async function POST(req: Request) {
     const role = invite.role as "TEACHER" | "STUDENT" | "GUARDIAN" | "ADMIN";
 
     const result = await prisma.$transaction(async (tx) => {
-      const newUser = await tx.user.create({
-        data: {
-          name: parsed.name,
-          email: invite.email!,
-          hashedPwd,
-          role,
-          schoolId: invite.schoolId,
-        },
+      const existingUser = await tx.user.findUnique({
+        where: { email: invite.email! },
       });
 
+      if (existingUser && existingUser.hashedPwd) {
+        throw Object.assign(new Error("An account with this email already exists"), { status: 400 });
+      }
+
+      const user = existingUser
+        ? await tx.user.update({
+            where: { id: existingUser.id },
+            data: {
+              name: parsed.name,
+              hashedPwd,
+              role,
+              schoolId: invite.schoolId,
+            },
+          })
+        : await tx.user.create({
+            data: {
+              name: parsed.name,
+              email: invite.email!,
+              hashedPwd,
+              role,
+              schoolId: invite.schoolId,
+            },
+          });
+
       if (role === "STUDENT") {
-        await tx.student.create({
-          data: { userId: newUser.id },
+        const student = await tx.student.findUnique({
+          where: { userId: user.id },
         });
+        if (!student) {
+          await tx.student.create({
+            data: { userId: user.id },
+          });
+        }
+      }
+
+      if (role === "GUARDIAN") {
+        const payload = parseGuardianLinkToken(invite.token);
+        if (payload?.studentId && payload.schoolId === invite.schoolId) {
+          const student = await tx.student.findUnique({
+            where: { id: payload.studentId },
+            include: { user: { select: { schoolId: true } } },
+          });
+
+          if (!student || student.user.schoolId !== invite.schoolId) {
+            throw Object.assign(new Error("Student not found in your school"), { status: 404 });
+          }
+
+          await tx.studentGuardian.upsert({
+            where: {
+              studentId_guardianId: {
+                studentId: payload.studentId,
+                guardianId: user.id,
+              },
+            },
+            create: {
+              studentId: payload.studentId,
+              guardianId: user.id,
+              relation: payload.relation ?? null,
+            },
+            update: {},
+          });
+        }
       }
 
       await tx.inviteToken.update({
@@ -56,7 +109,7 @@ export async function POST(req: Request) {
         data: { usedAt: new Date() },
       });
 
-      return newUser;
+      return user;
     });
 
     return NextResponse.json({ ok: true, role: result.role });

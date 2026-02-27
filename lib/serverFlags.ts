@@ -297,5 +297,17 @@ export function isNationalInsightsEnabled(): boolean {
   return process.env.ENABLE_NATIONAL_INSIGHTS === "true";
 }
 
+//  Guardian & Portal Flags
+
+/** Guardian portal UI + API access. DEFAULT OFF. */
+export function isGuardianPortalEnabled(): boolean {
+  return process.env.ENABLE_GUARDIAN_PORTAL === "true";
+}
+
+/** Guardian linking (token-based). DEFAULT OFF. */
+export function isGuardianLinkingEnabled(): boolean {
+  return process.env.ENABLE_GUARDIAN_LINKING === "true";
+}
+
 
 

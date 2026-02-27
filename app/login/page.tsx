@@ -44,7 +44,7 @@ export default function LoginPage() {
     }
   }, []);
 
-  const [role, setRole] = useState<"student" | "teacher" | "admin">("student");
+  const [role, setRole] = useState<"student" | "teacher" | "guardian" | "admin">("student");
   const [email, setEmail] = useState("student@school.lr");
   const [password, setPassword] = useState("password123");
   const [error, setError] = useState<string | null>(null);
@@ -105,7 +105,7 @@ export default function LoginPage() {
 
         {/* Role selector */}
         <div className="grid grid-cols-3 gap-2 text-xs">
-          {(["student", "teacher", "admin"] as const).map((option) => (
+          {(["student", "teacher", "guardian", "admin"] as const).map((option) => (
             <button
               key={option}
               type="button"
