@@ -47,14 +47,14 @@ model User {
 }
 
 model District {
-  id        String   @id @default(cuid())
-  tenantId  String
-  name      String
-  region    String
-  code      String?
-  isActive  Boolean  @default(true)
-  createdAt DateTime @default(now())
-  schools   School[]
+  id               String            @id @default(cuid())
+  tenantId         String
+  name             String
+  region           String
+  code             String?
+  isActive         Boolean           @default(true)
+  createdAt        DateTime          @default(now())
+  schools          School[]
   interventionLogs InterventionLog[]
 
   @@index([tenantId])
@@ -122,11 +122,11 @@ model Class {
 }
 
 model Student {
-  id                    String                 @id @default(cuid())
-  userId                String                 @unique
+  id                    String                  @id @default(cuid())
+  userId                String                  @unique
   county                String?
   community             String?
-  createdAt             DateTime               @default(now())
+  createdAt             DateTime                @default(now())
   currentGrade          Int?
   assignmentSubmissions AssignmentSubmission[]
   attendance            AttendanceRecord[]
@@ -140,11 +140,12 @@ model Student {
   placementTests        PlacementTest[]
   portfolioItems        PortfolioItem[]
   reviews               ReviewSchedule[]
-  user                  User                   @relation(fields: [userId], references: [id])
+  user                  User                    @relation(fields: [userId], references: [id])
   guardians             StudentGuardian[]
-  guardianConsents      GuardianConsent[]      @relation("GuardianConsentStudent")
+  guardianConsents      GuardianConsent[]       @relation("GuardianConsentStudent")
   smsDeliveryLogs       SMSDeliveryLog[]
   submissions           Submission[]
+  inviteTokens          InviteToken[]           @relation("InviteTokenStudent")
 }
 
 model StudentGuardian {
@@ -303,15 +304,15 @@ model Grade {
 /// Strand taxonomy  subject  strand  grade-band catalogue.
 /// Seeded by prisma/seeds/strand-catalog.ts. WAEC refs are G10-12 only.
 model StrandCatalog {
-  id             String                 @id @default(cuid())
-  subject        Subject
-  strandKey      String
-  name           String
-  gradeBand      GradeBand
-  waecRef        String?
-  isActive       Boolean                @default(true)
-  createdAt      DateTime               @default(now())
-  questionTags   QuestionTag[]
+  id              String                  @id @default(cuid())
+  subject         Subject
+  strandKey       String
+  name            String
+  gradeBand       GradeBand
+  waecRef         String?
+  isActive        Boolean                 @default(true)
+  createdAt       DateTime                @default(now())
+  questionTags    QuestionTag[]
   masteryProfiles StudentMasteryProfile[]
 
   @@unique([subject, strandKey], name: "StrandCatalog_subject_strandKey_key")
@@ -339,24 +340,24 @@ model QuestionTag {
 /// Pure-function metrics recomputed on every attempt write.
 /// baselineConfidence and baselineCompletedAt are optional (populated by Block 7B adaptive baseline).
 model StudentMasteryProfile {
-  id                   String           @id @default(cuid())
-  studentId            String
-  subject              Subject
-  strandKey            String
-  baselineScore        Float            @default(0)
-  currentScore         Float            @default(0)
-  proficiencyState     ProficiencyState @default(NOT_ASSESSED)
-  masteryState         MasteryState     @default(NOT_ASSESSED)
-  sustainabilityIndex  Float            @default(0)
-  decayRate            Float            @default(0)
-  aiRelianceRate       Float            @default(0)
-  lastAssessedAt       DateTime?
-  baselineConfidence   Float?
-  baselineCompletedAt  DateTime?
-  createdAt            DateTime         @default(now())
-  updatedAt            DateTime         @updatedAt
-  student              Student          @relation(fields: [studentId], references: [id], onDelete: Cascade)
-  StrandCatalog        StrandCatalog    @relation(fields: [subject, strandKey], references: [subject, strandKey])
+  id                  String           @id @default(cuid())
+  studentId           String
+  subject             Subject
+  strandKey           String
+  baselineScore       Float            @default(0)
+  currentScore        Float            @default(0)
+  proficiencyState    ProficiencyState @default(NOT_ASSESSED)
+  masteryState        MasteryState     @default(NOT_ASSESSED)
+  sustainabilityIndex Float            @default(0)
+  decayRate           Float            @default(0)
+  aiRelianceRate      Float            @default(0)
+  lastAssessedAt      DateTime?
+  baselineConfidence  Float?
+  baselineCompletedAt DateTime?
+  createdAt           DateTime         @default(now())
+  updatedAt           DateTime         @updatedAt
+  student             Student          @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  StrandCatalog       StrandCatalog    @relation(fields: [subject, strandKey], references: [subject, strandKey])
 
   @@unique([studentId, subject, strandKey], name: "StudentMasteryProfile_studentId_subject_strandKey_key")
   @@index([studentId])
@@ -413,7 +414,7 @@ model AuditLog {
   resourceId   String?
   resourceType String?
   schoolId     String?
-  traceId      String?  // Block 6: request-correlation trace ID
+  traceId      String? // Block 6: request-correlation trace ID
   School       School?  @relation(fields: [schoolId], references: [id])
   user         User?    @relation(fields: [userId], references: [id])
 
@@ -713,7 +714,7 @@ model InviteToken {
   expiresAt DateTime
   createdAt DateTime  @default(now())
   School    School    @relation(fields: [schoolId], references: [id])
-  Student   Student?  @relation(fields: [studentId], references: [id], onDelete: SetNull)
+  Student   Student?  @relation("InviteTokenStudent", fields: [studentId], references: [id], onDelete: SetNull)
 }
 
 /// / ===== Notification Log =====
@@ -1029,15 +1030,15 @@ model LongitudinalSnapshot {
 }
 
 model InterventionLog {
-  id                        String   @id @default(cuid())
+  id                        String    @id @default(cuid())
   tenantId                  String
   schoolId                  String
   districtId                String?
   interventionPriorityScore Float
   growthRiskFlag            String
   recommendedActionCount    Int
-  aiEnhanced                Boolean  @default(false)
-  generatedAt               DateTime @default(now())
+  aiEnhanced                Boolean   @default(false)
+  generatedAt               DateTime  @default(now())
   outcomeCheckedAt          DateTime?
   outcomeDelta              Float?
   outcomeEffectSize         Float?
@@ -1047,7 +1048,7 @@ model InterventionLog {
   outcomeFollowupEnd        DateTime?
   outcomeBaselineCount      Int?
   outcomeFollowupCount      Int?
-  school                    School   @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+  school                    School    @relation(fields: [schoolId], references: [id], onDelete: Cascade)
   district                  District? @relation(fields: [districtId], references: [id])
 
   @@index([tenantId, generatedAt])
@@ -1146,5 +1147,3 @@ enum MasteryState {
   MASTERED
   DECAYING
 }
-
-
