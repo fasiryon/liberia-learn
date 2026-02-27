@@ -277,5 +277,15 @@ export function isCurriculumOptimizationAiEnabled(): boolean {
   return process.env.ENABLE_CURRICULUM_OPTIMIZATION_AI === "true";
 }
 
+//  Block 19: Geo Intelligence Flags
+
+/**
+ * National geo-performance aggregates (county-level only).
+ * DEFAULT OFF. When false, geo-performance endpoints return 404.
+ */
+export function isGeoIntelligenceEnabled(): boolean {
+  return process.env.ENABLE_GEO_INTELLIGENCE === "true";
+}
+
 
 
