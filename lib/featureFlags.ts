@@ -16,6 +16,8 @@ export const FEATURE_FLAGS = {
   ENABLE_GUIDED_ONBOARDING: process.env.NEXT_PUBLIC_ENABLE_GUIDED_ONBOARDING === "true",
   ENABLE_ACCESSIBILITY_MODE: process.env.NEXT_PUBLIC_ENABLE_ACCESSIBILITY_MODE === "true",
   ENABLE_GUARDIAN_PORTAL: process.env.NEXT_PUBLIC_ENABLE_GUARDIAN_PORTAL === "true",
+  ENABLE_ENROLLMENT_INVITES: process.env.NEXT_PUBLIC_ENABLE_ENROLLMENT_INVITES === "true",
+  ENABLE_ACCOUNT_RECOVERY: process.env.NEXT_PUBLIC_ENABLE_ACCOUNT_RECOVERY === "true",
   /** Training Center — 8 micro-modules, progress tracking, badges, admin adoption view. */
   ENABLE_TRAINING_CENTER: process.env.NEXT_PUBLIC_ENABLE_TRAINING_CENTER === "true",
   /**
