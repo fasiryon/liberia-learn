@@ -59,11 +59,11 @@ export default function LoginClient({ showDemoHints, demoGroups, demoDefaults }:
   const [loading, setLoading] = useState(false);
   const guardianEnabled = FEATURE_FLAGS.ENABLE_GUARDIAN_PORTAL;
 
+  const ROLES_WITH_GUARDIAN = ["student", "teacher", "admin", "guardian"] as const;
+  const ROLES_NO_GUARDIAN = ["student", "teacher", "admin"] as const;
+
   const roleOptions = useMemo(
-    () =>
-      (guardianEnabled
-        ? ["student", "teacher", "admin", "guardian"]
-        : ["student", "teacher", "admin"]) as const,
+    () => (guardianEnabled ? ROLES_WITH_GUARDIAN : ROLES_NO_GUARDIAN),
     [guardianEnabled]
   );
 
