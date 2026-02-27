@@ -3,11 +3,15 @@ import { requireRole } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { sendGuardianInvite } from "@/lib/email";
 import { normalizeToE164 } from "@/lib/phone";
+import { isGuardianLinkingEnabled } from "@/lib/serverFlags";
 
 export const dynamic = "force-dynamic";
 
 export async function GET() {
   try {
+    if (!isGuardianLinkingEnabled()) {
+      return NextResponse.json({ error: "Not found" }, { status: 404 });
+    }
     const user = await requireRole("ADMIN");
 
     const links = await prisma.studentGuardian.findMany({
@@ -45,6 +49,9 @@ export async function GET() {
 
 export async function POST(req: Request) {
   try {
+    if (!isGuardianLinkingEnabled()) {
+      return NextResponse.json({ error: "Not found" }, { status: 404 });
+    }
     const user = await requireRole("ADMIN");
     const body = await req.json();
 
@@ -80,6 +87,16 @@ export async function POST(req: Request) {
           schoolId: user.schoolId,
         },
       });
+    } else if (guardian.schoolId && guardian.schoolId !== user.schoolId) {
+      return NextResponse.json(
+        { error: "Guardian belongs to another school" },
+        { status: 403 }
+      );
+    } else if (!guardian.schoolId && user.schoolId) {
+      guardian = await prisma.user.update({
+        where: { id: guardian.id },
+        data: { schoolId: user.schoolId },
+      });
     }
 
     // Update guardian phone/channel fields if provided
@@ -102,21 +119,6 @@ export async function POST(req: Request) {
       }
     }
 
-    // Upsert StudentGuardian link
-    await prisma.studentGuardian.upsert({
-      where: {
-        studentId_guardianId: { studentId, guardianId: guardian.id },
-      },
-      create: {
-        studentId,
-        guardianId: guardian.id,
-        relation: relation || null,
-      },
-      update: {
-        relation: relation || undefined,
-      },
-    });
-
     // Create invite token (7-day expiry)
     const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
     const invite = await prisma.inviteToken.create({
@@ -124,12 +126,15 @@ export async function POST(req: Request) {
         email,
         role: "GUARDIAN",
         schoolId: user.schoolId!,
+        studentId,
+        tokenType: "GUARDIAN_LINK",
+        relation: relation || null,
         expiresAt,
       },
     });
 
     const base = process.env.NEXTAUTH_URL ?? "http://localhost:3000";
-    const inviteUrl = `${base}/invite?token=${invite.token}`;
+    const inviteUrl = `${base}/guardian/link?token=${invite.token}`;
 
     // Fetch school name for email
     const school = user.schoolId

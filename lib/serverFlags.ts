@@ -297,5 +297,17 @@ export function isNationalInsightsEnabled(): boolean {
   return process.env.ENABLE_NATIONAL_INSIGHTS === "true";
 }
 
+//  Block RR-2: Guardian Portal + Linking Flags
+
+/** Guardian portal (UI + APIs). DEFAULT OFF. */
+export function isGuardianPortalEnabled(): boolean {
+  return process.env.ENABLE_GUARDIAN_PORTAL === "true";
+}
+
+/** Guardian linking APIs (token acceptance + admin invites). DEFAULT OFF. */
+export function isGuardianLinkingEnabled(): boolean {
+  return process.env.ENABLE_GUARDIAN_LINKING === "true";
+}
+
 
 

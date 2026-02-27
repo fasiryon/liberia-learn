@@ -705,11 +705,15 @@ model InviteToken {
   token     String    @unique @default(cuid())
   email     String?
   role      String    @default("TEACHER")
+  tokenType String    @default("ONBOARD")
   schoolId  String
+  studentId String?
+  relation  String?
   usedAt    DateTime?
   expiresAt DateTime
   createdAt DateTime  @default(now())
   School    School    @relation(fields: [schoolId], references: [id])
+  Student   Student?  @relation(fields: [studentId], references: [id], onDelete: SetNull)
 }
 
 /// / ===== Notification Log =====
