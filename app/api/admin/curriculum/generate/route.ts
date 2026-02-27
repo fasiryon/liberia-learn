@@ -7,6 +7,7 @@ import { generateCurriculumPayload } from "@/lib/ai/curriculum-factory";
 import { liberianize } from "@/lib/localization/liberia-context";
 import { standardizeTone } from "@/lib/localization/tone-standardizer";
 import { logAudit } from "@/lib/audit";
+import { recordMetricEvent } from "@/lib/metrics/events";
 import { createHash } from "crypto";
 import { slugify, generateLabs, generateTermPlanPayload, generateUnitPlanPayload } from "@/lib/curriculum-helpers";
 
@@ -69,6 +70,33 @@ export async function POST(req: Request) {
       enrichedPayload = generateUnitPlanPayload(grade, subject, topic);
     } else {
       // Lesson mode (default) — use AI generation
+      if (!process.env.OPENAI_API_KEY) {
+        await logAudit({
+          userId: user.id,
+          action: "curriculum.generate.lesson.failed",
+          resourceType: "curriculum",
+          resourceId: null,
+          details: {
+            grade,
+            subject,
+            topic,
+            mode,
+            reason: "openai_key_missing",
+          },
+        });
+
+        recordMetricEvent(
+          "curriculum_generate_ai_unavailable",
+          { mode, reason: "openai_key_missing" },
+          { scope: "school", scopeId: user.schoolId ?? null, schoolId: user.schoolId ?? null }
+        ).catch(() => {});
+
+        return NextResponse.json(
+          { ok: false, error: "AI unavailable", hadFallback: true },
+          { status: 503 }
+        );
+      }
+
       const payload = await generateCurriculumPayload({
         grade,
         subject,

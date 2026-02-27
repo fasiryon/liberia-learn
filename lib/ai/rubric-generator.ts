@@ -1,9 +1,8 @@
 // lib/ai/rubric-generator.ts
-import OpenAI from "openai";
 import { prisma } from "@/lib/db";
 import { HomeworkGrader } from "@/lib/ai/homework-grader";
+import { getOpenAIClientOrThrow } from "@/lib/ai/openaiClient";
 
-const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY! });
 
 export interface RubricQuestion {
   index: number;
@@ -55,7 +54,8 @@ Generate a grading rubric as JSON with this exact structure:
 
 Return ONLY valid JSON. No backticks, no explanation.`;
 
-  const completion = await openai.chat.completions.create({
+  const client = getOpenAIClientOrThrow();
+  const completion = await client.chat.completions.create({
     model: "gpt-4o-mini",
     messages: [
       { role: "system", content: "Return only valid JSON." },

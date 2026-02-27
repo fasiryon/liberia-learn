@@ -1,8 +1,8 @@
-﻿import OpenAI from "openai";
 import { z } from "zod";
 import type { ImpactSnapshot } from "@prisma/client";
 import type { SchoolDashboardMetrics } from "@/lib/reporting/dashboard/dashboardAggregator";
 import type { TrendSeries } from "@/lib/reporting/trends/types";
+import { getOpenAIClientOrThrow } from "@/lib/ai/openaiClient";
 
 export type RecommendationResult = {
   interventionPriorityScore: number;
@@ -119,11 +119,6 @@ const AiResponseSchema = z.object({
     .optional(),
 });
 
-function getOpenAIClient(): OpenAI | null {
-  const apiKey = process.env.OPENAI_API_KEY;
-  if (!apiKey) return null;
-  return new OpenAI({ apiKey });
-}
 
 async function tryAiEnhancement(params: {
   currentMetrics: SchoolDashboardMetrics;
@@ -133,7 +128,7 @@ async function tryAiEnhancement(params: {
 }): Promise<RecommendationResult["recommendedActions"] | null> {
   if (process.env.AI_INTERVENTIONS_AI_ENHANCED !== "true") return null;
 
-  const openai = getOpenAIClient();
+  const openai = getOpenAIClientOrThrow();
   if (!openai) return null;
 
   const prompt = buildInterventionPrompt(params);
@@ -256,3 +251,7 @@ export async function computeRecommendations(params: {
     return baseResult;
   }
 }
+
+
+
+
