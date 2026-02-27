@@ -60,6 +60,10 @@ export default function DigitalRuler({ onClose }: DigitalRulerProps) {
         <div
           aria-label="Drag handle for ruler resize"
           role="slider"
+          aria-valuemin={1}
+          aria-valuemax={30}
+          aria-valuenow={Number(lengthCm.toFixed(1))}
+          aria-orientation={vertical ? "vertical" : "horizontal"}
           tabIndex={0}
           className="absolute h-4 w-4 rounded-full bg-sky-600"
           style={vertical ? { left: 20, bottom: -8 } : { right: -8, top: 20 }}
