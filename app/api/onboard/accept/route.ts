@@ -32,6 +32,13 @@ export async function POST(req: Request) {
 
     const hashedPwd = await bcrypt.hash(parsed.password, 12);
 
+    if (invite.role === "GUARDIAN_LINK") {
+      return NextResponse.json(
+        { error: "Use guardian link to connect this student" },
+        { status: 400 }
+      );
+    }
+
     const role = invite.role as "TEACHER" | "STUDENT" | "GUARDIAN" | "ADMIN";
 
     const result = await prisma.$transaction(async (tx) => {
