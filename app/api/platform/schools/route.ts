@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { requirePlatformAdmin } from "@/lib/auth";
+import { requireMoePlatformAdmin } from "@/lib/moeAccess";
 import { prisma } from "@/lib/db";
 import { logAudit } from "@/lib/audit";
 
@@ -8,7 +8,7 @@ export const dynamic = "force-dynamic";
 /** GET: list all schools */
 export async function GET() {
   try {
-    await requirePlatformAdmin();
+    await requireMoePlatformAdmin();
 
     const schools = await prisma.school.findMany({
       select: {
@@ -41,7 +41,7 @@ export async function GET() {
 /** POST: create a new school */
 export async function POST(req: NextRequest) {
   try {
-    await requirePlatformAdmin();
+    await requireMoePlatformAdmin();
 
     const body = await req.json();
     const { name, county, district, contactName, contactEmail, contactPhone, motto, status } = body;
@@ -64,7 +64,7 @@ export async function POST(req: NextRequest) {
     });
 
     await logAudit({
-      userId: (await requirePlatformAdmin()).id,
+      userId: (await requireMoePlatformAdmin()).id,
       action: "school.create",
       resourceType: "school",
       resourceId: school.id,
@@ -83,7 +83,7 @@ export async function POST(req: NextRequest) {
 /** PATCH: update a school */
 export async function PATCH(req: NextRequest) {
   try {
-    await requirePlatformAdmin();
+    await requireMoePlatformAdmin();
 
     const body = await req.json();
     const { id, ...updates } = body;

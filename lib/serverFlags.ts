@@ -297,6 +297,22 @@ export function isNationalInsightsEnabled(): boolean {
   return process.env.ENABLE_NATIONAL_INSIGHTS === "true";
 }
 
+//  Block RR-4: MOE Portal Flag + Allowlist
+
+/** MOE/District portal. DEFAULT OFF. */
+export function isMoePortalEnabled(): boolean {
+  return process.env.ENABLE_MOE_PORTAL === "true";
+}
+
+/** Optional allowlist (comma-separated emails/domains). Empty = allow all. */
+export function getMoePortalAllowlist(): string[] {
+  const raw = process.env.MOE_PORTAL_ALLOWLIST ?? "";
+  return raw
+    .split(",")
+    .map((v) => v.trim())
+    .filter(Boolean);
+}
+
 //  Block RR-2: Guardian Portal + Linking Flags
 
 /** Guardian portal (UI + APIs). DEFAULT OFF. */

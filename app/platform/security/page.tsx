@@ -1,13 +1,18 @@
-import { requirePlatformAdmin } from "@/lib/auth";
 import { prisma } from "@/lib/db";
-import { redirect } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
+import { requireMoePlatformAdmin } from "@/lib/moeAccess";
 import { GenerateTokenButton, SelfDemoteButton } from "./SecurityActions";
 
 export const dynamic = "force-dynamic";
 
 export default async function PlatformSecurityPage() {
-  const user = await requirePlatformAdmin().catch(() => null);
-  if (!user) redirect("/login");
+  let user = null;
+  try {
+    user = await requireMoePlatformAdmin();
+  } catch (err: any) {
+    if (err?.status === 404) notFound();
+    redirect("/login");
+  }
 
   const platformAdmins = await prisma.user.findMany({
     where: { isPlatformAdmin: true },
