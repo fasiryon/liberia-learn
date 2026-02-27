@@ -177,6 +177,14 @@ export function isAiInterventionsEnabled(): boolean {
 }
 
 /**
+ * Intervention outcomes resolution + dashboard.
+ * DEFAULT OFF. When false, outcomes endpoints return 404 and jobs noop.
+ */
+export function isInterventionOutcomesEnabled(): boolean {
+  return process.env.ENABLE_INTERVENTION_OUTCOMES === "true";
+}
+
+/**
  * Optional AI enhancement for interventions (augment deterministic rules).
  * DEFAULT OFF. Requires OPENAI_API_KEY at request time.
  */

@@ -1,5 +1,5 @@
 // lib/ai/router.ts
-import OpenAI from "openai";
+import { getOpenAIClientOrThrow } from "@/lib/ai/openaiClient";
 
 let _groq: any = null;
 function getGroq() {
@@ -10,7 +10,6 @@ function getGroq() {
   return _groq;
 }
 
-const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY! });
 
 export type Tier = "fast" | "smart";
 
@@ -103,7 +102,8 @@ async function callOpenAI(
   messages: RouterOptions["messages"],
   maxTokens: number
 ): Promise<{ content: string; inputTokens: number; outputTokens: number }> {
-  const completion = await openai.chat.completions.create({
+  const client = getOpenAIClientOrThrow();
+  const completion = await client.chat.completions.create({
     model: OPENAI_MODEL,
     messages,
     max_tokens: maxTokens,
