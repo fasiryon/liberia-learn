@@ -2,11 +2,15 @@ import { NextResponse } from "next/server";
 import { requireUser } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { logAudit } from "@/lib/audit";
+import { isMoePortalEnabled } from "@/lib/serverFlags";
 
 export const dynamic = "force-dynamic";
 
 export async function POST(req: Request) {
   try {
+    if (!isMoePortalEnabled()) {
+      return NextResponse.json({ error: "Not found" }, { status: 404 });
+    }
     const user = await requireUser();
     const body = await req.json();
     const { token, demoteSender } = body;

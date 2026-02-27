@@ -30,9 +30,16 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Invite link has already been used" }, { status: 400 });
     }
 
+    if (invite.tokenType && !["ONBOARD", "GUARDIAN_LINK"].includes(invite.tokenType)) {
+      return NextResponse.json({ error: "Invalid invite type" }, { status: 400 });
+    }
+
     const hashedPwd = await bcrypt.hash(parsed.password, 12);
 
     const role = invite.role as "TEACHER" | "STUDENT" | "GUARDIAN" | "ADMIN";
+    if (invite.tokenType === "GUARDIAN_LINK" && role !== "GUARDIAN") {
+      return NextResponse.json({ error: "Invalid guardian invite" }, { status: 400 });
+    }
 
     const result = await prisma.$transaction(async (tx) => {
       const newUser = await tx.user.create({
@@ -48,6 +55,27 @@ export async function POST(req: Request) {
       if (role === "STUDENT") {
         await tx.student.create({
           data: { userId: newUser.id },
+        });
+      }
+
+      if (role === "GUARDIAN" && invite.tokenType === "GUARDIAN_LINK" && invite.studentId) {
+        const student = await tx.student.findUnique({
+          where: { id: invite.studentId },
+          include: { user: { select: { schoolId: true } } },
+        });
+        if (!student || student.user.schoolId !== invite.schoolId) {
+          throw Object.assign(new Error("Student not found"), { status: 404 });
+        }
+        await tx.studentGuardian.upsert({
+          where: { studentId_guardianId: { studentId: student.id, guardianId: newUser.id } },
+          create: {
+            studentId: student.id,
+            guardianId: newUser.id,
+            relation: invite.relation ?? null,
+          },
+          update: {
+            relation: invite.relation ?? undefined,
+          },
         });
       }
 

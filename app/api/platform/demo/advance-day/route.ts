@@ -1,10 +1,10 @@
 import { NextResponse } from "next/server";
-import { requirePlatformAdmin } from "@/lib/auth";
+import { requireMoePlatformAdmin } from "@/lib/moeAccess";
 import { prisma } from "@/lib/db";
 
 export async function POST() {
   try {
-    await requirePlatformAdmin();
+    await requireMoePlatformAdmin();
 
     const allWork = await prisma.scheduledWork.findMany({ select: { id: true, scheduledDate: true } });
     let updated = 0;

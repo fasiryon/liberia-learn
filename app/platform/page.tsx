@@ -1,13 +1,37 @@
-import { requirePlatformAdmin } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import Link from "next/link";
-import { redirect } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
+import { requireMoePortalUser } from "@/lib/moeAccess";
+import { DemoHintsSection } from "@/components/DemoHintsSection";
 
 export const dynamic = "force-dynamic";
 
 export default async function PlatformDashboard() {
-  const user = await requirePlatformAdmin().catch(() => null);
-  if (!user) redirect("/login");
+  let user = null;
+  try {
+    user = await requireMoePortalUser();
+  } catch (err: any) {
+    if (err?.status === 404) notFound();
+    redirect("/login");
+  }
+
+  if (user.role === "DISTRICT_ADMIN") {
+    return (
+      <div className="space-y-6">
+        <div>
+          <h1 className="text-2xl font-bold">District Portal</h1>
+          <p className="text-sm text-slate-400 mt-1">
+            District insights are being prepared. Contact LiberiaLearn support
+            for early access.
+          </p>
+        </div>
+        <DemoHintsSection variant="moe" />
+        <div className="rounded-2xl border border-white/10 bg-slate-900/70 p-6 text-sm text-slate-400">
+          Your district dashboard will appear here once it is enabled.
+        </div>
+      </div>
+    );
+  }
 
   const [schoolCount, userCount, studentCount, teacherCount, curriculumCount] =
     await Promise.all([
@@ -47,6 +71,8 @@ export default async function PlatformDashboard() {
           Cross-school overview for MOE platform administrators.
         </p>
       </div>
+
+      <DemoHintsSection variant="moe" />
 
       {/* Stats grid */}
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5">
