@@ -13,6 +13,7 @@ import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { StatCard } from "@/components/ui/Card";
 import { logger } from "@/lib/logger";
 import { StudentSidebar } from "@/components/StudentSidebar";
+import { DemoHintsSection } from "@/components/DemoHintsSection";
 
 export const dynamic = "force-dynamic";
 
@@ -86,16 +87,6 @@ export default async function DashboardPage() {
             <p className="text-sm text-slate-400">
               You&apos;re signed in but there is no matching student row.
             </p>
-            <p className="text-xs text-slate-500">
-              Demo login:{" "}
-              <span className="font-mono text-emerald-300">
-                student@school.lr
-              </span>{" "}
-              /{" "}
-              <span className="font-mono text-emerald-300">
-                password123
-              </span>
-            </p>
 
             {error && (
               <p className="text-xs text-red-400">DB Error: {error}</p>
@@ -114,6 +105,9 @@ export default async function DashboardPage() {
               >
                 Login
               </Link>
+            </div>
+            <div className="pt-2">
+              <DemoHintsSection variant="student" />
             </div>
           </div>
         </main>
@@ -198,6 +192,8 @@ export default async function DashboardPage() {
               </div>
             </div>
           </header>
+
+          <DemoHintsSection variant="student" />
 
           <div className="flex flex-1 flex-col gap-4 md:flex-row">
             {/* Sidebar */}

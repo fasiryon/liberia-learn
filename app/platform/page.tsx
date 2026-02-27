@@ -2,6 +2,7 @@ import { prisma } from "@/lib/db";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { requireMoePortalUser } from "@/lib/moeAccess";
+import { DemoHintsSection } from "@/components/DemoHintsSection";
 
 export const dynamic = "force-dynamic";
 
@@ -24,6 +25,7 @@ export default async function PlatformDashboard() {
             for early access.
           </p>
         </div>
+        <DemoHintsSection variant="moe" />
         <div className="rounded-2xl border border-white/10 bg-slate-900/70 p-6 text-sm text-slate-400">
           Your district dashboard will appear here once it is enabled.
         </div>
@@ -69,6 +71,8 @@ export default async function PlatformDashboard() {
           Cross-school overview for MOE platform administrators.
         </p>
       </div>
+
+      <DemoHintsSection variant="moe" />
 
       {/* Stats grid */}
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5">
