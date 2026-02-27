@@ -261,5 +261,21 @@ export function isDropoutRiskAiEnabled(): boolean {
   return process.env.AI_DROPOUT_RISK_ENABLED === "true";
 }
 
+/**
+ * Curriculum optimization loop (national strand weakness + emphasis advice).
+ * DEFAULT OFF. When false, national curriculum signals endpoint returns 404.
+ */
+export function isCurriculumOptimizationEnabled(): boolean {
+  return process.env.ENABLE_CURRICULUM_OPTIMIZATION === "true";
+}
+
+/**
+ * Optional AI augmentation for curriculum optimization advisory summaries.
+ * DEFAULT OFF. Deterministic strand ranking works regardless of this flag.
+ */
+export function isCurriculumOptimizationAiEnabled(): boolean {
+  return process.env.ENABLE_CURRICULUM_OPTIMIZATION_AI === "true";
+}
+
 
 
