@@ -516,21 +516,6 @@ async function main() {
     }
   }
 
-  console.log("\n=== MOE Demo Credentials (Password: Password123) ===");
-  console.log("Platform Admin: jkollie@mca.edu.lr");
-  console.log("\nSchool 1 — Monrovia Central Academy:");
-  console.log("  Admin:   jkollie@mca.edu.lr");
-  console.log("  Teacher: mpewee@mca.edu.lr, dnimely@mca.edu.lr, sflomo@mca.edu.lr");
-  console.log("  Student: fatu.flomo@mca.edu.lr");
-  console.log("\nSchool 2 — Paynesville Community School:");
-  console.log("  Admin:   gtokpah@pcs.edu.lr");
-  console.log("  Teacher: esumo@pcs.edu.lr, pwreh@pcs.edu.lr");
-  console.log("  Student: fatu.kpaan@pcs.edu.lr");
-  console.log("\nSchool 3 — Kakata Rural School:");
-  console.log("  Admin:   mkarnga@krs.edu.lr");
-  console.log("  Teacher: fkollie@krs.edu.lr, abestman@krs.edu.lr");
-  console.log("  Student: fatu.gbowee@krs.edu.lr");
-
   // ── Block 7A: Strand Catalog ──────────────────────────────────────────────
   console.log("\nSeeding strand catalog (Block 7A — Mastery Engine)...");
   await seedStrandCatalog();

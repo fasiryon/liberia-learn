@@ -7,6 +7,7 @@ import { prisma } from "@/lib/db";
 import { CollapsiblePanel } from "@/components/CollapsiblePanel";
 import { computeEarnedBadges } from "@/lib/training/badges";
 import type { ModuleProgressRecord } from "@/lib/training/progress";
+import { DemoHintsSection } from "@/components/DemoHintsSection";
 
 export const dynamic = "force-dynamic";
 
@@ -115,6 +116,8 @@ export default async function TeacherDashboardPage() {
             </form>
           </div>
         </header>
+
+        <DemoHintsSection variant="teacher" />
 
         {/* ── Nav tabs — enlarged tap targets ─────────────────────────── */}
         <nav className="mb-8 flex flex-wrap gap-2 border-b border-slate-800 pb-4">

@@ -313,6 +313,13 @@ export function getMoePortalAllowlist(): string[] {
     .filter(Boolean);
 }
 
+//  Block RR-5: Demo Mode Flag
+
+/** Demo mode master switch. DEFAULT OFF. */
+export function isDemoModeEnabled(): boolean {
+  return process.env.DEMO_MODE === "true";
+}
+
 //  Block RR-2: Guardian Portal + Linking Flags
 
 /** Guardian portal (UI + APIs). DEFAULT OFF. */
