@@ -1,12 +1,12 @@
 import { NextResponse } from "next/server";
-import { requirePlatformAdmin } from "@/lib/auth";
+import { requireMoePlatformAdmin } from "@/lib/moeAccess";
 import { prisma } from "@/lib/db";
 
 export const dynamic = "force-dynamic";
 
 export async function GET() {
   try {
-    await requirePlatformAdmin();
+    await requireMoePlatformAdmin();
 
     const [schoolCount, userCount, studentCount, teacherCount, curriculumCount] =
       await Promise.all([

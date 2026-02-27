@@ -1,12 +1,17 @@
-import { requirePlatformAdmin } from "@/lib/auth";
 import { prisma } from "@/lib/db";
-import { redirect } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
+import { requireMoePlatformAdmin } from "@/lib/moeAccess";
 
 export const dynamic = "force-dynamic";
 
 export default async function PlatformReportsPage() {
-  const user = await requirePlatformAdmin().catch(() => null);
-  if (!user) redirect("/login");
+  let user = null;
+  try {
+    user = await requireMoePlatformAdmin();
+  } catch (err: any) {
+    if (err?.status === 404) notFound();
+    redirect("/login");
+  }
 
   // ---- National Summary ----
   const [schoolCount, studentCount, teacherCount, curriculumCount, fullPackCount] =

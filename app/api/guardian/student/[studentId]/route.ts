@@ -2,6 +2,7 @@
 import { NextResponse } from "next/server";
 import { requireRole } from "@/lib/auth";
 import { prisma } from "@/lib/db";
+import { isGuardianPortalEnabled } from "@/lib/serverFlags";
 
 export const dynamic = "force-dynamic";
 
@@ -10,6 +11,9 @@ export async function GET(
   { params }: { params: { studentId: string } }
 ) {
   try {
+    if (!isGuardianPortalEnabled()) {
+      return NextResponse.json({ error: "Not found" }, { status: 404 });
+    }
     const user = await requireRole("GUARDIAN");
     const { studentId } = params;
 

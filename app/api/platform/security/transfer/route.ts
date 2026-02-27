@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { requirePlatformAdmin } from "@/lib/auth";
+import { requireMoePlatformAdmin } from "@/lib/moeAccess";
 import { prisma } from "@/lib/db";
 import { logAudit } from "@/lib/audit";
 
@@ -7,7 +7,7 @@ export const dynamic = "force-dynamic";
 
 export async function POST() {
   try {
-    const user = await requirePlatformAdmin();
+    const user = await requireMoePlatformAdmin();
 
     const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 hours
 

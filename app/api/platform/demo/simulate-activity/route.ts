@@ -1,10 +1,10 @@
 import { NextResponse } from "next/server";
-import { requirePlatformAdmin } from "@/lib/auth";
+import { requireMoePlatformAdmin } from "@/lib/moeAccess";
 import { prisma } from "@/lib/db";
 
 export async function POST() {
   try {
-    await requirePlatformAdmin();
+    await requireMoePlatformAdmin();
 
     const now = new Date();
     const startOfDay = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()));
