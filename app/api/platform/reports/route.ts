@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { requirePlatformAdmin } from "@/lib/auth";
+import { requireMoePlatformAdmin } from "@/lib/moeAccess";
 import { prisma } from "@/lib/db";
 import { computePilotScore } from "@/lib/pilot-score";
 
@@ -14,7 +14,7 @@ function toCSV(headers: string[], rows: string[][]): string {
 
 export async function GET(req: NextRequest) {
   try {
-    await requirePlatformAdmin();
+    await requireMoePlatformAdmin();
 
     const { searchParams } = new URL(req.url);
     const type = searchParams.get("type") ?? "attendance";

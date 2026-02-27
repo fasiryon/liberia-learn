@@ -1,9 +1,9 @@
 import { NextResponse } from "next/server";
-import { requirePlatformAdmin } from "@/lib/auth";
+import { requireMoePlatformAdmin } from "@/lib/moeAccess";
 
 export async function POST() {
   try {
-    await requirePlatformAdmin();
+    await requireMoePlatformAdmin();
     // In production, this would call the seed script
     // For now, return a message directing to use npx prisma db seed
     return NextResponse.json({

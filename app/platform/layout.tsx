@@ -1,5 +1,5 @@
-import { redirect } from "next/navigation";
-import { requireUser } from "@/lib/auth";
+import { notFound, redirect } from "next/navigation";
+import { requireMoePortalUser } from "@/lib/moeAccess";
 import Link from "next/link";
 
 const NAV = [
@@ -16,8 +16,16 @@ export default async function PlatformLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const user = await requireUser().catch(() => null);
-  if (!user || !user.isPlatformAdmin) redirect("/login");
+  let user = null;
+  try {
+    user = await requireMoePortalUser();
+  } catch (err: any) {
+    if (err?.status === 404) notFound();
+    redirect("/login");
+  }
+
+  const navItems =
+    user.role === "DISTRICT_ADMIN" ? NAV.slice(0, 1) : NAV;
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-50">
@@ -34,7 +42,7 @@ export default async function PlatformLayout({
           </Link>
 
           <nav className="flex gap-4">
-            {NAV.map((n) => (
+            {navItems.map((n) => (
               <Link
                 key={n.href}
                 href={n.href}
