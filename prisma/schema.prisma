@@ -1036,6 +1036,13 @@ model InterventionLog {
   generatedAt               DateTime @default(now())
   outcomeCheckedAt          DateTime?
   outcomeDelta              Float?
+  outcomeEffectSize         Float?
+  outcomeBaselineStart      DateTime?
+  outcomeBaselineEnd        DateTime?
+  outcomeFollowupStart      DateTime?
+  outcomeFollowupEnd        DateTime?
+  outcomeBaselineCount      Int?
+  outcomeFollowupCount      Int?
   school                    School   @relation(fields: [schoolId], references: [id], onDelete: Cascade)
   district                  District? @relation(fields: [districtId], references: [id])
 

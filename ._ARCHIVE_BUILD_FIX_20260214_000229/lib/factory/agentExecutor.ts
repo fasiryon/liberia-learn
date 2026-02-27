@@ -2,9 +2,13 @@ import OpenAI from 'openai';
 import fs from 'fs/promises';
 import path from 'path';
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
+let _openai: OpenAI | null = null;
+function getOpenAIClientOrNull(): OpenAI | null {
+  const apiKey = process.env.OPENAI_API_KEY;
+  if (!apiKey) return null;
+  if (!_openai) _openai = new OpenAI({ apiKey });
+  return _openai;
+}
 
 export class AgentExecutor {
   private agentPrompts: Map<string, string> = new Map();
@@ -94,7 +98,9 @@ export class AgentExecutor {
       throw new Error(`Agent prompt for ${agentType} not loaded`);
     }
 
-    const completion = await openai.chat.completions.create({
+    const client = getOpenAIClientOrNull();
+    if (!client) throw Object.assign(new Error("OpenAI unavailable"), { status: 503 });
+    const completion = await client.chat.completions.create({
       model: 'gpt-4',
       max_tokens: 8000,
       messages: [
@@ -155,7 +161,9 @@ Please complete your agent responsibilities as specified in your prompt above. O
     }
 
     // Otherwise, use OpenAI API
-    const completion = await openai.chat.completions.create({
+    const client = getOpenAIClientOrNull();
+    if (!client) throw Object.assign(new Error("OpenAI unavailable"), { status: 503 });
+    const completion = await client.chat.completions.create({
       model: 'gpt-4',
       max_tokens: 8000,
       messages: [

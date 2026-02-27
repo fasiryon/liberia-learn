@@ -1,11 +1,10 @@
 // lib/moe/alignment-engine.ts
-import OpenAI from "openai";
 import { prisma } from "@/lib/db";
 import type { $Enums } from "@prisma/client";
+import { getOpenAIClientOrThrow } from "@/lib/ai/openaiClient";
 type GradeBand = $Enums.GradeBand;
 type Subject = $Enums.Subject;
 
-const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY! });
 
 export function gradeToBand(grade: number): GradeBand {
   if (grade <= 3) return "G1_3";
@@ -141,11 +140,13 @@ export async function alignContentToMOE(
     };
   } else {
     // Fall back to AI
+    const client = getOpenAIClientOrThrow();
+
     const candidateList = candidates
       .map((c) => `${c.code}: ${c.description}`)
       .join("\n");
 
-    const completion = await openai.chat.completions.create({
+    const completion = await client.chat.completions.create({
       model: "gpt-4o-mini",
       messages: [
         {
