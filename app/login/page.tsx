@@ -2,9 +2,10 @@
 "use client";
 
 import Link from "next/link";
-import { FormEvent, useEffect, useState } from "react";
+import { FormEvent, useEffect, useMemo, useState } from "react";
 import { signIn, getSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import { FEATURE_FLAGS } from "@/lib/featureFlags";
 
 /** Map role to default landing page */
 function defaultRouteForRole(role: string): string {
@@ -27,7 +28,7 @@ function isNextUrlSafeForRole(url: string, role: string): boolean {
   // Block cross-role escalation
   if (role === "STUDENT" && (url.startsWith("/admin") || url.startsWith("/teacher"))) return false;
   if (role === "TEACHER" && url.startsWith("/admin")) return false;
-  if (role === "GUARDIAN" && (url.startsWith("/admin") || url.startsWith("/teacher"))) return false;
+  if (role === "GUARDIAN" && (url.startsWith("/admin") || url.startsWith("/teacher") || url.startsWith("/platform"))) return false;
   return true;
 }
 
@@ -44,11 +45,20 @@ export default function LoginPage() {
     }
   }, []);
 
-  const [role, setRole] = useState<"student" | "teacher" | "admin">("student");
+  const [role, setRole] = useState<"student" | "teacher" | "admin" | "guardian">("student");
   const [email, setEmail] = useState("student@school.lr");
   const [password, setPassword] = useState("password123");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const guardianEnabled = FEATURE_FLAGS.ENABLE_GUARDIAN_PORTAL;
+
+  const roleOptions = useMemo(
+    () =>
+      (guardianEnabled
+        ? ["student", "teacher", "admin", "guardian"]
+        : ["student", "teacher", "admin"]) as const,
+    [guardianEnabled]
+  );
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -104,8 +114,8 @@ export default function LoginPage() {
         </div>
 
         {/* Role selector */}
-        <div className="grid grid-cols-3 gap-2 text-xs">
-          {(["student", "teacher", "admin"] as const).map((option) => (
+        <div className={`grid gap-2 text-xs ${guardianEnabled ? "grid-cols-4" : "grid-cols-3"}`}>
+          {roleOptions.map((option) => (
             <button
               key={option}
               type="button"

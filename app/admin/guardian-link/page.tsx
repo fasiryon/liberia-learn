@@ -221,7 +221,7 @@ export default function GuardianLinkPage() {
           )}
           {success && (
             <div className="mt-4 rounded-lg border border-emerald-800 bg-emerald-950/40 px-3 py-2">
-              <p className="text-xs text-emerald-400">Guardian linked! Invite URL:</p>
+              <p className="text-xs text-emerald-400">Invite created. Share this link:</p>
               <p className="mt-1 break-all text-xs text-slate-300 font-mono">
                 {success}
               </p>
