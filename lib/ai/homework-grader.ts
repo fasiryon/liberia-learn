@@ -1,11 +1,8 @@
 // lib/ai/homework-grader.ts
-import OpenAI from "openai";
 import { prisma } from "@/lib/db";
+import { getOpenAIClientOrThrow } from "@/lib/ai/openaiClient";
 const AGENT_ID = "homework-grader";
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
 
 export type QuestionFeedback = {
   questionIndex: number;
@@ -142,8 +139,10 @@ const started = Date.now();try {
       };
       const scrubbedPayload = scrubPII(payload);
 
+      const client = getOpenAIClientOrThrow();
+
       // Ask the model to grade
-      const completion = await openai.chat.completions.create({
+      const completion = await client.chat.completions.create({
         model: "gpt-4.1-mini",
         messages: [
           {

@@ -1,7 +1,7 @@
 // app/api/placement/generate-question/route.ts
 import { NextResponse } from "next/server";
 import { requireRole } from "@/lib/auth";
-import OpenAI from "openai";
+import { getOpenAIClientOrThrow } from "@/lib/ai/openaiClient";
 
 const rateLimitMap = new Map<string, { count: number; resetAt: number }>();
 const RATE_LIMIT = 20;
@@ -19,9 +19,6 @@ function checkRateLimit(key: string): boolean {
   return true;
 }
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
 
 const difficultyDescriptions: Record<number, string> = {
   1: "very basic, elementary level",
@@ -42,9 +39,7 @@ export async function POST(req: Request) {
       );
     }
 
-    if (!process.env.OPENAI_API_KEY) {
-      throw new Error("OPENAI_API_KEY is not set in environment variables");
-    }
+    const client = getOpenAIClientOrThrow();
 
     const { difficulty, subject, previousAnswers } = await req.json();
 
@@ -81,7 +76,7 @@ Rules:
 - Explanation must be 1-3 short sentences.
 `;
 
-    const completion = await openai.chat.completions.create({
+    const completion = await client.chat.completions.create({
       model: "gpt-4.1-mini",
       messages: [
         {
@@ -115,7 +110,7 @@ Rules:
     console.error("Generate question error:", error);
     return NextResponse.json(
       { error: error.message || "Failed to generate question" },
-      { status: 500 }
+      { status: error?.status ?? 500 }
     );
   }
 }
