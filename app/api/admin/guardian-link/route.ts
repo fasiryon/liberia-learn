@@ -4,6 +4,7 @@ import { prisma } from "@/lib/db";
 import { sendGuardianInvite } from "@/lib/email";
 import { normalizeToE164 } from "@/lib/phone";
 import { isGuardianLinkingEnabled } from "@/lib/serverFlags";
+import { generateTokenPair } from "@/lib/tokens";
 
 export const dynamic = "force-dynamic";
 
@@ -121,6 +122,7 @@ export async function POST(req: Request) {
 
     // Create invite token (7-day expiry)
     const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
+    const { token: rawToken, tokenHash } = generateTokenPair();
     const invite = await prisma.inviteToken.create({
       data: {
         email,
@@ -129,12 +131,13 @@ export async function POST(req: Request) {
         studentId,
         tokenType: "GUARDIAN_LINK",
         relation: relation || null,
+        tokenHash,
         expiresAt,
       },
     });
 
     const base = process.env.NEXTAUTH_URL ?? "http://localhost:3000";
-    const inviteUrl = `${base}/guardian/link?token=${invite.token}`;
+    const inviteUrl = `${base}/guardian/link?token=${rawToken}`;
 
     // Fetch school name for email
     const school = user.schoolId
