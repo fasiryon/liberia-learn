@@ -18,6 +18,7 @@ model User {
   role                Role
   createdAt           DateTime             @default(now())
   updatedAt           DateTime             @updatedAt
+  passwordChangedAt   DateTime?
   schoolId            String?
   isPlatformAdmin     Boolean              @default(false)
   guardianCountryCode String               @default("+231")
@@ -658,6 +659,7 @@ model ChatMessage {
 model PasswordResetToken {
   id        String    @id @default(cuid())
   token     String    @unique @default(cuid())
+  tokenHash String?   @unique
   userId    String
   expiresAt DateTime
   usedAt    DateTime?
@@ -704,6 +706,7 @@ model VerificationToken {
 model InviteToken {
   id        String    @id @default(cuid())
   token     String    @unique @default(cuid())
+  tokenHash String?   @unique
   email     String?
   role      String    @default("TEACHER")
   tokenType String    @default("ONBOARD")
