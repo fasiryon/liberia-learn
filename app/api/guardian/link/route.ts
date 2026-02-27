@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { requireRole } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { isGuardianLinkingEnabled } from "@/lib/serverFlags";
+import { findInviteByToken } from "@/lib/inviteTokens";
 
 export const dynamic = "force-dynamic";
 
@@ -18,9 +19,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Token is required" }, { status: 400 });
     }
 
-    const invite = await prisma.inviteToken.findUnique({
-      where: { token },
-    });
+    const invite = await findInviteByToken(token);
 
     if (!invite || invite.tokenType !== "GUARDIAN_LINK") {
       return NextResponse.json({ error: "Invalid or expired token" }, { status: 400 });
