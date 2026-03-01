@@ -15,7 +15,7 @@ ALTER TABLE "ScheduledWork" ADD COLUMN IF NOT EXISTS "sessionPairId" TEXT;
 ALTER TABLE "ScheduledWork" ADD COLUMN IF NOT EXISTS "status" TEXT;
 ALTER TABLE "ScheduledWork" ADD COLUMN IF NOT EXISTS "suggestedLabs" JSONB;
 ALTER TABLE "ScheduledWork" ADD COLUMN IF NOT EXISTS "toolUsageLog" JSONB;
-CREATE INDEX CONCURRENTLY IF NOT EXISTS "ScheduledWork_sessionPairId_idx" ON "ScheduledWork"("sessionPairId");
+CREATE INDEX IF NOT EXISTS "ScheduledWork_sessionPairId_idx" ON "ScheduledWork"("sessionPairId");
 
 -- Part 4: CurriculumUnit
 CREATE TABLE IF NOT EXISTS "CurriculumUnit" (
@@ -35,7 +35,7 @@ CREATE TABLE IF NOT EXISTS "CurriculumUnit" (
   FOREIGN KEY ("schoolId") REFERENCES "School"("id"),
   FOREIGN KEY ("createdById") REFERENCES "User"("id")
 );
-CREATE INDEX CONCURRENTLY IF NOT EXISTS "CurriculumUnit_schoolId_grade_subject_idx"
+CREATE INDEX IF NOT EXISTS "CurriculumUnit_schoolId_grade_subject_idx"
   ON "CurriculumUnit"("schoolId", "grade", "subject");
 
 -- Part 5: Assignment + Homework lesson linkage
@@ -62,9 +62,9 @@ CREATE TABLE IF NOT EXISTS "AssignmentSuggestion" (
   "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY ("schoolId") REFERENCES "School"("id")
 );
-CREATE INDEX CONCURRENTLY IF NOT EXISTS "AssignmentSuggestion_schoolId_status_idx"
+CREATE INDEX IF NOT EXISTS "AssignmentSuggestion_schoolId_status_idx"
   ON "AssignmentSuggestion"("schoolId", "status");
-CREATE INDEX CONCURRENTLY IF NOT EXISTS "AssignmentSuggestion_scheduledWorkId_idx"
+CREATE INDEX IF NOT EXISTS "AssignmentSuggestion_scheduledWorkId_idx"
   ON "AssignmentSuggestion"("scheduledWorkId");
 
 -- Part 7: VirtualLab
@@ -90,9 +90,9 @@ CREATE TABLE IF NOT EXISTS "VirtualLab" (
   "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
   "updatedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
-CREATE INDEX CONCURRENTLY IF NOT EXISTS "VirtualLab_subject_grade_status_idx"
+CREATE INDEX IF NOT EXISTS "VirtualLab_subject_grade_status_idx"
   ON "VirtualLab"("subject", "grade", "status");
-CREATE INDEX CONCURRENTLY IF NOT EXISTS "VirtualLab_schoolId_idx"
+CREATE INDEX IF NOT EXISTS "VirtualLab_schoolId_idx"
   ON "VirtualLab"("schoolId");
 
 -- Part 7: LabSession
@@ -113,9 +113,9 @@ CREATE TABLE IF NOT EXISTS "LabSession" (
   FOREIGN KEY ("schoolId") REFERENCES "School"("id"),
   FOREIGN KEY ("studentId") REFERENCES "User"("id")
 );
-CREATE INDEX CONCURRENTLY IF NOT EXISTS "LabSession_schoolId_labId_idx"
+CREATE INDEX IF NOT EXISTS "LabSession_schoolId_labId_idx"
   ON "LabSession"("schoolId", "labId");
-CREATE INDEX CONCURRENTLY IF NOT EXISTS "LabSession_scheduledWorkId_idx"
+CREATE INDEX IF NOT EXISTS "LabSession_scheduledWorkId_idx"
   ON "LabSession"("scheduledWorkId");
-CREATE INDEX CONCURRENTLY IF NOT EXISTS "LabSession_studentId_schoolId_idx"
+CREATE INDEX IF NOT EXISTS "LabSession_studentId_schoolId_idx"
   ON "LabSession"("studentId", "schoolId");

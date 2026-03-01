@@ -12,7 +12,7 @@
 --    Hot path: class roster lookups in risk-summary and teacher growth routes.
 --    The existing unique index is (studentId, classId) — this one adds a
 --    classId-first entry point for queries filtering by classId IN [...].
-CREATE INDEX CONCURRENTLY IF NOT EXISTS "Enrollment_classId_idx"
+CREATE INDEX IF NOT EXISTS "Enrollment_classId_idx"
   ON "Enrollment"("classId");
 
 -- 2. Meeting(classId, startsAt)
@@ -20,7 +20,7 @@ CREATE INDEX CONCURRENTLY IF NOT EXISTS "Enrollment_classId_idx"
 --    Queries filter Meeting WHERE classId IN [...] AND startsAt BETWEEN.
 --    classId FIRST ensures the planner prunes to the relevant class set
 --    before applying the time range predicate.
-CREATE INDEX CONCURRENTLY IF NOT EXISTS "Meeting_classId_startsAt_idx"
+CREATE INDEX IF NOT EXISTS "Meeting_classId_startsAt_idx"
   ON "Meeting"("classId", "startsAt");
 
 -- 3. HomeworkSubmission(studentId, submittedAt)
@@ -28,7 +28,7 @@ CREATE INDEX CONCURRENTLY IF NOT EXISTS "Meeting_classId_startsAt_idx"
 --    Queries: WHERE studentId IN [...] AND submittedAt BETWEEN [prior, now].
 --    studentId FIRST scopes to the tenant's student set; submittedAt
 --    enables efficient range pruning within that set.
-CREATE INDEX CONCURRENTLY IF NOT EXISTS "HomeworkSubmission_studentId_submittedAt_idx"
+CREATE INDEX IF NOT EXISTS "HomeworkSubmission_studentId_submittedAt_idx"
   ON "HomeworkSubmission"("studentId", "submittedAt");
 
 -- 4. AssignmentSubmission(studentId, turnedInAt)
@@ -36,5 +36,5 @@ CREATE INDEX CONCURRENTLY IF NOT EXISTS "HomeworkSubmission_studentId_submittedA
 --    Same pattern as HomeworkSubmission above.
 --    The existing unique index is (assignmentId, studentId); this adds
 --    a studentId-first entry for time-range evidence queries.
-CREATE INDEX CONCURRENTLY IF NOT EXISTS "AssignmentSubmission_studentId_turnedInAt_idx"
+CREATE INDEX IF NOT EXISTS "AssignmentSubmission_studentId_turnedInAt_idx"
   ON "AssignmentSubmission"("studentId", "turnedInAt");

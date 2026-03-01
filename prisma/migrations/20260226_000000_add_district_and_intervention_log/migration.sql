@@ -1,4 +1,4 @@
-﻿-- Add Role enum value for district administrators
+-- Add Role enum value for district administrators
 DO $$ BEGIN
   ALTER TYPE "Role" ADD VALUE IF NOT EXISTS 'DISTRICT_ADMIN';
 EXCEPTION
