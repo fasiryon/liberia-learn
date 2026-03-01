@@ -5,6 +5,7 @@ import { prisma } from "@/lib/db";
 import { logAudit } from "@/lib/audit";
 import { liberianize } from "@/lib/localization/liberia-context";
 import { standardizeTone } from "@/lib/localization/tone-standardizer";
+import { gradeToBand } from "@/lib/moe/alignment-engine";
 import { createHash } from "crypto";
 import {
   slugify,
@@ -62,7 +63,22 @@ export async function POST(req: Request) {
       );
     }
 
-    const { grade, subject, topic, moeAlignmentCodes = [] } = parsed.data;
+    const { grade, subject, topic, moeAlignmentCodes: callerCodes = [] } = parsed.data;
+
+    // Auto-lookup MOE codes from DB when caller does not provide them.
+    // This converts the previous opt-in behaviour to opt-out, ensuring every
+    // full-pack has standards traceability without requiring the client to know
+    // which codes apply.
+    let moeAlignmentCodes: string[] = callerCodes;
+    if (moeAlignmentCodes.length === 0) {
+      const band = gradeToBand(grade);
+      const dbCodes = await prisma.standard.findMany({
+        where: { subject: subject as any, band },
+        select: { code: true },
+      });
+      moeAlignmentCodes = dbCodes.map((s) => s.code);
+    }
+
     const loc = (text: string) => standardizeTone(liberianize(text), grade);
 
     // 1. Term Plan
