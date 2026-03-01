@@ -2,7 +2,7 @@
  * Strand Catalog Seed — Block 7A: Mastery Engine Foundation
  *
  * Seeds the StrandCatalog table with the Liberia-aligned strand taxonomy for:
- *   MATH, SCIENCE, ENGINEERING, COMPUTER_SCIENCE, LITERACY (English)
+ *   MATH, SCIENCE, ENGINEERING, COMPUTER_SCIENCE, LITERACY (English), CIVICS
  *
  * Design principles:
  * - Idempotent: uses upsert with (subject, strandKey) as the natural key.
@@ -147,6 +147,21 @@ const STRANDS: StrandSeed[] = [
   { subject: "LITERACY", strandKey: "rhetoric_persuasion",   name: "Rhetoric & Persuasive Writing",   gradeBand: "G10_12", waecRef: "WASSCE-ENG-A3" },
   { subject: "LITERACY", strandKey: "literature_study",      name: "Literature Study & Criticism",    gradeBand: "G10_12", waecRef: "WASSCE-ENG-A4" },
   { subject: "LITERACY", strandKey: "career_communication",  name: "Career & Professional Communication", gradeBand: "G10_12", waecRef: "WASSCE-ENG-A5" },
+
+  // ── CIVICS ────────────────────────────────────────────────────────────────
+  // Added: ACTION-1 — MOE Standards Coverage remediation (GAP-1)
+  // Resolves: CIVICS had 6 MOE codes but 0 StrandCatalog entries, breaking
+  // the mastery tracking and intervention path for all Civics standards.
+  // G1–3
+  { subject: "CIVICS", strandKey: "national_identity",       name: "National Identity & Symbols",          gradeBand: "G1_3" },
+  // G4–6
+  { subject: "CIVICS", strandKey: "government_basics",       name: "Structure of Government",              gradeBand: "G4_6" },
+  { subject: "CIVICS", strandKey: "rights_responsibilities", name: "Rights & Civic Duties",               gradeBand: "G4_6" },
+  // G7–9
+  { subject: "CIVICS", strandKey: "liberian_history",        name: "Liberian History",                     gradeBand: "G7_9" },
+  { subject: "CIVICS", strandKey: "constitutional_law",      name: "Constitutional Government",            gradeBand: "G7_9" },
+  // G10–12
+  { subject: "CIVICS", strandKey: "international_relations", name: "International Relations & Global Bodies", gradeBand: "G10_12" },
 ];
 
 /**
