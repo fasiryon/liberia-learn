@@ -140,7 +140,12 @@ export function generateUnitPlanPayload(grade: number, subject: string, topic: s
 }
 
 /** Generate 5 MCQ assessment items for a unit topic */
-export function generateAssessmentItems(grade: number, subject: string, unitTopic: string) {
+export function generateAssessmentItems(
+  grade: number,
+  subject: string,
+  unitTopic: string,
+  moeAlignmentCodes: string[] = []
+) {
   const items = Array.from({ length: 5 }, (_, i) => ({
     id: `assess-${slugify(unitTopic)}-q${i + 1}`,
     question: standardizeTone(
@@ -156,17 +161,19 @@ export function generateAssessmentItems(grade: number, subject: string, unitTopi
     ],
     correctAnswer: "A",
     points: 2,
+    standardCodes: moeAlignmentCodes,
   }));
   return items;
 }
 
 /** Generate a rubric for an assessment */
-export function generateRubric(title: string) {
+export function generateRubric(title: string, moeAlignmentCodes: string[] = []) {
   return {
     title: `Rubric: ${title}`,
     criteria: [
       {
         name: "Understanding",
+        standardCodes: moeAlignmentCodes,
         levels: [
           { label: "Excellent", points: 4, description: "Demonstrates thorough understanding of all concepts." },
           { label: "Good", points: 3, description: "Demonstrates solid understanding of most concepts." },
@@ -176,6 +183,7 @@ export function generateRubric(title: string) {
       },
       {
         name: "Application",
+        standardCodes: moeAlignmentCodes,
         levels: [
           { label: "Excellent", points: 4, description: "Applies concepts accurately to new situations." },
           { label: "Good", points: 3, description: "Applies concepts with minor errors." },
@@ -185,6 +193,7 @@ export function generateRubric(title: string) {
       },
       {
         name: "Communication",
+        standardCodes: moeAlignmentCodes,
         levels: [
           { label: "Excellent", points: 4, description: "Explains reasoning clearly and completely." },
           { label: "Good", points: 3, description: "Explains reasoning adequately." },
