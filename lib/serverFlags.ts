@@ -356,5 +356,85 @@ export function isCurriculumFeedbackEnabled(): boolean {
   return process.env.ENABLE_CURRICULUM_FEEDBACK === "true";
 }
 
+// ─── Integrated Lesson Delivery Engine Flags (Parts 1–8) ───────────────────
 
+/**
+ * Part 1: AI-generated delivery profile embedded in CurriculumContent.
+ * When ON, generateCurriculumPayload() requests and validates deliveryProfile.
+ * DEFAULT OFF.
+ */
+export function isDeliveryProfileEnabled(): boolean {
+  return process.env.ENABLE_DELIVERY_PROFILE === "true";
+}
+
+/**
+ * Part 2: Lesson delivery tracking on ScheduledWork.
+ * When ON, PATCH /api/teacher/schedule/[id]/deliver is active.
+ * DEFAULT OFF.
+ */
+export function isLessonDeliveryTrackingEnabled(): boolean {
+  return process.env.ENABLE_LESSON_DELIVERY_TRACKING === "true";
+}
+
+/**
+ * Part 3: A/B block day pair auto-creation on scheduling.
+ * When ON, scheduling a block_a/block_b lesson also creates the sibling day.
+ * DEFAULT OFF.
+ */
+export function isAbBlockSchedulingEnabled(): boolean {
+  return process.env.ENABLE_AB_BLOCK_SCHEDULING === "true";
+}
+
+/**
+ * Part 4: Curriculum Unit grouping model and routes.
+ * DEFAULT OFF.
+ */
+export function isUnitGroupingEnabled(): boolean {
+  return process.env.ENABLE_UNIT_GROUPING === "true";
+}
+
+/**
+ * Part 5: Assignment/homework lesson linkage + auto-suggestions.
+ * When ON, scheduling a lesson with an exit ticket creates an AssignmentSuggestion.
+ * DEFAULT OFF.
+ */
+export function isAssignmentLessonLinkageEnabled(): boolean {
+  return process.env.ENABLE_ASSIGNMENT_LESSON_LINKAGE === "true";
+}
+
+/**
+ * Part 5: AI-assisted assignment draft generation.
+ * Requires ENABLE_ASSIGNMENT_LESSON_LINKAGE=true to be meaningful.
+ * DEFAULT OFF.
+ */
+export function isAiAssignmentGenerationEnabled(): boolean {
+  return process.env.ENABLE_AI_ASSIGNMENT_GENERATION === "true";
+}
+
+/**
+ * Part 6: Toolkit integration with lesson delivery.
+ * When ON, GET /api/teacher/schedule/[id]/tools returns required/optional/contextual tools.
+ * DEFAULT OFF.
+ */
+export function isToolkitLessonIntegrationEnabled(): boolean {
+  return process.env.ENABLE_TOOLKIT_LESSON_INTEGRATION === "true";
+}
+
+/**
+ * Part 7: Virtual lab system.
+ * When ON, VirtualLab and LabSession routes are active, labs auto-matched on scheduling.
+ * DEFAULT OFF.
+ */
+export function isVirtualLabsEnabled(): boolean {
+  return process.env.ENABLE_VIRTUAL_LABS === "true";
+}
+
+/**
+ * Part 8: MOE delivery compliance reporting.
+ * When ON, GET /api/teacher/schedule enhanced week view + admin compliance report active.
+ * DEFAULT OFF.
+ */
+export function isDeliveryComplianceReportingEnabled(): boolean {
+  return process.env.ENABLE_DELIVERY_COMPLIANCE_REPORTING === "true";
+}
 
