@@ -45,6 +45,10 @@ model User {
   TeacherProfile      TeacherProfile?
   TrainingProgress    TrainingProgress[]
   school              School?              @relation(fields: [schoolId], references: [id])
+  // Part 4: units created by this user
+  curriculumUnits     CurriculumUnit[]     @relation("CurriculumUnitCreatedBy")
+  // Part 7: lab sessions for this user
+  labSessions         LabSession[]         @relation("LabSessionStudent")
 }
 
 model District {
@@ -101,6 +105,12 @@ model School {
   metricEvents           MetricEvent[]
   District               District?              @relation(fields: [districtId], references: [id])
   interventionLogs       InterventionLog[]
+  // Part 4: unit grouping
+  curriculumUnits        CurriculumUnit[]
+  // Part 5: assignment suggestions
+  assignmentSuggestions  AssignmentSuggestion[]
+  // Part 7: virtual lab sessions
+  labSessions            LabSession[]
 }
 
 model Class {
@@ -447,15 +457,20 @@ model TrainingModule {
 
 /// / ===== Assignments =====
 model Assignment {
-  id          String                 @id @default(cuid())
-  classId     String
-  title       String
-  description String?
-  dueAt       DateTime?
-  points      Int                    @default(100)
-  createdAt   DateTime               @default(now())
-  Class       Class                  @relation(fields: [classId], references: [id])
-  submissions AssignmentSubmission[]
+  id               String                 @id @default(cuid())
+  classId          String
+  title            String
+  description      String?
+  dueAt            DateTime?
+  points           Int                    @default(100)
+  createdAt        DateTime               @default(now())
+  // Part 5: lesson linkage
+  scheduledWorkId  String?
+  contentId        String?
+  moeStandardCodes String[]               @default([])
+  generationMethod String?                // "manual"|"ai_generated"|"suggested"
+  Class            Class                  @relation(fields: [classId], references: [id])
+  submissions      AssignmentSubmission[]
 }
 
 model AssignmentSubmission {
@@ -474,19 +489,24 @@ model AssignmentSubmission {
 
 /// / ===== Homework (AI + Teacher) =====
 model Homework {
-  id           String               @id @default(cuid())
-  classId      String
-  title        String
-  dueAt        DateTime?
-  createdAt    DateTime             @default(now())
-  instructions String?
-  questions    Json?
-  description  String?
-  createdById  String
-  rubricJson   Json?
-  Class        Class                @relation(fields: [classId], references: [id])
-  createdBy    User                 @relation(fields: [createdById], references: [id])
-  submissions  HomeworkSubmission[]
+  id               String               @id @default(cuid())
+  classId          String
+  title            String
+  dueAt            DateTime?
+  createdAt        DateTime             @default(now())
+  instructions     String?
+  questions        Json?
+  description      String?
+  createdById      String
+  rubricJson       Json?
+  // Part 5: lesson linkage
+  scheduledWorkId  String?
+  contentId        String?
+  moeStandardCodes String[]             @default([])
+  generationMethod String?
+  Class            Class                @relation(fields: [classId], references: [id])
+  createdBy        User                 @relation(fields: [createdById], references: [id])
+  submissions      HomeworkSubmission[]
 }
 
 model HomeworkSubmission {
@@ -849,19 +869,21 @@ model CurriculumFeedback {
 
 /// / ===== Curriculum Content =====
 model CurriculumContent {
-  id            String          @id @default(cuid())
-  contentId     String          @unique
-  grade         Int
-  subject       String
-  contentType   String
-  status        String
-  version       String
-  payload       Json
-  moeAlignments Json?
-  hash          String?         @unique
-  createdAt     DateTime        @default(now())
-  updatedAt     DateTime        @updatedAt
-  scheduledWork ScheduledWork[]
+  id              String          @id @default(cuid())
+  contentId       String          @unique
+  grade           Int
+  subject         String
+  contentType     String
+  status          String
+  version         String
+  payload         Json
+  moeAlignments   Json?
+  hash            String?         @unique
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+  deliveryProfile Json?           // Part 1: AI-generated lesson delivery profile
+  unitId          String?         // Part 4: soft link to CurriculumUnit.unitId
+  scheduledWork   ScheduledWork[]
 
   @@index([grade, subject])
   @@index([contentType, status])
@@ -869,21 +891,35 @@ model CurriculumContent {
 
 /// / ===== Scheduled Work (Today's Work) =====
 model ScheduledWork {
-  id            String            @id @default(cuid())
-  contentId     String
-  classId       String
-  scheduledDate DateTime
-  createdById   String
-  createdAt     DateTime          @default(now())
-  endTime       String?
-  periodNumber  Int?
-  startTime     String?
-  class         Class             @relation(fields: [classId], references: [id])
-  content       CurriculumContent @relation(fields: [contentId], references: [contentId])
-  progress      StudentProgress[]
+  id             String            @id @default(cuid())
+  contentId      String
+  classId        String
+  scheduledDate  DateTime
+  createdById    String
+  createdAt      DateTime          @default(now())
+  endTime        String?
+  periodNumber   Int?
+  startTime      String?
+  // Part 2: scheduling + delivery tracking fields
+  classFormat    String?           // "standard"|"block_a"|"block_b"|"block_single"
+  deliveredAt    DateTime?
+  deliveryNotes  String?
+  completionRate Int?              // 0–100
+  isDelivered    Boolean           @default(false)
+  // Part 3: A/B block pairing
+  sessionPairId  String?           // shared UUID for A/B pairs
+  status         String?           // "confirmed"|"suggested"|"dismissed"
+  // Part 7: virtual labs
+  suggestedLabs  Json?             // auto-populated matched labs
+  // Part 6: toolkit
+  toolUsageLog   Json?             // toolKeys opened during session
+  class          Class             @relation(fields: [classId], references: [id])
+  content        CurriculumContent @relation(fields: [contentId], references: [contentId])
+  progress       StudentProgress[]
 
   @@index([classId, scheduledDate])
   @@index([contentId])
+  @@index([sessionPairId])
 }
 
 /// / ===== Student Progress =====
@@ -1082,6 +1118,101 @@ model InterventionLog {
   @@index([tenantId, generatedAt])
   @@index([schoolId, generatedAt])
   @@index([districtId, generatedAt])
+}
+
+/// / ===== Integrated Delivery Engine Models (Parts 4, 5, 7) =====
+
+/// Part 4: Curriculum Unit grouping — organises CurriculumContent into teaching units
+model CurriculumUnit {
+  id                  String   @id @default(cuid())
+  unitId              String   @unique @default(cuid())
+  name                String
+  description         String?
+  subject             String
+  grade               Int
+  schoolId            String
+  targetStandardCodes String[]
+  weekStart           Int
+  weekEnd             Int
+  createdById         String
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  school              School   @relation(fields: [schoolId], references: [id])
+  createdBy           User     @relation("CurriculumUnitCreatedBy", fields: [createdById], references: [id])
+
+  @@index([schoolId, grade, subject])
+}
+
+/// Part 5: Auto-generated assignment suggestions linked to scheduled lessons
+model AssignmentSuggestion {
+  id               String   @id @default(cuid())
+  schoolId         String
+  contentId        String
+  scheduledWorkId  String
+  classId          String
+  suggestedTitle   String
+  suggestedDueDate DateTime
+  moeStandardCodes String[]
+  status           String   @default("pending") // "pending"|"accepted"|"dismissed"
+  createdAt        DateTime @default(now())
+
+  school           School   @relation(fields: [schoolId], references: [id])
+
+  @@index([schoolId, status])
+  @@index([scheduledWorkId])
+}
+
+/// Part 7: Virtual lab definitions (platform-wide or school-specific)
+model VirtualLab {
+  id                   String   @id @default(cuid())
+  labId                String   @unique @default(cuid())
+  title                String
+  description          String
+  subject              String
+  grade                Int
+  gradeBand            String
+  labType              String   // "2d_simulation"|"3d_environment"|"guided_walkthrough"
+  moeStandardCodes     String[]
+  primaryContentIds    String[]
+  triggerStandardCodes String[]
+  estimatedMinutes     Int
+  difficulty           String   // "introductory"|"standard"|"advanced"
+  equipmentList        String[]
+  safetyNotes          String?
+  payload              Json     // lab definition: steps, interactions
+  status               String   @default("draft")
+  schoolId             String?  // null = platform-wide
+
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+
+  @@index([subject, grade, status])
+  @@index([schoolId])
+}
+
+/// Part 7: Student lab session records
+model LabSession {
+  id               String    @id @default(cuid())
+  labId            String
+  studentId        String
+  scheduledWorkId  String?
+  schoolId         String
+  startedAt        DateTime  @default(now())
+  completedAt      DateTime?
+  observations     Json?
+  conclusions      String?
+  score            Int?
+  teacherFeedback  String?
+  masteryUpdated   Boolean   @default(false)
+  createdAt        DateTime  @default(now())
+
+  school           School    @relation(fields: [schoolId], references: [id])
+  student          User      @relation("LabSessionStudent", fields: [studentId], references: [id])
+
+  @@index([schoolId, labId])
+  @@index([scheduledWorkId])
+  @@index([studentId, schoolId])
 }
 
 /// / ===== Enums =====
