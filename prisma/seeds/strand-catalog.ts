@@ -33,6 +33,9 @@ const STRANDS: StrandSeed[] = [
   { subject: "MATH", strandKey: "shapes_geometry",    name: "Shapes & Basic Geometry",          gradeBand: "G1_3" },
   { subject: "MATH", strandKey: "measurement_basics", name: "Measurement & Units",              gradeBand: "G1_3" },
   { subject: "MATH", strandKey: "patterns",           name: "Patterns & Relationships",         gradeBand: "G1_3" },
+  // Added: ACTION-8 — resolves LR-MATH-G1_3-05 strand mismatch
+  // "patterns" did not cover "tell time to the hour/half-hour; days/months"
+  { subject: "MATH", strandKey: "time_calendar",      name: "Time, Calendar & Sequencing",      gradeBand: "G1_3" },
   // G4–6
   { subject: "MATH", strandKey: "fractions_decimals", name: "Fractions & Decimals",             gradeBand: "G4_6" },
   { subject: "MATH", strandKey: "multi_digit_ops",    name: "Multi-Digit Operations",           gradeBand: "G4_6" },
@@ -46,11 +49,14 @@ const STRANDS: StrandSeed[] = [
   { subject: "MATH", strandKey: "statistics_prob",    name: "Statistics & Probability",         gradeBand: "G7_9" },
   { subject: "MATH", strandKey: "expressions_eqs",    name: "Expressions & Equations",          gradeBand: "G7_9" },
   // G10–12 (WAEC WASSCE aligned)
-  { subject: "MATH", strandKey: "advanced_algebra",   name: "Advanced Algebra & Functions",     gradeBand: "G10_12", waecRef: "WASSCE-MATH-A1" },
-  { subject: "MATH", strandKey: "trigonometry",       name: "Trigonometry",                     gradeBand: "G10_12", waecRef: "WASSCE-MATH-A2" },
-  { subject: "MATH", strandKey: "calculus_intro",     name: "Introductory Calculus",            gradeBand: "G10_12", waecRef: "WASSCE-MATH-A3" },
-  { subject: "MATH", strandKey: "functions_modeling", name: "Functions & Mathematical Modeling", gradeBand: "G10_12", waecRef: "WASSCE-MATH-A4" },
-  { subject: "MATH", strandKey: "combinatorics",      name: "Combinatorics & Probability",      gradeBand: "G10_12", waecRef: "WASSCE-MATH-A5" },
+  { subject: "MATH", strandKey: "advanced_algebra",    name: "Advanced Algebra & Functions",     gradeBand: "G10_12", waecRef: "WASSCE-MATH-A1" },
+  { subject: "MATH", strandKey: "trigonometry",        name: "Trigonometry",                     gradeBand: "G10_12", waecRef: "WASSCE-MATH-A2" },
+  { subject: "MATH", strandKey: "calculus_intro",      name: "Introductory Calculus",            gradeBand: "G10_12", waecRef: "WASSCE-MATH-A3" },
+  { subject: "MATH", strandKey: "functions_modeling",  name: "Functions & Mathematical Modeling", gradeBand: "G10_12", waecRef: "WASSCE-MATH-A4" },
+  { subject: "MATH", strandKey: "combinatorics",       name: "Combinatorics & Probability",      gradeBand: "G10_12", waecRef: "WASSCE-MATH-A5" },
+  // Added: ACTION-3 — resolves LR-MATH-G10_12-04 and LR-MATH-G10_12-05 strand gaps
+  { subject: "MATH", strandKey: "financial_sequences", name: "Sequences, Series & Financial Math", gradeBand: "G10_12", waecRef: "WASSCE-MATH-A6" },
+  { subject: "MATH", strandKey: "matrices_vectors",    name: "Matrices & Vectors",                 gradeBand: "G10_12", waecRef: "WASSCE-MATH-A7" },
 
   // ── SCIENCE ───────────────────────────────────────────────────────────────
   // G1–3
