@@ -33,7 +33,9 @@
       "Bash(git -C /c/Users/FA/liberia-learn log 5ff4cbc -1 --format=\"%B\")",
       "Bash(test:*)",
       "Bash(taskkill:*)",
-      "Bash(cat:*)"
+      "Bash(cat:*)",
+      "Bash(npx prisma:*)",
+      "Bash(sed:*)"
     ]
   }
 }
