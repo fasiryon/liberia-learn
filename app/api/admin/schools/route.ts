@@ -2,10 +2,13 @@
 import { NextResponse } from "next/server";
 import { requireRole } from "@/lib/auth";
 import { prisma } from "@/lib/db";
+import { logAudit } from "@/lib/audit";
+import { randomUUID } from "crypto";
 
 export async function POST(request: Request) {
+  const traceId = randomUUID();
   try {
-    await requireRole("ADMIN");
+    const user = await requireRole("ADMIN");
 
     const formData = await request.formData();
 
@@ -30,6 +33,16 @@ export async function POST(request: Request) {
         primaryHex,
         secondaryHex,
       },
+    });
+
+    await logAudit({
+      userId: user.id,
+      action: "admin.school.created",
+      resourceType: "school",
+      resourceId: id,
+      schoolId: user.schoolId ?? null,
+      traceId,
+      details: { name },
     });
 
     return NextResponse.redirect(new URL("/admin/schools", request.url));
