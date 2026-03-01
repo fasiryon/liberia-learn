@@ -1,23 +1,34 @@
 import { NextResponse } from "next/server";
+import { z } from "zod";
 import { requireRole } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { logAudit } from "@/lib/audit";
 import { isCurriculumFeedbackEnabled } from "@/lib/serverFlags";
 
+const RequestSchema = z.object({
+  contentId: z.string().min(1),
+  rejectionReason: z.string().max(500).optional(),
+});
+
 /**
- * POST /api/admin/curriculum/approve
- * Body: { contentId: string }
- * Sets status to "published" and adds approval metadata in payload.
+ * POST /api/admin/curriculum/reject
+ * Body: { contentId: string, rejectionReason?: string }
+ * Sets status to "rejected" and records structured telemetry.
  */
 export async function POST(req: Request) {
   try {
     const user = await requireRole("ADMIN", "TEACHER");
 
     const body = await req.json();
-    const { contentId } = body;
-    if (!contentId || typeof contentId !== "string") {
-      return NextResponse.json({ error: "contentId required" }, { status: 400 });
+    const parsed = RequestSchema.safeParse(body);
+    if (!parsed.success) {
+      return NextResponse.json(
+        { error: "Invalid input", details: parsed.error.issues },
+        { status: 400 }
+      );
     }
+
+    const { contentId, rejectionReason } = parsed.data;
 
     const record = await prisma.curriculumContent.findUnique({
       where: { contentId },
@@ -26,28 +37,29 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Not found" }, { status: 404 });
     }
 
-    // Update payload with approval info
+    // Update payload with rejection info
     const payload = (record.payload as any) ?? {};
     const updatedPayload = {
       ...payload,
-      approvalStatus: "APPROVED",
-      approvedByUserId: user.id,
-      approvedAt: new Date().toISOString(),
+      approvalStatus: "REJECTED",
+      rejectedByUserId: user.id,
+      rejectedAt: new Date().toISOString(),
     };
 
     await prisma.curriculumContent.update({
       where: { contentId },
       data: {
-        status: "published",
+        status: "rejected",
         payload: updatedPayload,
       },
     });
 
     await logAudit({
       userId: user.id,
-      action: "curriculum.approve",
+      action: "curriculum.reject",
       resourceType: "curriculum",
       resourceId: contentId,
+      details: { hasRejectionReason: !!rejectionReason },
     });
 
     // Telemetry — never crashes the response
@@ -58,22 +70,23 @@ export async function POST(req: Request) {
         await prisma.curriculumFeedback.create({
           data: {
             curriculumId: contentId,
-            action: "approved",
+            action: "rejected",
+            rejectionReason: rejectionReason ?? null,
             grade: record.grade,
             subject: record.subject,
             generationMethod,
           },
         });
       } catch {
-        // intentional no-op: telemetry must not crash approval
+        // intentional no-op: telemetry must not crash rejection
       }
     }
 
-    return NextResponse.json({ ok: true, contentId, status: "published" });
+    return NextResponse.json({ ok: true, contentId, status: "rejected" });
   } catch (err: any) {
-    console.error("Curriculum approve error:", err);
+    console.error("Curriculum reject error:", err);
     return NextResponse.json(
-      { error: err?.message ?? "Failed to approve" },
+      { error: err?.message ?? "Failed to reject" },
       { status: err?.status ?? 500 }
     );
   }

@@ -344,5 +344,17 @@ export function isAccountRecoveryEnabled(): boolean {
   return process.env.ENABLE_ACCOUNT_RECOVERY === "true";
 }
 
+//  AI Factory: Curriculum Feedback Loop (Gap 3)
+
+/**
+ * Enables structured telemetry capture on curriculum approval/rejection.
+ * DEFAULT OFF. Set ENABLE_CURRICULUM_FEEDBACK=true to activate.
+ * When enabled, approval and rejection events are written to CurriculumFeedback.
+ * Telemetry failures never crash approval/rejection requests.
+ */
+export function isCurriculumFeedbackEnabled(): boolean {
+  return process.env.ENABLE_CURRICULUM_FEEDBACK === "true";
+}
+
 
 

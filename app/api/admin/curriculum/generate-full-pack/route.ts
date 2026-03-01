@@ -39,6 +39,7 @@ const RequestSchema = z.object({
   grade: z.number().int().min(1).max(12),
   subject: z.string().min(1),
   topic: z.string().min(1).max(200),
+  moeAlignmentCodes: z.array(z.string()).optional(),
 });
 
 export async function POST(req: Request) {
@@ -61,7 +62,7 @@ export async function POST(req: Request) {
       );
     }
 
-    const { grade, subject, topic } = parsed.data;
+    const { grade, subject, topic, moeAlignmentCodes = [] } = parsed.data;
     const loc = (text: string) => standardizeTone(liberianize(text), grade);
 
     // 1. Term Plan
@@ -92,8 +93,8 @@ export async function POST(req: Request) {
       });
 
       // 4. Assessment + Rubric + Mastery
-      const assessmentItems = generateAssessmentItems(grade, subject, unitTopic);
-      const rubric = generateRubric(unitTopic);
+      const assessmentItems = generateAssessmentItems(grade, subject, unitTopic, moeAlignmentCodes);
+      const rubric = generateRubric(unitTopic, moeAlignmentCodes);
       const masteryChecks = generateMasteryChecks(grade, subject, unitTopic);
 
       return {
