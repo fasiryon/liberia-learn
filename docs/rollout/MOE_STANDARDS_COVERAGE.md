@@ -560,3 +560,119 @@ populate `moeAlignments` on all seeded content. Document this as a required post
 | Critical blockers for MOE review | GAP-1 (CIVICS strands), GAP-2 (ENGINEERING codes) |
 | Actions to reach 90% T1 | ACTION-1, 3, 5, 6, 8 |
 | Actions to reach 95%+ T1 | All 10 actions |
+
+---
+
+## Remediation Log
+
+Implemented on branch `feat/ai-factory-standards-remediation` — 2026-02-28.
+All 5 actions pass the full test suite (680 tests).
+
+### ACTION-7 — Fix batch alignment to include published content
+
+**Commit:** `1fb40f5`
+**Status:** Resolved
+
+`alignAllContent()` in `lib/moe/alignment-engine.ts` filtered for
+`status = "accepted"` only. All published curriculum content
+(`status = "published"`, set on approval) was silently excluded from
+every batch-alignment run. Published lessons were never auto-aligned.
+
+**Fix:** Status filter changed to `{ in: ["published", "accepted"] }`.
+**Tests:** 5 added in `__tests__/moe.alignment.batch.test.ts`
+
+---
+
+### ACTION-1 — Add CIVICS strands to StrandCatalog
+
+**Commit:** `2004064`
+**Status:** Resolved
+
+CIVICS had 6 MOE codes but zero StrandCatalog entries, completely
+breaking the mastery tracking → intervention signal path for all
+Civics standards.
+
+**Fix:** Added 6 CIVICS strands (1:1 with the 6 CIVICS MOE codes):
+
+| strandKey | Band | MOE Code |
+|-----------|------|---------|
+| `national_identity` | G1_3 | LR-CIV-G1_3-01 |
+| `government_basics` | G4_6 | LR-CIV-G4_6-01 |
+| `rights_responsibilities` | G4_6 | LR-CIV-G4_6-02 |
+| `liberian_history` | G7_9 | LR-CIV-G7_9-01 |
+| `constitutional_law` | G7_9 | LR-CIV-G7_9-02 |
+| `international_relations` | G10_12 | LR-CIV-G10_12-01 |
+
+**Migration:** `prisma/migrations/20260228_civics_strands/migration.sql`
+**Tests:** 7 added in `__tests__/moe.civics.strands.test.ts`
+
+**Coverage impact:** CIVICS intervention coverage 0% → 100% (6/6 codes now have strand paths)
+
+---
+
+### ACTION-9 — Auto-lookup MOE codes at full-pack generation
+
+**Commit:** `ab04af1`
+**Status:** Resolved
+
+`generate-full-pack` required callers to explicitly supply
+`moeAlignmentCodes`. When not provided (the common case), every
+generated full-pack had empty `standardCodes: []` on all assessment
+items and rubric criteria — defeating the Gap-1 fix entirely.
+
+**Fix:** When `moeAlignmentCodes` is not supplied or empty, the route
+now queries `prisma.standard.findMany({ subject, band: gradeToBand(grade) })`
+and uses the returned codes automatically. Callers can still override.
+Returns `[]` safely for subjects with no codes (ENGINEERING).
+
+**Tests:** 5 added in `__tests__/fullpack.moe.autolookup.test.ts`
+
+---
+
+### ACTION-3 — Add missing MATH G10_12 strands
+
+**Commit:** `686e60b`
+**Status:** Resolved
+
+`LR-MATH-G10_12-04` (sequences/series/financial math) and
+`LR-MATH-G10_12-05` (matrices/vectors) had no StrandCatalog entries.
+Students studying these senior secondary topics generated no mastery
+data and could not be targeted by interventions.
+
+**Fix:** Added two strands with WASSCE alignment:
+- `financial_sequences` G10_12 WASSCE-MATH-A6 → LR-MATH-G10_12-04
+- `matrices_vectors`    G10_12 WASSCE-MATH-A7 → LR-MATH-G10_12-05
+
+**Migration:** `prisma/migrations/20260228_math_strands/migration.sql`
+
+---
+
+### ACTION-8 — Add MATH G1_3 time_calendar strand
+
+**Commit:** `686e60b` (combined with ACTION-3)
+**Status:** Resolved
+
+`LR-MATH-G1_3-05` (tell time to the hour/half-hour; days of week and months)
+was previously mapped to the `patterns` strand — a completely different
+content domain. Students' time and calendar skills could not be tracked.
+
+**Fix:** Added `time_calendar` strand at G1_3 → LR-MATH-G1_3-05
+**Migration:** `prisma/migrations/20260228_math_strands/migration.sql`
+
+---
+
+### Post-Remediation Coverage Update
+
+| Dimension | Before | After |
+|-----------|--------|-------|
+| CIVICS intervention coverage | 0 / 6 (0%) | **6 / 6 (100%)** |
+| MATH G10_12 uncovered codes | 2 (G10_12-04, -05) | **0** |
+| MATH G1_3 strand mismatch | 1 (G1_3-05) | **0** |
+| Total intervention-capable codes | 43 / 53 (81%) | **50 / 53 (94%)** |
+| Batch alignment scope | accepted only | **published + accepted** |
+| Full-pack codes auto-populated | no (opt-in) | **yes (opt-out)** |
+| Total new test cases | — | **+25** (680 total) |
+
+**Remaining open actions:** ACTION-2 (ENGINEERING codes), ACTION-4 (CS G1_3 codes),
+ACTION-5 (CS G4_6 hardware strand), ACTION-6 (Science G4_6 water cycle strand),
+ACTION-10 (run alignment on seeded content). To be addressed in a subsequent session.
