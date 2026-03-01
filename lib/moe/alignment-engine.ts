@@ -199,7 +199,8 @@ export async function alignContentToMOE(
 export async function alignAllContent(
   opts: { force?: boolean } = {}
 ): Promise<{ success: number; failed: number }> {
-  const where: any = { status: "accepted" };
+  // Include both "published" (approved content) and "accepted" (legacy status)
+  const where: any = { status: { in: ["published", "accepted"] } };
   if (!opts.force) {
     where.moeAlignments = null;
   }
