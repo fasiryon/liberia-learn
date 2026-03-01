@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { requireRole } from "@/lib/auth";
 import { prisma } from "@/lib/db";
+import { logAudit } from "@/lib/audit";
 import { isUnitGroupingEnabled } from "@/lib/serverFlags";
 
 export const dynamic = "force-dynamic";
@@ -44,6 +45,15 @@ export async function POST(req: NextRequest) {
         weekEnd,
         createdById: user.id,
       },
+    });
+
+    await logAudit({
+      userId: user.id,
+      action: "curriculum.unit.create",
+      resourceType: "curriculumUnit",
+      resourceId: unit.id,
+      schoolId: user.schoolId,
+      details: { subject, grade, weekStart, weekEnd },
     });
 
     return NextResponse.json({ unit });

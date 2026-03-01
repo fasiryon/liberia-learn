@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { requireRole } from "@/lib/auth";
 import { prisma } from "@/lib/db";
+import { logAudit } from "@/lib/audit";
 import { isVirtualLabsEnabled } from "@/lib/serverFlags";
 
 export const dynamic = "force-dynamic";
@@ -48,6 +49,15 @@ export async function POST(
     const updated = await prisma.labSession.update({
       where: { id: session.id },
       data: { startedAt: new Date() },
+    });
+
+    await logAudit({
+      userId: user.id,
+      action: "lab.session.start",
+      resourceType: "labSession",
+      resourceId: session.id,
+      schoolId: user.schoolId,
+      details: { labId },
     });
 
     return NextResponse.json({ session: updated });
