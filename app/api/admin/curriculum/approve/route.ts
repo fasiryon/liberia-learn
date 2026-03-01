@@ -48,6 +48,7 @@ export async function POST(req: Request) {
       action: "curriculum.approve",
       resourceType: "curriculum",
       resourceId: contentId,
+      schoolId: user.schoolId ?? undefined,
     });
 
     // Telemetry — never crashes the response
