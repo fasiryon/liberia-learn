@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { requireRole } from "@/lib/auth";
 import { prisma } from "@/lib/db";
+import { logAudit } from "@/lib/audit";
 import { isVirtualLabsEnabled } from "@/lib/serverFlags";
 import { gradeToBand } from "@/lib/moe/alignment-engine";
 import { updateMasteryProfile } from "@/lib/mastery/masteryService";
@@ -63,6 +64,15 @@ export async function PATCH(
         score: score !== undefined ? score : undefined,
         completedAt: completedAt ? new Date(completedAt) : undefined,
       },
+    });
+
+    await logAudit({
+      userId: user.id,
+      action: isCompleting ? "lab.session.complete" : "lab.session.update",
+      resourceType: "labSession",
+      resourceId: sessionId,
+      schoolId: session.schoolId,
+      details: { score: score ?? null, isCompleting },
     });
 
     // Mastery integration when completing with a score

@@ -60,6 +60,7 @@ export async function POST(req: Request) {
       resourceType: "curriculum",
       resourceId: contentId,
       details: { hasRejectionReason: !!rejectionReason },
+      schoolId: user.schoolId ?? undefined,
     });
 
     // Telemetry — never crashes the response
