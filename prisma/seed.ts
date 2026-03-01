@@ -417,9 +417,9 @@ async function main() {
       // Find enrolled students for this class
       const enrollments = await prisma.enrollment.findMany({
         where: { classId: cls.id },
-        select: { student: { select: { userId: true } } },
+        select: { Student: { select: { userId: true } } },
       });
-      const userIds = enrollments.map(e => e.student.userId);
+      const userIds = enrollments.map(e => e.Student.userId);
 
       // Find all scheduled work for this class this week
       const allSw = await prisma.scheduledWork.findMany({
