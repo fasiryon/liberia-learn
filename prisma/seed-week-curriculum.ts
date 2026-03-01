@@ -1018,3 +1018,10 @@ const krs5a: WeekLesson[] = [
       ]
     })},
 ];
+
+export const SCHEDULES: ClassSchedule[] = [
+  { classId: "class_mca_7a", teacherEmail: "mpewee@mca.edu.lr", lessons: mca7a },
+  { classId: "class_mca_8b", teacherEmail: "dnimely@mca.edu.lr", lessons: mca8b },
+  { classId: "class_pcs_6a", teacherEmail: "esumo@pcs.edu.lr",   lessons: pcs6a },
+  { classId: "class_krs_5a", teacherEmail: "fkollie@krs.edu.lr", lessons: krs5a },
+];
