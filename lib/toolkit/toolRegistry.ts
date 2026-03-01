@@ -28,6 +28,9 @@ export type ToolDefinition = {
   a11yLabel: string;
 };
 
+// Part 6: alias for external consumers
+export type ToolRegistryEntry = ToolDefinition;
+
 const GRADE_BANDS: GradeBand[] = ["1-3", "4-6", "7-9", "10-12"];
 const SUBJECTS: Subject[] = ["math", "science", "english", "engineering", "cs"];
 const LESSON_TYPES: LessonType[] = ["assessment", "practice", "lesson", "lab"];
@@ -63,7 +66,7 @@ const TOOL_REGISTRY: ToolDefinition[] = [
   {
     id: "basic-calculator",
     name: "Basic Calculator",
-    icon: "??",
+    icon: "🧮",
     componentName: "BasicCalculator",
     contexts: buildContexts(["1-3", "4-6"], ["math", "science"], ["assessment", "practice"]),
     defaultOpen: false,
@@ -73,7 +76,7 @@ const TOOL_REGISTRY: ToolDefinition[] = [
   {
     id: "scientific-calculator",
     name: "Scientific Calculator",
-    icon: "??",
+    icon: "🔬",
     componentName: "ScientificCalculator",
     contexts: buildContexts(["7-9", "10-12"], ["math", "science", "engineering"], ["assessment", "practice"]),
     defaultOpen: false,
@@ -83,7 +86,7 @@ const TOOL_REGISTRY: ToolDefinition[] = [
   {
     id: "fraction-visualizer",
     name: "Fraction Visualizer",
-    icon: "??",
+    icon: "½",
     componentName: "FractionVisualizer",
     contexts: buildContexts(["1-3", "4-6"], ["math"], ["lesson", "practice"], ["fractions", "ratios"]),
     defaultOpen: false,
@@ -93,7 +96,7 @@ const TOOL_REGISTRY: ToolDefinition[] = [
   {
     id: "number-line",
     name: "Number Line",
-    icon: "??",
+    icon: "📏",
     componentName: "NumberLine",
     contexts: buildContexts(["1-3", "4-6"], ["math"], ["lesson", "practice", "assessment"], ["number-sense", "integers"]),
     defaultOpen: false,
@@ -103,7 +106,7 @@ const TOOL_REGISTRY: ToolDefinition[] = [
   {
     id: "digital-ruler",
     name: "Digital Ruler",
-    icon: "??",
+    icon: "📐",
     componentName: "DigitalRuler",
     contexts: buildContexts(["4-6", "7-9", "10-12"], ["math", "science"], ["lesson", "practice", "assessment"], ["measurement", "geometry"]),
     defaultOpen: false,
@@ -113,7 +116,7 @@ const TOOL_REGISTRY: ToolDefinition[] = [
   {
     id: "protractor",
     name: "Protractor",
-    icon: "??",
+    icon: "📐",
     componentName: "Protractor",
     contexts: buildContexts(["7-9", "10-12"], ["math"], ["lesson", "practice", "assessment"], ["geometry", "angles"]),
     defaultOpen: false,
@@ -123,7 +126,7 @@ const TOOL_REGISTRY: ToolDefinition[] = [
   {
     id: "multiplication-table",
     name: "Multiplication Table",
-    icon: "??",
+    icon: "✖️",
     componentName: "MultiplicationTable",
     contexts: buildContexts(["1-3", "4-6"], ["math"], ["lesson", "practice"], ["multiplication"]),
     defaultOpen: false,
@@ -133,7 +136,7 @@ const TOOL_REGISTRY: ToolDefinition[] = [
   {
     id: "periodic-table",
     name: "Periodic Table",
-    icon: "??",
+    icon: "⚗️",
     componentName: "PeriodicTable",
     contexts: buildContexts(["7-9", "10-12"], ["science"], ["lesson", "practice", "assessment"]),
     defaultOpen: false,
@@ -143,7 +146,7 @@ const TOOL_REGISTRY: ToolDefinition[] = [
   {
     id: "unit-converter",
     name: "Unit Converter",
-    icon: "??",
+    icon: "🔄",
     componentName: "UnitConverter",
     contexts: buildContexts(["7-9", "10-12"], ["math", "science"], ["lesson", "practice", "assessment"], ["measurement", "units"]),
     defaultOpen: false,
@@ -153,7 +156,7 @@ const TOOL_REGISTRY: ToolDefinition[] = [
   {
     id: "coordinate-grid",
     name: "Coordinate Grid",
-    icon: "???",
+    icon: "📊",
     componentName: "CoordinateGrid",
     contexts: buildContexts(["7-9", "10-12"], ["math"], ["lesson", "practice", "assessment"], ["algebra", "coordinates"]),
     defaultOpen: false,
@@ -163,7 +166,7 @@ const TOOL_REGISTRY: ToolDefinition[] = [
   {
     id: "timer",
     name: "Timer",
-    icon: "??",
+    icon: "⏱️",
     componentName: "Timer",
     contexts: buildContexts("all", "all", ["assessment"]),
     defaultOpen: true,
@@ -173,7 +176,7 @@ const TOOL_REGISTRY: ToolDefinition[] = [
   {
     id: "dictionary",
     name: "Dictionary",
-    icon: "??",
+    icon: "📖",
     componentName: "DictionaryTool",
     contexts: buildContexts("all", ["english"], ["lesson", "practice"]),
     defaultOpen: false,
@@ -238,6 +241,92 @@ export function getToolsForContext(
     if (!isEnabledByCategory(tool, enabledCategories)) return false;
     return tool.contexts.some((candidate) => matchesContext(context, candidate));
   });
+}
+
+/**
+ * Part 6: Map a grade number to the toolkit GradeBand string.
+ */
+function gradeToToolkitBand(grade: number): GradeBand {
+  if (grade <= 3) return "1-3";
+  if (grade <= 6) return "4-6";
+  if (grade <= 9) return "7-9";
+  return "10-12";
+}
+
+/**
+ * Part 6: Map a subject string to the toolkit Subject type (case-insensitive).
+ * Returns null if the subject is not recognised by the toolkit.
+ */
+function subjectToToolkitSubject(subjectStr: string): Subject | null {
+  const s = subjectStr.toLowerCase();
+  if (s === "math" || s === "mathematics") return "math";
+  if (s === "science") return "science";
+  if (s === "english" || s === "literacy" || s === "language_arts") return "english";
+  if (s === "engineering") return "engineering";
+  if (s === "computer_science" || s === "cs") return "cs";
+  return null;
+}
+
+export interface LessonToolSet {
+  required: ToolRegistryEntry[];
+  optional: ToolRegistryEntry[];
+  contextual: ToolRegistryEntry[];
+}
+
+/**
+ * Part 6: Get tools for a lesson, split into required / optional / contextual.
+ *
+ * - required: tools from deliveryProfile.toolsRequired where required=true
+ * - optional: tools from deliveryProfile.toolsRequired where required=false
+ * - contextual: tools from getToolsForContext() not already in required/optional
+ */
+export function getToolsForLesson(
+  subject: string,
+  grade: number,
+  lessonType: string,
+  toolsRequired?: Array<{ toolKey: string; reason: string; phase: string; required: boolean }>
+): LessonToolSet {
+  const gradeBand = gradeToToolkitBand(grade);
+  const toolkitSubject = subjectToToolkitSubject(subject);
+  const validLessonType: LessonType = (["assessment", "practice", "lesson", "lab"].includes(lessonType)
+    ? lessonType
+    : "lesson") as LessonType;
+
+  const toolById = new Map<string, ToolDefinition>(TOOL_REGISTRY.map((t) => [t.id, t]));
+
+  const required: ToolDefinition[] = [];
+  const optional: ToolDefinition[] = [];
+  const requiredIds = new Set<string>();
+
+  if (toolsRequired && toolsRequired.length > 0) {
+    for (const entry of toolsRequired) {
+      const tool = toolById.get(entry.toolKey);
+      if (!tool) continue;
+      if (!isToolAllowedByServerFlags(tool.id)) continue;
+      if (entry.required) {
+        required.push(tool);
+      } else {
+        optional.push(tool);
+      }
+      requiredIds.add(entry.toolKey);
+    }
+  }
+
+  // Build contextual tools (only when toolkit subject is known)
+  let contextual: ToolDefinition[] = [];
+  if (toolkitSubject) {
+    const context: ToolContext = {
+      subject: toolkitSubject,
+      gradeBand,
+      lessonType: validLessonType,
+    };
+    if (isValidContext(context)) {
+      const all = getToolsForContext(context, ["all"]);
+      contextual = all.filter((t) => !requiredIds.has(t.id));
+    }
+  }
+
+  return { required, optional, contextual };
 }
 
 export const TOOL_REGISTRY_DEFINITIONS = TOOL_REGISTRY;
