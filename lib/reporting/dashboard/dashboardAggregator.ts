@@ -1,4 +1,4 @@
-﻿import { prisma } from "@/lib/db";
+import { prisma } from "@/lib/db";
 import { getTrainingSummary } from "@/lib/reporting/training";
 
 export type SchoolDashboardMetrics = {
@@ -25,37 +25,39 @@ export async function computeSchoolDashboard(params: {
 }): Promise<SchoolDashboardMetrics> {
   const { schoolId } = params;
 
-  const masteryAgg = await prisma.studentMasteryProfile.aggregate({
-    where: {
-      student: {
-        user: { schoolId },
+  // Block 24: all four queries are independent — run in parallel to eliminate
+  // sequential round-trips. Reduces per-school query cost from 4 sequential
+  // to 1 parallel batch, critical for district rollups that fan out to N schools.
+  const [masteryAgg, training, submissions, assignments] = await Promise.all([
+    prisma.studentMasteryProfile.aggregate({
+      where: {
+        student: {
+          user: { schoolId },
+        },
       },
-    },
-    _avg: { currentScore: true },
-    _count: { _all: true },
-  });
+      _avg: { currentScore: true },
+      _count: { _all: true },
+    }),
+    getTrainingSummary({
+      scope: "school",
+      scopeId: schoolId,
+      pilotOnly: true,
+    }),
+    prisma.assignmentSubmission.count({
+      where: {
+        Assignment: { Class: { schoolId } },
+      },
+    }),
+    prisma.assignment.count({
+      where: { Class: { schoolId } },
+    }),
+  ]);
 
   const avgMasteryScore = clamp01(
     safeAvg(masteryAgg._avg.currentScore ?? 0, masteryAgg._count._all ?? 0)
   );
 
-  const training = await getTrainingSummary({
-    scope: "school",
-    scopeId: schoolId,
-    pilotOnly: true,
-  });
-
   const trainingAdoptionRate = clamp01(training.totals.completionRate);
-
-  const submissions = await prisma.assignmentSubmission.count({
-    where: {
-      Assignment: { Class: { schoolId } },
-    },
-  });
-
-  const assignments = await prisma.assignment.count({
-    where: { Class: { schoolId } },
-  });
 
   const evidenceSubmissionRate = clamp01(
     assignments > 0 ? submissions / assignments : 0
