@@ -831,6 +831,22 @@ model MetricEvent {
   @@index([schoolId, createdAt])
 }
 
+/// / ===== Curriculum Feedback (AI quality feedback loop) =====
+model CurriculumFeedback {
+  id               String   @id @default(cuid())
+  curriculumId     String
+  action           String   // "approved" | "rejected"
+  rejectionReason  String?
+  grade            Int
+  subject          String
+  generationMethod String   // "AI" | "deterministic"
+  createdAt        DateTime @default(now())
+
+  @@index([curriculumId])
+  @@index([action, createdAt])
+  @@index([grade, subject, action])
+}
+
 /// / ===== Curriculum Content =====
 model CurriculumContent {
   id            String          @id @default(cuid())

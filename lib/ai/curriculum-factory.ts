@@ -6,6 +6,7 @@ import {
   type CurriculumPayload,
   type GenerateInput,
 } from "@/lib/schemas/curriculumPayload";
+import { toneGuidance } from "@/lib/localization/tone-standardizer";
 
 export async function generateCurriculumPayload(
   rawInput: GenerateInput
@@ -24,6 +25,8 @@ export async function generateCurriculumPayload(
   const liberiaHint = input.liberiaContext
     ? `\nUse Liberian context throughout — reference local markets, rivers (St. Paul, Farmington), farms, cassava, palm oil, Liberian dollars, county names, and Liberian student names.`
     : "";
+
+  const toneHint = `\nTone and language guidance: ${toneGuidance(input.grade)}`;
 
   const systemPrompt = `You are a curriculum content generator for LiberiaLearn, an educational platform for Liberian schools.
 You MUST return ONLY a valid JSON object. No markdown, no backticks, no explanation, no extra keys.
@@ -47,7 +50,7 @@ The JSON must match this exact structure:
 Rules:
 - Output ONLY valid JSON. Nothing else.
 - body must be detailed educational content suitable for a Grade ${input.grade} student.
-- activities should be practical and doable in a Liberian classroom.${liberiaHint}${readingHint}${moeHint}`;
+- activities should be practical and doable in a Liberian classroom.${liberiaHint}${readingHint}${moeHint}${toneHint}`;
 
   const userPrompt = `Generate a ${input.subject} lesson for Grade ${input.grade} on the topic: "${input.topic}".`;
 
