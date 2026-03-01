@@ -2,12 +2,16 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { requireRole } from "@/lib/auth";
+import { logAudit } from "@/lib/audit";
+import { generateTokenPair } from "@/lib/tokens";
+import { findInviteByToken } from "@/lib/inviteTokens";
 import {
   sendTeacherInvite,
   sendStudentInvite,
   sendGuardianInvite,
 } from "@/lib/email";
 import { z } from "zod";
+import crypto from "crypto";
 
 const Schema = z.object({
   email: z.string().email().optional(),
@@ -18,6 +22,7 @@ const Schema = z.object({
 export async function POST(req: Request) {
   try {
     const user = await requireRole("ADMIN");
+    const traceId = crypto.randomUUID();
 
     const body = await req.json();
     const parsed = Schema.parse(body);
@@ -28,17 +33,19 @@ export async function POST(req: Request) {
     });
     const schoolName = school?.name ?? "LiberiaLearn";
 
+    const { token: rawToken, tokenHash } = generateTokenPair();
     const token = await prisma.inviteToken.create({
       data: {
         schoolId: user.schoolId!,
         email: parsed.email ?? null,
         role: parsed.role,
+        tokenHash,
         expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 days
       },
     });
 
     const baseUrl = process.env.NEXTAUTH_URL ?? "http://localhost:3000";
-    const inviteUrl = `${baseUrl}/onboard/accept?token=${token.token}`;
+    const inviteUrl = `${baseUrl}/onboard/accept?token=${rawToken}`;
 
     let emailSent = false;
 
@@ -74,9 +81,24 @@ export async function POST(req: Request) {
       emailSent = result.ok;
     }
 
+    await logAudit({
+      userId: user.id,
+      action: "invite.created",
+      resourceType: "InviteToken",
+      resourceId: token.id,
+      schoolId: user.schoolId ?? null,
+      traceId,
+      details: {
+        role: parsed.role,
+        tokenType: token.tokenType,
+        emailProvided: Boolean(parsed.email),
+        emailSent,
+      },
+    });
+
     return NextResponse.json({
       ok: true,
-      token: token.token,
+      token: rawToken,
       inviteUrl,
       expiresAt: token.expiresAt,
       emailSent,
@@ -102,9 +124,7 @@ export async function GET(req: Request) {
       );
     }
 
-    const invite = await prisma.inviteToken.findUnique({
-      where: { token: tokenValue },
-    });
+    const invite = await findInviteByToken(tokenValue);
 
     if (!invite) {
       return NextResponse.json({ error: "Invalid token" }, { status: 404 });

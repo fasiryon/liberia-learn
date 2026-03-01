@@ -10,7 +10,7 @@ const mockStudentFindUnique = vi.hoisted(() => vi.fn());
 const mockHomeworkSubmissionFindMany = vi.hoisted(() => vi.fn());
 const mockAttendanceRecordFindMany = vi.hoisted(() => vi.fn());
 const mockAuditLogCount = vi.hoisted(() => vi.fn());
-const mockInviteTokenFindUnique = vi.hoisted(() => vi.fn());
+const mockInviteTokenFindFirst = vi.hoisted(() => vi.fn());
 const mockInviteTokenUpdate = vi.hoisted(() => vi.fn());
 const mockTransaction = vi.hoisted(() => vi.fn());
 
@@ -35,7 +35,7 @@ vi.mock("@/lib/db", () => ({
     attendanceRecord: { findMany: mockAttendanceRecordFindMany },
     auditLog: { count: mockAuditLogCount },
     inviteToken: {
-      findUnique: mockInviteTokenFindUnique,
+      findFirst: mockInviteTokenFindFirst,
       update: mockInviteTokenUpdate,
     },
     $transaction: mockTransaction,
@@ -79,7 +79,7 @@ beforeEach(() => {
   });
   mockHomeworkSubmissionFindMany.mockResolvedValue([]);
   mockAttendanceRecordFindMany.mockResolvedValue([]);
-  mockInviteTokenFindUnique.mockResolvedValue({
+  mockInviteTokenFindFirst.mockResolvedValue({
     id: "invite-1",
     token: "tok-1",
     tokenType: "GUARDIAN_LINK",
@@ -131,7 +131,7 @@ describe("guardian portal + linking", () => {
   });
 
   it("guardian link rejects cross-tenant token", async () => {
-    mockInviteTokenFindUnique.mockResolvedValue({
+    mockInviteTokenFindFirst.mockResolvedValue({
       id: "invite-2",
       token: "tok-2",
       tokenType: "GUARDIAN_LINK",

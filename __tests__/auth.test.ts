@@ -7,7 +7,11 @@ vi.mock("next-auth", () => ({
 
 // Mock prisma
 vi.mock("@/lib/db", () => ({
-  prisma: {},
+  prisma: {
+    user: {
+      findUnique: vi.fn(),
+    },
+  },
 }));
 
 // Mock bcryptjs
@@ -16,7 +20,9 @@ vi.mock("bcryptjs", () => ({
 }));
 
 import { getServerSession } from "next-auth";
+import { prisma } from "@/lib/db";
 const mockGetServerSession = vi.mocked(getServerSession);
+const mockUserFindUnique = vi.mocked(prisma.user.findUnique);
 
 describe("auth helpers", () => {
   it("requireUser throws 401 when no session", async () => {
@@ -41,6 +47,7 @@ describe("auth helpers", () => {
         schoolId: "school-1",
       },
     } as any);
+    mockUserFindUnique.mockResolvedValue({ passwordChangedAt: null });
 
     const { requireRole } = await import("@/lib/auth");
 
@@ -61,12 +68,36 @@ describe("auth helpers", () => {
         schoolId: "school-1",
       },
     } as any);
+    mockUserFindUnique.mockResolvedValue({ passwordChangedAt: null });
 
     const { requireRole } = await import("@/lib/auth");
 
     await expect(requireRole("ADMIN")).rejects.toMatchObject({
       message: "Forbidden",
       status: 403,
+    });
+  });
+
+  it("requireUser denies stale sessions after password change", async () => {
+    const nowSec = Math.floor(Date.now() / 1000);
+    mockGetServerSession.mockResolvedValue({
+      user: {
+        id: "user-1",
+        email: "teacher@test.lr",
+        name: "Test Teacher",
+        role: "TEACHER",
+        schoolId: "school-1",
+        iat: nowSec - 3600,
+      },
+    } as any);
+    mockUserFindUnique.mockResolvedValue({
+      passwordChangedAt: new Date(Date.now()),
+    });
+
+    const { requireUser } = await import("@/lib/auth");
+    await expect(requireUser()).rejects.toMatchObject({
+      message: "Session expired",
+      status: 401,
     });
   });
 });
