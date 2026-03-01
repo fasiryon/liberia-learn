@@ -169,6 +169,8 @@ model Enrollment {
   Student   Student  @relation(fields: [studentId], references: [id])
 
   @@unique([studentId, classId])
+  // Block 23: classId-first index for class roster lookups in risk/growth routes
+  @@index([classId])
 }
 
 model Meeting {
@@ -178,6 +180,9 @@ model Meeting {
   endsAt     DateTime
   attendance AttendanceRecord[]
   Class      Class              @relation(fields: [classId], references: [id])
+
+  // Block 23: composite index for attendance window queries (classId + time range)
+  @@index([classId, startsAt])
 }
 
 model AttendanceRecord {
@@ -462,6 +467,8 @@ model AssignmentSubmission {
   Student      Student    @relation(fields: [studentId], references: [id])
 
   @@unique([assignmentId, studentId])
+  // Block 23: student-first + time index for assignment completion queries in risk routes
+  @@index([studentId, turnedInAt])
 }
 
 /// / ===== Homework (AI + Teacher) =====
@@ -496,6 +503,8 @@ model HomeworkSubmission {
   Student      Student  @relation(fields: [studentId], references: [id])
 
   @@unique([homeworkId, studentId])
+  // Block 23: student-first + time index for evidence-velocity queries in risk routes
+  @@index([studentId, submittedAt])
 }
 
 /// / ===== Capstone / Portfolio / Partners =====
