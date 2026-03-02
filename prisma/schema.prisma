@@ -1222,6 +1222,7 @@ enum Role {
   GUARDIAN
   ADMIN
   DISTRICT_ADMIN
+  MOE_OFFICIAL
 }
 
 enum GradeBand {
