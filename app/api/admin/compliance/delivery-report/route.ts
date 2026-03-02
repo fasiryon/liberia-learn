@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { requireRole } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { isDeliveryComplianceReportingEnabled } from "@/lib/serverFlags";
+import { withRequestLogging } from "@/lib/logging/requestLogger";
+import { handleApiError } from "@/lib/errors/apiErrorHandler";
 
 export const dynamic = "force-dynamic";
 
@@ -9,7 +11,7 @@ export const dynamic = "force-dynamic";
  * GET /api/admin/compliance/delivery-report?schoolId=&weekOf=
  * Part 8: MOE delivery compliance aggregate report. No student identifiers.
  */
-export async function GET(req: NextRequest) {
+async function deliveryReportGET(req: NextRequest) {
   if (!isDeliveryComplianceReportingEnabled()) {
     return NextResponse.json({ error: "Not found" }, { status: 404 });
   }
@@ -115,10 +117,12 @@ export async function GET(req: NextRequest) {
       labSessionsCompleted,
       assignmentsLinked,
     });
-  } catch (err: any) {
-    return NextResponse.json(
-      { error: err?.message ?? "Failed to generate report" },
-      { status: err?.status ?? 500 }
-    );
+  } catch (err: unknown) {
+    return handleApiError(err);
   }
 }
+
+export const GET = withRequestLogging(
+  "/api/admin/compliance/delivery-report",
+  deliveryReportGET
+);

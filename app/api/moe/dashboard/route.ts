@@ -8,10 +8,12 @@ import { requireUser } from "@/lib/auth";
 import { isMoePortalEnabled } from "@/lib/serverFlags";
 import { logAudit } from "@/lib/audit";
 import { prisma } from "@/lib/db";
+import { withRequestLogging } from "@/lib/logging/requestLogger";
+import { handleApiError } from "@/lib/errors/apiErrorHandler";
 
 export const dynamic = "force-dynamic";
 
-export async function GET() {
+async function dashboardGET() {
   try {
     if (!isMoePortalEnabled()) {
       return NextResponse.json({ error: "MOE portal is disabled" }, { status: 404 });
@@ -65,8 +67,9 @@ export async function GET() {
       },
       interventionsLast30Days: interventionCount,
     });
-  } catch (err: any) {
-    const status = err?.status ?? 500;
-    return NextResponse.json({ error: err?.message ?? "Internal error" }, { status });
+  } catch (err: unknown) {
+    return handleApiError(err);
   }
 }
+
+export const GET = withRequestLogging("/api/moe/dashboard", dashboardGET);
