@@ -9,10 +9,12 @@ import {
   isDeliveryComplianceReportingEnabled,
 } from "@/lib/serverFlags";
 import { randomUUID } from "crypto";
+import { withRequestLogging } from "@/lib/logging/requestLogger";
+import { handleApiError } from "@/lib/errors/apiErrorHandler";
 
 export const dynamic = "force-dynamic";
 
-export async function GET(req: NextRequest) {
+async function _scheduleGET(req: NextRequest) {
   try {
     const user = await requireRole("TEACHER", "ADMIN");
     const { searchParams } = new URL(req.url);
@@ -160,10 +162,12 @@ export async function GET(req: NextRequest) {
     }
 
     return NextResponse.json(response);
-  } catch (err: any) {
-    return NextResponse.json({ error: err.message }, { status: err?.status || 500 });
+  } catch (err: unknown) {
+    return handleApiError(err);
   }
 }
+
+export const GET = withRequestLogging("/api/teacher/schedule", _scheduleGET);
 
 export async function POST(req: NextRequest) {
   try {
@@ -314,8 +318,8 @@ export async function POST(req: NextRequest) {
       id: sw.id,
       ...(suggestedPair ? { suggestedPair } : {}),
     });
-  } catch (err: any) {
-    return NextResponse.json({ error: err.message }, { status: err?.status || 500 });
+  } catch (err: unknown) {
+    return handleApiError(err);
   }
 }
 
@@ -347,7 +351,7 @@ export async function DELETE(req: NextRequest) {
     });
 
     return NextResponse.json({ success: true });
-  } catch (err: any) {
-    return NextResponse.json({ error: err.message }, { status: err?.status || 500 });
+  } catch (err: unknown) {
+    return handleApiError(err);
   }
 }

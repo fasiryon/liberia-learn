@@ -7,6 +7,13 @@ import { logAudit } from "@/lib/audit";
 import { generateTokenPair } from "@/lib/tokens";
 import { sendTeacherInvite } from "@/lib/email";
 import { isEnrollmentInvitesEnabled } from "@/lib/serverFlags";
+import { checkRateLimit } from "@/lib/rateLimit";
+
+function getClientIp(req: Request): string {
+  const forwarded = req.headers.get("x-forwarded-for");
+  if (forwarded) return forwarded.split(",")[0].trim();
+  return req.headers.get("x-real-ip") ?? "unknown";
+}
 
 const Schema = z.object({
   email: z.string().email(),
@@ -15,6 +22,12 @@ const Schema = z.object({
 });
 
 export async function POST(req: Request) {
+  const ip = getClientIp(req);
+  const rl = checkRateLimit(`rollout:teacher:ip:${ip}`, { windowMs: 60 * 60 * 1000, max: 20 });
+  if (!rl.allowed) {
+    return NextResponse.json({ error: "Too many requests. Please try again later." }, { status: 429 });
+  }
+
   const traceId = crypto.randomUUID();
   try {
     if (!isEnrollmentInvitesEnabled()) {

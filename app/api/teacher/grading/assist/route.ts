@@ -32,6 +32,7 @@ import { logAudit } from "@/lib/audit";
 import { recordMetricEvent } from "@/lib/metrics/events";
 import { prisma } from "@/lib/db";
 import { getGradingAssistFeedback } from "@/lib/workflows/ai/gradingAssist";
+import { handleApiError } from "@/lib/errors/apiErrorHandler";
 
 export async function POST(req: NextRequest) {
   const traceId = randomUUID();
@@ -132,10 +133,7 @@ export async function POST(req: NextRequest) {
       teacherFinalAuthority: result.teacherFinalAuthority,
       hadFallback: result.hadFallback,
     });
-  } catch (err: any) {
-    return NextResponse.json(
-      { error: err?.message ?? "Server error" },
-      { status: err?.status ?? 500 }
-    );
+  } catch (err: unknown) {
+    return handleApiError(err);
   }
 }
