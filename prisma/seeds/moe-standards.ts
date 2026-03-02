@@ -3,7 +3,7 @@ import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
-const MOE_STANDARDS = [
+export const MOE_STANDARDS = [
   // ── MATH G1_3 ──
   { code: "LR-MATH-G1_3-01", description: "Count, read, and write whole numbers up to 1,000; understand place value to hundreds", subject: "MATH" as const, band: "G1_3" as const },
   { code: "LR-MATH-G1_3-02", description: "Add and subtract whole numbers up to 100 with and without regrouping", subject: "MATH" as const, band: "G1_3" as const },
@@ -94,6 +94,28 @@ const MOE_STANDARDS = [
   // ── COMPUTER_SCIENCE G10_12 ──
   { code: "LR-CS-G10_12-01", description: "Design and implement algorithms using functions, arrays, and basic data structures", subject: "COMPUTER_SCIENCE" as const, band: "G10_12" as const },
   { code: "LR-CS-G10_12-02", description: "Understand databases, SQL basics, and data management principles", subject: "COMPUTER_SCIENCE" as const, band: "G10_12" as const },
+
+  // ── COMPUTER_SCIENCE G1_3 (ACTION-4) ──
+  { code: "LR-CS-G1_3-01", description: "Use digital devices safely; understand that computers follow instructions and can solve problems", subject: "COMPUTER_SCIENCE" as const, band: "G1_3" as const },
+
+  // ── COMPUTER_SCIENCE G4_6 hardware strand (ACTION-5) ──
+  { code: "LR-CS-G4_6-02", description: "Connect and use input/output devices; understand how hardware and software work together", subject: "COMPUTER_SCIENCE" as const, band: "G4_6" as const },
+
+  // ── ENGINEERING G1_3 (ACTION-2) ──
+  { code: "LR-ENG-G1_3-01", description: "Identify common tools and their safe use; explore how simple structures are built", subject: "ENGINEERING" as const, band: "G1_3" as const },
+  { code: "LR-ENG-G1_3-02", description: "Investigate properties of everyday materials (strength, flexibility, waterproofing) found in Liberia", subject: "ENGINEERING" as const, band: "G1_3" as const },
+
+  // ── ENGINEERING G4_6 (ACTION-2) ──
+  { code: "LR-ENG-G4_6-01", description: "Follow the engineering design process (define, design, build, test, improve) to solve simple problems", subject: "ENGINEERING" as const, band: "G4_6" as const },
+  { code: "LR-ENG-G4_6-02", description: "Investigate forces, levers, and pulleys; explain how they reduce the effort needed to do work", subject: "ENGINEERING" as const, band: "G4_6" as const },
+
+  // ── ENGINEERING G7_9 (ACTION-2) ──
+  { code: "LR-ENG-G7_9-01", description: "Apply the engineering design process to address a practical community need in Liberia", subject: "ENGINEERING" as const, band: "G7_9" as const },
+  { code: "LR-ENG-G7_9-02", description: "Design, build, and test simple electrical circuits; understand voltage, current, and resistance", subject: "ENGINEERING" as const, band: "G7_9" as const },
+
+  // ── ENGINEERING G10_12 (ACTION-2) ──
+  { code: "LR-ENG-G10_12-01", description: "Design and prototype solutions using locally available materials; evaluate against safety and cost criteria", subject: "ENGINEERING" as const, band: "G10_12" as const },
+  { code: "LR-ENG-G10_12-02", description: "Apply principles of structural engineering and construction safety to real-world Liberian infrastructure challenges", subject: "ENGINEERING" as const, band: "G10_12" as const },
 ];
 
 async function main() {
