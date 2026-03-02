@@ -3,6 +3,7 @@ import { requireRole } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { logAudit } from "@/lib/audit";
 import { isUnitGroupingEnabled } from "@/lib/serverFlags";
+import { handleApiError } from "@/lib/errors/apiErrorHandler";
 
 export const dynamic = "force-dynamic";
 
@@ -57,10 +58,7 @@ export async function POST(req: NextRequest) {
     });
 
     return NextResponse.json({ unit });
-  } catch (err: any) {
-    return NextResponse.json(
-      { error: err?.message ?? "Failed to create unit" },
-      { status: err?.status ?? 500 }
-    );
+  } catch (err: unknown) {
+    return handleApiError(err);
   }
 }
