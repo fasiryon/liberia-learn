@@ -1,4 +1,4 @@
-﻿import { prisma } from "@/lib/db";
+import { prisma } from "@/lib/db";
 import type { TrendBucket, TrendSeries } from "@/lib/reporting/trends/types";
 
 function monthKey(d: Date): string {
@@ -68,29 +68,42 @@ export async function computeSchoolTrends(params: {
   const masteryTrend: TrendBucket[] = toTrendBuckets(buckets.map((b) => b.label));
   const evidenceVelocityTrend: TrendBucket[] = toTrendBuckets(buckets.map((b) => b.label));
 
-  for (let i = 0; i < buckets.length; i++) {
-    const { start, end } = buckets[i];
+  // PERF FIX (Block 26): Replace sequential per-bucket awaits with parallel batch.
+  // Before: 2×N sequential queries (N = bucket count, typically 6–12).
+  // After:  2 outer awaits, N parallel per metric — all buckets fire simultaneously.
+  const [masteryResults, evidenceResults] = await Promise.all([
+    Promise.all(
+      buckets.map(({ start, end }) =>
+        prisma.studentMasteryProfile.aggregate({
+          where: {
+            student: { user: { schoolId } },
+            lastAssessedAt: { gte: start, lte: end },
+          },
+          _avg: { currentScore: true },
+          _count: { _all: true },
+        })
+      )
+    ),
+    Promise.all(
+      buckets.map(({ start, end }) =>
+        prisma.assignmentSubmission.count({
+          where: {
+            Assignment: { Class: { schoolId } },
+            turnedInAt: { gte: start, lte: end },
+          },
+        })
+      )
+    ),
+  ]);
 
-    const masteryAgg = await prisma.studentMasteryProfile.aggregate({
-      where: {
-        student: { user: { schoolId } },
-        lastAssessedAt: { gte: start, lte: end },
-      },
-      _avg: { currentScore: true },
-      _count: { _all: true },
-    });
+  for (let i = 0; i < buckets.length; i++) {
+    const masteryAgg = masteryResults[i];
+    const evidenceCount = evidenceResults[i];
 
     const masteryCount = masteryAgg._count._all ?? 0;
     masteryTrend[i].value = masteryCount > 0
       ? (masteryAgg._avg.currentScore ?? 0)
       : null;
-
-    const evidenceCount = await prisma.assignmentSubmission.count({
-      where: {
-        Assignment: { Class: { schoolId } },
-        turnedInAt: { gte: start, lte: end },
-      },
-    });
 
     evidenceVelocityTrend[i].value = evidenceCount > 0 ? evidenceCount : null;
   }

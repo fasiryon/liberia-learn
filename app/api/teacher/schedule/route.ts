@@ -101,31 +101,24 @@ export async function GET(req: NextRequest) {
       // Planned vs delivered
       const deliveredCount = schedule.filter((sw) => sw.isDelivered).length;
 
-      // Pending assignment suggestions
-      const pendingAssignmentSuggestions = await prisma.assignmentSuggestion.count({
-        where: { schoolId: user.schoolId!, status: "pending" },
-      });
-
-      // Lab sessions this week
-      const labSessionsThisWeek =
-        scheduleIds.length > 0
-          ? await prisma.labSession.count({
-              where: {
-                scheduledWorkId: { in: scheduleIds },
-                completedAt: { not: null },
-              },
-            })
-          : 0;
-
-      const pendingLabSessions =
-        scheduleIds.length > 0
-          ? await prisma.labSession.count({
-              where: {
-                scheduledWorkId: { in: scheduleIds },
-                completedAt: null,
-              },
-            })
-          : 0;
+      // PERF FIX (Block 26): Parallelize the 3 compliance count queries.
+      // Before: 3 sequential awaits. After: 1 parallel round-trip.
+      const [pendingAssignmentSuggestions, labSessionsThisWeek, pendingLabSessions] =
+        await Promise.all([
+          prisma.assignmentSuggestion.count({
+            where: { schoolId: user.schoolId!, status: "pending" },
+          }),
+          scheduleIds.length > 0
+            ? prisma.labSession.count({
+                where: { scheduledWorkId: { in: scheduleIds }, completedAt: { not: null } },
+              })
+            : Promise.resolve(0),
+          scheduleIds.length > 0
+            ? prisma.labSession.count({
+                where: { scheduledWorkId: { in: scheduleIds }, completedAt: null },
+              })
+            : Promise.resolve(0),
+        ]);
 
       // Unit progress — group by unitId
       const unitProgressMap = new Map<
@@ -244,56 +237,69 @@ export async function POST(req: NextRequest) {
       },
     });
 
-    // Part 3: create suggested sibling day
-    let suggestedPair: any = undefined;
+    // PERF FIX (Block 26): Parallelize A/B sibling create and AssignmentSuggestion create.
+    // Before: 2 sequential conditional writes after main sw.create.
+    // After:  Both fire in parallel — neither depends on the other's result.
+    const shouldCreateSuggestion =
+      isAssignmentLessonLinkageEnabled() && !!deliveryProfile?.exitTicket?.questions?.length;
+
+    let siblingData: { date: Date; format: string } | null = null;
     if (shouldPair) {
       const siblingDate = new Date(scheduledDate);
       siblingDate.setDate(siblingDate.getDate() + 2);
-      const siblingFormat = classFormat === "block_a" ? "block_b" : "block_a";
-      const sibling = await prisma.scheduledWork.create({
-        data: {
-          contentId,
-          classId,
-          scheduledDate: siblingDate,
-          createdById: user.id,
-          startTime: startTime ?? undefined,
-          endTime: endTime ?? undefined,
-          periodNumber: periodNumber ?? undefined,
-          classFormat: siblingFormat,
-          status: "suggested",
-          sessionPairId,
-          suggestedLabs: suggestedLabs ?? undefined,
-        },
-      });
-      suggestedPair = {
-        id: sibling.id,
-        scheduledDate: sibling.scheduledDate,
-        classFormat: sibling.classFormat,
-        status: sibling.status,
-      };
+      siblingData = { date: siblingDate, format: classFormat === "block_a" ? "block_b" : "block_a" };
     }
 
-    // Part 5: auto-create AssignmentSuggestion when exit ticket present
-    if (isAssignmentLessonLinkageEnabled() && deliveryProfile?.exitTicket?.questions?.length) {
-      const alignments = content?.moeAlignments as Array<{ code: string }> | null;
-      const moeCodes = alignments ? alignments.map((a) => a.code).filter(Boolean) : [];
-      const title = (content?.payload as any)?.title ?? "Lesson";
-      const suggestedDue = new Date(scheduledDate);
-      suggestedDue.setDate(suggestedDue.getDate() + 1);
+    const alignmentsForSuggestion = content?.moeAlignments as Array<{ code: string }> | null;
+    const moeCodes = alignmentsForSuggestion
+      ? alignmentsForSuggestion.map((a) => a.code).filter(Boolean)
+      : [];
+    const lessonTitle = (content?.payload as any)?.title ?? "Lesson";
+    const suggestedDue = new Date(scheduledDate);
+    suggestedDue.setDate(suggestedDue.getDate() + 1);
 
-      await prisma.assignmentSuggestion.create({
-        data: {
-          schoolId: user.schoolId!,
-          contentId,
-          scheduledWorkId: sw.id,
-          classId,
-          suggestedTitle: `Check for Understanding: ${title}`,
-          suggestedDueDate: suggestedDue,
-          moeStandardCodes: moeCodes,
-          status: "pending",
-        },
-      });
-    }
+    const [sibling] = await Promise.all([
+      siblingData
+        ? prisma.scheduledWork.create({
+            data: {
+              contentId,
+              classId,
+              scheduledDate: siblingData.date,
+              createdById: user.id,
+              startTime: startTime ?? undefined,
+              endTime: endTime ?? undefined,
+              periodNumber: periodNumber ?? undefined,
+              classFormat: siblingData.format,
+              status: "suggested",
+              sessionPairId,
+              suggestedLabs: suggestedLabs ?? undefined,
+            },
+          })
+        : Promise.resolve(null),
+      shouldCreateSuggestion
+        ? prisma.assignmentSuggestion.create({
+            data: {
+              schoolId: user.schoolId!,
+              contentId,
+              scheduledWorkId: sw.id,
+              classId,
+              suggestedTitle: `Check for Understanding: ${lessonTitle}`,
+              suggestedDueDate: suggestedDue,
+              moeStandardCodes: moeCodes,
+              status: "pending",
+            },
+          })
+        : Promise.resolve(null),
+    ]);
+
+    const suggestedPair = sibling
+      ? {
+          id: sibling.id,
+          scheduledDate: sibling.scheduledDate,
+          classFormat: sibling.classFormat,
+          status: sibling.status,
+        }
+      : undefined;
 
     await logAudit({
       userId: user.id,
