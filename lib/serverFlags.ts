@@ -332,6 +332,15 @@ export function isGuardianLinkingEnabled(): boolean {
   return process.env.ENABLE_GUARDIAN_LINKING === "true";
 }
 
+/**
+ * Guardian dashboard + messaging routes. DEFAULT OFF.
+ * Set ENABLE_GUARDIAN_DASHBOARD=true to activate.
+ * When false, /api/guardian/dashboard and /api/guardian/messages return 404.
+ */
+export function isGuardianDashboardEnabled(): boolean {
+  return process.env.ENABLE_GUARDIAN_DASHBOARD === "true";
+}
+
 //  Block RR-1/RR-3: Enrollment Invites + Account Recovery Flags
 
 /** Enrollment invite APIs (admin + teacher). DEFAULT OFF. */

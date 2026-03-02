@@ -49,6 +49,9 @@ model User {
   curriculumUnits     CurriculumUnit[]     @relation("CurriculumUnitCreatedBy")
   // Part 7: lab sessions for this user
   labSessions         LabSession[]         @relation("LabSessionStudent")
+  // Guardian messaging
+  sentGuardianMessages     GuardianMessage[] @relation("GuardianMessageGuardian")
+  receivedGuardianMessages GuardianMessage[] @relation("GuardianMessageTeacher")
 }
 
 model District {
@@ -111,6 +114,7 @@ model School {
   assignmentSuggestions  AssignmentSuggestion[]
   // Part 7: virtual lab sessions
   labSessions            LabSession[]
+  guardianMessages       GuardianMessage[]
 }
 
 model Class {
@@ -157,6 +161,7 @@ model Student {
   smsDeliveryLogs       SMSDeliveryLog[]
   submissions           Submission[]
   inviteTokens          InviteToken[]           @relation("InviteTokenStudent")
+  guardianMessages      GuardianMessage[]
 }
 
 model StudentGuardian {
@@ -1213,6 +1218,33 @@ model LabSession {
   @@index([schoolId, labId])
   @@index([scheduledWorkId])
   @@index([studentId, schoolId])
+}
+
+/// / ===== Guardian Messaging =====
+
+/// Direct messages between a guardian and a teacher about a specific student.
+/// Tenant-scoped via schoolId. fromRole distinguishes sender direction.
+model GuardianMessage {
+  id         String   @id @default(cuid())
+  guardianId String
+  teacherId  String
+  studentId  String
+  schoolId   String
+  fromRole   String   // "guardian" | "teacher"
+  body       String
+  sentAt     DateTime @default(now())
+  read       Boolean  @default(false)
+  createdAt  DateTime @default(now())
+
+  guardian User    @relation("GuardianMessageGuardian", fields: [guardianId], references: [id])
+  teacher  User    @relation("GuardianMessageTeacher", fields: [teacherId], references: [id])
+  student  Student @relation(fields: [studentId], references: [id])
+  school   School  @relation(fields: [schoolId], references: [id])
+
+  @@index([guardianId, sentAt])
+  @@index([teacherId, sentAt])
+  @@index([studentId])
+  @@index([schoolId])
 }
 
 /// / ===== Enums =====
