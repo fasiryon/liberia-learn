@@ -1,6 +1,6 @@
 // SILENCE_GRADING_ASSIST_LOGS
 // Prevent noisy stderr output during this test file.
-// Vitest provides beforeAll/afterAll globally in this repo.
+import { beforeAll, afterAll } from "vitest";
 const __origConsoleError = console.error;
 const __origConsoleWarn  = console.warn;
 

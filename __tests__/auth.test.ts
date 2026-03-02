@@ -47,7 +47,7 @@ describe("auth helpers", () => {
         schoolId: "school-1",
       },
     } as any);
-    mockUserFindUnique.mockResolvedValue({ passwordChangedAt: null });
+    mockUserFindUnique.mockResolvedValue({ passwordChangedAt: null } as any);
 
     const { requireRole } = await import("@/lib/auth");
 
@@ -68,7 +68,7 @@ describe("auth helpers", () => {
         schoolId: "school-1",
       },
     } as any);
-    mockUserFindUnique.mockResolvedValue({ passwordChangedAt: null });
+    mockUserFindUnique.mockResolvedValue({ passwordChangedAt: null } as any);
 
     const { requireRole } = await import("@/lib/auth");
 
@@ -92,7 +92,7 @@ describe("auth helpers", () => {
     } as any);
     mockUserFindUnique.mockResolvedValue({
       passwordChangedAt: new Date(Date.now()),
-    });
+    } as any);
 
     const { requireUser } = await import("@/lib/auth");
     await expect(requireUser()).rejects.toMatchObject({

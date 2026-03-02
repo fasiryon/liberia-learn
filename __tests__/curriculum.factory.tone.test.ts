@@ -38,7 +38,7 @@ describe("generateCurriculumPayload — toneGuidance injection", () => {
       makeCompletion({ ...VALID_PAYLOAD, grade: 1 })
     );
 
-    await generateCurriculumPayload({ grade: 1, subject: "LITERACY", topic: "Alphabet" });
+    await generateCurriculumPayload({ grade: 1, subject: "LITERACY", topic: "Alphabet", liberiaContext: true });
 
     const call = mockRoutedCompletion.mock.calls[0][0];
     const systemPrompt: string = call.messages[0].content;
@@ -51,7 +51,7 @@ describe("generateCurriculumPayload — toneGuidance injection", () => {
       makeCompletion({ ...VALID_PAYLOAD, grade: 6 })
     );
 
-    await generateCurriculumPayload({ grade: 6, subject: "MATH", topic: "Fractions" });
+    await generateCurriculumPayload({ grade: 6, subject: "MATH", topic: "Fractions", liberiaContext: true });
 
     const call = mockRoutedCompletion.mock.calls[0][0];
     const systemPrompt: string = call.messages[0].content;
@@ -64,7 +64,7 @@ describe("generateCurriculumPayload — toneGuidance injection", () => {
       makeCompletion({ ...VALID_PAYLOAD, grade: 9 })
     );
 
-    await generateCurriculumPayload({ grade: 9, subject: "SCIENCE", topic: "Ecosystems" });
+    await generateCurriculumPayload({ grade: 9, subject: "SCIENCE", topic: "Ecosystems", liberiaContext: true });
 
     const call = mockRoutedCompletion.mock.calls[0][0];
     const systemPrompt: string = call.messages[0].content;
@@ -77,7 +77,7 @@ describe("generateCurriculumPayload — toneGuidance injection", () => {
       makeCompletion({ ...VALID_PAYLOAD, grade: 12 })
     );
 
-    await generateCurriculumPayload({ grade: 12, subject: "CIVICS", topic: "Government" });
+    await generateCurriculumPayload({ grade: 12, subject: "CIVICS", topic: "Government", liberiaContext: true });
 
     const call = mockRoutedCompletion.mock.calls[0][0];
     const systemPrompt: string = call.messages[0].content;

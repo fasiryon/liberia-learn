@@ -105,6 +105,7 @@ describe("generateCurriculumPayload — deliveryProfile flag", () => {
         grade: 4,
         subject: "MATH",
         topic: "Fractions",
+        liberiaContext: true,
       });
 
       expect(result).not.toHaveProperty("deliveryProfile");
@@ -114,7 +115,7 @@ describe("generateCurriculumPayload — deliveryProfile flag", () => {
       mockIsDeliveryProfileEnabled.mockReturnValue(false);
       mockRoutedCompletion.mockResolvedValueOnce(makeCompletion(BASE_PAYLOAD));
 
-      await generateCurriculumPayload({ grade: 4, subject: "MATH", topic: "Fractions" });
+      await generateCurriculumPayload({ grade: 4, subject: "MATH", topic: "Fractions", liberiaContext: true });
 
       const systemPrompt: string =
         mockRoutedCompletion.mock.calls[0][0].messages[0].content;
@@ -131,6 +132,7 @@ describe("generateCurriculumPayload — deliveryProfile flag", () => {
         grade: 4,
         subject: "MATH",
         topic: "Fractions",
+        liberiaContext: true,
       });
 
       expect(result.title).toBe("Introduction to Fractions");
@@ -145,6 +147,7 @@ describe("generateCurriculumPayload — deliveryProfile flag", () => {
         grade: 4,
         subject: "MATH",
         topic: "Fractions",
+        liberiaContext: true,
       });
 
       expect(result.deliveryProfile).toBeUndefined();
@@ -160,7 +163,7 @@ describe("generateCurriculumPayload — deliveryProfile flag", () => {
         makeCompletion({ ...BASE_PAYLOAD, deliveryProfile: VALID_DELIVERY_PROFILE })
       );
 
-      await generateCurriculumPayload({ grade: 4, subject: "MATH", topic: "Fractions" });
+      await generateCurriculumPayload({ grade: 4, subject: "MATH", topic: "Fractions", liberiaContext: true });
 
       const systemPrompt: string =
         mockRoutedCompletion.mock.calls[0][0].messages[0].content;
@@ -180,6 +183,7 @@ describe("generateCurriculumPayload — deliveryProfile flag", () => {
         grade: 4,
         subject: "MATH",
         topic: "Fractions",
+        liberiaContext: true,
       });
 
       expect(result.deliveryProfile).toBeDefined();
@@ -198,6 +202,7 @@ describe("generateCurriculumPayload — deliveryProfile flag", () => {
         grade: 4,
         subject: "MATH",
         topic: "Fractions",
+        liberiaContext: true,
       });
 
       expect(result.deliveryProfile!.toolsRequired[0].toolKey).toBe("fraction-visualizer");
@@ -231,6 +236,7 @@ describe("generateCurriculumPayload — deliveryProfile flag", () => {
         grade: 4,
         subject: "MATH",
         topic: "Fractions",
+        liberiaContext: true,
       });
 
       // Succeeds — Zod does not enumerate allowed toolKey values
@@ -257,7 +263,7 @@ describe("generateCurriculumPayload — deliveryProfile flag", () => {
       );
 
       await expect(
-        generateCurriculumPayload({ grade: 4, subject: "MATH", topic: "Fractions" })
+        generateCurriculumPayload({ grade: 4, subject: "MATH", topic: "Fractions", liberiaContext: true })
       ).rejects.toThrow(/validation/i);
     });
 
@@ -279,7 +285,7 @@ describe("generateCurriculumPayload — deliveryProfile flag", () => {
       );
 
       await expect(
-        generateCurriculumPayload({ grade: 4, subject: "MATH", topic: "Fractions" })
+        generateCurriculumPayload({ grade: 4, subject: "MATH", topic: "Fractions", liberiaContext: true })
       ).rejects.toThrow(/validation/i);
     });
 
@@ -293,6 +299,7 @@ describe("generateCurriculumPayload — deliveryProfile flag", () => {
         grade: 4,
         subject: "MATH",
         topic: "Fractions",
+        liberiaContext: true,
       });
 
       expect(result.deliveryProfile!.exitTicket.questions).toHaveLength(2);
@@ -318,6 +325,7 @@ describe("generateCurriculumPayload — deliveryProfile flag", () => {
         grade: 4,
         subject: "MATH",
         topic: "Fractions",
+        liberiaContext: true,
       });
 
       expect(result.deliveryProfile!.exitTicket.questions).toHaveLength(3);
@@ -332,7 +340,7 @@ describe("generateCurriculumPayload — deliveryProfile flag", () => {
       });
 
       await expect(
-        generateCurriculumPayload({ grade: 4, subject: "MATH", topic: "Fractions" })
+        generateCurriculumPayload({ grade: 4, subject: "MATH", topic: "Fractions", liberiaContext: true })
       ).rejects.toThrow(/invalid JSON/i);
     });
   });
