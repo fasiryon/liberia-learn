@@ -24,17 +24,20 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: "classId required" }, { status: 400 });
     }
 
-    // Verify class belongs to teacher's school
-    const cls = await prisma.class.findUnique({ where: { id: classId }, select: { schoolId: true } });
+    // PERF FIX (Block 26): Run class verification and enrollment fetch in parallel.
+    // Before: 2 sequential awaits. After: 1 parallel round-trip.
+    const [cls, enrollments] = await Promise.all([
+      prisma.class.findUnique({ where: { id: classId }, select: { schoolId: true } }),
+      prisma.enrollment.findMany({
+        where: { classId },
+        select: { Student: { select: { userId: true } } },
+      }),
+    ]);
+
     if (!cls || cls.schoolId !== user.schoolId) {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
-    // Get all student userIds enrolled in the class
-    const enrollments = await prisma.enrollment.findMany({
-      where: { classId },
-      include: { Student: { select: { userId: true } } },
-    });
     const studentIds = enrollments.map((e) => e.Student.userId);
 
     if (studentIds.length === 0) {
