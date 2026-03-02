@@ -149,6 +149,8 @@ export default function LoginClient({ showDemoHints, demoGroups, demoDefaults }:
               placeholder={
                 role === "student"
                   ? "student@school.lr"
+                  : role === "guardian"
+                  ? "guardian@family.lr"
                   : "teacher@school.lr"
               }
               value={email}
