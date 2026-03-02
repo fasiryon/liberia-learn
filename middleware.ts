@@ -2,6 +2,7 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { getToken } from "next-auth/jwt";
+import { isMoeAuthorized, roleDefaultPortal } from "@/lib/moe/routeGuard";
 
 const PUBLIC_PATHS = [
   "/",
@@ -19,6 +20,33 @@ function isPublicPath(pathname: string) {
 
 export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
+
+  // ── /moe/login — flag-gated public entry point ────────────────────────────
+  if (pathname === "/moe/login") {
+    const enabled = process.env.ENABLE_MOE_LOGIN_PORTAL === "true";
+    if (!enabled) {
+      const url = req.nextUrl.clone();
+      url.pathname = "/login";
+      return NextResponse.redirect(url);
+    }
+    return NextResponse.next();
+  }
+
+  // ── /moe/* — require auth AND MOE_OFFICIAL role ───────────────────────────
+  if (pathname.startsWith("/moe/")) {
+    const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
+    if (!token) {
+      const url = req.nextUrl.clone();
+      url.pathname = "/moe/login";
+      return NextResponse.redirect(url);
+    }
+    if (!isMoeAuthorized(token as any)) {
+      const url = req.nextUrl.clone();
+      url.pathname = roleDefaultPortal((token as any).role);
+      return NextResponse.redirect(url);
+    }
+    return NextResponse.next();
+  }
 
   // Let /admin and /platform pages render (rely on server-side auth in the page itself)
   if (pathname === "/admin" || pathname.startsWith("/admin/")) {

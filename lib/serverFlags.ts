@@ -304,6 +304,16 @@ export function isMoePortalEnabled(): boolean {
   return process.env.ENABLE_MOE_PORTAL === "true";
 }
 
+/**
+ * Dedicated MOE login portal at /moe/login.
+ * DEFAULT OFF (development). Set ENABLE_MOE_LOGIN_PORTAL=true to activate.
+ * When false: /moe/login redirects to /login; /moe/* routes are still protected.
+ * Production default should be "true" — see docs/ENV_VARS.md.
+ */
+export function isMoeLoginPortalEnabled(): boolean {
+  return process.env.ENABLE_MOE_LOGIN_PORTAL === "true";
+}
+
 /** Optional allowlist (comma-separated emails/domains). Empty = allow all. */
 export function getMoePortalAllowlist(): string[] {
   const raw = process.env.MOE_PORTAL_ALLOWLIST ?? "";
