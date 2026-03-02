@@ -45,7 +45,15 @@ async function checkMigrations(): Promise<"ok" | "pending" | "error"> {
       FROM _prisma_migrations
       WHERE finished_at IS NULL AND rolled_back_at IS NULL
     `;
-    const pending = Number(rows[0]?.pending ?? 0n);
+    const rawPending = rows?.[0]?.pending;
+    const pending =
+      rawPending === null || rawPending === undefined
+        ? 0
+        : typeof rawPending === "bigint"
+          ? Number(rawPending)
+          : typeof rawPending === "number"
+            ? rawPending
+            : Number.parseInt(String(rawPending), 10) || 0;
     return pending > 0 ? "pending" : "ok";
   } catch {
     return "error";
