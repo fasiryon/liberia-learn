@@ -43,6 +43,7 @@ vi.mock("@/lib/db", () => ({
       count: vi.fn().mockResolvedValue(0),
       create: vi.fn().mockResolvedValue({ id: "audit-1" }),
       findMany: vi.fn().mockResolvedValue([]),
+      groupBy: vi.fn().mockResolvedValue([]),
     },
     sMSDeliveryLog: {
       count: vi.fn().mockResolvedValue(0),

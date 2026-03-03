@@ -395,18 +395,22 @@ export async function buildMonthlyReportExport({
     },
   });
 
-  const auditEntries = await prisma.auditLog.findMany({
+  // Use groupBy to aggregate audit events server-side — avoids loading all
+  // rows into Node.js memory (can be millions in national deployments).
+  const auditGrouped = await prisma.auditLog.groupBy({
+    by: ["action"],
     where: {
       createdAt: timeWindow,
       ...(schoolId ? { schoolId } : {}),
     },
-    select: { action: true },
+    _count: { action: true },
   });
 
   const byAction: Record<string, number> = {};
-  for (const e of auditEntries) {
-    byAction[e.action] = (byAction[e.action] ?? 0) + 1;
+  for (const g of auditGrouped) {
+    byAction[g.action] = g._count.action;
   }
+  const totalAuditEntries = auditGrouped.reduce((s, g) => s + g._count.action, 0);
 
   const scope: "school" | "national" = schoolId ? "school" : "national";
 
@@ -419,7 +423,7 @@ export async function buildMonthlyReportExport({
     activity: { lessonsViewed, homeworkSubmitted, smsDelivered, smsFailed },
     exports: { totalExports: exportRecords.length, byType },
     training: { completionsThisMonth: trainingCompletions },
-    auditEvents: { totalAuditEntries: auditEntries.length, byAction },
+    auditEvents: { totalAuditEntries, byAction },
   };
 
   await _recordExportAudit({
