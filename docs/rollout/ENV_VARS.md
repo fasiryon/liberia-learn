@@ -141,6 +141,7 @@ All server flags are read from `lib/serverFlags.ts`. Default is **OFF** unless n
 | Variable | Description | Default |
 |----------|-------------|---------|
 | `ENABLE_MOE_PORTAL` | MOE national oversight portal (5 routes) | `false` |
+| `ENABLE_MOE_LOGIN_PORTAL` | Dedicated `/moe/login` entry point; when false `/moe/login` redirects to `/login` | `false` |
 | `MOE_PORTAL_ALLOWLIST` | Comma-separated emails/domains allowed for MOE role. Empty = all. | `` (all) |
 
 ### User Flows
@@ -151,6 +152,7 @@ All server flags are read from `lib/serverFlags.ts`. Default is **OFF** unless n
 | `ENABLE_ACCOUNT_RECOVERY` | Account recovery APIs (forgot/reset password) | `false` |
 | `ENABLE_GUARDIAN_PORTAL` | Guardian portal (UI + APIs) | `false` |
 | `ENABLE_GUARDIAN_LINKING` | Guardian linking APIs | `false` |
+| `ENABLE_GUARDIAN_DASHBOARD` | Guardian dashboard + messaging routes (`/api/guardian/dashboard`, `/api/guardian/messages`) | `false` |
 | `DEMO_MODE` | Demo mode master switch | `false` |
 
 ### AI Factory (Curriculum)
