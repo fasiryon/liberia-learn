@@ -27,6 +27,7 @@ import { randomUUID } from "crypto";
 
 const PAGE_SIZE = 50;
 const CSV_MAX_ROWS = 5_000;
+const CSV_CHUNK_SIZE = 500; // rows per DB fetch — keeps memory footprint bounded
 
 export async function GET(req: NextRequest) {
   const traceId = randomUUID();
@@ -75,27 +76,12 @@ export async function GET(req: NextRequest) {
         : {}),
     };
 
-    // ── CSV export ──────────────────────────────────────────────────────────
+    // ── CSV export (streaming, 500 rows/chunk) ──────────────────────────────
     if (format === "csv") {
       assertPermission(user, PERMISSIONS.COMPLIANCE_AUDIT_EXPORT);
 
-      const entries = await prisma.auditLog.findMany({
-        where,
-        orderBy: { createdAt: "desc" },
-        take: CSV_MAX_ROWS,
-        select: {
-          id: true,
-          createdAt: true,
-          action: true,
-          userId: true,
-          resourceType: true,
-          resourceId: true,
-          schoolId: true,
-          traceId: true,
-          ipAddress: true,
-        },
-      });
-
+      // Audit the export request before streaming begins (row count unknown at
+      // start — we log an estimate of CSV_MAX_ROWS; actual rows are capped by it).
       await logAudit({
         userId: user.id,
         action: "compliance.audit_log.exported",
@@ -103,45 +89,78 @@ export async function GET(req: NextRequest) {
         schoolId: user.schoolId,
         traceId,
         details: {
-          rowCount: entries.length,
+          maxRows: CSV_MAX_ROWS,
+          chunkSize: CSV_CHUNK_SIZE,
           filters: { action, userId: filterUserId, resourceType, from: fromParam, to: toParam },
         },
       });
 
       const esc = (s: string | null | undefined) =>
         `"${(s ?? "").replace(/"/g, '""')}"`;
-      const header = [
-        "ID",
-        "Created At",
-        "Action",
-        "User ID",
-        "Resource Type",
-        "Resource ID",
-        "School ID",
-        "Trace ID",
-        "IP Address",
-      ].join(",");
-      const lines = entries.map((e) =>
-        [
-          e.id,
-          e.createdAt.toISOString(),
-          e.action,
-          e.userId,
-          e.resourceType,
-          e.resourceId,
-          e.schoolId,
-          e.traceId,
-          e.ipAddress,
-        ]
-          .map(esc)
-          .join(",")
-      );
-      const csv = [header, ...lines].join("\n");
+
+      const csvSelect = {
+        id: true,
+        createdAt: true,
+        action: true,
+        userId: true,
+        resourceType: true,
+        resourceId: true,
+        schoolId: true,
+        traceId: true,
+        ipAddress: true,
+      } as const;
+
+      const header =
+        ["ID", "Created At", "Action", "User ID", "Resource Type", "Resource ID", "School ID", "Trace ID", "IP Address"].join(",") +
+        "\n";
+
+      const encoder = new TextEncoder();
+      const stream = new ReadableStream({
+        async start(controller) {
+          controller.enqueue(encoder.encode(header));
+
+          let cursor: string | undefined;
+          let fetched = 0;
+
+          while (fetched < CSV_MAX_ROWS) {
+            const remaining = CSV_MAX_ROWS - fetched;
+            const chunk = await prisma.auditLog.findMany({
+              where,
+              orderBy: { createdAt: "desc" },
+              take: Math.min(CSV_CHUNK_SIZE, remaining),
+              ...(cursor
+                ? { cursor: { id: cursor }, skip: 1 }
+                : {}),
+              select: csvSelect,
+            });
+
+            if (chunk.length === 0) break;
+
+            const lines = chunk
+              .map((e) =>
+                [e.id, e.createdAt.toISOString(), e.action, e.userId, e.resourceType, e.resourceId, e.schoolId, e.traceId, e.ipAddress]
+                  .map(esc)
+                  .join(",")
+              )
+              .join("\n") + "\n";
+
+            controller.enqueue(encoder.encode(lines));
+            fetched += chunk.length;
+            cursor = chunk[chunk.length - 1].id;
+
+            if (chunk.length < Math.min(CSV_CHUNK_SIZE, remaining)) break;
+          }
+
+          controller.close();
+        },
+      });
+
       const filename = `audit-log-${new Date().toISOString().slice(0, 10)}.csv`;
-      return new NextResponse(csv, {
+      return new NextResponse(stream, {
         headers: {
           "Content-Type": "text/csv; charset=utf-8",
           "Content-Disposition": `attachment; filename="${filename}"`,
+          "Transfer-Encoding": "chunked",
         },
       });
     }
