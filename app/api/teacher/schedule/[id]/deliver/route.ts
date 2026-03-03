@@ -3,6 +3,7 @@ import { requireRole } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { logAudit } from "@/lib/audit";
 import { isLessonDeliveryTrackingEnabled } from "@/lib/serverFlags";
+import { enqueue } from "@/lib/offline/offlineQueue";
 
 export const dynamic = "force-dynamic";
 
@@ -65,6 +66,16 @@ export async function PATCH(
       },
       schoolId: user.schoolId ?? undefined,
     });
+
+    // Fire-and-forget: record in offline queue for idempotent sync tracking.
+    try {
+      enqueue("lesson.delivered", id, {
+        teacherId: user.id,
+        classId: sw.classId,
+        deliveredAt: (updated.deliveredAt ?? new Date()).toISOString(),
+        completionRate: updated.completionRate ?? null,
+      });
+    } catch { /* noop */ }
 
     return NextResponse.json({ ok: true });
   } catch (err: any) {

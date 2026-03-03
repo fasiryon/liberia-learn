@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { requireRole } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { logAudit } from "@/lib/audit";
+import { enqueue } from "@/lib/offline/offlineQueue";
 
 export async function POST(
   _req: NextRequest,
@@ -49,6 +50,15 @@ export async function POST(
       resourceType: "scheduledWork",
       resourceId: scheduledWorkId,
     });
+
+    // Fire-and-forget: record in offline queue for idempotent sync tracking.
+    // Never let queue errors surface to the student.
+    try {
+      enqueue("lesson.completed", scheduledWorkId, {
+        userId: user.id,
+        completedAt: (progress.completedAt ?? new Date()).toISOString(),
+      });
+    } catch { /* noop */ }
 
     return NextResponse.json({ success: true, completedAt: progress.completedAt });
   } catch (err: any) {
