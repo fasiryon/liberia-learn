@@ -5,6 +5,7 @@ import { logAudit } from "@/lib/audit";
 import { isVirtualLabsEnabled } from "@/lib/serverFlags";
 import { gradeToBand } from "@/lib/moe/alignment-engine";
 import { updateMasteryProfile } from "@/lib/mastery/masteryService";
+import { enqueue } from "@/lib/offline/offlineQueue";
 import type { Subject } from "@prisma/client";
 
 export const dynamic = "force-dynamic";
@@ -74,6 +75,16 @@ export async function PATCH(
       schoolId: session.schoolId,
       details: { score: score ?? null, isCompleting },
     });
+
+    // Fire-and-forget: record in offline queue for idempotent sync tracking.
+    try {
+      enqueue("lab.session.update", sessionId, {
+        userId: user.id,
+        score: score ?? null,
+        isCompleting,
+        updatedAt: new Date().toISOString(),
+      });
+    } catch { /* noop */ }
 
     // Mastery integration when completing with a score
     if (isCompleting && !session.masteryUpdated) {
