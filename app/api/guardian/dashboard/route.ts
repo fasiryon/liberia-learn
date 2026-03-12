@@ -243,6 +243,7 @@ export async function GET() {
         }));
 
         return {
+          studentId: student.id,
           studentName: student.user.name ?? "Unknown",
           grade: student.currentGrade ?? null,
           school: schoolName,

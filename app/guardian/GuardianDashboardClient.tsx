@@ -1,30 +1,41 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import type { DemoHintGroup } from "@/lib/demoHints";
 import { DemoHints } from "@/components/DemoHints";
+import { GuardianNav } from "@/components/guardian/GuardianNav";
 
-type StudentSummary = {
+type GuardianSummary = {
   studentId: string;
   name: string | null;
-  email: string | null;
   currentGrade: number | null;
   relation: string | null;
   lastHomework: {
     title: string;
-    submittedAt: string;
     aiScore: number | null;
     teacherScore: number | null;
     aiReviewed: boolean;
   } | null;
   placement: {
     band: string;
-    estimatedGrade: number;
     levelLabel: string;
   } | null;
   lessonViewsThisWeek: number;
+};
+
+type DashboardChild = {
+  studentId: string;
+  studentName: string;
+  grade: number | null;
+  school: string | null;
+  className: string | null;
+  recentGrades: Array<{ subject: string; assignmentTitle: string; score: number; maxScore: number; date: string }>;
+  upcomingAssignments: Array<{ subject: string; title: string; dueAt: string; type: string }>;
+  attendance: { presentDays: number; absentDays: number; attendanceRate: number };
+  masteryProfile: Array<{ subject: string; strandKey: string; masteryLevel: number; trend: "up" | "down" | "stable" }>;
+  interventionAlerts: Array<{ subject: string; strandKey: string; alertType: string; createdAt: string }>;
 };
 
 type GuardianDashboardClientProps = {
@@ -32,143 +43,281 @@ type GuardianDashboardClientProps = {
   demoGroup: DemoHintGroup | null;
 };
 
+function scoreDisplay(hw: GuardianSummary["lastHomework"]) {
+  if (!hw) return "No submissions yet";
+  if (hw.teacherScore !== null) return `${hw.teacherScore}%`;
+  if (hw.aiReviewed && hw.aiScore !== null) return `${Math.round(hw.aiScore)}% (AI)`;
+  return "Pending review";
+}
+
 export default function GuardianDashboardClient({
   showDemoHints,
   demoGroup,
 }: GuardianDashboardClientProps) {
   const router = useRouter();
-  const [students, setStudents] = useState<StudentSummary[]>([]);
+  const [summaries, setSummaries] = useState<GuardianSummary[]>([]);
+  const [dashboardChildren, setDashboardChildren] = useState<DashboardChild[]>([]);
+  const [selectedChildId, setSelectedChildId] = useState<string>("");
+  const [unreadMessages, setUnreadMessages] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    fetch("/api/guardian/students")
-      .then((res) => {
-        if (res.status === 401 || res.status === 403) {
+    let active = true;
+    setLoading(true);
+    setError(null);
+
+    Promise.all([
+      fetch("/api/guardian/students", { cache: "no-store" }),
+      fetch("/api/guardian/dashboard", { cache: "no-store" }),
+    ])
+      .then(async ([studentsRes, dashboardRes]) => {
+        if (studentsRes.status === 401 || studentsRes.status === 403) {
           router.push("/login");
           return null;
         }
-        if (!res.ok) throw new Error("Failed to load students");
-        return res.json();
+
+        const studentsData = await studentsRes.json();
+        const dashboardData = await dashboardRes.json();
+        if (!studentsRes.ok) throw new Error(studentsData.error ?? "Failed to load students");
+        if (!dashboardRes.ok) throw new Error(dashboardData.error ?? "Failed to load dashboard");
+
+        return {
+          students: studentsData.students ?? [],
+          children: dashboardData.children ?? [],
+          unreadMessages: dashboardData.unreadMessages ?? 0,
+        };
       })
       .then((data) => {
-        if (data) setStudents(data.students);
+        if (!active || !data) return;
+        setSummaries(data.students);
+        setDashboardChildren(data.children);
+        setUnreadMessages(data.unreadMessages);
+        const firstId = data.children[0]?.studentId ?? data.students[0]?.studentId ?? "";
+        setSelectedChildId((current) => current || firstId);
       })
-      .catch((err) => setError(err.message))
-      .finally(() => setLoading(false));
+      .catch((err: Error) => {
+        if (active) setError(err.message);
+      })
+      .finally(() => {
+        if (active) setLoading(false);
+      });
+
+    return () => {
+      active = false;
+    };
   }, [router]);
 
-  function formatBand(band: string) {
-    return band.replace("_", "-").replace("G", "Grade ");
-  }
-
-  function scoreDisplay(hw: StudentSummary["lastHomework"]) {
-    if (!hw) return null;
-    if (hw.teacherScore !== null) return `${hw.teacherScore}%`;
-    if (hw.aiReviewed && hw.aiScore !== null) return `${Math.round(hw.aiScore)}% (AI)`;
-    return "Pending review";
-  }
+  const selectedSummary = useMemo(
+    () => summaries.find((student) => student.studentId === selectedChildId) ?? summaries[0] ?? null,
+    [selectedChildId, summaries]
+  );
+  const selectedDashboardChild = useMemo(
+    () =>
+      dashboardChildren.find((child) => child.studentId === selectedChildId) ??
+      dashboardChildren[0] ??
+      null,
+    [dashboardChildren, selectedChildId]
+  );
 
   return (
     <main className="min-h-screen bg-slate-950 px-4 py-8">
-      <div className="mx-auto max-w-3xl space-y-6">
+      <div className="mx-auto max-w-6xl space-y-6">
         <div>
           <h1 className="text-2xl font-bold text-slate-50">Guardian Dashboard</h1>
-          <p className="text-sm text-slate-400 mt-1">
-            Monitor your child&apos;s learning progress.
+          <p className="mt-1 text-sm text-slate-400">
+            Monitor your child&apos;s learning progress and stay connected with their teacher.
           </p>
         </div>
 
-        {showDemoHints && demoGroup && (
-          <DemoHints title="Guardian Demo Login" groups={[demoGroup]} />
-        )}
+        {showDemoHints && demoGroup ? <DemoHints title="Guardian Demo Login" groups={[demoGroup]} /> : null}
 
-        {loading && (
+        <GuardianNav />
+
+        {loading ? (
           <div className="space-y-4">
-            {[1, 2].map((i) => (
+            {Array.from({ length: 4 }).map((_, index) => (
               <div
-                key={i}
-                className="rounded-2xl border border-white/10 bg-slate-900/70 p-6 space-y-3"
-              >
-                <div className="h-5 w-1/3 animate-pulse rounded bg-slate-800" />
-                <div className="h-4 w-2/3 animate-pulse rounded bg-slate-800" />
-                <div className="h-4 w-1/2 animate-pulse rounded bg-slate-800" />
-              </div>
+                key={index}
+                className="h-32 animate-pulse rounded-2xl border border-white/10 bg-slate-900/70"
+              />
             ))}
           </div>
-        )}
-
-        {error && (
-          <div className="rounded-2xl border border-red-500/30 bg-red-500/10 p-4 text-sm text-red-400">
+        ) : error ? (
+          <div className="rounded-2xl border border-red-500/30 bg-red-500/10 p-4 text-sm text-red-300">
             {error}
           </div>
-        )}
-
-        {!loading && !error && students.length === 0 && (
-          <div className="rounded-2xl border border-white/10 bg-slate-900/70 p-8 text-center">
-            <p className="text-sm text-slate-400">
-              No students linked to your account yet. Contact your school admin.
-            </p>
+        ) : !selectedSummary || !selectedDashboardChild ? (
+          <div className="rounded-2xl border border-white/10 bg-slate-900/70 p-8 text-center text-sm text-slate-400">
+            No students linked to your account yet. Contact your school admin.
           </div>
+        ) : (
+          <>
+            {dashboardChildren.length > 1 ? (
+              <section className="rounded-2xl border border-white/10 bg-slate-900/70 p-4">
+                <label className="block text-xs text-slate-400">Child selector</label>
+                <select
+                  value={selectedDashboardChild.studentId}
+                  onChange={(event) => setSelectedChildId(event.target.value)}
+                  className="mt-2 min-h-11 w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-sm text-slate-100"
+                >
+                  {dashboardChildren.map((child) => (
+                    <option key={child.studentId} value={child.studentId}>
+                      {child.studentName} {child.grade ? `(Grade ${child.grade})` : ""}
+                    </option>
+                  ))}
+                </select>
+              </section>
+            ) : null}
+
+            <section className="rounded-3xl border border-white/10 bg-slate-900/70 p-6">
+              <div className="flex flex-wrap items-start justify-between gap-4">
+                <div>
+                  <h2 className="text-xl font-semibold text-slate-50">
+                    {selectedDashboardChild.studentName}
+                  </h2>
+                  <p className="mt-1 text-sm text-slate-400">
+                    {selectedSummary.relation ? `${selectedSummary.relation} · ` : ""}
+                    {selectedDashboardChild.className ?? "Class not assigned"}
+                    {selectedDashboardChild.school ? ` · ${selectedDashboardChild.school}` : ""}
+                  </p>
+                </div>
+                <div className="rounded-2xl border border-emerald-500/20 bg-emerald-500/10 px-4 py-3 text-right">
+                  <p className="text-xs text-emerald-200">Unread messages</p>
+                  <p className="text-2xl font-bold text-emerald-300">{unreadMessages}</p>
+                </div>
+              </div>
+
+              <div className="mt-5 grid gap-4 md:grid-cols-4">
+                <div className="rounded-2xl bg-slate-950/70 p-4">
+                  <p className="text-xs text-slate-500">Last homework</p>
+                  <p className="mt-2 text-sm font-semibold text-slate-100">
+                    {selectedSummary.lastHomework?.title ?? "No submissions yet"}
+                  </p>
+                  <p className="mt-1 text-xs text-slate-400">
+                    Score: {scoreDisplay(selectedSummary.lastHomework)}
+                  </p>
+                </div>
+                <div className="rounded-2xl bg-slate-950/70 p-4">
+                  <p className="text-xs text-slate-500">Attendance</p>
+                  <p className="mt-2 text-sm font-semibold text-slate-100">
+                    {Math.round(selectedDashboardChild.attendance.attendanceRate * 100)}%
+                  </p>
+                  <p className="mt-1 text-xs text-slate-400">
+                    {selectedDashboardChild.attendance.presentDays} present · {selectedDashboardChild.attendance.absentDays} absent
+                  </p>
+                </div>
+                <div className="rounded-2xl bg-slate-950/70 p-4">
+                  <p className="text-xs text-slate-500">Placement</p>
+                  <p className="mt-2 text-sm font-semibold text-slate-100">
+                    {selectedSummary.placement?.band?.replace("_", "-") ?? "Not assessed"}
+                  </p>
+                  <p className="mt-1 text-xs text-slate-400">
+                    {selectedSummary.placement?.levelLabel ?? "Placement result pending"}
+                  </p>
+                </div>
+                <div className="rounded-2xl bg-slate-950/70 p-4">
+                  <p className="text-xs text-slate-500">Messages</p>
+                  <p className="mt-2 text-sm font-semibold text-slate-100">
+                    Stay connected with teachers
+                  </p>
+                  <Link
+                    href="/guardian/messages"
+                    className="mt-3 inline-flex rounded-full bg-emerald-500 px-3 py-1.5 text-xs font-semibold text-slate-950"
+                  >
+                    Open Messages
+                  </Link>
+                </div>
+              </div>
+            </section>
+
+            <section className="grid gap-6 lg:grid-cols-2">
+              <div className="rounded-3xl border border-white/10 bg-slate-900/70 p-6">
+                <div className="flex items-center justify-between gap-3">
+                  <div>
+                    <h3 className="text-lg font-semibold text-slate-50">Mastery Profile</h3>
+                    <p className="text-sm text-slate-400">Subject progress and trend over time.</p>
+                  </div>
+                </div>
+                <div className="mt-4 space-y-4">
+                  {selectedDashboardChild.masteryProfile.length === 0 ? (
+                    <p className="text-sm text-slate-400">No mastery data yet.</p>
+                  ) : (
+                    selectedDashboardChild.masteryProfile.map((item) => {
+                      const percent = Math.max(0, Math.min(100, Math.round(item.masteryLevel * 100)));
+                      const trendSymbol =
+                        item.trend === "up" ? "↑" : item.trend === "down" ? "↓" : "→";
+                      return (
+                        <div key={`${item.subject}-${item.strandKey}`} className="rounded-2xl bg-slate-950/70 p-4">
+                          <div className="flex items-center justify-between gap-3">
+                            <div>
+                              <p className="text-sm font-semibold text-slate-100">
+                                {item.subject.replace(/_/g, " ")}
+                              </p>
+                              <p className="text-xs text-slate-500">{item.strandKey.replace(/_/g, " ")}</p>
+                            </div>
+                            <div className="text-right">
+                              <p className="text-sm font-semibold text-emerald-300">
+                                {Math.round(item.masteryLevel * 5)} / 5
+                              </p>
+                              <p className="text-xs text-slate-400">{trendSymbol} {item.trend}</p>
+                            </div>
+                          </div>
+                          <div className="mt-3 h-2 rounded-full bg-slate-800">
+                            <div className="h-2 rounded-full bg-emerald-400" style={{ width: `${percent}%` }} />
+                          </div>
+                        </div>
+                      );
+                    })
+                  )}
+                </div>
+              </div>
+
+              <div className="space-y-6">
+                <div className="rounded-3xl border border-white/10 bg-slate-900/70 p-6">
+                  <h3 className="text-lg font-semibold text-slate-50">Areas Needing Extra Support</h3>
+                  <div className="mt-4 space-y-3">
+                    {selectedDashboardChild.interventionAlerts.length === 0 ? (
+                      <p className="text-sm text-slate-400">No active alerts. Your child is on track!</p>
+                    ) : (
+                      selectedDashboardChild.interventionAlerts.map((alert) => (
+                        <div key={`${alert.subject}-${alert.strandKey}-${alert.createdAt}`} className="rounded-2xl bg-slate-950/70 p-4">
+                          <p className="text-sm font-semibold text-slate-100">
+                            {alert.subject.replace(/_/g, " ")}
+                          </p>
+                          <p className="mt-1 text-xs text-slate-400">
+                            {alert.strandKey.replace(/_/g, " ")} · {alert.alertType.replace(/_/g, " ")}
+                          </p>
+                          <p className="mt-1 text-xs text-slate-500">
+                            Since {new Date(alert.createdAt).toLocaleDateString("en-LR")}
+                          </p>
+                        </div>
+                      ))
+                    )}
+                  </div>
+                </div>
+
+                <div className="rounded-3xl border border-white/10 bg-slate-900/70 p-6">
+                  <h3 className="text-lg font-semibold text-slate-50">Upcoming Work</h3>
+                  <div className="mt-4 space-y-3">
+                    {selectedDashboardChild.upcomingAssignments.length === 0 ? (
+                      <p className="text-sm text-slate-400">No upcoming assignments right now.</p>
+                    ) : (
+                      selectedDashboardChild.upcomingAssignments.slice(0, 4).map((assignment) => (
+                        <div key={`${assignment.title}-${assignment.dueAt}`} className="rounded-2xl bg-slate-950/70 p-4">
+                          <p className="text-sm font-semibold text-slate-100">{assignment.title}</p>
+                          <p className="mt-1 text-xs text-slate-400">
+                            {assignment.subject.replace(/_/g, " ")} · due {new Date(assignment.dueAt).toLocaleDateString("en-LR")}
+                          </p>
+                        </div>
+                      ))
+                    )}
+                  </div>
+                </div>
+              </div>
+            </section>
+          </>
         )}
-
-        {students.map((s) => (
-          <div
-            key={s.studentId}
-            className="rounded-2xl border border-white/10 bg-slate-900/70 p-6 space-y-4"
-          >
-            <div className="flex items-start justify-between gap-4">
-              <div>
-                <h2 className="text-lg font-semibold text-slate-50">
-                  {s.name || "Unnamed Student"}
-                </h2>
-                <p className="text-xs text-slate-500">
-                  {s.relation ? `${s.relation} · ` : ""}
-                  {s.currentGrade ? `Grade ${s.currentGrade}` : "Grade not set"}
-                </p>
-              </div>
-              {s.placement && (
-                <span className="rounded-full bg-emerald-500/20 border border-emerald-400/30 px-3 py-0.5 text-xs font-medium text-emerald-300">
-                  {formatBand(s.placement.band)} · {s.placement.levelLabel}
-                </span>
-              )}
-            </div>
-
-            <div className="grid gap-3 sm:grid-cols-2">
-              {/* Last homework */}
-              <div className="rounded-xl bg-slate-950/60 border border-white/5 px-4 py-3">
-                <p className="text-xs text-slate-500 mb-1">Last Homework</p>
-                {s.lastHomework ? (
-                  <>
-                    <p className="text-sm font-medium text-slate-200 truncate">
-                      {s.lastHomework.title}
-                    </p>
-                    <p className="text-xs text-slate-400 mt-0.5">
-                      Score: {scoreDisplay(s.lastHomework)}
-                    </p>
-                  </>
-                ) : (
-                  <p className="text-sm text-slate-500">No submissions yet</p>
-                )}
-              </div>
-
-              {/* Lesson activity */}
-              <div className="rounded-xl bg-slate-950/60 border border-white/5 px-4 py-3">
-                <p className="text-xs text-slate-500 mb-1">This Week</p>
-                <p className="text-sm font-medium text-slate-200">
-                  {s.lessonViewsThisWeek} lesson{s.lessonViewsThisWeek !== 1 ? "s" : ""} viewed
-                </p>
-              </div>
-            </div>
-
-            <Link
-              href={`/guardian/student/${s.studentId}`}
-              className="inline-block rounded-lg bg-emerald-500 px-4 py-2 text-xs font-semibold text-slate-950 hover:bg-emerald-400"
-            >
-              View Details
-            </Link>
-          </div>
-        ))}
       </div>
     </main>
   );
