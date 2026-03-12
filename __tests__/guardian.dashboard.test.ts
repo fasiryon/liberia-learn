@@ -88,6 +88,13 @@ const GUARDIAN_USER = {
   isPlatformAdmin: false,
 };
 
+const TEACHER_USER = {
+  id: "teacher-1",
+  role: "TEACHER",
+  schoolId: "school-1",
+  isPlatformAdmin: false,
+};
+
 const STUDENT_RECORD = {
   id: "student-1",
   userId: "user-1",
@@ -335,6 +342,39 @@ describe("GET /api/guardian/messages", () => {
       })
     );
   });
+
+  it("supports teacher-scoped message listing", async () => {
+    mockRequireRole.mockResolvedValue(TEACHER_USER);
+    mockGuardianMessageFindMany.mockResolvedValue([
+      {
+        id: "msg-1",
+        guardianId: "guardian-1",
+        teacherId: "teacher-1",
+        studentId: "student-1",
+        fromRole: "guardian",
+        body: "Need help with homework",
+        sentAt: new Date("2026-03-01T09:00:00.000Z"),
+        read: false,
+        guardian: { name: "Parent One" },
+        teacher: { name: "Mr. Johnson" },
+        student: {
+          user: { name: "Alice Smith" },
+          enrollments: [{ Class: { name: "Grade 6 Math", subject: "MATH" } }],
+        },
+      },
+    ]);
+
+    const res = await messagesGET();
+    expect(res.status).toBe(200);
+    const data = await res.json();
+    expect(data[0].studentName).toBe("Alice Smith");
+    expect(data[0].subject).toBe("MATH");
+    expect(mockGuardianMessageFindMany).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: { teacherId: "teacher-1" },
+      })
+    );
+  });
 });
 
 // ─── MESSAGES POST TESTS ─────────────────────────────────────────────────────
@@ -456,6 +496,30 @@ describe("POST /api/guardian/messages", () => {
     expect(res.status).toBe(400);
     expect((await res.json()).error).toMatch(/studentId/i);
   });
+
+  it("allows a teacher to reply to a linked guardian", async () => {
+    mockRequireRole.mockResolvedValue(TEACHER_USER);
+    const req = makeReq("/api/guardian/messages", {
+      method: "POST",
+      body: {
+        guardianId: "guardian-1",
+        studentId: "student-1",
+        body: "Alice is improving this week.",
+      },
+    });
+
+    const res = await messagesPOST(req);
+    expect(res.status).toBe(201);
+    expect(mockGuardianMessageCreate).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({
+          guardianId: "guardian-1",
+          teacherId: "teacher-1",
+          fromRole: "teacher",
+        }),
+      })
+    );
+  });
 });
 
 // ─── MESSAGES READ PATCH TESTS ────────────────────────────────────────────────
@@ -528,6 +592,24 @@ describe("PATCH /api/guardian/messages/[id]/read", () => {
     expect(mockGuardianMessageFindFirst).toHaveBeenCalledWith(
       expect.objectContaining({
         where: { id: "msg-1", guardianId: "guardian-1" },
+      })
+    );
+  });
+
+  it("allows a teacher to mark guardian messages as read", async () => {
+    mockRequireRole.mockResolvedValue(TEACHER_USER);
+    mockGuardianMessageFindFirst.mockResolvedValue({
+      id: "msg-1",
+      teacherId: "teacher-1",
+      schoolId: "school-1",
+      read: false,
+    });
+
+    const res = await messageReadPATCH(makeReq("/"), { params: { id: "msg-1" } });
+    expect(res.status).toBe(200);
+    expect(mockGuardianMessageFindFirst).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: { id: "msg-1", teacherId: "teacher-1" },
       })
     );
   });

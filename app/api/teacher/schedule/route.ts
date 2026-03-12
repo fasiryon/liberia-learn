@@ -19,6 +19,9 @@ async function _scheduleGET(req: NextRequest) {
     const user = await requireRole("TEACHER", "ADMIN");
     const { searchParams } = new URL(req.url);
     const weekOf = searchParams.get("weekOf");
+    const from = searchParams.get("from");
+    const to = searchParams.get("to");
+    const deliveredOnly = searchParams.get("deliveredOnly") === "true";
 
     const classes = await prisma.class.findMany({
       where: { schoolId: user.schoolId!, teacherId: user.id },
@@ -26,7 +29,6 @@ async function _scheduleGET(req: NextRequest) {
     });
     const classIds = classes.map((c) => c.id);
 
-    // Calculate week range
     const baseDate = weekOf ? new Date(weekOf) : new Date();
     const day = baseDate.getUTCDay();
     const monday = new Date(baseDate);
@@ -35,10 +37,16 @@ async function _scheduleGET(req: NextRequest) {
     const friday = new Date(monday);
     friday.setUTCDate(monday.getUTCDate() + 5);
 
+    const rangeStart = from ? new Date(from) : monday;
+    rangeStart.setUTCHours(0, 0, 0, 0);
+    const rangeEnd = to ? new Date(to) : friday;
+    rangeEnd.setUTCHours(23, 59, 59, 999);
+
     const schedule = await prisma.scheduledWork.findMany({
       where: {
         classId: { in: classIds },
-        scheduledDate: { gte: monday, lt: friday },
+        scheduledDate: { gte: rangeStart, lte: rangeEnd },
+        ...(deliveredOnly ? { isDelivered: true } : {}),
       },
       include: {
         content: {
@@ -87,6 +95,8 @@ async function _scheduleGET(req: NextRequest) {
       items,
       classes,
       weekStart: monday.toISOString(),
+      rangeStart: rangeStart.toISOString(),
+      rangeEnd: rangeEnd.toISOString(),
     };
 
     // Part 8: enhanced compliance fields

@@ -8,6 +8,7 @@ import { CollapsiblePanel } from "@/components/CollapsiblePanel";
 import { computeEarnedBadges } from "@/lib/training/badges";
 import type { ModuleProgressRecord } from "@/lib/training/progress";
 import { DemoHintsSection } from "@/components/DemoHintsSection";
+import { TeacherNav } from "@/components/teacher/TeacherNav";
 
 export const dynamic = "force-dynamic";
 
@@ -119,35 +120,17 @@ export default async function TeacherDashboardPage() {
 
         <DemoHintsSection variant="teacher" />
 
-        {/* ── Nav tabs — enlarged tap targets ─────────────────────────── */}
-        <nav className="mb-8 flex flex-wrap gap-2 border-b border-slate-800 pb-4">
-          <Link
-            href="/teacher"
-            className="rounded-full bg-slate-100 text-slate-900 px-5 py-2 text-sm font-semibold"
-          >
-            Overview
-          </Link>
-          <Link
-            href="/teacher/homework"
-            className="rounded-full bg-slate-900 px-5 py-2 text-sm font-semibold text-slate-200 border border-slate-700 hover:bg-slate-800 transition-colors"
-          >
-            Homework
-          </Link>
-          <Link
-            href="/teacher/curriculum"
-            className="rounded-full bg-slate-900 px-5 py-2 text-sm font-semibold text-slate-200 border border-slate-700 hover:bg-slate-800 transition-colors"
-          >
-            Curriculum
-          </Link>
-          {TRAINING_ENABLED && (
+        <TeacherNav />
+        {TRAINING_ENABLED && (
+          <div className="mb-8">
             <Link
               href="/teacher/training"
-              className="rounded-full bg-emerald-500/20 px-5 py-2 text-sm font-semibold text-emerald-300 border border-emerald-500/30 hover:bg-emerald-500/30 transition-colors"
+              className="inline-flex rounded-full border border-emerald-500/30 bg-emerald-500/20 px-5 py-2 text-sm font-semibold text-emerald-300 hover:bg-emerald-500/30 transition-colors"
             >
-              🎓 Training
+              Training
             </Link>
-          )}
-        </nav>
+          </div>
+        )}
 
         {/* ── Overview stats — more padding, larger figures ────────────── */}
         <section className="mb-8 grid gap-4 md:grid-cols-3">
@@ -296,6 +279,18 @@ export default async function TeacherDashboardPage() {
             >
               <span>👥</span>
               <span>All students</span>
+            </Link>
+            <Link
+              href="/teacher/messages"
+              className="flex items-center gap-3 rounded-xl border border-slate-700 bg-slate-800/60 px-4 py-3 text-sm text-slate-300 hover:bg-slate-700 transition-colors"
+            >
+              <span>Messages</span>
+            </Link>
+            <Link
+              href="/teacher/delivery-report"
+              className="flex items-center gap-3 rounded-xl border border-slate-700 bg-slate-800/60 px-4 py-3 text-sm text-slate-300 hover:bg-slate-700 transition-colors"
+            >
+              <span>Delivery report</span>
             </Link>
           </div>
         </CollapsiblePanel>

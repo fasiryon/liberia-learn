@@ -1,13 +1,3 @@
-// app/api/guardian/messages/[id]/read/route.ts
-//
-// PATCH /api/guardian/messages/[id]/read
-//
-// Marks a guardian message as read. A guardian can only mark their own messages.
-//
-// Feature flag : ENABLE_GUARDIAN_DASHBOARD (default OFF → 404)
-// Auth         : GUARDIAN role
-// Scope        : message must belong to the requesting guardian
-
 import { NextResponse } from "next/server";
 import { requireRole } from "@/lib/auth";
 import { prisma } from "@/lib/db";
@@ -25,13 +15,15 @@ export async function PATCH(
       return NextResponse.json({ error: "Not found" }, { status: 404 });
     }
 
-    const user = await requireRole("GUARDIAN");
+    const user = await requireRole("GUARDIAN", "TEACHER");
     const { id } = params;
 
-    // Verify the message belongs to this guardian
-    const message = await prisma.guardianMessage.findFirst({
-      where: { id, guardianId: user.id },
-    });
+    const where =
+      user.role === "TEACHER"
+        ? { id, teacherId: user.id }
+        : { id, guardianId: user.id };
+
+    const message = await prisma.guardianMessage.findFirst({ where });
 
     if (!message) {
       return NextResponse.json(
@@ -41,7 +33,6 @@ export async function PATCH(
     }
 
     if (message.read) {
-      // Already read — idempotent, return success
       return NextResponse.json({ messageId: id, read: true });
     }
 
@@ -52,7 +43,7 @@ export async function PATCH(
 
     void logAudit({
       userId: user.id,
-      action: "guardian.message.read",
+      action: user.role === "TEACHER" ? "teacher.message.read" : "guardian.message.read",
       resourceType: "guardian_message",
       resourceId: id,
       schoolId: message.schoolId,
