@@ -5,6 +5,8 @@ import { logAudit } from "@/lib/audit";
 import { randomUUID } from "crypto";
 import { z } from "zod";
 import bcrypt from "bcryptjs";
+import { generatePin } from "@/lib/credentials";
+import { normalizeCredentialPhone, normalizeLoginId, slugifyLoginSeed } from "@/lib/login-identifiers";
 
 export const dynamic = "force-dynamic";
 
@@ -14,10 +16,7 @@ export async function GET(req: Request) {
     user = await requireRole("ADMIN");
   } catch (err: any) {
     const status = err?.status === 403 ? 403 : 401;
-    return NextResponse.json(
-      { error: status === 403 ? "forbidden" : "unauthorized" },
-      { status }
-    );
+    return NextResponse.json({ error: status === 403 ? "forbidden" : "unauthorized" }, { status });
   }
 
   const schoolId = user.schoolId ?? null;
@@ -30,14 +29,19 @@ export async function GET(req: Request) {
       where: { user: { schoolId } },
       select: {
         id: true,
-        user: { select: { name: true, email: true } },
+        currentGrade: true,
+        user: { select: { id: true, name: true, email: true, loginId: true, guardianPhoneE164: true } },
       },
     });
 
     const students = rows.map((s) => ({
       id: s.id,
+      userId: s.user.id,
       name: s.user?.name ?? s.user?.email ?? "Student",
       email: s.user?.email ?? null,
+      loginId: s.user?.loginId ?? null,
+      phone: s.user?.guardianPhoneE164 ?? null,
+      currentGrade: s.currentGrade ?? null,
     }));
 
     await logAudit({
@@ -49,7 +53,7 @@ export async function GET(req: Request) {
     });
 
     return NextResponse.json({ students }, { status: 200 });
-  } catch (err: any) {
+  } catch {
     return NextResponse.json({ error: "internal" }, { status: 500 });
   }
 }
@@ -63,18 +67,22 @@ const CreateSchema = z.object({
   gender: z.string().optional(),
   studentId: z.string().optional(),
   email: z.string().email().optional(),
+  phone: z.string().optional(),
 });
 
-function slugify(value: string) {
-  return value
-    .trim()
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-+|-+$/g, "");
-}
+async function buildUniqueLoginId(preferred: string | undefined, fallbackSeed: string) {
+  const base = normalizeLoginId(preferred && preferred.trim() ? preferred : fallbackSeed);
+  let candidate = base;
+  let attempt = 1;
 
-function generatePin() {
-  return Math.floor(100000 + Math.random() * 900000).toString();
+  while (attempt <= 10) {
+    const existing = await prisma.user.findFirst({ where: { loginId: candidate }, select: { id: true } });
+    if (!existing) return candidate;
+    attempt += 1;
+    candidate = `${base}-${attempt}`;
+  }
+
+  return `${base}-${Date.now().toString().slice(-4)}`;
 }
 
 export async function POST(req: Request) {
@@ -88,54 +96,44 @@ export async function POST(req: Request) {
     const body = await req.json().catch(() => null);
     const parsed = CreateSchema.safeParse(body);
     if (!parsed.success) {
-      return NextResponse.json(
-        { error: "Validation failed", issues: parsed.error.flatten() },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: "Validation failed", issues: parsed.error.flatten() }, { status: 400 });
     }
 
-    const {
-      firstName,
-      lastName,
-      grade,
-      classId,
-      studentId,
-      email,
-    } = parsed.data;
+    const { firstName, lastName, grade, classId, studentId, email, phone } = parsed.data;
 
-    const cls = await prisma.class.findUnique({
-      where: { id: classId },
-      select: { id: true, schoolId: true },
-    });
+    const cls = await prisma.class.findUnique({ where: { id: classId }, select: { id: true, schoolId: true } });
     if (!cls || cls.schoolId !== user.schoolId) {
       return NextResponse.json({ error: "Invalid class" }, { status: 400 });
     }
 
-    const baseEmailLocal =
-      (studentId && slugify(studentId)) ||
-      slugify(`${firstName}.${lastName}`) ||
-      `student-${Date.now()}`;
+    const loginId = await buildUniqueLoginId(studentId, `LBR-${new Date().getFullYear()}-${slugifyLoginSeed(`${firstName}-${lastName}`) || Date.now().toString().slice(-4)}`);
+    const baseEmailLocal = slugifyLoginSeed(loginId) || `student-${Date.now()}`;
     let candidate = (email ?? `${baseEmailLocal}@student.local`).toLowerCase();
 
-    // Ensure unique email
     let attempt = 0;
     while (attempt < 5) {
       const existing = await prisma.user.findUnique({ where: { email: candidate } });
       if (!existing) break;
-      attempt++;
+      attempt += 1;
       candidate = `${baseEmailLocal}-${attempt}@student.local`;
     }
 
     const tempPin = generatePin();
     const hashedPwd = await bcrypt.hash(tempPin, 10);
+    const phoneE164 = phone ? normalizeCredentialPhone(phone) : null;
 
     const created = await prisma.user.create({
       data: {
         email: candidate,
+        loginId,
         name: `${firstName} ${lastName}`.trim(),
         role: "STUDENT",
         hashedPwd,
         schoolId: user.schoolId,
+        guardianCountryCode: "+231",
+        guardianPhone: phone || null,
+        guardianPhoneE164: phoneE164,
+        preferredChannel: phoneE164 ? "SMS" : "EMAIL",
       },
     });
 
@@ -146,12 +144,7 @@ export async function POST(req: Request) {
       },
     });
 
-    await prisma.enrollment.create({
-      data: {
-        studentId: student.id,
-        classId,
-      },
-    });
+    await prisma.enrollment.create({ data: { studentId: student.id, classId } });
 
     await logAudit({
       userId: user.id,
@@ -163,6 +156,8 @@ export async function POST(req: Request) {
       details: {
         classId,
         currentGrade: grade,
+        loginId,
+        hasPhone: Boolean(phoneE164),
       },
     });
 
@@ -170,16 +165,22 @@ export async function POST(req: Request) {
       ok: true,
       student: {
         id: student.id,
+        userId: created.id,
         name: created.name,
         email: created.email,
+        loginId,
+        phone: phoneE164,
         currentGrade: student.currentGrade,
         classId,
       },
       tempPin,
-      loginId: created.email,
+      loginId,
+      userId: created.id,
+      phone: phoneE164,
     });
   } catch (err: any) {
     const status = err?.status ?? 500;
     return NextResponse.json({ error: err?.message ?? "Internal error" }, { status });
   }
 }
+
