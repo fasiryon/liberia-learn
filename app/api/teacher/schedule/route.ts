@@ -22,7 +22,7 @@ async function _scheduleGET(req: NextRequest) {
 
     const classes = await prisma.class.findMany({
       where: { schoolId: user.schoolId!, teacherId: user.id },
-      select: { id: true, name: true },
+      select: { id: true, name: true, subject: true },
     });
     const classIds = classes.map((c) => c.id);
 
@@ -180,6 +180,7 @@ export async function POST(req: NextRequest) {
       endTime,
       periodNumber,
       classFormat,
+      deliveryNotes,
     } = await req.json();
 
     if (!contentId || !classId || !scheduledDate) {
@@ -238,6 +239,7 @@ export async function POST(req: NextRequest) {
         status: shouldPair ? "confirmed" : undefined,
         sessionPairId: sessionPairId ?? undefined,
         suggestedLabs: suggestedLabs ?? undefined,
+        deliveryNotes: deliveryNotes ?? undefined,
       },
     });
 

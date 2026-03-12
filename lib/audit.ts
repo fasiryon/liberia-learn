@@ -23,6 +23,7 @@ export async function logAudit({
   schoolId?: string | null;
 }) {
   try {
+    if (!prisma?.auditLog?.create) return;
     await prisma.auditLog.create({
       data: {
         userId: userId ?? null,
