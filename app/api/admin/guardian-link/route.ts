@@ -137,7 +137,7 @@ export async function POST(req: Request) {
     });
 
     const base = process.env.NEXTAUTH_URL ?? "http://localhost:3000";
-    const inviteUrl = `${base}/guardian/link?token=${rawToken}`;
+    const inviteUrl = `${base}/guardian/register?token=${rawToken}`;
 
     // Fetch school name for email
     const school = user.schoolId
@@ -158,3 +158,5 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: err?.message ?? "Internal error" }, { status });
   }
 }
+
+

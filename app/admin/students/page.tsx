@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
+import { CredentialDeliveryActions } from "@/components/CredentialDeliveryActions";
 
 type ClassInfo = {
   id: string;
@@ -11,12 +12,22 @@ type ClassInfo = {
 
 type StudentRow = {
   id: string;
+  userId: string;
   name: string;
   email: string;
+  loginId: string | null;
+  phone: string | null;
   currentGrade: number | null;
   className: string | null;
   classId: string | null;
   subject: string | null;
+};
+
+type CreatedCredential = {
+  userId: string;
+  loginId: string;
+  tempPin: string;
+  phone: string | null;
 };
 
 const GRADES = Array.from({ length: 12 }, (_, i) => i + 1);
@@ -28,6 +39,7 @@ export default function AdminStudentsPage() {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
+  const [createdCredential, setCreatedCredential] = useState<CreatedCredential | null>(null);
 
   const [form, setForm] = useState({
     firstName: "",
@@ -38,6 +50,7 @@ export default function AdminStudentsPage() {
     gender: "",
     studentId: "",
     email: "",
+    phone: "",
   });
 
   useEffect(() => {
@@ -75,16 +88,9 @@ export default function AdminStudentsPage() {
     };
   }, []);
 
-  const selectedClass = useMemo(
-    () => classes.find((c) => c.id === form.classId) ?? null,
-    [classes, form.classId]
-  );
+  const selectedClass = useMemo(() => classes.find((c) => c.id === form.classId) ?? null, [classes, form.classId]);
 
-  const requiredMissing =
-    !form.firstName.trim() ||
-    !form.lastName.trim() ||
-    !form.classId ||
-    !form.grade;
+  const requiredMissing = !form.firstName.trim() || !form.lastName.trim() || !form.classId || !form.grade;
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -95,6 +101,7 @@ export default function AdminStudentsPage() {
     setSaving(true);
     setError(null);
     setSuccess(null);
+    setCreatedCredential(null);
 
     try {
       const res = await fetch("/api/admin/students", {
@@ -109,6 +116,7 @@ export default function AdminStudentsPage() {
           gender: form.gender || undefined,
           studentId: form.studentId || undefined,
           email: form.email || undefined,
+          phone: form.phone || undefined,
         }),
       });
       const data = await res.json();
@@ -119,8 +127,11 @@ export default function AdminStudentsPage() {
       setStudents((prev) => [
         {
           id: data.student.id,
+          userId: data.student.userId,
           name: data.student.name,
           email: data.student.email,
+          loginId: data.student.loginId ?? null,
+          phone: data.student.phone ?? null,
           currentGrade: data.student.currentGrade ?? null,
           className: selectedClass?.name ?? null,
           classId: data.student.classId ?? null,
@@ -129,9 +140,13 @@ export default function AdminStudentsPage() {
         ...prev,
       ]);
 
-      setSuccess(
-        `Student added. Login ID: ${data.loginId} · Temporary PIN: ${data.tempPin}`
-      );
+      setSuccess("Student added successfully");
+      setCreatedCredential({
+        userId: data.userId,
+        loginId: data.loginId,
+        tempPin: data.tempPin,
+        phone: data.phone ?? null,
+      });
       setForm({
         firstName: "",
         lastName: "",
@@ -141,6 +156,7 @@ export default function AdminStudentsPage() {
         gender: "",
         studentId: "",
         email: "",
+        phone: "",
       });
     } catch (err: any) {
       setError(err.message || "Failed to add student");
@@ -152,90 +168,52 @@ export default function AdminStudentsPage() {
   return (
     <main className="min-h-screen bg-slate-950 text-slate-50">
       <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_top,_#3b82f622,_transparent_60%)]" />
-      <div className="mx-auto max-w-6xl px-4 py-6 space-y-6">
+      <div className="mx-auto max-w-6xl space-y-6 px-4 py-6">
         <header className="flex flex-wrap items-center justify-between gap-3">
           <div>
-            <Link
-              href="/admin"
-              className="text-xs text-emerald-300 hover:text-emerald-200"
-            >
-              ← Back to Admin Console
+            <Link href="/admin" className="text-xs text-emerald-300 hover:text-emerald-200">
+              Back to Admin Console
             </Link>
             <h1 className="mt-2 text-2xl font-bold">Students</h1>
-            <p className="text-sm text-slate-400">
-              Enroll students and assign them to classes.
-            </p>
+            <p className="text-sm text-slate-400">Enroll students and assign them to classes.</p>
           </div>
         </header>
 
         <section className="rounded-2xl border border-white/10 bg-slate-900/70 p-6">
-          <h2 className="text-lg font-semibold mb-4">Add Student</h2>
+          <h2 className="mb-4 text-lg font-semibold">Add Student</h2>
           <form onSubmit={handleSubmit} className="grid gap-4 md:grid-cols-2">
             <div>
               <label className="block text-xs text-slate-400">First Name *</label>
-              <input
-                value={form.firstName}
-                onChange={(e) => setForm((f) => ({ ...f, firstName: e.target.value }))}
-                className="mt-1 w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 text-sm text-slate-100"
-                required
-              />
+              <input value={form.firstName} onChange={(e) => setForm((f) => ({ ...f, firstName: e.target.value }))} className="mt-1 min-h-11 w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-3 text-sm text-slate-100" required />
             </div>
             <div>
               <label className="block text-xs text-slate-400">Last Name *</label>
-              <input
-                value={form.lastName}
-                onChange={(e) => setForm((f) => ({ ...f, lastName: e.target.value }))}
-                className="mt-1 w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 text-sm text-slate-100"
-                required
-              />
+              <input value={form.lastName} onChange={(e) => setForm((f) => ({ ...f, lastName: e.target.value }))} className="mt-1 min-h-11 w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-3 text-sm text-slate-100" required />
             </div>
             <div>
               <label className="block text-xs text-slate-400">Grade *</label>
-              <select
-                value={form.grade}
-                onChange={(e) => setForm((f) => ({ ...f, grade: Number(e.target.value) }))}
-                className="mt-1 w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 text-sm text-slate-100"
-                required
-              >
+              <select value={form.grade} onChange={(e) => setForm((f) => ({ ...f, grade: Number(e.target.value) }))} className="mt-1 min-h-11 w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-3 text-sm text-slate-100" required>
                 {GRADES.map((g) => (
-                  <option key={g} value={g}>
-                    Grade {g}
-                  </option>
+                  <option key={g} value={g}>Grade {g}</option>
                 ))}
               </select>
             </div>
             <div>
               <label className="block text-xs text-slate-400">Class Section *</label>
-              <select
-                value={form.classId}
-                onChange={(e) => setForm((f) => ({ ...f, classId: e.target.value }))}
-                className="mt-1 w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 text-sm text-slate-100"
-                required
-              >
+              <select value={form.classId} onChange={(e) => setForm((f) => ({ ...f, classId: e.target.value }))} className="mt-1 min-h-11 w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-3 text-sm text-slate-100" required>
                 <option value="">Select class...</option>
                 {classes.map((c) => (
-                  <option key={c.id} value={c.id}>
-                    {c.name} · {c.subject}
-                  </option>
+                  <option key={c.id} value={c.id}>{c.name} · {c.subject}</option>
                 ))}
               </select>
             </div>
             <div>
               <label className="block text-xs text-slate-400">Date of Birth</label>
-              <input
-                type="date"
-                value={form.dateOfBirth}
-                onChange={(e) => setForm((f) => ({ ...f, dateOfBirth: e.target.value }))}
-                className="mt-1 w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 text-sm text-slate-100"
-              />
+              <input type="date" value={form.dateOfBirth} onChange={(e) => setForm((f) => ({ ...f, dateOfBirth: e.target.value }))} className="mt-1 min-h-11 w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-3 text-sm text-slate-100" />
             </div>
             <div>
               <label className="block text-xs text-slate-400">Gender</label>
-              <select
-                value={form.gender}
-                onChange={(e) => setForm((f) => ({ ...f, gender: e.target.value }))}
-                className="mt-1 w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 text-sm text-slate-100"
-              >
+              <select value={form.gender} onChange={(e) => setForm((f) => ({ ...f, gender: e.target.value }))} className="mt-1 min-h-11 w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-3 text-sm text-slate-100">
                 <option value="">Select...</option>
                 <option value="female">Female</option>
                 <option value="male">Male</option>
@@ -244,33 +222,20 @@ export default function AdminStudentsPage() {
             </div>
             <div>
               <label className="block text-xs text-slate-400">Student ID (optional)</label>
-              <input
-                value={form.studentId}
-                onChange={(e) => setForm((f) => ({ ...f, studentId: e.target.value }))}
-                className="mt-1 w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 text-sm text-slate-100"
-                placeholder="LBR-2024-001"
-              />
+              <input value={form.studentId} onChange={(e) => setForm((f) => ({ ...f, studentId: e.target.value }))} className="mt-1 min-h-11 w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-3 text-sm text-slate-100" placeholder="LBR-2024-001" />
             </div>
             <div>
+              <label className="block text-xs text-slate-400">Phone Number (optional)</label>
+              <input value={form.phone} onChange={(e) => setForm((f) => ({ ...f, phone: e.target.value }))} className="mt-1 min-h-11 w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-3 text-sm text-slate-100" placeholder="+231 XX XXX XXXX" />
+            </div>
+            <div className="md:col-span-2">
               <label className="block text-xs text-slate-400">Email (optional)</label>
-              <input
-                type="email"
-                value={form.email}
-                onChange={(e) => setForm((f) => ({ ...f, email: e.target.value }))}
-                className="mt-1 w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 text-sm text-slate-100"
-                placeholder="student@school.lr"
-              />
-              <p className="mt-1 text-[10px] text-slate-500">
-                If omitted, the system will generate a login ID.
-              </p>
+              <input type="email" value={form.email} onChange={(e) => setForm((f) => ({ ...f, email: e.target.value }))} className="mt-1 min-h-11 w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-3 text-sm text-slate-100" placeholder="student@school.lr" />
+              <p className="mt-1 text-[10px] text-slate-500">If omitted, LiberiaLearn will create a local account and Student ID.</p>
             </div>
 
             <div className="md:col-span-2 flex flex-wrap items-center gap-3">
-              <button
-                type="submit"
-                disabled={saving}
-                className="rounded-xl bg-emerald-500 px-6 py-2.5 text-sm font-semibold text-slate-950 hover:bg-emerald-400 disabled:opacity-60"
-              >
+              <button type="submit" disabled={saving} className="rounded-xl bg-emerald-500 px-6 py-3 text-sm font-semibold text-slate-950 hover:bg-emerald-400 disabled:opacity-60">
                 {saving ? "Saving..." : "Add Student"}
               </button>
               {error && <p className="text-xs text-red-300">{error}</p>}
@@ -279,8 +244,19 @@ export default function AdminStudentsPage() {
           </form>
         </section>
 
+        {createdCredential && (
+          <section className="rounded-2xl border border-emerald-500/30 bg-emerald-500/10 p-6">
+            <h2 className="text-xl font-semibold text-emerald-200">Student added successfully</h2>
+            <p className="mt-3 text-sm text-slate-200">Student ID: <span className="font-semibold text-white">{createdCredential.loginId}</span></p>
+            <p className="mt-1 text-sm text-slate-200">Temporary PIN: <span className="font-semibold text-white">{createdCredential.tempPin}</span></p>
+            <div className="mt-4">
+              <CredentialDeliveryActions userId={createdCredential.userId} pin={createdCredential.tempPin} phone={createdCredential.phone} />
+            </div>
+          </section>
+        )}
+
         <section className="rounded-2xl border border-white/10 bg-slate-900/70 p-6">
-          <div className="flex items-center justify-between mb-4">
+          <div className="mb-4 flex items-center justify-between">
             <h2 className="text-lg font-semibold">Enrolled Students</h2>
             <span className="text-xs text-slate-500">{students.length} total</span>
           </div>
@@ -288,13 +264,11 @@ export default function AdminStudentsPage() {
           {loading ? (
             <div className="space-y-2">
               {Array.from({ length: 5 }).map((_, idx) => (
-                <div key={idx} className="h-10 rounded-xl bg-slate-800/50 animate-pulse" />
+                <div key={idx} className="h-10 animate-pulse rounded-xl bg-slate-800/50" />
               ))}
             </div>
           ) : students.length === 0 ? (
-            <div className="rounded-xl border border-white/10 bg-black/10 p-6 text-sm text-slate-400">
-              No students enrolled yet. Add your first student.
-            </div>
+            <div className="rounded-xl border border-white/10 bg-black/10 p-6 text-sm text-slate-400">No students enrolled yet. Add your first student.</div>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
@@ -303,7 +277,7 @@ export default function AdminStudentsPage() {
                     <th className="pb-2 pr-4">Name</th>
                     <th className="pb-2 pr-4">Grade</th>
                     <th className="pb-2 pr-4">Class</th>
-                    <th className="pb-2 pr-4">Status</th>
+                    <th className="pb-2 pr-4">Login ID</th>
                     <th className="pb-2">Actions</th>
                   </tr>
                 </thead>
@@ -314,18 +288,11 @@ export default function AdminStudentsPage() {
                         <div className="font-medium">{s.name}</div>
                         <div className="text-[11px] text-slate-500">{s.email}</div>
                       </td>
-                      <td className="py-3 pr-4">{s.currentGrade ?? "—"}</td>
-                      <td className="py-3 pr-4">{s.className ?? "—"}</td>
-                      <td className="py-3 pr-4">
-                        <span className="rounded-full bg-emerald-500/20 px-2 py-0.5 text-[10px] text-emerald-300">
-                          Active
-                        </span>
-                      </td>
+                      <td className="py-3 pr-4">{s.currentGrade ?? "-"}</td>
+                      <td className="py-3 pr-4">{s.className ?? "-"}</td>
+                      <td className="py-3 pr-4">{s.loginId ?? "-"}</td>
                       <td className="py-3">
-                        <button
-                          type="button"
-                          className="rounded-full border border-white/10 px-2.5 py-1 text-[11px] text-slate-300 hover:text-slate-100"
-                        >
+                        <button type="button" className="rounded-full border border-white/10 px-2.5 py-1 text-[11px] text-slate-300 hover:text-slate-100">
                           View
                         </button>
                       </td>
@@ -340,3 +307,4 @@ export default function AdminStudentsPage() {
     </main>
   );
 }
+

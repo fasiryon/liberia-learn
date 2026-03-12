@@ -13,16 +13,15 @@ export default function HomePage() {
               L
             </div>
             <div className="flex flex-col leading-tight">
-              <span className="text-sm font-semibold tracking-wide text-slate-100">
-                LiberiaLearn
-              </span>
-              <span className="text-xs text-slate-400">
-                AI-powered national learning
-              </span>
+              <span className="text-sm font-semibold tracking-wide text-slate-100">LiberiaLearn</span>
+              <span className="text-xs text-slate-400">AI-powered national learning</span>
             </div>
           </div>
 
           <nav className="flex items-center gap-4 text-sm">
+            <Link href="/moe/login" className="text-slate-300 hover:text-white">
+              Ministry Officials
+            </Link>
             <Link href="/dashboard" className="text-slate-300 hover:text-white">
               Dashboard
             </Link>
@@ -39,21 +38,15 @@ export default function HomePage() {
         <div className="max-w-xl space-y-6">
           <span className="inline-flex items-center gap-2 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-3 py-1 text-xs font-medium text-emerald-300">
             <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
-            Liberia · Grade 1–12 · AI first
+            Liberia Â· Grade 1â€“12 Â· AI first
           </span>
 
           <h1 className="text-balance text-4xl font-semibold tracking-tight text-slate-50 sm:text-5xl lg:text-6xl">
-            One platform for{" "}
-            <span className="bg-gradient-to-r from-emerald-300 to-cyan-300 bg-clip-text text-transparent">
-              every Liberian student
-            </span>
-            .
+            One platform for <span className="bg-gradient-to-r from-emerald-300 to-cyan-300 bg-clip-text text-transparent">every Liberian student</span>.
           </h1>
 
           <p className="text-balance text-sm text-slate-300 sm:text-base">
-            LiberiaLearn brings structured, mastery-based lessons, real-time
-            progress, and AI tutors together in one dashboard — designed for
-            low-bandwidth classrooms across Liberia.
+            LiberiaLearn brings structured, mastery-based lessons, real-time progress, and AI tutors together in one dashboard designed for low-bandwidth classrooms across Liberia.
           </p>
 
           <div className="flex flex-wrap items-center gap-3">
@@ -73,38 +66,22 @@ export default function HomePage() {
         <div className="mt-10 w-full max-w-md md:mt-0">
           <div className="rounded-3xl border border-white/10 bg-slate-900/60 p-5 shadow-2xl shadow-emerald-500/20 backdrop-blur">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-semibold uppercase tracking-wide text-slate-400">
-                Today’s snapshot
-              </span>
-              <span className="rounded-full bg-emerald-500/10 px-2 py-0.5 text-[10px] font-semibold text-emerald-300">
-                demo preview
-              </span>
+              <span className="text-xs font-semibold uppercase tracking-wide text-slate-400">Today&apos;s snapshot</span>
+              <span className="rounded-full bg-emerald-500/10 px-2 py-0.5 text-[10px] font-semibold text-emerald-300">demo preview</span>
             </div>
 
             <div className="mt-4 grid grid-cols-3 gap-3 text-center text-xs">
               <div className="rounded-2xl bg-slate-900/80 px-3 py-3">
-                <p className="text-[10px] uppercase tracking-wide text-slate-400">
-                  Active students
-                </p>
-                <p className="mt-1 text-lg font-semibold text-emerald-300">
-                  1,248
-                </p>
+                <p className="text-[10px] uppercase tracking-wide text-slate-400">Active students</p>
+                <p className="mt-1 text-lg font-semibold text-emerald-300">1,248</p>
               </div>
               <div className="rounded-2xl bg-slate-900/80 px-3 py-3">
-                <p className="text-[10px] uppercase tracking-wide text-slate-400">
-                  Lessons completed
-                </p>
-                <p className="mt-1 text-lg font-semibold text-cyan-300">
-                  5,921
-                </p>
+                <p className="text-[10px] uppercase tracking-wide text-slate-400">Lessons completed</p>
+                <p className="mt-1 text-lg font-semibold text-cyan-300">5,921</p>
               </div>
               <div className="rounded-2xl bg-slate-900/80 px-3 py-3">
-                <p className="text-[10px] uppercase tracking-wide text-slate-400">
-                  Districts online
-                </p>
-                <p className="mt-1 text-lg font-semibold text-amber-300">
-                  12
-                </p>
+                <p className="text-[10px] uppercase tracking-wide text-slate-400">Districts online</p>
+                <p className="mt-1 text-lg font-semibold text-amber-300">12</p>
               </div>
             </div>
           </div>
@@ -113,3 +90,5 @@ export default function HomePage() {
     </main>
   );
 }
+
+
