@@ -16,6 +16,7 @@ const BASE_NAV_LINKS = [
   { label: "Analytics", href: "/admin/analytics" },
   { label: "Guardian Links", href: "/admin/guardian-link" },
   { label: "Classes", href: "/admin/classes" },
+  { label: "Students", href: "/admin/students" },
   { label: "School Branding", href: "/admin/school-branding" },
   { label: "School Settings", href: "/admin/school-settings" },
   { label: "Reports", href: "/admin/reports" },
@@ -128,6 +129,7 @@ export default async function AdminConsolePage() {
     { label: "Guardian Links", href: "/admin/guardian-link", bg: "bg-amber-500" },
     { label: "Analytics", href: "/admin/analytics", bg: "bg-cyan-500" },
     { label: "Classes", href: "/admin/classes", bg: "bg-rose-500" },
+    { label: "Students", href: "/admin/students", bg: "bg-emerald-600" },
     { label: "School Branding", href: "/admin/school-branding", bg: "bg-pink-500" },
     { label: "School Settings", href: "/admin/school-settings", bg: "bg-indigo-500" },
     ...(TRAINING_ENABLED
