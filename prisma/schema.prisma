@@ -1222,6 +1222,7 @@ model LabSession {
   observations     Json?
   conclusions      String?
   score            Int?
+  aiAnalysis       Json?
   teacherFeedback  String?
   masteryUpdated   Boolean   @default(false)
   createdAt        DateTime  @default(now())

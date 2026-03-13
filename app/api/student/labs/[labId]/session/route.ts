@@ -3,6 +3,7 @@ import { requireRole } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { logAudit } from "@/lib/audit";
 import { isVirtualLabsEnabled } from "@/lib/serverFlags";
+import { analyzeLabSession } from "@/lib/ai/lab/labAnalyzer";
 
 export const dynamic = "force-dynamic";
 
@@ -38,6 +39,72 @@ export async function POST(
 
     if (!session) {
       return NextResponse.json({ error: "No session found for this lab" }, { status: 404 });
+    }
+
+    const payload = await req.json().catch(() => null);
+    const hasSubmission =
+      payload &&
+      typeof payload === "object" &&
+      payload !== null &&
+      (payload.observations !== undefined || payload.conclusions !== undefined);
+
+    if (hasSubmission) {
+      const lab = await prisma.virtualLab.findUnique({ where: { labId } });
+      if (!lab) {
+        return NextResponse.json({ error: "Lab not found" }, { status: 404 });
+      }
+
+      const observations =
+        payload && typeof payload.observations === "object" && payload.observations !== null
+          ? payload.observations
+          : {};
+      const conclusions =
+        typeof payload?.conclusions === "string"
+          ? payload.conclusions
+          : JSON.stringify(payload?.conclusions ?? {});
+
+      const analysis = await analyzeLabSession({
+        lab: {
+          title: lab.title,
+          subject: lab.subject,
+          gradeLevel: lab.grade,
+          ...(typeof (lab.payload as any)?.labObjective === "string"
+            ? { labObjective: (lab.payload as any).labObjective }
+            : {}),
+          ...(Array.isArray((lab.payload as any)?.analysisQuestions)
+            ? { analysisQuestions: (lab.payload as any).analysisQuestions }
+            : {}),
+          ...(typeof (lab.payload as any)?.connectionToLesson === "string"
+            ? { connectionToLesson: (lab.payload as any).connectionToLesson }
+            : {}),
+        },
+        observations,
+        conclusions,
+        gradeLevel: lab.grade,
+      });
+
+      const completedSession = await prisma.labSession.update({
+        where: { id: session.id },
+        data: {
+          startedAt: session.startedAt ?? new Date(),
+          completedAt: new Date(),
+          observations,
+          conclusions,
+          score: analysis.suggestedScore,
+          aiAnalysis: analysis,
+        },
+      });
+
+      await logAudit({
+        userId: user.id,
+        action: "lab.session.complete",
+        resourceType: "labSession",
+        resourceId: session.id,
+        schoolId: user.schoolId,
+        details: { labId, suggestedScore: analysis.suggestedScore },
+      });
+
+      return NextResponse.json({ session: completedSession, aiAnalysis: analysis });
     }
 
     // If already started, just return the session
