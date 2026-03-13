@@ -27,7 +27,16 @@
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcryptjs";
 
-const prisma = new PrismaClient();
+let prisma = new PrismaClient();
+
+type DemoSeedLogger = Pick<Console, "log" | "error">;
+
+type SeedNationalDemoOptions = {
+  prisma?: PrismaClient;
+  schoolIds?: readonly string[];
+  allowExisting?: boolean;
+  logger?: DemoSeedLogger;
+};
 
 // ─────────────────────────────────────────────────────────────────────────────
 // PURE EXPORTED FUNCTIONS (testable without DB)
@@ -673,6 +682,75 @@ async function seedGuardianMessages(school: SchoolDef): Promise<void> {
 // MAIN
 // ─────────────────────────────────────────────────────────────────────────────
 
+function getStudentOffsetForSchool(targetSchoolId: string): number {
+  let offset = 0;
+  for (const school of SCHOOL_DEFS) {
+    if (school.id === targetSchoolId) return offset;
+    offset += school.studentCount;
+  }
+  return 0;
+}
+
+export async function seedNationalDemo({
+  prisma: providedPrisma,
+  schoolIds,
+  allowExisting = false,
+  logger = console,
+}: SeedNationalDemoOptions = {}): Promise<void> {
+  const previousPrisma = prisma;
+  if (providedPrisma) {
+    prisma = providedPrisma;
+  }
+
+  try {
+    if (isProduction()) {
+      logger.error("Refusing to run demo seed in production environment.");
+      throw new Error("Demo seed is blocked in production");
+    }
+
+    const selectedSchools = schoolIds?.length
+      ? SCHOOL_DEFS.filter((school) => schoolIds.includes(school.id))
+      : [...SCHOOL_DEFS];
+
+    if (selectedSchools.length === 0) {
+      throw new Error("No valid demo schools selected for seeding");
+    }
+
+    if (!allowExisting) {
+      const existing = await prisma.school.findFirst({
+        where: { name: "Capitol Hill Academy" },
+        select: { id: true },
+      });
+      if (existing) {
+        logger.log("Demo seed already present, skipping.");
+        return;
+      }
+    }
+
+    logger.log("Starting LiberiaLearn national scale demo seed...");
+
+    const [hashed, hashedMoe] = await Promise.all([
+      bcrypt.hash("DemoSeed2026!", 10),
+      bcrypt.hash("MOESeed2026!", 10),
+    ]);
+
+    await seedDistricts();
+    await seedDemoStrands();
+    await seedDemoCurriculumContent();
+    await seedMoeOfficials(hashedMoe);
+
+    for (const school of selectedSchools) {
+      const studentOffset = getStudentOffsetForSchool(school.id);
+      await seedSchool(school, hashed, hashedMoe, studentOffset);
+      await seedGuardianMessages(school);
+    }
+
+    logger.log(`Demo seed complete for ${selectedSchools.length} school(s).`);
+  } finally {
+    prisma = previousPrisma;
+  }
+}
+
 async function main() {
   // ── Safety check ──────────────────────────────────────────────────────────
   if (isProduction()) {
@@ -761,8 +839,10 @@ async function main() {
   await prisma.$disconnect();
 }
 
-main().catch(async (e) => {
+if (typeof require !== "undefined" && typeof module !== "undefined" && require.main === module) {
+  main().catch(async (e) => {
   console.error("❌  Seed failed:", e);
   await prisma.$disconnect();
   process.exit(1);
 });
+}
