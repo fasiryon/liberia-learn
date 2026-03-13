@@ -423,6 +423,14 @@ export function isUnitGroupingEnabled(): boolean {
 }
 
 /**
+ * Unit assembly layer for composing CurriculumUnit records from lesson artifacts.
+ * DEFAULT OFF.
+ */
+export function isUnitAssemblyEnabled(): boolean {
+  return process.env.ENABLE_UNIT_ASSEMBLY === "true";
+}
+
+/**
  * Part 5: Assignment/homework lesson linkage + auto-suggestions.
  * When ON, scheduling a lesson with an exit ticket creates an AssignmentSuggestion.
  * DEFAULT OFF.
