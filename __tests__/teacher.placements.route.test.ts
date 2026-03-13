@@ -7,6 +7,7 @@ const mockPlacementUpdate = vi.hoisted(() => vi.fn());
 const mockStudentUpdate = vi.hoisted(() => vi.fn());
 const mockTransaction = vi.hoisted(() => vi.fn());
 const mockLogAudit = vi.hoisted(() => vi.fn());
+const mockNotifyPlacementConfirmation = vi.hoisted(() => vi.fn());
 
 vi.mock("@/lib/auth", () => ({
   requireRole: mockRequireRole,
@@ -14,6 +15,10 @@ vi.mock("@/lib/auth", () => ({
 
 vi.mock("@/lib/audit", () => ({
   logAudit: mockLogAudit,
+}));
+
+vi.mock("@/lib/placement-notifications", () => ({
+  notifyPlacementConfirmation: mockNotifyPlacementConfirmation,
 }));
 
 vi.mock("@/lib/db", () => ({
@@ -48,6 +53,7 @@ describe("teacher placements routes", () => {
         },
       })
     );
+    mockNotifyPlacementConfirmation.mockResolvedValue(undefined);
   });
 
   it("lists placements scoped to the teacher school", async () => {
@@ -99,8 +105,13 @@ describe("teacher placements routes", () => {
       estimatedGrade: 5,
       student: {
         user: {
+          id: "student-user-2",
+          name: "Other Student",
           schoolId: "school-other",
+          guardianPhoneE164: null,
+          school: { name: "Other School" },
         },
+        guardians: [],
       },
     });
 
@@ -125,8 +136,13 @@ describe("teacher placements routes", () => {
       estimatedGrade: 7,
       student: {
         user: {
+          id: "student-user-3",
+          name: "Korto Doe",
           schoolId: "school-cha",
+          guardianPhoneE164: "+231770000111",
+          school: { name: "Camp Johnson School" },
         },
+        guardians: [{ guardianId: "guardian-3", guardian: { name: "Ma Korto" } }],
       },
     });
     mockPlacementUpdate.mockResolvedValue({
@@ -170,6 +186,17 @@ describe("teacher placements routes", () => {
         resourceId: "placement-3",
       })
     );
+    expect(mockNotifyPlacementConfirmation).toHaveBeenCalledWith(
+      expect.objectContaining({
+        schoolId: "school-cha",
+        finalGrade: 7,
+        student: expect.objectContaining({
+          id: "student-3",
+          userId: "student-user-3",
+          phone: "+231770000111",
+        }),
+      })
+    );
     expect(payload.finalGrade).toBe(7);
   });
 
@@ -195,8 +222,13 @@ describe("teacher placements routes", () => {
       estimatedGrade: 6,
       student: {
         user: {
+          id: "student-user-5",
+          name: "Musu Doe",
           schoolId: "school-cha",
+          guardianPhoneE164: null,
+          school: { name: "Camp Johnson School" },
         },
+        guardians: [{ guardianId: "guardian-5", guardian: { name: "Pa Doe" } }],
       },
     });
     mockPlacementUpdate.mockResolvedValue({
@@ -238,5 +270,46 @@ describe("teacher placements routes", () => {
       data: { currentGrade: 8 },
     });
     expect(payload.finalGrade).toBe(8);
+  });
+
+  it("returns success even if placement notifications fail", async () => {
+    mockPlacementFindUnique.mockResolvedValue({
+      id: "placement-6",
+      studentId: "student-6",
+      estimatedGrade: 6,
+      student: {
+        user: {
+          id: "student-user-6",
+          name: "Finda Doe",
+          schoolId: "school-cha",
+          guardianPhoneE164: "+231770000222",
+          school: { name: "Camp Johnson School" },
+        },
+        guardians: [{ guardianId: "guardian-6", guardian: { name: "Ma Finda" } }],
+      },
+    });
+    mockPlacementUpdate.mockResolvedValue({
+      id: "placement-6",
+      teacherDecision: "confirmed",
+      teacherGrade: null,
+      teacherReason: null,
+      reviewedAt: new Date("2026-03-13T12:00:00.000Z"),
+    });
+    mockStudentUpdate.mockResolvedValue({ id: "student-6", currentGrade: 6 });
+    mockNotifyPlacementConfirmation.mockRejectedValue(new Error("sms provider unavailable"));
+
+    const { POST } = await import("@/app/api/teacher/placements/[id]/review/route");
+    const response = await POST(
+      new Request("http://localhost/api/teacher/placements/placement-6/review", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ decision: "confirm" }),
+      }),
+      { params: Promise.resolve({ id: "placement-6" }) }
+    );
+
+    const payload = await response.json();
+    expect(response.status).toBe(200);
+    expect(payload.finalGrade).toBe(6);
   });
 });

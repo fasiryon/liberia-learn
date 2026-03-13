@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import type { DemoHintGroup } from "@/lib/demoHints";
 import { DemoHints } from "@/components/DemoHints";
 import { GuardianNav } from "@/components/guardian/GuardianNav";
+import { placementReviewStatusLabels, placementReviewStatusStyles } from "@/lib/placement";
 
 type GuardianSummary = {
   studentId: string;
@@ -31,6 +32,16 @@ type DashboardChild = {
   grade: number | null;
   school: string | null;
   className: string | null;
+  placementHistory: Array<{
+    id: string;
+    createdAt: string;
+    estimatedGrade: number;
+    teacherGrade: number | null;
+    teacherDecision: string | null;
+    levelLabel: string;
+    status: "pending" | "confirmed" | "overridden";
+    summary: string;
+  }>;
   recentGrades: Array<{ subject: string; assignmentTitle: string; score: number; maxScore: number; date: string }>;
   upcomingAssignments: Array<{ subject: string; title: string; dueAt: string; type: string }>;
   attendance: { presentDays: number; absentDays: number; attendanceRate: number };
@@ -308,6 +319,44 @@ export default function GuardianDashboardClient({
                           <p className="text-sm font-semibold text-slate-100">{assignment.title}</p>
                           <p className="mt-1 text-xs text-slate-400">
                             {assignment.subject.replace(/_/g, " ")} · due {new Date(assignment.dueAt).toLocaleDateString("en-LR")}
+                          </p>
+                        </div>
+                      ))
+                    )}
+                  </div>
+                </div>
+
+                <div className="rounded-3xl border border-white/10 bg-slate-900/70 p-6">
+                  <div className="flex items-center justify-between gap-3">
+                    <div>
+                      <h3 className="text-lg font-semibold text-slate-50">Placement History</h3>
+                      <p className="text-sm text-slate-400">
+                        Child placement history with AI recommendations and teacher confirmations.
+                      </p>
+                    </div>
+                    <Link
+                      href={`/guardian/student/${selectedDashboardChild.studentId}`}
+                      className="rounded-full border border-slate-700 px-3 py-1.5 text-xs text-slate-300 hover:text-slate-100"
+                    >
+                      View child profile
+                    </Link>
+                  </div>
+                  <div className="mt-4 space-y-3">
+                    {selectedDashboardChild.placementHistory.length === 0 ? (
+                      <p className="text-sm text-slate-400">No placement history yet.</p>
+                    ) : (
+                      selectedDashboardChild.placementHistory.map((placement) => (
+                        <div key={placement.id} className="rounded-2xl bg-slate-950/70 p-4">
+                          <div className="flex flex-wrap items-center justify-between gap-3">
+                            <p className="text-sm font-semibold text-slate-100">{placement.summary}</p>
+                            <span
+                              className={`rounded-full border px-3 py-1 text-[11px] font-medium ${placementReviewStatusStyles[placement.status]}`}
+                            >
+                              {placementReviewStatusLabels[placement.status]}
+                            </span>
+                          </div>
+                          <p className="mt-2 text-xs text-slate-400">
+                            {placement.levelLabel} · {new Date(placement.createdAt).toLocaleDateString("en-LR")}
                           </p>
                         </div>
                       ))

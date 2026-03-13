@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 import { requireRole } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { isGuardianPortalEnabled } from "@/lib/serverFlags";
+import { getPlacementOutcomeText, getPlacementReviewStatus } from "@/lib/placement";
 
 export const dynamic = "force-dynamic";
 
@@ -86,13 +87,23 @@ export async function GET(
         currentGrade: student.currentGrade,
         relation: link.relation,
       },
-      placementTests: student.placementTests.map((pt) => ({
+      placementTests: (student.placementTests ?? []).map((pt) => ({
+        id: pt.id,
         band: pt.band,
         estimatedGrade: pt.estimatedGrade,
+        teacherDecision: pt.teacherDecision,
+        teacherGrade: pt.teacherGrade,
+        teacherReason: pt.teacherReason,
         levelLabel: pt.levelLabel,
         rawScore: pt.rawScore,
         totalQuestions: pt.totalQuestions,
         createdAt: pt.createdAt,
+        status: getPlacementReviewStatus(pt.teacherDecision),
+        summary: getPlacementOutcomeText({
+          estimatedGrade: pt.estimatedGrade,
+          teacherDecision: pt.teacherDecision,
+          teacherGrade: pt.teacherGrade,
+        }),
       })),
       homeworkSubmissions: homeworkSubmissions.map((hs) => ({
         id: hs.id,

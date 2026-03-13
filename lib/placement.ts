@@ -36,3 +36,24 @@ export const placementReviewStatusStyles: Record<PlacementReviewStatus, string> 
   confirmed: "border-green-500/30 bg-green-500/15 text-green-200",
   overridden: "border-blue-500/30 bg-blue-500/15 text-blue-200",
 };
+
+export const placementReviewStatusLabels: Record<PlacementReviewStatus, string> = {
+  pending: "Pending",
+  confirmed: "Confirmed",
+  overridden: "Overridden",
+};
+
+export function getPlacementOutcomeText(input: {
+  estimatedGrade: number;
+  teacherDecision?: string | null;
+  teacherGrade?: number | null;
+}) {
+  const status = getPlacementReviewStatus(input.teacherDecision);
+  if (status === "confirmed") {
+    return `AI recommended Grade ${input.estimatedGrade}, teacher confirmed Grade ${input.estimatedGrade}`;
+  }
+  if (status === "overridden") {
+    return `AI recommended Grade ${input.estimatedGrade}, teacher adjusted to Grade ${input.teacherGrade ?? input.estimatedGrade}`;
+  }
+  return `AI recommended Grade ${input.estimatedGrade}, teacher review pending`;
+}

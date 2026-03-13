@@ -16,6 +16,7 @@ import { requireRole } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { isGuardianDashboardEnabled } from "@/lib/serverFlags";
 import { logAudit } from "@/lib/audit";
+import { getPlacementOutcomeText, getPlacementReviewStatus } from "@/lib/placement";
 
 export const dynamic = "force-dynamic";
 
@@ -58,6 +59,18 @@ export async function GET() {
           where: { id: studentId },
           include: {
             user: { select: { name: true } },
+            placementTests: {
+              orderBy: { createdAt: "desc" },
+              take: 10,
+              select: {
+                id: true,
+                estimatedGrade: true,
+                teacherDecision: true,
+                teacherGrade: true,
+                levelLabel: true,
+                createdAt: true,
+              },
+            },
             enrollments: {
               include: {
                 Class: {
@@ -80,6 +93,7 @@ export async function GET() {
         const schoolName = primaryEnrollment?.Class?.School?.name ?? null;
         const className = primaryEnrollment?.Class?.name ?? null;
         const classIds = student.enrollments.map((e) => e.classId);
+        const placementTests = student.placementTests ?? [];
 
         // ── Recent grades ──────────────────────────────────────────────────
         const [hwSubmissions, assignmentSubmissions] = await Promise.all([
@@ -248,6 +262,20 @@ export async function GET() {
           grade: student.currentGrade ?? null,
           school: schoolName,
           className,
+          placementHistory: placementTests.map((placement) => ({
+            id: placement.id,
+            createdAt: placement.createdAt.toISOString(),
+            estimatedGrade: placement.estimatedGrade,
+            teacherGrade: placement.teacherGrade,
+            teacherDecision: placement.teacherDecision,
+            levelLabel: placement.levelLabel,
+            status: getPlacementReviewStatus(placement.teacherDecision),
+            summary: getPlacementOutcomeText({
+              estimatedGrade: placement.estimatedGrade,
+              teacherDecision: placement.teacherDecision,
+              teacherGrade: placement.teacherGrade,
+            }),
+          })),
           recentGrades,
           upcomingAssignments: upcomingList,
           attendance: { presentDays, absentDays, attendanceRate },

@@ -13,12 +13,18 @@ type StudentDetail = {
     relation: string | null;
   };
   placementTests: {
+    id: string;
     band: string;
     estimatedGrade: number;
+    teacherDecision: string | null;
+    teacherGrade: number | null;
+    teacherReason: string | null;
     levelLabel: string;
     rawScore: number;
     totalQuestions: number;
     createdAt: string;
+    status: "pending" | "confirmed" | "overridden";
+    summary: string;
   }[];
   homeworkSubmissions: {
     id: string;
@@ -202,8 +208,11 @@ export default function GuardianStudentDetail() {
                       Est. Grade {pt.estimatedGrade}
                     </span>
                   </div>
-                  <div className="text-xs text-slate-500">
-                    {pt.rawScore}/{pt.totalQuestions} · {new Date(pt.createdAt).toLocaleDateString()}
+                  <div className="text-right">
+                    <p className="text-xs text-slate-300">{pt.summary}</p>
+                    <p className="text-[11px] text-slate-500">
+                      {pt.rawScore}/{pt.totalQuestions} · {new Date(pt.createdAt).toLocaleDateString()}
+                    </p>
                   </div>
                 </div>
               ))}
