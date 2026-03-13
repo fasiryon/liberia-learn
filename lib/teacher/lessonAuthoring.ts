@@ -99,6 +99,8 @@ export function deriveAssessmentQuestions(payload: {
 
 export function deriveEstimatedMinutes(payload: {
   body?: string;
+  body_standard?: string;
+  body_block?: string;
   deliveryProfile?: {
     estimatedMinutes?: number | null;
   } | null;
@@ -108,6 +110,11 @@ export function deriveEstimatedMinutes(payload: {
     return explicit;
   }
 
-  const wordCount = (payload.body ?? "").trim().split(/\s+/).filter(Boolean).length;
+  const sourceBody =
+    payload.body_block ??
+    payload.body_standard ??
+    payload.body ??
+    "";
+  const wordCount = sourceBody.trim().split(/\s+/).filter(Boolean).length;
   return Math.max(15, Math.min(90, Math.ceil(wordCount / 12)));
 }
