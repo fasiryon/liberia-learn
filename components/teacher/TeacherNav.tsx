@@ -12,6 +12,7 @@ const LINKS = [
   { href: "/teacher/delivery-report", label: "Delivery Report" },
   { href: "/teacher/schedule", label: "Schedule" },
   { href: "/teacher/students", label: "Students" },
+  { href: "/teacher/placements", label: "Placements" },
 ];
 
 type MessageSummary = { read: boolean; fromRole: "guardian" | "teacher" };
