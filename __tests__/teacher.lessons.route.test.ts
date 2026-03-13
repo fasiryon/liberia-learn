@@ -1,0 +1,130 @@
+import { beforeEach, describe, expect, it, vi } from "vitest";
+
+const mockRequireRole = vi.hoisted(() => vi.fn());
+const mockIsTeacherGenerationEnabled = vi.hoisted(() => vi.fn());
+const mockClassFindUnique = vi.hoisted(() => vi.fn());
+const mockStandardFindUnique = vi.hoisted(() => vi.fn());
+const mockCurriculumFindUnique = vi.hoisted(() => vi.fn());
+const mockCurriculumCreate = vi.hoisted(() => vi.fn());
+const mockCurriculumUpdate = vi.hoisted(() => vi.fn());
+const mockScheduledWorkCreate = vi.hoisted(() => vi.fn());
+const mockEmbedLesson = vi.hoisted(() => vi.fn());
+const mockLogAudit = vi.hoisted(() => vi.fn());
+
+vi.mock("@/lib/auth", () => ({
+  requireRole: mockRequireRole,
+}));
+
+vi.mock("@/lib/serverFlags", async () => {
+  const actual = await vi.importActual<any>("@/lib/serverFlags");
+  return {
+    ...actual,
+    isTeacherGenerationEnabled: mockIsTeacherGenerationEnabled,
+  };
+});
+
+vi.mock("@/lib/ai/rag/embeddingService", () => ({
+  embedLesson: mockEmbedLesson,
+}));
+
+vi.mock("@/lib/audit", () => ({
+  logAudit: mockLogAudit,
+}));
+
+vi.mock("@/lib/db", () => ({
+  prisma: {
+    class: { findUnique: mockClassFindUnique },
+    standard: { findUnique: mockStandardFindUnique },
+    curriculumContent: {
+      findUnique: mockCurriculumFindUnique,
+      create: mockCurriculumCreate,
+      update: mockCurriculumUpdate,
+    },
+    scheduledWork: { create: mockScheduledWorkCreate },
+  },
+}));
+
+import { POST } from "@/app/api/teacher/lessons/route";
+
+function makeReq(body: unknown) {
+  return new Request("http://localhost/api/teacher/lessons", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(body),
+  }) as any;
+}
+
+const teacherUser = { id: "teacher-1", role: "TEACHER", schoolId: "school-1" };
+const validBody = {
+  classId: "class-1",
+  title: "Equivalent Fractions",
+  content: "Equivalent fractions name the same amount in different ways.",
+  assessmentQuestions: ["What makes two fractions equivalent?"],
+  estimatedMinutes: 40,
+  status: "draft",
+  standardCode: "LR-MATH-G4_6-01",
+};
+
+beforeEach(() => {
+  vi.clearAllMocks();
+  mockRequireRole.mockResolvedValue(teacherUser);
+  mockIsTeacherGenerationEnabled.mockReturnValue(true);
+  mockClassFindUnique.mockResolvedValue({
+    id: "class-1",
+    name: "Grade 5 Math",
+    subject: "MATH",
+    schoolId: "school-1",
+    teacherId: "teacher-1",
+    enrollments: [{ Student: { currentGrade: 5 } }],
+  });
+  mockStandardFindUnique.mockResolvedValue({
+    code: "LR-MATH-G4_6-01",
+    description: "Equivalent fractions",
+  });
+  mockCurriculumFindUnique.mockResolvedValue(null);
+  mockCurriculumCreate.mockResolvedValue({
+    id: "content-1",
+    contentId: "teacher-class-1-equivalent-fractions-123",
+    status: "draft",
+  });
+  mockScheduledWorkCreate.mockResolvedValue({
+    id: "sched-1",
+  });
+  mockEmbedLesson.mockResolvedValue(undefined);
+  mockLogAudit.mockResolvedValue(undefined);
+});
+
+describe("POST /api/teacher/lessons", () => {
+  it("save draft stores with status draft", async () => {
+    const res = await POST(makeReq(validBody));
+
+    expect(res.status).toBe(200);
+    expect(mockCurriculumCreate).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({
+          status: "draft",
+          teacherCreated: true,
+        }),
+      })
+    );
+    expect(mockScheduledWorkCreate).not.toHaveBeenCalled();
+  });
+
+  it("publish creates scheduled lesson record", async () => {
+    mockCurriculumCreate.mockResolvedValue({
+      id: "content-2",
+      contentId: "teacher-class-1-equivalent-fractions-456",
+      status: "published",
+    });
+
+    const res = await POST(
+      makeReq({
+        ...validBody,
+        status: "published",
+      })
+    );
+
+    expect(res.status).toBe(200);
+    expect(mockScheduledWorkCreate).toHaveBeenCalledOnce();
+  });
+});
