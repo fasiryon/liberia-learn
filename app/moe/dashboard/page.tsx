@@ -47,6 +47,25 @@ type InterventionData = {
   }>;
 };
 
+type PlacementDistrict = {
+  districtId: string;
+  districtName: string;
+  studentsPlaced: number;
+  reviewedCount: number;
+  overrideRate: number;
+  avgAiConfidence: number | null;
+  topOverrideReason: string | null;
+  warning: string | null;
+};
+
+type PlacementData = {
+  totalStudentsPlaced: number;
+  averageAiConfidence: number | null;
+  nationalOverrideRate: number;
+  mostCommonPlacementBand: string | null;
+  byDistrict: PlacementDistrict[];
+};
+
 function formatPct(value: number | null | undefined) {
   if (value == null) return "—";
   return `${value.toFixed(1)}%`;
@@ -62,6 +81,7 @@ export default function MoeDashboardPage() {
   const [dashboard, setDashboard] = useState<DashboardData | null>(null);
   const [compliance, setCompliance] = useState<ComplianceData | null>(null);
   const [interventions, setInterventions] = useState<InterventionData | null>(null);
+  const [placements, setPlacements] = useState<PlacementData | null>(null);
   const [exporting, setExporting] = useState(false);
   const [exportError, setExportError] = useState<string | null>(null);
 
@@ -73,16 +93,18 @@ export default function MoeDashboardPage() {
       fetch("/api/moe/dashboard", { cache: "no-store" }).then((r) => r.json()),
       fetch("/api/moe/delivery-compliance", { cache: "no-store" }).then((r) => r.json()),
       fetch("/api/moe/intervention-impact", { cache: "no-store" }).then((r) => r.json()),
+      fetch("/api/moe/placements", { cache: "no-store" }).then((r) => r.json()),
     ])
-      .then(([dash, comp, inter]) => {
+      .then(([dash, comp, inter, placementData]) => {
         if (!active) return;
-        if (dash?.error || comp?.error || inter?.error) {
+        if (dash?.error || comp?.error || inter?.error || placementData?.error) {
           setError("Unable to load data — please refresh.");
           return;
         }
         setDashboard(dash);
         setCompliance(comp);
         setInterventions(inter);
+        setPlacements(placementData);
       })
       .catch(() => {
         if (!active) return;
@@ -396,6 +418,76 @@ export default function MoeDashboardPage() {
           </div>
         </section>
       )}
+
+      <section className="rounded-2xl border border-white/10 bg-white/5 p-6">
+        <h2 className="text-lg font-semibold">National Placement Analytics</h2>
+        <p className="text-xs text-slate-500">AI placement calibration and teacher override patterns</p>
+
+        {loading ? (
+          <div className="mt-4 grid gap-4 md:grid-cols-4">
+            {Array.from({ length: 4 }).map((_, index) => (
+              <div key={index} className="h-24 animate-pulse rounded-xl bg-white/5" />
+            ))}
+          </div>
+        ) : (
+          <>
+            <div className="mt-4 grid gap-4 md:grid-cols-4">
+              <div className="rounded-xl border border-white/10 bg-black/10 p-4">
+                <p className="text-xs text-slate-500">Total students placed nationally</p>
+                <p className="mt-2 text-2xl font-semibold text-emerald-200">{placements?.totalStudentsPlaced ?? 0}</p>
+              </div>
+              <div className="rounded-xl border border-white/10 bg-black/10 p-4">
+                <p className="text-xs text-slate-500">Average AI confidence score</p>
+                <p className="mt-2 text-2xl font-semibold text-cyan-200">
+                  {placements?.averageAiConfidence == null ? "â€”" : `${placements.averageAiConfidence}%`}
+                </p>
+              </div>
+              <div className="rounded-xl border border-white/10 bg-black/10 p-4">
+                <p className="text-xs text-slate-500">National override rate</p>
+                <p className="mt-2 text-2xl font-semibold text-amber-200">{placements?.nationalOverrideRate ?? 0}%</p>
+              </div>
+              <div className="rounded-xl border border-white/10 bg-black/10 p-4">
+                <p className="text-xs text-slate-500">Most common placement band</p>
+                <p className="mt-2 text-2xl font-semibold text-rose-200">{placements?.mostCommonPlacementBand ?? "â€”"}</p>
+              </div>
+            </div>
+
+            <div className="mt-6 overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="border-b border-white/10 text-left text-xs uppercase tracking-wide text-slate-500">
+                    <th className="pb-2 pr-4">District</th>
+                    <th className="pb-2 pr-4">Students Placed</th>
+                    <th className="pb-2 pr-4">Override Rate</th>
+                    <th className="pb-2 pr-4">Avg AI Confidence</th>
+                    <th className="pb-2 pr-4">Top Override Reason</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {(placements?.byDistrict ?? []).map((district) => (
+                    <tr key={district.districtId} className="border-b border-white/5 text-slate-200">
+                      <td className="py-3 pr-4">
+                        <div className="space-y-1">
+                          <p className="font-medium">{district.districtName}</p>
+                          {district.warning ? (
+                            <p className="text-xs text-amber-300">{district.warning} — high teacher override rate</p>
+                          ) : null}
+                        </div>
+                      </td>
+                      <td className="py-3 pr-4">{district.studentsPlaced}</td>
+                      <td className="py-3 pr-4">{district.overrideRate}%</td>
+                      <td className="py-3 pr-4">
+                        {district.avgAiConfidence == null ? "â€”" : `${district.avgAiConfidence}%`}
+                      </td>
+                      <td className="py-3 pr-4 text-slate-400">{district.topOverrideReason ?? "â€”"}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </>
+        )}
+      </section>
     </div>
   );
 }
