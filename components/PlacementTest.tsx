@@ -249,6 +249,51 @@ function mapScoreToGrade(track: Track, scorePercent: number): number {
   return 12;
 }
 
+export type PlacementBand =
+  | "foundational"
+  | "developing"
+  | "proficient"
+  | "advanced";
+
+export function getPlacementBand(scorePercent: number): PlacementBand {
+  if (scorePercent <= 40) return "foundational";
+  if (scorePercent <= 70) return "developing";
+  if (scorePercent <= 85) return "proficient";
+  return "advanced";
+}
+
+export function getPlacementLevelLabel(band: PlacementBand): string {
+  if (band === "foundational") return "Foundational";
+  if (band === "developing") return "Developing";
+  if (band === "proficient") return "Proficient";
+  return "Advanced";
+}
+
+export function buildPlacementPayload(params: {
+  scorePercent: number;
+  correctCount: number;
+  totalQuestions: number;
+  estimatedGrade: number;
+  track: Track;
+  answers: { questionId: string; selected: string; correct: boolean }[];
+  questions: Question[];
+}) {
+  const band = getPlacementBand(params.scorePercent);
+  return {
+    band,
+    levelLabel: getPlacementLevelLabel(band),
+    estimatedGrade: params.estimatedGrade,
+    rawScore: params.correctCount,
+    totalQuestions: params.totalQuestions,
+    details: {
+      scorePercent: params.scorePercent,
+      track: params.track,
+    },
+    answers: params.answers,
+    questions: params.questions,
+  };
+}
+
 export function PlacementTest({ studentId }: { studentId: string }) {
   const [track, setTrack] = useState<Track | null>(null);
   const [currentQuestion, setCurrentQuestion] = useState<Question | null>(null);
@@ -334,14 +379,17 @@ export function PlacementTest({ studentId }: { studentId: string }) {
       const res = await fetch("/api/student/placement", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          studentId,
-          track: t,
-          score: scorePercent,
-          grade,
-          answers: answersList,
-          questions: pool,
-        }),
+        body: JSON.stringify(
+          buildPlacementPayload({
+            scorePercent,
+            correctCount,
+            totalQuestions: answersList.length,
+            estimatedGrade: grade,
+            track: t,
+            answers: answersList,
+            questions: pool,
+          })
+        ),
       });
 
       if (!res.ok) {
