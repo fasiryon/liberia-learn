@@ -26,7 +26,7 @@ export function ServiceWorkerRegistration() {
         console.log("SW registered");
 
         if (supportsBackgroundSync(registration)) {
-          await registration.sync.register("offline-queue-sync");
+          await registration.sync.register("liberialearn-sync");
         }
       } catch (err) {
         console.warn("SW failed:", err);
