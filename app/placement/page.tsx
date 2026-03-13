@@ -96,6 +96,15 @@ function getBandStyles(band: PlacementBand) {
   return bandStyles[band];
 }
 
+function getPlacementBand(rawScore: number, totalQuestions: number): PlacementBand {
+  const scorePercent = totalQuestions > 0 ? (rawScore / totalQuestions) * 100 : 0;
+
+  if (scorePercent <= 40) return "foundational";
+  if (scorePercent <= 70) return "developing";
+  if (scorePercent <= 85) return "proficient";
+  return "advanced";
+}
+
 export default function PlacementTestPage() {
   const [testStarted, setTestStarted] = useState(false);
   const [currentQuestion, setCurrentQuestion] = useState<Question | null>(null);
@@ -220,7 +229,52 @@ export default function PlacementTestPage() {
         throw new Error(typeof payload?.error === "string" ? payload.error : "Failed to calculate placement results");
       }
 
-      setResults(payload as PlacementResults);
+      const calculatedResults = payload as PlacementResults;
+      const derivedBand = getPlacementBand(calculatedResults.correctAnswers, calculatedResults.totalQuestions);
+      const saveRes = await fetch("/api/student/placement", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          band: derivedBand,
+          levelLabel: bandLabelMap[derivedBand],
+          estimatedGrade: calculatedResults.recommendedGrade,
+          rawScore: calculatedResults.correctAnswers,
+          totalQuestions: calculatedResults.totalQuestions,
+          details: calculatedResults.details,
+          questions: finalQuestions.map((question) => ({
+            questionId: question.questionId,
+            question: question.question,
+            options: question.options,
+            correctAnswer: question.correctAnswer,
+            explanation: question.explanation,
+            difficulty: question.difficulty,
+            subject: question.subject,
+            strand: question.strand,
+            moeStandard: question.moeStandard,
+            whyThisQuestion: question.whyThisQuestion,
+            commonMistake: question.commonMistake,
+            hint: question.hint,
+          })),
+          answers: finalAnswers.map((answer) => ({
+            questionId: answer.questionId,
+            difficulty: answer.difficulty,
+            correct: answer.correct,
+            timeSpent: answer.timeSpent,
+            selectedAnswer: answer.selectedAnswer,
+          })),
+          aiAnalysis: calculatedResults.aiAnalysis,
+        }),
+      });
+
+      const savePayload = await saveRes.json().catch(() => ({}));
+      if (!saveRes.ok) {
+        throw new Error(typeof savePayload?.error === "string" ? savePayload.error : "Failed to save placement results");
+      }
+
+      setResults({
+        ...calculatedResults,
+        band: derivedBand,
+      });
     } catch (error: any) {
       setErrorMessage(error?.message ?? "Failed to calculate placement results.");
     } finally {
