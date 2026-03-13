@@ -4,6 +4,10 @@
  * Read at call-time (NOT module load) so tests can mutate process.env
  * between assertions without needing vi.resetModules().
  *
+ * Note: NEXT_PUBLIC_* flags are client-accessible environment variables
+ * and are NOT listed here. See .env.example for the full flag reference
+ * including NEXT_PUBLIC_ENABLE_AI_TUTOR.
+ *
  * NEVER use NEXT_PUBLIC_ prefixes here  those go in lib/featureFlags.ts.
  * NEVER import this file from client components.
  *
