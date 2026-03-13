@@ -890,6 +890,8 @@ model CurriculumContent {
   deliveryProfile Json?           // Part 1: AI-generated lesson delivery profile
   unitId          String?         // Part 4: soft link to CurriculumUnit.unitId
   scheduledWork   ScheduledWork[]
+  embeddedAt      DateTime?
+  embedding       Unsupported("vector(1536)")?
 
   @@index([grade, subject])
   @@index([contentType, status])
