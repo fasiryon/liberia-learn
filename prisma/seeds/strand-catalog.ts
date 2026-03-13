@@ -15,8 +15,6 @@
 
 import { PrismaClient, GradeBand, Subject } from "@prisma/client";
 
-const prisma = new PrismaClient();
-
 type StrandSeed = {
   subject: Subject;
   strandKey: string;
@@ -175,6 +173,7 @@ const STRANDS: StrandSeed[] = [
  * Returns the count of strands created or confirmed.
  */
 export async function seedStrandCatalog(): Promise<number> {
+  const prisma = new PrismaClient();
   console.log(`  Seeding ${STRANDS.length} strand catalog entries...`);
 
   let count = 0;
