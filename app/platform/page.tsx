@@ -55,6 +55,61 @@ export default async function PlatformDashboard() {
     take: 10,
   });
 
+  const [allUnits, textbookAuditLogs] = await Promise.all([
+    prisma.curriculumUnit.findMany({
+      select: {
+        subject: true,
+        grade: true,
+      },
+      orderBy: [{ subject: "asc" }, { grade: "asc" }],
+    }),
+    prisma.auditLog.findMany({
+      where: { action: "admin.textbook.generated" },
+      orderBy: { createdAt: "desc" },
+      take: 50,
+      select: {
+        createdAt: true,
+        details: true,
+      },
+    }),
+  ]);
+
+  const textbookLastGenerated = new Map<string, string>();
+  for (const entry of textbookAuditLogs) {
+    const details = (entry.details as any) ?? {};
+    const key =
+      typeof details.subject === "string" && typeof details.gradeLevel === "number"
+        ? `${details.subject}|${details.gradeLevel}`
+        : null;
+    if (!key || textbookLastGenerated.has(key)) {
+      continue;
+    }
+    textbookLastGenerated.set(key, entry.createdAt.toLocaleDateString("en-LR"));
+  }
+
+  const unitGroups = Array.from(
+    allUnits.reduce(
+      (accumulator, unit) => {
+        const key = `${unit.subject}|${unit.grade}`;
+        const current = accumulator.get(key) ?? {
+          subject: unit.subject,
+          grade: unit.grade,
+          count: 0,
+        };
+        current.count += 1;
+        accumulator.set(key, current);
+        return accumulator;
+      },
+      new Map<string, { subject: string; grade: number; count: number }>()
+    ).values()
+  )
+    .filter((group) => group.count >= 2)
+    .sort((left, right) =>
+      left.subject === right.subject
+        ? left.grade - right.grade
+        : left.subject.localeCompare(right.subject)
+    );
+
   const stats = [
     { label: "Schools", value: schoolCount, color: "bg-violet-500/20 text-violet-300" },
     { label: "Total Users", value: userCount, color: "bg-blue-500/20 text-blue-300" },
@@ -146,6 +201,62 @@ export default async function PlatformDashboard() {
                     </td>
                   </tr>
                 ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </section>
+
+      <section className="rounded-2xl border border-white/10 bg-slate-900/70 p-6">
+        <div className="mb-4 flex items-center justify-between">
+          <div>
+            <h2 className="text-lg font-semibold">Textbooks</h2>
+            <p className="text-sm text-slate-400 mt-1">
+              Subject and grade combinations with enough assembled units to compile a textbook.
+            </p>
+          </div>
+        </div>
+
+        {unitGroups.length === 0 ? (
+          <p className="text-sm text-slate-400">No textbooks available yet.</p>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-b border-slate-800 text-left text-xs text-slate-500">
+                  <th className="pb-2 pr-4">Subject</th>
+                  <th className="pb-2 pr-4">Grade</th>
+                  <th className="pb-2 pr-4">Units</th>
+                  <th className="pb-2 pr-4">Last Generated</th>
+                  <th className="pb-2">Download</th>
+                </tr>
+              </thead>
+              <tbody>
+                {unitGroups.map((group) => {
+                  const key = `${group.subject}|${group.grade}`;
+                  return (
+                    <tr key={key} className="border-b border-slate-800/50 text-slate-300">
+                      <td className="py-2 pr-4 font-medium text-slate-100">
+                        {group.subject.replace(/_/g, " ")}
+                      </td>
+                      <td className="py-2 pr-4">{group.grade}</td>
+                      <td className="py-2 pr-4">{group.count}</td>
+                      <td className="py-2 pr-4">
+                        {textbookLastGenerated.get(key) ?? "Not yet generated"}
+                      </td>
+                      <td className="py-2">
+                        <Link
+                          href={`/api/admin/curriculum/textbook?subject=${encodeURIComponent(
+                            group.subject
+                          )}&gradeLevel=${group.grade}`}
+                          className="text-xs font-semibold text-cyan-300 hover:text-cyan-200"
+                        >
+                          Download
+                        </Link>
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>
