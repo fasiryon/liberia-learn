@@ -889,6 +889,7 @@ model CurriculumContent {
   updatedAt       DateTime        @updatedAt
   deliveryProfile Json?           // Part 1: AI-generated lesson delivery profile
   unitId          String?         // Part 4: soft link to CurriculumUnit.unitId
+  teacherCreated  Boolean         @default(false)
   scheduledWork   ScheduledWork[]
   embeddedAt      DateTime?
   embedding       Unsupported("vector(1536)")?

@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 
 type ScheduleItem = {
@@ -68,6 +69,10 @@ export default function TeacherSchedulePage() {
     duration: 45,
     notes: "",
   });
+  const [publishedClassName, setPublishedClassName] = useState<string | null>(
+    null
+  );
+  const [publishSuccess, setPublishSuccess] = useState(false);
 
   function loadSchedule(weekOf?: string) {
     setLoading(true);
@@ -84,6 +89,12 @@ export default function TeacherSchedulePage() {
 
   useEffect(() => {
     loadSchedule();
+  }, []);
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    setPublishedClassName(params.get("className"));
+    setPublishSuccess(params.get("published") === "1");
   }, []);
 
   const selectedClass = useMemo(
@@ -162,7 +173,7 @@ export default function TeacherSchedulePage() {
     return hasConflict
       ? `This class already has a lesson scheduled on ${targetDate}.`
       : null;
-  }, [form.classId, form.date, form.startTime, form.duration, items]);
+  }, [form.classId, form.date, form.startTime, items]);
 
   async function handleSchedule(e: React.FormEvent) {
     e.preventDefault();
@@ -242,6 +253,12 @@ export default function TeacherSchedulePage() {
             </p>
           </div>
           <div className="flex gap-2">
+            <Link
+              href="/teacher/create-lesson"
+              className="rounded-xl border border-emerald-500/30 px-3 py-1.5 text-xs font-semibold text-emerald-200 hover:bg-emerald-500/10"
+            >
+              Create with AI
+            </Link>
             <button onClick={prevWeek} className="rounded-xl border border-slate-700 px-3 py-1.5 text-xs text-slate-300 hover:bg-slate-800">&larr; Prev</button>
             <button onClick={() => loadSchedule()} className="rounded-xl border border-slate-700 px-3 py-1.5 text-xs text-slate-300 hover:bg-slate-800">This Week</button>
             <button onClick={nextWeek} className="rounded-xl border border-slate-700 px-3 py-1.5 text-xs text-slate-300 hover:bg-slate-800">Next &rarr;</button>
@@ -253,6 +270,12 @@ export default function TeacherSchedulePage() {
             </button>
           </div>
         </div>
+
+        {publishSuccess && publishedClassName && (
+          <div className="rounded-2xl border border-emerald-500/30 bg-emerald-500/10 px-4 py-3 text-sm text-emerald-100">
+            Lesson published to {publishedClassName}.
+          </div>
+        )}
 
         {showForm && (
           <form onSubmit={handleSchedule} className="rounded-2xl border border-white/10 bg-slate-900/70 p-6 space-y-4">

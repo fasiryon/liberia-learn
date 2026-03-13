@@ -55,15 +55,18 @@ export default function TeacherDashboardPage() {
             </div>
 
             {/* Quick actions */}
-            <div className="grid grid-cols-3 gap-3">
-              <Link href="/teacher/curriculum" className="rounded-2xl border border-white/10 bg-slate-900/70 p-4 text-center hover:border-emerald-500/30">
-                <p className="text-sm font-semibold text-emerald-400">Generate Lesson</p>
+            <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
+              <Link href="/teacher/create-lesson" className="rounded-2xl border border-white/10 bg-slate-900/70 p-4 text-center hover:border-emerald-500/30">
+                <p className="text-sm font-semibold text-emerald-400">Create with AI</p>
               </Link>
               <Link href="/teacher/students" className="rounded-2xl border border-white/10 bg-slate-900/70 p-4 text-center hover:border-emerald-500/30">
                 <p className="text-sm font-semibold text-violet-400">View Students</p>
               </Link>
               <Link href="/teacher/schedule" className="rounded-2xl border border-white/10 bg-slate-900/70 p-4 text-center hover:border-emerald-500/30">
                 <p className="text-sm font-semibold text-amber-400">Schedule Work</p>
+              </Link>
+              <Link href="/teacher/curriculum" className="rounded-2xl border border-white/10 bg-slate-900/70 p-4 text-center hover:border-emerald-500/30">
+                <p className="text-sm font-semibold text-sky-400">Curriculum</p>
               </Link>
             </div>
 

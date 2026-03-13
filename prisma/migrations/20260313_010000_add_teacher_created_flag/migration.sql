@@ -1,0 +1,2 @@
+ALTER TABLE "CurriculumContent"
+ADD COLUMN IF NOT EXISTS "teacherCreated" BOOLEAN NOT NULL DEFAULT false;
