@@ -18,7 +18,7 @@
  *    (enforced by middleware — verified by redirect behaviour)
  */
 
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it, vi, afterEach } from "vitest";
 import { NextRequest } from "next/server";
 
 // ─── Hoisted mocks ────────────────────────────────────────────────────────────

@@ -19,7 +19,7 @@ import { GET } from "@/app/api/health/route";
 function setupHealthyDefaults() {
   mockSchoolCount.mockResolvedValue(5);
   // checkMigrations: 0 pending rows
-  mockQueryRaw.mockImplementation(async () => [{ pending: 0n }]);
+  mockQueryRaw.mockImplementation(async () => [{ pending: BigInt(0) }]);
   process.env.OPENAI_API_KEY = "sk-test-key";
   process.env.AT_API_KEY     = "at-test-key";
 }
@@ -88,7 +88,7 @@ describe("GET /api/health", () => {
   // ── Degraded: pending migrations ────────────────────────────────────────
 
   it("returns 200 with status=degraded when unapplied migrations exist", async () => {
-    mockQueryRaw.mockImplementation(async () => [{ pending: 2n }]);
+    mockQueryRaw.mockImplementation(async () => [{ pending: BigInt(2) }]);
 
     const res = await GET();
     expect(res.status).toBe(200);
@@ -142,3 +142,4 @@ describe("GET /api/health", () => {
     expect(body.checks).toHaveProperty("sms");
   });
 });
+
