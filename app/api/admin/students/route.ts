@@ -10,7 +10,7 @@ import { normalizeCredentialPhone, normalizeLoginId, slugifyLoginSeed } from "@/
 
 export const dynamic = "force-dynamic";
 
-export async function GET(req: Request) {
+export async function GET(req?: Request) {
   let user: any;
   try {
     user = await requireRole("ADMIN");
