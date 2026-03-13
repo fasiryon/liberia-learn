@@ -10,6 +10,7 @@ import { logAudit } from "@/lib/audit";
 import { recordMetricEvent } from "@/lib/metrics/events";
 import { createHash } from "crypto";
 import { slugify, generateLabs, generateTermPlanPayload, generateUnitPlanPayload } from "@/lib/curriculum-helpers";
+import { gradeToBand } from "@/lib/moe/alignment-engine";
 
 // Rate limit: 10 requests per 5 minutes per userId
 const rateLimitMap = new Map<string, { count: number; resetAt: number }>();
@@ -39,6 +40,74 @@ const RequestSchema = z.object({
 
 // slugify and generateLabs imported from lib/curriculum-helpers
 
+async function syncVirtualLabs(params: {
+  labs: Array<Record<string, any>>;
+  subject: string;
+  grade: number;
+  topic: string;
+  contentId: string;
+  schoolId: string | null | undefined;
+  moeAlignmentCodes?: string[];
+  approvalStatus: string;
+}) {
+  const { labs, subject, grade, topic, contentId, schoolId, moeAlignmentCodes, approvalStatus } = params;
+  if (labs.length === 0) return;
+
+  const gradeBand = gradeToBand(grade);
+  const standardCodes = moeAlignmentCodes ?? [];
+
+  await Promise.all(
+    labs.map((lab, index) => {
+      const labId = `${contentId}-lab-${index + 1}`;
+      const description =
+        typeof lab.connectionToLesson === "string" && lab.connectionToLesson.trim().length > 0
+          ? lab.connectionToLesson
+          : `Hands-on investigation for ${topic}`;
+
+      return prisma.virtualLab.upsert({
+        where: { labId },
+        update: {
+          title: lab.title,
+          description,
+          subject,
+          grade,
+          gradeBand,
+          labType: lab.type,
+          moeStandardCodes: standardCodes,
+          triggerStandardCodes: standardCodes,
+          primaryContentIds: [contentId],
+          estimatedMinutes: lab.durationMinutes,
+          difficulty: grade >= 9 ? "advanced" : grade >= 5 ? "standard" : "introductory",
+          equipmentList: Array.isArray(lab.materialsNeeded) ? lab.materialsNeeded : [],
+          safetyNotes: lab.safetyNotes ?? null,
+          payload: { ...lab, topic },
+          status: approvalStatus === "APPROVED" ? "published" : "draft",
+          schoolId: schoolId ?? null,
+        },
+        create: {
+          labId,
+          title: lab.title,
+          description,
+          subject,
+          grade,
+          gradeBand,
+          labType: lab.type,
+          moeStandardCodes: standardCodes,
+          triggerStandardCodes: standardCodes,
+          primaryContentIds: [contentId],
+          estimatedMinutes: lab.durationMinutes,
+          difficulty: grade >= 9 ? "advanced" : grade >= 5 ? "standard" : "introductory",
+          equipmentList: Array.isArray(lab.materialsNeeded) ? lab.materialsNeeded : [],
+          safetyNotes: lab.safetyNotes ?? null,
+          payload: { ...lab, topic },
+          status: approvalStatus === "APPROVED" ? "published" : "draft",
+          schoolId: schoolId ?? null,
+        },
+      });
+    })
+  );
+}
+
 export async function POST(req: Request) {
   try {
     const user = await requireRole("TEACHER", "ADMIN");
@@ -63,7 +132,7 @@ export async function POST(req: Request) {
 
     let enrichedPayload: Record<string, unknown>;
     let contentType = mode;
-    let labs: ReturnType<typeof generateLabs> = [];
+    let labs: Array<Record<string, any>> = [];
 
     if (mode === "term_plan") {
       enrichedPayload = generateTermPlanPayload(grade, subject, topic);
@@ -120,7 +189,7 @@ export async function POST(req: Request) {
         (a: string) => standardizeTone(liberianize(a), grade)
       );
 
-      labs = generateLabs(grade, subject, topic);
+      labs = Array.isArray(payload.labs) ? payload.labs : [];
 
       enrichedPayload = {
         ...payload,
@@ -190,6 +259,19 @@ export async function POST(req: Request) {
         hash,
       },
     });
+
+    if (mode === "lesson" && labs.length > 0) {
+      await syncVirtualLabs({
+        labs,
+        subject,
+        grade,
+        topic,
+        contentId: record.contentId,
+        schoolId: user.schoolId,
+        moeAlignmentCodes: (enrichedPayload as any).moeAlignments ?? moeAlignmentCodes,
+        approvalStatus,
+      });
+    }
 
     await logAudit({
       userId: user.id,

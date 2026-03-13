@@ -117,6 +117,80 @@ ${blockTemplate}
 - Set body to the same content as body_standard for compatibility.`;
 }
 
+function shouldGenerateLabs(subject: string, grade: number): boolean {
+  const normalized = subject.toUpperCase();
+
+  if (normalized === "SCIENCE" || normalized === "COMPUTER_SCIENCE" || normalized === "ENGINEERING") {
+    return true;
+  }
+
+  if (normalized === "MATH") {
+    return grade >= 7;
+  }
+
+  if (normalized === "LITERACY") {
+    return true;
+  }
+
+  return false;
+}
+
+function buildLabPrompt(subject: string, grade: number, lessonFormat: "standard" | "block" | "either"): string {
+  const warrantsLabs = shouldGenerateLabs(subject, grade);
+  const durationRange = lessonFormat === "block" ? "25-35" : "20-30";
+
+  if (!warrantsLabs) {
+    return `
+- Include a "labs" field and set it to an empty array for ${subject} at Grade ${grade}.`;
+  }
+
+  return `
+- Include a "labs" field in the JSON.
+- Generate at least one lab object for ${subject} at Grade ${grade}.
+- For rural schools with limited or no internet, the primary lab type should be "guided_walkthrough".
+- You may add "2d_simulation" as an optional alternative. Only use "3d_environment" when a connected experience is pedagogically necessary.
+- Every lab object must match this structure:
+  {
+    "title": string,
+    "type": "guided_walkthrough" | "2d_simulation" | "3d_environment",
+    "durationMinutes": number (${durationRange} minutes),
+    "subject": string,
+    "gradeLevel": number,
+    "labObjective": string,
+    "materialsNeeded": [string] using locally available materials in Liberia such as leaves, water, stones, local plants, paper, pencils, string, rulers, cups, buckets, notebooks, cassava leaves, bottle caps, or other basic household items,
+    "safetyNotes": string | null,
+    "procedure": [
+      {
+        "stepNumber": number,
+        "instruction": string,
+        "teacherNote": string | null,
+        "durationMinutes": number
+      }
+    ],
+    "observationForm": [
+      {
+        "field": string,
+        "prompt": string,
+        "inputType": "text" | "number" | "choice",
+        "choices": [string] | null
+      }
+    ],
+    "analysisQuestions": [
+      {
+        "question": string,
+        "expectedAnswer": string,
+        "scoringRubric": string
+      }
+    ],
+    "connectionToLesson": string,
+    "offlineCapable": boolean,
+    "virtualAlternative": string | null
+  }
+- Every lab must include a real step-by-step procedure, a real observation form, and analysis questions.
+- Use locally available Liberian materials. Avoid specialised imported equipment unless the virtualAlternative explains the substitute.
+- For guided_walkthrough labs, set offlineCapable to true.`;
+}
+
 function buildDeliveryProfilePrompt(grade: number, subject: string): string {
   return `
 Additionally, include a "deliveryProfile" field in the JSON with this structure:
@@ -178,6 +252,7 @@ export async function generateCurriculumPayload(
     : "";
 
   const lessonBodyHint = buildLessonBodyPrompt(lessonFormat);
+  const labPrompt = buildLabPrompt(input.subject, input.grade, lessonFormat);
 
   const baseJsonSchema = `{
   "title": "string (lesson title, min 3 chars)",
@@ -189,6 +264,36 @@ export async function generateCurriculumPayload(
   "body_standard": "string (45-minute standard lesson, required when format is standard or either)",
   "body_block": "string (90-minute block lesson, required when format is block or either)",
   "activities": ["string", "string"] (0 or more hands-on activities),
+  "labs": [{
+    "title": "string",
+    "type": "guided_walkthrough | 2d_simulation | 3d_environment",
+    "durationMinutes": "number",
+    "subject": "string",
+    "gradeLevel": "number",
+    "labObjective": "string",
+    "materialsNeeded": ["string"],
+    "safetyNotes": "string | null",
+    "procedure": [{
+      "stepNumber": "number",
+      "instruction": "string",
+      "teacherNote": "string | null",
+      "durationMinutes": "number"
+    }],
+    "observationForm": [{
+      "field": "string",
+      "prompt": "string",
+      "inputType": "text | number | choice",
+      "choices": ["string"] | null
+    }],
+    "analysisQuestions": [{
+      "question": "string",
+      "expectedAnswer": "string",
+      "scoringRubric": "string"
+    }],
+    "connectionToLesson": "string",
+    "offlineCapable": "boolean",
+    "virtualAlternative": "string | null"
+  }],
   "moeAlignments": ["string"] (MOE standard codes if applicable),
   "metadata": {
     "topic": "string",
@@ -209,6 +314,7 @@ Rules:
 - Each section must contain enough content for a teacher to actually teach from without any additional materials.
 - body/body_standard/body_block must be detailed educational content suitable for a Grade ${input.grade} student.
 - activities should be practical and doable in a Liberian classroom.${liberiaHint}${readingHint}${moeHint}${toneHint}${deliveryProfileHint}
+${labPrompt}
 ${lessonBodyHint}`;
 
   const userPrompt = `Generate a ${lessonFormat} format ${input.subject} lesson for Grade ${input.grade} on the topic: "${input.topic}". Keep the content classroom-ready and teachable.`;
@@ -288,6 +394,12 @@ ${lessonBodyHint}`;
     const issues = parsed.error.issues.map((i) => `${i.path.join(".")}: ${i.message}`).join("; ");
     throw new Error(
       `AI output failed validation: ${issues}. First 200 chars: ${result.content.slice(0, 200)}`
+    );
+  }
+
+  if (shouldGenerateLabs(parsed.data.subject, parsed.data.grade) && parsed.data.labs.length === 0) {
+    throw new Error(
+      `AI output failed validation: labs are required for ${parsed.data.subject} Grade ${parsed.data.grade}.`
     );
   }
 

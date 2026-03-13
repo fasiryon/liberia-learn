@@ -32,6 +32,44 @@ const LabComponentSchema = z.object({
   objectives: z.array(z.string()),
 });
 
+const LabProcedureStepSchema = z.object({
+  stepNumber: z.number().int().positive(),
+  instruction: z.string().min(5),
+  teacherNote: z.string().nullable(),
+  durationMinutes: z.number().int().positive(),
+});
+
+const LabObservationFieldSchema = z.object({
+  field: z.string().min(1),
+  prompt: z.string().min(5),
+  inputType: z.enum(["text", "number", "choice"]),
+  choices: z.array(z.string()).nullable(),
+});
+
+const LabAnalysisQuestionSchema = z.object({
+  question: z.string().min(5),
+  expectedAnswer: z.string().min(5),
+  scoringRubric: z.string().min(5),
+});
+
+export const LabDefinitionSchema = z.object({
+  id: z.string().optional(),
+  title: z.string().min(3),
+  type: z.enum(["guided_walkthrough", "2d_simulation", "3d_environment"]),
+  durationMinutes: z.number().int().min(20).max(60),
+  subject: z.string().min(1),
+  gradeLevel: z.number().int().min(1).max(12),
+  labObjective: z.string().min(5),
+  materialsNeeded: z.array(z.string().min(1)).min(1),
+  safetyNotes: z.string().nullable(),
+  procedure: z.array(LabProcedureStepSchema).min(3),
+  observationForm: z.array(LabObservationFieldSchema).min(2),
+  analysisQuestions: z.array(LabAnalysisQuestionSchema).min(2),
+  connectionToLesson: z.string().min(5),
+  offlineCapable: z.boolean(),
+  virtualAlternative: z.string().nullable(),
+});
+
 export const DeliveryProfileSchema = z.object({
   estimatedMinutes: z.number().int().positive(),
   recommendedFormat: z.enum(["standard", "block", "either"]),
@@ -71,6 +109,7 @@ export const CurriculumPayloadSchema = z.object({
   body_standard: z.string().min(50).optional(),
   body_block: z.string().min(50).optional(),
   activities: z.array(z.string()).default([]),
+  labs: z.array(LabDefinitionSchema).default([]),
   moeAlignments: z.array(z.string()).default([]),
   metadata: z
     .object({

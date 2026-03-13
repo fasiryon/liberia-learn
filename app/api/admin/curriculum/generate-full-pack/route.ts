@@ -98,14 +98,31 @@ export async function POST(req: Request) {
           title: loc(lesson.title),
           focus: loc(lesson.focus),
           labs: labs.map((lab) => ({
-            ...lab,
-            title: loc(lab.title),
-            objective: loc(lab.objective),
-            steps: lab.steps.map(loc),
-            assessment: loc(lab.assessment),
-            safetyNotes: lab.safetyNotes ? loc(lab.safetyNotes) : undefined,
+          ...lab,
+          title: loc(lab.title),
+          labObjective: loc(lab.labObjective),
+          materialsNeeded: lab.materialsNeeded.map(loc),
+          procedure: lab.procedure.map((step) => ({
+            ...step,
+            instruction: loc(step.instruction),
+            teacherNote: step.teacherNote ? loc(step.teacherNote) : null,
           })),
-        };
+          observationForm: lab.observationForm.map((field) => ({
+            ...field,
+            prompt: loc(field.prompt),
+            choices: field.choices?.map(loc) ?? null,
+          })),
+          analysisQuestions: lab.analysisQuestions.map((question) => ({
+            ...question,
+            question: loc(question.question),
+            expectedAnswer: loc(question.expectedAnswer),
+            scoringRubric: loc(question.scoringRubric),
+          })),
+          connectionToLesson: loc(lab.connectionToLesson),
+          virtualAlternative: lab.virtualAlternative ? loc(lab.virtualAlternative) : null,
+          safetyNotes: lab.safetyNotes ? loc(lab.safetyNotes) : null,
+        })),
+      };
       });
 
       // 4. Assessment + Rubric + Mastery
