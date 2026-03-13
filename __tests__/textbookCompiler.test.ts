@@ -2,9 +2,11 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const mockUnitFindMany = vi.hoisted(() => vi.fn());
 const mockCurriculumFindMany = vi.hoisted(() => vi.fn());
+const mockSchoolFindUnique = vi.hoisted(() => vi.fn());
 
 vi.mock("@/lib/db", () => ({
   prisma: {
+    school: { findUnique: mockSchoolFindUnique },
     curriculumUnit: { findMany: mockUnitFindMany },
     curriculumContent: { findMany: mockCurriculumFindMany },
   },
@@ -14,6 +16,7 @@ import { compileTextbook } from "@/lib/ai/textbook/textbookCompiler";
 
 beforeEach(() => {
   vi.clearAllMocks();
+  mockSchoolFindUnique.mockResolvedValue({ name: "Monrovia Demonstration School" });
 });
 
 describe("compileTextbook", () => {
@@ -73,6 +76,7 @@ describe("compileTextbook", () => {
 
     expect(result.subject).toBe("MATH");
     expect(result.gradeLevel).toBe(5);
+    expect(result.schoolName).toBe("Monrovia Demonstration School");
     expect(result.units).toHaveLength(2);
     expect(result.totalLessons).toBe(2);
     expect(result.units[0].lessons[0].title).toBe("Intro to Fractions");
@@ -90,5 +94,6 @@ describe("compileTextbook", () => {
     expect(result.units).toEqual([]);
     expect(result.totalLessons).toBe(0);
     expect(result.title).toContain("SCIENCE");
+    expect(result.schoolName).toBe("Ministry of Education, Liberia");
   });
 });
