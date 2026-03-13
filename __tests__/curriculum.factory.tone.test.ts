@@ -18,6 +18,42 @@ const VALID_PAYLOAD = {
   body: "Fractions represent parts of a whole. In Liberia, market sellers use fractions daily when dividing palm oil.",
   body_standard: "Fractions represent parts of a whole. In Liberia, market sellers use fractions daily when dividing palm oil.",
   activities: ["Group work with fraction strips"],
+  labs: [
+    {
+      title: "Local Observation Lab",
+      type: "guided_walkthrough",
+      durationMinutes: 25,
+      subject: "SCIENCE",
+      gradeLevel: 4,
+      labObjective: "Students observe and record evidence using simple local materials.",
+      materialsNeeded: ["paper", "pencil", "water", "stones"],
+      safetyNotes: null,
+      procedure: [
+        { stepNumber: 1, instruction: "Gather materials.", teacherNote: null, durationMinutes: 5 },
+        { stepNumber: 2, instruction: "Observe and record.", teacherNote: null, durationMinutes: 10 },
+        { stepNumber: 3, instruction: "Discuss findings.", teacherNote: null, durationMinutes: 10 },
+      ],
+      observationForm: [
+        { field: "item", prompt: "What did you observe?", inputType: "text", choices: null },
+        { field: "count", prompt: "How many items did you count?", inputType: "number", choices: null },
+      ],
+      analysisQuestions: [
+        {
+          question: "What did you notice?",
+          expectedAnswer: "Students identify one clear observation.",
+          scoringRubric: "Full credit for a clear observation.",
+        },
+        {
+          question: "How does it connect to the lesson?",
+          expectedAnswer: "Students explain the lesson connection.",
+          scoringRubric: "Full credit for a specific connection.",
+        },
+      ],
+      connectionToLesson: "Students connect evidence to the lesson.",
+      offlineCapable: true,
+      virtualAlternative: null,
+    },
+  ],
   moeAlignments: [],
   metadata: { topic: "Fractions", locale: "LR", generatedAt: new Date().toISOString() },
 };

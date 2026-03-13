@@ -134,6 +134,43 @@ describe("generateCurriculumPayload lesson depth", () => {
         body: buildBlockBody(),
         body_block: buildBlockBody(),
         activities: ["Field data collection"],
+        labs: [
+          {
+            title: "Field Data Collection Lab",
+            type: "guided_walkthrough",
+            durationMinutes: 30,
+            subject: "SCIENCE",
+            gradeLevel: 8,
+            labObjective: "Students collect and compare field observations using locally available materials.",
+            materialsNeeded: ["paper", "pencil", "string", "stones", "water"],
+            safetyNotes: "Handle water carefully to avoid slips.",
+            procedure: [
+              { stepNumber: 1, instruction: "Gather field materials.", teacherNote: "Use school-yard items only.", durationMinutes: 5 },
+              { stepNumber: 2, instruction: "Measure and record one variable.", teacherNote: "Model the first entry.", durationMinutes: 10 },
+              { stepNumber: 3, instruction: "Compare results with a partner.", teacherNote: "Prompt evidence-based discussion.", durationMinutes: 8 },
+              { stepNumber: 4, instruction: "Prepare one class finding.", teacherNote: "Summarize patterns clearly.", durationMinutes: 7 },
+            ],
+            observationForm: [
+              { field: "sample", prompt: "What did you measure?", inputType: "text", choices: null },
+              { field: "value", prompt: "What value did you record?", inputType: "number", choices: null },
+            ],
+            analysisQuestions: [
+              {
+                question: "What did the data show?",
+                expectedAnswer: "Students identify a pattern or comparison from their measurements.",
+                scoringRubric: "Full credit for a specific evidence-based observation.",
+              },
+              {
+                question: "How does the evidence connect to the lesson?",
+                expectedAnswer: "Students explain the connection between the observed data and the lesson concept.",
+                scoringRubric: "Full credit for a clear link to the lesson objective.",
+              },
+            ],
+            connectionToLesson: "Students use evidence to deepen the lesson concept.",
+            offlineCapable: true,
+            virtualAlternative: "A cached 2D graphing activity can substitute if materials are unavailable.",
+          },
+        ],
         moeAlignments: ["SCI-G8-DATA-02"],
         metadata: { topic: "Data Collection", locale: "LR", generatedAt: new Date().toISOString() },
         deliveryProfile: {
