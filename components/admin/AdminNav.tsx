@@ -11,6 +11,7 @@ const BASE_NAV_LINKS = [
   { label: "Classes", href: "/admin/classes" },
   { label: "Students", href: "/admin/students" },
   { label: "Teachers", href: "/admin/teachers" },
+  { label: "Placements", href: "/admin/placements" },
   { label: "School Branding", href: "/admin/school-branding" },
   { label: "School Settings", href: "/admin/school-settings" },
   { label: "Reports", href: "/admin/reports" },
