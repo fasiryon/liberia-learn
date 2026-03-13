@@ -889,6 +889,8 @@ model CurriculumContent {
   updatedAt       DateTime        @updatedAt
   deliveryProfile Json?           // Part 1: AI-generated lesson delivery profile
   unitId          String?         // Part 4: soft link to CurriculumUnit.unitId
+  orderInUnit     Int?
+  lessonType      String?         // intro|core|practice|review|assessment
   teacherCreated  Boolean         @default(false)
   scheduledWork   ScheduledWork[]
   embeddedAt      DateTime?
@@ -896,6 +898,7 @@ model CurriculumContent {
 
   @@index([grade, subject])
   @@index([contentType, status])
+  @@index([unitId, orderInUnit])
 }
 
 /// / ===== Scheduled Work (Today's Work) =====
@@ -1343,5 +1346,4 @@ enum MasteryState {
   MASTERED
   DECAYING
 }
-
 
