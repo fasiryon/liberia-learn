@@ -24,6 +24,99 @@ const VALID_TOOL_KEYS = [
   "dictionary",
 ];
 
+function getLessonWordLimit(
+  format: "standard" | "block" | "either",
+  contentType: string
+): number {
+  if (contentType === "lesson") {
+    if (format === "block") return 2200;
+    return 1400;
+  }
+  if (contentType === "full_pack") return 3000;
+  if (contentType === "term_plan") return 1800;
+  return 1000;
+}
+
+function buildLessonBodyPrompt(format: "standard" | "block" | "either"): string {
+  const standardTemplate = `
+- body_standard must contain these clearly labeled sections for a 45-minute lesson:
+  ## Opening (5 minutes)
+  Hook question or scenario using Liberian context.
+  Connect to prior knowledge.
+  State today's learning objective clearly.
+
+  ## Direct Instruction (15 minutes)
+  Explain the concept clearly and completely.
+  Use at least 2 worked examples with full step-by-step solutions shown.
+  Reference Liberian context throughout (markets, rivers, farms, Liberian currency, county names, local names).
+  Define all key vocabulary terms.
+
+  ## Guided Practice (15 minutes)
+  3-4 practice problems for teacher to work through with the class.
+  Show full solutions for each.
+  Include common mistakes to watch for.
+
+  ## Independent Practice (8 minutes)
+  4-5 problems for students to work alone.
+  Vary difficulty (2 easy, 2 medium, 1 challenge).
+  Include answer key.
+
+  ## Closing (7 minutes)
+  Summary of key concepts learned today.
+  Exit ticket question (links to assessment).
+  Preview of next lesson.`;
+
+  const blockTemplate = `
+- body_block must contain these clearly labeled sections for a 90-minute block lesson:
+  ## Opening (5 minutes)
+  Hook question or scenario using Liberian context.
+  Connect to prior knowledge.
+  State today's learning objective clearly.
+
+  ## Direct Instruction (20 minutes)
+  Explain the concept clearly and completely.
+  Use at least 3 worked examples with full step-by-step solutions shown.
+  Reference Liberian context throughout (markets, rivers, farms, Liberian currency, county names, local names).
+  Define all key vocabulary terms.
+
+  ## Guided Practice (20 minutes)
+  5-6 practice problems for teacher-led class work.
+  Show full solutions for each.
+  Include common mistakes to watch for.
+
+  ## Lab or Activity (25 minutes)
+  Include a lab, investigation, or group project activity tied to the lesson objective.
+  If no lab is appropriate, include an extended investigation or group project activity that is still teachable.
+
+  ## Independent Work (15 minutes)
+  6-8 problems with a wider difficulty range.
+  Include answer key.
+
+  ## Group Discussion (8 minutes)
+  Discussion prompt connecting the lesson to real Liberian context or current events.
+
+  ## Closing (7 minutes)
+  Summary of key concepts learned today.
+  Exit ticket question.
+  Reflection question and preview of next lesson.`;
+
+  if (format === "standard") {
+    return `${standardTemplate}
+- Set body to the same content as body_standard.`;
+  }
+
+  if (format === "block") {
+    return `${blockTemplate}
+- Set body to the same content as body_block.`;
+  }
+
+  return `${standardTemplate}
+
+${blockTemplate}
+- Generate both body_standard and body_block.
+- Set body to the same content as body_standard for compatibility.`;
+}
+
 function buildDeliveryProfilePrompt(grade: number, subject: string): string {
   return `
 Additionally, include a "deliveryProfile" field in the JSON with this structure:
@@ -66,7 +159,10 @@ export async function generateCurriculumPayload(
     ? `\nMOE alignment codes to reference: ${input.moeAlignmentCodes.join(", ")}`
     : "";
 
-  const wordLimit = input.maxWords ?? 600;
+  const lessonFormat = input.lessonFormat ?? "standard";
+  const wordLimit =
+    input.maxWords ??
+    getLessonWordLimit(lessonFormat, input.contentType ?? "lesson");
   const readingHint = input.readingLevel
     ? `\nTarget reading level: ${input.readingLevel}`
     : "";
@@ -81,12 +177,17 @@ export async function generateCurriculumPayload(
     ? buildDeliveryProfilePrompt(input.grade, input.subject)
     : "";
 
+  const lessonBodyHint = buildLessonBodyPrompt(lessonFormat);
+
   const baseJsonSchema = `{
   "title": "string (lesson title, min 3 chars)",
   "grade": number (1-12),
   "subject": "string (e.g. MATH, SCIENCE, LITERACY)",
+  "lessonFormat": "standard" | "block" | "either",
   "objectives": ["string", "string"] (at least 1),
-  "body": "string (lesson content, min 50 chars, up to ${wordLimit} words)",
+  "body": "string (primary lesson body, min 50 chars, up to ${wordLimit} words)",
+  "body_standard": "string (45-minute standard lesson, required when format is standard or either)",
+  "body_block": "string (90-minute block lesson, required when format is block or either)",
   "activities": ["string", "string"] (0 or more hands-on activities),
   "moeAlignments": ["string"] (MOE standard codes if applicable),
   "metadata": {
@@ -104,10 +205,13 @@ ${baseJsonSchema}
 
 Rules:
 - Output ONLY valid JSON. Nothing else.
-- body must be detailed educational content suitable for a Grade ${input.grade} student.
-- activities should be practical and doable in a Liberian classroom.${liberiaHint}${readingHint}${moeHint}${toneHint}${deliveryProfileHint}`;
+- Generate complete, detailed content for each section. Do not summarize or abbreviate.
+- Each section must contain enough content for a teacher to actually teach from without any additional materials.
+- body/body_standard/body_block must be detailed educational content suitable for a Grade ${input.grade} student.
+- activities should be practical and doable in a Liberian classroom.${liberiaHint}${readingHint}${moeHint}${toneHint}${deliveryProfileHint}
+${lessonBodyHint}`;
 
-  const userPrompt = `Generate a ${input.subject} lesson for Grade ${input.grade} on the topic: "${input.topic}".`;
+  const userPrompt = `Generate a ${lessonFormat} format ${input.subject} lesson for Grade ${input.grade} on the topic: "${input.topic}". Keep the content classroom-ready and teachable.`;
 
   const result = await routedCompletion({
     messages: [
@@ -137,6 +241,7 @@ Rules:
     ...(raw as Record<string, unknown>),
     grade: input.grade,
     subject: input.subject,
+    lessonFormat,
     metadata: {
       ...((raw as any)?.metadata ?? {}),
       topic: input.topic,
@@ -146,9 +251,36 @@ Rules:
     },
   };
 
+  const primaryBody =
+    typeof (enriched as any).body === "string" && (enriched as any).body.trim().length > 0
+      ? (enriched as any).body
+      : lessonFormat === "block"
+      ? (enriched as any).body_block
+      : (enriched as any).body_standard ?? (enriched as any).body_block;
+
+  if (typeof primaryBody === "string" && primaryBody.trim().length > 0) {
+    (enriched as any).body = primaryBody;
+  }
+
+  if (lessonFormat === "standard" && !(enriched as any).body_standard && typeof (enriched as any).body === "string") {
+    (enriched as any).body_standard = (enriched as any).body;
+  }
+
+  if (lessonFormat === "block" && !(enriched as any).body_block && typeof (enriched as any).body === "string") {
+    (enriched as any).body_block = (enriched as any).body;
+  }
+
   // When flag is OFF, strip deliveryProfile from output before validation
   if (!isDeliveryProfileEnabled()) {
     delete (enriched as any).deliveryProfile;
+  }
+
+  if (isDeliveryProfileEnabled()) {
+    (enriched as any).deliveryProfile = {
+      ...((enriched as any).deliveryProfile ?? {}),
+      recommendedFormat:
+        (enriched as any).deliveryProfile?.recommendedFormat ?? lessonFormat,
+    };
   }
 
   const parsed = CurriculumPayloadSchema.safeParse(enriched);

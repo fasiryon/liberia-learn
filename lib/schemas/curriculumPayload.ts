@@ -65,8 +65,11 @@ export const CurriculumPayloadSchema = z.object({
   title: z.string().min(3),
   grade: z.number().int().min(1).max(12),
   subject: z.string().min(1),
+  lessonFormat: z.enum(["standard", "block", "either"]).optional(),
   objectives: z.array(z.string()).min(1),
   body: z.string().min(50),
+  body_standard: z.string().min(50).optional(),
+  body_block: z.string().min(50).optional(),
   activities: z.array(z.string()).default([]),
   moeAlignments: z.array(z.string()).default([]),
   metadata: z
@@ -78,6 +81,47 @@ export const CurriculumPayloadSchema = z.object({
     })
     .optional(),
   deliveryProfile: DeliveryProfileSchema.optional(),
+}).superRefine((payload, ctx) => {
+  const recommendedFormat = payload.lessonFormat ?? payload.deliveryProfile?.recommendedFormat;
+
+  if (recommendedFormat === "standard") {
+    if (!payload.body_standard) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["body_standard"],
+        message: "body_standard is required for standard lessons",
+      });
+    }
+    return;
+  }
+
+  if (recommendedFormat === "block") {
+    if (!payload.body_block) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["body_block"],
+        message: "body_block is required for block lessons",
+      });
+    }
+    return;
+  }
+
+  if (recommendedFormat === "either") {
+    if (!payload.body_standard) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["body_standard"],
+        message: "body_standard is required when both lesson formats are generated",
+      });
+    }
+    if (!payload.body_block) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["body_block"],
+        message: "body_block is required when both lesson formats are generated",
+      });
+    }
+  }
 });
 
 export type CurriculumPayload = z.infer<typeof CurriculumPayloadSchema>;
@@ -86,10 +130,12 @@ export const GenerateInputSchema = z.object({
   grade: z.number().int().min(1).max(12),
   subject: z.string().min(1),
   topic: z.string().min(1),
+  contentType: z.string().optional().default("lesson"),
   moeAlignmentCodes: z.array(z.string()).optional(),
   readingLevel: z.string().optional(),
   maxWords: z.number().int().positive().optional(),
+  lessonFormat: z.enum(["standard", "block", "either"]).optional().default("standard"),
   liberiaContext: z.boolean().default(true),
 });
 
-export type GenerateInput = z.infer<typeof GenerateInputSchema>;
+export type GenerateInput = z.input<typeof GenerateInputSchema>;

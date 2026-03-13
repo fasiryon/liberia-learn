@@ -34,6 +34,7 @@ const RequestSchema = z.object({
   topic: z.string().min(1).max(200),
   moeAlignmentCodes: z.array(z.string()).optional(),
   mode: z.enum(["lesson", "term_plan", "unit_plan"]).optional().default("lesson"),
+  lessonFormat: z.enum(["standard", "block", "either"]).optional().default("either"),
 });
 
 // slugify and generateLabs imported from lib/curriculum-helpers
@@ -58,7 +59,7 @@ export async function POST(req: Request) {
       );
     }
 
-    const { grade, subject, topic, moeAlignmentCodes, mode } = parsed.data;
+    const { grade, subject, topic, moeAlignmentCodes, mode, lessonFormat } = parsed.data;
 
     let enrichedPayload: Record<string, unknown>;
     let contentType = mode;
@@ -101,12 +102,20 @@ export async function POST(req: Request) {
         grade,
         subject,
         topic,
+        contentType: mode,
         moeAlignmentCodes,
+        lessonFormat,
         liberiaContext: true,
       });
 
       // Apply localization post-processing
       const localizedBody = standardizeTone(liberianize(payload.body), grade);
+      const localizedStandardBody = payload.body_standard
+        ? standardizeTone(liberianize(payload.body_standard), grade)
+        : undefined;
+      const localizedBlockBody = payload.body_block
+        ? standardizeTone(liberianize(payload.body_block), grade)
+        : undefined;
       const localizedActivities = (payload.activities ?? []).map(
         (a: string) => standardizeTone(liberianize(a), grade)
       );
@@ -116,6 +125,8 @@ export async function POST(req: Request) {
       enrichedPayload = {
         ...payload,
         body: localizedBody,
+        ...(localizedStandardBody ? { body_standard: localizedStandardBody } : {}),
+        ...(localizedBlockBody ? { body_block: localizedBlockBody } : {}),
         activities: localizedActivities,
         labs,
       };
