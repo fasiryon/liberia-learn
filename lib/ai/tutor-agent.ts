@@ -1,8 +1,7 @@
-// lib/ai/tutor-agent.ts
+import crypto from "crypto";
+import { answerStudentQuestion } from "@/lib/ai/tutor/studentTutor";
 import { prisma } from "@/lib/db";
 import { logger } from "@/lib/logger";
-import { routedCompletion } from "@/lib/ai/router";
-import crypto from "crypto";
 
 const AGENT_ID = "tutor-agent";
 
@@ -49,18 +48,13 @@ export class TutorAgent {
         take: 20,
       });
 
-      const messages: ChatMsg[] = [
-        { role: "system", content: this.systemPrompt() },
-        ...history.slice(-10).map((m) => ({
-          role: (m.role === "user" ? "user" : "assistant") as
-            | "user"
-            | "assistant",
-          content: m.content,
-        })),
-        { role: "user", content: userMessage },
-      ];
+      const conversationHistory: ChatMsg[] = history.slice(-10).map((message) => ({
+        role: (message.role === "user" ? "user" : "assistant") as
+          | "user"
+          | "assistant",
+        content: message.content,
+      }));
 
-      // Create agent task record
       const task = await prisma.agentTask.create({
         data: {
           agentId: AGENT_ID,
@@ -75,11 +69,14 @@ export class TutorAgent {
       });
       taskId = task.id;
 
-      const result = await routedCompletion({ messages, maxTokens: 512 });
+      const responseText = await answerStudentQuestion(
+        this.studentId,
+        userMessage,
+        conversationHistory
+      );
 
       const duration = Date.now() - startTime;
 
-      // Update task with tier/model/cost info
       await prisma.agentTask.update({
         where: { id: taskId },
         data: {
@@ -87,15 +84,11 @@ export class TutorAgent {
           completedAt: new Date(),
           durationMs: duration,
           output: {
-            response: result.content,
-            tier: result.tier,
-            model: result.model,
-            costUSD: result.estimatedCostUSD,
+            response: responseText,
           },
         },
       });
 
-      // Save both messages
       await prisma.chatMessage.createMany({
         data: [
           {
@@ -106,13 +99,12 @@ export class TutorAgent {
           {
             studentId: this.studentId,
             role: "assistant",
-            content: result.content,
+            content: responseText,
             agentId: AGENT_ID,
           },
         ],
       });
 
-      // Upsert Agent record
       await prisma.agent.upsert({
         where: { id: AGENT_ID },
         update: { lastRunAt: new Date() },
@@ -125,7 +117,6 @@ export class TutorAgent {
         },
       });
 
-      // Update or create daily AgentMetric
       const today = new Date();
       today.setHours(0, 0, 0, 0);
 
@@ -162,10 +153,9 @@ export class TutorAgent {
       }
 
       return {
-        message: result.content,
+        message: responseText,
         conversationId: taskId,
         success: true,
-        tier: result.tier,
       };
     } catch (error: any) {
       const duration = Date.now() - startTime;
@@ -188,7 +178,6 @@ export class TutorAgent {
           .catch(() => {});
       }
 
-      // Update failed metric
       const today = new Date();
       today.setHours(0, 0, 0, 0);
       const metric = await prisma.agentMetric
@@ -232,23 +221,6 @@ export class TutorAgent {
         error: error?.message,
       };
     }
-  }
-
-  private systemPrompt(): string {
-    return `You are a helpful educational tutor for LiberiaLearn, an AI-powered learning platform for students in Liberia.
-
-Student context:
-- Grade level: ${this.grade}
-- Subject(s): ${this.subjects}
-- Learning environment: low-bandwidth classroom in Liberia
-
-Your role:
-- Help with homework and classwork — guide the student, do not simply give answers.
-- Use simple, encouraging language appropriate for the student's grade level.
-- Keep responses concise (2-3 paragraphs max).
-- Relate concepts to everyday Liberian life and contexts where helpful (e.g., local markets, geography, culture).
-- If you are unsure, say so honestly.
-- Always be patient, supportive, and culturally aware.`;
   }
 
   private hashId(value: string): string {

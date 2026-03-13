@@ -120,6 +120,10 @@ export function getAiTutorDailyLimit(): number {
 }
 
 /** Max teacher assist calls per teacher per day. Default 50. */
+/** RAG-grounded student tutor retrieval. DEFAULT OFF. */
+export function isRagTutorEnabled(): boolean {
+  return process.env.ENABLE_RAG_TUTOR === "true";
+}
 export function getAiTeacherAssistDailyLimit(): number {
   const raw = parseInt(process.env.AI_TEACHER_ASSIST_DAILY_LIMIT ?? "50", 10);
   return Number.isFinite(raw) && raw > 0 ? raw : 50;

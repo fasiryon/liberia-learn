@@ -14,6 +14,9 @@
  */
 
 import { routedCompletion } from "@/lib/ai/router";
+import { retrieveRelevantLessons, type RelevantLesson } from "@/lib/ai/rag/retrievalService";
+import { prisma } from "@/lib/db";
+import { isRagTutorEnabled } from "@/lib/serverFlags";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -45,6 +48,11 @@ export type StudentTutorResult = {
   confidenceScore: number;
   hadFallback: boolean;
   estimatedCostUSD: number;
+};
+
+export type Message = {
+  role: "system" | "user" | "assistant";
+  content: string;
 };
 
 // ─── Constants ────────────────────────────────────────────────────────────────
@@ -96,6 +104,39 @@ Response schema:
   "guidanceLevel": "light" | "moderate" | "intensive",
   "confidenceScore": <0.0–1.0>
 }`;
+}
+
+function buildChatSystemPrompt(grade: number | string, subjects: string): string {
+  return `You are a helpful educational tutor for LiberiaLearn, an AI-powered learning platform for students in Liberia.
+
+Student context:
+- Grade level: ${grade}
+- Subject(s): ${subjects}
+- Learning environment: low-bandwidth classroom in Liberia
+
+Your role:
+- Help with homework and classwork; guide the student, do not simply give answers.
+- Use simple, encouraging language appropriate for the student's grade level.
+- Keep responses concise (2-3 paragraphs max).
+- Relate concepts to everyday Liberian life and contexts where helpful (for example local markets, geography, and culture).
+- If you are unsure, say so honestly.
+- Always be patient, supportive, and culturally aware.`;
+}
+
+function buildRagSystemPrompt(
+  lessons: RelevantLesson[],
+  grade: number | string
+): string {
+  const context =
+    "Relevant lesson content from your curriculum:\n" +
+    lessons
+      .map((lesson) => `--- ${lesson.title} ---\n${lesson.content}`)
+      .join("\n\n");
+
+  return `You are a helpful tutor for a Liberian student.
+Answer based on the following lesson content from their curriculum. If the answer is not in the lessons, say so and provide general guidance. Always be encouraging and clear. Use simple language appropriate for the student's grade level (${grade}).
+
+${context}`;
 }
 
 function buildUserPrompt(input: StudentTutorInput): string {
@@ -154,6 +195,41 @@ function parseAndValidate(raw: string): StudentTutorResult | null {
   };
 }
 
+async function loadStudentChatContext(studentId: string): Promise<{
+  grade: number | string;
+  subjects: string;
+}> {
+  const student = await prisma.student.findUnique({
+    where: { id: studentId },
+    select: {
+      currentGrade: true,
+      enrollments: {
+        select: {
+          Class: {
+            select: {
+              subject: true,
+            },
+          },
+        },
+      },
+    },
+  });
+
+  const subjects =
+    Array.from(
+      new Set(
+        student?.enrollments
+          .map((enrollment) => enrollment.Class.subject)
+          .filter(Boolean) ?? []
+      )
+    ).join(", ") || "General";
+
+  return {
+    grade: student?.currentGrade ?? "unknown",
+    subjects,
+  };
+}
+
 // ─── Public API ───────────────────────────────────────────────────────────────
 
 export function isValidRequestType(v: unknown): v is TutorRequestType {
@@ -193,4 +269,32 @@ export async function getStudentTutorResponse(
     console.error("[AI_TUTOR] Call failed:", err?.message);
     return { ...FALLBACK };
   }
+}
+
+export async function answerStudentQuestion(
+  studentId: string,
+  question: string,
+  conversationHistory: Message[]
+): Promise<string> {
+  const { grade, subjects } = await loadStudentChatContext(studentId);
+
+  let systemPrompt = buildChatSystemPrompt(grade, subjects);
+  if (isRagTutorEnabled()) {
+    const lessons = await retrieveRelevantLessons(question, studentId);
+    if (lessons.length > 0) {
+      systemPrompt = buildRagSystemPrompt(lessons, grade);
+    }
+  }
+
+  const result = await routedCompletion({
+    messages: [
+      { role: "system", content: systemPrompt },
+      ...conversationHistory,
+      { role: "user", content: question },
+    ],
+    maxTokens: 512,
+    forceSmartTier: true,
+  });
+
+  return result.content;
 }

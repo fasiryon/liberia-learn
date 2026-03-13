@@ -18,6 +18,7 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 
 const mockRequireUser               = vi.hoisted(() => vi.fn());
 const mockIsAiTutorEnabled          = vi.hoisted(() => vi.fn());
+const mockIsRagTutorEnabled         = vi.hoisted(() => vi.fn());
 const mockGetAiTutorDailyLimit      = vi.hoisted(() => vi.fn());
 const mockGetAiBudgetMonthlyCap     = vi.hoisted(() => vi.fn());
 const mockRoutedCompletion          = vi.hoisted(() => vi.fn());
@@ -30,6 +31,7 @@ const mockAiInteractionLogCreate    = vi.hoisted(() => vi.fn());
 vi.mock("@/lib/auth", () => ({ requireUser: mockRequireUser }));
 vi.mock("@/lib/serverFlags", () => ({
   isAiTutorEnabled:      mockIsAiTutorEnabled,
+  isRagTutorEnabled:     mockIsRagTutorEnabled,
   getAiTutorDailyLimit:  mockGetAiTutorDailyLimit,
   getAiBudgetMonthlyCap: mockGetAiBudgetMonthlyCap,
 }));
@@ -83,6 +85,7 @@ function makeReq(body: unknown = VALID_BODY) {
 
 function setupDefaults() {
   mockIsAiTutorEnabled.mockReturnValue(true);
+  mockIsRagTutorEnabled.mockReturnValue(false);
   mockGetAiTutorDailyLimit.mockReturnValue(20);
   mockGetAiBudgetMonthlyCap.mockReturnValue(100);
   mockRequireUser.mockResolvedValue(VALID_USER);
