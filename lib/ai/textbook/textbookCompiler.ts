@@ -26,6 +26,7 @@ export type TextbookResult = {
   title: string;
   subject: string;
   gradeLevel: number;
+  schoolName?: string;
   units: CompiledUnit[];
   totalLessons: number;
   generatedAt: Date;
@@ -38,6 +39,14 @@ export async function compileTextbook(params: {
   title?: string;
 }): Promise<TextbookResult> {
   const subject = params.subject.trim().toUpperCase();
+  const schoolName = params.schoolId
+    ? (
+        await prisma.school.findUnique({
+          where: { id: params.schoolId },
+          select: { name: true },
+        })
+      )?.name ?? "Ministry of Education, Liberia"
+    : "Ministry of Education, Liberia";
   const units = await prisma.curriculumUnit.findMany({
     where: {
       subject,
@@ -63,6 +72,7 @@ export async function compileTextbook(params: {
         `${subject.replace(/_/g, " ")} Grade ${params.gradeLevel} Textbook`,
       subject,
       gradeLevel: params.gradeLevel,
+      schoolName,
       units: [],
       totalLessons: 0,
       generatedAt: new Date(),
@@ -137,6 +147,7 @@ export async function compileTextbook(params: {
       `${subject.replace(/_/g, " ")} Grade ${params.gradeLevel} Textbook`,
     subject,
     gradeLevel: params.gradeLevel,
+    schoolName,
     units: compiledUnits,
     totalLessons: compiledUnits.reduce((sum, unit) => sum + unit.lessons.length, 0),
     generatedAt: new Date(),

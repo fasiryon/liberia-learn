@@ -48,6 +48,7 @@ beforeEach(() => {
     title: "Math Grade 5 Textbook",
     subject: "MATH",
     gradeLevel: 5,
+    schoolName: "Monrovia Demonstration School",
     units: [
       {
         id: "db-1",
@@ -75,6 +76,7 @@ describe("GET /api/admin/curriculum/textbook", () => {
       title: "Math Grade 5 Textbook",
       subject: "MATH",
       gradeLevel: 5,
+      schoolName: "Monrovia Demonstration School",
       units: [],
       totalLessons: 0,
       generatedAt: new Date("2026-03-13T00:00:00.000Z"),

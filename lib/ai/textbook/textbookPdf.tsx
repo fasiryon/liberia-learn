@@ -97,6 +97,9 @@ function TextbookDocument({ result }: { result: TextbookResult }) {
           <Text style={styles.title}>
             {result.subject.replace(/_/g, " ")} Grade {result.gradeLevel}
           </Text>
+          <Text style={styles.subtitle}>
+            {result.schoolName ?? "Ministry of Education, Liberia"}
+          </Text>
           <Text style={styles.subtitle}>Ministry of Education, Liberia</Text>
           <Text style={styles.subtitle}>Academic Year 2026</Text>
           <Text style={styles.subtitle}>
