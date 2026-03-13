@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { requireRole } from "@/lib/auth";
 import { logAudit } from "@/lib/audit";
 import { prisma } from "@/lib/db";
+import { notifyPlacementConfirmation } from "@/lib/placement-notifications";
 
 export const dynamic = "force-dynamic";
 
@@ -43,7 +44,25 @@ export async function POST(
           include: {
             user: {
               select: {
+                id: true,
+                name: true,
                 schoolId: true,
+                guardianPhoneE164: true,
+                school: {
+                  select: {
+                    name: true,
+                  },
+                },
+              },
+            },
+            guardians: {
+              select: {
+                guardianId: true,
+                guardian: {
+                  select: {
+                    name: true,
+                  },
+                },
               },
             },
           },
@@ -97,6 +116,27 @@ export async function POST(
         overrideReason: decision === "override" ? overrideReason.trim() : null,
       },
     });
+
+    try {
+      await notifyPlacementConfirmation({
+        actingUserId: user.id,
+        schoolId: user.schoolId,
+        schoolName: placement.student.user.school?.name ?? "LiberiaLearn",
+        student: {
+          id: placement.studentId,
+          userId: placement.student.user.id,
+          name: placement.student.user.name ?? null,
+          phone: placement.student.user.guardianPhoneE164 ?? null,
+          guardians: placement.student.guardians.map((link) => ({
+            guardianId: link.guardianId,
+            guardianName: link.guardian.name ?? null,
+          })),
+        },
+        finalGrade,
+      });
+    } catch (notificationError) {
+      console.error("Placement confirmation notification failed", notificationError);
+    }
 
     return NextResponse.json({
       reviewed: true,
