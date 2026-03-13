@@ -52,6 +52,6 @@ describe("ServiceWorkerRegistration", () => {
     await Promise.resolve();
 
     expect(registerMock).toHaveBeenCalledWith("/sw.js");
-    expect(syncRegisterMock).toHaveBeenCalledWith("offline-queue-sync");
+    expect(syncRegisterMock).toHaveBeenCalledWith("liberialearn-sync");
   });
 });
