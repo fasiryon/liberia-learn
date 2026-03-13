@@ -137,6 +137,14 @@ export default function AdminCurriculumPage() {
             Generate AI-powered lessons with labs, aligned to Liberian MOE standards.
             Admin-generated items are auto-approved. Teacher-generated items need approval.
           </p>
+          <div className="mt-3">
+            <Link
+              href="/admin/curriculum/units"
+              className="inline-flex rounded-full border border-cyan-500/40 bg-cyan-500/10 px-3 py-1.5 text-xs font-semibold text-cyan-200 hover:border-cyan-400 hover:bg-cyan-500/20"
+            >
+              Open Unit Assembly
+            </Link>
+          </div>
         </div>
 
         {/* Generate form */}

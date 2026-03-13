@@ -15,10 +15,12 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 // ─── Hoisted mocks ─────────────────────────────────────────────────────────────
 
 const mockRequireRole = vi.hoisted(() => vi.fn());
+const mockRequireUser = vi.hoisted(() => vi.fn());
 const mockLogAudit   = vi.hoisted(() => vi.fn());
 
 // feature flags
 const mockIsUnitGroupingEnabled            = vi.hoisted(() => vi.fn());
+const mockIsUnitAssemblyEnabled            = vi.hoisted(() => vi.fn());
 const mockIsVirtualLabsEnabled             = vi.hoisted(() => vi.fn());
 const mockIsLessonDeliveryTrackingEnabled  = vi.hoisted(() => vi.fn());
 const mockIsCurriculumFeedbackEnabled      = vi.hoisted(() => vi.fn());
@@ -30,6 +32,7 @@ const mockCurriculumFeedbackCreate     = vi.hoisted(() => vi.fn());
 const mockCurriculumUnitCreate         = vi.hoisted(() => vi.fn());
 const mockCurriculumUnitFindMany       = vi.hoisted(() => vi.fn());
 const mockCurriculumContentGroupBy     = vi.hoisted(() => vi.fn());
+const mockAuditLogCount                = vi.hoisted(() => vi.fn());
 const mockLabSessionFindFirst          = vi.hoisted(() => vi.fn());
 const mockLabSessionFindUnique         = vi.hoisted(() => vi.fn());
 const mockLabSessionUpdate             = vi.hoisted(() => vi.fn());
@@ -38,10 +41,14 @@ const mockEnrollmentFindMany           = vi.hoisted(() => vi.fn());
 const mockStudentFindUnique            = vi.hoisted(() => vi.fn());
 const mockStrandCatalogFindFirst       = vi.hoisted(() => vi.fn());
 const mockScheduledWorkUpdate          = vi.hoisted(() => vi.fn());
+const mockAssembleUnit                 = vi.hoisted(() => vi.fn());
 
 // ─── Module mocks ──────────────────────────────────────────────────────────────
 
-vi.mock("@/lib/auth", () => ({ requireRole: mockRequireRole }));
+vi.mock("@/lib/auth", () => ({
+  requireRole: mockRequireRole,
+  requireUser: mockRequireUser,
+}));
 vi.mock("@/lib/audit", () => ({ logAudit: mockLogAudit }));
 
 vi.mock("@/lib/serverFlags", async () => {
@@ -49,11 +56,16 @@ vi.mock("@/lib/serverFlags", async () => {
   return {
     ...actual,
     isUnitGroupingEnabled:           mockIsUnitGroupingEnabled,
+    isUnitAssemblyEnabled:           mockIsUnitAssemblyEnabled,
     isVirtualLabsEnabled:            mockIsVirtualLabsEnabled,
     isLessonDeliveryTrackingEnabled: mockIsLessonDeliveryTrackingEnabled,
     isCurriculumFeedbackEnabled:     mockIsCurriculumFeedbackEnabled,
   };
 });
+
+vi.mock("@/lib/ai/units/unitAssembler", () => ({
+  assembleUnit: mockAssembleUnit,
+}));
 
 vi.mock("@/lib/db", () => ({
   prisma: {
@@ -67,6 +79,9 @@ vi.mock("@/lib/db", () => ({
     curriculumUnit: {
       create:   mockCurriculumUnitCreate,
       findMany: mockCurriculumUnitFindMany,
+    },
+    auditLog: {
+      count: mockAuditLogCount,
     },
     curriculumContent_groupBy: mockCurriculumContentGroupBy, // alias resolved below
     labSession: {
@@ -122,6 +137,11 @@ const UNIT_RECORD = {
   weekEnd: 2,
   createdById: "user-admin-1",
   createdAt: new Date(),
+};
+
+const ASSEMBLED_UNIT = {
+  unit: { unitId: "unit-uuid-1" },
+  lessons: Array.from({ length: 7 }, (_, index) => ({ id: `lesson-${index + 1}` })),
 };
 
 const LAB_SESSION = {
@@ -249,20 +269,19 @@ describe("Audit Gate 2 — Category 4: logAudit patch verification", () => {
   describe("POST /api/admin/curriculum/units — logAudit on create", () => {
     beforeEach(() => {
       vi.clearAllMocks();
-      mockRequireRole.mockResolvedValue(ADMIN_USER);
-      mockIsUnitGroupingEnabled.mockReturnValue(true);
-      mockCurriculumUnitCreate.mockResolvedValue(UNIT_RECORD);
+      mockRequireUser.mockResolvedValue({ ...ADMIN_USER, isPlatformAdmin: false });
+      mockIsUnitAssemblyEnabled.mockReturnValue(true);
+      mockAuditLogCount.mockResolvedValue(0);
+      mockAssembleUnit.mockResolvedValue(ASSEMBLED_UNIT);
       mockLogAudit.mockResolvedValue(undefined);
     });
 
-    it("calls logAudit with action curriculum.unit.create and schoolId", async () => {
+    it("calls logAudit with action admin.unit.assembled and schoolId", async () => {
       const res = await unitsPost(
         req("POST", "http://localhost/api/admin/curriculum/units", {
-          name: "Fractions",
           subject: "MATH",
-          grade: 4,
-          weekStart: 1,
-          weekEnd: 2,
+          gradeLevel: 4,
+          unitTitle: "Fractions",
         })
       );
 
@@ -270,19 +289,21 @@ describe("Audit Gate 2 — Category 4: logAudit patch verification", () => {
       expect(mockLogAudit).toHaveBeenCalledOnce();
 
       const auditArg = mockLogAudit.mock.calls[0][0];
-      expect(auditArg.action).toBe("curriculum.unit.create");
-      expect(auditArg.resourceType).toBe("curriculumUnit");
+      expect(auditArg.action).toBe("admin.unit.assembled");
+      expect(auditArg.resourceType).toBe("curriculum_unit");
       expect(auditArg.schoolId).toBe("school-1");
     });
 
-    it("returns 404 when ENABLE_UNIT_GROUPING flag is OFF", async () => {
-      mockIsUnitGroupingEnabled.mockReturnValue(false);
+    it("returns 503 when ENABLE_UNIT_ASSEMBLY flag is OFF", async () => {
+      mockIsUnitAssemblyEnabled.mockReturnValue(false);
       const res = await unitsPost(
         req("POST", "http://localhost/api/admin/curriculum/units", {
-          name: "X", subject: "MATH", grade: 4, weekStart: 1, weekEnd: 2,
+          subject: "MATH",
+          gradeLevel: 4,
+          unitTitle: "X",
         })
       );
-      expect(res.status).toBe(404);
+      expect(res.status).toBe(503);
       expect(mockLogAudit).not.toHaveBeenCalled();
     });
   });
@@ -474,15 +495,17 @@ describe("Audit Gate 2 — Category 5: Feature flag OFF returns 404", () => {
   });
 
   describe("POST /api/admin/curriculum/units — flag OFF", () => {
-    it("returns 404 (not 500) when ENABLE_UNIT_GROUPING is OFF", async () => {
+    it("returns 503 (not 500) when ENABLE_UNIT_ASSEMBLY is OFF", async () => {
       vi.clearAllMocks();
-      mockIsUnitGroupingEnabled.mockReturnValue(false);
+      mockIsUnitAssemblyEnabled.mockReturnValue(false);
       const res = await unitsPost(
         req("POST", "http://localhost/api/admin/curriculum/units", {
-          name: "X", subject: "MATH", grade: 4, weekStart: 1, weekEnd: 2,
+          subject: "MATH",
+          gradeLevel: 4,
+          unitTitle: "X",
         })
       );
-      expect(res.status).toBe(404);
+      expect(res.status).toBe(503);
     });
   });
 
@@ -520,14 +543,15 @@ describe("Audit Gate 2 — Category 2: RBAC enforcement", () => {
   describe("POST /api/admin/curriculum/units — requires ADMIN role", () => {
     it("returns 403 when a STUDENT tries to access the admin units route", async () => {
       vi.clearAllMocks();
-      mockIsUnitGroupingEnabled.mockReturnValue(true);
-      // Simulate requireRole throwing a 403 error (as the real implementation does)
+      mockIsUnitAssemblyEnabled.mockReturnValue(true);
       const authError = Object.assign(new Error("Forbidden"), { status: 403 });
-      mockRequireRole.mockRejectedValueOnce(authError);
+      mockRequireUser.mockRejectedValueOnce(authError);
 
       const res = await unitsPost(
         req("POST", "http://localhost/api/admin/curriculum/units", {
-          name: "X", subject: "MATH", grade: 4, weekStart: 1, weekEnd: 2,
+          subject: "MATH",
+          gradeLevel: 4,
+          unitTitle: "X",
         })
       );
       expect(res.status).toBe(403);
@@ -557,25 +581,28 @@ describe("Audit Gate 2 — Category 2: RBAC enforcement", () => {
 describe("Audit Gate 2 — Category 1: Tenant isolation", () => {
 
   describe("POST /api/admin/curriculum/units — scoped to user.schoolId", () => {
-    it("creates unit with schoolId from authenticated user (not request body)", async () => {
+    it("passes schoolId from the authenticated user into unit assembly", async () => {
       vi.clearAllMocks();
-      mockRequireRole.mockResolvedValue(ADMIN_USER);
-      mockIsUnitGroupingEnabled.mockReturnValue(true);
-      mockCurriculumUnitCreate.mockResolvedValue(UNIT_RECORD);
+      mockRequireUser.mockResolvedValue({ ...ADMIN_USER, isPlatformAdmin: false });
+      mockIsUnitAssemblyEnabled.mockReturnValue(true);
+      mockAuditLogCount.mockResolvedValue(0);
+      mockAssembleUnit.mockResolvedValue(ASSEMBLED_UNIT);
       mockLogAudit.mockResolvedValue(undefined);
 
       await unitsPost(
         req("POST", "http://localhost/api/admin/curriculum/units", {
-          name: "Fractions",
           subject: "MATH",
-          grade: 4,
-          weekStart: 1,
-          weekEnd: 2,
+          gradeLevel: 4,
+          unitTitle: "Fractions",
         })
       );
 
-      const createArg = mockCurriculumUnitCreate.mock.calls[0][0];
-      expect(createArg.data.schoolId).toBe("school-1"); // from user, not request body
+      expect(mockAssembleUnit).toHaveBeenCalledWith(
+        expect.objectContaining({
+          schoolId: "school-1",
+          createdById: "user-admin-1",
+        })
+      );
     });
   });
 

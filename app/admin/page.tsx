@@ -13,6 +13,7 @@ const TRAINING_ENABLED = process.env.NEXT_PUBLIC_ENABLE_TRAINING_CENTER === "tru
 
 const BASE_NAV_LINKS = [
   { label: "Curriculum / AI Factory", href: "/admin/curriculum" },
+  { label: "Curriculum Units", href: "/admin/curriculum/units" },
   { label: "Homework", href: "/admin/homework" },
   { label: "Analytics", href: "/admin/analytics" },
   { label: "Guardian Links", href: "/admin/guardian-link" },
@@ -324,6 +325,7 @@ export default async function AdminConsolePage() {
 
   const actions = [
     { label: "Curriculum / AI Factory", href: "/admin/curriculum", bg: "bg-emerald-500" },
+    { label: "Curriculum Units", href: "/admin/curriculum/units", bg: "bg-teal-500" },
     { label: "Seed Demo Data", href: "/admin/seed", bg: "bg-blue-500" },
     { label: "Homework", href: "/admin/homework", bg: "bg-purple-500" },
     { label: "Guardian Links", href: "/admin/guardian-link", bg: "bg-amber-500" },
