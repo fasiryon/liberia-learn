@@ -431,6 +431,14 @@ export function isUnitAssemblyEnabled(): boolean {
 }
 
 /**
+ * Textbook PDF compiler for assembled curriculum units.
+ * DEFAULT OFF.
+ */
+export function isTextbookCompilerEnabled(): boolean {
+  return process.env.ENABLE_TEXTBOOK_COMPILER === "true";
+}
+
+/**
  * Part 5: Assignment/homework lesson linkage + auto-suggestions.
  * When ON, scheduling a lesson with an exit ticket creates an AssignmentSuggestion.
  * DEFAULT OFF.

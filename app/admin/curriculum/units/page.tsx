@@ -52,6 +52,7 @@ export default function AdminCurriculumUnitsPage() {
   const [units, setUnits] = useState<UnitRow[]>([]);
   const [loadingUnits, setLoadingUnits] = useState(true);
   const [submitting, setSubmitting] = useState(false);
+  const [downloadingKey, setDownloadingKey] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [expandedUnitId, setExpandedUnitId] = useState<string | null>(null);
   const [progressStage, setProgressStage] = useState(0);
@@ -146,6 +147,54 @@ export default function AdminCurriculumUnitsPage() {
       return accumulator;
     }, {});
   }, [units]);
+
+  const textbookGroups = useMemo(() => {
+    return Object.entries(groupedCounts)
+      .filter(([, count]) => count >= 2)
+      .map(([key, count]) => {
+        const [subject, grade] = key.split("|");
+        return {
+          key,
+          subject,
+          grade: Number(grade),
+          count,
+        };
+      });
+  }, [groupedCounts]);
+
+  async function handleDownloadTextbook(subject: string, gradeLevel: number) {
+    const key = `${subject}|${gradeLevel}`;
+    setDownloadingKey(key);
+    setError(null);
+
+    try {
+      const response = await fetch(
+        `/api/admin/curriculum/textbook?subject=${encodeURIComponent(subject)}&gradeLevel=${gradeLevel}`,
+        {
+          method: "GET",
+        }
+      );
+
+      if (!response.ok) {
+        const body = await response.json().catch(() => ({}));
+        throw new Error(body.error ?? "Failed to compile textbook");
+      }
+
+      const blob = await response.blob();
+      const href = URL.createObjectURL(blob);
+      const anchor = document.createElement("a");
+      anchor.href = href;
+      anchor.download = `${subject.toLowerCase().replace(/_/g, "-")}-grade${gradeLevel}-textbook.pdf`;
+      document.body.appendChild(anchor);
+      anchor.click();
+      anchor.remove();
+      URL.revokeObjectURL(href);
+    } catch (downloadError: any) {
+      setError(downloadError.message ?? "Failed to compile textbook");
+    } finally {
+      setDownloadingKey(null);
+    }
+  }
 
   return (
     <main className="min-h-screen bg-slate-950 text-slate-50">
@@ -290,6 +339,46 @@ export default function AdminCurriculumUnitsPage() {
               {error}
             </div>
           ) : null}
+        </section>
+
+        <section className="rounded-2xl border border-white/10 bg-slate-900/70 p-6">
+          <div className="mb-4 flex items-center justify-between gap-4">
+            <div>
+              <h2 className="text-lg font-semibold">Textbooks</h2>
+              <p className="text-xs text-slate-500">
+                Download textbook PDFs when a subject and grade has at least two assembled units.
+              </p>
+            </div>
+          </div>
+
+          {textbookGroups.length === 0 ? (
+            <p className="text-sm text-slate-400">Assemble at least two units in a subject and grade to unlock textbook compilation.</p>
+          ) : (
+            <div className="grid gap-3 md:grid-cols-2">
+              {textbookGroups.map((group) => {
+                const busy = downloadingKey === group.key;
+                return (
+                  <div
+                    key={group.key}
+                    className="rounded-2xl border border-slate-800 bg-slate-950/60 p-4"
+                  >
+                    <p className="text-sm font-semibold text-slate-100">
+                      {group.subject.replace(/_/g, " ")} Grade {group.grade}
+                    </p>
+                    <p className="mt-1 text-xs text-slate-500">{group.count} units available</p>
+                    <button
+                      type="button"
+                      onClick={() => handleDownloadTextbook(group.subject, group.grade)}
+                      disabled={busy}
+                      className="mt-3 rounded-xl bg-cyan-400 px-4 py-2 text-sm font-semibold text-slate-950 hover:bg-cyan-300 disabled:cursor-not-allowed disabled:opacity-60"
+                    >
+                      {busy ? "Compiling textbook..." : "Download Textbook PDF"}
+                    </button>
+                  </div>
+                );
+              })}
+            </div>
+          )}
         </section>
 
         <section className="rounded-2xl border border-white/10 bg-slate-900/70 p-6">
