@@ -604,7 +604,7 @@ model BlockScheduleTemplate {
 model PlacementTest {
   id             String    @id @default(cuid())
   studentId      String
-  band           GradeBand
+  band           String
   levelLabel     String
   estimatedGrade Int
   rawScore       Int
@@ -612,10 +612,17 @@ model PlacementTest {
   details        Json?
   questions      Json?
   answers        Json?
+  aiAnalysis     Json?
+  teacherDecision String?
+  teacherGrade   Int?
+  teacherReason  String?
+  reviewedAt     DateTime?
+  reviewedBy     String?
   createdAt      DateTime  @default(now())
   student        Student   @relation(fields: [studentId], references: [id])
 
   @@index([studentId, createdAt])
+  @@index([teacherDecision, createdAt])
 }
 
 /// / ===== AI AGENT MODELS (NEW) =====

@@ -100,6 +100,7 @@ const STUDENT_RECORD = {
   userId: "user-1",
   currentGrade: 6,
   user: { name: "Alice Smith" },
+  placementTests: [],
   enrollments: [
     {
       classId: "class-1",
@@ -280,6 +281,35 @@ describe("GET /api/guardian/dashboard", () => {
     const res = await dashboardGET();
     const data = await res.json();
     expect(data.unreadMessages).toBe(3);
+  });
+
+  it("includes placement history with teacher review status", async () => {
+    mockStudentFindUnique.mockResolvedValue({
+      ...STUDENT_RECORD,
+      placementTests: [
+        {
+          id: "placement-1",
+          estimatedGrade: 6,
+          teacherDecision: "overridden",
+          teacherGrade: 7,
+          levelLabel: "Developing",
+          createdAt: new Date("2026-03-10T00:00:00.000Z"),
+        },
+      ],
+    });
+
+    const res = await dashboardGET();
+    const data = await res.json();
+
+    expect(data.children[0].placementHistory).toEqual([
+      expect.objectContaining({
+        id: "placement-1",
+        estimatedGrade: 6,
+        teacherGrade: 7,
+        status: "overridden",
+        summary: "AI recommended Grade 6, teacher adjusted to Grade 7",
+      }),
+    ]);
   });
 });
 

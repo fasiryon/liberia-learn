@@ -14,6 +14,12 @@ import { StatCard } from "@/components/ui/Card";
 import { logger } from "@/lib/logger";
 import { StudentSidebar } from "@/components/StudentSidebar";
 import { DemoHintsSection } from "@/components/DemoHintsSection";
+import {
+  getPlacementOutcomeText,
+  getPlacementReviewStatus,
+  placementReviewStatusLabels,
+  placementReviewStatusStyles,
+} from "@/lib/placement";
 
 export const dynamic = "force-dynamic";
 
@@ -245,7 +251,7 @@ export default async function DashboardPage() {
                   value={placementGradeLabel}
                   subtitle={
                     latestPlacement
-                      ? `Last test: ${latestPlacement.score}%`
+                      ? `Last test: ${latestPlacement.rawScore}/${latestPlacement.totalQuestions}`
                       : "No test yet"
                   }
                   valueClassName="text-emerald-300"
@@ -295,8 +301,9 @@ export default async function DashboardPage() {
                 </p>
                 {latestPlacement ? (
                   <p className="text-xs text-slate-400 mt-1">
-                    Last placement test: {latestPlacement.track} · Grade{" "}
-                    {latestPlacement.grade} · {latestPlacement.score}% ·{" "}
+                    Last placement test: {latestPlacement.levelLabel} · Grade{" "}
+                    {latestPlacement.estimatedGrade} · {latestPlacement.rawScore}/
+                    {latestPlacement.totalQuestions} ·{" "}
                     {new Date(latestPlacement.createdAt).toLocaleString()}
                   </p>
                 ) : (
@@ -311,6 +318,72 @@ export default async function DashboardPage() {
                 >
                   View placement details →
                 </Link>
+              </div>
+
+              <div className="rounded-2xl border border-slate-800 bg-slate-900/80 p-4">
+                <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                  <div>
+                    <p className="text-[11px] uppercase tracking-wide text-slate-400">
+                      Placement History
+                    </p>
+                    <p className="mt-1 text-xs text-slate-500">
+                      Review AI recommendations and teacher decisions from every placement attempt.
+                    </p>
+                  </div>
+                  <Link
+                    href="/placement"
+                    className="inline-flex rounded-full border border-emerald-500/30 px-3 py-1.5 text-[11px] text-emerald-300 hover:border-emerald-400/40 hover:text-emerald-200"
+                  >
+                    Retake placement
+                  </Link>
+                </div>
+
+                {student.placementTests.length === 0 ? (
+                  <p className="mt-4 text-sm text-slate-400">
+                    No placement history yet. Take the AI placement test to establish your starting grade.
+                  </p>
+                ) : (
+                  <div className="mt-4 space-y-3">
+                    {student.placementTests.map((placement: any) => {
+                      const status = getPlacementReviewStatus(placement.teacherDecision);
+                      return (
+                        <div
+                          key={placement.id}
+                          className="rounded-2xl border border-white/5 bg-slate-950/70 px-4 py-3"
+                        >
+                          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                            <div>
+                              <p className="text-sm font-semibold text-slate-100">
+                                {getPlacementOutcomeText({
+                                  estimatedGrade: placement.estimatedGrade,
+                                  teacherDecision: placement.teacherDecision,
+                                  teacherGrade: placement.teacherGrade,
+                                })}
+                              </p>
+                              <p className="mt-1 text-xs text-slate-400">
+                                {placement.rawScore}/{placement.totalQuestions} correct ·{" "}
+                                {new Date(placement.createdAt).toLocaleDateString("en-LR")}
+                              </p>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <span
+                                className={`rounded-full border px-3 py-1 text-[11px] font-medium ${placementReviewStatusStyles[status]}`}
+                              >
+                                {placementReviewStatusLabels[status]}
+                              </span>
+                              <Link
+                                href="/placement"
+                                className="rounded-full border border-slate-700 px-3 py-1 text-[11px] text-slate-300 hover:text-slate-100"
+                              >
+                                View results
+                              </Link>
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
               </div>
 
               {/* Grades */}
