@@ -50,8 +50,8 @@ async function main() {
     create: {
       id: PLACEMENT_TEST_ID,
       student: { connect: { id: studentId } },
-      band: "G4_6",
-      levelLabel: "Elementary",
+      band: "proficient",
+      levelLabel: "Proficient",
       estimatedGrade: 5,
       rawScore: answers.length,
       totalQuestions: questions.length,
