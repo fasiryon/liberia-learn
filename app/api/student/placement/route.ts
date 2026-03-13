@@ -1,6 +1,7 @@
 // app/api/student/placement/route.ts
 import { NextResponse } from "next/server";
 import { requireRole } from "@/lib/auth";
+import { logAudit } from "@/lib/audit";
 import { prisma } from "@/lib/db";
 
 export async function POST(req: Request) {
@@ -26,10 +27,11 @@ export async function POST(req: Request) {
       details,
       questions,
       answers,
+      aiAnalysis,
     } = body ?? {};
 
     if (
-      !band ||
+      typeof band !== "string" ||
       typeof levelLabel !== "string" ||
       typeof estimatedGrade !== "number" ||
       typeof rawScore !== "number" ||
@@ -51,6 +53,7 @@ export async function POST(req: Request) {
       details: details ?? null,
       questions: questions ?? null,
       answers: answers ?? null,
+      aiAnalysis: aiAnalysis ?? null,
     };
 
     const placement = await prisma.placementTest.create({
@@ -61,6 +64,20 @@ export async function POST(req: Request) {
       where: { id: student.id },
       data: {
         currentGrade: estimatedGrade,
+      },
+    });
+
+    await logAudit({
+      userId: user.id,
+      schoolId: user.schoolId ?? null,
+      action: "student.placement.created",
+      resourceType: "placement_test",
+      resourceId: placement.id,
+      details: {
+        band,
+        estimatedGrade,
+        rawScore,
+        totalQuestions,
       },
     });
 
