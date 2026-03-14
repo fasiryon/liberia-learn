@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { generateAssessmentItems, generateRubric } from "@/lib/curriculum-helpers";
+import { generateAssessmentItems, generateLabs, generateRubric } from "@/lib/curriculum-helpers";
 
 describe("generateAssessmentItems — standardCodes", () => {
   it("attaches provided moeAlignmentCodes to every item", () => {
@@ -27,6 +27,26 @@ describe("generateAssessmentItems — standardCodes", () => {
     for (const item of items) {
       expect(item.standardCodes).toEqual([]);
     }
+  });
+});
+
+describe("generateLabs", () => {
+  it("returns labs for science subjects", () => {
+    const labs = generateLabs(8, "SCIENCE", "Plant Growth");
+    expect(labs.length).toBeGreaterThan(0);
+    expect(labs[0].procedure.length).toBeGreaterThan(0);
+    expect(labs[0].observationForm.length).toBeGreaterThan(0);
+    expect(labs[0].analysisQuestions.length).toBeGreaterThan(0);
+  });
+
+  it("returns no labs for civics subjects", () => {
+    expect(generateLabs(6, "CIVICS", "Local Government")).toEqual([]);
+  });
+
+  it("uses locally available materials and offline-capable walkthroughs", () => {
+    const [lab] = generateLabs(8, "SCIENCE", "Plant Growth");
+    expect(lab.offlineCapable).toBe(true);
+    expect(lab.materialsNeeded.join(" ").toLowerCase()).not.toContain("test tube");
   });
 });
 

@@ -29,6 +29,7 @@ async function findUserForCredentials(credentials: Record<string, string>) {
         hashedPwd: true,
         schoolId: true,
         isPlatformAdmin: true,
+        mustChangePIN: true,
       },
     });
   }
@@ -45,6 +46,7 @@ async function findUserForCredentials(credentials: Record<string, string>) {
         hashedPwd: true,
         schoolId: true,
         isPlatformAdmin: true,
+        mustChangePIN: true,
       },
     });
   }
@@ -62,6 +64,7 @@ async function findUserForCredentials(credentials: Record<string, string>) {
       hashedPwd: true,
       schoolId: true,
       isPlatformAdmin: true,
+      mustChangePIN: true,
     },
   });
 }
@@ -90,6 +93,7 @@ export async function authorizeCredentials(rawCredentials?: RawCredentialInput |
     role: user.role,
     schoolId: user.schoolId ?? null,
     isPlatformAdmin: user.isPlatformAdmin,
+    mustChangePIN: user.mustChangePIN ?? false,
   } as any;
 }
 
@@ -117,6 +121,7 @@ export const authOptions: NextAuthOptions = {
         token.schoolId = (user as any).schoolId ?? null;
         token.isPlatformAdmin = (user as any).isPlatformAdmin ?? false;
         token.loginId = (user as any).loginId ?? null;
+        token.mustChangePIN = (user as any).mustChangePIN ?? false;
       }
       return token;
     },
@@ -128,6 +133,7 @@ export const authOptions: NextAuthOptions = {
         (session.user as any).isPlatformAdmin = (token as any).isPlatformAdmin ?? false;
         (session.user as any).iat = (token as any).iat ?? null;
         (session.user as any).loginId = (token as any).loginId ?? null;
+        (session.user as any).mustChangePIN = (token as any).mustChangePIN ?? false;
       }
       return session;
     },
@@ -144,6 +150,7 @@ export type SessionUser = {
   schoolId?: string | null;
   isPlatformAdmin?: boolean;
   iat?: number | null;
+  mustChangePIN?: boolean;
 };
 
 export async function getOptionalUser(): Promise<SessionUser | null> {
@@ -160,6 +167,7 @@ export async function getOptionalUser(): Promise<SessionUser | null> {
     schoolId: u.schoolId ?? null,
     isPlatformAdmin: u.isPlatformAdmin ?? false,
     iat: typeof u.iat === "number" ? u.iat : null,
+    mustChangePIN: u.mustChangePIN ?? false,
   };
 }
 

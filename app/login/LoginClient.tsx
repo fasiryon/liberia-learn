@@ -21,7 +21,7 @@ type LoginClientProps = {
   demoDefaults: { email: string; password: string } | null;
 };
 
-function defaultRouteForRole(role: string): string {
+function defaultRouteForRole(role: string, mustChangePIN = false): string {
   switch (role) {
     case "ADMIN":
       return "/admin";
@@ -29,6 +29,8 @@ function defaultRouteForRole(role: string): string {
       return "/teacher";
     case "GUARDIAN":
       return "/guardian";
+    case "STUDENT":
+      return mustChangePIN ? "/student/change-pin" : "/dashboard";
     default:
       return "/dashboard";
   }
@@ -40,6 +42,20 @@ function isNextUrlSafeForRole(url: string, role: string): boolean {
   if (role === "TEACHER" && url.startsWith("/admin")) return false;
   if (role === "GUARDIAN" && (url.startsWith("/admin") || url.startsWith("/teacher") || url.startsWith("/platform"))) return false;
   return true;
+}
+
+export function resolvePostLoginDestination(params: {
+  role: string;
+  isPlatformAdmin?: boolean;
+  mustChangePIN?: boolean;
+  nextUrl?: string | null;
+}) {
+  const { role, isPlatformAdmin = false, mustChangePIN = false, nextUrl = null } = params;
+  const safeNext = nextUrl && isNextUrlSafeForRole(nextUrl, role) ? nextUrl : null;
+  if (mustChangePIN && role === "STUDENT") {
+    return "/student/change-pin";
+  }
+  return safeNext || (isPlatformAdmin ? "/platform" : defaultRouteForRole(role, mustChangePIN));
 }
 
 const TOUCH_INPUT = "min-h-11 w-full rounded-xl border border-slate-700 bg-slate-900/70 px-3 py-3 text-base text-slate-50 outline-none placeholder:text-slate-500 focus:border-emerald-400 focus:ring-1 focus:ring-emerald-400/60";
@@ -173,8 +189,13 @@ export default function LoginClient({ showDemoHints, demoGroups, demoDefaults }:
     const session = await getSession();
     const userRole = (session?.user as any)?.role ?? "STUDENT";
     const isPlatformAdmin = (session?.user as any)?.isPlatformAdmin ?? false;
-    const safeNext = nextUrl && isNextUrlSafeForRole(nextUrl, userRole) ? nextUrl : null;
-    const destination = safeNext || (isPlatformAdmin ? "/platform" : defaultRouteForRole(userRole));
+    const mustChangePIN = (session?.user as any)?.mustChangePIN ?? false;
+    const destination = resolvePostLoginDestination({
+      role: userRole,
+      isPlatformAdmin,
+      mustChangePIN,
+      nextUrl,
+    });
     router.push(destination);
   };
 

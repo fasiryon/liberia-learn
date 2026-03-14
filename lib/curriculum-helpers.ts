@@ -14,79 +14,193 @@ export function generateLabs(grade: number, subject: string, topic: string) {
   const labs: Array<{
     id: string;
     title: string;
-    objective: string;
-    materials: string[];
-    steps: string[];
-    assessment: string;
-    safetyNotes?: string;
+    type: "guided_walkthrough" | "2d_simulation" | "3d_environment";
+    durationMinutes: number;
+    subject: string;
+    gradeLevel: number;
+    labObjective: string;
+    materialsNeeded: string[];
+    safetyNotes: string | null;
+    procedure: Array<{
+      stepNumber: number;
+      instruction: string;
+      teacherNote: string | null;
+      durationMinutes: number;
+    }>;
+    observationForm: Array<{
+      field: string;
+      prompt: string;
+      inputType: "text" | "number" | "choice";
+      choices: string[] | null;
+    }>;
+    analysisQuestions: Array<{
+      question: string;
+      expectedAnswer: string;
+      scoringRubric: string;
+    }>;
+    connectionToLesson: string;
+    offlineCapable: boolean;
+    virtualAlternative: string | null;
   }> = [];
 
   const labId = `lab-${subject.toLowerCase()}-g${grade}-${slugify(topic)}`;
 
+  if (subject === "MATH" && grade < 7) {
+    return [];
+  }
+
+  if (["CIVICS", "ARTS", "PE", "CAREER"].includes(subject)) {
+    return [];
+  }
+
+  const buildLocalLab = (params: {
+    idSuffix: string;
+    title: string;
+    objective: string;
+    materials: string[];
+    safetyNotes?: string | null;
+    steps: Array<{ instruction: string; teacherNote?: string | null; durationMinutes: number }>;
+    observationForm: Array<{ field: string; prompt: string; inputType: "text" | "number" | "choice"; choices?: string[] | null }>;
+    analysisQuestions: Array<{ question: string; expectedAnswer: string; scoringRubric: string }>;
+    connectionToLesson: string;
+    virtualAlternative?: string | null;
+  }) => ({
+    id: `${labId}-${params.idSuffix}`,
+    title: params.title,
+    type: "guided_walkthrough" as const,
+    durationMinutes: params.steps.reduce((sum, step) => sum + step.durationMinutes, 0),
+    subject,
+    gradeLevel: grade,
+    labObjective: params.objective,
+    materialsNeeded: params.materials,
+    safetyNotes: params.safetyNotes ?? null,
+    procedure: params.steps.map((step, index) => ({
+      stepNumber: index + 1,
+      instruction: step.instruction,
+      teacherNote: step.teacherNote ?? null,
+      durationMinutes: step.durationMinutes,
+    })),
+    observationForm: params.observationForm.map((field) => ({
+      field: field.field,
+      prompt: field.prompt,
+      inputType: field.inputType,
+      choices: field.choices ?? null,
+    })),
+    analysisQuestions: params.analysisQuestions,
+    connectionToLesson: params.connectionToLesson,
+    offlineCapable: true,
+    virtualAlternative: params.virtualAlternative ?? null,
+  });
+
   if (["MATH", "COMPUTER_SCIENCE", "ENGINEERING"].includes(subject)) {
     labs.push({
-      id: `${labId}-1`,
+      ...buildLocalLab({
+      idSuffix: "1",
       title: `Hands-On ${topic} Activity`,
-      objective: `Students will demonstrate understanding of ${topic} through a practical exercise.`,
-      materials: ["Paper", "Pencils", "Rulers", "Counters or bottle caps"],
+      objective: `Students will demonstrate understanding of ${topic} through a practical exercise grounded in Liberian daily life.`,
+      materials: ["Paper", "Pencils", "Rulers", "Bottle caps", "String"],
       steps: [
-        `Divide students into groups of 3-4.`,
-        `Present the problem: apply ${topic} concepts to a real-world Liberian market scenario.`,
-        `Each group works through the problem using physical counters or drawings.`,
-        `Groups present their solutions to the class.`,
-        `Class discusses different approaches and validates answers.`,
+        { instruction: "Divide students into groups of 3-4 and assign each group a recorder.", teacherNote: "Ensure each group has paper and bottle caps.", durationMinutes: 4 },
+        { instruction: `Present a real Liberian market or workshop problem that requires ${topic}.`, teacherNote: "Use prices, measurements, or counts familiar to students.", durationMinutes: 6 },
+        { instruction: "Students model the problem using bottle caps, string, drawings, or measurement marks.", teacherNote: "Prompt students to explain each step aloud.", durationMinutes: 8 },
+        { instruction: "Groups compare solutions and refine their reasoning.", teacherNote: "Watch for misconceptions and ask probing questions.", durationMinutes: 5 },
+        { instruction: "Each group shares one finding with the class.", teacherNote: "Capture strong explanations on the board.", durationMinutes: 4 },
       ],
-      assessment: "Observe group participation. Check written solutions for correct application of concepts.",
+      observationForm: [
+        { field: "strategy_used", prompt: "What strategy did your group use to solve the task?", inputType: "text" },
+        { field: "result_value", prompt: "What answer or measurement did your group find?", inputType: "number" },
+        { field: "confidence_level", prompt: "How confident is your group in the result?", inputType: "choice", choices: ["Low", "Medium", "High"] },
+      ],
+      analysisQuestions: [
+        {
+          question: `How did the materials help you understand ${topic}?`,
+          expectedAnswer: "Students describe how the concrete model showed the concept clearly.",
+          scoringRubric: "Full credit for a specific explanation linking the materials to the mathematical or design concept.",
+        },
+        {
+          question: "What mistake could another group make on this task, and how would you correct it?",
+          expectedAnswer: "Students identify a likely misconception and explain the correction.",
+          scoringRubric: "Full credit for naming a realistic error and a correct fix.",
+        },
+      ],
+      connectionToLesson: `This lab gives students a concrete way to apply ${topic} before they move to formal classwork.`,
+      virtualAlternative: `If materials are limited, the teacher can use a cached 2D simulation or projected drawing to model ${topic}.`,
+      }),
     });
   }
 
   if (["SCIENCE", "ENGINEERING"].includes(subject)) {
     labs.push({
-      id: `${labId}-sci`,
+      ...buildLocalLab({
+      idSuffix: "sci",
       title: `${topic} Observation Lab`,
-      objective: `Students will observe and record findings related to ${topic}.`,
-      materials: ["Notebook", "Pencil", "Locally available materials", "Measuring tools if available"],
+      objective: `Students will observe and record findings related to ${topic} using locally available materials.`,
+      materials: ["Notebook", "Pencil", "Leaves", "Water", "Stones", "String"],
+      safetyNotes: "Ensure students handle water and natural materials safely and wash hands after the activity.",
       steps: [
-        `Teacher introduces the key concept of ${topic}.`,
-        `Students make predictions about what they expect to observe.`,
-        `Conduct the observation or simple experiment using local materials.`,
-        `Record findings in their notebooks with drawings.`,
-        `Compare predictions to actual results and discuss.`,
+        { instruction: `Introduce the observation focus for ${topic} and explain the investigation question.`, teacherNote: "Ask students to predict what they expect to notice.", durationMinutes: 5 },
+        { instruction: "Students gather or arrange the local materials needed for the investigation.", teacherNote: "Model safe handling and shared use of materials.", durationMinutes: 4 },
+        { instruction: "Students carry out the observation and record what changes or patterns they notice.", teacherNote: "Encourage labelled drawings and measurements.", durationMinutes: 10 },
+        { instruction: "Pairs compare notes and identify one important finding.", teacherNote: "Prompt them to use lesson vocabulary.", durationMinutes: 5 },
+        { instruction: "Class debrief on what the investigation shows.", teacherNote: "Connect the observations back to the main science idea.", durationMinutes: 4 },
       ],
-      assessment: "Review student notebooks for accurate observations and thoughtful comparisons.",
-      safetyNotes: "Ensure students handle materials safely. Supervise any experiments closely.",
+      observationForm: [
+        { field: "prediction", prompt: "What did you predict would happen?", inputType: "text" },
+        { field: "observed_change", prompt: "What did you observe during the investigation?", inputType: "text" },
+        { field: "measurement", prompt: "Record one measurement or count from the lab.", inputType: "number" },
+      ],
+      analysisQuestions: [
+        {
+          question: "What evidence from the lab supports the lesson concept?",
+          expectedAnswer: "Students cite an observation or measurement that connects to the concept.",
+          scoringRubric: "Full credit for a clear link between evidence and the scientific idea.",
+        },
+        {
+          question: "How would you improve this investigation next time?",
+          expectedAnswer: "Students suggest a realistic improvement such as more careful measurement or more trials.",
+          scoringRubric: "Full credit for a specific improvement tied to better evidence.",
+        },
+      ],
+      connectionToLesson: `This lab makes ${topic} visible and discussable through direct observation.`,
+      virtualAlternative: "If a device is available, students can compare their observations to a simple cached 2D simulation.",
+      }),
     });
   }
 
-  if (["LITERACY", "CIVICS", "ARTS"].includes(subject)) {
+  if (subject === "LITERACY") {
     labs.push({
-      id: `${labId}-lit`,
+      ...buildLocalLab({
+      idSuffix: "lit",
       title: `${topic} Discussion & Creative Activity`,
-      objective: `Students will engage with ${topic} through discussion and creative expression.`,
-      materials: ["Paper", "Colored pencils or crayons", "Reading materials"],
+      objective: `Students will investigate ${topic} through reading, discussion, and writing.`,
+      materials: ["Paper", "Pencil", "Reading passage", "Notebook"],
       steps: [
-        `Read aloud or have students read a short passage related to ${topic}.`,
-        `Facilitate a class discussion on key themes.`,
-        `Students create a drawing, poem, or short essay responding to the topic.`,
-        `Share and discuss student work.`,
+        { instruction: `Read or listen to a short passage connected to ${topic}.`, teacherNote: "Pause to clarify unfamiliar words.", durationMinutes: 5 },
+        { instruction: "Students annotate or list key details from the passage.", teacherNote: "Model one example detail on the board.", durationMinutes: 6 },
+        { instruction: "Pairs discuss what the text suggests and gather evidence.", teacherNote: "Encourage students to quote or paraphrase accurately.", durationMinutes: 7 },
+        { instruction: "Students write a brief response or paragraph using their evidence.", teacherNote: "Support sentence starters for struggling writers.", durationMinutes: 8 },
+        { instruction: "Invite a few students to share and compare ideas.", teacherNote: "Highlight strong use of evidence.", durationMinutes: 4 },
       ],
-      assessment: "Evaluate participation in discussion and quality of creative response.",
-    });
-  }
-
-  if (labs.length === 0) {
-    labs.push({
-      id: `${labId}-gen`,
-      title: `Exploring ${topic}`,
-      objective: `Students will explore ${topic} through guided practice.`,
-      materials: ["Paper", "Pencils", "Classroom resources"],
-      steps: [
-        `Teacher reviews key concepts of ${topic}.`,
-        `Students work in pairs on practice problems or discussion questions.`,
-        `Pairs share their answers with the class.`,
-        `Teacher provides feedback and clarification.`,
+      observationForm: [
+        { field: "key_detail", prompt: "Write one important detail from the text.", inputType: "text" },
+        { field: "evidence_used", prompt: "What evidence did you use in your response?", inputType: "text" },
+        { field: "text_clarity", prompt: "How easy was the passage to understand?", inputType: "choice", choices: ["Hard", "Okay", "Easy"] },
       ],
-      assessment: "Check pair work for understanding. Ask follow-up questions to assess comprehension.",
+      analysisQuestions: [
+        {
+          question: "What did the investigation help you understand about the text?",
+          expectedAnswer: "Students explain a theme, idea, or craft move supported by evidence.",
+          scoringRubric: "Full credit for a clear claim supported by a relevant detail.",
+        },
+        {
+          question: "How could you strengthen your written response?",
+          expectedAnswer: "Students mention adding evidence, clearer explanation, or stronger vocabulary.",
+          scoringRubric: "Full credit for identifying a practical revision move.",
+        },
+      ],
+      connectionToLesson: `This writing workshop extends the lesson by making students collect evidence and explain their thinking.`,
+      virtualAlternative: "If devices are available, students can compare notes in a shared offline writing board.",
+      }),
     });
   }
 

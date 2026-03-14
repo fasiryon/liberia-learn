@@ -49,6 +49,10 @@ export async function GET() {
 
     const studentIds = links.map((l) => l.studentId);
     const now = new Date();
+    const startOfDay = new Date(now);
+    startOfDay.setHours(0, 0, 0, 0);
+    const endOfDay = new Date(startOfDay);
+    endOfDay.setDate(endOfDay.getDate() + 1);
     const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
     const thirtyDaysAhead = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000);
 
@@ -93,6 +97,7 @@ export async function GET() {
         const schoolName = primaryEnrollment?.Class?.School?.name ?? null;
         const className = primaryEnrollment?.Class?.name ?? null;
         const classIds = student.enrollments.map((e) => e.classId);
+        const studentUserId = student.userId;
         const placementTests = student.placementTests ?? [];
 
         // ── Recent grades ──────────────────────────────────────────────────
@@ -256,6 +261,100 @@ export async function GET() {
           createdAt: a.updatedAt.toISOString(),
         }));
 
+        const [todayProgress, todayAssignmentSubmissions, todayLabSessions, todayPlacementUpdates, todayGrades] =
+          await Promise.all([
+            prisma.studentProgress.findMany({
+              where: {
+                studentId: studentUserId,
+                completedAt: { gte: startOfDay, lt: endOfDay },
+              },
+              include: {
+                scheduledWork: {
+                  include: {
+                    content: { select: { payload: true } },
+                    class: { select: { subject: true } },
+                  },
+                },
+              },
+              orderBy: { completedAt: "desc" },
+            }),
+            prisma.assignmentSubmission.findMany({
+              where: {
+                studentId,
+                turnedInAt: { gte: startOfDay, lt: endOfDay },
+              },
+              include: {
+                Assignment: {
+                  select: {
+                    title: true,
+                    Class: { select: { subject: true } },
+                  },
+                },
+              },
+              orderBy: { turnedInAt: "desc" },
+            }),
+            prisma.labSession.findMany({
+              where: {
+                studentId: studentUserId,
+                OR: [
+                  { startedAt: { gte: startOfDay, lt: endOfDay } },
+                  { completedAt: { gte: startOfDay, lt: endOfDay } },
+                ],
+              },
+              orderBy: { startedAt: "desc" },
+            }),
+            prisma.placementTest.findMany({
+              where: {
+                studentId,
+                OR: [
+                  { reviewedAt: { gte: startOfDay, lt: endOfDay } },
+                  { createdAt: { gte: startOfDay, lt: endOfDay } },
+                ],
+              },
+              orderBy: { createdAt: "desc" },
+              take: 5,
+            }),
+            prisma.assignmentSubmission.findMany({
+              where: {
+                studentId,
+                gradedAt: { gte: startOfDay, lt: endOfDay },
+                score: { not: null },
+              },
+              include: {
+                Assignment: {
+                  select: {
+                    title: true,
+                  },
+                },
+              },
+              orderBy: { gradedAt: "desc" },
+            }),
+          ]);
+
+        const dailySummary = [
+          ...todayProgress.map((progress) => {
+            const subject = String(progress.scheduledWork.class.subject).replace(/_/g, " ");
+            return `Completed ${subject} lesson`;
+          }),
+          ...todayAssignmentSubmissions.map((submission) => {
+            const subject = String(submission.Assignment.Class.subject).replace(/_/g, " ");
+            return `Submitted ${subject} assignment`;
+          }),
+          ...todayLabSessions.map((session) =>
+            session.score === null
+              ? "Science lab pending review"
+              : `Science lab reviewed with score ${session.score}`
+          ),
+          ...todayGrades.map((submission) => `Received ${submission.score}/100 on ${submission.Assignment.title}`),
+          ...todayPlacementUpdates.map((placement) => {
+            const finalGrade =
+              placement.teacherDecision === "overridden" && placement.teacherGrade != null
+                ? placement.teacherGrade
+                : placement.estimatedGrade;
+            return `Placement updated to Grade ${finalGrade}`;
+          }),
+        ];
+
         return {
           studentId: student.id,
           studentName: student.user.name ?? "Unknown",
@@ -281,6 +380,13 @@ export async function GET() {
           attendance: { presentDays, absentDays, attendanceRate },
           masteryProfile,
           interventionAlerts,
+          todayActivity: {
+            lessonsCompleted: todayProgress.length,
+            assignmentsSubmitted: todayAssignmentSubmissions.length,
+            gradesReceived: todayGrades.length,
+            placementUpdates: todayPlacementUpdates.length,
+            dailySummary,
+          },
         };
       })
     );

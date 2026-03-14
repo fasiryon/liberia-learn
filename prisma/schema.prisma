@@ -20,6 +20,7 @@ model User {
   createdAt           DateTime             @default(now())
   updatedAt           DateTime             @updatedAt
   passwordChangedAt   DateTime?
+  mustChangePIN       Boolean              @default(false)
   schoolId            String?
   isPlatformAdmin     Boolean              @default(false)
   guardianCountryCode String               @default("+231")
@@ -73,6 +74,7 @@ model District {
 model School {
   id                     String                 @id @default(cuid())
   name                   String
+  code                   String?                @unique
   timezone               String                 @default("Africa/Monrovia")
   primaryHex             String?
   secondaryHex           String?
@@ -484,7 +486,11 @@ model AssignmentSubmission {
   assignmentId String
   studentId    String
   turnedInAt   DateTime?
+  content      String?
   score        Int?
+  feedback     String?
+  gradedAt     DateTime?
+  gradedBy     String?
   Assignment   Assignment @relation(fields: [assignmentId], references: [id])
   Student      Student    @relation(fields: [studentId], references: [id])
 
@@ -948,6 +954,8 @@ model StudentProgress {
   scheduledWorkId String
   completedAt     DateTime?
   startedAt       DateTime?
+  exitTicketResponses Json?
+  exitTicketScore Int?
   createdAt       DateTime      @default(now())
   scheduledWork   ScheduledWork @relation(fields: [scheduledWorkId], references: [id])
   student         User          @relation(fields: [studentId], references: [id])
@@ -1222,6 +1230,7 @@ model LabSession {
   observations     Json?
   conclusions      String?
   score            Int?
+  aiAnalysis       Json?
   teacherFeedback  String?
   masteryUpdated   Boolean   @default(false)
   createdAt        DateTime  @default(now())

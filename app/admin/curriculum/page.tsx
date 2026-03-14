@@ -35,6 +35,7 @@ export default function AdminCurriculumPage() {
   const router = useRouter();
 
   const [mode, setMode] = useState<"lesson" | "term_plan" | "unit_plan" | "full_pack">("lesson");
+  const [lessonFormat, setLessonFormat] = useState<"standard" | "block" | "either">("either");
   const [grade, setGrade] = useState(4);
   const [subject, setSubject] = useState("MATH");
   const [topic, setTopic] = useState("");
@@ -79,7 +80,7 @@ export default function AdminCurriculumPage() {
         : "/api/admin/curriculum/generate";
       const payload = mode === "full_pack"
         ? { grade, subject, topic: topic.trim() }
-        : { grade, subject, topic: topic.trim(), mode };
+        : { grade, subject, topic: topic.trim(), mode, lessonFormat };
       const res = await fetch(endpoint, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -209,6 +210,33 @@ export default function AdminCurriculumPage() {
               />
             </div>
           </div>
+
+          {mode === "lesson" && (
+            <div className="space-y-2">
+              <p className="text-xs font-medium text-slate-400">Lesson format</p>
+              <div className="grid gap-3 sm:grid-cols-3">
+                {[
+                  { value: "standard", label: "Standard Period (45 min)", description: "Generate a single 45-minute lesson." },
+                  { value: "block", label: "Block Period (90 min / A-B Day)", description: "Generate a full 90-minute block lesson." },
+                  { value: "either", label: "Both formats", description: "Generate both standard and block versions." },
+                ].map((option) => (
+                  <button
+                    key={option.value}
+                    type="button"
+                    onClick={() => setLessonFormat(option.value as typeof lessonFormat)}
+                    className={`rounded-2xl border px-4 py-3 text-left transition ${
+                      lessonFormat === option.value
+                        ? "border-emerald-400 bg-emerald-500/15 text-emerald-100"
+                        : "border-slate-700 bg-slate-950/80 text-slate-300 hover:border-slate-500"
+                    }`}
+                  >
+                    <span className="block text-sm font-semibold">{option.label}</span>
+                    <span className="mt-1 block text-xs text-slate-400">{option.description}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
 
           <button
             type="submit"
