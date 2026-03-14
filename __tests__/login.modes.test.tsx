@@ -14,7 +14,7 @@ vi.mock("@/components/DemoHints", () => ({
   DemoHints: () => null,
 }));
 
-import LoginClient from "@/app/login/LoginClient";
+import LoginClient, { resolvePostLoginDestination } from "@/app/login/LoginClient";
 import { getGuardianLoginFields, getStudentLoginFields } from "@/lib/login-identifiers";
 
 describe("login modes", () => {
@@ -50,6 +50,16 @@ describe("login modes", () => {
     expect(html).toContain("Use Student ID instead");
     expect(html).toContain("student@school.lr");
     expect(html).toContain("Continue");
+  });
+
+  it("routes students with mustChangePIN to the change-pin page after sign-in", () => {
+    expect(
+      resolvePostLoginDestination({
+        role: "STUDENT",
+        mustChangePIN: true,
+        nextUrl: "/dashboard",
+      })
+    ).toBe("/student/change-pin");
   });
 });
 
