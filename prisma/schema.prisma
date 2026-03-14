@@ -486,7 +486,11 @@ model AssignmentSubmission {
   assignmentId String
   studentId    String
   turnedInAt   DateTime?
+  content      String?
   score        Int?
+  feedback     String?
+  gradedAt     DateTime?
+  gradedBy     String?
   Assignment   Assignment @relation(fields: [assignmentId], references: [id])
   Student      Student    @relation(fields: [studentId], references: [id])
 
