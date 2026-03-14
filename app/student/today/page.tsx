@@ -60,7 +60,7 @@ export default function StudentTodayPage() {
             return (
               <Link
                 key={item.id}
-                href={`/student/work/${item.id}`}
+                href={`/student/lessons/${item.id}`}
                 className="flex items-center gap-4 rounded-2xl border border-white/10 bg-slate-900/70 p-4 hover:border-emerald-500/30 transition-colors"
               >
                 <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-500/20 text-emerald-400 text-sm font-bold">

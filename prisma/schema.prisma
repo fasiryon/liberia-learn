@@ -950,6 +950,8 @@ model StudentProgress {
   scheduledWorkId String
   completedAt     DateTime?
   startedAt       DateTime?
+  exitTicketResponses Json?
+  exitTicketScore Int?
   createdAt       DateTime      @default(now())
   scheduledWork   ScheduledWork @relation(fields: [scheduledWorkId], references: [id])
   student         User          @relation(fields: [studentId], references: [id])
