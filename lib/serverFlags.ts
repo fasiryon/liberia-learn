@@ -225,6 +225,11 @@ export function getAiBudgetMonthlyCap(): number {
   return Number.isFinite(raw) && raw > 0 ? raw : 100;
 }
 
+/** Adaptive learning engine. DEFAULT ON unless explicitly disabled. */
+export function isAdaptiveEngineEnabled(): boolean {
+  return process.env.ENABLE_ADAPTIVE_ENGINE !== "false";
+}
+
 //  Block 21: Classroom Toolkit Flags 
 
 /** Master gate for Classroom Toolkit. DEFAULT OFF. */
