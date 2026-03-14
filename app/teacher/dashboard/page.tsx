@@ -6,6 +6,19 @@ import Link from "next/link";
 type DashboardData = {
   scheduledToday: number;
   completionRateToday: number;
+  assignmentsPendingGrading: number;
+  labsPendingReview: number;
+  todayLessons: Array<{
+    id: string;
+    title: string;
+    className: string;
+    teacherName: string;
+    durationMinutes: number;
+    status: string;
+    startedCount: number;
+    completedCount: number;
+    averageExitTicketScore: number | null;
+  }>;
   recentLessons: Array<{ contentId: string; title: string; status: string; createdAt: string }>;
   classesWithoutLesson: string[];
 };
@@ -43,7 +56,7 @@ export default function TeacherDashboardPage() {
             )}
 
             {/* Stats */}
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
               <div className="rounded-2xl border border-white/10 bg-slate-900/70 p-4 text-center">
                 <p className="text-2xl font-bold text-emerald-400">{data?.scheduledToday || 0}</p>
                 <p className="text-xs text-slate-400">Lessons scheduled today</p>
@@ -52,10 +65,18 @@ export default function TeacherDashboardPage() {
                 <p className="text-2xl font-bold text-violet-400">{data?.completionRateToday || 0}%</p>
                 <p className="text-xs text-slate-400">Completion rate today</p>
               </div>
+              <div className="rounded-2xl border border-white/10 bg-slate-900/70 p-4 text-center">
+                <p className="text-2xl font-bold text-amber-400">{data?.assignmentsPendingGrading || 0}</p>
+                <p className="text-xs text-slate-400">Assignments pending grading</p>
+              </div>
+              <div className="rounded-2xl border border-white/10 bg-slate-900/70 p-4 text-center">
+                <p className="text-2xl font-bold text-cyan-400">{data?.labsPendingReview || 0}</p>
+                <p className="text-xs text-slate-400">Labs pending review</p>
+              </div>
             </div>
 
             {/* Quick actions */}
-            <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
+            <div className="grid grid-cols-2 gap-3 md:grid-cols-5">
               <Link href="/teacher/create-lesson" className="rounded-2xl border border-white/10 bg-slate-900/70 p-4 text-center hover:border-emerald-500/30">
                 <p className="text-sm font-semibold text-emerald-400">Create with AI</p>
               </Link>
@@ -71,7 +92,63 @@ export default function TeacherDashboardPage() {
               <Link href="/teacher/labs" className="rounded-2xl border border-white/10 bg-slate-900/70 p-4 text-center hover:border-emerald-500/30">
                 <p className="text-sm font-semibold text-cyan-400">Review Labs</p>
               </Link>
+              <Link href="/teacher/assignments" className="rounded-2xl border border-white/10 bg-slate-900/70 p-4 text-center hover:border-emerald-500/30">
+                <p className="text-sm font-semibold text-amber-300">Grade Assignments</p>
+              </Link>
             </div>
+
+            <section className="rounded-2xl border border-white/10 bg-slate-900/70 p-5">
+              <div className="mb-3 flex items-center justify-between gap-3">
+                <h2 className="text-sm font-semibold text-slate-300">Today&apos;s Scheduled Lessons</h2>
+                <Link href="/teacher/schedule" className="text-xs text-emerald-300 hover:text-emerald-200">
+                  Open Schedule
+                </Link>
+              </div>
+              {(!data?.todayLessons || data.todayLessons.length === 0) ? (
+                <p className="text-xs text-slate-500">No lessons scheduled for today.</p>
+              ) : (
+                <div className="space-y-3">
+                  {data.todayLessons.map((lesson) => (
+                    <div key={lesson.id} className="rounded-2xl border border-slate-800 bg-slate-950/50 p-4">
+                      <div className="flex flex-wrap items-start justify-between gap-3">
+                        <div>
+                          <p className="text-sm font-semibold text-slate-100">{lesson.title}</p>
+                          <p className="mt-1 text-xs text-slate-400">
+                            {lesson.className} · {lesson.teacherName} · {lesson.durationMinutes}-minute{" "}
+                            {lesson.durationMinutes >= 90 ? "block" : "period"}
+                          </p>
+                        </div>
+                        <span
+                          className={`rounded-full px-2 py-0.5 text-[10px] ${
+                            lesson.status === "delivered"
+                              ? "bg-emerald-500/20 text-emerald-300"
+                              : "bg-amber-500/20 text-amber-300"
+                          }`}
+                        >
+                          {lesson.status}
+                        </span>
+                      </div>
+                      <div className="mt-3 grid grid-cols-3 gap-3 text-center">
+                        <div className="rounded-xl bg-slate-900/70 p-3">
+                          <p className="text-lg font-semibold text-slate-100">{lesson.startedCount}</p>
+                          <p className="text-[11px] text-slate-500">Started</p>
+                        </div>
+                        <div className="rounded-xl bg-slate-900/70 p-3">
+                          <p className="text-lg font-semibold text-slate-100">{lesson.completedCount}</p>
+                          <p className="text-[11px] text-slate-500">Completed</p>
+                        </div>
+                        <div className="rounded-xl bg-slate-900/70 p-3">
+                          <p className="text-lg font-semibold text-slate-100">
+                            {lesson.averageExitTicketScore ?? "—"}
+                          </p>
+                          <p className="text-[11px] text-slate-500">Avg exit ticket</p>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </section>
 
             {/* Recent lessons */}
             <section className="rounded-2xl border border-white/10 bg-slate-900/70 p-5">
