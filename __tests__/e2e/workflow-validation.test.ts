@@ -69,6 +69,7 @@ const mockEnrollmentGroupBy    = vi.hoisted(() => vi.fn());
 const mockStudentFindUnique    = vi.hoisted(() => vi.fn());
 const mockStudentCount         = vi.hoisted(() => vi.fn());
 const mockProgressUpsert       = vi.hoisted(() => vi.fn());
+const mockProgressFindMany     = vi.hoisted(() => vi.fn());
 
 // Prisma — guardian dashboard
 const mockGuardianLinkFindMany = vi.hoisted(() => vi.fn());
@@ -79,6 +80,8 @@ const mockAssignFindMany       = vi.hoisted(() => vi.fn());
 const mockAttendFindMany       = vi.hoisted(() => vi.fn());
 const mockMasteryFindMany      = vi.hoisted(() => vi.fn());
 const mockMsgCount             = vi.hoisted(() => vi.fn());
+const mockPlacementTestFindMany = vi.hoisted(() => vi.fn());
+const mockLabSessionFindMany = vi.hoisted(() => vi.fn());
 
 // Prisma — MOE dashboard
 const mockSchoolCount       = vi.hoisted(() => vi.fn());
@@ -134,11 +137,12 @@ vi.mock("@/lib/db", () => ({
       findUnique: mockStudentFindUnique,
       count:      mockStudentCount,
     },
-    studentProgress:      { upsert: mockProgressUpsert },
+    studentProgress:      { upsert: mockProgressUpsert, findMany: mockProgressFindMany },
     labSession: {
       findUnique: mockLabSessionFindUnique,
       update:     mockLabSessionUpdate,
       count:      mockLabSessionCount,
+      findMany:   mockLabSessionFindMany,
     },
     strandCatalog:        { findFirst: mockStrandFindFirst },
     studentGuardian:      { findMany: mockGuardianLinkFindMany },
@@ -149,6 +153,7 @@ vi.mock("@/lib/db", () => ({
     attendanceRecord:     { findMany: mockAttendFindMany },
     studentMasteryProfile: { findMany: mockMasteryFindMany },
     guardianMessage:      { count: mockMsgCount },
+    placementTest:        { findMany: mockPlacementTestFindMany },
     school:               { count: mockSchoolCount },
     district:             { count: mockDistrictCount },
     interventionLog:      { count: mockInterventionCount },
@@ -646,6 +651,9 @@ describe("Step 5 — Interventions for at-risk students (guardian dashboard inte
     mockHwFindMany.mockResolvedValue([]);
     mockAssignFindMany.mockResolvedValue([]);
     mockAttendFindMany.mockResolvedValue([]);
+    mockProgressFindMany.mockResolvedValue([]);
+    mockLabSessionFindMany.mockResolvedValue([]);
+    mockPlacementTestFindMany.mockResolvedValue([]);
     mockMsgCount.mockResolvedValue(0);
   }
 
@@ -905,6 +913,9 @@ describe("Step 7 — Guardian sees child's progress (GET /api/guardian/dashboard
         { subject: "MATH", strandKey: "algebra_basics", currentScore: 0.68, baselineScore: 0.50 },
       ])
       .mockResolvedValueOnce([]); // no DECAYING/BELOW_PROFICIENT → no alerts
+    mockProgressFindMany.mockResolvedValue([]);
+    mockLabSessionFindMany.mockResolvedValue([]);
+    mockPlacementTestFindMany.mockResolvedValue([]);
     mockMsgCount.mockResolvedValue(2);
   });
 
@@ -1200,6 +1211,9 @@ describe("Multi-school simultaneous validation — 3 concurrent schools (A, B, C
       mockAssignFindMany.mockResolvedValue([]);
       mockAttendFindMany.mockResolvedValue([]);
       mockMasteryFindMany.mockResolvedValue([]);
+      mockProgressFindMany.mockResolvedValue([]);
+      mockLabSessionFindMany.mockResolvedValue([]);
+      mockPlacementTestFindMany.mockResolvedValue([]);
       mockMsgCount.mockResolvedValue(0);
 
       const res = await guardianDashGet();

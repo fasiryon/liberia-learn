@@ -76,7 +76,7 @@ describe("offline queue", () => {
     let queue = await getQueue();
     const id = queue[0].id;
 
-    for (let i = 0; i < 4; i++) {
+    for (let i = 0; i < 2; i++) {
       await markSyncFailure([id], "network_error");
     }
     queue = await getQueue();

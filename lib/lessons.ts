@@ -1,0 +1,60 @@
+type LessonPayload = {
+  body?: string | null;
+  body_standard?: string | null;
+  body_block?: string | null;
+};
+
+export function selectLessonBody(payload: LessonPayload, classFormat?: string | null) {
+  const format = classFormat ?? "standard";
+  if (format === "block_a" || format === "block_b" || format === "block_single") {
+    return payload.body_block ?? payload.body_standard ?? payload.body ?? "";
+  }
+  return payload.body_standard ?? payload.body_block ?? payload.body ?? "";
+}
+
+export function lessonDurationLabel(classFormat?: string | null) {
+  if (classFormat === "block_a" || classFormat === "block_b" || classFormat === "block_single") {
+    return "90-min block (A/B Day)";
+  }
+  return "45-min period";
+}
+
+export function renderSimpleMarkdown(markdown: string) {
+  return markdown
+    .split(/\n{2,}/)
+    .map((block) => block.trim())
+    .filter(Boolean)
+    .map((block) => {
+      if (block.startsWith("### ")) return `<h3>${escapeHtml(block.slice(4))}</h3>`;
+      if (block.startsWith("## ")) return `<h2>${escapeHtml(block.slice(3))}</h2>`;
+      if (block.startsWith("# ")) return `<h1>${escapeHtml(block.slice(2))}</h1>`;
+      if (block.startsWith("- ")) {
+        const items = block
+          .split("\n")
+          .filter((line) => line.trim().startsWith("- "))
+          .map((line) => `<li>${escapeHtml(line.trim().slice(2))}</li>`)
+          .join("");
+        return `<ul>${items}</ul>`;
+      }
+      if (/^\d+\.\s/.test(block)) {
+        const items = block
+          .split("\n")
+          .filter((line) => /^\d+\.\s/.test(line.trim()))
+          .map((line) => line.trim().replace(/^\d+\.\s/, ""))
+          .map((line) => `<li>${escapeHtml(line)}</li>`)
+          .join("");
+        return `<ol>${items}</ol>`;
+      }
+      return `<p>${escapeHtml(block).replace(/\n/g, "<br />")}</p>`;
+    })
+    .join("");
+}
+
+function escapeHtml(value: string) {
+  return value
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}

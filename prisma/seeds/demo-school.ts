@@ -27,10 +27,11 @@ async function main() {
   // ── School ──────────────────────────────────────────────────
   await prisma.school.upsert({
     where: { id: SCHOOL_ID },
-    update: { name: "Monrovia Central School", primaryHex: "#22c55e", secondaryHex: "#0ea5e9" },
+    update: { name: "Monrovia Central School", code: "MCS", primaryHex: "#22c55e", secondaryHex: "#0ea5e9" },
     create: {
       id: SCHOOL_ID,
       name: "Monrovia Central School",
+      code: "MCS",
       timezone: "Africa/Monrovia",
       primaryHex: "#22c55e",
       secondaryHex: "#0ea5e9",

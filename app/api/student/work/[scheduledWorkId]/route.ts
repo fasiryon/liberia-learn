@@ -22,12 +22,12 @@ export async function GET(
         where: { id: scheduledWorkId },
         include: {
           content: {
-            select: { payload: true, subject: true, grade: true, contentType: true },
+            select: { payload: true, subject: true, grade: true, contentType: true, deliveryProfile: true, moeAlignments: true },
           },
-          class: { select: { id: true, schoolId: true } },
+          class: { select: { id: true, schoolId: true, name: true, Teacher: { select: { name: true } }, School: { select: { name: true } } } },
           progress: {
             where: { studentId: user.id },
-            select: { completedAt: true, startedAt: true },
+            select: { completedAt: true, startedAt: true, exitTicketScore: true, exitTicketResponses: true },
           },
         },
       }),
@@ -64,6 +64,7 @@ export async function GET(
     }
 
     const payload = sw.content.payload as any;
+    const deliveryProfile = (sw.content.deliveryProfile as any) ?? payload?.deliveryProfile ?? null;
 
     return NextResponse.json({
       id: sw.id,
@@ -72,10 +73,20 @@ export async function GET(
       grade: sw.content.grade,
       contentType: sw.content.contentType,
       body: payload?.body || payload?.lessons || payload,
+      bodyStandard: payload?.body_standard ?? payload?.body ?? null,
+      bodyBlock: payload?.body_block ?? payload?.body ?? null,
       objectives: payload?.objectives || payload?.learningObjectives || [],
       activities: payload?.activities || [],
       labs: payload?.labs || [],
       durationMins: payload?.durationMins || 45,
+      teacherName: sw.class.Teacher?.name ?? "Teacher",
+      schoolName: sw.class.School?.name ?? "School",
+      className: sw.class.name,
+      classFormat: sw.classFormat ?? "standard",
+      deliveryProfile,
+      moeAlignments: sw.content.moeAlignments ?? [],
+      exitTicketScore: progress?.exitTicketScore ?? null,
+      exitTicketResponses: progress?.exitTicketResponses ?? null,
       status: progress?.completedAt ? "completed" : progress?.startedAt ? "in_progress" : "not_started",
       completedAt: progress?.completedAt || null,
       startedAt: progress?.startedAt || null,

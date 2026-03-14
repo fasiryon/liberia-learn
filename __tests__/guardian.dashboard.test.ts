@@ -35,6 +35,9 @@ const mockHomeworkFindMany = vi.hoisted(() => vi.fn());
 const mockAssignmentFindMany = vi.hoisted(() => vi.fn());
 const mockAttendanceRecordFindMany = vi.hoisted(() => vi.fn());
 const mockStudentMasteryProfileFindMany = vi.hoisted(() => vi.fn());
+const mockStudentProgressFindMany = vi.hoisted(() => vi.fn());
+const mockLabSessionFindMany = vi.hoisted(() => vi.fn());
+const mockPlacementTestFindMany = vi.hoisted(() => vi.fn());
 const mockGuardianMessageCount = vi.hoisted(() => vi.fn());
 const mockGuardianMessageFindMany = vi.hoisted(() => vi.fn());
 const mockGuardianMessageFindFirst = vi.hoisted(() => vi.fn());
@@ -61,6 +64,9 @@ vi.mock("@/lib/db", () => ({
     assignment: { findMany: mockAssignmentFindMany },
     attendanceRecord: { findMany: mockAttendanceRecordFindMany },
     studentMasteryProfile: { findMany: mockStudentMasteryProfileFindMany },
+    studentProgress: { findMany: mockStudentProgressFindMany },
+    labSession: { findMany: mockLabSessionFindMany },
+    placementTest: { findMany: mockPlacementTestFindMany },
     guardianMessage: {
       count: mockGuardianMessageCount,
       findMany: mockGuardianMessageFindMany,
@@ -147,6 +153,9 @@ beforeEach(() => {
   mockAssignmentFindMany.mockResolvedValue([]);
   mockAttendanceRecordFindMany.mockResolvedValue([]);
   mockStudentMasteryProfileFindMany.mockResolvedValue([]);
+  mockStudentProgressFindMany.mockResolvedValue([]);
+  mockLabSessionFindMany.mockResolvedValue([]);
+  mockPlacementTestFindMany.mockResolvedValue([]);
   mockGuardianMessageCount.mockResolvedValue(0);
   mockGuardianMessageFindMany.mockResolvedValue([]);
 });
@@ -281,6 +290,62 @@ describe("GET /api/guardian/dashboard", () => {
     const res = await dashboardGET();
     const data = await res.json();
     expect(data.unreadMessages).toBe(3);
+  });
+
+  it("includes today's real activity summary in dashboard response", async () => {
+    mockStudentProgressFindMany.mockResolvedValue([
+      {
+        scheduledWorkId: "work-1",
+        scheduledWork: {
+          class: { subject: "MATH" },
+          content: { payload: { title: "Fractions" } },
+        },
+      },
+    ]);
+    mockAssignmentSubmissionFindMany
+      .mockResolvedValueOnce([]) // recent grades
+      .mockResolvedValueOnce([
+        {
+          Assignment: {
+            title: "Essay",
+            Class: { subject: "ENGLISH" },
+          },
+        },
+      ])
+      .mockResolvedValueOnce([
+        {
+          score: 92,
+          Assignment: {
+            title: "Essay",
+          },
+        },
+      ]);
+    mockLabSessionFindMany.mockResolvedValue([{ score: null }]);
+    mockPlacementTestFindMany.mockResolvedValue([
+      {
+        estimatedGrade: 6,
+        teacherDecision: "confirmed",
+        teacherGrade: null,
+      },
+    ]);
+
+    const res = await dashboardGET();
+    const data = await res.json();
+    expect(data.children[0].todayActivity).toMatchObject({
+      lessonsCompleted: 1,
+      assignmentsSubmitted: 1,
+      gradesReceived: 1,
+      placementUpdates: 1,
+    });
+    expect(data.children[0].todayActivity.dailySummary).toEqual(
+      expect.arrayContaining([
+        "Completed MATH lesson",
+        "Submitted ENGLISH assignment",
+        "Science lab pending review",
+        "Received 92/100 on Essay",
+        "Placement updated to Grade 6",
+      ])
+    );
   });
 
   it("includes placement history with teacher review status", async () => {

@@ -190,6 +190,8 @@ export async function POST(req: NextRequest) {
       grade: body.gradeLevel,
       subject: body.subject,
       topic: body.objective,
+      contentType: "lesson",
+      lessonFormat: "either",
       moeAlignmentCodes: body.standardCode ? [body.standardCode] : undefined,
       liberiaContext: true,
     });
@@ -201,6 +203,8 @@ export async function POST(req: NextRequest) {
     });
     const estimatedMinutes = deriveEstimatedMinutes({
       body: payload.body,
+      body_standard: payload.body_standard,
+      body_block: payload.body_block,
       deliveryProfile: (payload as any).deliveryProfile ?? null,
     });
 
@@ -222,7 +226,9 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({
       title: payload.title,
-      content: payload.body,
+      content: payload.body_standard ?? payload.body,
+      standardContent: payload.body_standard ?? payload.body,
+      blockContent: payload.body_block ?? null,
       assessmentQuestions,
       estimatedMinutes,
       standardCode: body.standardCode ?? null,

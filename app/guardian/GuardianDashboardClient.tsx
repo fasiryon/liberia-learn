@@ -47,6 +47,13 @@ type DashboardChild = {
   attendance: { presentDays: number; absentDays: number; attendanceRate: number };
   masteryProfile: Array<{ subject: string; strandKey: string; masteryLevel: number; trend: "up" | "down" | "stable" }>;
   interventionAlerts: Array<{ subject: string; strandKey: string; alertType: string; createdAt: string }>;
+  todayActivity: {
+    lessonsCompleted: number;
+    assignmentsSubmitted: number;
+    gradesReceived: number;
+    placementUpdates: number;
+    dailySummary: string[];
+  };
 };
 
 type GuardianDashboardClientProps = {
@@ -285,6 +292,50 @@ export default function GuardianDashboardClient({
               </div>
 
               <div className="space-y-6">
+                <div className="rounded-3xl border border-white/10 bg-slate-900/70 p-6">
+                  <h3 className="text-lg font-semibold text-slate-50">Today&apos;s Activity</h3>
+                  <p className="mt-1 text-sm text-slate-400">
+                    {selectedDashboardChild.studentName}&apos;s activity today.
+                  </p>
+                  <div className="mt-4 grid gap-3 sm:grid-cols-4">
+                    <div className="rounded-2xl bg-slate-950/70 p-4">
+                      <p className="text-xs text-slate-500">Lessons</p>
+                      <p className="mt-2 text-xl font-semibold text-slate-100">
+                        {selectedDashboardChild.todayActivity.lessonsCompleted}
+                      </p>
+                    </div>
+                    <div className="rounded-2xl bg-slate-950/70 p-4">
+                      <p className="text-xs text-slate-500">Assignments</p>
+                      <p className="mt-2 text-xl font-semibold text-slate-100">
+                        {selectedDashboardChild.todayActivity.assignmentsSubmitted}
+                      </p>
+                    </div>
+                    <div className="rounded-2xl bg-slate-950/70 p-4">
+                      <p className="text-xs text-slate-500">Grades</p>
+                      <p className="mt-2 text-xl font-semibold text-slate-100">
+                        {selectedDashboardChild.todayActivity.gradesReceived}
+                      </p>
+                    </div>
+                    <div className="rounded-2xl bg-slate-950/70 p-4">
+                      <p className="text-xs text-slate-500">Placement</p>
+                      <p className="mt-2 text-xl font-semibold text-slate-100">
+                        {selectedDashboardChild.todayActivity.placementUpdates}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="mt-4 space-y-3">
+                    {selectedDashboardChild.todayActivity.dailySummary.length === 0 ? (
+                      <p className="text-sm text-slate-400">No activity recorded yet today.</p>
+                    ) : (
+                      selectedDashboardChild.todayActivity.dailySummary.map((summary) => (
+                        <div key={summary} className="rounded-2xl bg-slate-950/70 p-4 text-sm text-slate-200">
+                          {summary}
+                        </div>
+                      ))
+                    )}
+                  </div>
+                </div>
+
                 <div className="rounded-3xl border border-white/10 bg-slate-900/70 p-6">
                   <h3 className="text-lg font-semibold text-slate-50">Areas Needing Extra Support</h3>
                   <div className="mt-4 space-y-3">

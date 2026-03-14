@@ -1,11 +1,12 @@
 /**
  * lib/offline/offlineQueue.ts
  *
- * Minimal in-memory offline queue for acceptance testing.
+ * Compatibility queue for server routes and acceptance tests.
  *
- * Production offline storage uses lib/offline-queue.ts (idb-keyval / IndexedDB).
- * This module uses a plain Map so it runs in Node.js / Vitest environments
- * where IndexedDB is not available.
+ * Canonical browser offline storage lives in lib/offline-queue.ts
+ * (idb-keyval / IndexedDB). This module stays in-memory so Node.js routes
+ * and Vitest suites can exercise offline event wiring without importing
+ * browser-only storage code.
  *
  * Supported op types (ACTION-OFFLINE-1):
  *   lesson.completed   — student marks a scheduled lesson complete

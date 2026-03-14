@@ -1,4 +1,5 @@
 // app/api/ai/chat/route.ts
+// DEPRECATED: Use /api/student/tutor instead. Kept for backwards compatibility.
 // FIXED:
 //  1) Added in-memory rate limiter (20 req/min per student) -- replace with Upstash later.
 //  2) Requires STUDENT session.

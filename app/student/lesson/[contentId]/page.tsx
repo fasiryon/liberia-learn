@@ -72,7 +72,10 @@ export default function LessonViewerPage() {
 
   const objectives: string[] = Array.isArray(payload?.objectives) ? payload.objectives : [];
   const activities: string[] = Array.isArray(payload?.activities) ? payload.activities : [];
-  const bodyText: string = payload?.body ?? payload?.content ?? "";
+  const isBlockOnly = Boolean(payload?.lessonFormat === "block" && payload?.body_block && !payload?.body_standard);
+  const standardBodyText: string = isBlockOnly ? "" : payload?.body_standard ?? payload?.body ?? payload?.content ?? "";
+  const blockBodyText: string = payload?.body_block ?? "";
+  const hasBothFormats = Boolean(payload?.body_standard && payload?.body_block);
   const moeAlignments: string[] = Array.isArray(metadata?.moeAlignments) ? metadata.moeAlignments : [];
 
   return (
@@ -122,11 +125,39 @@ export default function LessonViewerPage() {
         )}
 
         {/* Body Content */}
-        {bodyText && (
-          <div className="rounded-2xl border border-white/10 bg-slate-900/70 p-5">
-            <div className="prose prose-invert prose-sm max-w-none text-slate-300 leading-relaxed whitespace-pre-line">
-              {bodyText}
-            </div>
+        {(standardBodyText || blockBodyText) && (
+          <div className="space-y-4">
+            {standardBodyText && (
+              <div className="rounded-2xl border border-white/10 bg-slate-900/70 p-5">
+                <div className="mb-3 flex items-center justify-between gap-3">
+                  <h2 className="text-sm font-semibold uppercase tracking-wide text-slate-300">
+                    Standard Period Lesson
+                  </h2>
+                  <span className="rounded-full border border-emerald-400/30 bg-emerald-500/10 px-3 py-1 text-[11px] text-emerald-200">
+                    45 min
+                  </span>
+                </div>
+                <div className="prose prose-invert prose-sm max-w-none whitespace-pre-line text-slate-300 leading-relaxed">
+                  {standardBodyText}
+                </div>
+              </div>
+            )}
+
+            {(hasBothFormats || isBlockOnly) && blockBodyText && (
+              <div className="rounded-2xl border border-cyan-500/20 bg-slate-900/70 p-5">
+                <div className="mb-3 flex items-center justify-between gap-3">
+                  <h2 className="text-sm font-semibold uppercase tracking-wide text-slate-300">
+                    Block Period Lesson
+                  </h2>
+                  <span className="rounded-full border border-cyan-400/30 bg-cyan-500/10 px-3 py-1 text-[11px] text-cyan-200">
+                    90 min / A-B day
+                  </span>
+                </div>
+                <div className="prose prose-invert prose-sm max-w-none whitespace-pre-line text-slate-300 leading-relaxed">
+                  {blockBodyText}
+                </div>
+              </div>
+            )}
           </div>
         )}
 
