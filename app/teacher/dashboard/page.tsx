@@ -8,6 +8,12 @@ type DashboardData = {
   completionRateToday: number;
   assignmentsPendingGrading: number;
   labsPendingReview: number;
+  adaptiveStats: {
+    studentsWithGaps: number;
+    totalGapsDetected: number;
+    avgMasteryScore: number;
+    topWeakStrands: string[];
+  };
   todayLessons: Array<{
     id: string;
     title: string;
@@ -26,6 +32,7 @@ type DashboardData = {
 export default function TeacherDashboardPage() {
   const [data, setData] = useState<DashboardData | null>(null);
   const [loading, setLoading] = useState(true);
+  const adaptiveEnabled = process.env.NEXT_PUBLIC_ENABLE_ADAPTIVE_ENGINE !== "false";
 
   useEffect(() => {
     fetch("/api/teacher/dashboard")
@@ -74,6 +81,49 @@ export default function TeacherDashboardPage() {
                 <p className="text-xs text-slate-400">Labs pending review</p>
               </div>
             </div>
+
+            {adaptiveEnabled && (
+              <section className="rounded-2xl border border-white/10 bg-slate-900/70 p-5">
+                <div className="mb-4 flex items-center justify-between gap-3">
+                  <h2 className="text-sm font-semibold text-slate-300">Adaptive Learning</h2>
+                  <span className="text-xs text-emerald-300">Closed-loop mastery</span>
+                </div>
+                <div className="grid gap-3 md:grid-cols-4">
+                  <div className="rounded-xl bg-slate-950/50 p-4">
+                    <p className="text-2xl font-bold text-emerald-400">
+                      {data?.adaptiveStats?.studentsWithGaps ?? 0}
+                    </p>
+                    <p className="text-xs text-slate-400">Students with gaps</p>
+                  </div>
+                  <div className="rounded-xl bg-slate-950/50 p-4">
+                    <p className="text-2xl font-bold text-amber-300">
+                      {data?.adaptiveStats?.totalGapsDetected ?? 0}
+                    </p>
+                    <p className="text-xs text-slate-400">Total gaps detected</p>
+                  </div>
+                  <div className="rounded-xl bg-slate-950/50 p-4">
+                    <p className="text-2xl font-bold text-cyan-300">
+                      {data?.adaptiveStats?.avgMasteryScore ?? 0}
+                    </p>
+                    <p className="text-xs text-slate-400">Average mastery score</p>
+                  </div>
+                  <div className="rounded-xl bg-slate-950/50 p-4">
+                    <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+                      Top weak strands
+                    </p>
+                    <ul className="mt-2 space-y-1 text-sm text-slate-200">
+                      {(data?.adaptiveStats?.topWeakStrands?.length ?? 0) === 0 ? (
+                        <li className="text-slate-500">No adaptive attempts yet.</li>
+                      ) : (
+                        data?.adaptiveStats?.topWeakStrands?.map((strand) => (
+                          <li key={strand}>{strand}</li>
+                        ))
+                      )}
+                    </ul>
+                  </div>
+                </div>
+              </section>
+            )}
 
             {/* Quick actions */}
             <div className="grid grid-cols-2 gap-3 md:grid-cols-5">
