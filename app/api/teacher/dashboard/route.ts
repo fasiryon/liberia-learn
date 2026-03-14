@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { requireRole } from "@/lib/auth";
 import { prisma } from "@/lib/db";
+import { isAdaptiveEngineEnabled } from "@/lib/serverFlags";
 
 export const dynamic = "force-dynamic";
 
@@ -18,6 +19,22 @@ export async function GET() {
       select: { id: true, name: true },
     });
     const classIds = classes.map((c) => c.id);
+    const adaptiveAttempts = isAdaptiveEngineEnabled()
+      ? await (prisma as any).studentAdaptiveAttempt.findMany({
+          where: {
+            student: {
+              user: {
+                schoolId: user.schoolId!,
+              },
+            },
+          },
+          select: {
+            studentId: true,
+            strandCode: true,
+            score: true,
+          },
+        })
+      : [];
 
     const now = new Date();
     const startOfDay = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()));
@@ -126,6 +143,46 @@ export async function GET() {
       take: 5,
     });
 
+    const adaptiveGroups = new Map<
+      string,
+      { studentId: string; strandCode: string; totalScore: number; count: number }
+    >();
+    for (const attempt of adaptiveAttempts as Array<{
+      studentId: string;
+      strandCode: string;
+      score: number;
+    }>) {
+      const key = `${attempt.studentId}::${attempt.strandCode}`;
+      const current = adaptiveGroups.get(key) ?? {
+        studentId: attempt.studentId,
+        strandCode: attempt.strandCode,
+        totalScore: 0,
+        count: 0,
+      };
+      current.totalScore += attempt.score;
+      current.count += 1;
+      adaptiveGroups.set(key, current);
+    }
+
+    const groupedAdaptive = [...adaptiveGroups.values()].map((entry) => ({
+      studentId: entry.studentId,
+      strandCode: entry.strandCode,
+      averageScore: entry.totalScore / Math.max(entry.count, 1),
+    }));
+    const gaps = groupedAdaptive.filter((entry) => entry.averageScore < 0.7);
+    const studentsWithGaps = new Set(gaps.map((entry) => entry.studentId)).size;
+    const avgMasteryScore =
+      groupedAdaptive.length > 0
+        ? Math.round(
+            (groupedAdaptive.reduce((sum, entry) => sum + entry.averageScore, 0) / groupedAdaptive.length) *
+              100
+          ) / 100
+        : 0;
+    const topWeakStrands = [...gaps]
+      .sort((a, b) => a.averageScore - b.averageScore)
+      .slice(0, 3)
+      .map((entry) => entry.strandCode);
+
     return NextResponse.json({
       scheduledToday: todayWork.length,
       completionRateToday: completionRate,
@@ -158,8 +215,15 @@ export async function GET() {
         status: l.status,
         createdAt: l.createdAt,
       })),
+      adaptiveStats: {
+        studentsWithGaps,
+        totalGapsDetected: gaps.length,
+        avgMasteryScore,
+        topWeakStrands,
+      },
     });
   } catch (err: any) {
+    console.error("[teacher.dashboard.GET]", err);
     return NextResponse.json({ error: err.message }, { status: err?.status || 500 });
   }
 }
