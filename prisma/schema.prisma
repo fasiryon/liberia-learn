@@ -20,6 +20,7 @@ model User {
   createdAt           DateTime             @default(now())
   updatedAt           DateTime             @updatedAt
   passwordChangedAt   DateTime?
+  mustChangePIN       Boolean              @default(false)
   schoolId            String?
   isPlatformAdmin     Boolean              @default(false)
   guardianCountryCode String               @default("+231")

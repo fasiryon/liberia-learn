@@ -86,6 +86,17 @@ export async function middleware(req: NextRequest) {
     return NextResponse.redirect(url);
   }
 
+  if (
+    (token as any).role === "STUDENT" &&
+    (token as any).mustChangePIN === true &&
+    pathname !== "/student/change-pin" &&
+    !pathname.startsWith("/api/student/change-pin")
+  ) {
+    const url = req.nextUrl.clone();
+    url.pathname = "/student/change-pin";
+    return NextResponse.redirect(url);
+  }
+
   return NextResponse.next();
 }
 

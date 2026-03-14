@@ -139,6 +139,7 @@ export async function POST(req: Request) {
         name: `${firstName} ${lastName}`.trim(),
         role: "STUDENT",
         hashedPwd,
+        mustChangePIN: true,
         schoolId: user.schoolId,
         guardianCountryCode: "+231",
         guardianPhone: phone || null,

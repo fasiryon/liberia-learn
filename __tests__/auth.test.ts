@@ -75,13 +75,14 @@ describe("auth helpers", () => {
       hashedPwd: "hashed-pin",
       schoolId: "school-1",
       isPlatformAdmin: false,
+      mustChangePIN: true,
     } as any);
     mockCompare.mockResolvedValue(true as never);
 
     const { authorizeCredentials } = await import("@/lib/auth");
     const user = await authorizeCredentials({ studentId: "lbr-2024-001", password: "1234" });
 
-    expect(user).toMatchObject({ id: "student-user-1", loginId: "LBR-2024-001", role: "STUDENT" });
+    expect(user).toMatchObject({ id: "student-user-1", loginId: "LBR-2024-001", role: "STUDENT", mustChangePIN: true });
     expect(mockUserFindFirst).toHaveBeenCalledWith(expect.objectContaining({ where: { loginId: "LBR-2024-001" } }));
   });
 
