@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { get, set, del } from "idb-keyval";
+import { enqueueOfflineRequest } from "@/lib/offline-queue";
 
 type ProcedureStep = {
   stepNumber: number;
@@ -115,6 +116,12 @@ export function LabSessionClient({ lab, sessionId, initialCompleted }: LabSessio
     if (typeof navigator !== "undefined" && !navigator.onLine) {
       await set(draftKey(sessionId), { observations, analysisAnswers });
       await set(pendingKey(sessionId), payload);
+      await enqueueOfflineRequest({
+        type: "lab-submission",
+        endpoint: `/api/student/labs/${lab.labId}/session`,
+        payload,
+        dedupeKey: `lab-submission:${sessionId}`,
+      });
       setStatusMessage("Lab saved offline. Will sync when you reconnect.");
       return;
     }
