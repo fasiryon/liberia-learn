@@ -11,6 +11,7 @@ const LINKS = [
   { href: "/teacher/messages", label: "Messages", badgeKey: "messages" },
   { href: "/teacher/delivery-report", label: "Delivery Report" },
   { href: "/teacher/schedule", label: "Schedule" },
+  { href: "/teacher/labs", label: "Labs" },
   { href: "/teacher/students", label: "Students" },
   { href: "/teacher/placements", label: "Placements" },
 ];

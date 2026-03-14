@@ -68,6 +68,9 @@ export default function TeacherDashboardPage() {
               <Link href="/teacher/curriculum" className="rounded-2xl border border-white/10 bg-slate-900/70 p-4 text-center hover:border-emerald-500/30">
                 <p className="text-sm font-semibold text-sky-400">Curriculum</p>
               </Link>
+              <Link href="/teacher/labs" className="rounded-2xl border border-white/10 bg-slate-900/70 p-4 text-center hover:border-emerald-500/30">
+                <p className="text-sm font-semibold text-cyan-400">Review Labs</p>
+              </Link>
             </div>
 
             {/* Recent lessons */}
