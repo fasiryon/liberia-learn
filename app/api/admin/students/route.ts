@@ -6,7 +6,8 @@ import { randomUUID } from "crypto";
 import { z } from "zod";
 import bcrypt from "bcryptjs";
 import { generatePin } from "@/lib/credentials";
-import { normalizeCredentialPhone, normalizeLoginId, slugifyLoginSeed } from "@/lib/login-identifiers";
+import { normalizeCredentialPhone, slugifyLoginSeed } from "@/lib/login-identifiers";
+import { generateStudentId } from "@/lib/studentId";
 
 export const dynamic = "force-dynamic";
 
@@ -70,21 +71,6 @@ const CreateSchema = z.object({
   phone: z.string().optional(),
 });
 
-async function buildUniqueLoginId(preferred: string | undefined, fallbackSeed: string) {
-  const base = normalizeLoginId(preferred && preferred.trim() ? preferred : fallbackSeed);
-  let candidate = base;
-  let attempt = 1;
-
-  while (attempt <= 10) {
-    const existing = await prisma.user.findFirst({ where: { loginId: candidate }, select: { id: true } });
-    if (!existing) return candidate;
-    attempt += 1;
-    candidate = `${base}-${attempt}`;
-  }
-
-  return `${base}-${Date.now().toString().slice(-4)}`;
-}
-
 export async function POST(req: Request) {
   const traceId = randomUUID();
   try {
@@ -99,14 +85,38 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Validation failed", issues: parsed.error.flatten() }, { status: 400 });
     }
 
-    const { firstName, lastName, grade, classId, studentId, email, phone } = parsed.data;
+    const { firstName, lastName, grade, classId, email, phone } = parsed.data;
 
-    const cls = await prisma.class.findUnique({ where: { id: classId }, select: { id: true, schoolId: true } });
+    const [cls, school, existingStudentCount] = await Promise.all([
+      prisma.class.findUnique({ where: { id: classId }, select: { id: true, schoolId: true } }),
+      prisma.school.findUnique({ where: { id: user.schoolId }, select: { id: true, code: true } }),
+      prisma.user.count({ where: { schoolId: user.schoolId, role: "STUDENT" } }),
+    ]);
+
     if (!cls || cls.schoolId !== user.schoolId) {
       return NextResponse.json({ error: "Invalid class" }, { status: 400 });
     }
 
-    const loginId = await buildUniqueLoginId(studentId, `LBR-${new Date().getFullYear()}-${slugifyLoginSeed(`${firstName}-${lastName}`) || Date.now().toString().slice(-4)}`);
+    if (!school?.code) {
+      return NextResponse.json({ error: "School code is required before creating student accounts" }, { status: 400 });
+    }
+
+    let sequence = existingStudentCount + 1;
+    let loginId = generateStudentId({
+      schoolCode: school.code,
+      year: new Date().getFullYear(),
+      sequence,
+    });
+
+    while (await prisma.user.findFirst({ where: { loginId }, select: { id: true } })) {
+      sequence += 1;
+      loginId = generateStudentId({
+        schoolCode: school.code,
+        year: new Date().getFullYear(),
+        sequence,
+      });
+    }
+
     const baseEmailLocal = slugifyLoginSeed(loginId) || `student-${Date.now()}`;
     let candidate = (email ?? `${baseEmailLocal}@student.local`).toLowerCase();
 

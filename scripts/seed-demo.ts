@@ -327,10 +327,11 @@ async function seedSchool(
   // ── School ────────────────────────────────────────────────────────────────
   await prisma.school.upsert({
     where: { id: schoolId },
-    update: { name },
+    update: { name, code: code.toUpperCase() },
     create: {
       id: schoolId,
       name,
+      code: code.toUpperCase(),
       county,
       district: districtId,
       districtId,

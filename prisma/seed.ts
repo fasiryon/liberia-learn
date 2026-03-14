@@ -53,6 +53,7 @@ async function main() {
     create: {
       id: "school_mca",
       name: "Monrovia Central Academy",
+      code: "MCA",
       county: "Montserrado",
       district: "Greater Monrovia",
       contactName: "James Kollie",
@@ -160,6 +161,7 @@ async function main() {
     create: {
       id: "school_pcs",
       name: "Paynesville Community School",
+      code: "PCS",
       county: "Montserrado",
       district: "Paynesville",
       contactName: "Grace Tokpah",
@@ -237,6 +239,7 @@ async function main() {
     create: {
       id: "school_krs",
       name: "Kakata Rural School",
+      code: "KRS",
       county: "Margibi",
       district: "Kakata",
       contactName: "Moses Karnga",
