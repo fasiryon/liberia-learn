@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 
 import { lessonDurationLabel, renderSimpleMarkdown, selectLessonBody } from "@/lib/lessons";
+import { enqueueOfflineRequest } from "@/lib/offline-queue";
 
 type ExitTicketQuestion = {
   question: string;
@@ -100,6 +101,25 @@ export default function LessonDeliveryClient({ lessonId }: { lessonId: string })
     setTutorLoading(true);
 
     try {
+      if (typeof navigator !== "undefined" && !navigator.onLine) {
+        await enqueueOfflineRequest({
+          type: "tutor-interaction",
+          endpoint: "/api/student/tutor",
+          payload: {
+            subject: lesson.subject,
+            strandKey: lesson.subject.toLowerCase(),
+            requestType: "explain",
+            message: prompt,
+          },
+          dedupeKey: `tutor:${lesson.id}:${prompt}`,
+        });
+        setTutorMessages((current) => [
+          ...current,
+          { role: "assistant", text: "You are offline. Your question has been saved and will sync when you reconnect." },
+        ]);
+        return;
+      }
+
       const response = await fetch("/api/student/tutor", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -132,6 +152,16 @@ export default function LessonDeliveryClient({ lessonId }: { lessonId: string })
         questionIndex: index,
         answer: answers[index] ?? null,
       }));
+      if (typeof navigator !== "undefined" && !navigator.onLine) {
+        await enqueueOfflineRequest({
+          type: "lesson-complete",
+          endpoint: `/api/student/lessons/${lesson.id}/complete`,
+          payload: { exitTicketAnswers },
+          dedupeKey: `lesson-complete:${lesson.id}`,
+        });
+        setSubmitMessage("Saved offline. Will sync when you reconnect.");
+        return;
+      }
       const response = await fetch(`/api/student/lessons/${lesson.id}/complete`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },

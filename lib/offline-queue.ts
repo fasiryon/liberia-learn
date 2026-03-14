@@ -12,6 +12,11 @@ const MAX_BACKOFF_MS = 5 * 60 * 1000;
 
 export type QueueItem = {
   id: string;
+  type?: "lesson-complete" | "assignment-submission" | "lab-submission" | "tutor-interaction";
+  endpoint?: string;
+  payload?: Record<string, unknown>;
+  queuedAt?: string;
+  retryCount?: number;
   opId?: string;
   entity?: "studentProgress" | "attendance" | "submission";
   scheduledWorkId: string;
@@ -49,6 +54,58 @@ function queueKey(partition?: SessionPartitionInput) {
   return `${QUEUE_KEY_PREFIX}${resolveSessionPartition(partition).key}`;
 }
 
+export async function enqueueOfflineRequest(
+  item: {
+    type: "lesson-complete" | "assignment-submission" | "lab-submission" | "tutor-interaction";
+    endpoint: string;
+    payload: Record<string, unknown>;
+    dedupeKey: string;
+  },
+  partition?: SessionPartitionInput
+): Promise<QueueItem> {
+  const queue = await getQueue(partition);
+  const existing = queue.find(
+    (entry) =>
+      entry.type === item.type &&
+      entry.endpoint === item.endpoint &&
+      entry.opId === item.dedupeKey &&
+      entry.status !== "failed"
+  );
+  if (existing) {
+    existing.payload = item.payload;
+    existing.retryCount = 0;
+    existing.attempts = 0;
+    existing.updatedAt = nowIso();
+    existing.nextRetryAt = null;
+    existing.status = "pending";
+    await set(queueKey(partition), queue);
+    return existing;
+  }
+
+  const created: QueueItem = {
+    id: typeof crypto !== "undefined" && "randomUUID" in crypto ? crypto.randomUUID() : `${Date.now()}-${Math.random()}`,
+    type: item.type,
+    endpoint: item.endpoint,
+    payload: item.payload,
+    queuedAt: nowIso(),
+    retryCount: 0,
+    opId: item.dedupeKey,
+    entity: "submission",
+    scheduledWorkId: String(item.payload.scheduledWorkId ?? item.payload.assignmentId ?? item.payload.sessionId ?? item.dedupeKey),
+    completedAt: String(item.payload.completedAt ?? nowIso()),
+    attempts: 0,
+    nextRetryAt: null,
+    status: "pending",
+    lastError: null,
+    conflict: null,
+    createdAt: nowIso(),
+    updatedAt: nowIso(),
+  };
+  queue.push(created);
+  await set(queueKey(partition), queue);
+  return created;
+}
+
 export async function addToQueue(
   scheduledWorkId: string,
   completedAt: string,
@@ -62,32 +119,19 @@ export async function enqueueCompletion(
   completedAt: string,
   partition?: SessionPartitionInput
 ): Promise<QueueItem> {
-  const queue = await getQueue(partition);
-  const existing = queue.find((q) => q.scheduledWorkId === scheduledWorkId && q.status !== "failed");
-  if (existing) {
-    existing.completedAt = completedAt;
-    existing.updatedAt = nowIso();
-    await set(queueKey(partition), queue);
-    return existing;
-  }
-
-  const item: QueueItem = {
-    id: typeof crypto !== "undefined" && "randomUUID" in crypto ? crypto.randomUUID() : `${Date.now()}-${Math.random()}`,
-    opId: undefined,
-    entity: "studentProgress",
-    scheduledWorkId,
-    completedAt,
-    attempts: 0,
-    nextRetryAt: null,
-    status: "pending",
-    lastError: null,
-    conflict: null,
-    createdAt: nowIso(),
-    updatedAt: nowIso(),
-  };
-  queue.push(item);
-  await set(queueKey(partition), queue);
-  return item;
+  const entry = await enqueueOfflineRequest(
+    {
+      type: "lesson-complete",
+      endpoint: `/api/student/lessons/${scheduledWorkId}/complete`,
+      payload: { scheduledWorkId, completedAt },
+      dedupeKey: `lesson-complete:${scheduledWorkId}`,
+    },
+    partition
+  );
+  entry.entity = "studentProgress";
+  entry.scheduledWorkId = scheduledWorkId;
+  entry.completedAt = completedAt;
+  return entry;
 }
 
 export async function getQueue(partition?: SessionPartitionInput): Promise<QueueItem[]> {
@@ -126,14 +170,15 @@ export async function markSyncFailure(
     if (!ids.includes(item.id)) continue;
     if (item.status === "conflict") continue;
     item.attempts += 1;
+    item.retryCount = (item.retryCount ?? item.attempts) + 1;
     item.lastError = error;
     item.updatedAt = nowIso();
-    if (item.attempts >= MAX_ATTEMPTS) {
+    if ((item.retryCount ?? item.attempts) >= 3) {
       item.status = "failed";
       item.nextRetryAt = null;
     } else {
       item.status = "pending";
-      const backoff = computeBackoff(item.attempts);
+      const backoff = computeBackoff(item.retryCount ?? item.attempts);
       item.nextRetryAt = new Date(now + backoff).toISOString();
     }
   }

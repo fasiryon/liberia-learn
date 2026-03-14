@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { enqueueOfflineRequest } from "@/lib/offline-queue";
 
 type AssignmentSubmissionClientProps = {
   assignmentId: string;
@@ -25,6 +26,17 @@ export default function AssignmentSubmissionClient(props: AssignmentSubmissionCl
     setStatus(null);
 
     try {
+      if (typeof navigator !== "undefined" && !navigator.onLine) {
+        await enqueueOfflineRequest({
+          type: "assignment-submission",
+          endpoint: `/api/student/assignments/${props.assignmentId}/submit`,
+          payload: { content },
+          dedupeKey: `assignment-submission:${props.assignmentId}`,
+        });
+        setStatus("Saved offline. Will submit when you reconnect.");
+        return;
+      }
+
       const response = await fetch(`/api/student/assignments/${props.assignmentId}/submit`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },

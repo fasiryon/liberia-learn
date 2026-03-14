@@ -5,11 +5,7 @@ import {
   getReadyQueue,
   markSyncFailure,
   markSyncSuccess,
-  markSyncConflict,
   getQueueStats,
-  retryConflicts,
-  discardConflicts,
-  clearQueue,
 } from "@/lib/offline-queue";
 import { getCacheStats, purgeExpiredPacks, purgePartitionPacks } from "@/lib/offline-cache";
 import { detectAndSetActiveSessionPartition, type SessionPartition } from "@/lib/offline-session";
@@ -47,45 +43,28 @@ export default function SyncManager() {
 
     setSyncing(true);
     try {
-      const res = await fetch("/api/student/sync", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          items: queue,
-          queueStats: {
-            pending: stats.queuePending,
-            conflicts: stats.queueConflicts,
-            deadLetter: stats.queueDeadLetter,
-          },
-        }),
-      });
-      const data = await res.json();
-      if (res.ok) {
-        if (Array.isArray(data.results)) {
-          const successIds = data.results
-            .filter((r: any) => r.status === "synced")
-            .map((r: any) => r.opId ?? r.id);
-          const failedIds = data.results
-            .filter((r: any) => r.status === "skipped")
-            .map((r: any) => r.opId ?? r.id);
-          const conflictItems = data.results
-            .filter((r: any) => r.status === "conflict")
-            .map((r: any) => ({
-              id: r.opId ?? r.id,
-              entity: r.entity,
-              serverState: r.serverState,
-              clientState: r.clientState,
-              resolutionHint: r.resolutionHint,
-            }));
-          await markSyncSuccess(successIds, partition ?? undefined);
-          await markSyncFailure(failedIds, "server_error", partition ?? undefined);
-          await markSyncConflict(conflictItems, partition ?? undefined);
-        } else {
-          await clearQueue(partition ?? undefined);
+      const successIds: string[] = [];
+      const failedIds: string[] = [];
+
+      for (const item of queue) {
+        try {
+          const res = await fetch(item.endpoint ?? "/api/student/sync", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(item.payload ?? {}),
+          });
+
+          if (res.ok) successIds.push(item.id);
+          else failedIds.push(item.id);
+        } catch {
+          failedIds.push(item.id);
         }
-        setSyncResult(`${data.synced ?? 0} lesson(s) synced`);
-        setTimeout(() => setSyncResult(null), 5000);
       }
+
+      await markSyncSuccess(successIds, partition ?? undefined);
+      await markSyncFailure(failedIds, "server_error", partition ?? undefined);
+      setSyncResult(`${successIds.length} items synced successfully`);
+      setTimeout(() => setSyncResult(null), 5000);
     } catch {
       await markSyncFailure(queue.map((q) => q.id), "network_error", partition ?? undefined);
     } finally {
@@ -116,8 +95,6 @@ export default function SyncManager() {
     refreshStats(partition);
   }, [syncing, syncResult, partition]);
 
-  const conflictCount = stats.queueConflicts;
-
   return (
     <div className="fixed bottom-4 right-4 z-50">
       {syncing && (
@@ -147,32 +124,6 @@ export default function SyncManager() {
           Purge cache
         </button>
       </div>
-      {conflictCount > 0 && (
-        <div className="mt-2 rounded-xl bg-red-500/20 border border-red-500/30 px-4 py-2 text-sm text-red-300">
-          {conflictCount} conflict(s) need attention.
-          <div className="mt-2 flex gap-2">
-            <button
-              className="px-3 py-1 rounded-md bg-red-600/40 hover:bg-red-600/60 text-xs"
-              onClick={async () => {
-                await retryConflicts(undefined, partition ?? undefined);
-                await refreshStats(partition);
-                if (navigator.onLine) doSync();
-              }}
-            >
-              Retry
-            </button>
-            <button
-              className="px-3 py-1 rounded-md bg-slate-700/60 hover:bg-slate-700 text-xs"
-              onClick={async () => {
-                await discardConflicts(undefined, partition ?? undefined);
-                await refreshStats(partition);
-              }}
-            >
-              Discard
-            </button>
-          </div>
-        </div>
-      )}
     </div>
   );
 }

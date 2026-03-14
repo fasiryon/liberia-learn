@@ -6,7 +6,7 @@ const SYNC_TAG = "liberialearn-sync";
 const QUEUE_PREFIX = "liberialearn_offline_queue::";
 const IDB_NAME = "keyval-store";
 const IDB_STORE = "keyval";
-const MAX_ATTEMPTS = 5;
+const MAX_ATTEMPTS = 3;
 const BASE_BACKOFF_MS = 5000;
 const MAX_BACKOFF_MS = 5 * 60 * 1000;
 
@@ -97,96 +97,51 @@ function isReady(item) {
   return Date.parse(item.nextRetryAt) <= Date.now();
 }
 
-function applySyncResults(queue, results) {
-  const resultById = new Map();
-  (results || []).forEach((result) => {
-    const key = result.opId || result.id;
-    if (key) {
-      resultById.set(key, result);
-    }
-  });
-
-  const nextQueue = [];
-  for (const item of queue) {
-    const result = resultById.get(item.id) || resultById.get(item.opId);
-    if (!result) {
-      nextQueue.push(item);
-      continue;
-    }
-
-    if (result.status === "synced") {
-      continue;
-    }
-
-    if (result.status === "conflict") {
-      nextQueue.push({
-        ...item,
-        status: "conflict",
-        nextRetryAt: null,
-        conflict: {
-          entity: result.entity,
-          serverState: result.serverState,
-          clientState: result.clientState,
-          resolutionHint: result.resolutionHint,
-        },
-        updatedAt: new Date().toISOString(),
-      });
-      continue;
-    }
-
-    const attempts = (item.attempts || 0) + 1;
-    nextQueue.push({
-      ...item,
-      attempts,
-      status: attempts >= MAX_ATTEMPTS ? "failed" : "pending",
-      lastError: "server_error",
-      nextRetryAt:
-        attempts >= MAX_ATTEMPTS ? null : new Date(Date.now() + computeBackoff(attempts)).toISOString(),
-      updatedAt: new Date().toISOString(),
-    });
-  }
-
-  return nextQueue;
-}
-
 async function flushOfflineQueue() {
   const entries = await readAllQueueEntries();
+  let syncedCount = 0;
   for (const entry of entries) {
     const readyItems = entry.queue.filter(isReady);
     if (readyItems.length === 0) {
       continue;
     }
 
-    try {
-      const response = await fetch("/api/student/sync", {
-        method: "POST",
-        credentials: "include",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          items: readyItems,
-          queueStats: {
-            pending: entry.queue.filter((item) => item.status === "pending").length,
-            conflicts: entry.queue.filter((item) => item.status === "conflict").length,
-            deadLetter: entry.queue.filter((item) => item.status === "failed").length,
-          },
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error(`Sync request failed with status ${response.status}`);
+    const nextQueue = [...entry.queue];
+    for (const item of readyItems) {
+      try {
+        const response = await fetch(item.endpoint || "/api/student/sync", {
+          method: "POST",
+          credentials: "include",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(item.payload || {}),
+        });
+        if (!response.ok) {
+          throw new Error(`Sync request failed with status ${response.status}`);
+        }
+        syncedCount += 1;
+        const index = nextQueue.findIndex((candidate) => candidate.id === item.id);
+        if (index >= 0) nextQueue.splice(index, 1);
+      } catch (error) {
+        console.warn("[SW] Background sync failed", error);
+        const index = nextQueue.findIndex((candidate) => candidate.id === item.id);
+        if (index < 0) continue;
+        const retryCount = (nextQueue[index].retryCount || nextQueue[index].attempts || 0) + 1;
+        nextQueue[index] = {
+          ...nextQueue[index],
+          retryCount,
+          attempts: retryCount,
+          status: retryCount >= MAX_ATTEMPTS ? "failed" : "pending",
+          nextRetryAt:
+            retryCount >= MAX_ATTEMPTS ? null : new Date(Date.now() + computeBackoff(retryCount)).toISOString(),
+          updatedAt: new Date().toISOString(),
+        };
       }
-
-      const payload = await response.json().catch(() => ({}));
-      const nextQueue = Array.isArray(payload.results)
-        ? applySyncResults(entry.queue, payload.results)
-        : entry.queue.filter((item) => !readyItems.some((ready) => ready.id === item.id));
-      await writeQueueEntry(entry.key, nextQueue);
-    } catch (error) {
-      console.warn("[SW] Background sync failed", error);
     }
+    await writeQueueEntry(entry.key, nextQueue);
   }
+
+  const clients = await self.clients.matchAll({ type: "window", includeUncontrolled: true });
+  clients.forEach((client) => client.postMessage({ type: "offline-sync-complete", syncedCount }));
 }
 
 async function networkFirst(request) {
