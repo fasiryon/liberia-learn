@@ -44,6 +44,7 @@ describe("POST /api/demo/reset", () => {
   });
 
   it("returns 403 when demo mode is disabled", async () => {
+    vi.resetModules();
     process.env.DEMO_MODE = "false";
     const { POST } = await import("@/app/api/demo/reset/route");
     const response = await POST(new Request("http://localhost/api/demo/reset", { method: "POST" }));

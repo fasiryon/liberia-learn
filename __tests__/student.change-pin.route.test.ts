@@ -41,6 +41,7 @@ describe("POST /api/student/change-pin", () => {
   });
 
   it("returns the placement path when the student has not completed placement", async () => {
+    vi.resetModules();
     mockStudentFindFirst.mockResolvedValue({ id: "student-1", placementTests: [] });
     const { POST } = await import("@/app/api/student/change-pin/route");
 
