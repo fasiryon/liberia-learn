@@ -155,6 +155,7 @@ model Student {
   homeworkSubmissions   HomeworkSubmission[]
   mastery               MasteryRecord[]
   masteryProfiles       StudentMasteryProfile[]
+  adaptiveAttempts      StudentAdaptiveAttempt[]
   placementTests        PlacementTest[]
   portfolioItems        PortfolioItem[]
   reviews               ReviewSchedule[]
@@ -961,6 +962,21 @@ model StudentProgress {
   student         User          @relation(fields: [studentId], references: [id])
 
   @@unique([studentId, scheduledWorkId])
+}
+
+model StudentAdaptiveAttempt {
+  id             String   @id @default(cuid())
+  studentId      String
+  strandCode     String
+  subject        String
+  grade          Int
+  score          Float
+  difficultyTier String
+  completedAt    DateTime @default(now())
+  student        Student  @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  @@index([studentId, strandCode])
+  @@index([studentId, completedAt])
 }
 
 /// / ===== Platform Transfer Tokens =====
