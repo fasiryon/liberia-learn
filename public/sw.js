@@ -172,9 +172,9 @@ async function networkFirst(request) {
 }
 
 self.addEventListener("fetch", (event) => {
-  if (event.request.method !== "GET") {
-    return;
-  }
+  const url = new URL(event.request.url);
+  if (event.request.method !== "GET") return;
+  if (url.pathname.startsWith("/moe/") || url.pathname.startsWith("/api/auth")) return;
 
   event.respondWith(
     networkFirst(event.request).catch(
