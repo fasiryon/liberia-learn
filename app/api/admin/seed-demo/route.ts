@@ -2,11 +2,24 @@ import { NextResponse } from "next/server";
 import { requireRole } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 
-const DEMO_SCHOOL_ID = "demo-school-monrovia";
+function getConfiguredDemoSchoolId() {
+  return (process.env.DEMO_SCHOOL_IDS ?? "")
+    .split(",")
+    .map((value) => value.trim())
+    .find(Boolean);
+}
 
 export async function POST() {
   try {
     const user = await requireRole("ADMIN");
+    const demoSchoolId = getConfiguredDemoSchoolId();
+
+    if (!demoSchoolId) {
+      return NextResponse.json(
+        { error: "DEMO_SCHOOL_IDS not configured" },
+        { status: 400 }
+      );
+    }
 
     // Determine schoolId: use session if present, else try DB, else fall back to demo school
     let schoolId: string | null = (user.schoolId as string) ?? null;
@@ -20,15 +33,15 @@ export async function POST() {
     if (!schoolId) {
       // Auto-attach to demo school if it exists
       const demoSchool = await prisma.school.findUnique({
-        where: { id: DEMO_SCHOOL_ID },
+        where: { id: demoSchoolId },
         select: { id: true },
       });
       if (demoSchool) {
         await prisma.user.update({
           where: { id: user.id },
-          data: { schoolId: DEMO_SCHOOL_ID },
+          data: { schoolId: demoSchoolId },
         });
-        schoolId = DEMO_SCHOOL_ID;
+        schoolId = demoSchoolId;
       }
     }
 
