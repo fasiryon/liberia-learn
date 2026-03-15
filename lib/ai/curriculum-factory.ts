@@ -29,12 +29,23 @@ function getLessonWordLimit(
   contentType: string
 ): number {
   if (contentType === "lesson") {
+    if (format === "either") return 3600;
     if (format === "block") return 2200;
     return 1400;
   }
   if (contentType === "full_pack") return 3000;
   if (contentType === "term_plan") return 1800;
   return 1000;
+}
+
+function getGenerationMaxTokens(
+  format: "standard" | "block" | "either",
+  contentType: string
+): number {
+  if (contentType !== "lesson") return 2500;
+  if (format === "either") return 6000;
+  if (format === "block") return 4000;
+  return 3000;
 }
 
 function buildLessonBodyPrompt(format: "standard" | "block" | "either"): string {
@@ -115,6 +126,26 @@ function buildLessonBodyPrompt(format: "standard" | "block" | "either"): string 
 ${blockTemplate}
 - Generate both body_standard and body_block.
 - Set body to the same content as body_standard for compatibility.`;
+}
+
+function buildDepthPrompt(format: "standard" | "block" | "either"): string {
+  if (format === "standard") {
+    return `
+- body and body_standard must each be at least 1000 words.
+- Each section must contain full teacher-ready explanations, worked examples, practice, and answer support.`;
+  }
+
+  if (format === "block") {
+    return `
+- body and body_block must each be at least 1800 words.
+- Each section must contain full teacher-ready explanations, worked examples, practice, lab/activity detail, and answer support.`;
+  }
+
+  return `
+- body_standard must be at least 1000 words.
+- body_block must be at least 1800 words.
+- body must match body_standard for compatibility.
+- Both versions must be fully developed, not abbreviated summaries.`;
 }
 
 function shouldGenerateLabs(subject: string, grade: number): boolean {
@@ -252,6 +283,7 @@ export async function generateCurriculumPayload(
     : "";
 
   const lessonBodyHint = buildLessonBodyPrompt(lessonFormat);
+  const depthPrompt = buildDepthPrompt(lessonFormat);
   const labPrompt = buildLabPrompt(input.subject, input.grade, lessonFormat);
 
   const baseJsonSchema = `{
@@ -315,6 +347,7 @@ Rules:
 - body/body_standard/body_block must be detailed educational content suitable for a Grade ${input.grade} student.
 - activities should be practical and doable in a Liberian classroom.${liberiaHint}${readingHint}${moeHint}${toneHint}${deliveryProfileHint}
 ${labPrompt}
+${depthPrompt}
 ${lessonBodyHint}`;
 
   const userPrompt = `Generate a ${lessonFormat} format ${input.subject} lesson for Grade ${input.grade} on the topic: "${input.topic}". Keep the content classroom-ready and teachable.`;
@@ -324,8 +357,8 @@ ${lessonBodyHint}`;
       { role: "system", content: systemPrompt },
       { role: "user", content: userPrompt },
     ],
-    maxTokens: 2500,
-    forceSmartTier: true,
+    maxTokens: getGenerationMaxTokens(lessonFormat, input.contentType ?? "lesson"),
+    forceSmartTier: input.forceSmartTier ?? true,
   });
 
   let raw: unknown;

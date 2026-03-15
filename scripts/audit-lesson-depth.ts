@@ -35,11 +35,27 @@ function countSections(text: string | undefined) {
   return (text.match(/^##\s+/gm) ?? []).length;
 }
 
+function countLessonWords(payload: LessonPayload) {
+  const standard = payload.body_standard;
+  const block = payload.body_block;
+  const primary = payload.body;
+
+  if (standard && block) {
+    return countWords(standard) + countWords(block);
+  }
+
+  if (primary && standard && primary.trim() === standard.trim()) {
+    return countWords(standard);
+  }
+
+  return countWords(block ?? standard ?? primary);
+}
+
 async function main() {
   const lessons = await prisma.curriculumContent.findMany({
     where: {
       contentType: "lesson",
-      status: "published",
+      status: "APPROVED",
     },
     select: {
       subject: true,
@@ -56,7 +72,7 @@ async function main() {
     const bodyStandard = payload.body_standard ?? payload.body;
     const bodyBlock = payload.body_block;
     const primaryBody = bodyBlock && countWords(bodyBlock) > countWords(bodyStandard) ? bodyBlock : bodyStandard;
-    const words = countWords(primaryBody);
+    const words = countLessonWords(payload);
     const sections = countSections(primaryBody);
     const labs = Array.isArray(payload.labs) ? payload.labs : [];
     const deliveryProfile =
@@ -81,7 +97,10 @@ async function main() {
   console.table(rows);
 
   const productionReady = rows.filter((row) => row.Words >= 800 && row.Sections >= 5).length;
+  const totalWords = rows.reduce((sum, row) => sum + row.Words, 0);
+  const averageWordCount = rows.length > 0 ? Math.round(totalWords / rows.length) : 0;
   console.log(`${productionReady}/${rows.length} lessons are production-ready`);
+  console.log(`Average word count: ${averageWordCount}`);
 }
 
 main()
