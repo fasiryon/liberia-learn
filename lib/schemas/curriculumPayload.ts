@@ -175,6 +175,7 @@ export const GenerateInputSchema = z.object({
   maxWords: z.number().int().positive().optional(),
   lessonFormat: z.enum(["standard", "block", "either"]).optional().default("standard"),
   liberiaContext: z.boolean().default(true),
+  forceSmartTier: z.boolean().optional(),
 });
 
 export type GenerateInput = z.input<typeof GenerateInputSchema>;
