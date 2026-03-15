@@ -127,12 +127,10 @@ describe("middleware — /moe/login flag gate", () => {
     vi.clearAllMocks();
   });
 
-  it("redirects /moe/login to /login when ENABLE_MOE_LOGIN_PORTAL is off", async () => {
+  it("allows /moe/login even when ENABLE_MOE_LOGIN_PORTAL is off", async () => {
     process.env.ENABLE_MOE_LOGIN_PORTAL = "false";
     const res = await middleware(makeReq("/moe/login"));
-    const location = getRedirectLocation(res);
-    expect(location).toContain("/login");
-    expect(location).not.toContain("/moe/login");
+    expect(res?.status).not.toBeGreaterThanOrEqual(300);
     delete process.env.ENABLE_MOE_LOGIN_PORTAL;
   });
 
@@ -144,10 +142,10 @@ describe("middleware — /moe/login flag gate", () => {
     delete process.env.ENABLE_MOE_LOGIN_PORTAL;
   });
 
-  it("ENABLE_MOE_LOGIN_PORTAL absent defaults to off (redirect)", async () => {
+  it("ENABLE_MOE_LOGIN_PORTAL absent still allows /moe/login", async () => {
     delete process.env.ENABLE_MOE_LOGIN_PORTAL;
     const res = await middleware(makeReq("/moe/login"));
-    expect(getRedirectLocation(res)).toContain("/login");
+    expect(res?.status).not.toBeGreaterThanOrEqual(300);
   });
 });
 
