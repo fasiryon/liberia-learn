@@ -1,7 +1,8 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
+import { useEffect, useMemo, useState } from "react";
+import { Card, StatCard } from "@/components/ui/Card";
 
 type DashboardData = {
   schools: number;
@@ -79,7 +80,7 @@ type PlacementData = {
 };
 
 function formatPct(value: number | null | undefined) {
-  if (value == null) return "—";
+  if (value == null) return "--";
   return `${value.toFixed(1)}%`;
 }
 
@@ -110,7 +111,7 @@ export default function MoeDashboardPage() {
       .then(([dash, comp, inter, placementData]) => {
         if (!active) return;
         if (dash?.error || comp?.error || inter?.error || placementData?.error) {
-          setError("Unable to load data — please refresh.");
+          setError("Unable to load data. Please refresh.");
           return;
         }
         setDashboard(dash);
@@ -120,7 +121,7 @@ export default function MoeDashboardPage() {
       })
       .catch(() => {
         if (!active) return;
-        setError("Unable to load data — please refresh.");
+        setError("Unable to load data. Please refresh.");
       })
       .finally(() => {
         if (!active) return;
@@ -185,376 +186,458 @@ export default function MoeDashboardPage() {
   const districtRows = compliance?.byDistrict ?? [];
 
   return (
-    <div className="space-y-8">
-      <div className="flex flex-col gap-2">
-        <p className="text-xs uppercase tracking-[0.2em] text-emerald-300">
-          National Overview
-        </p>
-        <h1 className="text-3xl font-semibold text-slate-100">
-          LiberiaLearn National Dashboard
-        </h1>
-        <p className="text-sm text-slate-400">
-          Aggregated indicators across all districts. No student-level data.
-        </p>
-      </div>
+    <main className="min-h-screen bg-slate-950 text-slate-50">
+      <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+        <div className="relative overflow-hidden rounded-3xl border border-slate-800 bg-slate-950/90 px-6 py-8 shadow-2xl shadow-slate-950/30 sm:px-8">
+          <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_left,_rgba(16,185,129,0.14),_transparent_32%),radial-gradient(circle_at_top_right,_rgba(59,130,246,0.12),_transparent_26%)]" />
 
-      {error && (
-        <div className="rounded-2xl border border-red-500/30 bg-red-500/10 p-4 text-sm text-red-300">
-          {error}
-        </div>
-      )}
-
-      {/* Stat cards */}
-      <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-        {loading ? (
-          Array.from({ length: 4 }).map((_, idx) => (
-            <div
-              key={idx}
-              className="rounded-2xl border border-white/10 bg-white/5 p-5 animate-pulse"
-            >
-              <div className="space-y-3">
-                <div className="h-3 w-1/2 rounded bg-white/10" />
-                <div className="h-7 w-24 rounded bg-white/10" />
-                <div className="h-3 w-2/3 rounded bg-white/10" />
-              </div>
-            </div>
-          ))
-        ) : (
-          <>
-            <div className="rounded-2xl border border-white/10 bg-white/5 p-5">
-              <p className="text-xs text-slate-400">Schools Active</p>
-              <p className="mt-2 text-3xl font-semibold text-emerald-200">
-                {dashboard?.schools ?? 0}
+          <div className="relative space-y-8">
+            <div className="flex flex-col gap-3">
+              <p className="text-[11px] font-medium uppercase tracking-[0.28em] text-emerald-300">
+                National Overview
               </p>
-              <p className="text-xs text-slate-500">
-                across {dashboard?.districts ?? 0} districts
-              </p>
-            </div>
-            <div className="rounded-2xl border border-white/10 bg-white/5 p-5">
-              <p className="text-xs text-slate-400">Lessons Delivered</p>
-              <p className="mt-2 text-3xl font-semibold text-cyan-200">
-                {dashboard?.scheduledWork?.delivered ?? 0}
-              </p>
-              <p className="text-xs text-slate-500">this month</p>
-            </div>
-            <div className="rounded-2xl border border-white/10 bg-white/5 p-5">
-              <p className="text-xs text-slate-400">National Mastery Rate</p>
-              <div className="mt-2 flex items-baseline gap-2">
-                <p className="text-3xl font-semibold text-amber-200">
-                  {formatPct(compliance?.national?.compliancePct)}
+              <div className="space-y-2">
+                <h1 className="text-3xl font-semibold tracking-tight text-slate-50 sm:text-4xl">
+                  LiberiaLearn National Dashboard
+                </h1>
+                <p className="max-w-3xl text-sm text-slate-400 sm:text-base">
+                  Aggregated indicators across all districts, aligned to the same
+                  operational patterns used across the platform. No student-level data.
                 </p>
-                <span className="text-xs text-emerald-300">▲</span>
               </div>
-              <p className="text-xs text-slate-500">delivery compliance proxy</p>
             </div>
-            <div className="rounded-2xl border border-white/10 bg-white/5 p-5">
-              <p className="text-xs text-slate-400">Active Interventions</p>
-              <p className="mt-2 text-3xl font-semibold text-rose-200">
-                {dashboard?.interventionsLast30Days ?? 0}
-              </p>
-              <p className="text-xs text-slate-500">students at risk</p>
-            </div>
-          </>
-        )}
-      </section>
 
-      {/* District Performance */}
-      <section className="rounded-2xl border border-white/10 bg-white/5 p-6">
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <div>
-            <h2 className="text-lg font-semibold">District Performance</h2>
-            <p className="text-xs text-slate-500">Delivery compliance by district</p>
-          </div>
-          <Link
-            href="/moe/districts"
-            className="rounded-full border border-white/10 px-3 py-1.5 text-xs text-slate-300 hover:text-slate-100"
-          >
-            View all districts
-          </Link>
-        </div>
-
-        {loading ? (
-          <div className="mt-4 space-y-2">
-            {Array.from({ length: 5 }).map((_, idx) => (
-              <div key={idx} className="h-10 rounded-xl bg-white/5 animate-pulse" />
-            ))}
-          </div>
-        ) : districtRows.length === 0 ? (
-          <div className="mt-4 rounded-xl border border-white/10 bg-black/10 p-6 text-sm text-slate-400">
-            No data available yet. District compliance will appear once lessons are delivered.
-          </div>
-        ) : (
-          <div className="mt-4 overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="border-b border-white/10 text-left text-xs text-slate-500">
-                  <th className="pb-2 pr-4">District</th>
-                  <th className="pb-2 pr-4">Schools</th>
-                  <th className="pb-2 pr-4">Students</th>
-                  <th className="pb-2 pr-4">Lessons</th>
-                  <th className="pb-2 pr-4">Mastery Rate</th>
-                  <th className="pb-2">Status</th>
-                </tr>
-              </thead>
-              <tbody>
-                {districtRows.map((d) => {
-                  const status =
-                    d.compliancePct == null
-                      ? "No data"
-                      : d.compliancePct >= 85
-                      ? "On Track"
-                      : d.compliancePct >= 60
-                      ? "Watch"
-                      : "At Risk";
-                  return (
-                    <tr key={d.districtId} className="border-b border-white/5 text-slate-200">
-                      <td className="py-3 pr-4 font-medium">
-                        <Link
-                          href={`/moe/districts/${d.districtId}`}
-                          className="hover:text-emerald-200"
-                        >
-                          {d.districtName}
-                        </Link>
-                      </td>
-                      <td className="py-3 pr-4">{d.schoolCount}</td>
-                      <td className="py-3 pr-4 text-slate-500">—</td>
-                      <td className="py-3 pr-4">{d.scheduledWorkDelivered}/{d.scheduledWorkTotal}</td>
-                      <td className="py-3 pr-4">{formatPct(d.compliancePct)}</td>
-                      <td className="py-3">
-                        <span className="rounded-full bg-white/5 px-2 py-0.5 text-[11px] text-slate-300">
-                          {status}
-                        </span>
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </div>
-        )}
-      </section>
-
-      {/* Compliance Summary */}
-      <section className="rounded-2xl border border-white/10 bg-white/5 p-6">
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <div>
-            <h2 className="text-lg font-semibold">Compliance Summary</h2>
-            <p className="text-xs text-slate-500">
-              National delivery compliance and reporting signals
-            </p>
-          </div>
-          <div className="flex items-center gap-3">
-            {exportError && (
-              <span className="text-xs text-red-300">{exportError}</span>
+            {error && (
+              <div className="rounded-2xl border border-amber-500/30 bg-amber-500/10 p-4 text-sm text-amber-100">
+                <p className="font-medium text-amber-200">Unable to load dashboard data</p>
+                <p className="mt-1 text-amber-100/90">{error}</p>
+              </div>
             )}
-            <button
-              onClick={handleExport}
-              disabled={exporting}
-              className="rounded-full bg-emerald-500 px-4 py-1.5 text-xs font-semibold text-slate-950 hover:bg-emerald-400 disabled:opacity-60"
-            >
-              {exporting ? "Exporting..." : "Export Compliance Report (CSV)"}
-            </button>
-          </div>
-        </div>
 
-        {loading ? (
-          <div className="mt-4 space-y-3">
-            {Array.from({ length: 3 }).map((_, idx) => (
-              <div key={idx} className="h-12 rounded-xl bg-white/5 animate-pulse" />
-            ))}
-          </div>
-        ) : (
-          <div className="mt-4 grid gap-4 md:grid-cols-3">
-            <div className="rounded-xl border border-white/10 bg-black/10 p-4">
-              <p className="text-xs text-slate-500">Reporting Rate</p>
-              <p className="mt-2 text-2xl font-semibold text-emerald-200">
-                {formatPct(compliance?.national?.compliancePct)}
-              </p>
-              <div className="mt-3 h-2 rounded-full bg-white/10">
-                <div
-                  className="h-2 rounded-full bg-emerald-400"
-                  style={{
-                    width: `${Math.min(
-                      100,
-                      Math.max(0, compliance?.national?.compliancePct ?? 0)
-                    )}%`,
-                  }}
-                />
-              </div>
-            </div>
-            <div className="rounded-xl border border-white/10 bg-black/10 p-4">
-              <p className="text-xs text-slate-500">Late Submissions</p>
-              <p className="mt-2 text-2xl font-semibold text-amber-200">
-                {(compliance?.national?.scheduledWorkTotal ?? 0) -
-                  (compliance?.national?.scheduledWorkDelivered ?? 0)}
-              </p>
-              <p className="text-xs text-slate-500">lessons not delivered</p>
-            </div>
-            <div className="rounded-xl border border-white/10 bg-black/10 p-4">
-              <p className="text-xs text-slate-500">Fully Compliant Schools</p>
-              <p className="mt-2 text-2xl font-semibold text-cyan-200">
-                {fullyCompliantDistricts}
-              </p>
-              <p className="text-xs text-slate-500">districts at 100%</p>
-            </div>
-          </div>
-        )}
-      </section>
+            <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+              {loading ? (
+                Array.from({ length: 4 }).map((_, idx) => (
+                  <Card key={idx} className="animate-pulse p-5">
+                    <div className="space-y-3">
+                      <div className="h-3 w-1/2 rounded bg-slate-800" />
+                      <div className="h-8 w-24 rounded bg-slate-800" />
+                      <div className="h-3 w-2/3 rounded bg-slate-800" />
+                    </div>
+                  </Card>
+                ))
+              ) : (
+                <>
+                  <StatCard
+                    label="Schools Active"
+                    value={dashboard?.schools ?? 0}
+                    subtitle={`Across ${dashboard?.districts ?? 0} districts`}
+                    valueClassName="text-emerald-300"
+                  />
+                  <StatCard
+                    label="Lessons Delivered"
+                    value={dashboard?.scheduledWork?.delivered ?? 0}
+                    subtitle="This month"
+                    valueClassName="text-cyan-300"
+                  />
+                  <Card className="p-5">
+                    <p className="text-[11px] font-medium uppercase tracking-wide text-slate-400">
+                      National Mastery Rate
+                    </p>
+                    <div className="mt-2 flex items-end gap-2">
+                      <p className="text-3xl font-semibold text-amber-300">
+                        {formatPct(compliance?.national?.compliancePct)}
+                      </p>
+                      <span className="pb-1 text-xs font-medium uppercase tracking-wide text-emerald-300">
+                        Up
+                      </span>
+                    </div>
+                    <p className="mt-1 text-[11px] text-slate-500">
+                      Delivery compliance proxy
+                    </p>
+                  </Card>
+                  <StatCard
+                    label="Active Interventions"
+                    value={dashboard?.interventionsLast30Days ?? 0}
+                    subtitle="Students at risk"
+                    valueClassName="text-rose-300"
+                  />
+                </>
+              )}
+            </section>
 
-      {/* Interventions Summary */}
-      {interventions && (
-        <section className="rounded-2xl border border-white/10 bg-white/5 p-6">
-          <h2 className="text-lg font-semibold">Interventions Snapshot</h2>
-          <p className="text-xs text-slate-500">
-            National aggregates (last 30 days)
-          </p>
-          <div className="mt-4 grid gap-4 md:grid-cols-3">
-            <div className="rounded-xl border border-white/10 bg-black/10 p-4">
-              <p className="text-xs text-slate-500">Total Active</p>
-              <p className="mt-2 text-2xl font-semibold text-rose-200">
-                {interventions.national.totalInterventions ?? 0}
-              </p>
-            </div>
-            <div className="rounded-xl border border-white/10 bg-black/10 p-4">
-              <p className="text-xs text-slate-500">Avg Outcome Delta</p>
-              <p className="mt-2 text-2xl font-semibold text-emerald-200">
-                {interventions.national.avgOutcomeDelta ?? "—"}
-              </p>
-            </div>
-            <div className="rounded-xl border border-white/10 bg-black/10 p-4">
-              <p className="text-xs text-slate-500">Avg Effect Size</p>
-              <p className="mt-2 text-2xl font-semibold text-amber-200">
-                {interventions.national.avgOutcomeEffectSize ?? "—"}
-              </p>
-            </div>
-          </div>
-        </section>
-      )}
+            <section className="rounded-2xl border border-slate-800 bg-slate-900/80 p-5">
+              <div className="flex flex-wrap items-start justify-between gap-3">
+                <div>
+                  <p className="text-[11px] font-medium uppercase tracking-[0.22em] text-slate-500">
+                    Districts
+                  </p>
+                  <h2 className="mt-2 text-xl font-semibold text-slate-100">
+                    District Performance
+                  </h2>
+                  <p className="mt-1 text-sm text-slate-400">
+                    Delivery compliance by district
+                  </p>
+                </div>
+                <Link
+                  href="/moe/districts"
+                  className="rounded-full border border-slate-700 bg-slate-950/60 px-3 py-1.5 text-xs font-medium text-slate-300 transition-colors hover:border-slate-600 hover:bg-slate-900 hover:text-slate-100"
+                >
+                  View all districts
+                </Link>
+              </div>
 
-      <section className="rounded-2xl border border-white/10 bg-white/5 p-6">
-        <h2 className="text-lg font-semibold">Exam System</h2>
-        <p className="text-xs text-slate-500">National exam publication, pass rate, certification, and integrity signals</p>
-
-        {loading ? (
-          <div className="mt-4 grid gap-4 md:grid-cols-4">
-            {Array.from({ length: 4 }).map((_, index) => (
-              <div key={index} className="h-24 animate-pulse rounded-xl bg-white/5" />
-            ))}
-          </div>
-        ) : (
-          <>
-            <div className="mt-4 grid gap-4 md:grid-cols-4">
-              <div className="rounded-xl border border-white/10 bg-black/10 p-4">
-                <p className="text-xs text-slate-500">Published Exams</p>
-                <p className="mt-2 text-2xl font-semibold text-emerald-200">{dashboard?.examStats.totalExamsPublished ?? 0}</p>
-              </div>
-              <div className="rounded-xl border border-white/10 bg-black/10 p-4">
-                <p className="text-xs text-slate-500">National Pass Rate</p>
-                <p className="mt-2 text-2xl font-semibold text-cyan-200">{formatPct(dashboard?.examStats.nationalPassRate)}</p>
-              </div>
-              <div className="rounded-xl border border-white/10 bg-black/10 p-4">
-                <p className="text-xs text-slate-500">Certifications Issued</p>
-                <p className="mt-2 text-2xl font-semibold text-amber-200">{dashboard?.examStats.certificationIssued ?? 0}</p>
-              </div>
-              <div className="rounded-xl border border-white/10 bg-black/10 p-4">
-                <p className="text-xs text-slate-500">Flagged Attempts</p>
-                <p className="mt-2 text-2xl font-semibold text-rose-200">{dashboard?.examStats.flaggedAttempts ?? 0}</p>
-              </div>
-            </div>
-
-            <div className="mt-6 overflow-x-auto">
-              <table className="w-full text-sm">
-                <thead>
-                  <tr className="border-b border-white/10 text-left text-xs uppercase tracking-wide text-slate-500">
-                    <th className="pb-2 pr-4">Subject</th>
-                    <th className="pb-2 pr-4">Attempts</th>
-                    <th className="pb-2 pr-4">Pass Rate</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {(dashboard?.examStats.subjectBreakdown ?? []).map((row) => (
-                    <tr key={row.subject} className="border-b border-white/5 text-slate-200">
-                      <td className="py-3 pr-4 font-medium">{row.subject}</td>
-                      <td className="py-3 pr-4">{row.attempts}</td>
-                      <td className="py-3 pr-4">{formatPct(row.passRate)}</td>
-                    </tr>
+              {loading ? (
+                <div className="mt-4 space-y-2">
+                  {Array.from({ length: 5 }).map((_, idx) => (
+                    <div key={idx} className="h-12 animate-pulse rounded-xl bg-slate-800/70" />
                   ))}
-                </tbody>
-              </table>
-            </div>
-          </>
-        )}
-      </section>
+                </div>
+              ) : districtRows.length === 0 ? (
+                <div className="mt-4 rounded-2xl border border-dashed border-slate-700 bg-slate-950/70 p-6 text-sm text-slate-400">
+                  No data available yet. District compliance will appear once lessons are delivered.
+                </div>
+              ) : (
+                <div className="mt-5 overflow-hidden rounded-2xl border border-slate-800">
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-sm">
+                      <thead className="bg-slate-950/80">
+                        <tr className="text-left text-[11px] font-medium uppercase tracking-[0.2em] text-slate-500">
+                          <th className="px-4 py-3">District</th>
+                          <th className="px-4 py-3">Schools</th>
+                          <th className="px-4 py-3">Students</th>
+                          <th className="px-4 py-3">Lessons</th>
+                          <th className="px-4 py-3">Mastery Rate</th>
+                          <th className="px-4 py-3">Status</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-slate-800 bg-slate-900/60">
+                        {districtRows.map((d) => {
+                          const status =
+                            d.compliancePct == null
+                              ? "No data"
+                              : d.compliancePct >= 85
+                                ? "On Track"
+                                : d.compliancePct >= 60
+                                  ? "Watch"
+                                  : "At Risk";
+                          const statusClassName =
+                            status === "On Track"
+                              ? "border-emerald-500/20 bg-emerald-500/10 text-emerald-200"
+                              : status === "Watch"
+                                ? "border-amber-500/20 bg-amber-500/10 text-amber-200"
+                                : status === "At Risk"
+                                  ? "border-rose-500/20 bg-rose-500/10 text-rose-200"
+                                  : "border-slate-700 bg-slate-800/70 text-slate-300";
 
-      <section className="rounded-2xl border border-white/10 bg-white/5 p-6">
-        <h2 className="text-lg font-semibold">National Placement Analytics</h2>
-        <p className="text-xs text-slate-500">AI placement calibration and teacher override patterns</p>
+                          return (
+                            <tr key={d.districtId} className="text-slate-200">
+                              <td className="px-4 py-3 font-medium">
+                                <Link
+                                  href={`/moe/districts/${d.districtId}`}
+                                  className="transition-colors hover:text-emerald-200"
+                                >
+                                  {d.districtName}
+                                </Link>
+                              </td>
+                              <td className="px-4 py-3">{d.schoolCount}</td>
+                              <td className="px-4 py-3 text-slate-500">--</td>
+                              <td className="px-4 py-3">
+                                {d.scheduledWorkDelivered}/{d.scheduledWorkTotal}
+                              </td>
+                              <td className="px-4 py-3">{formatPct(d.compliancePct)}</td>
+                              <td className="px-4 py-3">
+                                <span
+                                  className={`inline-flex rounded-full border px-2.5 py-1 text-[11px] font-medium ${statusClassName}`}
+                                >
+                                  {status}
+                                </span>
+                              </td>
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              )}
+            </section>
 
-        {loading ? (
-          <div className="mt-4 grid gap-4 md:grid-cols-4">
-            {Array.from({ length: 4 }).map((_, index) => (
-              <div key={index} className="h-24 animate-pulse rounded-xl bg-white/5" />
-            ))}
-          </div>
-        ) : (
-          <>
-            <div className="mt-4 grid gap-4 md:grid-cols-4">
-              <div className="rounded-xl border border-white/10 bg-black/10 p-4">
-                <p className="text-xs text-slate-500">Total students placed nationally</p>
-                <p className="mt-2 text-2xl font-semibold text-emerald-200">{placements?.totalStudentsPlaced ?? 0}</p>
+            <section className="rounded-2xl border border-slate-800 bg-slate-900/80 p-5">
+              <div className="flex flex-wrap items-start justify-between gap-3">
+                <div>
+                  <p className="text-[11px] font-medium uppercase tracking-[0.22em] text-slate-500">
+                    Compliance
+                  </p>
+                  <h2 className="mt-2 text-xl font-semibold text-slate-100">
+                    Compliance Summary
+                  </h2>
+                  <p className="mt-1 text-sm text-slate-400">
+                    National delivery compliance and reporting signals
+                  </p>
+                </div>
+                <div className="flex items-center gap-3">
+                  {exportError && (
+                    <span className="text-xs text-rose-300">{exportError}</span>
+                  )}
+                  <button
+                    onClick={handleExport}
+                    disabled={exporting}
+                    className="rounded-full bg-emerald-400 px-4 py-1.5 text-xs font-semibold text-slate-950 transition-colors hover:bg-emerald-300 disabled:cursor-not-allowed disabled:opacity-60"
+                  >
+                    {exporting ? "Exporting..." : "Export Compliance Report (CSV)"}
+                  </button>
+                </div>
               </div>
-              <div className="rounded-xl border border-white/10 bg-black/10 p-4">
-                <p className="text-xs text-slate-500">Average AI confidence score</p>
-                <p className="mt-2 text-2xl font-semibold text-cyan-200">
-                  {placements?.averageAiConfidence == null ? "—" : `${placements.averageAiConfidence}%`}
+
+              {loading ? (
+                <div className="mt-4 grid gap-4 md:grid-cols-3">
+                  {Array.from({ length: 3 }).map((_, idx) => (
+                    <Card key={idx} className="animate-pulse bg-slate-900/80 p-5">
+                      <div className="h-20 rounded-xl bg-slate-800" />
+                    </Card>
+                  ))}
+                </div>
+              ) : (
+                <div className="mt-5 grid gap-4 md:grid-cols-3">
+                  <Card className="p-5">
+                    <p className="text-[11px] font-medium uppercase tracking-wide text-slate-400">
+                      Reporting Rate
+                    </p>
+                    <p className="mt-2 text-3xl font-semibold text-emerald-300">
+                      {formatPct(compliance?.national?.compliancePct)}
+                    </p>
+                    <div className="mt-4 h-2 rounded-full bg-slate-800">
+                      <div
+                        className="h-2 rounded-full bg-emerald-400"
+                        style={{
+                          width: `${Math.min(
+                            100,
+                            Math.max(0, compliance?.national?.compliancePct ?? 0)
+                          )}%`,
+                        }}
+                      />
+                    </div>
+                  </Card>
+                  <StatCard
+                    label="Late Submissions"
+                    value={
+                      (compliance?.national?.scheduledWorkTotal ?? 0) -
+                      (compliance?.national?.scheduledWorkDelivered ?? 0)
+                    }
+                    subtitle="Lessons not delivered"
+                    valueClassName="text-amber-300"
+                  />
+                  <StatCard
+                    label="Fully Compliant Schools"
+                    value={fullyCompliantDistricts}
+                    subtitle="Districts at 100%"
+                    valueClassName="text-cyan-300"
+                  />
+                </div>
+              )}
+            </section>
+
+            {interventions && (
+              <section className="rounded-2xl border border-slate-800 bg-slate-900/80 p-5">
+                <div>
+                  <p className="text-[11px] font-medium uppercase tracking-[0.22em] text-slate-500">
+                    Interventions
+                  </p>
+                  <h2 className="mt-2 text-xl font-semibold text-slate-100">
+                    Interventions Snapshot
+                  </h2>
+                  <p className="mt-1 text-sm text-slate-400">
+                    National aggregates from the last 30 days
+                  </p>
+                </div>
+                <div className="mt-5 grid gap-4 md:grid-cols-3">
+                  <StatCard
+                    label="Total Active"
+                    value={interventions.national.totalInterventions ?? 0}
+                    valueClassName="text-rose-300"
+                  />
+                  <StatCard
+                    label="Avg Outcome Delta"
+                    value={interventions.national.avgOutcomeDelta ?? "--"}
+                    valueClassName="text-emerald-300"
+                  />
+                  <StatCard
+                    label="Avg Effect Size"
+                    value={interventions.national.avgOutcomeEffectSize ?? "--"}
+                    valueClassName="text-amber-300"
+                  />
+                </div>
+              </section>
+            )}
+
+            <section className="rounded-2xl border border-slate-800 bg-slate-900/80 p-5">
+              <div>
+                <p className="text-[11px] font-medium uppercase tracking-[0.22em] text-slate-500">
+                  Exams
+                </p>
+                <h2 className="mt-2 text-xl font-semibold text-slate-100">Exam System</h2>
+                <p className="mt-1 text-sm text-slate-400">
+                  National exam publication, pass rate, certification, and integrity signals
                 </p>
               </div>
-              <div className="rounded-xl border border-white/10 bg-black/10 p-4">
-                <p className="text-xs text-slate-500">National override rate</p>
-                <p className="mt-2 text-2xl font-semibold text-amber-200">{placements?.nationalOverrideRate ?? 0}%</p>
-              </div>
-              <div className="rounded-xl border border-white/10 bg-black/10 p-4">
-                <p className="text-xs text-slate-500">Most common placement band</p>
-                <p className="mt-2 text-2xl font-semibold text-rose-200">{placements?.mostCommonPlacementBand ?? "—"}</p>
-              </div>
-            </div>
 
-            <div className="mt-6 overflow-x-auto">
-              <table className="w-full text-sm">
-                <thead>
-                  <tr className="border-b border-white/10 text-left text-xs uppercase tracking-wide text-slate-500">
-                    <th className="pb-2 pr-4">District</th>
-                    <th className="pb-2 pr-4">Students Placed</th>
-                    <th className="pb-2 pr-4">Override Rate</th>
-                    <th className="pb-2 pr-4">Avg AI Confidence</th>
-                    <th className="pb-2 pr-4">Top Override Reason</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {(placements?.byDistrict ?? []).map((district) => (
-                    <tr key={district.districtId} className="border-b border-white/5 text-slate-200">
-                      <td className="py-3 pr-4">
-                        <div className="space-y-1">
-                          <p className="font-medium">{district.districtName}</p>
-                          {district.warning ? (
-                            <p className="text-xs text-amber-300">{district.warning} — high teacher override rate</p>
-                          ) : null}
-                        </div>
-                      </td>
-                      <td className="py-3 pr-4">{district.studentsPlaced}</td>
-                      <td className="py-3 pr-4">{district.overrideRate}%</td>
-                      <td className="py-3 pr-4">
-                        {district.avgAiConfidence == null ? "—" : `${district.avgAiConfidence}%`}
-                      </td>
-                      <td className="py-3 pr-4 text-slate-400">{district.topOverrideReason ?? "—"}</td>
-                    </tr>
+              {loading ? (
+                <div className="mt-5 grid gap-4 md:grid-cols-4">
+                  {Array.from({ length: 4 }).map((_, index) => (
+                    <Card key={index} className="animate-pulse bg-slate-900/80 p-5">
+                      <div className="h-20 rounded-xl bg-slate-800" />
+                    </Card>
                   ))}
-                </tbody>
-              </table>
-            </div>
-          </>
-        )}
-      </section>
-    </div>
+                </div>
+              ) : (
+                <>
+                  <div className="mt-5 grid gap-4 md:grid-cols-4">
+                    <StatCard
+                      label="Published Exams"
+                      value={dashboard?.examStats.totalExamsPublished ?? 0}
+                      valueClassName="text-emerald-300"
+                    />
+                    <StatCard
+                      label="National Pass Rate"
+                      value={formatPct(dashboard?.examStats.nationalPassRate)}
+                      valueClassName="text-cyan-300"
+                    />
+                    <StatCard
+                      label="Certifications Issued"
+                      value={dashboard?.examStats.certificationIssued ?? 0}
+                      valueClassName="text-amber-300"
+                    />
+                    <StatCard
+                      label="Flagged Attempts"
+                      value={dashboard?.examStats.flaggedAttempts ?? 0}
+                      valueClassName="text-rose-300"
+                    />
+                  </div>
+
+                  <div className="mt-5 overflow-hidden rounded-2xl border border-slate-800">
+                    <div className="overflow-x-auto">
+                      <table className="w-full text-sm">
+                        <thead className="bg-slate-950/80">
+                          <tr className="text-left text-[11px] font-medium uppercase tracking-[0.2em] text-slate-500">
+                            <th className="px-4 py-3">Subject</th>
+                            <th className="px-4 py-3">Attempts</th>
+                            <th className="px-4 py-3">Pass Rate</th>
+                          </tr>
+                        </thead>
+                        <tbody className="divide-y divide-slate-800 bg-slate-900/60">
+                          {(dashboard?.examStats.subjectBreakdown ?? []).map((row) => (
+                            <tr key={row.subject} className="text-slate-200">
+                              <td className="px-4 py-3 font-medium">{row.subject}</td>
+                              <td className="px-4 py-3">{row.attempts}</td>
+                              <td className="px-4 py-3">{formatPct(row.passRate)}</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </>
+              )}
+            </section>
+
+            <section className="rounded-2xl border border-slate-800 bg-slate-900/80 p-5">
+              <div>
+                <p className="text-[11px] font-medium uppercase tracking-[0.22em] text-slate-500">
+                  Placement
+                </p>
+                <h2 className="mt-2 text-xl font-semibold text-slate-100">
+                  National Placement Analytics
+                </h2>
+                <p className="mt-1 text-sm text-slate-400">
+                  AI placement calibration and teacher override patterns
+                </p>
+              </div>
+
+              {loading ? (
+                <div className="mt-5 grid gap-4 md:grid-cols-4">
+                  {Array.from({ length: 4 }).map((_, index) => (
+                    <Card key={index} className="animate-pulse bg-slate-900/80 p-5">
+                      <div className="h-20 rounded-xl bg-slate-800" />
+                    </Card>
+                  ))}
+                </div>
+              ) : (
+                <>
+                  <div className="mt-5 grid gap-4 md:grid-cols-4">
+                    <StatCard
+                      label="Students Placed"
+                      value={placements?.totalStudentsPlaced ?? 0}
+                      subtitle="National total"
+                      valueClassName="text-emerald-300"
+                    />
+                    <StatCard
+                      label="Average AI Confidence"
+                      value={
+                        placements?.averageAiConfidence == null
+                          ? "--"
+                          : `${placements.averageAiConfidence}%`
+                      }
+                      valueClassName="text-cyan-300"
+                    />
+                    <StatCard
+                      label="National Override Rate"
+                      value={`${placements?.nationalOverrideRate ?? 0}%`}
+                      valueClassName="text-amber-300"
+                    />
+                    <StatCard
+                      label="Most Common Placement Band"
+                      value={placements?.mostCommonPlacementBand ?? "--"}
+                      valueClassName="text-rose-300"
+                    />
+                  </div>
+
+                  <div className="mt-5 overflow-hidden rounded-2xl border border-slate-800">
+                    <div className="overflow-x-auto">
+                      <table className="w-full text-sm">
+                        <thead className="bg-slate-950/80">
+                          <tr className="text-left text-[11px] font-medium uppercase tracking-[0.2em] text-slate-500">
+                            <th className="px-4 py-3">District</th>
+                            <th className="px-4 py-3">Students Placed</th>
+                            <th className="px-4 py-3">Override Rate</th>
+                            <th className="px-4 py-3">Avg AI Confidence</th>
+                            <th className="px-4 py-3">Top Override Reason</th>
+                          </tr>
+                        </thead>
+                        <tbody className="divide-y divide-slate-800 bg-slate-900/60">
+                          {(placements?.byDistrict ?? []).map((district) => (
+                            <tr key={district.districtId} className="text-slate-200">
+                              <td className="px-4 py-3">
+                                <div className="space-y-1">
+                                  <p className="font-medium">{district.districtName}</p>
+                                  {district.warning ? (
+                                    <p className="text-xs text-amber-300">
+                                      {district.warning} - high teacher override rate
+                                    </p>
+                                  ) : null}
+                                </div>
+                              </td>
+                              <td className="px-4 py-3">{district.studentsPlaced}</td>
+                              <td className="px-4 py-3">{district.overrideRate}%</td>
+                              <td className="px-4 py-3">
+                                {district.avgAiConfidence == null
+                                  ? "--"
+                                  : `${district.avgAiConfidence}%`}
+                              </td>
+                              <td className="px-4 py-3 text-slate-400">
+                                {district.topOverrideReason ?? "--"}
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </>
+              )}
+            </section>
+          </div>
+        </div>
+      </div>
+    </main>
   );
 }
