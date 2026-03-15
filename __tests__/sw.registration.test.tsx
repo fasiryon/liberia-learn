@@ -1,4 +1,4 @@
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { renderToStaticMarkup } from "react-dom/server";
 
 const registerMock = vi.fn();
@@ -15,6 +15,15 @@ vi.mock("react", async () => {
 });
 
 describe("ServiceWorkerRegistration", () => {
+  beforeEach(() => {
+    if (!('navigator' in globalThis)) {
+      Object.defineProperty(globalThis, "navigator", {
+        configurable: true,
+        writable: true,
+        value: undefined,
+      });
+    }
+  });
   afterEach(() => {
     registerMock.mockReset();
     syncRegisterMock.mockReset();
