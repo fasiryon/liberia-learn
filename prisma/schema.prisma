@@ -1001,7 +1001,7 @@ model ScheduledWork {
   classFormat    String?           // "standard"|"block_a"|"block_b"|"block_single"
   deliveredAt    DateTime?
   deliveryNotes  String?
-  completionRate Int?              // 0â€“100
+  completionRate Int?              // 0-100
   isDelivered    Boolean           @default(false)
   // Part 3: A/B block pairing
   sessionPairId  String?           // shared UUID for A/B pairs
@@ -1236,7 +1236,7 @@ model InterventionLog {
 
 /// / ===== Integrated Delivery Engine Models (Parts 4, 5, 7) =====
 
-/// Part 4: Curriculum Unit grouping â€” organises CurriculumContent into teaching units
+/// Part 4: Curriculum Unit grouping — organises CurriculumContent into teaching units
 model CurriculumUnit {
   id                  String   @id @default(cuid())
   unitId              String   @unique @default(cuid())

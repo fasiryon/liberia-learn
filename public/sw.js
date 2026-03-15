@@ -1,7 +1,7 @@
 // Audited Sprint 1 - single cache registration,
 // single fetch handler, offline queue verified.
 const CACHE_NAME = "liberialearn-v1";
-const APP_SHELL = ["/", "/student/dashboard", "/teacher/dashboard", "/offline"];
+const APP_SHELL = ["/", "/student/dashboard", "/offline"];
 const SYNC_TAG = "liberialearn-sync";
 const QUEUE_PREFIX = "liberialearn_offline_queue::";
 const IDB_NAME = "keyval-store";
@@ -174,7 +174,20 @@ async function networkFirst(request) {
 self.addEventListener("fetch", (event) => {
   const url = new URL(event.request.url);
   if (event.request.method !== "GET") return;
-  if (url.pathname.startsWith("/moe/") || url.pathname.startsWith("/api/auth")) return;
+  if (
+    url.pathname.startsWith("/moe/") ||
+    url.pathname.startsWith("/api/") ||
+    url.pathname.startsWith("/login") ||
+    url.pathname.startsWith("/guardian") ||
+    url.pathname.startsWith("/teacher") ||
+    url.pathname.startsWith("/admin") ||
+    url.pathname.startsWith("/platform")
+  ) {
+    return;
+  }
+  if (url.pathname !== "/" && url.pathname !== "/offline" && !url.pathname.startsWith("/student/")) {
+    return;
+  }
 
   event.respondWith(
     networkFirst(event.request).catch(
