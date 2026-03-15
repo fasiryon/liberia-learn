@@ -16,13 +16,11 @@ vi.mock("react", async () => {
 
 describe("ServiceWorkerRegistration", () => {
   beforeEach(() => {
-    if (!('navigator' in globalThis)) {
-      Object.defineProperty(globalThis, "navigator", {
-        configurable: true,
-        writable: true,
-        value: {},
-      });
-    }
+    Object.defineProperty(globalThis, "navigator", {
+      configurable: true,
+      writable: true,
+      value: {},
+    });
   });
   afterEach(() => {
     registerMock.mockReset();

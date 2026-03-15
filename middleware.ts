@@ -21,14 +21,8 @@ function isPublicPath(pathname: string) {
 export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
 
-  // ── /moe/login — flag-gated public entry point ────────────────────────────
+  // /moe/login is always public; the page renders portal availability inline.
   if (pathname === "/moe/login") {
-    const enabled = process.env.ENABLE_MOE_LOGIN_PORTAL === "true";
-    if (!enabled) {
-      const url = req.nextUrl.clone();
-      url.pathname = "/login";
-      return NextResponse.redirect(url);
-    }
     return NextResponse.next();
   }
 

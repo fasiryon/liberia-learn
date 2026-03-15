@@ -506,7 +506,7 @@ export default function MoeDashboardPage() {
               <div className="rounded-xl border border-white/10 bg-black/10 p-4">
                 <p className="text-xs text-slate-500">Average AI confidence score</p>
                 <p className="mt-2 text-2xl font-semibold text-cyan-200">
-                  {placements?.averageAiConfidence == null ? "â€”" : `${placements.averageAiConfidence}%`}
+                  {placements?.averageAiConfidence == null ? "—" : `${placements.averageAiConfidence}%`}
                 </p>
               </div>
               <div className="rounded-xl border border-white/10 bg-black/10 p-4">
@@ -515,7 +515,7 @@ export default function MoeDashboardPage() {
               </div>
               <div className="rounded-xl border border-white/10 bg-black/10 p-4">
                 <p className="text-xs text-slate-500">Most common placement band</p>
-                <p className="mt-2 text-2xl font-semibold text-rose-200">{placements?.mostCommonPlacementBand ?? "â€”"}</p>
+                <p className="mt-2 text-2xl font-semibold text-rose-200">{placements?.mostCommonPlacementBand ?? "—"}</p>
               </div>
             </div>
 
@@ -544,9 +544,9 @@ export default function MoeDashboardPage() {
                       <td className="py-3 pr-4">{district.studentsPlaced}</td>
                       <td className="py-3 pr-4">{district.overrideRate}%</td>
                       <td className="py-3 pr-4">
-                        {district.avgAiConfidence == null ? "â€”" : `${district.avgAiConfidence}%`}
+                        {district.avgAiConfidence == null ? "—" : `${district.avgAiConfidence}%`}
                       </td>
-                      <td className="py-3 pr-4 text-slate-400">{district.topOverrideReason ?? "â€”"}</td>
+                      <td className="py-3 pr-4 text-slate-400">{district.topOverrideReason ?? "—"}</td>
                     </tr>
                   ))}
                 </tbody>
