@@ -2,7 +2,12 @@ import { NextResponse } from "next/server";
 import { requireRole } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 
-const DEMO_SCHOOL_ID = "demo-school-monrovia";
+function getConfiguredDemoSchoolId() {
+  return (process.env.DEMO_SCHOOL_IDS ?? "")
+    .split(",")
+    .map((value) => value.trim())
+    .find(Boolean);
+}
 
 /**
  * POST /api/admin/attach-demo-school
@@ -12,9 +17,17 @@ const DEMO_SCHOOL_ID = "demo-school-monrovia";
 export async function POST() {
   try {
     const user = await requireRole("ADMIN");
+    const demoSchoolId = getConfiguredDemoSchoolId();
+
+    if (!demoSchoolId) {
+      return NextResponse.json(
+        { error: "DEMO_SCHOOL_IDS not configured" },
+        { status: 400 }
+      );
+    }
 
     const school = await prisma.school.findUnique({
-      where: { id: DEMO_SCHOOL_ID },
+      where: { id: demoSchoolId },
       select: { id: true, name: true },
     });
     if (!school) {
@@ -36,10 +49,10 @@ export async function POST() {
     if (callingUser && !callingUser.schoolId) {
       await prisma.user.update({
         where: { id: user.id },
-        data: { schoolId: DEMO_SCHOOL_ID },
+        data: { schoolId: demoSchoolId },
       });
       logs.push(`Attached ${callingUser.email} to demo school`);
-    } else if (callingUser?.schoolId === DEMO_SCHOOL_ID) {
+    } else if (callingUser?.schoolId === demoSchoolId) {
       logs.push(`${callingUser.email} already on demo school`);
     } else {
       logs.push(`${callingUser?.email} has schoolId=${callingUser?.schoolId}, skipped`);
@@ -60,13 +73,13 @@ export async function POST() {
       if (u && !u.schoolId) {
         await prisma.user.update({
           where: { id: u.id },
-          data: { schoolId: DEMO_SCHOOL_ID },
+          data: { schoolId: demoSchoolId },
         });
         logs.push(`Attached ${email} to demo school`);
       }
     }
 
-    return NextResponse.json({ ok: true, schoolId: DEMO_SCHOOL_ID, logs });
+    return NextResponse.json({ ok: true, schoolId: demoSchoolId, logs });
   } catch (err: any) {
     console.error("Attach demo school error:", err);
     return NextResponse.json(

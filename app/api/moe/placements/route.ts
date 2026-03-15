@@ -8,10 +8,13 @@ import { withRequestLogging } from "@/lib/logging/requestLogger";
 export const dynamic = "force-dynamic";
 
 function confidenceToScore(value: unknown) {
-  if (value === "high") return 90;
-  if (value === "medium") return 70;
-  if (value === "low") return 50;
-  return null;
+  const scores = {
+    high: 90,
+    medium: 70,
+    low: 50,
+  } as const;
+
+  return typeof value === "string" ? (scores[value as keyof typeof scores] ?? null) : null;
 }
 
 async function placementsGET() {

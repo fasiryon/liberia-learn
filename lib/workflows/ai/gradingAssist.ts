@@ -187,6 +187,7 @@ function parseAndValidate(raw: string): GradingAssistResult | null {
       .trim();
     parsed = JSON.parse(cleaned);
   } catch {
+    // ACCEPTABLE NULL - return type includes null.
     return null;
   }
 
