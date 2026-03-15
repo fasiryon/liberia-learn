@@ -121,6 +121,7 @@ function parseAndValidate(raw: string): TeacherAssistResult | null {
       .trim();
     parsed = JSON.parse(cleaned);
   } catch {
+    // ACCEPTABLE NULL - return type includes null.
     return null;
   }
 
@@ -128,8 +129,10 @@ function parseAndValidate(raw: string): TeacherAssistResult | null {
   const r = parsed as Record<string, unknown>;
 
   if (!Array.isArray(r.reinforcementSuggestions) || r.reinforcementSuggestions.length === 0)
+    // ACCEPTABLE NULL - return type includes null.
     return null;
   if (typeof r.pacingSuggestion !== "string" || !r.pacingSuggestion.trim())
+    // ACCEPTABLE NULL - return type includes null.
     return null;
 
   const suggestions = (r.reinforcementSuggestions as unknown[])

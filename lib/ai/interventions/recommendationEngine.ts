@@ -149,6 +149,7 @@ async function tryAiEnhancement(params: {
   try {
     parsed = JSON.parse(raw);
   } catch {
+    // ACCEPTABLE NULL - return type includes null.
     return null;
   }
 
