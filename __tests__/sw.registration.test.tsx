@@ -20,7 +20,7 @@ describe("ServiceWorkerRegistration", () => {
       Object.defineProperty(globalThis, "navigator", {
         configurable: true,
         writable: true,
-        value: undefined,
+        value: {},
       });
     }
   });
