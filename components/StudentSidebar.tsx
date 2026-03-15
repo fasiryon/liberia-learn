@@ -54,6 +54,20 @@ export function StudentSidebar({
         </Link>
 
         <Link
+          href="/student/exams"
+          className="rounded-xl bg-slate-900/80 px-4 py-2 hover:bg-slate-800 transition"
+        >
+          Exams
+        </Link>
+
+        <Link
+          href="/student/certifications"
+          className="rounded-xl bg-slate-900/80 px-4 py-2 hover:bg-slate-800 transition"
+        >
+          Certifications
+        </Link>
+
+        <Link
           href="/ai-tutor"
           className="rounded-xl bg-slate-900/80 px-4 py-2 hover:bg-slate-800 transition"
         >

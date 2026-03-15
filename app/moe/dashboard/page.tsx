@@ -13,6 +13,18 @@ type DashboardData = {
     deliveryRatePct: number | null;
   };
   interventionsLast30Days: number;
+  examStats: {
+    totalExamsPublished: number;
+    totalAttempts: number;
+    nationalPassRate: number;
+    certificationIssued: number;
+    flaggedAttempts: number;
+    subjectBreakdown: {
+      subject: string;
+      attempts: number;
+      passRate: number;
+    }[];
+  };
 };
 
 type ComplianceDistrict = {
@@ -418,6 +430,61 @@ export default function MoeDashboardPage() {
           </div>
         </section>
       )}
+
+      <section className="rounded-2xl border border-white/10 bg-white/5 p-6">
+        <h2 className="text-lg font-semibold">Exam System</h2>
+        <p className="text-xs text-slate-500">National exam publication, pass rate, certification, and integrity signals</p>
+
+        {loading ? (
+          <div className="mt-4 grid gap-4 md:grid-cols-4">
+            {Array.from({ length: 4 }).map((_, index) => (
+              <div key={index} className="h-24 animate-pulse rounded-xl bg-white/5" />
+            ))}
+          </div>
+        ) : (
+          <>
+            <div className="mt-4 grid gap-4 md:grid-cols-4">
+              <div className="rounded-xl border border-white/10 bg-black/10 p-4">
+                <p className="text-xs text-slate-500">Published Exams</p>
+                <p className="mt-2 text-2xl font-semibold text-emerald-200">{dashboard?.examStats.totalExamsPublished ?? 0}</p>
+              </div>
+              <div className="rounded-xl border border-white/10 bg-black/10 p-4">
+                <p className="text-xs text-slate-500">National Pass Rate</p>
+                <p className="mt-2 text-2xl font-semibold text-cyan-200">{formatPct(dashboard?.examStats.nationalPassRate)}</p>
+              </div>
+              <div className="rounded-xl border border-white/10 bg-black/10 p-4">
+                <p className="text-xs text-slate-500">Certifications Issued</p>
+                <p className="mt-2 text-2xl font-semibold text-amber-200">{dashboard?.examStats.certificationIssued ?? 0}</p>
+              </div>
+              <div className="rounded-xl border border-white/10 bg-black/10 p-4">
+                <p className="text-xs text-slate-500">Flagged Attempts</p>
+                <p className="mt-2 text-2xl font-semibold text-rose-200">{dashboard?.examStats.flaggedAttempts ?? 0}</p>
+              </div>
+            </div>
+
+            <div className="mt-6 overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="border-b border-white/10 text-left text-xs uppercase tracking-wide text-slate-500">
+                    <th className="pb-2 pr-4">Subject</th>
+                    <th className="pb-2 pr-4">Attempts</th>
+                    <th className="pb-2 pr-4">Pass Rate</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {(dashboard?.examStats.subjectBreakdown ?? []).map((row) => (
+                    <tr key={row.subject} className="border-b border-white/5 text-slate-200">
+                      <td className="py-3 pr-4 font-medium">{row.subject}</td>
+                      <td className="py-3 pr-4">{row.attempts}</td>
+                      <td className="py-3 pr-4">{formatPct(row.passRate)}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </>
+        )}
+      </section>
 
       <section className="rounded-2xl border border-white/10 bg-white/5 p-6">
         <h2 className="text-lg font-semibold">National Placement Analytics</h2>
