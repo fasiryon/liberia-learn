@@ -491,3 +491,11 @@ export function isVirtualLabsEnabled(): boolean {
 export function isDeliveryComplianceReportingEnabled(): boolean {
   return process.env.ENABLE_DELIVERY_COMPLIANCE_REPORTING === "true";
 }
+
+/**
+ * Sprint 5: exam generation, delivery, grading, and certification flows.
+ * DEFAULT ON unless explicitly disabled.
+ */
+export function isExamSystemEnabled(): boolean {
+  return process.env.ENABLE_EXAM_SYSTEM !== "false";
+}
