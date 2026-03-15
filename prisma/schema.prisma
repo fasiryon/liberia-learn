@@ -118,6 +118,7 @@ model School {
   // Part 7: virtual lab sessions
   labSessions            LabSession[]
   guardianMessages       GuardianMessage[]
+  exams                  Exam[]
 }
 
 model Class {
@@ -166,6 +167,76 @@ model Student {
   submissions           Submission[]
   inviteTokens          InviteToken[]           @relation("InviteTokenStudent")
   guardianMessages      GuardianMessage[]
+  examAttempts          ExamAttempt[]
+  examCertifications    ExamCertification[]
+}
+
+model Exam {
+  id              String              @id @default(cuid())
+  title           String
+  subject         String
+  grade           Int
+  schoolId        String
+  createdBy       String
+  status          ExamStatus          @default(DRAFT)
+  moeStandards    String[]
+  timeLimit       Int
+  passingScore    Float               @default(0.70)
+  questions       ExamQuestion[]
+  attempts        ExamAttempt[]
+  certifications  ExamCertification[]
+  school          School              @relation(fields: [schoolId], references: [id])
+  createdAt       DateTime            @default(now())
+  updatedAt       DateTime            @updatedAt
+
+  @@index([schoolId, subject, grade])
+}
+
+model ExamQuestion {
+  id           String @id @default(cuid())
+  examId       String
+  prompt       String
+  options      String[]
+  correctIndex Int
+  explanation  String
+  moeCode      String
+  points       Int    @default(1)
+  exam         Exam   @relation(fields: [examId], references: [id], onDelete: Cascade)
+
+  @@index([examId])
+}
+
+model ExamAttempt {
+  id             String   @id @default(cuid())
+  examId         String
+  studentId      String
+  answers        Int[]
+  score          Float
+  passed         Boolean
+  startedAt      DateTime @default(now())
+  submittedAt    DateTime?
+  integrityFlags String[]
+  exam           Exam     @relation(fields: [examId], references: [id], onDelete: Cascade)
+  student        Student  @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  @@index([examId, studentId])
+  @@index([studentId, submittedAt])
+}
+
+model ExamCertification {
+  id        String   @id @default(cuid())
+  studentId String
+  examId    String
+  subject   String
+  grade     Int
+  score     Float
+  issuedAt  DateTime @default(now())
+  certCode  String   @unique
+  student   Student  @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  exam      Exam     @relation(fields: [examId], references: [id], onDelete: Cascade)
+
+  @@index([studentId])
+  @@index([examId])
 }
 
 model StudentGuardian {
@@ -1355,6 +1426,12 @@ enum SMSDeliveryStatus {
   failed
   blocked
   opted_out
+}
+
+enum ExamStatus {
+  DRAFT
+  PUBLISHED
+  CLOSED
 }
 
 /// Block 7A  Mastery Engine enums
