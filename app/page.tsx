@@ -38,7 +38,7 @@ export default function HomePage() {
         <div className="max-w-xl space-y-6">
           <span className="inline-flex items-center gap-2 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-3 py-1 text-xs font-medium text-emerald-300">
             <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
-            Liberia Â· Grade 1â€“12 Â· AI first
+            Liberia · Grade 1-12 · AI first
           </span>
 
           <h1 className="text-balance text-4xl font-semibold tracking-tight text-slate-50 sm:text-5xl lg:text-6xl">
