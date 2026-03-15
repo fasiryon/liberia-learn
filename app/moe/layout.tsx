@@ -1,17 +1,16 @@
 // app/moe/layout.tsx
 // Layout for all /moe/* pages.
 // MOE portal operates at national scope — no school context, no tenant switcher.
-
 import type { Metadata } from "next";
 import { getServerSession } from "next-auth";
-import { redirect, notFound } from "next/navigation";
+import { notFound } from "next/navigation";
 import { authOptions } from "@/lib/auth";
 import { getMoePortalAllowlist, isMoePortalEnabled } from "@/lib/serverFlags";
 import MoeShell from "./MoeShell";
 
 export const metadata: Metadata = {
-  title: "MOE Portal — LiberiaLearn",
-  description: "Ministry of Education — National Education Platform",
+  title: "MOE Portal – LiberiaLearn",
+  description: "Ministry of Education – National Education Platform",
 };
 
 function normalizeEmail(value?: string | null) {
@@ -48,18 +47,16 @@ export default async function MoeLayout({
     isPlatformAdmin?: boolean;
   } | null;
 
+  // No session — render children directly so /moe/login can display
   if (!user?.role) {
-    redirect("/moe/login");
+    return <>{children}</>;
   }
 
   const isMoeUser = user.role === "MOE_OFFICIAL" || user.isPlatformAdmin === true;
-  if (!isMoeUser) {
-    redirect("/moe/login");
-  }
-
   const allowlist = getMoePortalAllowlist();
-  if (!isAllowlisted(user.email ?? "", allowlist)) {
-    redirect("/moe/login");
+
+  if (!isMoeUser || !isAllowlisted(user.email ?? "", allowlist)) {
+    return <>{children}</>;
   }
 
   return (
