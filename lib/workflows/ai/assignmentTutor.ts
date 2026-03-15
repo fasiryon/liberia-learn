@@ -103,6 +103,7 @@ function parseAndValidate(raw: string): AssignmentTutorResult | null {
       .trim();
     parsed = JSON.parse(cleaned);
   } catch {
+    // ACCEPTABLE NULL - return type includes null.
     return null;
   }
 

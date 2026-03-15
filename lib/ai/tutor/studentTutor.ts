@@ -168,6 +168,7 @@ function parseAndValidate(raw: string): StudentTutorResult | null {
       .trim();
     parsed = JSON.parse(cleaned);
   } catch {
+    // ACCEPTABLE NULL - return type includes null.
     return null;
   }
 

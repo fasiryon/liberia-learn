@@ -12,12 +12,24 @@ const ReviewSchema = z.object({
   teacherFeedback: z.string().trim().min(10).max(2000),
 });
 
+type AuthorizedSessionResult =
+  | {
+      ok: true;
+      session: any;
+      scheduledWork: any;
+    }
+  | {
+      ok: false;
+      error: string;
+      status: number;
+    };
+
 async function resolveAuthorizedSession(
   sessionId: string,
   userId: string,
   schoolId: string,
   role: string
-) {
+): Promise<AuthorizedSessionResult> {
   const session = await prisma.labSession.findUnique({
     where: { id: sessionId },
     include: {
@@ -26,11 +38,11 @@ async function resolveAuthorizedSession(
   });
 
   if (!session || session.schoolId !== schoolId) {
-    return null;
+    return { ok: false, error: "Not found", status: 404 };
   }
 
   if (!session.scheduledWorkId) {
-    return null;
+    return { ok: false, error: "Not found", status: 404 };
   }
 
   const scheduledWork = await prisma.scheduledWork.findUnique({
@@ -41,15 +53,15 @@ async function resolveAuthorizedSession(
   });
 
   if (!scheduledWork || scheduledWork.class.schoolId !== schoolId) {
-    return null;
+    return { ok: false, error: "Not found", status: 404 };
   }
 
   const isAdminUser = role === "ADMIN";
   if (!isAdminUser && scheduledWork.class.teacherId !== userId) {
-    return null;
+    return { ok: false, error: "Forbidden", status: 403 };
   }
 
-  return { session, scheduledWork };
+  return { ok: true, session, scheduledWork };
 }
 
 export async function GET(
@@ -67,8 +79,8 @@ export async function GET(
     }
 
     const authorized = await resolveAuthorizedSession(params.sessionId, user.id, user.schoolId, user.role);
-    if (!authorized) {
-      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    if ("error" in authorized) {
+      return NextResponse.json({ error: authorized.error }, { status: authorized.status });
     }
 
     const lab = await prisma.virtualLab.findUnique({
@@ -101,8 +113,8 @@ export async function PATCH(
     }
 
     const authorized = await resolveAuthorizedSession(params.sessionId, user.id, user.schoolId, user.role);
-    if (!authorized) {
-      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    if ("error" in authorized) {
+      return NextResponse.json({ error: authorized.error }, { status: authorized.status });
     }
 
     const parsed = ReviewSchema.parse(await req.json());

@@ -592,6 +592,7 @@ function pickLesson(
   }
 
   if (!allowGeneralFallback) {
+    // ACCEPTABLE NULL - return type includes null.
     return null;
   }
 
@@ -601,6 +602,7 @@ function pickLesson(
     .sort((left, right) => right.score - left.score)[0];
 
   if (!fallback || fallback.score <= 0) {
+    // ACCEPTABLE NULL - return type includes null.
     return null;
   }
 

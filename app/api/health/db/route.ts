@@ -21,7 +21,9 @@ function redact(url: string | undefined): Record<string, string> {
 
 export async function GET() {
   const conn = redact(process.env.DATABASE_URL);
-  console.log("[health/db] connection info:", JSON.stringify(conn));
+  if (process.env.NODE_ENV === "development") {
+    console.log("[health/db] connection info:", JSON.stringify(conn));
+  }
 
   try {
     const start = Date.now();
