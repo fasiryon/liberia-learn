@@ -25,6 +25,8 @@ type LessonPayload = {
   };
 };
 
+const MAX_GENERATION_ATTEMPTS = 4;
+
 function asPayload(value: unknown): LessonPayload {
   if (!value || typeof value !== "object" || Array.isArray(value)) {
     return {};
@@ -81,8 +83,22 @@ function countLessonWords(payload: LessonPayload): number {
   return countWords(payload.body_block ?? payload.body_standard ?? payload.body);
 }
 
+function countSections(text: string | undefined): number {
+  if (!text) return 0;
+  return (text.match(/^##\s+/gm) ?? []).length;
+}
+
 function shouldRegenerate(payload: LessonPayload): boolean {
   if (!payload.body_standard || !payload.body_block) {
+    return true;
+  }
+
+  const primaryBody =
+    countWords(payload.body_block) > countWords(payload.body_standard)
+      ? payload.body_block
+      : payload.body_standard;
+
+  if (countSections(primaryBody) < 5) {
     return true;
   }
 
@@ -120,17 +136,36 @@ async function main() {
       const existingPayload = asPayload(lesson.payload);
       const topic = inferTopic(existingPayload);
       const moeAlignmentCodes = toAlignmentCodes(lesson.moeAlignments);
+      let newPayload: Awaited<ReturnType<typeof generateCurriculumPayload>> | null = null;
+      let lastGenerationError: unknown = null;
 
-      const newPayload = await generateCurriculumPayload({
-        grade: lesson.grade,
-        subject: lesson.subject,
-        topic,
-        contentType: "lesson",
-        moeAlignmentCodes,
-        lessonFormat: "either",
-        liberiaContext: true,
-        forceSmartTier: true,
-      });
+      for (let attempt = 1; attempt <= MAX_GENERATION_ATTEMPTS; attempt += 1) {
+        try {
+          newPayload = await generateCurriculumPayload({
+            grade: lesson.grade,
+            subject: lesson.subject,
+            topic,
+            contentType: "lesson",
+            moeAlignmentCodes,
+            lessonFormat: "either",
+            liberiaContext: true,
+            forceSmartTier: true,
+          });
+          break;
+        } catch (error) {
+          lastGenerationError = error;
+          console.error(
+            `[REGEN_LESSONS] Generation attempt ${attempt}/${MAX_GENERATION_ATTEMPTS} failed for ${lesson.id}`,
+            error
+          );
+        }
+      }
+
+      if (!newPayload) {
+        throw lastGenerationError instanceof Error
+          ? lastGenerationError
+          : new Error("Lesson generation failed after retries");
+      }
 
       const wordCount = countWords(newPayload.body);
 
