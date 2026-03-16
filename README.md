@@ -252,3 +252,12 @@ LiberiaLearn was designed and built as national education infrastructure for the
 
 *Built with Next.js · Supabase · OpenAI · Groq · Vercel*
 *Ministry of Education, Republic of Liberia · 2026*
+
+## Running With Docker
+
+```bash
+docker build -t liberialearn-web .
+docker-compose up --build
+```
+
+`docker-compose.yml` starts the Next.js web container and the SQS worker container together, both using `.env.local` for local secrets.

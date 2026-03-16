@@ -1,44 +1,22 @@
 services:
-  app:
-    build: .
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    env_file:
+      - .env.local
+    volumes:
+      - ./.env.local:/app/.env.local:ro
     ports:
       - "3000:3000"
+    depends_on:
+      - worker
+
+  worker:
+    build:
+      context: .
+      dockerfile: worker/Dockerfile
     env_file:
-      - .env
-    depends_on:
-      postgres:
-        condition: service_healthy
-
-  postgres:
-    image: postgres:16-alpine
-    container_name: liberia_learn_db
-    restart: always
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: password
-      POSTGRES_DB: liberia_learn
-    ports:
-      - "5432:5432"
+      - .env.local
     volumes:
-      - postgres_data:/var/lib/postgresql/data
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-
-  # pgAdmin already pulled fine; keep or remove as you like
-  pgadmin:
-    image: dpage/pgadmin4:latest
-    container_name: liberia_learn_pgadmin
-    restart: always
-    environment:
-      PGADMIN_DEFAULT_EMAIL: admin@liberialearn.dev
-      PGADMIN_DEFAULT_PASSWORD: password
-    ports:
-      - "5050:80"
-    depends_on:
-      - postgres
-
-volumes:
-  postgres_data:
+      - ./.env.local:/app/.env.local:ro

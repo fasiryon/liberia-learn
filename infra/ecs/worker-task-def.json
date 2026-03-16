@@ -1,0 +1,32 @@
+{
+  "family": "liberialearn-worker",
+  "networkMode": "awsvpc",
+  "requiresCompatibilities": ["FARGATE"],
+  "cpu": "256",
+  "memory": "512",
+  "containerDefinitions": [
+    {
+      "name": "liberialearn-worker",
+      "image": "${ECR_WORKER_IMAGE_URI}",
+      "essential": true,
+      "secrets": [
+        { "name": "DATABASE_URL", "valueFrom": "${SSM_DATABASE_URL_ARN}" },
+        { "name": "NEXTAUTH_SECRET", "valueFrom": "${SSM_NEXTAUTH_SECRET_ARN}" },
+        { "name": "NEXTAUTH_URL", "valueFrom": "${SSM_NEXTAUTH_URL_ARN}" },
+        { "name": "OPENAI_API_KEY", "valueFrom": "${SSM_OPENAI_API_KEY_ARN}" },
+        { "name": "GROQ_API_KEY", "valueFrom": "${SSM_GROQ_API_KEY_ARN}" },
+        { "name": "AFRICA_TALKING_API_KEY", "valueFrom": "${SSM_AFRICA_TALKING_API_KEY_ARN}" },
+        { "name": "AFRICA_TALKING_USERNAME", "valueFrom": "${SSM_AFRICA_TALKING_USERNAME_ARN}" },
+        { "name": "SQS_QUEUE_URL", "valueFrom": "${SSM_SQS_QUEUE_URL_ARN}" }
+      ],
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "/ecs/liberialearn-worker",
+          "awslogs-region": "${AWS_REGION}",
+          "awslogs-stream-prefix": "ecs"
+        }
+      }
+    }
+  ]
+}

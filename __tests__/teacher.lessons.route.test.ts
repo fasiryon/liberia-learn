@@ -10,6 +10,8 @@ const mockCurriculumUpdate = vi.hoisted(() => vi.fn());
 const mockScheduledWorkCreate = vi.hoisted(() => vi.fn());
 const mockEmbedLesson = vi.hoisted(() => vi.fn());
 const mockLogAudit = vi.hoisted(() => vi.fn());
+const mockEnqueueJob = vi.hoisted(() => vi.fn());
+const mockIsQueueConfigured = vi.hoisted(() => vi.fn());
 
 vi.mock("@/lib/auth", () => ({
   requireRole: mockRequireRole,
@@ -29,6 +31,14 @@ vi.mock("@/lib/ai/rag/embeddingService", () => ({
 
 vi.mock("@/lib/audit", () => ({
   logAudit: mockLogAudit,
+}));
+
+vi.mock("@/lib/queue", () => ({
+  JobType: {
+    GENERATE_EMBEDDINGS: "GENERATE_EMBEDDINGS",
+  },
+  enqueueJob: mockEnqueueJob,
+  isQueueConfigured: mockIsQueueConfigured,
 }));
 
 vi.mock("@/lib/db", () => ({
@@ -91,6 +101,8 @@ beforeEach(() => {
     id: "sched-1",
   });
   mockEmbedLesson.mockResolvedValue(undefined);
+  mockEnqueueJob.mockResolvedValue(undefined);
+  mockIsQueueConfigured.mockReturnValue(false);
   mockLogAudit.mockResolvedValue(undefined);
 });
 
@@ -126,5 +138,18 @@ describe("POST /api/teacher/lessons", () => {
 
     expect(res.status).toBe(200);
     expect(mockScheduledWorkCreate).toHaveBeenCalledOnce();
+  });
+
+  it("queues embeddings when SQS is configured", async () => {
+    mockIsQueueConfigured.mockReturnValue(true);
+
+    const res = await POST(makeReq(validBody));
+
+    expect(res.status).toBe(200);
+    expect(mockEnqueueJob).toHaveBeenCalledWith(
+      "GENERATE_EMBEDDINGS",
+      expect.objectContaining({ lessonId: "content-1" })
+    );
+    expect(mockEmbedLesson).not.toHaveBeenCalled();
   });
 });
