@@ -11,6 +11,7 @@ import {
   getTeacherClassOrThrow,
   inferClassGrade,
 } from "@/lib/teacher/lessonAuthoring";
+import { enqueueJob, isQueueConfigured, JobType } from "@/lib/queue";
 import { isTeacherGenerationEnabled } from "@/lib/serverFlags";
 
 const SaveLessonSchema = z.object({
@@ -124,7 +125,19 @@ export async function POST(req: NextRequest) {
           },
         });
 
-    await embedLesson(record.id);
+    if (isQueueConfigured()) {
+      try {
+        await enqueueJob(JobType.GENERATE_EMBEDDINGS, {
+          lessonId: record.id,
+          contentId: record.contentId,
+        });
+      } catch (error) {
+        console.error("[QUEUE] Falling back to inline embedding generation", error);
+        await embedLesson(record.id);
+      }
+    } else {
+      await embedLesson(record.id);
+    }
 
     let scheduledWorkId: string | null = null;
     if (body.status === "published") {

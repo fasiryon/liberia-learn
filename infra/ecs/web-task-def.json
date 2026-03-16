@@ -1,0 +1,47 @@
+{
+  "family": "liberialearn-web",
+  "networkMode": "awsvpc",
+  "requiresCompatibilities": ["FARGATE"],
+  "cpu": "512",
+  "memory": "1024",
+  "containerDefinitions": [
+    {
+      "name": "liberialearn-web",
+      "image": "${ECR_WEB_IMAGE_URI}",
+      "essential": true,
+      "portMappings": [
+        {
+          "containerPort": 3000,
+          "protocol": "tcp"
+        }
+      ],
+      "secrets": [
+        { "name": "DATABASE_URL", "valueFrom": "${SSM_DATABASE_URL_ARN}" },
+        { "name": "NEXTAUTH_SECRET", "valueFrom": "${SSM_NEXTAUTH_SECRET_ARN}" },
+        { "name": "NEXTAUTH_URL", "valueFrom": "${SSM_NEXTAUTH_URL_ARN}" },
+        { "name": "OPENAI_API_KEY", "valueFrom": "${SSM_OPENAI_API_KEY_ARN}" },
+        { "name": "GROQ_API_KEY", "valueFrom": "${SSM_GROQ_API_KEY_ARN}" },
+        { "name": "AFRICA_TALKING_API_KEY", "valueFrom": "${SSM_AFRICA_TALKING_API_KEY_ARN}" },
+        { "name": "AFRICA_TALKING_USERNAME", "valueFrom": "${SSM_AFRICA_TALKING_USERNAME_ARN}" }
+      ],
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "/ecs/liberialearn-web",
+          "awslogs-region": "${AWS_REGION}",
+          "awslogs-stream-prefix": "ecs"
+        }
+      },
+      "healthCheck": {
+        "command": [
+          "CMD-SHELL",
+          "wget -qO- http://localhost:3000/api/health >/dev/null || exit 1"
+        ],
+        "interval": 30,
+        "timeout": 5,
+        "retries": 3,
+        "startPeriod": 30
+      }
+    }
+  ]
+}

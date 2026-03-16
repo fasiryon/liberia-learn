@@ -15,7 +15,7 @@ function truncateInput(text: string): string {
   return text.replace(/\s+/g, " ").trim().slice(0, MAX_INPUT_CHARS);
 }
 
-function getCurriculumBody(payload: Record<string, unknown>): string {
+export function getCurriculumBody(payload: Record<string, unknown>): string {
   const direct =
     typeof payload.body === "string"
       ? payload.body
@@ -32,7 +32,7 @@ function getCurriculumBody(payload: Record<string, unknown>): string {
   return JSON.stringify(payload);
 }
 
-function buildLessonSource(record: {
+export function buildLessonSource(record: {
   subject: string;
   payload: Prisma.JsonValue;
 }): string {
@@ -46,7 +46,7 @@ function buildLessonSource(record: {
   return truncateInput([title, content, record.subject].join("\n"));
 }
 
-function toVectorLiteral(vector: number[]): string {
+export function toVectorLiteral(vector: number[]): string {
   if (vector.length !== EMBEDDING_DIMENSIONS) {
     throw new Error(
       `Expected ${EMBEDDING_DIMENSIONS}-dimension embedding, received ${vector.length}`
@@ -60,6 +60,35 @@ function toVectorLiteral(vector: number[]): string {
   }
 
   return `[${vector.join(",")}]`;
+}
+
+export async function getLessonEmbeddingSource(lessonId: string): Promise<string> {
+  const lesson = await prisma.curriculumContent.findUnique({
+    where: { id: lessonId },
+    select: {
+      subject: true,
+      payload: true,
+    },
+  });
+
+  if (!lesson) {
+    throw new Error(`CurriculumContent ${lessonId} not found`);
+  }
+
+  return buildLessonSource(lesson);
+}
+
+export async function saveLessonEmbedding(lessonId: string, embedding: number[]): Promise<void> {
+  const vectorSql = Prisma.raw(`'${toVectorLiteral(embedding)}'::vector`);
+
+  await prisma.$executeRaw(
+    Prisma.sql`
+      UPDATE "CurriculumContent"
+      SET "embedding" = ${vectorSql},
+          "embeddedAt" = NOW()
+      WHERE "id" = ${lessonId}
+    `
+  );
 }
 
 export async function embedText(text: string): Promise<number[]> {
@@ -121,29 +150,7 @@ export async function embedText(text: string): Promise<number[]> {
 }
 
 export async function embedLesson(lessonId: string): Promise<void> {
-  const lesson = await prisma.curriculumContent.findUnique({
-    where: { id: lessonId },
-    select: {
-      id: true,
-      subject: true,
-      payload: true,
-    },
-  });
-
-  if (!lesson) {
-    throw new Error(`CurriculumContent ${lessonId} not found`);
-  }
-
-  const source = buildLessonSource(lesson);
+  const source = await getLessonEmbeddingSource(lessonId);
   const embedding = await embedText(source);
-  const vectorSql = Prisma.raw(`'${toVectorLiteral(embedding)}'::vector`);
-
-  await prisma.$executeRaw(
-    Prisma.sql`
-      UPDATE "CurriculumContent"
-      SET "embedding" = ${vectorSql},
-          "embeddedAt" = NOW()
-      WHERE "id" = ${lesson.id}
-    `
-  );
+  await saveLessonEmbedding(lessonId, embedding);
 }
