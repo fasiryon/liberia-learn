@@ -15,6 +15,8 @@ jobs:
     env:
       AWS_REGION: ${{ vars.AWS_REGION }}
       ECR_REPOSITORY: liberialearn-web
+      SENTRY_ORG: liberialearn
+      SENTRY_PROJECT: liberialearn-web
     steps:
       - uses: actions/checkout@v4
       - id: aws-creds
@@ -25,7 +27,15 @@ jobs:
       - id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2
       - name: Build image
-        run: docker build -t $ECR_REPOSITORY:${GITHUB_SHA} -t $ECR_REPOSITORY:latest .
+        env:
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+        run: |
+          docker build \
+            --build-arg SENTRY_AUTH_TOKEN="$SENTRY_AUTH_TOKEN" \
+            --build-arg SENTRY_ORG="$SENTRY_ORG" \
+            --build-arg SENTRY_PROJECT="$SENTRY_PROJECT" \
+            -t $ECR_REPOSITORY:${GITHUB_SHA} \
+            -t $ECR_REPOSITORY:latest .
       - name: Tag image
         run: |
           docker tag $ECR_REPOSITORY:${GITHUB_SHA} ${{ steps.login-ecr.outputs.registry }}/$ECR_REPOSITORY:${GITHUB_SHA}

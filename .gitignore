@@ -29,6 +29,7 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
+*.map
 
 # env files (can opt-in for committing if needed)
 .env*
@@ -86,3 +87,4 @@ _patches/
 LL_AUDIT_DUMP*.txt
 .env*.local
 _gold/
+infra/outputs/

@@ -1,0 +1,67 @@
+{
+  "alarms": [
+    {
+      "AlarmName": "liberialearn-worker-dlq-alarm",
+      "AlarmDescription": "DLQ contains one or more worker messages.",
+      "Namespace": "AWS/SQS",
+      "MetricName": "ApproximateNumberOfMessagesVisible",
+      "Dimensions": [
+        {
+          "Name": "QueueName",
+          "Value": "${DLQ_NAME}"
+        }
+      ],
+      "Statistic": "Average",
+      "Period": 60,
+      "EvaluationPeriods": 1,
+      "Threshold": 0,
+      "ComparisonOperator": "GreaterThanThreshold",
+      "TreatMissingData": "notBreaching",
+      "AlarmActions": [
+        "${SNS_TOPIC_ARN}"
+      ]
+    },
+    {
+      "AlarmName": "liberialearn-ecs-cpu-alarm",
+      "AlarmDescription": "ECS CPU utilization is above 80 percent.",
+      "Namespace": "AWS/ECS",
+      "MetricName": "CPUUtilization",
+      "Dimensions": [
+        {
+          "Name": "ClusterName",
+          "Value": "${CLUSTER_NAME}"
+        }
+      ],
+      "Statistic": "Average",
+      "Period": 300,
+      "EvaluationPeriods": 1,
+      "Threshold": 80,
+      "ComparisonOperator": "GreaterThanThreshold",
+      "TreatMissingData": "notBreaching",
+      "AlarmActions": [
+        "${SNS_TOPIC_ARN}"
+      ]
+    },
+    {
+      "AlarmName": "liberialearn-ecs-memory-alarm",
+      "AlarmDescription": "ECS memory utilization is above 85 percent.",
+      "Namespace": "AWS/ECS",
+      "MetricName": "MemoryUtilization",
+      "Dimensions": [
+        {
+          "Name": "ClusterName",
+          "Value": "${CLUSTER_NAME}"
+        }
+      ],
+      "Statistic": "Average",
+      "Period": 300,
+      "EvaluationPeriods": 1,
+      "Threshold": 85,
+      "ComparisonOperator": "GreaterThanThreshold",
+      "TreatMissingData": "notBreaching",
+      "AlarmActions": [
+        "${SNS_TOPIC_ARN}"
+      ]
+    }
+  ]
+}
