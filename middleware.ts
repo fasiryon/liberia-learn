@@ -1,4 +1,4 @@
-﻿// middleware.ts
+// middleware.ts
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { getToken } from "next-auth/jwt";
@@ -11,6 +11,10 @@ const PUBLIC_PATHS = [
   "/api/onboard",
   "/api/onboard/school",
   "/api/auth",
+  "/forgot-password",
+  "/reset-password",
+  "/api/auth/forgot-password",
+  "/api/auth/reset-password",
 ];
 
 function isPublicPath(pathname: string) {
