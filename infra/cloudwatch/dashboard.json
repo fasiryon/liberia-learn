@@ -1,0 +1,104 @@
+{
+  "widgets": [
+    {
+      "type": "metric",
+      "x": 0,
+      "y": 0,
+      "width": 12,
+      "height": 6,
+      "properties": {
+        "title": "ECS CPU Utilization",
+        "region": "${AWS_REGION}",
+        "view": "timeSeries",
+        "stacked": false,
+        "metrics": [
+          ["AWS/ECS", "CPUUtilization", "ClusterName", "${CLUSTER_NAME}", "ServiceName", "${WEB_SERVICE_NAME}"],
+          [".", ".", ".", ".", "ServiceName", "${WORKER_SERVICE_NAME}"]
+        ]
+      }
+    },
+    {
+      "type": "metric",
+      "x": 12,
+      "y": 0,
+      "width": 12,
+      "height": 6,
+      "properties": {
+        "title": "ECS Memory Utilization",
+        "region": "${AWS_REGION}",
+        "view": "timeSeries",
+        "stacked": false,
+        "metrics": [
+          ["AWS/ECS", "MemoryUtilization", "ClusterName", "${CLUSTER_NAME}", "ServiceName", "${WEB_SERVICE_NAME}"],
+          [".", ".", ".", ".", "ServiceName", "${WORKER_SERVICE_NAME}"]
+        ]
+      }
+    },
+    {
+      "type": "metric",
+      "x": 0,
+      "y": 6,
+      "width": 12,
+      "height": 6,
+      "properties": {
+        "title": "SQS Messages Sent",
+        "region": "${AWS_REGION}",
+        "view": "timeSeries",
+        "stacked": false,
+        "metrics": [
+          ["AWS/SQS", "NumberOfMessagesSent", "QueueName", "${QUEUE_NAME}"],
+          [".", ".", "QueueName", "${DLQ_NAME}"]
+        ]
+      }
+    },
+    {
+      "type": "metric",
+      "x": 12,
+      "y": 6,
+      "width": 12,
+      "height": 6,
+      "properties": {
+        "title": "SQS In Flight Messages",
+        "region": "${AWS_REGION}",
+        "view": "timeSeries",
+        "stacked": false,
+        "metrics": [
+          ["AWS/SQS", "ApproximateNumberOfMessagesNotVisible", "QueueName", "${QUEUE_NAME}"]
+        ]
+      }
+    },
+    {
+      "type": "metric",
+      "x": 0,
+      "y": 12,
+      "width": 12,
+      "height": 6,
+      "properties": {
+        "title": "DLQ Dead Letters",
+        "region": "${AWS_REGION}",
+        "view": "timeSeries",
+        "stacked": false,
+        "metrics": [
+          ["AWS/SQS", "ApproximateNumberOfMessagesVisible", "QueueName", "${DLQ_NAME}"]
+        ]
+      }
+    },
+    {
+      "type": "metric",
+      "x": 12,
+      "y": 12,
+      "width": 12,
+      "height": 6,
+      "properties": {
+        "title": "ALB Requests and 5XX",
+        "region": "${AWS_REGION}",
+        "view": "timeSeries",
+        "stacked": false,
+        "metrics": [
+          ["AWS/ApplicationELB", "RequestCount", "LoadBalancer", "${ALB_DIMENSION}"],
+          [".", "HTTPCode_ELB_5XX_Count", ".", "."]
+        ]
+      }
+    }
+  ]
+}

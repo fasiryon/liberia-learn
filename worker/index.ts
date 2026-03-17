@@ -6,6 +6,7 @@ import {
 } from "@aws-sdk/client-sqs";
 import { JobType } from "@/lib/queue";
 import { dispatchJob } from "@/worker/handlers";
+import { initWorkerSentry, Sentry } from "@/worker/sentry";
 
 type QueueEnvelope = {
   jobType: JobType;
@@ -67,6 +68,10 @@ async function pollOnce() {
     } catch (error) {
       const receiveCount = Number(message.Attributes?.ApproximateReceiveCount ?? "1");
       const reason = error instanceof Error ? error.message : String(error);
+      Sentry.captureException(error, {
+        tags: { component: "worker", queue: "liberialearn-jobs" },
+        extra: { receiveCount },
+      });
       console.error("[WORKER] job failed", {
         receiveCount,
         reason,
@@ -79,6 +84,8 @@ async function pollOnce() {
 }
 
 async function run() {
+  initWorkerSentry();
+
   if (!queueUrl) {
     throw new Error("SQS_QUEUE_URL is required");
   }
@@ -97,6 +104,9 @@ process.on("SIGINT", () => {
 });
 
 run().catch((error) => {
+  Sentry.captureException(error, {
+    tags: { component: "worker", phase: "startup" },
+  });
   console.error("[WORKER] fatal error", error);
   process.exit(1);
 });

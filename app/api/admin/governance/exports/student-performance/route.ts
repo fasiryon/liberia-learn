@@ -12,7 +12,7 @@
  * Access: ADMIN (school scope), Platform Admin (national scope)
  */
 import { NextRequest, NextResponse } from "next/server";
-import { requireRole } from "@/lib/auth";
+import { requireUser } from "@/lib/auth";
 import { assertPermission, PERMISSIONS } from "@/lib/permissions";
 import {
   isGovExportsEnabled,
@@ -22,6 +22,16 @@ import {
 import { resolveScopeParams } from "@/lib/reporting/scope";
 import { buildStudentPerformanceExport } from "@/lib/exports/governanceExport";
 import { randomUUID } from "crypto";
+import { uploadExport } from "@/lib/storage";
+
+function buildExportKey(filename: string, traceId: string) {
+  const datePrefix = new Date().toISOString().slice(0, 10);
+  return `governance/${datePrefix}/${traceId}/${filename}`;
+}
+
+function wantsJson(req: NextRequest) {
+  return req.headers.get("accept")?.includes("application/json") ?? false;
+}
 
 export async function GET(req: NextRequest) {
   const traceId = randomUUID();
@@ -33,7 +43,10 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: "governance_exports_disabled" }, { status: 403 });
     }
 
-    const user = await requireRole("ADMIN");
+    const user = await requireUser();
+    if (user.role !== "ADMIN") {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    }
     assertPermission(user, PERMISSIONS.GOVERNANCE_EXPORT_SCHOOL);
 
     const { searchParams } = new URL(req.url);
@@ -61,11 +74,23 @@ export async function GET(req: NextRequest) {
     });
 
     const filename = `student-performance-${new Date().toISOString().slice(0, 10)}.${format}`;
-    return new NextResponse(result.body, {
-      headers: {
-        "Content-Type": result.contentType,
-        "Content-Disposition": `attachment; filename="${filename}"`,
-      },
+    const key = buildExportKey(filename, traceId);
+    const downloadUrl = await uploadExport(
+      key,
+      Buffer.from(result.body, "utf-8"),
+      result.contentType
+    );
+
+    if (!wantsJson(req)) {
+      return NextResponse.redirect(downloadUrl, 307);
+    }
+
+    return NextResponse.json({
+      downloadUrl,
+      key,
+      filename,
+      contentType: result.contentType,
+      expiresInSeconds: 900,
     });
   } catch (err: any) {
     return NextResponse.json(

@@ -61,7 +61,20 @@ Server-only vars must never be referenced from client components.
 
 | Variable | Description |
 |----------|-------------|
+| `SENTRY_DSN` | Server-side Sentry DSN for Next.js and the ECS worker |
+| `SENTRY_ORG` | Sentry org slug used for source map uploads |
+| `SENTRY_PROJECT` | Sentry project slug for web build uploads |
+| `SENTRY_AUTH_TOKEN` | Sentry auth token used in CI for source map uploads |
 | `NEXT_PUBLIC_SENTRY_DSN` | Sentry DSN for client + server error capture |
+
+### AWS Export Storage
+
+| Variable | Description |
+|----------|-------------|
+| `AWS_REGION` | AWS region for S3 and ECS resources |
+| `AWS_S3_EXPORTS_BUCKET` | Private S3 bucket used for governance export objects |
+| `AWS_ACCESS_KEY_ID` | Optional AWS access key for local/export automation |
+| `AWS_SECRET_ACCESS_KEY` | Optional AWS secret key for local/export automation |
 
 ---
 
@@ -218,7 +231,15 @@ AT_ENVIRONMENT="production"
 AT_SENDER_ID="LRLEARN"
 
 # Monitoring
+SENTRY_DSN="https://...@sentry.io/..."
+SENTRY_ORG="liberialearn"
+SENTRY_PROJECT="liberialearn-web"
 NEXT_PUBLIC_SENTRY_DSN="https://...@sentry.io/..."
+SENTRY_AUTH_TOKEN="sntrys_..."
+
+# AWS Export Storage
+AWS_REGION="us-east-1"
+AWS_S3_EXPORTS_BUCKET="liberialearn-exports-123456789012"
 
 # Phase 1 MOE deployment flags
 ENABLE_MOE_PORTAL="true"
