@@ -1,0 +1,14 @@
+# Terraform
+.terraform/
+*.tfstate
+*.tfstate.*
+*.tfvars
+*.tfplan
+terraform.zip
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Node
+node_modules/
