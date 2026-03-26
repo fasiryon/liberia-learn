@@ -2,12 +2,18 @@
 set -euo pipefail
 
 AWS_REGION="${AWS_REGION:-us-east-1}"
-WEB_ACL_NAME="${WAF_WEB_ACL_NAME:-liberialearn-waf}"
-CLOUDFRONT_COMMENT="${CLOUDFRONT_COMMENT:-liberialearn-cloudfront}"
+WEB_ACL_NAME="${WAF_WEB_ACL_NAME:-liberialearn-cloudfront-waf}"
+DISTRIBUTION_ID="${CLOUDFRONT_DISTRIBUTION_ID:-E176M9UAMBHZJM}"
+TEMPLATE_FILE="${WAF_TEMPLATE_FILE:-infra/waf/web-acl-template.json}"
 OUTPUT_DIR="infra/outputs"
-OUTPUT_FILE="${OUTPUT_DIR}/waf.txt"
+OUTPUT_FILE="${OUTPUT_DIR}/waf-arn.txt"
 
 mkdir -p "$OUTPUT_DIR"
+
+if [ ! -f "$TEMPLATE_FILE" ]; then
+  echo "WAF template not found: $TEMPLATE_FILE" >&2
+  exit 1
+fi
 
 WEB_ACL_ARN="$(aws wafv2 list-web-acls \
   --scope CLOUDFRONT \
@@ -16,110 +22,15 @@ WEB_ACL_ARN="$(aws wafv2 list-web-acls \
   --output text)"
 
 if [ -z "$WEB_ACL_ARN" ] || [ "$WEB_ACL_ARN" = "None" ]; then
-  REQUEST_FILE="$(mktemp)"
-  cat > "$REQUEST_FILE" <<'EOF'
-{
-  "Name": "liberialearn-waf",
-  "Scope": "CLOUDFRONT",
-  "DefaultAction": {
-    "Allow": {}
-  },
-  "VisibilityConfig": {
-    "SampledRequestsEnabled": true,
-    "CloudWatchMetricsEnabled": true,
-    "MetricName": "liberialearn-waf"
-  },
-  "Rules": [
-    {
-      "Name": "AWSManagedRulesCommonRuleSet",
-      "Priority": 0,
-      "Statement": {
-        "ManagedRuleGroupStatement": {
-          "VendorName": "AWS",
-          "Name": "AWSManagedRulesCommonRuleSet"
-        }
-      },
-      "OverrideAction": {
-        "None": {}
-      },
-      "VisibilityConfig": {
-        "SampledRequestsEnabled": true,
-        "CloudWatchMetricsEnabled": true,
-        "MetricName": "common-rule-set"
-      }
-    },
-    {
-      "Name": "AWSManagedRulesKnownBadInputsRuleSet",
-      "Priority": 1,
-      "Statement": {
-        "ManagedRuleGroupStatement": {
-          "VendorName": "AWS",
-          "Name": "AWSManagedRulesKnownBadInputsRuleSet"
-        }
-      },
-      "OverrideAction": {
-        "None": {}
-      },
-      "VisibilityConfig": {
-        "SampledRequestsEnabled": true,
-        "CloudWatchMetricsEnabled": true,
-        "MetricName": "known-bad-inputs"
-      }
-    },
-    {
-      "Name": "AWSManagedRulesBotControlRuleSet",
-      "Priority": 2,
-      "Statement": {
-        "ManagedRuleGroupStatement": {
-          "VendorName": "AWS",
-          "Name": "AWSManagedRulesBotControlRuleSet"
-        }
-      },
-      "OverrideAction": {
-        "Count": {}
-      },
-      "VisibilityConfig": {
-        "SampledRequestsEnabled": true,
-        "CloudWatchMetricsEnabled": true,
-        "MetricName": "bot-control-count"
-      }
-    },
-    {
-      "Name": "liberialearn-rate-limit",
-      "Priority": 3,
-      "Statement": {
-        "RateBasedStatement": {
-          "Limit": 1000,
-          "AggregateKeyType": "IP"
-        }
-      },
-      "Action": {
-        "Block": {}
-      },
-      "VisibilityConfig": {
-        "SampledRequestsEnabled": true,
-        "CloudWatchMetricsEnabled": true,
-        "MetricName": "rate-limit"
-      }
-    }
-  ]
-}
-EOF
-
   WEB_ACL_ARN="$(aws wafv2 create-web-acl \
     --region "$AWS_REGION" \
-    --cli-input-json "file://${REQUEST_FILE}" \
+    --cli-input-json "file://${TEMPLATE_FILE}" \
     --query 'Summary.ARN' \
     --output text)"
-  rm -f "$REQUEST_FILE"
   echo "Created WAF Web ACL: $WEB_ACL_NAME"
 else
   echo "WAF Web ACL exists: $WEB_ACL_NAME"
 fi
-
-DISTRIBUTION_ID="$(aws cloudfront list-distributions \
-  --query "DistributionList.Items[?Comment=='${CLOUDFRONT_COMMENT}'].Id | [0]" \
-  --output text)"
 
 if [ -n "$DISTRIBUTION_ID" ] && [ "$DISTRIBUTION_ID" != "None" ]; then
   ETAG="$(aws cloudfront get-distribution-config --id "$DISTRIBUTION_ID" --query 'ETag' --output text)"
