@@ -125,7 +125,10 @@ export function getAiTutorDailyLimit(): number {
 
 /** RAG-grounded student tutor retrieval. DEFAULT OFF. */
 export function isRagTutorEnabled(): boolean {
-  return process.env.ENABLE_RAG_TUTOR === "true";
+  return (
+    process.env.ENABLE_RAG_TUTOR === "true" ||
+    process.env.NEXT_PUBLIC_ENABLE_RAG_TUTOR === "true"
+  );
 }
 
 /** Teacher lesson generation and co-creation. DEFAULT OFF. */
