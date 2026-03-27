@@ -119,6 +119,7 @@ model School {
   labSessions            LabSession[]
   guardianMessages       GuardianMessage[]
   exams                  Exam[]
+  ragChunks              RagChunk[]
 }
 
 model Class {
@@ -984,6 +985,31 @@ model CurriculumContent {
   @@index([grade, subject])
   @@index([contentType, status])
   @@index([unitId, orderInUnit])
+}
+
+model RagChunk {
+  id         String   @id
+  sourceType String
+  sourceId    String
+  title      String
+  content    String
+  chunkIndex Int
+  subject    String?
+  grade      Int?
+  schoolId   String?
+  scope      String
+  sourceLabel String?
+  metadata   Json?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  embeddedAt DateTime?
+  embedding  Unsupported("vector(1536)")?
+  school     School?  @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+
+  @@unique([sourceType, sourceId, chunkIndex], name: "RagChunk_sourceType_sourceId_chunkIndex_key")
+  @@index([schoolId, scope])
+  @@index([sourceType, sourceId])
+  @@index([subject, grade])
 }
 
 /// / ===== Scheduled Work (Today's Work) =====
