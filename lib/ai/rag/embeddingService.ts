@@ -1,5 +1,5 @@
 import { Prisma } from "@prisma/client";
-import { getOpenAIClientOrThrow } from "@/lib/ai/openaiClient";
+import { routedCompletion } from "@/lib/ai/routedCompletion";
 import { prisma } from "@/lib/db";
 
 const EMBEDDING_MODEL = "text-embedding-3-small";
@@ -92,7 +92,6 @@ export async function saveLessonEmbedding(lessonId: string, embedding: number[])
 }
 
 export async function embedText(text: string): Promise<number[]> {
-  const client = getOpenAIClientOrThrow();
   const input = truncateInput(text);
 
   if (!input) {
@@ -103,15 +102,12 @@ export async function embedText(text: string): Promise<number[]> {
 
   for (let attempt = 1; attempt <= MAX_RETRIES; attempt += 1) {
     try {
-      const response = await client.embeddings.create({
+      const response = await routedCompletion({
+        mode: "embedding",
         model: EMBEDDING_MODEL,
         input,
       });
-
-      const vector = response.data[0]?.embedding;
-      if (!Array.isArray(vector)) {
-        throw new Error("OpenAI returned no embedding vector");
-      }
+      const vector = response.embedding;
 
       if (vector.length !== EMBEDDING_DIMENSIONS) {
         throw new Error(

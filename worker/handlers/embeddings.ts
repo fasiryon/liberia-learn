@@ -1,4 +1,5 @@
 import { getLessonEmbeddingSource, saveLessonEmbedding } from "@/lib/ai/rag/embeddingService";
+import { syncCurriculumContentRagChunks } from "@/lib/ai/rag/ragIngestionService";
 import { routedCompletion } from "@/lib/ai/routedCompletion";
 
 type EmbeddingsJobPayload = {
@@ -17,4 +18,5 @@ export async function handleGenerateEmbeddingsJob(payload: EmbeddingsJobPayload)
   });
 
   await saveLessonEmbedding(payload.lessonId, result.embedding);
+  await syncCurriculumContentRagChunks(payload.lessonId);
 }

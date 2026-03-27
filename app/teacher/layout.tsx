@@ -1,4 +1,5 @@
 import { TeacherShell } from "@/app/teacher/TeacherShell";
+import GlobalAssistantMount from "@/components/rag/GlobalAssistantMount";
 
 /**
  * Teacher layout — server component.
@@ -14,5 +15,10 @@ export default function TeacherLayout({
 }: {
   children: React.ReactNode;
 }) {
-  return <TeacherShell>{children}</TeacherShell>;
+  return (
+    <>
+      <TeacherShell>{children}</TeacherShell>
+      <GlobalAssistantMount />
+    </>
+  );
 }

@@ -2,6 +2,10 @@ import { randomUUID } from "crypto";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { embedLesson } from "@/lib/ai/rag/embeddingService";
+import {
+  deleteCurriculumContentRagChunks,
+  syncCurriculumContentRagChunks,
+} from "@/lib/ai/rag/ragIngestionService";
 import { requireRole } from "@/lib/auth";
 import { logAudit } from "@/lib/audit";
 import { prisma } from "@/lib/db";
@@ -37,6 +41,53 @@ function isTeacherGenerationDisabled() {
     return true;
   }
   return false;
+}
+
+async function runBestEffortAiWork(
+  recordId: string,
+  contentId: string,
+  status: string
+) {
+  const queueConfigured = isQueueConfigured();
+
+  if (queueConfigured) {
+    try {
+      await enqueueJob(JobType.GENERATE_EMBEDDINGS, {
+        lessonId: recordId,
+        contentId,
+      });
+    } catch (queueError) {
+      console.error("[QUEUE] Falling back to inline embedding generation", queueError);
+      try {
+        await embedLesson(recordId);
+      } catch (embeddingError) {
+        console.error("[RAG] Best-effort teacher lesson embedding failed", embeddingError);
+      }
+    }
+  } else {
+    try {
+      await embedLesson(recordId);
+    } catch (embeddingError) {
+      console.error("[RAG] Best-effort teacher lesson embedding failed", embeddingError);
+    }
+  }
+
+  if (status === "published") {
+    if (!queueConfigured) {
+      try {
+        await syncCurriculumContentRagChunks(recordId);
+      } catch (syncError) {
+        console.error("[RAG] Best-effort teacher lesson sync failed", syncError);
+      }
+    }
+    return;
+  }
+
+  try {
+    await deleteCurriculumContentRagChunks(recordId);
+  } catch (cleanupError) {
+    console.error("[RAG] Best-effort teacher lesson cleanup failed", cleanupError);
+  }
 }
 
 export async function POST(req: NextRequest) {
@@ -125,19 +176,7 @@ export async function POST(req: NextRequest) {
           },
         });
 
-    if (isQueueConfigured()) {
-      try {
-        await enqueueJob(JobType.GENERATE_EMBEDDINGS, {
-          lessonId: record.id,
-          contentId: record.contentId,
-        });
-      } catch (error) {
-        console.error("[QUEUE] Falling back to inline embedding generation", error);
-        await embedLesson(record.id);
-      }
-    } else {
-      await embedLesson(record.id);
-    }
+    await runBestEffortAiWork(record.id, record.contentId, record.status);
 
     let scheduledWorkId: string | null = null;
     if (body.status === "published") {
