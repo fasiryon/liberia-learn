@@ -3,6 +3,9 @@ import { requireRole } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { logAudit } from "@/lib/audit";
 import { isCurriculumFeedbackEnabled } from "@/lib/serverFlags";
+import { embedLesson } from "@/lib/ai/rag/embeddingService";
+import { syncCurriculumContentRagChunks } from "@/lib/ai/rag/ragIngestionService";
+import { enqueueJob, isQueueConfigured, JobType } from "@/lib/queue";
 
 /**
  * POST /api/admin/curriculum/approve
@@ -16,7 +19,10 @@ export async function POST(req: Request) {
     const body = await req.json();
     const { contentId } = body;
     if (!contentId || typeof contentId !== "string") {
-      return NextResponse.json({ error: "contentId required" }, { status: 400 });
+      return NextResponse.json(
+        { error: "contentId required" },
+        { status: 400 }
+      );
     }
 
     const record = await prisma.curriculumContent.findUnique({
@@ -26,7 +32,6 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Not found" }, { status: 404 });
     }
 
-    // Update payload with approval info
     const payload = (record.payload as any) ?? {};
     const updatedPayload = {
       ...payload,
@@ -51,7 +56,40 @@ export async function POST(req: Request) {
       schoolId: user.schoolId ?? undefined,
     });
 
-    // Telemetry — never crashes the response
+    if (isQueueConfigured()) {
+      try {
+        await enqueueJob(JobType.GENERATE_EMBEDDINGS, {
+          lessonId: record.id,
+          contentId: record.contentId,
+        });
+      } catch (queueError) {
+        console.error(
+          "[QUEUE] Falling back to inline embedding generation",
+          queueError
+        );
+
+        try {
+          await embedLesson(record.id);
+          await syncCurriculumContentRagChunks(record.id);
+        } catch (embeddingError) {
+          console.error(
+            "[RAG] Best-effort approval embedding failed",
+            embeddingError
+          );
+        }
+      }
+    } else {
+      try {
+        await embedLesson(record.id);
+        await syncCurriculumContentRagChunks(record.id);
+      } catch (embeddingError) {
+        console.error(
+          "[RAG] Best-effort approval embedding failed",
+          embeddingError
+        );
+      }
+    }
+
     if (isCurriculumFeedbackEnabled()) {
       try {
         const generationMethod =
@@ -65,8 +103,11 @@ export async function POST(req: Request) {
             generationMethod,
           },
         });
-      } catch {
-        // intentional no-op: telemetry must not crash approval
+      } catch (telemetryError) {
+        console.error(
+          "[TELEMETRY] Best-effort curriculum approval feedback failed",
+          telemetryError
+        );
       }
     }
 
