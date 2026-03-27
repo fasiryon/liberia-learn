@@ -11,6 +11,9 @@ import { recordMetricEvent } from "@/lib/metrics/events";
 import { createHash } from "crypto";
 import { slugify, generateLabs, generateTermPlanPayload, generateUnitPlanPayload } from "@/lib/curriculum-helpers";
 import { gradeToBand } from "@/lib/moe/alignment-engine";
+import { embedLesson } from "@/lib/ai/rag/embeddingService";
+import { syncCurriculumContentRagChunks } from "@/lib/ai/rag/ragIngestionService";
+import { enqueueJob, isQueueConfigured, JobType } from "@/lib/queue";
 
 // Rate limit: 10 requests per 5 minutes per userId
 const rateLimitMap = new Map<string, { count: number; resetAt: number }>();
@@ -271,6 +274,24 @@ export async function POST(req: Request) {
         moeAlignmentCodes: (enrichedPayload as any).moeAlignments ?? moeAlignmentCodes,
         approvalStatus,
       });
+    }
+
+    if (record.status === "published") {
+      if (isQueueConfigured()) {
+        try {
+          await enqueueJob(JobType.GENERATE_EMBEDDINGS, {
+            lessonId: record.id,
+            contentId: record.contentId,
+          });
+        } catch (error) {
+          console.error("[QUEUE] Falling back to inline embedding generation", error);
+          await embedLesson(record.id);
+          await syncCurriculumContentRagChunks(record.id);
+        }
+      } else {
+        await embedLesson(record.id);
+        await syncCurriculumContentRagChunks(record.id);
+      }
     }
 
     await logAudit({

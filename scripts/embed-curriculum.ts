@@ -1,5 +1,6 @@
 import { Prisma } from "@prisma/client";
 import { embedLesson } from "@/lib/ai/rag/embeddingService";
+import { syncCurriculumContentRagChunks } from "@/lib/ai/rag/ragIngestionService";
 import { prisma } from "@/lib/db";
 
 const args = new Set(process.argv.slice(2));
@@ -47,6 +48,7 @@ async function main() {
 
   for (const [index, id] of ids.entries()) {
     await embedLesson(id);
+    await syncCurriculumContentRagChunks(id);
     embeddedCount += 1;
     console.log(`Embedded ${embeddedCount}/${ids.length} lessons`);
 

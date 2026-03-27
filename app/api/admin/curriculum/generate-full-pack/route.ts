@@ -16,6 +16,9 @@ import {
   generateRubric,
   generateMasteryChecks,
 } from "@/lib/curriculum-helpers";
+import { embedLesson } from "@/lib/ai/rag/embeddingService";
+import { syncCurriculumContentRagChunks } from "@/lib/ai/rag/ragIngestionService";
+import { enqueueJob, isQueueConfigured, JobType } from "@/lib/queue";
 
 export const dynamic = "force-dynamic";
 
@@ -218,6 +221,24 @@ export async function POST(req: Request) {
         hash,
       },
     });
+
+    if (record.status === "published") {
+      if (isQueueConfigured()) {
+        try {
+          await enqueueJob(JobType.GENERATE_EMBEDDINGS, {
+            lessonId: record.id,
+            contentId: record.contentId,
+          });
+        } catch (error) {
+          console.error("[QUEUE] Falling back to inline embedding generation", error);
+          await embedLesson(record.id);
+          await syncCurriculumContentRagChunks(record.id);
+        }
+      } else {
+        await embedLesson(record.id);
+        await syncCurriculumContentRagChunks(record.id);
+      }
+    }
 
     await logAudit({
       userId: user.id,

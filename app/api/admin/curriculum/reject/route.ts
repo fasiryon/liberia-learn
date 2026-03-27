@@ -4,6 +4,7 @@ import { requireRole } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { logAudit } from "@/lib/audit";
 import { isCurriculumFeedbackEnabled } from "@/lib/serverFlags";
+import { deleteCurriculumContentRagChunks } from "@/lib/ai/rag/ragIngestionService";
 
 const RequestSchema = z.object({
   contentId: z.string().min(1),
@@ -37,7 +38,6 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Not found" }, { status: 404 });
     }
 
-    // Update payload with rejection info
     const payload = (record.payload as any) ?? {};
     const updatedPayload = {
       ...payload,
@@ -63,7 +63,15 @@ export async function POST(req: Request) {
       schoolId: user.schoolId ?? undefined,
     });
 
-    // Telemetry — never crashes the response
+    try {
+      await deleteCurriculumContentRagChunks(record.id);
+    } catch (cleanupError) {
+      console.error(
+        "[RAG] Best-effort curriculum rejection cleanup failed",
+        cleanupError
+      );
+    }
+
     if (isCurriculumFeedbackEnabled()) {
       try {
         const generationMethod =
@@ -78,8 +86,11 @@ export async function POST(req: Request) {
             generationMethod,
           },
         });
-      } catch {
-        // intentional no-op: telemetry must not crash rejection
+      } catch (telemetryError) {
+        console.error(
+          "[TELEMETRY] Best-effort curriculum rejection feedback failed",
+          telemetryError
+        );
       }
     }
 
