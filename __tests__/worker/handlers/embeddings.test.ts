@@ -2,11 +2,16 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const mockGetLessonEmbeddingSource = vi.hoisted(() => vi.fn());
 const mockSaveLessonEmbedding = vi.hoisted(() => vi.fn());
+const mockSyncCurriculumContentRagChunks = vi.hoisted(() => vi.fn());
 const mockRoutedCompletion = vi.hoisted(() => vi.fn());
 
 vi.mock("@/lib/ai/rag/embeddingService", () => ({
   getLessonEmbeddingSource: mockGetLessonEmbeddingSource,
   saveLessonEmbedding: mockSaveLessonEmbedding,
+}));
+
+vi.mock("@/lib/ai/rag/ragIngestionService", () => ({
+  syncCurriculumContentRagChunks: mockSyncCurriculumContentRagChunks,
 }));
 
 vi.mock("@/lib/ai/routedCompletion", () => ({
@@ -25,9 +30,10 @@ describe("handleGenerateEmbeddingsJob", () => {
       embedding: [0.1, 0.2, 0.3],
     });
     mockSaveLessonEmbedding.mockResolvedValue(undefined);
+    mockSyncCurriculumContentRagChunks.mockResolvedValue(undefined);
   });
 
-  it("uses routedCompletion and persists the embedding", async () => {
+  it("uses routedCompletion, persists the embedding, and syncs RAG chunks", async () => {
     await handleGenerateEmbeddingsJob({ lessonId: "lesson-1" });
 
     expect(mockRoutedCompletion).toHaveBeenCalledWith({
@@ -35,5 +41,6 @@ describe("handleGenerateEmbeddingsJob", () => {
       input: "lesson text",
     });
     expect(mockSaveLessonEmbedding).toHaveBeenCalledWith("lesson-1", [0.1, 0.2, 0.3]);
+    expect(mockSyncCurriculumContentRagChunks).toHaveBeenCalledWith("lesson-1");
   });
 });
