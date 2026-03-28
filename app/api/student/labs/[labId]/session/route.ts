@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { requireRole } from "@/lib/auth";
 import { prisma } from "@/lib/db";
+import { recordPerformanceEvent } from "@/lib/intelligence/recordPerformanceEvent";
 import { logAudit } from "@/lib/audit";
 import { isVirtualLabsEnabled } from "@/lib/serverFlags";
 import { analyzeLabSession } from "@/lib/ai/lab/labAnalyzer";
@@ -103,6 +104,33 @@ export async function POST(
         schoolId: user.schoolId,
         details: { labId, suggestedScore: analysis.suggestedScore },
       });
+
+      const studentRecord = await prisma.student.findUnique({
+        where: { userId: user.id },
+        select: { id: true, currentGrade: true },
+      });
+      if (studentRecord) {
+        void recordPerformanceEvent({
+          studentId: studentRecord.id,
+          schoolId: user.schoolId,
+          subject: lab.subject,
+          gradeLevel: studentRecord.currentGrade ?? lab.grade,
+          eventType: "lab",
+          score: analysis.suggestedScore / 100,
+          durationSeconds: Math.max(
+            0,
+            Math.round(
+              ((completedSession.completedAt ?? new Date()).getTime() - completedSession.startedAt.getTime()) /
+                1000
+            )
+          ),
+          attempts: 1,
+          aiAssistUsed: false,
+          lessonId: labId,
+        }).catch((eventError) => {
+          console.error("[lab.session.performanceEvent]", eventError);
+        });
+      }
 
       return NextResponse.json({ session: completedSession, aiAnalysis: analysis });
     }

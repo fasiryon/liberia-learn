@@ -170,6 +170,9 @@ model Student {
   guardianMessages      GuardianMessage[]
   examAttempts          ExamAttempt[]
   examCertifications    ExamCertification[]
+  performanceEvents     StudentPerformanceEvent[]
+  confusionSignals      ConfusionSignal[]
+  interventionRecommendations InterventionRecommendation[]
 }
 
 model Exam {
@@ -1025,6 +1028,58 @@ model EvalRun {
 
   @@index([runAt])
   @@index([passed, runAt])
+}
+
+model StudentPerformanceEvent {
+  id              String   @id @default(cuid())
+  studentId       String
+  lessonId        String?
+  subject         String
+  gradeLevel      Int
+  eventType       String
+  score           Float
+  durationSeconds Int
+  attempts        Int      @default(1)
+  aiAssistUsed    Boolean  @default(false)
+  schoolId        String
+  createdAt       DateTime @default(now())
+  student         Student  @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  @@index([studentId, createdAt])
+  @@index([schoolId, subject])
+  @@index([lessonId])
+}
+
+model ConfusionSignal {
+  id            String   @id @default(cuid())
+  studentId     String
+  lessonId      String?
+  conceptTag    String
+  confusionType String
+  severity      String
+  schoolId      String
+  detectedAt    DateTime @default(now())
+  student       Student  @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  @@index([studentId, detectedAt])
+  @@index([schoolId, severity])
+}
+
+model InterventionRecommendation {
+  id                 String   @id @default(cuid())
+  studentId          String
+  lessonId           String?
+  recommendationType String
+  reason             String
+  confidenceScore    Float
+  status             String   @default("pending")
+  expiresAt          DateTime?
+  schoolId           String
+  createdAt          DateTime @default(now())
+  student            Student  @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  @@index([studentId, createdAt])
+  @@index([schoolId, status])
 }
 
 /// / ===== Scheduled Work (Today's Work) =====

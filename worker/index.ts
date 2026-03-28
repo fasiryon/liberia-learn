@@ -4,6 +4,7 @@ import {
   SQSClient,
   type Message,
 } from "@aws-sdk/client-sqs";
+import { publishMetric } from "@/lib/cloudwatch";
 import { JobType } from "@/lib/queue";
 import { dispatchJob } from "@/worker/handlers";
 import { initWorkerSentry, Sentry } from "@/worker/sentry";
@@ -49,6 +50,14 @@ async function deleteMessage(message: Message) {
 async function handleMessage(message: Message) {
   const envelope = parseEnvelope(message);
   await dispatchJob(envelope.jobType, envelope.payload);
+  void publishMetric({
+    metricName: "WorkerJobCompleted",
+    value: 1,
+    unit: "Count",
+    dimensions: { JobType: envelope.jobType },
+  }).catch((error) => {
+    console.error("[CloudWatch] failed to publish WorkerJobCompleted", error);
+  });
   await deleteMessage(message);
 }
 
@@ -66,11 +75,26 @@ async function pollOnce() {
     try {
       await handleMessage(message);
     } catch (error) {
+      const envelope = (() => {
+        try {
+          return parseEnvelope(message);
+        } catch {
+          return null;
+        }
+      })();
       const receiveCount = Number(message.Attributes?.ApproximateReceiveCount ?? "1");
       const reason = error instanceof Error ? error.message : String(error);
       Sentry.captureException(error, {
         tags: { component: "worker", queue: "liberialearn-jobs" },
         extra: { receiveCount },
+      });
+      void publishMetric({
+        metricName: "WorkerJobFailed",
+        value: 1,
+        unit: "Count",
+        dimensions: { JobType: envelope?.jobType ?? "UNKNOWN" },
+      }).catch((metricError) => {
+        console.error("[CloudWatch] failed to publish WorkerJobFailed", metricError);
       });
       console.error("[WORKER] job failed", {
         receiveCount,
