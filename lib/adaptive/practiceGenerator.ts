@@ -1,4 +1,5 @@
 import { routedCompletion } from "@/lib/ai/router";
+import { getPrompt } from "@/lib/ai/promptRegistry";
 import type { DifficultyTier } from "@/lib/adaptive/difficultyAdapter";
 import type { MasteryGap } from "@/lib/adaptive/gapDetector";
 
@@ -81,8 +82,7 @@ export async function generateTargetedPracticeWithUsage(
     messages: [
       {
         role: "system",
-        content:
-          "You generate strict JSON only for student practice sets. Use Liberian names, places, schools, markets, transport, farms, and daily life. No markdown. No prose outside JSON.",
+        content: `${getPrompt("adaptive.practice").template}\nNo markdown. No prose outside JSON.`,
       },
       {
         role: "user",

@@ -5,6 +5,7 @@ import { logAudit } from "@/lib/audit";
 import { prisma } from "@/lib/db";
 import { handleApiError } from "@/lib/errors/apiErrorHandler";
 import { gradeAttempt } from "@/lib/exams/gradingPipeline";
+import { recordPerformanceEvent } from "@/lib/intelligence/recordPerformanceEvent";
 import { isExamSystemEnabled } from "@/lib/serverFlags";
 
 export const dynamic = "force-dynamic";
@@ -124,6 +125,24 @@ export async function POST(req: NextRequest, context: { params: { examId: string
         integrityFlags: uniqueFlags,
         weakMoeCodes: grading.weakMoeCodes,
       },
+    });
+
+    void recordPerformanceEvent({
+      studentId: student.id,
+      schoolId: user.schoolId ?? "",
+      subject: attempt.exam.subject,
+      gradeLevel: attempt.exam.grade,
+      eventType: "quiz",
+      score: grading.score,
+      durationSeconds: Math.max(
+        0,
+        Math.round((submittedAt.getTime() - attempt.startedAt.getTime()) / 1000)
+      ),
+      attempts: 1,
+      aiAssistUsed: false,
+      lessonId: attempt.exam.id,
+    }).catch((eventError) => {
+      console.error("[exam.submit.performanceEvent]", eventError);
     });
 
     return NextResponse.json({ score: grading.score, passed: grading.passed, certCode });

@@ -23,6 +23,9 @@ export async function logAudit({
   schoolId?: string | null;
 }) {
   try {
+    // AuditLog is append-only by design.
+    // DELETE and UPDATE operations on AuditLog are forbidden.
+    // This is enforced at the application layer.
     if (!prisma?.auditLog?.create) return;
     await prisma.auditLog.create({
       data: {

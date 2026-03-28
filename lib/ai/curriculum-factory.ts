@@ -1,5 +1,6 @@
 // lib/ai/curriculum-factory.ts
 import { routedCompletion } from "@/lib/ai/router";
+import { getPrompt } from "@/lib/ai/promptRegistry";
 import {
   CurriculumPayloadSchema,
   GenerateInputSchema,
@@ -334,7 +335,8 @@ export async function generateCurriculumPayload(
   }
 }`;
 
-  const systemPrompt = `You are a curriculum content generator for LiberiaLearn, an educational platform for Liberian schools.
+  const systemPrompt = `${getPrompt("lesson.deep").template}
+You are a curriculum content generator for LiberiaLearn, an educational platform for Liberian schools.
 You MUST return ONLY a valid JSON object. No markdown, no backticks, no explanation, no extra keys.
 The JSON must match this exact structure:
 
