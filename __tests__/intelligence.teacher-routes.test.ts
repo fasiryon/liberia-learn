@@ -3,20 +3,26 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 const mockRequireUser = vi.hoisted(() => vi.fn());
 const mockIsConfusionDetectionEnabled = vi.hoisted(() => vi.fn());
 const mockIsInterventionEngineEnabled = vi.hoisted(() => vi.fn());
+const mockIsInterventionWorkflowEnabled = vi.hoisted(() => vi.fn());
 const mockGetClassPerformanceSummary = vi.hoisted(() => vi.fn());
 const mockLogAudit = vi.hoisted(() => vi.fn());
 const mockConfusionFindMany = vi.hoisted(() => vi.fn());
 const mockInterventionFindMany = vi.hoisted(() => vi.fn());
 const mockInterventionUpdateMany = vi.hoisted(() => vi.fn());
 const mockInterventionFindFirst = vi.hoisted(() => vi.fn());
+const mockGetTeacherScope = vi.hoisted(() => vi.fn());
 
 vi.mock("@/lib/auth", () => ({ requireUser: mockRequireUser }));
 vi.mock("@/lib/serverFlags", () => ({
   isConfusionDetectionEnabled: mockIsConfusionDetectionEnabled,
   isInterventionEngineEnabled: mockIsInterventionEngineEnabled,
+  isInterventionWorkflowEnabled: mockIsInterventionWorkflowEnabled,
 }));
 vi.mock("@/lib/intelligence/performanceAggregator", () => ({
   getClassPerformanceSummary: mockGetClassPerformanceSummary,
+}));
+vi.mock("@/lib/intelligence/teacherScope", () => ({
+  getTeacherScope: mockGetTeacherScope,
 }));
 vi.mock("@/lib/audit", () => ({ logAudit: mockLogAudit }));
 vi.mock("@/lib/db", () => ({
@@ -44,11 +50,19 @@ beforeEach(() => {
   mockRequireUser.mockResolvedValue(teacherUser);
   mockIsConfusionDetectionEnabled.mockReturnValue(true);
   mockIsInterventionEngineEnabled.mockReturnValue(true);
+  mockIsInterventionWorkflowEnabled.mockReturnValue(true);
   mockGetClassPerformanceSummary.mockResolvedValue({ teacherId: "teacher-1", schoolId: "school-1" });
+  mockGetTeacherScope.mockResolvedValue({
+    studentIds: ["student-9", "student-1"],
+    students: new Map([
+      ["student-9", { id: "student-9", name: "Student 9", currentGrade: 6, className: "Grade 6A" }],
+      ["student-1", { id: "student-1", name: "Student 1", currentGrade: 6, className: "Grade 6A" }],
+    ]),
+  });
   mockConfusionFindMany.mockResolvedValue([{ id: "signal-1", severity: "high", detectedAt: new Date().toISOString() }]);
-  mockInterventionFindMany.mockResolvedValue([{ id: "int-1", status: "pending" }]);
+  mockInterventionFindMany.mockResolvedValue([{ id: "int-1", studentId: "student-1", status: "pending" }]);
   mockInterventionUpdateMany.mockResolvedValue({ count: 1 });
-  mockInterventionFindFirst.mockResolvedValue({ id: "int-1", status: "actioned" });
+  mockInterventionFindFirst.mockResolvedValue({ id: "int-1", studentId: "student-1", status: "actioned" });
   mockLogAudit.mockResolvedValue(undefined);
 });
 
@@ -85,7 +99,7 @@ describe("teacher intelligence routes", () => {
     expect(res.status).toBe(200);
     expect(mockInterventionUpdateMany).toHaveBeenCalledWith(
       expect.objectContaining({
-        where: { id: "int-1", schoolId: "school-1" },
+        where: { id: "int-1", schoolId: "school-1", studentId: { in: ["student-9", "student-1"] } },
         data: { status: "actioned" },
       })
     );
@@ -103,7 +117,7 @@ describe("teacher intelligence routes", () => {
     await interventionsGET();
     expect(mockInterventionFindMany).toHaveBeenCalledWith(
       expect.objectContaining({
-        where: { schoolId: "school-1", status: "pending" },
+        where: { schoolId: "school-1", status: "pending", studentId: { in: ["student-9", "student-1"] } },
       })
     );
   });

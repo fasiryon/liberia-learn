@@ -1,14 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
 import { requireUser } from "@/lib/auth";
 import { prisma } from "@/lib/db";
-import { isInterventionEngineEnabled } from "@/lib/serverFlags";
+import { isInterventionEngineEnabled, isInterventionWorkflowEnabled } from "@/lib/serverFlags";
 import { logAudit } from "@/lib/audit";
+import { getTeacherScope } from "@/lib/intelligence/teacherScope";
 
 export const dynamic = "force-dynamic";
 
 export async function GET() {
   try {
-    if (!isInterventionEngineEnabled()) {
+    if (!isInterventionEngineEnabled() || !isInterventionWorkflowEnabled()) {
       return NextResponse.json({ error: "Not found" }, { status: 404 });
     }
 
@@ -19,13 +20,32 @@ export async function GET() {
     if (!user.schoolId) {
       return NextResponse.json({ error: "schoolId required" }, { status: 400 });
     }
+    const scope = await getTeacherScope(user.id, user.schoolId);
+    if (scope.studentIds.length === 0) {
+      return NextResponse.json([]);
+    }
 
     const interventions = await (prisma as any).interventionRecommendation.findMany({
-      where: { schoolId: user.schoolId, status: "pending" },
+      where: {
+        schoolId: user.schoolId,
+        status: "pending",
+        studentId: { in: scope.studentIds },
+      },
       orderBy: { createdAt: "desc" },
     });
 
-    return NextResponse.json(interventions);
+    return NextResponse.json(
+      interventions.map((intervention: any) => ({
+        ...intervention,
+        studentName: scope.students.get(intervention.studentId)?.name ?? null,
+        workflowState:
+          intervention.status === "actioned"
+            ? "Teacher action taken"
+            : intervention.status === "dismissed"
+              ? "Dismissed"
+              : "Needs review",
+      }))
+    );
   } catch (error: any) {
     return NextResponse.json(
       { error: error?.message ?? "Failed to load interventions" },
@@ -36,7 +56,7 @@ export async function GET() {
 
 export async function PATCH(req: NextRequest) {
   try {
-    if (!isInterventionEngineEnabled()) {
+    if (!isInterventionEngineEnabled() || !isInterventionWorkflowEnabled()) {
       return NextResponse.json({ error: "Not found" }, { status: 404 });
     }
 
@@ -46,6 +66,10 @@ export async function PATCH(req: NextRequest) {
     }
     if (!user.schoolId) {
       return NextResponse.json({ error: "schoolId required" }, { status: 400 });
+    }
+    const scope = await getTeacherScope(user.id, user.schoolId);
+    if (scope.studentIds.length === 0) {
+      return NextResponse.json({ error: "Intervention not found" }, { status: 404 });
     }
 
     const body = await req.json();
@@ -57,7 +81,7 @@ export async function PATCH(req: NextRequest) {
     }
 
     const updated = await (prisma as any).interventionRecommendation.updateMany({
-      where: { id: body.id, schoolId: user.schoolId },
+      where: { id: body.id, schoolId: user.schoolId, studentId: { in: scope.studentIds } },
       data: { status: body.status },
     });
 
@@ -75,10 +99,23 @@ export async function PATCH(req: NextRequest) {
     });
 
     const intervention = await (prisma as any).interventionRecommendation.findFirst({
-      where: { id: body.id, schoolId: user.schoolId },
+      where: { id: body.id, schoolId: user.schoolId, studentId: { in: scope.studentIds } },
     });
 
-    return NextResponse.json(intervention);
+    return NextResponse.json(
+      intervention
+        ? {
+            ...intervention,
+            studentName: scope.students.get(intervention.studentId)?.name ?? null,
+            workflowState:
+              intervention.status === "actioned"
+                ? "Teacher action taken"
+                : intervention.status === "dismissed"
+                  ? "Dismissed"
+                  : "Needs review",
+          }
+        : null
+    );
   } catch (error: any) {
     return NextResponse.json(
       { error: error?.message ?? "Failed to update intervention" },

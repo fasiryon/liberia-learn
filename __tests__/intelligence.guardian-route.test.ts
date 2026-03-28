@@ -2,14 +2,18 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const mockRequireUser = vi.hoisted(() => vi.fn());
 const mockIsConfusionDetectionEnabled = vi.hoisted(() => vi.fn());
+const mockIsGuardianProgressViewEnabled = vi.hoisted(() => vi.fn());
 const mockStudentGuardianFindFirst = vi.hoisted(() => vi.fn());
 const mockGetStudentPerformanceSummary = vi.hoisted(() => vi.fn());
 const mockInterventionCount = vi.hoisted(() => vi.fn());
+const mockLogAudit = vi.hoisted(() => vi.fn());
 
 vi.mock("@/lib/auth", () => ({ requireUser: mockRequireUser }));
 vi.mock("@/lib/serverFlags", () => ({
   isConfusionDetectionEnabled: mockIsConfusionDetectionEnabled,
+  isGuardianProgressViewEnabled: mockIsGuardianProgressViewEnabled,
 }));
+vi.mock("@/lib/audit", () => ({ logAudit: mockLogAudit }));
 vi.mock("@/lib/db", () => ({
   prisma: {
     studentGuardian: { findFirst: mockStudentGuardianFindFirst },
@@ -26,6 +30,7 @@ beforeEach(() => {
   vi.clearAllMocks();
   mockRequireUser.mockResolvedValue({ id: "guardian-1", role: "GUARDIAN", schoolId: "school-1" });
   mockIsConfusionDetectionEnabled.mockReturnValue(true);
+  mockIsGuardianProgressViewEnabled.mockReturnValue(true);
   mockStudentGuardianFindFirst.mockResolvedValue({ studentId: "student-1" });
   mockGetStudentPerformanceSummary.mockResolvedValue({
     studentId: "student-1",
@@ -36,6 +41,7 @@ beforeEach(() => {
     pendingInterventions: 2,
   });
   mockInterventionCount.mockResolvedValue(1);
+  mockLogAudit.mockResolvedValue(undefined);
 });
 
 describe("GET /api/guardian/performance", () => {
