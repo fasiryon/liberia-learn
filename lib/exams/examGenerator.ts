@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { routedCompletion } from "@/lib/ai/router";
+import { getPrompt } from "@/lib/ai/promptRegistry";
 
 export type ExamGenerationParams = {
   subject: string;
@@ -57,7 +58,7 @@ function buildPrompt(params: Required<ExamGenerationParams>) {
   const standardsList = params.moeStandards.join(", ");
   const standardTarget = Math.max(1, Math.floor(params.questionCount / params.moeStandards.length));
 
-  return `You are an exam generator for Liberian schools.
+  return `${getPrompt("exam.generation").template}
 Return ONLY valid JSON with this shape:
 {
   "title": string,
