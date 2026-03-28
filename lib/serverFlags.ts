@@ -131,6 +131,11 @@ export function isRagTutorEnabled(): boolean {
   );
 }
 
+/** Eval run summary logging. DEFAULT OFF. */
+export function isEvalDbLoggingEnabled(): boolean {
+  return process.env.ENABLE_EVAL_DB_LOGGING === "true";
+}
+
 /** Teacher lesson generation and co-creation. DEFAULT OFF. */
 export function isTeacherGenerationEnabled(): boolean {
   return process.env.ENABLE_TEACHER_GENERATION === "true";

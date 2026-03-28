@@ -1,9 +1,10 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, type ReactNode } from "react";
 
 import { lessonDurationLabel, renderSimpleMarkdown, selectLessonBody } from "@/lib/lessons";
 import { enqueueOfflineRequest } from "@/lib/offline-queue";
+import type { PseudoLab, SimulationDefinition } from "@/lib/schemas/labSimulation";
 
 type ExitTicketQuestion = {
   question: string;
@@ -28,6 +29,9 @@ type LessonResponse = {
       questions?: ExitTicketQuestion[];
     };
   } | null;
+  objectives: string[];
+  pseudoLabs: PseudoLab[];
+  simulationDefinitions: SimulationDefinition[];
   status: "not_started" | "in_progress" | "completed";
   completedAt: string | null;
 };
@@ -36,6 +40,223 @@ type TutorMessage = {
   role: "student" | "assistant";
   text: string;
 };
+
+type SimulationValue = number | string | boolean | string[];
+
+function simulationDefaultState(definition: SimulationDefinition): Record<string, SimulationValue> {
+  return Object.fromEntries(
+    definition.inputs.map((input) => [
+      input.key,
+      input.defaultValue ?? (input.type === "toggle" ? false : input.type === "order" ? input.options ?? [] : input.min ?? 0),
+    ])
+  );
+}
+
+function renderFractionBar(numerator: number, denominator: number) {
+  const safeNumerator = Math.max(0, Math.min(numerator, denominator));
+  return (
+    <div className="grid grid-cols-8 gap-1">
+      {Array.from({ length: denominator }, (_, index) => (
+        <div
+          key={`${numerator}-${denominator}-${index}`}
+          className={`h-5 rounded ${index < safeNumerator ? "bg-emerald-400" : "bg-slate-800"}`}
+        />
+      ))}
+    </div>
+  );
+}
+
+function simulationFeedback(
+  definition: SimulationDefinition,
+  state: Record<string, SimulationValue>
+): { summary: string; detail: string; visual?: ReactNode } {
+  if (definition.rendererKey === "fraction_bar_visualizer") {
+    const numeratorA = Number(state.numeratorA ?? 0);
+    const denominatorA = Math.max(1, Number(state.denominatorA ?? 1));
+    const numeratorB = Number(state.numeratorB ?? 0);
+    const denominatorB = Math.max(1, Number(state.denominatorB ?? 1));
+    const valueA = numeratorA / denominatorA;
+    const valueB = numeratorB / denominatorB;
+    const summary =
+      Math.abs(valueA - valueB) < 0.0001
+        ? "The fractions are equal."
+        : valueA > valueB
+          ? `Fraction A (${numeratorA}/${denominatorA}) is greater.`
+          : `Fraction B (${numeratorB}/${denominatorB}) is greater.`;
+    const detail = `Benchmark check: ${valueA >= 0.5 ? "Fraction A is at or above one-half" : "Fraction A is below one-half"}, and ${valueB >= 0.5 ? "Fraction B is at or above one-half." : "Fraction B is below one-half."}`;
+
+    return {
+      summary,
+      detail,
+      visual: (
+        <div className="space-y-3">
+          <div>
+            <p className="mb-1 text-xs font-semibold uppercase tracking-[0.2em] text-slate-400">Fraction A</p>
+            {renderFractionBar(numeratorA, denominatorA)}
+          </div>
+          <div>
+            <p className="mb-1 text-xs font-semibold uppercase tracking-[0.2em] text-slate-400">Fraction B</p>
+            {renderFractionBar(numeratorB, denominatorB)}
+          </div>
+        </div>
+      ),
+    };
+  }
+
+  if (definition.rendererKey === "plant_growth_slider") {
+    const light = Number(state.light ?? 0);
+    const water = Number(state.water ?? 0);
+    const average = (light + water) / 2;
+    const summary = average >= 7 ? "Strong growth conditions" : average >= 4 ? "Fair growth conditions" : "Weak growth conditions";
+    const detail =
+      light < 4 || water < 4
+        ? "At least one condition is too low, so the plant struggles to make enough food."
+        : "Both light and water are high enough to support healthier growth.";
+    return { summary, detail };
+  }
+
+  if (definition.rendererKey === "water_cycle_sequence") {
+    const stages = Array.isArray(state.stages) ? state.stages.map(String) : [];
+    const expected = ["evaporation", "condensation", "collection"];
+    const correct = stages.join("|") === expected.join("|");
+    return {
+      summary: correct ? "The sequence is correct." : "The sequence needs adjustment.",
+      detail: correct
+        ? "Water evaporates, condenses into droplets, and then collects."
+        : "Try placing evaporation before condensation, then end with collection.",
+    };
+  }
+
+  return {
+    summary: definition.fallbackStaticVisual,
+    detail: definition.explanation,
+  };
+}
+
+function SimulationCard({ definition }: { definition: SimulationDefinition }) {
+  const [state, setState] = useState<Record<string, SimulationValue>>(() => simulationDefaultState(definition));
+  const feedback = simulationFeedback(definition, state);
+
+  function updateValue(key: string, value: SimulationValue) {
+    setState((current) => ({ ...current, [key]: value }));
+  }
+
+  function moveOrderItem(key: string, index: number, direction: -1 | 1) {
+    const current = Array.isArray(state[key]) ? [...(state[key] as string[])] : [];
+    const targetIndex = index + direction;
+    if (targetIndex < 0 || targetIndex >= current.length) return;
+    [current[index], current[targetIndex]] = [current[targetIndex], current[index]];
+    updateValue(key, current);
+  }
+
+  return (
+    <article className="rounded-3xl border border-emerald-500/20 bg-slate-950/60 p-5">
+      <div className="flex flex-wrap items-center gap-2 text-xs text-emerald-200">
+        <span className="rounded-full bg-emerald-500/15 px-3 py-1 font-semibold">{definition.simulationType.replace(/_/g, " ")}</span>
+        <span>Interactive support</span>
+      </div>
+      <h3 className="mt-3 text-lg font-semibold text-white">{definition.title}</h3>
+      <p className="mt-2 text-sm text-slate-300">{definition.objective}</p>
+
+      <div className="mt-4 grid gap-4 lg:grid-cols-[1.1fr_0.9fr]">
+        <div className="space-y-3">
+          {definition.inputs.map((input) => {
+            const value = state[input.key];
+            if (input.type === "range") {
+              return (
+                <label key={input.key} className="block rounded-2xl border border-slate-800 bg-slate-900/70 p-3">
+                  <div className="flex items-center justify-between gap-3">
+                    <span className="text-sm font-medium text-slate-100">{input.label}</span>
+                    <span className="text-xs text-slate-400">{String(value)}</span>
+                  </div>
+                  <input
+                    type="range"
+                    min={input.min}
+                    max={input.max}
+                    step={input.step ?? 1}
+                    value={typeof value === "number" ? value : Number(value ?? input.min ?? 0)}
+                    onChange={(event) => updateValue(input.key, Number(event.target.value))}
+                    className="mt-3 w-full accent-emerald-400"
+                  />
+                </label>
+              );
+            }
+
+            if (input.type === "toggle") {
+              return (
+                <label key={input.key} className="flex items-center justify-between rounded-2xl border border-slate-800 bg-slate-900/70 p-3 text-sm text-slate-100">
+                  <span>{input.label}</span>
+                  <input
+                    type="checkbox"
+                    checked={Boolean(value)}
+                    onChange={(event) => updateValue(input.key, event.target.checked)}
+                  />
+                </label>
+              );
+            }
+
+            if (input.type === "choice" || input.type === "step") {
+              return (
+                <label key={input.key} className="block rounded-2xl border border-slate-800 bg-slate-900/70 p-3">
+                  <span className="text-sm font-medium text-slate-100">{input.label}</span>
+                  <select
+                    value={String(value ?? input.options?.[0] ?? "")}
+                    onChange={(event) => updateValue(input.key, event.target.value)}
+                    className="mt-3 w-full rounded-xl border border-slate-700 bg-slate-950/80 px-3 py-2 text-sm text-slate-100"
+                  >
+                    {(input.options ?? []).map((option) => (
+                      <option key={option} value={option}>
+                        {option}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+              );
+            }
+
+            if (input.type === "order") {
+              const items = Array.isArray(value) ? (value as string[]) : [];
+              return (
+                <div key={input.key} className="rounded-2xl border border-slate-800 bg-slate-900/70 p-3">
+                  <p className="text-sm font-medium text-slate-100">{input.label}</p>
+                  <div className="mt-3 space-y-2">
+                    {items.map((item, index) => (
+                      <div key={`${item}-${index}`} className="flex items-center justify-between rounded-xl border border-slate-800 bg-slate-950/80 px-3 py-2 text-sm text-slate-200">
+                        <span>{item}</span>
+                        <div className="flex gap-2">
+                          <button type="button" onClick={() => moveOrderItem(input.key, index, -1)} className="rounded-full border border-slate-700 px-3 py-1 text-xs text-slate-200">
+                            Up
+                          </button>
+                          <button type="button" onClick={() => moveOrderItem(input.key, index, 1)} className="rounded-full border border-slate-700 px-3 py-1 text-xs text-slate-200">
+                            Down
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              );
+            }
+
+            return null;
+          })}
+        </div>
+
+        <div className="rounded-2xl border border-emerald-500/20 bg-emerald-500/10 p-4">
+          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-emerald-200">What the simulation shows</p>
+          <p className="mt-3 text-base font-semibold text-white">{feedback.summary}</p>
+          <p className="mt-2 text-sm text-slate-200">{feedback.detail}</p>
+          {feedback.visual ? <div className="mt-4">{feedback.visual}</div> : null}
+          <div className="mt-4 space-y-2 text-sm text-slate-300">
+            <p><span className="font-semibold text-slate-100">Student guide:</span> Try one change at a time, then explain what changed.</p>
+            <p><span className="font-semibold text-slate-100">Guardian guide:</span> {definition.guardianGuide ?? "Use the fallback explanation if no shared device is available."}</p>
+            <p><span className="font-semibold text-slate-100">Fallback:</span> {definition.fallbackStaticVisual}</p>
+          </div>
+        </div>
+      </div>
+    </article>
+  );
+}
 
 export default function LessonDeliveryClient({ lessonId }: { lessonId: string }) {
   const [lesson, setLesson] = useState<LessonResponse | null>(null);
@@ -203,6 +424,85 @@ export default function LessonDeliveryClient({ lessonId }: { lessonId: string })
           dangerouslySetInnerHTML={{ __html: renderSimpleMarkdown(renderedBody) }}
         />
       </section>
+
+      {lesson.objectives.length > 0 ? (
+        <section className="rounded-3xl border border-white/10 bg-slate-900/80 p-6">
+          <h2 className="text-lg font-semibold text-white">Lesson Objective</h2>
+          <ul className="mt-4 space-y-2 text-sm text-slate-200">
+            {lesson.objectives.map((objective, index) => (
+              <li key={`${objective}-${index}`} className="rounded-2xl border border-slate-800 bg-slate-950/60 px-4 py-3">
+                {objective}
+              </li>
+            ))}
+          </ul>
+        </section>
+      ) : null}
+
+      {lesson.pseudoLabs.length > 0 ? (
+        <section className="rounded-3xl border border-white/10 bg-slate-900/80 p-6">
+          <h2 className="text-lg font-semibold text-white">Lab Activity</h2>
+          <div className="mt-4 space-y-4">
+            {lesson.pseudoLabs.map((lab) => (
+              <article key={lab.id} className="rounded-3xl border border-cyan-500/20 bg-slate-950/60 p-5">
+                <div className="flex flex-wrap items-center gap-2 text-xs text-cyan-200">
+                  <span className="rounded-full bg-cyan-500/15 px-3 py-1 font-semibold">{lab.labType.replace(/_/g, " ")}</span>
+                  <span>{lab.resourceLevel} resource</span>
+                  <span>{lab.offlineCapable ? "Offline capable" : "Needs connectivity"}</span>
+                </div>
+                <h3 className="mt-3 text-lg font-semibold text-white">{lab.title}</h3>
+                <p className="mt-2 text-sm text-slate-300">{lab.objective}</p>
+                <div className="mt-4 grid gap-4 lg:grid-cols-2">
+                  <div className="rounded-2xl border border-slate-800 bg-slate-900/70 p-4">
+                    <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-400">Student steps</p>
+                    <ol className="mt-3 space-y-2 text-sm text-slate-200">
+                      {lab.procedureSteps.map((step, index) => (
+                        <li key={`${lab.id}-step-${index}`} className="rounded-xl border border-slate-800 bg-slate-950/70 px-3 py-3">
+                          {index + 1}. {step}
+                        </li>
+                      ))}
+                    </ol>
+                  </div>
+                  <div className="space-y-3">
+                    <div className="rounded-2xl border border-slate-800 bg-slate-900/70 p-4 text-sm text-slate-200">
+                      <p className="font-semibold text-white">Materials</p>
+                      <p className="mt-2">{lab.requiredMaterials.join(", ")}</p>
+                    </div>
+                    <div className="rounded-2xl border border-slate-800 bg-slate-900/70 p-4 text-sm text-slate-200">
+                      <p className="font-semibold text-white">Timing</p>
+                      <p className="mt-2">Setup {lab.setupTimeMinutes} min, run {lab.runTimeMinutes} min, cleanup {lab.cleanupTimeMinutes} min.</p>
+                    </div>
+                    <div className="rounded-2xl border border-slate-800 bg-slate-900/70 p-4 text-sm text-slate-200">
+                      <p className="font-semibold text-white">What to notice</p>
+                      <p className="mt-2">{lab.expectedObservation}</p>
+                    </div>
+                    <div className="rounded-2xl border border-slate-800 bg-slate-900/70 p-4 text-sm text-slate-200">
+                      <p className="font-semibold text-white">If materials are limited</p>
+                      <p className="mt-2">{lab.fallbackIfNoMaterials}</p>
+                    </div>
+                    {lab.guardianHomeVariant ? (
+                      <div className="rounded-2xl border border-amber-500/20 bg-amber-500/10 p-4 text-sm text-amber-100">
+                        <p className="font-semibold text-white">Home variant for a guardian</p>
+                        <p className="mt-2">{lab.guardianHomeVariant}</p>
+                      </div>
+                    ) : null}
+                  </div>
+                </div>
+              </article>
+            ))}
+          </div>
+        </section>
+      ) : null}
+
+      {lesson.simulationDefinitions.length > 0 ? (
+        <section className="rounded-3xl border border-white/10 bg-slate-900/80 p-6">
+          <h2 className="text-lg font-semibold text-white">Interactive Simulation</h2>
+          <div className="mt-4 space-y-4">
+            {lesson.simulationDefinitions.map((definition) => (
+              <SimulationCard key={definition.id} definition={definition} />
+            ))}
+          </div>
+        </section>
+      ) : null}
 
       {aiTutorEnabled ? (
         <section className="rounded-3xl border border-white/10 bg-slate-900/80 p-6">

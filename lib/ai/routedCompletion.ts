@@ -8,44 +8,71 @@ import {
 const EMBEDDING_MODEL = "text-embedding-3-small";
 
 type RoutedEmbeddingOptions = {
-  mode: "embedding";
-  input: string;
+  input: string | string[];
   model?: string;
 };
 
 type RoutedEmbeddingResult = {
-  mode: "embedding";
   model: string;
-  embedding: number[];
+  embedding: number[] | number[][];
 };
 
-export function routedCompletion(opts: RoutedEmbeddingOptions): Promise<RoutedEmbeddingResult>;
-export function routedCompletion(opts: RouterOptions): Promise<RouterResult>;
-export async function routedCompletion(
-  opts: RoutedEmbeddingOptions | RouterOptions
-): Promise<RoutedEmbeddingResult | RouterResult> {
-  if ("mode" in opts && opts.mode === "embedding") {
-    const input = opts.input.trim();
-    if (!input) {
-      throw new Error("Cannot generate embedding for empty input");
-    }
+function normalizeEmbeddingText(input: string): string {
+  const normalized = input.toWellFormed().replace(/\u0000/g, "").replace(/\s+/g, " ").trim();
+  if (!normalized) {
+    throw new Error("Cannot generate embedding for empty input");
+  }
+  return normalized;
+}
 
-    const client = getOpenAIClientOrThrow();
-    const response = await client.embeddings.create({
-      model: opts.model ?? EMBEDDING_MODEL,
-      input,
-    });
-    const embedding = response.data[0]?.embedding;
-    if (!Array.isArray(embedding)) {
-      throw new Error("Embedding model returned no vector");
+export function routedEmbedding(
+  opts: { input: string; model?: string }
+): Promise<{ model: string; embedding: number[] }>;
+export function routedEmbedding(
+  opts: { input: string[]; model?: string }
+): Promise<{ model: string; embedding: number[][] }>;
+export async function routedEmbedding(
+  opts: RoutedEmbeddingOptions
+): Promise<RoutedEmbeddingResult> {
+  const normalizedInput = Array.isArray(opts.input)
+    ? opts.input.map(normalizeEmbeddingText)
+    : normalizeEmbeddingText(opts.input);
+
+  const client = getOpenAIClientOrThrow();
+  const response = await client.embeddings.create({
+    model: opts.model ?? EMBEDDING_MODEL,
+    input: normalizedInput,
+  });
+
+  if (Array.isArray(normalizedInput)) {
+    const embedding = response.data.map((item) => item.embedding);
+    if (
+      embedding.length !== normalizedInput.length ||
+      embedding.some((vector) => !Array.isArray(vector))
+    ) {
+      throw new Error("Embedding model returned no vectors");
     }
 
     return {
-      mode: "embedding",
       model: opts.model ?? EMBEDDING_MODEL,
       embedding,
     };
   }
 
-  return routedTextCompletion(opts as RouterOptions);
+  const embedding = response.data[0]?.embedding;
+  if (!Array.isArray(embedding)) {
+    throw new Error("Embedding model returned no vector");
+  }
+
+  return {
+    model: opts.model ?? EMBEDDING_MODEL,
+    embedding,
+  };
+}
+
+export function routedCompletion(opts: RouterOptions): Promise<RouterResult>;
+export async function routedCompletion(
+  opts: RouterOptions
+): Promise<RouterResult> {
+  return routedTextCompletion(opts);
 }

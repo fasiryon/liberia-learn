@@ -57,11 +57,11 @@ export async function POST(req: Request) {
     });
 
     if (isQueueConfigured()) {
-      try {
-        await enqueueJob(JobType.GENERATE_EMBEDDINGS, {
-          lessonId: record.id,
-          contentId: record.contentId,
-        });
+        try {
+          await enqueueJob(JobType.GENERATE_EMBEDDINGS, {
+            lessonId: record.id,
+            contentId: record.contentId,
+          });
       } catch (queueError) {
         console.error(
           "[QUEUE] Falling back to inline embedding generation",
@@ -69,8 +69,16 @@ export async function POST(req: Request) {
         );
 
         try {
-          await embedLesson(record.id);
           await syncCurriculumContentRagChunks(record.id);
+        } catch (syncError) {
+          console.error(
+            "[RAG] Best-effort approval chunk sync failed",
+            syncError
+          );
+        }
+
+        try {
+          await embedLesson(record.id);
         } catch (embeddingError) {
           console.error(
             "[RAG] Best-effort approval embedding failed",
@@ -80,8 +88,16 @@ export async function POST(req: Request) {
       }
     } else {
       try {
-        await embedLesson(record.id);
         await syncCurriculumContentRagChunks(record.id);
+      } catch (syncError) {
+        console.error(
+          "[RAG] Best-effort approval chunk sync failed",
+          syncError
+        );
+      }
+
+      try {
+        await embedLesson(record.id);
       } catch (embeddingError) {
         console.error(
           "[RAG] Best-effort approval embedding failed",

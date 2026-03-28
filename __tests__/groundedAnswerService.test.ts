@@ -21,14 +21,14 @@ describe("answerGroundedQuestion", () => {
     vi.clearAllMocks();
   });
 
-  it("falls back safely when retrieval is weak", async () => {
+  it("falls back safely when retrieved chunks are unusable", async () => {
     mockRetrieveRelevantChunks.mockResolvedValue([
       {
         id: "chunk-1",
         sourceType: "policy_document",
         sourceId: "policy-1",
-        title: "Data Governance",
-        content: "Policy excerpt",
+        title: "   ",
+        content: "   ",
         chunkIndex: 0,
         subject: null,
         grade: null,
@@ -54,6 +54,64 @@ describe("answerGroundedQuestion", () => {
     expect(result.answer).toContain("could not find enough approved LiberiaLearn content");
     expect(result.sources[0]?.sourceType).toBe("policy");
     expect(result.actions.map((action) => action.type)).toEqual(["SUGGEST_INTERVENTION"]);
+    expect(mockRoutedCompletion).not.toHaveBeenCalled();
+  });
+
+  it("does not fallback when chunks exist even if retrieval is weak", async () => {
+    mockRetrieveRelevantChunks.mockResolvedValue([
+      {
+        id: "chunk-1",
+        sourceType: "curriculum_content",
+        sourceId: "curr-1",
+        title: "Fractions Lesson",
+        content: "Fractions are equal parts of a whole.",
+        chunkIndex: 0,
+        subject: "MATH",
+        grade: 5,
+        schoolId: "school-1",
+        scope: "SCHOOL",
+        sourceLabel: "teacher-fractions",
+        similarity: 0.41,
+      },
+    ]);
+    mockRoutedCompletion.mockResolvedValue({
+      content: JSON.stringify({
+        answer: "Fractions are equal parts of a whole.",
+        sourceIds: ["chunk-1"],
+      }),
+      estimatedCostUSD: 0.001,
+      inputTokens: 10,
+      outputTokens: 10,
+      model: "gpt-4o-mini",
+      tier: "smart",
+    });
+
+    const result = await answerGroundedQuestion({
+      question: "What is a fraction?",
+      schoolId: "school-1",
+      subject: "MATH",
+      grade: 5,
+      role: "STUDENT",
+    });
+
+    expect(result.hadFallback).toBe(false);
+    expect(result.retrievalWeak).toBe(true);
+    expect(result.isWeakGrounding).toBe(true);
+    expect(result.answer).toContain("equal parts of a whole");
+    expect(mockRoutedCompletion).toHaveBeenCalledOnce();
+  });
+
+  it("falls back when chunks are empty", async () => {
+    mockRetrieveRelevantChunks.mockResolvedValue([]);
+
+    const result = await answerGroundedQuestion({
+      question: "What is a fraction?",
+      schoolId: "school-1",
+      role: "STUDENT",
+    });
+
+    expect(result.hadFallback).toBe(true);
+    expect(result.sources).toEqual([]);
     expect(mockRoutedCompletion).not.toHaveBeenCalled();
   });
 

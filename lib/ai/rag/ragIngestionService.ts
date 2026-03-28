@@ -3,10 +3,16 @@ import { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/db";
 import { chunkText } from "@/lib/ai/rag/chunking";
 import { getCurriculumBody, getLessonEmbeddingSource, toVectorLiteral } from "@/lib/ai/rag/embeddingService";
-import { routedCompletion } from "@/lib/ai/routedCompletion";
+import { routedEmbedding } from "@/lib/ai/routedCompletion";
 import { listPolicySources, loadPolicySourceText } from "@/lib/ai/rag/policyCatalog";
+import { buildCurriculumChunkSeeds } from "@/lib/ai/rag/curriculumChunkBlueprint";
 
 type Scope = "GLOBAL" | "SCHOOL";
+
+function isPublishedCurriculumStatus(status: string | null | undefined): boolean {
+  const normalized = typeof status === "string" ? status.trim().toLowerCase() : "";
+  return normalized === "published" || normalized === "approved" || normalized === "accepted";
+}
 
 type ChunkSeed = {
   id: string;
@@ -24,20 +30,35 @@ type ChunkSeed = {
 };
 
 function buildChunkRows(seed: Omit<ChunkSeed, "id" | "chunkIndex" | "content"> & { content: string }): ChunkSeed[] {
-  return chunkText(seed.content).map((chunk, index) => ({
-    ...seed,
-    id: randomUUID(),
-    chunkIndex: index,
-    content: chunk,
-  }));
+  return chunkText(seed.content)
+    .map((chunk) => chunk.toWellFormed().replace(/\u0000/g, "").trim())
+    .filter((chunk) => chunk.length > 0)
+    .map((chunk, index) => ({
+      ...seed,
+      id: randomUUID(),
+      chunkIndex: index,
+      content: chunk,
+    }));
 }
 
 async function writeChunkEmbeddings(chunks: ChunkSeed[]) {
   for (const chunk of chunks) {
-    const result = await routedCompletion({
-      mode: "embedding",
-      input: chunk.content,
+    const content = chunk.content.toWellFormed().replace(/\u0000/g, "").trim();
+    if (!content) {
+      console.warn("[RAG_EMBED] Skipping empty chunk content", {
+        sourceType: chunk.sourceType,
+        sourceId: chunk.sourceId,
+        chunkIndex: chunk.chunkIndex,
+      });
+      continue;
+    }
+
+    const result = await routedEmbedding({
+      input: content,
     });
+    if (!Array.isArray(result.embedding)) {
+      throw new Error("Embedding response was not a vector");
+    }
     const vectorSql = Prisma.raw(`'${toVectorLiteral(result.embedding)}'::vector`);
 
     await prisma.$executeRaw(
@@ -52,17 +73,22 @@ async function writeChunkEmbeddings(chunks: ChunkSeed[]) {
 }
 
 async function replaceChunksForSource(sourceType: string, sourceId: string, chunks: ChunkSeed[]) {
+  const normalizedChunks = chunks.map((chunk, index) => ({
+    ...chunk,
+    chunkIndex: index,
+  }));
+
   await prisma.$transaction(async (tx) => {
     await tx.ragChunk.deleteMany({
       where: { sourceType, sourceId },
     });
 
-    if (chunks.length === 0) {
+    if (normalizedChunks.length === 0) {
       return;
     }
 
     await tx.ragChunk.createMany({
-      data: chunks.map((chunk) => ({
+      data: normalizedChunks.map((chunk) => ({
         id: chunk.id,
         sourceType: chunk.sourceType,
         sourceId: chunk.sourceId,
@@ -79,8 +105,8 @@ async function replaceChunksForSource(sourceType: string, sourceId: string, chun
     });
   });
 
-  if (chunks.length > 0) {
-    await writeChunkEmbeddings(chunks);
+  if (normalizedChunks.length > 0) {
+    await writeChunkEmbeddings(normalizedChunks);
   }
 }
 
@@ -125,7 +151,7 @@ export async function syncCurriculumContentRagChunks(curriculumContentId: string
     throw new Error(`CurriculumContent ${curriculumContentId} not found`);
   }
 
-  if (record.status !== "published") {
+  if (!isPublishedCurriculumStatus(record.status)) {
     await prisma.ragChunk.deleteMany({
       where: {
         sourceType: "curriculum_content",
@@ -149,7 +175,17 @@ export async function syncCurriculumContentRagChunks(curriculumContentId: string
     : [];
 
   const scopeInfo = await resolveContentScope(record);
-  const chunks = buildChunkRows({
+  const structuredSeeds = buildCurriculumChunkSeeds({
+    sourceId: record.id,
+    sourceLabel: record.contentId,
+    payload,
+    subject: record.subject,
+    grade: record.grade,
+    schoolId: scopeInfo.schoolId,
+    scope: scopeInfo.scope,
+  });
+
+  const chunks = (structuredSeeds.length > 0 ? structuredSeeds : [{
     sourceType: "curriculum_content",
     sourceId: record.id,
     title,
@@ -163,7 +199,16 @@ export async function syncCurriculumContentRagChunks(curriculumContentId: string
       contentId: record.contentId,
       teacherCreated: record.teacherCreated,
     },
-  });
+  }]).flatMap((seed) =>
+    buildChunkRows({
+      ...seed,
+      metadata: {
+        contentId: record.contentId,
+        teacherCreated: record.teacherCreated,
+        ...((seed.metadata as Record<string, unknown> | null) ?? {}),
+      },
+    })
+  );
 
   await replaceChunksForSource("curriculum_content", record.id, chunks);
 }
@@ -196,7 +241,11 @@ export async function syncPolicyRagChunks(): Promise<number> {
 
 export async function syncPublishedCurriculumRagChunks(): Promise<number> {
   const records = await prisma.curriculumContent.findMany({
-    where: { status: "published" },
+    where: {
+      status: {
+        in: ["published", "APPROVED", "approved", "accepted", "PUBLISHED"],
+      },
+    },
     select: { id: true },
   });
 

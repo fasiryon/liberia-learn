@@ -25,6 +25,7 @@ export type RetrievedChunk = {
   sourceLabel: string | null;
   similarity: number;
   rankingScore: number;
+  retrievalTier?: "same_grade" | "nearby_grade" | "null_grade" | "default";
   metadata?: unknown;
 };
 
@@ -83,6 +84,16 @@ type ChunkQueryInput = {
   context?: RetrievalContext;
 };
 
+type ChunkQueryFilters = {
+  sourceTypes: string[];
+  allowedSubjects: string[];
+  allowedGrades: number[];
+  normalizedSubject: string;
+  normalizedGrade: number | null;
+};
+
+type ClassroomFallbackTier = "same_grade" | "nearby_grade" | "null_grade" | "default";
+
 function normalizeText(value: unknown): string {
   return typeof value === "string" ? value.trim().toLowerCase() : "";
 }
@@ -113,6 +124,34 @@ function parseGradeLevel(value: unknown): number | null {
   }
 
   return null;
+}
+
+function normalizeSubjectList(values: Array<string | null | undefined>): string[] {
+  return Array.from(new Set(values.map(normalizeSubject).filter(Boolean)));
+}
+
+function normalizeGradeList(values: Array<number | string | null | undefined>): number[] {
+  return Array.from(
+    new Set(
+      values
+        .map((value) => parseGradeLevel(value))
+        .filter((grade): grade is number => grade != null)
+    )
+  );
+}
+
+function expandNearbyGrades(grade: number | null): number[] {
+  if (grade == null) {
+    return [];
+  }
+
+  return Array.from(
+    new Set(
+      [grade - 2, grade - 1, grade, grade + 1, grade + 2].filter(
+        (value) => value >= 1 && value <= 12
+      )
+    )
+  );
 }
 
 function extractChunkKind(chunk: {
@@ -188,19 +227,19 @@ function computeContentPriorityBoost(
   );
 
   if (kind === "curriculum") {
-    return isLearningContext ? 0.32 : isGovernanceContext ? 0.04 : 0.24;
+    return isLearningContext ? 0.44 : isGovernanceContext ? 0.02 : 0.3;
   }
 
   if (kind === "lesson") {
-    return isLearningContext ? 0.24 : isGovernanceContext ? 0.05 : 0.18;
+    return isLearningContext ? 0.32 : isGovernanceContext ? 0.02 : 0.22;
   }
 
   if (kind === "standard") {
-    return isGovernanceContext ? 0.18 : 0.12;
+    return isGovernanceContext ? 0.18 : 0.1;
   }
 
   if (kind === "governance") {
-    return isGovernanceContext ? 0.3 : 0.02;
+    return isGovernanceContext ? 0.32 : -0.08;
   }
 
   return 0.04;
@@ -208,7 +247,8 @@ function computeContentPriorityBoost(
 
 function computeMetadataMatchBoost(
   chunk: RetrievedChunk,
-  context: RetrievalContext | undefined
+  context: RetrievalContext | undefined,
+  hasExactGradeMatch: boolean
 ): number {
   if (!context) {
     return 0;
@@ -218,13 +258,33 @@ function computeMetadataMatchBoost(
   const expectedSubject = normalizeSubject(context.subject);
   const chunkSubject = extractChunkSubject(chunk);
   if (expectedSubject && chunkSubject) {
-    boost += expectedSubject === chunkSubject ? 0.18 : chunkSubject.includes(expectedSubject) ? 0.08 : 0;
+    boost +=
+      expectedSubject === chunkSubject
+        ? 0.34
+        : chunkSubject.includes(expectedSubject) || expectedSubject.includes(chunkSubject)
+          ? 0.1
+          : -0.22;
+  } else if (expectedSubject && !chunkSubject) {
+    boost -= 0.04;
   }
 
   const expectedGrade = parseGradeLevel(context.gradeLevel);
   const chunkGrade = extractChunkGradeLevel(chunk);
   if (expectedGrade != null && chunkGrade != null) {
-    boost += expectedGrade === chunkGrade ? 0.16 : Math.abs(expectedGrade - chunkGrade) === 1 ? 0.06 : 0;
+    if (expectedGrade === chunkGrade) {
+      boost += 0.46;
+    } else if (hasExactGradeMatch) {
+      boost -= Math.abs(expectedGrade - chunkGrade) <= 1 ? 0.42 : 0.52;
+    } else {
+      boost +=
+        Math.abs(expectedGrade - chunkGrade) === 1
+          ? 0.1
+          : Math.abs(expectedGrade - chunkGrade) === 2
+            ? 0.02
+            : -0.18;
+    }
+  } else if (expectedGrade != null && chunkGrade == null) {
+    boost -= hasExactGradeMatch ? 0.24 : 0.08;
   }
 
   return boost;
@@ -268,6 +328,10 @@ function rerankChunks(
   context?: RetrievalContext
 ): RetrievedChunk[] {
   const contextMode = context?.mode ?? "mixed";
+  const expectedGrade = parseGradeLevel(context?.gradeLevel);
+  const hasExactGradeMatch =
+    expectedGrade != null &&
+    chunks.some((chunk) => extractChunkGradeLevel(chunk) === expectedGrade);
 
   return [...chunks]
     .map((chunk) => {
@@ -275,7 +339,7 @@ function rerankChunks(
       const rankingScore =
         chunk.similarity +
         computeContentPriorityBoost(kind, contextMode) +
-        computeMetadataMatchBoost(chunk, context) +
+        computeMetadataMatchBoost(chunk, context, hasExactGradeMatch) +
         computeIntentBoost(question, kind, contextMode);
 
       return {
@@ -284,6 +348,105 @@ function rerankChunks(
       };
     })
     .sort((left, right) => right.rankingScore - left.rankingScore);
+}
+
+function buildChunkQueryFilters(input: ChunkQueryInput): ChunkQueryFilters {
+  const mode = input.mode ?? "mixed";
+  const normalizedSubject = normalizeSubject(input.subject);
+  const normalizedGrade = parseGradeLevel(input.grade);
+  const allowedSubjects = normalizeSubjectList(input.allowedSubjects ?? []);
+  const allowedGrades = normalizeGradeList(input.allowedGrades ?? []);
+  const sourceTypes =
+    input.sourceTypes && input.sourceTypes.length > 0
+      ? input.sourceTypes
+      : mode === "classroom"
+        ? ["curriculum_content"]
+        : mode === "policy"
+          ? ["policy_document"]
+          : ["curriculum_content", "policy_document"];
+
+  return {
+    sourceTypes,
+    allowedSubjects,
+    allowedGrades,
+    normalizedSubject,
+    normalizedGrade,
+  };
+}
+
+async function queryRelevantChunkRows(
+  input: ChunkQueryInput,
+  filters: ChunkQueryFilters,
+  rawLimit: number,
+  vectorSql: Prisma.Sql,
+  tier: ClassroomFallbackTier = "default"
+): Promise<ChunkRetrievalRow[]> {
+  const mode = input.mode ?? "mixed";
+  const effectiveAllowedSubjects =
+    filters.normalizedSubject
+      ? normalizeSubjectList([filters.normalizedSubject, ...filters.allowedSubjects])
+      : filters.allowedSubjects;
+  const effectiveAllowedGrades =
+    tier === "nearby_grade" && filters.normalizedGrade != null
+      ? expandNearbyGrades(filters.normalizedGrade).filter((grade) => grade !== filters.normalizedGrade)
+      : filters.allowedGrades;
+  const sourceTypeFilter = Prisma.sql`AND "sourceType" IN (${Prisma.join(filters.sourceTypes)})`;
+  const allowedSubjectFilter = effectiveAllowedSubjects.length
+    ? Prisma.sql`AND ("subject" IN (${Prisma.join(effectiveAllowedSubjects)}) OR "subject" IS NULL)`
+    : Prisma.empty;
+  const allowedGradeFilter = effectiveAllowedGrades.length
+    ? Prisma.sql`AND ("grade" IN (${Prisma.join(effectiveAllowedGrades)}) OR "grade" IS NULL)`
+    : Prisma.empty;
+  const subjectFilter = filters.normalizedSubject
+    ? mode === "classroom"
+      ? tier === "null_grade"
+        ? Prisma.sql`AND ("subject" = ${filters.normalizedSubject} OR "subject" IS NULL)`
+        : Prisma.sql`AND "subject" = ${filters.normalizedSubject}`
+      : Prisma.sql`AND ("subject" = ${filters.normalizedSubject} OR "subject" IS NULL)`
+    : Prisma.empty;
+  const gradeFilter =
+    filters.normalizedGrade != null
+      ? mode === "classroom"
+        ? tier === "same_grade"
+          ? Prisma.sql`AND "grade" = ${filters.normalizedGrade}`
+          : tier === "nearby_grade"
+            ? effectiveAllowedGrades.length > 0
+              ? Prisma.sql`AND "grade" IN (${Prisma.join(effectiveAllowedGrades)})`
+              : Prisma.sql`AND FALSE`
+            : tier === "null_grade"
+              ? Prisma.sql`AND "grade" IS NULL`
+              : Prisma.sql`AND "grade" = ${filters.normalizedGrade}`
+        : Prisma.sql`AND ("grade" = ${filters.normalizedGrade} OR "grade" IS NULL)`
+      : Prisma.empty;
+
+  return prisma.$queryRaw<ChunkRetrievalRow[]>(
+    Prisma.sql`
+      SELECT
+        "id",
+        "sourceType",
+        "sourceId",
+        "title",
+        "content",
+        "chunkIndex",
+        "subject",
+        "grade",
+        "schoolId",
+        "scope",
+        "sourceLabel",
+        "metadata",
+        1 - ("embedding" <=> ${vectorSql}) AS "similarity"
+      FROM "RagChunk"
+      WHERE "embedding" IS NOT NULL
+        AND ("scope" = 'GLOBAL' OR "schoolId" = ${input.schoolId})
+        ${allowedSubjectFilter}
+        ${allowedGradeFilter}
+        ${subjectFilter}
+        ${gradeFilter}
+        ${sourceTypeFilter}
+      ORDER BY "embedding" <=> ${vectorSql}
+      LIMIT ${rawLimit}
+    `
+  );
 }
 
 function buildVectorSql(vector: number[]): Prisma.Sql {
@@ -377,72 +540,35 @@ export async function retrieveRelevantChunks(
   const effectiveLimit = Math.max(1, Math.min(input.topK ?? input.limit ?? 5, 8));
   const rawLimit = Math.max(effectiveLimit * 3, 12);
   const mode = input.mode ?? "mixed";
-  const allowedSubjects = Array.from(
-    new Set((input.allowedSubjects ?? []).map((subject) => subject.trim()).filter(Boolean))
-  );
-  const allowedGrades = Array.from(
-    new Set(
-      (input.allowedGrades ?? []).filter(
-        (grade): grade is number => typeof grade === "number" && Number.isFinite(grade)
-      )
-    )
-  );
-  const requestedSourceTypes =
-    input.sourceTypes && input.sourceTypes.length > 0
-      ? input.sourceTypes
-      : mode === "classroom"
-        ? ["curriculum_content"]
-        : mode === "policy"
-          ? ["policy_document"]
-          : ["curriculum_content", "policy_document"];
-  const sourceTypeFilter = Prisma.sql`AND "sourceType" IN (${Prisma.join(requestedSourceTypes)})`;
-  const allowedSubjectFilter = allowedSubjects.length
-    ? Prisma.sql`AND "subject" IN (${Prisma.join(allowedSubjects)})`
-    : Prisma.empty;
-  const allowedGradeFilter = allowedGrades.length
-    ? Prisma.sql`AND "grade" IN (${Prisma.join(allowedGrades)})`
-    : Prisma.empty;
-  const subjectFilter =
-    input.subject && input.subject.trim()
-      ? mode === "classroom"
-        ? Prisma.sql`AND "subject" = ${input.subject.trim()}`
-        : Prisma.sql`AND ("subject" = ${input.subject.trim()} OR "subject" IS NULL)`
-      : Prisma.empty;
-  const gradeFilter =
-    typeof input.grade === "number"
-      ? mode === "classroom"
-        ? Prisma.sql`AND "grade" = ${input.grade}`
-        : Prisma.sql`AND ("grade" = ${input.grade} OR "grade" IS NULL)`
-      : Prisma.empty;
+  const filters = buildChunkQueryFilters(input);
+  let rows: ChunkRetrievalRow[] = [];
+  let retrievalTier: ClassroomFallbackTier = "default";
 
-  const rows = await prisma.$queryRaw<ChunkRetrievalRow[]>(
-    Prisma.sql`
-      SELECT
-        "id",
-        "sourceType",
-        "sourceId",
-        "title",
-        "content",
-        "chunkIndex",
-        "subject",
-        "grade",
-        "schoolId",
-        "scope",
-        "sourceLabel",
-        "metadata",
-        1 - ("embedding" <=> ${vectorSql}) AS "similarity"
-      FROM "RagChunk"
-      WHERE "embedding" IS NOT NULL
-        AND ("scope" = 'GLOBAL' OR "schoolId" = ${input.schoolId})
-        ${allowedSubjectFilter}
-        ${allowedGradeFilter}
-        ${subjectFilter}
-        ${gradeFilter}
-        ${sourceTypeFilter}
-      ORDER BY "embedding" <=> ${vectorSql}
-      LIMIT ${rawLimit}
-    `
-  );
+  if (mode === "classroom" && filters.normalizedGrade != null) {
+    rows = await queryRelevantChunkRows(input, filters, rawLimit, vectorSql, "same_grade");
+    retrievalTier = "same_grade";
+
+    if (rows.length === 0) {
+      const nearbyRows = await queryRelevantChunkRows(input, filters, rawLimit, vectorSql, "nearby_grade");
+      if (nearbyRows.length > 0) {
+        rows = nearbyRows;
+        retrievalTier = "nearby_grade";
+      }
+    }
+
+    if (rows.length === 0) {
+      const nullGradeRows = await queryRelevantChunkRows(input, filters, rawLimit, vectorSql, "null_grade");
+      if (nullGradeRows.length > 0) {
+        rows = nullGradeRows;
+        retrievalTier = "null_grade";
+      }
+    }
+  }
+
+  if (rows.length === 0) {
+    rows = await queryRelevantChunkRows(input, filters, rawLimit, vectorSql, "default");
+    retrievalTier = "default";
+  }
 
   const rankedChunks = rerankChunks(
     rows.map((row) => ({
@@ -459,6 +585,7 @@ export async function retrieveRelevantChunks(
     sourceLabel: row.sourceLabel,
     similarity: Number(row.similarity),
     rankingScore: Number(row.similarity),
+    retrievalTier,
     metadata: row.metadata,
   })),
     trimmedQuestion,

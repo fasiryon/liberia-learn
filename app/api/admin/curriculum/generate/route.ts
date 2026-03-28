@@ -14,6 +14,7 @@ import { gradeToBand } from "@/lib/moe/alignment-engine";
 import { embedLesson } from "@/lib/ai/rag/embeddingService";
 import { syncCurriculumContentRagChunks } from "@/lib/ai/rag/ragIngestionService";
 import { enqueueJob, isQueueConfigured, JobType } from "@/lib/queue";
+import { generateMediaArtifactsBestEffort } from "@/lib/curriculum/mediaGeneration";
 
 // Rate limit: 10 requests per 5 minutes per userId
 const rateLimitMap = new Map<string, { count: number; resetAt: number }>();
@@ -231,6 +232,58 @@ export async function POST(req: Request) {
 
     // Derive contentId and hash
     const contentId = `${mode === "lesson" ? "" : mode + "-"}${subject.toLowerCase()}-g${grade}-${slugify(topic)}`;
+
+    if (mode === "lesson") {
+      const lessonTitle = String((enrichedPayload as any).title ?? topic);
+      const lessonObjective =
+        typeof (enrichedPayload as any).objective === "string"
+          ? (enrichedPayload as any).objective
+          : Array.isArray((enrichedPayload as any).objectives)
+            ? String((enrichedPayload as any).objectives[0] ?? topic)
+            : topic;
+      const unitTitle =
+        typeof (enrichedPayload as any).unitTitle === "string" && (enrichedPayload as any).unitTitle.trim().length > 0
+          ? String((enrichedPayload as any).unitTitle)
+          : topic;
+      const mediaBundle = generateMediaArtifactsBestEffort({
+        sourceLessonId: contentId,
+        subject,
+        grade,
+        unitTitle,
+        lessonTitle,
+        objective: lessonObjective,
+        teacherExplanation: String((enrichedPayload as any).body ?? ""),
+        workedExamples: Array.isArray((enrichedPayload as any).activities)
+          ? (enrichedPayload as any).activities.slice(0, 2).map(String)
+          : [],
+        guidedPractice: Array.isArray((enrichedPayload as any).activities)
+          ? (enrichedPayload as any).activities.slice(0, 3).map(String)
+          : [],
+        groupWorkTask: String((enrichedPayload as any).activities?.[0] ?? `Apply ${topic} in pairs.`),
+        guardianSupportNote: `Ask your child to explain the main idea from ${topic} and show one example.`,
+        homePracticeSuggestion: `Review one short ${subject.toLowerCase()} task connected to ${topic} at home.`,
+        realWorldApplication: `Connect ${topic} to Liberia-relevant classroom, home, or community use.`,
+        digitalConnection: `If devices exist, extend ${topic} with a simple digital reinforcement activity.`,
+        materialsNeeded: Array.isArray((enrichedPayload as any).labs?.[0]?.materialsNeeded)
+          ? (enrichedPayload as any).labs[0].materialsNeeded.map(String)
+          : ["paper", "exercise books", "board"],
+      });
+
+      enrichedPayload = {
+        ...enrichedPayload,
+        visualAssetSpecs: mediaBundle.visualAssetSpecs,
+        audioScriptSpecs: mediaBundle.audioScriptSpecs,
+        slideDeckSpecs: mediaBundle.slideDeckSpecs,
+        videoStoryboardSpecs: mediaBundle.videoStoryboardSpecs,
+        labDefinitionSpecs: mediaBundle.labDefinitionSpecs,
+        mediaGenerationStatus: mediaBundle.mediaGenerationStatus,
+        mediaGenerationErrors: mediaBundle.mediaGenerationErrors,
+        pseudoLabs: mediaBundle.pseudoLabs,
+        simulationDefinitions: mediaBundle.simulationDefinitions,
+        threeDLabDefinitions: mediaBundle.threeDLabDefinitions,
+      };
+    }
+
     const payloadStr = JSON.stringify(enrichedPayload);
     const hash = createHash("sha256").update(payloadStr).digest("hex").slice(0, 40);
 
@@ -285,12 +338,28 @@ export async function POST(req: Request) {
           });
         } catch (error) {
           console.error("[QUEUE] Falling back to inline embedding generation", error);
-          await embedLesson(record.id);
-          await syncCurriculumContentRagChunks(record.id);
+          try {
+            await syncCurriculumContentRagChunks(record.id);
+          } catch (syncError) {
+            console.error("[RAG] Best-effort curriculum chunk sync failed", syncError);
+          }
+          try {
+            await embedLesson(record.id);
+          } catch (embeddingError) {
+            console.error("[RAG] Best-effort curriculum embedding failed", embeddingError);
+          }
         }
       } else {
-        await embedLesson(record.id);
-        await syncCurriculumContentRagChunks(record.id);
+        try {
+          await syncCurriculumContentRagChunks(record.id);
+        } catch (syncError) {
+          console.error("[RAG] Best-effort curriculum chunk sync failed", syncError);
+        }
+        try {
+          await embedLesson(record.id);
+        } catch (embeddingError) {
+          console.error("[RAG] Best-effort curriculum embedding failed", embeddingError);
+        }
       }
     }
 

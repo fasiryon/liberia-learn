@@ -50,6 +50,8 @@ type QueryInput = {
   mode?: RetrievalMode;
   role: SessionUser["role"];
   context?: RetrievalContext;
+  chunks?: RetrievedChunk[];
+  isEvalRun?: boolean;
 };
 
 const POLICY_KEYWORDS = [
@@ -101,6 +103,46 @@ function buildWeakRetrievalAnswerForInput(
       context: input.context,
     }),
   };
+}
+
+function hasUsableChunks(chunks: RetrievedChunk[]): boolean {
+  return chunks.some(
+    (chunk) =>
+      typeof chunk.content === "string" &&
+      chunk.content.trim().length > 0 &&
+      typeof chunk.title === "string" &&
+      chunk.title.trim().length > 0
+  );
+}
+
+function isExplicitRefusal(answer: string): boolean {
+  const normalized = normalizeText(answer);
+  return [
+    "i could not find enough approved liberialearn content",
+    "i cannot answer that confidently",
+    "i can't answer that confidently",
+    "unable to answer",
+    "not enough grounded information",
+    "do not have enough information",
+  ].some((pattern) => normalized.includes(pattern));
+}
+
+function parseGroundedAnswerResponse(raw: string): z.infer<typeof GroundedAnswerSchema> | null {
+  const candidates = [raw];
+  const objectMatch = raw.match(/\{[\s\S]*\}/);
+  if (objectMatch && objectMatch[0] !== raw) {
+    candidates.push(objectMatch[0]);
+  }
+
+  for (const candidate of candidates) {
+    try {
+      return GroundedAnswerSchema.parse(JSON.parse(candidate));
+    } catch {
+      continue;
+    }
+  }
+
+  return null;
 }
 
 function normalizeText(value: string | null | undefined): string {
@@ -250,7 +292,7 @@ function buildAudienceInstruction(role: SessionUser["role"]): string {
 }
 
 function buildPrompt(question: string, chunks: RetrievedChunk[], role: SessionUser["role"]): string {
-  const sources = chunks
+  const context = chunks
     .map(
       (chunk, index) =>
         `Source ${index + 1} (id: ${chunk.id})\nTitle: ${chunk.title}\nType: ${chunk.sourceType}\nContent:\n${chunk.content}`
@@ -258,6 +300,7 @@ function buildPrompt(question: string, chunks: RetrievedChunk[], role: SessionUs
     .join("\n\n");
 
   return `You are answering a LiberiaLearn educational query.
+Answer using the provided context only.
 You must answer only from the provided sources.
 If the sources do not fully answer the question, say that clearly and stay conservative.
 Do not cite any source id that is not present below.
@@ -272,61 +315,67 @@ Return JSON only in this exact shape:
 Question:
 ${question}
 
-Retrieved sources:
-${sources}`;
+Retrieved context:
+${context}`;
 }
 
 export async function answerGroundedQuestion(input: QueryInput): Promise<GroundedAnswerResult> {
   const mode = inferRetrievalMode(input);
-  const chunks = await retrieveRelevantChunks({
-    question: input.question,
-    schoolId: input.schoolId,
-    subject: input.subject,
-    grade: input.grade,
-    allowedSubjects: input.allowedSubjects,
-    allowedGrades: input.allowedGrades,
-    topK: 5,
-    mode,
-    context: input.context,
-  });
+  const chunks =
+    input.chunks ??
+    (await retrieveRelevantChunks({
+      question: input.question,
+      schoolId: input.schoolId,
+      subject: input.subject,
+      grade: input.grade,
+      allowedSubjects: input.allowedSubjects,
+      allowedGrades: input.allowedGrades,
+      topK: 5,
+      mode,
+      context: input.context,
+    }));
+  const retrievalWeak = isWeakRetrieval(chunks);
 
-  if (isWeakRetrieval(chunks)) {
+  if (!hasUsableChunks(chunks)) {
     return buildWeakRetrievalAnswerForInput(chunks, input);
   }
 
-  const response = await routedCompletion({
-    messages: [
-      {
-        role: "system",
-        content:
-          "You are a grounded LiberiaLearn assistant. Answer only from retrieved content and never invent sources.",
-      },
-      {
-        role: "user",
-        content: buildPrompt(input.question, chunks, input.role),
-      },
-    ],
-    maxTokens: 500,
-    forceSmartTier: true,
-  });
-
   try {
-    const parsed = GroundedAnswerSchema.parse(JSON.parse(response.content));
-    const allowedIds = new Set(chunks.map((chunk) => chunk.id));
-    const citedIds = parsed.sourceIds.filter((id) => allowedIds.has(id));
-
-    if (citedIds.length === 0) {
+    const response = await routedCompletion({
+      messages: [
+        {
+          role: "system",
+          content:
+            "You are a grounded LiberiaLearn assistant. Answer only from retrieved content and never invent sources.",
+        },
+        {
+          role: "user",
+          content: buildPrompt(input.question, chunks, input.role),
+        },
+      ],
+      maxTokens: 500,
+      forceSmartTier: true,
+    });
+    const parsed = parseGroundedAnswerResponse(response.content);
+    if (!parsed || !parsed.answer.trim() || isExplicitRefusal(parsed.answer)) {
       return buildWeakRetrievalAnswerForInput(chunks, input);
     }
+
+    const allowedIds = new Set(chunks.map((chunk) => chunk.id));
+    const citedIds = parsed.sourceIds.filter((id) => allowedIds.has(id));
+    const effectiveCitedIds =
+      citedIds.length > 0
+        ? citedIds
+        : chunks.slice(0, Math.min(3, chunks.length)).map((chunk) => chunk.id);
 
     return {
       answer: parsed.answer.trim(),
       sources: chunks
-        .filter((chunk) => citedIds.includes(chunk.id))
+        .filter((chunk) => effectiveCitedIds.includes(chunk.id))
         .map((chunk) => toSource(chunk, "grounded")),
-      retrievalWeak: false,
+      retrievalWeak,
       hadFallback: false,
-      isWeakGrounding: false,
+      isWeakGrounding: retrievalWeak,
       actions: buildAssistantActions({
         role: input.role,
         question: input.question,
