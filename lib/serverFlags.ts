@@ -238,6 +238,26 @@ export function isAdaptiveEngineEnabled(): boolean {
   return process.env.ENABLE_ADAPTIVE_ENGINE !== "false";
 }
 
+export function isConfusionDetectionEnabled(): boolean {
+  return process.env.ENABLE_CONFUSION_DETECTION === "true";
+}
+
+export function isInterventionEngineEnabled(): boolean {
+  return process.env.ENABLE_INTERVENTION_ENGINE === "true";
+}
+
+export function isPerformanceEventsEnabled(): boolean {
+  return process.env.ENABLE_PERFORMANCE_EVENTS !== "false";
+}
+
+export function isPromptRegistryEnabled(): boolean {
+  return process.env.ENABLE_PROMPT_REGISTRY !== "false";
+}
+
+export function isAuditImmutabilityEnabled(): boolean {
+  return process.env.ENABLE_AUDIT_IMMUTABILITY !== "false";
+}
+
 //  Block 21: Classroom Toolkit Flags 
 
 /** Master gate for Classroom Toolkit. DEFAULT OFF. */

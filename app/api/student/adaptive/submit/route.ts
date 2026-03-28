@@ -9,6 +9,7 @@ import {
   type AttemptRecord,
 } from "@/lib/adaptive/difficultyAdapter";
 import { isAdaptiveEngineEnabled } from "@/lib/serverFlags";
+import { recordPerformanceEvent } from "@/lib/intelligence/recordPerformanceEvent";
 import { updateMasteryProfile } from "@/lib/mastery/masteryService";
 import { gradeToBand } from "@/lib/moe/alignment-engine";
 
@@ -19,6 +20,9 @@ type SubmitBody = {
   practiceSetId?: string;
   answers?: number[];
   correctAnswers?: number[];
+  durationSeconds?: number;
+  aiAssistUsed?: boolean;
+  attempts?: number;
 };
 
 function computeScore(answers: number[], correctAnswers: number[]): number {
@@ -199,6 +203,21 @@ export async function POST(req: NextRequest) {
         passed: score >= 0.7,
         nextTier,
       },
+    });
+
+    void recordPerformanceEvent({
+      studentId: student.id,
+      schoolId: user.schoolId!,
+      subject: context.subject,
+      gradeLevel: context.grade,
+      eventType: "practice_attempt",
+      score,
+      durationSeconds: Math.max(0, Number(body.durationSeconds ?? 0)),
+      attempts: Math.max(1, Number(body.attempts ?? recentAttempts.length)),
+      aiAssistUsed: body.aiAssistUsed === true,
+      lessonId: body.practiceSetId,
+    }).catch((error) => {
+      console.error("[adaptive.submit.performanceEvent]", error);
     });
 
     return NextResponse.json({
