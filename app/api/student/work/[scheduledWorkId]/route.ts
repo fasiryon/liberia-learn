@@ -2,6 +2,12 @@ import { NextRequest, NextResponse } from "next/server";
 import { requireRole } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 
+function isRenderableArtifact(value: unknown): boolean {
+  if (!value || typeof value !== "object") return false;
+  const artifact = value as Record<string, unknown>;
+  return artifact.approved === true && artifact.renderStatus === "ready";
+}
+
 export const dynamic = "force-dynamic";
 
 export async function GET(
@@ -78,6 +84,11 @@ export async function GET(
       objectives: payload?.objectives || payload?.learningObjectives || [],
       activities: payload?.activities || [],
       labs: payload?.labs || [],
+      pseudoLabs: Array.isArray(payload?.pseudoLabs) ? payload.pseudoLabs.filter(isRenderableArtifact) : [],
+      simulationDefinitions: Array.isArray(payload?.simulationDefinitions)
+        ? payload.simulationDefinitions.filter(isRenderableArtifact)
+        : [],
+      threeDLabDefinitions: [],
       durationMins: payload?.durationMins || 45,
       teacherName: sw.class.Teacher?.name ?? "Teacher",
       schoolName: sw.class.School?.name ?? "School",

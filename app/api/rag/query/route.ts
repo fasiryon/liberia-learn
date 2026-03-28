@@ -98,7 +98,7 @@ export async function POST(req: NextRequest) {
       gradeLevel: body.gradeLevel ?? null,
       invalidSubjectBehavior: "fallback",
     });
-    const effectiveRole = body.role ?? user.role;
+    const effectiveRole = body.role ?? roleConfig.role;
     const requestedRetrievalMode =
       body.retrievalMode ??
       (body.mode === "classroom" || body.mode === "policy" || body.mode === "mixed"

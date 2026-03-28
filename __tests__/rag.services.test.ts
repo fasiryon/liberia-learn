@@ -4,23 +4,24 @@ const mockCurriculumFindUnique = vi.hoisted(() => vi.fn());
 const mockStudentFindUnique = vi.hoisted(() => vi.fn());
 const mockExecuteRaw = vi.hoisted(() => vi.fn());
 const mockQueryRaw = vi.hoisted(() => vi.fn());
-const mockRoutedCompletion = vi.hoisted(() => vi.fn());
+const mockRoutedEmbedding = vi.hoisted(() => vi.fn());
+const mockPrisma = vi.hoisted(() => ({
+  curriculumContent: {
+    findUnique: mockCurriculumFindUnique,
+  },
+  student: {
+    findUnique: mockStudentFindUnique,
+  },
+  $executeRaw: mockExecuteRaw,
+  $queryRaw: mockQueryRaw,
+}));
 
 vi.mock("@/lib/ai/routedCompletion", () => ({
-  routedCompletion: mockRoutedCompletion,
+  routedEmbedding: mockRoutedEmbedding,
 }));
 
 vi.mock("@/lib/db", () => ({
-  prisma: {
-    curriculumContent: {
-      findUnique: mockCurriculumFindUnique,
-    },
-    student: {
-      findUnique: mockStudentFindUnique,
-    },
-    $executeRaw: mockExecuteRaw,
-    $queryRaw: mockQueryRaw,
-  },
+  prisma: mockPrisma,
 }));
 
 import { embedLesson, embedText } from "@/lib/ai/rag/embeddingService";
@@ -32,12 +33,12 @@ import {
 describe("embeddingService", () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    mockPrisma.$executeRaw = mockExecuteRaw;
   });
 
   it("embedText returns array of 1536 numbers", async () => {
     const vector = Array.from({ length: 1536 }, (_, index) => index / 1000);
-    mockRoutedCompletion.mockResolvedValue({
-      mode: "embedding",
+    mockRoutedEmbedding.mockResolvedValue({
       model: "text-embedding-3-small",
       embedding: vector,
     });
@@ -55,8 +56,7 @@ describe("embeddingService", () => {
       subject: "MATH",
       payload: { title: "Fractions", body: "Lesson body" },
     });
-    mockRoutedCompletion.mockResolvedValue({
-      mode: "embedding",
+    mockRoutedEmbedding.mockResolvedValue({
       model: "text-embedding-3-small",
       embedding: Array.from({ length: 1536 }, () => 0.1),
     });
@@ -66,13 +66,31 @@ describe("embeddingService", () => {
 
     expect(mockExecuteRaw).toHaveBeenCalledOnce();
   });
+
+  it("embedLesson skips persistence safely when $executeRaw is unavailable", async () => {
+    mockCurriculumFindUnique.mockResolvedValue({
+      id: "content-1",
+      subject: "MATH",
+      payload: { title: "Fractions", body: "Lesson body" },
+    });
+    mockRoutedEmbedding.mockResolvedValue({
+      model: "text-embedding-3-small",
+      embedding: Array.from({ length: 1536 }, () => 0.1),
+    });
+    const originalExecuteRaw = mockPrisma.$executeRaw;
+    delete (mockPrisma as any).$executeRaw;
+
+    await expect(embedLesson("content-1")).resolves.toBeUndefined();
+    expect(mockExecuteRaw).not.toHaveBeenCalled();
+
+    mockPrisma.$executeRaw = originalExecuteRaw;
+  });
 });
 
 describe("retrievalService", () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    mockRoutedCompletion.mockResolvedValue({
-      mode: "embedding",
+    mockRoutedEmbedding.mockResolvedValue({
       model: "text-embedding-3-small",
       embedding: Array.from({ length: 1536 }, () => 0.2),
     });
@@ -157,6 +175,45 @@ describe("retrievalService", () => {
 
     const sqlArg = mockQueryRaw.mock.calls[0][0] as any;
     expect(sqlArg.values).toContain("curriculum_content");
+    expect(sqlArg.values).toContain("MATH");
+    expect(sqlArg.values).toContain(7);
+  });
+
+  it("classroom retrieval normalizes subject casing and grade strings while allowing null metadata rows", async () => {
+    mockQueryRaw.mockResolvedValue([
+      {
+        id: "metadata-match",
+        sourceType: "curriculum_content",
+        sourceId: "lesson-4",
+        title: "Grade 7 Fractions",
+        content: "Equivalent fractions and simplification.",
+        chunkIndex: 0,
+        subject: null,
+        grade: null,
+        schoolId: "school-1",
+        scope: "SCHOOL",
+        sourceLabel: "wk_mca7a_mon_p5",
+        similarity: 0.61,
+        metadata: { kind: "curriculum", subject: " math ", gradeLevel: "7" },
+      },
+    ]);
+
+    const result = await retrieveRelevantChunks({
+      question: "What are equivalent fractions?",
+      schoolId: "school-1",
+      subject: " math ",
+      grade: 7,
+      mode: "classroom",
+      context: {
+        role: "TEACHER",
+        mode: "lesson",
+        subject: " math ",
+        gradeLevel: "7",
+      },
+    });
+
+    expect(result[0].id).toBe("metadata-match");
+    const sqlArg = mockQueryRaw.mock.calls[0][0] as any;
     expect(sqlArg.values).toContain("MATH");
     expect(sqlArg.values).toContain(7);
   });
@@ -279,5 +336,89 @@ describe("retrievalService", () => {
 
     expect(result[0].id).toBe("exact-match");
     expect(result[0].rankingScore).toBeGreaterThan(result[1].rankingScore);
+  });
+
+  it("retries classroom retrieval with a broader grade window when strict filters return no rows", async () => {
+    mockQueryRaw
+      .mockResolvedValueOnce([])
+      .mockResolvedValueOnce([
+        {
+          id: "nearby-grade",
+          sourceType: "curriculum_content",
+          sourceId: "lesson-5",
+          title: "Fractions Review",
+          content: "Practice equal fractions with visual models.",
+          chunkIndex: 0,
+          subject: "MATH",
+          grade: 5,
+          schoolId: "school-1",
+          scope: "SCHOOL",
+          sourceLabel: "math-g5-fractions",
+          similarity: 0.55,
+          metadata: { kind: "curriculum", subject: "MATH", gradeLevel: "5" },
+        },
+      ]);
+
+    const result = await retrieveRelevantChunks({
+      question: "Explain fractions for Grade 7 math.",
+      schoolId: "school-1",
+      subject: "MATH",
+      grade: 7,
+      mode: "classroom",
+      context: {
+        role: "STUDENT",
+        mode: "learning",
+        subject: "MATH",
+        gradeLevel: "7",
+      },
+    });
+
+    expect(mockQueryRaw).toHaveBeenCalledTimes(2);
+    expect(result[0].id).toBe("nearby-grade");
+    const fallbackSqlArg = mockQueryRaw.mock.calls[1][0] as any;
+    expect(fallbackSqlArg.values).toContain(5);
+    expect(fallbackSqlArg.values).not.toContain(7);
+    expect(fallbackSqlArg.values).toContain(6);
+    expect(fallbackSqlArg.values).toContain(8);
+    expect(fallbackSqlArg.values).toContain(9);
+    expect(result[0].retrievalTier).toBe("nearby_grade");
+  });
+
+  it("keeps classroom retrieval on the same-grade tier when exact-grade chunks exist", async () => {
+    mockQueryRaw.mockResolvedValueOnce([
+      {
+        id: "same-grade",
+        sourceType: "curriculum_content",
+        sourceId: "lesson-7",
+        title: "Grade 7 Ratios",
+        content: "Ratios compare quantities.",
+        chunkIndex: 0,
+        subject: "MATH",
+        grade: 7,
+        schoolId: "school-1",
+        scope: "SCHOOL",
+        sourceLabel: "math-g7-ratios",
+        similarity: 0.87,
+        metadata: { kind: "curriculum", subject: "MATH", gradeLevel: "7" },
+      },
+    ]);
+
+    const result = await retrieveRelevantChunks({
+      question: "Explain grade 7 ratios.",
+      schoolId: "school-1",
+      subject: "MATH",
+      grade: 7,
+      mode: "classroom",
+      context: {
+        role: "STUDENT",
+        mode: "learning",
+        subject: "MATH",
+        gradeLevel: "7",
+      },
+    });
+
+    expect(mockQueryRaw).toHaveBeenCalledTimes(1);
+    expect(result[0].id).toBe("same-grade");
+    expect(result[0].retrievalTier).toBe("same_grade");
   });
 });

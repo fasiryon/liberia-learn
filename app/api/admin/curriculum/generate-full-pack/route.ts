@@ -231,12 +231,28 @@ export async function POST(req: Request) {
           });
         } catch (error) {
           console.error("[QUEUE] Falling back to inline embedding generation", error);
-          await embedLesson(record.id);
-          await syncCurriculumContentRagChunks(record.id);
+          try {
+            await syncCurriculumContentRagChunks(record.id);
+          } catch (syncError) {
+            console.error("[RAG] Best-effort full-pack chunk sync failed", syncError);
+          }
+          try {
+            await embedLesson(record.id);
+          } catch (embeddingError) {
+            console.error("[RAG] Best-effort full-pack embedding failed", embeddingError);
+          }
         }
       } else {
-        await embedLesson(record.id);
-        await syncCurriculumContentRagChunks(record.id);
+        try {
+          await syncCurriculumContentRagChunks(record.id);
+        } catch (syncError) {
+          console.error("[RAG] Best-effort full-pack chunk sync failed", syncError);
+        }
+        try {
+          await embedLesson(record.id);
+        } catch (embeddingError) {
+          console.error("[RAG] Best-effort full-pack embedding failed", embeddingError);
+        }
       }
     }
 

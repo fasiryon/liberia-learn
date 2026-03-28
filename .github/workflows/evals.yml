@@ -1,0 +1,36 @@
+name: Weekly RAG Evals
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 0 * * 0"
+
+permissions:
+  contents: read
+
+jobs:
+  run-evals:
+    runs-on: ubuntu-latest
+    env:
+      DATABASE_URL: ${{ secrets.DATABASE_URL }}
+      DIRECT_URL: ${{ secrets.DIRECT_URL }}
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+      ENABLE_RAG_TUTOR: "true"
+      EVAL_SCHOOL_ID: ${{ secrets.EVAL_SCHOOL_ID }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - name: Install dependencies
+        run: npm ci
+      - name: Generate Prisma client
+        run: npx prisma generate
+      - name: Run evals
+        run: npx tsx scripts/run-evals.ts
+      - name: Upload eval results
+        uses: actions/upload-artifact@v4
+        with:
+          name: rag-eval-results
+          path: evals/results/*.json

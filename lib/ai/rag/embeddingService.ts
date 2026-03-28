@@ -1,5 +1,5 @@
 import { Prisma } from "@prisma/client";
-import { routedCompletion } from "@/lib/ai/routedCompletion";
+import { routedEmbedding } from "@/lib/ai/routedCompletion";
 import { prisma } from "@/lib/db";
 
 const EMBEDDING_MODEL = "text-embedding-3-small";
@@ -12,7 +12,7 @@ function sleep(ms: number) {
 }
 
 function truncateInput(text: string): string {
-  return text.replace(/\s+/g, " ").trim().slice(0, MAX_INPUT_CHARS);
+  return text.toWellFormed().replace(/\u0000/g, "").replace(/\s+/g, " ").trim().slice(0, MAX_INPUT_CHARS);
 }
 
 export function getCurriculumBody(payload: Record<string, unknown>): string {
@@ -80,12 +80,36 @@ export async function getLessonEmbeddingSource(lessonId: string): Promise<string
 
 export async function saveLessonEmbedding(lessonId: string, embedding: number[]): Promise<void> {
   const vectorSql = Prisma.raw(`'${toVectorLiteral(embedding)}'::vector`);
+  const executeRaw = (prisma as { $executeRaw?: typeof prisma.$executeRaw }).$executeRaw;
 
-  await prisma.$executeRaw(
+  if (typeof executeRaw !== "function") {
+    return;
+  }
+
+  await executeRaw.call(
+    prisma,
     Prisma.sql`
       UPDATE "CurriculumContent"
       SET "embedding" = ${vectorSql},
           "embeddedAt" = NOW()
+      WHERE "id" = ${lessonId}
+    `
+  );
+}
+
+export async function clearLessonEmbedding(lessonId: string): Promise<void> {
+  const executeRaw = (prisma as { $executeRaw?: typeof prisma.$executeRaw }).$executeRaw;
+
+  if (typeof executeRaw !== "function") {
+    return;
+  }
+
+  await executeRaw.call(
+    prisma,
+    Prisma.sql`
+      UPDATE "CurriculumContent"
+      SET "embedding" = NULL,
+          "embeddedAt" = NULL
       WHERE "id" = ${lessonId}
     `
   );
@@ -102,16 +126,15 @@ export async function embedText(text: string): Promise<number[]> {
 
   for (let attempt = 1; attempt <= MAX_RETRIES; attempt += 1) {
     try {
-      const response = await routedCompletion({
-        mode: "embedding",
+      const response = await routedEmbedding({
         model: EMBEDDING_MODEL,
         input,
       });
       const vector = response.embedding;
 
-      if (vector.length !== EMBEDDING_DIMENSIONS) {
+      if (!Array.isArray(vector) || vector.length !== EMBEDDING_DIMENSIONS) {
         throw new Error(
-          `Unexpected embedding dimension ${vector.length} for ${EMBEDDING_MODEL}`
+          `Unexpected embedding dimension ${Array.isArray(vector) ? vector.length : "unknown"} for ${EMBEDDING_MODEL}`
         );
       }
 

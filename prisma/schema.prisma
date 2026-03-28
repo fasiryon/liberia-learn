@@ -1012,6 +1012,21 @@ model RagChunk {
   @@index([subject, grade])
 }
 
+model EvalRun {
+  id              String   @id @default(cuid())
+  runAt           DateTime @default(now())
+  datasetSize     Int
+  avgRecallAt5    Float
+  avgPrecisionAt5 Float
+  avgGrounding    Float
+  fallbackRate    Float
+  passed          Boolean
+  resultJson      Json
+
+  @@index([runAt])
+  @@index([passed, runAt])
+}
+
 /// / ===== Scheduled Work (Today's Work) =====
 model ScheduledWork {
   id             String            @id @default(cuid())
