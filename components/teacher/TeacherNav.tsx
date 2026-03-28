@@ -15,6 +15,7 @@ const LINKS = [
   { href: "/teacher/exams", label: "Exams" },
   { href: "/teacher/assignments", label: "Assignments" },
   { href: "/teacher/students", label: "Students" },
+  { href: "/teacher/intelligence", label: "Intelligence" },
   { href: "/teacher/placements", label: "Placements" },
 ];
 
