@@ -39,6 +39,7 @@ export type AssignmentTutorResult = {
   /** Whether this result came from the fallback path. */
   hadFallback: boolean;
   estimatedCostUSD: number;
+  tokensUsed: number;
 };
 
 // ─── Constants ────────────────────────────────────────────────────────────────
@@ -57,6 +58,7 @@ const FALLBACK: AssignmentTutorResult = {
   ],
   hadFallback: true,
   estimatedCostUSD: 0,
+  tokensUsed: 0,
 };
 
 // ─── Prompt builders ──────────────────────────────────────────────────────────
@@ -122,6 +124,7 @@ function parseAndValidate(raw: string): AssignmentTutorResult | null {
     scaffoldingSuggestions,
     hadFallback: false,
     estimatedCostUSD: 0,
+    tokensUsed: 0,
   };
 }
 
@@ -163,6 +166,7 @@ export async function getAssignmentTutorGuidance(
     }
 
     validated.estimatedCostUSD = result.estimatedCostUSD;
+    validated.tokensUsed = result.inputTokens + result.outputTokens;
     return validated;
   } catch (err: any) {
     console.error("[ASSIGNMENT_TUTOR] Call failed:", err?.message);

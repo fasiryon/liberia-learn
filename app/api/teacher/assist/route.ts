@@ -6,7 +6,7 @@
  *
  * Feature flag : AI_TEACHER_ASSIST_ENABLED (default OFF → 404)
  * Auth         : TEACHER role required
- * Rate limit   : AI_TEACHER_ASSIST_DAILY_LIMIT calls per teacher per day (default 50)
+ * Rate limit   : 50 requests/hour via checkAiRateLimit()
  * Budget check : AI_BUDGET_MONTHLY_CAP_USD (default $100); 503 when exceeded
  *
  * Audit action : "ai.teacher.assist.requested"
@@ -16,10 +16,10 @@ import { randomUUID } from "crypto";
 import { requireRole } from "@/lib/auth";
 import {
   isAiTeacherAssistEnabled,
-  getAiTeacherAssistDailyLimit,
   getAiBudgetMonthlyCap,
 } from "@/lib/serverFlags";
 import { logAudit } from "@/lib/audit";
+import { checkAiRateLimit } from "@/lib/ai/rateLimitGuard";
 import { recordMetricEvent } from "@/lib/metrics/events";
 import { prisma } from "@/lib/db";
 import {
@@ -38,25 +38,19 @@ export async function POST(req: NextRequest) {
     }
 
     const user = await requireRole("TEACHER");
-
-    // ── Rate limit ─────────────────────────────────────────────────────────
-    const todayStart = new Date();
-    todayStart.setHours(0, 0, 0, 0);
-    const todayCount = await prisma.auditLog.count({
-      where: {
-        userId: user.id,
-        action: "ai.teacher.assist.requested",
-        createdAt: { gte: todayStart },
-      },
+    const rateLimit = checkAiRateLimit({
+      userId: user.id,
+      role: user.role,
+      endpoint: "/api/teacher/assist",
     });
-    const dailyLimit = getAiTeacherAssistDailyLimit();
-    if (todayCount >= dailyLimit) {
+    if (!rateLimit.allowed) {
       return NextResponse.json(
-        { error: "rate_limit_exceeded", limit: dailyLimit },
+        { error: "Please wait before making another request" },
         { status: 429 }
       );
     }
 
+    // ── Rate limit ─────────────────────────────────────────────────────────
     // ── Monthly budget check ───────────────────────────────────────────────
     const monthStart = new Date();
     monthStart.setDate(1);
@@ -142,6 +136,8 @@ export async function POST(req: NextRequest) {
         requestType: "teacher_assist",
         guidanceLevel: null,
         hadFallback: result.hadFallback,
+        endpoint: "/api/teacher/assist",
+        tokensUsed: result.tokensUsed,
         estimatedCostUSD: result.estimatedCostUSD,
       },
     });

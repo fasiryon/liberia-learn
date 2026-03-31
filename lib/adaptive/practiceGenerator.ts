@@ -22,6 +22,7 @@ export type PracticeSet = {
 export type PracticeGenerationResult = {
   practice: PracticeSet;
   estimatedCostUSD: number;
+  tokensUsed: number;
 };
 
 function parsePracticeSet(content: string, gap: MasteryGap, difficultyTier: DifficultyTier): PracticeSet {
@@ -108,6 +109,7 @@ export async function generateTargetedPracticeWithUsage(
   return {
     practice: parsePracticeSet(result.content, gap, difficultyTier),
     estimatedCostUSD: result.estimatedCostUSD,
+    tokensUsed: result.inputTokens + result.outputTokens,
   };
 }
 

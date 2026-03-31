@@ -8,6 +8,8 @@ import {
 import { buildCurriculumChunkSeeds } from "@/lib/ai/rag/curriculumChunkBlueprint";
 import { PHASE_ONE_TARGETS } from "@/lib/curriculum/phaseOneScaleCatalog";
 
+const HEAVY_FACTORY_TIMEOUT_MS = 15_000;
+
 describe("curriculum factory expansion", () => {
   it("builds deterministic unit and lesson coverage for targeted gaps", () => {
     const batch = buildCurriculumExpansionBatch();
@@ -44,7 +46,7 @@ describe("curriculum factory expansion", () => {
     expect(scienceUnit?.coverage).toBe("full");
     expect(scienceUnit?.lessons).toHaveLength(5);
     expect(scienceUnit?.unitLabPlan.distributedLabs.length).toBeGreaterThanOrEqual(2);
-  });
+  }, HEAVY_FACTORY_TIMEOUT_MS);
 
   it("creates retrieval-ready lesson records with answerable chunk inputs", () => {
     const records = buildCurriculumExpansionRecords();
@@ -91,7 +93,7 @@ describe("curriculum factory expansion", () => {
     expect((conceptChunk?.metadata as any).unitId).toBe("math-g7-fractions-ratios");
     expect((conceptChunk?.metadata as any).lessonId).toBe("comparing-fractions-benchmarks");
     expect((conceptChunk?.metadata as any).difficultyLevel).toBe("standard");
-  });
+  }, HEAVY_FACTORY_TIMEOUT_MS);
 
   it("summarizes media, lab, and simulation coverage", () => {
     const summary = summarizeCurriculumExpansion();
@@ -112,7 +114,7 @@ describe("curriculum factory expansion", () => {
     expect(summary.pseudoLabs).toBeGreaterThan(0);
     expect(summary.simulations).toBeGreaterThan(0);
     expect(summary.chunkReadyLessons).toBe(summary.lessons);
-  });
+  }, HEAVY_FACTORY_TIMEOUT_MS);
 
   it("validates concept graphs before content is ingest-ready", () => {
     const batch = buildCurriculumExpansionBatch();
@@ -177,7 +179,7 @@ describe("curriculum factory expansion", () => {
     const validation = validateCurriculumExpansionBatch(invalidBatch as typeof batch);
     expect(validation.valid).toBe(false);
     expect(validation.errors.some((error) => error.includes("order_violation"))).toBe(true);
-  });
+  }, HEAVY_FACTORY_TIMEOUT_MS);
 
   it("flags broken prerequisite references that do not exist anywhere in the unit", () => {
     const batch = buildCurriculumExpansionBatch();

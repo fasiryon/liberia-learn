@@ -11,6 +11,7 @@ import {
   type TeacherInterventionItem,
 } from "@/components/intelligence/InterventionTable";
 import { Card } from "@/components/ui/Card";
+import { buildAdvisoryActions } from "@/lib/intelligence/advisoryActions";
 
 export type TeacherDashboardSummary = {
   teacherId: string;
@@ -85,13 +86,21 @@ export function TeacherDashboardScreen({
   const filteredConfusions = selectedStudentId
     ? sortedConfusions.filter((item) => item.studentId === selectedStudentId)
     : sortedConfusions;
+  const suggestedActions = buildAdvisoryActions({
+    confusions: filteredConfusions,
+    interventions: sortedInterventions,
+  });
 
   const highSeverityCount = sortedConfusions.filter(
     (item) => item.severity === "high"
   ).length;
+  const mediumSeverityCount = sortedConfusions.filter(
+    (item) => item.severity === "medium"
+  ).length;
   const urgentInterventionCount = sortedInterventions.filter(
     (item) => interventionPriority(item) >= 2
   ).length;
+  const topAttentionItems = filteredConfusions.slice(0, 3);
 
   return (
     <div className="space-y-6">
@@ -144,7 +153,7 @@ export function TeacherDashboardScreen({
               <p className="text-xs uppercase tracking-wide text-slate-500">
                 High-severity signals
               </p>
-              <p className="mt-2 text-2xl font-semibold text-slate-100">
+              <p className="mt-2 text-2xl font-semibold text-red-300">
                 {highSeverityCount}
               </p>
             </div>
@@ -157,6 +166,62 @@ export function TeacherDashboardScreen({
               </p>
             </div>
           </div>
+        </div>
+        <div className="mt-4 flex flex-wrap gap-2">
+          <span className="rounded-full border border-red-500/20 bg-red-500/10 px-3 py-1 text-xs font-semibold text-red-200">
+            High {highSeverityCount}
+          </span>
+          <span className="rounded-full border border-amber-500/20 bg-amber-500/10 px-3 py-1 text-xs font-semibold text-amber-200">
+            Medium {mediumSeverityCount}
+          </span>
+          <span className="rounded-full border border-slate-700 bg-slate-950/60 px-3 py-1 text-xs font-semibold text-slate-300">
+            Action queue {urgentInterventionCount}
+          </span>
+        </div>
+        {topAttentionItems.length > 0 ? (
+          <div className="mt-4 grid gap-3 lg:grid-cols-3">
+            {topAttentionItems.map((item) => (
+              <div key={item.id} className="rounded-2xl bg-slate-950/60 p-4">
+                <p className="text-xs uppercase tracking-wide text-slate-500">
+                  {item.severity} severity
+                </p>
+                <p className="mt-2 text-sm font-semibold text-slate-100">
+                  {item.conceptLabel}
+                </p>
+                <p className="mt-1 text-sm text-slate-400">
+                  {item.studentName ?? "Student"} needs follow-up on this concept.
+                </p>
+              </div>
+            ))}
+          </div>
+        ) : null}
+      </Card>
+
+      <Card className="p-5">
+        <div className="space-y-3">
+          <div>
+            <h2 className="text-lg font-semibold text-slate-100">AI suggested actions</h2>
+            <p className="mt-1 text-sm text-amber-300">
+              AI suggestions  teacher review required.
+            </p>
+          </div>
+          {suggestedActions.length === 0 ? (
+            <p className="text-sm text-slate-400">
+              No advisory actions are being surfaced from the current signal set.
+            </p>
+          ) : (
+            <div className="grid gap-3 lg:grid-cols-3">
+              {suggestedActions.map((action) => (
+                <div key={`${action.type}-${action.reason}`} className="rounded-2xl bg-slate-950/60 p-4">
+                  <p className="text-xs uppercase tracking-wide text-slate-500">{action.type.replace(/_/g, " ")}</p>
+                  <p className="mt-2 text-sm text-slate-200">{action.reason}</p>
+                  <p className="mt-2 text-xs text-slate-500">
+                    Confidence {Math.round(action.confidence * 100)}%
+                  </p>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       </Card>
 

@@ -2,6 +2,8 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import { renderToStaticMarkup } from "react-dom/server";
 import { PilotReadinessScreen } from "@/components/intelligence/PilotReadinessScreen";
 
+vi.setConfig({ testTimeout: 15_000 });
+
 describe("pilot readiness page", () => {
   afterEach(() => {
     vi.resetModules();

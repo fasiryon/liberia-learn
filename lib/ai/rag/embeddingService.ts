@@ -1,5 +1,11 @@
 import { Prisma } from "@prisma/client";
 import { routedEmbedding } from "@/lib/ai/routedCompletion";
+import {
+  buildAiCacheKey,
+  getCachedValue,
+  hashCacheQuery,
+  setCachedValue,
+} from "@/lib/ai/cache";
 import { prisma } from "@/lib/db";
 
 const EMBEDDING_MODEL = "text-embedding-3-small";
@@ -116,10 +122,30 @@ export async function clearLessonEmbedding(lessonId: string): Promise<void> {
 }
 
 export async function embedText(text: string): Promise<number[]> {
+  return embedTextForCacheScope(text, { tenantId: "global", role: "system" });
+}
+
+export async function embedTextForCacheScope(
+  text: string,
+  cacheScope: {
+    tenantId: string;
+    role: string;
+  }
+): Promise<number[]> {
   const input = truncateInput(text);
 
   if (!input) {
     throw new Error("Cannot embed empty text");
+  }
+
+  const cacheKey = buildAiCacheKey(
+    cacheScope.tenantId,
+    cacheScope.role,
+    hashCacheQuery({ kind: "embedding", model: EMBEDDING_MODEL, input })
+  );
+  const cached = getCachedValue<number[]>(cacheKey);
+  if (cached) {
+    return cached;
   }
 
   let lastError: unknown;
@@ -138,6 +164,7 @@ export async function embedText(text: string): Promise<number[]> {
         );
       }
 
+      setCachedValue(cacheKey, vector);
       return vector;
     } catch (error: any) {
       lastError = error;
@@ -170,6 +197,9 @@ export async function embedText(text: string): Promise<number[]> {
 
 export async function embedLesson(lessonId: string): Promise<void> {
   const source = await getLessonEmbeddingSource(lessonId);
-  const embedding = await embedText(source);
+  const embedding = await embedTextForCacheScope(source, {
+    tenantId: "global",
+    role: "system",
+  });
   await saveLessonEmbedding(lessonId, embedding);
 }

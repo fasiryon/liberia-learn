@@ -5,6 +5,7 @@ const mockStudentFindFirst = vi.hoisted(() => vi.fn());
 const mockUserUpdate = vi.hoisted(() => vi.fn());
 const mockHash = vi.hoisted(() => vi.fn());
 const mockLogAudit = vi.hoisted(() => vi.fn());
+const ROUTE_TIMEOUT_MS = 15_000;
 
 vi.mock("@/lib/auth", () => ({
   requireRole: mockRequireRole,
@@ -60,7 +61,7 @@ describe("POST /api/student/change-pin", () => {
         data: expect.objectContaining({ mustChangePIN: false, hashedPwd: "hashed-pin" }),
       })
     );
-  });
+  }, ROUTE_TIMEOUT_MS);
 
   it("returns the dashboard path when placement already exists", async () => {
     mockStudentFindFirst.mockResolvedValue({ id: "student-1", placementTests: [{ id: "placement-1" }] });

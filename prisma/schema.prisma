@@ -1232,9 +1232,11 @@ model AiInteractionLog {
   strandKey        String
   /// "explain" | "practice" | "step_by_step" | "reinforce" | "teacher_assist"
   requestType      String
+  endpoint         String?
   /// "light" | "moderate" | "intensive" | null (teacher_assist)
   guidanceLevel    String?
   hadFallback      Boolean  @default(false)
+  tokensUsed       Int      @default(0)
   estimatedCostUSD Float    @default(0)
   timestamp        DateTime @default(now())
 

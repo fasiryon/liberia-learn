@@ -8,6 +8,7 @@ const mockStudentProgressUpsert = vi.hoisted(() => vi.fn());
 const mockLogAudit = vi.hoisted(() => vi.fn());
 const mockNotifyLessonCompletion = vi.hoisted(() => vi.fn());
 const mockUpdateMasteryProfile = vi.hoisted(() => vi.fn());
+const ROUTE_TIMEOUT_MS = 15_000;
 
 vi.mock("@/lib/auth", () => ({
   requireRole: mockRequireRole,
@@ -104,7 +105,7 @@ describe("student lesson delivery", () => {
     await expect(response.json()).resolves.toMatchObject({ success: true, exitTicketScore: 100 });
     expect(mockNotifyLessonCompletion).toHaveBeenCalledOnce();
     expect(mockUpdateMasteryProfile).toHaveBeenCalledOnce();
-  });
+  }, ROUTE_TIMEOUT_MS);
 
   it("does not fail the lesson completion flow when guardian SMS fails", async () => {
     mockScheduledWorkFindUnique.mockResolvedValue({

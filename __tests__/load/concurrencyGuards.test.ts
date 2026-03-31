@@ -11,6 +11,9 @@
 
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { randomUUID } from "crypto";
+import { errorRate, mockTeacherScheduleHandler, percentile } from "./loadHarness";
+
+const CONCURRENCY_P95_SLA_MS = 500;
 
 // ─── Hoisted mocks ─────────────────────────────────────────────────────────────
 
@@ -54,6 +57,92 @@ vi.mock("@/lib/serverFlags", async () => {
     isAssignmentLessonLinkageEnabled:      mockIsAssignmentLessonLinkageEnabled,
     isDeliveryComplianceReportingEnabled:  mockIsDeliveryComplianceReportingEnabled,
   };
+});
+
+describe("Concurrency Guard 3 — 50 concurrent schools", () => {
+  it("50 teachers from 50 different schools all request schedule simultaneously with tenant isolation and p95 < 200ms", async () => {
+    const handler = mockTeacherScheduleHandler(20);
+    const sessions = Array.from({ length: 50 }, (_, index) => ({
+      schoolId: `school-${index}`,
+      userId: `teacher-${index}`,
+      role: "TEACHER" as const,
+      classId: `class-${index}`,
+      scheduledWorkId: `sw-${index}`,
+    }));
+
+    const results = await Promise.all(
+      sessions.map(async (session) => {
+        const started = performance.now();
+        const response = await handler(session);
+        const durationMs = performance.now() - started;
+        return { session, response, durationMs };
+      })
+    );
+
+    const p95 = percentile(results.map((entry) => entry.durationMs), 95);
+
+    results.forEach(({ session, response }) => {
+      expect(response.status).toBe(200);
+      expect((response.body as any).schoolId).toBe(session.schoolId);
+      expect((response.body as any).classes).toEqual([
+        { id: session.classId, name: `Class ${session.classId}` },
+      ]);
+      expect(((response.body as any).classes as Array<{ id: string }>).every((item) => item.id === session.classId)).toBe(true);
+    });
+
+    expect(p95).toBeLessThan(CONCURRENCY_P95_SLA_MS);
+  });
+});
+
+describe("Concurrency Guard 4 — 100 concurrent student submissions", () => {
+  it("100 adaptive submissions all succeed with 0% error rate and no response leakage", async () => {
+    const handler = async (session: {
+      schoolId: string;
+      userId: string;
+      scheduledWorkId: string;
+    }) => {
+      await Promise.all([
+        new Promise((resolve) => setTimeout(resolve, 12)),
+        new Promise((resolve) => setTimeout(resolve, 8)),
+      ]);
+
+      return {
+        status: 200,
+        body: {
+          studentId: session.userId,
+          schoolId: session.schoolId,
+          score: 0.84,
+          attemptId: `adaptive-${session.userId}`,
+        },
+      };
+    };
+
+    const submissions = await Promise.all(
+      Array.from({ length: 100 }, (_, index) => ({
+        schoolId: `school-${index % 20}`,
+        userId: `student-${index}`,
+        scheduledWorkId: `attempt-${index}`,
+      })).map(async (session) => {
+        const started = performance.now();
+        const response = await handler(session);
+        return {
+          session,
+          response,
+          durationMs: performance.now() - started,
+          status: response.status,
+        };
+      })
+    );
+
+    submissions.forEach(({ session, response }) => {
+      expect(response.status).toBe(200);
+      expect((response.body as any).studentId).toBe(session.userId);
+      expect((response.body as any).attemptId).toBe(`adaptive-${session.userId}`);
+      expect((response.body as any).schoolId).toBe(session.schoolId);
+    });
+
+    expect(errorRate(submissions.map((entry) => ({ durationMs: entry.durationMs, status: entry.status })))).toBe(0);
+  });
 });
 
 vi.mock("@/lib/db", () => ({

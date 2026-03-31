@@ -29,6 +29,7 @@ import {
   getAiBudgetMonthlyCap,
 } from "@/lib/serverFlags";
 import { logAudit } from "@/lib/audit";
+import { checkAiRateLimit } from "@/lib/ai/rateLimitGuard";
 import { recordMetricEvent } from "@/lib/metrics/events";
 import { prisma } from "@/lib/db";
 import { getGradingAssistFeedback } from "@/lib/workflows/ai/gradingAssist";
@@ -42,6 +43,17 @@ export async function POST(req: NextRequest) {
     }
 
     const user = await requireRole("TEACHER");
+    const rateLimit = checkAiRateLimit({
+      userId: user.id,
+      role: user.role,
+      endpoint: "/api/teacher/grading/assist",
+    });
+    if (!rateLimit.allowed) {
+      return NextResponse.json(
+        { error: "Please wait before making another request" },
+        { status: 429 }
+      );
+    }
 
     // ── Monthly budget check ───────────────────────────────────────────────
     const monthStart = new Date();
@@ -114,6 +126,8 @@ export async function POST(req: NextRequest) {
         requestType: "grading_assist",
         guidanceLevel: null,
         hadFallback: result.hadFallback,
+        endpoint: "/api/teacher/grading/assist",
+        tokensUsed: result.tokensUsed,
         estimatedCostUSD: result.estimatedCostUSD,
       },
     });

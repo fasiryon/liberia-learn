@@ -102,6 +102,24 @@ export function PilotReadinessScreen({
           </span>
         </div>
 
+        <div className="mt-5">
+          <div className="h-3 overflow-hidden rounded-full bg-slate-950/70">
+            <div
+              className={`h-full rounded-full ${
+                readinessLevel === "ready"
+                  ? "bg-emerald-400"
+                  : readinessLevel === "partial"
+                    ? "bg-amber-400"
+                    : "bg-red-400"
+              }`}
+              style={{ width: `${Math.max(0, Math.min(100, readinessScore))}%` }}
+            />
+          </div>
+          <p className="mt-2 text-xs text-slate-500">
+            Readiness score combines activation, data flow, guardian readiness, and blocking issue state.
+          </p>
+        </div>
+
         <div className="mt-5 grid gap-4 md:grid-cols-3">
           <div className="rounded-2xl bg-slate-950/60 p-4">
             <p className="text-xs uppercase tracking-wide text-slate-500">Teacher activation</p>
@@ -136,6 +154,13 @@ export function PilotReadinessScreen({
         <IssueList title="Blocking issues" items={blockingIssues} />
         <IssueList title="Non-blocking issues" items={nonBlockingIssues} />
       </div>
+
+      <Card className="p-5">
+        <h2 className="text-lg font-semibold text-slate-100">Checklist by readiness area</h2>
+        <p className="mt-1 text-sm text-slate-400">
+          Each section below shows its score, weight, and the specific checks that are still blocking or incomplete.
+        </p>
+      </Card>
 
       <ReadinessChecklist sections={sections} />
     </div>

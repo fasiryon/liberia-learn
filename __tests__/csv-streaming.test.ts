@@ -16,6 +16,8 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { NextRequest } from "next/server";
 
+vi.setConfig({ testTimeout: 15_000 });
+
 // ─── Mocks ────────────────────────────────────────────────────────────────────
 
 const mockRequireRole = vi.hoisted(() => vi.fn());

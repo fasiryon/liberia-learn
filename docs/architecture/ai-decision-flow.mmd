@@ -1,0 +1,13 @@
+flowchart TD
+  Request[AI request] --> Flag[Feature flag check]
+  Flag --> RBAC[requireUser / requireRole]
+  RBAC --> Limit[checkAiRateLimit()\nlib/ai/rateLimitGuard.ts]
+  Limit --> Budget[Monthly AI budget check]
+  Budget --> Mode{Grounded RAG?}
+  Mode -- Yes --> Scope[Audience scope + retrieval mode]
+  Scope --> Retrieve[retrieveRelevantChunks()]
+  Retrieve --> Trust[answerGroundedQuestion()\nconfidence + grounding + citations]
+  Trust --> Log[Audit + AiInteractionLog]
+  Mode -- No --> Router[routedCompletion()]
+  Router --> Log
+  Log --> Response[Safe response]

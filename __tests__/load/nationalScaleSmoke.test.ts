@@ -36,6 +36,50 @@ import {
   type SimulatedSession,
 } from "./loadHarness";
 
+vi.setConfig({ testTimeout: 15_000 });
+
+const TIER_4 = {
+  name: "Tier 4 — 2,500 schools",
+  schoolCount: 2500,
+  teachersPerSchool: 5,
+  studentsPerSchool: 10,
+} as const;
+
+const TIER_5 = {
+  name: "Tier 5 — 5,000 schools",
+  schoolCount: 5000,
+  teachersPerSchool: 5,
+  studentsPerSchool: 10,
+} as const;
+
+const TIER_6 = {
+  name: "Tier 6 — 10,000 schools (stress)",
+  schoolCount: 10000,
+  teachersPerSchool: 5,
+  studentsPerSchool: 10,
+} as const;
+
+function warnOnMiss(
+  label: string,
+  result: { p95Teacher: number; p95Student: number; errorRate: number },
+  targets: { teacherP95: number; studentP95: number; errorRate: number }
+) {
+  const misses: string[] = [];
+  if (result.p95Teacher > targets.teacherP95) misses.push(`p95 teacher ${result.p95Teacher}ms > ${targets.teacherP95}ms`);
+  if (result.p95Student > targets.studentP95) misses.push(`p95 student ${result.p95Student}ms > ${targets.studentP95}ms`);
+  if (result.errorRate > targets.errorRate) misses.push(`error rate ${(result.errorRate * 100).toFixed(3)}% > ${(targets.errorRate * 100).toFixed(3)}%`);
+
+  if (misses.length > 0) {
+    console.warn(`[WARN][${label}] ${misses.join(", ")}`);
+  }
+}
+
+function throughputFor(results: Array<{ durationMs: number }>) {
+  const totalDurationSeconds =
+    results.reduce((sum, item) => sum + item.durationMs, 0) / 1000;
+  return totalDurationSeconds > 0 ? Number((results.length / totalDurationSeconds).toFixed(2)) : 0;
+}
+
 // ─── Hoisted mocks ─────────────────────────────────────────────────────────────
 
 const mockRequireRole = vi.hoisted(() => vi.fn());
@@ -685,6 +729,80 @@ describe("Load Harness — Tier simulations (mock handlers, no DB)", () => {
     console.log(`[Tier 3] p95 teacher: ${result.p95Teacher}ms, p95 student: ${result.p95Student}ms, error rate: ${(result.errorRate * 100).toFixed(3)}%, PASS: ${result.pass}`);
   }, 120000); // 120s timeout for tier 3 stretch
 
+  it('Tier 4 (2,500 schools): "national-scale" synthetic benchmark warns on misses only', async () => {
+    const { teacherSessions, studentSessions } = generateSessions(TIER_4);
+    const labSessions = studentSessions.slice(0, Math.floor(studentSessions.length * 0.2));
+
+    const teacherResults = await runBatched(mockTeacherScheduleHandler(70), teacherSessions, 200);
+    const studentResults = await runBatched(mockStudentWorkHandler(55), studentSessions, 200);
+    const labResults = await runBatched(mockLabSessionHandler(45), labSessions, 200);
+
+    const result = evaluateTier(TIER_4, teacherResults, studentResults, labResults);
+
+    expect(result.teacherSessions).toBe(12500);
+    expect(result.studentSessions).toBe(25000);
+    expect(result.p95Teacher).toBeGreaterThan(0);
+    expect(result.p95Student).toBeGreaterThan(0);
+
+    warnOnMiss("national-scale", result, {
+      teacherP95: 1000,
+      studentP95: 600,
+      errorRate: 0.001,
+    });
+
+    console.log(
+      `[Tier 4][national-scale] p95 teacher: ${result.p95Teacher}ms, p95 student: ${result.p95Student}ms, error rate: ${(result.errorRate * 100).toFixed(3)}%`
+    );
+  }, 180000);
+
+  it('Tier 5 (5,000 schools): "beyond-national-scale" performance ceiling warns on misses only', async () => {
+    const { teacherSessions, studentSessions } = generateSessions(TIER_5);
+    const labSessions = studentSessions.slice(0, Math.floor(studentSessions.length * 0.2));
+
+    const teacherResults = await runBatched(mockTeacherScheduleHandler(80), teacherSessions, 250);
+    const studentResults = await runBatched(mockStudentWorkHandler(65), studentSessions, 250);
+    const labResults = await runBatched(mockLabSessionHandler(50), labSessions, 250);
+
+    const result = evaluateTier(TIER_5, teacherResults, studentResults, labResults);
+
+    expect(result.teacherSessions).toBe(25000);
+    expect(result.studentSessions).toBe(50000);
+    expect(result.p95Teacher).toBeGreaterThan(0);
+    expect(result.p95Student).toBeGreaterThan(0);
+
+    warnOnMiss("beyond-national-scale", result, {
+      teacherP95: 1500,
+      studentP95: 900,
+      errorRate: 0.005,
+    });
+
+    console.log(
+      `[Tier 5][beyond-national-scale] p95 teacher: ${result.p95Teacher}ms, p95 student: ${result.p95Student}ms, error rate: ${(result.errorRate * 100).toFixed(3)}%`
+    );
+  }, 240000);
+
+  it('Tier 6 (10,000 schools): "stress-test informational only" reports p95, p99, error rate, throughput', async () => {
+    const { teacherSessions, studentSessions } = generateSessions(TIER_6);
+    const labSessions = studentSessions.slice(0, Math.floor(studentSessions.length * 0.2));
+
+    const teacherResults = await runBatched(mockTeacherScheduleHandler(95), teacherSessions, 300);
+    const studentResults = await runBatched(mockStudentWorkHandler(75), studentSessions, 300);
+    const labResults = await runBatched(mockLabSessionHandler(60), labSessions, 300);
+
+    const result = evaluateTier(TIER_6, teacherResults, studentResults, labResults);
+    const throughput = throughputFor([...teacherResults, ...studentResults, ...labResults]);
+
+    expect(result.teacherSessions).toBe(50000);
+    expect(result.studentSessions).toBe(100000);
+    expect(result.p95Teacher).toBeGreaterThan(0);
+    expect(result.p99Teacher).toBeGreaterThanOrEqual(result.p95Teacher);
+    expect(result.errorRate).toBeGreaterThanOrEqual(0);
+
+    console.log(
+      `[Stress] p95 teacher: ${result.p95Teacher}ms, p99: ${result.p99Teacher}ms, error rate: ${(result.errorRate * 100).toFixed(3)}%, throughput: ${throughput} req/s`
+    );
+  }, 300000);
+
   it("session generation produces correct counts for all tiers", () => {
     const t1 = generateSessions(TIER_1);
     expect(t1.teacherSessions.length).toBe(500);
@@ -697,6 +815,18 @@ describe("Load Harness — Tier simulations (mock handlers, no DB)", () => {
     const t3 = generateSessions(TIER_3);
     expect(t3.teacherSessions.length).toBe(5000);
     expect(t3.studentSessions.length).toBe(10000);
+
+    const t4 = generateSessions(TIER_4);
+    expect(t4.teacherSessions.length).toBe(12500);
+    expect(t4.studentSessions.length).toBe(25000);
+
+    const t5 = generateSessions(TIER_5);
+    expect(t5.teacherSessions.length).toBe(25000);
+    expect(t5.studentSessions.length).toBe(50000);
+
+    const t6 = generateSessions(TIER_6);
+    expect(t6.teacherSessions.length).toBe(50000);
+    expect(t6.studentSessions.length).toBe(100000);
   });
 
   it("percentile calculation is correct", () => {

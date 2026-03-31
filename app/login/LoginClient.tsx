@@ -83,6 +83,15 @@ export default function LoginClient({ showDemoHints, demoGroups, demoDefaults }:
       const params = new URLSearchParams(window.location.search);
       setNextUrl(params.get("next") || params.get("callbackUrl") || null);
       setFlashMessage(params.get("message"));
+      const requestedRole = params.get("role");
+      if (
+        requestedRole === "student" ||
+        requestedRole === "teacher" ||
+        requestedRole === "admin" ||
+        requestedRole === "guardian"
+      ) {
+        setRole(requestedRole);
+      }
     }
   }, []);
 

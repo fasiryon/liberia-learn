@@ -2,10 +2,12 @@ import { randomUUID } from "crypto";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { answerGroundedQuestion } from "@/lib/ai/rag/groundedAnswerService";
+import { checkAiRateLimit } from "@/lib/ai/rateLimitGuard";
 import { getAssistantRoleConfig, resolveAllowedMode } from "@/lib/ai/rag/assistantAccess";
 import { resolveAssistantAudienceScope } from "@/lib/ai/rag/audienceScope";
 import { requireUser } from "@/lib/auth";
 import { logAudit } from "@/lib/audit";
+import { prisma } from "@/lib/db";
 import { isRagTutorEnabled } from "@/lib/serverFlags";
 import type {
   RetrievalContext,
@@ -82,6 +84,17 @@ export async function POST(req: NextRequest) {
     }
 
     const user = await requireUser();
+    const rateLimit = checkAiRateLimit({
+      userId: user.id,
+      role: user.role,
+      endpoint: "/api/rag/query",
+    });
+    if (!rateLimit.allowed) {
+      return NextResponse.json(
+        { error: "Please wait before making another request" },
+        { status: 429 }
+      );
+    }
     const roleConfig = getAssistantRoleConfig(user.role);
     if (!roleConfig) {
       return NextResponse.json({ error: "forbidden" }, { status: 403 });
@@ -154,6 +167,20 @@ export async function POST(req: NextRequest) {
         contextMode,
         sourceCount: result.sources.length,
         retrievalWeak: result.retrievalWeak,
+      },
+    });
+
+    await (prisma as any).aiInteractionLog.create({
+      data: {
+        schoolId: user.schoolId ?? null,
+        subject: audienceScope.subject ?? "GENERAL",
+        strandKey: "rag_query",
+        requestType: "rag_query",
+        guidanceLevel: result.confidence,
+        hadFallback: result.hadFallback,
+        endpoint: "/api/rag/query",
+        tokensUsed: result.tokensUsed,
+        estimatedCostUSD: result.estimatedCost,
       },
     });
 

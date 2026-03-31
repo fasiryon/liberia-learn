@@ -48,6 +48,7 @@ export type StudentTutorResult = {
   confidenceScore: number;
   hadFallback: boolean;
   estimatedCostUSD: number;
+  tokensUsed: number;
 };
 
 export type Message = {
@@ -78,6 +79,7 @@ const FALLBACK: StudentTutorResult = {
   confidenceScore: 0,
   hadFallback: true,
   estimatedCostUSD: 0,
+  tokensUsed: 0,
 };
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
@@ -193,6 +195,7 @@ function parseAndValidate(raw: string): StudentTutorResult | null {
     confidenceScore: Math.max(0, Math.min(1, r.confidenceScore)),
     hadFallback: false,
     estimatedCostUSD: 0,
+    tokensUsed: 0,
   };
 }
 
@@ -265,6 +268,7 @@ export async function getStudentTutorResponse(
     }
 
     validated.estimatedCostUSD = result.estimatedCostUSD;
+    validated.tokensUsed = result.inputTokens + result.outputTokens;
     return validated;
   } catch (err: any) {
     console.error("[AI_TUTOR] Call failed:", err?.message);

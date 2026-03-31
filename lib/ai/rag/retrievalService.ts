@@ -1,5 +1,8 @@
 import { Prisma } from "@prisma/client";
-import { embedText, toVectorLiteral } from "@/lib/ai/rag/embeddingService";
+import {
+  embedTextForCacheScope,
+  toVectorLiteral,
+} from "@/lib/ai/rag/embeddingService";
 import { prisma } from "@/lib/db";
 
 export type RelevantLesson = {
@@ -467,6 +470,11 @@ export async function retrieveRelevantLessons(
     where: { id: studentId },
     select: {
       currentGrade: true,
+      user: {
+        select: {
+          schoolId: true,
+        },
+      },
       enrollments: {
         select: {
           Class: {
@@ -491,7 +499,10 @@ export async function retrieveRelevantLessons(
     )
   );
 
-  const questionEmbedding = await embedText(trimmedQuestion);
+  const questionEmbedding = await embedTextForCacheScope(trimmedQuestion, {
+    tenantId: student.user?.schoolId ?? "global",
+    role: "student",
+  });
   const vectorSql = buildVectorSql(questionEmbedding);
   const subjectFilter = enrolledSubjects.length
     ? Prisma.sql`AND "subject" IN (${Prisma.join(enrolledSubjects)})`
@@ -535,7 +546,10 @@ export async function retrieveRelevantChunks(
     return [];
   }
 
-  const questionEmbedding = await embedText(trimmedQuestion);
+  const questionEmbedding = await embedTextForCacheScope(trimmedQuestion, {
+    tenantId: input.schoolId,
+    role: (input.context?.role ?? "system").toLowerCase(),
+  });
   const vectorSql = buildVectorSql(questionEmbedding);
   const effectiveLimit = Math.max(1, Math.min(input.topK ?? input.limit ?? 5, 8));
   const rawLimit = Math.max(effectiveLimit * 3, 12);

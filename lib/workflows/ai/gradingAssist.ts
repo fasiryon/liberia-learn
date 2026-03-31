@@ -54,6 +54,7 @@ export type GradingAssistResult = {
   /** Whether this result came from the fallback path. */
   hadFallback: boolean;
   estimatedCostUSD: number;
+  tokensUsed: number;
 };
 
 // ─── Punitive language guardrail (mirrors teacherAssist.ts) ──────────────────
@@ -104,6 +105,7 @@ const FALLBACK: GradingAssistResult = {
   teacherFinalAuthority: true,
   hadFallback: true,
   estimatedCostUSD: 0,
+  tokensUsed: 0,
 };
 
 // ─── Prompt builders ──────────────────────────────────────────────────────────
@@ -205,6 +207,7 @@ function parseAndValidate(raw: string): GradingAssistResult | null {
     teacherFinalAuthority: true,
     hadFallback: false,
     estimatedCostUSD: 0,
+    tokensUsed: 0,
   };
 }
 
@@ -246,6 +249,7 @@ export async function getGradingAssistFeedback(
     }
 
     validated.estimatedCostUSD = result.estimatedCostUSD;
+    validated.tokensUsed = result.inputTokens + result.outputTokens;
     return validated;
   } catch (err: any) {
     console.error("[GRADING_ASSIST] Call failed:", err?.message);
