@@ -352,6 +352,7 @@ export function enrichGeneratedLesson(input: EnrichmentInput) {
   const mergedPayload = {
     ...input.payload,
     ...parsed,
+    generationStage: "generated_enriched",
     primaryConcept: input.payload.primaryConcept,
     prerequisites: input.payload.prerequisites,
     nextConcepts: input.payload.nextConcepts,
