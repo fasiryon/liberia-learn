@@ -15,8 +15,8 @@ export type ReadinessSectionView = {
 
 function marker(ready: boolean) {
   return ready
-    ? "bg-emerald-500/15 text-emerald-300 border-emerald-500/20"
-    : "bg-amber-500/15 text-amber-300 border-amber-500/20";
+    ? "border-emerald-500/20 bg-emerald-500/15 text-emerald-300"
+    : "border-amber-500/20 bg-amber-500/15 text-amber-300";
 }
 
 export function ReadinessChecklist({
@@ -24,8 +24,17 @@ export function ReadinessChecklist({
 }: {
   sections: ReadinessSectionView[];
 }) {
+  const readyCount = sections.filter((section) => section.ready).length;
+
   return (
     <div className="space-y-4">
+      <Card className="p-5">
+        <h2 className="text-lg font-semibold text-slate-100">Section summary</h2>
+        <p className="mt-1 text-sm text-slate-400">
+          {readyCount} of {sections.length} readiness sections are currently ready.
+        </p>
+      </Card>
+
       {sections.map((section) => (
         <Card key={section.id} className="p-5">
           <div className="flex items-center justify-between gap-3">
@@ -34,7 +43,7 @@ export function ReadinessChecklist({
               {typeof section.score === "number" ? (
                 <p className="mt-1 text-xs text-slate-500">
                   Score {section.score}/100
-                  {typeof section.weight === "number" ? ` • Weight ${section.weight}%` : ""}
+                  {typeof section.weight === "number" ? ` | Weight ${section.weight}%` : ""}
                 </p>
               ) : null}
             </div>
@@ -44,12 +53,15 @@ export function ReadinessChecklist({
               {section.ready ? "Ready" : "Needs work"}
             </span>
           </div>
+
           <div className="mt-4 space-y-3">
             {section.checks.map((check) => (
               <div key={check.label} className="rounded-2xl bg-slate-950/60 p-4">
                 <div className="flex items-center justify-between gap-3">
                   <p className="text-sm font-semibold text-slate-100">{check.label}</p>
-                  <span className={`rounded-full border px-2.5 py-1 text-[11px] font-semibold ${marker(check.ready)}`}>
+                  <span
+                    className={`rounded-full border px-2.5 py-1 text-[11px] font-semibold ${marker(check.ready)}`}
+                  >
                     {check.ready ? "OK" : "Missing"}
                   </span>
                 </div>

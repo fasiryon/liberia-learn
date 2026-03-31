@@ -30,6 +30,12 @@ export type GeneratedExam = {
   questions: GeneratedQuestion[];
 };
 
+export type GeneratedExamWithUsage = {
+  exam: GeneratedExam;
+  estimatedCostUSD: number;
+  tokensUsed: number;
+};
+
 const GeneratedQuestionSchema = z.object({
   prompt: z.string().min(10),
   options: z.array(z.string().min(1)).length(4),
@@ -91,7 +97,9 @@ Rules:
 - No markdown, no commentary, no extra keys.`;
 }
 
-async function requestExam(params: Required<ExamGenerationParams>): Promise<GeneratedExam> {
+async function requestExam(
+  params: Required<ExamGenerationParams>
+): Promise<GeneratedExamWithUsage> {
   const result = await routedCompletion({
     forceSmartTier: true,
     maxTokens: 3200,
@@ -122,10 +130,16 @@ async function requestExam(params: Required<ExamGenerationParams>): Promise<Gene
     }
   }
 
-  return exam;
+  return {
+    exam,
+    estimatedCostUSD: result.estimatedCostUSD,
+    tokensUsed: result.inputTokens + result.outputTokens,
+  };
 }
 
-export async function generateExam(params: ExamGenerationParams): Promise<GeneratedExam> {
+export async function generateExamWithUsage(
+  params: ExamGenerationParams
+): Promise<GeneratedExamWithUsage> {
   const normalized: Required<ExamGenerationParams> = {
     subject: params.subject,
     grade: params.grade,
@@ -146,4 +160,9 @@ export async function generateExam(params: ExamGenerationParams): Promise<Genera
   }
 
   throw lastError instanceof Error ? lastError : new Error("Exam generation failed after retry");
+}
+
+export async function generateExam(params: ExamGenerationParams): Promise<GeneratedExam> {
+  const result = await generateExamWithUsage(params);
+  return result.exam;
 }

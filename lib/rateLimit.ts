@@ -31,3 +31,9 @@ export function checkRateLimit(
   rateLimitMap.set(key, current);
   return { allowed: true, remaining: options.max - current.count, resetAt: current.resetAt };
 }
+
+export function resetRateLimitStateForTests(): void {
+  if (process.env.NODE_ENV === "test") {
+    rateLimitMap.clear();
+  }
+}

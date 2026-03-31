@@ -1,0 +1,10 @@
+flowchart TD
+  Generate[POST /api/admin/curriculum/generate] --> Factory[generateCurriculumPayload()]
+  Factory --> Content[CurriculumContent]
+  Content --> Approve[POST /api/admin/curriculum/approve]
+  Approve --> ChunkSync[syncCurriculumContentRagChunks()]
+  Approve --> Embed[embedLesson()]
+  Content --> UnitAssembly[assembleUnit()]
+  ChunkSync --> RagChunk[(RagChunk)]
+  Embed --> RagChunk
+  RagChunk --> RAG[Grounded RAG query]

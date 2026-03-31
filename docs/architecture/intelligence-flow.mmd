@@ -1,0 +1,12 @@
+flowchart TD
+  Activity[Student learning activity] --> Events[recordPerformanceEvent()]
+  Events --> Confusion[detectConfusion()]
+  Confusion --> Signals[(ConfusionSignal)]
+  Signals --> Engine[runInterventionCheck()]
+  Engine --> Interventions[(InterventionRecommendation)]
+  Signals --> Aggregate[getStudentPerformanceSummary()\ngetClassPerformanceSummary()]
+  Interventions --> Teacher[Teacher intelligence routes]
+  Aggregate --> Teacher
+  Interventions --> Guardian[Guardian summary-safe route]
+  Aggregate --> Guardian
+  Aggregate --> Readiness[readinessService]

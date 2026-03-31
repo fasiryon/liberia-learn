@@ -1,6 +1,13 @@
 import { z } from "zod";
 import { routedCompletion } from "@/lib/ai/routedCompletion";
 import {
+  buildAiCacheKey,
+  getCachedValue,
+  hashCacheQuery,
+  setCachedValue,
+} from "@/lib/ai/cache";
+import { getAiUsageMetrics } from "@/lib/ai/interactionLog";
+import {
   buildAssistantActions,
   type AssistantAction,
 } from "@/lib/ai/rag/assistantActions";
@@ -11,6 +18,15 @@ import {
   type RetrievalMode,
 } from "@/lib/ai/rag/retrievalService";
 import type { SessionUser } from "@/lib/auth";
+import {
+  buildCitations,
+  buildExplainability,
+  computeGroundingScore,
+  deriveConfidence,
+  type AiCitation,
+  type AiConfidence,
+  type AiExplainability,
+} from "@/lib/ai/trust";
 
 const MIN_TOP_SIMILARITY = 0.72;
 const MIN_AVG_SIMILARITY = 0.66;
@@ -38,6 +54,14 @@ export type GroundedAnswerResult = {
   hadFallback: boolean;
   isWeakGrounding: boolean;
   actions: AssistantAction[];
+  confidence: AiConfidence;
+  groundingScore: number;
+  sourcesUsed: number;
+  citations: AiCitation[];
+  fallbackReason?: string;
+  explanation?: AiExplainability;
+  tokensUsed: number;
+  estimatedCost: number;
 };
 
 type QueryInput = {
@@ -84,12 +108,18 @@ function inferRetrievalMode(input: QueryInput): RetrievalMode {
 
 function buildWeakRetrievalAnswerForInput(
   chunks: RetrievedChunk[],
-  input: Pick<QueryInput, "role" | "question" | "subject" | "grade" | "context">
+  input: Pick<QueryInput, "role" | "question" | "subject" | "grade" | "context"> & {
+    fallbackReason: string;
+    tokensUsed?: number;
+    estimatedCost?: number;
+  }
 ): GroundedAnswerResult {
+  const weakSources = chunks.slice(0, 3).map((chunk) => toSource(chunk, "weak"));
+  const groundingScore = computeGroundingScore(weakSources.map((source) => source.similarity));
   return {
     answer:
       "Weak grounding: I could not find enough approved LiberiaLearn content to answer that confidently. Try narrowing the question by subject, grade, or route context.",
-    sources: chunks.slice(0, 3).map((chunk) => toSource(chunk, "weak")),
+    sources: weakSources,
     retrievalWeak: true,
     hadFallback: true,
     isWeakGrounding: true,
@@ -102,6 +132,27 @@ function buildWeakRetrievalAnswerForInput(
         (typeof input.grade === "number" ? String(input.grade) : null),
       context: input.context,
     }),
+    confidence: "low",
+    groundingScore,
+    sourcesUsed: weakSources.length,
+    citations: buildCitations(
+      weakSources.map((source) => ({
+        title: source.title,
+        sourceLabel: source.sourceLabel,
+        sourceType: source.sourceType,
+      })),
+      input.role
+    ),
+    fallbackReason: input.fallbackReason,
+    explanation: buildExplainability({
+      role: input.role,
+      hadFallback: true,
+      retrievalWeak: true,
+      groundingScore,
+      sources: weakSources.map((source) => source.title),
+    }),
+    tokensUsed: input.tokensUsed ?? 0,
+    estimatedCost: input.estimatedCost ?? 0,
   };
 }
 
@@ -320,6 +371,24 @@ ${context}`;
 }
 
 export async function answerGroundedQuestion(input: QueryInput): Promise<GroundedAnswerResult> {
+  const cacheKey = buildAiCacheKey(
+    input.schoolId,
+    input.role,
+    hashCacheQuery({
+      question: input.question,
+      subject: input.subject ?? null,
+      grade: input.grade ?? null,
+      allowedSubjects: input.allowedSubjects ?? null,
+      allowedGrades: input.allowedGrades ?? null,
+      mode: input.mode ?? null,
+      context: input.context ?? null,
+    })
+  );
+  const cached = getCachedValue<GroundedAnswerResult>(cacheKey);
+  if (cached) {
+    return cached;
+  }
+
   const mode = inferRetrievalMode(input);
   const chunks =
     input.chunks ??
@@ -337,7 +406,10 @@ export async function answerGroundedQuestion(input: QueryInput): Promise<Grounde
   const retrievalWeak = isWeakRetrieval(chunks);
 
   if (!hasUsableChunks(chunks)) {
-    return buildWeakRetrievalAnswerForInput(chunks, input);
+    return buildWeakRetrievalAnswerForInput(chunks, {
+      ...input,
+      fallbackReason: "insufficient_retrieved_context",
+    });
   }
 
   try {
@@ -356,9 +428,15 @@ export async function answerGroundedQuestion(input: QueryInput): Promise<Grounde
       maxTokens: 500,
       forceSmartTier: true,
     });
+    const usage = getAiUsageMetrics(response);
     const parsed = parseGroundedAnswerResponse(response.content);
     if (!parsed || !parsed.answer.trim() || isExplicitRefusal(parsed.answer)) {
-      return buildWeakRetrievalAnswerForInput(chunks, input);
+      return buildWeakRetrievalAnswerForInput(chunks, {
+        ...input,
+        fallbackReason: !parsed ? "invalid_ai_response" : "explicit_refusal",
+        tokensUsed: usage.tokensUsed,
+        estimatedCost: usage.estimatedCostUSD,
+      });
     }
 
     const allowedIds = new Set(chunks.map((chunk) => chunk.id));
@@ -367,12 +445,15 @@ export async function answerGroundedQuestion(input: QueryInput): Promise<Grounde
       citedIds.length > 0
         ? citedIds
         : chunks.slice(0, Math.min(3, chunks.length)).map((chunk) => chunk.id);
-
-    return {
+    const groundedSources = chunks
+      .filter((chunk) => effectiveCitedIds.includes(chunk.id))
+      .map((chunk) => toSource(chunk, "grounded"));
+    const groundingScore = computeGroundingScore(
+      groundedSources.map((source) => source.similarity)
+    );
+    const result: GroundedAnswerResult = {
       answer: parsed.answer.trim(),
-      sources: chunks
-        .filter((chunk) => effectiveCitedIds.includes(chunk.id))
-        .map((chunk) => toSource(chunk, "grounded")),
+      sources: groundedSources,
       retrievalWeak,
       hadFallback: false,
       isWeakGrounding: retrievalWeak,
@@ -385,8 +466,47 @@ export async function answerGroundedQuestion(input: QueryInput): Promise<Grounde
           (typeof input.grade === "number" ? String(input.grade) : null),
         context: input.context,
       }),
+      confidence: deriveConfidence({
+        groundingScore,
+        hadFallback: false,
+        retrievalWeak,
+      }),
+      groundingScore,
+      sourcesUsed: groundedSources.length,
+      citations: buildCitations(
+        groundedSources.map((source) => {
+          const chunk = chunks.find((entry) => entry.id === source.id);
+          return {
+            title: source.title,
+            sourceLabel: source.sourceLabel,
+            sourceType: source.sourceType,
+            subject: chunk?.subject ?? null,
+            grade: chunk?.grade ?? null,
+            metadata: chunk?.metadata,
+          };
+        }),
+        input.role
+      ),
+      explanation: buildExplainability({
+        role: input.role,
+        hadFallback: false,
+        retrievalWeak,
+        groundingScore,
+        sources: groundedSources.map((source) => source.title),
+      }),
+      tokensUsed: usage.tokensUsed,
+      estimatedCost: usage.estimatedCostUSD,
     };
+
+    if (!result.hadFallback) {
+      setCachedValue(cacheKey, result);
+    }
+
+    return result;
   } catch {
-    return buildWeakRetrievalAnswerForInput(chunks, input);
+    return buildWeakRetrievalAnswerForInput(chunks, {
+      ...input,
+      fallbackReason: "llm_request_failed",
+    });
   }
 }
