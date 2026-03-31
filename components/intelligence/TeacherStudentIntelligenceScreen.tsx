@@ -7,6 +7,7 @@ import {
   InterventionTable,
   type TeacherInterventionItem,
 } from "@/components/intelligence/InterventionTable";
+import { buildAdvisoryActions } from "@/lib/intelligence/advisoryActions";
 
 function trendLabel(trend: string) {
   if (trend === "improving") return "Improving";
@@ -48,6 +49,14 @@ export function TeacherStudentIntelligenceScreen({
       return acc;
     }, {})
   ).sort((a, b) => b[1].length - a[1].length);
+  const suggestedActions = buildAdvisoryActions({
+    confusions,
+    interventions,
+  });
+  const highSeverityCount = confusions.filter((item) => item.severity === "high").length;
+  const mediumSeverityCount = confusions.filter(
+    (item) => item.severity === "medium"
+  ).length;
 
   return (
     <div className="space-y-6">
@@ -90,6 +99,56 @@ export function TeacherStudentIntelligenceScreen({
         </Card>
       </div>
 
+      <Card className="p-5">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <h2 className="text-lg font-semibold text-slate-100">Needs attention now</h2>
+            <p className="mt-1 text-sm text-slate-400">
+              A compact view of the strongest current student-support signals.
+            </p>
+          </div>
+          <div className="flex flex-wrap gap-2 text-xs font-semibold">
+            <span className="rounded-full border border-red-500/20 bg-red-500/10 px-3 py-1 text-red-200">
+              High {highSeverityCount}
+            </span>
+            <span className="rounded-full border border-amber-500/20 bg-amber-500/10 px-3 py-1 text-amber-200">
+              Medium {mediumSeverityCount}
+            </span>
+            <span className="rounded-full border border-slate-700 bg-slate-950/60 px-3 py-1 text-slate-300">
+              Pending {summary.pendingInterventions}
+            </span>
+          </div>
+        </div>
+      </Card>
+
+      <section className="space-y-4">
+        <div>
+          <h2 className="text-lg font-semibold text-slate-100">AI suggested actions</h2>
+          <p className="text-sm text-amber-300">
+            AI suggestions  teacher review required.
+          </p>
+        </div>
+        {suggestedActions.length === 0 ? (
+          <Card className="p-5">
+            <p className="text-sm text-slate-400">
+              No advisory actions are currently suggested from this student&apos;s signal set.
+            </p>
+          </Card>
+        ) : (
+          <div className="grid gap-4 lg:grid-cols-3">
+            {suggestedActions.map((action) => (
+              <Card key={`${action.type}-${action.reason}`} className="p-5">
+                <p className="text-xs text-slate-500">{action.type.replace(/_/g, " ")}</p>
+                <p className="mt-2 text-sm text-slate-200">{action.reason}</p>
+                <p className="mt-2 text-xs text-slate-500">
+                  Confidence {Math.round(action.confidence * 100)}%
+                </p>
+              </Card>
+            ))}
+          </div>
+        )}
+      </section>
+
       <section className="space-y-4">
         <div>
           <h2 className="text-lg font-semibold text-slate-100">Concept focus</h2>
@@ -110,6 +169,9 @@ export function TeacherStudentIntelligenceScreen({
                 <p className="text-sm font-semibold text-slate-100">{concept}</p>
                 <p className="mt-1 text-sm text-slate-400">
                   {entries.length} signal{entries.length === 1 ? "" : "s"} recorded
+                </p>
+                <p className="mt-2 text-xs text-slate-500">
+                  Highest severity {entries.some((item) => item.severity === "high") ? "high" : entries.some((item) => item.severity === "medium") ? "medium" : "low"}
                 </p>
               </Card>
             ))}

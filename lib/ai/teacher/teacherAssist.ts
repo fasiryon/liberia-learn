@@ -29,6 +29,7 @@ export type TeacherAssistResult = {
   resourceHints: string[];
   hadFallback: boolean;
   estimatedCostUSD: number;
+  tokensUsed: number;
 };
 
 // ─── Constants ────────────────────────────────────────────────────────────────
@@ -61,6 +62,7 @@ const FALLBACK: TeacherAssistResult = {
   ],
   hadFallback: true,
   estimatedCostUSD: 0,
+  tokensUsed: 0,
 };
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
@@ -155,6 +157,7 @@ function parseAndValidate(raw: string): TeacherAssistResult | null {
     resourceHints: hints,
     hadFallback: false,
     estimatedCostUSD: 0,
+    tokensUsed: 0,
   };
 }
 
@@ -195,6 +198,7 @@ export async function getTeacherAssistResponse(
     }
 
     validated.estimatedCostUSD = result.estimatedCostUSD;
+    validated.tokensUsed = result.inputTokens + result.outputTokens;
     return validated;
   } catch (err: any) {
     console.error("[AI_TEACHER] Call failed:", err?.message);

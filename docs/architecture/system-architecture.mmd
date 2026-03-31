@@ -1,0 +1,13 @@
+flowchart TD
+  Browser[Next.js App Router UI\napp/*] --> Middleware[middleware.ts]
+  Middleware --> Api[API Routes\napp/api/*]
+  Api --> Auth[RBAC + session guards\nlib/auth.ts]
+  Api --> Domain[Domain services\nlib/*]
+  Domain --> Prisma[Prisma client\nlib/db.ts]
+  Prisma --> Postgres[(PostgreSQL / Prisma models)]
+  Domain --> Audit[Audit + metrics\nlib/audit.ts\nlib/metrics/events.ts]
+  Domain --> AI[AI Router + RAG\nlib/ai/router.ts\nlib/ai/rag/*]
+  AI --> Providers[OpenAI / Groq]
+  AI --> Chunks[(RagChunk)]
+  Domain --> Intelligence[Intelligence layer\nlib/intelligence/*]
+  Intelligence --> Postgres

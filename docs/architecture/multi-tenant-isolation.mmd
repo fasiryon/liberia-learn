@@ -1,0 +1,9 @@
+flowchart TD
+  User[Authenticated user] --> Middleware[middleware.ts]
+  Middleware --> Route[Route handler]
+  Route --> Role[Role check]
+  Role --> Scope[schoolId / teacher scope / guardian link / MOE guard]
+  Scope --> Query[Prisma query with tenant filters]
+  Query --> Response[Scoped response only]
+  Scope --> Cache[tenantId:role:queryHash cache key]
+  Cache --> Response
