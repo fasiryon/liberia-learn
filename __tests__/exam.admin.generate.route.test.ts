@@ -2,17 +2,18 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const mockRequireRole = vi.hoisted(() => vi.fn());
 const mockIsExamSystemEnabled = vi.hoisted(() => vi.fn());
-const mockGenerateExam = vi.hoisted(() => vi.fn());
+const mockGenerateExamWithUsage = vi.hoisted(() => vi.fn());
 const mockExamCreate = vi.hoisted(() => vi.fn());
 const mockLogAudit = vi.hoisted(() => vi.fn());
 
 vi.mock("@/lib/auth", () => ({ requireRole: mockRequireRole }));
 vi.mock("@/lib/serverFlags", () => ({ isExamSystemEnabled: mockIsExamSystemEnabled }));
-vi.mock("@/lib/exams/examGenerator", () => ({ generateExam: mockGenerateExam }));
+vi.mock("@/lib/exams/examGenerator", () => ({ generateExamWithUsage: mockGenerateExamWithUsage }));
 vi.mock("@/lib/audit", () => ({ logAudit: mockLogAudit }));
 vi.mock("@/lib/db", () => ({
   prisma: {
     exam: { create: mockExamCreate },
+    aiInteractionLog: { create: vi.fn().mockResolvedValue(undefined) },
   },
 }));
 
@@ -31,23 +32,27 @@ describe("POST /api/admin/exams/generate", () => {
     vi.clearAllMocks();
     mockIsExamSystemEnabled.mockReturnValue(true);
     mockRequireRole.mockResolvedValue({ id: "teacher-1", role: "TEACHER", schoolId: "school-1" });
-    mockGenerateExam.mockResolvedValue({
-      title: "Grade 6 Math Exam",
-      subject: "MATH",
-      grade: 6,
-      moeStandards: ["M1"],
-      timeLimit: 60,
-      passingScore: 0.7,
-      questions: [
-        {
-          prompt: "Q1",
-          options: ["A", "B", "C", "D"],
-          correctIndex: 1,
-          explanation: "Because",
-          moeCode: "M1",
-          points: 1,
-        },
-      ],
+    mockGenerateExamWithUsage.mockResolvedValue({
+      exam: {
+        title: "Grade 6 Math Exam",
+        subject: "MATH",
+        grade: 6,
+        moeStandards: ["M1"],
+        timeLimit: 60,
+        passingScore: 0.7,
+        questions: [
+          {
+            prompt: "Q1",
+            options: ["A", "B", "C", "D"],
+            correctIndex: 1,
+            explanation: "Because",
+            moeCode: "M1",
+            points: 1,
+          },
+        ],
+      },
+      tokensUsed: 123,
+      estimatedCostUSD: 0.01,
     });
     mockExamCreate.mockResolvedValue({ id: "exam-1" });
     mockLogAudit.mockResolvedValue(undefined);

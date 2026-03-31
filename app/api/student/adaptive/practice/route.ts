@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { requireRole } from "@/lib/auth";
 import { logAudit } from "@/lib/audit";
+import { checkAiRateLimit } from "@/lib/ai/rateLimitGuard";
 import { prisma } from "@/lib/db";
 import { recordMetricEvent } from "@/lib/metrics/events";
 import { getAiBudgetMonthlyCap, isAdaptiveEngineEnabled } from "@/lib/serverFlags";
@@ -38,6 +39,17 @@ export async function POST(req: NextRequest) {
     }
 
     const user = await requireRole("STUDENT");
+    const rateLimit = checkAiRateLimit({
+      userId: user.id,
+      role: user.role,
+      endpoint: "/api/student/adaptive/practice",
+    });
+    if (!rateLimit.allowed) {
+      return NextResponse.json(
+        { error: "Please wait before making another request" },
+        { status: 429 }
+      );
+    }
     const student = await prisma.student.findFirst({
       where: {
         userId: user.id,
@@ -104,6 +116,8 @@ export async function POST(req: NextRequest) {
         requestType: "adaptive_practice",
         guidanceLevel: tier,
         hadFallback: false,
+        endpoint: "/api/student/adaptive/practice",
+        tokensUsed: generation.tokensUsed,
         estimatedCostUSD: generation.estimatedCostUSD,
       },
     });

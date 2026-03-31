@@ -6,7 +6,7 @@
  *
  * Feature flag : AI_TUTOR_ENABLED (default OFF → 404)
  * Auth         : Any authenticated session; studentId = session user.id
- * Rate limit   : AI_TUTOR_DAILY_LIMIT calls per user per day (default 20)
+ * Rate limit   : 20 requests/hour via checkAiRateLimit()
  * Budget check : AI_BUDGET_MONTHLY_CAP_USD (default $100); 503 when exceeded
  *
  * Audit action : "ai.tutor.requested"
@@ -16,10 +16,10 @@ import { randomUUID } from "crypto";
 import { requireUser } from "@/lib/auth";
 import {
   isAiTutorEnabled,
-  getAiTutorDailyLimit,
   getAiBudgetMonthlyCap,
 } from "@/lib/serverFlags";
 import { logAudit } from "@/lib/audit";
+import { checkAiRateLimit } from "@/lib/ai/rateLimitGuard";
 import { recordMetricEvent } from "@/lib/metrics/events";
 import { prisma } from "@/lib/db";
 import {
@@ -36,25 +36,19 @@ export async function POST(req: NextRequest) {
     }
 
     const user = await requireUser();
-
-    // ── Rate limit ─────────────────────────────────────────────────────────
-    const todayStart = new Date();
-    todayStart.setHours(0, 0, 0, 0);
-    const todayCount = await prisma.auditLog.count({
-      where: {
-        userId: user.id,
-        action: "ai.tutor.requested",
-        createdAt: { gte: todayStart },
-      },
+    const rateLimit = checkAiRateLimit({
+      userId: user.id,
+      role: user.role,
+      endpoint: "/api/student/tutor",
     });
-    const dailyLimit = getAiTutorDailyLimit();
-    if (todayCount >= dailyLimit) {
+    if (!rateLimit.allowed) {
       return NextResponse.json(
-        { error: "rate_limit_exceeded", limit: dailyLimit },
+        { error: "Please wait before making another request" },
         { status: 429 }
       );
     }
 
+    // ── Rate limit ─────────────────────────────────────────────────────────
     // ── Monthly budget check ───────────────────────────────────────────────
     const monthStart = new Date();
     monthStart.setDate(1);
@@ -135,6 +129,8 @@ export async function POST(req: NextRequest) {
         requestType: input.requestType,
         guidanceLevel: result.guidanceLevel,
         hadFallback: result.hadFallback,
+        endpoint: "/api/student/tutor",
+        tokensUsed: result.tokensUsed,
         estimatedCostUSD: result.estimatedCostUSD,
       },
     });

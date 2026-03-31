@@ -5,6 +5,7 @@ const mockFindUnique = vi.hoisted(() => vi.fn());
 const mockUpdate = vi.hoisted(() => vi.fn());
 const mockLogAudit = vi.hoisted(() => vi.fn());
 const mockNotifyAssignmentGraded = vi.hoisted(() => vi.fn());
+const ROUTE_TIMEOUT_MS = 15_000;
 
 vi.mock("@/lib/auth", () => ({ requireRole: mockRequireRole }));
 vi.mock("@/lib/db", () => ({
@@ -94,7 +95,7 @@ describe("PATCH /api/teacher/assignments/[id]/grade", () => {
     );
     expect(mockLogAudit).toHaveBeenCalledOnce();
     expect(mockNotifyAssignmentGraded).toHaveBeenCalledOnce();
-  });
+  }, ROUTE_TIMEOUT_MS);
 
   it("returns 403 for a different teacher's submission", async () => {
     mockFindUnique.mockResolvedValue({

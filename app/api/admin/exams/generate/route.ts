@@ -1,10 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { requireRole } from "@/lib/auth";
+import { checkAiRateLimit } from "@/lib/ai/rateLimitGuard";
 import { logAudit } from "@/lib/audit";
 import { prisma } from "@/lib/db";
 import { handleApiError } from "@/lib/errors/apiErrorHandler";
-import { generateExam } from "@/lib/exams/examGenerator";
+import { generateExamWithUsage } from "@/lib/exams/examGenerator";
 import { isExamSystemEnabled } from "@/lib/serverFlags";
 
 export const dynamic = "force-dynamic";
@@ -28,9 +29,21 @@ export async function POST(req: NextRequest) {
     if (!user.schoolId) {
       return NextResponse.json({ error: "No school context available" }, { status: 400 });
     }
+    const rateLimit = checkAiRateLimit({
+      userId: user.id,
+      role: user.role,
+      endpoint: "/api/admin/exams/generate",
+    });
+    if (!rateLimit.allowed) {
+      return NextResponse.json(
+        { error: "Please wait before making another request" },
+        { status: 429 }
+      );
+    }
 
     const params = ExamGenerationParamsSchema.parse(await req.json());
-    const exam = await generateExam(params);
+    const generated = await generateExamWithUsage(params);
+    const exam = generated.exam;
 
     const record = await prisma.exam.create({
       data: {
@@ -68,6 +81,24 @@ export async function POST(req: NextRequest) {
         questionCount: exam.questions.length,
       },
     });
+
+    try {
+      await (prisma as any).aiInteractionLog.create({
+        data: {
+          schoolId: user.schoolId ?? null,
+          subject: exam.subject,
+          strandKey: exam.moeStandards.join(","),
+          requestType: "exam_generation",
+          guidanceLevel: null,
+          hadFallback: false,
+          endpoint: "/api/admin/exams/generate",
+          tokensUsed: generated.tokensUsed,
+          estimatedCostUSD: generated.estimatedCostUSD,
+        },
+      });
+    } catch (loggingError) {
+      console.error("[exam.generate] Failed to record AI usage", loggingError);
+    }
 
     return NextResponse.json({ examId: record.id, exam });
   } catch (error) {

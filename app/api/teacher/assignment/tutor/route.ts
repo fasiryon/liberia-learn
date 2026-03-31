@@ -28,6 +28,7 @@ import {
   getAiBudgetMonthlyCap,
 } from "@/lib/serverFlags";
 import { logAudit } from "@/lib/audit";
+import { checkAiRateLimit } from "@/lib/ai/rateLimitGuard";
 import { recordMetricEvent } from "@/lib/metrics/events";
 import { prisma } from "@/lib/db";
 import { getAssignmentTutorGuidance } from "@/lib/workflows/ai/assignmentTutor";
@@ -40,6 +41,17 @@ export async function POST(req: NextRequest) {
     }
 
     const user = await requireRole("TEACHER");
+    const rateLimit = checkAiRateLimit({
+      userId: user.id,
+      role: user.role,
+      endpoint: "/api/teacher/assignment/tutor",
+    });
+    if (!rateLimit.allowed) {
+      return NextResponse.json(
+        { error: "Please wait before making another request" },
+        { status: 429 }
+      );
+    }
 
     // ── Monthly budget check ───────────────────────────────────────────────
     const monthStart = new Date();
@@ -116,6 +128,8 @@ export async function POST(req: NextRequest) {
         requestType: "assignment_tutor",
         guidanceLevel: null,
         hadFallback: result.hadFallback,
+        endpoint: "/api/teacher/assignment/tutor",
+        tokensUsed: result.tokensUsed,
         estimatedCostUSD: result.estimatedCostUSD,
       },
     });

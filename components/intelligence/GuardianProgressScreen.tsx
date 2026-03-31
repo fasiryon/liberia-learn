@@ -27,5 +27,14 @@ export function GuardianProgressScreen({
     );
   }
 
-  return <GuardianProgressCard data={data} />;
+  return (
+    <div className="space-y-4">
+      <Card className="p-4">
+        <p className="text-sm text-slate-300">
+          Family guidance is simplified and non-actionable. Internal school follow-up detail is not shown in guardian views.
+        </p>
+      </Card>
+      <GuardianProgressCard data={data} />
+    </div>
+  );
 }
