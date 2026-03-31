@@ -6,6 +6,7 @@ const mockAnswerGroundedQuestion = vi.hoisted(() => vi.fn());
 const mockLogAudit = vi.hoisted(() => vi.fn());
 const mockStudentFindUnique = vi.hoisted(() => vi.fn());
 const mockUserFindUnique = vi.hoisted(() => vi.fn());
+const mockAiInteractionLogCreate = vi.hoisted(() => vi.fn());
 
 vi.mock("@/lib/auth", () => ({
   requireUser: mockRequireUser,
@@ -35,6 +36,9 @@ vi.mock("@/lib/db", () => ({
     user: {
       findUnique: mockUserFindUnique,
     },
+    aiInteractionLog: {
+      create: mockAiInteractionLogCreate,
+    },
   },
 }));
 
@@ -54,10 +58,18 @@ describe("POST /api/rag/query", () => {
       sources: [],
       retrievalWeak: false,
       hadFallback: false,
+      cacheHit: false,
       isWeakGrounding: false,
       actions: [],
+      confidence: "medium",
+      groundingScore: 0.8,
+      sourcesUsed: 0,
+      citations: [],
+      tokensUsed: 12,
+      estimatedCost: 0.001,
     });
     mockLogAudit.mockResolvedValue(undefined);
+    mockAiInteractionLogCreate.mockResolvedValue({ id: "log-1" });
     mockStudentFindUnique.mockResolvedValue({
       currentGrade: 7,
       enrollments: [{ Class: { subject: "MATH" } }],
@@ -335,5 +347,45 @@ describe("POST /api/rag/query", () => {
 
     expect(response.status).toBe(403);
     expect(mockAnswerGroundedQuestion).not.toHaveBeenCalled();
+  });
+
+  it("logs zero spend when the grounded answer result was served from cache", async () => {
+    mockAnswerGroundedQuestion.mockResolvedValue({
+      answer: "Cached grounded answer",
+      sources: [],
+      retrievalWeak: false,
+      hadFallback: false,
+      cacheHit: true,
+      isWeakGrounding: false,
+      actions: [],
+      confidence: "high",
+      groundingScore: 0.92,
+      sourcesUsed: 1,
+      citations: [],
+      tokensUsed: 0,
+      estimatedCost: 0,
+    });
+
+    const response = await POST(
+      new Request("http://localhost/api/rag/query", {
+        method: "POST",
+        body: JSON.stringify({
+          question: "What is a fraction?",
+          subject: "MATH",
+          grade: 5,
+          mode: "classroom",
+        }),
+      }) as any
+    );
+
+    expect(response.status).toBe(200);
+    expect(mockAiInteractionLogCreate).toHaveBeenCalledWith({
+      data: expect.objectContaining({
+        endpoint: "/api/rag/query",
+        tokensUsed: 0,
+        estimatedCostUSD: 0,
+      }),
+    });
+    expect((await response.json()).cacheHit).toBe(true);
   });
 });

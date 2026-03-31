@@ -2,6 +2,10 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const mockRetrieveRelevantChunks = vi.hoisted(() => vi.fn());
 const mockRoutedCompletion = vi.hoisted(() => vi.fn());
+const mockGetCachedValue = vi.hoisted(() => vi.fn());
+const mockSetCachedValue = vi.hoisted(() => vi.fn());
+const mockBuildAiCacheKey = vi.hoisted(() => vi.fn(() => "cache-key"));
+const mockHashCacheQuery = vi.hoisted(() => vi.fn(() => "query-hash"));
 
 vi.mock("@/lib/ai/rag/retrievalService", () => ({
   retrieveRelevantChunks: mockRetrieveRelevantChunks,
@@ -9,6 +13,13 @@ vi.mock("@/lib/ai/rag/retrievalService", () => ({
 
 vi.mock("@/lib/ai/routedCompletion", () => ({
   routedCompletion: mockRoutedCompletion,
+}));
+
+vi.mock("@/lib/ai/cache", () => ({
+  getCachedValue: mockGetCachedValue,
+  setCachedValue: mockSetCachedValue,
+  buildAiCacheKey: mockBuildAiCacheKey,
+  hashCacheQuery: mockHashCacheQuery,
 }));
 
 import {
@@ -19,6 +30,7 @@ import {
 describe("answerGroundedQuestion", () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    mockGetCachedValue.mockReturnValue(null);
   });
 
   it("falls back safely when retrieved chunks are unusable", async () => {
@@ -249,5 +261,37 @@ describe("answerGroundedQuestion", () => {
         content: "Compliance and audit guidance",
       })
     ).toBe("policy");
+  });
+
+  it("returns zero spend and cacheHit=true when serving a cached answer", async () => {
+    mockGetCachedValue.mockReturnValue({
+      answer: "Cached grounded answer",
+      sources: [],
+      retrievalWeak: false,
+      hadFallback: false,
+      cacheHit: false,
+      isWeakGrounding: false,
+      actions: [],
+      confidence: "high",
+      groundingScore: 0.91,
+      sourcesUsed: 1,
+      citations: [],
+      tokensUsed: 42,
+      estimatedCost: 0.002,
+    });
+
+    const result = await answerGroundedQuestion({
+      question: "What is a fraction?",
+      schoolId: "school-1",
+      subject: "MATH",
+      grade: 5,
+      role: "TEACHER",
+    });
+
+    expect(result.answer).toBe("Cached grounded answer");
+    expect(result.cacheHit).toBe(true);
+    expect(result.tokensUsed).toBe(0);
+    expect(result.estimatedCost).toBe(0);
+    expect(mockRoutedCompletion).not.toHaveBeenCalled();
   });
 });
