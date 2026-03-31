@@ -22,10 +22,53 @@ function hasFlag(flag: string) {
   return process.argv.includes(flag);
 }
 
+function readGradesArg() {
+  const value = readArg("--grades");
+  if (!value) return undefined;
+  const grades = value
+    .split(",")
+    .map((part) => Number.parseInt(part.trim(), 10))
+    .filter((grade) => Number.isFinite(grade) && grade >= 1 && grade <= 12);
+  return grades.length > 0 ? grades : undefined;
+}
+
+function readSubjectsArg() {
+  const value = readArg("--subjects");
+  if (!value) return undefined;
+  const subjects = value
+    .split(",")
+    .map((part) => part.trim().toUpperCase())
+    .filter((subject) => subject.length > 0);
+  return subjects.length > 0 ? subjects : undefined;
+}
+
+function getGenerationStage(payload: unknown) {
+  if (!payload || typeof payload !== "object" || Array.isArray(payload)) return undefined;
+  const stage = (payload as Record<string, unknown>).generationStage;
+  return typeof stage === "string" ? stage : undefined;
+}
+
+function createPriorityRank(priority: string | undefined) {
+  if (priority === "upper-secondary") {
+    return (grade: number) => {
+      if (grade === 10) return 0;
+      if (grade === 11) return 1;
+      if (grade === 12) return 2;
+      if (grade === 4) return 3;
+      return 4;
+    };
+  }
+
+  return (grade: number) => grade;
+}
+
 async function main() {
   const target = numberArg("--target", 500);
   const batchSize = numberArg("--batch-size", 100);
   const dryRun = hasFlag("--dry-run");
+  const grades = readGradesArg();
+  const subjects = readSubjectsArg();
+  const priority = readArg("--priority");
 
   const generatedRows = await prisma.curriculumContent.findMany({
     where: {
@@ -41,6 +84,22 @@ async function main() {
     },
     orderBy: [{ grade: "asc" }, { subject: "asc" }, { contentId: "asc" }],
   });
+
+  const priorityRank = createPriorityRank(priority);
+  const eligibleRows = generatedRows
+    .filter((row) => {
+      if (grades && !grades.includes(row.grade)) return false;
+      if (subjects && !subjects.includes(row.subject.toUpperCase())) return false;
+      return getGenerationStage(row.payload) !== "generated_enriched";
+    })
+    .sort((a, b) => {
+      const rankDelta = priorityRank(a.grade) - priorityRank(b.grade);
+      if (rankDelta !== 0) return rankDelta;
+      if (a.grade !== b.grade) return a.grade - b.grade;
+      const subjectDelta = a.subject.localeCompare(b.subject);
+      if (subjectDelta !== 0) return subjectDelta;
+      return a.contentId.localeCompare(b.contentId);
+    });
 
   const bySubject = new Map<string, number>();
   const byGrade = new Map<number, number>();
@@ -61,9 +120,13 @@ async function main() {
     dryRun,
     target,
     batchSize,
+    grades,
+    subjects,
+    priority,
+    eligibleToProcess: eligibleRows.length,
   });
 
-  const rowsToProcess = generatedRows.slice(0, target);
+  const rowsToProcess = eligibleRows.slice(0, target);
   let processed = 0;
   let enriched = 0;
   let totalWordCount = 0;

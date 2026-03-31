@@ -15,7 +15,8 @@
         "audit:lessons": "tsx scripts/audit-lesson-depth.ts",
         "regen:lessons": "tsx scripts/regenerate-approved-lessons.ts",
         "generate:curriculum": "tsx scripts/generate-curriculum-coverage.ts",
-        "enrich:generated-lessons": "tsx scripts/enrich-generated-lessons.ts"
+        "enrich:generated-lessons": "tsx scripts/enrich-generated-lessons.ts",
+        "enrich:lessons": "tsx scripts/enrich-generated-lessons.ts"
     },
     "dependencies": {
         "@auth/prisma-adapter": "^2.11.1",
