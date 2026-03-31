@@ -164,7 +164,17 @@ jobs:
                 flags.add('ready-for-review');
               }
 
-              const labels = Array.from(flags);
+              const triageLabels = Array.from(flags);
+              const currentLabels = await github.paginate(github.rest.issues.listLabelsOnIssue, {
+                owner,
+                repo,
+                issue_number: pr.number,
+                per_page: 100
+              });
+              const preservedLabels = currentLabels
+                .map(label => label.name)
+                .filter(name => !managedLabels.includes(name));
+              const labels = Array.from(new Set([...preservedLabels, ...triageLabels]));
 
               await github.rest.issues.setLabels({
                 owner,

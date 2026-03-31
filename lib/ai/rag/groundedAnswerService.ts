@@ -52,6 +52,7 @@ export type GroundedAnswerResult = {
   sources: GroundedSource[];
   retrievalWeak: boolean;
   hadFallback: boolean;
+  cacheHit: boolean;
   isWeakGrounding: boolean;
   actions: AssistantAction[];
   confidence: AiConfidence;
@@ -122,6 +123,7 @@ function buildWeakRetrievalAnswerForInput(
     sources: weakSources,
     retrievalWeak: true,
     hadFallback: true,
+    cacheHit: false,
     isWeakGrounding: true,
     actions: buildAssistantActions({
       role: input.role,
@@ -386,7 +388,12 @@ export async function answerGroundedQuestion(input: QueryInput): Promise<Grounde
   );
   const cached = getCachedValue<GroundedAnswerResult>(cacheKey);
   if (cached) {
-    return cached;
+    return {
+      ...cached,
+      cacheHit: true,
+      tokensUsed: 0,
+      estimatedCost: 0,
+    };
   }
 
   const mode = inferRetrievalMode(input);
@@ -456,6 +463,7 @@ export async function answerGroundedQuestion(input: QueryInput): Promise<Grounde
       sources: groundedSources,
       retrievalWeak,
       hadFallback: false,
+      cacheHit: false,
       isWeakGrounding: retrievalWeak,
       actions: buildAssistantActions({
         role: input.role,
