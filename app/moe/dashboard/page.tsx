@@ -33,6 +33,7 @@ type ComplianceDistrict = {
   districtName: string;
   region: string | null;
   schoolCount: number;
+  studentCount: number;
   scheduledWorkTotal: number;
   scheduledWorkDelivered: number;
   compliancePct: number | null;
@@ -340,7 +341,7 @@ export default function MoeDashboardPage() {
                                 </Link>
                               </td>
                               <td className="px-4 py-3">{d.schoolCount}</td>
-                              <td className="px-4 py-3 text-slate-500">--</td>
+                              <td className="px-4 py-3">{d.studentCount ?? 0}</td>
                               <td className="px-4 py-3">
                                 {d.scheduledWorkDelivered}/{d.scheduledWorkTotal}
                               </td>

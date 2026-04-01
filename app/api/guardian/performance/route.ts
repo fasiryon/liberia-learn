@@ -4,7 +4,6 @@ import { logAudit } from "@/lib/audit";
 import { prisma } from "@/lib/db";
 import { getStudentPerformanceSummary } from "@/lib/intelligence/performanceAggregator";
 import {
-  isConfusionDetectionEnabled,
   isGuardianProgressViewEnabled,
 } from "@/lib/serverFlags";
 
@@ -35,7 +34,7 @@ function buildSupportSuggestions(input: {
 
 export async function GET() {
   try {
-    if (!isConfusionDetectionEnabled() || !isGuardianProgressViewEnabled()) {
+    if (!isGuardianProgressViewEnabled()) {
       return NextResponse.json({ error: "Not found" }, { status: 404 });
     }
 

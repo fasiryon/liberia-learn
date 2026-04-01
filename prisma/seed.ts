@@ -3,6 +3,7 @@ import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcryptjs";
 import { SCHEDULES } from "./seed-week-curriculum";
 import { seedStrandCatalog } from "./seeds/strand-catalog";
+import { seedChaDemo } from "./seeds/cha-demo";
 
 const prisma = new PrismaClient();
 
@@ -15,7 +16,7 @@ function getThisWeekDates(): Date[] {
   return Array.from({ length: 5 }, (_, i) => new Date(monday.getTime() + i * 86400000));
 }
 
-const PASS = "Password123";
+const PASS = "DemoSeed2026!";
 
 const FEMALE_NAMES = [
   "Fatu", "Mary", "Grace", "Patience", "Sarah", "Jenneh", "Korto",
@@ -211,6 +212,7 @@ async function main() {
   });
 
   // School 2 students (25)
+  const s2Students: Array<{ user: { id: string }; student: { id: string; currentGrade: number | null }; classId: string }> = [];
   for (let i = 0; i < 25; i++) {
     const name = studentName(i + 40);
     const email = studentEmail(name, "pcs");
@@ -230,6 +232,7 @@ async function main() {
       update: {},
       create: { studentId: s.id, classId },
     });
+    s2Students.push({ user: u, student: s, classId });
   }
 
   // ========== SCHOOL 3: Kakata Rural School ==========
@@ -289,6 +292,7 @@ async function main() {
   });
 
   // School 3 students (20)
+  const s3Students: Array<{ user: { id: string }; student: { id: string; currentGrade: number | null }; classId: string }> = [];
   for (let i = 0; i < 20; i++) {
     const name = studentName(i + 80);
     const email = studentEmail(name, "krs");
@@ -308,6 +312,7 @@ async function main() {
       update: {},
       create: { studentId: s.id, classId },
     });
+    s3Students.push({ user: u, student: s, classId });
   }
 
   // ========== FULL WEEK CURRICULUM CONTENT + SCHEDULED WORK ==========
@@ -485,6 +490,85 @@ async function main() {
   await prisma.school.update({ where: { id: school1.id }, data: { onboardingStep: 5 } });
   console.log("  Updated MCA onboardingStep to 5");
 
+  // ========== PLACEMENT TESTS (10 per school for demo readiness) ==========
+  const placementBandForGrade = (grade: number) => {
+    if (grade <= 3) return { band: "FOUNDATIONAL",  levelLabel: "Grade 1–3",   rawScore: 8,  totalQuestions: 20 };
+    if (grade <= 6) return { band: "DEVELOPING",    levelLabel: "Grade 4–6",   rawScore: 11, totalQuestions: 20 };
+    if (grade <= 9) return { band: "PROFICIENT",    levelLabel: "Grade 7–9",   rawScore: 15, totalQuestions: 20 };
+    return           { band: "ADVANCED",      levelLabel: "Grade 10–12", rawScore: 18, totalQuestions: 20 };
+  };
+  const ptSchools = [
+    { code: "mca", students: s1Students.slice(0, 10) },
+    { code: "pcs", students: s2Students.slice(0, 10) },
+    { code: "krs", students: s3Students.slice(0, 10) },
+  ];
+  let ptCount = 0;
+  for (const { code, students } of ptSchools) {
+    for (let i = 0; i < students.length; i++) {
+      const grade = students[i].student.currentGrade ?? 7;
+      const pb = placementBandForGrade(grade);
+      await prisma.placementTest.upsert({
+        where: { id: `pt_${code}_${i}` },
+        update: {},
+        create: {
+          id: `pt_${code}_${i}`,
+          studentId: students[i].student.id,
+          band: pb.band,
+          levelLabel: pb.levelLabel,
+          estimatedGrade: grade,
+          rawScore: pb.rawScore,
+          totalQuestions: pb.totalQuestions,
+        },
+      });
+      ptCount++;
+    }
+  }
+  console.log(`  Created ${ptCount} placement test records (10 per school)`);
+
+  // ========== PCS GUARDIAN LINKS (5 for first 5 students) ==========
+  for (let i = 0; i < 5; i++) {
+    const gName = `Guardian ${studentName(i + 200)}`;
+    const gEmail = `guardian${i + 1}@pcs.edu.lr`;
+    const guardian = await prisma.user.upsert({
+      where: { email: gEmail },
+      update: {},
+      create: {
+        email: gEmail, name: gName, role: "GUARDIAN" as const, hashedPwd: hashed,
+        schoolId: school2.id, guardianPhone: `077${String(i + 100101).slice(1)}`,
+        guardianPhoneE164: `+231770${String(i + 100101).slice(1)}`,
+        guardianCountryCode: "+231", preferredChannel: "SMS", smsOptIn: true,
+      },
+    });
+    await prisma.studentGuardian.upsert({
+      where: { studentId_guardianId: { studentId: s2Students[i].student.id, guardianId: guardian.id } },
+      update: {},
+      create: { studentId: s2Students[i].student.id, guardianId: guardian.id, relation: "Parent" },
+    });
+  }
+  console.log("  Added 5 PCS guardian links");
+
+  // ========== KRS GUARDIAN LINKS (4 for first 4 students) ==========
+  for (let i = 0; i < 4; i++) {
+    const gName = `Guardian ${studentName(i + 300)}`;
+    const gEmail = `guardian${i + 1}@krs.edu.lr`;
+    const guardian = await prisma.user.upsert({
+      where: { email: gEmail },
+      update: {},
+      create: {
+        email: gEmail, name: gName, role: "GUARDIAN" as const, hashedPwd: hashed,
+        schoolId: school3.id, guardianPhone: `077${String(i + 100201).slice(1)}`,
+        guardianPhoneE164: `+231770${String(i + 100201).slice(1)}`,
+        guardianCountryCode: "+231", preferredChannel: "SMS", smsOptIn: true,
+      },
+    });
+    await prisma.studentGuardian.upsert({
+      where: { studentId_guardianId: { studentId: s3Students[i].student.id, guardianId: guardian.id } },
+      update: {},
+      create: { studentId: s3Students[i].student.id, guardianId: guardian.id, relation: "Parent" },
+    });
+  }
+  console.log("  Added 4 KRS guardian links");
+
   // Also keep old smoke-test compatible accounts
   await prisma.user.upsert({
     where: { email: "admin@mcs.edu.lr" },
@@ -522,6 +606,10 @@ async function main() {
   // ── Block 7A: Strand Catalog ──────────────────────────────────────────────
   console.log("\nSeeding strand catalog (Block 7A — Mastery Engine)...");
   await seedStrandCatalog();
+
+  // ── CHA Demo Accounts ─────────────────────────────────────────────────────
+  console.log("\nSeeding CHA demo accounts...");
+  await seedChaDemo();
 
   console.log("\nSeeding complete!");
 }

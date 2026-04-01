@@ -133,6 +133,7 @@ beforeEach(() => {
       schools: [
         {
           id: "school-1",
+          _count: { users: 120 },
           classes: [
             { scheduledWork: [{ id: "sw-1", isDelivered: true }, { id: "sw-2", isDelivered: false }] },
           ],

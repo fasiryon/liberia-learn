@@ -14,7 +14,7 @@ import { enqueueJob, isQueueConfigured, JobType } from "@/lib/queue";
  */
 export async function POST(req: Request) {
   try {
-    const user = await requireRole("ADMIN", "TEACHER");
+    const user = await requireRole("ADMIN");
 
     const body = await req.json();
     const { contentId } = body;

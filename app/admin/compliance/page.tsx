@@ -10,8 +10,7 @@
  */
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
+import { requireUser } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import AuditLogSearch from "./AuditLogSearch";
 import { isGovAuditSearchEnabled, isGovCircuitBreakerTripped } from "@/lib/serverFlags";
@@ -33,10 +32,13 @@ interface Props {
 
 export default async function CompliancePage({ searchParams = {} }: Props) {
   // ── Auth ──────────────────────────────────────────────────────────────────
-  const session = await getServerSession(authOptions);
-  const user = session?.user as any;
-  if (!user?.id) redirect("/login");
-  if (user.role !== "ADMIN") redirect("/");
+  let user: Awaited<ReturnType<typeof requireUser>>;
+  try {
+    user = await requireUser();
+  } catch {
+    redirect("/login");
+  }
+  if (user.role !== "ADMIN" && !user.isPlatformAdmin) redirect("/");
 
   // ── Feature flags ─────────────────────────────────────────────────────────
   const circuitOpen = isGovCircuitBreakerTripped();

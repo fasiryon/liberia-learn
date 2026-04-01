@@ -29,8 +29,8 @@ export default function StudentExamsClient() {
   }, []);
 
   return (
-    <main className="min-h-screen bg-slate-950 px-4 py-8 text-slate-50">
-      <div className="mx-auto max-w-4xl space-y-6">
+    <main className="ll-page min-h-screen px-4 py-8 text-slate-50">
+      <div className="ll-shell max-w-4xl space-y-6">
         <Link href="/dashboard" className="text-sm text-emerald-300 hover:text-emerald-200">
           &larr; Back to Dashboard
         </Link>
@@ -42,7 +42,7 @@ export default function StudentExamsClient() {
         {loading ? <div className="rounded-3xl border border-white/10 bg-slate-900/70 p-6 text-sm text-slate-400">Loading exams...</div> : null}
         {error ? <div className="rounded-3xl border border-red-500/20 bg-red-500/10 p-6 text-sm text-red-200">{error}</div> : null}
         {!loading && !error && exams.length === 0 ? (
-          <div className="rounded-3xl border border-white/10 bg-slate-900/70 p-8 text-center text-sm text-slate-400">
+          <div className="ll-empty rounded-3xl border border-white/10 bg-slate-900/70 p-8 text-center text-sm text-slate-400">
             No published exams are available yet.
           </div>
         ) : null}
@@ -59,7 +59,7 @@ export default function StudentExamsClient() {
               </div>
               <Link
                 href={`/student/exams/${exam.id}`}
-                className="mt-5 inline-flex rounded-2xl bg-emerald-500 px-4 py-2 text-sm font-semibold text-slate-950 hover:bg-emerald-400"
+                className="mt-5 inline-flex min-h-11 items-center rounded-2xl bg-emerald-500 px-4 py-2 text-sm font-semibold text-slate-950 hover:bg-emerald-400"
               >
                 Start Exam
               </Link>

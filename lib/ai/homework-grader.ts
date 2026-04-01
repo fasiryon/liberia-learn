@@ -1,6 +1,6 @@
 // lib/ai/homework-grader.ts
 import { prisma } from "@/lib/db";
-import { getOpenAIClientOrThrow } from "@/lib/ai/openaiClient";
+import { routedCompletion } from "@/lib/ai/routedCompletion";
 const AGENT_ID = "homework-grader";
 
 
@@ -64,7 +64,7 @@ async function getOrCreateGraderAgent() {
         type: "grader",
         status: "idle",
         config: {
-          model: "gpt-4.1-mini",
+          model: "gpt-4o-mini",
           description:
             "AI agent that grades student homework and gives structured feedback.",
         },
@@ -139,11 +139,8 @@ const started = Date.now();try {
       };
       const scrubbedPayload = scrubPII(payload);
 
-      const client = getOpenAIClientOrThrow();
-
       // Ask the model to grade
-      const completion = await client.chat.completions.create({
-        model: "gpt-4.1-mini",
+      const completion = await routedCompletion({
         messages: [
           {
             role: "system",
@@ -173,11 +170,10 @@ const started = Date.now();try {
             ].join("\n"),
           },
         ],
-        temperature: 0.2,
-        max_tokens: 800,
+        maxTokens: 800,
       });
 
-      const raw = completion.choices[0]?.message?.content ?? "{}";
+      const raw = completion.content ?? "{}";
 
       let parsed: GradingResult;
       try {

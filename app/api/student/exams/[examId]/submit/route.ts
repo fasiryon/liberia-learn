@@ -80,37 +80,42 @@ export async function POST(req: NextRequest, context: { params: { examId: string
 
     const uniqueFlags = Array.from(new Set(integrityFlags));
 
-    await prisma.examAttempt.update({
-      where: { id: attempt.id },
-      data: {
-        answers: body.answers,
-        score: grading.score,
-        passed: grading.passed,
-        submittedAt,
-        integrityFlags: uniqueFlags,
-      },
-    });
-
     let certCode: string | undefined;
     if (grading.passed) {
       certCode = `CERT-${submittedAt.getUTCFullYear()}-${student.id.slice(0, 6)}-${attempt.exam.id.slice(0, 6)}`;
-      await prisma.examCertification.upsert({
-        where: { certCode },
-        update: {
+    }
+
+    await prisma.$transaction(async (tx) => {
+      await tx.examAttempt.update({
+        where: { id: attempt.id },
+        data: {
+          answers: body.answers,
           score: grading.score,
-          subject: attempt.exam.subject,
-          grade: attempt.exam.grade,
-        },
-        create: {
-          studentId: student.id,
-          examId: attempt.exam.id,
-          subject: attempt.exam.subject,
-          grade: attempt.exam.grade,
-          score: grading.score,
-          certCode,
+          passed: grading.passed,
+          submittedAt,
+          integrityFlags: uniqueFlags,
         },
       });
-    }
+
+      if (grading.passed && certCode) {
+        await tx.examCertification.upsert({
+          where: { certCode },
+          update: {
+            score: grading.score,
+            subject: attempt.exam.subject,
+            grade: attempt.exam.grade,
+          },
+          create: {
+            studentId: student.id,
+            examId: attempt.exam.id,
+            subject: attempt.exam.subject,
+            grade: attempt.exam.grade,
+            score: grading.score,
+            certCode,
+          },
+        });
+      }
+    });
 
     await logAudit({
       userId: user.id,

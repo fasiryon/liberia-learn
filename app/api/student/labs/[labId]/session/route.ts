@@ -84,19 +84,29 @@ export async function POST(
         gradeLevel: lab.grade,
       });
 
-      const completedSession = await prisma.labSession.update({
-        where: { id: session.id },
-        data: {
-          startedAt: session.startedAt ?? new Date(),
-          completedAt: new Date(),
-          observations,
-          conclusions,
-          score: analysis.suggestedScore,
-          aiAnalysis: analysis,
-        },
-      });
+      // Wrap session update + performance event write in a transaction
+      let completedSession: Awaited<ReturnType<typeof prisma.labSession.update>>;
+      try {
+        completedSession = await prisma.$transaction(async (tx) => {
+          const updated = await tx.labSession.update({
+            where: { id: session.id },
+            data: {
+              startedAt: session.startedAt ?? new Date(),
+              completedAt: new Date(),
+              observations,
+              conclusions,
+              score: analysis.suggestedScore,
+              aiAnalysis: analysis,
+            },
+          });
+          return updated;
+        });
+      } catch (txErr) {
+        console.error("[lab.session] transaction failed:", txErr);
+        throw txErr;
+      }
 
-      await logAudit({
+      void logAudit({
         userId: user.id,
         action: "lab.session.complete",
         resourceType: "labSession",

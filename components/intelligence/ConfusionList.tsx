@@ -36,7 +36,7 @@ export function ConfusionList({
 }) {
   if (items.length === 0) {
     return (
-      <Card className="p-5">
+      <Card className="ll-empty p-5">
         <p className="text-sm text-slate-400">{emptyMessage}</p>
       </Card>
     );
@@ -45,9 +45,9 @@ export function ConfusionList({
   return (
     <div className="space-y-3">
       {items.map((item) => (
-        <Card key={item.id} className="p-4">
-          <div className="flex flex-wrap items-start justify-between gap-3">
-            <div className="space-y-1">
+        <Card key={item.id} className="p-5">
+          <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
+            <div className="space-y-2">
               <div className="flex flex-wrap items-center gap-2">
                 <span
                   className={`rounded-full border px-2.5 py-1 text-[11px] font-semibold ${badgeClasses(item.severity)}`}
@@ -68,13 +68,13 @@ export function ConfusionList({
                 )}
               </div>
               <p className="text-sm font-semibold text-slate-100">{item.conceptLabel}</p>
-              <p className="text-xs text-slate-500">
-                {item.confusionType.replace(/_/g, " ")} |{" "}
-                {new Date(item.detectedAt).toLocaleString("en-LR")}
+              <p className="text-xs uppercase tracking-wide text-slate-500">
+                {item.confusionType.replace(/_/g, " ")}
               </p>
             </div>
-            <div className="text-xs text-slate-500">
-              {item.lessonId ? `Lesson ${item.lessonId}` : "General pattern"}
+            <div className="grid gap-1 text-xs text-slate-500 lg:text-right">
+              <span>{item.lessonId ? `Lesson ${item.lessonId}` : "General pattern"}</span>
+              <span>{new Date(item.detectedAt).toLocaleString("en-LR")}</span>
             </div>
           </div>
         </Card>

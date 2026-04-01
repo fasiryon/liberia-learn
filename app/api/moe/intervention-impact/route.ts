@@ -43,6 +43,7 @@ export async function GET() {
         outcomeDeltaCount: number;
         outcomeEffectSizeSum: number;
         outcomeEffectSizeCount: number;
+        latestAt: Date | null;
       }
     > = {};
 
@@ -57,6 +58,7 @@ export async function GET() {
           outcomeDeltaCount: 0,
           outcomeEffectSizeSum: 0,
           outcomeEffectSizeCount: 0,
+          latestAt: null,
         };
       }
       const entry = districtMap[key];
@@ -72,12 +74,16 @@ export async function GET() {
         entry.outcomeEffectSizeSum += log.outcomeEffectSize;
         entry.outcomeEffectSizeCount++;
       }
+      if (entry.latestAt == null || log.generatedAt > entry.latestAt) {
+        entry.latestAt = log.generatedAt;
+      }
     }
 
     const byDistrict = Object.values(districtMap).map((d) => ({
       districtId: d.districtId,
       interventionCount: d.count,
       riskFlags: d.riskFlags,
+      latestAt: d.latestAt?.toISOString() ?? null,
       avgOutcomeDelta:
         d.outcomeDeltaCount > 0
           ? Math.round((d.outcomeDeltaSum / d.outcomeDeltaCount) * 10000) / 10000

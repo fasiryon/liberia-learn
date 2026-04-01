@@ -5,6 +5,7 @@ const mockStudentFindFirst = vi.hoisted(() => vi.fn());
 const mockPlacementCreate = vi.hoisted(() => vi.fn());
 const mockStudentUpdate = vi.hoisted(() => vi.fn());
 const mockLogAudit = vi.hoisted(() => vi.fn());
+const mockTransaction = vi.hoisted(() => vi.fn());
 
 vi.mock("@/lib/auth", () => ({
   requireRole: mockRequireRole,
@@ -23,6 +24,7 @@ vi.mock("@/lib/db", () => ({
     placementTest: {
       create: mockPlacementCreate,
     },
+    $transaction: mockTransaction,
   },
 }));
 
@@ -46,6 +48,7 @@ describe("placement contract", () => {
       id: "student-1",
       currentGrade: 4,
     });
+    mockTransaction.mockImplementation(async (arr: any) => Promise.all(arr));
   });
 
   it("builds the payload shape accepted by the placement route", async () => {

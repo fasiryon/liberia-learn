@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 type Question = {
   id: string;
@@ -35,6 +35,20 @@ export default function StudentExamSessionClient({ examId }: { examId: string })
   const [submitting, setSubmitting] = useState(false);
   const [result, setResult] = useState<SubmitPayload | null>(null);
   const flagsRef = useRef<Set<string>>(new Set());
+  const SESSION_KEY = `exam-session-${examId}`;
+
+  // Restore in-progress answers from sessionStorage on mount
+  useEffect(() => {
+    const saved = sessionStorage.getItem(SESSION_KEY);
+    if (saved) {
+      try {
+        const { answers: savedAnswers, currentIndex: savedIndex } = JSON.parse(saved);
+        if (Array.isArray(savedAnswers)) setAnswers(savedAnswers);
+        if (typeof savedIndex === "number") setCurrentIndex(savedIndex);
+      } catch { /* ignore corrupt state */ }
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     fetch(`/api/student/exams/${examId}/start`, { method: "POST" })
@@ -42,14 +56,26 @@ export default function StudentExamSessionClient({ examId }: { examId: string })
         const data = await res.json();
         if (!res.ok) throw new Error(data.error ?? "Failed to start exam");
         setSession(data);
-        setAnswers(Array.from({ length: data.questions.length }, () => -1));
+        // Only reset answers if nothing was restored from sessionStorage
+        setAnswers((prev) =>
+          prev.length === data.questions.length
+            ? prev
+            : Array.from({ length: data.questions.length }, () => -1)
+        );
         setRemainingSeconds((data.timeLimit ?? 60) * 60);
       })
       .catch((err) => setError(err.message))
       .finally(() => setLoading(false));
   }, [examId]);
 
-  async function submitExam() {
+  // Persist answers + currentIndex to sessionStorage on every change
+  useEffect(() => {
+    if (answers.length > 0) {
+      sessionStorage.setItem(SESSION_KEY, JSON.stringify({ answers, currentIndex }));
+    }
+  }, [answers, currentIndex, SESSION_KEY]);
+
+  const submitExam = useCallback(async () => {
     if (!session || submitting || result) return;
     setSubmitting(true);
     setError(null);
@@ -66,13 +92,14 @@ export default function StudentExamSessionClient({ examId }: { examId: string })
       const data = await response.json();
       if (!response.ok) throw new Error(data.error ?? "Failed to submit exam");
       setResult(data);
+      sessionStorage.removeItem(SESSION_KEY);
     } catch (err: any) {
       console.error("[STUDENT_EXAM_SUBMIT] Failed", err);
       setError(err.message ?? "Failed to submit exam");
     } finally {
       setSubmitting(false);
     }
-  }
+  }, [session, submitting, result, examId, answers, SESSION_KEY]);
 
   useEffect(() => {
     if (!session || result) return;
@@ -88,7 +115,7 @@ export default function StudentExamSessionClient({ examId }: { examId: string })
     }, 1000);
 
     return () => window.clearInterval(timer);
-  }, [session, result]);
+  }, [session, result, submitExam]);
 
   useEffect(() => {
     const onVisibility = () => {
@@ -108,24 +135,36 @@ export default function StudentExamSessionClient({ examId }: { examId: string })
   const canSubmit = useMemo(() => answers.every((answer) => answer >= 0), [answers]);
 
   if (loading) {
-    return <main className="min-h-screen bg-slate-950 px-4 py-8 text-slate-50"><div className="mx-auto max-w-4xl rounded-3xl border border-white/10 bg-slate-900/70 p-6">Starting exam...</div></main>;
+    return (
+      <main className="ll-page min-h-screen px-4 py-8 text-slate-50">
+        <div className="ll-shell max-w-4xl rounded-3xl border border-white/10 bg-slate-900/70 p-6">
+          Starting exam...
+        </div>
+      </main>
+    );
   }
 
   if (error && !session && !result) {
-    return <main className="min-h-screen bg-slate-950 px-4 py-8 text-slate-50"><div className="mx-auto max-w-4xl rounded-3xl border border-red-500/20 bg-red-500/10 p-6">{error}</div></main>;
+    return (
+      <main className="ll-page min-h-screen px-4 py-8 text-slate-50">
+        <div className="ll-shell max-w-4xl rounded-3xl border border-red-500/20 bg-red-500/10 p-6">
+          {error}
+        </div>
+      </main>
+    );
   }
 
   if (result) {
     return (
-      <main className="min-h-screen bg-slate-950 px-4 py-8 text-slate-50">
-        <div className="mx-auto max-w-3xl rounded-3xl border border-white/10 bg-slate-900/70 p-8 space-y-4">
+      <main className="ll-page min-h-screen px-4 py-8 text-slate-50">
+        <div className="ll-shell max-w-3xl rounded-3xl border border-white/10 bg-slate-900/70 p-8 space-y-4">
           <h1 className="text-3xl font-semibold">{result.passed ? "Exam Passed" : "Exam Submitted"}</h1>
           <p className="text-lg text-slate-200">Score: {scorePct}%</p>
           <p className={`text-sm ${result.passed ? "text-emerald-300" : "text-amber-300"}`}>{result.passed ? "You earned a certification." : "You did not reach the passing score this time."}</p>
           {result.certCode ? <div className="rounded-2xl border border-emerald-400/30 bg-emerald-500/10 p-4 text-sm">Certificate code: <span className="font-semibold text-emerald-200">{result.certCode}</span></div> : null}
-          <div className="flex gap-3">
-            <Link href="/student/exams" className="rounded-2xl border border-white/10 px-4 py-2 text-sm">Back to Exams</Link>
-            <Link href="/student/certifications" className="rounded-2xl bg-emerald-500 px-4 py-2 text-sm font-semibold text-slate-950">View Certifications</Link>
+          <div className="flex flex-wrap gap-3">
+            <Link href="/student/exams" className="inline-flex min-h-11 items-center rounded-2xl border border-white/10 px-4 py-2 text-sm">Back to Exams</Link>
+            <Link href="/student/certifications" className="inline-flex min-h-11 items-center rounded-2xl bg-emerald-500 px-4 py-2 text-sm font-semibold text-slate-950">View Certifications</Link>
           </div>
         </div>
       </main>
@@ -133,10 +172,10 @@ export default function StudentExamSessionClient({ examId }: { examId: string })
   }
 
   return (
-    <main className="min-h-screen bg-slate-950 px-4 py-8 text-slate-50">
-      <div className="mx-auto max-w-4xl space-y-6">
+    <main className="ll-page min-h-screen px-4 py-8 text-slate-50">
+      <div className="ll-shell max-w-4xl space-y-6">
         <div className="rounded-3xl border border-white/10 bg-slate-900/70 p-6">
-          <div className="flex flex-wrap items-center justify-between gap-3">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div>
               <p className="text-xs uppercase tracking-[0.2em] text-emerald-300">Exam Session</p>
               <h1 className="mt-2 text-2xl font-semibold">{session?.title}</h1>
@@ -155,7 +194,9 @@ export default function StudentExamSessionClient({ examId }: { examId: string })
 
         {question ? (
           <div className="rounded-3xl border border-white/10 bg-slate-900/70 p-6 space-y-4">
-            <p className="text-lg font-medium">{question.prompt}</p>
+            <div className="rounded-2xl border border-slate-800 bg-slate-950/55 p-4">
+              <p className="text-lg font-medium leading-8">{question.prompt}</p>
+            </div>
             <div className="space-y-3">
               {question.options.map((option, optionIndex) => (
                 <button
@@ -168,7 +209,7 @@ export default function StudentExamSessionClient({ examId }: { examId: string })
                       return next;
                     });
                   }}
-                  className={`w-full rounded-2xl border px-4 py-3 text-left text-sm ${
+                  className={`min-h-14 w-full rounded-2xl border px-4 py-3 text-left text-sm ${
                     answers[currentIndex] === optionIndex
                       ? "border-emerald-400/40 bg-emerald-500/10 text-emerald-100"
                       : "border-white/10 bg-white/5 text-slate-200"
@@ -183,7 +224,7 @@ export default function StudentExamSessionClient({ examId }: { examId: string })
                 type="button"
                 onClick={() => setCurrentIndex((prev) => Math.max(0, prev - 1))}
                 disabled={currentIndex === 0}
-                className="rounded-2xl border border-white/10 px-4 py-2 text-sm disabled:opacity-40"
+                className="min-h-11 rounded-2xl border border-white/10 px-4 py-2 text-sm disabled:opacity-40"
               >
                 Previous
               </button>
@@ -192,7 +233,7 @@ export default function StudentExamSessionClient({ examId }: { examId: string })
                   <button
                     type="button"
                     onClick={() => setCurrentIndex((prev) => Math.min((session?.questions.length ?? 1) - 1, prev + 1))}
-                    className="rounded-2xl bg-cyan-500 px-4 py-2 text-sm font-semibold text-slate-950"
+                    className="min-h-11 rounded-2xl bg-cyan-500 px-4 py-2 text-sm font-semibold text-slate-950"
                   >
                     Next
                   </button>
@@ -201,7 +242,7 @@ export default function StudentExamSessionClient({ examId }: { examId: string })
                   type="button"
                   disabled={!canSubmit || submitting}
                   onClick={() => void submitExam()}
-                  className="rounded-2xl bg-emerald-500 px-4 py-2 text-sm font-semibold text-slate-950 disabled:opacity-50"
+                  className="min-h-11 rounded-2xl bg-emerald-500 px-4 py-2 text-sm font-semibold text-slate-950 disabled:opacity-50"
                 >
                   {submitting ? "Submitting..." : "Submit Exam"}
                 </button>

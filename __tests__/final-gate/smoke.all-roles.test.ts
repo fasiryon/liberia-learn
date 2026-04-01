@@ -197,14 +197,28 @@ vi.mock("@/lib/serverFlags", () => ({
   isVirtualLabsEnabled: () => false,
 }));
 
+const makeModelProxy = (modelName: string) =>
+  new Proxy({}, {
+    get(_inner, method: string) {
+      return (args: any) => dbReturn(modelName, method, args);
+    },
+  });
+
 vi.mock("@/lib/db", () => ({
   prisma: new Proxy({}, {
     get(_target, model: string) {
-      return new Proxy({}, {
-        get(_inner, method: string) {
-          return (args: any) => dbReturn(model, method, args);
-        },
-      });
+      if (model === "$transaction") {
+        return async (cbOrArray: any) => {
+          if (typeof cbOrArray === "function") {
+            const tx = new Proxy({}, {
+              get(_t, txModel: string) { return makeModelProxy(txModel); },
+            });
+            return cbOrArray(tx);
+          }
+          return Promise.all(cbOrArray);
+        };
+      }
+      return makeModelProxy(model);
     },
   }),
 }));

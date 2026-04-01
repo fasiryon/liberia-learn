@@ -1,10 +1,26 @@
 import { NextResponse } from "next/server";
+import { z } from "zod";
 import { requireRole } from "@/lib/auth";
 import { prisma } from "@/lib/db";
+import { logAudit } from "@/lib/audit";
 import { sendGuardianInvite } from "@/lib/email";
 import { normalizeToE164 } from "@/lib/phone";
 import { isGuardianLinkingEnabled } from "@/lib/serverFlags";
 import { generateTokenPair } from "@/lib/tokens";
+
+const E164_REGEX = /^\+[1-9]\d{7,14}$/;
+const RELATION_VALUES = ["Parent", "Guardian", "Sibling", "Other"] as const;
+
+const PostSchema = z.object({
+  studentId: z.string().min(1),
+  guardianEmail: z.string().email(),
+  guardianName: z.string().optional(),
+  relation: z.enum(RELATION_VALUES).optional(),
+  guardianPhone: z.string().regex(E164_REGEX, "guardianPhone must be in E.164 format (e.g. +231770000001)").optional(),
+  guardianCountryCode: z.string().optional(),
+  preferredChannel: z.enum(["EMAIL", "SMS", "BOTH"]).optional(),
+  smsOptIn: z.boolean().optional(),
+});
 
 export const dynamic = "force-dynamic";
 
@@ -56,14 +72,15 @@ export async function POST(req: Request) {
     const user = await requireRole("ADMIN");
     const body = await req.json();
 
-    const { studentId, guardianEmail, guardianName, relation, guardianPhone, guardianCountryCode, preferredChannel, smsOptIn } = body;
-
-    if (!studentId || !guardianEmail) {
+    const validation = PostSchema.safeParse(body);
+    if (!validation.success) {
       return NextResponse.json(
-        { error: "studentId and guardianEmail are required" },
+        { error: "Validation failed", issues: validation.error.flatten() },
         { status: 400 }
       );
     }
+
+    const { studentId, guardianEmail, guardianName, relation, guardianPhone, guardianCountryCode, preferredChannel, smsOptIn } = validation.data;
 
     // Ensure student belongs to admin's school
     const student = await prisma.student.findUnique({
@@ -150,6 +167,14 @@ export async function POST(req: Request) {
       studentName: student.user.name ?? "your student",
       schoolName: school?.name ?? "LiberiaLearn",
       inviteUrl,
+    });
+
+    void logAudit({
+      userId: user.id,
+      schoolId: user.schoolId,
+      action: "admin.guardian-link.created",
+      resourceType: "guardianLink",
+      resourceId: invite.id,
     });
 
     return NextResponse.json({ ok: true, inviteUrl });

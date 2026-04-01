@@ -4,6 +4,7 @@ import { randomUUID } from "crypto";
 import { z } from "zod";
 import { requireRole } from "@/lib/auth";
 import { prisma } from "@/lib/db";
+import { logAudit } from "@/lib/audit";
 import { generatePin } from "@/lib/credentials";
 import {
   normalizeCredentialPhone,
@@ -210,6 +211,14 @@ export async function POST(req: Request) {
       },
     });
 
+    void logAudit({
+      userId: admin.id,
+      schoolId: admin.schoolId,
+      action: "admin.teachers.created",
+      resourceType: "user",
+      resourceId: created.id,
+    });
+
     return NextResponse.json({
       ok: true,
       teacher: created,
@@ -260,14 +269,22 @@ export async function PATCH(req: Request) {
     }
 
     if (action === "deactivate") {
-      await prisma.teacherProfile.update({
-        where: { userId: id },
-        data: {
-          permissions: mergeTeacherSettings(teacher.TeacherProfile?.permissions, {
-            active: false,
-          }),
-          updatedAt: new Date(),
-        },
+      await prisma.$transaction([
+        prisma.teacherProfile.update({
+          where: { userId: id },
+          data: {
+            permissions: mergeTeacherSettings(teacher.TeacherProfile?.permissions, { active: false }),
+            updatedAt: new Date(),
+          },
+        }),
+      ]);
+
+      void logAudit({
+        userId: admin.id,
+        schoolId: admin.schoolId,
+        action: "admin.teachers.deactivated",
+        resourceType: "user",
+        resourceId: id,
       });
 
       return NextResponse.json({ ok: true, status: "INACTIVE" });
@@ -279,57 +296,76 @@ export async function PATCH(req: Request) {
       const normalizedPhone = trimmedPhone ? normalizeCredentialPhone(trimmedPhone) : null;
       const trimmedEmail = email?.trim();
 
-      await prisma.user.update({
-        where: { id },
-        data: {
-          name: trimmedName,
-          email: trimmedEmail || teacher.email,
-          guardianPhone: trimmedPhone,
-          guardianPhoneE164: normalizedPhone,
-          preferredChannel: normalizedPhone ? "SMS" : "EMAIL",
-        },
-      });
+      await prisma.$transaction([
+        prisma.user.update({
+          where: { id },
+          data: {
+            name: trimmedName,
+            email: trimmedEmail || teacher.email,
+            guardianPhone: trimmedPhone,
+            guardianPhoneE164: normalizedPhone,
+            preferredChannel: normalizedPhone ? "SMS" : "EMAIL",
+          },
+        }),
+        prisma.teacherProfile.update({
+          where: { userId: id },
+          data: {
+            fullName: trimmedName ?? teacher.TeacherProfile?.fullName ?? "Teacher",
+            phone: normalizedPhone,
+            permissions: mergeTeacherSettings(teacher.TeacherProfile?.permissions, {
+              active: true,
+              subjectSpecialty: subjectSpecialty?.trim() || null,
+            }),
+            updatedAt: new Date(),
+          },
+        }),
+      ]);
 
-      await prisma.teacherProfile.update({
-        where: { userId: id },
-        data: {
-          fullName: trimmedName ?? teacher.TeacherProfile?.fullName ?? "Teacher",
-          phone: normalizedPhone,
-          permissions: mergeTeacherSettings(teacher.TeacherProfile?.permissions, {
-            active: true,
-            subjectSpecialty: subjectSpecialty?.trim() || null,
-          }),
-          updatedAt: new Date(),
-        },
+      void logAudit({
+        userId: admin.id,
+        schoolId: admin.schoolId,
+        action: "admin.teachers.updated",
+        resourceType: "user",
+        resourceId: id,
       });
 
       return NextResponse.json({ ok: true });
     }
 
+    // resendInvite — reset password
     const tempPin = generatePin();
     const hashedPwd = await bcrypt.hash(tempPin, 10);
 
-    await prisma.user.update({
-      where: { id },
-      data: {
-        hashedPwd,
-        preferredChannel:
-          (teacher.TeacherProfile?.phone ?? teacher.guardianPhoneE164) ? "SMS" : "EMAIL",
-      },
-    });
+    await prisma.$transaction([
+      prisma.user.update({
+        where: { id },
+        data: {
+          hashedPwd,
+          preferredChannel:
+            (teacher.TeacherProfile?.phone ?? teacher.guardianPhoneE164) ? "SMS" : "EMAIL",
+        },
+      }),
+      prisma.teacherProfile.update({
+        where: { userId: id },
+        data: {
+          permissions: mergeTeacherSettings(teacher.TeacherProfile?.permissions, {
+            active: true,
+            subjectSpecialty:
+              subjectSpecialty?.trim() ??
+              readTeacherSettings(teacher.TeacherProfile?.permissions).subjectSpecialty ??
+              null,
+          }),
+          updatedAt: new Date(),
+        },
+      }),
+    ]);
 
-    await prisma.teacherProfile.update({
-      where: { userId: id },
-      data: {
-        permissions: mergeTeacherSettings(teacher.TeacherProfile?.permissions, {
-          active: true,
-          subjectSpecialty:
-            subjectSpecialty?.trim() ??
-            readTeacherSettings(teacher.TeacherProfile?.permissions).subjectSpecialty ??
-            null,
-        }),
-        updatedAt: new Date(),
-      },
+    void logAudit({
+      userId: admin.id,
+      schoolId: admin.schoolId,
+      action: "admin.teachers.password_reset",
+      resourceType: "user",
+      resourceId: id,
     });
 
     return NextResponse.json({

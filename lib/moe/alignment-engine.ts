@@ -1,7 +1,7 @@
 // lib/moe/alignment-engine.ts
 import { prisma } from "@/lib/db";
 import type { $Enums } from "@prisma/client";
-import { getOpenAIClientOrThrow } from "@/lib/ai/openaiClient";
+import { routedCompletion } from "@/lib/ai/routedCompletion";
 type GradeBand = $Enums.GradeBand;
 type Subject = $Enums.Subject;
 
@@ -140,14 +140,11 @@ export async function alignContentToMOE(
     };
   } else {
     // Fall back to AI
-    const client = getOpenAIClientOrThrow();
-
     const candidateList = candidates
       .map((c) => `${c.code}: ${c.description}`)
       .join("\n");
 
-    const completion = await client.chat.completions.create({
-      model: "gpt-4o-mini",
+    const completion = await routedCompletion({
       messages: [
         {
           role: "system",
@@ -159,11 +156,10 @@ export async function alignContentToMOE(
           content: `Lesson text:\n${lessonText.slice(0, 1500)}\n\nCandidate standards:\n${candidateList}\n\nReturn the codes that match as a JSON array.`,
         },
       ],
-      temperature: 0.1,
-      max_tokens: 300,
+      maxTokens: 300,
     });
 
-    const raw = completion.choices[0]?.message?.content ?? "[]";
+    const raw = completion.content ?? "[]";
     let matchedCodes: string[] = [];
     try {
       matchedCodes = JSON.parse(raw);

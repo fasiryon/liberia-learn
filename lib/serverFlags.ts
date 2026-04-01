@@ -233,9 +233,9 @@ export function getAiBudgetMonthlyCap(): number {
   return Number.isFinite(raw) && raw > 0 ? raw : 100;
 }
 
-/** Adaptive learning engine. DEFAULT ON unless explicitly disabled. */
+/** Adaptive learning engine. Fail-closed: must be explicitly enabled. */
 export function isAdaptiveEngineEnabled(): boolean {
-  return process.env.ENABLE_ADAPTIVE_ENGINE !== "false";
+  return process.env.ENABLE_ADAPTIVE_ENGINE === "true";
 }
 
 export function isConfusionDetectionEnabled(): boolean {
@@ -275,7 +275,7 @@ export function isPilotReadinessEnabled(): boolean {
 }
 
 export function isInterventionWorkflowEnabled(): boolean {
-  return process.env.ENABLE_INTERVENTION_WORKFLOW !== "false";
+  return process.env.ENABLE_INTERVENTION_WORKFLOW === "true";
 }
 
 //  Block 21: Classroom Toolkit Flags 
@@ -399,9 +399,16 @@ export function isDemoModeEnabled(): boolean {
 
 //  Block RR-2: Guardian Portal + Linking Flags
 
-/** Guardian portal (UI + APIs). DEFAULT OFF. */
+/** Guardian portal (UI + APIs). DEFAULT OFF.
+ *  Checks EITHER server or client var so both sides work with one env set.
+ *  Both ENABLE_GUARDIAN_PORTAL and NEXT_PUBLIC_ENABLE_GUARDIAN_PORTAL must be
+ *  set in production — see .env.example for the required pair.
+ */
 export function isGuardianPortalEnabled(): boolean {
-  return process.env.ENABLE_GUARDIAN_PORTAL === "true";
+  return (
+    process.env.ENABLE_GUARDIAN_PORTAL === "true" ||
+    process.env.NEXT_PUBLIC_ENABLE_GUARDIAN_PORTAL === "true"
+  );
 }
 
 /** Guardian linking APIs (token acceptance + admin invites). DEFAULT OFF. */
@@ -542,8 +549,8 @@ export function isDeliveryComplianceReportingEnabled(): boolean {
 
 /**
  * Sprint 5: exam generation, delivery, grading, and certification flows.
- * DEFAULT ON unless explicitly disabled.
+ * Fail-closed: must be explicitly enabled.
  */
 export function isExamSystemEnabled(): boolean {
-  return process.env.ENABLE_EXAM_SYSTEM !== "false";
+  return process.env.ENABLE_EXAM_SYSTEM === "true";
 }

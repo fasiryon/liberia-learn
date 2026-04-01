@@ -30,6 +30,7 @@ export async function GET() {
         schools: {
           select: {
             id: true,
+            _count: { select: { users: { where: { role: "STUDENT" } } } },
             classes: {
               select: {
                 scheduledWork: {
@@ -45,7 +46,9 @@ export async function GET() {
     const byDistrict = districts.map((d) => {
       let total = 0;
       let delivered = 0;
+      let studentCount = 0;
       for (const school of d.schools) {
+        studentCount += school._count.users;
         for (const cls of school.classes) {
           for (const sw of cls.scheduledWork) {
             total++;
@@ -58,6 +61,7 @@ export async function GET() {
         districtName: d.name,
         region: d.region,
         schoolCount: d.schools.length,
+        studentCount,
         scheduledWorkTotal: total,
         scheduledWorkDelivered: delivered,
         compliancePct: total > 0 ? Math.round((delivered / total) * 10000) / 100 : null,

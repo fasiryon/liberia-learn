@@ -29,7 +29,7 @@ export function GuardianProgressCard({
   data: GuardianProgressData;
 }) {
   return (
-    <Card className="p-6">
+    <Card className="p-6 sm:p-7">
       <h2 className="text-xl font-semibold text-slate-100">Your child&apos;s progress</h2>
       <p className="mt-2 text-sm text-slate-400">
         A simple view to help you support learning at home.
@@ -56,7 +56,7 @@ export function GuardianProgressCard({
         </div>
       </div>
 
-      <div className="mt-5 grid gap-4 md:grid-cols-3">
+      <div className="mt-5 grid gap-4 lg:grid-cols-3">
         <div className="rounded-2xl bg-emerald-500/10 p-4">
           <p className="text-sm font-semibold text-emerald-200">Doing well</p>
           <p className="mt-2 text-sm text-slate-200">
@@ -69,7 +69,7 @@ export function GuardianProgressCard({
             {data.needsHelp ?? "Keep checking in on confidence and daily practice."}
           </p>
         </div>
-        <div className="rounded-2xl bg-slate-900/80 p-4">
+        <div className="rounded-2xl border border-slate-800 bg-slate-900/80 p-4">
           <p className="text-sm font-semibold text-slate-100">What you can do this week</p>
           <div className="mt-2 space-y-2">
             {data.supportSuggestions.length === 0 ? (
@@ -79,7 +79,8 @@ export function GuardianProgressCard({
             ) : (
               data.supportSuggestions.slice(0, 3).map((suggestion) => (
                 <p key={suggestion} className="text-sm text-slate-300">
-                  • {suggestion}
+                  {"- "}
+                  {suggestion}
                 </p>
               ))
             )}
