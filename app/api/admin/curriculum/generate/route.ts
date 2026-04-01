@@ -15,23 +15,11 @@ import { embedLesson } from "@/lib/ai/rag/embeddingService";
 import { syncCurriculumContentRagChunks } from "@/lib/ai/rag/ragIngestionService";
 import { enqueueJob, isQueueConfigured, JobType } from "@/lib/queue";
 import { generateMediaArtifactsBestEffort } from "@/lib/curriculum/mediaGeneration";
+import { checkRateLimit, getRateLimitHeaders } from "@/lib/rateLimit";
+import { logger } from "@/lib/logger";
 
-// Rate limit: 10 requests per 5 minutes per userId
-const rateLimitMap = new Map<string, { count: number; resetAt: number }>();
 const RATE_LIMIT = 10;
 const WINDOW_MS = 5 * 60_000;
-
-function checkRateLimit(key: string): boolean {
-  const now = Date.now();
-  const entry = rateLimitMap.get(key);
-  if (!entry || now > entry.resetAt) {
-    rateLimitMap.set(key, { count: 1, resetAt: now + WINDOW_MS });
-    return true;
-  }
-  if (entry.count >= RATE_LIMIT) return false;
-  entry.count++;
-  return true;
-}
 
 const RequestSchema = z.object({
   grade: z.number().int().min(1).max(12),
@@ -115,11 +103,16 @@ async function syncVirtualLabs(params: {
 export async function POST(req: Request) {
   try {
     const user = await requireRole("TEACHER", "ADMIN");
+    const rateLimit = checkRateLimit(user.id, {
+      windowMs: WINDOW_MS,
+      max: RATE_LIMIT,
+      namespace: "curriculum_generate",
+    });
 
-    if (!checkRateLimit(user.id)) {
+    if (!rateLimit.allowed) {
       return NextResponse.json(
         { error: "Too many requests. Please wait." },
-        { status: 429 }
+        { status: 429, headers: getRateLimitHeaders(rateLimit) }
       );
     }
 
@@ -371,20 +364,27 @@ export async function POST(req: Request) {
       details: { grade, subject, topic, mode, approvalStatus },
     });
 
-    return NextResponse.json({
-      ok: true,
-      contentId: record.contentId,
-      recordId: record.id,
-      mode,
-      approvalStatus,
-      labsCount: labs.length,
-      payloadPreview: {
-        title: (enrichedPayload as any).title,
-        objectivesCount: ((enrichedPayload as any).objectives ?? []).length,
+    return NextResponse.json(
+      {
+        ok: true,
+        contentId: record.contentId,
+        recordId: record.id,
+        mode,
+        approvalStatus,
+        labsCount: labs.length,
+        payloadPreview: {
+          title: (enrichedPayload as any).title,
+          objectivesCount: ((enrichedPayload as any).objectives ?? []).length,
+        },
       },
-    });
+      { headers: getRateLimitHeaders(rateLimit) }
+    );
   } catch (err: any) {
-    console.error("Curriculum generate error:", err);
+    logger.error("Curriculum generate route failed", {
+      route: "/api/admin/curriculum/generate",
+      errorMessage: err?.message ?? String(err),
+      status: err?.status ?? 500,
+    });
     return NextResponse.json(
       { error: err?.message ?? "Failed to generate curriculum" },
       { status: err?.status ?? 500 }

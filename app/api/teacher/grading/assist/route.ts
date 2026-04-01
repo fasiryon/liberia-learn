@@ -47,6 +47,7 @@ export async function POST(req: NextRequest) {
       userId: user.id,
       role: user.role,
       endpoint: "/api/teacher/grading/assist",
+      schoolId: user.schoolId ?? undefined,
     });
     if (!rateLimit.allowed) {
       return NextResponse.json(
