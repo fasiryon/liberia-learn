@@ -18,6 +18,34 @@ Flags are not optional. They are safety infrastructure.
 
 ---
 
+## Pass 2 Graduation Snapshot
+
+The following product features are now treated as real default-on surfaces. They remain kill-switchable by setting the flag to `"false"`, but they no longer require opt-in enablement:
+
+| Feature | Flag(s) | Default | Proof of wiring |
+|---|---|---|---|
+| Guardian portal access | `ENABLE_GUARDIAN_PORTAL`, `NEXT_PUBLIC_ENABLE_GUARDIAN_PORTAL` | on | `app/guardian/page.tsx`, `app/api/guardian/students/route.ts`, `app/login/LoginClient.tsx` |
+| Guardian linking | `ENABLE_GUARDIAN_LINKING` | on | `app/api/guardian/link/route.ts`, `__tests__/guardian.portal.linking.test.ts` |
+| Guardian dashboard and messaging | `ENABLE_GUARDIAN_DASHBOARD` | on | `app/guardian/dashboard/page.tsx`, `app/api/guardian/dashboard/route.ts`, `__tests__/guardian.dashboard.test.ts` |
+| Adaptive learning | `ENABLE_ADAPTIVE_ENGINE` | on | `app/student/adaptive/page.tsx`, `app/api/student/adaptive/practice/route.ts`, `__tests__/adaptive.practice.route.test.ts` |
+| Teacher intervention workflow | `ENABLE_INTERVENTION_ENGINE`, `ENABLE_INTERVENTION_WORKFLOW` | on | `app/teacher/intelligence/TeacherIntelligenceDashboard.tsx`, `app/api/teacher/interventions/route.ts`, `__tests__/intelligence.teacher-routes.test.ts` |
+| Textbook compilation | `ENABLE_TEXTBOOK_COMPILER` | on | `app/admin/curriculum/units/page.tsx`, `app/api/admin/curriculum/textbook/route.ts`, `__tests__/admin.textbook.route.test.ts` |
+| Assignment draft generation | `ENABLE_AI_ASSIGNMENT_GENERATION` | on | `app/api/teacher/assignments/generate/route.ts`, `__tests__/assignment-linkage.test.ts` |
+
+The following major features remain controlled after this pass because they still depend on a separate rollout or provider decision:
+
+| Feature | Flag(s) | Why still controlled |
+|---|---|---|
+| Student AI tutor | `AI_TUTOR_ENABLED`, `NEXT_PUBLIC_ENABLE_AI_TUTOR` | Requires provider-backed rollout and still uses split server/client flags |
+| RAG tutor | `ENABLE_RAG_TUTOR`, `NEXT_PUBLIC_ENABLE_RAG_TUTOR` | Depends on retrieval content quality and provider-backed tutor rollout |
+| Teacher AI assist | `AI_TEACHER_ASSIST_ENABLED` | Provider-backed AI surface |
+| Assignment tutor | `ENABLE_ASSIGNMENT_TUTOR` | Provider-backed AI surface |
+| AI grading assist | `ENABLE_AI_GRADING_ASSIST` | Provider-backed AI surface handling anonymized student work |
+| Teacher generation | `ENABLE_TEACHER_GENERATION` | Curriculum-generation rollout remains intentionally controlled |
+| MOE portal | `ENABLE_MOE_PORTAL`, `ENABLE_MOE_LOGIN_PORTAL` | National-scope operational rollout remains intentionally controlled |
+
+---
+
 ## SMS Throttle Rate Limiting
 
 Prevents guardian inbox flooding from misconfigured event triggers or runaway notification loops.
