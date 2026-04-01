@@ -20,6 +20,22 @@ async function recordNotification(input: {
   });
 }
 
+type StudentGuardianLookup = {
+  guardians?: Array<{
+    guardianId?: string | null;
+  }> | null;
+} | null;
+
+function getGuardianIds(student: StudentGuardianLookup): string[] {
+  if (!student?.guardians?.length) {
+    return [];
+  }
+
+  return student.guardians
+    .map((guardian) => guardian.guardianId?.trim())
+    .filter((guardianId): guardianId is string => Boolean(guardianId));
+}
+
 export async function notifyAssignmentSubmitted(input: {
   actorUserId: string;
   schoolId: string;
@@ -39,18 +55,19 @@ export async function notifyAssignmentSubmitted(input: {
     },
   });
 
-  if (!student || student.guardians.length === 0) {
+  const guardianIds = getGuardianIds(student);
+  if (guardianIds.length === 0) {
     return;
   }
 
   const body = `LiberiaLearn: ${input.studentName} submitted ${input.assignmentTitle} at ${input.schoolName}.`;
   await Promise.all(
-    student.guardians.map(async (guardian) => {
+    guardianIds.map(async (guardianId) => {
       try {
         const result = await sendGuardianSMS({
           schoolId: input.schoolId,
           studentId: input.studentId,
-          guardianId: guardian.guardianId,
+          guardianId,
           messageType: "custom",
           payload: {
             message: body,
@@ -59,20 +76,20 @@ export async function notifyAssignmentSubmitted(input: {
             schoolName: input.schoolName,
           },
           actorUserId: input.actorUserId,
-          idempotencyKey: `assignment-submitted:${input.studentId}:${guardian.guardianId}:${input.assignmentTitle}`,
+          idempotencyKey: `assignment-submitted:${input.studentId}:${guardianId}:${input.assignmentTitle}`,
         });
 
         await recordNotification({
-          userId: guardian.guardianId,
-          recipient: guardian.guardianId,
+          userId: guardianId,
+          recipient: guardianId,
           body,
           status: result.status,
           error: result.status === "failed" ? "assignment_submission_sms_failed" : null,
         });
       } catch (error: any) {
         await recordNotification({
-          userId: guardian.guardianId,
-          recipient: guardian.guardianId,
+          userId: guardianId,
+          recipient: guardianId,
           body,
           status: "failed",
           error: error?.message ?? "assignment_submission_sms_failed",
@@ -102,18 +119,19 @@ export async function notifyAssignmentGraded(input: {
     },
   });
 
-  if (!student || student.guardians.length === 0) {
+  const guardianIds = getGuardianIds(student);
+  if (guardianIds.length === 0) {
     return;
   }
 
   const body = `LiberiaLearn: ${input.studentName} received a grade of ${input.score}/100 on ${input.assignmentTitle}.`;
   await Promise.all(
-    student.guardians.map(async (guardian) => {
+    guardianIds.map(async (guardianId) => {
       try {
         const result = await sendGuardianSMS({
           schoolId: input.schoolId,
           studentId: input.studentId,
-          guardianId: guardian.guardianId,
+          guardianId,
           messageType: "custom",
           payload: {
             message: body,
@@ -123,20 +141,20 @@ export async function notifyAssignmentGraded(input: {
             schoolName: input.schoolName,
           },
           actorUserId: input.actorUserId,
-          idempotencyKey: `assignment-graded:${input.studentId}:${guardian.guardianId}:${input.assignmentTitle}:${input.score}`,
+          idempotencyKey: `assignment-graded:${input.studentId}:${guardianId}:${input.assignmentTitle}:${input.score}`,
         });
 
         await recordNotification({
-          userId: guardian.guardianId,
-          recipient: guardian.guardianId,
+          userId: guardianId,
+          recipient: guardianId,
           body,
           status: result.status,
           error: result.status === "failed" ? "assignment_grade_sms_failed" : null,
         });
       } catch (error: any) {
         await recordNotification({
-          userId: guardian.guardianId,
-          recipient: guardian.guardianId,
+          userId: guardianId,
+          recipient: guardianId,
           body,
           status: "failed",
           error: error?.message ?? "assignment_grade_sms_failed",
