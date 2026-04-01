@@ -18,7 +18,7 @@ export default function ToolkitOverlay({ context }: ToolkitOverlayProps) {
   const [openedAt, setOpenedAt] = useState<Record<string, number>>({});
 
   const tools = toolkit?.availableTools ?? [];
-  const activeTools = toolkit?.activeTools ?? [];
+  const activeTools = toolkit?.activeTools;
 
   useEffect(() => {
     emitToolkitRendered(tools.length, context);
@@ -29,7 +29,7 @@ export default function ToolkitOverlay({ context }: ToolkitOverlayProps) {
     setCollapsed(window.innerWidth < 640);
   }, []);
 
-  const activeToolSet = useMemo(() => new Set(activeTools), [activeTools]);
+  const activeToolSet = useMemo(() => new Set(activeTools ?? []), [activeTools]);
 
   if (!toolkit || tools.length === 0) return null;
 
@@ -78,7 +78,7 @@ export default function ToolkitOverlay({ context }: ToolkitOverlayProps) {
         </div>
       </div>
 
-      {activeTools.map((toolId, index) => {
+      {(activeTools ?? []).map((toolId, index) => {
         const definition = tools.find((tool) => tool.id === toolId);
         if (!definition) return null;
         const ToolComponent = TOOL_COMPONENTS[toolId];

@@ -101,9 +101,12 @@ The product shape in this repo is biased toward practical rollout constraints:
 ## Local Development
 
 ```bash
+cp .env.example .env.local
 npm install
 npx prisma generate
 npx vitest run
 npx tsc --noEmit
 npm run build
 ```
+
+Core runtime env validation now fails `next build` when `DATABASE_URL`, `DIRECT_URL`, `NEXTAUTH_URL`, or `NEXTAUTH_SECRET` are missing. AI provider keys are required only when the related AI feature flags are enabled.
