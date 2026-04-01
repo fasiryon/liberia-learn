@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { TeacherDashboardScreen, type TeacherDashboardSummary } from "@/components/intelligence/TeacherDashboardScreen";
 import type { TeacherConfusionItem } from "@/components/intelligence/ConfusionList";
 import type { TeacherInterventionItem } from "@/components/intelligence/InterventionTable";
+import { teacherWelcomeStorageKey } from "@/app/teacher/TeacherWelcomeGate";
 
 export default function TeacherIntelligenceDashboard() {
   const [summary, setSummary] = useState<TeacherDashboardSummary | null>(null);
@@ -46,6 +47,10 @@ export default function TeacherIntelligenceDashboard() {
   }
 
   useEffect(() => {
+    if (typeof window !== "undefined") {
+      window.localStorage.setItem("teacher_has_seen_intelligence", "true");
+      window.localStorage.setItem(teacherWelcomeStorageKey, "true");
+    }
     void load();
   }, []);
 

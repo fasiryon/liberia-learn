@@ -1,5 +1,7 @@
 import { TeacherShell } from "@/app/teacher/TeacherShell";
 import GlobalAssistantMount from "@/components/rag/GlobalAssistantMount";
+import { getOptionalUser } from "@/lib/auth";
+import { prisma } from "@/lib/db";
 
 /**
  * Teacher layout — server component.
@@ -10,14 +12,25 @@ import GlobalAssistantMount from "@/components/rag/GlobalAssistantMount";
  *
  * Mirrors the pattern used in app/student/layout.tsx.
  */
-export default function TeacherLayout({
+export default async function TeacherLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const user = await getOptionalUser();
+  const needsWelcome =
+    user?.role === "TEACHER"
+      ? !(
+          await prisma.teacherProfile.findUnique({
+            where: { userId: user.id },
+            select: { isOnboarded: true },
+          })
+        )?.isOnboarded
+      : false;
+
   return (
     <>
-      <TeacherShell>{children}</TeacherShell>
+      <TeacherShell needsWelcome={needsWelcome}>{children}</TeacherShell>
       <GlobalAssistantMount />
     </>
   );

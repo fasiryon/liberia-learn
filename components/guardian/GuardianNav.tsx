@@ -5,9 +5,10 @@ import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 
 const LINKS = [
-  { href: "/guardian", label: "Overview" },
+  { href: "/guardian/dashboard", label: "Overview" },
   { href: "/guardian/progress", label: "Progress" },
   { href: "/guardian/messages", label: "Messages", badgeKey: "messages" },
+  { href: "/guardian/settings", label: "Settings" },
 ];
 
 export function GuardianNav() {
@@ -34,7 +35,9 @@ export function GuardianNav() {
   return (
     <nav className="flex flex-wrap gap-2 border-b border-white/10 pb-4">
       {LINKS.map((link) => {
-        const active = pathname === link.href || (link.href !== "/guardian" && pathname.startsWith(link.href));
+        const active =
+          pathname === link.href ||
+          (link.href !== "/guardian/dashboard" && pathname.startsWith(link.href));
         return (
           <Link
             key={link.href}

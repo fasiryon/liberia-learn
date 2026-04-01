@@ -7,14 +7,5 @@ export default function GuardianPage() {
   if (!isGuardianPortalEnabled()) {
     redirect("/login");
   }
-
-  const showDemoHints = isDemoModeEnabled();
-  const demoGroup = showDemoHints ? getDemoHintGroup("guardian") : null;
-
-  return (
-    <GuardianDashboardClient
-      showDemoHints={showDemoHints}
-      demoGroup={demoGroup}
-    />
-  );
+  redirect("/guardian/dashboard");
 }

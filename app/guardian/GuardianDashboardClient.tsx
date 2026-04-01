@@ -7,6 +7,7 @@ import type { DemoHintGroup } from "@/lib/demoHints";
 import { DemoHints } from "@/components/DemoHints";
 import { GuardianNav } from "@/components/guardian/GuardianNav";
 import { placementReviewStatusLabels, placementReviewStatusStyles } from "@/lib/placement";
+import { guardianWelcomeStorageKey } from "@/app/guardian/GuardianWelcomeGate";
 
 type GuardianSummary = {
   studentId: string;
@@ -81,6 +82,9 @@ export default function GuardianDashboardClient({
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    if (typeof window !== "undefined") {
+      window.localStorage.setItem(guardianWelcomeStorageKey, "true");
+    }
     let active = true;
     setLoading(true);
     setError(null);
@@ -98,7 +102,20 @@ export default function GuardianDashboardClient({
         const studentsData = await studentsRes.json();
         const dashboardData = await dashboardRes.json();
         if (!studentsRes.ok) throw new Error(studentsData.error ?? "Failed to load students");
-        if (!dashboardRes.ok) throw new Error(dashboardData.error ?? "Failed to load dashboard");
+        if (!dashboardRes.ok) {
+          if (
+            dashboardRes.status === 403 &&
+            typeof dashboardData?.error === "string" &&
+            dashboardData.error.includes("No linked students")
+          ) {
+            return {
+              students: studentsData.students ?? [],
+              children: [],
+              unreadMessages: 0,
+            };
+          }
+          throw new Error(dashboardData.error ?? "Failed to load dashboard");
+        }
 
         return {
           students: studentsData.students ?? [],
@@ -167,7 +184,10 @@ export default function GuardianDashboardClient({
           </div>
         ) : !selectedSummary || !selectedDashboardChild ? (
           <div className="rounded-2xl border border-white/10 bg-slate-900/70 p-8 text-center text-sm text-slate-400">
-            No students linked to your account yet. Contact your school admin.
+            <div className="mx-auto h-20 w-20 rounded-3xl border border-dashed border-slate-700 bg-slate-950/70" />
+            <p className="mt-4 text-slate-300">
+              No students linked to your account yet. Contact your child&apos;s school to get connected.
+            </p>
           </div>
         ) : (
           <>
