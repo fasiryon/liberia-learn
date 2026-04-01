@@ -63,7 +63,7 @@ OPENAI_API_KEY="sk-..."
 
 # Email
 RESEND_API_KEY="re_..."
-RESEND_FROM_EMAIL="noreply@liberialearn.edu.lr"
+EMAIL_FROM="LiberiaLearn <noreply@liberialearn.edu.lr>"
 
 # SMS
 AT_API_KEY="..."
@@ -333,7 +333,7 @@ LOG_LEVEL=info   # enables logging (omit to use default)
 No PII is ever logged: raw user IDs are SHA-256 hashed; request bodies are not logged.
 
 ### Sentry integration
-Set `NEXT_PUBLIC_SENTRY_DSN` to enable automatic error capture on both client and server.
+Set `NEXT_PUBLIC_SENTRY_DSN` to enable automatic error capture on both client and server. Set `SENTRY_AUTH_TOKEN`, `SENTRY_ORG`, and `SENTRY_PROJECT` together if you want source-map uploads during build.
 
 ### Audit log review
 Platform admins can search and export audit logs via the governance UI

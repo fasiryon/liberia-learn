@@ -12,3 +12,5 @@ Sentry.init({
     return scrubSentryEvent(event);
   },
 });
+
+export const onRouterTransitionStart = Sentry.captureRouterTransitionStart;

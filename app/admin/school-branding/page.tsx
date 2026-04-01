@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -26,6 +27,7 @@ export default function SchoolBrandingPage() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
+  const [logoPreviewFailed, setLogoPreviewFailed] = useState(false);
 
   useEffect(() => {
     fetch("/api/admin/school-branding")
@@ -47,6 +49,10 @@ export default function SchoolBrandingPage() {
       })
       .finally(() => setLoading(false));
   }, [router]);
+
+  useEffect(() => {
+    setLogoPreviewFailed(false);
+  }, [branding.logoUrl]);
 
   async function handleSave(e: React.FormEvent) {
     e.preventDefault();
@@ -159,12 +165,16 @@ export default function SchoolBrandingPage() {
               className="rounded-xl border border-white/10 p-4 flex items-center gap-3"
               style={{ background: branding.primaryHex + "22" }}
             >
-              {branding.logoUrl ? (
-                <img
+              {branding.logoUrl && !logoPreviewFailed ? (
+                <Image
+                  loader={({ src }) => src}
+                  unoptimized
                   src={branding.logoUrl}
                   alt="Logo"
+                  width={40}
+                  height={40}
                   className="h-10 w-10 rounded-lg object-cover"
-                  onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }}
+                  onError={() => setLogoPreviewFailed(true)}
                 />
               ) : (
                 <div
