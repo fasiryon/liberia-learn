@@ -7,6 +7,7 @@ const mockExamAttemptFindFirst = vi.hoisted(() => vi.fn());
 const mockExamAttemptUpdate = vi.hoisted(() => vi.fn());
 const mockExamCertificationUpsert = vi.hoisted(() => vi.fn());
 const mockLogAudit = vi.hoisted(() => vi.fn());
+const mockTransaction = vi.hoisted(() => vi.fn());
 
 vi.mock("@/lib/auth", () => ({ requireRole: mockRequireRole }));
 vi.mock("@/lib/serverFlags", () => ({ isExamSystemEnabled: mockIsExamSystemEnabled }));
@@ -21,6 +22,7 @@ vi.mock("@/lib/db", () => ({
     examCertification: {
       upsert: mockExamCertificationUpsert,
     },
+    $transaction: mockTransaction,
   },
 }));
 
@@ -71,6 +73,13 @@ describe("POST /api/student/exams/[examId]/submit", () => {
     mockExamAttemptUpdate.mockResolvedValue(undefined);
     mockExamCertificationUpsert.mockResolvedValue(undefined);
     mockLogAudit.mockResolvedValue(undefined);
+    mockTransaction.mockImplementation(async (cb: any) => {
+      const tx = {
+        examAttempt: { update: mockExamAttemptUpdate },
+        examCertification: { upsert: mockExamCertificationUpsert },
+      };
+      return cb(tx);
+    });
   });
 
   it("grades correctly and returns score", async () => {

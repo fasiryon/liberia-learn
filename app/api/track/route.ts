@@ -1,7 +1,6 @@
 // app/api/track/route.ts
 import { NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
+import { requireUser } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { z } from "zod";
 
@@ -16,8 +15,12 @@ const Schema = z.object({
 
 export async function POST(req: Request) {
   try {
-    const session = await getServerSession(authOptions);
-    const userId = (session?.user as any)?.id ?? null;
+    let user;
+    try {
+      user = await requireUser();
+    } catch {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
 
     const body = await req.json();
     const parsed = Schema.safeParse(body);
@@ -30,7 +33,7 @@ export async function POST(req: Request) {
 
     await prisma.auditLog.create({
       data: {
-        userId,
+        userId: user.id,
         action: eventType,
         details: {
           sessionId: sessionId ?? null,

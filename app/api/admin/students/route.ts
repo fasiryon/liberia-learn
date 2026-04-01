@@ -132,30 +132,31 @@ export async function POST(req: Request) {
     const hashedPwd = await bcrypt.hash(tempPin, 10);
     const phoneE164 = phone ? normalizeCredentialPhone(phone) : null;
 
-    const created = await prisma.user.create({
-      data: {
-        email: candidate,
-        loginId,
-        name: `${firstName} ${lastName}`.trim(),
-        role: "STUDENT",
-        hashedPwd,
-        mustChangePIN: true,
-        schoolId: user.schoolId,
-        guardianCountryCode: "+231",
-        guardianPhone: phone || null,
-        guardianPhoneE164: phoneE164,
-        preferredChannel: phoneE164 ? "SMS" : "EMAIL",
-      },
-    });
+    const [created, student] = await prisma.$transaction(async (tx) => {
+      const newUser = await tx.user.create({
+        data: {
+          email: candidate,
+          loginId,
+          name: `${firstName} ${lastName}`.trim(),
+          role: "STUDENT",
+          hashedPwd,
+          mustChangePIN: true,
+          schoolId: user.schoolId,
+          guardianCountryCode: "+231",
+          guardianPhone: phone || null,
+          guardianPhoneE164: phoneE164,
+          preferredChannel: phoneE164 ? "SMS" : "EMAIL",
+        },
+      });
 
-    const student = await prisma.student.create({
-      data: {
-        userId: created.id,
-        currentGrade: grade,
-      },
-    });
+      const newStudent = await tx.student.create({
+        data: { userId: newUser.id, currentGrade: grade },
+      });
 
-    await prisma.enrollment.create({ data: { studentId: student.id, classId } });
+      await tx.enrollment.create({ data: { studentId: newStudent.id, classId } });
+
+      return [newUser, newStudent] as const;
+    });
 
     await logAudit({
       userId: user.id,

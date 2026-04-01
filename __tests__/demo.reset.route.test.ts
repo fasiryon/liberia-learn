@@ -1,9 +1,14 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
+const mockRequireUser = vi.hoisted(() => vi.fn());
 const mockStudentFindMany = vi.hoisted(() => vi.fn());
 const mockTransaction = vi.hoisted(() => vi.fn());
 const mockDeleteMany = vi.hoisted(() => vi.fn(() => ({ mocked: true })));
 const mockSeedNationalDemo = vi.hoisted(() => vi.fn());
+
+vi.mock("@/lib/auth", () => ({
+  requireUser: mockRequireUser,
+}));
 
 vi.mock("@/lib/db", () => ({
   prisma: {
@@ -39,6 +44,7 @@ describe("POST /api/demo/reset", () => {
       { id: "student-1", userId: "user-1" },
       { id: "student-2", userId: "user-2" },
     ]);
+    mockRequireUser.mockResolvedValue({ id: "platform-admin-1", isPlatformAdmin: true });
     mockTransaction.mockResolvedValue(undefined);
     mockSeedNationalDemo.mockResolvedValue(undefined);
   });
@@ -53,13 +59,11 @@ describe("POST /api/demo/reset", () => {
     expect(await response.json()).toEqual({ error: "Not available in production" });
   });
 
-  it("returns 401 when the secret is missing or invalid", async () => {
+  it("returns 401 when not authenticated", async () => {
+    mockRequireUser.mockRejectedValueOnce(new Error("Unauthorized"));
     const { POST } = await import("@/app/api/demo/reset/route");
     const response = await POST(
-      new Request("http://localhost/api/demo/reset", {
-        method: "POST",
-        headers: { "x-demo-secret": "wrong-secret" },
-      })
+      new Request("http://localhost/api/demo/reset", { method: "POST" })
     );
 
     expect(response.status).toBe(401);

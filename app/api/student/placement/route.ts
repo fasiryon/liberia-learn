@@ -56,16 +56,13 @@ export async function POST(req: Request) {
       aiAnalysis: aiAnalysis ?? null,
     };
 
-    const placement = await prisma.placementTest.create({
-      data: placementData,
-    });
-
-    const updatedStudent = await prisma.student.update({
-      where: { id: student.id },
-      data: {
-        currentGrade: estimatedGrade,
-      },
-    });
+    const [placement, updatedStudent] = await prisma.$transaction([
+      prisma.placementTest.create({ data: placementData }),
+      prisma.student.update({
+        where: { id: student.id },
+        data: { currentGrade: estimatedGrade },
+      }),
+    ]);
 
     await logAudit({
       userId: user.id,

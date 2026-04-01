@@ -105,9 +105,9 @@ export function TeacherDashboardScreen({
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-slate-50">Teacher Intelligence</h1>
+        <h1 className="text-2xl font-bold text-slate-50">Teacher Dashboard</h1>
         <p className="mt-1 text-sm text-slate-400">
-          Review class performance, recent confusion patterns, and advisory interventions.
+          Review class performance, students who may need help, and suggested support.
         </p>
       </div>
 
@@ -117,7 +117,7 @@ export function TeacherDashboardScreen({
         </div>
       ) : null}
 
-      <div className="grid gap-4 md:grid-cols-4">
+      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         <IntelligenceStatCard
           label="Class average score"
           value={summary ? `${Math.round(summary.avgScore * 100)}%` : "-"}
@@ -140,7 +140,7 @@ export function TeacherDashboardScreen({
         />
       </div>
 
-      <Card className="p-5">
+      <Card className="p-5 sm:p-6">
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div>
             <h2 className="text-lg font-semibold text-slate-100">Needs Attention</h2>
@@ -149,17 +149,17 @@ export function TeacherDashboardScreen({
             </p>
           </div>
           <div className="grid gap-3 sm:grid-cols-2">
-            <div className="rounded-2xl bg-slate-950/60 p-4">
+            <div className="rounded-2xl border border-red-500/15 bg-red-500/8 p-4">
               <p className="text-xs uppercase tracking-wide text-slate-500">
-                High-severity signals
+                High priority
               </p>
               <p className="mt-2 text-2xl font-semibold text-red-300">
                 {highSeverityCount}
               </p>
             </div>
-            <div className="rounded-2xl bg-slate-950/60 p-4">
+            <div className="rounded-2xl border border-slate-800 bg-slate-950/60 p-4">
               <p className="text-xs uppercase tracking-wide text-slate-500">
-                Urgent interventions
+                Support queue
               </p>
               <p className="mt-2 text-2xl font-semibold text-slate-100">
                 {urgentInterventionCount}
@@ -181,7 +181,7 @@ export function TeacherDashboardScreen({
         {topAttentionItems.length > 0 ? (
           <div className="mt-4 grid gap-3 lg:grid-cols-3">
             {topAttentionItems.map((item) => (
-              <div key={item.id} className="rounded-2xl bg-slate-950/60 p-4">
+              <div key={item.id} className="rounded-2xl border border-slate-800 bg-slate-950/60 p-4">
                 <p className="text-xs uppercase tracking-wide text-slate-500">
                   {item.severity} severity
                 </p>
@@ -197,22 +197,22 @@ export function TeacherDashboardScreen({
         ) : null}
       </Card>
 
-      <Card className="p-5">
+      <Card className="p-5 sm:p-6">
         <div className="space-y-3">
           <div>
-            <h2 className="text-lg font-semibold text-slate-100">AI suggested actions</h2>
+            <h2 className="text-lg font-semibold text-slate-100">Suggested Support</h2>
             <p className="mt-1 text-sm text-amber-300">
-              AI suggestions  teacher review required.
+              AI suggestions. Teacher review required.
             </p>
           </div>
           {suggestedActions.length === 0 ? (
             <p className="text-sm text-slate-400">
-              No advisory actions are being surfaced from the current signal set.
+              No support suggestions are being surfaced from the current class activity.
             </p>
           ) : (
             <div className="grid gap-3 lg:grid-cols-3">
               {suggestedActions.map((action) => (
-                <div key={`${action.type}-${action.reason}`} className="rounded-2xl bg-slate-950/60 p-4">
+                <div key={`${action.type}-${action.reason}`} className="rounded-2xl border border-slate-800 bg-slate-950/60 p-4">
                   <p className="text-xs uppercase tracking-wide text-slate-500">{action.type.replace(/_/g, " ")}</p>
                   <p className="mt-2 text-sm text-slate-200">{action.reason}</p>
                   <p className="mt-2 text-xs text-slate-500">
@@ -229,17 +229,17 @@ export function TeacherDashboardScreen({
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
             <h2 className="text-lg font-semibold text-slate-100">
-              Recent confusion signals
+              Students who may need help
             </h2>
             <p className="text-sm text-slate-400">
-              Start with high-severity signals first, then recent patterns.
+              Start with higher priority items first, then recent patterns.
             </p>
           </div>
           {studentOptions.length > 0 ? (
             <select
               value={selectedStudentId}
               onChange={(event) => setSelectedStudentId(event.target.value)}
-              className="rounded-xl border border-slate-700 bg-slate-900 px-4 py-2 text-sm text-slate-100"
+              className="min-h-11 rounded-xl border border-slate-700 bg-slate-900 px-4 py-2 text-sm text-slate-100"
             >
               <option value="">All students</option>
               {studentOptions.map((option) => (
@@ -258,9 +258,9 @@ export function TeacherDashboardScreen({
 
       <section className="space-y-4">
         <div>
-          <h2 className="text-lg font-semibold text-slate-100">Intervention queue</h2>
+          <h2 className="text-lg font-semibold text-slate-100">Support queue</h2>
           <p className="text-sm text-slate-400">
-            Recommendations stay advisory until a teacher reviews them.
+            Suggestions stay advisory until a teacher reviews them.
           </p>
         </div>
         <InterventionTable

@@ -84,14 +84,18 @@ beforeEach(() => {
   });
   mockSendTeacherInvite.mockResolvedValue({ ok: true });
   mockSendStudentInvite.mockResolvedValue({ ok: true });
-  mockTransaction.mockImplementation(async (cb: any) =>
-    cb({
-      user: { create: mockUserCreate },
-      student: { create: mockStudentCreate, findUnique: mockStudentFindUnique },
-      studentGuardian: { upsert: mockStudentGuardianUpsert },
-      inviteToken: { update: mockInviteTokenUpdate },
-    })
-  );
+  mockTransaction.mockImplementation(async (cbOrArray: any) => {
+    if (typeof cbOrArray === "function") {
+      return cbOrArray({
+        user: { create: mockUserCreate },
+        student: { create: mockStudentCreate, findUnique: mockStudentFindUnique },
+        studentGuardian: { upsert: mockStudentGuardianUpsert },
+        inviteToken: { update: mockInviteTokenUpdate },
+      });
+    }
+    // Array form: resolve all promise elements
+    return Promise.all(cbOrArray);
+  });
   mockUserCreate.mockResolvedValue({ id: "user-1", role: "STUDENT" });
   mockInviteTokenUpdate.mockResolvedValue({ id: "invite-1", usedAt: new Date() });
 });

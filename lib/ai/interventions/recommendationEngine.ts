@@ -2,7 +2,7 @@ import { z } from "zod";
 import type { ImpactSnapshot } from "@prisma/client";
 import type { SchoolDashboardMetrics } from "@/lib/reporting/dashboard/dashboardAggregator";
 import type { TrendSeries } from "@/lib/reporting/trends/types";
-import { getOpenAIClientOrThrow } from "@/lib/ai/openaiClient";
+import { routedCompletion } from "@/lib/ai/routedCompletion";
 
 export type RecommendationResult = {
   interventionPriorityScore: number;
@@ -128,23 +128,17 @@ async function tryAiEnhancement(params: {
 }): Promise<RecommendationResult["recommendedActions"] | null> {
   if (process.env.AI_INTERVENTIONS_AI_ENHANCED !== "true") return null;
 
-  const openai = getOpenAIClientOrThrow();
-  if (!openai) return null;
-
   const prompt = buildInterventionPrompt(params);
 
-  const completion = await openai.chat.completions.create({
-    model: "gpt-4o-mini",
+  const completion = await routedCompletion({
     messages: [
       { role: "system", content: "Return only valid JSON." },
       { role: "user", content: prompt },
     ],
-    temperature: 0.2,
-    max_tokens: 500,
-    response_format: { type: "json_object" },
+    maxTokens: 500,
   });
 
-  const raw = completion.choices[0]?.message?.content ?? "{}";
+  const raw = completion.content ?? "{}";
   let parsed: unknown;
   try {
     parsed = JSON.parse(raw);

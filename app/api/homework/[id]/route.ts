@@ -99,6 +99,22 @@ export async function POST(
       );
     }
 
+    // Verify the student is enrolled in the class that owns this homework
+    const homework = await prisma.homework.findFirst({
+      where: { id: params.id },
+      select: { classId: true },
+    });
+    if (!homework) {
+      return NextResponse.json({ error: "Homework not found" }, { status: 404 });
+    }
+    const isEnrolled = await prisma.enrollment.findFirst({
+      where: { studentId: student.id, classId: homework.classId },
+      select: { id: true },
+    });
+    if (!isEnrolled) {
+      return NextResponse.json({ error: "Not enrolled in this class" }, { status: 403 });
+    }
+
     const submission = await prisma.homeworkSubmission.upsert({
       where: {
         homeworkId_studentId: {

@@ -29,10 +29,18 @@ export async function GET() {
     const start = Date.now();
     await prisma.$queryRaw`SELECT 1 AS ok`;
     const latencyMs = Date.now() - start;
-    return NextResponse.json({ ok: true, latencyMs, conn, ts: new Date().toISOString() });
+    const response: Record<string, unknown> = { ok: true, latencyMs, ts: new Date().toISOString() };
+    if (process.env.NODE_ENV === "development") {
+      response.conn = conn;
+    }
+    return NextResponse.json(response);
   } catch (err: unknown) {
     const message = err instanceof Error ? err.message : String(err);
     console.error("[health/db] query failed:", message);
-    return NextResponse.json({ ok: false, error: message, conn, ts: new Date().toISOString() }, { status: 503 });
+    const errResponse: Record<string, unknown> = { ok: false, error: message, ts: new Date().toISOString() };
+    if (process.env.NODE_ENV === "development") {
+      errResponse.conn = conn;
+    }
+    return NextResponse.json(errResponse, { status: 503 });
   }
 }

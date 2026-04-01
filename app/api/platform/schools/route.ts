@@ -83,7 +83,7 @@ export async function POST(req: NextRequest) {
 /** PATCH: update a school */
 export async function PATCH(req: NextRequest) {
   try {
-    await requireMoePlatformAdmin();
+    const actor = await requireMoePlatformAdmin();
 
     const body = await req.json();
     const { id, ...updates } = body;
@@ -95,6 +95,13 @@ export async function PATCH(req: NextRequest) {
     const school = await prisma.school.update({
       where: { id },
       data: updates,
+    });
+
+    void logAudit({
+      userId: actor.id,
+      action: "platform.schools.updated",
+      resourceType: "school",
+      resourceId: id,
     });
 
     return NextResponse.json({ school });

@@ -1,0 +1,113 @@
+// __tests__/demo.seed.test.ts
+// Verifies that seedChaDemo creates the five expected CHA demo accounts.
+import { beforeEach, describe, expect, it, vi } from "vitest";
+
+// Hoist mock instances so they persist across the module boundary
+const mockPrismaInstance = vi.hoisted(() => ({
+  school: { upsert: vi.fn() },
+  user: { upsert: vi.fn() },
+  student: { upsert: vi.fn(), findUnique: vi.fn(), create: vi.fn(), update: vi.fn() },
+  teacherProfile: { upsert: vi.fn() },
+  studentGuardian: { upsert: vi.fn(), findFirst: vi.fn(), create: vi.fn() },
+  class: { upsert: vi.fn() },
+  enrollment: { findFirst: vi.fn(), create: vi.fn(), upsert: vi.fn() },
+  placementTest: { findFirst: vi.fn(), create: vi.fn() },
+  $disconnect: vi.fn(),
+}));
+
+// Use a real class so `new PrismaClient()` works (arrow fns can't be constructors)
+vi.mock("@prisma/client", () => ({
+  PrismaClient: class {
+    school = mockPrismaInstance.school;
+    user = mockPrismaInstance.user;
+    student = mockPrismaInstance.student;
+    teacherProfile = mockPrismaInstance.teacherProfile;
+    studentGuardian = mockPrismaInstance.studentGuardian;
+    class = mockPrismaInstance.class;
+    enrollment = mockPrismaInstance.enrollment;
+    placementTest = mockPrismaInstance.placementTest;
+    $disconnect = mockPrismaInstance.$disconnect;
+  },
+}));
+
+vi.mock("bcryptjs", () => ({
+  default: { hash: vi.fn().mockResolvedValue("hashed-pw") },
+}));
+
+import { seedChaDemo } from "@/prisma/seeds/cha-demo";
+
+beforeEach(() => {
+  vi.clearAllMocks();
+  mockPrismaInstance.school.upsert.mockResolvedValue({ id: "cha-high-academy" });
+  mockPrismaInstance.user.upsert.mockResolvedValue({ id: "mock-user-id" });
+  mockPrismaInstance.student.upsert.mockResolvedValue({ id: "mock-student-id", userId: "mock-user-id" });
+  mockPrismaInstance.student.findUnique.mockResolvedValue(null);
+  mockPrismaInstance.student.create.mockResolvedValue({ id: "mock-student-id" });
+  mockPrismaInstance.student.update.mockResolvedValue({ id: "mock-student-id" });
+  mockPrismaInstance.teacherProfile.upsert.mockResolvedValue({});
+  mockPrismaInstance.studentGuardian.upsert.mockResolvedValue({});
+  mockPrismaInstance.studentGuardian.findFirst.mockResolvedValue(null);
+  mockPrismaInstance.studentGuardian.create.mockResolvedValue({});
+  mockPrismaInstance.class.upsert.mockResolvedValue({ id: "cha-class-grade9a" });
+  mockPrismaInstance.enrollment.findFirst.mockResolvedValue(null);
+  mockPrismaInstance.enrollment.create.mockResolvedValue({});
+  mockPrismaInstance.enrollment.upsert.mockResolvedValue({});
+  mockPrismaInstance.placementTest.findFirst.mockResolvedValue(null);
+  mockPrismaInstance.placementTest.create.mockResolvedValue({});
+});
+
+describe("seedChaDemo", () => {
+  it("creates the CHA school record", async () => {
+    await seedChaDemo();
+    const schoolCall = mockPrismaInstance.school.upsert.mock.calls.find(
+      (c: any[]) => c[0]?.where?.id === "cha-high-academy"
+    );
+    expect(schoolCall).toBeDefined();
+    expect(schoolCall![0].create).toMatchObject({ code: "CHA", name: expect.stringContaining("Cha") });
+  });
+
+  it("creates admin@cha.edu.lr with ADMIN role", async () => {
+    await seedChaDemo();
+    const call = mockPrismaInstance.user.upsert.mock.calls.find(
+      (c: any[]) => c[0]?.where?.email === "admin@cha.edu.lr"
+    );
+    expect(call).toBeDefined();
+    expect(call![0].create.role).toBe("ADMIN");
+  });
+
+  it("creates teacher1@cha.edu.lr with TEACHER role", async () => {
+    await seedChaDemo();
+    const call = mockPrismaInstance.user.upsert.mock.calls.find(
+      (c: any[]) => c[0]?.where?.email === "teacher1@cha.edu.lr"
+    );
+    expect(call).toBeDefined();
+    expect(call![0].create.role).toBe("TEACHER");
+  });
+
+  it("creates student1@cha.edu.lr with STUDENT role", async () => {
+    await seedChaDemo();
+    const call = mockPrismaInstance.user.upsert.mock.calls.find(
+      (c: any[]) => c[0]?.where?.email === "student1@cha.edu.lr"
+    );
+    expect(call).toBeDefined();
+    expect(call![0].create.role).toBe("STUDENT");
+  });
+
+  it("creates guardian1@cha.family.lr with GUARDIAN role", async () => {
+    await seedChaDemo();
+    const call = mockPrismaInstance.user.upsert.mock.calls.find(
+      (c: any[]) => c[0]?.where?.email === "guardian1@cha.family.lr"
+    );
+    expect(call).toBeDefined();
+    expect(call![0].create.role).toBe("GUARDIAN");
+  });
+
+  it("creates official1@moe.gov.lr with MOE_OFFICIAL role", async () => {
+    await seedChaDemo();
+    const call = mockPrismaInstance.user.upsert.mock.calls.find(
+      (c: any[]) => c[0]?.where?.email === "official1@moe.gov.lr"
+    );
+    expect(call).toBeDefined();
+    expect(call![0].create.role).toBe("MOE_OFFICIAL");
+  });
+});

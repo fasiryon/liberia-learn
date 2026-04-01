@@ -9,7 +9,7 @@ const prisma = new PrismaClient();
 
 const SCHOOL_ID = "demo-school-monrovia";
 const CLASS_ID = "demo-class-grade5";
-const PASSWORD = "Demo1234!";
+const PASSWORD = "DemoSeed2026!";
 
 const STUDENT_DATA = [
   { email: "student1@mcs.edu.lr", name: "James Doe" },
