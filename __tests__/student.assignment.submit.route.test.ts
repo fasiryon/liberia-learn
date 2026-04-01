@@ -55,4 +55,43 @@ describe("POST /api/student/assignments/[id]/submit", () => {
     await expect(response.json()).resolves.toMatchObject({ ok: true, submissionId: "submission-1" });
     expect(mockNotifyAssignmentSubmitted).toHaveBeenCalledOnce();
   });
+
+  it("returns 403 when the student is not enrolled in the assignment class", async () => {
+    mockStudentFindUnique.mockResolvedValue({
+      id: "student-1",
+      user: { name: "Student One", schoolId: "school-1" },
+      enrollments: [{ classId: "class-2" }],
+    });
+
+    const { POST } = await import("@/app/api/student/assignments/[id]/submit/route");
+    const response = await POST(
+      new Request("http://localhost/api/student/assignments/assignment-1/submit", {
+        method: "POST",
+        body: JSON.stringify({ content: "My assignment response" }),
+        headers: { "Content-Type": "application/json" },
+      }) as any,
+      { params: { id: "assignment-1" } }
+    );
+
+    expect(response.status).toBe(403);
+    expect(mockAssignmentSubmissionUpsert).not.toHaveBeenCalled();
+  });
+
+  it("does not fail submission when guardian notification throws", async () => {
+    mockNotifyAssignmentSubmitted.mockRejectedValue(new Error("sms down"));
+
+    const { POST } = await import("@/app/api/student/assignments/[id]/submit/route");
+    const response = await POST(
+      new Request("http://localhost/api/student/assignments/assignment-1/submit", {
+        method: "POST",
+        body: JSON.stringify({ content: "My assignment response" }),
+        headers: { "Content-Type": "application/json" },
+      }) as any,
+      { params: { id: "assignment-1" } }
+    );
+
+    expect(response.status).toBe(200);
+    await expect(response.json()).resolves.toMatchObject({ ok: true, submissionId: "submission-1" });
+    expect(mockAssignmentSubmissionUpsert).toHaveBeenCalledOnce();
+  });
 });

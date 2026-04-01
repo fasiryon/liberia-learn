@@ -131,4 +131,33 @@ describe("PATCH /api/teacher/assignments/[id]/grade", () => {
     expect(response.status).toBe(403);
     expect(mockUpdate).not.toHaveBeenCalled();
   });
+
+  it("keeps grading successful when guardian notification fails", async () => {
+    mockNotifyAssignmentGraded.mockRejectedValue(new Error("sms down"));
+    const consoleErrorSpy = vi.spyOn(console, "error").mockImplementation(() => undefined);
+
+    const { PATCH } = await import("@/app/api/teacher/assignments/[id]/grade/route");
+    const response = await PATCH(
+      new Request("http://localhost/api/teacher/assignments/submission-1/grade", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          grade: 88,
+          feedback: "Strong effort with clear reasoning.",
+        }),
+      }) as any,
+      { params: { id: "submission-1" } }
+    );
+
+    expect(response.status).toBe(200);
+    await expect(response.json()).resolves.toMatchObject({
+      ok: true,
+      submission: expect.objectContaining({
+        id: "submission-1",
+        score: 88,
+      }),
+    });
+    expect(mockUpdate).toHaveBeenCalledOnce();
+    consoleErrorSpy.mockRestore();
+  });
 });
