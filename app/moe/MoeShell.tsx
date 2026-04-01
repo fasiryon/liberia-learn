@@ -13,6 +13,7 @@ const NAV_ITEMS = [
   { href: "/moe/districts", label: "Districts" },
   { href: "/moe/compliance", label: "Compliance" },
   { href: "/moe/alerts", label: "Alerts" },
+  { href: "/moe/exports", label: "Exports" },
 ];
 
 export default function MoeShell({

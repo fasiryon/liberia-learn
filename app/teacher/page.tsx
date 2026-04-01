@@ -9,6 +9,8 @@ import { computeEarnedBadges } from "@/lib/training/badges";
 import type { ModuleProgressRecord } from "@/lib/training/progress";
 import { DemoHintsSection } from "@/components/DemoHintsSection";
 import { TeacherNav } from "@/components/teacher/TeacherNav";
+import OnboardingChecklist from "@/components/teacher/OnboardingChecklist";
+import { readTeacherProfileSettings } from "@/lib/teacher/profileSettings";
 
 export const dynamic = "force-dynamic";
 
@@ -33,6 +35,15 @@ export default async function TeacherDashboardPage() {
   }
 
   const teacherId = session.user.id as string;
+  const isTeacher = session.user.role === "TEACHER";
+  const teacherProfile = await prisma.teacherProfile.findUnique({
+    where: { userId: teacherId },
+    select: {
+      isOnboarded: true,
+      permissions: true,
+    },
+  });
+  const teacherSettings = readTeacherProfileSettings(teacherProfile?.permissions);
 
   const classes = await prisma.class.findMany({
     where: { teacherId },
@@ -57,6 +68,15 @@ export default async function TeacherDashboardPage() {
     (sum, cls) => sum + cls.homework.length,
     0
   );
+  const assignmentCount = isTeacher
+    ? await prisma.assignment.count({
+        where: {
+          Class: {
+            teacherId,
+          },
+        },
+      }).catch(() => 0)
+    : 0;
 
   // ── Training badges (only query if flag is on) ────────────────────────────
   let trainingBadges: ReturnType<typeof computeEarnedBadges> = [];
@@ -119,6 +139,15 @@ export default async function TeacherDashboardPage() {
         </header>
 
         <DemoHintsSection variant="teacher" />
+
+        {isTeacher ? (
+          <OnboardingChecklist
+            isOnboarded={teacherProfile?.isOnboarded ?? false}
+            profileReady={Boolean(teacherSettings.bio?.trim())}
+            hasRoster={totalStudents > 0}
+            hasAssignment={assignmentCount > 0}
+          />
+        ) : null}
 
         <TeacherNav />
         {TRAINING_ENABLED && (

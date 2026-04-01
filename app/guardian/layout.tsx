@@ -1,13 +1,18 @@
 import GlobalAssistantMount from "@/components/rag/GlobalAssistantMount";
+import { getOptionalUser } from "@/lib/auth";
+import { GuardianShell } from "@/app/guardian/GuardianShell";
 
-export default function GuardianLayout({
+export default async function GuardianLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const user = await getOptionalUser();
   return (
     <>
-      {children}
+      <GuardianShell enableWelcomeGate={user?.role === "GUARDIAN"}>
+        {children}
+      </GuardianShell>
       <GlobalAssistantMount />
     </>
   );

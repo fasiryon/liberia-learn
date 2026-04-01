@@ -28,6 +28,7 @@ model User {
   guardianPhoneE164   String?
   preferredChannel    String               @default("EMAIL")
   smsOptIn            Boolean              @default(false)
+  guardianSmsPreferences Json?
   accounts            Account[]
   auditLogs           AuditLog[]
   teacherOf           Class[]              @relation("TeacherClasses")
