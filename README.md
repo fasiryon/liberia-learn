@@ -109,4 +109,4 @@ npx tsc --noEmit
 npm run build
 ```
 
-Core runtime env validation now fails `next build` when `DATABASE_URL`, `DIRECT_URL`, `NEXTAUTH_URL`, or `NEXTAUTH_SECRET` are missing. AI provider keys are required only when the related AI feature flags are enabled.
+Core runtime env validation now fails `next build` when `DATABASE_URL`, `DIRECT_URL`, `NEXTAUTH_URL`, or `NEXTAUTH_SECRET` are missing. AI provider keys are required only when the related provider-backed AI feature flags are enabled; deterministic textbook compilation and assignment draft generation no longer require `OPENAI_API_KEY`.

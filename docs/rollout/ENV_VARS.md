@@ -26,11 +26,11 @@ If any of these are missing, `npm run build` fails immediately.
 - `AI_INTERVENTIONS_AI_ENHANCED`
 - `AI_DROPOUT_RISK_ENABLED`
 - `ENABLE_CURRICULUM_OPTIMIZATION_AI`
-- `ENABLE_AI_ASSIGNMENT_GENERATION`
 - `ENABLE_DELIVERY_PROFILE`
-- `ENABLE_TEXTBOOK_COMPILER`
 
 This keeps local and production builds truthful: AI providers are not treated as globally required when all AI features remain disabled.
+
+`ENABLE_AI_ASSIGNMENT_GENERATION` and `ENABLE_TEXTBOOK_COMPILER` do not require `OPENAI_API_KEY` in the current codebase. Both routes are deterministic and operate on existing curriculum data.
 
 ## Recommended but optional
 
@@ -91,6 +91,20 @@ ENABLE_RAG_TUTOR="true"
 - `DIRECT_URL` should use the direct connection string for migrations only.
 - `NEXT_PUBLIC_*` variables are inlined at build time and require a rebuild when changed.
 - Server-only `ENABLE_*` flags are read at request time unless they are mirrored into a client-visible `NEXT_PUBLIC_*` variable.
+
+## Current default-on product flags
+
+These flags now default to enabled unless you set them to `"false"`:
+
+- `ENABLE_ADAPTIVE_ENGINE`
+- `ENABLE_INTERVENTION_ENGINE`
+- `ENABLE_INTERVENTION_WORKFLOW`
+- `ENABLE_GUARDIAN_PORTAL`
+- `NEXT_PUBLIC_ENABLE_GUARDIAN_PORTAL`
+- `ENABLE_GUARDIAN_LINKING`
+- `ENABLE_GUARDIAN_DASHBOARD`
+- `ENABLE_TEXTBOOK_COMPILER`
+- `ENABLE_AI_ASSIGNMENT_GENERATION`
 
 ## Related files
 
