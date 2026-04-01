@@ -20,6 +20,7 @@
  */
 
 import { NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
 
 export interface ApiErrorResponse {
   error: string;
@@ -67,7 +68,10 @@ export function handleApiError(err: unknown): NextResponse<ApiErrorResponse> {
         : typeof err === "object" && err !== null && "message" in err
         ? String((err as any).message)
         : String(err);
-    console.error("[API_ERROR]", msg);
+    logger.error("API handler error", {
+      errorMessage: msg,
+      status: typeof err === "object" && err !== null && "status" in err ? (err as any).status : 500,
+    });
   }
 
   // Auth errors thrown by requireUser / requireRole (carry a status property)

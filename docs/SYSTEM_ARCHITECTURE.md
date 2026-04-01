@@ -78,10 +78,26 @@ Implemented hardening in this branch:
 ### 4.3 AI Cost and Rate Controls
 
 Implemented controls:
-- shared role-aware in-memory rate limiting via [lib/ai/rateLimitGuard.ts](C:\Users\fasir\liberia-learn\lib\ai\rateLimitGuard.ts) using the existing [lib/rateLimit.ts](C:\Users\fasir\liberia-learn\lib\rateLimit.ts)
+- shared rate limiter abstraction in [lib/rateLimit.ts](C:\Users\fasir\liberia-learn\lib\rateLimit.ts) with an explicit in-memory instance-local fallback backend
+- role-aware AI limits applied through [lib/ai/rateLimitGuard.ts](C:\Users\fasir\liberia-learn\lib\ai\rateLimitGuard.ts)
 - per-request usage derivation in [lib/ai/interactionLog.ts](C:\Users\fasir\liberia-learn\lib\ai\interactionLog.ts)
 - persisted AI interaction records in `AiInteractionLog`
 - admin cost summary route in [app/api/admin/ai-costs/route.ts](C:\Users\fasir\liberia-learn\app\api\admin\ai-costs\route.ts)
+
+Current limitation:
+- no shared durable rate-limit store is configured in-repo, so production multi-instance enforcement still requires an external backing service to graduate beyond the fallback backend
+
+### 4.4 Logging and Error Monitoring
+
+Implemented observability paths:
+- structured request logging in [lib/logging/requestLogger.ts](C:\Users\fasir\liberia-learn\lib\logging\requestLogger.ts)
+- structured application logging in [lib/logger.ts](C:\Users\fasir\liberia-learn\lib\logger.ts)
+- API-safe error shaping in [lib/errors/apiErrorHandler.ts](C:\Users\fasir\liberia-learn\lib\errors\apiErrorHandler.ts)
+- Next.js Sentry registration in [instrumentation.ts](C:\Users\fasir\liberia-learn\instrumentation.ts) and [instrumentation-client.ts](C:\Users\fasir\liberia-learn\instrumentation-client.ts)
+- worker Sentry registration in [worker/sentry.ts](C:\Users\fasir\liberia-learn\worker\sentry.ts)
+
+Current limitation:
+- logs are emitted to stdout/stderr for collection by the platform runtime; the repo does not contain a configured external log sink or central log database writer
 
 ## 5. Curriculum Pipeline
 

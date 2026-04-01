@@ -40,6 +40,7 @@ export async function POST(req: NextRequest) {
       userId: user.id,
       role: user.role,
       endpoint: "/api/student/tutor",
+      schoolId: user.schoolId ?? undefined,
     });
     if (!rateLimit.allowed) {
       return NextResponse.json(

@@ -15,14 +15,25 @@ export function checkAiRateLimit(input: {
   userId: string;
   role: SessionUser["role"];
   endpoint: string;
+  schoolId?: string | null;
 }) {
   const max = AI_ROLE_LIMITS[input.role];
   if (!max) {
-    return { allowed: true, remaining: Number.POSITIVE_INFINITY, resetAt: Date.now() };
+    return {
+      allowed: true,
+      remaining: Number.POSITIVE_INFINITY,
+      resetAt: Date.now(),
+      limit: Number.POSITIVE_INFINITY,
+      backend: "memory" as const,
+      scope: "instance" as const,
+      namespace: "ai",
+    };
   }
 
-  return checkRateLimit(`ai:${input.role}:${input.userId}:${input.endpoint}`, {
+  const tenantKey = input.schoolId ? `${input.schoolId}:${input.userId}` : input.userId;
+  return checkRateLimit(`${input.role}:${tenantKey}:${input.endpoint}`, {
     windowMs: ONE_HOUR_MS,
     max,
+    namespace: "ai",
   });
 }

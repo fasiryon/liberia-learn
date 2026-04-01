@@ -2,16 +2,17 @@
  * __tests__/rateLimit.invites.test.ts
  *
  * Verifies that checkRateLimit behaves correctly for invite / auth routes.
- * These tests use the in-memory checkRateLimit implementation directly.
- * Each test uses a unique random key to avoid state leakage between tests.
+ * These tests use the shared rate limiter abstraction directly.
  */
 
-import { describe, it, expect } from "vitest";
-import { checkRateLimit } from "@/lib/rateLimit";
+import { describe, expect, it } from "vitest";
+import {
+  checkRateLimit,
+  getRateLimitHeaders,
+  getRateLimiterInfo,
+} from "@/lib/rateLimit";
 
-// ─── Unit tests for checkRateLimit ───────────────────────────────────────────
-
-describe("checkRateLimit — invite route protection", () => {
+describe("checkRateLimit - invite route protection", () => {
   it("allows the first request", () => {
     const key = `test:first:${Math.random()}`;
     const result = checkRateLimit(key, { windowMs: 60_000, max: 5 });
@@ -37,10 +38,10 @@ describe("checkRateLimit — invite route protection", () => {
     const key = `test:block:${Math.random()}`;
     const opts = { windowMs: 60_000, max: 2 };
 
-    checkRateLimit(key, opts); // 1
-    checkRateLimit(key, opts); // 2
+    checkRateLimit(key, opts);
+    checkRateLimit(key, opts);
 
-    const blocked = checkRateLimit(key, opts); // 3 — over limit
+    const blocked = checkRateLimit(key, opts);
     expect(blocked.allowed).toBe(false);
     expect(blocked.remaining).toBe(0);
   });
@@ -49,22 +50,22 @@ describe("checkRateLimit — invite route protection", () => {
     const key = `test:remaining:${Math.random()}`;
     const opts = { windowMs: 60_000, max: 5 };
 
-    checkRateLimit(key, opts); // 1 used → remaining 4
-    const second = checkRateLimit(key, opts); // 2 used → remaining 3
+    checkRateLimit(key, opts);
+    const second = checkRateLimit(key, opts);
     expect(second.remaining).toBe(3);
 
-    checkRateLimit(key, opts); // 3 used → remaining 2
-    checkRateLimit(key, opts); // 4 used → remaining 1
-    const fifth = checkRateLimit(key, opts); // 5 used → remaining 0
+    checkRateLimit(key, opts);
+    checkRateLimit(key, opts);
+    const fifth = checkRateLimit(key, opts);
     expect(fifth.remaining).toBe(0);
     expect(fifth.allowed).toBe(true);
   });
 
-  it("blocks call returns remaining=0 and resetAt in the future", () => {
+  it("blocked calls keep resetAt in the future", () => {
     const key = `test:future:${Math.random()}`;
     const opts = { windowMs: 60_000, max: 1 };
 
-    checkRateLimit(key, opts); // at max
+    checkRateLimit(key, opts);
     const blocked = checkRateLimit(key, opts);
 
     expect(blocked.allowed).toBe(false);
@@ -74,14 +75,14 @@ describe("checkRateLimit — invite route protection", () => {
 
   it("allows requests again after the window expires", async () => {
     const key = `test:window:${Math.random()}`;
-    const opts = { windowMs: 50, max: 1 }; // 50 ms window
+    const opts = { windowMs: 50, max: 1 };
 
-    checkRateLimit(key, opts); // 1 — at max
-    expect(checkRateLimit(key, opts).allowed).toBe(false); // blocked
+    checkRateLimit(key, opts);
+    expect(checkRateLimit(key, opts).allowed).toBe(false);
 
-    await new Promise((r) => setTimeout(r, 70)); // wait past window
+    await new Promise((resolve) => setTimeout(resolve, 70));
 
-    expect(checkRateLimit(key, opts).allowed).toBe(true); // window reset
+    expect(checkRateLimit(key, opts).allowed).toBe(true);
   });
 
   it("tracks different keys independently", () => {
@@ -89,22 +90,43 @@ describe("checkRateLimit — invite route protection", () => {
     const key1 = `test:independent:${Math.random()}`;
     const key2 = `test:independent:${Math.random()}`;
 
-    checkRateLimit(key1, opts); // key1 at max
-    expect(checkRateLimit(key1, opts).allowed).toBe(false); // key1 blocked
-    expect(checkRateLimit(key2, opts).allowed).toBe(true);  // key2 untouched
+    checkRateLimit(key1, opts);
+    expect(checkRateLimit(key1, opts).allowed).toBe(false);
+    expect(checkRateLimit(key2, opts).allowed).toBe(true);
   });
 });
 
-// ─── Invite-route-specific limit scenarios ────────────────────────────────────
-
-describe("checkRateLimit — configured limits match invite routes", () => {
+describe("checkRateLimit - configured limits match invite routes", () => {
   it("IP limit of 20/hour allows 20 calls and blocks the 21st", () => {
     const key = `invite:ip:${Math.random()}`;
     const opts = { windowMs: 60 * 60 * 1000, max: 20 };
 
-    for (let i = 0; i < 20; i++) {
+    for (let i = 0; i < 20; i += 1) {
       expect(checkRateLimit(key, opts).allowed).toBe(true);
     }
     expect(checkRateLimit(key, opts).allowed).toBe(false);
+  });
+
+  it("exposes the active backend honestly as instance-local memory fallback", () => {
+    expect(getRateLimiterInfo()).toMatchObject({
+      backend: "memory",
+      scope: "instance",
+      durable: false,
+      configuredSharedStore: false,
+    });
+  });
+
+  it("returns rate-limit headers for operators and clients", () => {
+    const key = `invite:headers:${Math.random()}`;
+    const opts = { windowMs: 60_000, max: 1 };
+
+    checkRateLimit(key, opts);
+    const blocked = checkRateLimit(key, opts);
+    const headers = getRateLimitHeaders(blocked) as Record<string, string>;
+
+    expect(headers["X-RateLimit-Limit"]).toBe("1");
+    expect(headers["X-RateLimit-Remaining"]).toBe("0");
+    expect(headers["X-RateLimit-Backend"]).toBe("memory");
+    expect(Number(headers["Retry-After"])).toBeGreaterThanOrEqual(0);
   });
 });

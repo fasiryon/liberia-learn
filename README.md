@@ -48,10 +48,15 @@ The current hardening pass includes:
 - grounded answer confidence, grounding score, and citations in [lib/ai/rag/groundedAnswerService.ts](C:\Users\fasir\liberia-learn\lib\ai\rag\groundedAnswerService.ts)
 - role-aware citation shaping and explainability in [lib/ai/trust.ts](C:\Users\fasir\liberia-learn\lib\ai\trust.ts)
 - tenant-safe in-memory caching in [lib/ai/cache.ts](C:\Users\fasir\liberia-learn\lib\ai\cache.ts)
-- role-aware hourly AI rate limiting through [lib/ai/rateLimitGuard.ts](C:\Users\fasir\liberia-learn\lib\ai\rateLimitGuard.ts) using [lib/rateLimit.ts](C:\Users\fasir\liberia-learn\lib\rateLimit.ts)
+- role-aware AI rate limiting through [lib/ai/rateLimitGuard.ts](C:\Users\fasir\liberia-learn\lib\ai\rateLimitGuard.ts) backed by the shared limiter abstraction in [lib/rateLimit.ts](C:\Users\fasir\liberia-learn\lib\rateLimit.ts)
 - AI usage and cost aggregation through `AiInteractionLog` and [app/api/admin/ai-costs/route.ts](C:\Users\fasir\liberia-learn\app\api\admin\ai-costs\route.ts)
 
 The trust layer is grounded in retrieved metadata and provider usage fields. It does not fabricate citations, confidence labels, or costs.
+
+Current operational reality:
+- the default rate limiter backend is an explicit in-memory instance-local fallback; no Redis, Upstash, or other shared durable backing is configured in this repo today
+- important admin and MOE routes emit structured request logs through [lib/logging/requestLogger.ts](C:\Users\fasir\liberia-learn\lib\logging\requestLogger.ts)
+- application and worker Sentry wiring is present through [instrumentation.ts](C:\Users\fasir\liberia-learn\instrumentation.ts), [instrumentation-client.ts](C:\Users\fasir\liberia-learn\instrumentation-client.ts), and [worker/sentry.ts](C:\Users\fasir\liberia-learn\worker\sentry.ts), but DSNs remain optional and unset in local builds by default
 
 ## Key Features
 
