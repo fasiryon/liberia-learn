@@ -3,22 +3,13 @@ import { NextResponse } from "next/server";
 import { requireRole } from "@/lib/auth";
 import { routedCompletion } from "@/lib/ai/routedCompletion";
 import { logAudit } from "@/lib/audit";
-
-const rateLimitMap = new Map<string, { count: number; resetAt: number }>();
-const RATE_LIMIT = 20;
-const WINDOW_MS  = 60_000;
-
-function checkRateLimit(key: string): boolean {
-  const now = Date.now();
-  const entry = rateLimitMap.get(key);
-  if (!entry || now > entry.resetAt) {
-    rateLimitMap.set(key, { count: 1, resetAt: now + WINDOW_MS });
-    return true;
-  }
-  if (entry.count >= RATE_LIMIT) return false;
-  entry.count++;
-  return true;
-}
+import {
+  checkRateLimit,
+  getRateLimitHeaders,
+  RATE_LIMIT_POLICIES,
+  rateLimitExceededResponse,
+} from "@/lib/rateLimit";
+import { logger } from "@/lib/logger";
 
 
 const difficultyDescriptions: Record<number, string> = {
@@ -94,12 +85,14 @@ function parsePlacementQuestion(content: string, expectedDifficulty: number): Pl
 export async function POST(req: Request) {
   try {
     const user = await requireRole("STUDENT");
+    const rateLimit = await checkRateLimit(user.id, {
+      windowMs: RATE_LIMIT_POLICIES.LEGACY_AI_CHAT.windowMs,
+      limit: RATE_LIMIT_POLICIES.LEGACY_AI_CHAT.limit,
+      namespace: "placement_question_generate",
+    });
 
-    if (!checkRateLimit(user.id)) {
-      return NextResponse.json(
-        { error: "Too many requests. Please wait." },
-        { status: 429 }
-      );
+    if (!rateLimit.allowed) {
+      return rateLimitExceededResponse(rateLimit);
     }
 
     const { difficulty, subject, previousAnswers } = await req.json();
@@ -175,9 +168,13 @@ Rules:
       },
     });
 
-    return NextResponse.json(questionData);
+    return NextResponse.json(questionData, { headers: getRateLimitHeaders(rateLimit) });
   } catch (error: any) {
-    console.error("Generate question error:", error);
+    logger.error("Placement question generation failed", {
+      route: "/api/placement/generate-question",
+      errorMessage: error?.message ?? String(error),
+      status: error?.status ?? 500,
+    });
     return NextResponse.json(
       { error: error.message || "Failed to generate question" },
       { status: error?.status ?? 500 }

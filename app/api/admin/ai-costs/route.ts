@@ -1,10 +1,12 @@
 import { NextResponse } from "next/server";
 import { requireRole } from "@/lib/auth";
 import { prisma } from "@/lib/db";
+import { withRequestLogging } from "@/lib/logging/requestLogger";
+import { logger } from "@/lib/logger";
 
 export const dynamic = "force-dynamic";
 
-export async function GET() {
+async function aiCostsGET() {
   try {
     const user = await requireRole("ADMIN");
     if (!user.schoolId && !user.isPlatformAdmin) {
@@ -49,9 +51,16 @@ export async function GET() {
       })),
     });
   } catch (error: any) {
+    logger.error("AI cost summary route failed", {
+      route: "/api/admin/ai-costs",
+      errorMessage: error?.message ?? "Failed to load AI cost summary",
+      status: error?.status ?? 500,
+    });
     return NextResponse.json(
       { error: error?.message ?? "Failed to load AI cost summary" },
       { status: error?.status ?? 500 }
     );
   }
 }
+
+export const GET = withRequestLogging("/api/admin/ai-costs", aiCostsGET);

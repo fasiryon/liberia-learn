@@ -55,7 +55,9 @@ export async function checkDatabase(): Promise<HealthCheckResult> {
 export async function checkPrismaClient(): Promise<HealthCheckResult> {
   const start = Date.now();
   try {
-    await import("@prisma/client");
+    if (!prisma || typeof prisma !== "object") {
+      throw new Error("Prisma client unavailable");
+    }
     return { name: "prisma_client", status: "ok", latencyMs: Date.now() - start };
   } catch (err: any) {
     return {

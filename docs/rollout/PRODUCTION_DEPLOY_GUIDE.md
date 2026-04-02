@@ -96,7 +96,7 @@ Set the following for **Production** environment (and optionally Preview):
 | Variable | Value |
 |----------|-------|
 | `RESEND_API_KEY` | Resend API key |
-| `RESEND_FROM_EMAIL` | `noreply@liberialearn.edu.lr` |
+| `EMAIL_FROM` | `LiberiaLearn <noreply@liberialearn.edu.lr>` |
 
 #### Required for SMS
 

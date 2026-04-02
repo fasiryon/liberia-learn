@@ -52,9 +52,9 @@ function makeReq(body: unknown = VALID_BODY) {
   }) as any;
 }
 
-beforeEach(() => {
+beforeEach(async () => {
   vi.clearAllMocks();
-  resetRateLimitStateForTests();
+  await resetRateLimitStateForTests();
   mockIsAiTeacherAssistEnabled.mockReturnValue(true);
   mockGetAiBudgetMonthlyCap.mockReturnValue(100);
   mockRequireRole.mockResolvedValue(VALID_TEACHER);
@@ -125,9 +125,10 @@ describe("POST /api/teacher/assist", () => {
     const blocked = await POST(makeReq());
 
     expect(blocked.status).toBe(429);
-    expect((await blocked.json()).error).toBe(
-      "Please wait before making another request"
-    );
+    expect(await blocked.json()).toMatchObject({
+      error: "Too many requests",
+      retryAfter: expect.any(Number),
+    });
   });
 
   it("returns 503 when the monthly AI budget cap is exceeded", async () => {

@@ -1,28 +1,36 @@
 import { checkRateLimit } from "@/lib/rateLimit";
 import type { SessionUser } from "@/lib/auth";
+import { RATE_LIMIT_POLICIES } from "@/lib/rateLimit";
 
-const ONE_HOUR_MS = 60 * 60 * 1000;
-
-const AI_ROLE_LIMITS: Partial<Record<SessionUser["role"], number>> = {
-  STUDENT: 20,
-  TEACHER: 50,
-  ADMIN: 100,
-  DISTRICT_ADMIN: 100,
-  MOE_OFFICIAL: 100,
-};
-
-export function checkAiRateLimit(input: {
+export async function checkAiRateLimit(input: {
   userId: string;
   role: SessionUser["role"];
   endpoint: string;
+  schoolId?: string | null;
 }) {
-  const max = AI_ROLE_LIMITS[input.role];
+  const max =
+    input.role === "STUDENT"
+      ? RATE_LIMIT_POLICIES.AI_HEAVY.student
+      : input.role === "TEACHER"
+      ? RATE_LIMIT_POLICIES.AI_HEAVY.teacher
+      : RATE_LIMIT_POLICIES.AI_HEAVY.admin;
   if (!max) {
-    return { allowed: true, remaining: Number.POSITIVE_INFINITY, resetAt: Date.now() };
+    return {
+      allowed: true,
+      remaining: Number.POSITIVE_INFINITY,
+      resetAt: Date.now(),
+      limit: Number.POSITIVE_INFINITY,
+      retryAfter: 0,
+      backend: "memory" as const,
+      scope: "instance" as const,
+      namespace: "ai",
+    };
   }
 
-  return checkRateLimit(`ai:${input.role}:${input.userId}:${input.endpoint}`, {
-    windowMs: ONE_HOUR_MS,
-    max,
+  const tenantKey = input.schoolId ? `${input.schoolId}:${input.userId}` : input.userId;
+  return checkRateLimit(`${input.role}:${tenantKey}:${input.endpoint}`, {
+    windowMs: RATE_LIMIT_POLICIES.AI_HEAVY.windowMs,
+    limit: max,
+    namespace: "ai",
   });
 }

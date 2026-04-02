@@ -6,7 +6,9 @@ const resend = process.env.RESEND_API_KEY
   : null;
 
 const FROM =
-  process.env.EMAIL_FROM ?? "LiberiaLearn <noreply@liberialearn.edu.lr>";
+  process.env.EMAIL_FROM ??
+  process.env.RESEND_FROM_EMAIL ??
+  "LiberiaLearn <noreply@liberialearn.edu.lr>";
 
 // ── Internal helpers ──
 

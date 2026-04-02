@@ -2,7 +2,23 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { TeacherNav } from "@/components/teacher/TeacherNav";
+
+type AssignmentRow = {
+  id: string;
+  title: string;
+  description: string;
+  classId: string;
+  className: string;
+  subject: string;
+  points: number;
+  dueAt: string | null;
+  createdAt: string;
+  submittedCount: number;
+  gradedCount: number;
+  studentCount: number;
+};
 
 type AssignmentSubmissionRow = {
   id: string;
@@ -26,7 +42,10 @@ type FormState = Record<
 >;
 
 export default function TeacherAssignmentsPage() {
+  const searchParams = useSearchParams();
+  const created = searchParams.get("created") === "1";
   const [submissions, setSubmissions] = useState<AssignmentSubmissionRow[]>([]);
+  const [assignments, setAssignments] = useState<AssignmentRow[]>([]);
   const [formState, setFormState] = useState<FormState>({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -43,6 +62,7 @@ export default function TeacherAssignmentsPage() {
       })
       .then((data) => {
         if (!active) return;
+        setAssignments((data.assignments ?? []) as AssignmentRow[]);
         const rows = (data.submissions ?? []) as AssignmentSubmissionRow[];
         setSubmissions(rows);
         setFormState(
@@ -154,6 +174,12 @@ export default function TeacherAssignmentsPage() {
 
         <TeacherNav />
 
+        {created ? (
+          <div className="rounded-3xl border border-emerald-500/20 bg-emerald-500/10 p-4 text-sm text-emerald-100">
+            Assignment created. Students can now open it from their assignment view, and submissions will appear here for grading.
+          </div>
+        ) : null}
+
         {loading ? (
           <div className="space-y-3">
             {Array.from({ length: 3 }).map((_, index) => (
@@ -168,20 +194,122 @@ export default function TeacherAssignmentsPage() {
             {error}
           </div>
         ) : submissions.length === 0 ? (
-          <div className="rounded-3xl border border-white/10 bg-slate-900/70 p-6 text-sm text-slate-300">
-            <div className="mx-auto h-20 w-20 rounded-3xl border border-dashed border-slate-700 bg-slate-950/70" />
-            <p className="mt-4">
-              No assignments yet. Create your first assignment to get started.
-            </p>
-            <Link
-              href="/teacher/assignments/new"
-              className="mt-4 inline-flex rounded-full bg-emerald-400 px-5 py-2 text-sm font-semibold text-slate-950"
-            >
-              Create Assignment
-            </Link>
+          <div className="space-y-6">
+            <section className="rounded-3xl border border-white/10 bg-slate-900/70 p-6">
+              <div className="flex flex-wrap items-center justify-between gap-3">
+                <div>
+                  <h2 className="text-lg font-semibold text-slate-100">Recent assignments</h2>
+                  <p className="mt-1 text-sm text-slate-400">
+                    Track what has been assigned even before submissions arrive.
+                  </p>
+                </div>
+                <Link
+                  href="/teacher/assignments/new"
+                  className="inline-flex rounded-full bg-emerald-400 px-5 py-2 text-sm font-semibold text-slate-950"
+                >
+                  Create Assignment
+                </Link>
+              </div>
+
+              {assignments.length === 0 ? (
+                <div className="rounded-3xl border border-dashed border-slate-700 bg-slate-950/60 p-6 text-sm text-slate-300">
+                  No assignments yet. Create your first assignment to get started.
+                </div>
+              ) : (
+                <div className="mt-5 grid gap-4 lg:grid-cols-2">
+                  {assignments.map((assignment) => (
+                    <section
+                      key={assignment.id}
+                      className="rounded-3xl border border-white/10 bg-slate-950/60 p-5"
+                    >
+                      <div className="flex items-start justify-between gap-3">
+                        <div>
+                          <h3 className="text-base font-semibold text-slate-100">{assignment.title}</h3>
+                          <p className="mt-1 text-sm text-slate-400">
+                            {assignment.className} · {assignment.subject.replace(/_/g, " ")}
+                          </p>
+                        </div>
+                        <span className="rounded-full border border-slate-700 px-3 py-1 text-xs text-slate-300">
+                          {assignment.points} pts
+                        </span>
+                      </div>
+                      {assignment.description ? (
+                        <p className="mt-3 line-clamp-3 text-sm text-slate-300">{assignment.description}</p>
+                      ) : null}
+                      <div className="mt-4 flex flex-wrap gap-3 text-xs text-slate-400">
+                        <span>Assigned {new Date(assignment.createdAt).toLocaleDateString("en-LR")}</span>
+                        <span>
+                          Due {assignment.dueAt ? new Date(assignment.dueAt).toLocaleString("en-LR") : "not set"}
+                        </span>
+                        <span>{assignment.submittedCount} submitted</span>
+                        <span>{assignment.gradedCount} graded</span>
+                      </div>
+                    </section>
+                  ))}
+                </div>
+              )}
+            </section>
+
+            <section className="rounded-3xl border border-white/10 bg-slate-900/70 p-6 text-sm text-slate-300">
+              No submissions need grading yet.
+            </section>
           </div>
         ) : (
-          <div className="space-y-4">
+          <div className="space-y-6">
+            <section className="rounded-3xl border border-white/10 bg-slate-900/70 p-6">
+              <div className="flex flex-wrap items-center justify-between gap-3">
+                <div>
+                  <h2 className="text-lg font-semibold text-slate-100">Recent assignments</h2>
+                  <p className="mt-1 text-sm text-slate-400">
+                    Review assignment coverage before submissions move into grading.
+                  </p>
+                </div>
+                <Link
+                  href="/teacher/assignments/new"
+                  className="inline-flex rounded-full bg-emerald-400 px-5 py-2 text-sm font-semibold text-slate-950"
+                >
+                  Create Assignment
+                </Link>
+              </div>
+
+              {assignments.length === 0 ? (
+                <p className="mt-5 text-sm text-slate-400">No assignments created yet.</p>
+              ) : (
+                <div className="mt-5 grid gap-4 lg:grid-cols-2">
+                  {assignments.map((assignment) => (
+                    <section
+                      key={assignment.id}
+                      className="rounded-3xl border border-white/10 bg-slate-950/60 p-5"
+                    >
+                      <div className="flex items-start justify-between gap-3">
+                        <div>
+                          <h3 className="text-base font-semibold text-slate-100">{assignment.title}</h3>
+                          <p className="mt-1 text-sm text-slate-400">
+                            {assignment.className} · {assignment.subject.replace(/_/g, " ")}
+                          </p>
+                        </div>
+                        <span className="rounded-full border border-slate-700 px-3 py-1 text-xs text-slate-300">
+                          {assignment.points} pts
+                        </span>
+                      </div>
+                      {assignment.description ? (
+                        <p className="mt-3 line-clamp-3 text-sm text-slate-300">{assignment.description}</p>
+                      ) : null}
+                      <div className="mt-4 flex flex-wrap gap-3 text-xs text-slate-400">
+                        <span>Assigned {new Date(assignment.createdAt).toLocaleDateString("en-LR")}</span>
+                        <span>
+                          Due {assignment.dueAt ? new Date(assignment.dueAt).toLocaleString("en-LR") : "not set"}
+                        </span>
+                        <span>{assignment.submittedCount} submitted</span>
+                        <span>{assignment.gradedCount} graded</span>
+                      </div>
+                    </section>
+                  ))}
+                </div>
+              )}
+            </section>
+
+            <div className="space-y-4">
             {submissions.map((submission) => {
               const state = formState[submission.id] ?? {
                 grade: "",
@@ -276,6 +404,7 @@ export default function TeacherAssignmentsPage() {
                 </section>
               );
             })}
+            </div>
           </div>
         )}
       </div>
