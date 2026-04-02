@@ -11,6 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       DATABASE_URL: "postgresql://postgres:postgres@localhost:5432/test"
+      DIRECT_URL: "postgresql://postgres:postgres@localhost:5432/test"
       NEXTAUTH_SECRET: "ci-secret-not-real"
       NEXTAUTH_URL: "http://localhost:3000"
       OPENAI_API_KEY: "sk-test"
