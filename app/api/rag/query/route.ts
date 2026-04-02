@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { answerGroundedQuestion } from "@/lib/ai/rag/groundedAnswerService";
 import { checkAiRateLimit } from "@/lib/ai/rateLimitGuard";
+import { getRateLimitHeaders, rateLimitExceededResponse } from "@/lib/rateLimit";
 import { getAssistantRoleConfig, resolveAllowedMode } from "@/lib/ai/rag/assistantAccess";
 import { resolveAssistantAudienceScope } from "@/lib/ai/rag/audienceScope";
 import { requireUser } from "@/lib/auth";
@@ -84,17 +85,14 @@ export async function POST(req: NextRequest) {
     }
 
     const user = await requireUser();
-    const rateLimit = checkAiRateLimit({
+    const rateLimit = await checkAiRateLimit({
       userId: user.id,
       role: user.role,
       endpoint: "/api/rag/query",
       schoolId: user.schoolId ?? undefined,
     });
     if (!rateLimit.allowed) {
-      return NextResponse.json(
-        { error: "Please wait before making another request" },
-        { status: 429 }
-      );
+      return rateLimitExceededResponse(rateLimit);
     }
     const roleConfig = getAssistantRoleConfig(user.role);
     if (!roleConfig) {
@@ -185,7 +183,7 @@ export async function POST(req: NextRequest) {
       },
     });
 
-    return NextResponse.json(result);
+    return NextResponse.json(result, { headers: getRateLimitHeaders(rateLimit) });
   } catch (error: any) {
     return NextResponse.json(
       { error: error?.message ?? "Failed to answer query" },

@@ -31,9 +31,9 @@ import { checkAiRateLimit } from "@/lib/ai/rateLimitGuard";
 import { POST as studentTutorPost } from "@/app/api/student/tutor/route";
 
 describe("AI rate limiting", () => {
-  beforeEach(() => {
+  beforeEach(async () => {
     vi.clearAllMocks();
-    resetRateLimitStateForTests();
+    await resetRateLimitStateForTests();
     mockRequireUser.mockResolvedValue({
       id: "student-rl-1",
       role: "STUDENT",
@@ -61,44 +61,44 @@ describe("AI rate limiting", () => {
     });
   });
 
-  it("enforces role-based hourly limits through the shared rate limiter", () => {
+  it("enforces role-based hourly limits through the shared rate limiter", async () => {
     for (let index = 0; index < 20; index += 1) {
       expect(
-        checkAiRateLimit({
+        (await checkAiRateLimit({
           userId: "student-helper",
           role: "STUDENT",
           endpoint: "/api/student/tutor",
-        }).allowed
+        })).allowed
       ).toBe(true);
     }
     expect(
-      checkAiRateLimit({
+      (await checkAiRateLimit({
         userId: "student-helper",
         role: "STUDENT",
         endpoint: "/api/student/tutor",
-      }).allowed
+      })).allowed
     ).toBe(false);
 
     expect(
-      checkAiRateLimit({
+      (await checkAiRateLimit({
         userId: "teacher-helper",
         role: "TEACHER",
         endpoint: "/api/teacher/assist",
-      }).allowed
+      })).allowed
     ).toBe(true);
     expect(
-      checkAiRateLimit({
+      (await checkAiRateLimit({
         userId: "admin-helper",
         role: "ADMIN",
         endpoint: "/api/admin/exams/generate",
-      }).allowed
+      })).allowed
     ).toBe(true);
     expect(
-      checkAiRateLimit({
+      (await checkAiRateLimit({
         userId: "district-helper",
         role: "DISTRICT_ADMIN",
         endpoint: "/api/rag/query",
-      }).allowed
+      })).allowed
     ).toBe(true);
   });
 
@@ -124,6 +124,9 @@ describe("AI rate limiting", () => {
 
     const blocked = await studentTutorPost(makeRequest());
     expect(blocked.status).toBe(429);
-    expect((await blocked.json()).error).toBe("Please wait before making another request");
+    expect(await blocked.json()).toMatchObject({
+      error: "Too many requests",
+      retryAfter: expect.any(Number),
+    });
   });
 });

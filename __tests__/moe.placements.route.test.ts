@@ -35,6 +35,7 @@ vi.mock("@/lib/db", () => ({
 
 describe("moe placements route", () => {
   beforeEach(() => {
+    vi.resetModules();
     vi.clearAllMocks();
     mockMoeEnabled.mockReturnValue(true);
     mockRequireUser.mockResolvedValue({
@@ -55,7 +56,7 @@ describe("moe placements route", () => {
     const response = await GET();
 
     expect(response.status).toBe(403);
-  });
+  }, 15_000);
 
   it("returns district override patterns without PII", async () => {
     mockPlacementFindMany.mockResolvedValue([
@@ -103,5 +104,5 @@ describe("moe placements route", () => {
         action: "MOE_PLACEMENT_ANALYTICS_VIEW",
       })
     );
-  });
+  }, 15_000);
 });

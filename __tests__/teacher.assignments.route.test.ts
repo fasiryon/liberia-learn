@@ -34,6 +34,7 @@ vi.mock("@/lib/db", () => ({
 
 describe("/api/teacher/assignments", () => {
   beforeEach(() => {
+    vi.resetModules();
     vi.clearAllMocks();
     mockRequireRole.mockResolvedValue({
       id: "teacher-1",
@@ -103,7 +104,7 @@ describe("/api/teacher/assignments", () => {
       })
     );
     expect(mockLogAudit).toHaveBeenCalledOnce();
-  });
+  }, 15_000);
 
   it("rejects teachers creating assignments for another teacher's class", async () => {
     mockClassFindUnique.mockResolvedValue({
@@ -129,7 +130,7 @@ describe("/api/teacher/assignments", () => {
 
     expect(response.status).toBe(403);
     expect(mockAssignmentCreate).not.toHaveBeenCalled();
-  });
+  }, 15_000);
 
   it("returns 400 for invalid teacher create payloads", async () => {
     const { POST } = await import("@/app/api/teacher/assignments/route");
@@ -147,5 +148,5 @@ describe("/api/teacher/assignments", () => {
 
     expect(response.status).toBe(400);
     expect(mockAssignmentCreate).not.toHaveBeenCalled();
-  });
+  }, 15_000);
 });

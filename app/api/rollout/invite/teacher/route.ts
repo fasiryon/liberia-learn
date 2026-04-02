@@ -7,7 +7,12 @@ import { logAudit } from "@/lib/audit";
 import { generateTokenPair } from "@/lib/tokens";
 import { sendTeacherInvite } from "@/lib/email";
 import { isEnrollmentInvitesEnabled } from "@/lib/serverFlags";
-import { checkRateLimit } from "@/lib/rateLimit";
+import {
+  checkRateLimit,
+  getRateLimitHeaders,
+  RATE_LIMIT_POLICIES,
+  rateLimitExceededResponse,
+} from "@/lib/rateLimit";
 
 function getClientIp(req: Request): string {
   const forwarded = req.headers.get("x-forwarded-for");
@@ -23,9 +28,13 @@ const Schema = z.object({
 
 export async function POST(req: Request) {
   const ip = getClientIp(req);
-  const rl = checkRateLimit(`rollout:teacher:ip:${ip}`, { windowMs: 60 * 60 * 1000, max: 20 });
+  const rl = await checkRateLimit(`rollout:teacher:ip:${ip}`, {
+    windowMs: RATE_LIMIT_POLICIES.INVITES.windowMs,
+    limit: RATE_LIMIT_POLICIES.INVITES.limit,
+    namespace: "invite",
+  });
   if (!rl.allowed) {
-    return NextResponse.json({ error: "Too many requests. Please try again later." }, { status: 429 });
+    return rateLimitExceededResponse(rl);
   }
 
   const traceId = crypto.randomUUID();
@@ -98,7 +107,7 @@ export async function POST(req: Request) {
       inviteUrl,
       expiresAt: invite.expiresAt,
       emailSent: emailResult.ok,
-    });
+    }, { headers: getRateLimitHeaders(rl) });
   } catch (err: any) {
     const status = err?.status ?? 500;
     return NextResponse.json(

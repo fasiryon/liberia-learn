@@ -2,7 +2,12 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import bcrypt from "bcryptjs";
 import { isAccountRecoveryEnabled } from "@/lib/serverFlags";
-import { checkRateLimit } from "@/lib/rateLimit";
+import {
+  checkRateLimit,
+  getRateLimitHeaders,
+  RATE_LIMIT_POLICIES,
+  rateLimitExceededResponse,
+} from "@/lib/rateLimit";
 import { logAudit } from "@/lib/audit";
 import { hashToken } from "@/lib/tokens";
 import crypto from "crypto";
@@ -33,15 +38,13 @@ export async function POST(req: Request) {
     }
 
     const ip = getClientIp(req);
-    const ipLimit = checkRateLimit(`reset:ip:${ip}`, {
-      windowMs: 60 * 60 * 1000,
-      max: 15,
+    const ipLimit = await checkRateLimit(`reset:ip:${ip}`, {
+      windowMs: RATE_LIMIT_POLICIES.AUTH.windowMs,
+      limit: RATE_LIMIT_POLICIES.AUTH.limit,
+      namespace: "auth",
     });
     if (!ipLimit.allowed) {
-      return NextResponse.json(
-        { error: "Too many requests. Please try again later." },
-        { status: 429 }
-      );
+      return rateLimitExceededResponse(ipLimit);
     }
 
     const tokenHash = hashToken(token);
@@ -113,7 +116,10 @@ export async function POST(req: Request) {
       ipAddress: ip,
     });
 
-    return NextResponse.json({ ok: true, message: "Password has been reset. You can now sign in." });
+    return NextResponse.json(
+      { ok: true, message: "Password has been reset. You can now sign in." },
+      { headers: getRateLimitHeaders(ipLimit) }
+    );
   } catch (err: any) {
     console.error("[reset-password]", err);
     return NextResponse.json({ error: "Internal error" }, { status: 500 });
