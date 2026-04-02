@@ -1,3 +1,4 @@
+import crypto from "crypto";
 import { NextResponse } from "next/server";
 import { requireUser } from "@/lib/auth";
 import { prisma } from "@/lib/db";
@@ -19,6 +20,8 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Token required" }, { status: 400 });
     }
 
+    // Compare hashes to avoid timing attacks on plain-text token lookup
+    const tokenHash = crypto.createHash("sha256").update(token).digest("hex");
     const record = await prisma.platformTransferToken.findUnique({
       where: { token },
     });
@@ -26,6 +29,13 @@ export async function POST(req: Request) {
     if (!record) {
       return NextResponse.json({ error: "Invalid token" }, { status: 404 });
     }
+
+    // Verify hash matches (guards against DB-level token exposure)
+    const storedHash = record.tokenHash ?? crypto.createHash("sha256").update(record.token).digest("hex");
+    if (storedHash !== tokenHash) {
+      return NextResponse.json({ error: "Invalid token" }, { status: 404 });
+    }
+
     if (record.usedAt) {
       return NextResponse.json({ error: "Token already used" }, { status: 400 });
     }
@@ -33,29 +43,33 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Token expired" }, { status: 400 });
     }
 
-    // Promote the accepting user
-    await prisma.user.update({
-      where: { id: user.id },
-      data: { isPlatformAdmin: true },
-    });
-
-    // Mark token as used
-    await prisma.platformTransferToken.update({
-      where: { token },
-      data: { usedAt: new Date(), usedBy: user.id },
-    });
-
-    // Optionally demote sender
-    if (demoteSender) {
-      // Ensure at least 2 platform admins remain after demote
-      const adminCount = await prisma.user.count({ where: { isPlatformAdmin: true } });
-      if (adminCount >= 2) {
-        await prisma.user.update({
-          where: { id: record.createdBy },
-          data: { isPlatformAdmin: false },
-        });
-      }
+    // Verify intended recipient if specified
+    if (record.intendedUserId && record.intendedUserId !== user.id) {
+      return NextResponse.json({ error: "Token not issued to this user" }, { status: 403 });
     }
+
+    // Wrap entire promote → mark-used → optional demote in a transaction
+    await prisma.$transaction(async (tx) => {
+      await tx.user.update({
+        where: { id: user.id },
+        data: { isPlatformAdmin: true },
+      });
+
+      await tx.platformTransferToken.update({
+        where: { token },
+        data: { usedAt: new Date(), usedBy: user.id },
+      });
+
+      if (demoteSender) {
+        const adminCount = await tx.user.count({ where: { isPlatformAdmin: true } });
+        if (adminCount >= 2) {
+          await tx.user.update({
+            where: { id: record.createdBy },
+            data: { isPlatformAdmin: false },
+          });
+        }
+      }
+    });
 
     await logAudit({
       userId: user.id,

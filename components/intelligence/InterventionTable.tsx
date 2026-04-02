@@ -45,7 +45,7 @@ export function InterventionTable({
 
   if (items.length === 0) {
     return (
-      <Card className="p-5">
+      <Card className="ll-empty p-5">
         <p className="text-sm text-slate-400">{emptyMessage}</p>
       </Card>
     );
@@ -54,8 +54,8 @@ export function InterventionTable({
   return (
     <div className="space-y-3">
       {items.map((item) => (
-        <Card key={item.id} className="p-4">
-          <div className="flex flex-wrap items-start justify-between gap-4">
+        <Card key={item.id} className="p-5">
+          <div className="flex flex-col gap-4 xl:flex-row xl:items-start xl:justify-between">
             <div className="space-y-2">
               <div className="flex flex-wrap items-center gap-2">
                 <span
@@ -70,10 +70,14 @@ export function InterventionTable({
                 ) : null}
               </div>
               <p className="text-sm text-slate-300">{item.reason}</p>
-              <p className="text-xs text-slate-500">
-                Confidence {Math.round(item.confidenceScore * 100)}% |{" "}
-                {item.workflowState ?? "Needs review"}
-              </p>
+              <div className="flex flex-wrap gap-2 text-xs">
+                <span className="rounded-full border border-slate-700 bg-slate-950/60 px-3 py-1 text-slate-300">
+                  Confidence {Math.round(item.confidenceScore * 100)}%
+                </span>
+                <span className="rounded-full border border-slate-700 bg-slate-950/60 px-3 py-1 text-slate-300">
+                  {item.workflowState ?? "Needs review"}
+                </span>
+              </div>
             </div>
 
             <div className="flex flex-wrap gap-2">
@@ -85,7 +89,7 @@ export function InterventionTable({
                     void onAction?.(item.id, "actioned");
                   })
                 }
-                className="rounded-full bg-emerald-500 px-3 py-1.5 text-xs font-semibold text-slate-950 disabled:opacity-50"
+                className="min-h-10 rounded-full bg-emerald-500 px-4 py-2 text-xs font-semibold text-slate-950 disabled:opacity-50"
               >
                 Mark actioned
               </button>
@@ -97,7 +101,7 @@ export function InterventionTable({
                     void onAction?.(item.id, "dismissed");
                   })
                 }
-                className="rounded-full border border-slate-700 px-3 py-1.5 text-xs font-semibold text-slate-200 disabled:opacity-50"
+                className="min-h-10 rounded-full border border-slate-700 px-4 py-2 text-xs font-semibold text-slate-200 disabled:opacity-50"
               >
                 Dismiss
               </button>

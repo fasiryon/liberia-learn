@@ -36,6 +36,8 @@ vi.mock("bcryptjs", () => ({
   default: { hash: mockHash },
 }));
 
+const mockTransaction = vi.hoisted(() => vi.fn());
+
 vi.mock("@/lib/db", () => ({
   prisma: {
     class: {
@@ -56,6 +58,7 @@ vi.mock("@/lib/db", () => ({
     enrollment: {
       create: mockEnrollmentCreate,
     },
+    $transaction: mockTransaction,
   },
 }));
 
@@ -92,6 +95,14 @@ describe("POST /api/admin/students", () => {
     mockStudentCreate.mockResolvedValue({ id: "student-1", currentGrade: 6 });
     mockEnrollmentCreate.mockResolvedValue({ id: "enrollment-1" });
     mockLogAudit.mockResolvedValue(undefined);
+    mockTransaction.mockImplementation(async (cb: any) => {
+      const tx = {
+        user: { create: mockUserCreate },
+        student: { create: mockStudentCreate },
+        enrollment: { create: mockEnrollmentCreate },
+      };
+      return cb(tx);
+    });
     vi.useFakeTimers();
     vi.setSystemTime(new Date("2026-03-13T12:00:00Z"));
   });

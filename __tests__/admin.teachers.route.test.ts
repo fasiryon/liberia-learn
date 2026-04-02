@@ -12,6 +12,7 @@ const mockGeneratePin = vi.hoisted(() => vi.fn());
 const mockNormalizePhone = vi.hoisted(() => vi.fn());
 const mockNormalizeLoginId = vi.hoisted(() => vi.fn());
 const mockSlugifyLoginSeed = vi.hoisted(() => vi.fn());
+const mockTransaction = vi.hoisted(() => vi.fn());
 
 vi.mock("@/lib/auth", () => ({ requireRole: mockRequireRole }));
 vi.mock("@/lib/db", () => ({
@@ -26,6 +27,7 @@ vi.mock("@/lib/db", () => ({
     teacherProfile: {
       update: mockTeacherProfileUpdate,
     },
+    $transaction: mockTransaction,
   },
 }));
 vi.mock("bcryptjs", () => ({ default: { hash: mockHash } }));
@@ -56,6 +58,16 @@ beforeEach(() => {
   mockSlugifyLoginSeed.mockImplementation((value: string) => value.toLowerCase().replace(/\s+/g, "-"));
   mockUserFindFirst.mockResolvedValue(null);
   mockUserFindUnique.mockResolvedValue(null);
+  mockTransaction.mockImplementation(async (cbOrArray: any) => {
+    if (typeof cbOrArray === "function") {
+      const tx = {
+        user: { update: mockUserUpdate },
+        teacherProfile: { update: mockTeacherProfileUpdate },
+      };
+      return cbOrArray(tx);
+    }
+    return Promise.all(cbOrArray);
+  });
 });
 
 describe("GET /api/admin/teachers", () => {

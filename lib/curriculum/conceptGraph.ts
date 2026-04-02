@@ -37,9 +37,16 @@ function makeNodes(
 const SUBJECT_CONCEPT_GRAPHS: Record<CanonicalSubjectCode, ConceptNode[]> = {
   MATH: makeNodes("MATH", [
     {
+      id: "math_readiness",
+      label: "Math Readiness and Prior Knowledge",
+      prerequisites: [],
+      nextConcepts: ["number_sense"],
+      keywords: ["math readiness"],
+    },
+    {
       id: "number_sense",
       label: "Number Sense and Place Value",
-      prerequisites: [],
+      prerequisites: ["math_readiness"],
       nextConcepts: ["operations"],
       keywords: ["number sense", "place value"],
     },
@@ -95,9 +102,16 @@ const SUBJECT_CONCEPT_GRAPHS: Record<CanonicalSubjectCode, ConceptNode[]> = {
   ]),
   LITERACY: makeNodes("LITERACY", [
     {
+      id: "literacy_readiness",
+      label: "Literacy Readiness and Prior Knowledge",
+      prerequisites: [],
+      nextConcepts: ["oral_language"],
+      keywords: ["literacy readiness"],
+    },
+    {
       id: "oral_language",
       label: "Listening and Speaking",
-      prerequisites: [],
+      prerequisites: ["literacy_readiness"],
       nextConcepts: ["reading_fluency"],
       keywords: ["listening", "speaking"],
     },
@@ -153,9 +167,16 @@ const SUBJECT_CONCEPT_GRAPHS: Record<CanonicalSubjectCode, ConceptNode[]> = {
   ]),
   SCIENCE: makeNodes("SCIENCE", [
     {
+      id: "science_readiness",
+      label: "Science Readiness and Prior Knowledge",
+      prerequisites: [],
+      nextConcepts: ["scientific_observation"],
+      keywords: ["science readiness"],
+    },
+    {
       id: "scientific_observation",
       label: "Observation and Scientific Thinking",
-      prerequisites: [],
+      prerequisites: ["science_readiness"],
       nextConcepts: ["living_things"],
       keywords: ["observation", "scientific thinking"],
     },
@@ -211,9 +232,16 @@ const SUBJECT_CONCEPT_GRAPHS: Record<CanonicalSubjectCode, ConceptNode[]> = {
   ]),
   SOCIAL_STUDIES: makeNodes("SOCIAL_STUDIES", [
     {
+      id: "social_studies_readiness",
+      label: "Social Studies Readiness and Prior Knowledge",
+      prerequisites: [],
+      nextConcepts: ["identity_community"],
+      keywords: ["social studies readiness"],
+    },
+    {
       id: "identity_community",
       label: "Self, Family, and Community",
-      prerequisites: [],
+      prerequisites: ["social_studies_readiness"],
       nextConcepts: ["maps_places"],
       keywords: ["self", "family", "community"],
     },
@@ -264,14 +292,21 @@ const SUBJECT_CONCEPT_GRAPHS: Record<CanonicalSubjectCode, ConceptNode[]> = {
       label: "Community Decision Making",
       prerequisites: ["citizenship_responsibilities", "work_trade"],
       nextConcepts: [],
-      keywords: ["decision making"],
+      keywords: ["decision making", "community decision making"],
     },
   ]),
   CIVICS: makeNodes("CIVICS", [
     {
+      id: "civics_readiness",
+      label: "Civics Readiness and Prior Knowledge",
+      prerequisites: [],
+      nextConcepts: ["rules_rights_duties"],
+      keywords: ["civics readiness"],
+    },
+    {
       id: "rules_rights_duties",
       label: "Rules, Rights, and Duties",
-      prerequisites: [],
+      prerequisites: ["civics_readiness"],
       nextConcepts: ["citizenship_participation"],
       keywords: ["rules", "rights", "duties"],
     },
@@ -375,9 +410,20 @@ export function inferConceptMetadata(input: LessonConceptInput): InferredConcept
   const graph = getSubjectConceptGraph(input.subject);
   const haystack = `${input.unitTitle} ${input.lessonTitle}`.toLowerCase();
   const matched =
-    graph.find((node) =>
-      node.keywords.some((keyword) => haystack.includes(keyword.toLowerCase()))
-    ) ?? graph[0];
+    graph
+      .map((node) => {
+        const keywordScore = node.keywords.reduce((score, keyword) => {
+          const normalizedKeyword = keyword.toLowerCase();
+          return haystack.includes(normalizedKeyword) ? Math.max(score, normalizedKeyword.length) : score;
+        }, 0);
+        const labelScore = haystack.includes(node.label.toLowerCase()) ? node.label.length + 5 : 0;
+        return {
+          node,
+          score: Math.max(keywordScore, labelScore),
+        };
+      })
+      .filter((entry) => entry.score > 0)
+      .sort((left, right) => right.score - left.score)[0]?.node ?? graph[0];
 
   const primaryConcept = matched?.id ?? `${input.subject.toLowerCase()}_foundations`;
   const prerequisites =

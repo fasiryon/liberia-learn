@@ -33,6 +33,7 @@ function IssueList({
   title: string;
   items: ReadinessIssueView[];
 }) {
+  const blocking = title.toLowerCase().includes("blocking");
   return (
     <Card className="p-5">
       <h2 className="text-lg font-semibold text-slate-100">{title}</h2>
@@ -41,7 +42,14 @@ function IssueList({
       ) : (
         <div className="mt-4 space-y-3">
           {items.map((item) => (
-            <div key={item.code} className="rounded-2xl bg-slate-950/60 p-4">
+            <div
+              key={item.code}
+              className={`rounded-2xl border p-4 ${
+                blocking
+                  ? "border-red-500/15 bg-red-500/8"
+                  : "border-amber-500/15 bg-amber-500/8"
+              }`}
+            >
               <p className="text-sm font-semibold text-slate-100">{item.label}</p>
               <p className="mt-1 text-sm text-slate-400">{item.detail}</p>
             </div>
@@ -84,10 +92,10 @@ export function PilotReadinessScreen({
         </p>
       </div>
 
-      <Card className="p-6">
+      <Card className="p-6 sm:p-7">
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div>
-            <p className="text-sm text-slate-400">Decision panel</p>
+            <p className="text-sm text-slate-400">Pilot summary</p>
             <h2 className="mt-2 text-3xl font-semibold text-slate-50">
               {readinessScore}/100
             </h2>
@@ -116,7 +124,7 @@ export function PilotReadinessScreen({
             />
           </div>
           <p className="mt-2 text-xs text-slate-500">
-            Readiness score combines activation, data flow, guardian readiness, and blocking issue state.
+            Readiness score combines activation, data flow, guardian readiness, and blocker state.
           </p>
         </div>
 
@@ -155,7 +163,7 @@ export function PilotReadinessScreen({
         <IssueList title="Non-blocking issues" items={nonBlockingIssues} />
       </div>
 
-      <Card className="p-5">
+      <Card className="p-5 sm:p-6">
         <h2 className="text-lg font-semibold text-slate-100">Checklist by readiness area</h2>
         <p className="mt-1 text-sm text-slate-400">
           Each section below shows its score, weight, and the specific checks that are still blocking or incomplete.

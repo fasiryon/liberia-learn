@@ -2,8 +2,8 @@
 import { TwilioSMSProvider } from "@/lib/sms/twilio-provider";
 
 export async function sendSMS(to: string, body: string): Promise<{ ok: boolean; sid?: string; error?: string }> {
-  const africaTalkingApiKey = process.env.AFRICA_TALKING_API_KEY?.trim();
-  const africaTalkingUsername = process.env.AFRICA_TALKING_USERNAME?.trim();
+  const africaTalkingApiKey = (process.env.AT_API_KEY ?? process.env.AFRICA_TALKING_API_KEY)?.trim();
+  const africaTalkingUsername = (process.env.AT_USERNAME ?? process.env.AFRICA_TALKING_USERNAME)?.trim();
 
   if (africaTalkingApiKey && africaTalkingUsername) {
     try {

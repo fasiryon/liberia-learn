@@ -42,11 +42,11 @@ export default function HomePage() {
   const demoModeEnabled = isDemoModeEnabled();
 
   return (
-    <main className="min-h-screen bg-slate-950 text-slate-50">
+    <main className="ll-page min-h-screen text-slate-50">
       <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_top,_rgba(16,185,129,0.18),_transparent_40%),radial-gradient(circle_at_80%_20%,_rgba(14,165,233,0.16),_transparent_32%),linear-gradient(180deg,_#020617_0%,_#020617_42%,_#0f172a_100%)]" />
 
       <header className="border-b border-white/5 bg-slate-950/70 backdrop-blur">
-        <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4">
+        <div className="ll-shell flex items-center justify-between gap-4 py-4">
           <div className="flex items-center gap-3">
             <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-emerald-400 text-lg font-black text-slate-950">
               L
@@ -61,12 +61,12 @@ export default function HomePage() {
             </div>
           </div>
 
-          <nav className="flex items-center gap-4 text-sm">
-            <Link href="/moe/login" className="text-slate-300 hover:text-white">
+          <nav className="flex items-center gap-3 text-sm">
+            <Link href="/moe/login" className="hidden text-slate-300 hover:text-white sm:inline">
               Ministry Officials
             </Link>
             <Link href="/login">
-              <span className="rounded-full bg-emerald-400 px-4 py-2 font-semibold text-slate-950 hover:bg-emerald-300">
+              <span className="inline-flex min-h-11 items-center rounded-full bg-emerald-400 px-5 py-2 font-semibold text-slate-950 hover:bg-emerald-300">
                 Log in
               </span>
             </Link>
@@ -74,8 +74,8 @@ export default function HomePage() {
         </div>
       </header>
 
-      <section className="mx-auto grid max-w-6xl gap-10 px-4 pb-16 pt-16 lg:grid-cols-[1.25fr_0.95fr] lg:items-center">
-        <div className="space-y-6">
+      <section className="ll-shell grid gap-8 pb-14 pt-12 lg:grid-cols-[1.25fr_0.95fr] lg:items-center lg:gap-10 lg:pt-16">
+        <div className="space-y-7">
           <span className="inline-flex items-center gap-2 rounded-full border border-emerald-400/20 bg-emerald-400/10 px-3 py-1 text-xs font-medium text-emerald-200">
             <span className="h-2 w-2 rounded-full bg-emerald-300" />
             Engineering ready for pilot review
@@ -92,21 +92,21 @@ export default function HomePage() {
             </p>
           </div>
 
-          <div className="flex flex-wrap gap-3">
+          <div className="flex flex-col gap-3 sm:flex-row">
             <Link href="/login">
-              <span className="inline-flex rounded-full bg-emerald-400 px-6 py-3 text-sm font-semibold text-slate-950 hover:bg-emerald-300">
+              <span className="inline-flex min-h-12 items-center justify-center rounded-full bg-emerald-400 px-6 py-3 text-sm font-semibold text-slate-950 hover:bg-emerald-300">
                 Launch platform
               </span>
             </Link>
             <Link href="/admin/pilot-readiness">
-              <span className="inline-flex rounded-full border border-slate-700 px-6 py-3 text-sm font-medium text-slate-100 hover:border-slate-500">
+              <span className="inline-flex min-h-12 items-center justify-center rounded-full border border-slate-700 px-6 py-3 text-sm font-medium text-slate-100 hover:border-slate-500">
                 Review pilot readiness
               </span>
             </Link>
           </div>
         </div>
 
-        <div className="rounded-[2rem] border border-white/10 bg-slate-900/70 p-6 shadow-2xl shadow-emerald-500/10 backdrop-blur">
+        <div className="rounded-[2rem] border border-white/10 bg-slate-900/70 p-6 shadow-2xl shadow-emerald-500/10 backdrop-blur sm:p-7">
           <div className="flex items-center justify-between gap-3">
             <div>
               <p className="text-xs uppercase tracking-[0.24em] text-slate-500">
@@ -139,7 +139,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="mx-auto max-w-6xl px-4 py-10">
+      <section className="ll-shell py-8 sm:py-10">
         <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
           {roleCards.map((card) => (
             <div
@@ -153,7 +153,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="mx-auto max-w-6xl px-4 py-10">
+      <section className="ll-shell py-8 sm:py-10">
         <div className="grid gap-6 rounded-[2rem] border border-white/8 bg-slate-900/55 p-6 lg:grid-cols-[1fr_0.95fr]">
           <div className="space-y-3">
             <p className="text-xs uppercase tracking-[0.24em] text-slate-500">
@@ -197,7 +197,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="mx-auto max-w-6xl px-4 pb-20 pt-6">
+      <section className="ll-shell pb-16 pt-4 sm:pb-20 sm:pt-6">
         <div className="rounded-[2rem] border border-white/8 bg-slate-900/55 p-6">
           <div className="flex flex-wrap items-start justify-between gap-4">
             <div>
@@ -220,7 +220,7 @@ export default function HomePage() {
           <div className="mt-6 grid gap-3 md:grid-cols-2 xl:grid-cols-4">
             {demoLinks.map((item) => (
               <Link key={item.label} href={item.href}>
-                <span className="flex h-full rounded-2xl border border-slate-700 bg-slate-950/60 px-4 py-4 text-sm font-medium text-slate-100 hover:border-emerald-400/50 hover:text-white">
+                <span className="flex h-full min-h-16 items-center rounded-2xl border border-slate-700 bg-slate-950/60 px-4 py-4 text-sm font-medium text-slate-100 hover:border-emerald-400/50 hover:text-white">
                   {item.label}
                 </span>
               </Link>

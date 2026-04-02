@@ -66,11 +66,11 @@ export function TeacherStudentIntelligenceScreen({
         </h1>
         <p className="mt-1 text-sm text-slate-400">
           {student.className ?? "Class not assigned"}
-          {student.currentGrade ? ` | Grade ${student.currentGrade}` : ""}
+          {student.currentGrade ? ` • Grade ${student.currentGrade}` : ""}
         </p>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-4">
+      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         <Card className="p-5">
           <p className="text-xs text-slate-500">Average score</p>
           <p className="mt-2 text-3xl font-semibold text-slate-100">
@@ -90,7 +90,7 @@ export function TeacherStudentIntelligenceScreen({
           </p>
         </Card>
         <Card className="p-5">
-          <p className="text-xs text-slate-500">Guardian support cue</p>
+          <p className="text-xs text-slate-500">Home support cue</p>
           <p className="mt-2 text-sm font-semibold text-slate-100">
             {hasGuardianSupportRecommendation
               ? "Guardian encouragement may help reinforce progress."
@@ -99,7 +99,7 @@ export function TeacherStudentIntelligenceScreen({
         </Card>
       </div>
 
-      <Card className="p-5">
+      <Card className="p-5 sm:p-6">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
             <h2 className="text-lg font-semibold text-slate-100">Needs attention now</h2>
@@ -123,15 +123,15 @@ export function TeacherStudentIntelligenceScreen({
 
       <section className="space-y-4">
         <div>
-          <h2 className="text-lg font-semibold text-slate-100">AI suggested actions</h2>
+          <h2 className="text-lg font-semibold text-slate-100">Suggested Support</h2>
           <p className="text-sm text-amber-300">
-            AI suggestions  teacher review required.
+            AI suggestions. Teacher review required.
           </p>
         </div>
         {suggestedActions.length === 0 ? (
-          <Card className="p-5">
+          <Card className="ll-empty p-5">
             <p className="text-sm text-slate-400">
-              No advisory actions are currently suggested from this student&apos;s signal set.
+              No support suggestions are currently surfaced for this student.
             </p>
           </Card>
         ) : (
@@ -151,13 +151,13 @@ export function TeacherStudentIntelligenceScreen({
 
       <section className="space-y-4">
         <div>
-          <h2 className="text-lg font-semibold text-slate-100">Concept focus</h2>
+          <h2 className="text-lg font-semibold text-slate-100">Priority concepts</h2>
           <p className="text-sm text-slate-400">
             Grouped from recent signals to support quick instructional follow-up.
           </p>
         </div>
         {groupedConcepts.length === 0 ? (
-          <Card className="p-5">
+          <Card className="ll-empty p-5">
             <p className="text-sm text-slate-400">
               No confusion history recorded for this student yet.
             </p>
@@ -180,7 +180,7 @@ export function TeacherStudentIntelligenceScreen({
       </section>
 
       <section className="space-y-4">
-        <h2 className="text-lg font-semibold text-slate-100">Confusion history</h2>
+        <h2 className="text-lg font-semibold text-slate-100">Recent learning patterns</h2>
         <ConfusionList
           items={confusions}
           emptyMessage="No confusion history recorded for this student yet."
@@ -189,7 +189,7 @@ export function TeacherStudentIntelligenceScreen({
 
       <section className="space-y-4">
         <h2 className="text-lg font-semibold text-slate-100">
-          Pending interventions
+          Support queue
         </h2>
         <InterventionTable
           items={interventions}
