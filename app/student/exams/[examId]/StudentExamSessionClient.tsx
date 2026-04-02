@@ -25,6 +25,12 @@ type SubmitPayload = {
   certCode?: string;
 };
 
+type PersistedExamSession = {
+  answers: number[];
+  currentIndex: number;
+  startedAt: string | null;
+};
+
 export default function StudentExamSessionClient({ examId }: { examId: string }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -34,51 +40,97 @@ export default function StudentExamSessionClient({ examId }: { examId: string })
   const [remainingSeconds, setRemainingSeconds] = useState(0);
   const [submitting, setSubmitting] = useState(false);
   const [result, setResult] = useState<SubmitPayload | null>(null);
+  const [startedAt, setStartedAt] = useState<string | null>(null);
   const flagsRef = useRef<Set<string>>(new Set());
-  const SESSION_KEY = `exam-session-${examId}`;
+  const restoredSessionRef = useRef<PersistedExamSession | null>(null);
+  const sessionKey = useMemo(() => `exam_session_${examId}`, [examId]);
 
-  // Restore in-progress answers from sessionStorage on mount
   useEffect(() => {
-    const saved = sessionStorage.getItem(SESSION_KEY);
-    if (saved) {
-      try {
-        const { answers: savedAnswers, currentIndex: savedIndex } = JSON.parse(saved);
-        if (Array.isArray(savedAnswers)) setAnswers(savedAnswers);
-        if (typeof savedIndex === "number") setCurrentIndex(savedIndex);
-      } catch { /* ignore corrupt state */ }
+    if (typeof window === "undefined") return;
+    const saved = window.sessionStorage.getItem(sessionKey);
+    if (!saved) return;
+
+    try {
+      const parsed = JSON.parse(saved) as Partial<PersistedExamSession>;
+      const restored: PersistedExamSession = {
+        answers: Array.isArray(parsed.answers)
+          ? parsed.answers.filter((value): value is number => typeof value === "number")
+          : [],
+        currentIndex:
+          typeof parsed.currentIndex === "number" && parsed.currentIndex >= 0
+            ? parsed.currentIndex
+            : 0,
+        startedAt: typeof parsed.startedAt === "string" ? parsed.startedAt : null,
+      };
+      restoredSessionRef.current = restored;
+      setAnswers(restored.answers);
+      setCurrentIndex(restored.currentIndex);
+      setStartedAt(restored.startedAt);
+    } catch {
+      window.sessionStorage.removeItem(sessionKey);
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [sessionKey]);
 
   useEffect(() => {
+    let cancelled = false;
+
     fetch(`/api/student/exams/${examId}/start`, { method: "POST" })
       .then(async (res) => {
         const data = await res.json();
         if (!res.ok) throw new Error(data.error ?? "Failed to start exam");
-        setSession(data);
-        // Only reset answers if nothing was restored from sessionStorage
-        setAnswers((prev) =>
-          prev.length === data.questions.length
-            ? prev
-            : Array.from({ length: data.questions.length }, () => -1)
+        if (cancelled) return;
+
+        const restored = restoredSessionRef.current;
+        const restoredAnswers =
+          restored?.answers?.length === data.questions.length ? restored.answers : null;
+        const restoredIndex =
+          restoredAnswers && typeof restored.currentIndex === "number"
+            ? Math.min(restored.currentIndex, Math.max(data.questions.length - 1, 0))
+            : 0;
+        const resolvedStartedAt = restored?.startedAt ?? new Date().toISOString();
+        const elapsedSeconds = Math.max(
+          0,
+          Math.floor((Date.now() - new Date(resolvedStartedAt).getTime()) / 1000)
         );
-        setRemainingSeconds((data.timeLimit ?? 60) * 60);
+
+        setSession(data);
+        setAnswers(
+          restoredAnswers ?? Array.from({ length: data.questions.length }, () => -1)
+        );
+        setCurrentIndex(restoredIndex);
+        setStartedAt(resolvedStartedAt);
+        setRemainingSeconds(Math.max((data.timeLimit ?? 60) * 60 - elapsedSeconds, 0));
       })
-      .catch((err) => setError(err.message))
-      .finally(() => setLoading(false));
+      .catch((err) => {
+        if (!cancelled) setError(err.message);
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
+
+    return () => {
+      cancelled = true;
+    };
   }, [examId]);
 
-  // Persist answers + currentIndex to sessionStorage on every change
   useEffect(() => {
-    if (answers.length > 0) {
-      sessionStorage.setItem(SESSION_KEY, JSON.stringify({ answers, currentIndex }));
-    }
-  }, [answers, currentIndex, SESSION_KEY]);
+    if (typeof window === "undefined" || !startedAt || result) return;
+    window.sessionStorage.setItem(
+      sessionKey,
+      JSON.stringify({ answers, currentIndex, startedAt })
+    );
+  }, [answers, currentIndex, startedAt, result, sessionKey]);
+
+  const clearPersistedSession = useCallback(() => {
+    if (typeof window === "undefined") return;
+    window.sessionStorage.removeItem(sessionKey);
+  }, [sessionKey]);
 
   const submitExam = useCallback(async () => {
     if (!session || submitting || result) return;
     setSubmitting(true);
     setError(null);
+
     try {
       const response = await fetch(`/api/student/exams/${examId}/submit`, {
         method: "POST",
@@ -92,21 +144,28 @@ export default function StudentExamSessionClient({ examId }: { examId: string })
       const data = await response.json();
       if (!response.ok) throw new Error(data.error ?? "Failed to submit exam");
       setResult(data);
-      sessionStorage.removeItem(SESSION_KEY);
+      clearPersistedSession();
     } catch (err: any) {
       console.error("[STUDENT_EXAM_SUBMIT] Failed", err);
       setError(err.message ?? "Failed to submit exam");
     } finally {
       setSubmitting(false);
     }
-  }, [session, submitting, result, examId, answers, SESSION_KEY]);
+  }, [answers, clearPersistedSession, examId, result, session, submitting]);
 
   useEffect(() => {
     if (!session || result) return;
+    if (remainingSeconds <= 0) {
+      clearPersistedSession();
+      void submitExam();
+      return;
+    }
+
     const timer = window.setInterval(() => {
       setRemainingSeconds((prev) => {
         if (prev <= 1) {
           window.clearInterval(timer);
+          clearPersistedSession();
           void submitExam();
           return 0;
         }
@@ -115,7 +174,7 @@ export default function StudentExamSessionClient({ examId }: { examId: string })
     }, 1000);
 
     return () => window.clearInterval(timer);
-  }, [session, result, submitExam]);
+  }, [clearPersistedSession, remainingSeconds, result, session, submitExam]);
 
   useEffect(() => {
     const onVisibility = () => {
@@ -159,12 +218,30 @@ export default function StudentExamSessionClient({ examId }: { examId: string })
       <main className="ll-page min-h-screen px-4 py-8 text-slate-50">
         <div className="ll-shell max-w-3xl rounded-3xl border border-white/10 bg-slate-900/70 p-8 space-y-4">
           <h1 className="text-3xl font-semibold">{result.passed ? "Exam Passed" : "Exam Submitted"}</h1>
-          <p className="text-lg text-slate-200">Score: {scorePct}%</p>
-          <p className={`text-sm ${result.passed ? "text-emerald-300" : "text-amber-300"}`}>{result.passed ? "You earned a certification." : "You did not reach the passing score this time."}</p>
-          {result.certCode ? <div className="rounded-2xl border border-emerald-400/30 bg-emerald-500/10 p-4 text-sm">Certificate code: <span className="font-semibold text-emerald-200">{result.certCode}</span></div> : null}
+          <p className="text-lg text-slate-100">Score: {scorePct}%</p>
+          <p className={`text-sm ${result.passed ? "text-emerald-200" : "text-amber-200"}`}>
+            {result.passed
+              ? "You earned a certification."
+              : "You did not reach the passing score this time."}
+          </p>
+          {result.certCode ? (
+            <div className="rounded-2xl border border-emerald-400/30 bg-emerald-500/10 p-4 text-sm text-slate-100">
+              Certificate code: <span className="font-semibold text-emerald-100">{result.certCode}</span>
+            </div>
+          ) : null}
           <div className="flex flex-wrap gap-3">
-            <Link href="/student/exams" className="inline-flex min-h-11 items-center rounded-2xl border border-white/10 px-4 py-2 text-sm">Back to Exams</Link>
-            <Link href="/student/certifications" className="inline-flex min-h-11 items-center rounded-2xl bg-emerald-500 px-4 py-2 text-sm font-semibold text-slate-950">View Certifications</Link>
+            <Link
+              href="/student/exams"
+              className="inline-flex min-h-11 min-w-11 items-center rounded-2xl border border-white/10 px-4 py-2 text-sm text-slate-100"
+            >
+              Back to Exams
+            </Link>
+            <Link
+              href="/student/certifications"
+              className="inline-flex min-h-11 min-w-11 items-center rounded-2xl bg-emerald-500 px-4 py-2 text-sm font-semibold text-slate-950"
+            >
+              View Certifications
+            </Link>
           </div>
         </div>
       </main>
@@ -178,24 +255,30 @@ export default function StudentExamSessionClient({ examId }: { examId: string })
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div>
               <p className="text-xs uppercase tracking-[0.2em] text-emerald-300">Exam Session</p>
-              <h1 className="mt-2 text-2xl font-semibold">{session?.title}</h1>
+              <h1 className="mt-2 text-2xl font-semibold text-white">{session?.title}</h1>
             </div>
-            <div className="rounded-2xl border border-amber-400/30 bg-amber-500/10 px-4 py-2 text-sm text-amber-200">
+            <div className="rounded-2xl border border-amber-400/30 bg-amber-500/10 px-4 py-2 text-sm text-amber-100">
               Time left: {minutes}:{seconds.toString().padStart(2, "0")}
             </div>
           </div>
           <div className="mt-4 h-2 rounded-full bg-white/10">
             <div className="h-2 rounded-full bg-emerald-400" style={{ width: `${progress}%` }} />
           </div>
-          <p className="mt-3 text-sm text-slate-400">Question {currentIndex + 1} of {session?.questions.length}</p>
+          <p className="mt-3 text-sm text-slate-200">
+            Question {currentIndex + 1} of {session?.questions.length}
+          </p>
         </div>
 
-        {error ? <div className="rounded-3xl border border-red-500/20 bg-red-500/10 p-4 text-sm text-red-200">{error}</div> : null}
+        {error ? (
+          <div className="rounded-3xl border border-red-500/20 bg-red-500/10 p-4 text-sm text-red-100">
+            {error}
+          </div>
+        ) : null}
 
         {question ? (
           <div className="rounded-3xl border border-white/10 bg-slate-900/70 p-6 space-y-4">
             <div className="rounded-2xl border border-slate-800 bg-slate-950/55 p-4">
-              <p className="text-lg font-medium leading-8">{question.prompt}</p>
+              <p className="text-lg font-medium leading-8 text-slate-50">{question.prompt}</p>
             </div>
             <div className="space-y-3">
               {question.options.map((option, optionIndex) => (
@@ -209,10 +292,10 @@ export default function StudentExamSessionClient({ examId }: { examId: string })
                       return next;
                     });
                   }}
-                  className={`min-h-14 w-full rounded-2xl border px-4 py-3 text-left text-sm ${
+                  className={`min-h-11 min-w-11 w-full rounded-2xl border px-4 py-3 text-left text-sm ${
                     answers[currentIndex] === optionIndex
                       ? "border-emerald-400/40 bg-emerald-500/10 text-emerald-100"
-                      : "border-white/10 bg-white/5 text-slate-200"
+                      : "border-white/10 bg-white/5 text-slate-100"
                   }`}
                 >
                   {option}
@@ -224,7 +307,7 @@ export default function StudentExamSessionClient({ examId }: { examId: string })
                 type="button"
                 onClick={() => setCurrentIndex((prev) => Math.max(0, prev - 1))}
                 disabled={currentIndex === 0}
-                className="min-h-11 rounded-2xl border border-white/10 px-4 py-2 text-sm disabled:opacity-40"
+                className="min-h-11 min-w-11 rounded-2xl border border-white/10 px-4 py-2 text-sm text-slate-100 disabled:opacity-40"
               >
                 Previous
               </button>
@@ -232,8 +315,12 @@ export default function StudentExamSessionClient({ examId }: { examId: string })
                 {currentIndex < (session?.questions.length ?? 0) - 1 ? (
                   <button
                     type="button"
-                    onClick={() => setCurrentIndex((prev) => Math.min((session?.questions.length ?? 1) - 1, prev + 1))}
-                    className="min-h-11 rounded-2xl bg-cyan-500 px-4 py-2 text-sm font-semibold text-slate-950"
+                    onClick={() =>
+                      setCurrentIndex((prev) =>
+                        Math.min((session?.questions.length ?? 1) - 1, prev + 1)
+                      )
+                    }
+                    className="min-h-11 min-w-11 rounded-2xl bg-cyan-500 px-4 py-2 text-sm font-semibold text-slate-950"
                   >
                     Next
                   </button>
@@ -242,7 +329,7 @@ export default function StudentExamSessionClient({ examId }: { examId: string })
                   type="button"
                   disabled={!canSubmit || submitting}
                   onClick={() => void submitExam()}
-                  className="min-h-11 rounded-2xl bg-emerald-500 px-4 py-2 text-sm font-semibold text-slate-950 disabled:opacity-50"
+                  className="min-h-11 min-w-11 rounded-2xl bg-emerald-500 px-4 py-2 text-sm font-semibold text-slate-950 disabled:opacity-50"
                 >
                   {submitting ? "Submitting..." : "Submit Exam"}
                 </button>

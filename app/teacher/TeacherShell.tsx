@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { GuidedOnboarding } from "@/components/GuidedOnboarding";
 import { AccessibilityToggle } from "@/components/AccessibilityToggle";
+import { TeacherWelcomeGate } from "@/app/teacher/TeacherWelcomeGate";
 
 // Flags are inlined at build time by Next.js for client bundles.
 const ONBOARDING_ENABLED =
@@ -17,12 +18,19 @@ const A11Y_ENABLED =
  * the GuidedOnboarding modal overlay to every teacher-facing page.
  * The server-rendered page content is passed as children unchanged.
  */
-export function TeacherShell({ children }: { children: React.ReactNode }) {
+export function TeacherShell({
+  children,
+  needsWelcome,
+}: {
+  children: React.ReactNode;
+  needsWelcome: boolean;
+}) {
   // Incrementing reopenKey triggers the guide to reset and reopen
   const [reopenKey, setReopenKey] = useState(0);
 
   return (
     <>
+      <TeacherWelcomeGate needsWelcome={needsWelcome} />
       {children}
 
       {/* ── Floating toolbar (bottom-right) ─────────────────────────── */}

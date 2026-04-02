@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { placementBandStyles, placementReviewStatusStyles } from "@/lib/placement";
+import HelpTooltip from "@/components/ui/HelpTooltip";
 
 type PlacementListItem = {
   id: string;
@@ -101,7 +102,15 @@ export default function TeacherPlacementsPage() {
                     <th className="px-4 py-3">Grade</th>
                     <th className="px-4 py-3">Test Date</th>
                     <th className="px-4 py-3">AI Recommendation</th>
-                    <th className="px-4 py-3">Band</th>
+                    <th className="px-4 py-3">
+                      <span className="inline-flex items-center gap-2">
+                        Placement Band
+                        <HelpTooltip
+                          text="The grade level where this student's knowledge was assessed to begin"
+                          position="right"
+                        />
+                      </span>
+                    </th>
                     <th className="px-4 py-3">Status</th>
                     <th className="px-4 py-3">Action</th>
                   </tr>

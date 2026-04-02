@@ -71,7 +71,9 @@ export default function AdaptivePracticeClient() {
         }
       } catch (fetchError: any) {
         if (!cancelled) {
-          setError(fetchError?.message ?? "Practice unavailable offline - gaps will load when reconnected");
+          setError(
+            fetchError?.message ?? "Practice unavailable offline - gaps will load when reconnected"
+          );
         }
       } finally {
         if (!cancelled) {
@@ -114,14 +116,18 @@ export default function AdaptivePracticeClient() {
 
       if (!response.ok) {
         const payload = await response.json().catch(() => null);
-        throw new Error(payload?.error ?? "Practice unavailable offline - gaps will load when reconnected");
+        throw new Error(
+          payload?.error ?? "Practice unavailable offline - gaps will load when reconnected"
+        );
       }
 
       const payload = await response.json();
       setPractice(payload.practice ?? null);
     } catch (practiceError: any) {
       console.error("[student.adaptive.startPractice]", practiceError);
-      setError(practiceError?.message ?? "Practice unavailable offline - gaps will load when reconnected");
+      setError(
+        practiceError?.message ?? "Practice unavailable offline - gaps will load when reconnected"
+      );
     }
   }
 
@@ -154,14 +160,18 @@ export default function AdaptivePracticeClient() {
 
       if (!response.ok) {
         const payload = await response.json().catch(() => null);
-        throw new Error(payload?.error ?? "Practice unavailable offline - gaps will load when reconnected");
+        throw new Error(
+          payload?.error ?? "Practice unavailable offline - gaps will load when reconnected"
+        );
       }
 
       const payload = await response.json();
       setResult(payload);
     } catch (submitError: any) {
       console.error("[student.adaptive.submit]", submitError);
-      setError(submitError?.message ?? "Practice unavailable offline - gaps will load when reconnected");
+      setError(
+        submitError?.message ?? "Practice unavailable offline - gaps will load when reconnected"
+      );
     } finally {
       setSubmitting(false);
     }
@@ -171,15 +181,17 @@ export default function AdaptivePracticeClient() {
     <div className="ll-page min-h-screen px-4 py-8 text-slate-50">
       <div className="ll-shell max-w-4xl space-y-6">
         <header className="space-y-2">
-          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-emerald-300">Adaptive Learning</p>
+          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-emerald-300">
+            Adaptive Learning
+          </p>
           <h1 className="text-3xl font-bold">My Practice</h1>
-          <p className="text-sm text-slate-400">
+          <p className="text-sm text-slate-200">
             Targeted practice for your weakest strands, updated from your latest results.
           </p>
         </header>
 
         {error && (
-          <div className="rounded-2xl border border-amber-500/30 bg-amber-500/10 px-4 py-3 text-sm text-amber-200">
+          <div className="rounded-2xl border border-amber-500/30 bg-amber-500/10 px-4 py-3 text-sm text-amber-100">
             {error}
           </div>
         )}
@@ -194,19 +206,19 @@ export default function AdaptivePracticeClient() {
           <section className="rounded-3xl border border-white/10 bg-slate-900/70 p-6">
             <div className="mb-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
               <div>
-                <p className="text-xs uppercase tracking-wide text-slate-400">
-                  {activeGap?.subject} • {practice.difficultyTier}
+                <p className="text-xs uppercase tracking-wide text-slate-200">
+                  {activeGap?.subject} - {practice.difficultyTier}
                 </p>
                 <h2 className="text-xl font-semibold text-slate-100">{practice.strand}</h2>
               </div>
-              <div className="rounded-full bg-slate-950/60 px-3 py-1 text-xs text-emerald-300">
+              <div className="rounded-full bg-slate-950/60 px-3 py-1 text-xs text-emerald-200">
                 Question {questionIndex + 1} / {practice.questions.length}
               </div>
             </div>
 
             <div className="space-y-4">
               <div className="rounded-2xl border border-slate-800 bg-slate-950/55 p-4">
-                <p className="text-lg leading-8 text-slate-100">{currentQuestion.prompt}</p>
+                <p className="text-lg leading-8 text-slate-50">{currentQuestion.prompt}</p>
               </div>
               <div className="grid gap-3">
                 {currentQuestion.options.map((option, optionIndex) => (
@@ -215,7 +227,7 @@ export default function AdaptivePracticeClient() {
                     type="button"
                     onClick={() => selectAnswer(optionIndex)}
                     disabled={submitting}
-                    className="min-h-14 rounded-2xl border border-white/10 bg-slate-950/70 px-4 py-3 text-left text-sm hover:border-emerald-500/40 hover:bg-slate-900 disabled:cursor-not-allowed disabled:opacity-60"
+                    className="min-h-11 min-w-11 rounded-2xl border border-white/10 bg-slate-950/70 px-4 py-3 text-left text-sm text-slate-100 hover:border-emerald-500/40 hover:bg-slate-900 disabled:cursor-not-allowed disabled:opacity-60"
                   >
                     {option}
                   </button>
@@ -224,37 +236,44 @@ export default function AdaptivePracticeClient() {
             </div>
 
             {result && (
-              <div className="mt-6 rounded-2xl border border-emerald-500/30 bg-emerald-500/10 px-4 py-3 text-sm">
-                Score {formatPercent(result.score)}. {result.passed ? "Passed" : "Needs more practice"}. Next tier:{" "}
-                {result.nextTier}.
+              <div className="mt-6 rounded-2xl border border-emerald-500/30 bg-emerald-500/10 px-4 py-3 text-sm text-slate-100">
+                Score {formatPercent(result.score)}.{" "}
+                {result.passed ? "Passed" : "Needs more practice"}. Next tier: {result.nextTier}.
               </div>
             )}
           </section>
         ) : (
           <section className="grid gap-4 md:grid-cols-2">
             {gaps.length === 0 ? (
-              <div className="ll-empty rounded-3xl border border-white/10 bg-slate-900/70 p-6 text-sm text-slate-400">
+              <div className="ll-empty rounded-3xl border border-white/10 bg-slate-900/70 p-6 text-sm text-slate-200">
                 No active mastery gaps yet.
               </div>
             ) : (
               gaps.map((gap) => (
-                <article key={`${gap.subject}-${gap.strand}`} className="rounded-3xl border border-white/10 bg-slate-900/70 p-6">
-                  <p className="text-xs uppercase tracking-wide text-slate-400">{gap.subject}</p>
+                <article
+                  key={`${gap.subject}-${gap.strand}`}
+                  className="rounded-3xl border border-white/10 bg-slate-900/70 p-6"
+                >
+                  <p className="text-xs uppercase tracking-wide text-slate-200">{gap.subject}</p>
                   <h2 className="mt-2 text-xl font-semibold text-slate-100">{gap.strand}</h2>
                   <div className="mt-4 grid grid-cols-2 gap-3 text-sm">
                     <div className="rounded-2xl bg-slate-950/60 p-3">
-                      <p className="text-xs text-slate-500">Average score</p>
-                      <p className="mt-1 text-lg font-semibold text-amber-300">{formatPercent(gap.averageScore)}</p>
+                      <p className="text-xs text-slate-300">Average score</p>
+                      <p className="mt-1 text-lg font-semibold text-amber-300">
+                        {formatPercent(gap.averageScore)}
+                      </p>
                     </div>
                     <div className="rounded-2xl bg-slate-950/60 p-3">
-                      <p className="text-xs text-slate-500">Difficulty tier</p>
-                      <p className="mt-1 text-lg font-semibold text-cyan-300">{inferTier(gap.averageScore)}</p>
+                      <p className="text-xs text-slate-300">Difficulty tier</p>
+                      <p className="mt-1 text-lg font-semibold text-cyan-300">
+                        {inferTier(gap.averageScore)}
+                      </p>
                     </div>
                   </div>
                   <button
                     type="button"
                     onClick={() => startPractice(gap)}
-                    className="mt-5 min-h-12 w-full rounded-2xl bg-emerald-400 px-4 py-3 text-sm font-semibold text-slate-950 hover:bg-emerald-300"
+                    className="mt-5 min-h-11 min-w-11 w-full rounded-2xl bg-emerald-400 px-4 py-3 text-sm font-semibold text-slate-950 hover:bg-emerald-300"
                   >
                     Start Practice
                   </button>

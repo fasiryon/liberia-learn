@@ -169,7 +169,16 @@ export default function TeacherAssignmentsPage() {
           </div>
         ) : submissions.length === 0 ? (
           <div className="rounded-3xl border border-white/10 bg-slate-900/70 p-6 text-sm text-slate-300">
-            No submitted assignments are waiting for grading.
+            <div className="mx-auto h-20 w-20 rounded-3xl border border-dashed border-slate-700 bg-slate-950/70" />
+            <p className="mt-4">
+              No assignments yet. Create your first assignment to get started.
+            </p>
+            <Link
+              href="/teacher/assignments/new"
+              className="mt-4 inline-flex rounded-full bg-emerald-400 px-5 py-2 text-sm font-semibold text-slate-950"
+            >
+              Create Assignment
+            </Link>
           </div>
         ) : (
           <div className="space-y-4">
