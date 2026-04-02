@@ -17,6 +17,10 @@ jobs:
       ECR_REPOSITORY: liberialearn-web
       SENTRY_ORG: liberialearn
       SENTRY_PROJECT: liberialearn-web
+      DATABASE_URL: "postgresql://postgres:postgres@localhost:5432/build"
+      DIRECT_URL: "postgresql://postgres:postgres@localhost:5432/build"
+      NEXTAUTH_SECRET: "ecs-build-secret-not-real"
+      NEXTAUTH_URL: "https://liberialearn.gov.lr"
     steps:
       - uses: actions/checkout@v4
       - id: aws-creds
@@ -31,6 +35,10 @@ jobs:
           SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
         run: |
           docker build \
+            --build-arg DATABASE_URL="$DATABASE_URL" \
+            --build-arg DIRECT_URL="$DIRECT_URL" \
+            --build-arg NEXTAUTH_SECRET="$NEXTAUTH_SECRET" \
+            --build-arg NEXTAUTH_URL="$NEXTAUTH_URL" \
             --build-arg SENTRY_AUTH_TOKEN="$SENTRY_AUTH_TOKEN" \
             --build-arg SENTRY_ORG="$SENTRY_ORG" \
             --build-arg SENTRY_PROJECT="$SENTRY_PROJECT" \
