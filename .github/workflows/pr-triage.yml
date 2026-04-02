@@ -1,4 +1,4 @@
-name: PR Triage
+﻿name: PR Triage
 
 on:
   schedule:
@@ -185,18 +185,18 @@ jobs:
 
               const comment = `
 <!-- pr-triage-comment -->
-### 🤖 PR Triage
+### PR Triage
 
 - Age: ${ageDays} days
 - Files changed: ${files.length}
-- Overlap with recent main: ${(overlapRatio*100).toFixed(0)}%
+- Overlap with recent main: ${(overlapRatio * 100).toFixed(0)}%
 - Merge state: ${mergeState}
 - Failing checks: ${failing}
 
 Labels:
 ${labels.join(', ') || 'none'}
 
-⚠️ "likely-superseded" means main probably already changed the same files.
+Warning: "likely-superseded" means main probably already changed the same files.
               `;
 
               await github.rest.issues.createComment({
@@ -206,3 +206,4 @@ ${labels.join(', ') || 'none'}
                 body: comment
               });
             }
+
