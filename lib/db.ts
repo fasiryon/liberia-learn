@@ -1,6 +1,7 @@
 // lib/db.ts  —  canonical PrismaClient singleton
 import { PrismaClient } from "@prisma/client";
 import { isAuditImmutabilityEnabled } from "@/lib/serverFlags";
+import { logger } from "@/lib/logger";
 
 const globalForPrisma = globalThis as unknown as {
   prisma: PrismaClient | undefined;
@@ -26,7 +27,7 @@ type AuditMutationAction = "delete" | "deleteMany" | "update" | "updateMany";
 
 function assertAuditLogMutationAllowed(action: AuditMutationAction) {
   if (isAuditImmutabilityEnabled()) {
-    console.error("[AUDIT] blocked AuditLog mutation", { action });
+    logger.warn("[AUDIT] blocked AuditLog mutation", { action });
     throw new Error("AuditLog mutations are forbidden");
   }
 }
@@ -81,7 +82,7 @@ export function isRdsDualWriteEnabled() {
 
 export function logRdsDualWriteError(action: string, error: unknown) {
   const message = error instanceof Error ? error.message : String(error);
-  console.error(`[RDS_DUAL_WRITE] ${action} failed`, { message });
+  logger.error(`[RDS_DUAL_WRITE] ${action} failed`, { message });
 }
 
 if (process.env.NODE_ENV !== "production") {

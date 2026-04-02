@@ -222,28 +222,28 @@ export async function POST(req: Request) {
             contentId: record.contentId,
           });
         } catch (error) {
-          console.error("[QUEUE] Falling back to inline embedding generation", error);
+          logger.warn("[QUEUE] Falling back to inline embedding generation", { error });
           try {
             await syncCurriculumContentRagChunks(record.id);
           } catch (syncError) {
-            console.error("[RAG] Best-effort full-pack chunk sync failed", syncError);
+            logger.warn("[RAG] Best-effort full-pack chunk sync failed", { error: syncError });
           }
           try {
             await embedLesson(record.id);
           } catch (embeddingError) {
-            console.error("[RAG] Best-effort full-pack embedding failed", embeddingError);
+            logger.warn("[RAG] Best-effort full-pack embedding failed", { error: embeddingError });
           }
         }
       } else {
         try {
           await syncCurriculumContentRagChunks(record.id);
         } catch (syncError) {
-          console.error("[RAG] Best-effort full-pack chunk sync failed", syncError);
+          logger.warn("[RAG] Best-effort full-pack chunk sync failed", { error: syncError });
         }
         try {
           await embedLesson(record.id);
         } catch (embeddingError) {
-          console.error("[RAG] Best-effort full-pack embedding failed", embeddingError);
+          logger.warn("[RAG] Best-effort full-pack embedding failed", { error: embeddingError });
         }
       }
     }

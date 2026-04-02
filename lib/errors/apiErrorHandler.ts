@@ -1,24 +1,5 @@
-/**
- * lib/errors/apiErrorHandler.ts
- *
- * Standardized error handler for Next.js API routes.
- *
- * Maps known error types to appropriate HTTP status codes and returns a
- * consistent, PII-safe error shape: { error, code, timestamp }.
- *
- * Stack traces are NEVER included in the HTTP response.
- * Errors are logged server-side via console.error.
- *
- * Supported mappings:
- *   Prisma P2002 → 409 CONFLICT
- *   Prisma P2025 → 404 NOT_FOUND
- *   Prisma P2003 → 400 BAD_REQUEST
- *   ZodError     → 422 VALIDATION_ERROR
- *   { status:401 } → 401 UNAUTHORIZED
- *   { status:403 } → 403 FORBIDDEN
- *   unknown      → 500 INTERNAL_ERROR
- */
-
+import crypto from "crypto";
+import * as Sentry from "@sentry/nextjs";
 import { NextResponse } from "next/server";
 import { logger } from "@/lib/logger";
 
@@ -26,6 +7,13 @@ export interface ApiErrorResponse {
   error: string;
   code: string;
   timestamp: string;
+  requestId: string;
+}
+
+export interface ApiErrorContext {
+  requestId?: string;
+  route?: string;
+  method?: string;
 }
 
 const PRISMA_ERROR_MAP: Record<string, { status: number; message: string; code: string }> = {
@@ -39,81 +27,103 @@ function isPrismaKnownError(err: unknown): err is { code: string; message: strin
     typeof err === "object" &&
     err !== null &&
     "code" in err &&
-    typeof (err as any).code === "string" &&
-    (err as any).code.startsWith("P")
+    typeof (err as { code: unknown }).code === "string" &&
+    (err as { code: string }).code.startsWith("P")
   );
 }
 
 function isZodError(err: unknown): boolean {
-  return (
-    typeof err === "object" &&
-    err !== null &&
-    "name" in err &&
-    (err as any).name === "ZodError"
-  );
+  return typeof err === "object" && err !== null && "name" in err && (err as { name?: string }).name === "ZodError";
 }
 
-/**
- * Call inside route catch blocks in place of ad-hoc NextResponse.json error returns.
- * Never throws — always returns a NextResponse.
- */
-export function handleApiError(err: unknown): NextResponse<ApiErrorResponse> {
-  const timestamp = new Date().toISOString();
-
-  // Log server-side — stack trace stays on the server, never in the response
-  if (process.env.NODE_ENV !== "test") {
-    const msg =
-      err instanceof Error
-        ? err.message
-        : typeof err === "object" && err !== null && "message" in err
-        ? String((err as any).message)
-        : String(err);
-    logger.error("API handler error", {
-      errorMessage: msg,
-      status: typeof err === "object" && err !== null && "status" in err ? (err as any).status : 500,
-    });
+function getErrorMessage(err: unknown): string {
+  if (err instanceof Error) {
+    return err.message;
   }
 
-  // Auth errors thrown by requireUser / requireRole (carry a status property)
+  if (typeof err === "object" && err !== null && "message" in err) {
+    return String((err as { message?: unknown }).message);
+  }
+
+  return String(err);
+}
+
+function getErrorStatus(err: unknown): number {
   if (typeof err === "object" && err !== null && "status" in err) {
-    const status = (err as any).status as number;
-    const message = String((err as any).message ?? "Authentication error");
-    if (status === 401) {
-      return NextResponse.json(
-        { error: message, code: "UNAUTHORIZED", timestamp },
-        { status: 401 }
-      );
+    return Number((err as { status?: unknown }).status ?? 500);
+  }
+
+  return 500;
+}
+
+function json(body: ApiErrorResponse, status: number) {
+  return NextResponse.json(body, {
+    status,
+    headers: {
+      "X-Request-Id": body.requestId,
+    },
+  });
+}
+
+export function handleApiError(err: unknown, context: ApiErrorContext = {}): NextResponse<ApiErrorResponse> {
+  const timestamp = new Date().toISOString();
+  const requestId = context.requestId ?? crypto.randomUUID();
+  const message = getErrorMessage(err);
+  const baseLogMetadata = {
+    route: context.route,
+    method: context.method,
+    errorMessage: message,
+    errorName: err instanceof Error ? err.name : typeof err,
+  };
+
+  if (typeof err === "object" && err !== null && "status" in err) {
+    const status = getErrorStatus(err);
+    const authMessage = String((err as { message?: unknown }).message ?? "Authentication error");
+    if (process.env.NODE_ENV !== "test") {
+      logger.warn("API handler error", { ...baseLogMetadata, status }, undefined, requestId);
     }
+
+    if (status === 401) {
+      return json({ error: authMessage, code: "UNAUTHORIZED", timestamp, requestId }, 401);
+    }
+
     if (status === 403) {
-      return NextResponse.json(
-        { error: message, code: "FORBIDDEN", timestamp },
-        { status: 403 }
-      );
+      return json({ error: authMessage, code: "FORBIDDEN", timestamp, requestId }, 403);
     }
   }
 
-  // Prisma known request errors
   if (isPrismaKnownError(err)) {
     const mapping = PRISMA_ERROR_MAP[err.code];
     if (mapping) {
-      return NextResponse.json(
-        { error: mapping.message, code: mapping.code, timestamp },
-        { status: mapping.status }
-      );
+      if (process.env.NODE_ENV !== "test") {
+        logger.warn("API handler error", { ...baseLogMetadata, status: mapping.status, code: mapping.code }, undefined, requestId);
+      }
+      return json({ error: mapping.message, code: mapping.code, timestamp, requestId }, mapping.status);
     }
   }
 
-  // Zod validation errors
   if (isZodError(err)) {
-    return NextResponse.json(
-      { error: "Validation failed", code: "VALIDATION_ERROR", timestamp },
-      { status: 422 }
-    );
+    if (process.env.NODE_ENV !== "test") {
+      logger.warn("API handler error", { ...baseLogMetadata, status: 422, code: "VALIDATION_ERROR" }, undefined, requestId);
+    }
+    return json({ error: "Validation failed", code: "VALIDATION_ERROR", timestamp, requestId }, 422);
   }
 
-  // Unknown — return opaque 500; never leak details or stack traces
-  return NextResponse.json(
-    { error: "Internal server error", code: "INTERNAL_ERROR", timestamp },
-    { status: 500 }
-  );
+  if (process.env.NODE_ENV !== "test") {
+    logger.error("API handler error", { ...baseLogMetadata, status: 500, code: "INTERNAL_ERROR" }, undefined, requestId);
+  }
+
+  Sentry.captureException(err instanceof Error ? err : new Error(message), {
+    tags: {
+      component: "api",
+      route: context.route ?? "unknown",
+      method: context.method ?? "UNKNOWN",
+    },
+    extra: {
+      requestId,
+      status: 500,
+    },
+  });
+
+  return json({ error: "Internal server error", code: "INTERNAL_ERROR", timestamp, requestId }, 500);
 }

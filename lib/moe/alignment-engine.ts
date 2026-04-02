@@ -2,6 +2,7 @@
 import { prisma } from "@/lib/db";
 import type { $Enums } from "@prisma/client";
 import { routedCompletion } from "@/lib/ai/routedCompletion";
+import { logger } from "@/lib/logger";
 type GradeBand = $Enums.GradeBand;
 type Subject = $Enums.Subject;
 
@@ -213,15 +214,19 @@ export async function alignAllContent(
     try {
       await alignContentToMOE(contents[i].id);
       success++;
-      console.log(
-        `[MOE-Align] ${i + 1}/${contents.length} aligned: ${contents[i].id}`
-      );
+      logger.info("[MOE-Align] content aligned", {
+        index: i + 1,
+        total: contents.length,
+        contentId: contents[i].id,
+      });
     } catch (err: any) {
       failed++;
-      console.error(
-        `[MOE-Align] ${i + 1}/${contents.length} FAILED: ${contents[i].id}`,
-        err?.message
-      );
+      logger.error("[MOE-Align] content alignment failed", {
+        index: i + 1,
+        total: contents.length,
+        contentId: contents[i].id,
+        errorMessage: err?.message,
+      });
     }
 
     // Rate limit: 200ms between calls

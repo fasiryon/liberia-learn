@@ -17,6 +17,7 @@ import {
 } from "@/lib/teacher/lessonAuthoring";
 import { enqueueJob, isQueueConfigured, JobType } from "@/lib/queue";
 import { isTeacherGenerationEnabled } from "@/lib/serverFlags";
+import { logger } from "@/lib/logger";
 
 const SaveLessonSchema = z.object({
   classId: z.string().min(1),
@@ -57,18 +58,18 @@ async function runBestEffortAiWork(
         contentId,
       });
     } catch (queueError) {
-      console.error("[QUEUE] Falling back to inline embedding generation", queueError);
+      logger.warn("[QUEUE] Falling back to inline embedding generation", { error: queueError });
       try {
         await embedLesson(recordId);
       } catch (embeddingError) {
-        console.error("[RAG] Best-effort teacher lesson embedding failed", embeddingError);
+        logger.warn("[RAG] Best-effort teacher lesson embedding failed", { error: embeddingError });
       }
     }
   } else {
     try {
       await embedLesson(recordId);
     } catch (embeddingError) {
-      console.error("[RAG] Best-effort teacher lesson embedding failed", embeddingError);
+      logger.warn("[RAG] Best-effort teacher lesson embedding failed", { error: embeddingError });
     }
   }
 
@@ -77,7 +78,7 @@ async function runBestEffortAiWork(
       try {
         await syncCurriculumContentRagChunks(recordId);
       } catch (syncError) {
-        console.error("[RAG] Best-effort teacher lesson sync failed", syncError);
+        logger.warn("[RAG] Best-effort teacher lesson sync failed", { error: syncError });
       }
     }
     return;
@@ -86,7 +87,7 @@ async function runBestEffortAiWork(
   try {
     await deleteCurriculumContentRagChunks(recordId);
   } catch (cleanupError) {
-    console.error("[RAG] Best-effort teacher lesson cleanup failed", cleanupError);
+    logger.warn("[RAG] Best-effort teacher lesson cleanup failed", { error: cleanupError });
   }
 }
 
@@ -212,6 +213,10 @@ export async function POST(req: NextRequest) {
       className: classRecord.name,
     });
   } catch (error: unknown) {
-    return handleApiError(error);
+    return handleApiError(error, {
+      route: "/api/teacher/lessons",
+      method: req.method,
+      requestId: traceId,
+    });
   }
 }
