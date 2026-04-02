@@ -29,6 +29,7 @@ import {
 } from "@/lib/serverFlags";
 import { logAudit } from "@/lib/audit";
 import { checkAiRateLimit } from "@/lib/ai/rateLimitGuard";
+import { getRateLimitHeaders, rateLimitExceededResponse } from "@/lib/rateLimit";
 import { recordMetricEvent } from "@/lib/metrics/events";
 import { prisma } from "@/lib/db";
 import { getAssignmentTutorGuidance } from "@/lib/workflows/ai/assignmentTutor";
@@ -41,17 +42,14 @@ export async function POST(req: NextRequest) {
     }
 
     const user = await requireRole("TEACHER");
-    const rateLimit = checkAiRateLimit({
+    const rateLimit = await checkAiRateLimit({
       userId: user.id,
       role: user.role,
       endpoint: "/api/teacher/assignment/tutor",
       schoolId: user.schoolId ?? undefined,
     });
     if (!rateLimit.allowed) {
-      return NextResponse.json(
-        { error: "Please wait before making another request" },
-        { status: 429 }
-      );
+      return rateLimitExceededResponse(rateLimit);
     }
 
     // ── Monthly budget check ───────────────────────────────────────────────
@@ -147,7 +145,7 @@ export async function POST(req: NextRequest) {
       anticipatedMisconceptions: result.anticipatedMisconceptions,
       scaffoldingSuggestions: result.scaffoldingSuggestions,
       hadFallback: result.hadFallback,
-    });
+    }, { headers: getRateLimitHeaders(rateLimit) });
   } catch (err: any) {
     return NextResponse.json(
       { error: err?.message ?? "Server error" },

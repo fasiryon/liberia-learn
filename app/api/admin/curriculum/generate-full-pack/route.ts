@@ -19,13 +19,15 @@ import {
 import { embedLesson } from "@/lib/ai/rag/embeddingService";
 import { syncCurriculumContentRagChunks } from "@/lib/ai/rag/ragIngestionService";
 import { enqueueJob, isQueueConfigured, JobType } from "@/lib/queue";
-import { checkRateLimit, getRateLimitHeaders } from "@/lib/rateLimit";
+import {
+  checkRateLimit,
+  getRateLimitHeaders,
+  RATE_LIMIT_POLICIES,
+  rateLimitExceededResponse,
+} from "@/lib/rateLimit";
 import { logger } from "@/lib/logger";
 
 export const dynamic = "force-dynamic";
-
-const RATE_LIMIT = 5;
-const WINDOW_MS = 10 * 60_000;
 
 const RequestSchema = z.object({
   grade: z.number().int().min(1).max(12),
@@ -37,17 +39,14 @@ const RequestSchema = z.object({
 export async function POST(req: Request) {
   try {
     const user = await requireRole("TEACHER", "ADMIN");
-    const rateLimit = checkRateLimit(user.id, {
-      windowMs: WINDOW_MS,
-      max: RATE_LIMIT,
+    const rateLimit = await checkRateLimit(user.id, {
+      windowMs: RATE_LIMIT_POLICIES.ADMIN.windowMs,
+      limit: RATE_LIMIT_POLICIES.ADMIN.limit,
       namespace: "curriculum_generate_full_pack",
     });
 
     if (!rateLimit.allowed) {
-      return NextResponse.json(
-        { error: "Too many requests. Full pack generation is rate-limited." },
-        { status: 429, headers: getRateLimitHeaders(rateLimit) }
-      );
+      return rateLimitExceededResponse(rateLimit);
     }
 
     const body = await req.json();

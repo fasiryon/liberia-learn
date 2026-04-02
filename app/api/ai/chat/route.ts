@@ -9,26 +9,25 @@ import { NextRequest, NextResponse } from "next/server";
 import { requireRole } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { TutorAgent } from "@/lib/ai/tutor-agent";
-import { checkRateLimit, getRateLimitHeaders } from "@/lib/rateLimit";
+import {
+  checkRateLimit,
+  getRateLimitHeaders,
+  RATE_LIMIT_POLICIES,
+  rateLimitExceededResponse,
+} from "@/lib/rateLimit";
 import { logger } from "@/lib/logger";
-
-const RATE_LIMIT = 20;        // requests
-const WINDOW_MS  = 60_000;    // 1 minute
 
 export async function POST(request: NextRequest) {
   try {
     const user = await requireRole("STUDENT");
-    const rateLimit = checkRateLimit(user.id, {
-      windowMs: WINDOW_MS,
-      max: RATE_LIMIT,
+    const rateLimit = await checkRateLimit(user.id, {
+      windowMs: RATE_LIMIT_POLICIES.LEGACY_AI_CHAT.windowMs,
+      limit: RATE_LIMIT_POLICIES.LEGACY_AI_CHAT.limit,
       namespace: "deprecated_ai_chat",
     });
 
     if (!rateLimit.allowed) {
-      return NextResponse.json(
-        { error: "Too many requests. Please wait a minute." },
-        { status: 429, headers: getRateLimitHeaders(rateLimit) }
-      );
+      return rateLimitExceededResponse(rateLimit);
     }
 
     const student = await prisma.student.findFirst({ where: { userId: user.id } });

@@ -31,6 +31,7 @@ const mockStrandFindFirst = vi.hoisted(() => vi.fn());
 const mockIsVirtualLabsEnabled = vi.hoisted(() => vi.fn().mockReturnValue(true));
 const mockIsLessonDeliveryEnabled = vi.hoisted(() => vi.fn().mockReturnValue(true));
 const mockUpdateMastery = vi.hoisted(() => vi.fn().mockResolvedValue({}));
+const mockNotifyLessonCompletion = vi.hoisted(() => vi.fn().mockResolvedValue(undefined));
 
 vi.mock("@/lib/auth", () => ({ requireRole: mockRequireRole }));
 vi.mock("@/lib/audit", () => ({ logAudit: mockLogAudit }));
@@ -40,6 +41,9 @@ vi.mock("@/lib/serverFlags", () => ({
 }));
 vi.mock("@/lib/mastery/masteryService", () => ({
   updateMasteryProfile: mockUpdateMastery,
+}));
+vi.mock("@/lib/lesson-notifications", () => ({
+  notifyLessonCompletion: mockNotifyLessonCompletion,
 }));
 vi.mock("@/lib/moe/alignment-engine", () => ({
   gradeToBand: vi.fn().mockReturnValue("G4_6"),

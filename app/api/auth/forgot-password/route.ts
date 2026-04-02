@@ -2,7 +2,12 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { sendPasswordReset } from "@/lib/email";
 import { isAccountRecoveryEnabled } from "@/lib/serverFlags";
-import { checkRateLimit } from "@/lib/rateLimit";
+import {
+  checkRateLimit,
+  getRateLimitHeaders,
+  RATE_LIMIT_POLICIES,
+  rateLimitExceededResponse,
+} from "@/lib/rateLimit";
 import { generateTokenPair } from "@/lib/tokens";
 import { logAudit } from "@/lib/audit";
 import crypto from "crypto";
@@ -31,19 +36,18 @@ export async function POST(req: Request) {
     const normalised = email.trim().toLowerCase();
 
     const ip = getClientIp(req);
-    const ipLimit = checkRateLimit(`forgot:ip:${ip}`, {
-      windowMs: 60 * 60 * 1000,
-      max: 20,
+    const ipLimit = await checkRateLimit(`forgot:ip:${ip}`, {
+      windowMs: RATE_LIMIT_POLICIES.ADMIN.windowMs,
+      limit: RATE_LIMIT_POLICIES.ADMIN.limit,
+      namespace: "auth",
     });
-    const emailLimit = checkRateLimit(`forgot:email:${normalised}`, {
-      windowMs: 15 * 60 * 1000,
-      max: 5,
+    const emailLimit = await checkRateLimit(`forgot:email:${normalised}`, {
+      windowMs: RATE_LIMIT_POLICIES.AUTH.windowMs,
+      limit: RATE_LIMIT_POLICIES.AUTH.limit,
+      namespace: "auth",
     });
     if (!ipLimit.allowed || !emailLimit.allowed) {
-      return NextResponse.json(
-        { error: "Too many requests. Please try again later." },
-        { status: 429 }
-      );
+      return rateLimitExceededResponse(!ipLimit.allowed ? ipLimit : emailLimit);
     }
 
     const user = await prisma.user.findUnique({
@@ -59,7 +63,10 @@ export async function POST(req: Request) {
         details: { accountFound: false },
         ipAddress: ip,
       });
-      return NextResponse.json({ ok: true, message: "If that email is registered, a reset link has been sent." });
+      return NextResponse.json(
+        { ok: true, message: "If that email is registered, a reset link has been sent." },
+        { headers: getRateLimitHeaders(emailLimit) }
+      );
     }
 
     const expiresAt = new Date(Date.now() + 60 * 60 * 1000); // 1 hour
@@ -88,7 +95,10 @@ export async function POST(req: Request) {
       ipAddress: ip,
     });
 
-    return NextResponse.json({ ok: true, message: "If that email is registered, a reset link has been sent." });
+    return NextResponse.json(
+      { ok: true, message: "If that email is registered, a reset link has been sent." },
+      { headers: getRateLimitHeaders(emailLimit) }
+    );
   } catch (err: any) {
     console.error("[forgot-password]", err);
     return NextResponse.json(

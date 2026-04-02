@@ -3,11 +3,13 @@ import { NextResponse } from "next/server";
 import { requireRole } from "@/lib/auth";
 import { routedCompletion } from "@/lib/ai/routedCompletion";
 import { logAudit } from "@/lib/audit";
-import { checkRateLimit, getRateLimitHeaders } from "@/lib/rateLimit";
+import {
+  checkRateLimit,
+  getRateLimitHeaders,
+  RATE_LIMIT_POLICIES,
+  rateLimitExceededResponse,
+} from "@/lib/rateLimit";
 import { logger } from "@/lib/logger";
-
-const RATE_LIMIT = 20;
-const WINDOW_MS  = 60_000;
 
 
 const difficultyDescriptions: Record<number, string> = {
@@ -83,17 +85,14 @@ function parsePlacementQuestion(content: string, expectedDifficulty: number): Pl
 export async function POST(req: Request) {
   try {
     const user = await requireRole("STUDENT");
-    const rateLimit = checkRateLimit(user.id, {
-      windowMs: WINDOW_MS,
-      max: RATE_LIMIT,
+    const rateLimit = await checkRateLimit(user.id, {
+      windowMs: RATE_LIMIT_POLICIES.LEGACY_AI_CHAT.windowMs,
+      limit: RATE_LIMIT_POLICIES.LEGACY_AI_CHAT.limit,
       namespace: "placement_question_generate",
     });
 
     if (!rateLimit.allowed) {
-      return NextResponse.json(
-        { error: "Too many requests. Please wait." },
-        { status: 429, headers: getRateLimitHeaders(rateLimit) }
-      );
+      return rateLimitExceededResponse(rateLimit);
     }
 
     const { difficulty, subject, previousAnswers } = await req.json();
