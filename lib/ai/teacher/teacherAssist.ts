@@ -10,6 +10,7 @@
  */
 
 import { routedCompletion } from "@/lib/ai/router";
+import { getSystemPrompt } from "@/lib/ai/promptRegistry";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -68,23 +69,7 @@ const FALLBACK: TeacherAssistResult = {
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
 function buildSystemPrompt(): string {
-  return `You are a supportive instructional coach for teachers on LiberiaLearn.
-Your role is to suggest practical, classroom-friendly reinforcement strategies based on class-wide learning patterns.
-
-Rules:
-- NEVER evaluate or score individual students or the teacher.
-- Language must always be supportive, constructive, and encouraging.
-- Keep suggestions concrete and doable in a Liberian classroom (low-resource context).
-- Do NOT use punitive or deficit-focused language.
-
-You MUST respond with valid JSON only. No prose outside the JSON object.
-
-Response schema:
-{
-  "reinforcementSuggestions": ["<activity 1>", "<activity 2>", ...],  // 2-4 items
-  "pacingSuggestion": "<one sentence on pacing>",
-  "resourceHints": ["<resource 1>", ...]                              // 1-3 items
-}`;
+  return getSystemPrompt("teacher.assist.system");
 }
 
 function buildUserPrompt(input: TeacherAssistInput): string {
