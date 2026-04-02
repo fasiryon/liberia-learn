@@ -43,7 +43,10 @@ export default function TeacherStudentsPage() {
         </div>
       ) : students.length === 0 ? (
         <div className="rounded-2xl border border-white/10 bg-slate-900/70 p-8 text-center">
-          <p className="text-slate-400">No students enrolled in your classes yet.</p>
+          <div className="mx-auto h-20 w-20 rounded-3xl border border-dashed border-slate-700 bg-slate-950/70" />
+          <p className="mt-4 text-slate-300">
+            Your class roster is empty. Ask your school admin to enroll students in your class.
+          </p>
         </div>
       ) : (
         <div className="rounded-2xl border border-white/10 bg-slate-900/70 overflow-hidden">

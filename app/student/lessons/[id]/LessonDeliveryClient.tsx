@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState, type ReactNode } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 
 import { lessonDurationLabel, renderSimpleMarkdown, selectLessonBody } from "@/lib/lessons";
 import { enqueueOfflineRequest } from "@/lib/offline-queue";
@@ -42,6 +42,11 @@ type TutorMessage = {
 };
 
 type SimulationValue = number | string | boolean | string[];
+
+type LessonProgressState = {
+  scrollPosition: number;
+  lastReadSection: string;
+};
 
 function simulationDefaultState(definition: SimulationDefinition): Record<string, SimulationValue> {
   return Object.fromEntries(
@@ -156,7 +161,7 @@ function SimulationCard({ definition }: { definition: SimulationDefinition }) {
         <span>Interactive support</span>
       </div>
       <h3 className="mt-3 text-lg font-semibold text-white">{definition.title}</h3>
-      <p className="mt-2 text-sm text-slate-300">{definition.objective}</p>
+      <p className="mt-2 text-sm text-slate-200">{definition.objective}</p>
 
       <div className="mt-4 grid gap-4 lg:grid-cols-[1.1fr_0.9fr]">
         <div className="space-y-3">
@@ -167,7 +172,7 @@ function SimulationCard({ definition }: { definition: SimulationDefinition }) {
                 <label key={input.key} className="block rounded-2xl border border-slate-800 bg-slate-900/70 p-3">
                   <div className="flex items-center justify-between gap-3">
                     <span className="text-sm font-medium text-slate-100">{input.label}</span>
-                    <span className="text-xs text-slate-400">{String(value)}</span>
+                    <span className="text-xs text-slate-300">{String(value)}</span>
                   </div>
                   <input
                     type="range"
@@ -176,7 +181,7 @@ function SimulationCard({ definition }: { definition: SimulationDefinition }) {
                     step={input.step ?? 1}
                     value={typeof value === "number" ? value : Number(value ?? input.min ?? 0)}
                     onChange={(event) => updateValue(input.key, Number(event.target.value))}
-                    className="mt-3 w-full accent-emerald-400"
+                    className="mt-3 min-h-11 w-full accent-emerald-400"
                   />
                 </label>
               );
@@ -184,12 +189,13 @@ function SimulationCard({ definition }: { definition: SimulationDefinition }) {
 
             if (input.type === "toggle") {
               return (
-                <label key={input.key} className="flex items-center justify-between rounded-2xl border border-slate-800 bg-slate-900/70 p-3 text-sm text-slate-100">
+                <label key={input.key} className="flex min-h-11 items-center justify-between rounded-2xl border border-slate-800 bg-slate-900/70 p-3 text-sm text-slate-100">
                   <span>{input.label}</span>
                   <input
                     type="checkbox"
                     checked={Boolean(value)}
                     onChange={(event) => updateValue(input.key, event.target.checked)}
+                    className="h-5 w-5"
                   />
                 </label>
               );
@@ -202,7 +208,7 @@ function SimulationCard({ definition }: { definition: SimulationDefinition }) {
                   <select
                     value={String(value ?? input.options?.[0] ?? "")}
                     onChange={(event) => updateValue(input.key, event.target.value)}
-                    className="mt-3 w-full rounded-xl border border-slate-700 bg-slate-950/80 px-3 py-2 text-sm text-slate-100"
+                    className="mt-3 min-h-11 w-full rounded-xl border border-slate-700 bg-slate-950/80 px-3 py-2 text-sm text-slate-100"
                   >
                     {(input.options ?? []).map((option) => (
                       <option key={option} value={option}>
@@ -221,13 +227,13 @@ function SimulationCard({ definition }: { definition: SimulationDefinition }) {
                   <p className="text-sm font-medium text-slate-100">{input.label}</p>
                   <div className="mt-3 space-y-2">
                     {items.map((item, index) => (
-                      <div key={`${item}-${index}`} className="flex items-center justify-between rounded-xl border border-slate-800 bg-slate-950/80 px-3 py-2 text-sm text-slate-200">
+                      <div key={`${item}-${index}`} className="flex items-center justify-between rounded-xl border border-slate-800 bg-slate-950/80 px-3 py-2 text-sm text-slate-100">
                         <span>{item}</span>
                         <div className="flex gap-2">
-                          <button type="button" onClick={() => moveOrderItem(input.key, index, -1)} className="rounded-full border border-slate-700 px-3 py-1 text-xs text-slate-200">
+                          <button type="button" onClick={() => moveOrderItem(input.key, index, -1)} className="min-h-11 min-w-11 rounded-full border border-slate-700 px-3 py-1 text-xs text-slate-100">
                             Up
                           </button>
-                          <button type="button" onClick={() => moveOrderItem(input.key, index, 1)} className="rounded-full border border-slate-700 px-3 py-1 text-xs text-slate-200">
+                          <button type="button" onClick={() => moveOrderItem(input.key, index, 1)} className="min-h-11 min-w-11 rounded-full border border-slate-700 px-3 py-1 text-xs text-slate-100">
                             Down
                           </button>
                         </div>
@@ -245,9 +251,9 @@ function SimulationCard({ definition }: { definition: SimulationDefinition }) {
         <div className="rounded-2xl border border-emerald-500/20 bg-emerald-500/10 p-4">
           <p className="text-xs font-semibold uppercase tracking-[0.2em] text-emerald-200">What the simulation shows</p>
           <p className="mt-3 text-base font-semibold text-white">{feedback.summary}</p>
-          <p className="mt-2 text-sm text-slate-200">{feedback.detail}</p>
+          <p className="mt-2 text-sm text-slate-100">{feedback.detail}</p>
           {feedback.visual ? <div className="mt-4">{feedback.visual}</div> : null}
-          <div className="mt-4 space-y-2 text-sm text-slate-300">
+          <div className="mt-4 space-y-2 text-sm text-slate-100">
             <p><span className="font-semibold text-slate-100">Student guide:</span> Try one change at a time, then explain what changed.</p>
             <p><span className="font-semibold text-slate-100">Guardian guide:</span> {definition.guardianGuide ?? "Use the fallback explanation if no shared device is available."}</p>
             <p><span className="font-semibold text-slate-100">Fallback:</span> {definition.fallbackStaticVisual}</p>
@@ -268,6 +274,9 @@ export default function LessonDeliveryClient({ lessonId }: { lessonId: string })
   const [tutorQuestion, setTutorQuestion] = useState("");
   const [tutorMessages, setTutorMessages] = useState<TutorMessage[]>([]);
   const [tutorLoading, setTutorLoading] = useState(false);
+  const [currentSection, setCurrentSection] = useState("overview");
+  const sectionRefs = useRef<Record<string, HTMLElement | null>>({});
+  const hasRestoredProgressRef = useRef(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -311,6 +320,99 @@ export default function LessonDeliveryClient({ lessonId }: { lessonId: string })
 
   const exitTicketQuestions = lesson?.deliveryProfile?.exitTicket?.questions ?? [];
   const aiTutorEnabled = process.env.NEXT_PUBLIC_ENABLE_AI_TUTOR === "true";
+  const lessonProgressKey = useMemo(() => `lesson_progress_${lessonId}`, [lessonId]);
+
+  const registerSection = useCallback(
+    (sectionId: string) => (node: HTMLElement | null) => {
+      sectionRefs.current[sectionId] = node;
+    },
+    []
+  );
+
+  const persistLessonProgress = useCallback(() => {
+    if (typeof window === "undefined" || !lesson || lesson.status === "completed") return;
+    const payload: LessonProgressState = {
+      scrollPosition: window.scrollY,
+      lastReadSection: currentSection,
+    };
+    window.sessionStorage.setItem(lessonProgressKey, JSON.stringify(payload));
+  }, [currentSection, lesson, lessonProgressKey]);
+
+  useEffect(() => {
+    if (!lesson) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const visible = entries
+          .filter((entry) => entry.isIntersecting)
+          .sort((left, right) => right.intersectionRatio - left.intersectionRatio)[0];
+        const sectionId = visible?.target.getAttribute("data-section-id");
+        if (sectionId) setCurrentSection(sectionId);
+      },
+      {
+        rootMargin: "-15% 0px -55% 0px",
+        threshold: [0.2, 0.45, 0.7],
+      }
+    );
+
+    Object.values(sectionRefs.current).forEach((node) => {
+      if (node) observer.observe(node);
+    });
+
+    return () => observer.disconnect();
+  }, [lesson]);
+
+  useEffect(() => {
+    if (!lesson || typeof window === "undefined" || hasRestoredProgressRef.current) return;
+    hasRestoredProgressRef.current = true;
+
+    const saved = window.sessionStorage.getItem(lessonProgressKey);
+    if (!saved) return;
+
+    try {
+      const parsed = JSON.parse(saved) as Partial<LessonProgressState>;
+      const savedScrollPosition =
+        typeof parsed.scrollPosition === "number" ? parsed.scrollPosition : 0;
+      const savedSection =
+        typeof parsed.lastReadSection === "string" ? parsed.lastReadSection : "overview";
+
+      setCurrentSection(savedSection);
+
+      window.requestAnimationFrame(() => {
+        window.setTimeout(() => {
+          const targetSection = sectionRefs.current[savedSection];
+          if (savedScrollPosition > 0) {
+            window.scrollTo({ top: savedScrollPosition, behavior: "auto" });
+          } else if (targetSection) {
+            targetSection.scrollIntoView({ block: "start", behavior: "auto" });
+          }
+        }, 0);
+      });
+    } catch {
+      window.sessionStorage.removeItem(lessonProgressKey);
+    }
+  }, [lesson, lessonProgressKey]);
+
+  useEffect(() => {
+    if (!lesson || typeof window === "undefined") return;
+
+    const interval = window.setInterval(() => {
+      persistLessonProgress();
+    }, 30000);
+    const handleVisibility = () => {
+      if (document.visibilityState === "hidden") persistLessonProgress();
+    };
+    const handleBeforeUnload = () => persistLessonProgress();
+
+    document.addEventListener("visibilitychange", handleVisibility);
+    window.addEventListener("beforeunload", handleBeforeUnload);
+
+    return () => {
+      window.clearInterval(interval);
+      document.removeEventListener("visibilitychange", handleVisibility);
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+    };
+  }, [lesson, persistLessonProgress]);
 
   async function handleTutorSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -390,6 +492,9 @@ export default function LessonDeliveryClient({ lessonId }: { lessonId: string })
       });
       const data = await response.json().catch(() => null);
       if (!response.ok) throw new Error(data?.error ?? "Failed to complete lesson.");
+      if (typeof window !== "undefined") {
+        window.sessionStorage.removeItem(lessonProgressKey);
+      }
       setLesson((current) => (current ? { ...current, status: "completed", completedAt: data?.completedAt ?? new Date().toISOString() } : current));
       setSubmitMessage("Lesson complete! Great work.");
     } catch (submitError: any) {
@@ -408,8 +513,8 @@ export default function LessonDeliveryClient({ lessonId }: { lessonId: string })
 
   return (
     <div className="space-y-6">
-        <section className="rounded-3xl border border-white/10 bg-slate-900/80 p-6 sm:p-7">
-          <div className="flex flex-wrap items-center gap-3 text-xs text-slate-300">
+        <section ref={registerSection("overview")} data-section-id="overview" className="rounded-3xl border border-white/10 bg-slate-900/80 p-6 sm:p-7">
+          <div className="flex flex-wrap items-center gap-3 text-xs text-slate-200">
             <span className="rounded-full bg-emerald-500/15 px-3 py-1 font-semibold text-emerald-300">{lesson.subject}</span>
             <span>Grade {lesson.grade}</span>
             <span>{lessonDurationLabel(lesson.classFormat)}</span>
@@ -417,25 +522,25 @@ export default function LessonDeliveryClient({ lessonId }: { lessonId: string })
           <div className="mt-4 flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
             <div>
               <h1 className="text-3xl font-semibold text-white">{lesson.title}</h1>
-              <p className="mt-2 text-sm text-slate-400">Teacher: {lesson.teacherName}</p>
+              <p className="mt-2 text-sm text-slate-200">Teacher: {lesson.teacherName}</p>
             </div>
-            <div className="rounded-2xl border border-slate-800 bg-slate-950/55 px-4 py-3 text-sm text-slate-300">
+            <div className="rounded-2xl border border-slate-800 bg-slate-950/55 px-4 py-3 text-sm text-slate-200">
               Stay focused on the lesson, then complete the exit ticket at the end.
             </div>
           </div>
         </section>
 
-        <section className="rounded-3xl border border-white/10 bg-slate-900/80 p-6 sm:p-7">
+        <section ref={registerSection("lesson-content")} data-section-id="lesson-content" className="rounded-3xl border border-white/10 bg-slate-900/80 p-6 sm:p-7">
           <div
-            className="prose prose-invert max-w-none prose-headings:text-white prose-p:text-slate-200 prose-li:text-slate-200"
+            className="prose prose-invert max-w-none prose-headings:text-white prose-p:text-slate-100 prose-li:text-slate-100"
             dangerouslySetInnerHTML={{ __html: renderSimpleMarkdown(renderedBody) }}
           />
         </section>
 
         {lesson.objectives.length > 0 ? (
-          <section className="rounded-3xl border border-white/10 bg-slate-900/80 p-6 sm:p-7">
+          <section ref={registerSection("objectives")} data-section-id="objectives" className="rounded-3xl border border-white/10 bg-slate-900/80 p-6 sm:p-7">
             <h2 className="text-lg font-semibold text-white">Lesson Objectives</h2>
-            <ul className="mt-4 space-y-2 text-sm text-slate-200">
+            <ul className="mt-4 space-y-2 text-sm text-slate-100">
               {lesson.objectives.map((objective, index) => (
                 <li key={`${objective}-${index}`} className="rounded-2xl border border-slate-800 bg-slate-950/60 px-4 py-3">
                   {objective}
@@ -446,7 +551,7 @@ export default function LessonDeliveryClient({ lessonId }: { lessonId: string })
         ) : null}
 
       {lesson.pseudoLabs.length > 0 ? (
-        <section className="rounded-3xl border border-white/10 bg-slate-900/80 p-6 sm:p-7">
+        <section ref={registerSection("lab-activity")} data-section-id="lab-activity" className="rounded-3xl border border-white/10 bg-slate-900/80 p-6 sm:p-7">
           <h2 className="text-lg font-semibold text-white">Lab Activity</h2>
           <div className="mt-4 space-y-4">
             {lesson.pseudoLabs.map((lab) => (
@@ -457,11 +562,11 @@ export default function LessonDeliveryClient({ lessonId }: { lessonId: string })
                   <span>{lab.offlineCapable ? "Offline capable" : "Needs connectivity"}</span>
                 </div>
                 <h3 className="mt-3 text-lg font-semibold text-white">{lab.title}</h3>
-                <p className="mt-2 text-sm text-slate-300">{lab.objective}</p>
+                <p className="mt-2 text-sm text-slate-200">{lab.objective}</p>
                 <div className="mt-4 grid gap-4 lg:grid-cols-2">
                   <div className="rounded-2xl border border-slate-800 bg-slate-900/70 p-4">
                     <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-400">Student steps</p>
-                    <ol className="mt-3 space-y-2 text-sm text-slate-200">
+                    <ol className="mt-3 space-y-2 text-sm text-slate-100">
                       {lab.procedureSteps.map((step, index) => (
                         <li key={`${lab.id}-step-${index}`} className="rounded-xl border border-slate-800 bg-slate-950/70 px-3 py-3">
                           {index + 1}. {step}
@@ -470,19 +575,19 @@ export default function LessonDeliveryClient({ lessonId }: { lessonId: string })
                     </ol>
                   </div>
                   <div className="space-y-3">
-                    <div className="rounded-2xl border border-slate-800 bg-slate-900/70 p-4 text-sm text-slate-200">
+                    <div className="rounded-2xl border border-slate-800 bg-slate-900/70 p-4 text-sm text-slate-100">
                       <p className="font-semibold text-white">Materials</p>
                       <p className="mt-2">{lab.requiredMaterials.join(", ")}</p>
                     </div>
-                    <div className="rounded-2xl border border-slate-800 bg-slate-900/70 p-4 text-sm text-slate-200">
+                    <div className="rounded-2xl border border-slate-800 bg-slate-900/70 p-4 text-sm text-slate-100">
                       <p className="font-semibold text-white">Timing</p>
                       <p className="mt-2">Setup {lab.setupTimeMinutes} min, run {lab.runTimeMinutes} min, cleanup {lab.cleanupTimeMinutes} min.</p>
                     </div>
-                    <div className="rounded-2xl border border-slate-800 bg-slate-900/70 p-4 text-sm text-slate-200">
+                    <div className="rounded-2xl border border-slate-800 bg-slate-900/70 p-4 text-sm text-slate-100">
                       <p className="font-semibold text-white">What to notice</p>
                       <p className="mt-2">{lab.expectedObservation}</p>
                     </div>
-                    <div className="rounded-2xl border border-slate-800 bg-slate-900/70 p-4 text-sm text-slate-200">
+                    <div className="rounded-2xl border border-slate-800 bg-slate-900/70 p-4 text-sm text-slate-100">
                       <p className="font-semibold text-white">If materials are limited</p>
                       <p className="mt-2">{lab.fallbackIfNoMaterials}</p>
                     </div>
@@ -501,7 +606,7 @@ export default function LessonDeliveryClient({ lessonId }: { lessonId: string })
       ) : null}
 
       {lesson.simulationDefinitions.length > 0 ? (
-        <section className="rounded-3xl border border-white/10 bg-slate-900/80 p-6 sm:p-7">
+        <section ref={registerSection("simulations")} data-section-id="simulations" className="rounded-3xl border border-white/10 bg-slate-900/80 p-6 sm:p-7">
           <h2 className="text-lg font-semibold text-white">Interactive Simulation</h2>
           <div className="mt-4 space-y-4">
             {lesson.simulationDefinitions.map((definition) => (
@@ -512,7 +617,7 @@ export default function LessonDeliveryClient({ lessonId }: { lessonId: string })
       ) : null}
 
       {aiTutorEnabled ? (
-        <section className="rounded-3xl border border-white/10 bg-slate-900/80 p-6 sm:p-7">
+        <section ref={registerSection("ask-tutor")} data-section-id="ask-tutor" className="rounded-3xl border border-white/10 bg-slate-900/80 p-6 sm:p-7">
           <h2 className="text-lg font-semibold text-white">Ask a question about this lesson</h2>
           <form className="mt-4 space-y-3" onSubmit={handleTutorSubmit}>
             <textarea
@@ -524,7 +629,7 @@ export default function LessonDeliveryClient({ lessonId }: { lessonId: string })
             <button
               type="submit"
               disabled={tutorLoading || !tutorQuestion.trim()}
-              className="inline-flex min-h-11 items-center justify-center rounded-full bg-emerald-400 px-5 text-sm font-semibold text-slate-950 disabled:cursor-not-allowed disabled:bg-slate-700 disabled:text-slate-400"
+              className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-full bg-emerald-400 px-5 text-sm font-semibold text-slate-950 disabled:cursor-not-allowed disabled:bg-slate-700 disabled:text-slate-400"
             >
               {tutorLoading ? "Asking..." : "Ask Tutor"}
             </button>
@@ -547,21 +652,22 @@ export default function LessonDeliveryClient({ lessonId }: { lessonId: string })
         </section>
       ) : null}
 
-        <section className="rounded-3xl border border-white/10 bg-slate-900/80 p-6 sm:p-7">
+        <section ref={registerSection("exit-ticket")} data-section-id="exit-ticket" className="rounded-3xl border border-white/10 bg-slate-900/80 p-6 sm:p-7">
           <h2 className="text-lg font-semibold text-white">Exit Ticket</h2>
           <div className="mt-4 space-y-5">
             {exitTicketQuestions.map((question, index) => (
               <div key={`${question.question}-${index}`} className="rounded-2xl border border-slate-800 bg-slate-950/60 p-4">
-                <p className="text-sm font-medium text-slate-100">{question.question}</p>
+                <p className="text-sm font-medium text-slate-50">{question.question}</p>
                 {question.type === "mcq" ? (
                   <div className="mt-3 space-y-2">
                     {(question.choices ?? []).map((choice, choiceIndex) => (
-                      <label key={`${choice}-${choiceIndex}`} className="flex items-center gap-3 rounded-xl border border-slate-800 px-3 py-3 text-sm text-slate-200">
+                      <label key={`${choice}-${choiceIndex}`} className="flex min-h-11 items-center gap-3 rounded-xl border border-slate-800 px-3 py-3 text-sm text-slate-100">
                         <input
                           type="radio"
                           name={`exit-ticket-${index}`}
                           checked={answers[index] === String(choiceIndex)}
                           onChange={() => setAnswers((current) => ({ ...current, [index]: String(choiceIndex) }))}
+                          className="h-5 w-5"
                         />
                         <span>{choice}</span>
                       </label>
@@ -583,7 +689,7 @@ export default function LessonDeliveryClient({ lessonId }: { lessonId: string })
             type="button"
             onClick={handleSubmitExitTicket}
             disabled={submitting || lesson.status === "completed"}
-            className="mt-6 inline-flex min-h-12 items-center justify-center rounded-full bg-emerald-400 px-6 text-sm font-semibold text-slate-950 disabled:cursor-not-allowed disabled:bg-slate-700 disabled:text-slate-400"
+            className="mt-6 inline-flex min-h-12 min-w-11 items-center justify-center rounded-full bg-emerald-400 px-6 text-sm font-semibold text-slate-950 disabled:cursor-not-allowed disabled:bg-slate-700 disabled:text-slate-400"
           >
             {lesson.status === "completed" ? "Lesson already completed" : submitting ? "Submitting..." : "Submit"}
           </button>

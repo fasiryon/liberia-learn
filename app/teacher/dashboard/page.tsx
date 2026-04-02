@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { teacherWelcomeStorageKey } from "@/app/teacher/TeacherWelcomeGate";
 
 type DashboardData = {
   scheduledToday: number;
@@ -35,6 +36,9 @@ export default function TeacherDashboardPage() {
   const adaptiveEnabled = process.env.NEXT_PUBLIC_ENABLE_ADAPTIVE_ENGINE !== "false";
 
   useEffect(() => {
+    if (typeof window !== "undefined") {
+      window.localStorage.setItem(teacherWelcomeStorageKey, "true");
+    }
     fetch("/api/teacher/dashboard")
       .then((r) => r.json())
       .then((d) => setData(d))

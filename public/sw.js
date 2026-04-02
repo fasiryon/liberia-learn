@@ -1,7 +1,13 @@
 // Audited Sprint 1 - single cache registration,
 // single fetch handler, offline queue verified.
-const CACHE_NAME = "liberialearn-v1";
-const APP_SHELL = ["/", "/student/dashboard", "/offline"];
+const CACHE_NAME = "liberialearn-v2";
+const APP_SHELL = [
+  "/",
+  "/offline",
+  "/offline.html",
+  "/student/dashboard",
+  "/student/lessons",
+];
 const SYNC_TAG = "liberialearn-sync";
 const QUEUE_PREFIX = "liberialearn_offline_queue::";
 const IDB_NAME = "keyval-store";
@@ -23,6 +29,39 @@ self.addEventListener("activate", (event) => {
   );
   self.clients.claim();
 });
+
+function isProtectedRoute(pathname) {
+  return (
+    pathname.startsWith("/api/") ||
+    pathname === "/auth" ||
+    pathname.startsWith("/auth/") ||
+    pathname === "/login" ||
+    pathname.startsWith("/login/") ||
+    pathname === "/guardian/login" ||
+    pathname.startsWith("/guardian/login/") ||
+    pathname.startsWith("/teacher") ||
+    pathname.startsWith("/admin") ||
+    pathname.startsWith("/platform") ||
+    pathname.startsWith("/moe")
+  );
+}
+
+function isLessonPage(pathname) {
+  return (
+    pathname.startsWith("/student/lessons/") ||
+    pathname.startsWith("/student/lesson/")
+  );
+}
+
+function isLessonImage(request, pathname) {
+  if (!pathname.startsWith("/student/")) return false;
+  return request.destination === "image";
+}
+
+function isLessonFont(request, pathname) {
+  if (!pathname.startsWith("/student/")) return false;
+  return request.destination === "font";
+}
 
 function computeBackoff(attempts) {
   const backoff = BASE_BACKOFF_MS * Math.pow(2, Math.max(0, attempts - 1));
@@ -171,54 +210,74 @@ async function networkFirst(request) {
   }
 }
 
+async function cacheFirst(request) {
+  const cached = await caches.match(request);
+  if (cached) return cached;
+  const response = await fetch(request);
+  if (response && response.ok) {
+    const cache = await caches.open(CACHE_NAME);
+    await cache.put(request, response.clone());
+  }
+  return response;
+}
+
+async function staleWhileRevalidate(request) {
+  const cache = await caches.open(CACHE_NAME);
+  const cached = await cache.match(request);
+  const networkPromise = fetch(request)
+    .then((response) => {
+      if (response && response.ok) {
+        cache.put(request, response.clone());
+      }
+      return response;
+    })
+    .catch(() => null);
+
+  if (cached) {
+    return cached;
+  }
+
+  const networkResponse = await networkPromise;
+  if (networkResponse) {
+    return networkResponse;
+  }
+
+  return caches.match("/offline.html");
+}
+
 self.addEventListener("fetch", (event) => {
   const url = new URL(event.request.url);
   if (event.request.method !== "GET") return;
-  if (
-    url.pathname.startsWith("/moe/") ||
-    url.pathname.startsWith("/api/") ||
-    url.pathname.startsWith("/auth") ||
-    url.pathname.startsWith("/login") ||
-    url.pathname.startsWith("/guardian/login") ||
-    url.pathname.startsWith("/teacher") ||
-    url.pathname.startsWith("/admin") ||
-    url.pathname.startsWith("/platform")
-  ) {
+  if (isProtectedRoute(url.pathname)) {
     return;
   }
-  if (url.pathname !== "/" && url.pathname !== "/offline" && !url.pathname.startsWith("/student/")) {
+  if (url.pathname.startsWith("/_next/static/")) {
+    event.respondWith(cacheFirst(event.request));
+    return;
+  }
+  if (
+    url.pathname !== "/" &&
+    url.pathname !== "/offline" &&
+    url.pathname !== "/offline.html" &&
+    !url.pathname.startsWith("/student/")
+  ) {
     return;
   }
 
-  // Cache lesson and lab pages on first load for offline access
-  if (
-    url.pathname.startsWith("/student/lessons/") ||
-    url.pathname.startsWith("/student/labs/")
-  ) {
-    event.respondWith(
-      fetch(event.request)
-        .then((response) => {
-          if (response.ok) {
-            const clone = response.clone();
-            caches.open(CACHE_NAME).then((cache) => cache.put(event.request, clone));
-          }
-          return response;
-        })
-        .catch(async () => {
-          const cached = await caches.match(event.request);
-          if (cached) return cached;
-          return new Response("Lesson unavailable offline", {
-            status: 503,
-            headers: { "Content-Type": "text/plain" },
-          });
-        })
-    );
+  if (isLessonFont(event.request, url.pathname) || isLessonImage(event.request, url.pathname)) {
+    event.respondWith(cacheFirst(event.request));
+    return;
+  }
+
+  if (isLessonPage(url.pathname)) {
+    event.respondWith(staleWhileRevalidate(event.request));
     return;
   }
 
   event.respondWith(
     networkFirst(event.request).catch(
-      () =>
+      async () =>
+        (await caches.match("/offline.html")) ||
         new Response("Offline fallback unavailable", {
           status: 503,
           headers: { "Content-Type": "text/plain" },

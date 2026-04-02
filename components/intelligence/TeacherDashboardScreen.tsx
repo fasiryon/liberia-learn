@@ -11,6 +11,7 @@ import {
   type TeacherInterventionItem,
 } from "@/components/intelligence/InterventionTable";
 import { Card } from "@/components/ui/Card";
+import HelpTooltip from "@/components/ui/HelpTooltip";
 import { buildAdvisoryActions } from "@/lib/intelligence/advisoryActions";
 
 export type TeacherDashboardSummary = {
@@ -143,7 +144,10 @@ export function TeacherDashboardScreen({
       <Card className="p-5 sm:p-6">
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div>
-            <h2 className="text-lg font-semibold text-slate-100">Needs Attention</h2>
+            <div className="flex items-center gap-2">
+              <h2 className="text-lg font-semibold text-slate-100">Confusion Alerts</h2>
+              <HelpTooltip text="Students flagged by AI as struggling with the current lesson" />
+            </div>
             <p className="mt-1 text-sm text-slate-400">
               Prioritized items for the next classroom follow-up.
             </p>
@@ -258,7 +262,10 @@ export function TeacherDashboardScreen({
 
       <section className="space-y-4">
         <div>
-          <h2 className="text-lg font-semibold text-slate-100">Support queue</h2>
+          <div className="flex items-center gap-2">
+            <h2 className="text-lg font-semibold text-slate-100">Intervention Queue</h2>
+            <HelpTooltip text="Students who may need additional support based on recent activity" />
+          </div>
           <p className="text-sm text-slate-400">
             Suggestions stay advisory until a teacher reviews them.
           </p>

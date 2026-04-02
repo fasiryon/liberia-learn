@@ -8,6 +8,7 @@ import {
   type TeacherInterventionItem,
 } from "@/components/intelligence/InterventionTable";
 import { buildAdvisoryActions } from "@/lib/intelligence/advisoryActions";
+import HelpTooltip from "@/components/ui/HelpTooltip";
 
 function trendLabel(trend: string) {
   if (trend === "improving") return "Improving";
@@ -78,7 +79,10 @@ export function TeacherStudentIntelligenceScreen({
           </p>
         </Card>
         <Card className="p-5">
-          <p className="text-xs text-slate-500">Mastery level</p>
+          <div className="flex items-center gap-2">
+            <p className="text-xs text-slate-500">Mastery Score</p>
+            <HelpTooltip text="How well a student has demonstrated understanding across lessons and exams" />
+          </div>
           <p className="mt-2 text-xl font-semibold text-slate-100">
             {masteryLabel(summary.masteryLevel)}
           </p>
@@ -188,9 +192,12 @@ export function TeacherStudentIntelligenceScreen({
       </section>
 
       <section className="space-y-4">
-        <h2 className="text-lg font-semibold text-slate-100">
-          Support queue
-        </h2>
+        <div className="flex items-center gap-2">
+          <h2 className="text-lg font-semibold text-slate-100">
+            Intervention Queue
+          </h2>
+          <HelpTooltip text="Students who may need additional support based on recent activity" />
+        </div>
         <InterventionTable
           items={interventions}
           emptyMessage="No interventions are pending for this student."

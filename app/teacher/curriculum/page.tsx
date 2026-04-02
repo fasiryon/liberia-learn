@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { teacherWelcomeStorageKey } from "@/app/teacher/TeacherWelcomeGate";
 
 const SUBJECTS = [
   "MATH", "SCIENCE", "LITERACY", "CIVICS",
@@ -68,6 +69,11 @@ export default function TeacherCurriculumPage() {
   }
 
   useEffect(() => { loadItems(); }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    window.localStorage.setItem("teacher_has_viewed_lesson", "true");
+    window.localStorage.setItem(teacherWelcomeStorageKey, "true");
+  }, []);
 
   async function handleGenerate(e: React.FormEvent) {
     e.preventDefault();
@@ -294,7 +300,12 @@ export default function TeacherCurriculumPage() {
           {loadingItems ? (
             <p className="text-sm text-slate-400">Loading...</p>
           ) : items.length === 0 ? (
-            <p className="text-sm text-slate-400">No curriculum items yet. Generate one above or ask your admin.</p>
+            <div className="rounded-2xl border border-dashed border-slate-700 bg-slate-950/60 p-8 text-center">
+              <div className="mx-auto h-20 w-20 rounded-3xl border border-slate-700 bg-slate-900/80" />
+              <p className="mt-4 text-sm text-slate-300">
+                No lessons assigned to your grade level yet. Contact your admin.
+              </p>
+            </div>
           ) : (
             <div className="space-y-3">
               {items.map((item) => {
