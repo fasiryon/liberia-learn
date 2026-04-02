@@ -237,6 +237,10 @@ export default function GlobalAssistantShell({
   }, [open]);
 
   useEffect(() => {
+    if (typeof window === "undefined") {
+      return;
+    }
+
     try {
       const cached = window.sessionStorage.getItem(contextStorageKey);
       if (!cached) {
@@ -387,6 +391,10 @@ export default function GlobalAssistantShell({
         ? scopedGrade
         : undefined;
     const cachedContext = (() => {
+      if (typeof window === "undefined") {
+        return null;
+      }
+
       try {
         const cached = window.sessionStorage.getItem(contextStorageKey);
         return cached ? (JSON.parse(cached) as CachedAssistantContext) : null;
@@ -401,7 +409,7 @@ export default function GlobalAssistantShell({
       cachedContext?.gradeLevel ??
       undefined;
 
-    if (resolvedSubject || resolvedGradeLevel) {
+    if (typeof window !== "undefined" && (resolvedSubject || resolvedGradeLevel)) {
       window.sessionStorage.setItem(
         contextStorageKey,
         JSON.stringify({
