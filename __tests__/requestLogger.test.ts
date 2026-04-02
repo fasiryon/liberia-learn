@@ -1,11 +1,9 @@
-import { beforeEach, afterEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import {
   hashUserId,
   logRequest,
   withRequestLogging,
 } from "@/lib/logging/requestLogger";
-
-// ─── Helpers ──────────────────────────────────────────────────────────────────
 
 function makeEntry(overrides: Partial<Parameters<typeof logRequest>[0]> = {}) {
   return {
@@ -19,17 +17,15 @@ function makeEntry(overrides: Partial<Parameters<typeof logRequest>[0]> = {}) {
 }
 
 function parsedLog(spy: ReturnType<typeof vi.spyOn>): Record<string, unknown> {
-  // In non-dev environments the logger calls console.log(json) — single arg
   const arg = spy.mock.calls[0][0] as string;
   return JSON.parse(arg);
 }
-
-// ─── Tests ────────────────────────────────────────────────────────────────────
 
 describe("logRequest", () => {
   let consoleSpy: ReturnType<typeof vi.spyOn>;
 
   beforeEach(() => {
+    vi.stubEnv("NODE_ENV", "development");
     consoleSpy = vi.spyOn(console, "log").mockImplementation(() => {});
     delete process.env.LOG_LEVEL;
   });
@@ -37,6 +33,7 @@ describe("logRequest", () => {
   afterEach(() => {
     consoleSpy.mockRestore();
     delete process.env.LOG_LEVEL;
+    vi.unstubAllEnvs();
   });
 
   it("produces JSON output", () => {
@@ -47,9 +44,11 @@ describe("logRequest", () => {
     expect(() => JSON.parse(arg)).not.toThrow();
 
     const parsed = parsedLog(consoleSpy);
-    expect(parsed.method).toBe("GET");
-    expect(parsed.route).toBe("/api/test");
-    expect(parsed.statusCode).toBe(200);
+    const metadata = parsed.metadata as Record<string, unknown>;
+    expect(parsed.message).toBe("HTTP request");
+    expect(metadata.method).toBe("GET");
+    expect(metadata.route).toBe("/api/test");
+    expect(metadata.statusCode).toBe(200);
   });
 
   it("hashes userId and does not include the raw value", () => {
@@ -57,50 +56,51 @@ describe("logRequest", () => {
     logRequest(makeEntry({ userId: rawId }));
 
     const parsed = parsedLog(consoleSpy);
-    expect(parsed.userId).toBeUndefined();
-    expect(parsed.userIdHash).toBeDefined();
-    expect(parsed.userIdHash).not.toBe(rawId);
-    expect(parsed.userIdHash).toBe(hashUserId(rawId));
+    const metadata = parsed.metadata as Record<string, unknown>;
+    expect(metadata.userId).toBeUndefined();
+    expect(metadata.userIdHash).toBeDefined();
+    expect(metadata.userIdHash).not.toBe(rawId);
+    expect(metadata.userIdHash).toBe(hashUserId(rawId));
   });
 
   it("does not include request body PII fields in output", () => {
-    // The interface does not accept body/email/password/submissionContent —
-    // this test confirms the emitted JSON never contains those keys.
     logRequest(makeEntry({ method: "POST" }));
 
     const parsed = parsedLog(consoleSpy);
-    expect(parsed).not.toHaveProperty("body");
-    expect(parsed).not.toHaveProperty("email");
-    expect(parsed).not.toHaveProperty("password");
-    expect(parsed).not.toHaveProperty("submissionContent");
-    expect(parsed).not.toHaveProperty("token");
+    const metadata = parsed.metadata as Record<string, unknown>;
+    expect(metadata).not.toHaveProperty("body");
+    expect(metadata).not.toHaveProperty("email");
+    expect(metadata).not.toHaveProperty("password");
+    expect(metadata).not.toHaveProperty("submissionContent");
+    expect(metadata).not.toHaveProperty("token");
   });
 
   it("captures statusCode and durationMs", () => {
     logRequest(makeEntry({ statusCode: 422, durationMs: 75 }));
 
     const parsed = parsedLog(consoleSpy);
-    expect(parsed.statusCode).toBe(422);
-    expect(parsed.durationMs).toBe(75);
+    const metadata = parsed.metadata as Record<string, unknown>;
+    expect(metadata.statusCode).toBe(422);
+    expect(metadata.durationMs).toBe(75);
   });
 
   it("includes optional fields when provided", () => {
-    logRequest(
-      makeEntry({ schoolId: "school-1", role: "TEACHER" })
-    );
+    logRequest(makeEntry({ schoolId: "school-1", role: "TEACHER" }));
 
     const parsed = parsedLog(consoleSpy);
-    expect(parsed.schoolId).toBe("school-1");
-    expect(parsed.role).toBe("TEACHER");
+    const metadata = parsed.metadata as Record<string, unknown>;
+    expect(metadata.schoolId).toBe("school-1");
+    expect(metadata.role).toBe("TEACHER");
   });
 
   it("omits optional fields when not provided", () => {
     logRequest(makeEntry());
 
     const parsed = parsedLog(consoleSpy);
-    expect(parsed).not.toHaveProperty("userIdHash");
-    expect(parsed).not.toHaveProperty("schoolId");
-    expect(parsed).not.toHaveProperty("role");
+    const metadata = parsed.metadata as Record<string, unknown>;
+    expect(metadata).not.toHaveProperty("userIdHash");
+    expect(metadata).not.toHaveProperty("schoolId");
+    expect(metadata).not.toHaveProperty("role");
   });
 
   it("is silent when LOG_LEVEL=silent", () => {
@@ -110,8 +110,6 @@ describe("logRequest", () => {
     expect(consoleSpy).not.toHaveBeenCalled();
   });
 });
-
-// ─── hashUserId ───────────────────────────────────────────────────────────────
 
 describe("hashUserId", () => {
   it("returns 16 hex characters", () => {
@@ -129,12 +127,11 @@ describe("hashUserId", () => {
   });
 });
 
-// ─── withRequestLogging ───────────────────────────────────────────────────────
-
 describe("withRequestLogging", () => {
   let consoleSpy: ReturnType<typeof vi.spyOn>;
 
   beforeEach(() => {
+    vi.stubEnv("NODE_ENV", "development");
     consoleSpy = vi.spyOn(console, "log").mockImplementation(() => {});
     delete process.env.LOG_LEVEL;
   });
@@ -142,6 +139,7 @@ describe("withRequestLogging", () => {
   afterEach(() => {
     consoleSpy.mockRestore();
     delete process.env.LOG_LEVEL;
+    vi.unstubAllEnvs();
   });
 
   it("logs statusCode and route on success", async () => {
@@ -152,9 +150,10 @@ describe("withRequestLogging", () => {
 
     expect(consoleSpy).toHaveBeenCalledOnce();
     const parsed = parsedLog(consoleSpy);
-    expect(parsed.route).toBe("/api/demo");
-    expect(parsed.statusCode).toBe(200);
-    expect(parsed.method).toBe("GET");
+    const metadata = parsed.metadata as Record<string, unknown>;
+    expect(metadata.route).toBe("/api/demo");
+    expect(metadata.statusCode).toBe(200);
+    expect(metadata.method).toBe("GET");
   });
 
   it("captures durationMs >= 0", async () => {
@@ -164,8 +163,9 @@ describe("withRequestLogging", () => {
     await wrapped({ method: "POST" });
 
     const parsed = parsedLog(consoleSpy);
-    expect(typeof parsed.durationMs).toBe("number");
-    expect(parsed.durationMs as number).toBeGreaterThanOrEqual(0);
+    const metadata = parsed.metadata as Record<string, unknown>;
+    expect(typeof metadata.durationMs).toBe("number");
+    expect(metadata.durationMs as number).toBeGreaterThanOrEqual(0);
   });
 
   it("logs on error and re-throws", async () => {
@@ -179,7 +179,8 @@ describe("withRequestLogging", () => {
 
     expect(consoleSpy).toHaveBeenCalledOnce();
     const parsed = parsedLog(consoleSpy);
-    expect(parsed.statusCode).toBe(403);
+    const metadata = parsed.metadata as Record<string, unknown>;
+    expect(metadata.statusCode).toBe(403);
   });
 
   it("is silent when LOG_LEVEL=silent even for wrapped handlers", async () => {

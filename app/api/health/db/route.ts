@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
+import { logger } from "@/lib/logger";
 
 export const dynamic = "force-dynamic";
 
@@ -22,7 +23,7 @@ function redact(url: string | undefined): Record<string, string> {
 export async function GET() {
   const conn = redact(process.env.DATABASE_URL);
   if (process.env.NODE_ENV === "development") {
-    console.log("[health/db] connection info:", JSON.stringify(conn));
+    logger.info("[health/db] connection info", { conn });
   }
 
   try {
@@ -36,7 +37,7 @@ export async function GET() {
     return NextResponse.json(response);
   } catch (err: unknown) {
     const message = err instanceof Error ? err.message : String(err);
-    console.error("[health/db] query failed:", message);
+    logger.error("[health/db] query failed", { errorMessage: message });
     const errResponse: Record<string, unknown> = { ok: false, error: message, ts: new Date().toISOString() };
     if (process.env.NODE_ENV === "development") {
       errResponse.conn = conn;

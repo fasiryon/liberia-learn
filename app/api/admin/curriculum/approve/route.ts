@@ -6,6 +6,7 @@ import { isCurriculumFeedbackEnabled } from "@/lib/serverFlags";
 import { embedLesson } from "@/lib/ai/rag/embeddingService";
 import { syncCurriculumContentRagChunks } from "@/lib/ai/rag/ragIngestionService";
 import { enqueueJob, isQueueConfigured, JobType } from "@/lib/queue";
+import { logger } from "@/lib/logger";
 
 /**
  * POST /api/admin/curriculum/approve
@@ -63,46 +64,31 @@ export async function POST(req: Request) {
             contentId: record.contentId,
           });
       } catch (queueError) {
-        console.error(
-          "[QUEUE] Falling back to inline embedding generation",
-          queueError
-        );
+        logger.warn("[QUEUE] Falling back to inline embedding generation", { error: queueError });
 
         try {
           await syncCurriculumContentRagChunks(record.id);
         } catch (syncError) {
-          console.error(
-            "[RAG] Best-effort approval chunk sync failed",
-            syncError
-          );
+          logger.warn("[RAG] Best-effort approval chunk sync failed", { error: syncError });
         }
 
         try {
           await embedLesson(record.id);
         } catch (embeddingError) {
-          console.error(
-            "[RAG] Best-effort approval embedding failed",
-            embeddingError
-          );
+          logger.warn("[RAG] Best-effort approval embedding failed", { error: embeddingError });
         }
       }
     } else {
       try {
         await syncCurriculumContentRagChunks(record.id);
       } catch (syncError) {
-        console.error(
-          "[RAG] Best-effort approval chunk sync failed",
-          syncError
-        );
+        logger.warn("[RAG] Best-effort approval chunk sync failed", { error: syncError });
       }
 
       try {
         await embedLesson(record.id);
       } catch (embeddingError) {
-        console.error(
-          "[RAG] Best-effort approval embedding failed",
-          embeddingError
-        );
+        logger.warn("[RAG] Best-effort approval embedding failed", { error: embeddingError });
       }
     }
 
@@ -120,16 +106,17 @@ export async function POST(req: Request) {
           },
         });
       } catch (telemetryError) {
-        console.error(
-          "[TELEMETRY] Best-effort curriculum approval feedback failed",
-          telemetryError
-        );
+        logger.warn("[TELEMETRY] Best-effort curriculum approval feedback failed", { error: telemetryError });
       }
     }
 
     return NextResponse.json({ ok: true, contentId, status: "published" });
   } catch (err: any) {
-    console.error("Curriculum approve error:", err);
+    logger.error("Curriculum approve error", {
+      route: "/api/admin/curriculum/approve",
+      error: err,
+      status: err?.status ?? 500,
+    });
     return NextResponse.json(
       { error: err?.message ?? "Failed to approve" },
       { status: err?.status ?? 500 }

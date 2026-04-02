@@ -14,7 +14,7 @@ export function initWorkerSentry() {
 
   Sentry.init({
     dsn: process.env.SENTRY_DSN,
-    enabled: process.env.NODE_ENV === "production",
+    enabled: Boolean(process.env.SENTRY_DSN),
     tracesSampleRate: 0.1,
     ignoreErrors: SENTRY_IGNORE_ERRORS,
     beforeSend(event) {

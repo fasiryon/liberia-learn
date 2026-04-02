@@ -3,8 +3,7 @@
  *
  * Lightweight structured logger for API requests.
  * - Output: JSON (machine-readable for log aggregators)
- * - Dev: console.log with [REQUEST] prefix
- * - Prod/other: single-line JSON to stdout via console.log
+ * - Uses the shared logger for stdout/stderr emission
  * - Silent: when LOG_LEVEL=silent, logs nothing
  *
  * PII safety:
@@ -14,6 +13,7 @@
  */
 
 import crypto from "crypto";
+import { logger } from "@/lib/logger";
 
 export interface RequestLogEntry {
   method: string;
@@ -44,7 +44,7 @@ export function hashUserId(userId: string): string {
 }
 
 function isSilent(): boolean {
-  return process.env.LOG_LEVEL === "silent";
+  return process.env.LOG_LEVEL === "silent" || process.env.NODE_ENV === "test";
 }
 
 /**
@@ -60,12 +60,7 @@ export function logRequest(entry: RequestLogEntry): void {
     ...(userId !== undefined ? { userIdHash: hashUserId(userId) } : {}),
   };
 
-  const json = JSON.stringify(structured);
-  if (process.env.NODE_ENV === "development") {
-    console.log("[REQUEST]", json);
-  } else {
-    console.log(json);
-  }
+  logger.info("HTTP request", structured as unknown as Record<string, unknown>);
 }
 
 /**

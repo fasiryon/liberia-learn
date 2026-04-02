@@ -12,6 +12,7 @@ import { isAdaptiveEngineEnabled } from "@/lib/serverFlags";
 import { recordPerformanceEvent } from "@/lib/intelligence/recordPerformanceEvent";
 import { updateMasteryProfile } from "@/lib/mastery/masteryService";
 import { gradeToBand } from "@/lib/moe/alignment-engine";
+import { logger } from "@/lib/logger";
 
 export const dynamic = "force-dynamic";
 
@@ -174,7 +175,7 @@ export async function POST(req: NextRequest) {
           .map((attempt: { score: number }) => attempt.score),
       });
     } catch (error) {
-      console.error("[adaptive.submit.masteryRefresh]", error);
+      logger.error("[adaptive.submit.masteryRefresh]", { error });
       throw error;
     }
 
@@ -217,7 +218,7 @@ export async function POST(req: NextRequest) {
       aiAssistUsed: body.aiAssistUsed === true,
       lessonId: body.practiceSetId,
     }).catch((error) => {
-      console.error("[adaptive.submit.performanceEvent]", error);
+      logger.warn("[adaptive.submit.performanceEvent]", { error });
     });
 
     return NextResponse.json({
@@ -226,7 +227,11 @@ export async function POST(req: NextRequest) {
       nextTier,
     });
   } catch (error: any) {
-    console.error("[adaptive.submit.POST]", error);
+    logger.error("[adaptive.submit.POST]", {
+      route: "/api/student/adaptive/submit",
+      error,
+      status: error?.status ?? 500,
+    });
     return NextResponse.json(
       { error: error?.message ?? "Server error" },
       { status: error?.status ?? 500 }

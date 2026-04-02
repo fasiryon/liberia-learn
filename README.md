@@ -56,7 +56,8 @@ The trust layer is grounded in retrieved metadata and provider usage fields. It 
 Current operational reality:
 - the default rate limiter backend is an explicit in-memory instance-local fallback; no Redis, Upstash, or other shared durable backing is configured in this repo today
 - important admin and MOE routes emit structured request logs through [lib/logging/requestLogger.ts](C:\Users\fasir\liberia-learn\lib\logging\requestLogger.ts)
-- application and worker Sentry wiring is present through [instrumentation.ts](C:\Users\fasir\liberia-learn\instrumentation.ts), [instrumentation-client.ts](C:\Users\fasir\liberia-learn\instrumentation-client.ts), and [worker/sentry.ts](C:\Users\fasir\liberia-learn\worker\sentry.ts), but DSNs remain optional and unset in local builds by default
+- application and worker Sentry wiring is present through [app/instrumentation.ts](C:\Users\fasir\liberia-learn\app\instrumentation.ts), [instrumentation-client.ts](C:\Users\fasir\liberia-learn\instrumentation-client.ts), [app/global-error.tsx](C:\Users\fasir\liberia-learn\app\global-error.tsx), and [worker/sentry.ts](C:\Users\fasir\liberia-learn\worker\sentry.ts), but DSNs remain optional and unset in local builds by default
+- when no Sentry DSN is configured, browser/server/worker errors are not exported to Sentry and observability falls back to structured stdout/stderr logs only
 
 ## Key Features
 

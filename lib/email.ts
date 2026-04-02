@@ -1,5 +1,6 @@
 // lib/email.ts
 import { Resend } from "resend";
+import { logger } from "@/lib/logger";
 
 const resend = process.env.RESEND_API_KEY
   ? new Resend(process.env.RESEND_API_KEY)
@@ -14,8 +15,11 @@ const FROM =
 
 async function send(to: string, subject: string, html: string) {
   if (!resend) {
-    console.log(`[EMAIL-DEV] To: ${to} | Subject: ${subject}`);
-    console.log(html);
+    logger.info("[EMAIL-DEV] Email send bypassed", {
+      to,
+      subject,
+      htmlPreview: html.slice(0, 120),
+    });
     return { ok: true, id: "dev-no-send" };
   }
 

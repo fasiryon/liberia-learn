@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/db";
 import { detectConfusion } from "@/lib/intelligence/confusionDetector";
 import { runInterventionCheck } from "@/lib/intelligence/interventionEngine";
+import { logger } from "@/lib/logger";
 
 export async function runConfusionDetectionForStudent(
   studentId: string,
@@ -18,13 +19,13 @@ export async function runConfusionDetectionForStudent(
       await runInterventionCheck(studentId, schoolId, signals);
     }
 
-    console.log("[intelligence.confusionScheduler] processed student", {
+    logger.info("[intelligence.confusionScheduler] processed student", {
       studentId,
       schoolId,
       signalCount: signals.length,
     });
   } catch (error) {
-    console.error("[intelligence.confusionScheduler] failed", {
+    logger.error("[intelligence.confusionScheduler] failed", {
       studentId,
       schoolId,
       error,

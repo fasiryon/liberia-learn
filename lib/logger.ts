@@ -13,18 +13,41 @@ interface LogData {
   level: LogLevel;
   message: string;
   userId?: string;
+  requestId?: string;
   metadata?: Record<string, JsonLike>;
   timestamp: string;
   service: "liberialearn";
+}
+
+const REDACTED_KEYS = new Set([
+  "authorization",
+  "cookie",
+  "email",
+  "html",
+  "password",
+  "phone",
+  "resettoken",
+  "secret",
+  "token",
+]);
+
+function sanitizeString(value: string): string {
+  return value
+    .replace(/[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/gi, "[REDACTED_EMAIL]")
+    .replace(/Bearer\s+[A-Za-z0-9\-._~+/]+=*/gi, "Bearer [REDACTED_TOKEN]")
+    .replace(/\b\d{7,15}\b/g, "[REDACTED_NUMBER]");
 }
 
 function sanitizeValue(value: unknown): JsonLike {
   if (value instanceof Error) {
     return {
       name: value.name,
-      message: value.message,
+      message: sanitizeString(value.message),
       stack: process.env.NODE_ENV === "development" ? value.stack ?? null : null,
     };
+  }
+  if (typeof value === "string") {
+    return sanitizeString(value);
   }
   if (Array.isArray(value)) {
     return value.map((item) => sanitizeValue(item));
@@ -33,7 +56,7 @@ function sanitizeValue(value: unknown): JsonLike {
     return Object.fromEntries(
       Object.entries(value as Record<string, unknown>).map(([key, entryValue]) => [
         key,
-        sanitizeValue(entryValue),
+        REDACTED_KEYS.has(key.toLowerCase()) ? "[REDACTED]" : sanitizeValue(entryValue),
       ])
     );
   }
@@ -44,11 +67,18 @@ function sanitizeValue(value: unknown): JsonLike {
 }
 
 class Logger {
-  private log(level: LogLevel, message: string, metadata?: Record<string, unknown>, userId?: string) {
+  private log(
+    level: LogLevel,
+    message: string,
+    metadata?: Record<string, unknown>,
+    userId?: string,
+    requestId?: string
+  ) {
     const logData: LogData = {
       level,
-      message,
+      message: sanitizeString(message),
       userId,
+      requestId,
       metadata: metadata ? (sanitizeValue(metadata) as Record<string, JsonLike>) : undefined,
       timestamp: new Date().toISOString(),
       service: "liberialearn",
@@ -66,16 +96,16 @@ class Logger {
     console.log(serialized);
   }
 
-  info(message: string, metadata?: Record<string, unknown>, userId?: string) {
-    this.log("info", message, metadata, userId);
+  info(message: string, metadata?: Record<string, unknown>, userId?: string, requestId?: string) {
+    this.log("info", message, metadata, userId, requestId);
   }
 
-  warn(message: string, metadata?: Record<string, unknown>, userId?: string) {
-    this.log("warn", message, metadata, userId);
+  warn(message: string, metadata?: Record<string, unknown>, userId?: string, requestId?: string) {
+    this.log("warn", message, metadata, userId, requestId);
   }
 
-  error(message: string, metadata?: Record<string, unknown>, userId?: string) {
-    this.log("error", message, metadata, userId);
+  error(message: string, metadata?: Record<string, unknown>, userId?: string, requestId?: string) {
+    this.log("error", message, metadata, userId, requestId);
   }
 }
 
