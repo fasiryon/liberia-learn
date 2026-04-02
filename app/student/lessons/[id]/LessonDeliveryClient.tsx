@@ -43,10 +43,41 @@ type TutorMessage = {
 
 type SimulationValue = number | string | boolean | string[];
 
-type LessonProgressState = {
+export type LessonProgressState = {
   scrollPosition: number;
   lastReadSection: string;
 };
+
+export function parseLessonProgressState(raw: string): LessonProgressState | null {
+  try {
+    const parsed = JSON.parse(raw) as Partial<LessonProgressState>;
+    return {
+      scrollPosition:
+        typeof parsed.scrollPosition === "number" ? parsed.scrollPosition : 0,
+      lastReadSection:
+        typeof parsed.lastReadSection === "string"
+          ? parsed.lastReadSection
+          : "overview",
+    };
+  } catch {
+    return null;
+  }
+}
+
+export function persistLessonProgressState(
+  storage: Pick<Storage, "setItem">,
+  key: string,
+  progress: LessonProgressState
+) {
+  storage.setItem(key, JSON.stringify(progress));
+}
+
+export function clearLessonProgressState(
+  storage: Pick<Storage, "removeItem">,
+  key: string
+) {
+  storage.removeItem(key);
+}
 
 function simulationDefaultState(definition: SimulationDefinition): Record<string, SimulationValue> {
   return Object.fromEntries(
@@ -335,7 +366,7 @@ export default function LessonDeliveryClient({ lessonId }: { lessonId: string })
       scrollPosition: window.scrollY,
       lastReadSection: currentSection,
     };
-    window.sessionStorage.setItem(lessonProgressKey, JSON.stringify(payload));
+    persistLessonProgressState(window.sessionStorage, lessonProgressKey, payload);
   }, [currentSection, lesson, lessonProgressKey]);
 
   useEffect(() => {
@@ -369,12 +400,10 @@ export default function LessonDeliveryClient({ lessonId }: { lessonId: string })
     const saved = window.sessionStorage.getItem(lessonProgressKey);
     if (!saved) return;
 
-    try {
-      const parsed = JSON.parse(saved) as Partial<LessonProgressState>;
-      const savedScrollPosition =
-        typeof parsed.scrollPosition === "number" ? parsed.scrollPosition : 0;
-      const savedSection =
-        typeof parsed.lastReadSection === "string" ? parsed.lastReadSection : "overview";
+    const parsed = parseLessonProgressState(saved);
+    if (parsed) {
+      const savedScrollPosition = parsed.scrollPosition;
+      const savedSection = parsed.lastReadSection;
 
       setCurrentSection(savedSection);
 
@@ -388,8 +417,8 @@ export default function LessonDeliveryClient({ lessonId }: { lessonId: string })
           }
         }, 0);
       });
-    } catch {
-      window.sessionStorage.removeItem(lessonProgressKey);
+    } else {
+      clearLessonProgressState(window.sessionStorage, lessonProgressKey);
     }
   }, [lesson, lessonProgressKey]);
 
@@ -493,7 +522,7 @@ export default function LessonDeliveryClient({ lessonId }: { lessonId: string })
       const data = await response.json().catch(() => null);
       if (!response.ok) throw new Error(data?.error ?? "Failed to complete lesson.");
       if (typeof window !== "undefined") {
-        window.sessionStorage.removeItem(lessonProgressKey);
+        clearLessonProgressState(window.sessionStorage, lessonProgressKey);
       }
       setLesson((current) => (current ? { ...current, status: "completed", completedAt: data?.completedAt ?? new Date().toISOString() } : current));
       setSubmitMessage("Lesson complete! Great work.");
