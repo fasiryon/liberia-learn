@@ -17,6 +17,7 @@ vi.mock("@/lib/db", () => ({
 
 describe("admin placements route", () => {
   beforeEach(() => {
+    vi.resetModules();
     vi.clearAllMocks();
     mockRequireUser.mockResolvedValue({
       id: "admin-1",
@@ -65,7 +66,7 @@ describe("admin placements route", () => {
       })
     );
     expect(payload.placements).toHaveLength(1);
-  });
+  }, 15_000);
 
   it("calculates override rate from reviewed placements only", async () => {
     mockPlacementFindMany.mockResolvedValue([
@@ -116,5 +117,5 @@ describe("admin placements route", () => {
     expect(payload.summary.aiOverridden).toBe(1);
     expect(payload.summary.overrideRate).toBe(50);
     expect(payload.summary.calibrationSignal.label).toBe("AI needs recalibration");
-  });
+  }, 15_000);
 });

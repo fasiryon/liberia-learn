@@ -3,6 +3,11 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 const mockRequireRole = vi.hoisted(() => vi.fn());
 const mockLogAudit = vi.hoisted(() => vi.fn());
 const mockIsCurriculumFeedbackEnabled = vi.hoisted(() => vi.fn());
+const mockEmbedLesson = vi.hoisted(() => vi.fn());
+const mockSyncCurriculumContentRagChunks = vi.hoisted(() => vi.fn());
+const mockDeleteCurriculumContentRagChunks = vi.hoisted(() => vi.fn());
+const mockEnqueueJob = vi.hoisted(() => vi.fn());
+const mockIsQueueConfigured = vi.hoisted(() => vi.fn());
 
 const mockFindUnique = vi.hoisted(() => vi.fn());
 const mockUpdate = vi.hoisted(() => vi.fn());
@@ -23,6 +28,23 @@ vi.mock("@/lib/serverFlags", async () => {
     isCurriculumFeedbackEnabled: mockIsCurriculumFeedbackEnabled,
   };
 });
+
+vi.mock("@/lib/ai/rag/embeddingService", () => ({
+  embedLesson: mockEmbedLesson,
+}));
+
+vi.mock("@/lib/ai/rag/ragIngestionService", () => ({
+  syncCurriculumContentRagChunks: mockSyncCurriculumContentRagChunks,
+  deleteCurriculumContentRagChunks: mockDeleteCurriculumContentRagChunks,
+}));
+
+vi.mock("@/lib/queue", () => ({
+  JobType: {
+    GENERATE_EMBEDDINGS: "GENERATE_EMBEDDINGS",
+  },
+  enqueueJob: mockEnqueueJob,
+  isQueueConfigured: mockIsQueueConfigured,
+}));
 
 vi.mock("@/lib/db", () => ({
   prisma: {
@@ -62,9 +84,14 @@ describe("curriculum approve — telemetry", () => {
     vi.clearAllMocks();
     mockRequireRole.mockResolvedValue(ADMIN_USER);
     mockLogAudit.mockResolvedValue(undefined);
-    mockFindUnique.mockResolvedValue(CURRICULUM_RECORD);
+    mockFindUnique.mockResolvedValue({ ...CURRICULUM_RECORD, id: "content-db-1" });
     mockUpdate.mockResolvedValue({ ...CURRICULUM_RECORD, status: "published" });
     mockFeedbackCreate.mockResolvedValue({ id: "fb-1" });
+    mockEmbedLesson.mockResolvedValue(undefined);
+    mockSyncCurriculumContentRagChunks.mockResolvedValue(undefined);
+    mockDeleteCurriculumContentRagChunks.mockResolvedValue(0);
+    mockEnqueueJob.mockResolvedValue(undefined);
+    mockIsQueueConfigured.mockReturnValue(false);
   });
 
   it("records approved telemetry when flag is enabled", async () => {
@@ -123,9 +150,14 @@ describe("curriculum reject — telemetry", () => {
     vi.clearAllMocks();
     mockRequireRole.mockResolvedValue(ADMIN_USER);
     mockLogAudit.mockResolvedValue(undefined);
-    mockFindUnique.mockResolvedValue(CURRICULUM_RECORD);
+    mockFindUnique.mockResolvedValue({ ...CURRICULUM_RECORD, id: "content-db-1" });
     mockUpdate.mockResolvedValue({ ...CURRICULUM_RECORD, status: "rejected" });
     mockFeedbackCreate.mockResolvedValue({ id: "fb-2" });
+    mockEmbedLesson.mockResolvedValue(undefined);
+    mockSyncCurriculumContentRagChunks.mockResolvedValue(undefined);
+    mockDeleteCurriculumContentRagChunks.mockResolvedValue(0);
+    mockEnqueueJob.mockResolvedValue(undefined);
+    mockIsQueueConfigured.mockReturnValue(false);
   });
 
   it("records rejected telemetry with reason when flag is enabled", async () => {

@@ -19,6 +19,22 @@ vi.mock("@/lib/serverFlags", () => ({
 
 vi.mock("@/lib/rateLimit", () => ({
   checkRateLimit: mockCheckRateLimit,
+  getRateLimitHeaders: vi.fn(() => ({
+    "X-RateLimit-Limit": "5",
+    "X-RateLimit-Remaining": "0",
+    "X-RateLimit-Reset": String(Math.ceil(Date.now() / 1000) + 60),
+    "Retry-After": "60",
+  })),
+  rateLimitExceededResponse: vi.fn((result: any) =>
+    Response.json(
+      { error: "Too many requests", retryAfter: result?.retryAfter ?? 60 },
+      { status: 429 }
+    )
+  ),
+  RATE_LIMIT_POLICIES: {
+    AUTH: { windowMs: 900_000, limit: 5 },
+    ADMIN: { windowMs: 3_600_000, limit: 200 },
+  },
 }));
 
 vi.mock("@/lib/email", () => ({
@@ -60,6 +76,8 @@ beforeEach(() => {
     allowed: true,
     remaining: 1,
     resetAt: Date.now() + 60000,
+    limit: 5,
+    retryAfter: 60,
   });
   mockSendPasswordReset.mockResolvedValue({ ok: true });
   mockTransaction.mockImplementation(async (ops: any[]) => Promise.all(ops));
@@ -82,6 +100,8 @@ describe("RR-3 account recovery", () => {
       allowed: false,
       remaining: 0,
       resetAt: Date.now() + 60000,
+      limit: 5,
+      retryAfter: 60,
     });
     const res = await forgotPOST(
       makeReq("/api/auth/forgot-password", { email: "user@test.lr" })

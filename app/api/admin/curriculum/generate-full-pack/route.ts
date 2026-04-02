@@ -19,25 +19,15 @@ import {
 import { embedLesson } from "@/lib/ai/rag/embeddingService";
 import { syncCurriculumContentRagChunks } from "@/lib/ai/rag/ragIngestionService";
 import { enqueueJob, isQueueConfigured, JobType } from "@/lib/queue";
+import {
+  checkRateLimit,
+  getRateLimitHeaders,
+  RATE_LIMIT_POLICIES,
+  rateLimitExceededResponse,
+} from "@/lib/rateLimit";
+import { logger } from "@/lib/logger";
 
 export const dynamic = "force-dynamic";
-
-// Rate limit: 5 full-pack requests per 10 minutes per userId
-const rateLimitMap = new Map<string, { count: number; resetAt: number }>();
-const RATE_LIMIT = 5;
-const WINDOW_MS = 10 * 60_000;
-
-function checkRateLimit(key: string): boolean {
-  const now = Date.now();
-  const entry = rateLimitMap.get(key);
-  if (!entry || now > entry.resetAt) {
-    rateLimitMap.set(key, { count: 1, resetAt: now + WINDOW_MS });
-    return true;
-  }
-  if (entry.count >= RATE_LIMIT) return false;
-  entry.count++;
-  return true;
-}
 
 const RequestSchema = z.object({
   grade: z.number().int().min(1).max(12),
@@ -49,12 +39,14 @@ const RequestSchema = z.object({
 export async function POST(req: Request) {
   try {
     const user = await requireRole("TEACHER", "ADMIN");
+    const rateLimit = await checkRateLimit(user.id, {
+      windowMs: RATE_LIMIT_POLICIES.ADMIN.windowMs,
+      limit: RATE_LIMIT_POLICIES.ADMIN.limit,
+      namespace: "curriculum_generate_full_pack",
+    });
 
-    if (!checkRateLimit(user.id)) {
-      return NextResponse.json(
-        { error: "Too many requests. Full pack generation is rate-limited." },
-        { status: 429 }
-      );
+    if (!rateLimit.allowed) {
+      return rateLimitExceededResponse(rateLimit);
     }
 
     const body = await req.json();
@@ -271,21 +263,28 @@ export async function POST(req: Request) {
       },
     });
 
-    return NextResponse.json({
-      ok: true,
-      contentId: record.contentId,
-      recordId: record.id,
-      mode: "full_pack",
-      approvalStatus,
-      packSummary: {
-        unitCount: units.length,
-        lessonCount: (packPayload.metadata as any).lessonCount,
-        labCount: (packPayload.metadata as any).labCount,
-        assessmentItemCount: (packPayload.metadata as any).assessmentItemCount,
+    return NextResponse.json(
+      {
+        ok: true,
+        contentId: record.contentId,
+        recordId: record.id,
+        mode: "full_pack",
+        approvalStatus,
+        packSummary: {
+          unitCount: units.length,
+          lessonCount: (packPayload.metadata as any).lessonCount,
+          labCount: (packPayload.metadata as any).labCount,
+          assessmentItemCount: (packPayload.metadata as any).assessmentItemCount,
+        },
       },
-    });
+      { headers: getRateLimitHeaders(rateLimit) }
+    );
   } catch (err: any) {
-    console.error("Full pack generate error:", err);
+    logger.error("Full-pack curriculum generation failed", {
+      route: "/api/admin/curriculum/generate-full-pack",
+      errorMessage: err?.message ?? String(err),
+      status: err?.status ?? 500,
+    });
     return NextResponse.json(
       { error: err?.message ?? "Failed to generate full pack" },
       { status: err?.status ?? 500 }

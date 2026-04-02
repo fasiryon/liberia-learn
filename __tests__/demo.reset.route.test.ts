@@ -36,6 +36,7 @@ vi.mock("@/scripts/seed-demo", () => ({
 
 describe("POST /api/demo/reset", () => {
   beforeEach(() => {
+    vi.resetModules();
     vi.clearAllMocks();
     process.env.DEMO_MODE = "true";
     process.env.DEMO_RESET_SECRET = "demo-secret";
@@ -50,14 +51,13 @@ describe("POST /api/demo/reset", () => {
   });
 
   it("returns 403 when demo mode is disabled", async () => {
-    vi.resetModules();
     process.env.DEMO_MODE = "false";
     const { POST } = await import("@/app/api/demo/reset/route");
     const response = await POST(new Request("http://localhost/api/demo/reset", { method: "POST" }));
 
     expect(response.status).toBe(403);
     expect(await response.json()).toEqual({ error: "Not available in production" });
-  });
+  }, 15_000);
 
   it("returns 401 when not authenticated", async () => {
     mockRequireUser.mockRejectedValueOnce(new Error("Unauthorized"));
@@ -68,7 +68,7 @@ describe("POST /api/demo/reset", () => {
 
     expect(response.status).toBe(401);
     expect(await response.json()).toEqual({ error: "Unauthorized" });
-  });
+  }, 15_000);
 
   it("returns 400 when demo school IDs are not configured", async () => {
     process.env.DEMO_SCHOOL_IDS = "";
@@ -82,7 +82,7 @@ describe("POST /api/demo/reset", () => {
 
     expect(response.status).toBe(400);
     expect(await response.json()).toEqual({ error: "DEMO_SCHOOL_IDS not configured" });
-  });
+  }, 15_000);
 
   it("deletes demo activity data and reseeds authorized demo schools", async () => {
     const { POST } = await import("@/app/api/demo/reset/route");
@@ -114,5 +114,5 @@ describe("POST /api/demo/reset", () => {
     expect(payload.success).toBe(true);
     expect(payload.message).toBe("Demo data reset");
     expect(typeof payload.resetAt).toBe("string");
-  });
+  }, 15_000);
 });

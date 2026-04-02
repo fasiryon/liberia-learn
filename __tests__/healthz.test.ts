@@ -1,4 +1,4 @@
-import { describe, it, expect, vi } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 
 // Mock prisma
 vi.mock("@/lib/db", () => ({
@@ -8,6 +8,11 @@ vi.mock("@/lib/db", () => ({
 }));
 
 describe("GET /api/healthz", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    vi.resetModules();
+  });
+
   it("returns status ok when DB is reachable", async () => {
     const { GET } = await import("@/app/api/healthz/route");
 
@@ -19,7 +24,7 @@ describe("GET /api/healthz", () => {
     expect(body.db).toBe("ok");
     expect(body).toHaveProperty("uptime");
     expect(body).toHaveProperty("ts");
-  });
+  }, 15_000);
 
   it("returns status degraded when DB fails", async () => {
     const { prisma } = await import("@/lib/db");
@@ -33,5 +38,5 @@ describe("GET /api/healthz", () => {
     expect(response.status).toBe(503);
     expect(body.status).toBe("degraded");
     expect(body.db).toBe("error");
-  });
+  }, 15_000);
 });

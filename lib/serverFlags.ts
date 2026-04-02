@@ -233,17 +233,18 @@ export function getAiBudgetMonthlyCap(): number {
   return Number.isFinite(raw) && raw > 0 ? raw : 100;
 }
 
-/** Adaptive learning engine. Fail-closed: must be explicitly enabled. */
+/** Adaptive learning engine. DEFAULT ON. Set ENABLE_ADAPTIVE_ENGINE=false to disable. */
 export function isAdaptiveEngineEnabled(): boolean {
-  return process.env.ENABLE_ADAPTIVE_ENGINE === "true";
+  return process.env.ENABLE_ADAPTIVE_ENGINE !== "false";
 }
 
 export function isConfusionDetectionEnabled(): boolean {
   return process.env.ENABLE_CONFUSION_DETECTION === "true";
 }
 
+/** Teacher intervention recommendation engine. DEFAULT ON. */
 export function isInterventionEngineEnabled(): boolean {
-  return process.env.ENABLE_INTERVENTION_ENGINE === "true";
+  return process.env.ENABLE_INTERVENTION_ENGINE !== "false";
 }
 
 export function isPerformanceEventsEnabled(): boolean {
@@ -274,8 +275,9 @@ export function isPilotReadinessEnabled(): boolean {
   return process.env.ENABLE_PILOT_READINESS !== "false";
 }
 
+/** Teacher intervention workflow actions. DEFAULT ON. */
 export function isInterventionWorkflowEnabled(): boolean {
-  return process.env.ENABLE_INTERVENTION_WORKFLOW === "true";
+  return process.env.ENABLE_INTERVENTION_WORKFLOW !== "false";
 }
 
 //  Block 21: Classroom Toolkit Flags 
@@ -399,30 +401,36 @@ export function isDemoModeEnabled(): boolean {
 
 //  Block RR-2: Guardian Portal + Linking Flags
 
-/** Guardian portal (UI + APIs). DEFAULT OFF.
+/** Guardian portal (UI + APIs). DEFAULT ON.
  *  Checks EITHER server or client var so both sides work with one env set.
- *  Both ENABLE_GUARDIAN_PORTAL and NEXT_PUBLIC_ENABLE_GUARDIAN_PORTAL must be
- *  set in production — see .env.example for the required pair.
+ *  Set either ENABLE_GUARDIAN_PORTAL=false or NEXT_PUBLIC_ENABLE_GUARDIAN_PORTAL=false
+ *  to hide the portal again.
  */
 export function isGuardianPortalEnabled(): boolean {
+  if (
+    process.env.ENABLE_GUARDIAN_PORTAL === "false" ||
+    process.env.NEXT_PUBLIC_ENABLE_GUARDIAN_PORTAL === "false"
+  ) {
+    return false;
+  }
   return (
-    process.env.ENABLE_GUARDIAN_PORTAL === "true" ||
-    process.env.NEXT_PUBLIC_ENABLE_GUARDIAN_PORTAL === "true"
+    process.env.ENABLE_GUARDIAN_PORTAL !== "false" &&
+    process.env.NEXT_PUBLIC_ENABLE_GUARDIAN_PORTAL !== "false"
   );
 }
 
-/** Guardian linking APIs (token acceptance + admin invites). DEFAULT OFF. */
+/** Guardian linking APIs (token acceptance + admin invites). DEFAULT ON. */
 export function isGuardianLinkingEnabled(): boolean {
-  return process.env.ENABLE_GUARDIAN_LINKING === "true";
+  return process.env.ENABLE_GUARDIAN_LINKING !== "false";
 }
 
 /**
- * Guardian dashboard + messaging routes. DEFAULT OFF.
- * Set ENABLE_GUARDIAN_DASHBOARD=true to activate.
+ * Guardian dashboard + messaging routes. DEFAULT ON.
+ * Set ENABLE_GUARDIAN_DASHBOARD=false to disable.
  * When false, /api/guardian/dashboard and /api/guardian/messages return 404.
  */
 export function isGuardianDashboardEnabled(): boolean {
-  return process.env.ENABLE_GUARDIAN_DASHBOARD === "true";
+  return process.env.ENABLE_GUARDIAN_DASHBOARD !== "false";
 }
 
 //  Block RR-1/RR-3: Enrollment Invites + Account Recovery Flags
@@ -496,10 +504,10 @@ export function isUnitAssemblyEnabled(): boolean {
 
 /**
  * Textbook PDF compiler for assembled curriculum units.
- * DEFAULT OFF.
+ * DEFAULT ON.
  */
 export function isTextbookCompilerEnabled(): boolean {
-  return process.env.ENABLE_TEXTBOOK_COMPILER === "true";
+  return process.env.ENABLE_TEXTBOOK_COMPILER !== "false";
 }
 
 /**
@@ -512,12 +520,12 @@ export function isAssignmentLessonLinkageEnabled(): boolean {
 }
 
 /**
- * Part 5: AI-assisted assignment draft generation.
- * Requires ENABLE_ASSIGNMENT_LESSON_LINKAGE=true to be meaningful.
- * DEFAULT OFF.
+ * Part 5: assignment draft generation.
+ * This route is deterministic today and returns a draft only.
+ * DEFAULT ON.
  */
 export function isAiAssignmentGenerationEnabled(): boolean {
-  return process.env.ENABLE_AI_ASSIGNMENT_GENERATION === "true";
+  return process.env.ENABLE_AI_ASSIGNMENT_GENERATION !== "false";
 }
 
 /**

@@ -12,7 +12,12 @@ import {
 } from "@/lib/email";
 import { z } from "zod";
 import crypto from "crypto";
-import { checkRateLimit } from "@/lib/rateLimit";
+import {
+  checkRateLimit,
+  getRateLimitHeaders,
+  RATE_LIMIT_POLICIES,
+  rateLimitExceededResponse,
+} from "@/lib/rateLimit";
 
 function getClientIp(req: Request): string {
   const forwarded = req.headers.get("x-forwarded-for");
@@ -28,9 +33,13 @@ const Schema = z.object({
 
 export async function POST(req: Request) {
   const ip = getClientIp(req);
-  const rl = checkRateLimit(`invite:ip:${ip}`, { windowMs: 60 * 60 * 1000, max: 20 });
+  const rl = await checkRateLimit(`invite:ip:${ip}`, {
+    windowMs: RATE_LIMIT_POLICIES.INVITES.windowMs,
+    limit: RATE_LIMIT_POLICIES.INVITES.limit,
+    namespace: "invite",
+  });
   if (!rl.allowed) {
-    return NextResponse.json({ error: "Too many requests. Please try again later." }, { status: 429 });
+    return rateLimitExceededResponse(rl);
   }
 
   try {
@@ -115,7 +124,7 @@ export async function POST(req: Request) {
       inviteUrl,
       expiresAt: token.expiresAt,
       emailSent,
-    });
+    }, { headers: getRateLimitHeaders(rl) });
   } catch (err: any) {
     const status = err?.status ?? 500;
     return NextResponse.json(

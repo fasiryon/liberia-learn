@@ -1,14 +1,9 @@
 const { withSentryConfig } = require("@sentry/nextjs");
 
-// Validate required env vars at build time (skip during Next.js lint/type-check phases)
+// Validate required env vars at build time.
 if (process.env.NEXT_PHASE !== "phase-development-server" && process.env.SKIP_ENV_VALIDATION !== "true") {
-  try {
-    const { validateEnv } = require("./lib/validateEnv");
-    validateEnv();
-  } catch (err) {
-    console.error("[ENV VALIDATION]", err.message);
-    // Don't hard-fail build — warn only (DB_URL may be unavailable in CI)
-  }
+  const { validateEnv } = require("./lib/validateEnv.shared.js");
+  validateEnv();
 }
 
 /** @type {import('next').NextConfig} */
@@ -31,12 +26,21 @@ const nextConfig = {
   },
 };
 
-module.exports = withSentryConfig(nextConfig, {
-  org: process.env.SENTRY_ORG,
-  project: process.env.SENTRY_PROJECT,
-  authToken: process.env.SENTRY_AUTH_TOKEN,
-  silent: true,
-  telemetry: false,
-  disableLogger: true,
-  widenClientFileUpload: false,
-});
+const shouldEnableSentryBuildPlugin =
+  typeof process.env.SENTRY_AUTH_TOKEN === "string" &&
+  process.env.SENTRY_AUTH_TOKEN.trim().length > 0 &&
+  typeof process.env.SENTRY_ORG === "string" &&
+  process.env.SENTRY_ORG.trim().length > 0 &&
+  typeof process.env.SENTRY_PROJECT === "string" &&
+  process.env.SENTRY_PROJECT.trim().length > 0;
+
+module.exports = shouldEnableSentryBuildPlugin
+  ? withSentryConfig(nextConfig, {
+      org: process.env.SENTRY_ORG,
+      project: process.env.SENTRY_PROJECT,
+      authToken: process.env.SENTRY_AUTH_TOKEN,
+      silent: true,
+      telemetry: false,
+      widenClientFileUpload: false,
+    })
+  : nextConfig;

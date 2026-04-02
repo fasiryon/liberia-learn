@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { requireRole } from "@/lib/auth";
 import { checkAiRateLimit } from "@/lib/ai/rateLimitGuard";
+import { getRateLimitHeaders, rateLimitExceededResponse } from "@/lib/rateLimit";
 import { logAudit } from "@/lib/audit";
 import { prisma } from "@/lib/db";
 import { handleApiError } from "@/lib/errors/apiErrorHandler";
@@ -29,16 +30,14 @@ export async function POST(req: NextRequest) {
     if (!user.schoolId) {
       return NextResponse.json({ error: "No school context available" }, { status: 400 });
     }
-    const rateLimit = checkAiRateLimit({
+    const rateLimit = await checkAiRateLimit({
       userId: user.id,
       role: user.role,
       endpoint: "/api/admin/exams/generate",
+      schoolId: user.schoolId ?? undefined,
     });
     if (!rateLimit.allowed) {
-      return NextResponse.json(
-        { error: "Please wait before making another request" },
-        { status: 429 }
-      );
+      return rateLimitExceededResponse(rateLimit);
     }
 
     const params = ExamGenerationParamsSchema.parse(await req.json());
@@ -100,7 +99,7 @@ export async function POST(req: NextRequest) {
       console.error("[exam.generate] Failed to record AI usage", loggingError);
     }
 
-    return NextResponse.json({ examId: record.id, exam });
+    return NextResponse.json({ examId: record.id, exam }, { headers: getRateLimitHeaders(rateLimit) });
   } catch (error) {
     return handleApiError(error);
   }

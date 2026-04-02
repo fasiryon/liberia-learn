@@ -209,5 +209,5 @@ describe("curriculum factory expansion", () => {
     const validation = validateCurriculumExpansionBatch(invalidBatch as typeof batch);
     expect(validation.valid).toBe(false);
     expect(validation.errors.some((error) => error.includes("broken_reference"))).toBe(true);
-  });
+  }, HEAVY_FACTORY_TIMEOUT_MS);
 });

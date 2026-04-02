@@ -20,6 +20,7 @@ import {
 } from "@/lib/serverFlags";
 import { logAudit } from "@/lib/audit";
 import { checkAiRateLimit } from "@/lib/ai/rateLimitGuard";
+import { getRateLimitHeaders, rateLimitExceededResponse } from "@/lib/rateLimit";
 import { recordMetricEvent } from "@/lib/metrics/events";
 import { prisma } from "@/lib/db";
 import {
@@ -36,16 +37,14 @@ export async function POST(req: NextRequest) {
     }
 
     const user = await requireUser();
-    const rateLimit = checkAiRateLimit({
+    const rateLimit = await checkAiRateLimit({
       userId: user.id,
       role: user.role,
       endpoint: "/api/student/tutor",
+      schoolId: user.schoolId ?? undefined,
     });
     if (!rateLimit.allowed) {
-      return NextResponse.json(
-        { error: "Please wait before making another request" },
-        { status: 429 }
-      );
+      return rateLimitExceededResponse(rateLimit);
     }
 
     // ── Rate limit ─────────────────────────────────────────────────────────
@@ -157,7 +156,7 @@ export async function POST(req: NextRequest) {
       guidanceLevel: result.guidanceLevel,
       confidenceScore: result.confidenceScore,
       hadFallback: result.hadFallback,
-    });
+    }, { headers: getRateLimitHeaders(rateLimit) });
   } catch (err: any) {
     return NextResponse.json(
       { error: err?.message ?? "Server error" },

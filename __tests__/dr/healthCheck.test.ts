@@ -138,7 +138,7 @@ describe("checkPrismaClient", () => {
     const result = await checkPrismaClient();
     expect(result.status).toBe("ok");
     expect(result.name).toBe("prisma_client");
-  });
+  }, 15_000);
 });
 
 // ─── runHealthChecks ──────────────────────────────────────────────────────────

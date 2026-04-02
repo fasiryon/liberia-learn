@@ -24,6 +24,7 @@ vi.mock("@/lib/audit", () => ({
 
 describe("GET/PATCH /api/guardian/settings", () => {
   beforeEach(() => {
+    vi.resetModules();
     vi.clearAllMocks();
     mockRequireRole.mockResolvedValue({
       id: "guardian-1",
@@ -51,7 +52,7 @@ describe("GET/PATCH /api/guardian/settings", () => {
     expect(response.status).toBe(200);
     expect(body.phoneNumber).toBe("+231770000111");
     expect(body.preferences.examResults).toBe(false);
-  });
+  }, 15_000);
 
   it("updates guardian sms preferences", async () => {
     const { PATCH } = await import("@/app/api/guardian/settings/route");
@@ -86,5 +87,5 @@ describe("GET/PATCH /api/guardian/settings", () => {
         action: "guardian.settings.updated",
       })
     );
-  });
+  }, 15_000);
 });

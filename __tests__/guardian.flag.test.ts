@@ -19,9 +19,9 @@ afterEach(() => {
 });
 
 describe("isGuardianPortalEnabled flag split", () => {
-  it("returns false when both vars are absent", async () => {
+  it("returns true when both vars are absent", async () => {
     const { isGuardianPortalEnabled } = await import("@/lib/serverFlags");
-    expect(isGuardianPortalEnabled()).toBe(false);
+    expect(isGuardianPortalEnabled()).toBe(true);
   });
 
   it("returns true when ENABLE_GUARDIAN_PORTAL is 'true'", async () => {
@@ -51,17 +51,41 @@ describe("isGuardianPortalEnabled flag split", () => {
   });
 });
 
-describe("fail-closed flags", () => {
-  it("isAdaptiveEngineEnabled returns false when ENABLE_ADAPTIVE_ENGINE is not set", async () => {
+describe("default-on flags", () => {
+  it("isAdaptiveEngineEnabled returns true when ENABLE_ADAPTIVE_ENGINE is not set", async () => {
     delete process.env.ENABLE_ADAPTIVE_ENGINE;
     const { isAdaptiveEngineEnabled } = await import("@/lib/serverFlags");
-    expect(isAdaptiveEngineEnabled()).toBe(false);
+    expect(isAdaptiveEngineEnabled()).toBe(true);
   });
 
   it("isAdaptiveEngineEnabled returns true when ENABLE_ADAPTIVE_ENGINE is 'true'", async () => {
     process.env.ENABLE_ADAPTIVE_ENGINE = "true";
     const { isAdaptiveEngineEnabled } = await import("@/lib/serverFlags");
     expect(isAdaptiveEngineEnabled()).toBe(true);
+  });
+
+  it("isInterventionEngineEnabled returns true when ENABLE_INTERVENTION_ENGINE is not set", async () => {
+    delete process.env.ENABLE_INTERVENTION_ENGINE;
+    const { isInterventionEngineEnabled } = await import("@/lib/serverFlags");
+    expect(isInterventionEngineEnabled()).toBe(true);
+  });
+
+  it("isInterventionWorkflowEnabled returns true when ENABLE_INTERVENTION_WORKFLOW is not set", async () => {
+    delete process.env.ENABLE_INTERVENTION_WORKFLOW;
+    const { isInterventionWorkflowEnabled } = await import("@/lib/serverFlags");
+    expect(isInterventionWorkflowEnabled()).toBe(true);
+  });
+
+  it("isTextbookCompilerEnabled returns true when ENABLE_TEXTBOOK_COMPILER is not set", async () => {
+    delete process.env.ENABLE_TEXTBOOK_COMPILER;
+    const { isTextbookCompilerEnabled } = await import("@/lib/serverFlags");
+    expect(isTextbookCompilerEnabled()).toBe(true);
+  });
+
+  it("isAiAssignmentGenerationEnabled returns true when ENABLE_AI_ASSIGNMENT_GENERATION is not set", async () => {
+    delete process.env.ENABLE_AI_ASSIGNMENT_GENERATION;
+    const { isAiAssignmentGenerationEnabled } = await import("@/lib/serverFlags");
+    expect(isAiAssignmentGenerationEnabled()).toBe(true);
   });
 
   it("isExamSystemEnabled returns false when ENABLE_EXAM_SYSTEM is not set", async () => {

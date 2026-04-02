@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { requireRole } from "@/lib/auth";
 import { logAudit } from "@/lib/audit";
 import { checkAiRateLimit } from "@/lib/ai/rateLimitGuard";
+import { getRateLimitHeaders, rateLimitExceededResponse } from "@/lib/rateLimit";
 import { prisma } from "@/lib/db";
 import { recordMetricEvent } from "@/lib/metrics/events";
 import { getAiBudgetMonthlyCap, isAdaptiveEngineEnabled } from "@/lib/serverFlags";
@@ -39,16 +40,14 @@ export async function POST(req: NextRequest) {
     }
 
     const user = await requireRole("STUDENT");
-    const rateLimit = checkAiRateLimit({
+    const rateLimit = await checkAiRateLimit({
       userId: user.id,
       role: user.role,
       endpoint: "/api/student/adaptive/practice",
+      schoolId: user.schoolId ?? undefined,
     });
     if (!rateLimit.allowed) {
-      return NextResponse.json(
-        { error: "Please wait before making another request" },
-        { status: 429 }
-      );
+      return rateLimitExceededResponse(rateLimit);
     }
     const student = await prisma.student.findFirst({
       where: {
@@ -135,7 +134,7 @@ export async function POST(req: NextRequest) {
       },
     });
 
-    return NextResponse.json({ practice: generation.practice });
+    return NextResponse.json({ practice: generation.practice }, { headers: getRateLimitHeaders(rateLimit) });
   } catch (error: any) {
     console.error("[adaptive.practice.POST]", error);
     return NextResponse.json(
