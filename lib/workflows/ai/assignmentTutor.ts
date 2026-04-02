@@ -15,6 +15,7 @@
  */
 
 import { routedCompletion } from "@/lib/ai/router";
+import { getSystemPrompt } from "@/lib/ai/promptRegistry";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -64,23 +65,7 @@ const FALLBACK: AssignmentTutorResult = {
 // ─── Prompt builders ──────────────────────────────────────────────────────────
 
 function buildSystemPrompt(): string {
-  return `You are an instructional design assistant for LiberiaLearn teachers.
-Your role is to provide practical teaching guidance for a specific assignment.
-
-Rules:
-- NEVER reference individual students or their data.
-- Keep all guidance concrete and suitable for Liberian classrooms (low-resource context).
-- Language must be supportive and constructive.
-- Do NOT use punitive or deficit-focused language.
-
-You MUST respond with valid JSON only. No prose outside the JSON object.
-
-Response schema:
-{
-  "teachingHints": ["<hint 1>", "<hint 2>"],
-  "anticipatedMisconceptions": ["<misconception 1>"],
-  "scaffoldingSuggestions": ["<suggestion 1>", "<suggestion 2>"]
-}`;
+  return getSystemPrompt("teacher.assignment-tutor.system");
 }
 
 function buildUserPrompt(input: AssignmentTutorInput): string {

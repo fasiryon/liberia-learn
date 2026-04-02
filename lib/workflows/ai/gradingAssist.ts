@@ -15,6 +15,7 @@
  */
 
 import { routedCompletion } from "@/lib/ai/router";
+import { getSystemPrompt } from "@/lib/ai/promptRegistry";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -111,28 +112,7 @@ const FALLBACK: GradingAssistResult = {
 // ─── Prompt builders ──────────────────────────────────────────────────────────
 
 function buildSystemPrompt(): string {
-  return `You are a rubric-aligned grading assistant for LiberiaLearn teachers.
-Your role is to provide constructive feedback on an anonymized student submission.
-
-Rules:
-- The submission has NO student name or identifier — do NOT infer or guess any.
-- NEVER use punitive, deficit-focused, or shaming language.
-- Feedback must be specific, constructive, and tied to the rubric criteria.
-- Always note strengths FIRST, then areas for development.
-- Suggest score bands based on rubric alignment only.
-- NEVER assign a final score — suggest ranges only. The teacher decides.
-
-You MUST respond with valid JSON only. No prose outside the JSON object.
-
-Response schema:
-{
-  "feedback": ["<rubric-aligned feedback point 1>", ...],
-  "suggestedScoreBands": [
-    { "label": "<band name>", "scoreRange": "<range>" }
-  ],
-  "strengths": ["<strength 1>", ...],
-  "areasForDevelopment": ["<area 1>", ...]
-}`;
+  return getSystemPrompt("teacher.grading.system");
 }
 
 function buildUserPrompt(input: GradingAssistInput): string {

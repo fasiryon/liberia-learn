@@ -2,6 +2,7 @@
 import { NextResponse } from "next/server";
 import { requireRole } from "@/lib/auth";
 import { routedCompletion } from "@/lib/ai/routedCompletion";
+import { buildPrompt } from "@/lib/ai/promptRegistry";
 import { logAudit } from "@/lib/audit";
 import {
   checkRateLimit,
@@ -104,46 +105,22 @@ export async function POST(req: Request) {
 
     const subjectText = subject || "mathematics";
 
-    const prompt = `
-Generate a single ${subjectText} placement-test multiple-choice question at ${
-      difficultyDescriptions[safeDifficulty]
-    }.
-
-Previous performance: ${
-      previousAnswers ? JSON.stringify(previousAnswers) : "No previous answers"
-    }
-
-Return ONLY a JSON object with this exact structure (no backticks, no extra text):
-
-{
-  "question": "The question text",
-  "options": ["Option A", "Option B", "Option C", "Option D"],
-  "correctAnswer": 0,
-  "explanation": "Brief explanation of the answer",
-  "difficulty": ${safeDifficulty},
-  "subject": "${subjectText.toLowerCase()}",
-  "strand": "Number sense",
-  "moeStandard": "MATH-G5-NS-01",
-  "whyThisQuestion": "This tests whether the student understands place value at difficulty ${safeDifficulty}",
-  "commonMistake": "Students often confuse tens and hundreds place",
-  "hint": "Think about the position of each digit"
-}
-
-Rules:
-- Question must be clear and age-appropriate.
-- All 4 options must be plausible.
-- correctAnswer is the index (0-3) of the correct option.
-- Explanation must be 1-3 short sentences.
-- subject must match the requested subject.
-- strand must name the MOE strand or sub-skill being tested.
-- moeStandard should be an MOE code when you can infer one, otherwise null.
-- whyThisQuestion must explain the concept and difficulty being assessed.
-- commonMistake must describe a realistic learner misconception.
-- hint must help the learner think without revealing the answer.
-`;
+    const systemPrompt = buildPrompt("placement.question.system", {
+      subjectText,
+      difficultyDescription: difficultyDescriptions[safeDifficulty],
+      previousAnswers: previousAnswers ? JSON.stringify(previousAnswers) : "No previous answers",
+      safeDifficulty,
+      subjectLower: subjectText.toLowerCase(),
+    });
 
     const completion = await routedCompletion({
-      messages: [{ role: "user", content: prompt }],
+      messages: [
+        { role: "system", content: systemPrompt },
+        {
+          role: "user",
+          content: `Generate the placement question for ${subjectText} at difficulty ${safeDifficulty}.`,
+        },
+      ],
       maxTokens: 600,
       forceSmartTier: true,
     });

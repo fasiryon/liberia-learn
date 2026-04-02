@@ -1,13 +1,44 @@
 import { describe, expect, it } from "vitest";
-import { getPrompt, listPrompts, registerPrompt } from "@/lib/ai/promptRegistry";
+import {
+  buildPrompt,
+  getPrompt,
+  getPromptMetadata,
+  getSystemPrompt,
+  listPrompts,
+  registerPrompt,
+} from "@/lib/ai/promptRegistry";
 
 describe("promptRegistry", () => {
   it("getPrompt returns registered prompt", () => {
-    expect(getPrompt("adaptive.practice").name).toBe("adaptive.practice");
+    expect(getPrompt("adaptive.practice").key).toBe("adaptive.practice");
   });
 
   it("getPrompt throws for unknown prompt name", () => {
     expect(() => getPrompt("missing.prompt")).toThrow(/not found/i);
+  });
+
+  it("getSystemPrompt returns the raw template", () => {
+    expect(getSystemPrompt("teacher.assist.system")).toContain(
+      "supportive instructional coach"
+    );
+  });
+
+  it("buildPrompt enforces placeholders", () => {
+    expect(() => buildPrompt("student.tutor.system")).toThrow(
+      /Missing prompt placeholders/i
+    );
+  });
+
+  it("buildPrompt fills placeholders deterministically", () => {
+    const prompt = buildPrompt("student.tutor.system", {
+      persona: "a helper.",
+      contextBlock: "Context goes here.",
+      instructionBlock: "Follow the rules.",
+    });
+
+    expect(prompt).toContain("You are a helper.");
+    expect(prompt).toContain("Context goes here.");
+    expect(prompt).toContain("Follow the rules.");
   });
 
   it("hash is consistent for same template", () => {
@@ -16,10 +47,19 @@ describe("promptRegistry", () => {
     expect(first.hash).toBe(second.hash);
   });
 
+  it("getPromptMetadata returns preview-only metadata", () => {
+    const metadata = getPromptMetadata("lesson.deep");
+    expect(metadata.key).toBe("lesson.deep");
+    expect(metadata.approvedDynamic).toBe(true);
+    expect(metadata.preview.length).toBeGreaterThan(0);
+    expect((metadata as any).template).toBeUndefined();
+  });
+
   it("listPrompts returns all registered prompts", () => {
     const prompts = listPrompts();
-    expect(prompts.some((entry) => entry.name === "adaptive.practice")).toBe(true);
-    expect(prompts.some((entry) => entry.name === "exam.generation")).toBe(true);
-    expect(prompts.some((entry) => entry.name === "lesson.deep")).toBe(true);
+    expect(prompts.some((entry) => entry.key === "adaptive.practice")).toBe(true);
+    expect(prompts.some((entry) => entry.key === "exam.generation")).toBe(true);
+    expect(prompts.some((entry) => entry.key === "lesson.deep")).toBe(true);
+    expect(prompts.some((entry) => entry.key === "student.tutor.system")).toBe(true);
   });
 });
