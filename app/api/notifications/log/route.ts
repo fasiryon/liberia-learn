@@ -7,9 +7,10 @@ export const dynamic = "force-dynamic";
 /** GET /api/notifications/log — list notification history */
 export async function GET() {
   try {
-    await requireRole("TEACHER", "ADMIN");
+    const user = await requireRole("TEACHER", "ADMIN");
 
     const logs = await prisma.notificationLog.findMany({
+      where: { user: { schoolId: user.schoolId } },
       orderBy: { createdAt: "desc" },
       take: 100,
       include: {

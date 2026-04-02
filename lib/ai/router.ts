@@ -103,19 +103,29 @@ async function callOpenAI(
   maxTokens: number
 ): Promise<{ content: string; inputTokens: number; outputTokens: number }> {
   const client = getOpenAIClientOrThrow();
-  const completion = await client.chat.completions.create({
-    model: OPENAI_MODEL,
-    messages,
-    max_tokens: maxTokens,
-  });
+  try {
+    const completion = await client.chat.completions.create(
+      {
+        model: OPENAI_MODEL,
+        messages,
+        max_tokens: maxTokens,
+      },
+      { signal: AbortSignal.timeout(30_000) }
+    );
 
-  return {
-    content:
-      completion.choices[0]?.message?.content ??
-      "I'm not sure how to answer that.",
-    inputTokens: completion.usage?.prompt_tokens ?? 0,
-    outputTokens: completion.usage?.completion_tokens ?? 0,
-  };
+    return {
+      content:
+        completion.choices[0]?.message?.content ??
+        "I'm not sure how to answer that.",
+      inputTokens: completion.usage?.prompt_tokens ?? 0,
+      outputTokens: completion.usage?.completion_tokens ?? 0,
+    };
+  } catch (err) {
+    if (err instanceof Error && err.name === "AbortError") {
+      throw new Error("AI provider timeout after 30s");
+    }
+    throw err;
+  }
 }
 
 export async function routedCompletion(
@@ -137,6 +147,7 @@ export async function routedCompletion(
         model: GROQ_MODEL,
         messages: opts.messages,
         max_tokens: maxTokens,
+        signal: AbortSignal.timeout(30_000),
       });
 
       const inputTokens = completion.usage?.prompt_tokens ?? 0;

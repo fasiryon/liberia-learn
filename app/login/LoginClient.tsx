@@ -261,16 +261,16 @@ export default function LoginClient({ showDemoHints, demoGroups, demoDefaults }:
   };
 
   return (
-    <main className="flex min-h-screen items-center justify-center bg-slate-950 px-4 py-8">
+    <main className="ll-page flex min-h-screen items-center justify-center px-4 py-8 sm:py-10">
       <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_top,_#22c55e33,_transparent_55%),radial-gradient(circle_at_bottom,_#0ea5e933,_transparent_55%)]" />
 
-      <div className="w-full max-w-md space-y-6 rounded-3xl border border-white/10 bg-slate-900/70 p-6 shadow-2xl shadow-emerald-500/20 backdrop-blur">
-        <div className="flex flex-col items-center gap-2 text-center">
+      <div className="w-full max-w-lg space-y-6 rounded-[2rem] border border-white/10 bg-slate-900/75 p-6 shadow-2xl shadow-emerald-500/15 backdrop-blur sm:p-7">
+        <div className="flex flex-col items-center gap-3 text-center">
           <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-emerald-500 text-lg font-black text-slate-950">
             L
           </div>
-          <h1 className="mt-1 text-lg font-semibold text-slate-50">Sign in to LiberiaLearn</h1>
-          <p className="text-xs text-slate-400">Access your personalized lessons, assignments, and progress.</p>
+          <h1 className="text-xl font-semibold text-slate-50">Sign in to LiberiaLearn</h1>
+          <p className="text-sm text-slate-400">Access lessons, assignments, progress, and school tools.</p>
         </div>
 
         {flashMessage && (
@@ -279,23 +279,31 @@ export default function LoginClient({ showDemoHints, demoGroups, demoDefaults }:
           </p>
         )}
 
-        {showDemoHints && demoGroups.length > 0 && <DemoHints title="Demo Login Hints" groups={demoGroups} />}
+        {showDemoHints && demoGroups.length > 0 ? (
+          <div className="space-y-2 rounded-2xl border border-slate-800/80 bg-slate-950/55 p-4">
+            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-500">Demo help</p>
+            <DemoHints title="Demo Login Hints" groups={demoGroups} />
+          </div>
+        ) : null}
 
-        <div className={`grid gap-2 text-xs ${guardianEnabled ? "grid-cols-4" : "grid-cols-3"}`}>
-          {roleOptions.map((option) => (
-            <button
-              key={option}
-              type="button"
-              onClick={() => setRole(option)}
-              className={`rounded-full border px-2.5 py-2 capitalize ${
-                role === option
-                  ? "border-emerald-400 bg-emerald-500/20 text-emerald-200"
-                  : "border-slate-700 bg-slate-900/80 text-slate-300 hover:border-slate-500"
-              }`}
-            >
-              {option}
-            </button>
-          ))}
+        <div className="space-y-2">
+          <p className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-500">Sign in as</p>
+          <div className={`grid gap-2 text-xs ${guardianEnabled ? "grid-cols-2 sm:grid-cols-4" : "grid-cols-3"}`}>
+            {roleOptions.map((option) => (
+              <button
+                key={option}
+                type="button"
+                onClick={() => setRole(option)}
+                className={`min-h-11 rounded-2xl border px-3 py-2.5 capitalize ${
+                  role === option
+                    ? "border-emerald-400 bg-emerald-500/20 text-emerald-200"
+                    : "border-slate-700 bg-slate-900/80 text-slate-300 hover:border-slate-500"
+                }`}
+              >
+                {option}
+              </button>
+            ))}
+          </div>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4 text-sm">
@@ -327,7 +335,11 @@ export default function LoginClient({ showDemoHints, demoGroups, demoDefaults }:
             />
           </div>
 
-          {renderToggle() && <div>{renderToggle()}</div>}
+          {renderToggle() ? (
+            <div className="rounded-2xl border border-slate-800/80 bg-slate-950/45 px-3 py-2">
+              {renderToggle()}
+            </div>
+          ) : null}
 
           <div className="text-right">
             <Link href="/forgot-password" className="text-xs text-emerald-300 hover:text-emerald-200">
@@ -340,7 +352,7 @@ export default function LoginClient({ showDemoHints, demoGroups, demoDefaults }:
           <button
             type="submit"
             disabled={loading}
-            className="mt-2 flex min-h-11 w-full items-center justify-center rounded-xl bg-emerald-500 px-4 py-3 text-base font-semibold text-slate-950 shadow-lg shadow-emerald-500/40 hover:bg-emerald-400 disabled:opacity-60"
+            className="mt-2 flex min-h-12 w-full items-center justify-center rounded-2xl bg-emerald-500 px-4 py-3 text-base font-semibold text-slate-950 shadow-lg shadow-emerald-500/30 hover:bg-emerald-400 disabled:opacity-60"
           >
             {loading ? "Signing in..." : "Continue"}
           </button>

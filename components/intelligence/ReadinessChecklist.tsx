@@ -28,7 +28,7 @@ export function ReadinessChecklist({
 
   return (
     <div className="space-y-4">
-      <Card className="p-5">
+      <Card className="p-5 sm:p-6">
         <h2 className="text-lg font-semibold text-slate-100">Section summary</h2>
         <p className="mt-1 text-sm text-slate-400">
           {readyCount} of {sections.length} readiness sections are currently ready.
@@ -36,8 +36,8 @@ export function ReadinessChecklist({
       </Card>
 
       {sections.map((section) => (
-        <Card key={section.id} className="p-5">
-          <div className="flex items-center justify-between gap-3">
+        <Card key={section.id} className="p-5 sm:p-6">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div>
               <h2 className="text-lg font-semibold text-slate-100">{section.title}</h2>
               {typeof section.score === "number" ? (
@@ -56,8 +56,8 @@ export function ReadinessChecklist({
 
           <div className="mt-4 space-y-3">
             {section.checks.map((check) => (
-              <div key={check.label} className="rounded-2xl bg-slate-950/60 p-4">
-                <div className="flex items-center justify-between gap-3">
+              <div key={check.label} className="rounded-2xl border border-slate-800 bg-slate-950/60 p-4">
+                <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
                   <p className="text-sm font-semibold text-slate-100">{check.label}</p>
                   <span
                     className={`rounded-full border px-2.5 py-1 text-[11px] font-semibold ${marker(check.ready)}`}

@@ -11,7 +11,10 @@ export const dynamic = "force-dynamic";
 
 export async function POST(req: Request) {
   try {
-    await requireRole("ADMIN");
+    const actor = await requireRole("MOE_OFFICIAL");
+    if (!actor.isPlatformAdmin && actor.role !== "MOE_OFFICIAL") {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    }
 
     const body = await req.json();
 
@@ -47,7 +50,10 @@ export async function POST(req: Request) {
 
 export async function GET(req: Request) {
   try {
-    await requireRole("ADMIN");
+    const actor = await requireRole("MOE_OFFICIAL");
+    if (!actor.isPlatformAdmin && actor.role !== "MOE_OFFICIAL") {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    }
 
     const { searchParams } = new URL(req.url);
     const isReport = searchParams.get("report") === "true";

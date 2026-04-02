@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { requireUser } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { seedNationalDemo, SCHOOL_DEFS } from "@/scripts/seed-demo";
 
@@ -16,10 +17,15 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Not available in production" }, { status: 403 });
     }
 
-    const expectedSecret = process.env.DEMO_RESET_SECRET;
-    const providedSecret = request.headers.get("x-demo-secret");
-    if (!expectedSecret || !providedSecret || providedSecret !== expectedSecret) {
+    // Require authenticated platform admin — removes plain-text secret dependency
+    let actor;
+    try {
+      actor = await requireUser();
+    } catch {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+    if (!actor.isPlatformAdmin) {
+      return NextResponse.json({ error: "Platform admin required" }, { status: 403 });
     }
 
     const schoolIds = getDemoSchoolIdsFromEnv();

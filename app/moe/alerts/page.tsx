@@ -11,6 +11,7 @@ type InterventionDistrict = {
   districtId: string;
   interventionCount: number;
   riskFlags: Record<string, number>;
+  latestAt: string | null;
 };
 
 type AlertRow = {
@@ -53,15 +54,20 @@ export default function MoeAlertsPage() {
         const rows: AlertRow[] = [];
         (inter.byDistrict ?? []).forEach((d: InterventionDistrict) => {
           const districtName = districtMap[d.districtId] ?? "Unassigned";
+          const createdLabel = d.latestAt
+            ? new Date(d.latestAt).toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" })
+            : inter.generatedAt
+              ? new Date(inter.generatedAt).toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" })
+              : "N/A";
           Object.entries(d.riskFlags ?? {}).forEach(([flag, count]) => {
             rows.push({
               districtId: d.districtId,
               districtName,
               subject: "All Subjects",
-              strand: "—",
+              strand: "All",
               alertType: flag,
               studentsAffected: count,
-              created: "—",
+              created: createdLabel,
             });
           });
         });

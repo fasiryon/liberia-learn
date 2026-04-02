@@ -18,7 +18,7 @@ export function GuardianProgressScreen({
 }) {
   if (!data) {
     return (
-      <Card className="p-6">
+      <Card className="ll-empty p-6">
         <h2 className="text-xl font-semibold text-slate-100">Progress view</h2>
         <p className="mt-2 text-sm text-slate-400">
           Progress details will appear here once your child starts completing learning work.
@@ -29,9 +29,9 @@ export function GuardianProgressScreen({
 
   return (
     <div className="space-y-4">
-      <Card className="p-4">
+      <Card className="p-4 sm:p-5">
         <p className="text-sm text-slate-300">
-          Family guidance is simplified and non-actionable. Internal school follow-up detail is not shown in guardian views.
+          This page focuses on simple home support. Internal school follow-up details are not shown here.
         </p>
       </Card>
       <GuardianProgressCard data={data} />

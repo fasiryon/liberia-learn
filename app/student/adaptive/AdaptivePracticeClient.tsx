@@ -168,8 +168,8 @@ export default function AdaptivePracticeClient() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-950 px-4 py-8 text-slate-50">
-      <div className="mx-auto max-w-4xl space-y-6">
+    <div className="ll-page min-h-screen px-4 py-8 text-slate-50">
+      <div className="ll-shell max-w-4xl space-y-6">
         <header className="space-y-2">
           <p className="text-xs font-semibold uppercase tracking-[0.2em] text-emerald-300">Adaptive Learning</p>
           <h1 className="text-3xl font-bold">My Practice</h1>
@@ -192,7 +192,7 @@ export default function AdaptivePracticeClient() {
           </div>
         ) : practice && currentQuestion ? (
           <section className="rounded-3xl border border-white/10 bg-slate-900/70 p-6">
-            <div className="mb-5 flex items-center justify-between gap-3">
+            <div className="mb-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
               <div>
                 <p className="text-xs uppercase tracking-wide text-slate-400">
                   {activeGap?.subject} • {practice.difficultyTier}
@@ -205,7 +205,9 @@ export default function AdaptivePracticeClient() {
             </div>
 
             <div className="space-y-4">
-              <p className="text-lg text-slate-100">{currentQuestion.prompt}</p>
+              <div className="rounded-2xl border border-slate-800 bg-slate-950/55 p-4">
+                <p className="text-lg leading-8 text-slate-100">{currentQuestion.prompt}</p>
+              </div>
               <div className="grid gap-3">
                 {currentQuestion.options.map((option, optionIndex) => (
                   <button
@@ -213,7 +215,7 @@ export default function AdaptivePracticeClient() {
                     type="button"
                     onClick={() => selectAnswer(optionIndex)}
                     disabled={submitting}
-                    className="rounded-2xl border border-white/10 bg-slate-950/70 px-4 py-3 text-left text-sm hover:border-emerald-500/40 hover:bg-slate-900 disabled:cursor-not-allowed disabled:opacity-60"
+                    className="min-h-14 rounded-2xl border border-white/10 bg-slate-950/70 px-4 py-3 text-left text-sm hover:border-emerald-500/40 hover:bg-slate-900 disabled:cursor-not-allowed disabled:opacity-60"
                   >
                     {option}
                   </button>
@@ -231,7 +233,7 @@ export default function AdaptivePracticeClient() {
         ) : (
           <section className="grid gap-4 md:grid-cols-2">
             {gaps.length === 0 ? (
-              <div className="rounded-3xl border border-white/10 bg-slate-900/70 p-6 text-sm text-slate-400">
+              <div className="ll-empty rounded-3xl border border-white/10 bg-slate-900/70 p-6 text-sm text-slate-400">
                 No active mastery gaps yet.
               </div>
             ) : (
@@ -252,7 +254,7 @@ export default function AdaptivePracticeClient() {
                   <button
                     type="button"
                     onClick={() => startPractice(gap)}
-                    className="mt-5 w-full rounded-2xl bg-emerald-400 px-4 py-3 text-sm font-semibold text-slate-950 hover:bg-emerald-300"
+                    className="mt-5 min-h-12 w-full rounded-2xl bg-emerald-400 px-4 py-3 text-sm font-semibold text-slate-950 hover:bg-emerald-300"
                   >
                     Start Practice
                   </button>

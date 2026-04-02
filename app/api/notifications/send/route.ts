@@ -27,12 +27,12 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "type and userId required" }, { status: 400 });
     }
 
-    const target = await prisma.user.findUnique({
-      where: { id: userId },
+    const target = await prisma.user.findFirst({
+      where: { id: userId, schoolId: user.schoolId },
       select: { id: true, email: true, name: true },
     });
     if (!target) {
-      return NextResponse.json({ error: "User not found" }, { status: 404 });
+      return NextResponse.json({ error: "User not found or outside your school" }, { status: 403 });
     }
 
     const results: Array<{ channel: string; ok: boolean; error?: string }> = [];

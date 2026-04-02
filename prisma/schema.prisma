@@ -148,6 +148,7 @@ model Student {
   community             String?
   createdAt             DateTime                @default(now())
   currentGrade          Int?
+  deletedAt             DateTime?
   assignmentSubmissions AssignmentSubmission[]
   attendance            AttendanceRecord[]
   capstoneProjects      CapstoneProject[]
@@ -186,6 +187,7 @@ model Exam {
   moeStandards    String[]
   timeLimit       Int
   passingScore    Float               @default(0.70)
+  deletedAt       DateTime?
   questions       ExamQuestion[]
   attempts        ExamAttempt[]
   certifications  ExamCertification[]
@@ -516,7 +518,7 @@ model AuditLog {
   schoolId     String?
   traceId      String? // Block 6: request-correlation trace ID
   School       School?  @relation(fields: [schoolId], references: [id])
-  user         User?    @relation(fields: [userId], references: [id])
+  user         User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
 
   @@index([resourceType, resourceId])
   @@index([userId, createdAt])
@@ -1148,13 +1150,15 @@ model StudentAdaptiveAttempt {
 
 /// / ===== Platform Transfer Tokens =====
 model PlatformTransferToken {
-  id        String    @id @default(cuid())
-  token     String    @unique @default(cuid())
-  createdBy String
-  expiresAt DateTime
-  usedAt    DateTime?
-  usedBy    String?
-  createdAt DateTime  @default(now())
+  id              String    @id @default(cuid())
+  token           String    @unique @default(cuid())
+  tokenHash       String?
+  createdBy       String
+  intendedUserId  String?
+  expiresAt       DateTime
+  usedAt          DateTime?
+  usedBy          String?
+  createdAt       DateTime  @default(now())
 }
 
 model PilotChecklistItem {

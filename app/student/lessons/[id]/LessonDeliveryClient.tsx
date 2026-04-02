@@ -408,38 +408,45 @@ export default function LessonDeliveryClient({ lessonId }: { lessonId: string })
 
   return (
     <div className="space-y-6">
-      <section className="rounded-3xl border border-white/10 bg-slate-900/80 p-6">
-        <div className="flex flex-wrap items-center gap-3 text-xs text-slate-300">
-          <span className="rounded-full bg-emerald-500/15 px-3 py-1 font-semibold text-emerald-300">{lesson.subject}</span>
-          <span>Grade {lesson.grade}</span>
-          <span>{lessonDurationLabel(lesson.classFormat)}</span>
-        </div>
-        <h1 className="mt-4 text-3xl font-semibold text-white">{lesson.title}</h1>
-        <p className="mt-2 text-sm text-slate-400">Teacher: {lesson.teacherName}</p>
-      </section>
-
-      <section className="rounded-3xl border border-white/10 bg-slate-900/80 p-6">
-        <div
-          className="prose prose-invert max-w-none prose-headings:text-white prose-p:text-slate-200 prose-li:text-slate-200"
-          dangerouslySetInnerHTML={{ __html: renderSimpleMarkdown(renderedBody) }}
-        />
-      </section>
-
-      {lesson.objectives.length > 0 ? (
-        <section className="rounded-3xl border border-white/10 bg-slate-900/80 p-6">
-          <h2 className="text-lg font-semibold text-white">Lesson Objective</h2>
-          <ul className="mt-4 space-y-2 text-sm text-slate-200">
-            {lesson.objectives.map((objective, index) => (
-              <li key={`${objective}-${index}`} className="rounded-2xl border border-slate-800 bg-slate-950/60 px-4 py-3">
-                {objective}
-              </li>
-            ))}
-          </ul>
+        <section className="rounded-3xl border border-white/10 bg-slate-900/80 p-6 sm:p-7">
+          <div className="flex flex-wrap items-center gap-3 text-xs text-slate-300">
+            <span className="rounded-full bg-emerald-500/15 px-3 py-1 font-semibold text-emerald-300">{lesson.subject}</span>
+            <span>Grade {lesson.grade}</span>
+            <span>{lessonDurationLabel(lesson.classFormat)}</span>
+          </div>
+          <div className="mt-4 flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+            <div>
+              <h1 className="text-3xl font-semibold text-white">{lesson.title}</h1>
+              <p className="mt-2 text-sm text-slate-400">Teacher: {lesson.teacherName}</p>
+            </div>
+            <div className="rounded-2xl border border-slate-800 bg-slate-950/55 px-4 py-3 text-sm text-slate-300">
+              Stay focused on the lesson, then complete the exit ticket at the end.
+            </div>
+          </div>
         </section>
-      ) : null}
+
+        <section className="rounded-3xl border border-white/10 bg-slate-900/80 p-6 sm:p-7">
+          <div
+            className="prose prose-invert max-w-none prose-headings:text-white prose-p:text-slate-200 prose-li:text-slate-200"
+            dangerouslySetInnerHTML={{ __html: renderSimpleMarkdown(renderedBody) }}
+          />
+        </section>
+
+        {lesson.objectives.length > 0 ? (
+          <section className="rounded-3xl border border-white/10 bg-slate-900/80 p-6 sm:p-7">
+            <h2 className="text-lg font-semibold text-white">Lesson Objectives</h2>
+            <ul className="mt-4 space-y-2 text-sm text-slate-200">
+              {lesson.objectives.map((objective, index) => (
+                <li key={`${objective}-${index}`} className="rounded-2xl border border-slate-800 bg-slate-950/60 px-4 py-3">
+                  {objective}
+                </li>
+              ))}
+            </ul>
+          </section>
+        ) : null}
 
       {lesson.pseudoLabs.length > 0 ? (
-        <section className="rounded-3xl border border-white/10 bg-slate-900/80 p-6">
+        <section className="rounded-3xl border border-white/10 bg-slate-900/80 p-6 sm:p-7">
           <h2 className="text-lg font-semibold text-white">Lab Activity</h2>
           <div className="mt-4 space-y-4">
             {lesson.pseudoLabs.map((lab) => (
@@ -494,7 +501,7 @@ export default function LessonDeliveryClient({ lessonId }: { lessonId: string })
       ) : null}
 
       {lesson.simulationDefinitions.length > 0 ? (
-        <section className="rounded-3xl border border-white/10 bg-slate-900/80 p-6">
+        <section className="rounded-3xl border border-white/10 bg-slate-900/80 p-6 sm:p-7">
           <h2 className="text-lg font-semibold text-white">Interactive Simulation</h2>
           <div className="mt-4 space-y-4">
             {lesson.simulationDefinitions.map((definition) => (
@@ -505,7 +512,7 @@ export default function LessonDeliveryClient({ lessonId }: { lessonId: string })
       ) : null}
 
       {aiTutorEnabled ? (
-        <section className="rounded-3xl border border-white/10 bg-slate-900/80 p-6">
+        <section className="rounded-3xl border border-white/10 bg-slate-900/80 p-6 sm:p-7">
           <h2 className="text-lg font-semibold text-white">Ask a question about this lesson</h2>
           <form className="mt-4 space-y-3" onSubmit={handleTutorSubmit}>
             <textarea
@@ -540,49 +547,49 @@ export default function LessonDeliveryClient({ lessonId }: { lessonId: string })
         </section>
       ) : null}
 
-      <section className="rounded-3xl border border-white/10 bg-slate-900/80 p-6">
-        <h2 className="text-lg font-semibold text-white">Exit Ticket</h2>
-        <div className="mt-4 space-y-5">
-          {exitTicketQuestions.map((question, index) => (
-            <div key={`${question.question}-${index}`} className="rounded-2xl border border-slate-800 bg-slate-950/60 p-4">
-              <p className="text-sm font-medium text-slate-100">{question.question}</p>
-              {question.type === "mcq" ? (
-                <div className="mt-3 space-y-2">
-                  {(question.choices ?? []).map((choice, choiceIndex) => (
-                    <label key={`${choice}-${choiceIndex}`} className="flex items-center gap-3 rounded-xl border border-slate-800 px-3 py-3 text-sm text-slate-200">
-                      <input
-                        type="radio"
-                        name={`exit-ticket-${index}`}
-                        checked={answers[index] === String(choiceIndex)}
-                        onChange={() => setAnswers((current) => ({ ...current, [index]: String(choiceIndex) }))}
-                      />
-                      <span>{choice}</span>
-                    </label>
-                  ))}
-                </div>
-              ) : (
-                <textarea
-                  value={answers[index] ?? ""}
-                  onChange={(event) => setAnswers((current) => ({ ...current, [index]: event.target.value }))}
-                  className="mt-3 min-h-24 w-full rounded-2xl border border-slate-700 bg-slate-950/80 px-4 py-3 text-sm text-slate-50 outline-none focus:border-emerald-400 focus:ring-1 focus:ring-emerald-400/60"
-                  placeholder="Write your answer here"
-                />
-              )}
-            </div>
-          ))}
-        </div>
+        <section className="rounded-3xl border border-white/10 bg-slate-900/80 p-6 sm:p-7">
+          <h2 className="text-lg font-semibold text-white">Exit Ticket</h2>
+          <div className="mt-4 space-y-5">
+            {exitTicketQuestions.map((question, index) => (
+              <div key={`${question.question}-${index}`} className="rounded-2xl border border-slate-800 bg-slate-950/60 p-4">
+                <p className="text-sm font-medium text-slate-100">{question.question}</p>
+                {question.type === "mcq" ? (
+                  <div className="mt-3 space-y-2">
+                    {(question.choices ?? []).map((choice, choiceIndex) => (
+                      <label key={`${choice}-${choiceIndex}`} className="flex items-center gap-3 rounded-xl border border-slate-800 px-3 py-3 text-sm text-slate-200">
+                        <input
+                          type="radio"
+                          name={`exit-ticket-${index}`}
+                          checked={answers[index] === String(choiceIndex)}
+                          onChange={() => setAnswers((current) => ({ ...current, [index]: String(choiceIndex) }))}
+                        />
+                        <span>{choice}</span>
+                      </label>
+                    ))}
+                  </div>
+                ) : (
+                  <textarea
+                    value={answers[index] ?? ""}
+                    onChange={(event) => setAnswers((current) => ({ ...current, [index]: event.target.value }))}
+                    className="mt-3 min-h-24 w-full rounded-2xl border border-slate-700 bg-slate-950/80 px-4 py-3 text-sm text-slate-50 outline-none focus:border-emerald-400 focus:ring-1 focus:ring-emerald-400/60"
+                    placeholder="Write your answer here"
+                  />
+                )}
+              </div>
+            ))}
+          </div>
 
-        <button
-          type="button"
-          onClick={handleSubmitExitTicket}
-          disabled={submitting || lesson.status === "completed"}
-          className="mt-6 inline-flex min-h-12 items-center justify-center rounded-full bg-emerald-400 px-6 text-sm font-semibold text-slate-950 disabled:cursor-not-allowed disabled:bg-slate-700 disabled:text-slate-400"
-        >
-          {lesson.status === "completed" ? "Lesson already completed" : submitting ? "Submitting..." : "Submit"}
-        </button>
+          <button
+            type="button"
+            onClick={handleSubmitExitTicket}
+            disabled={submitting || lesson.status === "completed"}
+            className="mt-6 inline-flex min-h-12 items-center justify-center rounded-full bg-emerald-400 px-6 text-sm font-semibold text-slate-950 disabled:cursor-not-allowed disabled:bg-slate-700 disabled:text-slate-400"
+          >
+            {lesson.status === "completed" ? "Lesson already completed" : submitting ? "Submitting..." : "Submit"}
+          </button>
 
-        {submitMessage ? <p className="mt-3 text-sm text-slate-300">{submitMessage}</p> : null}
-      </section>
+          {submitMessage ? <p className="mt-3 text-sm text-slate-300">{submitMessage}</p> : null}
+        </section>
     </div>
   );
 }

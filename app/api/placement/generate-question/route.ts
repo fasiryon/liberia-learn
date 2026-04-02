@@ -1,7 +1,7 @@
 // app/api/placement/generate-question/route.ts
 import { NextResponse } from "next/server";
 import { requireRole } from "@/lib/auth";
-import { getOpenAIClientOrThrow } from "@/lib/ai/openaiClient";
+import { routedCompletion } from "@/lib/ai/routedCompletion";
 import { logAudit } from "@/lib/audit";
 
 const rateLimitMap = new Map<string, { count: number; resetAt: number }>();
@@ -102,8 +102,6 @@ export async function POST(req: Request) {
       );
     }
 
-    const client = getOpenAIClientOrThrow();
-
     const { difficulty, subject, previousAnswers } = await req.json();
 
     const safeDifficulty =
@@ -151,20 +149,15 @@ Rules:
 - hint must help the learner think without revealing the answer.
 `;
 
-    const completion = await client.chat.completions.create({
-      model: "gpt-4.1-mini",
-      messages: [
-        {
-          role: "user",
-          content: prompt,
-        },
-      ],
-      temperature: 0.7,
+    const completion = await routedCompletion({
+      messages: [{ role: "user", content: prompt }],
+      maxTokens: 600,
+      forceSmartTier: true,
     });
 
-    const content = completion.choices[0]?.message?.content;
+    const content = completion.content;
     if (!content) {
-      throw new Error("No content returned from OpenAI");
+      throw new Error("No content returned from AI");
     }
 
     const questionData = parsePlacementQuestion(content, safeDifficulty);

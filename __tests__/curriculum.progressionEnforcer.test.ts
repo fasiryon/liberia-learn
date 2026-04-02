@@ -20,7 +20,7 @@ describe("curriculum progression enforcer", () => {
     });
 
     expect(patch.payload.primaryConcept).toBe("scientific_observation");
-    expect(patch.payload.prerequisites).toEqual([]);
+    expect(patch.payload.prerequisites).toEqual(["science_readiness"]);
     expect(patch.payload.nextConcepts).toEqual(["living_things"]);
     expect(patch.payload.difficulty).toBe("intro");
   });
@@ -38,7 +38,7 @@ describe("curriculum progression enforcer", () => {
           title: "Observation and Scientific Thinking: Foundations",
           unitTitle: "Observation and Scientific Thinking",
           primaryConcept: "scientific_observation",
-          prerequisites: [],
+          prerequisites: ["science_readiness"],
           nextConcepts: ["living_things"],
           difficulty: "intro",
         },

@@ -177,8 +177,9 @@ self.addEventListener("fetch", (event) => {
   if (
     url.pathname.startsWith("/moe/") ||
     url.pathname.startsWith("/api/") ||
+    url.pathname.startsWith("/auth") ||
     url.pathname.startsWith("/login") ||
-    url.pathname.startsWith("/guardian") ||
+    url.pathname.startsWith("/guardian/login") ||
     url.pathname.startsWith("/teacher") ||
     url.pathname.startsWith("/admin") ||
     url.pathname.startsWith("/platform")
@@ -186,6 +187,32 @@ self.addEventListener("fetch", (event) => {
     return;
   }
   if (url.pathname !== "/" && url.pathname !== "/offline" && !url.pathname.startsWith("/student/")) {
+    return;
+  }
+
+  // Cache lesson and lab pages on first load for offline access
+  if (
+    url.pathname.startsWith("/student/lessons/") ||
+    url.pathname.startsWith("/student/labs/")
+  ) {
+    event.respondWith(
+      fetch(event.request)
+        .then((response) => {
+          if (response.ok) {
+            const clone = response.clone();
+            caches.open(CACHE_NAME).then((cache) => cache.put(event.request, clone));
+          }
+          return response;
+        })
+        .catch(async () => {
+          const cached = await caches.match(event.request);
+          if (cached) return cached;
+          return new Response("Lesson unavailable offline", {
+            status: 503,
+            headers: { "Content-Type": "text/plain" },
+          });
+        })
+    );
     return;
   }
 
@@ -200,6 +227,10 @@ self.addEventListener("fetch", (event) => {
   );
 });
 
+// Background sync requires browser to remain open.
+// Queue persists in IndexedDB but replay requires
+// app to be reopened after connectivity restored.
+// Planned: push-triggered sync in v1.1
 self.addEventListener("sync", (event) => {
   if (event.tag !== SYNC_TAG) {
     return;

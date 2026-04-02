@@ -42,39 +42,57 @@ export async function POST(req: Request) {
       select: { name: true },
     });
 
-    const results = await Promise.all(
-      payload.students.map(async (entry: Entry) => {
-        const { token: rawToken, tokenHash } = generateTokenPair();
-        const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
-        const invite = await prisma.inviteToken.create({
-          data: {
-            schoolId: user.schoolId!,
-            email: entry.email,
-            role: "STUDENT",
-            tokenType: "ENROLL_STUDENT",
-            tokenHash,
-            expiresAt,
-          },
-        });
+    const BATCH_SIZE = 50;
+    const results: Array<{
+      id: string; email: string; inviteUrl: string; emailSent: boolean; expiresAt: Date; error?: string;
+    }> = [];
 
-        const baseUrl = process.env.NEXTAUTH_URL ?? "http://localhost:3000";
+    for (let i = 0; i < payload.students.length; i += BATCH_SIZE) {
+      const batch = payload.students.slice(i, i + BATCH_SIZE);
+
+      // Create all invite tokens for this batch in a single transaction
+      const invites = await prisma.$transaction(
+        batch.map((entry: Entry) => {
+          const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
+          const { tokenHash } = generateTokenPair();
+          return prisma.inviteToken.create({
+            data: {
+              schoolId: user.schoolId!,
+              email: entry.email,
+              role: "STUDENT",
+              tokenType: "ENROLL_STUDENT",
+              tokenHash,
+              expiresAt,
+            },
+          });
+        })
+      ).catch((batchErr) => {
+        console.error(`[invite.bulk] Batch ${i}-${i + BATCH_SIZE} failed:`, batchErr);
+        return null;
+      });
+
+      if (!invites) continue;
+
+      // Send emails outside transaction (side-effect, best-effort)
+      const baseUrl = process.env.NEXTAUTH_URL ?? "http://localhost:3000";
+      for (let j = 0; j < batch.length; j++) {
+        const entry = batch[j];
+        const invite = invites[j];
+        const { token: rawToken } = generateTokenPair();
         const inviteUrl = `${baseUrl}/onboard/accept?token=${rawToken}`;
-        const emailResult = await sendStudentInvite({
-          to: entry.email,
-          name: entry.name,
-          schoolName: school?.name ?? "LiberiaLearn",
-          inviteUrl,
-        });
-
-        return {
-          id: invite.id,
-          email: entry.email,
-          inviteUrl,
-          emailSent: emailResult.ok,
-          expiresAt: invite.expiresAt,
-        };
-      })
-    );
+        let emailSent = false;
+        try {
+          const emailResult = await sendStudentInvite({
+            to: entry.email,
+            name: entry.name,
+            schoolName: school?.name ?? "LiberiaLearn",
+            inviteUrl,
+          });
+          emailSent = emailResult.ok;
+        } catch { /* best-effort */ }
+        results.push({ id: invite.id, email: entry.email, inviteUrl, emailSent, expiresAt: invite.expiresAt });
+      }
+    }
 
     await logAudit({
       userId: user.id,
