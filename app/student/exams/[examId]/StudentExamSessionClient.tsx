@@ -25,11 +25,44 @@ type SubmitPayload = {
   certCode?: string;
 };
 
-type PersistedExamSession = {
+export type PersistedExamSession = {
   answers: number[];
   currentIndex: number;
   startedAt: string | null;
 };
+
+export function parsePersistedExamSession(raw: string): PersistedExamSession | null {
+  try {
+    const parsed = JSON.parse(raw) as Partial<PersistedExamSession>;
+    return {
+      answers: Array.isArray(parsed.answers)
+        ? parsed.answers.filter((value): value is number => typeof value === "number")
+        : [],
+      currentIndex:
+        typeof parsed.currentIndex === "number" && parsed.currentIndex >= 0
+          ? parsed.currentIndex
+          : 0,
+      startedAt: typeof parsed.startedAt === "string" ? parsed.startedAt : null,
+    };
+  } catch {
+    return null;
+  }
+}
+
+export function persistExamSession(
+  storage: Pick<Storage, "setItem">,
+  key: string,
+  session: PersistedExamSession
+) {
+  storage.setItem(key, JSON.stringify(session));
+}
+
+export function clearExamSession(
+  storage: Pick<Storage, "removeItem">,
+  key: string
+) {
+  storage.removeItem(key);
+}
 
 export default function StudentExamSessionClient({ examId }: { examId: string }) {
   const [loading, setLoading] = useState(true);
@@ -50,24 +83,14 @@ export default function StudentExamSessionClient({ examId }: { examId: string })
     const saved = window.sessionStorage.getItem(sessionKey);
     if (!saved) return;
 
-    try {
-      const parsed = JSON.parse(saved) as Partial<PersistedExamSession>;
-      const restored: PersistedExamSession = {
-        answers: Array.isArray(parsed.answers)
-          ? parsed.answers.filter((value): value is number => typeof value === "number")
-          : [],
-        currentIndex:
-          typeof parsed.currentIndex === "number" && parsed.currentIndex >= 0
-            ? parsed.currentIndex
-            : 0,
-        startedAt: typeof parsed.startedAt === "string" ? parsed.startedAt : null,
-      };
+    const restored = parsePersistedExamSession(saved);
+    if (restored) {
       restoredSessionRef.current = restored;
       setAnswers(restored.answers);
       setCurrentIndex(restored.currentIndex);
       setStartedAt(restored.startedAt);
-    } catch {
-      window.sessionStorage.removeItem(sessionKey);
+    } else {
+      clearExamSession(window.sessionStorage, sessionKey);
     }
   }, [sessionKey]);
 
@@ -115,15 +138,16 @@ export default function StudentExamSessionClient({ examId }: { examId: string })
 
   useEffect(() => {
     if (typeof window === "undefined" || !startedAt || result) return;
-    window.sessionStorage.setItem(
-      sessionKey,
-      JSON.stringify({ answers, currentIndex, startedAt })
-    );
+    persistExamSession(window.sessionStorage, sessionKey, {
+      answers,
+      currentIndex,
+      startedAt,
+    });
   }, [answers, currentIndex, startedAt, result, sessionKey]);
 
   const clearPersistedSession = useCallback(() => {
     if (typeof window === "undefined") return;
-    window.sessionStorage.removeItem(sessionKey);
+    clearExamSession(window.sessionStorage, sessionKey);
   }, [sessionKey]);
 
   const submitExam = useCallback(async () => {
