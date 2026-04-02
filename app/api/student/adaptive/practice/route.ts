@@ -12,6 +12,7 @@ import {
   type AttemptRecord,
 } from "@/lib/adaptive/difficultyAdapter";
 import { generateTargetedPracticeWithUsage } from "@/lib/adaptive/practiceGenerator";
+import { logger } from "@/lib/logger";
 
 export const dynamic = "force-dynamic";
 
@@ -76,7 +77,7 @@ export async function POST(req: NextRequest) {
           { scope: "school", scopeId: user.schoolId ?? null, schoolId: user.schoolId }
         );
       } catch (error) {
-        console.error("[adaptive.practice.metric.cap_hit]", error);
+        logger.warn("[adaptive.practice.metric.cap_hit]", { error });
       }
       return NextResponse.json({ error: "ai_budget_exhausted" }, { status: 503 });
     }
@@ -88,7 +89,7 @@ export async function POST(req: NextRequest) {
           { scope: "school", scopeId: user.schoolId ?? null, schoolId: user.schoolId }
         );
       } catch (error) {
-        console.error("[adaptive.practice.metric.warning]", error);
+        logger.warn("[adaptive.practice.metric.warning]", { error });
       }
     }
 
@@ -136,7 +137,11 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ practice: generation.practice }, { headers: getRateLimitHeaders(rateLimit) });
   } catch (error: any) {
-    console.error("[adaptive.practice.POST]", error);
+    logger.error("[adaptive.practice.POST]", {
+      route: "/api/student/adaptive/practice",
+      error,
+      status: error?.status ?? 500,
+    });
     return NextResponse.json(
       { error: error?.message ?? "Server error" },
       { status: error?.status ?? 500 }

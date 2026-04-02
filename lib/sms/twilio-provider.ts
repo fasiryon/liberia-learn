@@ -1,4 +1,5 @@
 import type { SMSProvider, SMSProviderNormalizedError, SMSProviderSendParams, SMSProviderSendResult } from "@/lib/sms/provider";
+import { logger } from "@/lib/logger";
 
 function hasTwilioConfig() {
   return Boolean(process.env.TWILIO_ACCOUNT_SID && process.env.TWILIO_AUTH_TOKEN && process.env.TWILIO_PHONE_NUMBER);
@@ -19,12 +20,18 @@ export class TwilioSMSProvider implements SMSProvider {
 
   async send(input: SMSProviderSendParams): Promise<SMSProviderSendResult> {
     if (process.env.NODE_ENV === "test") {
-      console.log(`[SMS-DEV] To: ${input.to} | Body: ${input.body}`);
+      logger.info("[SMS-DEV] SMS send bypassed", {
+        to: input.to,
+        bodyPreview: input.body.slice(0, 120),
+      });
       return { ok: true, providerMessageId: "dev-no-send" };
     }
     if (!hasTwilioConfig()) {
       if (devBypassAllowed()) {
-        console.log(`[SMS-DEV] To: ${input.to} | Body: ${input.body}`);
+        logger.info("[SMS-DEV] SMS send bypassed", {
+          to: input.to,
+          bodyPreview: input.body.slice(0, 120),
+        });
         return { ok: true, providerMessageId: "dev-no-send" };
       }
       return { ok: false, error: "Twilio config missing", retryable: false };

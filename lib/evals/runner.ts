@@ -22,6 +22,7 @@ import type {
   EvalRole,
 } from "@/lib/evals/types";
 import type { RetrievedChunk } from "@/lib/ai/rag/retrievalService";
+import { logger } from "@/lib/logger";
 
 export const EVAL_THRESHOLDS = {
   minRecallAt5: 0.6,
@@ -162,9 +163,13 @@ function printFailingClassroomCaseDebug(
       chunk.retrievalTier !== "default"
   );
 
-  console.log(
-    `[EVAL DEBUG] ${evalCase.id} subject=${evalCase.subject ?? "n/a"} grade=${evalCase.grade ?? "n/a"} fallbackTier=${fallbackTierActivated ? "yes" : "no"} -> top chunks: ${JSON.stringify(topChunks)}`
-  );
+  logger.info("[EVAL DEBUG] classroom case retrieval miss", {
+    evalCaseId: evalCase.id,
+    subject: evalCase.subject ?? "n/a",
+    grade: evalCase.grade ?? "n/a",
+    fallbackTierActivated,
+    topChunks,
+  });
 }
 
 export function printEvalSummary(result: EvalRunResult) {
@@ -223,7 +228,7 @@ async function persistEvalSummarySafely(result: EvalRunResult) {
   try {
     await persistEvalSummary(result);
   } catch (error) {
-    console.warn("[EVAL_RUNNER][DB_LOGGING_SKIPPED]", error);
+    logger.warn("[EVAL_RUNNER][DB_LOGGING_SKIPPED]", { error });
   }
 }
 
