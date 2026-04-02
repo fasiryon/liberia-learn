@@ -1,16 +1,29 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+
+const { captureExceptionMock } = vi.hoisted(() => ({
+  captureExceptionMock: vi.fn(),
+}));
+
+vi.mock("@sentry/nextjs", () => ({
+  captureException: captureExceptionMock,
+}));
+
 import { handleApiError } from "@/lib/errors/apiErrorHandler";
 
 describe("handleApiError", () => {
   let errorSpy: ReturnType<typeof vi.spyOn>;
+  let warnSpy: ReturnType<typeof vi.spyOn>;
 
   beforeEach(() => {
     vi.stubEnv("NODE_ENV", "production");
     errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+    warnSpy = vi.spyOn(console, "warn").mockImplementation(() => {});
+    captureExceptionMock.mockReset();
   });
 
   afterEach(() => {
     errorSpy.mockRestore();
+    warnSpy.mockRestore();
     vi.unstubAllEnvs();
   });
 
@@ -23,6 +36,7 @@ describe("handleApiError", () => {
     expect(body.code).toBe("CONFLICT");
     expect(body.error).toBe("Resource already exists");
     expect(body.timestamp).toBeDefined();
+    expect(body.requestId).toBeDefined();
   });
 
   it("returns 404 for Prisma P2025 (record not found)", async () => {
@@ -32,6 +46,7 @@ describe("handleApiError", () => {
     expect(res.status).toBe(404);
     const body = await res.json();
     expect(body.code).toBe("NOT_FOUND");
+    expect(body.requestId).toBeDefined();
   });
 
   it("returns 400 for Prisma P2003 (foreign key constraint)", async () => {
@@ -60,6 +75,8 @@ describe("handleApiError", () => {
     expect(res.status).toBe(401);
     const body = await res.json();
     expect(body.code).toBe("UNAUTHORIZED");
+    expect(body.requestId).toBeDefined();
+    expect(res.headers.get("X-Request-Id")).toBe(body.requestId);
   });
 
   it("returns 403 for auth error with status 403", async () => {
@@ -70,6 +87,7 @@ describe("handleApiError", () => {
     const body = await res.json();
     expect(body.code).toBe("FORBIDDEN");
     expect(body.error).toBe("Forbidden");
+    expect(body.requestId).toBeDefined();
   });
 
   it("returns 500 for unknown Error without stack trace in response", async () => {
@@ -79,6 +97,7 @@ describe("handleApiError", () => {
     const body = await res.json();
     expect(body.code).toBe("INTERNAL_ERROR");
     expect(body.error).toBe("Internal server error");
+    expect(body.requestId).toBeDefined();
     expect(JSON.stringify(body)).not.toContain("stack");
     expect(JSON.stringify(body)).not.toContain("exploded");
   });
@@ -109,23 +128,31 @@ describe("handleApiError", () => {
     expect(body).not.toHaveProperty("submissionContent");
   });
 
-  it("logs structured error output server-side", async () => {
-    await handleApiError(new Error("internal db failure"));
+  it("logs structured 5xx error output server-side and captures Sentry", async () => {
+    const res = await handleApiError(new Error("internal db failure"), {
+      route: "/api/test",
+      method: "GET",
+    });
 
     expect(errorSpy).toHaveBeenCalledOnce();
     const payload = JSON.parse(String(errorSpy.mock.calls[0][0]));
     expect(payload.message).toBe("API handler error");
     expect(payload.metadata.errorMessage).toBe("internal db failure");
     expect(payload.metadata.status).toBe(500);
+    expect(payload.metadata.route).toBe("/api/test");
+    expect(payload.requestId).toBeDefined();
+    expect(res.headers.get("X-Request-Id")).toBe(payload.requestId);
+    expect(captureExceptionMock).toHaveBeenCalledOnce();
   });
 
-  it("logs Prisma error message server-side", async () => {
+  it("logs Prisma error message server-side as warn", async () => {
     await handleApiError({ code: "P2002", message: "Unique constraint failed" });
 
-    expect(errorSpy).toHaveBeenCalledOnce();
-    const payload = JSON.parse(String(errorSpy.mock.calls[0][0]));
+    expect(warnSpy).toHaveBeenCalledOnce();
+    const payload = JSON.parse(String(warnSpy.mock.calls[0][0]));
     expect(payload.message).toBe("API handler error");
     expect(payload.metadata.errorMessage).toBe("Unique constraint failed");
+    expect(captureExceptionMock).not.toHaveBeenCalled();
   });
 
   it("response always includes timestamp as ISO string", async () => {
@@ -135,11 +162,12 @@ describe("handleApiError", () => {
     expect(new Date(body.timestamp).getTime()).not.toBeNaN();
   });
 
-  it("response always includes error and code fields", async () => {
+  it("response always includes error, code, and requestId fields", async () => {
     const res = handleApiError({ code: "P2025", message: "not found" });
     const body = await res.json();
     expect(typeof body.error).toBe("string");
     expect(typeof body.code).toBe("string");
     expect(typeof body.timestamp).toBe("string");
+    expect(typeof body.requestId).toBe("string");
   });
 });

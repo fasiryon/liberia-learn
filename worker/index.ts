@@ -5,6 +5,7 @@ import {
   type Message,
 } from "@aws-sdk/client-sqs";
 import { publishMetric } from "@/lib/cloudwatch";
+import { logger } from "@/lib/logger";
 import { JobType } from "@/lib/queue";
 import { dispatchJob } from "@/worker/handlers";
 import { initWorkerSentry, Sentry } from "@/worker/sentry";
@@ -56,7 +57,7 @@ async function handleMessage(message: Message) {
     unit: "Count",
     dimensions: { JobType: envelope.jobType },
   }).catch((error) => {
-    console.error("[CloudWatch] failed to publish WorkerJobCompleted", error);
+    logger.error("[CloudWatch] failed to publish WorkerJobCompleted", { error });
   });
   await deleteMessage(message);
 }
@@ -94,14 +95,16 @@ async function pollOnce() {
         unit: "Count",
         dimensions: { JobType: envelope?.jobType ?? "UNKNOWN" },
       }).catch((metricError) => {
-        console.error("[CloudWatch] failed to publish WorkerJobFailed", metricError);
+        logger.error("[CloudWatch] failed to publish WorkerJobFailed", { error: metricError });
       });
-      console.error("[WORKER] job failed", {
+      logger.error("[WORKER] job failed", {
         receiveCount,
         reason,
       });
       if (receiveCount >= 3) {
-        console.error("[WORKER] message will be moved to the DLQ by SQS redrive policy");
+        logger.error("[WORKER] message will be moved to the DLQ by SQS redrive policy", {
+          receiveCount,
+        });
       }
     }
   }
@@ -131,6 +134,6 @@ run().catch((error) => {
   Sentry.captureException(error, {
     tags: { component: "worker", phase: "startup" },
   });
-  console.error("[WORKER] fatal error", error);
+  logger.error("[WORKER] fatal error", { error });
   process.exit(1);
 });

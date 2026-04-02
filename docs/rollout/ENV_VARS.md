@@ -41,6 +41,13 @@ Warnings are emitted when these are unset:
 
 If any of `SENTRY_AUTH_TOKEN`, `SENTRY_ORG`, or `SENTRY_PROJECT` are set, all three should be set together for source-map upload consistency.
 
+Sentry runtime behavior is now explicit:
+
+- Browser capture is active only when `NEXT_PUBLIC_SENTRY_DSN` is set.
+- Server and edge capture are active only when `SENTRY_DSN` or `NEXT_PUBLIC_SENTRY_DSN` is set.
+- Worker capture is active only when `SENTRY_DSN` is set.
+- Without a DSN, the app still emits structured JSON logs but Sentry is inactive.
+
 ## Canonical env names
 
 Use these names in new deployments:
