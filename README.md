@@ -42,6 +42,19 @@ Long-form implementation docs:
 - [CURRICULUM_PIPELINE.md](C:\Users\fasir\liberia-learn\docs\CURRICULUM_PIPELINE.md)
 - [INTELLIGENCE_FLOW.md](C:\Users\fasir\liberia-learn\docs\INTELLIGENCE_FLOW.md)
 
+## Repository Structure
+
+- [app](C:\Users\fasir\liberia-learn\app) contains the App Router UI, layouts, and API route handlers.
+- [components](C:\Users\fasir\liberia-learn\components) holds shared React UI building blocks.
+- [lib](C:\Users\fasir\liberia-learn\lib) contains auth, AI orchestration, data access, metrics, and domain services.
+- [prisma](C:\Users\fasir\liberia-learn\prisma) stores the schema, SQL migrations, and seed-adjacent data assets.
+- [worker](C:\Users\fasir\liberia-learn\worker) contains background job consumers and handler modules.
+- [scripts](C:\Users\fasir\liberia-learn\scripts) is reserved for curriculum pipelines, audits, seeds, and operational helpers that are still in active use.
+- [docs](C:\Users\fasir\liberia-learn\docs) includes architecture, ops, curriculum, and reviewer-facing documentation.
+- [__tests__](C:\Users\fasir\liberia-learn\__tests__) contains Vitest suites for routes, services, and runtime gates.
+- [public](C:\Users\fasir\liberia-learn\public) stores static assets served by the web app.
+- [infra](C:\Users\fasir\liberia-learn\infra) contains deployment and infrastructure artifacts.
+
 ## AI Trust Layer
 
 The current hardening pass includes:

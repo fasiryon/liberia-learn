@@ -52,6 +52,7 @@ test-*.log
 *.map
 
 # Local backups and archives
+/archive/
 *.bak
 *.bak.*
 *.bak_*
@@ -74,7 +75,15 @@ check-math.js
 check-rag.js
 index.html
 tmp-*.js
+tmp-*
 *.zip
+vitest-full.json
+vitest-hardening.json
+ci-log.txt
+deploy-log.txt
+pr-triage-log.txt
+scripts/*.txt
+scripts/demo-credentials.txt
 
 # Infra outputs
 infra/outputs/
