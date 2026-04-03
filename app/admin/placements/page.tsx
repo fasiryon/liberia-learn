@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import Link from "next/link";
 import { placementBandStyles, placementReviewStatusStyles } from "@/lib/placement";
 
 type PlacementRow = {
@@ -172,13 +173,14 @@ export default function AdminPlacementsPage() {
                       <th className="px-4 py-3">Teacher Grade</th>
                       <th className="px-4 py-3">Decision</th>
                       <th className="px-4 py-3">Override Reason</th>
+                      <th className="px-4 py-3">Details</th>
                     </tr>
                   </thead>
                   <tbody>
                     {filteredPlacements.map((placement) => (
                       <tr key={placement.id} className="border-b border-slate-800/60 text-slate-200">
                         <td className="px-4 py-4 font-semibold text-slate-100">{placement.studentName}</td>
-                        <td className="px-4 py-4">Grade {placement.currentGrade ?? "—"}</td>
+                        <td className="px-4 py-4">Grade {placement.currentGrade ?? "-"}</td>
                         <td className="px-4 py-4">{new Date(placement.testDate).toLocaleDateString("en-LR")}</td>
                         <td className="px-4 py-4">Grade {placement.aiGrade}</td>
                         <td className="px-4 py-4">
@@ -186,13 +188,21 @@ export default function AdminPlacementsPage() {
                             {placement.levelLabel}
                           </span>
                         </td>
-                        <td className="px-4 py-4">{placement.teacherGrade ? `Grade ${placement.teacherGrade}` : "—"}</td>
+                        <td className="px-4 py-4">{placement.teacherGrade ? `Grade ${placement.teacherGrade}` : "-"}</td>
                         <td className="px-4 py-4">
                           <span className={`inline-flex rounded-full border px-3 py-1 text-xs font-semibold ${placementReviewStatusStyles[placement.status]}`}>
                             {placement.status}
                           </span>
                         </td>
-                        <td className="px-4 py-4 text-slate-400">{placement.teacherReason ?? "—"}</td>
+                        <td className="px-4 py-4 text-slate-400">{placement.teacherReason ?? "-"}</td>
+                        <td className="px-4 py-4">
+                          <Link
+                            href={`/admin/placements/${placement.id}`}
+                            className="inline-flex rounded-full border border-white/10 px-3 py-1 text-xs font-semibold text-slate-200 hover:bg-slate-800"
+                          >
+                            View Responses
+                          </Link>
+                        </td>
                       </tr>
                     ))}
                   </tbody>

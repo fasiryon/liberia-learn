@@ -47,6 +47,14 @@ type UnitRow = {
   lessons: UnitLesson[];
 };
 
+function mapUnitsError(message: string | null | undefined) {
+  if (message === "unit_assembly_disabled") {
+    return "This feature is not available yet.";
+  }
+
+  return message ?? "Failed to load units";
+}
+
 export default function AdminCurriculumUnitsPage() {
   const router = useRouter();
   const [units, setUnits] = useState<UnitRow[]>([]);
@@ -93,12 +101,12 @@ export default function AdminCurriculumUnitsPage() {
 
       const data = await response.json();
       if (!response.ok) {
-        throw new Error(data.error ?? "Failed to load units");
+        throw new Error(mapUnitsError(data.error));
       }
 
       setUnits(data.units ?? []);
     } catch (loadError: any) {
-      setError(loadError.message ?? "Failed to load units");
+      setError(mapUnitsError(loadError.message));
     } finally {
       setLoadingUnits(false);
     }
@@ -127,14 +135,14 @@ export default function AdminCurriculumUnitsPage() {
 
       const data = await response.json();
       if (!response.ok) {
-        throw new Error(data.error ?? "Failed to assemble unit");
+        throw new Error(mapUnitsError(data.error));
       }
 
       setForm((current) => ({ ...current, unitTitle: "", unitDescription: "" }));
       await loadUnits();
       setExpandedUnitId(data.unitId ?? null);
     } catch (submitError: any) {
-      setError(submitError.message ?? "Failed to assemble unit");
+      setError(mapUnitsError(submitError.message));
     } finally {
       setSubmitting(false);
     }
