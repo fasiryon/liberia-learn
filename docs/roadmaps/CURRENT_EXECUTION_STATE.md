@@ -21,7 +21,7 @@ Sprint 0.7 - Deployment Stability
 |--------|------|--------|--------|------|
 | 0 | Repo Hygiene | COMPLETE | 7c69075 | 2026-04-03 |
 | 0.5 | ECS Worker | COMPLETE | b4b8b84 | 2026-04-03 |
-| 0.7 | Deployment Stability | COMPLETE | pending commit | 2026-04-03 |
+| 0.7 | Deployment Stability | COMPLETE | 2382b03 | 2026-04-03 |
 | 1 | Ops Dashboard + SLO | NOT STARTED | - | - |
 | 2 | AI Cost Guardrails | NOT STARTED | - | - |
 | 3 | Environment Separation | NOT STARTED | - | - |
