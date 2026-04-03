@@ -6,54 +6,28 @@
   "memory": "512",
   "executionRoleArn": "arn:aws:iam::258048833400:role/ecsTaskExecutionRole",
   "taskRoleArn": "arn:aws:iam::258048833400:role/ecsTaskRole",
-  "containerDefinitions": [
-    {
-      "name": "liberialearn-worker",
-      "image": "258048833400.dkr.ecr.us-east-1.amazonaws.com/liberialearn-worker:latest",
-      "essential": true,
-      "environment": [
-        { "name": "NODE_ENV", "value": "production" },
-        { "name": "AWS_REGION", "value": "us-east-1" }
-      ],
-      "secrets": [
-        {
-          "name": "DATABASE_URL",
-          "valueFrom": "arn:aws:secretsmanager:us-east-1:258048833400:secret:liberialearn/DATABASE_URL"
-        },
-        {
-          "name": "DIRECT_URL",
-          "valueFrom": "arn:aws:secretsmanager:us-east-1:258048833400:secret:liberialearn/DIRECT_URL"
-        },
-        {
-          "name": "SQS_QUEUE_URL",
-          "valueFrom": "arn:aws:secretsmanager:us-east-1:258048833400:secret:liberialearn/SQS_QUEUE_URL"
-        },
-        {
-          "name": "OPENAI_API_KEY",
-          "valueFrom": "arn:aws:secretsmanager:us-east-1:258048833400:secret:liberialearn/OPENAI_API_KEY"
-        },
-        {
-          "name": "GROQ_API_KEY",
-          "valueFrom": "arn:aws:secretsmanager:us-east-1:258048833400:secret:liberialearn/GROQ_API_KEY"
-        }
-      ],
-      "logConfiguration": {
-        "logDriver": "awslogs",
-        "options": {
-          "awslogs-group": "/ecs/liberialearn-worker",
-          "awslogs-region": "us-east-1",
-          "awslogs-stream-prefix": "ecs"
-        }
-      },
-      "healthCheck": {
-        "command": [
-          "CMD-SHELL",
-          "node -e \"require('./worker/index.js')\" || exit 1"
-        ],
-        "interval": 30,
-        "timeout": 5,
-        "retries": 3
+  "containerDefinitions": [{
+    "name": "liberialearn-worker",
+    "image": "258048833400.dkr.ecr.us-east-1.amazonaws.com/liberialearn-worker:latest",
+    "essential": true,
+    "environment": [
+      { "name": "NODE_ENV", "value": "production" },
+      { "name": "AWS_REGION", "value": "us-east-1" }
+    ],
+    "secrets": [
+      { "name": "DATABASE_URL", "valueFrom": "arn:aws:secretsmanager:us-east-1:258048833400:secret:liberialearn/DATABASE_URL-ZOBURW" },
+      { "name": "DIRECT_URL", "valueFrom": "arn:aws:secretsmanager:us-east-1:258048833400:secret:liberialearn/DIRECT_URL-c6k7nR" },
+      { "name": "SQS_QUEUE_URL", "valueFrom": "arn:aws:secretsmanager:us-east-1:258048833400:secret:liberialearn/SQS_QUEUE_URL-Y1hkXj" },
+      { "name": "OPENAI_API_KEY", "valueFrom": "arn:aws:secretsmanager:us-east-1:258048833400:secret:liberialearn/OPENAI_API_KEY-kQPTUv" },
+      { "name": "GROQ_API_KEY", "valueFrom": "arn:aws:secretsmanager:us-east-1:258048833400:secret:liberialearn/GROQ_API_KEY-7Tp5q5" }
+    ],
+    "logConfiguration": {
+      "logDriver": "awslogs",
+      "options": {
+        "awslogs-group": "/ecs/liberialearn-worker",
+        "awslogs-region": "us-east-1",
+        "awslogs-stream-prefix": "ecs"
       }
     }
-  ]
+  }]
 }
