@@ -52,3 +52,33 @@ jobs:
         run: |
           docker push ${{ steps.login-ecr.outputs.registry }}/$ECR_REPOSITORY:${GITHUB_SHA}
           docker push ${{ steps.login-ecr.outputs.registry }}/$ECR_REPOSITORY:latest
+
+  push-worker-image:
+    runs-on: ubuntu-latest
+    needs: push-web-image
+    env:
+      AWS_REGION: ${{ vars.AWS_REGION }}
+      ECR_REPOSITORY: liberialearn-worker
+    steps:
+      - uses: actions/checkout@v4
+      - id: aws-creds
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_GITHUB_ACTIONS_ROLE_ARN }}
+          aws-region: ${{ env.AWS_REGION }}
+      - id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+      - name: Build worker image
+        run: |
+          docker build \
+            --target worker \
+            -t $ECR_REPOSITORY:${GITHUB_SHA} \
+            -t $ECR_REPOSITORY:latest .
+      - name: Tag worker image
+        run: |
+          docker tag $ECR_REPOSITORY:${GITHUB_SHA} ${{ steps.login-ecr.outputs.registry }}/$ECR_REPOSITORY:${GITHUB_SHA}
+          docker tag $ECR_REPOSITORY:latest ${{ steps.login-ecr.outputs.registry }}/$ECR_REPOSITORY:latest
+      - name: Push worker image
+        run: |
+          docker push ${{ steps.login-ecr.outputs.registry }}/$ECR_REPOSITORY:${GITHUB_SHA}
+          docker push ${{ steps.login-ecr.outputs.registry }}/$ECR_REPOSITORY:latest

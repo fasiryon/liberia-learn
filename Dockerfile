@@ -2,6 +2,7 @@ FROM node:20-alpine AS deps
 WORKDIR /app
 ENV NEXT_TELEMETRY_DISABLED=1
 COPY package.json package-lock.json ./
+COPY scripts/patch-vitest-offline-wildcard.mjs ./scripts/patch-vitest-offline-wildcard.mjs
 RUN npm ci
 
 FROM node:20-alpine AS builder
@@ -37,3 +38,21 @@ COPY --from=builder /app/.next/static ./.next/static
 COPY --from=builder /app/public ./public
 EXPOSE 3000
 CMD ["node", "server.js"]
+
+FROM node:20-alpine AS worker-builder
+WORKDIR /app
+ENV NEXT_TELEMETRY_DISABLED=1
+COPY --from=deps /app/node_modules ./node_modules
+COPY . .
+RUN npx prisma generate
+RUN npx esbuild worker/index.ts --bundle --platform=node --target=node20 --outfile=dist/worker/index.js --tsconfig=tsconfig.json --external:@prisma/client --external:.prisma/client --external:prisma
+
+FROM node:20-alpine AS worker
+WORKDIR /app
+ENV NODE_ENV=production
+ENV NEXT_TELEMETRY_DISABLED=1
+COPY --from=worker-builder /app/node_modules ./node_modules
+COPY --from=worker-builder /app/dist/worker/index.js ./worker/index.js
+COPY --from=worker-builder /app/prisma ./prisma
+COPY --from=worker-builder /app/package.json ./package.json
+CMD ["node", "worker/index.js"]
