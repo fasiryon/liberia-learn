@@ -2,6 +2,7 @@ import { readFileSync } from "fs";
 import { join } from "path";
 import { GetQueueAttributesCommand, SQSClient } from "@aws-sdk/client-sqs";
 import { prisma } from "@/lib/db";
+import { getEnvironment } from "@/lib/environment";
 import { getRateLimiterInfo } from "@/lib/rateLimit";
 import { getSloStatus } from "@/lib/slo/tracker";
 
@@ -162,14 +163,7 @@ export async function getOpsDashboardData(): Promise<OpsDashboardData> {
     build: {
       version: readAppVersion(),
       commitSha: process.env.VERCEL_GIT_COMMIT_SHA ?? "unknown",
-      environment:
-        process.env.NODE_ENV === "development"
-          ? "development"
-          : process.env.DEMO_MODE === "true"
-          ? "demo"
-          : process.env.VERCEL_ENV === "preview"
-          ? "staging"
-          : process.env.NODE_ENV ?? "production",
+      environment: getEnvironment(),
     },
     health: {
       db: dbHealth.status,

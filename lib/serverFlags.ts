@@ -19,6 +19,8 @@
 export const SEVERITY_LEVELS = ["info", "warn", "critical"] as const;
 export type FindingSeverity = (typeof SEVERITY_LEVELS)[number];
 
+import { isDemo } from "@/lib/environment";
+
 /**
  * Returns true if findingSeverity meets or exceeds minSeverity.
  * Unknown values are treated conservatively: unknown finding  info (0),
@@ -421,7 +423,7 @@ export function getMoePortalAllowlist(): string[] {
 
 /** Demo mode master switch. DEFAULT OFF. */
 export function isDemoModeEnabled(): boolean {
-  return process.env.DEMO_MODE === "true";
+  return isDemo();
 }
 
 //  Block RR-2: Guardian Portal + Linking Flags

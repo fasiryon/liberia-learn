@@ -1,3 +1,5 @@
+import { isDemo, isDevelopment } from "@/lib/environment";
+
 export type DemoCredentialKey = "student" | "teacher" | "admin" | "guardian" | "moe";
 
 export type DemoCredential = {
@@ -56,4 +58,8 @@ export function getDemoCredential(key: DemoCredentialKey): DemoCredential {
     throw new Error(`Unknown demo credential key: ${key}`);
   }
   return match;
+}
+
+export function shouldShowDemoCredentials(): boolean {
+  return isDemo() || isDevelopment();
 }

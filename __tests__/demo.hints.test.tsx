@@ -8,6 +8,8 @@ import { getDemoCredentials } from "@/lib/demoCredentials";
 describe("demo hints rendering", () => {
   afterEach(() => {
     delete process.env.DEMO_MODE;
+    delete process.env.VERCEL_ENV;
+    Object.assign(process.env, { NODE_ENV: "test" });
   });
 
   it("renders nothing when DEMO_MODE is off", () => {
@@ -17,7 +19,7 @@ describe("demo hints rendering", () => {
   });
 
   it("renders hints when DEMO_MODE is on", () => {
-    process.env.DEMO_MODE = "true";
+    Object.assign(process.env, { DEMO_MODE: "true" });
     const html = renderToStaticMarkup(<DemoHintsSection variant="login" />);
     expect(html).toContain("Demo Login Hints");
     expect(html).toContain("student1@cha.edu.lr");
@@ -28,6 +30,16 @@ describe("demo hints rendering", () => {
     expect(html).toContain("Password: MOESeed2026!");
     expect(html).not.toContain("student1@legacy-demo.lr");
     expect(html).not.toContain("Password: LegacyDemo123!");
+  });
+
+  it("renders hints in development even when DEMO_MODE is off", () => {
+    Object.assign(process.env, { NODE_ENV: "development" });
+    delete process.env.DEMO_MODE;
+
+    const html = renderToStaticMarkup(<DemoHintsSection variant="login" />);
+
+    expect(html).toContain("Demo Login Hints");
+    expect(html).toContain("student1@cha.edu.lr");
   });
 });
 

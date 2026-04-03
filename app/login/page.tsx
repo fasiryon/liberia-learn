@@ -1,10 +1,12 @@
-import { isDemoModeEnabled } from "@/lib/serverFlags";
 import { getDemoHintGroups } from "@/lib/demoHints";
-import { getDemoCredential } from "@/lib/demoCredentials";
+import {
+  getDemoCredential,
+  shouldShowDemoCredentials,
+} from "@/lib/demoCredentials";
 import LoginClient from "./LoginClient";
 
 export default function LoginPage() {
-  const showDemoHints = isDemoModeEnabled();
+  const showDemoHints = shouldShowDemoCredentials();
   const demoGroups = showDemoHints ? getDemoHintGroups() : [];
   const demoDefaults = showDemoHints
     ? (() => {

@@ -1,21 +1,15 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const mockRequireRole = vi.hoisted(() => vi.fn());
-const mockCreate = vi.hoisted(() => vi.fn());
+const mockRoutedCompletion = vi.hoisted(() => vi.fn());
 const mockLogAudit = vi.hoisted(() => vi.fn());
 
 vi.mock("@/lib/auth", () => ({
   requireRole: mockRequireRole,
 }));
 
-vi.mock("@/lib/ai/openaiClient", () => ({
-  getOpenAIClientOrThrow: () => ({
-    chat: {
-      completions: {
-        create: mockCreate,
-      },
-    },
-  }),
+vi.mock("@/lib/ai/routedCompletion", () => ({
+  routedCompletion: mockRoutedCompletion,
 }));
 
 vi.mock("@/lib/audit", () => ({
@@ -26,32 +20,26 @@ describe("POST /api/placement/generate-question", () => {
   beforeEach(() => {
     vi.resetModules();
     mockRequireRole.mockReset();
-    mockCreate.mockReset();
+    mockRoutedCompletion.mockReset();
     mockLogAudit.mockReset();
     mockRequireRole.mockResolvedValue({ id: "student-1", schoolId: "school-1", role: "STUDENT" });
   });
 
   it("returns enriched placement question fields", async () => {
-    mockCreate.mockResolvedValue({
-      choices: [
-        {
-          message: {
-            content: JSON.stringify({
-              question: "Which digit is in the hundreds place in 482?",
-              options: ["4", "8", "2", "0"],
-              correctAnswer: 0,
-              explanation: "The 4 is in the hundreds place.",
-              difficulty: 3,
-              subject: "mathematics",
-              strand: "Number sense",
-              moeStandard: "MATH-G5-NS-01",
-              whyThisQuestion: "This tests whether the student understands place value at difficulty 3.",
-              commonMistake: "Students often confuse tens and hundreds place.",
-              hint: "Think about the position of each digit.",
-            }),
-          },
-        },
-      ],
+    mockRoutedCompletion.mockResolvedValue({
+      content: JSON.stringify({
+        question: "Which digit is in the hundreds place in 482?",
+        options: ["4", "8", "2", "0"],
+        correctAnswer: 0,
+        explanation: "The 4 is in the hundreds place.",
+        difficulty: 3,
+        subject: "mathematics",
+        strand: "Number sense",
+        moeStandard: "MATH-G5-NS-01",
+        whyThisQuestion: "This tests whether the student understands place value at difficulty 3.",
+        commonMistake: "Students often confuse tens and hundreds place.",
+        hint: "Think about the position of each digit.",
+      }),
     });
 
     const { POST } = await import("@/app/api/placement/generate-question/route");

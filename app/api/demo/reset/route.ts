@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { requireUser } from "@/lib/auth";
 import { prisma } from "@/lib/db";
+import { isProduction, isStaging } from "@/lib/environment";
 import { seedNationalDemo, SCHOOL_DEFS } from "@/scripts/seed-demo";
 
 function getDemoSchoolIdsFromEnv(): string[] {
@@ -13,8 +14,11 @@ function getDemoSchoolIdsFromEnv(): string[] {
 
 export async function POST(request: Request) {
   try {
-    if (process.env.DEMO_MODE !== "true") {
-      return NextResponse.json({ error: "Not available in production" }, { status: 403 });
+    if (isProduction() || isStaging()) {
+      return NextResponse.json(
+        { error: "Not available in this environment" },
+        { status: 403 }
+      );
     }
 
     // Require authenticated platform admin — removes plain-text secret dependency
