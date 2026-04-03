@@ -49,7 +49,7 @@ const prog = await p.studentProgress.updateMany({
 });
 console.log("  Reset " + prog.count + " progress records to yesterday");
 
-// Verify: what does today look like for MCA students?
+// Verify: what does today look like for seeded demo students?
 const todayWork = await p.scheduledWork.findMany({
   where: {
     scheduledDate: { gte: today, lt: tomorrow },

@@ -47,18 +47,18 @@ async function main() {
 
   const hashed = await bcrypt.hash(PASS, 10);
 
-  // ========== SCHOOL 1: Monrovia Central Academy ==========
+  // ========== SCHOOL 1: CHA High Academy ==========
   const school1 = await prisma.school.upsert({
     where: { id: "school_mca" },
     update: {},
     create: {
       id: "school_mca",
-      name: "Monrovia Central Academy",
-      code: "MCA",
+      name: "CHA High Academy",
+      code: "CHA",
       county: "Montserrado",
       district: "Greater Monrovia",
       contactName: "James Kollie",
-      contactEmail: "jkollie@mca.edu.lr",
+      contactEmail: "admin@cha.edu.lr",
       contactPhone: "+231770100001",
       motto: "Excellence Through Knowledge",
       primaryHex: "#10b981",
@@ -69,19 +69,19 @@ async function main() {
 
   // School 1 users
   const s1Admin = await prisma.user.upsert({
-    where: { email: "jkollie@mca.edu.lr" },
+    where: { email: "admin@cha.edu.lr" },
     update: {},
     create: {
-      email: "jkollie@mca.edu.lr", name: "James Kollie", role: "ADMIN",
-      hashedPwd: hashed, schoolId: school1.id, isPlatformAdmin: true,
+      email: "admin@cha.edu.lr", name: "CHA Administrator", role: "ADMIN",
+      hashedPwd: hashed, schoolId: school1.id, isPlatformAdmin: false,
     },
   });
 
   const s1Teachers = [];
   for (const t of [
-    { email: "mpewee@mca.edu.lr", name: "Mary Pewee" },
-    { email: "dnimely@mca.edu.lr", name: "David Nimely" },
-    { email: "sflomo@mca.edu.lr", name: "Sarah Flomo" },
+    { email: "teacher1@cha.edu.lr", name: "Mary Pewee" },
+    { email: "teacher2@cha.edu.lr", name: "David Nimely" },
+    { email: "teacher3@cha.edu.lr", name: "Sarah Flomo" },
   ]) {
     const u = await prisma.user.upsert({
       where: { email: t.email },
@@ -113,7 +113,7 @@ async function main() {
   const s1Students = [];
   for (let i = 0; i < 30; i++) {
     const name = studentName(i);
-    const email = studentEmail(name, "mca");
+    const email = studentEmail(name, "cha");
     const u = await prisma.user.upsert({
       where: { email },
       update: {},
@@ -137,7 +137,7 @@ async function main() {
   // School 1 guardian links (5)
   for (let i = 0; i < 5; i++) {
     const gName = `Guardian ${studentName(i + 50)}`;
-    const gEmail = `guardian${i + 1}@mca.edu.lr`;
+    const gEmail = `guardian${i + 1}@cha.family.lr`;
     const guardian = await prisma.user.upsert({
       where: { email: gEmail },
       update: {},
@@ -376,9 +376,9 @@ async function main() {
   console.log(`  Created ${contentCount} curriculum content records, ${swCount} scheduled work entries`);
 
   // ========== MEETINGS (attendance markers) ==========
-  // MCA: all 5 days × 2 classes = 10, PCS: Mon-Wed × 2 = 6, KRS: Mon only × 2 = 2 → 18 total
+  // CHA: all 5 days × 2 classes = 10, PCS: Mon-Wed × 2 = 6, KRS: Mon only × 2 = 2 → 18 total
   const meetingConfigs: { classIds: string[]; days: number[] }[] = [
-    { classIds: [s1c1.id, s1c2.id], days: [0, 1, 2, 3, 4] }, // MCA all week
+    { classIds: [s1c1.id, s1c2.id], days: [0, 1, 2, 3, 4] }, // CHA all week
     { classIds: [s2c1.id, s2c2.id], days: [0, 1, 2] },        // PCS Mon-Wed
     { classIds: [s3c1.id, s3c2.id], days: [0] },               // KRS Mon only
   ];
@@ -401,7 +401,7 @@ async function main() {
   console.log(`  Created ${meetingCount} meeting records`);
 
   // ========== STUDENT PROGRESS (story arc) ==========
-  // MCA: 85% completion on past days, 40% on today
+  // CHA: 85% completion on past days, 40% on today
   // PCS: 55% on past days, 20% on today
   // KRS: 25% on past days (krs5a), 35% (krs10a), 10% on today
   const schoolStudents: { schoolCode: string; students: typeof s1Students; classes: { id: string; pct: number; todayPct: number }[] }[] = [
@@ -464,10 +464,10 @@ async function main() {
   }
   console.log(`  Created ${progressCount} student progress records`);
 
-  // ========== ADDITIONAL GUARDIAN LINKS (MCA needs 15 total for 50% of 30) ==========
+  // ========== ADDITIONAL GUARDIAN LINKS (CHA needs 15 total for 50% of 30) ==========
   for (let i = 5; i < 15; i++) {
     const gName = `Guardian ${studentName(i + 50)}`;
-    const gEmail = `guardian${i + 1}@mca.edu.lr`;
+    const gEmail = `guardian${i + 1}@cha.family.lr`;
     const guardian = await prisma.user.upsert({
       where: { email: gEmail },
       update: {},
@@ -484,11 +484,11 @@ async function main() {
       create: { studentId: s1Students[i].student.id, guardianId: guardian.id, relation: "Parent" },
     });
   }
-  console.log("  Added 10 more MCA guardian links (15 total, 50% of 30 students)");
+  console.log("  Added 10 more CHA guardian links (15 total, 50% of 30 students)");
 
-  // Update MCA school onboardingStep to 5
+  // Update CHA school onboardingStep to 5
   await prisma.school.update({ where: { id: school1.id }, data: { onboardingStep: 5 } });
-  console.log("  Updated MCA onboardingStep to 5");
+  console.log("  Updated CHA onboardingStep to 5");
 
   // ========== PLACEMENT TESTS (10 per school for demo readiness) ==========
   const placementBandForGrade = (grade: number) => {
@@ -569,27 +569,7 @@ async function main() {
   }
   console.log("  Added 4 KRS guardian links");
 
-  // Also keep old smoke-test compatible accounts
-  await prisma.user.upsert({
-    where: { email: "admin@mcs.edu.lr" },
-    update: {},
-    create: { email: "admin@mcs.edu.lr", name: "MCS Admin", role: "ADMIN", hashedPwd: hashed, schoolId: school1.id, isPlatformAdmin: true },
-  });
-  await prisma.user.upsert({
-    where: { email: "teacher@mcs.edu.lr" },
-    update: {},
-    create: { email: "teacher@mcs.edu.lr", name: "MCS Teacher", role: "TEACHER", hashedPwd: hashed, schoolId: school1.id },
-  });
-  const smokeStudent = await prisma.user.upsert({
-    where: { email: "student1@mcs.edu.lr" },
-    update: {},
-    create: { email: "student1@mcs.edu.lr", name: "MCS Student", role: "STUDENT", hashedPwd: hashed, schoolId: school1.id },
-  });
-  await prisma.student.upsert({
-    where: { userId: smokeStudent.id },
-    update: {},
-    create: { userId: smokeStudent.id, county: "Montserrado" },
-  });
+  // Canonical demo identities are seeded via prisma/seeds/cha-demo.ts.
 
   // ========== WEEKLY SCHEDULE SUMMARY ==========
   console.log("\n=== Weekly Schedule Summary ===");

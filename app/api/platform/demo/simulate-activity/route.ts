@@ -10,7 +10,7 @@ export async function POST() {
     const startOfDay = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()));
     const endOfDay = new Date(startOfDay.getTime() + 86400000);
 
-    // Get today's MCA scheduled work
+    // Get today's seeded demo-school scheduled work
     const todayWork = await prisma.scheduledWork.findMany({
       where: {
         class: { schoolId: "school_mca" },
@@ -44,7 +44,7 @@ export async function POST() {
       }
     }
 
-    return NextResponse.json({ created, message: `Simulated ${created} completions for Monrovia Central Academy` });
+    return NextResponse.json({ created, message: `Simulated ${created} completions for the seeded demo school` });
   } catch (err: any) {
     return NextResponse.json({ error: err.message }, { status: err?.status || 500 });
   }
