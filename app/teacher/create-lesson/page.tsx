@@ -28,6 +28,14 @@ type MetadataResponse = {
   standards: StandardOption[];
 };
 
+function mapLessonError(message: string | null | undefined) {
+  if (message === "teacher_generation_disabled") {
+    return "This feature is not available yet.";
+  }
+
+  return message ?? "Failed to load lesson form";
+}
+
 export default function TeacherCreateLessonPage() {
   const router = useRouter();
   const [classes, setClasses] = useState<TeacherClass[]>([]);
@@ -61,12 +69,12 @@ export default function TeacherCreateLessonPage() {
         });
         const data: MetadataResponse = await response.json();
         if (!response.ok) {
-          throw new Error((data as any).error ?? "Failed to load lesson form");
+          throw new Error(mapLessonError((data as any).error));
         }
         setClasses(data.classes ?? []);
         setStandards(data.standards ?? []);
       } catch (err: any) {
-        setError(err.message ?? "Failed to load lesson form");
+        setError(mapLessonError(err.message));
       } finally {
         setLoading(false);
       }
@@ -102,11 +110,11 @@ export default function TeacherCreateLessonPage() {
         });
         const data: MetadataResponse = await response.json();
         if (!response.ok) {
-          throw new Error((data as any).error ?? "Failed to load standards");
+          throw new Error(mapLessonError((data as any).error));
         }
         setStandards(data.standards ?? []);
       } catch (err: any) {
-        setError(err.message ?? "Failed to load standards");
+        setError(mapLessonError(err.message));
       } finally {
         setLoadingStandards(false);
       }
@@ -134,7 +142,7 @@ export default function TeacherCreateLessonPage() {
       });
       const data = await response.json();
       if (!response.ok) {
-        throw new Error(data.error ?? "Lesson generation failed");
+        throw new Error(mapLessonError(data.error));
       }
       setDraft({
         title: data.title,
@@ -144,7 +152,7 @@ export default function TeacherCreateLessonPage() {
       });
       setContentId(null);
     } catch (err: any) {
-      setError(err.message ?? "Lesson generation failed");
+      setError(mapLessonError(err.message));
     } finally {
       setGenerating(false);
     }
@@ -176,7 +184,7 @@ export default function TeacherCreateLessonPage() {
       });
       const data = await response.json();
       if (!response.ok) {
-        throw new Error(data.error ?? "Unable to save lesson");
+        throw new Error(mapLessonError(data.error));
       }
 
       setContentId(data.contentId);
@@ -189,7 +197,7 @@ export default function TeacherCreateLessonPage() {
         );
       }
     } catch (err: any) {
-      setError(err.message ?? "Unable to save lesson");
+      setError(mapLessonError(err.message));
     } finally {
       setSavingDraft(false);
       setPublishing(false);

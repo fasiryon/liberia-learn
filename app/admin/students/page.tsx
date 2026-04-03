@@ -292,9 +292,12 @@ export default function AdminStudentsPage() {
                       <td className="py-3 pr-4">{s.className ?? "-"}</td>
                       <td className="py-3 pr-4">{s.loginId ?? "-"}</td>
                       <td className="py-3">
-                        <button type="button" className="rounded-full border border-white/10 px-2.5 py-1 text-[11px] text-slate-300 hover:text-slate-100">
-                          View
-                        </button>
+                        <Link
+                          href={`/admin/students/${s.id}`}
+                          className="inline-flex rounded-full border border-white/10 px-2.5 py-1 text-[11px] text-slate-300 hover:text-slate-100"
+                        >
+                          View Student
+                        </Link>
                       </td>
                     </tr>
                   ))}

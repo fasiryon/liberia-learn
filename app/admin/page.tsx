@@ -4,7 +4,6 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { AttachDemoSchoolButton } from "./AttachDemoSchoolButton";
-import { DemoHintsSection } from "@/components/DemoHintsSection";
 import { AdminNav } from "@/components/admin/AdminNav";
 
 export const dynamic = "force-dynamic";
@@ -377,8 +376,6 @@ export default async function AdminConsolePage() {
             </form>
           </div>
         </header>
-
-        <DemoHintsSection variant="admin" />
 
         {/* Onboarding banner */}
         {onboardingIncomplete && (
