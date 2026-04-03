@@ -56,7 +56,7 @@ describe("POST /api/demo/reset", () => {
     const response = await POST(new Request("http://localhost/api/demo/reset", { method: "POST" }));
 
     expect(response.status).toBe(403);
-    expect(await response.json()).toEqual({ error: "Not available in production" });
+    expect(await response.json()).toEqual({ error: "Not available in this environment" });
   }, 15_000);
 
   it("returns 401 when not authenticated", async () => {

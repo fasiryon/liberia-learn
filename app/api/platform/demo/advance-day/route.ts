@@ -1,9 +1,17 @@
 import { NextResponse } from "next/server";
 import { requireMoePlatformAdmin } from "@/lib/moeAccess";
 import { prisma } from "@/lib/db";
+import { isProduction, isStaging } from "@/lib/environment";
 
 export async function POST() {
   try {
+    if (isProduction() || isStaging()) {
+      return NextResponse.json(
+        { error: "Not available in this environment" },
+        { status: 403 }
+      );
+    }
+
     await requireMoePlatformAdmin();
 
     const allWork = await prisma.scheduledWork.findMany({ select: { id: true, scheduledDate: true } });

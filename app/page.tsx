@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { isDemoModeEnabled } from "@/lib/serverFlags";
+import { shouldShowDemoCredentials } from "@/lib/demoCredentials";
 
 const roleCards = [
   {
@@ -39,7 +39,7 @@ const demoLinks = [
 ];
 
 export default function HomePage() {
-  const demoModeEnabled = isDemoModeEnabled();
+  const demoModeEnabled = shouldShowDemoCredentials();
 
   return (
     <main className="ll-page min-h-screen text-slate-50">

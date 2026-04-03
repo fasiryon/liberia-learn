@@ -1,5 +1,5 @@
-import { isDemoModeEnabled } from "@/lib/serverFlags";
 import { DemoHints } from "@/components/DemoHints";
+import { shouldShowDemoCredentials } from "@/lib/demoCredentials";
 import {
   getDemoHintGroup,
   getDemoHintGroups,
@@ -13,7 +13,7 @@ type DemoHintsSectionProps = {
 };
 
 export function DemoHintsSection({ variant }: DemoHintsSectionProps) {
-  if (!isDemoModeEnabled()) return null;
+  if (!shouldShowDemoCredentials()) return null;
 
   const groups =
     variant === "login"

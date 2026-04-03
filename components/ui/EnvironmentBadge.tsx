@@ -1,15 +1,14 @@
+import { getEnvironment, type AppEnvironment } from "@/lib/environment";
+
 type EnvironmentBadgeProps = {
-  environment: string;
+  environment: AppEnvironment;
 };
 
 export function getEnvironmentBadgeValue() {
-  if (process.env.NODE_ENV === "development") return "development";
-  if (process.env.DEMO_MODE === "true") return "demo";
-  if (process.env.VERCEL_ENV === "preview") return "staging";
-  return process.env.NODE_ENV ?? "production";
+  return getEnvironment();
 }
 
-const STYLES: Record<string, { label: string; className: string }> = {
+const STYLES: Record<AppEnvironment, { label: string; className: string }> = {
   production: {
     label: "PRODUCTION",
     className: "border-emerald-500/30 bg-emerald-500/10 text-emerald-200",
@@ -29,7 +28,7 @@ const STYLES: Record<string, { label: string; className: string }> = {
 };
 
 export function EnvironmentBadge({ environment }: EnvironmentBadgeProps) {
-  const config = STYLES[environment] ?? STYLES.production;
+  const config = STYLES[environment];
 
   return (
     <span className={`inline-flex items-center gap-2 rounded-full border px-3 py-1 text-[11px] font-semibold tracking-wide ${config.className}`}>
