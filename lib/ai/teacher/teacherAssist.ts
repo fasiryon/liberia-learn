@@ -24,6 +24,12 @@ export type TeacherAssistInput = {
   gradeBand: string;
 };
 
+type TeacherAssistUsageContext = {
+  route: string;
+  schoolId?: string | null;
+  userId?: string | null;
+};
+
 export type TeacherAssistResult = {
   reinforcementSuggestions: string[];
   pacingSuggestion: string;
@@ -154,7 +160,8 @@ function parseAndValidate(raw: string): TeacherAssistResult | null {
  * NO individual student data in input, prompt, or output.
  */
 export async function getTeacherAssistResponse(
-  input: TeacherAssistInput
+  input: TeacherAssistInput,
+  usageContext?: TeacherAssistUsageContext
 ): Promise<TeacherAssistResult> {
   try {
     const result = await routedCompletion({
@@ -164,6 +171,22 @@ export async function getTeacherAssistResponse(
       ],
       maxTokens: 500,
       forceSmartTier: true,
+      aiUsage: usageContext
+        ? {
+            route: usageContext.route,
+            feature: "teacherAssist",
+            schoolId: usageContext.schoolId ?? null,
+            userId: usageContext.userId ?? null,
+            subject: input.subject,
+            strandKey: input.strandKey,
+            requestType: "teacher_assist",
+            budgetFallbackContent: JSON.stringify({
+              reinforcementSuggestions: FALLBACK.reinforcementSuggestions,
+              pacingSuggestion: FALLBACK.pacingSuggestion,
+              resourceHints: FALLBACK.resourceHints,
+            }),
+          }
+        : undefined,
     });
 
     const validated = parseAndValidate(result.content);
@@ -182,6 +205,7 @@ export async function getTeacherAssistResponse(
       return { ...FALLBACK };
     }
 
+    validated.hadFallback = result.budgetBlocked === true;
     validated.estimatedCostUSD = result.estimatedCostUSD;
     validated.tokensUsed = result.inputTokens + result.outputTokens;
     return validated;

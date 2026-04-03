@@ -41,7 +41,11 @@ export async function POST(req: NextRequest) {
     }
 
     const params = ExamGenerationParamsSchema.parse(await req.json());
-    const generated = await generateExamWithUsage(params);
+    const generated = await generateExamWithUsage(params, {
+      route: "/api/admin/exams/generate",
+      schoolId: user.schoolId ?? null,
+      userId: user.id,
+    });
     const exam = generated.exam;
 
     const record = await prisma.exam.create({
@@ -78,26 +82,9 @@ export async function POST(req: NextRequest) {
         subject: exam.subject,
         grade: exam.grade,
         questionCount: exam.questions.length,
+        hadFallback: generated.hadFallback === true,
       },
     });
-
-    try {
-      await (prisma as any).aiInteractionLog.create({
-        data: {
-          schoolId: user.schoolId ?? null,
-          subject: exam.subject,
-          strandKey: exam.moeStandards.join(","),
-          requestType: "exam_generation",
-          guidanceLevel: null,
-          hadFallback: false,
-          endpoint: "/api/admin/exams/generate",
-          tokensUsed: generated.tokensUsed,
-          estimatedCostUSD: generated.estimatedCostUSD,
-        },
-      });
-    } catch (loggingError) {
-      console.error("[exam.generate] Failed to record AI usage", loggingError);
-    }
 
     return NextResponse.json({ examId: record.id, exam }, { headers: getRateLimitHeaders(rateLimit) });
   } catch (error) {

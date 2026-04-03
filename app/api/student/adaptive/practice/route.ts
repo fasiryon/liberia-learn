@@ -4,8 +4,7 @@ import { logAudit } from "@/lib/audit";
 import { checkAiRateLimit } from "@/lib/ai/rateLimitGuard";
 import { getRateLimitHeaders, rateLimitExceededResponse } from "@/lib/rateLimit";
 import { prisma } from "@/lib/db";
-import { recordMetricEvent } from "@/lib/metrics/events";
-import { getAiBudgetMonthlyCap, isAdaptiveEngineEnabled } from "@/lib/serverFlags";
+import { isAdaptiveEngineEnabled } from "@/lib/serverFlags";
 import { detectMasteryGaps } from "@/lib/adaptive/gapDetector";
 import {
   computeDifficultyTier,
@@ -20,19 +19,6 @@ type PracticeBody = {
   strandCode?: string;
   difficultyTier?: string;
 };
-
-async function getMonthlyAiSpend(): Promise<number> {
-  const monthStart = new Date();
-  monthStart.setDate(1);
-  monthStart.setHours(0, 0, 0, 0);
-
-  const budgetResult = await (prisma as any).aiInteractionLog.aggregate({
-    where: { timestamp: { gte: monthStart } },
-    _sum: { estimatedCostUSD: true },
-  });
-
-  return (budgetResult as any)?._sum?.estimatedCostUSD ?? 0;
-}
 
 export async function POST(req: NextRequest) {
   try {
@@ -50,6 +36,7 @@ export async function POST(req: NextRequest) {
     if (!rateLimit.allowed) {
       return rateLimitExceededResponse(rateLimit);
     }
+
     const student = await prisma.student.findFirst({
       where: {
         userId: user.id,
@@ -67,32 +54,6 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "invalid_strand_code" }, { status: 400 });
     }
 
-    const monthlySpend = await getMonthlyAiSpend();
-    const cap = getAiBudgetMonthlyCap();
-    if (monthlySpend >= cap) {
-      try {
-        await recordMetricEvent(
-          "ai.budget.cap_hit",
-          { monthlySpend, cap },
-          { scope: "school", scopeId: user.schoolId ?? null, schoolId: user.schoolId }
-        );
-      } catch (error) {
-        logger.warn("[adaptive.practice.metric.cap_hit]", { error });
-      }
-      return NextResponse.json({ error: "ai_budget_exhausted" }, { status: 503 });
-    }
-    if (monthlySpend >= cap * 0.8) {
-      try {
-        await recordMetricEvent(
-          "ai.budget.warning",
-          { monthlySpend, cap },
-          { scope: "school", scopeId: user.schoolId ?? null, schoolId: user.schoolId }
-        );
-      } catch (error) {
-        logger.warn("[adaptive.practice.metric.warning]", { error });
-      }
-    }
-
     const gaps = await detectMasteryGaps(student.id);
     const gap = gaps.find((entry) => entry.strand === body.strandCode);
     if (!gap) {
@@ -106,20 +67,10 @@ export async function POST(req: NextRequest) {
       select: { score: true, completedAt: true },
     });
     const tier = computeDifficultyTier(gap, recentAttempts as AttemptRecord[]);
-    const generation = await generateTargetedPracticeWithUsage(gap, tier);
-
-    await (prisma as any).aiInteractionLog.create({
-      data: {
-        schoolId: user.schoolId ?? null,
-        subject: gap.subject,
-        strandKey: gap.strand,
-        requestType: "adaptive_practice",
-        guidanceLevel: tier,
-        hadFallback: false,
-        endpoint: "/api/student/adaptive/practice",
-        tokensUsed: generation.tokensUsed,
-        estimatedCostUSD: generation.estimatedCostUSD,
-      },
+    const generation = await generateTargetedPracticeWithUsage(gap, tier, {
+      route: "/api/student/adaptive/practice",
+      schoolId: user.schoolId ?? null,
+      userId: user.id,
     });
 
     await logAudit({
@@ -132,10 +83,14 @@ export async function POST(req: NextRequest) {
         subject: gap.subject,
         difficultyTier: tier,
         requestedDifficultyTier: body.difficultyTier ?? null,
+        hadFallback: generation.hadFallback === true,
       },
     });
 
-    return NextResponse.json({ practice: generation.practice }, { headers: getRateLimitHeaders(rateLimit) });
+    return NextResponse.json(
+      { practice: generation.practice, hadFallback: generation.hadFallback === true },
+      { headers: getRateLimitHeaders(rateLimit) }
+    );
   } catch (error: any) {
     logger.error("[adaptive.practice.POST]", {
       route: "/api/student/adaptive/practice",

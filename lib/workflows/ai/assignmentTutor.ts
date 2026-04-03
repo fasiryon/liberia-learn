@@ -30,6 +30,12 @@ export type AssignmentTutorInput = {
   questionPrompt: string;
 };
 
+type AssignmentTutorUsageContext = {
+  route: string;
+  schoolId?: string | null;
+  userId?: string | null;
+};
+
 export type AssignmentTutorResult = {
   /** Teaching hints scoped to this assignment's rubric and question. */
   teachingHints: string[];
@@ -129,7 +135,8 @@ function toStringArray(v: unknown): string[] {
  * No student identifiers in input, prompt, or output.
  */
 export async function getAssignmentTutorGuidance(
-  input: AssignmentTutorInput
+  input: AssignmentTutorInput,
+  usageContext?: AssignmentTutorUsageContext
 ): Promise<AssignmentTutorResult> {
   try {
     const result = await routedCompletion({
@@ -139,6 +146,22 @@ export async function getAssignmentTutorGuidance(
       ],
       maxTokens: 500,
       forceSmartTier: true,
+      aiUsage: usageContext
+        ? {
+            route: usageContext.route,
+            feature: "teacherAssist",
+            schoolId: usageContext.schoolId ?? null,
+            userId: usageContext.userId ?? null,
+            subject: input.subject,
+            strandKey: input.strandKey,
+            requestType: "assignment_tutor",
+            budgetFallbackContent: JSON.stringify({
+              teachingHints: FALLBACK.teachingHints,
+              anticipatedMisconceptions: FALLBACK.anticipatedMisconceptions,
+              scaffoldingSuggestions: FALLBACK.scaffoldingSuggestions,
+            }),
+          }
+        : undefined,
     });
 
     const validated = parseAndValidate(result.content);
@@ -150,6 +173,7 @@ export async function getAssignmentTutorGuidance(
       return { ...FALLBACK };
     }
 
+    validated.hadFallback = result.budgetBlocked === true;
     validated.estimatedCostUSD = result.estimatedCostUSD;
     validated.tokensUsed = result.inputTokens + result.outputTokens;
     return validated;

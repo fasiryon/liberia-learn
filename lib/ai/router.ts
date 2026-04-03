@@ -1,5 +1,7 @@
 // lib/ai/router.ts
 import { getOpenAIClientOrThrow } from "@/lib/ai/openaiClient";
+import { checkBudget } from "@/lib/ai/budgetGuard";
+import { recordAiUsage, type AiBudgetFeature } from "@/lib/ai/interactionLog";
 
 let _groq: any = null;
 function getGroq() {
@@ -77,6 +79,17 @@ export interface RouterOptions {
   messages: Array<{ role: "system" | "user" | "assistant"; content: string }>;
   maxTokens?: number;
   forceSmartTier?: boolean;
+  aiUsage?: {
+    route: string;
+    feature: AiBudgetFeature;
+    schoolId?: string | null;
+    userId?: string | null;
+    subject?: string | null;
+    strandKey?: string | null;
+    requestType?: string | null;
+    guidanceLevel?: string | null;
+    budgetFallbackContent?: string | null;
+  };
 }
 
 export interface RouterResult {
@@ -86,14 +99,15 @@ export interface RouterResult {
   inputTokens: number;
   outputTokens: number;
   estimatedCostUSD: number;
+  budgetBlocked?: boolean;
 }
 
 const GROQ_MODEL = "llama-3.1-8b-instant";
 const OPENAI_MODEL = "gpt-4o-mini";
 
 const COSTS = {
-  groq_input: 0.05 / 1_000_000,
-  groq_output: 0.08 / 1_000_000,
+  groq_input: 0.1 / 1_000_000,
+  groq_output: 0.1 / 1_000_000,
   openai_input: 0.15 / 1_000_000,
   openai_output: 0.6 / 1_000_000,
 };
@@ -138,6 +152,41 @@ export async function routedCompletion(
     : classifyMessage(lastUserMsg);
 
   const maxTokens = opts.maxTokens ?? 512;
+  if (opts.aiUsage) {
+    const budget = await checkBudget(opts.aiUsage.feature, opts.aiUsage.schoolId ?? null);
+    if (!budget.allowed) {
+      void recordAiUsage({
+        route: opts.aiUsage.route,
+        feature: opts.aiUsage.feature,
+        schoolId: opts.aiUsage.schoolId ?? null,
+        userId: opts.aiUsage.userId ?? null,
+        subject: opts.aiUsage.subject ?? null,
+        strandKey: opts.aiUsage.strandKey ?? null,
+        requestType: opts.aiUsage.requestType ?? null,
+        guidanceLevel: opts.aiUsage.guidanceLevel ?? null,
+        tokensUsed: 0,
+        estimatedCostUSD: 0,
+        model: "budget_guard",
+        tier: classification.tier,
+        fallbackUsed: true,
+      });
+
+      return {
+        content:
+          opts.aiUsage.budgetFallbackContent ??
+          JSON.stringify({ hadFallback: true, fallbackReason: budget.fallbackReason }),
+        tier: classification.tier,
+        model: "budget_guard",
+        inputTokens: 0,
+        outputTokens: 0,
+        estimatedCostUSD: 0,
+        budgetBlocked: true,
+      };
+    }
+  }
+
+  let providerFallbackUsed = false;
+  let response: RouterResult | null = null;
 
   // Try Groq for fast tier if API key available
   if (classification.tier === "fast" && process.env.GROQ_API_KEY) {
@@ -153,7 +202,7 @@ export async function routedCompletion(
       const inputTokens = completion.usage?.prompt_tokens ?? 0;
       const outputTokens = completion.usage?.completion_tokens ?? 0;
 
-      return {
+      response = {
         content:
           completion.choices[0]?.message?.content ??
           "I'm not sure how to answer that.",
@@ -166,20 +215,43 @@ export async function routedCompletion(
       };
     } catch {
       // Fall through to OpenAI
+      providerFallbackUsed = true;
     }
   }
 
-  // Default: OpenAI
-  const result = await callOpenAI(opts.messages, maxTokens);
+  if (!response) {
+    // Default: OpenAI
+    const result = await callOpenAI(opts.messages, maxTokens);
 
-  return {
-    content: result.content,
-    tier: classification.tier,
-    model: OPENAI_MODEL,
-    inputTokens: result.inputTokens,
-    outputTokens: result.outputTokens,
-    estimatedCostUSD:
-      result.inputTokens * COSTS.openai_input +
-      result.outputTokens * COSTS.openai_output,
-  };
+    response = {
+      content: result.content,
+      tier: classification.tier,
+      model: OPENAI_MODEL,
+      inputTokens: result.inputTokens,
+      outputTokens: result.outputTokens,
+      estimatedCostUSD:
+        result.inputTokens * COSTS.openai_input +
+        result.outputTokens * COSTS.openai_output,
+    };
+  }
+
+  if (opts.aiUsage) {
+    void recordAiUsage({
+      route: opts.aiUsage.route,
+      feature: opts.aiUsage.feature,
+      schoolId: opts.aiUsage.schoolId ?? null,
+      userId: opts.aiUsage.userId ?? null,
+      subject: opts.aiUsage.subject ?? null,
+      strandKey: opts.aiUsage.strandKey ?? null,
+      requestType: opts.aiUsage.requestType ?? null,
+      guidanceLevel: opts.aiUsage.guidanceLevel ?? null,
+      tokensUsed: response.inputTokens + response.outputTokens,
+      estimatedCostUSD: response.estimatedCostUSD,
+      model: response.model,
+      tier: response.tier,
+      fallbackUsed: providerFallbackUsed,
+    });
+  }
+
+  return response;
 }

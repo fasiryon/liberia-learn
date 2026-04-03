@@ -23,6 +23,13 @@ export type PracticeGenerationResult = {
   practice: PracticeSet;
   estimatedCostUSD: number;
   tokensUsed: number;
+  hadFallback?: boolean;
+};
+
+type PracticeUsageContext = {
+  route: string;
+  schoolId?: string | null;
+  userId?: string | null;
 };
 
 function parsePracticeSet(content: string, gap: MasteryGap, difficultyTier: DifficultyTier): PracticeSet {
@@ -75,7 +82,8 @@ function parsePracticeSet(content: string, gap: MasteryGap, difficultyTier: Diff
 
 export async function generateTargetedPracticeWithUsage(
   gap: MasteryGap,
-  difficultyTier: DifficultyTier
+  difficultyTier: DifficultyTier,
+  usageContext?: PracticeUsageContext
 ): Promise<PracticeGenerationResult> {
   const result = await routedCompletion({
     forceSmartTier: true,
@@ -104,12 +112,34 @@ export async function generateTargetedPracticeWithUsage(
         ].join("\n"),
       },
     ],
+    aiUsage: usageContext
+      ? {
+          route: usageContext.route,
+          feature: "curriculum",
+          schoolId: usageContext.schoolId ?? null,
+          userId: usageContext.userId ?? null,
+          subject: gap.subject,
+          strandKey: gap.strand,
+          requestType: "adaptive_practice",
+          budgetFallbackContent: JSON.stringify({
+            questions: Array.from({ length: 5 }, (_, index) => ({
+              id: `fallback-${index + 1}`,
+              prompt: `Review question ${index + 1} for ${gap.strand}.`,
+              options: ["Option A", "Option B", "Option C", "Option D"],
+              correctIndex: 0,
+              explanation: "Review the lesson notes with your teacher.",
+              hintText: "Use your class notes and try one step at a time.",
+            })),
+          }),
+        }
+      : undefined,
   });
 
   return {
     practice: parsePracticeSet(result.content, gap, difficultyTier),
     estimatedCostUSD: result.estimatedCostUSD,
     tokensUsed: result.inputTokens + result.outputTokens,
+    hadFallback: result.budgetBlocked === true,
   };
 }
 

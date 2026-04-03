@@ -1248,6 +1248,8 @@ model AiInteractionLog {
   id               String   @id @default(cuid())
   /// School that the call originated from (null = national/unknown)
   schoolId         String?
+  userId           String?
+  feature          String?
   subject          String
   strandKey        String
   /// "explain" | "practice" | "step_by_step" | "reinforce" | "teacher_assist"
@@ -1255,6 +1257,8 @@ model AiInteractionLog {
   endpoint         String?
   /// "light" | "moderate" | "intensive" | null (teacher_assist)
   guidanceLevel    String?
+  model            String?
+  tier             String?
   hadFallback      Boolean  @default(false)
   tokensUsed       Int      @default(0)
   estimatedCostUSD Float    @default(0)
@@ -1263,6 +1267,8 @@ model AiInteractionLog {
   @@index([timestamp])
   @@index([subject, strandKey])
   @@index([schoolId, timestamp])
+  @@index([feature, timestamp])
+  @@index([userId, timestamp])
 }
 
 /// / ===== Block 12A: Impact Snapshots =====
@@ -1573,4 +1579,3 @@ enum MasteryState {
   MASTERED
   DECAYING
 }
-
