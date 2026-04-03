@@ -60,10 +60,14 @@ describe("seedChaDemo", () => {
   it("creates the CHA school record", async () => {
     await seedChaDemo();
     const schoolCall = mockPrismaInstance.school.upsert.mock.calls.find(
-      (c: any[]) => c[0]?.where?.id === "cha-high-academy"
+      (c: any[]) => c[0]?.where?.code === "CHA"
     );
     expect(schoolCall).toBeDefined();
-    expect(schoolCall![0].create).toMatchObject({ code: "CHA", name: expect.stringContaining("Cha") });
+    expect(schoolCall![0].create).toMatchObject({
+      id: "cha-high-academy",
+      code: "CHA",
+      name: expect.stringContaining("Cha"),
+    });
   });
 
   it("creates admin@cha.edu.lr with ADMIN role", async () => {

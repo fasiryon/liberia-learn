@@ -64,6 +64,7 @@ export default function LoginClient({ showDemoHints, demoGroups, demoDefaults }:
   const router = useRouter();
   const [nextUrl, setNextUrl] = useState<string | null>(null);
   const [flashMessage, setFlashMessage] = useState<string | null>(null);
+  const [showDemoHelp, setShowDemoHelp] = useState(false);
 
   const [role, setRole] = useState<"student" | "teacher" | "admin" | "guardian">("student");
   const [email, setEmail] = useState(demoDefaults?.email ?? "");
@@ -264,7 +265,7 @@ export default function LoginClient({ showDemoHints, demoGroups, demoDefaults }:
     <main className="ll-page flex min-h-screen items-center justify-center px-4 py-8 sm:py-10">
       <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_top,_#22c55e33,_transparent_55%),radial-gradient(circle_at_bottom,_#0ea5e933,_transparent_55%)]" />
 
-      <div className="w-full max-w-lg space-y-6 rounded-[2rem] border border-white/10 bg-slate-900/75 p-6 shadow-2xl shadow-emerald-500/15 backdrop-blur sm:p-7">
+      <div className="w-full max-w-lg space-y-5 rounded-[2rem] border border-white/10 bg-slate-900/75 p-5 shadow-2xl shadow-emerald-500/15 backdrop-blur sm:space-y-6 sm:p-7">
         <div className="flex flex-col items-center gap-3 text-center">
           <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-emerald-500 text-lg font-black text-slate-950">
             L
@@ -278,13 +279,6 @@ export default function LoginClient({ showDemoHints, demoGroups, demoDefaults }:
             {flashMessage}
           </p>
         )}
-
-        {showDemoHints && demoGroups.length > 0 ? (
-          <div className="space-y-2 rounded-2xl border border-slate-800/80 bg-slate-950/55 p-4">
-            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-500">Demo help</p>
-            <DemoHints title="Demo Login Hints" groups={demoGroups} />
-          </div>
-        ) : null}
 
         <div className="space-y-2">
           <p className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-500">Sign in as</p>
@@ -357,6 +351,43 @@ export default function LoginClient({ showDemoHints, demoGroups, demoDefaults }:
             {loading ? "Signing in..." : "Continue"}
           </button>
         </form>
+
+        {showDemoHints && demoGroups.length > 0 ? (
+          <section className="rounded-2xl border border-slate-800/80 bg-slate-950/45 p-4">
+            <div className="flex items-start justify-between gap-3">
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-500">Demo help</p>
+                <p className="mt-1 text-xs leading-5 text-slate-400">
+                  Seeded test accounts are available when demo mode is enabled. Keep this secondary to normal sign-in.
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setShowDemoHelp((current) => !current)}
+                className="shrink-0 rounded-full border border-slate-700 px-3 py-1 text-[11px] font-semibold text-slate-200 hover:border-slate-500"
+              >
+                {showDemoHelp ? "Hide" : "Show"}
+              </button>
+            </div>
+
+            {showDemoHelp ? (
+              <div className="mt-3">
+                <DemoHints title="Demo Login Hints" groups={demoGroups} />
+              </div>
+            ) : (
+              <div className="mt-3 flex flex-wrap gap-2 text-[11px] text-slate-400">
+                {demoGroups.map((group) => (
+                  <span
+                    key={group.key}
+                    className="rounded-full border border-slate-800 bg-slate-900/70 px-3 py-1"
+                  >
+                    {group.label}: {group.email}
+                  </span>
+                ))}
+              </div>
+            )}
+          </section>
+        ) : null}
 
         <div className="text-center text-[11px] text-slate-500">
           <Link href="/" className="text-emerald-300 hover:text-emerald-200">
