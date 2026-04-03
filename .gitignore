@@ -41,10 +41,12 @@ test-*.log
 .env.production
 .env.production.local
 .env.vercel.production
+.env.preview
 
 # Vercel / local tooling
 .vercel
 .claude/
+.worktrees/
 
 # OS / editor noise
 .DS_Store
@@ -90,3 +92,6 @@ infra/outputs/
 
 # Local eval artifacts
 evals/results/
+
+.env*.local
+.vercel

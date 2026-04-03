@@ -121,6 +121,7 @@ model School {
   guardianMessages       GuardianMessage[]
   exams                  Exam[]
   ragChunks              RagChunk[]
+  sloEvents              SloEvent[]
 }
 
 model Class {
@@ -946,6 +947,20 @@ model MetricEvent {
   @@index([scope, scopeId, createdAt])
   @@index([name, createdAt])
   @@index([severity, createdAt])
+  @@index([schoolId, createdAt])
+}
+
+model SloEvent {
+  id        String   @id @default(cuid())
+  service   String
+  success   Boolean
+  latencyMs Int
+  schoolId  String?
+  createdAt DateTime @default(now())
+  school    School?  @relation(fields: [schoolId], references: [id])
+
+  @@index([service, createdAt])
+  @@index([createdAt])
   @@index([schoolId, createdAt])
 }
 

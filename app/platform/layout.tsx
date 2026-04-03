@@ -1,9 +1,11 @@
 import { notFound, redirect } from "next/navigation";
 import { requireMoePortalUser } from "@/lib/moeAccess";
 import Link from "next/link";
+import { EnvironmentBadge, getEnvironmentBadgeValue } from "@/components/ui/EnvironmentBadge";
 
 const NAV = [
   { href: "/platform", label: "Dashboard" },
+  { href: "/platform/ops", label: "Ops" },
   { href: "/platform/schools", label: "Schools" },
   { href: "/platform/audit", label: "Audit Log" },
   { href: "/platform/reports", label: "Reports" },
@@ -26,6 +28,7 @@ export default async function PlatformLayout({
 
   const navItems =
     user.role === "DISTRICT_ADMIN" ? NAV.slice(0, 1) : NAV;
+  const environment = getEnvironmentBadgeValue();
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-50">
@@ -54,7 +57,10 @@ export default async function PlatformLayout({
           </nav>
 
           <div className="ml-auto text-xs text-slate-500">
-            {user.email}
+            <div className="flex items-center gap-3">
+              <EnvironmentBadge environment={environment} />
+              <span>{user.email}</span>
+            </div>
           </div>
         </div>
       </header>

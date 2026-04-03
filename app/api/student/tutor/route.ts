@@ -28,9 +28,11 @@ import {
   isValidRequestType,
   type StudentTutorInput,
 } from "@/lib/ai/tutor/studentTutor";
+import { recordSloEvent } from "@/lib/slo/tracker";
 
 export async function POST(req: NextRequest) {
   const traceId = randomUUID();
+  const startedAt = Date.now();
   try {
     if (!isAiTutorEnabled()) {
       return NextResponse.json({ error: "ai_tutor_disabled" }, { status: 404 });
@@ -150,6 +152,13 @@ export async function POST(req: NextRequest) {
       }
     ).catch(() => {});
 
+    recordSloEvent({
+      service: "tutor",
+      success: true,
+      latencyMs: Date.now() - startedAt,
+      schoolId: user.schoolId ?? null,
+    });
+
     return NextResponse.json({
       explanation: result.explanation,
       practicePrompt: result.practicePrompt ?? null,
@@ -158,6 +167,12 @@ export async function POST(req: NextRequest) {
       hadFallback: result.hadFallback,
     }, { headers: getRateLimitHeaders(rateLimit) });
   } catch (err: any) {
+    recordSloEvent({
+      service: "tutor",
+      success: false,
+      latencyMs: Date.now() - startedAt,
+      schoolId: null,
+    });
     return NextResponse.json(
       { error: err?.message ?? "Server error" },
       { status: err?.status ?? 500 }

@@ -2,8 +2,10 @@ import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/db';
 import bcrypt from 'bcryptjs';
 import { SignJWT } from 'jose';
+import { recordSloEvent } from '@/lib/slo/tracker';
 
 export async function POST(request: NextRequest) {
+  const startedAt = Date.now();
   try {
     const { email, password } = await request.json();
 
@@ -13,6 +15,12 @@ export async function POST(request: NextRequest) {
     });
 
     if (!user || !user.hashedPwd) {
+      recordSloEvent({
+        service: "login",
+        success: false,
+        latencyMs: Date.now() - startedAt,
+        schoolId: user?.schoolId ?? null,
+      });
       return NextResponse.json(
         { error: 'Invalid credentials' },
         { status: 401 }
@@ -23,6 +31,12 @@ export async function POST(request: NextRequest) {
     const isValid = await bcrypt.compare(password, user.hashedPwd);
 
     if (!isValid) {
+      recordSloEvent({
+        service: "login",
+        success: false,
+        latencyMs: Date.now() - startedAt,
+        schoolId: user.schoolId ?? null,
+      });
       return NextResponse.json(
         { error: 'Invalid credentials' },
         { status: 401 }
@@ -60,9 +74,22 @@ export async function POST(request: NextRequest) {
       maxAge: 60 * 60 * 24 * 7, // 7 days
     });
 
+    recordSloEvent({
+      service: "login",
+      success: true,
+      latencyMs: Date.now() - startedAt,
+      schoolId: user.schoolId ?? null,
+    });
+
     return response;
   } catch (error) {
     console.error('Login error:', error);
+    recordSloEvent({
+      service: "login",
+      success: false,
+      latencyMs: Date.now() - startedAt,
+      schoolId: null,
+    });
     return NextResponse.json(
       { error: 'An error occurred during login' },
       { status: 500 }

@@ -7,10 +7,12 @@ import {
   requireMoeExportUser,
   schoolMetricsToCsvRows,
 } from "@/lib/moe/exportUtils";
+import { recordSloEvent } from "@/lib/slo/tracker";
 
 export const dynamic = "force-dynamic";
 
 export async function GET() {
+  const startedAt = Date.now();
   if (!isMoePortalEnabled()) {
     return NextResponse.json({ error: "MOE portal is disabled" }, { status: 404 });
   }
@@ -36,6 +38,13 @@ export async function GET() {
       rows
     );
 
+    recordSloEvent({
+      service: "export",
+      success: true,
+      latencyMs: Date.now() - startedAt,
+      schoolId: null,
+    });
+
     return new NextResponse(csv, {
       headers: {
         "Content-Type": "text/csv; charset=utf-8",
@@ -43,6 +52,12 @@ export async function GET() {
       },
     });
   } catch (err: any) {
+    recordSloEvent({
+      service: "export",
+      success: false,
+      latencyMs: Date.now() - startedAt,
+      schoolId: null,
+    });
     return NextResponse.json(
       { error: err?.message ?? "Export failed" },
       { status: err?.status ?? 500 }
