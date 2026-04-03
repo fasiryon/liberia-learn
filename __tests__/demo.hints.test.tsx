@@ -26,8 +26,8 @@ describe("demo hints rendering", () => {
     expect(html).toContain("official1@moe.gov.lr");
     expect(html).toContain("Password: DemoSeed2026!");
     expect(html).toContain("Password: MOESeed2026!");
-    expect(html).not.toContain("student1@mcs.edu.lr");
-    expect(html).not.toContain("Password: Password123");
+    expect(html).not.toContain("student1@legacy-demo.lr");
+    expect(html).not.toContain("Password: LegacyDemo123!");
   });
 });
 
@@ -36,7 +36,7 @@ describe("seed scripts do not print demo passwords", () => {
     const seedPath = path.join(process.cwd(), "prisma", "seed.ts");
     const contents = fs.readFileSync(seedPath, "utf8");
     expect(contents).not.toMatch(/MOE Demo Credentials/i);
-    expect(contents).not.toMatch(/Password:\s*Password123/);
+    expect(contents).not.toMatch(/Password:\s*LegacyDemo123!/);
   });
 
   it("shared demo credentials stay aligned with the CHA seed script", () => {

@@ -120,7 +120,7 @@ describe("RR-3 account recovery", () => {
     const res = await resetPOST(
       makeReq("/api/auth/reset-password", {
         token: "tok-expired",
-        password: "Password123",
+        password: "DemoSeed2026!",
       })
     );
     expect(res.status).toBe(400);
@@ -137,7 +137,7 @@ describe("RR-3 account recovery", () => {
     const res = await resetPOST(
       makeReq("/api/auth/reset-password", {
         token: "tok-used",
-        password: "Password123",
+        password: "DemoSeed2026!",
       })
     );
     expect(res.status).toBe(400);
@@ -151,7 +151,7 @@ describe("RR-3 account recovery", () => {
     const res2 = await resetPOST(
       makeReq("/api/auth/reset-password", {
         token: "tok-any",
-        password: "Password123",
+        password: "DemoSeed2026!",
       })
     );
     expect(res1.status).toBe(404);

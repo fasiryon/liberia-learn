@@ -163,7 +163,7 @@ describe("RR-1 invite acceptance", () => {
       makeReq("/api/onboard/accept", {
         token: "tok-expired",
         name: "Student",
-        password: "Password123",
+        password: "DemoSeed2026!",
       })
     );
     expect(res.status).toBe(400);
@@ -182,7 +182,7 @@ describe("RR-1 invite acceptance", () => {
       makeReq("/api/onboard/accept", {
         token: "tok-used",
         name: "Student",
-        password: "Password123",
+        password: "DemoSeed2026!",
       })
     );
     expect(res.status).toBe(400);
@@ -202,7 +202,7 @@ describe("RR-1 invite acceptance", () => {
       makeReq("/api/onboard/accept", {
         token: "tok-enroll",
         name: "Student",
-        password: "Password123",
+        password: "DemoSeed2026!",
       })
     );
     expect(res.status).toBe(404);

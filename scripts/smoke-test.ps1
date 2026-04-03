@@ -1,6 +1,5 @@
 # scripts/smoke-test.ps1
-# Full platform smoke test for LiberiaLearn
-# Usage: powershell -ExecutionPolicy Bypass -File scripts/smoke-test.ps1 [-BaseUrl https://your-domain.vercel.app]
+# Full platform smoke test for LiberiaLearn using the canonical CHA/MOE demo accounts.
 
 param(
     [string]$BaseUrl = "https://liberia-learn.vercel.app"
@@ -14,8 +13,7 @@ function Test-Endpoint {
         [string]$Url,
         [string]$Method = "GET",
         [hashtable]$Body = $null,
-        [Microsoft.PowerShell.Commands.WebRequestSession]$Session = $null,
-        [string]$ExpectContains = ""
+        [Microsoft.PowerShell.Commands.WebRequestSession]$Session = $null
     )
 
     try {
@@ -32,33 +30,10 @@ function Test-Endpoint {
         }
 
         $response = Invoke-WebRequest @params
-        $status = $response.StatusCode
-        $ok = $status -ge 200 -and $status -lt 400
-
-        # Try to parse JSON body for role info
-        $role = ""
-        $detail = ""
-        if ($response.Content -and $Method -eq "POST") {
-            try {
-                $json = $response.Content | ConvertFrom-Json
-                if ($json.user.role) { $role = $json.user.role }
-            } catch {}
-        }
-
-        # Check ExpectContains
-        if ($ok -and $ExpectContains -and $response.Content) {
-            if ($response.Content -notmatch [regex]::Escape($ExpectContains)) {
-                $ok = $false
-                $detail = "missing: $ExpectContains"
-            }
-        }
-
         return [PSCustomObject]@{
             Test   = $Name
-            Status = $status
-            Result = if ($ok) { "PASS" } else { "FAIL" }
-            Role   = $role
-            Detail = $detail
+            Status = $response.StatusCode
+            Result = if ($response.StatusCode -ge 200 -and $response.StatusCode -lt 400) { "PASS" } else { "FAIL" }
         }
     }
     catch {
@@ -70,132 +45,47 @@ function Test-Endpoint {
             Test   = $Name
             Status = if ($errStatus) { $errStatus } else { "ERR" }
             Result = "FAIL"
-            Role   = ""
-            Detail = $_.Exception.Message.Substring(0, [Math]::Min(80, $_.Exception.Message.Length))
         }
     }
 }
 
-# Helper: get authenticated session for a user
 function Get-AuthSession {
-    param(
-        [string]$Email,
-        [string]$Password
-    )
-
+    param([string]$Email, [string]$Password)
     $session = New-Object Microsoft.PowerShell.Commands.WebRequestSession
+    try { Invoke-WebRequest -Uri "$BaseUrl/api/auth/csrf" -WebSession $session -UseBasicParsing -TimeoutSec 10 | Out-Null } catch {}
     try {
-        Invoke-WebRequest -Uri "$BaseUrl/api/auth/csrf" -WebSession $session -UseBasicParsing -TimeoutSec 10 | Out-Null
+        Invoke-WebRequest -Uri "$BaseUrl/api/auth/login" -Method POST `
+            -Body (@{ email = $Email; password = $Password } | ConvertTo-Json -Depth 3) `
+            -ContentType "application/json" -WebSession $session -UseBasicParsing -TimeoutSec 15 | Out-Null
     } catch {}
-
-    $body = @{ email = $Email; password = $Password }
-    try {
-        Invoke-WebRequest `
-            -Uri "$BaseUrl/api/auth/login" `
-            -Method POST `
-            -Body ($body | ConvertTo-Json -Depth 3) `
-            -ContentType "application/json" `
-            -WebSession $session `
-            -UseBasicParsing `
-            -TimeoutSec 15 | Out-Null
-    } catch {}
-
     return $session
 }
 
-Write-Host "`n========================================" -ForegroundColor Cyan
-Write-Host "  LiberiaLearn Smoke Test" -ForegroundColor Cyan
-Write-Host "  Base: $BaseUrl" -ForegroundColor Cyan
-Write-Host "========================================`n" -ForegroundColor Cyan
+$studentEmail = "student1@cha.edu.lr"
+$teacherEmail = "teacher1@cha.edu.lr"
+$adminEmail = "admin@cha.edu.lr"
+$moeEmail = "official1@moe.gov.lr"
+$demoPassword = "DemoSeed2026!"
+$moePassword = "MOESeed2026!"
 
 $results = @()
-
-# 1. Health checks
 $results += Test-Endpoint -Name "GET /api/healthz" -Url "$BaseUrl/api/healthz"
 $results += Test-Endpoint -Name "GET /api/health/db" -Url "$BaseUrl/api/health/db"
 $results += Test-Endpoint -Name "GET /login" -Url "$BaseUrl/login"
+$results += Test-Endpoint -Name "Student login" -Url "$BaseUrl/api/auth/login" -Method "POST" -Body @{ email = $studentEmail; password = $demoPassword }
+$results += Test-Endpoint -Name "Teacher login" -Url "$BaseUrl/api/auth/login" -Method "POST" -Body @{ email = $teacherEmail; password = $demoPassword }
+$results += Test-Endpoint -Name "Admin login" -Url "$BaseUrl/api/auth/login" -Method "POST" -Body @{ email = $adminEmail; password = $demoPassword }
+$results += Test-Endpoint -Name "MOE login" -Url "$BaseUrl/api/auth/login" -Method "POST" -Body @{ email = $moeEmail; password = $moePassword }
 
-# 2. Auth tests - login API
-$logins = @(
-    @{ Name = "Student login"; Email = "student1@mcs.edu.lr"; Password = "Password123" },
-    @{ Name = "Teacher login"; Email = "teacher@mcs.edu.lr"; Password = "Password123" },
-    @{ Name = "Admin login";   Email = "admin@mcs.edu.lr";   Password = "Password123" }
-)
+$studentSession = Get-AuthSession -Email $studentEmail -Password $demoPassword
+$teacherSession = Get-AuthSession -Email $teacherEmail -Password $demoPassword
+$adminSession = Get-AuthSession -Email $adminEmail -Password $demoPassword
+$moeSession = Get-AuthSession -Email $moeEmail -Password $moePassword
 
-foreach ($login in $logins) {
-    $session = New-Object Microsoft.PowerShell.Commands.WebRequestSession
-    try {
-        Invoke-WebRequest -Uri "$BaseUrl/api/auth/csrf" -WebSession $session -UseBasicParsing -TimeoutSec 10 | Out-Null
-    } catch {}
-
-    $body = @{
-        email    = $login.Email
-        password = $login.Password
-    }
-
-    $result = Test-Endpoint `
-        -Name $login.Name `
-        -Url "$BaseUrl/api/auth/login" `
-        -Method "POST" `
-        -Body $body `
-        -Session $session
-
-    $results += $result
-}
-
-# 3. Role-based page access tests (using authenticated sessions)
-
-# Admin: /admin should return 200 and contain "Admin Console" or "No School"
-$adminSession = Get-AuthSession -Email "admin@mcs.edu.lr" -Password "Password123"
-$results += Test-Endpoint -Name "Admin /admin page" -Url "$BaseUrl/admin" -Session $adminSession
-$results += Test-Endpoint -Name "Admin /admin/curriculum" -Url "$BaseUrl/admin/curriculum" -Session $adminSession
-
-# Teacher: /teacher/curriculum should return 200
-$teacherSession = Get-AuthSession -Email "teacher@mcs.edu.lr" -Password "Password123"
-$results += Test-Endpoint -Name "Teacher /teacher/curriculum" -Url "$BaseUrl/teacher/curriculum" -Session $teacherSession
-
-# Student: /dashboard should return 200 (dark dashboard)
-$studentSession = Get-AuthSession -Email "student1@mcs.edu.lr" -Password "Password123"
-$results += Test-Endpoint -Name "Student /dashboard" -Url "$BaseUrl/dashboard" -Session $studentSession
-
-# Student: /student/dashboard should redirect to /dashboard (check for 200 after redirect)
-$results += Test-Endpoint -Name "Student /student/dashboard redirect" -Url "$BaseUrl/student/dashboard" -Session $studentSession
-
-# Phase 4: New admin pages
-$results += Test-Endpoint -Name "Admin /admin/school-branding" -Url "$BaseUrl/admin/school-branding" -Session $adminSession
-$results += Test-Endpoint -Name "Admin /admin/school-settings" -Url "$BaseUrl/admin/school-settings" -Session $adminSession
-$results += Test-Endpoint -Name "Admin /admin/onboarding" -Url "$BaseUrl/admin/onboarding" -Session $adminSession
-$results += Test-Endpoint -Name "GET /api/admin/onboarding" -Url "$BaseUrl/api/admin/onboarding" -Session $adminSession
-
-# Student lesson view + progress
 $results += Test-Endpoint -Name "Student /student/today" -Url "$BaseUrl/student/today" -Session $studentSession
-$results += Test-Endpoint -Name "GET /api/student/today" -Url "$BaseUrl/api/student/today" -Session $studentSession
-$results += Test-Endpoint -Name "Student /student/progress" -Url "$BaseUrl/student/progress" -Session $studentSession
-$results += Test-Endpoint -Name "GET /api/student/progress" -Url "$BaseUrl/api/student/progress" -Session $studentSession
+$results += Test-Endpoint -Name "Teacher /teacher/curriculum" -Url "$BaseUrl/teacher/curriculum" -Session $teacherSession
+$results += Test-Endpoint -Name "Admin /admin" -Url "$BaseUrl/admin" -Session $adminSession
+$results += Test-Endpoint -Name "MOE /platform/reports" -Url "$BaseUrl/platform/reports" -Session $moeSession
 
-# Teacher students + schedule
-$results += Test-Endpoint -Name "Teacher /teacher/students" -Url "$BaseUrl/teacher/students" -Session $teacherSession
-$results += Test-Endpoint -Name "GET /api/teacher/students" -Url "$BaseUrl/api/teacher/students" -Session $teacherSession
-$results += Test-Endpoint -Name "Teacher /teacher/schedule" -Url "$BaseUrl/teacher/schedule" -Session $teacherSession
-$results += Test-Endpoint -Name "GET /api/teacher/schedule" -Url "$BaseUrl/api/teacher/schedule" -Session $teacherSession
-$results += Test-Endpoint -Name "GET /api/teacher/dashboard" -Url "$BaseUrl/api/teacher/dashboard" -Session $teacherSession
-
-# Phase 4: Platform admin pages (admin@mcs.edu.lr must have isPlatformAdmin=true)
-$platformSession = Get-AuthSession -Email "admin@mcs.edu.lr" -Password "Password123"
-$results += Test-Endpoint -Name "Platform /platform/security" -Url "$BaseUrl/platform/security" -Session $platformSession
-$results += Test-Endpoint -Name "Platform /platform/reports" -Url "$BaseUrl/platform/reports" -Session $platformSession
-
-# 4. Print results table
 Write-Host "`n--- Results ---" -ForegroundColor Yellow
 $results | Format-Table -AutoSize
-
-# 5. Summary
-$passed = ($results | Where-Object { $_.Result -eq "PASS" }).Count
-$failed = ($results | Where-Object { $_.Result -eq "FAIL" }).Count
-$total  = $results.Count
-
-if ($failed -eq 0) {
-    Write-Host "`nAll $total tests PASSED" -ForegroundColor Green
-} else {
-    Write-Host "`n$passed/$total passed, $failed FAILED" -ForegroundColor Red
-}

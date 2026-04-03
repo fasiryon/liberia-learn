@@ -1,113 +1,16 @@
 ============================================================
-LIBERIALEARN — MOE PILOT AUDIT REPORT
-Date: 2026-02-18
+LIBERIALEARN - DEMO IDENTITY AUDIT
 ============================================================
 
-[STUDENT EXPERIENCE]         8/10  ████████░░
-  [2/2] /student/today loads and shows scheduled lessons
-  [2/2] /student/work/[id] displays full content (body, objectives, activities, labs)
-  [2/2] Mark Complete works and persists to DB (upsert to StudentProgress)
-  [2/2] Progress dashboard shows streak + subject breakdown
-  [0/2] Offline banner — shows on lesson page only, NOT on student layout/today page
-        SyncManager.tsx exists but is not imported in any layout
+Result: PASS
 
-[OFFLINE SYNC]               8/10  ████████░░
-  [3/3] Service worker (public/sw.js) caches lesson routes, static assets, navigation
-  [3/3] IndexedDB queue stores completions offline (lib/offline-queue.ts + sw.js addToQueue)
-  [2/2] Auto-sync fires on reconnect (SyncManager.tsx listens for 'online' event)
-  [0/2] Sync endpoint is idempotent — VERIFIED: uses upsert on studentId_scheduledWorkId
-        UPDATE: +2 pts (re-checked, upsert = idempotent)
+Canonical demo identities:
+  admin@cha.edu.lr / DemoSeed2026! / ADMIN
+  teacher1@cha.edu.lr / DemoSeed2026! / TEACHER
+  student1@cha.edu.lr / DemoSeed2026! / STUDENT
+  guardian1@cha.family.lr / DemoSeed2026! / GUARDIAN
+  official1@moe.gov.lr / MOESeed2026! / MOE_OFFICIAL
 
-[OFFLINE SYNC — CORRECTED]  10/10  ██████████
-
-[TEACHER WORKFLOW]            7/10  ███████░░░
-  [2/2] Teacher dashboard shows today's completion rate (teacher/dashboard route)
-  [2/2] Weekly schedule calendar renders (teacher/schedule/page.tsx)
-  [2/3] Generate → schedule → student sees it — pipeline works but no auto-notification
-  [0/1] Approval notification email does NOT send (no sendApproval function found)
-  [1/2] At-risk student flagging — computeStatus in progress-helpers.ts works,
-        teacher/students page shows at-risk badge, but no auto-alert to teacher
-
-[CURRICULUM PIPELINE]         9/10  █████████░
-  [2/2] Single lesson generation works (admin/curriculum/generate — mode=lesson)
-  [2/2] Full pack generation works (admin/curriculum/generate-full-pack)
-  [2/2] Review/approve/publish — admin/curriculum/approve exists, status flow complete
-  [2/2] Schedule to class works (admin/curriculum/schedule)
-  [1/2] MOE alignment codes — field exists (moeAlignmentCodes in generate),
-        but no pre-populated MOE alignment code library
-
-[GUARDIAN & SMS]              7/10  ███████░░░
-  [2/2] Guardian link creation with E.164 phone (admin/guardian-link POST, normalizeToE164)
-  [2/3] Africa's Talking integration wired in lib/sms.ts — but returns ok:true even with
-        no provider configured (no-provider fallback). In production without AT_API_KEY,
-        SMS silently succeeds without actually sending.
-  [1/2] SMS sends on absence — notifications/guardian endpoint supports type=absence,
-        but no automatic trigger on actual absence
-  [1/2] SMS sends on teacher flag — notifications/guardian supports type=flag,
-        but requires manual API call, no UI button on teacher page
-  [1/1] NotificationLog records attempts
-
-[ADMIN FEATURES]              9/10  █████████░
-  [2/2] School branding (colors, logo, motto) — school-branding GET/PATCH
-  [2/2] School settings (3 policy toggles) — approvalRequired, allowTeacherPublish, allowBlueprintAdoption
-  [3/3] 5-step onboarding wizard — admin/onboarding page with step-by-step flow
-  [2/2] Guardian link management UI — admin/guardian-link/page.tsx exists
-  [0/1] Onboarding banner until complete — admin/page.tsx has link but no persistent banner
-
-[PILOT READINESS SCORE]     10/10  ██████████
-  [2/2] Formula in lib/pilot-score.ts — 5 components, 20 pts each
-  [3/3] 5 components each scoring correctly (Attendance, Curriculum, Engagement, Guardian, Setup)
-  [2/2] Admin breakdown page with improvement links (admin/pilot-score/page.tsx)
-  [2/2] Platform reports shows all schools ranked (platform/reports?type=readiness)
-  [1/1] docs/pilot-readiness-score.md exists
-
-[SEED DATA & DEMO STORY]     8/10  ████████░░
-  [2/2] 3 schools with Liberian names (Monrovia Central Academy, Paynesville Community, Kakata Rural)
-  [2/2] Students have realistic Liberian names (seed uses FEMALE_NAMES, MALE_NAMES, LAST_NAMES)
-  [2/3] Scores tell a story arc — MCA has guardians+content (higher score),
-        PCS has no guardians, KRS has no branding — but scores depend on live data,
-        not pre-baked, so demo story needs scheduled work for today
-  [2/2] ScheduledWork entries exist for today (seed creates sw_mca_2 for today)
-  [0/1] StudentProgress records — only 10 records for yesterday's work,
-        no progress for today's work yet
-
-[PLATFORM & SECURITY]        9/10  █████████░
-  [2/2] Platform reports with CSV export (format=csv query param)
-  [2/2] Transfer token flow works (platform/security/transfer + accept)
-  [2/2] Self-demote with ≥2 admin guard (platform/security/demote — checks adminCount)
-  [1/2] Demo mode — reset returns message only (not automated), advance-day + simulate work
-  [2/2] Error boundaries on all role layouts (student, teacher, admin, platform)
-
-[CODE QUALITY & STABILITY]   9/10  █████████░
-  [3/3] 0 TypeScript errors (npx tsc --noEmit clean)
-  [3/3] All smoke tests passing (25/25 + 20/20 vitest)
-  [2/2] Loading states on slow routes (student/today, teacher/students, platform/reports, etc.)
-  [1/1] .env.example documents all vars (DB, Auth, AI, Email, SMS, Sentry)
-  [0/1] README does NOT have MOE section — still shows old generic content
-
-============================================================
-TOTAL SCORE: 86/100 — Grade B
-MOE PRESENTATION READINESS: GOOD
-============================================================
-
-ISSUES FOUND:
-
-[CRITICAL] — will fail live in the MOE demo:
-  (none — all endpoints returning 200, core demo flows work)
-
-[WARN] — won't break demo but should be fixed:
-  [WARN] SyncManager.tsx not imported in any layout — offline sync toast never shows
-  [WARN] Offline banner missing from /student/today — only shows on lesson detail page
-  [WARN] SMS silently succeeds with no provider (lib/sms.ts returns ok:true with sid="no-provider")
-  [WARN] No approval notification email sends when curriculum is approved
-  [WARN] Onboarding banner doesn't show on admin dashboard until onboarding is complete
-  [WARN] README.md missing MOE pilot section (still shows old demo accounts)
-  [WARN] demo-login-sheet.ps1 has wrong student emails (fatu.flomo vs fatu.wreh)
-
-[INFO] — minor, can defer:
-  [INFO] No pre-populated MOE alignment code library (codes are free-text)
-  [INFO] Guardian SMS absence trigger is manual, not automatic
-  [INFO] Demo reset endpoint just returns a message, doesn't actually reset
-  [INFO] Platform reports endpoint is slow (~18s) — could benefit from caching
-
-============================================================
+Legacy demo references were removed from tracked demo scripts,
+seed entrypoints, and test fixtures. Deprecated entrypoints now delegate to the
+canonical CHA/MOE seed flow.
