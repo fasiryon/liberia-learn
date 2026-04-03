@@ -3,8 +3,6 @@
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import type { DemoHintGroup } from "@/lib/demoHints";
-import { DemoHints } from "@/components/DemoHints";
 import { GuardianNav } from "@/components/guardian/GuardianNav";
 import { placementReviewStatusLabels, placementReviewStatusStyles } from "@/lib/placement";
 import { guardianWelcomeStorageKey } from "@/app/guardian/GuardianWelcomeGate";
@@ -57,11 +55,6 @@ type DashboardChild = {
   };
 };
 
-type GuardianDashboardClientProps = {
-  showDemoHints: boolean;
-  demoGroup: DemoHintGroup | null;
-};
-
 function scoreDisplay(hw: GuardianSummary["lastHomework"]) {
   if (!hw) return "No submissions yet";
   if (hw.teacherScore !== null) return `${hw.teacherScore}%`;
@@ -69,10 +62,7 @@ function scoreDisplay(hw: GuardianSummary["lastHomework"]) {
   return "Pending review";
 }
 
-export default function GuardianDashboardClient({
-  showDemoHints,
-  demoGroup,
-}: GuardianDashboardClientProps) {
+export default function GuardianDashboardClient() {
   const router = useRouter();
   const [summaries, setSummaries] = useState<GuardianSummary[]>([]);
   const [dashboardChildren, setDashboardChildren] = useState<DashboardChild[]>([]);
@@ -164,8 +154,6 @@ export default function GuardianDashboardClient({
             Monitor your child&apos;s learning progress and stay connected with their teacher.
           </p>
         </div>
-
-        {showDemoHints && demoGroup ? <DemoHints title="Guardian Demo Login" groups={[demoGroup]} /> : null}
 
         <GuardianNav />
 

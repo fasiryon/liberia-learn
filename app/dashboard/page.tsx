@@ -13,7 +13,6 @@ import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { StatCard } from "@/components/ui/Card";
 import { logger } from "@/lib/logger";
 import { StudentSidebar } from "@/components/StudentSidebar";
-import { DemoHintsSection } from "@/components/DemoHintsSection";
 import {
   getPlacementOutcomeText,
   getPlacementReviewStatus,
@@ -112,9 +111,6 @@ export default async function DashboardPage() {
                 Login
               </Link>
             </div>
-            <div className="pt-2">
-              <DemoHintsSection variant="student" />
-            </div>
           </div>
         </main>
       </ErrorBoundary>
@@ -198,8 +194,6 @@ export default async function DashboardPage() {
               </div>
             </div>
           </header>
-
-          <DemoHintsSection variant="student" />
 
           <div className="flex flex-1 flex-col gap-4 md:flex-row">
             {/* Sidebar */}
