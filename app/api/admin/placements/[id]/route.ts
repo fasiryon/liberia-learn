@@ -11,10 +11,12 @@ export async function GET(
 ) {
   try {
     const user = await requireUser();
-    if (user.role !== "TEACHER" && user.role !== "ADMIN") {
+    if (user.role !== "ADMIN" && !user.isPlatformAdmin) {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
-    if (!user.schoolId) {
+
+    const schoolId = user.schoolId ?? null;
+    if (!schoolId) {
       return NextResponse.json({ error: "School context required" }, { status: 400 });
     }
 
@@ -26,7 +28,6 @@ export async function GET(
           include: {
             user: {
               select: {
-                id: true,
                 name: true,
                 email: true,
                 schoolId: true,
@@ -41,12 +42,15 @@ export async function GET(
       return NextResponse.json({ error: "Placement not found" }, { status: 404 });
     }
 
-    if (placement.student.user.schoolId !== user.schoolId) {
+    if (placement.student.user.schoolId !== schoolId) {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
     return NextResponse.json({ placement: serializePlacementDetail(placement) });
   } catch (err: any) {
-    return NextResponse.json({ error: err?.message ?? "Internal error" }, { status: err?.status ?? 500 });
+    return NextResponse.json(
+      { error: err?.message ?? "Internal error" },
+      { status: err?.status ?? 500 }
+    );
   }
 }

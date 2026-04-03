@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
+import type { PlacementResponseItem } from "@/lib/placementDetail";
 import { placementBandStyles, placementReviewStatusStyles } from "@/lib/placement";
 
 type PlacementDetail = {
@@ -12,27 +13,7 @@ type PlacementDetail = {
   estimatedGrade: number;
   rawScore: number;
   totalQuestions: number;
-  questions: Array<{
-    questionId: string;
-    question: string;
-    options: string[];
-    correctAnswer: number;
-    explanation: string;
-    difficulty: number;
-    subject: string;
-    strand: string;
-    moeStandard: string | null;
-    whyThisQuestion: string;
-    commonMistake: string;
-    hint: string;
-  }> | null;
-  answers: Array<{
-    questionId: string;
-    difficulty: number;
-    correct: boolean;
-    timeSpent: number;
-    selectedAnswer: number;
-  }> | null;
+  responses: PlacementResponseItem[];
   aiAnalysis: {
     overallNarrative: string;
     strengths: string[];
@@ -96,14 +77,7 @@ export default function TeacherPlacementReviewPage({ params }: { params: { place
     };
   }, [params.placementId]);
 
-  const questionPairs = useMemo(() => {
-    const questions = data?.questions ?? [];
-    const answers = data?.answers ?? [];
-    return questions.map((question) => ({
-      question,
-      answer: answers.find((entry) => entry.questionId === question.questionId) ?? null,
-    }));
-  }, [data]);
+  const responses = useMemo(() => data?.responses ?? [], [data]);
 
   async function submitReview() {
     if (!data) return;
@@ -206,7 +180,7 @@ export default function TeacherPlacementReviewPage({ params }: { params: { place
             <div className="mt-4 grid gap-3 sm:grid-cols-3">
               <div className="rounded-2xl border border-slate-800 bg-slate-950/60 p-4">
                 <p className="text-xs uppercase tracking-wide text-slate-500">Current grade</p>
-                <p className="mt-2 text-2xl font-bold">Grade {data.student.currentGrade ?? "—"}</p>
+                <p className="mt-2 text-2xl font-bold">Grade {data.student.currentGrade ?? "-"}</p>
               </div>
               <div className="rounded-2xl border border-slate-800 bg-slate-950/60 p-4">
                 <p className="text-xs uppercase tracking-wide text-slate-500">Test date</p>
@@ -269,57 +243,45 @@ export default function TeacherPlacementReviewPage({ params }: { params: { place
         </section>
 
         <section className="rounded-3xl border border-slate-800 bg-slate-900/80 p-6">
-          <h2 className="text-lg font-semibold">Question by question</h2>
+          <h2 className="text-lg font-semibold">Student Responses</h2>
           <div className="mt-4 space-y-4">
-            {questionPairs.map(({ question, answer }, index) => (
-              <article key={question.questionId} className="rounded-2xl border border-slate-800 bg-slate-950/60 p-5">
+            {responses.map((response, index) => (
+              <article key={response.questionId} className="rounded-2xl border border-slate-800 bg-slate-950/60 p-5">
                 <div className="mb-3 flex flex-wrap gap-2 text-xs uppercase tracking-wide text-slate-500">
                   <span>Question {index + 1}</span>
-                  <span>Difficulty {question.difficulty}/5</span>
-                  <span>{question.strand}</span>
-                  {question.moeStandard ? <span>{question.moeStandard}</span> : null}
+                  {response.difficulty ? <span>Difficulty {response.difficulty}/5</span> : null}
+                  {response.concept ? <span>{response.concept}</span> : null}
+                  {response.moeStandard ? <span>{response.moeStandard}</span> : null}
                 </div>
-                <h3 className="text-lg font-semibold text-slate-100">{question.question}</h3>
-                <div className="mt-4 space-y-2">
-                  {question.options.map((option, optionIndex) => {
-                    const optionClass =
-                      optionIndex === question.correctAnswer
-                        ? "border-green-500/40 bg-green-500/15 text-green-100"
-                        : optionIndex === answer?.selectedAnswer
-                        ? "border-red-500/40 bg-red-500/15 text-red-100"
-                        : "border-slate-800 bg-slate-900/70 text-slate-200";
-
-                    return (
-                      <div key={`${question.questionId}-${optionIndex}`} className={`rounded-xl border px-4 py-3 text-sm ${optionClass}`}>
-                        <div className="flex items-start justify-between gap-3">
-                          <span>
-                            <span className="mr-2 font-semibold">{String.fromCharCode(65 + optionIndex)}.</span>
-                            {option}
-                          </span>
-                          <span className="shrink-0 text-xs font-semibold uppercase tracking-wide">
-                            {optionIndex === question.correctAnswer
-                              ? "Correct"
-                              : optionIndex === answer?.selectedAnswer
-                              ? "Student answer"
-                              : ""}
-                          </span>
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-                <div className="mt-4 grid gap-3 lg:grid-cols-3">
+                <h3 className="text-lg font-semibold text-slate-100">{response.question}</h3>
+                <div className="mt-4 grid gap-3 md:grid-cols-2">
                   <div className="rounded-2xl border border-slate-800 bg-slate-900/60 p-4">
-                    <p className="text-xs uppercase tracking-wide text-slate-500">AI explanation</p>
-                    <p className="mt-2 text-sm leading-relaxed text-slate-100">{question.explanation}</p>
+                    <p className="text-xs uppercase tracking-wide text-slate-500">Selected answer</p>
+                    <p className="mt-2 text-sm text-slate-100">{response.selectedAnswerText ?? "No answer recorded"}</p>
                   </div>
                   <div className="rounded-2xl border border-slate-800 bg-slate-900/60 p-4">
-                    <p className="text-xs uppercase tracking-wide text-slate-500">Common mistake</p>
-                    <p className="mt-2 text-sm leading-relaxed text-slate-100">{question.commonMistake}</p>
+                    <p className="text-xs uppercase tracking-wide text-slate-500">Correct answer</p>
+                    <p className="mt-2 text-sm text-slate-100">{response.correctAnswerText ?? "-"}</p>
+                  </div>
+                </div>
+                <div className="mt-4 grid gap-3 lg:grid-cols-4">
+                  <div className="rounded-2xl border border-slate-800 bg-slate-900/60 p-4">
+                    <p className="text-xs uppercase tracking-wide text-slate-500">Correctness</p>
+                    <p className={`mt-2 text-sm font-semibold ${response.isCorrect ? "text-green-300" : "text-red-300"}`}>
+                      {response.isCorrect ? "Correct" : "Incorrect"}
+                    </p>
+                  </div>
+                  <div className="rounded-2xl border border-slate-800 bg-slate-900/60 p-4">
+                    <p className="text-xs uppercase tracking-wide text-slate-500">Concept</p>
+                    <p className="mt-2 text-sm leading-relaxed text-slate-100">{response.concept ?? "-"}</p>
                   </div>
                   <div className="rounded-2xl border border-slate-800 bg-slate-900/60 p-4">
                     <p className="text-xs uppercase tracking-wide text-slate-500">Why this question</p>
-                    <p className="mt-2 text-sm leading-relaxed text-slate-100">{question.whyThisQuestion}</p>
+                    <p className="mt-2 text-sm leading-relaxed text-slate-100">{response.whyThisQuestion ?? "-"}</p>
+                  </div>
+                  <div className="rounded-2xl border border-slate-800 bg-slate-900/60 p-4">
+                    <p className="text-xs uppercase tracking-wide text-slate-500">Common mistake</p>
+                    <p className="mt-2 text-sm leading-relaxed text-slate-100">{response.commonMistake ?? "-"}</p>
                   </div>
                 </div>
               </article>

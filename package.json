@@ -19,7 +19,8 @@
         "enrich:generated-lessons": "tsx scripts/enrich-generated-lessons.ts",
         "enrich:lessons": "tsx scripts/enrich-generated-lessons.ts",
         "promote:lessons": "tsx scripts/promote-enriched-lessons.ts",
-        "seed:cha": "tsx prisma/seeds/cha-demo.ts"
+        "seed:cha": "tsx prisma/seeds/cha-demo.ts",
+        "fix:encoding": "tsx scripts/fix-encoding.ts"
     },
     "dependencies": {
         "@auth/prisma-adapter": "^2.11.1",
