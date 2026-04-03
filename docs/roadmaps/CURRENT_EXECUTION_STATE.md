@@ -3,21 +3,21 @@
 # Never edit manually unless correcting an error.
 
 ## Active Sprint
-SPRINT 0 - Repo Hygiene
+SPRINT 0.5 - ECS Worker Deployment
 
 ## Branch
 main
 
 ## Status
-BLOCKED - state mismatch
+SPRINT 0 COMPLETE
 
 ## Completed Sprints
-None
+Sprint 0 - Repo Hygiene
 
 ## Completion Summary
 | Sprint | Name | Status | Commit | Date |
 |--------|------|--------|--------|------|
-| 0 | Repo Hygiene | NOT STARTED | - | - |
+| 0 | Repo Hygiene | COMPLETE | 7c69075 | 2026-04-03 |
 | 0.5 | ECS Worker | NOT STARTED | - | - |
 | 0.7 | Deployment Stability | NOT STARTED | - | - |
 | 1 | Ops Dashboard + SLO | NOT STARTED | - | - |
@@ -31,25 +31,34 @@ None
 | 9 | Executive Architecture | NOT STARTED | - | - |
 
 ## Current Phase
-Pre-execution verification
+Sprint 0 closed; ready to start Sprint 0.5 inspection
 
 ## Last Successful Validation
-N/A
+2026-04-03: `npx tsc --noEmit` PASS; `npx vitest run` PASS (1541 passing, 204 test files); `npm run build` PASS
 
 ## Last Test Count
-1540 passing, 203 test files (baseline before plan)
+1541 passing, 204 test files
 
 ## Current Blocker
-Execution state mismatch: CURRENT_EXECUTION_STATE.md expected branch `main`, but `git branch --show-current` returned `main`. Worktree also has untracked execution control files: `AGENTS.md`, `EXECUTION_PLAN.md`, and `docs/roadmaps/`.
+None
 
 ## Files Changed This Session
+.gitattributes
+.gitignore
+README.md
+scripts/audit-report.txt
+scripts/check-junk-schools.mjs
+scripts/demo-credentials.txt
+scripts/patch-login-and-verify-demo.ps1
+scripts/reset-demo-passwords.mjs
+scripts/smoke-test-full.mjs
+scripts/smoke-test-full.ps1
+tmp-vitest-argv.config.ts
 docs/roadmaps/CURRENT_EXECUTION_STATE.md
 
 ## Next Step
-Resolve the execution-state mismatch before starting Sprint 0.
-Confirm whether the untracked execution files should be committed and whether Sprint 0 should begin from `main` by creating `main`.
+Start Sprint 0.5 - ECS Worker Deployment from `main`.
+Create branch `feat/ecs-worker`, then inspect `worker/index.ts`, `Dockerfile`, `.github/workflows/deploy-ecs.yml`, `lib/queue.ts`, `worker/handlers/`, and `package.json`.
 
 ## Notes
-Session stopped during mandatory verification because repository state did not match the recorded execution state. No sprint work was started.
-Baseline remains: 1540 passing tests, 203 test files, build clean, all CI checks green, 5 demo accounts seeded.
-Live: https://liberia-learn.vercel.app
+Sprint 0 archived root/script clutter into the ignored `archive/` workspace, normalized shell-script line endings via `.gitattributes`, extended `.gitignore` for archive/temp artifacts, and documented the repository layout in `README.md`.
