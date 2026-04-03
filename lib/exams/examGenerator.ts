@@ -34,6 +34,13 @@ export type GeneratedExamWithUsage = {
   exam: GeneratedExam;
   estimatedCostUSD: number;
   tokensUsed: number;
+  hadFallback?: boolean;
+};
+
+type ExamUsageContext = {
+  route: string;
+  schoolId?: string | null;
+  userId?: string | null;
 };
 
 const GeneratedQuestionSchema = z.object({
@@ -98,7 +105,8 @@ Rules:
 }
 
 async function requestExam(
-  params: Required<ExamGenerationParams>
+  params: Required<ExamGenerationParams>,
+  usageContext?: ExamUsageContext
 ): Promise<GeneratedExamWithUsage> {
   const result = await routedCompletion({
     forceSmartTier: true,
@@ -110,6 +118,33 @@ async function requestExam(
         content: `Generate the exam titled "${params.title}" for Grade ${params.grade} ${params.subject} with ${params.questionCount} questions and a ${params.timeLimit}-minute time limit.`,
       },
     ],
+    aiUsage: usageContext
+      ? {
+          route: usageContext.route,
+          feature: "curriculum",
+          schoolId: usageContext.schoolId ?? null,
+          userId: usageContext.userId ?? null,
+          subject: params.subject,
+          strandKey: params.moeStandards.join(","),
+          requestType: "exam_generation",
+          budgetFallbackContent: JSON.stringify({
+            title: params.title,
+            subject: params.subject,
+            grade: params.grade,
+            moeStandards: params.moeStandards,
+            timeLimit: params.timeLimit,
+            passingScore: 0.7,
+            questions: Array.from({ length: params.questionCount }, (_, index) => ({
+              prompt: `Review question ${index + 1} for ${params.subject}.`,
+              options: ["Option A", "Option B", "Option C", "Option D"],
+              correctIndex: 0,
+              explanation: "Review this standard with your teacher before retrying.",
+              moeCode: params.moeStandards[index % params.moeStandards.length],
+              points: 1,
+            })),
+          }),
+        }
+      : undefined,
   });
 
   let parsedJson: unknown;
@@ -134,11 +169,13 @@ async function requestExam(
     exam,
     estimatedCostUSD: result.estimatedCostUSD,
     tokensUsed: result.inputTokens + result.outputTokens,
+    hadFallback: result.budgetBlocked === true,
   };
 }
 
 export async function generateExamWithUsage(
-  params: ExamGenerationParams
+  params: ExamGenerationParams,
+  usageContext?: ExamUsageContext
 ): Promise<GeneratedExamWithUsage> {
   const normalized: Required<ExamGenerationParams> = {
     subject: params.subject,
@@ -152,7 +189,7 @@ export async function generateExamWithUsage(
   let lastError: unknown;
   for (let attempt = 1; attempt <= 2; attempt += 1) {
     try {
-      return await requestExam(normalized);
+      return await requestExam(normalized, usageContext);
     } catch (error) {
       lastError = error;
       console.error(`[EXAM_GENERATOR] Attempt ${attempt} failed`, error);

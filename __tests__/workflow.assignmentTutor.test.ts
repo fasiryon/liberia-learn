@@ -207,11 +207,29 @@ describe("POST /api/teacher/assignment/tutor — fallback", () => {
 // ─── Budget exhaustion ────────────────────────────────────────────────────────
 
 describe("POST /api/teacher/assignment/tutor — budget", () => {
-  it("returns 503 when monthly budget is exhausted", async () => {
-    mockAiInteractionLogAggregate.mockResolvedValue({ _sum: { estimatedCostUSD: 100 } });
+  it("returns a graceful fallback when the shared budget guard blocks the request", async () => {
+    mockRoutedCompletion.mockResolvedValue({
+      content: JSON.stringify({
+        teachingHints: [
+          "Break the task into smaller sub-questions and guide students through each step.",
+        ],
+        anticipatedMisconceptions: [
+          "Students may confuse surface features of the question with the underlying concept.",
+        ],
+        scaffoldingSuggestions: [
+          "Provide a sentence starter or partially completed model answer for students who are stuck.",
+        ],
+      }),
+      tier: "smart",
+      model: "budget_guard",
+      inputTokens: 0,
+      outputTokens: 0,
+      estimatedCostUSD: 0,
+      budgetBlocked: true,
+    });
     const res = await POST(makeReq());
-    expect(res.status).toBe(503);
-    expect(mockRoutedCompletion).not.toHaveBeenCalled();
+    expect(res.status).toBe(200);
+    expect((await res.json()).hadFallback).toBe(true);
   });
 });
 

@@ -132,15 +132,25 @@ describe("POST /api/student/tutor", () => {
     });
   });
 
-  it("returns 503 when the monthly AI budget cap is exceeded", async () => {
-    mockAiInteractionLogAggregate.mockResolvedValue({
-      _sum: { estimatedCostUSD: 100 },
+  it("returns a graceful fallback when the shared budget guard blocks the request", async () => {
+    mockRoutedCompletion.mockResolvedValue({
+      content: JSON.stringify({
+        explanation:
+          "The AI tutor is temporarily unavailable. Please ask your teacher for help with this topic.",
+        practicePrompt: null,
+        guidanceLevel: "light",
+        confidenceScore: 0,
+      }),
+      tier: "smart",
+      model: "budget_guard",
+      inputTokens: 0,
+      outputTokens: 0,
+      estimatedCostUSD: 0,
+      budgetBlocked: true,
     });
-
     const response = await POST(makeReq());
-
-    expect(response.status).toBe(503);
-    expect((await response.json()).error).toBe("ai_budget_exhausted");
+    expect(response.status).toBe(200);
+    expect((await response.json()).hadFallback).toBe(true);
   });
 
   it("falls back safely when the AI call fails", async () => {

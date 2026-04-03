@@ -233,6 +233,31 @@ export function getAiBudgetMonthlyCap(): number {
   return Number.isFinite(raw) && raw > 0 ? raw : 100;
 }
 
+export function getAiBudgetDailyCap(): number {
+  const raw = parseFloat(process.env.AI_BUDGET_DAILY_CAP_USD ?? "25");
+  return Number.isFinite(raw) && raw > 0 ? raw : 25;
+}
+
+export function getAiTutorDailyBudgetUsd(): number {
+  const raw = parseFloat(process.env.AI_TUTOR_DAILY_BUDGET_USD ?? "5");
+  return Number.isFinite(raw) && raw > 0 ? raw : 5;
+}
+
+export function getAiTeacherAssistDailyBudgetUsd(): number {
+  const raw = parseFloat(process.env.AI_TEACHER_ASSIST_DAILY_BUDGET_USD ?? "10");
+  return Number.isFinite(raw) && raw > 0 ? raw : 10;
+}
+
+export function getAiGradingDailyBudgetUsd(): number {
+  const raw = parseFloat(process.env.AI_GRADING_DAILY_BUDGET_USD ?? "8");
+  return Number.isFinite(raw) && raw > 0 ? raw : 8;
+}
+
+export function getAiCurriculumDailyBudgetUsd(): number {
+  const raw = parseFloat(process.env.AI_CURRICULUM_DAILY_BUDGET_USD ?? "20");
+  return Number.isFinite(raw) && raw > 0 ? raw : 20;
+}
+
 /** Adaptive learning engine. DEFAULT ON. Set ENABLE_ADAPTIVE_ENGINE=false to disable. */
 export function isAdaptiveEngineEnabled(): boolean {
   return process.env.ENABLE_ADAPTIVE_ENGINE !== "false";

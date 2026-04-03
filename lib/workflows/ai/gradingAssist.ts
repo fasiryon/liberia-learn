@@ -33,6 +33,12 @@ export type GradingAssistInput = {
   expectedAnswer?: string;
 };
 
+type GradingAssistUsageContext = {
+  route: string;
+  schoolId?: string | null;
+  userId?: string | null;
+};
+
 export type ScoreBand = {
   label: string;      // e.g. "Meets Standard", "Approaching Standard", "Below Standard"
   scoreRange: string; // e.g. "80–100%"
@@ -200,7 +206,8 @@ function parseAndValidate(raw: string): GradingAssistResult | null {
  * No student identifiers in input, prompt, or output.
  */
 export async function getGradingAssistFeedback(
-  input: GradingAssistInput
+  input: GradingAssistInput,
+  usageContext?: GradingAssistUsageContext
 ): Promise<GradingAssistResult> {
   try {
     const result = await routedCompletion({
@@ -210,6 +217,23 @@ export async function getGradingAssistFeedback(
       ],
       maxTokens: 600,
       forceSmartTier: true,
+      aiUsage: usageContext
+        ? {
+            route: usageContext.route,
+            feature: "grading",
+            schoolId: usageContext.schoolId ?? null,
+            userId: usageContext.userId ?? null,
+            subject: input.subject,
+            strandKey: input.strandKey,
+            requestType: "grading_assist",
+            budgetFallbackContent: JSON.stringify({
+              feedback: FALLBACK.feedback,
+              suggestedScoreBands: FALLBACK.suggestedScoreBands,
+              strengths: FALLBACK.strengths,
+              areasForDevelopment: FALLBACK.areasForDevelopment,
+            }),
+          }
+        : undefined,
     });
 
     const validated = parseAndValidate(result.content);
@@ -228,6 +252,7 @@ export async function getGradingAssistFeedback(
       return { ...FALLBACK };
     }
 
+    validated.hadFallback = result.budgetBlocked === true;
     validated.estimatedCostUSD = result.estimatedCostUSD;
     validated.tokensUsed = result.inputTokens + result.outputTokens;
     return validated;

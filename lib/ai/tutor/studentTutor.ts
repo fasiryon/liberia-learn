@@ -41,6 +41,12 @@ export type StudentTutorInput = {
   requestType: TutorRequestType;
 };
 
+type StudentTutorUsageContext = {
+  route: string;
+  schoolId?: string | null;
+  userId?: string | null;
+};
+
 export type StudentTutorResult = {
   explanation: string;
   practicePrompt?: string;
@@ -253,7 +259,8 @@ export function isValidRequestType(v: unknown): v is TutorRequestType {
  * NO PII in input, prompt, or output.
  */
 export async function getStudentTutorResponse(
-  input: StudentTutorInput
+  input: StudentTutorInput,
+  usageContext?: StudentTutorUsageContext
 ): Promise<StudentTutorResult> {
   try {
     const result = await routedCompletion({
@@ -263,6 +270,23 @@ export async function getStudentTutorResponse(
       ],
       maxTokens: 400,
       forceSmartTier: true,
+      aiUsage: usageContext
+        ? {
+            route: usageContext.route,
+            feature: "tutor",
+            schoolId: usageContext.schoolId ?? null,
+            userId: usageContext.userId ?? null,
+            subject: input.subject,
+            strandKey: input.strandKey,
+            requestType: input.requestType,
+            budgetFallbackContent: JSON.stringify({
+              explanation: FALLBACK.explanation,
+              practicePrompt: FALLBACK.practicePrompt ?? null,
+              guidanceLevel: FALLBACK.guidanceLevel,
+              confidenceScore: FALLBACK.confidenceScore,
+            }),
+          }
+        : undefined,
     });
 
     const validated = parseAndValidate(result.content);
@@ -274,6 +298,7 @@ export async function getStudentTutorResponse(
       return { ...FALLBACK };
     }
 
+    validated.hadFallback = result.budgetBlocked === true;
     validated.estimatedCostUSD = result.estimatedCostUSD;
     validated.tokensUsed = result.inputTokens + result.outputTokens;
     return validated;

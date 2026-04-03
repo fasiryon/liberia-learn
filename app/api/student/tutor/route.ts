@@ -1,28 +1,24 @@
 /**
  * POST /api/student/tutor
  *
- * Student AI Tutor — returns a strand-targeted explanation or practice prompt.
+ * Student AI Tutor returns a strand-targeted explanation or practice prompt.
  * No PII in request, response, audit log, or AI prompt.
  *
- * Feature flag : AI_TUTOR_ENABLED (default OFF → 404)
+ * Feature flag : AI_TUTOR_ENABLED (default OFF -> 404)
  * Auth         : Any authenticated session; studentId = session user.id
  * Rate limit   : 20 requests/hour via checkAiRateLimit()
- * Budget check : AI_BUDGET_MONTHLY_CAP_USD (default $100); 503 when exceeded
+ * Budget check : centralized routed AI budget guards with graceful fallback
  *
  * Audit action : "ai.tutor.requested"
  */
 import { NextRequest, NextResponse } from "next/server";
 import { randomUUID } from "crypto";
 import { requireUser } from "@/lib/auth";
-import {
-  isAiTutorEnabled,
-  getAiBudgetMonthlyCap,
-} from "@/lib/serverFlags";
+import { isAiTutorEnabled } from "@/lib/serverFlags";
 import { logAudit } from "@/lib/audit";
 import { checkAiRateLimit } from "@/lib/ai/rateLimitGuard";
 import { getRateLimitHeaders, rateLimitExceededResponse } from "@/lib/rateLimit";
 import { recordMetricEvent } from "@/lib/metrics/events";
-import { prisma } from "@/lib/db";
 import {
   getStudentTutorResponse,
   isValidRequestType,
@@ -33,6 +29,7 @@ import { recordSloEvent } from "@/lib/slo/tracker";
 export async function POST(req: NextRequest) {
   const traceId = randomUUID();
   const startedAt = Date.now();
+
   try {
     if (!isAiTutorEnabled()) {
       return NextResponse.json({ error: "ai_tutor_disabled" }, { status: 404 });
@@ -49,40 +46,10 @@ export async function POST(req: NextRequest) {
       return rateLimitExceededResponse(rateLimit);
     }
 
-    // ── Rate limit ─────────────────────────────────────────────────────────
-    // ── Monthly budget check ───────────────────────────────────────────────
-    const monthStart = new Date();
-    monthStart.setDate(1);
-    monthStart.setHours(0, 0, 0, 0);
-    const budgetResult = await (prisma as any).aiInteractionLog.aggregate({
-      where: { timestamp: { gte: monthStart } },
-      _sum: { estimatedCostUSD: true },
-    });
-    const monthlySpend: number =
-      (budgetResult as any)?._sum?.estimatedCostUSD ?? 0;
-    const cap = getAiBudgetMonthlyCap();
-
-    if (monthlySpend >= cap) {
-      recordMetricEvent(
-        "ai.budget.cap_hit",
-        { monthlySpend, cap },
-        { scope: "school", scopeId: user.schoolId ?? null, schoolId: user.schoolId }
-      ).catch(() => {});
-      return NextResponse.json({ error: "ai_budget_exhausted" }, { status: 503 });
-    }
-    if (monthlySpend >= cap * 0.8) {
-      recordMetricEvent(
-        "ai.budget.warning",
-        { monthlySpend, cap },
-        { scope: "school", scopeId: user.schoolId ?? null, schoolId: user.schoolId }
-      ).catch(() => {});
-    }
-
-    // ── Parse + validate body ──────────────────────────────────────────────
     const body = await req.json();
-
     const subject = String(body.subject ?? "").trim();
     const strandKey = String(body.strandKey ?? "").trim();
+
     if (!subject || !strandKey) {
       return NextResponse.json(
         { error: "subject and strandKey are required" },
@@ -101,10 +68,12 @@ export async function POST(req: NextRequest) {
         : "explain",
     };
 
-    // ── AI call ────────────────────────────────────────────────────────────
-    const result = await getStudentTutorResponse(input);
+    const result = await getStudentTutorResponse(input, {
+      route: "/api/student/tutor",
+      schoolId: user.schoolId ?? null,
+      userId: user.id,
+    });
 
-    // ── Audit log (no PII — no studentId in details) ───────────────────────
     await logAudit({
       userId: user.id,
       action: "ai.tutor.requested",
@@ -117,26 +86,9 @@ export async function POST(req: NextRequest) {
         requestType: input.requestType,
         guidanceLevel: result.guidanceLevel,
         hadFallback: result.hadFallback,
-        // No studentId, no name
       },
     });
 
-    // ── Interaction log (no studentId) ─────────────────────────────────────
-    await (prisma as any).aiInteractionLog.create({
-      data: {
-        schoolId: user.schoolId ?? null,
-        subject: input.subject,
-        strandKey: input.strandKey,
-        requestType: input.requestType,
-        guidanceLevel: result.guidanceLevel,
-        hadFallback: result.hadFallback,
-        endpoint: "/api/student/tutor",
-        tokensUsed: result.tokensUsed,
-        estimatedCostUSD: result.estimatedCostUSD,
-      },
-    });
-
-    // ── Telemetry (no studentId) ───────────────────────────────────────────
     recordMetricEvent(
       result.hadFallback ? "ai_tutor_fallback" : "ai_tutor_request",
       {
@@ -159,13 +111,16 @@ export async function POST(req: NextRequest) {
       schoolId: user.schoolId ?? null,
     });
 
-    return NextResponse.json({
-      explanation: result.explanation,
-      practicePrompt: result.practicePrompt ?? null,
-      guidanceLevel: result.guidanceLevel,
-      confidenceScore: result.confidenceScore,
-      hadFallback: result.hadFallback,
-    }, { headers: getRateLimitHeaders(rateLimit) });
+    return NextResponse.json(
+      {
+        explanation: result.explanation,
+        practicePrompt: result.practicePrompt ?? null,
+        guidanceLevel: result.guidanceLevel,
+        confidenceScore: result.confidenceScore,
+        hadFallback: result.hadFallback,
+      },
+      { headers: getRateLimitHeaders(rateLimit) }
+    );
   } catch (err: any) {
     recordSloEvent({
       service: "tutor",
@@ -173,6 +128,7 @@ export async function POST(req: NextRequest) {
       latencyMs: Date.now() - startedAt,
       schoolId: null,
     });
+
     return NextResponse.json(
       { error: err?.message ?? "Server error" },
       { status: err?.status ?? 500 }
