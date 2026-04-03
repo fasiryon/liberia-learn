@@ -78,7 +78,7 @@ export default function HomePage() {
         <div className="space-y-7">
           <span className="inline-flex items-center gap-2 rounded-full border border-emerald-400/20 bg-emerald-400/10 px-3 py-1 text-xs font-medium text-emerald-200">
             <span className="h-2 w-2 rounded-full bg-emerald-300" />
-            Engineering ready for pilot review
+            National learning platform
           </span>
 
           <div className="space-y-4">
@@ -87,7 +87,7 @@ export default function HomePage() {
             </h1>
             <p className="max-w-2xl text-base leading-7 text-slate-300">
               LiberiaLearn brings curriculum delivery, student practice, guardian progress,
-              school readiness, and grounded AI assistance into one platform designed for
+              school operations, and grounded AI assistance into one platform designed for
               Grades 1-12 and low-resource deployment conditions.
             </p>
           </div>
@@ -98,7 +98,7 @@ export default function HomePage() {
                 Launch platform
               </span>
             </Link>
-            <Link href="/admin/pilot-readiness">
+            <Link href="/admin/pilot-readiness" className="hidden sm:inline-flex">
               <span className="inline-flex min-h-12 items-center justify-center rounded-full border border-slate-700 px-6 py-3 text-sm font-medium text-slate-100 hover:border-slate-500">
                 Review pilot readiness
               </span>
@@ -160,7 +160,7 @@ export default function HomePage() {
               Why it matters
             </p>
             <h2 className="text-2xl font-semibold text-slate-50">
-              Built for pilot conditions, not just demos
+              Built for real operations, not just demos
             </h2>
             <p className="text-sm leading-7 text-slate-300">
               The repo already implements offline queueing, guardian-safe shaping,
@@ -208,10 +208,10 @@ export default function HomePage() {
                 Role-based walkthrough entry points
               </h2>
               <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-300">
-                Open the login flow with the role already selected. Demo credentials are
-                shown only when `DEMO_MODE=true`.
-              </p>
-            </div>
+              Open the sign-in flow with the role already selected. Seeded test credentials
+              are available only when `DEMO_MODE=true`.
+            </p>
+          </div>
             <span className="rounded-full border border-slate-700 px-3 py-1 text-xs font-medium text-slate-300">
               {demoModeEnabled ? "Demo hints enabled" : "Demo hints hidden"}
             </span>

@@ -75,7 +75,7 @@ export default async function AdminConsolePage() {
               href="/api/auth/signout"
               className="rounded-xl border border-slate-700 px-5 py-3 text-sm font-semibold hover:bg-slate-900"
             >
-              Log out (use admin@mcs.edu.lr)
+              Log out (use admin@cha.edu.lr)
             </Link>
           </div>
 

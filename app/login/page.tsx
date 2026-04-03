@@ -1,12 +1,16 @@
 import { isDemoModeEnabled } from "@/lib/serverFlags";
-import { getDemoHintGroups, getDemoHintGroup, DEMO_PASSWORD_VALUE } from "@/lib/demoHints";
+import { getDemoHintGroups } from "@/lib/demoHints";
+import { getDemoCredential } from "@/lib/demoCredentials";
 import LoginClient from "./LoginClient";
 
 export default function LoginPage() {
   const showDemoHints = isDemoModeEnabled();
   const demoGroups = showDemoHints ? getDemoHintGroups() : [];
   const demoDefaults = showDemoHints
-    ? { email: getDemoHintGroup("student").email, password: DEMO_PASSWORD_VALUE }
+    ? (() => {
+        const credential = getDemoCredential("student");
+        return { email: credential.email, password: credential.password };
+      })()
     : null;
 
   return (

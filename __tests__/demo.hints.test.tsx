@@ -3,6 +3,7 @@ import { renderToStaticMarkup } from "react-dom/server";
 import fs from "fs";
 import path from "path";
 import { DemoHintsSection } from "@/components/DemoHintsSection";
+import { getDemoCredentials } from "@/lib/demoCredentials";
 
 describe("demo hints rendering", () => {
   afterEach(() => {
@@ -19,8 +20,14 @@ describe("demo hints rendering", () => {
     process.env.DEMO_MODE = "true";
     const html = renderToStaticMarkup(<DemoHintsSection variant="login" />);
     expect(html).toContain("Demo Login Hints");
-    expect(html).toContain("student1@mcs.edu.lr");
-    expect(html).toContain("Password: Password123");
+    expect(html).toContain("student1@cha.edu.lr");
+    expect(html).toContain("teacher1@cha.edu.lr");
+    expect(html).toContain("guardian1@cha.family.lr");
+    expect(html).toContain("official1@moe.gov.lr");
+    expect(html).toContain("Password: DemoSeed2026!");
+    expect(html).toContain("Password: MOESeed2026!");
+    expect(html).not.toContain("student1@mcs.edu.lr");
+    expect(html).not.toContain("Password: Password123");
   });
 });
 
@@ -30,5 +37,16 @@ describe("seed scripts do not print demo passwords", () => {
     const contents = fs.readFileSync(seedPath, "utf8");
     expect(contents).not.toMatch(/MOE Demo Credentials/i);
     expect(contents).not.toMatch(/Password:\s*Password123/);
+  });
+
+  it("shared demo credentials stay aligned with the CHA seed script", () => {
+    const seedPath = path.join(process.cwd(), "prisma", "seeds", "cha-demo.ts");
+    const contents = fs.readFileSync(seedPath, "utf8");
+
+    for (const credential of getDemoCredentials()) {
+      expect(contents).toContain(credential.email);
+      expect(contents).toContain(credential.password);
+      expect(contents).toContain(credential.role);
+    }
   });
 });

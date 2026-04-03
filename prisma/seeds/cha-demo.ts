@@ -1,6 +1,6 @@
-// prisma/seeds/cha-demo.ts
+﻿// prisma/seeds/cha-demo.ts
 // CHA High Academy demo accounts for MOE pilot demonstrations.
-// Idempotent — safe to re-run. Uses upsert everywhere.
+// Idempotent â€” safe to re-run. Uses upsert everywhere.
 // Accounts match the official demo handout exactly.
 
 import { PrismaClient } from "@prisma/client";
@@ -22,9 +22,9 @@ export async function seedChaDemo() {
     bcrypt.hash(MOE_PASS, 10),
   ]);
 
-  // ── School ──────────────────────────────────────────────
+  // â”€â”€ School â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   const school = await prisma.school.upsert({
-    where: { id: CHA_SCHOOL_ID },
+    where: { code: "CHA" },
     create: {
       id: CHA_SCHOOL_ID,
       name: "Cha High Academy",
@@ -34,7 +34,7 @@ export async function seedChaDemo() {
     update: {},
   });
 
-  // ── Admin ────────────────────────────────────────────────
+  // â”€â”€ Admin â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   const admin = await prisma.user.upsert({
     where: { email: "admin@cha.edu.lr" },
     create: {
@@ -48,7 +48,7 @@ export async function seedChaDemo() {
     update: { hashedPwd: demoHash },
   });
 
-  // ── Teacher ──────────────────────────────────────────────
+  // â”€â”€ Teacher â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   const teacher = await prisma.user.upsert({
     where: { email: "teacher1@cha.edu.lr" },
     create: {
@@ -82,15 +82,15 @@ export async function seedChaDemo() {
     },
     update: {},
   }).catch(() => {
-    // Profile may already exist — skip
+    // Profile may already exist â€” skip
   });
 
-  // ── Class ────────────────────────────────────────────────
+  // â”€â”€ Class â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   const cls = await prisma.class.upsert({
     where: { id: CHA_CLASS_ID },
     create: {
       id: CHA_CLASS_ID,
-      name: "Grade 9A — Mathematics",
+      name: "Grade 9A â€” Mathematics",
       subject: "MATH",
       schoolId: school.id,
       teacherId: teacher.id,
@@ -98,7 +98,7 @@ export async function seedChaDemo() {
     update: { teacherId: teacher.id },
   });
 
-  // ── Student ──────────────────────────────────────────────
+  // â”€â”€ Student â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   const studentUser = await prisma.user.upsert({
     where: { email: "student1@cha.edu.lr" },
     create: {
@@ -158,7 +158,7 @@ export async function seedChaDemo() {
     });
   }
 
-  // ── Guardian ─────────────────────────────────────────────
+  // â”€â”€ Guardian â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   const guardian = await prisma.user.upsert({
     where: { email: "guardian1@cha.family.lr" },
     create: {
@@ -188,7 +188,7 @@ export async function seedChaDemo() {
     });
   }
 
-  // ── MOE Official ─────────────────────────────────────────
+  // â”€â”€ MOE Official â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   await prisma.user.upsert({
     where: { email: "official1@moe.gov.lr" },
     create: {
@@ -219,3 +219,4 @@ if (require.main === module) {
     })
     .finally(() => prisma.$disconnect());
 }
+
