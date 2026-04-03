@@ -4,11 +4,13 @@ import { requireRole } from "@/lib/auth";
 import { logAudit } from "@/lib/audit";
 import { notifyAssignmentSubmitted } from "@/lib/assignment-notifications";
 import { prisma } from "@/lib/db";
+import { recordSloEvent } from "@/lib/slo/tracker";
 
 export async function POST(
   req: NextRequest,
   { params }: { params: { id: string } }
 ) {
+  const startedAt = Date.now();
   try {
     const user = await requireRole("STUDENT");
     const body = await req.json().catch(() => null);
@@ -85,8 +87,21 @@ export async function POST(
       assignmentTitle: assignment.title,
     }).catch(() => null);
 
+    recordSloEvent({
+      service: "submit",
+      success: true,
+      latencyMs: Date.now() - startedAt,
+      schoolId: user.schoolId ?? null,
+    });
+
     return NextResponse.json({ ok: true, submissionId: submission.id, submittedAt: submission.turnedInAt });
   } catch (err: any) {
+    recordSloEvent({
+      service: "submit",
+      success: false,
+      latencyMs: Date.now() - startedAt,
+      schoolId: null,
+    });
     return NextResponse.json({ error: err?.message ?? "Failed to submit assignment." }, { status: err?.status ?? 500 });
   }
 }
