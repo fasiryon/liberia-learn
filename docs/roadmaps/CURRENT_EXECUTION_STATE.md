@@ -3,13 +3,13 @@
 # Never edit manually unless correcting an error.
 
 ## Active Sprint
-SPRINT 5 - Data Governance Audit Pack
+SPRINT 6 - Scale Readiness + Incident Response
 
 ## Branch
-feat/governance-audit-pack
+main
 
 ## Status
-SPRINT 5 IN PROGRESS
+SPRINT 5 COMPLETE
 
 ## Completed Sprints
 Sprint 0 - Repo Hygiene
@@ -28,38 +28,40 @@ Sprint 3 - Environment Separation
 | 1 | Ops Dashboard + SLO | COMPLETE | 990ba57 | 2026-04-03 |
 | 2 | AI Cost Guardrails | COMPLETE | 17212be | 2026-04-03 |
 | 3 | Environment Separation | COMPLETE | 6503d17 | 2026-04-03 |
-| 4 | Curriculum Completion | COMPLETE | - | 2026-04-03 |
-| 5 | Governance Audit Pack | IN PROGRESS | - | 2026-04-03 |
+| 4 | Curriculum Completion | COMPLETE | f6ecd97 | 2026-04-03 |
+| 5 | Governance Audit Pack | COMPLETE | adf7045 | 2026-04-03 |
 | 6 | Scale + Incident | NOT STARTED | - | - |
 | 7 | Product Metrics | NOT STARTED | - | - |
 | 8 | Mobile UX Polish | NOT STARTED | - | - |
 | 9 | Executive Architecture | NOT STARTED | - | - |
 
 ## Current Phase
-Sprint 5 branch created from updated `main`; inspect audit/governance surfaces before implementation
+Sprint 5 merged to `main`; Sprint 6 has not started yet
 
 ## Last Successful Validation
-2026-04-03: `npm run audit:lessons` PASS (1306/1306 READY, avg 1450 words); `npx tsc --noEmit` PASS; `npx vitest run --reporter=dot` PASS (1570 passing, 212 test files); `npm run build` PASS
+2026-04-03: `npx tsc --noEmit` PASS; `npx vitest run --reporter=dot` PASS (1572 passing, 213 test files); `npm run build` PASS
 
 ## Last Test Count
-1570 passing, 212 test files
+1572 passing, 213 test files
 
 ## Current Blocker
 None
 
 ## Files Changed This Session
+__tests__/compliance-audit.test.ts
+__tests__/csv-streaming.test.ts
+__tests__/governance.report.test.ts
+app/admin/compliance/AuditLogSearch.tsx
+app/admin/compliance/page.tsx
+app/admin/governance/exports/page.tsx
+app/admin/governance/page.tsx
+app/api/admin/compliance/audit-log/route.ts
+app/api/admin/governance/report/route.ts
 docs/roadmaps/CURRENT_EXECUTION_STATE.md
-next.config.js
-lib/validateEnv.shared.js
-lib/validateEnv.ts
-__tests__/validateEnv.test.ts
-app/api/admin/curriculum/waec-alignment/route.ts
-__tests__/admin.curriculum.waec-alignment.route.test.ts
-__tests__/district.admin.smoke.test.ts
-__tests__/curriculum.computer-science.coverage.test.ts
+lib/governance/report.ts
 
 ## Next Step
-Inspect `lib/audit.ts`, `app/api/admin/compliance/audit-log/route.ts`, `app/admin/compliance/`, and `prisma/schema.prisma` to begin Sprint 5.
+Create `feat/scale-and-incident` from `main`, then implement Sprint 6 starting with `docs/ops/SCALE_READINESS.md`.
 
 ## Notes
-Sprint 4 adds the admin WAEC alignment endpoint, district admin smoke coverage, Computer Science curriculum coverage proof from the local catalog, and a build-safe split between config-load env validation and strict runtime validation. The Sprint 4 validation gate completed with lesson audit, typecheck, full Vitest, and build all passing, and `main` was fast-forwarded to `fc97f6b` before Sprint 5 branch creation.
+Sprint 5 completed the compliance audit UI filters and CSV export, added the governance summary route and dashboard, and aligned the governance exports page with `requireUser()`. Audit completeness was verified for the sprint's named admin and platform actions; no admin student soft-delete route exists in the current codebase to patch.
