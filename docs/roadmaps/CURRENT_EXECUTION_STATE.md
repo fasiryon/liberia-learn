@@ -3,13 +3,13 @@
 # Never edit manually unless correcting an error.
 
 ## Active Sprint
-SPRINT 6 - Scale Readiness + Incident Response
+SPRINT 7 - Product Metrics
 
 ## Branch
 main
 
 ## Status
-SPRINT 5 COMPLETE
+SPRINT 6 COMPLETE
 
 ## Completed Sprints
 Sprint 0 - Repo Hygiene
@@ -30,13 +30,13 @@ Sprint 3 - Environment Separation
 | 3 | Environment Separation | COMPLETE | 6503d17 | 2026-04-03 |
 | 4 | Curriculum Completion | COMPLETE | f6ecd97 | 2026-04-03 |
 | 5 | Governance Audit Pack | COMPLETE | adf7045 | 2026-04-03 |
-| 6 | Scale + Incident | NOT STARTED | - | - |
+| 6 | Scale + Incident | COMPLETE | f7f4ce6 | 2026-04-03 |
 | 7 | Product Metrics | NOT STARTED | - | - |
 | 8 | Mobile UX Polish | NOT STARTED | - | - |
 | 9 | Executive Architecture | NOT STARTED | - | - |
 
 ## Current Phase
-Sprint 5 merged to `main`; Sprint 6 has not started yet
+Sprint 6 merged to `main`; Sprint 7 has not started yet
 
 ## Last Successful Validation
 2026-04-03: `npx tsc --noEmit` PASS; `npx vitest run --reporter=dot` PASS (1572 passing, 213 test files); `npm run build` PASS
@@ -48,20 +48,13 @@ Sprint 5 merged to `main`; Sprint 6 has not started yet
 None
 
 ## Files Changed This Session
-__tests__/compliance-audit.test.ts
-__tests__/csv-streaming.test.ts
-__tests__/governance.report.test.ts
-app/admin/compliance/AuditLogSearch.tsx
-app/admin/compliance/page.tsx
-app/admin/governance/exports/page.tsx
-app/admin/governance/page.tsx
-app/api/admin/compliance/audit-log/route.ts
-app/api/admin/governance/report/route.ts
+docs/ops/DATABASE_SCALING.md
+docs/ops/INCIDENT_RESPONSE.md
+docs/ops/SCALE_READINESS.md
 docs/roadmaps/CURRENT_EXECUTION_STATE.md
-lib/governance/report.ts
 
 ## Next Step
-Create `feat/scale-and-incident` from `main`, then implement Sprint 6 starting with `docs/ops/SCALE_READINESS.md`.
+Create `feat/product-metrics` from `main`, then inspect `prisma/schema.prisma`, `app/api/moe/dashboard/route.ts`, and `lib/intelligence/` to begin Sprint 7.
 
 ## Notes
-Sprint 5 completed the compliance audit UI filters and CSV export, added the governance summary route and dashboard, and aligned the governance exports page with `requireUser()`. Audit completeness was verified for the sprint's named admin and platform actions; no admin student soft-delete route exists in the current codebase to patch.
+Sprint 6 added scale readiness, incident response, and database scaling runbooks using the in-repo load harness and existing deployment guidance. The worker retry, shutdown, and structured logging requirements were re-inspected and already satisfied by `worker/index.ts`, so no code change was needed there.
