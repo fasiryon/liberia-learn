@@ -1,131 +1,99 @@
 # LiberiaLearn
 
-LiberiaLearn is a multi-role K-12 learning platform for Liberia built with Next.js, Prisma, and a grounded AI layer. The codebase supports students, teachers, guardians, school admins, platform admins, and Ministry-facing aggregate views from one repository.
+LiberiaLearn is a national-scale K-12 learning platform for Liberia's Ministry of Education. It is built as production infrastructure, not a demo application, with role-based experiences for students, teachers, guardians, school administrators, platform operators, and ministry reviewers.
 
-## What It Is
+`Tests: 1577 passing` `Test files: 214` `App routes: 189` `Prisma models: 81` `Curriculum: 1306 READY lessons` `Average lesson length: 1450 words`
 
-Implemented product areas in this repo include:
-- student daily work, adaptive practice, exams, certifications, and offline sync
-- teacher schedule delivery, grading, intelligence dashboards, labs, and training
-- guardian dashboard and simplified progress summaries
-- school-admin onboarding, pilot readiness, compliance, and curriculum operations
-- platform school management and reporting
-- MOE aggregate dashboards, placements, and standards coverage
+Live URL: `https://liberia-learn.vercel.app`
 
-Core application paths:
-- UI surfaces: [app](C:\Users\fasir\liberia-learn\app)
-- API routes: [app/api](C:\Users\fasir\liberia-learn\app\api)
-- AI services: [lib/ai](C:\Users\fasir\liberia-learn\lib\ai)
-- intelligence layer: [lib/intelligence](C:\Users\fasir\liberia-learn\lib\intelligence)
-- data model: [prisma/schema.prisma](C:\Users\fasir\liberia-learn\prisma\schema.prisma)
+## Technical Highlights
 
-## Who It Helps
+- Multi-tenant role system across student, teacher, guardian, school-admin, platform-admin, and MOE experiences from one repository.
+- App Router web platform with `189` route handlers and `377` app-layer entry files.
+- Prisma-backed domain model with `81` models covering users, schools, curriculum, assessments, governance, messaging, AI usage, and ops telemetry.
+- Grounded AI architecture with routed provider access, usage logging, cost guardrails, and curriculum-aware retrieval.
+- Offline-first student flows for interrupted connectivity, including queue-based sync and resumable learning state.
+- Immutable audit logging, governance exports, and compliance reporting for school and ministry review.
+- Operational hardening through SLO tracking, health routes, incident runbooks, worker deployment, and scale-readiness documentation.
+- Full curriculum audit gate with `1306/1306` lessons marked `READY` at an average of `1450` words.
 
-- Students get structured daily learning, adaptive practice, and grounded support flows.
-- Teachers get delivery, grading, intervention, and intelligence surfaces without automatic AI mutation of grades or assignments.
-- Guardians get summary-safe progress views and simple support suggestions.
-- Schools get operational readiness, compliance, and onboarding visibility.
-- Ministry and district users get aggregate views without school-level PII leakage.
+## Architecture
 
-## Architecture Overview
+The runtime is centered on a Next.js App Router application in [app](C:/Users/fasir/liberia-learn/app), Prisma access in [lib/db.ts](C:/Users/fasir/liberia-learn/lib/db.ts), authentication and tenant enforcement in [lib/auth.ts](C:/Users/fasir/liberia-learn/lib/auth.ts) and [middleware.ts](C:/Users/fasir/liberia-learn/middleware.ts), and background processing in [worker](C:/Users/fasir/liberia-learn/worker).
 
-The implemented stack is:
-- Next.js App Router UI and route handlers in [app](C:\Users\fasir\liberia-learn\app)
-- authentication and RBAC in [lib/auth.ts](C:\Users\fasir\liberia-learn\lib\auth.ts) and [middleware.ts](C:\Users\fasir\liberia-learn\middleware.ts)
-- Prisma access through [lib/db.ts](C:\Users\fasir\liberia-learn\lib\db.ts)
-- runtime feature flags in [lib/serverFlags.ts](C:\Users\fasir\liberia-learn\lib\serverFlags.ts)
-- audit and telemetry through [lib/audit.ts](C:\Users\fasir\liberia-learn\lib\audit.ts) and [lib/metrics/events.ts](C:\Users\fasir\liberia-learn\lib\metrics\events.ts)
+```mermaid
+flowchart LR
+  Users[Students | Teachers | Guardians | Admins | MOE] --> Web[Next.js App Router]
+  Web --> Auth[Auth and RBAC]
+  Web --> API[Route Handlers]
+  API --> Prisma[Prisma Data Layer]
+  Prisma --> DB[(Postgres)]
+  API --> AI[Routed AI Services]
+  AI --> Providers[OpenAI and Groq]
+  API --> Queue[SQS-backed Background Work]
+  Queue --> Worker[ECS Worker]
+  API --> Audit[Audit and Metrics]
+  Audit --> Ops[Ops Dashboards and Governance Reports]
+```
 
-Long-form implementation docs:
-- [SYSTEM_ARCHITECTURE.md](C:\Users\fasir\liberia-learn\docs\SYSTEM_ARCHITECTURE.md)
-- [AI_DECISION_FLOW.md](C:\Users\fasir\liberia-learn\docs\AI_DECISION_FLOW.md)
-- [CURRICULUM_PIPELINE.md](C:\Users\fasir\liberia-learn\docs\CURRICULUM_PIPELINE.md)
-- [INTELLIGENCE_FLOW.md](C:\Users\fasir\liberia-learn\docs\INTELLIGENCE_FLOW.md)
+Existing architecture references:
+
+- [SYSTEM_ARCHITECTURE.md](C:/Users/fasir/liberia-learn/docs/SYSTEM_ARCHITECTURE.md)
+- [SYSTEM_OVERVIEW.md](C:/Users/fasir/liberia-learn/docs/architecture/SYSTEM_OVERVIEW.md)
+- [AI_DECISION_FLOW.md](C:/Users/fasir/liberia-learn/docs/AI_DECISION_FLOW.md)
+- [CURRICULUM_PIPELINE.md](C:/Users/fasir/liberia-learn/docs/CURRICULUM_PIPELINE.md)
+- [INTELLIGENCE_FLOW.md](C:/Users/fasir/liberia-learn/docs/INTELLIGENCE_FLOW.md)
 
 ## Repository Structure
 
-- [app](C:\Users\fasir\liberia-learn\app) contains the App Router UI, layouts, and API route handlers.
-- [components](C:\Users\fasir\liberia-learn\components) holds shared React UI building blocks.
-- [lib](C:\Users\fasir\liberia-learn\lib) contains auth, AI orchestration, data access, metrics, and domain services.
-- [prisma](C:\Users\fasir\liberia-learn\prisma) stores the schema, SQL migrations, and seed-adjacent data assets.
-- [worker](C:\Users\fasir\liberia-learn\worker) contains background job consumers and handler modules.
-- [scripts](C:\Users\fasir\liberia-learn\scripts) is reserved for curriculum pipelines, audits, seeds, and operational helpers that are still in active use.
-- [docs](C:\Users\fasir\liberia-learn\docs) includes architecture, ops, curriculum, and reviewer-facing documentation.
-- [__tests__](C:\Users\fasir\liberia-learn\__tests__) contains Vitest suites for routes, services, and runtime gates.
-- [public](C:\Users\fasir\liberia-learn\public) stores static assets served by the web app.
-- [infra](C:\Users\fasir\liberia-learn\infra) contains deployment and infrastructure artifacts.
+- [app](C:/Users/fasir/liberia-learn/app): UI surfaces, layouts, and API route handlers.
+- [components](C:/Users/fasir/liberia-learn/components): shared interface building blocks.
+- [lib](C:/Users/fasir/liberia-learn/lib): auth, AI orchestration, data services, telemetry, and domain logic.
+- [prisma](C:/Users/fasir/liberia-learn/prisma): schema, migrations, seeds, and data-loading assets.
+- [worker](C:/Users/fasir/liberia-learn/worker): background job consumer and handlers.
+- [scripts](C:/Users/fasir/liberia-learn/scripts): audits, curriculum pipelines, seed helpers, and maintenance scripts.
+- [docs](C:/Users/fasir/liberia-learn/docs): architecture, governance, ops, rollout, and reviewer-facing documentation.
+- [__tests__](C:/Users/fasir/liberia-learn/__tests__): Vitest suites for routes, services, flows, and runtime gates.
+- [infra](C:/Users/fasir/liberia-learn/infra): deployment and infrastructure artifacts.
 
-## AI Trust Layer
-
-The current hardening pass includes:
-- grounded answer confidence, grounding score, and citations in [lib/ai/rag/groundedAnswerService.ts](C:\Users\fasir\liberia-learn\lib\ai\rag\groundedAnswerService.ts)
-- role-aware citation shaping and explainability in [lib/ai/trust.ts](C:\Users\fasir\liberia-learn\lib\ai\trust.ts)
-- tenant-safe in-memory caching in [lib/ai/cache.ts](C:\Users\fasir\liberia-learn\lib\ai\cache.ts)
-- role-aware AI rate limiting through [lib/ai/rateLimitGuard.ts](C:\Users\fasir\liberia-learn\lib\ai\rateLimitGuard.ts) backed by the shared limiter abstraction in [lib/rateLimit.ts](C:\Users\fasir\liberia-learn\lib\rateLimit.ts)
-- AI usage and cost aggregation through `AiInteractionLog` and [app/api/admin/ai-costs/route.ts](C:\Users\fasir\liberia-learn\app\api\admin\ai-costs\route.ts)
-
-The trust layer is grounded in retrieved metadata and provider usage fields. It does not fabricate citations, confidence labels, or costs.
-
-Current operational reality:
-- the default rate limiter backend is an explicit in-memory instance-local fallback; no Redis, Upstash, or other shared durable backing is configured in this repo today
-- important admin and MOE routes emit structured request logs through [lib/logging/requestLogger.ts](C:\Users\fasir\liberia-learn\lib\logging\requestLogger.ts)
-- application and worker Sentry wiring is present through [app/instrumentation.ts](C:\Users\fasir\liberia-learn\app\instrumentation.ts), [instrumentation-client.ts](C:\Users\fasir\liberia-learn\instrumentation-client.ts), [app/global-error.tsx](C:\Users\fasir\liberia-learn\app\global-error.tsx), and [worker/sentry.ts](C:\Users\fasir\liberia-learn\worker\sentry.ts), but DSNs remain optional and unset in local builds by default
-- when no Sentry DSN is configured, browser/server/worker errors are not exported to Sentry and observability falls back to structured stdout/stderr logs only
-
-## Key Features
-
-- grounded curriculum and policy retrieval through `RagChunk`
-- curriculum generation, approval, and ingestion into retrieval
-- teacher confusion detection and intervention workflows
-- advisory-only AI action suggestions on teacher surfaces
-- guardian-safe response shaping
-- immutable audit protections
-- feature-flag-driven rollout controls
-- offline queueing and reconnect sync for student work
-
-## Diagrams
-
-Mermaid diagrams in this repo:
-- [system-architecture.mmd](C:\Users\fasir\liberia-learn\docs\architecture\system-architecture.mmd)
-- [ai-decision-flow.mmd](C:\Users\fasir\liberia-learn\docs\architecture\ai-decision-flow.mmd)
-- [multi-tenant-isolation.mmd](C:\Users\fasir\liberia-learn\docs\architecture\multi-tenant-isolation.mmd)
-- [curriculum-pipeline.mmd](C:\Users\fasir\liberia-learn\docs\architecture\curriculum-pipeline.mmd)
-- [intelligence-flow.mmd](C:\Users\fasir\liberia-learn\docs\architecture\intelligence-flow.mmd)
-
-## Screenshots
-
-Real screenshots are intentionally not committed as placeholders. The capture list is documented in:
-- [docs/assets/screenshots/README.md](C:\Users\fasir\liberia-learn\docs\assets\screenshots\README.md)
-
-## Pilot Readiness
-
-The current repo state is engineering-ready for pilot review when tests, typecheck, build, and curriculum audit thresholds are met. The operational readiness surfaces live in:
-- [app/api/admin/pilot-readiness/route.ts](C:\Users\fasir\liberia-learn\app\api\admin\pilot-readiness\route.ts)
-- [app/api/admin/onboarding/readiness/route.ts](C:\Users\fasir\liberia-learn\app\api\admin\onboarding\readiness\route.ts)
-- [lib/readiness/readinessService.ts](C:\Users\fasir\liberia-learn\lib\readiness\readinessService.ts)
-
-Deployment and ops references:
-- [docs/ops/DEPLOYMENT_RUNBOOK.md](C:\Users\fasir\liberia-learn\docs\ops\DEPLOYMENT_RUNBOOK.md)
-- [docs/ops/FEATURE_FLAGS.md](C:\Users\fasir\liberia-learn\docs\ops\FEATURE_FLAGS.md)
-
-## Why This Matters In Low-Resource Environments
-
-The product shape in this repo is biased toward practical rollout constraints:
-- offline flows exist for interrupted connectivity
-- guardian surfaces use simplified language
-- AI answers are grounded to approved content instead of open-ended generation
-- feature flags support staged activation instead of all-at-once deployment
-- teacher-facing AI recommendations remain advisory, not automatic
-
-## Local Development
+## Local Setup
 
 ```bash
-cp .env.example .env.local
 npm install
 npx prisma generate
-npx vitest run
 npx tsc --noEmit
+npx vitest run
 npm run build
 ```
 
-Core runtime env validation now fails `next build` when `DATABASE_URL`, `DIRECT_URL`, `NEXTAUTH_URL`, or `NEXTAUTH_SECRET` are missing. AI provider keys are required only when the related provider-backed AI feature flags are enabled; deterministic textbook compilation and assignment draft generation no longer require `OPENAI_API_KEY`.
+Typical local environment files:
+
+- `.env`
+- `.env.local`
+- `.env.production`
+
+Environment behavior is documented in [ENVIRONMENTS.md](C:/Users/fasir/liberia-learn/docs/ops/ENVIRONMENTS.md).
+
+## Documentation
+
+| Document | Purpose |
+|---|---|
+| [ARCHITECTURE_EXECUTIVE.md](C:/Users/fasir/liberia-learn/docs/ARCHITECTURE_EXECUTIVE.md) | Technical overview for senior engineers and technical reviewers |
+| [API_REFERENCE.md](C:/Users/fasir/liberia-learn/docs/API_REFERENCE.md) | Human-readable API guide grouped by role |
+| [MOE_TECHNICAL_BRIEF.md](C:/Users/fasir/liberia-learn/docs/MOE_TECHNICAL_BRIEF.md) | Ministry-facing technical brief in plain language |
+| [SYSTEM_ARCHITECTURE.md](C:/Users/fasir/liberia-learn/docs/SYSTEM_ARCHITECTURE.md) | Detailed implementation architecture |
+| [SECURITY_MODEL.md](C:/Users/fasir/liberia-learn/docs/governance/SECURITY_MODEL.md) | Security and governance controls |
+| [SCALE_READINESS.md](C:/Users/fasir/liberia-learn/docs/ops/SCALE_READINESS.md) | Scale assumptions, bottlenecks, and readiness posture |
+| [INCIDENT_RESPONSE.md](C:/Users/fasir/liberia-learn/docs/ops/INCIDENT_RESPONSE.md) | Incident handling and rollback procedures |
+| [WORKER_DEPLOYMENT.md](C:/Users/fasir/liberia-learn/docs/ops/WORKER_DEPLOYMENT.md) | Background worker deployment and verification |
+
+## Current Status
+
+Current verified repo state:
+
+- Sprint 8 is complete.
+- Sprint 9 documentation is in progress.
+- Latest validated gate: `npx tsc --noEmit`, `npx vitest run --reporter=dot`, and `npm run build`.
+- Curriculum audit: `1306/1306` lessons are `READY`.
+
+Execution tracking lives in [CURRENT_EXECUTION_STATE.md](C:/Users/fasir/liberia-learn/docs/roadmaps/CURRENT_EXECUTION_STATE.md).
