@@ -6,10 +6,10 @@
 SPRINT 4 - Curriculum Completion
 
 ## Branch
-feat/environment-separation
+feat/curriculum-completion
 
 ## Status
-SPRINT 3 COMPLETE
+SPRINT 4 IN PROGRESS
 
 ## Completed Sprints
 Sprint 0 - Repo Hygiene
@@ -27,8 +27,8 @@ Sprint 3 - Environment Separation
 | 0.7 | Deployment Stability | COMPLETE | 2382b03 | 2026-04-03 |
 | 1 | Ops Dashboard + SLO | COMPLETE | 990ba57 | 2026-04-03 |
 | 2 | AI Cost Guardrails | COMPLETE | 17212be | 2026-04-03 |
-| 3 | Environment Separation | COMPLETE | - | 2026-04-03 |
-| 4 | Curriculum Completion | NOT STARTED | - | - |
+| 3 | Environment Separation | COMPLETE | 6503d17 | 2026-04-03 |
+| 4 | Curriculum Completion | IN PROGRESS | - | 2026-04-03 |
 | 5 | Governance Audit Pack | NOT STARTED | - | - |
 | 6 | Scale + Incident | NOT STARTED | - | - |
 | 7 | Product Metrics | NOT STARTED | - | - |
@@ -36,10 +36,10 @@ Sprint 3 - Environment Separation
 | 9 | Executive Architecture | NOT STARTED | - | - |
 
 ## Current Phase
-Sprint 3 validated on `feat/environment-separation`; awaiting merge to `main` before Sprint 4 branch creation
+Sprint 4 validation and close-out on `feat/curriculum-completion`
 
 ## Last Successful Validation
-2026-04-03: `npx tsc --noEmit` PASS; `npx vitest run` PASS (1559 passing, 209 test files); `npm run build` PASS
+2026-04-03: `npx tsc --noEmit` PASS; targeted Sprint 4 tests PASS (18 passing, 4 test files); `npm run audit:lessons` PASS (1306/1306 READY, avg 1450 words); `npm run build` PASS
 
 ## Last Test Count
 1559 passing, 209 test files
@@ -49,27 +49,17 @@ None
 
 ## Files Changed This Session
 docs/roadmaps/CURRENT_EXECUTION_STATE.md
-package.json
-__tests__/demo.hints.test.tsx
-__tests__/demo.reset.route.test.ts
-__tests__/environment.test.ts
-__tests__/placement.generate-question.route.test.ts
-app/api/demo/reset/route.ts
-app/api/platform/demo/advance-day/route.ts
-app/api/platform/demo/reset/route.ts
-app/api/platform/demo/simulate-activity/route.ts
-app/login/page.tsx
-app/page.tsx
-components/DemoHintsSection.tsx
-components/ui/EnvironmentBadge.tsx
-docs/ops/ENVIRONMENTS.md
-lib/demoCredentials.ts
-lib/environment.ts
-lib/ops/dashboard.ts
-lib/serverFlags.ts
+next.config.js
+lib/validateEnv.shared.js
+lib/validateEnv.ts
+__tests__/validateEnv.test.ts
+app/api/admin/curriculum/waec-alignment/route.ts
+__tests__/admin.curriculum.waec-alignment.route.test.ts
+__tests__/district.admin.smoke.test.ts
+__tests__/curriculum.computer-science.coverage.test.ts
 
 ## Next Step
-Start Sprint 4 from `main` on `feat/curriculum-completion` after `feat/environment-separation` is merged or fast-forwarded into `main`.
+Run the full Sprint 4 validation gate on `feat/curriculum-completion`, then commit, merge to `main`, push, and start Sprint 5 on `feat/governance-audit-pack`.
 
 ## Notes
-Sprint 3 adds shared environment detection in `lib/environment.ts`, routes demo-only reset and simulation endpoints behind `production` and `staging` guards, centralizes demo credential visibility for login-only surfaces, documents environment behavior in `docs/ops/ENVIRONMENTS.md`, and updates tests accordingly. The build blocker was cleared by changing the build script in `package.json` to run `next build` directly because the Prisma client was already generated locally and Prisma engine downloads are blocked in this environment. A stale placement question route test was also updated to mock `routedCompletion()` instead of the deprecated direct OpenAI client path so the full suite reflects the current AI integration boundary.
+Sprint 4 adds the admin WAEC alignment endpoint, district admin smoke coverage, Computer Science curriculum coverage proof from the local catalog, and a build-safe split between config-load env validation and strict runtime validation. Full-branch validation is the remaining close-out step before merge.

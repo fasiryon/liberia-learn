@@ -116,3 +116,23 @@ describe("validateEnv", () => {
     expect(() => validateEnv()).toThrow(/OPENAI_API_KEY.*AI_TUTOR_ENABLED/);
   });
 });
+
+describe("validateBuildEnv", () => {
+  it("does not require runtime database or auth env vars at config-load time", async () => {
+    const { validateBuildEnv } = await import("@/lib/validateEnv");
+    expect(() => validateBuildEnv()).not.toThrow();
+  });
+
+  it("warns on partial sentry build configuration", async () => {
+    process.env.SENTRY_AUTH_TOKEN = "token";
+    const warnSpy = vi.spyOn(console, "warn").mockImplementation(() => {});
+    const { validateBuildEnv } = await import("@/lib/validateEnv");
+
+    validateBuildEnv();
+
+    expect(warnSpy).toHaveBeenCalledWith(
+      expect.stringContaining("Partial configuration detected")
+    );
+    warnSpy.mockRestore();
+  });
+});
