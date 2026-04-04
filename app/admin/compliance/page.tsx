@@ -1,13 +1,3 @@
-/**
- * /admin/compliance — Compliance & Audit Log
- *
- * Server component. Shows a searchable, paginated audit log for the admin's
- * school. Platform admins see entries across all schools.
- *
- * Plain-language UI for low-literacy admins per national usability requirements.
- * All interactive elements are keyboard-navigable.
- * Escape hatch: ← Back to Admin Console link.
- */
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { requireUser } from "@/lib/auth";
@@ -22,6 +12,8 @@ const PAGE_SIZE = 50;
 interface Props {
   searchParams?: {
     action?: string;
+    actorEmail?: string;
+    role?: string;
     resourceType?: string;
     from?: string;
     to?: string;
@@ -31,7 +23,6 @@ interface Props {
 }
 
 export default async function CompliancePage({ searchParams = {} }: Props) {
-  // ── Auth ──────────────────────────────────────────────────────────────────
   let user: Awaited<ReturnType<typeof requireUser>>;
   try {
     user = await requireUser();
@@ -40,29 +31,35 @@ export default async function CompliancePage({ searchParams = {} }: Props) {
   }
   if (user.role !== "ADMIN" && !user.isPlatformAdmin) redirect("/");
 
-  // ── Feature flags ─────────────────────────────────────────────────────────
   const circuitOpen = isGovCircuitBreakerTripped();
   const auditEnabled = !circuitOpen && isGovAuditSearchEnabled();
 
-  // ── Params ────────────────────────────────────────────────────────────────
   const action = searchParams.action ?? "";
+  const actorEmail = searchParams.actorEmail ?? "";
+  const role = searchParams.role ?? "";
   const resourceType = searchParams.resourceType ?? "";
   const from = searchParams.from ?? "";
   const to = searchParams.to ?? "";
   const page = Math.max(1, parseInt(searchParams.page ?? "1", 10));
   const isPlatformAdmin = user.isPlatformAdmin === true;
 
-  // Tenant isolation
   const effectiveSchoolId = isPlatformAdmin
     ? (searchParams.schoolId ?? undefined)
     : (user.schoolId ?? undefined);
 
-  // ── Data fetch ────────────────────────────────────────────────────────────
   const where: Record<string, unknown> = auditEnabled
     ? {
         ...(effectiveSchoolId ? { schoolId: effectiveSchoolId } : {}),
-        ...(action ? { action: { contains: action } } : {}),
+        ...(action ? { action: { contains: action, mode: "insensitive" } } : {}),
         ...(resourceType ? { resourceType } : {}),
+        ...((actorEmail || role)
+          ? {
+              user: {
+                ...(actorEmail ? { email: { contains: actorEmail, mode: "insensitive" } } : {}),
+                ...(role ? { role } : {}),
+              },
+            }
+          : {}),
         ...((from || to)
           ? {
               createdAt: {
@@ -72,7 +69,7 @@ export default async function CompliancePage({ searchParams = {} }: Props) {
             }
           : {}),
       }
-    : { id: "disabled" }; // empty result when disabled
+    : { id: "disabled" };
 
   const [total, entries, recentExports] = await Promise.all([
     auditEnabled ? prisma.auditLog.count({ where }) : Promise.resolve(0),
@@ -86,7 +83,13 @@ export default async function CompliancePage({ searchParams = {} }: Props) {
             id: true,
             createdAt: true,
             action: true,
-            userId: true,
+            ipAddress: true,
+            user: {
+              select: {
+                email: true,
+                role: true,
+              },
+            },
             resourceType: true,
             resourceId: true,
             schoolId: true,
@@ -104,7 +107,6 @@ export default async function CompliancePage({ searchParams = {} }: Props) {
         exportType: true,
         scope: true,
         format: true,
-        userId: true,
       },
     }),
   ]);
@@ -115,29 +117,24 @@ export default async function CompliancePage({ searchParams = {} }: Props) {
     <main className="min-h-screen bg-slate-950 text-slate-50">
       <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_top,_#3b82f622,_transparent_60%)]" />
       <div className="mx-auto max-w-6xl px-4 py-6">
-
-        {/* ── Header ────────────────────────────────────────────────────── */}
         <header className="mb-6 flex items-center gap-4">
           <Link
             href="/admin"
             className="rounded-full border border-slate-700 px-3 py-1.5 text-xs hover:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-500"
             aria-label="Back to Admin Console"
           >
-            ← Back
+            Back
           </Link>
           <div>
-            <p className="text-xs uppercase tracking-wide text-emerald-300 mb-0.5">
-              Compliance
-            </p>
+            <p className="mb-0.5 text-xs uppercase tracking-wide text-emerald-300">Compliance</p>
             <h1 className="text-2xl font-bold">Audit Log</h1>
-            <p className="text-xs text-slate-400 mt-0.5">
+            <p className="mt-0.5 text-xs text-slate-400">
               All important actions taken in your school are recorded here.
             </p>
           </div>
         </header>
 
-        {/* ── Circuit breaker notice ─────────────────────────────────────── */}
-        {circuitOpen && (
+        {circuitOpen ? (
           <div
             role="alert"
             className="mb-6 rounded-2xl border border-red-700/40 bg-red-900/20 p-4 text-sm text-red-300"
@@ -145,27 +142,27 @@ export default async function CompliancePage({ searchParams = {} }: Props) {
             Governance features are temporarily disabled by the system administrator.
             Please contact support.
           </div>
-        )}
+        ) : null}
 
-        {/* ── Search form ────────────────────────────────────────────────── */}
-        {auditEnabled && (
+        {auditEnabled ? (
           <AuditLogSearch
             currentAction={action}
+            currentActorEmail={actorEmail}
+            currentRole={role}
             currentFrom={from}
             currentTo={to}
             currentResourceType={resourceType}
             schoolId={effectiveSchoolId ?? null}
             isPlatformAdmin={isPlatformAdmin}
           />
-        )}
+        ) : null}
 
-        {/* ── Results table ──────────────────────────────────────────────── */}
-        {auditEnabled && (
+        {auditEnabled ? (
           <section className="mb-8">
-            <div className="flex items-center justify-between mb-3">
+            <div className="mb-3 flex items-center justify-between">
               <h2 className="text-base font-semibold">
                 Records{" "}
-                <span className="text-slate-400 font-normal text-sm">
+                <span className="text-sm font-normal text-slate-400">
                   ({total.toLocaleString()} total)
                 </span>
               </h2>
@@ -178,43 +175,42 @@ export default async function CompliancePage({ searchParams = {} }: Props) {
               <table className="w-full text-xs">
                 <thead>
                   <tr className="border-b border-slate-800 bg-slate-900/60">
-                    <th className="px-3 py-2.5 text-left text-slate-400 font-medium">
-                      When
-                    </th>
-                    <th className="px-3 py-2.5 text-left text-slate-400 font-medium">
-                      Action
-                    </th>
-                    <th className="px-3 py-2.5 text-left text-slate-400 font-medium">
+                    <th className="px-3 py-2.5 text-left font-medium text-slate-400">When</th>
+                    <th className="px-3 py-2.5 text-left font-medium text-slate-400">Actor</th>
+                    <th className="px-3 py-2.5 text-left font-medium text-slate-400">Role</th>
+                    <th className="px-3 py-2.5 text-left font-medium text-slate-400">Action</th>
+                    <th className="px-3 py-2.5 text-left font-medium text-slate-400">
                       Record Type
                     </th>
-                    <th className="px-3 py-2.5 text-left text-slate-400 font-medium">
+                    <th className="px-3 py-2.5 text-left font-medium text-slate-400">
                       Record ID
                     </th>
-                    {isPlatformAdmin && (
-                      <th className="px-3 py-2.5 text-left text-slate-400 font-medium">
+                    <th className="px-3 py-2.5 text-left font-medium text-slate-400">IP</th>
+                    {isPlatformAdmin ? (
+                      <th className="px-3 py-2.5 text-left font-medium text-slate-400">
                         School
                       </th>
-                    )}
+                    ) : null}
                   </tr>
                 </thead>
                 <tbody>
-                  {entries.length === 0 && (
+                  {entries.length === 0 ? (
                     <tr>
                       <td
-                        colSpan={isPlatformAdmin ? 5 : 4}
+                        colSpan={isPlatformAdmin ? 8 : 7}
                         className="px-3 py-6 text-center text-slate-500"
                       >
                         No records found for these filters.
                       </td>
                     </tr>
-                  )}
-                  {entries.map((e) => (
+                  ) : null}
+                  {entries.map((entry) => (
                     <tr
-                      key={e.id}
+                      key={entry.id}
                       className="border-b border-slate-800/50 hover:bg-slate-800/30"
                     >
-                      <td className="px-3 py-2 text-slate-400 whitespace-nowrap">
-                        {new Date(e.createdAt).toLocaleString("en-GB", {
+                      <td className="whitespace-nowrap px-3 py-2 text-slate-400">
+                        {new Date(entry.createdAt).toLocaleString("en-GB", {
                           day: "2-digit",
                           month: "short",
                           year: "numeric",
@@ -222,69 +218,75 @@ export default async function CompliancePage({ searchParams = {} }: Props) {
                           minute: "2-digit",
                         })}
                       </td>
-                      <td className="px-3 py-2 font-mono text-slate-200">
-                        {e.action}
+                      <td className="px-3 py-2 text-slate-200">
+                        {entry.user?.email ?? "Unknown"}
                       </td>
                       <td className="px-3 py-2 text-slate-400">
-                        {e.resourceType ?? "—"}
+                        {entry.user?.role ?? "-"}
                       </td>
-                      <td className="px-3 py-2 text-slate-500 font-mono text-[10px]">
-                        {e.resourceId ? e.resourceId.slice(0, 12) + "…" : "—"}
+                      <td className="px-3 py-2 font-mono text-slate-200">{entry.action}</td>
+                      <td className="px-3 py-2 text-slate-400">{entry.resourceType ?? "-"}</td>
+                      <td className="px-3 py-2 font-mono text-[10px] text-slate-500">
+                        {entry.resourceId ? `${entry.resourceId.slice(0, 12)}...` : "-"}
                       </td>
-                      {isPlatformAdmin && (
-                        <td className="px-3 py-2 text-slate-500 font-mono text-[10px]">
-                          {e.schoolId ?? "—"}
+                      <td className="px-3 py-2 font-mono text-[10px] text-slate-500">
+                        {entry.ipAddress ?? "-"}
+                      </td>
+                      {isPlatformAdmin ? (
+                        <td className="px-3 py-2 font-mono text-[10px] text-slate-500">
+                          {entry.schoolId ?? "-"}
                         </td>
-                      )}
+                      ) : null}
                     </tr>
                   ))}
                 </tbody>
               </table>
             </div>
 
-            {/* Pagination */}
-            {totalPages > 1 && (
-              <nav
-                aria-label="Audit log pages"
-                className="mt-3 flex gap-2 justify-end"
-              >
-                {page > 1 && (
+            {totalPages > 1 ? (
+              <nav aria-label="Audit log pages" className="mt-3 flex justify-end gap-2">
+                {page > 1 ? (
                   <Link
                     href={`/admin/compliance?${new URLSearchParams({
                       ...(action ? { action } : {}),
+                      ...(actorEmail ? { actorEmail } : {}),
+                      ...(role ? { role } : {}),
                       ...(resourceType ? { resourceType } : {}),
                       ...(from ? { from } : {}),
                       ...(to ? { to } : {}),
+                      ...(effectiveSchoolId ? { schoolId: effectiveSchoolId } : {}),
                       page: String(page - 1),
                     }).toString()}`}
                     className="rounded-lg border border-slate-700 px-3 py-1.5 text-xs hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500"
                   >
-                    ← Previous
+                    Previous
                   </Link>
-                )}
-                {page < totalPages && (
+                ) : null}
+                {page < totalPages ? (
                   <Link
                     href={`/admin/compliance?${new URLSearchParams({
                       ...(action ? { action } : {}),
+                      ...(actorEmail ? { actorEmail } : {}),
+                      ...(role ? { role } : {}),
                       ...(resourceType ? { resourceType } : {}),
                       ...(from ? { from } : {}),
                       ...(to ? { to } : {}),
+                      ...(effectiveSchoolId ? { schoolId: effectiveSchoolId } : {}),
                       page: String(page + 1),
                     }).toString()}`}
                     className="rounded-lg border border-slate-700 px-3 py-1.5 text-xs hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500"
                   >
-                    Next →
+                    Next
                   </Link>
-                )}
+                ) : null}
               </nav>
-            )}
+            ) : null}
           </section>
-        )}
+        ) : null}
 
-        {/* ── Recent export history ──────────────────────────────────────── */}
         <section>
-          <h2 className="text-base font-semibold mb-3">Recent Downloads</h2>
-          <p className="text-xs text-slate-400 mb-3">
+          <h2 className="mb-3 text-base font-semibold">Recent Downloads</h2>
+          <p className="mb-3 text-xs text-slate-400">
             Every data download is recorded below for your records.
           </p>
           {recentExports.length === 0 ? (
@@ -294,39 +296,31 @@ export default async function CompliancePage({ searchParams = {} }: Props) {
               <table className="w-full text-xs">
                 <thead>
                   <tr className="border-b border-slate-800 bg-slate-900/60">
-                    <th className="px-3 py-2.5 text-left text-slate-400 font-medium">
-                      When
-                    </th>
-                    <th className="px-3 py-2.5 text-left text-slate-400 font-medium">
-                      Type
-                    </th>
-                    <th className="px-3 py-2.5 text-left text-slate-400 font-medium">
-                      Scope
-                    </th>
-                    <th className="px-3 py-2.5 text-left text-slate-400 font-medium">
-                      Format
-                    </th>
+                    <th className="px-3 py-2.5 text-left font-medium text-slate-400">When</th>
+                    <th className="px-3 py-2.5 text-left font-medium text-slate-400">Type</th>
+                    <th className="px-3 py-2.5 text-left font-medium text-slate-400">Scope</th>
+                    <th className="px-3 py-2.5 text-left font-medium text-slate-400">Format</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {recentExports.map((r) => (
+                  {recentExports.map((record) => (
                     <tr
-                      key={r.id}
+                      key={record.id}
                       className="border-b border-slate-800/50 hover:bg-slate-800/30"
                     >
-                      <td className="px-3 py-2 text-slate-400 whitespace-nowrap">
-                        {new Date(r.createdAt).toLocaleString("en-GB", {
+                      <td className="whitespace-nowrap px-3 py-2 text-slate-400">
+                        {new Date(record.createdAt).toLocaleString("en-GB", {
                           day: "2-digit",
                           month: "short",
                           year: "numeric",
                         })}
                       </td>
                       <td className="px-3 py-2 text-slate-200">
-                        {r.exportType.replace(/_/g, " ")}
+                        {record.exportType.replace(/_/g, " ")}
                       </td>
-                      <td className="px-3 py-2 text-slate-400">{r.scope}</td>
-                      <td className="px-3 py-2 text-slate-500 uppercase">
-                        {r.format ?? "—"}
+                      <td className="px-3 py-2 text-slate-400">{record.scope}</td>
+                      <td className="px-3 py-2 uppercase text-slate-500">
+                        {record.format ?? "-"}
                       </td>
                     </tr>
                   ))}
@@ -334,13 +328,21 @@ export default async function CompliancePage({ searchParams = {} }: Props) {
               </table>
             </div>
           )}
-          <div className="mt-4">
+          <div className="mt-4 flex gap-4">
             <Link
               href="/admin/governance/exports"
               className="rounded-xl bg-emerald-600 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-400"
             >
-              Go to Data Downloads →
+              Go to Data Downloads
             </Link>
+            {isPlatformAdmin ? (
+              <Link
+                href="/admin/governance"
+                className="rounded-xl border border-slate-700 px-4 py-2 text-sm text-slate-300 hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-500"
+              >
+                Governance Dashboard
+              </Link>
+            ) : null}
           </div>
         </section>
       </div>

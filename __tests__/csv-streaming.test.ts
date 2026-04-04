@@ -20,7 +20,7 @@ vi.setConfig({ testTimeout: 15_000 });
 
 // ─── Mocks ────────────────────────────────────────────────────────────────────
 
-const mockRequireRole = vi.hoisted(() => vi.fn());
+const mockRequireUser = vi.hoisted(() => vi.fn());
 const mockAssertPermission = vi.hoisted(() => vi.fn());
 const mockLogAudit = vi.hoisted(() => vi.fn().mockResolvedValue(undefined));
 const mockAuditFindMany = vi.hoisted(() => vi.fn());
@@ -37,7 +37,7 @@ const mockMetricEvent = vi.hoisted(() => vi.fn().mockResolvedValue(undefined));
 const mockIsGovAuditEnabled = vi.hoisted(() => vi.fn().mockReturnValue(true));
 const mockIsCircuitBreaker = vi.hoisted(() => vi.fn().mockReturnValue(false));
 
-vi.mock("@/lib/auth", () => ({ requireRole: mockRequireRole }));
+vi.mock("@/lib/auth", () => ({ requireUser: mockRequireUser }));
 vi.mock("@/lib/audit", () => ({ logAudit: mockLogAudit }));
 vi.mock("@/lib/permissions", () => ({
   assertPermission: mockAssertPermission,
@@ -108,7 +108,7 @@ async function drainStream(body: ReadableStream<Uint8Array>): Promise<string> {
 describe("Gap 4: streaming CSV export — audit-log route", () => {
   beforeEach(() => {
     vi.resetAllMocks(); // also clears once-queue, preventing cross-test mock leakage
-    mockRequireRole.mockResolvedValue(ADMIN_USER);
+    mockRequireUser.mockResolvedValue(ADMIN_USER);
     mockAssertPermission.mockReturnValue(undefined);
     mockIsGovAuditEnabled.mockReturnValue(true);
     mockIsCircuitBreaker.mockReturnValue(false);
@@ -137,7 +137,7 @@ describe("Gap 4: streaming CSV export — audit-log route", () => {
     mockAuditFindMany.mockResolvedValueOnce([buildRow(1)]).mockResolvedValueOnce([]);
     const res = await callGet();
     const text = await drainStream(res.body as ReadableStream<Uint8Array>);
-    expect(text).toContain("ID,Created At,Action,User ID");
+    expect(text).toContain("ID,Created At,Action,Actor Email,Actor Role,User ID");
   });
 
   it("response rows include audit log data", async () => {
