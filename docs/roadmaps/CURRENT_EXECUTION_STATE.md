@@ -6,7 +6,7 @@
 SPRINT 8 - Mobile UX Polish
 
 ## Branch
-feat/product-metrics
+main
 
 ## Status
 SPRINT 7 COMPLETE
@@ -31,12 +31,12 @@ Sprint 3 - Environment Separation
 | 4 | Curriculum Completion | COMPLETE | f6ecd97 | 2026-04-03 |
 | 5 | Governance Audit Pack | COMPLETE | adf7045 | 2026-04-03 |
 | 6 | Scale + Incident | COMPLETE | f7f4ce6 | 2026-04-03 |
-| 7 | Product Metrics | COMPLETE | pending-commit | 2026-04-03 |
+| 7 | Product Metrics | COMPLETE | 26242e1 | 2026-04-03 |
 | 8 | Mobile UX Polish | NOT STARTED | - | - |
 | 9 | Executive Architecture | NOT STARTED | - | - |
 
 ## Current Phase
-Sprint 7 validated on `feat/product-metrics`; ready to commit, merge to `main`, and start Sprint 8
+Sprint 7 merged to `main`; Sprint 8 is next and not yet started
 
 ## Last Successful Validation
 2026-04-03: `npx tsc --noEmit` PASS; `npx vitest run` PASS (1577 passing, 214 test files); `npm run build` PASS
@@ -59,7 +59,7 @@ docs/roadmaps/CURRENT_EXECUTION_STATE.md
 lib/reporting/productMetrics.ts
 
 ## Next Step
-Commit Sprint 7 with `feat(metrics): product metrics API, admin metrics page, national outcomes for MOE, trend indicators`, merge `feat/product-metrics` into `main`, push `main`, then create `feat/mobile-ux-polish` for Sprint 8.
+Create `feat/mobile-ux-polish` from `main`, inspect the student, teacher, guardian, and global CSS mobile surfaces, then execute Sprint 8.
 
 ## Notes
 Sprint 7 added a shared product metrics aggregator, a new admin metrics API and page, and a National Outcomes section on the MOE dashboard. The MOE route now reuses the same metrics layer, and the helper was hardened to tolerate reduced Prisma mocks used by the repo's final-gate suites without changing production behavior.
