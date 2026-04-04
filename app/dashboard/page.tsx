@@ -155,15 +155,33 @@ export default async function DashboardPage() {
     },
   });
 
+  const todayWorkItems = [
+    {
+      label: "Continue lesson",
+      href: "/student/lessons",
+      helper: "Open today's learning path",
+    },
+    {
+      label: "Take exam",
+      href: "/student/exams",
+      helper: "Finish active assessments",
+    },
+    {
+      label: "Practice weak areas",
+      href: "/student/adaptive",
+      helper: "Target the strands that need review",
+    },
+  ];
+
   return (
     <ErrorBoundary>
       <main className="min-h-screen bg-slate-950 text-slate-50">
         {/* Glow */}
         <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_top,_#22c55e22,_transparent_60%),radial-gradient(circle_at_bottom,_#0ea5e922,_transparent_60%)]" />
 
-        <div className="mx-auto max-w-6xl min-h-screen flex flex-col gap-4 px-4 py-6">
+        <div className="mx-auto flex min-h-screen max-w-6xl flex-col gap-4 px-3 py-5 sm:px-4 sm:py-6">
           {/* Header */}
-          <header className="flex items-center justify-between rounded-3xl border border-white/5 bg-slate-950/70 px-4 py-3 shadow-lg shadow-black/40 backdrop-blur">
+          <header className="flex flex-col gap-3 rounded-3xl border border-white/5 bg-slate-950/70 px-4 py-3 shadow-lg shadow-black/40 backdrop-blur sm:flex-row sm:items-center sm:justify-between">
             <div className="flex items-center gap-3">
               <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-emerald-500 text-sm font-black text-slate-950">
                 L
@@ -176,19 +194,19 @@ export default async function DashboardPage() {
               </div>
             </div>
 
-            <div className="flex items-center gap-3 text-xs">
+            <div className="flex items-center justify-between gap-3 text-xs sm:justify-end">
               <Link
                 href="/"
-                className="hidden sm:inline-flex rounded-full border border-slate-700 px-3 py-1.5 text-slate-300 hover:text-slate-50"
+                className="ll-touch-target hidden items-center rounded-full border border-slate-700 px-4 py-2 text-slate-300 hover:text-slate-50 sm:inline-flex"
               >
                 &larr; Home
               </Link>
-              <div className="flex items-center gap-2 rounded-full bg-slate-900/80 px-3 py-1.5">
+              <div className="flex min-w-0 items-center gap-2 rounded-2xl bg-slate-900/80 px-3 py-2">
                 <div className="h-7 w-7 rounded-full bg-gradient-to-br from-emerald-400 to-cyan-400" />
-                <div>
+                <div className="min-w-0">
                   <p className="text-xs font-medium">{studentName}</p>
-                  <p className="text-[10px] text-slate-400">
-                    {className} &middot; {county}
+                  <p className="truncate text-xs text-slate-300">
+                    {className} - {county}
                   </p>
                 </div>
               </div>
@@ -217,24 +235,58 @@ export default async function DashboardPage() {
                       {studentName}
                     </span>
                   </h1>
-                  <p className="text-xs text-slate-400">
+                  <p className="text-sm text-slate-300">
                     Placement: {placementGradeLabel}
                   </p>
                 </div>
 
-                <div className="rounded-2xl bg-slate-900/90 px-3 py-2 text-xs">
-                  <p className="text-[11px] text-slate-400">
+                <div className="rounded-2xl bg-slate-900/90 px-4 py-3 text-sm">
+                  <p className="text-xs text-slate-300">
                     Current class
                   </p>
                   <p className="text-sm font-semibold text-slate-100">
                     {className}
                   </p>
-                  <p className="text-[11px] text-emerald-300">{school}</p>
+                  <p className="text-xs text-emerald-300">{school}</p>
+                </div>
+              </div>
+
+              <div className="rounded-3xl border border-emerald-400/20 bg-emerald-500/10 p-4">
+                <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+                  <div>
+                    <p className="text-xs font-semibold uppercase tracking-[0.2em] text-emerald-200">
+                      Today&apos;s Work
+                    </p>
+                    <h2 className="mt-2 text-xl font-semibold text-white">
+                      Keep moving while everything is fresh.
+                    </h2>
+                    <p className="mt-2 max-w-2xl text-sm text-slate-100">
+                      Start with your current lesson, then finish any open exam or adaptive practice before the day ends.
+                    </p>
+                  </div>
+                  <Link
+                    href="/student/lessons"
+                    className="ll-touch-target inline-flex items-center justify-center rounded-2xl bg-emerald-400 px-5 py-3 text-sm font-semibold text-slate-950"
+                  >
+                    Open today&apos;s lesson
+                  </Link>
+                </div>
+                <div className="mt-4 grid gap-3 sm:grid-cols-3">
+                  {todayWorkItems.map((item) => (
+                    <Link
+                      key={item.href}
+                      href={item.href}
+                      className="ll-touch-target rounded-2xl border border-white/10 bg-slate-950/60 px-4 py-3"
+                    >
+                      <p className="text-sm font-semibold text-slate-50">{item.label}</p>
+                      <p className="mt-1 text-sm text-slate-300">{item.helper}</p>
+                    </Link>
+                  ))}
                 </div>
               </div>
 
               {/* Stats */}
-              <div className="grid gap-3 md:grid-cols-5">
+              <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-5">
                 <StatCard
                   label="Average Grade"
                   value={`${avgGrade}%`}
@@ -487,4 +539,3 @@ export default async function DashboardPage() {
     </ErrorBoundary>
   );
 }
-

@@ -185,7 +185,7 @@ export default function AdaptivePracticeClient() {
             Adaptive Learning
           </p>
           <h1 className="text-3xl font-bold">My Practice</h1>
-          <p className="text-sm text-slate-200">
+          <p className="max-w-2xl text-base leading-7 text-slate-100">
             Targeted practice for your weakest strands, updated from your latest results.
           </p>
         </header>
@@ -203,7 +203,7 @@ export default function AdaptivePracticeClient() {
             ))}
           </div>
         ) : practice && currentQuestion ? (
-          <section className="rounded-3xl border border-white/10 bg-slate-900/70 p-6">
+          <section className="rounded-3xl border border-white/10 bg-slate-900/70 p-5 sm:p-6">
             <div className="mb-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
               <div>
                 <p className="text-xs uppercase tracking-wide text-slate-200">
@@ -218,7 +218,7 @@ export default function AdaptivePracticeClient() {
 
             <div className="space-y-4">
               <div className="rounded-2xl border border-slate-800 bg-slate-950/55 p-4">
-                <p className="text-lg leading-8 text-slate-50">{currentQuestion.prompt}</p>
+                <p className="text-xl leading-8 text-slate-50">{currentQuestion.prompt}</p>
               </div>
               <div className="grid gap-3">
                 {currentQuestion.options.map((option, optionIndex) => (
@@ -227,7 +227,8 @@ export default function AdaptivePracticeClient() {
                     type="button"
                     onClick={() => selectAnswer(optionIndex)}
                     disabled={submitting}
-                    className="min-h-11 min-w-11 rounded-2xl border border-white/10 bg-slate-950/70 px-4 py-3 text-left text-sm text-slate-100 hover:border-emerald-500/40 hover:bg-slate-900 disabled:cursor-not-allowed disabled:opacity-60"
+                    className="w-full rounded-2xl border border-white/10 bg-slate-950/70 px-4 py-4 text-left text-base leading-7 text-slate-100 hover:border-emerald-500/40 hover:bg-slate-900 disabled:cursor-not-allowed disabled:opacity-60"
+                    style={{ minHeight: "52px" }}
                   >
                     {option}
                   </button>
@@ -256,6 +257,9 @@ export default function AdaptivePracticeClient() {
                 >
                   <p className="text-xs uppercase tracking-wide text-slate-200">{gap.subject}</p>
                   <h2 className="mt-2 text-xl font-semibold text-slate-100">{gap.strand}</h2>
+                  <p className="mt-2 text-sm leading-7 text-slate-300">
+                    This strand needs extra support. Start with a short practice set and close the gap before your next exam.
+                  </p>
                   <div className="mt-4 grid grid-cols-2 gap-3 text-sm">
                     <div className="rounded-2xl bg-slate-950/60 p-3">
                       <p className="text-xs text-slate-300">Average score</p>
@@ -273,7 +277,7 @@ export default function AdaptivePracticeClient() {
                   <button
                     type="button"
                     onClick={() => startPractice(gap)}
-                    className="mt-5 min-h-11 min-w-11 w-full rounded-2xl bg-emerald-400 px-4 py-3 text-sm font-semibold text-slate-950 hover:bg-emerald-300"
+                    className="ll-touch-target mt-5 w-full rounded-2xl bg-emerald-400 px-4 py-3 text-sm font-semibold text-slate-950 hover:bg-emerald-300"
                   >
                     Start Practice
                   </button>

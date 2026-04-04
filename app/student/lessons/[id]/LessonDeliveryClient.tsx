@@ -306,6 +306,7 @@ export default function LessonDeliveryClient({ lessonId }: { lessonId: string })
   const [tutorMessages, setTutorMessages] = useState<TutorMessage[]>([]);
   const [tutorLoading, setTutorLoading] = useState(false);
   const [currentSection, setCurrentSection] = useState("overview");
+  const [sectionOrder, setSectionOrder] = useState<string[]>(["overview", "lesson-content", "exit-ticket"]);
   const sectionRefs = useRef<Record<string, HTMLElement | null>>({});
   const hasRestoredProgressRef = useRef(false);
 
@@ -352,6 +353,7 @@ export default function LessonDeliveryClient({ lessonId }: { lessonId: string })
   const exitTicketQuestions = lesson?.deliveryProfile?.exitTicket?.questions ?? [];
   const aiTutorEnabled = process.env.NEXT_PUBLIC_ENABLE_AI_TUTOR === "true";
   const lessonProgressKey = useMemo(() => `lesson_progress_${lessonId}`, [lessonId]);
+  const currentSectionIndex = sectionOrder.indexOf(currentSection);
 
   const registerSection = useCallback(
     (sectionId: string) => (node: HTMLElement | null) => {
@@ -369,8 +371,23 @@ export default function LessonDeliveryClient({ lessonId }: { lessonId: string })
     persistLessonProgressState(window.sessionStorage, lessonProgressKey, payload);
   }, [currentSection, lesson, lessonProgressKey]);
 
+  const scrollToSection = useCallback((sectionId: string) => {
+    const target = sectionRefs.current[sectionId];
+    if (!target) return;
+    target.scrollIntoView({ behavior: "smooth", block: "start" });
+    setCurrentSection(sectionId);
+  }, []);
+
   useEffect(() => {
     if (!lesson) return;
+
+    const nextSectionOrder = ["overview", "lesson-content"];
+    if (lesson.objectives.length > 0) nextSectionOrder.push("objectives");
+    if (lesson.pseudoLabs.length > 0) nextSectionOrder.push("lab-activity");
+    if (lesson.simulationDefinitions.length > 0) nextSectionOrder.push("simulations");
+    if (aiTutorEnabled) nextSectionOrder.push("ask-tutor");
+    nextSectionOrder.push("exit-ticket");
+    setSectionOrder(nextSectionOrder);
 
     const observer = new IntersectionObserver(
       (entries) => {
@@ -391,7 +408,7 @@ export default function LessonDeliveryClient({ lessonId }: { lessonId: string })
     });
 
     return () => observer.disconnect();
-  }, [lesson]);
+  }, [aiTutorEnabled, lesson]);
 
   useEffect(() => {
     if (!lesson || typeof window === "undefined" || hasRestoredProgressRef.current) return;
@@ -541,8 +558,8 @@ export default function LessonDeliveryClient({ lessonId }: { lessonId: string })
   }
 
   return (
-    <div className="space-y-6">
-        <section ref={registerSection("overview")} data-section-id="overview" className="rounded-3xl border border-white/10 bg-slate-900/80 p-6 sm:p-7">
+    <div className="space-y-6 pb-28">
+        <section ref={registerSection("overview")} data-section-id="overview" className="rounded-3xl border border-white/10 bg-slate-900/80 p-5 sm:p-7">
           <div className="flex flex-wrap items-center gap-3 text-xs text-slate-200">
             <span className="rounded-full bg-emerald-500/15 px-3 py-1 font-semibold text-emerald-300">{lesson.subject}</span>
             <span>Grade {lesson.grade}</span>
@@ -551,25 +568,52 @@ export default function LessonDeliveryClient({ lessonId }: { lessonId: string })
           <div className="mt-4 flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
             <div>
               <h1 className="text-3xl font-semibold text-white">{lesson.title}</h1>
-              <p className="mt-2 text-sm text-slate-200">Teacher: {lesson.teacherName}</p>
+              <p className="mt-2 text-base text-slate-100">Teacher: {lesson.teacherName}</p>
             </div>
             <div className="rounded-2xl border border-slate-800 bg-slate-950/55 px-4 py-3 text-sm text-slate-200">
               Stay focused on the lesson, then complete the exit ticket at the end.
             </div>
           </div>
+          <div className="mt-5 rounded-2xl border border-white/10 bg-slate-950/70 p-4">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-[0.2em] text-emerald-200">Progress</p>
+                <p className="mt-1 text-sm text-slate-100">
+                  You are currently reading the {currentSection.replace(/-/g, " ")} section.
+                </p>
+              </div>
+              <p className="text-sm text-slate-300">School: {lesson.schoolName}</p>
+            </div>
+            <div className="mt-4 flex flex-wrap gap-2">
+              {sectionOrder.map((sectionId) => (
+                <button
+                  key={sectionId}
+                  type="button"
+                  onClick={() => scrollToSection(sectionId)}
+                  className={`ll-touch-target rounded-full px-4 py-2 text-sm ${
+                    sectionId === currentSection
+                      ? "bg-emerald-400 text-slate-950"
+                      : "border border-slate-700 bg-slate-950/70 text-slate-100"
+                  }`}
+                >
+                  {sectionId.replace(/-/g, " ")}
+                </button>
+              ))}
+            </div>
+          </div>
         </section>
 
-        <section ref={registerSection("lesson-content")} data-section-id="lesson-content" className="rounded-3xl border border-white/10 bg-slate-900/80 p-6 sm:p-7">
+        <section ref={registerSection("lesson-content")} data-section-id="lesson-content" className="rounded-3xl border border-white/10 bg-slate-900/80 p-5 sm:p-7">
           <div
-            className="prose prose-invert max-w-none prose-headings:text-white prose-p:text-slate-100 prose-li:text-slate-100"
+            className="prose prose-invert max-w-[680px] prose-headings:text-white prose-p:text-slate-100 prose-p:text-[1rem] prose-p:leading-8 prose-li:text-slate-100 prose-li:text-[1rem] prose-li:leading-8"
             dangerouslySetInnerHTML={{ __html: renderSimpleMarkdown(renderedBody) }}
           />
         </section>
 
         {lesson.objectives.length > 0 ? (
-          <section ref={registerSection("objectives")} data-section-id="objectives" className="rounded-3xl border border-white/10 bg-slate-900/80 p-6 sm:p-7">
+          <section ref={registerSection("objectives")} data-section-id="objectives" className="rounded-3xl border border-white/10 bg-slate-900/80 p-5 sm:p-7">
             <h2 className="text-lg font-semibold text-white">Lesson Objectives</h2>
-            <ul className="mt-4 space-y-2 text-sm text-slate-100">
+            <ul className="mt-4 space-y-3 text-base text-slate-100">
               {lesson.objectives.map((objective, index) => (
                 <li key={`${objective}-${index}`} className="rounded-2xl border border-slate-800 bg-slate-950/60 px-4 py-3">
                   {objective}
@@ -580,7 +624,7 @@ export default function LessonDeliveryClient({ lessonId }: { lessonId: string })
         ) : null}
 
       {lesson.pseudoLabs.length > 0 ? (
-        <section ref={registerSection("lab-activity")} data-section-id="lab-activity" className="rounded-3xl border border-white/10 bg-slate-900/80 p-6 sm:p-7">
+        <section ref={registerSection("lab-activity")} data-section-id="lab-activity" className="rounded-3xl border border-white/10 bg-slate-900/80 p-5 sm:p-7">
           <h2 className="text-lg font-semibold text-white">Lab Activity</h2>
           <div className="mt-4 space-y-4">
             {lesson.pseudoLabs.map((lab) => (
@@ -635,7 +679,7 @@ export default function LessonDeliveryClient({ lessonId }: { lessonId: string })
       ) : null}
 
       {lesson.simulationDefinitions.length > 0 ? (
-        <section ref={registerSection("simulations")} data-section-id="simulations" className="rounded-3xl border border-white/10 bg-slate-900/80 p-6 sm:p-7">
+        <section ref={registerSection("simulations")} data-section-id="simulations" className="rounded-3xl border border-white/10 bg-slate-900/80 p-5 sm:p-7">
           <h2 className="text-lg font-semibold text-white">Interactive Simulation</h2>
           <div className="mt-4 space-y-4">
             {lesson.simulationDefinitions.map((definition) => (
@@ -646,19 +690,19 @@ export default function LessonDeliveryClient({ lessonId }: { lessonId: string })
       ) : null}
 
       {aiTutorEnabled ? (
-        <section ref={registerSection("ask-tutor")} data-section-id="ask-tutor" className="rounded-3xl border border-white/10 bg-slate-900/80 p-6 sm:p-7">
+        <section ref={registerSection("ask-tutor")} data-section-id="ask-tutor" className="rounded-3xl border border-white/10 bg-slate-900/80 p-5 sm:p-7">
           <h2 className="text-lg font-semibold text-white">Ask a question about this lesson</h2>
           <form className="mt-4 space-y-3" onSubmit={handleTutorSubmit}>
             <textarea
               value={tutorQuestion}
               onChange={(event) => setTutorQuestion(event.target.value)}
-              className="min-h-24 w-full rounded-2xl border border-slate-700 bg-slate-950/80 px-4 py-3 text-sm text-slate-50 outline-none focus:border-emerald-400 focus:ring-1 focus:ring-emerald-400/60"
+              className="min-h-28 w-full rounded-2xl border border-slate-700 bg-slate-950/80 px-4 py-3 text-base leading-7 text-slate-50 outline-none focus:border-emerald-400 focus:ring-1 focus:ring-emerald-400/60"
               placeholder="Ask for help with the lesson..."
             />
             <button
               type="submit"
               disabled={tutorLoading || !tutorQuestion.trim()}
-              className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-full bg-emerald-400 px-5 text-sm font-semibold text-slate-950 disabled:cursor-not-allowed disabled:bg-slate-700 disabled:text-slate-400"
+              className="ll-touch-target inline-flex items-center justify-center rounded-full bg-emerald-400 px-5 text-sm font-semibold text-slate-950 disabled:cursor-not-allowed disabled:bg-slate-700 disabled:text-slate-400"
             >
               {tutorLoading ? "Asking..." : "Ask Tutor"}
             </button>
@@ -669,7 +713,7 @@ export default function LessonDeliveryClient({ lessonId }: { lessonId: string })
               {tutorMessages.map((message, index) => (
                 <div
                   key={`${message.role}-${index}`}
-                  className={`rounded-2xl px-4 py-3 text-sm ${
+                  className={`rounded-2xl px-4 py-3 text-base leading-7 ${
                     message.role === "student" ? "bg-slate-950/80 text-slate-200" : "bg-emerald-500/10 text-emerald-100"
                   }`}
                 >
@@ -681,16 +725,16 @@ export default function LessonDeliveryClient({ lessonId }: { lessonId: string })
         </section>
       ) : null}
 
-        <section ref={registerSection("exit-ticket")} data-section-id="exit-ticket" className="rounded-3xl border border-white/10 bg-slate-900/80 p-6 sm:p-7">
+        <section ref={registerSection("exit-ticket")} data-section-id="exit-ticket" className="rounded-3xl border border-white/10 bg-slate-900/80 p-5 sm:p-7">
           <h2 className="text-lg font-semibold text-white">Exit Ticket</h2>
           <div className="mt-4 space-y-5">
             {exitTicketQuestions.map((question, index) => (
               <div key={`${question.question}-${index}`} className="rounded-2xl border border-slate-800 bg-slate-950/60 p-4">
-                <p className="text-sm font-medium text-slate-50">{question.question}</p>
+                <p className="text-base font-medium leading-7 text-slate-50">{question.question}</p>
                 {question.type === "mcq" ? (
                   <div className="mt-3 space-y-2">
                     {(question.choices ?? []).map((choice, choiceIndex) => (
-                      <label key={`${choice}-${choiceIndex}`} className="flex min-h-11 items-center gap-3 rounded-xl border border-slate-800 px-3 py-3 text-sm text-slate-100">
+                      <label key={`${choice}-${choiceIndex}`} className="flex min-h-12 items-center gap-3 rounded-xl border border-slate-800 px-4 py-3 text-base text-slate-100">
                         <input
                           type="radio"
                           name={`exit-ticket-${index}`}
@@ -706,7 +750,7 @@ export default function LessonDeliveryClient({ lessonId }: { lessonId: string })
                   <textarea
                     value={answers[index] ?? ""}
                     onChange={(event) => setAnswers((current) => ({ ...current, [index]: event.target.value }))}
-                    className="mt-3 min-h-24 w-full rounded-2xl border border-slate-700 bg-slate-950/80 px-4 py-3 text-sm text-slate-50 outline-none focus:border-emerald-400 focus:ring-1 focus:ring-emerald-400/60"
+                    className="mt-3 min-h-28 w-full rounded-2xl border border-slate-700 bg-slate-950/80 px-4 py-3 text-base leading-7 text-slate-50 outline-none focus:border-emerald-400 focus:ring-1 focus:ring-emerald-400/60"
                     placeholder="Write your answer here"
                   />
                 )}
@@ -714,17 +758,52 @@ export default function LessonDeliveryClient({ lessonId }: { lessonId: string })
             ))}
           </div>
 
-          <button
-            type="button"
-            onClick={handleSubmitExitTicket}
-            disabled={submitting || lesson.status === "completed"}
-            className="mt-6 inline-flex min-h-12 min-w-11 items-center justify-center rounded-full bg-emerald-400 px-6 text-sm font-semibold text-slate-950 disabled:cursor-not-allowed disabled:bg-slate-700 disabled:text-slate-400"
-          >
-            {lesson.status === "completed" ? "Lesson already completed" : submitting ? "Submitting..." : "Submit"}
-          </button>
-
           {submitMessage ? <p className="mt-3 text-sm text-slate-300">{submitMessage}</p> : null}
         </section>
+        <div className="sticky bottom-3 z-10">
+          <div className="rounded-3xl border border-white/10 bg-slate-950/95 p-3 shadow-2xl shadow-black/40 backdrop-blur">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-[0.2em] text-emerald-200">Section navigation</p>
+                <p className="mt-1 text-sm text-slate-200">
+                  {currentSectionIndex + 1} of {sectionOrder.length}
+                </p>
+              </div>
+              <div className="grid grid-cols-1 gap-2 sm:flex">
+                <button
+                  type="button"
+                  onClick={() => {
+                    const previousSection = sectionOrder[Math.max(0, currentSectionIndex - 1)];
+                    if (previousSection) scrollToSection(previousSection);
+                  }}
+                  disabled={currentSectionIndex <= 0}
+                  className="ll-touch-target rounded-2xl border border-slate-700 px-4 py-3 text-sm text-slate-100 disabled:opacity-40"
+                >
+                  Back
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    const nextSection = sectionOrder[Math.min(sectionOrder.length - 1, currentSectionIndex + 1)];
+                    if (nextSection) scrollToSection(nextSection);
+                  }}
+                  disabled={currentSectionIndex >= sectionOrder.length - 1}
+                  className="ll-touch-target rounded-2xl bg-cyan-400 px-4 py-3 text-sm font-semibold text-slate-950 disabled:opacity-40"
+                >
+                  Next
+                </button>
+                <button
+                  type="button"
+                  onClick={handleSubmitExitTicket}
+                  disabled={submitting || lesson.status === "completed"}
+                  className="ll-touch-target rounded-2xl bg-emerald-400 px-5 py-3 text-sm font-semibold text-slate-950 disabled:cursor-not-allowed disabled:bg-slate-700 disabled:text-slate-400"
+                >
+                  {lesson.status === "completed" ? "Lesson already completed" : submitting ? "Submitting..." : "Submit exit ticket"}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
     </div>
   );
 }

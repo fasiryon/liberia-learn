@@ -6,10 +6,10 @@
 SPRINT 8 - Mobile UX Polish
 
 ## Branch
-main
+feat/mobile-ux-polish
 
 ## Status
-SPRINT 7 COMPLETE
+SPRINT 8 COMPLETE
 
 ## Completed Sprints
 Sprint 0 - Repo Hygiene
@@ -32,14 +32,14 @@ Sprint 3 - Environment Separation
 | 5 | Governance Audit Pack | COMPLETE | adf7045 | 2026-04-03 |
 | 6 | Scale + Incident | COMPLETE | f7f4ce6 | 2026-04-03 |
 | 7 | Product Metrics | COMPLETE | 26242e1 | 2026-04-03 |
-| 8 | Mobile UX Polish | NOT STARTED | - | - |
+| 8 | Mobile UX Polish | COMPLETE | pending-merge | 2026-04-03 |
 | 9 | Executive Architecture | NOT STARTED | - | - |
 
 ## Current Phase
-Sprint 7 merged to `main`; Sprint 8 is next and not yet started
+Sprint 8 validated on `feat/mobile-ux-polish`; merge back to `main` is next
 
 ## Last Successful Validation
-2026-04-03: `npx tsc --noEmit` PASS; `npx vitest run` PASS (1577 passing, 214 test files); `npm run build` PASS
+2026-04-03: `npx tsc --noEmit` PASS; `npx vitest run --reporter=dot` PASS (1577 passing, 214 test files); `npm run build` PASS
 
 ## Last Test Count
 1577 passing, 214 test files
@@ -48,18 +48,17 @@ Sprint 7 merged to `main`; Sprint 8 is next and not yet started
 None
 
 ## Files Changed This Session
-__tests__/exam.moe.dashboard.test.ts
-__tests__/product.metrics.route.test.ts
-app/admin/metrics/page.tsx
-app/api/admin/metrics/product/route.ts
-app/api/moe/dashboard/route.ts
-app/moe/dashboard/page.tsx
-components/admin/AdminNav.tsx
+app/dashboard/page.tsx
+app/globals.css
+app/guardian/GuardianDashboardClient.tsx
+app/student/adaptive/AdaptivePracticeClient.tsx
+app/student/exams/[examId]/StudentExamSessionClient.tsx
+app/student/lessons/[id]/LessonDeliveryClient.tsx
+app/teacher/dashboard/page.tsx
 docs/roadmaps/CURRENT_EXECUTION_STATE.md
-lib/reporting/productMetrics.ts
 
 ## Next Step
-Create `feat/mobile-ux-polish` from `main`, inspect the student, teacher, guardian, and global CSS mobile surfaces, then execute Sprint 8.
+Merge `feat/mobile-ux-polish` back to `main`, push, then start Sprint 9 on `feat/executive-architecture`.
 
 ## Notes
-Sprint 7 added a shared product metrics aggregator, a new admin metrics API and page, and a National Outcomes section on the MOE dashboard. The MOE route now reuses the same metrics layer, and the helper was hardened to tolerate reduced Prisma mocks used by the repo's final-gate suites without changing production behavior.
+Sprint 8 raised the mobile baseline, moved the student primary work action above the fold, added sticky lesson navigation, made exam answer targets and submit confirmation safer on phones, and improved teacher and guardian mobile readability.

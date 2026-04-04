@@ -74,6 +74,7 @@ export default function StudentExamSessionClient({ examId }: { examId: string })
   const [submitting, setSubmitting] = useState(false);
   const [result, setResult] = useState<SubmitPayload | null>(null);
   const [startedAt, setStartedAt] = useState<string | null>(null);
+  const [confirmingSubmit, setConfirmingSubmit] = useState(false);
   const flagsRef = useRef<Set<string>>(new Set());
   const restoredSessionRef = useRef<PersistedExamSession | null>(null);
   const sessionKey = useMemo(() => `exam_session_${examId}`, [examId]);
@@ -216,6 +217,7 @@ export default function StudentExamSessionClient({ examId }: { examId: string })
   const seconds = remainingSeconds % 60;
   const scorePct = result ? Math.round(result.score * 100) : null;
   const canSubmit = useMemo(() => answers.every((answer) => answer >= 0), [answers]);
+  const selectedAnswer = question ? answers[currentIndex] : -1;
 
   if (loading) {
     return (
@@ -282,7 +284,8 @@ export default function StudentExamSessionClient({ examId }: { examId: string })
               <h1 className="mt-2 text-2xl font-semibold text-white">{session?.title}</h1>
             </div>
             <div className="rounded-2xl border border-amber-400/30 bg-amber-500/10 px-4 py-2 text-sm text-amber-100">
-              Time left: {minutes}:{seconds.toString().padStart(2, "0")}
+              <p className="text-xs uppercase tracking-[0.2em] text-amber-200">Time left</p>
+              <p className="mt-1 text-lg font-semibold">{minutes}:{seconds.toString().padStart(2, "0")}</p>
             </div>
           </div>
           <div className="mt-4 h-2 rounded-full bg-white/10">
@@ -316,22 +319,33 @@ export default function StudentExamSessionClient({ examId }: { examId: string })
                       return next;
                     });
                   }}
-                  className={`min-h-11 min-w-11 w-full rounded-2xl border px-4 py-3 text-left text-sm ${
-                    answers[currentIndex] === optionIndex
-                      ? "border-emerald-400/40 bg-emerald-500/10 text-emerald-100"
+                  className={`w-full rounded-2xl border px-4 py-4 text-left text-base leading-7 ${
+                    selectedAnswer === optionIndex
+                      ? "border-emerald-300 bg-emerald-500/15 text-emerald-50 ring-2 ring-emerald-300/60"
                       : "border-white/10 bg-white/5 text-slate-100"
                   }`}
+                  style={{ minHeight: "52px" }}
                 >
-                  {option}
+                  <div className="flex items-start justify-between gap-3">
+                    <span>{option}</span>
+                    {selectedAnswer === optionIndex ? (
+                      <span className="rounded-full bg-emerald-300 px-2 py-1 text-xs font-semibold text-slate-950">
+                        Selected
+                      </span>
+                    ) : null}
+                  </div>
                 </button>
               ))}
+            </div>
+            <div className="rounded-2xl border border-white/10 bg-slate-950/55 px-4 py-3 text-sm text-slate-200">
+              {selectedAnswer >= 0 ? "Answer selected. Review once more, then continue." : "Choose one answer before moving on."}
             </div>
             <div className="flex flex-wrap justify-between gap-3">
               <button
                 type="button"
                 onClick={() => setCurrentIndex((prev) => Math.max(0, prev - 1))}
                 disabled={currentIndex === 0}
-                className="min-h-11 min-w-11 rounded-2xl border border-white/10 px-4 py-2 text-sm text-slate-100 disabled:opacity-40"
+                className="ll-touch-target rounded-2xl border border-white/10 px-4 py-2 text-sm text-slate-100 disabled:opacity-40"
               >
                 Previous
               </button>
@@ -344,7 +358,7 @@ export default function StudentExamSessionClient({ examId }: { examId: string })
                         Math.min((session?.questions.length ?? 1) - 1, prev + 1)
                       )
                     }
-                    className="min-h-11 min-w-11 rounded-2xl bg-cyan-500 px-4 py-2 text-sm font-semibold text-slate-950"
+                    className="ll-touch-target rounded-2xl bg-cyan-500 px-4 py-2 text-sm font-semibold text-slate-950"
                   >
                     Next
                   </button>
@@ -352,8 +366,8 @@ export default function StudentExamSessionClient({ examId }: { examId: string })
                 <button
                   type="button"
                   disabled={!canSubmit || submitting}
-                  onClick={() => void submitExam()}
-                  className="min-h-11 min-w-11 rounded-2xl bg-emerald-500 px-4 py-2 text-sm font-semibold text-slate-950 disabled:opacity-50"
+                  onClick={() => setConfirmingSubmit(true)}
+                  className="ll-touch-target rounded-2xl bg-emerald-500 px-5 py-3 text-sm font-semibold text-slate-950 disabled:opacity-50"
                 >
                   {submitting ? "Submitting..." : "Submit Exam"}
                 </button>
@@ -362,6 +376,35 @@ export default function StudentExamSessionClient({ examId }: { examId: string })
           </div>
         ) : null}
       </div>
+      {confirmingSubmit ? (
+        <div className="fixed inset-0 z-20 flex items-end justify-center bg-slate-950/80 px-4 py-6 sm:items-center">
+          <div className="w-full max-w-md rounded-3xl border border-white/10 bg-slate-900 p-6 shadow-2xl">
+            <h2 className="text-xl font-semibold text-white">Submit exam?</h2>
+            <p className="mt-3 text-sm leading-7 text-slate-200">
+              You are about to submit your answers for grading. Check that every question is complete before you continue.
+            </p>
+            <div className="mt-5 flex flex-col gap-3 sm:flex-row sm:justify-end">
+              <button
+                type="button"
+                onClick={() => setConfirmingSubmit(false)}
+                className="ll-touch-target rounded-2xl border border-white/10 px-4 py-3 text-sm text-slate-100"
+              >
+                Review answers
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setConfirmingSubmit(false);
+                  void submitExam();
+                }}
+                className="ll-touch-target rounded-2xl bg-emerald-500 px-5 py-3 text-sm font-semibold text-slate-950"
+              >
+                Confirm submit
+              </button>
+            </div>
+          </div>
+        </div>
+      ) : null}
     </main>
   );
 }
