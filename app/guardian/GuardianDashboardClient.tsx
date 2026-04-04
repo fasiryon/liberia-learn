@@ -150,7 +150,7 @@ export default function GuardianDashboardClient() {
       <div className="mx-auto max-w-6xl space-y-6">
         <div>
           <h1 className="text-2xl font-bold text-slate-50">Guardian Dashboard</h1>
-          <p className="mt-1 text-sm text-slate-400">
+          <p className="mt-1 text-sm text-slate-300">
             Monitor your child&apos;s learning progress and stay connected with their teacher.
           </p>
         </div>
@@ -199,7 +199,10 @@ export default function GuardianDashboardClient() {
             <section className="rounded-3xl border border-white/10 bg-slate-900/70 p-6">
               <div className="flex flex-wrap items-start justify-between gap-4">
                 <div>
-                  <h2 className="text-xl font-semibold text-slate-50">
+                  <p className="text-xs font-semibold uppercase tracking-[0.2em] text-emerald-200">
+                    Child overview
+                  </p>
+                  <h2 className="mt-2 text-3xl font-semibold text-slate-50">
                     {selectedDashboardChild.studentName}
                   </h2>
                   <p className="mt-1 text-sm text-slate-400">
@@ -214,7 +217,31 @@ export default function GuardianDashboardClient() {
                 </div>
               </div>
 
-              <div className="mt-5 grid gap-4 md:grid-cols-4">
+              <div className="mt-5 grid gap-4 lg:grid-cols-[1.4fr_1fr]">
+                <div className="rounded-3xl border border-emerald-500/20 bg-emerald-500/10 p-5">
+                  <p className="text-xs font-semibold uppercase tracking-[0.2em] text-emerald-200">Progress at a glance</p>
+                  <div className="mt-4 grid gap-4 sm:grid-cols-3">
+                    <div className="rounded-2xl bg-slate-950/70 p-4">
+                      <p className="text-xs text-slate-400">Attendance</p>
+                      <p className="mt-2 text-2xl font-semibold text-slate-100">
+                        {Math.round(selectedDashboardChild.attendance.attendanceRate * 100)}%
+                      </p>
+                    </div>
+                    <div className="rounded-2xl bg-slate-950/70 p-4">
+                      <p className="text-xs text-slate-400">Lessons this week</p>
+                      <p className="mt-2 text-2xl font-semibold text-slate-100">
+                        {selectedSummary.lessonViewsThisWeek}
+                      </p>
+                    </div>
+                    <div className="rounded-2xl bg-slate-950/70 p-4">
+                      <p className="text-xs text-slate-400">Placement band</p>
+                      <p className="mt-2 text-2xl font-semibold text-slate-100">
+                        {selectedSummary.placement?.band?.replace("_", "-") ?? "Pending"}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-1">
                 <div className="rounded-2xl bg-slate-950/70 p-4">
                   <p className="text-xs text-slate-500">Last homework</p>
                   <p className="mt-2 text-sm font-semibold text-slate-100">
@@ -249,10 +276,11 @@ export default function GuardianDashboardClient() {
                   </p>
                   <Link
                     href="/guardian/messages"
-                    className="mt-3 inline-flex rounded-full bg-emerald-500 px-3 py-1.5 text-xs font-semibold text-slate-950"
+                    className="ll-touch-target mt-3 inline-flex items-center rounded-full bg-emerald-500 px-4 py-2 text-xs font-semibold text-slate-950"
                   >
                     Open Messages
                   </Link>
+                </div>
                 </div>
               </div>
             </section>

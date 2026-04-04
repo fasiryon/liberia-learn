@@ -50,7 +50,7 @@ export default function TeacherDashboardPage() {
       <div className="mx-auto max-w-4xl space-y-6">
         <div>
           <h1 className="text-2xl font-bold">Teacher Dashboard</h1>
-          <p className="text-sm text-slate-400 mt-1">
+          <p className="mt-1 text-sm text-slate-300">
             {new Date().toLocaleDateString("en-LR", { weekday: "long", month: "long", day: "numeric" })}
           </p>
         </div>
@@ -87,9 +87,12 @@ export default function TeacherDashboardPage() {
             </div>
 
             {adaptiveEnabled && (
-              <section className="rounded-2xl border border-white/10 bg-slate-900/70 p-5">
+              <section className="rounded-3xl border border-amber-400/20 bg-gradient-to-br from-amber-500/10 to-slate-900/80 p-5">
                 <div className="mb-4 flex items-center justify-between gap-3">
-                  <h2 className="text-sm font-semibold text-slate-300">Adaptive Learning</h2>
+                  <div>
+                    <h2 className="text-base font-semibold text-slate-100">Students Needing Extra Support</h2>
+                    <p className="mt-1 text-sm text-slate-300">Use this section first when deciding who needs intervention today.</p>
+                  </div>
                   <span className="text-xs text-emerald-300">Closed-loop mastery</span>
                 </div>
                 <div className="grid gap-3 md:grid-cols-4">
@@ -97,19 +100,19 @@ export default function TeacherDashboardPage() {
                     <p className="text-2xl font-bold text-emerald-400">
                       {data?.adaptiveStats?.studentsWithGaps ?? 0}
                     </p>
-                    <p className="text-xs text-slate-400">Students with gaps</p>
+                    <p className="text-sm text-slate-300">Students with gaps</p>
                   </div>
                   <div className="rounded-xl bg-slate-950/50 p-4">
                     <p className="text-2xl font-bold text-amber-300">
                       {data?.adaptiveStats?.totalGapsDetected ?? 0}
                     </p>
-                    <p className="text-xs text-slate-400">Total gaps detected</p>
+                    <p className="text-sm text-slate-300">Total gaps detected</p>
                   </div>
                   <div className="rounded-xl bg-slate-950/50 p-4">
                     <p className="text-2xl font-bold text-cyan-300">
                       {data?.adaptiveStats?.avgMasteryScore ?? 0}
                     </p>
-                    <p className="text-xs text-slate-400">Average mastery score</p>
+                    <p className="text-sm text-slate-300">Average mastery score</p>
                   </div>
                   <div className="rounded-xl bg-slate-950/50 p-4">
                     <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
@@ -131,22 +134,22 @@ export default function TeacherDashboardPage() {
 
             {/* Quick actions */}
             <div className="grid grid-cols-2 gap-3 md:grid-cols-5">
-              <Link href="/teacher/create-lesson" className="rounded-2xl border border-white/10 bg-slate-900/70 p-4 text-center hover:border-emerald-500/30">
+              <Link href="/teacher/create-lesson" className="ll-touch-target rounded-2xl border border-white/10 bg-slate-900/70 p-4 text-center hover:border-emerald-500/30">
                 <p className="text-sm font-semibold text-emerald-400">Create with AI</p>
               </Link>
-              <Link href="/teacher/students" className="rounded-2xl border border-white/10 bg-slate-900/70 p-4 text-center hover:border-emerald-500/30">
+              <Link href="/teacher/students" className="ll-touch-target rounded-2xl border border-white/10 bg-slate-900/70 p-4 text-center hover:border-emerald-500/30">
                 <p className="text-sm font-semibold text-violet-400">View Students</p>
               </Link>
-              <Link href="/teacher/schedule" className="rounded-2xl border border-white/10 bg-slate-900/70 p-4 text-center hover:border-emerald-500/30">
+              <Link href="/teacher/schedule" className="ll-touch-target rounded-2xl border border-white/10 bg-slate-900/70 p-4 text-center hover:border-emerald-500/30">
                 <p className="text-sm font-semibold text-amber-400">Schedule Work</p>
               </Link>
-              <Link href="/teacher/curriculum" className="rounded-2xl border border-white/10 bg-slate-900/70 p-4 text-center hover:border-emerald-500/30">
+              <Link href="/teacher/curriculum" className="ll-touch-target rounded-2xl border border-white/10 bg-slate-900/70 p-4 text-center hover:border-emerald-500/30">
                 <p className="text-sm font-semibold text-sky-400">Curriculum</p>
               </Link>
-              <Link href="/teacher/labs" className="rounded-2xl border border-white/10 bg-slate-900/70 p-4 text-center hover:border-emerald-500/30">
+              <Link href="/teacher/labs" className="ll-touch-target rounded-2xl border border-white/10 bg-slate-900/70 p-4 text-center hover:border-emerald-500/30">
                 <p className="text-sm font-semibold text-cyan-400">Review Labs</p>
               </Link>
-              <Link href="/teacher/assignments" className="rounded-2xl border border-white/10 bg-slate-900/70 p-4 text-center hover:border-emerald-500/30">
+              <Link href="/teacher/assignments" className="ll-touch-target rounded-2xl border border-white/10 bg-slate-900/70 p-4 text-center hover:border-emerald-500/30">
                 <p className="text-sm font-semibold text-amber-300">Grade Assignments</p>
               </Link>
             </div>
