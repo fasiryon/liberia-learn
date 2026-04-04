@@ -3,10 +3,10 @@
 # Never edit manually unless correcting an error.
 
 ## Active Sprint
-SPRINT 8 - Mobile UX Polish
+SPRINT 9 - Executive Architecture Narrative
 
 ## Branch
-feat/mobile-ux-polish
+main
 
 ## Status
 SPRINT 8 COMPLETE
@@ -32,11 +32,11 @@ Sprint 3 - Environment Separation
 | 5 | Governance Audit Pack | COMPLETE | adf7045 | 2026-04-03 |
 | 6 | Scale + Incident | COMPLETE | f7f4ce6 | 2026-04-03 |
 | 7 | Product Metrics | COMPLETE | 26242e1 | 2026-04-03 |
-| 8 | Mobile UX Polish | COMPLETE | pending-merge | 2026-04-03 |
+| 8 | Mobile UX Polish | COMPLETE | f27f403 | 2026-04-03 |
 | 9 | Executive Architecture | NOT STARTED | - | - |
 
 ## Current Phase
-Sprint 8 validated on `feat/mobile-ux-polish`; merge back to `main` is next
+Sprint 8 merged to `main`; Sprint 9 is next
 
 ## Last Successful Validation
 2026-04-03: `npx tsc --noEmit` PASS; `npx vitest run --reporter=dot` PASS (1577 passing, 214 test files); `npm run build` PASS
@@ -58,7 +58,7 @@ app/teacher/dashboard/page.tsx
 docs/roadmaps/CURRENT_EXECUTION_STATE.md
 
 ## Next Step
-Merge `feat/mobile-ux-polish` back to `main`, push, then start Sprint 9 on `feat/executive-architecture`.
+Create `feat/executive-architecture` from `main`, inspect README/docs/schema counts, then execute Sprint 9.
 
 ## Notes
 Sprint 8 raised the mobile baseline, moved the student primary work action above the fold, added sticky lesson navigation, made exam answer targets and submit confirmation safer on phones, and improved teacher and guardian mobile readability.
