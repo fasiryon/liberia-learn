@@ -10,6 +10,7 @@ import { logAudit } from "@/lib/audit";
 import { prisma } from "@/lib/db";
 import { withRequestLogging } from "@/lib/logging/requestLogger";
 import { handleApiError } from "@/lib/errors/apiErrorHandler";
+import { getProductMetricsDashboard } from "@/lib/reporting/productMetrics";
 
 export const dynamic = "force-dynamic";
 
@@ -76,6 +77,7 @@ async function dashboardGET() {
       scheduledWorkDelivered,
       interventionCount,
       examStats,
+      productMetrics,
     ] = await Promise.all([
       prisma.school.count(),
       prisma.district.count(),
@@ -86,6 +88,7 @@ async function dashboardGET() {
         where: { generatedAt: { gte: thirtyDaysAgo } },
       }),
       getExamStats(),
+      getProductMetricsDashboard({ period: "30d", schoolId: null }),
     ]);
 
     const deliveryRate =
@@ -133,6 +136,16 @@ async function dashboardGET() {
           attempts: bucket.attempts,
           passRate: bucket.attempts > 0 ? Math.round((bucket.passed / bucket.attempts) * 10000) / 100 : 0,
         })),
+      },
+      productMetrics: {
+        nationalLessonCompletionRate:
+          productMetrics.nationalOutcomes?.nationalLessonCompletionRate ?? 0,
+        nationalExamPassRate: productMetrics.nationalOutcomes?.nationalExamPassRate ?? 0,
+        nationalGuardianEngagementRate:
+          productMetrics.nationalOutcomes?.nationalGuardianEngagementRate ?? 0,
+        interventionImpactRate: productMetrics.nationalOutcomes?.interventionImpactRate ?? 0,
+        topPerformingDistricts: productMetrics.nationalOutcomes?.topPerformingDistricts ?? [],
+        lowestPerformingDistricts: productMetrics.nationalOutcomes?.lowestPerformingDistricts ?? [],
       },
     });
   } catch (err: unknown) {

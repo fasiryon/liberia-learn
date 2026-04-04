@@ -12,10 +12,14 @@ const mockExamCount = vi.hoisted(() => vi.fn());
 const mockExamAttemptFindMany = vi.hoisted(() => vi.fn());
 const mockExamCertificationCount = vi.hoisted(() => vi.fn());
 const mockExamAttemptCount = vi.hoisted(() => vi.fn());
+const mockGetProductMetricsDashboard = vi.hoisted(() => vi.fn());
 
 vi.mock("@/lib/auth", () => ({ requireUser: mockRequireUser }));
 vi.mock("@/lib/serverFlags", () => ({ isMoePortalEnabled: mockIsMoePortalEnabled }));
 vi.mock("@/lib/audit", () => ({ logAudit: mockLogAudit }));
+vi.mock("@/lib/reporting/productMetrics", () => ({
+  getProductMetricsDashboard: mockGetProductMetricsDashboard,
+}));
 vi.mock("@/lib/db", () => ({
   prisma: {
     school: { count: mockSchoolCount },
@@ -46,6 +50,16 @@ describe("MOE dashboard examStats", () => {
     mockExamCertificationCount.mockResolvedValue(0);
     mockExamAttemptCount.mockResolvedValue(0);
     mockLogAudit.mockResolvedValue(undefined);
+    mockGetProductMetricsDashboard.mockResolvedValue({
+      nationalOutcomes: {
+        nationalLessonCompletionRate: 81,
+        nationalExamPassRate: 68,
+        nationalGuardianEngagementRate: 24,
+        interventionImpactRate: 52,
+        topPerformingDistricts: [{ districtId: "d1", districtName: "Montserrado", compositeScore: 88 }],
+        lowestPerformingDistricts: [{ districtId: "d2", districtName: "Grand Bassa", compositeScore: 41 }],
+      },
+    });
   });
 
   it("examStats returns zeros when no exams exist", async () => {
@@ -97,5 +111,18 @@ describe("MOE dashboard examStats", () => {
     expect(serialized).not.toContain("studentId");
     expect(serialized).not.toContain("email");
     expect(serialized).not.toContain("name");
+  });
+
+  it("includes national product metrics", async () => {
+    const res = await GET();
+    const body = await res.json();
+
+    expect(body.productMetrics).toMatchObject({
+      nationalLessonCompletionRate: 81,
+      nationalExamPassRate: 68,
+      nationalGuardianEngagementRate: 24,
+      interventionImpactRate: 52,
+    });
+    expect(body.productMetrics.topPerformingDistricts[0].districtName).toBe("Montserrado");
   });
 });
