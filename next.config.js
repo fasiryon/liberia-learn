@@ -2,8 +2,8 @@ const { withSentryConfig } = require("@sentry/nextjs");
 
 // Validate required env vars at build time.
 if (process.env.NEXT_PHASE !== "phase-development-server" && process.env.SKIP_ENV_VALIDATION !== "true") {
-  const { validateEnv } = require("./lib/validateEnv.shared.js");
-  validateEnv();
+  const { validateBuildEnv } = require("./lib/validateEnv.shared.js");
+  validateBuildEnv();
 }
 
 /** @type {import('next').NextConfig} */
