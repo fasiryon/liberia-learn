@@ -3,13 +3,13 @@
 # Never edit manually unless correcting an error.
 
 ## Active Sprint
-SPRINT 7 - Product Metrics
+SPRINT 8 - Mobile UX Polish
 
 ## Branch
-main
+feat/product-metrics
 
 ## Status
-SPRINT 6 COMPLETE
+SPRINT 7 COMPLETE
 
 ## Completed Sprints
 Sprint 0 - Repo Hygiene
@@ -31,30 +31,35 @@ Sprint 3 - Environment Separation
 | 4 | Curriculum Completion | COMPLETE | f6ecd97 | 2026-04-03 |
 | 5 | Governance Audit Pack | COMPLETE | adf7045 | 2026-04-03 |
 | 6 | Scale + Incident | COMPLETE | f7f4ce6 | 2026-04-03 |
-| 7 | Product Metrics | NOT STARTED | - | - |
+| 7 | Product Metrics | COMPLETE | pending-commit | 2026-04-03 |
 | 8 | Mobile UX Polish | NOT STARTED | - | - |
 | 9 | Executive Architecture | NOT STARTED | - | - |
 
 ## Current Phase
-Sprint 6 merged to `main`; Sprint 7 has not started yet
+Sprint 7 validated on `feat/product-metrics`; ready to commit, merge to `main`, and start Sprint 8
 
 ## Last Successful Validation
-2026-04-03: `npx tsc --noEmit` PASS; `npx vitest run --reporter=dot` PASS (1572 passing, 213 test files); `npm run build` PASS
+2026-04-03: `npx tsc --noEmit` PASS; `npx vitest run` PASS (1577 passing, 214 test files); `npm run build` PASS
 
 ## Last Test Count
-1572 passing, 213 test files
+1577 passing, 214 test files
 
 ## Current Blocker
 None
 
 ## Files Changed This Session
-docs/ops/DATABASE_SCALING.md
-docs/ops/INCIDENT_RESPONSE.md
-docs/ops/SCALE_READINESS.md
+__tests__/exam.moe.dashboard.test.ts
+__tests__/product.metrics.route.test.ts
+app/admin/metrics/page.tsx
+app/api/admin/metrics/product/route.ts
+app/api/moe/dashboard/route.ts
+app/moe/dashboard/page.tsx
+components/admin/AdminNav.tsx
 docs/roadmaps/CURRENT_EXECUTION_STATE.md
+lib/reporting/productMetrics.ts
 
 ## Next Step
-Create `feat/product-metrics` from `main`, then inspect `prisma/schema.prisma`, `app/api/moe/dashboard/route.ts`, and `lib/intelligence/` to begin Sprint 7.
+Commit Sprint 7 with `feat(metrics): product metrics API, admin metrics page, national outcomes for MOE, trend indicators`, merge `feat/product-metrics` into `main`, push `main`, then create `feat/mobile-ux-polish` for Sprint 8.
 
 ## Notes
-Sprint 6 added scale readiness, incident response, and database scaling runbooks using the in-repo load harness and existing deployment guidance. The worker retry, shutdown, and structured logging requirements were re-inspected and already satisfied by `worker/index.ts`, so no code change was needed there.
+Sprint 7 added a shared product metrics aggregator, a new admin metrics API and page, and a National Outcomes section on the MOE dashboard. The MOE route now reuses the same metrics layer, and the helper was hardened to tolerate reduced Prisma mocks used by the repo's final-gate suites without changing production behavior.

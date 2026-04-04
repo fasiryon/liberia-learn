@@ -26,6 +26,22 @@ type DashboardData = {
       passRate: number;
     }[];
   };
+  productMetrics: {
+    nationalLessonCompletionRate: number;
+    nationalExamPassRate: number;
+    nationalGuardianEngagementRate: number;
+    interventionImpactRate: number;
+    topPerformingDistricts: Array<{
+      districtId: string;
+      districtName: string;
+      compositeScore: number;
+    }>;
+    lowestPerformingDistricts: Array<{
+      districtId: string;
+      districtName: string;
+      compositeScore: number;
+    }>;
+  };
 };
 
 type ComplianceDistrict = {
@@ -470,6 +486,90 @@ export default function MoeDashboardPage() {
                 </div>
               </section>
             )}
+
+            <section className="rounded-2xl border border-slate-800 bg-slate-900/80 p-5">
+              <div>
+                <p className="text-[11px] font-medium uppercase tracking-[0.22em] text-slate-500">
+                  National Outcomes
+                </p>
+                <h2 className="mt-2 text-xl font-semibold text-slate-100">
+                  Product Metrics Snapshot
+                </h2>
+                <p className="mt-1 text-sm text-slate-400">
+                  National completion, assessment, guardian engagement, and district outcome ranking.
+                </p>
+              </div>
+
+              {loading ? (
+                <div className="mt-5 grid gap-4 md:grid-cols-4">
+                  {Array.from({ length: 4 }).map((_, index) => (
+                    <Card key={index} className="animate-pulse bg-slate-900/80 p-5">
+                      <div className="h-20 rounded-xl bg-slate-800" />
+                    </Card>
+                  ))}
+                </div>
+              ) : (
+                <>
+                  <div className="mt-5 grid gap-4 md:grid-cols-4">
+                    <StatCard
+                      label="Lesson Completion"
+                      value={formatPct(dashboard?.productMetrics.nationalLessonCompletionRate)}
+                      valueClassName="text-emerald-300"
+                    />
+                    <StatCard
+                      label="Exam Pass Rate"
+                      value={formatPct(dashboard?.productMetrics.nationalExamPassRate)}
+                      valueClassName="text-cyan-300"
+                    />
+                    <StatCard
+                      label="Guardian Engagement"
+                      value={formatPct(dashboard?.productMetrics.nationalGuardianEngagementRate)}
+                      valueClassName="text-amber-300"
+                    />
+                    <StatCard
+                      label="Intervention Impact"
+                      value={formatPct(dashboard?.productMetrics.interventionImpactRate)}
+                      valueClassName="text-rose-300"
+                    />
+                  </div>
+
+                  <div className="mt-5 grid gap-4 lg:grid-cols-2">
+                    <Card className="p-5">
+                      <p className="text-[11px] font-medium uppercase tracking-wide text-slate-500">
+                        Top Performing Districts
+                      </p>
+                      <div className="mt-4 space-y-3">
+                        {(dashboard?.productMetrics.topPerformingDistricts ?? []).map((district) => (
+                          <div
+                            key={district.districtId}
+                            className="flex items-center justify-between rounded-xl border border-white/10 bg-slate-950/60 px-4 py-3"
+                          >
+                            <p className="font-medium text-slate-100">{district.districtName}</p>
+                            <p className="font-semibold text-emerald-300">{district.compositeScore.toFixed(1)}%</p>
+                          </div>
+                        ))}
+                      </div>
+                    </Card>
+                    <Card className="p-5">
+                      <p className="text-[11px] font-medium uppercase tracking-wide text-slate-500">
+                        Lowest Performing Districts
+                      </p>
+                      <div className="mt-4 space-y-3">
+                        {(dashboard?.productMetrics.lowestPerformingDistricts ?? []).map((district) => (
+                          <div
+                            key={district.districtId}
+                            className="flex items-center justify-between rounded-xl border border-white/10 bg-slate-950/60 px-4 py-3"
+                          >
+                            <p className="font-medium text-slate-100">{district.districtName}</p>
+                            <p className="font-semibold text-rose-300">{district.compositeScore.toFixed(1)}%</p>
+                          </div>
+                        ))}
+                      </div>
+                    </Card>
+                  </div>
+                </>
+              )}
+            </section>
 
             <section className="rounded-2xl border border-slate-800 bg-slate-900/80 p-5">
               <div>

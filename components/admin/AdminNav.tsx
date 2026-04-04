@@ -7,6 +7,7 @@ const BASE_NAV_LINKS = [
   { label: "Curriculum Units", href: "/admin/curriculum/units" },
   { label: "Homework", href: "/admin/homework" },
   { label: "Analytics", href: "/admin/analytics" },
+  { label: "Product Metrics", href: "/admin/metrics" },
   { label: "AI Costs", href: "/admin/ai-costs" },
   { label: "Guardian Links", href: "/admin/guardian-link" },
   { label: "Classes", href: "/admin/classes" },
