@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { requireRole } from "@/lib/auth";
+import { buildCurriculumDisplayTitle } from "@/lib/curriculum/title";
 
 export const dynamic = "force-dynamic";
 
@@ -27,6 +28,7 @@ export async function GET(req: Request) {
       select: {
         id: true,
         contentId: true,
+        title: true,
         grade: true,
         subject: true,
         contentType: true,
@@ -38,7 +40,18 @@ export async function GET(req: Request) {
       },
     });
 
-    return NextResponse.json({ count: rows.length, items: rows });
+    return NextResponse.json({
+      count: rows.length,
+      items: rows.map((row) => ({
+        ...row,
+        displayTitle: buildCurriculumDisplayTitle({
+          title: row.title,
+          subject: row.subject,
+          gradeLevel: row.grade,
+          payload: row.payload,
+        }),
+      })),
+    });
   } catch (e: any) {
     console.error("GET /api/curriculum failed:", e);
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });

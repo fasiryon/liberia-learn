@@ -19,6 +19,7 @@
         "enrich:generated-lessons": "tsx scripts/enrich-generated-lessons.ts",
         "enrich:lessons": "tsx scripts/enrich-generated-lessons.ts",
         "promote:lessons": "tsx scripts/promote-enriched-lessons.ts",
+        "populate:titles": "tsx scripts/populate-lesson-titles.ts",
         "seed:cha": "tsx prisma/seeds/cha-demo.ts",
         "fix:encoding": "tsx scripts/fix-encoding.ts"
     },

@@ -135,6 +135,7 @@ export async function POST(req: NextRequest) {
     }
 
     const updateData = {
+      title: body.title,
       grade: classGrade,
       subject: classRecord.subject,
       contentType: "lesson",

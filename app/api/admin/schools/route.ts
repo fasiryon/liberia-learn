@@ -1,6 +1,6 @@
 // app/api/admin/schools/route.ts
 import { NextResponse } from "next/server";
-import { requireRole } from "@/lib/auth";
+import { requireUser } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { logAudit } from "@/lib/audit";
 import { randomUUID } from "crypto";
@@ -8,7 +8,10 @@ import { randomUUID } from "crypto";
 export async function POST(request: Request) {
   const traceId = randomUUID();
   try {
-    const user = await requireRole("ADMIN");
+    const user = await requireUser();
+    if (user.role !== "ADMIN" || !user.isPlatformAdmin) {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    }
 
     const formData = await request.formData();
 

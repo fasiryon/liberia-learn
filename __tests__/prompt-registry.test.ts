@@ -39,6 +39,7 @@ describe("promptRegistry", () => {
     expect(prompt).toContain("You are a helper.");
     expect(prompt).toContain("Context goes here.");
     expect(prompt).toContain("Follow the rules.");
+    expect(prompt).toContain("Mathematics, Literacy, Science, Civics, Social Studies, and Computer Science");
   });
 
   it("hash is consistent for same template", () => {
