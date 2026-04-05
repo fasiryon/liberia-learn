@@ -511,19 +511,19 @@ export default async function AdminConsolePage() {
         {/* Quick actions */}
         <section>
           <h2 className="text-lg font-semibold mb-4">Quick Actions</h2>
-          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="grid grid-cols-2 gap-3 xl:grid-cols-4">
             {actions.map((a) => (
               <Link
                 key={a.href}
                 href={a.href}
-                className="flex items-center gap-3 rounded-2xl border border-slate-800 bg-slate-900/80 p-5 hover:bg-slate-800/80 transition-colors"
+                className="flex min-h-[120px] flex-col items-start justify-between rounded-2xl border border-slate-800 bg-slate-900/80 p-4 transition-colors hover:bg-slate-800/80"
               >
                 <div
-                  className={`h-10 w-10 rounded-xl ${a.bg} flex items-center justify-center text-slate-950 font-bold text-sm`}
+                  className={`flex h-12 w-12 items-center justify-center rounded-2xl ${a.bg} text-sm font-bold text-slate-950`}
                 >
                   {a.label[0]}
                 </div>
-                <span className="text-sm font-semibold">{a.label}</span>
+                <span className="text-sm font-semibold leading-snug">{a.label}</span>
               </Link>
             ))}
           </div>

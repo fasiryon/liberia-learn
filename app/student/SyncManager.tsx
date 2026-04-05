@@ -10,7 +10,11 @@ import {
 import { getCacheStats, purgeExpiredPacks, purgePartitionPacks } from "@/lib/offline-cache";
 import { detectAndSetActiveSessionPartition, type SessionPartition } from "@/lib/offline-session";
 
-export default function SyncManager() {
+export default function SyncManager({
+  isPlatformAdmin,
+}: {
+  isPlatformAdmin: boolean;
+}) {
   const [syncing, setSyncing] = useState(false);
   const [syncResult, setSyncResult] = useState<string | null>(null);
   const [partition, setPartition] = useState<SessionPartition | null>(null);
@@ -107,23 +111,25 @@ export default function SyncManager() {
           {syncResult}
         </div>
       )}
-      <div className="mt-2 rounded-xl bg-slate-900/90 border border-white/10 px-4 py-3 text-xs text-slate-300">
-        <div className="font-semibold text-slate-200">Offline stats</div>
-        <div className="mt-1">Queue pending: {stats.queuePending}</div>
-        <div>Queue conflicts: {stats.queueConflicts}</div>
-        <div>Queue dead-letter: {stats.queueDeadLetter}</div>
-        <div>Cache packs: {stats.cachePacksCount}</div>
-        <div>Cache bytes: {formatBytes(stats.cacheBytes)}</div>
-        <button
-          className="mt-2 px-3 py-1 rounded-md bg-slate-700/60 hover:bg-slate-700 text-xs"
-          onClick={async () => {
-            await purgePartitionPacks(partition ?? undefined);
-            await refreshStats(partition);
-          }}
-        >
-          Purge cache
-        </button>
-      </div>
+      {isPlatformAdmin ? (
+        <div className="mt-2 rounded-xl bg-slate-900/90 border border-white/10 px-4 py-3 text-xs text-slate-300">
+          <div className="font-semibold text-slate-200">Offline stats</div>
+          <div className="mt-1">Queue pending: {stats.queuePending}</div>
+          <div>Queue conflicts: {stats.queueConflicts}</div>
+          <div>Queue dead-letter: {stats.queueDeadLetter}</div>
+          <div>Cache packs: {stats.cachePacksCount}</div>
+          <div>Cache bytes: {formatBytes(stats.cacheBytes)}</div>
+          <button
+            className="mt-2 px-3 py-1 rounded-md bg-slate-700/60 hover:bg-slate-700 text-xs"
+            onClick={async () => {
+              await purgePartitionPacks(partition ?? undefined);
+              await refreshStats(partition);
+            }}
+          >
+            Purge cache
+          </button>
+        </div>
+      ) : null}
     </div>
   );
 }

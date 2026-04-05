@@ -984,6 +984,7 @@ model CurriculumFeedback {
 model CurriculumContent {
   id              String          @id @default(cuid())
   contentId       String          @unique
+  title           String?
   grade           Int
   subject         String
   contentType     String

@@ -6,6 +6,8 @@ import Link from "next/link";
 
 type LessonItem = {
   contentId: string;
+  title?: string | null;
+  displayTitle: string;
   grade: number;
   subject: string;
   contentType: string;
@@ -78,7 +80,7 @@ export default function StudentLessonsPage() {
               className="group rounded-2xl border border-white/10 bg-slate-900/70 p-5 space-y-3 hover:border-emerald-400/30 transition-colors"
             >
               <h2 className="text-sm font-semibold text-slate-50 group-hover:text-emerald-300 transition-colors">
-                {lesson.contentId}
+                {lesson.displayTitle}
               </h2>
               <div className="flex flex-wrap gap-2">
                 <span className="rounded-full bg-emerald-500/20 border border-emerald-400/30 px-2.5 py-0.5 text-[11px] font-medium text-emerald-300">
