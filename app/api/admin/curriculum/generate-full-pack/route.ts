@@ -192,6 +192,7 @@ export async function POST(req: Request) {
     const record = await prisma.curriculumContent.upsert({
       where: { contentId },
       update: {
+        title: typeof packPayload.title === "string" ? packPayload.title : null,
         grade,
         subject,
         payload: packPayload as any,
@@ -203,6 +204,7 @@ export async function POST(req: Request) {
       },
       create: {
         contentId,
+        title: typeof packPayload.title === "string" ? packPayload.title : null,
         grade,
         subject,
         contentType: "full_pack",
