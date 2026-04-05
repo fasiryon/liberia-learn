@@ -420,6 +420,7 @@ Requirements:
   return prisma.curriculumContent.create({
     data: {
       contentId: buildAssembledContentId(params.unit.unitId, params.lessonType, params.orderInUnit),
+      title: localized.title,
       grade: params.gradeLevel,
       subject: params.subject,
       contentType: "lesson",
@@ -488,6 +489,7 @@ async function createAssessmentArtifact(params: {
   return prisma.curriculumContent.create({
     data: {
       contentId: buildAssembledContentId(params.unit.unitId, "assessment", params.orderInUnit),
+      title: `${params.unitTitle} Unit Assessment`,
       grade: params.gradeLevel,
       subject: params.subject,
       contentType: "assessment",

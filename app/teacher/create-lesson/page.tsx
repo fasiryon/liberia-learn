@@ -41,6 +41,7 @@ export default function TeacherCreateLessonPage() {
   const [classes, setClasses] = useState<TeacherClass[]>([]);
   const [standards, setStandards] = useState<StandardOption[]>([]);
   const [loading, setLoading] = useState(true);
+  const [featureDisabled, setFeatureDisabled] = useState(false);
   const [loadingStandards, setLoadingStandards] = useState(false);
   const [generating, setGenerating] = useState(false);
   const [savingDraft, setSavingDraft] = useState(false);
@@ -69,7 +70,13 @@ export default function TeacherCreateLessonPage() {
         });
         const data: MetadataResponse = await response.json();
         if (!response.ok) {
-          throw new Error(mapLessonError((data as any).error));
+          const message = mapLessonError((data as any).error);
+          if ((data as any).error === "teacher_generation_disabled") {
+            setFeatureDisabled(true);
+            setError(null);
+            return;
+          }
+          throw new Error(message);
         }
         setClasses(data.classes ?? []);
         setStandards(data.standards ?? []);
@@ -93,6 +100,9 @@ export default function TeacherCreateLessonPage() {
   }, [selectedClass]);
 
   useEffect(() => {
+    if (featureDisabled) {
+      return;
+    }
     if (!form.subject || !form.gradeLevel) {
       setStandards([]);
       return;
@@ -121,7 +131,7 @@ export default function TeacherCreateLessonPage() {
     }
 
     loadStandards();
-  }, [form.subject, form.gradeLevel]);
+  }, [featureDisabled, form.subject, form.gradeLevel]);
 
   async function handleGenerate() {
     setGenerating(true);
@@ -248,6 +258,45 @@ export default function TeacherCreateLessonPage() {
           <p className="text-sm text-slate-400">Loading lesson generator...</p>
         </div>
       </div>
+    );
+  }
+
+  if (featureDisabled) {
+    return (
+      <main className="min-h-screen bg-slate-950 px-4 py-8 text-slate-50">
+        <div className="mx-auto max-w-4xl space-y-6">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <div>
+              <Link
+                href="/teacher/dashboard"
+                className="text-sm text-emerald-300 hover:text-emerald-200"
+              >
+                Back to teacher dashboard
+              </Link>
+              <h1 className="mt-3 text-3xl font-bold">Create with AI</h1>
+            </div>
+            <Link
+              href="/teacher/curriculum"
+              className="rounded-xl border border-emerald-500/30 px-4 py-2 text-sm text-emerald-200 hover:bg-emerald-500/10"
+            >
+              Browse curriculum
+            </Link>
+          </div>
+
+          <section className="rounded-3xl border border-white/10 bg-slate-900/70 p-6">
+            <h2 className="text-xl font-semibold">This feature is coming soon.</h2>
+            <p className="mt-3 max-w-2xl text-sm text-slate-400">
+              In the meantime, browse existing lessons in your curriculum.
+            </p>
+            <Link
+              href="/teacher/curriculum"
+              className="mt-5 inline-flex rounded-2xl bg-emerald-400 px-5 py-3 text-sm font-semibold text-slate-950 hover:bg-emerald-300"
+            >
+              Open teacher curriculum
+            </Link>
+          </section>
+        </div>
+      </main>
     );
   }
 
