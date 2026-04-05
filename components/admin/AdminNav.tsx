@@ -12,6 +12,8 @@ const BASE_NAV_LINKS = [
   { label: "Guardian Links", href: "/admin/guardian-link" },
   { label: "Classes", href: "/admin/classes" },
   { label: "Students", href: "/admin/students" },
+  { label: "Academic Years", href: "/admin/academic-year" },
+  { label: "Enrollments", href: "/admin/enrollment" },
   { label: "Teachers", href: "/admin/teachers" },
   { label: "Placements", href: "/admin/placements" },
   { label: "School Branding", href: "/admin/school-branding" },
