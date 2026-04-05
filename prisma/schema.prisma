@@ -122,6 +122,9 @@ model School {
   exams                  Exam[]
   ragChunks              RagChunk[]
   sloEvents              SloEvent[]
+  academicYears          AcademicYear[]
+  academicEnrollments    AcademicEnrollment[]
+  transcripts            Transcript[]
 }
 
 model Class {
@@ -176,6 +179,8 @@ model Student {
   performanceEvents     StudentPerformanceEvent[]
   confusionSignals      ConfusionSignal[]
   interventionRecommendations InterventionRecommendation[]
+  academicEnrollments   AcademicEnrollment[]
+  transcripts           Transcript[]
 }
 
 model Exam {
@@ -270,6 +275,72 @@ model Enrollment {
   @@unique([studentId, classId])
   // Block 23: classId-first index for class roster lookups in risk/growth routes
   @@index([classId])
+}
+
+model AcademicYear {
+  id          String               @id @default(cuid())
+  schoolId    String
+  yearLabel   String
+  startDate   DateTime
+  endDate     DateTime
+  isActive    Boolean              @default(false)
+  createdAt   DateTime             @default(now())
+  school      School               @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+  terms       Term[]
+  enrollments AcademicEnrollment[]
+  transcripts Transcript[]
+
+  @@unique([schoolId, yearLabel])
+  @@index([schoolId, isActive])
+  @@index([schoolId, startDate])
+}
+
+model Term {
+  id             String       @id @default(cuid())
+  academicYearId String
+  name           String
+  startDate      DateTime
+  endDate        DateTime
+  createdAt      DateTime     @default(now())
+  academicYear   AcademicYear @relation(fields: [academicYearId], references: [id], onDelete: Cascade)
+
+  @@unique([academicYearId, name])
+  @@index([academicYearId, startDate])
+}
+
+model AcademicEnrollment {
+  id             String                   @id @default(cuid())
+  studentId      String
+  schoolId       String
+  academicYearId String
+  grade          Int
+  status         AcademicEnrollmentStatus @default(ACTIVE)
+  createdAt      DateTime                 @default(now())
+  student        Student                  @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  school         School                   @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+  academicYear   AcademicYear             @relation(fields: [academicYearId], references: [id], onDelete: Cascade)
+
+  @@unique([studentId, schoolId, academicYearId])
+  @@index([schoolId, academicYearId, status])
+  @@index([studentId, academicYearId])
+}
+
+model Transcript {
+  id             String       @id @default(cuid())
+  studentId      String
+  schoolId       String
+  academicYearId String
+  grade          Int
+  gpa            Float?
+  summary        Json?
+  createdAt      DateTime     @default(now())
+  student        Student      @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  school         School       @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+  academicYear   AcademicYear @relation(fields: [academicYearId], references: [id], onDelete: Cascade)
+
+  @@unique([studentId, academicYearId])
+  @@index([schoolId, academicYearId])
+  @@index([studentId, createdAt])
 }
 
 model Meeting {
@@ -1579,4 +1650,11 @@ enum MasteryState {
   APPROACHING
   MASTERED
   DECAYING
+}
+
+enum AcademicEnrollmentStatus {
+  ACTIVE
+  PROMOTED
+  GRADUATED
+  TRANSFERRED
 }
