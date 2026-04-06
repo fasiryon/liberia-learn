@@ -8,6 +8,8 @@
 
 LiberiaLearn is a full-stack, production-grade AI system — not a demo — built to deliver real-world education infrastructure.
 
+Built and operated by a single engineer (end-to-end system ownership), the platform is designed to function as national education infrastructure.
+
 It combines:
 
 - RAG-based AI tutoring (grounded responses, not hallucinations)
@@ -61,10 +63,31 @@ It combines:
 
 ---
 
+## AI System Design
+
+- Retrieval: pgvector cosine similarity over curriculum chunks
+- Grounding: responses constrained strictly to retrieved context
+- Providers: OpenAI (primary), Groq (fallback routing)
+- Prompting: structured templates with role, context, and curriculum injection
+- Evaluation: recall@k and precision@k used for internal validation
+- Cost Control: per-request tracking, rate limiting, and usage constraints
+
+---
+
+## Engineering Decisions
+
+- RAG used instead of fine-tuning to ensure explainability and curriculum grounding
+- Multi-provider routing implemented to prevent vendor lock-in and increase reliability
+- Offline-first architecture chosen due to unreliable connectivity environments
+- Distributed workers (ECS + SQS) used for async scalability and background processing
+- Observability built into core system for production readiness (CloudWatch + logs)
+- Multi-tenant RBAC enforced at both API and middleware layers
+
+---
+
 ## Architecture
 
-<img width="1536" height="840" alt="image" src="https://github.com/user-attachments/assets/2ed9c750-b881-4f24-ba1f-760fe1a897e2" />
-
+<img width="1536" height="840" alt="image" src="https://github.com/user-attachments/assets/04822703-f0dd-450b-bfe5-a3dc58c0670c" />
 
 ---
 
@@ -90,7 +113,6 @@ npx prisma generate
 npx tsc --noEmit
 npx vitest run
 npm run build
-
 ___
 ## Environment 
 Typical files:
