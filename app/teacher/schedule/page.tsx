@@ -18,6 +18,18 @@ type ScheduleItem = {
 };
 
 type ClassInfo = { id: string; name: string; subject?: string | null };
+type TimetableItem = {
+  id: string;
+  classId: string;
+  teacherId: string;
+  subject: string;
+  dayOfWeek: string;
+  periodLabel: string;
+  startTime: string | null;
+  endTime: string | null;
+  room: string | null;
+  class: { id: string; name: string; subject: string } | null;
+};
 
 const DAY_LABELS = ["Mon", "Tue", "Wed", "Thu", "Fri"];
 const SUBJECTS = [
@@ -54,6 +66,7 @@ function addMinutes(time: string, minutes: number) {
 export default function TeacherSchedulePage() {
   const [items, setItems] = useState<ScheduleItem[]>([]);
   const [classes, setClasses] = useState<ClassInfo[]>([]);
+  const [timetable, setTimetable] = useState<TimetableItem[]>([]);
   const [weekStart, setWeekStart] = useState("");
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
@@ -82,6 +95,7 @@ export default function TeacherSchedulePage() {
       .then((d) => {
         setItems(d.items || []);
         setClasses(d.classes || []);
+        setTimetable(d.timetable || []);
         setWeekStart(d.weekStart || "");
       })
       .finally(() => setLoading(false));
@@ -402,77 +416,123 @@ export default function TeacherSchedulePage() {
 
         {loading ? (
           <div className="h-60 rounded-2xl bg-slate-800/50 animate-pulse" />
-        ) : items.length === 0 ? (
-          <div className="rounded-2xl border border-white/10 bg-slate-900/70 p-8 text-center text-sm text-slate-400">
-            No lessons scheduled yet. Schedule your first lesson.
-          </div>
         ) : (
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-5">
-            {weekDates.map((date, di) => {
-              const dateStr = date.toISOString().slice(0, 10);
-              const dayItems = items.filter(
-                (i) => new Date(i.scheduledDate).toISOString().slice(0, 10) === dateStr
-              );
-              const isToday = dateStr === new Date().toISOString().slice(0, 10);
-
-              return (
-                <div key={di} className={`rounded-2xl border ${isToday ? "border-emerald-500/30" : "border-white/10"} bg-slate-900/70 p-3`}>
-                  <p className={`text-xs font-semibold mb-2 ${isToday ? "text-emerald-400" : "text-slate-400"}`}>
-                    {DAY_LABELS[di]} {date.getUTCDate()}
-                  </p>
-                  {dayItems.length === 0 ? (
-                    <p className="text-[10px] text-slate-600">No lessons</p>
-                  ) : (
-                    <div className="space-y-2">
-                      {dayItems.map((item) => {
-                        const pct = item.totalStudents > 0 ? Math.round((item.completedCount / item.totalStudents) * 100) : 0;
-                        const scheduledDateStr = toDateOnly(item.scheduledDate);
-                        const past = isPast(scheduledDateStr);
-                        const delivered = item.isDelivered;
-                        const statusLabel = delivered
-                          ? "Delivered"
-                          : past
-                          ? "Not Delivered"
-                          : "Scheduled";
-                        const statusColor = delivered
-                          ? "bg-emerald-500/20 text-emerald-300"
-                          : past
-                          ? "bg-amber-500/20 text-amber-300"
-                          : "bg-blue-500/20 text-blue-300";
-                        return (
-                          <div key={item.id} className="rounded-lg border border-slate-800 bg-slate-950/50 p-2">
-                            <p className="text-[11px] font-medium text-slate-200 truncate">{item.title}</p>
-                            <p className="text-[9px] text-slate-500">{item.className}</p>
-                            <div className="mt-1 flex items-center justify-between">
-                              <span className="text-[9px] text-emerald-400">{pct}% done</span>
-                              <span className={`rounded-full px-2 py-0.5 text-[9px] ${statusColor}`}>
-                                {statusLabel}
-                              </span>
-                            </div>
-                            <div className="mt-2 flex items-center gap-2">
-                              {!delivered && (
-                                <button
-                                  onClick={() => handleDeliver(item.id)}
-                                  className="rounded-full bg-emerald-500/20 px-2 py-0.5 text-[9px] text-emerald-300 hover:bg-emerald-500/30"
-                                >
-                                  Mark Delivered
-                                </button>
-                              )}
-                              <button
-                                onClick={() => handleDelete(item.id)}
-                                className="rounded-full bg-red-500/10 px-2 py-0.5 text-[9px] text-red-300 hover:bg-red-500/20"
-                              >
-                                Remove
-                              </button>
-                            </div>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  )}
+          <div className="space-y-6">
+            <section className="rounded-2xl border border-white/10 bg-slate-900/70 p-4">
+              <div className="mb-3 flex items-center justify-between gap-3">
+                <div>
+                  <h2 className="text-sm font-semibold text-slate-200">Weekly Timetable</h2>
+                  <p className="text-xs text-slate-500">Fixed class sessions and ownership for daily operations.</p>
                 </div>
-              );
-            })}
+              </div>
+              {timetable.length === 0 ? (
+                <p className="text-sm text-slate-400">No timetable entries assigned yet.</p>
+              ) : (
+                <div className="grid grid-cols-1 gap-4 md:grid-cols-5">
+                  {DAY_LABELS.map((label, index) => {
+                    const dayKey = ["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY"][index];
+                    const dayItems = timetable.filter((item) => item.dayOfWeek === dayKey);
+                    return (
+                      <div key={dayKey} className="rounded-2xl border border-white/10 bg-slate-950/50 p-3">
+                        <p className="mb-2 text-xs font-semibold text-slate-400">{label}</p>
+                        {dayItems.length === 0 ? (
+                          <p className="text-[10px] text-slate-600">No timetable slots</p>
+                        ) : (
+                          <div className="space-y-2">
+                            {dayItems.map((item) => (
+                              <div key={item.id} className="rounded-xl border border-slate-800 bg-slate-900/70 p-3">
+                                <p className="text-xs font-semibold text-slate-100">{item.class?.name ?? "Class"}</p>
+                                <p className="text-[11px] text-slate-400">{item.periodLabel}</p>
+                                <p className="mt-1 text-[11px] text-emerald-300">
+                                  {[item.startTime, item.endTime].filter(Boolean).join(" - ") || "Time TBD"}
+                                </p>
+                                <p className="text-[10px] text-slate-500">
+                                  {item.subject.replace(/_/g, " ")}{item.room ? ` - ${item.room}` : ""}
+                                </p>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+            </section>
+
+            {items.length === 0 ? (
+              <div className="rounded-2xl border border-white/10 bg-slate-900/70 p-8 text-center text-sm text-slate-400">
+                No lessons scheduled yet. Schedule your first lesson.
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-5">
+                {weekDates.map((date, di) => {
+                  const dateStr = date.toISOString().slice(0, 10);
+                  const dayItems = items.filter(
+                    (i) => new Date(i.scheduledDate).toISOString().slice(0, 10) === dateStr
+                  );
+                  const isToday = dateStr === new Date().toISOString().slice(0, 10);
+
+                  return (
+                    <div key={di} className={`rounded-2xl border ${isToday ? "border-emerald-500/30" : "border-white/10"} bg-slate-900/70 p-3`}>
+                      <p className={`text-xs font-semibold mb-2 ${isToday ? "text-emerald-400" : "text-slate-400"}`}>
+                        {DAY_LABELS[di]} {date.getUTCDate()}
+                      </p>
+                      {dayItems.length === 0 ? (
+                        <p className="text-[10px] text-slate-600">No lessons</p>
+                      ) : (
+                        <div className="space-y-2">
+                          {dayItems.map((item) => {
+                            const pct = item.totalStudents > 0 ? Math.round((item.completedCount / item.totalStudents) * 100) : 0;
+                            const scheduledDateStr = toDateOnly(item.scheduledDate);
+                            const past = isPast(scheduledDateStr);
+                            const delivered = item.isDelivered;
+                            const statusLabel = delivered
+                              ? "Delivered"
+                              : past
+                              ? "Not Delivered"
+                              : "Scheduled";
+                            const statusColor = delivered
+                              ? "bg-emerald-500/20 text-emerald-300"
+                              : past
+                              ? "bg-amber-500/20 text-amber-300"
+                              : "bg-blue-500/20 text-blue-300";
+                            return (
+                              <div key={item.id} className="rounded-lg border border-slate-800 bg-slate-950/50 p-2">
+                                <p className="text-[11px] font-medium text-slate-200 truncate">{item.title}</p>
+                                <p className="text-[9px] text-slate-500">{item.className}</p>
+                                <div className="mt-1 flex items-center justify-between">
+                                  <span className="text-[9px] text-emerald-400">{pct}% done</span>
+                                  <span className={`rounded-full px-2 py-0.5 text-[9px] ${statusColor}`}>
+                                    {statusLabel}
+                                  </span>
+                                </div>
+                                <div className="mt-2 flex items-center gap-2">
+                                  {!delivered && (
+                                    <button
+                                      onClick={() => handleDeliver(item.id)}
+                                      className="rounded-full bg-emerald-500/20 px-2 py-0.5 text-[9px] text-emerald-300 hover:bg-emerald-500/30"
+                                    >
+                                      Mark Delivered
+                                    </button>
+                                  )}
+                                  <button
+                                    onClick={() => handleDelete(item.id)}
+                                    className="rounded-full bg-red-500/10 px-2 py-0.5 text-[9px] text-red-300 hover:bg-red-500/20"
+                                  >
+                                    Remove
+                                  </button>
+                                </div>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            )}
           </div>
         )}
       </div>

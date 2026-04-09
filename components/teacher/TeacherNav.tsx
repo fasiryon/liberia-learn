@@ -10,6 +10,7 @@ const LINKS = [
   { href: "/teacher/curriculum", label: "Curriculum" },
   { href: "/teacher/messages", label: "Messages", badgeKey: "messages" },
   { href: "/teacher/delivery-report", label: "Delivery Report" },
+  { href: "/teacher/attendance", label: "Attendance" },
   { href: "/teacher/schedule", label: "Schedule" },
   { href: "/teacher/labs", label: "Labs" },
   { href: "/teacher/exams", label: "Exams" },

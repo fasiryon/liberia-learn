@@ -32,6 +32,9 @@ model User {
   accounts            Account[]
   auditLogs           AuditLog[]
   teacherOf           Class[]              @relation("TeacherClasses")
+  markedAttendance    Attendance[]         @relation("AttendanceMarkedBy")
+  timetableEntries    Timetable[]          @relation("TimetableTeacher")
+  teacherAssignments  TeacherAssignment[]  @relation("TeacherAssignmentTeacher")
   homework            Homework[]
   messagesSent        Message[]            @relation("MessagesSent")
   messagesReceived    Message[]            @relation("MessagesReceived")
@@ -125,6 +128,9 @@ model School {
   academicYears          AcademicYear[]
   academicEnrollments    AcademicEnrollment[]
   transcripts            Transcript[]
+  attendanceEntries      Attendance[]
+  timetableEntries       Timetable[]
+  teacherAssignments     TeacherAssignment[]
 }
 
 model Class {
@@ -142,8 +148,11 @@ model Class {
   grades        Grade[]
   homework      Homework[]
   meetings      Meeting[]
+  attendanceEntries Attendance[]
   messages      Message[]
   scheduledWork ScheduledWork[]
+  timetableEntries Timetable[]
+  teacherAssignments TeacherAssignment[]
 }
 
 model Student {
@@ -156,6 +165,7 @@ model Student {
   deletedAt             DateTime?
   assignmentSubmissions AssignmentSubmission[]
   attendance            AttendanceRecord[]
+  operationalAttendance Attendance[]
   capstoneProjects      CapstoneProject[]
   chatMessages          ChatMessage[]
   enrollments           Enrollment[]
@@ -353,6 +363,28 @@ model Meeting {
 
   // Block 23: composite index for attendance window queries (classId + time range)
   @@index([classId, startsAt])
+}
+
+model Attendance {
+  id         String           @id @default(cuid())
+  studentId  String
+  classId    String
+  schoolId   String
+  date       DateTime
+  status     AttendanceStatus
+  markedById String
+  notes      String?
+  createdAt  DateTime         @default(now())
+  updatedAt  DateTime         @updatedAt
+  student    Student          @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  class      Class            @relation(fields: [classId], references: [id], onDelete: Cascade)
+  school     School           @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+  markedBy   User             @relation("AttendanceMarkedBy", fields: [markedById], references: [id], onDelete: Cascade)
+
+  @@unique([studentId, classId, date])
+  @@index([schoolId, date])
+  @@index([classId, date])
+  @@index([markedById, date])
 }
 
 model AttendanceRecord {
@@ -1205,6 +1237,46 @@ model ScheduledWork {
   @@index([sessionPairId])
 }
 
+model Timetable {
+  id         String     @id @default(cuid())
+  schoolId   String
+  classId    String
+  subject    Subject
+  teacherId  String
+  dayOfWeek  Weekday
+  periodLabel String
+  startTime  String?
+  endTime    String?
+  room       String?
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
+  school     School     @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+  class      Class      @relation(fields: [classId], references: [id], onDelete: Cascade)
+  teacher    User       @relation("TimetableTeacher", fields: [teacherId], references: [id], onDelete: Cascade)
+
+  @@index([schoolId, dayOfWeek])
+  @@index([teacherId, dayOfWeek])
+  @@unique([schoolId, classId, dayOfWeek, periodLabel])
+}
+
+model TeacherAssignment {
+  id         String    @id @default(cuid())
+  schoolId   String
+  teacherId  String
+  classId    String
+  subject    Subject
+  isPrimary  Boolean   @default(false)
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+  school     School    @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+  teacher    User      @relation("TeacherAssignmentTeacher", fields: [teacherId], references: [id], onDelete: Cascade)
+  class      Class     @relation(fields: [classId], references: [id], onDelete: Cascade)
+
+  @@unique([schoolId, teacherId, classId, subject])
+  @@index([schoolId, teacherId])
+  @@index([schoolId, classId])
+}
+
 /// / ===== Student Progress =====
 model StudentProgress {
   id              String        @id @default(cuid())
@@ -1586,6 +1658,17 @@ enum AttendanceStatus {
   PRESENT
   ABSENT
   LATE
+  EXCUSED
+}
+
+enum Weekday {
+  MONDAY
+  TUESDAY
+  WEDNESDAY
+  THURSDAY
+  FRIDAY
+  SATURDAY
+  SUNDAY
 }
 
 enum ItemType {
