@@ -14,6 +14,8 @@ const BASE_NAV_LINKS = [
   { label: "Students", href: "/admin/students" },
   { label: "Academic Years", href: "/admin/academic-year" },
   { label: "Enrollments", href: "/admin/enrollment" },
+  { label: "Timetable", href: "/admin/timetable" },
+  { label: "Teacher Assignments", href: "/admin/assignments" },
   { label: "Teachers", href: "/admin/teachers" },
   { label: "Placements", href: "/admin/placements" },
   { label: "School Branding", href: "/admin/school-branding" },

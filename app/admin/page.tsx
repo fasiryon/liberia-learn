@@ -337,6 +337,8 @@ export default async function AdminConsolePage() {
     { label: "Students", href: "/admin/students", bg: "bg-emerald-600" },
     { label: "Academic Years", href: "/admin/academic-year", bg: "bg-indigo-500" },
     { label: "Enrollments", href: "/admin/enrollment", bg: "bg-fuchsia-500" },
+    { label: "Timetable", href: "/admin/timetable", bg: "bg-cyan-500" },
+    { label: "Teacher Assignments", href: "/admin/assignments", bg: "bg-lime-500" },
     { label: "Teachers", href: "/admin/teachers", bg: "bg-sky-500" },
     { label: "School Branding", href: "/admin/school-branding", bg: "bg-pink-500" },
     { label: "School Settings", href: "/admin/school-settings", bg: "bg-indigo-500" },
