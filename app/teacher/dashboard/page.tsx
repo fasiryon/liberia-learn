@@ -140,6 +140,9 @@ export default function TeacherDashboardPage() {
               <Link href="/teacher/students" className="ll-touch-target rounded-2xl border border-white/10 bg-slate-900/70 p-4 text-center hover:border-emerald-500/30">
                 <p className="text-sm font-semibold text-violet-400">View Students</p>
               </Link>
+              <Link href="/teacher/attendance" className="ll-touch-target rounded-2xl border border-white/10 bg-slate-900/70 p-4 text-center hover:border-emerald-500/30">
+                <p className="text-sm font-semibold text-emerald-300">Take Attendance</p>
+              </Link>
               <Link href="/teacher/schedule" className="ll-touch-target rounded-2xl border border-white/10 bg-slate-900/70 p-4 text-center hover:border-emerald-500/30">
                 <p className="text-sm font-semibold text-amber-400">Schedule Work</p>
               </Link>

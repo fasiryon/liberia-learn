@@ -90,6 +90,12 @@ export function handleApiError(err: unknown, context: ApiErrorContext = {}): Nex
     if (status === 403) {
       return json({ error: authMessage, code: "FORBIDDEN", timestamp, requestId }, 403);
     }
+
+    if (status >= 400 && status < 500) {
+      const code =
+        status === 404 ? "NOT_FOUND" : status === 409 ? "CONFLICT" : "BAD_REQUEST";
+      return json({ error: authMessage, code, timestamp, requestId }, status);
+    }
   }
 
   if (isPrismaKnownError(err)) {

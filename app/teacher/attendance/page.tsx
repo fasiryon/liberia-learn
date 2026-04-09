@@ -1,217 +1,296 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { TeacherNav } from "@/components/teacher/TeacherNav";
 
-type StatusType = "PRESENT" | "ABSENT" | "LATE";
-
-interface ClassInfo {
+type ClassInfo = {
   id: string;
   name: string;
-}
-
-interface StudentInfo {
-  studentId: string;
-  name: string;
-}
-
-const STATUS_CYCLE: StatusType[] = ["PRESENT", "LATE", "ABSENT"];
-const STATUS_COLORS: Record<StatusType, string> = {
-  PRESENT: "bg-emerald-600 hover:bg-emerald-700",
-  LATE: "bg-amber-600 hover:bg-amber-700",
-  ABSENT: "bg-red-600 hover:bg-red-700",
+  subject: string;
 };
 
-export default function AttendancePage() {
+type StudentInfo = {
+  studentId: string;
+  name: string;
+  currentGrade: number | null;
+};
+
+type AttendanceRecord = {
+  studentId: string;
+  status: StatusType;
+  notes: string | null;
+};
+
+type StatusType = "PRESENT" | "ABSENT" | "LATE" | "EXCUSED";
+
+const STATUS_OPTIONS: StatusType[] = ["PRESENT", "LATE", "EXCUSED", "ABSENT"];
+
+const STATUS_STYLES: Record<StatusType, string> = {
+  PRESENT: "bg-emerald-500/20 text-emerald-200 border-emerald-500/30",
+  LATE: "bg-amber-500/20 text-amber-200 border-amber-500/30",
+  EXCUSED: "bg-sky-500/20 text-sky-200 border-sky-500/30",
+  ABSENT: "bg-red-500/20 text-red-200 border-red-500/30",
+};
+
+function formatDate(date: Date) {
+  return date.toISOString().slice(0, 10);
+}
+
+export default function TeacherAttendancePage() {
   const [classes, setClasses] = useState<ClassInfo[]>([]);
   const [classId, setClassId] = useState("");
+  const [date, setDate] = useState(formatDate(new Date()));
   const [students, setStudents] = useState<StudentInfo[]>([]);
   const [statuses, setStatuses] = useState<Record<string, StatusType>>({});
-  const [meetingId, setMeetingId] = useState<string | null>(null);
+  const [notes, setNotes] = useState<Record<string, string>>({});
+  const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  async function load(selectedClassId?: string, selectedDate?: string) {
+    setLoading(true);
+    setError(null);
+    try {
+      const params = new URLSearchParams();
+      if (selectedClassId) params.set("classId", selectedClassId);
+      if (selectedDate) params.set("date", selectedDate);
+      const suffix = params.toString() ? `?${params.toString()}` : "";
+      const res = await fetch(`/api/teacher/attendance${suffix}`, { cache: "no-store" });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error ?? "Unable to load attendance.");
+
+      const nextClasses = data.classes ?? [];
+      setClasses(nextClasses);
+      if (!selectedClassId && nextClasses.length > 0) {
+        setClassId(nextClasses[0].id);
+        setDate(selectedDate ?? formatDate(new Date()));
+        return;
+      }
+
+      const roster = data.roster ?? [];
+      const attendance = data.attendance ?? [];
+      const nextStatuses: Record<string, StatusType> = {};
+      const nextNotes: Record<string, string> = {};
+
+      for (const student of roster) {
+        const record = attendance.find((item: AttendanceRecord) => item.studentId === student.studentId);
+        nextStatuses[student.studentId] = record?.status ?? "ABSENT";
+        nextNotes[student.studentId] = record?.notes ?? "";
+      }
+
+      setStudents(roster);
+      setStatuses(nextStatuses);
+      setNotes(nextNotes);
+      setSaved(false);
+    } catch (err: any) {
+      setError(err.message ?? "Unable to load attendance.");
+    } finally {
+      setLoading(false);
+    }
+  }
 
   useEffect(() => {
-    fetch("/api/teacher/classes")
-      .then((r) => r.json())
-      .then((data) => setClasses(data.classes ?? data ?? []))
-      .catch(() => {});
+    void load();
   }, []);
 
-  async function startSession() {
+  useEffect(() => {
     if (!classId) return;
-    setSaved(false);
+    void load(classId, date);
+  }, [classId, date]);
 
-    const now = new Date();
-    const end = new Date(now.getTime() + 45 * 60 * 1000);
-
-    const res = await fetch("/api/attendance", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        classId,
-        startsAt: now.toISOString(),
-        endsAt: end.toISOString(),
-      }),
-    });
-
-    const data = await res.json();
-    setMeetingId(data.meeting?.id ?? null);
-
-    const sRes = await fetch(`/api/class/${classId}/students`);
-    const sData = await sRes.json();
-    const studentList: StudentInfo[] = (sData.students ?? sData ?? []).map(
-      (s: any) => ({
-        studentId: s.studentId ?? s.id,
-        name: s.name ?? s.user?.name ?? "Student",
-      })
-    );
-    setStudents(studentList);
-
-    const defaultStatuses: Record<string, StatusType> = {};
-    for (const s of studentList) {
-      defaultStatuses[s.studentId] = "ABSENT";
-    }
-    setStatuses(defaultStatuses);
-  }
-
-  function toggle(studentId: string) {
-    setStatuses((prev) => {
-      const current = prev[studentId] ?? "ABSENT";
-      const idx = STATUS_CYCLE.indexOf(current);
-      const next = STATUS_CYCLE[(idx + 1) % STATUS_CYCLE.length];
-      return { ...prev, [studentId]: next };
-    });
-  }
+  const counts = useMemo(
+    () => ({
+      present: Object.values(statuses).filter((status) => status === "PRESENT").length,
+      late: Object.values(statuses).filter((status) => status === "LATE").length,
+      excused: Object.values(statuses).filter((status) => status === "EXCUSED").length,
+      absent: Object.values(statuses).filter((status) => status === "ABSENT").length,
+    }),
+    [statuses]
+  );
 
   function markAll(status: StatusType) {
-    setStatuses((prev) => {
-      const next: Record<string, StatusType> = {};
-      for (const key of Object.keys(prev)) {
-        next[key] = status;
-      }
-      return next;
-    });
+    setStatuses((current) =>
+      Object.fromEntries(Object.keys(current).map((studentId) => [studentId, status]))
+    );
   }
 
   async function save() {
-    if (!meetingId) return;
     setSaving(true);
     setSaved(false);
+    setError(null);
+    try {
+      const records = students.map((student) => ({
+        studentId: student.studentId,
+        status: statuses[student.studentId] ?? "ABSENT",
+        notes: notes[student.studentId]?.trim() || null,
+      }));
 
-    const records = Object.entries(statuses).map(([studentId, status]) => ({
-      studentId,
-      status,
-    }));
-
-    await fetch(`/api/attendance/${meetingId}`, {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ records }),
-    });
-
-    setSaving(false);
-    setSaved(true);
+      const res = await fetch("/api/teacher/attendance", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          classId,
+          date,
+          records,
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error ?? "Unable to save attendance.");
+      setSaved(true);
+    } catch (err: any) {
+      setError(err.message ?? "Unable to save attendance.");
+    } finally {
+      setSaving(false);
+    }
   }
 
-  const counts = {
-    present: Object.values(statuses).filter((s) => s === "PRESENT").length,
-    late: Object.values(statuses).filter((s) => s === "LATE").length,
-    absent: Object.values(statuses).filter((s) => s === "ABSENT").length,
-  };
-
   return (
-    <div className="min-h-screen bg-slate-950 text-white p-4 max-w-2xl mx-auto">
-      <h1 className="text-2xl font-bold text-emerald-400 mb-6">
-        Attendance
-      </h1>
+    <main className="min-h-screen bg-slate-950 px-4 py-8 text-slate-50">
+      <div className="mx-auto max-w-6xl space-y-6">
+        <header>
+          <h1 className="text-2xl font-bold">Daily Attendance</h1>
+          <p className="mt-1 text-sm text-slate-400">
+            Mark the live class roster for the current day without leaving the teacher console.
+          </p>
+        </header>
 
-      {!meetingId ? (
-        <div className="space-y-4">
-          <label className="block text-sm text-slate-300">Select Class</label>
-          <select
-            value={classId}
-            onChange={(e) => setClassId(e.target.value)}
-            className="w-full bg-slate-800 border border-slate-700 rounded-lg px-4 py-3 text-white"
-          >
-            <option value="">-- Choose a class --</option>
-            {classes.map((c) => (
-              <option key={c.id} value={c.id}>
-                {c.name}
-              </option>
-            ))}
-          </select>
+        <TeacherNav />
+
+        <section className="grid gap-4 rounded-2xl border border-white/10 bg-slate-900/70 p-4 md:grid-cols-[1fr,220px,auto]">
+          <div>
+            <label className="text-xs text-slate-400">Class</label>
+            <select
+              value={classId}
+              onChange={(event) => setClassId(event.target.value)}
+              className="mt-1 min-h-11 w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-sm"
+            >
+              <option value="">Select class...</option>
+              {classes.map((item) => (
+                <option key={item.id} value={item.id}>
+                  {item.name} - {item.subject.replace(/_/g, " ")}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div>
+            <label className="text-xs text-slate-400">Date</label>
+            <input
+              type="date"
+              value={date}
+              onChange={(event) => setDate(event.target.value)}
+              className="mt-1 min-h-11 w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-sm"
+            />
+          </div>
           <button
-            onClick={startSession}
-            disabled={!classId}
-            className="w-full bg-emerald-600 hover:bg-emerald-700 disabled:opacity-50 text-white font-semibold rounded-lg py-3"
+            type="button"
+            onClick={() => void load(classId, date)}
+            className="self-end rounded-xl border border-slate-700 px-5 py-3 text-sm font-semibold text-slate-200 hover:bg-slate-800"
           >
-            Start Attendance Session
+            Refresh
           </button>
-        </div>
-      ) : (
-        <div className="space-y-4">
-          {/* Stats bar */}
-          <div className="flex gap-3 text-sm">
-            <span className="bg-emerald-800 px-3 py-1 rounded-full">
-              Present: {counts.present}
-            </span>
-            <span className="bg-amber-800 px-3 py-1 rounded-full">
-              Late: {counts.late}
-            </span>
-            <span className="bg-red-800 px-3 py-1 rounded-full">
-              Absent: {counts.absent}
-            </span>
-          </div>
+        </section>
 
-          {/* Quick mark-all buttons */}
-          <div className="flex gap-2">
-            <button
-              onClick={() => markAll("PRESENT")}
-              className="flex-1 bg-emerald-700 hover:bg-emerald-800 text-white text-sm py-2 rounded-lg"
-            >
-              All Present
-            </button>
-            <button
-              onClick={() => markAll("LATE")}
-              className="flex-1 bg-amber-700 hover:bg-amber-800 text-white text-sm py-2 rounded-lg"
-            >
-              All Late
-            </button>
-            <button
-              onClick={() => markAll("ABSENT")}
-              className="flex-1 bg-red-700 hover:bg-red-800 text-white text-sm py-2 rounded-lg"
-            >
-              All Absent
-            </button>
+        <section className="grid gap-3 md:grid-cols-4">
+          <div className="rounded-2xl border border-emerald-500/20 bg-emerald-500/10 p-4 text-center">
+            <p className="text-2xl font-bold text-emerald-300">{counts.present}</p>
+            <p className="text-xs text-slate-300">Present</p>
           </div>
+          <div className="rounded-2xl border border-amber-500/20 bg-amber-500/10 p-4 text-center">
+            <p className="text-2xl font-bold text-amber-300">{counts.late}</p>
+            <p className="text-xs text-slate-300">Late</p>
+          </div>
+          <div className="rounded-2xl border border-sky-500/20 bg-sky-500/10 p-4 text-center">
+            <p className="text-2xl font-bold text-sky-300">{counts.excused}</p>
+            <p className="text-xs text-slate-300">Excused</p>
+          </div>
+          <div className="rounded-2xl border border-red-500/20 bg-red-500/10 p-4 text-center">
+            <p className="text-2xl font-bold text-red-300">{counts.absent}</p>
+            <p className="text-xs text-slate-300">Absent</p>
+          </div>
+        </section>
 
-          {/* Student list */}
-          <div className="space-y-2">
-            {students.map((s) => {
-              const status = statuses[s.studentId] ?? "ABSENT";
-              return (
-                <button
-                  key={s.studentId}
-                  onClick={() => toggle(s.studentId)}
-                  className={`w-full flex justify-between items-center px-4 py-3 rounded-lg text-white font-medium transition-colors ${STATUS_COLORS[status]}`}
+        <section className="flex flex-wrap gap-2">
+          {STATUS_OPTIONS.map((status) => (
+            <button
+              key={status}
+              type="button"
+              onClick={() => markAll(status)}
+              className={`rounded-full border px-4 py-2 text-xs font-semibold ${STATUS_STYLES[status]}`}
+            >
+              Mark All {status.toLowerCase()}
+            </button>
+          ))}
+        </section>
+
+        <section className="rounded-2xl border border-white/10 bg-slate-900/70 p-4">
+          {error ? <p className="mb-4 text-sm text-red-300">{error}</p> : null}
+          {saved ? <p className="mb-4 text-sm text-emerald-300">Attendance saved.</p> : null}
+          {loading ? (
+            <div className="space-y-3">
+              {Array.from({ length: 5 }).map((_, index) => (
+                <div key={index} className="h-16 animate-pulse rounded-xl bg-slate-800/60" />
+              ))}
+            </div>
+          ) : !classId ? (
+            <p className="text-sm text-slate-400">Select a class to load the roster.</p>
+          ) : students.length === 0 ? (
+            <p className="text-sm text-slate-400">This class has no enrolled students yet.</p>
+          ) : (
+            <div className="space-y-3">
+              {students.map((student) => (
+                <div
+                  key={student.studentId}
+                  className="grid gap-3 rounded-2xl border border-slate-800 bg-slate-950/60 p-4 md:grid-cols-[1.2fr,1fr,1.2fr]"
                 >
-                  <span>{s.name}</span>
-                  <span className="text-sm opacity-80">{status}</span>
-                </button>
-              );
-            })}
-          </div>
+                  <div>
+                    <p className="font-semibold text-slate-100">{student.name}</p>
+                    <p className="text-xs text-slate-500">
+                      Grade {student.currentGrade ?? "-"}
+                    </p>
+                  </div>
+                  <select
+                    value={statuses[student.studentId] ?? "ABSENT"}
+                    onChange={(event) =>
+                      setStatuses((current) => ({
+                        ...current,
+                        [student.studentId]: event.target.value as StatusType,
+                      }))
+                    }
+                    className="min-h-11 rounded-xl border border-slate-700 bg-slate-900 px-4 py-3 text-sm"
+                  >
+                    {STATUS_OPTIONS.map((status) => (
+                      <option key={status} value={status}>
+                        {status}
+                      </option>
+                    ))}
+                  </select>
+                  <input
+                    value={notes[student.studentId] ?? ""}
+                    onChange={(event) =>
+                      setNotes((current) => ({
+                        ...current,
+                        [student.studentId]: event.target.value,
+                      }))
+                    }
+                    placeholder="Optional note"
+                    className="min-h-11 rounded-xl border border-slate-700 bg-slate-900 px-4 py-3 text-sm"
+                  />
+                </div>
+              ))}
+            </div>
+          )}
+        </section>
 
-          {/* Save button */}
-          <button
-            onClick={save}
-            disabled={saving}
-            className="w-full bg-emerald-600 hover:bg-emerald-700 disabled:opacity-50 text-white font-bold rounded-lg py-3 mt-4"
-          >
-            {saving ? "Saving..." : saved ? "Saved!" : "Save Attendance"}
-          </button>
-        </div>
-      )}
-    </div>
+        <button
+          type="button"
+          onClick={save}
+          disabled={saving || students.length === 0 || !classId}
+          className="rounded-xl bg-emerald-500 px-6 py-3 text-sm font-semibold text-slate-950 hover:bg-emerald-400 disabled:opacity-60"
+        >
+          {saving ? "Saving..." : "Save Attendance"}
+        </button>
+      </div>
+    </main>
   );
 }

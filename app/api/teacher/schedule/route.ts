@@ -11,6 +11,7 @@ import {
 import { randomUUID } from "crypto";
 import { withRequestLogging } from "@/lib/logging/requestLogger";
 import { handleApiError } from "@/lib/errors/apiErrorHandler";
+import { listTeacherScheduleForUser } from "@/lib/records/schoolOperations";
 
 export const dynamic = "force-dynamic";
 
@@ -23,10 +24,8 @@ async function _scheduleGET(req: NextRequest) {
     const to = searchParams.get("to");
     const deliveredOnly = searchParams.get("deliveredOnly") === "true";
 
-    const classes = await prisma.class.findMany({
-      where: { schoolId: user.schoolId!, teacherId: user.id },
-      select: { id: true, name: true, subject: true },
-    });
+    const teacherScope = await listTeacherScheduleForUser(user);
+    const classes = teacherScope.classes;
     const classIds = classes.map((c) => c.id);
 
     const baseDate = weekOf ? new Date(weekOf) : new Date();
@@ -94,6 +93,7 @@ async function _scheduleGET(req: NextRequest) {
     const response: Record<string, unknown> = {
       items,
       classes,
+      timetable: teacherScope.timetable,
       weekStart: monday.toISOString(),
       rangeStart: rangeStart.toISOString(),
       rangeEnd: rangeEnd.toISOString(),
