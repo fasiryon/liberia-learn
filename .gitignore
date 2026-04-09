@@ -95,3 +95,6 @@ evals/results/
 
 .env*.local
 .vercel
+
+.vercel
+.env*.local
