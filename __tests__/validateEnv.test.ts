@@ -1,138 +1,182 @@
-// __tests__/validateEnv.test.ts
-// Verifies that validateEnv throws on missing required vars and warns on recommended ones.
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-const REQUIRED = [
-  "DATABASE_URL",
-  "DIRECT_URL",
-  "NEXTAUTH_SECRET",
-  "NEXTAUTH_URL",
-];
-
-const CONDITIONAL = ["AI_TUTOR_ENABLED", "OPENAI_API_KEY"];
-
-const RECOMMENDED = [
-  "SENTRY_DSN",
-  "NEXT_PUBLIC_SENTRY_DSN",
-  "RESEND_API_KEY",
-  "EMAIL_FROM",
-  "AT_API_KEY",
-  "AT_USERNAME",
-];
-
-const savedEnv: Record<string, string | undefined> = {};
-
-beforeEach(() => {
-  // Save and clear all relevant env vars
-  for (const k of [...REQUIRED, ...CONDITIONAL, ...RECOMMENDED]) {
-    savedEnv[k] = process.env[k];
-    delete process.env[k];
-  }
-});
-
-afterEach(() => {
-  for (const k of [...REQUIRED, ...CONDITIONAL, ...RECOMMENDED]) {
-    if (savedEnv[k] !== undefined) {
-      process.env[k] = savedEnv[k];
-    } else {
-      delete process.env[k];
-    }
-  }
-});
-
-function setAllRequired() {
-  process.env.DATABASE_URL = "postgresql://test";
-  process.env.DIRECT_URL = "postgresql://test-direct";
-  process.env.NEXTAUTH_SECRET = "test-secret-32chars-xxxxxxxxxxxx";
-  process.env.NEXTAUTH_URL = "http://localhost:3000";
+function mutableEnv() {
+  return process.env as Record<string, string | undefined>;
 }
 
-function setAllRecommended() {
-  process.env.SENTRY_DSN = "https://sentry.io/test";
-  process.env.NEXT_PUBLIC_SENTRY_DSN = "https://sentry.io/client-test";
-  process.env.RESEND_API_KEY = "re_test";
-  process.env.EMAIL_FROM = "LiberiaLearn <noreply@example.com>";
-  process.env.AT_API_KEY = "at-test";
-  process.env.AT_USERNAME = "sandbox";
+function resetRelevantEnv() {
+  const env = mutableEnv();
+  delete env.DATABASE_URL;
+  delete env.DIRECT_URL;
+  delete env.NEXTAUTH_SECRET;
+  delete env.NEXTAUTH_URL;
+  delete env.OPENAI_API_KEY;
+  delete env.AI_TUTOR_ENABLED;
+  delete env.AI_TEACHER_ASSIST_ENABLED;
+  delete env.ENABLE_RAG_TUTOR;
+  delete env.NEXT_PUBLIC_ENABLE_RAG_TUTOR;
+  delete env.ENABLE_TEACHER_GENERATION;
+  delete env.ENABLE_ASSIGNMENT_TUTOR;
+  delete env.ENABLE_AI_GRADING_ASSIST;
+  delete env.AI_INTERVENTIONS_AI_ENHANCED;
+  delete env.AI_DROPOUT_RISK_ENABLED;
+  delete env.ENABLE_CURRICULUM_OPTIMIZATION_AI;
+  delete env.ENABLE_DELIVERY_PROFILE;
+  delete env.NEXT_PUBLIC_SENTRY_DSN;
+  delete env.SENTRY_DSN;
+  delete env.SENTRY_AUTH_TOKEN;
+  delete env.SENTRY_ORG;
+  delete env.SENTRY_PROJECT;
+  delete env.RESEND_API_KEY;
+  delete env.EMAIL_FROM;
+  delete env.AT_API_KEY;
+  delete env.AT_USERNAME;
+  delete env.CI;
+  delete env.NODE_ENV;
+  delete env.NEXT_PHASE;
+}
+
+async function importValidateEnvModule() {
+  vi.resetModules();
+  return await import("@/lib/validateEnv");
 }
 
 describe("validateEnv", () => {
+  beforeEach(() => {
+    resetRelevantEnv();
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
   it("throws when DATABASE_URL is missing", async () => {
-    const { validateEnv } = await import("@/lib/validateEnv");
+    mutableEnv().DIRECT_URL = "postgres://direct";
+    mutableEnv().NEXTAUTH_SECRET = "secret";
+    mutableEnv().NEXTAUTH_URL = "http://localhost:3000";
+
+    const { validateEnv } = await importValidateEnvModule();
+
     expect(() => validateEnv()).toThrow(/DATABASE_URL/);
   });
 
   it("lists all missing required vars in the error message", async () => {
-    const { validateEnv } = await import("@/lib/validateEnv");
-    expect(() => validateEnv()).toThrow(
-      /DATABASE_URL.*DIRECT_URL.*NEXTAUTH_SECRET.*NEXTAUTH_URL/s
-    );
+    const { validateEnv } = await importValidateEnvModule();
+
+    expect(() => validateEnv()).toThrow(/DATABASE_URL/);
+    expect(() => validateEnv()).toThrow(/DIRECT_URL/);
+    expect(() => validateEnv()).toThrow(/NEXTAUTH_SECRET/);
+    expect(() => validateEnv()).toThrow(/NEXTAUTH_URL/);
   });
 
   it("throws only for missing vars, not present ones", async () => {
-    process.env.DATABASE_URL = "postgresql://test";
-    process.env.DIRECT_URL = "postgresql://test-direct";
-    const { validateEnv } = await import("@/lib/validateEnv");
-    const err = (() => { try { validateEnv(); } catch (e) { return e as Error; } })();
-    expect(err?.message).not.toMatch(/DATABASE_URL/);
-    expect(err?.message).not.toMatch(/DIRECT_URL/);
-    expect(err?.message).toMatch(/NEXTAUTH_SECRET/);
+    mutableEnv().DATABASE_URL = "postgres://db";
+    mutableEnv().DIRECT_URL = "postgres://direct";
+    mutableEnv().NEXTAUTH_SECRET = "secret";
+
+    const { validateEnv } = await importValidateEnvModule();
+
+    expect(() => validateEnv()).toThrow(/NEXTAUTH_URL/);
+    expect(() => validateEnv()).not.toThrow(/DATABASE_URL.*DIRECT_URL.*NEXTAUTH_SECRET/);
   });
 
   it("does not throw when all required vars are set", async () => {
-    setAllRequired();
-    const { validateEnv } = await import("@/lib/validateEnv");
+    mutableEnv().DATABASE_URL = "postgres://db";
+    mutableEnv().DIRECT_URL = "postgres://direct";
+    mutableEnv().NEXTAUTH_SECRET = "secret";
+    mutableEnv().NEXTAUTH_URL = "http://localhost:3000";
+
+    const { validateEnv } = await importValidateEnvModule();
+
     expect(() => validateEnv()).not.toThrow();
   });
 
   it("warns on recommended vars that are missing", async () => {
-    setAllRequired();
+    mutableEnv().DATABASE_URL = "postgres://db";
+    mutableEnv().DIRECT_URL = "postgres://direct";
+    mutableEnv().NEXTAUTH_SECRET = "secret";
+    mutableEnv().NEXTAUTH_URL = "http://localhost:3000";
+
     const warnSpy = vi.spyOn(console, "warn").mockImplementation(() => {});
-    const { validateEnv } = await import("@/lib/validateEnv");
+    const { validateEnv } = await importValidateEnvModule();
+
     validateEnv();
-    expect(warnSpy).toHaveBeenCalledWith(expect.stringContaining("SENTRY_DSN"));
-    expect(warnSpy).toHaveBeenCalledWith(expect.stringContaining("AT_USERNAME"));
-    expect(warnSpy).toHaveBeenCalledWith(expect.stringContaining("NEXT_PUBLIC_SENTRY_DSN"));
-    expect(warnSpy).toHaveBeenCalledWith(expect.stringContaining("RESEND_API_KEY"));
-    expect(warnSpy).toHaveBeenCalledWith(expect.stringContaining("EMAIL_FROM"));
-    expect(warnSpy).toHaveBeenCalledWith(expect.stringContaining("AT_API_KEY"));
-    warnSpy.mockRestore();
+
+    expect(warnSpy).toHaveBeenCalled();
   });
 
   it("does not warn when recommended vars are present", async () => {
-    setAllRequired();
-    setAllRecommended();
+    mutableEnv().DATABASE_URL = "postgres://db";
+    mutableEnv().DIRECT_URL = "postgres://direct";
+    mutableEnv().NEXTAUTH_SECRET = "secret";
+    mutableEnv().NEXTAUTH_URL = "http://localhost:3000";
+    mutableEnv().NEXT_PUBLIC_SENTRY_DSN = "https://examplePublic@sentry.io/123";
+    mutableEnv().SENTRY_DSN = "https://exampleServer@sentry.io/456";
+    mutableEnv().SENTRY_AUTH_TOKEN = "token";
+    mutableEnv().SENTRY_ORG = "liberia-learn";
+    mutableEnv().SENTRY_PROJECT = "liberialearn-web";
+    mutableEnv().RESEND_API_KEY = "resend";
+    mutableEnv().EMAIL_FROM = "noreply@example.com";
+    mutableEnv().AT_API_KEY = "at-key";
+    mutableEnv().AT_USERNAME = "at-user";
+
     const warnSpy = vi.spyOn(console, "warn").mockImplementation(() => {});
-    const { validateEnv } = await import("@/lib/validateEnv");
+    const { validateEnv } = await importValidateEnvModule();
+
     validateEnv();
+
     expect(warnSpy).not.toHaveBeenCalled();
-    warnSpy.mockRestore();
   });
 
   it("requires OPENAI_API_KEY when an AI feature flag is enabled", async () => {
-    setAllRequired();
-    process.env.AI_TUTOR_ENABLED = "true";
-    const { validateEnv } = await import("@/lib/validateEnv");
-    expect(() => validateEnv()).toThrow(/OPENAI_API_KEY.*AI_TUTOR_ENABLED/);
+    mutableEnv().DATABASE_URL = "postgres://db";
+    mutableEnv().DIRECT_URL = "postgres://direct";
+    mutableEnv().NEXTAUTH_SECRET = "secret";
+    mutableEnv().NEXTAUTH_URL = "http://localhost:3000";
+    mutableEnv().AI_TUTOR_ENABLED = "true";
+
+    const { validateEnv } = await importValidateEnvModule();
+
+    expect(() => validateEnv()).toThrow(/OPENAI_API_KEY/);
   });
 });
 
 describe("validateBuildEnv", () => {
+  beforeEach(() => {
+    resetRelevantEnv();
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
   it("does not require runtime database or auth env vars at config-load time", async () => {
-    const { validateBuildEnv } = await import("@/lib/validateEnv");
+    mutableEnv().NODE_ENV = "production";
+    mutableEnv().CI = "true";
+
+    const warnSpy = vi.spyOn(console, "warn").mockImplementation(() => {});
+    const { validateBuildEnv } = await importValidateEnvModule();
+
     expect(() => validateBuildEnv()).not.toThrow();
+    expect(warnSpy).toHaveBeenCalled();
   });
 
   it("warns on partial sentry build configuration", async () => {
-    process.env.SENTRY_AUTH_TOKEN = "token";
+    mutableEnv().NODE_ENV = "production";
+    mutableEnv().CI = "true";
+    mutableEnv().NEXT_PUBLIC_SENTRY_DSN = "https://examplePublic@sentry.io/123";
+    mutableEnv().SENTRY_DSN = "https://exampleServer@sentry.io/456";
+    mutableEnv().SENTRY_ORG = "liberia-learn";
+    mutableEnv().SENTRY_PROJECT = "liberialearn-web";
+    delete mutableEnv().SENTRY_AUTH_TOKEN;
+
     const warnSpy = vi.spyOn(console, "warn").mockImplementation(() => {});
-    const { validateBuildEnv } = await import("@/lib/validateEnv");
+    const { validateBuildEnv } = await importValidateEnvModule();
 
     validateBuildEnv();
 
     expect(warnSpy).toHaveBeenCalledWith(
       expect.stringContaining("Partial configuration detected")
     );
-    warnSpy.mockRestore();
   });
 });

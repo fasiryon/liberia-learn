@@ -6,6 +6,7 @@ import { getRateLimitHeaders, rateLimitExceededResponse } from "@/lib/rateLimit"
 import { logAudit } from "@/lib/audit";
 import { prisma } from "@/lib/db";
 import { handleApiError } from "@/lib/errors/apiErrorHandler";
+import { assertExamScopeContext, examGenerationContextSchema } from "@/lib/exams/examAuthority";
 import { generateExamWithUsage } from "@/lib/exams/examGenerator";
 import { isExamSystemEnabled } from "@/lib/serverFlags";
 
@@ -18,7 +19,7 @@ const ExamGenerationParamsSchema = z.object({
   questionCount: z.number().int().min(5).max(100).optional(),
   timeLimit: z.number().int().min(10).max(240).optional(),
   title: z.string().min(3).max(200).optional(),
-});
+}).merge(examGenerationContextSchema);
 
 export async function POST(req: NextRequest) {
   try {
@@ -47,6 +48,11 @@ export async function POST(req: NextRequest) {
       userId: user.id,
     });
     const exam = generated.exam;
+    const scoped = await assertExamScopeContext(user.schoolId, {
+      academicYearId: params.academicYearId,
+      classId: params.classId,
+      subject: exam.subject,
+    });
 
     const record = await prisma.exam.create({
       data: {
@@ -54,6 +60,8 @@ export async function POST(req: NextRequest) {
         subject: exam.subject,
         grade: exam.grade,
         schoolId: user.schoolId,
+        academicYearId: scoped.academicYearId ?? null,
+        classId: scoped.classId ?? null,
         createdBy: user.id,
         moeStandards: exam.moeStandards,
         timeLimit: exam.timeLimit,
@@ -81,12 +89,14 @@ export async function POST(req: NextRequest) {
       details: {
         subject: exam.subject,
         grade: exam.grade,
+        academicYearId: scoped.academicYearId ?? null,
+        classId: scoped.classId ?? null,
         questionCount: exam.questions.length,
         hadFallback: generated.hadFallback === true,
       },
     });
 
-    return NextResponse.json({ examId: record.id, exam }, { headers: getRateLimitHeaders(rateLimit) });
+    return NextResponse.json({ examId: record.id }, { headers: getRateLimitHeaders(rateLimit) });
   } catch (error) {
     return handleApiError(error);
   }

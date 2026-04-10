@@ -17,12 +17,17 @@ type StartPayload = {
   questions: Question[];
   timeLimit: number;
   title: string;
+  startedAt: string;
+  resumed?: boolean;
 };
 
 type SubmitPayload = {
   score: number;
   passed: boolean;
   certCode?: string;
+  resultsPublished?: boolean;
+  durationSeconds?: number;
+  tabSwitchCount?: number;
 };
 
 export type PersistedExamSession = {
@@ -76,8 +81,18 @@ export default function StudentExamSessionClient({ examId }: { examId: string })
   const [startedAt, setStartedAt] = useState<string | null>(null);
   const [confirmingSubmit, setConfirmingSubmit] = useState(false);
   const flagsRef = useRef<Set<string>>(new Set());
+  const tabSwitchCountRef = useRef(0);
+  const submissionLogRef = useRef<Array<{ type: string; at: string; detail?: string }>>([]);
   const restoredSessionRef = useRef<PersistedExamSession | null>(null);
   const sessionKey = useMemo(() => `exam_session_${examId}`, [examId]);
+
+  const appendLog = useCallback((type: string, detail?: string) => {
+    submissionLogRef.current.push({
+      type,
+      at: new Date().toISOString(),
+      ...(detail ? { detail } : {}),
+    });
+  }, []);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -90,10 +105,11 @@ export default function StudentExamSessionClient({ examId }: { examId: string })
       setAnswers(restored.answers);
       setCurrentIndex(restored.currentIndex);
       setStartedAt(restored.startedAt);
+      appendLog("session_restored");
     } else {
       clearExamSession(window.sessionStorage, sessionKey);
     }
-  }, [sessionKey]);
+  }, [appendLog, sessionKey]);
 
   useEffect(() => {
     let cancelled = false;
@@ -111,7 +127,7 @@ export default function StudentExamSessionClient({ examId }: { examId: string })
           restoredAnswers && typeof restored.currentIndex === "number"
             ? Math.min(restored.currentIndex, Math.max(data.questions.length - 1, 0))
             : 0;
-        const resolvedStartedAt = restored?.startedAt ?? new Date().toISOString();
+        const resolvedStartedAt = restored?.startedAt ?? data.startedAt ?? new Date().toISOString();
         const elapsedSeconds = Math.max(
           0,
           Math.floor((Date.now() - new Date(resolvedStartedAt).getTime()) / 1000)
@@ -124,6 +140,7 @@ export default function StudentExamSessionClient({ examId }: { examId: string })
         setCurrentIndex(restoredIndex);
         setStartedAt(resolvedStartedAt);
         setRemainingSeconds(Math.max((data.timeLimit ?? 60) * 60 - elapsedSeconds, 0));
+        appendLog(data.resumed ? "attempt_resumed" : "attempt_started");
       })
       .catch((err) => {
         if (!cancelled) setError(err.message);
@@ -135,7 +152,7 @@ export default function StudentExamSessionClient({ examId }: { examId: string })
     return () => {
       cancelled = true;
     };
-  }, [examId]);
+  }, [appendLog, examId]);
 
   useEffect(() => {
     if (typeof window === "undefined" || !startedAt || result) return;
@@ -164,6 +181,8 @@ export default function StudentExamSessionClient({ examId }: { examId: string })
           attemptId: session.attemptId,
           answers: answers.map((answer) => (answer < 0 ? 0 : answer)),
           flags: Array.from(flagsRef.current),
+          tabSwitchCount: tabSwitchCountRef.current,
+          submissionLog: submissionLogRef.current,
         }),
       });
       const data = await response.json();
@@ -205,11 +224,13 @@ export default function StudentExamSessionClient({ examId }: { examId: string })
     const onVisibility = () => {
       if (document.visibilityState === "hidden") {
         flagsRef.current.add("tab_switch");
+        tabSwitchCountRef.current += 1;
+        appendLog("tab_hidden", `count:${tabSwitchCountRef.current}`);
       }
     };
     document.addEventListener("visibilitychange", onVisibility);
     return () => document.removeEventListener("visibilitychange", onVisibility);
-  }, []);
+  }, [appendLog]);
 
   const question = session?.questions[currentIndex] ?? null;
   const progress = session ? ((currentIndex + 1) / session.questions.length) * 100 : 0;
@@ -249,6 +270,14 @@ export default function StudentExamSessionClient({ examId }: { examId: string })
             {result.passed
               ? "You earned a certification."
               : "You did not reach the passing score this time."}
+          </p>
+          <p className="text-sm text-slate-300">
+            {result.resultsPublished
+              ? "This result has been released to your official record."
+              : "Your submission is recorded. Official transcript release follows school review."}
+          </p>
+          <p className="text-xs text-slate-500">
+            Session duration: {result.durationSeconds ?? 0}s · Tab switches recorded: {result.tabSwitchCount ?? 0}
           </p>
           {result.certCode ? (
             <div className="rounded-2xl border border-emerald-400/30 bg-emerald-500/10 p-4 text-sm text-slate-100">
@@ -293,6 +322,9 @@ export default function StudentExamSessionClient({ examId }: { examId: string })
           </div>
           <p className="mt-3 text-sm text-slate-200">
             Question {currentIndex + 1} of {session?.questions.length}
+          </p>
+          <p className="mt-2 text-xs text-slate-500">
+            Integrity note: tab switching and anomalous session timing are recorded for review.
           </p>
         </div>
 
@@ -394,6 +426,7 @@ export default function StudentExamSessionClient({ examId }: { examId: string })
               <button
                 type="button"
                 onClick={() => {
+                  appendLog("submit_confirmed");
                   setConfirmingSubmit(false);
                   void submitExam();
                 }}

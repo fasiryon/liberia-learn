@@ -1,20 +1,19 @@
 import { NextRequest, NextResponse } from "next/server";
-import { z } from "zod";
 import { requireRole } from "@/lib/auth";
 import { logAudit } from "@/lib/audit";
 import { prisma } from "@/lib/db";
 import { handleApiError } from "@/lib/errors/apiErrorHandler";
+import {
+  buildAttemptIntegrityMetadata,
+  normalizeAttemptLog,
+  submitExamSchema,
+  syncTranscriptSummariesForExam,
+} from "@/lib/exams/examAuthority";
 import { gradeAttempt } from "@/lib/exams/gradingPipeline";
 import { recordPerformanceEvent } from "@/lib/intelligence/recordPerformanceEvent";
 import { isExamSystemEnabled } from "@/lib/serverFlags";
 
 export const dynamic = "force-dynamic";
-
-const SubmitSchema = z.object({
-  attemptId: z.string().min(1),
-  answers: z.array(z.number().int().min(0).max(3)),
-  flags: z.array(z.string().min(1)).optional(),
-});
 
 export async function POST(req: NextRequest, context: { params: { examId: string } }) {
   try {
@@ -23,7 +22,7 @@ export async function POST(req: NextRequest, context: { params: { examId: string
     }
 
     const user = await requireRole("STUDENT");
-    const body = SubmitSchema.parse(await req.json());
+    const body = submitExamSchema.parse(await req.json());
     const student = await prisma.student.findUnique({
       where: { userId: user.id },
       select: { id: true },
@@ -71,14 +70,33 @@ export async function POST(req: NextRequest, context: { params: { examId: string
       attempt.exam.questions as any
     );
 
-    const integrityFlags = Array.isArray(body.flags) ? [...body.flags] : [];
     const submittedAt = new Date();
+    const durationSeconds = Math.max(
+      0,
+      Math.round((submittedAt.getTime() - attempt.startedAt.getTime()) / 1000)
+    );
+    const suspiciousDuration = durationSeconds > 0 && durationSeconds < Math.max(30, attempt.exam.questions.length * 5);
+    const integrityFlags = Array.isArray(body.flags) ? [...body.flags] : [];
+    const tabSwitchCount = body.tabSwitchCount ?? 0;
     const maxAllowedMs = (attempt.exam.timeLimit + 5) * 60 * 1000;
     if (submittedAt.getTime() - attempt.startedAt.getTime() > maxAllowedMs) {
       integrityFlags.push("time_exceeded");
     }
+    if (tabSwitchCount > 0) {
+      integrityFlags.push("tab_switch");
+    }
+    if (suspiciousDuration) {
+      integrityFlags.push("suspicious_duration");
+    }
 
     const uniqueFlags = Array.from(new Set(integrityFlags));
+    const submissionLog = normalizeAttemptLog(body.submissionLog).concat([
+      {
+        type: "submitted",
+        at: submittedAt.toISOString(),
+        detail: `duration_seconds:${durationSeconds}`,
+      },
+    ]);
 
     let certCode: string | undefined;
     if (grading.passed) {
@@ -93,7 +111,20 @@ export async function POST(req: NextRequest, context: { params: { examId: string
           score: grading.score,
           passed: grading.passed,
           submittedAt,
+          tabSwitchCount,
+          durationSeconds,
           integrityFlags: uniqueFlags,
+          submissionLog: {
+            events: submissionLog,
+          },
+          integrityMetadata: buildAttemptIntegrityMetadata({
+            flags: uniqueFlags,
+            tabSwitchCount,
+            durationSeconds,
+            weakMoeCodes: grading.weakMoeCodes,
+            suspiciousDuration,
+            submissionLog,
+          }),
         },
       });
 
@@ -128,9 +159,15 @@ export async function POST(req: NextRequest, context: { params: { examId: string
         score: grading.score,
         passed: grading.passed,
         integrityFlags: uniqueFlags,
+        tabSwitchCount,
+        durationSeconds,
         weakMoeCodes: grading.weakMoeCodes,
       },
     });
+
+    if (attempt.exam.resultsPublishedAt && attempt.exam.academicYearId) {
+      await syncTranscriptSummariesForExam(attempt.exam.id);
+    }
 
     void recordPerformanceEvent({
       studentId: student.id,
@@ -139,10 +176,7 @@ export async function POST(req: NextRequest, context: { params: { examId: string
       gradeLevel: attempt.exam.grade,
       eventType: "quiz",
       score: grading.score,
-      durationSeconds: Math.max(
-        0,
-        Math.round((submittedAt.getTime() - attempt.startedAt.getTime()) / 1000)
-      ),
+      durationSeconds,
       attempts: 1,
       aiAssistUsed: false,
       lessonId: attempt.exam.id,
@@ -150,7 +184,14 @@ export async function POST(req: NextRequest, context: { params: { examId: string
       console.error("[exam.submit.performanceEvent]", eventError);
     });
 
-    return NextResponse.json({ score: grading.score, passed: grading.passed, certCode });
+    return NextResponse.json({
+      score: grading.score,
+      passed: grading.passed,
+      certCode,
+      resultsPublished: Boolean(attempt.exam.resultsPublishedAt),
+      durationSeconds,
+      tabSwitchCount,
+    });
   } catch (error) {
     return handleApiError(error);
   }

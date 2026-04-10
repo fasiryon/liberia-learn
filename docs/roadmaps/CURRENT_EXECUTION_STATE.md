@@ -4,10 +4,10 @@
 This file records live progress only. It must match the actual repository state at the end of every session.
 
 ## Current workstream
-Phase 2 school operations
+Phase 3 exams and results authority
 
 ## Current sprint or phase
-Phase 2 implementation complete
+Phase 3 final wiring pass validated
 
 ## Current branch
 main
@@ -16,77 +16,80 @@ main
 Dirty
 
 ## Worktree details
-- Pre-existing unrelated modifications still present: `.gitignore`, `package-lock.json`, `package.json`
-- Pre-existing untracked Phase 1 migration directory still present: `prisma/migrations/20260405_191827_phase1_system_of_record/`
-- Phase 2 files modified this session:
+- Pre-existing unrelated modification remains present: `.gitignore`
+- Pre-existing untracked migration directories remain present:
+  - `prisma/migrations/20260409_122556_phase2_school_operations/`
+  - `prisma/migrations/20260409_124356_phase2_school_operations/`
+- Phase 3 files modified this session:
+  - `__tests__/validateEnv.test.ts`
   - `app/admin/page.tsx`
-  - `app/api/teacher/schedule/route.ts`
-  - `app/teacher/attendance/page.tsx`
-  - `app/teacher/dashboard/page.tsx`
-  - `app/teacher/schedule/page.tsx`
+  - `app/api/admin/exams/[examId]/publish/route.ts`
+  - `app/api/admin/exams/[examId]/route.ts`
+  - `app/api/admin/exams/generate/route.ts`
+  - `app/api/admin/exams/route.ts`
+  - `app/api/student/exams/[examId]/start/route.ts`
+  - `app/api/student/exams/[examId]/submit/route.ts`
+  - `app/api/teacher/exams/route.ts`
+  - `app/student/exams/[examId]/StudentExamSessionClient.tsx`
+  - `app/student/transcript/page.tsx`
+  - `app/teacher/exams/TeacherExamsClient.tsx`
+  - `app/teacher/exams/[examId]/page.tsx`
   - `components/admin/AdminNav.tsx`
-  - `components/teacher/TeacherNav.tsx`
-  - `lib/errors/apiErrorHandler.ts`
   - `prisma/schema.prisma`
-- Phase 2 files added this session:
-  - `app/admin/assignments/page.tsx`
-  - `app/admin/timetable/page.tsx`
-  - `app/api/admin/assignments/route.ts`
-  - `app/api/admin/timetable/route.ts`
-  - `app/api/teacher/attendance/route.ts`
-  - `lib/records/schoolOperations.ts`
-  - `__tests__/admin.assignments.route.test.ts`
-  - `__tests__/admin.timetable.route.test.ts`
-  - `__tests__/teacher.attendance.route.test.ts`
+- Phase 3 files added this session:
+  - `app/admin/exams/page.tsx`
+  - `app/admin/exams/AdminExamsClient.tsx`
+  - `app/api/admin/exams/[examId]/results/route.ts`
+  - `lib/exams/examAuthority.ts`
   - `docs/roadmaps/CURRENT_EXECUTION_STATE.md`
 
 ## Overall status
-Phase 2 delivered
+Phase 3 wired and validated
 
 ## Completed roadmap status
-- Phase 1 system-of-record foundation remains in place and was not broken by this session.
-- Phase 2 school operations now includes attendance, timetable management, teacher assignments, assignment-aware teacher schedule access, roster-based attendance marking, admin operational pages, and targeted route coverage.
+- Phase 1 system-of-record foundation remains in place.
+- Phase 2 school operations foundation remains in place.
+- Phase 3 exam authority now has validated generation, session submission, grading persistence, teacher/admin visibility, transcript linkage support, and integrity metadata capture on top of the existing exam system.
 
 ## Last completed phase
-School operations delivered: operational attendance model and teacher flow, timetable model and admin management flow, teacher assignment model and admin management flow, assignment-aware teacher schedule retrieval, and roster-safe attendance writes
+Phase 3 exams and results authority final wiring pass completed
 
 ## Last successful validation
-- `npx prisma generate`: PASS
 - `npx tsc --noEmit`: PASS
 - `npx vitest run`: PASS (`222` test files, `1609` tests)
 - `npm run build`: PASS
 
 ## Validation run in this session
-- `npx prisma generate`: PASS
 - `npx tsc --noEmit`: PASS
 - `npx vitest run`: PASS (`222` test files, `1609` tests)
 - `npm run build`: PASS
-- Build emitted non-fatal warnings for missing recommended Sentry environment variables and existing OpenTelemetry critical dependency warnings.
+- Build completed with existing non-fatal warnings about missing recommended Sentry env vars and existing OpenTelemetry critical dependency warnings.
 
 ## Blockers or discrepancies
-- Repository state was mismatched at session start because the state file still described Phase 1 while the user had moved execution to Phase 2.
-- The repo is still not clean because of pre-existing unrelated local changes and the pre-existing untracked Phase 1 migration directory.
+- No active code blockers.
+- Repository remains dirty because of the pre-existing `.gitignore` modification and the untracked Phase 2 migration directories.
 
 ## Exact next step
-Prepare the manual Prisma migration SQL for the new Phase 2 operational tables (`Attendance`, `Timetable`, `TeacherAssignment`, enum updates), then begin the next roadmap phase on top of the validated Phase 1 and Phase 2 foundations.
+Prepare the manual Prisma migration SQL for the Phase 3 exam schema extensions and then move to the next roadmap phase from the now-validated Phase 1, Phase 2, and Phase 3 foundation.
 
 ## Files changed this session
+- `__tests__/validateEnv.test.ts`
 - `app/admin/page.tsx`
-- `app/api/teacher/schedule/route.ts`
-- `app/teacher/attendance/page.tsx`
-- `app/teacher/dashboard/page.tsx`
-- `app/teacher/schedule/page.tsx`
+- `app/api/admin/exams/[examId]/publish/route.ts`
+- `app/api/admin/exams/[examId]/route.ts`
+- `app/api/admin/exams/generate/route.ts`
+- `app/api/admin/exams/route.ts`
+- `app/api/student/exams/[examId]/start/route.ts`
+- `app/api/student/exams/[examId]/submit/route.ts`
+- `app/api/teacher/exams/route.ts`
+- `app/student/exams/[examId]/StudentExamSessionClient.tsx`
+- `app/student/transcript/page.tsx`
+- `app/teacher/exams/TeacherExamsClient.tsx`
+- `app/teacher/exams/[examId]/page.tsx`
 - `components/admin/AdminNav.tsx`
-- `components/teacher/TeacherNav.tsx`
-- `lib/errors/apiErrorHandler.ts`
 - `prisma/schema.prisma`
-- `app/admin/assignments/page.tsx`
-- `app/admin/timetable/page.tsx`
-- `app/api/admin/assignments/route.ts`
-- `app/api/admin/timetable/route.ts`
-- `app/api/teacher/attendance/route.ts`
-- `lib/records/schoolOperations.ts`
-- `__tests__/admin.assignments.route.test.ts`
-- `__tests__/admin.timetable.route.test.ts`
-- `__tests__/teacher.attendance.route.test.ts`
+- `app/admin/exams/page.tsx`
+- `app/admin/exams/AdminExamsClient.tsx`
+- `app/api/admin/exams/[examId]/results/route.ts`
+- `lib/exams/examAuthority.ts`
 - `docs/roadmaps/CURRENT_EXECUTION_STATE.md`

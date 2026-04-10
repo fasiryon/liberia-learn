@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { requireRole } from "@/lib/auth";
+import { requireUser } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { handleApiError } from "@/lib/errors/apiErrorHandler";
 import { isExamSystemEnabled } from "@/lib/serverFlags";
@@ -12,29 +12,45 @@ export async function GET() {
       return NextResponse.json({ error: "Not found" }, { status: 404 });
     }
 
-    const user = await requireRole("TEACHER");
+    const user = await requireUser();
+    if (user.role !== "TEACHER") {
+      throw Object.assign(new Error("Forbidden"), { status: 403 });
+    }
     if (!user.schoolId) {
       return NextResponse.json({ exams: [] });
     }
 
     const exams = await prisma.exam.findMany({
-      where: { schoolId: user.schoolId },
-      include: {
-        attempts: true,
-        _count: { select: { questions: true } },
-      },
+      where: { schoolId: user.schoolId, deletedAt: null },
       orderBy: { createdAt: "desc" },
+      select: {
+        id: true,
+        title: true,
+        subject: true,
+        grade: true,
+        status: true,
+        resultsPublishedAt: true,
+        class: { select: { name: true } },
+        academicYear: { select: { yearLabel: true } },
+        attempts: {
+          select: {
+            score: true,
+            passed: true,
+            submittedAt: true,
+            integrityFlags: true,
+          },
+        },
+        _count: { select: { attempts: true } },
+      },
     });
 
     return NextResponse.json({
       exams: exams.map((exam) => {
-        const attemptCount = exam.attempts.length;
-        const passCount = exam.attempts.filter((attempt) => attempt.passed).length;
-        const avgScore =
-          attemptCount > 0
-            ? exam.attempts.reduce((sum, attempt) => sum + attempt.score, 0) / attemptCount
-            : 0;
-        const flaggedCount = exam.attempts.filter((attempt) => attempt.integrityFlags.length > 0).length;
+        const attempts = Array.isArray(exam.attempts) ? exam.attempts : [];
+        const submittedAttempts = attempts.filter((attempt) => !("submittedAt" in attempt) || Boolean(attempt.submittedAt));
+        const attemptCount = exam._count?.attempts ?? attempts.length;
+        const passCount = attempts.filter((attempt) => attempt.passed).length;
+        const flaggedCount = attempts.filter((attempt) => attempt.integrityFlags.length > 0).length;
 
         return {
           id: exam.id,
@@ -42,10 +58,11 @@ export async function GET() {
           subject: exam.subject,
           grade: exam.grade,
           status: exam.status,
-          questionCount: exam._count.questions,
+          className: exam.class?.name ?? null,
+          academicYearLabel: exam.academicYear?.yearLabel ?? null,
+          resultsPublishedAt: exam.resultsPublishedAt,
           attemptCount,
           passRate: attemptCount > 0 ? passCount / attemptCount : 0,
-          avgScore,
           flaggedCount,
         };
       }),
