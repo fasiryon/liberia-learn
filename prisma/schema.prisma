@@ -153,6 +153,7 @@ model Class {
   scheduledWork ScheduledWork[]
   timetableEntries Timetable[]
   teacherAssignments TeacherAssignment[]
+  exams          Exam[]
 }
 
 model Student {
@@ -199,20 +200,28 @@ model Exam {
   subject         String
   grade           Int
   schoolId        String
+  academicYearId  String?
+  classId         String?
   createdBy       String
   status          ExamStatus          @default(DRAFT)
   moeStandards    String[]
   timeLimit       Int
   passingScore    Float               @default(0.70)
+  publishedAt     DateTime?
+  resultsPublishedAt DateTime?
   deletedAt       DateTime?
   questions       ExamQuestion[]
   attempts        ExamAttempt[]
   certifications  ExamCertification[]
   school          School              @relation(fields: [schoolId], references: [id])
+  academicYear    AcademicYear?       @relation(fields: [academicYearId], references: [id], onDelete: SetNull)
+  class           Class?              @relation(fields: [classId], references: [id], onDelete: SetNull)
   createdAt       DateTime            @default(now())
   updatedAt       DateTime            @updatedAt
 
   @@index([schoolId, subject, grade])
+  @@index([schoolId, status, grade])
+  @@index([academicYearId, classId])
 }
 
 model ExamQuestion {
@@ -238,12 +247,17 @@ model ExamAttempt {
   passed         Boolean
   startedAt      DateTime @default(now())
   submittedAt    DateTime?
+  tabSwitchCount Int      @default(0)
+  durationSeconds Int?
   integrityFlags String[]
+  integrityMetadata Json?
+  submissionLog  Json?
   exam           Exam     @relation(fields: [examId], references: [id], onDelete: Cascade)
   student        Student  @relation(fields: [studentId], references: [id], onDelete: Cascade)
 
   @@index([examId, studentId])
   @@index([studentId, submittedAt])
+  @@index([examId, submittedAt])
 }
 
 model ExamCertification {
@@ -299,6 +313,7 @@ model AcademicYear {
   terms       Term[]
   enrollments AcademicEnrollment[]
   transcripts Transcript[]
+  exams       Exam[]
 
   @@unique([schoolId, yearLabel])
   @@index([schoolId, isActive])
