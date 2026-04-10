@@ -1,13 +1,13 @@
 # CURRENT EXECUTION STATE
 
 ## Purpose
-This file records live progress only. It must match the actual repository state at the end of every session.
+This file records live progress only. It must match the actual repository and database state at the end of every session.
 
 ## Current workstream
-Phase 3 exams and results authority
+DB reconciliation and migration ordering pass
 
 ## Current sprint or phase
-Phase 3 final wiring pass validated
+Migration authority restoration in progress
 
 ## Current branch
 main
@@ -16,43 +16,19 @@ main
 Dirty
 
 ## Worktree details
-- Pre-existing unrelated modification remains present: `.gitignore`
-- Pre-existing untracked migration directories remain present:
-  - `prisma/migrations/20260409_122556_phase2_school_operations/`
+- Untracked migration directories are present:
+  - `prisma/migrations/20260405_191827_phase1_system_of_record/`
   - `prisma/migrations/20260409_124356_phase2_school_operations/`
-- Phase 3 files modified this session:
-  - `__tests__/validateEnv.test.ts`
-  - `app/admin/page.tsx`
-  - `app/api/admin/exams/[examId]/publish/route.ts`
-  - `app/api/admin/exams/[examId]/route.ts`
-  - `app/api/admin/exams/generate/route.ts`
-  - `app/api/admin/exams/route.ts`
-  - `app/api/student/exams/[examId]/start/route.ts`
-  - `app/api/student/exams/[examId]/submit/route.ts`
-  - `app/api/teacher/exams/route.ts`
-  - `app/student/exams/[examId]/StudentExamSessionClient.tsx`
-  - `app/student/transcript/page.tsx`
-  - `app/teacher/exams/TeacherExamsClient.tsx`
-  - `app/teacher/exams/[examId]/page.tsx`
-  - `components/admin/AdminNav.tsx`
-  - `prisma/schema.prisma`
-- Phase 3 files added this session:
-  - `app/admin/exams/page.tsx`
-  - `app/admin/exams/AdminExamsClient.tsx`
-  - `app/api/admin/exams/[examId]/results/route.ts`
-  - `lib/exams/examAuthority.ts`
+  - `prisma/migrations/20260410_000000_phase2_subject_reconciliation/`
+  - `prisma/migrations/20260409_214655_phase3_exam_authority/`
+- This session updated:
   - `docs/roadmaps/CURRENT_EXECUTION_STATE.md`
 
 ## Overall status
-Phase 3 wired and validated
-
-## Completed roadmap status
-- Phase 1 system-of-record foundation remains in place.
-- Phase 2 school operations foundation remains in place.
-- Phase 3 exam authority now has validated generation, session submission, grading persistence, teacher/admin visibility, transcript linkage support, and integrity metadata capture on top of the existing exam system.
+Phase 1 and Phase 2 authoritative migration reconciliation prepared locally; DB apply not run yet
 
 ## Last completed phase
-Phase 3 exams and results authority final wiring pass completed
+Phase 3 exam authority code validation completed previously
 
 ## Last successful validation
 - `npx tsc --noEmit`: PASS
@@ -60,36 +36,38 @@ Phase 3 exams and results authority final wiring pass completed
 - `npm run build`: PASS
 
 ## Validation run in this session
-- `npx tsc --noEmit`: PASS
-- `npx vitest run`: PASS (`222` test files, `1609` tests)
-- `npm run build`: PASS
-- Build completed with existing non-fatal warnings about missing recommended Sentry env vars and existing OpenTelemetry critical dependency warnings.
+- `npx prisma migrate status --schema prisma/schema.prisma`: completed
+- `npx prisma db pull --print --schema prisma/schema.prisma`: completed
+- No code validation gate rerun in this session because the blocker is database state divergence, not application code.
 
 ## Blockers or discrepancies
-- No active code blockers.
-- Repository remains dirty because of the pre-existing `.gitignore` modification and the untracked Phase 2 migration directories.
+- Live database does not contain the Phase 1 academic-record tables required by the current Prisma schema:
+  - `AcademicYear`
+  - `Term`
+  - `AcademicEnrollment`
+  - `Transcript`
+- Database migration history reports `20260405_191827_phase1_system_of_record` as applied, but those Phase 1 tables are absent from the live database.
+- Live database contains Phase 2 operational tables, but their structure does not match the validated Prisma schema:
+  - `TeacherAssignment` has `subjectId` and `subjectName`, while the current schema expects a single `subject` enum field.
+  - `Timetable` has `subjectId` and `subjectName`, while the current schema expects a single `subject` enum field.
+- Live database contains the older exam system, but the Phase 3 exam extensions are absent:
+  - `Exam.academicYearId`
+  - `Exam.classId`
+  - `Exam.publishedAt`
+  - `Exam.resultsPublishedAt`
+  - `ExamAttempt.tabSwitchCount`
+  - `ExamAttempt.durationSeconds`
+  - `ExamAttempt.integrityMetadata`
+  - `ExamAttempt.submissionLog`
+- Local authoritative recovery assets are now prepared:
+  - restored `20260405_191827_phase1_system_of_record`
+  - added `20260410_000000_phase2_subject_reconciliation`
+- Database application has not started yet.
 
 ## Exact next step
-Prepare the manual Prisma migration SQL for the Phase 3 exam schema extensions and then move to the next roadmap phase from the now-validated Phase 1, Phase 2, and Phase 3 foundation.
+Apply the restored Phase 1 migration and the new Phase 2 subject reconciliation migration to the live database in order, verify success, and then apply the Phase 3 exam extension migration.
 
 ## Files changed this session
-- `__tests__/validateEnv.test.ts`
-- `app/admin/page.tsx`
-- `app/api/admin/exams/[examId]/publish/route.ts`
-- `app/api/admin/exams/[examId]/route.ts`
-- `app/api/admin/exams/generate/route.ts`
-- `app/api/admin/exams/route.ts`
-- `app/api/student/exams/[examId]/start/route.ts`
-- `app/api/student/exams/[examId]/submit/route.ts`
-- `app/api/teacher/exams/route.ts`
-- `app/student/exams/[examId]/StudentExamSessionClient.tsx`
-- `app/student/transcript/page.tsx`
-- `app/teacher/exams/TeacherExamsClient.tsx`
-- `app/teacher/exams/[examId]/page.tsx`
-- `components/admin/AdminNav.tsx`
-- `prisma/schema.prisma`
-- `app/admin/exams/page.tsx`
-- `app/admin/exams/AdminExamsClient.tsx`
-- `app/api/admin/exams/[examId]/results/route.ts`
-- `lib/exams/examAuthority.ts`
 - `docs/roadmaps/CURRENT_EXECUTION_STATE.md`
+- `prisma/migrations/20260405_191827_phase1_system_of_record/migration.sql`
+- `prisma/migrations/20260410_000000_phase2_subject_reconciliation/migration.sql`
