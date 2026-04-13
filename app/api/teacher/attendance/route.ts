@@ -12,6 +12,7 @@ import {
 import { validateAttendanceCompliance } from "@/lib/policy/policyEngine";
 
 export const dynamic = "force-dynamic";
+const SCHOOL_LOOKUP_TIMEOUT_MS = 250;
 
 function assertTeacherAccess(user: { role: string }) {
   if (user.role !== "TEACHER" && user.role !== "ADMIN") {
@@ -51,10 +52,15 @@ export async function POST(req: NextRequest) {
     let school: { districtId?: string | null } | null = null;
     if (user.schoolId && schoolModel?.findUnique) {
       try {
-        school = await schoolModel.findUnique({
-          where: { id: user.schoolId },
-          select: { districtId: true },
-        });
+        school = await Promise.race([
+          schoolModel.findUnique({
+            where: { id: user.schoolId },
+            select: { districtId: true },
+          }),
+          new Promise<null>((resolve) => {
+            setTimeout(() => resolve(null), SCHOOL_LOOKUP_TIMEOUT_MS);
+          }),
+        ]);
       } catch {
         school = null;
       }
