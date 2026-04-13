@@ -4,7 +4,7 @@ This plan governs the final 22-sprint closeout of LiberiaLearn from the validate
 
 | Sprint | Name | Status | Gate | Commit | Notes |
 |--------|------|--------|------|--------|------|
-| 1 | Production Seeding Truth Audit + Fix | COMPLETE | PASS | YES | Root cause was a seeding gap: live reset was blocked, the platform reset route was a stub, and live demo logins plus role pages verified on April 13, 2026. |
+| 1 | Production Seeding Truth Audit + Fix | BLOCKED | PASS | YES | Root cause was a seeding gap. Local gate passed and live demo logins plus role pages verified on April 13, 2026, but the post-push Vercel status for commit `1cb3ad6` failed and needs authenticated deployment diagnosis before Sprint 1 can be closed. |
 | 2 | Data Architecture + Schema + Immutable Event Layer | PENDING | NOT RUN | NO | |
 | 3 | Intervention Chains + Derived Intelligence + Misconceptions | PENDING | NOT RUN | NO | |
 | 4 | AI Telemetry + Versioning + Offline Sync Integrity | PENDING | NOT RUN | NO | |
