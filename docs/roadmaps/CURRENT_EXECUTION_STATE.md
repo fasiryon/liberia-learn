@@ -7,7 +7,7 @@ Live execution tracking for the final closeout program.
 22-sprint final platform closeout
 
 ## Current sprint or phase
-Sprint 2  Data Architecture + Schema + Immutable Event Layer
+Sprint 1  Production Seeding Truth Audit + Fix
 
 ## Current branch
 feat/production-seeding-truth
@@ -16,13 +16,13 @@ feat/production-seeding-truth
 Dirty
 
 ## Worktree detail
-Sprint 1 changes are validated on `feat/production-seeding-truth`, but the repository still contains pre-existing modified and untracked files outside this sprint scope.
+Sprint 1 changes are committed on `feat/production-seeding-truth` and pushed to both `origin/feat/production-seeding-truth` and `origin/main`, but the repository still contains pre-existing modified and untracked files outside this sprint scope.
 
 ## Overall status
-Sprint 1 complete and validated; awaiting Sprint 2 execution
+Sprint 1 is blocked after post-push remote deployment failure
 
 ## Last completed phase
-Sprint 1  Production Seeding Truth Audit + Fix
+validated Phase 15 baseline complete
 
 ## Last successful validation
 - `npx prisma generate`: PASS
@@ -31,7 +31,7 @@ Sprint 1  Production Seeding Truth Audit + Fix
 - `npm run build`: PASS
 
 ## Exact next step
-execute Sprint 2 from `docs/roadmaps/MASTER_EXECUTION_PLAN.md`
+diagnose the Vercel failure for commit `1cb3ad6ce847eea2604ca2d49387ba20d8a56f62`, fix only what is required, rerun the gate if code changes are needed, and re-verify remote status before closing Sprint 1
 
 ## Note
 Prior Phase 15 systems are already validated and must be extended, not rebuilt.
@@ -46,3 +46,8 @@ Prior Phase 15 systems are already validated and must be extended, not rebuilt.
   - `https://liberia-learn.vercel.app` returned `200`
   - demo logins for student, teacher, admin, and MOE accounts returned `200`
   - role pages `/student/today`, `/teacher/curriculum`, `/admin`, and `/platform/reports` returned `200`
+- Remote status after push:
+  - `origin/feat/production-seeding-truth`: pushed
+  - `origin/main`: advanced to `1cb3ad6ce847eea2604ca2d49387ba20d8a56f62`
+  - GitHub commit status: `Vercel = failure`
+  - Blocker: the public Vercel deployment page does not expose the failure details without authenticated deployment access
