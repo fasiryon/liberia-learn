@@ -1,7 +1,8 @@
 // app/api/track/route.ts
 import { NextResponse } from "next/server";
 import { requireUser } from "@/lib/auth";
-import { prisma } from "@/lib/db";
+import { logAudit } from "@/lib/audit";
+import { logLearningEvent } from "@/lib/events/logLearningEvent";
 import { z } from "zod";
 
 export const dynamic = "force-dynamic";
@@ -31,16 +32,43 @@ export async function POST(req: Request) {
 
     const { eventType, sessionId, contentId, metadata } = parsed.data;
 
-    await prisma.auditLog.create({
-      data: {
-        userId: user.id,
-        action: eventType,
-        details: {
-          sessionId: sessionId ?? null,
-          contentId: contentId ?? null,
-          userAgent: req.headers.get("user-agent") ?? null,
-          ...(metadata ?? {}),
-        },
+    const details = {
+      sessionId: sessionId ?? null,
+      contentId: contentId ?? null,
+      userAgent: req.headers.get("user-agent") ?? null,
+      ...(metadata ?? {}),
+    };
+
+    await logAudit({
+      userId: user.id,
+      schoolId: user.schoolId ?? null,
+      action: eventType,
+      resourceType: "track_event",
+      resourceId: contentId ?? undefined,
+      details,
+    });
+
+    await logLearningEvent({
+      schoolId: user.schoolId ?? null,
+      userId: user.id,
+      actor: {
+        type: "user",
+        id: user.id,
+        role: user.role ?? null,
+      },
+      target: contentId
+        ? {
+            type: "curriculum_content",
+            id: contentId,
+          }
+        : null,
+      eventType,
+      source: "/api/track",
+      contentId: contentId ?? null,
+      clientEventId: sessionId ?? null,
+      metadata: details,
+      qualityMarkers: {
+        ingestion: "user_telemetry",
       },
     });
   } catch (_) {
