@@ -35,6 +35,7 @@ type SeedNationalDemoOptions = {
   prisma?: PrismaClient;
   schoolIds?: readonly string[];
   allowExisting?: boolean;
+  allowProduction?: boolean;
   logger?: DemoSeedLogger;
 };
 
@@ -696,6 +697,7 @@ export async function seedNationalDemo({
   prisma: providedPrisma,
   schoolIds,
   allowExisting = false,
+  allowProduction = false,
   logger = console,
 }: SeedNationalDemoOptions = {}): Promise<void> {
   const previousPrisma = prisma;
@@ -704,7 +706,7 @@ export async function seedNationalDemo({
   }
 
   try {
-    if (isProduction()) {
+    if (isProduction() && !allowProduction) {
       logger.error("Refusing to run demo seed in production environment.");
       throw new Error("Demo seed is blocked in production");
     }

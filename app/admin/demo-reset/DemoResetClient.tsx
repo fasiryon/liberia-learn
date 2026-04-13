@@ -12,24 +12,12 @@ export function DemoResetClient() {
   const [state, setState] = useState<ResetState>({ kind: "idle", message: null });
 
   async function handleReset() {
-    const secret = process.env.NEXT_PUBLIC_DEMO_RESET_SECRET;
-    if (!secret) {
-      setState({
-        kind: "error",
-        message: "NEXT_PUBLIC_DEMO_RESET_SECRET is not configured for this deployment.",
-      });
-      return;
-    }
-
     setIsResetting(true);
     setState({ kind: "idle", message: null });
 
     try {
       const response = await fetch("/api/demo/reset", {
         method: "POST",
-        headers: {
-          "x-demo-secret": secret,
-        },
       });
       const payload = await response.json();
 

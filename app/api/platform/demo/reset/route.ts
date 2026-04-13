@@ -1,22 +1,47 @@
 import { NextResponse } from "next/server";
 import { requireMoePlatformAdmin } from "@/lib/moeAccess";
-import { isProduction, isStaging } from "@/lib/environment";
+import { prisma } from "@/lib/db";
+import {
+  canRunDemoResetInCurrentEnv,
+  getDemoSchoolIdsFromEnv,
+  resetDemoSchools,
+  validateDemoSchoolIds,
+} from "@/lib/demo/reset";
 
 export async function POST() {
   try {
-    if (isProduction() || isStaging()) {
+    if (!canRunDemoResetInCurrentEnv()) {
       return NextResponse.json(
-        { error: "Not available in this environment" },
+        { error: "Live demo reset is not enabled in this environment" },
         { status: 403 }
       );
     }
 
-    await requireMoePlatformAdmin();
-    // In production, this would call the seed script
-    // For now, return a message directing to use npx prisma db seed
+    const actor = await requireMoePlatformAdmin();
+    const schoolIds = getDemoSchoolIdsFromEnv();
+    if (schoolIds.length === 0) {
+      return NextResponse.json({ error: "DEMO_SCHOOL_IDS not configured" }, { status: 400 });
+    }
+
+    const unknownSchoolIds = validateDemoSchoolIds(schoolIds);
+    if (unknownSchoolIds.length > 0) {
+      return NextResponse.json(
+        { error: `Unknown demo school IDs: ${unknownSchoolIds.join(", ")}` },
+        { status: 400 }
+      );
+    }
+
+    await resetDemoSchools({
+      prisma,
+      schoolIds,
+    });
+
     return NextResponse.json({
-      message: "Run 'npx prisma db seed' to reset demo data",
-      note: "Automated reset requires server-side execution",
+      success: true,
+      message: "Demo data reset",
+      schoolIds,
+      actorId: actor.id,
+      resetAt: new Date().toISOString(),
     });
   } catch (err: any) {
     return NextResponse.json({ error: err.message }, { status: err?.status || 500 });
