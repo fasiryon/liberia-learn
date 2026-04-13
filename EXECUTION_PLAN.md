@@ -1,30 +1,11 @@
-﻿# LIBERIALEARN EXECUTION PLAN
+# LiberiaLearn Execution Plan
 
-## EXECUTION PROTOCOL
+This file is retained only as a pointer for legacy repo references.
 
-1. Read AGENTS.md and CURRENT_EXECUTION_STATE.md
-2. Execute in order
-3. Validate after each sprint:
-   - npx tsc --noEmit
-   - npx vitest run
-   - npm run build
-4. Stop on failure
+## Source of truth
 
-## BEFORE ENDING
-- Update CURRENT_EXECUTION_STATE.md
-- Record next step
+- `docs/roadmaps/IMPLEMENT.md`
+- `docs/roadmaps/MASTER_EXECUTION_PLAN.md`
+- `docs/roadmaps/CURRENT_EXECUTION_STATE.md`
 
-## SPRINTS
-
-SPRINT 0 — Repo Hygiene  
-SPRINT 0.5 — ECS Worker  
-SPRINT 0.7 — Deployment Stability  
-SPRINT 1 — Ops Dashboard  
-SPRINT 2 — AI Cost  
-SPRINT 3 — Environment Separation  
-SPRINT 4 — Curriculum  
-SPRINT 5 — Governance  
-SPRINT 6 — Scale + Incident  
-SPRINT 7 — Product Metrics  
-SPRINT 8 — Mobile UX  
-SPRINT 9 — Architecture Narrative  
+Do not use any retired phase list or older sprint sequence from this file. The final 22-sprint closeout program is governed only by the roadmap files above.

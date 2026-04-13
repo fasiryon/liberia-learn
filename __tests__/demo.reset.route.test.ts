@@ -39,7 +39,6 @@ describe("POST /api/demo/reset", () => {
     vi.resetModules();
     vi.clearAllMocks();
     process.env.DEMO_MODE = "true";
-    process.env.DEMO_RESET_SECRET = "demo-secret";
     process.env.DEMO_SCHOOL_IDS = "school-cha,school-mcs";
     mockStudentFindMany.mockResolvedValue([
       { id: "student-1", userId: "user-1" },
@@ -56,7 +55,9 @@ describe("POST /api/demo/reset", () => {
     const response = await POST(new Request("http://localhost/api/demo/reset", { method: "POST" }));
 
     expect(response.status).toBe(403);
-    expect(await response.json()).toEqual({ error: "Not available in this environment" });
+    expect(await response.json()).toEqual({
+      error: "Live demo reset is not enabled in this environment",
+    });
   }, 15_000);
 
   it("returns 401 when not authenticated", async () => {
@@ -76,7 +77,6 @@ describe("POST /api/demo/reset", () => {
     const response = await POST(
       new Request("http://localhost/api/demo/reset", {
         method: "POST",
-        headers: { "x-demo-secret": "demo-secret" },
       })
     );
 
@@ -89,7 +89,6 @@ describe("POST /api/demo/reset", () => {
     const response = await POST(
       new Request("http://localhost/api/demo/reset", {
         method: "POST",
-        headers: { "x-demo-secret": "demo-secret" },
       })
     );
 
@@ -109,10 +108,32 @@ describe("POST /api/demo/reset", () => {
       expect.objectContaining({
         schoolIds: ["school-cha", "school-mcs"],
         allowExisting: true,
+        allowProduction: false,
       })
     );
     expect(payload.success).toBe(true);
     expect(payload.message).toBe("Demo data reset");
     expect(typeof payload.resetAt).toBe("string");
+  }, 15_000);
+
+  it("allows protected production reset when explicitly enabled", async () => {
+    Object.assign(process.env, {
+      NODE_ENV: "production",
+      DEMO_MODE: "false",
+      VERCEL_ENV: "production",
+      ALLOW_LIVE_DEMO_RESET: "true",
+    });
+
+    const { POST } = await import("@/app/api/demo/reset/route");
+    const response = await POST(new Request("http://localhost/api/demo/reset", { method: "POST" }));
+
+    expect(response.status).toBe(200);
+    expect(mockSeedNationalDemo).toHaveBeenCalledWith(
+      expect.objectContaining({
+        schoolIds: ["school-cha", "school-mcs"],
+        allowExisting: true,
+        allowProduction: true,
+      })
+    );
   }, 15_000);
 });

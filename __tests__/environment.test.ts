@@ -2,6 +2,10 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 
 const mockRequireUser = vi.hoisted(() => vi.fn());
 const mockRequireMoePlatformAdmin = vi.hoisted(() => vi.fn());
+const mockStudentFindMany = vi.hoisted(() => vi.fn());
+const mockTransaction = vi.hoisted(() => vi.fn());
+const mockDeleteMany = vi.hoisted(() => vi.fn(() => ({ mocked: true })));
+const mockSeedNationalDemo = vi.hoisted(() => vi.fn());
 
 vi.mock("@/lib/auth", () => ({
   requireUser: mockRequireUser,
@@ -13,24 +17,24 @@ vi.mock("@/lib/moeAccess", () => ({
 
 vi.mock("@/lib/db", () => ({
   prisma: {
-    student: { findMany: vi.fn() },
-    attendanceRecord: { deleteMany: vi.fn() },
-    studentProgress: { deleteMany: vi.fn() },
-    homeworkSubmission: { deleteMany: vi.fn() },
-    placementTest: { deleteMany: vi.fn() },
-    labSession: { deleteMany: vi.fn() },
-    guardianMessage: { deleteMany: vi.fn() },
-    sMSDeliveryLog: { deleteMany: vi.fn() },
-    notificationLog: { deleteMany: vi.fn() },
-    auditLog: { deleteMany: vi.fn() },
-    scheduledWork: { deleteMany: vi.fn(), findMany: vi.fn() },
-    $transaction: vi.fn(),
+    student: { findMany: mockStudentFindMany },
+    attendanceRecord: { deleteMany: mockDeleteMany },
+    studentProgress: { deleteMany: mockDeleteMany },
+    homeworkSubmission: { deleteMany: mockDeleteMany },
+    placementTest: { deleteMany: mockDeleteMany },
+    labSession: { deleteMany: mockDeleteMany },
+    guardianMessage: { deleteMany: mockDeleteMany },
+    sMSDeliveryLog: { deleteMany: mockDeleteMany },
+    notificationLog: { deleteMany: mockDeleteMany },
+    auditLog: { deleteMany: mockDeleteMany },
+    scheduledWork: { deleteMany: mockDeleteMany, findMany: vi.fn() },
+    $transaction: mockTransaction,
   },
 }));
 
 vi.mock("@/scripts/seed-demo", () => ({
   SCHOOL_DEFS: [{ id: "school-cha" }],
-  seedNationalDemo: vi.fn(),
+  seedNationalDemo: mockSeedNationalDemo,
 }));
 
 import {
@@ -48,6 +52,8 @@ const originalEnv = {
   NODE_ENV: process.env.NODE_ENV,
   DEMO_MODE: process.env.DEMO_MODE,
   VERCEL_ENV: process.env.VERCEL_ENV,
+  DEMO_SCHOOL_IDS: process.env.DEMO_SCHOOL_IDS,
+  ALLOW_LIVE_DEMO_RESET: process.env.ALLOW_LIVE_DEMO_RESET,
 };
 
 describe("environment detection", () => {
@@ -68,6 +74,18 @@ describe("environment detection", () => {
       Reflect.deleteProperty(process.env, "VERCEL_ENV");
     } else {
       Object.assign(process.env, { VERCEL_ENV: originalEnv.VERCEL_ENV });
+    }
+
+    if (originalEnv.DEMO_SCHOOL_IDS === undefined) {
+      Reflect.deleteProperty(process.env, "DEMO_SCHOOL_IDS");
+    } else {
+      Object.assign(process.env, { DEMO_SCHOOL_IDS: originalEnv.DEMO_SCHOOL_IDS });
+    }
+
+    if (originalEnv.ALLOW_LIVE_DEMO_RESET === undefined) {
+      Reflect.deleteProperty(process.env, "ALLOW_LIVE_DEMO_RESET");
+    } else {
+      Object.assign(process.env, { ALLOW_LIVE_DEMO_RESET: originalEnv.ALLOW_LIVE_DEMO_RESET });
     }
 
     vi.clearAllMocks();
@@ -142,6 +160,18 @@ describe("demo route guards", () => {
       Object.assign(process.env, { VERCEL_ENV: originalEnv.VERCEL_ENV });
     }
 
+    if (originalEnv.DEMO_SCHOOL_IDS === undefined) {
+      Reflect.deleteProperty(process.env, "DEMO_SCHOOL_IDS");
+    } else {
+      Object.assign(process.env, { DEMO_SCHOOL_IDS: originalEnv.DEMO_SCHOOL_IDS });
+    }
+
+    if (originalEnv.ALLOW_LIVE_DEMO_RESET === undefined) {
+      Reflect.deleteProperty(process.env, "ALLOW_LIVE_DEMO_RESET");
+    } else {
+      Object.assign(process.env, { ALLOW_LIVE_DEMO_RESET: originalEnv.ALLOW_LIVE_DEMO_RESET });
+    }
+
     vi.clearAllMocks();
   });
 
@@ -154,7 +184,7 @@ describe("demo route guards", () => {
     const response = await demoResetPost(new Request("http://localhost/api/demo/reset", { method: "POST" }));
 
     expect(response.status).toBe(403);
-    expect(await response.json()).toEqual({ error: "Not available in this environment" });
+    expect(await response.json()).toEqual({ error: "Live demo reset is not enabled in this environment" });
     expect(mockRequireUser).not.toHaveBeenCalled();
   });
 
@@ -167,7 +197,34 @@ describe("demo route guards", () => {
     const response = await platformDemoResetPost();
 
     expect(response.status).toBe(403);
-    expect(await response.json()).toEqual({ error: "Not available in this environment" });
+    expect(await response.json()).toEqual({ error: "Live demo reset is not enabled in this environment" });
     expect(mockRequireMoePlatformAdmin).not.toHaveBeenCalled();
+  });
+
+  it("runs platform demo reset in production when explicitly enabled", async () => {
+    Object.assign(process.env, {
+      NODE_ENV: "production",
+      VERCEL_ENV: "production",
+      DEMO_SCHOOL_IDS: "school-cha",
+      ALLOW_LIVE_DEMO_RESET: "true",
+    });
+    mockRequireMoePlatformAdmin.mockResolvedValue({ id: "moe-admin-1" });
+    mockStudentFindMany.mockResolvedValue([]);
+    mockTransaction.mockResolvedValue(undefined);
+    mockSeedNationalDemo.mockResolvedValue(undefined);
+
+    const response = await platformDemoResetPost();
+    const payload = await response.json();
+
+    expect(response.status).toBe(200);
+    expect(mockRequireMoePlatformAdmin).toHaveBeenCalledTimes(1);
+    expect(mockSeedNationalDemo).toHaveBeenCalledWith(
+      expect.objectContaining({
+        schoolIds: ["school-cha"],
+        allowExisting: true,
+        allowProduction: true,
+      })
+    );
+    expect(payload.success).toBe(true);
   });
 });
