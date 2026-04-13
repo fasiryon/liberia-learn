@@ -1,73 +1,63 @@
 # CURRENT EXECUTION STATE
 
 ## Purpose
-This file records live progress only. It must match the actual repository and database state at the end of every session.
+This file records live progress only. It must match the actual repository state at the end of every session.
 
 ## Current workstream
-DB reconciliation and migration ordering pass
+22-sprint final platform closeout
 
 ## Current sprint or phase
-Migration authority restoration in progress
+Sprint 2 - Data Architecture + Schema + Immutable Event Layer
 
 ## Current branch
-main
+feat/data-intelligence-schema
 
 ## Worktree status
 Dirty
 
 ## Worktree details
-- Untracked migration directories are present:
-  - `prisma/migrations/20260405_191827_phase1_system_of_record/`
-  - `prisma/migrations/20260409_124356_phase2_school_operations/`
-  - `prisma/migrations/20260410_000000_phase2_subject_reconciliation/`
-  - `prisma/migrations/20260409_214655_phase3_exam_authority/`
-- This session updated:
-  - `docs/roadmaps/CURRENT_EXECUTION_STATE.md`
+- Sprint 2 implementation is present locally and the full gate passed.
+- The repository also contains unrelated pre-existing modified and untracked files outside Sprint 2 scope.
 
 ## Overall status
-Phase 1 and Phase 2 authoritative migration reconciliation prepared locally; DB apply not run yet
+Sprint 2 implementation complete locally; awaiting clean commit/push decision because overlapping unrelated work exists in the same checkout.
 
 ## Last completed phase
-Phase 3 exam authority code validation completed previously
+Sprint 1 - Production Seeding Truth Audit + Fix
 
 ## Last successful validation
+- `npx prisma generate`: PASS
 - `npx tsc --noEmit`: PASS
-- `npx vitest run`: PASS (`222` test files, `1609` tests)
+- `npm test`: PASS (`227` test files, `1620` tests)
 - `npm run build`: PASS
 
-## Validation run in this session
-- `npx prisma migrate status --schema prisma/schema.prisma`: completed
-- `npx prisma db pull --print --schema prisma/schema.prisma`: completed
-- No code validation gate rerun in this session because the blocker is database state divergence, not application code.
+## Discovery summary
+- Existing systems:
+  - `AuditLog` with `logAudit()`
+  - `MetricEvent`, `SystemEvent`, `SloEvent`
+  - `AiInteractionLog`
+  - offline queue and sync ingestion in `lib/offline-queue.ts`, `lib/offline-sync/policies.ts`, and `app/api/student/sync/route.ts`
+  - student intelligence records such as `StudentPerformanceEvent`, `InterventionLog`, `InterventionRecommendation`, and mastery services
+- Partial systems:
+  - event capture is fragmented across several tables and utilities
+  - consent and export records exist but do not cover the normalized Sprint 2 lifecycle
+  - AI logging exists, but mostly as aggregate usage logging
+- Missing before Sprint 2:
+  - canonical append-only `LearningEvent`
+  - normalized `AssessmentAttempt`, `Intervention`, `MasterySnapshot`, `AIInteraction`, `TeacherAction`
+  - normalized `DataPolicyAcceptance`, `ConsentRecord`, `ExportJobRequest`
+  - central typed `logLearningEvent()`
 
-## Blockers or discrepancies
-- Live database does not contain the Phase 1 academic-record tables required by the current Prisma schema:
-  - `AcademicYear`
-  - `Term`
-  - `AcademicEnrollment`
-  - `Transcript`
-- Database migration history reports `20260405_191827_phase1_system_of_record` as applied, but those Phase 1 tables are absent from the live database.
-- Live database contains Phase 2 operational tables, but their structure does not match the validated Prisma schema:
-  - `TeacherAssignment` has `subjectId` and `subjectName`, while the current schema expects a single `subject` enum field.
-  - `Timetable` has `subjectId` and `subjectName`, while the current schema expects a single `subject` enum field.
-- Live database contains the older exam system, but the Phase 3 exam extensions are absent:
-  - `Exam.academicYearId`
-  - `Exam.classId`
-  - `Exam.publishedAt`
-  - `Exam.resultsPublishedAt`
-  - `ExamAttempt.tabSwitchCount`
-  - `ExamAttempt.durationSeconds`
-  - `ExamAttempt.integrityMetadata`
-  - `ExamAttempt.submissionLog`
-- Local authoritative recovery assets are now prepared:
-  - restored `20260405_191827_phase1_system_of_record`
-  - added `20260410_000000_phase2_subject_reconciliation`
-- Database application has not started yet.
+## Sprint 2 files changed
+- `prisma/schema.prisma`
+- `prisma/migrations/20260413_180000_sprint2_event_layer/migration.sql`
+- `lib/events/logLearningEvent.ts`
+- `app/api/track/route.ts`
+- `lib/ai/interactionLog.ts`
+- `lib/policy/policyEngine.ts`
+- `__tests__/track.route.test.ts`
+- `__tests__/learningEvent.test.ts`
+- `__tests__/ai.interactionLog.test.ts`
 
 ## Exact next step
-Apply the restored Phase 1 migration and the new Phase 2 subject reconciliation migration to the live database in order, verify success, and then apply the Phase 3 exam extension migration.
-
-## Files changed this session
-- `docs/roadmaps/CURRENT_EXECUTION_STATE.md`
-- `prisma/migrations/20260405_191827_phase1_system_of_record/migration.sql`
-- `prisma/migrations/20260410_000000_phase2_subject_reconciliation/migration.sql`
+Stage only the Sprint 2 files, commit them as Sprint 2, push, and then begin Sprint 3 on the next run.

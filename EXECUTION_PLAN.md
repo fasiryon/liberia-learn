@@ -1,30 +1,26 @@
-﻿# LIBERIALEARN EXECUTION PLAN
+# LIBERIALEARN EXECUTION PLAN
 
 ## EXECUTION PROTOCOL
 
-1. Read AGENTS.md and CURRENT_EXECUTION_STATE.md
-2. Execute in order
-3. Validate after each sprint:
-   - npx tsc --noEmit
-   - npx vitest run
-   - npm run build
-4. Stop on failure
+1. Read `AGENTS.md`, this file, and `docs/roadmaps/CURRENT_EXECUTION_STATE.md`.
+2. Resume from the sprint recorded in current execution state.
+3. Execute one sprint at a time and inspect first before coding.
+4. Extend validated systems; do not rebuild prior working phases.
+5. Validate after each sprint:
+   - `npx prisma generate`
+   - `npx tsc --noEmit`
+   - `npm test`
+   - `npm run build`
+6. Stop on any failure. Fix only the blocking issue, rerun the full gate, and do not advance to the next sprint.
+
+## ACTIVE CLOSEOUT SEQUENCE
+
+- Sprint 1 — Production Seeding Truth Audit + Fix: complete
+- Sprint 2 — Data Architecture + Schema + Immutable Event Layer: complete locally, awaiting clean stage/commit in this checkout
+- Sprint 3 — Intervention Chains + Derived Intelligence + Misconceptions: next
 
 ## BEFORE ENDING
-- Update CURRENT_EXECUTION_STATE.md
-- Record next step
 
-## SPRINTS
-
-SPRINT 0 — Repo Hygiene  
-SPRINT 0.5 — ECS Worker  
-SPRINT 0.7 — Deployment Stability  
-SPRINT 1 — Ops Dashboard  
-SPRINT 2 — AI Cost  
-SPRINT 3 — Environment Separation  
-SPRINT 4 — Curriculum  
-SPRINT 5 — Governance  
-SPRINT 6 — Scale + Incident  
-SPRINT 7 — Product Metrics  
-SPRINT 8 — Mobile UX  
-SPRINT 9 — Architecture Narrative  
+- Update `docs/roadmaps/CURRENT_EXECUTION_STATE.md`
+- Record the exact next step
+- Do not silently skip or merge sprint scope

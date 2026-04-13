@@ -3,10 +3,12 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const mockRequireUser = vi.hoisted(() => vi.fn());
-const mockAuditCreate = vi.hoisted(() => vi.fn());
+const mockLogAudit = vi.hoisted(() => vi.fn());
+const mockLogLearningEvent = vi.hoisted(() => vi.fn());
 
 vi.mock("@/lib/auth", () => ({ requireUser: mockRequireUser }));
-vi.mock("@/lib/db", () => ({ prisma: { auditLog: { create: mockAuditCreate } } }));
+vi.mock("@/lib/audit", () => ({ logAudit: mockLogAudit }));
+vi.mock("@/lib/events/logLearningEvent", () => ({ logLearningEvent: mockLogLearningEvent }));
 
 import { POST } from "@/app/api/track/route";
 
@@ -20,8 +22,9 @@ function makeReq(body: unknown) {
 
 beforeEach(() => {
   vi.clearAllMocks();
-  mockRequireUser.mockResolvedValue({ id: "user-1", schoolId: "school-1" });
-  mockAuditCreate.mockResolvedValue({});
+  mockRequireUser.mockResolvedValue({ id: "user-1", schoolId: "school-1", role: "STUDENT" });
+  mockLogAudit.mockResolvedValue({});
+  mockLogLearningEvent.mockResolvedValue({});
 });
 
 describe("POST /api/track", () => {
@@ -38,9 +41,13 @@ describe("POST /api/track", () => {
     const body = await res.json();
     expect(res.status).toBe(200);
     expect(body.ok).toBe(true);
-    expect(mockAuditCreate).toHaveBeenCalledWith(
+    expect(mockLogAudit).toHaveBeenCalledWith(
+      expect.objectContaining({ userId: "user-1", action: "page_view" })
+    );
+    expect(mockLogLearningEvent).toHaveBeenCalledWith(
       expect.objectContaining({
-        data: expect.objectContaining({ userId: "user-1", action: "page_view" }),
+        userId: "user-1",
+        eventType: "page_view",
       })
     );
   });
@@ -51,16 +58,21 @@ describe("POST /api/track", () => {
     expect(res.status).toBe(200);
     expect(body.ok).toBe(true);
     // No audit log created for invalid body
-    expect(mockAuditCreate).not.toHaveBeenCalled();
+    expect(mockLogAudit).not.toHaveBeenCalled();
+    expect(mockLogLearningEvent).not.toHaveBeenCalled();
   });
 
   it("records contentId and sessionId when provided", async () => {
     await POST(makeReq({ eventType: "lesson_start", contentId: "content-99", sessionId: "sess-1" }));
-    expect(mockAuditCreate).toHaveBeenCalledWith(
+    expect(mockLogAudit).toHaveBeenCalledWith(
       expect.objectContaining({
-        data: expect.objectContaining({
-          details: expect.objectContaining({ contentId: "content-99", sessionId: "sess-1" }),
-        }),
+        details: expect.objectContaining({ contentId: "content-99", sessionId: "sess-1" }),
+      })
+    );
+    expect(mockLogLearningEvent).toHaveBeenCalledWith(
+      expect.objectContaining({
+        contentId: "content-99",
+        clientEventId: "sess-1",
       })
     );
   });

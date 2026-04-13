@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/db";
+import { logLearningEvent } from "@/lib/events/logLearningEvent";
 
 export type AiBudgetFeature =
   | "tutor"
@@ -66,8 +67,11 @@ export async function recordAiUsage(input: RecordAiUsageInput) {
   const aiInteractionLogModel = (prisma as typeof prisma & {
     aiInteractionLog?: { create?: (args: unknown) => Promise<unknown> };
   }).aiInteractionLog;
+  const aiInteractionModel = (prisma as typeof prisma & {
+    aIInteraction?: { create?: (args: unknown) => Promise<unknown> };
+  }).aIInteraction;
 
-  if (!aiInteractionLogModel?.create) {
+  if (!aiInteractionLogModel?.create && !aiInteractionModel?.create) {
     return null;
   }
 
@@ -80,23 +84,89 @@ export async function recordAiUsage(input: RecordAiUsageInput) {
       ? Math.max(0, input.estimatedCostUSD)
       : 0;
 
-  return aiInteractionLogModel
-    .create({
-      data: {
-        schoolId: input.schoolId ?? null,
-        userId: input.userId ?? null,
-        feature: normalizeAiFeature(input.feature),
-        subject: input.subject?.trim() || "general",
-        strandKey: input.strandKey?.trim() || "general",
-        requestType: input.requestType?.trim() || input.feature,
-        endpoint: input.route,
+  const feature = normalizeAiFeature(input.feature);
+  const subject = input.subject?.trim() || "general";
+  const strandKey = input.strandKey?.trim() || "general";
+  const requestType = input.requestType?.trim() || input.feature;
+  const hadFallback = input.fallbackUsed === true;
+
+  const [legacyLog] = await Promise.all([
+    aiInteractionLogModel?.create
+      ? aiInteractionLogModel
+          .create({
+            data: {
+              schoolId: input.schoolId ?? null,
+              userId: input.userId ?? null,
+              feature,
+              subject,
+              strandKey,
+              requestType,
+              endpoint: input.route,
+              guidanceLevel: input.guidanceLevel ?? null,
+              model: input.model ?? null,
+              tier: input.tier ?? null,
+              hadFallback,
+              tokensUsed,
+              estimatedCostUSD,
+            },
+          })
+          .catch(() => null)
+      : Promise.resolve(null),
+    aiInteractionModel?.create
+      ? aiInteractionModel
+          .create({
+            data: {
+              schoolId: input.schoolId ?? null,
+              userId: input.userId ?? null,
+              route: input.route,
+              feature,
+              requestType,
+              guidanceLevel: input.guidanceLevel ?? null,
+              subject,
+              strandKey,
+              model: input.model ?? null,
+              provider:
+                input.model === "budget_guard"
+                  ? "budget_guard"
+                  : input.model?.startsWith("groq:")
+                    ? "groq"
+                    : "openai",
+              tier: input.tier ?? null,
+              hadFallback,
+              tokensUsed,
+              estimatedCostUSD,
+              metadata: {
+                normalizedFeature: feature,
+              },
+            },
+          })
+          .catch(() => null)
+      : Promise.resolve(null),
+    logLearningEvent({
+      schoolId: input.schoolId ?? null,
+      userId: input.userId ?? null,
+      actor: {
+        type: "user",
+        id: input.userId ?? null,
+      },
+      eventType: "ai.interaction",
+      source: input.route,
+      subject,
+      metadata: {
+        feature,
+        requestType,
         guidanceLevel: input.guidanceLevel ?? null,
         model: input.model ?? null,
         tier: input.tier ?? null,
-        hadFallback: input.fallbackUsed === true,
         tokensUsed,
         estimatedCostUSD,
       },
-    })
-    .catch(() => null);
+      qualityMarkers: {
+        hadFallback,
+        interactionLog: "aggregate_and_normalized",
+      },
+    }),
+  ]);
+
+  return legacyLog;
 }

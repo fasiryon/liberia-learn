@@ -53,6 +53,10 @@ model User {
   school              School?              @relation(fields: [schoolId], references: [id])
   // Part 4: units created by this user
   curriculumUnits     CurriculumUnit[]     @relation("CurriculumUnitCreatedBy")
+  curriculumVersionsCreated CurriculumVersion[] @relation("CurriculumVersionCreatedBy")
+  policyConfigsCreated PolicyConfig[] @relation("PolicyConfigCreatedBy")
+  policyConfigsUpdated PolicyConfig[] @relation("PolicyConfigUpdatedBy")
+  policyOverridesCreated PolicyOverride[] @relation("PolicyOverrideCreatedBy")
   // Part 7: lab sessions for this user
   labSessions         LabSession[]         @relation("LabSessionStudent")
   // Guardian messaging
@@ -70,6 +74,8 @@ model District {
   createdAt        DateTime          @default(now())
   schools          School[]
   interventionLogs InterventionLog[]
+  policyConfigs    PolicyConfig[]
+  policyOverrides  PolicyOverride[]
 
   @@index([tenantId])
   @@index([isActive])
@@ -129,6 +135,8 @@ model School {
   academicEnrollments    AcademicEnrollment[]
   transcripts            Transcript[]
   attendanceEntries      Attendance[]
+  policyConfigs          PolicyConfig[]
+  policyOverrides        PolicyOverride[]
   timetableEntries       Timetable[]
   teacherAssignments     TeacherAssignment[]
 }
@@ -1000,6 +1008,79 @@ model ExportRecord {
   @@index([userId, createdAt])
 }
 
+/// Sprint 2: approval event for a named policy/version acceptance.
+/// Append-only; do not update accepted rows in place.
+model DataPolicyAcceptance {
+  id            String   @id @default(cuid())
+  userId        String?
+  schoolId      String?
+  policyKey     String
+  policyVersion String
+  source        String?
+  locale        String?
+  metadata      Json?
+  acceptedAt    DateTime @default(now())
+  createdAt     DateTime @default(now())
+
+  @@index([policyKey, policyVersion, acceptedAt])
+  @@index([userId, acceptedAt])
+  @@index([schoolId, acceptedAt])
+}
+
+/// Sprint 2: generalized consent record that complements GuardianConsent.
+model ConsentRecord {
+  id            String    @id @default(cuid())
+  schoolId      String?
+  userId        String?
+  studentId     String?
+  guardianId    String?
+  consentType   String
+  status        String    @default("granted")
+  legalBasis    String?
+  policyVersion String?
+  source        String?
+  metadata      Json?
+  grantedAt     DateTime  @default(now())
+  revokedAt     DateTime?
+  expiresAt     DateTime?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  @@index([consentType, status, grantedAt])
+  @@index([schoolId, consentType, grantedAt])
+  @@index([studentId, consentType, grantedAt])
+  @@index([guardianId, consentType, grantedAt])
+}
+
+/// Sprint 2: request/approval lifecycle for governed exports.
+model ExportJobRequest {
+  id                String    @id @default(cuid())
+  requestedByUserId String?
+  approvedByUserId  String?
+  schoolId          String?
+  scope             String
+  scopeId           String?
+  exportType        String
+  format            String    @default("csv")
+  status            String    @default("pending")
+  approvalStatus    String    @default("pending")
+  filters           Json?
+  metadata          Json?
+  requestedAt       DateTime  @default(now())
+  approvedAt        DateTime?
+  completedAt       DateTime?
+  downloadUrl       String?
+  checksum          String?
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  @@index([status, requestedAt])
+  @@index([approvalStatus, requestedAt])
+  @@index([exportType, requestedAt])
+  @@index([requestedByUserId, requestedAt])
+  @@index([schoolId, scope, requestedAt])
+}
+
 model GuardianConsent {
   id         String    @id @default(cuid())
   schoolId   String
@@ -1082,6 +1163,54 @@ model SloEvent {
   @@index([schoolId, createdAt])
 }
 
+/// Sprint 2: immutable learning event log.
+/// Canonical append-only event stream for learner, teacher, and sync events.
+model LearningEvent {
+  id                 String    @id @default(cuid())
+  schoolId           String?
+  districtId         String?
+  classId            String?
+  userId             String?
+  studentId          String?
+  actorType          String?
+  actorId            String?
+  actorRole          String?
+  targetType         String?
+  targetId           String?
+  eventType          String
+  source             String?
+  status             String    @default("accepted")
+  occurredAt         DateTime  @default(now())
+  originalOccurredAt DateTime?
+  syncReceivedAt     DateTime?
+  clientEventId      String?
+  dedupeKey          String?
+  replayOfEventId    String?
+  replaySequence     Int?
+  isReplay           Boolean   @default(false)
+  contentId          String?
+  lessonId           String?
+  unitId             String?
+  termId             String?
+  subject            String?
+  grade              Int?
+  curriculumVersion  String?
+  promptVersion      String?
+  assessmentVersion  String?
+  calculationVersion String?
+  metadata           Json?
+  qualityMarkers     Json?
+  createdAt          DateTime  @default(now())
+
+  @@index([eventType, occurredAt])
+  @@index([schoolId, occurredAt])
+  @@index([studentId, occurredAt])
+  @@index([userId, occurredAt])
+  @@index([contentId, occurredAt])
+  @@index([clientEventId, eventType])
+  @@index([dedupeKey])
+}
+
 /// / ===== Curriculum Feedback (AI quality feedback loop) =====
 model CurriculumFeedback {
   id               String   @id @default(cuid())
@@ -1118,13 +1247,72 @@ model CurriculumContent {
   orderInUnit     Int?
   lessonType      String?         // intro|core|practice|review|assessment
   teacherCreated  Boolean         @default(false)
+  versionId       String?
   scheduledWork   ScheduledWork[]
   embeddedAt      DateTime?
   embedding       Unsupported("vector(1536)")?
+  curriculumVersion CurriculumVersion? @relation(fields: [versionId], references: [id], onDelete: SetNull)
 
   @@index([grade, subject])
   @@index([contentType, status])
   @@index([unitId, orderInUnit])
+  @@index([versionId, status])
+}
+
+model CurriculumVersion {
+  id          String                  @id @default(cuid())
+  versionName String                  @unique
+  status      CurriculumVersionStatus @default(DRAFT)
+  createdById String
+  createdAt   DateTime                @default(now())
+  createdBy   User                    @relation("CurriculumVersionCreatedBy", fields: [createdById], references: [id], onDelete: Restrict)
+  contents    CurriculumContent[]
+
+  @@index([status, createdAt])
+}
+
+model PolicyConfig {
+  id          String      @id @default(cuid())
+  policyKey   String
+  scope       PolicyScope
+  districtId  String?
+  schoolId    String?
+  isActive    Boolean     @default(true)
+  config      Json
+  createdById String
+  updatedById String?
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  district    District?   @relation(fields: [districtId], references: [id], onDelete: Cascade)
+  school      School?     @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+  createdBy   User        @relation("PolicyConfigCreatedBy", fields: [createdById], references: [id], onDelete: Restrict)
+  updatedBy   User?       @relation("PolicyConfigUpdatedBy", fields: [updatedById], references: [id], onDelete: SetNull)
+  overrides   PolicyOverride[]
+
+  @@index([policyKey, scope, isActive])
+  @@index([districtId, schoolId])
+}
+
+model PolicyOverride {
+  id           String    @id @default(cuid())
+  policyKey    String
+  policyId     String?
+  districtId   String?
+  schoolId     String?
+  targetType   String
+  targetId     String?
+  reason       String
+  overrideData Json
+  expiresAt    DateTime?
+  createdById  String
+  createdAt    DateTime  @default(now())
+  district     District? @relation(fields: [districtId], references: [id], onDelete: Cascade)
+  school       School?   @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+  policy       PolicyConfig? @relation(fields: [policyId], references: [id], onDelete: SetNull)
+  createdBy    User      @relation("PolicyOverrideCreatedBy", fields: [createdById], references: [id], onDelete: Restrict)
+
+  @@index([policyKey, districtId, schoolId])
+  @@index([targetType, targetId])
 }
 
 model RagChunk {
@@ -1187,6 +1375,39 @@ model StudentPerformanceEvent {
   @@index([lessonId])
 }
 
+/// Sprint 2: normalized assessment attempt record.
+/// Complements exam/homework submissions without replacing them.
+model AssessmentAttempt {
+  id               String    @id @default(cuid())
+  assessmentId     String?
+  assessmentItemId String?
+  studentId        String?
+  userId           String?
+  schoolId         String?
+  classId          String?
+  subject          String?
+  grade            Int?
+  attemptNumber    Int       @default(1)
+  status           String    @default("completed")
+  score            Float?
+  maxScore         Float?
+  rubricScore      Float?
+  aiAssisted       Boolean   @default(false)
+  rawResponse      Json?
+  evaluation       Json?
+  metadata         Json?
+  source           String?
+  sourceEventId    String?
+  attemptedAt      DateTime  @default(now())
+  submittedAt      DateTime?
+  createdAt        DateTime  @default(now())
+
+  @@index([assessmentId, attemptedAt])
+  @@index([studentId, attemptedAt])
+  @@index([schoolId, subject, attemptedAt])
+  @@index([sourceEventId])
+}
+
 model ConfusionSignal {
   id            String   @id @default(cuid())
   studentId     String
@@ -1200,6 +1421,123 @@ model ConfusionSignal {
 
   @@index([studentId, detectedAt])
   @@index([schoolId, severity])
+}
+
+/// Sprint 2: normalized intervention lifecycle record.
+/// Extends existing recommendation/log foundations without replacing them.
+model Intervention {
+  id               String    @id @default(cuid())
+  tenantId         String?
+  schoolId         String?
+  districtId       String?
+  studentId        String?
+  teacherUserId    String?
+  recommendationId String?
+  interventionType String
+  status           String    @default("open")
+  channel          String?
+  priority         String?
+  objective        String?
+  details          Json?
+  outcome          Json?
+  openedAt         DateTime  @default(now())
+  dueAt            DateTime?
+  closedAt         DateTime?
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+
+  @@index([studentId, openedAt])
+  @@index([schoolId, status, openedAt])
+  @@index([tenantId, openedAt])
+  @@index([recommendationId])
+}
+
+/// Sprint 2: append-only mastery state snapshot.
+/// Snapshot rows must never be updated in place.
+model MasterySnapshot {
+  id                  String    @id @default(cuid())
+  studentId           String
+  schoolId            String?
+  subject             String
+  strandKey           String?
+  sourceProfileId     String?
+  sourceAttemptId     String?
+  currentScore        Float?
+  baselineScore       Float?
+  proficiencyState    String?
+  masteryState        String?
+  sustainabilityIndex Float?
+  decayRate           Float?
+  aiRelianceRate      Float?
+  hybridScore         Float?
+  growthDelta         Float?
+  metadata            Json?
+  capturedAt          DateTime  @default(now())
+  createdAt           DateTime  @default(now())
+
+  @@index([studentId, capturedAt])
+  @@index([schoolId, subject, capturedAt])
+  @@index([sourceProfileId])
+  @@index([sourceAttemptId])
+}
+
+/// Sprint 2: normalized AI interaction provenance.
+/// Complements the aggregate AiInteractionLog table.
+model AIInteraction {
+  id                 String    @id @default(cuid())
+  schoolId           String?
+  userId             String?
+  studentId          String?
+  route              String?
+  feature            String?
+  requestType        String?
+  guidanceLevel      String?
+  subject            String?
+  strandKey          String?
+  contentId          String?
+  lessonId           String?
+  provider           String?
+  model              String?
+  tier               String?
+  hadFallback        Boolean   @default(false)
+  tokensUsed         Int       @default(0)
+  estimatedCostUSD   Float     @default(0)
+  latencyMs          Int?
+  promptVersion      String?
+  contentVersion     String?
+  assessmentVersion  String?
+  calculationVersion String?
+  metadata           Json?
+  createdAt          DateTime  @default(now())
+
+  @@index([createdAt])
+  @@index([schoolId, createdAt])
+  @@index([userId, createdAt])
+  @@index([feature, createdAt])
+  @@index([subject, strandKey, createdAt])
+}
+
+/// Sprint 2: teacher-originated action record.
+/// Narrow, additive action log for workflow attribution.
+model TeacherAction {
+  id            String    @id @default(cuid())
+  teacherUserId String
+  schoolId      String
+  classId       String?
+  studentId     String?
+  contentId     String?
+  actionType    String
+  targetType    String?
+  targetId      String?
+  subject       String?
+  metadata      Json?
+  occurredAt    DateTime  @default(now())
+  createdAt     DateTime  @default(now())
+
+  @@index([teacherUserId, occurredAt])
+  @@index([schoolId, actionType, occurredAt])
+  @@index([studentId, occurredAt])
+  @@index([contentId, occurredAt])
 }
 
 model InterventionRecommendation {
@@ -1648,6 +1986,20 @@ enum Role {
   ADMIN
   DISTRICT_ADMIN
   MOE_OFFICIAL
+  MOE_SUPER_ADMIN
+  MOE_DISTRICT_ADMIN
+}
+
+enum CurriculumVersionStatus {
+  DRAFT
+  ACTIVE
+  ARCHIVED
+}
+
+enum PolicyScope {
+  NATIONAL
+  DISTRICT
+  SCHOOL
 }
 
 enum GradeBand {
