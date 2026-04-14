@@ -15,7 +15,7 @@
  */
 
 import { routedCompletion } from "@/lib/ai/router";
-import { getSystemPrompt } from "@/lib/ai/promptRegistry";
+import { getPromptMetadata, getSystemPrompt } from "@/lib/ai/promptRegistry";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -114,6 +114,7 @@ const FALLBACK: GradingAssistResult = {
   estimatedCostUSD: 0,
   tokensUsed: 0,
 };
+const gradingPromptMetadata = getPromptMetadata("teacher.grading.system");
 
 // ─── Prompt builders ──────────────────────────────────────────────────────────
 
@@ -226,6 +227,9 @@ export async function getGradingAssistFeedback(
             subject: input.subject,
             strandKey: input.strandKey,
             requestType: "grading_assist",
+            promptKey: gradingPromptMetadata.key,
+            promptVersion: gradingPromptMetadata.version,
+            promptHash: gradingPromptMetadata.hash,
             budgetFallbackContent: JSON.stringify({
               feedback: FALLBACK.feedback,
               suggestedScoreBands: FALLBACK.suggestedScoreBands,

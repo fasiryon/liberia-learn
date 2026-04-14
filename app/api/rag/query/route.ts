@@ -8,7 +8,6 @@ import { getAssistantRoleConfig, resolveAllowedMode } from "@/lib/ai/rag/assista
 import { resolveAssistantAudienceScope } from "@/lib/ai/rag/audienceScope";
 import { requireUser } from "@/lib/auth";
 import { logAudit } from "@/lib/audit";
-import { prisma } from "@/lib/db";
 import { isRagTutorEnabled } from "@/lib/serverFlags";
 import type {
   RetrievalContext,
@@ -151,6 +150,11 @@ export async function POST(req: NextRequest) {
       mode: effectiveMode,
       role: user.role,
       context: retrievalContext,
+      usageContext: {
+        route: "/api/rag/query",
+        userId: user.id,
+        studentId: user.role === "STUDENT" ? user.id : null,
+      },
     });
 
     await logAudit({
@@ -168,21 +172,6 @@ export async function POST(req: NextRequest) {
         retrievalWeak: result.retrievalWeak,
       },
     });
-
-    await (prisma as any).aiInteractionLog.create({
-      data: {
-        schoolId: user.schoolId ?? null,
-        subject: audienceScope.subject ?? "GENERAL",
-        strandKey: "rag_query",
-        requestType: "rag_query",
-        guidanceLevel: result.confidence,
-        hadFallback: result.hadFallback,
-        endpoint: "/api/rag/query",
-        tokensUsed: result.tokensUsed,
-        estimatedCostUSD: result.estimatedCost,
-      },
-    });
-
     return NextResponse.json(result, { headers: getRateLimitHeaders(rateLimit) });
   } catch (error: any) {
     return NextResponse.json(

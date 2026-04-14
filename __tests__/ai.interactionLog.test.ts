@@ -19,9 +19,9 @@ vi.mock("@/lib/events/logLearningEvent", () => ({
   logLearningEvent: mockLogLearningEvent,
 }));
 
-import { recordAiUsage } from "@/lib/ai/interactionLog";
+import { logAIInteraction } from "@/lib/ai/interactionLog";
 
-describe("recordAiUsage", () => {
+describe("logAIInteraction", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mockAiInteractionLogCreate.mockResolvedValue({ id: "legacy-1" });
@@ -30,20 +30,31 @@ describe("recordAiUsage", () => {
   });
 
   it("writes both aggregate and normalized AI interaction records", async () => {
-    await recordAiUsage({
+    await logAIInteraction({
       route: "/api/student/tutor",
       feature: "tutor",
       schoolId: "school-1",
       userId: "user-1",
+      studentId: "student-1",
       subject: "Science",
       strandKey: "matter",
       requestType: "explain",
       guidanceLevel: "step_by_step",
-      tokensUsed: 321,
+      inputTokens: 300,
+      outputTokens: 21,
       estimatedCostUSD: 0.12,
       model: "gpt-4o-mini",
       tier: "smart",
       fallbackUsed: false,
+      promptKey: "student.tutor.system",
+      promptVersion: "1.1.0",
+      promptHash: "hash-1",
+      clientEventId: "client-evt-1",
+      dedupeKey: "tutor:science:matter",
+      metadata: {
+        prompt: "should be stripped",
+        traceId: "trace-1",
+      },
     });
 
     expect(mockAiInteractionLogCreate).toHaveBeenCalled();
@@ -59,6 +70,13 @@ describe("recordAiUsage", () => {
           model: "gpt-4o-mini",
           tokensUsed: 321,
           estimatedCostUSD: 0.12,
+          promptVersion: "1.1.0",
+          promptKey: "student.tutor.system",
+          clientEventId: "client-evt-1",
+          dedupeKey: "tutor:science:matter",
+          metadata: expect.objectContaining({
+            traceId: "trace-1",
+          }),
         }),
       })
     );
@@ -68,6 +86,9 @@ describe("recordAiUsage", () => {
         source: "/api/student/tutor",
         schoolId: "school-1",
         userId: "user-1",
+        studentId: "student-1",
+        clientEventId: "client-evt-1",
+        dedupeKey: "tutor:science:matter",
       })
     );
   });

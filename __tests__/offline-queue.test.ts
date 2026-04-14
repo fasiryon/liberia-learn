@@ -47,6 +47,10 @@ describe("offline queue", () => {
     const queue = await getQueue();
     expect(queue).toHaveLength(1);
     expect(queue[0].completedAt).toBe("2026-02-20T11:00:00.000Z");
+    expect(queue[0].clientEventId).toBeTruthy();
+    expect(queue[0].originalTimestamp).toBe("2026-02-20T10:00:00.000Z");
+    expect(queue[0].payload?.clientEventId).toBe(queue[0].clientEventId);
+    expect(queue[0].payload?.originalTimestamp).toBe("2026-02-20T10:00:00.000Z");
   });
 
   it("returns ready items in createdAt order", async () => {

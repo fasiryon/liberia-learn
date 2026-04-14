@@ -14,7 +14,7 @@
  */
 
 import { routedCompletion } from "@/lib/ai/router";
-import { buildPrompt } from "@/lib/ai/promptRegistry";
+import { buildPrompt, getPromptMetadata } from "@/lib/ai/promptRegistry";
 import { retrieveRelevantLessons, type RelevantLesson } from "@/lib/ai/rag/retrievalService";
 import { prisma } from "@/lib/db";
 import { isRagTutorEnabled } from "@/lib/serverFlags";
@@ -88,6 +88,7 @@ const FALLBACK: StudentTutorResult = {
   estimatedCostUSD: 0,
   tokensUsed: 0,
 };
+const studentTutorPromptMetadata = getPromptMetadata("student.tutor.system");
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -279,6 +280,9 @@ export async function getStudentTutorResponse(
             subject: input.subject,
             strandKey: input.strandKey,
             requestType: input.requestType,
+            promptKey: studentTutorPromptMetadata.key,
+            promptVersion: studentTutorPromptMetadata.version,
+            promptHash: studentTutorPromptMetadata.hash,
             budgetFallbackContent: JSON.stringify({
               explanation: FALLBACK.explanation,
               practicePrompt: FALLBACK.practicePrompt ?? null,

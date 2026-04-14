@@ -1640,6 +1640,13 @@ model AIInteraction {
   contentVersion     String?
   assessmentVersion  String?
   calculationVersion String?
+  promptKey          String?
+  promptHash         String?
+  originalOccurredAt DateTime?
+  syncReceivedAt     DateTime?
+  clientEventId      String?
+  dedupeKey          String?
+  sourceEventId      String?
   metadata           Json?
   createdAt          DateTime  @default(now())
 
@@ -1648,6 +1655,9 @@ model AIInteraction {
   @@index([userId, createdAt])
   @@index([feature, createdAt])
   @@index([subject, strandKey, createdAt])
+  @@index([clientEventId])
+  @@index([dedupeKey])
+  @@index([sourceEventId])
 }
 
 /// Sprint 2: teacher-originated action record.
