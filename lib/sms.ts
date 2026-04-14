@@ -1,7 +1,16 @@
 // lib/sms.ts - Backward-compatible wrapper for SMS sending.
 import { TwilioSMSProvider } from "@/lib/sms/twilio-provider";
+import { DryRunSMSProvider } from "@/lib/sms/dry-run-provider";
+import { isLiveSmsEnabled } from "@/lib/serverFlags";
 
 export async function sendSMS(to: string, body: string): Promise<{ ok: boolean; sid?: string; error?: string }> {
+  // Gate: if live SMS is not explicitly enabled, route to the dry-run provider.
+  if (!isLiveSmsEnabled()) {
+    const dryRun = new DryRunSMSProvider();
+    const result = await dryRun.send({ to, body });
+    return { ok: result.ok, sid: result.providerMessageId, error: result.error };
+  }
+
   const africaTalkingApiKey = (process.env.AT_API_KEY ?? process.env.AFRICA_TALKING_API_KEY)?.trim();
   const africaTalkingUsername = (process.env.AT_USERNAME ?? process.env.AFRICA_TALKING_USERNAME)?.trim();
 
