@@ -1,13 +1,10 @@
-// app/api/moe/delivery-compliance/route.ts
-// Block 28 — MOE Delivery Compliance
-// Returns lesson delivery compliance rates aggregated by district.
-// No PII — district-level counts only.
-
 import { NextResponse } from "next/server";
 import { requireUser } from "@/lib/auth";
+import { prisma } from "@/lib/db";
 import { isMoePortalEnabled } from "@/lib/serverFlags";
 import { logAudit } from "@/lib/audit";
-import { prisma } from "@/lib/db";
+import { handleApiError } from "@/lib/errors/apiErrorHandler";
+import { isMoeDistrictRole, isMoeSuperRole } from "@/lib/moe/rbac";
 
 export const dynamic = "force-dynamic";
 
@@ -18,11 +15,18 @@ export async function GET() {
     }
 
     const user = await requireUser();
-    if (user.role !== "MOE_OFFICIAL" && !user.isPlatformAdmin) {
+    const isNational = user.isPlatformAdmin || isMoeSuperRole(user.role);
+    if (!isNational && !isMoeDistrictRole(user.role)) {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
+    const districtId =
+      !isNational && user.schoolId
+        ? (await prisma.school.findUnique({ where: { id: user.schoolId }, select: { districtId: true } }))?.districtId ?? null
+        : null;
+
     const districts = await prisma.district.findMany({
+      where: districtId ? { id: districtId } : {},
       select: {
         id: true,
         name: true,
@@ -43,24 +47,25 @@ export async function GET() {
       },
     });
 
-    const byDistrict = districts.map((d) => {
+    const byDistrict = districts.map((district) => {
       let total = 0;
       let delivered = 0;
       let studentCount = 0;
-      for (const school of d.schools) {
+      for (const school of district.schools) {
         studentCount += school._count.users;
         for (const cls of school.classes) {
-          for (const sw of cls.scheduledWork) {
-            total++;
-            if (sw.isDelivered) delivered++;
+          for (const work of cls.scheduledWork) {
+            total += 1;
+            if (work.isDelivered) delivered += 1;
           }
         }
       }
+
       return {
-        districtId: d.id,
-        districtName: d.name,
-        region: d.region,
-        schoolCount: d.schools.length,
+        districtId: district.id,
+        districtName: district.name,
+        region: district.region,
+        schoolCount: district.schools.length,
         studentCount,
         scheduledWorkTotal: total,
         scheduledWorkDelivered: delivered,
@@ -68,14 +73,14 @@ export async function GET() {
       };
     });
 
-    // National totals
-    const nationalTotal = byDistrict.reduce((s, d) => s + d.scheduledWorkTotal, 0);
-    const nationalDelivered = byDistrict.reduce((s, d) => s + d.scheduledWorkDelivered, 0);
+    const nationalTotal = byDistrict.reduce((sum, district) => sum + district.scheduledWorkTotal, 0);
+    const nationalDelivered = byDistrict.reduce((sum, district) => sum + district.scheduledWorkDelivered, 0);
 
-    void logAudit({
+    await logAudit({
       userId: user.id,
       action: "MOE_DELIVERY_COMPLIANCE_VIEW",
       resourceType: "delivery_compliance",
+      details: { scope: isNational ? "national" : "district", districtId },
     });
 
     return NextResponse.json({
@@ -83,15 +88,11 @@ export async function GET() {
       national: {
         scheduledWorkTotal: nationalTotal,
         scheduledWorkDelivered: nationalDelivered,
-        compliancePct:
-          nationalTotal > 0
-            ? Math.round((nationalDelivered / nationalTotal) * 10000) / 100
-            : null,
+        compliancePct: nationalTotal > 0 ? Math.round((nationalDelivered / nationalTotal) * 10000) / 100 : null,
       },
       byDistrict,
     });
-  } catch (err: any) {
-    const status = err?.status ?? 500;
-    return NextResponse.json({ error: err?.message ?? "Internal error" }, { status });
+  } catch (error) {
+    return handleApiError(error, { route: "/api/moe/delivery-compliance", method: "GET" });
   }
 }

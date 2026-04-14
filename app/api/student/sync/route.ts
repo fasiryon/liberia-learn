@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { requireRole } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { logAudit } from "@/lib/audit";
+import { handleApiError } from "@/lib/errors/apiErrorHandler";
 import { resolveAttendance, resolveSubmission } from "@/lib/offline-sync/policies";
 import { recordMetricEvent } from "@/lib/metrics/events";
 
@@ -55,6 +56,7 @@ export async function POST(req: NextRequest) {
         id,
         opId,
         entity = "studentProgress",
+        endpoint,
         scheduledWorkId,
         completedAt,
         clientUpdatedAt,
@@ -208,6 +210,83 @@ export async function POST(req: NextRequest) {
           continue;
         }
 
+        if (
+          entity === "assignmentSubmission" ||
+          (entity === "submission" &&
+            typeof endpoint === "string" &&
+            endpoint.includes("/api/student/assignments/"))
+        ) {
+          const submission = payload ?? {};
+          const assignmentId =
+            typeof submission.assignmentId === "string"
+              ? submission.assignmentId
+              : typeof endpoint === "string"
+                ? endpoint.split("/").filter(Boolean).at(-2) ?? null
+                : null;
+          const content = typeof submission.content === "string" ? submission.content.trim() : "";
+          const clientTime = submission.clientUpdatedAt ?? clientUpdatedAt ?? completedAt;
+
+          if (!assignmentId || !content || !clientTime) {
+            skipped++;
+            results.push({ opId: opKey, entity: "assignmentSubmission", status: "skipped" });
+            continue;
+          }
+
+          const student = await prisma.student.findUnique({
+            where: { userId: user.id },
+            select: { id: true, enrollments: { select: { classId: true } } },
+          });
+          if (!student) {
+            skipped++;
+            results.push({ opId: opKey, entity: "assignmentSubmission", status: "skipped" });
+            continue;
+          }
+
+          const assignment = await prisma.assignment.findUnique({
+            where: { id: assignmentId },
+            select: { id: true, classId: true, Class: { select: { schoolId: true } } },
+          });
+
+          const isEnrolled = Boolean(
+            assignment &&
+              assignment.Class.schoolId === user.schoolId &&
+              student.enrollments.some((enrollment) => enrollment.classId === assignment.classId)
+          );
+
+          if (!assignment || !isEnrolled) {
+            results.push({
+              status: "conflict",
+              opId: opKey,
+              entity: "assignmentSubmission",
+              clientState: submission,
+              resolutionHint: "assignment_submission_requires_current_class_membership",
+            });
+            continue;
+          }
+
+          await prisma.assignmentSubmission.upsert({
+            where: {
+              assignmentId_studentId: {
+                assignmentId,
+                studentId: student.id,
+              },
+            },
+            update: {
+              content,
+              turnedInAt: new Date(clientTime),
+            },
+            create: {
+              assignmentId,
+              studentId: student.id,
+              content,
+              turnedInAt: new Date(clientTime),
+            },
+          });
+          synced++;
+          results.push({ opId: opKey, entity: "assignmentSubmission", status: "synced" });
+          continue;
+        }
+
         skipped++;
         results.push({ opId: opKey, entity, status: "skipped" });
       } catch {
@@ -254,6 +333,6 @@ export async function POST(req: NextRequest) {
     } catch {
       // Never fail request because metrics write failed.
     }
-    return NextResponse.json({ error: err.message }, { status: err?.status || 500 });
+    return handleApiError(err, { route: "/api/student/sync", method: "POST" });
   }
 }

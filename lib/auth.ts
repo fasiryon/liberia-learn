@@ -4,6 +4,7 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/db";
 import { normalizeLoginId, normalizeCredentialPhone } from "@/lib/login-identifiers";
+import { roleMatches } from "@/lib/moe/rbac";
 
 type RawCredentialInput = {
   email?: string;
@@ -146,7 +147,15 @@ export type SessionUser = {
   email?: string | null;
   loginId?: string | null;
   name?: string | null;
-  role: "STUDENT" | "TEACHER" | "ADMIN" | "GUARDIAN" | "DISTRICT_ADMIN" | "MOE_OFFICIAL";
+  role:
+    | "STUDENT"
+    | "TEACHER"
+    | "ADMIN"
+    | "GUARDIAN"
+    | "DISTRICT_ADMIN"
+    | "MOE_OFFICIAL"
+    | "MOE_SUPER_ADMIN"
+    | "MOE_DISTRICT_ADMIN";
   schoolId?: string | null;
   isPlatformAdmin?: boolean;
   iat?: number | null;
@@ -190,7 +199,7 @@ export async function requireUser(): Promise<SessionUser> {
 
 export async function requireRole(...roles: string[]): Promise<SessionUser> {
   const user = await requireUser();
-  if (!roles.includes(user.role)) {
+  if (!roleMatches(user.role, roles)) {
     throw Object.assign(new Error("Forbidden"), { status: 403 });
   }
   return user;

@@ -30,10 +30,12 @@ export type AiExplainability = {
 type TrustAudienceRole =
   | "ADMIN"
   | "DISTRICT_ADMIN"
+  | "MOE_DISTRICT_ADMIN"
   | "TEACHER"
   | "STUDENT"
   | "GUARDIAN"
-  | "MOE_OFFICIAL";
+  | "MOE_OFFICIAL"
+  | "MOE_SUPER_ADMIN";
 
 function clampScore(value: number): number {
   return Math.max(0, Math.min(1, value));

@@ -342,6 +342,7 @@ export default async function AdminConsolePage() {
     { label: "Timetable", href: "/admin/timetable", bg: "bg-cyan-500" },
     { label: "Teacher Assignments", href: "/admin/assignments", bg: "bg-lime-500" },
     { label: "Teachers", href: "/admin/teachers", bg: "bg-sky-500" },
+    { label: "Bulk Import", href: "/admin/import", bg: "bg-orange-500" },
     { label: "School Branding", href: "/admin/school-branding", bg: "bg-pink-500" },
     { label: "School Settings", href: "/admin/school-settings", bg: "bg-indigo-500" },
     ...(TRAINING_ENABLED

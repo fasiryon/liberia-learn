@@ -7,9 +7,9 @@
 //
 // Auth flow:
 //  1. Submit credentials via NextAuth signIn("credentials")
-//  2. Fetch session and verify role === MOE_OFFICIAL
-//  3. If not MOE_OFFICIAL: sign out, show "This portal is restricted to Ministry officials."
-//  4. If MOE_OFFICIAL: redirect to /moe/dashboard
+//  2. Fetch session and verify an MOE portal role
+//  3. If not MOE-authorized: sign out and show the restricted-access message
+//  4. Redirect to the matching MOE landing page
 
 import { FormEvent, useState } from "react";
 import { signIn, signOut, getSession } from "next-auth/react";
@@ -42,12 +42,16 @@ export default function MoeLoginClient() {
       return;
     }
 
-    // Verify the authenticated user has MOE_OFFICIAL role
+    // Verify the authenticated user has MOE portal authority
     const session = await getSession();
     const userRole = (session?.user as any)?.role ?? "";
     const isPlatformAdmin = (session?.user as any)?.isPlatformAdmin ?? false;
+    const isMoeRole =
+      userRole === "MOE_OFFICIAL" ||
+      userRole === "MOE_SUPER_ADMIN" ||
+      userRole === "MOE_DISTRICT_ADMIN";
 
-    if (userRole !== "MOE_OFFICIAL" && !isPlatformAdmin) {
+    if (!isMoeRole && !isPlatformAdmin) {
       // Sign the user out to prevent a dangling authenticated session
       await signOut({ redirect: false });
       setLoading(false);
@@ -55,7 +59,7 @@ export default function MoeLoginClient() {
       return;
     }
 
-    router.push("/moe/dashboard");
+    router.push(userRole === "MOE_DISTRICT_ADMIN" ? "/moe/districts" : "/moe/dashboard");
   };
 
   return (

@@ -3,6 +3,8 @@
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { Card, StatCard } from "@/components/ui/Card";
+import { LowBandwidthToggle } from "@/components/LowBandwidthToggle";
+import { readLowBandwidthPreference, resolveLowBandwidthMode } from "@/lib/lowBandwidthMode";
 
 type DashboardData = {
   schools: number;
@@ -108,6 +110,7 @@ function toCsv(rows: string[][]) {
 export default function MoeDashboardPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [lowBandwidth, setLowBandwidth] = useState(false);
   const [dashboard, setDashboard] = useState<DashboardData | null>(null);
   const [compliance, setCompliance] = useState<ComplianceData | null>(null);
   const [interventions, setInterventions] = useState<InterventionData | null>(null);
@@ -116,15 +119,29 @@ export default function MoeDashboardPage() {
   const [exportError, setExportError] = useState<string | null>(null);
 
   useEffect(() => {
+    if (typeof window === "undefined") return;
+    const connection =
+      (navigator as any).connection ?? (navigator as any).mozConnection ?? (navigator as any).webkitConnection ?? null;
+    setLowBandwidth(resolveLowBandwidthMode(readLowBandwidthPreference(window.localStorage), connection));
+  }, []);
+
+  useEffect(() => {
     let active = true;
     setLoading(true);
     setError(null);
-    Promise.all([
-      fetch("/api/moe/dashboard", { cache: "no-store" }).then((r) => r.json()),
-      fetch("/api/moe/delivery-compliance", { cache: "no-store" }).then((r) => r.json()),
-      fetch("/api/moe/intervention-impact", { cache: "no-store" }).then((r) => r.json()),
-      fetch("/api/moe/placements", { cache: "no-store" }).then((r) => r.json()),
-    ])
+    const requests = lowBandwidth
+      ? Promise.all([
+          fetch("/api/moe/dashboard", { cache: "no-store", headers: { "X-Low-Bandwidth": "true" } }).then((r) => r.json()),
+          fetch("/api/moe/delivery-compliance", { cache: "no-store", headers: { "X-Low-Bandwidth": "true" } }).then((r) => r.json()),
+        ]).then(([dash, comp]) => [dash, comp, null, null] as const)
+      : Promise.all([
+          fetch("/api/moe/dashboard", { cache: "no-store" }).then((r) => r.json()),
+          fetch("/api/moe/delivery-compliance", { cache: "no-store" }).then((r) => r.json()),
+          fetch("/api/moe/intervention-impact", { cache: "no-store" }).then((r) => r.json()),
+          fetch("/api/moe/placements", { cache: "no-store" }).then((r) => r.json()),
+        ]);
+
+    requests
       .then(([dash, comp, inter, placementData]) => {
         if (!active) return;
         if (dash?.error || comp?.error || inter?.error || placementData?.error) {
@@ -148,7 +165,7 @@ export default function MoeDashboardPage() {
     return () => {
       active = false;
     };
-  }, []);
+  }, [lowBandwidth]);
 
   const fullyCompliantDistricts = useMemo(() => {
     if (!compliance?.byDistrict) return 0;
@@ -221,6 +238,14 @@ export default function MoeDashboardPage() {
                   Aggregated indicators across all districts, aligned to the same
                   operational patterns used across the platform. No student-level data.
                 </p>
+              </div>
+              <div className="pt-2">
+                <LowBandwidthToggle />
+                {lowBandwidth ? (
+                  <p className="mt-2 text-xs text-emerald-200">
+                    Low-bandwidth mode is active. Heavy district analytics are deferred so summaries load faster on weak connections.
+                  </p>
+                ) : null}
               </div>
             </div>
 
@@ -454,7 +479,7 @@ export default function MoeDashboardPage() {
               )}
             </section>
 
-            {interventions && (
+            {interventions && !lowBandwidth && (
               <section className="rounded-2xl border border-slate-800 bg-slate-900/80 p-5">
                 <div>
                   <p className="text-[11px] font-medium uppercase tracking-[0.22em] text-slate-500">
@@ -571,6 +596,7 @@ export default function MoeDashboardPage() {
               )}
             </section>
 
+            {!lowBandwidth ? (
             <section className="rounded-2xl border border-slate-800 bg-slate-900/80 p-5">
               <div>
                 <p className="text-[11px] font-medium uppercase tracking-[0.22em] text-slate-500">
@@ -640,6 +666,7 @@ export default function MoeDashboardPage() {
                 </>
               )}
             </section>
+            ) : null}
 
             <section className="rounded-2xl border border-slate-800 bg-slate-900/80 p-5">
               <div>

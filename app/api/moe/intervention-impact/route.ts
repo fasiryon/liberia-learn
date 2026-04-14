@@ -1,13 +1,10 @@
-// app/api/moe/intervention-impact/route.ts
-// Block 28 — MOE Intervention Impact
-// Returns aggregated intervention outcome metrics by district.
-// No PII — district-level aggregates and risk flag counts only.
-
 import { NextResponse } from "next/server";
 import { requireUser } from "@/lib/auth";
+import { prisma } from "@/lib/db";
 import { isMoePortalEnabled } from "@/lib/serverFlags";
 import { logAudit } from "@/lib/audit";
-import { prisma } from "@/lib/db";
+import { handleApiError } from "@/lib/errors/apiErrorHandler";
+import { isMoeDistrictRole, isMoeSuperRole } from "@/lib/moe/rbac";
 
 export const dynamic = "force-dynamic";
 
@@ -18,11 +15,18 @@ export async function GET() {
     }
 
     const user = await requireUser();
-    if (user.role !== "MOE_OFFICIAL" && !user.isPlatformAdmin) {
+    const isNational = user.isPlatformAdmin || isMoeSuperRole(user.role);
+    if (!isNational && !isMoeDistrictRole(user.role)) {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
+    const districtId =
+      !isNational && user.schoolId
+        ? (await prisma.school.findUnique({ where: { id: user.schoolId }, select: { districtId: true } }))?.districtId ?? null
+        : null;
+
     const logs = await prisma.interventionLog.findMany({
+      where: districtId ? { districtId } : {},
       select: {
         districtId: true,
         growthRiskFlag: true,
@@ -32,20 +36,16 @@ export async function GET() {
       },
     });
 
-    // Aggregate by district
-    const districtMap: Record<
-      string,
-      {
-        districtId: string;
-        count: number;
-        riskFlags: Record<string, number>;
-        outcomeDeltaSum: number;
-        outcomeDeltaCount: number;
-        outcomeEffectSizeSum: number;
-        outcomeEffectSizeCount: number;
-        latestAt: Date | null;
-      }
-    > = {};
+    const districtMap: Record<string, {
+      districtId: string;
+      count: number;
+      riskFlags: Record<string, number>;
+      outcomeDeltaSum: number;
+      outcomeDeltaCount: number;
+      outcomeEffectSizeSum: number;
+      outcomeEffectSizeCount: number;
+      latestAt: Date | null;
+    }> = {};
 
     for (const log of logs) {
       const key = log.districtId ?? "unassigned";
@@ -61,51 +61,48 @@ export async function GET() {
           latestAt: null,
         };
       }
+
       const entry = districtMap[key];
-      entry.count++;
+      entry.count += 1;
       if (log.growthRiskFlag) {
         entry.riskFlags[log.growthRiskFlag] = (entry.riskFlags[log.growthRiskFlag] ?? 0) + 1;
       }
       if (log.outcomeDelta != null) {
         entry.outcomeDeltaSum += log.outcomeDelta;
-        entry.outcomeDeltaCount++;
+        entry.outcomeDeltaCount += 1;
       }
       if (log.outcomeEffectSize != null) {
         entry.outcomeEffectSizeSum += log.outcomeEffectSize;
-        entry.outcomeEffectSizeCount++;
+        entry.outcomeEffectSizeCount += 1;
       }
       if (entry.latestAt == null || log.generatedAt > entry.latestAt) {
         entry.latestAt = log.generatedAt;
       }
     }
 
-    const byDistrict = Object.values(districtMap).map((d) => ({
-      districtId: d.districtId,
-      interventionCount: d.count,
-      riskFlags: d.riskFlags,
-      latestAt: d.latestAt?.toISOString() ?? null,
+    const byDistrict = Object.values(districtMap).map((district) => ({
+      districtId: district.districtId,
+      interventionCount: district.count,
+      riskFlags: district.riskFlags,
+      latestAt: district.latestAt?.toISOString() ?? null,
       avgOutcomeDelta:
-        d.outcomeDeltaCount > 0
-          ? Math.round((d.outcomeDeltaSum / d.outcomeDeltaCount) * 10000) / 10000
+        district.outcomeDeltaCount > 0
+          ? Math.round((district.outcomeDeltaSum / district.outcomeDeltaCount) * 10000) / 10000
           : null,
       avgOutcomeEffectSize:
-        d.outcomeEffectSizeCount > 0
-          ? Math.round((d.outcomeEffectSizeSum / d.outcomeEffectSizeCount) * 10000) / 10000
+        district.outcomeEffectSizeCount > 0
+          ? Math.round((district.outcomeEffectSizeSum / district.outcomeEffectSizeCount) * 10000) / 10000
           : null,
     }));
 
-    // National totals
-    const nationalDeltaVals = logs
-      .filter((l) => l.outcomeDelta != null)
-      .map((l) => l.outcomeDelta as number);
-    const nationalEffectVals = logs
-      .filter((l) => l.outcomeEffectSize != null)
-      .map((l) => l.outcomeEffectSize as number);
+    const nationalDeltaValues = logs.flatMap((log) => (log.outcomeDelta == null ? [] : [log.outcomeDelta]));
+    const nationalEffectValues = logs.flatMap((log) => (log.outcomeEffectSize == null ? [] : [log.outcomeEffectSize]));
 
-    void logAudit({
+    await logAudit({
       userId: user.id,
       action: "MOE_INTERVENTION_IMPACT_VIEW",
       resourceType: "intervention_impact",
+      details: { scope: isNational ? "national" : "district", districtId },
     });
 
     return NextResponse.json({
@@ -113,24 +110,17 @@ export async function GET() {
       national: {
         totalInterventions: logs.length,
         avgOutcomeDelta:
-          nationalDeltaVals.length > 0
-            ? Math.round(
-                (nationalDeltaVals.reduce((s, v) => s + v, 0) / nationalDeltaVals.length) *
-                  10000
-              ) / 10000
+          nationalDeltaValues.length > 0
+            ? Math.round((nationalDeltaValues.reduce((sum, value) => sum + value, 0) / nationalDeltaValues.length) * 10000) / 10000
             : null,
         avgOutcomeEffectSize:
-          nationalEffectVals.length > 0
-            ? Math.round(
-                (nationalEffectVals.reduce((s, v) => s + v, 0) / nationalEffectVals.length) *
-                  10000
-              ) / 10000
+          nationalEffectValues.length > 0
+            ? Math.round((nationalEffectValues.reduce((sum, value) => sum + value, 0) / nationalEffectValues.length) * 10000) / 10000
             : null,
       },
       byDistrict,
     });
-  } catch (err: any) {
-    const status = err?.status ?? 500;
-    return NextResponse.json({ error: err?.message ?? "Internal error" }, { status });
+  } catch (error) {
+    return handleApiError(error, { route: "/api/moe/intervention-impact", method: "GET" });
   }
 }

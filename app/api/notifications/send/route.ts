@@ -1,11 +1,18 @@
 import { NextRequest, NextResponse } from "next/server";
 import { requireRole } from "@/lib/auth";
+import { logAudit } from "@/lib/audit";
 import { prisma } from "@/lib/db";
 import {
   sendHomeworkGraded,
   sendWeeklyProgressToGuardian,
 } from "@/lib/email";
-import { sendSMS } from "@/lib/sms";
+import { handleApiError } from "@/lib/errors/apiErrorHandler";
+import {
+  checkRateLimit,
+  RATE_LIMIT_POLICIES,
+  rateLimitExceededResponse,
+} from "@/lib/rateLimit";
+import { sendReliableSms } from "@/lib/sms/reliableSend";
 
 export const dynamic = "force-dynamic";
 
@@ -20,6 +27,15 @@ export const dynamic = "force-dynamic";
 export async function POST(req: NextRequest) {
   try {
     const user = await requireRole("TEACHER", "ADMIN");
+    const rateLimit = await checkRateLimit(`notifications:${user.id}`, {
+      windowMs: RATE_LIMIT_POLICIES.ADMIN.windowMs,
+      limit: Math.max(20, Math.floor(RATE_LIMIT_POLICIES.ADMIN.limit / 4)),
+      namespace: "notifications",
+    });
+    if (!rateLimit.allowed) {
+      return rateLimitExceededResponse(rateLimit);
+    }
+
     const body = await req.json();
     const { type, userId, channel = "email", data } = body;
 
@@ -80,7 +96,7 @@ export async function POST(req: NextRequest) {
           ? `LiberiaLearn: ${target.name ?? "Student"} was marked ${data.status ?? "absent"} today.`
           : data?.message ?? "LiberiaLearn notification";
 
-      const smsResult = await sendSMS(data.phone, smsBody);
+      const smsResult = await sendReliableSms(data.phone, smsBody);
       results.push({ channel: "sms", ...smsResult });
 
       await prisma.notificationLog.create({
@@ -95,11 +111,21 @@ export async function POST(req: NextRequest) {
       });
     }
 
+    await logAudit({
+      userId: user.id,
+      schoolId: user.schoolId ?? null,
+      action: "notification.sent",
+      resourceType: "notification",
+      resourceId: target.id,
+      details: {
+        type,
+        channel,
+        resultCount: results.length,
+      },
+    });
+
     return NextResponse.json({ ok: true, results });
-  } catch (err: any) {
-    return NextResponse.json(
-      { error: err?.message ?? "Failed" },
-      { status: err?.status ?? 500 }
-    );
+  } catch (err) {
+    return handleApiError(err, { route: "/api/notifications/send", method: "POST" });
   }
 }

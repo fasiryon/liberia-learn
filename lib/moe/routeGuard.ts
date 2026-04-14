@@ -18,7 +18,12 @@ export type MoeToken = {
  */
 export function isMoeAuthorized(token: MoeToken): boolean {
   if (!token) return false;
-  return token.role === "MOE_OFFICIAL" || token.isPlatformAdmin === true;
+  return (
+    token.role === "MOE_OFFICIAL" ||
+    token.role === "MOE_SUPER_ADMIN" ||
+    token.role === "MOE_DISTRICT_ADMIN" ||
+    token.isPlatformAdmin === true
+  );
 }
 
 /**
@@ -28,6 +33,7 @@ export function isMoeAuthorized(token: MoeToken): boolean {
 export function roleDefaultPortal(role: string | undefined): string {
   switch (role) {
     case "ADMIN":
+      return "/admin";
     case "DISTRICT_ADMIN":
       return "/admin";
     case "TEACHER":
@@ -37,7 +43,10 @@ export function roleDefaultPortal(role: string | undefined): string {
     case "STUDENT":
       return "/dashboard";
     case "MOE_OFFICIAL":
+    case "MOE_SUPER_ADMIN":
       return "/moe/dashboard";
+    case "MOE_DISTRICT_ADMIN":
+      return "/moe/districts";
     default:
       return "/login";
   }

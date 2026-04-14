@@ -6,7 +6,7 @@ import { resolveSessionPartition, type SessionPartitionInput } from "@/lib/offli
 
 const QUEUE_KEY_PREFIX = "liberialearn_offline_queue::";
 
-const MAX_ATTEMPTS = 5;
+const MAX_ATTEMPTS = 3;
 const BASE_BACKOFF_MS = 5000;
 const MAX_BACKOFF_MS = 5 * 60 * 1000;
 
@@ -18,7 +18,7 @@ export type QueueItem = {
   queuedAt?: string;
   retryCount?: number;
   opId?: string;
-  entity?: "studentProgress" | "attendance" | "submission";
+  entity?: "studentProgress" | "attendance" | "submission" | "assignmentSubmission";
   scheduledWorkId: string;
   completedAt: string;
   attempts: number;
@@ -173,7 +173,7 @@ export async function markSyncFailure(
     item.retryCount = (item.retryCount ?? item.attempts) + 1;
     item.lastError = error;
     item.updatedAt = nowIso();
-    if ((item.retryCount ?? item.attempts) >= 3) {
+    if ((item.retryCount ?? item.attempts) >= MAX_ATTEMPTS) {
       item.status = "failed";
       item.nextRetryAt = null;
     } else {

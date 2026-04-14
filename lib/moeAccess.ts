@@ -1,5 +1,6 @@
 import { requirePlatformAdmin, requireRole, type SessionUser } from "@/lib/auth";
 import { getMoePortalAllowlist, isMoePortalEnabled } from "@/lib/serverFlags";
+import { isAnyMoeRole } from "@/lib/moe/rbac";
 
 function normalizeEmail(value?: string | null) {
   return (value ?? "").trim().toLowerCase();
@@ -21,16 +22,20 @@ function isAllowlistedEmail(email: string, allowlist: string[]): boolean {
   });
 }
 
-/** Throws 404 when MOE portal flag is off, 403 when user is not allowed. */
 export async function requireMoePortalUser(): Promise<SessionUser> {
   if (!isMoePortalEnabled()) {
     throw Object.assign(new Error("Not found"), { status: 404 });
   }
 
-  const user = await requireRole("ADMIN", "DISTRICT_ADMIN");
-
-  if (user.role === "ADMIN" && !user.isPlatformAdmin) {
-    throw Object.assign(new Error("Forbidden — platform admin required"), { status: 403 });
+  const user = await requireRole(
+    "ADMIN",
+    "DISTRICT_ADMIN",
+    "MOE_OFFICIAL",
+    "MOE_SUPER_ADMIN",
+    "MOE_DISTRICT_ADMIN"
+  );
+  if (!user.isPlatformAdmin && !isAnyMoeRole(user.role)) {
+    throw Object.assign(new Error("Forbidden"), { status: 403 });
   }
 
   const allowlist = getMoePortalAllowlist();
@@ -41,7 +46,6 @@ export async function requireMoePortalUser(): Promise<SessionUser> {
   return user;
 }
 
-/** Platform-admin-only access with MOE portal flag + allowlist. */
 export async function requireMoePlatformAdmin(): Promise<SessionUser> {
   if (!isMoePortalEnabled()) {
     throw Object.assign(new Error("Not found"), { status: 404 });

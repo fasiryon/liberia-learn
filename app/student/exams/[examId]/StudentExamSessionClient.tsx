@@ -2,6 +2,8 @@
 
 import Link from "next/link";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { LowBandwidthToggle } from "@/components/LowBandwidthToggle";
+import { readLowBandwidthPreference, resolveLowBandwidthMode } from "@/lib/lowBandwidthMode";
 
 type Question = {
   id: string;
@@ -80,6 +82,7 @@ export default function StudentExamSessionClient({ examId }: { examId: string })
   const [result, setResult] = useState<SubmitPayload | null>(null);
   const [startedAt, setStartedAt] = useState<string | null>(null);
   const [confirmingSubmit, setConfirmingSubmit] = useState(false);
+  const [lowBandwidth, setLowBandwidth] = useState(false);
   const flagsRef = useRef<Set<string>>(new Set());
   const tabSwitchCountRef = useRef(0);
   const submissionLogRef = useRef<Array<{ type: string; at: string; detail?: string }>>([]);
@@ -92,6 +95,13 @@ export default function StudentExamSessionClient({ examId }: { examId: string })
       at: new Date().toISOString(),
       ...(detail ? { detail } : {}),
     });
+  }, []);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const connection =
+      (navigator as any).connection ?? (navigator as any).mozConnection ?? (navigator as any).webkitConnection ?? null;
+    setLowBandwidth(resolveLowBandwidthMode(readLowBandwidthPreference(window.localStorage), connection));
   }, []);
 
   useEffect(() => {
@@ -305,7 +315,7 @@ export default function StudentExamSessionClient({ examId }: { examId: string })
 
   return (
     <main className="ll-page min-h-screen px-4 py-8 text-slate-50">
-      <div className="ll-shell max-w-4xl space-y-6">
+        <div className="ll-shell max-w-4xl space-y-6">
         <div className="rounded-3xl border border-white/10 bg-slate-900/70 p-6">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div>
@@ -316,6 +326,14 @@ export default function StudentExamSessionClient({ examId }: { examId: string })
               <p className="text-xs uppercase tracking-[0.2em] text-amber-200">Time left</p>
               <p className="mt-1 text-lg font-semibold">{minutes}:{seconds.toString().padStart(2, "0")}</p>
             </div>
+          </div>
+          <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
+            <LowBandwidthToggle />
+            {lowBandwidth ? (
+              <p className="text-xs text-emerald-200">
+                Low-bandwidth mode keeps this exam session text-first while timer and integrity tracking stay active.
+              </p>
+            ) : null}
           </div>
           <div className="mt-4 h-2 rounded-full bg-white/10">
             <div className="h-2 rounded-full bg-emerald-400" style={{ width: `${progress}%` }} />
@@ -351,7 +369,7 @@ export default function StudentExamSessionClient({ examId }: { examId: string })
                       return next;
                     });
                   }}
-                  className={`w-full rounded-2xl border px-4 py-4 text-left text-base leading-7 ${
+                  className={`w-full rounded-2xl border px-4 ${lowBandwidth ? "py-3 text-sm leading-6" : "py-4 text-base leading-7"} text-left ${
                     selectedAnswer === optionIndex
                       ? "border-emerald-300 bg-emerald-500/15 text-emerald-50 ring-2 ring-emerald-300/60"
                       : "border-white/10 bg-white/5 text-slate-100"

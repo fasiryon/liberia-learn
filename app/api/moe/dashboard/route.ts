@@ -1,58 +1,71 @@
-// app/api/moe/dashboard/route.ts
-// Block 28 — MOE National Dashboard
-// Returns platform-wide summary counts for Ministry of Education officials.
-// No PII — aggregated counts only.
-
 import { NextResponse } from "next/server";
 import { requireUser } from "@/lib/auth";
-import { isMoePortalEnabled } from "@/lib/serverFlags";
-import { logAudit } from "@/lib/audit";
 import { prisma } from "@/lib/db";
+import { logAudit } from "@/lib/audit";
 import { withRequestLogging } from "@/lib/logging/requestLogger";
 import { handleApiError } from "@/lib/errors/apiErrorHandler";
+import { isMoePortalEnabled } from "@/lib/serverFlags";
 import { getProductMetricsDashboard } from "@/lib/reporting/productMetrics";
+import { isMoeDistrictRole, isMoeSuperRole } from "@/lib/moe/rbac";
 
 export const dynamic = "force-dynamic";
 
-async function getExamStats() {
-  const examPrisma = prisma as typeof prisma & {
-    exam?: { count: (args?: unknown) => Promise<number> };
-    examAttempt?: {
-      findMany: (args?: unknown) => Promise<Array<{ passed: boolean; integrityFlags: string[]; exam: { subject: string } }>>;
-      count: (args?: unknown) => Promise<number>;
+function getDashboardPrisma() {
+  const unsafe = prisma as typeof prisma & {
+    class?: {
+      findMany?: (args: unknown) => Promise<Array<{ id: string }>>;
     };
-    examCertification?: { count: (args?: unknown) => Promise<number> };
+    exam?: {
+      count?: (args: unknown) => Promise<number>;
+    };
+    examAttempt?: {
+      findMany?: (args: unknown) => Promise<Array<{ passed: boolean; integrityFlags: string[]; exam: { subject: string } }>>;
+      count?: (args: unknown) => Promise<number>;
+    };
+    examCertification?: {
+      count?: (args: unknown) => Promise<number>;
+    };
   };
 
-  if (!examPrisma.exam || !examPrisma.examAttempt || !examPrisma.examCertification) {
-    return {
-      totalExamsPublished: 0,
-      examAttempts: [] as Array<{ passed: boolean; integrityFlags: string[]; exam: { subject: string } }>,
-      certificationIssued: 0,
-      flaggedAttempts: 0,
-    };
+  return {
+    class: unsafe.class,
+    exam: unsafe.exam,
+    examAttempt: unsafe.examAttempt,
+    examCertification: unsafe.examCertification,
+  };
+}
+
+async function resolveScope(user: Awaited<ReturnType<typeof requireUser>>) {
+  const isNational = user.isPlatformAdmin || isMoeSuperRole(user.role);
+  if (isNational) {
+    return { level: "national" as const, districtId: null, districtName: null, schoolIds: null };
   }
 
-  const [totalExamsPublished, examAttempts, certificationIssued, flaggedAttempts] = await Promise.all([
-    examPrisma.exam.count({ where: { status: "PUBLISHED" } }),
-    examPrisma.examAttempt.findMany({
-      select: {
-        passed: true,
-        integrityFlags: true,
-        exam: { select: { subject: true } },
-      },
-    }),
-    examPrisma.examCertification.count(),
-    examPrisma.examAttempt.count({
-      where: { NOT: { integrityFlags: { equals: [] } } },
-    }),
-  ]);
+  if (!isMoeDistrictRole(user.role) || !user.schoolId) {
+    throw Object.assign(new Error("Forbidden"), { status: 403 });
+  }
+
+  const school = await prisma.school.findUnique({
+    where: { id: user.schoolId },
+    select: { districtId: true, District: { select: { name: true } } },
+  });
+  const districtId = school?.districtId ?? null;
+  if (!districtId) {
+    throw Object.assign(new Error("Forbidden"), { status: 403 });
+  }
+
+  const schoolIds = (
+    await prisma.school.findMany({
+      where: { districtId },
+      select: { id: true },
+    })
+  ).map((item) => item.id);
 
   return {
-    totalExamsPublished,
-    examAttempts,
-    certificationIssued,
-    flaggedAttempts,
+    level: "district" as const,
+    districtId,
+    districtName: school?.District?.name ?? null,
+    schoolIds,
   };
 }
 
@@ -63,11 +76,20 @@ async function dashboardGET() {
     }
 
     const user = await requireUser();
-    if (user.role !== "MOE_OFFICIAL" && !user.isPlatformAdmin) {
-      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
-    }
+    const scope = await resolveScope(user);
+    const schoolIds = scope.schoolIds;
+    const delegates = getDashboardPrisma();
+    const classIds = delegates.class?.findMany
+      ? (
+          await delegates.class.findMany({
+            where: schoolIds ? { schoolId: { in: schoolIds } } : {},
+            select: { id: true },
+          })
+        ).map((item) => item.id)
+      : [];
 
-    const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
+    const scheduledWorkWhere = schoolIds ? { classId: { in: classIds.length > 0 ? classIds : ["__none__"] } } : {};
+    const examWhere = schoolIds ? { schoolId: { in: schoolIds } } : {};
 
     const [
       schoolCount,
@@ -76,80 +98,113 @@ async function dashboardGET() {
       scheduledWorkTotal,
       scheduledWorkDelivered,
       interventionCount,
-      examStats,
+      totalExamsPublished,
+      examAttempts,
+      certificationIssued,
+      flaggedAttempts,
       productMetrics,
     ] = await Promise.all([
-      prisma.school.count(),
-      prisma.district.count(),
-      prisma.student.count(),
-      prisma.scheduledWork.count(),
-      prisma.scheduledWork.count({ where: { isDelivered: true } }),
-      prisma.interventionLog.count({
-        where: { generatedAt: { gte: thirtyDaysAgo } },
-      }),
-      getExamStats(),
-      getProductMetricsDashboard({ period: "30d", schoolId: null }),
+      prisma.school.count({ where: schoolIds ? { id: { in: schoolIds } } : {} }),
+      prisma.district.count({ where: scope.districtId ? { id: scope.districtId } : {} }),
+      prisma.student.count({ where: schoolIds ? { user: { schoolId: { in: schoolIds } } } : {} }),
+      prisma.scheduledWork.count({ where: scheduledWorkWhere }),
+      prisma.scheduledWork.count({ where: { ...scheduledWorkWhere, isDelivered: true } }),
+      prisma.interventionLog.count({ where: scope.districtId ? { districtId: scope.districtId } : {} }),
+      delegates.exam?.count
+        ? delegates.exam.count({ where: { ...examWhere, status: "PUBLISHED" } })
+        : Promise.resolve(0),
+      delegates.examAttempt?.findMany
+        ? delegates.examAttempt.findMany({
+            where: schoolIds ? { exam: { schoolId: { in: schoolIds } } } : {},
+            select: {
+              passed: true,
+              integrityFlags: true,
+              exam: { select: { subject: true } },
+            },
+          })
+        : Promise.resolve([]),
+      delegates.examCertification?.count
+        ? delegates.examCertification.count({ where: schoolIds ? { exam: { schoolId: { in: schoolIds } } } : {} })
+        : Promise.resolve(0),
+      delegates.examAttempt?.count
+        ? delegates.examAttempt.count({
+            where: {
+              ...(schoolIds ? { exam: { schoolId: { in: schoolIds } } } : {}),
+              NOT: { integrityFlags: { equals: [] } },
+            },
+          })
+        : Promise.resolve(0),
+      scope.level === "national"
+        ? getProductMetricsDashboard({ period: "30d", schoolId: null }).catch(() => null)
+        : null,
     ]);
 
-    const deliveryRate =
-      scheduledWorkTotal > 0
-        ? Math.round((scheduledWorkDelivered / scheduledWorkTotal) * 10000) / 100
-        : null;
-
     const subjectBuckets = new Map<string, { attempts: number; passed: number }>();
-    for (const attempt of examStats.examAttempts) {
+    for (const attempt of examAttempts) {
       const bucket = subjectBuckets.get(attempt.exam.subject) ?? { attempts: 0, passed: 0 };
       bucket.attempts += 1;
       if (attempt.passed) bucket.passed += 1;
       subjectBuckets.set(attempt.exam.subject, bucket);
     }
 
-    void logAudit({
+    await logAudit({
       userId: user.id,
       action: "MOE_DASHBOARD_VIEW",
       resourceType: "national_dashboard",
+      details: {
+        scope: scope.level,
+        districtId: scope.districtId,
+      },
     });
 
     return NextResponse.json({
       generatedAt: new Date().toISOString(),
+      scope,
       schools: schoolCount,
       districts: districtCount,
       students: studentCount,
       scheduledWork: {
         total: scheduledWorkTotal,
         delivered: scheduledWorkDelivered,
-        deliveryRatePct: deliveryRate,
+        deliveryRatePct:
+          scheduledWorkTotal > 0 ? Math.round((scheduledWorkDelivered / scheduledWorkTotal) * 10000) / 100 : null,
       },
       interventionsLast30Days: interventionCount,
       examStats: {
-        totalExamsPublished: examStats.totalExamsPublished,
-        totalAttempts: examStats.examAttempts.length,
+        totalExamsPublished,
+        totalAttempts: examAttempts.length,
         nationalPassRate:
-          examStats.examAttempts.length > 0
-            ? Math.round((examStats.examAttempts.filter((attempt) => attempt.passed).length / examStats.examAttempts.length) * 10000) /
-              100
+          examAttempts.length > 0
+            ? Math.round((examAttempts.filter((attempt) => attempt.passed).length / examAttempts.length) * 10000) / 100
             : 0,
-        certificationIssued: examStats.certificationIssued,
-        flaggedAttempts: examStats.flaggedAttempts,
+        certificationIssued,
+        flaggedAttempts,
         subjectBreakdown: Array.from(subjectBuckets.entries()).map(([subject, bucket]) => ({
           subject,
           attempts: bucket.attempts,
           passRate: bucket.attempts > 0 ? Math.round((bucket.passed / bucket.attempts) * 10000) / 100 : 0,
         })),
       },
-      productMetrics: {
-        nationalLessonCompletionRate:
-          productMetrics.nationalOutcomes?.nationalLessonCompletionRate ?? 0,
-        nationalExamPassRate: productMetrics.nationalOutcomes?.nationalExamPassRate ?? 0,
-        nationalGuardianEngagementRate:
-          productMetrics.nationalOutcomes?.nationalGuardianEngagementRate ?? 0,
-        interventionImpactRate: productMetrics.nationalOutcomes?.interventionImpactRate ?? 0,
-        topPerformingDistricts: productMetrics.nationalOutcomes?.topPerformingDistricts ?? [],
-        lowestPerformingDistricts: productMetrics.nationalOutcomes?.lowestPerformingDistricts ?? [],
-      },
+      productMetrics: scope.level === "national"
+        ? {
+            nationalLessonCompletionRate: productMetrics?.nationalOutcomes?.nationalLessonCompletionRate ?? 0,
+            nationalExamPassRate: productMetrics?.nationalOutcomes?.nationalExamPassRate ?? 0,
+            nationalGuardianEngagementRate: productMetrics?.nationalOutcomes?.nationalGuardianEngagementRate ?? 0,
+            interventionImpactRate: productMetrics?.nationalOutcomes?.interventionImpactRate ?? 0,
+            topPerformingDistricts: productMetrics?.nationalOutcomes?.topPerformingDistricts ?? [],
+            lowestPerformingDistricts: productMetrics?.nationalOutcomes?.lowestPerformingDistricts ?? [],
+          }
+        : {
+            nationalLessonCompletionRate: 0,
+            nationalExamPassRate: 0,
+            nationalGuardianEngagementRate: 0,
+            interventionImpactRate: 0,
+            topPerformingDistricts: [],
+            lowestPerformingDistricts: [],
+          },
     });
-  } catch (err: unknown) {
-    return handleApiError(err);
+  } catch (error) {
+    return handleApiError(error, { route: "/api/moe/dashboard", method: "GET" });
   }
 }
 

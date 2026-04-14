@@ -1,4 +1,4 @@
-import { sendSMS } from "@/lib/sms";
+import { sendReliableSms } from "@/lib/sms/reliableSend";
 
 export function generatePin() {
   return Math.floor(100000 + Math.random() * 900000).toString();
@@ -30,7 +30,7 @@ export async function sendCredentialSms(input: {
   pin: string;
   role: string;
 }) {
-  return sendSMS(
+  return sendReliableSms(
     input.to,
     formatCredentialSms({
       schoolName: input.schoolName,

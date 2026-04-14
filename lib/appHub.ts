@@ -5,6 +5,11 @@ export function resolveAppRedirect(user: SessionUser): string {
   switch (user.role) {
     case "ADMIN":
       return "/admin";
+    case "MOE_OFFICIAL":
+    case "MOE_SUPER_ADMIN":
+      return "/moe/dashboard";
+    case "MOE_DISTRICT_ADMIN":
+      return "/moe/districts";
     case "TEACHER":
       return "/teacher";
     case "GUARDIAN":

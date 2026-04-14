@@ -52,7 +52,11 @@ export default async function MoeLayout({
     return <>{children}</>;
   }
 
-  const isMoeUser = user.role === "MOE_OFFICIAL" || user.isPlatformAdmin === true;
+  const isMoeUser =
+    user.role === "MOE_OFFICIAL" ||
+    user.role === "MOE_SUPER_ADMIN" ||
+    user.role === "MOE_DISTRICT_ADMIN" ||
+    user.isPlatformAdmin === true;
   const allowlist = getMoePortalAllowlist();
 
   if (!isMoeUser || !isAllowlisted(user.email ?? "", allowlist)) {
@@ -60,7 +64,7 @@ export default async function MoeLayout({
   }
 
   return (
-    <MoeShell user={{ name: user.name, email: user.email }}>
+    <MoeShell user={{ name: user.name, email: user.email, role: user.role ?? null }}>
       {children}
     </MoeShell>
   );

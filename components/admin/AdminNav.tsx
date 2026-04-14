@@ -23,6 +23,7 @@ const BASE_NAV_LINKS = [
   { label: "School Settings", href: "/admin/school-settings" },
   { label: "Reports", href: "/admin/reports" },
   { label: "Notifications", href: "/admin/notifications" },
+  { label: "Bulk Import", href: "/admin/import" },
   { label: "Pilot Score", href: "/admin/pilot-score" },
   { label: "Onboarding", href: "/admin/onboarding" },
   { label: "Audit Log", href: "/admin/audit" },

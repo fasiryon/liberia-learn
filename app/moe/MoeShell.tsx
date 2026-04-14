@@ -6,11 +6,14 @@ import { usePathname } from "next/navigation";
 type MoeUser = {
   name?: string | null;
   email?: string | null;
+  role?: string | null;
 };
 
 const NAV_ITEMS = [
   { href: "/moe/dashboard", label: "Dashboard" },
   { href: "/moe/districts", label: "Districts" },
+  { href: "/moe/curriculum", label: "Curriculum" },
+  { href: "/moe/policies", label: "Policies" },
   { href: "/moe/compliance", label: "Compliance" },
   { href: "/moe/alerts", label: "Alerts" },
   { href: "/moe/exports", label: "Exports" },
@@ -24,6 +27,10 @@ export default function MoeShell({
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
+  const visibleNavItems =
+    user.role === "MOE_DISTRICT_ADMIN"
+      ? NAV_ITEMS.filter((item) => item.href !== "/moe/dashboard")
+      : NAV_ITEMS;
 
   return (
     <div className="min-h-screen bg-[#0b1120] text-slate-100">
@@ -44,7 +51,7 @@ export default function MoeShell({
           </Link>
 
           <nav className="flex flex-wrap items-center gap-2 text-xs font-semibold">
-            {NAV_ITEMS.map((item) => {
+            {visibleNavItems.map((item) => {
               const active = pathname === item.href || pathname?.startsWith(`${item.href}/`);
               return (
                 <Link

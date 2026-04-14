@@ -49,6 +49,11 @@ export const PERMISSIONS = {
   /** View district-level dashboard (aggregate only). */
   VIEW_DISTRICT_DASHBOARD: "view:district:dashboard",
   VIEW_NATIONAL_DASHBOARD: "view:national:dashboard",
+  MOE_ACCESS_NATIONAL: "moe:access:national",
+  MOE_ACCESS_DISTRICT: "moe:access:district",
+  CURRICULUM_OVERRIDE: "curriculum:override:manage",
+  POLICY_CONTROL: "policy:control:manage",
+  CURRICULUM_VERSION_MANAGE: "curriculum:version:manage",
   // National impact: platform admin only  enforced via requirePlatformAdmin(), no separate permission.
 } as const;
 
@@ -80,6 +85,33 @@ export const ROLE_PERMISSIONS: Record<string, ReadonlySet<Permission>> = {
     PERMISSIONS.DASHBOARD_SCHOOL_INTERVENTIONS,
     PERMISSIONS.VIEW_SCHOOL_DASHBOARD,
     PERMISSIONS.VIEW_DISTRICT_DASHBOARD,
+    PERMISSIONS.MOE_ACCESS_DISTRICT,
+  ]),
+  MOE_DISTRICT_ADMIN: new Set<Permission>([
+    PERMISSIONS.DASHBOARD_SCHOOL_IMPACT,
+    PERMISSIONS.DASHBOARD_SCHOOL_INTERVENTIONS,
+    PERMISSIONS.VIEW_SCHOOL_DASHBOARD,
+    PERMISSIONS.VIEW_DISTRICT_DASHBOARD,
+    PERMISSIONS.MOE_ACCESS_DISTRICT,
+  ]),
+  MOE_OFFICIAL: new Set<Permission>([
+    PERMISSIONS.MOE_ACCESS_NATIONAL,
+    PERMISSIONS.VIEW_NATIONAL_DASHBOARD,
+    PERMISSIONS.VIEW_DISTRICT_DASHBOARD,
+    PERMISSIONS.GOVERNANCE_EXPORT_NATIONAL,
+    PERMISSIONS.CURRICULUM_OVERRIDE,
+    PERMISSIONS.POLICY_CONTROL,
+    PERMISSIONS.CURRICULUM_VERSION_MANAGE,
+  ]),
+  MOE_SUPER_ADMIN: new Set<Permission>([
+    PERMISSIONS.MOE_ACCESS_NATIONAL,
+    PERMISSIONS.VIEW_NATIONAL_DASHBOARD,
+    PERMISSIONS.VIEW_DISTRICT_DASHBOARD,
+    PERMISSIONS.GOVERNANCE_EXPORT_NATIONAL,
+    PERMISSIONS.GOVERNANCE_EXPORT_PII,
+    PERMISSIONS.CURRICULUM_OVERRIDE,
+    PERMISSIONS.POLICY_CONTROL,
+    PERMISSIONS.CURRICULUM_VERSION_MANAGE,
   ]),
   TEACHER: new Set<Permission>([]),
   STUDENT: new Set<Permission>([]),
@@ -96,7 +128,7 @@ export function hasPermission(
 ): boolean {
   if (user.isPlatformAdmin) return true;
   if (permission === PERMISSIONS.VIEW_NATIONAL_DASHBOARD) {
-    return false;
+    return user.role === "MOE_OFFICIAL" || user.role === "MOE_SUPER_ADMIN";
   }
   const perms = ROLE_PERMISSIONS[user.role];
   return perms?.has(permission) ?? false;

@@ -2,6 +2,7 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
+import { LowBandwidthModeScript } from "@/components/LowBandwidthModeScript";
 import { ServiceWorkerRegistration } from "@/components/ServiceWorkerRegistration";
 
 const inter = Inter({
@@ -23,6 +24,7 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${inter.className} bg-slate-950 text-slate-50`}>
         {children}
+        <LowBandwidthModeScript />
         <ServiceWorkerRegistration />
       </body>
     </html>

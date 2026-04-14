@@ -12,6 +12,7 @@ import {
 import { gradeAttempt } from "@/lib/exams/gradingPipeline";
 import { recordPerformanceEvent } from "@/lib/intelligence/recordPerformanceEvent";
 import { isExamSystemEnabled } from "@/lib/serverFlags";
+import { validateExamSubmission } from "@/lib/policy/policyEngine";
 
 export const dynamic = "force-dynamic";
 
@@ -71,12 +72,27 @@ export async function POST(req: NextRequest, context: { params: { examId: string
     );
 
     const submittedAt = new Date();
-    const durationSeconds = Math.max(
-      0,
-      Math.round((submittedAt.getTime() - attempt.startedAt.getTime()) / 1000)
-    );
+    const schoolModel = (prisma as typeof prisma & {
+      school?: { findUnique?: (args: unknown) => Promise<{ districtId?: string | null } | null> };
+    }).school;
+    const school = user.schoolId && schoolModel?.findUnique
+      ? await schoolModel.findUnique({
+          where: { id: user.schoolId },
+          select: { districtId: true },
+        })
+      : null;
+    const policyValidation = await validateExamSubmission({
+      user,
+      schoolId: user.schoolId ?? null,
+      districtId: school?.districtId ?? null,
+      startedAt: attempt.startedAt,
+      submittedAt,
+      examTimeLimitMinutes: attempt.exam.timeLimit,
+      tabSwitchCount: body.tabSwitchCount ?? 0,
+    });
+    const durationSeconds = policyValidation.durationSeconds;
     const suspiciousDuration = durationSeconds > 0 && durationSeconds < Math.max(30, attempt.exam.questions.length * 5);
-    const integrityFlags = Array.isArray(body.flags) ? [...body.flags] : [];
+    const integrityFlags = Array.isArray(body.flags) ? [...body.flags, ...policyValidation.flags] : [...policyValidation.flags];
     const tabSwitchCount = body.tabSwitchCount ?? 0;
     const maxAllowedMs = (attempt.exam.timeLimit + 5) * 60 * 1000;
     if (submittedAt.getTime() - attempt.startedAt.getTime() > maxAllowedMs) {

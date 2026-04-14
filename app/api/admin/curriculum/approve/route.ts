@@ -7,6 +7,8 @@ import { embedLesson } from "@/lib/ai/rag/embeddingService";
 import { syncCurriculumContentRagChunks } from "@/lib/ai/rag/ragIngestionService";
 import { enqueueJob, isQueueConfigured, JobType } from "@/lib/queue";
 import { logger } from "@/lib/logger";
+import { handleApiError } from "@/lib/errors/apiErrorHandler";
+import { validateCurriculumApproval } from "@/lib/policy/policyEngine";
 
 /**
  * POST /api/admin/curriculum/approve
@@ -32,6 +34,21 @@ export async function POST(req: Request) {
     if (!record) {
       return NextResponse.json({ error: "Not found" }, { status: 404 });
     }
+
+    const schoolModel = (prisma as typeof prisma & {
+      school?: { findUnique?: (args: unknown) => Promise<{ districtId?: string | null } | null> };
+    }).school;
+    const school = user.schoolId && schoolModel?.findUnique
+      ? await schoolModel.findUnique({
+          where: { id: user.schoolId },
+          select: { districtId: true },
+        })
+      : null;
+    await validateCurriculumApproval({
+      schoolId: user.schoolId ?? null,
+      districtId: school?.districtId ?? null,
+      nextStatus: "published",
+    });
 
     const payload = (record.payload as any) ?? {};
     const updatedPayload = {
@@ -117,9 +134,6 @@ export async function POST(req: Request) {
       error: err,
       status: err?.status ?? 500,
     });
-    return NextResponse.json(
-      { error: err?.message ?? "Failed to approve" },
-      { status: err?.status ?? 500 }
-    );
+    return handleApiError(err, { route: "/api/admin/curriculum/approve", method: "POST" });
   }
 }

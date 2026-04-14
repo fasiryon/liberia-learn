@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import {
   getReadyQueue,
+  markSyncConflict,
   markSyncFailure,
   markSyncSuccess,
   getQueueStats,
@@ -47,27 +48,77 @@ export default function SyncManager({
 
     setSyncing(true);
     try {
-      const successIds: string[] = [];
-      const failedIds: string[] = [];
+      const queueStats = await getQueueStats(partition ?? undefined);
+      const res = await fetch("/api/student/sync", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          items: queue.map((item) => ({
+            id: item.id,
+            opId: item.opId,
+            entity: item.entity,
+            endpoint: item.endpoint,
+            payload: item.payload,
+            scheduledWorkId: item.scheduledWorkId,
+            completedAt: item.completedAt,
+          })),
+          queueStats: {
+            pending: queueStats.queuePending,
+            conflicts: queueStats.queueConflicts,
+            deadLetter: queueStats.queueDeadLetter,
+          },
+        }),
+      });
 
-      for (const item of queue) {
-        try {
-          const res = await fetch(item.endpoint ?? "/api/student/sync", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(item.payload ?? {}),
-          });
-
-          if (res.ok) successIds.push(item.id);
-          else failedIds.push(item.id);
-        } catch {
-          failedIds.push(item.id);
-        }
+      const data = await res.json().catch(() => null);
+      if (!res.ok) {
+        await markSyncFailure(
+          queue.map((item) => item.id),
+          data?.error ?? "server_error",
+          partition ?? undefined
+        );
+        setSyncResult("Offline sync queued for retry");
+        return;
       }
 
-      await markSyncSuccess(successIds, partition ?? undefined);
+      const syncedIds = (data?.results ?? [])
+        .filter((item: { status?: string; opId?: string }) => item.status === "synced")
+        .map((item: { opId?: string }) => item.opId)
+        .filter((value: string | undefined): value is string => Boolean(value));
+      const skippedIds = (data?.results ?? [])
+        .filter((item: { status?: string; opId?: string }) => item.status === "skipped")
+        .map((item: { opId?: string }) => item.opId)
+        .filter((value: string | undefined): value is string => Boolean(value));
+      const conflictItems = (data?.results ?? [])
+        .filter((item: { status?: string; opId?: string }) => item.status === "conflict")
+        .map((item: {
+          opId?: string;
+          entity?: string;
+          serverState?: unknown;
+          clientState?: unknown;
+          resolutionHint?: string;
+        }) => ({
+          id: item.opId!,
+          entity: item.entity,
+          serverState: item.serverState,
+          clientState: item.clientState,
+          resolutionHint: item.resolutionHint,
+        }))
+        .filter((item: { id?: string }) => Boolean(item.id));
+
+      const resultIdsHandled = new Set<string>([
+        ...syncedIds,
+        ...skippedIds,
+        ...conflictItems.map((item: { id: string }) => item.id),
+      ]);
+      const failedIds = queue
+        .map((item) => item.id)
+        .filter((id) => !resultIdsHandled.has(id));
+
+      await markSyncSuccess([...syncedIds, ...skippedIds], partition ?? undefined);
+      await markSyncConflict(conflictItems, partition ?? undefined);
       await markSyncFailure(failedIds, "server_error", partition ?? undefined);
-      setSyncResult(`${successIds.length} items synced successfully`);
+      setSyncResult(`${syncedIds.length} items synced successfully`);
       setTimeout(() => setSyncResult(null), 5000);
     } catch {
       await markSyncFailure(queue.map((q) => q.id), "network_error", partition ?? undefined);
