@@ -50,6 +50,16 @@ export const PERMISSIONS = {
   VIEW_DISTRICT_DASHBOARD: "view:district:dashboard",
   VIEW_NATIONAL_DASHBOARD: "view:national:dashboard",
   // National impact: platform admin only  enforced via requirePlatformAdmin(), no separate permission.
+  /** MOE district-level access (data scoped to a district). */
+  MOE_ACCESS_DISTRICT: "moe:access:district",
+  /** MOE national-level access (all-districts aggregate). */
+  MOE_ACCESS_NATIONAL: "moe:access:national",
+  /** Override curriculum content (MOE). */
+  CURRICULUM_OVERRIDE: "curriculum:content:override",
+  /** Create and manage curriculum versions. */
+  CURRICULUM_VERSION_MANAGE: "curriculum:version:manage",
+  /** Create and manage MOE delivery policies. */
+  POLICY_CONTROL: "policy:moe:control",
 } as const;
 
 export type Permission = (typeof PERMISSIONS)[keyof typeof PERMISSIONS];

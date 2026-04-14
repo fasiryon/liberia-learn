@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
 import Link from "next/link";
 import { trackEvent, EVENTS } from "@/lib/trackEvent";
+import { cacheLessonContent, loadCachedLesson } from "@/lib/lesson-offline-cache";
 
 export default function LessonViewerPage() {
   const router = useRouter();
@@ -15,6 +16,7 @@ export default function LessonViewerPage() {
   const [payload, setPayload] = useState<any>(null);
   const [error, setError] = useState<string | null>(null);
   const [completed, setCompleted] = useState(false);
+  const [servedFromCache, setServedFromCache] = useState(false);
 
   useEffect(() => {
     if (!contentId) return;
@@ -34,9 +36,21 @@ export default function LessonViewerPage() {
         if (data) {
           setMetadata(data.metadata);
           setPayload(data.payload);
+          // Cache lesson content for offline use after first successful load
+          cacheLessonContent(contentId, { metadata: data.metadata, payload: data.payload });
         }
       })
-      .catch((err) => setError(err.message))
+      .catch(async () => {
+        // Network failure — attempt to serve from local cache
+        const cached = await loadCachedLesson(contentId);
+        if (cached) {
+          setMetadata(cached.metadata);
+          setPayload(cached.payload);
+          setServedFromCache(true);
+        } else {
+          setError("This lesson isn't available offline yet. Please connect to the internet to load it for the first time.");
+        }
+      })
       .finally(() => setLoading(false));
   }, [contentId, router]);
 
@@ -85,6 +99,13 @@ export default function LessonViewerPage() {
         <Link href="/student/dashboard" className="inline-block text-sm text-emerald-300 hover:text-emerald-200">
           &larr; Back to Dashboard
         </Link>
+
+        {/* Offline cache indicator */}
+        {servedFromCache && (
+          <div className="rounded-xl border border-amber-500/30 bg-amber-500/10 px-4 py-2 text-xs text-amber-300">
+            Viewing cached version — you are offline
+          </div>
+        )}
 
         {/* Title + badges */}
         <div className="space-y-3">
@@ -194,7 +215,7 @@ export default function LessonViewerPage() {
 
         {/* Low bandwidth note */}
         <p className="text-[11px] text-slate-500 text-center pb-4">
-          Saving data? This page works offline.
+          This lesson is cached for offline use after first load.
         </p>
       </div>
     </main>

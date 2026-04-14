@@ -589,3 +589,14 @@ export function isDeliveryComplianceReportingEnabled(): boolean {
 export function isExamSystemEnabled(): boolean {
   return process.env.ENABLE_EXAM_SYSTEM === "true";
 }
+
+/**
+ * Sprint 5: Live SMS sending gate.
+ * DEFAULT OFF — when not "true", all SMS is routed through DryRunSMSProvider
+ * which logs the intended send without contacting any external API.
+ * Set ENABLE_LIVE_SMS=true in production to activate real delivery via
+ * Africa's Talking or Twilio (whichever provider credentials are present).
+ */
+export function isLiveSmsEnabled(): boolean {
+  return process.env.ENABLE_LIVE_SMS === "true";
+}
