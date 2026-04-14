@@ -1,5 +1,6 @@
 // prisma/seeds/moe-standards.ts
 import { PrismaClient } from "@prisma/client";
+import { pathToFileURL } from "url";
 
 const prisma = new PrismaClient();
 
@@ -141,9 +142,14 @@ async function main() {
   console.log(`Done. ${MOE_STANDARDS.length} standards upserted.`);
 }
 
-main()
-  .catch((e) => {
-    console.error(e);
-    process.exit(1);
-  })
-  .finally(() => prisma.$disconnect());
+const isDirectExecution =
+  typeof process.argv[1] === "string" && import.meta.url === pathToFileURL(process.argv[1]).href;
+
+if (isDirectExecution) {
+  main()
+    .catch((e) => {
+      console.error(e);
+      process.exit(1);
+    })
+    .finally(() => prisma.$disconnect());
+}
