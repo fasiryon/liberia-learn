@@ -7,58 +7,55 @@ Live execution tracking for the final closeout program.
 22-sprint final platform closeout
 
 ## Current sprint or phase
-Sprint 4  AI Telemetry + Versioning + Offline Sync Integrity
+Sprint 6 — MOE Dashboard + Student Learning Passport
 
 ## Current branch
-feat/data-intelligence-ai-telemetry
+feat/moe-dashboard-passport
 
 ## Worktree status
-Dirty
+Clean (Sprint 5 committed to main at 6f93bae)
 
 ## Worktree detail
-Sprint 4 implementation is complete in the isolated Sprint 4 worktree on `feat/data-intelligence-ai-telemetry`; changes are not yet committed or staged.
+Sprint 5 merged to main. Branch feat/moe-dashboard-passport checked out for Sprint 6 work.
 
 ## Overall status
-Sprint 4 implementation complete and fully validated.
+Sprint 5 complete and fully validated. Sprint 6 in progress.
 
 ## Last completed phase
-Sprint 4  AI Telemetry + Versioning + Offline Sync Integrity
+Sprint 5 — Offline Lesson Delivery + Teacher Weekly Report + SMS Dry-Run Gate
 
-## Last successful validation
+## Last successful validation (Sprint 5)
 - `npx prisma generate`: PASS
 - `npx tsc --noEmit`: PASS
-- `npm test`: PASS (`227` test files, `1621` tests)
+- `npm test`: PASS (1649 tests)
 - `npm run build`: PASS
 
-## Discovery summary
-- `routedCompletion()` was the dominant AI entrypoint, but provider access was split across `lib/ai/router.ts` and `lib/ai/routedCompletion.ts`, and embeddings still bypassed a single routed boundary.
-- `AIInteraction` and `logLearningEvent()` already existed, but `app/api/rag/query/route.ts` still wrote directly to legacy `AiInteractionLog`, and most AI flows were not threading prompt or calculation versions into telemetry.
-- Prompt registry metadata already carried version and hash, but live call sites were inconsistently using it.
-- `lib/offline-queue.ts` had queue-level dedupe primitives, while `app/api/student/sync/route.ts` resolved writes by timestamp only and did not emit replay-dedupe or conflict lifecycle events.
+## Sprint history (all on main)
 
-## Sprint 4 files changed
-- `prisma/schema.prisma`
-- `prisma/migrations/20260413_230000_sprint4_ai_telemetry_sync_integrity/migration.sql`
-- `lib/ai/routedCompletion.ts`
-- `lib/ai/router.ts`
-- `lib/ai/interactionLog.ts`
-- `lib/ai/rag/groundedAnswerService.ts`
-- `app/api/rag/query/route.ts`
-- `app/api/placement/generate-question/route.ts`
-- `app/api/placement/calculate-grade/route.ts`
-- `lib/adaptive/practiceGenerator.ts`
-- `lib/ai/tutor/studentTutor.ts`
-- `lib/workflows/ai/gradingAssist.ts`
-- `lib/offline-queue.ts`
-- `app/api/student/sync/route.ts`
-- `__tests__/ai.interactionLog.test.ts`
-- `__tests__/ai.usage.recording.test.ts`
-- `__tests__/offline-queue.test.ts`
-- `__tests__/student-sync.conflict.test.ts`
-- `__tests__/rag.query.route.test.ts`
+| Sprint | Deliverable | Commit |
+|--------|-------------|--------|
+| 1–3 | Platform foundation, AI factory, mastery/interventions | pre-2bf49f6 |
+| 4 | AI Telemetry + Versioning + Offline Sync Integrity | 2bf49f6 |
+| 5 | Offline lesson caching · Teacher weekly report · SMS dry-run gate | 6f93bae |
+
+## Sprint 5 files committed
+- `lib/lesson-offline-cache.ts`
+- `app/student/lesson/[contentId]/page.tsx`
+- `lib/reporting/teacherWeeklyReport.ts`
+- `app/api/teacher/weekly-report/route.ts`
+- `app/teacher/weekly-report/page.tsx`
+- `lib/sms/dry-run-provider.ts`
+- `lib/serverFlags.ts` (added isLiveSmsEnabled)
+- `lib/sms.ts` (added dry-run gate)
+- `lib/permissions.ts` (added 5 MOE permission constants)
+- `__tests__/lesson.offlineCache.test.ts`
+- `__tests__/sms.dryRun.test.ts`
+- `__tests__/sms.test.ts`
+- `__tests__/teacher.weeklyReport.route.test.ts`
 
 ## Exact next step
-Run `git status`, then stage only the Sprint 4 files with individual `git add` commands. Do not stage unrelated dirty-worktree files. Do not start Sprint 5.
+Discovery pass on MOE portal, existing MOE routes, reporting/dashboard infra, student progress, guardian access, Redis cache. Then implement Sprint 6.
 
 ## Note
 Prior Phase 15 systems are already validated and must be extended, not rebuilt.
+Untracked pre-existing files (not yet committed): app/api/moe/{curriculum,override,policies}/, lib/moe/authority.ts, lib/moe/rbac.ts, lib/sms/reliableSend.ts, components/LowBandwidth*.tsx, lib/lowBandwidthMode.ts, vercel-deploy.html.
