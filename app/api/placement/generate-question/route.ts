@@ -2,7 +2,7 @@
 import { NextResponse } from "next/server";
 import { requireRole } from "@/lib/auth";
 import { routedCompletion } from "@/lib/ai/routedCompletion";
-import { buildPrompt } from "@/lib/ai/promptRegistry";
+import { buildPrompt, getPromptMetadata } from "@/lib/ai/promptRegistry";
 import { logAudit } from "@/lib/audit";
 import {
   checkRateLimit,
@@ -20,6 +20,7 @@ const difficultyDescriptions: Record<number, string> = {
   4: "challenging, high school level",
   5: "advanced, college prep level",
 };
+const promptMetadata = getPromptMetadata("placement.question.system");
 
 type PlacementQuestion = {
   question: string;
@@ -123,6 +124,19 @@ export async function POST(req: Request) {
       ],
       maxTokens: 600,
       forceSmartTier: true,
+      aiUsage: {
+        route: "/api/placement/generate-question",
+        feature: "curriculum",
+        schoolId: user.schoolId ?? null,
+        userId: user.id,
+        studentId: user.id,
+        subject: subjectText,
+        requestType: "placement_question_generation",
+        promptKey: promptMetadata.key,
+        promptVersion: promptMetadata.version,
+        promptHash: promptMetadata.hash,
+        assessmentVersion: "placement.v1",
+      },
     });
 
     const content = completion.content;

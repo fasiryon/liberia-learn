@@ -85,13 +85,14 @@ export async function generateTargetedPracticeWithUsage(
   difficultyTier: DifficultyTier,
   usageContext?: PracticeUsageContext
 ): Promise<PracticeGenerationResult> {
+  const prompt = getPrompt("adaptive.practice");
   const result = await routedCompletion({
     forceSmartTier: true,
     maxTokens: 1800,
     messages: [
       {
         role: "system",
-        content: `${getPrompt("adaptive.practice").template}\nNo markdown. No prose outside JSON.`,
+        content: `${prompt.template}\nNo markdown. No prose outside JSON.`,
       },
       {
         role: "user",
@@ -121,6 +122,9 @@ export async function generateTargetedPracticeWithUsage(
           subject: gap.subject,
           strandKey: gap.strand,
           requestType: "adaptive_practice",
+          promptKey: prompt.key,
+          promptVersion: prompt.version,
+          promptHash: prompt.hash,
           budgetFallbackContent: JSON.stringify({
             questions: Array.from({ length: 5 }, (_, index) => ({
               id: `fallback-${index + 1}`,

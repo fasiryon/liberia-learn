@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const mockCheckBudget = vi.hoisted(() => vi.fn());
-const mockRecordAiUsage = vi.hoisted(() => vi.fn());
+const mockLogAIInteraction = vi.hoisted(() => vi.fn());
 const mockCreateCompletion = vi.hoisted(() => vi.fn());
 
 vi.mock("@/lib/ai/budgetGuard", () => {
@@ -12,7 +12,7 @@ vi.mock("@/lib/ai/budgetGuard", () => {
 
 vi.mock("@/lib/ai/interactionLog", () => {
   return {
-    recordAiUsage: mockRecordAiUsage,
+    logAIInteraction: mockLogAIInteraction,
   };
 });
 
@@ -64,13 +64,14 @@ describe("routedCompletion AI usage recording", () => {
     });
 
     expect(result.model).toBe("gpt-4o-mini");
-    expect(mockRecordAiUsage).toHaveBeenCalledWith(
+    expect(mockLogAIInteraction).toHaveBeenCalledWith(
       expect.objectContaining({
         route: "/api/student/tutor",
         feature: "tutor",
         schoolId: "school-1",
         userId: "user-1",
-        tokensUsed: 150,
+        inputTokens: 120,
+        outputTokens: 30,
         model: "gpt-4o-mini",
         tier: expect.any(String),
       })
@@ -101,11 +102,12 @@ describe("routedCompletion AI usage recording", () => {
 
     expect(result.budgetBlocked).toBe(true);
     expect(mockCreateCompletion).not.toHaveBeenCalled();
-    expect(mockRecordAiUsage).toHaveBeenCalledWith(
+    expect(mockLogAIInteraction).toHaveBeenCalledWith(
       expect.objectContaining({
         feature: "tutor",
         model: "budget_guard",
-        tokensUsed: 0,
+        inputTokens: 0,
+        outputTokens: 0,
         estimatedCostUSD: 0,
         fallbackUsed: true,
       })

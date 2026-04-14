@@ -12,6 +12,9 @@ const MAX_BACKOFF_MS = 5 * 60 * 1000;
 
 export type QueueItem = {
   id: string;
+  clientEventId?: string;
+  originalTimestamp?: string;
+  syncReceivedAt?: string | null;
   type?: "lesson-complete" | "assignment-submission" | "lab-submission" | "tutor-interaction";
   endpoint?: string;
   payload?: Record<string, unknown>;
@@ -60,6 +63,8 @@ export async function enqueueOfflineRequest(
     endpoint: string;
     payload: Record<string, unknown>;
     dedupeKey: string;
+    clientEventId?: string;
+    originalTimestamp?: string;
   },
   partition?: SessionPartitionInput
 ): Promise<QueueItem> {
@@ -72,7 +77,11 @@ export async function enqueueOfflineRequest(
       entry.status !== "failed"
   );
   if (existing) {
-    existing.payload = item.payload;
+    existing.payload = {
+      ...item.payload,
+      clientEventId: existing.clientEventId,
+      originalTimestamp: existing.originalTimestamp,
+    };
     existing.retryCount = 0;
     existing.attempts = 0;
     existing.updatedAt = nowIso();
@@ -82,11 +91,26 @@ export async function enqueueOfflineRequest(
     return existing;
   }
 
+  const clientEventId =
+    item.clientEventId ??
+    (typeof crypto !== "undefined" && "randomUUID" in crypto
+      ? crypto.randomUUID()
+      : `${Date.now()}-${Math.random()}`);
+  const originalTimestamp =
+    item.originalTimestamp ??
+    String(item.payload.originalTimestamp ?? item.payload.completedAt ?? item.payload.clientUpdatedAt ?? nowIso());
   const created: QueueItem = {
     id: typeof crypto !== "undefined" && "randomUUID" in crypto ? crypto.randomUUID() : `${Date.now()}-${Math.random()}`,
+    clientEventId,
+    originalTimestamp,
+    syncReceivedAt: null,
     type: item.type,
     endpoint: item.endpoint,
-    payload: item.payload,
+    payload: {
+      ...item.payload,
+      clientEventId,
+      originalTimestamp,
+    },
     queuedAt: nowIso(),
     retryCount: 0,
     opId: item.dedupeKey,
@@ -169,6 +193,7 @@ export async function markSyncFailure(
   for (const item of queue) {
     if (!ids.includes(item.id)) continue;
     if (item.status === "conflict") continue;
+    item.syncReceivedAt = nowIso();
     item.attempts += 1;
     item.retryCount = (item.retryCount ?? item.attempts) + 1;
     item.lastError = error;
@@ -202,6 +227,7 @@ export async function markSyncConflict(
     const conflict = byId.get(item.id);
     if (!conflict) continue;
     item.status = "conflict";
+    item.syncReceivedAt = nowIso();
     item.nextRetryAt = null;
     item.conflict = {
       entity: conflict.entity,

@@ -7,52 +7,58 @@ Live execution tracking for the final closeout program.
 22-sprint final platform closeout
 
 ## Current sprint or phase
-Sprint 3  Intervention Chains + Derived Intelligence + Misconceptions
+Sprint 4  AI Telemetry + Versioning + Offline Sync Integrity
 
 ## Current branch
-feat/data-intelligence-chains
+feat/data-intelligence-ai-telemetry
 
 ## Worktree status
 Dirty
 
 ## Worktree detail
-Sprint 3 implementation is complete in the isolated Sprint 3 worktree on `feat/data-intelligence-chains`; changes are not yet committed.
+Sprint 4 implementation is complete in the isolated Sprint 4 worktree on `feat/data-intelligence-ai-telemetry`; changes are not yet committed or staged.
 
 ## Overall status
-Sprint 3 implementation complete and fully validated.
+Sprint 4 implementation complete and fully validated.
 
 ## Last completed phase
-Sprint 3  Intervention Chains + Derived Intelligence + Misconceptions
+Sprint 4  AI Telemetry + Versioning + Offline Sync Integrity
 
 ## Last successful validation
 - `npx prisma generate`: PASS
 - `npx tsc --noEmit`: PASS
-- `npm test`: PASS (`227` test files, `1620` tests)
+- `npm test`: PASS (`227` test files, `1621` tests)
 - `npm run build`: PASS
 
 ## Discovery summary
-- Sprint 2 normalized tables existed but live writes still flowed through legacy adaptive attempts, mutable `StudentMasteryProfile`, and aggregate `InterventionLog`.
-- `MasterySnapshot` existed in schema but was not appended on the adaptive path.
-- Reporting and risk views still derived directly from mutable source tables rather than a separate append-only derived intelligence layer.
-- Wrong-answer handling computed correctness but had no persisted misconception taxonomy or tags.
-- Intervention lifecycle analytics existed only at school aggregate scope and lacked chain-level attribution.
+- `routedCompletion()` was the dominant AI entrypoint, but provider access was split across `lib/ai/router.ts` and `lib/ai/routedCompletion.ts`, and embeddings still bypassed a single routed boundary.
+- `AIInteraction` and `logLearningEvent()` already existed, but `app/api/rag/query/route.ts` still wrote directly to legacy `AiInteractionLog`, and most AI flows were not threading prompt or calculation versions into telemetry.
+- Prompt registry metadata already carried version and hash, but live call sites were inconsistently using it.
+- `lib/offline-queue.ts` had queue-level dedupe primitives, while `app/api/student/sync/route.ts` resolved writes by timestamp only and did not emit replay-dedupe or conflict lifecycle events.
 
-## Sprint 3 files changed
+## Sprint 4 files changed
 - `prisma/schema.prisma`
-- `prisma/migrations/20260413_210000_sprint3_intervention_chains/migration.sql`
-- `app/api/student/adaptive/submit/route.ts`
-- `lib/intelligence/derivedProgress.ts`
-- `lib/intelligence/misconceptions.ts`
-- `lib/interventions/interventionChains.ts`
-- `lib/policy/policyEngine.ts`
-- `prisma/seeds/moe-standards.ts`
-- `__tests__/adaptive.submit.route.test.ts`
-- `__tests__/derivedProgress.test.ts`
-- `__tests__/interventionChains.test.ts`
-- `__tests__/misconceptions.test.ts`
+- `prisma/migrations/20260413_230000_sprint4_ai_telemetry_sync_integrity/migration.sql`
+- `lib/ai/routedCompletion.ts`
+- `lib/ai/router.ts`
+- `lib/ai/interactionLog.ts`
+- `lib/ai/rag/groundedAnswerService.ts`
+- `app/api/rag/query/route.ts`
+- `app/api/placement/generate-question/route.ts`
+- `app/api/placement/calculate-grade/route.ts`
+- `lib/adaptive/practiceGenerator.ts`
+- `lib/ai/tutor/studentTutor.ts`
+- `lib/workflows/ai/gradingAssist.ts`
+- `lib/offline-queue.ts`
+- `app/api/student/sync/route.ts`
+- `__tests__/ai.interactionLog.test.ts`
+- `__tests__/ai.usage.recording.test.ts`
+- `__tests__/offline-queue.test.ts`
+- `__tests__/student-sync.conflict.test.ts`
+- `__tests__/rag.query.route.test.ts`
 
 ## Exact next step
-Stage and commit the Sprint 3 files on `feat/data-intelligence-chains`, then begin Sprint 4 only after that branch state is preserved.
+Run `git status`, then stage only the Sprint 4 files with individual `git add` commands. Do not stage unrelated dirty-worktree files. Do not start Sprint 5.
 
 ## Note
 Prior Phase 15 systems are already validated and must be extended, not rebuilt.

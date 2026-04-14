@@ -4,6 +4,86 @@ import { prisma } from "@/lib/db";
 import { logAudit } from "@/lib/audit";
 import { resolveAttendance, resolveSubmission } from "@/lib/offline-sync/policies";
 import { recordMetricEvent } from "@/lib/metrics/events";
+import { logLearningEvent } from "@/lib/events/logLearningEvent";
+
+type SyncItem = {
+  id?: string;
+  opId?: string;
+  entity?: string;
+  scheduledWorkId?: string;
+  completedAt?: string;
+  clientUpdatedAt?: string;
+  clientEventId?: string;
+  originalTimestamp?: string;
+  payload?: Record<string, unknown>;
+};
+
+function toIso(value?: string | Date | null) {
+  if (!value) return null;
+  const date = value instanceof Date ? value : new Date(value);
+  return Number.isNaN(date.getTime()) ? null : date.toISOString();
+}
+
+function getSyncIdentity(item: SyncItem) {
+  const payload = (item.payload ?? {}) as Record<string, unknown>;
+  const clientEventId =
+    typeof item.clientEventId === "string"
+      ? item.clientEventId
+      : typeof payload.clientEventId === "string"
+        ? payload.clientEventId
+        : typeof item.opId === "string"
+          ? item.opId
+          : typeof item.id === "string"
+            ? item.id
+            : null;
+  const originalTimestamp =
+    toIso(item.originalTimestamp) ??
+    toIso(typeof payload.originalTimestamp === "string" ? payload.originalTimestamp : null) ??
+    toIso(item.clientUpdatedAt) ??
+    toIso(item.completedAt);
+  const dedupeKey =
+    typeof item.opId === "string"
+      ? item.opId
+      : typeof item.id === "string"
+        ? item.id
+        : clientEventId;
+
+  return {
+    clientEventId,
+    originalTimestamp,
+    syncReceivedAt: new Date().toISOString(),
+    dedupeKey,
+  };
+}
+
+async function findReplaySourceEvent(input: {
+  schoolId?: string | null;
+  userId?: string | null;
+  eventType: string;
+  clientEventId?: string | null;
+  dedupeKey?: string | null;
+}) {
+  const learningEventModel = (prisma as typeof prisma & {
+    learningEvent?: { findFirst?: (args: unknown) => Promise<any> };
+  }).learningEvent;
+
+  if (!learningEventModel?.findFirst || (!input.clientEventId && !input.dedupeKey)) {
+    return null;
+  }
+
+  return learningEventModel.findFirst({
+    where: {
+      schoolId: input.schoolId ?? null,
+      userId: input.userId ?? null,
+      eventType: input.eventType,
+      OR: [
+        input.clientEventId ? { clientEventId: input.clientEventId } : undefined,
+        input.dedupeKey ? { dedupeKey: input.dedupeKey } : undefined,
+      ].filter(Boolean),
+    },
+    orderBy: { createdAt: "desc" },
+  });
+}
 
 export async function POST(req: NextRequest) {
   try {
@@ -50,7 +130,7 @@ export async function POST(req: NextRequest) {
       resolutionHint?: string;
     }> = [];
 
-    for (const item of items) {
+    for (const item of items as SyncItem[]) {
       const {
         id,
         opId,
@@ -62,6 +142,7 @@ export async function POST(req: NextRequest) {
       } = item ?? {};
 
       const opKey = opId ?? id;
+      const syncIdentity = getSyncIdentity(item);
 
       try {
         if (entity === "studentProgress") {
@@ -78,11 +159,61 @@ export async function POST(req: NextRequest) {
             continue;
           }
 
+          const replayOf = await findReplaySourceEvent({
+            schoolId: user.schoolId ?? null,
+            userId: user.id,
+            eventType: "offline.sync.student_progress.accepted",
+            clientEventId: syncIdentity.clientEventId,
+            dedupeKey: syncIdentity.dedupeKey,
+          });
+          if (replayOf) {
+            await logLearningEvent({
+              schoolId: user.schoolId ?? null,
+              userId: user.id,
+              studentId: user.id,
+              actor: { type: "user", id: user.id, role: "STUDENT" },
+              eventType: "offline.sync.replay_deduped",
+              source: "/api/student/sync",
+              status: "deduped",
+              clientEventId: syncIdentity.clientEventId,
+              dedupeKey: syncIdentity.dedupeKey,
+              originalOccurredAt: syncIdentity.originalTimestamp,
+              syncReceivedAt: syncIdentity.syncReceivedAt,
+              replayOfEventId: replayOf.id,
+              isReplay: true,
+              metadata: {
+                entity,
+                scheduledWorkId,
+              },
+            });
+            skipped++;
+            results.push({ opId: opKey, entity, scheduledWorkId, status: "skipped" });
+            continue;
+          }
+
           const existing = await prisma.studentProgress.findUnique({
             where: { studentId_scheduledWorkId: { studentId: user.id, scheduledWorkId } },
           });
 
           if (existing?.completedAt && existing.completedAt.getTime() > new Date(clientTime).getTime()) {
+            await logLearningEvent({
+              schoolId: user.schoolId ?? null,
+              userId: user.id,
+              studentId: user.id,
+              actor: { type: "user", id: user.id, role: "STUDENT" },
+              eventType: "offline.sync.conflict",
+              source: "/api/student/sync",
+              status: "conflict",
+              clientEventId: syncIdentity.clientEventId,
+              dedupeKey: syncIdentity.dedupeKey,
+              originalOccurredAt: syncIdentity.originalTimestamp,
+              syncReceivedAt: syncIdentity.syncReceivedAt,
+              metadata: {
+                entity,
+                scheduledWorkId,
+                resolutionHint: "student_progress_last_write_wins_by_timestamp",
+              },
+            });
             results.push({
               status: "conflict",
               opId: opKey,
@@ -111,33 +242,115 @@ export async function POST(req: NextRequest) {
             },
           });
           synced++;
+          await logLearningEvent({
+            schoolId: user.schoolId ?? null,
+            userId: user.id,
+            studentId: user.id,
+            actor: { type: "user", id: user.id, role: "STUDENT" },
+            target: { type: "studentProgress", id: scheduledWorkId },
+            eventType: "offline.sync.student_progress.accepted",
+            source: "/api/student/sync",
+            clientEventId: syncIdentity.clientEventId,
+            dedupeKey: syncIdentity.dedupeKey,
+            originalOccurredAt: syncIdentity.originalTimestamp,
+            syncReceivedAt: syncIdentity.syncReceivedAt,
+            metadata: {
+              entity,
+              scheduledWorkId,
+            },
+          });
           results.push({ opId: opKey, entity, scheduledWorkId, status: "synced" });
           continue;
         }
 
         if (entity === "attendance") {
-          const attendance = payload ?? {};
-          const { meetingId, studentId, status } = attendance;
-          const clientTime = attendance.clientUpdatedAt ?? clientUpdatedAt;
+          const attendance = (payload ?? {}) as Record<string, unknown>;
+          const meetingId =
+            typeof attendance.meetingId === "string" ? attendance.meetingId : null;
+          const attendanceStudentId =
+            typeof attendance.studentId === "string" ? attendance.studentId : null;
+          const status =
+            typeof attendance.status === "string" ? attendance.status : null;
+          const clientTime =
+            typeof attendance.clientUpdatedAt === "string"
+              ? attendance.clientUpdatedAt
+              : clientUpdatedAt;
 
-          if (!meetingId || !studentId || !status || !clientTime) {
+          if (!meetingId || !attendanceStudentId || !status || !clientTime) {
+            skipped++;
+            results.push({ opId: opKey, entity, status: "skipped" });
+            continue;
+          }
+
+          const replayOf = await findReplaySourceEvent({
+            schoolId: user.schoolId ?? null,
+            userId: user.id,
+            eventType: "offline.sync.attendance.accepted",
+            clientEventId: syncIdentity.clientEventId,
+            dedupeKey: syncIdentity.dedupeKey,
+          });
+          if (replayOf) {
+            await logLearningEvent({
+              schoolId: user.schoolId ?? null,
+              userId: user.id,
+              studentId: user.id,
+              actor: { type: "user", id: user.id, role: "STUDENT" },
+              eventType: "offline.sync.replay_deduped",
+              source: "/api/student/sync",
+              status: "deduped",
+              clientEventId: syncIdentity.clientEventId,
+              dedupeKey: syncIdentity.dedupeKey,
+              originalOccurredAt: syncIdentity.originalTimestamp,
+              syncReceivedAt: syncIdentity.syncReceivedAt,
+              replayOfEventId: replayOf.id,
+              isReplay: true,
+              metadata: { entity, meetingId },
+            });
             skipped++;
             results.push({ opId: opKey, entity, status: "skipped" });
             continue;
           }
 
           const existing = await prisma.attendanceRecord.findUnique({
-            where: { meetingId_studentId: { meetingId, studentId } },
+            where: { meetingId_studentId: { meetingId, studentId: attendanceStudentId } },
           });
 
           const resolution = resolveAttendance(
             existing
-              ? { meetingId, studentId, status: existing.status as any, markedAt: existing.markedAt }
+              ? {
+                  meetingId,
+                  studentId: attendanceStudentId,
+                  status: existing.status as any,
+                  markedAt: existing.markedAt,
+                }
               : null,
-            { meetingId, studentId, status, clientUpdatedAt: clientTime }
+            {
+              meetingId,
+              studentId: attendanceStudentId,
+              status: status as any,
+              clientUpdatedAt: clientTime,
+            }
           );
 
           if (resolution.action === "conflict") {
+            await logLearningEvent({
+              schoolId: user.schoolId ?? null,
+              userId: user.id,
+              studentId: user.id,
+              actor: { type: "user", id: user.id, role: "STUDENT" },
+              eventType: "offline.sync.conflict",
+              source: "/api/student/sync",
+              status: "conflict",
+              clientEventId: syncIdentity.clientEventId,
+              dedupeKey: syncIdentity.dedupeKey,
+              originalOccurredAt: syncIdentity.originalTimestamp,
+              syncReceivedAt: syncIdentity.syncReceivedAt,
+              metadata: {
+                entity,
+                meetingId,
+                resolutionHint: resolution.hint,
+              },
+            });
             results.push({
               status: "conflict",
               opId: opKey,
@@ -150,21 +363,74 @@ export async function POST(req: NextRequest) {
           }
 
           await prisma.attendanceRecord.upsert({
-            where: { meetingId_studentId: { meetingId, studentId } },
-            update: { status, markedAt: resolution.markedAt },
-            create: { meetingId, studentId, status, markedAt: resolution.markedAt },
+            where: { meetingId_studentId: { meetingId, studentId: attendanceStudentId } },
+            update: { status: status as any, markedAt: resolution.markedAt },
+            create: {
+              meetingId,
+              studentId: attendanceStudentId,
+              status: status as any,
+              markedAt: resolution.markedAt,
+            },
           });
           synced++;
+          await logLearningEvent({
+            schoolId: user.schoolId ?? null,
+            userId: user.id,
+            studentId: user.id,
+            actor: { type: "user", id: user.id, role: "STUDENT" },
+            target: { type: "attendance", id: meetingId },
+            eventType: "offline.sync.attendance.accepted",
+            source: "/api/student/sync",
+            clientEventId: syncIdentity.clientEventId,
+            dedupeKey: syncIdentity.dedupeKey,
+            originalOccurredAt: syncIdentity.originalTimestamp,
+            syncReceivedAt: syncIdentity.syncReceivedAt,
+            metadata: { entity, meetingId, studentId: attendanceStudentId },
+          });
           results.push({ opId: opKey, entity, status: "synced" });
           continue;
         }
 
         if (entity === "submission") {
-          const submission = payload ?? {};
-          const { homeworkId, answers } = submission;
-          const clientTime = submission.clientUpdatedAt ?? clientUpdatedAt;
+          const submission = (payload ?? {}) as Record<string, unknown>;
+          const homeworkId =
+            typeof submission.homeworkId === "string" ? submission.homeworkId : null;
+          const answers = (submission.answers ?? null) as any;
+          const clientTime =
+            typeof submission.clientUpdatedAt === "string"
+              ? submission.clientUpdatedAt
+              : clientUpdatedAt;
 
           if (!homeworkId || !clientTime) {
+            skipped++;
+            results.push({ opId: opKey, entity, status: "skipped" });
+            continue;
+          }
+
+          const replayOf = await findReplaySourceEvent({
+            schoolId: user.schoolId ?? null,
+            userId: user.id,
+            eventType: "offline.sync.submission.accepted",
+            clientEventId: syncIdentity.clientEventId,
+            dedupeKey: syncIdentity.dedupeKey,
+          });
+          if (replayOf) {
+            await logLearningEvent({
+              schoolId: user.schoolId ?? null,
+              userId: user.id,
+              studentId: user.id,
+              actor: { type: "user", id: user.id, role: "STUDENT" },
+              eventType: "offline.sync.replay_deduped",
+              source: "/api/student/sync",
+              status: "deduped",
+              clientEventId: syncIdentity.clientEventId,
+              dedupeKey: syncIdentity.dedupeKey,
+              originalOccurredAt: syncIdentity.originalTimestamp,
+              syncReceivedAt: syncIdentity.syncReceivedAt,
+              replayOfEventId: replayOf.id,
+              isReplay: true,
+              metadata: { entity, homeworkId },
+            });
             skipped++;
             results.push({ opId: opKey, entity, status: "skipped" });
             continue;
@@ -187,6 +453,24 @@ export async function POST(req: NextRequest) {
           );
 
           if (resolution.action === "conflict") {
+            await logLearningEvent({
+              schoolId: user.schoolId ?? null,
+              userId: user.id,
+              studentId: user.id,
+              actor: { type: "user", id: user.id, role: "STUDENT" },
+              eventType: "offline.sync.conflict",
+              source: "/api/student/sync",
+              status: "conflict",
+              clientEventId: syncIdentity.clientEventId,
+              dedupeKey: syncIdentity.dedupeKey,
+              originalOccurredAt: syncIdentity.originalTimestamp,
+              syncReceivedAt: syncIdentity.syncReceivedAt,
+              metadata: {
+                entity,
+                homeworkId,
+                resolutionHint: resolution.hint,
+              },
+            });
             results.push({
               status: "conflict",
               opId: opKey,
@@ -204,6 +488,20 @@ export async function POST(req: NextRequest) {
             create: { homeworkId, studentId: user.id, answers, submittedAt: resolution.submittedAt },
           });
           synced++;
+          await logLearningEvent({
+            schoolId: user.schoolId ?? null,
+            userId: user.id,
+            studentId: user.id,
+            actor: { type: "user", id: user.id, role: "STUDENT" },
+            target: { type: "submission", id: homeworkId },
+            eventType: "offline.sync.submission.accepted",
+            source: "/api/student/sync",
+            clientEventId: syncIdentity.clientEventId,
+            dedupeKey: syncIdentity.dedupeKey,
+            originalOccurredAt: syncIdentity.originalTimestamp,
+            syncReceivedAt: syncIdentity.syncReceivedAt,
+            metadata: { entity, homeworkId },
+          });
           results.push({ opId: opKey, entity, status: "synced" });
           continue;
         }

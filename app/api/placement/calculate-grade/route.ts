@@ -4,6 +4,10 @@ import { requireRole } from "@/lib/auth";
 import { logAudit } from "@/lib/audit";
 import { routedCompletion } from "@/lib/ai/router";
 
+const PLACEMENT_ANALYSIS_PROMPT_KEY = "placement.analysis";
+const PLACEMENT_ANALYSIS_PROMPT_VERSION = "1.0.0";
+const PLACEMENT_CALCULATION_VERSION = "placement.grade.v1";
+
 interface Answer {
   questionId: string;
   difficulty: number;
@@ -92,6 +96,10 @@ async function generatePlacementAnalysis(input: {
   recommendedGrade: number;
   band: PlacementBand;
   confidence: string;
+  usageContext: {
+    schoolId?: string | null;
+    userId?: string | null;
+  };
 }): Promise<AiPlacementAnalysis> {
   const analysisPrompt = JSON.stringify(
     input.questions.map((question, index) => ({
@@ -142,6 +150,23 @@ Return exactly:
     ],
     maxTokens: 900,
     forceSmartTier: true,
+    aiUsage: {
+      route: "/api/placement/calculate-grade",
+      feature: "grading",
+      schoolId: input.usageContext.schoolId ?? null,
+      userId: input.usageContext.userId ?? null,
+      studentId: input.usageContext.userId ?? null,
+      requestType: "placement_analysis",
+      promptKey: PLACEMENT_ANALYSIS_PROMPT_KEY,
+      promptVersion: PLACEMENT_ANALYSIS_PROMPT_VERSION,
+      assessmentVersion: "placement.v1",
+      calculationVersion: PLACEMENT_CALCULATION_VERSION,
+      metadata: {
+        questionCount: input.questions.length,
+        band: input.band,
+        confidence: input.confidence,
+      },
+    },
   });
 
   return parseAiPlacementAnalysis(result.content);
@@ -247,6 +272,10 @@ export async function POST(req: Request) {
       recommendedGrade,
       band,
       confidence,
+      usageContext: {
+        schoolId: user.schoolId ?? null,
+        userId: user.id,
+      },
     });
 
     await logAudit({

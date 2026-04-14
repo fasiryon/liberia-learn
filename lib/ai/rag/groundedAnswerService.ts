@@ -31,6 +31,8 @@ import {
 const MIN_TOP_SIMILARITY = 0.72;
 const MIN_AVG_SIMILARITY = 0.66;
 const MIN_SHORT_CONTEXT_CONFIDENCE = 0.84;
+const RAG_GROUNDED_PROMPT_KEY = "rag.grounded.answer";
+const RAG_GROUNDED_PROMPT_VERSION = "1.0.0";
 
 const GroundedAnswerSchema = z.object({
   answer: z.string().min(1),
@@ -77,6 +79,16 @@ type QueryInput = {
   context?: RetrievalContext;
   chunks?: RetrievedChunk[];
   isEvalRun?: boolean;
+  usageContext?: {
+    route: string;
+    userId?: string | null;
+    studentId?: string | null;
+    clientEventId?: string | null;
+    originalTimestamp?: Date | string | null;
+    syncReceivedAt?: Date | string | null;
+    dedupeKey?: string | null;
+    sourceEventId?: string | null;
+  };
 };
 
 const POLICY_KEYWORDS = [
@@ -434,6 +446,27 @@ export async function answerGroundedQuestion(input: QueryInput): Promise<Grounde
       ],
       maxTokens: 500,
       forceSmartTier: true,
+      aiUsage: {
+        route: input.usageContext?.route ?? "/api/rag/query",
+        feature: "tutor",
+        schoolId: input.schoolId,
+        userId: input.usageContext?.userId ?? null,
+        studentId: input.usageContext?.studentId ?? input.usageContext?.userId ?? null,
+        subject: input.subject ?? null,
+        requestType: "rag_grounded_answer",
+        promptKey: RAG_GROUNDED_PROMPT_KEY,
+        promptVersion: RAG_GROUNDED_PROMPT_VERSION,
+        clientEventId: input.usageContext?.clientEventId ?? null,
+        originalTimestamp: input.usageContext?.originalTimestamp ?? null,
+        syncReceivedAt: input.usageContext?.syncReceivedAt ?? null,
+        dedupeKey: input.usageContext?.dedupeKey ?? null,
+        sourceEventId: input.usageContext?.sourceEventId ?? null,
+        metadata: {
+          retrievalMode: mode,
+          sourceCount: chunks.length,
+          retrievalWeak,
+        },
+      },
     });
     const usage = getAiUsageMetrics(response);
     const parsed = parseGroundedAnswerResponse(response.content);

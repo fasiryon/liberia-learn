@@ -6,7 +6,6 @@ const mockAnswerGroundedQuestion = vi.hoisted(() => vi.fn());
 const mockLogAudit = vi.hoisted(() => vi.fn());
 const mockStudentFindUnique = vi.hoisted(() => vi.fn());
 const mockUserFindUnique = vi.hoisted(() => vi.fn());
-const mockAiInteractionLogCreate = vi.hoisted(() => vi.fn());
 
 vi.mock("@/lib/auth", () => ({
   requireUser: mockRequireUser,
@@ -35,9 +34,6 @@ vi.mock("@/lib/db", () => ({
     },
     user: {
       findUnique: mockUserFindUnique,
-    },
-    aiInteractionLog: {
-      create: mockAiInteractionLogCreate,
     },
   },
 }));
@@ -69,7 +65,6 @@ describe("POST /api/rag/query", () => {
       estimatedCost: 0.001,
     });
     mockLogAudit.mockResolvedValue(undefined);
-    mockAiInteractionLogCreate.mockResolvedValue({ id: "log-1" });
     mockStudentFindUnique.mockResolvedValue({
       currentGrade: 7,
       enrollments: [{ Class: { subject: "MATH" } }],
@@ -121,6 +116,8 @@ describe("POST /api/rag/query", () => {
       schoolId: "school-1",
       subject: "MATH",
       grade: 5,
+      allowedSubjects: undefined,
+      allowedGrades: undefined,
       mode: "classroom",
       role: "TEACHER",
       context: {
@@ -128,6 +125,11 @@ describe("POST /api/rag/query", () => {
         mode: "mixed",
         subject: "MATH",
         gradeLevel: "5",
+      },
+      usageContext: {
+        route: "/api/rag/query",
+        userId: "teacher-1",
+        studentId: null,
       },
     });
   });
@@ -217,6 +219,11 @@ describe("POST /api/rag/query", () => {
         subject: "MATH",
         gradeLevel: "7",
       },
+      usageContext: {
+        route: "/api/rag/query",
+        userId: "student-1",
+        studentId: "student-1",
+      },
     });
   });
 
@@ -282,6 +289,11 @@ describe("POST /api/rag/query", () => {
         mode: "support",
         subject: "MATH",
         gradeLevel: "7",
+      },
+      usageContext: {
+        route: "/api/rag/query",
+        userId: "guardian-1",
+        studentId: null,
       },
     });
   });
@@ -379,13 +391,6 @@ describe("POST /api/rag/query", () => {
     );
 
     expect(response.status).toBe(200);
-    expect(mockAiInteractionLogCreate).toHaveBeenCalledWith({
-      data: expect.objectContaining({
-        endpoint: "/api/rag/query",
-        tokensUsed: 0,
-        estimatedCostUSD: 0,
-      }),
-    });
     expect((await response.json()).cacheHit).toBe(true);
   });
 });
