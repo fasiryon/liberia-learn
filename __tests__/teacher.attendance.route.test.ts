@@ -4,6 +4,8 @@ const mockRequireUser = vi.hoisted(() => vi.fn());
 const mockLogAudit = vi.hoisted(() => vi.fn());
 const mockListTeacherAttendanceContext = vi.hoisted(() => vi.fn());
 const mockUpsertAttendanceForTeacher = vi.hoisted(() => vi.fn());
+const mockValidateAttendanceCompliance = vi.hoisted(() => vi.fn());
+const mockSchoolFindUnique = vi.hoisted(() => vi.fn());
 
 vi.mock("@/lib/auth", () => ({
   requireUser: mockRequireUser,
@@ -11,6 +13,16 @@ vi.mock("@/lib/auth", () => ({
 
 vi.mock("@/lib/audit", () => ({
   logAudit: mockLogAudit,
+}));
+
+vi.mock("@/lib/db", () => ({
+  prisma: {
+    school: { findUnique: mockSchoolFindUnique },
+  },
+}));
+
+vi.mock("@/lib/policy/policyEngine", () => ({
+  validateAttendanceCompliance: mockValidateAttendanceCompliance,
 }));
 
 vi.mock("@/lib/records/schoolOperations", async () => {
@@ -38,6 +50,8 @@ describe("/api/teacher/attendance", () => {
       isPlatformAdmin: false,
     });
     mockLogAudit.mockResolvedValue(undefined);
+    mockSchoolFindUnique.mockResolvedValue({ districtId: "district-1" });
+    mockValidateAttendanceCompliance.mockResolvedValue(undefined);
     mockListTeacherAttendanceContext.mockResolvedValue({
       classes: [{ id: "class-1", name: "JSS 1A", subject: "MATH" }],
       roster: [{ studentId: "student-1", name: "Student One", currentGrade: 7 }],
