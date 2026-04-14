@@ -60,6 +60,7 @@ function isMissingPolicyTableError(error: unknown) {
 
   return (
     (typeof error === "object" && error !== null && "code" in error && (error as { code?: unknown }).code === "P2021") ||
+    message.includes("Environment variable not found: DATABASE_URL") ||
     message.includes("PolicyConfig") ||
     message.includes("PolicyOverride") ||
     message.includes("CurriculumVersion") ||

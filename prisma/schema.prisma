@@ -1398,6 +1398,7 @@ model AssessmentAttempt {
   metadata         Json?
   source           String?
   sourceEventId    String?
+  chainId          String?
   attemptedAt      DateTime  @default(now())
   submittedAt      DateTime?
   createdAt        DateTime  @default(now())
@@ -1406,6 +1407,7 @@ model AssessmentAttempt {
   @@index([studentId, attemptedAt])
   @@index([schoolId, subject, attemptedAt])
   @@index([sourceEventId])
+  @@index([chainId, attemptedAt])
 }
 
 model ConfusionSignal {
@@ -1440,6 +1442,13 @@ model Intervention {
   objective        String?
   details          Json?
   outcome          Json?
+  chainId          String?
+  chainStage       String?
+  sourceEventId    String?
+  attributionSource String?
+  openedByUserId   String?
+  closedByUserId   String?
+  sourceAttemptId  String?
   openedAt         DateTime  @default(now())
   dueAt            DateTime?
   closedAt         DateTime?
@@ -1450,6 +1459,8 @@ model Intervention {
   @@index([schoolId, status, openedAt])
   @@index([tenantId, openedAt])
   @@index([recommendationId])
+  @@index([chainId, openedAt])
+  @@index([sourceAttemptId])
 }
 
 /// Sprint 2: append-only mastery state snapshot.
@@ -1462,6 +1473,9 @@ model MasterySnapshot {
   strandKey           String?
   sourceProfileId     String?
   sourceAttemptId     String?
+  previousSnapshotId  String?
+  snapshotType        String    @default("progress_refresh")
+  sourceEventId       String?
   currentScore        Float?
   baselineScore       Float?
   proficiencyState    String?
@@ -1476,9 +1490,128 @@ model MasterySnapshot {
   createdAt           DateTime  @default(now())
 
   @@index([studentId, capturedAt])
+  @@index([studentId, subject, strandKey, capturedAt])
   @@index([schoolId, subject, capturedAt])
   @@index([sourceProfileId])
   @@index([sourceAttemptId])
+  @@index([previousSnapshotId])
+  @@index([sourceEventId])
+}
+
+/// Sprint 3: append-only derived progress state.
+/// Keeps computed student intelligence separate from raw attempts and current profiles.
+model DerivedStudentProgress {
+  id                         String   @id @default(cuid())
+  studentId                  String
+  schoolId                   String?
+  subject                    String
+  strandKey                  String?
+  sourceProfileId            String?
+  sourceAttemptId            String?
+  sourceSnapshotId           String?
+  sourceChainId              String?
+  derivationType             String   @default("mastery_refresh")
+  progressVersion            String?
+  currentScore               Float?
+  baselineScore              Float?
+  growthDelta                Float?
+  hybridScore                Float?
+  sustainabilityIndex        Float?
+  decayRate                  Float?
+  aiRelianceRate             Float?
+  proficiencyState           String?
+  masteryState               String?
+  misconceptionCount         Int      @default(0)
+  openInterventionChainCount Int      @default(0)
+  metadata                   Json?
+  derivedAt                  DateTime @default(now())
+  createdAt                  DateTime @default(now())
+
+  @@index([studentId, derivedAt])
+  @@index([studentId, subject, strandKey, derivedAt])
+  @@index([schoolId, subject, derivedAt])
+  @@index([sourceSnapshotId])
+  @@index([sourceChainId, derivedAt])
+}
+
+/// Sprint 3: chain-level intervention lifecycle with attribution.
+/// Tracks baseline -> intervention -> outcome -> retention without rewriting history.
+model InterventionChain {
+  id                        String   @id @default(cuid())
+  tenantId                  String?
+  schoolId                  String?
+  districtId                String?
+  studentId                 String?
+  teacherUserId             String?
+  openedByUserId            String?
+  openedByRole              String?
+  attributionSource         String?
+  status                    String   @default("open")
+  currentStage              String   @default("baseline")
+  rationale                 String?
+  sourceAssessmentAttemptId String?
+  baselineSnapshotId        String?
+  latestInterventionId      String?
+  metadata                  Json?
+  openedAt                  DateTime @default(now())
+  interventionStartedAt     DateTime?
+  outcomeMeasuredAt         DateTime?
+  retentionCheckedAt        DateTime?
+  closedAt                  DateTime?
+  createdAt                 DateTime @default(now())
+  updatedAt                 DateTime @updatedAt
+
+  @@index([studentId, status, openedAt])
+  @@index([schoolId, status, currentStage, openedAt])
+  @@index([teacherUserId, status, openedAt])
+  @@index([sourceAssessmentAttemptId])
+}
+
+/// Sprint 3: extensible misconception taxonomy for system and teacher workflows.
+model MisconceptionCategory {
+  id              String   @id @default(cuid())
+  schoolId        String?
+  subject         String?
+  strandKey       String?
+  code            String
+  label           String
+  description     String?
+  severity        String?
+  examples        Json?
+  guidance        Json?
+  createdByUserId String?
+  isSystem        Boolean  @default(false)
+  isActive        Boolean  @default(true)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@unique([schoolId, code], name: "MisconceptionCategory_schoolId_code_key")
+  @@index([subject, strandKey, isActive])
+  @@index([createdByUserId, createdAt])
+}
+
+/// Sprint 3: append-only misconception tags attached to attempts, interventions, and chains.
+model MisconceptionTag {
+  id                  String   @id @default(cuid())
+  studentId           String
+  schoolId            String?
+  assessmentAttemptId String?
+  interventionId      String?
+  chainId             String?
+  categoryId          String
+  status              String   @default("active")
+  origin              String   @default("assessment_evaluation")
+  confidence          Float?
+  evidence            Json?
+  teacherNote         String?
+  taggedByUserId      String?
+  sourceEventId       String?
+  createdAt           DateTime @default(now())
+
+  @@index([studentId, createdAt])
+  @@index([categoryId, createdAt])
+  @@index([assessmentAttemptId, createdAt])
+  @@index([chainId, createdAt])
 }
 
 /// Sprint 2: normalized AI interaction provenance.
