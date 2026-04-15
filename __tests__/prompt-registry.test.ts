@@ -32,11 +32,21 @@ describe("promptRegistry", () => {
   it("buildPrompt fills placeholders deterministically", () => {
     const prompt = buildPrompt("student.tutor.system", {
       persona: "a helper.",
+      subjectContext: "Mathematics",
+      gradeContext: "Grade 6 (upper primary)",
+      strandContext: "fractions",
+      lessonTitle: "Adding Fractions",
+      lessonExcerpt: "Fractions represent equal parts of a whole.",
       contextBlock: "Context goes here.",
       instructionBlock: "Follow the rules.",
     });
 
     expect(prompt).toContain("You are a helper.");
+    expect(prompt).toContain("Current lesson subject: Mathematics.");
+    expect(prompt).toContain("Current learner level: Grade 6 (upper primary).");
+    expect(prompt).toContain("Current learning strand: fractions.");
+    expect(prompt).toContain("Current lesson title: Adding Fractions.");
+    expect(prompt).toContain("Lesson excerpt: Fractions represent equal parts of a whole.");
     expect(prompt).toContain("Context goes here.");
     expect(prompt).toContain("Follow the rules.");
     expect(prompt).toContain("Mathematics, Literacy, Science, Civics, Social Studies, and Computer Science");

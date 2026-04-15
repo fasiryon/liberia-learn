@@ -280,10 +280,10 @@ export default function TeacherCurriculumPage() {
               </div>
             </dl>
             <Link
-              href={`/student/lesson/${result.contentId}`}
+              href={`/teacher/lesson/${result.contentId}`}
               className="inline-block rounded-lg bg-emerald-500 px-4 py-2 text-xs font-semibold text-slate-950 hover:bg-emerald-400"
             >
-              Preview Lesson
+              View Lesson
             </Link>
           </div>
         )}
@@ -338,7 +338,7 @@ export default function TeacherCurriculumPage() {
                           </button>
                         )}
                         <Link
-                          href={`/student/lesson/${item.contentId}`}
+                          href={`/teacher/lesson/${item.contentId}`}
                           className="rounded-lg border border-slate-700 px-3 py-1 text-xs text-slate-300 hover:text-slate-50"
                         >
                           View

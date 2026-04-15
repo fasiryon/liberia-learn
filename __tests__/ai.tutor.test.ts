@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { resetRateLimitStateForTests } from "@/lib/rateLimit";
 
-const mockRequireUser = vi.hoisted(() => vi.fn());
+const mockRequireRole = vi.hoisted(() => vi.fn());
 const mockIsAiTutorEnabled = vi.hoisted(() => vi.fn());
 const mockIsRagTutorEnabled = vi.hoisted(() => vi.fn());
 const mockGetAiBudgetMonthlyCap = vi.hoisted(() => vi.fn());
@@ -11,7 +11,7 @@ const mockRecordMetricEvent = vi.hoisted(() => vi.fn());
 const mockAiInteractionLogAggregate = vi.hoisted(() => vi.fn());
 const mockAiInteractionLogCreate = vi.hoisted(() => vi.fn());
 
-vi.mock("@/lib/auth", () => ({ requireUser: mockRequireUser }));
+vi.mock("@/lib/auth", () => ({ requireRole: mockRequireRole }));
 vi.mock("@/lib/serverFlags", () => ({
   isAiTutorEnabled: mockIsAiTutorEnabled,
   isRagTutorEnabled: mockIsRagTutorEnabled,
@@ -41,6 +41,11 @@ const VALID_USER = {
 const VALID_BODY = {
   subject: "Mathematics",
   strandKey: "fractions.adding",
+  lessonTitle: "Adding Fractions",
+  lessonContent:
+    "Fractions represent equal parts of a whole. To add fractions with the same denominator, add the numerators and keep the denominator.",
+  question: "Explain how to add fractions with the same denominator.",
+  gradeLevel: 6,
   masteryState: "DEVELOPING",
   proficiencyState: "BELOW_PROFICIENT",
   gradeBand: "upper_primary",
@@ -61,7 +66,7 @@ beforeEach(async () => {
   mockIsAiTutorEnabled.mockReturnValue(true);
   mockIsRagTutorEnabled.mockReturnValue(false);
   mockGetAiBudgetMonthlyCap.mockReturnValue(100);
-  mockRequireUser.mockResolvedValue(VALID_USER);
+  mockRequireRole.mockResolvedValue(VALID_USER);
   mockAiInteractionLogAggregate.mockResolvedValue({ _sum: { estimatedCostUSD: 0 } });
   mockAiInteractionLogCreate.mockResolvedValue({ id: "log-1" });
   mockLogAudit.mockResolvedValue(undefined);
@@ -114,6 +119,10 @@ describe("POST /api/student/tutor", () => {
 
     expect(promptText).not.toContain(VALID_USER.id);
     expect(promptText).not.toContain(VALID_USER.schoolId);
+    expect(promptText).toContain("Current lesson subject: Mathematics.");
+    expect(promptText).toContain("Current learner level: Grade 6 (upper primary).");
+    expect(promptText).toContain("Current lesson title: Adding Fractions.");
+    expect(promptText).toContain("Student question: Explain how to add fractions with the same denominator.");
     expect(auditArgs.details).not.toHaveProperty("studentId");
   });
 

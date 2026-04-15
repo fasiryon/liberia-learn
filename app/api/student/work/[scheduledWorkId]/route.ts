@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { requireRole } from "@/lib/auth";
 import { prisma } from "@/lib/db";
+import { resolveLessonTitle } from "@/lib/lessons/resolveLessonTitle";
 
 function isRenderableArtifact(value: unknown): boolean {
   if (!value || typeof value !== "object") return false;
@@ -28,7 +29,15 @@ export async function GET(
         where: { id: scheduledWorkId },
         include: {
           content: {
-            select: { payload: true, subject: true, grade: true, contentType: true, deliveryProfile: true, moeAlignments: true },
+            select: {
+              contentId: true,
+              payload: true,
+              subject: true,
+              grade: true,
+              contentType: true,
+              deliveryProfile: true,
+              moeAlignments: true,
+            },
           },
           class: { select: { id: true, schoolId: true, name: true, Teacher: { select: { name: true } }, School: { select: { name: true } } } },
           progress: {
@@ -74,7 +83,12 @@ export async function GET(
 
     return NextResponse.json({
       id: sw.id,
-      title: payload?.title || payload?.topic || `${sw.content.subject} Lesson`,
+      contentId: sw.content.contentId,
+      title: resolveLessonTitle({
+        payload,
+        subject: String(sw.content.subject),
+        fallbackTitle: sw.content.contentId,
+      }),
       subject: sw.content.subject,
       grade: sw.content.grade,
       contentType: sw.content.contentType,

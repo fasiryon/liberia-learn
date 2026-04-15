@@ -2,6 +2,8 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 
+import { StudentLessonHelpPanel } from "@/components/student/StudentLessonHelpPanel";
+import { gradeToTutorBand } from "@/lib/ai/studentLessonSupport";
 import { lessonDurationLabel, renderSimpleMarkdown, selectLessonBody } from "@/lib/lessons";
 import { enqueueOfflineRequest } from "@/lib/offline-queue";
 import type { PseudoLab, SimulationDefinition } from "@/lib/schemas/labSimulation";
@@ -15,6 +17,7 @@ type ExitTicketQuestion = {
 
 type LessonResponse = {
   id: string;
+  contentId: string;
   title: string;
   subject: string;
   grade: number;
@@ -302,6 +305,7 @@ export default function LessonDeliveryClient({ lessonId }: { lessonId: string })
   const [answers, setAnswers] = useState<Record<number, string>>({});
   const [submitting, setSubmitting] = useState(false);
   const [submitMessage, setSubmitMessage] = useState<string | null>(null);
+  const [helpPanelOpen, setHelpPanelOpen] = useState(false);
   const [tutorQuestion, setTutorQuestion] = useState("");
   const [tutorMessages, setTutorMessages] = useState<TutorMessage[]>([]);
   const [tutorLoading, setTutorLoading] = useState(false);
@@ -385,7 +389,6 @@ export default function LessonDeliveryClient({ lessonId }: { lessonId: string })
     if (lesson.objectives.length > 0) nextSectionOrder.push("objectives");
     if (lesson.pseudoLabs.length > 0) nextSectionOrder.push("lab-activity");
     if (lesson.simulationDefinitions.length > 0) nextSectionOrder.push("simulations");
-    if (aiTutorEnabled) nextSectionOrder.push("ask-tutor");
     nextSectionOrder.push("exit-ticket");
     setSectionOrder(nextSectionOrder);
 
@@ -460,11 +463,12 @@ export default function LessonDeliveryClient({ lessonId }: { lessonId: string })
     };
   }, [lesson, persistLessonProgress]);
 
-  async function handleTutorSubmit(event: React.FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    if (!lesson || !tutorQuestion.trim()) return;
+  async function submitTutorQuestion(questionOverride?: string) {
+    if (!lesson) return;
 
-    const prompt = tutorQuestion.trim();
+    const prompt = (questionOverride ?? tutorQuestion).trim();
+    if (!prompt) return;
+
     setTutorMessages((current) => [...current, { role: "student", text: prompt }]);
     setTutorQuestion("");
     setTutorLoading(true);
@@ -477,8 +481,12 @@ export default function LessonDeliveryClient({ lessonId }: { lessonId: string })
           payload: {
             subject: lesson.subject,
             strandKey: lesson.subject.toLowerCase(),
+            lessonTitle: lesson.title,
+            lessonContent: renderedBody,
+            lessonId: lesson.id,
+            contentId: lesson.contentId,
             requestType: "explain",
-            message: prompt,
+            question: prompt,
           },
           dedupeKey: `tutor:${lesson.id}:${prompt}`,
         });
@@ -495,9 +503,15 @@ export default function LessonDeliveryClient({ lessonId }: { lessonId: string })
         body: JSON.stringify({
           subject: lesson.subject,
           strandKey: lesson.subject.toLowerCase(),
+          lessonTitle: lesson.title,
+          lessonContent: renderedBody,
+          lessonId: lesson.id,
+          contentId: lesson.contentId,
+          question: prompt,
+          gradeLevel: lesson.grade,
           masteryState: "NOT_ASSESSED",
           proficiencyState: "NOT_ASSESSED",
-          gradeBand: lesson.grade <= 3 ? "lower_primary" : lesson.grade <= 6 ? "upper_primary" : "secondary",
+          gradeBand: gradeToTutorBand(lesson.grade),
           requestType: "explain",
         }),
       });
@@ -584,7 +598,7 @@ export default function LessonDeliveryClient({ lessonId }: { lessonId: string })
               </div>
               <p className="text-sm text-slate-300">School: {lesson.schoolName}</p>
             </div>
-            <div className="mt-4 flex flex-wrap gap-2">
+          <div className="mt-4 flex flex-wrap gap-2">
               {sectionOrder.map((sectionId) => (
                 <button
                   key={sectionId}
@@ -600,6 +614,15 @@ export default function LessonDeliveryClient({ lessonId }: { lessonId: string })
                 </button>
               ))}
             </div>
+            {aiTutorEnabled ? (
+              <button
+                type="button"
+                onClick={() => setHelpPanelOpen(true)}
+                className="mt-4 inline-flex min-h-12 items-center justify-center rounded-full bg-emerald-400 px-5 py-3 text-sm font-semibold text-slate-950 transition-colors hover:bg-emerald-300"
+              >
+                Help Me Understand
+              </button>
+            ) : null}
           </div>
         </section>
 
@@ -689,42 +712,6 @@ export default function LessonDeliveryClient({ lessonId }: { lessonId: string })
         </section>
       ) : null}
 
-      {aiTutorEnabled ? (
-        <section ref={registerSection("ask-tutor")} data-section-id="ask-tutor" className="rounded-3xl border border-white/10 bg-slate-900/80 p-5 sm:p-7">
-          <h2 className="text-lg font-semibold text-white">Ask a question about this lesson</h2>
-          <form className="mt-4 space-y-3" onSubmit={handleTutorSubmit}>
-            <textarea
-              value={tutorQuestion}
-              onChange={(event) => setTutorQuestion(event.target.value)}
-              className="min-h-28 w-full rounded-2xl border border-slate-700 bg-slate-950/80 px-4 py-3 text-base leading-7 text-slate-50 outline-none focus:border-emerald-400 focus:ring-1 focus:ring-emerald-400/60"
-              placeholder="Ask for help with the lesson..."
-            />
-            <button
-              type="submit"
-              disabled={tutorLoading || !tutorQuestion.trim()}
-              className="ll-touch-target inline-flex items-center justify-center rounded-full bg-emerald-400 px-5 text-sm font-semibold text-slate-950 disabled:cursor-not-allowed disabled:bg-slate-700 disabled:text-slate-400"
-            >
-              {tutorLoading ? "Asking..." : "Ask Tutor"}
-            </button>
-          </form>
-
-          {tutorMessages.length > 0 ? (
-            <div className="mt-4 space-y-3">
-              {tutorMessages.map((message, index) => (
-                <div
-                  key={`${message.role}-${index}`}
-                  className={`rounded-2xl px-4 py-3 text-base leading-7 ${
-                    message.role === "student" ? "bg-slate-950/80 text-slate-200" : "bg-emerald-500/10 text-emerald-100"
-                  }`}
-                >
-                  {message.text}
-                </div>
-              ))}
-            </div>
-          ) : null}
-        </section>
-      ) : null}
-
         <section ref={registerSection("exit-ticket")} data-section-id="exit-ticket" className="rounded-3xl border border-white/10 bg-slate-900/80 p-5 sm:p-7">
           <h2 className="text-lg font-semibold text-white">Exit Ticket</h2>
           <div className="mt-4 space-y-5">
@@ -770,6 +757,15 @@ export default function LessonDeliveryClient({ lessonId }: { lessonId: string })
                 </p>
               </div>
               <div className="grid grid-cols-1 gap-2 sm:flex">
+                {aiTutorEnabled ? (
+                  <button
+                    type="button"
+                    onClick={() => setHelpPanelOpen(true)}
+                    className="ll-touch-target rounded-2xl border border-emerald-400/30 bg-emerald-400/10 px-4 py-3 text-sm font-semibold text-emerald-100"
+                  >
+                    Help Me Understand
+                  </button>
+                ) : null}
                 <button
                   type="button"
                   onClick={() => {
@@ -804,6 +800,18 @@ export default function LessonDeliveryClient({ lessonId }: { lessonId: string })
             </div>
           </div>
         </div>
+      <StudentLessonHelpPanel
+        open={aiTutorEnabled && helpPanelOpen}
+        onClose={() => setHelpPanelOpen(false)}
+        lessonTitle={lesson.title}
+        subject={lesson.subject}
+        grade={lesson.grade}
+        question={tutorQuestion}
+        onQuestionChange={setTutorQuestion}
+        onQuestionSubmit={submitTutorQuestion}
+        messages={tutorMessages}
+        loading={tutorLoading}
+      />
     </div>
   );
 }
