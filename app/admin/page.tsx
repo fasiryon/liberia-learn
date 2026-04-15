@@ -5,6 +5,7 @@ import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { AttachDemoSchoolButton } from "./AttachDemoSchoolButton";
 import { AdminNav } from "@/components/admin/AdminNav";
+import { PortalIcon } from "@/components/ui/PortalIcon";
 
 export const dynamic = "force-dynamic";
 
@@ -365,7 +366,10 @@ export default async function AdminConsolePage() {
             <h1 className="text-2xl md:text-3xl font-bold">
               Admin Console{" "}
               <span className="text-slate-400 font-normal">
-                &mdash; {schoolName}
+                &mdash;{" "}
+                <Link href={`/admin/schools/${schoolId}`} className="hover:text-emerald-300">
+                  {schoolName}
+                </Link>
               </span>
             </h1>
           </div>
@@ -441,7 +445,11 @@ export default async function AdminConsolePage() {
                 <tbody>
                   {classPerformance.map((row) => (
                     <tr key={row.id} className="border-b border-slate-800/60 text-slate-200">
-                      <td className="px-3 py-3">{row.name}</td>
+                      <td className="px-3 py-3">
+                        <Link href="/admin/schools" className="font-medium text-slate-100 hover:text-emerald-300">
+                          {row.name}
+                        </Link>
+                      </td>
                       <td className="px-3 py-3">{row.teacher}</td>
                       <td className="px-3 py-3">{row.students}</td>
                       <td className="px-3 py-3">{row.avgMastery}%</td>
@@ -526,11 +534,7 @@ export default async function AdminConsolePage() {
                 href={a.href}
                 className="flex min-h-[120px] flex-col items-start justify-between rounded-2xl border border-slate-800 bg-slate-900/80 p-4 transition-colors hover:bg-slate-800/80"
               >
-                <div
-                  className={`flex h-12 w-12 items-center justify-center rounded-2xl ${a.bg} text-sm font-bold text-slate-950`}
-                >
-                  {a.label[0]}
-                </div>
+                <PortalIcon label={a.label[0]} accentClassName={`${a.bg} text-slate-950`} />
                 <span className="text-sm font-semibold leading-snug">{a.label}</span>
               </Link>
             ))}

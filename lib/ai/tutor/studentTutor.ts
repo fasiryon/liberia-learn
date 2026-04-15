@@ -32,6 +32,7 @@ export type GuidanceLevel = "light" | "moderate" | "intensive";
 export type StudentTutorInput = {
   subject: string;
   strandKey: string;
+  gradeLevel?: number;
   /** e.g. DEVELOPING | APPROACHING | MASTERED | NOT_ASSESSED */
   masteryState: string;
   /** e.g. BELOW_PROFICIENT | APPROACHING | PROFICIENT */
@@ -99,10 +100,21 @@ function inferGuidanceLevel(masteryState: string): GuidanceLevel {
   return "intensive";
 }
 
-function buildSystemPrompt(): string {
+function describeGradeContext(input: StudentTutorInput): string {
+  if (typeof input.gradeLevel === "number" && Number.isFinite(input.gradeLevel)) {
+    return `Grade ${input.gradeLevel} (${input.gradeBand.replace(/_/g, " ")})`;
+  }
+
+  return input.gradeBand.replace(/_/g, " ");
+}
+
+function buildSystemPrompt(input: StudentTutorInput): string {
   return buildPrompt("student.tutor.system", {
     persona:
       "an educational AI tutor for LiberiaLearn, a platform for students in Liberia.",
+    subjectContext: input.subject.replace(/_/g, " "),
+    gradeContext: describeGradeContext(input),
+    strandContext: input.strandKey.replace(/_/g, " "),
     contextBlock: "",
     instructionBlock: `Guide students to understand concepts — never give direct assessment answers.
 Use simple, encouraging language. Keep responses concise (2-3 sentences max for explanation).
@@ -124,6 +136,9 @@ function buildChatSystemPrompt(grade: number | string, subjects: string): string
   return buildPrompt("student.tutor.system", {
     persona:
       "a helpful educational tutor for LiberiaLearn, an AI-powered learning platform for students in Liberia.",
+    subjectContext: subjects,
+    gradeContext: `Grade ${grade}`,
+    strandContext: "general learning support",
     contextBlock: `Student context:
 - Grade level: ${grade}
 - Subject(s): ${subjects}
@@ -150,6 +165,9 @@ function buildRagSystemPrompt(
 
   return buildPrompt("student.tutor.system", {
     persona: "a helpful tutor for a Liberian student.",
+    subjectContext: lessons[0]?.subject ?? "current lesson",
+    gradeContext: `Grade ${grade}`,
+    strandContext: "curriculum-aligned support",
     contextBlock: context,
     instructionBlock: `Answer based on the following lesson content from their curriculum. If the answer is not in the lessons, say so and provide general guidance. Always be encouraging and clear. Use simple language appropriate for the student's grade level (${grade}).`,
   });
@@ -266,7 +284,7 @@ export async function getStudentTutorResponse(
   try {
     const result = await routedCompletion({
       messages: [
-        { role: "system", content: buildSystemPrompt() },
+        { role: "system", content: buildSystemPrompt(input) },
         { role: "user", content: buildUserPrompt(input) },
       ],
       maxTokens: 400,

@@ -41,6 +41,7 @@ const VALID_USER = {
 const VALID_BODY = {
   subject: "Mathematics",
   strandKey: "fractions.adding",
+  gradeLevel: 6,
   masteryState: "DEVELOPING",
   proficiencyState: "BELOW_PROFICIENT",
   gradeBand: "upper_primary",
@@ -114,6 +115,8 @@ describe("POST /api/student/tutor", () => {
 
     expect(promptText).not.toContain(VALID_USER.id);
     expect(promptText).not.toContain(VALID_USER.schoolId);
+    expect(promptText).toContain("Current lesson subject: Mathematics.");
+    expect(promptText).toContain("Current learner level: Grade 6 (upper primary).");
     expect(auditArgs.details).not.toHaveProperty("studentId");
   });
 

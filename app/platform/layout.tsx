@@ -2,6 +2,7 @@ import { notFound, redirect } from "next/navigation";
 import { requireMoePortalUser } from "@/lib/moeAccess";
 import Link from "next/link";
 import { EnvironmentBadge, getEnvironmentBadgeValue } from "@/components/ui/EnvironmentBadge";
+import { PortalIcon } from "@/components/ui/PortalIcon";
 
 const NAV = [
   { href: "/platform", label: "Dashboard" },
@@ -36,9 +37,7 @@ export default async function PlatformLayout({
       <header className="border-b border-white/10 bg-slate-900/80 backdrop-blur">
         <div className="mx-auto flex max-w-7xl items-center gap-6 px-4 py-3">
           <Link href="/platform" className="flex items-center gap-2">
-            <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-violet-500 text-sm font-black text-white">
-              P
-            </span>
+            <PortalIcon label="P" accentClassName="bg-violet-500 text-white" className="h-8 w-8 rounded-lg text-sm" />
             <span className="text-sm font-semibold text-slate-200">
               Platform Admin
             </span>

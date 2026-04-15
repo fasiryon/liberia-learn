@@ -1,4 +1,4 @@
-import { isDemo, isDevelopment } from "@/lib/environment";
+import { shouldShowDemoCredentials as shouldShowDebugDemoCredentials } from "@/lib/debug/visibility";
 
 export type DemoCredentialKey = "student" | "teacher" | "admin" | "guardian" | "moe";
 
@@ -60,6 +60,8 @@ export function getDemoCredential(key: DemoCredentialKey): DemoCredential {
   return match;
 }
 
-export function shouldShowDemoCredentials(): boolean {
-  return isDemo() || isDevelopment();
+export function shouldShowDemoCredentials(
+  viewerRole?: "STUDENT" | "TEACHER" | "ADMIN" | "GUARDIAN" | "MOE_OFFICIAL" | string | null
+): boolean {
+  return shouldShowDebugDemoCredentials(viewerRole);
 }

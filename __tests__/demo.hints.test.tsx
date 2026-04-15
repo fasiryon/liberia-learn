@@ -32,14 +32,13 @@ describe("demo hints rendering", () => {
     expect(html).not.toContain("Password: LegacyDemo123!");
   });
 
-  it("renders hints in development even when DEMO_MODE is off", () => {
+  it("keeps hints hidden in development when no admin/demo context is present", () => {
     Object.assign(process.env, { NODE_ENV: "development" });
     delete process.env.DEMO_MODE;
 
     const html = renderToStaticMarkup(<DemoHintsSection variant="login" />);
 
-    expect(html).toContain("Demo Login Hints");
-    expect(html).toContain("student1@cha.edu.lr");
+    expect(html).toBe("");
   });
 });
 

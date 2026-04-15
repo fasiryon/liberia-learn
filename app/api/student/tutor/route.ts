@@ -60,6 +60,10 @@ export async function POST(req: NextRequest) {
     const input: StudentTutorInput = {
       subject,
       strandKey,
+      gradeLevel:
+        typeof body.gradeLevel === "number" && Number.isFinite(body.gradeLevel)
+          ? body.gradeLevel
+          : undefined,
       masteryState: String(body.masteryState ?? "NOT_ASSESSED"),
       proficiencyState: String(body.proficiencyState ?? "NOT_ASSESSED"),
       gradeBand: String(body.gradeBand ?? "lower_primary"),

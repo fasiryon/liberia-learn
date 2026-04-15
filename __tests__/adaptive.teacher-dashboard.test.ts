@@ -80,4 +80,23 @@ describe("GET /api/teacher/dashboard adaptiveStats", () => {
     const body = await response.json();
     expect(body.adaptiveStats.topWeakStrands).toEqual(["reading", "geometry", "grammar"]);
   });
+
+  it("uses a human-readable title when payload is missing and raw content ids are present", async () => {
+    mockScheduledWorkFindMany.mockResolvedValue([
+      {
+        id: "sw-1",
+        classId: "class-1",
+        contentId: "raw_content_9f2a10",
+        classFormat: null,
+        isDelivered: true,
+        class: { name: "Grade 6", Teacher: { name: "Teacher A" } },
+        content: { payload: { topic: "Equivalent Fractions" } },
+      },
+    ]);
+
+    const response = await GET();
+    const body = await response.json();
+
+    expect(body.todayLessons[0].title).toBe("Equivalent Fractions");
+  });
 });

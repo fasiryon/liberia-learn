@@ -100,7 +100,8 @@ describe("environment detection", () => {
 
     expect(getEnvironment()).toBe("development");
     expect(isDevelopment()).toBe(true);
-    expect(shouldShowDemoCredentials()).toBe(true);
+    expect(shouldShowDemoCredentials()).toBe(false);
+    expect(shouldShowDemoCredentials("ADMIN")).toBe(true);
   });
 
   it("detects demo outside development", () => {

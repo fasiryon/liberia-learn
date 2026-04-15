@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { requireRole } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { isAdaptiveEngineEnabled } from "@/lib/serverFlags";
+import { resolveLessonTitle } from "@/lib/lessons/resolveLessonTitle";
 
 export const dynamic = "force-dynamic";
 
@@ -198,7 +199,10 @@ export async function GET() {
         };
         return {
           id: work.id,
-          title: (work.content.payload as any)?.title || work.contentId,
+          title: resolveLessonTitle({
+            payload: (work.content.payload as any) ?? null,
+            fallbackTitle: work.contentId,
+          }),
           className: work.class.name,
           teacherName: work.class.Teacher?.name ?? "Teacher",
           durationMinutes:
@@ -211,7 +215,10 @@ export async function GET() {
       }),
       recentLessons: recentLessons.map((l) => ({
         contentId: l.contentId,
-        title: (l.payload as any)?.title || l.contentId,
+        title: resolveLessonTitle({
+          payload: (l.payload as any) ?? null,
+          fallbackTitle: l.contentId,
+        }),
         status: l.status,
         createdAt: l.createdAt,
       })),

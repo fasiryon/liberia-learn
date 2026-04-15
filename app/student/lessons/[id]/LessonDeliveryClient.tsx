@@ -495,6 +495,7 @@ export default function LessonDeliveryClient({ lessonId }: { lessonId: string })
         body: JSON.stringify({
           subject: lesson.subject,
           strandKey: lesson.subject.toLowerCase(),
+          gradeLevel: lesson.grade,
           masteryState: "NOT_ASSESSED",
           proficiencyState: "NOT_ASSESSED",
           gradeBand: lesson.grade <= 3 ? "lower_primary" : lesson.grade <= 6 ? "upper_primary" : "secondary",

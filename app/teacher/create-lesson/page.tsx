@@ -57,6 +57,12 @@ export default function TeacherCreateLessonPage() {
   });
   const [draft, setDraft] = useState<LessonDraft | null>(null);
 
+  function resetGeneratedState() {
+    setDraft(null);
+    setContentId(null);
+    setError(null);
+  }
+
   const selectedClass = useMemo(
     () => classes.find((item) => item.id === form.classId) ?? null,
     [classes, form.classId]
@@ -64,6 +70,7 @@ export default function TeacherCreateLessonPage() {
 
   useEffect(() => {
     async function loadMetadata() {
+      resetGeneratedState();
       try {
         const response = await fetch("/api/teacher/generate-lesson", {
           cache: "no-store",
@@ -134,8 +141,8 @@ export default function TeacherCreateLessonPage() {
   }, [featureDisabled, form.subject, form.gradeLevel]);
 
   async function handleGenerate() {
+    resetGeneratedState();
     setGenerating(true);
-    setError(null);
 
     try {
       const response = await fetch("/api/teacher/generate-lesson", {
@@ -246,9 +253,7 @@ export default function TeacherCreateLessonPage() {
   }
 
   function discardDraft() {
-    setDraft(null);
-    setContentId(null);
-    setError(null);
+    resetGeneratedState();
   }
 
   if (loading) {

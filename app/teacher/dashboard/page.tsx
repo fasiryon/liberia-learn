@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { PortalIcon } from "@/components/ui/PortalIcon";
 import { teacherWelcomeStorageKey } from "@/app/teacher/TeacherWelcomeGate";
 
 type DashboardData = {
@@ -135,24 +136,45 @@ export default function TeacherDashboardPage() {
             {/* Quick actions */}
             <div className="grid grid-cols-2 gap-3 md:grid-cols-5">
               <Link href="/teacher/create-lesson" className="ll-touch-target rounded-2xl border border-white/10 bg-slate-900/70 p-4 text-center hover:border-emerald-500/30">
+                <div className="mb-3 flex justify-center">
+                  <PortalIcon label="AI" accentClassName="bg-emerald-500/20 text-emerald-300" />
+                </div>
                 <p className="text-sm font-semibold text-emerald-400">Create with AI</p>
               </Link>
               <Link href="/teacher/students" className="ll-touch-target rounded-2xl border border-white/10 bg-slate-900/70 p-4 text-center hover:border-emerald-500/30">
+                <div className="mb-3 flex justify-center">
+                  <PortalIcon label="ST" accentClassName="bg-violet-500/20 text-violet-300" />
+                </div>
                 <p className="text-sm font-semibold text-violet-400">View Students</p>
               </Link>
               <Link href="/teacher/attendance" className="ll-touch-target rounded-2xl border border-white/10 bg-slate-900/70 p-4 text-center hover:border-emerald-500/30">
+                <div className="mb-3 flex justify-center">
+                  <PortalIcon label="AT" accentClassName="bg-emerald-500/20 text-emerald-300" />
+                </div>
                 <p className="text-sm font-semibold text-emerald-300">Take Attendance</p>
               </Link>
               <Link href="/teacher/schedule" className="ll-touch-target rounded-2xl border border-white/10 bg-slate-900/70 p-4 text-center hover:border-emerald-500/30">
+                <div className="mb-3 flex justify-center">
+                  <PortalIcon label="SC" accentClassName="bg-amber-500/20 text-amber-300" />
+                </div>
                 <p className="text-sm font-semibold text-amber-400">Schedule Work</p>
               </Link>
               <Link href="/teacher/curriculum" className="ll-touch-target rounded-2xl border border-white/10 bg-slate-900/70 p-4 text-center hover:border-emerald-500/30">
+                <div className="mb-3 flex justify-center">
+                  <PortalIcon label="CU" accentClassName="bg-sky-500/20 text-sky-300" />
+                </div>
                 <p className="text-sm font-semibold text-sky-400">Curriculum</p>
               </Link>
               <Link href="/teacher/labs" className="ll-touch-target rounded-2xl border border-white/10 bg-slate-900/70 p-4 text-center hover:border-emerald-500/30">
+                <div className="mb-3 flex justify-center">
+                  <PortalIcon label="LB" accentClassName="bg-cyan-500/20 text-cyan-300" />
+                </div>
                 <p className="text-sm font-semibold text-cyan-400">Review Labs</p>
               </Link>
               <Link href="/teacher/assignments" className="ll-touch-target rounded-2xl border border-white/10 bg-slate-900/70 p-4 text-center hover:border-emerald-500/30">
+                <div className="mb-3 flex justify-center">
+                  <PortalIcon label="AS" accentClassName="bg-amber-500/20 text-amber-300" />
+                </div>
                 <p className="text-sm font-semibold text-amber-300">Grade Assignments</p>
               </Link>
             </div>

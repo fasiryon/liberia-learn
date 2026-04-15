@@ -10,6 +10,19 @@ const mockPrismaInstance = vi.hoisted(() => ({
   teacherProfile: { upsert: vi.fn() },
   studentGuardian: { upsert: vi.fn(), findFirst: vi.fn(), create: vi.fn() },
   class: { upsert: vi.fn() },
+  curriculumContent: { upsert: vi.fn() },
+  scheduledWork: { upsert: vi.fn() },
+  studentProgress: { upsert: vi.fn() },
+  meeting: { upsert: vi.fn() },
+  attendanceRecord: { upsert: vi.fn() },
+  studentMasteryProfile: { upsert: vi.fn() },
+  assignment: { upsert: vi.fn() },
+  assignmentSubmission: { upsert: vi.fn() },
+  homework: { upsert: vi.fn() },
+  homeworkSubmission: { upsert: vi.fn() },
+  grade: { upsert: vi.fn() },
+  chatMessage: { upsert: vi.fn() },
+  auditLog: { upsert: vi.fn() },
   enrollment: { findFirst: vi.fn(), create: vi.fn(), upsert: vi.fn() },
   placementTest: { findFirst: vi.fn(), create: vi.fn() },
   $disconnect: vi.fn(),
@@ -24,6 +37,19 @@ vi.mock("@prisma/client", () => ({
     teacherProfile = mockPrismaInstance.teacherProfile;
     studentGuardian = mockPrismaInstance.studentGuardian;
     class = mockPrismaInstance.class;
+    curriculumContent = mockPrismaInstance.curriculumContent;
+    scheduledWork = mockPrismaInstance.scheduledWork;
+    studentProgress = mockPrismaInstance.studentProgress;
+    meeting = mockPrismaInstance.meeting;
+    attendanceRecord = mockPrismaInstance.attendanceRecord;
+    studentMasteryProfile = mockPrismaInstance.studentMasteryProfile;
+    assignment = mockPrismaInstance.assignment;
+    assignmentSubmission = mockPrismaInstance.assignmentSubmission;
+    homework = mockPrismaInstance.homework;
+    homeworkSubmission = mockPrismaInstance.homeworkSubmission;
+    grade = mockPrismaInstance.grade;
+    chatMessage = mockPrismaInstance.chatMessage;
+    auditLog = mockPrismaInstance.auditLog;
     enrollment = mockPrismaInstance.enrollment;
     placementTest = mockPrismaInstance.placementTest;
     $disconnect = mockPrismaInstance.$disconnect;
@@ -49,6 +75,19 @@ beforeEach(() => {
   mockPrismaInstance.studentGuardian.findFirst.mockResolvedValue(null);
   mockPrismaInstance.studentGuardian.create.mockResolvedValue({});
   mockPrismaInstance.class.upsert.mockResolvedValue({ id: "cha-class-grade9a" });
+  mockPrismaInstance.curriculumContent.upsert.mockResolvedValue({});
+  mockPrismaInstance.scheduledWork.upsert.mockResolvedValue({});
+  mockPrismaInstance.studentProgress.upsert.mockResolvedValue({});
+  mockPrismaInstance.meeting.upsert.mockResolvedValue({});
+  mockPrismaInstance.attendanceRecord.upsert.mockResolvedValue({});
+  mockPrismaInstance.studentMasteryProfile.upsert.mockResolvedValue({});
+  mockPrismaInstance.assignment.upsert.mockResolvedValue({});
+  mockPrismaInstance.assignmentSubmission.upsert.mockResolvedValue({});
+  mockPrismaInstance.homework.upsert.mockResolvedValue({});
+  mockPrismaInstance.homeworkSubmission.upsert.mockResolvedValue({});
+  mockPrismaInstance.grade.upsert.mockResolvedValue({});
+  mockPrismaInstance.chatMessage.upsert.mockResolvedValue({});
+  mockPrismaInstance.auditLog.upsert.mockResolvedValue({});
   mockPrismaInstance.enrollment.findFirst.mockResolvedValue(null);
   mockPrismaInstance.enrollment.create.mockResolvedValue({});
   mockPrismaInstance.enrollment.upsert.mockResolvedValue({});
@@ -113,5 +152,20 @@ describe("seedChaDemo", () => {
     );
     expect(call).toBeDefined();
     expect(call![0].create.role).toBe("MOE_OFFICIAL");
+  });
+
+  it("seeds dashboard-ready activity records for the demo accounts", async () => {
+    await seedChaDemo();
+
+    expect(mockPrismaInstance.curriculumContent.upsert).toHaveBeenCalled();
+    expect(mockPrismaInstance.scheduledWork.upsert).toHaveBeenCalled();
+    expect(mockPrismaInstance.studentProgress.upsert).toHaveBeenCalled();
+    expect(mockPrismaInstance.attendanceRecord.upsert).toHaveBeenCalled();
+    expect(mockPrismaInstance.studentMasteryProfile.upsert).toHaveBeenCalled();
+    expect(mockPrismaInstance.assignmentSubmission.upsert).toHaveBeenCalled();
+    expect(mockPrismaInstance.homeworkSubmission.upsert).toHaveBeenCalled();
+    expect(mockPrismaInstance.grade.upsert).toHaveBeenCalled();
+    expect(mockPrismaInstance.chatMessage.upsert).toHaveBeenCalled();
+    expect(mockPrismaInstance.auditLog.upsert).toHaveBeenCalled();
   });
 });

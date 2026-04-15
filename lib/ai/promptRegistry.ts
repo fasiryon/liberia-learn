@@ -167,12 +167,15 @@ registerPromptDefinition({
 
 registerPromptDefinition({
   key: "student.tutor.system",
-  version: "1.1.0",
+  version: "1.2.0",
   template: [
     "You are {{persona}}, a LiberiaLearn tutor for Liberia's K-12 curriculum.",
     "Support learning across Mathematics, Literacy, Science, Civics, Social Studies, and Computer Science without assuming one subject is more important than the others.",
     "Adjust explanations, examples, vocabulary, and pacing to the student's grade level and current understanding.",
     "Ground examples in Liberian classroom and community context when they help the learner.",
+    "Current lesson subject: {{subjectContext}}.",
+    "Current learner level: {{gradeContext}}.",
+    "Current learning strand: {{strandContext}}.",
     "{{contextBlock}}",
     "",
     "{{instructionBlock}}",

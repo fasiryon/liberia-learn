@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { requireRole } from "@/lib/auth";
 import { prisma } from "@/lib/db";
+import { resolveLessonTitle } from "@/lib/lessons/resolveLessonTitle";
 
 export const dynamic = "force-dynamic";
 
@@ -29,7 +30,10 @@ export async function GET() {
       return {
         id: p.id,
         scheduledWorkId: p.scheduledWorkId,
-        title: payload?.title || payload?.topic || `${p.scheduledWork.content.subject} Lesson`,
+        title: resolveLessonTitle({
+          payload,
+          subject: String(p.scheduledWork.content.subject),
+        }),
         subject: p.scheduledWork.content.subject,
         completedAt: p.completedAt,
         startedAt: p.startedAt,

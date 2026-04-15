@@ -11,6 +11,7 @@ import { prisma } from "@/lib/db";
 
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { StatCard } from "@/components/ui/Card";
+import { PortalIcon } from "@/components/ui/PortalIcon";
 import { logger } from "@/lib/logger";
 import { StudentSidebar } from "@/components/StudentSidebar";
 import {
@@ -183,9 +184,7 @@ export default async function DashboardPage() {
           {/* Header */}
           <header className="flex flex-col gap-3 rounded-3xl border border-white/5 bg-slate-950/70 px-4 py-3 shadow-lg shadow-black/40 backdrop-blur sm:flex-row sm:items-center sm:justify-between">
             <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-emerald-500 text-sm font-black text-slate-950">
-                L
-              </div>
+              <PortalIcon label="S" accentClassName="bg-emerald-500 text-slate-950" className="h-10 w-10 text-sm" />
               <div>
                 <p className="text-xs font-semibold uppercase tracking-wide text-emerald-300">
                   LiberiaLearn
@@ -202,7 +201,11 @@ export default async function DashboardPage() {
                 &larr; Home
               </Link>
               <div className="flex min-w-0 items-center gap-2 rounded-2xl bg-slate-900/80 px-3 py-2">
-                <div className="h-7 w-7 rounded-full bg-gradient-to-br from-emerald-400 to-cyan-400" />
+                <PortalIcon
+                  label={studentName.slice(0, 1).toUpperCase()}
+                  accentClassName="bg-gradient-to-br from-emerald-400 to-cyan-400 text-slate-950"
+                  className="h-7 w-7 rounded-full text-[10px]"
+                />
                 <div className="min-w-0">
                   <p className="text-xs font-medium">{studentName}</p>
                   <p className="truncate text-xs text-slate-300">

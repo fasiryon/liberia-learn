@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { shouldShowDemoCredentials } from "@/lib/demoCredentials";
+import { PortalIcon } from "@/components/ui/PortalIcon";
 
 const roleCards = [
   {
@@ -48,9 +49,7 @@ export default function HomePage() {
       <header className="border-b border-white/5 bg-slate-950/70 backdrop-blur">
         <div className="ll-shell flex items-center justify-between gap-4 py-4">
           <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-emerald-400 text-lg font-black text-slate-950">
-              L
-            </div>
+            <PortalIcon label="L" accentClassName="bg-emerald-400 text-slate-950" className="h-10 w-10 text-lg" />
             <div className="leading-tight">
               <p className="text-sm font-semibold tracking-wide text-slate-100">
                 LiberiaLearn

@@ -12,6 +12,7 @@ import { randomUUID } from "crypto";
 import { withRequestLogging } from "@/lib/logging/requestLogger";
 import { handleApiError } from "@/lib/errors/apiErrorHandler";
 import { listTeacherScheduleForUser } from "@/lib/records/schoolOperations";
+import { resolveLessonTitle } from "@/lib/lessons/resolveLessonTitle";
 
 export const dynamic = "force-dynamic";
 
@@ -76,7 +77,11 @@ async function _scheduleGET(req: NextRequest) {
       classId: sw.classId,
       className: classes.find((c) => c.id === sw.classId)?.name || "",
       contentId: sw.content.contentId,
-      title: (sw.content.payload as any)?.title || sw.content.subject,
+      title: resolveLessonTitle({
+        payload: (sw.content.payload as any) ?? null,
+        subject: String(sw.content.subject),
+        fallbackTitle: sw.content.contentId,
+      }),
       subject: sw.content.subject,
       scheduledDate: sw.scheduledDate,
       completedCount: sw.progress.length,

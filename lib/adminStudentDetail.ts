@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/db";
+import { resolveLessonTitle } from "@/lib/lessons/resolveLessonTitle";
 
 export async function getAdminStudentDetail(studentId: string, schoolId: string) {
   const student = await prisma.student.findFirst({
@@ -165,10 +166,11 @@ export async function getAdminStudentDetail(studentId: string, schoolId: string)
       exitTicketScore: progress.exitTicketScore,
       className: progress.scheduledWork.class.name,
       subject: String(progress.scheduledWork.class.subject),
-      lessonTitle:
-        typeof (progress.scheduledWork.content.payload as { title?: unknown })?.title === "string"
-          ? ((progress.scheduledWork.content.payload as { title: string }).title)
-          : progress.scheduledWork.content.contentId,
+      lessonTitle: resolveLessonTitle({
+        payload: (progress.scheduledWork.content.payload as { title?: unknown }) ?? null,
+        subject: String(progress.scheduledWork.class.subject),
+        fallbackTitle: progress.scheduledWork.content.contentId,
+      }),
     })),
     examAttempts: student.examAttempts.map((attempt) => ({
       id: attempt.id,

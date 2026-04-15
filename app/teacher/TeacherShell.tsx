@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { signOut } from "next-auth/react";
 import { GuidedOnboarding } from "@/components/GuidedOnboarding";
 import { AccessibilityToggle } from "@/components/AccessibilityToggle";
@@ -33,7 +34,13 @@ export function TeacherShell({
   return (
     <>
       <TeacherWelcomeGate needsWelcome={needsWelcome} />
-      <div className="pointer-events-none fixed right-4 top-4 z-40">
+      <div className="pointer-events-none fixed right-4 top-4 z-40 flex items-center gap-2">
+        <Link
+          href="/teacher/dashboard"
+          className="pointer-events-auto rounded-full border border-slate-700 bg-slate-900/90 px-4 py-2 text-xs font-semibold text-slate-100 shadow-lg shadow-black/30 transition-colors hover:border-slate-500 hover:bg-slate-800"
+        >
+          Dashboard
+        </Link>
         <button
           type="button"
           onClick={async () => {
