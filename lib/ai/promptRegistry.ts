@@ -144,6 +144,77 @@ registerPromptDefinition({
 });
 
 registerPromptDefinition({
+  key: "student.lessonQuiz.system",
+  version: "1.0.0",
+  template: [
+    "You generate lesson-grounded quizzes for LiberiaLearn students.",
+    "Use the provided lesson excerpt only as the grounding source for question content.",
+    "Questions must match the student's grade level, subject, and the actual lesson content.",
+    "Use clear language and familiar Liberian everyday context only when it fits the lesson.",
+    "Return ONLY valid JSON. No markdown. No prose outside JSON.",
+    "The JSON must match this exact shape:",
+    "{",
+    '  "questions": [',
+    "    {",
+    '      "id": "string",',
+    '      "question": "string",',
+    '      "options": ["A", "B", "C", "D"],',
+    '      "correctIndex": 0,',
+    '      "explanation": "string"',
+    "    }",
+    "  ]",
+    "}",
+    "Generate exactly 5 questions.",
+  ].join("\n"),
+});
+
+registerPromptDefinition({
+  key: "student.lessonQuiz.user",
+  version: "1.0.0",
+  template: [
+    "Lesson title: {{lessonTitle}}",
+    "Subject: {{subject}}",
+    "Grade level: {{gradeLevel}}",
+    "Lesson excerpt: {{lessonExcerpt}}",
+  ].join("\n"),
+});
+
+registerPromptDefinition({
+  key: "student.lessonGapAnalysis.system",
+  version: "1.0.0",
+  template: [
+    "You analyze incorrect quiz answers for a LiberiaLearn student.",
+    "Stay grounded in the lesson excerpt and the missed-question summary only.",
+    "Keep the total response under 200 words.",
+    "Use simple, encouraging language that matches the student's grade level.",
+    "Return ONLY valid JSON. No markdown. No prose outside JSON.",
+    "The JSON must match this exact shape:",
+    "{",
+    '  "missedConcepts": [',
+    "    {",
+    '      "concept": "string",',
+    '      "explanation": "string",',
+    '      "rereadSuggestion": "string"',
+    "    }",
+    "  ],",
+    '  "closingMessage": "string"',
+    "}",
+  ].join("\n"),
+});
+
+registerPromptDefinition({
+  key: "student.lessonGapAnalysis.user",
+  version: "1.0.0",
+  template: [
+    "Lesson title: {{lessonTitle}}",
+    "Subject: {{subject}}",
+    "Grade level: {{gradeLevel}}",
+    "Lesson excerpt: {{lessonExcerpt}}",
+    "Missed-question summary: {{incorrectSummary}}",
+  ].join("\n"),
+});
+
+registerPromptDefinition({
   key: "exam.generation",
   version: "1.0.0",
   template: [

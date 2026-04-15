@@ -72,5 +72,7 @@ describe("promptRegistry", () => {
     expect(prompts.some((entry) => entry.key === "exam.generation")).toBe(true);
     expect(prompts.some((entry) => entry.key === "lesson.deep")).toBe(true);
     expect(prompts.some((entry) => entry.key === "student.tutor.system")).toBe(true);
+    expect(prompts.some((entry) => entry.key === "student.lessonQuiz.system")).toBe(true);
+    expect(prompts.some((entry) => entry.key === "student.lessonGapAnalysis.system")).toBe(true);
   });
 });
