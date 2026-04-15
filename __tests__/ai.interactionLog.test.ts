@@ -92,4 +92,37 @@ describe("logAIInteraction", () => {
       })
     );
   });
+
+  it("strips raw prompt text and direct identifiers from telemetry metadata", async () => {
+    await logAIInteraction({
+      route: "/api/student/tutor",
+      feature: "tutor",
+      userId: "user-1",
+      schoolId: "school-1",
+      metadata: {
+        prompt: "Explain this full student answer in detail",
+        studentName: "Asha Doe",
+        studentEmail: "asha@example.com",
+        traceId: "trace-2",
+        safeNested: {
+          responsePreview: "too much raw text",
+          rubricId: "rubric-1",
+        },
+      },
+    });
+
+    expect(mockAIInteractionCreate).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({
+          metadata: {
+            normalizedFeature: "tutor",
+            traceId: "trace-2",
+            safeNested: {
+              rubricId: "rubric-1",
+            },
+          },
+        }),
+      })
+    );
+  });
 });

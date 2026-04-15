@@ -39,7 +39,10 @@ export async function getRetentionSummary(
     }),
     prisma.derivedStudentProgress.findMany({
       distinct: ["studentId"],
-      where: { derivedAt: { gte: activeSince } },
+      where: {
+        derivedAt: { gte: activeSince },
+        ...(schoolId ? { schoolId } : {}),
+      },
       select: { studentId: true },
     }),
     prisma.student.count({
@@ -71,7 +74,7 @@ export async function getRetentionSummary(
             prisma.derivedStudentProgress
               .findMany({
                 distinct: ["studentId"],
-                where: { derivedAt: { gte: activeSince } },
+                where: { derivedAt: { gte: activeSince }, schoolId: s.id },
                 select: { studentId: true },
               })
               .then((r) => r.length),

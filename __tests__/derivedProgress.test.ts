@@ -5,6 +5,8 @@ const mockMasterySnapshotCreate = vi.hoisted(() => vi.fn());
 const mockInterventionChainCount = vi.hoisted(() => vi.fn());
 const mockMisconceptionTagCount = vi.hoisted(() => vi.fn());
 const mockDerivedStudentProgressCreate = vi.hoisted(() => vi.fn());
+const mockStudentMasteryProfileUpdate = vi.hoisted(() => vi.fn());
+const mockAssessmentAttemptUpdate = vi.hoisted(() => vi.fn());
 
 vi.mock("@/lib/db", () => ({
   prisma: {
@@ -20,6 +22,12 @@ vi.mock("@/lib/db", () => ({
     },
     derivedStudentProgress: {
       create: mockDerivedStudentProgressCreate,
+    },
+    studentMasteryProfile: {
+      update: mockStudentMasteryProfileUpdate,
+    },
+    assessmentAttempt: {
+      update: mockAssessmentAttemptUpdate,
     },
   },
 }));
@@ -89,5 +97,7 @@ describe("derived progress services", () => {
         }),
       })
     );
+    expect(mockStudentMasteryProfileUpdate).not.toHaveBeenCalled();
+    expect(mockAssessmentAttemptUpdate).not.toHaveBeenCalled();
   });
 });

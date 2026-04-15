@@ -4,6 +4,7 @@ const mockIsMoePortalEnabled = vi.hoisted(() => vi.fn());
 const mockRequireMoeActor = vi.hoisted(() => vi.fn());
 const mockLogAudit = vi.hoisted(() => vi.fn());
 const mockLogLearningEvent = vi.hoisted(() => vi.fn());
+const mockLogDataAccess = vi.hoisted(() => vi.fn());
 const mockHandleApiError = vi.hoisted(() => vi.fn());
 const mockWithRequestLogging = vi.hoisted(() =>
   vi.fn().mockImplementation((_route: string, handler: unknown) => handler)
@@ -16,6 +17,7 @@ vi.mock("@/lib/serverFlags", () => ({ isMoePortalEnabled: mockIsMoePortalEnabled
 vi.mock("@/lib/moe/authority", () => ({ requireMoeActor: mockRequireMoeActor }));
 vi.mock("@/lib/audit", () => ({ logAudit: mockLogAudit }));
 vi.mock("@/lib/events/logLearningEvent", () => ({ logLearningEvent: mockLogLearningEvent }));
+vi.mock("@/lib/dataAccess/logDataAccess", () => ({ logDataAccess: mockLogDataAccess }));
 vi.mock("@/lib/errors/apiErrorHandler", () => ({ handleApiError: mockHandleApiError }));
 vi.mock("@/lib/cache/redisCache", () => ({ withRedisCache: mockWithRedisCache }));
 vi.mock("@/lib/reporting/productMetrics", () => ({
@@ -106,6 +108,7 @@ describe("GET /api/moe/dashboard (Sprint 6 enhanced)", () => {
     mockRequireMoeActor.mockResolvedValue({ user: MOE_USER, scope: { level: "national" } });
     mockLogAudit.mockResolvedValue(undefined);
     mockLogLearningEvent.mockResolvedValue(undefined);
+    mockLogDataAccess.mockResolvedValue(undefined);
     mockHandleApiError.mockImplementation((err: unknown) =>
       Response.json({ error: "error" }, { status: (err as { status?: number })?.status ?? 500 })
     );
@@ -148,6 +151,16 @@ describe("GET /api/moe/dashboard (Sprint 6 enhanced)", () => {
     expect(bomi.metrics).toBeNull();
   });
 
+  it("returns aggregate-only payload with no individual student rows", async () => {
+    mockWithRedisCache.mockResolvedValue(AGGREGATE_STUB);
+    const res = await GET();
+    const body = await res.json();
+    expect(body.studentId).toBeUndefined();
+    expect(body.students).toBe(8000);
+    expect(Array.isArray(body.studentRows)).toBe(false);
+    expect(Array.isArray(body.studentsList)).toBe(false);
+  });
+
   it("fires logLearningEvent with moe.dashboard.viewed", async () => {
     mockWithRedisCache.mockResolvedValue(AGGREGATE_STUB);
     await GET();
@@ -161,6 +174,20 @@ describe("GET /api/moe/dashboard (Sprint 6 enhanced)", () => {
     await GET();
     expect(mockLogAudit).toHaveBeenCalledWith(
       expect.objectContaining({ action: "MOE_DASHBOARD_VIEW", userId: "moe-1" })
+    );
+  });
+
+  it("writes a DataAccessLog entry for MOE dashboard reads", async () => {
+    mockWithRedisCache.mockResolvedValue(AGGREGATE_STUB);
+    await GET();
+    expect(mockLogDataAccess).toHaveBeenCalledWith(
+      expect.objectContaining({
+        userId: "moe-1",
+        resourceType: "moe_dashboard",
+        resourceId: "national",
+        action: "view",
+        scope: "national",
+      })
     );
   });
 });

@@ -100,7 +100,7 @@ describe("student sync conflict detection", () => {
     const res = await POST(req as any);
     const data = await res.json();
     expect(res.status).toBe(200);
-    expect(data.results[0].status).toBe("skipped");
+    expect(data.results[0].status).toBe("rejected");
     expect(prisma.studentProgress.upsert).not.toHaveBeenCalled();
   });
 });

@@ -3,6 +3,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 const mockRequireRole = vi.hoisted(() => vi.fn());
 const mockBuildStudentPassport = vi.hoisted(() => vi.fn());
 const mockLogLearningEvent = vi.hoisted(() => vi.fn());
+const mockLogDataAccess = vi.hoisted(() => vi.fn());
 const mockHandleApiError = vi.hoisted(() => vi.fn());
 const mockStudentFindUnique = vi.hoisted(() => vi.fn());
 const mockStudentGuardianFindFirst = vi.hoisted(() => vi.fn());
@@ -12,6 +13,7 @@ vi.mock("@/lib/passport/buildStudentPassport", () => ({
   buildStudentPassport: mockBuildStudentPassport,
 }));
 vi.mock("@/lib/events/logLearningEvent", () => ({ logLearningEvent: mockLogLearningEvent }));
+vi.mock("@/lib/dataAccess/logDataAccess", () => ({ logDataAccess: mockLogDataAccess }));
 vi.mock("@/lib/errors/apiErrorHandler", () => ({ handleApiError: mockHandleApiError }));
 vi.mock("@/lib/db", () => ({
   prisma: {
@@ -42,6 +44,7 @@ describe("GET /api/student/passport", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mockLogLearningEvent.mockResolvedValue(undefined);
+    mockLogDataAccess.mockResolvedValue(undefined);
     mockHandleApiError.mockImplementation((err: unknown) =>
       Response.json({ error: "error" }, { status: (err as { status?: number })?.status ?? 500 })
     );
@@ -71,6 +74,19 @@ describe("GET /api/student/passport", () => {
       await GET(makeReq("http://localhost/api/student/passport"));
       expect(mockLogLearningEvent).toHaveBeenCalledWith(
         expect.objectContaining({ eventType: "student.passport.viewed", userId: "user-1" })
+      );
+    });
+
+    it("writes a DataAccessLog entry for passport reads", async () => {
+      await GET(makeReq("http://localhost/api/student/passport"));
+      expect(mockLogDataAccess).toHaveBeenCalledWith(
+        expect.objectContaining({
+          userId: "user-1",
+          resourceType: "student_passport",
+          resourceId: "student-1",
+          action: "view",
+          scope: "own_student",
+        })
       );
     });
 
@@ -107,6 +123,17 @@ describe("GET /api/student/passport", () => {
         makeReq("http://localhost/api/student/passport?studentId=other-student")
       );
       expect(res.status).toBe(403);
+    });
+
+    it("writes guardian-linked scope in DataAccessLog", async () => {
+      await GET(makeReq("http://localhost/api/student/passport?studentId=student-1"));
+      expect(mockLogDataAccess).toHaveBeenCalledWith(
+        expect.objectContaining({
+          userId: "guardian-1",
+          resourceId: "student-1",
+          scope: "guardian_linked_student",
+        })
+      );
     });
 
     it("does NOT call student.findUnique for guardian", async () => {

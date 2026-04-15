@@ -6,6 +6,9 @@ const mockIsGovExportsEnabled = vi.hoisted(() => vi.fn());
 const mockIsGovCircuitBreakerTripped = vi.hoisted(() => vi.fn());
 const mockCreateExportJob = vi.hoisted(() => vi.fn());
 const mockListExportJobs = vi.hoisted(() => vi.fn());
+const mockApproveExportJob = vi.hoisted(() => vi.fn());
+const mockRejectExportJob = vi.hoisted(() => vi.fn());
+const mockGetExportDownload = vi.hoisted(() => vi.fn());
 
 vi.mock("@/lib/auth", () => ({ requireUser: mockRequireUser }));
 vi.mock("@/lib/errors/apiErrorHandler", () => ({ handleApiError: mockHandleApiError }));
@@ -16,9 +19,14 @@ vi.mock("@/lib/serverFlags", () => ({
 vi.mock("@/lib/exports/exportJobService", () => ({
   createExportJob: mockCreateExportJob,
   listExportJobs: mockListExportJobs,
+  approveExportJob: mockApproveExportJob,
+  rejectExportJob: mockRejectExportJob,
+  getExportDownload: mockGetExportDownload,
 }));
 
 import { GET, POST } from "@/app/api/admin/governance/exports/jobs/route";
+import { POST as approvePOST } from "@/app/api/admin/governance/exports/jobs/[jobId]/approve/route";
+import { GET as downloadGET } from "@/app/api/admin/governance/exports/jobs/[jobId]/download/route";
 
 const PLATFORM_ADMIN = { id: "admin-1", role: "ADMIN", isPlatformAdmin: true, schoolId: null };
 const SCHOOL_ADMIN = { id: "admin-2", role: "ADMIN", isPlatformAdmin: false, schoolId: "school-1" };
@@ -115,5 +123,24 @@ describe("POST /api/admin/governance/exports/jobs", () => {
     expect(res.status).toBe(201);
     const body = await res.json();
     expect(body.id).toBe("job-1");
+  });
+});
+
+describe("export job action routes", () => {
+  it("approves a pending job for platform admins", async () => {
+    mockRequireUser.mockResolvedValue(PLATFORM_ADMIN);
+    mockApproveExportJob.mockResolvedValue({ id: "job-1", approvalStatus: "approved" });
+    const req = { json: () => Promise.resolve({ decision: "approve" }) } as any;
+    const res = await approvePOST(req, { params: { jobId: "job-1" } });
+    expect(res.status).toBe(200);
+    expect(mockApproveExportJob).toHaveBeenCalledWith(
+      expect.objectContaining({ jobId: "job-1", approvedByUserId: "admin-1" })
+    );
+  });
+
+  it("blocks download for non-platform-admin users", async () => {
+    mockRequireUser.mockResolvedValue(SCHOOL_ADMIN);
+    const res = await downloadGET({} as any, { params: { jobId: "job-1" } });
+    expect(res.status).toBe(403);
   });
 });

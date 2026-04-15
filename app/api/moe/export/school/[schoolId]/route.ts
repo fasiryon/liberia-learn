@@ -8,6 +8,7 @@ import {
   logStudentCohortExport,
   requireMoeExportUser,
 } from "@/lib/moe/exportUtils";
+import { logDataAccess } from "@/lib/dataAccess/logDataAccess";
 
 export const dynamic = "force-dynamic";
 
@@ -23,6 +24,14 @@ export async function GET(
     const user = await requireMoeExportUser();
     const schoolId = params.schoolId;
     await logStudentCohortExport({ userId: user.id, schoolId });
+    void logDataAccess({
+      userId: user.id,
+      schoolId,
+      resourceType: "moe_export",
+      resourceId: schoolId,
+      action: "download",
+      scope: "school",
+    });
 
     const students = await prisma.student.findMany({
       where: {
