@@ -1,19 +1,19 @@
 import { NextResponse } from "next/server";
 
 import { requireRole } from "@/lib/auth";
-import { buildStudentProgressSummary } from "@/lib/student/progressSummary";
+import { listStudentCertificates } from "@/lib/certificates/certificateService";
 
 export const dynamic = "force-dynamic";
 
 export async function GET() {
   try {
     const user = await requireRole("STUDENT");
-    const summary = await buildStudentProgressSummary(user);
+    const certificates = await listStudentCertificates(user.id);
 
-    return NextResponse.json(summary);
+    return NextResponse.json({ certificates });
   } catch (error: any) {
     return NextResponse.json(
-      { error: error?.message ?? "Failed to load student progress" },
+      { error: error?.message ?? "Failed to load certificates" },
       { status: error?.status ?? 500 }
     );
   }

@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { generateLessonGapAnalysis } from "@/lib/ai/lessonQuiz";
 import { requireRole } from "@/lib/auth";
 import { logAudit } from "@/lib/audit";
+import { awardLessonQuizCertificates } from "@/lib/certificates/certificateService";
 import { prisma } from "@/lib/db";
 import { logLearningEvent } from "@/lib/events/logLearningEvent";
 import { tagMisconception } from "@/lib/intelligence/misconceptions";
@@ -278,6 +279,19 @@ export async function POST(
       lessonId: lesson.scheduledWorkId,
     }).catch(() => null);
 
+    const certificateAwards = await awardLessonQuizCertificates({
+      studentId: lesson.studentId,
+      studentUserId: user.id,
+      schoolId: lesson.schoolId,
+      classId: lesson.classId,
+      subject: lesson.subject,
+      scheduledWorkId: lesson.scheduledWorkId,
+      contentId: lesson.contentId,
+      lessonTitle: lesson.title,
+      actingUserId: user.id,
+      quizScore: score,
+    });
+
     return NextResponse.json({
       attemptId: assessmentAttempt.id,
       score,
@@ -300,6 +314,7 @@ export async function POST(
         score === 1
           ? "Excellent work. You answered every question correctly."
           : null,
+      certificates: certificateAwards,
     });
   } catch (error: any) {
     return NextResponse.json(
