@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useMemo, useState } from "react";
 
 type LessonQuizQuestion = {
@@ -34,6 +35,10 @@ type LessonQuizResult = {
   } | null;
   gapAnalysisError: string | null;
   congratulatoryMessage: string | null;
+  certificates?: {
+    lessonAwarded: boolean;
+    subjectAwarded: boolean;
+  };
 };
 
 type LessonQuiz = {
@@ -236,6 +241,25 @@ export function LessonQuizPanel({
           {result.congratulatoryMessage ? (
             <div className="rounded-2xl border border-cyan-400/30 bg-cyan-500/10 px-4 py-4 text-sm text-cyan-100">
               {result.congratulatoryMessage}
+            </div>
+          ) : null}
+
+          {result.certificates?.lessonAwarded || result.certificates?.subjectAwarded ? (
+            <div className="rounded-2xl border border-emerald-400/30 bg-emerald-500/10 px-4 py-4 text-sm text-emerald-100">
+              <p className="font-semibold text-white">Certificate awarded</p>
+              <p className="mt-2 leading-6">
+                {result.certificates.lessonAwarded && result.certificates.subjectAwarded
+                  ? "You earned both a lesson certificate and a subject certificate."
+                  : result.certificates.lessonAwarded
+                    ? "You earned a lesson certificate for this lesson."
+                    : "You earned a subject certificate."}
+              </p>
+              <Link
+                href="/student/certificates"
+                className="mt-3 inline-flex text-sm font-semibold text-emerald-200 underline underline-offset-4"
+              >
+                View certificates
+              </Link>
             </div>
           ) : null}
 
