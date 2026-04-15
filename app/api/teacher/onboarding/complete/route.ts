@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { requireRole } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { logAudit } from "@/lib/audit";
+import { logDataAccess } from "@/lib/dataAccess/logDataAccess";
 
 export const dynamic = "force-dynamic";
 
@@ -48,6 +49,24 @@ export async function PATCH() {
       action: "teacher.onboarding.completed",
       resourceType: "teacher_onboarding",
       resourceId: user.id,
+    });
+
+    // Record data policy acceptance on teacher onboarding completion
+    void prisma.dataPolicyAcceptance?.create({
+      data: {
+        userId: user.id,
+        schoolId,
+        policyKey: "platform_data_policy",
+        policyVersion: "1.0",
+        source: "teacher_onboarding",
+      },
+    })?.catch(() => {});
+    void logDataAccess({
+      userId: user.id,
+      schoolId,
+      resourceType: "data_policy",
+      action: "accept",
+      scope: "teacher",
     });
 
     return NextResponse.json({ ok: true });
