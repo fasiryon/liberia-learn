@@ -58,6 +58,15 @@ describe("exportJobService", () => {
       expect(result.id).toBe("job-1");
       expect(result.approvalStatus).toBe("pending");
       expect(mockPrismaExportJobRequest.create).toHaveBeenCalledOnce();
+      expect(mockLogDataAccess).toHaveBeenCalledWith(
+        expect.objectContaining({
+          userId: "user-1",
+          resourceType: "export_job",
+          resourceId: "job-1",
+          action: "create",
+          scope: "school",
+        })
+      );
     });
   });
 
@@ -122,6 +131,15 @@ describe("exportJobService", () => {
       expect(url).toContain("s3.example.com");
       expect(mockLogAudit).toHaveBeenCalledWith(
         expect.objectContaining({ action: "export.job.download" })
+      );
+      expect(mockLogDataAccess).toHaveBeenCalledWith(
+        expect.objectContaining({
+          userId: "user-1",
+          resourceType: "export_job",
+          resourceId: "job-1",
+          action: "download",
+          scope: "school",
+        })
       );
     });
 

@@ -1,11 +1,15 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const mockCreate = vi.hoisted(() => vi.fn());
+const mockUpdate = vi.hoisted(() => vi.fn());
+const mockDelete = vi.hoisted(() => vi.fn());
 
 vi.mock("@/lib/db", () => ({
   prisma: {
     learningEvent: {
       create: mockCreate,
+      update: mockUpdate,
+      delete: mockDelete,
     },
   },
 }));
@@ -59,10 +63,19 @@ describe("logLearningEvent", () => {
         }),
       })
     );
+    expect(mockUpdate).not.toHaveBeenCalled();
+    expect(mockDelete).not.toHaveBeenCalled();
   });
 
   it("returns null when the event write fails and throwOnError is not set", async () => {
     mockCreate.mockRejectedValueOnce(new Error("db down"));
     await expect(logLearningEvent({ eventType: "x" })).resolves.toBeNull();
+  });
+
+  it("rethrows when throwOnError is enabled", async () => {
+    mockCreate.mockRejectedValueOnce(new Error("db down"));
+    await expect(
+      logLearningEvent({ eventType: "x" }, { throwOnError: true })
+    ).rejects.toThrow("db down");
   });
 });

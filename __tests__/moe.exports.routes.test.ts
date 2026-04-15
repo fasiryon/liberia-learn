@@ -4,6 +4,7 @@ const mockRequireUser = vi.hoisted(() => vi.fn());
 const mockIsMoePortalEnabled = vi.hoisted(() => vi.fn());
 const mockGetSchoolExportMetrics = vi.hoisted(() => vi.fn());
 const mockLogStudentCohortExport = vi.hoisted(() => vi.fn());
+const mockLogDataAccess = vi.hoisted(() => vi.fn());
 const mockStudentFindMany = vi.hoisted(() => vi.fn());
 const mockStudentProgressCount = vi.hoisted(() => vi.fn());
 const mockSchoolCount = vi.hoisted(() => vi.fn());
@@ -21,6 +22,9 @@ vi.mock("@/lib/auth", () => ({
 
 vi.mock("@/lib/serverFlags", () => ({
   isMoePortalEnabled: mockIsMoePortalEnabled,
+}));
+vi.mock("@/lib/dataAccess/logDataAccess", () => ({
+  logDataAccess: mockLogDataAccess,
 }));
 
 vi.mock("@/lib/moe/exportUtils", async () => {
@@ -113,6 +117,7 @@ describe("MOE export routes", () => {
         district: "Montserrado",
       },
     ]);
+    mockLogDataAccess.mockResolvedValue(undefined);
   });
 
   it("returns national CSV", async () => {
@@ -127,6 +132,10 @@ describe("MOE export routes", () => {
     );
     expect(body).toContain("School Name");
     expect(body).toContain("Capitol Hill Academy");
+    expect(body).not.toContain("student-1");
+    expect(mockLogDataAccess).toHaveBeenCalledWith(
+      expect.objectContaining({ resourceType: "moe_export", resourceId: "national", scope: "national" })
+    );
   });
 
   it("returns district CSV", async () => {
@@ -139,6 +148,9 @@ describe("MOE export routes", () => {
     expect(response.status).toBe(200);
     expect(mockGetSchoolExportMetrics).toHaveBeenCalledWith("Montserrado");
     expect(body).toContain("Capitol Hill Academy");
+    expect(mockLogDataAccess).toHaveBeenCalledWith(
+      expect.objectContaining({ resourceType: "moe_export", resourceId: "Montserrado", scope: "district" })
+    );
   });
 
   it("returns school cohort CSV and logs audit access", async () => {
@@ -153,9 +165,24 @@ describe("MOE export routes", () => {
       userId: "moe-1",
       schoolId: "school-1",
     });
+    expect(mockLogDataAccess).toHaveBeenCalledWith(
+      expect.objectContaining({ userId: "moe-1", schoolId: "school-1", scope: "school" })
+    );
     expect(body).toContain("Student ID");
     expect(body).not.toContain("student-1");
+    expect(body).not.toContain("user-1");
     expect(body).toContain("G4_6");
+  });
+
+  it("blocks exports for non-MOE, non-platform users", async () => {
+    mockRequireUser.mockResolvedValueOnce({
+      id: "teacher-1",
+      role: "TEACHER",
+      isPlatformAdmin: false,
+    });
+    const { GET } = await import("@/app/api/moe/export/national/route");
+    const response = await GET();
+    expect(response.status).toBe(403);
   });
 
   it("returns printable summary HTML", async () => {

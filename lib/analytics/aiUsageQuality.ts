@@ -26,16 +26,18 @@ export interface AiUsageQualityReport {
 }
 
 export interface AiUsageQualityOptions {
+  schoolId?: string | null;
   since?: Date;
 }
 
 export async function getAiUsageQuality(
   options: AiUsageQualityOptions = {}
 ): Promise<AiUsageQualityReport> {
-  const { since } = options;
+  const { schoolId, since } = options;
 
   const interactions = await prisma.aIInteraction.findMany({
     where: {
+      ...(schoolId ? { schoolId } : {}),
       ...(since ? { createdAt: { gte: since } } : {}),
     },
     select: {

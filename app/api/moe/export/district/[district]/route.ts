@@ -7,6 +7,7 @@ import {
   requireMoeExportUser,
   schoolMetricsToCsvRows,
 } from "@/lib/moe/exportUtils";
+import { logDataAccess } from "@/lib/dataAccess/logDataAccess";
 
 export const dynamic = "force-dynamic";
 
@@ -19,10 +20,18 @@ export async function GET(
   }
 
   try {
-    await requireMoeExportUser();
+    const user = await requireMoeExportUser();
     const district = decodeURIComponent(params.district);
     const exportDate = formatExportDate();
     const rows = schoolMetricsToCsvRows(await getSchoolExportMetrics(district), exportDate);
+    void logDataAccess({
+      userId: user.id,
+      schoolId: null,
+      resourceType: "moe_export",
+      resourceId: district,
+      action: "download",
+      scope: "district",
+    });
     const csv = buildCsv(
       [
         "School Name",

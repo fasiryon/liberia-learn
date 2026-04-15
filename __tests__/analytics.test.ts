@@ -20,6 +20,7 @@ import { getTeacherActionCorrelation } from "@/lib/analytics/teacherActionCorrel
 import { getAiUsageQuality } from "@/lib/analytics/aiUsageQuality";
 import { getMisconceptionFrequency } from "@/lib/analytics/misconceptionFrequency";
 import { getRetentionSummary } from "@/lib/analytics/retentionSummary";
+import { getSchoolClassSummary } from "@/lib/analytics/schoolClassSummary";
 
 beforeEach(() => vi.clearAllMocks());
 
@@ -55,6 +56,16 @@ describe("getLongitudinalAggregate", () => {
     expect(result.totalStudentsTracked).toBe(0);
     expect(result.avgMasteryRatePct).toBeNull();
   });
+
+  it("passes schoolId through to longitudinal summaries", async () => {
+    mockPrisma.derivedStudentProgress.findMany.mockResolvedValue([]);
+    await getStudentLongitudinalSummaries({ schoolId: "school-a" });
+    expect(mockPrisma.derivedStudentProgress.findMany).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: expect.objectContaining({ schoolId: "school-a" }),
+      })
+    );
+  });
 });
 
 // ── Intervention Effectiveness ────────────────────────────────────────────────
@@ -79,6 +90,16 @@ describe("getInterventionEffectiveness", () => {
     expect(result.closureRatePct).toBeCloseTo(66.67, 1);
     expect(result.byAttributionSource).toHaveLength(2);
     expect(result.avgDaysToClose).toBeGreaterThan(0);
+  });
+
+  it("scopes intervention analytics by school", async () => {
+    mockPrisma.interventionChain.findMany.mockResolvedValue([]);
+    await getInterventionEffectiveness({ schoolId: "school-a" });
+    expect(mockPrisma.interventionChain.findMany).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: expect.objectContaining({ schoolId: "school-a" }),
+      })
+    );
   });
 });
 
@@ -105,6 +126,16 @@ describe("getTeacherActionCorrelation", () => {
     expect(result.byActionType[0].actionType).toBe("assign_work");
     expect(result.topActiveTeachers[0].teacherUserId).toBe("t1");
   });
+
+  it("scopes teacher action analytics by school", async () => {
+    mockPrisma.teacherAction.findMany.mockResolvedValue([]);
+    await getTeacherActionCorrelation({ schoolId: "school-a" });
+    expect(mockPrisma.teacherAction.findMany).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: expect.objectContaining({ schoolId: "school-a" }),
+      })
+    );
+  });
 });
 
 // ── AI Usage Quality ──────────────────────────────────────────────────────────
@@ -127,6 +158,16 @@ describe("getAiUsageQuality", () => {
     expect(result.totalInteractions).toBe(3);
     expect(result.fallbackRatePct).toBeCloseTo(33.33, 1);
     expect(result.byFeature.find((f) => f.feature === "tutor")?.count).toBe(2);
+  });
+
+  it("scopes AI usage analytics by school", async () => {
+    mockPrisma.aIInteraction.findMany.mockResolvedValue([]);
+    await getAiUsageQuality({ schoolId: "school-a" });
+    expect(mockPrisma.aIInteraction.findMany).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: expect.objectContaining({ schoolId: "school-a" }),
+      })
+    );
   });
 });
 
@@ -152,6 +193,16 @@ describe("getMisconceptionFrequency", () => {
     expect(result.topCategories[0].categoryId).toBe("fraction_division");
     expect(result.topCategories[0].activePct).toBeCloseTo(50, 1);
   });
+
+  it("scopes misconception analytics by school", async () => {
+    mockPrisma.misconceptionTag.findMany.mockResolvedValue([]);
+    await getMisconceptionFrequency({ schoolId: "school-a" });
+    expect(mockPrisma.misconceptionTag.findMany).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: expect.objectContaining({ schoolId: "school-a" }),
+      })
+    );
+  });
 });
 
 // ── Retention Summary ─────────────────────────────────────────────────────────
@@ -167,5 +218,29 @@ describe("getRetentionSummary", () => {
     expect(result.totalStudents).toBe(100);
     expect(result.activeStudents).toBe(75);
     expect(result.retentionRatePct).toBe(75);
+  });
+
+  it("scopes active retention rows by school", async () => {
+    mockPrisma.student.count.mockResolvedValue(0);
+    mockPrisma.derivedStudentProgress.findMany.mockResolvedValue([]);
+    await getRetentionSummary({ schoolId: "school-a" });
+    expect(mockPrisma.derivedStudentProgress.findMany).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: expect.objectContaining({ schoolId: "school-a" }),
+      })
+    );
+  });
+});
+
+describe("getSchoolClassSummary", () => {
+  it("scopes school summary queries to one tenant", async () => {
+    mockPrisma.school.findMany.mockResolvedValue([]);
+    const result = await getSchoolClassSummary({ schoolId: "school-a" });
+    expect(result.totalSchools).toBe(0);
+    expect(mockPrisma.school.findMany).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: { id: "school-a" },
+      })
+    );
   });
 });

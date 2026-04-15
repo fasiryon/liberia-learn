@@ -87,6 +87,15 @@ describe("intervention chain services", () => {
         }),
       })
     );
+    expect(mockInterventionChainUpdate).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: { id: "chain-1" },
+        data: expect.objectContaining({
+          currentStage: "intervention",
+          latestInterventionId: "intervention-1",
+        }),
+      })
+    );
     expect(result.interventionId).toBe("intervention-1");
     expect(mockLogLearningEvent).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -109,6 +118,25 @@ describe("intervention chain services", () => {
           openedByUserId: true,
           openedByRole: true,
           attributionSource: true,
+        }),
+      })
+    );
+  });
+
+  it("does not create orphaned intervention records when no intervention payload is supplied", async () => {
+    await advanceInterventionChainStage({
+      chainId: "chain-1",
+      stage: "outcome",
+      schoolId: "school-1",
+      studentId: "student-1",
+      userId: "teacher-1",
+    });
+
+    expect(mockInterventionCreate).not.toHaveBeenCalled();
+    expect(mockInterventionChainUpdate).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.not.objectContaining({
+          latestInterventionId: "intervention-1",
         }),
       })
     );

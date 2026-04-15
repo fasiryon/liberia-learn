@@ -10,6 +10,7 @@ import { prisma } from "@/lib/db";
 import { buildStudentPassport } from "@/lib/passport/buildStudentPassport";
 import { handleApiError } from "@/lib/errors/apiErrorHandler";
 import { logLearningEvent } from "@/lib/events/logLearningEvent";
+import { logDataAccess } from "@/lib/dataAccess/logDataAccess";
 
 export const dynamic = "force-dynamic";
 
@@ -50,6 +51,16 @@ export async function GET(req: NextRequest) {
     }
 
     const passport = await buildStudentPassport(studentId);
+
+    void logDataAccess({
+      userId: user.id,
+      schoolId: user.schoolId ?? null,
+      resourceType: "student_passport",
+      resourceId: studentId,
+      action: "view",
+      scope: user.role === "GUARDIAN" ? "guardian_linked_student" : "own_student",
+      metadata: { role: user.role },
+    });
 
     logLearningEvent({
       userId: user.id,

@@ -121,7 +121,7 @@ export async function POST(req: NextRequest) {
     let skipped = 0;
 
     const results: Array<{
-      status: "synced" | "skipped" | "conflict";
+      status: "synced" | "skipped" | "conflict" | "rejected";
       opId?: string;
       entity?: string;
       scheduledWorkId?: string;
@@ -174,7 +174,7 @@ export async function POST(req: NextRequest) {
               actor: { type: "user", id: user.id, role: "STUDENT" },
               eventType: "offline.sync.replay_deduped",
               source: "/api/student/sync",
-              status: "deduped",
+              status: "rejected",
               clientEventId: syncIdentity.clientEventId,
               dedupeKey: syncIdentity.dedupeKey,
               originalOccurredAt: syncIdentity.originalTimestamp,
@@ -187,7 +187,7 @@ export async function POST(req: NextRequest) {
               },
             });
             skipped++;
-            results.push({ opId: opKey, entity, scheduledWorkId, status: "skipped" });
+            results.push({ opId: opKey, entity, scheduledWorkId, status: "rejected" });
             continue;
           }
 
@@ -297,7 +297,7 @@ export async function POST(req: NextRequest) {
               actor: { type: "user", id: user.id, role: "STUDENT" },
               eventType: "offline.sync.replay_deduped",
               source: "/api/student/sync",
-              status: "deduped",
+              status: "rejected",
               clientEventId: syncIdentity.clientEventId,
               dedupeKey: syncIdentity.dedupeKey,
               originalOccurredAt: syncIdentity.originalTimestamp,
@@ -307,7 +307,7 @@ export async function POST(req: NextRequest) {
               metadata: { entity, meetingId },
             });
             skipped++;
-            results.push({ opId: opKey, entity, status: "skipped" });
+            results.push({ opId: opKey, entity, status: "rejected" });
             continue;
           }
 
@@ -422,7 +422,7 @@ export async function POST(req: NextRequest) {
               actor: { type: "user", id: user.id, role: "STUDENT" },
               eventType: "offline.sync.replay_deduped",
               source: "/api/student/sync",
-              status: "deduped",
+              status: "rejected",
               clientEventId: syncIdentity.clientEventId,
               dedupeKey: syncIdentity.dedupeKey,
               originalOccurredAt: syncIdentity.originalTimestamp,
@@ -432,7 +432,7 @@ export async function POST(req: NextRequest) {
               metadata: { entity, homeworkId },
             });
             skipped++;
-            results.push({ opId: opKey, entity, status: "skipped" });
+            results.push({ opId: opKey, entity, status: "rejected" });
             continue;
           }
 

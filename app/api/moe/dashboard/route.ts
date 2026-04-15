@@ -15,6 +15,7 @@ import { requireMoeActor } from "@/lib/moe/authority";
 import { logLearningEvent } from "@/lib/events/logLearningEvent";
 import { withRedisCache } from "@/lib/cache/redisCache";
 import { computeNationalGeoPerformance } from "@/lib/reporting/geo/geoAggregator";
+import { logDataAccess } from "@/lib/dataAccess/logDataAccess";
 
 export const dynamic = "force-dynamic";
 
@@ -285,6 +286,14 @@ async function dashboardGET() {
 
     // Fire-and-forget: audit + learning event (always per-request, not cached)
     void logAudit({ userId: user.id, action: "MOE_DASHBOARD_VIEW", resourceType: "national_dashboard" });
+    void logDataAccess({
+      userId: user.id,
+      schoolId: null,
+      resourceType: "moe_dashboard",
+      resourceId: "national",
+      action: "view",
+      scope: "national",
+    });
     logLearningEvent({
       userId: user.id,
       eventType: "moe.dashboard.viewed",
