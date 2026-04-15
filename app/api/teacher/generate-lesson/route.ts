@@ -123,6 +123,7 @@ export async function GET(req: NextRequest) {
         name: classRecord.name,
         subject: classRecord.subject,
         gradeLevel: inferClassGrade(classRecord.enrollments),
+        studentCount: classRecord.enrollments.length,
       })),
       standards,
     });

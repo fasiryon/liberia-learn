@@ -167,15 +167,35 @@ registerPromptDefinition({
 
 registerPromptDefinition({
   key: "student.tutor.system",
-  version: "1.1.0",
+  version: "2.0.0",
   template: [
     "You are {{persona}}, a LiberiaLearn tutor for Liberia's K-12 curriculum.",
     "Support learning across Mathematics, Literacy, Science, Civics, Social Studies, and Computer Science without assuming one subject is more important than the others.",
     "Adjust explanations, examples, vocabulary, and pacing to the student's grade level and current understanding.",
-    "Ground examples in Liberian classroom and community context when they help the learner.",
+    "Ground every answer in the current lesson content first. If the lesson excerpt does not support a claim, say so plainly and stay within general study guidance.",
+    "Use examples from everyday Liberian life only when they fit the lesson and help the learner understand more clearly.",
+    "Current lesson subject: {{subjectContext}}.",
+    "Current learner level: {{gradeContext}}.",
+    "Current learning strand: {{strandContext}}.",
+    "Current lesson title: {{lessonTitle}}.",
+    "Lesson excerpt: {{lessonExcerpt}}",
     "{{contextBlock}}",
     "",
     "{{instructionBlock}}",
+  ].join("\n"),
+});
+
+registerPromptDefinition({
+  key: "student.tutor.user",
+  version: "1.0.0",
+  template: [
+    "Student request type: {{requestLabel}}",
+    "Student mastery level: {{masteryState}}",
+    "Student proficiency level: {{proficiencyState}}",
+    "Grade band: {{gradeBand}}",
+    "Student question: {{studentQuestion}}",
+    "",
+    "Respond in valid JSON only.",
   ].join("\n"),
 });
 
@@ -253,6 +273,53 @@ registerPromptDefinition({
     '  "anticipatedMisconceptions": ["<misconception 1>"],',
     '  "scaffoldingSuggestions": ["<suggestion 1>", "<suggestion 2>"]',
     "}",
+  ].join("\n"),
+});
+
+registerPromptDefinition({
+  key: "teacher.lessonPlanner.system",
+  version: "1.0.0",
+  template: [
+    "You are a lesson planning assistant for LiberiaLearn teachers.",
+    "Create practical lesson plans for low-resource Liberian classrooms, including large classes and limited technology.",
+    "Use the provided lesson excerpt as the grounding source for objectives, sequence, assessment, and homework.",
+    "Do not invent materials that depend on advanced devices, constant internet access, or expensive supplies unless the teacher specifically asks for them.",
+    "Keep the tone concrete, realistic, and classroom-ready.",
+    "",
+    "You MUST respond with valid JSON only. No prose outside the JSON object.",
+    "",
+    "Response schema:",
+    "{",
+    '  "learningObjectives": ["<objective 1>", "<objective 2>", "<objective 3>"],',
+    '  "warmUpActivity": "<short warm-up activity>",',
+    '  "teachingSequence": [',
+    '    {',
+    '      "segment": "<segment name>",',
+    '      "minutes": <number>,',
+    '      "teacherMoves": "<what the teacher should do>",',
+    '      "studentExperience": "<what students do or show>"',
+    "    }",
+    "  ],",
+    '  "assessmentCheck": "<one practical assessment check>",',
+    '  "homeworkSuggestion": "<one homework suggestion>"',
+    "}",
+  ].join("\n"),
+});
+
+registerPromptDefinition({
+  key: "teacher.lessonPlanner.user",
+  version: "1.0.0",
+  template: [
+    "Lesson title: {{lessonTitle}}",
+    "Subject: {{subject}}",
+    "Grade level: {{gradeLevel}}",
+    "Class size: {{classSize}}",
+    "Time available: {{timeAvailableMinutes}} minutes",
+    "Special considerations: {{specialConsiderations}}",
+    "Lesson excerpt: {{lessonExcerpt}}",
+    "",
+    "Build a plan with clear timing, practical teacher moves, one assessment check, and one homework suggestion.",
+    "Respond in valid JSON only.",
   ].join("\n"),
 });
 

@@ -5,7 +5,7 @@
  * No PII in request, response, audit log, or AI prompt.
  *
  * Feature flag : AI_TUTOR_ENABLED (default OFF -> 404)
- * Auth         : Any authenticated session; studentId = session user.id
+ * Auth         : STUDENT role required
  * Rate limit   : 20 requests/hour via checkAiRateLimit()
  * Budget check : centralized routed AI budget guards with graceful fallback
  *
@@ -13,7 +13,7 @@
  */
 import { NextRequest, NextResponse } from "next/server";
 import { randomUUID } from "crypto";
-import { requireUser } from "@/lib/auth";
+import { requireRole } from "@/lib/auth";
 import { isAiTutorEnabled } from "@/lib/serverFlags";
 import { logAudit } from "@/lib/audit";
 import { checkAiRateLimit } from "@/lib/ai/rateLimitGuard";
@@ -35,7 +35,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "ai_tutor_disabled" }, { status: 404 });
     }
 
-    const user = await requireUser();
+    const user = await requireRole("STUDENT");
     const rateLimit = await checkAiRateLimit({
       userId: user.id,
       role: user.role,
@@ -49,6 +49,9 @@ export async function POST(req: NextRequest) {
     const body = await req.json();
     const subject = String(body.subject ?? "").trim();
     const strandKey = String(body.strandKey ?? "").trim();
+    const lessonTitle = String(body.lessonTitle ?? "").trim();
+    const lessonContent = String(body.lessonContent ?? "").trim();
+    const studentQuestion = String(body.question ?? "").trim();
 
     if (!subject || !strandKey) {
       return NextResponse.json(
@@ -60,6 +63,13 @@ export async function POST(req: NextRequest) {
     const input: StudentTutorInput = {
       subject,
       strandKey,
+      lessonTitle: lessonTitle || `${subject} Lesson`,
+      lessonContent,
+      studentQuestion,
+      gradeLevel:
+        typeof body.gradeLevel === "number" && Number.isFinite(body.gradeLevel)
+          ? body.gradeLevel
+          : undefined,
       masteryState: String(body.masteryState ?? "NOT_ASSESSED"),
       proficiencyState: String(body.proficiencyState ?? "NOT_ASSESSED"),
       gradeBand: String(body.gradeBand ?? "lower_primary"),
@@ -72,6 +82,8 @@ export async function POST(req: NextRequest) {
       route: "/api/student/tutor",
       schoolId: user.schoolId ?? null,
       userId: user.id,
+      lessonId: typeof body.lessonId === "string" ? body.lessonId : null,
+      contentId: typeof body.contentId === "string" ? body.contentId : null,
     });
 
     await logAudit({
@@ -84,6 +96,8 @@ export async function POST(req: NextRequest) {
         subject: input.subject,
         strandKey: input.strandKey,
         requestType: input.requestType,
+        lessonId: typeof body.lessonId === "string" ? body.lessonId : null,
+        contentId: typeof body.contentId === "string" ? body.contentId : null,
         guidanceLevel: result.guidanceLevel,
         hadFallback: result.hadFallback,
       },
