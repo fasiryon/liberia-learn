@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 
+import { LessonQuizPanel } from "@/components/student/LessonQuizPanel";
 import { lessonDurationLabel, renderSimpleMarkdown, selectLessonBody } from "@/lib/lessons";
 import { enqueueOfflineRequest } from "@/lib/offline-queue";
 import type { PseudoLab, SimulationDefinition } from "@/lib/schemas/labSimulation";
@@ -15,6 +16,7 @@ type ExitTicketQuestion = {
 
 type LessonResponse = {
   id: string;
+  contentId?: string;
   title: string;
   subject: string;
   grade: number;
@@ -761,6 +763,9 @@ export default function LessonDeliveryClient({ lessonId }: { lessonId: string })
 
           {submitMessage ? <p className="mt-3 text-sm text-slate-300">{submitMessage}</p> : null}
         </section>
+
+        <LessonQuizPanel lessonId={lesson.id} lessonStatus={lesson.status} />
+
         <div className="sticky bottom-3 z-10">
           <div className="rounded-3xl border border-white/10 bg-slate-950/95 p-3 shadow-2xl shadow-black/40 backdrop-blur">
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
