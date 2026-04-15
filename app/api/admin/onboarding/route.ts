@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { requireRole } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { logAudit } from "@/lib/audit";
+import { logDataAccess } from "@/lib/dataAccess/logDataAccess";
 
 export const dynamic = "force-dynamic";
 
@@ -61,6 +62,40 @@ export async function PATCH(req: NextRequest) {
     }
 
     await prisma.school.update({ where: { id: user.schoolId }, data: updateData });
+
+    // Step 5: record data policy acceptance on onboarding completion
+    if (step === 5) {
+      const policyVersion = data?.policyVersion ?? "1.0";
+      await Promise.all([
+        (prisma.dataPolicyAcceptance?.create({
+          data: {
+            userId: user.id,
+            schoolId: user.schoolId,
+            policyKey: "platform_data_policy",
+            policyVersion,
+            source: "onboarding",
+          },
+        }) ?? Promise.resolve()).catch(() => {}),
+        (prisma.consentRecord?.create({
+          data: {
+            userId: user.id,
+            schoolId: user.schoolId,
+            consentType: "data_processing",
+            status: "granted",
+            legalBasis: "legitimate_interest",
+            policyVersion,
+            source: "onboarding",
+          },
+        }) ?? Promise.resolve()).catch(() => {}),
+      ]);
+      void logDataAccess({
+        userId: user.id,
+        schoolId: user.schoolId,
+        resourceType: "data_policy",
+        action: "accept",
+        scope: "school",
+      });
+    }
 
     await logAudit({
       userId: user.id,

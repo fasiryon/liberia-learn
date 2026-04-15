@@ -1052,6 +1052,27 @@ model ConsentRecord {
   @@index([guardianId, consentType, grantedAt])
 }
 
+/// Sprint 7: fine-grained data access audit trail.
+model DataAccessLog {
+  id           String   @id @default(cuid())
+  userId       String?
+  schoolId     String?
+  resourceType String
+  resourceId   String?
+  action       String
+  scope        String?
+  traceId      String?
+  ipAddress    String?
+  metadata     Json?
+  accessedAt   DateTime @default(now())
+  createdAt    DateTime @default(now())
+
+  @@index([userId, accessedAt])
+  @@index([schoolId, accessedAt])
+  @@index([resourceType, action, accessedAt])
+  @@index([traceId])
+}
+
 /// Sprint 2: request/approval lifecycle for governed exports.
 model ExportJobRequest {
   id                String    @id @default(cuid())
