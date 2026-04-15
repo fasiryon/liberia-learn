@@ -195,6 +195,7 @@ model Student {
   guardianMessages      GuardianMessage[]
   examAttempts          ExamAttempt[]
   examCertifications    ExamCertification[]
+  certificates          Certificate[]
   performanceEvents     StudentPerformanceEvent[]
   confusionSignals      ConfusionSignal[]
   interventionRecommendations InterventionRecommendation[]
@@ -282,6 +283,20 @@ model ExamCertification {
 
   @@index([studentId])
   @@index([examId])
+}
+
+model Certificate {
+  id              String          @id @default(cuid())
+  studentId       String
+  type            CertificateType
+  referenceId     String
+  awardedAt       DateTime        @default(now())
+  certificateCode String          @unique
+  student         Student         @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  @@unique([studentId, type, referenceId])
+  @@index([studentId, awardedAt])
+  @@index([type, referenceId])
 }
 
 model StudentGuardian {
@@ -2242,6 +2257,11 @@ enum ExamStatus {
   DRAFT
   PUBLISHED
   CLOSED
+}
+
+enum CertificateType {
+  LESSON
+  SUBJECT
 }
 
 /// Block 7A  Mastery Engine enums
