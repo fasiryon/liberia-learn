@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { resetRateLimitStateForTests } from "@/lib/rateLimit";
 
-const mockRequireUser = vi.hoisted(() => vi.fn());
+const mockRequireRole = vi.hoisted(() => vi.fn());
 const mockIsAiTutorEnabled = vi.hoisted(() => vi.fn());
 const mockGetAiBudgetMonthlyCap = vi.hoisted(() => vi.fn());
 const mockRoutedCompletion = vi.hoisted(() => vi.fn());
@@ -10,7 +10,7 @@ const mockRecordMetricEvent = vi.hoisted(() => vi.fn());
 const mockAiInteractionLogAggregate = vi.hoisted(() => vi.fn());
 const mockAiInteractionLogCreate = vi.hoisted(() => vi.fn());
 
-vi.mock("@/lib/auth", () => ({ requireUser: mockRequireUser }));
+vi.mock("@/lib/auth", () => ({ requireRole: mockRequireRole }));
 vi.mock("@/lib/serverFlags", () => ({
   isAiTutorEnabled: mockIsAiTutorEnabled,
   getAiBudgetMonthlyCap: mockGetAiBudgetMonthlyCap,
@@ -34,7 +34,7 @@ describe("AI rate limiting", () => {
   beforeEach(async () => {
     vi.clearAllMocks();
     await resetRateLimitStateForTests();
-    mockRequireUser.mockResolvedValue({
+    mockRequireRole.mockResolvedValue({
       id: "student-rl-1",
       role: "STUDENT",
       schoolId: "school-1",
@@ -110,6 +110,10 @@ describe("AI rate limiting", () => {
         body: JSON.stringify({
           subject: "Mathematics",
           strandKey: "fractions.adding",
+          lessonTitle: "Adding Fractions",
+          lessonContent:
+            "Fractions represent equal parts of a whole. To add fractions with the same denominator, add the numerators and keep the denominator.",
+          question: "Explain how to add these fractions.",
           masteryState: "DEVELOPING",
           proficiencyState: "BELOW_PROFICIENT",
           gradeBand: "upper_primary",

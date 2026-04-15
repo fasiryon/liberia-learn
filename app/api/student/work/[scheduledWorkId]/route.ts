@@ -83,6 +83,7 @@ export async function GET(
 
     return NextResponse.json({
       id: sw.id,
+      contentId: sw.content.contentId,
       title: resolveLessonTitle({
         payload,
         subject: String(sw.content.subject),
