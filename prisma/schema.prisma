@@ -2281,6 +2281,9 @@ enum SMSMessageType {
   at_risk
   praise
   custom
+  weekly_digest
+  assignment_due
+  certificate_awarded
 }
 
 enum SMSDeliveryStatus {

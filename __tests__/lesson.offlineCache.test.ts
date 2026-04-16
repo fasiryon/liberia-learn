@@ -59,9 +59,10 @@ describe("lesson offline cache", () => {
     const { set } = await import("idb-keyval");
     vi.mocked(set).mockRejectedValueOnce(new Error("QuotaExceededError"));
 
+    // Returns false (not true) when storage fails — does not throw
     await expect(
       cacheLessonContent("content-2", { metadata: null, payload: null })
-    ).resolves.toBeUndefined();
+    ).resolves.toBe(false);
   });
 
   it("returns null when loadCachedLesson encounters an error", async () => {
