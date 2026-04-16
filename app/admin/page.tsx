@@ -23,6 +23,8 @@ const BASE_NAV_LINKS = [
   { label: "Enrollments", href: "/admin/enrollment" },
   { label: "Exams", href: "/admin/exams" },
   { label: "Teachers", href: "/admin/teachers" },
+  { label: "School Operations", href: "/admin/school" },
+  { label: "Bulk Student Import", href: "/admin/students/import" },
   { label: "School Branding", href: "/admin/school-branding" },
   { label: "School Settings", href: "/admin/school-settings" },
   { label: "Reports", href: "/admin/reports" },
@@ -34,6 +36,7 @@ const BASE_NAV_LINKS = [
   { label: "Data Downloads", href: "/admin/governance/exports" },
   { label: "Seed Demo Data", href: "/admin/seed" },
   { label: "Schools", href: "/admin/schools" },
+  { label: "Pending Schools", href: "/admin/schools/pending" },
 ];
 
 // Training Adoption link only appears when ENABLE_TRAINING_CENTER is true
