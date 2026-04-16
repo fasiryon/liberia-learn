@@ -33,6 +33,14 @@ export default async function AdminSchoolsPage() {
           >
             Back to admin home
           </Link>
+          {user.isPlatformAdmin ? (
+            <Link
+              href="/admin/schools/pending"
+              className="rounded-full border border-emerald-500/40 px-3 py-1.5 text-xs text-emerald-200 hover:border-emerald-400"
+            >
+              Pending approvals
+            </Link>
+          ) : null}
         </header>
 
         {user.isPlatformAdmin ? (

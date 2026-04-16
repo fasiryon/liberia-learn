@@ -30,6 +30,7 @@ async function findUserForCredentials(credentials: Record<string, string>) {
         schoolId: true,
         isPlatformAdmin: true,
         mustChangePIN: true,
+        school: { select: { status: true } },
       },
     });
   }
@@ -47,6 +48,7 @@ async function findUserForCredentials(credentials: Record<string, string>) {
         schoolId: true,
         isPlatformAdmin: true,
         mustChangePIN: true,
+        school: { select: { status: true } },
       },
     });
   }
@@ -65,6 +67,7 @@ async function findUserForCredentials(credentials: Record<string, string>) {
       schoolId: true,
       isPlatformAdmin: true,
       mustChangePIN: true,
+      school: { select: { status: true } },
     },
   });
 }
@@ -84,6 +87,10 @@ export async function authorizeCredentials(rawCredentials?: RawCredentialInput |
 
   const ok = await bcrypt.compare(credentials.password, user.hashedPwd);
   if (!ok) return null;
+
+  if (user.schoolId && !user.isPlatformAdmin && user.role === "ADMIN" && user.school?.status !== "ACTIVE") {
+    return null;
+  }
 
   return {
     id: user.id,
@@ -203,4 +210,3 @@ export async function requirePlatformAdmin(): Promise<SessionUser> {
   }
   return user;
 }
-

@@ -37,6 +37,93 @@ async function send(to: string, subject: string, html: string) {
   }
 }
 
+export async function sendSchoolEnrollmentReceived({
+  to,
+  principalName,
+  schoolName,
+  loginId,
+  temporaryPassword,
+}: {
+  to: string;
+  principalName?: string;
+  schoolName: string;
+  loginId: string;
+  temporaryPassword: string;
+}): Promise<{ ok: boolean; id?: string; error?: string }> {
+  const html = base(
+    p(`Hello ${principalName ?? "Principal"},`) +
+      p(`Your school enrollment request for <strong>${schoolName}</strong> has been received and is pending platform approval.`) +
+      p(`Use login ID <strong>${loginId}</strong> and temporary password <strong>${temporaryPassword}</strong> after approval.`) +
+      p("You will receive another email when the school is approved."),
+    schoolName
+  );
+  return send(to, `School enrollment received - ${schoolName}`, html);
+}
+
+export async function sendSchoolApprovalNotice({
+  to,
+  principalName,
+  schoolName,
+  schoolCode,
+  loginUrl,
+}: {
+  to: string;
+  principalName?: string;
+  schoolName: string;
+  schoolCode: string;
+  loginUrl: string;
+}): Promise<{ ok: boolean; id?: string; error?: string }> {
+  const html = base(
+    p(`Hello ${principalName ?? "Principal"},`) +
+      p(`<strong>${schoolName}</strong> has been approved on LiberiaLearn.`) +
+      p(`Your school code is <strong>${schoolCode}</strong>.`) +
+      `<p style="margin:24px 0;text-align:center">${btn("Go to Login", loginUrl)}</p>`,
+    schoolName
+  );
+  return send(to, `School approved - ${schoolName}`, html);
+}
+
+export async function sendSchoolRejectionNotice({
+  to,
+  principalName,
+  schoolName,
+  reason,
+}: {
+  to: string;
+  principalName?: string;
+  schoolName: string;
+  reason?: string | null;
+}): Promise<{ ok: boolean; id?: string; error?: string }> {
+  const html = base(
+    p(`Hello ${principalName ?? "Principal"},`) +
+      p(`Your school enrollment request for <strong>${schoolName}</strong> was not approved at this time.`) +
+      (reason ? p(`Reason: ${reason}`) : "") +
+      p("You can reapply after addressing the missing information."),
+    schoolName
+  );
+  return send(to, `School enrollment update - ${schoolName}`, html);
+}
+
+export async function sendPlatformAdminSchoolPending({
+  to,
+  schoolName,
+  county,
+  principalName,
+}: {
+  to: string;
+  schoolName: string;
+  county?: string | null;
+  principalName: string;
+}): Promise<{ ok: boolean; id?: string; error?: string }> {
+  const html = base(
+    p("A new school enrollment request needs review.") +
+      p(`<strong>${schoolName}</strong> - ${county ?? "County not set"}`) +
+      p(`Principal: ${principalName}`),
+    "LiberiaLearn"
+  );
+  return send(to, `Pending school enrollment - ${schoolName}`, html);
+}
+
 function p(text: string) {
   return `<p style="margin:0 0 12px;color:#cbd5e1;font-size:15px;line-height:1.6">${text}</p>`;
 }
