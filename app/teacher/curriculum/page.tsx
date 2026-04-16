@@ -343,6 +343,12 @@ export default function TeacherCurriculumPage() {
                         >
                           View
                         </Link>
+                        <Link
+                          href={`/teacher/assignments/new?contentId=${encodeURIComponent(item.contentId)}&title=${encodeURIComponent(`${item.payload?.title ?? item.contentId} Assignment`)}&description=${encodeURIComponent(`Complete the follow-up work for ${item.payload?.title ?? item.contentId}.`)}`}
+                          className="rounded-lg border border-emerald-500/30 px-3 py-1 text-xs text-emerald-200 hover:border-emerald-400/50 hover:text-emerald-100"
+                        >
+                          Assign
+                        </Link>
                       </div>
                     </div>
 

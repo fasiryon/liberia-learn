@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { requireRole } from "@/lib/auth";
 import { prisma } from "@/lib/db";
+import { buildTeacherClassPerformance } from "@/lib/reporting/teacherClassPerformance";
 import { isAdaptiveEngineEnabled } from "@/lib/serverFlags";
 
 export const dynamic = "force-dynamic";
@@ -19,6 +20,10 @@ export async function GET() {
       select: { id: true, name: true },
     });
     const classIds = classes.map((c) => c.id);
+    const classPerformance =
+      user.role === "TEACHER" && user.schoolId
+        ? await buildTeacherClassPerformance(user.id, user.schoolId)
+        : [];
     const adaptiveAttempts = isAdaptiveEngineEnabled()
       ? await (prisma as any).studentAdaptiveAttempt.findMany({
           where: {
@@ -221,6 +226,7 @@ export async function GET() {
         avgMasteryScore,
         topWeakStrands,
       },
+      classPerformance,
     });
   } catch (err: any) {
     console.error("[teacher.dashboard.GET]", err);

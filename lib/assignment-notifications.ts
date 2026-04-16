@@ -99,6 +99,56 @@ export async function notifyAssignmentSubmitted(input: {
   );
 }
 
+export async function notifyAssignmentCreated(input: {
+  actorUserId: string;
+  schoolId: string;
+  classId: string;
+  assignmentTitle: string;
+  className: string;
+  teacherName: string;
+  dueAt?: Date | null;
+}) {
+  const enrollments = await prisma.enrollment.findMany({
+    where: { classId: input.classId },
+    select: {
+      Student: {
+        select: {
+          user: {
+            select: {
+              id: true,
+              email: true,
+            },
+          },
+        },
+      },
+    },
+  });
+
+  if (enrollments.length === 0) {
+    return;
+  }
+
+  const dueText = input.dueAt
+    ? ` Due ${input.dueAt.toLocaleDateString("en-LR")}.`
+    : "";
+  const body = `Assigned by ${input.teacherName}: ${input.assignmentTitle} for ${input.className}.${dueText}`;
+
+  await Promise.all(
+    enrollments.map((row) =>
+      prisma.notificationLog.create({
+        data: {
+          userId: row.Student.user.id,
+          channel: "in_app",
+          recipient: row.Student.user.email,
+          subject: "New assignment",
+          body,
+          status: "delivered",
+        },
+      })
+    )
+  );
+}
+
 export async function notifyAssignmentGraded(input: {
   actorUserId: string;
   schoolId: string;
