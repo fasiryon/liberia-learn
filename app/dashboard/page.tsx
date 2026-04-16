@@ -173,6 +173,39 @@ export default async function DashboardPage() {
     },
   ];
 
+  const classIds = student.enrollments.map((enrollment: any) => enrollment.classId);
+  const dashboardAssignments =
+    classIds.length === 0
+      ? []
+      : await prisma.assignment.findMany({
+          where: {
+            classId: { in: classIds },
+          },
+          include: {
+            Class: {
+              select: {
+                id: true,
+                name: true,
+                Teacher: {
+                  select: {
+                    name: true,
+                    email: true,
+                  },
+                },
+              },
+            },
+            submissions: {
+              where: { studentId: student.id },
+              select: {
+                turnedInAt: true,
+                score: true,
+              },
+            },
+          },
+          orderBy: [{ dueAt: "asc" }, { createdAt: "desc" }],
+          take: 6,
+        });
+
   return (
     <ErrorBoundary>
       <main className="min-h-screen bg-slate-950 text-slate-50">
@@ -283,6 +316,84 @@ export default async function DashboardPage() {
                     </Link>
                   ))}
                 </div>
+              </div>
+
+              <div className="rounded-3xl border border-amber-400/20 bg-amber-500/10 p-4">
+                <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                  <div>
+                    <p className="text-xs font-semibold uppercase tracking-[0.2em] text-amber-200">
+                      Teacher Assignments
+                    </p>
+                    <h2 className="mt-2 text-xl font-semibold text-white">
+                      Work your teacher assigned to your class.
+                    </h2>
+                  </div>
+                  <Link
+                    href="/assignments"
+                    className="ll-touch-target inline-flex items-center justify-center rounded-2xl border border-amber-300/30 bg-slate-950/60 px-5 py-3 text-sm font-semibold text-amber-100"
+                  >
+                    Open assignments
+                  </Link>
+                </div>
+                {dashboardAssignments.length === 0 ? (
+                  <p className="mt-4 text-sm text-slate-200">
+                    No class assignments are waiting right now.
+                  </p>
+                ) : (
+                  <div className="mt-4 grid gap-3">
+                    {dashboardAssignments.map((assignment: any) => {
+                      const submission = assignment.submissions[0] ?? null;
+                      const isOverdue =
+                        !submission?.turnedInAt &&
+                        assignment.dueAt &&
+                        new Date(assignment.dueAt).getTime() < Date.now();
+                      const teacherName =
+                        assignment.Class.Teacher?.name ??
+                        assignment.Class.Teacher?.email ??
+                        "Teacher";
+
+                      return (
+                        <Link
+                          key={assignment.id}
+                          href={`/student/assignments/${assignment.id}`}
+                          className="rounded-2xl border border-white/10 bg-slate-950/60 px-4 py-4"
+                        >
+                          <div className="flex flex-wrap items-start justify-between gap-3">
+                            <div>
+                              <p className="text-sm font-semibold text-slate-50">
+                                {assignment.title}
+                              </p>
+                              <p className="mt-1 text-xs text-slate-300">
+                                Assigned by {teacherName} · Due{" "}
+                                {assignment.dueAt
+                                  ? new Date(assignment.dueAt).toLocaleDateString("en-LR")
+                                  : "not set"}
+                              </p>
+                            </div>
+                            <span
+                              className={`rounded-full px-3 py-1 text-[11px] font-semibold ${
+                                submission?.turnedInAt
+                                  ? "bg-emerald-500/20 text-emerald-300"
+                                  : isOverdue
+                                    ? "bg-red-500/20 text-red-300"
+                                    : "bg-amber-500/20 text-amber-300"
+                              }`}
+                            >
+                              {submission?.turnedInAt
+                                ? "Submitted"
+                                : isOverdue
+                                  ? "Overdue"
+                                  : "Assigned"}
+                            </span>
+                          </div>
+                          <p className="mt-3 text-sm text-slate-200">
+                            {assignment.description || "Open this assignment to see instructions."}
+                          </p>
+                        </Link>
+                      );
+                    })}
+                  </div>
+                )}
               </div>
 
               {/* Stats */}

@@ -1,7 +1,9 @@
 import { NextResponse } from "next/server";
 import { requireRole } from "@/lib/auth";
 import { logAudit } from "@/lib/audit";
+import { notifyAssignmentCreated } from "@/lib/assignment-notifications";
 import { prisma } from "@/lib/db";
+import { logLearningEvent } from "@/lib/events/logLearningEvent";
 import { assignmentCreateSchema } from "@/lib/schemas/assignment";
 
 export const dynamic = "force-dynamic";
@@ -85,6 +87,27 @@ export async function GET() {
               id: true,
               name: true,
               subject: true,
+              Teacher: {
+                select: {
+                  name: true,
+                  email: true,
+                },
+              },
+              enrollments: {
+                select: {
+                  Student: {
+                    select: {
+                      id: true,
+                      user: {
+                        select: {
+                          name: true,
+                          email: true,
+                        },
+                      },
+                    },
+                  },
+                },
+              },
             },
           },
           submissions: {
@@ -92,6 +115,17 @@ export async function GET() {
               id: true,
               score: true,
               turnedInAt: true,
+              Student: {
+                select: {
+                  id: true,
+                  user: {
+                    select: {
+                      name: true,
+                      email: true,
+                    },
+                  },
+                },
+              },
             },
           },
         },
@@ -104,19 +138,39 @@ export async function GET() {
       assignments: assignments.map((assignment) => {
         const submittedCount = assignment.submissions.filter((submission) => submission.turnedInAt).length;
         const gradedCount = assignment.submissions.filter((submission) => submission.score != null).length;
+        const gradedScores = assignment.submissions
+          .map((submission) => submission.score)
+          .filter((score): score is number => typeof score === "number");
+        const submittedStudentIds = new Set(
+          assignment.submissions
+            .filter((submission) => submission.turnedInAt)
+            .map((submission) => submission.Student.id)
+        );
+        const pendingStudents = assignment.Class.enrollments
+          .filter((enrollment) => !submittedStudentIds.has(enrollment.Student.id))
+          .map((enrollment) => enrollment.Student.user.name ?? enrollment.Student.user.email ?? "Student");
         return {
           id: assignment.id,
           title: assignment.title,
           description: assignment.description ?? "",
           classId: assignment.classId,
           className: assignment.Class.name,
+          teacherName: assignment.Class.Teacher?.name ?? assignment.Class.Teacher?.email ?? "Teacher",
           subject: String(assignment.Class.subject),
           points: assignment.points,
           dueAt: assignment.dueAt?.toISOString() ?? null,
           createdAt: assignment.createdAt.toISOString(),
           submittedCount,
+          completionCount: submittedCount,
           gradedCount,
-          studentCount: assignment.submissions.length,
+          studentCount: assignment.Class.enrollments.length,
+          averageScore:
+            gradedScores.length > 0
+              ? Math.round(
+                  gradedScores.reduce((sum, score) => sum + score, 0) / gradedScores.length
+                )
+              : null,
+          pendingStudents,
         };
       }),
       submissions: submissions.map((submission) => ({
@@ -238,6 +292,12 @@ export async function POST(req: Request) {
             id: true,
             name: true,
             subject: true,
+            Teacher: {
+              select: {
+                name: true,
+                email: true,
+              },
+            },
           },
         },
       },
@@ -255,6 +315,50 @@ export async function POST(req: Request) {
         generationMethod: assignment.generationMethod ?? "manual",
       },
     });
+
+    await logLearningEvent({
+      schoolId: user.schoolId,
+      classId: assignment.classId,
+      userId: user.id,
+      actor: { type: "user", id: user.id, role: user.role },
+      target: { type: "assignment", id: assignment.id },
+      eventType: "assignment.created",
+      source: "/api/teacher/assignments",
+      contentId: assignment.contentId ?? null,
+      subject: String(assignment.Class.subject),
+      metadata: {
+        dueAt: assignment.dueAt?.toISOString() ?? null,
+        generationMethod: assignment.generationMethod ?? "manual",
+        points: assignment.points,
+      },
+    });
+
+    await (prisma as any).teacherAction?.create?.({
+      data: {
+        teacherUserId: user.id,
+        schoolId: user.schoolId,
+        classId: assignment.classId,
+        contentId: assignment.contentId ?? null,
+        actionType: "assign_work",
+        targetType: "assignment",
+        targetId: assignment.id,
+        subject: String(assignment.Class.subject),
+        metadata: {
+          generationMethod: assignment.generationMethod ?? "manual",
+          dueAt: assignment.dueAt?.toISOString() ?? null,
+        },
+      },
+    });
+
+    await notifyAssignmentCreated({
+      actorUserId: user.id,
+      schoolId: user.schoolId,
+      classId: assignment.classId,
+      assignmentTitle: assignment.title,
+      className: assignment.Class.name,
+      teacherName: assignment.Class.Teacher?.name ?? assignment.Class.Teacher?.email ?? "Teacher",
+      dueAt: assignment.dueAt,
+    }).catch(() => null);
 
     return NextResponse.json(
       {

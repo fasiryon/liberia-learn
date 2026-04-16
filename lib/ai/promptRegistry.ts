@@ -295,6 +295,53 @@ registerPromptDefinition({
 });
 
 registerPromptDefinition({
+  key: "teacher.assist.user",
+  version: "1.0.0",
+  template: [
+    "Subject: {{subject}}",
+    "Primary strand: {{strandKey}}",
+    "Class average mastery level: {{classAverageMasteryState}}",
+    "Strands needing additional support: {{weakStrandKeys}}",
+    "Grade band: {{gradeBand}}",
+    "",
+    "Suggest practical reinforcement activities and pacing guidance.",
+    "Respond in JSON only.",
+  ].join("\n"),
+});
+
+registerPromptDefinition({
+  key: "teacher.classInsights.system",
+  version: "1.0.0",
+  template: [
+    "You are a practical teacher coach for LiberiaLearn.",
+    "Use only the structured class performance data provided.",
+    "Write direct, actionable recommendations for this week in plain teacher language.",
+    "Keep every recommendation realistic for low-resource Liberian classrooms, including large classes and limited technology.",
+    "Do not use corporate, vague, or motivational filler.",
+    "Identify the lesson the class struggled with most and suggest one concrete reteaching approach.",
+    "Keep the total response under 250 words.",
+    "You MUST respond with valid JSON only. No prose outside the JSON object.",
+    "Response schema:",
+    "{",
+    '  "recommendations": ["<action 1>", "<action 2>", "<action 3>"],',
+    '  "strugglingLesson": "<lesson title>",',
+    '  "reteachApproach": "<specific reteaching approach>"',
+    "}",
+  ].join("\n"),
+});
+
+registerPromptDefinition({
+  key: "teacher.classInsights.user",
+  version: "1.0.0",
+  template: [
+    "Class name: {{className}}",
+    "Subject: {{subject}}",
+    "Structured class performance JSON:",
+    "{{performanceJson}}",
+  ].join("\n"),
+});
+
+registerPromptDefinition({
   key: "teacher.grading.system",
   version: "1.0.0",
   template: [
@@ -344,6 +391,21 @@ registerPromptDefinition({
     '  "anticipatedMisconceptions": ["<misconception 1>"],',
     '  "scaffoldingSuggestions": ["<suggestion 1>", "<suggestion 2>"]',
     "}",
+  ].join("\n"),
+});
+
+registerPromptDefinition({
+  key: "teacher.assignment-tutor.user",
+  version: "1.0.0",
+  template: [
+    "Grade: {{grade}}",
+    "Subject: {{subject}}",
+    "Strand: {{strandKey}}",
+    "Rubric: {{rubric}}",
+    "Assignment question/task: {{questionPrompt}}",
+    "",
+    "Provide teaching hints, anticipated misconceptions, and scaffolding suggestions for this assignment.",
+    "Respond in JSON only.",
   ].join("\n"),
 });
 

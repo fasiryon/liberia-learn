@@ -11,13 +11,17 @@ type AssignmentRow = {
   description: string;
   classId: string;
   className: string;
+  teacherName: string;
   subject: string;
   points: number;
   dueAt: string | null;
   createdAt: string;
   submittedCount: number;
+  completionCount: number;
   gradedCount: number;
   studentCount: number;
+  averageScore: number | null;
+  pendingStudents: string[];
 };
 
 type AssignmentSubmissionRow = {
@@ -241,8 +245,31 @@ export default function TeacherAssignmentsPage() {
                         <span>
                           Due {assignment.dueAt ? new Date(assignment.dueAt).toLocaleString("en-LR") : "not set"}
                         </span>
-                        <span>{assignment.submittedCount} submitted</span>
+                        <span>{assignment.completionCount}/{assignment.studentCount} completed</span>
                         <span>{assignment.gradedCount} graded</span>
+                        <span>{assignment.averageScore == null ? "No score yet" : `Avg score ${assignment.averageScore}%`}</span>
+                      </div>
+                      <div className="mt-4 rounded-2xl border border-slate-800 bg-slate-900/70 p-4">
+                        <div className="flex flex-wrap items-center justify-between gap-3">
+                          <p className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-400">Completion tracking</p>
+                          <a
+                            href={`/api/teacher/assignments/${assignment.id}/export`}
+                            className="rounded-full border border-slate-700 px-3 py-1 text-[11px] text-slate-300 hover:text-slate-100"
+                          >
+                            Export CSV
+                          </a>
+                        </div>
+                        <p className="mt-2 text-sm text-slate-300">
+                          Assigned by {assignment.teacherName}
+                        </p>
+                        {assignment.pendingStudents.length === 0 ? (
+                          <p className="mt-2 text-sm text-emerald-300">Everyone in this class has completed the assignment.</p>
+                        ) : (
+                          <p className="mt-2 text-sm text-slate-300">
+                            Not completed: {assignment.pendingStudents.slice(0, 6).join(", ")}
+                            {assignment.pendingStudents.length > 6 ? ` +${assignment.pendingStudents.length - 6} more` : ""}
+                          </p>
+                        )}
                       </div>
                     </section>
                   ))}
@@ -300,8 +327,31 @@ export default function TeacherAssignmentsPage() {
                         <span>
                           Due {assignment.dueAt ? new Date(assignment.dueAt).toLocaleString("en-LR") : "not set"}
                         </span>
-                        <span>{assignment.submittedCount} submitted</span>
+                        <span>{assignment.completionCount}/{assignment.studentCount} completed</span>
                         <span>{assignment.gradedCount} graded</span>
+                        <span>{assignment.averageScore == null ? "No score yet" : `Avg score ${assignment.averageScore}%`}</span>
+                      </div>
+                      <div className="mt-4 rounded-2xl border border-slate-800 bg-slate-900/70 p-4">
+                        <div className="flex flex-wrap items-center justify-between gap-3">
+                          <p className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-400">Completion tracking</p>
+                          <a
+                            href={`/api/teacher/assignments/${assignment.id}/export`}
+                            className="rounded-full border border-slate-700 px-3 py-1 text-[11px] text-slate-300 hover:text-slate-100"
+                          >
+                            Export CSV
+                          </a>
+                        </div>
+                        <p className="mt-2 text-sm text-slate-300">
+                          Assigned by {assignment.teacherName}
+                        </p>
+                        {assignment.pendingStudents.length === 0 ? (
+                          <p className="mt-2 text-sm text-emerald-300">Everyone in this class has completed the assignment.</p>
+                        ) : (
+                          <p className="mt-2 text-sm text-slate-300">
+                            Not completed: {assignment.pendingStudents.slice(0, 6).join(", ")}
+                            {assignment.pendingStudents.length > 6 ? ` +${assignment.pendingStudents.length - 6} more` : ""}
+                          </p>
+                        )}
                       </div>
                     </section>
                   ))}

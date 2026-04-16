@@ -1,11 +1,14 @@
 import { prisma } from "@/lib/db";
+import { buildTeacherClassPerformance } from "@/lib/reporting/teacherClassPerformance";
 
 export type ClassWeeklySummary = {
   classId: string;
   className: string;
   lessonCount: number;
-  lessonCompletionRate: number; // 0–100
-  assignmentSubmissionRate: number; // 0–100
+  lessonCompletionRate: number;
+  assignmentSubmissionRate: number;
+  averageQuizScore: number | null;
+  weakestLessonTitle: string | null;
   absencesThisWeek: number;
   atRiskStudentCount: number;
   enrolledStudentCount: number;
@@ -13,19 +16,19 @@ export type ClassWeeklySummary = {
 
 export type TeacherWeeklyReport = {
   teacherId: string;
-  weekStart: string; // ISO date (Monday)
-  weekEnd: string;   // ISO date (Sunday)
+  weekStart: string;
+  weekEnd: string;
   generatedAt: string;
   classes: ClassWeeklySummary[];
   totalLessons: number;
   totalAbsences: number;
-  overallCompletionRate: number; // weighted average across classes
+  overallCompletionRate: number;
 };
 
 function startOfWeek(date: Date): Date {
   const d = new Date(date);
-  const day = d.getUTCDay(); // 0=Sun … 6=Sat
-  const diff = day === 0 ? -6 : 1 - day; // Monday-based
+  const day = d.getUTCDay();
+  const diff = day === 0 ? -6 : 1 - day;
   d.setUTCDate(d.getUTCDate() + diff);
   d.setUTCHours(0, 0, 0, 0);
   return d;
@@ -46,11 +49,13 @@ export async function buildTeacherWeeklyReport(
   const weekStart = startOfWeek(referenceDate);
   const weekEnd = endOfWeek(weekStart);
 
-  // Fetch all classes the teacher owns in this school
-  const classes = await prisma.class.findMany({
-    where: { teacherId, schoolId },
-    select: { id: true, name: true },
-  });
+  const [classes, performanceIntelligence] = await Promise.all([
+    prisma.class.findMany({
+      where: { teacherId, schoolId },
+      select: { id: true, name: true },
+    }),
+    buildTeacherClassPerformance(teacherId, schoolId),
+  ]);
 
   if (classes.length === 0) {
     return {
@@ -65,9 +70,11 @@ export async function buildTeacherWeeklyReport(
     };
   }
 
+  const performanceByClassId = new Map(
+    performanceIntelligence.map((row) => [row.classId, row] as const)
+  );
   const classIds = classes.map((c) => c.id);
 
-  // Enrolled students per class
   const enrollments = await prisma.enrollment.findMany({
     where: { classId: { in: classIds } },
     select: { classId: true, studentId: true },
@@ -77,7 +84,6 @@ export async function buildTeacherWeeklyReport(
     enrolledByClass.set(e.classId, (enrolledByClass.get(e.classId) ?? 0) + 1);
   }
 
-  // Scheduled lessons this week
   const scheduledWork = await prisma.scheduledWork.findMany({
     where: {
       classId: { in: classIds },
@@ -92,16 +98,16 @@ export async function buildTeacherWeeklyReport(
     lessonsByClass.set(sw.classId, existing);
   }
 
-  // Student progress completions this week
-  const completedWork = scheduledWork.length > 0
-    ? await prisma.studentProgress.findMany({
-        where: {
-          scheduledWorkId: { in: scheduledWork.map((s) => s.id) },
-          completedAt: { not: null, gte: weekStart, lte: weekEnd },
-        },
-        select: { scheduledWorkId: true, studentId: true },
-      })
-    : [];
+  const completedWork =
+    scheduledWork.length > 0
+      ? await prisma.studentProgress.findMany({
+          where: {
+            scheduledWorkId: { in: scheduledWork.map((s) => s.id) },
+            completedAt: { not: null, gte: weekStart, lte: weekEnd },
+          },
+          select: { scheduledWorkId: true, studentId: true },
+        })
+      : [];
   const completionsByWork = new Map<string, number>();
   for (const cp of completedWork) {
     completionsByWork.set(
@@ -110,22 +116,24 @@ export async function buildTeacherWeeklyReport(
     );
   }
 
-  // Assignment submissions this week (via AssignmentSubmission)
-  const assignmentSubmissions = await (prisma as any).assignmentSubmission.findMany({
-    where: {
-      assignment: { classId: { in: classIds } },
-      submittedAt: { gte: weekStart, lte: weekEnd },
-    },
-    select: { id: true, assignment: { select: { classId: true } } },
-  }).catch(() => [] as any[]);
+  const assignmentSubmissions = await (prisma as any).assignmentSubmission
+    .findMany({
+      where: {
+        Assignment: { classId: { in: classIds } },
+        turnedInAt: { gte: weekStart, lte: weekEnd },
+      },
+      select: { id: true, Assignment: { select: { classId: true } } },
+    })
+    .catch(() => [] as any[]);
 
   const submissionsByClass = new Map<string, number>();
   for (const sub of assignmentSubmissions) {
-    const cid = sub.assignment?.classId;
-    if (cid) submissionsByClass.set(cid, (submissionsByClass.get(cid) ?? 0) + 1);
+    const cid = sub.Assignment?.classId;
+    if (cid) {
+      submissionsByClass.set(cid, (submissionsByClass.get(cid) ?? 0) + 1);
+    }
   }
 
-  // Absences this week — query Attendance directly (has classId + date + status)
   const absenceRows = await prisma.attendance.findMany({
     where: {
       classId: { in: classIds },
@@ -135,34 +143,39 @@ export async function buildTeacherWeeklyReport(
     select: { classId: true },
   });
   const absencesByClass = new Map<string, number>();
-  for (const ar of absenceRows) {
-    absencesByClass.set(ar.classId, (absencesByClass.get(ar.classId) ?? 0) + 1);
+  for (const row of absenceRows) {
+    absencesByClass.set(row.classId, (absencesByClass.get(row.classId) ?? 0) + 1);
   }
 
-  // At-risk: students with DerivedStudentProgress.isAtRisk = true
-  const atRiskRecords = await (prisma as any).derivedStudentProgress.findMany({
-    where: {
-      classId: { in: classIds },
-      isAtRisk: true,
-    },
-    select: { classId: true, studentId: true },
-    distinct: ["classId", "studentId"],
-  }).catch(() => [] as any[]);
+  const atRiskRecords = await (prisma as any).derivedStudentProgress
+    .findMany({
+      where: {
+        classId: { in: classIds },
+        isAtRisk: true,
+      },
+      select: { classId: true, studentId: true },
+      distinct: ["classId", "studentId"],
+    })
+    .catch(() => [] as any[]);
   const atRiskByClass = new Map<string, number>();
-  for (const r of atRiskRecords) {
-    if (r.classId) atRiskByClass.set(r.classId, (atRiskByClass.get(r.classId) ?? 0) + 1);
+  for (const record of atRiskRecords) {
+    if (record.classId) {
+      atRiskByClass.set(
+        record.classId,
+        (atRiskByClass.get(record.classId) ?? 0) + 1
+      );
+    }
   }
 
-  // Build per-class summaries
   const classSummaries: ClassWeeklySummary[] = classes.map((cls) => {
     const enrolled = enrolledByClass.get(cls.id) ?? 0;
     const lessonIds = lessonsByClass.get(cls.id) ?? [];
     const lessonCount = lessonIds.length;
+    const performance = performanceByClassId.get(cls.id);
 
-    // Completion rate = completions / (lessons × enrolled students)
     const expectedCompletions = lessonCount * enrolled;
     const actualCompletions = lessonIds.reduce(
-      (sum, wId) => sum + (completionsByWork.get(wId) ?? 0),
+      (sum, workId) => sum + (completionsByWork.get(workId) ?? 0),
       0
     );
     const lessonCompletionRate =
@@ -170,7 +183,6 @@ export async function buildTeacherWeeklyReport(
         ? Math.round((actualCompletions / expectedCompletions) * 100)
         : 0;
 
-    // Assignment submission rate = submissions / enrolled (rough proxy)
     const submissions = submissionsByClass.get(cls.id) ?? 0;
     const assignmentSubmissionRate =
       enrolled > 0 ? Math.min(100, Math.round((submissions / enrolled) * 100)) : 0;
@@ -181,18 +193,23 @@ export async function buildTeacherWeeklyReport(
       lessonCount,
       lessonCompletionRate,
       assignmentSubmissionRate,
+      averageQuizScore: performance?.averageQuizScore ?? null,
+      weakestLessonTitle: performance?.strugglingLesson?.lessonTitle ?? null,
       absencesThisWeek: absencesByClass.get(cls.id) ?? 0,
       atRiskStudentCount: atRiskByClass.get(cls.id) ?? 0,
       enrolledStudentCount: enrolled,
     };
   });
 
-  const totalLessons = classSummaries.reduce((s, c) => s + c.lessonCount, 0);
-  const totalAbsences = classSummaries.reduce((s, c) => s + c.absencesThisWeek, 0);
+  const totalLessons = classSummaries.reduce((sum, row) => sum + row.lessonCount, 0);
+  const totalAbsences = classSummaries.reduce(
+    (sum, row) => sum + row.absencesThisWeek,
+    0
+  );
   const overallCompletionRate =
     classSummaries.length > 0
       ? Math.round(
-          classSummaries.reduce((s, c) => s + c.lessonCompletionRate, 0) /
+          classSummaries.reduce((sum, row) => sum + row.lessonCompletionRate, 0) /
             classSummaries.length
         )
       : 0;

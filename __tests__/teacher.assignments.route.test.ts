@@ -8,9 +8,14 @@ const mockScheduledWorkFindUnique = vi.hoisted(() => vi.fn());
 const mockCurriculumContentFindUnique = vi.hoisted(() => vi.fn());
 const mockAssignmentCreate = vi.hoisted(() => vi.fn());
 const mockLogAudit = vi.hoisted(() => vi.fn());
+const mockNotifyAssignmentCreated = vi.hoisted(() => vi.fn());
+const mockLogLearningEvent = vi.hoisted(() => vi.fn());
+const mockTeacherActionCreate = vi.hoisted(() => vi.fn());
 
 vi.mock("@/lib/auth", () => ({ requireRole: mockRequireRole }));
 vi.mock("@/lib/audit", () => ({ logAudit: mockLogAudit }));
+vi.mock("@/lib/assignment-notifications", () => ({ notifyAssignmentCreated: mockNotifyAssignmentCreated }));
+vi.mock("@/lib/events/logLearningEvent", () => ({ logLearningEvent: mockLogLearningEvent }));
 vi.mock("@/lib/db", () => ({
   prisma: {
     assignmentSubmission: {
@@ -19,6 +24,9 @@ vi.mock("@/lib/db", () => ({
     assignment: {
       findMany: mockAssignmentFindMany,
       create: mockAssignmentCreate,
+    },
+    teacherAction: {
+      create: mockTeacherActionCreate,
     },
     class: {
       findUnique: mockClassFindUnique,
@@ -63,9 +71,16 @@ describe("/api/teacher/assignments", () => {
         id: "class-1",
         name: "JSS 2 Mathematics",
         subject: "MATH",
+        Teacher: {
+          name: "Teacher A",
+          email: "teacher@example.com",
+        },
       },
     });
     mockLogAudit.mockResolvedValue(undefined);
+    mockNotifyAssignmentCreated.mockResolvedValue(undefined);
+    mockLogLearningEvent.mockResolvedValue(null);
+    mockTeacherActionCreate.mockResolvedValue(undefined);
   });
 
   it("creates a teacher-scoped assignment", async () => {
@@ -104,6 +119,9 @@ describe("/api/teacher/assignments", () => {
       })
     );
     expect(mockLogAudit).toHaveBeenCalledOnce();
+    expect(mockLogLearningEvent).toHaveBeenCalledOnce();
+    expect(mockNotifyAssignmentCreated).toHaveBeenCalledOnce();
+    expect(mockTeacherActionCreate).toHaveBeenCalledOnce();
   }, 15_000);
 
   it("rejects teachers creating assignments for another teacher's class", async () => {

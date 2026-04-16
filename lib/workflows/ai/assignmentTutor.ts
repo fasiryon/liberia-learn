@@ -15,7 +15,7 @@
  */
 
 import { routedCompletion } from "@/lib/ai/router";
-import { getSystemPrompt } from "@/lib/ai/promptRegistry";
+import { buildPrompt, getPromptMetadata } from "@/lib/ai/promptRegistry";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -68,21 +68,23 @@ const FALLBACK: AssignmentTutorResult = {
   tokensUsed: 0,
 };
 
+const systemPromptMetadata = getPromptMetadata("teacher.assignment-tutor.system");
+const userPromptMetadata = getPromptMetadata("teacher.assignment-tutor.user");
+
 // ─── Prompt builders ──────────────────────────────────────────────────────────
 
 function buildSystemPrompt(): string {
-  return getSystemPrompt("teacher.assignment-tutor.system");
+  return buildPrompt("teacher.assignment-tutor.system");
 }
 
 function buildUserPrompt(input: AssignmentTutorInput): string {
-  return `Grade: ${input.grade}
-Subject: ${input.subject}
-Strand: ${input.strandKey}
-Rubric: ${input.rubric.slice(0, 500)}
-Assignment question/task: ${input.questionPrompt.slice(0, 400)}
-
-Provide teaching hints, anticipated misconceptions, and scaffolding suggestions for this assignment.
-Respond in JSON only.`;
+  return buildPrompt("teacher.assignment-tutor.user", {
+    grade: input.grade,
+    subject: input.subject,
+    strandKey: input.strandKey,
+    rubric: input.rubric.slice(0, 500),
+    questionPrompt: input.questionPrompt.slice(0, 400),
+  });
 }
 
 // ─── Parse + validate ─────────────────────────────────────────────────────────
@@ -155,6 +157,9 @@ export async function getAssignmentTutorGuidance(
             subject: input.subject,
             strandKey: input.strandKey,
             requestType: "assignment_tutor",
+            promptKey: `${systemPromptMetadata.key}+${userPromptMetadata.key}`,
+            promptVersion: systemPromptMetadata.version,
+            promptHash: systemPromptMetadata.hash,
             budgetFallbackContent: JSON.stringify({
               teachingHints: FALLBACK.teachingHints,
               anticipatedMisconceptions: FALLBACK.anticipatedMisconceptions,

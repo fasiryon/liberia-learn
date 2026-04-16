@@ -97,6 +97,15 @@ export default function TeacherLessonViewClient({
     () => renderSimpleMarkdown(lessonBody),
     [lessonBody]
   );
+  const assignmentHref = useMemo(() => {
+    const params = new URLSearchParams({
+      contentId,
+      title: `${lessonTitle} Assignment`,
+      description: `Complete the follow-up work for ${lessonTitle}.`,
+      generationMethod: "manual",
+    });
+    return `/teacher/assignments/new?${params.toString()}`;
+  }, [contentId, lessonTitle]);
 
   async function handleGeneratePlan(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -155,13 +164,21 @@ export default function TeacherLessonViewClient({
         >
           &larr; Back to curriculum
         </Link>
-        <button
-          type="button"
-          onClick={() => setPlannerOpen(true)}
-          className="min-h-12 rounded-full bg-cyan-400 px-5 py-3 text-sm font-semibold text-slate-950 transition-colors hover:bg-cyan-300"
-        >
-          Plan This Lesson
-        </button>
+        <div className="flex flex-wrap items-center gap-3">
+          <Link
+            href={assignmentHref}
+            className="min-h-12 rounded-full border border-emerald-400/30 bg-emerald-400/10 px-5 py-3 text-sm font-semibold text-emerald-100 transition-colors hover:border-emerald-300/50 hover:bg-emerald-400/15"
+          >
+            Assign to Class
+          </Link>
+          <button
+            type="button"
+            onClick={() => setPlannerOpen(true)}
+            className="min-h-12 rounded-full bg-cyan-400 px-5 py-3 text-sm font-semibold text-slate-950 transition-colors hover:bg-cyan-300"
+          >
+            Plan This Lesson
+          </button>
+        </div>
       </div>
 
       <section className="rounded-3xl border border-white/10 bg-slate-900/80 p-5 sm:p-7">

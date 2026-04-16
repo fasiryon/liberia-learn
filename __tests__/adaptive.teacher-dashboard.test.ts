@@ -11,9 +11,13 @@ const mockStudentProgressFindMany = vi.hoisted(() => vi.fn());
 const mockAssignmentSubmissionCount = vi.hoisted(() => vi.fn());
 const mockLabSessionCount = vi.hoisted(() => vi.fn());
 const mockCurriculumContentFindMany = vi.hoisted(() => vi.fn());
+const mockBuildTeacherClassPerformance = vi.hoisted(() => vi.fn());
 
 vi.mock("@/lib/auth", () => ({ requireRole: mockRequireRole }));
 vi.mock("@/lib/serverFlags", () => ({ isAdaptiveEngineEnabled: mockIsAdaptiveEngineEnabled }));
+vi.mock("@/lib/reporting/teacherClassPerformance", () => ({
+  buildTeacherClassPerformance: mockBuildTeacherClassPerformance,
+}));
 vi.mock("@/lib/db", () => ({
   prisma: {
     class: { findMany: mockClassFindMany },
@@ -42,6 +46,7 @@ beforeEach(() => {
   mockAssignmentSubmissionCount.mockResolvedValue(0);
   mockLabSessionCount.mockResolvedValue(0);
   mockCurriculumContentFindMany.mockResolvedValue([]);
+  mockBuildTeacherClassPerformance.mockResolvedValue([]);
 });
 
 describe("GET /api/teacher/dashboard adaptiveStats", () => {

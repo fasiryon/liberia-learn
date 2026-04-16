@@ -10,7 +10,7 @@
  */
 
 import { routedCompletion } from "@/lib/ai/router";
-import { getSystemPrompt } from "@/lib/ai/promptRegistry";
+import { buildPrompt, getPromptMetadata } from "@/lib/ai/promptRegistry";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -72,10 +72,13 @@ const FALLBACK: TeacherAssistResult = {
   tokensUsed: 0,
 };
 
+const systemPromptMetadata = getPromptMetadata("teacher.assist.system");
+const userPromptMetadata = getPromptMetadata("teacher.assist.user");
+
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
 function buildSystemPrompt(): string {
-  return getSystemPrompt("teacher.assist.system");
+  return buildPrompt("teacher.assist.system");
 }
 
 function buildUserPrompt(input: TeacherAssistInput): string {
@@ -84,14 +87,13 @@ function buildUserPrompt(input: TeacherAssistInput): string {
       ? input.weakStrandKeys.slice(0, 10).join(", ")
       : "none identified yet";
 
-  return `Subject: ${input.subject}
-Primary strand: ${input.strandKey}
-Class average mastery level: ${input.classAverageMasteryState}
-Strands needing additional support: ${weakList}
-Grade band: ${input.gradeBand}
-
-Suggest practical reinforcement activities and pacing guidance.
-Respond in JSON only.`;
+  return buildPrompt("teacher.assist.user", {
+    subject: input.subject,
+    strandKey: input.strandKey,
+    classAverageMasteryState: input.classAverageMasteryState,
+    weakStrandKeys: weakList,
+    gradeBand: input.gradeBand,
+  });
 }
 
 function hasPunitiveLanguage(result: TeacherAssistResult): boolean {
@@ -180,6 +182,9 @@ export async function getTeacherAssistResponse(
             subject: input.subject,
             strandKey: input.strandKey,
             requestType: "teacher_assist",
+            promptKey: `${systemPromptMetadata.key}+${userPromptMetadata.key}`,
+            promptVersion: systemPromptMetadata.version,
+            promptHash: systemPromptMetadata.hash,
             budgetFallbackContent: JSON.stringify({
               reinforcementSuggestions: FALLBACK.reinforcementSuggestions,
               pacingSuggestion: FALLBACK.pacingSuggestion,
