@@ -112,7 +112,9 @@ describe("environment detection", () => {
 
     expect(getEnvironment()).toBe("demo");
     expect(isDemo()).toBe(true);
-    expect(shouldShowDemoCredentials()).toBe(true);
+    // Security fix: shouldShowDemoCredentials requires NODE_ENV=development AND DEMO_MODE=true.
+    // DEMO_MODE=true in production is NOT sufficient to expose demo credentials.
+    expect(shouldShowDemoCredentials()).toBe(false);
   });
 
   it("detects staging for preview deployments", () => {

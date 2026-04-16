@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 import { FEATURE_FLAGS } from "@/lib/featureFlags";
 import type { DemoHintGroup } from "@/lib/demoHints";
 import { DemoHints } from "@/components/DemoHints";
+import { PublicFooter } from "@/components/PublicFooter";
 import {
   getGuardianLoginFields,
   getStudentLoginFields,
@@ -262,10 +263,11 @@ export default function LoginClient({ showDemoHints, demoGroups, demoDefaults }:
   };
 
   return (
-    <main className="ll-page flex min-h-screen items-center justify-center px-4 py-8 sm:py-10">
+    <main className="ll-page flex min-h-screen flex-col px-4 py-8 sm:py-10">
       <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_top,_#22c55e33,_transparent_55%),radial-gradient(circle_at_bottom,_#0ea5e933,_transparent_55%)]" />
 
-      <div className="w-full max-w-lg space-y-5 rounded-[2rem] border border-white/10 bg-slate-900/75 p-5 shadow-2xl shadow-emerald-500/15 backdrop-blur sm:space-y-6 sm:p-7">
+      <div className="mx-auto w-full max-w-lg flex-1 flex items-center justify-center py-4">
+      <div className="w-full space-y-5 rounded-[2rem] border border-white/10 bg-slate-900/75 p-5 shadow-2xl shadow-emerald-500/15 backdrop-blur sm:space-y-6 sm:p-7">
         <div className="flex flex-col items-center gap-3 text-center">
           <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-emerald-500 text-lg font-black text-slate-950">
             L
@@ -395,6 +397,9 @@ export default function LoginClient({ showDemoHints, demoGroups, demoDefaults }:
           </Link>
         </div>
       </div>
+      </div>
+
+      <PublicFooter />
     </main>
   );
 }
