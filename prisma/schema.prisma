@@ -110,6 +110,11 @@ model School {
   pilotNotes             String?
   contactEmailVerified   Boolean                @default(false)
   contactPhoneVerified   Boolean                @default(false)
+  schoolType             String?
+  estimatedEnrollment    Int?
+  approvedAt             DateTime?
+  rejectedAt             DateTime?
+  rejectionReason        String?
   AuditLog               AuditLog[]
   classes                Class[]
   inviteTokens           InviteToken[]
@@ -139,6 +144,7 @@ model School {
   policyOverrides        PolicyOverride[]
   timetableEntries       Timetable[]
   teacherAssignments     TeacherAssignment[]
+  studentImportBatches   StudentImportBatch[]
 }
 
 model Class {
@@ -146,6 +152,7 @@ model Class {
   schoolId      String
   name          String
   subject       Subject
+  gradeLevel    Int?
   teacherId     String?
   createdAt     DateTime        @default(now())
   assessments   Assessment[]
@@ -169,6 +176,7 @@ model Student {
   userId                String                  @unique
   county                String?
   community             String?
+  dateOfBirth           DateTime?
   createdAt             DateTime                @default(now())
   currentGrade          Int?
   deletedAt             DateTime?
@@ -1004,6 +1012,29 @@ model NotificationLog {
 
   @@index([userId, createdAt])
   @@index([status, createdAt])
+}
+
+model StudentImportBatch {
+  id                String                   @id @default(cuid())
+  schoolId          String
+  createdById       String
+  status            StudentImportBatchStatus @default(PENDING)
+  sourceFileName    String?
+  totalRows         Int                      @default(0)
+  processedRows     Int                      @default(0)
+  successCount      Int                      @default(0)
+  errorCount        Int                      @default(0)
+  queuedAt          DateTime?
+  completedAt       DateTime?
+  downloadedAt      DateTime?
+  resultSummary     Json?
+  credentialCsv     String?
+  createdAt         DateTime                 @default(now())
+  updatedAt         DateTime                 @updatedAt
+  school            School                   @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+
+  @@index([schoolId, status, createdAt])
+  @@index([createdById, createdAt])
 }
 
 model ExportRecord {
@@ -2167,6 +2198,14 @@ enum Role {
   MOE_OFFICIAL
   MOE_SUPER_ADMIN
   MOE_DISTRICT_ADMIN
+}
+
+enum StudentImportBatchStatus {
+  PENDING
+  QUEUED
+  PROCESSING
+  COMPLETED
+  FAILED
 }
 
 enum CurriculumVersionStatus {

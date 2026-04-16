@@ -31,19 +31,32 @@ export async function GET(req?: Request) {
       select: {
         id: true,
         currentGrade: true,
+        enrollments: {
+          take: 1,
+          select: {
+            classId: true,
+            Class: { select: { name: true, subject: true } },
+          },
+        },
         user: { select: { id: true, name: true, email: true, loginId: true, guardianPhoneE164: true } },
       },
     });
 
-    const students = rows.map((s) => ({
-      id: s.id,
-      userId: s.user.id,
-      name: s.user?.name ?? s.user?.email ?? "Student",
-      email: s.user?.email ?? null,
-      loginId: s.user?.loginId ?? null,
-      phone: s.user?.guardianPhoneE164 ?? null,
-      currentGrade: s.currentGrade ?? null,
-    }));
+    const students = rows.map((s) => {
+      const enrollment = (s as any).enrollments?.[0] ?? null;
+      return {
+        id: s.id,
+        userId: s.user.id,
+        name: s.user?.name ?? s.user?.email ?? "Student",
+        email: s.user?.email ?? null,
+        loginId: s.user?.loginId ?? null,
+        phone: s.user?.guardianPhoneE164 ?? null,
+        currentGrade: s.currentGrade ?? null,
+        classId: enrollment?.classId ?? null,
+        className: enrollment?.Class?.name ?? null,
+        subject: enrollment?.Class?.subject ? String(enrollment.Class.subject) : null,
+      };
+    });
 
     await logAudit({
       userId: user.id,
@@ -85,7 +98,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Validation failed", issues: parsed.error.flatten() }, { status: 400 });
     }
 
-    const { firstName, lastName, grade, classId, email, phone } = parsed.data;
+    const { firstName, lastName, grade, classId, email, phone, dateOfBirth } = parsed.data;
 
     const [cls, school, existingStudentCount] = await Promise.all([
       prisma.class.findUnique({ where: { id: classId }, select: { id: true, schoolId: true } }),
@@ -99,6 +112,27 @@ export async function POST(req: Request) {
 
     if (!school?.code) {
       return NextResponse.json({ error: "School code is required before creating student accounts" }, { status: 400 });
+    }
+
+    const dob = dateOfBirth ? new Date(`${dateOfBirth}T00:00:00.000Z`) : null;
+    if (dob && Number.isNaN(dob.getTime())) {
+      return NextResponse.json({ error: "Invalid date of birth" }, { status: 400 });
+    }
+
+    if (dob) {
+      const duplicate = await prisma.student.findFirst({
+        where: {
+          dateOfBirth: dob,
+          user: {
+            schoolId: user.schoolId,
+            name: { equals: `${firstName} ${lastName}`.trim(), mode: "insensitive" },
+          },
+        },
+        select: { id: true },
+      });
+      if (duplicate) {
+        return NextResponse.json({ error: "Duplicate student with same name and date of birth" }, { status: 409 });
+      }
     }
 
     let sequence = existingStudentCount + 1;
@@ -150,7 +184,7 @@ export async function POST(req: Request) {
       });
 
       const newStudent = await tx.student.create({
-        data: { userId: newUser.id, currentGrade: grade },
+        data: { userId: newUser.id, currentGrade: grade, dateOfBirth: dob },
       });
 
       await tx.enrollment.create({ data: { studentId: newStudent.id, classId } });
