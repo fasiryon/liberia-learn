@@ -17,6 +17,7 @@ function getSmsDeliveryLogDelegate() {
 }
 
 import { recordMetricEvent } from "@/lib/metrics/events";
+import { logAudit } from "@/lib/audit";
 import { renderGuardianTemplate, getDefaultTemplateKey, type GuardianMessageType, type GuardianTemplateKey } from "@/lib/guardian/sms-templates";
 import type { SMSProvider } from "@/lib/sms/provider";
 import { TwilioSMSProvider } from "@/lib/sms/twilio-provider";
@@ -284,6 +285,20 @@ export async function sendGuardianSMS(input: SendGuardianSMSInput, deps?: Servic
           userId: input.actorUserId ?? null,
         }
       );
+      void logAudit({
+        userId: input.actorUserId ?? null,
+        action: "sms.delivered",
+        resourceType: "SMSDeliveryLog",
+        resourceId: updated.id,
+        schoolId: input.schoolId,
+        details: {
+          messageType: input.messageType,
+          templateKey: templateKey ?? null,
+          guardianId: input.guardianId,
+          studentId: input.studentId,
+          attempts: attempt,
+        },
+      });
       return { status: updated.status, deliveryLogId: updated.id };
     }
 

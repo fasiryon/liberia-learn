@@ -1,5 +1,19 @@
-export type GuardianTemplateKey = "absence" | "at_risk" | "praise";
-export type GuardianMessageType = "absence" | "at_risk" | "praise" | "custom";
+export type GuardianTemplateKey =
+  | "absence"
+  | "at_risk"
+  | "praise"
+  | "weekly_digest"
+  | "assignment_due"
+  | "certificate_awarded";
+
+export type GuardianMessageType =
+  | "absence"
+  | "at_risk"
+  | "praise"
+  | "weekly_digest"
+  | "assignment_due"
+  | "certificate_awarded"
+  | "custom";
 
 export type GuardianTemplatePayload = Record<string, unknown>;
 
@@ -24,11 +38,26 @@ const templateRegistry: Record<GuardianTemplateKey, TemplateDefinition> = {
     render: (payload) =>
       `LiberiaLearn: Great news. ${String(payload.studentName)}: ${String(payload.achievement).slice(0, 110)}.`,
   },
+  weekly_digest: {
+    requiredFields: ["studentName", "lessonsCompleted", "avgScore"],
+    render: (payload) =>
+      `LiberiaLearn Weekly Update: ${String(payload.studentName)} completed ${String(payload.lessonsCompleted)} lesson(s) this week. Avg score: ${String(payload.avgScore)}%. Keep it up! Reply STOP to unsubscribe.`,
+  },
+  assignment_due: {
+    requiredFields: ["studentName", "subject", "dueDate"],
+    render: (payload) =>
+      `LiberiaLearn: Reminder — ${String(payload.studentName)} has a ${String(payload.subject)} assignment due on ${String(payload.dueDate)}. Please encourage them to complete it. Reply STOP to unsubscribe.`,
+  },
+  certificate_awarded: {
+    requiredFields: ["studentName", "subject", "certificateCode"],
+    render: (payload) =>
+      `LiberiaLearn: Congratulations! ${String(payload.studentName)} earned a certificate in ${String(payload.subject)}. Certificate code: ${String(payload.certificateCode)}. Reply STOP to unsubscribe.`,
+  },
 };
 
 export function getDefaultTemplateKey(messageType: GuardianMessageType): GuardianTemplateKey | null {
   if (messageType === "custom") return null;
-  return messageType;
+  return messageType as GuardianTemplateKey;
 }
 
 export function renderGuardianTemplate(templateKey: GuardianTemplateKey, payload: GuardianTemplatePayload): string {
@@ -43,4 +72,3 @@ export function renderGuardianTemplate(templateKey: GuardianTemplateKey, payload
   }
   return template.render(payload);
 }
-

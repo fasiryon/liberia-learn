@@ -61,7 +61,7 @@ function estimateBytes(value: unknown): number {
   return serialized.length * 2;
 }
 
-async function getMetadata(partition?: SessionPartitionInput): Promise<CachePackMetadata[]> {
+export async function getMetadata(partition?: SessionPartitionInput): Promise<CachePackMetadata[]> {
   return (await get<CachePackMetadata[]>(metaStoreKey(partition))) ?? [];
 }
 
