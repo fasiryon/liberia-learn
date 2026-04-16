@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { shouldShowDemoCredentials } from "@/lib/demoCredentials";
+import { PublicFooter } from "@/components/PublicFooter";
 
 const roleCards = [
   {
@@ -32,15 +32,13 @@ const trustPillars = [
 ];
 
 const demoLinks = [
-  { label: "Student demo", href: "/login?role=student" },
-  { label: "Teacher demo", href: "/login?role=teacher" },
-  { label: "Guardian demo", href: "/login?role=guardian" },
-  { label: "Admin demo", href: "/login?role=admin" },
+  { label: "Student sign-in", href: "/login?role=student" },
+  { label: "Teacher sign-in", href: "/login?role=teacher" },
+  { label: "Guardian sign-in", href: "/login?role=guardian" },
+  { label: "Admin sign-in", href: "/login?role=admin" },
 ];
 
 export default function HomePage() {
-  const demoModeEnabled = shouldShowDemoCredentials();
-
   return (
     <main className="ll-page min-h-screen text-slate-50">
       <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_top,_rgba(16,185,129,0.18),_transparent_40%),radial-gradient(circle_at_80%_20%,_rgba(14,165,233,0.16),_transparent_32%),linear-gradient(180deg,_#020617_0%,_#020617_42%,_#0f172a_100%)]" />
@@ -98,7 +96,7 @@ export default function HomePage() {
                 Launch platform
               </span>
             </Link>
-            <Link href="/admin/pilot-readiness" className="hidden sm:inline-flex">
+            <Link href="/pilot-preview" className="hidden sm:inline-flex">
               <span className="inline-flex min-h-12 items-center justify-center rounded-full border border-slate-700 px-6 py-3 text-sm font-medium text-slate-100 hover:border-slate-500">
                 Review pilot readiness
               </span>
@@ -182,7 +180,7 @@ export default function HomePage() {
               whether a school is operationally prepared for a staged rollout.
             </p>
             <div className="flex flex-wrap gap-3 pt-2">
-              <Link href="/admin/pilot-readiness">
+              <Link href="/pilot-preview">
                 <span className="inline-flex rounded-full bg-amber-300 px-5 py-2.5 text-sm font-semibold text-slate-950 hover:bg-amber-200">
                   Open readiness review
                 </span>
@@ -199,22 +197,17 @@ export default function HomePage() {
 
       <section className="ll-shell pb-16 pt-4 sm:pb-20 sm:pt-6">
         <div className="rounded-[2rem] border border-white/8 bg-slate-900/55 p-6">
-          <div className="flex flex-wrap items-start justify-between gap-4">
-            <div>
-              <p className="text-xs uppercase tracking-[0.24em] text-slate-500">
-                Explore Demo
-              </p>
-              <h2 className="mt-2 text-2xl font-semibold text-slate-50">
-                Role-based walkthrough entry points
-              </h2>
-              <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-300">
-              Open the sign-in flow with the role already selected. Seeded test credentials
-              are available only when `DEMO_MODE=true`.
+          <div className="space-y-2">
+            <p className="text-xs uppercase tracking-[0.24em] text-slate-500">
+              Access the platform
             </p>
-          </div>
-            <span className="rounded-full border border-slate-700 px-3 py-1 text-xs font-medium text-slate-300">
-              {demoModeEnabled ? "Demo hints enabled" : "Demo hints hidden"}
-            </span>
+            <h2 className="text-2xl font-semibold text-slate-50">
+              Sign in for your role
+            </h2>
+            <p className="max-w-2xl text-sm leading-6 text-slate-300">
+              Select your role below to go directly to the sign-in page. Contact your school
+              administrator if you need help accessing your account.
+            </p>
           </div>
 
           <div className="mt-6 grid gap-3 md:grid-cols-2 xl:grid-cols-4">
@@ -228,6 +221,8 @@ export default function HomePage() {
           </div>
         </div>
       </section>
+
+      <PublicFooter />
     </main>
   );
 }

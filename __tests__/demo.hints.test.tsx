@@ -18,8 +18,9 @@ describe("demo hints rendering", () => {
     expect(html).toBe("");
   });
 
-  it("renders hints when DEMO_MODE is on", () => {
-    Object.assign(process.env, { DEMO_MODE: "true" });
+  it("renders hints only when both NODE_ENV=development AND DEMO_MODE=true", () => {
+    // Security fix: both conditions required — DEMO_MODE alone in production is not enough.
+    Object.assign(process.env, { NODE_ENV: "development", DEMO_MODE: "true" });
     const html = renderToStaticMarkup(<DemoHintsSection variant="login" />);
     expect(html).toContain("Demo Login Hints");
     expect(html).toContain("student1@cha.edu.lr");
@@ -32,14 +33,21 @@ describe("demo hints rendering", () => {
     expect(html).not.toContain("Password: LegacyDemo123!");
   });
 
-  it("renders hints in development even when DEMO_MODE is off", () => {
+  it("renders nothing in development when DEMO_MODE is off", () => {
+    // Development without DEMO_MODE=true should not show credentials.
     Object.assign(process.env, { NODE_ENV: "development" });
     delete process.env.DEMO_MODE;
 
     const html = renderToStaticMarkup(<DemoHintsSection variant="login" />);
 
-    expect(html).toContain("Demo Login Hints");
-    expect(html).toContain("student1@cha.edu.lr");
+    expect(html).toBe("");
+  });
+
+  it("renders nothing in production even when DEMO_MODE=true", () => {
+    // The critical production guard: NODE_ENV=production must always block credential exposure.
+    Object.assign(process.env, { NODE_ENV: "production", DEMO_MODE: "true" });
+    const html = renderToStaticMarkup(<DemoHintsSection variant="login" />);
+    expect(html).toBe("");
   });
 });
 

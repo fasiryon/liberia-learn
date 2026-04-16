@@ -1,4 +1,5 @@
-import { isDemo, isDevelopment } from "@/lib/environment";
+// Note: isDemo/isDevelopment intentionally NOT used here — shouldShowDemoCredentials
+// checks process.env directly so it cannot be unlocked by DEMO_MODE alone in production.
 
 export type DemoCredentialKey = "student" | "teacher" | "admin" | "guardian" | "moe";
 
@@ -60,6 +61,14 @@ export function getDemoCredential(key: DemoCredentialKey): DemoCredential {
   return match;
 }
 
+/**
+ * Returns true ONLY in local development AND when DEMO_MODE is explicitly
+ * enabled. Both conditions must be true.
+ *
+ * In production (NODE_ENV === 'production') this is ALWAYS false regardless
+ * of DEMO_MODE, preventing any seeded account details from appearing on the
+ * public-facing login page or homepage.
+ */
 export function shouldShowDemoCredentials(): boolean {
-  return isDemo() || isDevelopment();
+  return process.env.NODE_ENV === "development" && process.env.DEMO_MODE === "true";
 }
