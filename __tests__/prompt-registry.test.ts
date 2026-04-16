@@ -74,5 +74,9 @@ describe("promptRegistry", () => {
     expect(prompts.some((entry) => entry.key === "student.tutor.system")).toBe(true);
     expect(prompts.some((entry) => entry.key === "student.lessonQuiz.system")).toBe(true);
     expect(prompts.some((entry) => entry.key === "student.lessonGapAnalysis.system")).toBe(true);
+    expect(prompts.some((entry) => entry.key === "teacher.assist.user")).toBe(true);
+    expect(prompts.some((entry) => entry.key === "teacher.assignment-tutor.user")).toBe(true);
+    expect(prompts.some((entry) => entry.key === "teacher.classInsights.system")).toBe(true);
+    expect(prompts.some((entry) => entry.key === "teacher.classInsights.user")).toBe(true);
   });
 });

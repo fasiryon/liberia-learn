@@ -9,6 +9,53 @@ type DashboardData = {
   completionRateToday: number;
   assignmentsPendingGrading: number;
   labsPendingReview: number;
+  classPerformance: Array<{
+    classId: string;
+    className: string;
+    subject: string;
+    studentCount: number;
+    lessonCount: number;
+    lessonCompletionRate: number;
+    averageQuizScore: number | null;
+    lessonQuizPerformance: Array<{
+      lessonKey: string;
+      lessonTitle: string;
+      averageQuizScore: number;
+      attemptCount: number;
+    }>;
+    strugglingLesson: {
+      lessonKey: string;
+      lessonTitle: string;
+      averageQuizScore: number;
+      attemptCount: number;
+    } | null;
+    topStudents: Array<{
+      studentId: string;
+      userId: string;
+      name: string;
+      averageQuizScore: number;
+      attemptCount: number;
+      profileHref: string;
+    }>;
+    bottomStudents: Array<{
+      studentId: string;
+      userId: string;
+      name: string;
+      averageQuizScore: number;
+      attemptCount: number;
+      profileHref: string;
+    }>;
+    atRiskStudents: Array<{
+      studentId: string;
+      userId: string;
+      name: string;
+      classId: string;
+      className: string;
+      lastActivityAt: string | null;
+      daysSinceActivity: number;
+      profileHref: string;
+    }>;
+  }>;
   adaptiveStats: {
     studentsWithGaps: number;
     totalGapsDetected: number;
@@ -33,6 +80,21 @@ type DashboardData = {
 export default function TeacherDashboardPage() {
   const [data, setData] = useState<DashboardData | null>(null);
   const [loading, setLoading] = useState(true);
+  const [insightState, setInsightState] = useState<
+    Record<
+      string,
+      {
+        loading: boolean;
+        error: string | null;
+        result: null | {
+          recommendations: string[];
+          strugglingLesson: string;
+          reteachApproach: string;
+          hadFallback: boolean;
+        };
+      }
+    >
+  >({});
   const adaptiveEnabled = process.env.NEXT_PUBLIC_ENABLE_ADAPTIVE_ENGINE !== "false";
 
   useEffect(() => {
@@ -44,6 +106,39 @@ export default function TeacherDashboardPage() {
       .then((d) => setData(d))
       .finally(() => setLoading(false));
   }, []);
+
+  async function handleClassInsights(classId: string) {
+    setInsightState((current) => ({
+      ...current,
+      [classId]: { loading: true, error: null, result: current[classId]?.result ?? null },
+    }));
+
+    try {
+      const response = await fetch("/api/teacher/class-insights", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ classId }),
+      });
+      const payload = await response.json().catch(() => null);
+      if (!response.ok) {
+        throw new Error(payload?.error ?? "Failed to load class insights.");
+      }
+
+      setInsightState((current) => ({
+        ...current,
+        [classId]: { loading: false, error: null, result: payload },
+      }));
+    } catch (error: any) {
+      setInsightState((current) => ({
+        ...current,
+        [classId]: {
+          loading: false,
+          error: error?.message ?? "Failed to load class insights.",
+          result: current[classId]?.result ?? null,
+        },
+      }));
+    }
+  }
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-50 px-4 py-8">
@@ -131,6 +226,181 @@ export default function TeacherDashboardPage() {
                 </div>
               </section>
             )}
+
+            <section className="rounded-3xl border border-white/10 bg-slate-900/70 p-5">
+              <div className="flex flex-wrap items-start justify-between gap-3">
+                <div>
+                  <h2 className="text-base font-semibold text-slate-100">Class Performance Intelligence</h2>
+                  <p className="mt-1 text-sm text-slate-300">
+                    Lesson completion, lesson quiz performance, and students who have had no lesson or quiz activity for 7 or more days.
+                  </p>
+                </div>
+                <Link href="/teacher/weekly-report" className="text-xs text-emerald-300 hover:text-emerald-200">
+                  Open weekly report
+                </Link>
+              </div>
+
+              {(!data?.classPerformance || data.classPerformance.length === 0) ? (
+                <p className="mt-4 text-sm text-slate-500">No class performance data yet.</p>
+              ) : (
+                <div className="mt-4 space-y-4">
+                  {data.classPerformance.map((cls) => {
+                    const insights = insightState[cls.classId];
+                    return (
+                      <article key={cls.classId} className="rounded-3xl border border-slate-800 bg-slate-950/60 p-4 sm:p-5">
+                        <div className="flex flex-wrap items-start justify-between gap-3">
+                          <div>
+                            <h3 className="text-base font-semibold text-slate-100">{cls.className}</h3>
+                            <p className="mt-1 text-xs text-slate-400">
+                              {cls.subject.replace(/_/g, " ")} · {cls.studentCount} students · {cls.lessonCount} lessons
+                            </p>
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => handleClassInsights(cls.classId)}
+                            className="min-h-11 rounded-full border border-cyan-400/30 bg-cyan-400/10 px-4 py-2 text-xs font-semibold text-cyan-100 hover:border-cyan-300/50 hover:bg-cyan-400/15"
+                          >
+                            {insights?.loading ? "Loading insights..." : "AI Class Insights"}
+                          </button>
+                        </div>
+
+                        <div className="mt-4 grid gap-3 sm:grid-cols-3">
+                          <div className="rounded-2xl border border-white/10 bg-slate-900/70 p-4">
+                            <p className="text-xs text-slate-400">Lesson completion</p>
+                            <p className="mt-2 text-2xl font-semibold text-emerald-300">{cls.lessonCompletionRate}%</p>
+                          </div>
+                          <div className="rounded-2xl border border-white/10 bg-slate-900/70 p-4">
+                            <p className="text-xs text-slate-400">Average quiz score</p>
+                            <p className="mt-2 text-2xl font-semibold text-cyan-300">
+                              {cls.averageQuizScore == null ? "No data" : `${cls.averageQuizScore}%`}
+                            </p>
+                          </div>
+                          <div className="rounded-2xl border border-white/10 bg-slate-900/70 p-4">
+                            <p className="text-xs text-slate-400">At-risk students</p>
+                            <p className="mt-2 text-2xl font-semibold text-amber-300">{cls.atRiskStudents.length}</p>
+                          </div>
+                        </div>
+
+                        <div className="mt-4 grid gap-4 lg:grid-cols-2">
+                          <section className="rounded-2xl border border-white/10 bg-slate-900/70 p-4">
+                            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-400">Lesson quiz averages</p>
+                            {cls.lessonQuizPerformance.length === 0 ? (
+                              <p className="mt-3 text-sm text-slate-500">No lesson quizzes completed yet.</p>
+                            ) : (
+                              <div className="mt-3 space-y-3">
+                                {cls.lessonQuizPerformance.slice(0, 4).map((lesson) => (
+                                  <div key={lesson.lessonKey} className="rounded-2xl border border-slate-800 bg-slate-950/60 px-4 py-3">
+                                    <div className="flex items-center justify-between gap-3">
+                                      <p className="text-sm font-medium text-slate-100">{lesson.lessonTitle}</p>
+                                      <span className="text-sm font-semibold text-cyan-300">{lesson.averageQuizScore}%</span>
+                                    </div>
+                                    <p className="mt-1 text-xs text-slate-500">{lesson.attemptCount} quiz attempt(s)</p>
+                                  </div>
+                                ))}
+                              </div>
+                            )}
+                            {cls.strugglingLesson ? (
+                              <p className="mt-3 text-xs text-amber-300">
+                                Lowest-performing lesson: {cls.strugglingLesson.lessonTitle}
+                              </p>
+                            ) : null}
+                          </section>
+
+                          <section className="rounded-2xl border border-white/10 bg-slate-900/70 p-4">
+                            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-400">At-risk students</p>
+                            {cls.atRiskStudents.length === 0 ? (
+                              <p className="mt-3 text-sm text-slate-500">No students are currently past the 7-day inactivity mark.</p>
+                            ) : (
+                              <div className="mt-3 space-y-2">
+                                {cls.atRiskStudents.slice(0, 5).map((student) => (
+                                  <Link
+                                    key={student.studentId}
+                                    href={student.profileHref}
+                                    className="flex items-center justify-between rounded-2xl border border-slate-800 bg-slate-950/60 px-4 py-3 hover:border-amber-400/40"
+                                  >
+                                    <div>
+                                      <p className="text-sm font-medium text-slate-100">{student.name}</p>
+                                      <p className="mt-1 text-xs text-slate-500">
+                                        {student.lastActivityAt
+                                          ? `Last activity ${new Date(student.lastActivityAt).toLocaleDateString("en-LR")}`
+                                          : "No lesson or quiz activity yet"}
+                                      </p>
+                                    </div>
+                                    <span className="text-xs font-semibold text-amber-300">
+                                      {student.daysSinceActivity >= 999 ? "No activity" : `${student.daysSinceActivity} days`}
+                                    </span>
+                                  </Link>
+                                ))}
+                              </div>
+                            )}
+                          </section>
+                        </div>
+
+                        <div className="mt-4 grid gap-4 lg:grid-cols-2">
+                          <section className="rounded-2xl border border-white/10 bg-slate-900/70 p-4">
+                            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-400">Top 3 students</p>
+                            {cls.topStudents.length === 0 ? (
+                              <p className="mt-3 text-sm text-slate-500">No quiz ranking data yet.</p>
+                            ) : (
+                              <div className="mt-3 space-y-2">
+                                {cls.topStudents.map((student) => (
+                                  <Link key={student.studentId} href={student.profileHref} className="flex items-center justify-between rounded-2xl bg-slate-950/60 px-4 py-3 hover:border hover:border-emerald-400/30">
+                                    <span className="text-sm text-slate-100">{student.name}</span>
+                                    <span className="text-sm font-semibold text-emerald-300">{student.averageQuizScore}%</span>
+                                  </Link>
+                                ))}
+                              </div>
+                            )}
+                          </section>
+
+                          <section className="rounded-2xl border border-white/10 bg-slate-900/70 p-4">
+                            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-400">Bottom 3 students</p>
+                            {cls.bottomStudents.length === 0 ? (
+                              <p className="mt-3 text-sm text-slate-500">No quiz ranking data yet.</p>
+                            ) : (
+                              <div className="mt-3 space-y-2">
+                                {cls.bottomStudents.map((student) => (
+                                  <Link key={student.studentId} href={student.profileHref} className="flex items-center justify-between rounded-2xl bg-slate-950/60 px-4 py-3 hover:border hover:border-amber-400/30">
+                                    <span className="text-sm text-slate-100">{student.name}</span>
+                                    <span className="text-sm font-semibold text-amber-300">{student.averageQuizScore}%</span>
+                                  </Link>
+                                ))}
+                              </div>
+                            )}
+                          </section>
+                        </div>
+
+                        {insights?.error ? (
+                          <div className="mt-4 rounded-2xl border border-red-500/20 bg-red-500/10 px-4 py-3 text-sm text-red-200">
+                            {insights.error}
+                          </div>
+                        ) : null}
+
+                        {insights?.result ? (
+                          <section className="mt-4 rounded-2xl border border-cyan-500/20 bg-cyan-500/10 p-4">
+                            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-cyan-200">AI class insights</p>
+                            <div className="mt-3 space-y-2 text-sm text-slate-100">
+                              {insights.result.recommendations.map((recommendation, index) => (
+                                <p key={`${cls.classId}-insight-${index}`}>{index + 1}. {recommendation}</p>
+                              ))}
+                            </div>
+                            <p className="mt-3 text-sm text-slate-100">
+                              <span className="font-semibold text-cyan-100">Most difficult lesson:</span> {insights.result.strugglingLesson}
+                            </p>
+                            <p className="mt-2 text-sm text-slate-100">
+                              <span className="font-semibold text-cyan-100">Reteach approach:</span> {insights.result.reteachApproach}
+                            </p>
+                            {insights.result.hadFallback ? (
+                              <p className="mt-2 text-xs text-amber-300">Fallback guidance was used for this response.</p>
+                            ) : null}
+                          </section>
+                        ) : null}
+                      </article>
+                    );
+                  })}
+                </div>
+              )}
+            </section>
 
             {/* Quick actions */}
             <div className="grid grid-cols-2 gap-3 md:grid-cols-5">

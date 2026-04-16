@@ -9,6 +9,8 @@ type ClassSummary = {
   lessonCount: number;
   lessonCompletionRate: number;
   assignmentSubmissionRate: number;
+  averageQuizScore: number | null;
+  weakestLessonTitle: string | null;
   absencesThisWeek: number;
   atRiskStudentCount: number;
   enrolledStudentCount: number;
@@ -132,6 +134,21 @@ export default function TeacherWeeklyReportPage() {
                       <div>
                         <p className="text-xs text-slate-400 mb-1">Assignment Submission</p>
                         <RateBar value={cls.assignmentSubmissionRate} />
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-4 text-sm">
+                      <div className="rounded-2xl border border-slate-800 bg-slate-950/60 p-3">
+                        <p className="text-xs text-slate-400">Average quiz score</p>
+                        <p className="mt-2 text-lg font-semibold text-cyan-300">
+                          {cls.averageQuizScore == null ? "No data" : `${cls.averageQuizScore}%`}
+                        </p>
+                      </div>
+                      <div className="rounded-2xl border border-slate-800 bg-slate-950/60 p-3">
+                        <p className="text-xs text-slate-400">Hardest lesson</p>
+                        <p className="mt-2 text-sm font-medium text-slate-100">
+                          {cls.weakestLessonTitle ?? "No lesson quiz data"}
+                        </p>
                       </div>
                     </div>
 
