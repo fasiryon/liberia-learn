@@ -76,6 +76,7 @@ describe("auth helpers", () => {
       schoolId: "school-1",
       isPlatformAdmin: false,
       mustChangePIN: true,
+      school: { status: "ACTIVE" },
     } as any);
     mockCompare.mockResolvedValue(true as never);
 
@@ -96,6 +97,7 @@ describe("auth helpers", () => {
       hashedPwd: "hashed-pin",
       schoolId: "school-1",
       isPlatformAdmin: false,
+      school: { status: "ACTIVE" },
     } as any);
     mockCompare.mockResolvedValue(true as never);
 

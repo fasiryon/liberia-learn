@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { routedCompletion } from "@/lib/ai/router";
+import { buildPrompt } from "@/lib/ai/promptRegistry";
 import { isCurriculumOptimizationAiEnabled } from "@/lib/serverFlags";
 import type { NationalCurriculumSignals, WeakStrand } from "@/lib/reporting/curriculum/nationalCurriculumSignals";
 
@@ -56,20 +57,9 @@ function buildAiPrompt(signal: NationalCurriculumSignals): string {
     weakByGradeBand: signal.weakByGradeBand,
   };
 
-  return [
-    "You are an advisory-only curriculum analyst for a national education platform.",
-    "Return only valid JSON.",
-    "Do not include school-level, district-level, student, teacher, or person identifiers.",
-    "Do not produce rankings for public release.",
-    "Produce concise ministry-facing advisory language only.",
-    "Schema:",
-    "{",
-    '  "advisoryText": "string",',
-    '  "emphasisChanges": ["string"]',
-    "}",
-    "Input:",
-    JSON.stringify(payload),
-  ].join("\n");
+  return buildPrompt("curriculum.optimizer.user", {
+    payloadJson: JSON.stringify(payload),
+  });
 }
 
 async function getAiAugmentation(signal: NationalCurriculumSignals): Promise<{
@@ -80,7 +70,7 @@ async function getAiAugmentation(signal: NationalCurriculumSignals): Promise<{
   try {
     const aiResult = await routedCompletion({
       messages: [
-        { role: "system", content: "Return only valid JSON." },
+        { role: "system", content: buildPrompt("curriculum.optimizer.system") },
         { role: "user", content: buildAiPrompt(signal) },
       ],
       maxTokens: 500,

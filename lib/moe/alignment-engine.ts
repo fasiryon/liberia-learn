@@ -2,6 +2,7 @@
 import { prisma } from "@/lib/db";
 import type { $Enums } from "@prisma/client";
 import { routedCompletion } from "@/lib/ai/routedCompletion";
+import { buildPrompt } from "@/lib/ai/promptRegistry";
 import { logger } from "@/lib/logger";
 type GradeBand = $Enums.GradeBand;
 type Subject = $Enums.Subject;
@@ -149,12 +150,14 @@ export async function alignContentToMOE(
       messages: [
         {
           role: "system",
-          content:
-            'You match lesson content to curriculum standards. Return ONLY a JSON array of matching standard codes. Example: ["LR-MATH-G1_3-01","LR-MATH-G1_3-02"]',
+          content: buildPrompt("moe.alignment.system"),
         },
         {
           role: "user",
-          content: `Lesson text:\n${lessonText.slice(0, 1500)}\n\nCandidate standards:\n${candidateList}\n\nReturn the codes that match as a JSON array.`,
+          content: buildPrompt("moe.alignment.user", {
+            lessonText: lessonText.slice(0, 1500),
+            candidateList,
+          }),
         },
       ],
       maxTokens: 300,

@@ -4,6 +4,7 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/db";
 import { normalizeLoginId, normalizeCredentialPhone } from "@/lib/login-identifiers";
+import { checkRateLimit } from "@/lib/rateLimit";
 
 type RawCredentialInput = {
   email?: string;
@@ -72,6 +73,15 @@ async function findUserForCredentials(credentials: Record<string, string>) {
   });
 }
 
+function resolveCredentialIdentifier(credentials: Record<string, string>) {
+  const phone = credentials.phone ? normalizeCredentialPhone(credentials.phone) : null;
+  const studentId = credentials.studentId ? normalizeLoginId(credentials.studentId) : "";
+  const email = credentials.email?.trim().toLowerCase() ?? "";
+  return (phone ?? studentId ?? normalizeLoginId(email) ?? "missing")
+    .replace(/[^a-zA-Z0-9@._:+-]/g, "_")
+    .slice(0, 160);
+}
+
 export async function authorizeCredentials(rawCredentials?: RawCredentialInput | null) {
   const credentials = {
     email: rawCredentials?.email ?? "",
@@ -81,6 +91,13 @@ export async function authorizeCredentials(rawCredentials?: RawCredentialInput |
   };
 
   if (!credentials.password) return null;
+  const identifier = resolveCredentialIdentifier(credentials);
+  const identifierLimit = await checkRateLimit(`credentials:${identifier}`, {
+    namespace: "auth",
+    windowMs: 15 * 60 * 1000,
+    limit: 10,
+  });
+  if (!identifierLimit.allowed) return null;
 
   const user = await findUserForCredentials(credentials);
   if (!user?.hashedPwd) return null;
@@ -88,7 +105,7 @@ export async function authorizeCredentials(rawCredentials?: RawCredentialInput |
   const ok = await bcrypt.compare(credentials.password, user.hashedPwd);
   if (!ok) return null;
 
-  if (user.schoolId && !user.isPlatformAdmin && user.role === "ADMIN" && user.school?.status !== "ACTIVE") {
+  if (user.schoolId && !user.isPlatformAdmin && user.school?.status !== "ACTIVE") {
     return null;
   }
 
@@ -178,12 +195,28 @@ export async function getOptionalUser(): Promise<SessionUser | null> {
   };
 }
 
-async function assertSessionFresh(userId: string, sessionIat?: number | null) {
-  if (!sessionIat) return;
-  const record = await prisma.user.findUnique({ where: { id: userId }, select: { passwordChangedAt: true } });
-  if (!record?.passwordChangedAt) return;
+async function assertSessionFresh(user: SessionUser) {
+  const record = await prisma.user.findUnique({
+    where: { id: user.id },
+    select: {
+      passwordChangedAt: true,
+      schoolId: true,
+      isPlatformAdmin: true,
+      school: { select: { status: true } },
+    },
+  });
+
+  if (!record) {
+    throw Object.assign(new Error("Unauthorized"), { status: 401 });
+  }
+
+  if (record.schoolId && !record.isPlatformAdmin && record.school?.status !== "ACTIVE") {
+    throw Object.assign(new Error("School inactive"), { status: 403 });
+  }
+
+  if (!user.iat || !record.passwordChangedAt) return;
   const changedAtMs = record.passwordChangedAt.getTime();
-  if (sessionIat * 1000 < changedAtMs) {
+  if (user.iat * 1000 < changedAtMs) {
     throw Object.assign(new Error("Session expired"), { status: 401 });
   }
 }
@@ -191,7 +224,7 @@ async function assertSessionFresh(userId: string, sessionIat?: number | null) {
 export async function requireUser(): Promise<SessionUser> {
   const user = await getOptionalUser();
   if (!user) throw Object.assign(new Error("Unauthorized"), { status: 401 });
-  await assertSessionFresh(user.id, user.iat ?? null);
+  await assertSessionFresh(user);
   return user;
 }
 

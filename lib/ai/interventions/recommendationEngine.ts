@@ -3,6 +3,7 @@ import type { ImpactSnapshot } from "@prisma/client";
 import type { SchoolDashboardMetrics } from "@/lib/reporting/dashboard/dashboardAggregator";
 import type { TrendSeries } from "@/lib/reporting/trends/types";
 import { routedCompletion } from "@/lib/ai/routedCompletion";
+import { buildPrompt } from "@/lib/ai/promptRegistry";
 
 export type RecommendationResult = {
   interventionPriorityScore: number;
@@ -85,25 +86,9 @@ export function buildInterventionPrompt(params: {
     gradeBand: gradeBand ?? null,
   };
 
-  return [
-    "You are an advisory-only intervention assistant for a national K-12 platform.",
-    "Return ONLY valid JSON. No markdown, no explanations.",
-    "Do not include any student, teacher, or school identifiers.",
-    "Suggest additional recommendedActions only when justified by the metrics.",
-    "JSON schema:",
-    "{",
-    "  \"recommendedActions\": [",
-    "    {",
-    "      \"type\": \"curriculum|pacing|support|training|resource\",",
-    "      \"description\": \"string\",",
-    "      \"targetStrandKeys\": [\"string\"],",
-    "      \"urgency\": \"low|medium|high\"",
-    "    }",
-    "  ]",
-    "}",
-    "Metrics:",
-    JSON.stringify(promptPayload),
-  ].join("\n");
+  return buildPrompt("intervention.recommendation.user", {
+    payloadJson: JSON.stringify(promptPayload),
+  });
 }
 
 const AiResponseSchema = z.object({
@@ -132,7 +117,7 @@ async function tryAiEnhancement(params: {
 
   const completion = await routedCompletion({
     messages: [
-      { role: "system", content: "Return only valid JSON." },
+      { role: "system", content: buildPrompt("intervention.recommendation.system") },
       { role: "user", content: prompt },
     ],
     maxTokens: 500,

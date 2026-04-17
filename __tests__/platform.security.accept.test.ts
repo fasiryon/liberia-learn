@@ -5,7 +5,7 @@ import crypto from "crypto";
 
 const mockRequireUser = vi.hoisted(() => vi.fn());
 const mockIsMoePortalEnabled = vi.hoisted(() => vi.fn());
-const mockTokenFindUnique = vi.hoisted(() => vi.fn());
+const mockTokenFindFirst = vi.hoisted(() => vi.fn());
 const mockTransaction = vi.hoisted(() => vi.fn());
 const mockLogAudit = vi.hoisted(() => vi.fn());
 
@@ -14,7 +14,7 @@ vi.mock("@/lib/serverFlags", () => ({ isMoePortalEnabled: mockIsMoePortalEnabled
 vi.mock("@/lib/audit", () => ({ logAudit: mockLogAudit }));
 vi.mock("@/lib/db", () => ({
   prisma: {
-    platformTransferToken: { findUnique: mockTokenFindUnique },
+    platformTransferToken: { findFirst: mockTokenFindFirst },
     $transaction: mockTransaction,
   },
 }));
@@ -31,7 +31,7 @@ function makeRecord(overrides: Record<string, unknown> = {}) {
     createdBy: "sender-1",
     usedAt: null,
     expiresAt: new Date(Date.now() + 60 * 60 * 1000),
-    intendedUserId: null,
+    intendedUserId: "recipient-1",
     ...overrides,
   };
 }
@@ -48,7 +48,7 @@ beforeEach(() => {
   vi.clearAllMocks();
   mockIsMoePortalEnabled.mockReturnValue(true);
   mockRequireUser.mockResolvedValue({ id: "recipient-1" });
-  mockTokenFindUnique.mockResolvedValue(makeRecord());
+  mockTokenFindFirst.mockResolvedValue(makeRecord());
   mockTransaction.mockResolvedValue(undefined);
   mockLogAudit.mockResolvedValue(undefined);
 });
@@ -68,13 +68,13 @@ describe("POST /api/platform/security/accept", () => {
   });
 
   it("returns 404 when token is not in database", async () => {
-    mockTokenFindUnique.mockResolvedValueOnce(null);
+    mockTokenFindFirst.mockResolvedValueOnce(null);
     const res = await POST(makeReq({ token: VALID_TOKEN }));
     expect(res.status).toBe(404);
   });
 
   it("returns 400 when token has already been used", async () => {
-    mockTokenFindUnique.mockResolvedValueOnce(makeRecord({ usedAt: new Date() }));
+    mockTokenFindFirst.mockResolvedValueOnce(makeRecord({ usedAt: new Date() }));
     const res = await POST(makeReq({ token: VALID_TOKEN }));
     expect(res.status).toBe(400);
     const body = await res.json();
@@ -82,7 +82,7 @@ describe("POST /api/platform/security/accept", () => {
   });
 
   it("returns 400 when token is expired", async () => {
-    mockTokenFindUnique.mockResolvedValueOnce(
+    mockTokenFindFirst.mockResolvedValueOnce(
       makeRecord({ expiresAt: new Date(Date.now() - 1000) })
     );
     const res = await POST(makeReq({ token: VALID_TOKEN }));
@@ -92,7 +92,7 @@ describe("POST /api/platform/security/accept", () => {
   });
 
   it("returns 403 when token intendedUserId does not match requester", async () => {
-    mockTokenFindUnique.mockResolvedValueOnce(
+    mockTokenFindFirst.mockResolvedValueOnce(
       makeRecord({ intendedUserId: "different-user" })
     );
     const res = await POST(makeReq({ token: VALID_TOKEN }));
@@ -101,7 +101,15 @@ describe("POST /api/platform/security/accept", () => {
     expect(body.error).toMatch(/not issued to this user/i);
   });
 
-  it("promotes the user and returns ok on a valid token", async () => {
+  it("returns 403 when token has no intended recipient", async () => {
+    mockTokenFindFirst.mockResolvedValueOnce(makeRecord({ intendedUserId: null }));
+    const res = await POST(makeReq({ token: VALID_TOKEN }));
+    expect(res.status).toBe(403);
+    const body = await res.json();
+    expect(body.error).toMatch(/no intended recipient/i);
+  });
+
+  it("promotes the user and returns ok on a valid recipient-bound token", async () => {
     const res = await POST(makeReq({ token: VALID_TOKEN }));
     const body = await res.json();
     expect(res.status).toBe(200);
@@ -111,7 +119,7 @@ describe("POST /api/platform/security/accept", () => {
   });
 
   it("accepts token when intendedUserId matches requester", async () => {
-    mockTokenFindUnique.mockResolvedValueOnce(
+    mockTokenFindFirst.mockResolvedValueOnce(
       makeRecord({ intendedUserId: "recipient-1" })
     );
     const res = await POST(makeReq({ token: VALID_TOKEN }));

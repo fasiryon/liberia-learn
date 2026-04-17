@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { routedCompletion } from "@/lib/ai/router";
+import { buildPrompt } from "@/lib/ai/promptRegistry";
 
 const LabAnalysisSchema = z.object({
   suggestedScore: z.number().min(0).max(100),
@@ -34,25 +35,17 @@ export async function analyzeLabSession(params: {
     messages: [
       {
         role: "system",
-        content:
-          "You are an education assessment specialist reviewing a student lab submission from a Liberian school. Assess the observations and conclusions fairly and constructively. Return JSON only.",
+        content: buildPrompt("lab.analysis.system"),
       },
       {
         role: "user",
-        content: JSON.stringify({
-          lab: params.lab,
-          observations: params.observations,
-          conclusions: params.conclusions,
-          gradeLevel: params.gradeLevel,
-          outputSchema: {
-            suggestedScore: "number 0-100",
-            observationFeedback: "string",
-            conclusionFeedback: "string",
-            whatWentWell: ["string"],
-            areasToImprove: ["string"],
-            connectionToStandard: "string",
-            teacherNote: "string",
-          },
+        content: buildPrompt("lab.analysis.user", {
+          payloadJson: JSON.stringify({
+            lab: params.lab,
+            observations: params.observations,
+            conclusions: params.conclusions,
+            gradeLevel: params.gradeLevel,
+          }),
         }),
       },
     ],

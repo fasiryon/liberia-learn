@@ -10,6 +10,8 @@ const mockPrismaInstance = vi.hoisted(() => ({
   teacherProfile: { upsert: vi.fn() },
   studentGuardian: { upsert: vi.fn(), findFirst: vi.fn(), create: vi.fn() },
   class: { upsert: vi.fn() },
+  curriculumContent: { upsert: vi.fn() },
+  scheduledWork: { findFirst: vi.fn(), create: vi.fn() },
   enrollment: { findFirst: vi.fn(), create: vi.fn(), upsert: vi.fn() },
   placementTest: { findFirst: vi.fn(), create: vi.fn() },
   $disconnect: vi.fn(),
@@ -24,6 +26,8 @@ vi.mock("@prisma/client", () => ({
     teacherProfile = mockPrismaInstance.teacherProfile;
     studentGuardian = mockPrismaInstance.studentGuardian;
     class = mockPrismaInstance.class;
+    curriculumContent = mockPrismaInstance.curriculumContent;
+    scheduledWork = mockPrismaInstance.scheduledWork;
     enrollment = mockPrismaInstance.enrollment;
     placementTest = mockPrismaInstance.placementTest;
     $disconnect = mockPrismaInstance.$disconnect;
@@ -49,6 +53,9 @@ beforeEach(() => {
   mockPrismaInstance.studentGuardian.findFirst.mockResolvedValue(null);
   mockPrismaInstance.studentGuardian.create.mockResolvedValue({});
   mockPrismaInstance.class.upsert.mockResolvedValue({ id: "cha-class-grade9a" });
+  mockPrismaInstance.curriculumContent.upsert.mockResolvedValue({ id: "cha-demo-content" });
+  mockPrismaInstance.scheduledWork.findFirst.mockResolvedValue(null);
+  mockPrismaInstance.scheduledWork.create.mockResolvedValue({ id: "cha-scheduled-work" });
   mockPrismaInstance.enrollment.findFirst.mockResolvedValue(null);
   mockPrismaInstance.enrollment.create.mockResolvedValue({});
   mockPrismaInstance.enrollment.upsert.mockResolvedValue({});

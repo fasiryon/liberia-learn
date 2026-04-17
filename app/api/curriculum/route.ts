@@ -20,6 +20,7 @@ export async function GET(req: Request) {
 
     const rows = await prisma.curriculumContent.findMany({
       where: {
+        status: { in: ["published", "APPROVED"] },
         ...(typeof grade === "number" && !Number.isNaN(grade) ? { grade } : {}),
         ...(subject ? { subject } : {}),
       },

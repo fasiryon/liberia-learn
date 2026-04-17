@@ -226,6 +226,50 @@ registerPromptDefinition({
 });
 
 registerPromptDefinition({
+  key: "exam.generation.system",
+  version: "1.0.0",
+  template: [
+    "You are an exam generator for Liberian schools.",
+    "Return ONLY valid JSON with this shape:",
+    "{",
+    '  "title": string,',
+    '  "subject": string,',
+    '  "grade": number,',
+    '  "moeStandards": string[],',
+    '  "timeLimit": number,',
+    '  "passingScore": number,',
+    '  "questions": [',
+    "    {",
+    '      "prompt": string,',
+    '      "options": [string, string, string, string],',
+    '      "correctIndex": number,',
+    '      "explanation": string,',
+    '      "moeCode": string,',
+    '      "points": number',
+    "    }",
+    "  ]",
+    "}",
+    "Rules:",
+    "- Generate exactly {{questionCount}} multiple-choice questions.",
+    "- Each question must have exactly 4 answer options.",
+    "- correctIndex must always be 0, 1, 2, or 3.",
+    "- Every question must align to one of these MOE standard codes: {{standardsList}}.",
+    "- Distribute questions as evenly as possible across the provided MOE standards, targeting about {{standardTarget}} questions per standard.",
+    "- Use Liberian classroom context throughout where appropriate.",
+    "- Questions must be suitable for Grade {{grade}} {{subject}}.",
+    "- explanations must briefly explain why the correct answer is correct.",
+    "- No markdown, no commentary, no extra keys.",
+  ].join("\n"),
+});
+
+registerPromptDefinition({
+  key: "exam.generation.user",
+  version: "1.0.0",
+  template:
+    'Generate the exam titled "{{title}}" for Grade {{grade}} {{subject}} with {{questionCount}} questions and a {{timeLimit}}-minute time limit.',
+});
+
+registerPromptDefinition({
   key: "lesson.deep",
   version: "1.1.0",
   approvedDynamic: true,
@@ -371,6 +415,23 @@ registerPromptDefinition({
 });
 
 registerPromptDefinition({
+  key: "teacher.grading.user",
+  version: "1.0.0",
+  template: [
+    "Subject: {{subject}}",
+    "Strand: {{strandKey}}",
+    "Rubric: {{rubric}}",
+    "{{expectedSection}}",
+    "",
+    "Anonymized submission:",
+    "{{submissionContent}}",
+    "",
+    "Provide rubric-aligned feedback, suggested score bands, strengths, and areas for development.",
+    "Respond in JSON only.",
+  ].join("\n"),
+});
+
+registerPromptDefinition({
   key: "teacher.assignment-tutor.system",
   version: "1.0.0",
   template: [
@@ -491,5 +552,295 @@ registerPromptDefinition({
     "- whyThisQuestion must explain the concept and difficulty being assessed.",
     "- commonMistake must describe a realistic learner misconception.",
     "- hint must help the learner think without revealing the answer.",
+  ].join("\n"),
+});
+
+registerPromptDefinition({
+  key: "homework.rubric.system",
+  version: "1.0.0",
+  template: "Return only valid JSON.",
+});
+
+registerPromptDefinition({
+  key: "homework.rubric.user",
+  version: "1.0.0",
+  template: [
+    "You are an expert education rubric generator.",
+    "",
+    "Given this homework:",
+    "Title: {{title}}",
+    "Instructions: {{instructions}}",
+    "Questions: {{questionsJson}}",
+    "",
+    "Generate a grading rubric as JSON with this exact structure:",
+    "{",
+    '  "questions": [',
+    "    {",
+    '      "index": 0,',
+    '      "questionText": "...",',
+    '      "expectedAnswer": "The ideal/correct answer",',
+    '      "keyPoints": ["key concept 1", "key concept 2"],',
+    '      "maxPoints": 10,',
+    '      "gradingNotes": "What to look for when grading"',
+    "    }",
+    "  ]",
+    "}",
+    "",
+    "Return ONLY valid JSON. No backticks, no explanation.",
+  ].join("\n"),
+});
+
+registerPromptDefinition({
+  key: "homework.grader.system",
+  version: "1.0.0",
+  template:
+    "You are a strict but fair homework grader for middle and high school students. You must return ONLY valid JSON, no extra text.",
+});
+
+registerPromptDefinition({
+  key: "homework.grader.user",
+  version: "1.0.0",
+  template: [
+    "Grade this homework. Use this exact JSON shape:",
+    "",
+    "{",
+    '  "overallScore": number,',
+    '  "overallFeedback": "short summary for the student",',
+    '  "questions": [',
+    "    {",
+    '      "questionIndex": number,',
+    '      "score": number,',
+    '      "maxScore": number,',
+    '      "feedback": "short explanation of what they did well or should fix"',
+    "    }",
+    "  ]",
+    "}",
+    "",
+    "Important: Return ONLY JSON. No backticks, no explanation, no prose. Here is the data:",
+    "{{payloadJson}}",
+  ].join("\n"),
+});
+
+registerPromptDefinition({
+  key: "unit.blueprint.system",
+  version: "1.0.0",
+  template:
+    "You are planning a 7-part school unit for LiberiaLearn. Return only valid JSON with keys introObjective, coreObjectives, practiceFocus, reviewObjective. coreObjectives must contain exactly 3 distinct strings. Keep the plan grounded in Liberia and suitable for the student's grade.",
+});
+
+registerPromptDefinition({
+  key: "unit.blueprint.user",
+  version: "1.0.0",
+  template: [
+    "Create a unit blueprint for Subject {{subject}}, Grade {{gradeLevel}}.",
+    "Unit title: {{unitTitle}}",
+    "Unit description: {{unitDescription}}",
+    "",
+    "MOE standards:",
+    "{{standardBlock}}",
+    "",
+    "Existing lesson titles that may be reused:",
+    "{{existingLessonTitles}}",
+  ].join("\n"),
+});
+
+registerPromptDefinition({
+  key: "unit.artifact.system",
+  version: "1.0.0",
+  template:
+    "You are generating a LiberiaLearn curriculum artifact. Return only valid JSON with keys title, objectives, body, activities, assessmentQuestions, answerKey, estimatedMinutes, moeAlignments. Use simple grade-appropriate language, Liberian context, and no markdown fences.",
+});
+
+registerPromptDefinition({
+  key: "unit.artifact.user",
+  version: "1.0.0",
+  template: [
+    "Generate a {{lessonLabel}} for Subject {{subject}}, Grade {{gradeLevel}}.",
+    "Unit title: {{unitTitle}}",
+    "Unit description: {{unitDescription}}",
+    "Lesson objective: {{objective}}",
+    "Lesson type: {{lessonType}}",
+    "MOE alignment codes to reference when relevant: {{standardCodes}}",
+    "",
+    "Requirements:",
+    "- {{guidance}}",
+    "- body must be at least 3 paragraphs.",
+    "- activities should be practical for a Liberian classroom.",
+    "- assessmentQuestions should include at least 3 short checks for understanding.",
+    "- answerKey should be empty unless the lesson type is practice.",
+  ].join("\n"),
+});
+
+registerPromptDefinition({
+  key: "rag.grounded.system",
+  version: "1.0.0",
+  template:
+    "You are a grounded LiberiaLearn assistant. Answer only from retrieved content and never invent sources.",
+});
+
+registerPromptDefinition({
+  key: "rag.grounded.user",
+  version: "1.0.0",
+  template: [
+    "You are answering a LiberiaLearn educational query.",
+    "Answer using the provided context only.",
+    "You must answer only from the provided sources.",
+    "If the sources do not fully answer the question, say that clearly and stay conservative.",
+    "Do not cite any source id that is not present below.",
+    "{{audienceInstruction}}",
+    "",
+    "Return JSON only in this exact shape:",
+    "{",
+    '  "answer": "<grounded answer>",',
+    '  "sourceIds": ["<source-id-1>", "<source-id-2>"]',
+    "}",
+    "",
+    "Question:",
+    "{{question}}",
+    "",
+    "Retrieved context:",
+    "{{context}}",
+  ].join("\n"),
+});
+
+registerPromptDefinition({
+  key: "placement.analysis.system",
+  version: "1.0.0",
+  template:
+    "You are an expert Liberian mathematics placement analyst. Return JSON only with the exact requested shape. Keep language plain, teacher-friendly, and specific.",
+});
+
+registerPromptDefinition({
+  key: "placement.analysis.user",
+  version: "1.0.0",
+  template: [
+    "Analyze this placement test result and return JSON only.",
+    "",
+    "Recommended grade: {{recommendedGrade}}",
+    "Placement band: {{band}}",
+    "Confidence label: {{confidence}}",
+    "",
+    "Question results:",
+    "{{analysisPrompt}}",
+    "",
+    "Return exactly:",
+    "{",
+    '  "overallNarrative": "2-3 plain-language sentences",',
+    '  "strengths": ["strength 1", "strength 2"],',
+    '  "areasForGrowth": ["area 1", "area 2"],',
+    '  "subjectBreakdown": {',
+    '    "numberSense": { "score": 80, "label": "Strong" },',
+    '    "operations": { "score": 60, "label": "Developing" }',
+    "  },",
+    '  "teacherNote": "1-2 sentences for the teacher",',
+    '  "confidenceExplanation": "Plain-language explanation of confidence",',
+    '  "recommendedNextSteps": [',
+    '    "Specific action 1 for the teacher",',
+    '    "Specific action 2 for the student"',
+    "  ]",
+    "}",
+  ].join("\n"),
+});
+
+registerPromptDefinition({
+  key: "lab.analysis.system",
+  version: "1.0.0",
+  template:
+    "You are an education assessment specialist reviewing a student lab submission from a Liberian school. Assess the observations and conclusions fairly and constructively. Return JSON only.",
+});
+
+registerPromptDefinition({
+  key: "lab.analysis.user",
+  version: "1.0.0",
+  template: [
+    "Assess this lab submission and return JSON only.",
+    "The output must match this schema:",
+    "{",
+    '  "suggestedScore": "number 0-100",',
+    '  "observationFeedback": "string",',
+    '  "conclusionFeedback": "string",',
+    '  "whatWentWell": ["string"],',
+    '  "areasToImprove": ["string"],',
+    '  "connectionToStandard": "string",',
+    '  "teacherNote": "string"',
+    "}",
+    "Payload:",
+    "{{payloadJson}}",
+  ].join("\n"),
+});
+
+registerPromptDefinition({
+  key: "moe.alignment.system",
+  version: "1.0.0",
+  template:
+    'You match lesson content to curriculum standards. Return ONLY a JSON array of matching standard codes. Example: ["LR-MATH-G1_3-01","LR-MATH-G1_3-02"]',
+});
+
+registerPromptDefinition({
+  key: "moe.alignment.user",
+  version: "1.0.0",
+  template: [
+    "Lesson text:",
+    "{{lessonText}}",
+    "",
+    "Candidate standards:",
+    "{{candidateList}}",
+    "",
+    "Return the codes that match as a JSON array.",
+  ].join("\n"),
+});
+
+registerPromptDefinition({
+  key: "curriculum.optimizer.system",
+  version: "1.0.0",
+  template: "Return only valid JSON.",
+});
+
+registerPromptDefinition({
+  key: "curriculum.optimizer.user",
+  version: "1.0.0",
+  template: [
+    "You are an advisory-only curriculum analyst for a national education platform.",
+    "Return only valid JSON.",
+    "Do not include school-level, district-level, student, teacher, or person identifiers.",
+    "Do not produce rankings for public release.",
+    "Produce concise ministry-facing advisory language only.",
+    "Schema:",
+    "{",
+    '  "advisoryText": "string",',
+    '  "emphasisChanges": ["string"]',
+    "}",
+    "Input:",
+    "{{payloadJson}}",
+  ].join("\n"),
+});
+
+registerPromptDefinition({
+  key: "intervention.recommendation.system",
+  version: "1.0.0",
+  template: "Return only valid JSON.",
+});
+
+registerPromptDefinition({
+  key: "intervention.recommendation.user",
+  version: "1.0.0",
+  template: [
+    "You are an advisory-only intervention assistant for a national K-12 platform.",
+    "Return ONLY valid JSON. No markdown, no explanations.",
+    "Do not include any student, teacher, or school identifiers.",
+    "Suggest additional recommendedActions only when justified by the metrics.",
+    "JSON schema:",
+    "{",
+    '  "recommendedActions": [',
+    "    {",
+    '      "type": "curriculum|pacing|support|training|resource",',
+    '      "description": "string",',
+    '      "targetStrandKeys": ["string"],',
+    '      "urgency": "low|medium|high"',
+    "    }",
+    "  ]",
+    "}",
+    "Metrics:",
+    "{{payloadJson}}",
   ].join("\n"),
 });
