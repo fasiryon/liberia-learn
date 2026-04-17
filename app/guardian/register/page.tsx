@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/db";
 import { findInviteByToken } from "@/lib/inviteTokens";
+import Link from "next/link";
 import RegisterForm from "./RegisterForm";
 
 export const dynamic = "force-dynamic";
@@ -42,7 +43,13 @@ export default async function GuardianRegisterPage({ searchParams }: PageProps) 
         <p className="mt-3 text-lg leading-7 text-slate-700">
           You have been invited to monitor {student.user.name ?? "your child"} at {school.name}.
         </p>
-        <p className="mt-2 text-base leading-7 text-slate-600">Use your phone number and a simple PIN to sign in.</p>
+        <p className="mt-2 text-base leading-7 text-slate-600">
+          Use your phone number and a simple PIN to sign in. Review the{" "}
+          <Link href="/legal/data-for-minors" className="font-semibold text-emerald-700 hover:text-emerald-800">
+            Data Policy for Minors
+          </Link>{" "}
+          for guardian data rights.
+        </p>
         <div className="mt-6">
           <RegisterForm token={tokenValue} defaultName={guardian.name ?? ""} phone={guardian.guardianPhoneE164} />
         </div>

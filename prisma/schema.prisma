@@ -1064,6 +1064,7 @@ model DataPolicyAcceptance {
   policyVersion String
   source        String?
   locale        String?
+  ipAddress     String?
   metadata      Json?
   acceptedAt    DateTime @default(now())
   createdAt     DateTime @default(now())

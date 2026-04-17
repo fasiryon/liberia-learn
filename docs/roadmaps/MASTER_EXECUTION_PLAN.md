@@ -24,7 +24,7 @@ This plan governs the final 22-sprint closeout of LiberiaLearn from the validate
 | 16C | Student and Guardian Self-Registration | PENDING | NOT RUN | NO | |
 | 16D | Email Deliverability Verification and Configuration | PENDING | NOT RUN | NO | |
 | 16E | Load and Stress Test Validation | PENDING | NOT RUN | NO | |
-| 16F | Legal and Compliance Pages | PENDING | NOT RUN | NO | |
+| 16F | Legal and Compliance Pages | COMPLETE | PASS | YES | Privacy, terms, minors data policy, contact page, consent acceptance flow, portal footers, and public cookie notice completed. |
 
 ## How execution works
 

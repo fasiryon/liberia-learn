@@ -80,6 +80,10 @@ export default function GuardianRegistrationPage() {
           <h1 className="mt-2 text-3xl font-bold">Create a guardian account</h1>
           <p className="mt-2 text-sm text-slate-300">
             You need your child&apos;s school code and their exact full name and date of birth as registered.
+            Guardian data rights and deletion requests are explained in the{" "}
+            <Link href="/legal/data-for-minors" className="text-emerald-300 hover:underline">
+              Data Policy for Minors
+            </Link>.
           </p>
 
           <form onSubmit={submit} className="mt-6 grid gap-4 sm:grid-cols-2">

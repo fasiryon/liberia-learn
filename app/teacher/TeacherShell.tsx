@@ -4,6 +4,7 @@ import { useState } from "react";
 import { signOut } from "next-auth/react";
 import { GuidedOnboarding } from "@/components/GuidedOnboarding";
 import { AccessibilityToggle } from "@/components/AccessibilityToggle";
+import { LegalFooter } from "@/components/LegalFooter";
 import { TeacherWelcomeGate } from "@/app/teacher/TeacherWelcomeGate";
 import { safeLogout } from "@/lib/safe-logout";
 
@@ -46,6 +47,7 @@ export function TeacherShell({
         </button>
       </div>
       {children}
+      <LegalFooter />
 
       {/* ── Floating toolbar (bottom-right) ─────────────────────────── */}
       {(ONBOARDING_ENABLED || A11Y_ENABLED) && (

@@ -7,28 +7,40 @@ Live execution tracking for the final closeout program.
 22-sprint final platform closeout
 
 ## Current sprint or phase
-Sprint 16D COMPLETE. Email deliverability verification and configuration implemented. 1805 tests passing.
+Sprint 16F COMPLETE. Legal and compliance pages implemented. All supplemental sprints are complete.
 
 ## Current branch
-main
+feat/legal-compliance
 
 ## Worktree status
-Sprint 16D files validated and ready to commit. Pre-existing untracked worktree files remain unstaged and are not part of Sprint 16D.
+Sprint 16F files validated and ready to commit. Pre-existing untracked worktree files remain unstaged and are not part of Sprint 16F.
 
 ## Overall status
-Sprints 1-16 + 16B + 16C + 16D + 16E complete. Self-registration, email deliverability, OWASP hardening, and load testing all complete. 1805 tests pass.
+Sprints 1-16 + 16B + 16C + 16D + 16E + 16F complete. Legal/compliance pages, first-login policy consent, role portal footer links, public cookie notice, self-registration, email deliverability, OWASP hardening, and load testing are all complete.
 
 ## Last completed phase
-Sprint 16D - Email Deliverability Verification and Configuration
+Sprint 16F - Legal and Compliance Pages
 
 ## Last commit reference
-feat: sprint 16D complete - email deliverability verification
+Pending Sprint 16F commit: `feat: sprint 16F complete - legal and compliance pages`
 
-## Last successful validation (Sprint 16D)
+## Last successful validation (Sprint 16F)
 - `npx prisma generate`: PASS
 - `npx tsc --noEmit`: PASS (0 errors)
-- `npm test`: PASS (1805 tests, 249 files)
+- `npm test`: PASS (1820 tests, 250 files)
 - `npm run build`: PASS
+
+## Sprint 16F Deliverables
+| Feature | Route / File | Notes |
+|---------|--------------|-------|
+| Privacy Policy | `/legal/privacy` | Full policy content, effective April 2026, LiberiaLearn / Republic of Liberia governing entity |
+| Terms of Service | `/legal/terms` | Full terms content, K-12 education purpose, acceptable use, governing law |
+| Data Handling for Minors | `/legal/data-for-minors` | Guardian rights, no advertising/profiling, contact path for data concerns |
+| Contact page | `/contact` | Data requests, school enrollment questions, and technical support contacts |
+| Consent acceptance | `components/ConsentGate.tsx`, `/api/legal/accept-policy` | Non-dismissible first-login modal for current policy version `2026-04` |
+| Policy acceptance storage | `DataPolicyAcceptance`, `ConsentRecord` | Stores user, version, timestamp, source, and request IP address |
+| Portal legal footer | all role portal shells/layouts | Links to privacy, terms, minors data policy, and contact |
+| Cookie notice | public pages only | One-time localStorage dismissal; session cookies only, no tracking or advertising cookies |
 
 ## Sprint 16B Security Findings
 | ID | Severity | File | Fix |
@@ -39,7 +51,7 @@ feat: sprint 16D complete - email deliverability verification
 | FINDING-4 | HIGH | next.config.js | Added Content-Security-Policy header |
 | FINDING-5 | HIGH | app/api/moe/export/district/[district]/route.ts | Added rate limiting (30/hr per user) |
 | FINDING-6 | MEDIUM | app/api/admin/governance/exports/ (6 routes) | Documented; protected by role checks |
-| FINDING-7 | MEDIUM | Student performance national export | Documented; platform-admin flag protected |
+| FINDING-7 | MEDIUM | Student performance national export | Documented; platform-admin-only export management |
 | FINDING-8 | PASS | app/verify/[certificateCode] | First name + course + date only; crypto.randomBytes codes |
 | FINDING-9 | PASS | app/api/moe/dashboard | Aggregate only; cohort suppression n<5; no PII drilldown |
 
@@ -82,13 +94,14 @@ Required before national scale sign-off: Vercel Pro upgrade + seed load-test use
 | School code on dashboard | /teacher/dashboard | Prominent display + copy-to-clipboard + shareable link |
 
 ## Phase status
-- Sprints 1-16 + 16B + 16C + 16D + 16E complete
-- Test baseline: 1805 passing tests (249 files)
+- Sprints 1-16 + 16B + 16C + 16D + 16E + 16F complete
+- Test baseline: 1820 passing tests (250 files)
 - Security: OWASP-hardened
 - Self-registration: Live at /register/student and /register/guardian
 - Email deliverability: Verified and configured through central sendEmail() path
 - Load tested: 100-VU baseline PASS; national scale requires Vercel Pro
-- System sign-off: SYSTEM-COMPLETE + SECURITY-HARDENED + LOAD-VALIDATED + SELF-REGISTRATION + EMAIL-VERIFIED
+- Legal/compliance: Privacy, terms, minors data, contact, consent acceptance, footers, and cookie notice complete
+- System sign-off: SYSTEM-COMPLETE + SECURITY-HARDENED + LOAD-VALIDATED + SELF-REGISTRATION + EMAIL-VERIFIED + LEGAL-COMPLETE
 
 ## Sprint history (all on main target)
 
@@ -104,14 +117,15 @@ Required before national scale sign-off: Vercel Pro upgrade + seed load-test use
 | 16 | Final System Audit + Sign-Off | 811d8a2 | 1787 |
 | 16B | OWASP Security Hardening Audit | 79a21a1 | 1787 |
 | 16C | Student and Guardian Self-Registration | 9d2bf40 | 1805 |
-| 16D | Email Deliverability Verification and Configuration | Sprint 16D commit | 1805 |
+| 16D | Email Deliverability Verification | ce8ec48 | 1805 |
 | 16E | Load Test Validation | a0f50ae | 1787 |
+| 16F | Legal and Compliance Pages | Pending Sprint 16F commit | 1820 |
 
-## Untracked files (pending future sprint inspection only)
+## Untracked files (not part of Sprint 16F)
 - `.git-temp-sprint2/`
 - `e2e/`
 - `playwright.config.ts`
 - `prisma/migrations/20260416_100000_curriculum_version/`
 
 ## Exact next step
-Commit Sprint 16D email deliverability verification, push to main, and confirm all four GitHub Actions workflows are green on main.
+Commit Sprint 16F legal and compliance pages, push to main, and confirm all four GitHub Actions workflows are green on main.

@@ -1,12 +1,5 @@
-import { ComingSoonPage } from "@/components/ComingSoonPage";
-
-export const metadata = { title: "Terms of Service — LiberiaLearn" };
+import { redirect } from "next/navigation";
 
 export default function TermsPage() {
-  return (
-    <ComingSoonPage
-      title="Terms of Service"
-      description="The LiberiaLearn Terms of Service are being prepared for publication. They will be available here before the national pilot launch."
-    />
-  );
+  redirect("/legal/terms");
 }

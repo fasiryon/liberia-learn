@@ -15,6 +15,14 @@ const PUBLIC_PATHS = [
   "/reset-password",
   "/api/auth/forgot-password",
   "/api/auth/reset-password",
+  "/pilot-preview",
+  "/legal",
+  "/privacy",
+  "/terms",
+  "/data-policy",
+  "/contact",
+  "/register",
+  "/guardian/register",
 ];
 
 function isPublicPath(pathname: string) {

@@ -14,6 +14,7 @@
 import { FormEvent, useState } from "react";
 import { signIn, signOut, getSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import { PublicFooter } from "@/components/PublicFooter";
 
 const MOE_RESTRICTED_ERROR = "This portal is restricted to Ministry officials.";
 
@@ -59,10 +60,11 @@ export default function MoeLoginClient() {
   };
 
   return (
-    <main className="flex min-h-screen items-center justify-center bg-[#020d1f] px-4 py-8">
+    <main className="flex min-h-screen flex-col bg-[#020d1f]">
       {/* Deep navy radial background — distinct from school portal's emerald gradient */}
       <div className="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_top,_#1e3a5f33,_transparent_60%),radial-gradient(ellipse_at_bottom,_#0f2d5533,_transparent_60%)]" />
 
+      <div className="flex flex-1 items-center justify-center px-4 py-8">
       <div className="w-full max-w-md space-y-8 rounded-2xl border border-blue-800/30 bg-[#0a1e3d]/80 p-8 shadow-2xl shadow-blue-950/60 backdrop-blur">
 
         {/* Ministry branding header */}
@@ -148,6 +150,8 @@ export default function MoeLoginClient() {
           Contact your administrator if you do not have access.
         </div>
       </div>
+      </div>
+      <PublicFooter />
     </main>
   );
 }

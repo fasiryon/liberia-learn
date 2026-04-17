@@ -1,6 +1,7 @@
 import SyncManager from "./SyncManager";
 import OfflineBanner from "./OfflineBanner";
 import GlobalAssistantMount from "@/components/rag/GlobalAssistantMount";
+import { LegalFooter } from "@/components/LegalFooter";
 import { getOptionalUser } from "@/lib/auth";
 
 export default async function StudentLayout({
@@ -15,6 +16,7 @@ export default async function StudentLayout({
     <>
       <OfflineBanner />
       {children}
+      <LegalFooter />
       <GlobalAssistantMount positionClassName="bottom-40 right-4" />
       <SyncManager isPlatformAdmin={isPlatformAdmin} />
     </>
