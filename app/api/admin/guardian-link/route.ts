@@ -167,7 +167,7 @@ export async function POST(req: Request) {
       studentName: student.user.name ?? "your student",
       schoolName: school?.name ?? "LiberiaLearn",
       inviteUrl,
-    });
+    }).catch(() => null);
 
     void logAudit({
       userId: user.id,

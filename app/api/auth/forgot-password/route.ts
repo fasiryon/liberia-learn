@@ -83,7 +83,7 @@ export async function POST(req: Request) {
       to: user.email,
       name: user.name ?? undefined,
       resetUrl,
-    });
+    }).catch(() => null);
 
     await logAudit({
       userId: user.id,

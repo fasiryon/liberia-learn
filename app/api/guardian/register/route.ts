@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import { z } from "zod";
 import { prisma } from "@/lib/db";
+import { sendGuardianWelcome } from "@/lib/email";
 import { findInviteByToken } from "@/lib/inviteTokens";
 import { isValidPin } from "@/lib/login-identifiers";
 
@@ -114,6 +115,19 @@ export async function POST(req: Request) {
 
       await tx.inviteToken.update({ where: { id: invite.id }, data: { usedAt: new Date() } });
     });
+
+    if (invite.email && !invite.email.endsWith("@guardian.local")) {
+      const school = await prisma.school.findUnique({
+        where: { id: invite.schoolId },
+        select: { name: true },
+      }).catch(() => null);
+      await sendGuardianWelcome({
+        to: invite.email,
+        guardianName: fullName.trim(),
+        schoolName: school?.name ?? "LiberiaLearn",
+        dashboardUrl: `${process.env.NEXTAUTH_URL ?? "https://liberia-learn.vercel.app"}/guardian/dashboard`,
+      }).catch(() => null);
+    }
 
     return NextResponse.json({ ok: true, redirectTo: "/login?message=Account%20created.%20Log%20in%20with%20your%20phone%20and%20PIN." });
   } catch (err: any) {

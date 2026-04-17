@@ -81,7 +81,7 @@ export async function POST(req: Request) {
             name: parsed.name,
             schoolName,
             inviteUrl,
-          });
+          }).catch((error: any) => ({ ok: false, error: error?.message ?? "email_failed" }));
           break;
         case "GUARDIAN":
           result = await sendGuardianInvite({
@@ -90,7 +90,7 @@ export async function POST(req: Request) {
             studentName: "your student",
             schoolName,
             inviteUrl,
-          });
+          }).catch((error: any) => ({ ok: false, error: error?.message ?? "email_failed" }));
           break;
         default:
           result = await sendTeacherInvite({
@@ -98,7 +98,7 @@ export async function POST(req: Request) {
             name: parsed.name,
             schoolName,
             inviteUrl,
-          });
+          }).catch((error: any) => ({ ok: false, error: error?.message ?? "email_failed" }));
       }
       emailSent = result.ok;
     }
