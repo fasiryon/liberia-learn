@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { Card, StatCard } from "@/components/ui/Card";
+import { DashboardTopBar } from "@/components/DashboardTopBar";
 
 type DashboardData = {
   schools: number;
@@ -204,24 +205,51 @@ export default function MoeDashboardPage() {
 
   return (
     <main className="min-h-screen bg-slate-950 text-slate-50">
-      <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8 space-y-6">
+        {/* Consistent top bar */}
+        <DashboardTopBar
+          roleLabel="Ministry Official"
+          roleBadgeBg="bg-blue-800"
+          roleAccent="text-blue-200"
+          subtitle="National Overview — LiberiaLearn"
+        />
+
+        {/* Greeting */}
+        <div>
+          <h1 className="text-2xl font-bold">Good morning. National overview.</h1>
+          <p className="mt-1 text-sm text-slate-400">
+            Aggregated indicators across all districts. No student-level data.
+          </p>
+        </div>
+
         <div className="relative overflow-hidden rounded-3xl border border-slate-800 bg-slate-950/90 px-6 py-8 shadow-2xl shadow-slate-950/30 sm:px-8">
           <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_left,_rgba(16,185,129,0.14),_transparent_32%),radial-gradient(circle_at_top_right,_rgba(59,130,246,0.12),_transparent_26%)]" />
 
           <div className="relative space-y-8">
-            <div className="flex flex-col gap-3">
-              <p className="text-[11px] font-medium uppercase tracking-[0.28em] text-emerald-300">
-                National Overview
-              </p>
-              <div className="space-y-2">
-                <h1 className="text-3xl font-semibold tracking-tight text-slate-50 sm:text-4xl">
-                  LiberiaLearn National Dashboard
-                </h1>
-                <p className="max-w-3xl text-sm text-slate-400 sm:text-base">
-                  Aggregated indicators across all districts, aligned to the same
-                  operational patterns used across the platform. No student-level data.
-                </p>
-              </div>
+            {/* Primary Actions */}
+            <div className="grid gap-3 sm:grid-cols-3">
+              <Link
+                href="/moe/districts"
+                className="flex flex-col gap-1 rounded-2xl border border-blue-500/30 bg-blue-500/10 p-4 hover:bg-blue-500/20"
+              >
+                <p className="text-sm font-bold text-blue-200">County breakdown</p>
+                <p className="text-xs text-slate-400">View all district performance</p>
+              </Link>
+              <button
+                onClick={handleExport}
+                disabled={exporting}
+                className="flex flex-col gap-1 rounded-2xl border border-white/10 bg-slate-900/70 p-4 text-left hover:border-blue-500/30 disabled:opacity-60"
+              >
+                <p className="text-sm font-bold text-slate-100">Generate report</p>
+                <p className="text-xs text-slate-400">{exporting ? "Exporting..." : "Export compliance CSV"}</p>
+              </button>
+              <Link
+                href="/moe/audit"
+                className="flex flex-col gap-1 rounded-2xl border border-white/10 bg-slate-900/70 p-4 hover:border-blue-500/30"
+              >
+                <p className="text-sm font-bold text-slate-100">View audit log</p>
+                <p className="text-xs text-slate-400">National audit trail</p>
+              </Link>
             </div>
 
             {error && (

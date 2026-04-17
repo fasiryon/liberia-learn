@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { teacherWelcomeStorageKey } from "@/app/teacher/TeacherWelcomeGate";
+import { DashboardTopBar } from "@/components/DashboardTopBar";
 
 type DashboardData = {
   scheduledToday: number;
@@ -153,11 +154,21 @@ export default function TeacherDashboardPage() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-50 px-4 py-8">
+    <div className="min-h-screen bg-slate-950 text-slate-50 px-4 py-6">
       <div className="mx-auto max-w-4xl space-y-6">
+        {/* Consistent top bar */}
+        <DashboardTopBar
+          roleLabel="Teacher"
+          roleBadgeBg="bg-blue-500"
+          roleAccent="text-blue-300"
+          userName={data?.schoolName ?? undefined}
+          subtitle={data?.schoolCode ? `Code: ${data.schoolCode}` : undefined}
+        />
+
+        {/* Greeting */}
         <div>
-          <h1 className="text-2xl font-bold">Teacher Dashboard</h1>
-          <p className="mt-1 text-sm text-slate-300">
+          <h1 className="text-2xl font-bold">Good morning.</h1>
+          <p className="mt-1 text-sm text-slate-400">
             {new Date().toLocaleDateString("en-LR", { weekday: "long", month: "long", day: "numeric" })}
           </p>
         </div>
@@ -172,6 +183,42 @@ export default function TeacherDashboardPage() {
                 {data.classesWithoutLesson.length} class(es) have no lesson scheduled for today: {data.classesWithoutLesson.join(", ")}
               </div>
             )}
+
+            {/* KPI cards */}
+            <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
+              <div className="rounded-2xl border border-white/10 bg-slate-900/70 p-4 text-center">
+                <p className="text-2xl font-bold text-blue-400">{data?.scheduledToday || 0}</p>
+                <p className="text-xs text-slate-400">Lessons today</p>
+              </div>
+              <div className="rounded-2xl border border-white/10 bg-slate-900/70 p-4 text-center">
+                <p className="text-2xl font-bold text-emerald-400">{data?.completionRateToday || 0}%</p>
+                <p className="text-xs text-slate-400">Completion rate</p>
+              </div>
+              <div className="rounded-2xl border border-white/10 bg-slate-900/70 p-4 text-center">
+                <p className="text-2xl font-bold text-amber-400">{data?.assignmentsPendingGrading || 0}</p>
+                <p className="text-xs text-slate-400">Pending grading</p>
+              </div>
+              <div className="rounded-2xl border border-white/10 bg-slate-900/70 p-4 text-center">
+                <p className="text-2xl font-bold text-cyan-400">{data?.labsPendingReview || 0}</p>
+                <p className="text-xs text-slate-400">Labs to review</p>
+              </div>
+            </div>
+
+            {/* Primary Actions — above fold */}
+            <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
+              <Link href="/teacher/students" className="flex flex-col gap-1 rounded-2xl border border-blue-500/30 bg-blue-500/10 p-4 hover:bg-blue-500/20">
+                <p className="text-sm font-bold text-blue-300">View my classes</p>
+              </Link>
+              <Link href="/teacher/assignments" className="flex flex-col gap-1 rounded-2xl border border-white/10 bg-slate-900/70 p-4 hover:border-blue-500/30">
+                <p className="text-sm font-bold text-slate-100">Grade assignments</p>
+              </Link>
+              <Link href="/teacher/schedule" className="flex flex-col gap-1 rounded-2xl border border-white/10 bg-slate-900/70 p-4 hover:border-blue-500/30">
+                <p className="text-sm font-bold text-slate-100">Lesson planner</p>
+              </Link>
+              <Link href="/teacher/weekly-report" className="flex flex-col gap-1 rounded-2xl border border-white/10 bg-slate-900/70 p-4 hover:border-blue-500/30">
+                <p className="text-sm font-bold text-slate-100">Weekly report</p>
+              </Link>
+            </div>
 
             {/* School registration code */}
             {data?.schoolCode && (
@@ -202,25 +249,6 @@ export default function TeacherDashboardPage() {
               </section>
             )}
 
-            {/* Stats */}
-            <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
-              <div className="rounded-2xl border border-white/10 bg-slate-900/70 p-4 text-center">
-                <p className="text-2xl font-bold text-emerald-400">{data?.scheduledToday || 0}</p>
-                <p className="text-xs text-slate-400">Lessons scheduled today</p>
-              </div>
-              <div className="rounded-2xl border border-white/10 bg-slate-900/70 p-4 text-center">
-                <p className="text-2xl font-bold text-violet-400">{data?.completionRateToday || 0}%</p>
-                <p className="text-xs text-slate-400">Completion rate today</p>
-              </div>
-              <div className="rounded-2xl border border-white/10 bg-slate-900/70 p-4 text-center">
-                <p className="text-2xl font-bold text-amber-400">{data?.assignmentsPendingGrading || 0}</p>
-                <p className="text-xs text-slate-400">Assignments pending grading</p>
-              </div>
-              <div className="rounded-2xl border border-white/10 bg-slate-900/70 p-4 text-center">
-                <p className="text-2xl font-bold text-cyan-400">{data?.labsPendingReview || 0}</p>
-                <p className="text-xs text-slate-400">Labs pending review</p>
-              </div>
-            </div>
 
             {adaptiveEnabled && (
               <section className="rounded-3xl border border-amber-400/20 bg-gradient-to-br from-amber-500/10 to-slate-900/80 p-5">
@@ -443,30 +471,6 @@ export default function TeacherDashboardPage() {
               )}
             </section>
 
-            {/* Quick actions */}
-            <div className="grid grid-cols-2 gap-3 md:grid-cols-5">
-              <Link href="/teacher/create-lesson" className="ll-touch-target rounded-2xl border border-white/10 bg-slate-900/70 p-4 text-center hover:border-emerald-500/30">
-                <p className="text-sm font-semibold text-emerald-400">Create with AI</p>
-              </Link>
-              <Link href="/teacher/students" className="ll-touch-target rounded-2xl border border-white/10 bg-slate-900/70 p-4 text-center hover:border-emerald-500/30">
-                <p className="text-sm font-semibold text-violet-400">View Students</p>
-              </Link>
-              <Link href="/teacher/attendance" className="ll-touch-target rounded-2xl border border-white/10 bg-slate-900/70 p-4 text-center hover:border-emerald-500/30">
-                <p className="text-sm font-semibold text-emerald-300">Take Attendance</p>
-              </Link>
-              <Link href="/teacher/schedule" className="ll-touch-target rounded-2xl border border-white/10 bg-slate-900/70 p-4 text-center hover:border-emerald-500/30">
-                <p className="text-sm font-semibold text-amber-400">Schedule Work</p>
-              </Link>
-              <Link href="/teacher/curriculum" className="ll-touch-target rounded-2xl border border-white/10 bg-slate-900/70 p-4 text-center hover:border-emerald-500/30">
-                <p className="text-sm font-semibold text-sky-400">Curriculum</p>
-              </Link>
-              <Link href="/teacher/labs" className="ll-touch-target rounded-2xl border border-white/10 bg-slate-900/70 p-4 text-center hover:border-emerald-500/30">
-                <p className="text-sm font-semibold text-cyan-400">Review Labs</p>
-              </Link>
-              <Link href="/teacher/assignments" className="ll-touch-target rounded-2xl border border-white/10 bg-slate-900/70 p-4 text-center hover:border-emerald-500/30">
-                <p className="text-sm font-semibold text-amber-300">Grade Assignments</p>
-              </Link>
-            </div>
 
             <section className="rounded-2xl border border-white/10 bg-slate-900/70 p-5">
               <div className="mb-3 flex items-center justify-between gap-3">

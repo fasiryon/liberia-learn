@@ -4,45 +4,12 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { AttachDemoSchoolButton } from "./AttachDemoSchoolButton";
-import { AdminNav } from "@/components/admin/AdminNav";
+import { DashboardTopBar } from "@/components/DashboardTopBar";
 
 export const dynamic = "force-dynamic";
 
 const TRAINING_ENABLED = process.env.NEXT_PUBLIC_ENABLE_TRAINING_CENTER === "true";
 
-const BASE_NAV_LINKS = [
-  { label: "Curriculum / AI Factory", href: "/admin/curriculum" },
-  { label: "Curriculum Units", href: "/admin/curriculum/units" },
-  { label: "Homework", href: "/admin/homework" },
-  { label: "Analytics", href: "/admin/analytics" },
-  { label: "AI Costs", href: "/admin/ai-costs" },
-  { label: "Guardian Links", href: "/admin/guardian-link" },
-  { label: "Classes", href: "/admin/classes" },
-  { label: "Students", href: "/admin/students" },
-  { label: "Academic Years", href: "/admin/academic-year" },
-  { label: "Enrollments", href: "/admin/enrollment" },
-  { label: "Exams", href: "/admin/exams" },
-  { label: "Teachers", href: "/admin/teachers" },
-  { label: "School Operations", href: "/admin/school" },
-  { label: "Bulk Student Import", href: "/admin/students/import" },
-  { label: "School Branding", href: "/admin/school-branding" },
-  { label: "School Settings", href: "/admin/school-settings" },
-  { label: "Reports", href: "/admin/reports" },
-  { label: "Notifications", href: "/admin/notifications" },
-  { label: "Pilot Score", href: "/admin/pilot-score" },
-  { label: "Onboarding", href: "/admin/onboarding" },
-  { label: "Audit Log", href: "/admin/audit" },
-  { label: "Compliance", href: "/admin/compliance" },
-  { label: "Data Downloads", href: "/admin/governance/exports" },
-  { label: "Seed Demo Data", href: "/admin/seed" },
-  { label: "Schools", href: "/admin/schools" },
-  { label: "Pending Schools", href: "/admin/schools/pending" },
-];
-
-// Training Adoption link only appears when ENABLE_TRAINING_CENTER is true
-const NAV_LINKS = TRAINING_ENABLED
-  ? [...BASE_NAV_LINKS, { label: "Training Adoption", href: "/admin/training/adoption" }]
-  : BASE_NAV_LINKS;
 
 export default async function AdminConsolePage() {
   const session = await getServerSession(authOptions);
@@ -65,10 +32,14 @@ export default async function AdminConsolePage() {
     return (
       <main className="min-h-screen bg-slate-950 text-slate-50">
         <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_top,_#3b82f622,_transparent_60%)]" />
-        <div className="mx-auto max-w-2xl px-4 py-12 text-center space-y-6">
-          <p className="text-xs uppercase tracking-wide text-emerald-300">
-            LIBERIALEARN - ADMIN
-          </p>
+        <div className="mx-auto max-w-2xl px-4 py-6 space-y-6">
+          <DashboardTopBar
+            roleLabel="Admin"
+            roleBadgeBg="bg-amber-400"
+            roleAccent="text-amber-300"
+            userName={user.name ?? user.email ?? undefined}
+          />
+          <div className="text-center space-y-6">
           <h1 className="text-2xl font-bold">No School Assigned</h1>
           <p className="text-sm text-slate-400">
             Your admin account ({user.email}) does not have a school attached yet.
@@ -85,20 +56,11 @@ export default async function AdminConsolePage() {
             </Link>
           </div>
 
-          {/* Still show nav links even without schoolId */}
-          <div className="pt-6 border-t border-slate-800">
-            <p className="text-xs text-slate-500 mb-3">Or navigate directly:</p>
-            <div className="flex flex-wrap justify-center gap-2">
-              {NAV_LINKS.map((l) => (
-                <Link
-                  key={l.href}
-                  href={l.href}
-                  className="rounded-full border border-slate-700 px-3 py-1.5 text-xs text-slate-300 hover:text-slate-50 hover:border-slate-500"
-                >
-                  {l.label}
-                </Link>
-              ))}
-            </div>
+          <div className="pt-6 border-t border-slate-800 flex flex-wrap justify-center gap-2">
+            <Link href="/admin/students" className="rounded-xl border border-slate-700 px-4 py-2 text-xs text-slate-300 hover:text-slate-50 hover:border-slate-500">Students</Link>
+            <Link href="/admin/curriculum" className="rounded-xl border border-slate-700 px-4 py-2 text-xs text-slate-300 hover:text-slate-50 hover:border-slate-500">Curriculum</Link>
+            <Link href="/admin/analytics" className="rounded-xl border border-slate-700 px-4 py-2 text-xs text-slate-300 hover:text-slate-50 hover:border-slate-500">Analytics</Link>
+          </div>
           </div>
         </div>
       </main>
@@ -329,72 +291,97 @@ export default async function AdminConsolePage() {
     { label: "School Attendance Rate (30d)", value: `${attendanceRate30d}%`, color: "text-purple-300" },
   ];
 
-  const actions = [
-    { label: "Curriculum / AI Factory", href: "/admin/curriculum", bg: "bg-emerald-500" },
-    { label: "Curriculum Units", href: "/admin/curriculum/units", bg: "bg-teal-500" },
-    { label: "Seed Demo Data", href: "/admin/seed", bg: "bg-blue-500" },
-    { label: "Homework", href: "/admin/homework", bg: "bg-purple-500" },
-    { label: "AI Costs", href: "/admin/ai-costs", bg: "bg-teal-500" },
-    { label: "Guardian Links", href: "/admin/guardian-link", bg: "bg-amber-500" },
-    { label: "Analytics", href: "/admin/analytics", bg: "bg-cyan-500" },
-    { label: "Classes", href: "/admin/classes", bg: "bg-rose-500" },
-    { label: "Students", href: "/admin/students", bg: "bg-emerald-600" },
-    { label: "Academic Years", href: "/admin/academic-year", bg: "bg-indigo-500" },
-    { label: "Enrollments", href: "/admin/enrollment", bg: "bg-fuchsia-500" },
-    { label: "Exams", href: "/admin/exams", bg: "bg-emerald-500" },
-    { label: "Timetable", href: "/admin/timetable", bg: "bg-cyan-500" },
-    { label: "Teacher Assignments", href: "/admin/assignments", bg: "bg-lime-500" },
-    { label: "Teachers", href: "/admin/teachers", bg: "bg-sky-500" },
-    { label: "School Branding", href: "/admin/school-branding", bg: "bg-pink-500" },
-    { label: "School Settings", href: "/admin/school-settings", bg: "bg-indigo-500" },
-    ...(TRAINING_ENABLED
-      ? [{ label: "Training Adoption", href: "/admin/training/adoption", bg: "bg-teal-500" }]
-      : []),
-    { label: "Compliance", href: "/admin/compliance", bg: "bg-orange-500" },
-    { label: "Data Downloads", href: "/admin/governance/exports", bg: "bg-fuchsia-600" },
+  const navGroups = [
+    {
+      label: "School Operations",
+      accent: "text-amber-300",
+      border: "border-amber-500/20",
+      links: [
+        { label: "Students", href: "/admin/students" },
+        { label: "Teachers", href: "/admin/teachers" },
+        { label: "Classes", href: "/admin/classes" },
+        { label: "Enrollments", href: "/admin/enrollment" },
+        { label: "Teacher Assignments", href: "/admin/assignments" },
+        { label: "Academic Years", href: "/admin/academic-year" },
+        { label: "Timetable", href: "/admin/timetable" },
+        { label: "Placements", href: "/admin/placements" },
+        { label: "Bulk Student Import", href: "/admin/students/import" },
+      ],
+    },
+    {
+      label: "Curriculum",
+      accent: "text-emerald-300",
+      border: "border-emerald-500/20",
+      links: [
+        { label: "Curriculum / AI Factory", href: "/admin/curriculum" },
+        { label: "Curriculum Units", href: "/admin/curriculum/units" },
+        { label: "Homework", href: "/admin/homework" },
+        { label: "Exams", href: "/admin/exams" },
+      ],
+    },
+    {
+      label: "Communications",
+      accent: "text-cyan-300",
+      border: "border-cyan-500/20",
+      links: [
+        { label: "Notifications", href: "/admin/notifications" },
+        { label: "Guardian Links", href: "/admin/guardian-link" },
+        { label: "Onboarding", href: "/admin/onboarding" },
+      ],
+    },
+    {
+      label: "Analytics & Compliance",
+      accent: "text-purple-300",
+      border: "border-purple-500/20",
+      links: [
+        { label: "Analytics", href: "/admin/analytics" },
+        { label: "AI Costs", href: "/admin/ai-costs" },
+        { label: "Reports", href: "/admin/reports" },
+        { label: "Audit Log", href: "/admin/audit" },
+        { label: "Compliance", href: "/admin/compliance" },
+        { label: "Data Downloads", href: "/admin/governance/exports" },
+        { label: "Pilot Score", href: "/admin/pilot-score" },
+        ...(TRAINING_ENABLED ? [{ label: "Training Adoption", href: "/admin/training/adoption" }] : []),
+      ],
+    },
+    {
+      label: "Settings",
+      accent: "text-slate-300",
+      border: "border-slate-600/30",
+      links: [
+        { label: "School Branding", href: "/admin/school-branding" },
+        { label: "School Settings", href: "/admin/school-settings" },
+        { label: "Schools", href: "/admin/schools" },
+        { label: "Seed Demo Data", href: "/admin/seed" },
+      ],
+    },
   ];
 
   return (
     <main className="min-h-screen bg-slate-950 text-slate-50">
       <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_top,_#3b82f622,_transparent_60%)]" />
 
-      <div className="mx-auto max-w-6xl px-4 py-6">
-        {/* Header */}
-        <header className="mb-6 flex items-center justify-between gap-4">
-          <div>
-            <p className="text-xs uppercase tracking-wide text-emerald-300 mb-1">
-              LIBERIALEARN - ADMIN
-            </p>
-            <h1 className="text-2xl md:text-3xl font-bold">
-              Admin Console{" "}
-              <span className="text-slate-400 font-normal">
-                &mdash; {schoolName}
-              </span>
-            </h1>
-          </div>
-          <div className="flex items-center gap-3">
-            <Link
-              href="/"
-              className="rounded-full border border-slate-700 px-4 py-2 text-xs md:text-sm hover:bg-slate-900"
-            >
-              Home
-            </Link>
-            <form action="/api/auth/signout" method="post">
-              <button
-                type="submit"
-                className="rounded-full bg-red-500 px-4 py-2 text-xs md:text-sm font-semibold text-slate-950 hover:bg-red-400"
-              >
-                Log out
-              </button>
-            </form>
-          </div>
-        </header>
+      <div className="mx-auto max-w-6xl px-4 py-6 space-y-6">
+        {/* Consistent top bar */}
+        <DashboardTopBar
+          roleLabel="Admin"
+          roleBadgeBg="bg-amber-400"
+          roleAccent="text-amber-300"
+          userName={user.name ?? user.email ?? undefined}
+          subtitle={schoolName}
+        />
+
+        {/* Greeting */}
+        <div>
+          <h1 className="text-2xl font-bold">Good morning. Here&apos;s your school today.</h1>
+          <p className="mt-1 text-sm text-slate-400">{schoolName}</p>
+        </div>
 
         {/* Onboarding banner */}
         {onboardingIncomplete && (
           <Link
             href="/admin/onboarding"
-            className="mb-4 flex items-center gap-3 rounded-2xl border border-amber-500/30 bg-amber-500/10 p-4 hover:bg-amber-500/20 transition-colors"
+            className="flex items-center gap-3 rounded-2xl border border-amber-500/30 bg-amber-500/10 p-4 hover:bg-amber-500/20 transition-colors"
           >
             <span className="text-2xl">&#9888;</span>
             <div>
@@ -406,10 +393,8 @@ export default async function AdminConsolePage() {
           </Link>
         )}
 
-        <AdminNav />
-
-        {/* Stats cards */}
-        <section className="mb-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        {/* KPI cards */}
+        <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {stats.map((s) => (
             <div
               key={s.label}
@@ -421,7 +406,29 @@ export default async function AdminConsolePage() {
           ))}
         </section>
 
-        <section className="mb-8 rounded-2xl border border-slate-800 bg-slate-900/80 p-5">
+        {/* Grouped navigation sections */}
+        <section className="space-y-4">
+          {navGroups.map((group) => (
+            <div key={group.label} className={`rounded-2xl border ${group.border} bg-slate-900/70 p-4`}>
+              <p className={`mb-3 text-xs font-bold uppercase tracking-[0.2em] ${group.accent}`}>
+                {group.label}
+              </p>
+              <div className="flex flex-wrap gap-2">
+                {group.links.map((link) => (
+                  <Link
+                    key={link.href}
+                    href={link.href}
+                    className="rounded-xl border border-slate-700 bg-slate-950/60 px-4 py-2 text-sm font-medium text-slate-200 hover:border-slate-500 hover:bg-slate-800 hover:text-slate-50"
+                  >
+                    {link.label}
+                  </Link>
+                ))}
+              </div>
+            </div>
+          ))}
+        </section>
+
+        <section className="rounded-2xl border border-slate-800 bg-slate-900/80 p-5">
           <div className="mb-4 flex items-center justify-between gap-3">
             <h2 className="text-lg font-semibold">Class Performance</h2>
             <span className="text-xs text-slate-500">{classPerformance.length} classes</span>
@@ -458,7 +465,7 @@ export default async function AdminConsolePage() {
           )}
         </section>
 
-        <section className="mb-8 grid gap-4 lg:grid-cols-[1.2fr,0.8fr]">
+        <section className="grid gap-4 lg:grid-cols-[1.2fr,0.8fr]">
           <div className="rounded-2xl border border-slate-800 bg-slate-900/80 p-5">
             <div className="mb-4 flex items-center justify-between gap-3">
               <div>
@@ -519,26 +526,6 @@ export default async function AdminConsolePage() {
           </div>
         </section>
 
-        {/* Quick actions */}
-        <section>
-          <h2 className="text-lg font-semibold mb-4">Quick Actions</h2>
-          <div className="grid grid-cols-2 gap-3 xl:grid-cols-4">
-            {actions.map((a) => (
-              <Link
-                key={a.href}
-                href={a.href}
-                className="flex min-h-[120px] flex-col items-start justify-between rounded-2xl border border-slate-800 bg-slate-900/80 p-4 transition-colors hover:bg-slate-800/80"
-              >
-                <div
-                  className={`flex h-12 w-12 items-center justify-center rounded-2xl ${a.bg} text-sm font-bold text-slate-950`}
-                >
-                  {a.label[0]}
-                </div>
-                <span className="text-sm font-semibold leading-snug">{a.label}</span>
-              </Link>
-            ))}
-          </div>
-        </section>
       </div>
     </main>
   );
