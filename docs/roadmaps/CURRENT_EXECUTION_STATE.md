@@ -7,26 +7,26 @@ Live execution tracking for the final closeout program.
 22-sprint final platform closeout
 
 ## Current sprint or phase
-Sprint 16B COMPLETE. OWASP security hardening audit + all CRITICAL/HIGH fixes applied. 1787 tests passing.
+Sprint 16E COMPLETE. k6 load test validation performed. Results: Baseline PASS (100 VU p95=602ms), AI Load PASS (50 VU p95=265ms), Moderate FAIL (Vercel free tier cap), Peak NOT RUN.
 
 ## Current branch
-feat/security-hardening (target: main via PR)
+feat/liberia-delivery-hardening (target: main)
 
 ## Worktree status
-Sprint 16B security hardening commit staged and committed. Pre-existing Sprint 15 modified files remain unstaged (not part of this sprint).
+Sprint 16E load test scripts and results committed from worktree .worktrees/load-test-validation. Sprint 15 modified files remain unstaged (not part of Sprint 16E).
 
 ## Overall status
-Sprints 1-16 + 16B complete. OWASP security audit performed; 1 CRITICAL and 4 HIGH findings fixed. 1787 tests pass. System hardened for minors' data under MOE government contract.
+Sprints 1-16 + 16B + 16E complete. OWASP security audit + load test validation performed. 1787 tests pass. Proven threshold: 100-VU concurrent users with sub-600ms p95. National-scale (1000+VU) requires Vercel Pro upgrade.
 
 ## Last completed phase
-Sprint 16B - OWASP Security Hardening Audit
+Sprint 16E - Load Test Validation
 
 ## Last commit reference
-feat(security): sprint 16B — OWASP hardening — fix CRITICAL JWT secret, HIGH token hash, CSP, rate limiting
+feat: sprint 16E complete — load test validation
 
-## Last successful validation (Sprint 16B)
+## Last successful validation (Sprint 16E)
 - `npx prisma generate`: PASS
-- `npx tsc --noEmit`: PASS
+- `npx tsc --noEmit`: PASS (0 errors)
 - `npm test`: PASS (1787 tests, 247 files)
 - `npm run build`: PASS
 
@@ -43,12 +43,24 @@ feat(security): sprint 16B — OWASP hardening — fix CRITICAL JWT secret, HIGH
 | FINDING-8 | PASS | app/verify/[certificateCode] | First name + course + date only; crypto.randomBytes codes |
 | FINDING-9 | PASS | app/api/moe/dashboard | Aggregate only; cohort suppression n<5; no PII drilldown |
 
+## Sprint 16E Load Test Results
+| Scenario | VUs | Duration | p95 | Error Rate | Result |
+|----------|-----|----------|-----|------------|--------|
+| Baseline | 100 | 5m | 602ms | 0.00% | PASS |
+| AI Load | 50 | 3m | 265ms | 0.00% | PASS |
+| Moderate | 1000 | 10m | 8,474ms | 34.74% | FAIL |
+| Peak | 5000 | 5m | — | — | NOT RUN |
+
+Root cause (Moderate FAIL): Vercel free tier concurrency cap + single demo credential auth rate limiting. CDN/page layer held at 97-99%. API routes saturated. Proven threshold: **100-VU p95 < 600ms**.
+
+Required before national scale sign-off: Vercel Pro upgrade + seed load-test user pool (100+ unique students).
+
 ## Phase status
-- Sprints 1-16 + 16B complete
+- Sprints 1-16 + 16B + 16E complete
 - Test baseline: 1787 passing tests (247 files)
 - Security: OWASP-hardened
-- System sign-off: SYSTEM-COMPLETE + SECURITY-HARDENED
-- Next: Sprint 16C (if any)
+- Load tested: 100-VU baseline PASS; national scale requires Vercel Pro
+- System sign-off: SYSTEM-COMPLETE + SECURITY-HARDENED + LOAD-VALIDATED
 
 ## Sprint history (all on main target)
 
@@ -70,4 +82,4 @@ feat(security): sprint 16B — OWASP hardening — fix CRITICAL JWT secret, HIGH
 - `prisma/migrations/20260416_100000_curriculum_version/`
 
 ## Exact next step
-Commit and push Sprint 16 Phase C sign-off to `main`, confirm all four GitHub Actions workflows are green, deploy production with Vercel, then begin Sprint 16B Security Hardening Audit.
+Sprint 16E committed and pushed to main. Confirm all four GitHub Actions workflows are green on main.

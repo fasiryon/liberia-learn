@@ -1,6 +1,6 @@
 ﻿// prisma/seeds/cha-demo.ts
 // CHA High Academy demo accounts for MOE pilot demonstrations.
-// Idempotent â€” safe to re-run. Uses upsert everywhere.
+// Idempotent â€" safe to re-run. Uses upsert everywhere.
 // Accounts match the official demo handout exactly.
 
 import { PrismaClient } from "@prisma/client";
@@ -22,7 +22,7 @@ export async function seedChaDemo() {
     bcrypt.hash(MOE_PASS, 10),
   ]);
 
-  // â”€â”€ School â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // â"€â"€ School â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
   const school = await prisma.school.upsert({
     where: { code: "CHA" },
     create: {
@@ -34,7 +34,7 @@ export async function seedChaDemo() {
     update: {},
   });
 
-  // â”€â”€ Admin â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // â"€â"€ Admin â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
   const admin = await prisma.user.upsert({
     where: { email: "admin@cha.edu.lr" },
     create: {
@@ -48,7 +48,7 @@ export async function seedChaDemo() {
     update: { hashedPwd: demoHash },
   });
 
-  // â”€â”€ Teacher â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // â"€â"€ Teacher â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
   const teacher = await prisma.user.upsert({
     where: { email: "teacher1@cha.edu.lr" },
     create: {
@@ -82,15 +82,15 @@ export async function seedChaDemo() {
     },
     update: {},
   }).catch(() => {
-    // Profile may already exist â€” skip
+    // Profile may already exist â€" skip
   });
 
-  // â”€â”€ Class â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // â"€â"€ Class â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
   const cls = await prisma.class.upsert({
     where: { id: CHA_CLASS_ID },
     create: {
       id: CHA_CLASS_ID,
-      name: "Grade 9A â€” Mathematics",
+      name: "Grade 9A - Mathematics",
       subject: "MATH",
       schoolId: school.id,
       teacherId: teacher.id,
@@ -98,7 +98,7 @@ export async function seedChaDemo() {
     update: { teacherId: teacher.id },
   });
 
-  // â”€â”€ Student â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // â"€â"€ Student â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
   const studentUser = await prisma.user.upsert({
     where: { email: "student1@cha.edu.lr" },
     create: {
@@ -158,7 +158,7 @@ export async function seedChaDemo() {
     });
   }
 
-  // â”€â”€ Guardian â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // â"€â"€ Guardian â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
   const guardian = await prisma.user.upsert({
     where: { email: "guardian1@cha.family.lr" },
     create: {
@@ -188,7 +188,56 @@ export async function seedChaDemo() {
     });
   }
 
-  // â”€â”€ MOE Official â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── Demo CurriculumContent + ScheduledWork for /student/today ─────────────
+  const DEMO_CONTENT_ID = "cha-demo-math-lesson-001";
+
+  await prisma.curriculumContent.upsert({
+    where: { contentId: DEMO_CONTENT_ID },
+    create: {
+      contentId: DEMO_CONTENT_ID,
+      title: "Algebra Lesson: Quadratic Equations",
+      grade: 9,
+      subject: "MATH",
+      contentType: "lesson",
+      status: "published",
+      version: "1.0",
+      payload: {
+        title: "Algebra Lesson: Quadratic Equations",
+        topic: "Quadratic Equations",
+        durationMins: 45,
+        body: "In this lesson we explore quadratic equations of the form ax^2 + bx + c = 0 and solve them by factoring.\n\n## Key Concepts\n- Standard form of a quadratic equation\n- Factoring method\n- Zero-product property\n\n## Example\nSolve x^2 - 5x + 6 = 0\nFactor: (x - 2)(x - 3) = 0\nSolutions: x = 2 or x = 3",
+        objectives: [
+          "Identify quadratic equations in standard form",
+          "Solve quadratic equations by factoring",
+        ],
+      },
+      teacherCreated: false,
+    },
+    update: {},
+  });
+
+  // Today's scheduled work — idempotent (check by classId + contentId + date)
+  const todayUTC = new Date();
+  todayUTC.setUTCHours(0, 0, 0, 0);
+  const existingTodayWork = await prisma.scheduledWork.findFirst({
+    where: { classId: CHA_CLASS_ID, contentId: DEMO_CONTENT_ID, scheduledDate: todayUTC },
+  });
+  if (!existingTodayWork) {
+    await prisma.scheduledWork.create({
+      data: {
+        contentId: DEMO_CONTENT_ID,
+        classId: CHA_CLASS_ID,
+        scheduledDate: todayUTC,
+        createdById: teacher.id,
+        periodNumber: 1,
+        startTime: "08:00",
+        endTime: "08:45",
+        status: "confirmed",
+      },
+    });
+  }
+
+  // â"€â"€ MOE Official â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
   await prisma.user.upsert({
     where: { email: "official1@moe.gov.lr" },
     create: {

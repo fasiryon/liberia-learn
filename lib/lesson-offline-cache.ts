@@ -18,7 +18,7 @@
  *  - isLessonCached() — quick existence check
  */
 
-import { cachePack, getCachedPack, invalidatePack, getCacheStats, getMetadata } from "@/lib/offline-cache";
+import { cachePack, getCachedPack, invalidatePack, getMetadata } from "@/lib/offline-cache";
 
 const LESSON_SCOPE = "lesson";
 
@@ -128,8 +128,10 @@ export async function getCachedLessonCount(): Promise<number> {
  */
 export async function getCachedLessonBytes(): Promise<number> {
   try {
-    const stats = await getCacheStats();
-    return stats.cacheBytes;
+    const metas = await getMetadata();
+    return metas
+      .filter((m) => m.scope === LESSON_SCOPE)
+      .reduce((total, meta) => total + meta.sizeBytes, 0);
   } catch {
     return 0;
   }

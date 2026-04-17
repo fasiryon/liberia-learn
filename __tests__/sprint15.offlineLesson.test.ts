@@ -24,10 +24,12 @@ import {
   listCachedLessons,
   removeCachedLesson,
   getCachedLessonCount,
+  getCachedLessonBytes,
   isLessonCached,
   isCacheAtCapacity,
   MAX_CACHED_LESSONS,
 } from "@/lib/lesson-offline-cache";
+import { cachePack } from "@/lib/offline-cache";
 
 describe("lesson offline cache — Sprint 15 extensions", () => {
   beforeEach(() => {
@@ -57,6 +59,23 @@ describe("lesson offline cache — Sprint 15 extensions", () => {
     await cacheLessonContent("l1", { metadata: null, payload: null });
     await cacheLessonContent("l2", { metadata: null, payload: null });
     expect(await getCachedLessonCount()).toBe(2);
+  });
+
+  it("getCachedLessonBytes returns only lesson-scoped cache bytes", async () => {
+    await cacheLessonContent("l1", { metadata: null, payload: { title: "One" } });
+    await cacheLessonContent("l2", { metadata: null, payload: { title: "Two" } });
+    await cachePack("quiz", "q1", "1", { largeOtherScopePayload: "x".repeat(5000) });
+
+    const metas = await import("@/lib/offline-cache").then((mod) => mod.getMetadata());
+    const expectedLessonBytes = metas
+      .filter((meta) => meta.scope === "lesson")
+      .reduce((total, meta) => total + meta.sizeBytes, 0);
+    const otherScopeBytes = metas
+      .filter((meta) => meta.scope !== "lesson")
+      .reduce((total, meta) => total + meta.sizeBytes, 0);
+
+    expect(otherScopeBytes).toBeGreaterThan(0);
+    expect(await getCachedLessonBytes()).toBe(expectedLessonBytes);
   });
 
   it("removeCachedLesson removes the entry", async () => {

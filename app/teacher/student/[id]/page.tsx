@@ -14,6 +14,7 @@ type AppSession = {
     role?: "STUDENT" | "TEACHER" | "ADMIN" | string;
     email?: string | null;
     name?: string | null;
+    schoolId?: string | null;
   };
 };
 
@@ -31,9 +32,19 @@ export default async function TeacherStudentProfilePage({ params }: PageProps) {
   const teacherId = session.user.id as string;
   const studentId = params.id;
 
-  // Load student + related data
-  const student = await prisma.student.findUnique({
-    where: { id: studentId },
+  // Load only students enrolled in classes assigned to this teacher.
+  const student = await prisma.student.findFirst({
+    where: {
+      id: studentId,
+      enrollments: {
+        some: {
+          Class: {
+            teacherId,
+            schoolId: session.user.schoolId ?? undefined,
+          },
+        },
+      },
+    },
     include: {
       user: true,
       enrollments: {
@@ -86,7 +97,7 @@ export default async function TeacherStudentProfilePage({ params }: PageProps) {
 
   if (!teachesStudent) {
     // For now just let them in – if you want, you can enforce:
-    // redirect("/teacher");
+    redirect("/teacher");
   }
 
   const studentName = student.user?.name ?? "Student";

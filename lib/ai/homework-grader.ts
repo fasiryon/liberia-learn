@@ -1,7 +1,10 @@
 // lib/ai/homework-grader.ts
 import { prisma } from "@/lib/db";
 import { routedCompletion } from "@/lib/ai/routedCompletion";
+import { buildPrompt, getPromptMetadata } from "@/lib/ai/promptRegistry";
 const AGENT_ID = "homework-grader";
+const graderSystemPrompt = getPromptMetadata("homework.grader.system");
+const graderUserPrompt = getPromptMetadata("homework.grader.user");
 
 
 export type QuestionFeedback = {
@@ -144,33 +147,27 @@ const started = Date.now();try {
         messages: [
           {
             role: "system",
-            content:
-              "You are a strict but fair homework grader for middle and high school students. You must return ONLY valid JSON, no extra text.",
+            content: buildPrompt("homework.grader.system"),
           },
           {
             role: "user",
-            content: [
-              "Grade this homework. Use this exact JSON shape:",
-              "",
-              `{
-  "overallScore": number,          // 0-100
-  "overallFeedback": string,       // short summary for the student
-  "questions": [
-    {
-      "questionIndex": number,     // index of the question in the array
-      "score": number,             // score for this question (0-1 or 0-10 is fine)
-      "maxScore": number,          // max score for this question
-      "feedback": string           // short explanation of what they did well or should fix
-    }
-  ]
-}`,
-              "",
-              "Important: Return ONLY JSON. No backticks, no explanation, no prose. Here is the data:",
-              JSON.stringify(scrubbedPayload, null, 2),
-            ].join("\n"),
+            content: buildPrompt("homework.grader.user", {
+              payloadJson: JSON.stringify(scrubbedPayload, null, 2),
+            }),
           },
         ],
         maxTokens: 800,
+        aiUsage: {
+          route: "lib/ai/homework-grader",
+          feature: "grading",
+          userId: submission.Student?.userId ?? null,
+          studentId: submission.studentId,
+          requestType: "homework_grading",
+          promptKey: `${graderSystemPrompt.key}+${graderUserPrompt.key}`,
+          promptVersion: `${graderSystemPrompt.version}+${graderUserPrompt.version}`,
+          promptHash: graderSystemPrompt.hash,
+          metadata: { submissionId, homeworkId: homework.id },
+        },
       });
 
       const raw = completion.content ?? "{}";

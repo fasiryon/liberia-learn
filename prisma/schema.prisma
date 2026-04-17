@@ -1875,7 +1875,7 @@ model StudentAdaptiveAttempt {
 model PlatformTransferToken {
   id              String    @id @default(cuid())
   token           String    @unique @default(cuid())
-  tokenHash       String?
+  tokenHash       String?   @unique
   createdBy       String
   intendedUserId  String?
   expiresAt       DateTime

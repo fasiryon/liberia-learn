@@ -18,6 +18,64 @@ type SyncItem = {
   payload?: Record<string, unknown>;
 };
 
+async function resolveStudentForUser(userId: string) {
+  return prisma.student.findUnique({
+    where: { userId },
+    select: { id: true, userId: true },
+  });
+}
+
+async function findAuthorizedScheduledWork(input: {
+  scheduledWorkId: string;
+  studentId: string;
+  schoolId?: string | null;
+}) {
+  return prisma.scheduledWork.findFirst({
+    where: {
+      id: input.scheduledWorkId,
+      class: {
+        schoolId: input.schoolId ?? undefined,
+        enrollments: { some: { studentId: input.studentId } },
+      },
+    },
+    select: { id: true },
+  });
+}
+
+async function findAuthorizedMeeting(input: {
+  meetingId: string;
+  studentId: string;
+  schoolId?: string | null;
+}) {
+  return prisma.meeting.findFirst({
+    where: {
+      id: input.meetingId,
+      Class: {
+        schoolId: input.schoolId ?? undefined,
+        enrollments: { some: { studentId: input.studentId } },
+      },
+    },
+    select: { id: true },
+  });
+}
+
+async function findAuthorizedHomework(input: {
+  homeworkId: string;
+  studentId: string;
+  schoolId?: string | null;
+}) {
+  return prisma.homework.findFirst({
+    where: {
+      id: input.homeworkId,
+      Class: {
+        schoolId: input.schoolId ?? undefined,
+        enrollments: { some: { studentId: input.studentId } },
+      },
+    },
+    select: { id: true },
+  });
+}
+
 function toIso(value?: string | Date | null) {
   if (!value) return null;
   const date = value instanceof Date ? value : new Date(value);
@@ -89,6 +147,11 @@ export async function POST(req: NextRequest) {
   try {
     const user = await requireRole("STUDENT");
     const { items, queueStats } = await req.json();
+    const student = await resolveStudentForUser(user.id);
+
+    if (!student) {
+      return NextResponse.json({ error: "Student profile not found" }, { status: 403 });
+    }
 
     if (!Array.isArray(items) || items.length === 0) {
       return NextResponse.json({ synced: 0, skipped: 0 });
@@ -156,6 +219,17 @@ export async function POST(req: NextRequest) {
           if (!clientTime) {
             skipped++;
             results.push({ opId: opKey, entity, scheduledWorkId, status: "skipped" });
+            continue;
+          }
+
+          const authorizedWork = await findAuthorizedScheduledWork({
+            scheduledWorkId,
+            studentId: student.id,
+            schoolId: user.schoolId ?? null,
+          });
+          if (!authorizedWork) {
+            skipped++;
+            results.push({ opId: opKey, entity, scheduledWorkId, status: "rejected" });
             continue;
           }
 
@@ -267,8 +341,7 @@ export async function POST(req: NextRequest) {
           const attendance = (payload ?? {}) as Record<string, unknown>;
           const meetingId =
             typeof attendance.meetingId === "string" ? attendance.meetingId : null;
-          const attendanceStudentId =
-            typeof attendance.studentId === "string" ? attendance.studentId : null;
+          const attendanceStudentId = student.id;
           const status =
             typeof attendance.status === "string" ? attendance.status : null;
           const clientTime =
@@ -276,9 +349,20 @@ export async function POST(req: NextRequest) {
               ? attendance.clientUpdatedAt
               : clientUpdatedAt;
 
-          if (!meetingId || !attendanceStudentId || !status || !clientTime) {
+          if (!meetingId || !status || !clientTime) {
             skipped++;
             results.push({ opId: opKey, entity, status: "skipped" });
+            continue;
+          }
+
+          const authorizedMeeting = await findAuthorizedMeeting({
+            meetingId,
+            studentId: student.id,
+            schoolId: user.schoolId ?? null,
+          });
+          if (!authorizedMeeting) {
+            skipped++;
+            results.push({ opId: opKey, entity, status: "rejected" });
             continue;
           }
 
@@ -407,6 +491,17 @@ export async function POST(req: NextRequest) {
             continue;
           }
 
+          const authorizedHomework = await findAuthorizedHomework({
+            homeworkId,
+            studentId: student.id,
+            schoolId: user.schoolId ?? null,
+          });
+          if (!authorizedHomework) {
+            skipped++;
+            results.push({ opId: opKey, entity, status: "rejected" });
+            continue;
+          }
+
           const replayOf = await findReplaySourceEvent({
             schoolId: user.schoolId ?? null,
             userId: user.id,
@@ -437,7 +532,7 @@ export async function POST(req: NextRequest) {
           }
 
           const existing = await prisma.homeworkSubmission.findUnique({
-            where: { homeworkId_studentId: { homeworkId, studentId: user.id } },
+            where: { homeworkId_studentId: { homeworkId, studentId: student.id } },
           });
 
           const resolution = resolveSubmission(
@@ -483,9 +578,9 @@ export async function POST(req: NextRequest) {
           }
 
           await prisma.homeworkSubmission.upsert({
-            where: { homeworkId_studentId: { homeworkId, studentId: user.id } },
+            where: { homeworkId_studentId: { homeworkId, studentId: student.id } },
             update: { answers, submittedAt: resolution.submittedAt },
-            create: { homeworkId, studentId: user.id, answers, submittedAt: resolution.submittedAt },
+            create: { homeworkId, studentId: student.id, answers, submittedAt: resolution.submittedAt },
           });
           synced++;
           await logLearningEvent({

@@ -9,7 +9,13 @@ import {
 import { gradeToBand } from "@/lib/moe/alignment-engine";
 import { liberianize } from "@/lib/localization/liberia-context";
 import { standardizeTone } from "@/lib/localization/tone-standardizer";
+import { buildPrompt, getPromptMetadata } from "@/lib/ai/promptRegistry";
 import { z } from "zod";
+
+const unitBlueprintSystemPrompt = getPromptMetadata("unit.blueprint.system");
+const unitBlueprintUserPrompt = getPromptMetadata("unit.blueprint.user");
+const unitArtifactSystemPrompt = getPromptMetadata("unit.artifact.system");
+const unitArtifactUserPrompt = getPromptMetadata("unit.artifact.user");
 
 const SUBJECT_VALUES = [
   "MATH",
@@ -333,24 +339,31 @@ async function buildBlueprint(params: {
     messages: [
       {
         role: "system",
-        content:
-          "You are planning a 7-part school unit for LiberiaLearn. Return only valid JSON with keys introObjective, coreObjectives, practiceFocus, reviewObjective. coreObjectives must contain exactly 3 distinct strings. Keep the plan grounded in Liberia and suitable for the student's grade.",
+        content: buildPrompt("unit.blueprint.system"),
       },
       {
         role: "user",
-        content: `Create a unit blueprint for Subject ${params.subject}, Grade ${params.gradeLevel}.
-Unit title: ${params.unitTitle}
-Unit description: ${params.unitDescription || "None provided"}
-
-MOE standards:
-${standardBlock}
-
-Existing lesson titles that may be reused:
-${existingLessonTitles}`,
+        content: buildPrompt("unit.blueprint.user", {
+          subject: params.subject,
+          gradeLevel: params.gradeLevel,
+          unitTitle: params.unitTitle,
+          unitDescription: params.unitDescription || "None provided",
+          standardBlock,
+          existingLessonTitles,
+        }),
       },
     ],
     maxTokens: 900,
     forceSmartTier: true,
+    aiUsage: {
+      route: "lib/ai/units/unitAssembler",
+      feature: "curriculum",
+      requestType: "unit_blueprint",
+      promptKey: `${unitBlueprintSystemPrompt.key}+${unitBlueprintUserPrompt.key}`,
+      promptVersion: `${unitBlueprintSystemPrompt.version}+${unitBlueprintUserPrompt.version}`,
+      promptHash: unitBlueprintSystemPrompt.hash,
+      metadata: { subject: params.subject, gradeLevel: params.gradeLevel, unitTitle: params.unitTitle },
+    },
   });
 
   return parseJson(result.content, BlueprintSchema, "unit blueprint");
@@ -390,28 +403,40 @@ async function createGeneratedArtifact(params: {
     messages: [
       {
         role: "system",
-        content:
-          "You are generating a LiberiaLearn curriculum artifact. Return only valid JSON with keys title, objectives, body, activities, assessmentQuestions, answerKey, estimatedMinutes, moeAlignments. Use simple grade-appropriate language, Liberian context, and no markdown fences.",
+        content: buildPrompt("unit.artifact.system"),
       },
       {
         role: "user",
-        content: `Generate a ${lessonLabel} for Subject ${params.subject}, Grade ${params.gradeLevel}.
-Unit title: ${params.unitTitle}
-Unit description: ${params.unitDescription || "None provided"}
-Lesson objective: ${params.objective}
-Lesson type: ${params.lessonType}
-MOE alignment codes to reference when relevant: ${params.standardCodes.join(", ") || "none"}
-
-Requirements:
-- ${guidance}
-- body must be at least 3 paragraphs.
-- activities should be practical for a Liberian classroom.
-- assessmentQuestions should include at least 3 short checks for understanding.
-- answerKey should be empty unless the lesson type is practice.`,
+        content: buildPrompt("unit.artifact.user", {
+          lessonLabel,
+          subject: params.subject,
+          gradeLevel: params.gradeLevel,
+          unitTitle: params.unitTitle,
+          unitDescription: params.unitDescription || "None provided",
+          objective: params.objective,
+          lessonType: params.lessonType,
+          standardCodes: params.standardCodes.join(", ") || "none",
+          guidance,
+        }),
       },
     ],
     maxTokens: 1800,
     forceSmartTier: true,
+    aiUsage: {
+      route: "lib/ai/units/unitAssembler",
+      feature: "curriculum",
+      userId: params.createdById,
+      requestType: "unit_artifact",
+      promptKey: `${unitArtifactSystemPrompt.key}+${unitArtifactUserPrompt.key}`,
+      promptVersion: `${unitArtifactSystemPrompt.version}+${unitArtifactUserPrompt.version}`,
+      promptHash: unitArtifactSystemPrompt.hash,
+      metadata: {
+        subject: params.subject,
+        gradeLevel: params.gradeLevel,
+        unitTitle: params.unitTitle,
+        lessonType: params.lessonType,
+      },
+    },
   });
 
   const lesson = parseJson(result.content, GeneratedLessonSchema, params.lessonType);

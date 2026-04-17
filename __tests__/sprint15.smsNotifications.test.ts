@@ -2,6 +2,7 @@
  * Sprint 15: SMS notifications — validators, templates, STOP handler
  */
 import { describe, it, expect, vi, beforeEach } from "vitest";
+import { createHash } from "node:crypto";
 
 // ─── Phone validator tests ────────────────────────────────────────────────────
 import { isValidLiberianPhone, normalizeLiberianPhone } from "@/lib/sms/validators";
@@ -125,11 +126,19 @@ vi.mock("@/lib/db", () => ({ prisma: prismaMock }));
 import { POST } from "@/app/api/sms/stop/route";
 import { NextRequest } from "next/server";
 
-function makeRequest(body: Record<string, string>, contentType = "application/x-www-form-urlencoded") {
+function signatureFor(apiKey = process.env.AT_API_KEY ?? "test-at-api-key") {
+  return createHash("sha256").update(apiKey).digest("hex");
+}
+
+function makeRequest(
+  body: Record<string, string>,
+  contentType = "application/x-www-form-urlencoded",
+  signature = signatureFor()
+) {
   const encoded = new URLSearchParams(body).toString();
   return new NextRequest("http://localhost/api/sms/stop", {
     method: "POST",
-    headers: { "content-type": contentType },
+    headers: { "content-type": contentType, "x-at-signature": signature },
     body: encoded,
   });
 }
@@ -137,12 +146,16 @@ function makeRequest(body: Record<string, string>, contentType = "application/x-
 describe("POST /api/sms/stop", () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    process.env.AT_API_KEY = "test-at-api-key";
   });
 
   it("returns 400 when body is missing", async () => {
     const req = new NextRequest("http://localhost/api/sms/stop", {
       method: "POST",
-      headers: { "content-type": "application/x-www-form-urlencoded" },
+      headers: {
+        "content-type": "application/x-www-form-urlencoded",
+        "x-at-signature": signatureFor(),
+      },
       body: "",
     });
     const res = await POST(req);
@@ -175,6 +188,71 @@ describe("POST /api/sms/stop", () => {
     expect(data.optedOut).toBe(true);
     expect(prismaMock.user.update).toHaveBeenCalledWith(
       expect.objectContaining({ data: { smsOptIn: false } })
+    );
+  });
+
+  it("returns 401 and does not opt out when the webhook signature is invalid", async () => {
+    const req = makeRequest({ From: "+231770000000", Body: "STOP" }, undefined, "bad-signature");
+    const res = await POST(req);
+    const data = await res.json();
+
+    expect(res.status).toBe(401);
+    expect(data.error).toBe("Invalid webhook signature");
+    expect(prismaMock.user.findFirst).not.toHaveBeenCalled();
+    expect(prismaMock.user.update).not.toHaveBeenCalled();
+    expect(prismaMock.guardianConsent.upsert).not.toHaveBeenCalled();
+  });
+
+  it("opts out every linked student when a guardian has multiple students", async () => {
+    prismaMock.user.findFirst.mockResolvedValueOnce({
+      id: "guardian-3",
+      schoolId: "school-1",
+      guardianOf: [
+        { studentId: "student-1" },
+        { studentId: "student-2" },
+        { studentId: "student-3" },
+      ],
+    });
+    prismaMock.user.update.mockResolvedValueOnce({});
+    prismaMock.guardianConsent.upsert.mockResolvedValue({});
+    prismaMock.auditLog.create.mockResolvedValueOnce({});
+
+    const req = makeRequest({ From: "+231770000000", Body: "STOP" });
+    const res = await POST(req);
+    const data = await res.json();
+
+    expect(res.status).toBe(200);
+    expect(data.optedOut).toBe(true);
+    expect(prismaMock.guardianConsent.upsert).toHaveBeenCalledTimes(3);
+    expect(prismaMock.guardianConsent.upsert).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: expect.objectContaining({
+          GuardianConsent_schoolId_studentId_guardianId_key: expect.objectContaining({
+            studentId: "student-1",
+          }),
+        }),
+        update: expect.objectContaining({ smsOptIn: false }),
+      })
+    );
+    expect(prismaMock.guardianConsent.upsert).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: expect.objectContaining({
+          GuardianConsent_schoolId_studentId_guardianId_key: expect.objectContaining({
+            studentId: "student-2",
+          }),
+        }),
+        update: expect.objectContaining({ smsOptIn: false }),
+      })
+    );
+    expect(prismaMock.guardianConsent.upsert).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: expect.objectContaining({
+          GuardianConsent_schoolId_studentId_guardianId_key: expect.objectContaining({
+            studentId: "student-3",
+          }),
+        }),
+        update: expect.objectContaining({ smsOptIn: false }),
+      })
     );
   });
 

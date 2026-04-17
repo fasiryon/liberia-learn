@@ -2,6 +2,10 @@
 import { prisma } from "@/lib/db";
 import { HomeworkGrader } from "@/lib/ai/homework-grader";
 import { routedCompletion } from "@/lib/ai/routedCompletion";
+import { buildPrompt, getPromptMetadata } from "@/lib/ai/promptRegistry";
+
+const rubricSystemPrompt = getPromptMetadata("homework.rubric.system");
+const rubricUserPrompt = getPromptMetadata("homework.rubric.user");
 
 
 export interface RubricQuestion {
@@ -31,35 +35,28 @@ export async function generateHomeworkRubric(
 
   const questions = (homework.questions as any[]) ?? [];
 
-  const prompt = `You are an expert education rubric generator.
-
-Given this homework:
-Title: ${homework.title}
-Instructions: ${homework.instructions ?? "None"}
-Questions: ${JSON.stringify(questions, null, 2)}
-
-Generate a grading rubric as JSON with this exact structure:
-{
-  "questions": [
-    {
-      "index": 0,
-      "questionText": "...",
-      "expectedAnswer": "The ideal/correct answer",
-      "keyPoints": ["key concept 1", "key concept 2"],
-      "maxPoints": 10,
-      "gradingNotes": "What to look for when grading"
-    }
-  ]
-}
-
-Return ONLY valid JSON. No backticks, no explanation.`;
-
   const completion = await routedCompletion({
     messages: [
-      { role: "system", content: "Return only valid JSON." },
-      { role: "user", content: prompt },
+      { role: "system", content: buildPrompt("homework.rubric.system") },
+      {
+        role: "user",
+        content: buildPrompt("homework.rubric.user", {
+          title: homework.title,
+          instructions: homework.instructions ?? "None",
+          questionsJson: JSON.stringify(questions, null, 2),
+        }),
+      },
     ],
     maxTokens: 1500,
+    aiUsage: {
+      route: "lib/ai/rubric-generator",
+      feature: "grading",
+      requestType: "homework_rubric",
+      promptKey: `${rubricSystemPrompt.key}+${rubricUserPrompt.key}`,
+      promptVersion: `${rubricSystemPrompt.version}+${rubricUserPrompt.version}`,
+      promptHash: rubricSystemPrompt.hash,
+      metadata: { homeworkId },
+    },
   });
 
   const raw = completion.content ?? "{}";

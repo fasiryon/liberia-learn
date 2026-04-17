@@ -27,12 +27,13 @@ import {
   type AiConfidence,
   type AiExplainability,
 } from "@/lib/ai/trust";
+import { buildPrompt as buildRegisteredPrompt, getPromptMetadata } from "@/lib/ai/promptRegistry";
 
 const MIN_TOP_SIMILARITY = 0.72;
 const MIN_AVG_SIMILARITY = 0.66;
 const MIN_SHORT_CONTEXT_CONFIDENCE = 0.84;
-const RAG_GROUNDED_PROMPT_KEY = "rag.grounded.answer";
-const RAG_GROUNDED_PROMPT_VERSION = "1.0.0";
+const ragSystemPrompt = getPromptMetadata("rag.grounded.system");
+const ragUserPrompt = getPromptMetadata("rag.grounded.user");
 
 const GroundedAnswerSchema = z.object({
   answer: z.string().min(1),
@@ -356,7 +357,7 @@ function buildAudienceInstruction(role: SessionUser["role"]): string {
   return "Answer like a grounded school assistant for teachers and administrators.";
 }
 
-function buildPrompt(question: string, chunks: RetrievedChunk[], role: SessionUser["role"]): string {
+function buildGroundedPrompt(question: string, chunks: RetrievedChunk[], role: SessionUser["role"]): string {
   const context = chunks
     .map(
       (chunk, index) =>
@@ -364,24 +365,11 @@ function buildPrompt(question: string, chunks: RetrievedChunk[], role: SessionUs
     )
     .join("\n\n");
 
-  return `You are answering a LiberiaLearn educational query.
-Answer using the provided context only.
-You must answer only from the provided sources.
-If the sources do not fully answer the question, say that clearly and stay conservative.
-Do not cite any source id that is not present below.
-${buildAudienceInstruction(role)}
-
-Return JSON only in this exact shape:
-{
-  "answer": "<grounded answer>",
-  "sourceIds": ["<source-id-1>", "<source-id-2>"]
-}
-
-Question:
-${question}
-
-Retrieved context:
-${context}`;
+  return buildRegisteredPrompt("rag.grounded.user", {
+    audienceInstruction: buildAudienceInstruction(role),
+    question,
+    context,
+  });
 }
 
 export async function answerGroundedQuestion(input: QueryInput): Promise<GroundedAnswerResult> {
@@ -436,12 +424,11 @@ export async function answerGroundedQuestion(input: QueryInput): Promise<Grounde
       messages: [
         {
           role: "system",
-          content:
-            "You are a grounded LiberiaLearn assistant. Answer only from retrieved content and never invent sources.",
+          content: buildRegisteredPrompt("rag.grounded.system"),
         },
         {
           role: "user",
-          content: buildPrompt(input.question, chunks, input.role),
+          content: buildGroundedPrompt(input.question, chunks, input.role),
         },
       ],
       maxTokens: 500,
@@ -454,8 +441,9 @@ export async function answerGroundedQuestion(input: QueryInput): Promise<Grounde
         studentId: input.usageContext?.studentId ?? input.usageContext?.userId ?? null,
         subject: input.subject ?? null,
         requestType: "rag_grounded_answer",
-        promptKey: RAG_GROUNDED_PROMPT_KEY,
-        promptVersion: RAG_GROUNDED_PROMPT_VERSION,
+        promptKey: `${ragSystemPrompt.key}+${ragUserPrompt.key}`,
+        promptVersion: `${ragSystemPrompt.version}+${ragUserPrompt.version}`,
+        promptHash: ragSystemPrompt.hash,
         clientEventId: input.usageContext?.clientEventId ?? null,
         originalTimestamp: input.usageContext?.originalTimestamp ?? null,
         syncReceivedAt: input.usageContext?.syncReceivedAt ?? null,

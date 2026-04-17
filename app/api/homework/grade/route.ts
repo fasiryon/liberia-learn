@@ -29,25 +29,21 @@ export async function POST(req: Request) {
       );
     }
 
-    // Load submission to get classId for ownership check
-    const submission = await prisma.homeworkSubmission.findUnique({
-      where: { id: submissionId },
+    // Scope grading to the caller's tenant and, for teachers, their assigned class.
+    const submission = await prisma.homeworkSubmission.findFirst({
+      where: {
+        id: submissionId,
+        Homework: {
+          Class: {
+            schoolId,
+            ...(user.role === "TEACHER" ? { teacherId: user.id } : {}),
+          },
+        },
+      },
       include: { Homework: { select: { classId: true } } },
     });
     if (!submission) {
       return NextResponse.json({ error: "Submission not found" }, { status: 404 });
-    }
-
-    // Teachers can only grade their own classes (basic check by teacherId on Class)
-    // If your Class model doesn't have teacherId yet, remove this block.
-    if (user.role === "TEACHER") {
-      const cls = await prisma.class.findUnique({
-        where: { id: submission.Homework.classId },
-        select: { teacherId: true },
-      });
-      if (cls?.teacherId && cls.teacherId !== user.id) {
-        return NextResponse.json({ error: "Not your class" }, { status: 403 });
-      }
     }
 
     const updated = await prisma.homeworkSubmission.update({
