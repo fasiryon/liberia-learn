@@ -7,27 +7,27 @@ Live execution tracking for the final closeout program.
 22-sprint final platform closeout
 
 ## Current sprint or phase
-Sprint 16E COMPLETE. k6 load test validation performed. Results: Baseline PASS (100 VU p95=602ms), AI Load PASS (50 VU p95=265ms), Moderate FAIL (Vercel free tier cap), Peak NOT RUN.
+Sprint 16C COMPLETE. Student and guardian self-registration implemented. 1805 tests passing.
 
 ## Current branch
-feat/liberia-delivery-hardening (target: main)
+feat/self-registration (target: main)
 
 ## Worktree status
-Sprint 16E load test scripts and results committed from worktree .worktrees/load-test-validation. Sprint 15 modified files remain unstaged (not part of Sprint 16E).
+Sprint 16C files staged and committed. Pre-existing linter-modified files (email deliverability sprint) remain unstaged — not part of Sprint 16C.
 
 ## Overall status
-Sprints 1-16 + 16B + 16E complete. OWASP security audit + load test validation performed. 1787 tests pass. Proven threshold: 100-VU concurrent users with sub-600ms p95. National-scale (1000+VU) requires Vercel Pro upgrade.
+Sprints 1-16 + 16B + 16C + 16E complete. Self-registration, OWASP hardening, and load testing all complete. 1805 tests pass.
 
 ## Last completed phase
-Sprint 16E - Load Test Validation
+Sprint 16C - Student and Guardian Self-Registration
 
 ## Last commit reference
-feat: sprint 16E complete — load test validation
+feat: sprint 16C complete — student and guardian self-registration
 
-## Last successful validation (Sprint 16E)
+## Last successful validation (Sprint 16C)
 - `npx prisma generate`: PASS
 - `npx tsc --noEmit`: PASS (0 errors)
-- `npm test`: PASS (1787 tests, 247 files)
+- `npm test`: PASS (1805 tests, 249 files)
 - `npm run build`: PASS
 
 ## Sprint 16B Security Findings
@@ -55,12 +55,22 @@ Root cause (Moderate FAIL): Vercel free tier concurrency cap + single demo crede
 
 Required before national scale sign-off: Vercel Pro upgrade + seed load-test user pool (100+ unique students).
 
+## Sprint 16C Deliverables
+| Feature | Route | Notes |
+|---------|-------|-------|
+| Student self-registration | POST /api/register/student | School code + DOB + grade; email/phone optional; rate limit 10/hr/IP |
+| Guardian self-registration | POST /api/register/guardian | Student match by name+DOB+code; no existence leak on mismatch |
+| Student registration page | /register/student | Form with ?code= prefill from shareable link |
+| Guardian registration page | /register/guardian | Links to student registration |
+| School code on dashboard | /teacher/dashboard | Prominent display + copy-to-clipboard + shareable link |
+
 ## Phase status
-- Sprints 1-16 + 16B + 16E complete
-- Test baseline: 1787 passing tests (247 files)
+- Sprints 1-16 + 16B + 16C + 16E complete
+- Test baseline: 1805 passing tests (249 files)
 - Security: OWASP-hardened
+- Self-registration: Live at /register/student and /register/guardian
 - Load tested: 100-VU baseline PASS; national scale requires Vercel Pro
-- System sign-off: SYSTEM-COMPLETE + SECURITY-HARDENED + LOAD-VALIDATED
+- System sign-off: SYSTEM-COMPLETE + SECURITY-HARDENED + LOAD-VALIDATED + SELF-REGISTRATION
 
 ## Sprint history (all on main target)
 
@@ -75,6 +85,7 @@ Required before national scale sign-off: Vercel Pro upgrade + seed load-test use
 | 9-15 | Phase 2 product, operations, and delivery hardening | completed before Sprint 16 Phase C sign-off | 1781+ |
 | 16 | Final System Audit + Sign-Off | 811d8a2 | 1787 |
 | 16B | OWASP Security Hardening Audit | 79a21a1 | 1787 |
+| 16C | Student and Guardian Self-Registration | pending | 1805 |
 | 16E | Load Test Validation | a0f50ae | 1787 |
 
 ## Untracked files (pending future sprint inspection only)

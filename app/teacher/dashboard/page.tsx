@@ -75,6 +75,8 @@ type DashboardData = {
   }>;
   recentLessons: Array<{ contentId: string; title: string; status: string; createdAt: string }>;
   classesWithoutLesson: string[];
+  schoolCode: string | null;
+  schoolName: string | null;
 };
 
 export default function TeacherDashboardPage() {
@@ -96,6 +98,16 @@ export default function TeacherDashboardPage() {
     >
   >({});
   const adaptiveEnabled = process.env.NEXT_PUBLIC_ENABLE_ADAPTIVE_ENGINE !== "false";
+  const [codeCopied, setCodeCopied] = useState(false);
+
+  function copySchoolCode() {
+    const code = data?.schoolCode;
+    if (!code) return;
+    navigator.clipboard.writeText(code).then(() => {
+      setCodeCopied(true);
+      setTimeout(() => setCodeCopied(false), 2000);
+    });
+  }
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -159,6 +171,35 @@ export default function TeacherDashboardPage() {
               <div className="rounded-xl bg-amber-500/20 border border-amber-500/30 px-4 py-3 text-sm text-amber-300">
                 {data.classesWithoutLesson.length} class(es) have no lesson scheduled for today: {data.classesWithoutLesson.join(", ")}
               </div>
+            )}
+
+            {/* School registration code */}
+            {data?.schoolCode && (
+              <section className="rounded-3xl border border-emerald-500/30 bg-emerald-950/20 p-5">
+                <div className="flex flex-wrap items-center justify-between gap-3">
+                  <div>
+                    <p className="text-xs font-semibold uppercase tracking-[0.15em] text-emerald-400">School registration code</p>
+                    <p className="mt-1 font-mono text-2xl font-bold tracking-wider text-slate-50">{data.schoolCode}</p>
+                    <p className="mt-1 text-xs text-slate-400">Share this code so students and guardians can self-register.</p>
+                  </div>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={copySchoolCode}
+                      className="rounded-xl border border-emerald-500/40 bg-emerald-900/40 px-4 py-2 text-xs font-semibold text-emerald-300 hover:bg-emerald-900/60"
+                    >
+                      {codeCopied ? "Copied!" : "Copy code"}
+                    </button>
+                    <a
+                      href={`/register/student?code=${encodeURIComponent(data.schoolCode)}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="rounded-xl border border-slate-600/40 bg-slate-900/60 px-4 py-2 text-xs font-semibold text-slate-300 hover:bg-slate-800"
+                    >
+                      Shareable link
+                    </a>
+                  </div>
+                </div>
+              </section>
             )}
 
             {/* Stats */}
