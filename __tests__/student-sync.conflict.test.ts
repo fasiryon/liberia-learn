@@ -13,6 +13,12 @@ vi.mock("@/lib/db", () => ({
     learningEvent: {
       findFirst: vi.fn(),
     },
+    student: {
+      findUnique: vi.fn(),
+    },
+    scheduledWork: {
+      findFirst: vi.fn(),
+    },
     studentProgress: {
       findUnique: vi.fn(),
       upsert: vi.fn(),
@@ -46,6 +52,8 @@ import { prisma } from "@/lib/db";
 describe("student sync conflict detection", () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    (prisma.student.findUnique as any).mockResolvedValue({ id: "student-rec-1", userId: "student-1" });
+    (prisma.scheduledWork.findFirst as any).mockResolvedValue({ id: "sw-1" });
   });
 
   it("returns conflict when client version is stale", async () => {

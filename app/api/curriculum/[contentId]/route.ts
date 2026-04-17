@@ -13,8 +13,11 @@ export async function GET(
     await requireRole("STUDENT", "TEACHER", "ADMIN");
     const contentId = params.contentId;
 
-    const row = await prisma.curriculumContent.findUnique({
-      where: { contentId },
+    const row = await prisma.curriculumContent.findFirst({
+      where: {
+        contentId,
+        status: { in: ["published", "APPROVED"] },
+      },
       select: {
         contentId: true,
         grade: true,
@@ -22,7 +25,6 @@ export async function GET(
         contentType: true,
         status: true,
         version: true,
-        hash: true,
         payload: true,
         createdAt: true,
         updatedAt: true,
@@ -41,7 +43,6 @@ export async function GET(
         contentType: row.contentType,
         status: row.status,
         version: row.version,
-        hash: row.hash,
         createdAt: row.createdAt,
         updatedAt: row.updatedAt,
       },

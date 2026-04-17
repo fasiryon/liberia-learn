@@ -15,7 +15,7 @@
  */
 
 import { routedCompletion } from "@/lib/ai/router";
-import { getPromptMetadata, getSystemPrompt } from "@/lib/ai/promptRegistry";
+import { buildPrompt, getPromptMetadata, getSystemPrompt } from "@/lib/ai/promptRegistry";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -124,18 +124,16 @@ function buildSystemPrompt(): string {
 
 function buildUserPrompt(input: GradingAssistInput): string {
   const expectedSection = input.expectedAnswer
-    ? `\nExpected/model answer: ${input.expectedAnswer.slice(0, 300)}`
+    ? `Expected/model answer: ${input.expectedAnswer.slice(0, 300)}`
     : "";
 
-  return `Subject: ${input.subject}
-Strand: ${input.strandKey}
-Rubric: ${input.rubric.slice(0, 500)}${expectedSection}
-
-Anonymized submission:
-${input.submissionContent.slice(0, 600)}
-
-Provide rubric-aligned feedback, suggested score bands, strengths, and areas for development.
-Respond in JSON only.`;
+  return buildPrompt("teacher.grading.user", {
+    subject: input.subject,
+    strandKey: input.strandKey,
+    rubric: input.rubric.slice(0, 500),
+    expectedSection,
+    submissionContent: input.submissionContent.slice(0, 600),
+  });
 }
 
 // ─── Parse + validate ─────────────────────────────────────────────────────────

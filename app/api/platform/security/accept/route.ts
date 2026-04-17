@@ -4,6 +4,7 @@ import { requireUser } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { logAudit } from "@/lib/audit";
 import { isMoePortalEnabled } from "@/lib/serverFlags";
+import { hashToken } from "@/lib/tokens";
 
 export const dynamic = "force-dynamic";
 
@@ -20,19 +21,16 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Token required" }, { status: 400 });
     }
 
-    // Compare hashes to avoid timing attacks on plain-text token lookup
-    const tokenHash = crypto.createHash("sha256").update(token).digest("hex");
-    const record = await prisma.platformTransferToken.findUnique({
-      where: { token },
+    const tokenHash = hashToken(token);
+    const record = await prisma.platformTransferToken.findFirst({
+      where: { tokenHash },
     });
 
     if (!record) {
       return NextResponse.json({ error: "Invalid token" }, { status: 404 });
     }
 
-    // Verify hash matches (guards against DB-level token exposure)
-    const storedHash = record.tokenHash ?? crypto.createHash("sha256").update(record.token).digest("hex");
-    if (storedHash !== tokenHash) {
+    if (!record.tokenHash || !crypto.timingSafeEqual(Buffer.from(record.tokenHash), Buffer.from(tokenHash))) {
       return NextResponse.json({ error: "Invalid token" }, { status: 404 });
     }
 
@@ -43,8 +41,11 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Token expired" }, { status: 400 });
     }
 
-    // Verify intended recipient if specified
-    if (record.intendedUserId && record.intendedUserId !== user.id) {
+    if (!record.intendedUserId) {
+      return NextResponse.json({ error: "Token has no intended recipient" }, { status: 403 });
+    }
+
+    if (record.intendedUserId !== user.id) {
       return NextResponse.json({ error: "Token not issued to this user" }, { status: 403 });
     }
 
@@ -56,7 +57,7 @@ export async function POST(req: Request) {
       });
 
       await tx.platformTransferToken.update({
-        where: { token },
+        where: { id: record.id },
         data: { usedAt: new Date(), usedBy: user.id },
       });
 

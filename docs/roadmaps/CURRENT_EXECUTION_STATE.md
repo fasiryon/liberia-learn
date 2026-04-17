@@ -7,54 +7,54 @@ Live execution tracking for the final closeout program.
 22-sprint final platform closeout
 
 ## Current sprint or phase
-Phase 1 complete on main through Sprint 8. Phase 2 begins with Sprint 9.
+Sprint 16 Phase C complete. System-complete sign-off issued. 1787 tests passing. Next: Sprint 16B Security Hardening.
 
 ## Current branch
-main (Sprint 8 committed and merged at 0743cfc)
+main target via Sprint 16 Phase C sign-off commit.
 
 ## Worktree status
-Main updated through Sprint 8. Additional untracked files remain in the worktree for future sprint inspection and are not part of the Sprint 8 commits.
+Sprint 16 Phase C sign-off changes are staged for commit. Additional unrelated modified and untracked files remain in the worktree and are not part of the Sprint 16 Phase C commit.
 
 ## Overall status
-Phase 1 is complete and fully validated on main. Sprint 9 is the next execution target.
+Sprints 1-16 are COMPLETE through the Sprint 16 Phase C system audit and sign-off. System-complete sign-off has been issued with 1787 tests passing. Sprint 16B Security Hardening is the next execution target.
 
 ## Last completed phase
-Sprint 8 - Tests + Docs + Final Foundation Hardening
+Sprint 16 Phase C - Final System Audit + Sign-Off
 
-## Last successful validation (Sprint 8)
+## Last commit reference
+Pending commit: `feat: sprint 16 complete  system audit + sign-off`
+
+## Last successful validation (Sprint 16 Phase C)
 - `npx prisma generate`: PASS
 - `npx tsc --noEmit`: PASS
-- `npm test`: PASS (1731 tests)
+- `npm test`: PASS (1787 tests, 247 files)
 - `npm run build`: PASS
-- CI / Runtime Gate 1 / Deploy ECS Images / PR Triage: all green on main
+- Playwright production tracks: PASS (Public site, MOE official, Teacher, Student, Admin)
 
 ## Phase status
-- Phase 1 complete: Sprints 1-8 on main
-- Test baseline: 1731 passing tests
-- Phase 2 begins with Sprint 9 - UX Defect Fix + Demo Experience Cleanup
+- Sprints 1-16 complete
+- Test baseline: 1787 passing tests
+- System sign-off: SYSTEM-COMPLETE
+- Next: Sprint 16B - Security Hardening Audit
 
-## Sprint history (all on main)
+## Sprint history (all on main target)
 
 | Sprint | Deliverable | Commit | Tests |
 |--------|-------------|--------|-------|
 | 1-3 | Platform foundation, AI factory, mastery/interventions | pre-2bf49f6 | - |
 | 4 | AI Telemetry + Versioning + Offline Sync Integrity | 2bf49f6 | - |
-| 5 | Offline lesson delivery · Teacher weekly report · SMS dry-run gate | 6f93bae | 1649 |
+| 5 | Offline lesson delivery, Teacher weekly report, SMS dry-run gate | 6f93bae | 1649 |
 | 6 | MOE National Dashboard + Student Learning Passport | 5c14e44 | 1671 |
 | 7 | Governance + Anonymized Exports + Analytics APIs | 3c22ed2 | 1714 |
 | 8 | Tests + Docs + Final Foundation Hardening | 0743cfc | 1731 |
+| 9-15 | Phase 2 product, operations, and delivery hardening | completed before Sprint 16 Phase C sign-off | 1781+ |
+| 16 | Final System Audit + Sign-Off | pending Sprint 16 Phase C commit | 1787 |
 
 ## Untracked files (pending future sprint inspection only)
-- `__tests__/admin.import.route.test.ts`
-- `__tests__/lowBandwidthMode.test.ts`
-- `__tests__/reliableSend.test.ts`
-- `app/admin/import/`
-- `app/api/admin/import/`
-- `components/LowBandwidthModeScript.tsx`
-- `components/LowBandwidthToggle.tsx`
-- `lib/import/`
-- `lib/lowBandwidthMode.ts`
-- `vercel-deploy.html`
+- `.git-temp-sprint2/`
+- `e2e/`
+- `playwright.config.ts`
+- `prisma/migrations/20260416_100000_curriculum_version/`
 
 ## Exact next step
-Begin Sprint 9 on `feat/ux-defects-demo-cleanup`. Inspect first, identify root causes, then execute the mandatory gate before any Sprint 10 work.
+Commit and push Sprint 16 Phase C sign-off to `main`, confirm all four GitHub Actions workflows are green, deploy production with Vercel, then begin Sprint 16B Security Hardening Audit.

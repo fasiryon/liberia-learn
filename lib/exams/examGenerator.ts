@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { routedCompletion } from "@/lib/ai/router";
-import { getPrompt } from "@/lib/ai/promptRegistry";
+import { buildPrompt, getPromptMetadata } from "@/lib/ai/promptRegistry";
 
 export type ExamGenerationParams = {
   subject: string;
@@ -67,41 +67,19 @@ function stripFences(text: string) {
   return text.replace(/^```(?:json)?\s*/, "").replace(/```\s*$/, "");
 }
 
-function buildPrompt(params: Required<ExamGenerationParams>) {
+const examPromptMetadata = getPromptMetadata("exam.generation.system");
+
+function buildExamSystemPrompt(params: Required<ExamGenerationParams>) {
   const standardsList = params.moeStandards.join(", ");
   const standardTarget = Math.max(1, Math.floor(params.questionCount / params.moeStandards.length));
 
-  return `${getPrompt("exam.generation").template}
-Return ONLY valid JSON with this shape:
-{
-  "title": string,
-  "subject": string,
-  "grade": number,
-  "moeStandards": string[],
-  "timeLimit": number,
-  "passingScore": number,
-  "questions": [
-    {
-      "prompt": string,
-      "options": [string, string, string, string],
-      "correctIndex": number,
-      "explanation": string,
-      "moeCode": string,
-      "points": number
-    }
-  ]
-}
-
-Rules:
-- Generate exactly ${params.questionCount} multiple-choice questions.
-- Each question must have exactly 4 answer options.
-- correctIndex must always be 0, 1, 2, or 3.
-- Every question must align to one of these MOE standard codes: ${standardsList}.
-- Distribute questions as evenly as possible across the provided MOE standards, targeting about ${standardTarget} questions per standard.
-- Use Liberian classroom context throughout where appropriate.
-- Questions must be suitable for Grade ${params.grade} ${params.subject}.
-- explanations must briefly explain why the correct answer is correct.
-- No markdown, no commentary, no extra keys.`;
+  return buildPrompt("exam.generation.system", {
+    questionCount: params.questionCount,
+    standardsList,
+    standardTarget,
+    grade: params.grade,
+    subject: params.subject,
+  });
 }
 
 async function requestExam(
@@ -112,10 +90,16 @@ async function requestExam(
     forceSmartTier: true,
     maxTokens: 3200,
     messages: [
-      { role: "system", content: buildPrompt(params) },
+      { role: "system", content: buildExamSystemPrompt(params) },
       {
         role: "user",
-        content: `Generate the exam titled "${params.title}" for Grade ${params.grade} ${params.subject} with ${params.questionCount} questions and a ${params.timeLimit}-minute time limit.`,
+        content: buildPrompt("exam.generation.user", {
+          title: params.title,
+          grade: params.grade,
+          subject: params.subject,
+          questionCount: params.questionCount,
+          timeLimit: params.timeLimit,
+        }),
       },
     ],
     aiUsage: usageContext
@@ -127,6 +111,9 @@ async function requestExam(
           subject: params.subject,
           strandKey: params.moeStandards.join(","),
           requestType: "exam_generation",
+          promptKey: examPromptMetadata.key,
+          promptVersion: examPromptMetadata.version,
+          promptHash: examPromptMetadata.hash,
           budgetFallbackContent: JSON.stringify({
             title: params.title,
             subject: params.subject,
