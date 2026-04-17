@@ -2,7 +2,7 @@ import type { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/db";
 import { logLearningEvent } from "@/lib/events/logLearningEvent";
 
-export type AiBudgetFeature = "tutor" | "teacherAssist" | "grading" | "curriculum";
+export type AiBudgetFeature = "tutor" | "teacherAssist" | "grading" | "curriculum" | "labs";
 
 type JsonObject = Record<string, unknown>;
 

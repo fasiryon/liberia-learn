@@ -4,6 +4,7 @@ import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } fro
 
 import { LessonQuizPanel } from "@/components/student/LessonQuizPanel";
 import { StudentLessonHelpPanel } from "@/components/student/StudentLessonHelpPanel";
+import GravityLessonLabPanel from "@/components/labs/GravityLessonLabPanel";
 import { gradeToTutorBand } from "@/lib/ai/studentLessonSupport";
 import { lessonDurationLabel, renderSimpleMarkdown, selectLessonBody } from "@/lib/lessons";
 import { enqueueOfflineRequest } from "@/lib/offline-queue";
@@ -307,6 +308,7 @@ export default function LessonDeliveryClient({ lessonId }: { lessonId: string })
   const [submitting, setSubmitting] = useState(false);
   const [submitMessage, setSubmitMessage] = useState<string | null>(null);
   const [helpPanelOpen, setHelpPanelOpen] = useState(false);
+  const [gravityLabOpen, setGravityLabOpen] = useState(false);
   const [tutorQuestion, setTutorQuestion] = useState("");
   const [tutorMessages, setTutorMessages] = useState<TutorMessage[]>([]);
   const [tutorLoading, setTutorLoading] = useState(false);
@@ -359,6 +361,11 @@ export default function LessonDeliveryClient({ lessonId }: { lessonId: string })
   const aiTutorEnabled = process.env.NEXT_PUBLIC_ENABLE_AI_TUTOR === "true";
   const lessonProgressKey = useMemo(() => `lesson_progress_${lessonId}`, [lessonId]);
   const currentSectionIndex = sectionOrder.indexOf(currentSection);
+  const hasGravityLab =
+    Boolean(lesson) &&
+    lesson!.grade >= 7 &&
+    lesson!.grade <= 9 &&
+    lesson!.subject.toLowerCase().includes("physics");
 
   const registerSection = useCallback(
     (sectionId: string) => (node: HTMLElement | null) => {
@@ -382,6 +389,22 @@ export default function LessonDeliveryClient({ lessonId }: { lessonId: string })
     target.scrollIntoView({ behavior: "smooth", block: "start" });
     setCurrentSection(sectionId);
   }, []);
+
+  const openGravityLab = useCallback(() => {
+    setGravityLabOpen(true);
+    void fetch("/api/track", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        eventType: "LAB_OPENED",
+        contentId: lesson?.contentId ?? null,
+        metadata: {
+          labId: "gravity-explorer",
+          lessonId,
+        },
+      }),
+    }).catch(() => {});
+  }, [lesson?.contentId, lessonId]);
 
   useEffect(() => {
     if (!lesson) return;
@@ -624,6 +647,15 @@ export default function LessonDeliveryClient({ lessonId }: { lessonId: string })
                 Help Me Understand
               </button>
             ) : null}
+            {hasGravityLab ? (
+              <button
+                type="button"
+                onClick={openGravityLab}
+                className="mt-4 ml-0 inline-flex min-h-12 items-center justify-center rounded-full bg-cyan-300 px-5 py-3 text-sm font-semibold text-slate-950 transition-colors hover:bg-cyan-200 sm:ml-2"
+              >
+                Open Gravity Lab
+              </button>
+            ) : null}
           </div>
         </section>
 
@@ -815,6 +847,11 @@ export default function LessonDeliveryClient({ lessonId }: { lessonId: string })
         onQuestionSubmit={submitTutorQuestion}
         messages={tutorMessages}
         loading={tutorLoading}
+      />
+      <GravityLessonLabPanel
+        open={gravityLabOpen}
+        onClose={() => setGravityLabOpen(false)}
+        lessonId={lesson.id}
       />
     </div>
   );
