@@ -1,6 +1,7 @@
 "use client";
 
 import { GuardianWelcomeGate } from "@/app/guardian/GuardianWelcomeGate";
+import { LegalFooter } from "@/components/LegalFooter";
 
 export function GuardianShell({
   children,
@@ -13,6 +14,7 @@ export function GuardianShell({
     <>
       <GuardianWelcomeGate enabled={enableWelcomeGate} />
       {children}
+      <LegalFooter />
     </>
   );
 }

@@ -13,6 +13,7 @@ import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { StatCard } from "@/components/ui/Card";
 import { logger } from "@/lib/logger";
 import { StudentSidebar } from "@/components/StudentSidebar";
+import { LegalFooter } from "@/components/LegalFooter";
 import {
   getPlacementOutcomeText,
   getPlacementReviewStatus,
@@ -646,6 +647,7 @@ export default async function DashboardPage() {
             </section>
           </div>
         </div>
+        <LegalFooter />
       </main>
     </ErrorBoundary>
   );
