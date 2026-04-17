@@ -1,5 +1,6 @@
 import AiTutorChat from "@/components/AiTutorChat";
 import LogoutButton from "@/components/LogoutButton";
+import { DashboardTopBar } from "@/components/DashboardTopBar";
 
 // app/page.tsx (Student Dashboard)
 import Link from "next/link";
@@ -210,42 +211,24 @@ export default async function DashboardPage() {
   return (
     <ErrorBoundary>
       <main className="min-h-screen bg-slate-950 text-slate-50">
+        {/* Scroll-to-top on mount */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: "window.scrollTo(0,0);",
+          }}
+        />
         {/* Glow */}
         <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_top,_#22c55e22,_transparent_60%),radial-gradient(circle_at_bottom,_#0ea5e922,_transparent_60%)]" />
 
         <div className="mx-auto flex min-h-screen max-w-6xl flex-col gap-4 px-3 py-5 sm:px-4 sm:py-6">
-          {/* Header */}
-          <header className="flex flex-col gap-3 rounded-3xl border border-white/5 bg-slate-950/70 px-4 py-3 shadow-lg shadow-black/40 backdrop-blur sm:flex-row sm:items-center sm:justify-between">
-            <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-emerald-500 text-sm font-black text-slate-950">
-                L
-              </div>
-              <div>
-                <p className="text-xs font-semibold uppercase tracking-wide text-emerald-300">
-                  LiberiaLearn
-                </p>
-                <p className="text-sm font-medium">Student dashboard</p>
-              </div>
-            </div>
-
-            <div className="flex items-center justify-between gap-3 text-xs sm:justify-end">
-              <Link
-                href="/"
-                className="ll-touch-target hidden items-center rounded-full border border-slate-700 px-4 py-2 text-slate-300 hover:text-slate-50 sm:inline-flex"
-              >
-                &larr; Home
-              </Link>
-              <div className="flex min-w-0 items-center gap-2 rounded-2xl bg-slate-900/80 px-3 py-2">
-                <div className="h-7 w-7 rounded-full bg-gradient-to-br from-emerald-400 to-cyan-400" />
-                <div className="min-w-0">
-                  <p className="text-xs font-medium">{studentName}</p>
-                  <p className="truncate text-xs text-slate-300">
-                    {className} - {county}
-                  </p>
-                </div>
-              </div>
-            </div>
-          </header>
+          {/* Consistent top bar */}
+          <DashboardTopBar
+            roleLabel="Student"
+            roleBadgeBg="bg-emerald-400"
+            roleAccent="text-emerald-300"
+            userName={studentName}
+            subtitle={`${className} · ${county}`}
+          />
 
           <div className="flex flex-1 flex-col gap-4 md:flex-row">
             {/* Sidebar */}
@@ -258,31 +241,59 @@ export default async function DashboardPage() {
             {/* Main Content */}
             <section className="flex flex-1 flex-col gap-4 rounded-3xl border border-white/5 bg-slate-950/80 p-4 shadow-lg shadow-black/40 backdrop-blur">
               {/* Greeting */}
-              <div className="flex flex-col gap-3 sm:flex-row sm:justify-between sm:items-center">
-                <div>
-                  <p className="text-xs uppercase tracking-wide text-emerald-300">
-                    Today
-                  </p>
-                  <h1 className="text-xl font-semibold">
-                    Welcome back,{" "}
-                    <span className="text-emerald-300">
-                      {studentName}
-                    </span>
-                  </h1>
-                  <p className="text-sm text-slate-300">
-                    Placement: {placementGradeLabel}
-                  </p>
-                </div>
+              <div>
+                <p className="text-xs uppercase tracking-wide text-emerald-300">
+                  {new Date().toLocaleDateString("en-LR", { weekday: "long", month: "long", day: "numeric" })}
+                </p>
+                <h1 className="mt-1 text-xl font-semibold">
+                  Good morning, <span className="text-emerald-300">{studentName}</span>. Ready to learn?
+                </h1>
+                <p className="mt-1 text-sm text-slate-400">Placement: {placementGradeLabel} · {school}</p>
+              </div>
 
-                <div className="rounded-2xl bg-slate-900/90 px-4 py-3 text-sm">
-                  <p className="text-xs text-slate-300">
-                    Current class
-                  </p>
-                  <p className="text-sm font-semibold text-slate-100">
-                    {className}
-                  </p>
-                  <p className="text-xs text-emerald-300">{school}</p>
+              {/* KPI Cards */}
+              <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+                <div className="rounded-2xl border border-white/10 bg-slate-900/70 p-4 text-center">
+                  <p className="text-2xl font-bold text-emerald-400">{lessonsThisWeek}</p>
+                  <p className="mt-1 text-xs text-slate-400">Lessons this week</p>
                 </div>
+                <div className="rounded-2xl border border-white/10 bg-slate-900/70 p-4 text-center">
+                  <p className="text-2xl font-bold text-cyan-400">{attendancePercent}%</p>
+                  <p className="mt-1 text-xs text-slate-400">Attendance</p>
+                </div>
+                <div className="rounded-2xl border border-white/10 bg-slate-900/70 p-4 text-center">
+                  <p className="text-2xl font-bold text-amber-400">{avgGrade}%</p>
+                  <p className="mt-1 text-xs text-slate-400">Average grade</p>
+                </div>
+                <div className="rounded-2xl border border-white/10 bg-slate-900/70 p-4 text-center">
+                  <p className="text-2xl font-bold text-purple-400">{chatMessagesCount}</p>
+                  <p className="mt-1 text-xs text-slate-400">AI questions this week</p>
+                </div>
+              </div>
+
+              {/* Primary Actions */}
+              <div className="grid gap-3 sm:grid-cols-3">
+                <Link
+                  href="/student/lessons"
+                  className="flex flex-col gap-1 rounded-2xl border border-emerald-500/30 bg-emerald-500/10 p-4 hover:bg-emerald-500/20"
+                >
+                  <p className="text-sm font-bold text-emerald-300">Continue today&apos;s lesson</p>
+                  <p className="text-xs text-slate-400">Open your current learning path</p>
+                </Link>
+                <Link
+                  href="/student/progress"
+                  className="flex flex-col gap-1 rounded-2xl border border-white/10 bg-slate-900/70 p-4 hover:border-emerald-500/30"
+                >
+                  <p className="text-sm font-bold text-slate-100">View my progress</p>
+                  <p className="text-xs text-slate-400">Grades, mastery, and history</p>
+                </Link>
+                <Link
+                  href="/student/certificates"
+                  className="flex flex-col gap-1 rounded-2xl border border-white/10 bg-slate-900/70 p-4 hover:border-emerald-500/30"
+                >
+                  <p className="text-sm font-bold text-slate-100">My certificates</p>
+                  <p className="text-xs text-slate-400">View earned certificates</p>
+                </Link>
               </div>
 
               <div className="rounded-3xl border border-emerald-400/20 bg-emerald-500/10 p-4">
