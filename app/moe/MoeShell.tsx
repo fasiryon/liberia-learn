@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { LegalFooter } from "@/components/LegalFooter";
 
 type MoeUser = {
   name?: string | null;
@@ -82,6 +83,7 @@ export default function MoeShell({
       <main className="mx-auto w-full max-w-7xl px-4 py-6">
         {children}
       </main>
+      <LegalFooter />
     </div>
   );
 }

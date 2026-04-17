@@ -1,4 +1,5 @@
 import GlobalAssistantMount from "@/components/rag/GlobalAssistantMount";
+import { LegalFooter } from "@/components/LegalFooter";
 
 export default function AdminLayout({
   children,
@@ -8,6 +9,7 @@ export default function AdminLayout({
   return (
     <>
       {children}
+      <LegalFooter />
       <GlobalAssistantMount />
     </>
   );
