@@ -85,7 +85,7 @@ export async function POST(req: Request) {
       name: parsed.name,
       schoolName: school.name ?? "LiberiaLearn",
       inviteUrl,
-    });
+    }).catch((error: any) => ({ ok: false, error: error?.message ?? "email_failed" }));
 
     await logAudit({
       userId: user.id,

@@ -4,6 +4,7 @@ import { Prisma, type CertificateType } from "@prisma/client";
 
 import { logAudit } from "@/lib/audit";
 import { prisma } from "@/lib/db";
+import { sendCertificateAwarded } from "@/lib/email";
 import { logLearningEvent } from "@/lib/events/logLearningEvent";
 import { resolveLessonTitle } from "@/lib/lessons/resolveLessonTitle";
 
@@ -196,6 +197,27 @@ async function awardCertificate(input: AwardCertificateInput) {
       status: "sent",
     },
   });
+
+  const studentUserModel = (prisma as any).user;
+  const studentUser = studentUserModel?.findUnique
+    ? await studentUserModel
+        .findUnique({
+          where: { id: input.studentUserId },
+          select: { email: true, name: true },
+        })
+        .catch(() => null)
+    : null;
+
+  if (studentUser?.email && !studentUser.email.endsWith(".local")) {
+    const verifyUrl = `${process.env.NEXTAUTH_URL ?? "https://liberia-learn.vercel.app"}/verify/${certificate.certificateCode}`;
+    await sendCertificateAwarded({
+      to: studentUser.email,
+      studentName: studentUser.name ?? "Student",
+      certificateTitle: input.title,
+      certificateCode: certificate.certificateCode,
+      verifyUrl,
+    }).catch(() => null);
+  }
 
   await logAudit({
     userId: input.actingUserId,

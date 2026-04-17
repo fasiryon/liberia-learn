@@ -7,6 +7,8 @@ const mockCertificateFindMany = vi.hoisted(() => vi.fn());
 const mockEnrollmentFindMany = vi.hoisted(() => vi.fn());
 const mockScheduledWorkFindMany = vi.hoisted(() => vi.fn());
 const mockNotificationLogCreate = vi.hoisted(() => vi.fn());
+const mockUserFindUnique = vi.hoisted(() => vi.fn());
+const mockSendCertificateAwarded = vi.hoisted(() => vi.fn());
 const mockLogAudit = vi.hoisted(() => vi.fn());
 const mockLogLearningEvent = vi.hoisted(() => vi.fn());
 
@@ -30,7 +32,14 @@ vi.mock("@/lib/db", () => ({
     notificationLog: {
       create: mockNotificationLogCreate,
     },
+    user: {
+      findUnique: mockUserFindUnique,
+    },
   },
+}));
+
+vi.mock("@/lib/email", () => ({
+  sendCertificateAwarded: mockSendCertificateAwarded,
 }));
 
 vi.mock("@/lib/audit", () => ({
@@ -47,6 +56,8 @@ describe("awardLessonQuizCertificates", () => {
     mockLogAudit.mockResolvedValue(undefined);
     mockLogLearningEvent.mockResolvedValue(undefined);
     mockNotificationLogCreate.mockResolvedValue({ id: "notif-1" });
+    mockUserFindUnique.mockResolvedValue(null);
+    mockSendCertificateAwarded.mockResolvedValue({ ok: true });
   });
 
   it("does not award a certificate below the passing score", async () => {
@@ -111,5 +122,39 @@ describe("awardLessonQuizCertificates", () => {
     expect(mockNotificationLogCreate).toHaveBeenCalledTimes(2);
     expect(mockLogAudit).toHaveBeenCalledTimes(2);
     expect(mockLogLearningEvent).toHaveBeenCalledTimes(2);
+  });
+
+  it("sends certificate award email when the student has an email address", async () => {
+    mockStudentProgressFindUnique.mockResolvedValue({ completedAt: new Date("2026-04-15T12:00:00Z") });
+    mockCertificateFindUnique.mockResolvedValueOnce(null);
+    mockCertificateCreate.mockResolvedValueOnce({ id: "cert-lesson-1", certificateCode: "ABC12345" });
+    mockEnrollmentFindMany.mockResolvedValue([]);
+    mockUserFindUnique.mockResolvedValue({ email: "student@example.lr", name: "Student One" });
+
+    const { awardLessonQuizCertificates } = await import(
+      "@/lib/certificates/certificateService"
+    );
+
+    await awardLessonQuizCertificates({
+      studentId: "student-1",
+      studentUserId: "user-1",
+      schoolId: "school-1",
+      classId: "class-1",
+      subject: "SCIENCE",
+      scheduledWorkId: "lesson-1",
+      contentId: "content-1",
+      lessonTitle: "Living Things",
+      actingUserId: "user-1",
+      quizScore: 0.85,
+    });
+
+    expect(mockSendCertificateAwarded).toHaveBeenCalledWith(
+      expect.objectContaining({
+        to: "student@example.lr",
+        studentName: "Student One",
+        certificateTitle: "Living Things",
+        certificateCode: "ABC12345",
+      })
+    );
   });
 });

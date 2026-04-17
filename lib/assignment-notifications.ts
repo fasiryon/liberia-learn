@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/db";
+import { sendAssignmentDue } from "@/lib/email";
 import { sendGuardianSMS } from "@/lib/guardian/sms-service";
 
 async function recordNotification(input: {
@@ -117,6 +118,7 @@ export async function notifyAssignmentCreated(input: {
             select: {
               id: true,
               email: true,
+              name: true,
             },
           },
         },
@@ -133,9 +135,11 @@ export async function notifyAssignmentCreated(input: {
     : "";
   const body = `Assigned by ${input.teacherName}: ${input.assignmentTitle} for ${input.className}.${dueText}`;
 
+  const assignmentUrl = `${process.env.NEXTAUTH_URL ?? "https://liberia-learn.vercel.app"}/student/assignments`;
+
   await Promise.all(
-    enrollments.map((row) =>
-      prisma.notificationLog.create({
+    enrollments.map(async (row) => {
+      await prisma.notificationLog.create({
         data: {
           userId: row.Student.user.id,
           channel: "in_app",
@@ -144,8 +148,32 @@ export async function notifyAssignmentCreated(input: {
           body,
           status: "delivered",
         },
-      })
-    )
+      });
+
+      if (row.Student.user.email && !row.Student.user.email.endsWith(".local")) {
+        const emailResult = await sendAssignmentDue({
+          to: row.Student.user.email,
+          studentName: row.Student.user.name ?? "Student",
+          assignmentTitle: input.assignmentTitle,
+          className: input.className,
+          teacherName: input.teacherName,
+          dueAt: input.dueAt,
+          assignmentUrl,
+        }).catch((error: any) => ({ ok: false, error: error?.message ?? "email_failed" }));
+
+        await prisma.notificationLog.create({
+          data: {
+            userId: row.Student.user.id,
+            channel: "email",
+            recipient: row.Student.user.email,
+            subject: "Assignment due",
+            body,
+            status: emailResult.ok ? "sent" : "failed",
+            error: emailResult.error ?? null,
+          },
+        });
+      }
+    })
   );
 }
 

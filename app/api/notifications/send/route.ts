@@ -49,7 +49,17 @@ export async function POST(req: NextRequest) {
           score: data?.score ?? 0,
           teacherNotes: data?.teacherNotes,
           dashboardUrl: data?.dashboardUrl ?? `${process.env.NEXTAUTH_URL}/dashboard`,
-        });
+        }).catch((error: any) => ({ ok: false, error: error?.message ?? "email_failed" }));
+      } else if (type === "weekly_progress" && target.email) {
+        emailResult = await sendWeeklyProgressToGuardian({
+          to: target.email,
+          guardianName: target.name ?? "Guardian",
+          studentName: data?.studentName ?? "Student",
+          schoolName: data?.schoolName ?? "LiberiaLearn",
+          weekSummary: Array.isArray(data?.weekSummary) ? data.weekSummary : [],
+          dashboardUrl: data?.dashboardUrl ?? `${process.env.NEXTAUTH_URL}/guardian/dashboard`,
+          unsubscribeUrl: data?.unsubscribeUrl,
+        }).catch((error: any) => ({ ok: false, error: error?.message ?? "email_failed" }));
       } else if (type === "custom" && target.email) {
         // For custom, we'd need to add a generic send — for now log it
         emailResult = { ok: true };

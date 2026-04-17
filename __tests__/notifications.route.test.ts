@@ -90,4 +90,30 @@ describe("POST /api/notifications/send — school isolation", () => {
       })
     );
   });
+
+  it("routes weekly progress email through the guardian digest template", async () => {
+    mockUserFindFirst.mockResolvedValueOnce({ id: "guardian-1", email: "g@school.edu", name: "Guardian" });
+    mockNotifCreate.mockResolvedValue({ id: "n-1" });
+    mockSendWeeklyProgress.mockResolvedValue({ ok: true });
+
+    const res = await POST(makePostReq({
+      type: "weekly_progress",
+      userId: "guardian-1",
+      channel: "email",
+      data: {
+        studentName: "Student One",
+        schoolName: "School 1",
+        weekSummary: [{ subject: "Math", homework: 2, avgScore: 90 }],
+      },
+    }));
+
+    expect(res.status).toBe(200);
+    expect(mockSendWeeklyProgress).toHaveBeenCalledWith(
+      expect.objectContaining({
+        to: "g@school.edu",
+        guardianName: "Guardian",
+        studentName: "Student One",
+      })
+    );
+  });
 });
