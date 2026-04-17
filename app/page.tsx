@@ -25,10 +25,10 @@ const roleCards = [
 ];
 
 const trustPillars = [
-  "Grounded responses with confidence, grounding score, and citations",
-  "Role-aware explainability for teacher and admin workflows",
-  "Tenant-safe caching, RBAC, and school-scoped data access",
-  "Rate limiting and AI cost observability on admin surfaces",
+  "AI responses grounded in the national curriculum — not the open web",
+  "Every role sees only what they are authorised to see",
+  "School data stays school-scoped — no cross-institution leakage",
+  "AI usage monitored and rate-controlled at every entry point",
 ];
 
 const demoLinks = [
@@ -98,7 +98,7 @@ export default function HomePage() {
             </Link>
             <Link href="/pilot-preview" className="hidden sm:inline-flex">
               <span className="inline-flex min-h-12 items-center justify-center rounded-full border border-slate-700 px-6 py-3 text-sm font-medium text-slate-100 hover:border-slate-500">
-                Review pilot readiness
+                For Ministry officials
               </span>
             </Link>
           </div>
@@ -108,15 +108,12 @@ export default function HomePage() {
           <div className="flex items-center justify-between gap-3">
             <div>
               <p className="text-xs uppercase tracking-[0.24em] text-slate-500">
-                Trust layer
+                Built for national scale
               </p>
               <h2 className="mt-2 text-2xl font-semibold text-slate-50">
-                Safer AI for real classrooms
+                Government-grade infrastructure, built in
               </h2>
             </div>
-            <span className="rounded-full border border-cyan-400/20 bg-cyan-400/10 px-3 py-1 text-xs font-semibold text-cyan-200">
-              Grounded
-            </span>
           </div>
 
           <div className="mt-6 space-y-3">
@@ -131,8 +128,7 @@ export default function HomePage() {
           </div>
 
           <p className="mt-5 text-sm leading-6 text-slate-400">
-            Teacher and admin AI flows can expose citations and high-level explainability.
-            Student and guardian views stay simplified and avoid internal implementation detail.
+            Designed for deployment in low-bandwidth, low-resource school environments across all 15 Liberian counties.
           </p>
         </div>
       </section>
@@ -155,34 +151,34 @@ export default function HomePage() {
         <div className="grid gap-6 rounded-[2rem] border border-white/8 bg-slate-900/55 p-6 lg:grid-cols-[1fr_0.95fr]">
           <div className="space-y-3">
             <p className="text-xs uppercase tracking-[0.24em] text-slate-500">
-              Why it matters
+              What schools get on day one
             </p>
             <h2 className="text-2xl font-semibold text-slate-50">
-              Built for real operations, not just demos
+              From enrollment to learning in minutes
             </h2>
             <p className="text-sm leading-7 text-slate-300">
-              The repo already implements offline queueing, guardian-safe shaping,
-              school-scoped intelligence, pilot readiness scoring, and feature-flag
-              rollouts. The goal is operational confidence in low-bandwidth, real-world
-              classrooms rather than a single polished demo path.
+              School administrators enroll online, import student lists, and assign
+              teachers — all without technical support. Students log in and begin working
+              through the national curriculum immediately. Guardians receive progress
+              updates by SMS.
             </p>
           </div>
 
           <div className="space-y-3 rounded-3xl border border-amber-400/15 bg-amber-400/8 p-5">
             <p className="text-xs uppercase tracking-[0.24em] text-amber-200/80">
-              Pilot call to action
+              For Ministry officials
             </p>
             <h3 className="text-xl font-semibold text-slate-50">
-              Review the pilot surfaces with school and ministry stakeholders
+              Request a Ministry briefing
             </h3>
             <p className="text-sm leading-6 text-slate-300">
-              Use the readiness, delivery, intelligence, and guardian flows to validate
-              whether a school is operationally prepared for a staged rollout.
+              LiberiaLearn is ready for national deployment. Schedule a walkthrough for
+              Ministry of Education stakeholders or request access for a pilot school.
             </p>
             <div className="flex flex-wrap gap-3 pt-2">
               <Link href="/pilot-preview">
                 <span className="inline-flex rounded-full bg-amber-300 px-5 py-2.5 text-sm font-semibold text-slate-950 hover:bg-amber-200">
-                  Open readiness review
+                  Request a briefing
                 </span>
               </Link>
               <Link href="/moe/login">
