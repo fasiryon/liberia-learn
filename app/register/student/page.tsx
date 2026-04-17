@@ -1,12 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 
 const GRADES = Array.from({ length: 12 }, (_, i) => i + 1);
 
-export default function StudentRegistrationPage() {
+function StudentRegistrationForm() {
   const searchParams = useSearchParams();
   const prefillCode = searchParams.get("code") ?? "";
 
@@ -81,7 +81,7 @@ export default function StudentRegistrationPage() {
           <p className="text-xs uppercase tracking-[0.2em] text-emerald-300">Student registration</p>
           <h1 className="mt-2 text-3xl font-bold">Create your account</h1>
           <p className="mt-2 text-sm text-slate-300">
-            You need your school's registration code. Ask your teacher or principal.
+            You need your school&apos;s registration code. Ask your teacher or principal.
           </p>
 
           <form onSubmit={submit} className="mt-6 grid gap-4 sm:grid-cols-2">
@@ -210,5 +210,13 @@ export default function StudentRegistrationPage() {
         </section>
       </div>
     </main>
+  );
+}
+
+export default function StudentRegistrationPage() {
+  return (
+    <Suspense fallback={null}>
+      <StudentRegistrationForm />
+    </Suspense>
   );
 }
