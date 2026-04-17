@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { GuardianNav } from "@/components/guardian/GuardianNav";
+import { DashboardTopBar } from "@/components/DashboardTopBar";
 import { placementReviewStatusLabels, placementReviewStatusStyles } from "@/lib/placement";
 import { guardianWelcomeStorageKey } from "@/app/guardian/GuardianWelcomeGate";
 
@@ -146,11 +147,20 @@ export default function GuardianDashboardClient() {
   );
 
   return (
-    <main className="min-h-screen bg-slate-950 px-4 py-8">
+    <main className="min-h-screen bg-slate-950 px-4 py-6">
       <div className="mx-auto max-w-6xl space-y-6">
+        {/* Consistent top bar */}
+        <DashboardTopBar
+          roleLabel="Guardian"
+          roleBadgeBg="bg-purple-500"
+          roleAccent="text-purple-300"
+          userName={selectedDashboardChild?.studentName ? `Viewing: ${selectedDashboardChild.studentName}` : undefined}
+        />
+
+        {/* Greeting */}
         <div>
-          <h1 className="text-2xl font-bold text-slate-50">Guardian Dashboard</h1>
-          <p className="mt-1 text-sm text-slate-300">
+          <h1 className="text-2xl font-bold text-slate-50">Good morning.</h1>
+          <p className="mt-1 text-sm text-slate-400">
             Monitor your child&apos;s learning progress and stay connected with their teacher.
           </p>
         </div>
@@ -195,6 +205,59 @@ export default function GuardianDashboardClient() {
                 </select>
               </section>
             ) : null}
+
+            {/* KPI cards */}
+            <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+              <div className="rounded-2xl border border-white/10 bg-slate-900/70 p-4 text-center">
+                <p className="text-2xl font-bold text-purple-400">{selectedSummary?.lessonViewsThisWeek ?? 0}</p>
+                <p className="mt-1 text-xs text-slate-400">Lessons this week</p>
+              </div>
+              <div className="rounded-2xl border border-white/10 bg-slate-900/70 p-4 text-center">
+                <p className="text-2xl font-bold text-emerald-400">
+                  {selectedDashboardChild ? Math.round(selectedDashboardChild.attendance.attendanceRate * 100) : 0}%
+                </p>
+                <p className="mt-1 text-xs text-slate-400">Attendance</p>
+              </div>
+              <div className="rounded-2xl border border-white/10 bg-slate-900/70 p-4 text-center">
+                <p className="text-2xl font-bold text-cyan-400">
+                  {selectedSummary?.lastHomework?.aiScore != null
+                    ? `${Math.round(selectedSummary.lastHomework.aiScore)}%`
+                    : "--"}
+                </p>
+                <p className="mt-1 text-xs text-slate-400">Last score</p>
+              </div>
+              <div className="rounded-2xl border border-white/10 bg-slate-900/70 p-4 text-center">
+                <p className="text-2xl font-bold text-amber-400">{unreadMessages}</p>
+                <p className="mt-1 text-xs text-slate-400">Unread messages</p>
+              </div>
+            </div>
+
+            {/* Primary Actions */}
+            <div className="grid gap-3 sm:grid-cols-3">
+              <Link
+                href={selectedDashboardChild ? `/guardian/student/${selectedDashboardChild.studentId}` : "/guardian/progress"}
+                className="flex flex-col gap-1 rounded-2xl border border-purple-500/30 bg-purple-500/10 p-4 hover:bg-purple-500/20"
+              >
+                <p className="text-sm font-bold text-purple-300">
+                  View {selectedDashboardChild?.studentName ?? "student"}&apos;s progress
+                </p>
+                <p className="text-xs text-slate-400">Grades, mastery, and placement</p>
+              </Link>
+              <Link
+                href="/guardian/messages"
+                className="flex flex-col gap-1 rounded-2xl border border-white/10 bg-slate-900/70 p-4 hover:border-purple-500/30"
+              >
+                <p className="text-sm font-bold text-slate-100">Messages</p>
+                <p className="text-xs text-slate-400">Stay connected with teachers</p>
+              </Link>
+              <Link
+                href="/guardian/progress"
+                className="flex flex-col gap-1 rounded-2xl border border-white/10 bg-slate-900/70 p-4 hover:border-purple-500/30"
+              >
+                <p className="text-sm font-bold text-slate-100">Weekly digest</p>
+                <p className="text-xs text-slate-400">This week&apos;s summary</p>
+              </Link>
+            </div>
 
             <section className="rounded-3xl border border-white/10 bg-slate-900/70 p-6">
               <div className="flex flex-wrap items-start justify-between gap-4">

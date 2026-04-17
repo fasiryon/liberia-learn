@@ -11,8 +11,10 @@ export default function AiTutorChat() {
   ]);
   const [busy, setBusy] = useState(false);
   const bottomRef = useRef<HTMLDivElement | null>(null);
+  const hasSentRef = useRef(false);
 
   useEffect(() => {
+    if (!hasSentRef.current) return;
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [msgs.length]);
 
@@ -20,6 +22,7 @@ export default function AiTutorChat() {
     const text = input.trim();
     if (!text || busy) return;
 
+    hasSentRef.current = true;
     setMsgs((m) => [...m, { role: "user", content: text }]);
     setInput("");
     setBusy(true);
