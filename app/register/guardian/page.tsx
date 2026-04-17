@@ -79,7 +79,7 @@ export default function GuardianRegistrationPage() {
           <p className="text-xs uppercase tracking-[0.2em] text-emerald-300">Guardian registration</p>
           <h1 className="mt-2 text-3xl font-bold">Create a guardian account</h1>
           <p className="mt-2 text-sm text-slate-300">
-            You need your child's school code and their exact full name and date of birth as registered.
+            You need your child&apos;s school code and their exact full name and date of birth as registered.
           </p>
 
           <form onSubmit={submit} className="mt-6 grid gap-4 sm:grid-cols-2">
@@ -129,7 +129,7 @@ export default function GuardianRegistrationPage() {
             </label>
 
             <label className="sm:col-span-2">
-              <span className="text-xs text-slate-400">Student's full name</span>
+              <span className="text-xs text-slate-400">Student&apos;s full name</span>
               <input
                 required
                 value={form.studentFullName}
@@ -140,7 +140,7 @@ export default function GuardianRegistrationPage() {
             </label>
 
             <label>
-              <span className="text-xs text-slate-400">Student's date of birth</span>
+              <span className="text-xs text-slate-400">Student&apos;s date of birth</span>
               <input
                 required
                 type="date"
