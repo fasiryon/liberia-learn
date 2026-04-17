@@ -8,6 +8,11 @@ import {
   schoolMetricsToCsvRows,
 } from "@/lib/moe/exportUtils";
 import { logDataAccess } from "@/lib/dataAccess/logDataAccess";
+import {
+  checkRateLimit,
+  RATE_LIMIT_POLICIES,
+  rateLimitExceededResponse,
+} from "@/lib/rateLimit";
 
 export const dynamic = "force-dynamic";
 
@@ -21,6 +26,16 @@ export async function GET(
 
   try {
     const user = await requireMoeExportUser();
+
+    const rateLimit = await checkRateLimit(`moe:export:${user.id}`, {
+      windowMs: RATE_LIMIT_POLICIES.ADMIN.windowMs,
+      limit: 30,
+      namespace: "moe_export",
+    });
+    if (!rateLimit.allowed) {
+      return rateLimitExceededResponse(rateLimit);
+    }
+
     const district = decodeURIComponent(params.district);
     const exportDate = formatExportDate();
     const rows = schoolMetricsToCsvRows(await getSchoolExportMetrics(district), exportDate);

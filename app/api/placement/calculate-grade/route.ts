@@ -3,9 +3,16 @@ import { NextResponse } from "next/server";
 import { requireRole } from "@/lib/auth";
 import { logAudit } from "@/lib/audit";
 import { routedCompletion } from "@/lib/ai/router";
+import { buildPrompt, getPromptMetadata } from "@/lib/ai/promptRegistry";
+import {
+  checkRateLimit,
+  getRateLimitHeaders,
+  RATE_LIMIT_POLICIES,
+  rateLimitExceededResponse,
+} from "@/lib/rateLimit";
 
-const PLACEMENT_ANALYSIS_PROMPT_KEY = "placement.analysis";
-const PLACEMENT_ANALYSIS_PROMPT_VERSION = "1.0.0";
+const placementAnalysisSystemPrompt = getPromptMetadata("placement.analysis.system");
+const placementAnalysisUserPrompt = getPromptMetadata("placement.analysis.user");
 const PLACEMENT_CALCULATION_VERSION = "placement.grade.v1";
 
 interface Answer {
@@ -116,36 +123,16 @@ async function generatePlacementAnalysis(input: {
     messages: [
       {
         role: "system",
-        content:
-          "You are an expert Liberian mathematics placement analyst. Return JSON only with the exact requested shape. Keep language plain, teacher-friendly, and specific.",
+        content: buildPrompt("placement.analysis.system"),
       },
       {
         role: "user",
-        content: `Analyze this placement test result and return JSON only.
-
-Recommended grade: ${input.recommendedGrade}
-Placement band: ${input.band}
-Confidence label: ${input.confidence}
-
-Question results:
-${analysisPrompt}
-
-Return exactly:
-{
-  "overallNarrative": "2-3 plain-language sentences",
-  "strengths": ["strength 1", "strength 2"],
-  "areasForGrowth": ["area 1", "area 2"],
-  "subjectBreakdown": {
-    "numberSense": { "score": 80, "label": "Strong" },
-    "operations": { "score": 60, "label": "Developing" }
-  },
-  "teacherNote": "1-2 sentences for the teacher",
-  "confidenceExplanation": "Plain-language explanation of confidence",
-  "recommendedNextSteps": [
-    "Specific action 1 for the teacher",
-    "Specific action 2 for the student"
-  ]
-}`,
+        content: buildPrompt("placement.analysis.user", {
+          recommendedGrade: input.recommendedGrade,
+          band: input.band,
+          confidence: input.confidence,
+          analysisPrompt,
+        }),
       },
     ],
     maxTokens: 900,
@@ -157,8 +144,9 @@ Return exactly:
       userId: input.usageContext.userId ?? null,
       studentId: input.usageContext.userId ?? null,
       requestType: "placement_analysis",
-      promptKey: PLACEMENT_ANALYSIS_PROMPT_KEY,
-      promptVersion: PLACEMENT_ANALYSIS_PROMPT_VERSION,
+      promptKey: `${placementAnalysisSystemPrompt.key}+${placementAnalysisUserPrompt.key}`,
+      promptVersion: `${placementAnalysisSystemPrompt.version}+${placementAnalysisUserPrompt.version}`,
+      promptHash: placementAnalysisSystemPrompt.hash,
       assessmentVersion: "placement.v1",
       calculationVersion: PLACEMENT_CALCULATION_VERSION,
       metadata: {
@@ -175,6 +163,16 @@ Return exactly:
 export async function POST(req: Request) {
   try {
     const user = await requireRole("STUDENT");
+
+    const rateLimit = await checkRateLimit(`placement:${user.id}`, {
+      windowMs: RATE_LIMIT_POLICIES.AI_HEAVY.windowMs,
+      limit: RATE_LIMIT_POLICIES.AI_HEAVY.student,
+      namespace: "placement_grade",
+    });
+    if (!rateLimit.allowed) {
+      return rateLimitExceededResponse(rateLimit);
+    }
+
     const { answers, questions }: { answers: Answer[]; questions?: QuestionForAnalysis[] } = await req.json();
 
     if (!answers || answers.length === 0) {
@@ -292,23 +290,26 @@ export async function POST(req: Request) {
       },
     });
 
-    return NextResponse.json({
-      recommendedGrade,
-      band,
-      accuracyRate: Math.round(accuracyRate),
-      weightedAccuracy: Math.round(weightedAccuracy),
-      totalQuestions,
-      correctAnswers,
-      confidence,
-      aiAnalysis,
-      details: {
-        averageDifficulty: avgDifficulty,
-        difficultyRange: {
-          min: Math.min(...answers.map((a) => a.difficulty || 1)),
-          max: Math.max(...answers.map((a) => a.difficulty || 1)),
+    return NextResponse.json(
+      {
+        recommendedGrade,
+        band,
+        accuracyRate: Math.round(accuracyRate),
+        weightedAccuracy: Math.round(weightedAccuracy),
+        totalQuestions,
+        correctAnswers,
+        confidence,
+        aiAnalysis,
+        details: {
+          averageDifficulty: avgDifficulty,
+          difficultyRange: {
+            min: Math.min(...answers.map((a) => a.difficulty || 1)),
+            max: Math.max(...answers.map((a) => a.difficulty || 1)),
+          },
         },
       },
-    });
+      { headers: getRateLimitHeaders(rateLimit) }
+    );
   } catch (error: any) {
     console.error("Calculate grade error:", error);
     return NextResponse.json(

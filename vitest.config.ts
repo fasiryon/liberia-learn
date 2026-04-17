@@ -35,6 +35,9 @@ export default defineConfig({
   test: {
     environment: "node",
     globals: true,
+    env: {
+      JWT_SECRET: "vitest-test-secret-not-for-production",
+    },
     maxWorkers: 2,
     // Explicit include scopes tests to __tests__/ only, preventing accidental
     // pickup of third-party node_modules test files when running from the
