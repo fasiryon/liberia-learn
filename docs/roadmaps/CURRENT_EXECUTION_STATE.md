@@ -7,28 +7,27 @@ Live execution tracking for the final closeout program.
 22-sprint final platform closeout
 
 ## Current sprint or phase
-Sprint 16F COMPLETE. Legal and compliance pages implemented. All supplemental sprints are complete.
+Dashboard UX Harmonisation COMPLETE. All 5 role portals unified. CI green on main.
 
 ## Current branch
-feat/legal-compliance
+main (57721be)
 
 ## Worktree status
-Sprint 16F files validated and ready to commit. Pre-existing untracked worktree files remain unstaged and are not part of Sprint 16F.
+Clean — sprint committed and pushed.
 
 ## Overall status
-Sprints 1-16 + 16B + 16C + 16D + 16E + 16F complete. Legal/compliance pages, first-login policy consent, role portal footer links, public cookie notice, self-registration, email deliverability, OWASP hardening, and load testing are all complete.
+Sprints 1-16 + 16B + 16C + 16D + 16E + 16F + Dashboard UX complete. All role portals now share a consistent design system: DashboardTopBar, KPI cards, primary actions above fold, and role accent colours.
 
 ## Last completed phase
-Sprint 16F - Legal and Compliance Pages
+Dashboard UX Harmonisation — all 5 role portals
 
 ## Last commit reference
-Pending Sprint 16F commit: `feat: sprint 16F complete - legal and compliance pages`
+`57721be feat(ux): harmonise dashboard UX across all 5 role portals`
 
-## Last successful validation (Sprint 16F)
-- `npx prisma generate`: PASS
+## Last successful validation (Dashboard UX)
 - `npx tsc --noEmit`: PASS (0 errors)
-- `npm test`: PASS (1820 tests, 250 files)
-- `npm run build`: PASS
+- `npm test`: PASS (1805 tests)
+- `npm run build`: PASS (exit 0)
 
 ## Sprint 16F Deliverables
 | Feature | Route / File | Notes |
