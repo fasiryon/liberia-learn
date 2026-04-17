@@ -44,9 +44,12 @@ export async function POST(request: NextRequest) {
     }
 
     // Create JWT token
-    const secret = new TextEncoder().encode(
-      process.env.JWT_SECRET || 'your-secret-key-change-in-production'
-    );
+    const jwtSecret = process.env.JWT_SECRET;
+    if (!jwtSecret) {
+      console.error('[login] JWT_SECRET env var is not set');
+      return NextResponse.json({ error: 'Server configuration error' }, { status: 500 });
+    }
+    const secret = new TextEncoder().encode(jwtSecret);
 
     const token = await new SignJWT({
       userId: user.id,
