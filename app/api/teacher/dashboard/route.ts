@@ -19,12 +19,13 @@ export async function GET() {
       where: classWhere,
       select: { id: true, name: true },
     });
-    const school = user.schoolId
-      ? await prisma.school.findUnique({
-          where: { id: user.schoolId },
-          select: { code: true, name: true },
-        })
-      : null;
+    const school =
+      user.schoolId && (prisma as any).school
+        ? await prisma.school.findUnique({
+            where: { id: user.schoolId },
+            select: { code: true, name: true },
+          })
+        : null;
     const classIds = classes.map((c) => c.id);
     const classPerformance =
       user.role === "TEACHER" && user.schoolId
