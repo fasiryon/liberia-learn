@@ -27,6 +27,7 @@ vi.mock("@/lib/serverFlags", () => ({
   getAiTeacherAssistDailyBudgetUsd: () => 10,
   getAiGradingDailyBudgetUsd: () => 8,
   getAiCurriculumDailyBudgetUsd: () => 20,
+  getAiLabsDailyBudgetUsd: () => 5,
 }));
 
 import { getAiUsageMetrics } from "@/lib/ai/interactionLog";

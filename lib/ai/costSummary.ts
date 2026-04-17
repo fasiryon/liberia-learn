@@ -4,6 +4,7 @@ import {
   getAiBudgetMonthlyCap,
   getAiCurriculumDailyBudgetUsd,
   getAiGradingDailyBudgetUsd,
+  getAiLabsDailyBudgetUsd,
   getAiTeacherAssistDailyBudgetUsd,
   getAiTutorDailyBudgetUsd,
 } from "@/lib/serverFlags";
@@ -66,6 +67,7 @@ function emptyByFeature(): ByFeatureSummary {
     teacherAssist: { costUsd: 0, tokensUsed: 0, requestCount: 0, fallbackCount: 0 },
     grading: { costUsd: 0, tokensUsed: 0, requestCount: 0, fallbackCount: 0 },
     curriculum: { costUsd: 0, tokensUsed: 0, requestCount: 0, fallbackCount: 0 },
+    labs: { costUsd: 0, tokensUsed: 0, requestCount: 0, fallbackCount: 0 },
   };
 }
 
@@ -195,6 +197,7 @@ export async function getAiCostDashboardData(
   const teacherDailyCap = Math.min(getAiTeacherAssistDailyBudgetUsd(), getAiBudgetDailyCap());
   const gradingDailyCap = Math.min(getAiGradingDailyBudgetUsd(), getAiBudgetDailyCap());
   const curriculumDailyCap = Math.min(getAiCurriculumDailyBudgetUsd(), getAiBudgetDailyCap());
+  const labsDailyCap = Math.min(getAiLabsDailyBudgetUsd(), getAiBudgetDailyCap());
 
   if (byFeature.tutor.costUsd >= tutorDailyCap * 0.8) {
     alerts.push("Tutor AI spend is above 80% of its daily budget.");
@@ -207,6 +210,9 @@ export async function getAiCostDashboardData(
   }
   if (byFeature.curriculum.costUsd >= curriculumDailyCap * 0.8) {
     alerts.push("Curriculum AI spend is above 80% of its daily budget.");
+  }
+  if (byFeature.labs.costUsd >= labsDailyCap * 0.8) {
+    alerts.push("AI Labs spend is above 80% of its daily budget.");
   }
   if (monthCost >= monthlyCap * 0.9) {
     alerts.push("Platform AI spend is above 90% of the monthly cap.");

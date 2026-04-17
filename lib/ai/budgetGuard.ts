@@ -5,6 +5,7 @@ import {
   getAiBudgetMonthlyCap,
   getAiCurriculumDailyBudgetUsd,
   getAiGradingDailyBudgetUsd,
+  getAiLabsDailyBudgetUsd,
   getAiTeacherAssistDailyBudgetUsd,
   getAiTutorDailyBudgetUsd,
 } from "@/lib/serverFlags";
@@ -43,6 +44,8 @@ function getFeatureDailyCap(feature: AiBudgetFeature) {
       return getAiGradingDailyBudgetUsd();
     case "curriculum":
       return getAiCurriculumDailyBudgetUsd();
+    case "labs":
+      return getAiLabsDailyBudgetUsd();
   }
 }
 

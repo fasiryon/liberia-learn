@@ -3,6 +3,34 @@
 ## Purpose
 Live execution tracking for the final closeout program.
 
+## AI Labs V1 Current State
+- Current workstream: AI Labs V1
+- Current phase: Phase 2 Gravity Explorer COMPLETE; Phase 3 partial labs are blocked pending explicit approval.
+- Current branch: `feat/ai-labs-v1`
+- Worktree status: Phase 2 implemented locally; validation gate passed; commit/deploy verification in progress.
+- Last completed phase: AI Labs V1 Phase 2 - Gravity Explorer
+- Last commit reference: Pending Phase 2 commit
+
+## AI Labs V1 Phase 2 Validation
+- `npx prisma generate`: PASS
+- `npx tsc --noEmit`: PASS (0 errors)
+- `npm test`: PASS (1843 tests, 256 files)
+- `npm run build`: PASS (exit 0)
+- Gravity scene dynamic chunks: PASS (`2232...js` 2.3 KB fallback, `7704...js` 3.2 KB scene; both under 200 KB)
+
+## AI Labs V1 Phase 2 Deliverables
+| Feature | Route / File | Notes |
+|---------|--------------|-------|
+| Gravity lab state/actions | `lib/labs/gravity-explorer/` | Typed state, action union, deterministic runtime, validator |
+| Lab registry entry | `lib/labs/registry.ts` | `gravity-explorer`, tier 1, Physics Grades 7-9 |
+| Runtime dispatch | `lib/labs/runtime/*` | Gravity apply/validate dispatchers wired |
+| Canvas scene | `components/labs/gravity-explorer/Scene.tsx` | 2D animation, trail, velocity color, readout, controls |
+| Low-end fallback | `components/labs/gravity-explorer/Fallback.tsx` | 2D canvas fallback with height bar and controls |
+| Lab page | `/student/labs/gravity-explorer` | Student-only route with lab open telemetry |
+| Lesson integration | `/student/lessons/[id]` | Physics Grades 7-9 shows slide-over "Open Gravity Lab" entry point |
+| AI loop | `/api/labs/gravity-explorer/plan`, `/api/labs/gravity-explorer/explain` | Planner validates actions, frontend applies runtime state, explainer returns tutor text |
+| Tests | `__tests__/labs/` | Gravity runtime and validator coverage added |
+
 ## Current workstream
 22-sprint final platform closeout
 

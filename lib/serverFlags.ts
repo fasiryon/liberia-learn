@@ -260,6 +260,11 @@ export function getAiCurriculumDailyBudgetUsd(): number {
   return Number.isFinite(raw) && raw > 0 ? raw : 20;
 }
 
+export function getAiLabsDailyBudgetUsd(): number {
+  const raw = parseFloat(process.env.AI_LABS_DAILY_BUDGET_USD ?? "5");
+  return Number.isFinite(raw) && raw > 0 ? raw : 5;
+}
+
 /** Adaptive learning engine. DEFAULT ON. Set ENABLE_ADAPTIVE_ENGINE=false to disable. */
 export function isAdaptiveEngineEnabled(): boolean {
   return process.env.ENABLE_ADAPTIVE_ENGINE !== "false";
@@ -571,6 +576,15 @@ export function isToolkitLessonIntegrationEnabled(): boolean {
  */
 export function isVirtualLabsEnabled(): boolean {
   return process.env.ENABLE_VIRTUAL_LABS === "true";
+}
+
+/**
+ * AI Labs V1 interactive simulations.
+ * Separate from VirtualLab/LabSession assignment and submission flows.
+ * DEFAULT OFF.
+ */
+export function isAiLabsEnabled(): boolean {
+  return process.env.ENABLE_AI_LABS === "true";
 }
 
 /**
