@@ -5,11 +5,11 @@ Live execution tracking for the final closeout program.
 
 ## AI Labs V1 Current State
 - Current workstream: AI Labs V1
-- Current phase: Phase 4 2D scenes, AI loop wiring, lesson integration, deploy, and live verification COMPLETE.
+- Current phase: Phase 5 Batch 1 Physics Labs COMPLETE pending commit, push, deploy, and live production verification.
 - Current branch: `main`
-- Worktree status: Phase 4 committed, pushed, deployed, and verified on production.
-- Last completed phase: AI Labs V1 Phase 4 - 2D Lab Scenes + AI Loop + Lesson Integration
-- Last commit reference: `e8be082 feat(labs): complete phase 4 canvas lab scenes`
+- Worktree status: Phase 5 Batch 1 implemented locally; validation gate passed; commit not yet created.
+- Last completed phase: AI Labs V1 Phase 5 Batch 1 - Physics Labs
+- Last commit reference: `e35d333` Phase 4 labs baseline on main
 
 ## AI Labs V1 Phase 2 Validation
 - `npx prisma generate`: PASS
@@ -60,6 +60,24 @@ Live execution tracking for the final closeout program.
 - Live production AI loop verification: PASS for Pendulum `SET_LENGTH`, Molecule Motion `SET_TEMPERATURE`, Human Heart `SET_EXERCISE_LEVEL`
 - Live 375px canvas verification: PASS for all three labs
 - Live lesson slide-over integration verification: PASS for Physics/Pendulum, Chemistry/Molecule, Biology/Heart
+
+## AI Labs V1 Phase 5 Batch 1 Deliverables
+| Feature | Route / File | Notes |
+|---------|--------------|-------|
+| Electric Circuit Builder | `/student/labs/electric-circuit` | 2D canvas circuit scene, low-end fallback, LabShell AI loop, registry/runtime/validator wiring, lesson slide-over entry |
+| Wave Motion Lab | `/student/labs/wave-motion` | 2D transverse/longitudinal wave scene, low-end fallback, LabShell AI loop, registry/runtime/validator wiring, lesson slide-over entry |
+| Lesson integration | `/student/lessons/[id]` | Physics Grades 9-11 shows Open Circuit Lab; Physics Grades 10-12 shows Open Wave Lab |
+| Registry status | `lib/labs/registry.ts` | 6 registered complete labs |
+
+## AI Labs V1 Phase 5 Batch 1 Validation
+- `npx prisma generate`: PASS
+- `npx tsc --noEmit`: PASS (0 errors)
+- `npm test`: PASS (1883 tests, 263 files)
+- `npm run build`: PASS (exit 0)
+- Electric Circuit scene chunk: PASS (`1782...js` 4.3 KB scene; fallback `9453...js` 1.3 KB; both under 200 KB)
+- Wave Motion scene chunk: PASS (`7569...js` 4.6 KB scene; fallback `1163...js` 1.5 KB; both under 200 KB)
+- Live production route verification: PENDING deploy
+- Live production AI loop verification: PENDING deploy
 
 ## Current workstream
 22-sprint final platform closeout

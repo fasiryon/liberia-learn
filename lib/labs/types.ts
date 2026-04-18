@@ -3,6 +3,8 @@ export type LabId =
   | "pendulum-lab"
   | "molecule-motion"
   | "human-heart"
+  | "electric-circuit"
+  | "wave-motion"
   | "electric-circuits"
   | "light-and-shadow"
   | "simple-machines"

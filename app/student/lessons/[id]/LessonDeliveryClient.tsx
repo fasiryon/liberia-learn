@@ -372,6 +372,12 @@ export default function LessonDeliveryClient({ lessonId }: { lessonId: string })
         { labId: "pendulum-lab", label: "Open Pendulum Lab" }
       );
     }
+    if (lesson.grade >= 9 && lesson.grade <= 11 && subject.includes("physics")) {
+      labs.push({ labId: "electric-circuit", label: "Open Circuit Lab" });
+    }
+    if (lesson.grade >= 10 && lesson.grade <= 12 && subject.includes("physics")) {
+      labs.push({ labId: "wave-motion", label: "Open Wave Lab" });
+    }
     if (lesson.grade >= 9 && lesson.grade <= 11 && subject.includes("chemistry")) {
       labs.push({ labId: "molecule-motion", label: "Open Molecule Lab" });
     }
