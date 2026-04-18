@@ -5,11 +5,11 @@ Live execution tracking for the final closeout program.
 
 ## AI Labs V1 Current State
 - Current workstream: AI Labs V1
-- Current phase: Phase 2 Gravity Explorer COMPLETE; Phase 3 partial labs are blocked pending explicit approval.
+- Current phase: Phase 3 partial labs COMPLETE; Phase 4 lesson integration expansion is blocked pending explicit approval.
 - Current branch: `feat/ai-labs-v1`
 - Worktree status: Phase 2 implemented locally; validation gate passed; commit/deploy verification in progress.
-- Last completed phase: AI Labs V1 Phase 2 - Gravity Explorer
-- Last commit reference: Pending Phase 2 commit
+- Last completed phase: AI Labs V1 Phase 3 - Partial Labs
+- Last commit reference: Pending Phase 3 commit
 
 ## AI Labs V1 Phase 2 Validation
 - `npx prisma generate`: PASS
@@ -30,6 +30,16 @@ Live execution tracking for the final closeout program.
 | Lesson integration | `/student/lessons/[id]` | Physics Grades 7-9 shows slide-over "Open Gravity Lab" entry point |
 | AI loop | `/api/labs/gravity-explorer/plan`, `/api/labs/gravity-explorer/explain` | Planner validates actions, frontend applies runtime state, explainer returns tutor text |
 | Tests | `__tests__/labs/` | Gravity runtime and validator coverage added |
+
+## AI Labs V1 Phase 3 Deliverables
+| Feature | Route / File | Notes |
+|---------|--------------|-------|
+| Pendulum Lab partial | `lib/labs/pendulum-lab/` | Typed state/actions/runtime/validator only; tier 1; partial registry entry |
+| Molecule Motion partial | `lib/labs/molecule-motion/` | Typed state/actions/runtime/validator only; tier 1; partial registry entry |
+| Human Heart Simulator partial | `lib/labs/human-heart/` | Typed state/actions/runtime/validator only; tier 2; partial registry entry |
+| Registry count | `lib/labs/registry.ts` | 4 registered labs total: Gravity complete + 3 partial labs |
+| Runtime dispatch | `lib/labs/runtime/*` | Apply/validate dispatchers wired for all 4 registered labs |
+| Tests | `__tests__/labs/` | Pendulum, Molecule Motion, and Human Heart runtime coverage added |
 
 ## Current workstream
 22-sprint final platform closeout

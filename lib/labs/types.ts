@@ -38,6 +38,7 @@ export type LabDefinition<S> = {
   gradeBand: string;
   description?: string;
   tier: 1 | 2 | 3;
+  partial?: boolean;
   curriculumStandards: string[];
   allowedActions: string[];
   initialState: S;
