@@ -86,6 +86,10 @@ export function applyHumanHeartAction(
         blockage: false,
         oxygenLevel: Math.min(98, current.oxygenLevel + 15),
       };
+    case "PLAY":
+      return { ...current, paused: false };
+    case "PAUSE":
+      return { ...current, paused: true };
     case "RESET":
       return { ...HEART_INITIAL_STATE };
     case "STEP": {

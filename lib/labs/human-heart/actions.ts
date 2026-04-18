@@ -3,6 +3,8 @@ export type HumanHeartAction =
   | { type: "SET_EXERCISE_LEVEL"; value: number }
   | { type: "SIMULATE_BLOCKAGE" }
   | { type: "CLEAR_BLOCKAGE" }
+  | { type: "PLAY" }
+  | { type: "PAUSE" }
   | { type: "RESET" }
   | { type: "STEP"; dt?: number };
 
@@ -11,6 +13,8 @@ export const HEART_ACTION_TYPES = [
   "SET_EXERCISE_LEVEL",
   "SIMULATE_BLOCKAGE",
   "CLEAR_BLOCKAGE",
+  "PLAY",
+  "PAUSE",
   "RESET",
   "STEP",
 ] as const;

@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { requireRole } from "@/lib/auth";
 import { prisma } from "@/lib/db";
+import { labRegistry } from "@/lib/labs/registry";
+import { isAiLabsEnabled } from "@/lib/serverFlags";
 
 export const dynamic = "force-dynamic";
 
@@ -13,6 +15,10 @@ function typeLabel(labType: string) {
 export default async function StudentLabsPage() {
   try {
     const user = await requireRole("STUDENT");
+    const aiLabsEnabled = isAiLabsEnabled();
+    const aiLabs = Object.values(labRegistry)
+      .filter(Boolean)
+      .sort((left, right) => left!.title.localeCompare(right!.title));
 
     const sessions = await prisma.labSession.findMany({
       where: { studentId: user.id, schoolId: user.schoolId ?? undefined },
@@ -51,16 +57,84 @@ export default async function StudentLabsPage() {
             </Link>
             <h1 className="mt-3 text-3xl font-bold">Student Labs</h1>
             <p className="mt-2 max-w-2xl text-sm text-slate-400">
-              Complete your assigned labs, record your observations, and submit your findings for teacher review.
+              Open AI learning labs or complete assigned practical labs for teacher review.
             </p>
           </div>
 
+          <section>
+            <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-cyan-200">
+                  AI Labs
+                </p>
+                <h2 className="mt-2 text-2xl font-semibold text-white">Available learning labs</h2>
+              </div>
+              {!aiLabsEnabled ? (
+                <span className="rounded-full border border-amber-400/30 bg-amber-400/10 px-3 py-1 text-xs font-semibold text-amber-100">
+                  Disabled
+                </span>
+              ) : null}
+            </div>
+            <div className="mt-4 grid gap-4 sm:grid-cols-2">
+              {aiLabs.map((lab) => {
+                if (!lab) return null;
+                const comingSoon = Boolean(lab.partial) || !aiLabsEnabled;
+                return (
+                  <article key={lab.id} className="rounded-3xl border border-white/10 bg-slate-900/70 p-5">
+                    <div className="flex items-start justify-between gap-3">
+                      <div>
+                        <p className="text-lg font-semibold text-slate-100">{lab.title}</p>
+                        <p className="mt-1 text-sm text-slate-400">
+                          {lab.subject} | {lab.gradeBand}
+                        </p>
+                      </div>
+                      {comingSoon ? (
+                        <span className="rounded-full border border-amber-400/20 bg-amber-400/10 px-3 py-1 text-[11px] font-semibold text-amber-100">
+                          Coming soon
+                        </span>
+                      ) : (
+                        <span className="rounded-full border border-cyan-400/20 bg-cyan-500/10 px-3 py-1 text-[11px] font-semibold text-cyan-200">
+                          Tier {lab.tier}
+                        </span>
+                      )}
+                    </div>
+                    <p className="mt-3 text-sm leading-6 text-slate-300">{lab.description}</p>
+                    {comingSoon ? (
+                      <button
+                        type="button"
+                        disabled
+                        className="mt-5 inline-flex min-h-11 rounded-2xl border border-slate-700 px-4 py-2 text-sm font-semibold text-slate-500"
+                      >
+                        Open Lab
+                      </button>
+                    ) : (
+                      <Link
+                        href={`/student/labs/${lab.id}`}
+                        className="mt-5 inline-flex min-h-11 items-center rounded-2xl bg-cyan-300 px-4 py-2 text-sm font-semibold text-slate-950 hover:bg-cyan-200"
+                      >
+                        Open Lab
+                      </Link>
+                    )}
+                  </article>
+                );
+              })}
+            </div>
+          </section>
+
+          <section>
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-emerald-200">
+                Assigned Labs
+              </p>
+              <h2 className="mt-2 text-2xl font-semibold text-white">Teacher-assigned practical labs</h2>
+            </div>
+
           {sessions.length === 0 ? (
-            <div className="rounded-3xl border border-white/10 bg-slate-900/70 p-8 text-sm text-slate-300">
+            <div className="mt-4 rounded-3xl border border-white/10 bg-slate-900/70 p-8 text-sm text-slate-300">
               No labs have been assigned yet.
             </div>
           ) : (
-            <div className="grid gap-4 sm:grid-cols-2">
+            <div className="mt-4 grid gap-4 sm:grid-cols-2">
               {sessions.map((session) => {
                 const lab = labMap.get(session.labId);
                 if (!lab) return null;
@@ -95,6 +169,7 @@ export default async function StudentLabsPage() {
               })}
             </div>
           )}
+          </section>
         </div>
       </main>
     );

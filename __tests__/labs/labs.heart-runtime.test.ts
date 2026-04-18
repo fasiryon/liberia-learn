@@ -76,4 +76,11 @@ describe("human heart runtime", () => {
 
     expect(next).toEqual(HEART_INITIAL_STATE);
   });
+
+  it("PLAY and PAUSE update paused state", () => {
+    expect(applyHumanHeartAction(HEART_INITIAL_STATE, { type: "PLAY" }).paused).toBe(false);
+    expect(
+      applyHumanHeartAction({ ...HEART_INITIAL_STATE, paused: false }, { type: "PAUSE" }).paused
+    ).toBe(true);
+  });
 });

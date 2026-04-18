@@ -13,6 +13,8 @@ export function validateHumanHeartAction(action: HumanHeartAction): LabValidatio
         : { ok: false, reason: "Exercise level must be between 0 and 3." };
     case "SIMULATE_BLOCKAGE":
     case "CLEAR_BLOCKAGE":
+    case "PLAY":
+    case "PAUSE":
     case "RESET":
     case "STEP":
       return { ok: true };
