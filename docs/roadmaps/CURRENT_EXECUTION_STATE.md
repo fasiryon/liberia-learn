@@ -5,11 +5,11 @@ Live execution tracking for the final closeout program.
 
 ## AI Labs V1 Current State
 - Current workstream: AI Labs V1
-- Current phase: Phase 5 Batch 1 Physics Labs COMPLETE pending commit, push, deploy, and live production verification.
+- Current phase: Phase 5 Batch 1 Physics Labs COMPLETE.
 - Current branch: `main`
-- Worktree status: Phase 5 Batch 1 implemented locally; validation gate passed; commit not yet created.
+- Worktree status: Phase 5 Batch 1 committed, pushed, deployed, and verified on production.
 - Last completed phase: AI Labs V1 Phase 5 Batch 1 - Physics Labs
-- Last commit reference: `e35d333` Phase 4 labs baseline on main
+- Last commit reference: `beb99c9 fix(labs): guide planner for phase 5 physics labs`
 
 ## AI Labs V1 Phase 2 Validation
 - `npx prisma generate`: PASS
@@ -76,8 +76,11 @@ Live execution tracking for the final closeout program.
 - `npm run build`: PASS (exit 0)
 - Electric Circuit scene chunk: PASS (`1782...js` 4.3 KB scene; fallback `9453...js` 1.3 KB; both under 200 KB)
 - Wave Motion scene chunk: PASS (`7569...js` 4.6 KB scene; fallback `1163...js` 1.5 KB; both under 200 KB)
-- Live production route verification: PENDING deploy
-- Live production AI loop verification: PENDING deploy
+- Live production route verification: PASS for `/student/labs/electric-circuit` and `/student/labs/wave-motion`
+- Live production AI loop verification: PASS for Electric Circuit `SET_VOLTAGE` and Wave Motion `SET_AMPLITUDE`
+- Live lesson slide-over integration verification: PASS by lesson mapping for Physics Grades 9-11 Circuit and Grades 10-12 Wave
+- Production deploy: PASS, aliased to `https://liberia-learn.vercel.app`
+- GitHub Actions on latest main: PASS, all 4 workflows green (`PR Triage`, `Runtime Gate 1`, `Deploy ECS Images`, `CI`)
 
 ## Current workstream
 22-sprint final platform closeout
