@@ -58,6 +58,26 @@ import {
 } from "@/lib/labs/ecosystem-balance/state";
 import { applyEcosystemBalanceAction } from "@/lib/labs/ecosystem-balance/runtime";
 import { validateEcosystemBalanceAction } from "@/lib/labs/ecosystem-balance/validator";
+import {
+  REACTION_ACTION_TYPES,
+  isChemicalReactionAction,
+} from "@/lib/labs/chemical-reaction/actions";
+import {
+  REACTION_INITIAL_STATE,
+  type ChemicalReactionState,
+} from "@/lib/labs/chemical-reaction/state";
+import { applyChemicalReactionAction } from "@/lib/labs/chemical-reaction/runtime";
+import { validateChemicalReactionAction } from "@/lib/labs/chemical-reaction/validator";
+import {
+  PERIODIC_TABLE_ACTION_TYPES,
+  isPeriodicTableAction,
+} from "@/lib/labs/periodic-table/actions";
+import {
+  PERIODIC_TABLE_INITIAL_STATE,
+  type PeriodicTableState,
+} from "@/lib/labs/periodic-table/state";
+import { applyPeriodicTableAction } from "@/lib/labs/periodic-table/runtime";
+import { validatePeriodicTableAction } from "@/lib/labs/periodic-table/validator";
 
 export const LAB_IDS = [
   "gravity-explorer",
@@ -67,6 +87,8 @@ export const LAB_IDS = [
   "electric-circuit",
   "wave-motion",
   "cell-division",
+  "chemical-reaction",
+  "periodic-table",
   "electric-circuits",
   "light-and-shadow",
   "simple-machines",
@@ -269,6 +291,57 @@ const ecosystemBalanceDefinition: LabDefinition<EcosystemBalanceState> = {
   },
 };
 
+const chemicalReactionDefinition: LabDefinition<ChemicalReactionState> = {
+  id: "chemical-reaction",
+  title: "Chemical Reaction Lab",
+  subject: "Chemistry",
+  gradeBand: "Grades 10-12",
+  description: "Explore how temperature, catalysts, and reactant amounts affect reaction rate and energy.",
+  tier: 3,
+  curriculumStandards: ["Liberia Grade 11 Chemistry - Reaction Kinetics and Energy"],
+  allowedActions: [...REACTION_ACTION_TYPES],
+  initialState: REACTION_INITIAL_STATE,
+  validateAction: (_state, action) => {
+    if (!isChemicalReactionAction(action)) {
+      return { ok: false, reason: "Action is not valid for Chemical Reaction Lab." };
+    }
+    return validateChemicalReactionAction(action);
+  },
+  applyAction: (state, action) => {
+    if (!isChemicalReactionAction(action)) {
+      return state;
+    }
+    return applyChemicalReactionAction(state, action);
+  },
+};
+
+const periodicTableDefinition: LabDefinition<PeriodicTableState> = {
+  id: "periodic-table",
+  title: "Periodic Table Explorer",
+  subject: "Chemistry",
+  gradeBand: "Grades 9-12",
+  description: "Explore all 118 elements, their properties, atomic structure, and periodic trends.",
+  tier: 2,
+  curriculumStandards: [
+    "Liberia Grade 10 Chemistry - The Periodic Table",
+    "Liberia Grade 11 Chemistry - Atomic Structure",
+  ],
+  allowedActions: [...PERIODIC_TABLE_ACTION_TYPES],
+  initialState: PERIODIC_TABLE_INITIAL_STATE,
+  validateAction: (_state, action) => {
+    if (!isPeriodicTableAction(action)) {
+      return { ok: false, reason: "Action is not valid for Periodic Table Explorer." };
+    }
+    return validatePeriodicTableAction(action);
+  },
+  applyAction: (state, action) => {
+    if (!isPeriodicTableAction(action)) {
+      return state;
+    }
+    return applyPeriodicTableAction(state, action);
+  },
+};
+
 export const labRegistry: Partial<Record<LabId, LabDefinition<unknown>>> = {
   "gravity-explorer": gravityExplorerDefinition as LabDefinition<unknown>,
   "pendulum-lab": pendulumLabDefinition as LabDefinition<unknown>,
@@ -278,6 +351,8 @@ export const labRegistry: Partial<Record<LabId, LabDefinition<unknown>>> = {
   "wave-motion": waveMotionDefinition as LabDefinition<unknown>,
   "cell-division": cellDivisionDefinition as LabDefinition<unknown>,
   "ecosystem-balance": ecosystemBalanceDefinition as LabDefinition<unknown>,
+  "chemical-reaction": chemicalReactionDefinition as LabDefinition<unknown>,
+  "periodic-table": periodicTableDefinition as LabDefinition<unknown>,
 };
 
 export function isValidLabId(id: string): id is LabId {

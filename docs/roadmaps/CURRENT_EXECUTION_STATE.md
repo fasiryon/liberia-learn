@@ -5,11 +5,11 @@ Live execution tracking for the final closeout program.
 
 ## AI Labs V1 Current State
 - Current workstream: AI Labs V1
-- Current phase: Phase 5 Batch 2 Biology Labs COMPLETE.
+- Current phase: Phase 5 Batch 3 Chemistry Labs COMPLETE.
 - Current branch: `main`
-- Worktree status: Phase 5 Batch 2 committed, pushed, deployed, and verified on production.
-- Last completed phase: AI Labs V1 Phase 5 Batch 2 - Biology Labs
-- Last commit reference: `1b461ff feat(labs): complete phase 5 batch 2 biology labs`
+- Worktree status: Phase 5 Batch 3 implemented and locally validated; commit, push, production deploy, and live verification in progress.
+- Last completed phase: AI Labs V1 Phase 5 Batch 3 - Chemistry Labs
+- Last commit reference: Pending Phase 5 Batch 3 commit
 
 ## AI Labs V1 Phase 2 Validation
 - `npx prisma generate`: PASS
@@ -103,6 +103,28 @@ Live execution tracking for the final closeout program.
 - Live lesson slide-over integration verification: PASS by lesson mapping for Biology Grades 9-11 Cell Division and Grades 7-9 Ecosystem
 - Production deploy: PASS, aliased to `https://liberia-learn.vercel.app`
 - GitHub Actions on latest main: PASS, all 4 workflows green (`PR Triage`, `Runtime Gate 1`, `Deploy ECS Images`, `CI`)
+
+## AI Labs V1 Phase 5 Batch 3 Deliverables
+| Feature | Route / File | Notes |
+|---------|--------------|-------|
+| Chemical Reaction Lab | `/student/labs/chemical-reaction` | 2D canvas reaction vessel, molecule/collision animation, catalyst and temperature controls, LabShell AI loop, registry/runtime/validator wiring, lesson slide-over entry |
+| Periodic Table Explorer | `/student/labs/periodic-table` | 118-element dataset, 2D table/Bohr/properties canvas views, low-end fallback, LabShell AI loop, registry/runtime/validator wiring, lesson slide-over entry |
+| Lesson integration | `/student/lessons/[id]` | Chemistry Grades 10-12 shows Open Reaction Lab; Chemistry Grades 9-12 shows Open Periodic Table Lab |
+| Registry status | `lib/labs/registry.ts` | 10 registered complete labs |
+
+## AI Labs V1 Phase 5 Batch 3 Validation
+- `npx prisma generate`: PASS
+- `npx tsc --noEmit`: PASS (0 errors)
+- `npm test`: PASS (1912 tests, 268 files)
+- `npm run build`: PASS (exit 0)
+- Periodic element data accuracy test: PASS, all 118 elements present with required fields and reference checks for H, C, Au, and Og
+- Chemical Reaction bundle: PASS (`page-59f173b864b25351.js` 9.25 KB route; `5729...js` 6.02 KB scene; `6503...js` 1.67 KB fallback; all under 200 KB)
+- Periodic Table bundle: PASS (`2578...js` 35.91 KB page/data; `5226...js` 6.76 KB scene; `4298...js` 2.28 KB fallback; all under 200 KB)
+- Live production route verification: Pending production deploy
+- Live production AI loop verification: Pending production deploy
+- Live lesson slide-over integration verification: Pending production deploy
+- Production deploy: Pending
+- GitHub Actions on latest main: Pending
 
 ## Current workstream
 22-sprint final platform closeout

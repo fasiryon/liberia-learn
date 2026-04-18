@@ -381,6 +381,12 @@ export default function LessonDeliveryClient({ lessonId }: { lessonId: string })
     if (lesson.grade >= 9 && lesson.grade <= 11 && subject.includes("chemistry")) {
       labs.push({ labId: "molecule-motion", label: "Open Molecule Lab" });
     }
+    if (lesson.grade >= 10 && lesson.grade <= 12 && subject.includes("chemistry")) {
+      labs.push({ labId: "chemical-reaction", label: "Open Reaction Lab" });
+    }
+    if (lesson.grade >= 9 && lesson.grade <= 12 && subject.includes("chemistry")) {
+      labs.push({ labId: "periodic-table", label: "Open Periodic Table Lab" });
+    }
     if (lesson.grade >= 8 && lesson.grade <= 10 && subject.includes("biology")) {
       labs.push({ labId: "human-heart", label: "Open Heart Lab" });
     }
