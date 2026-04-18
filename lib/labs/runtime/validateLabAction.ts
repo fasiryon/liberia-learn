@@ -5,6 +5,8 @@ import { isElectricCircuitAction } from "@/lib/labs/electric-circuit/actions";
 import { validateElectricCircuitAction } from "@/lib/labs/electric-circuit/validator";
 import { isEcosystemBalanceAction } from "@/lib/labs/ecosystem-balance/actions";
 import { validateEcosystemBalanceAction } from "@/lib/labs/ecosystem-balance/validator";
+import { isChemicalReactionAction } from "@/lib/labs/chemical-reaction/actions";
+import { validateChemicalReactionAction } from "@/lib/labs/chemical-reaction/validator";
 import { isGravityLabAction } from "@/lib/labs/gravity-explorer/actions";
 import { validateGravityLabAction } from "@/lib/labs/gravity-explorer/validator";
 import { isHumanHeartAction } from "@/lib/labs/human-heart/actions";
@@ -15,6 +17,8 @@ import { isPendulumLabAction } from "@/lib/labs/pendulum-lab/actions";
 import { validatePendulumLabAction } from "@/lib/labs/pendulum-lab/validator";
 import { isWaveMotionAction } from "@/lib/labs/wave-motion/actions";
 import { validateWaveMotionAction } from "@/lib/labs/wave-motion/validator";
+import { isPeriodicTableAction } from "@/lib/labs/periodic-table/actions";
+import { validatePeriodicTableAction } from "@/lib/labs/periodic-table/validator";
 import type { LabAction, LabId, LabValidationResult } from "@/lib/labs/types";
 
 export function validateLabAction<S>(
@@ -68,6 +72,18 @@ export function validateLabAction<S>(
     return isEcosystemBalanceAction(action)
       ? validateEcosystemBalanceAction(action)
       : { ok: false, reason: "Action is not valid for Ecosystem Balance Lab." };
+  }
+
+  if (labId === "chemical-reaction") {
+    return isChemicalReactionAction(action)
+      ? validateChemicalReactionAction(action)
+      : { ok: false, reason: "Action is not valid for Chemical Reaction Lab." };
+  }
+
+  if (labId === "periodic-table") {
+    return isPeriodicTableAction(action)
+      ? validatePeriodicTableAction(action)
+      : { ok: false, reason: "Action is not valid for Periodic Table Explorer." };
   }
 
   const definition = getLabDefinition(labId);

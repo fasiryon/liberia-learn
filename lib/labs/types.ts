@@ -6,6 +6,8 @@ export type LabId =
   | "electric-circuit"
   | "wave-motion"
   | "cell-division"
+  | "chemical-reaction"
+  | "periodic-table"
   | "electric-circuits"
   | "light-and-shadow"
   | "simple-machines"

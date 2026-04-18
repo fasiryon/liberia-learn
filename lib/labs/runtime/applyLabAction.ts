@@ -17,6 +17,11 @@ import {
   applyEcosystemBalanceAction,
   isEcosystemBalanceState,
 } from "@/lib/labs/ecosystem-balance/runtime";
+import { isChemicalReactionAction } from "@/lib/labs/chemical-reaction/actions";
+import {
+  applyChemicalReactionAction,
+  isChemicalReactionState,
+} from "@/lib/labs/chemical-reaction/runtime";
 import { isHumanHeartAction } from "@/lib/labs/human-heart/actions";
 import { applyHumanHeartAction, isHumanHeartState } from "@/lib/labs/human-heart/runtime";
 import { isMoleculeMotionAction } from "@/lib/labs/molecule-motion/actions";
@@ -28,6 +33,11 @@ import { isPendulumLabAction } from "@/lib/labs/pendulum-lab/actions";
 import { applyPendulumLabAction, isPendulumLabState } from "@/lib/labs/pendulum-lab/runtime";
 import { isWaveMotionAction } from "@/lib/labs/wave-motion/actions";
 import { applyWaveMotionAction, isWaveMotionState } from "@/lib/labs/wave-motion/runtime";
+import { isPeriodicTableAction } from "@/lib/labs/periodic-table/actions";
+import {
+  applyPeriodicTableAction,
+  isPeriodicTableState,
+} from "@/lib/labs/periodic-table/runtime";
 import type { LabAction, LabId } from "@/lib/labs/types";
 
 export function applyLabAction<S>(labId: LabId, state: S, action: LabAction): S {
@@ -61,6 +71,14 @@ export function applyLabAction<S>(labId: LabId, state: S, action: LabAction): S 
 
   if (labId === "ecosystem-balance" && isEcosystemBalanceState(state) && isEcosystemBalanceAction(action)) {
     return applyEcosystemBalanceAction(state, action) as S;
+  }
+
+  if (labId === "chemical-reaction" && isChemicalReactionState(state) && isChemicalReactionAction(action)) {
+    return applyChemicalReactionAction(state, action) as S;
+  }
+
+  if (labId === "periodic-table" && isPeriodicTableState(state) && isPeriodicTableAction(action)) {
+    return applyPeriodicTableAction(state, action) as S;
   }
 
   const definition = getLabDefinition(labId);
