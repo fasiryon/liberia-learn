@@ -7,9 +7,9 @@ Live execution tracking for the final closeout program.
 - Current workstream: AI Labs V1
 - Current phase: Phase 5 Batch 3 Chemistry Labs COMPLETE.
 - Current branch: `main`
-- Worktree status: Phase 5 Batch 3 implemented and locally validated; commit, push, production deploy, and live verification in progress.
+- Worktree status: Phase 5 Batch 3 committed, pushed, deployed, and verified on production.
 - Last completed phase: AI Labs V1 Phase 5 Batch 3 - Chemistry Labs
-- Last commit reference: Pending Phase 5 Batch 3 commit
+- Last commit reference: `b8d7242 feat(labs): complete phase 5 batch 3 chemistry labs`
 
 ## AI Labs V1 Phase 2 Validation
 - `npx prisma generate`: PASS
@@ -120,11 +120,11 @@ Live execution tracking for the final closeout program.
 - Periodic element data accuracy test: PASS, all 118 elements present with required fields and reference checks for H, C, Au, and Og
 - Chemical Reaction bundle: PASS (`page-59f173b864b25351.js` 9.25 KB route; `5729...js` 6.02 KB scene; `6503...js` 1.67 KB fallback; all under 200 KB)
 - Periodic Table bundle: PASS (`2578...js` 35.91 KB page/data; `5226...js` 6.76 KB scene; `4298...js` 2.28 KB fallback; all under 200 KB)
-- Live production route verification: Pending production deploy
-- Live production AI loop verification: Pending production deploy
-- Live lesson slide-over integration verification: Pending production deploy
-- Production deploy: Pending
-- GitHub Actions on latest main: Pending
+- Live production route verification: PASS for `/student/labs/chemical-reaction` and `/student/labs/periodic-table`
+- Live production AI loop verification: PASS for Chemical Reaction `ADD_CATALYST` and Periodic Table `HIGHLIGHT_CATEGORY`
+- Live lesson slide-over integration verification: PASS by lesson mapping for Chemistry Grades 10-12 Reaction and Grades 9-12 Periodic Table
+- Production deploy: PASS, aliased to `https://liberia-learn.vercel.app`
+- GitHub Actions on latest main: PASS, all 4 workflows green (`PR Triage`, `Runtime Gate 1`, `Deploy ECS Images`, `CI`)
 
 ## Current workstream
 22-sprint final platform closeout
