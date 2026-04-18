@@ -19,6 +19,10 @@ import { isWaveMotionAction } from "@/lib/labs/wave-motion/actions";
 import { validateWaveMotionAction } from "@/lib/labs/wave-motion/validator";
 import { isPeriodicTableAction } from "@/lib/labs/periodic-table/actions";
 import { validatePeriodicTableAction } from "@/lib/labs/periodic-table/validator";
+import { isWeatherSystemAction } from "@/lib/labs/weather-system/actions";
+import { validateWeatherSystemAction } from "@/lib/labs/weather-system/validator";
+import { isTectonicPlatesAction } from "@/lib/labs/tectonic-plates/actions";
+import { validateTectonicPlatesAction } from "@/lib/labs/tectonic-plates/validator";
 import type { LabAction, LabId, LabValidationResult } from "@/lib/labs/types";
 
 export function validateLabAction<S>(
@@ -84,6 +88,18 @@ export function validateLabAction<S>(
     return isPeriodicTableAction(action)
       ? validatePeriodicTableAction(action)
       : { ok: false, reason: "Action is not valid for Periodic Table Explorer." };
+  }
+
+  if (labId === "weather-system") {
+    return isWeatherSystemAction(action)
+      ? validateWeatherSystemAction(action)
+      : { ok: false, reason: "Action is not valid for Weather System Lab." };
+  }
+
+  if (labId === "tectonic-plates") {
+    return isTectonicPlatesAction(action)
+      ? validateTectonicPlatesAction(action)
+      : { ok: false, reason: "Action is not valid for Tectonic Plates Lab." };
   }
 
   const definition = getLabDefinition(labId);

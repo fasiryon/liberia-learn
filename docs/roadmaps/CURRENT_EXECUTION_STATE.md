@@ -5,11 +5,11 @@ Live execution tracking for the final closeout program.
 
 ## AI Labs V1 Current State
 - Current workstream: AI Labs V1
-- Current phase: Phase 5 Batch 3 Chemistry Labs COMPLETE.
+- Current phase: Phase 5 Batch 4 Earth Science Labs COMPLETE locally; production verification pending.
 - Current branch: `main`
-- Worktree status: Phase 5 Batch 3 committed, pushed, deployed, and verified on production.
+- Worktree status: Phase 5 Batch 4 implemented, mandatory local gate passing, awaiting commit/push/deploy/live verification.
 - Last completed phase: AI Labs V1 Phase 5 Batch 3 - Chemistry Labs
-- Last commit reference: `b8d7242 feat(labs): complete phase 5 batch 3 chemistry labs`
+- Last commit reference: `55dd835 Phase 5 Batch 3 complete on main`
 
 ## AI Labs V1 Phase 2 Validation
 - `npx prisma generate`: PASS
@@ -125,6 +125,28 @@ Live execution tracking for the final closeout program.
 - Live lesson slide-over integration verification: PASS by lesson mapping for Chemistry Grades 10-12 Reaction and Grades 9-12 Periodic Table
 - Production deploy: PASS, aliased to `https://liberia-learn.vercel.app`
 - GitHub Actions on latest main: PASS, all 4 workflows green (`PR Triage`, `Runtime Gate 1`, `Deploy ECS Images`, `CI`)
+
+## AI Labs V1 Phase 5 Batch 4 Deliverables
+| Feature | Route / File | Notes |
+|---------|--------------|-------|
+| Weather System Lab | `/student/labs/weather-system` | 2D canvas weather scene, cloud/precipitation animation, wet/dry season controls, LabShell AI loop, registry/runtime/validator wiring, lesson slide-over entry |
+| Tectonic Plates Lab | `/student/labs/tectonic-plates` | 2D cross-section plate boundary scene, pressure/risk model, earthquake/eruption events, LabShell AI loop, registry/runtime/validator wiring, lesson slide-over entry |
+| Lesson integration | `/student/lessons/[id]` | Earth Science Grades 7-9 shows Open Weather Lab; Earth Science Grades 8-10 shows Open Tectonic Plates Lab |
+| Labs index | `/student/labs` | All 12 labs grouped by subject with no coming-soon placeholders |
+| Registry status | `lib/labs/registry.ts` | 12 registered complete labs |
+
+## AI Labs V1 Phase 5 Batch 4 Validation
+- `npx prisma generate`: PASS
+- `npx tsc --noEmit`: PASS (0 errors)
+- `npm test`: PASS (1932 tests, 270 files)
+- `npm run build`: PASS (exit 0)
+- Weather System bundle: PASS (`page-cde9bf16fb09ee4c.js` 8.99 KB route; `7752...js` 6.12 KB scene; `5608...js` 1.17 KB fallback; all under 200 KB)
+- Tectonic Plates bundle: PASS (`page-82b23ee6724325a5.js` 9.33 KB route; `6618...js` 6.85 KB scene; `2000...js` 1.54 KB fallback; all under 200 KB)
+- Live production route verification: PENDING
+- Live production AI loop verification: PENDING
+- Live labs index verification: PENDING
+- Production deploy: PENDING
+- GitHub Actions on latest main: PENDING
 
 ## Current workstream
 22-sprint final platform closeout

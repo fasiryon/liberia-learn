@@ -396,6 +396,12 @@ export default function LessonDeliveryClient({ lessonId }: { lessonId: string })
     if (lesson.grade >= 7 && lesson.grade <= 9 && subject.includes("biology")) {
       labs.push({ labId: "ecosystem-balance", label: "Open Ecosystem Lab" });
     }
+    if (lesson.grade >= 7 && lesson.grade <= 9 && subject.includes("earth science")) {
+      labs.push({ labId: "weather-system", label: "Open Weather Lab" });
+    }
+    if (lesson.grade >= 8 && lesson.grade <= 10 && subject.includes("earth science")) {
+      labs.push({ labId: "tectonic-plates", label: "Open Tectonic Plates Lab" });
+    }
     return labs;
   }, [lesson]);
 

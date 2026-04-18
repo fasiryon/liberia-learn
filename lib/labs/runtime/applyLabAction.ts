@@ -38,6 +38,16 @@ import {
   applyPeriodicTableAction,
   isPeriodicTableState,
 } from "@/lib/labs/periodic-table/runtime";
+import { isWeatherSystemAction } from "@/lib/labs/weather-system/actions";
+import {
+  applyWeatherSystemAction,
+  isWeatherSystemState,
+} from "@/lib/labs/weather-system/runtime";
+import { isTectonicPlatesAction } from "@/lib/labs/tectonic-plates/actions";
+import {
+  applyTectonicPlatesAction,
+  isTectonicPlatesState,
+} from "@/lib/labs/tectonic-plates/runtime";
 import type { LabAction, LabId } from "@/lib/labs/types";
 
 export function applyLabAction<S>(labId: LabId, state: S, action: LabAction): S {
@@ -79,6 +89,14 @@ export function applyLabAction<S>(labId: LabId, state: S, action: LabAction): S 
 
   if (labId === "periodic-table" && isPeriodicTableState(state) && isPeriodicTableAction(action)) {
     return applyPeriodicTableAction(state, action) as S;
+  }
+
+  if (labId === "weather-system" && isWeatherSystemState(state) && isWeatherSystemAction(action)) {
+    return applyWeatherSystemAction(state, action) as S;
+  }
+
+  if (labId === "tectonic-plates" && isTectonicPlatesState(state) && isTectonicPlatesAction(action)) {
+    return applyTectonicPlatesAction(state, action) as S;
   }
 
   const definition = getLabDefinition(labId);

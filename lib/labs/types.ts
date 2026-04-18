@@ -8,6 +8,8 @@ export type LabId =
   | "cell-division"
   | "chemical-reaction"
   | "periodic-table"
+  | "weather-system"
+  | "tectonic-plates"
   | "electric-circuits"
   | "light-and-shadow"
   | "simple-machines"

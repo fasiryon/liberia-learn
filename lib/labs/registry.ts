@@ -78,6 +78,23 @@ import {
 } from "@/lib/labs/periodic-table/state";
 import { applyPeriodicTableAction } from "@/lib/labs/periodic-table/runtime";
 import { validatePeriodicTableAction } from "@/lib/labs/periodic-table/validator";
+import { WEATHER_ACTION_TYPES, isWeatherSystemAction } from "@/lib/labs/weather-system/actions";
+import {
+  WEATHER_INITIAL_STATE,
+  type WeatherSystemState,
+} from "@/lib/labs/weather-system/state";
+import { applyWeatherSystemAction } from "@/lib/labs/weather-system/runtime";
+import { validateWeatherSystemAction } from "@/lib/labs/weather-system/validator";
+import {
+  TECTONIC_ACTION_TYPES,
+  isTectonicPlatesAction,
+} from "@/lib/labs/tectonic-plates/actions";
+import {
+  TECTONIC_INITIAL_STATE,
+  type TectonicPlatesState,
+} from "@/lib/labs/tectonic-plates/state";
+import { applyTectonicPlatesAction } from "@/lib/labs/tectonic-plates/runtime";
+import { validateTectonicPlatesAction } from "@/lib/labs/tectonic-plates/validator";
 
 export const LAB_IDS = [
   "gravity-explorer",
@@ -89,6 +106,8 @@ export const LAB_IDS = [
   "cell-division",
   "chemical-reaction",
   "periodic-table",
+  "weather-system",
+  "tectonic-plates",
   "electric-circuits",
   "light-and-shadow",
   "simple-machines",
@@ -342,6 +361,60 @@ const periodicTableDefinition: LabDefinition<PeriodicTableState> = {
   },
 };
 
+const weatherSystemDefinition: LabDefinition<WeatherSystemState> = {
+  id: "weather-system",
+  title: "Weather System Lab",
+  subject: "Earth Science",
+  gradeBand: "Grades 7-9",
+  description: "Explore how temperature, humidity, and pressure interact to create weather patterns.",
+  tier: 2,
+  curriculumStandards: [
+    "Liberia Grade 8 Earth Science - Weather and Climate",
+    "Liberia Grade 8 Earth Science - Liberia Wet and Dry Seasons",
+  ],
+  allowedActions: [...WEATHER_ACTION_TYPES],
+  initialState: WEATHER_INITIAL_STATE,
+  validateAction: (_state, action) => {
+    if (!isWeatherSystemAction(action)) {
+      return { ok: false, reason: "Action is not valid for Weather System Lab." };
+    }
+    return validateWeatherSystemAction(action);
+  },
+  applyAction: (state, action) => {
+    if (!isWeatherSystemAction(action)) {
+      return state;
+    }
+    return applyWeatherSystemAction(state, action);
+  },
+};
+
+const tectonicPlatesDefinition: LabDefinition<TectonicPlatesState> = {
+  id: "tectonic-plates",
+  title: "Tectonic Plates Lab",
+  subject: "Earth Science",
+  gradeBand: "Grades 8-10",
+  description: "Explore how tectonic plate movement creates earthquakes, volcanoes, and mountain ranges.",
+  tier: 3,
+  curriculumStandards: [
+    "Liberia Grade 9 Earth Science - Plate Tectonics",
+    "Liberia Grade 9 Earth Science - Earthquakes and Volcanoes",
+  ],
+  allowedActions: [...TECTONIC_ACTION_TYPES],
+  initialState: TECTONIC_INITIAL_STATE,
+  validateAction: (_state, action) => {
+    if (!isTectonicPlatesAction(action)) {
+      return { ok: false, reason: "Action is not valid for Tectonic Plates Lab." };
+    }
+    return validateTectonicPlatesAction(action);
+  },
+  applyAction: (state, action) => {
+    if (!isTectonicPlatesAction(action)) {
+      return state;
+    }
+    return applyTectonicPlatesAction(state, action);
+  },
+};
+
 export const labRegistry: Partial<Record<LabId, LabDefinition<unknown>>> = {
   "gravity-explorer": gravityExplorerDefinition as LabDefinition<unknown>,
   "pendulum-lab": pendulumLabDefinition as LabDefinition<unknown>,
@@ -353,6 +426,8 @@ export const labRegistry: Partial<Record<LabId, LabDefinition<unknown>>> = {
   "ecosystem-balance": ecosystemBalanceDefinition as LabDefinition<unknown>,
   "chemical-reaction": chemicalReactionDefinition as LabDefinition<unknown>,
   "periodic-table": periodicTableDefinition as LabDefinition<unknown>,
+  "weather-system": weatherSystemDefinition as LabDefinition<unknown>,
+  "tectonic-plates": tectonicPlatesDefinition as LabDefinition<unknown>,
 };
 
 export function isValidLabId(id: string): id is LabId {
