@@ -5,11 +5,11 @@ Live execution tracking for the final closeout program.
 
 ## AI Labs V1 Current State
 - Current workstream: AI Labs V1
-- Current phase: Phase 5 Batch 1 Physics Labs COMPLETE.
+- Current phase: Phase 5 Batch 2 Biology Labs COMPLETE.
 - Current branch: `main`
-- Worktree status: Phase 5 Batch 1 committed, pushed, deployed, and verified on production.
-- Last completed phase: AI Labs V1 Phase 5 Batch 1 - Physics Labs
-- Last commit reference: `beb99c9 fix(labs): guide planner for phase 5 physics labs`
+- Worktree status: Phase 5 Batch 2 implemented and locally validated; commit, push, production deploy, and live verification in progress.
+- Last completed phase: AI Labs V1 Phase 5 Batch 2 - Biology Labs
+- Last commit reference: Pending Phase 5 Batch 2 commit
 
 ## AI Labs V1 Phase 2 Validation
 - `npx prisma generate`: PASS
@@ -81,6 +81,28 @@ Live execution tracking for the final closeout program.
 - Live lesson slide-over integration verification: PASS by lesson mapping for Physics Grades 9-11 Circuit and Grades 10-12 Wave
 - Production deploy: PASS, aliased to `https://liberia-learn.vercel.app`
 - GitHub Actions on latest main: PASS, all 4 workflows green (`PR Triage`, `Runtime Gate 1`, `Deploy ECS Images`, `CI`)
+
+## AI Labs V1 Phase 5 Batch 2 Deliverables
+| Feature | Route / File | Notes |
+|---------|--------------|-------|
+| Cell Division Explorer | `/student/labs/cell-division` | 2D canvas mitosis stage scene, low-end fallback, LabShell AI loop, registry/runtime/validator wiring, lesson slide-over entry |
+| Ecosystem Balance Lab | `/student/labs/ecosystem-balance` | 2D ecosystem terrain, drought overlay, population history graph, stable trophic runtime, low-end fallback, LabShell AI loop, lesson slide-over entry |
+| Lesson integration | `/student/lessons/[id]` | Biology Grades 9-11 shows Open Cell Division Lab; Biology Grades 7-9 shows Open Ecosystem Lab |
+| Registry status | `lib/labs/registry.ts` | 8 registered complete labs |
+
+## AI Labs V1 Phase 5 Batch 2 Validation
+- `npx prisma generate`: PASS
+- `npx tsc --noEmit`: PASS (0 errors)
+- `npm test`: PASS (1896 tests, 265 files)
+- `npm run build`: PASS (exit 0)
+- Cell Division route chunk: PASS (`page-90a8436f27732e2e.js` 9.13 KB; under 200 KB)
+- Ecosystem Balance route chunk: PASS (`page-9177738ea74b4baa.js` 9.54 KB; under 200 KB)
+- Ecosystem stability test: PASS, 200 STEP iterations keep plants, herbivores, and carnivores above zero
+- Live production route verification: Pending production deploy
+- Live production AI loop verification: Pending production deploy
+- Live lesson slide-over integration verification: Pending production deploy
+- Production deploy: Pending
+- GitHub Actions on latest main: Pending
 
 ## Current workstream
 22-sprint final platform closeout

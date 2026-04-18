@@ -1,6 +1,10 @@
 import { getLabDefinition } from "@/lib/labs/registry";
+import { isCellDivisionAction } from "@/lib/labs/cell-division/actions";
+import { validateCellDivisionAction } from "@/lib/labs/cell-division/validator";
 import { isElectricCircuitAction } from "@/lib/labs/electric-circuit/actions";
 import { validateElectricCircuitAction } from "@/lib/labs/electric-circuit/validator";
+import { isEcosystemBalanceAction } from "@/lib/labs/ecosystem-balance/actions";
+import { validateEcosystemBalanceAction } from "@/lib/labs/ecosystem-balance/validator";
 import { isGravityLabAction } from "@/lib/labs/gravity-explorer/actions";
 import { validateGravityLabAction } from "@/lib/labs/gravity-explorer/validator";
 import { isHumanHeartAction } from "@/lib/labs/human-heart/actions";
@@ -52,6 +56,18 @@ export function validateLabAction<S>(
     return isWaveMotionAction(action)
       ? validateWaveMotionAction(action)
       : { ok: false, reason: "Action is not valid for Wave Motion Lab." };
+  }
+
+  if (labId === "cell-division") {
+    return isCellDivisionAction(action)
+      ? validateCellDivisionAction(action)
+      : { ok: false, reason: "Action is not valid for Cell Division Explorer." };
+  }
+
+  if (labId === "ecosystem-balance") {
+    return isEcosystemBalanceAction(action)
+      ? validateEcosystemBalanceAction(action)
+      : { ok: false, reason: "Action is not valid for Ecosystem Balance Lab." };
   }
 
   const definition = getLabDefinition(labId);

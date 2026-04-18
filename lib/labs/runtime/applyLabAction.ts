@@ -1,4 +1,9 @@
 import { getLabDefinition } from "@/lib/labs/registry";
+import { isCellDivisionAction } from "@/lib/labs/cell-division/actions";
+import {
+  applyCellDivisionAction,
+  isCellDivisionState,
+} from "@/lib/labs/cell-division/runtime";
 import { isGravityLabAction } from "@/lib/labs/gravity-explorer/actions";
 import { applyGravityLabAction } from "@/lib/labs/gravity-explorer/runtime";
 import { isGravityLabState } from "@/lib/labs/gravity-explorer/runtime";
@@ -7,6 +12,11 @@ import {
   applyElectricCircuitAction,
   isElectricCircuitState,
 } from "@/lib/labs/electric-circuit/runtime";
+import { isEcosystemBalanceAction } from "@/lib/labs/ecosystem-balance/actions";
+import {
+  applyEcosystemBalanceAction,
+  isEcosystemBalanceState,
+} from "@/lib/labs/ecosystem-balance/runtime";
 import { isHumanHeartAction } from "@/lib/labs/human-heart/actions";
 import { applyHumanHeartAction, isHumanHeartState } from "@/lib/labs/human-heart/runtime";
 import { isMoleculeMotionAction } from "@/lib/labs/molecule-motion/actions";
@@ -43,6 +53,14 @@ export function applyLabAction<S>(labId: LabId, state: S, action: LabAction): S 
 
   if (labId === "wave-motion" && isWaveMotionState(state) && isWaveMotionAction(action)) {
     return applyWaveMotionAction(state, action) as S;
+  }
+
+  if (labId === "cell-division" && isCellDivisionState(state) && isCellDivisionAction(action)) {
+    return applyCellDivisionAction(state, action) as S;
+  }
+
+  if (labId === "ecosystem-balance" && isEcosystemBalanceState(state) && isEcosystemBalanceAction(action)) {
+    return applyEcosystemBalanceAction(state, action) as S;
   }
 
   const definition = getLabDefinition(labId);

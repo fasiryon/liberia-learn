@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect } from "react";
+import CellDivisionLabPage from "@/components/labs/CellDivisionLabPage";
+import EcosystemBalanceLabPage from "@/components/labs/EcosystemBalanceLabPage";
 import GravityLabPage from "@/components/labs/GravityLabPage";
 import ElectricCircuitLabPage from "@/components/labs/ElectricCircuitLabPage";
 import HumanHeartLabPage from "@/components/labs/HumanHeartLabPage";
@@ -16,6 +18,8 @@ const LAB_META: Partial<Record<LabId, { title: string; subject: string }>> = {
   "wave-motion": { title: "Wave Motion Lab", subject: "Physics Lab" },
   "molecule-motion": { title: "Molecule Motion Lab", subject: "Chemistry Lab" },
   "human-heart": { title: "Human Heart Simulator", subject: "Biology Lab" },
+  "cell-division": { title: "Cell Division Explorer", subject: "Biology Lab" },
+  "ecosystem-balance": { title: "Ecosystem Balance Lab", subject: "Biology Lab" },
 };
 
 function LabContent({ labId, lessonId }: { labId: LabId; lessonId: string }) {
@@ -25,6 +29,8 @@ function LabContent({ labId, lessonId }: { labId: LabId; lessonId: string }) {
   if (labId === "wave-motion") return <WaveMotionLabPage lessonId={lessonId} />;
   if (labId === "molecule-motion") return <MoleculeMotionLabPage lessonId={lessonId} />;
   if (labId === "human-heart") return <HumanHeartLabPage lessonId={lessonId} />;
+  if (labId === "cell-division") return <CellDivisionLabPage lessonId={lessonId} />;
+  if (labId === "ecosystem-balance") return <EcosystemBalanceLabPage lessonId={lessonId} />;
   return null;
 }
 

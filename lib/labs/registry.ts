@@ -38,6 +38,26 @@ import { WAVE_ACTION_TYPES, isWaveMotionAction } from "@/lib/labs/wave-motion/ac
 import { WAVE_INITIAL_STATE, type WaveMotionState } from "@/lib/labs/wave-motion/state";
 import { applyWaveMotionAction } from "@/lib/labs/wave-motion/runtime";
 import { validateWaveMotionAction } from "@/lib/labs/wave-motion/validator";
+import {
+  CELL_DIVISION_ACTION_TYPES,
+  isCellDivisionAction,
+} from "@/lib/labs/cell-division/actions";
+import {
+  CELL_DIVISION_INITIAL_STATE,
+  type CellDivisionState,
+} from "@/lib/labs/cell-division/state";
+import { applyCellDivisionAction } from "@/lib/labs/cell-division/runtime";
+import { validateCellDivisionAction } from "@/lib/labs/cell-division/validator";
+import {
+  ECOSYSTEM_ACTION_TYPES,
+  isEcosystemBalanceAction,
+} from "@/lib/labs/ecosystem-balance/actions";
+import {
+  ECOSYSTEM_INITIAL_STATE,
+  type EcosystemBalanceState,
+} from "@/lib/labs/ecosystem-balance/state";
+import { applyEcosystemBalanceAction } from "@/lib/labs/ecosystem-balance/runtime";
+import { validateEcosystemBalanceAction } from "@/lib/labs/ecosystem-balance/validator";
 
 export const LAB_IDS = [
   "gravity-explorer",
@@ -46,6 +66,7 @@ export const LAB_IDS = [
   "human-heart",
   "electric-circuit",
   "wave-motion",
+  "cell-division",
   "electric-circuits",
   "light-and-shadow",
   "simple-machines",
@@ -200,6 +221,54 @@ const waveMotionDefinition: LabDefinition<WaveMotionState> = {
   },
 };
 
+const cellDivisionDefinition: LabDefinition<CellDivisionState> = {
+  id: "cell-division",
+  title: "Cell Division Explorer",
+  subject: "Biology",
+  gradeBand: "Grades 9-11",
+  description: "Explore the stages of mitosis and how chromosomes divide.",
+  tier: 1,
+  curriculumStandards: ["Liberia Grade 10 Biology - Cell Reproduction and Mitosis"],
+  allowedActions: [...CELL_DIVISION_ACTION_TYPES],
+  initialState: CELL_DIVISION_INITIAL_STATE,
+  validateAction: (_state, action) => {
+    if (!isCellDivisionAction(action)) {
+      return { ok: false, reason: "Action is not valid for Cell Division Explorer." };
+    }
+    return validateCellDivisionAction(action);
+  },
+  applyAction: (state, action) => {
+    if (!isCellDivisionAction(action)) {
+      return state;
+    }
+    return applyCellDivisionAction(state, action);
+  },
+};
+
+const ecosystemBalanceDefinition: LabDefinition<EcosystemBalanceState> = {
+  id: "ecosystem-balance",
+  title: "Ecosystem Balance Lab",
+  subject: "Biology",
+  gradeBand: "Grades 7-9",
+  description: "Explore predator-prey relationships and how populations interact in an ecosystem.",
+  tier: 3,
+  curriculumStandards: ["Liberia Grade 8 Biology - Ecosystems and Food Chains"],
+  allowedActions: [...ECOSYSTEM_ACTION_TYPES],
+  initialState: ECOSYSTEM_INITIAL_STATE,
+  validateAction: (_state, action) => {
+    if (!isEcosystemBalanceAction(action)) {
+      return { ok: false, reason: "Action is not valid for Ecosystem Balance Lab." };
+    }
+    return validateEcosystemBalanceAction(action);
+  },
+  applyAction: (state, action) => {
+    if (!isEcosystemBalanceAction(action)) {
+      return state;
+    }
+    return applyEcosystemBalanceAction(state, action);
+  },
+};
+
 export const labRegistry: Partial<Record<LabId, LabDefinition<unknown>>> = {
   "gravity-explorer": gravityExplorerDefinition as LabDefinition<unknown>,
   "pendulum-lab": pendulumLabDefinition as LabDefinition<unknown>,
@@ -207,6 +276,8 @@ export const labRegistry: Partial<Record<LabId, LabDefinition<unknown>>> = {
   "human-heart": humanHeartDefinition as LabDefinition<unknown>,
   "electric-circuit": electricCircuitDefinition as LabDefinition<unknown>,
   "wave-motion": waveMotionDefinition as LabDefinition<unknown>,
+  "cell-division": cellDivisionDefinition as LabDefinition<unknown>,
+  "ecosystem-balance": ecosystemBalanceDefinition as LabDefinition<unknown>,
 };
 
 export function isValidLabId(id: string): id is LabId {
