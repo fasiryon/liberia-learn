@@ -10,7 +10,7 @@ describe("labs registry", () => {
     expect(isValidLabId("unknown-lab")).toBe(false);
   });
 
-  it("registers ten complete labs", () => {
+  it("registers twelve complete labs", () => {
     expect(Object.keys(labRegistry).sort()).toEqual([
       "cell-division",
       "chemical-reaction",
@@ -21,7 +21,9 @@ describe("labs registry", () => {
       "molecule-motion",
       "pendulum-lab",
       "periodic-table",
+      "tectonic-plates",
       "wave-motion",
+      "weather-system",
     ]);
     expect(labRegistry["cell-division"]?.partial).toBeUndefined();
     expect(labRegistry["chemical-reaction"]?.partial).toBeUndefined();
@@ -32,6 +34,8 @@ describe("labs registry", () => {
     expect(labRegistry["molecule-motion"]?.partial).toBeUndefined();
     expect(labRegistry["human-heart"]?.partial).toBeUndefined();
     expect(labRegistry["periodic-table"]?.partial).toBeUndefined();
+    expect(labRegistry["tectonic-plates"]?.partial).toBeUndefined();
+    expect(labRegistry["weather-system"]?.partial).toBeUndefined();
     expect(labRegistry["wave-motion"]?.partial).toBeUndefined();
   });
 });

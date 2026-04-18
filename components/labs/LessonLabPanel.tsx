@@ -10,6 +10,8 @@ import HumanHeartLabPage from "@/components/labs/HumanHeartLabPage";
 import MoleculeMotionLabPage from "@/components/labs/MoleculeMotionLabPage";
 import PendulumLabPage from "@/components/labs/PendulumLabPage";
 import PeriodicTableLabPage from "@/components/labs/PeriodicTableLabPage";
+import TectonicPlatesLabPage from "@/components/labs/TectonicPlatesLabPage";
+import WeatherSystemLabPage from "@/components/labs/WeatherSystemLabPage";
 import WaveMotionLabPage from "@/components/labs/WaveMotionLabPage";
 import type { LabId } from "@/lib/labs/types";
 
@@ -21,6 +23,8 @@ const LAB_META: Partial<Record<LabId, { title: string; subject: string }>> = {
   "molecule-motion": { title: "Molecule Motion Lab", subject: "Chemistry Lab" },
   "chemical-reaction": { title: "Chemical Reaction Lab", subject: "Chemistry Lab" },
   "periodic-table": { title: "Periodic Table Explorer", subject: "Chemistry Lab" },
+  "weather-system": { title: "Weather System Lab", subject: "Earth Science Lab" },
+  "tectonic-plates": { title: "Tectonic Plates Lab", subject: "Earth Science Lab" },
   "human-heart": { title: "Human Heart Simulator", subject: "Biology Lab" },
   "cell-division": { title: "Cell Division Explorer", subject: "Biology Lab" },
   "ecosystem-balance": { title: "Ecosystem Balance Lab", subject: "Biology Lab" },
@@ -34,6 +38,8 @@ function LabContent({ labId, lessonId }: { labId: LabId; lessonId: string }) {
   if (labId === "molecule-motion") return <MoleculeMotionLabPage lessonId={lessonId} />;
   if (labId === "chemical-reaction") return <ChemicalReactionLabPage lessonId={lessonId} />;
   if (labId === "periodic-table") return <PeriodicTableLabPage lessonId={lessonId} />;
+  if (labId === "weather-system") return <WeatherSystemLabPage lessonId={lessonId} />;
+  if (labId === "tectonic-plates") return <TectonicPlatesLabPage lessonId={lessonId} />;
   if (labId === "human-heart") return <HumanHeartLabPage lessonId={lessonId} />;
   if (labId === "cell-division") return <CellDivisionLabPage lessonId={lessonId} />;
   if (labId === "ecosystem-balance") return <EcosystemBalanceLabPage lessonId={lessonId} />;

@@ -782,7 +782,7 @@ registerPromptDefinition({
 
 registerPromptDefinition({
   key: "lab.action.planner",
-  version: "1.4.0",
+  version: "1.5.0",
   template: [
     "Plan one safe action for this interactive lab.",
     "Lab: {{labTitle}} ({{labId}})",
@@ -803,6 +803,8 @@ registerPromptDefinition({
     "For Ecosystem Balance Lab, map common student requests to one bounded action: add more carnivores can use SET_CARNIVORES with value 80, simulate a drought can use ADD_DROUGHT, and population cycling questions can use STEP.",
     "For Chemical Reaction Lab, map common student requests to one bounded action: adding a catalyst can use ADD_CATALYST, higher temperature can use SET_TEMPERATURE with value 120, and energy release or absorption can use SET_ENERGY_TYPE with value exothermic or endothermic.",
     "For Periodic Table Explorer, map common student requests to one bounded action: show metals can use HIGHLIGHT_CATEGORY with category transition_metal, Bohr model for Carbon can use SELECT_ELEMENT with symbol C, and highest electronegativity can use HIGHLIGHT_PROPERTY with property electronegativity.",
+    "For Weather System Lab, map common student requests to one bounded action: simulate a storm can use SIMULATE_STORM, rainy season can use SET_SEASON with value wet, and snow questions can use SET_TEMPERATURE with value 0.",
+    "For Tectonic Plates Lab, map common student requests to one bounded action: convergent boundary can use SET_BOUNDARY_TYPE with value convergent, earthquakes can use TRIGGER_EARTHQUAKE, and faster plates can use SET_PLATE1_SPEED with value 8.",
     "When an allowed action requires a numeric value, include that bounded value in action.value.",
     "Return exactly this JSON shape:",
     "{",
