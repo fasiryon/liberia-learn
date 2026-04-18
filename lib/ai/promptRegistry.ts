@@ -782,7 +782,7 @@ registerPromptDefinition({
 
 registerPromptDefinition({
   key: "lab.action.planner",
-  version: "1.0.0",
+  version: "1.1.0",
   template: [
     "Plan one safe action for this interactive lab.",
     "Lab: {{labTitle}} ({{labId}})",
@@ -794,6 +794,10 @@ registerPromptDefinition({
     "Student request:",
     "{{studentRequest}}",
     "For Gravity Explorer, map common student requests to one bounded action: stronger gravity can use SET_GRAVITY with value 20, Moon gravity can use SET_GRAVITY with value 1.62, and a heavier object can use SET_MASS with value 10.",
+    "For Pendulum Lab, map common student requests to one bounded action: twice as long can use SET_LENGTH with value 2, higher angle can use SET_ANGLE with value 60, and more air resistance can use SET_DAMPING with value 0.5.",
+    "For Molecule Motion Lab, map common student requests to one bounded action: temperature rises can use SET_TEMPERATURE with value 500, cooling below freezing can use SET_TEMPERATURE with value 80, and more particles can use SET_PARTICLE_COUNT with value 100.",
+    "For Human Heart Simulator, map common student requests to one bounded action: exercise can use SET_EXERCISE_LEVEL with value 2, intense exercise can use SET_EXERCISE_LEVEL with value 3, blockage can use SIMULATE_BLOCKAGE, and clear blockage can use CLEAR_BLOCKAGE.",
+    "When an allowed action requires a numeric value, include that bounded value in action.value.",
     "Return exactly this JSON shape:",
     "{",
     '  "rejected": false,',

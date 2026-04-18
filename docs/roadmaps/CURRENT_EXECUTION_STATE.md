@@ -5,11 +5,11 @@ Live execution tracking for the final closeout program.
 
 ## AI Labs V1 Current State
 - Current workstream: AI Labs V1
-- Current phase: Phase 3 partial labs COMPLETE; Phase 4 lesson integration expansion is blocked pending explicit approval.
-- Current branch: `feat/ai-labs-v1`
-- Worktree status: Phase 2 implemented locally; validation gate passed; commit/deploy verification in progress.
-- Last completed phase: AI Labs V1 Phase 3 - Partial Labs
-- Last commit reference: Pending Phase 3 commit
+- Current phase: Phase 4 2D scenes, AI loop wiring, lesson integration, deploy, and live verification COMPLETE.
+- Current branch: `main`
+- Worktree status: Phase 4 committed, pushed, deployed, and verified on production.
+- Last completed phase: AI Labs V1 Phase 4 - 2D Lab Scenes + AI Loop + Lesson Integration
+- Last commit reference: `e8be082 feat(labs): complete phase 4 canvas lab scenes`
 
 ## AI Labs V1 Phase 2 Validation
 - `npx prisma generate`: PASS
@@ -40,6 +40,26 @@ Live execution tracking for the final closeout program.
 | Registry count | `lib/labs/registry.ts` | 4 registered labs total: Gravity complete + 3 partial labs |
 | Runtime dispatch | `lib/labs/runtime/*` | Apply/validate dispatchers wired for all 4 registered labs |
 | Tests | `__tests__/labs/` | Pendulum, Molecule Motion, and Human Heart runtime coverage added |
+
+## AI Labs V1 Phase 4 Deliverables
+| Feature | Route / File | Notes |
+|---------|--------------|-------|
+| Pendulum Lab complete | `/student/labs/pendulum-lab` | 2D canvas pendulum scene, low-end fallback, LabShell AI loop, lesson slide-over entry |
+| Molecule Motion complete | `/student/labs/molecule-motion` | 2D particle scene with phase transitions, low-end fallback, LabShell AI loop, lesson slide-over entry |
+| Human Heart complete | `/student/labs/human-heart` | 2D heart chamber pulse scene, low-end fallback, LabShell AI loop, lesson slide-over entry |
+| Lesson integration | `/student/lessons/[id]` | Physics 7-9: Gravity + Pendulum; Chemistry 9-11: Molecule Motion; Biology 8-10: Human Heart |
+| Labs index | `/student/labs` | Registered labs shown as cards with Open Lab actions and coming-soon handling |
+| Registry status | `lib/labs/registry.ts` | 4 registered complete labs; no Phase 3 partial flags remain |
+
+## AI Labs V1 Phase 4 Validation
+- `npx prisma generate`: PASS
+- `npx tsc --noEmit`: PASS (0 errors)
+- `npm test`: PASS (1864 tests, 259 files)
+- `npm run build`: PASS (exit 0)
+- Live production route verification: PASS for `/student/labs/pendulum-lab`, `/student/labs/molecule-motion`, `/student/labs/human-heart`
+- Live production AI loop verification: PASS for Pendulum `SET_LENGTH`, Molecule Motion `SET_TEMPERATURE`, Human Heart `SET_EXERCISE_LEVEL`
+- Live 375px canvas verification: PASS for all three labs
+- Live lesson slide-over integration verification: PASS for Physics/Pendulum, Chemistry/Molecule, Biology/Heart
 
 ## Current workstream
 22-sprint final platform closeout

@@ -10,7 +10,7 @@ describe("labs registry", () => {
     expect(isValidLabId("unknown-lab")).toBe(false);
   });
 
-  it("registers gravity plus three partial labs", () => {
+  it("registers four complete labs", () => {
     expect(Object.keys(labRegistry).sort()).toEqual([
       "gravity-explorer",
       "human-heart",
@@ -18,8 +18,8 @@ describe("labs registry", () => {
       "pendulum-lab",
     ]);
     expect(labRegistry["gravity-explorer"]?.partial).toBeUndefined();
-    expect(labRegistry["pendulum-lab"]?.partial).toBe(true);
-    expect(labRegistry["molecule-motion"]?.partial).toBe(true);
-    expect(labRegistry["human-heart"]?.partial).toBe(true);
+    expect(labRegistry["pendulum-lab"]?.partial).toBeUndefined();
+    expect(labRegistry["molecule-motion"]?.partial).toBeUndefined();
+    expect(labRegistry["human-heart"]?.partial).toBeUndefined();
   });
 });

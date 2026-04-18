@@ -4,10 +4,11 @@ import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } fro
 
 import { LessonQuizPanel } from "@/components/student/LessonQuizPanel";
 import { StudentLessonHelpPanel } from "@/components/student/StudentLessonHelpPanel";
-import GravityLessonLabPanel from "@/components/labs/GravityLessonLabPanel";
+import LessonLabPanel from "@/components/labs/LessonLabPanel";
 import { gradeToTutorBand } from "@/lib/ai/studentLessonSupport";
 import { lessonDurationLabel, renderSimpleMarkdown, selectLessonBody } from "@/lib/lessons";
 import { enqueueOfflineRequest } from "@/lib/offline-queue";
+import type { LabId } from "@/lib/labs/types";
 import type { PseudoLab, SimulationDefinition } from "@/lib/schemas/labSimulation";
 
 type ExitTicketQuestion = {
@@ -308,7 +309,7 @@ export default function LessonDeliveryClient({ lessonId }: { lessonId: string })
   const [submitting, setSubmitting] = useState(false);
   const [submitMessage, setSubmitMessage] = useState<string | null>(null);
   const [helpPanelOpen, setHelpPanelOpen] = useState(false);
-  const [gravityLabOpen, setGravityLabOpen] = useState(false);
+  const [openLabId, setOpenLabId] = useState<LabId | null>(null);
   const [tutorQuestion, setTutorQuestion] = useState("");
   const [tutorMessages, setTutorMessages] = useState<TutorMessage[]>([]);
   const [tutorLoading, setTutorLoading] = useState(false);
@@ -361,11 +362,24 @@ export default function LessonDeliveryClient({ lessonId }: { lessonId: string })
   const aiTutorEnabled = process.env.NEXT_PUBLIC_ENABLE_AI_TUTOR === "true";
   const lessonProgressKey = useMemo(() => `lesson_progress_${lessonId}`, [lessonId]);
   const currentSectionIndex = sectionOrder.indexOf(currentSection);
-  const hasGravityLab =
-    Boolean(lesson) &&
-    lesson!.grade >= 7 &&
-    lesson!.grade <= 9 &&
-    lesson!.subject.toLowerCase().includes("physics");
+  const availableLabs = useMemo(() => {
+    if (!lesson) return [] as Array<{ labId: LabId; label: string }>;
+    const subject = lesson.subject.toLowerCase();
+    const labs: Array<{ labId: LabId; label: string }> = [];
+    if (lesson.grade >= 7 && lesson.grade <= 9 && subject.includes("physics")) {
+      labs.push(
+        { labId: "gravity-explorer", label: "Open Gravity Lab" },
+        { labId: "pendulum-lab", label: "Open Pendulum Lab" }
+      );
+    }
+    if (lesson.grade >= 9 && lesson.grade <= 11 && subject.includes("chemistry")) {
+      labs.push({ labId: "molecule-motion", label: "Open Molecule Lab" });
+    }
+    if (lesson.grade >= 8 && lesson.grade <= 10 && subject.includes("biology")) {
+      labs.push({ labId: "human-heart", label: "Open Heart Lab" });
+    }
+    return labs;
+  }, [lesson]);
 
   const registerSection = useCallback(
     (sectionId: string) => (node: HTMLElement | null) => {
@@ -390,8 +404,8 @@ export default function LessonDeliveryClient({ lessonId }: { lessonId: string })
     setCurrentSection(sectionId);
   }, []);
 
-  const openGravityLab = useCallback(() => {
-    setGravityLabOpen(true);
+  const openLessonLab = useCallback((labId: LabId) => {
+    setOpenLabId(labId);
     void fetch("/api/track", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -399,7 +413,7 @@ export default function LessonDeliveryClient({ lessonId }: { lessonId: string })
         eventType: "LAB_OPENED",
         contentId: lesson?.contentId ?? null,
         metadata: {
-          labId: "gravity-explorer",
+          labId,
           lessonId,
         },
       }),
@@ -647,15 +661,16 @@ export default function LessonDeliveryClient({ lessonId }: { lessonId: string })
                 Help Me Understand
               </button>
             ) : null}
-            {hasGravityLab ? (
+            {availableLabs.map((lab) => (
               <button
+                key={lab.labId}
                 type="button"
-                onClick={openGravityLab}
+                onClick={() => openLessonLab(lab.labId)}
                 className="mt-4 ml-0 inline-flex min-h-12 items-center justify-center rounded-full bg-cyan-300 px-5 py-3 text-sm font-semibold text-slate-950 transition-colors hover:bg-cyan-200 sm:ml-2"
               >
-                Open Gravity Lab
+                {lab.label}
               </button>
-            ) : null}
+            ))}
           </div>
         </section>
 
@@ -848,9 +863,10 @@ export default function LessonDeliveryClient({ lessonId }: { lessonId: string })
         messages={tutorMessages}
         loading={tutorLoading}
       />
-      <GravityLessonLabPanel
-        open={gravityLabOpen}
-        onClose={() => setGravityLabOpen(false)}
+      <LessonLabPanel
+        open={openLabId !== null}
+        onClose={() => setOpenLabId(null)}
+        labId={openLabId}
         lessonId={lesson.id}
       />
     </div>
