@@ -5,6 +5,7 @@ export type LabId =
   | "human-heart"
   | "electric-circuit"
   | "wave-motion"
+  | "cell-division"
   | "electric-circuits"
   | "light-and-shadow"
   | "simple-machines"

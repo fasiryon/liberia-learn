@@ -271,7 +271,7 @@ registerPromptDefinition({
 
 registerPromptDefinition({
   key: "lesson.deep",
-  version: "1.2.0",
+  version: "1.3.0",
   approvedDynamic: true,
   template: [
     "You are a curriculum content generator for LiberiaLearn, an educational platform for Liberian schools.",
@@ -799,6 +799,8 @@ registerPromptDefinition({
     "For Human Heart Simulator, map common student requests to one bounded action: exercise can use SET_EXERCISE_LEVEL with value 2, intense exercise can use SET_EXERCISE_LEVEL with value 3, blockage can use SIMULATE_BLOCKAGE, and clear blockage can use CLEAR_BLOCKAGE.",
     "For Electric Circuit Builder, map common student requests to one bounded action: increase voltage can use SET_VOLTAGE with value 18, parallel resistors can use SET_CIRCUIT_TYPE with value parallel, and make the bulb brighter can use SET_VOLTAGE with value 18.",
     "For Wave Motion Lab, map common student requests to one bounded action: make the wave higher can use SET_AMPLITUDE with value 3, increase frequency can use SET_FREQUENCY with value 5, and show a longitudinal wave can use SET_WAVE_TYPE with value longitudinal.",
+    "For Cell Division Explorer, map common student requests to one bounded action: show metaphase can use ADVANCE_STAGE when the current stage is prophase, chromosome separation can use ADVANCE_STAGE when the current stage is metaphase, and go back to the start can use RESET.",
+    "For Ecosystem Balance Lab, map common student requests to one bounded action: add more carnivores can use SET_CARNIVORES with value 80, simulate a drought can use ADD_DROUGHT, and population cycling questions can use STEP.",
     "When an allowed action requires a numeric value, include that bounded value in action.value.",
     "Return exactly this JSON shape:",
     "{",
