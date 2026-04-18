@@ -24,12 +24,28 @@ import { HEART_ACTION_TYPES, isHumanHeartAction } from "@/lib/labs/human-heart/a
 import { HEART_INITIAL_STATE, type HumanHeartState } from "@/lib/labs/human-heart/state";
 import { applyHumanHeartAction } from "@/lib/labs/human-heart/runtime";
 import { validateHumanHeartAction } from "@/lib/labs/human-heart/validator";
+import {
+  CIRCUIT_ACTION_TYPES,
+  isElectricCircuitAction,
+} from "@/lib/labs/electric-circuit/actions";
+import {
+  CIRCUIT_INITIAL_STATE,
+  type ElectricCircuitState,
+} from "@/lib/labs/electric-circuit/state";
+import { applyElectricCircuitAction } from "@/lib/labs/electric-circuit/runtime";
+import { validateElectricCircuitAction } from "@/lib/labs/electric-circuit/validator";
+import { WAVE_ACTION_TYPES, isWaveMotionAction } from "@/lib/labs/wave-motion/actions";
+import { WAVE_INITIAL_STATE, type WaveMotionState } from "@/lib/labs/wave-motion/state";
+import { applyWaveMotionAction } from "@/lib/labs/wave-motion/runtime";
+import { validateWaveMotionAction } from "@/lib/labs/wave-motion/validator";
 
 export const LAB_IDS = [
   "gravity-explorer",
   "pendulum-lab",
   "molecule-motion",
   "human-heart",
+  "electric-circuit",
+  "wave-motion",
   "electric-circuits",
   "light-and-shadow",
   "simple-machines",
@@ -136,11 +152,61 @@ const humanHeartDefinition: LabDefinition<HumanHeartState> = {
   },
 };
 
+const electricCircuitDefinition: LabDefinition<ElectricCircuitState> = {
+  id: "electric-circuit",
+  title: "Electric Circuit Builder",
+  subject: "Physics",
+  gradeBand: "Grades 9-11",
+  description: "Explore how voltage, resistance, and circuit type affect current and power.",
+  tier: 1,
+  curriculumStandards: ["Liberia Grade 10 Physics - Electricity and Circuits"],
+  allowedActions: [...CIRCUIT_ACTION_TYPES],
+  initialState: CIRCUIT_INITIAL_STATE,
+  validateAction: (_state, action) => {
+    if (!isElectricCircuitAction(action)) {
+      return { ok: false, reason: "Action is not valid for Electric Circuit Builder." };
+    }
+    return validateElectricCircuitAction(action);
+  },
+  applyAction: (state, action) => {
+    if (!isElectricCircuitAction(action)) {
+      return state;
+    }
+    return applyElectricCircuitAction(state, action);
+  },
+};
+
+const waveMotionDefinition: LabDefinition<WaveMotionState> = {
+  id: "wave-motion",
+  title: "Wave Motion Lab",
+  subject: "Physics",
+  gradeBand: "Grades 10-12",
+  description: "Explore how frequency, amplitude, and wave speed affect wave behavior.",
+  tier: 1,
+  curriculumStandards: ["Liberia Grade 11 Physics - Waves and Oscillations"],
+  allowedActions: [...WAVE_ACTION_TYPES],
+  initialState: WAVE_INITIAL_STATE,
+  validateAction: (_state, action) => {
+    if (!isWaveMotionAction(action)) {
+      return { ok: false, reason: "Action is not valid for Wave Motion Lab." };
+    }
+    return validateWaveMotionAction(action);
+  },
+  applyAction: (state, action) => {
+    if (!isWaveMotionAction(action)) {
+      return state;
+    }
+    return applyWaveMotionAction(state, action);
+  },
+};
+
 export const labRegistry: Partial<Record<LabId, LabDefinition<unknown>>> = {
   "gravity-explorer": gravityExplorerDefinition as LabDefinition<unknown>,
   "pendulum-lab": pendulumLabDefinition as LabDefinition<unknown>,
   "molecule-motion": moleculeMotionDefinition as LabDefinition<unknown>,
   "human-heart": humanHeartDefinition as LabDefinition<unknown>,
+  "electric-circuit": electricCircuitDefinition as LabDefinition<unknown>,
+  "wave-motion": waveMotionDefinition as LabDefinition<unknown>,
 };
 
 export function isValidLabId(id: string): id is LabId {

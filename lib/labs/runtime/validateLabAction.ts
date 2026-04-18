@@ -1,4 +1,6 @@
 import { getLabDefinition } from "@/lib/labs/registry";
+import { isElectricCircuitAction } from "@/lib/labs/electric-circuit/actions";
+import { validateElectricCircuitAction } from "@/lib/labs/electric-circuit/validator";
 import { isGravityLabAction } from "@/lib/labs/gravity-explorer/actions";
 import { validateGravityLabAction } from "@/lib/labs/gravity-explorer/validator";
 import { isHumanHeartAction } from "@/lib/labs/human-heart/actions";
@@ -7,6 +9,8 @@ import { isMoleculeMotionAction } from "@/lib/labs/molecule-motion/actions";
 import { validateMoleculeMotionAction } from "@/lib/labs/molecule-motion/validator";
 import { isPendulumLabAction } from "@/lib/labs/pendulum-lab/actions";
 import { validatePendulumLabAction } from "@/lib/labs/pendulum-lab/validator";
+import { isWaveMotionAction } from "@/lib/labs/wave-motion/actions";
+import { validateWaveMotionAction } from "@/lib/labs/wave-motion/validator";
 import type { LabAction, LabId, LabValidationResult } from "@/lib/labs/types";
 
 export function validateLabAction<S>(
@@ -36,6 +40,18 @@ export function validateLabAction<S>(
     return isHumanHeartAction(action)
       ? validateHumanHeartAction(action)
       : { ok: false, reason: "Action is not valid for Human Heart Simulator." };
+  }
+
+  if (labId === "electric-circuit") {
+    return isElectricCircuitAction(action)
+      ? validateElectricCircuitAction(action)
+      : { ok: false, reason: "Action is not valid for Electric Circuit Builder." };
+  }
+
+  if (labId === "wave-motion") {
+    return isWaveMotionAction(action)
+      ? validateWaveMotionAction(action)
+      : { ok: false, reason: "Action is not valid for Wave Motion Lab." };
   }
 
   const definition = getLabDefinition(labId);

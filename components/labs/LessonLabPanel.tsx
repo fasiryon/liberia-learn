@@ -2,14 +2,18 @@
 
 import { useEffect } from "react";
 import GravityLabPage from "@/components/labs/GravityLabPage";
+import ElectricCircuitLabPage from "@/components/labs/ElectricCircuitLabPage";
 import HumanHeartLabPage from "@/components/labs/HumanHeartLabPage";
 import MoleculeMotionLabPage from "@/components/labs/MoleculeMotionLabPage";
 import PendulumLabPage from "@/components/labs/PendulumLabPage";
+import WaveMotionLabPage from "@/components/labs/WaveMotionLabPage";
 import type { LabId } from "@/lib/labs/types";
 
 const LAB_META: Partial<Record<LabId, { title: string; subject: string }>> = {
   "gravity-explorer": { title: "Gravity Explorer", subject: "Physics Lab" },
   "pendulum-lab": { title: "Pendulum Lab", subject: "Physics Lab" },
+  "electric-circuit": { title: "Electric Circuit Builder", subject: "Physics Lab" },
+  "wave-motion": { title: "Wave Motion Lab", subject: "Physics Lab" },
   "molecule-motion": { title: "Molecule Motion Lab", subject: "Chemistry Lab" },
   "human-heart": { title: "Human Heart Simulator", subject: "Biology Lab" },
 };
@@ -17,6 +21,8 @@ const LAB_META: Partial<Record<LabId, { title: string; subject: string }>> = {
 function LabContent({ labId, lessonId }: { labId: LabId; lessonId: string }) {
   if (labId === "gravity-explorer") return <GravityLabPage lessonId={lessonId} />;
   if (labId === "pendulum-lab") return <PendulumLabPage lessonId={lessonId} />;
+  if (labId === "electric-circuit") return <ElectricCircuitLabPage lessonId={lessonId} />;
+  if (labId === "wave-motion") return <WaveMotionLabPage lessonId={lessonId} />;
   if (labId === "molecule-motion") return <MoleculeMotionLabPage lessonId={lessonId} />;
   if (labId === "human-heart") return <HumanHeartLabPage lessonId={lessonId} />;
   return null;
