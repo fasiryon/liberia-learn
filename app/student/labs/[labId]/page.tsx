@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { ArrowLeft } from "lucide-react";
 import { requireRole } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { LabSessionClient } from "@/app/student/labs/LabSessionClient";
@@ -28,7 +29,7 @@ export default async function StudentLabDetailPage({
     if (!session) {
       return (
         <main className="min-h-screen bg-slate-950 px-4 py-8 text-slate-50">
-          <div className="mx-auto max-w-3xl rounded-3xl border border-white/10 bg-slate-900/70 p-6 text-sm text-slate-300">
+          <div className="mx-auto max-w-3xl rounded-xl border border-white/10 bg-slate-900/70 p-6 text-sm text-slate-300">
             No lab session was found for this assignment.
           </div>
         </main>
@@ -48,7 +49,7 @@ export default async function StudentLabDetailPage({
     if (!lab) {
       return (
         <main className="min-h-screen bg-slate-950 px-4 py-8 text-slate-50">
-          <div className="mx-auto max-w-3xl rounded-3xl border border-white/10 bg-slate-900/70 p-6 text-sm text-slate-300">
+          <div className="mx-auto max-w-3xl rounded-xl border border-white/10 bg-slate-900/70 p-6 text-sm text-slate-300">
             This lab definition is no longer available.
           </div>
         </main>
@@ -58,8 +59,9 @@ export default async function StudentLabDetailPage({
     return (
       <main className="min-h-screen bg-slate-950 px-4 py-8 text-slate-50">
         <div className="mx-auto max-w-4xl space-y-6">
-          <Link href="/student/labs" className="text-sm text-emerald-300 hover:text-emerald-200">
-            &larr; Back to Labs
+          <Link href="/student/labs" className="ll-interactive inline-flex items-center gap-1.5 rounded-lg px-2 py-1 text-sm text-[var(--ll-text-muted)] hover:text-[var(--ll-text)]">
+            <ArrowLeft className="h-4 w-4" strokeWidth={1.5} />
+            Back to Labs
           </Link>
           <LabSessionClient
             lab={{
@@ -77,7 +79,7 @@ export default async function StudentLabDetailPage({
   } catch (error: any) {
     return (
       <main className="min-h-screen bg-slate-950 px-4 py-8 text-slate-50">
-        <div className="mx-auto max-w-3xl rounded-3xl border border-red-500/20 bg-red-500/10 p-6 text-sm text-red-200">
+        <div className="mx-auto max-w-3xl rounded-xl border border-red-500/20 bg-red-500/10 p-6 text-sm text-red-200">
           {error?.message ?? "Unable to load the lab."}
         </div>
       </main>

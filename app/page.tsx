@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { LogIn } from "lucide-react";
 import { PublicFooter } from "@/components/PublicFooter";
 
 const roleCards = [
@@ -51,15 +52,12 @@ export default function HomePage() {
       <header className="border-b border-[var(--ll-border)] bg-[var(--ll-bg)]">
         <div className="ll-shell flex items-center justify-between gap-4 py-4">
           <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-[var(--ll-accent)] text-lg font-black text-slate-950">
-              L
-            </div>
             <div className="leading-tight">
-              <p className="text-sm font-semibold tracking-wide text-[var(--ll-text)]">
-                LiberiaLearn
+              <p className="text-sm font-semibold text-[var(--ll-text)]">
+                Liberia<span className="text-[var(--ll-accent)]">.</span>Learn
               </p>
-              <p className="text-xs text-[var(--ll-text-muted)]">
-                National K-12 learning platform
+              <p className="text-[10px] font-medium uppercase tracking-[0.15em] text-[var(--ll-text-faint)]">
+                National K–12 Education Platform
               </p>
             </div>
           </div>
@@ -69,7 +67,8 @@ export default function HomePage() {
               Ministry Officials
             </Link>
             <Link href="/login">
-              <span className="inline-flex min-h-11 items-center rounded-lg bg-[var(--ll-accent)] px-5 py-2 font-semibold text-slate-950 hover:opacity-90">
+              <span className="ll-interactive inline-flex min-h-11 items-center gap-1.5 rounded-lg bg-[var(--ll-accent)] px-5 py-2 font-semibold text-slate-950">
+                <LogIn className="h-4 w-4" strokeWidth={1.5} />
                 Log in
               </span>
             </Link>
@@ -85,23 +84,22 @@ export default function HomePage() {
 
           <div className="space-y-4">
             <h1 className="max-w-4xl text-balance text-4xl font-semibold tracking-tight text-[var(--ll-text)] sm:text-5xl lg:text-6xl">
-              AI-supported teaching and learning for Liberia&apos;s classrooms, families, and school systems.
+              Education infrastructure for every Liberian school.
             </h1>
             <p className="max-w-2xl text-base leading-7 text-[var(--ll-text-muted)]">
-              LiberiaLearn brings curriculum delivery, student practice, guardian progress,
-              school operations, and grounded AI assistance into one platform designed for
-              Grades 1-12 and low-resource deployment conditions.
+              Curriculum delivery, AI tutoring, school operations, and national oversight —
+              built for Grades 1–12 across all 15 counties.
             </p>
           </div>
 
           <div className="flex flex-col gap-3 sm:flex-row">
             <Link href="/login">
-              <span className="inline-flex min-h-12 items-center justify-center rounded-lg bg-[var(--ll-accent)] px-6 py-3 text-sm font-semibold text-slate-950 hover:opacity-90">
-                Launch platform
+              <span className="ll-interactive inline-flex min-h-12 items-center justify-center rounded-lg bg-[var(--ll-accent)] px-6 py-3 text-sm font-semibold text-slate-950">
+                Access the platform
               </span>
             </Link>
             <Link href="/pilot-preview">
-              <span className="inline-flex min-h-12 items-center justify-center rounded-lg border border-[var(--ll-border-strong)] px-6 py-3 text-sm font-medium text-[var(--ll-text)] hover:bg-[var(--ll-surface-muted)]">
+              <span className="ll-interactive inline-flex min-h-12 items-center justify-center rounded-lg border border-[var(--ll-border-strong)] px-6 py-3 text-sm font-medium text-[var(--ll-text)]">
                 For Ministry officials
               </span>
             </Link>

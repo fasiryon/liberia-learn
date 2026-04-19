@@ -33,7 +33,7 @@ export function TeacherShell({
     <>
       <TeacherWelcomeGate needsWelcome={needsWelcome} />
       {children}
-      <LegalFooter />
+      <LegalFooter variant="portal" />
 
       {/* ── Floating toolbar (bottom-right) ─────────────────────────── */}
       {(ONBOARDING_ENABLED || A11Y_ENABLED) && (

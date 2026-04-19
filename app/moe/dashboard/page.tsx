@@ -211,7 +211,7 @@ export default function MoeDashboardPage() {
 
   return (
     <main className="ll-dashboard-shell">
-      <div className="mx-auto max-w-7xl px-4 py-5 sm:px-6 lg:px-8 space-y-5">
+      <div className="ll-page-enter mx-auto max-w-7xl px-4 py-5 sm:px-6 lg:px-8 space-y-5">
         <DashboardTopBar
           roleLabel="Ministry Official"
           roleBadgeBg="bg-slate-500/10 border-slate-500/20"
@@ -292,7 +292,7 @@ export default function MoeDashboardPage() {
               </div>
               <Link
                 href="/moe/districts"
-                className="rounded-lg border border-[var(--ll-border)] bg-[var(--ll-surface-muted)] px-3 py-1.5 text-xs font-medium text-[var(--ll-text-muted)] transition-colors hover:border-[var(--ll-border-strong)] hover:text-[var(--ll-text)]"
+                className="ll-interactive rounded-lg border border-[var(--ll-border)] bg-[var(--ll-surface-muted)] px-3 py-1.5 text-xs font-medium text-[var(--ll-text-muted)]"
               >
                 View all districts
               </Link>
@@ -311,9 +311,8 @@ export default function MoeDashboardPage() {
                 </p>
               </div>
             ) : (
-              <div className="mt-5 overflow-hidden rounded-xl border border-[var(--ll-border)]">
-                <div className="overflow-x-auto">
-                  <table className="w-full text-sm">
+              <div className="ll-scroll-table mt-5 overflow-hidden rounded-xl border border-[var(--ll-border)]">
+                <table className="w-full text-sm">
                     <thead className="bg-[var(--ll-surface-muted)]">
                       <tr className="text-left text-[11px] font-medium uppercase tracking-[0.1em] text-[var(--ll-text-faint)]">
                         <th className="px-4 py-3">District</th>
@@ -371,7 +370,6 @@ export default function MoeDashboardPage() {
                       })}
                     </tbody>
                   </table>
-                </div>
               </div>
             )}
           </section>

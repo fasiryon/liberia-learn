@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import { Play, Pause, RotateCcw, SeparatorHorizontal } from "lucide-react";
 import type { GravityLabAction } from "@/lib/labs/gravity-explorer/actions";
 import type { GravityLabState } from "@/lib/labs/gravity-explorer/state";
 
@@ -92,22 +93,26 @@ export default function GravityFallback({
         <button
           type="button"
           onClick={() => onAction(state.paused ? { type: "PLAY" } : { type: "PAUSE" })}
-          className="min-h-11 rounded-xl bg-cyan-300 px-3 py-2 text-sm font-semibold text-slate-950"
+          className="ll-interactive inline-flex min-h-11 items-center justify-center gap-1.5 rounded-xl bg-[var(--ll-accent)] px-3 py-2 text-sm font-semibold text-slate-950"
         >
-          {state.paused ? "Play" : "Pause"}
+          {state.paused
+            ? <><Play className="h-4 w-4" strokeWidth={1.5} />Play</>
+            : <><Pause className="h-4 w-4" strokeWidth={1.5} />Pause</>}
         </button>
         <button
           type="button"
           onClick={() => onAction({ type: "STEP", dt: 0.1 })}
-          className="min-h-11 rounded-xl border border-slate-700 px-3 py-2 text-sm font-semibold text-slate-100"
+          className="ll-interactive inline-flex min-h-11 items-center justify-center gap-1.5 rounded-xl border border-[var(--ll-border)] px-3 py-2 text-sm font-semibold text-[var(--ll-text)]"
         >
+          <SeparatorHorizontal className="h-4 w-4" strokeWidth={1.5} />
           Step
         </button>
         <button
           type="button"
           onClick={() => onAction({ type: "RESET" })}
-          className="min-h-11 rounded-xl border border-slate-700 px-3 py-2 text-sm font-semibold text-slate-100"
+          className="ll-interactive inline-flex min-h-11 items-center justify-center gap-1.5 rounded-xl border border-[var(--ll-border)] px-3 py-2 text-sm font-semibold text-[var(--ll-text)]"
         >
+          <RotateCcw className="h-4 w-4" strokeWidth={1.5} />
           Reset
         </button>
       </div>

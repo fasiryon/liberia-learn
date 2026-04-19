@@ -263,7 +263,7 @@ export default function LoginClient({ showDemoHints, demoGroups, demoDefaults }:
   };
 
   return (
-    <main className="ll-page flex min-h-screen flex-col px-4 py-8 sm:py-10">
+    <main className="ll-page ll-page-enter flex min-h-screen flex-col px-4 py-8 sm:py-10">
       <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_top,_#22c55e33,_transparent_55%),radial-gradient(circle_at_bottom,_#0ea5e933,_transparent_55%)]" />
 
       <div className="mx-auto w-full max-w-lg flex-1 flex items-center justify-center py-4">
