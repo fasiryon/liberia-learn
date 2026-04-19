@@ -68,14 +68,6 @@ export default function MoeShell({
               <p className="text-slate-200">{user.name || "MOE Official"}</p>
               <p className="text-[10px] text-slate-400">{user.email || "—"}</p>
             </div>
-            <form action="/api/auth/signout" method="post">
-              <button
-                type="submit"
-                className="rounded-full border border-red-400/40 px-3 py-1.5 text-[11px] font-semibold text-red-200 hover:bg-red-500/20"
-              >
-                Sign Out
-              </button>
-            </form>
           </div>
         </div>
       </header>

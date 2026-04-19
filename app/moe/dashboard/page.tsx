@@ -202,9 +202,14 @@ export default function MoeDashboardPage() {
   }
 
   const districtRows = compliance?.byDistrict ?? [];
+  const districtsRequiringAttention = districtRows.filter(
+    (district) =>
+      (district.schoolCount ?? 0) > 0 &&
+      ((district.compliancePct ?? 0) < 60 || (district.scheduledWorkDelivered ?? 0) === 0)
+  );
 
   return (
-    <main className="min-h-screen bg-slate-950 text-slate-50">
+    <main className="ll-dashboard-shell">
       <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8 space-y-6">
         {/* Consistent top bar */}
         <DashboardTopBar
@@ -222,44 +227,15 @@ export default function MoeDashboardPage() {
           </p>
         </div>
 
-        <div className="relative overflow-hidden rounded-3xl border border-slate-800 bg-slate-950/90 px-6 py-8 shadow-2xl shadow-slate-950/30 sm:px-8">
-          <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_left,_rgba(16,185,129,0.14),_transparent_32%),radial-gradient(circle_at_top_right,_rgba(59,130,246,0.12),_transparent_26%)]" />
-
-          <div className="relative space-y-8">
-            {/* Primary Actions */}
-            <div className="grid gap-3 sm:grid-cols-3">
-              <Link
-                href="/moe/districts"
-                className="flex flex-col gap-1 rounded-2xl border border-blue-500/30 bg-blue-500/10 p-4 hover:bg-blue-500/20"
-              >
-                <p className="text-sm font-bold text-blue-200">County breakdown</p>
-                <p className="text-xs text-slate-400">View all district performance</p>
-              </Link>
-              <button
-                onClick={handleExport}
-                disabled={exporting}
-                className="flex flex-col gap-1 rounded-2xl border border-white/10 bg-slate-900/70 p-4 text-left hover:border-blue-500/30 disabled:opacity-60"
-              >
-                <p className="text-sm font-bold text-slate-100">Generate report</p>
-                <p className="text-xs text-slate-400">{exporting ? "Exporting..." : "Export compliance CSV"}</p>
-              </button>
-              <Link
-                href="/moe/audit"
-                className="flex flex-col gap-1 rounded-2xl border border-white/10 bg-slate-900/70 p-4 hover:border-blue-500/30"
-              >
-                <p className="text-sm font-bold text-slate-100">View audit log</p>
-                <p className="text-xs text-slate-400">National audit trail</p>
-              </Link>
-            </div>
-
+        <div className="space-y-5">
             {error && (
-              <div className="rounded-2xl border border-amber-500/30 bg-amber-500/10 p-4 text-sm text-amber-100">
+              <div className="ll-notice ll-notice-warning">
                 <p className="font-medium text-amber-200">Unable to load dashboard data</p>
                 <p className="mt-1 text-amber-100/90">{error}</p>
               </div>
             )}
 
-            <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+            <section className="grid gap-4 grid-cols-2 xl:grid-cols-4">
               {loading ? (
                 Array.from({ length: 4 }).map((_, idx) => (
                   <Card key={idx} className="animate-pulse p-5">
@@ -310,7 +286,7 @@ export default function MoeDashboardPage() {
               )}
             </section>
 
-            <section className="rounded-2xl border border-slate-800 bg-slate-900/80 p-5">
+            <section className="ll-section rounded-xl p-4">
               <div className="flex flex-wrap items-start justify-between gap-3">
                 <div>
                   <p className="text-[11px] font-medium uppercase tracking-[0.22em] text-slate-500">
@@ -338,11 +314,11 @@ export default function MoeDashboardPage() {
                   ))}
                 </div>
               ) : districtRows.length === 0 ? (
-                <div className="mt-4 rounded-2xl border border-dashed border-slate-700 bg-slate-950/70 p-6 text-sm text-slate-400">
+                <div className="mt-4 rounded-xl border border-dashed border-[var(--ll-border-strong)] bg-[var(--ll-surface-muted)] p-6 text-sm text-[var(--ll-text-muted)]">
                   No data available yet. District compliance will appear once lessons are delivered.
                 </div>
               ) : (
-                <div className="mt-5 overflow-hidden rounded-2xl border border-slate-800">
+                <div className="mt-5 overflow-hidden rounded-xl border border-[var(--ll-border)]">
                   <div className="overflow-x-auto">
                     <table className="w-full text-sm">
                       <thead className="bg-slate-950/80">
@@ -407,7 +383,55 @@ export default function MoeDashboardPage() {
               )}
             </section>
 
-            <section className="rounded-2xl border border-slate-800 bg-slate-900/80 p-5">
+            {districtsRequiringAttention.length > 0 && (
+              <section className="ll-section rounded-xl p-4">
+                <p className="text-[11px] font-medium uppercase tracking-[0.22em] text-[var(--ll-text-faint)]">
+                  Requires attention
+                </p>
+                <h2 className="mt-2 text-xl font-semibold text-slate-100">
+                  Districts Requiring Attention
+                </h2>
+                <div className="mt-4 grid gap-3 md:grid-cols-2">
+                  {districtsRequiringAttention.slice(0, 6).map((district) => (
+                    <Link
+                      key={district.districtId}
+                      href={`/moe/districts/${district.districtId}`}
+                      className="ll-command ll-focus justify-between text-sm"
+                    >
+                      <span className="font-semibold text-[var(--ll-text)]">{district.districtName}</span>
+                      <span className="text-[var(--ll-warning)]">{formatPct(district.compliancePct)}</span>
+                    </Link>
+                  ))}
+                </div>
+              </section>
+            )}
+
+            <details className="ll-section rounded-xl p-4">
+              <summary className="cursor-pointer text-sm font-semibold text-[var(--ll-text)]">
+                Exports and audit
+              </summary>
+              <div className="mt-4 grid gap-3 sm:grid-cols-3">
+                <Link href="/moe/districts" className="ll-command ll-focus flex-col items-start">
+                  <p className="text-sm font-bold text-slate-100">County breakdown</p>
+                  <p className="text-xs text-[var(--ll-text-muted)]">View all district performance</p>
+                </Link>
+                <button
+                  onClick={handleExport}
+                  disabled={exporting}
+                  className="ll-command ll-focus flex-col items-start text-left disabled:opacity-60"
+                >
+                  <p className="text-sm font-bold text-slate-100">Generate report</p>
+                  <p className="text-xs text-[var(--ll-text-muted)]">{exporting ? "Exporting..." : "Export compliance CSV"}</p>
+                </button>
+                <Link href="/moe/audit" className="ll-command ll-focus flex-col items-start">
+                  <p className="text-sm font-bold text-slate-100">View audit log</p>
+                  <p className="text-xs text-[var(--ll-text-muted)]">National audit trail</p>
+                </Link>
+              </div>
+              {exportError && <p className="mt-3 text-xs text-[var(--ll-danger)]">{exportError}</p>}
+            </details>
+
+            <section className="ll-section rounded-xl p-4">
               <div className="flex flex-wrap items-start justify-between gap-3">
                 <div>
                   <p className="text-[11px] font-medium uppercase tracking-[0.22em] text-slate-500">
@@ -419,18 +443,6 @@ export default function MoeDashboardPage() {
                   <p className="mt-1 text-sm text-slate-400">
                     National delivery compliance and reporting signals
                   </p>
-                </div>
-                <div className="flex items-center gap-3">
-                  {exportError && (
-                    <span className="text-xs text-rose-300">{exportError}</span>
-                  )}
-                  <button
-                    onClick={handleExport}
-                    disabled={exporting}
-                    className="rounded-full bg-emerald-400 px-4 py-1.5 text-xs font-semibold text-slate-950 transition-colors hover:bg-emerald-300 disabled:cursor-not-allowed disabled:opacity-60"
-                  >
-                    {exporting ? "Exporting..." : "Export Compliance Report (CSV)"}
-                  </button>
                 </div>
               </div>
 
@@ -483,7 +495,7 @@ export default function MoeDashboardPage() {
             </section>
 
             {interventions && (
-              <section className="rounded-2xl border border-slate-800 bg-slate-900/80 p-5">
+              <section className="ll-section rounded-xl p-4">
                 <div>
                   <p className="text-[11px] font-medium uppercase tracking-[0.22em] text-slate-500">
                     Interventions
@@ -515,7 +527,7 @@ export default function MoeDashboardPage() {
               </section>
             )}
 
-            <section className="rounded-2xl border border-slate-800 bg-slate-900/80 p-5">
+            <section className="ll-section rounded-xl p-4">
               <div>
                 <p className="text-[11px] font-medium uppercase tracking-[0.22em] text-slate-500">
                   National Outcomes
@@ -599,7 +611,7 @@ export default function MoeDashboardPage() {
               )}
             </section>
 
-            <section className="rounded-2xl border border-slate-800 bg-slate-900/80 p-5">
+            <section className="ll-section rounded-xl p-4">
               <div>
                 <p className="text-[11px] font-medium uppercase tracking-[0.22em] text-slate-500">
                   Exams
@@ -643,7 +655,7 @@ export default function MoeDashboardPage() {
                     />
                   </div>
 
-                  <div className="mt-5 overflow-hidden rounded-2xl border border-slate-800">
+                  <div className="mt-5 overflow-hidden rounded-xl border border-[var(--ll-border)]">
                     <div className="overflow-x-auto">
                       <table className="w-full text-sm">
                         <thead className="bg-slate-950/80">
@@ -669,7 +681,7 @@ export default function MoeDashboardPage() {
               )}
             </section>
 
-            <section className="rounded-2xl border border-slate-800 bg-slate-900/80 p-5">
+            <section className="ll-section rounded-xl p-4">
               <div>
                 <p className="text-[11px] font-medium uppercase tracking-[0.22em] text-slate-500">
                   Placement
@@ -720,7 +732,7 @@ export default function MoeDashboardPage() {
                     />
                   </div>
 
-                  <div className="mt-5 overflow-hidden rounded-2xl border border-slate-800">
+                  <div className="mt-5 overflow-hidden rounded-xl border border-[var(--ll-border)]">
                     <div className="overflow-x-auto">
                       <table className="w-full text-sm">
                         <thead className="bg-slate-950/80">
@@ -764,7 +776,6 @@ export default function MoeDashboardPage() {
                 </>
               )}
             </section>
-          </div>
         </div>
       </div>
     </main>

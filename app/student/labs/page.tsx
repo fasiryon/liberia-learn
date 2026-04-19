@@ -74,7 +74,7 @@ export default async function StudentLabsPage() {
     const labMap = new Map(labs.map((lab) => [lab.labId, lab]));
 
     return (
-      <main className="min-h-screen bg-slate-950 px-4 py-8 text-slate-50">
+      <main className="ll-dashboard-shell px-4 py-8">
         <div className="mx-auto max-w-6xl space-y-8">
           <div>
             <Link href="/student/dashboard" className="text-sm text-emerald-300 hover:text-emerald-200">
@@ -116,7 +116,7 @@ export default async function StudentLabsPage() {
                     const lab = labRegistry[labId];
                     if (!lab) return null;
                     return (
-                      <article key={lab.id} className="flex min-h-64 flex-col rounded-2xl border border-white/10 bg-slate-900/75 p-5 shadow-xl shadow-black/20">
+                      <article key={lab.id} className="flex min-h-64 flex-col rounded-xl border border-[var(--ll-border)] bg-[var(--ll-surface)] p-5 shadow-none">
                         <div className="flex flex-wrap items-start justify-between gap-2">
                           <span className={`rounded-full border px-3 py-1 text-[11px] font-semibold ${group.accent}`}>
                             {lab.subject}
@@ -151,7 +151,7 @@ export default async function StudentLabsPage() {
             </div>
 
           {sessions.length === 0 ? (
-            <div className="mt-4 rounded-3xl border border-white/10 bg-slate-900/70 p-8 text-sm text-slate-300">
+            <div className="ll-section mt-4 rounded-xl p-8 text-sm text-slate-300">
               No labs have been assigned yet.
             </div>
           ) : (
@@ -161,7 +161,7 @@ export default async function StudentLabsPage() {
                 if (!lab) return null;
 
                 return (
-                  <div key={session.id} className="rounded-3xl border border-white/10 bg-slate-900/70 p-5">
+                  <div key={session.id} className="ll-card rounded-xl p-5">
                     <div className="flex items-start justify-between gap-3">
                       <div>
                         <p className="text-lg font-semibold text-slate-100">{lab.title}</p>
@@ -196,8 +196,8 @@ export default async function StudentLabsPage() {
     );
   } catch (error: any) {
     return (
-      <main className="min-h-screen bg-slate-950 px-4 py-8 text-slate-50">
-        <div className="mx-auto max-w-3xl rounded-3xl border border-red-500/20 bg-red-500/10 p-6 text-sm text-red-200">
+      <main className="ll-dashboard-shell px-4 py-8">
+        <div className="mx-auto max-w-3xl rounded-xl border border-[var(--ll-danger)] bg-[rgba(251,113,133,0.08)] p-6 text-sm text-[var(--ll-danger)]">
           {error?.message ?? "Unable to load labs."}
         </div>
       </main>

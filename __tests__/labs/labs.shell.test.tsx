@@ -17,7 +17,8 @@ describe("LabShell and LabChatPanel", () => {
     );
 
     expect(html).toContain("Scene is ready");
-    expect(html).toContain("State");
+    expect(html).toContain("Observations");
+    expect(html).toContain("Status");
   });
 
   it("LabShell renders LabFallback when WebGL is unavailable", () => {
