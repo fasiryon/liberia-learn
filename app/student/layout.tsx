@@ -16,7 +16,7 @@ export default async function StudentLayout({
     <>
       <OfflineBanner />
       {children}
-      <LegalFooter />
+      <LegalFooter variant="portal" />
       <GlobalAssistantMount positionClassName="bottom-40 right-4" />
       <SyncManager isPlatformAdmin={isPlatformAdmin} />
     </>

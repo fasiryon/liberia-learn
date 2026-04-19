@@ -9,7 +9,7 @@ export default function AdminLayout({
   return (
     <>
       {children}
-      <LegalFooter />
+      <LegalFooter variant="portal" />
       <GlobalAssistantMount />
     </>
   );

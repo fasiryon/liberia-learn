@@ -14,7 +14,7 @@ export function GuardianShell({
     <>
       <GuardianWelcomeGate enabled={enableWelcomeGate} />
       {children}
-      <LegalFooter />
+      <LegalFooter variant="portal" />
     </>
   );
 }

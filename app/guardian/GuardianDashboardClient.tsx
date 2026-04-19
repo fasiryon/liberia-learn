@@ -149,7 +149,7 @@ export default function GuardianDashboardClient() {
 
   return (
     <main className="ll-dashboard-shell px-4 py-5">
-      <div className="mx-auto max-w-6xl space-y-5">
+      <div className="ll-page-enter mx-auto max-w-6xl space-y-5">
         <DashboardTopBar
           roleLabel="Guardian"
           roleBadgeBg="bg-purple-500/10 border-purple-500/20"

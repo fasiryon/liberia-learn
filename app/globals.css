@@ -198,6 +198,64 @@ textarea {
 [data-a11y="true"] h2 { font-size: 1.5rem; }
 [data-a11y="true"] h3 { font-size: 1.25rem; }
 
+/* ── Interactive transitions ─────────────────────────────────────────────── */
+.ll-interactive {
+  transition: border-color 150ms ease-out,
+    background-color 150ms ease-out,
+    color 150ms ease-out,
+    box-shadow 150ms ease-out;
+}
+
+.ll-interactive:hover {
+  border-color: var(--ll-border-strong);
+}
+
+.ll-interactive:focus-visible {
+  outline: none;
+  box-shadow: var(--ll-focus);
+}
+
+/* ── Page enter animation ────────────────────────────────────────────────── */
+.ll-page-enter {
+  animation: fadeUp 200ms ease-out both;
+}
+
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ── Scrollable data tables ──────────────────────────────────────────────── */
+.ll-scroll-table {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.ll-scroll-table table {
+  min-width: 600px;
+}
+
+/* ── Mobile responsive helpers ───────────────────────────────────────────── */
+.ll-mobile-collapse {
+  display: none;
+}
+
+@media (max-width: 640px) {
+  .ll-mobile-collapse {
+    display: block;
+  }
+
+  .ll-mobile-show {
+    display: none;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: 0.01ms !important;

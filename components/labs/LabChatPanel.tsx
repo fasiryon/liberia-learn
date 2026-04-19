@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { Sparkles } from "lucide-react";
 import type { PlannedLabAction } from "@/lib/labs/types";
 
 type LabChatPanelProps = {
@@ -80,6 +81,10 @@ export default function LabChatPanel({
 
   return (
     <section className="border-t border-[var(--ll-border)] bg-[var(--ll-bg)] px-4 py-4 text-sm sm:px-5">
+      <p className="mb-3 flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-[0.18em] text-[var(--ll-text-muted)]">
+        <Sparkles className="h-3.5 w-3.5" strokeWidth={1.5} />
+        Lab Tutor
+      </p>
       <div className="flex flex-wrap gap-2">
         {suggestedPrompts.map((prompt) => (
           <button
@@ -87,7 +92,7 @@ export default function LabChatPanel({
             type="button"
             onClick={() => submit(prompt)}
             disabled={status === "loading"}
-            className="rounded-lg border border-[var(--ll-border)] bg-[var(--ll-surface-muted)] px-3 py-2 text-left text-xs text-[var(--ll-text-muted)] transition-colors hover:border-[var(--ll-border-strong)] hover:text-[var(--ll-text)] disabled:cursor-not-allowed disabled:opacity-50"
+            className="ll-interactive rounded-lg border border-[var(--ll-border)] bg-[var(--ll-surface-muted)] px-3 py-2 text-left text-xs text-[var(--ll-text-muted)] disabled:cursor-not-allowed disabled:opacity-50"
           >
             {prompt}
           </button>
@@ -123,7 +128,7 @@ export default function LabChatPanel({
         <button
           type="submit"
           disabled={status === "loading" || message.trim().length < 2}
-          className="mt-3 inline-flex min-h-12 w-full items-center justify-center rounded-lg bg-[var(--ll-surface-muted)] px-5 py-3 text-sm font-semibold text-[var(--ll-text-muted)] transition-colors hover:bg-[var(--ll-surface)] hover:text-[var(--ll-text)] disabled:cursor-not-allowed disabled:text-[var(--ll-text-faint)]"
+          className="ll-interactive mt-3 inline-flex min-h-12 w-full items-center justify-center rounded-lg bg-[var(--ll-surface-muted)] px-5 py-3 text-sm font-semibold text-[var(--ll-text-muted)] hover:bg-[var(--ll-surface)] hover:text-[var(--ll-text)] disabled:cursor-not-allowed disabled:text-[var(--ll-text-faint)]"
         >
           {status === "loading" ? "Planning..." : "Ask Lab Tutor"}
         </button>
