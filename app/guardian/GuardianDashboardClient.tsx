@@ -7,6 +7,7 @@ import { GuardianNav } from "@/components/guardian/GuardianNav";
 import { DashboardTopBar } from "@/components/DashboardTopBar";
 import { placementReviewStatusLabels, placementReviewStatusStyles } from "@/lib/placement";
 import { guardianWelcomeStorageKey } from "@/app/guardian/GuardianWelcomeGate";
+import GuardianLinkStudentCard from "@/app/guardian/GuardianLinkStudentCard";
 
 type GuardianSummary = {
   studentId: string;
@@ -65,6 +66,7 @@ function scoreDisplay(hw: GuardianSummary["lastHomework"]) {
 
 export default function GuardianDashboardClient() {
   const router = useRouter();
+  const [reloadKey, setReloadKey] = useState(0);
   const [summaries, setSummaries] = useState<GuardianSummary[]>([]);
   const [dashboardChildren, setDashboardChildren] = useState<DashboardChild[]>([]);
   const [selectedChildId, setSelectedChildId] = useState<string>("");
@@ -132,7 +134,7 @@ export default function GuardianDashboardClient() {
     return () => {
       active = false;
     };
-  }, [router]);
+  }, [router, reloadKey]);
 
   const selectedSummary = useMemo(
     () => summaries.find((student) => student.studentId === selectedChildId) ?? summaries[0] ?? null,
@@ -181,14 +183,11 @@ export default function GuardianDashboardClient() {
             {error}
           </div>
         ) : !selectedSummary || !selectedDashboardChild ? (
-          <div className="rounded-2xl border border-white/10 bg-slate-900/70 p-8 text-center text-sm text-slate-400">
-            <div className="mx-auto h-20 w-20 rounded-3xl border border-dashed border-slate-700 bg-slate-950/70" />
-            <p className="mt-4 text-slate-300">
-              No students linked to your account yet. Contact your child&apos;s school to get connected.
-            </p>
-          </div>
+          <GuardianLinkStudentCard prominent onLinked={() => setReloadKey((current) => current + 1)} />
         ) : (
           <>
+            <GuardianLinkStudentCard onLinked={() => setReloadKey((current) => current + 1)} />
+
             {dashboardChildren.length > 1 ? (
               <section className="rounded-2xl border border-white/10 bg-slate-900/70 p-4">
                 <label className="block text-xs text-slate-400">Child selector</label>

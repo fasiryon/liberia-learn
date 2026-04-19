@@ -1,4 +1,4 @@
-"use client";
+ï»¿"use client";
 
 import { useMemo, useState } from "react";
 
@@ -69,9 +69,10 @@ export default function FractionVisualizer({ onClose }: FractionVisualizerProps)
       </svg>
 
       <div className="grid grid-cols-2 gap-3 rounded bg-slate-900 p-3">
-        <p>A: {safeA.num}/{safeA.den} = {aDecimal.toFixed(4)} · simplified {aSimplified}</p>
-        <p>B: {safeB.num}/{safeB.den} = {bDecimal.toFixed(4)} · simplified {bSimplified}</p>
+        <p>A: {safeA.num}/{safeA.den} = {aDecimal.toFixed(4)} Â· simplified {aSimplified}</p>
+        <p>B: {safeB.num}/{safeB.den} = {bDecimal.toFixed(4)} Â· simplified {bSimplified}</p>
       </div>
     </div>
   );
 }
+

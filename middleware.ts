@@ -23,6 +23,7 @@ const PUBLIC_PATHS = [
   "/contact",
   "/register",
   "/guardian/register",
+  "/enroll/status",
 ];
 
 function isPublicPath(pathname: string) {
@@ -109,4 +110,3 @@ export async function middleware(req: NextRequest) {
 export const config = {
   matcher: ["/((?!_next/static|_next/image|favicon.ico).*)"],
 };
-
