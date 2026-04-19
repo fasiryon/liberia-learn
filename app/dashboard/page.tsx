@@ -220,8 +220,8 @@ export default async function DashboardPage() {
           {/* Consistent top bar */}
           <DashboardTopBar
             roleLabel="Student"
-            roleBadgeBg="bg-emerald-400"
-            roleAccent="text-emerald-300"
+            roleBadgeBg="bg-emerald-500/10 border-emerald-500/20"
+            roleAccent="text-[var(--ll-accent)]"
             userName={studentName}
             subtitle={`${className} · ${county}`}
           />
@@ -238,32 +238,32 @@ export default async function DashboardPage() {
             <section className="flex flex-1 flex-col gap-4 rounded-xl border border-[var(--ll-border)] bg-[var(--ll-surface)] p-4 shadow-none">
               {/* Greeting */}
               <div>
-                <p className="text-xs uppercase tracking-wide text-emerald-300">
+                <p className="text-xs uppercase tracking-[0.1em] text-[var(--ll-text-faint)]">
                   {new Date().toLocaleDateString("en-LR", { weekday: "long", month: "long", day: "numeric" })}
                 </p>
-                <h1 className="mt-1 text-xl font-semibold">
-                  Good morning, <span className="text-emerald-300">{studentName}</span>. Ready to learn?
+                <h1 className="mt-1 text-2xl font-semibold text-[var(--ll-text)]">
+                  Good morning, <span className="text-[var(--ll-accent)]">{studentName}</span>. Ready to learn?
                 </h1>
                 <p className="mt-1 text-sm text-slate-400">Placement: {placementGradeLabel} · {school}</p>
               </div>
 
               {/* KPI Cards */}
               <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-                <div className="rounded-2xl border border-white/10 bg-slate-900/70 p-4 text-center">
-                  <p className="text-2xl font-bold text-emerald-400">{lessonsThisWeek}</p>
-                  <p className="mt-1 text-xs text-slate-400">Lessons this week</p>
+                <div className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-surface)] p-4 text-center">
+                  <p className="text-2xl font-semibold text-[var(--ll-text)]">{lessonsThisWeek}</p>
+                  <p className="mt-1 text-xs text-[var(--ll-text-faint)]">Lessons this week</p>
                 </div>
-                <div className="rounded-2xl border border-white/10 bg-slate-900/70 p-4 text-center">
-                  <p className="text-2xl font-bold text-cyan-400">{attendancePercent}%</p>
-                  <p className="mt-1 text-xs text-slate-400">Attendance</p>
+                <div className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-surface)] p-4 text-center">
+                  <p className="text-2xl font-semibold text-[var(--ll-text)]">{attendancePercent}%</p>
+                  <p className="mt-1 text-xs text-[var(--ll-text-faint)]">Attendance</p>
                 </div>
-                <div className="rounded-2xl border border-white/10 bg-slate-900/70 p-4 text-center">
-                  <p className="text-2xl font-bold text-amber-400">{avgGrade}%</p>
-                  <p className="mt-1 text-xs text-slate-400">Average grade</p>
+                <div className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-surface)] p-4 text-center">
+                  <p className="text-2xl font-semibold text-[var(--ll-text)]">{avgGrade}%</p>
+                  <p className="mt-1 text-xs text-[var(--ll-text-faint)]">Average grade</p>
                 </div>
-                <div className="rounded-2xl border border-white/10 bg-slate-900/70 p-4 text-center">
-                  <p className="text-2xl font-bold text-purple-400">{chatMessagesCount}</p>
-                  <p className="mt-1 text-xs text-slate-400">AI questions this week</p>
+                <div className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-surface)] p-4 text-center">
+                  <p className="text-2xl font-semibold text-[var(--ll-text)]">{chatMessagesCount}</p>
+                  <p className="mt-1 text-xs text-[var(--ll-text-faint)]">AI questions this week</p>
                 </div>
               </div>
 
@@ -271,43 +271,43 @@ export default async function DashboardPage() {
               <div className="grid gap-3 sm:grid-cols-3">
                 <Link
                   href="/student/lessons"
-                  className="flex flex-col gap-1 rounded-2xl border border-emerald-500/30 bg-emerald-500/10 p-4 hover:bg-emerald-500/20"
+                  className="flex flex-col gap-1 rounded-xl border border-[var(--ll-border)] bg-[var(--ll-accent-soft)] p-4 hover:bg-[rgba(24,211,158,0.15)]"
                 >
-                  <p className="text-sm font-bold text-emerald-300">Continue today&apos;s lesson</p>
-                  <p className="text-xs text-slate-400">Open your current learning path</p>
+                  <p className="text-sm font-semibold text-[var(--ll-accent)]">Continue today&apos;s lesson</p>
+                  <p className="text-xs text-[var(--ll-text-muted)]">Open your current learning path</p>
                 </Link>
                 <Link
                   href="/student/progress"
-                  className="flex flex-col gap-1 rounded-2xl border border-white/10 bg-slate-900/70 p-4 hover:border-emerald-500/30"
+                  className="flex flex-col gap-1 rounded-xl border border-[var(--ll-border)] bg-[var(--ll-surface)] p-4 hover:border-[var(--ll-border-strong)]"
                 >
-                  <p className="text-sm font-bold text-slate-100">View my progress</p>
-                  <p className="text-xs text-slate-400">Grades, mastery, and history</p>
+                  <p className="text-sm font-semibold text-[var(--ll-text)]">View my progress</p>
+                  <p className="text-xs text-[var(--ll-text-muted)]">Grades, mastery, and history</p>
                 </Link>
                 <Link
                   href="/student/certificates"
-                  className="flex flex-col gap-1 rounded-2xl border border-white/10 bg-slate-900/70 p-4 hover:border-emerald-500/30"
+                  className="flex flex-col gap-1 rounded-xl border border-[var(--ll-border)] bg-[var(--ll-surface)] p-4 hover:border-[var(--ll-border-strong)]"
                 >
-                  <p className="text-sm font-bold text-slate-100">My certificates</p>
-                  <p className="text-xs text-slate-400">View earned certificates</p>
+                  <p className="text-sm font-semibold text-[var(--ll-text)]">My certificates</p>
+                  <p className="text-xs text-[var(--ll-text-muted)]">View earned certificates</p>
                 </Link>
               </div>
 
-              <div className="rounded-xl border border-emerald-400/20 bg-emerald-500/10 p-4">
+              <div className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-surface)] p-4">
                 <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
                   <div>
-                    <p className="text-xs font-semibold uppercase tracking-[0.2em] text-emerald-200">
+                    <p className="text-[11px] font-medium uppercase tracking-[0.1em] text-[var(--ll-text-faint)]">
                       Today&apos;s Work
                     </p>
-                    <h2 className="mt-2 text-xl font-semibold text-white">
+                    <h2 className="mt-2 text-base font-semibold text-[var(--ll-text)]">
                       Keep moving while everything is fresh.
                     </h2>
-                    <p className="mt-2 max-w-2xl text-sm text-slate-100">
+                    <p className="mt-2 max-w-2xl text-sm leading-6 text-[var(--ll-text-muted)]">
                       Start with your current lesson, then finish any open exam or adaptive practice before the day ends.
                     </p>
                   </div>
                   <Link
                     href="/student/lessons"
-                    className="ll-touch-target inline-flex items-center justify-center rounded-2xl bg-emerald-400 px-5 py-3 text-sm font-semibold text-slate-950"
+                    className="ll-touch-target inline-flex items-center justify-center rounded-lg bg-[var(--ll-accent)] px-5 py-3 text-sm font-semibold text-slate-950"
                   >
                     Open today&apos;s lesson
                   </Link>
@@ -317,28 +317,28 @@ export default async function DashboardPage() {
                     <Link
                       key={item.href}
                       href={item.href}
-                      className="ll-touch-target rounded-2xl border border-white/10 bg-slate-950/60 px-4 py-3"
+                      className="ll-touch-target rounded-xl border border-[var(--ll-border)] bg-[var(--ll-surface-muted)] px-4 py-3"
                     >
-                      <p className="text-sm font-semibold text-slate-50">{item.label}</p>
-                      <p className="mt-1 text-sm text-slate-300">{item.helper}</p>
+                      <p className="text-sm font-semibold text-[var(--ll-text)]">{item.label}</p>
+                      <p className="mt-1 text-sm text-[var(--ll-text-muted)]">{item.helper}</p>
                     </Link>
                   ))}
                 </div>
               </div>
 
-              <div className="rounded-xl border border-amber-400/20 bg-amber-500/10 p-4">
+              <div className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-surface)] p-4">
                 <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                   <div>
-                    <p className="text-xs font-semibold uppercase tracking-[0.2em] text-amber-200">
+                    <p className="text-[11px] font-medium uppercase tracking-[0.1em] text-[var(--ll-text-faint)]">
                       Teacher Assignments
                     </p>
-                    <h2 className="mt-2 text-xl font-semibold text-white">
+                    <h2 className="mt-2 text-base font-semibold text-[var(--ll-text)]">
                       Work your teacher assigned to your class.
                     </h2>
                   </div>
                   <Link
                     href="/assignments"
-                    className="ll-touch-target inline-flex items-center justify-center rounded-2xl border border-amber-300/30 bg-slate-950/60 px-5 py-3 text-sm font-semibold text-amber-100"
+                    className="ll-touch-target inline-flex items-center justify-center rounded-lg border border-[var(--ll-border)] bg-[var(--ll-surface-muted)] px-5 py-3 text-sm font-semibold text-[var(--ll-text-muted)]"
                   >
                     Open assignments
                   </Link>
@@ -364,7 +364,7 @@ export default async function DashboardPage() {
                         <Link
                           key={assignment.id}
                           href={`/student/assignments/${assignment.id}`}
-                          className="rounded-2xl border border-white/10 bg-slate-950/60 px-4 py-4"
+                          className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-surface-muted)] px-4 py-4"
                         >
                           <div className="flex flex-wrap items-start justify-between gap-3">
                             <div>
@@ -435,7 +435,7 @@ export default async function DashboardPage() {
                 />
 
                 {/* AI TUTOR ACTIVITY */}
-                <div className="rounded-2xl border border-slate-800 bg-slate-900/80 p-4">
+                <div className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-surface)] p-4">
                   <p className="text-[11px] uppercase tracking-wide text-slate-400">
                     AI Tutor Activity
                   </p>
@@ -454,7 +454,7 @@ export default async function DashboardPage() {
               </div>
 
               {/* Placement Overview */}
-              <div className="rounded-2xl border border-slate-800 bg-slate-900/80 p-4">
+              <div className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-surface)] p-4">
                 <p className="text-[11px] uppercase tracking-wide text-slate-400 mb-2">
                   Placement overview
                 </p>
@@ -485,7 +485,7 @@ export default async function DashboardPage() {
                 </Link>
               </div>
 
-              <div className="rounded-2xl border border-slate-800 bg-slate-900/80 p-4">
+              <div className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-surface)] p-4">
                 <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                   <div>
                     <p className="text-[11px] uppercase tracking-wide text-slate-400">
@@ -514,7 +514,7 @@ export default async function DashboardPage() {
                       return (
                         <div
                           key={placement.id}
-                          className="rounded-2xl border border-white/5 bg-slate-950/70 px-4 py-3"
+                          className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-surface-muted)] px-4 py-3"
                         >
                           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                             <div>
@@ -553,7 +553,7 @@ export default async function DashboardPage() {
 
               {/* Grades */}
               {grades.length === 0 ? (
-                <div className="rounded-2xl border border-slate-800 bg-slate-900/80 p-8 text-center">
+                <div className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-surface)] p-8 text-center">
                   <p className="text-4xl mb-2">📚</p>
                   <p className="text-sm font-medium mb-1">
                     No grades yet
@@ -563,7 +563,7 @@ export default async function DashboardPage() {
                   </p>
                 </div>
               ) : (
-                <div className="rounded-2xl border border-slate-800 bg-slate-900/80 p-4">
+                <div className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-surface)] p-4">
                   <p className="text-[11px] uppercase tracking-wide text-slate-400 mb-3">
                     Recent Grades
                   </p>
@@ -598,7 +598,7 @@ export default async function DashboardPage() {
               )}
 
               {/* Today's schedule */}
-              <div className="rounded-2xl border border-slate-800 bg-slate-900/80 p-4">
+              <div className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-surface)] p-4">
                 <p className="text-[11px] uppercase tracking-wide text-slate-400">
                   Today&apos;s schedule
                 </p>
@@ -644,7 +644,7 @@ export default async function DashboardPage() {
               {/* AI TUTOR */}
               <div
                 id="ai-tutor-section"
-                className="rounded-2xl border border-slate-800 bg-slate-900/80 p-4"
+                className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-surface)] p-4"
               >
                 <p className="text-[11px] uppercase tracking-wide text-slate-400 mb-3">
                   AI Tutor

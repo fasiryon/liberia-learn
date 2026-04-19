@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { SkeletonCard } from "@/components/ui/Skeleton";
 
 type WorkItem = {
   id: string;
@@ -17,9 +18,9 @@ type WorkItem = {
 };
 
 const STATUS_BADGE: Record<string, { label: string; cls: string }> = {
-  not_started: { label: "Not Started", cls: "bg-slate-700 text-slate-300" },
-  in_progress: { label: "In Progress", cls: "bg-amber-500/20 text-amber-300" },
-  completed: { label: "Completed", cls: "bg-emerald-500/20 text-emerald-300" },
+  not_started: { label: "Not Started", cls: "bg-[var(--ll-surface-muted)] text-[var(--ll-text-muted)]" },
+  in_progress: { label: "In Progress", cls: "bg-[rgba(250,204,21,0.10)] text-[var(--ll-warning)]" },
+  completed: { label: "Completed", cls: "bg-[var(--ll-accent-soft)] text-[var(--ll-accent)]" },
 };
 
 export default function StudentTodayPage() {
@@ -35,28 +36,25 @@ export default function StudentTodayPage() {
 
   return (
     <main className="ll-dashboard-shell">
-      <div className="mx-auto max-w-4xl px-4 py-6 space-y-5">
+      <div className="mx-auto max-w-4xl px-4 py-5 space-y-5">
         <div>
           <h1 className="text-2xl font-semibold text-[var(--ll-text)]">Today&apos;s Work</h1>
-          <p className="text-sm text-[var(--ll-text-muted)] mt-1">
+          <p className="text-sm leading-6 text-[var(--ll-text-muted)] mt-1">
             {new Date().toLocaleDateString("en-LR", { weekday: "long", month: "long", day: "numeric" })}
           </p>
         </div>
 
         {loading ? (
           <div className="space-y-3">
-            {[1, 2, 3].map((i) => (
-              <div key={i} className="h-20 rounded-xl bg-[var(--ll-surface-muted)] animate-pulse" />
-            ))}
+            {[1, 2, 3].map((i) => <SkeletonCard key={i} />)}
           </div>
         ) : items.length === 0 ? (
-          <div className="ll-section rounded-xl p-6 text-left">
-            <p className="text-[var(--ll-text)]">You have no lessons scheduled today.</p>
-            <p className="text-sm text-[var(--ll-text-muted)] mt-1">
-              Browse the curriculum to keep learning while you wait for your next class assignment.
+          <div className="ll-section p-6 text-center">
+            <p className="text-sm leading-6 text-[var(--ll-text-muted)]">
+              Nothing scheduled yet. Browse the curriculum to start learning.
             </p>
             <Link
-              href="/student/lessons"
+              href="/student/curriculum"
               className="ll-command ll-focus mt-4 inline-flex text-sm font-semibold text-[var(--ll-text)]"
             >
               Browse lessons
