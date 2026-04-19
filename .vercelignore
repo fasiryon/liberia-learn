@@ -5,3 +5,7 @@ lib.BACKUP-*
 _frontend_old/
 _ARCHIVE_*/
 _patches/
+
+# Local E2E scratch files are not part of the production app bundle.
+e2e/
+playwright.config.ts

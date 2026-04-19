@@ -68,6 +68,13 @@ export function StudentSidebar({
         </Link>
 
         <Link
+          href="/student/textbooks"
+          className="rounded-xl bg-slate-900/80 px-4 py-2 hover:bg-slate-800 transition"
+        >
+          Textbooks
+        </Link>
+
+        <Link
           href="/student/transcript"
           className="rounded-xl bg-slate-900/80 px-4 py-2 hover:bg-slate-800 transition"
         >

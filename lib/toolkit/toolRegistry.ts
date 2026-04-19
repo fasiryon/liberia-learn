@@ -68,7 +68,10 @@ const TOOL_REGISTRY: ToolDefinition[] = [
     name: "Basic Calculator",
     icon: "🧮",
     componentName: "BasicCalculator",
-    contexts: buildContexts(["1-3", "4-6"], ["math", "science"], ["assessment", "practice"]),
+    contexts: [
+      ...buildContexts("all", "all", ["lesson", "lab"]),
+      ...buildContexts(["1-3", "4-6"], ["math", "science"], ["assessment", "practice"]),
+    ],
     defaultOpen: false,
     category: "math",
     a11yLabel: "Open basic calculator",
@@ -78,7 +81,7 @@ const TOOL_REGISTRY: ToolDefinition[] = [
     name: "Scientific Calculator",
     icon: "🔬",
     componentName: "ScientificCalculator",
-    contexts: buildContexts(["7-9", "10-12"], ["math", "science", "engineering"], ["assessment", "practice"]),
+    contexts: buildContexts(["7-9", "10-12"], ["math", "science", "engineering"], ["lesson", "assessment", "practice", "lab"]),
     defaultOpen: false,
     category: "math",
     a11yLabel: "Open scientific calculator",
@@ -98,7 +101,7 @@ const TOOL_REGISTRY: ToolDefinition[] = [
     name: "Number Line",
     icon: "📏",
     componentName: "NumberLine",
-    contexts: buildContexts(["1-3", "4-6"], ["math"], ["lesson", "practice", "assessment"], ["number-sense", "integers"]),
+    contexts: buildContexts("all", ["math"], ["lesson", "practice", "assessment", "lab"]),
     defaultOpen: false,
     category: "math",
     a11yLabel: "Open number line",
@@ -108,7 +111,7 @@ const TOOL_REGISTRY: ToolDefinition[] = [
     name: "Digital Ruler",
     icon: "📐",
     componentName: "DigitalRuler",
-    contexts: buildContexts(["4-6", "7-9", "10-12"], ["math", "science"], ["lesson", "practice", "assessment"], ["measurement", "geometry"]),
+    contexts: buildContexts(["4-6", "7-9", "10-12"], ["math", "science", "english"], ["lesson", "practice", "assessment", "lab"]),
     defaultOpen: false,
     category: "utility",
     a11yLabel: "Open digital ruler",
@@ -128,7 +131,7 @@ const TOOL_REGISTRY: ToolDefinition[] = [
     name: "Multiplication Table",
     icon: "✖️",
     componentName: "MultiplicationTable",
-    contexts: buildContexts(["1-3", "4-6"], ["math"], ["lesson", "practice"], ["multiplication"]),
+    contexts: buildContexts("all", ["math"], ["lesson", "practice", "assessment", "lab"]),
     defaultOpen: false,
     category: "math",
     a11yLabel: "Open multiplication table",
@@ -148,7 +151,7 @@ const TOOL_REGISTRY: ToolDefinition[] = [
     name: "Unit Converter",
     icon: "🔄",
     componentName: "UnitConverter",
-    contexts: buildContexts(["7-9", "10-12"], ["math", "science"], ["lesson", "practice", "assessment"], ["measurement", "units"]),
+    contexts: buildContexts(["7-9", "10-12"], ["math", "science"], ["lesson", "practice", "assessment", "lab"]),
     defaultOpen: false,
     category: "utility",
     a11yLabel: "Open unit converter",
@@ -158,7 +161,7 @@ const TOOL_REGISTRY: ToolDefinition[] = [
     name: "Coordinate Grid",
     icon: "📊",
     componentName: "CoordinateGrid",
-    contexts: buildContexts(["7-9", "10-12"], ["math"], ["lesson", "practice", "assessment"], ["algebra", "coordinates"]),
+    contexts: buildContexts(["7-9", "10-12"], ["math"], ["lesson", "practice", "assessment", "lab"]),
     defaultOpen: false,
     category: "math",
     a11yLabel: "Open coordinate grid",
@@ -168,7 +171,7 @@ const TOOL_REGISTRY: ToolDefinition[] = [
     name: "Timer",
     icon: "⏱️",
     componentName: "Timer",
-    contexts: buildContexts("all", "all", ["assessment"]),
+    contexts: buildContexts("all", "all", "all"),
     defaultOpen: true,
     category: "utility",
     a11yLabel: "Open timer",
@@ -260,8 +263,8 @@ function gradeToToolkitBand(grade: number): GradeBand {
 function subjectToToolkitSubject(subjectStr: string): Subject | null {
   const s = subjectStr.toLowerCase();
   if (s === "math" || s === "mathematics") return "math";
-  if (s === "science") return "science";
-  if (s === "english" || s === "literacy" || s === "language_arts") return "english";
+  if (s === "science" || s === "biology" || s === "chemistry" || s === "physics" || s === "earth science" || s === "earth_science") return "science";
+  if (s === "english" || s === "literacy" || s === "language_arts" || s === "language arts") return "english";
   if (s === "engineering") return "engineering";
   if (s === "computer_science" || s === "cs") return "cs";
   return null;

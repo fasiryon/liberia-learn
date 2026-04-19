@@ -1,4 +1,4 @@
-"use client";
+ï»¿"use client";
 
 import { useState } from "react";
 
@@ -25,13 +25,13 @@ export default function Protractor({ onClose }: ProtractorProps) {
 
       <div className="flex items-center gap-2 text-xs">
         <button type="button" aria-label="Toggle full circle mode" className="rounded border border-slate-600 px-2 py-1" onClick={() => setFullCircle((v) => !v)}>
-          {fullCircle ? "360°" : "180°"}
+          {fullCircle ? "360Â°" : "180Â°"}
         </button>
         <label>
           Angle
           <input aria-label="Angle slider" type="range" min={0} max={maxAngle} step={1} value={angle} onChange={(e) => setAngle(snap5(Number(e.target.value)))} />
         </label>
-        <span>{angle}°</span>
+        <span>{angle}Â°</span>
       </div>
 
       <svg
@@ -55,8 +55,9 @@ export default function Protractor({ onClose }: ProtractorProps) {
         <path d="M20 140 A110 110 0 0 1 240 140" fill="none" stroke="#e2e8f0" strokeWidth="2" />
         {fullCircle && <circle cx="130" cy="80" r="60" fill="none" stroke="#64748b" strokeDasharray="3 3" />}
         <line x1="130" y1={fullCircle ? "80" : "140"} x2={130 + 100 * Math.cos((Math.PI * angle) / 180)} y2={(fullCircle ? 80 : 140) - 100 * Math.sin((Math.PI * angle) / 180)} stroke="#22d3ee" strokeWidth="2" />
-        <text x="130" y="20" textAnchor="middle" fill="#cbd5e1" fontSize="12">{angle}°</text>
+        <text x="130" y="20" textAnchor="middle" fill="#cbd5e1" fontSize="12">{angle}Â°</text>
       </svg>
     </div>
   );
 }
+

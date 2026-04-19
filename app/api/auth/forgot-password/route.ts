@@ -25,7 +25,17 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Not found" }, { status: 404 });
     }
 
-    const { email } = await req.json();
+    let body: { email?: unknown };
+    try {
+      body = await req.json();
+    } catch {
+      return NextResponse.json(
+        { error: "Invalid JSON body" },
+        { status: 400 }
+      );
+    }
+
+    const { email } = body;
     if (!email || typeof email !== "string") {
       return NextResponse.json(
         { error: "Email is required" },
@@ -69,7 +79,7 @@ export async function POST(req: Request) {
       );
     }
 
-    const expiresAt = new Date(Date.now() + 60 * 60 * 1000); // 1 hour
+    const expiresAt = new Date(Date.now() + 60 * 60 * 1000);
 
     const { token: rawToken, tokenHash } = generateTokenPair();
     const token = await prisma.passwordResetToken.create({
@@ -100,7 +110,7 @@ export async function POST(req: Request) {
       { headers: getRateLimitHeaders(emailLimit) }
     );
   } catch (err: any) {
-    console.error("[forgot-password]", err);
+    console.error("[forgot-password]", { message: err?.message, code: err?.code });
     return NextResponse.json(
       { error: "Internal error" },
       { status: 500 }

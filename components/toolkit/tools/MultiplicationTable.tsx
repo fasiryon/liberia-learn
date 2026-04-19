@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useMemo, useState } from "react";
 
@@ -29,7 +29,7 @@ export default function MultiplicationTable({ onClose }: MultiplicationTableProp
         <table className="w-full border-collapse">
           <thead>
             <tr>
-              <th className="border border-slate-700 p-1">�</th>
+              <th className="border border-slate-700 p-1">×</th>
               {Array.from({ length: max }, (_, i) => <th key={i + 1} className="border border-slate-700 p-1">{i + 1}</th>)}
             </tr>
           </thead>
@@ -74,3 +74,4 @@ export default function MultiplicationTable({ onClose }: MultiplicationTableProp
     </div>
   );
 }
+
