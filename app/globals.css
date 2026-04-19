@@ -4,6 +4,21 @@
   --background: #ffffff;
   --foreground: #171717;
   --surface-border: rgba(148, 163, 184, 0.16);
+  --ll-bg: #050914;
+  --ll-surface: #0b1220;
+  --ll-surface-muted: #101827;
+  --ll-border: rgba(148,163,184,0.14);
+  --ll-border-strong: rgba(148,163,184,0.22);
+  --ll-text: #f8fafc;
+  --ll-text-muted: #94a3b8;
+  --ll-text-faint: #64748b;
+  --ll-accent: #18d39e;
+  --ll-accent-soft: rgba(24,211,158,0.10);
+  --ll-warning: #facc15;
+  --ll-danger: #fb7185;
+  --ll-radius-card: 0.75rem;
+  --ll-radius-control: 0.625rem;
+  --ll-focus: 0 0 0 3px rgba(24,211,158,0.28);
 }
 
 @theme inline {
@@ -20,9 +35,13 @@
   }
 }
 
+html {
+  background: var(--ll-bg);
+}
+
 body {
-  background: var(--background);
-  color: var(--foreground);
+  background: var(--ll-bg);
+  color: var(--ll-text);
   font-family: var(--font-sans), Arial, Helvetica, sans-serif;
   min-height: 100vh;
   font-size: 16px;
@@ -53,9 +72,7 @@ textarea {
 
 .ll-page {
   min-height: 100vh;
-  background:
-    radial-gradient(circle at top, rgba(16, 185, 129, 0.12), transparent 38%),
-    linear-gradient(180deg, #020617 0%, #0f172a 100%);
+  background: var(--ll-bg);
 }
 
 .ll-shell {
@@ -68,6 +85,81 @@ textarea {
   border: 1px dashed rgba(148, 163, 184, 0.2);
   background: rgba(15, 23, 42, 0.45);
   color: #94a3b8;
+}
+
+.ll-card {
+  border-radius: var(--ll-radius-card);
+  border: 1px solid var(--ll-border);
+  background: var(--ll-surface);
+  padding: 1rem;
+}
+
+.ll-section {
+  border-radius: var(--ll-radius-card);
+  border: 1px solid var(--ll-border);
+  background: var(--ll-surface);
+  padding: 1rem 1.25rem;
+}
+
+.ll-kpi {
+  border-radius: var(--ll-radius-card);
+  border: 1px solid var(--ll-border);
+  background: var(--ll-surface);
+  padding: 1rem;
+  text-align: left;
+}
+
+.ll-command {
+  border-radius: var(--ll-radius-control);
+  border: 1px solid var(--ll-border);
+  background: var(--ll-surface-muted);
+  padding: 0.75rem 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  transition: border-color 150ms ease-out,
+    background 150ms ease-out;
+}
+
+.ll-command:hover {
+  border-color: var(--ll-border-strong);
+  background: var(--ll-surface);
+}
+
+.ll-notice {
+  border-radius: var(--ll-radius-control);
+  border: 1px solid var(--ll-border);
+  padding: 0.75rem 1rem;
+  font-size: 0.875rem;
+}
+
+.ll-notice-error {
+  border-color: var(--ll-danger);
+  background: rgba(251,113,133,0.08);
+  color: var(--ll-danger);
+}
+
+.ll-notice-warning {
+  border-color: var(--ll-warning);
+  background: rgba(250,204,21,0.08);
+  color: var(--ll-warning);
+}
+
+.ll-notice-success {
+  border-color: var(--ll-accent);
+  background: var(--ll-accent-soft);
+  color: var(--ll-accent);
+}
+
+.ll-focus:focus-visible {
+  outline: none;
+  box-shadow: var(--ll-focus);
+}
+
+.ll-dashboard-shell {
+  min-height: 100vh;
+  background: var(--ll-bg);
+  color: var(--ll-text);
 }
 
 @media (max-width: 768px) {

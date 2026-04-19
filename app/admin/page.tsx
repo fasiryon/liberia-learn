@@ -30,8 +30,7 @@ export default async function AdminConsolePage() {
   // ---- No schoolId: show helpful CTA instead of dead-end ----
   if (!schoolId) {
     return (
-      <main className="min-h-screen bg-slate-950 text-slate-50">
-        <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_top,_#3b82f622,_transparent_60%)]" />
+      <main className="ll-dashboard-shell">
         <div className="mx-auto max-w-2xl px-4 py-6 space-y-6">
           <DashboardTopBar
             roleLabel="Admin"
@@ -48,12 +47,6 @@ export default async function AdminConsolePage() {
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
             <AttachDemoSchoolButton />
-            <Link
-              href="/api/auth/signout"
-              className="rounded-xl border border-slate-700 px-5 py-3 text-sm font-semibold hover:bg-slate-900"
-            >
-              Log out (use admin@cha.edu.lr)
-            </Link>
           </div>
 
           <div className="pt-6 border-t border-slate-800 flex flex-wrap justify-center gap-2">
@@ -305,7 +298,6 @@ export default async function AdminConsolePage() {
         { label: "Academic Years", href: "/admin/academic-year" },
         { label: "Timetable", href: "/admin/timetable" },
         { label: "Placements", href: "/admin/placements" },
-        { label: "Bulk Student Import", href: "/admin/students/import" },
       ],
     },
     {
@@ -358,9 +350,7 @@ export default async function AdminConsolePage() {
   ];
 
   return (
-    <main className="min-h-screen bg-slate-950 text-slate-50">
-      <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_top,_#3b82f622,_transparent_60%)]" />
-
+    <main className="ll-dashboard-shell">
       <div className="mx-auto max-w-6xl px-4 py-6 space-y-6">
         {/* Consistent top bar */}
         <DashboardTopBar
@@ -381,7 +371,7 @@ export default async function AdminConsolePage() {
         {onboardingIncomplete && (
           <Link
             href="/admin/onboarding"
-            className="flex items-center gap-3 rounded-2xl border border-amber-500/30 bg-amber-500/10 p-4 hover:bg-amber-500/20 transition-colors"
+            className="ll-command ll-focus border-[var(--ll-warning)] bg-[rgba(250,204,21,0.08)]"
           >
             <span className="text-2xl">&#9888;</span>
             <div>
@@ -398,7 +388,7 @@ export default async function AdminConsolePage() {
           {stats.map((s) => (
             <div
               key={s.label}
-              className="rounded-2xl border border-slate-800 bg-slate-900/80 p-5"
+              className="ll-kpi rounded-xl p-5"
             >
               <p className="text-xs text-slate-400 mb-1">{s.label}</p>
               <p className={`text-3xl font-bold ${s.color}`}>{s.value}</p>
@@ -406,29 +396,7 @@ export default async function AdminConsolePage() {
           ))}
         </section>
 
-        {/* Grouped navigation sections */}
-        <section className="space-y-4">
-          {navGroups.map((group) => (
-            <div key={group.label} className={`rounded-2xl border ${group.border} bg-slate-900/70 p-4`}>
-              <p className={`mb-3 text-xs font-bold uppercase tracking-[0.2em] ${group.accent}`}>
-                {group.label}
-              </p>
-              <div className="flex flex-wrap gap-2">
-                {group.links.map((link) => (
-                  <Link
-                    key={link.href}
-                    href={link.href}
-                    className="rounded-xl border border-slate-700 bg-slate-950/60 px-4 py-2 text-sm font-medium text-slate-200 hover:border-slate-500 hover:bg-slate-800 hover:text-slate-50"
-                  >
-                    {link.label}
-                  </Link>
-                ))}
-              </div>
-            </div>
-          ))}
-        </section>
-
-        <section className="rounded-2xl border border-slate-800 bg-slate-900/80 p-5">
+        <section className="ll-section rounded-xl p-5">
           <div className="mb-4 flex items-center justify-between gap-3">
             <h2 className="text-lg font-semibold">Class Performance</h2>
             <span className="text-xs text-slate-500">{classPerformance.length} classes</span>
@@ -463,6 +431,28 @@ export default async function AdminConsolePage() {
               </table>
             </div>
           )}
+        </section>
+
+        {/* Grouped navigation sections */}
+        <section className="space-y-4">
+          {navGroups.map((group) => (
+            <div key={group.label} className="ll-section rounded-xl p-4">
+              <p className="mb-2 text-[10px] font-semibold uppercase tracking-[0.14em] text-[var(--ll-text-faint)]">
+                {group.label}
+              </p>
+              <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
+                {group.links.map((link) => (
+                  <Link
+                    key={link.href}
+                    href={link.href}
+                    className="ll-command ll-focus text-sm font-medium text-[var(--ll-text)]"
+                  >
+                    {link.label}
+                  </Link>
+                ))}
+              </div>
+            </div>
+          ))}
         </section>
 
         <section className="grid gap-4 lg:grid-cols-[1.2fr,0.8fr]">

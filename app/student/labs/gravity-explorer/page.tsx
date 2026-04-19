@@ -8,9 +8,9 @@ export default async function StudentGravityExplorerPage() {
 
   if (!isAiLabsEnabled()) {
     return (
-      <main className="ll-page min-h-screen px-4 py-8 text-slate-50">
+      <main className="ll-dashboard-shell px-4 py-8">
         <div className="ll-shell max-w-5xl">
-          <section className="rounded-3xl border border-slate-800 bg-slate-900/80 p-6 text-slate-100">
+          <section className="ll-section rounded-xl p-6 text-slate-100">
             Gravity Explorer is not available yet.
           </section>
         </div>
@@ -32,7 +32,7 @@ export default async function StudentGravityExplorerPage() {
   });
 
   return (
-    <main className="ll-page min-h-screen px-4 py-8 text-slate-50">
+    <main className="ll-dashboard-shell px-4 py-8">
       <div className="ll-shell max-w-6xl">
         <div className="mb-5">
           <p className="text-xs font-semibold uppercase tracking-[0.18em] text-cyan-200">
