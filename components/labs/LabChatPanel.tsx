@@ -96,11 +96,7 @@ export default function LabChatPanel({
 
       {assistantMessage ? (
         <div
-          className={`mt-4 rounded-xl px-4 py-3 text-sm leading-6 ${
-            status === "error"
-              ? "ll-notice-warning"
-              : "border border-[var(--ll-border)] bg-[var(--ll-surface-muted)] text-[var(--ll-text)]"
-          }`}
+          className={`mt-4 ll-notice ${status === "error" ? "ll-notice-error" : "ll-notice-success"}`}
           aria-live="polite"
         >
           {assistantMessage}
