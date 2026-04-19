@@ -269,7 +269,7 @@ export default function LoginClient({ showDemoHints, demoGroups, demoDefaults }:
       <div className="mx-auto w-full max-w-lg flex-1 flex items-center justify-center py-4">
       <div className="w-full space-y-5 rounded-[2rem] border border-white/10 bg-slate-900/75 p-5 shadow-2xl shadow-emerald-500/15 backdrop-blur sm:space-y-6 sm:p-7">
         <div className="flex flex-col items-center gap-3 text-center">
-          <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-emerald-500 text-lg font-black text-slate-950">
+          <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-[var(--ll-accent)] text-lg font-black text-slate-950">
             L
           </div>
           <h1 className="text-xl font-semibold text-slate-50">Sign in to LiberiaLearn</h1>
@@ -332,7 +332,7 @@ export default function LoginClient({ showDemoHints, demoGroups, demoDefaults }:
           </div>
 
           {renderToggle() ? (
-            <div className="rounded-2xl border border-slate-800/80 bg-slate-950/45 px-3 py-2">
+            <div className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-surface-muted)] px-3 py-2">
               {renderToggle()}
             </div>
           ) : null}
@@ -355,7 +355,7 @@ export default function LoginClient({ showDemoHints, demoGroups, demoDefaults }:
         </form>
 
         {showDemoHints && demoGroups.length > 0 ? (
-          <section className="rounded-2xl border border-slate-800/80 bg-slate-950/45 p-4">
+          <section className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-surface-muted)] p-4">
             <div className="flex items-start justify-between gap-3">
               <div>
                 <p className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-500">Demo help</p>
