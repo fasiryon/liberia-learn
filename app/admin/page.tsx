@@ -1,6 +1,8 @@
+import type { ReactNode } from "react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getServerSession } from "next-auth";
+import { AlertTriangle, Building2, BookOpen, Bell, BarChart2, Settings } from "lucide-react";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { AttachDemoSchoolButton } from "./AttachDemoSchoolButton";
@@ -280,9 +282,10 @@ export default async function AdminConsolePage() {
     { label: "Attendance (30d)", value: `${attendanceRate30d}%` },
   ];
 
-  const navGroups = [
+  const navGroups: Array<{ label: string; icon: ReactNode; links: { label: string; href: string }[] }> = [
     {
       label: "School Operations",
+      icon: <Building2 className="h-3.5 w-3.5 shrink-0" strokeWidth={1.5} />,
       links: [
         { label: "Students", href: "/admin/students" },
         { label: "Teachers", href: "/admin/teachers" },
@@ -296,6 +299,7 @@ export default async function AdminConsolePage() {
     },
     {
       label: "Curriculum",
+      icon: <BookOpen className="h-3.5 w-3.5 shrink-0" strokeWidth={1.5} />,
       links: [
         { label: "Curriculum / AI Factory", href: "/admin/curriculum" },
         { label: "Curriculum Units", href: "/admin/curriculum/units" },
@@ -305,6 +309,7 @@ export default async function AdminConsolePage() {
     },
     {
       label: "Communications",
+      icon: <Bell className="h-3.5 w-3.5 shrink-0" strokeWidth={1.5} />,
       links: [
         { label: "Notifications", href: "/admin/notifications" },
         { label: "Guardian Links", href: "/admin/guardian-link" },
@@ -313,6 +318,7 @@ export default async function AdminConsolePage() {
     },
     {
       label: "Analytics & Compliance",
+      icon: <BarChart2 className="h-3.5 w-3.5 shrink-0" strokeWidth={1.5} />,
       links: [
         { label: "Analytics", href: "/admin/analytics" },
         { label: "AI Costs", href: "/admin/ai-costs" },
@@ -326,6 +332,7 @@ export default async function AdminConsolePage() {
     },
     {
       label: "Settings",
+      icon: <Settings className="h-3.5 w-3.5 shrink-0" strokeWidth={1.5} />,
       links: [
         { label: "School Branding", href: "/admin/school-branding" },
         { label: "School Settings", href: "/admin/school-settings" },
@@ -337,7 +344,7 @@ export default async function AdminConsolePage() {
 
   return (
     <main className="ll-dashboard-shell">
-      <div className="mx-auto max-w-6xl px-4 py-5 space-y-5">
+      <div className="ll-page-enter mx-auto max-w-6xl px-4 py-5 space-y-5">
         <DashboardTopBar
           roleLabel="Admin"
           roleBadgeBg="bg-amber-400/10 border-amber-400/20"
@@ -356,7 +363,7 @@ export default async function AdminConsolePage() {
             href="/admin/onboarding"
             className="ll-command ll-focus border-[var(--ll-warning)] bg-[rgba(250,204,21,0.08)]"
           >
-            <span className="text-2xl">&#9888;</span>
+            <AlertTriangle className="h-5 w-5 shrink-0 text-[var(--ll-warning)]" strokeWidth={1.5} />
             <div>
               <p className="text-sm font-semibold text-[var(--ll-warning)]">Complete School Onboarding</p>
               <p className="text-xs text-[var(--ll-text-faint)]">
@@ -387,7 +394,7 @@ export default async function AdminConsolePage() {
               <Link href="/admin/students/import" className="ll-command ll-focus mt-3 inline-flex text-sm font-semibold text-[var(--ll-text)]">Import students</Link>
             </div>
           ) : (
-            <div className="overflow-x-auto">
+            <div className="ll-scroll-table">
               <table className="min-w-full text-sm">
                 <thead>
                   <tr className="border-b border-[var(--ll-border)] text-left text-xs text-[var(--ll-text-faint)]">
@@ -420,7 +427,8 @@ export default async function AdminConsolePage() {
         <section className="space-y-4">
           {navGroups.map((group) => (
             <div key={group.label} className="ll-section p-4">
-              <p className="mb-3 text-[11px] font-medium uppercase tracking-[0.1em] text-[var(--ll-text-faint)]">
+              <p className="mb-3 flex items-center gap-1.5 text-[11px] font-medium uppercase tracking-[0.1em] text-[var(--ll-text-faint)]">
+                {group.icon}
                 {group.label}
               </p>
               <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-4">

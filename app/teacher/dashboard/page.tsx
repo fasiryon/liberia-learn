@@ -160,7 +160,7 @@ export default function TeacherDashboardPage() {
 
   return (
     <div className="ll-dashboard-shell px-4 py-5">
-      <div className="mx-auto max-w-5xl space-y-5">
+      <div className="ll-page-enter mx-auto max-w-5xl space-y-5">
         <DashboardTopBar
           roleLabel="Teacher"
           roleBadgeBg="bg-blue-500/10 border-blue-500/20"
@@ -256,7 +256,7 @@ export default function TeacherDashboardPage() {
                   <div className="flex gap-2">
                     <button
                       onClick={copySchoolCode}
-                      className="rounded-lg border border-[var(--ll-border-strong)] bg-[var(--ll-surface-muted)] px-4 py-2 text-xs font-semibold text-[var(--ll-text)] hover:bg-[var(--ll-surface)]"
+                      className="ll-interactive rounded-lg border border-[var(--ll-border-strong)] bg-[var(--ll-surface-muted)] px-4 py-2 text-xs font-semibold text-[var(--ll-text)]"
                     >
                       {codeCopied ? "Copied!" : "Copy code"}
                     </button>
@@ -353,7 +353,7 @@ export default function TeacherDashboardPage() {
                           <button
                             type="button"
                             onClick={() => handleClassInsights(cls.classId)}
-                            className="min-h-11 rounded-lg border border-[var(--ll-border-strong)] bg-[var(--ll-surface-muted)] px-4 py-2 text-xs font-semibold text-[var(--ll-text)] hover:bg-[var(--ll-surface)]"
+                            className="ll-interactive min-h-11 rounded-lg border border-[var(--ll-border-strong)] bg-[var(--ll-surface-muted)] px-4 py-2 text-xs font-semibold text-[var(--ll-text)]"
                           >
                             {insights?.loading ? "Loading insights..." : "AI Class Insights"}
                           </button>
@@ -405,11 +405,11 @@ export default function TeacherDashboardPage() {
                             <section className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-surface)] p-4">
                               <p className="text-[11px] font-medium uppercase tracking-[0.1em] text-[var(--ll-text-faint)]">At-risk students</p>
                               <div className="mt-3 space-y-2">
-                                {cls.atRiskStudents.slice(0, 5).map((student) => (
+                                {cls.atRiskStudents.slice(0, 5).map((student, idx) => (
                                   <Link
                                     key={student.studentId}
                                     href={student.profileHref}
-                                    className="flex items-center justify-between rounded-xl border border-[var(--ll-border)] bg-[var(--ll-surface-muted)] px-4 py-3 hover:border-[var(--ll-warning)]/40"
+                                    className={`ll-interactive flex items-center justify-between rounded-xl border border-[var(--ll-border)] bg-[var(--ll-surface-muted)] px-4 py-3${idx >= 3 ? " hidden sm:flex" : ""}`}
                                   >
                                     <div>
                                       <p className="text-sm font-medium text-[var(--ll-text)]">{student.name}</p>

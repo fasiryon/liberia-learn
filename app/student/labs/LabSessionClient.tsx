@@ -156,7 +156,7 @@ export function LabSessionClient({ lab, sessionId, initialCompleted }: LabSessio
 
   return (
     <div className="space-y-6">
-      <section className="rounded-3xl border border-white/10 bg-slate-900/70 p-6">
+      <section className="rounded-xl border border-white/10 bg-slate-900/70 p-6">
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div>
             <h1 className="text-2xl font-bold text-slate-100">{lab.title}</h1>
@@ -177,7 +177,7 @@ export function LabSessionClient({ lab, sessionId, initialCompleted }: LabSessio
             </ul>
           </div>
           {lab.payload.safetyNotes ? (
-            <div className="rounded-2xl border border-amber-500/20 bg-amber-500/10 p-4 text-sm text-amber-100">
+            <div className="rounded-xl border border-amber-500/20 bg-amber-500/10 p-4 text-sm text-amber-100">
               <p className="font-semibold">Safety notes</p>
               <p className="mt-2">{lab.payload.safetyNotes}</p>
             </div>
@@ -188,7 +188,7 @@ export function LabSessionClient({ lab, sessionId, initialCompleted }: LabSessio
           <button
             type="button"
             onClick={beginLab}
-            className="mt-6 rounded-2xl bg-emerald-500 px-5 py-3 text-sm font-semibold text-slate-950 hover:bg-emerald-400"
+            className="ll-interactive mt-6 rounded-xl bg-[var(--ll-accent)] px-5 py-3 text-sm font-semibold text-slate-950"
           >
             Begin Lab
           </button>
@@ -196,7 +196,7 @@ export function LabSessionClient({ lab, sessionId, initialCompleted }: LabSessio
       </section>
 
       {showProcedure && procedure.length > 0 && !procedureComplete ? (
-        <section className="rounded-3xl border border-white/10 bg-slate-900/70 p-6">
+        <section className="rounded-xl border border-white/10 bg-slate-900/70 p-6">
           <div className="mb-4 flex items-center justify-between">
             <h2 className="text-lg font-semibold text-slate-100">Procedure</h2>
             <span className="text-xs text-slate-400">
@@ -219,7 +219,7 @@ export function LabSessionClient({ lab, sessionId, initialCompleted }: LabSessio
           <button
             type="button"
             onClick={() => setStepIndex((current) => current + 1)}
-            className="mt-5 rounded-2xl bg-cyan-400 px-5 py-3 text-sm font-semibold text-slate-950 hover:bg-cyan-300"
+            className="ll-interactive mt-5 rounded-xl bg-[var(--ll-accent)] px-5 py-3 text-sm font-semibold text-slate-950"
           >
             Next Step
           </button>
@@ -227,7 +227,7 @@ export function LabSessionClient({ lab, sessionId, initialCompleted }: LabSessio
       ) : null}
 
       {showProcedure && procedureComplete ? (
-        <section className="rounded-3xl border border-white/10 bg-slate-900/70 p-6">
+        <section className="rounded-xl border border-white/10 bg-slate-900/70 p-6">
           <h2 className="text-lg font-semibold text-slate-100">Observation Form</h2>
           <div className="mt-4 space-y-4">
             {observationFields.map((field) => (
@@ -237,7 +237,7 @@ export function LabSessionClient({ lab, sessionId, initialCompleted }: LabSessio
                   <select
                     value={observations[field.field] ?? ""}
                     onChange={(event) => setObservations((current) => ({ ...current, [field.field]: event.target.value }))}
-                    className="w-full rounded-2xl border border-slate-700 bg-slate-950 px-4 py-3 text-sm text-slate-100"
+                    className="w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-sm text-slate-100"
                   >
                     <option value="">Select one</option>
                     {(field.choices ?? []).map((choice) => (
@@ -251,7 +251,7 @@ export function LabSessionClient({ lab, sessionId, initialCompleted }: LabSessio
                     type={field.inputType === "number" ? "number" : "text"}
                     value={observations[field.field] ?? ""}
                     onChange={(event) => setObservations((current) => ({ ...current, [field.field]: event.target.value }))}
-                    className="w-full rounded-2xl border border-slate-700 bg-slate-950 px-4 py-3 text-sm text-slate-100"
+                    className="w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-sm text-slate-100"
                   />
                 )}
               </label>
@@ -261,7 +261,7 @@ export function LabSessionClient({ lab, sessionId, initialCompleted }: LabSessio
           <button
             type="button"
             onClick={saveProgress}
-            className="mt-5 rounded-2xl border border-slate-700 px-5 py-3 text-sm font-semibold text-slate-100 hover:border-slate-500"
+            className="ll-interactive mt-5 rounded-xl border border-[var(--ll-border-strong)] px-5 py-3 text-sm font-semibold text-[var(--ll-text)]"
           >
             Save progress
           </button>
@@ -275,7 +275,7 @@ export function LabSessionClient({ lab, sessionId, initialCompleted }: LabSessio
                   rows={4}
                   value={analysisAnswers[index] ?? ""}
                   onChange={(event) => setAnalysisAnswers((current) => ({ ...current, [index]: event.target.value }))}
-                  className="w-full rounded-2xl border border-slate-700 bg-slate-950 px-4 py-3 text-sm text-slate-100"
+                  className="w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-sm text-slate-100"
                 />
               </label>
             ))}
@@ -285,7 +285,7 @@ export function LabSessionClient({ lab, sessionId, initialCompleted }: LabSessio
             type="button"
             onClick={submitLab}
             disabled={submitting}
-            className="mt-5 rounded-2xl bg-emerald-500 px-5 py-3 text-sm font-semibold text-slate-950 hover:bg-emerald-400 disabled:cursor-not-allowed disabled:opacity-60"
+            className="ll-interactive mt-5 rounded-xl bg-[var(--ll-accent)] px-5 py-3 text-sm font-semibold text-slate-950 disabled:cursor-not-allowed disabled:opacity-60"
           >
             {submitting ? "Submitting Lab..." : "Submit Lab"}
           </button>
@@ -293,13 +293,13 @@ export function LabSessionClient({ lab, sessionId, initialCompleted }: LabSessio
       ) : null}
 
       {statusMessage ? (
-        <div className="rounded-2xl border border-emerald-500/20 bg-emerald-500/10 p-4 text-sm text-emerald-100">
+        <div className="rounded-xl border border-emerald-500/20 bg-emerald-500/10 p-4 text-sm text-emerald-100">
           {statusMessage}
         </div>
       ) : null}
 
       {completed ? (
-        <div className="rounded-2xl border border-white/10 bg-slate-900/70 p-4 text-sm text-slate-300">
+        <div className="rounded-xl border border-white/10 bg-slate-900/70 p-4 text-sm text-slate-300">
           Lab submitted. Your teacher will review your observations.
         </div>
       ) : null}

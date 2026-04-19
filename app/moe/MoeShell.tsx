@@ -75,7 +75,7 @@ export default function MoeShell({
       <main className="mx-auto w-full max-w-7xl px-4 py-6">
         {children}
       </main>
-      <LegalFooter />
+      <LegalFooter variant="portal" />
     </div>
   );
 }

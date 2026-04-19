@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { BookOpen } from "lucide-react";
 import { SkeletonCard } from "@/components/ui/Skeleton";
 
 type WorkItem = {
@@ -36,7 +37,7 @@ export default function StudentTodayPage() {
 
   return (
     <main className="ll-dashboard-shell">
-      <div className="mx-auto max-w-4xl px-4 py-5 space-y-5">
+      <div className="ll-page-enter mx-auto max-w-4xl px-4 py-5 space-y-5">
         <div>
           <h1 className="text-2xl font-semibold text-[var(--ll-text)]">Today&apos;s Work</h1>
           <p className="text-sm leading-6 text-[var(--ll-text-muted)] mt-1">
@@ -50,6 +51,7 @@ export default function StudentTodayPage() {
           </div>
         ) : items.length === 0 ? (
           <div className="ll-section p-6 text-center">
+            <BookOpen className="mx-auto mb-3 h-8 w-8 text-[var(--ll-text-faint)]" strokeWidth={1.5} />
             <p className="text-sm leading-6 text-[var(--ll-text-muted)]">
               Nothing scheduled yet. Browse the curriculum to start learning.
             </p>

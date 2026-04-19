@@ -150,13 +150,13 @@ export default function LabShell({
           )}
         </div>
 
-        <aside className="border-t border-[var(--ll-border)] bg-[var(--ll-bg)] p-4 lg:border-l lg:border-t-0">
-          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[var(--ll-text-muted)]">
+        <aside className="ll-page-enter border-t border-[var(--ll-border)] bg-[var(--ll-bg)] p-4 lg:border-l lg:border-t-0">
+          <p className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-[0.18em] text-[var(--ll-text-muted)]">
             Observations
           </p>
           <dl className="mt-3 space-y-2">
             {entries.map(([key, value]) => (
-              <div key={key} className="flex items-center justify-between gap-3 rounded-lg bg-[var(--ll-surface-muted)] px-3 py-2 text-sm">
+              <div key={key} className="flex items-center justify-between gap-3 rounded-lg bg-[var(--ll-surface-muted)] px-3 py-2 text-sm [transition:background-color_300ms_ease-out]">
                 <dt className="text-[var(--ll-text-muted)]">{key}</dt>
                 <dd className="font-medium text-slate-100">{value}</dd>
               </div>
