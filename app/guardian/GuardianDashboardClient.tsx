@@ -147,8 +147,8 @@ export default function GuardianDashboardClient() {
   );
 
   return (
-    <main className="min-h-screen bg-slate-950 px-4 py-6">
-      <div className="mx-auto max-w-6xl space-y-6">
+    <main className="ll-dashboard-shell px-4 py-6">
+      <div className="mx-auto max-w-6xl space-y-5">
         {/* Consistent top bar */}
         <DashboardTopBar
           roleLabel="Guardian"
@@ -170,14 +170,11 @@ export default function GuardianDashboardClient() {
         {loading ? (
           <div className="space-y-4">
             {Array.from({ length: 4 }).map((_, index) => (
-              <div
-                key={index}
-                className="h-32 animate-pulse rounded-2xl border border-white/10 bg-slate-900/70"
-              />
+              <div key={index} className="h-32 animate-pulse rounded-xl border border-[var(--ll-border)] bg-[var(--ll-surface)]" />
             ))}
           </div>
         ) : error ? (
-          <div className="rounded-2xl border border-red-500/30 bg-red-500/10 p-4 text-sm text-red-300">
+          <div className="ll-notice ll-notice-error">
             {error}
           </div>
         ) : !selectedSummary || !selectedDashboardChild ? (
@@ -190,7 +187,7 @@ export default function GuardianDashboardClient() {
         ) : (
           <>
             {dashboardChildren.length > 1 ? (
-              <section className="rounded-2xl border border-white/10 bg-slate-900/70 p-4">
+              <section className="ll-section rounded-xl p-4">
                 <label className="block text-xs text-slate-400">Child selector</label>
                 <select
                   value={selectedDashboardChild.studentId}
@@ -206,60 +203,7 @@ export default function GuardianDashboardClient() {
               </section>
             ) : null}
 
-            {/* KPI cards */}
-            <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-              <div className="rounded-2xl border border-white/10 bg-slate-900/70 p-4 text-center">
-                <p className="text-2xl font-bold text-purple-400">{selectedSummary?.lessonViewsThisWeek ?? 0}</p>
-                <p className="mt-1 text-xs text-slate-400">Lessons this week</p>
-              </div>
-              <div className="rounded-2xl border border-white/10 bg-slate-900/70 p-4 text-center">
-                <p className="text-2xl font-bold text-emerald-400">
-                  {selectedDashboardChild ? Math.round(selectedDashboardChild.attendance.attendanceRate * 100) : 0}%
-                </p>
-                <p className="mt-1 text-xs text-slate-400">Attendance</p>
-              </div>
-              <div className="rounded-2xl border border-white/10 bg-slate-900/70 p-4 text-center">
-                <p className="text-2xl font-bold text-cyan-400">
-                  {selectedSummary?.lastHomework?.aiScore != null
-                    ? `${Math.round(selectedSummary.lastHomework.aiScore)}%`
-                    : "--"}
-                </p>
-                <p className="mt-1 text-xs text-slate-400">Last score</p>
-              </div>
-              <div className="rounded-2xl border border-white/10 bg-slate-900/70 p-4 text-center">
-                <p className="text-2xl font-bold text-amber-400">{unreadMessages}</p>
-                <p className="mt-1 text-xs text-slate-400">Unread messages</p>
-              </div>
-            </div>
-
-            {/* Primary Actions */}
-            <div className="grid gap-3 sm:grid-cols-3">
-              <Link
-                href={selectedDashboardChild ? `/guardian/student/${selectedDashboardChild.studentId}` : "/guardian/progress"}
-                className="flex flex-col gap-1 rounded-2xl border border-purple-500/30 bg-purple-500/10 p-4 hover:bg-purple-500/20"
-              >
-                <p className="text-sm font-bold text-purple-300">
-                  View {selectedDashboardChild?.studentName ?? "student"}&apos;s progress
-                </p>
-                <p className="text-xs text-slate-400">Grades, mastery, and placement</p>
-              </Link>
-              <Link
-                href="/guardian/messages"
-                className="flex flex-col gap-1 rounded-2xl border border-white/10 bg-slate-900/70 p-4 hover:border-purple-500/30"
-              >
-                <p className="text-sm font-bold text-slate-100">Messages</p>
-                <p className="text-xs text-slate-400">Stay connected with teachers</p>
-              </Link>
-              <Link
-                href="/guardian/progress"
-                className="flex flex-col gap-1 rounded-2xl border border-white/10 bg-slate-900/70 p-4 hover:border-purple-500/30"
-              >
-                <p className="text-sm font-bold text-slate-100">Weekly digest</p>
-                <p className="text-xs text-slate-400">This week&apos;s summary</p>
-              </Link>
-            </div>
-
-            <section className="rounded-3xl border border-white/10 bg-slate-900/70 p-6">
+            <section className="ll-section rounded-xl p-4 sm:p-5">
               <div className="flex flex-wrap items-start justify-between gap-4">
                 <div>
                   <p className="text-xs font-semibold uppercase tracking-[0.2em] text-emerald-200">
@@ -274,38 +218,44 @@ export default function GuardianDashboardClient() {
                     {selectedDashboardChild.school ? ` · ${selectedDashboardChild.school}` : ""}
                   </p>
                 </div>
-                <div className="rounded-2xl border border-emerald-500/20 bg-emerald-500/10 px-4 py-3 text-right">
-                  <p className="text-xs text-emerald-200">Unread messages</p>
-                  <p className="text-2xl font-bold text-emerald-300">{unreadMessages}</p>
-                </div>
+                <Link
+                  href="/guardian/messages"
+                  className="ll-command ll-focus text-sm font-semibold text-[var(--ll-text)]"
+                >
+                  Message teacher
+                </Link>
               </div>
 
               <div className="mt-5 grid gap-4 lg:grid-cols-[1.4fr_1fr]">
-                <div className="rounded-3xl border border-emerald-500/20 bg-emerald-500/10 p-5">
-                  <p className="text-xs font-semibold uppercase tracking-[0.2em] text-emerald-200">Progress at a glance</p>
+                <div className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-surface-muted)] p-5">
+                  <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--ll-text-faint)]">Weekly summary</p>
                   <div className="mt-4 grid gap-4 sm:grid-cols-3">
-                    <div className="rounded-2xl bg-slate-950/70 p-4">
+                    <div className="rounded-xl bg-[var(--ll-surface)] p-4">
                       <p className="text-xs text-slate-400">Attendance</p>
                       <p className="mt-2 text-2xl font-semibold text-slate-100">
                         {Math.round(selectedDashboardChild.attendance.attendanceRate * 100)}%
                       </p>
                     </div>
-                    <div className="rounded-2xl bg-slate-950/70 p-4">
+                    <div className="rounded-xl bg-[var(--ll-surface)] p-4">
                       <p className="text-xs text-slate-400">Lessons this week</p>
                       <p className="mt-2 text-2xl font-semibold text-slate-100">
                         {selectedSummary.lessonViewsThisWeek}
                       </p>
                     </div>
-                    <div className="rounded-2xl bg-slate-950/70 p-4">
-                      <p className="text-xs text-slate-400">Placement band</p>
+                    <div className="rounded-xl bg-[var(--ll-surface)] p-4">
+                      <p className="text-xs text-slate-400">Progress trajectory</p>
                       <p className="mt-2 text-2xl font-semibold text-slate-100">
-                        {selectedSummary.placement?.band?.replace("_", "-") ?? "Pending"}
+                        {selectedDashboardChild.masteryProfile.some((item) => item.trend === "up")
+                          ? "Improving"
+                          : selectedDashboardChild.masteryProfile.some((item) => item.trend === "down")
+                            ? "Needs support"
+                            : "Stable"}
                       </p>
                     </div>
                   </div>
                 </div>
                 <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-1">
-                <div className="rounded-2xl bg-slate-950/70 p-4">
+                <div className="rounded-xl bg-[var(--ll-surface-muted)] p-4">
                   <p className="text-xs text-slate-500">Last homework</p>
                   <p className="mt-2 text-sm font-semibold text-slate-100">
                     {selectedSummary.lastHomework?.title ?? "No submissions yet"}
@@ -314,7 +264,7 @@ export default function GuardianDashboardClient() {
                     Score: {scoreDisplay(selectedSummary.lastHomework)}
                   </p>
                 </div>
-                <div className="rounded-2xl bg-slate-950/70 p-4">
+                <div className="rounded-xl bg-[var(--ll-surface-muted)] p-4">
                   <p className="text-xs text-slate-500">Attendance</p>
                   <p className="mt-2 text-sm font-semibold text-slate-100">
                     {Math.round(selectedDashboardChild.attendance.attendanceRate * 100)}%
@@ -323,7 +273,7 @@ export default function GuardianDashboardClient() {
                     {selectedDashboardChild.attendance.presentDays} present · {selectedDashboardChild.attendance.absentDays} absent
                   </p>
                 </div>
-                <div className="rounded-2xl bg-slate-950/70 p-4">
+                <div className="rounded-xl bg-[var(--ll-surface-muted)] p-4">
                   <p className="text-xs text-slate-500">Placement</p>
                   <p className="mt-2 text-sm font-semibold text-slate-100">
                     {selectedSummary.placement?.band?.replace("_", "-") ?? "Not assessed"}
@@ -332,7 +282,7 @@ export default function GuardianDashboardClient() {
                     {selectedSummary.placement?.levelLabel ?? "Placement result pending"}
                   </p>
                 </div>
-                <div className="rounded-2xl bg-slate-950/70 p-4">
+                <div className="rounded-xl bg-[var(--ll-surface-muted)] p-4">
                   <p className="text-xs text-slate-500">Messages</p>
                   <p className="mt-2 text-sm font-semibold text-slate-100">
                     Stay connected with teachers
@@ -349,7 +299,7 @@ export default function GuardianDashboardClient() {
             </section>
 
             <section className="grid gap-6 lg:grid-cols-2">
-              <div className="rounded-3xl border border-white/10 bg-slate-900/70 p-6">
+              <div className="ll-section rounded-xl p-5">
                 <div className="flex items-center justify-between gap-3">
                   <div>
                     <h3 className="text-lg font-semibold text-slate-50">Mastery Profile</h3>
@@ -391,7 +341,7 @@ export default function GuardianDashboardClient() {
               </div>
 
               <div className="space-y-6">
-                <div className="rounded-3xl border border-white/10 bg-slate-900/70 p-6">
+                <div className="ll-section rounded-xl p-5">
                   <h3 className="text-lg font-semibold text-slate-50">Today&apos;s Activity</h3>
                   <p className="mt-1 text-sm text-slate-400">
                     {selectedDashboardChild.studentName}&apos;s activity today.
@@ -435,7 +385,7 @@ export default function GuardianDashboardClient() {
                   </div>
                 </div>
 
-                <div className="rounded-3xl border border-white/10 bg-slate-900/70 p-6">
+                <div className="ll-section rounded-xl p-5">
                   <h3 className="text-lg font-semibold text-slate-50">Areas Needing Extra Support</h3>
                   <div className="mt-4 space-y-3">
                     {selectedDashboardChild.interventionAlerts.length === 0 ? (
@@ -458,7 +408,7 @@ export default function GuardianDashboardClient() {
                   </div>
                 </div>
 
-                <div className="rounded-3xl border border-white/10 bg-slate-900/70 p-6">
+                <div className="ll-section rounded-xl p-5">
                   <h3 className="text-lg font-semibold text-slate-50">Upcoming Work</h3>
                   <div className="mt-4 space-y-3">
                     {selectedDashboardChild.upcomingAssignments.length === 0 ? (
@@ -476,7 +426,7 @@ export default function GuardianDashboardClient() {
                   </div>
                 </div>
 
-                <div className="rounded-3xl border border-white/10 bg-slate-900/70 p-6">
+                <div className="ll-section rounded-xl p-5">
                   <div className="flex items-center justify-between gap-3">
                     <div>
                       <h3 className="text-lg font-semibold text-slate-50">Placement History</h3>

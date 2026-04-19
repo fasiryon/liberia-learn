@@ -153,9 +153,13 @@ export default function TeacherDashboardPage() {
     }
   }
 
+  const atRiskCount =
+    data?.classPerformance.reduce((total, cls) => total + cls.atRiskStudents.length, 0) ?? 0;
+  const pendingGradingCount = data?.assignmentsPendingGrading ?? 0;
+
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-50 px-4 py-6">
-      <div className="mx-auto max-w-4xl space-y-6">
+    <div className="ll-dashboard-shell px-4 py-6">
+      <div className="mx-auto max-w-5xl space-y-5">
         {/* Consistent top bar */}
         <DashboardTopBar
           roleLabel="Teacher"
@@ -179,50 +183,72 @@ export default function TeacherDashboardPage() {
           <>
             {/* Alert banner */}
             {data?.classesWithoutLesson && data.classesWithoutLesson.length > 0 && (
-              <div className="rounded-xl bg-amber-500/20 border border-amber-500/30 px-4 py-3 text-sm text-amber-300">
+              <div className="ll-notice ll-notice-warning">
                 {data.classesWithoutLesson.length} class(es) have no lesson scheduled for today: {data.classesWithoutLesson.join(", ")}
               </div>
             )}
 
+            {(atRiskCount > 0 || pendingGradingCount > 0) && (
+              <section className="ll-section rounded-xl p-4">
+                <p className="mb-3 text-[10px] font-semibold uppercase tracking-[0.14em] text-[var(--ll-text-faint)]">
+                  Needs attention today
+                </p>
+                <div className="grid gap-3 sm:grid-cols-2">
+                  {atRiskCount > 0 && (
+                    <Link href="/teacher/students" className="ll-command ll-focus justify-between">
+                      <span className="text-sm font-semibold text-[var(--ll-text)]">At-risk students</span>
+                      <span className="text-sm font-semibold text-[var(--ll-warning)]">{atRiskCount}</span>
+                    </Link>
+                  )}
+                  {pendingGradingCount > 0 && (
+                    <Link href="/teacher/assignments" className="ll-command ll-focus justify-between">
+                      <span className="text-sm font-semibold text-[var(--ll-text)]">Assignments to grade</span>
+                      <span className="text-sm font-semibold text-[var(--ll-warning)]">{pendingGradingCount}</span>
+                    </Link>
+                  )}
+                </div>
+              </section>
+            )}
+
             {/* KPI cards */}
             <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
-              <div className="rounded-2xl border border-white/10 bg-slate-900/70 p-4 text-center">
-                <p className="text-2xl font-bold text-blue-400">{data?.scheduledToday || 0}</p>
-                <p className="text-xs text-slate-400">Lessons today</p>
+              <div className="ll-kpi rounded-xl">
+                <p className={`text-2xl font-semibold ${(data?.scheduledToday || 0) === 0 ? "text-[var(--ll-text-faint)]" : "text-blue-400"}`}>{data?.scheduledToday || 0}</p>
+                <p className="text-xs text-[var(--ll-text-muted)]">Lessons today</p>
               </div>
-              <div className="rounded-2xl border border-white/10 bg-slate-900/70 p-4 text-center">
-                <p className="text-2xl font-bold text-emerald-400">{data?.completionRateToday || 0}%</p>
-                <p className="text-xs text-slate-400">Completion rate</p>
+              <div className="ll-kpi rounded-xl">
+                <p className={`text-2xl font-semibold ${(data?.completionRateToday || 0) === 0 ? "text-[var(--ll-text-faint)]" : "text-emerald-400"}`}>{data?.completionRateToday || 0}%</p>
+                <p className="text-xs text-[var(--ll-text-muted)]">Completion rate</p>
               </div>
-              <div className="rounded-2xl border border-white/10 bg-slate-900/70 p-4 text-center">
-                <p className="text-2xl font-bold text-amber-400">{data?.assignmentsPendingGrading || 0}</p>
-                <p className="text-xs text-slate-400">Pending grading</p>
+              <div className="ll-kpi rounded-xl">
+                <p className={`text-2xl font-semibold ${(data?.assignmentsPendingGrading || 0) === 0 ? "text-[var(--ll-text-faint)]" : "text-amber-400"}`}>{data?.assignmentsPendingGrading || 0}</p>
+                <p className="text-xs text-[var(--ll-text-muted)]">Pending grading</p>
               </div>
-              <div className="rounded-2xl border border-white/10 bg-slate-900/70 p-4 text-center">
-                <p className="text-2xl font-bold text-cyan-400">{data?.labsPendingReview || 0}</p>
-                <p className="text-xs text-slate-400">Labs to review</p>
+              <div className="ll-kpi rounded-xl">
+                <p className={`text-2xl font-semibold ${(data?.labsPendingReview || 0) === 0 ? "text-[var(--ll-text-faint)]" : "text-cyan-400"}`}>{data?.labsPendingReview || 0}</p>
+                <p className="text-xs text-[var(--ll-text-muted)]">Labs to review</p>
               </div>
             </div>
 
             {/* Primary Actions — above fold */}
             <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
-              <Link href="/teacher/students" className="flex flex-col gap-1 rounded-2xl border border-blue-500/30 bg-blue-500/10 p-4 hover:bg-blue-500/20">
+              <Link href="/teacher/students" className="ll-command ll-focus flex-col items-start">
                 <p className="text-sm font-bold text-blue-300">View my classes</p>
               </Link>
-              <Link href="/teacher/assignments" className="flex flex-col gap-1 rounded-2xl border border-white/10 bg-slate-900/70 p-4 hover:border-blue-500/30">
+              <Link href="/teacher/assignments" className="ll-command ll-focus flex-col items-start">
                 <p className="text-sm font-bold text-slate-100">Grade assignments</p>
               </Link>
-              <Link href="/teacher/schedule" className="flex flex-col gap-1 rounded-2xl border border-white/10 bg-slate-900/70 p-4 hover:border-blue-500/30">
+              <Link href="/teacher/schedule" className="ll-command ll-focus flex-col items-start">
                 <p className="text-sm font-bold text-slate-100">Lesson planner</p>
               </Link>
-              <Link href="/teacher/weekly-report" className="flex flex-col gap-1 rounded-2xl border border-white/10 bg-slate-900/70 p-4 hover:border-blue-500/30">
+              <Link href="/teacher/weekly-report" className="ll-command ll-focus flex-col items-start">
                 <p className="text-sm font-bold text-slate-100">Weekly report</p>
               </Link>
             </div>
 
             {/* School registration code */}
             {data?.schoolCode && (
-              <section className="rounded-3xl border border-emerald-500/30 bg-emerald-950/20 p-5">
+              <section className="ll-section rounded-xl p-5">
                 <div className="flex flex-wrap items-center justify-between gap-3">
                   <div>
                     <p className="text-xs font-semibold uppercase tracking-[0.15em] text-emerald-400">School registration code</p>
@@ -251,7 +277,7 @@ export default function TeacherDashboardPage() {
 
 
             {adaptiveEnabled && (
-              <section className="rounded-3xl border border-amber-400/20 bg-gradient-to-br from-amber-500/10 to-slate-900/80 p-5">
+              <section className="ll-section rounded-xl p-5">
                 <div className="mb-4 flex items-center justify-between gap-3">
                   <div>
                     <h2 className="text-base font-semibold text-slate-100">Students Needing Extra Support</h2>
@@ -296,7 +322,7 @@ export default function TeacherDashboardPage() {
               </section>
             )}
 
-            <section className="rounded-3xl border border-white/10 bg-slate-900/70 p-5">
+            <section className="ll-section rounded-xl p-5">
               <div className="flex flex-wrap items-start justify-between gap-3">
                 <div>
                   <h2 className="text-base font-semibold text-slate-100">Class Performance Intelligence</h2>
@@ -316,7 +342,7 @@ export default function TeacherDashboardPage() {
                   {data.classPerformance.map((cls) => {
                     const insights = insightState[cls.classId];
                     return (
-                      <article key={cls.classId} className="rounded-3xl border border-slate-800 bg-slate-950/60 p-4 sm:p-5">
+                      <article key={cls.classId} className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-surface-muted)] p-4 sm:p-5">
                         <div className="flex flex-wrap items-start justify-between gap-3">
                           <div>
                             <h3 className="text-base font-semibold text-slate-100">{cls.className}</h3>

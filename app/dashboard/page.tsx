@@ -1,5 +1,4 @@
 import AiTutorChat from "@/components/AiTutorChat";
-import LogoutButton from "@/components/LogoutButton";
 import { DashboardTopBar } from "@/components/DashboardTopBar";
 
 // app/page.tsx (Student Dashboard)
@@ -210,16 +209,13 @@ export default async function DashboardPage() {
 
   return (
     <ErrorBoundary>
-      <main className="min-h-screen bg-slate-950 text-slate-50">
+      <main className="ll-dashboard-shell">
         {/* Scroll-to-top on mount */}
         <script
           dangerouslySetInnerHTML={{
             __html: "window.scrollTo(0,0);",
           }}
         />
-        {/* Glow */}
-        <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_top,_#22c55e22,_transparent_60%),radial-gradient(circle_at_bottom,_#0ea5e922,_transparent_60%)]" />
-
         <div className="mx-auto flex min-h-screen max-w-6xl flex-col gap-4 px-3 py-5 sm:px-4 sm:py-6">
           {/* Consistent top bar */}
           <DashboardTopBar
@@ -239,7 +235,7 @@ export default async function DashboardPage() {
             />
 
             {/* Main Content */}
-            <section className="flex flex-1 flex-col gap-4 rounded-3xl border border-white/5 bg-slate-950/80 p-4 shadow-lg shadow-black/40 backdrop-blur">
+            <section className="flex flex-1 flex-col gap-4 rounded-xl border border-[var(--ll-border)] bg-[var(--ll-surface)] p-4 shadow-none">
               {/* Greeting */}
               <div>
                 <p className="text-xs uppercase tracking-wide text-emerald-300">
@@ -296,7 +292,34 @@ export default async function DashboardPage() {
                 </Link>
               </div>
 
-              <div className="rounded-3xl border border-emerald-400/20 bg-emerald-500/10 p-4">
+              {completedLessonCount === 0 && firstRecommendedLesson ? (
+                <div className="rounded-xl border border-cyan-400/30 bg-cyan-500/10 p-4">
+                  <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+                    <div>
+                      <p className="text-xs font-semibold uppercase tracking-[0.2em] text-cyan-200">
+                        Start here
+                      </p>
+                      <h2 className="mt-2 text-xl font-semibold text-white">
+                        Your first lesson:{" "}
+                        {firstRecommendedLesson.title ??
+                          (firstRecommendedLesson.payload as any)?.title ??
+                          firstRecommendedLesson.contentId}
+                      </h2>
+                      <p className="mt-2 text-sm text-slate-100">
+                        Grade {student.currentGrade} {firstRecommendedLesson.subject.replace(/_/g, " ")}
+                      </p>
+                    </div>
+                    <Link
+                      href={`/student/lesson/${firstRecommendedLesson.contentId}`}
+                      className="ll-touch-target inline-flex items-center justify-center rounded-2xl bg-cyan-300 px-5 py-3 text-sm font-semibold text-slate-950"
+                    >
+                      Open first lesson
+                    </Link>
+                  </div>
+                </div>
+              ) : null}
+
+              <div className="rounded-xl border border-emerald-400/20 bg-emerald-500/10 p-4">
                 <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
                   <div>
                     <p className="text-xs font-semibold uppercase tracking-[0.2em] text-emerald-200">
@@ -330,7 +353,7 @@ export default async function DashboardPage() {
                 </div>
               </div>
 
-              <div className="rounded-3xl border border-amber-400/20 bg-amber-500/10 p-4">
+              <div className="rounded-xl border border-amber-400/20 bg-amber-500/10 p-4">
                 <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                   <div>
                     <p className="text-xs font-semibold uppercase tracking-[0.2em] text-amber-200">
