@@ -17,7 +17,6 @@ export default async function AdminConsolePage() {
   if (!user?.id) redirect("/login");
   if (user.role !== "ADMIN") redirect("/");
 
-  // Session JWT may have stale null schoolId. Check DB as fallback.
   let schoolId = user.schoolId as string | null;
   if (!schoolId) {
     const dbUser = await prisma.user.findUnique({
@@ -27,20 +26,19 @@ export default async function AdminConsolePage() {
     schoolId = dbUser?.schoolId ?? null;
   }
 
-  // ---- No schoolId: show helpful CTA instead of dead-end ----
   if (!schoolId) {
     return (
       <main className="ll-dashboard-shell">
-        <div className="mx-auto max-w-2xl px-4 py-6 space-y-6">
+        <div className="mx-auto max-w-2xl px-4 py-5 space-y-5">
           <DashboardTopBar
             roleLabel="Admin"
-            roleBadgeBg="bg-amber-400"
-            roleAccent="text-amber-300"
+            roleBadgeBg="bg-amber-400/10 border-amber-400/20"
+            roleAccent="text-[var(--ll-text-muted)]"
             userName={user.name ?? user.email ?? undefined}
           />
-          <div className="text-center space-y-6">
-          <h1 className="text-2xl font-bold">No School Assigned</h1>
-          <p className="text-sm text-slate-400">
+          <div className="text-center space-y-5">
+          <h1 className="text-2xl font-semibold text-[var(--ll-text)]">No School Assigned</h1>
+          <p className="text-sm leading-6 text-[var(--ll-text-muted)]">
             Your admin account ({user.email}) does not have a school attached yet.
             Attach to the demo school to explore the platform, or log out and use the
             primary demo admin account.
@@ -49,10 +47,10 @@ export default async function AdminConsolePage() {
             <AttachDemoSchoolButton />
           </div>
 
-          <div className="pt-6 border-t border-slate-800 flex flex-wrap justify-center gap-2">
-            <Link href="/admin/students" className="rounded-xl border border-slate-700 px-4 py-2 text-xs text-slate-300 hover:text-slate-50 hover:border-slate-500">Students</Link>
-            <Link href="/admin/curriculum" className="rounded-xl border border-slate-700 px-4 py-2 text-xs text-slate-300 hover:text-slate-50 hover:border-slate-500">Curriculum</Link>
-            <Link href="/admin/analytics" className="rounded-xl border border-slate-700 px-4 py-2 text-xs text-slate-300 hover:text-slate-50 hover:border-slate-500">Analytics</Link>
+          <div className="pt-5 border-t border-[var(--ll-border)] flex flex-wrap justify-center gap-2">
+            <Link href="/admin/students" className="rounded-lg border border-[var(--ll-border)] px-4 py-2 text-xs text-[var(--ll-text-muted)] hover:text-[var(--ll-text)] hover:border-[var(--ll-border-strong)]">Students</Link>
+            <Link href="/admin/curriculum" className="rounded-lg border border-[var(--ll-border)] px-4 py-2 text-xs text-[var(--ll-text-muted)] hover:text-[var(--ll-text)] hover:border-[var(--ll-border-strong)]">Curriculum</Link>
+            <Link href="/admin/analytics" className="rounded-lg border border-[var(--ll-border)] px-4 py-2 text-xs text-[var(--ll-text-muted)] hover:text-[var(--ll-text)] hover:border-[var(--ll-border-strong)]">Analytics</Link>
           </div>
           </div>
         </div>
@@ -60,7 +58,6 @@ export default async function AdminConsolePage() {
     );
   }
 
-  // ---- Normal admin console with schoolId ----
   const [school, studentCount, teacherCount] =
     await Promise.all([
       prisma.school.findUnique({ where: { id: schoolId }, select: { name: true } }),
@@ -270,7 +267,6 @@ export default async function AdminConsolePage() {
     recentActivity = [];
   }
 
-  // Check onboarding status
   const schoolDetail = await prisma.school.findUnique({
     where: { id: schoolId },
     select: { onboardingStep: true },
@@ -278,17 +274,15 @@ export default async function AdminConsolePage() {
   const onboardingIncomplete = !schoolDetail?.onboardingStep || schoolDetail.onboardingStep < 5;
 
   const stats = [
-    { label: "Total Students", value: studentCount, color: "text-emerald-300" },
-    { label: "Total Teachers", value: teacherCount, color: "text-blue-300" },
-    { label: "Lessons Delivered This Month", value: lessonsDeliveredThisMonth, color: "text-amber-300" },
-    { label: "School Attendance Rate (30d)", value: `${attendanceRate30d}%`, color: "text-purple-300" },
+    { label: "Total Students", value: studentCount },
+    { label: "Total Teachers", value: teacherCount },
+    { label: "Lessons This Month", value: lessonsDeliveredThisMonth },
+    { label: "Attendance (30d)", value: `${attendanceRate30d}%` },
   ];
 
   const navGroups = [
     {
       label: "School Operations",
-      accent: "text-amber-300",
-      border: "border-amber-500/20",
       links: [
         { label: "Students", href: "/admin/students" },
         { label: "Teachers", href: "/admin/teachers" },
@@ -302,8 +296,6 @@ export default async function AdminConsolePage() {
     },
     {
       label: "Curriculum",
-      accent: "text-emerald-300",
-      border: "border-emerald-500/20",
       links: [
         { label: "Curriculum / AI Factory", href: "/admin/curriculum" },
         { label: "Curriculum Units", href: "/admin/curriculum/units" },
@@ -313,8 +305,6 @@ export default async function AdminConsolePage() {
     },
     {
       label: "Communications",
-      accent: "text-cyan-300",
-      border: "border-cyan-500/20",
       links: [
         { label: "Notifications", href: "/admin/notifications" },
         { label: "Guardian Links", href: "/admin/guardian-link" },
@@ -323,8 +313,6 @@ export default async function AdminConsolePage() {
     },
     {
       label: "Analytics & Compliance",
-      accent: "text-purple-300",
-      border: "border-purple-500/20",
       links: [
         { label: "Analytics", href: "/admin/analytics" },
         { label: "AI Costs", href: "/admin/ai-costs" },
@@ -338,8 +326,6 @@ export default async function AdminConsolePage() {
     },
     {
       label: "Settings",
-      accent: "text-slate-300",
-      border: "border-slate-600/30",
       links: [
         { label: "School Branding", href: "/admin/school-branding" },
         { label: "School Settings", href: "/admin/school-settings" },
@@ -351,23 +337,20 @@ export default async function AdminConsolePage() {
 
   return (
     <main className="ll-dashboard-shell">
-      <div className="mx-auto max-w-6xl px-4 py-6 space-y-6">
-        {/* Consistent top bar */}
+      <div className="mx-auto max-w-6xl px-4 py-5 space-y-5">
         <DashboardTopBar
           roleLabel="Admin"
-          roleBadgeBg="bg-amber-400"
-          roleAccent="text-amber-300"
+          roleBadgeBg="bg-amber-400/10 border-amber-400/20"
+          roleAccent="text-[var(--ll-text-muted)]"
           userName={user.name ?? user.email ?? undefined}
           subtitle={schoolName}
         />
 
-        {/* Greeting */}
         <div>
-          <h1 className="text-2xl font-bold">Good morning. Here&apos;s your school today.</h1>
-          <p className="mt-1 text-sm text-slate-400">{schoolName}</p>
+          <h1 className="text-2xl font-semibold text-[var(--ll-text)]">Good morning. Here&apos;s your school today.</h1>
+          <p className="mt-1 text-sm leading-6 text-[var(--ll-text-muted)]">{schoolName}</p>
         </div>
 
-        {/* Onboarding banner */}
         {onboardingIncomplete && (
           <Link
             href="/admin/onboarding"
@@ -375,8 +358,8 @@ export default async function AdminConsolePage() {
           >
             <span className="text-2xl">&#9888;</span>
             <div>
-              <p className="text-sm font-semibold text-amber-300">Complete School Onboarding</p>
-              <p className="text-xs text-amber-400/70">
+              <p className="text-sm font-semibold text-[var(--ll-warning)]">Complete School Onboarding</p>
+              <p className="text-xs text-[var(--ll-text-faint)]">
                 Finish the 5-step setup wizard to improve your Pilot Readiness Score.
               </p>
             </div>
@@ -384,30 +367,30 @@ export default async function AdminConsolePage() {
         )}
 
         {/* KPI cards */}
-        <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <section className="grid grid-cols-2 gap-3 sm:grid-cols-4">
           {stats.map((s) => (
-            <div
-              key={s.label}
-              className="ll-kpi rounded-xl p-5"
-            >
-              <p className="text-xs text-slate-400 mb-1">{s.label}</p>
-              <p className={`text-3xl font-bold ${s.color}`}>{s.value}</p>
+            <div key={s.label} className="ll-kpi">
+              <p className="text-[11px] font-medium uppercase tracking-[0.1em] text-[var(--ll-text-faint)] mb-1">{s.label}</p>
+              <p className="text-2xl font-semibold text-[var(--ll-text)]">{s.value}</p>
             </div>
           ))}
         </section>
 
-        <section className="ll-section rounded-xl p-5">
-          <div className="mb-4 flex items-center justify-between gap-3">
-            <h2 className="text-lg font-semibold">Class Performance</h2>
-            <span className="text-xs text-slate-500">{classPerformance.length} classes</span>
+        <section className="ll-section p-4">
+          <div className="mb-3 flex items-center justify-between gap-3">
+            <h2 className="text-base font-semibold text-[var(--ll-text)]">Class Performance</h2>
+            <span className="text-xs text-[var(--ll-text-faint)]">{classPerformance.length} classes</span>
           </div>
           {classPerformance.length === 0 ? (
-            <p className="text-sm text-slate-400">No classes yet.</p>
+            <div className="ll-section p-6 text-center">
+              <p className="text-sm leading-6 text-[var(--ll-text-muted)]">No students imported yet.</p>
+              <Link href="/admin/students/import" className="ll-command ll-focus mt-3 inline-flex text-sm font-semibold text-[var(--ll-text)]">Import students</Link>
+            </div>
           ) : (
             <div className="overflow-x-auto">
               <table className="min-w-full text-sm">
                 <thead>
-                  <tr className="border-b border-slate-800 text-left text-xs text-slate-500">
+                  <tr className="border-b border-[var(--ll-border)] text-left text-xs text-[var(--ll-text-faint)]">
                     <th className="px-3 py-2">Class</th>
                     <th className="px-3 py-2">Teacher</th>
                     <th className="px-3 py-2">Students</th>
@@ -418,7 +401,7 @@ export default async function AdminConsolePage() {
                 </thead>
                 <tbody>
                   {classPerformance.map((row) => (
-                    <tr key={row.id} className="border-b border-slate-800/60 text-slate-200">
+                    <tr key={row.id} className="border-b border-[var(--ll-border)]/60 text-[var(--ll-text-muted)]">
                       <td className="px-3 py-3">{row.name}</td>
                       <td className="px-3 py-3">{row.teacher}</td>
                       <td className="px-3 py-3">{row.students}</td>
@@ -436,8 +419,8 @@ export default async function AdminConsolePage() {
         {/* Grouped navigation sections */}
         <section className="space-y-4">
           {navGroups.map((group) => (
-            <div key={group.label} className="ll-section rounded-xl p-4">
-              <p className="mb-2 text-[10px] font-semibold uppercase tracking-[0.14em] text-[var(--ll-text-faint)]">
+            <div key={group.label} className="ll-section p-4">
+              <p className="mb-3 text-[11px] font-medium uppercase tracking-[0.1em] text-[var(--ll-text-faint)]">
                 {group.label}
               </p>
               <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
@@ -456,34 +439,34 @@ export default async function AdminConsolePage() {
         </section>
 
         <section className="grid gap-4 lg:grid-cols-[1.2fr,0.8fr]">
-          <div className="rounded-2xl border border-slate-800 bg-slate-900/80 p-5">
-            <div className="mb-4 flex items-center justify-between gap-3">
+          <div className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-surface)] p-4">
+            <div className="mb-3 flex items-center justify-between gap-3">
               <div>
-                <h2 className="text-lg font-semibold">Students Needing Attention</h2>
-                <p className="text-xs text-slate-500">Active intervention signals across the school.</p>
+                <h2 className="text-base font-semibold text-[var(--ll-text)]">Students Needing Attention</h2>
+                <p className="text-xs text-[var(--ll-text-faint)]">Active intervention signals across the school.</p>
               </div>
               {atRiskTotal > 10 ? (
-                <Link href="/admin/students" className="text-xs font-semibold text-emerald-300 hover:text-emerald-200">
+                <Link href="/admin/students" className="text-xs font-semibold text-[var(--ll-accent)] hover:opacity-80">
                   View All
                 </Link>
               ) : null}
             </div>
             {atRiskStudents.length === 0 ? (
-              <p className="text-sm text-slate-400">No at-risk alerts. Great work!</p>
+              <p className="text-sm text-[var(--ll-text-faint)]">No at-risk alerts. Great work!</p>
             ) : (
               <div className="space-y-2">
                 {atRiskStudents.map((student) => (
-                  <div key={student.studentId} className="rounded-xl border border-slate-800 bg-slate-950/60 px-4 py-3">
+                  <div key={student.studentId} className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-surface-muted)] px-4 py-3">
                     <div className="flex flex-wrap items-center justify-between gap-3">
                       <div>
-                        <p className="text-sm font-semibold text-slate-100">{student.name}</p>
-                        <p className="text-xs text-slate-500">
+                        <p className="text-sm font-semibold text-[var(--ll-text)]">{student.name}</p>
+                        <p className="text-xs text-[var(--ll-text-faint)]">
                           Grade {student.grade ?? "-"} · {student.className ?? "Unassigned"}
                         </p>
                       </div>
                       <div className="text-right">
-                        <p className="text-xs font-semibold text-amber-300">{student.subject}</p>
-                        <p className="text-[11px] text-slate-400">{student.alertType.replace(/_/g, " ")}</p>
+                        <p className="text-xs font-semibold text-[var(--ll-warning)]">{student.subject}</p>
+                        <p className="text-[11px] text-[var(--ll-text-faint)]">{student.alertType.replace(/_/g, " ")}</p>
                       </div>
                     </div>
                   </div>
@@ -492,16 +475,16 @@ export default async function AdminConsolePage() {
             )}
           </div>
 
-          <div className="rounded-2xl border border-slate-800 bg-slate-900/80 p-5">
-            <h2 className="text-lg font-semibold">Recent Activity</h2>
-            <div className="mt-4 space-y-3">
+          <div className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-surface)] p-4">
+            <h2 className="text-base font-semibold text-[var(--ll-text)]">Recent Activity</h2>
+            <div className="mt-3 space-y-3">
               {recentActivity.length === 0 ? (
-                <p className="text-sm text-slate-400">No recent activity.</p>
+                <p className="text-sm text-[var(--ll-text-faint)]">No recent activity.</p>
               ) : (
                 recentActivity.map((entry) => (
-                  <div key={entry.id} className="rounded-xl border border-slate-800 bg-slate-950/60 px-4 py-3">
-                    <p className="text-sm font-semibold text-slate-100">{entry.action.replace(/\./g, " ")}</p>
-                    <p className="text-xs text-slate-500">
+                  <div key={entry.id} className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-surface-muted)] px-4 py-3">
+                    <p className="text-sm font-semibold text-[var(--ll-text)]">{entry.action.replace(/\./g, " ")}</p>
+                    <p className="text-xs text-[var(--ll-text-faint)]">
                       {entry.createdAt.toLocaleString("en-LR", {
                         month: "short",
                         day: "numeric",

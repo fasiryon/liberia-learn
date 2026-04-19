@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { Card, StatCard } from "@/components/ui/Card";
 import { DashboardTopBar } from "@/components/DashboardTopBar";
+import { SkeletonCard } from "@/components/ui/Skeleton";
 
 type DashboardData = {
   schools: number;
@@ -210,572 +211,548 @@ export default function MoeDashboardPage() {
 
   return (
     <main className="ll-dashboard-shell">
-      <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8 space-y-6">
-        {/* Consistent top bar */}
+      <div className="mx-auto max-w-7xl px-4 py-5 sm:px-6 lg:px-8 space-y-5">
         <DashboardTopBar
           roleLabel="Ministry Official"
-          roleBadgeBg="bg-blue-800"
-          roleAccent="text-blue-200"
+          roleBadgeBg="bg-slate-500/10 border-slate-500/20"
+          roleAccent="text-[var(--ll-text-muted)]"
           subtitle="National Overview — LiberiaLearn"
         />
 
-        {/* Greeting */}
         <div>
-          <h1 className="text-2xl font-bold">Good morning. National overview.</h1>
-          <p className="mt-1 text-sm text-slate-400">
+          <h1 className="text-2xl font-semibold text-[var(--ll-text)]">Good morning. National overview.</h1>
+          <p className="mt-1 text-sm leading-6 text-[var(--ll-text-muted)]">
             Aggregated indicators across all districts. No student-level data.
           </p>
         </div>
 
         <div className="space-y-5">
-            {error && (
-              <div className="ll-notice ll-notice-warning">
-                <p className="font-medium text-amber-200">Unable to load dashboard data</p>
-                <p className="mt-1 text-amber-100/90">{error}</p>
+          {error && (
+            <div className="ll-notice ll-notice-warning">
+              <p className="font-medium">Unable to load dashboard data</p>
+              <p className="mt-1 text-sm">{error}</p>
+            </div>
+          )}
+
+          <section className="grid gap-3 grid-cols-2 sm:grid-cols-4">
+            {loading ? (
+              Array.from({ length: 4 }).map((_, idx) => <SkeletonCard key={idx} />)
+            ) : (
+              <>
+                <StatCard
+                  label="Schools Active"
+                  value={dashboard?.schools ?? 0}
+                  subtitle={`Across ${dashboard?.districts ?? 0} districts`}
+                  valueClassName="text-[var(--ll-text)]"
+                />
+                <StatCard
+                  label="Lessons Delivered"
+                  value={dashboard?.scheduledWork?.delivered ?? 0}
+                  subtitle="This month"
+                  valueClassName="text-[var(--ll-text)]"
+                />
+                <Card className="p-5">
+                  <p className="text-[11px] font-medium uppercase tracking-[0.1em] text-[var(--ll-text-faint)]">
+                    National Mastery Rate
+                  </p>
+                  <div className="mt-2 flex items-end gap-2">
+                    <p className="text-2xl font-semibold text-[var(--ll-warning)]">
+                      {formatPct(compliance?.national?.compliancePct)}
+                    </p>
+                    <span className="pb-1 text-xs font-medium uppercase tracking-[0.1em] text-[var(--ll-accent)]">
+                      Up
+                    </span>
+                  </div>
+                  <p className="mt-1 text-xs text-[var(--ll-text-faint)]">
+                    Delivery compliance proxy
+                  </p>
+                </Card>
+                <StatCard
+                  label="Active Interventions"
+                  value={dashboard?.interventionsLast30Days ?? 0}
+                  subtitle="Students at risk"
+                  valueClassName="text-[var(--ll-danger)]"
+                />
+              </>
+            )}
+          </section>
+
+          <section className="ll-section rounded-xl p-4">
+            <div className="flex flex-wrap items-start justify-between gap-3">
+              <div>
+                <p className="text-[11px] font-medium uppercase tracking-[0.1em] text-[var(--ll-text-faint)]">
+                  Districts
+                </p>
+                <h2 className="mt-2 text-base font-semibold text-[var(--ll-text)]">
+                  District Performance
+                </h2>
+                <p className="mt-1 text-sm leading-6 text-[var(--ll-text-muted)]">
+                  Delivery compliance by district
+                </p>
+              </div>
+              <Link
+                href="/moe/districts"
+                className="rounded-lg border border-[var(--ll-border)] bg-[var(--ll-surface-muted)] px-3 py-1.5 text-xs font-medium text-[var(--ll-text-muted)] transition-colors hover:border-[var(--ll-border-strong)] hover:text-[var(--ll-text)]"
+              >
+                View all districts
+              </Link>
+            </div>
+
+            {loading ? (
+              <div className="mt-4 space-y-2">
+                {Array.from({ length: 5 }).map((_, idx) => (
+                  <div key={idx} className="h-12 animate-pulse rounded-xl bg-[var(--ll-surface-muted)]" />
+                ))}
+              </div>
+            ) : districtRows.length === 0 ? (
+              <div className="ll-section mt-4 p-6 text-center">
+                <p className="text-sm leading-6 text-[var(--ll-text-muted)]">
+                  No activity data yet for this county.
+                </p>
+              </div>
+            ) : (
+              <div className="mt-5 overflow-hidden rounded-xl border border-[var(--ll-border)]">
+                <div className="overflow-x-auto">
+                  <table className="w-full text-sm">
+                    <thead className="bg-[var(--ll-surface-muted)]">
+                      <tr className="text-left text-[11px] font-medium uppercase tracking-[0.1em] text-[var(--ll-text-faint)]">
+                        <th className="px-4 py-3">District</th>
+                        <th className="px-4 py-3">Schools</th>
+                        <th className="px-4 py-3">Students</th>
+                        <th className="px-4 py-3">Lessons</th>
+                        <th className="px-4 py-3">Mastery Rate</th>
+                        <th className="px-4 py-3">Status</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-[var(--ll-border)] bg-[var(--ll-surface)]">
+                      {districtRows.map((d) => {
+                        const status =
+                          d.compliancePct == null
+                            ? "No data"
+                            : d.compliancePct >= 85
+                              ? "On Track"
+                              : d.compliancePct >= 60
+                                ? "Watch"
+                                : "At Risk";
+                        const statusClassName =
+                          status === "On Track"
+                            ? "border-[var(--ll-accent)]/20 bg-[var(--ll-accent-soft)] text-[var(--ll-accent)]"
+                            : status === "Watch"
+                              ? "border-[var(--ll-warning)]/20 bg-[rgba(250,204,21,0.10)] text-[var(--ll-warning)]"
+                              : status === "At Risk"
+                                ? "border-[var(--ll-danger)]/20 bg-[rgba(251,113,133,0.10)] text-[var(--ll-danger)]"
+                                : "border-[var(--ll-border)] bg-[var(--ll-surface-muted)] text-[var(--ll-text-muted)]";
+
+                        return (
+                          <tr key={d.districtId} className="text-[var(--ll-text-muted)]">
+                            <td className="px-4 py-3 font-medium">
+                              <Link
+                                href={`/moe/districts/${d.districtId}`}
+                                className="transition-colors hover:text-[var(--ll-accent)]"
+                              >
+                                {d.districtName}
+                              </Link>
+                            </td>
+                            <td className="px-4 py-3">{d.schoolCount}</td>
+                            <td className="px-4 py-3">{d.studentCount ?? 0}</td>
+                            <td className="px-4 py-3">
+                              {d.scheduledWorkDelivered}/{d.scheduledWorkTotal}
+                            </td>
+                            <td className="px-4 py-3">{formatPct(d.compliancePct)}</td>
+                            <td className="px-4 py-3">
+                              <span
+                                className={`inline-flex rounded-full border px-2.5 py-1 text-[11px] font-medium ${statusClassName}`}
+                              >
+                                {status}
+                              </span>
+                            </td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                </div>
               </div>
             )}
+          </section>
 
-            <section className="grid gap-4 grid-cols-2 xl:grid-cols-4">
-              {loading ? (
-                Array.from({ length: 4 }).map((_, idx) => (
-                  <Card key={idx} className="animate-pulse p-5">
-                    <div className="space-y-3">
-                      <div className="h-3 w-1/2 rounded bg-slate-800" />
-                      <div className="h-8 w-24 rounded bg-slate-800" />
-                      <div className="h-3 w-2/3 rounded bg-slate-800" />
-                    </div>
-                  </Card>
-                ))
-              ) : (
-                <>
-                  <StatCard
-                    label="Schools Active"
-                    value={dashboard?.schools ?? 0}
-                    subtitle={`Across ${dashboard?.districts ?? 0} districts`}
-                    valueClassName="text-emerald-300"
-                  />
-                  <StatCard
-                    label="Lessons Delivered"
-                    value={dashboard?.scheduledWork?.delivered ?? 0}
-                    subtitle="This month"
-                    valueClassName="text-cyan-300"
-                  />
-                  <Card className="p-5">
-                    <p className="text-[11px] font-medium uppercase tracking-wide text-slate-400">
-                      National Mastery Rate
-                    </p>
-                    <div className="mt-2 flex items-end gap-2">
-                      <p className="text-3xl font-semibold text-amber-300">
-                        {formatPct(compliance?.national?.compliancePct)}
-                      </p>
-                      <span className="pb-1 text-xs font-medium uppercase tracking-wide text-emerald-300">
-                        Up
-                      </span>
-                    </div>
-                    <p className="mt-1 text-[11px] text-slate-500">
-                      Delivery compliance proxy
-                    </p>
-                  </Card>
-                  <StatCard
-                    label="Active Interventions"
-                    value={dashboard?.interventionsLast30Days ?? 0}
-                    subtitle="Students at risk"
-                    valueClassName="text-rose-300"
-                  />
-                </>
-              )}
-            </section>
-
+          {districtsRequiringAttention.length > 0 && (
             <section className="ll-section rounded-xl p-4">
-              <div className="flex flex-wrap items-start justify-between gap-3">
-                <div>
-                  <p className="text-[11px] font-medium uppercase tracking-[0.22em] text-slate-500">
-                    Districts
-                  </p>
-                  <h2 className="mt-2 text-xl font-semibold text-slate-100">
-                    District Performance
-                  </h2>
-                  <p className="mt-1 text-sm text-slate-400">
-                    Delivery compliance by district
-                  </p>
-                </div>
-                <Link
-                  href="/moe/districts"
-                  className="rounded-full border border-slate-700 bg-slate-950/60 px-3 py-1.5 text-xs font-medium text-slate-300 transition-colors hover:border-slate-600 hover:bg-slate-900 hover:text-slate-100"
-                >
-                  View all districts
-                </Link>
+              <p className="text-[11px] font-medium uppercase tracking-[0.1em] text-[var(--ll-text-faint)]">
+                Requires attention
+              </p>
+              <h2 className="mt-2 text-base font-semibold text-[var(--ll-text)]">
+                Districts Requiring Attention
+              </h2>
+              <div className="mt-4 grid gap-3 md:grid-cols-2">
+                {districtsRequiringAttention.slice(0, 6).map((district) => (
+                  <Link
+                    key={district.districtId}
+                    href={`/moe/districts/${district.districtId}`}
+                    className="ll-command ll-focus justify-between text-sm"
+                  >
+                    <span className="font-semibold text-[var(--ll-text)]">{district.districtName}</span>
+                    <span className="text-[var(--ll-warning)]">{formatPct(district.compliancePct)}</span>
+                  </Link>
+                ))}
               </div>
+            </section>
+          )}
 
-              {loading ? (
-                <div className="mt-4 space-y-2">
-                  {Array.from({ length: 5 }).map((_, idx) => (
-                    <div key={idx} className="h-12 animate-pulse rounded-xl bg-slate-800/70" />
-                  ))}
+          <details className="ll-section rounded-xl p-4">
+            <summary className="cursor-pointer text-sm font-semibold text-[var(--ll-text)]">
+              Exports and audit
+            </summary>
+            <div className="mt-4 grid gap-3 sm:grid-cols-3">
+              <Link href="/moe/districts" className="ll-command ll-focus flex-col items-start">
+                <p className="text-sm font-semibold text-[var(--ll-text)]">County breakdown</p>
+                <p className="text-xs text-[var(--ll-text-muted)]">View all district performance</p>
+              </Link>
+              <button
+                onClick={handleExport}
+                disabled={exporting}
+                className="ll-command ll-focus flex-col items-start text-left disabled:opacity-60"
+              >
+                <p className="text-sm font-semibold text-[var(--ll-text)]">Generate report</p>
+                <p className="text-xs text-[var(--ll-text-muted)]">{exporting ? "Exporting..." : "Export compliance CSV"}</p>
+              </button>
+              <Link href="/moe/audit" className="ll-command ll-focus flex-col items-start">
+                <p className="text-sm font-semibold text-[var(--ll-text)]">View audit log</p>
+                <p className="text-xs text-[var(--ll-text-muted)]">National audit trail</p>
+              </Link>
+            </div>
+            {exportError && <p className="mt-3 text-xs text-[var(--ll-danger)]">{exportError}</p>}
+          </details>
+
+          <section className="ll-section rounded-xl p-4">
+            <div className="flex flex-wrap items-start justify-between gap-3">
+              <div>
+                <p className="text-[11px] font-medium uppercase tracking-[0.1em] text-[var(--ll-text-faint)]">
+                  Compliance
+                </p>
+                <h2 className="mt-2 text-base font-semibold text-[var(--ll-text)]">
+                  Compliance Summary
+                </h2>
+                <p className="mt-1 text-sm leading-6 text-[var(--ll-text-muted)]">
+                  National delivery compliance and reporting signals
+                </p>
+              </div>
+            </div>
+
+            {loading ? (
+              <div className="mt-4 grid gap-3 md:grid-cols-3">
+                {Array.from({ length: 3 }).map((_, idx) => <SkeletonCard key={idx} />)}
+              </div>
+            ) : (
+              <div className="mt-5 grid gap-3 md:grid-cols-3">
+                <Card className="p-5">
+                  <p className="text-[11px] font-medium uppercase tracking-[0.1em] text-[var(--ll-text-faint)]">
+                    Reporting Rate
+                  </p>
+                  <p className="mt-2 text-2xl font-semibold text-[var(--ll-accent)]">
+                    {formatPct(compliance?.national?.compliancePct)}
+                  </p>
+                  <div className="mt-4 h-2 rounded-full bg-[var(--ll-surface-muted)]">
+                    <div
+                      className="h-2 rounded-full bg-[var(--ll-accent)]"
+                      style={{
+                        width: `${Math.min(
+                          100,
+                          Math.max(0, compliance?.national?.compliancePct ?? 0)
+                        )}%`,
+                      }}
+                    />
+                  </div>
+                </Card>
+                <StatCard
+                  label="Late Submissions"
+                  value={
+                    (compliance?.national?.scheduledWorkTotal ?? 0) -
+                    (compliance?.national?.scheduledWorkDelivered ?? 0)
+                  }
+                  subtitle="Lessons not delivered"
+                  valueClassName="text-[var(--ll-warning)]"
+                />
+                <StatCard
+                  label="Fully Compliant Districts"
+                  value={fullyCompliantDistricts}
+                  subtitle="Districts at 100%"
+                  valueClassName="text-[var(--ll-text)]"
+                />
+              </div>
+            )}
+          </section>
+
+          {interventions && (
+            <section className="ll-section rounded-xl p-4">
+              <div>
+                <p className="text-[11px] font-medium uppercase tracking-[0.1em] text-[var(--ll-text-faint)]">
+                  Interventions
+                </p>
+                <h2 className="mt-2 text-base font-semibold text-[var(--ll-text)]">
+                  Interventions Snapshot
+                </h2>
+                <p className="mt-1 text-sm leading-6 text-[var(--ll-text-muted)]">
+                  National aggregates from the last 30 days
+                </p>
+              </div>
+              <div className="mt-5 grid gap-3 md:grid-cols-3">
+                <StatCard
+                  label="Total Active"
+                  value={interventions.national.totalInterventions ?? 0}
+                  valueClassName="text-[var(--ll-danger)]"
+                />
+                <StatCard
+                  label="Avg Outcome Delta"
+                  value={interventions.national.avgOutcomeDelta ?? "--"}
+                  valueClassName="text-[var(--ll-accent)]"
+                />
+                <StatCard
+                  label="Avg Effect Size"
+                  value={interventions.national.avgOutcomeEffectSize ?? "--"}
+                  valueClassName="text-[var(--ll-warning)]"
+                />
+              </div>
+            </section>
+          )}
+
+          <section className="ll-section rounded-xl p-4">
+            <div>
+              <p className="text-[11px] font-medium uppercase tracking-[0.1em] text-[var(--ll-text-faint)]">
+                National Outcomes
+              </p>
+              <h2 className="mt-2 text-base font-semibold text-[var(--ll-text)]">
+                Product Metrics Snapshot
+              </h2>
+              <p className="mt-1 text-sm leading-6 text-[var(--ll-text-muted)]">
+                National completion, assessment, guardian engagement, and district outcome ranking.
+              </p>
+            </div>
+
+            {loading ? (
+              <div className="mt-5 grid gap-3 md:grid-cols-4">
+                {Array.from({ length: 4 }).map((_, index) => <SkeletonCard key={index} />)}
+              </div>
+            ) : (
+              <>
+                <div className="mt-5 grid gap-3 md:grid-cols-4">
+                  <StatCard
+                    label="Lesson Completion"
+                    value={formatPct(dashboard?.productMetrics.nationalLessonCompletionRate)}
+                    valueClassName="text-[var(--ll-text)]"
+                  />
+                  <StatCard
+                    label="Exam Pass Rate"
+                    value={formatPct(dashboard?.productMetrics.nationalExamPassRate)}
+                    valueClassName="text-[var(--ll-text)]"
+                  />
+                  <StatCard
+                    label="Guardian Engagement"
+                    value={formatPct(dashboard?.productMetrics.nationalGuardianEngagementRate)}
+                    valueClassName="text-[var(--ll-text)]"
+                  />
+                  <StatCard
+                    label="Intervention Impact"
+                    value={formatPct(dashboard?.productMetrics.interventionImpactRate)}
+                    valueClassName="text-[var(--ll-danger)]"
+                  />
                 </div>
-              ) : districtRows.length === 0 ? (
-                <div className="mt-4 rounded-xl border border-dashed border-[var(--ll-border-strong)] bg-[var(--ll-surface-muted)] p-6 text-sm text-[var(--ll-text-muted)]">
-                  No data available yet. District compliance will appear once lessons are delivered.
+
+                <div className="mt-5 grid gap-4 lg:grid-cols-2">
+                  <Card className="p-5">
+                    <p className="text-[11px] font-medium uppercase tracking-[0.1em] text-[var(--ll-text-faint)]">
+                      Top Performing Districts
+                    </p>
+                    <div className="mt-4 space-y-3">
+                      {(dashboard?.productMetrics.topPerformingDistricts ?? []).map((district) => (
+                        <div
+                          key={district.districtId}
+                          className="flex items-center justify-between rounded-xl border border-[var(--ll-border)] bg-[var(--ll-surface-muted)] px-4 py-3"
+                        >
+                          <p className="font-medium text-[var(--ll-text)]">{district.districtName}</p>
+                          <p className="font-semibold text-[var(--ll-accent)]">{district.compositeScore.toFixed(1)}%</p>
+                        </div>
+                      ))}
+                    </div>
+                  </Card>
+                  <Card className="p-5">
+                    <p className="text-[11px] font-medium uppercase tracking-[0.1em] text-[var(--ll-text-faint)]">
+                      Lowest Performing Districts
+                    </p>
+                    <div className="mt-4 space-y-3">
+                      {(dashboard?.productMetrics.lowestPerformingDistricts ?? []).map((district) => (
+                        <div
+                          key={district.districtId}
+                          className="flex items-center justify-between rounded-xl border border-[var(--ll-border)] bg-[var(--ll-surface-muted)] px-4 py-3"
+                        >
+                          <p className="font-medium text-[var(--ll-text)]">{district.districtName}</p>
+                          <p className="font-semibold text-[var(--ll-danger)]">{district.compositeScore.toFixed(1)}%</p>
+                        </div>
+                      ))}
+                    </div>
+                  </Card>
                 </div>
-              ) : (
+              </>
+            )}
+          </section>
+
+          <section className="ll-section rounded-xl p-4">
+            <div>
+              <p className="text-[11px] font-medium uppercase tracking-[0.1em] text-[var(--ll-text-faint)]">
+                Exams
+              </p>
+              <h2 className="mt-2 text-base font-semibold text-[var(--ll-text)]">Exam System</h2>
+              <p className="mt-1 text-sm leading-6 text-[var(--ll-text-muted)]">
+                National exam publication, pass rate, certification, and integrity signals
+              </p>
+            </div>
+
+            {loading ? (
+              <div className="mt-5 grid gap-3 md:grid-cols-4">
+                {Array.from({ length: 4 }).map((_, index) => <SkeletonCard key={index} />)}
+              </div>
+            ) : (
+              <>
+                <div className="mt-5 grid gap-3 md:grid-cols-4">
+                  <StatCard
+                    label="Published Exams"
+                    value={dashboard?.examStats.totalExamsPublished ?? 0}
+                    valueClassName="text-[var(--ll-text)]"
+                  />
+                  <StatCard
+                    label="National Pass Rate"
+                    value={formatPct(dashboard?.examStats.nationalPassRate)}
+                    valueClassName="text-[var(--ll-text)]"
+                  />
+                  <StatCard
+                    label="Certifications Issued"
+                    value={dashboard?.examStats.certificationIssued ?? 0}
+                    valueClassName="text-[var(--ll-text)]"
+                  />
+                  <StatCard
+                    label="Flagged Attempts"
+                    value={dashboard?.examStats.flaggedAttempts ?? 0}
+                    valueClassName="text-[var(--ll-danger)]"
+                  />
+                </div>
+
                 <div className="mt-5 overflow-hidden rounded-xl border border-[var(--ll-border)]">
                   <div className="overflow-x-auto">
                     <table className="w-full text-sm">
-                      <thead className="bg-slate-950/80">
-                        <tr className="text-left text-[11px] font-medium uppercase tracking-[0.2em] text-slate-500">
-                          <th className="px-4 py-3">District</th>
-                          <th className="px-4 py-3">Schools</th>
-                          <th className="px-4 py-3">Students</th>
-                          <th className="px-4 py-3">Lessons</th>
-                          <th className="px-4 py-3">Mastery Rate</th>
-                          <th className="px-4 py-3">Status</th>
+                      <thead className="bg-[var(--ll-surface-muted)]">
+                        <tr className="text-left text-[11px] font-medium uppercase tracking-[0.1em] text-[var(--ll-text-faint)]">
+                          <th className="px-4 py-3">Subject</th>
+                          <th className="px-4 py-3">Attempts</th>
+                          <th className="px-4 py-3">Pass Rate</th>
                         </tr>
                       </thead>
-                      <tbody className="divide-y divide-slate-800 bg-slate-900/60">
-                        {districtRows.map((d) => {
-                          const status =
-                            d.compliancePct == null
-                              ? "No data"
-                              : d.compliancePct >= 85
-                                ? "On Track"
-                                : d.compliancePct >= 60
-                                  ? "Watch"
-                                  : "At Risk";
-                          const statusClassName =
-                            status === "On Track"
-                              ? "border-emerald-500/20 bg-emerald-500/10 text-emerald-200"
-                              : status === "Watch"
-                                ? "border-amber-500/20 bg-amber-500/10 text-amber-200"
-                                : status === "At Risk"
-                                  ? "border-rose-500/20 bg-rose-500/10 text-rose-200"
-                                  : "border-slate-700 bg-slate-800/70 text-slate-300";
-
-                          return (
-                            <tr key={d.districtId} className="text-slate-200">
-                              <td className="px-4 py-3 font-medium">
-                                <Link
-                                  href={`/moe/districts/${d.districtId}`}
-                                  className="transition-colors hover:text-emerald-200"
-                                >
-                                  {d.districtName}
-                                </Link>
-                              </td>
-                              <td className="px-4 py-3">{d.schoolCount}</td>
-                              <td className="px-4 py-3">{d.studentCount ?? 0}</td>
-                              <td className="px-4 py-3">
-                                {d.scheduledWorkDelivered}/{d.scheduledWorkTotal}
-                              </td>
-                              <td className="px-4 py-3">{formatPct(d.compliancePct)}</td>
-                              <td className="px-4 py-3">
-                                <span
-                                  className={`inline-flex rounded-full border px-2.5 py-1 text-[11px] font-medium ${statusClassName}`}
-                                >
-                                  {status}
-                                </span>
-                              </td>
-                            </tr>
-                          );
-                        })}
+                      <tbody className="divide-y divide-[var(--ll-border)] bg-[var(--ll-surface)]">
+                        {(dashboard?.examStats.subjectBreakdown ?? []).map((row) => (
+                          <tr key={row.subject} className="text-[var(--ll-text-muted)]">
+                            <td className="px-4 py-3 font-medium text-[var(--ll-text)]">{row.subject}</td>
+                            <td className="px-4 py-3">{row.attempts}</td>
+                            <td className="px-4 py-3">{formatPct(row.passRate)}</td>
+                          </tr>
+                        ))}
                       </tbody>
                     </table>
                   </div>
                 </div>
-              )}
-            </section>
-
-            {districtsRequiringAttention.length > 0 && (
-              <section className="ll-section rounded-xl p-4">
-                <p className="text-[11px] font-medium uppercase tracking-[0.22em] text-[var(--ll-text-faint)]">
-                  Requires attention
-                </p>
-                <h2 className="mt-2 text-xl font-semibold text-slate-100">
-                  Districts Requiring Attention
-                </h2>
-                <div className="mt-4 grid gap-3 md:grid-cols-2">
-                  {districtsRequiringAttention.slice(0, 6).map((district) => (
-                    <Link
-                      key={district.districtId}
-                      href={`/moe/districts/${district.districtId}`}
-                      className="ll-command ll-focus justify-between text-sm"
-                    >
-                      <span className="font-semibold text-[var(--ll-text)]">{district.districtName}</span>
-                      <span className="text-[var(--ll-warning)]">{formatPct(district.compliancePct)}</span>
-                    </Link>
-                  ))}
-                </div>
-              </section>
+              </>
             )}
+          </section>
 
-            <details className="ll-section rounded-xl p-4">
-              <summary className="cursor-pointer text-sm font-semibold text-[var(--ll-text)]">
-                Exports and audit
-              </summary>
-              <div className="mt-4 grid gap-3 sm:grid-cols-3">
-                <Link href="/moe/districts" className="ll-command ll-focus flex-col items-start">
-                  <p className="text-sm font-bold text-slate-100">County breakdown</p>
-                  <p className="text-xs text-[var(--ll-text-muted)]">View all district performance</p>
-                </Link>
-                <button
-                  onClick={handleExport}
-                  disabled={exporting}
-                  className="ll-command ll-focus flex-col items-start text-left disabled:opacity-60"
-                >
-                  <p className="text-sm font-bold text-slate-100">Generate report</p>
-                  <p className="text-xs text-[var(--ll-text-muted)]">{exporting ? "Exporting..." : "Export compliance CSV"}</p>
-                </button>
-                <Link href="/moe/audit" className="ll-command ll-focus flex-col items-start">
-                  <p className="text-sm font-bold text-slate-100">View audit log</p>
-                  <p className="text-xs text-[var(--ll-text-muted)]">National audit trail</p>
-                </Link>
+          <section className="ll-section rounded-xl p-4">
+            <div>
+              <p className="text-[11px] font-medium uppercase tracking-[0.1em] text-[var(--ll-text-faint)]">
+                Placement
+              </p>
+              <h2 className="mt-2 text-base font-semibold text-[var(--ll-text)]">
+                National Placement Analytics
+              </h2>
+              <p className="mt-1 text-sm leading-6 text-[var(--ll-text-muted)]">
+                AI placement calibration and teacher override patterns
+              </p>
+            </div>
+
+            {loading ? (
+              <div className="mt-5 grid gap-3 md:grid-cols-4">
+                {Array.from({ length: 4 }).map((_, index) => <SkeletonCard key={index} />)}
               </div>
-              {exportError && <p className="mt-3 text-xs text-[var(--ll-danger)]">{exportError}</p>}
-            </details>
-
-            <section className="ll-section rounded-xl p-4">
-              <div className="flex flex-wrap items-start justify-between gap-3">
-                <div>
-                  <p className="text-[11px] font-medium uppercase tracking-[0.22em] text-slate-500">
-                    Compliance
-                  </p>
-                  <h2 className="mt-2 text-xl font-semibold text-slate-100">
-                    Compliance Summary
-                  </h2>
-                  <p className="mt-1 text-sm text-slate-400">
-                    National delivery compliance and reporting signals
-                  </p>
-                </div>
-              </div>
-
-              {loading ? (
-                <div className="mt-4 grid gap-4 md:grid-cols-3">
-                  {Array.from({ length: 3 }).map((_, idx) => (
-                    <Card key={idx} className="animate-pulse bg-slate-900/80 p-5">
-                      <div className="h-20 rounded-xl bg-slate-800" />
-                    </Card>
-                  ))}
-                </div>
-              ) : (
-                <div className="mt-5 grid gap-4 md:grid-cols-3">
-                  <Card className="p-5">
-                    <p className="text-[11px] font-medium uppercase tracking-wide text-slate-400">
-                      Reporting Rate
-                    </p>
-                    <p className="mt-2 text-3xl font-semibold text-emerald-300">
-                      {formatPct(compliance?.national?.compliancePct)}
-                    </p>
-                    <div className="mt-4 h-2 rounded-full bg-slate-800">
-                      <div
-                        className="h-2 rounded-full bg-emerald-400"
-                        style={{
-                          width: `${Math.min(
-                            100,
-                            Math.max(0, compliance?.national?.compliancePct ?? 0)
-                          )}%`,
-                        }}
-                      />
-                    </div>
-                  </Card>
+            ) : (
+              <>
+                <div className="mt-5 grid gap-3 md:grid-cols-4">
                   <StatCard
-                    label="Late Submissions"
+                    label="Students Placed"
+                    value={placements?.totalStudentsPlaced ?? 0}
+                    subtitle="National total"
+                    valueClassName="text-[var(--ll-text)]"
+                  />
+                  <StatCard
+                    label="Average AI Confidence"
                     value={
-                      (compliance?.national?.scheduledWorkTotal ?? 0) -
-                      (compliance?.national?.scheduledWorkDelivered ?? 0)
+                      placements?.averageAiConfidence == null
+                        ? "--"
+                        : `${placements.averageAiConfidence}%`
                     }
-                    subtitle="Lessons not delivered"
-                    valueClassName="text-amber-300"
+                    valueClassName="text-[var(--ll-text)]"
                   />
                   <StatCard
-                    label="Fully Compliant Schools"
-                    value={fullyCompliantDistricts}
-                    subtitle="Districts at 100%"
-                    valueClassName="text-cyan-300"
+                    label="National Override Rate"
+                    value={`${placements?.nationalOverrideRate ?? 0}%`}
+                    valueClassName="text-[var(--ll-warning)]"
+                  />
+                  <StatCard
+                    label="Most Common Placement Band"
+                    value={placements?.mostCommonPlacementBand ?? "--"}
+                    valueClassName="text-[var(--ll-text)]"
                   />
                 </div>
-              )}
-            </section>
 
-            {interventions && (
-              <section className="ll-section rounded-xl p-4">
-                <div>
-                  <p className="text-[11px] font-medium uppercase tracking-[0.22em] text-slate-500">
-                    Interventions
-                  </p>
-                  <h2 className="mt-2 text-xl font-semibold text-slate-100">
-                    Interventions Snapshot
-                  </h2>
-                  <p className="mt-1 text-sm text-slate-400">
-                    National aggregates from the last 30 days
-                  </p>
+                <div className="mt-5 overflow-hidden rounded-xl border border-[var(--ll-border)]">
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-sm">
+                      <thead className="bg-[var(--ll-surface-muted)]">
+                        <tr className="text-left text-[11px] font-medium uppercase tracking-[0.1em] text-[var(--ll-text-faint)]">
+                          <th className="px-4 py-3">District</th>
+                          <th className="px-4 py-3">Students Placed</th>
+                          <th className="px-4 py-3">Override Rate</th>
+                          <th className="px-4 py-3">Avg AI Confidence</th>
+                          <th className="px-4 py-3">Top Override Reason</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-[var(--ll-border)] bg-[var(--ll-surface)]">
+                        {(placements?.byDistrict ?? []).map((district) => (
+                          <tr key={district.districtId} className="text-[var(--ll-text-muted)]">
+                            <td className="px-4 py-3">
+                              <div className="space-y-1">
+                                <p className="font-medium text-[var(--ll-text)]">{district.districtName}</p>
+                                {district.warning ? (
+                                  <p className="text-xs text-[var(--ll-warning)]">
+                                    {district.warning} - high teacher override rate
+                                  </p>
+                                ) : null}
+                              </div>
+                            </td>
+                            <td className="px-4 py-3">{district.studentsPlaced}</td>
+                            <td className="px-4 py-3">{district.overrideRate}%</td>
+                            <td className="px-4 py-3">
+                              {district.avgAiConfidence == null
+                                ? "--"
+                                : `${district.avgAiConfidence}%`}
+                            </td>
+                            <td className="px-4 py-3 text-[var(--ll-text-faint)]">
+                              {district.topOverrideReason ?? "--"}
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
                 </div>
-                <div className="mt-5 grid gap-4 md:grid-cols-3">
-                  <StatCard
-                    label="Total Active"
-                    value={interventions.national.totalInterventions ?? 0}
-                    valueClassName="text-rose-300"
-                  />
-                  <StatCard
-                    label="Avg Outcome Delta"
-                    value={interventions.national.avgOutcomeDelta ?? "--"}
-                    valueClassName="text-emerald-300"
-                  />
-                  <StatCard
-                    label="Avg Effect Size"
-                    value={interventions.national.avgOutcomeEffectSize ?? "--"}
-                    valueClassName="text-amber-300"
-                  />
-                </div>
-              </section>
+              </>
             )}
-
-            <section className="ll-section rounded-xl p-4">
-              <div>
-                <p className="text-[11px] font-medium uppercase tracking-[0.22em] text-slate-500">
-                  National Outcomes
-                </p>
-                <h2 className="mt-2 text-xl font-semibold text-slate-100">
-                  Product Metrics Snapshot
-                </h2>
-                <p className="mt-1 text-sm text-slate-400">
-                  National completion, assessment, guardian engagement, and district outcome ranking.
-                </p>
-              </div>
-
-              {loading ? (
-                <div className="mt-5 grid gap-4 md:grid-cols-4">
-                  {Array.from({ length: 4 }).map((_, index) => (
-                    <Card key={index} className="animate-pulse bg-slate-900/80 p-5">
-                      <div className="h-20 rounded-xl bg-slate-800" />
-                    </Card>
-                  ))}
-                </div>
-              ) : (
-                <>
-                  <div className="mt-5 grid gap-4 md:grid-cols-4">
-                    <StatCard
-                      label="Lesson Completion"
-                      value={formatPct(dashboard?.productMetrics.nationalLessonCompletionRate)}
-                      valueClassName="text-emerald-300"
-                    />
-                    <StatCard
-                      label="Exam Pass Rate"
-                      value={formatPct(dashboard?.productMetrics.nationalExamPassRate)}
-                      valueClassName="text-cyan-300"
-                    />
-                    <StatCard
-                      label="Guardian Engagement"
-                      value={formatPct(dashboard?.productMetrics.nationalGuardianEngagementRate)}
-                      valueClassName="text-amber-300"
-                    />
-                    <StatCard
-                      label="Intervention Impact"
-                      value={formatPct(dashboard?.productMetrics.interventionImpactRate)}
-                      valueClassName="text-rose-300"
-                    />
-                  </div>
-
-                  <div className="mt-5 grid gap-4 lg:grid-cols-2">
-                    <Card className="p-5">
-                      <p className="text-[11px] font-medium uppercase tracking-wide text-slate-500">
-                        Top Performing Districts
-                      </p>
-                      <div className="mt-4 space-y-3">
-                        {(dashboard?.productMetrics.topPerformingDistricts ?? []).map((district) => (
-                          <div
-                            key={district.districtId}
-                            className="flex items-center justify-between rounded-xl border border-white/10 bg-slate-950/60 px-4 py-3"
-                          >
-                            <p className="font-medium text-slate-100">{district.districtName}</p>
-                            <p className="font-semibold text-emerald-300">{district.compositeScore.toFixed(1)}%</p>
-                          </div>
-                        ))}
-                      </div>
-                    </Card>
-                    <Card className="p-5">
-                      <p className="text-[11px] font-medium uppercase tracking-wide text-slate-500">
-                        Lowest Performing Districts
-                      </p>
-                      <div className="mt-4 space-y-3">
-                        {(dashboard?.productMetrics.lowestPerformingDistricts ?? []).map((district) => (
-                          <div
-                            key={district.districtId}
-                            className="flex items-center justify-between rounded-xl border border-white/10 bg-slate-950/60 px-4 py-3"
-                          >
-                            <p className="font-medium text-slate-100">{district.districtName}</p>
-                            <p className="font-semibold text-rose-300">{district.compositeScore.toFixed(1)}%</p>
-                          </div>
-                        ))}
-                      </div>
-                    </Card>
-                  </div>
-                </>
-              )}
-            </section>
-
-            <section className="ll-section rounded-xl p-4">
-              <div>
-                <p className="text-[11px] font-medium uppercase tracking-[0.22em] text-slate-500">
-                  Exams
-                </p>
-                <h2 className="mt-2 text-xl font-semibold text-slate-100">Exam System</h2>
-                <p className="mt-1 text-sm text-slate-400">
-                  National exam publication, pass rate, certification, and integrity signals
-                </p>
-              </div>
-
-              {loading ? (
-                <div className="mt-5 grid gap-4 md:grid-cols-4">
-                  {Array.from({ length: 4 }).map((_, index) => (
-                    <Card key={index} className="animate-pulse bg-slate-900/80 p-5">
-                      <div className="h-20 rounded-xl bg-slate-800" />
-                    </Card>
-                  ))}
-                </div>
-              ) : (
-                <>
-                  <div className="mt-5 grid gap-4 md:grid-cols-4">
-                    <StatCard
-                      label="Published Exams"
-                      value={dashboard?.examStats.totalExamsPublished ?? 0}
-                      valueClassName="text-emerald-300"
-                    />
-                    <StatCard
-                      label="National Pass Rate"
-                      value={formatPct(dashboard?.examStats.nationalPassRate)}
-                      valueClassName="text-cyan-300"
-                    />
-                    <StatCard
-                      label="Certifications Issued"
-                      value={dashboard?.examStats.certificationIssued ?? 0}
-                      valueClassName="text-amber-300"
-                    />
-                    <StatCard
-                      label="Flagged Attempts"
-                      value={dashboard?.examStats.flaggedAttempts ?? 0}
-                      valueClassName="text-rose-300"
-                    />
-                  </div>
-
-                  <div className="mt-5 overflow-hidden rounded-xl border border-[var(--ll-border)]">
-                    <div className="overflow-x-auto">
-                      <table className="w-full text-sm">
-                        <thead className="bg-slate-950/80">
-                          <tr className="text-left text-[11px] font-medium uppercase tracking-[0.2em] text-slate-500">
-                            <th className="px-4 py-3">Subject</th>
-                            <th className="px-4 py-3">Attempts</th>
-                            <th className="px-4 py-3">Pass Rate</th>
-                          </tr>
-                        </thead>
-                        <tbody className="divide-y divide-slate-800 bg-slate-900/60">
-                          {(dashboard?.examStats.subjectBreakdown ?? []).map((row) => (
-                            <tr key={row.subject} className="text-slate-200">
-                              <td className="px-4 py-3 font-medium">{row.subject}</td>
-                              <td className="px-4 py-3">{row.attempts}</td>
-                              <td className="px-4 py-3">{formatPct(row.passRate)}</td>
-                            </tr>
-                          ))}
-                        </tbody>
-                      </table>
-                    </div>
-                  </div>
-                </>
-              )}
-            </section>
-
-            <section className="ll-section rounded-xl p-4">
-              <div>
-                <p className="text-[11px] font-medium uppercase tracking-[0.22em] text-slate-500">
-                  Placement
-                </p>
-                <h2 className="mt-2 text-xl font-semibold text-slate-100">
-                  National Placement Analytics
-                </h2>
-                <p className="mt-1 text-sm text-slate-400">
-                  AI placement calibration and teacher override patterns
-                </p>
-              </div>
-
-              {loading ? (
-                <div className="mt-5 grid gap-4 md:grid-cols-4">
-                  {Array.from({ length: 4 }).map((_, index) => (
-                    <Card key={index} className="animate-pulse bg-slate-900/80 p-5">
-                      <div className="h-20 rounded-xl bg-slate-800" />
-                    </Card>
-                  ))}
-                </div>
-              ) : (
-                <>
-                  <div className="mt-5 grid gap-4 md:grid-cols-4">
-                    <StatCard
-                      label="Students Placed"
-                      value={placements?.totalStudentsPlaced ?? 0}
-                      subtitle="National total"
-                      valueClassName="text-emerald-300"
-                    />
-                    <StatCard
-                      label="Average AI Confidence"
-                      value={
-                        placements?.averageAiConfidence == null
-                          ? "--"
-                          : `${placements.averageAiConfidence}%`
-                      }
-                      valueClassName="text-cyan-300"
-                    />
-                    <StatCard
-                      label="National Override Rate"
-                      value={`${placements?.nationalOverrideRate ?? 0}%`}
-                      valueClassName="text-amber-300"
-                    />
-                    <StatCard
-                      label="Most Common Placement Band"
-                      value={placements?.mostCommonPlacementBand ?? "--"}
-                      valueClassName="text-rose-300"
-                    />
-                  </div>
-
-                  <div className="mt-5 overflow-hidden rounded-xl border border-[var(--ll-border)]">
-                    <div className="overflow-x-auto">
-                      <table className="w-full text-sm">
-                        <thead className="bg-slate-950/80">
-                          <tr className="text-left text-[11px] font-medium uppercase tracking-[0.2em] text-slate-500">
-                            <th className="px-4 py-3">District</th>
-                            <th className="px-4 py-3">Students Placed</th>
-                            <th className="px-4 py-3">Override Rate</th>
-                            <th className="px-4 py-3">Avg AI Confidence</th>
-                            <th className="px-4 py-3">Top Override Reason</th>
-                          </tr>
-                        </thead>
-                        <tbody className="divide-y divide-slate-800 bg-slate-900/60">
-                          {(placements?.byDistrict ?? []).map((district) => (
-                            <tr key={district.districtId} className="text-slate-200">
-                              <td className="px-4 py-3">
-                                <div className="space-y-1">
-                                  <p className="font-medium">{district.districtName}</p>
-                                  {district.warning ? (
-                                    <p className="text-xs text-amber-300">
-                                      {district.warning} - high teacher override rate
-                                    </p>
-                                  ) : null}
-                                </div>
-                              </td>
-                              <td className="px-4 py-3">{district.studentsPlaced}</td>
-                              <td className="px-4 py-3">{district.overrideRate}%</td>
-                              <td className="px-4 py-3">
-                                {district.avgAiConfidence == null
-                                  ? "--"
-                                  : `${district.avgAiConfidence}%`}
-                              </td>
-                              <td className="px-4 py-3 text-slate-400">
-                                {district.topOverrideReason ?? "--"}
-                              </td>
-                            </tr>
-                          ))}
-                        </tbody>
-                      </table>
-                    </div>
-                  </div>
-                </>
-              )}
-            </section>
+          </section>
         </div>
       </div>
     </main>

@@ -21,14 +21,14 @@ export function DashboardTopBar({
     <header className="flex w-full items-center justify-between gap-4 border-b border-[var(--ll-border)] bg-transparent px-4 py-3 shadow-none">
       <div className="flex items-center gap-3">
         <span
-          className={`inline-flex items-center rounded-lg px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.12em] text-slate-950 ${roleBadgeBg}`}
+          className={`inline-flex items-center rounded-lg border px-2.5 py-1 text-[11px] font-medium uppercase tracking-[0.1em] text-[var(--ll-text-muted)] ${roleBadgeBg}`}
         >
           {roleLabel}
         </span>
         {userName && (
           <div className="hidden sm:block">
             <p className={`text-sm font-semibold ${roleAccent}`}>{userName}</p>
-            {subtitle && <p className="text-xs text-slate-500">{subtitle}</p>}
+            {subtitle && <p className="text-xs text-[var(--ll-text-faint)]">{subtitle}</p>}
           </div>
         )}
       </div>

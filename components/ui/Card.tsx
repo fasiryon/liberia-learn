@@ -1,4 +1,3 @@
-// components/ui/Card.tsx
 import type { ReactNode } from "react";
 
 interface CardProps {
@@ -20,7 +19,7 @@ export function StatCard({
   label,
   value,
   subtitle,
-  valueClassName = "text-emerald-300",
+  valueClassName = "text-[var(--ll-text)]",
 }: {
   label: string;
   value: string | number;
@@ -29,14 +28,14 @@ export function StatCard({
 }) {
   return (
     <Card>
-      <p className="text-[11px] font-medium uppercase tracking-wide text-slate-400">
+      <p className="text-[11px] font-medium uppercase tracking-[0.1em] text-[var(--ll-text-faint)]">
         {label}
       </p>
-      <p className={`mt-2 text-3xl font-semibold ${valueClassName}`}>
+      <p className={`mt-2 text-2xl font-semibold ${valueClassName}`}>
         {value}
       </p>
       {subtitle && (
-        <p className="mt-1 text-[11px] text-slate-500">{subtitle}</p>
+        <p className="mt-1 text-xs text-[var(--ll-text-faint)]">{subtitle}</p>
       )}
     </Card>
   );
