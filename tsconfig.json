@@ -74,7 +74,10 @@
                     "app/api/governance",
                     "app/api/governance/**",
                     "app/api/grading",
-                    "app/api/grading/**"
+                    "app/api/grading/**",
+                    "e2e",
+                    "e2e/**",
+                    "playwright.config.ts"
                 ]
 }
 
