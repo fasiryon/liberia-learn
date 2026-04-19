@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { requireRole } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { isTextbookCompilerEnabled } from "@/lib/serverFlags";
-import { getStudentTextbook } from "@/lib/ai/textbook/studentTextbook";
+import { getStudentTextbook, getStudentTextbookSubjects } from "@/lib/ai/textbook/studentTextbook";
 import { handleApiError } from "@/lib/errors/apiErrorHandler";
 import {
   checkRateLimit,
@@ -31,7 +31,12 @@ export async function GET(_req: NextRequest, { params }: { params: { subject: st
       return rateLimitExceededResponse(limit);
     }
 
-    const subject = decodeURIComponent(params.subject).trim().toUpperCase();
+    let subject: string;
+    try {
+      subject = decodeURIComponent(params.subject).trim().toUpperCase();
+    } catch {
+      return NextResponse.json({ error: "Invalid subject" }, { status: 400 });
+    }
     if (!SUBJECT_REGEX.test(subject)) {
       return NextResponse.json({ error: "Invalid subject" }, { status: 400 });
     }
@@ -42,6 +47,14 @@ export async function GET(_req: NextRequest, { params }: { params: { subject: st
     });
     if (!student?.currentGrade) {
       return NextResponse.json({ error: "Student grade is not set" }, { status: 400 });
+    }
+
+    const allowedSubjects = await getStudentTextbookSubjects({
+      gradeLevel: student.currentGrade,
+      schoolId: user.schoolId ?? null,
+    });
+    if (!allowedSubjects.includes(subject)) {
+      return NextResponse.json({ error: "Subject not available" }, { status: 404 });
     }
 
     const textbook = await getStudentTextbook({

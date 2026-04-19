@@ -27,7 +27,12 @@ export default async function StudentTextbookReaderPage({
   });
   if (!student?.currentGrade) notFound();
 
-  const subject = decodeURIComponent(params.subject);
+  let subject: string;
+  try {
+    subject = decodeURIComponent(params.subject);
+  } catch {
+    notFound();
+  }
   const textbook = await getStudentTextbook({
     subject,
     gradeLevel: student.currentGrade,
