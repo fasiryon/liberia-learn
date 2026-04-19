@@ -248,17 +248,23 @@ export async function createSchoolEnrollmentRequest(input: EnrollSchoolInput) {
   );
 
   if (result.school.contactEmail) {
+    const statusUrl = `${process.env.NEXTAUTH_URL ?? "https://liberia-learn.vercel.app"}/enroll/status?email=${encodeURIComponent(
+      result.school.contactEmail
+    )}`;
     await sendSchoolEnrollmentReceived({
       to: result.school.contactEmail,
       principalName: result.school.contactName ?? input.principalFullName,
       schoolName: result.school.name,
       loginId,
       temporaryPassword,
+      statusUrl,
     }).catch(() => null);
   }
 
   return {
     schoolId: result.school.id,
+    schoolName: result.school.name,
+    principalEmail: result.school.contactEmail,
     loginId,
     temporaryPassword,
   };

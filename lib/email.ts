@@ -169,12 +169,14 @@ export async function sendSchoolEnrollmentReceived({
   schoolName,
   loginId,
   temporaryPassword,
+  statusUrl,
 }: {
   to: string;
   principalName?: string;
   schoolName: string;
   loginId: string;
   temporaryPassword: string;
+  statusUrl?: string;
 }): Promise<EmailSendResult> {
   const subject = `School enrollment received - ${schoolName}`;
   const text = textBlock([
@@ -182,6 +184,7 @@ export async function sendSchoolEnrollmentReceived({
     `Your school enrollment request for ${schoolName} has been received and is pending platform approval.`,
     `Login ID: ${loginId}`,
     `Temporary password: ${temporaryPassword}`,
+    statusUrl ? `Application status: ${statusUrl}` : undefined,
     "You will receive another email when the school is approved.",
   ]);
   const html = brandedLayout({
@@ -192,6 +195,7 @@ export async function sendSchoolEnrollmentReceived({
       paragraph(`Your school enrollment request for <strong>${escapeHtml(schoolName)}</strong> has been received and is pending platform approval.`) +
       paragraph(`Login ID: <strong>${escapeHtml(loginId)}</strong>`) +
       paragraph(`Temporary password: <strong>${escapeHtml(temporaryPassword)}</strong>`) +
+      (statusUrl ? `<p style="margin:24px 0;text-align:center">${button("Check Application Status", statusUrl)}</p>` : "") +
       paragraph("You will receive another email when the school is approved."),
   });
   return sendEmail({ to, subject, html, text, type: "school_enrollment_received", recipientRole: "principal" });

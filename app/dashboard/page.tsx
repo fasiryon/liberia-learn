@@ -146,6 +146,37 @@ export default async function DashboardPage() {
   const placementGradeLabel = student.currentGrade
     ? `Grade ${student.currentGrade}`
     : "Not set";
+  const completedLessonCount = await prisma.studentProgress.count({
+    where: {
+      studentId: userId,
+      completedAt: { not: null },
+    },
+  });
+  const isNewStudentAccount =
+    student.user?.createdAt &&
+    new Date(student.user.createdAt).getTime() >= Date.now() - 7 * 24 * 60 * 60 * 1000;
+
+  if (completedLessonCount === 0 && isNewStudentAccount && !student.user?.welcomeCompletedAt) {
+    redirect("/student/welcome");
+  }
+
+  const firstRecommendedLesson =
+    completedLessonCount === 0 && student.currentGrade
+      ? await prisma.curriculumContent.findFirst({
+          where: {
+            grade: student.currentGrade,
+            status: "APPROVED",
+            contentType: { in: ["LESSON", "lesson"] },
+          },
+          orderBy: [{ subject: "asc" }, { createdAt: "asc" }],
+          select: {
+            contentId: true,
+            title: true,
+            subject: true,
+            payload: true,
+          },
+        })
+      : null;
 
   // Fetch AI chat message count for this student
   const chatMessagesCount = await prisma.chatMessage.count({
@@ -295,6 +326,33 @@ export default async function DashboardPage() {
                   <p className="text-xs text-slate-400">View earned certificates</p>
                 </Link>
               </div>
+
+              {completedLessonCount === 0 && firstRecommendedLesson ? (
+                <div className="rounded-3xl border border-cyan-400/30 bg-cyan-500/10 p-4">
+                  <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+                    <div>
+                      <p className="text-xs font-semibold uppercase tracking-[0.2em] text-cyan-200">
+                        Start here
+                      </p>
+                      <h2 className="mt-2 text-xl font-semibold text-white">
+                        Your first lesson:{" "}
+                        {firstRecommendedLesson.title ??
+                          (firstRecommendedLesson.payload as any)?.title ??
+                          firstRecommendedLesson.contentId}
+                      </h2>
+                      <p className="mt-2 text-sm text-slate-100">
+                        Grade {student.currentGrade} {firstRecommendedLesson.subject.replace(/_/g, " ")}
+                      </p>
+                    </div>
+                    <Link
+                      href={`/student/lesson/${firstRecommendedLesson.contentId}`}
+                      className="ll-touch-target inline-flex items-center justify-center rounded-2xl bg-cyan-300 px-5 py-3 text-sm font-semibold text-slate-950"
+                    >
+                      Open first lesson
+                    </Link>
+                  </div>
+                </div>
+              ) : null}
 
               <div className="rounded-3xl border border-emerald-400/20 bg-emerald-500/10 p-4">
                 <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">

@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useMemo, useState } from "react";
 
@@ -69,7 +69,7 @@ export default function DictionaryTool({ onClose }: DictionaryToolProps) {
         {results.map((entry) => (
           <article key={`${entry.word}-${entry.definition}`} className="rounded bg-slate-900 p-3">
             <p className="font-semibold">{entry.word}</p>
-            <p className="text-xs text-slate-400">{entry.partOfSpeech} � {entry.grade}</p>
+            <p className="text-xs text-slate-400">{entry.partOfSpeech} · {entry.grade}</p>
             <p className="mt-1">{entry.definition}</p>
             <p className="mt-1 text-xs text-slate-300">Example: {entry.example}</p>
           </article>
@@ -78,4 +78,5 @@ export default function DictionaryTool({ onClose }: DictionaryToolProps) {
     </div>
   );
 }
+
 

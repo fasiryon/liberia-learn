@@ -49,7 +49,7 @@ export async function POST(req: Request) {
 
     const tokenHash = hashToken(token);
     const record = await prisma.passwordResetToken.findFirst({
-      where: { OR: [{ tokenHash }, { token }] },
+      where: { tokenHash },
       include: { User: true },
     });
 
@@ -121,7 +121,7 @@ export async function POST(req: Request) {
       { headers: getRateLimitHeaders(ipLimit) }
     );
   } catch (err: any) {
-    console.error("[reset-password]", err);
+    console.error("[reset-password]", { message: err?.message, code: err?.code });
     return NextResponse.json({ error: "Internal error" }, { status: 500 });
   }
 }

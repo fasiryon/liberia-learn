@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 
 const SCHOOL_TYPES = ["Public", "Private", "Mission", "Community"] as const;
@@ -23,6 +24,7 @@ const LIBERIAN_COUNTIES = [
 ] as const;
 
 export default function SchoolEnrollmentPage() {
+  const router = useRouter();
   const [form, setForm] = useState({
     schoolName: "",
     county: "Montserrado",
@@ -51,7 +53,7 @@ export default function SchoolEnrollmentPage() {
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Enrollment failed");
-      setStatus(`Request submitted. Login ID: ${data.loginId}. Temporary password: ${data.temporaryPassword}`);
+      router.push(`/enroll/status?email=${encodeURIComponent(form.email.trim().toLowerCase())}`);
     } catch (error: any) {
       setStatus(error.message || "Enrollment failed");
     } finally {

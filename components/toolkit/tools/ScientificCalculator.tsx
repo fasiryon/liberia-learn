@@ -1,4 +1,4 @@
-"use client";
+ï»¿"use client";
 
 import { useState } from "react";
 
@@ -106,8 +106,8 @@ export default function ScientificCalculator({ onClose }: ScientificCalculatorPr
         <button type="button" aria-label="Natural log" className="rounded bg-slate-800 p-2" onClick={() => unary("ln")}>ln</button>
         <button type="button" aria-label="Percent" className="rounded bg-slate-800 p-2" onClick={() => push("/100")}>%</button>
 
-        <button type="button" aria-label="Square" className="rounded bg-slate-800 p-2" onClick={() => unary("square")}>x²</button>
-        <button type="button" aria-label="Cube" className="rounded bg-slate-800 p-2" onClick={() => unary("cube")}>x³</button>
+        <button type="button" aria-label="Square" className="rounded bg-slate-800 p-2" onClick={() => unary("square")}>xÂ²</button>
+        <button type="button" aria-label="Cube" className="rounded bg-slate-800 p-2" onClick={() => unary("cube")}>xÂ³</button>
         <button type="button" aria-label="M plus" className="rounded bg-slate-800 p-2" onClick={() => setMemory((m) => m + Number(expression || 0))}>M+</button>
         <button type="button" aria-label="M minus" className="rounded bg-slate-800 p-2" onClick={() => setMemory((m) => m - Number(expression || 0))}>M-</button>
         <button type="button" aria-label="Memory recall" className="rounded bg-slate-800 p-2" onClick={() => setExpression(String(memory))}>MR</button>
@@ -128,3 +128,4 @@ export default function ScientificCalculator({ onClose }: ScientificCalculatorPr
     </div>
   );
 }
+
