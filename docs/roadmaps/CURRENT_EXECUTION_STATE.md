@@ -202,7 +202,7 @@ feat/phase-4-5-full-completion
 - Recreate fixture: run `npm run seed:cha`, which upserts the CHA school, teacher, student, enrollment, curriculum content, and scheduled work.
 
 ## Worktree status
-Phase 4.5 committed locally; push to main and CI confirmation in progress.
+Phase 4.5 committed, pushed to main, deployed, and verified. GitHub Actions are green on main.
 
 ## Overall status
 Sprints 1-16 + 16B + 16C + 16D + 16E + 16F + Dashboard UX complete. All role portals now share a consistent design system: DashboardTopBar, KPI cards, primary actions above fold, and role accent colours.
