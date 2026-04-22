@@ -86,7 +86,7 @@ export default function StudentPassportPage() {
       <main className="flex min-h-screen items-center justify-center bg-[var(--ll-bg)] px-4">
         <div className="text-center space-y-3">
           <p className="text-sm text-red-400">{error ?? "No passport data found."}</p>
-          <Link href="/student/dashboard" className="text-sm text-[var(--ll-yellow)] hover:text-[var(--ll-yellow)]">
+          <Link href="/dashboard" className="text-sm text-[var(--ll-yellow)] hover:text-[var(--ll-yellow)]">
             Back to Dashboard
           </Link>
         </div>
@@ -99,7 +99,7 @@ export default function StudentPassportPage() {
       <div className="mx-auto max-w-3xl space-y-6">
         {/* Header */}
         <div className="space-y-1">
-          <Link href="/student/dashboard" className="inline-block text-sm text-[var(--ll-yellow)] hover:text-[var(--ll-yellow)]">
+          <Link href="/dashboard" className="inline-block text-sm text-[var(--ll-yellow)] hover:text-[var(--ll-yellow)]">
             &larr; Back to Dashboard
           </Link>
           <h1 className="text-2xl font-bold text-[var(--ll-text)]">My Learning Passport</h1>

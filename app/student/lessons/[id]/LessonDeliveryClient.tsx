@@ -9,6 +9,7 @@ import LessonLabPanel from "@/components/labs/LessonLabPanel";
 import { PencilButton, PencilButtonFloat } from "@/components/ui/PencilButton";
 import { gradeToTutorBand } from "@/lib/ai/studentLessonSupport";
 import { lessonDurationLabel, renderSimpleMarkdown, selectLessonBody } from "@/lib/lessons";
+import { getLessonLabLinks } from "@/lib/lessons/labLinks";
 import { parseToSlides } from "@/lib/lessons/parseToSlides";
 import { enqueueOfflineRequest } from "@/lib/offline-queue";
 import type { LabId } from "@/lib/labs/types";
@@ -451,45 +452,7 @@ export default function LessonDeliveryClient({ lessonId }: { lessonId: string })
   const currentSectionIndex = sectionOrder.indexOf(currentSection);
   const availableLabs = useMemo(() => {
     if (!lesson) return [] as Array<{ labId: LabId; label: string }>;
-    const subject = lesson.subject.toLowerCase();
-    const labs: Array<{ labId: LabId; label: string }> = [];
-    if (lesson.grade >= 7 && lesson.grade <= 9 && subject.includes("physics")) {
-      labs.push(
-        { labId: "gravity-explorer", label: "Open Gravity Lab" },
-        { labId: "pendulum-lab", label: "Open Pendulum Lab" }
-      );
-    }
-    if (lesson.grade >= 9 && lesson.grade <= 11 && subject.includes("physics")) {
-      labs.push({ labId: "electric-circuit", label: "Open Circuit Lab" });
-    }
-    if (lesson.grade >= 10 && lesson.grade <= 12 && subject.includes("physics")) {
-      labs.push({ labId: "wave-motion", label: "Open Wave Lab" });
-    }
-    if (lesson.grade >= 9 && lesson.grade <= 11 && subject.includes("chemistry")) {
-      labs.push({ labId: "molecule-motion", label: "Open Molecule Lab" });
-    }
-    if (lesson.grade >= 10 && lesson.grade <= 12 && subject.includes("chemistry")) {
-      labs.push({ labId: "chemical-reaction", label: "Open Reaction Lab" });
-    }
-    if (lesson.grade >= 9 && lesson.grade <= 12 && subject.includes("chemistry")) {
-      labs.push({ labId: "periodic-table", label: "Open Periodic Table Lab" });
-    }
-    if (lesson.grade >= 8 && lesson.grade <= 10 && subject.includes("biology")) {
-      labs.push({ labId: "human-heart", label: "Open Heart Lab" });
-    }
-    if (lesson.grade >= 9 && lesson.grade <= 11 && subject.includes("biology")) {
-      labs.push({ labId: "cell-division", label: "Open Cell Division Lab" });
-    }
-    if (lesson.grade >= 7 && lesson.grade <= 9 && subject.includes("biology")) {
-      labs.push({ labId: "ecosystem-balance", label: "Open Ecosystem Lab" });
-    }
-    if (lesson.grade >= 7 && lesson.grade <= 9 && subject.includes("earth science")) {
-      labs.push({ labId: "weather-system", label: "Open Weather Lab" });
-    }
-    if (lesson.grade >= 8 && lesson.grade <= 10 && subject.includes("earth science")) {
-      labs.push({ labId: "tectonic-plates", label: "Open Tectonic Plates Lab" });
-    }
-    return labs;
+    return getLessonLabLinks({ subject: lesson.subject, grade: lesson.grade });
   }, [lesson]);
 
   const registerSection = useCallback(
@@ -1106,7 +1069,9 @@ export default function LessonDeliveryClient({ lessonId }: { lessonId: string })
           {submitMessage ? <p className="mt-3 text-sm text-[var(--ll-text)]">{submitMessage}</p> : null}
         </section>
 
-        <LessonQuizPanel lessonId={lesson.id} lessonStatus={lesson.status} />
+        <div id="lesson-quiz">
+          <LessonQuizPanel lessonId={lesson.id} lessonStatus={lesson.status} />
+        </div>
 
         <div className="sticky bottom-3 z-10">
           <div className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/95 p-3 shadow-none shadow-black/40 backdrop-blur">

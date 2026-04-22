@@ -87,13 +87,23 @@ export default function MoeExportsClient({ districts, schools }: MoeExportsClien
                   </option>
                 ))}
               </select>
-              <a
-                href={selectedDistrict ? `/api/moe/export/district/${encodeURIComponent(selectedDistrict)}` : "#"}
-                onClick={() => selectedDistrict && markExport("district")}
-                className="inline-flex min-h-11 items-center rounded-xl bg-[var(--ll-silver-soft)] px-5 py-2 text-sm font-semibold text-[var(--ll-text-faint)]"
-              >
-                Download District CSV
-              </a>
+              {selectedDistrict ? (
+                <a
+                  href={`/api/moe/export/district/${encodeURIComponent(selectedDistrict)}`}
+                  onClick={() => markExport("district")}
+                  className="inline-flex min-h-11 items-center rounded-xl bg-[var(--ll-silver-soft)] px-5 py-2 text-sm font-semibold text-[var(--ll-text-faint)]"
+                >
+                  Download District CSV
+                </a>
+              ) : (
+                <button
+                  type="button"
+                  disabled
+                  className="inline-flex min-h-11 cursor-not-allowed items-center rounded-xl bg-[var(--ll-surface-muted)] px-5 py-2 text-sm font-semibold text-[var(--ll-text-faint)]"
+                >
+                  Download District CSV
+                </button>
+              )}
             </div>
             <p className="mt-3 text-xs text-[var(--ll-text-muted)]">
               Last export: {lastExported.district ?? "Not yet exported"}
@@ -120,13 +130,23 @@ export default function MoeExportsClient({ districts, schools }: MoeExportsClien
                   </option>
                 ))}
               </select>
-              <a
-                href={selectedSchool ? `/api/moe/export/school/${selectedSchool}` : "#"}
-                onClick={() => selectedSchool && markExport("school")}
-                className="inline-flex min-h-11 items-center rounded-xl bg-[var(--ll-yellow-soft)] px-5 py-2 text-sm font-semibold text-[var(--ll-text-faint)]"
-              >
-                Download Cohort CSV
-              </a>
+              {selectedSchool ? (
+                <a
+                  href={`/api/moe/export/school/${selectedSchool}`}
+                  onClick={() => markExport("school")}
+                  className="inline-flex min-h-11 items-center rounded-xl bg-[var(--ll-yellow-soft)] px-5 py-2 text-sm font-semibold text-[var(--ll-text-faint)]"
+                >
+                  Download Cohort CSV
+                </a>
+              ) : (
+                <button
+                  type="button"
+                  disabled
+                  className="inline-flex min-h-11 cursor-not-allowed items-center rounded-xl bg-[var(--ll-surface-muted)] px-5 py-2 text-sm font-semibold text-[var(--ll-text-faint)]"
+                >
+                  Download Cohort CSV
+                </button>
+              )}
             </div>
             <p className="mt-3 text-xs text-[var(--ll-text-muted)]">
               Last export: {lastExported.school ?? "Not yet exported"}

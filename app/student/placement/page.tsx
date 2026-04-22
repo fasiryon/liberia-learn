@@ -78,22 +78,22 @@ export default function StudentPlacementIntroPage() {
                 >
                   Back to Dashboard
                 </Link>
-                <Link
-                  href={acknowledged ? "/placement" : "#"}
-                  aria-disabled={!acknowledged}
-                  className={`inline-flex min-h-11 items-center justify-center rounded-full px-5 text-sm font-semibold transition ${
-                    acknowledged
-                      ? "bg-[var(--ll-yellow-soft)] text-[var(--ll-text-faint)] hover:bg-[var(--ll-yellow-soft)]"
-                      : "cursor-not-allowed bg-[var(--ll-surface)] text-[var(--ll-text-faint)]"
-                  }`}
-                  onClick={(event) => {
-                    if (!acknowledged) {
-                      event.preventDefault();
-                    }
-                  }}
-                >
-                  Begin Assessment
-                </Link>
+                {acknowledged ? (
+                  <Link
+                    href="/placement"
+                    className="inline-flex min-h-11 items-center justify-center rounded-full bg-[var(--ll-yellow-soft)] px-5 text-sm font-semibold text-[var(--ll-text-faint)] transition hover:bg-[var(--ll-yellow-soft)]"
+                  >
+                    Begin Assessment
+                  </Link>
+                ) : (
+                  <button
+                    type="button"
+                    disabled
+                    className="inline-flex min-h-11 cursor-not-allowed items-center justify-center rounded-full bg-[var(--ll-surface)] px-5 text-sm font-semibold text-[var(--ll-text-faint)]"
+                  >
+                    Begin Assessment
+                  </button>
+                )}
               </div>
             </section>
 

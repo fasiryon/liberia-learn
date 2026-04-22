@@ -33,6 +33,10 @@ export function StudentSidebar({
           Dashboard
         </Link>
 
+        <Link href="/student/today" className={navLinkClass}>
+          Today
+        </Link>
+
         <Link href="/student/placement" className={navLinkClass}>
           Placement Test
         </Link>

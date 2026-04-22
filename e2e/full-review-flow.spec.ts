@@ -4,15 +4,29 @@ const BASE = process.env.PLAYWRIGHT_BASE_URL ?? "https://liberia-learn.vercel.ap
 const SEEDED_LESSON = "/student/lessons/cha-demo-student1-multimedia-lesson";
 const SEEDED_CONTENT_ID = "cha-g9-math-multimedia-demo";
 
+async function gotoWithRetry(page: Page, url: string) {
+  for (let attempt = 0; attempt < 2; attempt += 1) {
+    try {
+      await page.goto(url, { waitUntil: "domcontentloaded", timeout: 30000 });
+      return;
+    } catch (error) {
+      if (attempt === 0 && error instanceof Error && error.message.includes("ERR_NETWORK_CHANGED")) {
+        continue;
+      }
+      throw error;
+    }
+  }
+}
+
 async function login(page: Page, email: string, password: string, role?: "student" | "teacher" | "admin" | "guardian") {
-  await page.goto(`${BASE}/login${role ? `?role=${role}` : ""}`);
+  await gotoWithRetry(page, `${BASE}/login${role ? `?role=${role}` : ""}`);
   if (role) {
     await page.getByRole("button", { name: role, exact: true }).click();
   }
   await page.fill('input[type="email"], input[type="text"]', email);
   await page.fill('input[type="password"]', password);
   await page.getByRole("button", { name: "Continue" }).click();
-  await page.waitForLoadState("networkidle");
+  await page.waitForURL((url) => !url.pathname.startsWith("/login"), { timeout: 20000 });
 }
 
 async function loginMoe(page: Page) {

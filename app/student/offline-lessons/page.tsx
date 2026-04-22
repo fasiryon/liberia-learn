@@ -53,7 +53,7 @@ export default function OfflineLessonsPage() {
       <div className="mx-auto max-w-2xl space-y-6">
         <div className="flex items-center gap-3">
           <Link
-            href="/student/dashboard"
+            href="/dashboard"
             className="text-sm text-[var(--ll-text-muted)] hover:text-[var(--ll-text)]"
           >
             ← Dashboard

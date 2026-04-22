@@ -46,12 +46,20 @@ export default function StudentCertificatesClient() {
       <div className="mx-auto max-w-6xl space-y-6">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <Link
-              href="/student/progress"
-              className="text-sm text-[var(--ll-pink)] transition-colors hover:opacity-80 print:hidden"
-            >
-              &larr; Back to Progress
-            </Link>
+            <nav className="flex flex-wrap gap-3 text-sm print:hidden" aria-label="Certificate navigation">
+              <Link
+                href="/dashboard"
+                className="text-[var(--ll-yellow)] transition-colors hover:opacity-80"
+              >
+                &larr; Back to Dashboard
+              </Link>
+              <Link
+                href="/student/progress"
+                className="text-[var(--ll-pink)] transition-colors hover:opacity-80"
+              >
+                My Progress
+              </Link>
+            </nav>
             <h1 className="mt-2 text-3xl font-semibold text-[var(--ll-text)] print:text-[var(--ll-text-faint)]">
               My Certificates
             </h1>

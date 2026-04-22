@@ -56,7 +56,7 @@ export default function StudentLessonsPage() {
   return (
     <main className="min-h-screen bg-[var(--ll-bg)] px-4 py-8">
       <div className="mx-auto max-w-3xl space-y-6">
-        <Link href="/student/dashboard" className="inline-block text-sm text-[var(--ll-yellow)] hover:text-[var(--ll-yellow)]">
+        <Link href="/dashboard" className="inline-block text-sm text-[var(--ll-yellow)] hover:text-[var(--ll-yellow)]">
           &larr; Back to Dashboard
         </Link>
 
