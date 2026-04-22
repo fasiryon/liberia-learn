@@ -48,7 +48,7 @@ export default function ElectricCircuitLabPage({ lessonId }: { lessonId?: string
       onAction={handlePlannedAction}
       suggestedPrompts={SUGGESTED_PROMPTS}
       fallback={
-        <Suspense fallback={<div className="rounded-md border border-slate-200 p-4 text-sm text-slate-600">Loading lab fallback...</div>}>
+        <Suspense fallback={<div className="rounded-md border border-[var(--ll-border)] p-4 text-sm text-[var(--ll-text-faint)]">Loading lab fallback...</div>}>
           <ElectricCircuitFallback state={state} onAction={applyAction} />
         </Suspense>
       }

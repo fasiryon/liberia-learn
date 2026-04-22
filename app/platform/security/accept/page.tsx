@@ -33,25 +33,25 @@ export default function AcceptTransferPage() {
 
   if (!token) {
     return (
-      <main className="min-h-screen bg-slate-950 text-slate-50 flex items-center justify-center">
+      <main className="min-h-screen bg-[var(--ll-bg)] text-[var(--ll-text)] flex items-center justify-center">
         <p className="text-red-400">No transfer token provided.</p>
       </main>
     );
   }
 
   return (
-    <main className="min-h-screen bg-slate-950 text-slate-50 flex items-center justify-center">
-      <div className="mx-auto max-w-md space-y-6 rounded-2xl border border-white/10 bg-slate-900/70 p-8">
+    <main className="min-h-screen bg-[var(--ll-bg)] text-[var(--ll-text)] flex items-center justify-center">
+      <div className="mx-auto max-w-md space-y-6 rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 p-8">
         <div>
           <h1 className="text-xl font-bold">Accept Platform Admin Transfer</h1>
-          <p className="text-sm text-slate-400 mt-1">
+          <p className="text-sm text-[var(--ll-text-muted)] mt-1">
             You have been invited to become a platform admin for LiberiaLearn.
           </p>
         </div>
 
         {result ? (
-          <div className="rounded-lg border border-emerald-800 bg-emerald-950/40 p-4">
-            <p className="text-sm text-emerald-400">{result}</p>
+          <div className="rounded-lg border border-emerald-800 bg-[var(--ll-yellow-soft)] p-4">
+            <p className="text-sm text-[var(--ll-yellow)]">{result}</p>
           </div>
         ) : (
           <>
@@ -60,9 +60,9 @@ export default function AcceptTransferPage() {
                 type="checkbox"
                 checked={demoteSender}
                 onChange={(e) => setDemoteSender(e.target.checked)}
-                className="h-4 w-4 rounded border-slate-600 bg-slate-900"
+                className="h-4 w-4 rounded border-[var(--ll-border)] bg-[var(--ll-bg)]"
               />
-              <label className="text-sm text-slate-300">
+              <label className="text-sm text-[var(--ll-text)]">
                 Remove platform admin access from the sender
               </label>
             </div>
@@ -70,7 +70,7 @@ export default function AcceptTransferPage() {
             <button
               onClick={handleAccept}
               disabled={loading}
-              className="w-full rounded-xl bg-violet-500 px-6 py-3 text-sm font-semibold text-white hover:bg-violet-400 disabled:opacity-50"
+              className="w-full rounded-xl bg-violet-500 px-6 py-3 text-sm font-semibold text-[var(--ll-text)] hover:bg-violet-400 disabled:opacity-50"
             >
               {loading ? "Processing..." : "Accept Platform Admin Role"}
             </button>

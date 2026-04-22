@@ -78,27 +78,27 @@ export default function SchoolBrandingPage() {
 
   if (loading) {
     return (
-      <main className="min-h-screen bg-slate-950 text-slate-50 flex items-center justify-center">
-        <p className="text-sm text-slate-400">Loading...</p>
+      <main className="min-h-screen bg-[var(--ll-bg)] text-[var(--ll-text)] flex items-center justify-center">
+        <p className="text-sm text-[var(--ll-text-muted)]">Loading...</p>
       </main>
     );
   }
 
   return (
-    <main className="min-h-screen bg-slate-950 text-slate-50">
+    <main className="min-h-screen bg-[var(--ll-bg)] text-[var(--ll-text)]">
       <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_top,_#ec489922,_transparent_60%)]" />
       <div className="mx-auto max-w-3xl px-4 py-6 space-y-8">
         <div>
-          <Link href="/admin" className="text-xs text-emerald-300 hover:text-emerald-200">
+          <Link href="/admin" className="text-xs text-[var(--ll-yellow)] hover:text-[var(--ll-yellow)]">
             &larr; Back to Admin Console
           </Link>
           <h1 className="text-2xl font-bold mt-2">School Branding</h1>
-          <p className="text-sm text-slate-400 mt-1">
+          <p className="text-sm text-[var(--ll-text-muted)] mt-1">
             Customize your school&apos;s colors, logo, and messaging.
           </p>
         </div>
 
-        <form onSubmit={handleSave} className="rounded-2xl border border-white/10 bg-slate-900/70 p-6 space-y-6">
+        <form onSubmit={handleSave} className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 p-6 space-y-6">
           <div className="grid gap-5 sm:grid-cols-3">
             {[
               { label: "Primary Color", key: "primaryHex" as const },
@@ -106,19 +106,19 @@ export default function SchoolBrandingPage() {
               { label: "Accent Color", key: "accentHex" as const },
             ].map(({ label, key }) => (
               <div key={key}>
-                <label className="block text-xs font-medium text-slate-400 mb-1">{label}</label>
+                <label className="block text-xs font-medium text-[var(--ll-text-muted)] mb-1">{label}</label>
                 <div className="flex items-center gap-2">
                   <input
                     type="color"
                     value={branding[key]}
                     onChange={(e) => setBranding({ ...branding, [key]: e.target.value })}
-                    className="h-10 w-10 rounded-lg border border-slate-700 cursor-pointer bg-transparent"
+                    className="h-10 w-10 rounded-lg border border-[var(--ll-border)] cursor-pointer bg-transparent"
                   />
                   <input
                     type="text"
                     value={branding[key]}
                     onChange={(e) => setBranding({ ...branding, [key]: e.target.value })}
-                    className="flex-1 rounded-lg bg-slate-950 border border-slate-700 px-3 py-2 text-sm text-slate-100 font-mono focus:outline-none focus:border-emerald-500"
+                    className="flex-1 rounded-lg bg-[var(--ll-bg)] border border-[var(--ll-border)] px-3 py-2 text-sm text-[var(--ll-text)] font-mono focus:outline-none focus:border-emerald-500"
                   />
                 </div>
               </div>
@@ -126,43 +126,43 @@ export default function SchoolBrandingPage() {
           </div>
 
           <div>
-            <label className="block text-xs font-medium text-slate-400 mb-1">Logo URL</label>
+            <label className="block text-xs font-medium text-[var(--ll-text-muted)] mb-1">Logo URL</label>
             <input
               type="url"
               value={branding.logoUrl}
               onChange={(e) => setBranding({ ...branding, logoUrl: e.target.value })}
               placeholder="https://example.com/logo.png"
-              className="w-full rounded-lg bg-slate-950 border border-slate-700 px-3 py-2 text-sm text-slate-100 focus:outline-none focus:border-emerald-500"
+              className="w-full rounded-lg bg-[var(--ll-bg)] border border-[var(--ll-border)] px-3 py-2 text-sm text-[var(--ll-text)] focus:outline-none focus:border-emerald-500"
             />
           </div>
 
           <div>
-            <label className="block text-xs font-medium text-slate-400 mb-1">School Motto</label>
+            <label className="block text-xs font-medium text-[var(--ll-text-muted)] mb-1">School Motto</label>
             <input
               type="text"
               value={branding.motto}
               onChange={(e) => setBranding({ ...branding, motto: e.target.value })}
               placeholder="Excellence in Education"
-              className="w-full rounded-lg bg-slate-950 border border-slate-700 px-3 py-2 text-sm text-slate-100 focus:outline-none focus:border-emerald-500"
+              className="w-full rounded-lg bg-[var(--ll-bg)] border border-[var(--ll-border)] px-3 py-2 text-sm text-[var(--ll-text)] focus:outline-none focus:border-emerald-500"
             />
           </div>
 
           <div>
-            <label className="block text-xs font-medium text-slate-400 mb-1">Welcome Message</label>
+            <label className="block text-xs font-medium text-[var(--ll-text-muted)] mb-1">Welcome Message</label>
             <textarea
               value={branding.welcomeMsg}
               onChange={(e) => setBranding({ ...branding, welcomeMsg: e.target.value })}
               rows={3}
               placeholder="Welcome to our school..."
-              className="w-full rounded-lg bg-slate-950 border border-slate-700 px-3 py-2 text-sm text-slate-100 focus:outline-none focus:border-emerald-500 resize-none"
+              className="w-full rounded-lg bg-[var(--ll-bg)] border border-[var(--ll-border)] px-3 py-2 text-sm text-[var(--ll-text)] focus:outline-none focus:border-emerald-500 resize-none"
             />
           </div>
 
           {/* Live preview */}
           <div>
-            <p className="text-xs font-medium text-slate-400 mb-2">Preview</p>
+            <p className="text-xs font-medium text-[var(--ll-text-muted)] mb-2">Preview</p>
             <div
-              className="rounded-xl border border-white/10 p-4 flex items-center gap-3"
+              className="rounded-xl border border-[var(--ll-border)] p-4 flex items-center gap-3"
               style={{ background: branding.primaryHex + "22" }}
             >
               {branding.logoUrl && !logoPreviewFailed ? (
@@ -178,7 +178,7 @@ export default function SchoolBrandingPage() {
                 />
               ) : (
                 <div
-                  className="h-10 w-10 rounded-lg flex items-center justify-center text-white font-bold text-sm"
+                  className="h-10 w-10 rounded-lg flex items-center justify-center text-[var(--ll-text)] font-bold text-sm"
                   style={{ background: branding.primaryHex }}
                 >
                   S
@@ -189,7 +189,7 @@ export default function SchoolBrandingPage() {
                   Your School Name
                 </p>
                 {branding.motto && (
-                  <p className="text-xs text-slate-400 italic">{branding.motto}</p>
+                  <p className="text-xs text-[var(--ll-text-muted)] italic">{branding.motto}</p>
                 )}
               </div>
               <div className="ml-auto flex gap-2">
@@ -215,13 +215,13 @@ export default function SchoolBrandingPage() {
           <button
             type="submit"
             disabled={saving}
-            className="rounded-xl bg-emerald-500 px-6 py-3 text-sm font-semibold text-slate-950 shadow-lg shadow-emerald-500/30 hover:bg-emerald-400 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="rounded-xl bg-[var(--ll-yellow)] px-6 py-3 text-sm font-semibold text-[var(--ll-text-faint)] shadow-lg shadow-emerald-500/30 hover:bg-[var(--ll-yellow-soft)] disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {saving ? "Saving..." : "Save Branding"}
           </button>
 
           {message && (
-            <p className={`text-sm ${message.includes("success") ? "text-emerald-400" : "text-red-400"}`}>
+            <p className={`text-sm ${message.includes("success") ? "text-[var(--ll-yellow)]" : "text-red-400"}`}>
               {message}
             </p>
           )}

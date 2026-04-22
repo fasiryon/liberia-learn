@@ -106,14 +106,14 @@ export function TeacherDashboardScreen({
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-slate-50">Teacher Dashboard</h1>
-        <p className="mt-1 text-sm text-slate-400">
+        <h1 className="text-2xl font-bold text-[var(--ll-text)]">Teacher Dashboard</h1>
+        <p className="mt-1 text-sm text-[var(--ll-text-muted)]">
           Review class performance, students who may need help, and suggested support.
         </p>
       </div>
 
       {error ? (
-        <div className="rounded-2xl border border-red-500/30 bg-red-500/10 p-4 text-sm text-red-300">
+        <div className="rounded-xl border border-red-500/30 bg-red-500/10 p-4 text-sm text-red-300">
           {error}
         </div>
       ) : null}
@@ -145,27 +145,27 @@ export function TeacherDashboardScreen({
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div>
             <div className="flex items-center gap-2">
-              <h2 className="text-lg font-semibold text-slate-100">Confusion Alerts</h2>
+              <h2 className="text-lg font-semibold text-[var(--ll-text)]">Confusion Alerts</h2>
               <HelpTooltip text="Students flagged by AI as struggling with the current lesson" />
             </div>
-            <p className="mt-1 text-sm text-slate-400">
+            <p className="mt-1 text-sm text-[var(--ll-text-muted)]">
               Prioritized items for the next classroom follow-up.
             </p>
           </div>
           <div className="grid gap-3 sm:grid-cols-2">
-            <div className="rounded-2xl border border-red-500/15 bg-red-500/8 p-4">
-              <p className="text-xs uppercase tracking-wide text-slate-500">
+            <div className="rounded-xl border border-red-500/15 bg-red-500/8 p-4">
+              <p className="text-xs uppercase tracking-wide text-[var(--ll-text-faint)]">
                 High priority
               </p>
               <p className="mt-2 text-2xl font-semibold text-red-300">
                 {highSeverityCount}
               </p>
             </div>
-            <div className="rounded-2xl border border-slate-800 bg-slate-950/60 p-4">
-              <p className="text-xs uppercase tracking-wide text-slate-500">
+            <div className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/60 p-4">
+              <p className="text-xs uppercase tracking-wide text-[var(--ll-text-faint)]">
                 Support queue
               </p>
-              <p className="mt-2 text-2xl font-semibold text-slate-100">
+              <p className="mt-2 text-2xl font-semibold text-[var(--ll-text)]">
                 {urgentInterventionCount}
               </p>
             </div>
@@ -175,24 +175,24 @@ export function TeacherDashboardScreen({
           <span className="rounded-full border border-red-500/20 bg-red-500/10 px-3 py-1 text-xs font-semibold text-red-200">
             High {highSeverityCount}
           </span>
-          <span className="rounded-full border border-amber-500/20 bg-amber-500/10 px-3 py-1 text-xs font-semibold text-amber-200">
+          <span className="rounded-full border border-amber-500/20 bg-[var(--ll-yellow-soft)] px-3 py-1 text-xs font-semibold text-[var(--ll-yellow)]">
             Medium {mediumSeverityCount}
           </span>
-          <span className="rounded-full border border-slate-700 bg-slate-950/60 px-3 py-1 text-xs font-semibold text-slate-300">
+          <span className="rounded-full border border-[var(--ll-border)] bg-[var(--ll-bg)]/60 px-3 py-1 text-xs font-semibold text-[var(--ll-text)]">
             Action queue {urgentInterventionCount}
           </span>
         </div>
         {topAttentionItems.length > 0 ? (
           <div className="mt-4 grid gap-3 lg:grid-cols-3">
             {topAttentionItems.map((item) => (
-              <div key={item.id} className="rounded-2xl border border-slate-800 bg-slate-950/60 p-4">
-                <p className="text-xs uppercase tracking-wide text-slate-500">
+              <div key={item.id} className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/60 p-4">
+                <p className="text-xs uppercase tracking-wide text-[var(--ll-text-faint)]">
                   {item.severity} severity
                 </p>
-                <p className="mt-2 text-sm font-semibold text-slate-100">
+                <p className="mt-2 text-sm font-semibold text-[var(--ll-text)]">
                   {item.conceptLabel}
                 </p>
-                <p className="mt-1 text-sm text-slate-400">
+                <p className="mt-1 text-sm text-[var(--ll-text-muted)]">
                   {item.studentName ?? "Student"} needs follow-up on this concept.
                 </p>
               </div>
@@ -204,22 +204,22 @@ export function TeacherDashboardScreen({
       <Card className="p-5 sm:p-6">
         <div className="space-y-3">
           <div>
-            <h2 className="text-lg font-semibold text-slate-100">Suggested Support</h2>
-            <p className="mt-1 text-sm text-amber-300">
+            <h2 className="text-lg font-semibold text-[var(--ll-text)]">Suggested Support</h2>
+            <p className="mt-1 text-sm text-[var(--ll-yellow)]">
               AI suggestions. Teacher review required.
             </p>
           </div>
           {suggestedActions.length === 0 ? (
-            <p className="text-sm text-slate-400">
+            <p className="text-sm text-[var(--ll-text-muted)]">
               No support suggestions are being surfaced from the current class activity.
             </p>
           ) : (
             <div className="grid gap-3 lg:grid-cols-3">
               {suggestedActions.map((action) => (
-                <div key={`${action.type}-${action.reason}`} className="rounded-2xl border border-slate-800 bg-slate-950/60 p-4">
-                  <p className="text-xs uppercase tracking-wide text-slate-500">{action.type.replace(/_/g, " ")}</p>
-                  <p className="mt-2 text-sm text-slate-200">{action.reason}</p>
-                  <p className="mt-2 text-xs text-slate-500">
+                <div key={`${action.type}-${action.reason}`} className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/60 p-4">
+                  <p className="text-xs uppercase tracking-wide text-[var(--ll-text-faint)]">{action.type.replace(/_/g, " ")}</p>
+                  <p className="mt-2 text-sm text-[var(--ll-text)]">{action.reason}</p>
+                  <p className="mt-2 text-xs text-[var(--ll-text-faint)]">
                     Confidence {Math.round(action.confidence * 100)}%
                   </p>
                 </div>
@@ -232,10 +232,10 @@ export function TeacherDashboardScreen({
       <section className="space-y-4">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
-            <h2 className="text-lg font-semibold text-slate-100">
+            <h2 className="text-lg font-semibold text-[var(--ll-text)]">
               Students who may need help
             </h2>
-            <p className="text-sm text-slate-400">
+            <p className="text-sm text-[var(--ll-text-muted)]">
               Start with higher priority items first, then recent patterns.
             </p>
           </div>
@@ -243,7 +243,7 @@ export function TeacherDashboardScreen({
             <select
               value={selectedStudentId}
               onChange={(event) => setSelectedStudentId(event.target.value)}
-              className="min-h-11 rounded-xl border border-slate-700 bg-slate-900 px-4 py-2 text-sm text-slate-100"
+              className="min-h-11 rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)] px-4 py-2 text-sm text-[var(--ll-text)]"
             >
               <option value="">All students</option>
               {studentOptions.map((option) => (
@@ -263,10 +263,10 @@ export function TeacherDashboardScreen({
       <section className="space-y-4">
         <div>
           <div className="flex items-center gap-2">
-            <h2 className="text-lg font-semibold text-slate-100">Intervention Queue</h2>
+            <h2 className="text-lg font-semibold text-[var(--ll-text)]">Intervention Queue</h2>
             <HelpTooltip text="Students who may need additional support based on recent activity" />
           </div>
-          <p className="text-sm text-slate-400">
+          <p className="text-sm text-[var(--ll-text-muted)]">
             Suggestions stay advisory until a teacher reviews them.
           </p>
         </div>

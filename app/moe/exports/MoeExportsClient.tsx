@@ -40,46 +40,46 @@ export default function MoeExportsClient({ districts, schools }: MoeExportsClien
   }
 
   return (
-    <main className="min-h-screen bg-slate-950 text-slate-50">
+    <main className="min-h-screen bg-[var(--ll-bg)] text-[var(--ll-text)]">
       <div className="mx-auto max-w-5xl px-4 py-8">
         <div className="space-y-2">
-          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-emerald-300">
+          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--ll-yellow)]">
             Reporting
           </p>
-          <h1 className="text-3xl font-semibold text-white">Data Exports</h1>
-          <p className="max-w-3xl text-sm text-slate-300">
+          <h1 className="text-3xl font-semibold text-[var(--ll-text)]">Data Exports</h1>
+          <p className="max-w-3xl text-sm text-[var(--ll-text)]">
             Download national, district, and school cohort reports for ministry review.
           </p>
         </div>
 
         <div className="mt-8 grid gap-5">
           <Card className="p-6">
-            <h2 className="text-xl font-semibold text-slate-50">National Report</h2>
-            <p className="mt-2 text-sm text-slate-300">
+            <h2 className="text-xl font-semibold text-[var(--ll-text)]">National Report</h2>
+            <p className="mt-2 text-sm text-[var(--ll-text)]">
               Export national school-level indicators across the platform.
             </p>
             <a
               href="/api/moe/export/national"
               onClick={() => markExport("national")}
-              className="mt-5 inline-flex min-h-11 items-center rounded-2xl bg-emerald-400 px-5 py-2 text-sm font-semibold text-slate-950"
+              className="mt-5 inline-flex min-h-11 items-center rounded-xl bg-[var(--ll-yellow-soft)] px-5 py-2 text-sm font-semibold text-[var(--ll-text-faint)]"
             >
               Download National CSV
             </a>
-            <p className="mt-3 text-xs text-slate-400">
+            <p className="mt-3 text-xs text-[var(--ll-text-muted)]">
               Last export: {lastExported.national ?? "Not yet exported"}
             </p>
           </Card>
 
           <Card className="p-6">
-            <h2 className="text-xl font-semibold text-slate-50">District Report</h2>
-            <p className="mt-2 text-sm text-slate-300">
+            <h2 className="text-xl font-semibold text-[var(--ll-text)]">District Report</h2>
+            <p className="mt-2 text-sm text-[var(--ll-text)]">
               Export school-level breakdown rows for a selected district.
             </p>
             <div className="mt-5 flex flex-col gap-3 sm:flex-row sm:items-center">
               <select
                 value={selectedDistrict}
                 onChange={(event) => setSelectedDistrict(event.target.value)}
-                className="min-h-11 rounded-2xl border border-slate-700 bg-slate-950 px-4 py-2 text-sm text-slate-100"
+                className="min-h-11 rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)] px-4 py-2 text-sm text-[var(--ll-text)]"
               >
                 {districts.map((district) => (
                   <option key={district} value={district}>
@@ -90,29 +90,29 @@ export default function MoeExportsClient({ districts, schools }: MoeExportsClien
               <a
                 href={selectedDistrict ? `/api/moe/export/district/${encodeURIComponent(selectedDistrict)}` : "#"}
                 onClick={() => selectedDistrict && markExport("district")}
-                className="inline-flex min-h-11 items-center rounded-2xl bg-cyan-500 px-5 py-2 text-sm font-semibold text-slate-950"
+                className="inline-flex min-h-11 items-center rounded-xl bg-[var(--ll-silver-soft)] px-5 py-2 text-sm font-semibold text-[var(--ll-text-faint)]"
               >
                 Download District CSV
               </a>
             </div>
-            <p className="mt-3 text-xs text-slate-400">
+            <p className="mt-3 text-xs text-[var(--ll-text-muted)]">
               Last export: {lastExported.district ?? "Not yet exported"}
             </p>
           </Card>
 
           <Card className="p-6">
-            <h2 className="text-xl font-semibold text-slate-50">School Cohort</h2>
-            <p className="mt-2 text-sm text-slate-300">
+            <h2 className="text-xl font-semibold text-[var(--ll-text)]">School Cohort</h2>
+            <p className="mt-2 text-sm text-[var(--ll-text)]">
               Export anonymized student cohort rows for a selected school.
             </p>
-            <p className="mt-3 rounded-2xl border border-amber-400/20 bg-amber-500/10 px-4 py-3 text-sm text-amber-100">
+            <p className="mt-3 rounded-xl border border-amber-400/20 bg-[var(--ll-yellow-soft)] px-4 py-3 text-sm text-[var(--ll-yellow)]">
               This export contains student-level data and is logged.
             </p>
             <div className="mt-5 flex flex-col gap-3 sm:flex-row sm:items-center">
               <select
                 value={selectedSchool}
                 onChange={(event) => setSelectedSchool(event.target.value)}
-                className="min-h-11 rounded-2xl border border-slate-700 bg-slate-950 px-4 py-2 text-sm text-slate-100"
+                className="min-h-11 rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)] px-4 py-2 text-sm text-[var(--ll-text)]"
               >
                 {schools.map((school) => (
                   <option key={school.id} value={school.id}>
@@ -123,24 +123,24 @@ export default function MoeExportsClient({ districts, schools }: MoeExportsClien
               <a
                 href={selectedSchool ? `/api/moe/export/school/${selectedSchool}` : "#"}
                 onClick={() => selectedSchool && markExport("school")}
-                className="inline-flex min-h-11 items-center rounded-2xl bg-amber-300 px-5 py-2 text-sm font-semibold text-slate-950"
+                className="inline-flex min-h-11 items-center rounded-xl bg-[var(--ll-yellow-soft)] px-5 py-2 text-sm font-semibold text-[var(--ll-text-faint)]"
               >
                 Download Cohort CSV
               </a>
             </div>
-            <p className="mt-3 text-xs text-slate-400">
+            <p className="mt-3 text-xs text-[var(--ll-text-muted)]">
               Last export: {lastExported.school ?? "Not yet exported"}
             </p>
           </Card>
 
           <Card className="p-6">
-            <h2 className="text-xl font-semibold text-slate-50">Printable Summary</h2>
-            <p className="mt-2 text-sm text-slate-300">
+            <h2 className="text-xl font-semibold text-[var(--ll-text)]">Printable Summary</h2>
+            <p className="mt-2 text-sm text-[var(--ll-text)]">
               Open a print-optimized HTML summary report for ministry sharing.
             </p>
             <a
               href="/api/moe/export/summary-pdf"
-              className="mt-5 inline-flex min-h-11 items-center rounded-2xl border border-white/10 px-5 py-2 text-sm font-semibold text-slate-100"
+              className="mt-5 inline-flex min-h-11 items-center rounded-xl border border-[var(--ll-border)] px-5 py-2 text-sm font-semibold text-[var(--ll-text)]"
             >
               Open Summary Report
             </a>

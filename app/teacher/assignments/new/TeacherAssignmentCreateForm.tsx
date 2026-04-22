@@ -80,13 +80,13 @@ export default function TeacherAssignmentCreateForm({
 
   return (
     <form className="space-y-6" onSubmit={handleSubmit}>
-      <section className="grid gap-6 rounded-3xl border border-white/10 bg-slate-900/70 p-6 md:grid-cols-2">
+      <section className="grid gap-6 rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 p-6 md:grid-cols-2">
         <label className="space-y-2 text-sm">
-          <span className="text-slate-200">Class</span>
+          <span className="text-[var(--ll-text)]">Class</span>
           <select
             value={classId}
             onChange={(event) => setClassId(event.target.value)}
-            className="min-h-11 w-full rounded-2xl border border-slate-700 bg-slate-950 px-4 py-3 text-slate-100"
+            className="min-h-11 w-full rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)] px-4 py-3 text-[var(--ll-text)]"
             required
           >
             {classes.map((cls) => (
@@ -98,56 +98,56 @@ export default function TeacherAssignmentCreateForm({
         </label>
 
         <label className="space-y-2 text-sm">
-          <span className="text-slate-200">Points</span>
+          <span className="text-[var(--ll-text)]">Points</span>
           <input
             type="number"
             min={1}
             max={1000}
             value={points}
             onChange={(event) => setPoints(event.target.value)}
-            className="min-h-11 w-full rounded-2xl border border-slate-700 bg-slate-950 px-4 py-3 text-slate-100"
+            className="min-h-11 w-full rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)] px-4 py-3 text-[var(--ll-text)]"
             required
           />
         </label>
 
         <label className="space-y-2 text-sm md:col-span-2">
-          <span className="text-slate-200">Title</span>
+          <span className="text-[var(--ll-text)]">Title</span>
           <input
             type="text"
             value={title}
             onChange={(event) => setTitle(event.target.value)}
-            className="min-h-11 w-full rounded-2xl border border-slate-700 bg-slate-950 px-4 py-3 text-slate-100"
+            className="min-h-11 w-full rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)] px-4 py-3 text-[var(--ll-text)]"
             placeholder="Fractions exit ticket"
             required
           />
         </label>
 
         <label className="space-y-2 text-sm md:col-span-2">
-          <span className="text-slate-200">Instructions</span>
+          <span className="text-[var(--ll-text)]">Instructions</span>
           <textarea
             value={description}
             onChange={(event) => setDescription(event.target.value)}
-            className="min-h-40 w-full rounded-2xl border border-slate-700 bg-slate-950 px-4 py-3 text-slate-100"
+            className="min-h-40 w-full rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)] px-4 py-3 text-[var(--ll-text)]"
             placeholder="Explain the task, expected format, and any success criteria."
           />
         </label>
 
         <label className="space-y-2 text-sm">
-          <span className="text-slate-200">Due date</span>
+          <span className="text-[var(--ll-text)]">Due date</span>
           <input
             type="datetime-local"
             value={dueAt}
             onChange={(event) => setDueAt(event.target.value)}
-            className="min-h-11 w-full rounded-2xl border border-slate-700 bg-slate-950 px-4 py-3 text-slate-100"
+            className="min-h-11 w-full rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)] px-4 py-3 text-[var(--ll-text)]"
           />
         </label>
 
         <label className="space-y-2 text-sm">
-          <span className="text-slate-200">Generation method</span>
+          <span className="text-[var(--ll-text)]">Generation method</span>
           <select
             value={generationMethod}
             onChange={(event) => setGenerationMethod(event.target.value)}
-            className="min-h-11 w-full rounded-2xl border border-slate-700 bg-slate-950 px-4 py-3 text-slate-100"
+            className="min-h-11 w-full rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)] px-4 py-3 text-[var(--ll-text)]"
           >
             <option value="manual">Manual</option>
             <option value="ai_generated">AI generated</option>
@@ -156,41 +156,41 @@ export default function TeacherAssignmentCreateForm({
         </label>
       </section>
 
-      <section className="grid gap-6 rounded-3xl border border-white/10 bg-slate-900/70 p-6 md:grid-cols-2">
+      <section className="grid gap-6 rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 p-6 md:grid-cols-2">
         <label className="space-y-2 text-sm">
-          <span className="text-slate-200">Scheduled work ID</span>
+          <span className="text-[var(--ll-text)]">Scheduled work ID</span>
           <input
             type="text"
             value={scheduledWorkId}
             onChange={(event) => setScheduledWorkId(event.target.value)}
-            className="min-h-11 w-full rounded-2xl border border-slate-700 bg-slate-950 px-4 py-3 text-slate-100"
+            className="min-h-11 w-full rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)] px-4 py-3 text-[var(--ll-text)]"
             placeholder="Optional lesson schedule reference"
           />
         </label>
 
         <label className="space-y-2 text-sm">
-          <span className="text-slate-200">Curriculum content ID</span>
+          <span className="text-[var(--ll-text)]">Curriculum content ID</span>
           <input
             type="text"
             value={contentId}
             onChange={(event) => setContentId(event.target.value)}
-            className="min-h-11 w-full rounded-2xl border border-slate-700 bg-slate-950 px-4 py-3 text-slate-100"
+            className="min-h-11 w-full rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)] px-4 py-3 text-[var(--ll-text)]"
             placeholder="Optional curriculum content reference"
           />
         </label>
 
         <label className="space-y-2 text-sm md:col-span-2">
-          <span className="text-slate-200">MOE standard codes</span>
+          <span className="text-[var(--ll-text)]">MOE standard codes</span>
           <input
             type="text"
             value={moeStandardCodes}
             onChange={(event) => setMoeStandardCodes(event.target.value)}
-            className="min-h-11 w-full rounded-2xl border border-slate-700 bg-slate-950 px-4 py-3 text-slate-100"
+            className="min-h-11 w-full rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)] px-4 py-3 text-[var(--ll-text)]"
             placeholder="Optional comma-separated alignment codes"
           />
         </label>
 
-        <p className="text-sm text-slate-400 md:col-span-2">
+        <p className="text-sm text-[var(--ll-text-muted)] md:col-span-2">
           These optional linkage fields keep assignment creation compatible with lesson-linked
           suggestions and AI-generated drafts, but the assignment itself can now be created
           directly from this page.
@@ -201,7 +201,7 @@ export default function TeacherAssignmentCreateForm({
         <button
           type="submit"
           disabled={saving}
-          className="inline-flex min-h-11 items-center justify-center rounded-full bg-emerald-400 px-5 text-sm font-semibold text-slate-950 disabled:cursor-not-allowed disabled:opacity-60"
+          className="inline-flex min-h-11 items-center justify-center rounded-full bg-[var(--ll-yellow-soft)] px-5 text-sm font-semibold text-[var(--ll-text-faint)] disabled:cursor-not-allowed disabled:opacity-60"
         >
           {saving ? "Creating..." : "Create Assignment"}
         </button>

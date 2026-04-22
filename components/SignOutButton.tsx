@@ -10,7 +10,7 @@ export default function SignOutButton() {
         await safeLogout();
         await signOut({ callbackUrl: "/login" });
       }}
-      className="rounded-full border border-slate-700 px-3 py-1.5 text-xs text-slate-300 hover:border-slate-500 hover:text-slate-50"
+      className="rounded-full border border-[var(--ll-border)] px-3 py-1.5 text-xs text-[var(--ll-text)] hover:border-[var(--ll-border)] hover:text-[var(--ll-text)]"
     >
       Log out
     </button>

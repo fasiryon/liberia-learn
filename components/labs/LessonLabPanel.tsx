@@ -71,25 +71,25 @@ export default function LessonLabPanel({
   const meta = LAB_META[labId] ?? { title: "Lab", subject: "Learning Lab" };
 
   return (
-    <div className="fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-sm">
+    <div className="fixed inset-0 z-50 bg-[var(--ll-bg)]/70 backdrop-blur-sm">
       <button
         type="button"
         aria-label={`Close ${meta.title}`}
         className="absolute inset-0 cursor-default"
         onClick={onClose}
       />
-      <section className="absolute inset-x-0 bottom-0 flex max-h-[92vh] flex-col overflow-hidden rounded-t-[2rem] border border-white/10 bg-slate-950 text-slate-50 shadow-2xl shadow-black/50 sm:inset-y-0 sm:right-0 sm:left-auto sm:h-full sm:max-h-none sm:w-[min(58rem,92vw)] sm:rounded-none sm:rounded-l-[2rem]">
-        <header className="flex items-start justify-between gap-3 border-b border-slate-800 px-4 py-4 sm:px-5">
+      <section className="absolute inset-x-0 bottom-0 flex max-h-[92vh] flex-col overflow-hidden rounded-t-[2rem] border border-[var(--ll-border)] bg-[var(--ll-bg)] text-[var(--ll-text)] shadow-none shadow-black/50 sm:inset-y-0 sm:right-0 sm:left-auto sm:h-full sm:max-h-none sm:w-[min(58rem,92vw)] sm:rounded-none sm:rounded-l-[2rem]">
+        <header className="flex items-start justify-between gap-3 border-b border-[var(--ll-border)] px-4 py-4 sm:px-5">
           <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-cyan-200">
+            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[var(--ll-silver)]">
               {meta.subject}
             </p>
-            <h2 className="mt-1 text-xl font-semibold text-white">{meta.title}</h2>
+            <h2 className="mt-1 text-xl font-semibold text-[var(--ll-text)]">{meta.title}</h2>
           </div>
           <button
             type="button"
             onClick={onClose}
-            className="rounded-full border border-slate-700 px-3 py-1.5 text-xs font-semibold text-slate-300 transition-colors hover:border-slate-500 hover:text-slate-100"
+            className="rounded-full border border-[var(--ll-border)] px-3 py-1.5 text-xs font-semibold text-[var(--ll-text)] transition-colors hover:border-[var(--ll-border)] hover:text-[var(--ll-text)]"
           >
             Close
           </button>

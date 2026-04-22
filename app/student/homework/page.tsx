@@ -30,13 +30,13 @@ export default async function StudentHomeworkList() {
   });
 
   return (
-    <main className="min-h-screen bg-slate-950 p-6 text-slate-50">
+    <main className="min-h-screen bg-[var(--ll-bg)] p-6 text-[var(--ll-text)]">
       <div className="mx-auto max-w-3xl space-y-6">
         <h1 className="text-2xl font-bold">Your Homework</h1>
 
         <div className="space-y-3">
           {allHomework.length === 0 ? (
-            <p className="text-sm text-slate-400">
+            <p className="text-sm text-[var(--ll-text-muted)]">
               No homework assigned yet.
             </p>
           ) : (
@@ -44,10 +44,10 @@ export default async function StudentHomeworkList() {
               <Link
                 key={hw.id}
                 href={`/student/homework/${hw.id}`}
-                className="block rounded-xl border border-slate-800 bg-slate-900/70 p-4 hover:border-emerald-500/30"
+                className="block rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 p-4 hover:border-emerald-500/30"
               >
                 <p className="text-lg font-medium">{hw.title}</p>
-                <p className="text-sm text-slate-400">
+                <p className="text-sm text-[var(--ll-text-muted)]">
                   {new Date(hw.createdAt).toLocaleDateString()}
                 </p>
               </Link>

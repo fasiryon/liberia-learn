@@ -33,7 +33,7 @@ export function GuardianNav() {
   }, []);
 
   return (
-    <nav className="flex flex-wrap gap-2 border-b border-white/10 pb-4">
+    <nav className="flex flex-wrap gap-2 border-b border-[var(--ll-border)] pb-4">
       {LINKS.map((link) => {
         const active =
           pathname === link.href ||
@@ -44,13 +44,13 @@ export function GuardianNav() {
             href={link.href}
             className={`inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold ${
               active
-                ? "bg-emerald-400 text-slate-950"
-                : "border border-slate-700 bg-slate-900/70 text-slate-200 hover:border-slate-500"
+                ? "bg-[var(--ll-yellow-soft)] text-[var(--ll-text-faint)]"
+                : "border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 text-[var(--ll-text)] hover:border-[var(--ll-border)]"
             }`}
           >
             <span>{link.label}</span>
             {link.badgeKey === "messages" && unreadCount > 0 ? (
-              <span className="rounded-full bg-slate-950/90 px-2 py-0.5 text-[10px] font-semibold text-emerald-300">
+              <span className="rounded-full bg-[var(--ll-bg)]/90 px-2 py-0.5 text-[10px] font-semibold text-[var(--ll-yellow)]">
                 {unreadCount}
               </span>
             ) : null}

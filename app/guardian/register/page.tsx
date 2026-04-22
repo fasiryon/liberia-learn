@@ -36,16 +36,16 @@ export default async function GuardianRegisterPage({ searchParams }: PageProps) 
   }
 
   return (
-    <main className="min-h-screen bg-stone-100 px-4 py-8 text-slate-950">
-      <div className="mx-auto max-w-md rounded-[28px] bg-white p-6 shadow-xl shadow-slate-300/50">
-        <p className="text-sm font-semibold uppercase tracking-[0.2em] text-emerald-700">LiberiaLearn</p>
+    <main className="min-h-screen bg-[var(--ll-surface-muted)] px-4 py-8 text-[var(--ll-text-faint)]">
+      <div className="mx-auto max-w-md rounded-xl bg-white p-6 shadow-none shadow-slate-300/50">
+        <p className="text-sm font-semibold uppercase tracking-[0.2em] text-[var(--ll-yellow)]">LiberiaLearn</p>
         <h1 className="mt-4 text-3xl font-bold leading-tight">Create your guardian account</h1>
-        <p className="mt-3 text-lg leading-7 text-slate-700">
+        <p className="mt-3 text-lg leading-7 text-[var(--ll-text-faint)]">
           You have been invited to monitor {student.user.name ?? "your child"} at {school.name}.
         </p>
-        <p className="mt-2 text-base leading-7 text-slate-600">
+        <p className="mt-2 text-base leading-7 text-[var(--ll-text-faint)]">
           Use your phone number and a simple PIN to sign in. Review the{" "}
-          <Link href="/legal/data-for-minors" className="font-semibold text-emerald-700 hover:text-emerald-800">
+          <Link href="/legal/data-for-minors" className="font-semibold text-[var(--ll-yellow)] hover:text-[var(--ll-yellow)]">
             Data Policy for Minors
           </Link>{" "}
           for guardian data rights.
@@ -60,10 +60,10 @@ export default async function GuardianRegisterPage({ searchParams }: PageProps) 
 
 function ExpiredState() {
   return (
-    <main className="flex min-h-screen items-center justify-center bg-stone-100 px-4 py-8 text-slate-950">
-      <div className="max-w-md rounded-[28px] bg-white p-6 text-center shadow-xl shadow-slate-300/50">
+    <main className="flex min-h-screen items-center justify-center bg-[var(--ll-surface-muted)] px-4 py-8 text-[var(--ll-text-faint)]">
+      <div className="max-w-md rounded-xl bg-white p-6 text-center shadow-none shadow-slate-300/50">
         <h1 className="text-2xl font-bold">This link has expired.</h1>
-        <p className="mt-3 text-lg leading-7 text-slate-700">Please contact your child&apos;s school.</p>
+        <p className="mt-3 text-lg leading-7 text-[var(--ll-text-faint)]">Please contact your child&apos;s school.</p>
       </div>
     </main>
   );

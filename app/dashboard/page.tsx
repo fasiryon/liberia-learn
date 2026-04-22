@@ -1,5 +1,6 @@
 import AiTutorChat from "@/components/AiTutorChat";
 import { DashboardTopBar } from "@/components/DashboardTopBar";
+import { BookOpen, ChevronLeft, ChevronRight } from "lucide-react";
 
 // app/page.tsx (Student Dashboard)
 import Link from "next/link";
@@ -87,10 +88,10 @@ export default async function DashboardPage() {
   if (!student) {
     return (
       <ErrorBoundary>
-        <main className="min-h-screen bg-slate-950 text-slate-50 flex items-center justify-center px-4">
+        <main className="min-h-screen bg-[var(--ll-bg)] text-[var(--ll-text)] flex items-center justify-center px-4">
           <div className="max-w-md w-full text-center space-y-4">
             <h1 className="text-xl font-semibold">No student profile found</h1>
-            <p className="text-sm text-slate-400">
+            <p className="text-sm text-[var(--ll-text-muted)]">
               You&apos;re signed in but there is no matching student row.
             </p>
 
@@ -101,13 +102,16 @@ export default async function DashboardPage() {
             <div className="flex justify-center gap-2 pt-2">
               <Link
                 href="/"
-                className="rounded-full border border-slate-700 px-3 py-1.5 text-xs text-slate-300 hover:text-slate-50"
+                className="rounded-full border border-[var(--ll-border)] px-3 py-1.5 text-xs text-[var(--ll-text)] hover:text-[var(--ll-text)]"
               >
-                &larr; Back
+                <span className="inline-flex items-center gap-1">
+                  <ChevronLeft size={14} />
+                  Back
+                </span>
               </Link>
               <Link
                 href="/login"
-                className="rounded-full bg-emerald-500 px-3 py-1.5 text-xs font-semibold text-slate-950"
+                className="rounded-full bg-[var(--ll-yellow)] px-3 py-1.5 text-xs font-semibold text-[var(--ll-text-faint)]"
               >
                 Login
               </Link>
@@ -220,10 +224,10 @@ export default async function DashboardPage() {
           {/* Consistent top bar */}
           <DashboardTopBar
             roleLabel="Student"
-            roleBadgeBg="bg-emerald-500/10 border-emerald-500/20"
+            roleBadgeBg="bg-[var(--ll-yellow)]/10 border-emerald-500/20"
             roleAccent="text-[var(--ll-accent)]"
             userName={studentName}
-            subtitle={`${className} · ${county}`}
+            subtitle={`${className} Â· ${county}`}
           />
 
           <div className="flex flex-1 flex-col gap-4 md:flex-row">
@@ -244,7 +248,7 @@ export default async function DashboardPage() {
                 <h1 className="mt-1 text-2xl font-semibold text-[var(--ll-text)]">
                   Good morning, <span className="text-[var(--ll-accent)]">{studentName}</span>. Ready to learn?
                 </h1>
-                <p className="mt-1 text-sm text-slate-400">Placement: {placementGradeLabel} · {school}</p>
+                <p className="mt-1 text-sm text-[var(--ll-text-muted)]">Placement: {placementGradeLabel} Â· {school}</p>
               </div>
 
               {/* KPI Cards */}
@@ -307,7 +311,7 @@ export default async function DashboardPage() {
                   </div>
                   <Link
                     href="/student/lessons"
-                    className="ll-touch-target inline-flex items-center justify-center rounded-lg bg-[var(--ll-accent)] px-5 py-3 text-sm font-semibold text-slate-950"
+                    className="ll-touch-target inline-flex items-center justify-center rounded-lg bg-[var(--ll-accent)] px-5 py-3 text-sm font-semibold text-[var(--ll-text-faint)]"
                   >
                     Open today&apos;s lesson
                   </Link>
@@ -344,7 +348,7 @@ export default async function DashboardPage() {
                   </Link>
                 </div>
                 {dashboardAssignments.length === 0 ? (
-                  <p className="mt-4 text-sm text-slate-200">
+                  <p className="mt-4 text-sm text-[var(--ll-text)]">
                     No class assignments are waiting right now.
                   </p>
                 ) : (
@@ -368,11 +372,11 @@ export default async function DashboardPage() {
                         >
                           <div className="flex flex-wrap items-start justify-between gap-3">
                             <div>
-                              <p className="text-sm font-semibold text-slate-50">
+                              <p className="text-sm font-semibold text-[var(--ll-text)]">
                                 {assignment.title}
                               </p>
-                              <p className="mt-1 text-xs text-slate-300">
-                                Assigned by {teacherName} · Due{" "}
+                              <p className="mt-1 text-xs text-[var(--ll-text)]">
+                                Assigned by {teacherName} Â· Due{" "}
                                 {assignment.dueAt
                                   ? new Date(assignment.dueAt).toLocaleDateString("en-LR")
                                   : "not set"}
@@ -381,10 +385,10 @@ export default async function DashboardPage() {
                             <span
                               className={`rounded-full px-3 py-1 text-[11px] font-semibold ${
                                 submission?.turnedInAt
-                                  ? "bg-emerald-500/20 text-emerald-300"
+                                  ? "bg-[var(--ll-yellow)]/20 text-[var(--ll-yellow)]"
                                   : isOverdue
                                     ? "bg-red-500/20 text-red-300"
-                                    : "bg-amber-500/20 text-amber-300"
+                                    : "bg-[var(--ll-yellow-soft)] text-[var(--ll-yellow)]"
                               }`}
                             >
                               {submission?.turnedInAt
@@ -394,7 +398,7 @@ export default async function DashboardPage() {
                                   : "Assigned"}
                             </span>
                           </div>
-                          <p className="mt-3 text-sm text-slate-200">
+                          <p className="mt-3 text-sm text-[var(--ll-text)]">
                             {assignment.description || "Open this assignment to see instructions."}
                           </p>
                         </Link>
@@ -419,13 +423,13 @@ export default async function DashboardPage() {
                       ? `Last test: ${latestPlacement.rawScore}/${latestPlacement.totalQuestions}`
                       : "No test yet"
                   }
-                  valueClassName="text-emerald-300"
+                  valueClassName="text-[var(--ll-yellow)]"
                 />
                 <StatCard
                   label="Classes"
                   value={student.enrollments.length || 1}
                   subtitle={`${community}, ${county}`}
-                  valueClassName="text-amber-300"
+                  valueClassName="text-[var(--ll-yellow)]"
                 />
                 <StatCard
                   label="Attendance"
@@ -436,75 +440,78 @@ export default async function DashboardPage() {
 
                 {/* AI TUTOR ACTIVITY */}
                 <div className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-surface)] p-4">
-                  <p className="text-[11px] uppercase tracking-wide text-slate-400">
+                  <p className="text-[11px] uppercase tracking-wide text-[var(--ll-text-muted)]">
                     AI Tutor Activity
                   </p>
                   <div className="mt-2 flex items-baseline gap-2">
-                    <p className="text-2xl font-semibold text-emerald-300">
+                    <p className="text-2xl font-semibold text-[var(--ll-yellow)]">
                       {chatMessagesCount}
                     </p>
-                    <p className="text-xs text-slate-400">
+                    <p className="text-xs text-[var(--ll-text-muted)]">
                       questions this week
                     </p>
                   </div>
-                  <p className="text-xs text-slate-500 mt-2">
-                    Keep asking questions — learning grows with curiosity.
+                  <p className="text-xs text-[var(--ll-text-faint)] mt-2">
+                    Keep asking questions â€” learning grows with curiosity.
                   </p>
                 </div>
               </div>
 
               {/* Placement Overview */}
               <div className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-surface)] p-4">
-                <p className="text-[11px] uppercase tracking-wide text-slate-400 mb-2">
+                <p className="text-[11px] uppercase tracking-wide text-[var(--ll-text-muted)] mb-2">
                   Placement overview
                 </p>
-                <p className="text-sm text-slate-200">
+                <p className="text-sm text-[var(--ll-text)]">
                   Current recommended grade:{" "}
                   <span className="font-semibold">
                     {placementGradeLabel}
                   </span>
                 </p>
                 {latestPlacement ? (
-                  <p className="text-xs text-slate-400 mt-1">
-                    Last placement test: {latestPlacement.levelLabel} · Grade{" "}
-                    {latestPlacement.estimatedGrade} · {latestPlacement.rawScore}/
-                    {latestPlacement.totalQuestions} ·{" "}
+                  <p className="text-xs text-[var(--ll-text-muted)] mt-1">
+                    Last placement test: {latestPlacement.levelLabel} Â· Grade{" "}
+                    {latestPlacement.estimatedGrade} Â· {latestPlacement.rawScore}/
+                    {latestPlacement.totalQuestions} Â·{" "}
                     {new Date(latestPlacement.createdAt).toLocaleString()}
                   </p>
                 ) : (
-                  <p className="text-xs text-slate-400 mt-1">
+                  <p className="text-xs text-[var(--ll-text-muted)] mt-1">
                     You haven&apos;t taken a placement test yet. Once the AI
                     test is live, we&apos;ll use it to set your starting grade.
                   </p>
                 )}
                 <Link
                   href="/student/placement"
-                  className="mt-2 inline-flex text-[11px] text-emerald-300 hover:text-emerald-200"
+                  className="mt-2 inline-flex text-[11px] text-[var(--ll-yellow)] hover:text-[var(--ll-yellow)]"
                 >
-                  View placement details →
+                  <span className="inline-flex items-center gap-1">
+                    View placement details
+                    <ChevronRight size={14} />
+                  </span>
                 </Link>
               </div>
 
               <div className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-surface)] p-4">
                 <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                   <div>
-                    <p className="text-[11px] uppercase tracking-wide text-slate-400">
+                    <p className="text-[11px] uppercase tracking-wide text-[var(--ll-text-muted)]">
                       Placement History
                     </p>
-                    <p className="mt-1 text-xs text-slate-500">
+                    <p className="mt-1 text-xs text-[var(--ll-text-faint)]">
                       Review AI recommendations and teacher decisions from every placement attempt.
                     </p>
                   </div>
                   <Link
                     href="/placement"
-                    className="inline-flex rounded-full border border-emerald-500/30 px-3 py-1.5 text-[11px] text-emerald-300 hover:border-emerald-400/40 hover:text-emerald-200"
+                    className="inline-flex rounded-full border border-emerald-500/30 px-3 py-1.5 text-[11px] text-[var(--ll-yellow)] hover:border-emerald-400/40 hover:text-[var(--ll-yellow)]"
                   >
                     Retake placement
                   </Link>
                 </div>
 
                 {student.placementTests.length === 0 ? (
-                  <p className="mt-4 text-sm text-slate-400">
+                  <p className="mt-4 text-sm text-[var(--ll-text-muted)]">
                     No placement history yet. Take the AI placement test to establish your starting grade.
                   </p>
                 ) : (
@@ -518,15 +525,15 @@ export default async function DashboardPage() {
                         >
                           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                             <div>
-                              <p className="text-sm font-semibold text-slate-100">
+                              <p className="text-sm font-semibold text-[var(--ll-text)]">
                                 {getPlacementOutcomeText({
                                   estimatedGrade: placement.estimatedGrade,
                                   teacherDecision: placement.teacherDecision,
                                   teacherGrade: placement.teacherGrade,
                                 })}
                               </p>
-                              <p className="mt-1 text-xs text-slate-400">
-                                {placement.rawScore}/{placement.totalQuestions} correct ·{" "}
+                              <p className="mt-1 text-xs text-[var(--ll-text-muted)]">
+                                {placement.rawScore}/{placement.totalQuestions} correct Â·{" "}
                                 {new Date(placement.createdAt).toLocaleDateString("en-LR")}
                               </p>
                             </div>
@@ -538,7 +545,7 @@ export default async function DashboardPage() {
                               </span>
                               <Link
                                 href="/placement"
-                                className="rounded-full border border-slate-700 px-3 py-1 text-[11px] text-slate-300 hover:text-slate-100"
+                                className="rounded-full border border-[var(--ll-border)] px-3 py-1 text-[11px] text-[var(--ll-text)] hover:text-[var(--ll-text)]"
                               >
                                 View results
                               </Link>
@@ -554,40 +561,42 @@ export default async function DashboardPage() {
               {/* Grades */}
               {grades.length === 0 ? (
                 <div className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-surface)] p-8 text-center">
-                  <p className="text-4xl mb-2">📚</p>
+                  <p className="mb-2 flex justify-center text-[var(--ll-text-muted)]">
+                    <BookOpen size={28} />
+                  </p>
                   <p className="text-sm font-medium mb-1">
                     No grades yet
                   </p>
-                  <p className="text-xs text-slate-500">
+                  <p className="text-xs text-[var(--ll-text-faint)]">
                     Your work will appear here once it&apos;s graded.
                   </p>
                 </div>
               ) : (
                 <div className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-surface)] p-4">
-                  <p className="text-[11px] uppercase tracking-wide text-slate-400 mb-3">
+                  <p className="text-[11px] uppercase tracking-wide text-[var(--ll-text-muted)] mb-3">
                     Recent Grades
                   </p>
                   <div className="space-y-2">
                     {grades.map((g: any) => (
                       <div
                         key={g.id}
-                        className="flex items-center justify-between rounded-xl bg-slate-950/80 px-3 py-2 text-sm"
+                        className="flex items-center justify-between rounded-xl bg-[var(--ll-bg)]/80 px-3 py-2 text-sm"
                       >
                         <div>
-                          <p className="text-slate-100">
+                          <p className="text-[var(--ll-text)]">
                             {g.Class?.name}
                           </p>
-                          <p className="text-[11px] text-slate-400">
+                          <p className="text-[11px] text-[var(--ll-text-muted)]">
                             {new Date(
                               g.computedAt
                             ).toLocaleDateString()}
                           </p>
                         </div>
                         <div className="text-right">
-                          <p className="text-lg font-semibold text-emerald-300">
+                          <p className="text-lg font-semibold text-[var(--ll-yellow)]">
                             {g.percent}%
                           </p>
-                          <p className="text-[11px] text-slate-400">
+                          <p className="text-[11px] text-[var(--ll-text-muted)]">
                             Grade: {g.letter}
                           </p>
                         </div>
@@ -599,41 +608,41 @@ export default async function DashboardPage() {
 
               {/* Today's schedule */}
               <div className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-surface)] p-4">
-                <p className="text-[11px] uppercase tracking-wide text-slate-400">
+                <p className="text-[11px] uppercase tracking-wide text-[var(--ll-text-muted)]">
                   Today&apos;s schedule
                 </p>
 
-                <div className="mt-3 space-y-2 text-xs text-slate-300">
+                <div className="mt-3 space-y-2 text-xs text-[var(--ll-text)]">
                   {[
                     {
-                      time: "08:30 – 09:15",
-                      title: "Mathematics · Fractions & Ratios",
+                      time: "08:30 â€“ 09:15",
+                      title: "Mathematics Â· Fractions & Ratios",
                       tag: "AI plan ready",
                     },
                     {
-                      time: "09:30 – 10:15",
-                      title: "Science · States of Matter",
+                      time: "09:30 â€“ 10:15",
+                      title: "Science Â· States of Matter",
                       tag: "Slides prepared",
                     },
                     {
-                      time: "11:00 – 11:45",
-                      title: "English · Reading comprehension",
+                      time: "11:00 â€“ 11:45",
+                      title: "English Â· Reading comprehension",
                       tag: "Reading pack",
                     },
                   ].map((item, i) => (
                     <div
                       key={i}
-                      className="flex items-center justify-between rounded-xl bg-slate-950/80 px-3 py-2"
+                      className="flex items-center justify-between rounded-xl bg-[var(--ll-bg)]/80 px-3 py-2"
                     >
                       <div>
-                        <p className="text-[11px] text-slate-400">
+                        <p className="text-[11px] text-[var(--ll-text-muted)]">
                           {item.time}
                         </p>
-                        <p className="text-sm text-slate-100">
+                        <p className="text-sm text-[var(--ll-text)]">
                           {item.title}
                         </p>
                       </div>
-                      <span className="text-[10px] bg-emerald-500/15 rounded-full px-2 py-0.5 text-emerald-300">
+                      <span className="text-[10px] bg-[var(--ll-yellow)]/15 rounded-full px-2 py-0.5 text-[var(--ll-yellow)]">
                         {item.tag}
                       </span>
                     </div>
@@ -646,7 +655,7 @@ export default async function DashboardPage() {
                 id="ai-tutor-section"
                 className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-surface)] p-4"
               >
-                <p className="text-[11px] uppercase tracking-wide text-slate-400 mb-3">
+                <p className="text-[11px] uppercase tracking-wide text-[var(--ll-text-muted)] mb-3">
                   AI Tutor
                 </p>
                 <AiTutorChat />
@@ -654,7 +663,7 @@ export default async function DashboardPage() {
             </section>
           </div>
         </div>
-        <LegalFooter />
+        <LegalFooter variant="portal" />
       </main>
     </ErrorBoundary>
   );

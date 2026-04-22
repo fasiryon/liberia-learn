@@ -38,7 +38,7 @@ export default async function TrainingModulePage({ params }: Props) {
   if (!mod) notFound();
 
   return (
-    <main className="min-h-screen bg-slate-950 text-slate-50">
+    <main className="min-h-screen bg-[var(--ll-bg)] text-[var(--ll-text)]">
       <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_top,_#10b98122,_transparent_60%)]" />
       <ModulePlayer module={mod} />
     </main>

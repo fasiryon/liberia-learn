@@ -43,18 +43,18 @@ export default async function TeacherExamDetailPage({
   }
 
   return (
-    <main className="min-h-screen bg-slate-950 px-4 py-8 text-slate-50">
+    <main className="min-h-screen bg-[var(--ll-bg)] px-4 py-8 text-[var(--ll-text)]">
       <div className="mx-auto max-w-6xl space-y-6">
-        <Link href="/teacher/exams" className="text-sm text-emerald-300 hover:text-emerald-200">
+        <Link href="/teacher/exams" className="text-sm text-[var(--ll-yellow)] hover:text-[var(--ll-yellow)]">
           &larr; Back to Exams
         </Link>
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div>
             <h1 className="text-3xl font-semibold">{exam.title}</h1>
-            <p className="mt-2 text-sm text-slate-400">
+            <p className="mt-2 text-sm text-[var(--ll-text-muted)]">
               {exam.subject} · Grade {exam.grade} · {exam.status}
             </p>
-            <p className="mt-1 text-xs text-slate-500">
+            <p className="mt-1 text-xs text-[var(--ll-text-faint)]">
               {exam.class?.name ?? "Grade-wide"} · {exam.academicYear?.yearLabel ?? "No academic year"} ·{" "}
               {exam.resultsPublishedAt
                 ? `Results released ${new Date(exam.resultsPublishedAt).toLocaleDateString()}`
@@ -64,15 +64,15 @@ export default async function TeacherExamDetailPage({
           <ExamStatusControls examId={exam.id} isAdmin={user.role === "ADMIN"} status={exam.status} />
         </div>
 
-        <div className="rounded-3xl border border-white/10 bg-slate-900/70 p-6">
+        <div className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 p-6">
           <h2 className="text-lg font-semibold">Questions</h2>
           <div className="mt-4 space-y-3">
             {exam.questions.map((question, index) => (
-              <div key={question.id} className="rounded-2xl border border-white/10 bg-white/5 p-4">
+              <div key={question.id} className="rounded-xl border border-[var(--ll-border)] bg-white/5 p-4">
                 <p className="font-medium">
                   {index + 1}. {question.prompt}
                 </p>
-                <p className="mt-2 text-xs text-slate-400">
+                <p className="mt-2 text-xs text-[var(--ll-text-muted)]">
                   MOE: {question.moeCode} · Correct option index: {question.correctIndex}
                 </p>
               </div>
@@ -80,9 +80,9 @@ export default async function TeacherExamDetailPage({
           </div>
         </div>
 
-        <div className="overflow-hidden rounded-3xl border border-white/10 bg-slate-900/70">
+        <div className="overflow-hidden rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70">
           <table className="min-w-full text-left text-sm">
-            <thead className="bg-slate-900/90 text-slate-300">
+            <thead className="bg-[var(--ll-bg)]/90 text-[var(--ll-text)]">
               <tr>
                 <th className="px-4 py-3">Student</th>
                 <th className="px-4 py-3">Score</th>
@@ -96,7 +96,7 @@ export default async function TeacherExamDetailPage({
             <tbody>
               {exam.attempts.length === 0 ? (
                 <tr>
-                  <td colSpan={7} className="px-4 py-6 text-slate-400">
+                  <td colSpan={7} className="px-4 py-6 text-[var(--ll-text-muted)]">
                     No attempts yet.
                   </td>
                 </tr>
@@ -105,7 +105,7 @@ export default async function TeacherExamDetailPage({
                   <tr
                     key={attempt.id}
                     className={`border-t border-white/5 ${
-                      attempt.integrityFlags.length > 0 ? "bg-amber-500/10" : ""
+                      attempt.integrityFlags.length > 0 ? "bg-[var(--ll-yellow-soft)]" : ""
                     }`}
                   >
                     <td className="px-4 py-3">

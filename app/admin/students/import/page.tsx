@@ -94,44 +94,44 @@ export default function StudentImportPage() {
   }
 
   return (
-    <main className="min-h-screen bg-slate-950 text-slate-50">
+    <main className="min-h-screen bg-[var(--ll-bg)] text-[var(--ll-text)]">
       <div className="mx-auto max-w-5xl px-4 py-6">
-        <Link href="/admin/school" className="text-xs font-semibold text-emerald-300">Back to school dashboard</Link>
-        <header className="mt-4 rounded-3xl border border-white/10 bg-slate-900/80 p-5">
-          <p className="text-xs uppercase tracking-[0.2em] text-emerald-300">Bulk student import</p>
+        <Link href="/admin/school" className="text-xs font-semibold text-[var(--ll-yellow)]">Back to school dashboard</Link>
+        <header className="mt-4 rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/80 p-5">
+          <p className="text-xs uppercase tracking-[0.2em] text-[var(--ll-yellow)]">Bulk student import</p>
           <h1 className="mt-2 text-3xl font-bold">Import students by CSV</h1>
-          <p className="mt-2 text-sm text-slate-300">
+          <p className="mt-2 text-sm text-[var(--ll-text)]">
             Format: firstName,lastName,grade,dateOfBirth,guardianPhone. Batches over 50 students use the existing SQS FIFO queue when configured.
           </p>
         </header>
 
-        <section className="mt-5 rounded-3xl border border-white/10 bg-slate-900/80 p-5">
-          <input type="file" accept=".csv,text/csv" onChange={(e) => loadFile(e.target.files?.[0])} className="w-full rounded-xl border border-slate-700 bg-slate-950 px-3 py-3 text-sm" />
+        <section className="mt-5 rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/80 p-5">
+          <input type="file" accept=".csv,text/csv" onChange={(e) => loadFile(e.target.files?.[0])} className="w-full rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)] px-3 py-3 text-sm" />
           <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-            <p className="text-sm text-slate-300">{rows.length} rows parsed.</p>
-            <button disabled={busy || rows.length === 0 || errors.length > 0} onClick={submit} className="rounded-xl bg-emerald-400 px-4 py-3 text-sm font-bold text-slate-950 disabled:opacity-50">
+            <p className="text-sm text-[var(--ll-text)]">{rows.length} rows parsed.</p>
+            <button disabled={busy || rows.length === 0 || errors.length > 0} onClick={submit} className="rounded-xl bg-[var(--ll-yellow-soft)] px-4 py-3 text-sm font-bold text-[var(--ll-text-faint)] disabled:opacity-50">
               {busy ? "Importing..." : "Start import"}
             </button>
           </div>
           {errors.length > 0 ? (
-            <div className="mt-4 rounded-2xl border border-red-400/30 bg-red-500/10 p-4 text-sm text-red-100">
+            <div className="mt-4 rounded-xl border border-red-400/30 bg-red-500/10 p-4 text-sm text-red-100">
               {errors.map((error) => <p key={error}>{error}</p>)}
             </div>
           ) : null}
-          {message ? <p className="mt-4 rounded-xl border border-white/10 bg-slate-950 p-3 text-sm">{message}</p> : null}
+          {message ? <p className="mt-4 rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)] p-3 text-sm">{message}</p> : null}
         </section>
 
         {batch ? (
-          <section className="mt-5 rounded-3xl border border-white/10 bg-slate-900/80 p-5">
+          <section className="mt-5 rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/80 p-5">
             <h2 className="text-xl font-semibold">Import results</h2>
-            <p className="mt-2 text-sm text-slate-300">Status: {batch.status} - Created: {batch.successCount} - Errors: {batch.errorCount}</p>
+            <p className="mt-2 text-sm text-[var(--ll-text)]">Status: {batch.status} - Created: {batch.successCount} - Errors: {batch.errorCount}</p>
             {batch.resultSummary?.errors?.length ? (
-              <div className="mt-4 rounded-2xl border border-amber-400/30 bg-amber-500/10 p-4 text-sm text-amber-100">
+              <div className="mt-4 rounded-xl border border-amber-400/30 bg-[var(--ll-yellow-soft)] p-4 text-sm text-[var(--ll-yellow)]">
                 {batch.resultSummary.errors.map((error) => <p key={`${error.rowNumber}-${error.message}`}>Row {error.rowNumber}: {error.message}</p>)}
               </div>
             ) : null}
             {batch.status === "COMPLETED" || batch.successCount > 0 ? (
-              <a href={`/api/admin/import/batches/${batch.id}/credentials`} className="mt-4 inline-flex rounded-xl bg-emerald-400 px-4 py-3 text-sm font-bold text-slate-950">
+              <a href={`/api/admin/import/batches/${batch.id}/credentials`} className="mt-4 inline-flex rounded-xl bg-[var(--ll-yellow-soft)] px-4 py-3 text-sm font-bold text-[var(--ll-text-faint)]">
                 Download credentials CSV once
               </a>
             ) : null}

@@ -39,12 +39,12 @@ export function AdminNav() {
     : BASE_NAV_LINKS;
 
   return (
-    <nav className="mb-6 flex flex-wrap gap-2 border-b border-slate-800 pb-3">
+    <nav className="mb-6 flex flex-wrap gap-2 border-b border-[var(--ll-border)] pb-3">
       {navLinks.map((link) => (
         <Link
           key={link.href}
           href={link.href}
-          className="rounded-full border border-slate-700 bg-slate-900/80 px-4 py-1.5 text-xs font-semibold text-slate-200 hover:border-slate-500 hover:bg-slate-800"
+          className="rounded-full border border-[var(--ll-border)] bg-[var(--ll-bg)]/80 px-4 py-1.5 text-xs font-semibold text-[var(--ll-text)] hover:border-[var(--ll-border)] hover:bg-[var(--ll-surface)]"
         >
           {link.label}
         </Link>

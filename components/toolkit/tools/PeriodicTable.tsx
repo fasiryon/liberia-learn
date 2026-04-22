@@ -37,16 +37,16 @@ function inferGroup(n: number): string {
 }
 
 const GROUP_COLORS: Record<string, string> = {
-  "alkali-metal": "bg-rose-700",
-  "alkaline-earth": "bg-amber-700",
+  "alkali-metal": "bg-[var(--ll-danger)]/10",
+  "alkaline-earth": "bg-[var(--ll-yellow-soft)]",
   "noble-gas": "bg-sky-700",
   "halogen": "bg-lime-700",
   lanthanide: "bg-violet-700",
   actinide: "bg-fuchsia-700",
-  nonmetal: "bg-emerald-700",
-  metalloid: "bg-cyan-700",
+  nonmetal: "bg-[var(--ll-yellow-soft)]",
+  metalloid: "bg-[var(--ll-silver-soft)]",
   "transition-metal": "bg-indigo-700",
-  "post-transition": "bg-slate-700",
+  "post-transition": "bg-[var(--ll-surface-muted)]",
 };
 
 const ELEMENTS: Element[] = SYMBOLS.map((symbol, index) => {
@@ -76,7 +76,7 @@ export default function PeriodicTable({ onClose }: PeriodicTableProps) {
     <div className="space-y-3 text-xs">
       <div className="flex items-center justify-between">
         <h3 className="text-sm font-semibold">Periodic Table (118 elements)</h3>
-        <button type="button" aria-label="Close periodic table" className="rounded border border-slate-600 px-2 py-1" onClick={() => onClose?.()}>Close</button>
+        <button type="button" aria-label="Close periodic table" className="rounded border border-[var(--ll-border)] px-2 py-1" onClick={() => onClose?.()}>Close</button>
       </div>
 
       <input
@@ -84,17 +84,17 @@ export default function PeriodicTable({ onClose }: PeriodicTableProps) {
         value={query}
         onChange={(e) => setQuery(e.target.value)}
         placeholder="Search by name or symbol"
-        className="w-full rounded bg-slate-900 p-2"
+        className="w-full rounded bg-[var(--ll-bg)] p-2"
       />
 
-      <div className="max-h-[42vh] overflow-auto rounded border border-slate-700 p-2">
+      <div className="max-h-[42vh] overflow-auto rounded border border-[var(--ll-border)] p-2">
         <div className="grid grid-cols-6 gap-2 sm:grid-cols-10 md:grid-cols-14">
           {filtered.map((element) => (
             <button
               key={element.number}
               type="button"
               aria-label={`Element ${element.name}`}
-              className={`rounded p-2 text-left ${GROUP_COLORS[element.group] ?? "bg-slate-700"}`}
+              className={`rounded p-2 text-left ${GROUP_COLORS[element.group] ?? "bg-[var(--ll-surface-muted)]"}`}
               onClick={() => setSelected(element)}
             >
               <p className="text-[10px] opacity-80">{element.number}</p>
@@ -104,7 +104,7 @@ export default function PeriodicTable({ onClose }: PeriodicTableProps) {
         </div>
       </div>
 
-      <aside className="rounded bg-slate-900 p-3">
+      <aside className="rounded bg-[var(--ll-bg)] p-3">
         {selected ? (
           <div className="space-y-1">
             <p className="text-sm font-semibold">{selected.name} ({selected.symbol})</p>

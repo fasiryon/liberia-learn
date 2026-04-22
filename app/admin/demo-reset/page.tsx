@@ -13,19 +13,19 @@ export default async function AdminDemoResetPage() {
   }
 
   return (
-    <main className="min-h-screen bg-slate-950 px-4 py-10 text-slate-50 sm:px-6 lg:px-8">
+    <main className="min-h-screen bg-[var(--ll-bg)] px-4 py-10 text-[var(--ll-text)] sm:px-6 lg:px-8">
       <div className="mx-auto max-w-3xl space-y-6">
         <div className="flex items-center justify-between gap-4">
           <div>
-            <p className="text-xs uppercase tracking-[0.28em] text-emerald-300">LiberiaLearn Admin</p>
+            <p className="text-xs uppercase tracking-[0.28em] text-[var(--ll-yellow)]">LiberiaLearn Admin</p>
             <h1 className="mt-2 text-3xl font-semibold tracking-tight">Demo Reset</h1>
-            <p className="mt-2 max-w-2xl text-sm text-slate-400">
+            <p className="mt-2 max-w-2xl text-sm text-[var(--ll-text-muted)]">
               Reset demo schools to a clean seeded state for preview deployments, MOE walkthroughs, and investor demos.
             </p>
           </div>
           <Link
             href="/admin"
-            className="rounded-full border border-slate-700 px-4 py-2 text-sm text-slate-200 transition hover:border-slate-500 hover:bg-slate-900"
+            className="rounded-full border border-[var(--ll-border)] px-4 py-2 text-sm text-[var(--ll-text)] transition hover:border-[var(--ll-border)] hover:bg-[var(--ll-bg)]"
           >
             Back to Admin
           </Link>

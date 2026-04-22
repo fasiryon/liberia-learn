@@ -27,10 +27,10 @@ export default function OnboardPage() {
   }
 
   return (
-    <main className="min-h-screen bg-[#05060a] text-white flex items-center justify-center p-6">
-      <div className="w-full max-w-xl rounded-2xl border border-white/10 bg-white/5 p-6 shadow">
+    <main className="min-h-screen bg-[#05060a] text-[var(--ll-text)] flex items-center justify-center p-6">
+      <div className="w-full max-w-xl rounded-xl border border-[var(--ll-border)] bg-white/5 p-6 shadow">
         <h1 className="text-2xl font-semibold">Create School & Admin</h1>
-        <p className="text-white/70 mt-1">This registers a new school and the first ADMIN user.</p>
+        <p className="text-[var(--ll-text)]/70 mt-1">This registers a new school and the first ADMIN user.</p>
 
         <div className="mt-6 grid gap-3">
           <Field label="School name" value={schoolName} onChange={setSchoolName} />
@@ -41,19 +41,19 @@ export default function OnboardPage() {
 
           <button
             onClick={submit}
-            className="mt-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-black font-semibold px-4 py-3"
+            className="mt-2 rounded-xl bg-[var(--ll-yellow)] hover:bg-[var(--ll-yellow-soft)] text-black font-semibold px-4 py-3"
           >
             Create School & Admin
           </button>
 
           {status && (
-            <div className="rounded-xl border border-white/10 bg-white/5 p-3 text-sm whitespace-pre-wrap">
+            <div className="rounded-xl border border-[var(--ll-border)] bg-white/5 p-3 text-sm whitespace-pre-wrap">
               {status}
             </div>
           )}
 
-          <div className="text-xs text-white/60">
-            After creating: go to <code className="text-white/80">/login</code> and sign in with the admin email + password.
+          <div className="text-xs text-[var(--ll-text)]/60">
+            After creating: go to <code className="text-[var(--ll-text)]/80">/login</code> and sign in with the admin email + password.
           </div>
         </div>
       </div>
@@ -74,12 +74,12 @@ function Field({
 }) {
   return (
     <label className="grid gap-1">
-      <span className="text-sm text-white/80">{label}</span>
+      <span className="text-sm text-[var(--ll-text)]/80">{label}</span>
       <input
         type={type}
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="rounded-xl bg-[#0b0d14] border border-white/10 px-3 py-2 outline-none focus:border-emerald-500"
+        className="rounded-xl bg-[#0b0d14] border border-[var(--ll-border)] px-3 py-2 outline-none focus:border-emerald-500"
       />
     </label>
   );

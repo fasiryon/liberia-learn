@@ -53,14 +53,14 @@ export default function GuardianRegistrationPage() {
 
   if (loginId) {
     return (
-      <main className="min-h-screen bg-slate-950 text-slate-50 flex items-center justify-center px-4">
-        <section className="w-full max-w-md rounded-3xl border border-white/10 bg-slate-900/80 p-8 text-center">
-          <p className="text-xs uppercase tracking-[0.2em] text-emerald-300">Registration complete</p>
+      <main className="min-h-screen bg-[var(--ll-bg)] text-[var(--ll-text)] flex items-center justify-center px-4">
+        <section className="w-full max-w-md rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/80 p-8 text-center">
+          <p className="text-xs uppercase tracking-[0.2em] text-[var(--ll-yellow)]">Registration complete</p>
           <h1 className="mt-2 text-2xl font-bold">Welcome to LiberiaLearn!</h1>
-          <p className="mt-3 text-sm text-slate-300">Your guardian login ID is:</p>
-          <p className="mt-2 rounded-xl bg-slate-950 px-4 py-3 font-mono text-lg font-bold text-emerald-300">{loginId}</p>
-          <p className="mt-3 text-xs text-slate-400">Save this ID — you will use it to sign in.</p>
-          <Link href="/login" className="mt-6 inline-flex rounded-xl bg-emerald-400 px-6 py-3 text-sm font-bold text-slate-950">
+          <p className="mt-3 text-sm text-[var(--ll-text)]">Your guardian login ID is:</p>
+          <p className="mt-2 rounded-xl bg-[var(--ll-bg)] px-4 py-3 font-mono text-lg font-bold text-[var(--ll-yellow)]">{loginId}</p>
+          <p className="mt-3 text-xs text-[var(--ll-text-muted)]">Save this ID — you will use it to sign in.</p>
+          <Link href="/login" className="mt-6 inline-flex rounded-xl bg-[var(--ll-yellow-soft)] px-6 py-3 text-sm font-bold text-[var(--ll-text-faint)]">
             Go to login
           </Link>
         </section>
@@ -69,95 +69,95 @@ export default function GuardianRegistrationPage() {
   }
 
   return (
-    <main className="min-h-screen bg-slate-950 text-slate-50">
+    <main className="min-h-screen bg-[var(--ll-bg)] text-[var(--ll-text)]">
       <div className="mx-auto max-w-xl px-4 py-8">
-        <Link href="/login" className="text-xs font-semibold text-emerald-300 hover:text-emerald-200">
+        <Link href="/login" className="text-xs font-semibold text-[var(--ll-yellow)] hover:text-[var(--ll-yellow)]">
           ← Back to login
         </Link>
 
-        <section className="mt-4 rounded-3xl border border-white/10 bg-slate-900/80 p-6 shadow-xl shadow-black/30">
-          <p className="text-xs uppercase tracking-[0.2em] text-emerald-300">Guardian registration</p>
+        <section className="mt-4 rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/80 p-6 shadow-none shadow-black/30">
+          <p className="text-xs uppercase tracking-[0.2em] text-[var(--ll-yellow)]">Guardian registration</p>
           <h1 className="mt-2 text-3xl font-bold">Create a guardian account</h1>
-          <p className="mt-2 text-sm text-slate-300">
+          <p className="mt-2 text-sm text-[var(--ll-text)]">
             You need your child&apos;s school code and their exact full name and date of birth as registered.
             Guardian data rights and deletion requests are explained in the{" "}
-            <Link href="/legal/data-for-minors" className="text-emerald-300 hover:underline">
+            <Link href="/legal/data-for-minors" className="text-[var(--ll-yellow)] hover:underline">
               Data Policy for Minors
             </Link>.
           </p>
 
           <form onSubmit={submit} className="mt-6 grid gap-4 sm:grid-cols-2">
             <label className="sm:col-span-2">
-              <span className="text-xs text-slate-400">Your full name</span>
+              <span className="text-xs text-[var(--ll-text-muted)]">Your full name</span>
               <input
                 required
                 value={form.fullName}
                 onChange={set("fullName")}
                 placeholder="Your full name"
-                className="mt-1 w-full rounded-xl border border-slate-700 bg-slate-950 px-3 py-3 text-sm"
+                className="mt-1 w-full rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)] px-3 py-3 text-sm"
               />
             </label>
 
             <label>
-              <span className="text-xs text-slate-400">Email address</span>
+              <span className="text-xs text-[var(--ll-text-muted)]">Email address</span>
               <input
                 type="email"
                 value={form.email}
                 onChange={set("email")}
                 placeholder="your@email.com"
-                className="mt-1 w-full rounded-xl border border-slate-700 bg-slate-950 px-3 py-3 text-sm"
+                className="mt-1 w-full rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)] px-3 py-3 text-sm"
               />
             </label>
 
             <label>
-              <span className="text-xs text-slate-400">Phone number</span>
+              <span className="text-xs text-[var(--ll-text-muted)]">Phone number</span>
               <input
                 type="tel"
                 value={form.phone}
                 onChange={set("phone")}
                 placeholder="+231 XX XXX XXXX"
-                className="mt-1 w-full rounded-xl border border-slate-700 bg-slate-950 px-3 py-3 text-sm"
+                className="mt-1 w-full rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)] px-3 py-3 text-sm"
               />
             </label>
-            <p className="sm:col-span-2 -mt-2 text-xs text-slate-500">At least one of email or phone is required.</p>
+            <p className="sm:col-span-2 -mt-2 text-xs text-[var(--ll-text-faint)]">At least one of email or phone is required.</p>
 
             <label className="sm:col-span-2">
-              <span className="text-xs text-slate-400">School code</span>
+              <span className="text-xs text-[var(--ll-text-muted)]">School code</span>
               <input
                 required
                 value={form.schoolCode}
                 onChange={set("schoolCode")}
                 placeholder="e.g. LIB-MONT-A1B2"
-                className="mt-1 w-full rounded-xl border border-slate-700 bg-slate-950 px-3 py-3 font-mono text-sm uppercase"
+                className="mt-1 w-full rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)] px-3 py-3 font-mono text-sm uppercase"
               />
             </label>
 
             <label className="sm:col-span-2">
-              <span className="text-xs text-slate-400">Student&apos;s full name</span>
+              <span className="text-xs text-[var(--ll-text-muted)]">Student&apos;s full name</span>
               <input
                 required
                 value={form.studentFullName}
                 onChange={set("studentFullName")}
                 placeholder="Exactly as registered at school"
-                className="mt-1 w-full rounded-xl border border-slate-700 bg-slate-950 px-3 py-3 text-sm"
+                className="mt-1 w-full rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)] px-3 py-3 text-sm"
               />
             </label>
 
             <label>
-              <span className="text-xs text-slate-400">Student&apos;s date of birth</span>
+              <span className="text-xs text-[var(--ll-text-muted)]">Student&apos;s date of birth</span>
               <input
                 required
                 type="date"
                 value={form.studentDateOfBirth}
                 onChange={set("studentDateOfBirth")}
-                className="mt-1 w-full rounded-xl border border-slate-700 bg-slate-950 px-3 py-3 text-sm"
+                className="mt-1 w-full rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)] px-3 py-3 text-sm"
               />
             </label>
 
             <div />
 
             <label>
-              <span className="text-xs text-slate-400">Password</span>
+              <span className="text-xs text-[var(--ll-text-muted)]">Password</span>
               <input
                 required
                 type="password"
@@ -165,12 +165,12 @@ export default function GuardianRegistrationPage() {
                 value={form.password}
                 onChange={set("password")}
                 placeholder="At least 8 characters"
-                className="mt-1 w-full rounded-xl border border-slate-700 bg-slate-950 px-3 py-3 text-sm"
+                className="mt-1 w-full rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)] px-3 py-3 text-sm"
               />
             </label>
 
             <label>
-              <span className="text-xs text-slate-400">Confirm password</span>
+              <span className="text-xs text-[var(--ll-text-muted)]">Confirm password</span>
               <input
                 required
                 type="password"
@@ -178,13 +178,13 @@ export default function GuardianRegistrationPage() {
                 value={form.confirmPassword}
                 onChange={set("confirmPassword")}
                 placeholder="Repeat your password"
-                className="mt-1 w-full rounded-xl border border-slate-700 bg-slate-950 px-3 py-3 text-sm"
+                className="mt-1 w-full rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)] px-3 py-3 text-sm"
               />
             </label>
 
             <button
               disabled={busy}
-              className="sm:col-span-2 rounded-2xl bg-emerald-400 px-5 py-3 text-sm font-bold text-slate-950 disabled:opacity-60"
+              className="sm:col-span-2 rounded-xl bg-[var(--ll-yellow-soft)] px-5 py-3 text-sm font-bold text-[var(--ll-text-faint)] disabled:opacity-60"
             >
               {busy ? "Creating account…" : "Create guardian account"}
             </button>
@@ -193,7 +193,7 @@ export default function GuardianRegistrationPage() {
               <p
                 className={`sm:col-span-2 rounded-xl border px-3 py-3 text-sm ${
                   status.ok
-                    ? "border-emerald-500/30 bg-emerald-950/40 text-emerald-300"
+                    ? "border-emerald-500/30 bg-[var(--ll-yellow-soft)] text-[var(--ll-yellow)]"
                     : "border-red-500/30 bg-red-950/40 text-red-300"
                 }`}
               >
@@ -202,9 +202,9 @@ export default function GuardianRegistrationPage() {
             )}
           </form>
 
-          <p className="mt-4 text-xs text-slate-400">
+          <p className="mt-4 text-xs text-[var(--ll-text-muted)]">
             Registering as a student?{" "}
-            <Link href="/register/student" className="text-emerald-300 hover:underline">
+            <Link href="/register/student" className="text-[var(--ll-yellow)] hover:underline">
               Student registration
             </Link>
           </p>

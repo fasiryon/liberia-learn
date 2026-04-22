@@ -31,41 +31,41 @@ export default function DemoModePage() {
 
       <div>
         <h1 className="text-2xl font-bold">Demo Mode</h1>
-        <p className="text-sm text-slate-400 mt-1">Tools for managing demo data during MOE presentation</p>
+        <p className="text-sm text-[var(--ll-text-muted)] mt-1">Tools for managing demo data during MOE presentation</p>
       </div>
 
       <div className="space-y-4">
-        <div className="rounded-2xl border border-white/10 bg-slate-900/70 p-5">
-          <h2 className="text-sm font-semibold text-slate-200 mb-2">Reset Demo Data</h2>
-          <p className="text-xs text-slate-400 mb-3">Re-seed all 3 demo schools to clean state.</p>
+        <div className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 p-5">
+          <h2 className="text-sm font-semibold text-[var(--ll-text)] mb-2">Reset Demo Data</h2>
+          <p className="text-xs text-[var(--ll-text-muted)] mb-3">Re-seed all 3 demo schools to clean state.</p>
           <button
             onClick={() => handleAction("reset", "Reset")}
             disabled={loading !== null}
-            className="rounded-xl bg-red-500 px-5 py-2.5 text-sm font-semibold text-white hover:bg-red-400 disabled:opacity-50"
+            className="rounded-xl bg-red-500 px-5 py-2.5 text-sm font-semibold text-[var(--ll-text)] hover:bg-red-400 disabled:opacity-50"
           >
             {loading === "reset" ? "Resetting..." : "Reset Demo Data"}
           </button>
         </div>
 
-        <div className="rounded-2xl border border-white/10 bg-slate-900/70 p-5">
-          <h2 className="text-sm font-semibold text-slate-200 mb-2">Advance Demo Day</h2>
-          <p className="text-xs text-slate-400 mb-3">Move all scheduled work dates forward by 1 day.</p>
+        <div className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 p-5">
+          <h2 className="text-sm font-semibold text-[var(--ll-text)] mb-2">Advance Demo Day</h2>
+          <p className="text-xs text-[var(--ll-text-muted)] mb-3">Move all scheduled work dates forward by 1 day.</p>
           <button
             onClick={() => handleAction("advance-day", "Advance")}
             disabled={loading !== null}
-            className="rounded-xl bg-amber-500 px-5 py-2.5 text-sm font-semibold text-white hover:bg-amber-400 disabled:opacity-50"
+            className="rounded-xl bg-[var(--ll-yellow-soft)] px-5 py-2.5 text-sm font-semibold text-[var(--ll-text)] hover:bg-[var(--ll-yellow-soft)] disabled:opacity-50"
           >
             {loading === "advance-day" ? "Advancing..." : "Advance Demo Day"}
           </button>
         </div>
 
-        <div className="rounded-2xl border border-white/10 bg-slate-900/70 p-5">
-          <h2 className="text-sm font-semibold text-slate-200 mb-2">Simulate Student Activity</h2>
-          <p className="text-xs text-slate-400 mb-3">Mark 60% of today&apos;s Monrovia Central work as complete.</p>
+        <div className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 p-5">
+          <h2 className="text-sm font-semibold text-[var(--ll-text)] mb-2">Simulate Student Activity</h2>
+          <p className="text-xs text-[var(--ll-text-muted)] mb-3">Mark 60% of today&apos;s Monrovia Central work as complete.</p>
           <button
             onClick={() => handleAction("simulate-activity", "Simulate")}
             disabled={loading !== null}
-            className="rounded-xl bg-emerald-500 px-5 py-2.5 text-sm font-semibold text-white hover:bg-emerald-400 disabled:opacity-50"
+            className="rounded-xl bg-[var(--ll-yellow)] px-5 py-2.5 text-sm font-semibold text-[var(--ll-text)] hover:bg-[var(--ll-yellow-soft)] disabled:opacity-50"
           >
             {loading === "simulate-activity" ? "Simulating..." : "Simulate Student Activity"}
           </button>
@@ -73,8 +73,8 @@ export default function DemoModePage() {
       </div>
 
       {result && (
-        <div className="rounded-xl border border-slate-800 bg-slate-950/50 p-4">
-          <p className="text-xs text-slate-300 font-mono">{result}</p>
+        <div className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/50 p-4">
+          <p className="text-xs text-[var(--ll-text)] font-mono">{result}</p>
         </div>
       )}
     </div>

@@ -407,30 +407,30 @@ export function PlacementTest({ studentId }: { studentId: string }) {
   if (step === "choose") {
     return (
       <section className="space-y-3">
-        <p className="text-xs text-slate-400">
+        <p className="text-xs text-[var(--ll-text-muted)]">
           Choose your current level. If you are not sure, start with Elementary.
         </p>
         <div className="grid gap-3 md:grid-cols-3">
           <button
             onClick={() => startTrack("ELEMENTARY")}
-            className="rounded-2xl border border-slate-800 bg-slate-900/80 px-4 py-3 text-left text-sm hover:border-emerald-500"
+            className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/80 px-4 py-3 text-left text-sm hover:border-emerald-500"
           >
-            <p className="font-semibold text-slate-100">Elementary</p>
-            <p className="text-xs text-slate-400">Covers Grade 1–5 topics.</p>
+            <p className="font-semibold text-[var(--ll-text)]">Elementary</p>
+            <p className="text-xs text-[var(--ll-text-muted)]">Covers Grade 1–5 topics.</p>
           </button>
           <button
             onClick={() => startTrack("MIDDLE")}
-            className="rounded-2xl border border-slate-800 bg-slate-900/80 px-4 py-3 text-left text-sm hover:border-emerald-500"
+            className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/80 px-4 py-3 text-left text-sm hover:border-emerald-500"
           >
-            <p className="font-semibold text-slate-100">Middle school</p>
-            <p className="text-xs text-slate-400">Covers Grade 6–8 topics.</p>
+            <p className="font-semibold text-[var(--ll-text)]">Middle school</p>
+            <p className="text-xs text-[var(--ll-text-muted)]">Covers Grade 6–8 topics.</p>
           </button>
           <button
             onClick={() => startTrack("HIGH")}
-            className="rounded-2xl border border-slate-800 bg-slate-900/80 px-4 py-3 text-left text-sm hover:border-emerald-500"
+            className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/80 px-4 py-3 text-left text-sm hover:border-emerald-500"
           >
-            <p className="font-semibold text-slate-100">High school</p>
-            <p className="text-xs text-slate-400">Covers Grade 9–12 topics.</p>
+            <p className="font-semibold text-[var(--ll-text)]">High school</p>
+            <p className="text-xs text-[var(--ll-text-muted)]">Covers Grade 9–12 topics.</p>
           </button>
         </div>
       </section>
@@ -442,20 +442,20 @@ export function PlacementTest({ studentId }: { studentId: string }) {
     return (
       <section className="space-y-4">
         <div className="flex items-center justify-between">
-          <p className="text-xs text-slate-400">
+          <p className="text-xs text-[var(--ll-text-muted)]">
             {track === "ELEMENTARY"
               ? "Elementary level"
               : track === "MIDDLE"
               ? "Middle school level"
               : "High school level"}
           </p>
-          <p className="text-xs text-slate-400">
+          <p className="text-xs text-[var(--ll-text-muted)]">
             Question {questionNumber} of {TOTAL_QUESTIONS}
           </p>
         </div>
 
-        <div className="rounded-2xl border border-slate-800 bg-slate-900/80 p-4">
-          <p className="text-sm font-medium text-slate-100 mb-3">
+        <div className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/80 p-4">
+          <p className="text-sm font-medium text-[var(--ll-text)] mb-3">
             {currentQuestion.text}
           </p>
           <div className="space-y-2">
@@ -464,8 +464,8 @@ export function PlacementTest({ studentId }: { studentId: string }) {
                 key={opt}
                 className={`flex cursor-pointer items-center gap-2 rounded-xl border px-3 py-2 text-sm ${
                   selectedOption === opt
-                    ? "border-emerald-500 bg-emerald-500/10"
-                    : "border-slate-700 bg-slate-950/70 hover:border-slate-500"
+                    ? "border-emerald-500 bg-[var(--ll-yellow)]/10"
+                    : "border-[var(--ll-border)] bg-[var(--ll-bg)]/70 hover:border-[var(--ll-border)]"
                 }`}
               >
                 <input
@@ -486,7 +486,7 @@ export function PlacementTest({ studentId }: { studentId: string }) {
           type="button"
           onClick={handleNext}
           disabled={!selectedOption}
-          className="rounded-full bg-emerald-500 px-6 py-2 text-sm font-semibold text-slate-950 disabled:opacity-60"
+          className="rounded-full bg-[var(--ll-yellow)] px-6 py-2 text-sm font-semibold text-[var(--ll-text-faint)] disabled:opacity-60"
         >
           {questionNumber === TOTAL_QUESTIONS ? "Finish test" : "Next question"}
         </button>
@@ -496,15 +496,15 @@ export function PlacementTest({ studentId }: { studentId: string }) {
 
   if (step === "result" && result) {
     return (
-      <section className="space-y-4 rounded-2xl border border-slate-800 bg-slate-900/80 p-4">
-        <p className="text-xs uppercase tracking-wide text-emerald-300">
+      <section className="space-y-4 rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/80 p-4">
+        <p className="text-xs uppercase tracking-wide text-[var(--ll-yellow)]">
           Placement result
         </p>
-        <p className="text-lg font-semibold text-slate-50">
+        <p className="text-lg font-semibold text-[var(--ll-text)]">
           Recommended starting grade:{" "}
-          <span className="text-emerald-300">Grade {result.grade}</span>
+          <span className="text-[var(--ll-yellow)]">Grade {result.grade}</span>
         </p>
-        <p className="text-sm text-slate-300">
+        <p className="text-sm text-[var(--ll-text)]">
           You scored <span className="font-semibold">{result.score}%</span> on
           the{" "}
           {result.track === "ELEMENTARY"
@@ -514,7 +514,7 @@ export function PlacementTest({ studentId }: { studentId: string }) {
             : "High school"}{" "}
           placement test.
         </p>
-        <p className="text-xs text-slate-400">
+        <p className="text-xs text-[var(--ll-text-muted)]">
           Your teachers and the system can use this result to place you into the
           right class. You can re-take the test later if needed.
         </p>
@@ -530,7 +530,7 @@ export function PlacementTest({ studentId }: { studentId: string }) {
             setUsedIds(new Set());
             setAnswers([]);
           }}
-          className="rounded-full border border-slate-700 px-5 py-2 text-xs text-slate-200 hover:bg-slate-900"
+          className="rounded-full border border-[var(--ll-border)] px-5 py-2 text-xs text-[var(--ll-text)] hover:bg-[var(--ll-bg)]"
         >
           Take again
         </button>

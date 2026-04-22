@@ -6,7 +6,7 @@ export default function PrivacyPolicyPage() {
   return (
     <LegalPageShell title="Privacy Policy">
       <section>
-        <p className="font-semibold text-slate-100">Effective date: April 2026</p>
+        <p className="font-semibold text-[var(--ll-text)]">Effective date: April 2026</p>
         <p className="mt-2">
           This Privacy Policy explains how LiberiaLearn, operating for education delivery in the Republic of Liberia,
           collects, uses, stores, and protects information for students, guardians, teachers, school administrators,
@@ -15,7 +15,7 @@ export default function PrivacyPolicyPage() {
       </section>
 
       <section>
-        <h2 className="text-xl font-semibold text-white">Data We Collect</h2>
+        <h2 className="text-xl font-semibold text-[var(--ll-text)]">Data We Collect</h2>
         <p className="mt-2">
           LiberiaLearn collects the minimum data needed to deliver K-12 education services. This may include a
           learner&apos;s name, grade, school, learning activity, lesson progress, quiz scores, attendance or assignment
@@ -25,7 +25,7 @@ export default function PrivacyPolicyPage() {
       </section>
 
       <section>
-        <h2 className="text-xl font-semibold text-white">Who Can See Student Data</h2>
+        <h2 className="text-xl font-semibold text-[var(--ll-text)]">Who Can See Student Data</h2>
         <p className="mt-2">
           Student-level information is limited to authorized users with a legitimate education role. A teacher of
           record may see students assigned to their classes. A school administrator may see student records for their
@@ -36,7 +36,7 @@ export default function PrivacyPolicyPage() {
       </section>
 
       <section>
-        <h2 className="text-xl font-semibold text-white">Storage and Security</h2>
+        <h2 className="text-xl font-semibold text-[var(--ll-text)]">Storage and Security</h2>
         <p className="mt-2">
           LiberiaLearn stores platform data in Supabase/Postgres with encryption at rest. Application delivery runs
           through the Vercel edge network. Access controls, role-based authorization, tenant isolation, audit logging,
@@ -45,7 +45,7 @@ export default function PrivacyPolicyPage() {
       </section>
 
       <section>
-        <h2 className="text-xl font-semibold text-white">Retention</h2>
+        <h2 className="text-xl font-semibold text-[var(--ll-text)]">Retention</h2>
         <p className="mt-2">
           Student and account data is retained for the active account lifetime plus 2 years, unless a longer retention
           period is required for lawful education administration, audit obligations, or verified school records.
@@ -53,7 +53,7 @@ export default function PrivacyPolicyPage() {
       </section>
 
       <section>
-        <h2 className="text-xl font-semibold text-white">No Sale or Advertising Use</h2>
+        <h2 className="text-xl font-semibold text-[var(--ll-text)]">No Sale or Advertising Use</h2>
         <p className="mt-2">
           Student data is never sold. LiberiaLearn does not share student data with advertisers or third parties for
           commercial advertising, tracking, or profiling purposes.
@@ -61,7 +61,7 @@ export default function PrivacyPolicyPage() {
       </section>
 
       <section>
-        <h2 className="text-xl font-semibold text-white">Guardian Requests</h2>
+        <h2 className="text-xl font-semibold text-[var(--ll-text)]">Guardian Requests</h2>
         <p className="mt-2">
           Guardians may request access to their child&apos;s data or request deletion where deletion is permitted by
           school and public education record requirements. Requests may be submitted through the contact page or by
@@ -71,7 +71,7 @@ export default function PrivacyPolicyPage() {
       </section>
 
       <section>
-        <h2 className="text-xl font-semibold text-white">Governing Entity</h2>
+        <h2 className="text-xl font-semibold text-[var(--ll-text)]">Governing Entity</h2>
         <p className="mt-2">
           This policy is governed by LiberiaLearn / Republic of Liberia for the purpose of national education delivery.
         </p>

@@ -25,19 +25,19 @@ export default async function PlatformAuditPage() {
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-bold">System Audit Log</h1>
-        <p className="text-sm text-slate-400 mt-1">
+        <p className="text-sm text-[var(--ll-text-muted)] mt-1">
           Immutable record of all administrative actions across the platform.
         </p>
       </div>
 
-      <section className="rounded-2xl border border-white/10 bg-slate-900/70 p-6">
+      <section className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 p-6">
         {logs.length === 0 ? (
-          <p className="text-sm text-slate-400">No audit entries yet.</p>
+          <p className="text-sm text-[var(--ll-text-muted)]">No audit entries yet.</p>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="border-b border-slate-800 text-left text-xs text-slate-500">
+                <tr className="border-b border-[var(--ll-border)] text-left text-xs text-[var(--ll-text-faint)]">
                   <th className="pb-2 pr-3">Timestamp</th>
                   <th className="pb-2 pr-3">User</th>
                   <th className="pb-2 pr-3">Action</th>
@@ -49,18 +49,18 @@ export default async function PlatformAuditPage() {
                 {logs.map((log) => (
                   <tr
                     key={log.id}
-                    className="border-b border-slate-800/50 text-slate-300"
+                    className="border-b border-[var(--ll-border)]/50 text-[var(--ll-text)]"
                   >
-                    <td className="py-2 pr-3 text-xs text-slate-500 whitespace-nowrap">
+                    <td className="py-2 pr-3 text-xs text-[var(--ll-text-faint)] whitespace-nowrap">
                       {new Date(log.createdAt).toLocaleString()}
                     </td>
                     <td className="py-2 pr-3 text-xs">
                       {log.user?.email ?? log.userId ?? "system"}
                     </td>
-                    <td className="py-2 pr-3 font-medium text-slate-100">
+                    <td className="py-2 pr-3 font-medium text-[var(--ll-text)]">
                       {log.action}
                     </td>
-                    <td className="py-2 pr-3 text-xs text-slate-400">
+                    <td className="py-2 pr-3 text-xs text-[var(--ll-text-muted)]">
                       {log.resourceType && (
                         <span>
                           {log.resourceType}
@@ -68,7 +68,7 @@ export default async function PlatformAuditPage() {
                         </span>
                       )}
                     </td>
-                    <td className="py-2 text-xs text-slate-500 max-w-xs truncate">
+                    <td className="py-2 text-xs text-[var(--ll-text-faint)] max-w-xs truncate">
                       {log.details
                         ? JSON.stringify(log.details).slice(0, 80)
                         : "--"}

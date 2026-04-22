@@ -3,22 +3,47 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
-  --surface-border: rgba(148, 163, 184, 0.16);
-  --ll-bg: #050914;
-  --ll-surface: #0b1220;
-  --ll-surface-muted: #101827;
-  --ll-border: rgba(148,163,184,0.14);
-  --ll-border-strong: rgba(148,163,184,0.22);
-  --ll-text: #f8fafc;
-  --ll-text-muted: #94a3b8;
-  --ll-text-faint: #64748b;
-  --ll-accent: #18d39e;
-  --ll-accent-soft: rgba(24,211,158,0.10);
-  --ll-warning: #facc15;
+  --surface-border: rgba(192, 192, 200, 0.16);
+
+  /* Backgrounds — warm graphite */
+  --ll-bg: #1a1a18;
+  --ll-surface: #242420;
+  --ll-surface-muted: #2e2e28;
+
+  /* Borders — silver ferrule tones */
+  --ll-border: rgba(192,192,200,0.14);
+  --ll-border-strong: rgba(192,192,200,0.26);
+
+  /* Text — warm paper white */
+  --ll-text: #f5f0e8;
+  --ll-text-muted: #a89f94;
+  --ll-text-faint: #6b6460;
+
+  /* Pencil palette — all three at equal weight */
+  --ll-yellow: #E8B84B;
+  --ll-yellow-soft: rgba(232,184,75,0.11);
+  --ll-pink: #E8919E;
+  --ll-pink-soft: rgba(232,145,158,0.11);
+  --ll-silver: #A8A8B8;
+  --ll-silver-soft: rgba(168,168,184,0.11);
+
+  /* Pencil material tones */
+  --ll-wood: #C8956A;
+  --ll-graphite: #3a3a36;
+
+  /* Semantic — mapped from pencil palette */
+  --ll-accent: var(--ll-yellow);
+  --ll-accent-soft: var(--ll-yellow-soft);
+  --ll-success: var(--ll-pink);
+  --ll-success-soft: var(--ll-pink-soft);
+  --ll-neutral: var(--ll-silver);
+  --ll-neutral-soft: var(--ll-silver-soft);
+  --ll-warning: #E8B84B;
   --ll-danger: #fb7185;
+
   --ll-radius-card: 0.75rem;
   --ll-radius-control: 0.625rem;
-  --ll-focus: 0 0 0 3px rgba(24,211,158,0.28);
+  --ll-focus: 0 0 0 3px rgba(232,184,75,0.22);
 }
 
 @theme inline {
@@ -254,6 +279,27 @@ textarea {
   .ll-mobile-show {
     display: none;
   }
+}
+
+/* ── Global tap and transition polish ───────────────────────────────────── */
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+button,
+a,
+[role="button"] {
+  transition: color 150ms ease-out,
+    background-color 150ms ease-out,
+    border-color 150ms ease-out,
+    box-shadow 150ms ease-out;
+}
+
+button:focus-visible,
+a:focus-visible,
+[role="button"]:focus-visible {
+  outline: none;
+  box-shadow: var(--ll-focus);
 }
 
 @media (prefers-reduced-motion: reduce) {

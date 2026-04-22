@@ -34,26 +34,26 @@ export default function ForgotPasswordPage() {
   };
 
   return (
-    <main className="flex min-h-screen items-center justify-center bg-slate-950 px-4 py-8">
-      <div className="w-full max-w-md space-y-6 rounded-3xl border border-white/10 bg-slate-900/70 p-6 shadow-2xl backdrop-blur">
+    <main className="flex min-h-screen items-center justify-center bg-[var(--ll-bg)] px-4 py-8">
+      <div className="w-full max-w-md space-y-6 rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 p-6 shadow-none backdrop-blur">
         <div className="text-center">
-          <h1 className="text-lg font-semibold text-slate-50">
+          <h1 className="text-lg font-semibold text-[var(--ll-text)]">
             Forgot Password
           </h1>
-          <p className="mt-1 text-xs text-slate-400">
+          <p className="mt-1 text-xs text-[var(--ll-text-muted)]">
             Enter your email and we will send a reset link.
           </p>
         </div>
 
         {success ? (
           <div className="space-y-4 text-center">
-            <p className="text-sm text-emerald-400">
+            <p className="text-sm text-[var(--ll-yellow)]">
               If that email is registered, a reset link has been sent. Check
               your inbox.
             </p>
             <Link
               href="/login"
-              className="text-xs text-emerald-300 hover:text-emerald-200"
+              className="text-xs text-[var(--ll-yellow)] hover:text-[var(--ll-yellow)]"
             >
               Back to login
             </Link>
@@ -61,13 +61,13 @@ export default function ForgotPasswordPage() {
         ) : (
           <form onSubmit={handleSubmit} className="space-y-4 text-sm">
             <div className="space-y-1">
-              <label className="block text-xs font-medium text-slate-300">
+              <label className="block text-xs font-medium text-[var(--ll-text)]">
                 Email address
               </label>
               <input
                 required
                 type="email"
-                className="w-full rounded-xl border border-slate-700 bg-slate-900/70 px-3 py-2 text-sm text-slate-50 outline-none placeholder:text-slate-500 focus:border-emerald-400 focus:ring-1 focus:ring-emerald-400/60"
+                className="w-full rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 px-3 py-2 text-sm text-[var(--ll-text)] outline-none placeholder:text-[var(--ll-text-faint)] focus:border-emerald-400 focus:ring-1 focus:ring-emerald-400/60"
                 placeholder="you@school.lr"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
@@ -84,7 +84,7 @@ export default function ForgotPasswordPage() {
             <button
               type="submit"
               disabled={loading}
-              className="flex w-full items-center justify-center rounded-xl bg-emerald-500 px-4 py-2.5 text-sm font-semibold text-slate-950 shadow-lg shadow-emerald-500/40 hover:bg-emerald-400 disabled:opacity-60"
+              className="flex w-full items-center justify-center rounded-xl bg-[var(--ll-yellow)] px-4 py-2.5 text-sm font-semibold text-[var(--ll-text-faint)] shadow-lg shadow-emerald-500/40 hover:bg-[var(--ll-yellow-soft)] disabled:opacity-60"
             >
               {loading ? "Sending..." : "Send Reset Link"}
             </button>
@@ -92,7 +92,7 @@ export default function ForgotPasswordPage() {
             <div className="text-center">
               <Link
                 href="/login"
-                className="text-xs text-emerald-300 hover:text-emerald-200"
+                className="text-xs text-[var(--ll-yellow)] hover:text-[var(--ll-yellow)]"
               >
                 Back to login
               </Link>

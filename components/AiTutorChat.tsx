@@ -60,10 +60,10 @@ export default function AiTutorChat() {
   }
 
   return (
-    <div className="w-full max-w-4xl rounded-2xl border border-white/10 bg-white/5 shadow overflow-hidden">
-      <div className="p-4 border-b border-white/10">
-        <div className="text-white/90 font-semibold">LiberiaLearn AI Tutor</div>
-        <div className="text-white/60 text-sm">Ask in simple English (or we can add Koloqua later).</div>
+    <div className="w-full max-w-4xl rounded-xl border border-[var(--ll-border)] bg-white/5 shadow overflow-hidden">
+      <div className="p-4 border-b border-[var(--ll-border)]">
+        <div className="text-[var(--ll-text)]/90 font-semibold">LiberiaLearn AI Tutor</div>
+        <div className="text-[var(--ll-text)]/60 text-sm">Ask in simple English (or we can add Koloqua later).</div>
       </div>
 
       <div className="h-[62vh] overflow-auto p-4 space-y-3">
@@ -71,10 +71,10 @@ export default function AiTutorChat() {
           <div
             key={idx}
             className={[
-              "max-w-[90%] rounded-2xl px-4 py-3 text-sm leading-relaxed",
+              "max-w-[90%] rounded-xl px-4 py-3 text-sm leading-relaxed",
               m.role === "user"
-                ? "ml-auto bg-emerald-500 text-black"
-                : "bg-[#0b0d14] text-white border border-white/10",
+                ? "ml-auto bg-[var(--ll-yellow)] text-black"
+                : "bg-[#0b0d14] text-[var(--ll-text)] border border-[var(--ll-border)]",
             ].join(" ")}
           >
             {m.content}
@@ -83,12 +83,12 @@ export default function AiTutorChat() {
         <div ref={bottomRef} />
       </div>
 
-      <div className="p-4 border-t border-white/10 flex gap-3">
+      <div className="p-4 border-t border-[var(--ll-border)] flex gap-3">
         <input
           value={input}
           onChange={(e) => setInput(e.target.value)}
           placeholder="Ask a question (example: Explain fractions like I'm in Grade 4)"
-          className="flex-1 rounded-xl bg-[#0b0d14] border border-white/10 px-3 py-3 outline-none focus:border-emerald-500"
+          className="flex-1 rounded-xl bg-[#0b0d14] border border-[var(--ll-border)] px-3 py-3 outline-none focus:border-emerald-500"
           onKeyDown={(e) => {
             if (e.key === "Enter") send();
           }}
@@ -96,7 +96,7 @@ export default function AiTutorChat() {
         <button
           onClick={send}
           disabled={busy}
-          className="rounded-xl bg-emerald-500 hover:bg-emerald-400 disabled:opacity-60 text-black font-semibold px-5"
+          className="rounded-xl bg-[var(--ll-yellow)] hover:bg-[var(--ll-yellow-soft)] disabled:opacity-60 text-black font-semibold px-5"
         >
           {busy ? "..." : "Send"}
         </button>

@@ -1,10 +1,12 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
 import { LessonQuizPanel } from "@/components/student/LessonQuizPanel";
 import { StudentLessonHelpPanel } from "@/components/student/StudentLessonHelpPanel";
 import LessonLabPanel from "@/components/labs/LessonLabPanel";
+import { PencilButton, PencilButtonFloat } from "@/components/ui/PencilButton";
 import { gradeToTutorBand } from "@/lib/ai/studentLessonSupport";
 import { lessonDurationLabel, renderSimpleMarkdown, selectLessonBody } from "@/lib/lessons";
 import { enqueueOfflineRequest } from "@/lib/offline-queue";
@@ -101,7 +103,7 @@ function renderFractionBar(numerator: number, denominator: number) {
       {Array.from({ length: denominator }, (_, index) => (
         <div
           key={`${numerator}-${denominator}-${index}`}
-          className={`h-5 rounded ${index < safeNumerator ? "bg-emerald-400" : "bg-slate-800"}`}
+          className={`h-5 rounded ${index < safeNumerator ? "bg-[var(--ll-yellow-soft)]" : "bg-[var(--ll-surface)]"}`}
         />
       ))}
     </div>
@@ -133,11 +135,11 @@ function simulationFeedback(
       visual: (
         <div className="space-y-3">
           <div>
-            <p className="mb-1 text-xs font-semibold uppercase tracking-[0.2em] text-slate-400">Fraction A</p>
+            <p className="mb-1 text-xs font-semibold uppercase tracking-[0.2em] text-[var(--ll-text-muted)]">Fraction A</p>
             {renderFractionBar(numeratorA, denominatorA)}
           </div>
           <div>
-            <p className="mb-1 text-xs font-semibold uppercase tracking-[0.2em] text-slate-400">Fraction B</p>
+            <p className="mb-1 text-xs font-semibold uppercase tracking-[0.2em] text-[var(--ll-text-muted)]">Fraction B</p>
             {renderFractionBar(numeratorB, denominatorB)}
           </div>
         </div>
@@ -192,13 +194,13 @@ function SimulationCard({ definition }: { definition: SimulationDefinition }) {
   }
 
   return (
-    <article className="rounded-3xl border border-emerald-500/20 bg-slate-950/60 p-5">
-      <div className="flex flex-wrap items-center gap-2 text-xs text-emerald-200">
-        <span className="rounded-full bg-emerald-500/15 px-3 py-1 font-semibold">{definition.simulationType.replace(/_/g, " ")}</span>
+    <article className="rounded-xl border border-emerald-500/20 bg-[var(--ll-bg)]/60 p-5">
+      <div className="flex flex-wrap items-center gap-2 text-xs text-[var(--ll-yellow)]">
+        <span className="rounded-full bg-[var(--ll-yellow)]/15 px-3 py-1 font-semibold">{definition.simulationType.replace(/_/g, " ")}</span>
         <span>Interactive support</span>
       </div>
-      <h3 className="mt-3 text-lg font-semibold text-white">{definition.title}</h3>
-      <p className="mt-2 text-sm text-slate-200">{definition.objective}</p>
+      <h3 className="mt-3 text-lg font-semibold text-[var(--ll-text)]">{definition.title}</h3>
+      <p className="mt-2 text-sm text-[var(--ll-text)]">{definition.objective}</p>
 
       <div className="mt-4 grid gap-4 lg:grid-cols-[1.1fr_0.9fr]">
         <div className="space-y-3">
@@ -206,10 +208,10 @@ function SimulationCard({ definition }: { definition: SimulationDefinition }) {
             const value = state[input.key];
             if (input.type === "range") {
               return (
-                <label key={input.key} className="block rounded-2xl border border-slate-800 bg-slate-900/70 p-3">
+                <label key={input.key} className="block rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 p-3">
                   <div className="flex items-center justify-between gap-3">
-                    <span className="text-sm font-medium text-slate-100">{input.label}</span>
-                    <span className="text-xs text-slate-300">{String(value)}</span>
+                    <span className="text-sm font-medium text-[var(--ll-text)]">{input.label}</span>
+                    <span className="text-xs text-[var(--ll-text)]">{String(value)}</span>
                   </div>
                   <input
                     type="range"
@@ -226,7 +228,7 @@ function SimulationCard({ definition }: { definition: SimulationDefinition }) {
 
             if (input.type === "toggle") {
               return (
-                <label key={input.key} className="flex min-h-11 items-center justify-between rounded-2xl border border-slate-800 bg-slate-900/70 p-3 text-sm text-slate-100">
+                <label key={input.key} className="flex min-h-11 items-center justify-between rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 p-3 text-sm text-[var(--ll-text)]">
                   <span>{input.label}</span>
                   <input
                     type="checkbox"
@@ -240,12 +242,12 @@ function SimulationCard({ definition }: { definition: SimulationDefinition }) {
 
             if (input.type === "choice" || input.type === "step") {
               return (
-                <label key={input.key} className="block rounded-2xl border border-slate-800 bg-slate-900/70 p-3">
-                  <span className="text-sm font-medium text-slate-100">{input.label}</span>
+                <label key={input.key} className="block rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 p-3">
+                  <span className="text-sm font-medium text-[var(--ll-text)]">{input.label}</span>
                   <select
                     value={String(value ?? input.options?.[0] ?? "")}
                     onChange={(event) => updateValue(input.key, event.target.value)}
-                    className="mt-3 min-h-11 w-full rounded-xl border border-slate-700 bg-slate-950/80 px-3 py-2 text-sm text-slate-100"
+                    className="mt-3 min-h-11 w-full rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/80 px-3 py-2 text-sm text-[var(--ll-text)]"
                   >
                     {(input.options ?? []).map((option) => (
                       <option key={option} value={option}>
@@ -260,17 +262,17 @@ function SimulationCard({ definition }: { definition: SimulationDefinition }) {
             if (input.type === "order") {
               const items = Array.isArray(value) ? (value as string[]) : [];
               return (
-                <div key={input.key} className="rounded-2xl border border-slate-800 bg-slate-900/70 p-3">
-                  <p className="text-sm font-medium text-slate-100">{input.label}</p>
+                <div key={input.key} className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 p-3">
+                  <p className="text-sm font-medium text-[var(--ll-text)]">{input.label}</p>
                   <div className="mt-3 space-y-2">
                     {items.map((item, index) => (
-                      <div key={`${item}-${index}`} className="flex items-center justify-between rounded-xl border border-slate-800 bg-slate-950/80 px-3 py-2 text-sm text-slate-100">
+                      <div key={`${item}-${index}`} className="flex items-center justify-between rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/80 px-3 py-2 text-sm text-[var(--ll-text)]">
                         <span>{item}</span>
                         <div className="flex gap-2">
-                          <button type="button" onClick={() => moveOrderItem(input.key, index, -1)} className="min-h-11 min-w-11 rounded-full border border-slate-700 px-3 py-1 text-xs text-slate-100">
+                          <button type="button" onClick={() => moveOrderItem(input.key, index, -1)} className="min-h-11 min-w-11 rounded-full border border-[var(--ll-border)] px-3 py-1 text-xs text-[var(--ll-text)]">
                             Up
                           </button>
-                          <button type="button" onClick={() => moveOrderItem(input.key, index, 1)} className="min-h-11 min-w-11 rounded-full border border-slate-700 px-3 py-1 text-xs text-slate-100">
+                          <button type="button" onClick={() => moveOrderItem(input.key, index, 1)} className="min-h-11 min-w-11 rounded-full border border-[var(--ll-border)] px-3 py-1 text-xs text-[var(--ll-text)]">
                             Down
                           </button>
                         </div>
@@ -285,15 +287,15 @@ function SimulationCard({ definition }: { definition: SimulationDefinition }) {
           })}
         </div>
 
-        <div className="rounded-2xl border border-emerald-500/20 bg-emerald-500/10 p-4">
-          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-emerald-200">What the simulation shows</p>
-          <p className="mt-3 text-base font-semibold text-white">{feedback.summary}</p>
-          <p className="mt-2 text-sm text-slate-100">{feedback.detail}</p>
+        <div className="rounded-xl border border-emerald-500/20 bg-[var(--ll-yellow)]/10 p-4">
+          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--ll-yellow)]">What the simulation shows</p>
+          <p className="mt-3 text-base font-semibold text-[var(--ll-text)]">{feedback.summary}</p>
+          <p className="mt-2 text-sm text-[var(--ll-text)]">{feedback.detail}</p>
           {feedback.visual ? <div className="mt-4">{feedback.visual}</div> : null}
-          <div className="mt-4 space-y-2 text-sm text-slate-100">
-            <p><span className="font-semibold text-slate-100">Student guide:</span> Try one change at a time, then explain what changed.</p>
-            <p><span className="font-semibold text-slate-100">Guardian guide:</span> {definition.guardianGuide ?? "Use the fallback explanation if no shared device is available."}</p>
-            <p><span className="font-semibold text-slate-100">Fallback:</span> {definition.fallbackStaticVisual}</p>
+          <div className="mt-4 space-y-2 text-sm text-[var(--ll-text)]">
+            <p><span className="font-semibold text-[var(--ll-text)]">Student guide:</span> Try one change at a time, then explain what changed.</p>
+            <p><span className="font-semibold text-[var(--ll-text)]">Guardian guide:</span> {definition.guardianGuide ?? "Use the fallback explanation if no shared device is available."}</p>
+            <p><span className="font-semibold text-[var(--ll-text)]">Fallback:</span> {definition.fallbackStaticVisual}</p>
           </div>
         </div>
       </div>
@@ -310,6 +312,7 @@ export default function LessonDeliveryClient({ lessonId }: { lessonId: string })
   const [submitMessage, setSubmitMessage] = useState<string | null>(null);
   const [helpPanelOpen, setHelpPanelOpen] = useState(false);
   const [openLabId, setOpenLabId] = useState<LabId | null>(null);
+  const [toolkitOpen, setToolkitOpen] = useState(false);
   const [tutorQuestion, setTutorQuestion] = useState("");
   const [tutorMessages, setTutorMessages] = useState<TutorMessage[]>([]);
   const [tutorLoading, setTutorLoading] = useState(false);
@@ -430,6 +433,7 @@ export default function LessonDeliveryClient({ lessonId }: { lessonId: string })
 
   const openLessonLab = useCallback((labId: LabId) => {
     setOpenLabId(labId);
+    setToolkitOpen(true);
     void fetch("/api/track", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -627,38 +631,38 @@ export default function LessonDeliveryClient({ lessonId }: { lessonId: string })
   }
 
   if (loading) {
-    return <div className="h-64 animate-pulse rounded-3xl bg-slate-900/60" />;
+    return <div className="h-64 animate-pulse rounded-xl bg-[var(--ll-bg)]/60" />;
   }
   if (error || !lesson) {
-    return <div className="rounded-3xl border border-red-500/20 bg-red-500/10 p-6 text-sm text-red-200">{error ?? "Lesson not found."}</div>;
+    return <div className="rounded-xl border border-[var(--ll-danger)]/30 bg-[var(--ll-danger)]/10 p-6 text-sm text-[var(--ll-danger)]">{error ?? "Lesson not found."}</div>;
   }
 
   return (
     <div className="space-y-6 pb-28">
-        <section ref={registerSection("overview")} data-section-id="overview" className="rounded-3xl border border-white/10 bg-slate-900/80 p-5 sm:p-7">
-          <div className="flex flex-wrap items-center gap-3 text-xs text-slate-200">
-            <span className="rounded-full bg-emerald-500/15 px-3 py-1 font-semibold text-emerald-300">{lesson.subject}</span>
+        <section ref={registerSection("overview")} data-section-id="overview" className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/80 p-5 sm:p-7">
+          <div className="flex flex-wrap items-center gap-3 text-xs text-[var(--ll-text)]">
+            <span className="rounded-full bg-[var(--ll-yellow)]/15 px-3 py-1 font-semibold text-[var(--ll-yellow)]">{lesson.subject}</span>
             <span>Grade {lesson.grade}</span>
             <span>{lessonDurationLabel(lesson.classFormat)}</span>
           </div>
           <div className="mt-4 flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
             <div>
-              <h1 className="text-3xl font-semibold text-white">{lesson.title}</h1>
-              <p className="mt-2 text-base text-slate-100">Teacher: {lesson.teacherName}</p>
+              <h1 className="text-3xl font-semibold text-[var(--ll-text)]">{lesson.title}</h1>
+              <p className="mt-2 text-base text-[var(--ll-text)]">Teacher: {lesson.teacherName}</p>
             </div>
-            <div className="rounded-2xl border border-slate-800 bg-slate-950/55 px-4 py-3 text-sm text-slate-200">
+            <div className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/55 px-4 py-3 text-sm text-[var(--ll-text)]">
               Stay focused on the lesson, then complete the exit ticket at the end.
             </div>
           </div>
-          <div className="mt-5 rounded-2xl border border-white/10 bg-slate-950/70 p-4">
+          <div className="mt-5 rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 p-4">
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
               <div>
-                <p className="text-xs font-semibold uppercase tracking-[0.2em] text-emerald-200">Progress</p>
-                <p className="mt-1 text-sm text-slate-100">
+                <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--ll-yellow)]">Progress</p>
+                <p className="mt-1 text-sm text-[var(--ll-text)]">
                   You are currently reading the {currentSection.replace(/-/g, " ")} section.
                 </p>
               </div>
-              <p className="text-sm text-slate-300">School: {lesson.schoolName}</p>
+              <p className="text-sm text-[var(--ll-text)]">School: {lesson.schoolName}</p>
             </div>
           <div className="mt-4 flex flex-wrap gap-2">
               {sectionOrder.map((sectionId) => (
@@ -668,8 +672,8 @@ export default function LessonDeliveryClient({ lessonId }: { lessonId: string })
                   onClick={() => scrollToSection(sectionId)}
                   className={`ll-touch-target rounded-full px-4 py-2 text-sm ${
                     sectionId === currentSection
-                      ? "bg-emerald-400 text-slate-950"
-                      : "border border-slate-700 bg-slate-950/70 text-slate-100"
+                      ? "bg-[var(--ll-yellow-soft)] text-[var(--ll-text-faint)]"
+                      : "border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 text-[var(--ll-text)]"
                   }`}
                 >
                   {sectionId.replace(/-/g, " ")}
@@ -677,20 +681,20 @@ export default function LessonDeliveryClient({ lessonId }: { lessonId: string })
               ))}
             </div>
             {aiTutorEnabled ? (
-              <button
-                type="button"
-                onClick={() => setHelpPanelOpen(true)}
-                className="mt-4 inline-flex min-h-12 items-center justify-center rounded-full bg-emerald-400 px-5 py-3 text-sm font-semibold text-slate-950 transition-colors hover:bg-emerald-300"
-              >
-                Help Me Understand
-              </button>
+              <div className="mt-4">
+                <PencilButton
+                  onClick={() => setHelpPanelOpen(true)}
+                  label="Ask the tutor"
+                  active={helpPanelOpen}
+                />
+              </div>
             ) : null}
             {availableLabs.map((lab) => (
               <button
                 key={lab.labId}
                 type="button"
                 onClick={() => openLessonLab(lab.labId)}
-                className="mt-4 ml-0 inline-flex min-h-12 items-center justify-center rounded-full bg-cyan-300 px-5 py-3 text-sm font-semibold text-slate-950 transition-colors hover:bg-cyan-200 sm:ml-2"
+                className="mt-4 ml-0 inline-flex min-h-12 items-center justify-center rounded-full bg-[var(--ll-silver-soft)] px-5 py-3 text-sm font-semibold text-[var(--ll-text-faint)] transition-colors hover:bg-[var(--ll-silver-soft)] sm:ml-2"
               >
                 {lab.label}
               </button>
@@ -698,19 +702,19 @@ export default function LessonDeliveryClient({ lessonId }: { lessonId: string })
           </div>
         </section>
 
-        <section ref={registerSection("lesson-content")} data-section-id="lesson-content" className="rounded-3xl border border-white/10 bg-slate-900/80 p-5 sm:p-7">
+        <section ref={registerSection("lesson-content")} data-section-id="lesson-content" className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/80 p-5 sm:p-7">
           <div
-            className="prose prose-invert max-w-[680px] prose-headings:text-white prose-p:text-slate-100 prose-p:text-[1rem] prose-p:leading-8 prose-li:text-slate-100 prose-li:text-[1rem] prose-li:leading-8"
+            className="prose prose-invert max-w-[680px] prose-headings:text-[var(--ll-text)] prose-p:text-[var(--ll-text)] prose-p:text-[1rem] prose-p:leading-8 prose-li:text-[var(--ll-text)] prose-li:text-[1rem] prose-li:leading-8"
             dangerouslySetInnerHTML={{ __html: renderSimpleMarkdown(renderedBody) }}
           />
         </section>
 
         {lesson.objectives.length > 0 ? (
-          <section ref={registerSection("objectives")} data-section-id="objectives" className="rounded-3xl border border-white/10 bg-slate-900/80 p-5 sm:p-7">
-            <h2 className="text-lg font-semibold text-white">Lesson Objectives</h2>
-            <ul className="mt-4 space-y-3 text-base text-slate-100">
+          <section ref={registerSection("objectives")} data-section-id="objectives" className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/80 p-5 sm:p-7">
+            <h2 className="text-lg font-semibold text-[var(--ll-text)]">Lesson Objectives</h2>
+            <ul className="mt-4 space-y-3 text-base text-[var(--ll-text)]">
               {lesson.objectives.map((objective, index) => (
-                <li key={`${objective}-${index}`} className="rounded-2xl border border-slate-800 bg-slate-950/60 px-4 py-3">
+                <li key={`${objective}-${index}`} className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/60 px-4 py-3">
                   {objective}
                 </li>
               ))}
@@ -719,49 +723,49 @@ export default function LessonDeliveryClient({ lessonId }: { lessonId: string })
         ) : null}
 
       {lesson.pseudoLabs.length > 0 ? (
-        <section ref={registerSection("lab-activity")} data-section-id="lab-activity" className="rounded-3xl border border-white/10 bg-slate-900/80 p-5 sm:p-7">
-          <h2 className="text-lg font-semibold text-white">Lab Activity</h2>
+        <section ref={registerSection("lab-activity")} data-section-id="lab-activity" className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/80 p-5 sm:p-7">
+          <h2 className="text-lg font-semibold text-[var(--ll-text)]">Lab Activity</h2>
           <div className="mt-4 space-y-4">
             {lesson.pseudoLabs.map((lab) => (
-              <article key={lab.id} className="rounded-3xl border border-cyan-500/20 bg-slate-950/60 p-5">
-                <div className="flex flex-wrap items-center gap-2 text-xs text-cyan-200">
-                  <span className="rounded-full bg-cyan-500/15 px-3 py-1 font-semibold">{lab.labType.replace(/_/g, " ")}</span>
+              <article key={lab.id} className="rounded-xl border border-[var(--ll-silver)]/20 bg-[var(--ll-bg)]/60 p-5">
+                <div className="flex flex-wrap items-center gap-2 text-xs text-[var(--ll-silver)]">
+                  <span className="rounded-full bg-[var(--ll-silver-soft)] px-3 py-1 font-semibold">{lab.labType.replace(/_/g, " ")}</span>
                   <span>{lab.resourceLevel} resource</span>
                   <span>{lab.offlineCapable ? "Offline capable" : "Needs connectivity"}</span>
                 </div>
-                <h3 className="mt-3 text-lg font-semibold text-white">{lab.title}</h3>
-                <p className="mt-2 text-sm text-slate-200">{lab.objective}</p>
+                <h3 className="mt-3 text-lg font-semibold text-[var(--ll-text)]">{lab.title}</h3>
+                <p className="mt-2 text-sm text-[var(--ll-text)]">{lab.objective}</p>
                 <div className="mt-4 grid gap-4 lg:grid-cols-2">
-                  <div className="rounded-2xl border border-slate-800 bg-slate-900/70 p-4">
-                    <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-400">Student steps</p>
-                    <ol className="mt-3 space-y-2 text-sm text-slate-100">
+                  <div className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 p-4">
+                    <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--ll-text-muted)]">Student steps</p>
+                    <ol className="mt-3 space-y-2 text-sm text-[var(--ll-text)]">
                       {lab.procedureSteps.map((step, index) => (
-                        <li key={`${lab.id}-step-${index}`} className="rounded-xl border border-slate-800 bg-slate-950/70 px-3 py-3">
+                        <li key={`${lab.id}-step-${index}`} className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 px-3 py-3">
                           {index + 1}. {step}
                         </li>
                       ))}
                     </ol>
                   </div>
                   <div className="space-y-3">
-                    <div className="rounded-2xl border border-slate-800 bg-slate-900/70 p-4 text-sm text-slate-100">
-                      <p className="font-semibold text-white">Materials</p>
+                    <div className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 p-4 text-sm text-[var(--ll-text)]">
+                      <p className="font-semibold text-[var(--ll-text)]">Materials</p>
                       <p className="mt-2">{lab.requiredMaterials.join(", ")}</p>
                     </div>
-                    <div className="rounded-2xl border border-slate-800 bg-slate-900/70 p-4 text-sm text-slate-100">
-                      <p className="font-semibold text-white">Timing</p>
+                    <div className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 p-4 text-sm text-[var(--ll-text)]">
+                      <p className="font-semibold text-[var(--ll-text)]">Timing</p>
                       <p className="mt-2">Setup {lab.setupTimeMinutes} min, run {lab.runTimeMinutes} min, cleanup {lab.cleanupTimeMinutes} min.</p>
                     </div>
-                    <div className="rounded-2xl border border-slate-800 bg-slate-900/70 p-4 text-sm text-slate-100">
-                      <p className="font-semibold text-white">What to notice</p>
+                    <div className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 p-4 text-sm text-[var(--ll-text)]">
+                      <p className="font-semibold text-[var(--ll-text)]">What to notice</p>
                       <p className="mt-2">{lab.expectedObservation}</p>
                     </div>
-                    <div className="rounded-2xl border border-slate-800 bg-slate-900/70 p-4 text-sm text-slate-100">
-                      <p className="font-semibold text-white">If materials are limited</p>
+                    <div className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 p-4 text-sm text-[var(--ll-text)]">
+                      <p className="font-semibold text-[var(--ll-text)]">If materials are limited</p>
                       <p className="mt-2">{lab.fallbackIfNoMaterials}</p>
                     </div>
                     {lab.guardianHomeVariant ? (
-                      <div className="rounded-2xl border border-amber-500/20 bg-amber-500/10 p-4 text-sm text-amber-100">
-                        <p className="font-semibold text-white">Home variant for a guardian</p>
+                      <div className="rounded-xl border border-amber-500/20 bg-[var(--ll-yellow-soft)] p-4 text-sm text-[var(--ll-yellow)]">
+                        <p className="font-semibold text-[var(--ll-text)]">Home variant for a guardian</p>
                         <p className="mt-2">{lab.guardianHomeVariant}</p>
                       </div>
                     ) : null}
@@ -774,8 +778,8 @@ export default function LessonDeliveryClient({ lessonId }: { lessonId: string })
       ) : null}
 
       {lesson.simulationDefinitions.length > 0 ? (
-        <section ref={registerSection("simulations")} data-section-id="simulations" className="rounded-3xl border border-white/10 bg-slate-900/80 p-5 sm:p-7">
-          <h2 className="text-lg font-semibold text-white">Interactive Simulation</h2>
+        <section ref={registerSection("simulations")} data-section-id="simulations" className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/80 p-5 sm:p-7">
+          <h2 className="text-lg font-semibold text-[var(--ll-text)]">Interactive Simulation</h2>
           <div className="mt-4 space-y-4">
             {lesson.simulationDefinitions.map((definition) => (
               <SimulationCard key={definition.id} definition={definition} />
@@ -784,16 +788,16 @@ export default function LessonDeliveryClient({ lessonId }: { lessonId: string })
         </section>
       ) : null}
 
-        <section ref={registerSection("exit-ticket")} data-section-id="exit-ticket" className="rounded-3xl border border-white/10 bg-slate-900/80 p-5 sm:p-7">
-          <h2 className="text-lg font-semibold text-white">Exit Ticket</h2>
+        <section ref={registerSection("exit-ticket")} data-section-id="exit-ticket" className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/80 p-5 sm:p-7">
+          <h2 className="text-lg font-semibold text-[var(--ll-text)]">Exit Ticket</h2>
           <div className="mt-4 space-y-5">
             {exitTicketQuestions.map((question, index) => (
-              <div key={`${question.question}-${index}`} className="rounded-2xl border border-slate-800 bg-slate-950/60 p-4">
-                <p className="text-base font-medium leading-7 text-slate-50">{question.question}</p>
+              <div key={`${question.question}-${index}`} className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/60 p-4">
+                <p className="text-base font-medium leading-7 text-[var(--ll-text)]">{question.question}</p>
                 {question.type === "mcq" ? (
                   <div className="mt-3 space-y-2">
                     {(question.choices ?? []).map((choice, choiceIndex) => (
-                      <label key={`${choice}-${choiceIndex}`} className="flex min-h-12 items-center gap-3 rounded-xl border border-slate-800 px-4 py-3 text-base text-slate-100">
+                      <label key={`${choice}-${choiceIndex}`} className="flex min-h-12 items-center gap-3 rounded-xl border border-[var(--ll-border)] px-4 py-3 text-base text-[var(--ll-text)]">
                         <input
                           type="radio"
                           name={`exit-ticket-${index}`}
@@ -809,7 +813,7 @@ export default function LessonDeliveryClient({ lessonId }: { lessonId: string })
                   <textarea
                     value={answers[index] ?? ""}
                     onChange={(event) => setAnswers((current) => ({ ...current, [index]: event.target.value }))}
-                    className="mt-3 min-h-28 w-full rounded-2xl border border-slate-700 bg-slate-950/80 px-4 py-3 text-base leading-7 text-slate-50 outline-none focus:border-emerald-400 focus:ring-1 focus:ring-emerald-400/60"
+                    className="mt-3 min-h-28 w-full rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/80 px-4 py-3 text-base leading-7 text-[var(--ll-text)] outline-none focus:border-[var(--ll-yellow)] focus:ring-1 focus:ring-[var(--ll-yellow)]/60"
                     placeholder="Write your answer here"
                   />
                 )}
@@ -817,29 +821,27 @@ export default function LessonDeliveryClient({ lessonId }: { lessonId: string })
             ))}
           </div>
 
-          {submitMessage ? <p className="mt-3 text-sm text-slate-300">{submitMessage}</p> : null}
+          {submitMessage ? <p className="mt-3 text-sm text-[var(--ll-text)]">{submitMessage}</p> : null}
         </section>
 
         <LessonQuizPanel lessonId={lesson.id} lessonStatus={lesson.status} />
 
         <div className="sticky bottom-3 z-10">
-          <div className="rounded-3xl border border-white/10 bg-slate-950/95 p-3 shadow-2xl shadow-black/40 backdrop-blur">
+          <div className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/95 p-3 shadow-none shadow-black/40 backdrop-blur">
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
               <div>
-                <p className="text-xs font-semibold uppercase tracking-[0.2em] text-emerald-200">Section navigation</p>
-                <p className="mt-1 text-sm text-slate-200">
+                <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--ll-yellow)]">Section navigation</p>
+                <p className="mt-1 text-sm text-[var(--ll-text)]">
                   {currentSectionIndex + 1} of {sectionOrder.length}
                 </p>
               </div>
               <div className="grid grid-cols-1 gap-2 sm:flex">
                 {aiTutorEnabled ? (
-                  <button
-                    type="button"
+                  <PencilButton
                     onClick={() => setHelpPanelOpen(true)}
-                    className="ll-touch-target rounded-2xl border border-emerald-400/30 bg-emerald-400/10 px-4 py-3 text-sm font-semibold text-emerald-100"
-                  >
-                    Help Me Understand
-                  </button>
+                    label="Ask the tutor"
+                    active={helpPanelOpen}
+                  />
                 ) : null}
                 <button
                   type="button"
@@ -848,9 +850,12 @@ export default function LessonDeliveryClient({ lessonId }: { lessonId: string })
                     if (previousSection) scrollToSection(previousSection);
                   }}
                   disabled={currentSectionIndex <= 0}
-                  className="ll-touch-target rounded-2xl border border-slate-700 px-4 py-3 text-sm text-slate-100 disabled:opacity-40"
+                  className="ll-touch-target rounded-xl border border-[var(--ll-border)] px-4 py-3 text-sm text-[var(--ll-text)] disabled:opacity-40"
                 >
-                  Back
+                  <span className="inline-flex items-center gap-1">
+                    <ChevronLeft size={14} />
+                    Back
+                  </span>
                 </button>
                 <button
                   type="button"
@@ -859,15 +864,18 @@ export default function LessonDeliveryClient({ lessonId }: { lessonId: string })
                     if (nextSection) scrollToSection(nextSection);
                   }}
                   disabled={currentSectionIndex >= sectionOrder.length - 1}
-                  className="ll-touch-target rounded-2xl bg-cyan-400 px-4 py-3 text-sm font-semibold text-slate-950 disabled:opacity-40"
+                  className="ll-touch-target rounded-xl bg-[var(--ll-silver-soft)] px-4 py-3 text-sm font-semibold text-[var(--ll-text-faint)] disabled:opacity-40"
                 >
-                  Next
+                  <span className="inline-flex items-center gap-1">
+                    Next
+                    <ChevronRight size={14} />
+                  </span>
                 </button>
                 <button
                   type="button"
                   onClick={handleSubmitExitTicket}
                   disabled={submitting || lesson.status === "completed"}
-                  className="ll-touch-target rounded-2xl bg-emerald-400 px-5 py-3 text-sm font-semibold text-slate-950 disabled:cursor-not-allowed disabled:bg-slate-700 disabled:text-slate-400"
+                  className="ll-touch-target rounded-xl bg-[var(--ll-yellow-soft)] px-5 py-3 text-sm font-semibold text-[var(--ll-text-faint)] disabled:cursor-not-allowed disabled:bg-[var(--ll-surface-muted)] disabled:text-[var(--ll-text-muted)]"
                 >
                   {lesson.status === "completed" ? "Lesson already completed" : submitting ? "Submitting..." : "Submit exit ticket"}
                 </button>
@@ -889,10 +897,21 @@ export default function LessonDeliveryClient({ lessonId }: { lessonId: string })
       />
       <LessonLabPanel
         open={openLabId !== null}
-        onClose={() => setOpenLabId(null)}
+        onClose={() => {
+          setOpenLabId(null);
+          setToolkitOpen(false);
+        }}
         labId={openLabId}
         lessonId={lesson.id}
       />
+      {availableLabs.length > 0 ? (
+        <div className="sm:hidden">
+          <PencilButtonFloat
+            onClick={() => openLessonLab(availableLabs[0].labId)}
+            active={toolkitOpen}
+          />
+        </div>
+      ) : null}
     </div>
   );
 }

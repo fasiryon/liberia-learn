@@ -68,14 +68,14 @@ export default async function TeacherHomeworkDetail({
 
   if (!homework) {
     return (
-      <main className="min-h-screen bg-slate-950 text-slate-50 flex items-center justify-center">
+      <main className="min-h-screen bg-[var(--ll-bg)] text-[var(--ll-text)] flex items-center justify-center">
         <div className="text-center">
           <h1 className="text-xl font-semibold mb-2">Homework not found</h1>
-          <p className="text-sm text-slate-400 mb-3">
+          <p className="text-sm text-[var(--ll-text-muted)] mb-3">
             This assignment doesn&apos;t exist or doesn&apos;t belong to your
             classes.
           </p>
-          <Link href="/teacher/homework" className="text-blue-300 text-sm">
+          <Link href="/teacher/homework" className="text-[var(--ll-silver)] text-sm">
             ← Back to homework list
           </Link>
         </div>
@@ -101,7 +101,7 @@ export default async function TeacherHomeworkDetail({
   const questions = (homework.questions as any[]) || [];
 
   return (
-    <main className="min-h-screen bg-slate-950 text-slate-50">
+    <main className="min-h-screen bg-[var(--ll-bg)] text-[var(--ll-text)]">
       <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_top,_#3b82f622,_transparent_60%)]" />
       <div className="mx-auto max-w-6xl px-4 py-6">
         {/* Header */}
@@ -109,24 +109,24 @@ export default async function TeacherHomeworkDetail({
           <div>
             <Link
               href={`/teacher/homework?classId=${homework.classId}`}
-              className="inline-block text-sm text-blue-300 hover:underline mb-3"
+              className="inline-block text-sm text-[var(--ll-silver)] hover:underline mb-3"
             >
               ← Back to homework list
             </Link>
             <h1 className="text-2xl font-bold mb-1">{homework.title}</h1>
-            <p className="text-sm text-slate-400">
+            <p className="text-sm text-[var(--ll-text-muted)]">
               {homework.Class.name} ·{" "}
               {homework.Class.School?.name || "Your school"}
             </p>
             {homework.dueAt && (
-              <p className="mt-2 text-xs text-slate-500">
+              <p className="mt-2 text-xs text-[var(--ll-text-faint)]">
                 Due: {new Date(homework.dueAt).toLocaleString()}
               </p>
             )}
           </div>
 
-          <div className="rounded-2xl border border-slate-800 bg-slate-900/80 px-4 py-3 text-xs text-right">
-            <p className="text-slate-400 mb-1">Class summary</p>
+          <div className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/80 px-4 py-3 text-xs text-right">
+            <p className="text-[var(--ll-text-muted)] mb-1">Class summary</p>
             <p>
               Students: <span className="font-semibold">{totalStudents}</span>
             </p>
@@ -143,7 +143,7 @@ export default async function TeacherHomeworkDetail({
               </span>
             </p>
             {averageScore !== null && (
-              <p className="mt-1 text-emerald-300 font-semibold">
+              <p className="mt-1 text-[var(--ll-yellow)] font-semibold">
                 Avg: {averageScore}%
               </p>
             )}
@@ -152,27 +152,27 @@ export default async function TeacherHomeworkDetail({
 
         {/* Instructions + Questions */}
         <section className="mb-6 grid gap-4 md:grid-cols-[2fr,3fr]">
-          <div className="rounded-2xl border border-slate-800 bg-slate-900/80 p-5">
-            <h2 className="text-sm font-semibold uppercase tracking-wide text-slate-400 mb-2">
+          <div className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/80 p-5">
+            <h2 className="text-sm font-semibold uppercase tracking-wide text-[var(--ll-text-muted)] mb-2">
               Instructions
             </h2>
-            <p className="text-sm text-slate-200">
+            <p className="text-sm text-[var(--ll-text)]">
               {homework.instructions || "No specific instructions."}
             </p>
           </div>
 
-          <div className="rounded-2xl border border-slate-800 bg-slate-900/80 p-5">
-            <h2 className="text-sm font-semibold uppercase tracking-wide text-slate-400 mb-3">
+          <div className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/80 p-5">
+            <h2 className="text-sm font-semibold uppercase tracking-wide text-[var(--ll-text-muted)] mb-3">
               Questions
             </h2>
-            <div className="space-y-3 text-sm text-slate-200">
+            <div className="space-y-3 text-sm text-[var(--ll-text)]">
               {questions.length === 0 ? (
                 <p>No questions stored for this homework.</p>
               ) : (
                 questions.map((q: any, i: number) => (
                   <div
                     key={i}
-                    className="rounded-xl bg-slate-950/80 px-4 py-3 border border-slate-800"
+                    className="rounded-xl bg-[var(--ll-bg)]/80 px-4 py-3 border border-[var(--ll-border)]"
                   >
                     <p className="font-medium mb-1">
                       {i + 1}. {typeof q === "string" ? q : q.text}
@@ -191,7 +191,7 @@ export default async function TeacherHomeworkDetail({
           </h2>
 
           {totalStudents === 0 ? (
-            <div className="rounded-2xl border border-slate-800 bg-slate-900/80 p-8 text-center text-sm text-slate-400">
+            <div className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/80 p-8 text-center text-sm text-[var(--ll-text-muted)]">
               No students are enrolled in this class yet.
             </div>
           ) : (
@@ -205,25 +205,25 @@ export default async function TeacherHomeworkDetail({
                 return (
                   <div
                     key={s.id}
-                    className="rounded-2xl border border-slate-800 bg-slate-900/80 p-5"
+                    className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/80 p-5"
                   >
                     <div className="flex items-start justify-between gap-4">
                       <div>
                         <p className="text-sm font-semibold">
                           {s.user?.name || "Unnamed student"}
                         </p>
-                        <p className="text-xs text-slate-500">
+                        <p className="text-xs text-[var(--ll-text-faint)]">
                           {s.user?.email || "No email"}
                         </p>
                         {submission ? (
-                          <p className="mt-2 text-xs text-slate-400">
+                          <p className="mt-2 text-xs text-[var(--ll-text-muted)]">
                             Submitted:{" "}
                             {new Date(
                               submission.submittedAt
                             ).toLocaleString()}
                           </p>
                         ) : (
-                          <p className="mt-2 text-xs text-amber-300">
+                          <p className="mt-2 text-xs text-[var(--ll-yellow)]">
                             Not submitted yet
                           </p>
                         )}
@@ -248,7 +248,7 @@ export default async function TeacherHomeworkDetail({
                           />
                         </div>
                       ) : (
-                        <div className="text-xs text-slate-500">
+                        <div className="text-xs text-[var(--ll-text-faint)]">
                           No work to grade yet.
                         </div>
                       )}

@@ -4,11 +4,11 @@ import { TeacherDeliveryReport } from "@/components/teacher/TeacherDeliveryRepor
 
 export default function TeacherDeliveryReportPage() {
   return (
-    <main className="min-h-screen bg-slate-950 text-slate-50">
+    <main className="min-h-screen bg-[var(--ll-bg)] text-[var(--ll-text)]">
       <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_top,_#3b82f622,_transparent_60%)]" />
       <div className="mx-auto max-w-6xl px-4 py-8">
         <header className="mb-6">
-          <Link href="/teacher" className="text-xs text-emerald-300 hover:text-emerald-200">
+          <Link href="/teacher" className="text-xs text-[var(--ll-yellow)] hover:text-[var(--ll-yellow)]">
             Back to Teacher Dashboard
           </Link>
         </header>

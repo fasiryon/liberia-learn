@@ -59,8 +59,8 @@ export function CookieNotice() {
   if (!visible) return null;
 
   return (
-    <div className="fixed inset-x-0 bottom-0 z-50 border-t border-white/10 bg-slate-950/95 px-4 py-3 shadow-2xl shadow-black/50">
-      <div className="mx-auto flex max-w-5xl flex-col gap-3 text-sm text-slate-200 sm:flex-row sm:items-center sm:justify-between">
+    <div className="fixed inset-x-0 bottom-0 z-50 border-t border-[var(--ll-border)] bg-[var(--ll-bg)]/95 px-4 py-3 shadow-none shadow-black/50">
+      <div className="mx-auto flex max-w-5xl flex-col gap-3 text-sm text-[var(--ll-text)] sm:flex-row sm:items-center sm:justify-between">
         <p className="leading-6">
           LiberiaLearn uses session cookies only for authentication. No tracking or advertising cookies are used.
         </p>
@@ -70,7 +70,7 @@ export function CookieNotice() {
             window.localStorage.setItem(COOKIE_NOTICE_KEY, "true");
             setVisible(false);
           }}
-          className="min-h-11 rounded-xl bg-emerald-400 px-4 py-2 text-sm font-semibold text-slate-950 hover:bg-emerald-300"
+          className="min-h-11 rounded-xl bg-[var(--ll-yellow-soft)] px-4 py-2 text-sm font-semibold text-[var(--ll-text-faint)] hover:bg-[var(--ll-yellow-soft)]"
         >
           Dismiss
         </button>

@@ -46,7 +46,7 @@ export function LowBandwidthBanner() {
     <div
       role="status"
       aria-live="polite"
-      className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between bg-amber-600/90 px-4 py-2 text-sm text-white"
+      className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between bg-[var(--ll-yellow-soft)] px-4 py-2 text-sm text-[var(--ll-text)]"
     >
       <span>Slow connection detected. Low-bandwidth mode is on.</span>
       <button
@@ -82,13 +82,13 @@ export function LowBandwidthToggle() {
 
   return (
     <div className="flex items-center gap-3">
-      <span className="text-sm text-slate-300">Low-bandwidth mode</span>
+      <span className="text-sm text-[var(--ll-text)]">Low-bandwidth mode</span>
       <button
         role="switch"
         aria-checked={enabled}
         onClick={toggle}
         className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-500 ${
-          enabled ? "bg-emerald-600" : "bg-slate-600"
+          enabled ? "bg-[var(--ll-yellow-soft)]" : "bg-[var(--ll-surface-muted)]"
         }`}
       >
         <span
@@ -100,7 +100,7 @@ export function LowBandwidthToggle() {
       {hasManualOverride() && (
         <button
           onClick={reset}
-          className="text-xs text-slate-400 hover:text-slate-200 underline"
+          className="text-xs text-[var(--ll-text-muted)] hover:text-[var(--ll-text)] underline"
         >
           Reset to auto
         </button>

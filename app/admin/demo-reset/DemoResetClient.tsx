@@ -40,10 +40,10 @@ export function DemoResetClient() {
   }
 
   return (
-    <div className="space-y-4 rounded-3xl border border-slate-800 bg-slate-900/80 p-6">
-      <div className="rounded-2xl border border-amber-500/30 bg-amber-500/10 p-4">
-        <p className="text-sm font-semibold text-amber-300">Warning</p>
-        <p className="mt-1 text-sm text-amber-100/80">
+    <div className="space-y-4 rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/80 p-6">
+      <div className="rounded-xl border border-amber-500/30 bg-[var(--ll-yellow-soft)] p-4">
+        <p className="text-sm font-semibold text-[var(--ll-yellow)]">Warning</p>
+        <p className="mt-1 text-sm text-[var(--ll-yellow)]/80">
           This will delete all activity data for demo schools and re-seed.
         </p>
       </div>
@@ -52,16 +52,16 @@ export function DemoResetClient() {
         type="button"
         onClick={handleReset}
         disabled={isResetting}
-        className="inline-flex items-center justify-center rounded-2xl bg-red-500 px-5 py-3 text-sm font-semibold text-white transition hover:bg-red-400 disabled:cursor-not-allowed disabled:opacity-60"
+        className="inline-flex items-center justify-center rounded-xl bg-red-500 px-5 py-3 text-sm font-semibold text-[var(--ll-text)] transition hover:bg-red-400 disabled:cursor-not-allowed disabled:opacity-60"
       >
         {isResetting ? "Resetting Demo Data..." : "Reset Demo Data"}
       </button>
 
       {state.message ? (
         <div
-          className={`rounded-2xl border px-4 py-3 text-sm ${
+          className={`rounded-xl border px-4 py-3 text-sm ${
             state.kind === "success"
-              ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-200"
+              ? "border-emerald-500/30 bg-[var(--ll-yellow)]/10 text-[var(--ll-yellow)]"
               : "border-red-500/30 bg-red-500/10 text-red-200"
           }`}
         >

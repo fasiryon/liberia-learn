@@ -83,25 +83,25 @@ export default function GuardianLinkPage() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-50 px-4 py-8 sm:px-8">
+    <div className="min-h-screen bg-[var(--ll-bg)] text-[var(--ll-text)] px-4 py-8 sm:px-8">
       <div className="mx-auto max-w-4xl space-y-8">
         <h1 className="text-2xl font-bold tracking-tight">Guardian Links</h1>
 
         {/* Form */}
-        <div className="rounded-2xl border border-slate-800 bg-slate-900/60 p-6">
-          <h2 className="mb-4 text-sm font-semibold text-slate-300">
+        <div className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/60 p-6">
+          <h2 className="mb-4 text-sm font-semibold text-[var(--ll-text)]">
             Link a Guardian to a Student
           </h2>
           <form onSubmit={handleSubmit} className="grid gap-4 sm:grid-cols-2">
             <div className="space-y-1 sm:col-span-2">
-              <label className="block text-xs font-medium text-slate-400">
+              <label className="block text-xs font-medium text-[var(--ll-text-muted)]">
                 Student
               </label>
               <select
                 required
                 value={studentId}
                 onChange={(e) => setStudentId(e.target.value)}
-                className="w-full rounded-xl border border-slate-700 bg-slate-900/70 px-3 py-2 text-sm text-slate-50 outline-none focus:border-emerald-400"
+                className="w-full rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 px-3 py-2 text-sm text-[var(--ll-text)] outline-none focus:border-emerald-400"
               >
                 <option value="">Select student...</option>
                 {students.map((s) => (
@@ -113,7 +113,7 @@ export default function GuardianLinkPage() {
             </div>
 
             <div className="space-y-1">
-              <label className="block text-xs font-medium text-slate-400">
+              <label className="block text-xs font-medium text-[var(--ll-text-muted)]">
                 Guardian Email
               </label>
               <input
@@ -121,71 +121,71 @@ export default function GuardianLinkPage() {
                 type="email"
                 value={guardianEmail}
                 onChange={(e) => setGuardianEmail(e.target.value)}
-                className="w-full rounded-xl border border-slate-700 bg-slate-900/70 px-3 py-2 text-sm text-slate-50 outline-none placeholder:text-slate-500 focus:border-emerald-400"
+                className="w-full rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 px-3 py-2 text-sm text-[var(--ll-text)] outline-none placeholder:text-[var(--ll-text-faint)] focus:border-emerald-400"
                 placeholder="guardian@example.com"
               />
             </div>
 
             <div className="space-y-1">
-              <label className="block text-xs font-medium text-slate-400">
+              <label className="block text-xs font-medium text-[var(--ll-text-muted)]">
                 Guardian Name
               </label>
               <input
                 type="text"
                 value={guardianName}
                 onChange={(e) => setGuardianName(e.target.value)}
-                className="w-full rounded-xl border border-slate-700 bg-slate-900/70 px-3 py-2 text-sm text-slate-50 outline-none placeholder:text-slate-500 focus:border-emerald-400"
+                className="w-full rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 px-3 py-2 text-sm text-[var(--ll-text)] outline-none placeholder:text-[var(--ll-text-faint)] focus:border-emerald-400"
                 placeholder="Optional"
               />
             </div>
 
             <div className="space-y-1">
-              <label className="block text-xs font-medium text-slate-400">
+              <label className="block text-xs font-medium text-[var(--ll-text-muted)]">
                 Relation
               </label>
               <input
                 type="text"
                 value={relation}
                 onChange={(e) => setRelation(e.target.value)}
-                className="w-full rounded-xl border border-slate-700 bg-slate-900/70 px-3 py-2 text-sm text-slate-50 outline-none placeholder:text-slate-500 focus:border-emerald-400"
+                className="w-full rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 px-3 py-2 text-sm text-[var(--ll-text)] outline-none placeholder:text-[var(--ll-text-faint)] focus:border-emerald-400"
                 placeholder="e.g. Mother, Father, Uncle"
               />
             </div>
 
             <div className="space-y-1">
-              <label className="block text-xs font-medium text-slate-400">
+              <label className="block text-xs font-medium text-[var(--ll-text-muted)]">
                 Country Code
               </label>
               <input
                 type="text"
                 value={guardianCountryCode}
                 onChange={(e) => setGuardianCountryCode(e.target.value)}
-                className="w-full rounded-xl border border-slate-700 bg-slate-900/70 px-3 py-2 text-sm text-slate-50 outline-none placeholder:text-slate-500 focus:border-emerald-400"
+                className="w-full rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 px-3 py-2 text-sm text-[var(--ll-text)] outline-none placeholder:text-[var(--ll-text-faint)] focus:border-emerald-400"
                 placeholder="+231"
               />
             </div>
 
             <div className="space-y-1">
-              <label className="block text-xs font-medium text-slate-400">
+              <label className="block text-xs font-medium text-[var(--ll-text-muted)]">
                 Phone Number
               </label>
               <input
                 type="tel"
                 value={guardianPhone}
                 onChange={(e) => setGuardianPhone(e.target.value)}
-                className="w-full rounded-xl border border-slate-700 bg-slate-900/70 px-3 py-2 text-sm text-slate-50 outline-none placeholder:text-slate-500 focus:border-emerald-400"
+                className="w-full rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 px-3 py-2 text-sm text-[var(--ll-text)] outline-none placeholder:text-[var(--ll-text-faint)] focus:border-emerald-400"
                 placeholder="077XXXXXXX"
               />
             </div>
 
             <div className="space-y-1">
-              <label className="block text-xs font-medium text-slate-400">
+              <label className="block text-xs font-medium text-[var(--ll-text-muted)]">
                 Preferred Channel
               </label>
               <select
                 value={preferredChannel}
                 onChange={(e) => setPreferredChannel(e.target.value)}
-                className="w-full rounded-xl border border-slate-700 bg-slate-900/70 px-3 py-2 text-sm text-slate-50 outline-none focus:border-emerald-400"
+                className="w-full rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 px-3 py-2 text-sm text-[var(--ll-text)] outline-none focus:border-emerald-400"
               >
                 <option value="EMAIL">Email</option>
                 <option value="SMS">SMS</option>
@@ -198,16 +198,16 @@ export default function GuardianLinkPage() {
                 type="checkbox"
                 checked={smsOptIn}
                 onChange={(e) => setSmsOptIn(e.target.checked)}
-                className="h-4 w-4 rounded border-slate-600 bg-slate-900 text-emerald-500"
+                className="h-4 w-4 rounded border-[var(--ll-border)] bg-[var(--ll-bg)] text-[var(--ll-yellow)]"
               />
-              <label className="text-xs text-slate-400">SMS Opt-In</label>
+              <label className="text-xs text-[var(--ll-text-muted)]">SMS Opt-In</label>
             </div>
 
             <div className="flex items-end">
               <button
                 type="submit"
                 disabled={submitting}
-                className="rounded-xl bg-emerald-500 px-6 py-2.5 text-sm font-semibold text-slate-950 shadow-lg shadow-emerald-500/40 hover:bg-emerald-400 disabled:opacity-60"
+                className="rounded-xl bg-[var(--ll-yellow)] px-6 py-2.5 text-sm font-semibold text-[var(--ll-text-faint)] shadow-lg shadow-emerald-500/40 hover:bg-[var(--ll-yellow-soft)] disabled:opacity-60"
               >
                 {submitting ? "Linking..." : "Link Guardian"}
               </button>
@@ -220,9 +220,9 @@ export default function GuardianLinkPage() {
             </p>
           )}
           {success && (
-            <div className="mt-4 rounded-lg border border-emerald-800 bg-emerald-950/40 px-3 py-2">
-              <p className="text-xs text-emerald-400">Invite created. Share this link:</p>
-              <p className="mt-1 break-all text-xs text-slate-300 font-mono">
+            <div className="mt-4 rounded-lg border border-emerald-800 bg-[var(--ll-yellow-soft)] px-3 py-2">
+              <p className="text-xs text-[var(--ll-yellow)]">Invite created. Share this link:</p>
+              <p className="mt-1 break-all text-xs text-[var(--ll-text)] font-mono">
                 {success}
               </p>
             </div>
@@ -230,8 +230,8 @@ export default function GuardianLinkPage() {
         </div>
 
         {/* Existing links table */}
-        <div className="rounded-2xl border border-slate-800 bg-slate-900/60 p-6">
-          <h2 className="mb-4 text-sm font-semibold text-slate-300">
+        <div className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/60 p-6">
+          <h2 className="mb-4 text-sm font-semibold text-[var(--ll-text)]">
             Existing Guardian Links
           </h2>
           {loading ? (
@@ -239,14 +239,14 @@ export default function GuardianLinkPage() {
               <div className="h-6 w-6 animate-spin rounded-full border-2 border-emerald-500 border-t-transparent" />
             </div>
           ) : links.length === 0 ? (
-            <p className="py-8 text-center text-sm text-slate-500">
+            <p className="py-8 text-center text-sm text-[var(--ll-text-faint)]">
               No guardian links yet.
             </p>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full text-left text-xs">
                 <thead>
-                  <tr className="border-b border-slate-800 text-slate-400">
+                  <tr className="border-b border-[var(--ll-border)] text-[var(--ll-text-muted)]">
                     <th className="pb-2 pr-4">Student</th>
                     <th className="pb-2 pr-4">Guardian</th>
                     <th className="pb-2 pr-4">Email</th>
@@ -257,23 +257,23 @@ export default function GuardianLinkPage() {
                 </thead>
                 <tbody>
                   {links.map((l) => (
-                    <tr key={l.id} className="border-b border-slate-800/50">
-                      <td className="py-2 pr-4 text-slate-200">
+                    <tr key={l.id} className="border-b border-[var(--ll-border)]/50">
+                      <td className="py-2 pr-4 text-[var(--ll-text)]">
                         {l.studentName}
                       </td>
-                      <td className="py-2 pr-4 text-slate-200">
+                      <td className="py-2 pr-4 text-[var(--ll-text)]">
                         {l.guardianName}
                       </td>
-                      <td className="py-2 pr-4 text-slate-400">
+                      <td className="py-2 pr-4 text-[var(--ll-text-muted)]">
                         {l.guardianEmail}
                       </td>
-                      <td className="py-2 pr-4 text-slate-400">
+                      <td className="py-2 pr-4 text-[var(--ll-text-muted)]">
                         {l.guardianPhone ?? "-"}
                       </td>
-                      <td className="py-2 pr-4 text-slate-400">
+                      <td className="py-2 pr-4 text-[var(--ll-text-muted)]">
                         {l.preferredChannel ?? "EMAIL"}
                       </td>
-                      <td className="py-2 text-slate-400">
+                      <td className="py-2 text-[var(--ll-text-muted)]">
                         {l.relation ?? "-"}
                       </td>
                     </tr>

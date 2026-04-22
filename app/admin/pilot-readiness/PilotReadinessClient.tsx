@@ -39,14 +39,14 @@ export default function PilotReadinessClient() {
 
   if (error) {
     return (
-      <div className="rounded-2xl border border-red-500/30 bg-red-500/10 p-4 text-sm text-red-300">
+      <div className="rounded-xl border border-red-500/30 bg-red-500/10 p-4 text-sm text-red-300">
         {error}
       </div>
     );
   }
 
   if (!data) {
-    return <div className="h-48 animate-pulse rounded-2xl bg-slate-900/70" />;
+    return <div className="h-48 animate-pulse rounded-xl bg-[var(--ll-bg)]/70" />;
   }
 
   return (

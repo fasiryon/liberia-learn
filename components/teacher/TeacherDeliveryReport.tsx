@@ -130,8 +130,8 @@ export function TeacherDeliveryReport() {
     <div className="space-y-6">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-slate-50">Lesson Delivery Report</h1>
-          <p className="mt-1 text-sm text-slate-400">
+          <h1 className="text-2xl font-bold text-[var(--ll-text)]">Lesson Delivery Report</h1>
+          <p className="mt-1 text-sm text-[var(--ll-text-muted)]">
             Track delivered lessons and completion across your classes.
           </p>
         </div>
@@ -143,8 +143,8 @@ export function TeacherDeliveryReport() {
               onClick={() => setRange(option.value)}
               className={`rounded-full px-4 py-2 text-sm font-semibold ${
                 range === option.value
-                  ? "bg-emerald-500 text-slate-950"
-                  : "border border-slate-700 bg-slate-900 text-slate-200"
+                  ? "bg-[var(--ll-yellow)] text-[var(--ll-text-faint)]"
+                  : "border border-[var(--ll-border)] bg-[var(--ll-bg)] text-[var(--ll-text)]"
               }`}
             >
               {option.label}
@@ -154,7 +154,7 @@ export function TeacherDeliveryReport() {
             type="button"
             onClick={() => downloadCsv(items)}
             disabled={items.length === 0}
-            className="rounded-full border border-slate-700 bg-slate-900 px-4 py-2 text-sm font-semibold text-slate-200 disabled:opacity-50"
+            className="rounded-full border border-[var(--ll-border)] bg-[var(--ll-bg)] px-4 py-2 text-sm font-semibold text-[var(--ll-text)] disabled:opacity-50"
           >
             Download CSV
           </button>
@@ -162,39 +162,39 @@ export function TeacherDeliveryReport() {
       </div>
 
       <section className="grid gap-4 md:grid-cols-3">
-        <div className="rounded-2xl border border-white/10 bg-slate-900/70 p-5">
-          <p className="text-xs text-slate-400">Total Lessons Delivered</p>
-          <p className="mt-2 text-3xl font-bold text-emerald-300">{summary.totalLessonsDelivered}</p>
+        <div className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 p-5">
+          <p className="text-xs text-[var(--ll-text-muted)]">Total Lessons Delivered</p>
+          <p className="mt-2 text-3xl font-bold text-[var(--ll-yellow)]">{summary.totalLessonsDelivered}</p>
         </div>
-        <div className="rounded-2xl border border-white/10 bg-slate-900/70 p-5">
-          <p className="text-xs text-slate-400">Average Completion Rate</p>
-          <p className="mt-2 text-3xl font-bold text-blue-300">{summary.averageCompletionRate}%</p>
+        <div className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 p-5">
+          <p className="text-xs text-[var(--ll-text-muted)]">Average Completion Rate</p>
+          <p className="mt-2 text-3xl font-bold text-[var(--ll-silver)]">{summary.averageCompletionRate}%</p>
         </div>
-        <div className="rounded-2xl border border-white/10 bg-slate-900/70 p-5">
-          <p className="text-xs text-slate-400">Total Students Reached</p>
-          <p className="mt-2 text-3xl font-bold text-amber-300">{summary.totalStudentsReached}</p>
+        <div className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 p-5">
+          <p className="text-xs text-[var(--ll-text-muted)]">Total Students Reached</p>
+          <p className="mt-2 text-3xl font-bold text-[var(--ll-yellow)]">{summary.totalStudentsReached}</p>
         </div>
       </section>
 
       {loading ? (
-        <div className="space-y-3 rounded-3xl border border-white/10 bg-slate-900/70 p-6">
+        <div className="space-y-3 rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 p-6">
           {Array.from({ length: 6 }).map((_, index) => (
-            <div key={index} className="h-12 animate-pulse rounded-2xl bg-slate-800/60" />
+            <div key={index} className="h-12 animate-pulse rounded-xl bg-[var(--ll-surface)]/60" />
           ))}
         </div>
       ) : error ? (
-        <div className="rounded-2xl border border-red-500/30 bg-red-500/10 p-4 text-sm text-red-200">
+        <div className="rounded-xl border border-red-500/30 bg-red-500/10 p-4 text-sm text-red-200">
           {error}
         </div>
       ) : items.length === 0 ? (
-        <div className="rounded-3xl border border-white/10 bg-slate-900/70 p-8 text-center text-sm text-slate-400">
+        <div className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 p-8 text-center text-sm text-[var(--ll-text-muted)]">
           No delivered lessons in this period. Deliver a lesson to see it here.
         </div>
       ) : (
-        <div className="overflow-x-auto rounded-3xl border border-white/10 bg-slate-900/70">
+        <div className="overflow-x-auto rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70">
           <table className="min-w-full text-sm">
             <thead>
-              <tr className="border-b border-white/10 text-left text-xs text-slate-500">
+              <tr className="border-b border-[var(--ll-border)] text-left text-xs text-[var(--ll-text-faint)]">
                 <th className="px-4 py-3">Lesson Title</th>
                 <th className="px-4 py-3">Class</th>
                 <th className="px-4 py-3">Date</th>
@@ -208,7 +208,7 @@ export function TeacherDeliveryReport() {
               {items.map((item) => {
                 const rate = item.totalStudents > 0 ? Math.round((item.completedCount / item.totalStudents) * 100) : 0;
                 return (
-                  <tr key={item.id} className="border-b border-white/5 text-slate-200">
+                  <tr key={item.id} className="border-b border-white/5 text-[var(--ll-text)]">
                     <td className="px-4 py-3">{item.title}</td>
                     <td className="px-4 py-3">{item.className}</td>
                     <td className="px-4 py-3">{new Date(item.scheduledDate).toLocaleDateString("en-LR")}</td>
@@ -216,8 +216,8 @@ export function TeacherDeliveryReport() {
                       <span
                         className={`rounded-full px-2.5 py-1 text-[11px] font-semibold ${
                           item.isDelivered
-                            ? "bg-emerald-500/20 text-emerald-300"
-                            : "bg-amber-500/20 text-amber-300"
+                            ? "bg-[var(--ll-yellow)]/20 text-[var(--ll-yellow)]"
+                            : "bg-[var(--ll-yellow-soft)] text-[var(--ll-yellow)]"
                         }`}
                       >
                         {item.isDelivered ? "Delivered" : "Not Delivered"}

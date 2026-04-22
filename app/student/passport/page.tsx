@@ -28,9 +28,9 @@ type Passport = {
 
 function StatBadge({ label, value }: { label: string; value: string | number | null }) {
   return (
-    <div className="flex flex-col items-center rounded-2xl border border-white/10 bg-slate-900/60 px-5 py-4 text-center">
-      <span className="text-2xl font-bold text-emerald-300">{value ?? "--"}</span>
-      <span className="mt-1 text-xs text-slate-400">{label}</span>
+    <div className="flex flex-col items-center rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/60 px-5 py-4 text-center">
+      <span className="text-2xl font-bold text-[var(--ll-yellow)]">{value ?? "--"}</span>
+      <span className="mt-1 text-xs text-[var(--ll-text-muted)]">{label}</span>
     </div>
   );
 }
@@ -38,9 +38,9 @@ function StatBadge({ label, value }: { label: string; value: string | number | n
 function MasteryBar({ pct }: { pct: number | null }) {
   const width = pct ?? 0;
   return (
-    <div className="h-2 w-full rounded-full bg-slate-700">
+    <div className="h-2 w-full rounded-full bg-[var(--ll-surface-muted)]">
       <div
-        className="h-2 rounded-full bg-emerald-500 transition-all"
+        className="h-2 rounded-full bg-[var(--ll-yellow)] transition-all"
         style={{ width: `${Math.min(100, Math.max(0, width))}%` }}
       />
     </div>
@@ -71,10 +71,10 @@ export default function StudentPassportPage() {
 
   if (loading) {
     return (
-      <main className="flex min-h-screen items-center justify-center bg-slate-950">
+      <main className="flex min-h-screen items-center justify-center bg-[var(--ll-bg)]">
         <div className="w-full max-w-3xl space-y-4 px-4 py-8">
           {[...Array(4)].map((_, i) => (
-            <div key={i} className="h-16 animate-pulse rounded-2xl bg-slate-800" />
+            <div key={i} className="h-16 animate-pulse rounded-xl bg-[var(--ll-surface)]" />
           ))}
         </div>
       </main>
@@ -83,10 +83,10 @@ export default function StudentPassportPage() {
 
   if (error || !passport) {
     return (
-      <main className="flex min-h-screen items-center justify-center bg-slate-950 px-4">
+      <main className="flex min-h-screen items-center justify-center bg-[var(--ll-bg)] px-4">
         <div className="text-center space-y-3">
           <p className="text-sm text-red-400">{error ?? "No passport data found."}</p>
-          <Link href="/student/dashboard" className="text-sm text-emerald-300 hover:text-emerald-200">
+          <Link href="/student/dashboard" className="text-sm text-[var(--ll-yellow)] hover:text-[var(--ll-yellow)]">
             Back to Dashboard
           </Link>
         </div>
@@ -95,15 +95,15 @@ export default function StudentPassportPage() {
   }
 
   return (
-    <main className="min-h-screen bg-slate-950 px-4 py-8">
+    <main className="min-h-screen bg-[var(--ll-bg)] px-4 py-8">
       <div className="mx-auto max-w-3xl space-y-6">
         {/* Header */}
         <div className="space-y-1">
-          <Link href="/student/dashboard" className="inline-block text-sm text-emerald-300 hover:text-emerald-200">
+          <Link href="/student/dashboard" className="inline-block text-sm text-[var(--ll-yellow)] hover:text-[var(--ll-yellow)]">
             &larr; Back to Dashboard
           </Link>
-          <h1 className="text-2xl font-bold text-slate-50">My Learning Passport</h1>
-          <p className="text-xs text-slate-500">
+          <h1 className="text-2xl font-bold text-[var(--ll-text)]">My Learning Passport</h1>
+          <p className="text-xs text-[var(--ll-text-faint)]">
             Generated {formatDate(passport.generatedAt)} · Last activity{" "}
             {formatDate(passport.latestActivityAt)}
           </p>
@@ -125,15 +125,15 @@ export default function StudentPassportPage() {
 
         {/* Interventions */}
         {passport.interventionSummary.total > 0 && (
-          <div className="rounded-2xl border border-white/10 bg-slate-900/60 p-5 space-y-2">
-            <h2 className="text-sm font-semibold uppercase tracking-wide text-slate-300">
+          <div className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/60 p-5 space-y-2">
+            <h2 className="text-sm font-semibold uppercase tracking-wide text-[var(--ll-text)]">
               Support History
             </h2>
-            <div className="flex flex-wrap gap-4 text-sm text-slate-300">
+            <div className="flex flex-wrap gap-4 text-sm text-[var(--ll-text)]">
               <span>{passport.interventionSummary.total} total</span>
-              <span className="text-amber-400">{passport.interventionSummary.open} open</span>
+              <span className="text-[var(--ll-yellow)]">{passport.interventionSummary.open} open</span>
               <span className="text-sky-400">{passport.interventionSummary.inProgress} in progress</span>
-              <span className="text-emerald-400">{passport.interventionSummary.closed} resolved</span>
+              <span className="text-[var(--ll-yellow)]">{passport.interventionSummary.closed} resolved</span>
             </div>
           </div>
         )}
@@ -141,7 +141,7 @@ export default function StudentPassportPage() {
         {/* Subject breakdown */}
         {passport.subjects.length > 0 ? (
           <div className="space-y-3">
-            <h2 className="text-sm font-semibold uppercase tracking-wide text-slate-400">
+            <h2 className="text-sm font-semibold uppercase tracking-wide text-[var(--ll-text-muted)]">
               By Subject
             </h2>
             {passport.subjects.map((s) => {
@@ -152,36 +152,36 @@ export default function StudentPassportPage() {
               return (
                 <div
                   key={s.subject}
-                  className="rounded-2xl border border-white/10 bg-slate-900/60 p-5 space-y-3"
+                  className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/60 p-5 space-y-3"
                 >
                   <div className="flex items-center justify-between gap-3 flex-wrap">
                     <div>
-                      <span className="font-semibold text-slate-100">{s.subject}</span>
+                      <span className="font-semibold text-[var(--ll-text)]">{s.subject}</span>
                       {s.dominantMasteryState && (
-                        <span className="ml-2 rounded-full bg-emerald-500/20 border border-emerald-400/30 px-2 py-0.5 text-xs text-emerald-300">
+                        <span className="ml-2 rounded-full bg-[var(--ll-yellow)]/20 border border-emerald-400/30 px-2 py-0.5 text-xs text-[var(--ll-yellow)]">
                           {s.dominantMasteryState}
                         </span>
                       )}
                     </div>
-                    <span className="text-xs text-slate-400">
+                    <span className="text-xs text-[var(--ll-text-muted)]">
                       {s.masteredStrandCount}/{s.strandCount} strands mastered
                     </span>
                   </div>
                   <MasteryBar pct={pct} />
-                  <div className="flex flex-wrap gap-4 text-xs text-slate-400">
+                  <div className="flex flex-wrap gap-4 text-xs text-[var(--ll-text-muted)]">
                     {s.avgCurrentScore != null && (
                       <span>Avg score: {s.avgCurrentScore.toFixed(1)}</span>
                     )}
                     {s.avgGrowthDelta != null && (
                       <span>
                         Growth:{" "}
-                        <span className={s.avgGrowthDelta >= 0 ? "text-emerald-400" : "text-red-400"}>
+                        <span className={s.avgGrowthDelta >= 0 ? "text-[var(--ll-yellow)]" : "text-red-400"}>
                           {s.avgGrowthDelta >= 0 ? "+" : ""}{s.avgGrowthDelta.toFixed(2)}
                         </span>
                       </span>
                     )}
                     {s.openInterventionChainCount > 0 && (
-                      <span className="text-amber-400">{s.openInterventionChainCount} open interventions</span>
+                      <span className="text-[var(--ll-yellow)]">{s.openInterventionChainCount} open interventions</span>
                     )}
                     {s.lastAssessedAt && (
                       <span>Last assessed: {formatDate(s.lastAssessedAt)}</span>
@@ -192,12 +192,12 @@ export default function StudentPassportPage() {
             })}
           </div>
         ) : (
-          <div className="rounded-2xl border border-white/10 bg-slate-900/60 p-8 text-center text-sm text-slate-400">
+          <div className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/60 p-8 text-center text-sm text-[var(--ll-text-muted)]">
             No subject data yet. Complete some lessons to build your passport.
           </div>
         )}
 
-        <p className="text-center text-[11px] text-slate-500 pb-4">
+        <p className="text-center text-[11px] text-[var(--ll-text-faint)] pb-4">
           Your learning passport is a private longitudinal record of your progress.
         </p>
       </div>

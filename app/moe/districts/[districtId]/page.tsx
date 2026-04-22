@@ -75,24 +75,24 @@ export default function MoeDistrictDetailPage() {
     <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <p className="text-xs uppercase tracking-[0.2em] text-emerald-300">District Detail</p>
+          <p className="text-xs uppercase tracking-[0.2em] text-[var(--ll-yellow)]">District Detail</p>
           <h1 className="text-3xl font-semibold">
             {district?.districtName ?? "District Overview"}
           </h1>
-          <p className="text-sm text-slate-400">
+          <p className="text-sm text-[var(--ll-text-muted)]">
             Aggregated compliance and intervention data. No student-level details.
           </p>
         </div>
         <Link
           href="/moe/dashboard"
-          className="rounded-full border border-white/10 px-3 py-1.5 text-xs text-slate-300 hover:text-slate-100"
+          className="rounded-full border border-[var(--ll-border)] px-3 py-1.5 text-xs text-[var(--ll-text)] hover:text-[var(--ll-text)]"
         >
           ← Back to dashboard
         </Link>
       </div>
 
       {error && (
-        <div className="rounded-2xl border border-red-500/30 bg-red-500/10 p-4 text-sm text-red-300">
+        <div className="rounded-xl border border-red-500/30 bg-red-500/10 p-4 text-sm text-red-300">
           {error}
         </div>
       )}
@@ -100,71 +100,71 @@ export default function MoeDistrictDetailPage() {
       {loading ? (
         <div className="space-y-3">
           {Array.from({ length: 4 }).map((_, idx) => (
-            <div key={idx} className="h-16 rounded-2xl bg-white/5 animate-pulse" />
+            <div key={idx} className="h-16 rounded-xl bg-white/5 animate-pulse" />
           ))}
         </div>
       ) : !district ? (
-        <div className="rounded-2xl border border-white/10 bg-black/10 p-6 text-sm text-slate-400">
+        <div className="rounded-xl border border-[var(--ll-border)] bg-black/10 p-6 text-sm text-[var(--ll-text-muted)]">
           District data not available yet.
         </div>
       ) : (
         <>
           <section className="grid gap-4 md:grid-cols-3">
-            <div className="rounded-2xl border border-white/10 bg-white/5 p-5">
-              <p className="text-xs text-slate-400">Schools</p>
-              <p className="mt-2 text-2xl font-semibold text-emerald-200">
+            <div className="rounded-xl border border-[var(--ll-border)] bg-white/5 p-5">
+              <p className="text-xs text-[var(--ll-text-muted)]">Schools</p>
+              <p className="mt-2 text-2xl font-semibold text-[var(--ll-yellow)]">
                 {district.schoolCount}
               </p>
             </div>
-            <div className="rounded-2xl border border-white/10 bg-white/5 p-5">
-              <p className="text-xs text-slate-400">Lessons Delivered</p>
-              <p className="mt-2 text-2xl font-semibold text-cyan-200">
+            <div className="rounded-xl border border-[var(--ll-border)] bg-white/5 p-5">
+              <p className="text-xs text-[var(--ll-text-muted)]">Lessons Delivered</p>
+              <p className="mt-2 text-2xl font-semibold text-[var(--ll-silver)]">
                 {district.scheduledWorkDelivered}/{district.scheduledWorkTotal}
               </p>
             </div>
-            <div className="rounded-2xl border border-white/10 bg-white/5 p-5">
-              <p className="text-xs text-slate-400">Compliance</p>
-              <p className="mt-2 text-2xl font-semibold text-amber-200">
+            <div className="rounded-xl border border-[var(--ll-border)] bg-white/5 p-5">
+              <p className="text-xs text-[var(--ll-text-muted)]">Compliance</p>
+              <p className="mt-2 text-2xl font-semibold text-[var(--ll-yellow)]">
                 {district.compliancePct == null ? "—" : `${district.compliancePct.toFixed(1)}%`}
               </p>
             </div>
           </section>
 
-          <section className="rounded-2xl border border-white/10 bg-white/5 p-6">
+          <section className="rounded-xl border border-[var(--ll-border)] bg-white/5 p-6">
             <h2 className="text-lg font-semibold">School List</h2>
-            <p className="text-xs text-slate-500">
+            <p className="text-xs text-[var(--ll-text-faint)]">
               School-level breakdown is not yet available via MOE API.
             </p>
-            <div className="mt-4 rounded-xl border border-white/10 bg-black/10 p-6 text-sm text-slate-400">
+            <div className="mt-4 rounded-xl border border-[var(--ll-border)] bg-black/10 p-6 text-sm text-[var(--ll-text-muted)]">
               No school list available for this district.
             </div>
           </section>
 
-          <section className="rounded-2xl border border-white/10 bg-white/5 p-6">
+          <section className="rounded-xl border border-[var(--ll-border)] bg-white/5 p-6">
             <h2 className="text-lg font-semibold">Mastery Breakdown by Subject</h2>
-            <p className="text-xs text-slate-500">
+            <p className="text-xs text-[var(--ll-text-faint)]">
               Subject-level mastery rates will appear once MOE subject metrics are enabled.
             </p>
-            <div className="mt-4 rounded-xl border border-white/10 bg-black/10 p-6 text-sm text-slate-400">
+            <div className="mt-4 rounded-xl border border-[var(--ll-border)] bg-black/10 p-6 text-sm text-[var(--ll-text-muted)]">
               No mastery breakdown available yet.
             </div>
           </section>
 
-          <section className="rounded-2xl border border-white/10 bg-white/5 p-6">
+          <section className="rounded-xl border border-[var(--ll-border)] bg-white/5 p-6">
             <h2 className="text-lg font-semibold">Active Interventions</h2>
-            <p className="text-xs text-slate-500">
+            <p className="text-xs text-[var(--ll-text-faint)]">
               Aggregated counts of intervention alerts (no student data).
             </p>
             {riskFlags.length === 0 ? (
-              <div className="mt-4 rounded-xl border border-white/10 bg-black/10 p-6 text-sm text-slate-400">
+              <div className="mt-4 rounded-xl border border-[var(--ll-border)] bg-black/10 p-6 text-sm text-[var(--ll-text-muted)]">
                 No interventions recorded for this district.
               </div>
             ) : (
               <div className="mt-4 grid gap-3 md:grid-cols-3">
                 {riskFlags.map((rf) => (
-                  <div key={rf.flag} className="rounded-xl border border-white/10 bg-black/10 p-4">
-                    <p className="text-xs text-slate-500">{rf.flag}</p>
-                    <p className="mt-2 text-2xl font-semibold text-rose-200">{rf.count}</p>
+                  <div key={rf.flag} className="rounded-xl border border-[var(--ll-border)] bg-black/10 p-4">
+                    <p className="text-xs text-[var(--ll-text-faint)]">{rf.flag}</p>
+                    <p className="mt-2 text-2xl font-semibold text-[var(--ll-danger)]">{rf.count}</p>
                   </div>
                 ))}
               </div>

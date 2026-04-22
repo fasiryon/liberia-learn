@@ -17,11 +17,11 @@ export default function DigitalRuler({ onClose }: DigitalRulerProps) {
     <div className="space-y-3">
       <div className="flex items-center justify-between">
         <h3 className="font-semibold">Digital Ruler</h3>
-        <button type="button" aria-label="Close digital ruler" className="rounded border border-slate-600 px-2 py-1 text-xs" onClick={() => onClose?.()}>Close</button>
+        <button type="button" aria-label="Close digital ruler" className="rounded border border-[var(--ll-border)] px-2 py-1 text-xs" onClick={() => onClose?.()}>Close</button>
       </div>
 
       <div className="flex items-center gap-2 text-xs">
-        <button type="button" aria-label="Toggle ruler orientation" className="rounded border border-slate-600 px-2 py-1" onClick={() => setVertical((v) => !v)}>
+        <button type="button" aria-label="Toggle ruler orientation" className="rounded border border-[var(--ll-border)] px-2 py-1" onClick={() => setVertical((v) => !v)}>
           {vertical ? "Vertical" : "Horizontal"}
         </button>
         <label>
@@ -31,7 +31,7 @@ export default function DigitalRuler({ onClose }: DigitalRulerProps) {
       </div>
 
       <div
-        className="relative inline-flex rounded border border-slate-700 bg-amber-100 text-slate-900"
+        className="relative inline-flex rounded border border-[var(--ll-border)] bg-[var(--ll-yellow-soft)] text-[var(--ll-text-faint)]"
         style={vertical ? { width: 56, height: longSide } : { width: longSide, height: 56 }}
       >
         <svg aria-label="Ruler markings" width="100%" height="100%" viewBox={vertical ? `0 0 56 ${longSide}` : `0 0 ${longSide} 56`}>

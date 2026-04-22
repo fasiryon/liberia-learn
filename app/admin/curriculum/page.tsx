@@ -23,12 +23,12 @@ type CurriculumItem = {
 function statusBadge(status: string, payloadStatus?: string) {
   const s = payloadStatus || status;
   if (s === "published" || s === "APPROVED")
-    return <span className="rounded-full bg-emerald-500/20 text-emerald-300 px-2.5 py-0.5 text-[11px]">Approved</span>;
+    return <span className="rounded-full bg-[var(--ll-yellow)]/20 text-[var(--ll-yellow)] px-2.5 py-0.5 text-[11px]">Approved</span>;
   if (s === "pending_approval" || s === "PENDING_APPROVAL")
-    return <span className="rounded-full bg-amber-500/20 text-amber-300 px-2.5 py-0.5 text-[11px]">Pending Approval</span>;
+    return <span className="rounded-full bg-[var(--ll-yellow-soft)] text-[var(--ll-yellow)] px-2.5 py-0.5 text-[11px]">Pending Approval</span>;
   if (s === "DRAFT" || s === "draft")
-    return <span className="rounded-full bg-slate-500/20 text-slate-300 px-2.5 py-0.5 text-[11px]">Draft</span>;
-  return <span className="rounded-full bg-slate-500/20 text-slate-400 px-2.5 py-0.5 text-[11px]">{s}</span>;
+    return <span className="rounded-full bg-[var(--ll-surface-muted)]/20 text-[var(--ll-text)] px-2.5 py-0.5 text-[11px]">Draft</span>;
+  return <span className="rounded-full bg-[var(--ll-surface-muted)]/20 text-[var(--ll-text-muted)] px-2.5 py-0.5 text-[11px]">{s}</span>;
 }
 
 export default function AdminCurriculumPage() {
@@ -125,23 +125,23 @@ export default function AdminCurriculumPage() {
   }
 
   return (
-    <main className="min-h-screen bg-slate-950 text-slate-50">
+    <main className="min-h-screen bg-[var(--ll-bg)] text-[var(--ll-text)]">
       <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_top,_#22c55e22,_transparent_60%)]" />
 
       <div className="mx-auto max-w-4xl px-4 py-6 space-y-8">
         <div>
-          <Link href="/admin" className="text-xs text-emerald-300 hover:text-emerald-200">
+          <Link href="/admin" className="text-xs text-[var(--ll-yellow)] hover:text-[var(--ll-yellow)]">
             &larr; Back to Admin Console
           </Link>
           <h1 className="text-2xl font-bold mt-2">Curriculum &amp; AI Factory</h1>
-          <p className="text-sm text-slate-400 mt-1">
+          <p className="text-sm text-[var(--ll-text-muted)] mt-1">
             Generate AI-powered lessons with labs, aligned to Liberian MOE standards.
             Admin-generated items are auto-approved. Teacher-generated items need approval.
           </p>
           <div className="mt-3">
             <Link
               href="/admin/curriculum/units"
-              className="inline-flex rounded-full border border-cyan-500/40 bg-cyan-500/10 px-3 py-1.5 text-xs font-semibold text-cyan-200 hover:border-cyan-400 hover:bg-cyan-500/20"
+              className="inline-flex rounded-full border border-cyan-500/40 bg-[var(--ll-silver-soft)] px-3 py-1.5 text-xs font-semibold text-[var(--ll-silver)] hover:border-cyan-400 hover:bg-[var(--ll-silver-soft)]"
             >
               Open Unit Assembly
             </Link>
@@ -151,7 +151,7 @@ export default function AdminCurriculumPage() {
         {/* Generate form */}
         <form
           onSubmit={handleGenerate}
-          className="rounded-2xl border border-white/10 bg-slate-900/70 p-6 space-y-5"
+          className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 p-6 space-y-5"
         >
           <h2 className="text-lg font-semibold">Run AI Factory &mdash; Generate Curriculum</h2>
 
@@ -164,8 +164,8 @@ export default function AdminCurriculumPage() {
                 onClick={() => setMode(m)}
                 className={`rounded-full border px-3 py-1.5 text-xs capitalize ${
                   mode === m
-                    ? "border-emerald-400 bg-emerald-500/20 text-emerald-200"
-                    : "border-slate-700 bg-slate-900/80 text-slate-300 hover:border-slate-500"
+                    ? "border-emerald-400 bg-[var(--ll-yellow)]/20 text-[var(--ll-yellow)]"
+                    : "border-[var(--ll-border)] bg-[var(--ll-bg)]/80 text-[var(--ll-text)] hover:border-[var(--ll-border)]"
                 }`}
               >
                 {m.replace(/_/g, " ")}
@@ -175,11 +175,11 @@ export default function AdminCurriculumPage() {
 
           <div className="grid gap-4 sm:grid-cols-3">
             <div>
-              <label className="block text-xs font-medium text-slate-400 mb-1">Grade</label>
+              <label className="block text-xs font-medium text-[var(--ll-text-muted)] mb-1">Grade</label>
               <select
                 value={grade}
                 onChange={(e) => setGrade(Number(e.target.value))}
-                className="w-full rounded-lg bg-slate-950 border border-slate-700 px-3 py-2 text-sm text-slate-100 focus:outline-none focus:border-emerald-500"
+                className="w-full rounded-lg bg-[var(--ll-bg)] border border-[var(--ll-border)] px-3 py-2 text-sm text-[var(--ll-text)] focus:outline-none focus:border-emerald-500"
               >
                 {Array.from({ length: 12 }, (_, i) => i + 1).map((g) => (
                   <option key={g} value={g}>Grade {g}</option>
@@ -187,11 +187,11 @@ export default function AdminCurriculumPage() {
               </select>
             </div>
             <div>
-              <label className="block text-xs font-medium text-slate-400 mb-1">Subject</label>
+              <label className="block text-xs font-medium text-[var(--ll-text-muted)] mb-1">Subject</label>
               <select
                 value={subject}
                 onChange={(e) => setSubject(e.target.value)}
-                className="w-full rounded-lg bg-slate-950 border border-slate-700 px-3 py-2 text-sm text-slate-100 focus:outline-none focus:border-emerald-500"
+                className="w-full rounded-lg bg-[var(--ll-bg)] border border-[var(--ll-border)] px-3 py-2 text-sm text-[var(--ll-text)] focus:outline-none focus:border-emerald-500"
               >
                 {SUBJECTS.map((s) => (
                   <option key={s} value={s}>{s.replace(/_/g, " ")}</option>
@@ -199,21 +199,21 @@ export default function AdminCurriculumPage() {
               </select>
             </div>
             <div>
-              <label className="block text-xs font-medium text-slate-400 mb-1">Topic</label>
+              <label className="block text-xs font-medium text-[var(--ll-text-muted)] mb-1">Topic</label>
               <input
                 type="text"
                 value={topic}
                 onChange={(e) => setTopic(e.target.value)}
                 placeholder='e.g. "Fractions and Mixed Numbers"'
                 required
-                className="w-full rounded-lg bg-slate-950 border border-slate-700 px-3 py-2 text-sm text-slate-100 focus:outline-none focus:border-emerald-500"
+                className="w-full rounded-lg bg-[var(--ll-bg)] border border-[var(--ll-border)] px-3 py-2 text-sm text-[var(--ll-text)] focus:outline-none focus:border-emerald-500"
               />
             </div>
           </div>
 
           {mode === "lesson" && (
             <div className="space-y-2">
-              <p className="text-xs font-medium text-slate-400">Lesson format</p>
+              <p className="text-xs font-medium text-[var(--ll-text-muted)]">Lesson format</p>
               <div className="grid gap-3 sm:grid-cols-3">
                 {[
                   { value: "standard", label: "Standard Period (45 min)", description: "Generate a single 45-minute lesson." },
@@ -224,14 +224,14 @@ export default function AdminCurriculumPage() {
                     key={option.value}
                     type="button"
                     onClick={() => setLessonFormat(option.value as typeof lessonFormat)}
-                    className={`rounded-2xl border px-4 py-3 text-left transition ${
+                    className={`rounded-xl border px-4 py-3 text-left transition ${
                       lessonFormat === option.value
-                        ? "border-emerald-400 bg-emerald-500/15 text-emerald-100"
-                        : "border-slate-700 bg-slate-950/80 text-slate-300 hover:border-slate-500"
+                        ? "border-emerald-400 bg-[var(--ll-yellow)]/15 text-[var(--ll-yellow)]"
+                        : "border-[var(--ll-border)] bg-[var(--ll-bg)]/80 text-[var(--ll-text)] hover:border-[var(--ll-border)]"
                     }`}
                   >
                     <span className="block text-sm font-semibold">{option.label}</span>
-                    <span className="mt-1 block text-xs text-slate-400">{option.description}</span>
+                    <span className="mt-1 block text-xs text-[var(--ll-text-muted)]">{option.description}</span>
                   </button>
                 ))}
               </div>
@@ -241,46 +241,46 @@ export default function AdminCurriculumPage() {
           <button
             type="submit"
             disabled={loading || !topic.trim()}
-            className="rounded-xl bg-emerald-500 px-6 py-3 text-sm font-semibold text-slate-950 shadow-lg shadow-emerald-500/30 hover:bg-emerald-400 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="rounded-xl bg-[var(--ll-yellow)] px-6 py-3 text-sm font-semibold text-[var(--ll-text-faint)] shadow-lg shadow-emerald-500/30 hover:bg-[var(--ll-yellow-soft)] disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {loading ? "Running AI Factory..." : `Generate ${mode.replace(/_/g, " ")}`}
           </button>
         </form>
 
         {error && (
-          <div className="rounded-2xl border border-red-500/30 bg-red-500/10 p-4 text-sm text-red-400">
+          <div className="rounded-xl border border-red-500/30 bg-red-500/10 p-4 text-sm text-red-400">
             {error}
           </div>
         )}
 
         {result && (
-          <div className="rounded-2xl border border-emerald-500/30 bg-emerald-500/10 p-5 space-y-3">
-            <h2 className="text-lg font-semibold text-emerald-300">Lesson + Labs Generated</h2>
-            <dl className="grid grid-cols-2 gap-2 text-sm text-slate-300">
+          <div className="rounded-xl border border-emerald-500/30 bg-[var(--ll-yellow)]/10 p-5 space-y-3">
+            <h2 className="text-lg font-semibold text-[var(--ll-yellow)]">Lesson + Labs Generated</h2>
+            <dl className="grid grid-cols-2 gap-2 text-sm text-[var(--ll-text)]">
               <div>
-                <dt className="text-xs text-slate-500">Title</dt>
+                <dt className="text-xs text-[var(--ll-text-faint)]">Title</dt>
                 <dd className="font-medium">{result.title}</dd>
               </div>
               <div>
-                <dt className="text-xs text-slate-500">Content ID</dt>
+                <dt className="text-xs text-[var(--ll-text-faint)]">Content ID</dt>
                 <dd className="font-mono text-xs">{result.contentId}</dd>
               </div>
               <div>
-                <dt className="text-xs text-slate-500">Objectives</dt>
+                <dt className="text-xs text-[var(--ll-text-faint)]">Objectives</dt>
                 <dd>{result.objectivesCount} learning objectives</dd>
               </div>
               <div>
-                <dt className="text-xs text-slate-500">Labs</dt>
+                <dt className="text-xs text-[var(--ll-text-faint)]">Labs</dt>
                 <dd>{result.labsCount} lab(s) included</dd>
               </div>
               <div>
-                <dt className="text-xs text-slate-500">Status</dt>
+                <dt className="text-xs text-[var(--ll-text-faint)]">Status</dt>
                 <dd>{statusBadge(result.approvalStatus)}</dd>
               </div>
             </dl>
             <Link
               href={`/student/lesson/${result.contentId}`}
-              className="inline-block rounded-lg bg-emerald-500 px-4 py-2 text-xs font-semibold text-slate-950 hover:bg-emerald-400"
+              className="inline-block rounded-lg bg-[var(--ll-yellow)] px-4 py-2 text-xs font-semibold text-[var(--ll-text-faint)] hover:bg-[var(--ll-yellow-soft)]"
             >
               Preview Lesson
             </Link>
@@ -288,19 +288,19 @@ export default function AdminCurriculumPage() {
         )}
 
         {/* Curriculum items with approval + labs */}
-        <section className="rounded-2xl border border-white/10 bg-slate-900/70 p-6">
+        <section className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 p-6">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-lg font-semibold">All Curriculum Items</h2>
-            <button onClick={loadItems} className="text-xs text-emerald-300 hover:text-emerald-200">
+            <button onClick={loadItems} className="text-xs text-[var(--ll-yellow)] hover:text-[var(--ll-yellow)]">
               Refresh
             </button>
           </div>
 
           {loadingItems ? (
-            <p className="text-sm text-slate-400">Loading...</p>
+            <p className="text-sm text-[var(--ll-text-muted)]">Loading...</p>
           ) : items.length === 0 ? (
             <div className="text-center py-8">
-              <p className="text-slate-400 text-sm">No curriculum yet -- generate one above.</p>
+              <p className="text-[var(--ll-text-muted)] text-sm">No curriculum yet -- generate one above.</p>
             </div>
           ) : (
             <div className="space-y-3">
@@ -311,13 +311,13 @@ export default function AdminCurriculumPage() {
                   item.payload?.approvalStatus === "PENDING_APPROVAL";
 
                 return (
-                  <div key={item.id} className="rounded-xl border border-slate-800 bg-slate-950/80 p-4 space-y-3">
+                  <div key={item.id} className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/80 p-4 space-y-3">
                     <div className="flex items-start justify-between gap-3">
                       <div className="flex-1 min-w-0">
-                        <p className="text-sm font-semibold text-slate-100">
+                        <p className="text-sm font-semibold text-[var(--ll-text)]">
                           {item.payload?.title ?? item.contentId}
                         </p>
-                        <p className="text-xs text-slate-400 mt-1">
+                        <p className="text-xs text-[var(--ll-text-muted)] mt-1">
                           Grade {item.grade} - {item.subject} - {item.contentType}
                           {labs.length > 0 && ` - ${labs.length} lab(s)`}
                         </p>
@@ -328,7 +328,7 @@ export default function AdminCurriculumPage() {
                           <button
                             onClick={() => handleApprove(item.contentId)}
                             disabled={approving === item.contentId}
-                            className="rounded-lg bg-emerald-500 px-3 py-1 text-xs font-semibold text-slate-950 hover:bg-emerald-400 disabled:opacity-50"
+                            className="rounded-lg bg-[var(--ll-yellow)] px-3 py-1 text-xs font-semibold text-[var(--ll-text-faint)] hover:bg-[var(--ll-yellow-soft)] disabled:opacity-50"
                           >
                             {approving === item.contentId ? "..." : "Approve"}
                           </button>
@@ -336,14 +336,14 @@ export default function AdminCurriculumPage() {
                         {item.contentType === "full_pack" ? (
                           <Link
                             href={`/admin/curriculum/${item.contentId}/review`}
-                            className="rounded-lg border border-blue-700 bg-blue-500/10 px-3 py-1 text-xs text-blue-300 hover:text-blue-50"
+                            className="rounded-lg border border-blue-700 bg-[var(--ll-silver-soft)] px-3 py-1 text-xs text-[var(--ll-silver)] hover:text-[var(--ll-silver)]"
                           >
                             Review Pack
                           </Link>
                         ) : (
                           <Link
                             href={`/student/lesson/${item.contentId}`}
-                            className="rounded-lg border border-slate-700 px-3 py-1 text-xs text-slate-300 hover:text-slate-50"
+                            className="rounded-lg border border-[var(--ll-border)] px-3 py-1 text-xs text-[var(--ll-text)] hover:text-[var(--ll-text)]"
                           >
                             Preview
                           </Link>
@@ -356,26 +356,26 @@ export default function AdminCurriculumPage() {
                       <div>
                         <button
                           onClick={() => setExpandedLabs(isExpanded ? null : item.contentId)}
-                          className="text-xs text-blue-300 hover:text-blue-200"
+                          className="text-xs text-[var(--ll-silver)] hover:text-[var(--ll-silver)]"
                         >
                           {isExpanded ? "Hide labs" : `Show ${labs.length} lab(s)`}
                         </button>
                         {isExpanded && (
                           <div className="mt-2 space-y-3">
                             {labs.map((lab: any, i: number) => (
-                              <div key={lab.id ?? i} className="rounded-lg border border-slate-700 bg-slate-900/60 p-3 text-xs space-y-1">
-                                <p className="font-semibold text-slate-100">{lab.title}</p>
-                                <p className="text-slate-400"><strong>Objective:</strong> {lab.objective}</p>
-                                <p className="text-slate-400"><strong>Materials:</strong> {lab.materials?.join(", ")}</p>
-                                <div className="text-slate-400">
+                              <div key={lab.id ?? i} className="rounded-lg border border-[var(--ll-border)] bg-[var(--ll-bg)]/60 p-3 text-xs space-y-1">
+                                <p className="font-semibold text-[var(--ll-text)]">{lab.title}</p>
+                                <p className="text-[var(--ll-text-muted)]"><strong>Objective:</strong> {lab.objective}</p>
+                                <p className="text-[var(--ll-text-muted)]"><strong>Materials:</strong> {lab.materials?.join(", ")}</p>
+                                <div className="text-[var(--ll-text-muted)]">
                                   <strong>Steps:</strong>
                                   <ol className="list-decimal ml-4 mt-1 space-y-0.5">
                                     {lab.steps?.map((s: string, j: number) => <li key={j}>{s}</li>)}
                                   </ol>
                                 </div>
-                                <p className="text-slate-400"><strong>Assessment:</strong> {lab.assessment}</p>
+                                <p className="text-[var(--ll-text-muted)]"><strong>Assessment:</strong> {lab.assessment}</p>
                                 {lab.safetyNotes && (
-                                  <p className="text-amber-400"><strong>Safety:</strong> {lab.safetyNotes}</p>
+                                  <p className="text-[var(--ll-yellow)]"><strong>Safety:</strong> {lab.safetyNotes}</p>
                                 )}
                               </div>
                             ))}

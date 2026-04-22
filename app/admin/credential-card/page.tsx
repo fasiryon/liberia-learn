@@ -38,7 +38,7 @@ export default async function CredentialCardPage({ searchParams }: PageProps) {
   const roleLabel = user.role === "TEACHER" ? "Teacher" : "Student";
 
   return (
-    <main className="min-h-screen bg-white p-4 text-slate-950 print:p-0">
+    <main className="min-h-screen bg-white p-4 text-[var(--ll-text-faint)] print:p-0">
       <script dangerouslySetInnerHTML={{ __html: "window.print();" }} />
       <style>{`
         @media print {
@@ -56,7 +56,7 @@ export default async function CredentialCardPage({ searchParams }: PageProps) {
 
 function CredentialCard(input: { schoolName: string; name: string; loginId: string; pin: string; roleLabel: string }) {
   return (
-    <section className="flex min-h-[132mm] flex-col justify-between rounded-3xl border-2 border-slate-900 p-8">
+    <section className="flex min-h-[132mm] flex-col justify-between rounded-xl border-2 border-[var(--ll-border)] p-8">
       <div>
         <p className="text-2xl font-bold">LiberiaLearn</p>
         <p className="mt-1 text-lg font-semibold">{input.schoolName}</p>
