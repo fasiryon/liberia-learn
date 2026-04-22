@@ -45,6 +45,12 @@ type DashboardData = {
       compositeScore: number;
     }>;
   };
+  multimediaAnalytics: {
+    lessonModeUsage: Array<{ mode: "read" | "slides" | "listen"; count: number; percentage: number }>;
+    studentEngagement: { activeLearners: number; totalEvents: number; lessonInteractions: number; quizSubmissions: number };
+    audioUsage: { playbackStarts: number; generated: number; pending: number; processing: number; failed: number; estimatedCostUsd: number };
+    videoUsage: { playbackStarts: number; uploaded: number; active: number };
+  } | null;
 };
 
 type ComplianceDistrict = {
@@ -591,6 +597,49 @@ export default function MoeDashboardPage() {
                       ))}
                     </div>
                   </Card>
+                </div>
+              </>
+            )}
+          </section>
+
+          <section className="ll-section rounded-xl p-4">
+            <div>
+              <p className="text-[11px] font-medium uppercase tracking-[0.1em] text-[var(--ll-text-faint)]">
+                Multimedia learning
+              </p>
+              <h2 className="mt-2 text-base font-semibold text-[var(--ll-text)]">Lesson Mode Usage</h2>
+              <p className="mt-1 text-sm leading-6 text-[var(--ll-text-muted)]">
+                Real learner events from Read, Slides, Listen, audio playback, and teacher video use.
+              </p>
+            </div>
+            <div className="mt-4 grid gap-3 md:grid-cols-3 xl:grid-cols-6">
+              <StatCard label="Active Learners" value={dashboard?.multimediaAnalytics?.studentEngagement.activeLearners ?? 0} valueClassName="text-[var(--ll-text)]" />
+              <StatCard label="Lesson Events" value={dashboard?.multimediaAnalytics?.studentEngagement.lessonInteractions ?? 0} valueClassName="text-[var(--ll-text)]" />
+              <StatCard label="Audio Starts" value={dashboard?.multimediaAnalytics?.audioUsage.playbackStarts ?? 0} valueClassName="text-[var(--ll-yellow)]" />
+              <StatCard label="Generated Audio" value={dashboard?.multimediaAnalytics?.audioUsage.generated ?? 0} valueClassName="text-[var(--ll-yellow)]" />
+              <StatCard label="Audio Cost" value={`$${(dashboard?.multimediaAnalytics?.audioUsage.estimatedCostUsd ?? 0).toFixed(4)}`} valueClassName="text-[var(--ll-yellow)]" />
+              <StatCard label="Video Starts" value={dashboard?.multimediaAnalytics?.videoUsage.playbackStarts ?? 0} valueClassName="text-[var(--ll-pink)]" />
+              <StatCard label="Active Videos" value={dashboard?.multimediaAnalytics?.videoUsage.active ?? 0} valueClassName="text-[var(--ll-pink)]" />
+            </div>
+            {loading ? (
+              <div className="mt-5 grid gap-3 md:grid-cols-3">
+                {Array.from({ length: 3 }).map((_, index) => <SkeletonCard key={index} />)}
+              </div>
+            ) : (
+              <>
+                <div className="mt-5 grid gap-3 md:grid-cols-3">
+                  {(dashboard?.multimediaAnalytics?.lessonModeUsage ?? []).map((row) => (
+                    <Card key={row.mode} className="p-5">
+                      <div className="flex items-center justify-between">
+                        <p className="text-sm font-semibold capitalize text-[var(--ll-text)]">{row.mode}</p>
+                        <p className="text-lg font-semibold text-[var(--ll-silver)]">{row.percentage.toFixed(1)}%</p>
+                      </div>
+                      <div className="mt-3 h-2 rounded-full bg-[var(--ll-surface-muted)]">
+                        <div className="h-2 rounded-full bg-[var(--ll-silver)]" style={{ width: `${Math.min(100, row.percentage)}%` }} />
+                      </div>
+                      <p className="mt-2 text-xs text-[var(--ll-text-muted)]">{row.count.toLocaleString()} changes</p>
+                    </Card>
+                  ))}
                 </div>
               </>
             )}

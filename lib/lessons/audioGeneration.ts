@@ -116,6 +116,31 @@ export async function generateLessonAudioNow(input: {
   }
 
   const voice = input.voice ?? DEFAULT_TTS_VOICE;
+  const estimatedCostUsd = estimateTtsCostUsd(input.text);
+  await prisma.lessonAudio.upsert({
+    where: {
+      lessonId_contentVersion_voice: {
+        lessonId: input.lessonId,
+        contentVersion: input.contentVersion,
+        voice,
+      },
+    },
+    update: {
+      status: "PROCESSING",
+      generatedAt: new Date(),
+      estimatedCostUsd,
+    },
+    create: {
+      lessonId: input.lessonId,
+      contentVersion: input.contentVersion,
+      voice,
+      storageUrl: "",
+      status: "PROCESSING",
+      generatedAt: new Date(),
+      estimatedCostUsd,
+    },
+  });
+
   const client = new OpenAI({ apiKey });
   const response = await client.audio.speech.create({
     model: TTS_MODEL,
@@ -135,8 +160,6 @@ export async function generateLessonAudioNow(input: {
     contentType: "audio/mpeg",
     body: audioBuffer,
   });
-  const estimatedCostUsd = estimateTtsCostUsd(input.text);
-
   const record = await prisma.lessonAudio.upsert({
     where: {
       lessonId_contentVersion_voice: {
@@ -178,4 +201,45 @@ export async function generateLessonAudioNow(input: {
   });
 
   return record;
+}
+
+export async function processPendingLessonAudio(limit = 1) {
+  const pending = await prisma.lessonAudio.findMany({
+    where: { status: { in: ["PENDING", "PROCESSING"] } },
+    orderBy: { generatedAt: "asc" },
+    take: Math.min(10, Math.max(1, limit)),
+    include: {
+      lesson: {
+        select: {
+          contentId: true,
+          version: true,
+          payload: true,
+        },
+      },
+    },
+  });
+
+  const results: Array<{ lessonId: string; status: string; error?: string }> = [];
+  for (const row of pending) {
+    try {
+      const payload = row.lesson.payload as { body_standard?: string; body?: string; title?: string } | null;
+      const text = payload?.body_standard ?? payload?.body ?? "";
+      if (!text.trim()) {
+        await prisma.lessonAudio.update({ where: { id: row.id }, data: { status: "FAILED" } });
+        results.push({ lessonId: row.lessonId, status: "FAILED", error: "Lesson has no readable text." });
+        continue;
+      }
+      await generateLessonAudioNow({
+        lessonId: row.lessonId,
+        contentVersion: row.contentVersion,
+        voice: row.voice,
+        text,
+      });
+      results.push({ lessonId: row.lessonId, status: "GENERATED" });
+    } catch (error: any) {
+      await prisma.lessonAudio.update({ where: { id: row.id }, data: { status: "FAILED" } }).catch(() => {});
+      results.push({ lessonId: row.lessonId, status: "FAILED", error: error?.message ?? "Audio generation failed." });
+    }
+  }
+  return results;
 }

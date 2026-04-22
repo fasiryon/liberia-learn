@@ -1,6 +1,6 @@
 import { test, expect } from "@playwright/test";
 
-const BASE = "https://liberia-learn.vercel.app";
+const BASE = process.env.PLAYWRIGHT_BASE_URL ?? "https://liberia-learn.vercel.app";
 const SEEDED_LESSON_PATH = "/student/lessons/cha-demo-student1-multimedia-lesson";
 
 async function loginStudent(page: import("@playwright/test").Page) {

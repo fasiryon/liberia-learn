@@ -149,13 +149,48 @@ Live execution tracking for the final closeout program.
 - GitHub Actions on latest main: PASS, all 4 workflows green (`PR Triage`, `Runtime Gate 1`, `Deploy ECS Images`, `CI`)
 
 ## Current workstream
-22-sprint final platform closeout
+Phase 4.5 final platform review readiness
 
 ## Current sprint or phase
-Dashboard UX Harmonisation COMPLETE. All 5 role portals unified. CI green on main.
+Phase 4.5 Full Completion Sprint COMPLETE. Deferred multimedia, navigation, analytics, demo, and reviewer walkthrough work is implemented and production-verified.
 
 ## Current branch
-feat/multimedia-lesson-delivery
+feat/phase-4-5-full-completion
+
+## Phase 4.5 Demo Access
+- Student: `student1@cha.edu.lr` / `DemoSeed2026!` lands on `/dashboard`; first click `/student/today`; seeded lesson `/student/lessons/cha-demo-student1-multimedia-lesson`.
+- Teacher: `teacher1@cha.edu.lr` / `DemoSeed2026!` lands on `/teacher`; first click curriculum lesson management and video upload.
+- Guardian: `guardian1@cha.family.lr` / `DemoSeed2026!` lands on `/guardian`; sees linked student Fatu Kollie.
+- School Admin: `admin@cha.edu.lr` / `DemoSeed2026!` lands on `/admin`; first click curriculum/audio tools and analytics.
+- Platform Admin: `platform.admin@liberialearn.org` / `DemoSeed2026!` lands on `/platform`; sees platform operations surfaces.
+- MOE Official: `official1@moe.gov.lr` / `MOESeed2026!` lands on `/moe/dashboard`; sees national analytics.
+
+## Phase 4.5 Seeded Data Summary
+- CHA school, Grade 9A Mathematics class, teacher, student, guardian, admin, MOE official, and platform admin are upserted by `npm run seed:cha`.
+- Stable lesson: `Ratios in Market Prices`, content id `cha-g9-math-multimedia-demo`, scheduled work id `cha-demo-student1-multimedia-lesson`.
+- Student surfaces include `/student/today`, `/student/exams`, `/student/certificates`, and `/student/textbooks`.
+- Seed includes a published Grade 9 ratios exam, one lesson certificate, and multimedia learning events for Read, Slides, Listen, audio, and video analytics.
+
+## Phase 4.5 Completion Summary
+| Area | Status | Notes |
+|------|--------|-------|
+| Student navigation | COMPLETE | Exams, certificates, and textbooks routes resolve to real pages; textbooks no longer collides with `/student/[id]`; sidebar uses an accessible book icon. |
+| Demo system | COMPLETE | `DEMO_ACCESS.md` documents student, teacher, guardian, school admin, platform admin, and MOE official accounts with first-click guidance. |
+| MOE/Admin analytics | COMPLETE | Real aggregation from `LearningEvent`, `LessonAudio`, and `LessonVideo` powers lesson mode usage, engagement, audio usage, video usage, and cost summaries. |
+| Audio system | COMPLETE | Admin curriculum page can batch queue approved lessons, process pending jobs, show status, and expose cost/status aggregation. |
+| Video system | COMPLETE | Teacher uploads a generated WebM test clip, activates it, and student lesson playback shows the active video in production. Missing Supabase storage config falls back only for playable demo storage; real upload errors still fail. |
+| Homepage hero | COMPLETE | Desktop hero layout rebalanced while maintaining 375px mobile quality. |
+| Reviewer flow | COMPLETE | Production Playwright verifies student, teacher, admin, MOE, guardian, and platform admin first-click walkthroughs. |
+| Cleanup | COMPLETE | `.git-temp-phase1` removed; `.git-temp-sprint2` absent; `.git-temp*`, `node_modules`, and `e2e/screenshots` covered by `.vercelignore`. |
+
+## Phase 4.5 Production Validation
+- `npm run seed:cha`: PASS; all six demo accounts upserted in the production-backed database.
+- `npx prisma generate`: PASS.
+- `npx tsc --noEmit`: PASS (0 errors).
+- `npm test`: PASS (1951 tests, 274 files).
+- `npm run build`: PASS (208 static pages; existing Sentry/OpenTelemetry warnings only).
+- `npx playwright test`: PASS (6 production reviewer-flow tests).
+- Production deploy: PASS, aliased to `https://liberia-learn.vercel.app`; deployment `dpl_APMaYiszSzo9V4JCkfuqAwwucQqk`.
 
 ## Multimedia Lesson Delivery Sprint seed note
 - Seeded student user: `student1@cha.edu.lr` / `DemoSeed2026!`
@@ -167,16 +202,16 @@ feat/multimedia-lesson-delivery
 - Recreate fixture: run `npm run seed:cha`, which upserts the CHA school, teacher, student, enrollment, curriculum content, and scheduled work.
 
 ## Worktree status
-Clean — sprint committed and pushed.
+Phase 4.5 committed locally; push to main and CI confirmation in progress.
 
 ## Overall status
 Sprints 1-16 + 16B + 16C + 16D + 16E + 16F + Dashboard UX complete. All role portals now share a consistent design system: DashboardTopBar, KPI cards, primary actions above fold, and role accent colours.
 
 ## Last completed phase
-Dashboard UX Harmonisation — all 5 role portals
+Phase 4.5 Full Completion Sprint
 
 ## Last commit reference
-`57721be feat(ux): harmonise dashboard UX across all 5 role portals`
+`feat: complete phase 4.5 review readiness`
 
 ## Last successful validation (Dashboard UX)
 - `npx tsc --noEmit`: PASS (0 errors)

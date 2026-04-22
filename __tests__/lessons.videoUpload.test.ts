@@ -1,10 +1,18 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
+
+const mockUploadBinaryToSupabase = vi.hoisted(() => vi.fn());
+
+vi.mock("@/lib/supabaseStorage", () => ({
+  uploadBinaryToSupabase: mockUploadBinaryToSupabase,
+}));
+
 import {
   MAX_LESSON_VIDEO_BYTES,
   MAX_LESSON_VIDEO_SECONDS,
   canManageLessonVideo,
   lessonVideoStoragePath,
   selectActiveLessonVideo,
+  uploadLessonVideoToSupabase,
   validateLessonVideoFile,
 } from "@/lib/lessons/videoUpload";
 
@@ -66,5 +74,15 @@ describe("lesson video upload validation", () => {
       { id: "newer", isActive: true, uploadedAt: "2026-04-03T00:00:00.000Z" },
     ]);
     expect(selected?.id).toBe("newer");
+  });
+
+  it("uses inline storage only when Supabase storage is not configured", async () => {
+    mockUploadBinaryToSupabase.mockRejectedValueOnce(new Error("Supabase storage is not configured"));
+    const url = await uploadLessonVideoToSupabase({
+      lessonId: "lesson-1",
+      teacherId: "teacher-1",
+      file: new File([new Uint8Array([1, 2, 3])], "intro.webm", { type: "video/webm" }),
+    });
+    expect(url).toBe("data:video/webm;base64,AQID");
   });
 });

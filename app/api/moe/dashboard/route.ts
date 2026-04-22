@@ -16,6 +16,7 @@ import { logLearningEvent } from "@/lib/events/logLearningEvent";
 import { withRedisCache } from "@/lib/cache/redisCache";
 import { computeNationalGeoPerformance } from "@/lib/reporting/geo/geoAggregator";
 import { logDataAccess } from "@/lib/dataAccess/logDataAccess";
+import { getMultimediaAnalytics } from "@/lib/analytics/multimediaAnalytics";
 
 export const dynamic = "force-dynamic";
 
@@ -25,7 +26,7 @@ const DASHBOARD_CACHE_TTL_SEC = 900; // 15 minutes
 function getDashboardCacheKey(): string {
   const now = new Date();
   const month = `${now.getUTCFullYear()}-${String(now.getUTCMonth() + 1).padStart(2, "0")}`;
-  return `moe:dashboard:national:v1:${month}`;
+  return `moe:dashboard:national:v2:${month}`;
 }
 
 function getDefaultPeriodRange(): { from: string; to: string } {
@@ -96,6 +97,7 @@ async function buildNationalAggregate() {
     nationalMastery,
     aiTotal,
     aiByFeature,
+    multimediaAnalytics,
   ] = await Promise.all([
     prisma.school.count().catch(() => 0),
     prisma.district.count().catch(() => 0),
@@ -161,6 +163,7 @@ async function buildNationalAggregate() {
         }) as Promise<{ feature: string | null; _count: { _all: number }; _sum: { tokensUsed: number | null } }[]>
       )
       .catch(() => [] as { feature: string | null; _count: { _all: number }; _sum: { tokensUsed: number | null } }[]),
+    getMultimediaAnalytics({ days: 30, schoolId: null }).catch(() => null),
   ]);
 
   // Build county student counts (by school county, matching geoAggregator logic)
@@ -267,6 +270,7 @@ async function buildNationalAggregate() {
         tokensUsed: row._sum.tokensUsed ?? 0,
       })),
     },
+    multimediaAnalytics,
   };
 }
 

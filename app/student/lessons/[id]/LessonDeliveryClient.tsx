@@ -49,7 +49,7 @@ type LessonResponse = {
     voice?: string;
     durationSeconds?: number | null;
     contentVersion?: string;
-    status: "NOT_GENERATED" | "PENDING" | "GENERATED" | "STALE" | "FAILED";
+    status: "NOT_GENERATED" | "PENDING" | "PROCESSING" | "GENERATED" | "STALE" | "FAILED";
     estimatedCostUsd?: number;
   };
   activeVideo?: {
@@ -446,7 +446,7 @@ export default function LessonDeliveryClient({ lessonId }: { lessonId: string })
   }, [mode, slides.length]);
 
   const exitTicketQuestions = lesson?.deliveryProfile?.exitTicket?.questions ?? [];
-  const aiTutorEnabled = process.env.NEXT_PUBLIC_ENABLE_AI_TUTOR === "true";
+  const aiTutorEnabled = process.env.NEXT_PUBLIC_ENABLE_AI_TUTOR !== "false";
   const lessonProgressKey = useMemo(() => `lesson_progress_${lessonId}`, [lessonId]);
   const currentSectionIndex = sectionOrder.indexOf(currentSection);
   const availableLabs = useMemo(() => {
@@ -912,7 +912,7 @@ export default function LessonDeliveryClient({ lessonId }: { lessonId: string })
                 />
               ) : (
                 <div className="mt-4 rounded-lg border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 px-4 py-3 text-sm text-[var(--ll-text-muted)]">
-                  {audioRequesting || lesson.audio?.status === "PENDING"
+                  {audioRequesting || lesson.audio?.status === "PENDING" || lesson.audio?.status === "PROCESSING"
                     ? "Audio being prepared. You can keep reading now."
                     : "Audio is not generated yet. Listen mode will queue preparation and keep the lesson readable."}
                 </div>
