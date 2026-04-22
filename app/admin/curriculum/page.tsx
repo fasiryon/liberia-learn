@@ -17,6 +17,7 @@ type CurriculumItem = {
   contentType: string;
   status: string;
   payload: any;
+  audioStatus?: string;
   createdAt: string;
 };
 
@@ -52,6 +53,7 @@ export default function AdminCurriculumPage() {
   const [loadingItems, setLoadingItems] = useState(true);
   const [expandedLabs, setExpandedLabs] = useState<string | null>(null);
   const [approving, setApproving] = useState<string | null>(null);
+  const [audioGenerating, setAudioGenerating] = useState<string | null>(null);
 
   async function loadItems() {
     setLoadingItems(true);
@@ -121,6 +123,20 @@ export default function AdminCurriculumPage() {
       alert(err.message);
     } finally {
       setApproving(null);
+    }
+  }
+
+  async function handleGenerateAudio(contentId: string) {
+    setAudioGenerating(contentId);
+    try {
+      const res = await fetch(`/api/admin/curriculum/${contentId}/audio`, { method: "POST" });
+      const data = await res.json().catch(() => null);
+      if (!res.ok) throw new Error(data?.error ?? "Audio generation failed");
+      await loadItems();
+    } catch (err: any) {
+      alert(err.message);
+    } finally {
+      setAudioGenerating(null);
     }
   }
 
@@ -321,9 +337,23 @@ export default function AdminCurriculumPage() {
                           Grade {item.grade} - {item.subject} - {item.contentType}
                           {labs.length > 0 && ` - ${labs.length} lab(s)`}
                         </p>
+                        <p className="mt-2 text-xs text-[var(--ll-silver)]">
+                          Audio: {item.audioStatus === "GENERATED" ? "Generated" : item.audioStatus === "PENDING" ? "Pending" : item.audioStatus === "STALE" ? "Stale" : "Not Generated"}
+                        </p>
                       </div>
                       <div className="flex items-center gap-2 shrink-0">
                         {statusBadge(item.status, item.payload?.approvalStatus)}
+                        <button
+                          onClick={() => handleGenerateAudio(item.contentId)}
+                          disabled={audioGenerating === item.contentId}
+                          className="rounded-lg border border-[var(--ll-border)] bg-[var(--ll-silver-soft)] px-3 py-1 text-xs font-semibold text-[var(--ll-silver)] disabled:opacity-50"
+                        >
+                          {audioGenerating === item.contentId
+                            ? "Queueing..."
+                            : item.audioStatus === "GENERATED"
+                              ? "Regenerate Audio"
+                              : "Generate Audio"}
+                        </button>
                         {isPending && (
                           <button
                             onClick={() => handleApprove(item.contentId)}

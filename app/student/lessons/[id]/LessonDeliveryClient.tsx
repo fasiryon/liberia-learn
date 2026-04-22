@@ -9,6 +9,7 @@ import LessonLabPanel from "@/components/labs/LessonLabPanel";
 import { PencilButton, PencilButtonFloat } from "@/components/ui/PencilButton";
 import { gradeToTutorBand } from "@/lib/ai/studentLessonSupport";
 import { lessonDurationLabel, renderSimpleMarkdown, selectLessonBody } from "@/lib/lessons";
+import { parseToSlides } from "@/lib/lessons/parseToSlides";
 import { enqueueOfflineRequest } from "@/lib/offline-queue";
 import type { LabId } from "@/lib/labs/types";
 import type { PseudoLab, SimulationDefinition } from "@/lib/schemas/labSimulation";
@@ -42,6 +43,26 @@ type LessonResponse = {
   simulationDefinitions: SimulationDefinition[];
   status: "not_started" | "in_progress" | "completed";
   completedAt: string | null;
+  audio?: {
+    id?: string;
+    storageUrl?: string | null;
+    voice?: string;
+    durationSeconds?: number | null;
+    contentVersion?: string;
+    status: "NOT_GENERATED" | "PENDING" | "GENERATED" | "STALE" | "FAILED";
+    estimatedCostUsd?: number;
+  };
+  activeVideo?: {
+    id: string;
+    title: string;
+    description: string | null;
+    storageUrl: string;
+    thumbnailUrl: string | null;
+    durationSeconds: number;
+    fileSize: number;
+    uploadedAt: string;
+    teacherName: string;
+  } | null;
 };
 
 type TutorMessage = {
@@ -50,6 +71,7 @@ type TutorMessage = {
 };
 
 type SimulationValue = number | string | boolean | string[];
+type LessonMode = "read" | "slides" | "listen";
 
 export type LessonProgressState = {
   scrollPosition: number;
@@ -85,6 +107,33 @@ export function clearLessonProgressState(
   key: string
 ) {
   storage.removeItem(key);
+}
+
+export function persistLessonMode(storage: Pick<Storage, "setItem">, mode: LessonMode) {
+  storage.setItem("lesson_mode", mode);
+}
+
+export function readPersistedLessonMode(storage: Pick<Storage, "getItem">): LessonMode {
+  const value = storage.getItem("lesson_mode");
+  return value === "slides" || value === "listen" || value === "read" ? value : "read";
+}
+
+export async function trackLessonModeChanged(
+  fetcher: typeof fetch,
+  input: { contentId: string | null; lessonId: string; mode: LessonMode }
+) {
+  await fetcher("/api/track", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      eventType: "LESSON_MODE_CHANGED",
+      contentId: input.contentId,
+      metadata: {
+        lessonId: input.lessonId,
+        mode: input.mode,
+      },
+    }),
+  });
 }
 
 function simulationDefaultState(definition: SimulationDefinition): Record<string, SimulationValue> {
@@ -313,6 +362,9 @@ export default function LessonDeliveryClient({ lessonId }: { lessonId: string })
   const [helpPanelOpen, setHelpPanelOpen] = useState(false);
   const [openLabId, setOpenLabId] = useState<LabId | null>(null);
   const [toolkitOpen, setToolkitOpen] = useState(false);
+  const [mode, setMode] = useState<LessonMode>("read");
+  const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
+  const [audioRequesting, setAudioRequesting] = useState(false);
   const [tutorQuestion, setTutorQuestion] = useState("");
   const [tutorMessages, setTutorMessages] = useState<TutorMessage[]>([]);
   const [tutorLoading, setTutorLoading] = useState(false);
@@ -349,6 +401,11 @@ export default function LessonDeliveryClient({ lessonId }: { lessonId: string })
     };
   }, [lessonId]);
 
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    setMode(readPersistedLessonMode(window.localStorage));
+  }, []);
+
   const renderedBody = useMemo(() => {
     if (!lesson) return "";
     return selectLessonBody(
@@ -360,6 +417,33 @@ export default function LessonDeliveryClient({ lessonId }: { lessonId: string })
       lesson.classFormat
     );
   }, [lesson]);
+
+  const slides = useMemo(() => {
+    if (!lesson) return [];
+    return parseToSlides({ title: lesson.title, content: renderedBody });
+  }, [lesson, renderedBody]);
+
+  const currentSlide = slides[Math.min(currentSlideIndex, Math.max(0, slides.length - 1))] ?? null;
+
+  useEffect(() => {
+    if (currentSlideIndex > Math.max(0, slides.length - 1)) {
+      setCurrentSlideIndex(Math.max(0, slides.length - 1));
+    }
+  }, [currentSlideIndex, slides.length]);
+
+  useEffect(() => {
+    if (mode !== "slides") return;
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "ArrowLeft") {
+        setCurrentSlideIndex((value) => Math.max(0, value - 1));
+      }
+      if (event.key === "ArrowRight") {
+        setCurrentSlideIndex((value) => Math.min(Math.max(0, slides.length - 1), value + 1));
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [mode, slides.length]);
 
   const exitTicketQuestions = lesson?.deliveryProfile?.exitTicket?.questions ?? [];
   const aiTutorEnabled = process.env.NEXT_PUBLIC_ENABLE_AI_TUTOR === "true";
@@ -447,6 +531,39 @@ export default function LessonDeliveryClient({ lessonId }: { lessonId: string })
       }),
     }).catch(() => {});
   }, [lesson?.contentId, lessonId]);
+
+  const changeMode = useCallback((nextMode: LessonMode) => {
+    setMode(nextMode);
+    if (typeof window !== "undefined") {
+      persistLessonMode(window.localStorage, nextMode);
+    }
+    void trackLessonModeChanged(fetch, {
+      contentId: lesson?.contentId ?? null,
+      lessonId,
+      mode: nextMode,
+    }).catch(() => {});
+  }, [lesson?.contentId, lessonId]);
+
+  const requestAudio = useCallback(async () => {
+    if (!lesson || audioRequesting) return;
+    if (lesson.audio?.status === "GENERATED") return;
+    setAudioRequesting(true);
+    try {
+      const response = await fetch(`/api/student/lessons/${lesson.id}/audio`, { method: "POST" });
+      const data = await response.json().catch(() => null);
+      if (response.ok && data?.audio) {
+        setLesson((current) => current ? { ...current, audio: { ...data.audio, status: data.status ?? data.audio.status } } : current);
+      }
+    } finally {
+      setAudioRequesting(false);
+    }
+  }, [audioRequesting, lesson]);
+
+  useEffect(() => {
+    if (mode === "listen") {
+      void requestAudio();
+    }
+  }, [mode, requestAudio]);
 
   useEffect(() => {
     if (!lesson) return;
@@ -654,6 +771,22 @@ export default function LessonDeliveryClient({ lessonId }: { lessonId: string })
               Stay focused on the lesson, then complete the exit ticket at the end.
             </div>
           </div>
+          <div className="mt-5 grid grid-cols-3 rounded-xl border border-[var(--ll-border)] bg-[var(--ll-surface)] p-1 text-sm sm:inline-grid sm:min-w-[24rem]">
+            {(["read", "slides", "listen"] as const).map((entry) => (
+              <button
+                key={entry}
+                type="button"
+                onClick={() => changeMode(entry)}
+                className={`ll-touch-target rounded-lg px-3 py-2 font-semibold capitalize ${
+                  mode === entry
+                    ? "bg-[var(--ll-yellow-soft)] text-[var(--ll-yellow)]"
+                    : "text-[var(--ll-text-muted)] hover:text-[var(--ll-text)]"
+                }`}
+              >
+                {entry}
+              </button>
+            ))}
+          </div>
           <div className="mt-5 rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 p-4">
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
               <div>
@@ -702,11 +835,160 @@ export default function LessonDeliveryClient({ lessonId }: { lessonId: string })
           </div>
         </section>
 
+        {lesson.activeVideo ? (
+          <section className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/80 p-4 sm:p-5">
+            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--ll-pink)]">
+              Lesson introduction by {lesson.activeVideo.teacherName}
+            </p>
+            <h2 className="mt-2 text-lg font-semibold text-[var(--ll-text)]">{lesson.activeVideo.title}</h2>
+            {lesson.activeVideo.description ? (
+              <p className="mt-1 text-sm text-[var(--ll-text-muted)]">{lesson.activeVideo.description}</p>
+            ) : null}
+            <video
+              className="mt-4 w-full rounded-xl border border-[var(--ll-border)] bg-[var(--ll-graphite)]"
+              controls
+              preload="metadata"
+              poster={lesson.activeVideo.thumbnailUrl ?? undefined}
+              src={lesson.activeVideo.storageUrl}
+              onPlay={() => {
+                void fetch("/api/track", {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({
+                    eventType: "VIDEO_PLAYBACK_STARTED",
+                    contentId: lesson.contentId,
+                    metadata: { lessonId: lesson.id, videoId: lesson.activeVideo?.id },
+                  }),
+                }).catch(() => {});
+              }}
+            />
+            <button
+              type="button"
+              className="mt-3 rounded-lg border border-[var(--ll-border)] px-3 py-2 text-xs text-[var(--ll-text-muted)]"
+              onClick={() => alert(`Video is ${Math.ceil((lesson.activeVideo?.fileSize ?? 0) / 1024 / 1024)}MB. Download only on a reliable connection.`)}
+            >
+              Download video for offline
+            </button>
+          </section>
+        ) : null}
+
         <section ref={registerSection("lesson-content")} data-section-id="lesson-content" className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/80 p-5 sm:p-7">
-          <div
-            className="prose prose-invert max-w-[680px] prose-headings:text-[var(--ll-text)] prose-p:text-[var(--ll-text)] prose-p:text-[1rem] prose-p:leading-8 prose-li:text-[var(--ll-text)] prose-li:text-[1rem] prose-li:leading-8"
-            dangerouslySetInnerHTML={{ __html: renderSimpleMarkdown(renderedBody) }}
-          />
+          {mode === "listen" ? (
+            <div className="mb-6 rounded-xl border border-[var(--ll-silver)]/20 bg-[var(--ll-silver-soft)] p-4">
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                <div>
+                  <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--ll-silver)]">Listen Mode</p>
+                  <p className="mt-1 text-sm text-[var(--ll-text-muted)]">
+                    The full lesson text stays below while audio plays.
+                  </p>
+                </div>
+                {lesson.audio?.storageUrl && lesson.audio.status === "GENERATED" ? (
+                  <a
+                    href={lesson.audio.storageUrl}
+                    download
+                    className="rounded-lg border border-[var(--ll-border)] px-3 py-2 text-sm font-semibold text-[var(--ll-text)]"
+                  >
+                    Download audio
+                  </a>
+                ) : null}
+              </div>
+              {lesson.audio?.storageUrl && lesson.audio.status === "GENERATED" ? (
+                <audio
+                  className="mt-4 w-full"
+                  controls
+                  src={lesson.audio.storageUrl}
+                  onPlay={(event) => {
+                    event.currentTarget.playbackRate = event.currentTarget.playbackRate || 1;
+                    void fetch("/api/track", {
+                      method: "POST",
+                      headers: { "Content-Type": "application/json" },
+                      body: JSON.stringify({
+                        eventType: "AUDIO_PLAYBACK_STARTED",
+                        contentId: lesson.contentId,
+                        metadata: { lessonId: lesson.id, audioId: lesson.audio?.id },
+                      }),
+                    }).catch(() => {});
+                  }}
+                />
+              ) : (
+                <div className="mt-4 rounded-lg border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 px-4 py-3 text-sm text-[var(--ll-text-muted)]">
+                  {audioRequesting || lesson.audio?.status === "PENDING"
+                    ? "Audio being prepared. You can keep reading now."
+                    : "Audio is not generated yet. Listen mode will queue preparation and keep the lesson readable."}
+                </div>
+              )}
+              {lesson.audio?.storageUrl && lesson.audio.status === "GENERATED" ? (
+                <div className="mt-3 flex flex-wrap gap-2 text-xs">
+                  {[0.75, 1, 1.25, 1.5].map((speed) => (
+                    <button
+                      key={speed}
+                      type="button"
+                      className="rounded-full border border-[var(--ll-border)] px-3 py-1 text-[var(--ll-text-muted)]"
+                      onClick={() => {
+                        const audio = document.querySelector<HTMLAudioElement>('audio[src="' + lesson.audio?.storageUrl + '"]');
+                        if (audio) audio.playbackRate = speed;
+                      }}
+                    >
+                      {speed}x
+                    </button>
+                  ))}
+                </div>
+              ) : null}
+            </div>
+          ) : null}
+
+          {mode === "slides" && currentSlide ? (
+            <div className="space-y-5">
+              <div className="h-2 overflow-hidden rounded-full bg-[var(--ll-surface-muted)]">
+                <div
+                  className="h-full rounded-full bg-[var(--ll-yellow)] transition-all"
+                  style={{ width: `${((currentSlideIndex + 1) / Math.max(1, slides.length)) * 100}%` }}
+                />
+              </div>
+              <article className="min-h-[24rem] rounded-xl border border-[var(--ll-border-strong)] bg-[var(--ll-surface)] p-5 transition-colors sm:p-7">
+                <p className="text-sm font-semibold text-[var(--ll-text-muted)]">
+                  Slide {currentSlideIndex + 1} of {slides.length}
+                </p>
+                <h2 className="mt-3 text-2xl font-semibold text-[var(--ll-text)]">{currentSlide.title}</h2>
+                <div
+                  className="prose prose-invert mt-5 max-w-none prose-headings:text-[var(--ll-text)] prose-p:text-[var(--ll-text)] prose-p:text-[1rem] prose-p:leading-8 prose-li:text-[var(--ll-text)] prose-li:text-[1rem] prose-li:leading-8"
+                  dangerouslySetInnerHTML={{ __html: renderSimpleMarkdown(currentSlide.content) }}
+                />
+              </article>
+              <div className="grid gap-2 sm:flex sm:items-center sm:justify-between">
+                <button
+                  type="button"
+                  disabled={currentSlideIndex === 0}
+                  onClick={() => setCurrentSlideIndex((value) => Math.max(0, value - 1))}
+                  className="ll-touch-target rounded-xl border border-[var(--ll-border)] px-4 py-3 text-sm text-[var(--ll-text)] disabled:opacity-40"
+                >
+                  Previous slide
+                </button>
+                {currentSlide.isLast ? (
+                  <button
+                    type="button"
+                    onClick={() => scrollToSection("exit-ticket")}
+                    className="ll-touch-target rounded-xl bg-[var(--ll-yellow-soft)] px-4 py-3 text-sm font-semibold text-[var(--ll-yellow)]"
+                  >
+                    Go to quiz
+                  </button>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={() => setCurrentSlideIndex((value) => Math.min(slides.length - 1, value + 1))}
+                    className="ll-touch-target rounded-xl bg-[var(--ll-silver-soft)] px-4 py-3 text-sm font-semibold text-[var(--ll-text-faint)]"
+                  >
+                    Next slide
+                  </button>
+                )}
+              </div>
+            </div>
+          ) : (
+            <div
+              className="prose prose-invert max-w-[680px] prose-headings:text-[var(--ll-text)] prose-p:text-[var(--ll-text)] prose-p:text-[1rem] prose-p:leading-8 prose-li:text-[var(--ll-text)] prose-li:text-[1rem] prose-li:leading-8"
+              dangerouslySetInnerHTML={{ __html: renderSimpleMarkdown(renderedBody) }}
+            />
+          )}
         </section>
 
         {lesson.objectives.length > 0 ? (

@@ -155,7 +155,16 @@ Live execution tracking for the final closeout program.
 Dashboard UX Harmonisation COMPLETE. All 5 role portals unified. CI green on main.
 
 ## Current branch
-main (57721be)
+feat/multimedia-lesson-delivery
+
+## Multimedia Lesson Delivery Sprint seed note
+- Seeded student user: `student1@cha.edu.lr` / `DemoSeed2026!`
+- Seeded lesson title: `Ratios in Market Prices`
+- Seeded lesson content id: `cha-g9-math-multimedia-demo`
+- Seeded scheduled work id: `cha-demo-student1-multimedia-lesson`
+- Direct student lesson path: `/student/lessons/cha-demo-student1-multimedia-lesson`
+- Student surface: `/student/today` shows the lesson for the current UTC day after running `npm run seed:cha`
+- Recreate fixture: run `npm run seed:cha`, which upserts the CHA school, teacher, student, enrollment, curriculum content, and scheduled work.
 
 ## Worktree status
 Clean — sprint committed and pushed.

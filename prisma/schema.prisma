@@ -62,6 +62,7 @@ model User {
   // Guardian messaging
   sentGuardianMessages     GuardianMessage[] @relation("GuardianMessageGuardian")
   receivedGuardianMessages GuardianMessage[] @relation("GuardianMessageTeacher")
+  lessonVideos        LessonVideo[]          @relation("LessonVideoTeacher")
 }
 
 model District {
@@ -1317,6 +1318,8 @@ model CurriculumContent {
   teacherCreated  Boolean         @default(false)
   versionId       String?
   scheduledWork   ScheduledWork[]
+  audioAssets     LessonAudio[]
+  videoSupplements LessonVideo[]
   embeddedAt      DateTime?
   embedding       Unsupported("vector(1536)")?
   curriculumVersion CurriculumVersion? @relation(fields: [versionId], references: [id], onDelete: SetNull)
@@ -1325,6 +1328,42 @@ model CurriculumContent {
   @@index([contentType, status])
   @@index([unitId, orderInUnit])
   @@index([versionId, status])
+}
+
+model LessonAudio {
+  id               String            @id @default(cuid())
+  lessonId         String
+  storageUrl       String?
+  voice            String            @default("alloy")
+  durationSeconds  Int?
+  generatedAt      DateTime?
+  contentVersion   String
+  status           String            @default("PENDING")
+  estimatedCostUsd Float             @default(0)
+  lesson           CurriculumContent @relation(fields: [lessonId], references: [contentId], onDelete: Cascade)
+
+  @@unique([lessonId, contentVersion, voice])
+  @@index([lessonId, status])
+  @@index([status, generatedAt])
+}
+
+model LessonVideo {
+  id              String            @id @default(cuid())
+  lessonId        String
+  uploadedBy      String
+  title           String
+  description     String?
+  storageUrl      String
+  thumbnailUrl    String?
+  durationSeconds Int
+  fileSize        Int
+  uploadedAt      DateTime          @default(now())
+  isActive        Boolean           @default(false)
+  lesson          CurriculumContent @relation(fields: [lessonId], references: [contentId], onDelete: Cascade)
+  teacher         User              @relation("LessonVideoTeacher", fields: [uploadedBy], references: [id], onDelete: Cascade)
+
+  @@index([lessonId, isActive])
+  @@index([uploadedBy, uploadedAt])
 }
 
 model CurriculumVersion {

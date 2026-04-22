@@ -21,6 +21,7 @@
 import { cachePack, getCachedPack, invalidatePack, getCacheStats, getMetadata } from "@/lib/offline-cache";
 
 const LESSON_SCOPE = "lesson";
+const LESSON_AUDIO_SCOPE = "lesson-audio";
 
 export const MAX_CACHED_LESSONS = 20;
 
@@ -50,6 +51,18 @@ export async function cacheLessonContent(
     return true;
   } catch {
     // IndexedDB unavailable (private browsing, quota exceeded) — silently skip
+    return false;
+  }
+}
+
+export async function cacheLessonAudio(
+  contentId: string,
+  audio: { storageUrl: string; contentVersion?: string | null; sizeBytes?: number | null }
+): Promise<boolean> {
+  try {
+    await cachePack(LESSON_AUDIO_SCOPE, contentId, audio.contentVersion ?? "1", audio);
+    return true;
+  } catch {
     return false;
   }
 }

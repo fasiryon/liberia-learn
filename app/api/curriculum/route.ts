@@ -36,6 +36,17 @@ export async function GET(req: Request) {
         status: true,
         version: true,
         payload: true,
+        audioAssets: {
+          orderBy: { generatedAt: "desc" },
+          take: 1,
+          select: {
+            id: true,
+            status: true,
+            contentVersion: true,
+            storageUrl: true,
+            estimatedCostUsd: true,
+          },
+        },
         createdAt: true,
         updatedAt: true,
       },
@@ -45,6 +56,12 @@ export async function GET(req: Request) {
       count: rows.length,
       items: rows.map((row) => ({
         ...row,
+        audioStatus:
+          row.audioAssets[0]?.contentVersion === row.version
+            ? row.audioAssets[0]?.status ?? "NOT_GENERATED"
+            : row.audioAssets[0]?.status === "GENERATED"
+              ? "STALE"
+              : row.audioAssets[0]?.status ?? "NOT_GENERATED",
         displayTitle: buildCurriculumDisplayTitle({
           title: row.title,
           subject: row.subject,

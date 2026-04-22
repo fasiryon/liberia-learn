@@ -35,8 +35,39 @@ export async function GET(
               subject: true,
               grade: true,
               contentType: true,
+              version: true,
               deliveryProfile: true,
               moeAlignments: true,
+              audioAssets: {
+                orderBy: { generatedAt: "desc" },
+                take: 1,
+                select: {
+                  id: true,
+                  storageUrl: true,
+                  voice: true,
+                  durationSeconds: true,
+                  generatedAt: true,
+                  contentVersion: true,
+                  status: true,
+                  estimatedCostUsd: true,
+                },
+              },
+              videoSupplements: {
+                where: { isActive: true },
+                orderBy: { uploadedAt: "desc" },
+                take: 1,
+                select: {
+                  id: true,
+                  title: true,
+                  description: true,
+                  storageUrl: true,
+                  thumbnailUrl: true,
+                  durationSeconds: true,
+                  fileSize: true,
+                  uploadedAt: true,
+                  teacher: { select: { name: true } },
+                },
+              },
             },
           },
           class: { select: { id: true, schoolId: true, name: true, Teacher: { select: { name: true } }, School: { select: { name: true } } } },
@@ -80,6 +111,14 @@ export async function GET(
 
     const payload = sw.content.payload as any;
     const deliveryProfile = (sw.content.deliveryProfile as any) ?? payload?.deliveryProfile ?? null;
+    const latestAudio = sw.content.audioAssets[0] ?? null;
+    const audioStatus =
+      latestAudio?.contentVersion === sw.content.version
+        ? latestAudio.status
+        : latestAudio?.status === "GENERATED"
+          ? "STALE"
+          : latestAudio?.status ?? "NOT_GENERATED";
+    const activeVideo = sw.content.videoSupplements[0] ?? null;
 
     return NextResponse.json({
       id: sw.id,
@@ -108,6 +147,18 @@ export async function GET(
       schoolName: sw.class.School?.name ?? "School",
       className: sw.class.name,
       classFormat: sw.classFormat ?? "standard",
+      audio: latestAudio
+        ? {
+            ...latestAudio,
+            status: audioStatus,
+          }
+        : { status: "NOT_GENERATED" },
+      activeVideo: activeVideo
+        ? {
+            ...activeVideo,
+            teacherName: activeVideo.teacher?.name ?? "Teacher",
+          }
+        : null,
       deliveryProfile,
       moeAlignments: sw.content.moeAlignments ?? [],
       exitTicketScore: progress?.exitTicketScore ?? null,
