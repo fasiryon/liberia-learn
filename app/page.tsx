@@ -33,6 +33,33 @@ const trustStrip = [
   "Ministry-grade security",
 ];
 
+const capabilityBlocks = [
+  {
+    title: "Curriculum delivery",
+    body: "Structured lessons, quizzes, multimedia modes, and textbooks aligned to classroom schedules.",
+  },
+  {
+    title: "AI tutoring",
+    body: "Grounded lesson help that respects grade level, subject context, and student safety.",
+  },
+  {
+    title: "Offline-first access",
+    body: "Students can keep learning through low bandwidth, cached lessons, and sync-aware workflows.",
+  },
+  {
+    title: "National oversight",
+    body: "MOE dashboards surface delivery, engagement, and multimedia usage without exposing student PII.",
+  },
+  {
+    title: "Teacher tools",
+    body: "Teachers manage lessons, assignments, video supplements, reports, and class interventions.",
+  },
+  {
+    title: "Student outcomes",
+    body: "Progress, exams, certificates, and daily learning paths make achievement visible.",
+  },
+];
+
 const trustPillars = [
   "AI responses grounded in the national curriculum, not the open web",
   "Every role sees only what they are authorised to see",
@@ -109,15 +136,12 @@ export default function HomePage() {
           </div>
           </div>
 
-          <div className="grid gap-3 text-sm">
-            {[
-              ["15", "counties supported"],
-              ["3", "lesson modes"],
-              ["5", "reviewer roles"],
-            ].map(([value, label]) => (
-              <div key={label} className="flex items-center justify-between border-b border-[var(--ll-border)] py-4">
-                <span className="text-3xl font-semibold text-[var(--ll-text)]">{value}</span>
-                <span className="text-right text-[var(--ll-text-muted)]">{label}</span>
+          <div className="grid gap-3 sm:grid-cols-2">
+            {capabilityBlocks.map((block) => (
+              <div key={block.title} className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-surface)] p-4">
+                <div className="mb-3 h-1 w-10 rounded-full bg-[var(--ll-accent)]" />
+                <h2 className="text-sm font-semibold text-[var(--ll-text)]">{block.title}</h2>
+                <p className="mt-2 text-sm leading-6 text-[var(--ll-text-muted)]">{block.body}</p>
               </div>
             ))}
           </div>

@@ -163,8 +163,8 @@ export default async function DashboardPage() {
   const todayWorkItems = [
     {
       label: "Continue lesson",
-      href: "/student/lessons",
-      helper: "Open today's learning path",
+      href: "/student/today",
+      helper: "Resume today's current or next lesson",
     },
     {
       label: "Take exam",
@@ -274,11 +274,11 @@ export default async function DashboardPage() {
               {/* Primary Actions */}
               <div className="grid gap-3 sm:grid-cols-3">
                 <Link
-                  href="/student/lessons"
+                  href="/student/today"
                   className="flex flex-col gap-1 rounded-xl border border-[var(--ll-border)] bg-[var(--ll-accent-soft)] p-4 hover:bg-[rgba(24,211,158,0.15)]"
                 >
                   <p className="text-sm font-semibold text-[var(--ll-accent)]">Continue today&apos;s lesson</p>
-                  <p className="text-xs text-[var(--ll-text-muted)]">Open your current learning path</p>
+                  <p className="text-xs text-[var(--ll-text-muted)]">Open today&apos;s structured lesson plan</p>
                 </Link>
                 <Link
                   href="/student/progress"
@@ -310,7 +310,7 @@ export default async function DashboardPage() {
                     </p>
                   </div>
                   <Link
-                    href="/student/lessons"
+                    href="/student/today"
                     className="ll-touch-target inline-flex items-center justify-center rounded-lg bg-[var(--ll-accent)] px-5 py-3 text-sm font-semibold text-[var(--ll-text-faint)]"
                   >
                     Open today&apos;s lesson

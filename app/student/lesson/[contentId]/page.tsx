@@ -76,7 +76,7 @@ export default function LessonViewerPage() {
       <main className="flex min-h-screen items-center justify-center bg-[var(--ll-bg)] px-4 py-8">
         <div className="w-full max-w-3xl space-y-4 text-center">
           <p className="text-sm text-red-400">{error}</p>
-          <Link href="/student/dashboard" className="text-sm text-[var(--ll-yellow)] hover:text-[var(--ll-yellow)]">
+          <Link href="/dashboard" className="text-sm text-[var(--ll-yellow)] hover:text-[var(--ll-yellow)]">
             Back to Dashboard
           </Link>
         </div>
@@ -96,7 +96,7 @@ export default function LessonViewerPage() {
     <main className="min-h-screen bg-[var(--ll-bg)] px-4 py-8">
       <div className="mx-auto max-w-3xl space-y-6">
         {/* Back */}
-        <Link href="/student/dashboard" className="inline-block text-sm text-[var(--ll-yellow)] hover:text-[var(--ll-yellow)]">
+        <Link href="/dashboard" className="inline-block text-sm text-[var(--ll-yellow)] hover:text-[var(--ll-yellow)]">
           &larr; Back to Dashboard
         </Link>
 

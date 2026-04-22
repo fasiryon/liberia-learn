@@ -84,6 +84,9 @@ export default function StudentProgressDashboard() {
       <div className="mx-auto max-w-6xl space-y-6">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
           <div>
+            <Link href="/dashboard" className="text-sm text-[var(--ll-yellow)] hover:text-[var(--ll-yellow)]">
+              &larr; Back to Dashboard
+            </Link>
             <h1 className="text-3xl font-semibold text-[var(--ll-text)]">My Progress</h1>
             <p className="mt-2 text-sm text-[var(--ll-text-muted)]">
               Track lesson completion, quiz performance, streaks, and subject mastery.

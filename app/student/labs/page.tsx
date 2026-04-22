@@ -78,7 +78,7 @@ export default async function StudentLabsPage() {
       <main className="ll-dashboard-shell px-4 py-5">
         <div className="mx-auto max-w-6xl space-y-5">
           <div>
-            <Link href="/student/dashboard" className="text-xs text-[var(--ll-text-faint)] hover:text-[var(--ll-text-muted)]">
+            <Link href="/dashboard" className="text-xs text-[var(--ll-text-faint)] hover:text-[var(--ll-text-muted)]">
               <span className="inline-flex items-center gap-1">
                 <ChevronLeft size={14} />
                 Back to Dashboard

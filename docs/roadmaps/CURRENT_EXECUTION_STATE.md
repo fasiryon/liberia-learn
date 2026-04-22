@@ -149,13 +149,13 @@ Live execution tracking for the final closeout program.
 - GitHub Actions on latest main: PASS, all 4 workflows green (`PR Triage`, `Runtime Gate 1`, `Deploy ECS Images`, `CI`)
 
 ## Current workstream
-Phase 4.5 final platform review readiness
+Phase 4.6 UX Flow Integrity + Homepage Upgrade
 
 ## Current sprint or phase
-Phase 4.5 Full Completion Sprint COMPLETE. Deferred multimedia, navigation, analytics, demo, and reviewer walkthrough work is implemented and production-verified.
+Phase 4.6 COMPLETE. Student Today flow, CTA route semantics, student back navigation, dead-link cleanup, and homepage value proof section are implemented and production-verified.
 
 ## Current branch
-feat/phase-4-5-full-completion
+feat/phase-4-6-flow-integrity
 
 ## Phase 4.5 Demo Access
 - Student: `student1@cha.edu.lr` / `DemoSeed2026!` lands on `/dashboard`; first click `/student/today`; seeded lesson `/student/lessons/cha-demo-student1-multimedia-lesson`.
@@ -192,6 +192,25 @@ feat/phase-4-5-full-completion
 - `npx playwright test`: PASS (6 production reviewer-flow tests).
 - Production deploy: PASS, aliased to `https://liberia-learn.vercel.app`; deployment `dpl_APMaYiszSzo9V4JCkfuqAwwucQqk`.
 
+## Phase 4.6 Completion Summary
+| Area | Status | Notes |
+|------|--------|-------|
+| Student flow breaks | COMPLETE | Certificates and progress now expose clear `Back to Dashboard` navigation to `/dashboard`; stale `/student/dashboard` links were corrected. |
+| Today experience | COMPLETE | `/student/today` is a real daily-flow page with ordered subjects, current/next lesson, completed/remaining counts, and Continue/Quiz/Lab quick actions. |
+| Lesson navigation structure | COMPLETE | Today CTAs now land on `/student/today`; My Lessons remains a catalog/library destination only. |
+| CTA/route consistency | COMPLETE | Student primary CTAs, dead `href="#"` states, MOE export disabled actions, and legacy student dashboard links were audited and corrected. |
+| Homepage upgrade | COMPLETE | Old numeric metric block was replaced with six capability proof blocks: curriculum delivery, AI tutoring, offline-first access, national oversight, teacher tools, and student outcomes. |
+| Playwright flow validation | COMPLETE | `e2e/flow-integrity.spec.ts` validates student Today routing, Continue lesson, certificates/progress dashboard return, homepage capability blocks, and 375px no-overflow. |
+
+## Phase 4.6 Production Validation
+- `npm run seed:cha`: PASS; all six demo accounts upserted in the production-backed database.
+- `npx prisma generate`: PASS.
+- `npx tsc --noEmit`: PASS (0 errors).
+- `npm test`: PASS (1951 tests, 274 files).
+- `npm run build`: PASS (208 static pages; existing Sentry/OpenTelemetry warnings only).
+- `npx playwright test` with `PLAYWRIGHT_BASE_URL=https://liberia-learn.vercel.app`: PASS (9 browser tests).
+- Production deploy: PASS, aliased to `https://liberia-learn.vercel.app`; deployment `dpl_HtJ2RmoTxbGqtj8wHZaKyWeR95H1`.
+
 ## Multimedia Lesson Delivery Sprint seed note
 - Seeded student user: `student1@cha.edu.lr` / `DemoSeed2026!`
 - Seeded lesson title: `Ratios in Market Prices`
@@ -202,16 +221,16 @@ feat/phase-4-5-full-completion
 - Recreate fixture: run `npm run seed:cha`, which upserts the CHA school, teacher, student, enrollment, curriculum content, and scheduled work.
 
 ## Worktree status
-Phase 4.5 committed, pushed to main, deployed, and verified. GitHub Actions are green on main.
+Phase 4.6 implemented, seeded, deployed, and browser-verified. Commit, push to main, final deploy, and GitHub Actions confirmation are in progress.
 
 ## Overall status
 Sprints 1-16 + 16B + 16C + 16D + 16E + 16F + Dashboard UX complete. All role portals now share a consistent design system: DashboardTopBar, KPI cards, primary actions above fold, and role accent colours.
 
 ## Last completed phase
-Phase 4.5 Full Completion Sprint
+Phase 4.6 UX Flow Integrity + Homepage Upgrade
 
 ## Last commit reference
-`feat: complete phase 4.5 review readiness`
+Pending Phase 4.6 commit
 
 ## Last successful validation (Dashboard UX)
 - `npx tsc --noEmit`: PASS (0 errors)
@@ -316,4 +335,4 @@ Required before national scale sign-off: Vercel Pro upgrade + seed load-test use
 - `prisma/migrations/20260416_100000_curriculum_version/`
 
 ## Exact next step
-Commit Sprint 16F legal and compliance pages, push to main, and confirm all four GitHub Actions workflows are green on main.
+Commit Phase 4.6 flow integrity changes, push to main, redeploy production, and confirm GitHub Actions are green on main.
