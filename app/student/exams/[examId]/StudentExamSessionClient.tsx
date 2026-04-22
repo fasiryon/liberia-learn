@@ -242,8 +242,8 @@ export default function StudentExamSessionClient({ examId }: { examId: string })
 
   if (loading) {
     return (
-      <main className="ll-page min-h-screen px-4 py-8 text-slate-50">
-        <div className="ll-shell max-w-4xl rounded-3xl border border-white/10 bg-slate-900/70 p-6">
+      <main className="ll-page min-h-screen px-4 py-8 text-[var(--ll-text)]">
+        <div className="ll-shell max-w-4xl rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 p-6">
           Starting exam...
         </div>
       </main>
@@ -252,8 +252,8 @@ export default function StudentExamSessionClient({ examId }: { examId: string })
 
   if (error && !session && !result) {
     return (
-      <main className="ll-page min-h-screen px-4 py-8 text-slate-50">
-        <div className="ll-shell max-w-4xl rounded-3xl border border-red-500/20 bg-red-500/10 p-6">
+      <main className="ll-page min-h-screen px-4 py-8 text-[var(--ll-text)]">
+        <div className="ll-shell max-w-4xl rounded-xl border border-red-500/20 bg-red-500/10 p-6">
           {error}
         </div>
       </main>
@@ -262,38 +262,38 @@ export default function StudentExamSessionClient({ examId }: { examId: string })
 
   if (result) {
     return (
-      <main className="ll-page min-h-screen px-4 py-8 text-slate-50">
-        <div className="ll-shell max-w-3xl rounded-3xl border border-white/10 bg-slate-900/70 p-8 space-y-4">
+      <main className="ll-page min-h-screen px-4 py-8 text-[var(--ll-text)]">
+        <div className="ll-shell max-w-3xl rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 p-8 space-y-4">
           <h1 className="text-3xl font-semibold">{result.passed ? "Exam Passed" : "Exam Submitted"}</h1>
-          <p className="text-lg text-slate-100">Score: {scorePct}%</p>
-          <p className={`text-sm ${result.passed ? "text-emerald-200" : "text-amber-200"}`}>
+          <p className="text-lg text-[var(--ll-text)]">Score: {scorePct}%</p>
+          <p className={`text-sm ${result.passed ? "text-[var(--ll-yellow)]" : "text-[var(--ll-yellow)]"}`}>
             {result.passed
               ? "You earned a certification."
               : "You did not reach the passing score this time."}
           </p>
-          <p className="text-sm text-slate-300">
+          <p className="text-sm text-[var(--ll-text)]">
             {result.resultsPublished
               ? "This result has been released to your official record."
               : "Your submission is recorded. Official transcript release follows school review."}
           </p>
-          <p className="text-xs text-slate-500">
+          <p className="text-xs text-[var(--ll-text-faint)]">
             Session duration: {result.durationSeconds ?? 0}s · Tab switches recorded: {result.tabSwitchCount ?? 0}
           </p>
           {result.certCode ? (
-            <div className="rounded-2xl border border-emerald-400/30 bg-emerald-500/10 p-4 text-sm text-slate-100">
-              Certificate code: <span className="font-semibold text-emerald-100">{result.certCode}</span>
+            <div className="rounded-xl border border-emerald-400/30 bg-[var(--ll-yellow)]/10 p-4 text-sm text-[var(--ll-text)]">
+              Certificate code: <span className="font-semibold text-[var(--ll-yellow)]">{result.certCode}</span>
             </div>
           ) : null}
           <div className="flex flex-wrap gap-3">
             <Link
               href="/student/exams"
-              className="inline-flex min-h-11 min-w-11 items-center rounded-2xl border border-white/10 px-4 py-2 text-sm text-slate-100"
+              className="inline-flex min-h-11 min-w-11 items-center rounded-xl border border-[var(--ll-border)] px-4 py-2 text-sm text-[var(--ll-text)]"
             >
               Back to Exams
             </Link>
             <Link
               href="/student/certifications"
-              className="inline-flex min-h-11 min-w-11 items-center rounded-2xl bg-emerald-500 px-4 py-2 text-sm font-semibold text-slate-950"
+              className="inline-flex min-h-11 min-w-11 items-center rounded-xl bg-[var(--ll-yellow)] px-4 py-2 text-sm font-semibold text-[var(--ll-text-faint)]"
             >
               View Certifications
             </Link>
@@ -304,40 +304,40 @@ export default function StudentExamSessionClient({ examId }: { examId: string })
   }
 
   return (
-    <main className="ll-page min-h-screen px-4 py-8 text-slate-50">
+    <main className="ll-page min-h-screen px-4 py-8 text-[var(--ll-text)]">
       <div className="ll-shell max-w-4xl space-y-6">
-        <div className="rounded-3xl border border-white/10 bg-slate-900/70 p-6">
+        <div className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 p-6">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div>
-              <p className="text-xs uppercase tracking-[0.2em] text-emerald-300">Exam Session</p>
-              <h1 className="mt-2 text-2xl font-semibold text-white">{session?.title}</h1>
+              <p className="text-xs uppercase tracking-[0.2em] text-[var(--ll-yellow)]">Exam Session</p>
+              <h1 className="mt-2 text-2xl font-semibold text-[var(--ll-text)]">{session?.title}</h1>
             </div>
-            <div className="rounded-2xl border border-amber-400/30 bg-amber-500/10 px-4 py-2 text-sm text-amber-100">
-              <p className="text-xs uppercase tracking-[0.2em] text-amber-200">Time left</p>
+            <div className="rounded-xl border border-amber-400/30 bg-[var(--ll-yellow-soft)] px-4 py-2 text-sm text-[var(--ll-yellow)]">
+              <p className="text-xs uppercase tracking-[0.2em] text-[var(--ll-yellow)]">Time left</p>
               <p className="mt-1 text-lg font-semibold">{minutes}:{seconds.toString().padStart(2, "0")}</p>
             </div>
           </div>
           <div className="mt-4 h-2 rounded-full bg-white/10">
-            <div className="h-2 rounded-full bg-emerald-400" style={{ width: `${progress}%` }} />
+            <div className="h-2 rounded-full bg-[var(--ll-yellow-soft)]" style={{ width: `${progress}%` }} />
           </div>
-          <p className="mt-3 text-sm text-slate-200">
+          <p className="mt-3 text-sm text-[var(--ll-text)]">
             Question {currentIndex + 1} of {session?.questions.length}
           </p>
-          <p className="mt-2 text-xs text-slate-500">
+          <p className="mt-2 text-xs text-[var(--ll-text-faint)]">
             Integrity note: tab switching and anomalous session timing are recorded for review.
           </p>
         </div>
 
         {error ? (
-          <div className="rounded-3xl border border-red-500/20 bg-red-500/10 p-4 text-sm text-red-100">
+          <div className="rounded-xl border border-red-500/20 bg-red-500/10 p-4 text-sm text-red-100">
             {error}
           </div>
         ) : null}
 
         {question ? (
-          <div className="rounded-3xl border border-white/10 bg-slate-900/70 p-6 space-y-4">
-            <div className="rounded-2xl border border-slate-800 bg-slate-950/55 p-4">
-              <p className="text-lg font-medium leading-8 text-slate-50">{question.prompt}</p>
+          <div className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 p-6 space-y-4">
+            <div className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/55 p-4">
+              <p className="text-lg font-medium leading-8 text-[var(--ll-text)]">{question.prompt}</p>
             </div>
             <div className="space-y-3">
               {question.options.map((option, optionIndex) => (
@@ -351,17 +351,17 @@ export default function StudentExamSessionClient({ examId }: { examId: string })
                       return next;
                     });
                   }}
-                  className={`w-full rounded-2xl border px-4 py-4 text-left text-base leading-7 ${
+                  className={`w-full rounded-xl border px-4 py-4 text-left text-base leading-7 ${
                     selectedAnswer === optionIndex
-                      ? "border-emerald-300 bg-emerald-500/15 text-emerald-50 ring-2 ring-emerald-300/60"
-                      : "border-white/10 bg-white/5 text-slate-100"
+                      ? "border-emerald-300 bg-[var(--ll-yellow)]/15 text-[var(--ll-yellow)] ring-2 ring-emerald-300/60"
+                      : "border-[var(--ll-border)] bg-white/5 text-[var(--ll-text)]"
                   }`}
                   style={{ minHeight: "52px" }}
                 >
                   <div className="flex items-start justify-between gap-3">
                     <span>{option}</span>
                     {selectedAnswer === optionIndex ? (
-                      <span className="rounded-full bg-emerald-300 px-2 py-1 text-xs font-semibold text-slate-950">
+                      <span className="rounded-full bg-[var(--ll-yellow-soft)] px-2 py-1 text-xs font-semibold text-[var(--ll-text-faint)]">
                         Selected
                       </span>
                     ) : null}
@@ -369,7 +369,7 @@ export default function StudentExamSessionClient({ examId }: { examId: string })
                 </button>
               ))}
             </div>
-            <div className="rounded-2xl border border-white/10 bg-slate-950/55 px-4 py-3 text-sm text-slate-200">
+            <div className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/55 px-4 py-3 text-sm text-[var(--ll-text)]">
               {selectedAnswer >= 0 ? "Answer selected. Review once more, then continue." : "Choose one answer before moving on."}
             </div>
             <div className="flex flex-wrap justify-between gap-3">
@@ -377,7 +377,7 @@ export default function StudentExamSessionClient({ examId }: { examId: string })
                 type="button"
                 onClick={() => setCurrentIndex((prev) => Math.max(0, prev - 1))}
                 disabled={currentIndex === 0}
-                className="ll-touch-target rounded-2xl border border-white/10 px-4 py-2 text-sm text-slate-100 disabled:opacity-40"
+                className="ll-touch-target rounded-xl border border-[var(--ll-border)] px-4 py-2 text-sm text-[var(--ll-text)] disabled:opacity-40"
               >
                 Previous
               </button>
@@ -390,7 +390,7 @@ export default function StudentExamSessionClient({ examId }: { examId: string })
                         Math.min((session?.questions.length ?? 1) - 1, prev + 1)
                       )
                     }
-                    className="ll-touch-target rounded-2xl bg-cyan-500 px-4 py-2 text-sm font-semibold text-slate-950"
+                    className="ll-touch-target rounded-xl bg-[var(--ll-silver-soft)] px-4 py-2 text-sm font-semibold text-[var(--ll-text-faint)]"
                   >
                     Next
                   </button>
@@ -399,7 +399,7 @@ export default function StudentExamSessionClient({ examId }: { examId: string })
                   type="button"
                   disabled={!canSubmit || submitting}
                   onClick={() => setConfirmingSubmit(true)}
-                  className="ll-touch-target rounded-2xl bg-emerald-500 px-5 py-3 text-sm font-semibold text-slate-950 disabled:opacity-50"
+                  className="ll-touch-target rounded-xl bg-[var(--ll-yellow)] px-5 py-3 text-sm font-semibold text-[var(--ll-text-faint)] disabled:opacity-50"
                 >
                   {submitting ? "Submitting..." : "Submit Exam"}
                 </button>
@@ -409,17 +409,17 @@ export default function StudentExamSessionClient({ examId }: { examId: string })
         ) : null}
       </div>
       {confirmingSubmit ? (
-        <div className="fixed inset-0 z-20 flex items-end justify-center bg-slate-950/80 px-4 py-6 sm:items-center">
-          <div className="w-full max-w-md rounded-3xl border border-white/10 bg-slate-900 p-6 shadow-2xl">
-            <h2 className="text-xl font-semibold text-white">Submit exam?</h2>
-            <p className="mt-3 text-sm leading-7 text-slate-200">
+        <div className="fixed inset-0 z-20 flex items-end justify-center bg-[var(--ll-bg)]/80 px-4 py-6 sm:items-center">
+          <div className="w-full max-w-md rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)] p-6 shadow-none">
+            <h2 className="text-xl font-semibold text-[var(--ll-text)]">Submit exam?</h2>
+            <p className="mt-3 text-sm leading-7 text-[var(--ll-text)]">
               You are about to submit your answers for grading. Check that every question is complete before you continue.
             </p>
             <div className="mt-5 flex flex-col gap-3 sm:flex-row sm:justify-end">
               <button
                 type="button"
                 onClick={() => setConfirmingSubmit(false)}
-                className="ll-touch-target rounded-2xl border border-white/10 px-4 py-3 text-sm text-slate-100"
+                className="ll-touch-target rounded-xl border border-[var(--ll-border)] px-4 py-3 text-sm text-[var(--ll-text)]"
               >
                 Review answers
               </button>
@@ -430,7 +430,7 @@ export default function StudentExamSessionClient({ examId }: { examId: string })
                   setConfirmingSubmit(false);
                   void submitExam();
                 }}
-                className="ll-touch-target rounded-2xl bg-emerald-500 px-5 py-3 text-sm font-semibold text-slate-950"
+                className="ll-touch-target rounded-xl bg-[var(--ll-yellow)] px-5 py-3 text-sm font-semibold text-[var(--ll-text-faint)]"
               >
                 Confirm submit
               </button>

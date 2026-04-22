@@ -24,27 +24,27 @@ export default function StudentOfflineStatusPage() {
   }, []);
 
   return (
-    <main className="min-h-screen bg-slate-950 px-4 py-8 text-slate-50">
+    <main className="min-h-screen bg-[var(--ll-bg)] px-4 py-8 text-[var(--ll-text)]">
       <div className="mx-auto max-w-3xl space-y-6">
         <header>
-          <p className="text-xs font-semibold uppercase tracking-[0.22em] text-emerald-300">LiberiaLearn</p>
-          <h1 className="mt-3 text-3xl font-semibold text-white">Offline Status</h1>
-          <p className="mt-2 text-sm text-slate-400">{online ? "Online" : "Offline"}</p>
+          <p className="text-xs font-semibold uppercase tracking-[0.22em] text-[var(--ll-yellow)]">LiberiaLearn</p>
+          <h1 className="mt-3 text-3xl font-semibold text-[var(--ll-text)]">Offline Status</h1>
+          <p className="mt-2 text-sm text-[var(--ll-text-muted)]">{online ? "Online" : "Offline"}</p>
         </header>
 
         {items.length > 0 ? (
-          <section className="rounded-3xl border border-white/10 bg-slate-900/80 p-6">
-            <p className="text-sm text-slate-200">{items.length} items waiting to sync</p>
-            <ul className="mt-4 space-y-2 text-sm text-slate-300">
+          <section className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/80 p-6">
+            <p className="text-sm text-[var(--ll-text)]">{items.length} items waiting to sync</p>
+            <ul className="mt-4 space-y-2 text-sm text-[var(--ll-text)]">
               {items.map((item) => (
-                <li key={item.id} className="rounded-2xl border border-slate-800 bg-slate-950/70 px-4 py-3">
+                <li key={item.id} className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 px-4 py-3">
                   {(item.type ?? "offline-item").replace(/-/g, " ")} - {item.status}
                 </li>
               ))}
             </ul>
           </section>
         ) : (
-          <section className="rounded-3xl border border-white/10 bg-slate-900/80 p-6 text-sm text-slate-200">
+          <section className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/80 p-6 text-sm text-[var(--ll-text)]">
             All activity synced
           </section>
         )}

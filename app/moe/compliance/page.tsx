@@ -114,24 +114,24 @@ export default function MoeCompliancePage() {
   return (
     <div className="space-y-6">
       <div>
-        <p className="text-xs uppercase tracking-[0.2em] text-emerald-300">Compliance</p>
+        <p className="text-xs uppercase tracking-[0.2em] text-[var(--ll-yellow)]">Compliance</p>
         <h1 className="text-3xl font-semibold">Delivery Compliance</h1>
-        <p className="text-sm text-slate-400">
+        <p className="text-sm text-[var(--ll-text-muted)]">
           District-level delivery compliance aggregated nationally.
         </p>
       </div>
 
       {error && (
-        <div className="rounded-2xl border border-red-500/30 bg-red-500/10 p-4 text-sm text-red-300">
+        <div className="rounded-xl border border-red-500/30 bg-red-500/10 p-4 text-sm text-red-300">
           {error}
         </div>
       )}
 
-      <section className="rounded-2xl border border-white/10 bg-white/5 p-6 space-y-4">
+      <section className="rounded-xl border border-[var(--ll-border)] bg-white/5 p-6 space-y-4">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
             <h2 className="text-lg font-semibold">National Summary</h2>
-            <p className="text-xs text-slate-500">
+            <p className="text-xs text-[var(--ll-text-faint)]">
               Reporting rate, late submissions, and fully compliant districts.
             </p>
           </div>
@@ -142,7 +142,7 @@ export default function MoeCompliancePage() {
             <button
               onClick={handleExport}
               disabled={exporting}
-              className="rounded-full bg-emerald-500 px-4 py-1.5 text-xs font-semibold text-slate-950 hover:bg-emerald-400 disabled:opacity-60"
+              className="rounded-full bg-[var(--ll-yellow)] px-4 py-1.5 text-xs font-semibold text-[var(--ll-text-faint)] hover:bg-[var(--ll-yellow-soft)] disabled:opacity-60"
             >
               {exporting ? "Exporting..." : "Export Compliance Report (CSV)"}
             </button>
@@ -157,33 +157,33 @@ export default function MoeCompliancePage() {
           </div>
         ) : (
           <div className="grid gap-4 md:grid-cols-3">
-            <div className="rounded-xl border border-white/10 bg-black/10 p-4">
-              <p className="text-xs text-slate-500">Reporting Rate</p>
-              <p className="mt-2 text-2xl font-semibold text-emerald-200">
+            <div className="rounded-xl border border-[var(--ll-border)] bg-black/10 p-4">
+              <p className="text-xs text-[var(--ll-text-faint)]">Reporting Rate</p>
+              <p className="mt-2 text-2xl font-semibold text-[var(--ll-yellow)]">
                 {data?.national?.compliancePct == null
                   ? "—"
                   : `${data.national.compliancePct.toFixed(1)}%`}
               </p>
             </div>
-            <div className="rounded-xl border border-white/10 bg-black/10 p-4">
-              <p className="text-xs text-slate-500">Late Submissions</p>
-              <p className="mt-2 text-2xl font-semibold text-amber-200">
+            <div className="rounded-xl border border-[var(--ll-border)] bg-black/10 p-4">
+              <p className="text-xs text-[var(--ll-text-faint)]">Late Submissions</p>
+              <p className="mt-2 text-2xl font-semibold text-[var(--ll-yellow)]">
                 {(data?.national?.scheduledWorkTotal ?? 0) -
                   (data?.national?.scheduledWorkDelivered ?? 0)}
               </p>
             </div>
-            <div className="rounded-xl border border-white/10 bg-black/10 p-4">
-              <p className="text-xs text-slate-500">Fully Compliant Schools</p>
-              <p className="mt-2 text-2xl font-semibold text-cyan-200">
+            <div className="rounded-xl border border-[var(--ll-border)] bg-black/10 p-4">
+              <p className="text-xs text-[var(--ll-text-faint)]">Fully Compliant Schools</p>
+              <p className="mt-2 text-2xl font-semibold text-[var(--ll-silver)]">
                 {fullyCompliantDistricts}
               </p>
-              <p className="text-[11px] text-slate-500">districts at 100%</p>
+              <p className="text-[11px] text-[var(--ll-text-faint)]">districts at 100%</p>
             </div>
           </div>
         )}
       </section>
 
-      <section className="rounded-2xl border border-white/10 bg-white/5 p-6">
+      <section className="rounded-xl border border-[var(--ll-border)] bg-white/5 p-6">
         <h2 className="text-lg font-semibold">District Breakdown</h2>
         {loading ? (
           <div className="mt-4 space-y-2">
@@ -192,14 +192,14 @@ export default function MoeCompliancePage() {
             ))}
           </div>
         ) : !data || data.byDistrict.length === 0 ? (
-          <div className="mt-4 rounded-xl border border-white/10 bg-black/10 p-6 text-sm text-slate-400">
+          <div className="mt-4 rounded-xl border border-[var(--ll-border)] bg-black/10 p-6 text-sm text-[var(--ll-text-muted)]">
             No compliance data available yet.
           </div>
         ) : (
           <div className="mt-4 overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="border-b border-white/10 text-left text-xs text-slate-500">
+                <tr className="border-b border-[var(--ll-border)] text-left text-xs text-[var(--ll-text-faint)]">
                   <th className="pb-2 pr-4">District</th>
                   <th className="pb-2 pr-4">Schools</th>
                   <th className="pb-2 pr-4">Lessons Delivered</th>
@@ -219,7 +219,7 @@ export default function MoeCompliancePage() {
                       ? "Watch"
                       : "At Risk";
                   return (
-                    <tr key={d.districtId} className="border-b border-white/5 text-slate-200">
+                    <tr key={d.districtId} className="border-b border-white/5 text-[var(--ll-text)]">
                       <td className="py-3 pr-4 font-medium">{d.districtName}</td>
                       <td className="py-3 pr-4">{d.schoolCount}</td>
                       <td className="py-3 pr-4">
@@ -229,7 +229,7 @@ export default function MoeCompliancePage() {
                         {d.compliancePct == null ? "—" : `${d.compliancePct.toFixed(1)}%`}
                       </td>
                       <td className="py-3">
-                        <span className="rounded-full bg-white/5 px-2 py-0.5 text-[11px] text-slate-300">
+                        <span className="rounded-full bg-white/5 px-2 py-0.5 text-[11px] text-[var(--ll-text)]">
                           {status}
                         </span>
                       </td>

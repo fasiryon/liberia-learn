@@ -53,15 +53,15 @@ export default function LabFallback({
   }, [values]);
 
   return (
-    <section className="rounded-2xl border border-slate-700 bg-slate-950 p-4 text-slate-50">
+    <section className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)] p-4 text-[var(--ll-text)]">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-cyan-200">
+          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[var(--ll-silver)]">
             2D fallback
           </p>
           <h3 className="mt-1 text-base font-semibold">Lab view: {labId}</h3>
         </div>
-        <span className="rounded-full border border-cyan-400/40 px-3 py-1 text-xs text-cyan-100">
+        <span className="rounded-full border border-cyan-400/40 px-3 py-1 text-xs text-[var(--ll-silver)]">
           WebGL unavailable
         </span>
       </div>
@@ -69,14 +69,14 @@ export default function LabFallback({
         ref={canvasRef}
         width={560}
         height={240}
-        className="mt-4 h-48 w-full rounded-xl border border-slate-800 bg-slate-950"
+        className="mt-4 h-48 w-full rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]"
         aria-label="Two dimensional lab visualization"
       />
       <dl className="mt-4 grid grid-cols-1 gap-2 text-sm sm:grid-cols-2">
         {values.map(([key, value]) => (
-          <div key={key} className="flex items-center justify-between gap-3 rounded-lg bg-slate-900 px-3 py-2">
-            <dt className="text-slate-400">{key}</dt>
-            <dd className="font-medium text-slate-100">{value}</dd>
+          <div key={key} className="flex items-center justify-between gap-3 rounded-lg bg-[var(--ll-bg)] px-3 py-2">
+            <dt className="text-[var(--ll-text-muted)]">{key}</dt>
+            <dd className="font-medium text-[var(--ll-text)]">{value}</dd>
           </div>
         ))}
       </dl>

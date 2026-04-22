@@ -59,7 +59,7 @@ export function resolvePostLoginDestination(params: {
   return safeNext || (isPlatformAdmin ? "/platform" : defaultRouteForRole(role, mustChangePIN));
 }
 
-const TOUCH_INPUT = "min-h-11 w-full rounded-xl border border-slate-700 bg-slate-900/70 px-3 py-3 text-base text-slate-50 outline-none placeholder:text-slate-500 focus:border-emerald-400 focus:ring-1 focus:ring-emerald-400/60";
+const TOUCH_INPUT = "min-h-11 w-full rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 px-3 py-3 text-base text-[var(--ll-text)] outline-none placeholder:text-[var(--ll-text-faint)] focus:border-emerald-400 focus:ring-1 focus:ring-emerald-400/60";
 
 export default function LoginClient({ showDemoHints, demoGroups, demoDefaults }: LoginClientProps) {
   const router = useRouter();
@@ -240,7 +240,7 @@ export default function LoginClient({ showDemoHints, demoGroups, demoDefaults }:
         <button
           type="button"
           onClick={() => setStudentMode((current) => (current === "email" ? "studentId" : "email"))}
-          className="text-sm text-emerald-300 hover:text-emerald-200"
+          className="text-sm text-[var(--ll-yellow)] hover:text-[var(--ll-yellow)]"
         >
           {studentFields.toggleText}
         </button>
@@ -252,7 +252,7 @@ export default function LoginClient({ showDemoHints, demoGroups, demoDefaults }:
         <button
           type="button"
           onClick={() => setGuardianMode((current) => (current === "email" ? "phone" : "email"))}
-          className="text-sm text-emerald-300 hover:text-emerald-200"
+          className="text-sm text-[var(--ll-yellow)] hover:text-[var(--ll-yellow)]"
         >
           {guardianFields.toggleText}
         </button>
@@ -267,33 +267,33 @@ export default function LoginClient({ showDemoHints, demoGroups, demoDefaults }:
       <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_top,_#22c55e33,_transparent_55%),radial-gradient(circle_at_bottom,_#0ea5e933,_transparent_55%)]" />
 
       <div className="mx-auto w-full max-w-lg flex-1 flex items-center justify-center py-4">
-      <div className="w-full space-y-5 rounded-[2rem] border border-white/10 bg-slate-900/75 p-5 shadow-2xl shadow-emerald-500/15 backdrop-blur sm:space-y-6 sm:p-7">
+      <div className="w-full space-y-5 rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/75 p-5 shadow-none shadow-emerald-500/15 backdrop-blur sm:space-y-6 sm:p-7">
         <div className="flex flex-col items-center gap-3 text-center">
-          <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-[var(--ll-accent)] text-lg font-black text-slate-950">
+          <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-[var(--ll-accent)] text-lg font-black text-[var(--ll-text-faint)]">
             L
           </div>
-          <h1 className="text-xl font-semibold text-slate-50">Sign in to LiberiaLearn</h1>
-          <p className="text-sm text-slate-400">Access lessons, assignments, progress, and school tools.</p>
+          <h1 className="text-xl font-semibold text-[var(--ll-text)]">Sign in to LiberiaLearn</h1>
+          <p className="text-sm text-[var(--ll-text-muted)]">Access lessons, assignments, progress, and school tools.</p>
         </div>
 
         {flashMessage && (
-          <p className="rounded-lg border border-emerald-800 bg-emerald-950/40 px-3 py-3 text-sm text-emerald-200">
+          <p className="rounded-lg border border-emerald-800 bg-[var(--ll-yellow-soft)] px-3 py-3 text-sm text-[var(--ll-yellow)]">
             {flashMessage}
           </p>
         )}
 
         <div className="space-y-2">
-          <p className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-500">Sign in as</p>
+          <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[var(--ll-text-faint)]">Sign in as</p>
           <div className={`grid gap-2 text-xs ${guardianEnabled ? "grid-cols-2 sm:grid-cols-4" : "grid-cols-3"}`}>
             {roleOptions.map((option) => (
               <button
                 key={option}
                 type="button"
                 onClick={() => setRole(option)}
-                className={`min-h-11 rounded-2xl border px-3 py-2.5 capitalize ${
+                className={`min-h-11 rounded-xl border px-3 py-2.5 capitalize ${
                   role === option
-                    ? "border-emerald-400 bg-emerald-500/20 text-emerald-200"
-                    : "border-slate-700 bg-slate-900/80 text-slate-300 hover:border-slate-500"
+                    ? "border-emerald-400 bg-[var(--ll-yellow)]/20 text-[var(--ll-yellow)]"
+                    : "border-[var(--ll-border)] bg-[var(--ll-bg)]/80 text-[var(--ll-text)] hover:border-[var(--ll-border)]"
                 }`}
               >
                 {option}
@@ -304,7 +304,7 @@ export default function LoginClient({ showDemoHints, demoGroups, demoDefaults }:
 
         <form onSubmit={handleSubmit} className="space-y-4 text-sm">
           <div className="space-y-1">
-            <label className="block text-xs font-medium text-slate-300">{identifierLabel}</label>
+            <label className="block text-xs font-medium text-[var(--ll-text)]">{identifierLabel}</label>
             <input
               required
               type={identifierType}
@@ -317,7 +317,7 @@ export default function LoginClient({ showDemoHints, demoGroups, demoDefaults }:
           </div>
 
           <div className="space-y-1">
-            <label className="block text-xs font-medium text-slate-300">{secretLabel}</label>
+            <label className="block text-xs font-medium text-[var(--ll-text)]">{secretLabel}</label>
             <input
               required
               type={secretInputMode ? "password" : "password"}
@@ -338,7 +338,7 @@ export default function LoginClient({ showDemoHints, demoGroups, demoDefaults }:
           ) : null}
 
           <div className="text-right">
-            <Link href="/forgot-password" className="text-xs text-emerald-300 hover:text-emerald-200">
+            <Link href="/forgot-password" className="text-xs text-[var(--ll-yellow)] hover:text-[var(--ll-yellow)]">
               Forgot password?
             </Link>
           </div>
@@ -348,7 +348,7 @@ export default function LoginClient({ showDemoHints, demoGroups, demoDefaults }:
           <button
             type="submit"
             disabled={loading}
-            className="mt-2 flex min-h-12 w-full items-center justify-center rounded-2xl bg-emerald-500 px-4 py-3 text-base font-semibold text-slate-950 shadow-lg shadow-emerald-500/30 hover:bg-emerald-400 disabled:opacity-60"
+            className="mt-2 flex min-h-12 w-full items-center justify-center rounded-xl bg-[var(--ll-yellow)] px-4 py-3 text-base font-semibold text-[var(--ll-text-faint)] shadow-lg shadow-emerald-500/30 hover:bg-[var(--ll-yellow-soft)] disabled:opacity-60"
           >
             {loading ? "Signing in..." : "Continue"}
           </button>
@@ -358,15 +358,15 @@ export default function LoginClient({ showDemoHints, demoGroups, demoDefaults }:
           <section className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-surface-muted)] p-4">
             <div className="flex items-start justify-between gap-3">
               <div>
-                <p className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-500">Demo help</p>
-                <p className="mt-1 text-xs leading-5 text-slate-400">
+                <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[var(--ll-text-faint)]">Demo help</p>
+                <p className="mt-1 text-xs leading-5 text-[var(--ll-text-muted)]">
                   Seeded test accounts are available when demo mode is enabled. Keep this secondary to normal sign-in.
                 </p>
               </div>
               <button
                 type="button"
                 onClick={() => setShowDemoHelp((current) => !current)}
-                className="shrink-0 rounded-full border border-slate-700 px-3 py-1 text-[11px] font-semibold text-slate-200 hover:border-slate-500"
+                className="shrink-0 rounded-full border border-[var(--ll-border)] px-3 py-1 text-[11px] font-semibold text-[var(--ll-text)] hover:border-[var(--ll-border)]"
               >
                 {showDemoHelp ? "Hide" : "Show"}
               </button>
@@ -377,11 +377,11 @@ export default function LoginClient({ showDemoHints, demoGroups, demoDefaults }:
                 <DemoHints title="Demo Login Hints" groups={demoGroups} />
               </div>
             ) : (
-              <div className="mt-3 flex flex-wrap gap-2 text-[11px] text-slate-400">
+              <div className="mt-3 flex flex-wrap gap-2 text-[11px] text-[var(--ll-text-muted)]">
                 {demoGroups.map((group) => (
                   <span
                     key={group.key}
-                    className="rounded-full border border-slate-800 bg-slate-900/70 px-3 py-1"
+                    className="rounded-full border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 px-3 py-1"
                   >
                     {group.label}: {group.email}
                   </span>
@@ -391,8 +391,8 @@ export default function LoginClient({ showDemoHints, demoGroups, demoDefaults }:
           </section>
         ) : null}
 
-        <div className="text-center text-[11px] text-slate-500">
-          <Link href="/" className="text-emerald-300 hover:text-emerald-200">
+        <div className="text-center text-[11px] text-[var(--ll-text-faint)]">
+          <Link href="/" className="text-[var(--ll-yellow)] hover:text-[var(--ll-yellow)]">
             Back to homepage
           </Link>
         </div>

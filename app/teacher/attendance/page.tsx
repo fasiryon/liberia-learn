@@ -26,8 +26,8 @@ type StatusType = "PRESENT" | "ABSENT" | "LATE" | "EXCUSED";
 const STATUS_OPTIONS: StatusType[] = ["PRESENT", "LATE", "EXCUSED", "ABSENT"];
 
 const STATUS_STYLES: Record<StatusType, string> = {
-  PRESENT: "bg-emerald-500/20 text-emerald-200 border-emerald-500/30",
-  LATE: "bg-amber-500/20 text-amber-200 border-amber-500/30",
+  PRESENT: "bg-[var(--ll-yellow)]/20 text-[var(--ll-yellow)] border-emerald-500/30",
+  LATE: "bg-[var(--ll-yellow-soft)] text-[var(--ll-yellow)] border-amber-500/30",
   EXCUSED: "bg-sky-500/20 text-sky-200 border-sky-500/30",
   ABSENT: "bg-red-500/20 text-red-200 border-red-500/30",
 };
@@ -146,24 +146,24 @@ export default function TeacherAttendancePage() {
   }
 
   return (
-    <main className="min-h-screen bg-slate-950 px-4 py-8 text-slate-50">
+    <main className="min-h-screen bg-[var(--ll-bg)] px-4 py-8 text-[var(--ll-text)]">
       <div className="mx-auto max-w-6xl space-y-6">
         <header>
           <h1 className="text-2xl font-bold">Daily Attendance</h1>
-          <p className="mt-1 text-sm text-slate-400">
+          <p className="mt-1 text-sm text-[var(--ll-text-muted)]">
             Mark the live class roster for the current day without leaving the teacher console.
           </p>
         </header>
 
         <TeacherNav />
 
-        <section className="grid gap-4 rounded-2xl border border-white/10 bg-slate-900/70 p-4 md:grid-cols-[1fr,220px,auto]">
+        <section className="grid gap-4 rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 p-4 md:grid-cols-[1fr,220px,auto]">
           <div>
-            <label className="text-xs text-slate-400">Class</label>
+            <label className="text-xs text-[var(--ll-text-muted)]">Class</label>
             <select
               value={classId}
               onChange={(event) => setClassId(event.target.value)}
-              className="mt-1 min-h-11 w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-sm"
+              className="mt-1 min-h-11 w-full rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)] px-4 py-3 text-sm"
             >
               <option value="">Select class...</option>
               {classes.map((item) => (
@@ -174,39 +174,39 @@ export default function TeacherAttendancePage() {
             </select>
           </div>
           <div>
-            <label className="text-xs text-slate-400">Date</label>
+            <label className="text-xs text-[var(--ll-text-muted)]">Date</label>
             <input
               type="date"
               value={date}
               onChange={(event) => setDate(event.target.value)}
-              className="mt-1 min-h-11 w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-sm"
+              className="mt-1 min-h-11 w-full rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)] px-4 py-3 text-sm"
             />
           </div>
           <button
             type="button"
             onClick={() => void load(classId, date)}
-            className="self-end rounded-xl border border-slate-700 px-5 py-3 text-sm font-semibold text-slate-200 hover:bg-slate-800"
+            className="self-end rounded-xl border border-[var(--ll-border)] px-5 py-3 text-sm font-semibold text-[var(--ll-text)] hover:bg-[var(--ll-surface)]"
           >
             Refresh
           </button>
         </section>
 
         <section className="grid gap-3 md:grid-cols-4">
-          <div className="rounded-2xl border border-emerald-500/20 bg-emerald-500/10 p-4 text-center">
-            <p className="text-2xl font-bold text-emerald-300">{counts.present}</p>
-            <p className="text-xs text-slate-300">Present</p>
+          <div className="rounded-xl border border-emerald-500/20 bg-[var(--ll-yellow)]/10 p-4 text-center">
+            <p className="text-2xl font-bold text-[var(--ll-yellow)]">{counts.present}</p>
+            <p className="text-xs text-[var(--ll-text)]">Present</p>
           </div>
-          <div className="rounded-2xl border border-amber-500/20 bg-amber-500/10 p-4 text-center">
-            <p className="text-2xl font-bold text-amber-300">{counts.late}</p>
-            <p className="text-xs text-slate-300">Late</p>
+          <div className="rounded-xl border border-amber-500/20 bg-[var(--ll-yellow-soft)] p-4 text-center">
+            <p className="text-2xl font-bold text-[var(--ll-yellow)]">{counts.late}</p>
+            <p className="text-xs text-[var(--ll-text)]">Late</p>
           </div>
-          <div className="rounded-2xl border border-sky-500/20 bg-sky-500/10 p-4 text-center">
+          <div className="rounded-xl border border-sky-500/20 bg-sky-500/10 p-4 text-center">
             <p className="text-2xl font-bold text-sky-300">{counts.excused}</p>
-            <p className="text-xs text-slate-300">Excused</p>
+            <p className="text-xs text-[var(--ll-text)]">Excused</p>
           </div>
-          <div className="rounded-2xl border border-red-500/20 bg-red-500/10 p-4 text-center">
+          <div className="rounded-xl border border-red-500/20 bg-red-500/10 p-4 text-center">
             <p className="text-2xl font-bold text-red-300">{counts.absent}</p>
-            <p className="text-xs text-slate-300">Absent</p>
+            <p className="text-xs text-[var(--ll-text)]">Absent</p>
           </div>
         </section>
 
@@ -223,29 +223,29 @@ export default function TeacherAttendancePage() {
           ))}
         </section>
 
-        <section className="rounded-2xl border border-white/10 bg-slate-900/70 p-4">
+        <section className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 p-4">
           {error ? <p className="mb-4 text-sm text-red-300">{error}</p> : null}
-          {saved ? <p className="mb-4 text-sm text-emerald-300">Attendance saved.</p> : null}
+          {saved ? <p className="mb-4 text-sm text-[var(--ll-yellow)]">Attendance saved.</p> : null}
           {loading ? (
             <div className="space-y-3">
               {Array.from({ length: 5 }).map((_, index) => (
-                <div key={index} className="h-16 animate-pulse rounded-xl bg-slate-800/60" />
+                <div key={index} className="h-16 animate-pulse rounded-xl bg-[var(--ll-surface)]/60" />
               ))}
             </div>
           ) : !classId ? (
-            <p className="text-sm text-slate-400">Select a class to load the roster.</p>
+            <p className="text-sm text-[var(--ll-text-muted)]">Select a class to load the roster.</p>
           ) : students.length === 0 ? (
-            <p className="text-sm text-slate-400">This class has no enrolled students yet.</p>
+            <p className="text-sm text-[var(--ll-text-muted)]">This class has no enrolled students yet.</p>
           ) : (
             <div className="space-y-3">
               {students.map((student) => (
                 <div
                   key={student.studentId}
-                  className="grid gap-3 rounded-2xl border border-slate-800 bg-slate-950/60 p-4 md:grid-cols-[1.2fr,1fr,1.2fr]"
+                  className="grid gap-3 rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/60 p-4 md:grid-cols-[1.2fr,1fr,1.2fr]"
                 >
                   <div>
-                    <p className="font-semibold text-slate-100">{student.name}</p>
-                    <p className="text-xs text-slate-500">
+                    <p className="font-semibold text-[var(--ll-text)]">{student.name}</p>
+                    <p className="text-xs text-[var(--ll-text-faint)]">
                       Grade {student.currentGrade ?? "-"}
                     </p>
                   </div>
@@ -257,7 +257,7 @@ export default function TeacherAttendancePage() {
                         [student.studentId]: event.target.value as StatusType,
                       }))
                     }
-                    className="min-h-11 rounded-xl border border-slate-700 bg-slate-900 px-4 py-3 text-sm"
+                    className="min-h-11 rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)] px-4 py-3 text-sm"
                   >
                     {STATUS_OPTIONS.map((status) => (
                       <option key={status} value={status}>
@@ -274,7 +274,7 @@ export default function TeacherAttendancePage() {
                       }))
                     }
                     placeholder="Optional note"
-                    className="min-h-11 rounded-xl border border-slate-700 bg-slate-900 px-4 py-3 text-sm"
+                    className="min-h-11 rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)] px-4 py-3 text-sm"
                   />
                 </div>
               ))}
@@ -286,7 +286,7 @@ export default function TeacherAttendancePage() {
           type="button"
           onClick={save}
           disabled={saving || students.length === 0 || !classId}
-          className="rounded-xl bg-emerald-500 px-6 py-3 text-sm font-semibold text-slate-950 hover:bg-emerald-400 disabled:opacity-60"
+          className="rounded-xl bg-[var(--ll-yellow)] px-6 py-3 text-sm font-semibold text-[var(--ll-text-faint)] hover:bg-[var(--ll-yellow-soft)] disabled:opacity-60"
         >
           {saving ? "Saving..." : "Save Attendance"}
         </button>

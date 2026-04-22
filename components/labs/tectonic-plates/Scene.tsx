@@ -217,8 +217,8 @@ export default function TectonicPlatesScene({ state, onAction }: Props) {
 
   return (
     <div className="space-y-4 p-4">
-      <canvas ref={canvasRef} width={WIDTH} height={HEIGHT} className="w-full rounded-lg border border-slate-800 bg-slate-950" />
-      <div className="grid gap-2 text-sm text-slate-100 sm:grid-cols-2 lg:grid-cols-3">
+      <canvas ref={canvasRef} width={WIDTH} height={HEIGHT} className="w-full rounded-lg border border-[var(--ll-border)] bg-[var(--ll-bg)]" />
+      <div className="grid gap-2 text-sm text-[var(--ll-text)] sm:grid-cols-2 lg:grid-cols-3">
         <span>Plate 1: {state.plate1Speed.toFixed(1)} cm/yr</span>
         <span>Plate 2: {state.plate2Speed.toFixed(1)} cm/yr</span>
         <span>Boundary: {state.boundaryType}</span>
@@ -226,9 +226,9 @@ export default function TectonicPlatesScene({ state, onAction }: Props) {
         <span style={{ color: riskColor(state.earthquakeRisk) }}>Risk: {state.earthquakeRisk.toUpperCase()}</span>
         <span>Last Event: {state.lastEvent}</span>
       </div>
-      <div className="rounded-lg border border-slate-800 bg-slate-900/70 p-3 text-sm text-slate-100">
-        <p className="font-semibold text-slate-50">Event Log</p>
-        {eventLog.length === 0 ? <p className="mt-2 text-slate-400">No events yet.</p> : null}
+      <div className="rounded-lg border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 p-3 text-sm text-[var(--ll-text)]">
+        <p className="font-semibold text-[var(--ll-text)]">Event Log</p>
+        {eventLog.length === 0 ? <p className="mt-2 text-[var(--ll-text-muted)]">No events yet.</p> : null}
         {eventLog.map((entry, index) => (
           <p key={`${entry.time}-${entry.event}-${index}`} className="mt-1">
             T={entry.time.toFixed(1)} {entry.event === "earthquake" ? "Earthquake" : "Eruption"} (pressure reset to {entry.pressure.toFixed(0)})
@@ -241,21 +241,21 @@ export default function TectonicPlatesScene({ state, onAction }: Props) {
             key={boundary}
             type="button"
             onClick={() => onAction({ type: "SET_BOUNDARY_TYPE", value: boundary })}
-            className={`min-h-11 rounded-full px-4 text-sm font-semibold ${state.boundaryType === boundary ? "bg-cyan-300 text-slate-950" : "border border-slate-700 text-slate-100"}`}
+            className={`min-h-11 rounded-full px-4 text-sm font-semibold ${state.boundaryType === boundary ? "bg-[var(--ll-silver-soft)] text-[var(--ll-text-faint)]" : "border border-[var(--ll-border)] text-[var(--ll-text)]"}`}
           >
             {boundary[0].toUpperCase() + boundary.slice(1)}
           </button>
         ))}
-        <button type="button" onClick={() => onAction({ type: "TRIGGER_EARTHQUAKE" })} className="min-h-11 rounded-full border border-slate-700 px-4 text-sm text-slate-100">
+        <button type="button" onClick={() => onAction({ type: "TRIGGER_EARTHQUAKE" })} className="min-h-11 rounded-full border border-[var(--ll-border)] px-4 text-sm text-[var(--ll-text)]">
           Trigger Earthquake
         </button>
-        <button type="button" onClick={() => onAction({ type: "TRIGGER_ERUPTION" })} className="min-h-11 rounded-full border border-slate-700 px-4 text-sm text-slate-100">
+        <button type="button" onClick={() => onAction({ type: "TRIGGER_ERUPTION" })} className="min-h-11 rounded-full border border-[var(--ll-border)] px-4 text-sm text-[var(--ll-text)]">
           Trigger Eruption
         </button>
-        <button type="button" onClick={() => onAction({ type: state.paused ? "PLAY" : "PAUSE" })} className="min-h-11 rounded-full border border-slate-700 px-4 text-sm text-slate-100">
+        <button type="button" onClick={() => onAction({ type: state.paused ? "PLAY" : "PAUSE" })} className="min-h-11 rounded-full border border-[var(--ll-border)] px-4 text-sm text-[var(--ll-text)]">
           {state.paused ? "Play" : "Pause"}
         </button>
-        <button type="button" onClick={() => onAction({ type: "RESET" })} className="min-h-11 rounded-full border border-slate-700 px-4 text-sm text-slate-100">
+        <button type="button" onClick={() => onAction({ type: "RESET" })} className="min-h-11 rounded-full border border-[var(--ll-border)] px-4 text-sm text-[var(--ll-text)]">
           Reset
         </button>
       </div>
@@ -264,7 +264,7 @@ export default function TectonicPlatesScene({ state, onAction }: Props) {
           ["Plate 1 Speed", "SET_PLATE1_SPEED", state.plate1Speed],
           ["Plate 2 Speed", "SET_PLATE2_SPEED", state.plate2Speed],
         ].map(([label, type, value]) => (
-          <label key={String(type)} className="rounded-lg border border-slate-800 bg-slate-900/70 p-3 text-sm text-slate-100">
+          <label key={String(type)} className="rounded-lg border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 p-3 text-sm text-[var(--ll-text)]">
             <span className="flex justify-between">{label}<strong>{Number(value).toFixed(1)} cm/yr</strong></span>
             <input
               type="range"

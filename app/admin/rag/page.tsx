@@ -15,7 +15,7 @@ export default async function AdminRagPage() {
   }
 
   return (
-    <main className="min-h-screen bg-[#f5f7fb] px-6 py-10 text-slate-950">
+    <main className="min-h-screen bg-[#f5f7fb] px-6 py-10 text-[var(--ll-text-faint)]">
       <GroundedQueryConsole />
     </main>
   );

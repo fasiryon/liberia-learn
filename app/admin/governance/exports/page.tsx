@@ -58,7 +58,7 @@ export default async function GovernanceExportsPage() {
       csvUrl: `/api/admin/governance/exports/student-performance${schoolScope}&format=csv`,
       jsonUrl: `/api/admin/governance/exports/student-performance${schoolScope}&format=json`,
       icon: "SP",
-      color: "bg-emerald-600",
+      color: "bg-[var(--ll-yellow-soft)]",
     },
     {
       title: "Class Summary",
@@ -67,7 +67,7 @@ export default async function GovernanceExportsPage() {
       csvUrl: `/api/admin/governance/exports/class-summary${schoolScope}&format=csv`,
       jsonUrl: `/api/admin/governance/exports/class-summary${schoolScope}&format=json`,
       icon: "CS",
-      color: "bg-blue-600",
+      color: "bg-[var(--ll-silver-soft)]",
     },
     {
       title: `This Month's Report (${yearMonth})`,
@@ -81,21 +81,21 @@ export default async function GovernanceExportsPage() {
   ];
 
   return (
-    <main className="min-h-screen bg-slate-950 text-slate-50">
+    <main className="min-h-screen bg-[var(--ll-bg)] text-[var(--ll-text)]">
       <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_top,_#3b82f622,_transparent_60%)]" />
       <div className="mx-auto max-w-4xl px-4 py-6">
         <header className="mb-6 flex items-center gap-4">
           <Link
             href="/admin"
-            className="rounded-full border border-slate-700 px-3 py-1.5 text-xs hover:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-500"
+            className="rounded-full border border-[var(--ll-border)] px-3 py-1.5 text-xs hover:bg-[var(--ll-bg)] focus:outline-none focus:ring-2 focus:ring-slate-500"
             aria-label="Back to Admin Console"
           >
             Back
           </Link>
           <div>
-            <p className="mb-0.5 text-xs uppercase tracking-wide text-emerald-300">Governance</p>
+            <p className="mb-0.5 text-xs uppercase tracking-wide text-[var(--ll-yellow)]">Governance</p>
             <h1 className="text-2xl font-bold">Data Downloads</h1>
-            <p className="mt-0.5 text-xs text-slate-400">
+            <p className="mt-0.5 text-xs text-[var(--ll-text-muted)]">
               Download safe reports for your school. No student names are included -
               only totals and percentages.
             </p>
@@ -105,7 +105,7 @@ export default async function GovernanceExportsPage() {
         {circuitOpen ? (
           <div
             role="alert"
-            className="mb-6 rounded-2xl border border-red-700/40 bg-red-900/20 p-4 text-sm text-red-300"
+            className="mb-6 rounded-xl border border-red-700/40 bg-red-900/20 p-4 text-sm text-red-300"
           >
             Data downloads are temporarily disabled by the system administrator.
             Please try again later or contact support.
@@ -116,7 +116,7 @@ export default async function GovernanceExportsPage() {
           {downloads.map((download) => (
             <div
               key={download.title}
-              className="rounded-2xl border border-slate-800 bg-slate-900/80 p-5"
+              className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/80 p-5"
             >
               <div className="flex items-start gap-4">
                 <div
@@ -127,24 +127,24 @@ export default async function GovernanceExportsPage() {
                 </div>
                 <div className="min-w-0 flex-1">
                   <h2 className="mb-1 text-base font-semibold">{download.title}</h2>
-                  <p className="mb-4 text-sm text-slate-400">{download.description}</p>
+                  <p className="mb-4 text-sm text-[var(--ll-text-muted)]">{download.description}</p>
                   {exportsEnabled ? (
                     <div className="flex flex-wrap gap-2">
                       <a
                         href={download.csvUrl}
-                        className="rounded-xl bg-emerald-600 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-400"
+                        className="rounded-xl bg-[var(--ll-yellow-soft)] px-4 py-2 text-sm font-semibold text-[var(--ll-text)] hover:bg-[var(--ll-yellow)] focus:outline-none focus:ring-2 focus:ring-emerald-400"
                       >
                         Spreadsheet (CSV)
                       </a>
                       <a
                         href={download.jsonUrl}
-                        className="rounded-xl border border-slate-700 px-4 py-2 text-sm text-slate-300 hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-500"
+                        className="rounded-xl border border-[var(--ll-border)] px-4 py-2 text-sm text-[var(--ll-text)] hover:bg-[var(--ll-surface)] focus:outline-none focus:ring-2 focus:ring-slate-500"
                       >
                         JSON
                       </a>
                     </div>
                   ) : (
-                    <p className="text-xs italic text-slate-500">Downloads are currently disabled.</p>
+                    <p className="text-xs italic text-[var(--ll-text-faint)]">Downloads are currently disabled.</p>
                   )}
                 </div>
               </div>
@@ -153,30 +153,30 @@ export default async function GovernanceExportsPage() {
         </section>
 
         {isPlatformAdmin ? (
-          <section className="mb-8 rounded-2xl border border-amber-800/40 bg-amber-900/10 p-5">
-            <h2 className="mb-2 text-base font-semibold text-amber-300">
+          <section className="mb-8 rounded-xl border border-amber-800/40 bg-[var(--ll-yellow-soft)] p-5">
+            <h2 className="mb-2 text-base font-semibold text-[var(--ll-yellow)]">
               National Aggregates (Platform Admin)
             </h2>
-            <p className="mb-4 text-sm text-slate-400">
+            <p className="mb-4 text-sm text-[var(--ll-text-muted)]">
               Download summary data across all schools. These exports are logged and audited.
             </p>
             {nationalEnabled ? (
               <div className="flex flex-wrap gap-2">
                 <a
                   href="/api/admin/governance/exports/student-performance?scope=national&format=csv"
-                  className="rounded-xl border border-amber-700 px-4 py-2 text-sm font-semibold text-amber-300 hover:bg-amber-900/40 focus:outline-none focus:ring-2 focus:ring-amber-500"
+                  className="rounded-xl border border-amber-700 px-4 py-2 text-sm font-semibold text-[var(--ll-yellow)] hover:bg-[var(--ll-yellow-soft)] focus:outline-none focus:ring-2 focus:ring-amber-500"
                 >
                   National Performance (CSV)
                 </a>
                 <a
                   href={`/api/admin/governance/exports/monthly-report?scope=national&yearMonth=${yearMonth}&format=csv`}
-                  className="rounded-xl border border-amber-700 px-4 py-2 text-sm font-semibold text-amber-300 hover:bg-amber-900/40 focus:outline-none focus:ring-2 focus:ring-amber-500"
+                  className="rounded-xl border border-amber-700 px-4 py-2 text-sm font-semibold text-[var(--ll-yellow)] hover:bg-[var(--ll-yellow-soft)] focus:outline-none focus:ring-2 focus:ring-amber-500"
                 >
                   National Monthly Report (CSV)
                 </a>
               </div>
             ) : (
-              <p className="text-xs italic text-slate-500">
+              <p className="text-xs italic text-[var(--ll-text-faint)]">
                 National exports are currently disabled.
               </p>
             )}
@@ -185,27 +185,27 @@ export default async function GovernanceExportsPage() {
 
         <section>
           <h2 className="mb-2 text-base font-semibold">Recent Downloads</h2>
-          <p className="mb-3 text-xs text-slate-400">Your last 5 downloads are listed below.</p>
+          <p className="mb-3 text-xs text-[var(--ll-text-muted)]">Your last 5 downloads are listed below.</p>
           {recentExports.length === 0 ? (
-            <p className="text-sm text-slate-500">No downloads yet.</p>
+            <p className="text-sm text-[var(--ll-text-faint)]">No downloads yet.</p>
           ) : (
             <ul className="space-y-2">
               {recentExports.map((record) => (
                 <li
                   key={record.id}
-                  className="flex items-center gap-3 rounded-xl border border-slate-800 bg-slate-900/60 px-4 py-2.5 text-xs"
+                  className="flex items-center gap-3 rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/60 px-4 py-2.5 text-xs"
                 >
-                  <span className="whitespace-nowrap text-slate-400">
+                  <span className="whitespace-nowrap text-[var(--ll-text-muted)]">
                     {new Date(record.createdAt).toLocaleDateString("en-GB", {
                       day: "2-digit",
                       month: "short",
                       year: "numeric",
                     })}
                   </span>
-                  <span className="font-medium text-slate-200">
+                  <span className="font-medium text-[var(--ll-text)]">
                     {record.exportType.replace(/_/g, " ")}
                   </span>
-                  <span className="ml-auto uppercase text-slate-500">
+                  <span className="ml-auto uppercase text-[var(--ll-text-faint)]">
                     {record.format ?? "-"} | {record.scope}
                   </span>
                 </li>
@@ -215,14 +215,14 @@ export default async function GovernanceExportsPage() {
           <div className="mt-4 flex gap-4">
             <Link
               href="/admin/compliance"
-              className="text-xs text-emerald-400 hover:underline focus:outline-none focus:ring-2 focus:ring-emerald-500 rounded"
+              className="text-xs text-[var(--ll-yellow)] hover:underline focus:outline-none focus:ring-2 focus:ring-emerald-500 rounded"
             >
               View full audit log
             </Link>
             {isPlatformAdmin ? (
               <Link
                 href="/admin/governance"
-                className="text-xs text-emerald-400 hover:underline focus:outline-none focus:ring-2 focus:ring-emerald-500 rounded"
+                className="text-xs text-[var(--ll-yellow)] hover:underline focus:outline-none focus:ring-2 focus:ring-emerald-500 rounded"
               >
                 View governance dashboard
               </Link>

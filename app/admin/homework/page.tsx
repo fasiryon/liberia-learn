@@ -66,18 +66,18 @@ const r = await fetch(`/api/homework?classId=${encodeURIComponent(_classId)}`, {
   }, [classId]);
 
   return (
-    <main className="min-h-screen bg-[#070811] text-white">
+    <main className="min-h-screen bg-[#070811] text-[var(--ll-text)]">
       <div className="max-w-3xl mx-auto p-8">
         <h1 className="text-3xl font-bold">Homework</h1>
-        <p className="text-white/60 mt-1">Quick admin viewer (tenant-safe).</p>
+        <p className="text-[var(--ll-text)]/60 mt-1">Quick admin viewer (tenant-safe).</p>
 
-        <div className="mt-6 rounded-2xl border border-white/10 bg-white/5 p-5 space-y-3">
+        <div className="mt-6 rounded-xl border border-[var(--ll-border)] bg-white/5 p-5 space-y-3">
           <label className="grid gap-1">
-            <span className="text-sm text-white/80">Class</span>
+            <span className="text-sm text-[var(--ll-text)]/80">Class</span>
             <select
               value={classId}
               onChange={(e) => setClassId(e.target.value)}
-              className="rounded-xl bg-[#0b0d14] border border-white/10 px-3 py-2 outline-none focus:border-emerald-500"
+              className="rounded-xl bg-[#0b0d14] border border-[var(--ll-border)] px-3 py-2 outline-none focus:border-emerald-500"
             >
               {classes.map((c) => (
                 <option key={c.id} value={c.id}>
@@ -87,37 +87,37 @@ const r = await fetch(`/api/homework?classId=${encodeURIComponent(_classId)}`, {
             </select>
           </label>
 
-          <div className="text-xs text-white/60">
+          <div className="text-xs text-[var(--ll-text)]/60">
             Selected: {selectedClass ? `${selectedClass.name} (${selectedClass.subject})` : "--"}
           </div>
 
           <button
             onClick={() => loadHomework(classId)}
             disabled={busy || !classId}
-            className="rounded-xl bg-emerald-500 hover:bg-emerald-400 disabled:opacity-60 text-black font-semibold px-4 py-3"
+            className="rounded-xl bg-[var(--ll-yellow)] hover:bg-[var(--ll-yellow-soft)] disabled:opacity-60 text-black font-semibold px-4 py-3"
           >
             {busy ? "..." : "Refresh"}
           </button>
 
           {status && (
-            <div className="rounded-xl border border-white/10 bg-white/5 p-3 text-sm whitespace-pre-wrap">
+            <div className="rounded-xl border border-[var(--ll-border)] bg-white/5 p-3 text-sm whitespace-pre-wrap">
               {status}
             </div>
           )}
         </div>
 
-        <div className="mt-6 rounded-2xl border border-white/10 bg-white/5 p-5">
-          <div className="text-white/80 font-semibold mb-2">Latest homework</div>
+        <div className="mt-6 rounded-xl border border-[var(--ll-border)] bg-white/5 p-5">
+          <div className="text-[var(--ll-text)]/80 font-semibold mb-2">Latest homework</div>
 
           {rows.length === 0 ? (
-            <div className="text-white/60 text-sm">No homework yet.</div>
+            <div className="text-[var(--ll-text)]/60 text-sm">No homework yet.</div>
           ) : (
             <div className="space-y-2">
               {rows.map((h) => (
-                <div key={h.id} className="rounded-xl border border-white/10 bg-[#0b0d14] p-3 text-sm">
-                  <div className="text-white/90 font-semibold">{h.title}</div>
-                  {h.description && <div className="text-white/70 mt-1">desc: {h.description}</div>}
-                  <div className="text-white/60 text-xs mt-1">
+                <div key={h.id} className="rounded-xl border border-[var(--ll-border)] bg-[#0b0d14] p-3 text-sm">
+                  <div className="text-[var(--ll-text)]/90 font-semibold">{h.title}</div>
+                  {h.description && <div className="text-[var(--ll-text)]/70 mt-1">desc: {h.description}</div>}
+                  <div className="text-[var(--ll-text)]/60 text-xs mt-1">
                     id: {h.id} - due: {h.dueAt ? new Date(h.dueAt).toLocaleString() : "--"}
                   </div>
                 </div>
@@ -126,7 +126,7 @@ const r = await fetch(`/api/homework?classId=${encodeURIComponent(_classId)}`, {
           )}
         </div>
 
-        <div className="mt-6 text-xs text-white/60">
+        <div className="mt-6 text-xs text-[var(--ll-text)]/60">
           Tip: this page uses GET /api/homework?classId=... which verifies the class belongs to your tenant schoolId.
         </div>
       </div>

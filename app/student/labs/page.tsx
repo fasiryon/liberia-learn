@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { ChevronLeft } from "lucide-react";
 import { requireRole } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { labRegistry } from "@/lib/labs/registry";
@@ -20,22 +21,22 @@ const LAB_GROUPS: Array<{
 }> = [
   {
     subject: "Physics",
-    badgeCls: "border-[var(--ll-border)] bg-[var(--ll-accent-soft)] text-[var(--ll-text-muted)]",
+    badgeCls: "border-[var(--ll-yellow)]/30 bg-[var(--ll-yellow-soft)] text-[var(--ll-yellow)]",
     labs: ["gravity-explorer", "pendulum-lab", "electric-circuit", "wave-motion"],
   },
   {
     subject: "Biology",
-    badgeCls: "border-[var(--ll-border)] bg-[rgba(74,222,128,0.10)] text-[var(--ll-text-muted)]",
+    badgeCls: "border-[var(--ll-pink)]/30 bg-[var(--ll-pink-soft)] text-[var(--ll-pink)]",
     labs: ["human-heart", "cell-division", "ecosystem-balance"],
   },
   {
     subject: "Chemistry",
-    badgeCls: "border-[var(--ll-border)] bg-[rgba(251,146,60,0.10)] text-[var(--ll-text-muted)]",
+    badgeCls: "border-[var(--ll-silver)]/30 bg-[var(--ll-silver-soft)] text-[var(--ll-silver)]",
     labs: ["molecule-motion", "chemical-reaction", "periodic-table"],
   },
   {
     subject: "Earth Science",
-    badgeCls: "border-[var(--ll-border)] bg-[rgba(96,165,250,0.10)] text-[var(--ll-text-muted)]",
+    badgeCls: "border-[var(--ll-wood)]/30 bg-[rgba(200,149,106,0.11)] text-[var(--ll-wood)]",
     labs: ["weather-system", "tectonic-plates"],
   },
 ];
@@ -78,7 +79,10 @@ export default async function StudentLabsPage() {
         <div className="mx-auto max-w-6xl space-y-5">
           <div>
             <Link href="/student/dashboard" className="text-xs text-[var(--ll-text-faint)] hover:text-[var(--ll-text-muted)]">
-              &larr; Back to Dashboard
+              <span className="inline-flex items-center gap-1">
+                <ChevronLeft size={14} />
+                Back to Dashboard
+              </span>
             </Link>
             <h1 className="mt-3 text-2xl font-semibold text-[var(--ll-text)]">Student Labs</h1>
             <p className="mt-1 max-w-2xl text-sm leading-6 text-[var(--ll-text-muted)]">
@@ -130,7 +134,7 @@ export default async function StudentLabsPage() {
                         <p className="mt-3 flex-1 text-sm leading-6 text-[var(--ll-text-muted)]">{lab.description}</p>
                         <Link
                           href={`/student/labs/${lab.id}`}
-                          className="mt-5 inline-flex min-h-11 items-center justify-center rounded-lg bg-[var(--ll-accent)] px-4 py-2 text-sm font-semibold text-slate-950 hover:opacity-90"
+                          className="mt-5 inline-flex min-h-11 items-center justify-center rounded-lg bg-[var(--ll-accent)] px-4 py-2 text-sm font-semibold text-[var(--ll-text-faint)] hover:opacity-90"
                         >
                           Open Lab
                         </Link>
@@ -181,7 +185,7 @@ export default async function StudentLabsPage() {
 
                     <Link
                       href={`/student/labs/${lab.labId}`}
-                      className="mt-4 inline-flex rounded-lg bg-[var(--ll-accent)] px-4 py-2 text-sm font-semibold text-slate-950 hover:opacity-90"
+                      className="mt-4 inline-flex rounded-lg bg-[var(--ll-accent)] px-4 py-2 text-sm font-semibold text-[var(--ll-text-faint)] hover:opacity-90"
                     >
                       {session.completedAt ? "Review Lab" : "Start Lab"}
                     </Link>

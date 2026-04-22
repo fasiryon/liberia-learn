@@ -74,12 +74,12 @@ export default function NewHomeworkForm({ classes }: { classes: ClassOption[] })
       )}
 
       <div className="space-y-1">
-        <label className="text-sm font-medium text-slate-200">
+        <label className="text-sm font-medium text-[var(--ll-text)]">
           Class
         </label>
         <select
           name="classId"
-          className="w-full rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 text-sm text-slate-50"
+          className="w-full rounded-lg border border-[var(--ll-border)] bg-[var(--ll-bg)] px-3 py-2 text-sm text-[var(--ll-text)]"
         >
           {classes.map((c) => (
             <option key={c.id} value={c.id}>
@@ -90,37 +90,37 @@ export default function NewHomeworkForm({ classes }: { classes: ClassOption[] })
       </div>
 
       <div className="space-y-1">
-        <label className="text-sm font-medium text-slate-200">
+        <label className="text-sm font-medium text-[var(--ll-text)]">
           Title
         </label>
         <input
           name="title"
           required
-          className="w-full rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 text-sm text-slate-50"
+          className="w-full rounded-lg border border-[var(--ll-border)] bg-[var(--ll-bg)] px-3 py-2 text-sm text-[var(--ll-text)]"
           placeholder="Homework 1 – Fractions practice"
         />
       </div>
 
       <div className="space-y-1">
-        <label className="text-sm font-medium text-slate-200">
+        <label className="text-sm font-medium text-[var(--ll-text)]">
           Instructions
         </label>
         <textarea
           name="instructions"
           rows={3}
-          className="w-full rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 text-sm text-slate-50"
+          className="w-full rounded-lg border border-[var(--ll-border)] bg-[var(--ll-bg)] px-3 py-2 text-sm text-[var(--ll-text)]"
           placeholder="Explain to students what to do..."
         />
       </div>
 
       <div className="space-y-1">
-        <label className="text-sm font-medium text-slate-200">
+        <label className="text-sm font-medium text-[var(--ll-text)]">
           Questions (one per line)
         </label>
         <textarea
           name="questions"
           rows={6}
-          className="w-full rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 text-sm text-slate-50"
+          className="w-full rounded-lg border border-[var(--ll-border)] bg-[var(--ll-bg)] px-3 py-2 text-sm text-[var(--ll-text)]"
           placeholder={`Example:
 1) What is 3/4 + 1/2 ?
 2) Explain in your own words what a fraction is.`}
@@ -128,20 +128,20 @@ export default function NewHomeworkForm({ classes }: { classes: ClassOption[] })
       </div>
 
       <div className="space-y-1">
-        <label className="text-sm font-medium text-slate-200">
+        <label className="text-sm font-medium text-[var(--ll-text)]">
           Due date (optional)
         </label>
         <input
           type="date"
           name="dueAt"
-          className="w-full rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 text-sm text-slate-50"
+          className="w-full rounded-lg border border-[var(--ll-border)] bg-[var(--ll-bg)] px-3 py-2 text-sm text-[var(--ll-text)]"
         />
       </div>
 
       <button
         type="submit"
         disabled={submitting}
-        className="rounded-lg bg-emerald-500 px-4 py-2 text-sm font-semibold text-slate-900 hover:bg-emerald-400 disabled:opacity-60"
+        className="rounded-lg bg-[var(--ll-yellow)] px-4 py-2 text-sm font-semibold text-[var(--ll-text-faint)] hover:bg-[var(--ll-yellow-soft)] disabled:opacity-60"
       >
         {submitting ? "Creating..." : "Create Homework"}
       </button>

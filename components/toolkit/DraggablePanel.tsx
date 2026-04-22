@@ -109,11 +109,11 @@ export default function DraggablePanel({
       aria-label={a11yLabel}
       tabIndex={-1}
       onMouseDown={() => setZIndex(++nextZ)}
-      className="fixed w-[min(92vw,440px)] rounded-xl border border-slate-700 bg-slate-950 text-slate-100 shadow-2xl"
+      className="fixed w-[min(92vw,440px)] rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)] text-[var(--ll-text)] shadow-none"
       style={{ left: position.x, top: position.y, zIndex }}
     >
       <header
-        className="flex cursor-move items-center justify-between rounded-t-xl border-b border-slate-700 bg-slate-900 px-3 py-2"
+        className="flex cursor-move items-center justify-between rounded-t-xl border-b border-[var(--ll-border)] bg-[var(--ll-bg)] px-3 py-2"
         onMouseDown={(event) => {
           event.preventDefault();
           setZIndex(++nextZ);
@@ -131,7 +131,7 @@ export default function DraggablePanel({
           <button
             type="button"
             aria-label={`Minimize ${title}`}
-            className="rounded border border-slate-600 px-2 py-1 text-xs"
+            className="rounded border border-[var(--ll-border)] px-2 py-1 text-xs"
             onClick={() => {
               setMinimized((v) => !v);
               onMinimize?.();
@@ -142,7 +142,7 @@ export default function DraggablePanel({
           <button
             type="button"
             aria-label={`Close ${title}`}
-            className="rounded border border-rose-500 px-2 py-1 text-xs text-rose-300"
+            className="rounded border border-rose-500 px-2 py-1 text-xs text-[var(--ll-danger)]"
             onClick={onClose}
           >
             Close

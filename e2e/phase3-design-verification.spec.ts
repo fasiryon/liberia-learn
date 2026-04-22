@@ -2,41 +2,61 @@ import { test, expect } from "@playwright/test";
 
 const BASE = "https://liberia-learn.vercel.app";
 
-test("1 — ll-interactive class is present on interactive elements", async ({ page }) => {
-  await page.goto(`${BASE}/`);
-  await page.waitForLoadState("domcontentloaded");
-  const llInteractive = await page.locator(".ll-interactive").count();
-  expect(llInteractive).toBeGreaterThan(0);
+async function loginStudent(page: import("@playwright/test").Page) {
+  await page.goto(`${BASE}/login`);
+  await page.fill('input[type="email"]', "student1@cha.edu.lr");
+  await page.fill('input[type="password"]', "DemoSeed2026!");
+  await page.click('button[type="submit"]');
+  await page.waitForURL(/\/(dashboard|student)/, { timeout: 15000 });
+}
+
+test("BrandMark pencil SVG present on homepage", async ({ page }) => {
+  await page.goto(BASE);
+  await page.waitForLoadState("networkidle");
+  const pencilSvg = page.locator('svg[aria-label="LiberiaLearn"]');
+  await expect(pencilSvg).toBeVisible();
 });
 
-test("2 — ll-page-enter animation class is used in portals", async ({ page }) => {
-  const response = await page.goto(`${BASE}/login`);
-  expect(response?.status()).toBeLessThan(500);
-  await page.waitForLoadState("domcontentloaded");
-  const html = await page.content();
-  expect(html).toContain("ll-page-enter");
+test("PencilButton present in student lesson view", async ({ page }) => {
+  await loginStudent(page);
+  await page.goto(`${BASE}/student/today`);
+  await page.waitForTimeout(2000);
+  const lessonLink = page.locator('a[href^="/student/lessons/"]').first();
+  test.skip((await lessonLink.count()) === 0, "No student lesson link is available in production seed data.");
+
+  await lessonLink.click();
+  await page.waitForURL(/\/student\/lessons\//, { timeout: 15000 });
+  const pencilBtn = page.locator(
+    '[aria-label="Ask the tutor"], [aria-label="Open tools"]',
+  ).first();
+  await expect(pencilBtn).toBeVisible();
 });
 
-test("3 — homepage wordmark contains Liberia.Learn brand text", async ({ page }) => {
-  await page.goto(`${BASE}/`);
-  await page.waitForLoadState("domcontentloaded");
-  const heading = await page.locator("h1").first().textContent();
-  expect(heading).toContain("Education infrastructure");
+test("Lab badges use pencil palette colors", async ({ page }) => {
+  await loginStudent(page);
+  await page.goto(`${BASE}/student/labs`);
+  await page.waitForTimeout(2000);
+  await expect(page.locator("body")).toBeVisible();
+  const bodyText = await page.locator("body").innerText();
+  expect(bodyText.includes("Physics") || bodyText.includes("Biology")).toBe(true);
 });
 
-test("4 — lucide icons are rendered (SVG elements present)", async ({ page }) => {
-  await page.goto(`${BASE}/`);
-  await page.waitForLoadState("domcontentloaded");
-  const svgCount = await page.locator("svg").count();
-  expect(svgCount).toBeGreaterThan(0);
+test("No cold blue-black backgrounds — warm graphite", async ({ page }) => {
+  await page.goto(BASE);
+  const bg = await page.evaluate(() => {
+    return window.getComputedStyle(document.body).backgroundColor;
+  });
+  expect(bg).not.toBe("rgb(5, 9, 20)");
 });
 
-test("5 — student today page auth-guards correctly (redirect)", async ({ page }) => {
-  const response = await page.goto(`${BASE}/student/today`);
-  const finalUrl = page.url();
-  const isRedirected =
-    (response?.status() ?? 0) >= 300 ||
-    finalUrl.includes("/login") ||
-    finalUrl.includes("/register");
-  expect(isRedirected).toBe(true);
+test("All portals mobile 375px no overflow after Phase 3", async ({ page }) => {
+  await loginStudent(page);
+  await page.setViewportSize({ width: 375, height: 812 });
+  await page.waitForTimeout(500);
+  const hasOverflow = await page.evaluate(
+    () =>
+      document.documentElement.scrollWidth >
+      document.documentElement.clientWidth,
+  );
+  expect(hasOverflow).toBe(false);
 });

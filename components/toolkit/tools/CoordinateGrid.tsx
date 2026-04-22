@@ -36,31 +36,31 @@ export default function CoordinateGrid({ onClose }: CoordinateGridProps) {
     <div className="space-y-3 text-sm">
       <div className="flex items-center justify-between">
         <h3 className="font-semibold">Coordinate Grid</h3>
-        <button type="button" aria-label="Close coordinate grid" className="rounded border border-slate-600 px-2 py-1 text-xs" onClick={() => onClose?.()}>Close</button>
+        <button type="button" aria-label="Close coordinate grid" className="rounded border border-[var(--ll-border)] px-2 py-1 text-xs" onClick={() => onClose?.()}>Close</button>
       </div>
 
       <div className="flex flex-wrap items-center gap-2 text-xs">
         <label>
           Range
-          <input aria-label="Grid range" type="number" className="ml-1 w-16 rounded bg-slate-900 p-1" value={range} onChange={(e) => setRange(Math.max(2, Number(e.target.value || 10)))} />
+          <input aria-label="Grid range" type="number" className="ml-1 w-16 rounded bg-[var(--ll-bg)] p-1" value={range} onChange={(e) => setRange(Math.max(2, Number(e.target.value || 10)))} />
         </label>
         <label>
           X
-          <input aria-label="Manual X coordinate" type="number" className="ml-1 w-16 rounded bg-slate-900 p-1" value={inputX} onChange={(e) => setInputX(e.target.value)} />
+          <input aria-label="Manual X coordinate" type="number" className="ml-1 w-16 rounded bg-[var(--ll-bg)] p-1" value={inputX} onChange={(e) => setInputX(e.target.value)} />
         </label>
         <label>
           Y
-          <input aria-label="Manual Y coordinate" type="number" className="ml-1 w-16 rounded bg-slate-900 p-1" value={inputY} onChange={(e) => setInputY(e.target.value)} />
+          <input aria-label="Manual Y coordinate" type="number" className="ml-1 w-16 rounded bg-[var(--ll-bg)] p-1" value={inputY} onChange={(e) => setInputY(e.target.value)} />
         </label>
-        <button type="button" aria-label="Add manual point" className="rounded border border-slate-600 px-2 py-1" onClick={() => addPoint(Number(inputX), Number(inputY))}>Plot</button>
-        <button type="button" aria-label="Toggle connect points" className="rounded border border-slate-600 px-2 py-1" onClick={() => setConnect((v) => !v)}>{connect ? "Lines ON" : "Lines OFF"}</button>
+        <button type="button" aria-label="Add manual point" className="rounded border border-[var(--ll-border)] px-2 py-1" onClick={() => addPoint(Number(inputX), Number(inputY))}>Plot</button>
+        <button type="button" aria-label="Toggle connect points" className="rounded border border-[var(--ll-border)] px-2 py-1" onClick={() => setConnect((v) => !v)}>{connect ? "Lines ON" : "Lines OFF"}</button>
         <button type="button" aria-label="Clear points" className="rounded border border-rose-600 px-2 py-1" onClick={() => setPoints([])}>Clear</button>
       </div>
 
       <svg
         aria-label="Coordinate grid"
         viewBox="0 0 320 320"
-        className="w-full rounded bg-slate-900"
+        className="w-full rounded bg-[var(--ll-bg)]"
         onClick={(e) => {
           const rect = e.currentTarget.getBoundingClientRect();
           const x = fromCanvas(e.clientX - rect.left);

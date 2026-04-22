@@ -23,14 +23,14 @@ export default async function EnrollmentStatusPage({
 
   if (!limit.allowed) {
     return (
-      <main className="min-h-screen bg-slate-950 px-4 py-8 text-slate-50">
-        <section className="mx-auto max-w-2xl rounded-3xl border border-white/10 bg-slate-900/80 p-6 shadow-xl shadow-black/30">
-          <Link href="/enroll" className="text-sm font-semibold text-emerald-300 hover:text-emerald-200">
+      <main className="min-h-screen bg-[var(--ll-bg)] px-4 py-8 text-[var(--ll-text)]">
+        <section className="mx-auto max-w-2xl rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/80 p-6 shadow-none shadow-black/30">
+          <Link href="/enroll" className="text-sm font-semibold text-[var(--ll-yellow)] hover:text-[var(--ll-yellow)]">
             Back to enrollment
           </Link>
           <div className="mt-6 space-y-3">
-            <h1 className="text-2xl font-bold text-white">Too many requests</h1>
-            <p className="text-sm leading-6 text-slate-300">
+            <h1 className="text-2xl font-bold text-[var(--ll-text)]">Too many requests</h1>
+            <p className="text-sm leading-6 text-[var(--ll-text)]">
               Please wait before checking again.
             </p>
           </div>
@@ -52,45 +52,45 @@ export default async function EnrollmentStatusPage({
     : null;
 
   return (
-    <main className="min-h-screen bg-slate-950 px-4 py-8 text-slate-50">
-      <section className="mx-auto max-w-2xl rounded-3xl border border-white/10 bg-slate-900/80 p-6 shadow-xl shadow-black/30">
-        <Link href="/enroll" className="text-sm font-semibold text-emerald-300 hover:text-emerald-200">
+    <main className="min-h-screen bg-[var(--ll-bg)] px-4 py-8 text-[var(--ll-text)]">
+      <section className="mx-auto max-w-2xl rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/80 p-6 shadow-none shadow-black/30">
+        <Link href="/enroll" className="text-sm font-semibold text-[var(--ll-yellow)] hover:text-[var(--ll-yellow)]">
           Back to enrollment
         </Link>
 
         {!school ? (
           <div className="mt-6 space-y-3">
-            <h1 className="text-2xl font-bold text-white">Application not found</h1>
-            <p className="text-sm leading-6 text-slate-300">
+            <h1 className="text-2xl font-bold text-[var(--ll-text)]">Application not found</h1>
+            <p className="text-sm leading-6 text-[var(--ll-text)]">
               Enter the same principal email used on the enrollment form to check status.
             </p>
           </div>
         ) : (
           <div className="mt-6 space-y-5">
             <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-emerald-300">
+              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--ll-yellow)]">
                 School enrollment status
               </p>
-              <h1 className="mt-2 text-2xl font-bold text-white">
+              <h1 className="mt-2 text-2xl font-bold text-[var(--ll-text)]">
                 Your application for {school.name} has been received.
               </h1>
             </div>
 
-            <div className="rounded-2xl border border-white/10 bg-slate-950/70 p-4">
-              <p className="text-xs text-slate-400">Status</p>
-              <p className="mt-1 text-xl font-semibold text-emerald-300">{school.status}</p>
-              <p className="mt-3 text-sm text-slate-300">Expected review time: 2-3 business days</p>
-              <p className="mt-1 text-sm text-slate-300">Questions: support@liberialearn.org</p>
+            <div className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 p-4">
+              <p className="text-xs text-[var(--ll-text-muted)]">Status</p>
+              <p className="mt-1 text-xl font-semibold text-[var(--ll-yellow)]">{school.status}</p>
+              <p className="mt-3 text-sm text-[var(--ll-text)]">Expected review time: 2-3 business days</p>
+              <p className="mt-1 text-sm text-[var(--ll-text)]">Questions: support@liberialearn.org</p>
             </div>
 
             {school.status === "ACTIVE" ? (
-              <div className="rounded-2xl border border-emerald-400/30 bg-emerald-500/10 p-4">
-                <p className="text-sm text-slate-100">
+              <div className="rounded-xl border border-emerald-400/30 bg-[var(--ll-yellow)]/10 p-4">
+                <p className="text-sm text-[var(--ll-text)]">
                   Your school has been approved. Check your email for login details and your school code.
                 </p>
                 <Link
                   href="/login"
-                  className="mt-4 inline-flex rounded-2xl bg-emerald-400 px-5 py-3 text-sm font-bold text-slate-950"
+                  className="mt-4 inline-flex rounded-xl bg-[var(--ll-yellow-soft)] px-5 py-3 text-sm font-bold text-[var(--ll-text-faint)]"
                 >
                   Go to login
                 </Link>
@@ -98,7 +98,7 @@ export default async function EnrollmentStatusPage({
             ) : null}
 
             {school.status === "REJECTED" ? (
-              <div className="rounded-2xl border border-red-400/30 bg-red-500/10 p-4 text-sm text-red-100">
+              <div className="rounded-xl border border-red-400/30 bg-red-500/10 p-4 text-sm text-red-100">
                 Your application was not approved. Contact support@liberialearn.org for details.
               </div>
             ) : null}

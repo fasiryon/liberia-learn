@@ -92,7 +92,7 @@ export default async function ClassStudentsPage({
   });
 
   return (
-    <main className="min-h-screen bg-slate-950 text-slate-50">
+    <main className="min-h-screen bg-[var(--ll-bg)] text-[var(--ll-text)]">
       <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_top,_#3b82f622,_transparent_60%)]" />
 
       <div className="mx-auto max-w-6xl px-4 py-6">
@@ -101,7 +101,7 @@ export default async function ClassStudentsPage({
           <div>
             <Link
               href="/teacher"
-              className="inline-block text-xs text-emerald-300 hover:underline mb-2"
+              className="inline-block text-xs text-[var(--ll-yellow)] hover:underline mb-2"
             >
               ← Back to teacher dashboard
             </Link>
@@ -109,17 +109,17 @@ export default async function ClassStudentsPage({
             <h1 className="text-2xl md:text-3xl font-bold">
               {cls.name} • Students
             </h1>
-            <p className="mt-1 text-xs text-slate-400">
+            <p className="mt-1 text-xs text-[var(--ll-text-muted)]">
               {cls.School?.name || "School"} · Subject: {cls.subject}
             </p>
           </div>
 
-          <div className="rounded-2xl border border-slate-800 bg-slate-900/80 px-4 py-2 text-xs text-right">
-            <p className="text-slate-400">Total students</p>
-            <p className="text-xl font-semibold text-emerald-300">
+          <div className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/80 px-4 py-2 text-xs text-right">
+            <p className="text-[var(--ll-text-muted)]">Total students</p>
+            <p className="text-xl font-semibold text-[var(--ll-yellow)]">
               {students.length}
             </p>
-            <p className="text-[11px] text-slate-500">
+            <p className="text-[11px] text-[var(--ll-text-faint)]">
               Homework assigned: {cls.homework.length}
             </p>
           </div>
@@ -127,7 +127,7 @@ export default async function ClassStudentsPage({
 
         {/* Students list */}
         {students.length === 0 ? (
-          <div className="rounded-2xl border border-slate-800 bg-slate-900/80 p-10 text-center text-sm text-slate-400">
+          <div className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/80 p-10 text-center text-sm text-[var(--ll-text-muted)]">
             No students enrolled in this class yet.
           </div>
         ) : (
@@ -136,35 +136,35 @@ export default async function ClassStudentsPage({
               <Link
                 key={s.id}
                 href={`/teacher/student/${s.id}`}
-                className="block rounded-2xl border border-slate-800 bg-slate-900/80 px-4 py-3 hover:border-emerald-500/50 transition-colors"
+                className="block rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/80 px-4 py-3 hover:border-emerald-500/50 transition-colors"
               >
                 <div className="flex items-center justify-between gap-4">
                   <div>
-                    <p className="text-sm font-semibold text-slate-50">
+                    <p className="text-sm font-semibold text-[var(--ll-text)]">
                       {s.name}
                     </p>
-                    <p className="text-xs text-slate-400">
+                    <p className="text-xs text-[var(--ll-text-muted)]">
                       {s.community}, {s.county}
                     </p>
                     {s.email && (
-                      <p className="text-[11px] text-slate-500 mt-1">
+                      <p className="text-[11px] text-[var(--ll-text-faint)] mt-1">
                         {s.email}
                       </p>
                     )}
                   </div>
 
                   <div className="text-right text-xs">
-                    <p className="text-slate-400 mb-1">Average grade</p>
-                    <p className="text-lg font-semibold text-emerald-300">
+                    <p className="text-[var(--ll-text-muted)] mb-1">Average grade</p>
+                    <p className="text-lg font-semibold text-[var(--ll-yellow)]">
                       {s.avgGrade !== null ? `${s.avgGrade.toFixed(1)}%` : "—"}
                     </p>
                     {s.lastUpdated && (
-                      <p className="text-[11px] text-slate-500">
+                      <p className="text-[11px] text-[var(--ll-text-faint)]">
                         Updated{" "}
                         {new Date(s.lastUpdated).toLocaleDateString()}
                       </p>
                     )}
-                    <p className="mt-1 text-[11px] text-emerald-300">
+                    <p className="mt-1 text-[11px] text-[var(--ll-yellow)]">
                       View full profile →
                     </p>
                   </div>

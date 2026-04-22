@@ -22,15 +22,15 @@ export default function PeriodicTableFallback({
   const selected = state.selectedElement ? getElementBySymbol(state.selectedElement) : null;
 
   return (
-    <div className="space-y-4 rounded-lg border border-slate-800 bg-slate-950 p-4 text-slate-100">
+    <div className="space-y-4 rounded-lg border border-[var(--ll-border)] bg-[var(--ll-bg)] p-4 text-[var(--ll-text)]">
       <input
         value={query}
         onChange={(event) => setQuery(event.target.value)}
         placeholder="Search by name or symbol"
-        className="min-h-11 w-full rounded-lg border border-slate-700 bg-slate-900 px-3 text-sm"
+        className="min-h-11 w-full rounded-lg border border-[var(--ll-border)] bg-[var(--ll-bg)] px-3 text-sm"
       />
       {selected ? (
-        <div className="rounded-lg border border-slate-800 bg-slate-900 p-3 text-sm">
+        <div className="rounded-lg border border-[var(--ll-border)] bg-[var(--ll-bg)] p-3 text-sm">
           <h3 className="text-lg font-semibold">{selected.name} ({selected.symbol})</h3>
           <p>Atomic number: {selected.atomicNumber}</p>
           <p>Atomic mass: {selected.atomicMass}</p>
@@ -42,11 +42,11 @@ export default function PeriodicTableFallback({
           <p>Electron configuration: {selected.electronConfig}</p>
         </div>
       ) : null}
-      <div className="max-h-80 overflow-y-auto rounded-lg border border-slate-800">
+      <div className="max-h-80 overflow-y-auto rounded-lg border border-[var(--ll-border)]">
         <table className="w-full text-left text-sm">
           <tbody>
             {matches.map((element) => (
-              <tr key={element.symbol} className="border-b border-slate-800">
+              <tr key={element.symbol} className="border-b border-[var(--ll-border)]">
                 <td className="p-2">{element.atomicNumber}</td>
                 <td className="p-2 font-semibold">{element.symbol}</td>
                 <td className="p-2">{element.name}</td>
@@ -54,7 +54,7 @@ export default function PeriodicTableFallback({
                   <button
                     type="button"
                     onClick={() => onAction({ type: "SELECT_ELEMENT", symbol: element.symbol })}
-                    className="min-h-9 rounded-full bg-cyan-300 px-3 text-xs font-semibold text-slate-950"
+                    className="min-h-9 rounded-full bg-[var(--ll-silver-soft)] px-3 text-xs font-semibold text-[var(--ll-text-faint)]"
                   >
                     Select
                   </button>

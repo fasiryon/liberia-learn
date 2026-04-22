@@ -133,32 +133,32 @@ export default function AdminAssignmentsPage() {
   }
 
   return (
-    <main className="min-h-screen bg-slate-950 text-slate-50">
+    <main className="min-h-screen bg-[var(--ll-bg)] text-[var(--ll-text)]">
       <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_top,_#10b98122,_transparent_60%)]" />
       <div className="mx-auto max-w-6xl space-y-6 px-4 py-6">
         <header>
-          <Link href="/admin" className="text-xs text-emerald-300 hover:text-emerald-200">
+          <Link href="/admin" className="text-xs text-[var(--ll-yellow)] hover:text-[var(--ll-yellow)]">
             Back to Admin Console
           </Link>
           <h1 className="mt-2 text-2xl font-bold">Teacher Assignments</h1>
-          <p className="text-sm text-slate-400">
+          <p className="text-sm text-[var(--ll-text-muted)]">
             Control which teacher owns each class and subject workflow.
           </p>
         </header>
 
         <AdminNav />
 
-        <section className="rounded-2xl border border-white/10 bg-slate-900/70 p-6">
+        <section className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 p-6">
           <h2 className="text-lg font-semibold">
             {editingId ? "Update assignment" : "Create assignment"}
           </h2>
           <form onSubmit={handleSubmit} className="mt-4 grid gap-4 md:grid-cols-2">
             <div>
-              <label className="text-xs text-slate-400">Teacher</label>
+              <label className="text-xs text-[var(--ll-text-muted)]">Teacher</label>
               <select
                 value={form.teacherId}
                 onChange={(event) => setForm((current) => ({ ...current, teacherId: event.target.value }))}
-                className="mt-1 min-h-11 w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-sm"
+                className="mt-1 min-h-11 w-full rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)] px-4 py-3 text-sm"
                 required
               >
                 <option value="">Select teacher...</option>
@@ -170,11 +170,11 @@ export default function AdminAssignmentsPage() {
               </select>
             </div>
             <div>
-              <label className="text-xs text-slate-400">Class</label>
+              <label className="text-xs text-[var(--ll-text-muted)]">Class</label>
               <select
                 value={form.classId}
                 onChange={(event) => setForm((current) => ({ ...current, classId: event.target.value }))}
-                className="mt-1 min-h-11 w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-sm"
+                className="mt-1 min-h-11 w-full rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)] px-4 py-3 text-sm"
                 required
               >
                 <option value="">Select class...</option>
@@ -186,11 +186,11 @@ export default function AdminAssignmentsPage() {
               </select>
             </div>
             <div>
-              <label className="text-xs text-slate-400">Subject</label>
+              <label className="text-xs text-[var(--ll-text-muted)]">Subject</label>
               <select
                 value={form.subject}
                 onChange={(event) => setForm((current) => ({ ...current, subject: event.target.value }))}
-                className="mt-1 min-h-11 w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-sm"
+                className="mt-1 min-h-11 w-full rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)] px-4 py-3 text-sm"
                 required
               >
                 <option value="">Select subject...</option>
@@ -201,7 +201,7 @@ export default function AdminAssignmentsPage() {
                 ))}
               </select>
             </div>
-            <label className="flex items-center gap-3 rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-sm text-slate-200">
+            <label className="flex items-center gap-3 rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)] px-4 py-3 text-sm text-[var(--ll-text)]">
               <input
                 type="checkbox"
                 checked={form.isPrimary}
@@ -215,7 +215,7 @@ export default function AdminAssignmentsPage() {
               <button
                 type="submit"
                 disabled={saving}
-                className="rounded-xl bg-emerald-500 px-5 py-3 text-sm font-semibold text-slate-950 hover:bg-emerald-400 disabled:opacity-60"
+                className="rounded-xl bg-[var(--ll-yellow)] px-5 py-3 text-sm font-semibold text-[var(--ll-text-faint)] hover:bg-[var(--ll-yellow-soft)] disabled:opacity-60"
               >
                 {saving ? "Saving..." : editingId ? "Save Assignment" : "Create Assignment"}
               </button>
@@ -223,7 +223,7 @@ export default function AdminAssignmentsPage() {
                 <button
                   type="button"
                   onClick={resetForm}
-                  className="rounded-xl border border-slate-700 px-5 py-3 text-sm font-semibold text-slate-200"
+                  className="rounded-xl border border-[var(--ll-border)] px-5 py-3 text-sm font-semibold text-[var(--ll-text)]"
                 >
                   Cancel
                 </button>
@@ -232,21 +232,21 @@ export default function AdminAssignmentsPage() {
           </form>
         </section>
 
-        <section className="rounded-2xl border border-white/10 bg-slate-900/70 p-6">
+        <section className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 p-6">
           {error ? <p className="mb-4 text-sm text-red-300">{error}</p> : null}
           {loading ? (
             <div className="space-y-3">
               {Array.from({ length: 4 }).map((_, index) => (
-                <div key={index} className="h-12 animate-pulse rounded-xl bg-slate-800/60" />
+                <div key={index} className="h-12 animate-pulse rounded-xl bg-[var(--ll-surface)]/60" />
               ))}
             </div>
           ) : assignments.length === 0 ? (
-            <p className="text-sm text-slate-400">No teacher assignments created yet.</p>
+            <p className="text-sm text-[var(--ll-text-muted)]">No teacher assignments created yet.</p>
           ) : (
             <div className="overflow-x-auto">
               <table className="min-w-full text-sm">
                 <thead>
-                  <tr className="border-b border-white/10 text-left text-xs text-slate-500">
+                  <tr className="border-b border-[var(--ll-border)] text-left text-xs text-[var(--ll-text-faint)]">
                     <th className="px-4 py-3">Teacher</th>
                     <th className="px-4 py-3">Class</th>
                     <th className="px-4 py-3">Subject</th>
@@ -256,7 +256,7 @@ export default function AdminAssignmentsPage() {
                 </thead>
                 <tbody>
                   {assignments.map((item) => (
-                    <tr key={item.id} className="border-b border-white/5 text-slate-200">
+                    <tr key={item.id} className="border-b border-white/5 text-[var(--ll-text)]">
                       <td className="px-4 py-3">{item.teacher?.name ?? "-"}</td>
                       <td className="px-4 py-3">{item.class?.name ?? "-"}</td>
                       <td className="px-4 py-3">{item.subject.replace(/_/g, " ")}</td>
@@ -266,7 +266,7 @@ export default function AdminAssignmentsPage() {
                           <button
                             type="button"
                             onClick={() => handleEdit(item)}
-                            className="rounded-full border border-slate-700 px-3 py-1 text-[11px] font-semibold"
+                            className="rounded-full border border-[var(--ll-border)] px-3 py-1 text-[11px] font-semibold"
                           >
                             Edit
                           </button>

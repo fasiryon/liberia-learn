@@ -55,34 +55,34 @@ export default function AssignmentSubmissionClient(props: AssignmentSubmissionCl
   return (
     <form className="space-y-5" onSubmit={handleSubmit}>
       {props.instructions ? (
-        <section className="rounded-2xl border border-slate-800 bg-slate-900/80 p-4 text-sm text-slate-200">
+        <section className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/80 p-4 text-sm text-[var(--ll-text)]">
           {props.instructions}
         </section>
       ) : null}
 
       <label className="block">
-        <span className="mb-2 block text-sm font-medium text-slate-200">Your response</span>
+        <span className="mb-2 block text-sm font-medium text-[var(--ll-text)]">Your response</span>
         <textarea
           value={content}
           onChange={(event) => setContent(event.target.value)}
-          className="min-h-56 w-full rounded-2xl border border-slate-700 bg-slate-950/80 px-4 py-3 text-sm text-slate-50 outline-none focus:border-emerald-400 focus:ring-1 focus:ring-emerald-400/60"
+          className="min-h-56 w-full rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/80 px-4 py-3 text-sm text-[var(--ll-text)] outline-none focus:border-emerald-400 focus:ring-1 focus:ring-emerald-400/60"
           placeholder="Write your assignment response here..."
           required
         />
       </label>
 
-      <div className="flex items-center justify-between text-xs text-slate-400">
+      <div className="flex items-center justify-between text-xs text-[var(--ll-text-muted)]">
         <span>Word count: {wordCount}</span>
         <button
           type="submit"
           disabled={submitting || !content.trim()}
-          className="inline-flex min-h-11 items-center justify-center rounded-full bg-emerald-400 px-5 text-sm font-semibold text-slate-950 disabled:cursor-not-allowed disabled:bg-slate-700 disabled:text-slate-400"
+          className="inline-flex min-h-11 items-center justify-center rounded-full bg-[var(--ll-yellow-soft)] px-5 text-sm font-semibold text-[var(--ll-text-faint)] disabled:cursor-not-allowed disabled:bg-[var(--ll-surface-muted)] disabled:text-[var(--ll-text-muted)]"
         >
           {submitting ? "Submitting..." : "Submit Assignment"}
         </button>
       </div>
 
-      {status ? <p className="text-sm text-slate-200">{status}</p> : null}
+      {status ? <p className="text-sm text-[var(--ll-text)]">{status}</p> : null}
     </form>
   );
 }

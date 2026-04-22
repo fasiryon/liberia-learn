@@ -19,12 +19,12 @@ export default async function PlatformDashboard() {
       <div className="space-y-6">
         <div>
           <h1 className="text-2xl font-bold">District Portal</h1>
-          <p className="text-sm text-slate-400 mt-1">
+          <p className="text-sm text-[var(--ll-text-muted)] mt-1">
             District insights are being prepared. Contact LiberiaLearn support
             for early access.
           </p>
         </div>
-        <div className="rounded-2xl border border-white/10 bg-slate-900/70 p-6 text-sm text-slate-400">
+        <div className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 p-6 text-sm text-[var(--ll-text-muted)]">
           Your district dashboard will appear here once it is enabled.
         </div>
       </div>
@@ -110,17 +110,17 @@ export default async function PlatformDashboard() {
 
   const stats = [
     { label: "Schools", value: schoolCount, color: "bg-violet-500/20 text-violet-300" },
-    { label: "Total Users", value: userCount, color: "bg-blue-500/20 text-blue-300" },
-    { label: "Students", value: studentCount, color: "bg-emerald-500/20 text-emerald-300" },
-    { label: "Teachers", value: teacherCount, color: "bg-amber-500/20 text-amber-300" },
-    { label: "Curriculum Items", value: curriculumCount, color: "bg-cyan-500/20 text-cyan-300" },
+    { label: "Total Users", value: userCount, color: "bg-[var(--ll-silver-soft)] text-[var(--ll-silver)]" },
+    { label: "Students", value: studentCount, color: "bg-[var(--ll-yellow)]/20 text-[var(--ll-yellow)]" },
+    { label: "Teachers", value: teacherCount, color: "bg-[var(--ll-yellow-soft)] text-[var(--ll-yellow)]" },
+    { label: "Curriculum Items", value: curriculumCount, color: "bg-[var(--ll-silver-soft)] text-[var(--ll-silver)]" },
   ];
 
   return (
     <div className="space-y-8">
       <div>
         <h1 className="text-2xl font-bold">Platform Dashboard</h1>
-        <p className="text-sm text-slate-400 mt-1">
+        <p className="text-sm text-[var(--ll-text-muted)] mt-1">
           Cross-school overview for MOE platform administrators.
         </p>
       </div>
@@ -130,9 +130,9 @@ export default async function PlatformDashboard() {
         {stats.map((s) => (
           <div
             key={s.label}
-            className="rounded-2xl border border-white/10 bg-slate-900/70 p-4"
+            className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 p-4"
           >
-            <p className="text-xs text-slate-400">{s.label}</p>
+            <p className="text-xs text-[var(--ll-text-muted)]">{s.label}</p>
             <p className={`mt-1 text-2xl font-bold ${s.color.split(" ")[1]}`}>
               {s.value}
             </p>
@@ -141,7 +141,7 @@ export default async function PlatformDashboard() {
       </div>
 
       {/* Recent schools */}
-      <section className="rounded-2xl border border-white/10 bg-slate-900/70 p-6">
+      <section className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 p-6">
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-lg font-semibold">Schools</h2>
           <Link
@@ -153,12 +153,12 @@ export default async function PlatformDashboard() {
         </div>
 
         {recentSchools.length === 0 ? (
-          <p className="text-sm text-slate-400">No schools yet.</p>
+          <p className="text-sm text-[var(--ll-text-muted)]">No schools yet.</p>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="border-b border-slate-800 text-left text-xs text-slate-500">
+                <tr className="border-b border-[var(--ll-border)] text-left text-xs text-[var(--ll-text-faint)]">
                   <th className="pb-2 pr-4">Name</th>
                   <th className="pb-2 pr-4">County</th>
                   <th className="pb-2 pr-4">Status</th>
@@ -171,9 +171,9 @@ export default async function PlatformDashboard() {
                 {recentSchools.map((s) => (
                   <tr
                     key={s.id}
-                    className="border-b border-slate-800/50 text-slate-300"
+                    className="border-b border-[var(--ll-border)]/50 text-[var(--ll-text)]"
                   >
-                    <td className="py-2 pr-4 font-medium text-slate-100">
+                    <td className="py-2 pr-4 font-medium text-[var(--ll-text)]">
                       {s.name}
                     </td>
                     <td className="py-2 pr-4">{s.county ?? "--"}</td>
@@ -181,9 +181,9 @@ export default async function PlatformDashboard() {
                       <span
                         className={`rounded-full px-2 py-0.5 text-[11px] ${
                           s.status === "ACTIVE"
-                            ? "bg-emerald-500/20 text-emerald-300"
+                            ? "bg-[var(--ll-yellow)]/20 text-[var(--ll-yellow)]"
                             : s.status === "PENDING"
-                            ? "bg-amber-500/20 text-amber-300"
+                            ? "bg-[var(--ll-yellow-soft)] text-[var(--ll-yellow)]"
                             : "bg-red-500/20 text-red-300"
                         }`}
                       >
@@ -192,7 +192,7 @@ export default async function PlatformDashboard() {
                     </td>
                     <td className="py-2 pr-4">{s._count.users}</td>
                     <td className="py-2 pr-4">{s._count.classes}</td>
-                    <td className="py-2 text-xs text-slate-500">
+                    <td className="py-2 text-xs text-[var(--ll-text-faint)]">
                       {new Date(s.createdAt).toLocaleDateString()}
                     </td>
                   </tr>
@@ -203,23 +203,23 @@ export default async function PlatformDashboard() {
         )}
       </section>
 
-      <section className="rounded-2xl border border-white/10 bg-slate-900/70 p-6">
+      <section className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 p-6">
         <div className="mb-4 flex items-center justify-between">
           <div>
             <h2 className="text-lg font-semibold">Textbooks</h2>
-            <p className="text-sm text-slate-400 mt-1">
+            <p className="text-sm text-[var(--ll-text-muted)] mt-1">
               Subject and grade combinations with enough assembled units to compile a textbook.
             </p>
           </div>
         </div>
 
         {unitGroups.length === 0 ? (
-          <p className="text-sm text-slate-400">No textbooks available yet.</p>
+          <p className="text-sm text-[var(--ll-text-muted)]">No textbooks available yet.</p>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="border-b border-slate-800 text-left text-xs text-slate-500">
+                <tr className="border-b border-[var(--ll-border)] text-left text-xs text-[var(--ll-text-faint)]">
                   <th className="pb-2 pr-4">Subject</th>
                   <th className="pb-2 pr-4">Grade</th>
                   <th className="pb-2 pr-4">Units</th>
@@ -231,8 +231,8 @@ export default async function PlatformDashboard() {
                 {unitGroups.map((group) => {
                   const key = `${group.subject}|${group.grade}`;
                   return (
-                    <tr key={key} className="border-b border-slate-800/50 text-slate-300">
-                      <td className="py-2 pr-4 font-medium text-slate-100">
+                    <tr key={key} className="border-b border-[var(--ll-border)]/50 text-[var(--ll-text)]">
+                      <td className="py-2 pr-4 font-medium text-[var(--ll-text)]">
                         {group.subject.replace(/_/g, " ")}
                       </td>
                       <td className="py-2 pr-4">{group.grade}</td>
@@ -245,7 +245,7 @@ export default async function PlatformDashboard() {
                           href={`/api/admin/curriculum/textbook?subject=${encodeURIComponent(
                             group.subject
                           )}&gradeLevel=${group.grade}`}
-                          className="text-xs font-semibold text-cyan-300 hover:text-cyan-200"
+                          className="text-xs font-semibold text-[var(--ll-silver)] hover:text-[var(--ll-silver)]"
                         >
                           Download
                         </Link>

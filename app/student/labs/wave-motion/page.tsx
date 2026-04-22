@@ -8,9 +8,9 @@ export default async function StudentWaveMotionLabPage() {
 
   if (!isAiLabsEnabled()) {
     return (
-      <main className="ll-page min-h-screen px-4 py-8 text-slate-50">
+      <main className="ll-page min-h-screen px-4 py-8 text-[var(--ll-text)]">
         <div className="ll-shell max-w-5xl">
-          <section className="rounded-3xl border border-slate-800 bg-slate-900/80 p-6 text-slate-100">
+          <section className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/80 p-6 text-[var(--ll-text)]">
             Wave Motion Lab is not available yet.
           </section>
         </div>
@@ -32,14 +32,14 @@ export default async function StudentWaveMotionLabPage() {
   });
 
   return (
-    <main className="ll-page min-h-screen px-4 py-8 text-slate-50">
+    <main className="ll-page min-h-screen px-4 py-8 text-[var(--ll-text)]">
       <div className="ll-shell max-w-6xl">
         <div className="mb-5">
-          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-cyan-200">
+          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[var(--ll-silver)]">
             Physics Lab
           </p>
-          <h1 className="mt-2 text-3xl font-semibold text-white">Wave Motion Lab</h1>
-          <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-300">
+          <h1 className="mt-2 text-3xl font-semibold text-[var(--ll-text)]">Wave Motion Lab</h1>
+          <p className="mt-2 max-w-2xl text-sm leading-6 text-[var(--ll-text)]">
             Explore how frequency, amplitude, and wave speed affect wave behavior.
           </p>
         </div>

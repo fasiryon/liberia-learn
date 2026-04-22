@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { ChevronRight } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { Card, StatCard } from "@/components/ui/Card";
 import { DashboardTopBar } from "@/components/DashboardTopBar";
@@ -214,7 +215,7 @@ export default function MoeDashboardPage() {
       <div className="ll-page-enter mx-auto max-w-7xl px-4 py-5 sm:px-6 lg:px-8 space-y-5">
         <DashboardTopBar
           roleLabel="Ministry Official"
-          roleBadgeBg="bg-slate-500/10 border-slate-500/20"
+          roleBadgeBg="bg-[var(--ll-surface-muted)]/10 border-[var(--ll-border)]/20"
           roleAccent="text-[var(--ll-text-muted)]"
           subtitle="National Overview — LiberiaLearn"
         />
@@ -398,8 +399,9 @@ export default function MoeDashboardPage() {
           )}
 
           <details className="ll-section rounded-xl p-4">
-            <summary className="cursor-pointer text-sm font-semibold text-[var(--ll-text)]">
-              Exports and audit
+            <summary className="flex cursor-pointer list-none items-center justify-between text-sm font-medium text-[var(--ll-text-muted)]">
+              Reports and exports
+              <ChevronRight size={14} className="text-[var(--ll-text-faint)]" />
             </summary>
             <div className="mt-4 grid gap-3 sm:grid-cols-3">
               <Link href="/moe/districts" className="ll-command ll-focus flex-col items-start">

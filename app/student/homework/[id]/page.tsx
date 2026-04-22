@@ -74,7 +74,7 @@ export default function StudentHomeworkTake({
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-slate-950 text-slate-50 p-6">
+      <div className="min-h-screen bg-[var(--ll-bg)] text-[var(--ll-text)] p-6">
         <p>Loading homework...</p>
       </div>
     );
@@ -82,12 +82,12 @@ export default function StudentHomeworkTake({
 
   if (!homework) {
     return (
-      <main className="min-h-screen bg-slate-950 p-6 text-slate-50">
+      <main className="min-h-screen bg-[var(--ll-bg)] p-6 text-[var(--ll-text)]">
         <div className="max-w-3xl mx-auto space-y-4">
           <button
             type="button"
             onClick={() => router.back()}
-            className="inline-flex items-center rounded-full border border-slate-700 px-4 py-2 text-sm text-slate-200 hover:bg-slate-800 transition-colors"
+            className="inline-flex items-center rounded-full border border-[var(--ll-border)] px-4 py-2 text-sm text-[var(--ll-text)] hover:bg-[var(--ll-surface)] transition-colors"
           >
             ← Back to class list
           </button>
@@ -99,20 +99,20 @@ export default function StudentHomeworkTake({
   }
 
   return (
-    <main className="min-h-screen bg-slate-950 p-6 text-slate-50">
+    <main className="min-h-screen bg-[var(--ll-bg)] p-6 text-[var(--ll-text)]">
       <div className="max-w-3xl mx-auto space-y-6">
         {/* 🔙 Back button FIXED */}
         <button
           type="button"
           onClick={() => router.back()}
-          className="inline-flex items-center rounded-full border border-slate-700 px-4 py-2 text-sm text-slate-200 hover:bg-slate-800 transition-colors"
+          className="inline-flex items-center rounded-full border border-[var(--ll-border)] px-4 py-2 text-sm text-[var(--ll-text)] hover:bg-[var(--ll-surface)] transition-colors"
         >
           ← Back to class list
         </button>
 
         <h1 className="text-2xl font-bold">{homework.title}</h1>
 
-        <p className="text-slate-300 whitespace-pre-wrap">
+        <p className="text-[var(--ll-text)] whitespace-pre-wrap">
           {homework.description}
         </p>
 
@@ -120,13 +120,13 @@ export default function StudentHomeworkTake({
           {homework.questions.map((q, idx) => (
             <div
               key={idx}
-              className="rounded-xl border border-slate-800 bg-slate-900/70 p-4"
+              className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 p-4"
             >
-              <p className="font-medium text-slate-100 mb-2">
+              <p className="font-medium text-[var(--ll-text)] mb-2">
                 Question {idx + 1}
               </p>
 
-              <p className="text-slate-300 text-sm whitespace-pre-wrap">{q}</p>
+              <p className="text-[var(--ll-text)] text-sm whitespace-pre-wrap">{q}</p>
 
               <textarea
                 value={answers[idx]}
@@ -137,7 +137,7 @@ export default function StudentHomeworkTake({
                     return updated;
                   })
                 }
-                className="mt-3 w-full rounded-xl border border-slate-700 bg-slate-950/70 p-3 text-sm text-slate-100 focus:border-emerald-400 focus:ring-emerald-400"
+                className="mt-3 w-full rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 p-3 text-sm text-[var(--ll-text)] focus:border-emerald-400 focus:ring-emerald-400"
                 placeholder="Type your answer..."
                 rows={4}
               />
@@ -148,17 +148,17 @@ export default function StudentHomeworkTake({
         <button
           onClick={submitHomework}
           disabled={submitting}
-          className="rounded-xl bg-emerald-500 px-5 py-2 text-slate-900 font-semibold hover:bg-emerald-400 disabled:opacity-40"
+          className="rounded-xl bg-[var(--ll-yellow)] px-5 py-2 text-[var(--ll-text-faint)] font-semibold hover:bg-[var(--ll-yellow-soft)] disabled:opacity-40"
         >
           {submitting ? "Submitting..." : "Submit homework"}
         </button>
 
         {result && (
-          <div className="mt-6 rounded-xl border border-emerald-500/30 bg-emerald-500/10 p-4">
-            <p className="text-emerald-300 font-semibold">
+          <div className="mt-6 rounded-xl border border-emerald-500/30 bg-[var(--ll-yellow)]/10 p-4">
+            <p className="text-[var(--ll-yellow)] font-semibold">
               Score: {result.score}/100
             </p>
-            <p className="text-slate-300 text-sm whitespace-pre-wrap mt-2">
+            <p className="text-[var(--ll-text)] text-sm whitespace-pre-wrap mt-2">
               {result.feedback}
             </p>
           </div>

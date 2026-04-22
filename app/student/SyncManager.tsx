@@ -102,25 +102,25 @@ export default function SyncManager({
   return (
     <div className="fixed bottom-4 right-4 z-50">
       {syncing && (
-        <div className="rounded-xl bg-amber-500/20 border border-amber-500/30 px-4 py-2 text-sm text-amber-300">
+        <div className="rounded-xl bg-[var(--ll-yellow-soft)] border border-amber-500/30 px-4 py-2 text-sm text-[var(--ll-yellow)]">
           Syncing offline work...
         </div>
       )}
       {syncResult && (
-        <div className="rounded-xl bg-emerald-500/20 border border-emerald-500/30 px-4 py-2 text-sm text-emerald-300">
+        <div className="rounded-xl bg-[var(--ll-yellow)]/20 border border-emerald-500/30 px-4 py-2 text-sm text-[var(--ll-yellow)]">
           {syncResult}
         </div>
       )}
       {isPlatformAdmin ? (
-        <div className="mt-2 rounded-xl bg-slate-900/90 border border-white/10 px-4 py-3 text-xs text-slate-300">
-          <div className="font-semibold text-slate-200">Offline stats</div>
+        <div className="mt-2 rounded-xl bg-[var(--ll-bg)]/90 border border-[var(--ll-border)] px-4 py-3 text-xs text-[var(--ll-text)]">
+          <div className="font-semibold text-[var(--ll-text)]">Offline stats</div>
           <div className="mt-1">Queue pending: {stats.queuePending}</div>
           <div>Queue conflicts: {stats.queueConflicts}</div>
           <div>Queue dead-letter: {stats.queueDeadLetter}</div>
           <div>Cache packs: {stats.cachePacksCount}</div>
           <div>Cache bytes: {formatBytes(stats.cacheBytes)}</div>
           <button
-            className="mt-2 px-3 py-1 rounded-md bg-slate-700/60 hover:bg-slate-700 text-xs"
+            className="mt-2 px-3 py-1 rounded-md bg-[var(--ll-surface-muted)]/60 hover:bg-[var(--ll-surface-muted)] text-xs"
             onClick={async () => {
               await purgePartitionPacks(partition ?? undefined);
               await refreshStats(partition);

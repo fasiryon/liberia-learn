@@ -78,25 +78,25 @@ export default function MoePoliciesPage() {
 
   return (
     <div className="space-y-6">
-      <section className="rounded-3xl border border-white/10 bg-slate-950/70 p-6">
-        <p className="text-xs uppercase tracking-[0.22em] text-emerald-300">Policy Layer</p>
-        <h1 className="mt-2 text-3xl font-semibold text-slate-50">National and District Policies</h1>
-        <p className="mt-2 max-w-3xl text-sm text-slate-400">
+      <section className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 p-6">
+        <p className="text-xs uppercase tracking-[0.22em] text-[var(--ll-yellow)]">Policy Layer</p>
+        <h1 className="mt-2 text-3xl font-semibold text-[var(--ll-text)]">National and District Policies</h1>
+        <p className="mt-2 max-w-3xl text-sm text-[var(--ll-text-muted)]">
           All policy controls are enforced server-side through the shared policy engine. This page manages the active policy set and override history.
         </p>
       </section>
 
-      <section className="rounded-3xl border border-white/10 bg-slate-950/70 p-6">
+      <section className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 p-6">
         <form onSubmit={handleCreate} className="grid gap-3 md:grid-cols-3">
           <input
             value={form.policyKey}
             onChange={(event) => setForm((current) => ({ ...current, policyKey: event.target.value }))}
-            className="rounded-2xl border border-white/10 bg-slate-900 px-4 py-3 text-sm text-slate-100"
+            className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)] px-4 py-3 text-sm text-[var(--ll-text)]"
           />
           <select
             value={form.scope}
             onChange={(event) => setForm((current) => ({ ...current, scope: event.target.value }))}
-            className="rounded-2xl border border-white/10 bg-slate-900 px-4 py-3 text-sm text-slate-100"
+            className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)] px-4 py-3 text-sm text-[var(--ll-text)]"
           >
             <option value="NATIONAL">National</option>
             <option value="DISTRICT">District</option>
@@ -105,30 +105,30 @@ export default function MoePoliciesPage() {
           <button
             type="submit"
             disabled={saving}
-            className="rounded-2xl bg-emerald-400 px-4 py-3 text-sm font-semibold text-slate-950 disabled:opacity-60"
+            className="rounded-xl bg-[var(--ll-yellow-soft)] px-4 py-3 text-sm font-semibold text-[var(--ll-text-faint)] disabled:opacity-60"
           >
             {saving ? "Saving..." : "Save Policy"}
           </button>
           <textarea
             value={form.config}
             onChange={(event) => setForm((current) => ({ ...current, config: event.target.value }))}
-            className="md:col-span-3 min-h-[120px] rounded-2xl border border-white/10 bg-slate-900 px-4 py-3 text-sm text-slate-100"
+            className="md:col-span-3 min-h-[120px] rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)] px-4 py-3 text-sm text-[var(--ll-text)]"
           />
         </form>
-        {error ? <p className="mt-3 text-sm text-rose-300">{error}</p> : null}
+        {error ? <p className="mt-3 text-sm text-[var(--ll-danger)]">{error}</p> : null}
       </section>
 
       <section className="grid gap-6 lg:grid-cols-2">
-        <div className="rounded-3xl border border-white/10 bg-slate-950/70 p-6">
-          <h2 className="text-lg font-semibold text-slate-100">Active Policies</h2>
+        <div className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 p-6">
+          <h2 className="text-lg font-semibold text-[var(--ll-text)]">Active Policies</h2>
           <div className="mt-4 space-y-3">
             {policies.map((policy) => (
-              <div key={policy.id} className="rounded-2xl border border-white/5 bg-slate-900/70 p-4">
+              <div key={policy.id} className="rounded-xl border border-white/5 bg-[var(--ll-bg)]/70 p-4">
                 <div className="flex items-center justify-between gap-3">
-                  <p className="font-medium text-slate-100">{policy.policyKey}</p>
-                  <span className="text-xs uppercase tracking-wide text-emerald-300">{policy.scope}</span>
+                  <p className="font-medium text-[var(--ll-text)]">{policy.policyKey}</p>
+                  <span className="text-xs uppercase tracking-wide text-[var(--ll-yellow)]">{policy.scope}</span>
                 </div>
-                <pre className="mt-3 overflow-x-auto whitespace-pre-wrap text-xs text-slate-400">
+                <pre className="mt-3 overflow-x-auto whitespace-pre-wrap text-xs text-[var(--ll-text-muted)]">
                   {JSON.stringify(policy.config, null, 2)}
                 </pre>
               </div>
@@ -136,17 +136,17 @@ export default function MoePoliciesPage() {
           </div>
         </div>
 
-        <div className="rounded-3xl border border-white/10 bg-slate-950/70 p-6">
-          <h2 className="text-lg font-semibold text-slate-100">Overrides</h2>
+        <div className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 p-6">
+          <h2 className="text-lg font-semibold text-[var(--ll-text)]">Overrides</h2>
           <div className="mt-4 space-y-3">
             {overrides.map((override) => (
-              <div key={override.id} className="rounded-2xl border border-white/5 bg-slate-900/70 p-4">
+              <div key={override.id} className="rounded-xl border border-white/5 bg-[var(--ll-bg)]/70 p-4">
                 <div className="flex items-center justify-between gap-3">
-                  <p className="font-medium text-slate-100">{override.policyKey}</p>
-                  <span className="text-xs uppercase tracking-wide text-amber-300">{override.targetType}</span>
+                  <p className="font-medium text-[var(--ll-text)]">{override.policyKey}</p>
+                  <span className="text-xs uppercase tracking-wide text-[var(--ll-yellow)]">{override.targetType}</span>
                 </div>
-                <p className="mt-2 text-sm text-slate-300">{override.reason}</p>
-                <p className="mt-1 text-xs text-slate-500">
+                <p className="mt-2 text-sm text-[var(--ll-text)]">{override.reason}</p>
+                <p className="mt-1 text-xs text-[var(--ll-text-faint)]">
                   Target: {override.targetId ?? "global"} {override.expiresAt ? `· Expires ${new Date(override.expiresAt).toLocaleString()}` : ""}
                 </p>
               </div>

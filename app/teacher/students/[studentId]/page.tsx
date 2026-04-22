@@ -31,11 +31,11 @@ export default function TeacherStudentDetailPage() {
   }, [studentId]);
 
   if (loading) {
-    return <div className="space-y-3">{[1, 2, 3].map((i) => <div key={i} className="h-14 rounded-xl bg-slate-800/50 animate-pulse" />)}</div>;
+    return <div className="space-y-3">{[1, 2, 3].map((i) => <div key={i} className="h-14 rounded-xl bg-[var(--ll-surface)]/50 animate-pulse" />)}</div>;
   }
 
   if (error) {
-    return <div className="rounded-2xl border border-red-500/20 bg-slate-900/70 p-8 text-center"><p className="text-red-400">{error}</p></div>;
+    return <div className="rounded-xl border border-red-500/20 bg-[var(--ll-bg)]/70 p-8 text-center"><p className="text-red-400">{error}</p></div>;
   }
 
   // Subject breakdown
@@ -49,25 +49,25 @@ export default function TeacherStudentDetailPage() {
   return (
     <div className="space-y-6">
       <div>
-        <a href="/teacher/students" className="text-xs text-emerald-400 hover:underline">&larr; Back to Students</a>
+        <a href="/teacher/students" className="text-xs text-[var(--ll-yellow)] hover:underline">&larr; Back to Students</a>
         <h1 className="text-2xl font-bold mt-2">{student?.name || "Student"}</h1>
-        <p className="text-sm text-slate-400">{student?.email}</p>
+        <p className="text-sm text-[var(--ll-text-muted)]">{student?.email}</p>
       </div>
 
       {/* Subject breakdown */}
-      <section className="rounded-2xl border border-white/10 bg-slate-900/70 p-5">
-        <h2 className="text-sm font-semibold text-slate-300 mb-3">Progress by Subject</h2>
+      <section className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 p-5">
+        <h2 className="text-sm font-semibold text-[var(--ll-text)] mb-3">Progress by Subject</h2>
         <div className="space-y-3">
           {Object.entries(bySubject).map(([subject, data]) => {
             const pct = data.total > 0 ? Math.round((data.completed / data.total) * 100) : 0;
             return (
               <div key={subject}>
                 <div className="flex justify-between text-xs mb-1">
-                  <span className="text-slate-300">{subject}</span>
-                  <span className="text-slate-400">{data.completed}/{data.total} ({pct}%)</span>
+                  <span className="text-[var(--ll-text)]">{subject}</span>
+                  <span className="text-[var(--ll-text-muted)]">{data.completed}/{data.total} ({pct}%)</span>
                 </div>
-                <div className="h-2 rounded-full bg-slate-800">
-                  <div className="h-2 rounded-full bg-emerald-500" style={{ width: `${pct}%` }} />
+                <div className="h-2 rounded-full bg-[var(--ll-surface)]">
+                  <div className="h-2 rounded-full bg-[var(--ll-yellow)]" style={{ width: `${pct}%` }} />
                 </div>
               </div>
             );
@@ -76,24 +76,24 @@ export default function TeacherStudentDetailPage() {
       </section>
 
       {/* All assigned work */}
-      <section className="rounded-2xl border border-white/10 bg-slate-900/70 p-5">
-        <h2 className="text-sm font-semibold text-slate-300 mb-3">All Assigned Work</h2>
+      <section className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 p-5">
+        <h2 className="text-sm font-semibold text-[var(--ll-text)] mb-3">All Assigned Work</h2>
         {records.length === 0 ? (
-          <p className="text-xs text-slate-500">No work assigned yet.</p>
+          <p className="text-xs text-[var(--ll-text-faint)]">No work assigned yet.</p>
         ) : (
           <div className="space-y-2">
             {records.map((r) => (
-              <div key={r.id} className="flex items-center justify-between rounded-xl border border-slate-800 bg-slate-950/50 px-4 py-2">
+              <div key={r.id} className="flex items-center justify-between rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/50 px-4 py-2">
                 <div>
-                  <p className="text-sm text-slate-200">{r.title}</p>
-                  <p className="text-xs text-slate-500">{r.subject} &middot; {new Date(r.scheduledDate).toLocaleDateString()}</p>
+                  <p className="text-sm text-[var(--ll-text)]">{r.title}</p>
+                  <p className="text-xs text-[var(--ll-text-faint)]">{r.subject} &middot; {new Date(r.scheduledDate).toLocaleDateString()}</p>
                 </div>
                 {r.completedAt ? (
-                  <span className="rounded-full bg-emerald-500/20 text-emerald-300 px-2.5 py-0.5 text-[10px]">Completed</span>
+                  <span className="rounded-full bg-[var(--ll-yellow)]/20 text-[var(--ll-yellow)] px-2.5 py-0.5 text-[10px]">Completed</span>
                 ) : r.startedAt ? (
-                  <span className="rounded-full bg-amber-500/20 text-amber-300 px-2.5 py-0.5 text-[10px]">In Progress</span>
+                  <span className="rounded-full bg-[var(--ll-yellow-soft)] text-[var(--ll-yellow)] px-2.5 py-0.5 text-[10px]">In Progress</span>
                 ) : (
-                  <span className="rounded-full bg-slate-700 text-slate-300 px-2.5 py-0.5 text-[10px]">Not Started</span>
+                  <span className="rounded-full bg-[var(--ll-surface-muted)] text-[var(--ll-text)] px-2.5 py-0.5 text-[10px]">Not Started</span>
                 )}
               </div>
             ))}

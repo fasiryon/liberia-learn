@@ -19,8 +19,8 @@ export function GuardianProgressScreen({
   if (!data) {
     return (
       <Card className="ll-empty p-6">
-        <h2 className="text-xl font-semibold text-slate-100">Progress view</h2>
-        <p className="mt-2 text-sm text-slate-400">
+        <h2 className="text-xl font-semibold text-[var(--ll-text)]">Progress view</h2>
+        <p className="mt-2 text-sm text-[var(--ll-text-muted)]">
           Progress details will appear here once your child starts completing learning work.
         </p>
       </Card>
@@ -30,7 +30,7 @@ export function GuardianProgressScreen({
   return (
     <div className="space-y-4">
       <Card className="p-4 sm:p-5">
-        <p className="text-sm text-slate-300">
+        <p className="text-sm text-[var(--ll-text)]">
           This page focuses on simple home support. Internal school follow-up details are not shown here.
         </p>
       </Card>

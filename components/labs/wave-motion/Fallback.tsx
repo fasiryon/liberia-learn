@@ -32,9 +32,9 @@ export default function WaveMotionFallback({
   }, [state.amplitude]);
 
   return (
-    <section className="bg-slate-950 p-4 text-slate-100">
-      <canvas ref={canvasRef} width={640} height={220} className="h-auto w-full rounded-2xl border border-slate-800" />
-      <div className="mt-3 rounded-2xl border border-slate-800 bg-slate-900 p-4 text-sm leading-7">
+    <section className="bg-[var(--ll-bg)] p-4 text-[var(--ll-text)]">
+      <canvas ref={canvasRef} width={640} height={220} className="h-auto w-full rounded-xl border border-[var(--ll-border)]" />
+      <div className="mt-3 rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)] p-4 text-sm leading-7">
         <p>Frequency: {state.frequency.toFixed(1)} Hz</p>
         <p>Amplitude: {state.amplitude.toFixed(1)} m</p>
         <p>Wave Speed: {state.waveSpeed.toFixed(1)} m/s</p>
@@ -44,7 +44,7 @@ export default function WaveMotionFallback({
       <button
         type="button"
         onClick={() => onAction({ type: "SET_WAVE_TYPE", value: state.waveType === "transverse" ? "longitudinal" : "transverse" })}
-        className="mt-3 min-h-11 rounded-xl bg-cyan-300 px-4 py-2 text-sm font-semibold text-slate-950"
+        className="mt-3 min-h-11 rounded-xl bg-[var(--ll-silver-soft)] px-4 py-2 text-sm font-semibold text-[var(--ll-text-faint)]"
       >
         {state.waveType === "transverse" ? "Longitudinal" : "Transverse"}
       </button>

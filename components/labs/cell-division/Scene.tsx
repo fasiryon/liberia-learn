@@ -219,27 +219,27 @@ export default function CellDivisionScene({ state, onAction }: Props) {
   }, [onAction, state.paused]);
 
   return (
-    <div className="bg-slate-950 p-3 sm:p-4">
+    <div className="bg-[var(--ll-bg)] p-3 sm:p-4">
       <canvas
         ref={canvasRef}
         width={WIDTH}
         height={HEIGHT}
-        className="h-auto w-full rounded-2xl border border-slate-800 bg-slate-950"
+        className="h-auto w-full rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]"
         aria-label="Cell Division Explorer mitosis canvas simulation"
       />
       <div className="mt-3 grid gap-3">
         <div className="grid grid-cols-3 gap-2">
-          <button type="button" onClick={() => onAction({ type: "ADVANCE_STAGE" })} className="min-h-11 rounded-xl bg-cyan-300 px-3 py-2 text-sm font-semibold text-slate-950">
+          <button type="button" onClick={() => onAction({ type: "ADVANCE_STAGE" })} className="min-h-11 rounded-xl bg-[var(--ll-silver-soft)] px-3 py-2 text-sm font-semibold text-[var(--ll-text-faint)]">
             Next Stage
           </button>
-          <button type="button" onClick={() => onAction(state.paused ? { type: "PLAY" } : { type: "PAUSE" })} className="min-h-11 rounded-xl border border-slate-700 px-3 py-2 text-sm font-semibold text-slate-100">
+          <button type="button" onClick={() => onAction(state.paused ? { type: "PLAY" } : { type: "PAUSE" })} className="min-h-11 rounded-xl border border-[var(--ll-border)] px-3 py-2 text-sm font-semibold text-[var(--ll-text)]">
             {state.paused ? "Play" : "Pause"}
           </button>
-          <button type="button" onClick={() => onAction({ type: "RESET" })} className="min-h-11 rounded-xl border border-slate-700 px-3 py-2 text-sm font-semibold text-slate-100">
+          <button type="button" onClick={() => onAction({ type: "RESET" })} className="min-h-11 rounded-xl border border-[var(--ll-border)] px-3 py-2 text-sm font-semibold text-[var(--ll-text)]">
             Reset
           </button>
         </div>
-        <label className="text-sm text-slate-100">
+        <label className="text-sm text-[var(--ll-text)]">
           Speed {state.speed.toFixed(1)}
           <input className="mt-2 w-full accent-cyan-300" type="range" min="1" max="5" step="0.1" value={state.speed} onChange={(event) => onAction({ type: "SET_SPEED", value: Number(event.target.value) })} />
         </label>

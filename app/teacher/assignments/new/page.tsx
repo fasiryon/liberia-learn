@@ -44,14 +44,14 @@ export default async function TeacherAssignmentNewPage({
   };
 
   return (
-    <main className="min-h-screen bg-slate-950 px-4 py-8 text-slate-50">
+    <main className="min-h-screen bg-[var(--ll-bg)] px-4 py-8 text-[var(--ll-text)]">
       <div className="mx-auto max-w-4xl space-y-6">
         <header>
-          <Link href="/teacher/assignments" className="text-sm text-emerald-300 hover:text-emerald-200">
+          <Link href="/teacher/assignments" className="text-sm text-[var(--ll-yellow)] hover:text-[var(--ll-yellow)]">
             &larr; Back to Assignments
           </Link>
           <h1 className="mt-3 text-3xl font-bold">Create Assignment</h1>
-          <p className="mt-2 max-w-2xl text-sm text-slate-400">
+          <p className="mt-2 max-w-2xl text-sm text-[var(--ll-text-muted)]">
             Create classwork, homework, or quizzes directly for one of your classes.
             AI-generated drafts and lesson-linked suggestions can still land here, but
             teachers no longer have to depend on them to assign work.
@@ -59,14 +59,14 @@ export default async function TeacherAssignmentNewPage({
         </header>
 
         {classes.length === 0 ? (
-          <section className="rounded-3xl border border-white/10 bg-slate-900/70 p-6">
-            <h2 className="text-lg font-semibold text-slate-100">No classes available</h2>
-            <p className="mt-2 text-sm text-slate-400">
+          <section className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 p-6">
+            <h2 className="text-lg font-semibold text-[var(--ll-text)]">No classes available</h2>
+            <p className="mt-2 text-sm text-[var(--ll-text-muted)]">
               A teacher must be assigned to at least one class before creating assignments.
             </p>
             <Link
               href="/teacher/dashboard"
-              className="mt-4 inline-flex rounded-full border border-slate-700 px-5 py-2 text-sm text-slate-200 hover:bg-slate-900/60"
+              className="mt-4 inline-flex rounded-full border border-[var(--ll-border)] px-5 py-2 text-sm text-[var(--ll-text)] hover:bg-[var(--ll-bg)]/60"
             >
               Return to dashboard
             </Link>

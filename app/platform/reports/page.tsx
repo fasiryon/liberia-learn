@@ -157,8 +157,8 @@ export default async function PlatformReportsPage() {
   );
 
   function readinessColor(score: number) {
-    if (score >= 80) return "bg-emerald-500";
-    if (score >= 40) return "bg-amber-500";
+    if (score >= 80) return "bg-[var(--ll-yellow)]";
+    if (score >= 40) return "bg-[var(--ll-yellow-soft)]";
     return "bg-red-500";
   }
 
@@ -166,7 +166,7 @@ export default async function PlatformReportsPage() {
     <div className="space-y-8">
       <div>
         <h1 className="text-2xl font-bold">MOE Reports</h1>
-        <p className="text-sm text-slate-400 mt-1">
+        <p className="text-sm text-[var(--ll-text-muted)] mt-1">
           Aggregate statistics for Ministry of Education reporting.
         </p>
       </div>
@@ -180,8 +180,8 @@ export default async function PlatformReportsPage() {
           { label: "Curriculum Items", value: curriculumCount },
           { label: "Full Packs Published", value: fullPackCount },
         ].map((s) => (
-          <div key={s.label} className="rounded-2xl border border-white/10 bg-slate-900/70 p-4">
-            <p className="text-xs text-slate-400">{s.label}</p>
+          <div key={s.label} className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 p-4">
+            <p className="text-xs text-[var(--ll-text-muted)]">{s.label}</p>
             <p className="mt-1 text-2xl font-bold text-violet-300">{s.value}</p>
           </div>
         ))}
@@ -193,7 +193,7 @@ export default async function PlatformReportsPage() {
           <a
             key={type}
             href={`/api/platform/reports?type=${type}&format=csv`}
-            className="rounded-lg border border-slate-700 px-3 py-1.5 text-xs text-slate-300 hover:border-violet-500 hover:text-violet-300"
+            className="rounded-lg border border-[var(--ll-border)] px-3 py-1.5 text-xs text-[var(--ll-text)] hover:border-violet-500 hover:text-violet-300"
           >
             Export {type} CSV
           </a>
@@ -201,15 +201,15 @@ export default async function PlatformReportsPage() {
       </div>
 
       {/* County breakdown */}
-      <section className="rounded-2xl border border-white/10 bg-slate-900/70 p-6">
+      <section className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 p-6">
         <h2 className="text-lg font-semibold mb-4">By County</h2>
         {countyStats.length === 0 ? (
-          <p className="text-sm text-slate-400">No data.</p>
+          <p className="text-sm text-[var(--ll-text-muted)]">No data.</p>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="border-b border-slate-800 text-left text-xs text-slate-500">
+                <tr className="border-b border-[var(--ll-border)] text-left text-xs text-[var(--ll-text-faint)]">
                   <th className="pb-2 pr-4">County</th>
                   <th className="pb-2 pr-4">Schools</th>
                   <th className="pb-2 pr-4">Users</th>
@@ -218,8 +218,8 @@ export default async function PlatformReportsPage() {
               </thead>
               <tbody>
                 {countyStats.map((c) => (
-                  <tr key={c.county} className="border-b border-slate-800/50 text-slate-300">
-                    <td className="py-2 pr-4 font-medium text-slate-100">{c.county}</td>
+                  <tr key={c.county} className="border-b border-[var(--ll-border)]/50 text-[var(--ll-text)]">
+                    <td className="py-2 pr-4 font-medium text-[var(--ll-text)]">{c.county}</td>
                     <td className="py-2 pr-4">{c.schools}</td>
                     <td className="py-2 pr-4">{c.users}</td>
                     <td className="py-2">{c.classes}</td>
@@ -232,15 +232,15 @@ export default async function PlatformReportsPage() {
       </section>
 
       {/* Attendance Rollups */}
-      <section className="rounded-2xl border border-white/10 bg-slate-900/70 p-6">
+      <section className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 p-6">
         <h2 className="text-lg font-semibold mb-4">Attendance by County</h2>
         {attendanceStats.length === 0 ? (
-          <p className="text-sm text-slate-400">No attendance data.</p>
+          <p className="text-sm text-[var(--ll-text-muted)]">No attendance data.</p>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="border-b border-slate-800 text-left text-xs text-slate-500">
+                <tr className="border-b border-[var(--ll-border)] text-left text-xs text-[var(--ll-text-faint)]">
                   <th className="pb-2 pr-4">County</th>
                   <th className="pb-2 pr-4">Records</th>
                   <th className="pb-2 pr-4">Present %</th>
@@ -250,12 +250,12 @@ export default async function PlatformReportsPage() {
               </thead>
               <tbody>
                 {attendanceStats.map((a) => (
-                  <tr key={a.county} className="border-b border-slate-800/50 text-slate-300">
-                    <td className="py-2 pr-4 font-medium text-slate-100">{a.county}</td>
+                  <tr key={a.county} className="border-b border-[var(--ll-border)]/50 text-[var(--ll-text)]">
+                    <td className="py-2 pr-4 font-medium text-[var(--ll-text)]">{a.county}</td>
                     <td className="py-2 pr-4">{a.total}</td>
-                    <td className="py-2 pr-4 text-emerald-400">{a.presentPct}%</td>
+                    <td className="py-2 pr-4 text-[var(--ll-yellow)]">{a.presentPct}%</td>
                     <td className="py-2 pr-4 text-red-400">{a.absentPct}%</td>
-                    <td className="py-2 text-amber-400">{a.latePct}%</td>
+                    <td className="py-2 text-[var(--ll-yellow)]">{a.latePct}%</td>
                   </tr>
                 ))}
               </tbody>
@@ -265,15 +265,15 @@ export default async function PlatformReportsPage() {
       </section>
 
       {/* Performance Signals */}
-      <section className="rounded-2xl border border-white/10 bg-slate-900/70 p-6">
+      <section className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 p-6">
         <h2 className="text-lg font-semibold mb-4">Performance by School</h2>
         {perfStats.length === 0 ? (
-          <p className="text-sm text-slate-400">No grade data.</p>
+          <p className="text-sm text-[var(--ll-text-muted)]">No grade data.</p>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="border-b border-slate-800 text-left text-xs text-slate-500">
+                <tr className="border-b border-[var(--ll-border)] text-left text-xs text-[var(--ll-text-faint)]">
                   <th className="pb-2 pr-4">School</th>
                   <th className="pb-2 pr-4">County</th>
                   <th className="pb-2 pr-4">Avg Grade %</th>
@@ -282,8 +282,8 @@ export default async function PlatformReportsPage() {
               </thead>
               <tbody>
                 {perfStats.map((p) => (
-                  <tr key={p.name} className="border-b border-slate-800/50 text-slate-300">
-                    <td className="py-2 pr-4 font-medium text-slate-100">{p.name}</td>
+                  <tr key={p.name} className="border-b border-[var(--ll-border)]/50 text-[var(--ll-text)]">
+                    <td className="py-2 pr-4 font-medium text-[var(--ll-text)]">{p.name}</td>
                     <td className="py-2 pr-4">{p.county}</td>
                     <td className="py-2 pr-4 text-violet-300">{p.avgGrade}%</td>
                     <td className="py-2">{p.total}</td>
@@ -296,15 +296,15 @@ export default async function PlatformReportsPage() {
       </section>
 
       {/* Curriculum Adoption */}
-      <section className="rounded-2xl border border-white/10 bg-slate-900/70 p-6">
+      <section className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 p-6">
         <h2 className="text-lg font-semibold mb-4">Curriculum Adoption</h2>
         {curriculumByType.length === 0 ? (
-          <p className="text-sm text-slate-400">No published curriculum.</p>
+          <p className="text-sm text-[var(--ll-text-muted)]">No published curriculum.</p>
         ) : (
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
             {curriculumByType.map((ct) => (
-              <div key={ct.contentType} className="rounded-xl border border-slate-800 bg-slate-950/60 p-3">
-                <p className="text-xs text-slate-400 capitalize">{ct.contentType.replace(/_/g, " ")}</p>
+              <div key={ct.contentType} className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/60 p-3">
+                <p className="text-xs text-[var(--ll-text-muted)] capitalize">{ct.contentType.replace(/_/g, " ")}</p>
                 <p className="text-xl font-bold text-violet-300 mt-1">{ct._count}</p>
               </div>
             ))}
@@ -313,13 +313,13 @@ export default async function PlatformReportsPage() {
       </section>
 
       {/* Pilot Readiness Score */}
-      <section className="rounded-2xl border border-white/10 bg-slate-900/70 p-6">
+      <section className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 p-6">
         <h2 className="text-lg font-semibold mb-4">Pilot Readiness Score</h2>
-        <p className="text-xs text-slate-400 mb-4">
+        <p className="text-xs text-[var(--ll-text-muted)] mb-4">
           Score out of 100: Branding (20) + Guardian SMS (20) + Attendance (20) + Curriculum (20) + Enrollments (20)
         </p>
         {readinessScores.length === 0 ? (
-          <p className="text-sm text-slate-400">No schools.</p>
+          <p className="text-sm text-[var(--ll-text-muted)]">No schools.</p>
         ) : (
           <div className="space-y-3">
             {readinessScores
@@ -327,16 +327,16 @@ export default async function PlatformReportsPage() {
               .map((s) => (
                 <div key={s.name} className="flex items-center gap-3">
                   <div className="w-40 shrink-0">
-                    <p className="text-sm font-medium text-slate-100 truncate">{s.name}</p>
-                    <p className="text-[10px] text-slate-500">{s.county}</p>
+                    <p className="text-sm font-medium text-[var(--ll-text)] truncate">{s.name}</p>
+                    <p className="text-[10px] text-[var(--ll-text-faint)]">{s.county}</p>
                   </div>
-                  <div className="flex-1 h-4 rounded-full bg-slate-800 overflow-hidden">
+                  <div className="flex-1 h-4 rounded-full bg-[var(--ll-surface)] overflow-hidden">
                     <div
                       className={`h-full rounded-full ${readinessColor(s.score)} transition-all`}
                       style={{ width: `${s.score}%` }}
                     />
                   </div>
-                  <span className="text-sm font-bold text-slate-200 w-10 text-right">{s.score}</span>
+                  <span className="text-sm font-bold text-[var(--ll-text)] w-10 text-right">{s.score}</span>
                 </div>
               ))}
           </div>

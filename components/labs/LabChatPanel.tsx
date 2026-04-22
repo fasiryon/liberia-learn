@@ -92,7 +92,7 @@ export default function LabChatPanel({
             type="button"
             onClick={() => submit(prompt)}
             disabled={status === "loading"}
-            className="ll-interactive rounded-lg border border-[var(--ll-border)] bg-[var(--ll-surface-muted)] px-3 py-2 text-left text-xs text-[var(--ll-text-muted)] disabled:cursor-not-allowed disabled:opacity-50"
+            className="ll-interactive rounded-lg border border-[var(--ll-yellow)]/20 bg-[var(--ll-yellow-soft)] px-3 py-2 text-left text-xs text-[var(--ll-text-muted)] disabled:cursor-not-allowed disabled:opacity-50"
           >
             {prompt}
           </button>
@@ -101,7 +101,7 @@ export default function LabChatPanel({
 
       {assistantMessage ? (
         <div
-          className={`mt-4 ll-notice ${status === "error" ? "ll-notice-error" : "ll-notice-success"}`}
+          className={`mt-4 rounded-lg border px-3 py-2 ${status === "error" ? "border-[var(--ll-danger)]/30 bg-[var(--ll-danger)]/10 text-[var(--ll-danger)]" : "border-[var(--ll-border)] bg-[var(--ll-surface-muted)] text-[var(--ll-text)]"}`}
           aria-live="polite"
         >
           {assistantMessage}

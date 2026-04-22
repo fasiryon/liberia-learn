@@ -107,28 +107,28 @@ export default async function TeacherStudentProfilePage({ params }: PageProps) {
   const latestPlacement = student.placementTests[0] ?? null;
 
   return (
-    <main className="min-h-screen bg-slate-950 text-slate-50">
+    <main className="min-h-screen bg-[var(--ll-bg)] text-[var(--ll-text)]">
       <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_top,_#22c55e22,_transparent_60%)]" />
 
       <div className="mx-auto max-w-5xl px-4 py-6 space-y-6">
         {/* Header */}
         <div className="flex items-center justify-between gap-4">
           <div>
-            <p className="text-[11px] uppercase tracking-wide text-emerald-300">
+            <p className="text-[11px] uppercase tracking-wide text-[var(--ll-yellow)]">
               LIBERIALEARN · Student profile
             </p>
             <h1 className="mt-1 text-2xl font-semibold">{studentName}</h1>
-            <p className="mt-1 text-xs text-slate-400">
+            <p className="mt-1 text-xs text-[var(--ll-text-muted)]">
               {community}, {county}
             </p>
             {email && (
-              <p className="text-[11px] text-slate-500">{email}</p>
+              <p className="text-[11px] text-[var(--ll-text-faint)]">{email}</p>
             )}
           </div>
 
           <Link
             href="/teacher/class"
-            className="text-xs rounded-full border border-slate-700 px-3 py-1.5 text-slate-300 hover:text-slate-50"
+            className="text-xs rounded-full border border-[var(--ll-border)] px-3 py-1.5 text-[var(--ll-text)] hover:text-[var(--ll-text)]"
           >
             ← Back to class list
           </Link>
@@ -136,20 +136,20 @@ export default async function TeacherStudentProfilePage({ params }: PageProps) {
 
         {/* Top stats */}
         <section className="grid gap-3 md:grid-cols-3">
-          <div className="rounded-2xl border border-slate-800 bg-slate-900/80 p-4 text-sm">
-            <p className="text-[11px] uppercase tracking-wide text-slate-400 mb-1">
+          <div className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/80 p-4 text-sm">
+            <p className="text-[11px] uppercase tracking-wide text-[var(--ll-text-muted)] mb-1">
               Average grade
             </p>
-            <p className="text-2xl font-semibold text-emerald-300">
+            <p className="text-2xl font-semibold text-[var(--ll-yellow)]">
               {avgGrade ? `${avgGrade}%` : "—"}
             </p>
-            <p className="text-[11px] text-slate-500">
+            <p className="text-[11px] text-[var(--ll-text-faint)]">
               {student.grades.length} grade records
             </p>
           </div>
 
-          <div className="rounded-2xl border border-slate-800 bg-slate-900/80 p-4 text-sm">
-            <p className="text-[11px] uppercase tracking-wide text-slate-400 mb-1">
+          <div className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/80 p-4 text-sm">
+            <p className="text-[11px] uppercase tracking-wide text-[var(--ll-text-muted)] mb-1">
               Current placement
             </p>
             <p className="text-2xl font-semibold">
@@ -158,36 +158,36 @@ export default async function TeacherStudentProfilePage({ params }: PageProps) {
                 : "Not set"}
             </p>
             {latestPlacement ? (
-              <p className="text-[11px] text-slate-500">
+              <p className="text-[11px] text-[var(--ll-text-faint)]">
                 Last test: {latestPlacement.levelLabel} · {Math.round((latestPlacement.rawScore / latestPlacement.totalQuestions) * 100)}%
               </p>
             ) : (
-              <p className="text-[11px] text-slate-500">
+              <p className="text-[11px] text-[var(--ll-text-faint)]">
                 No placement tests yet.
               </p>
             )}
           </div>
 
-          <div className="rounded-2xl border border-slate-800 bg-slate-900/80 p-4 text-sm">
-            <p className="text-[11px] uppercase tracking-wide text-slate-400 mb-1">
+          <div className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/80 p-4 text-sm">
+            <p className="text-[11px] uppercase tracking-wide text-[var(--ll-text-muted)] mb-1">
               Classes
             </p>
-            <p className="text-2xl font-semibold text-cyan-300">
+            <p className="text-2xl font-semibold text-[var(--ll-silver)]">
               {student.enrollments.length}
             </p>
-            <p className="text-[11px] text-slate-500">
+            <p className="text-[11px] text-[var(--ll-text-faint)]">
               Enrolled classes this year
             </p>
           </div>
         </section>
 
         {/* Classes list */}
-        <section className="rounded-2xl border border-slate-800 bg-slate-900/80 p-4 text-sm space-y-2">
-          <p className="text-[11px] uppercase tracking-wide text-slate-400">
+        <section className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/80 p-4 text-sm space-y-2">
+          <p className="text-[11px] uppercase tracking-wide text-[var(--ll-text-muted)]">
             Enrolled classes
           </p>
           {student.enrollments.length === 0 ? (
-            <p className="text-xs text-slate-500">
+            <p className="text-xs text-[var(--ll-text-faint)]">
               No class enrollments found.
             </p>
           ) : (
@@ -195,19 +195,19 @@ export default async function TeacherStudentProfilePage({ params }: PageProps) {
               {student.enrollments.map((enr: any) => (
                 <div
                   key={enr.id}
-                  className="flex items-center justify-between rounded-xl bg-slate-950/80 border border-slate-800 px-3 py-2"
+                  className="flex items-center justify-between rounded-xl bg-[var(--ll-bg)]/80 border border-[var(--ll-border)] px-3 py-2"
                 >
                   <div>
-                    <p className="text-sm text-slate-100">
+                    <p className="text-sm text-[var(--ll-text)]">
                       {enr.Class?.name}
                     </p>
-                    <p className="text-[11px] text-slate-500">
+                    <p className="text-[11px] text-[var(--ll-text-faint)]">
                       {enr.Class?.subject} · {enr.Class?.School?.name}
                     </p>
                   </div>
-                  <p className="text-[11px] text-slate-400">
+                  <p className="text-[11px] text-[var(--ll-text-muted)]">
                     Teacher:{" "}
-                    <span className="text-slate-100">
+                    <span className="text-[var(--ll-text)]">
                       {enr.Class?.Teacher?.name ?? "—"}
                     </span>
                   </p>
@@ -218,12 +218,12 @@ export default async function TeacherStudentProfilePage({ params }: PageProps) {
         </section>
 
         {/* Recent grades */}
-        <section className="rounded-2xl border border-slate-800 bg-slate-900/80 p-4 text-sm space-y-2">
-          <p className="text-[11px] uppercase tracking-wide text-slate-400">
+        <section className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/80 p-4 text-sm space-y-2">
+          <p className="text-[11px] uppercase tracking-wide text-[var(--ll-text-muted)]">
             Recent grades
           </p>
           {student.grades.length === 0 ? (
-            <p className="text-xs text-slate-500">
+            <p className="text-xs text-[var(--ll-text-faint)]">
               No grades recorded yet.
             </p>
           ) : (
@@ -231,21 +231,21 @@ export default async function TeacherStudentProfilePage({ params }: PageProps) {
               {student.grades.map((g: any) => (
                 <div
                   key={g.id}
-                  className="flex items-center justify-between rounded-xl bg-slate-950/80 border border-slate-800 px-3 py-2"
+                  className="flex items-center justify-between rounded-xl bg-[var(--ll-bg)]/80 border border-[var(--ll-border)] px-3 py-2"
                 >
                   <div>
-                    <p className="text-sm text-slate-100">
+                    <p className="text-sm text-[var(--ll-text)]">
                       {g.Class?.name}
                     </p>
-                    <p className="text-[11px] text-slate-500">
+                    <p className="text-[11px] text-[var(--ll-text-faint)]">
                       {new Date(g.computedAt).toLocaleDateString("en-US")}
                     </p>
                   </div>
                   <div className="text-right">
-                    <p className="text-lg font-semibold text-emerald-300">
+                    <p className="text-lg font-semibold text-[var(--ll-yellow)]">
                       {g.percent}%
                     </p>
-                    <p className="text-[11px] text-slate-400">
+                    <p className="text-[11px] text-[var(--ll-text-muted)]">
                       Grade: {g.letter}
                     </p>
                   </div>
@@ -256,12 +256,12 @@ export default async function TeacherStudentProfilePage({ params }: PageProps) {
         </section>
 
         {/* Homework history */}
-        <section className="rounded-2xl border border-slate-800 bg-slate-900/80 p-4 text-sm space-y-2">
-          <p className="text-[11px] uppercase tracking-wide text-slate-400">
+        <section className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/80 p-4 text-sm space-y-2">
+          <p className="text-[11px] uppercase tracking-wide text-[var(--ll-text-muted)]">
             Homework submissions
           </p>
           {student.homeworkSubmissions.length === 0 ? (
-            <p className="text-xs text-slate-500">
+            <p className="text-xs text-[var(--ll-text-faint)]">
               No homework submissions yet.
             </p>
           ) : (
@@ -269,13 +269,13 @@ export default async function TeacherStudentProfilePage({ params }: PageProps) {
               {student.homeworkSubmissions.map((s: any) => (
                 <div
                   key={s.id}
-                  className="flex items-center justify-between rounded-xl bg-slate-950/80 border border-slate-800 px-3 py-2"
+                  className="flex items-center justify-between rounded-xl bg-[var(--ll-bg)]/80 border border-[var(--ll-border)] px-3 py-2"
                 >
                   <div>
-                    <p className="text-sm text-slate-100">
+                    <p className="text-sm text-[var(--ll-text)]">
                       {s.Homework?.title}
                     </p>
-                    <p className="text-[11px] text-slate-500">
+                    <p className="text-[11px] text-[var(--ll-text-faint)]">
                       {s.Homework?.Class?.name} ·{" "}
                       {new Date(s.submittedAt).toLocaleString("en-US")}
                     </p>
@@ -283,15 +283,15 @@ export default async function TeacherStudentProfilePage({ params }: PageProps) {
                   <div className="text-right">
                     {(s.teacherScore ?? s.aiScore) != null ? (
                       <>
-                        <p className="text-lg font-semibold text-emerald-300">
+                        <p className="text-lg font-semibold text-[var(--ll-yellow)]">
                           {s.teacherScore ?? s.aiScore}%
                         </p>
-                        <p className="text-[11px] text-slate-400">
+                        <p className="text-[11px] text-[var(--ll-text-muted)]">
                           Scored
                         </p>
                       </>
                     ) : (
-                      <p className="text-[11px] text-amber-300">
+                      <p className="text-[11px] text-[var(--ll-yellow)]">
                         Not graded yet
                       </p>
                     )}

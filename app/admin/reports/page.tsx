@@ -38,13 +38,13 @@ export default function AdminReportsPage() {
   }
 
   return (
-    <main className="min-h-screen bg-slate-950 px-4 py-8 text-slate-50">
+    <main className="min-h-screen bg-[var(--ll-bg)] px-4 py-8 text-[var(--ll-text)]">
       <div className="mx-auto max-w-6xl space-y-6">
-        <a href="/admin" className="text-sm text-emerald-300 hover:text-emerald-200">
+        <a href="/admin" className="text-sm text-[var(--ll-yellow)] hover:text-[var(--ll-yellow)]">
           &larr; Back to Admin
         </a>
         <h1 className="text-2xl font-bold">Reports & Exports</h1>
-        <p className="text-sm text-slate-400">
+        <p className="text-sm text-[var(--ll-text-muted)]">
           Generate reports for your school. Download as CSV for MOE reporting.
         </p>
 
@@ -52,7 +52,7 @@ export default function AdminReportsPage() {
           <select
             value={type}
             onChange={(e) => setType(e.target.value)}
-            className="rounded-lg bg-slate-950 border border-slate-700 px-3 py-2 text-sm text-slate-100 focus:outline-none focus:border-emerald-500"
+            className="rounded-lg bg-[var(--ll-bg)] border border-[var(--ll-border)] px-3 py-2 text-sm text-[var(--ll-text)] focus:outline-none focus:border-emerald-500"
           >
             {REPORT_TYPES.map((r) => (
               <option key={r.value} value={r.value}>{r.label}</option>
@@ -62,14 +62,14 @@ export default function AdminReportsPage() {
           <button
             onClick={loadReport}
             disabled={loading}
-            className="rounded-xl bg-emerald-500 px-4 py-2 text-sm font-semibold text-slate-950 hover:bg-emerald-400 disabled:opacity-50"
+            className="rounded-xl bg-[var(--ll-yellow)] px-4 py-2 text-sm font-semibold text-[var(--ll-text-faint)] hover:bg-[var(--ll-yellow-soft)] disabled:opacity-50"
           >
             {loading ? "Loading..." : "Preview"}
           </button>
 
           <button
             onClick={downloadCSV}
-            className="rounded-xl border border-emerald-500 px-4 py-2 text-sm font-semibold text-emerald-300 hover:bg-emerald-500/10"
+            className="rounded-xl border border-emerald-500 px-4 py-2 text-sm font-semibold text-[var(--ll-yellow)] hover:bg-[var(--ll-yellow)]/10"
           >
             Download CSV
           </button>
@@ -80,12 +80,12 @@ export default function AdminReportsPage() {
         )}
 
         {data && (
-          <section className="rounded-2xl border border-white/10 bg-slate-900/70 p-6">
-            <p className="text-xs text-slate-400 mb-3">{data.rows.length} rows</p>
+          <section className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 p-6">
+            <p className="text-xs text-[var(--ll-text-muted)] mb-3">{data.rows.length} rows</p>
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="border-b border-slate-800 text-left text-xs text-slate-500">
+                  <tr className="border-b border-[var(--ll-border)] text-left text-xs text-[var(--ll-text-faint)]">
                     {data.headers.map((h) => (
                       <th key={h} className="pb-2 pr-3">{h}</th>
                     ))}
@@ -93,7 +93,7 @@ export default function AdminReportsPage() {
                 </thead>
                 <tbody>
                   {data.rows.slice(0, 50).map((row, i) => (
-                    <tr key={i} className="border-b border-slate-800/50 text-slate-300">
+                    <tr key={i} className="border-b border-[var(--ll-border)]/50 text-[var(--ll-text)]">
                       {row.map((cell, j) => (
                         <td key={j} className="py-2 pr-3 text-xs">{cell}</td>
                       ))}
@@ -102,7 +102,7 @@ export default function AdminReportsPage() {
                 </tbody>
               </table>
               {data.rows.length > 50 && (
-                <p className="text-xs text-slate-500 mt-2">
+                <p className="text-xs text-[var(--ll-text-faint)] mt-2">
                   Showing first 50 of {data.rows.length} rows. Download CSV for full data.
                 </p>
               )}

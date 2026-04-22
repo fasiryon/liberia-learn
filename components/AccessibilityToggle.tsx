@@ -36,8 +36,8 @@ export function AccessibilityToggle() {
       title="Toggle large font and simplified layout"
       className={`rounded-full border px-3.5 py-1.5 text-xs font-semibold transition-all ${
         enabled
-          ? "border-emerald-500 bg-emerald-500/20 text-emerald-300 shadow shadow-emerald-500/20"
-          : "border-slate-700 bg-slate-800 text-slate-400 hover:border-slate-500 hover:text-slate-200"
+          ? "border-emerald-500 bg-[var(--ll-yellow)]/20 text-[var(--ll-yellow)] shadow shadow-emerald-500/20"
+          : "border-[var(--ll-border)] bg-[var(--ll-surface)] text-[var(--ll-text-muted)] hover:border-[var(--ll-border)] hover:text-[var(--ll-text)]"
       }`}
     >
       {enabled ? "Aa ✓" : "Aa"}

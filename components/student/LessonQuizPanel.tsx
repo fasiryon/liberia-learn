@@ -124,14 +124,14 @@ export function LessonQuizPanel({
   }
 
   return (
-    <section className="rounded-3xl border border-white/10 bg-slate-900/80 p-5 sm:p-7">
+    <section className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/80 p-5 sm:p-7">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-cyan-300">
+          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--ll-silver)]">
             Adaptive Assessment
           </p>
-          <h2 className="mt-1 text-lg font-semibold text-white">Test Yourself</h2>
-          <p className="mt-2 text-sm text-slate-300">
+          <h2 className="mt-1 text-lg font-semibold text-[var(--ll-text)]">Test Yourself</h2>
+          <p className="mt-2 text-sm text-[var(--ll-text)]">
             Generate a 5-question quiz from this lesson and see what to review next.
           </p>
         </div>
@@ -139,20 +139,20 @@ export function LessonQuizPanel({
           type="button"
           onClick={handleGenerateQuiz}
           disabled={loading || lessonStatus === "not_started"}
-          className="min-h-12 rounded-full bg-cyan-400 px-5 py-3 text-sm font-semibold text-slate-950 transition-colors hover:bg-cyan-300 disabled:cursor-not-allowed disabled:bg-slate-700 disabled:text-slate-400"
+          className="min-h-12 rounded-full bg-[var(--ll-silver-soft)] px-5 py-3 text-sm font-semibold text-[var(--ll-text-faint)] transition-colors hover:bg-[var(--ll-silver-soft)] disabled:cursor-not-allowed disabled:bg-[var(--ll-surface-muted)] disabled:text-[var(--ll-text-muted)]"
         >
           {loading ? "Building Quiz..." : "Test Yourself"}
         </button>
       </div>
 
       {lessonStatus === "not_started" ? (
-        <p className="mt-4 text-sm text-slate-400">
+        <p className="mt-4 text-sm text-[var(--ll-text-muted)]">
           Start reading the lesson before generating your quiz.
         </p>
       ) : null}
 
       {error ? (
-        <div className="mt-4 rounded-2xl border border-amber-500/30 bg-amber-500/10 px-4 py-3 text-sm text-amber-100">
+        <div className="mt-4 rounded-xl border border-amber-500/30 bg-[var(--ll-yellow-soft)] px-4 py-3 text-sm text-[var(--ll-yellow)]">
           {error}
         </div>
       ) : null}
@@ -162,12 +162,12 @@ export function LessonQuizPanel({
           {quiz.questions.map((question, index) => (
             <article
               key={question.id}
-              className="rounded-2xl border border-slate-800 bg-slate-950/60 p-4"
+              className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/60 p-4"
             >
-              <p className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-400">
+              <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[var(--ll-text-muted)]">
                 Question {index + 1}
               </p>
-              <p className="mt-2 text-base leading-7 text-slate-50">{question.question}</p>
+              <p className="mt-2 text-base leading-7 text-[var(--ll-text)]">{question.question}</p>
               <div className="mt-4 grid gap-3">
                 {question.options.map((option, optionIndex) => {
                   const selected = answers[question.id] === optionIndex;
@@ -191,16 +191,16 @@ export function LessonQuizPanel({
                           [question.id]: optionIndex,
                         }))
                       }
-                      className={`min-h-12 rounded-2xl border px-4 py-3 text-left text-sm leading-6 transition-colors ${
+                      className={`min-h-12 rounded-xl border px-4 py-3 text-left text-sm leading-6 transition-colors ${
                         showReview
                           ? isCorrect
-                            ? "border-emerald-400/40 bg-emerald-500/10 text-emerald-100"
+                            ? "border-emerald-400/40 bg-[var(--ll-yellow)]/10 text-[var(--ll-yellow)]"
                             : isIncorrectSelection
                               ? "border-red-400/40 bg-red-500/10 text-red-100"
-                              : "border-slate-800 bg-slate-900 text-slate-200"
+                              : "border-[var(--ll-border)] bg-[var(--ll-bg)] text-[var(--ll-text)]"
                           : selected
-                            ? "border-cyan-400/40 bg-cyan-500/10 text-cyan-100"
-                            : "border-slate-800 bg-slate-900 text-slate-200 hover:border-cyan-400/30"
+                            ? "border-cyan-400/40 bg-[var(--ll-silver-soft)] text-[var(--ll-silver)]"
+                            : "border-[var(--ll-border)] bg-[var(--ll-bg)] text-[var(--ll-text)] hover:border-cyan-400/30"
                       }`}
                     >
                       {option}
@@ -209,7 +209,7 @@ export function LessonQuizPanel({
                 })}
               </div>
               {result ? (
-                <div className="mt-4 rounded-2xl border border-slate-800 bg-slate-900/70 px-4 py-3 text-sm text-slate-100">
+                <div className="mt-4 rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 px-4 py-3 text-sm text-[var(--ll-text)]">
                   {
                     result.explanations.find((entry) => entry.questionId === question.id)
                       ?.explanation
@@ -224,7 +224,7 @@ export function LessonQuizPanel({
               type="button"
               onClick={handleSubmitQuiz}
               disabled={submitting || !allAnswered}
-              className="min-h-12 w-full rounded-full bg-emerald-400 px-5 py-3 text-sm font-semibold text-slate-950 transition-colors hover:bg-emerald-300 disabled:cursor-not-allowed disabled:bg-slate-700 disabled:text-slate-400"
+              className="min-h-12 w-full rounded-full bg-[var(--ll-yellow-soft)] px-5 py-3 text-sm font-semibold text-[var(--ll-text-faint)] transition-colors hover:bg-[var(--ll-yellow-soft)] disabled:cursor-not-allowed disabled:bg-[var(--ll-surface-muted)] disabled:text-[var(--ll-text-muted)]"
             >
               {submitting ? "Checking Answers..." : "Submit Quiz"}
             </button>
@@ -234,19 +234,19 @@ export function LessonQuizPanel({
 
       {result ? (
         <div className="mt-5 space-y-4">
-          <div className="rounded-2xl border border-emerald-500/30 bg-emerald-500/10 px-4 py-4 text-sm text-slate-100">
+          <div className="rounded-xl border border-emerald-500/30 bg-[var(--ll-yellow)]/10 px-4 py-4 text-sm text-[var(--ll-text)]">
             Score {result.scorePercent}% ({result.correctCount}/{result.totalQuestions} correct)
           </div>
 
           {result.congratulatoryMessage ? (
-            <div className="rounded-2xl border border-cyan-400/30 bg-cyan-500/10 px-4 py-4 text-sm text-cyan-100">
+            <div className="rounded-xl border border-cyan-400/30 bg-[var(--ll-silver-soft)] px-4 py-4 text-sm text-[var(--ll-silver)]">
               {result.congratulatoryMessage}
             </div>
           ) : null}
 
           {result.certificates?.lessonAwarded || result.certificates?.subjectAwarded ? (
-            <div className="rounded-2xl border border-emerald-400/30 bg-emerald-500/10 px-4 py-4 text-sm text-emerald-100">
-              <p className="font-semibold text-white">Certificate awarded</p>
+            <div className="rounded-xl border border-emerald-400/30 bg-[var(--ll-yellow)]/10 px-4 py-4 text-sm text-[var(--ll-yellow)]">
+              <p className="font-semibold text-[var(--ll-text)]">Certificate awarded</p>
               <p className="mt-2 leading-6">
                 {result.certificates.lessonAwarded && result.certificates.subjectAwarded
                   ? "You earned both a lesson certificate and a subject certificate."
@@ -256,7 +256,7 @@ export function LessonQuizPanel({
               </p>
               <Link
                 href="/student/certificates"
-                className="mt-3 inline-flex text-sm font-semibold text-emerald-200 underline underline-offset-4"
+                className="mt-3 inline-flex text-sm font-semibold text-[var(--ll-yellow)] underline underline-offset-4"
               >
                 View certificates
               </Link>
@@ -264,22 +264,22 @@ export function LessonQuizPanel({
           ) : null}
 
           {result.gapAnalysis ? (
-            <article className="rounded-2xl border border-white/10 bg-slate-950/70 px-4 py-4">
-              <h3 className="text-sm font-semibold uppercase tracking-[0.16em] text-cyan-300">
+            <article className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 px-4 py-4">
+              <h3 className="text-sm font-semibold uppercase tracking-[0.16em] text-[var(--ll-silver)]">
                 What To Review
               </h3>
-              <div className="mt-3 space-y-3 text-sm text-slate-100">
+              <div className="mt-3 space-y-3 text-sm text-[var(--ll-text)]">
                 {result.gapAnalysis.missedConcepts.map((concept, index) => (
                   <div
                     key={`${concept.concept}-${index}`}
-                    className="rounded-2xl border border-slate-800 bg-slate-900/70 px-4 py-3"
+                    className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 px-4 py-3"
                   >
-                    <p className="font-semibold text-white">{concept.concept}</p>
+                    <p className="font-semibold text-[var(--ll-text)]">{concept.concept}</p>
                     <p className="mt-2 leading-6">{concept.explanation}</p>
-                    <p className="mt-2 text-cyan-200">{concept.rereadSuggestion}</p>
+                    <p className="mt-2 text-[var(--ll-silver)]">{concept.rereadSuggestion}</p>
                   </div>
                 ))}
-                <p className="rounded-2xl border border-slate-800 bg-slate-900/70 px-4 py-3 leading-6">
+                <p className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 px-4 py-3 leading-6">
                   {result.gapAnalysis.closingMessage}
                 </p>
               </div>
@@ -287,7 +287,7 @@ export function LessonQuizPanel({
           ) : null}
 
           {result.gapAnalysisError ? (
-            <div className="rounded-2xl border border-amber-500/30 bg-amber-500/10 px-4 py-4 text-sm text-amber-100">
+            <div className="rounded-xl border border-amber-500/30 bg-[var(--ll-yellow-soft)] px-4 py-4 text-sm text-[var(--ll-yellow)]">
               {result.gapAnalysisError}
             </div>
           ) : null}

@@ -112,17 +112,17 @@ export function ModulePlayer({ module }: Props) {
   if (completed) {
     return (
       <div className="flex min-h-screen flex-col items-center justify-center px-5 py-12">
-        <div className="mx-auto w-full max-w-md rounded-2xl border border-emerald-500/30 bg-slate-900 p-8 text-center">
+        <div className="mx-auto w-full max-w-md rounded-xl border border-emerald-500/30 bg-[var(--ll-bg)] p-8 text-center">
           <div className="mb-4 text-5xl">✅</div>
-          <h2 className="mb-2 text-2xl font-bold text-emerald-400">Module Complete!</h2>
-          <p className="mb-6 text-base text-slate-300">{module.title}</p>
+          <h2 className="mb-2 text-2xl font-bold text-[var(--ll-yellow)]">Module Complete!</h2>
+          <p className="mb-6 text-base text-[var(--ll-text)]">{module.title}</p>
 
           {levelComplete && (
-            <div className="mb-6 rounded-2xl border border-emerald-500/30 bg-emerald-500/10 p-5">
-              <p className="text-lg font-bold text-emerald-300">
+            <div className="mb-6 rounded-xl border border-emerald-500/30 bg-[var(--ll-yellow)]/10 p-5">
+              <p className="text-lg font-bold text-[var(--ll-yellow)]">
                 🏅 Level {module.level} Complete!
               </p>
-              <p className="mt-1 text-sm text-slate-400">You have earned a new certification badge.</p>
+              <p className="mt-1 text-sm text-[var(--ll-text-muted)]">You have earned a new certification badge.</p>
             </div>
           )}
 
@@ -131,7 +131,7 @@ export function ModulePlayer({ module }: Props) {
               {badgesEarned.map((badge) => (
                 <span
                   key={badge.name}
-                  className="rounded-full border border-emerald-500/30 bg-emerald-500/20 px-4 py-2 text-sm font-bold text-emerald-300"
+                  className="rounded-full border border-emerald-500/30 bg-[var(--ll-yellow)]/20 px-4 py-2 text-sm font-bold text-[var(--ll-yellow)]"
                 >
                   {badge.emoji} {badge.label}
                 </span>
@@ -141,7 +141,7 @@ export function ModulePlayer({ module }: Props) {
 
           <Link
             href="/teacher/training"
-            className="block rounded-2xl bg-emerald-500 px-5 py-4 text-base font-bold text-slate-950 hover:bg-emerald-400 transition-colors"
+            className="block rounded-xl bg-[var(--ll-yellow)] px-5 py-4 text-base font-bold text-[var(--ll-text-faint)] hover:bg-[var(--ll-yellow-soft)] transition-colors"
           >
             Back to Training Center →
           </Link>
@@ -157,11 +157,11 @@ export function ModulePlayer({ module }: Props) {
       <div className="mb-6 flex items-center justify-between">
         <Link
           href="/teacher/training"
-          className="rounded-full border border-slate-700 px-5 py-2.5 text-sm font-semibold hover:bg-slate-900 transition-colors"
+          className="rounded-full border border-[var(--ll-border)] px-5 py-2.5 text-sm font-semibold hover:bg-[var(--ll-bg)] transition-colors"
         >
           ← Exit Training
         </Link>
-        <span className="text-sm text-slate-400">~{module.estimatedMinutes} min</span>
+        <span className="text-sm text-[var(--ll-text-muted)]">~{module.estimatedMinutes} min</span>
       </div>
 
       {/* ── Module title ─────────────────────────────────────────────────── */}
@@ -173,26 +173,26 @@ export function ModulePlayer({ module }: Props) {
           <span
             key={i}
             className={`h-2 flex-1 rounded-full transition-all ${
-              i <= stepIndex ? "bg-emerald-400" : "bg-slate-700"
+              i <= stepIndex ? "bg-[var(--ll-yellow-soft)]" : "bg-[var(--ll-surface-muted)]"
             }`}
           />
         ))}
       </div>
 
       {/* ── Step card ────────────────────────────────────────────────────── */}
-      <div className="mb-6 rounded-2xl border border-slate-700 bg-slate-900/80 p-6">
-        <p className="mb-3 text-xs font-semibold uppercase tracking-wide text-slate-500">
+      <div className="mb-6 rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/80 p-6">
+        <p className="mb-3 text-xs font-semibold uppercase tracking-wide text-[var(--ll-text-faint)]">
           Step {stepIndex + 1} of {steps.length}
         </p>
 
         {currentStep.screenshotPlaceholder && (
-          <div className="mb-5 flex items-center justify-center rounded-xl bg-slate-800 px-4 py-8 text-center text-sm text-slate-500">
+          <div className="mb-5 flex items-center justify-center rounded-xl bg-[var(--ll-surface)] px-4 py-8 text-center text-sm text-[var(--ll-text-faint)]">
             <span className="mr-2 text-xl">📸</span>
             <span>{currentStep.screenshotPlaceholder}</span>
           </div>
         )}
 
-        <p className="text-lg font-medium leading-relaxed text-slate-100">
+        <p className="text-lg font-medium leading-relaxed text-[var(--ll-text)]">
           {currentStep.text}
         </p>
       </div>
@@ -209,14 +209,14 @@ export function ModulePlayer({ module }: Props) {
         <button
           onClick={handleMarkComplete}
           disabled={completing}
-          className="w-full rounded-2xl bg-emerald-500 px-5 py-4 text-base font-bold text-slate-950 hover:bg-emerald-400 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          className="w-full rounded-xl bg-[var(--ll-yellow)] px-5 py-4 text-base font-bold text-[var(--ll-text-faint)] hover:bg-[var(--ll-yellow-soft)] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
         >
           {completing ? "Saving…" : "✅ Mark as Complete"}
         </button>
       ) : (
         <button
           onClick={handleNext}
-          className="w-full rounded-2xl bg-blue-500 px-5 py-4 text-base font-bold text-white hover:bg-blue-400 transition-colors"
+          className="w-full rounded-xl bg-[var(--ll-silver-soft)] px-5 py-4 text-base font-bold text-[var(--ll-text)] hover:bg-[var(--ll-silver-soft)] transition-colors"
         >
           Next Step →
         </button>
@@ -226,7 +226,7 @@ export function ModulePlayer({ module }: Props) {
       <div className="mt-4 text-center">
         <Link
           href="/teacher/training"
-          className="text-sm text-slate-500 hover:text-slate-300 transition-colors"
+          className="text-sm text-[var(--ll-text-faint)] hover:text-[var(--ll-text)] transition-colors"
         >
           Exit without completing
         </Link>

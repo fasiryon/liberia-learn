@@ -257,28 +257,28 @@ export default function TeacherSchedulePage() {
   const weekDates = getWeekDates();
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-50 px-4 py-8">
+    <div className="min-h-screen bg-[var(--ll-bg)] text-[var(--ll-text)] px-4 py-8">
       <div className="mx-auto max-w-6xl space-y-6">
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div>
             <h1 className="text-2xl font-bold">Weekly Schedule</h1>
-            <p className="text-sm text-slate-400 mt-1">
+            <p className="text-sm text-[var(--ll-text-muted)] mt-1">
               Manage lessons scheduled for your classes
             </p>
           </div>
           <div className="flex gap-2">
             <Link
               href="/teacher/create-lesson"
-              className="rounded-xl border border-emerald-500/30 px-3 py-1.5 text-xs font-semibold text-emerald-200 hover:bg-emerald-500/10"
+              className="rounded-xl border border-emerald-500/30 px-3 py-1.5 text-xs font-semibold text-[var(--ll-yellow)] hover:bg-[var(--ll-yellow)]/10"
             >
               Create with AI
             </Link>
-            <button onClick={prevWeek} className="rounded-xl border border-slate-700 px-3 py-1.5 text-xs text-slate-300 hover:bg-slate-800">&larr; Prev</button>
-            <button onClick={() => loadSchedule()} className="rounded-xl border border-slate-700 px-3 py-1.5 text-xs text-slate-300 hover:bg-slate-800">This Week</button>
-            <button onClick={nextWeek} className="rounded-xl border border-slate-700 px-3 py-1.5 text-xs text-slate-300 hover:bg-slate-800">Next &rarr;</button>
+            <button onClick={prevWeek} className="rounded-xl border border-[var(--ll-border)] px-3 py-1.5 text-xs text-[var(--ll-text)] hover:bg-[var(--ll-surface)]">&larr; Prev</button>
+            <button onClick={() => loadSchedule()} className="rounded-xl border border-[var(--ll-border)] px-3 py-1.5 text-xs text-[var(--ll-text)] hover:bg-[var(--ll-surface)]">This Week</button>
+            <button onClick={nextWeek} className="rounded-xl border border-[var(--ll-border)] px-3 py-1.5 text-xs text-[var(--ll-text)] hover:bg-[var(--ll-surface)]">Next &rarr;</button>
             <button
               onClick={() => setShowForm((v) => !v)}
-              className="rounded-xl bg-emerald-500 px-3 py-1.5 text-xs font-semibold text-slate-950 hover:bg-emerald-400"
+              className="rounded-xl bg-[var(--ll-yellow)] px-3 py-1.5 text-xs font-semibold text-[var(--ll-text-faint)] hover:bg-[var(--ll-yellow-soft)]"
             >
               {showForm ? "Close" : "Schedule Lesson"}
             </button>
@@ -286,21 +286,21 @@ export default function TeacherSchedulePage() {
         </div>
 
         {publishSuccess && publishedClassName && (
-          <div className="rounded-2xl border border-emerald-500/30 bg-emerald-500/10 px-4 py-3 text-sm text-emerald-100">
+          <div className="rounded-xl border border-emerald-500/30 bg-[var(--ll-yellow)]/10 px-4 py-3 text-sm text-[var(--ll-yellow)]">
             Lesson published to {publishedClassName}.
           </div>
         )}
 
         {showForm && (
-          <form onSubmit={handleSchedule} className="rounded-2xl border border-white/10 bg-slate-900/70 p-6 space-y-4">
+          <form onSubmit={handleSchedule} className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 p-6 space-y-4">
             <h2 className="text-lg font-semibold">Schedule Lesson</h2>
             <div className="grid gap-4 md:grid-cols-2">
               <div>
-                <label className="block text-xs text-slate-400">Class *</label>
+                <label className="block text-xs text-[var(--ll-text-muted)]">Class *</label>
                 <select
                   value={form.classId}
                   onChange={(e) => setForm((f) => ({ ...f, classId: e.target.value }))}
-                  className="mt-1 w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 text-sm text-slate-100"
+                  className="mt-1 w-full rounded-lg border border-[var(--ll-border)] bg-[var(--ll-bg)] px-3 py-2 text-sm text-[var(--ll-text)]"
                   required
                 >
                   <option value="">Select class...</option>
@@ -312,11 +312,11 @@ export default function TeacherSchedulePage() {
                 </select>
               </div>
               <div>
-                <label className="block text-xs text-slate-400">Subject *</label>
+                <label className="block text-xs text-[var(--ll-text-muted)]">Subject *</label>
                 <select
                   value={form.subject}
                   onChange={(e) => setForm((f) => ({ ...f, subject: e.target.value }))}
-                  className="mt-1 w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 text-sm text-slate-100"
+                  className="mt-1 w-full rounded-lg border border-[var(--ll-border)] bg-[var(--ll-bg)] px-3 py-2 text-sm text-[var(--ll-text)]"
                   required
                 >
                   <option value="">Select subject...</option>
@@ -327,17 +327,17 @@ export default function TeacherSchedulePage() {
                   ))}
                 </select>
                 {selectedClass?.subject && (
-                  <p className="text-[10px] text-slate-500 mt-1">
+                  <p className="text-[10px] text-[var(--ll-text-faint)] mt-1">
                     Class subject: {selectedClass.subject}
                   </p>
                 )}
               </div>
               <div>
-                <label className="block text-xs text-slate-400">Grade *</label>
+                <label className="block text-xs text-[var(--ll-text-muted)]">Grade *</label>
                 <select
                   value={form.grade}
                   onChange={(e) => setForm((f) => ({ ...f, grade: Number(e.target.value) }))}
-                  className="mt-1 w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 text-sm text-slate-100"
+                  className="mt-1 w-full rounded-lg border border-[var(--ll-border)] bg-[var(--ll-bg)] px-3 py-2 text-sm text-[var(--ll-text)]"
                 >
                   {Array.from({ length: 12 }, (_, i) => i + 1).map((g) => (
                     <option key={g} value={g}>
@@ -347,41 +347,41 @@ export default function TeacherSchedulePage() {
                 </select>
               </div>
               <div>
-                <label className="block text-xs text-slate-400">Topic / Lesson Title *</label>
+                <label className="block text-xs text-[var(--ll-text-muted)]">Topic / Lesson Title *</label>
                 <input
                   value={form.topic}
                   onChange={(e) => setForm((f) => ({ ...f, topic: e.target.value }))}
-                  className="mt-1 w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 text-sm text-slate-100"
+                  className="mt-1 w-full rounded-lg border border-[var(--ll-border)] bg-[var(--ll-bg)] px-3 py-2 text-sm text-[var(--ll-text)]"
                   placeholder="Fractions and Mixed Numbers"
                   required
                 />
               </div>
               <div>
-                <label className="block text-xs text-slate-400">Date *</label>
+                <label className="block text-xs text-[var(--ll-text-muted)]">Date *</label>
                 <input
                   type="date"
                   value={form.date}
                   onChange={(e) => setForm((f) => ({ ...f, date: e.target.value }))}
-                  className="mt-1 w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 text-sm text-slate-100"
+                  className="mt-1 w-full rounded-lg border border-[var(--ll-border)] bg-[var(--ll-bg)] px-3 py-2 text-sm text-[var(--ll-text)]"
                   required
                 />
               </div>
               <div>
-                <label className="block text-xs text-slate-400">Start Time *</label>
+                <label className="block text-xs text-[var(--ll-text-muted)]">Start Time *</label>
                 <input
                   type="time"
                   value={form.startTime}
                   onChange={(e) => setForm((f) => ({ ...f, startTime: e.target.value }))}
-                  className="mt-1 w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 text-sm text-slate-100"
+                  className="mt-1 w-full rounded-lg border border-[var(--ll-border)] bg-[var(--ll-bg)] px-3 py-2 text-sm text-[var(--ll-text)]"
                   required
                 />
               </div>
               <div>
-                <label className="block text-xs text-slate-400">Duration *</label>
+                <label className="block text-xs text-[var(--ll-text-muted)]">Duration *</label>
                 <select
                   value={form.duration}
                   onChange={(e) => setForm((f) => ({ ...f, duration: Number(e.target.value) }))}
-                  className="mt-1 w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 text-sm text-slate-100"
+                  className="mt-1 w-full rounded-lg border border-[var(--ll-border)] bg-[var(--ll-bg)] px-3 py-2 text-sm text-[var(--ll-text)]"
                 >
                   {DURATIONS.map((d) => (
                     <option key={d.minutes} value={d.minutes}>
@@ -391,23 +391,23 @@ export default function TeacherSchedulePage() {
                 </select>
               </div>
               <div>
-                <label className="block text-xs text-slate-400">Notes (optional)</label>
+                <label className="block text-xs text-[var(--ll-text-muted)]">Notes (optional)</label>
                 <textarea
                   value={form.notes}
                   onChange={(e) => setForm((f) => ({ ...f, notes: e.target.value }))}
-                  className="mt-1 w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 text-sm text-slate-100"
+                  className="mt-1 w-full rounded-lg border border-[var(--ll-border)] bg-[var(--ll-bg)] px-3 py-2 text-sm text-[var(--ll-text)]"
                   rows={2}
                 />
               </div>
             </div>
             {conflictWarning && (
-              <p className="text-xs text-amber-300">{conflictWarning}</p>
+              <p className="text-xs text-[var(--ll-yellow)]">{conflictWarning}</p>
             )}
             {error && <p className="text-xs text-red-300">{error}</p>}
             <button
               type="submit"
               disabled={saving}
-              className="rounded-xl bg-emerald-500 px-6 py-2.5 text-sm font-semibold text-slate-950 hover:bg-emerald-400 disabled:opacity-60"
+              className="rounded-xl bg-[var(--ll-yellow)] px-6 py-2.5 text-sm font-semibold text-[var(--ll-text-faint)] hover:bg-[var(--ll-yellow-soft)] disabled:opacity-60"
             >
               {saving ? "Scheduling..." : "Schedule Lesson"}
             </button>
@@ -415,38 +415,38 @@ export default function TeacherSchedulePage() {
         )}
 
         {loading ? (
-          <div className="h-60 rounded-2xl bg-slate-800/50 animate-pulse" />
+          <div className="h-60 rounded-xl bg-[var(--ll-surface)]/50 animate-pulse" />
         ) : (
           <div className="space-y-6">
-            <section className="rounded-2xl border border-white/10 bg-slate-900/70 p-4">
+            <section className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 p-4">
               <div className="mb-3 flex items-center justify-between gap-3">
                 <div>
-                  <h2 className="text-sm font-semibold text-slate-200">Weekly Timetable</h2>
-                  <p className="text-xs text-slate-500">Fixed class sessions and ownership for daily operations.</p>
+                  <h2 className="text-sm font-semibold text-[var(--ll-text)]">Weekly Timetable</h2>
+                  <p className="text-xs text-[var(--ll-text-faint)]">Fixed class sessions and ownership for daily operations.</p>
                 </div>
               </div>
               {timetable.length === 0 ? (
-                <p className="text-sm text-slate-400">No timetable entries assigned yet.</p>
+                <p className="text-sm text-[var(--ll-text-muted)]">No timetable entries assigned yet.</p>
               ) : (
                 <div className="grid grid-cols-1 gap-4 md:grid-cols-5">
                   {DAY_LABELS.map((label, index) => {
                     const dayKey = ["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY"][index];
                     const dayItems = timetable.filter((item) => item.dayOfWeek === dayKey);
                     return (
-                      <div key={dayKey} className="rounded-2xl border border-white/10 bg-slate-950/50 p-3">
-                        <p className="mb-2 text-xs font-semibold text-slate-400">{label}</p>
+                      <div key={dayKey} className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/50 p-3">
+                        <p className="mb-2 text-xs font-semibold text-[var(--ll-text-muted)]">{label}</p>
                         {dayItems.length === 0 ? (
-                          <p className="text-[10px] text-slate-600">No timetable slots</p>
+                          <p className="text-[10px] text-[var(--ll-text-faint)]">No timetable slots</p>
                         ) : (
                           <div className="space-y-2">
                             {dayItems.map((item) => (
-                              <div key={item.id} className="rounded-xl border border-slate-800 bg-slate-900/70 p-3">
-                                <p className="text-xs font-semibold text-slate-100">{item.class?.name ?? "Class"}</p>
-                                <p className="text-[11px] text-slate-400">{item.periodLabel}</p>
-                                <p className="mt-1 text-[11px] text-emerald-300">
+                              <div key={item.id} className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 p-3">
+                                <p className="text-xs font-semibold text-[var(--ll-text)]">{item.class?.name ?? "Class"}</p>
+                                <p className="text-[11px] text-[var(--ll-text-muted)]">{item.periodLabel}</p>
+                                <p className="mt-1 text-[11px] text-[var(--ll-yellow)]">
                                   {[item.startTime, item.endTime].filter(Boolean).join(" - ") || "Time TBD"}
                                 </p>
-                                <p className="text-[10px] text-slate-500">
+                                <p className="text-[10px] text-[var(--ll-text-faint)]">
                                   {item.subject.replace(/_/g, " ")}{item.room ? ` - ${item.room}` : ""}
                                 </p>
                               </div>
@@ -461,7 +461,7 @@ export default function TeacherSchedulePage() {
             </section>
 
             {items.length === 0 ? (
-              <div className="rounded-2xl border border-white/10 bg-slate-900/70 p-8 text-center text-sm text-slate-400">
+              <div className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 p-8 text-center text-sm text-[var(--ll-text-muted)]">
                 No lessons scheduled yet. Schedule your first lesson.
               </div>
             ) : (
@@ -474,12 +474,12 @@ export default function TeacherSchedulePage() {
                   const isToday = dateStr === new Date().toISOString().slice(0, 10);
 
                   return (
-                    <div key={di} className={`rounded-2xl border ${isToday ? "border-emerald-500/30" : "border-white/10"} bg-slate-900/70 p-3`}>
-                      <p className={`text-xs font-semibold mb-2 ${isToday ? "text-emerald-400" : "text-slate-400"}`}>
+                    <div key={di} className={`rounded-xl border ${isToday ? "border-emerald-500/30" : "border-[var(--ll-border)]"} bg-[var(--ll-bg)]/70 p-3`}>
+                      <p className={`text-xs font-semibold mb-2 ${isToday ? "text-[var(--ll-yellow)]" : "text-[var(--ll-text-muted)]"}`}>
                         {DAY_LABELS[di]} {date.getUTCDate()}
                       </p>
                       {dayItems.length === 0 ? (
-                        <p className="text-[10px] text-slate-600">No lessons</p>
+                        <p className="text-[10px] text-[var(--ll-text-faint)]">No lessons</p>
                       ) : (
                         <div className="space-y-2">
                           {dayItems.map((item) => {
@@ -493,16 +493,16 @@ export default function TeacherSchedulePage() {
                               ? "Not Delivered"
                               : "Scheduled";
                             const statusColor = delivered
-                              ? "bg-emerald-500/20 text-emerald-300"
+                              ? "bg-[var(--ll-yellow)]/20 text-[var(--ll-yellow)]"
                               : past
-                              ? "bg-amber-500/20 text-amber-300"
-                              : "bg-blue-500/20 text-blue-300";
+                              ? "bg-[var(--ll-yellow-soft)] text-[var(--ll-yellow)]"
+                              : "bg-[var(--ll-silver-soft)] text-[var(--ll-silver)]";
                             return (
-                              <div key={item.id} className="rounded-lg border border-slate-800 bg-slate-950/50 p-2">
-                                <p className="text-[11px] font-medium text-slate-200 truncate">{item.title}</p>
-                                <p className="text-[9px] text-slate-500">{item.className}</p>
+                              <div key={item.id} className="rounded-lg border border-[var(--ll-border)] bg-[var(--ll-bg)]/50 p-2">
+                                <p className="text-[11px] font-medium text-[var(--ll-text)] truncate">{item.title}</p>
+                                <p className="text-[9px] text-[var(--ll-text-faint)]">{item.className}</p>
                                 <div className="mt-1 flex items-center justify-between">
-                                  <span className="text-[9px] text-emerald-400">{pct}% done</span>
+                                  <span className="text-[9px] text-[var(--ll-yellow)]">{pct}% done</span>
                                   <span className={`rounded-full px-2 py-0.5 text-[9px] ${statusColor}`}>
                                     {statusLabel}
                                   </span>
@@ -511,7 +511,7 @@ export default function TeacherSchedulePage() {
                                   {!delivered && (
                                     <button
                                       onClick={() => handleDeliver(item.id)}
-                                      className="rounded-full bg-emerald-500/20 px-2 py-0.5 text-[9px] text-emerald-300 hover:bg-emerald-500/30"
+                                      className="rounded-full bg-[var(--ll-yellow)]/20 px-2 py-0.5 text-[9px] text-[var(--ll-yellow)] hover:bg-[var(--ll-yellow)]/30"
                                     >
                                       Mark Delivered
                                     </button>

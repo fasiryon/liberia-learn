@@ -49,7 +49,7 @@ export default async function StudentLessonPage({ params }: { params: { id: stri
   const lessonContent = <LessonDeliveryClient lessonId={params.id} />;
 
   return (
-    <main className="ll-page min-h-screen px-4 py-8 text-slate-50">
+    <main className="ll-page min-h-screen px-4 py-8 text-[var(--ll-text)]">
       <div className="ll-shell max-w-5xl">
         {isToolkitLessonIntegrationEnabled() ? (
           <ToolkitProvider context={context}>

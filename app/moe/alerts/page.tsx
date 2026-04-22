@@ -109,44 +109,44 @@ export default function MoeAlertsPage() {
   return (
     <div className="space-y-6">
       <div>
-        <p className="text-xs uppercase tracking-[0.2em] text-emerald-300">
+        <p className="text-xs uppercase tracking-[0.2em] text-[var(--ll-yellow)]">
           National Alerts
         </p>
         <h1 className="text-3xl font-semibold">National Intervention Alerts</h1>
-        <p className="text-sm text-slate-400">
+        <p className="text-sm text-[var(--ll-text-muted)]">
           Aggregated intervention signals across districts. No student PII.
         </p>
       </div>
 
       {error && (
-        <div className="rounded-2xl border border-red-500/30 bg-red-500/10 p-4 text-sm text-red-300">
+        <div className="rounded-xl border border-red-500/30 bg-red-500/10 p-4 text-sm text-red-300">
           {error}
         </div>
       )}
 
       <section className="grid gap-4 md:grid-cols-3">
-        <div className="rounded-2xl border border-white/10 bg-white/5 p-5">
-          <p className="text-xs text-slate-400">Total Active</p>
-          <p className="mt-2 text-2xl font-semibold text-rose-200">{totalActive}</p>
+        <div className="rounded-xl border border-[var(--ll-border)] bg-white/5 p-5">
+          <p className="text-xs text-[var(--ll-text-muted)]">Total Active</p>
+          <p className="mt-2 text-2xl font-semibold text-[var(--ll-danger)]">{totalActive}</p>
         </div>
-        <div className="rounded-2xl border border-white/10 bg-white/5 p-5">
-          <p className="text-xs text-slate-400">High Priority</p>
-          <p className="mt-2 text-2xl font-semibold text-amber-200">{highPriority}</p>
+        <div className="rounded-xl border border-[var(--ll-border)] bg-white/5 p-5">
+          <p className="text-xs text-[var(--ll-text-muted)]">High Priority</p>
+          <p className="mt-2 text-2xl font-semibold text-[var(--ll-yellow)]">{highPriority}</p>
         </div>
-        <div className="rounded-2xl border border-white/10 bg-white/5 p-5">
-          <p className="text-xs text-slate-400">Districts Reporting</p>
-          <p className="mt-2 text-2xl font-semibold text-emerald-200">{byDistrict}</p>
+        <div className="rounded-xl border border-[var(--ll-border)] bg-white/5 p-5">
+          <p className="text-xs text-[var(--ll-text-muted)]">Districts Reporting</p>
+          <p className="mt-2 text-2xl font-semibold text-[var(--ll-yellow)]">{byDistrict}</p>
         </div>
       </section>
 
-      <section className="rounded-2xl border border-white/10 bg-white/5 p-6 space-y-4">
+      <section className="rounded-xl border border-[var(--ll-border)] bg-white/5 p-6 space-y-4">
         <div className="flex flex-wrap items-center gap-3">
           <div>
-            <label className="block text-[11px] text-slate-500">District</label>
+            <label className="block text-[11px] text-[var(--ll-text-faint)]">District</label>
             <select
               value={districtFilter}
               onChange={(e) => setDistrictFilter(e.target.value)}
-              className="mt-1 rounded-lg border border-white/10 bg-[#0b1120] px-3 py-2 text-xs text-slate-200"
+              className="mt-1 rounded-lg border border-[var(--ll-border)] bg-[#0b1120] px-3 py-2 text-xs text-[var(--ll-text)]"
             >
               <option value="all">All Districts</option>
               {districts.map((d) => (
@@ -157,11 +157,11 @@ export default function MoeAlertsPage() {
             </select>
           </div>
           <div>
-            <label className="block text-[11px] text-slate-500">Subject</label>
+            <label className="block text-[11px] text-[var(--ll-text-faint)]">Subject</label>
             <select
               value={subjectFilter}
               onChange={(e) => setSubjectFilter(e.target.value)}
-              className="mt-1 rounded-lg border border-white/10 bg-[#0b1120] px-3 py-2 text-xs text-slate-200"
+              className="mt-1 rounded-lg border border-[var(--ll-border)] bg-[#0b1120] px-3 py-2 text-xs text-[var(--ll-text)]"
             >
               <option value="all">All Subjects</option>
               {subjects.map((s) => (
@@ -180,14 +180,14 @@ export default function MoeAlertsPage() {
             ))}
           </div>
         ) : filtered.length === 0 ? (
-          <div className="rounded-xl border border-white/10 bg-black/10 p-6 text-sm text-slate-400">
+          <div className="rounded-xl border border-[var(--ll-border)] bg-black/10 p-6 text-sm text-[var(--ll-text-muted)]">
             No alerts found for the selected filters.
           </div>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="border-b border-white/10 text-left text-xs text-slate-500">
+                <tr className="border-b border-[var(--ll-border)] text-left text-xs text-[var(--ll-text-faint)]">
                   <th className="pb-2 pr-4">District</th>
                   <th className="pb-2 pr-4">Subject</th>
                   <th className="pb-2 pr-4">Strand</th>
@@ -198,7 +198,7 @@ export default function MoeAlertsPage() {
               </thead>
               <tbody>
                 {filtered.map((a, idx) => (
-                  <tr key={`${a.districtId}-${a.alertType}-${idx}`} className="border-b border-white/5 text-slate-200">
+                  <tr key={`${a.districtId}-${a.alertType}-${idx}`} className="border-b border-white/5 text-[var(--ll-text)]">
                     <td className="py-3 pr-4 font-medium">{a.districtName}</td>
                     <td className="py-3 pr-4">{a.subject}</td>
                     <td className="py-3 pr-4">{a.strand}</td>

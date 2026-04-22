@@ -7,7 +7,7 @@ function riskClass(risk: TectonicPlatesState["earthquakeRisk"]) {
   if (risk === "critical") return "text-red-300";
   if (risk === "high") return "text-orange-300";
   if (risk === "medium") return "text-yellow-300";
-  return "text-emerald-300";
+  return "text-[var(--ll-yellow)]";
 }
 
 export default function TectonicPlatesFallback({
@@ -18,9 +18,9 @@ export default function TectonicPlatesFallback({
   onAction: (action: TectonicPlatesAction) => void;
 }) {
   return (
-    <div className="space-y-4 rounded-lg border border-slate-800 bg-slate-950 p-4 text-slate-100">
+    <div className="space-y-4 rounded-lg border border-[var(--ll-border)] bg-[var(--ll-bg)] p-4 text-[var(--ll-text)]">
       <h3 className="text-lg font-semibold">Tectonic Plates Lab</h3>
-      <div className={`rounded-lg border border-slate-800 bg-slate-900 p-4 text-center text-3xl font-bold uppercase ${riskClass(state.earthquakeRisk)}`}>
+      <div className={`rounded-lg border border-[var(--ll-border)] bg-[var(--ll-bg)] p-4 text-center text-3xl font-bold uppercase ${riskClass(state.earthquakeRisk)}`}>
         {state.earthquakeRisk}
       </div>
       <div className="grid gap-2 text-sm sm:grid-cols-2">
@@ -32,10 +32,10 @@ export default function TectonicPlatesFallback({
         <p>Time: {state.time.toFixed(1)}</p>
       </div>
       <div className="flex flex-wrap gap-2">
-        <button type="button" onClick={() => onAction({ type: "TRIGGER_EARTHQUAKE" })} className="min-h-11 rounded-full bg-cyan-300 px-4 text-sm font-semibold text-slate-950">
+        <button type="button" onClick={() => onAction({ type: "TRIGGER_EARTHQUAKE" })} className="min-h-11 rounded-full bg-[var(--ll-silver-soft)] px-4 text-sm font-semibold text-[var(--ll-text-faint)]">
           Trigger Earthquake
         </button>
-        <button type="button" onClick={() => onAction({ type: "TRIGGER_ERUPTION" })} className="min-h-11 rounded-full border border-slate-700 px-4 text-sm">
+        <button type="button" onClick={() => onAction({ type: "TRIGGER_ERUPTION" })} className="min-h-11 rounded-full border border-[var(--ll-border)] px-4 text-sm">
           Trigger Eruption
         </button>
       </div>

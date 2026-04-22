@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { LogIn } from "lucide-react";
+import { BrandMark } from "@/components/ui/BrandMark";
 import { PublicFooter } from "@/components/PublicFooter";
 
 const roleCards = [
@@ -52,6 +53,7 @@ export default function HomePage() {
       <header className="border-b border-[var(--ll-border)] bg-[var(--ll-bg)]">
         <div className="ll-shell flex items-center justify-between gap-4 py-4">
           <div className="flex items-center gap-3">
+            <BrandMark size={20} />
             <div className="leading-tight">
               <p className="text-sm font-semibold text-[var(--ll-text)]">
                 Liberia<span className="text-[var(--ll-accent)]">.</span>Learn
@@ -67,7 +69,7 @@ export default function HomePage() {
               Ministry Officials
             </Link>
             <Link href="/login">
-              <span className="ll-interactive inline-flex min-h-11 items-center gap-1.5 rounded-lg bg-[var(--ll-accent)] px-5 py-2 font-semibold text-slate-950">
+              <span className="ll-interactive inline-flex min-h-11 items-center gap-1.5 rounded-lg bg-[var(--ll-accent)] px-5 py-2 font-semibold text-[var(--ll-text-faint)]">
                 <LogIn className="h-4 w-4" strokeWidth={1.5} />
                 Log in
               </span>
@@ -94,7 +96,7 @@ export default function HomePage() {
 
           <div className="flex flex-col gap-3 sm:flex-row">
             <Link href="/login">
-              <span className="ll-interactive inline-flex min-h-12 items-center justify-center rounded-lg bg-[var(--ll-accent)] px-6 py-3 text-sm font-semibold text-slate-950">
+              <span className="ll-interactive inline-flex min-h-12 items-center justify-center rounded-lg bg-[var(--ll-accent)] px-6 py-3 text-sm font-semibold text-[var(--ll-text-faint)]">
                 Access the platform
               </span>
             </Link>
@@ -193,7 +195,7 @@ export default function HomePage() {
             </p>
             <div className="flex flex-wrap gap-3 pt-5">
               <Link href="/pilot-preview">
-                <span className="inline-flex rounded-lg bg-[var(--ll-warning)] px-5 py-2.5 text-sm font-semibold text-slate-950 hover:opacity-90">
+                <span className="inline-flex rounded-lg bg-[var(--ll-warning)] px-5 py-2.5 text-sm font-semibold text-[var(--ll-text-faint)] hover:opacity-90">
                   Request a briefing
                 </span>
               </Link>

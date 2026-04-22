@@ -10,7 +10,7 @@ export default async function StudentGravityExplorerPage() {
     return (
       <main className="ll-dashboard-shell px-4 py-8">
         <div className="ll-shell max-w-5xl">
-          <section className="ll-section rounded-xl p-6 text-slate-100">
+          <section className="ll-section rounded-xl p-6 text-[var(--ll-text)]">
             Gravity Explorer is not available yet.
           </section>
         </div>
@@ -35,11 +35,11 @@ export default async function StudentGravityExplorerPage() {
     <main className="ll-dashboard-shell px-4 py-8">
       <div className="ll-shell max-w-6xl">
         <div className="mb-5">
-          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-cyan-200">
+          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[var(--ll-silver)]">
             Physics Lab
           </p>
-          <h1 className="mt-2 text-3xl font-semibold text-white">Gravity Explorer</h1>
-          <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-300">
+          <h1 className="mt-2 text-3xl font-semibold text-[var(--ll-text)]">Gravity Explorer</h1>
+          <p className="mt-2 max-w-2xl text-sm leading-6 text-[var(--ll-text)]">
             Explore how gravity, height, and mass affect falling motion.
           </p>
         </div>

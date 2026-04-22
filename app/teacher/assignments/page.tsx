@@ -161,17 +161,17 @@ export default function TeacherAssignmentsPage() {
   }
 
   return (
-    <main className="min-h-screen bg-slate-950 px-4 py-8 text-slate-50">
+    <main className="min-h-screen bg-[var(--ll-bg)] px-4 py-8 text-[var(--ll-text)]">
       <div className="mx-auto max-w-6xl space-y-6">
         <div>
           <Link
             href="/teacher/dashboard"
-            className="text-sm text-emerald-300 hover:text-emerald-200"
+            className="text-sm text-[var(--ll-yellow)] hover:text-[var(--ll-yellow)]"
           >
             &larr; Back to Teacher Dashboard
           </Link>
           <h1 className="mt-3 text-3xl font-bold">Assignment Grading</h1>
-          <p className="mt-2 text-sm text-slate-400">
+          <p className="mt-2 text-sm text-[var(--ll-text-muted)]">
             Review assignment responses, save grades, and notify guardians when grading is complete.
           </p>
         </div>
@@ -179,7 +179,7 @@ export default function TeacherAssignmentsPage() {
         <TeacherNav />
 
         {created ? (
-          <div className="rounded-3xl border border-emerald-500/20 bg-emerald-500/10 p-4 text-sm text-emerald-100">
+          <div className="rounded-xl border border-emerald-500/20 bg-[var(--ll-yellow)]/10 p-4 text-sm text-[var(--ll-yellow)]">
             Assignment created. Students can now open it from their assignment view, and submissions will appear here for grading.
           </div>
         ) : null}
@@ -189,34 +189,34 @@ export default function TeacherAssignmentsPage() {
             {Array.from({ length: 3 }).map((_, index) => (
               <div
                 key={index}
-                className="h-44 animate-pulse rounded-3xl border border-white/10 bg-slate-900/70"
+                className="h-44 animate-pulse rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70"
               />
             ))}
           </div>
         ) : error ? (
-          <div className="rounded-3xl border border-red-500/20 bg-red-500/10 p-6 text-sm text-red-200">
+          <div className="rounded-xl border border-red-500/20 bg-red-500/10 p-6 text-sm text-red-200">
             {error}
           </div>
         ) : submissions.length === 0 ? (
           <div className="space-y-6">
-            <section className="rounded-3xl border border-white/10 bg-slate-900/70 p-6">
+            <section className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 p-6">
               <div className="flex flex-wrap items-center justify-between gap-3">
                 <div>
-                  <h2 className="text-lg font-semibold text-slate-100">Recent assignments</h2>
-                  <p className="mt-1 text-sm text-slate-400">
+                  <h2 className="text-lg font-semibold text-[var(--ll-text)]">Recent assignments</h2>
+                  <p className="mt-1 text-sm text-[var(--ll-text-muted)]">
                     Track what has been assigned even before submissions arrive.
                   </p>
                 </div>
                 <Link
                   href="/teacher/assignments/new"
-                  className="inline-flex rounded-full bg-emerald-400 px-5 py-2 text-sm font-semibold text-slate-950"
+                  className="inline-flex rounded-full bg-[var(--ll-yellow-soft)] px-5 py-2 text-sm font-semibold text-[var(--ll-text-faint)]"
                 >
                   Create Assignment
                 </Link>
               </div>
 
               {assignments.length === 0 ? (
-                <div className="rounded-3xl border border-dashed border-slate-700 bg-slate-950/60 p-6 text-sm text-slate-300">
+                <div className="rounded-xl border border-dashed border-[var(--ll-border)] bg-[var(--ll-bg)]/60 p-6 text-sm text-[var(--ll-text)]">
                   No assignments yet. Create your first assignment to get started.
                 </div>
               ) : (
@@ -224,23 +224,23 @@ export default function TeacherAssignmentsPage() {
                   {assignments.map((assignment) => (
                     <section
                       key={assignment.id}
-                      className="rounded-3xl border border-white/10 bg-slate-950/60 p-5"
+                      className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/60 p-5"
                     >
                       <div className="flex items-start justify-between gap-3">
                         <div>
-                          <h3 className="text-base font-semibold text-slate-100">{assignment.title}</h3>
-                          <p className="mt-1 text-sm text-slate-400">
+                          <h3 className="text-base font-semibold text-[var(--ll-text)]">{assignment.title}</h3>
+                          <p className="mt-1 text-sm text-[var(--ll-text-muted)]">
                             {assignment.className} · {assignment.subject.replace(/_/g, " ")}
                           </p>
                         </div>
-                        <span className="rounded-full border border-slate-700 px-3 py-1 text-xs text-slate-300">
+                        <span className="rounded-full border border-[var(--ll-border)] px-3 py-1 text-xs text-[var(--ll-text)]">
                           {assignment.points} pts
                         </span>
                       </div>
                       {assignment.description ? (
-                        <p className="mt-3 line-clamp-3 text-sm text-slate-300">{assignment.description}</p>
+                        <p className="mt-3 line-clamp-3 text-sm text-[var(--ll-text)]">{assignment.description}</p>
                       ) : null}
-                      <div className="mt-4 flex flex-wrap gap-3 text-xs text-slate-400">
+                      <div className="mt-4 flex flex-wrap gap-3 text-xs text-[var(--ll-text-muted)]">
                         <span>Assigned {new Date(assignment.createdAt).toLocaleDateString("en-LR")}</span>
                         <span>
                           Due {assignment.dueAt ? new Date(assignment.dueAt).toLocaleString("en-LR") : "not set"}
@@ -249,23 +249,23 @@ export default function TeacherAssignmentsPage() {
                         <span>{assignment.gradedCount} graded</span>
                         <span>{assignment.averageScore == null ? "No score yet" : `Avg score ${assignment.averageScore}%`}</span>
                       </div>
-                      <div className="mt-4 rounded-2xl border border-slate-800 bg-slate-900/70 p-4">
+                      <div className="mt-4 rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 p-4">
                         <div className="flex flex-wrap items-center justify-between gap-3">
-                          <p className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-400">Completion tracking</p>
+                          <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[var(--ll-text-muted)]">Completion tracking</p>
                           <a
                             href={`/api/teacher/assignments/${assignment.id}/export`}
-                            className="rounded-full border border-slate-700 px-3 py-1 text-[11px] text-slate-300 hover:text-slate-100"
+                            className="rounded-full border border-[var(--ll-border)] px-3 py-1 text-[11px] text-[var(--ll-text)] hover:text-[var(--ll-text)]"
                           >
                             Export CSV
                           </a>
                         </div>
-                        <p className="mt-2 text-sm text-slate-300">
+                        <p className="mt-2 text-sm text-[var(--ll-text)]">
                           Assigned by {assignment.teacherName}
                         </p>
                         {assignment.pendingStudents.length === 0 ? (
-                          <p className="mt-2 text-sm text-emerald-300">Everyone in this class has completed the assignment.</p>
+                          <p className="mt-2 text-sm text-[var(--ll-yellow)]">Everyone in this class has completed the assignment.</p>
                         ) : (
-                          <p className="mt-2 text-sm text-slate-300">
+                          <p className="mt-2 text-sm text-[var(--ll-text)]">
                             Not completed: {assignment.pendingStudents.slice(0, 6).join(", ")}
                             {assignment.pendingStudents.length > 6 ? ` +${assignment.pendingStudents.length - 6} more` : ""}
                           </p>
@@ -277,52 +277,52 @@ export default function TeacherAssignmentsPage() {
               )}
             </section>
 
-            <section className="rounded-3xl border border-white/10 bg-slate-900/70 p-6 text-sm text-slate-300">
+            <section className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 p-6 text-sm text-[var(--ll-text)]">
               No submissions need grading yet.
             </section>
           </div>
         ) : (
           <div className="space-y-6">
-            <section className="rounded-3xl border border-white/10 bg-slate-900/70 p-6">
+            <section className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 p-6">
               <div className="flex flex-wrap items-center justify-between gap-3">
                 <div>
-                  <h2 className="text-lg font-semibold text-slate-100">Recent assignments</h2>
-                  <p className="mt-1 text-sm text-slate-400">
+                  <h2 className="text-lg font-semibold text-[var(--ll-text)]">Recent assignments</h2>
+                  <p className="mt-1 text-sm text-[var(--ll-text-muted)]">
                     Review assignment coverage before submissions move into grading.
                   </p>
                 </div>
                 <Link
                   href="/teacher/assignments/new"
-                  className="inline-flex rounded-full bg-emerald-400 px-5 py-2 text-sm font-semibold text-slate-950"
+                  className="inline-flex rounded-full bg-[var(--ll-yellow-soft)] px-5 py-2 text-sm font-semibold text-[var(--ll-text-faint)]"
                 >
                   Create Assignment
                 </Link>
               </div>
 
               {assignments.length === 0 ? (
-                <p className="mt-5 text-sm text-slate-400">No assignments created yet.</p>
+                <p className="mt-5 text-sm text-[var(--ll-text-muted)]">No assignments created yet.</p>
               ) : (
                 <div className="mt-5 grid gap-4 lg:grid-cols-2">
                   {assignments.map((assignment) => (
                     <section
                       key={assignment.id}
-                      className="rounded-3xl border border-white/10 bg-slate-950/60 p-5"
+                      className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/60 p-5"
                     >
                       <div className="flex items-start justify-between gap-3">
                         <div>
-                          <h3 className="text-base font-semibold text-slate-100">{assignment.title}</h3>
-                          <p className="mt-1 text-sm text-slate-400">
+                          <h3 className="text-base font-semibold text-[var(--ll-text)]">{assignment.title}</h3>
+                          <p className="mt-1 text-sm text-[var(--ll-text-muted)]">
                             {assignment.className} · {assignment.subject.replace(/_/g, " ")}
                           </p>
                         </div>
-                        <span className="rounded-full border border-slate-700 px-3 py-1 text-xs text-slate-300">
+                        <span className="rounded-full border border-[var(--ll-border)] px-3 py-1 text-xs text-[var(--ll-text)]">
                           {assignment.points} pts
                         </span>
                       </div>
                       {assignment.description ? (
-                        <p className="mt-3 line-clamp-3 text-sm text-slate-300">{assignment.description}</p>
+                        <p className="mt-3 line-clamp-3 text-sm text-[var(--ll-text)]">{assignment.description}</p>
                       ) : null}
-                      <div className="mt-4 flex flex-wrap gap-3 text-xs text-slate-400">
+                      <div className="mt-4 flex flex-wrap gap-3 text-xs text-[var(--ll-text-muted)]">
                         <span>Assigned {new Date(assignment.createdAt).toLocaleDateString("en-LR")}</span>
                         <span>
                           Due {assignment.dueAt ? new Date(assignment.dueAt).toLocaleString("en-LR") : "not set"}
@@ -331,23 +331,23 @@ export default function TeacherAssignmentsPage() {
                         <span>{assignment.gradedCount} graded</span>
                         <span>{assignment.averageScore == null ? "No score yet" : `Avg score ${assignment.averageScore}%`}</span>
                       </div>
-                      <div className="mt-4 rounded-2xl border border-slate-800 bg-slate-900/70 p-4">
+                      <div className="mt-4 rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 p-4">
                         <div className="flex flex-wrap items-center justify-between gap-3">
-                          <p className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-400">Completion tracking</p>
+                          <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[var(--ll-text-muted)]">Completion tracking</p>
                           <a
                             href={`/api/teacher/assignments/${assignment.id}/export`}
-                            className="rounded-full border border-slate-700 px-3 py-1 text-[11px] text-slate-300 hover:text-slate-100"
+                            className="rounded-full border border-[var(--ll-border)] px-3 py-1 text-[11px] text-[var(--ll-text)] hover:text-[var(--ll-text)]"
                           >
                             Export CSV
                           </a>
                         </div>
-                        <p className="mt-2 text-sm text-slate-300">
+                        <p className="mt-2 text-sm text-[var(--ll-text)]">
                           Assigned by {assignment.teacherName}
                         </p>
                         {assignment.pendingStudents.length === 0 ? (
-                          <p className="mt-2 text-sm text-emerald-300">Everyone in this class has completed the assignment.</p>
+                          <p className="mt-2 text-sm text-[var(--ll-yellow)]">Everyone in this class has completed the assignment.</p>
                         ) : (
-                          <p className="mt-2 text-sm text-slate-300">
+                          <p className="mt-2 text-sm text-[var(--ll-text)]">
                             Not completed: {assignment.pendingStudents.slice(0, 6).join(", ")}
                             {assignment.pendingStudents.length > 6 ? ` +${assignment.pendingStudents.length - 6} more` : ""}
                           </p>
@@ -371,43 +371,43 @@ export default function TeacherAssignmentsPage() {
               return (
                 <section
                   key={submission.id}
-                  className="rounded-3xl border border-white/10 bg-slate-900/70 p-6"
+                  className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 p-6"
                 >
                   <div className="flex flex-wrap items-start justify-between gap-4">
                     <div>
-                      <h2 className="text-lg font-semibold text-slate-50">
+                      <h2 className="text-lg font-semibold text-[var(--ll-text)]">
                         {submission.assignmentTitle}
                       </h2>
-                      <p className="mt-1 text-sm text-slate-400">
+                      <p className="mt-1 text-sm text-[var(--ll-text-muted)]">
                         {submission.studentName} · {submission.className} ·{" "}
                         {submission.subject.replace(/_/g, " ")}
                       </p>
-                      <p className="mt-1 text-xs text-slate-500">
+                      <p className="mt-1 text-xs text-[var(--ll-text-faint)]">
                         Submitted{" "}
                         {submission.submittedAt
                           ? new Date(submission.submittedAt).toLocaleString("en-LR")
                           : "Not submitted yet"}
                       </p>
                     </div>
-                    <span className="rounded-full border border-amber-400/20 bg-amber-500/10 px-3 py-1 text-xs font-semibold text-amber-200">
+                    <span className="rounded-full border border-amber-400/20 bg-[var(--ll-yellow-soft)] px-3 py-1 text-xs font-semibold text-[var(--ll-yellow)]">
                       {submission.score == null
                         ? "Pending grading"
                         : `Scored ${submission.score}/100`}
                     </span>
                   </div>
 
-                  <div className="mt-4 rounded-2xl bg-slate-950/70 p-4">
-                    <p className="text-xs uppercase tracking-wide text-slate-500">
+                  <div className="mt-4 rounded-xl bg-[var(--ll-bg)]/70 p-4">
+                    <p className="text-xs uppercase tracking-wide text-[var(--ll-text-faint)]">
                       Student response
                     </p>
-                    <p className="mt-2 whitespace-pre-wrap text-sm text-slate-200">
+                    <p className="mt-2 whitespace-pre-wrap text-sm text-[var(--ll-text)]">
                       {submission.content || "No response recorded."}
                     </p>
                   </div>
 
                   <div className="mt-4 grid gap-4 md:grid-cols-[160px,1fr]">
                     <label className="space-y-2 text-sm">
-                      <span className="text-slate-300">Grade (0-100)</span>
+                      <span className="text-[var(--ll-text)]">Grade (0-100)</span>
                       <input
                         type="number"
                         min={0}
@@ -416,17 +416,17 @@ export default function TeacherAssignmentsPage() {
                         onChange={(event) =>
                           updateField(submission.id, "grade", event.target.value)
                         }
-                        className="min-h-11 w-full rounded-2xl border border-slate-700 bg-slate-950 px-4 py-3 text-slate-100"
+                        className="min-h-11 w-full rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)] px-4 py-3 text-[var(--ll-text)]"
                       />
                     </label>
                     <label className="space-y-2 text-sm">
-                      <span className="text-slate-300">Feedback</span>
+                      <span className="text-[var(--ll-text)]">Feedback</span>
                       <textarea
                         value={state.feedback}
                         onChange={(event) =>
                           updateField(submission.id, "feedback", event.target.value)
                         }
-                        className="min-h-[120px] w-full rounded-2xl border border-slate-700 bg-slate-950 px-4 py-3 text-slate-100"
+                        className="min-h-[120px] w-full rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)] px-4 py-3 text-[var(--ll-text)]"
                         placeholder="Add clear, constructive feedback for the student and guardian."
                       />
                     </label>
@@ -437,14 +437,14 @@ export default function TeacherAssignmentsPage() {
                       type="button"
                       onClick={() => saveGrade(submission.id)}
                       disabled={state.saving}
-                      className="rounded-full bg-emerald-400 px-5 py-2 text-sm font-semibold text-slate-950 disabled:cursor-not-allowed disabled:opacity-60"
+                      className="rounded-full bg-[var(--ll-yellow-soft)] px-5 py-2 text-sm font-semibold text-[var(--ll-text-faint)] disabled:cursor-not-allowed disabled:opacity-60"
                     >
                       {state.saving ? "Saving..." : "Save Grade"}
                     </button>
                     {state.message ? (
                       <p
                         className={`text-sm ${
-                          state.message === "Saved" ? "text-emerald-300" : "text-red-300"
+                          state.message === "Saved" ? "text-[var(--ll-yellow)]" : "text-red-300"
                         }`}
                       >
                         {state.message}

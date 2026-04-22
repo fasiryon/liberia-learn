@@ -34,7 +34,7 @@ export default async function AdminConsolePage() {
         <div className="mx-auto max-w-2xl px-4 py-5 space-y-5">
           <DashboardTopBar
             roleLabel="Admin"
-            roleBadgeBg="bg-amber-400/10 border-amber-400/20"
+            roleBadgeBg="bg-[var(--ll-yellow-soft)] border-amber-400/20"
             roleAccent="text-[var(--ll-text-muted)]"
             userName={user.name ?? user.email ?? undefined}
           />
@@ -347,7 +347,7 @@ export default async function AdminConsolePage() {
       <div className="ll-page-enter mx-auto max-w-6xl px-4 py-5 space-y-5">
         <DashboardTopBar
           roleLabel="Admin"
-          roleBadgeBg="bg-amber-400/10 border-amber-400/20"
+          roleBadgeBg="bg-[var(--ll-yellow-soft)] border-amber-400/20"
           roleAccent="text-[var(--ll-text-muted)]"
           userName={user.name ?? user.email ?? undefined}
           subtitle={schoolName}

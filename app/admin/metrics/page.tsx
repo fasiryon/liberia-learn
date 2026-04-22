@@ -21,9 +21,9 @@ function formatMetricValue(label: string, metric: MetricValue) {
 }
 
 function trendBadge(metric: MetricValue) {
-  if (metric.trend === "up") return { text: `+${metric.delta.toFixed(1)}`, className: "text-emerald-300" };
-  if (metric.trend === "down") return { text: metric.delta.toFixed(1), className: "text-rose-300" };
-  return { text: "0.0", className: "text-slate-400" };
+  if (metric.trend === "up") return { text: `+${metric.delta.toFixed(1)}`, className: "text-[var(--ll-yellow)]" };
+  if (metric.trend === "down") return { text: metric.delta.toFixed(1), className: "text-[var(--ll-danger)]" };
+  return { text: "0.0", className: "text-[var(--ll-text-muted)]" };
 }
 
 function MetricCard({
@@ -35,13 +35,13 @@ function MetricCard({
 }) {
   const trend = trendBadge(metric);
   return (
-    <div className="rounded-2xl border border-white/10 bg-slate-900/70 p-5">
-      <p className="text-xs uppercase tracking-wide text-slate-500">{label}</p>
+    <div className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 p-5">
+      <p className="text-xs uppercase tracking-wide text-[var(--ll-text-faint)]">{label}</p>
       <div className="mt-3 flex items-end justify-between gap-3">
-        <p className="text-3xl font-bold text-slate-100">{formatMetricValue(label, metric)}</p>
+        <p className="text-3xl font-bold text-[var(--ll-text)]">{formatMetricValue(label, metric)}</p>
         <p className={`text-sm font-semibold ${trend.className}`}>{trend.text}</p>
       </div>
-      <p className="mt-2 text-xs text-slate-500">
+      <p className="mt-2 text-xs text-[var(--ll-text-faint)]">
         Previous period {formatMetricValue(label, metric).includes("%") ? `${metric.previousValue.toFixed(1)}%` : metric.previousValue.toFixed(0)}
       </p>
     </div>
@@ -67,16 +67,16 @@ export default async function AdminMetricsPage({
   const data = await getProductMetricsDashboard({ period, schoolId });
 
   return (
-    <main className="min-h-screen bg-slate-950 text-slate-50">
+    <main className="min-h-screen bg-[var(--ll-bg)] text-[var(--ll-text)]">
       <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_top,_#2563eb20,_transparent_60%)]" />
       <div className="mx-auto max-w-6xl space-y-6 px-4 py-8">
         <header className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
           <div className="space-y-2">
-            <p className="text-xs uppercase tracking-wide text-cyan-300">LiberiaLearn Product Metrics</p>
+            <p className="text-xs uppercase tracking-wide text-[var(--ll-silver)]">LiberiaLearn Product Metrics</p>
             <h1 className="text-3xl font-bold">
               {data.scope === "national" ? "National Product Metrics" : "School Product Metrics"}
             </h1>
-            <p className="max-w-3xl text-sm text-slate-400">
+            <p className="max-w-3xl text-sm text-[var(--ll-text-muted)]">
               Learning outcomes, guardian engagement, AI adoption, and active usage with period-over-period trend signals.
             </p>
           </div>
@@ -87,8 +87,8 @@ export default async function AdminMetricsPage({
                 href={`/admin/metrics?period=${option}`}
                 className={`rounded-full border px-4 py-1.5 text-xs font-semibold ${
                   option === period
-                    ? "border-cyan-400 bg-cyan-400 text-slate-950"
-                    : "border-slate-700 bg-slate-900/80 text-slate-200 hover:border-slate-500"
+                    ? "border-cyan-400 bg-[var(--ll-silver-soft)] text-[var(--ll-text-faint)]"
+                    : "border-[var(--ll-border)] bg-[var(--ll-bg)]/80 text-[var(--ll-text)] hover:border-[var(--ll-border)]"
                 }`}
               >
                 {option}
@@ -99,8 +99,8 @@ export default async function AdminMetricsPage({
 
         <section className="space-y-4">
           <div>
-            <p className="text-xs uppercase tracking-wide text-slate-500">Learning Outcomes</p>
-            <h2 className="mt-1 text-lg font-semibold text-slate-100">Completion, mastery, and assessment</h2>
+            <p className="text-xs uppercase tracking-wide text-[var(--ll-text-faint)]">Learning Outcomes</p>
+            <h2 className="mt-1 text-lg font-semibold text-[var(--ll-text)]">Completion, mastery, and assessment</h2>
           </div>
           <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
             <MetricCard label="Lesson Completion Rate" metric={data.learningOutcomes.lessonCompletionRate} />
@@ -113,8 +113,8 @@ export default async function AdminMetricsPage({
 
         <section className="space-y-4">
           <div>
-            <p className="text-xs uppercase tracking-wide text-slate-500">Engagement</p>
-            <h2 className="mt-1 text-lg font-semibold text-slate-100">Assignments, guardians, AI, and interventions</h2>
+            <p className="text-xs uppercase tracking-wide text-[var(--ll-text-faint)]">Engagement</p>
+            <h2 className="mt-1 text-lg font-semibold text-[var(--ll-text)]">Assignments, guardians, AI, and interventions</h2>
           </div>
           <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
             <MetricCard label="Assignment Submission Rate" metric={data.engagement.assignmentSubmissionRate} />
@@ -127,8 +127,8 @@ export default async function AdminMetricsPage({
 
         <section className="space-y-4">
           <div>
-            <p className="text-xs uppercase tracking-wide text-slate-500">Platform Activity</p>
-            <h2 className="mt-1 text-lg font-semibold text-slate-100">Exports and active-user coverage</h2>
+            <p className="text-xs uppercase tracking-wide text-[var(--ll-text-faint)]">Platform Activity</p>
+            <h2 className="mt-1 text-lg font-semibold text-[var(--ll-text)]">Exports and active-user coverage</h2>
           </div>
           <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
             <MetricCard label="Moe Export Count" metric={data.platformMetrics.moeExportCount} />

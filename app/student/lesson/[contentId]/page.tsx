@@ -61,11 +61,11 @@ export default function LessonViewerPage() {
 
   if (loading) {
     return (
-      <main className="flex min-h-screen items-center justify-center bg-slate-950 px-4 py-8">
+      <main className="flex min-h-screen items-center justify-center bg-[var(--ll-bg)] px-4 py-8">
         <div className="w-full max-w-3xl space-y-4">
-          <div className="h-8 w-2/3 animate-pulse rounded-lg bg-slate-800" />
-          <div className="h-4 w-full animate-pulse rounded-lg bg-slate-800" />
-          <div className="h-4 w-5/6 animate-pulse rounded-lg bg-slate-800" />
+          <div className="h-8 w-2/3 animate-pulse rounded-lg bg-[var(--ll-surface)]" />
+          <div className="h-4 w-full animate-pulse rounded-lg bg-[var(--ll-surface)]" />
+          <div className="h-4 w-5/6 animate-pulse rounded-lg bg-[var(--ll-surface)]" />
         </div>
       </main>
     );
@@ -73,10 +73,10 @@ export default function LessonViewerPage() {
 
   if (error) {
     return (
-      <main className="flex min-h-screen items-center justify-center bg-slate-950 px-4 py-8">
+      <main className="flex min-h-screen items-center justify-center bg-[var(--ll-bg)] px-4 py-8">
         <div className="w-full max-w-3xl space-y-4 text-center">
           <p className="text-sm text-red-400">{error}</p>
-          <Link href="/student/dashboard" className="text-sm text-emerald-300 hover:text-emerald-200">
+          <Link href="/student/dashboard" className="text-sm text-[var(--ll-yellow)] hover:text-[var(--ll-yellow)]">
             Back to Dashboard
           </Link>
         </div>
@@ -93,30 +93,30 @@ export default function LessonViewerPage() {
   const moeAlignments: string[] = Array.isArray(metadata?.moeAlignments) ? metadata.moeAlignments : [];
 
   return (
-    <main className="min-h-screen bg-slate-950 px-4 py-8">
+    <main className="min-h-screen bg-[var(--ll-bg)] px-4 py-8">
       <div className="mx-auto max-w-3xl space-y-6">
         {/* Back */}
-        <Link href="/student/dashboard" className="inline-block text-sm text-emerald-300 hover:text-emerald-200">
+        <Link href="/student/dashboard" className="inline-block text-sm text-[var(--ll-yellow)] hover:text-[var(--ll-yellow)]">
           &larr; Back to Dashboard
         </Link>
 
         {/* Offline cache indicator */}
         {servedFromCache && (
-          <div className="rounded-xl border border-amber-500/30 bg-amber-500/10 px-4 py-2 text-xs text-amber-300">
+          <div className="rounded-xl border border-amber-500/30 bg-[var(--ll-yellow-soft)] px-4 py-2 text-xs text-[var(--ll-yellow)]">
             Viewing cached version — you are offline
           </div>
         )}
 
         {/* Title + badges */}
         <div className="space-y-3">
-          <h1 className="text-2xl font-bold text-slate-50">
+          <h1 className="text-2xl font-bold text-[var(--ll-text)]">
             {payload?.title ?? contentId}
           </h1>
           <div className="flex flex-wrap gap-2">
-            <span className="rounded-full bg-emerald-500/20 border border-emerald-400/30 px-3 py-0.5 text-xs font-medium text-emerald-300">
+            <span className="rounded-full bg-[var(--ll-yellow)]/20 border border-emerald-400/30 px-3 py-0.5 text-xs font-medium text-[var(--ll-yellow)]">
               Grade {metadata?.grade}
             </span>
-            <span className="rounded-full bg-emerald-500/20 border border-emerald-400/30 px-3 py-0.5 text-xs font-medium text-emerald-300">
+            <span className="rounded-full bg-[var(--ll-yellow)]/20 border border-emerald-400/30 px-3 py-0.5 text-xs font-medium text-[var(--ll-yellow)]">
               {metadata?.subject}
             </span>
           </div>
@@ -135,9 +135,9 @@ export default function LessonViewerPage() {
 
         {/* Learning Objectives */}
         {objectives.length > 0 && (
-          <div className="rounded-2xl border border-white/10 bg-slate-900/70 p-5 space-y-3">
-            <h2 className="text-sm font-semibold text-slate-300 uppercase tracking-wide">Learning Objectives</h2>
-            <ul className="list-disc list-inside space-y-1 text-sm text-slate-300">
+          <div className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 p-5 space-y-3">
+            <h2 className="text-sm font-semibold text-[var(--ll-text)] uppercase tracking-wide">Learning Objectives</h2>
+            <ul className="list-disc list-inside space-y-1 text-sm text-[var(--ll-text)]">
               {objectives.map((obj: string, i: number) => (
                 <li key={i}>{obj}</li>
               ))}
@@ -149,32 +149,32 @@ export default function LessonViewerPage() {
         {(standardBodyText || blockBodyText) && (
           <div className="space-y-4">
             {standardBodyText && (
-              <div className="rounded-2xl border border-white/10 bg-slate-900/70 p-5">
+              <div className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 p-5">
                 <div className="mb-3 flex items-center justify-between gap-3">
-                  <h2 className="text-sm font-semibold uppercase tracking-wide text-slate-300">
+                  <h2 className="text-sm font-semibold uppercase tracking-wide text-[var(--ll-text)]">
                     Standard Period Lesson
                   </h2>
-                  <span className="rounded-full border border-emerald-400/30 bg-emerald-500/10 px-3 py-1 text-[11px] text-emerald-200">
+                  <span className="rounded-full border border-emerald-400/30 bg-[var(--ll-yellow)]/10 px-3 py-1 text-[11px] text-[var(--ll-yellow)]">
                     45 min
                   </span>
                 </div>
-                <div className="prose prose-invert prose-sm max-w-none whitespace-pre-line text-slate-300 leading-relaxed">
+                <div className="prose prose-invert prose-sm max-w-none whitespace-pre-line text-[var(--ll-text)] leading-relaxed">
                   {standardBodyText}
                 </div>
               </div>
             )}
 
             {(hasBothFormats || isBlockOnly) && blockBodyText && (
-              <div className="rounded-2xl border border-cyan-500/20 bg-slate-900/70 p-5">
+              <div className="rounded-xl border border-cyan-500/20 bg-[var(--ll-bg)]/70 p-5">
                 <div className="mb-3 flex items-center justify-between gap-3">
-                  <h2 className="text-sm font-semibold uppercase tracking-wide text-slate-300">
+                  <h2 className="text-sm font-semibold uppercase tracking-wide text-[var(--ll-text)]">
                     Block Period Lesson
                   </h2>
-                  <span className="rounded-full border border-cyan-400/30 bg-cyan-500/10 px-3 py-1 text-[11px] text-cyan-200">
+                  <span className="rounded-full border border-cyan-400/30 bg-[var(--ll-silver-soft)] px-3 py-1 text-[11px] text-[var(--ll-silver)]">
                     90 min / A-B day
                   </span>
                 </div>
-                <div className="prose prose-invert prose-sm max-w-none whitespace-pre-line text-slate-300 leading-relaxed">
+                <div className="prose prose-invert prose-sm max-w-none whitespace-pre-line text-[var(--ll-text)] leading-relaxed">
                   {blockBodyText}
                 </div>
               </div>
@@ -184,9 +184,9 @@ export default function LessonViewerPage() {
 
         {/* Activities */}
         {activities.length > 0 && (
-          <div className="rounded-2xl border border-white/10 bg-slate-900/70 p-5 space-y-3">
-            <h2 className="text-sm font-semibold text-slate-300 uppercase tracking-wide">Activities</h2>
-            <ol className="list-decimal list-inside space-y-2 text-sm text-slate-300">
+          <div className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 p-5 space-y-3">
+            <h2 className="text-sm font-semibold text-[var(--ll-text)] uppercase tracking-wide">Activities</h2>
+            <ol className="list-decimal list-inside space-y-2 text-sm text-[var(--ll-text)]">
               {activities.map((act: string, i: number) => (
                 <li key={i}>{act}</li>
               ))}
@@ -197,7 +197,7 @@ export default function LessonViewerPage() {
         {/* Mark Complete */}
         <div className="flex items-center gap-3">
           {completed ? (
-            <div className="flex items-center gap-2 text-emerald-400 text-sm font-medium">
+            <div className="flex items-center gap-2 text-[var(--ll-yellow)] text-sm font-medium">
               <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
               </svg>
@@ -206,7 +206,7 @@ export default function LessonViewerPage() {
           ) : (
             <button
               onClick={handleComplete}
-              className="rounded-xl bg-emerald-500 px-5 py-2.5 text-sm font-semibold text-slate-950 shadow-lg shadow-emerald-500/40 hover:bg-emerald-400"
+              className="rounded-xl bg-[var(--ll-yellow)] px-5 py-2.5 text-sm font-semibold text-[var(--ll-text-faint)] shadow-lg shadow-emerald-500/40 hover:bg-[var(--ll-yellow-soft)]"
             >
               Mark as Complete
             </button>
@@ -214,7 +214,7 @@ export default function LessonViewerPage() {
         </div>
 
         {/* Low bandwidth note */}
-        <p className="text-[11px] text-slate-500 text-center pb-4">
+        <p className="text-[11px] text-[var(--ll-text-faint)] text-center pb-4">
           This lesson is cached for offline use after first load.
         </p>
       </div>

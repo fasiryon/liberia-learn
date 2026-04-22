@@ -10,7 +10,7 @@ type RegisterFormProps = {
   phone: string;
 };
 
-const FIELD = "min-h-11 w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-base text-slate-950 outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200";
+const FIELD = "min-h-11 w-full rounded-xl border border-[var(--ll-border)] bg-white px-4 py-3 text-base text-[var(--ll-text-faint)] outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200";
 
 export default function RegisterForm({ token, defaultName, phone }: RegisterFormProps) {
   const router = useRouter();
@@ -47,15 +47,15 @@ export default function RegisterForm({ token, defaultName, phone }: RegisterForm
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <div>
-        <label className="mb-1 block text-sm font-semibold text-slate-700">Full Name</label>
+        <label className="mb-1 block text-sm font-semibold text-[var(--ll-text-faint)]">Full Name</label>
         <input className={FIELD} value={fullName} onChange={(e) => setFullName(e.target.value)} required />
       </div>
       <div>
-        <label className="mb-1 block text-sm font-semibold text-slate-700">Phone Number</label>
-        <input className={`${FIELD} bg-slate-100`} value={phone} readOnly aria-readonly="true" />
+        <label className="mb-1 block text-sm font-semibold text-[var(--ll-text-faint)]">Phone Number</label>
+        <input className={`${FIELD} bg-[var(--ll-surface-muted)]`} value={phone} readOnly aria-readonly="true" />
       </div>
       <div>
-        <label className="mb-1 block text-sm font-semibold text-slate-700">Create PIN</label>
+        <label className="mb-1 block text-sm font-semibold text-[var(--ll-text-faint)]">Create PIN</label>
         <input
           className={`${FIELD} text-lg tracking-[0.2em]`}
           value={pin}
@@ -68,7 +68,7 @@ export default function RegisterForm({ token, defaultName, phone }: RegisterForm
         />
       </div>
       <div>
-        <label className="mb-1 block text-sm font-semibold text-slate-700">Confirm PIN</label>
+        <label className="mb-1 block text-sm font-semibold text-[var(--ll-text-faint)]">Confirm PIN</label>
         <input
           className={`${FIELD} text-lg tracking-[0.2em]`}
           value={confirmPin}
@@ -81,7 +81,7 @@ export default function RegisterForm({ token, defaultName, phone }: RegisterForm
         />
       </div>
       {error && <p className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">{error}</p>}
-      <button type="submit" disabled={saving} className="min-h-11 w-full rounded-xl bg-emerald-600 px-4 py-3 text-lg font-semibold text-white hover:bg-emerald-500 disabled:opacity-60">
+      <button type="submit" disabled={saving} className="min-h-11 w-full rounded-xl bg-[var(--ll-yellow-soft)] px-4 py-3 text-lg font-semibold text-[var(--ll-text)] hover:bg-[var(--ll-yellow)] disabled:opacity-60">
         {saving ? "Creating account..." : "Create My Account"}
       </button>
     </form>

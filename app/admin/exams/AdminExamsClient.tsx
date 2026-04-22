@@ -95,25 +95,25 @@ export default function AdminExamsClient() {
   }
 
   return (
-    <main className="min-h-screen bg-slate-950 px-4 py-8 text-slate-50">
+    <main className="min-h-screen bg-[var(--ll-bg)] px-4 py-8 text-[var(--ll-text)]">
       <div className="mx-auto max-w-7xl space-y-6">
         <div>
-          <Link href="/admin" className="text-sm text-emerald-300 hover:text-emerald-200">
+          <Link href="/admin" className="text-sm text-[var(--ll-yellow)] hover:text-[var(--ll-yellow)]">
             &larr; Back to Admin Console
           </Link>
           <h1 className="mt-3 text-3xl font-semibold">Exam Management</h1>
-          <p className="mt-2 text-sm text-slate-400">
+          <p className="mt-2 text-sm text-[var(--ll-text-muted)]">
             Manage school-scoped exams, publish schedules, and release official results into transcript records.
           </p>
         </div>
 
-        <form onSubmit={onGenerate} className="grid gap-3 rounded-3xl border border-white/10 bg-slate-900/70 p-6 md:grid-cols-7">
-          <input name="title" placeholder="Exam title" className="rounded-2xl border border-white/10 bg-white/5 px-3 py-2 text-sm md:col-span-2" />
-          <input name="subject" placeholder="Subject" required className="rounded-2xl border border-white/10 bg-white/5 px-3 py-2 text-sm" />
-          <input name="grade" type="number" min="1" max="12" required className="rounded-2xl border border-white/10 bg-white/5 px-3 py-2 text-sm" />
-          <input name="questionCount" type="number" min="5" defaultValue="20" required className="rounded-2xl border border-white/10 bg-white/5 px-3 py-2 text-sm" />
-          <input name="timeLimit" type="number" min="10" defaultValue="60" required className="rounded-2xl border border-white/10 bg-white/5 px-3 py-2 text-sm" />
-          <select name="academicYearId" className="rounded-2xl border border-white/10 bg-slate-950 px-3 py-2 text-sm">
+        <form onSubmit={onGenerate} className="grid gap-3 rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 p-6 md:grid-cols-7">
+          <input name="title" placeholder="Exam title" className="rounded-xl border border-[var(--ll-border)] bg-white/5 px-3 py-2 text-sm md:col-span-2" />
+          <input name="subject" placeholder="Subject" required className="rounded-xl border border-[var(--ll-border)] bg-white/5 px-3 py-2 text-sm" />
+          <input name="grade" type="number" min="1" max="12" required className="rounded-xl border border-[var(--ll-border)] bg-white/5 px-3 py-2 text-sm" />
+          <input name="questionCount" type="number" min="5" defaultValue="20" required className="rounded-xl border border-[var(--ll-border)] bg-white/5 px-3 py-2 text-sm" />
+          <input name="timeLimit" type="number" min="10" defaultValue="60" required className="rounded-xl border border-[var(--ll-border)] bg-white/5 px-3 py-2 text-sm" />
+          <select name="academicYearId" className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)] px-3 py-2 text-sm">
             <option value="">Active academic year</option>
             {support.academicYears.map((year) => (
               <option key={year.id} value={year.id}>
@@ -121,7 +121,7 @@ export default function AdminExamsClient() {
               </option>
             ))}
           </select>
-          <select name="classId" className="rounded-2xl border border-white/10 bg-slate-950 px-3 py-2 text-sm">
+          <select name="classId" className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)] px-3 py-2 text-sm">
             <option value="">School-wide / grade-wide</option>
             {support.classes.map((klass) => (
               <option key={klass.id} value={klass.id}>
@@ -129,17 +129,17 @@ export default function AdminExamsClient() {
               </option>
             ))}
           </select>
-          <input name="moeStandards" placeholder="MOE codes comma-separated" required className="rounded-2xl border border-white/10 bg-white/5 px-3 py-2 text-sm md:col-span-6" />
-          <button type="submit" disabled={submitting} className="rounded-2xl bg-emerald-500 px-4 py-2 text-sm font-semibold text-slate-950 disabled:opacity-60">
+          <input name="moeStandards" placeholder="MOE codes comma-separated" required className="rounded-xl border border-[var(--ll-border)] bg-white/5 px-3 py-2 text-sm md:col-span-6" />
+          <button type="submit" disabled={submitting} className="rounded-xl bg-[var(--ll-yellow)] px-4 py-2 text-sm font-semibold text-[var(--ll-text-faint)] disabled:opacity-60">
             {submitting ? "Generating..." : "Generate Exam"}
           </button>
         </form>
 
-        {error ? <div className="rounded-3xl border border-red-500/20 bg-red-500/10 p-4 text-sm text-red-200">{error}</div> : null}
+        {error ? <div className="rounded-xl border border-red-500/20 bg-red-500/10 p-4 text-sm text-red-200">{error}</div> : null}
 
-        <div className="overflow-hidden rounded-3xl border border-white/10 bg-slate-900/70">
+        <div className="overflow-hidden rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70">
           <table className="min-w-full text-left text-sm">
-            <thead className="bg-slate-900/90 text-slate-300">
+            <thead className="bg-[var(--ll-bg)]/90 text-[var(--ll-text)]">
               <tr>
                 <th className="px-4 py-3">Exam</th>
                 <th className="px-4 py-3">Scope</th>
@@ -153,30 +153,30 @@ export default function AdminExamsClient() {
             </thead>
             <tbody>
               {loading ? (
-                <tr><td className="px-4 py-6 text-slate-400" colSpan={8}>Loading exams...</td></tr>
+                <tr><td className="px-4 py-6 text-[var(--ll-text-muted)]" colSpan={8}>Loading exams...</td></tr>
               ) : exams.length === 0 ? (
-                <tr><td className="px-4 py-6 text-slate-400" colSpan={8}>No exams yet.</td></tr>
+                <tr><td className="px-4 py-6 text-[var(--ll-text-muted)]" colSpan={8}>No exams yet.</td></tr>
               ) : (
                 exams.map((exam) => (
                   <tr key={exam.id} className="border-t border-white/5 align-top">
                     <td className="px-4 py-3">
                       <div className="font-medium">{exam.title}</div>
-                      <div className="mt-1 text-xs text-slate-400">{exam.subject} · Grade {exam.grade}</div>
+                      <div className="mt-1 text-xs text-[var(--ll-text-muted)]">{exam.subject} · Grade {exam.grade}</div>
                     </td>
-                    <td className="px-4 py-3 text-xs text-slate-300">
+                    <td className="px-4 py-3 text-xs text-[var(--ll-text)]">
                       <div>{exam.className ?? "Grade-wide"}</div>
-                      <div className="mt-1 text-slate-500">{exam.academicYearLabel ?? "No academic year set"}</div>
+                      <div className="mt-1 text-[var(--ll-text-faint)]">{exam.academicYearLabel ?? "No academic year set"}</div>
                     </td>
-                    <td className="px-4 py-3 text-xs text-slate-300">
+                    <td className="px-4 py-3 text-xs text-[var(--ll-text)]">
                       <div>{exam.status}</div>
-                      <div className="mt-1 text-slate-500">
+                      <div className="mt-1 text-[var(--ll-text-faint)]">
                         {exam.publishedAt ? `Published ${new Date(exam.publishedAt).toLocaleDateString()}` : "Not yet published"}
                       </div>
                     </td>
                     <td className="px-4 py-3">{exam.attemptCount}</td>
                     <td className="px-4 py-3">{Math.round(exam.passRate * 100)}%</td>
                     <td className="px-4 py-3">{exam.flaggedCount}</td>
-                    <td className="px-4 py-3 text-xs text-slate-300">
+                    <td className="px-4 py-3 text-xs text-[var(--ll-text)]">
                       {exam.resultsPublishedAt
                         ? `Released ${new Date(exam.resultsPublishedAt).toLocaleDateString()}`
                         : "Pending review"}
@@ -184,16 +184,16 @@ export default function AdminExamsClient() {
                     <td className="px-4 py-3">
                       <div className="flex flex-wrap gap-2">
                         {exam.status !== "PUBLISHED" ? (
-                          <button type="button" onClick={() => void postAction(`/api/admin/exams/${exam.id}/publish`).catch((err) => setError(err.message))} className="rounded-2xl bg-emerald-500 px-3 py-2 text-xs font-semibold text-slate-950">
+                          <button type="button" onClick={() => void postAction(`/api/admin/exams/${exam.id}/publish`).catch((err) => setError(err.message))} className="rounded-xl bg-[var(--ll-yellow)] px-3 py-2 text-xs font-semibold text-[var(--ll-text-faint)]">
                             Publish
                           </button>
                         ) : null}
                         {!exam.resultsPublishedAt ? (
-                          <button type="button" onClick={() => void postAction(`/api/admin/exams/${exam.id}/results`).catch((err) => setError(err.message))} className="rounded-2xl border border-white/10 px-3 py-2 text-xs">
+                          <button type="button" onClick={() => void postAction(`/api/admin/exams/${exam.id}/results`).catch((err) => setError(err.message))} className="rounded-xl border border-[var(--ll-border)] px-3 py-2 text-xs">
                             Release Results
                           </button>
                         ) : null}
-                        <Link href={`/teacher/exams/${exam.id}`} className="rounded-2xl border border-cyan-400/30 px-3 py-2 text-xs text-cyan-300">
+                        <Link href={`/teacher/exams/${exam.id}`} className="rounded-xl border border-cyan-400/30 px-3 py-2 text-xs text-[var(--ll-silver)]">
                           Review
                         </Link>
                       </div>

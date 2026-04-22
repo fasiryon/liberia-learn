@@ -205,38 +205,38 @@ export default function AdminCurriculumUnitsPage() {
   }
 
   return (
-    <main className="min-h-screen bg-slate-950 text-slate-50">
+    <main className="min-h-screen bg-[var(--ll-bg)] text-[var(--ll-text)]">
       <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_top,_#14b8a622,_transparent_60%)]" />
 
       <div className="mx-auto max-w-6xl px-4 py-6 space-y-8">
         <div className="flex items-center justify-between gap-4">
           <div>
-            <Link href="/admin/curriculum" className="text-xs text-emerald-300 hover:text-emerald-200">
+            <Link href="/admin/curriculum" className="text-xs text-[var(--ll-yellow)] hover:text-[var(--ll-yellow)]">
               &larr; Back to Curriculum / AI Factory
             </Link>
             <h1 className="mt-2 text-2xl font-bold">Curriculum Units</h1>
-            <p className="mt-1 text-sm text-slate-400">
+            <p className="mt-1 text-sm text-[var(--ll-text-muted)]">
               Assemble coherent units from existing approved lessons and generate only the missing artifacts.
             </p>
           </div>
           <button
             type="button"
             onClick={loadUnits}
-            className="rounded-full border border-slate-700 px-4 py-2 text-xs font-semibold text-slate-200 hover:border-slate-500"
+            className="rounded-full border border-[var(--ll-border)] px-4 py-2 text-xs font-semibold text-[var(--ll-text)] hover:border-[var(--ll-border)]"
           >
             Refresh
           </button>
         </div>
 
-        <section className="rounded-2xl border border-white/10 bg-slate-900/70 p-6">
+        <section className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 p-6">
           <div className="mb-4 flex items-center justify-between gap-4">
             <div>
               <h2 className="text-lg font-semibold">Create Unit</h2>
-              <p className="text-xs text-slate-500">
+              <p className="text-xs text-[var(--ll-text-faint)]">
                 Existing real lessons are reused first. Missing unit stages are generated with the AI factory.
               </p>
             </div>
-            <span className="rounded-full bg-slate-800 px-3 py-1 text-xs text-slate-300">
+            <span className="rounded-full bg-[var(--ll-surface)] px-3 py-1 text-xs text-[var(--ll-text)]">
               {units.length} units assembled
             </span>
           </div>
@@ -244,13 +244,13 @@ export default function AdminCurriculumUnitsPage() {
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
               <label className="space-y-1">
-                <span className="block text-xs font-medium text-slate-400">Subject</span>
+                <span className="block text-xs font-medium text-[var(--ll-text-muted)]">Subject</span>
                 <select
                   value={form.subject}
                   onChange={(event) =>
                     setForm((current) => ({ ...current, subject: event.target.value }))
                   }
-                  className="w-full rounded-xl border border-slate-700 bg-slate-950 px-3 py-2 text-sm"
+                  className="w-full rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)] px-3 py-2 text-sm"
                 >
                   {SUBJECTS.map((subject) => (
                     <option key={subject} value={subject}>
@@ -261,7 +261,7 @@ export default function AdminCurriculumUnitsPage() {
               </label>
 
               <label className="space-y-1">
-                <span className="block text-xs font-medium text-slate-400">Grade level</span>
+                <span className="block text-xs font-medium text-[var(--ll-text-muted)]">Grade level</span>
                 <input
                   type="number"
                   min={1}
@@ -273,12 +273,12 @@ export default function AdminCurriculumUnitsPage() {
                       gradeLevel: Number(event.target.value),
                     }))
                   }
-                  className="w-full rounded-xl border border-slate-700 bg-slate-950 px-3 py-2 text-sm"
+                  className="w-full rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)] px-3 py-2 text-sm"
                 />
               </label>
 
               <label className="space-y-1 md:col-span-2">
-                <span className="block text-xs font-medium text-slate-400">Unit title</span>
+                <span className="block text-xs font-medium text-[var(--ll-text-muted)]">Unit title</span>
                 <input
                   type="text"
                   value={form.unitTitle}
@@ -287,13 +287,13 @@ export default function AdminCurriculumUnitsPage() {
                   }
                   placeholder="e.g. Number Sense"
                   required
-                  className="w-full rounded-xl border border-slate-700 bg-slate-950 px-3 py-2 text-sm"
+                  className="w-full rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)] px-3 py-2 text-sm"
                 />
               </label>
             </div>
 
             <label className="space-y-1">
-              <span className="block text-xs font-medium text-slate-400">Unit description</span>
+              <span className="block text-xs font-medium text-[var(--ll-text-muted)]">Unit description</span>
               <textarea
                 value={form.unitDescription}
                 onChange={(event) =>
@@ -301,22 +301,22 @@ export default function AdminCurriculumUnitsPage() {
                 }
                 rows={4}
                 placeholder="Optional summary of the concepts this unit should cover."
-                className="w-full rounded-xl border border-slate-700 bg-slate-950 px-3 py-2 text-sm"
+                className="w-full rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)] px-3 py-2 text-sm"
               />
             </label>
 
             <button
               type="submit"
               disabled={submitting || !form.unitTitle.trim()}
-              className="rounded-xl bg-emerald-500 px-5 py-3 text-sm font-semibold text-slate-950 hover:bg-emerald-400 disabled:cursor-not-allowed disabled:opacity-60"
+              className="rounded-xl bg-[var(--ll-yellow)] px-5 py-3 text-sm font-semibold text-[var(--ll-text-faint)] hover:bg-[var(--ll-yellow-soft)] disabled:cursor-not-allowed disabled:opacity-60"
             >
               {submitting ? "Assembling Unit..." : "Assemble Unit"}
             </button>
           </form>
 
           {submitting ? (
-            <div className="mt-6 rounded-2xl border border-emerald-500/30 bg-emerald-500/10 p-4">
-              <p className="text-sm font-semibold text-emerald-200">
+            <div className="mt-6 rounded-xl border border-emerald-500/30 bg-[var(--ll-yellow)]/10 p-4">
+              <p className="text-sm font-semibold text-[var(--ll-yellow)]">
                 Assembling unit... generating 7 lessons (this takes about 2 minutes)
               </p>
               <div className="mt-4 grid gap-2 md:grid-cols-4 xl:grid-cols-7">
@@ -328,10 +328,10 @@ export default function AdminCurriculumUnitsPage() {
                       key={stage}
                       className={`rounded-xl border px-3 py-2 text-center text-xs ${
                         isComplete
-                          ? "border-emerald-400 bg-emerald-500/20 text-emerald-100"
+                          ? "border-emerald-400 bg-[var(--ll-yellow)]/20 text-[var(--ll-yellow)]"
                           : isActive
-                          ? "border-cyan-400 bg-cyan-500/20 text-cyan-100"
-                          : "border-slate-700 bg-slate-950/60 text-slate-400"
+                          ? "border-cyan-400 bg-[var(--ll-silver-soft)] text-[var(--ll-silver)]"
+                          : "border-[var(--ll-border)] bg-[var(--ll-bg)]/60 text-[var(--ll-text-muted)]"
                       }`}
                     >
                       {stage}
@@ -349,18 +349,18 @@ export default function AdminCurriculumUnitsPage() {
           ) : null}
         </section>
 
-        <section className="rounded-2xl border border-white/10 bg-slate-900/70 p-6">
+        <section className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 p-6">
           <div className="mb-4 flex items-center justify-between gap-4">
             <div>
               <h2 className="text-lg font-semibold">Textbooks</h2>
-              <p className="text-xs text-slate-500">
+              <p className="text-xs text-[var(--ll-text-faint)]">
                 Download textbook PDFs when a subject and grade has at least two assembled units.
               </p>
             </div>
           </div>
 
           {textbookGroups.length === 0 ? (
-            <p className="text-sm text-slate-400">Assemble at least two units in a subject and grade to unlock textbook compilation.</p>
+            <p className="text-sm text-[var(--ll-text-muted)]">Assemble at least two units in a subject and grade to unlock textbook compilation.</p>
           ) : (
             <div className="grid gap-3 md:grid-cols-2">
               {textbookGroups.map((group) => {
@@ -368,17 +368,17 @@ export default function AdminCurriculumUnitsPage() {
                 return (
                   <div
                     key={group.key}
-                    className="rounded-2xl border border-slate-800 bg-slate-950/60 p-4"
+                    className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/60 p-4"
                   >
-                    <p className="text-sm font-semibold text-slate-100">
+                    <p className="text-sm font-semibold text-[var(--ll-text)]">
                       {group.subject.replace(/_/g, " ")} Grade {group.grade}
                     </p>
-                    <p className="mt-1 text-xs text-slate-500">{group.count} units available</p>
+                    <p className="mt-1 text-xs text-[var(--ll-text-faint)]">{group.count} units available</p>
                     <button
                       type="button"
                       onClick={() => handleDownloadTextbook(group.subject, group.grade)}
                       disabled={busy}
-                      className="mt-3 rounded-xl bg-cyan-400 px-4 py-2 text-sm font-semibold text-slate-950 hover:bg-cyan-300 disabled:cursor-not-allowed disabled:opacity-60"
+                      className="mt-3 rounded-xl bg-[var(--ll-silver-soft)] px-4 py-2 text-sm font-semibold text-[var(--ll-text-faint)] hover:bg-[var(--ll-silver-soft)] disabled:cursor-not-allowed disabled:opacity-60"
                     >
                       {busy ? "Compiling textbook..." : "Download Textbook PDF"}
                     </button>
@@ -389,15 +389,15 @@ export default function AdminCurriculumUnitsPage() {
           )}
         </section>
 
-        <section className="rounded-2xl border border-white/10 bg-slate-900/70 p-6">
+        <section className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 p-6">
           <div className="mb-4 flex items-center justify-between gap-4">
             <div>
               <h2 className="text-lg font-semibold">Unit List</h2>
-              <p className="text-xs text-slate-500">
+              <p className="text-xs text-[var(--ll-text-faint)]">
                 Subject and grade combinations currently assembled in this school.
               </p>
             </div>
-            <div className="text-right text-xs text-slate-400">
+            <div className="text-right text-xs text-[var(--ll-text-muted)]">
               {Object.entries(groupedCounts).map(([key, count]) => (
                 <div key={key}>
                   {key.replace("|", " Grade ")}: {count}
@@ -407,23 +407,23 @@ export default function AdminCurriculumUnitsPage() {
           </div>
 
           {loadingUnits ? (
-            <p className="text-sm text-slate-400">Loading units...</p>
+            <p className="text-sm text-[var(--ll-text-muted)]">Loading units...</p>
           ) : units.length === 0 ? (
-            <p className="text-sm text-slate-400">No units assembled yet.</p>
+            <p className="text-sm text-[var(--ll-text-muted)]">No units assembled yet.</p>
           ) : (
             <div className="space-y-3">
               {units.map((unit) => {
                 const expanded = expandedUnitId === unit.unitId;
                 return (
-                  <div key={unit.unitId} className="rounded-2xl border border-slate-800 bg-slate-950/70 p-4">
+                  <div key={unit.unitId} className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 p-4">
                     <div className="flex flex-wrap items-start justify-between gap-3">
                       <div>
-                        <p className="text-sm font-semibold text-slate-100">{unit.name}</p>
-                        <p className="mt-1 text-xs text-slate-400">
+                        <p className="text-sm font-semibold text-[var(--ll-text)]">{unit.name}</p>
+                        <p className="mt-1 text-xs text-[var(--ll-text-muted)]">
                           {unit.subject.replace(/_/g, " ")} | Grade {unit.grade} | {unit.lessonCount} lessons
                         </p>
                         {unit.description ? (
-                          <p className="mt-2 max-w-3xl text-sm text-slate-300">{unit.description}</p>
+                          <p className="mt-2 max-w-3xl text-sm text-[var(--ll-text)]">{unit.description}</p>
                         ) : null}
                       </div>
                       <div className="flex items-center gap-2">
@@ -434,7 +434,7 @@ export default function AdminCurriculumUnitsPage() {
                               current === unit.unitId ? null : unit.unitId
                             )
                           }
-                          className="rounded-full border border-slate-700 px-3 py-1 text-xs font-semibold text-slate-200 hover:border-slate-500"
+                          className="rounded-full border border-[var(--ll-border)] px-3 py-1 text-xs font-semibold text-[var(--ll-text)] hover:border-[var(--ll-border)]"
                         >
                           {expanded ? "Hide Lessons" : "View Lessons"}
                         </button>
@@ -446,17 +446,17 @@ export default function AdminCurriculumUnitsPage() {
                         {unit.lessons.map((lesson) => (
                           <div
                             key={lesson.id}
-                            className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-slate-800 bg-slate-900/70 px-4 py-3"
+                            className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 px-4 py-3"
                           >
                             <div>
-                              <p className="text-sm font-medium text-slate-100">{lesson.title}</p>
-                              <p className="text-xs text-slate-500">{lesson.contentId}</p>
+                              <p className="text-sm font-medium text-[var(--ll-text)]">{lesson.title}</p>
+                              <p className="text-xs text-[var(--ll-text-faint)]">{lesson.contentId}</p>
                             </div>
                             <div className="flex items-center gap-2">
-                              <span className="rounded-full bg-slate-800 px-3 py-1 text-[11px] uppercase tracking-wide text-slate-300">
+                              <span className="rounded-full bg-[var(--ll-surface)] px-3 py-1 text-[11px] uppercase tracking-wide text-[var(--ll-text)]">
                                 {lesson.lessonType ?? "lesson"}
                               </span>
-                              <span className="rounded-full bg-emerald-500/20 px-3 py-1 text-[11px] text-emerald-200">
+                              <span className="rounded-full bg-[var(--ll-yellow)]/20 px-3 py-1 text-[11px] text-[var(--ll-yellow)]">
                                 #{lesson.orderInUnit ?? "-"}
                               </span>
                             </div>

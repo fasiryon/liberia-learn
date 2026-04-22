@@ -178,20 +178,20 @@ export default function AdaptivePracticeClient() {
   }
 
   return (
-    <div className="ll-page min-h-screen px-4 py-8 text-slate-50">
+    <div className="ll-page min-h-screen px-4 py-8 text-[var(--ll-text)]">
       <div className="ll-shell max-w-4xl space-y-6">
         <header className="space-y-2">
-          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-emerald-300">
+          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--ll-yellow)]">
             Adaptive Learning
           </p>
           <h1 className="text-3xl font-bold">My Practice</h1>
-          <p className="max-w-2xl text-base leading-7 text-slate-100">
+          <p className="max-w-2xl text-base leading-7 text-[var(--ll-text)]">
             Targeted practice for your weakest strands, updated from your latest results.
           </p>
         </header>
 
         {error && (
-          <div className="rounded-2xl border border-amber-500/30 bg-amber-500/10 px-4 py-3 text-sm text-amber-100">
+          <div className="rounded-xl border border-amber-500/30 bg-[var(--ll-yellow-soft)] px-4 py-3 text-sm text-[var(--ll-yellow)]">
             {error}
           </div>
         )}
@@ -199,26 +199,26 @@ export default function AdaptivePracticeClient() {
         {loading ? (
           <div className="space-y-3">
             {[1, 2, 3].map((item) => (
-              <div key={item} className="h-24 animate-pulse rounded-2xl bg-slate-900/70" />
+              <div key={item} className="h-24 animate-pulse rounded-xl bg-[var(--ll-bg)]/70" />
             ))}
           </div>
         ) : practice && currentQuestion ? (
-          <section className="rounded-3xl border border-white/10 bg-slate-900/70 p-5 sm:p-6">
+          <section className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 p-5 sm:p-6">
             <div className="mb-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
               <div>
-                <p className="text-xs uppercase tracking-wide text-slate-200">
+                <p className="text-xs uppercase tracking-wide text-[var(--ll-text)]">
                   {activeGap?.subject} - {practice.difficultyTier}
                 </p>
-                <h2 className="text-xl font-semibold text-slate-100">{practice.strand}</h2>
+                <h2 className="text-xl font-semibold text-[var(--ll-text)]">{practice.strand}</h2>
               </div>
-              <div className="rounded-full bg-slate-950/60 px-3 py-1 text-xs text-emerald-200">
+              <div className="rounded-full bg-[var(--ll-bg)]/60 px-3 py-1 text-xs text-[var(--ll-yellow)]">
                 Question {questionIndex + 1} / {practice.questions.length}
               </div>
             </div>
 
             <div className="space-y-4">
-              <div className="rounded-2xl border border-slate-800 bg-slate-950/55 p-4">
-                <p className="text-xl leading-8 text-slate-50">{currentQuestion.prompt}</p>
+              <div className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/55 p-4">
+                <p className="text-xl leading-8 text-[var(--ll-text)]">{currentQuestion.prompt}</p>
               </div>
               <div className="grid gap-3">
                 {currentQuestion.options.map((option, optionIndex) => (
@@ -227,7 +227,7 @@ export default function AdaptivePracticeClient() {
                     type="button"
                     onClick={() => selectAnswer(optionIndex)}
                     disabled={submitting}
-                    className="w-full rounded-2xl border border-white/10 bg-slate-950/70 px-4 py-4 text-left text-base leading-7 text-slate-100 hover:border-emerald-500/40 hover:bg-slate-900 disabled:cursor-not-allowed disabled:opacity-60"
+                    className="w-full rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 px-4 py-4 text-left text-base leading-7 text-[var(--ll-text)] hover:border-emerald-500/40 hover:bg-[var(--ll-bg)] disabled:cursor-not-allowed disabled:opacity-60"
                     style={{ minHeight: "52px" }}
                   >
                     {option}
@@ -237,7 +237,7 @@ export default function AdaptivePracticeClient() {
             </div>
 
             {result && (
-              <div className="mt-6 rounded-2xl border border-emerald-500/30 bg-emerald-500/10 px-4 py-3 text-sm text-slate-100">
+              <div className="mt-6 rounded-xl border border-emerald-500/30 bg-[var(--ll-yellow)]/10 px-4 py-3 text-sm text-[var(--ll-text)]">
                 Score {formatPercent(result.score)}.{" "}
                 {result.passed ? "Passed" : "Needs more practice"}. Next tier: {result.nextTier}.
               </div>
@@ -246,30 +246,30 @@ export default function AdaptivePracticeClient() {
         ) : (
           <section className="grid gap-4 md:grid-cols-2">
             {gaps.length === 0 ? (
-              <div className="ll-empty rounded-3xl border border-white/10 bg-slate-900/70 p-6 text-sm text-slate-200">
+              <div className="ll-empty rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 p-6 text-sm text-[var(--ll-text)]">
                 No active mastery gaps yet.
               </div>
             ) : (
               gaps.map((gap) => (
                 <article
                   key={`${gap.subject}-${gap.strand}`}
-                  className="rounded-3xl border border-white/10 bg-slate-900/70 p-6"
+                  className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 p-6"
                 >
-                  <p className="text-xs uppercase tracking-wide text-slate-200">{gap.subject}</p>
-                  <h2 className="mt-2 text-xl font-semibold text-slate-100">{gap.strand}</h2>
-                  <p className="mt-2 text-sm leading-7 text-slate-300">
+                  <p className="text-xs uppercase tracking-wide text-[var(--ll-text)]">{gap.subject}</p>
+                  <h2 className="mt-2 text-xl font-semibold text-[var(--ll-text)]">{gap.strand}</h2>
+                  <p className="mt-2 text-sm leading-7 text-[var(--ll-text)]">
                     This strand needs extra support. Start with a short practice set and close the gap before your next exam.
                   </p>
                   <div className="mt-4 grid grid-cols-2 gap-3 text-sm">
-                    <div className="rounded-2xl bg-slate-950/60 p-3">
-                      <p className="text-xs text-slate-300">Average score</p>
-                      <p className="mt-1 text-lg font-semibold text-amber-300">
+                    <div className="rounded-xl bg-[var(--ll-bg)]/60 p-3">
+                      <p className="text-xs text-[var(--ll-text)]">Average score</p>
+                      <p className="mt-1 text-lg font-semibold text-[var(--ll-yellow)]">
                         {formatPercent(gap.averageScore)}
                       </p>
                     </div>
-                    <div className="rounded-2xl bg-slate-950/60 p-3">
-                      <p className="text-xs text-slate-300">Difficulty tier</p>
-                      <p className="mt-1 text-lg font-semibold text-cyan-300">
+                    <div className="rounded-xl bg-[var(--ll-bg)]/60 p-3">
+                      <p className="text-xs text-[var(--ll-text)]">Difficulty tier</p>
+                      <p className="mt-1 text-lg font-semibold text-[var(--ll-silver)]">
                         {inferTier(gap.averageScore)}
                       </p>
                     </div>
@@ -277,7 +277,7 @@ export default function AdaptivePracticeClient() {
                   <button
                     type="button"
                     onClick={() => startPractice(gap)}
-                    className="ll-touch-target mt-5 w-full rounded-2xl bg-emerald-400 px-4 py-3 text-sm font-semibold text-slate-950 hover:bg-emerald-300"
+                    className="ll-touch-target mt-5 w-full rounded-xl bg-[var(--ll-yellow-soft)] px-4 py-3 text-sm font-semibold text-[var(--ll-text-faint)] hover:bg-[var(--ll-yellow-soft)]"
                   >
                     Start Practice
                   </button>

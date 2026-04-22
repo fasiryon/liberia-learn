@@ -39,12 +39,12 @@ export default function AuditLogSearch({
   };
 
   return (
-    <div className="mb-6 rounded-2xl border border-slate-800 bg-slate-900/80 p-5">
+    <div className="mb-6 rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/80 p-5">
       <h2 className="mb-4 text-base font-semibold">Search Records</h2>
       <form method="get" action="/admin/compliance" className="space-y-4">
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
           <div>
-            <label htmlFor="action" className="mb-1 block text-xs text-slate-400">
+            <label htmlFor="action" className="mb-1 block text-xs text-[var(--ll-text-muted)]">
               Action Type
             </label>
             <input
@@ -53,11 +53,11 @@ export default function AuditLogSearch({
               type="text"
               defaultValue={currentAction}
               placeholder="e.g. export, login"
-              className="w-full rounded-lg border border-slate-700 bg-slate-800 px-3 py-2 text-sm text-slate-200 placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+              className="w-full rounded-lg border border-[var(--ll-border)] bg-[var(--ll-surface)] px-3 py-2 text-sm text-[var(--ll-text)] placeholder:text-[var(--ll-text-faint)] focus:outline-none focus:ring-2 focus:ring-emerald-500"
             />
           </div>
           <div>
-            <label htmlFor="actorEmail" className="mb-1 block text-xs text-slate-400">
+            <label htmlFor="actorEmail" className="mb-1 block text-xs text-[var(--ll-text-muted)]">
               Actor Email
             </label>
             <input
@@ -66,18 +66,18 @@ export default function AuditLogSearch({
               type="text"
               defaultValue={currentActorEmail}
               placeholder="e.g. admin@school.lr"
-              className="w-full rounded-lg border border-slate-700 bg-slate-800 px-3 py-2 text-sm text-slate-200 placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+              className="w-full rounded-lg border border-[var(--ll-border)] bg-[var(--ll-surface)] px-3 py-2 text-sm text-[var(--ll-text)] placeholder:text-[var(--ll-text-faint)] focus:outline-none focus:ring-2 focus:ring-emerald-500"
             />
           </div>
           <div>
-            <label htmlFor="role" className="mb-1 block text-xs text-slate-400">
+            <label htmlFor="role" className="mb-1 block text-xs text-[var(--ll-text-muted)]">
               Actor Role
             </label>
             <select
               id="role"
               name="role"
               defaultValue={currentRole}
-              className="w-full rounded-lg border border-slate-700 bg-slate-800 px-3 py-2 text-sm text-slate-200 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+              className="w-full rounded-lg border border-[var(--ll-border)] bg-[var(--ll-surface)] px-3 py-2 text-sm text-[var(--ll-text)] focus:outline-none focus:ring-2 focus:ring-emerald-500"
             >
               <option value="">All roles</option>
               <option value="ADMIN">ADMIN</option>
@@ -89,7 +89,7 @@ export default function AuditLogSearch({
             </select>
           </div>
           <div>
-            <label htmlFor="resourceType" className="mb-1 block text-xs text-slate-400">
+            <label htmlFor="resourceType" className="mb-1 block text-xs text-[var(--ll-text-muted)]">
               Record Type
             </label>
             <input
@@ -98,11 +98,11 @@ export default function AuditLogSearch({
               type="text"
               defaultValue={currentResourceType}
               placeholder="e.g. export, school"
-              className="w-full rounded-lg border border-slate-700 bg-slate-800 px-3 py-2 text-sm text-slate-200 placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+              className="w-full rounded-lg border border-[var(--ll-border)] bg-[var(--ll-surface)] px-3 py-2 text-sm text-[var(--ll-text)] placeholder:text-[var(--ll-text-faint)] focus:outline-none focus:ring-2 focus:ring-emerald-500"
             />
           </div>
           <div>
-            <label htmlFor="from" className="mb-1 block text-xs text-slate-400">
+            <label htmlFor="from" className="mb-1 block text-xs text-[var(--ll-text-muted)]">
               From Date
             </label>
             <input
@@ -110,11 +110,11 @@ export default function AuditLogSearch({
               name="from"
               type="date"
               defaultValue={currentFrom}
-              className="w-full rounded-lg border border-slate-700 bg-slate-800 px-3 py-2 text-sm text-slate-200 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+              className="w-full rounded-lg border border-[var(--ll-border)] bg-[var(--ll-surface)] px-3 py-2 text-sm text-[var(--ll-text)] focus:outline-none focus:ring-2 focus:ring-emerald-500"
             />
           </div>
           <div>
-            <label htmlFor="to" className="mb-1 block text-xs text-slate-400">
+            <label htmlFor="to" className="mb-1 block text-xs text-[var(--ll-text-muted)]">
               To Date
             </label>
             <input
@@ -122,12 +122,12 @@ export default function AuditLogSearch({
               name="to"
               type="date"
               defaultValue={currentTo}
-              className="w-full rounded-lg border border-slate-700 bg-slate-800 px-3 py-2 text-sm text-slate-200 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+              className="w-full rounded-lg border border-[var(--ll-border)] bg-[var(--ll-surface)] px-3 py-2 text-sm text-[var(--ll-text)] focus:outline-none focus:ring-2 focus:ring-emerald-500"
             />
           </div>
           {isPlatformAdmin ? (
             <div>
-              <label htmlFor="schoolId" className="mb-1 block text-xs text-slate-400">
+              <label htmlFor="schoolId" className="mb-1 block text-xs text-[var(--ll-text-muted)]">
                 School ID
               </label>
               <input
@@ -136,7 +136,7 @@ export default function AuditLogSearch({
                 type="text"
                 defaultValue={schoolId ?? ""}
                 placeholder="Optional school scope"
-                className="w-full rounded-lg border border-slate-700 bg-slate-800 px-3 py-2 text-sm text-slate-200 placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                className="w-full rounded-lg border border-[var(--ll-border)] bg-[var(--ll-surface)] px-3 py-2 text-sm text-[var(--ll-text)] placeholder:text-[var(--ll-text-faint)] focus:outline-none focus:ring-2 focus:ring-emerald-500"
               />
             </div>
           ) : null}
@@ -144,20 +144,20 @@ export default function AuditLogSearch({
         <div className="flex flex-wrap gap-2 pt-1">
           <button
             type="submit"
-            className="rounded-xl bg-emerald-600 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-400"
+            className="rounded-xl bg-[var(--ll-yellow-soft)] px-4 py-2 text-sm font-semibold text-[var(--ll-text)] hover:bg-[var(--ll-yellow)] focus:outline-none focus:ring-2 focus:ring-emerald-400"
           >
             Search
           </button>
           <button
             type="button"
             onClick={handleClear}
-            className="rounded-xl border border-slate-700 px-4 py-2 text-sm text-slate-300 hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-500"
+            className="rounded-xl border border-[var(--ll-border)] px-4 py-2 text-sm text-[var(--ll-text)] hover:bg-[var(--ll-surface)] focus:outline-none focus:ring-2 focus:ring-slate-500"
           >
             Clear Filters
           </button>
           <a
             href={buildCsvUrl()}
-            className="ml-auto rounded-xl border border-emerald-700 px-4 py-2 text-sm font-semibold text-emerald-300 hover:bg-emerald-900/40 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+            className="ml-auto rounded-xl border border-emerald-700 px-4 py-2 text-sm font-semibold text-[var(--ll-yellow)] hover:bg-[var(--ll-yellow-soft)] focus:outline-none focus:ring-2 focus:ring-emerald-500"
             aria-label="Download audit log as spreadsheet (CSV)"
           >
             Download as Spreadsheet

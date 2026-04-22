@@ -233,23 +233,23 @@ export function AdminTeachersManager() {
   }
 
   return (
-    <main className="min-h-screen bg-slate-950 text-slate-50">
+    <main className="min-h-screen bg-[var(--ll-bg)] text-[var(--ll-text)]">
       <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_top,_#3b82f622,_transparent_60%)]" />
       <div className="mx-auto max-w-6xl space-y-6 px-4 py-6">
         <header className="flex flex-wrap items-center justify-between gap-3">
           <div>
-            <Link href="/admin" className="text-xs text-emerald-300 hover:text-emerald-200">
+            <Link href="/admin" className="text-xs text-[var(--ll-yellow)] hover:text-[var(--ll-yellow)]">
               Back to Admin Console
             </Link>
             <h1 className="mt-2 text-2xl font-bold">Teachers</h1>
-            <p className="text-sm text-slate-400">
+            <p className="text-sm text-[var(--ll-text-muted)]">
               Manage teachers, resend credentials, and track roster status.
             </p>
           </div>
           <button
             type="button"
             onClick={openAddForm}
-            className="rounded-xl bg-emerald-500 px-5 py-3 text-sm font-semibold text-slate-950 hover:bg-emerald-400"
+            className="rounded-xl bg-[var(--ll-yellow)] px-5 py-3 text-sm font-semibold text-[var(--ll-text-faint)] hover:bg-[var(--ll-yellow-soft)]"
           >
             Add Teacher
           </button>
@@ -257,67 +257,67 @@ export function AdminTeachersManager() {
 
         <AdminNav />
 
-        <section className="rounded-2xl border border-white/10 bg-slate-900/70 p-4">
+        <section className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 p-4">
           <input
             value={search}
             onChange={(event) => setSearch(event.target.value)}
             placeholder="Search by name, phone, email, or specialty"
-            className="min-h-11 w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-sm text-slate-100"
+            className="min-h-11 w-full rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)] px-4 py-3 text-sm text-[var(--ll-text)]"
           />
         </section>
 
         {mode ? (
-          <section className="rounded-2xl border border-white/10 bg-slate-900/70 p-6">
+          <section className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 p-6">
             <h2 className="text-lg font-semibold">
               {mode === "add" ? "Add Teacher" : `Edit ${selectedTeacher?.name ?? "Teacher"}`}
             </h2>
             <form onSubmit={handleSubmit} className="mt-4 grid gap-4 md:grid-cols-2">
               <div>
-                <label className="text-xs text-slate-400">First Name</label>
+                <label className="text-xs text-[var(--ll-text-muted)]">First Name</label>
                 <input
                   value={form.firstName}
                   onChange={(event) => setForm((current) => ({ ...current, firstName: event.target.value }))}
-                  className="mt-1 min-h-11 w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-sm text-slate-100"
+                  className="mt-1 min-h-11 w-full rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)] px-4 py-3 text-sm text-[var(--ll-text)]"
                 />
               </div>
               <div>
-                <label className="text-xs text-slate-400">Last Name</label>
+                <label className="text-xs text-[var(--ll-text-muted)]">Last Name</label>
                 <input
                   value={form.lastName}
                   onChange={(event) => setForm((current) => ({ ...current, lastName: event.target.value }))}
-                  className="mt-1 min-h-11 w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-sm text-slate-100"
+                  className="mt-1 min-h-11 w-full rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)] px-4 py-3 text-sm text-[var(--ll-text)]"
                 />
               </div>
               <div>
-                <label className="text-xs text-slate-400">Email or Phone</label>
+                <label className="text-xs text-[var(--ll-text-muted)]">Email or Phone</label>
                 <input
                   value={form.contact}
                   onChange={(event) => setForm((current) => ({ ...current, contact: event.target.value }))}
-                  className="mt-1 min-h-11 w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-sm text-slate-100"
+                  className="mt-1 min-h-11 w-full rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)] px-4 py-3 text-sm text-[var(--ll-text)]"
                 />
               </div>
               <div>
-                <label className="text-xs text-slate-400">Subject Specialty</label>
+                <label className="text-xs text-[var(--ll-text-muted)]">Subject Specialty</label>
                 <input
                   value={form.subjectSpecialty}
                   onChange={(event) =>
                     setForm((current) => ({ ...current, subjectSpecialty: event.target.value }))
                   }
-                  className="mt-1 min-h-11 w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-sm text-slate-100"
+                  className="mt-1 min-h-11 w-full rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)] px-4 py-3 text-sm text-[var(--ll-text)]"
                 />
               </div>
               <div className="md:col-span-2 flex flex-wrap gap-3">
                 <button
                   type="submit"
                   disabled={saving}
-                  className="rounded-xl bg-emerald-500 px-5 py-3 text-sm font-semibold text-slate-950 hover:bg-emerald-400 disabled:opacity-60"
+                  className="rounded-xl bg-[var(--ll-yellow)] px-5 py-3 text-sm font-semibold text-[var(--ll-text-faint)] hover:bg-[var(--ll-yellow-soft)] disabled:opacity-60"
                 >
                   {saving ? "Saving..." : mode === "add" ? "Create Teacher" : "Save Changes"}
                 </button>
                 <button
                   type="button"
                   onClick={() => setMode(null)}
-                  className="rounded-xl border border-slate-700 px-5 py-3 text-sm font-semibold text-slate-200"
+                  className="rounded-xl border border-[var(--ll-border)] px-5 py-3 text-sm font-semibold text-[var(--ll-text)]"
                 >
                   Cancel
                 </button>
@@ -327,13 +327,13 @@ export function AdminTeachersManager() {
         ) : null}
 
         {credentials ? (
-          <section className="rounded-2xl border border-emerald-500/30 bg-emerald-500/10 p-6">
-            <h2 className="text-xl font-semibold text-emerald-200">Credential delivery</h2>
-            <p className="mt-2 text-sm text-slate-200">
-              Teacher ID: <span className="font-semibold text-white">{credentials.loginId ?? "Pending"}</span>
+          <section className="rounded-xl border border-emerald-500/30 bg-[var(--ll-yellow)]/10 p-6">
+            <h2 className="text-xl font-semibold text-[var(--ll-yellow)]">Credential delivery</h2>
+            <p className="mt-2 text-sm text-[var(--ll-text)]">
+              Teacher ID: <span className="font-semibold text-[var(--ll-text)]">{credentials.loginId ?? "Pending"}</span>
             </p>
-            <p className="mt-1 text-sm text-slate-200">
-              Temporary PIN: <span className="font-semibold text-white">{credentials.tempPin}</span>
+            <p className="mt-1 text-sm text-[var(--ll-text)]">
+              Temporary PIN: <span className="font-semibold text-[var(--ll-text)]">{credentials.tempPin}</span>
             </p>
             <div className="mt-4">
               <CredentialDeliveryActions
@@ -345,24 +345,24 @@ export function AdminTeachersManager() {
           </section>
         ) : null}
 
-        <section className="rounded-2xl border border-white/10 bg-slate-900/70 p-6">
+        <section className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 p-6">
           {error ? <p className="mb-4 text-sm text-red-300">{error}</p> : null}
 
           {loading ? (
             <div className="space-y-3">
               {Array.from({ length: 5 }).map((_, index) => (
-                <div key={index} className="h-12 animate-pulse rounded-xl bg-slate-800/60" />
+                <div key={index} className="h-12 animate-pulse rounded-xl bg-[var(--ll-surface)]/60" />
               ))}
             </div>
           ) : filteredTeachers.length === 0 ? (
-            <div className="rounded-xl border border-white/10 bg-black/10 p-8 text-center text-sm text-slate-400">
+            <div className="rounded-xl border border-[var(--ll-border)] bg-black/10 p-8 text-center text-sm text-[var(--ll-text-muted)]">
               No teachers yet. Add your first teacher to get started.
             </div>
           ) : (
             <div className="overflow-x-auto">
               <table className="min-w-full text-sm">
                 <thead>
-                  <tr className="border-b border-white/10 text-left text-xs text-slate-500">
+                  <tr className="border-b border-[var(--ll-border)] text-left text-xs text-[var(--ll-text-faint)]">
                     <th className="px-4 py-3">Name</th>
                     <th className="px-4 py-3">Email/Phone</th>
                     <th className="px-4 py-3">Classes</th>
@@ -372,10 +372,10 @@ export function AdminTeachersManager() {
                 </thead>
                 <tbody>
                   {filteredTeachers.map((teacher) => (
-                    <tr key={teacher.id} className="border-b border-white/5 text-slate-200">
+                    <tr key={teacher.id} className="border-b border-white/5 text-[var(--ll-text)]">
                       <td className="px-4 py-3">
                         <p className="font-semibold">{teacher.name}</p>
-                        <p className="text-xs text-slate-500">{teacher.subjectSpecialty ?? "General educator"}</p>
+                        <p className="text-xs text-[var(--ll-text-faint)]">{teacher.subjectSpecialty ?? "General educator"}</p>
                       </td>
                       <td className="px-4 py-3">{teacher.contact ?? teacher.email ?? teacher.phone ?? "-"}</td>
                       <td className="px-4 py-3">
@@ -387,8 +387,8 @@ export function AdminTeachersManager() {
                         <span
                           className={`rounded-full px-2.5 py-1 text-[11px] font-semibold ${
                             teacher.status === "ACTIVE"
-                              ? "bg-emerald-500/20 text-emerald-300"
-                              : "bg-slate-700 text-slate-200"
+                              ? "bg-[var(--ll-yellow)]/20 text-[var(--ll-yellow)]"
+                              : "bg-[var(--ll-surface-muted)] text-[var(--ll-text)]"
                           }`}
                         >
                           {teacher.status === "ACTIVE" ? "Active" : "Inactive"}
@@ -399,14 +399,14 @@ export function AdminTeachersManager() {
                           <button
                             type="button"
                             onClick={() => handleResendInvite(teacher)}
-                            className="rounded-full border border-slate-700 px-3 py-1 text-[11px] font-semibold text-slate-200"
+                            className="rounded-full border border-[var(--ll-border)] px-3 py-1 text-[11px] font-semibold text-[var(--ll-text)]"
                           >
                             Resend Invite
                           </button>
                           <button
                             type="button"
                             onClick={() => openEditForm(teacher)}
-                            className="rounded-full border border-slate-700 px-3 py-1 text-[11px] font-semibold text-slate-200"
+                            className="rounded-full border border-[var(--ll-border)] px-3 py-1 text-[11px] font-semibold text-[var(--ll-text)]"
                           >
                             Edit
                           </button>

@@ -29,27 +29,27 @@ export function GenerateTokenButton() {
 
   return (
     <div className="space-y-3">
-      <label className="block text-xs font-medium text-slate-300">
+      <label className="block text-xs font-medium text-[var(--ll-text)]">
         Intended recipient user ID
         <input
           value={intendedUserId}
           onChange={(event) => setIntendedUserId(event.target.value)}
-          className="mt-1 w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 text-sm text-slate-100"
+          className="mt-1 w-full rounded-lg border border-[var(--ll-border)] bg-[var(--ll-bg)] px-3 py-2 text-sm text-[var(--ll-text)]"
           placeholder="user_..."
         />
       </label>
       <button
         onClick={handleGenerate}
         disabled={loading || !intendedUserId.trim()}
-        className="rounded-xl bg-violet-500 px-5 py-2.5 text-sm font-semibold text-white hover:bg-violet-400 disabled:opacity-50"
+        className="rounded-xl bg-violet-500 px-5 py-2.5 text-sm font-semibold text-[var(--ll-text)] hover:bg-violet-400 disabled:opacity-50"
       >
         {loading ? "Generating..." : "Generate Transfer Token"}
       </button>
       {result && (
         <div className="rounded-lg border border-violet-800 bg-violet-950/40 p-3 text-xs space-y-1">
           <p className="text-violet-300">One-time transfer token (expires {new Date(result.expiresAt).toLocaleString()}):</p>
-          <p className="font-mono text-slate-200 break-all">{result.token}</p>
-          <p className="text-slate-500">Deliver this token directly to the intended recipient. It is not embedded in a URL.</p>
+          <p className="font-mono text-[var(--ll-text)] break-all">{result.token}</p>
+          <p className="text-[var(--ll-text-faint)]">Deliver this token directly to the intended recipient. It is not embedded in a URL.</p>
         </div>
       )}
       {error && <p className="text-xs text-red-400">{error}</p>}
@@ -80,7 +80,7 @@ export function SelfDemoteButton({ adminCount }: { adminCount: number }) {
   }
 
   if (done) {
-    return <p className="text-sm text-amber-400">You have been demoted. Please log out and back in.</p>;
+    return <p className="text-sm text-[var(--ll-yellow)]">You have been demoted. Please log out and back in.</p>;
   }
 
   return (
@@ -88,12 +88,12 @@ export function SelfDemoteButton({ adminCount }: { adminCount: number }) {
       <button
         onClick={handleDemote}
         disabled={loading || disabled}
-        className="rounded-xl bg-red-500 px-5 py-2.5 text-sm font-semibold text-white hover:bg-red-400 disabled:opacity-50 disabled:cursor-not-allowed"
+        className="rounded-xl bg-red-500 px-5 py-2.5 text-sm font-semibold text-[var(--ll-text)] hover:bg-red-400 disabled:opacity-50 disabled:cursor-not-allowed"
       >
         {loading ? "Processing..." : "Remove My Platform Admin Access"}
       </button>
       {disabled && (
-        <p className="text-xs text-amber-400">
+        <p className="text-xs text-[var(--ll-yellow)]">
           Cannot demote: at least 2 platform admins required. Promote another admin first.
         </p>
       )}

@@ -31,18 +31,18 @@ export function CollapsiblePanel({
 
   return (
     <div
-      className={`rounded-2xl border border-slate-800 bg-slate-900/80 overflow-hidden ${className}`}
+      className={`rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/80 overflow-hidden ${className}`}
     >
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
         aria-expanded={open}
-        className="flex w-full items-center justify-between px-5 py-4 text-left hover:bg-slate-800/50 transition-colors"
+        className="flex w-full items-center justify-between px-5 py-4 text-left hover:bg-[var(--ll-surface)]/50 transition-colors"
       >
-        <span className="text-base font-semibold text-slate-100">{title}</span>
+        <span className="text-base font-semibold text-[var(--ll-text)]">{title}</span>
         <span
           aria-hidden="true"
-          className="text-slate-500 text-sm transition-transform duration-200"
+          className="text-[var(--ll-text-faint)] text-sm transition-transform duration-200"
           style={{ display: "inline-block", transform: open ? "rotate(180deg)" : "rotate(0deg)" }}
         >
           ▾

@@ -20,7 +20,7 @@ export default function OfflineBanner() {
   if (!offline) return null;
 
   return (
-    <div className="rounded-xl bg-amber-500/20 border border-amber-500/30 px-4 py-2 text-sm text-amber-300 mb-4">
+    <div className="rounded-xl bg-[var(--ll-yellow-soft)] border border-amber-500/30 px-4 py-2 text-sm text-[var(--ll-yellow)] mb-4">
       You are offline. Your work will be saved and synced when you reconnect.
     </div>
   );

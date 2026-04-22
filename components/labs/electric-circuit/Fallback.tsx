@@ -11,8 +11,8 @@ export default function ElectricCircuitFallback({
   onAction: (action: ElectricCircuitAction) => void;
 }) {
   return (
-    <section className="bg-slate-950 p-4 text-slate-100">
-      <div className="rounded-2xl border border-slate-800 bg-slate-900 p-4 font-mono text-sm leading-7">
+    <section className="bg-[var(--ll-bg)] p-4 text-[var(--ll-text)]">
+      <div className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)] p-4 font-mono text-sm leading-7">
         <p>Battery {state.voltage.toFixed(1)} V (+) ---- circuit ---- bulb ---- (-)</p>
         <p>
           {state.circuitType === "series"
@@ -26,7 +26,7 @@ export default function ElectricCircuitFallback({
       <button
         type="button"
         onClick={() => onAction({ type: "SET_CIRCUIT_TYPE", value: state.circuitType === "series" ? "parallel" : "series" })}
-        className="mt-3 min-h-11 rounded-xl bg-cyan-300 px-4 py-2 text-sm font-semibold text-slate-950"
+        className="mt-3 min-h-11 rounded-xl bg-[var(--ll-silver-soft)] px-4 py-2 text-sm font-semibold text-[var(--ll-text-faint)]"
       >
         {state.circuitType === "series" ? "Switch to Parallel" : "Switch to Series"}
       </button>

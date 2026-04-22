@@ -25,9 +25,9 @@ function workflowTone(type: string) {
     return "border-red-500/20 bg-red-500/10 text-red-200";
   }
   if (type === "extra_practice") {
-    return "border-amber-500/20 bg-amber-500/10 text-amber-200";
+    return "border-amber-500/20 bg-[var(--ll-yellow-soft)] text-[var(--ll-yellow)]";
   }
-  return "border-slate-700 bg-slate-900 text-slate-300";
+  return "border-[var(--ll-border)] bg-[var(--ll-bg)] text-[var(--ll-text)]";
 }
 
 export function InterventionTable({
@@ -46,7 +46,7 @@ export function InterventionTable({
   if (items.length === 0) {
     return (
       <Card className="ll-empty p-5">
-        <p className="text-sm text-slate-400">{emptyMessage}</p>
+        <p className="text-sm text-[var(--ll-text-muted)]">{emptyMessage}</p>
       </Card>
     );
   }
@@ -64,17 +64,17 @@ export function InterventionTable({
                   {recommendationLabel(item.recommendationType)}
                 </span>
                 {item.studentName ? (
-                  <p className="text-sm font-semibold text-slate-100">
+                  <p className="text-sm font-semibold text-[var(--ll-text)]">
                     {item.studentName}
                   </p>
                 ) : null}
               </div>
-              <p className="text-sm text-slate-300">{item.reason}</p>
+              <p className="text-sm text-[var(--ll-text)]">{item.reason}</p>
               <div className="flex flex-wrap gap-2 text-xs">
-                <span className="rounded-full border border-slate-700 bg-slate-950/60 px-3 py-1 text-slate-300">
+                <span className="rounded-full border border-[var(--ll-border)] bg-[var(--ll-bg)]/60 px-3 py-1 text-[var(--ll-text)]">
                   Confidence {Math.round(item.confidenceScore * 100)}%
                 </span>
-                <span className="rounded-full border border-slate-700 bg-slate-950/60 px-3 py-1 text-slate-300">
+                <span className="rounded-full border border-[var(--ll-border)] bg-[var(--ll-bg)]/60 px-3 py-1 text-[var(--ll-text)]">
                   {item.workflowState ?? "Needs review"}
                 </span>
               </div>
@@ -89,7 +89,7 @@ export function InterventionTable({
                     void onAction?.(item.id, "actioned");
                   })
                 }
-                className="min-h-10 rounded-full bg-emerald-500 px-4 py-2 text-xs font-semibold text-slate-950 disabled:opacity-50"
+                className="min-h-10 rounded-full bg-[var(--ll-yellow)] px-4 py-2 text-xs font-semibold text-[var(--ll-text-faint)] disabled:opacity-50"
               >
                 Mark actioned
               </button>
@@ -101,7 +101,7 @@ export function InterventionTable({
                     void onAction?.(item.id, "dismissed");
                   })
                 }
-                className="min-h-10 rounded-full border border-slate-700 px-4 py-2 text-xs font-semibold text-slate-200 disabled:opacity-50"
+                className="min-h-10 rounded-full border border-[var(--ll-border)] px-4 py-2 text-xs font-semibold text-[var(--ll-text)] disabled:opacity-50"
               >
                 Dismiss
               </button>

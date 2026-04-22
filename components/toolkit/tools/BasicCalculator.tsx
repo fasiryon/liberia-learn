@@ -179,11 +179,11 @@ export default function BasicCalculator({ onClose }: BasicCalculatorProps) {
   return (
     <div className="space-y-3">
       <div className="flex items-center justify-between">
-        <p className="text-xs uppercase tracking-wide text-slate-400">Running Total: {runningTotal || "-"}</p>
+        <p className="text-xs uppercase tracking-wide text-[var(--ll-text-muted)]">Running Total: {runningTotal || "-"}</p>
         <button
           type="button"
           aria-label="Close basic calculator"
-          className="rounded border border-slate-600 px-2 py-1 text-xs"
+          className="rounded border border-[var(--ll-border)] px-2 py-1 text-xs"
           onClick={() => onClose?.()}
         >
           Close
@@ -192,15 +192,15 @@ export default function BasicCalculator({ onClose }: BasicCalculatorProps) {
 
       <output
         aria-label="Calculator display"
-        className="block rounded border border-slate-700 bg-slate-900 px-3 py-2 text-right text-2xl font-semibold"
+        className="block rounded border border-[var(--ll-border)] bg-[var(--ll-bg)] px-3 py-2 text-right text-2xl font-semibold"
       >
         {display}
       </output>
 
       <div className="grid grid-cols-4 gap-2">
-        <button type="button" aria-label="Clear" className="rounded bg-slate-800 p-2" onClick={clearAll}>C</button>
-        <button type="button" aria-label="Backspace" className="rounded bg-slate-800 p-2" onClick={backspace}>?</button>
-        <button type="button" aria-label="Equals" className="col-span-2 rounded bg-emerald-600 p-2 font-semibold" onClick={applyEquals}>=</button>
+        <button type="button" aria-label="Clear" className="rounded bg-[var(--ll-surface)] p-2" onClick={clearAll}>C</button>
+        <button type="button" aria-label="Backspace" className="rounded bg-[var(--ll-surface)] p-2" onClick={backspace}>?</button>
+        <button type="button" aria-label="Equals" className="col-span-2 rounded bg-[var(--ll-yellow-soft)] p-2 font-semibold" onClick={applyEquals}>=</button>
 
         {buttons.flat().map((token) => {
           const isOperator = ["+", "-", "*", "/"].includes(token);
@@ -209,7 +209,7 @@ export default function BasicCalculator({ onClose }: BasicCalculatorProps) {
               key={token}
               type="button"
               aria-label={`Key ${token}`}
-              className={`rounded p-2 ${isOperator ? "bg-sky-700" : "bg-slate-800"}`}
+              className={`rounded p-2 ${isOperator ? "bg-sky-700" : "bg-[var(--ll-surface)]"}`}
               onClick={() => {
                 if (token === ".") {
                   if (!display.includes(".")) appendDigit(".");

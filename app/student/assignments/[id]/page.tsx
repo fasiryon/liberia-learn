@@ -46,12 +46,12 @@ export default async function StudentAssignmentPage({ params }: { params: { id: 
   const submission = assignment.submissions[0] ?? null;
 
   return (
-    <main className="min-h-screen bg-slate-950 px-4 py-8 text-slate-50">
+    <main className="min-h-screen bg-[var(--ll-bg)] px-4 py-8 text-[var(--ll-text)]">
       <div className="mx-auto max-w-4xl space-y-6">
         <header>
-          <p className="text-xs font-semibold uppercase tracking-[0.22em] text-emerald-300">LiberiaLearn</p>
-          <h1 className="mt-3 text-3xl font-semibold text-white">{assignment.title}</h1>
-          <p className="mt-2 text-sm text-slate-400">{assignment.Class.name}</p>
+          <p className="text-xs font-semibold uppercase tracking-[0.22em] text-[var(--ll-yellow)]">LiberiaLearn</p>
+          <h1 className="mt-3 text-3xl font-semibold text-[var(--ll-text)]">{assignment.title}</h1>
+          <p className="mt-2 text-sm text-[var(--ll-text-muted)]">{assignment.Class.name}</p>
         </header>
 
         <AssignmentSubmissionClient

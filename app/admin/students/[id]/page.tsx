@@ -107,10 +107,10 @@ export default function AdminStudentDetailPage({ params }: { params: { id: strin
 
   if (loading) {
     return (
-      <main className="min-h-screen bg-slate-950 px-4 py-8 text-slate-50">
+      <main className="min-h-screen bg-[var(--ll-bg)] px-4 py-8 text-[var(--ll-text)]">
         <div className="mx-auto max-w-6xl space-y-4">
           {Array.from({ length: 4 }).map((_, index) => (
-            <div key={index} className="h-24 animate-pulse rounded-2xl bg-slate-900/70" />
+            <div key={index} className="h-24 animate-pulse rounded-xl bg-[var(--ll-bg)]/70" />
           ))}
         </div>
       </main>
@@ -119,12 +119,12 @@ export default function AdminStudentDetailPage({ params }: { params: { id: strin
 
   if (error || !student) {
     return (
-      <main className="min-h-screen bg-slate-950 px-4 py-8 text-slate-50">
+      <main className="min-h-screen bg-[var(--ll-bg)] px-4 py-8 text-[var(--ll-text)]">
         <div className="mx-auto max-w-3xl space-y-4">
-          <div className="rounded-2xl border border-red-500/30 bg-red-500/10 p-5 text-sm text-red-200">
+          <div className="rounded-xl border border-red-500/30 bg-red-500/10 p-5 text-sm text-red-200">
             {error ?? "Student not found."}
           </div>
-          <Link href="/admin/students" className="inline-flex rounded-xl border border-slate-700 px-4 py-2 text-sm text-slate-200 hover:bg-slate-800">
+          <Link href="/admin/students" className="inline-flex rounded-xl border border-[var(--ll-border)] px-4 py-2 text-sm text-[var(--ll-text)] hover:bg-[var(--ll-surface)]">
             Back to students
           </Link>
         </div>
@@ -133,38 +133,38 @@ export default function AdminStudentDetailPage({ params }: { params: { id: strin
   }
 
   return (
-    <main className="min-h-screen bg-slate-950 px-4 py-8 text-slate-50">
+    <main className="min-h-screen bg-[var(--ll-bg)] px-4 py-8 text-[var(--ll-text)]">
       <div className="mx-auto max-w-6xl space-y-6">
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div>
-            <p className="text-xs font-semibold uppercase tracking-wide text-emerald-300">Admin Student Detail</p>
+            <p className="text-xs font-semibold uppercase tracking-wide text-[var(--ll-yellow)]">Admin Student Detail</p>
             <h1 className="text-3xl font-bold">{student.name}</h1>
-            <p className="mt-1 text-sm text-slate-400">
+            <p className="mt-1 text-sm text-[var(--ll-text-muted)]">
               {student.email} {student.school ? `• ${student.school.name}` : ""}
             </p>
           </div>
-          <Link href="/admin/students" className="inline-flex rounded-xl border border-slate-700 px-4 py-2 text-sm text-slate-200 hover:bg-slate-800">
+          <Link href="/admin/students" className="inline-flex rounded-xl border border-[var(--ll-border)] px-4 py-2 text-sm text-[var(--ll-text)] hover:bg-[var(--ll-surface)]">
             Back to students
           </Link>
         </div>
 
         <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-          <div className="rounded-2xl border border-slate-800 bg-slate-900/80 p-5">
-            <p className="text-xs uppercase tracking-wide text-slate-500">Grade</p>
+          <div className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/80 p-5">
+            <p className="text-xs uppercase tracking-wide text-[var(--ll-text-faint)]">Grade</p>
             <p className="mt-2 text-2xl font-bold">Grade {student.grade ?? "-"}</p>
           </div>
-          <div className="rounded-2xl border border-slate-800 bg-slate-900/80 p-5">
-            <p className="text-xs uppercase tracking-wide text-slate-500">Classes</p>
-            <p className="mt-2 text-sm font-semibold text-slate-100">
+          <div className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/80 p-5">
+            <p className="text-xs uppercase tracking-wide text-[var(--ll-text-faint)]">Classes</p>
+            <p className="mt-2 text-sm font-semibold text-[var(--ll-text)]">
               {student.classes.length ? student.classes.map((item) => item.name).join(", ") : "-"}
             </p>
           </div>
-          <div className="rounded-2xl border border-slate-800 bg-slate-900/80 p-5">
-            <p className="text-xs uppercase tracking-wide text-slate-500">Placement band</p>
+          <div className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/80 p-5">
+            <p className="text-xs uppercase tracking-wide text-[var(--ll-text-faint)]">Placement band</p>
             <p className="mt-2 text-2xl font-bold">{student.latestPlacement?.levelLabel ?? "No placement"}</p>
           </div>
-          <div className="rounded-2xl border border-slate-800 bg-slate-900/80 p-5">
-            <p className="text-xs uppercase tracking-wide text-slate-500">Recommended grade</p>
+          <div className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/80 p-5">
+            <p className="text-xs uppercase tracking-wide text-[var(--ll-text-faint)]">Recommended grade</p>
             <p className="mt-2 text-2xl font-bold">
               {student.latestPlacement ? `Grade ${student.latestPlacement.estimatedGrade}` : "-"}
             </p>
@@ -172,88 +172,88 @@ export default function AdminStudentDetailPage({ params }: { params: { id: strin
         </section>
 
         <section className="grid gap-6 xl:grid-cols-2">
-          <article className="rounded-3xl border border-slate-800 bg-slate-900/80 p-6">
+          <article className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/80 p-6">
             <h2 className="text-lg font-semibold">Recent lesson completions</h2>
             <div className="mt-4 space-y-3">
               {student.recentLessonCompletions.length ? student.recentLessonCompletions.map((lesson) => (
-                <div key={lesson.id} className="rounded-2xl border border-slate-800 bg-slate-950/60 p-4">
+                <div key={lesson.id} className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/60 p-4">
                   <div className="flex flex-wrap items-center justify-between gap-2">
-                    <p className="font-semibold text-slate-100">{lesson.lessonTitle}</p>
-                    <p className="text-xs text-slate-400">
+                    <p className="font-semibold text-[var(--ll-text)]">{lesson.lessonTitle}</p>
+                    <p className="text-xs text-[var(--ll-text-muted)]">
                       {lesson.completedAt ? new Date(lesson.completedAt).toLocaleDateString("en-LR") : "In progress"}
                     </p>
                   </div>
-                  <p className="mt-2 text-sm text-slate-400">
+                  <p className="mt-2 text-sm text-[var(--ll-text-muted)]">
                     {lesson.className} • {lesson.subject} • Score: {lesson.exitTicketScore ?? "-"}
                   </p>
                 </div>
-              )) : <p className="text-sm text-slate-400">No lesson completions recorded yet.</p>}
+              )) : <p className="text-sm text-[var(--ll-text-muted)]">No lesson completions recorded yet.</p>}
             </div>
           </article>
 
-          <article className="rounded-3xl border border-slate-800 bg-slate-900/80 p-6">
+          <article className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/80 p-6">
             <h2 className="text-lg font-semibold">Exam attempts</h2>
             <div className="mt-4 space-y-3">
               {student.examAttempts.length ? student.examAttempts.map((attempt) => (
-                <div key={attempt.id} className="rounded-2xl border border-slate-800 bg-slate-950/60 p-4">
+                <div key={attempt.id} className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/60 p-4">
                   <div className="flex flex-wrap items-center justify-between gap-2">
-                    <p className="font-semibold text-slate-100">{attempt.title}</p>
-                    <p className="text-xs text-slate-400">
+                    <p className="font-semibold text-[var(--ll-text)]">{attempt.title}</p>
+                    <p className="text-xs text-[var(--ll-text-muted)]">
                       {attempt.submittedAt ? new Date(attempt.submittedAt).toLocaleDateString("en-LR") : "In progress"}
                     </p>
                   </div>
-                  <p className="mt-2 text-sm text-slate-400">
+                  <p className="mt-2 text-sm text-[var(--ll-text-muted)]">
                     {attempt.subject} • Score: {attempt.score ?? "-"}
                   </p>
                 </div>
-              )) : <p className="text-sm text-slate-400">No exam attempts recorded yet.</p>}
+              )) : <p className="text-sm text-[var(--ll-text-muted)]">No exam attempts recorded yet.</p>}
             </div>
           </article>
         </section>
 
         <section className="grid gap-6 xl:grid-cols-2">
-          <article className="rounded-3xl border border-slate-800 bg-slate-900/80 p-6">
+          <article className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/80 p-6">
             <h2 className="text-lg font-semibold">Assignment submissions</h2>
             <div className="mt-4 space-y-3">
               {student.assignmentSubmissions.length ? student.assignmentSubmissions.map((submission) => (
-                <div key={submission.id} className="rounded-2xl border border-slate-800 bg-slate-950/60 p-4">
+                <div key={submission.id} className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/60 p-4">
                   <div className="flex flex-wrap items-center justify-between gap-2">
-                    <p className="font-semibold text-slate-100">{submission.title}</p>
-                    <p className="text-xs text-slate-400">
+                    <p className="font-semibold text-[var(--ll-text)]">{submission.title}</p>
+                    <p className="text-xs text-[var(--ll-text-muted)]">
                       {submission.turnedInAt ? new Date(submission.turnedInAt).toLocaleDateString("en-LR") : "Not submitted"}
                     </p>
                   </div>
-                  <p className="mt-2 text-sm text-slate-400">
+                  <p className="mt-2 text-sm text-[var(--ll-text-muted)]">
                     {submission.className} • {submission.subject} • Score: {submission.score ?? "-"}
                   </p>
                 </div>
-              )) : <p className="text-sm text-slate-400">No assignment submissions recorded yet.</p>}
+              )) : <p className="text-sm text-[var(--ll-text-muted)]">No assignment submissions recorded yet.</p>}
             </div>
           </article>
 
-          <article className="rounded-3xl border border-slate-800 bg-slate-900/80 p-6">
+          <article className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/80 p-6">
             <h2 className="text-lg font-semibold">Guardian link status</h2>
             <div className="mt-4 space-y-3">
               {student.guardians.length ? student.guardians.map((guardian) => (
-                <div key={guardian.id} className="rounded-2xl border border-slate-800 bg-slate-950/60 p-4">
-                  <p className="font-semibold text-slate-100">{guardian.name}</p>
-                  <p className="mt-1 text-sm text-slate-400">
+                <div key={guardian.id} className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/60 p-4">
+                  <p className="font-semibold text-[var(--ll-text)]">{guardian.name}</p>
+                  <p className="mt-1 text-sm text-[var(--ll-text-muted)]">
                     {guardian.relation ?? "Guardian"} {guardian.phone ? `• ${guardian.phone}` : ""}
                   </p>
                 </div>
-              )) : <p className="text-sm text-slate-400">No guardian linked yet.</p>}
+              )) : <p className="text-sm text-[var(--ll-text-muted)]">No guardian linked yet.</p>}
             </div>
           </article>
         </section>
 
-        <section className="rounded-3xl border border-slate-800 bg-slate-900/80 p-6">
+        <section className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/80 p-6">
           <h2 className="text-lg font-semibold">Intervention flags</h2>
           <div className="mt-4 flex flex-wrap gap-2">
             {student.interventionFlags.length ? student.interventionFlags.map((flag) => (
-              <span key={flag.id} className="rounded-full border border-amber-500/30 bg-amber-500/10 px-3 py-1 text-xs font-semibold text-amber-200">
+              <span key={flag.id} className="rounded-full border border-amber-500/30 bg-[var(--ll-yellow-soft)] px-3 py-1 text-xs font-semibold text-[var(--ll-yellow)]">
                 {flag.type}: {flag.reason}
               </span>
-            )) : <p className="text-sm text-slate-400">No intervention flags recorded.</p>}
+            )) : <p className="text-sm text-[var(--ll-text-muted)]">No intervention flags recorded.</p>}
           </div>
         </section>
       </div>

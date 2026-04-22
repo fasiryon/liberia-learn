@@ -45,39 +45,39 @@ export default function StudentWelcomeClient({ name }: { name: string }) {
   ];
 
   return (
-    <main className="min-h-screen bg-slate-950 px-4 py-8 text-slate-50">
+    <main className="min-h-screen bg-[var(--ll-bg)] px-4 py-8 text-[var(--ll-text)]">
       <div className="mx-auto flex min-h-[calc(100vh-4rem)] max-w-5xl flex-col justify-center gap-8">
         <section className="space-y-4">
-          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-emerald-300">
+          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--ll-yellow)]">
             First login
           </p>
-          <h1 className="text-4xl font-bold tracking-normal text-white">
+          <h1 className="text-4xl font-bold tracking-normal text-[var(--ll-text)]">
             Welcome to LiberiaLearn, {name}!
           </h1>
-          <p className="max-w-2xl text-base leading-7 text-slate-200">
+          <p className="max-w-2xl text-base leading-7 text-[var(--ll-text)]">
             Start with one lesson, use help when you need it, and watch your progress build.
           </p>
         </section>
 
         <section className="grid gap-4 md:grid-cols-3">
           {steps.map((step, index) => (
-            <article key={step.title} className="rounded-2xl border border-white/10 bg-slate-900/80 p-5">
-              <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-emerald-400 text-slate-950">
+            <article key={step.title} className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/80 p-5">
+              <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-[var(--ll-yellow-soft)] text-[var(--ll-text-faint)]">
                 <svg aria-hidden="true" viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="2">
                   <path d={step.icon} strokeLinecap="round" strokeLinejoin="round" />
                 </svg>
               </div>
-              <p className="mt-4 text-xs font-semibold uppercase tracking-[0.2em] text-slate-400">
+              <p className="mt-4 text-xs font-semibold uppercase tracking-[0.2em] text-[var(--ll-text-muted)]">
                 Step {index + 1}
               </p>
-              <h2 className="mt-2 text-lg font-semibold text-white">{step.title}</h2>
-              <p className="mt-2 text-sm leading-6 text-slate-300">{step.body}</p>
+              <h2 className="mt-2 text-lg font-semibold text-[var(--ll-text)]">{step.title}</h2>
+              <p className="mt-2 text-sm leading-6 text-[var(--ll-text)]">{step.body}</p>
             </article>
           ))}
         </section>
 
         {error ? (
-          <p className="rounded-2xl border border-red-500/30 bg-red-500/10 p-3 text-sm text-red-200">
+          <p className="rounded-xl border border-red-500/30 bg-red-500/10 p-3 text-sm text-red-200">
             {error}
           </p>
         ) : null}
@@ -87,7 +87,7 @@ export default function StudentWelcomeClient({ name }: { name: string }) {
             type="button"
             onClick={() => finish("lessons")}
             disabled={busyAction !== null}
-            className="ll-touch-target inline-flex items-center justify-center rounded-2xl bg-emerald-400 px-6 py-3 text-sm font-bold text-slate-950 disabled:opacity-60"
+            className="ll-touch-target inline-flex items-center justify-center rounded-xl bg-[var(--ll-yellow-soft)] px-6 py-3 text-sm font-bold text-[var(--ll-text-faint)] disabled:opacity-60"
           >
             {busyAction === "lessons" ? "Saving..." : "Let's get started"}
           </button>
@@ -95,7 +95,7 @@ export default function StudentWelcomeClient({ name }: { name: string }) {
             type="button"
             onClick={() => finish("dashboard")}
             disabled={busyAction !== null}
-            className="ll-touch-target inline-flex items-center justify-center rounded-2xl border border-slate-700 px-6 py-3 text-sm font-semibold text-slate-100 disabled:opacity-60"
+            className="ll-touch-target inline-flex items-center justify-center rounded-xl border border-[var(--ll-border)] px-6 py-3 text-sm font-semibold text-[var(--ll-text)] disabled:opacity-60"
           >
             {busyAction === "dashboard" ? "Saving..." : "Go to my dashboard"}
           </button>

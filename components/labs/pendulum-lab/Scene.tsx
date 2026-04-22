@@ -148,33 +148,33 @@ export default function PendulumScene({ state, onAction }: PendulumSceneProps) {
   }, [onAction, state.paused]);
 
   return (
-    <div className="bg-slate-950 p-3 sm:p-4">
+    <div className="bg-[var(--ll-bg)] p-3 sm:p-4">
       <canvas
         ref={canvasRef}
         width={CANVAS_WIDTH}
         height={CANVAS_HEIGHT}
-        className="h-auto w-full rounded-2xl border border-slate-800 bg-slate-950"
+        className="h-auto w-full rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]"
         aria-label="Pendulum Lab swinging pendulum simulation"
       />
       <div className="mt-3 grid grid-cols-3 gap-2">
         <button
           type="button"
           onClick={() => onAction(state.paused ? { type: "PLAY" } : { type: "PAUSE" })}
-          className="min-h-11 rounded-xl bg-cyan-300 px-3 py-2 text-sm font-semibold text-slate-950"
+          className="min-h-11 rounded-xl bg-[var(--ll-silver-soft)] px-3 py-2 text-sm font-semibold text-[var(--ll-text-faint)]"
         >
           {state.paused ? "Play" : "Pause"}
         </button>
         <button
           type="button"
           onClick={() => onAction({ type: "STEP", dt: 0.05 })}
-          className="min-h-11 rounded-xl border border-slate-700 px-3 py-2 text-sm font-semibold text-slate-100"
+          className="min-h-11 rounded-xl border border-[var(--ll-border)] px-3 py-2 text-sm font-semibold text-[var(--ll-text)]"
         >
           Step
         </button>
         <button
           type="button"
           onClick={() => onAction({ type: "RESET" })}
-          className="min-h-11 rounded-xl border border-slate-700 px-3 py-2 text-sm font-semibold text-slate-100"
+          className="min-h-11 rounded-xl border border-[var(--ll-border)] px-3 py-2 text-sm font-semibold text-[var(--ll-text)]"
         >
           Reset
         </button>

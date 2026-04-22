@@ -67,14 +67,14 @@ const bandLabelMap: Record<PlacementBand, string> = {
 
 const bandStyles: Record<PlacementBand, { badge: string; panel: string; accent: string }> = {
   foundational: {
-    badge: "bg-amber-500/15 text-amber-200 border border-amber-400/30",
-    panel: "border-amber-500/30 bg-amber-500/10",
-    accent: "text-amber-300",
+    badge: "bg-[var(--ll-yellow-soft)] text-[var(--ll-yellow)] border border-amber-400/30",
+    panel: "border-amber-500/30 bg-[var(--ll-yellow-soft)]",
+    accent: "text-[var(--ll-yellow)]",
   },
   developing: {
-    badge: "bg-blue-500/15 text-blue-200 border border-blue-400/30",
-    panel: "border-blue-500/30 bg-blue-500/10",
-    accent: "text-blue-300",
+    badge: "bg-[var(--ll-silver-soft)] text-[var(--ll-silver)] border border-blue-400/30",
+    panel: "border-blue-500/30 bg-[var(--ll-silver-soft)]",
+    accent: "text-[var(--ll-silver)]",
   },
   proficient: {
     badge: "bg-green-500/15 text-green-200 border border-green-400/30",
@@ -82,9 +82,9 @@ const bandStyles: Record<PlacementBand, { badge: string; panel: string; accent: 
     accent: "text-green-300",
   },
   advanced: {
-    badge: "bg-emerald-500/15 text-emerald-200 border border-emerald-400/30",
-    panel: "border-emerald-500/30 bg-emerald-500/10",
-    accent: "text-emerald-300",
+    badge: "bg-[var(--ll-yellow)]/15 text-[var(--ll-yellow)] border border-emerald-400/30",
+    panel: "border-emerald-500/30 bg-[var(--ll-yellow)]/10",
+    accent: "text-[var(--ll-yellow)]",
   },
 };
 
@@ -294,45 +294,45 @@ export default function PlacementTestPage() {
 
   if (!testStarted) {
     return (
-      <main className="flex min-h-screen items-center justify-center bg-slate-950 px-4 text-slate-50">
+      <main className="flex min-h-screen items-center justify-center bg-[var(--ll-bg)] px-4 text-[var(--ll-text)]">
         <div className="w-full max-w-2xl">
           <div className="mb-8 text-center">
-            <div className="mb-4 inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-emerald-500 text-2xl font-black text-slate-950">
+            <div className="mb-4 inline-flex h-16 w-16 items-center justify-center rounded-xl bg-[var(--ll-yellow)] text-2xl font-black text-[var(--ll-text-faint)]">
               L
             </div>
-            <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-emerald-300">
+            <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-[var(--ll-yellow)]">
               LIBERIALEARN · PLACEMENT
             </p>
             <h1 className="mb-3 text-3xl font-bold">Grade placement check</h1>
-            <p className="text-slate-400">
+            <p className="text-[var(--ll-text-muted)]">
               We use a short adaptive mathematics test to recommend the best starting grade for you.
             </p>
           </div>
 
-          <div className="mb-6 rounded-2xl border border-slate-800 bg-slate-900/80 p-6">
-            <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-slate-400">Current Placement</h2>
+          <div className="mb-6 rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/80 p-6">
+            <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-[var(--ll-text-muted)]">Current Placement</h2>
             <p className="mb-2 text-lg">
               Recommended grade: <span className="font-bold">Not set yet</span>
             </p>
-            <p className="text-sm text-slate-400">
+            <p className="text-sm text-[var(--ll-text-muted)]">
               You have not taken a placement test yet. Start the assessment to receive an AI-supported recommendation.
             </p>
           </div>
 
-          <div className="mb-6 rounded-2xl border border-slate-800 bg-slate-900/80 p-6">
-            <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-slate-400">Start Test</h2>
-            <p className="mb-4 text-slate-300">
+          <div className="mb-6 rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/80 p-6">
+            <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-[var(--ll-text-muted)]">Start Test</h2>
+            <p className="mb-4 text-[var(--ll-text)]">
               The test adapts to your answers, takes around 10 questions, and gives your teacher a detailed review.
             </p>
             <button
               onClick={startTest}
-              className="w-full rounded-xl bg-emerald-500 px-6 py-3 font-semibold text-slate-950 transition-colors hover:bg-emerald-400"
+              className="w-full rounded-xl bg-[var(--ll-yellow)] px-6 py-3 font-semibold text-[var(--ll-text-faint)] transition-colors hover:bg-[var(--ll-yellow-soft)]"
             >
               Start AI Placement Test
             </button>
           </div>
 
-          <Link href="/" className="block text-center text-sm text-slate-400 hover:text-emerald-300">
+          <Link href="/" className="block text-center text-sm text-[var(--ll-text-muted)] hover:text-[var(--ll-yellow)]">
             ← Back to dashboard
           </Link>
         </div>
@@ -345,16 +345,16 @@ export default function PlacementTestPage() {
 
     if (showReveal) {
       return (
-        <main className="flex min-h-screen items-center justify-center bg-slate-950 px-4 text-slate-50">
-          <div className={`w-full max-w-2xl rounded-3xl border p-10 text-center shadow-2xl ${styles.panel}`}>
-            <p className="mb-3 text-xs font-semibold uppercase tracking-[0.3em] text-slate-300">Placement Result</p>
+        <main className="flex min-h-screen items-center justify-center bg-[var(--ll-bg)] px-4 text-[var(--ll-text)]">
+          <div className={`w-full max-w-2xl rounded-xl border p-10 text-center shadow-none ${styles.panel}`}>
+            <p className="mb-3 text-xs font-semibold uppercase tracking-[0.3em] text-[var(--ll-text)]">Placement Result</p>
             <h1 className={`mb-4 text-4xl font-black sm:text-5xl ${styles.accent}`}>
               Grade {results.recommendedGrade} recommended
             </h1>
             <div className={`mx-auto mb-5 inline-flex rounded-full px-4 py-2 text-sm font-semibold ${styles.badge}`}>
               {bandLabelMap[results.band]}
             </div>
-            <p className="mx-auto max-w-xl text-base leading-relaxed text-slate-100">
+            <p className="mx-auto max-w-xl text-base leading-relaxed text-[var(--ll-text)]">
               {results.aiAnalysis.overallNarrative}
             </p>
           </div>
@@ -363,42 +363,42 @@ export default function PlacementTestPage() {
     }
 
     return (
-      <main className="min-h-screen bg-slate-950 px-4 py-8 text-slate-50">
+      <main className="min-h-screen bg-[var(--ll-bg)] px-4 py-8 text-[var(--ll-text)]">
         <div className="mx-auto w-full max-w-5xl space-y-6">
           <div className="text-center">
-            <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-emerald-300">Placement Complete</p>
+            <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-[var(--ll-yellow)]">Placement Complete</p>
             <h1 className="text-3xl font-bold">Your placement results</h1>
-            <p className="mt-2 text-slate-400">Review the recommendation, the reasoning, and what happens next.</p>
+            <p className="mt-2 text-[var(--ll-text-muted)]">Review the recommendation, the reasoning, and what happens next.</p>
           </div>
 
-          <section className={`rounded-3xl border p-6 sm:p-8 ${styles.panel}`}>
+          <section className={`rounded-xl border p-6 sm:p-8 ${styles.panel}`}>
             <h2 className="mb-5 text-lg font-semibold">Your Result</h2>
             <div className="grid gap-4 lg:grid-cols-[1.4fr_1fr]">
               <div>
-                <p className="text-sm text-slate-300">Grade recommendation</p>
+                <p className="text-sm text-[var(--ll-text)]">Grade recommendation</p>
                 <p className={`mt-2 text-5xl font-black ${styles.accent}`}>Grade {results.recommendedGrade}</p>
                 <div className={`mt-3 inline-flex rounded-full px-4 py-2 text-sm font-semibold ${styles.badge}`}>
                   {bandLabelMap[results.band]}
                 </div>
-                <p className="mt-4 max-w-2xl text-sm leading-relaxed text-slate-200">
+                <p className="mt-4 max-w-2xl text-sm leading-relaxed text-[var(--ll-text)]">
                   {results.aiAnalysis.overallNarrative}
                 </p>
               </div>
               <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-1">
-                <div className="rounded-2xl border border-slate-800 bg-slate-900/70 p-4">
-                  <p className="text-xs uppercase tracking-wide text-slate-400">Accuracy</p>
+                <div className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 p-4">
+                  <p className="text-xs uppercase tracking-wide text-[var(--ll-text-muted)]">Accuracy</p>
                   <p className="mt-1 text-2xl font-bold">
                     {results.correctAnswers}/{results.totalQuestions} correct
                   </p>
                 </div>
-                <div className="rounded-2xl border border-slate-800 bg-slate-900/70 p-4">
-                  <p className="text-xs uppercase tracking-wide text-slate-400">Weighted score</p>
+                <div className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 p-4">
+                  <p className="text-xs uppercase tracking-wide text-[var(--ll-text-muted)]">Weighted score</p>
                   <p className="mt-1 text-2xl font-bold">{results.weightedAccuracy}%</p>
                 </div>
-                <div className="rounded-2xl border border-slate-800 bg-slate-900/70 p-4 sm:col-span-2 lg:col-span-1">
-                  <p className="text-xs uppercase tracking-wide text-slate-400">Confidence</p>
+                <div className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 p-4 sm:col-span-2 lg:col-span-1">
+                  <p className="text-xs uppercase tracking-wide text-[var(--ll-text-muted)]">Confidence</p>
                   <p className="mt-1 text-2xl font-bold">{formatConfidence(results.confidence)}</p>
-                  <p className="mt-2 text-sm leading-relaxed text-slate-300">
+                  <p className="mt-2 text-sm leading-relaxed text-[var(--ll-text)]">
                     {results.aiAnalysis.confidenceExplanation}
                   </p>
                 </div>
@@ -406,14 +406,14 @@ export default function PlacementTestPage() {
             </div>
           </section>
 
-          <section className="rounded-3xl border border-slate-800 bg-slate-900/80 p-6">
+          <section className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/80 p-6">
             <h2 className="mb-4 text-lg font-semibold">What you did well</h2>
             {results.aiAnalysis.strengths.length === 0 ? (
-              <p className="text-sm text-slate-400">No strengths were recorded for this attempt.</p>
+              <p className="text-sm text-[var(--ll-text-muted)]">No strengths were recorded for this attempt.</p>
             ) : (
               <ul className="grid gap-3 md:grid-cols-2">
                 {results.aiAnalysis.strengths.map((strength) => (
-                  <li key={strength} className="rounded-2xl border border-green-500/20 bg-green-500/10 p-4 text-sm text-slate-100">
+                  <li key={strength} className="rounded-xl border border-green-500/20 bg-green-500/10 p-4 text-sm text-[var(--ll-text)]">
                     {strength}
                   </li>
                 ))}
@@ -421,14 +421,14 @@ export default function PlacementTestPage() {
             )}
           </section>
 
-          <section className="rounded-3xl border border-slate-800 bg-slate-900/80 p-6">
+          <section className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/80 p-6">
             <h2 className="mb-4 text-lg font-semibold">Areas to grow</h2>
             {results.aiAnalysis.areasForGrowth.length === 0 ? (
-              <p className="text-sm text-slate-400">No growth areas were recorded for this attempt.</p>
+              <p className="text-sm text-[var(--ll-text-muted)]">No growth areas were recorded for this attempt.</p>
             ) : (
               <ul className="grid gap-3 md:grid-cols-2">
                 {results.aiAnalysis.areasForGrowth.map((area) => (
-                  <li key={area} className="rounded-2xl border border-blue-500/20 bg-blue-500/10 p-4 text-sm text-slate-100">
+                  <li key={area} className="rounded-xl border border-blue-500/20 bg-[var(--ll-silver-soft)] p-4 text-sm text-[var(--ll-text)]">
                     {area}
                   </li>
                 ))}
@@ -436,16 +436,16 @@ export default function PlacementTestPage() {
             )}
           </section>
 
-          <section className="rounded-3xl border border-slate-800 bg-slate-900/80 p-6">
+          <section className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/80 p-6">
             <div className="mb-4 flex items-center justify-between gap-4">
               <div>
                 <h2 className="text-lg font-semibold">Question by question review</h2>
-                <p className="text-sm text-slate-400">The first three are expanded. You can show the rest below.</p>
+                <p className="text-sm text-[var(--ll-text-muted)]">The first three are expanded. You can show the rest below.</p>
               </div>
               {reviewQuestions.length > 3 ? (
                 <button
                   onClick={() => setShowAllQuestions((prev) => !prev)}
-                  className="rounded-xl border border-slate-700 px-4 py-2 text-sm font-semibold text-slate-200 hover:border-slate-500"
+                  className="rounded-xl border border-[var(--ll-border)] px-4 py-2 text-sm font-semibold text-[var(--ll-text)] hover:border-[var(--ll-border)]"
                 >
                   {showAllQuestions ? "Show fewer questions" : "Show all questions"}
                 </button>
@@ -460,14 +460,14 @@ export default function PlacementTestPage() {
                   const isCorrect = answer?.correct ?? false;
 
                   return (
-                    <article key={question.questionId} className="rounded-2xl border border-slate-800 bg-slate-950/60 p-5">
-                      <div className="mb-3 flex flex-wrap items-center gap-2 text-xs uppercase tracking-wide text-slate-400">
+                    <article key={question.questionId} className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/60 p-5">
+                      <div className="mb-3 flex flex-wrap items-center gap-2 text-xs uppercase tracking-wide text-[var(--ll-text-muted)]">
                         <span>Question {index + 1}</span>
                         <span>Difficulty {question.difficulty}/5</span>
                         <span>{question.strand}</span>
                         {question.moeStandard ? <span>{question.moeStandard}</span> : null}
                       </div>
-                      <h3 className="text-lg font-semibold text-slate-50">{question.question}</h3>
+                      <h3 className="text-lg font-semibold text-[var(--ll-text)]">{question.question}</h3>
                       <div className="mt-4 space-y-2">
                         {question.options.map((option, optionIndex) => {
                           const optionStyles =
@@ -475,7 +475,7 @@ export default function PlacementTestPage() {
                               ? "border-green-500/40 bg-green-500/15 text-green-100"
                               : optionIndex === selectedIndex && !isCorrect
                               ? "border-red-500/40 bg-red-500/15 text-red-100"
-                              : "border-slate-800 bg-slate-900/70 text-slate-200";
+                              : "border-[var(--ll-border)] bg-[var(--ll-bg)]/70 text-[var(--ll-text)]";
 
                           return (
                             <div key={`${question.questionId}-${optionIndex}`} className={`rounded-xl border px-4 py-3 text-sm ${optionStyles}`}>
@@ -497,13 +497,13 @@ export default function PlacementTestPage() {
                         })}
                       </div>
                       <div className="mt-4 grid gap-3 md:grid-cols-2">
-                        <div className="rounded-2xl border border-slate-800 bg-slate-900/60 p-4">
-                          <p className="text-xs uppercase tracking-wide text-slate-400">AI explanation</p>
-                          <p className="mt-2 text-sm leading-relaxed text-slate-100">{question.explanation}</p>
+                        <div className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/60 p-4">
+                          <p className="text-xs uppercase tracking-wide text-[var(--ll-text-muted)]">AI explanation</p>
+                          <p className="mt-2 text-sm leading-relaxed text-[var(--ll-text)]">{question.explanation}</p>
                         </div>
-                        <div className="rounded-2xl border border-slate-800 bg-slate-900/60 p-4">
-                          <p className="text-xs uppercase tracking-wide text-slate-400">Common mistake</p>
-                          <p className="mt-2 text-sm leading-relaxed text-slate-100">{question.commonMistake}</p>
+                        <div className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/60 p-4">
+                          <p className="text-xs uppercase tracking-wide text-[var(--ll-text-muted)]">Common mistake</p>
+                          <p className="mt-2 text-sm leading-relaxed text-[var(--ll-text)]">{question.commonMistake}</p>
                         </div>
                       </div>
                     </article>
@@ -512,23 +512,23 @@ export default function PlacementTestPage() {
             </div>
           </section>
 
-          <section className="rounded-3xl border border-slate-800 bg-slate-900/80 p-6">
+          <section className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/80 p-6">
             <h2 className="mb-4 text-lg font-semibold">Next steps</h2>
             <ul className="space-y-3">
               {results.aiAnalysis.recommendedNextSteps.map((step) => (
-                <li key={step} className="rounded-2xl border border-slate-800 bg-slate-950/60 p-4 text-sm text-slate-100">
+                <li key={step} className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/60 p-4 text-sm text-[var(--ll-text)]">
                   {step}
                 </li>
               ))}
             </ul>
-            <p className="mt-4 text-sm text-slate-300">
+            <p className="mt-4 text-sm text-[var(--ll-text)]">
               Your teacher will review these results and confirm your grade placement.
             </p>
           </section>
 
-          <section className="rounded-3xl border border-slate-800 bg-slate-900/80 p-6">
+          <section className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/80 p-6">
             <h2 className="mb-4 text-lg font-semibold">What happens next</h2>
-            <p className="text-sm leading-relaxed text-slate-300">
+            <p className="text-sm leading-relaxed text-[var(--ll-text)]">
               Your teacher at your school will review your AI placement and either confirm it or adjust it based on what they know about you.
               You will be notified when your placement is confirmed.
             </p>
@@ -537,13 +537,13 @@ export default function PlacementTestPage() {
           <div className="flex flex-col gap-3 sm:flex-row">
             <Link
               href="/"
-              className="w-full rounded-xl bg-slate-800 px-6 py-3 text-center font-semibold transition-colors hover:bg-slate-700"
+              className="w-full rounded-xl bg-[var(--ll-surface)] px-6 py-3 text-center font-semibold transition-colors hover:bg-[var(--ll-surface-muted)]"
             >
               Return to dashboard
             </Link>
             <button
               onClick={startTest}
-              className="w-full rounded-xl bg-emerald-500 px-6 py-3 font-semibold text-slate-950 transition-colors hover:bg-emerald-400"
+              className="w-full rounded-xl bg-[var(--ll-yellow)] px-6 py-3 font-semibold text-[var(--ll-text-faint)] transition-colors hover:bg-[var(--ll-yellow-soft)]"
             >
               Retake placement test
             </button>
@@ -554,25 +554,25 @@ export default function PlacementTestPage() {
   }
 
   return (
-    <main className="flex min-h-screen items-center justify-center bg-slate-950 px-4 text-slate-50">
+    <main className="flex min-h-screen items-center justify-center bg-[var(--ll-bg)] px-4 text-[var(--ll-text)]">
       <div className="w-full max-w-3xl">
         <div className="mb-8">
           <div className="mb-2 flex items-center justify-between">
-            <p className="text-sm text-slate-400">
+            <p className="text-sm text-[var(--ll-text-muted)]">
               Question {questionNumber} of {MAX_QUESTIONS}
             </p>
-            <p className="text-sm text-slate-400">Difficulty: {currentDifficulty}/5</p>
+            <p className="text-sm text-[var(--ll-text-muted)]">Difficulty: {currentDifficulty}/5</p>
           </div>
-          <div className="h-2 overflow-hidden rounded-full bg-slate-800">
+          <div className="h-2 overflow-hidden rounded-full bg-[var(--ll-surface)]">
             <div
-              className="h-full bg-emerald-500 transition-all duration-300"
+              className="h-full bg-[var(--ll-yellow)] transition-all duration-300"
               style={{ width: `${(questionNumber / MAX_QUESTIONS) * 100}%` }}
             />
           </div>
         </div>
 
         {errorMessage ? (
-          <div className="mb-6 rounded-2xl border border-red-500/30 bg-red-500/10 p-5">
+          <div className="mb-6 rounded-xl border border-red-500/30 bg-red-500/10 p-5">
             <h2 className="text-lg font-semibold text-red-200">Something went wrong</h2>
             <p className="mt-2 text-sm text-red-100">{errorMessage}</p>
             <div className="mt-4 flex flex-col gap-3 sm:flex-row">
@@ -580,13 +580,13 @@ export default function PlacementTestPage() {
                 onClick={() =>
                   loadingStage === "results" ? calculateResults(answers, completedQuestions) : generateQuestion(currentDifficulty)
                 }
-                className="rounded-xl bg-red-500 px-4 py-2 font-semibold text-white hover:bg-red-400"
+                className="rounded-xl bg-red-500 px-4 py-2 font-semibold text-[var(--ll-text)] hover:bg-red-400"
               >
                 Try again
               </button>
               <button
                 onClick={startTest}
-                className="rounded-xl border border-slate-700 px-4 py-2 font-semibold text-slate-200 hover:border-slate-500"
+                className="rounded-xl border border-[var(--ll-border)] px-4 py-2 font-semibold text-[var(--ll-text)] hover:border-[var(--ll-border)]"
               >
                 Restart test
               </button>
@@ -597,17 +597,17 @@ export default function PlacementTestPage() {
         {loadingStage === "question" ? (
           <div className="py-16 text-center">
             <div className="mb-4 inline-block h-12 w-12 animate-spin rounded-full border-4 border-emerald-500 border-r-transparent" />
-            <p className="text-slate-400">Generating your next question...</p>
+            <p className="text-[var(--ll-text-muted)]">Generating your next question...</p>
           </div>
         ) : loadingStage === "results" ? (
           <div className="py-16 text-center">
             <div className="mb-4 inline-block h-12 w-12 animate-spin rounded-full border-4 border-emerald-500 border-r-transparent" />
-            <p className="text-slate-400">Analyzing your results and preparing the review...</p>
+            <p className="text-[var(--ll-text-muted)]">Analyzing your results and preparing the review...</p>
           </div>
         ) : currentQuestion ? (
           <>
-            <div className="mb-6 rounded-2xl border border-slate-800 bg-slate-900/80 p-6">
-              <div className="mb-4 flex flex-wrap gap-2 text-xs uppercase tracking-wide text-slate-400">
+            <div className="mb-6 rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/80 p-6">
+              <div className="mb-4 flex flex-wrap gap-2 text-xs uppercase tracking-wide text-[var(--ll-text-muted)]">
                 <span>{currentQuestion.strand}</span>
                 {currentQuestion.moeStandard ? <span>{currentQuestion.moeStandard}</span> : null}
                 <span>Hint available after you answer</span>
@@ -622,13 +622,13 @@ export default function PlacementTestPage() {
                     className={`w-full rounded-xl border-2 px-4 py-3 text-left transition-all ${
                       showExplanation
                         ? index === currentQuestion.correctAnswer
-                          ? "border-emerald-500 bg-emerald-500/20"
+                          ? "border-emerald-500 bg-[var(--ll-yellow)]/20"
                           : index === selectedAnswer
                           ? "border-red-500 bg-red-500/20"
-                          : "border-slate-800 bg-slate-900/50"
+                          : "border-[var(--ll-border)] bg-[var(--ll-bg)]/50"
                         : selectedAnswer === index
-                        ? "border-emerald-500 bg-emerald-500/10"
-                        : "border-slate-700 bg-slate-900/50 hover:border-slate-600"
+                        ? "border-emerald-500 bg-[var(--ll-yellow)]/10"
+                        : "border-[var(--ll-border)] bg-[var(--ll-bg)]/50 hover:border-[var(--ll-border)]"
                     } ${showExplanation ? "cursor-not-allowed" : ""}`}
                   >
                     <span className="mr-2 font-semibold">{String.fromCharCode(65 + index)}.</span>
@@ -641,25 +641,25 @@ export default function PlacementTestPage() {
             {showExplanation ? (
               <div className="mb-6 space-y-4">
                 <div
-                  className={`rounded-2xl border p-6 ${
+                  className={`rounded-xl border p-6 ${
                     selectedAnswer === currentQuestion.correctAnswer
-                      ? "border-emerald-500/30 bg-emerald-500/10"
+                      ? "border-emerald-500/30 bg-[var(--ll-yellow)]/10"
                       : "border-red-500/30 bg-red-500/10"
                   }`}
                 >
                   <p className="mb-2 font-semibold">
                     {selectedAnswer === currentQuestion.correctAnswer ? "Correct" : "Incorrect"}
                   </p>
-                  <p className="text-sm text-slate-100">{currentQuestion.explanation}</p>
+                  <p className="text-sm text-[var(--ll-text)]">{currentQuestion.explanation}</p>
                 </div>
                 <div className="grid gap-4 md:grid-cols-2">
-                  <div className="rounded-2xl border border-slate-800 bg-slate-900/70 p-4">
-                    <p className="text-xs uppercase tracking-wide text-slate-400">Common mistake</p>
-                    <p className="mt-2 text-sm text-slate-100">{currentQuestion.commonMistake}</p>
+                  <div className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 p-4">
+                    <p className="text-xs uppercase tracking-wide text-[var(--ll-text-muted)]">Common mistake</p>
+                    <p className="mt-2 text-sm text-[var(--ll-text)]">{currentQuestion.commonMistake}</p>
                   </div>
-                  <div className="rounded-2xl border border-slate-800 bg-slate-900/70 p-4">
-                    <p className="text-xs uppercase tracking-wide text-slate-400">Hint</p>
-                    <p className="mt-2 text-sm text-slate-100">{currentQuestion.hint}</p>
+                  <div className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 p-4">
+                    <p className="text-xs uppercase tracking-wide text-[var(--ll-text-muted)]">Hint</p>
+                    <p className="mt-2 text-sm text-[var(--ll-text)]">{currentQuestion.hint}</p>
                   </div>
                 </div>
               </div>
@@ -669,26 +669,26 @@ export default function PlacementTestPage() {
               <button
                 onClick={submitAnswer}
                 disabled={selectedAnswer === null}
-                className="w-full rounded-xl bg-emerald-500 px-6 py-3 font-semibold text-slate-950 transition-colors hover:bg-emerald-400 disabled:cursor-not-allowed disabled:opacity-50"
+                className="w-full rounded-xl bg-[var(--ll-yellow)] px-6 py-3 font-semibold text-[var(--ll-text-faint)] transition-colors hover:bg-[var(--ll-yellow-soft)] disabled:cursor-not-allowed disabled:opacity-50"
               >
                 Submit answer
               </button>
             ) : (
               <button
                 onClick={nextQuestion}
-                className="w-full rounded-xl bg-blue-500 px-6 py-3 font-semibold text-white transition-colors hover:bg-blue-400"
+                className="w-full rounded-xl bg-[var(--ll-silver-soft)] px-6 py-3 font-semibold text-[var(--ll-text)] transition-colors hover:bg-[var(--ll-silver-soft)]"
               >
                 {questionNumber >= MAX_QUESTIONS ? "View results" : "Next question →"}
               </button>
             )}
           </>
         ) : (
-          <div className="rounded-2xl border border-slate-800 bg-slate-900/80 p-8 text-center">
+          <div className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/80 p-8 text-center">
             <h2 className="text-lg font-semibold">No question loaded</h2>
-            <p className="mt-2 text-sm text-slate-400">Start the assessment again to continue.</p>
+            <p className="mt-2 text-sm text-[var(--ll-text-muted)]">Start the assessment again to continue.</p>
             <button
               onClick={startTest}
-              className="mt-4 rounded-xl bg-emerald-500 px-6 py-3 font-semibold text-slate-950 transition-colors hover:bg-emerald-400"
+              className="mt-4 rounded-xl bg-[var(--ll-yellow)] px-6 py-3 font-semibold text-[var(--ll-text-faint)] transition-colors hover:bg-[var(--ll-yellow-soft)]"
             >
               Restart test
             </button>

@@ -65,14 +65,14 @@ export function SubmitHomeworkForm({
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
-      <div className="rounded-2xl border border-slate-800 bg-slate-900/80 p-5">
-        <h2 className="mb-4 text-sm font-semibold uppercase tracking-wide text-slate-400">
+      <div className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/80 p-5">
+        <h2 className="mb-4 text-sm font-semibold uppercase tracking-wide text-[var(--ll-text-muted)]">
           Questions
         </h2>
 
         <div className="space-y-4">
           {questions.map((q, i) => (
-            <div key={i} className="rounded-xl bg-slate-950/80 p-4">
+            <div key={i} className="rounded-xl bg-[var(--ll-bg)]/80 p-4">
               <label className="mb-2 block text-sm font-medium">
                 {i + 1}. {typeof q === "string" ? q : q?.text ?? "(Untitled question)"}
               </label>
@@ -83,7 +83,7 @@ export function SubmitHomeworkForm({
                   newAnswers[i] = e.target.value;
                   setAnswers(newAnswers);
                 }}
-                className="w-full min-h-[100px] rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 text-sm text-slate-200 placeholder:text-slate-500 focus:border-emerald-500 focus:outline-none"
+                className="w-full min-h-[100px] rounded-lg border border-[var(--ll-border)] bg-[var(--ll-bg)] px-3 py-2 text-sm text-[var(--ll-text)] placeholder:text-[var(--ll-text-faint)] focus:border-emerald-500 focus:outline-none"
                 placeholder="Type your answer here..."
               />
             </div>
@@ -100,7 +100,7 @@ export function SubmitHomeworkForm({
       <button
         type="submit"
         disabled={submitting}
-        className="w-full rounded-xl bg-emerald-500 px-6 py-3 font-semibold text-slate-950 transition-colors hover:bg-emerald-400 disabled:cursor-not-allowed disabled:opacity-50"
+        className="w-full rounded-xl bg-[var(--ll-yellow)] px-6 py-3 font-semibold text-[var(--ll-text-faint)] transition-colors hover:bg-[var(--ll-yellow-soft)] disabled:cursor-not-allowed disabled:opacity-50"
       >
         {submitting ? "Submitting..." : "Submit Homework"}
       </button>

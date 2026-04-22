@@ -253,9 +253,9 @@ export default function TeacherCreateLessonPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-slate-950 px-4 py-8 text-slate-50">
-        <div className="mx-auto max-w-5xl rounded-3xl border border-white/10 bg-slate-900/70 p-8">
-          <p className="text-sm text-slate-400">Loading lesson generator...</p>
+      <div className="min-h-screen bg-[var(--ll-bg)] px-4 py-8 text-[var(--ll-text)]">
+        <div className="mx-auto max-w-5xl rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 p-8">
+          <p className="text-sm text-[var(--ll-text-muted)]">Loading lesson generator...</p>
         </div>
       </div>
     );
@@ -263,13 +263,13 @@ export default function TeacherCreateLessonPage() {
 
   if (featureDisabled) {
     return (
-      <main className="min-h-screen bg-slate-950 px-4 py-8 text-slate-50">
+      <main className="min-h-screen bg-[var(--ll-bg)] px-4 py-8 text-[var(--ll-text)]">
         <div className="mx-auto max-w-4xl space-y-6">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div>
               <Link
                 href="/teacher/dashboard"
-                className="text-sm text-emerald-300 hover:text-emerald-200"
+                className="text-sm text-[var(--ll-yellow)] hover:text-[var(--ll-yellow)]"
               >
                 Back to teacher dashboard
               </Link>
@@ -277,20 +277,20 @@ export default function TeacherCreateLessonPage() {
             </div>
             <Link
               href="/teacher/curriculum"
-              className="rounded-xl border border-emerald-500/30 px-4 py-2 text-sm text-emerald-200 hover:bg-emerald-500/10"
+              className="rounded-xl border border-emerald-500/30 px-4 py-2 text-sm text-[var(--ll-yellow)] hover:bg-[var(--ll-yellow)]/10"
             >
               Browse curriculum
             </Link>
           </div>
 
-          <section className="rounded-3xl border border-white/10 bg-slate-900/70 p-6">
+          <section className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 p-6">
             <h2 className="text-xl font-semibold">This feature is coming soon.</h2>
-            <p className="mt-3 max-w-2xl text-sm text-slate-400">
+            <p className="mt-3 max-w-2xl text-sm text-[var(--ll-text-muted)]">
               In the meantime, browse existing lessons in your curriculum.
             </p>
             <Link
               href="/teacher/curriculum"
-              className="mt-5 inline-flex rounded-2xl bg-emerald-400 px-5 py-3 text-sm font-semibold text-slate-950 hover:bg-emerald-300"
+              className="mt-5 inline-flex rounded-xl bg-[var(--ll-yellow-soft)] px-5 py-3 text-sm font-semibold text-[var(--ll-text-faint)] hover:bg-[var(--ll-yellow-soft)]"
             >
               Open teacher curriculum
             </Link>
@@ -301,40 +301,40 @@ export default function TeacherCreateLessonPage() {
   }
 
   return (
-    <main className="min-h-screen bg-slate-950 px-4 py-8 text-slate-50">
+    <main className="min-h-screen bg-[var(--ll-bg)] px-4 py-8 text-[var(--ll-text)]">
       <div className="mx-auto max-w-5xl space-y-6">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
             <Link
               href="/teacher/dashboard"
-              className="text-sm text-emerald-300 hover:text-emerald-200"
+              className="text-sm text-[var(--ll-yellow)] hover:text-[var(--ll-yellow)]"
             >
               Back to teacher dashboard
             </Link>
             <h1 className="mt-3 text-3xl font-bold">Create with AI</h1>
-            <p className="mt-2 max-w-2xl text-sm text-slate-400">
+            <p className="mt-2 max-w-2xl text-sm text-[var(--ll-text-muted)]">
               Generate a lesson for one of your classes, review it, edit it,
               then save it as a draft or publish it to the class schedule.
             </p>
           </div>
           <Link
             href="/teacher/schedule"
-            className="rounded-xl border border-emerald-500/30 px-4 py-2 text-sm text-emerald-200 hover:bg-emerald-500/10"
+            className="rounded-xl border border-emerald-500/30 px-4 py-2 text-sm text-[var(--ll-yellow)] hover:bg-[var(--ll-yellow)]/10"
           >
             Open schedule
           </Link>
         </div>
 
         {error && (
-          <div className="rounded-2xl border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-200">
+          <div className="rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-200">
             {error}
           </div>
         )}
 
-        <section className="rounded-3xl border border-white/10 bg-slate-900/70 p-6">
+        <section className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 p-6">
           <div className="mb-4 flex items-center justify-between">
             <div>
-              <p className="text-xs uppercase tracking-[0.2em] text-emerald-300">
+              <p className="text-xs uppercase tracking-[0.2em] text-[var(--ll-yellow)]">
                 Step 1
               </p>
               <h2 className="text-xl font-semibold">Select objective</h2>
@@ -343,7 +343,7 @@ export default function TeacherCreateLessonPage() {
 
           <div className="grid gap-4 md:grid-cols-2">
             <div>
-              <label className="block text-xs text-slate-400">Class</label>
+              <label className="block text-xs text-[var(--ll-text-muted)]">Class</label>
               <select
                 value={form.classId}
                 onChange={(event) =>
@@ -352,7 +352,7 @@ export default function TeacherCreateLessonPage() {
                     classId: event.target.value,
                   }))
                 }
-                className="mt-1 w-full rounded-xl border border-slate-700 bg-slate-950 px-3 py-2 text-sm"
+                className="mt-1 w-full rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)] px-3 py-2 text-sm"
               >
                 <option value="">Select class</option>
                 {classes.map((item) => (
@@ -364,7 +364,7 @@ export default function TeacherCreateLessonPage() {
             </div>
 
             <div>
-              <label className="block text-xs text-slate-400">Subject</label>
+              <label className="block text-xs text-[var(--ll-text-muted)]">Subject</label>
               <input
                 value={form.subject}
                 onChange={(event) =>
@@ -373,12 +373,12 @@ export default function TeacherCreateLessonPage() {
                     subject: event.target.value,
                   }))
                 }
-                className="mt-1 w-full rounded-xl border border-slate-700 bg-slate-950 px-3 py-2 text-sm"
+                className="mt-1 w-full rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)] px-3 py-2 text-sm"
               />
             </div>
 
             <div>
-              <label className="block text-xs text-slate-400">Grade level</label>
+              <label className="block text-xs text-[var(--ll-text-muted)]">Grade level</label>
               <input
                 type="number"
                 min={1}
@@ -390,12 +390,12 @@ export default function TeacherCreateLessonPage() {
                     gradeLevel: Number(event.target.value),
                   }))
                 }
-                className="mt-1 w-full rounded-xl border border-slate-700 bg-slate-950 px-3 py-2 text-sm"
+                className="mt-1 w-full rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)] px-3 py-2 text-sm"
               />
             </div>
 
             <div>
-              <label className="block text-xs text-slate-400">
+              <label className="block text-xs text-[var(--ll-text-muted)]">
                 MOE standard (optional)
               </label>
               <select
@@ -406,7 +406,7 @@ export default function TeacherCreateLessonPage() {
                     standardCode: event.target.value,
                   }))
                 }
-                className="mt-1 w-full rounded-xl border border-slate-700 bg-slate-950 px-3 py-2 text-sm"
+                className="mt-1 w-full rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)] px-3 py-2 text-sm"
               >
                 <option value="">
                   {loadingStandards ? "Loading standards..." : "Select standard"}
@@ -421,7 +421,7 @@ export default function TeacherCreateLessonPage() {
           </div>
 
           <div className="mt-4">
-            <label className="block text-xs text-slate-400">
+            <label className="block text-xs text-[var(--ll-text-muted)]">
               Learning objective
             </label>
             <textarea
@@ -434,7 +434,7 @@ export default function TeacherCreateLessonPage() {
               }
               placeholder="e.g. Students will understand equivalent fractions"
               rows={4}
-              className="mt-1 w-full rounded-2xl border border-slate-700 bg-slate-950 px-4 py-3 text-sm"
+              className="mt-1 w-full rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)] px-4 py-3 text-sm"
             />
           </div>
 
@@ -449,7 +449,7 @@ export default function TeacherCreateLessonPage() {
               form.gradeLevel > 12
             }
             onClick={handleGenerate}
-            className="mt-5 rounded-2xl bg-emerald-400 px-5 py-3 text-sm font-semibold text-slate-950 disabled:opacity-50"
+            className="mt-5 rounded-xl bg-[var(--ll-yellow-soft)] px-5 py-3 text-sm font-semibold text-[var(--ll-text-faint)] disabled:opacity-50"
           >
             {generating ? "Generating your lesson... this takes about 30 seconds" : "Generate Lesson"}
           </button>
@@ -457,9 +457,9 @@ export default function TeacherCreateLessonPage() {
 
         {draft && (
           <>
-            <section className="rounded-3xl border border-white/10 bg-slate-900/70 p-6">
+            <section className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 p-6">
               <div className="mb-4">
-                <p className="text-xs uppercase tracking-[0.2em] text-amber-300">
+                <p className="text-xs uppercase tracking-[0.2em] text-[var(--ll-yellow)]">
                   Step 2
                 </p>
                 <h2 className="text-xl font-semibold">Review generated lesson</h2>
@@ -467,7 +467,7 @@ export default function TeacherCreateLessonPage() {
 
               <div className="space-y-4">
                 <div>
-                  <label className="block text-xs text-slate-400">Lesson title</label>
+                  <label className="block text-xs text-[var(--ll-text-muted)]">Lesson title</label>
                   <input
                     value={draft.title}
                     onChange={(event) =>
@@ -477,12 +477,12 @@ export default function TeacherCreateLessonPage() {
                           : current
                       )
                     }
-                    className="mt-1 w-full rounded-xl border border-slate-700 bg-slate-950 px-3 py-2 text-sm"
+                    className="mt-1 w-full rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)] px-3 py-2 text-sm"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs text-slate-400">Lesson content</label>
+                  <label className="block text-xs text-[var(--ll-text-muted)]">Lesson content</label>
                   <textarea
                     value={draft.content}
                     onChange={(event) =>
@@ -493,19 +493,19 @@ export default function TeacherCreateLessonPage() {
                       )
                     }
                     rows={16}
-                    className="mt-1 w-full rounded-2xl border border-slate-700 bg-slate-950 px-4 py-3 text-sm"
+                    className="mt-1 w-full rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)] px-4 py-3 text-sm"
                   />
                 </div>
 
                 <div>
                   <div className="flex items-center justify-between">
-                    <label className="block text-xs text-slate-400">
+                    <label className="block text-xs text-[var(--ll-text-muted)]">
                       Assessment questions
                     </label>
                     <button
                       type="button"
                       onClick={addQuestion}
-                      className="text-xs text-emerald-300 hover:text-emerald-200"
+                      className="text-xs text-[var(--ll-yellow)] hover:text-[var(--ll-yellow)]"
                     >
                       Add question
                     </button>
@@ -519,12 +519,12 @@ export default function TeacherCreateLessonPage() {
                             updateQuestion(index, event.target.value)
                           }
                           rows={2}
-                          className="w-full rounded-xl border border-slate-700 bg-slate-950 px-3 py-2 text-sm"
+                          className="w-full rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)] px-3 py-2 text-sm"
                         />
                         <button
                           type="button"
                           onClick={() => removeQuestion(index)}
-                          className="rounded-xl border border-slate-700 px-3 text-xs text-slate-300"
+                          className="rounded-xl border border-[var(--ll-border)] px-3 text-xs text-[var(--ll-text)]"
                         >
                           Remove
                         </button>
@@ -534,7 +534,7 @@ export default function TeacherCreateLessonPage() {
                 </div>
 
                 <div>
-                  <label className="block text-xs text-slate-400">
+                  <label className="block text-xs text-[var(--ll-text-muted)]">
                     Estimated duration (minutes)
                   </label>
                   <input
@@ -552,13 +552,13 @@ export default function TeacherCreateLessonPage() {
                           : current
                       )
                     }
-                    className="mt-1 w-full rounded-xl border border-slate-700 bg-slate-950 px-3 py-2 text-sm md:w-48"
+                    className="mt-1 w-full rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)] px-3 py-2 text-sm md:w-48"
                   />
                 </div>
               </div>
             </section>
 
-            <section className="rounded-3xl border border-white/10 bg-slate-900/70 p-6">
+            <section className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 p-6">
               <div className="mb-4">
                 <p className="text-xs uppercase tracking-[0.2em] text-sky-300">
                   Step 3
@@ -571,7 +571,7 @@ export default function TeacherCreateLessonPage() {
                   type="button"
                   onClick={() => persistLesson("save_draft")}
                   disabled={savingDraft || publishing}
-                  className="rounded-2xl border border-slate-600 px-5 py-3 text-sm font-semibold text-slate-100 disabled:opacity-50"
+                  className="rounded-xl border border-[var(--ll-border)] px-5 py-3 text-sm font-semibold text-[var(--ll-text)] disabled:opacity-50"
                 >
                   {savingDraft ? "Saving draft..." : "Save as Draft"}
                 </button>
@@ -579,7 +579,7 @@ export default function TeacherCreateLessonPage() {
                   type="button"
                   onClick={() => persistLesson("publish")}
                   disabled={savingDraft || publishing}
-                  className="rounded-2xl bg-emerald-400 px-5 py-3 text-sm font-semibold text-slate-950 disabled:opacity-50"
+                  className="rounded-xl bg-[var(--ll-yellow-soft)] px-5 py-3 text-sm font-semibold text-[var(--ll-text-faint)] disabled:opacity-50"
                 >
                   {publishing ? "Publishing..." : "Publish to Class"}
                 </button>
@@ -587,7 +587,7 @@ export default function TeacherCreateLessonPage() {
                   type="button"
                   onClick={discardDraft}
                   disabled={savingDraft || publishing}
-                  className="rounded-2xl border border-red-500/40 px-5 py-3 text-sm font-semibold text-red-200 disabled:opacity-50"
+                  className="rounded-xl border border-red-500/40 px-5 py-3 text-sm font-semibold text-red-200 disabled:opacity-50"
                 >
                   Discard
                 </button>

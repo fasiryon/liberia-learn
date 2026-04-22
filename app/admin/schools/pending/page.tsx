@@ -51,38 +51,38 @@ export default function PendingSchoolsPage() {
   }
 
   return (
-    <main className="min-h-screen bg-slate-950 text-slate-50">
+    <main className="min-h-screen bg-[var(--ll-bg)] text-[var(--ll-text)]">
       <div className="mx-auto max-w-6xl px-4 py-6">
-        <Link href="/admin/schools" className="text-xs font-semibold text-emerald-300">
+        <Link href="/admin/schools" className="text-xs font-semibold text-[var(--ll-yellow)]">
           Back to schools
         </Link>
-        <header className="mt-4 rounded-3xl border border-white/10 bg-slate-900/80 p-5">
-          <p className="text-xs uppercase tracking-[0.2em] text-emerald-300">Platform admin</p>
+        <header className="mt-4 rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/80 p-5">
+          <p className="text-xs uppercase tracking-[0.2em] text-[var(--ll-yellow)]">Platform admin</p>
           <h1 className="mt-2 text-3xl font-bold">Pending schools</h1>
-          <p className="mt-2 text-sm text-slate-300">Approve requests to activate principal access and issue school codes.</p>
+          <p className="mt-2 text-sm text-[var(--ll-text)]">Approve requests to activate principal access and issue school codes.</p>
         </header>
-        {status ? <p className="mt-4 rounded-xl border border-white/10 bg-slate-900 p-3 text-sm">{status}</p> : null}
+        {status ? <p className="mt-4 rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)] p-3 text-sm">{status}</p> : null}
         <section className="mt-5 grid gap-4">
           {schools.length === 0 ? (
-            <p className="rounded-2xl border border-white/10 bg-slate-900/80 p-5 text-sm text-slate-300">No pending schools.</p>
+            <p className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/80 p-5 text-sm text-[var(--ll-text)]">No pending schools.</p>
           ) : (
             schools.map((school) => (
-              <article key={school.id} className="rounded-2xl border border-white/10 bg-slate-900/80 p-5">
+              <article key={school.id} className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/80 p-5">
                 <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
                   <div>
                     <h2 className="text-xl font-semibold">{school.name}</h2>
-                    <p className="mt-1 text-sm text-slate-300">
+                    <p className="mt-1 text-sm text-[var(--ll-text)]">
                       {school.county ?? "County missing"} - {school.district ?? "District missing"} - {school.schoolType ?? "Type missing"}
                     </p>
-                    <p className="mt-2 text-sm text-slate-400">
+                    <p className="mt-2 text-sm text-[var(--ll-text-muted)]">
                       Principal: {school.contactName ?? "Missing"} - {school.contactEmail ?? "No email"} - {school.contactPhone ?? "No phone"}
                     </p>
-                    <p className="mt-1 text-xs text-slate-500">
+                    <p className="mt-1 text-xs text-[var(--ll-text-faint)]">
                       Estimated enrollment: {school.estimatedEnrollment ?? "-"} - Submitted {new Date(school.createdAt).toLocaleString("en-LR")}
                     </p>
                   </div>
                   <div className="flex gap-2">
-                    <button onClick={() => act(school.id, "approve")} className="rounded-xl bg-emerald-400 px-4 py-2 text-sm font-bold text-slate-950">Approve</button>
+                    <button onClick={() => act(school.id, "approve")} className="rounded-xl bg-[var(--ll-yellow-soft)] px-4 py-2 text-sm font-bold text-[var(--ll-text-faint)]">Approve</button>
                     <button onClick={() => act(school.id, "reject")} className="rounded-xl border border-red-400/40 px-4 py-2 text-sm font-bold text-red-200">Reject</button>
                   </div>
                 </div>

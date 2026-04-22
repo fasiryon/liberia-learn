@@ -114,21 +114,21 @@ export default async function CompliancePage({ searchParams = {} }: Props) {
   const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
 
   return (
-    <main className="min-h-screen bg-slate-950 text-slate-50">
+    <main className="min-h-screen bg-[var(--ll-bg)] text-[var(--ll-text)]">
       <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_top,_#3b82f622,_transparent_60%)]" />
       <div className="mx-auto max-w-6xl px-4 py-6">
         <header className="mb-6 flex items-center gap-4">
           <Link
             href="/admin"
-            className="rounded-full border border-slate-700 px-3 py-1.5 text-xs hover:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-500"
+            className="rounded-full border border-[var(--ll-border)] px-3 py-1.5 text-xs hover:bg-[var(--ll-bg)] focus:outline-none focus:ring-2 focus:ring-slate-500"
             aria-label="Back to Admin Console"
           >
             Back
           </Link>
           <div>
-            <p className="mb-0.5 text-xs uppercase tracking-wide text-emerald-300">Compliance</p>
+            <p className="mb-0.5 text-xs uppercase tracking-wide text-[var(--ll-yellow)]">Compliance</p>
             <h1 className="text-2xl font-bold">Audit Log</h1>
-            <p className="mt-0.5 text-xs text-slate-400">
+            <p className="mt-0.5 text-xs text-[var(--ll-text-muted)]">
               All important actions taken in your school are recorded here.
             </p>
           </div>
@@ -137,7 +137,7 @@ export default async function CompliancePage({ searchParams = {} }: Props) {
         {circuitOpen ? (
           <div
             role="alert"
-            className="mb-6 rounded-2xl border border-red-700/40 bg-red-900/20 p-4 text-sm text-red-300"
+            className="mb-6 rounded-xl border border-red-700/40 bg-red-900/20 p-4 text-sm text-red-300"
           >
             Governance features are temporarily disabled by the system administrator.
             Please contact support.
@@ -162,32 +162,32 @@ export default async function CompliancePage({ searchParams = {} }: Props) {
             <div className="mb-3 flex items-center justify-between">
               <h2 className="text-base font-semibold">
                 Records{" "}
-                <span className="text-sm font-normal text-slate-400">
+                <span className="text-sm font-normal text-[var(--ll-text-muted)]">
                   ({total.toLocaleString()} total)
                 </span>
               </h2>
-              <p className="text-xs text-slate-500">
+              <p className="text-xs text-[var(--ll-text-faint)]">
                 Page {page} of {totalPages}
               </p>
             </div>
 
-            <div className="overflow-x-auto rounded-2xl border border-slate-800">
+            <div className="overflow-x-auto rounded-xl border border-[var(--ll-border)]">
               <table className="w-full text-xs">
                 <thead>
-                  <tr className="border-b border-slate-800 bg-slate-900/60">
-                    <th className="px-3 py-2.5 text-left font-medium text-slate-400">When</th>
-                    <th className="px-3 py-2.5 text-left font-medium text-slate-400">Actor</th>
-                    <th className="px-3 py-2.5 text-left font-medium text-slate-400">Role</th>
-                    <th className="px-3 py-2.5 text-left font-medium text-slate-400">Action</th>
-                    <th className="px-3 py-2.5 text-left font-medium text-slate-400">
+                  <tr className="border-b border-[var(--ll-border)] bg-[var(--ll-bg)]/60">
+                    <th className="px-3 py-2.5 text-left font-medium text-[var(--ll-text-muted)]">When</th>
+                    <th className="px-3 py-2.5 text-left font-medium text-[var(--ll-text-muted)]">Actor</th>
+                    <th className="px-3 py-2.5 text-left font-medium text-[var(--ll-text-muted)]">Role</th>
+                    <th className="px-3 py-2.5 text-left font-medium text-[var(--ll-text-muted)]">Action</th>
+                    <th className="px-3 py-2.5 text-left font-medium text-[var(--ll-text-muted)]">
                       Record Type
                     </th>
-                    <th className="px-3 py-2.5 text-left font-medium text-slate-400">
+                    <th className="px-3 py-2.5 text-left font-medium text-[var(--ll-text-muted)]">
                       Record ID
                     </th>
-                    <th className="px-3 py-2.5 text-left font-medium text-slate-400">IP</th>
+                    <th className="px-3 py-2.5 text-left font-medium text-[var(--ll-text-muted)]">IP</th>
                     {isPlatformAdmin ? (
-                      <th className="px-3 py-2.5 text-left font-medium text-slate-400">
+                      <th className="px-3 py-2.5 text-left font-medium text-[var(--ll-text-muted)]">
                         School
                       </th>
                     ) : null}
@@ -198,7 +198,7 @@ export default async function CompliancePage({ searchParams = {} }: Props) {
                     <tr>
                       <td
                         colSpan={isPlatformAdmin ? 8 : 7}
-                        className="px-3 py-6 text-center text-slate-500"
+                        className="px-3 py-6 text-center text-[var(--ll-text-faint)]"
                       >
                         No records found for these filters.
                       </td>
@@ -207,9 +207,9 @@ export default async function CompliancePage({ searchParams = {} }: Props) {
                   {entries.map((entry) => (
                     <tr
                       key={entry.id}
-                      className="border-b border-slate-800/50 hover:bg-slate-800/30"
+                      className="border-b border-[var(--ll-border)]/50 hover:bg-[var(--ll-surface)]/30"
                     >
-                      <td className="whitespace-nowrap px-3 py-2 text-slate-400">
+                      <td className="whitespace-nowrap px-3 py-2 text-[var(--ll-text-muted)]">
                         {new Date(entry.createdAt).toLocaleString("en-GB", {
                           day: "2-digit",
                           month: "short",
@@ -218,22 +218,22 @@ export default async function CompliancePage({ searchParams = {} }: Props) {
                           minute: "2-digit",
                         })}
                       </td>
-                      <td className="px-3 py-2 text-slate-200">
+                      <td className="px-3 py-2 text-[var(--ll-text)]">
                         {entry.user?.email ?? "Unknown"}
                       </td>
-                      <td className="px-3 py-2 text-slate-400">
+                      <td className="px-3 py-2 text-[var(--ll-text-muted)]">
                         {entry.user?.role ?? "-"}
                       </td>
-                      <td className="px-3 py-2 font-mono text-slate-200">{entry.action}</td>
-                      <td className="px-3 py-2 text-slate-400">{entry.resourceType ?? "-"}</td>
-                      <td className="px-3 py-2 font-mono text-[10px] text-slate-500">
+                      <td className="px-3 py-2 font-mono text-[var(--ll-text)]">{entry.action}</td>
+                      <td className="px-3 py-2 text-[var(--ll-text-muted)]">{entry.resourceType ?? "-"}</td>
+                      <td className="px-3 py-2 font-mono text-[10px] text-[var(--ll-text-faint)]">
                         {entry.resourceId ? `${entry.resourceId.slice(0, 12)}...` : "-"}
                       </td>
-                      <td className="px-3 py-2 font-mono text-[10px] text-slate-500">
+                      <td className="px-3 py-2 font-mono text-[10px] text-[var(--ll-text-faint)]">
                         {entry.ipAddress ?? "-"}
                       </td>
                       {isPlatformAdmin ? (
-                        <td className="px-3 py-2 font-mono text-[10px] text-slate-500">
+                        <td className="px-3 py-2 font-mono text-[10px] text-[var(--ll-text-faint)]">
                           {entry.schoolId ?? "-"}
                         </td>
                       ) : null}
@@ -257,7 +257,7 @@ export default async function CompliancePage({ searchParams = {} }: Props) {
                       ...(effectiveSchoolId ? { schoolId: effectiveSchoolId } : {}),
                       page: String(page - 1),
                     }).toString()}`}
-                    className="rounded-lg border border-slate-700 px-3 py-1.5 text-xs hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                    className="rounded-lg border border-[var(--ll-border)] px-3 py-1.5 text-xs hover:bg-[var(--ll-surface)] focus:outline-none focus:ring-2 focus:ring-emerald-500"
                   >
                     Previous
                   </Link>
@@ -274,7 +274,7 @@ export default async function CompliancePage({ searchParams = {} }: Props) {
                       ...(effectiveSchoolId ? { schoolId: effectiveSchoolId } : {}),
                       page: String(page + 1),
                     }).toString()}`}
-                    className="rounded-lg border border-slate-700 px-3 py-1.5 text-xs hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                    className="rounded-lg border border-[var(--ll-border)] px-3 py-1.5 text-xs hover:bg-[var(--ll-surface)] focus:outline-none focus:ring-2 focus:ring-emerald-500"
                   >
                     Next
                   </Link>
@@ -286,40 +286,40 @@ export default async function CompliancePage({ searchParams = {} }: Props) {
 
         <section>
           <h2 className="mb-3 text-base font-semibold">Recent Downloads</h2>
-          <p className="mb-3 text-xs text-slate-400">
+          <p className="mb-3 text-xs text-[var(--ll-text-muted)]">
             Every data download is recorded below for your records.
           </p>
           {recentExports.length === 0 ? (
-            <p className="text-sm text-slate-500">No downloads yet.</p>
+            <p className="text-sm text-[var(--ll-text-faint)]">No downloads yet.</p>
           ) : (
-            <div className="overflow-x-auto rounded-2xl border border-slate-800">
+            <div className="overflow-x-auto rounded-xl border border-[var(--ll-border)]">
               <table className="w-full text-xs">
                 <thead>
-                  <tr className="border-b border-slate-800 bg-slate-900/60">
-                    <th className="px-3 py-2.5 text-left font-medium text-slate-400">When</th>
-                    <th className="px-3 py-2.5 text-left font-medium text-slate-400">Type</th>
-                    <th className="px-3 py-2.5 text-left font-medium text-slate-400">Scope</th>
-                    <th className="px-3 py-2.5 text-left font-medium text-slate-400">Format</th>
+                  <tr className="border-b border-[var(--ll-border)] bg-[var(--ll-bg)]/60">
+                    <th className="px-3 py-2.5 text-left font-medium text-[var(--ll-text-muted)]">When</th>
+                    <th className="px-3 py-2.5 text-left font-medium text-[var(--ll-text-muted)]">Type</th>
+                    <th className="px-3 py-2.5 text-left font-medium text-[var(--ll-text-muted)]">Scope</th>
+                    <th className="px-3 py-2.5 text-left font-medium text-[var(--ll-text-muted)]">Format</th>
                   </tr>
                 </thead>
                 <tbody>
                   {recentExports.map((record) => (
                     <tr
                       key={record.id}
-                      className="border-b border-slate-800/50 hover:bg-slate-800/30"
+                      className="border-b border-[var(--ll-border)]/50 hover:bg-[var(--ll-surface)]/30"
                     >
-                      <td className="whitespace-nowrap px-3 py-2 text-slate-400">
+                      <td className="whitespace-nowrap px-3 py-2 text-[var(--ll-text-muted)]">
                         {new Date(record.createdAt).toLocaleString("en-GB", {
                           day: "2-digit",
                           month: "short",
                           year: "numeric",
                         })}
                       </td>
-                      <td className="px-3 py-2 text-slate-200">
+                      <td className="px-3 py-2 text-[var(--ll-text)]">
                         {record.exportType.replace(/_/g, " ")}
                       </td>
-                      <td className="px-3 py-2 text-slate-400">{record.scope}</td>
-                      <td className="px-3 py-2 uppercase text-slate-500">
+                      <td className="px-3 py-2 text-[var(--ll-text-muted)]">{record.scope}</td>
+                      <td className="px-3 py-2 uppercase text-[var(--ll-text-faint)]">
                         {record.format ?? "-"}
                       </td>
                     </tr>
@@ -331,14 +331,14 @@ export default async function CompliancePage({ searchParams = {} }: Props) {
           <div className="mt-4 flex gap-4">
             <Link
               href="/admin/governance/exports"
-              className="rounded-xl bg-emerald-600 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-400"
+              className="rounded-xl bg-[var(--ll-yellow-soft)] px-4 py-2 text-sm font-semibold text-[var(--ll-text)] hover:bg-[var(--ll-yellow)] focus:outline-none focus:ring-2 focus:ring-emerald-400"
             >
               Go to Data Downloads
             </Link>
             {isPlatformAdmin ? (
               <Link
                 href="/admin/governance"
-                className="rounded-xl border border-slate-700 px-4 py-2 text-sm text-slate-300 hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-500"
+                className="rounded-xl border border-[var(--ll-border)] px-4 py-2 text-sm text-[var(--ll-text)] hover:bg-[var(--ll-surface)] focus:outline-none focus:ring-2 focus:ring-slate-500"
               >
                 Governance Dashboard
               </Link>

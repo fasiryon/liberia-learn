@@ -164,7 +164,7 @@ export default function OnboardingPage() {
     window.location.href = "/admin";
   }
 
-  if (loading) return <div className="p-8"><div className="h-40 animate-pulse rounded-2xl bg-slate-800/50" /></div>;
+  if (loading) return <div className="p-8"><div className="h-40 animate-pulse rounded-xl bg-[var(--ll-surface)]/50" /></div>;
 
   const STEPS = ["School Identity", "Branding", "Add Teacher", "Create Class", "Ready!"];
 
@@ -172,44 +172,44 @@ export default function OnboardingPage() {
     <div className="mx-auto max-w-2xl space-y-6">
       <div>
         <h1 className="text-2xl font-bold">School Setup</h1>
-        <p className="mt-1 text-sm text-slate-400">Get your school ready in 5 easy steps</p>
+        <p className="mt-1 text-sm text-[var(--ll-text-muted)]">Get your school ready in 5 easy steps</p>
       </div>
 
       <div className="flex gap-1">
         {STEPS.map((s, i) => (
           <div key={i} className="flex-1">
-            <div className={`h-1.5 rounded-full ${i + 1 <= step ? "bg-emerald-500" : "bg-slate-800"}`} />
-            <p className={`mt-1 text-[10px] ${i + 1 === step ? "text-emerald-400" : "text-slate-500"}`}>{s}</p>
+            <div className={`h-1.5 rounded-full ${i + 1 <= step ? "bg-[var(--ll-yellow)]" : "bg-[var(--ll-surface)]"}`} />
+            <p className={`mt-1 text-[10px] ${i + 1 === step ? "text-[var(--ll-yellow)]" : "text-[var(--ll-text-faint)]"}`}>{s}</p>
           </div>
         ))}
       </div>
 
-      <div className="rounded-2xl border border-white/10 bg-slate-900/70 p-6">
+      <div className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 p-6">
         {step === 1 && (
           <div className="space-y-4">
             <h2 className="text-lg font-semibold">Step 1: School Identity</h2>
             <div className="space-y-3">
               <div>
-                <label className="text-xs text-slate-400">School Name</label>
-                <input value={name} onChange={(e) => setName(e.target.value)} className="mt-1 w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-sm text-slate-100" />
+                <label className="text-xs text-[var(--ll-text-muted)]">School Name</label>
+                <input value={name} onChange={(e) => setName(e.target.value)} className="mt-1 w-full rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)] px-4 py-3 text-sm text-[var(--ll-text)]" />
               </div>
               <div>
-                <label className="text-xs text-slate-400">County</label>
-                <select value={county} onChange={(e) => setCounty(e.target.value)} className="mt-1 w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-sm text-slate-100">
+                <label className="text-xs text-[var(--ll-text-muted)]">County</label>
+                <select value={county} onChange={(e) => setCounty(e.target.value)} className="mt-1 w-full rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)] px-4 py-3 text-sm text-[var(--ll-text)]">
                   <option value="">Select county...</option>
                   {COUNTIES.map((c) => <option key={c} value={c}>{c}</option>)}
                 </select>
               </div>
               <div>
-                <label className="text-xs text-slate-400">School Motto</label>
-                <input value={motto} onChange={(e) => setMotto(e.target.value)} className="mt-1 w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-sm text-slate-100" />
+                <label className="text-xs text-[var(--ll-text-muted)]">School Motto</label>
+                <input value={motto} onChange={(e) => setMotto(e.target.value)} className="mt-1 w-full rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)] px-4 py-3 text-sm text-[var(--ll-text)]" />
               </div>
               <div>
-                <label className="text-xs text-slate-400">Principal Name</label>
-                <input value={principal} onChange={(e) => setPrincipal(e.target.value)} className="mt-1 w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-sm text-slate-100" />
+                <label className="text-xs text-[var(--ll-text-muted)]">Principal Name</label>
+                <input value={principal} onChange={(e) => setPrincipal(e.target.value)} className="mt-1 w-full rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)] px-4 py-3 text-sm text-[var(--ll-text)]" />
               </div>
             </div>
-            <button onClick={handleStep1} disabled={saving || !name} className="w-full rounded-xl bg-emerald-500 px-6 py-3 text-sm font-semibold text-white hover:bg-emerald-400 disabled:opacity-50">
+            <button onClick={handleStep1} disabled={saving || !name} className="w-full rounded-xl bg-[var(--ll-yellow)] px-6 py-3 text-sm font-semibold text-[var(--ll-text)] hover:bg-[var(--ll-yellow-soft)] disabled:opacity-50">
               {saving ? "Saving..." : "Continue"}
             </button>
           </div>
@@ -220,19 +220,19 @@ export default function OnboardingPage() {
             <h2 className="text-lg font-semibold">Step 2: School Branding</h2>
             <div className="space-y-3">
               <div>
-                <label className="text-xs text-slate-400">Primary Color</label>
+                <label className="text-xs text-[var(--ll-text-muted)]">Primary Color</label>
                 <div className="mt-1 flex items-center gap-3">
                   <input type="color" value={primaryHex} onChange={(e) => setPrimaryHex(e.target.value)} className="h-10 w-10 cursor-pointer rounded" />
-                  <span className="text-sm text-slate-300">{primaryHex}</span>
+                  <span className="text-sm text-[var(--ll-text)]">{primaryHex}</span>
                 </div>
               </div>
               <div>
-                <label className="text-xs text-slate-400">Logo URL (optional)</label>
-                <input value={logoUrl} onChange={(e) => setLogoUrl(e.target.value)} placeholder="https://..." className="mt-1 w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-sm text-slate-100" />
+                <label className="text-xs text-[var(--ll-text-muted)]">Logo URL (optional)</label>
+                <input value={logoUrl} onChange={(e) => setLogoUrl(e.target.value)} placeholder="https://..." className="mt-1 w-full rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)] px-4 py-3 text-sm text-[var(--ll-text)]" />
               </div>
-              <div className="rounded-xl border border-slate-800 p-4" style={{ borderColor: `${primaryHex}40` }}>
+              <div className="rounded-xl border border-[var(--ll-border)] p-4" style={{ borderColor: `${primaryHex}40` }}>
                 <div className="flex items-center gap-2">
-                  <div className="flex h-8 w-8 items-center justify-center rounded-lg text-xs font-bold text-white" style={{ backgroundColor: primaryHex }}>
+                  <div className="flex h-8 w-8 items-center justify-center rounded-lg text-xs font-bold text-[var(--ll-text)]" style={{ backgroundColor: primaryHex }}>
                     {name?.[0] || "S"}
                   </div>
                   <span className="text-sm font-semibold" style={{ color: primaryHex }}>{name || "Your School"}</span>
@@ -240,8 +240,8 @@ export default function OnboardingPage() {
               </div>
             </div>
             <div className="flex gap-3">
-              <button onClick={() => { saveStep(2, {}); setStep(3); }} className="flex-1 rounded-xl border border-slate-700 px-6 py-3 text-sm text-slate-400 hover:text-slate-200">Skip</button>
-              <button onClick={handleStep2} disabled={saving} className="flex-1 rounded-xl bg-emerald-500 px-6 py-3 text-sm font-semibold text-white hover:bg-emerald-400 disabled:opacity-50">
+              <button onClick={() => { saveStep(2, {}); setStep(3); }} className="flex-1 rounded-xl border border-[var(--ll-border)] px-6 py-3 text-sm text-[var(--ll-text-muted)] hover:text-[var(--ll-text)]">Skip</button>
+              <button onClick={handleStep2} disabled={saving} className="flex-1 rounded-xl bg-[var(--ll-yellow)] px-6 py-3 text-sm font-semibold text-[var(--ll-text)] hover:bg-[var(--ll-yellow-soft)] disabled:opacity-50">
                 {saving ? "Saving..." : "Continue"}
               </button>
             </div>
@@ -251,43 +251,43 @@ export default function OnboardingPage() {
         {step === 3 && (
           <div className="space-y-4">
             <h2 className="text-lg font-semibold">Step 3: Add Your First Teacher</h2>
-            <p className="text-xs text-slate-400">{teacherCount} teacher(s) already added</p>
+            <p className="text-xs text-[var(--ll-text-muted)]">{teacherCount} teacher(s) already added</p>
             <div className="space-y-3">
               <div>
-                <label className="text-xs text-slate-400">Teacher Name</label>
-                <input value={teacherName} onChange={(e) => setTeacherName(e.target.value)} className="mt-1 w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-sm text-slate-100" />
+                <label className="text-xs text-[var(--ll-text-muted)]">Teacher Name</label>
+                <input value={teacherName} onChange={(e) => setTeacherName(e.target.value)} className="mt-1 w-full rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)] px-4 py-3 text-sm text-[var(--ll-text)]" />
               </div>
               <div>
-                <label className="text-xs text-slate-400">Teacher ID (optional)</label>
-                <input value={teacherLoginId} onChange={(e) => setTeacherLoginId(e.target.value)} placeholder="TCH-2026-001" className="mt-1 w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-sm text-slate-100" />
+                <label className="text-xs text-[var(--ll-text-muted)]">Teacher ID (optional)</label>
+                <input value={teacherLoginId} onChange={(e) => setTeacherLoginId(e.target.value)} placeholder="TCH-2026-001" className="mt-1 w-full rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)] px-4 py-3 text-sm text-[var(--ll-text)]" />
               </div>
               <div>
-                <label className="text-xs text-slate-400">Phone Number (optional)</label>
-                <input value={teacherPhone} onChange={(e) => setTeacherPhone(e.target.value)} placeholder="+231 XX XXX XXXX" className="mt-1 w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-sm text-slate-100" />
+                <label className="text-xs text-[var(--ll-text-muted)]">Phone Number (optional)</label>
+                <input value={teacherPhone} onChange={(e) => setTeacherPhone(e.target.value)} placeholder="+231 XX XXX XXXX" className="mt-1 w-full rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)] px-4 py-3 text-sm text-[var(--ll-text)]" />
               </div>
               <div>
-                <label className="text-xs text-slate-400">Email (optional)</label>
-                <input value={teacherEmail} onChange={(e) => setTeacherEmail(e.target.value)} type="email" className="mt-1 w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-sm text-slate-100" />
+                <label className="text-xs text-[var(--ll-text-muted)]">Email (optional)</label>
+                <input value={teacherEmail} onChange={(e) => setTeacherEmail(e.target.value)} type="email" className="mt-1 w-full rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)] px-4 py-3 text-sm text-[var(--ll-text)]" />
               </div>
-              {teacherAdded && <p className="text-xs text-emerald-400">Teacher added successfully.</p>}
+              {teacherAdded && <p className="text-xs text-[var(--ll-yellow)]">Teacher added successfully.</p>}
               {teacherError && <p className="text-xs text-red-400">{teacherError}</p>}
-              <button onClick={handleAddTeacher} disabled={!teacherName || teacherSaving} className="rounded-xl border border-emerald-500/30 bg-emerald-500/10 px-4 py-3 text-sm text-emerald-400 hover:bg-emerald-500/20 disabled:opacity-50">
+              <button onClick={handleAddTeacher} disabled={!teacherName || teacherSaving} className="rounded-xl border border-emerald-500/30 bg-[var(--ll-yellow)]/10 px-4 py-3 text-sm text-[var(--ll-yellow)] hover:bg-[var(--ll-yellow)]/20 disabled:opacity-50">
                 {teacherSaving ? "Adding Teacher..." : "Add Teacher"}
               </button>
             </div>
             {teacherCredential && (
-              <div className="rounded-2xl border border-emerald-500/30 bg-emerald-500/10 p-4">
-                <h3 className="text-lg font-semibold text-emerald-200">Teacher added successfully</h3>
-                <p className="mt-2 text-sm text-slate-200">Teacher ID: <span className="font-semibold text-white">{teacherCredential.loginId}</span></p>
-                <p className="mt-1 text-sm text-slate-200">Temporary PIN: <span className="font-semibold text-white">{teacherCredential.tempPin}</span></p>
+              <div className="rounded-xl border border-emerald-500/30 bg-[var(--ll-yellow)]/10 p-4">
+                <h3 className="text-lg font-semibold text-[var(--ll-yellow)]">Teacher added successfully</h3>
+                <p className="mt-2 text-sm text-[var(--ll-text)]">Teacher ID: <span className="font-semibold text-[var(--ll-text)]">{teacherCredential.loginId}</span></p>
+                <p className="mt-1 text-sm text-[var(--ll-text)]">Temporary PIN: <span className="font-semibold text-[var(--ll-text)]">{teacherCredential.tempPin}</span></p>
                 <div className="mt-4">
                   <CredentialDeliveryActions userId={teacherCredential.userId} pin={teacherCredential.tempPin} phone={teacherCredential.phone} />
                 </div>
               </div>
             )}
             <div className="flex gap-3">
-              <button onClick={() => { saveStep(3, {}); setStep(4); }} className="flex-1 rounded-xl border border-slate-700 px-6 py-3 text-sm text-slate-400 hover:text-slate-200">Skip</button>
-              <button onClick={handleStep3} disabled={saving} className="flex-1 rounded-xl bg-emerald-500 px-6 py-3 text-sm font-semibold text-white hover:bg-emerald-400 disabled:opacity-50">Continue</button>
+              <button onClick={() => { saveStep(3, {}); setStep(4); }} className="flex-1 rounded-xl border border-[var(--ll-border)] px-6 py-3 text-sm text-[var(--ll-text-muted)] hover:text-[var(--ll-text)]">Skip</button>
+              <button onClick={handleStep3} disabled={saving} className="flex-1 rounded-xl bg-[var(--ll-yellow)] px-6 py-3 text-sm font-semibold text-[var(--ll-text)] hover:bg-[var(--ll-yellow-soft)] disabled:opacity-50">Continue</button>
             </div>
           </div>
         )}
@@ -295,26 +295,26 @@ export default function OnboardingPage() {
         {step === 4 && (
           <div className="space-y-4">
             <h2 className="text-lg font-semibold">Step 4: Create Your First Class</h2>
-            <p className="text-xs text-slate-400">{classCount} class(es) already created</p>
+            <p className="text-xs text-[var(--ll-text-muted)]">{classCount} class(es) already created</p>
             <div className="space-y-3">
               <div>
-                <label className="text-xs text-slate-400">Class Name</label>
-                <input value={className} onChange={(e) => setClassName(e.target.value)} placeholder="e.g. Grade 7A" className="mt-1 w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-sm text-slate-100" />
+                <label className="text-xs text-[var(--ll-text-muted)]">Class Name</label>
+                <input value={className} onChange={(e) => setClassName(e.target.value)} placeholder="e.g. Grade 7A" className="mt-1 w-full rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)] px-4 py-3 text-sm text-[var(--ll-text)]" />
               </div>
               <div>
-                <label className="text-xs text-slate-400">Grade Level</label>
-                <select value={gradeLevel} onChange={(e) => setGradeLevel(e.target.value)} className="mt-1 w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-sm text-slate-100">
+                <label className="text-xs text-[var(--ll-text-muted)]">Grade Level</label>
+                <select value={gradeLevel} onChange={(e) => setGradeLevel(e.target.value)} className="mt-1 w-full rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)] px-4 py-3 text-sm text-[var(--ll-text)]">
                   {Array.from({ length: 12 }, (_, i) => i + 1).map((g) => <option key={g} value={g}>Grade {g}</option>)}
                 </select>
               </div>
-              {classCreated && <p className="text-xs text-emerald-400">Class created!</p>}
-              <button onClick={handleCreateClass} disabled={!className} className="rounded-xl border border-emerald-500/30 bg-emerald-500/10 px-4 py-3 text-sm text-emerald-400 hover:bg-emerald-500/20 disabled:opacity-50">
+              {classCreated && <p className="text-xs text-[var(--ll-yellow)]">Class created!</p>}
+              <button onClick={handleCreateClass} disabled={!className} className="rounded-xl border border-emerald-500/30 bg-[var(--ll-yellow)]/10 px-4 py-3 text-sm text-[var(--ll-yellow)] hover:bg-[var(--ll-yellow)]/20 disabled:opacity-50">
                 Create Class
               </button>
             </div>
             <div className="flex gap-3">
-              <button onClick={() => { saveStep(4, {}); setStep(5); }} className="flex-1 rounded-xl border border-slate-700 px-6 py-3 text-sm text-slate-400 hover:text-slate-200">Skip</button>
-              <button onClick={handleStep4} disabled={saving} className="flex-1 rounded-xl bg-emerald-500 px-6 py-3 text-sm font-semibold text-white hover:bg-emerald-400 disabled:opacity-50">Continue</button>
+              <button onClick={() => { saveStep(4, {}); setStep(5); }} className="flex-1 rounded-xl border border-[var(--ll-border)] px-6 py-3 text-sm text-[var(--ll-text-muted)] hover:text-[var(--ll-text)]">Skip</button>
+              <button onClick={handleStep4} disabled={saving} className="flex-1 rounded-xl bg-[var(--ll-yellow)] px-6 py-3 text-sm font-semibold text-[var(--ll-text)] hover:bg-[var(--ll-yellow-soft)] disabled:opacity-50">Continue</button>
             </div>
           </div>
         )}
@@ -323,14 +323,14 @@ export default function OnboardingPage() {
           <div className="space-y-4 text-center">
             <div className="text-4xl">Graduation</div>
             <h2 className="text-lg font-semibold">You&apos;re Ready!</h2>
-            <p className="text-sm text-slate-400">Your school is set up and ready for the pilot.</p>
-            <div className="space-y-2 rounded-xl border border-slate-800 bg-slate-950/50 p-4 text-left">
-              <p className="text-sm text-slate-300"><span className="text-emerald-400">School:</span> {name}</p>
-              <p className="text-sm text-slate-300"><span className="text-emerald-400">County:</span> {county || "Not set"}</p>
-              <p className="text-sm text-slate-300"><span className="text-emerald-400">Teachers:</span> {teacherCount}</p>
-              <p className="text-sm text-slate-300"><span className="text-emerald-400">Classes:</span> {classCount}</p>
+            <p className="text-sm text-[var(--ll-text-muted)]">Your school is set up and ready for the pilot.</p>
+            <div className="space-y-2 rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/50 p-4 text-left">
+              <p className="text-sm text-[var(--ll-text)]"><span className="text-[var(--ll-yellow)]">School:</span> {name}</p>
+              <p className="text-sm text-[var(--ll-text)]"><span className="text-[var(--ll-yellow)]">County:</span> {county || "Not set"}</p>
+              <p className="text-sm text-[var(--ll-text)]"><span className="text-[var(--ll-yellow)]">Teachers:</span> {teacherCount}</p>
+              <p className="text-sm text-[var(--ll-text)]"><span className="text-[var(--ll-yellow)]">Classes:</span> {classCount}</p>
             </div>
-            <button onClick={handleFinish} className="w-full rounded-xl bg-emerald-500 px-6 py-3 text-sm font-semibold text-white hover:bg-emerald-400">
+            <button onClick={handleFinish} className="w-full rounded-xl bg-[var(--ll-yellow)] px-6 py-3 text-sm font-semibold text-[var(--ll-text)] hover:bg-[var(--ll-yellow-soft)]">
               Go to Admin Console
             </button>
           </div>

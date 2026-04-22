@@ -41,55 +41,55 @@ export default async function StudentTextbookReaderPage({
   if (textbook.units.length === 0) notFound();
 
   return (
-    <main className="min-h-screen bg-slate-950 px-4 py-8 text-slate-50">
+    <main className="min-h-screen bg-[var(--ll-bg)] px-4 py-8 text-[var(--ll-text)]">
       <TextbookOfflineCache cacheKey={`textbook:${student.currentGrade}:${textbook.subject}`} textbook={textbook} />
       <div className="mx-auto max-w-6xl space-y-6">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-          <Link href="/student/textbooks" className="text-sm font-semibold text-emerald-300 hover:text-emerald-200">
+          <Link href="/student/textbooks" className="text-sm font-semibold text-[var(--ll-yellow)] hover:text-[var(--ll-yellow)]">
             Back to textbooks
           </Link>
-          <PrintButton className="rounded-2xl border border-slate-700 px-4 py-2 text-sm text-slate-100 print:hidden" />
+          <PrintButton className="rounded-xl border border-[var(--ll-border)] px-4 py-2 text-sm text-[var(--ll-text)] print:hidden" />
         </div>
 
         <header className="space-y-2">
-          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-emerald-300">
+          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--ll-yellow)]">
             Grade {textbook.gradeLevel}
           </p>
-          <h1 className="text-3xl font-bold text-white">{label(textbook.subject)} Textbook</h1>
-          <p className="text-sm text-slate-300">
+          <h1 className="text-3xl font-bold text-[var(--ll-text)]">{label(textbook.subject)} Textbook</h1>
+          <p className="text-sm text-[var(--ll-text)]">
             {textbook.totalLessons} lessons - {textbook.schoolName}
           </p>
         </header>
 
         <div className="grid gap-6 lg:grid-cols-[260px_1fr]">
-          <aside className="rounded-2xl border border-white/10 bg-slate-900/80 p-4 lg:sticky lg:top-4 lg:max-h-[calc(100vh-2rem)] lg:overflow-auto">
-            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-400">Contents</p>
+          <aside className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/80 p-4 lg:sticky lg:top-4 lg:max-h-[calc(100vh-2rem)] lg:overflow-auto">
+            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--ll-text-muted)]">Contents</p>
             <nav className="mt-3 space-y-2 text-sm">
               {textbook.units.map((unit) => (
-                <a key={unit.id} href={`#unit-${unit.id}`} className="block rounded-xl bg-slate-950/70 px-3 py-2 text-slate-200 hover:text-emerald-200">
+                <a key={unit.id} href={`#unit-${unit.id}`} className="block rounded-xl bg-[var(--ll-bg)]/70 px-3 py-2 text-[var(--ll-text)] hover:text-[var(--ll-yellow)]">
                   {unit.orderIndex}. {unit.title}
                 </a>
               ))}
             </nav>
-            <PrintButton className="mt-4 w-full rounded-2xl bg-emerald-400 px-4 py-3 text-sm font-bold text-slate-950 print:hidden" />
+            <PrintButton className="mt-4 w-full rounded-xl bg-[var(--ll-yellow-soft)] px-4 py-3 text-sm font-bold text-[var(--ll-text-faint)] print:hidden" />
           </aside>
 
           <article className="space-y-6">
             {textbook.units.map((unit) => (
-              <section key={unit.id} id={`unit-${unit.id}`} className="rounded-3xl border border-white/10 bg-slate-900/80 p-5 sm:p-7">
-                <p className="text-xs font-semibold uppercase tracking-[0.2em] text-emerald-300">
+              <section key={unit.id} id={`unit-${unit.id}`} className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/80 p-5 sm:p-7">
+                <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--ll-yellow)]">
                   Unit {unit.orderIndex}
                 </p>
-                <h2 className="mt-2 text-2xl font-bold text-white">{unit.title}</h2>
-                {unit.description ? <p className="mt-2 text-sm text-slate-300">{unit.description}</p> : null}
+                <h2 className="mt-2 text-2xl font-bold text-[var(--ll-text)]">{unit.title}</h2>
+                {unit.description ? <p className="mt-2 text-sm text-[var(--ll-text)]">{unit.description}</p> : null}
 
                 <div className="mt-6 space-y-5">
                   {unit.lessons.map((lesson, index) => (
-                    <section key={lesson.id} className="rounded-2xl border border-slate-800 bg-slate-950/70 p-5">
-                      <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">
+                    <section key={lesson.id} className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 p-5">
+                      <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--ll-text-faint)]">
                         Chapter {index + 1}
                       </p>
-                      <h3 className="mt-2 text-xl font-semibold text-white">{lesson.title}</h3>
+                      <h3 className="mt-2 text-xl font-semibold text-[var(--ll-text)]">{lesson.title}</h3>
                       <div
                         className="prose prose-invert mt-4 max-w-none prose-p:leading-8 prose-li:leading-8"
                         dangerouslySetInnerHTML={{ __html: renderSimpleMarkdown(lesson.content) }}

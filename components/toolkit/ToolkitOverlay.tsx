@@ -35,13 +35,13 @@ export default function ToolkitOverlay({ context }: ToolkitOverlayProps) {
 
   return (
     <div className="pointer-events-none fixed bottom-24 right-4 z-[900]">
-      <div className="pointer-events-auto rounded-xl border border-slate-700 bg-slate-950/95 p-2 shadow-xl">
+      <div className="pointer-events-auto rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/95 p-2 shadow-none">
         <div className="mb-1 flex items-center justify-between gap-2">
-          <span className="px-1 text-xs font-semibold uppercase tracking-wide text-slate-300">Tools</span>
+          <span className="px-1 text-xs font-semibold uppercase tracking-wide text-[var(--ll-text)]">Tools</span>
           <button
             type="button"
             aria-label="Toggle toolkit toolbar"
-            className="rounded border border-slate-600 px-2 py-1 text-xs"
+            className="rounded border border-[var(--ll-border)] px-2 py-1 text-xs"
             onClick={() => setCollapsed((v) => !v)}
           >
             {collapsed ? "Expand" : "Collapse"}
@@ -56,8 +56,8 @@ export default function ToolkitOverlay({ context }: ToolkitOverlayProps) {
               aria-label={tool.a11yLabel}
               className={`rounded border px-3 py-2 text-sm ${
                 activeToolSet.has(tool.id)
-                  ? "border-emerald-400 bg-emerald-500/20"
-                  : "border-slate-600 bg-slate-900"
+                  ? "border-[var(--ll-yellow)] bg-[var(--ll-yellow-soft)]"
+                  : "border-[var(--ll-border)] bg-[var(--ll-bg)]"
               }`}
               onClick={() => {
                 if (activeToolSet.has(tool.id)) {

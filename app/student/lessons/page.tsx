@@ -40,12 +40,12 @@ export default function StudentLessonsPage() {
 
   if (loading) {
     return (
-      <main className="min-h-screen bg-slate-950 px-4 py-8">
+      <main className="min-h-screen bg-[var(--ll-bg)] px-4 py-8">
         <div className="mx-auto max-w-3xl space-y-6">
-          <div className="h-8 w-1/3 animate-pulse rounded-lg bg-slate-800" />
+          <div className="h-8 w-1/3 animate-pulse rounded-lg bg-[var(--ll-surface)]" />
           <div className="grid gap-4 sm:grid-cols-2">
             {Array.from({ length: 6 }).map((_, i) => (
-              <div key={i} className="h-28 animate-pulse rounded-2xl bg-slate-800" />
+              <div key={i} className="h-28 animate-pulse rounded-xl bg-[var(--ll-surface)]" />
             ))}
           </div>
         </div>
@@ -54,21 +54,21 @@ export default function StudentLessonsPage() {
   }
 
   return (
-    <main className="min-h-screen bg-slate-950 px-4 py-8">
+    <main className="min-h-screen bg-[var(--ll-bg)] px-4 py-8">
       <div className="mx-auto max-w-3xl space-y-6">
-        <Link href="/student/dashboard" className="inline-block text-sm text-emerald-300 hover:text-emerald-200">
+        <Link href="/student/dashboard" className="inline-block text-sm text-[var(--ll-yellow)] hover:text-[var(--ll-yellow)]">
           &larr; Back to Dashboard
         </Link>
 
-        <h1 className="text-2xl font-bold text-slate-50">My Lessons</h1>
+        <h1 className="text-2xl font-bold text-[var(--ll-text)]">My Lessons</h1>
 
         {error && (
           <p className="text-sm text-red-400">{error}</p>
         )}
 
         {!error && lessons.length === 0 && (
-          <div className="rounded-2xl border border-white/10 bg-slate-900/70 p-8 text-center">
-            <p className="text-sm text-slate-400">No lessons available yet.</p>
+          <div className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 p-8 text-center">
+            <p className="text-sm text-[var(--ll-text-muted)]">No lessons available yet.</p>
           </div>
         )}
 
@@ -77,16 +77,16 @@ export default function StudentLessonsPage() {
             <Link
               key={lesson.contentId}
               href={`/student/lesson/${lesson.contentId}`}
-              className="group rounded-2xl border border-white/10 bg-slate-900/70 p-5 space-y-3 hover:border-emerald-400/30 transition-colors"
+              className="group rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 p-5 space-y-3 hover:border-emerald-400/30 transition-colors"
             >
-              <h2 className="text-sm font-semibold text-slate-50 group-hover:text-emerald-300 transition-colors">
+              <h2 className="text-sm font-semibold text-[var(--ll-text)] group-hover:text-[var(--ll-yellow)] transition-colors">
                 {lesson.displayTitle}
               </h2>
               <div className="flex flex-wrap gap-2">
-                <span className="rounded-full bg-emerald-500/20 border border-emerald-400/30 px-2.5 py-0.5 text-[11px] font-medium text-emerald-300">
+                <span className="rounded-full bg-[var(--ll-yellow)]/20 border border-emerald-400/30 px-2.5 py-0.5 text-[11px] font-medium text-[var(--ll-yellow)]">
                   Grade {lesson.grade}
                 </span>
-                <span className="rounded-full bg-emerald-500/20 border border-emerald-400/30 px-2.5 py-0.5 text-[11px] font-medium text-emerald-300">
+                <span className="rounded-full bg-[var(--ll-yellow)]/20 border border-emerald-400/30 px-2.5 py-0.5 text-[11px] font-medium text-[var(--ll-yellow)]">
                   {lesson.subject}
                 </span>
               </div>

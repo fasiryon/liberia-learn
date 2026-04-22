@@ -51,26 +51,26 @@ export default function TeacherProfileClient() {
   }
 
   return (
-    <main className="min-h-screen bg-slate-950 px-4 py-8 text-slate-50">
+    <main className="min-h-screen bg-[var(--ll-bg)] px-4 py-8 text-[var(--ll-text)]">
       <div className="mx-auto max-w-3xl space-y-6">
         <div>
-          <Link href="/teacher" className="text-sm text-emerald-300 hover:text-emerald-200">
+          <Link href="/teacher" className="text-sm text-[var(--ll-yellow)] hover:text-[var(--ll-yellow)]">
             &larr; Back to Teacher Dashboard
           </Link>
           <h1 className="mt-3 text-3xl font-bold">Teacher Profile</h1>
-          <p className="mt-2 text-sm text-slate-400">
+          <p className="mt-2 text-sm text-[var(--ll-text-muted)]">
             Add a short teaching bio so students and school staff can understand your classroom focus.
           </p>
         </div>
 
-        <section className="rounded-3xl border border-white/10 bg-slate-900/70 p-6">
-          <label className="block text-sm font-medium text-slate-200">
+        <section className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 p-6">
+          <label className="block text-sm font-medium text-[var(--ll-text)]">
             Short bio
           </label>
           <textarea
             value={bio}
             onChange={(event) => setBio(event.target.value)}
-            className="mt-3 min-h-[180px] w-full rounded-2xl border border-slate-700 bg-slate-950 px-4 py-3 text-sm text-slate-100"
+            className="mt-3 min-h-[180px] w-full rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)] px-4 py-3 text-sm text-[var(--ll-text)]"
             placeholder="Example: I teach JSS mathematics and focus on step-by-step problem solving."
             disabled={loading}
           />
@@ -79,11 +79,11 @@ export default function TeacherProfileClient() {
               type="button"
               onClick={saveProfile}
               disabled={saving || loading}
-              className="rounded-full bg-emerald-400 px-5 py-2 text-sm font-semibold text-slate-950 disabled:opacity-60"
+              className="rounded-full bg-[var(--ll-yellow-soft)] px-5 py-2 text-sm font-semibold text-[var(--ll-text-faint)] disabled:opacity-60"
             >
               {saving ? "Saving..." : "Save profile"}
             </button>
-            {message ? <p className="text-sm text-slate-300">{message}</p> : null}
+            {message ? <p className="text-sm text-[var(--ll-text)]">{message}</p> : null}
           </div>
         </section>
       </div>

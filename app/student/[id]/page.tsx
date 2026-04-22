@@ -54,21 +54,21 @@ export default function StudentProfilePage({ params }: StudentProfilePageProps) 
   }, [id]);
 
   return (
-    <main className="min-h-screen bg-slate-950 text-slate-50 px-4 py-8">
+    <main className="min-h-screen bg-[var(--ll-bg)] text-[var(--ll-text)] px-4 py-8">
       <div className="max-w-4xl mx-auto">
         <div className="flex items-center justify-between mb-6">
           <div>
-            <p className="text-xs font-semibold uppercase tracking-wide text-emerald-300 mb-2">
+            <p className="text-xs font-semibold uppercase tracking-wide text-[var(--ll-yellow)] mb-2">
               LIBERIALEARN · STUDENT
             </p>
             <h1 className="text-2xl font-bold">Student Profile</h1>
-            <p className="text-sm text-slate-400 mt-1">
+            <p className="text-sm text-[var(--ll-text-muted)] mt-1">
               ID: <span className="font-mono">{id}</span>
             </p>
           </div>
           <Link
             href="/teacher"
-            className="rounded-xl border border-slate-700 px-4 py-2 text-sm text-slate-200 hover:bg-slate-800 transition-colors"
+            className="rounded-xl border border-[var(--ll-border)] px-4 py-2 text-sm text-[var(--ll-text)] hover:bg-[var(--ll-surface)] transition-colors"
           >
             ← Back to teacher dashboard
           </Link>
@@ -76,29 +76,29 @@ export default function StudentProfilePage({ params }: StudentProfilePageProps) 
 
         <div className="grid gap-6 md:grid-cols-3">
           {/* Basic Info */}
-          <div className="md:col-span-2 rounded-2xl border border-slate-800 bg-slate-900/80 p-6">
-            <h2 className="text-sm font-semibold uppercase tracking-wide text-slate-400 mb-4">
+          <div className="md:col-span-2 rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/80 p-6">
+            <h2 className="text-sm font-semibold uppercase tracking-wide text-[var(--ll-text-muted)] mb-4">
               Basic Information
             </h2>
 
             {loading ? (
-              <p className="text-slate-400 text-sm">Loading profile…</p>
+              <p className="text-[var(--ll-text-muted)] text-sm">Loading profile…</p>
             ) : (
               <div className="space-y-3 text-sm">
                 <div className="flex justify-between">
-                  <span className="text-slate-400">Name</span>
+                  <span className="text-[var(--ll-text-muted)]">Name</span>
                   <span className="font-semibold">
                     {student?.name ?? "Not set"}
                   </span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-slate-400">Email</span>
+                  <span className="text-[var(--ll-text-muted)]">Email</span>
                   <span className="font-semibold">
                     {student?.email ?? "Not set"}
                   </span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-slate-400">Grade Level</span>
+                  <span className="text-[var(--ll-text-muted)]">Grade Level</span>
                   <span className="font-semibold">
                     {student?.gradeLevel ?? "Not set"}
                   </span>
@@ -115,21 +115,21 @@ export default function StudentProfilePage({ params }: StudentProfilePageProps) 
           </div>
 
           {/* Placement Summary */}
-          <div className="rounded-2xl border border-slate-800 bg-slate-900/80 p-6">
-            <h2 className="text-sm font-semibold uppercase tracking-wide text-slate-400 mb-4">
+          <div className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/80 p-6">
+            <h2 className="text-sm font-semibold uppercase tracking-wide text-[var(--ll-text-muted)] mb-4">
               Placement Summary
             </h2>
-            <p className="text-sm text-slate-300 mb-1">
+            <p className="text-sm text-[var(--ll-text)] mb-1">
               Recommended Grade:
             </p>
-            <p className="text-3xl font-bold text-emerald-300 mb-3">
+            <p className="text-3xl font-bold text-[var(--ll-yellow)] mb-3">
               {student?.placementGrade
                 ? `Grade ${student.placementGrade}`
                 : "Not set"}
             </p>
             <Link
               href="/placement"
-              className="inline-flex w-full items-center justify-center rounded-xl bg-emerald-500 px-4 py-2.5 text-sm font-semibold text-slate-950 hover:bg-emerald-400 transition-colors"
+              className="inline-flex w-full items-center justify-center rounded-xl bg-[var(--ll-yellow)] px-4 py-2.5 text-sm font-semibold text-[var(--ll-text-faint)] hover:bg-[var(--ll-yellow-soft)] transition-colors"
             >
               View / Run Placement Test
             </Link>

@@ -48,14 +48,14 @@ export default async function TeacherHomeworkList({
 
   if (classes.length === 0) {
     return (
-      <main className="flex min-h-screen items-center justify-center bg-slate-950 text-slate-50">
-        <div className="rounded-2xl border border-slate-800 bg-slate-900/80 p-8 text-center">
+      <main className="flex min-h-screen items-center justify-center bg-[var(--ll-bg)] text-[var(--ll-text)]">
+        <div className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/80 p-8 text-center">
           <h1 className="mb-2 text-xl font-semibold">No classes found</h1>
-          <p className="mb-4 text-sm text-slate-400">
+          <p className="mb-4 text-sm text-[var(--ll-text-muted)]">
             Contact your admin to assign you to a class before managing
             homework.
           </p>
-          <Link href="/teacher" className="text-sm text-blue-300 hover:underline">
+          <Link href="/teacher" className="text-sm text-[var(--ll-silver)] hover:underline">
             ← Back to teacher dashboard
           </Link>
         </div>
@@ -83,7 +83,7 @@ export default async function TeacherHomeworkList({
   const selectedClassName = selectedClass?.name || "Selected class";
 
   return (
-    <main className="min-h-screen bg-slate-950 text-slate-50">
+    <main className="min-h-screen bg-[var(--ll-bg)] text-[var(--ll-text)]">
       <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_top,_#3b82f622,_transparent_60%)]" />
 
       <div className="mx-auto max-w-5xl px-4 py-6">
@@ -92,27 +92,27 @@ export default async function TeacherHomeworkList({
           <div>
             <Link
               href="/teacher"
-              className="mb-2 inline-block text-sm text-blue-300 hover:underline"
+              className="mb-2 inline-block text-sm text-[var(--ll-silver)] hover:underline"
             >
               ← Back to teacher dashboard
             </Link>
             <h1 className="text-2xl font-bold">Homework Assignments</h1>
-            <p className="text-sm text-slate-400">
+            <p className="text-sm text-[var(--ll-text-muted)]">
               View and manage homework for your classes.
             </p>
           </div>
 
           <Link
             href="/teacher/homework/create"
-            className="rounded-full bg-emerald-500 px-4 py-2 text-sm font-semibold text-slate-950 hover:bg-emerald-400"
+            className="rounded-full bg-[var(--ll-yellow)] px-4 py-2 text-sm font-semibold text-[var(--ll-text-faint)] hover:bg-[var(--ll-yellow-soft)]"
           >
             + Create Homework
           </Link>
         </header>
 
         {/* Class Selector */}
-        <div className="mb-6 rounded-2xl border border-slate-800 bg-slate-900/80 p-4">
-          <p className="mb-2 text-xs uppercase tracking-wide text-slate-400">
+        <div className="mb-6 rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/80 p-4">
+          <p className="mb-2 text-xs uppercase tracking-wide text-[var(--ll-text-muted)]">
             Select Class
           </p>
           <div className="flex flex-wrap gap-2">
@@ -122,8 +122,8 @@ export default async function TeacherHomeworkList({
                 href={`/teacher/homework?classId=${cls.id}`}
                 className={`rounded-full px-4 py-2 text-sm font-semibold transition-colors ${
                   cls.id === selectedClassId
-                    ? "bg-blue-500 text-white"
-                    : "bg-slate-800 text-slate-300 hover:bg-slate-700"
+                    ? "bg-[var(--ll-silver-soft)] text-[var(--ll-text)]"
+                    : "bg-[var(--ll-surface)] text-[var(--ll-text)] hover:bg-[var(--ll-surface-muted)]"
                 }`}
               >
                 {cls.name}
@@ -135,15 +135,15 @@ export default async function TeacherHomeworkList({
         {/* Homework List */}
         <div className="space-y-4">
           {homework.length === 0 ? (
-            <div className="rounded-2xl border border-slate-800 bg-slate-900/80 p-12 text-center">
+            <div className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/80 p-12 text-center">
               <p className="mb-3 text-4xl">📝</p>
               <p className="mb-2 text-lg font-medium">No homework yet</p>
-              <p className="mb-4 text-sm text-slate-400">
+              <p className="mb-4 text-sm text-[var(--ll-text-muted)]">
                 Create your first homework assignment for {selectedClassName}.
               </p>
               <Link
                 href="/teacher/homework/create"
-                className="inline-block rounded-full bg-emerald-500 px-6 py-2 text-sm font-semibold text-slate-950 hover:bg-emerald-400"
+                className="inline-block rounded-full bg-[var(--ll-yellow)] px-6 py-2 text-sm font-semibold text-[var(--ll-text-faint)] hover:bg-[var(--ll-yellow-soft)]"
               >
                 + Create Homework
               </Link>
@@ -159,18 +159,18 @@ export default async function TeacherHomeworkList({
                 <Link
                   key={hw.id}
                   href={`/teacher/homework/${hw.id}`}
-                  className="block rounded-2xl border border-slate-800 bg-slate-900/80 p-5 transition-colors hover:border-blue-500/50"
+                  className="block rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/80 p-5 transition-colors hover:border-blue-500/50"
                 >
                   <div className="flex items-start justify-between gap-4">
                     <div className="flex-1">
                       <h3 className="mb-1 text-lg font-semibold">
                         {hw.title}
                       </h3>
-                      <p className="mb-3 text-sm text-slate-400">
+                      <p className="mb-3 text-sm text-[var(--ll-text-muted)]">
                         {hw.instructions || "No description"}
                       </p>
 
-                      <div className="flex flex-wrap items-center gap-4 text-xs text-slate-500">
+                      <div className="flex flex-wrap items-center gap-4 text-xs text-[var(--ll-text-faint)]">
                         <span>Class: {hw.Class.name}</span>
                         <span>
                           Assigned:{" "}
@@ -186,13 +186,13 @@ export default async function TeacherHomeworkList({
                     </div>
 
                     <div className="ml-4 text-right">
-                      <p className="mb-1 text-xs text-slate-400">
+                      <p className="mb-1 text-xs text-[var(--ll-text-muted)]">
                         Submissions
                       </p>
-                      <p className="text-2xl font-bold text-blue-300">
+                      <p className="text-2xl font-bold text-[var(--ll-silver)]">
                         {totalSubmissions}
                       </p>
-                      <p className="text-xs text-slate-500">
+                      <p className="text-xs text-[var(--ll-text-faint)]">
                         {gradedSubmissions} graded
                       </p>
                     </div>

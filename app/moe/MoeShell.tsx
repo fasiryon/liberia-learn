@@ -27,18 +27,18 @@ export default function MoeShell({
   const pathname = usePathname();
 
   return (
-    <div className="min-h-screen bg-[#0b1120] text-slate-100">
-      <header className="sticky top-0 z-20 border-b border-white/10 bg-[#0a1326]/95 backdrop-blur">
+    <div className="min-h-screen bg-[#0b1120] text-[var(--ll-text)]">
+      <header className="sticky top-0 z-20 border-b border-[var(--ll-border)] bg-[#0a1326]/95 backdrop-blur">
         <div className="mx-auto flex w-full max-w-7xl flex-wrap items-center gap-4 px-4 py-3">
           <Link href="/moe/dashboard" className="flex items-center gap-3">
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-400 text-sm font-black text-slate-950">
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[var(--ll-yellow-soft)] text-sm font-black text-[var(--ll-text-faint)]">
               L
             </div>
             <div className="leading-tight">
-              <p className="text-xs font-semibold uppercase tracking-wide text-emerald-300">
+              <p className="text-xs font-semibold uppercase tracking-wide text-[var(--ll-yellow)]">
                 LiberiaLearn
               </p>
-              <p className="text-sm font-medium text-slate-100">
+              <p className="text-sm font-medium text-[var(--ll-text)]">
                 Ministry of Education Portal
               </p>
             </div>
@@ -53,8 +53,8 @@ export default function MoeShell({
                   href={item.href}
                   className={`rounded-full px-3 py-1.5 transition ${
                     active
-                      ? "bg-emerald-500/20 text-emerald-200"
-                      : "text-slate-300 hover:text-slate-100 hover:bg-white/5"
+                      ? "bg-[var(--ll-yellow)]/20 text-[var(--ll-yellow)]"
+                      : "text-[var(--ll-text)] hover:text-[var(--ll-text)] hover:bg-white/5"
                   }`}
                 >
                   {item.label}
@@ -65,8 +65,8 @@ export default function MoeShell({
 
           <div className="ml-auto flex flex-wrap items-center gap-3 text-xs">
             <div className="rounded-full bg-white/5 px-3 py-1.5">
-              <p className="text-slate-200">{user.name || "MOE Official"}</p>
-              <p className="text-[10px] text-slate-400">{user.email || "—"}</p>
+              <p className="text-[var(--ll-text)]">{user.name || "MOE Official"}</p>
+              <p className="text-[10px] text-[var(--ll-text-muted)]">{user.email || "—"}</p>
             </div>
           </div>
         </div>

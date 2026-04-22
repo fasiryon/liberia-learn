@@ -199,9 +199,9 @@ export default function ChemicalReactionScene({ state, onAction }: Props) {
         ref={canvasRef}
         width={WIDTH}
         height={HEIGHT}
-        className="w-full rounded-lg border border-slate-800 bg-slate-950"
+        className="w-full rounded-lg border border-[var(--ll-border)] bg-[var(--ll-bg)]"
       />
-      <div className="grid gap-2 text-sm text-slate-100 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-2 text-sm text-[var(--ll-text)] sm:grid-cols-2 lg:grid-cols-4">
         <span>Reactant A: {state.reactantA.toFixed(1)} mol</span>
         <span>Reactant B: {state.reactantB.toFixed(1)} mol</span>
         <span>Product C: {state.productC.toFixed(1)} mol</span>
@@ -215,14 +215,14 @@ export default function ChemicalReactionScene({ state, onAction }: Props) {
           type="button"
           disabled={state.reactionStarted}
           onClick={() => onAction({ type: "START_REACTION" })}
-          className="min-h-11 rounded-full bg-cyan-300 px-4 text-sm font-semibold text-slate-950 disabled:bg-slate-700 disabled:text-slate-400"
+          className="min-h-11 rounded-full bg-[var(--ll-silver-soft)] px-4 text-sm font-semibold text-[var(--ll-text-faint)] disabled:bg-[var(--ll-surface-muted)] disabled:text-[var(--ll-text-muted)]"
         >
           Start Reaction
         </button>
         <button
           type="button"
           onClick={() => onAction({ type: state.catalyst ? "REMOVE_CATALYST" : "ADD_CATALYST" })}
-          className="min-h-11 rounded-full border border-slate-700 px-4 text-sm text-slate-100"
+          className="min-h-11 rounded-full border border-[var(--ll-border)] px-4 text-sm text-[var(--ll-text)]"
         >
           {state.catalyst ? "Remove Catalyst" : "Add Catalyst"}
         </button>
@@ -234,14 +234,14 @@ export default function ChemicalReactionScene({ state, onAction }: Props) {
               value: state.energyType === "exothermic" ? "endothermic" : "exothermic",
             })
           }
-          className="min-h-11 rounded-full border border-slate-700 px-4 text-sm text-slate-100"
+          className="min-h-11 rounded-full border border-[var(--ll-border)] px-4 text-sm text-[var(--ll-text)]"
         >
           {state.energyType === "exothermic" ? "Exothermic" : "Endothermic"}
         </button>
         <button
           type="button"
           onClick={() => onAction({ type: "RESET" })}
-          className="min-h-11 rounded-full border border-slate-700 px-4 text-sm text-slate-100"
+          className="min-h-11 rounded-full border border-[var(--ll-border)] px-4 text-sm text-[var(--ll-text)]"
         >
           Reset
         </button>
@@ -252,7 +252,7 @@ export default function ChemicalReactionScene({ state, onAction }: Props) {
           ["Reactant B", "reactantB", 0, 100, state.reactantB],
           ["Temperature", "temperature", 0, 500, state.temperature],
         ].map(([label, key, min, max, value]) => (
-          <label key={String(key)} className="rounded-lg border border-slate-800 bg-slate-900/70 p-3 text-sm text-slate-100">
+          <label key={String(key)} className="rounded-lg border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 p-3 text-sm text-[var(--ll-text)]">
             <span className="flex justify-between">
               {label}
               <strong>{Number(value).toFixed(0)}</strong>

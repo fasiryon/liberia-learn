@@ -72,60 +72,60 @@ export default async function HomeworkDetailPage({ params }: PageProps) {
     homework.dueAt && new Date(homework.dueAt).toLocaleString("en-US");
 
   return (
-    <main className="min-h-screen bg-slate-950 text-slate-50">
+    <main className="min-h-screen bg-[var(--ll-bg)] text-[var(--ll-text)]">
       <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_top,_#22c55e22,_transparent_60%)]" />
 
       <div className="mx-auto max-w-4xl px-4 py-6 space-y-6">
         {/* Header row */}
         <div className="flex items-center justify-between gap-4">
           <div>
-            <p className="text-[11px] uppercase tracking-wide text-emerald-300">
+            <p className="text-[11px] uppercase tracking-wide text-[var(--ll-yellow)]">
               LIBERIALEARN · Homework
             </p>
             <h1 className="mt-1 text-2xl font-semibold">{homework.title}</h1>
-            <p className="mt-1 text-xs text-slate-400">
+            <p className="mt-1 text-xs text-[var(--ll-text-muted)]">
               {className} · {schoolName}
             </p>
             {dueDate && (
-              <p className="text-[11px] text-slate-500">
-                Due: <span className="font-medium text-slate-200">{dueDate}</span>
+              <p className="text-[11px] text-[var(--ll-text-faint)]">
+                Due: <span className="font-medium text-[var(--ll-text)]">{dueDate}</span>
               </p>
             )}
           </div>
 
           <Link
             href="/assignments"
-            className="text-xs rounded-full border border-slate-700 px-3 py-1.5 text-slate-300 hover:text-slate-50"
+            className="text-xs rounded-full border border-[var(--ll-border)] px-3 py-1.5 text-[var(--ll-text)] hover:text-[var(--ll-text)]"
           >
             ← Back to assignments
           </Link>
         </div>
 
         {/* Status */}
-        <section className="rounded-2xl border border-slate-800 bg-slate-900/80 p-4 text-sm">
-          <p className="text-[11px] uppercase tracking-wide text-slate-400 mb-1">
+        <section className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/80 p-4 text-sm">
+          <p className="text-[11px] uppercase tracking-wide text-[var(--ll-text-muted)] mb-1">
             Status
           </p>
           {submission ? (
             <div className="flex flex-wrap items-baseline gap-2">
-              <span className="rounded-full bg-emerald-500/15 px-2 py-0.5 text-[11px] font-semibold text-emerald-300">
+              <span className="rounded-full bg-[var(--ll-yellow)]/15 px-2 py-0.5 text-[11px] font-semibold text-[var(--ll-yellow)]">
                 Submitted
               </span>
-              <p className="text-xs text-slate-400">
+              <p className="text-xs text-[var(--ll-text-muted)]">
                 Submitted on{" "}
                 {new Date(submission.submittedAt).toLocaleString("en-US")}
               </p>
               {(submission.teacherScore ?? submission.aiScore) != null && (
-                <p className="text-xs text-slate-400">
+                <p className="text-xs text-[var(--ll-text-muted)]">
                   · Score:{" "}
-                  <span className="font-semibold text-emerald-300">
+                  <span className="font-semibold text-[var(--ll-yellow)]">
                     {submission.teacherScore ?? submission.aiScore}%
                   </span>
                 </p>
               )}
             </div>
           ) : (
-            <p className="text-xs text-amber-300">
+            <p className="text-xs text-[var(--ll-yellow)]">
               Not submitted yet. Answer all questions below and then press{" "}
               <span className="font-semibold">Submit homework</span>.
             </p>
@@ -134,19 +134,19 @@ export default async function HomeworkDetailPage({ params }: PageProps) {
 
         {/* Instructions */}
         {homework.instructions && (
-          <section className="rounded-2xl border border-slate-800 bg-slate-900/80 p-4 text-sm">
-            <p className="text-[11px] uppercase tracking-wide text-slate-400 mb-2">
+          <section className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/80 p-4 text-sm">
+            <p className="text-[11px] uppercase tracking-wide text-[var(--ll-text-muted)] mb-2">
               Instructions
             </p>
-            <p className="text-slate-200 whitespace-pre-line">
+            <p className="text-[var(--ll-text)] whitespace-pre-line">
               {homework.instructions}
             </p>
           </section>
         )}
 
         {/* Questions + form */}
-        <section className="rounded-2xl border border-slate-800 bg-slate-900/80 p-4 text-sm space-y-4">
-          <p className="text-[11px] uppercase tracking-wide text-slate-400">
+        <section className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/80 p-4 text-sm space-y-4">
+          <p className="text-[11px] uppercase tracking-wide text-[var(--ll-text-muted)]">
             Questions
           </p>
 
@@ -156,7 +156,7 @@ export default async function HomeworkDetailPage({ params }: PageProps) {
             className="space-y-4"
           >
             {questions.length === 0 && (
-              <p className="text-xs text-slate-400">
+              <p className="text-xs text-[var(--ll-text-muted)]">
                 No questions found for this homework.
               </p>
             )}
@@ -179,16 +179,16 @@ export default async function HomeworkDetailPage({ params }: PageProps) {
               return (
                 <div
                   key={index}
-                  className="rounded-xl bg-slate-950/80 border border-slate-800 p-3 space-y-2"
+                  className="rounded-xl bg-[var(--ll-bg)]/80 border border-[var(--ll-border)] p-3 space-y-2"
                 >
-                  <p className="text-slate-100 text-sm">
+                  <p className="text-[var(--ll-text)] text-sm">
                     {index + 1}. {label}
                   </p>
                   <textarea
                     name={`answer-${index}`}
                     defaultValue={existingValue}
                     rows={3}
-                    className="w-full rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 text-xs text-slate-100 outline-none focus:border-emerald-400"
+                    className="w-full rounded-lg border border-[var(--ll-border)] bg-[var(--ll-bg)] px-3 py-2 text-xs text-[var(--ll-text)] outline-none focus:border-emerald-400"
                     placeholder="Type your answer here..."
                     required
                   />
@@ -198,12 +198,12 @@ export default async function HomeworkDetailPage({ params }: PageProps) {
 
             {questions.length > 0 && (
               <div className="flex items-center justify-between pt-2">
-                <p className="text-[11px] text-slate-500">
+                <p className="text-[11px] text-[var(--ll-text-faint)]">
                   Make sure each answer is clear before submitting.
                 </p>
                 <button
                   type="submit"
-                  className="rounded-full bg-emerald-500 px-4 py-2 text-xs font-semibold text-slate-950 hover:bg-emerald-400"
+                  className="rounded-full bg-[var(--ll-yellow)] px-4 py-2 text-xs font-semibold text-[var(--ll-text-faint)] hover:bg-[var(--ll-yellow-soft)]"
                 >
                   {submission ? "Update submission" : "Submit homework"}
                 </button>

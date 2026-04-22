@@ -42,41 +42,41 @@ export function TeacherLabReviewForm({
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4 rounded-3xl border border-white/10 bg-slate-900/70 p-6">
-      <h2 className="text-lg font-semibold text-slate-100">Teacher Review</h2>
+    <form onSubmit={handleSubmit} className="space-y-4 rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 p-6">
+      <h2 className="text-lg font-semibold text-[var(--ll-text)]">Teacher Review</h2>
 
       <label className="block space-y-2">
-        <span className="text-sm font-medium text-slate-200">Teacher score (0-100)</span>
+        <span className="text-sm font-medium text-[var(--ll-text)]">Teacher score (0-100)</span>
         <input
           type="number"
           min={0}
           max={100}
           value={score}
           onChange={(event) => setScore(Number(event.target.value))}
-          className="w-full rounded-2xl border border-slate-700 bg-slate-950 px-4 py-3 text-sm text-slate-100"
+          className="w-full rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)] px-4 py-3 text-sm text-[var(--ll-text)]"
         />
       </label>
 
       <label className="block space-y-2">
-        <span className="text-sm font-medium text-slate-200">Teacher feedback</span>
+        <span className="text-sm font-medium text-[var(--ll-text)]">Teacher feedback</span>
         <textarea
           rows={5}
           value={teacherFeedback}
           onChange={(event) => setTeacherFeedback(event.target.value)}
-          className="w-full rounded-2xl border border-slate-700 bg-slate-950 px-4 py-3 text-sm text-slate-100"
+          className="w-full rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)] px-4 py-3 text-sm text-[var(--ll-text)]"
         />
       </label>
 
       <button
         type="submit"
         disabled={submitting}
-        className="rounded-2xl bg-emerald-500 px-5 py-3 text-sm font-semibold text-slate-950 hover:bg-emerald-400 disabled:cursor-not-allowed disabled:opacity-60"
+        className="rounded-xl bg-[var(--ll-yellow)] px-5 py-3 text-sm font-semibold text-[var(--ll-text-faint)] hover:bg-[var(--ll-yellow-soft)] disabled:cursor-not-allowed disabled:opacity-60"
       >
         {submitting ? "Submitting Review..." : "Submit Review"}
       </button>
 
       {status ? (
-        <div className="rounded-2xl border border-white/10 bg-slate-950/70 p-3 text-sm text-slate-300">
+        <div className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 p-3 text-sm text-[var(--ll-text)]">
           {status}
         </div>
       ) : null}

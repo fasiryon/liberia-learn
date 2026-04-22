@@ -68,20 +68,20 @@ export default function MoeDistrictsPage() {
   return (
     <div className="space-y-6">
       <div>
-        <p className="text-xs uppercase tracking-[0.2em] text-emerald-300">Districts</p>
+        <p className="text-xs uppercase tracking-[0.2em] text-[var(--ll-yellow)]">Districts</p>
         <h1 className="text-3xl font-semibold">District Performance</h1>
-        <p className="text-sm text-slate-400">
+        <p className="text-sm text-[var(--ll-text-muted)]">
           National delivery compliance and intervention aggregates by district.
         </p>
       </div>
 
       {error && (
-        <div className="rounded-2xl border border-red-500/30 bg-red-500/10 p-4 text-sm text-red-300">
+        <div className="rounded-xl border border-red-500/30 bg-red-500/10 p-4 text-sm text-red-300">
           {error}
         </div>
       )}
 
-      <section className="rounded-2xl border border-white/10 bg-white/5 p-6">
+      <section className="rounded-xl border border-[var(--ll-border)] bg-white/5 p-6">
         {loading ? (
           <div className="space-y-2">
             {Array.from({ length: 6 }).map((_, idx) => (
@@ -89,14 +89,14 @@ export default function MoeDistrictsPage() {
             ))}
           </div>
         ) : districts.length === 0 ? (
-          <div className="rounded-xl border border-white/10 bg-black/10 p-6 text-sm text-slate-400">
+          <div className="rounded-xl border border-[var(--ll-border)] bg-black/10 p-6 text-sm text-[var(--ll-text-muted)]">
             No district data available yet.
           </div>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="border-b border-white/10 text-left text-xs text-slate-500">
+                <tr className="border-b border-[var(--ll-border)] text-left text-xs text-[var(--ll-text-faint)]">
                   <th className="pb-2 pr-4">District</th>
                   <th className="pb-2 pr-4">Schools</th>
                   <th className="pb-2 pr-4">Lessons Delivered</th>
@@ -117,11 +117,11 @@ export default function MoeDistrictsPage() {
                       ? "Watch"
                       : "At Risk";
                   return (
-                    <tr key={d.districtId} className="border-b border-white/5 text-slate-200">
+                    <tr key={d.districtId} className="border-b border-white/5 text-[var(--ll-text)]">
                       <td className="py-3 pr-4 font-medium">
                         <Link
                           href={`/moe/districts/${d.districtId}`}
-                          className="hover:text-emerald-200"
+                          className="hover:text-[var(--ll-yellow)]"
                         >
                           {d.districtName}
                         </Link>
@@ -135,7 +135,7 @@ export default function MoeDistrictsPage() {
                       </td>
                       <td className="py-3 pr-4">{interventionMap[d.districtId] ?? 0}</td>
                       <td className="py-3">
-                        <span className="rounded-full bg-white/5 px-2 py-0.5 text-[11px] text-slate-300">
+                        <span className="rounded-full bg-white/5 px-2 py-0.5 text-[11px] text-[var(--ll-text)]">
                           {status}
                         </span>
                       </td>

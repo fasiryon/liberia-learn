@@ -29,7 +29,7 @@ export function AttachDemoSchoolButton() {
       <button
         onClick={handleAttach}
         disabled={loading}
-        className="rounded-xl bg-emerald-500 px-5 py-3 text-sm font-semibold text-slate-950 shadow-lg shadow-emerald-500/30 hover:bg-emerald-400 disabled:opacity-50"
+        className="rounded-xl bg-[var(--ll-yellow)] px-5 py-3 text-sm font-semibold text-[var(--ll-text-faint)] shadow-lg shadow-emerald-500/30 hover:bg-[var(--ll-yellow-soft)] disabled:opacity-50"
       >
         {loading ? "Attaching..." : "Switch to Demo School"}
       </button>

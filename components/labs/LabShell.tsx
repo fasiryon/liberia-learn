@@ -132,15 +132,15 @@ export default function LabShell({
   }
 
   return (
-    <section className="overflow-hidden rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)] text-slate-50 shadow-none">
+    <section className="overflow-hidden rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)] text-[var(--ll-text)] shadow-none">
       <div className="grid min-h-[28rem] grid-cols-1 lg:grid-cols-[minmax(0,1fr)_18rem]">
-        <div className="min-w-0 bg-slate-950">
+        <div className="min-w-0 bg-[var(--ll-surface)]">
           {webglAvailable === false ? (
             fallback ?? <LabFallback labId={labId} state={displayedState} />
           ) : (
             <Suspense
               fallback={
-                <div className="flex min-h-72 items-center justify-center bg-slate-950 text-sm text-slate-300">
+                <div className="flex min-h-72 items-center justify-center bg-[var(--ll-surface)] text-sm text-[var(--ll-text-muted)]">
                   Loading lab scene...
                 </div>
               }
@@ -150,15 +150,15 @@ export default function LabShell({
           )}
         </div>
 
-        <aside className="ll-page-enter border-t border-[var(--ll-border)] bg-[var(--ll-bg)] p-4 lg:border-l lg:border-t-0">
-          <p className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-[0.18em] text-[var(--ll-text-muted)]">
+        <aside className="ll-page-enter border-t border-[var(--ll-silver)]/20 bg-[var(--ll-bg)] p-4 lg:border-l lg:border-t-0">
+          <p className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-[0.18em] text-[var(--ll-silver)]">
             Observations
           </p>
           <dl className="mt-3 space-y-2">
             {entries.map(([key, value]) => (
               <div key={key} className="flex items-center justify-between gap-3 rounded-lg bg-[var(--ll-surface-muted)] px-3 py-2 text-sm [transition:background-color_300ms_ease-out]">
                 <dt className="text-[var(--ll-text-muted)]">{key}</dt>
-                <dd className="font-medium text-slate-100">{value}</dd>
+                <dd className="font-medium text-[var(--ll-text)]">{value}</dd>
               </div>
             ))}
           </dl>

@@ -77,7 +77,7 @@ export default function UnitConverter({ onClose }: UnitConverterProps) {
     <div className="space-y-3">
       <div className="flex items-center justify-between">
         <h3 className="font-semibold">Unit Converter</h3>
-        <button type="button" aria-label="Close unit converter" className="rounded border border-slate-600 px-2 py-1 text-xs" onClick={() => onClose?.()}>Close</button>
+        <button type="button" aria-label="Close unit converter" className="rounded border border-[var(--ll-border)] px-2 py-1 text-xs" onClick={() => onClose?.()}>Close</button>
       </div>
 
       <div className="flex flex-wrap gap-2">
@@ -86,7 +86,7 @@ export default function UnitConverter({ onClose }: UnitConverterProps) {
             key={nextCategory}
             type="button"
             aria-label={`Select ${nextCategory} conversions`}
-            className={`rounded border px-2 py-1 text-xs ${category === nextCategory ? "border-emerald-400" : "border-slate-600"}`}
+            className={`rounded border px-2 py-1 text-xs ${category === nextCategory ? "border-emerald-400" : "border-[var(--ll-border)]"}`}
             onClick={() => {
               setCategory(nextCategory);
               setLeftUnit(0);
@@ -101,22 +101,22 @@ export default function UnitConverter({ onClose }: UnitConverterProps) {
       </div>
 
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-        <div className="space-y-2 rounded bg-slate-900 p-3">
-          <select aria-label="From unit" className="w-full rounded bg-slate-800 p-2" value={leftUnit} onChange={(e) => setLeftUnit(Number(e.target.value))}>
+        <div className="space-y-2 rounded bg-[var(--ll-bg)] p-3">
+          <select aria-label="From unit" className="w-full rounded bg-[var(--ll-surface)] p-2" value={leftUnit} onChange={(e) => setLeftUnit(Number(e.target.value))}>
             {units.map((unit, idx) => <option key={unit.label} value={idx}>{unit.label}</option>)}
           </select>
-          <input aria-label="From value" type="number" className="w-full rounded bg-slate-800 p-2" value={leftValue} onChange={(e) => syncFromLeft(e.target.value)} />
+          <input aria-label="From value" type="number" className="w-full rounded bg-[var(--ll-surface)] p-2" value={leftValue} onChange={(e) => syncFromLeft(e.target.value)} />
         </div>
 
-        <div className="space-y-2 rounded bg-slate-900 p-3">
-          <select aria-label="To unit" className="w-full rounded bg-slate-800 p-2" value={rightUnit} onChange={(e) => setRightUnit(Number(e.target.value))}>
+        <div className="space-y-2 rounded bg-[var(--ll-bg)] p-3">
+          <select aria-label="To unit" className="w-full rounded bg-[var(--ll-surface)] p-2" value={rightUnit} onChange={(e) => setRightUnit(Number(e.target.value))}>
             {units.map((unit, idx) => <option key={unit.label} value={idx}>{unit.label}</option>)}
           </select>
-          <input aria-label="To value" type="number" className="w-full rounded bg-slate-800 p-2" value={rightValue} onChange={(e) => syncFromRight(e.target.value)} />
+          <input aria-label="To value" type="number" className="w-full rounded bg-[var(--ll-surface)] p-2" value={rightValue} onChange={(e) => syncFromRight(e.target.value)} />
         </div>
       </div>
 
-      <p className="text-xs text-slate-400">Metric-first defaults are used for classroom context in Liberia.</p>
+      <p className="text-xs text-[var(--ll-text-muted)]">Metric-first defaults are used for classroom context in Liberia.</p>
     </div>
   );
 }

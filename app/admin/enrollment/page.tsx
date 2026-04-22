@@ -138,26 +138,26 @@ export default function EnrollmentManagementPage() {
   }
 
   return (
-    <main className="min-h-screen bg-slate-950 text-slate-50">
+    <main className="min-h-screen bg-[var(--ll-bg)] text-[var(--ll-text)]">
       <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_top,_#3b82f622,_transparent_60%)]" />
       <div className="mx-auto max-w-6xl space-y-6 px-4 py-6">
         <header>
-          <Link href="/admin" className="text-xs text-emerald-300 hover:text-emerald-200">
+          <Link href="/admin" className="text-xs text-[var(--ll-yellow)] hover:text-[var(--ll-yellow)]">
             Back to Admin Console
           </Link>
           <h1 className="mt-2 text-2xl font-bold">Enrollment Management</h1>
-          <p className="mt-1 text-sm text-slate-400">Track student school-year enrollment and status changes without disturbing class rosters.</p>
+          <p className="mt-1 text-sm text-[var(--ll-text-muted)]">Track student school-year enrollment and status changes without disturbing class rosters.</p>
         </header>
 
-        <section className="rounded-2xl border border-white/10 bg-slate-900/70 p-6">
+        <section className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 p-6">
           <h2 className="mb-4 text-lg font-semibold">Create Enrollment Record</h2>
           <form onSubmit={handleSubmit} className="grid gap-4 md:grid-cols-4">
             <div>
-              <label className="block text-xs text-slate-400">Student</label>
+              <label className="block text-xs text-[var(--ll-text-muted)]">Student</label>
               <select
                 value={form.studentId}
                 onChange={(e) => setForm((current) => ({ ...current, studentId: e.target.value }))}
-                className="mt-1 min-h-11 w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-3 text-sm"
+                className="mt-1 min-h-11 w-full rounded-lg border border-[var(--ll-border)] bg-[var(--ll-bg)] px-3 py-3 text-sm"
                 required
               >
                 <option value="">Select student...</option>
@@ -169,11 +169,11 @@ export default function EnrollmentManagementPage() {
               </select>
             </div>
             <div>
-              <label className="block text-xs text-slate-400">Academic Year</label>
+              <label className="block text-xs text-[var(--ll-text-muted)]">Academic Year</label>
               <select
                 value={form.academicYearId}
                 onChange={(e) => setForm((current) => ({ ...current, academicYearId: e.target.value }))}
-                className="mt-1 min-h-11 w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-3 text-sm"
+                className="mt-1 min-h-11 w-full rounded-lg border border-[var(--ll-border)] bg-[var(--ll-bg)] px-3 py-3 text-sm"
                 required
               >
                 <option value="">Select year...</option>
@@ -185,23 +185,23 @@ export default function EnrollmentManagementPage() {
               </select>
             </div>
             <div>
-              <label className="block text-xs text-slate-400">Grade</label>
+              <label className="block text-xs text-[var(--ll-text-muted)]">Grade</label>
               <input
                 type="number"
                 min={1}
                 max={12}
                 value={form.grade}
                 onChange={(e) => setForm((current) => ({ ...current, grade: Number(e.target.value) }))}
-                className="mt-1 min-h-11 w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-3 text-sm"
+                className="mt-1 min-h-11 w-full rounded-lg border border-[var(--ll-border)] bg-[var(--ll-bg)] px-3 py-3 text-sm"
                 required
               />
             </div>
             <div>
-              <label className="block text-xs text-slate-400">Status</label>
+              <label className="block text-xs text-[var(--ll-text-muted)]">Status</label>
               <select
                 value={form.status}
                 onChange={(e) => setForm((current) => ({ ...current, status: e.target.value as EnrollmentRecord["status"] }))}
-                className="mt-1 min-h-11 w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-3 text-sm"
+                className="mt-1 min-h-11 w-full rounded-lg border border-[var(--ll-border)] bg-[var(--ll-bg)] px-3 py-3 text-sm"
               >
                 {statusOptions.map((status) => (
                   <option key={status} value={status}>
@@ -214,31 +214,31 @@ export default function EnrollmentManagementPage() {
               <button
                 type="submit"
                 disabled={saving}
-                className="rounded-xl bg-emerald-500 px-6 py-3 text-sm font-semibold text-slate-950 disabled:opacity-60"
+                className="rounded-xl bg-[var(--ll-yellow)] px-6 py-3 text-sm font-semibold text-[var(--ll-text-faint)] disabled:opacity-60"
               >
                 {saving ? "Saving..." : "Create Enrollment"}
               </button>
-              {message ? <p className="text-xs text-emerald-300">{message}</p> : null}
+              {message ? <p className="text-xs text-[var(--ll-yellow)]">{message}</p> : null}
               {error ? <p className="text-xs text-red-300">{error}</p> : null}
             </div>
           </form>
         </section>
 
-        <section className="rounded-2xl border border-white/10 bg-slate-900/70 p-6">
+        <section className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 p-6">
           <div className="mb-4 flex items-center justify-between">
             <h2 className="text-lg font-semibold">Enrollment Records</h2>
-            <span className="text-xs text-slate-500">{enrollments.length} total</span>
+            <span className="text-xs text-[var(--ll-text-faint)]">{enrollments.length} total</span>
           </div>
 
           {loading ? (
-            <div className="rounded-xl border border-white/10 bg-black/10 p-6 text-sm text-slate-400">Loading enrollments...</div>
+            <div className="rounded-xl border border-[var(--ll-border)] bg-black/10 p-6 text-sm text-[var(--ll-text-muted)]">Loading enrollments...</div>
           ) : enrollments.length === 0 ? (
-            <div className="rounded-xl border border-white/10 bg-black/10 p-6 text-sm text-slate-400">No academic enrollments recorded yet.</div>
+            <div className="rounded-xl border border-[var(--ll-border)] bg-black/10 p-6 text-sm text-[var(--ll-text-muted)]">No academic enrollments recorded yet.</div>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="border-b border-white/10 text-left text-xs text-slate-500">
+                  <tr className="border-b border-[var(--ll-border)] text-left text-xs text-[var(--ll-text-faint)]">
                     <th className="pb-2 pr-4">Student</th>
                     <th className="pb-2 pr-4">Academic Year</th>
                     <th className="pb-2 pr-4">Grade</th>
@@ -248,12 +248,12 @@ export default function EnrollmentManagementPage() {
                 </thead>
                 <tbody>
                   {enrollments.map((enrollment) => (
-                    <tr key={enrollment.id} className="border-b border-white/5 text-slate-200">
+                    <tr key={enrollment.id} className="border-b border-white/5 text-[var(--ll-text)]">
                       <td className="py-3 pr-4">{enrollment.student?.name ?? "Student"}</td>
                       <td className="py-3 pr-4">{enrollment.academicYearLabel ?? "-"}</td>
                       <td className="py-3 pr-4">Grade {enrollment.grade}</td>
                       <td className="py-3 pr-4">
-                        <span className="rounded-full bg-slate-800 px-2.5 py-1 text-[11px] font-semibold text-slate-200">
+                        <span className="rounded-full bg-[var(--ll-surface)] px-2.5 py-1 text-[11px] font-semibold text-[var(--ll-text)]">
                           {enrollment.status}
                         </span>
                       </td>
@@ -261,7 +261,7 @@ export default function EnrollmentManagementPage() {
                         <select
                           value={enrollment.status}
                           onChange={(e) => updateStatus(enrollment.id, e.target.value as EnrollmentRecord["status"])}
-                          className="min-h-10 rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 text-sm"
+                          className="min-h-10 rounded-lg border border-[var(--ll-border)] bg-[var(--ll-bg)] px-3 py-2 text-sm"
                         >
                           {statusOptions.map((status) => (
                             <option key={status} value={status}>
