@@ -152,7 +152,7 @@ export default function GuardianDashboardClient() {
       <div className="ll-page-enter mx-auto max-w-6xl space-y-5">
         <DashboardTopBar
           roleLabel="Guardian"
-          roleBadgeBg="bg-purple-500/10 border-purple-500/20"
+          roleBadgeBg="bg-[var(--ll-pink-soft)] border-purple-500/20"
           roleAccent="text-[var(--ll-text-muted)]"
           userName={selectedDashboardChild?.studentName ? `Viewing: ${selectedDashboardChild.studentName}` : undefined}
         />
@@ -286,7 +286,7 @@ export default function GuardianDashboardClient() {
                   </p>
                   <Link
                     href="/guardian/messages"
-                    className="ll-touch-target mt-3 inline-flex items-center rounded-lg bg-[var(--ll-accent)] px-4 py-2 text-xs font-semibold text-slate-950"
+                    className="ll-touch-target mt-3 inline-flex items-center rounded-lg bg-[var(--ll-accent)] px-4 py-2 text-xs font-semibold text-[var(--ll-text-faint)]"
                   >
                     Open Messages
                   </Link>

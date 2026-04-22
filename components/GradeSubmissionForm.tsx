@@ -62,21 +62,21 @@ export function GradeSubmissionForm({
     <form onSubmit={handleSubmit} className="space-y-3">
       <div className="flex items-center gap-3">
         <div>
-          <label className="block text-xs text-slate-400 mb-1">Score (%)</label>
+          <label className="block text-xs text-[var(--ll-text-muted)] mb-1">Score (%)</label>
           <input
             type="number"
             min={0}
             max={100}
             value={score}
             onChange={(e) => setScore(e.target.value)}
-            className="w-24 rounded-lg bg-slate-950 border border-slate-700 px-2 py-1 text-sm text-slate-100 focus:outline-none focus:border-emerald-500"
+            className="w-24 rounded-lg bg-[var(--ll-bg)] border border-[var(--ll-border)] px-2 py-1 text-sm text-[var(--ll-text)] focus:outline-none focus:border-emerald-500"
             required
           />
         </div>
         <button
           type="submit"
           disabled={saving}
-          className="mt-5 rounded-lg bg-emerald-500 px-4 py-2 text-xs font-semibold text-slate-950 hover:bg-emerald-400 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="mt-5 rounded-lg bg-[var(--ll-yellow)] px-4 py-2 text-xs font-semibold text-[var(--ll-text-faint)] hover:bg-[var(--ll-yellow-soft)] disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {saving
             ? "Saving..."
@@ -87,13 +87,13 @@ export function GradeSubmissionForm({
       </div>
 
       <div>
-        <label className="block text-xs text-slate-400 mb-1">
+        <label className="block text-xs text-[var(--ll-text-muted)] mb-1">
           Teacher notes (optional)
         </label>
         <textarea
           value={notes}
           onChange={(e) => setNotes(e.target.value)}
-          className="w-full rounded-lg bg-slate-950 border border-slate-700 px-3 py-2 text-xs text-slate-100 focus:outline-none focus:border-emerald-500 min-h-[70px]"
+          className="w-full rounded-lg bg-[var(--ll-bg)] border border-[var(--ll-border)] px-3 py-2 text-xs text-[var(--ll-text)] focus:outline-none focus:border-emerald-500 min-h-[70px]"
           placeholder="Short feedback for the student..."
         />
       </div>

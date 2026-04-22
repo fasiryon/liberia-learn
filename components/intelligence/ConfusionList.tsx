@@ -18,9 +18,9 @@ function badgeClasses(severity: string) {
     return "border-red-500/20 bg-red-500/15 text-red-300";
   }
   if (severity === "medium") {
-    return "border-amber-500/20 bg-amber-500/15 text-amber-300";
+    return "border-amber-500/20 bg-[var(--ll-yellow-soft)] text-[var(--ll-yellow)]";
   }
-  return "border-slate-700 bg-slate-800 text-slate-300";
+  return "border-[var(--ll-border)] bg-[var(--ll-surface)] text-[var(--ll-text)]";
 }
 
 function severityLabel(severity: string) {
@@ -37,7 +37,7 @@ export function ConfusionList({
   if (items.length === 0) {
     return (
       <Card className="ll-empty p-5">
-        <p className="text-sm text-slate-400">{emptyMessage}</p>
+        <p className="text-sm text-[var(--ll-text-muted)]">{emptyMessage}</p>
       </Card>
     );
   }
@@ -57,22 +57,22 @@ export function ConfusionList({
                 {item.studentName ? (
                   <Link
                     href={`/teacher/intelligence/${item.studentId}`}
-                    className="text-sm font-semibold text-emerald-300 hover:text-emerald-200"
+                    className="text-sm font-semibold text-[var(--ll-yellow)] hover:text-[var(--ll-yellow)]"
                   >
                     {item.studentName}
                   </Link>
                 ) : (
-                  <span className="text-sm font-semibold text-slate-100">
+                  <span className="text-sm font-semibold text-[var(--ll-text)]">
                     {item.studentId}
                   </span>
                 )}
               </div>
-              <p className="text-sm font-semibold text-slate-100">{item.conceptLabel}</p>
-              <p className="text-xs uppercase tracking-wide text-slate-500">
+              <p className="text-sm font-semibold text-[var(--ll-text)]">{item.conceptLabel}</p>
+              <p className="text-xs uppercase tracking-wide text-[var(--ll-text-faint)]">
                 {item.confusionType.replace(/_/g, " ")}
               </p>
             </div>
-            <div className="grid gap-1 text-xs text-slate-500 lg:text-right">
+            <div className="grid gap-1 text-xs text-[var(--ll-text-faint)] lg:text-right">
               <span>{item.lessonId ? `Lesson ${item.lessonId}` : "General pattern"}</span>
               <span>{new Date(item.detectedAt).toLocaleString("en-LR")}</span>
             </div>

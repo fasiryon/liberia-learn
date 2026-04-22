@@ -20,17 +20,17 @@ export default function CellDivisionFallback({
   onAction: (action: CellDivisionAction) => void;
 }) {
   return (
-    <section className="bg-slate-950 p-4 text-slate-100">
-      <div className="rounded-2xl border border-slate-800 bg-slate-900 p-5">
-        <p className="text-3xl font-bold text-white">{state.stage.toUpperCase()}</p>
-        <p className="mt-3 text-sm leading-6 text-slate-200">{descriptions[state.stage]}</p>
+    <section className="bg-[var(--ll-bg)] p-4 text-[var(--ll-text)]">
+      <div className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)] p-5">
+        <p className="text-3xl font-bold text-[var(--ll-text)]">{state.stage.toUpperCase()}</p>
+        <p className="mt-3 text-sm leading-6 text-[var(--ll-text)]">{descriptions[state.stage]}</p>
         <div className="mt-4 grid gap-3 sm:grid-cols-3">
-          <div className="rounded-xl bg-slate-950 p-3">Chromosomes: {state.chromosomeCount}</div>
-          <div className="rounded-xl bg-slate-950 p-3">Cells: {state.cellCount}</div>
-          <div className="rounded-xl bg-slate-950 p-3">Progress: {state.progress.toFixed(0)}%</div>
+          <div className="rounded-xl bg-[var(--ll-bg)] p-3">Chromosomes: {state.chromosomeCount}</div>
+          <div className="rounded-xl bg-[var(--ll-bg)] p-3">Cells: {state.cellCount}</div>
+          <div className="rounded-xl bg-[var(--ll-bg)] p-3">Progress: {state.progress.toFixed(0)}%</div>
         </div>
       </div>
-      <button type="button" onClick={() => onAction({ type: "ADVANCE_STAGE" })} className="mt-3 min-h-11 rounded-xl bg-cyan-300 px-4 py-2 text-sm font-semibold text-slate-950">
+      <button type="button" onClick={() => onAction({ type: "ADVANCE_STAGE" })} className="mt-3 min-h-11 rounded-xl bg-[var(--ll-silver-soft)] px-4 py-2 text-sm font-semibold text-[var(--ll-text-faint)]">
         Next Stage
       </button>
     </section>

@@ -146,8 +146,8 @@ function ScopeBadge({
   value: string;
 }) {
   return (
-    <div className="rounded-full border border-slate-800 bg-slate-900 px-3 py-2 text-xs text-slate-300">
-      <span className="font-semibold text-slate-100">{label}:</span> {value}
+    <div className="rounded-full border border-[var(--ll-border)] bg-[var(--ll-bg)] px-3 py-2 text-xs text-[var(--ll-text)]">
+      <span className="font-semibold text-[var(--ll-text)]">{label}:</span> {value}
     </div>
   );
 }
@@ -559,41 +559,41 @@ export default function GlobalAssistantShell({
       }`}
     >
       {open ? (
-        <section className="flex max-h-[70vh] w-[min(92vw,24rem)] max-w-md flex-col overflow-hidden rounded-[1.35rem] border border-emerald-400/20 bg-slate-950/95 shadow-[0_20px_60px_rgba(2,6,23,0.72)] backdrop-blur">
-          <div className="border-b border-slate-800 bg-gradient-to-r from-slate-900 via-slate-900 to-emerald-950/60 px-4 py-3.5">
+        <section className="flex max-h-[70vh] w-[min(92vw,24rem)] max-w-md flex-col overflow-hidden rounded-xl border border-emerald-400/20 bg-[var(--ll-bg)]/95 shadow-[0_20px_60px_rgba(2,6,23,0.72)] backdrop-blur">
+          <div className="border-b border-[var(--ll-border)] bg-gradient-to-r from-slate-900 via-slate-900 to-emerald-950/60 px-4 py-3.5">
             <div className="flex items-start justify-between gap-3">
               <div>
-                <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-emerald-300">
+                <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-[var(--ll-yellow)]">
                   LiberiaLearn AI
                 </p>
                 <div className="mt-1 flex items-center gap-2">
-                  <h2 className="text-base font-semibold text-slate-100">
+                  <h2 className="text-base font-semibold text-[var(--ll-text)]">
                     AI Assistant
                   </h2>
-                  <span className="rounded-full border border-emerald-400/20 bg-emerald-400/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.16em] text-emerald-200">
+                  <span className="rounded-full border border-emerald-400/20 bg-[var(--ll-yellow-soft)] px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.16em] text-[var(--ll-yellow)]">
                     {formatModeLabel(contextMode)}
                   </span>
                 </div>
-                <p className="mt-1 text-xs leading-5 text-slate-400">
+                <p className="mt-1 text-xs leading-5 text-[var(--ll-text-muted)]">
                   {roleConfig.label}. {roleConfig.emptyStateBody}
                 </p>
               </div>
               <button
                 type="button"
                 onClick={() => setOpen(false)}
-                className="rounded-full border border-slate-700 px-3 py-1 text-[11px] font-semibold text-slate-300 transition-colors hover:border-slate-500 hover:text-slate-100"
+                className="rounded-full border border-[var(--ll-border)] px-3 py-1 text-[11px] font-semibold text-[var(--ll-text)] transition-colors hover:border-[var(--ll-border)] hover:text-[var(--ll-text)]"
               >
                 Minimize
               </button>
             </div>
           </div>
 
-          <div className="space-y-3 border-b border-slate-800 px-4 py-3.5">
+          <div className="space-y-3 border-b border-[var(--ll-border)] px-4 py-3.5">
             <textarea
               value={question}
               onChange={(event) => setQuestion(event.target.value)}
               placeholder={roleConfig.placeholder}
-              className="min-h-24 w-full rounded-2xl border border-slate-800 bg-slate-900 px-4 py-3 text-sm text-slate-100 outline-none transition-colors focus:border-emerald-400/50"
+              className="min-h-24 w-full rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)] px-4 py-3 text-sm text-[var(--ll-text)] outline-none transition-colors focus:border-emerald-400/50"
             />
 
             {isTeacherOrAdmin ? (
@@ -602,14 +602,14 @@ export default function GlobalAssistantShell({
                   value={teacherSubject}
                   onChange={(event) => setTeacherSubject(event.target.value)}
                   placeholder="Subject"
-                  className="rounded-2xl border border-slate-800 bg-slate-900 px-4 py-2.5 text-sm text-slate-100 outline-none transition-colors focus:border-emerald-400/50"
+                  className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)] px-4 py-2.5 text-sm text-[var(--ll-text)] outline-none transition-colors focus:border-emerald-400/50"
                 />
                 <input
                   value={teacherGrade}
                   onChange={(event) => setTeacherGrade(event.target.value)}
                   placeholder="Grade"
                   inputMode="numeric"
-                  className="rounded-2xl border border-slate-800 bg-slate-900 px-4 py-2.5 text-sm text-slate-100 outline-none transition-colors focus:border-emerald-400/50"
+                  className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)] px-4 py-2.5 text-sm text-[var(--ll-text)] outline-none transition-colors focus:border-emerald-400/50"
                 />
                 {visibleModes.length > 1 ? (
                   <select
@@ -617,7 +617,7 @@ export default function GlobalAssistantShell({
                     onChange={(event) =>
                       setMode(event.target.value as RetrievalMode)
                     }
-                    className="rounded-2xl border border-slate-800 bg-slate-900 px-4 py-2.5 text-sm text-slate-100 outline-none transition-colors focus:border-emerald-400/50"
+                    className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)] px-4 py-2.5 text-sm text-[var(--ll-text)] outline-none transition-colors focus:border-emerald-400/50"
                   >
                     {visibleModes.map((allowedMode) => (
                       <option key={allowedMode} value={allowedMode}>
@@ -630,14 +630,14 @@ export default function GlobalAssistantShell({
             ) : (
               <div className="space-y-2">
                 {isGuardian && guardianLearners.length > 1 ? (
-                  <label className="block text-xs font-semibold uppercase tracking-[0.16em] text-slate-500">
+                  <label className="block text-xs font-semibold uppercase tracking-[0.16em] text-[var(--ll-text-faint)]">
                     Student
                     <select
                       value={selectedGuardianLearner?.id ?? ""}
                       onChange={(event) =>
                         setSelectedGuardianLearnerId(event.target.value)
                       }
-                      className="mt-2 w-full rounded-2xl border border-slate-800 bg-slate-900 px-4 py-2.5 text-sm font-medium text-slate-100 outline-none transition-colors focus:border-emerald-400/50"
+                      className="mt-2 w-full rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)] px-4 py-2.5 text-sm font-medium text-[var(--ll-text)] outline-none transition-colors focus:border-emerald-400/50"
                     >
                       {guardianLearners.map((learner) => (
                         <option key={learner.id} value={learner.id}>
@@ -662,14 +662,14 @@ export default function GlobalAssistantShell({
                 </div>
 
                 {scopedSubjectOptions.length > 1 ? (
-                  <label className="block text-xs font-semibold uppercase tracking-[0.16em] text-slate-500">
+                  <label className="block text-xs font-semibold uppercase tracking-[0.16em] text-[var(--ll-text-faint)]">
                     Subject
                     <select
                       value={selectedScopedSubject}
                       onChange={(event) =>
                         setSelectedScopedSubject(event.target.value)
                       }
-                      className="mt-2 w-full rounded-2xl border border-slate-800 bg-slate-900 px-4 py-2.5 text-sm font-medium text-slate-100 outline-none transition-colors focus:border-emerald-400/50"
+                      className="mt-2 w-full rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)] px-4 py-2.5 text-sm font-medium text-[var(--ll-text)] outline-none transition-colors focus:border-emerald-400/50"
                     >
                       {scopedSubjectOptions.map((subject) => (
                         <option key={subject} value={subject}>
@@ -693,7 +693,7 @@ export default function GlobalAssistantShell({
                     key={item}
                     type="button"
                     onClick={() => setTeacherSubject(item)}
-                    className="rounded-full border border-slate-700 px-3 py-1 text-xs font-medium text-slate-300 transition-colors hover:border-emerald-400/40 hover:text-emerald-200"
+                    className="rounded-full border border-[var(--ll-border)] px-3 py-1 text-xs font-medium text-[var(--ll-text)] transition-colors hover:border-emerald-400/40 hover:text-[var(--ll-yellow)]"
                   >
                     {item}
                   </button>
@@ -707,7 +707,7 @@ export default function GlobalAssistantShell({
                   key={prompt}
                   type="button"
                   onClick={() => setQuestion(prompt)}
-                  className="rounded-full border border-slate-700 bg-slate-900 px-3 py-1 text-[11px] font-medium text-slate-300 transition-colors hover:border-emerald-400/40 hover:text-emerald-200"
+                  className="rounded-full border border-[var(--ll-border)] bg-[var(--ll-bg)] px-3 py-1 text-[11px] font-medium text-[var(--ll-text)] transition-colors hover:border-emerald-400/40 hover:text-[var(--ll-yellow)]"
                 >
                   {prompt}
                 </button>
@@ -718,7 +718,7 @@ export default function GlobalAssistantShell({
               type="button"
               onClick={() => submitQuestion()}
               disabled={loading || question.trim().length < 8}
-              className="inline-flex w-full items-center justify-center rounded-full bg-emerald-400 px-5 py-2.5 text-sm font-semibold text-slate-950 transition-colors hover:bg-emerald-300 disabled:cursor-not-allowed disabled:bg-slate-700 disabled:text-slate-400"
+              className="inline-flex w-full items-center justify-center rounded-full bg-[var(--ll-yellow-soft)] px-5 py-2.5 text-sm font-semibold text-[var(--ll-text-faint)] transition-colors hover:bg-[var(--ll-yellow-soft)] disabled:cursor-not-allowed disabled:bg-[var(--ll-surface-muted)] disabled:text-[var(--ll-text-muted)]"
             >
               {loading ? "Thinking..." : "Ask Assistant"}
             </button>
@@ -726,11 +726,11 @@ export default function GlobalAssistantShell({
 
           <div className="min-h-0 flex-1 overflow-y-auto px-4 py-3.5">
             {messages.length === 0 ? (
-              <div className="rounded-2xl border border-dashed border-slate-800 bg-slate-900/60 px-4 py-4">
-                <p className="text-sm font-semibold text-slate-200">
+              <div className="rounded-xl border border-dashed border-[var(--ll-border)] bg-[var(--ll-bg)]/60 px-4 py-4">
+                <p className="text-sm font-semibold text-[var(--ll-text)]">
                   {roleConfig.emptyStateTitle}
                 </p>
-                <p className="mt-2 text-sm leading-6 text-slate-400">
+                <p className="mt-2 text-sm leading-6 text-[var(--ll-text-muted)]">
                   Answers stay grounded in retrieved LiberiaLearn content with
                   visible sources.
                 </p>
@@ -739,31 +739,31 @@ export default function GlobalAssistantShell({
               <div className="space-y-4">
                 {messages.map((message) => (
                   <article key={message.id} className="space-y-3">
-                    <div className="ml-auto max-w-[88%] rounded-2xl bg-emerald-400 px-4 py-3 text-sm font-medium text-slate-950">
+                    <div className="ml-auto max-w-[88%] rounded-xl bg-[var(--ll-yellow-soft)] px-4 py-3 text-sm font-medium text-[var(--ll-text-faint)]">
                       {message.question}
                     </div>
 
                     {message.result ? (
-                      <div className="max-w-[94%] rounded-2xl border border-slate-800 bg-slate-900 px-4 py-4 text-sm text-slate-200">
+                      <div className="max-w-[94%] rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)] px-4 py-4 text-sm text-[var(--ll-text)]">
                         <div className="flex items-center justify-between gap-3">
-                          <span className="text-[11px] font-semibold uppercase tracking-[0.18em] text-emerald-300">
+                          <span className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[var(--ll-yellow)]">
                             {message.result.isWeakGrounding
                               ? "Weak Grounding"
                               : message.result.retrievalWeak
                                 ? "Weak Retrieval"
                                 : "Grounded Answer"}
                           </span>
-                          <span className="text-[11px] text-slate-500">
+                          <span className="text-[11px] text-[var(--ll-text-faint)]">
                             {message.result.sources.length} source
                             {message.result.sources.length === 1 ? "" : "s"}
                           </span>
                         </div>
                         {message.result.isWeakGrounding ? (
-                          <p className="mt-2 text-xs font-medium text-amber-300">
+                          <p className="mt-2 text-xs font-medium text-[var(--ll-yellow)]">
                             Limited curriculum grounding
                           </p>
                         ) : null}
-                        <p className="mt-3 whitespace-pre-wrap leading-7 text-slate-200">
+                        <p className="mt-3 whitespace-pre-wrap leading-7 text-[var(--ll-text)]">
                           {message.result.answer}
                         </p>
                         {message.result.sources.length > 0 ? (
@@ -771,30 +771,30 @@ export default function GlobalAssistantShell({
                             {message.result.sources.map((source) => (
                               <div
                                 key={source.id}
-                                className="rounded-xl border border-slate-800 bg-slate-950/80 px-3 py-3"
+                                className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/80 px-3 py-3"
                               >
                                 <div className="flex items-start justify-between gap-3">
                                   <div>
-                                    <span className="inline-flex rounded-full border border-slate-700 bg-slate-900 px-2 py-0.5 text-[10px] font-semibold text-slate-200">
+                                    <span className="inline-flex rounded-full border border-[var(--ll-border)] bg-[var(--ll-bg)] px-2 py-0.5 text-[10px] font-semibold text-[var(--ll-text)]">
                                       {getSourceBadge(source.sourceType)}
                                     </span>
-                                    <p className="mt-2 text-sm font-semibold text-slate-100">
+                                    <p className="mt-2 text-sm font-semibold text-[var(--ll-text)]">
                                       {source.title}
                                     </p>
                                   </div>
                                   {source.groundingStrength ? (
-                                    <span className="text-[10px] uppercase tracking-[0.16em] text-slate-500">
+                                    <span className="text-[10px] uppercase tracking-[0.16em] text-[var(--ll-text-faint)]">
                                       {source.groundingStrength}
                                     </span>
                                   ) : null}
                                 </div>
-                                <p className="mt-1 text-[11px] uppercase tracking-[0.16em] text-slate-500">
+                                <p className="mt-1 text-[11px] uppercase tracking-[0.16em] text-[var(--ll-text-faint)]">
                                   {source.sourceType}
                                   {source.sourceLabel
                                     ? ` | ${source.sourceLabel}`
                                     : ""}
                                 </p>
-                                <p className="mt-2 text-sm leading-6 text-slate-400">
+                                <p className="mt-2 text-sm leading-6 text-[var(--ll-text-muted)]">
                                   {source.excerpt}
                                 </p>
                               </div>
@@ -808,7 +808,7 @@ export default function GlobalAssistantShell({
                                 key={`${message.id}-${action.type}`}
                                 type="button"
                                 onClick={() => handleAction(message.id, action)}
-                                className="rounded-full border border-emerald-400/30 bg-emerald-400/10 px-3 py-1.5 text-xs font-semibold text-emerald-200 transition-colors hover:border-emerald-300/50 hover:bg-emerald-400/15"
+                                className="rounded-full border border-emerald-400/30 bg-[var(--ll-yellow-soft)] px-3 py-1.5 text-xs font-semibold text-[var(--ll-yellow)] transition-colors hover:border-emerald-300/50 hover:bg-[var(--ll-yellow-soft)]"
                               >
                                 {action.label}
                               </button>
@@ -816,11 +816,11 @@ export default function GlobalAssistantShell({
                           </div>
                         ) : null}
                         {pendingConfirmation?.messageId === message.id ? (
-                          <div className="mt-3 rounded-xl border border-amber-400/25 bg-amber-400/10 px-3 py-3">
-                            <p className="text-sm font-semibold text-amber-100">
+                          <div className="mt-3 rounded-xl border border-amber-400/25 bg-[var(--ll-yellow-soft)] px-3 py-3">
+                            <p className="text-sm font-semibold text-[var(--ll-yellow)]">
                               Confirm {pendingConfirmation.action.label}?
                             </p>
-                            <p className="mt-1 text-xs leading-5 text-amber-200/80">
+                            <p className="mt-1 text-xs leading-5 text-[var(--ll-yellow)]/80">
                               This will prepare a draft follow-up based on the current grounded answer.
                             </p>
                             <div className="mt-3 flex gap-2">
@@ -832,14 +832,14 @@ export default function GlobalAssistantShell({
                                     pendingConfirmation.action
                                   )
                                 }
-                                className="rounded-full bg-amber-300 px-3 py-1.5 text-xs font-semibold text-slate-950 transition-colors hover:bg-amber-200"
+                                className="rounded-full bg-[var(--ll-yellow-soft)] px-3 py-1.5 text-xs font-semibold text-[var(--ll-text-faint)] transition-colors hover:bg-[var(--ll-yellow-soft)]"
                               >
                                 Confirm
                               </button>
                               <button
                                 type="button"
                                 onClick={() => setPendingConfirmation(null)}
-                                className="rounded-full border border-slate-700 px-3 py-1.5 text-xs font-semibold text-slate-300 transition-colors hover:border-slate-500 hover:text-slate-100"
+                                className="rounded-full border border-[var(--ll-border)] px-3 py-1.5 text-xs font-semibold text-[var(--ll-text)] transition-colors hover:border-[var(--ll-border)] hover:text-[var(--ll-text)]"
                               >
                                 Cancel
                               </button>
@@ -847,15 +847,15 @@ export default function GlobalAssistantShell({
                           </div>
                         ) : null}
                         {message.actionResult ? (
-                          <div className="mt-3 rounded-xl border border-emerald-400/20 bg-emerald-400/10 px-3 py-3 text-sm text-emerald-100">
-                            <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-emerald-300">
+                          <div className="mt-3 rounded-xl border border-emerald-400/20 bg-[var(--ll-yellow-soft)] px-3 py-3 text-sm text-[var(--ll-yellow)]">
+                            <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[var(--ll-yellow)]">
                               {message.actionResult.label}
                             </p>
                             <p className="mt-2 leading-6">{message.actionResult.content}</p>
                           </div>
                         ) : null}
                         {message.actionError ? (
-                          <div className="mt-3 rounded-xl border border-amber-400/20 bg-amber-400/10 px-3 py-3 text-sm text-amber-100">
+                          <div className="mt-3 rounded-xl border border-amber-400/20 bg-[var(--ll-yellow-soft)] px-3 py-3 text-sm text-[var(--ll-yellow)]">
                             {message.actionError}
                           </div>
                         ) : null}
@@ -863,7 +863,7 @@ export default function GlobalAssistantShell({
                     ) : null}
 
                     {message.error ? (
-                      <div className="max-w-[94%] rounded-2xl border border-rose-500/30 bg-rose-500/10 px-4 py-4 text-sm text-rose-100">
+                      <div className="max-w-[94%] rounded-xl border border-rose-500/30 bg-[var(--ll-danger)]/10 px-4 py-4 text-sm text-[var(--ll-danger)]">
                         {message.error}
                       </div>
                     ) : null}
@@ -879,14 +879,14 @@ export default function GlobalAssistantShell({
       <button
         type="button"
         onClick={() => setOpen((current) => !current)}
-        className="group flex items-center gap-3 rounded-full border border-emerald-400/30 bg-slate-900/95 px-4 py-2.5 text-left shadow-[0_18px_50px_rgba(2,6,23,0.55)] transition-colors hover:border-emerald-300/50"
+        className="group flex items-center gap-3 rounded-full border border-emerald-400/30 bg-[var(--ll-bg)]/95 px-4 py-2.5 text-left shadow-[0_18px_50px_rgba(2,6,23,0.55)] transition-colors hover:border-emerald-300/50"
       >
-        <div className="flex h-9 w-9 items-center justify-center rounded-full bg-emerald-400 text-xs font-bold text-slate-950">
+        <div className="flex h-9 w-9 items-center justify-center rounded-full bg-[var(--ll-yellow-soft)] text-xs font-bold text-[var(--ll-text-faint)]">
           AI
         </div>
         <div className="pr-1">
-          <p className="text-sm font-semibold text-slate-100">Assistant</p>
-          <p className="text-[11px] text-slate-400">
+          <p className="text-sm font-semibold text-[var(--ll-text)]">Assistant</p>
+          <p className="text-[11px] text-[var(--ll-text-muted)]">
             {roleConfig.label} | {formatModeLabel(contextMode)}
           </p>
         </div>

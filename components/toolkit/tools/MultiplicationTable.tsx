@@ -17,31 +17,30 @@ export default function MultiplicationTable({ onClose }: MultiplicationTableProp
     <div className="space-y-3 text-xs">
       <div className="flex items-center justify-between">
         <h3 className="font-semibold text-sm">Multiplication Table</h3>
-        <button type="button" aria-label="Close multiplication table" className="rounded border border-slate-600 px-2 py-1" onClick={() => onClose?.()}>Close</button>
+        <button type="button" aria-label="Close multiplication table" className="rounded border border-[var(--ll-border)] px-2 py-1" onClick={() => onClose?.()}>Close</button>
       </div>
 
       <div className="flex gap-2">
-        <button type="button" aria-label="Set table to 1 through 5" className="rounded border border-slate-600 px-2 py-1" onClick={() => setMax(5)}>Grade 1-3</button>
-        <button type="button" aria-label="Set table to 1 through 12" className="rounded border border-slate-600 px-2 py-1" onClick={() => setMax(12)}>Grade 4-6</button>
+        <button type="button" aria-label="Set table to 1 through 5" className="rounded border border-[var(--ll-border)] px-2 py-1" onClick={() => setMax(5)}>Grade 1-3</button>
+        <button type="button" aria-label="Set table to 1 through 12" className="rounded border border-[var(--ll-border)] px-2 py-1" onClick={() => setMax(12)}>Grade 4-6</button>
       </div>
 
-      <div role="grid" aria-label="Multiplication grid" className="max-h-[45vh] overflow-auto rounded border border-slate-700">
+      <div role="grid" aria-label="Multiplication grid" className="max-h-[45vh] overflow-auto rounded border border-[var(--ll-border)]">
         <table className="w-full border-collapse">
           <thead>
             <tr>
-              <th className="border border-slate-700 p-1">×</th>
-              {Array.from({ length: max }, (_, i) => <th key={i + 1} className="border border-slate-700 p-1">{i + 1}</th>)}
+              <th className="border border-[var(--ll-border)] p-1">x</th>`r`n              {Array.from({ length: max }, (_, i) => <th key={i + 1} className="border border-[var(--ll-border)] p-1">{i + 1}</th>)}
             </tr>
           </thead>
           <tbody>
             {cells.map((row) => (
               <tr key={row[0].row}>
-                <th className="border border-slate-700 p-1">{row[0].row}</th>
+                <th className="border border-[var(--ll-border)] p-1">{row[0].row}</th>
                 {row.map((cell) => {
                   const highlighted = hover && (hover.row === cell.row || hover.col === cell.col);
                   const selectedCell = selected?.row === cell.row && selected?.col === cell.col;
                   return (
-                    <td key={`${cell.row}-${cell.col}`} className={`border border-slate-700 p-1 text-center ${selectedCell ? "bg-emerald-600 text-slate-950" : highlighted ? "bg-slate-800" : ""}`}>
+                    <td key={`${cell.row}-${cell.col}`} className={`border border-[var(--ll-border)] p-1 text-center ${selectedCell ? "bg-[var(--ll-yellow-soft)] text-[var(--ll-text-faint)]" : highlighted ? "bg-[var(--ll-surface)]" : ""}`}>
                       <button
                         type="button"
                         aria-label={`Product ${cell.row} times ${cell.col}`}

@@ -35,13 +35,13 @@ export default async function TrainingAdoptionPage() {
   const schoolId = user.schoolId ?? null;
   if (!schoolId) {
     return (
-      <main className="min-h-screen bg-slate-950 text-slate-50">
+      <main className="min-h-screen bg-[var(--ll-bg)] text-[var(--ll-text)]">
         <div className="mx-auto max-w-2xl px-4 py-12 text-center space-y-4">
           <h1 className="text-2xl font-bold">No School Assigned</h1>
-          <p className="text-slate-400">
+          <p className="text-[var(--ll-text-muted)]">
             Your admin account does not have a school attached. Attach your school first.
           </p>
-          <Link href="/admin" className="inline-block rounded-xl bg-slate-800 px-5 py-3 text-sm font-semibold hover:bg-slate-700">
+          <Link href="/admin" className="inline-block rounded-xl bg-[var(--ll-surface)] px-5 py-3 text-sm font-semibold hover:bg-[var(--ll-surface-muted)]">
             ← Back to Admin
           </Link>
         </div>
@@ -60,9 +60,9 @@ export default async function TrainingAdoptionPage() {
       label: LEVEL_LABELS[1],
       moduleCount: MODULES_BY_LEVEL[1].length,
       cardBorder: "border-emerald-500/30",
-      cardBg: "bg-emerald-500/10",
-      textColor: "text-emerald-300",
-      barColor: "bg-emerald-500",
+      cardBg: "bg-[var(--ll-yellow)]/10",
+      textColor: "text-[var(--ll-yellow)]",
+      barColor: "bg-[var(--ll-yellow)]",
     },
     {
       level: 2 as const,
@@ -70,9 +70,9 @@ export default async function TrainingAdoptionPage() {
       label: LEVEL_LABELS[2],
       moduleCount: MODULES_BY_LEVEL[2].length,
       cardBorder: "border-blue-500/30",
-      cardBg: "bg-blue-500/10",
-      textColor: "text-blue-300",
-      barColor: "bg-blue-500",
+      cardBg: "bg-[var(--ll-silver-soft)]",
+      textColor: "text-[var(--ll-silver)]",
+      barColor: "bg-[var(--ll-silver-soft)]",
     },
     {
       level: 3 as const,
@@ -80,41 +80,41 @@ export default async function TrainingAdoptionPage() {
       label: LEVEL_LABELS[3],
       moduleCount: MODULES_BY_LEVEL[3].length,
       cardBorder: "border-purple-500/30",
-      cardBg: "bg-purple-500/10",
-      textColor: "text-purple-300",
-      barColor: "bg-purple-500",
+      cardBg: "bg-[var(--ll-pink-soft)]",
+      textColor: "text-[var(--ll-pink)]",
+      barColor: "bg-[var(--ll-pink-soft)]",
     },
   ];
 
   return (
-    <main className="min-h-screen bg-slate-950 text-slate-50">
+    <main className="min-h-screen bg-[var(--ll-bg)] text-[var(--ll-text)]">
       <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_top,_#3b82f622,_transparent_60%)]" />
 
       <div className="mx-auto max-w-4xl px-4 py-8">
         {/* ── Header ─────────────────────────────────────────────────────── */}
         <header className="mb-8 flex items-center justify-between gap-4">
           <div>
-            <p className="mb-1 text-xs uppercase tracking-wide text-emerald-300">
+            <p className="mb-1 text-xs uppercase tracking-wide text-[var(--ll-yellow)]">
               LIBERIALEARN · ADMIN · TRAINING
             </p>
             <h1 className="text-2xl font-bold md:text-3xl">Training Adoption</h1>
-            <p className="mt-1 text-sm text-slate-400">
+            <p className="mt-1 text-sm text-[var(--ll-text-muted)]">
               School-wide teacher training progress. Counts only — no individual teacher data.
             </p>
           </div>
           <Link
             href="/admin"
-            className="rounded-full border border-slate-700 px-5 py-2.5 text-sm font-semibold hover:bg-slate-900 transition-colors"
+            className="rounded-full border border-[var(--ll-border)] px-5 py-2.5 text-sm font-semibold hover:bg-[var(--ll-bg)] transition-colors"
           >
             ← Back
           </Link>
         </header>
 
         {/* ── Total teachers ─────────────────────────────────────────────── */}
-        <section className="mb-8 rounded-2xl border border-slate-800 bg-slate-900/80 p-6">
-          <p className="mb-1 text-sm text-slate-400">Total Teachers</p>
-          <p className="text-5xl font-bold text-white">{totalTeachers}</p>
-          <p className="mt-2 text-sm text-slate-500">
+        <section className="mb-8 rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/80 p-6">
+          <p className="mb-1 text-sm text-[var(--ll-text-muted)]">Total Teachers</p>
+          <p className="text-5xl font-bold text-[var(--ll-text)]">{totalTeachers}</p>
+          <p className="mt-2 text-sm text-[var(--ll-text-faint)]">
             Teachers enrolled at this school
           </p>
         </section>
@@ -124,7 +124,7 @@ export default async function TrainingAdoptionPage() {
           <h2 className="mb-4 text-lg font-semibold">Level Completion</h2>
 
           {totalTeachers === 0 ? (
-            <div className="rounded-2xl border border-slate-800 bg-slate-900/80 p-10 text-center text-sm text-slate-400">
+            <div className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/80 p-10 text-center text-sm text-[var(--ll-text-muted)]">
               No teachers found for this school yet.
             </div>
           ) : (
@@ -134,19 +134,19 @@ export default async function TrainingAdoptionPage() {
                 return (
                   <div
                     key={level}
-                    className={`rounded-2xl border p-6 ${cardBorder} ${cardBg}`}
+                    className={`rounded-xl border p-6 ${cardBorder} ${cardBg}`}
                   >
                     <p className={`mb-1 text-xs font-semibold uppercase tracking-wide ${textColor}`}>
                       {label}
                     </p>
                     <p className={`text-4xl font-bold ${textColor}`}>{count}</p>
-                    <p className="mt-1 text-sm text-slate-400">
+                    <p className="mt-1 text-sm text-[var(--ll-text-muted)]">
                       {pct}% of teachers
                     </p>
-                    <p className="mt-0.5 text-xs text-slate-500">
+                    <p className="mt-0.5 text-xs text-[var(--ll-text-faint)]">
                       {count} of {totalTeachers} completed all modules
                     </p>
-                    <div className="mt-4 h-2 rounded-full bg-slate-800/60">
+                    <div className="mt-4 h-2 rounded-full bg-[var(--ll-surface)]/60">
                       <div
                         className={`h-2 rounded-full transition-all duration-500 ${barColor}`}
                         style={{ width: `${pct}%` }}
@@ -160,9 +160,9 @@ export default async function TrainingAdoptionPage() {
         </section>
 
         {/* ── Tip ────────────────────────────────────────────────────────── */}
-        <div className="mt-8 rounded-2xl border border-slate-800 bg-slate-900/40 p-5">
-          <p className="text-sm text-slate-400">
-            <span className="font-semibold text-slate-300">Tip:</span> Share the Training Center
+        <div className="mt-8 rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/40 p-5">
+          <p className="text-sm text-[var(--ll-text-muted)]">
+            <span className="font-semibold text-[var(--ll-text)]">Tip:</span> Share the Training Center
             link with teachers so they can complete modules at their own pace.
             Each module takes 5–7 minutes and can be done on a phone.
           </p>

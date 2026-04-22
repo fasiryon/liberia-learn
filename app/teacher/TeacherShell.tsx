@@ -49,7 +49,7 @@ export function TeacherShell({
               onClick={() => setReopenKey((k) => k + 1)}
               aria-label="Open step-by-step guide"
               title="Open step-by-step guide"
-              className="rounded-full border border-slate-700 bg-slate-800 px-4 py-2 text-xs font-semibold text-slate-300 hover:bg-slate-700 hover:text-slate-100 transition-colors"
+              className="rounded-full border border-[var(--ll-border)] bg-[var(--ll-surface)] px-4 py-2 text-xs font-semibold text-[var(--ll-text)] hover:bg-[var(--ll-surface-muted)] hover:text-[var(--ll-text)] transition-colors"
             >
               ? Help
             </button>

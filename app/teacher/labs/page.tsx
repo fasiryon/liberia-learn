@@ -53,26 +53,26 @@ export default async function TeacherLabsPage() {
     const labMap = new Map(labs.map((lab) => [lab.labId, lab.title]));
 
     return (
-      <main className="min-h-screen bg-slate-950 px-4 py-8 text-slate-50">
+      <main className="min-h-screen bg-[var(--ll-bg)] px-4 py-8 text-[var(--ll-text)]">
         <div className="mx-auto max-w-6xl space-y-6">
           <div>
-            <Link href="/teacher/dashboard" className="text-sm text-emerald-300 hover:text-emerald-200">
+            <Link href="/teacher/dashboard" className="text-sm text-[var(--ll-yellow)] hover:text-[var(--ll-yellow)]">
               &larr; Back to Teacher Dashboard
             </Link>
             <h1 className="mt-3 text-3xl font-bold">Teacher Lab Review</h1>
-            <p className="mt-2 text-sm text-slate-400">
+            <p className="mt-2 text-sm text-[var(--ll-text-muted)]">
               Review lab sessions from your classes, inspect student observations, and record your feedback.
             </p>
           </div>
 
           {sessions.length === 0 ? (
-            <div className="rounded-3xl border border-white/10 bg-slate-900/70 p-6 text-sm text-slate-300">
+            <div className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 p-6 text-sm text-[var(--ll-text)]">
               No lab sessions are ready for review yet.
             </div>
           ) : (
-            <div className="overflow-hidden rounded-3xl border border-white/10 bg-slate-900/70">
+            <div className="overflow-hidden rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70">
               <table className="min-w-full text-left text-sm">
-                <thead className="bg-slate-900/90 text-slate-300">
+                <thead className="bg-[var(--ll-bg)]/90 text-[var(--ll-text)]">
                   <tr>
                     <th className="px-4 py-3 font-medium">Student</th>
                     <th className="px-4 py-3 font-medium">Lab</th>
@@ -84,7 +84,7 @@ export default async function TeacherLabsPage() {
                 </thead>
                 <tbody>
                   {sessions.map((session) => (
-                    <tr key={session.id} className="border-t border-white/5 text-slate-200">
+                    <tr key={session.id} className="border-t border-white/5 text-[var(--ll-text)]">
                       <td className="px-4 py-3">{session.student.name ?? session.student.email ?? "Student"}</td>
                       <td className="px-4 py-3">{labMap.get(session.labId) ?? session.labId}</td>
                       <td className="px-4 py-3">
@@ -95,7 +95,7 @@ export default async function TeacherLabsPage() {
                       <td className="px-4 py-3">
                         <Link
                           href={`/teacher/labs/sessions/${session.id}`}
-                          className="inline-flex rounded-2xl border border-cyan-400/20 bg-cyan-500/10 px-3 py-2 text-xs font-semibold text-cyan-200 hover:bg-cyan-500/20"
+                          className="inline-flex rounded-xl border border-cyan-400/20 bg-[var(--ll-silver-soft)] px-3 py-2 text-xs font-semibold text-[var(--ll-silver)] hover:bg-[var(--ll-silver-soft)]"
                         >
                           Review
                         </Link>
@@ -111,8 +111,8 @@ export default async function TeacherLabsPage() {
     );
   } catch (error: any) {
     return (
-      <main className="min-h-screen bg-slate-950 px-4 py-8 text-slate-50">
-        <div className="mx-auto max-w-3xl rounded-3xl border border-red-500/20 bg-red-500/10 p-6 text-sm text-red-200">
+      <main className="min-h-screen bg-[var(--ll-bg)] px-4 py-8 text-[var(--ll-text)]">
+        <div className="mx-auto max-w-3xl rounded-xl border border-red-500/20 bg-red-500/10 p-6 text-sm text-red-200">
           {error?.message ?? "Unable to load lab reviews."}
         </div>
       </main>

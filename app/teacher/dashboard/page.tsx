@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { ChevronRight } from "lucide-react";
 import { teacherWelcomeStorageKey } from "@/app/teacher/TeacherWelcomeGate";
 import { DashboardTopBar } from "@/components/DashboardTopBar";
 import { SkeletonCard } from "@/components/ui/Skeleton";
@@ -163,7 +164,7 @@ export default function TeacherDashboardPage() {
       <div className="ll-page-enter mx-auto max-w-5xl space-y-5">
         <DashboardTopBar
           roleLabel="Teacher"
-          roleBadgeBg="bg-blue-500/10 border-blue-500/20"
+          roleBadgeBg="bg-[var(--ll-silver-soft)] border-[var(--ll-silver)]/20"
           roleAccent="text-[var(--ll-text-muted)]"
           userName={data?.schoolName ?? undefined}
           subtitle={data?.schoolCode ? `Code: ${data.schoolCode}` : undefined}
@@ -495,9 +496,12 @@ export default function TeacherDashboardPage() {
               )}
             </section>
 
-            <section className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-surface-muted)] p-4">
-              <div className="mb-3 flex items-center justify-between gap-3">
-                <h2 className="text-base font-semibold text-[var(--ll-text)]">Today&apos;s Scheduled Lessons</h2>
+            <details className="ll-section p-4">
+              <summary className="flex cursor-pointer list-none items-center justify-between text-sm font-medium text-[var(--ll-text-muted)]">
+                Today&apos;s scheduled lessons
+                <ChevronRight size={14} className="text-[var(--ll-text-faint)]" />
+              </summary>
+              <div className="mt-3 flex items-center justify-end">
                 <Link href="/teacher/schedule" className="text-xs text-[var(--ll-text-faint)] hover:text-[var(--ll-text-muted)]">
                   Open Schedule
                 </Link>
@@ -546,19 +550,22 @@ export default function TeacherDashboardPage() {
                   ))}
                 </div>
               )}
-            </section>
+            </details>
 
-            <section className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-surface-muted)] p-4">
-              <h2 className="text-base font-semibold text-[var(--ll-text)] mb-3">Recent Published Lessons</h2>
+            <details className="ll-section p-4">
+              <summary className="flex cursor-pointer list-none items-center justify-between text-sm font-medium text-[var(--ll-text-muted)]">
+                Recent published lessons
+                <ChevronRight size={14} className="text-[var(--ll-text-faint)]" />
+              </summary>
               {(!data?.recentLessons || data.recentLessons.length === 0) ? (
-                <div className="ll-section p-6 text-center">
+                <div className="ll-section mt-3 p-6 text-center">
                   <p className="text-sm leading-6 text-[var(--ll-text-muted)]">You have not created any lessons yet.</p>
                   <Link href="/teacher/create-lesson" className="ll-command ll-focus mt-3 inline-flex text-sm font-semibold text-[var(--ll-text)]">
                     Create a lesson
                   </Link>
                 </div>
               ) : (
-                <div className="space-y-2">
+                <div className="mt-3 space-y-2">
                   {data.recentLessons.slice(0, 5).map((l) => (
                     <div key={l.contentId} className="flex items-center justify-between rounded-xl border border-[var(--ll-border)] bg-[var(--ll-surface)] px-4 py-2">
                       <div>
@@ -572,7 +579,7 @@ export default function TeacherDashboardPage() {
                   ))}
                 </div>
               )}
-            </section>
+            </details>
           </>
         )}
       </div>

@@ -27,25 +27,25 @@ export default function NumberLine({ onClose }: NumberLineProps) {
     <div className="space-y-3">
       <div className="flex items-center justify-between">
         <h3 className="font-semibold">Number Line</h3>
-        <button type="button" aria-label="Close number line" className="rounded border border-slate-600 px-2 py-1 text-xs" onClick={() => onClose?.()}>Close</button>
+        <button type="button" aria-label="Close number line" className="rounded border border-[var(--ll-border)] px-2 py-1 text-xs" onClick={() => onClose?.()}>Close</button>
       </div>
 
       <div className="flex flex-wrap gap-2 text-xs">
         <label>
           Min
-          <input aria-label="Minimum value" type="number" className="ml-1 w-16 rounded bg-slate-900 p-1" value={min} onChange={(e) => setMin(Number(e.target.value || -10))} />
+          <input aria-label="Minimum value" type="number" className="ml-1 w-16 rounded bg-[var(--ll-bg)] p-1" value={min} onChange={(e) => setMin(Number(e.target.value || -10))} />
         </label>
         <label>
           Max
-          <input aria-label="Maximum value" type="number" className="ml-1 w-16 rounded bg-slate-900 p-1" value={max} onChange={(e) => setMax(Number(e.target.value || 10))} />
+          <input aria-label="Maximum value" type="number" className="ml-1 w-16 rounded bg-[var(--ll-bg)] p-1" value={max} onChange={(e) => setMax(Number(e.target.value || 10))} />
         </label>
-        <button type="button" aria-label="Toggle decimal mode" className="rounded border border-slate-600 px-2" onClick={() => setDecimalMode((v) => !v)}>
+        <button type="button" aria-label="Toggle decimal mode" className="rounded border border-[var(--ll-border)] px-2" onClick={() => setDecimalMode((v) => !v)}>
           {decimalMode ? "Decimal" : "Integer"}
         </button>
-        <button type="button" aria-label="Zoom in" className="rounded border border-slate-600 px-2" onClick={() => { setMin((v) => v + 1); setMax((v) => v - 1); }}>
+        <button type="button" aria-label="Zoom in" className="rounded border border-[var(--ll-border)] px-2" onClick={() => { setMin((v) => v + 1); setMax((v) => v - 1); }}>
           Zoom +
         </button>
-        <button type="button" aria-label="Zoom out" className="rounded border border-slate-600 px-2" onClick={() => { setMin((v) => v - 1); setMax((v) => v + 1); }}>
+        <button type="button" aria-label="Zoom out" className="rounded border border-[var(--ll-border)] px-2" onClick={() => { setMin((v) => v - 1); setMax((v) => v + 1); }}>
           Zoom -
         </button>
       </div>
@@ -53,7 +53,7 @@ export default function NumberLine({ onClose }: NumberLineProps) {
       <svg
         aria-label="Interactive number line"
         viewBox="0 0 320 90"
-        className="w-full rounded bg-slate-900"
+        className="w-full rounded bg-[var(--ll-bg)]"
         onClick={(e) => setValue(fromClientX(e.clientX))}
         onMouseMove={(e) => {
           if (e.buttons !== 1) return;

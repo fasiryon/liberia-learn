@@ -24,7 +24,7 @@ export default async function TeacherStudentIntelligencePage({
   }
 
   return (
-    <main className="min-h-screen bg-slate-950 px-4 py-8 text-slate-50">
+    <main className="min-h-screen bg-[var(--ll-bg)] px-4 py-8 text-[var(--ll-text)]">
       <div className="mx-auto max-w-6xl space-y-6">
         <TeacherNav />
         <TeacherStudentIntelligenceClient studentId={params.studentId} />

@@ -88,23 +88,23 @@ export default function OnboardingChecklist({
   }
 
   return (
-    <section className="mb-8 rounded-3xl border border-emerald-500/20 bg-emerald-500/10 p-6">
+    <section className="mb-8 rounded-xl border border-emerald-500/20 bg-[var(--ll-yellow)]/10 p-6">
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
-          <p className="text-xs font-semibold uppercase tracking-wide text-emerald-300">
+          <p className="text-xs font-semibold uppercase tracking-wide text-[var(--ll-yellow)]">
             New Teacher Checklist
           </p>
-          <h2 className="mt-2 text-xl font-semibold text-slate-50">
+          <h2 className="mt-2 text-xl font-semibold text-[var(--ll-text)]">
             Start with these five steps
           </h2>
-          <p className="mt-2 text-sm text-slate-300">
+          <p className="mt-2 text-sm text-[var(--ll-text)]">
             Complete the basics so your classes, assignments, and student support tools are ready.
           </p>
         </div>
         <button
           type="button"
           onClick={dismiss}
-          className="rounded-full border border-slate-700 px-4 py-2 text-sm text-slate-200 hover:bg-slate-900/60"
+          className="rounded-full border border-[var(--ll-border)] px-4 py-2 text-sm text-[var(--ll-text)] hover:bg-[var(--ll-bg)]/60"
         >
           Dismiss
         </button>
@@ -115,13 +115,13 @@ export default function OnboardingChecklist({
           <Link
             key={item.id}
             href={item.href}
-            className="rounded-2xl border border-white/10 bg-slate-950/60 p-4 transition-colors hover:border-emerald-400/40 hover:bg-slate-900"
+            className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/60 p-4 transition-colors hover:border-emerald-400/40 hover:bg-[var(--ll-bg)]"
           >
-            <p className="text-xs uppercase tracking-wide text-slate-500">
+            <p className="text-xs uppercase tracking-wide text-[var(--ll-text-faint)]">
               Step {index + 1}
             </p>
-            <p className="mt-2 text-sm font-semibold text-slate-100">{item.label}</p>
-            <p className={`mt-3 text-xs font-semibold ${item.done ? "text-emerald-300" : "text-slate-400"}`}>
+            <p className="mt-2 text-sm font-semibold text-[var(--ll-text)]">{item.label}</p>
+            <p className={`mt-3 text-xs font-semibold ${item.done ? "text-[var(--ll-yellow)]" : "text-[var(--ll-text-muted)]"}`}>
               {item.done ? "Complete" : "Open"}
             </p>
           </Link>
@@ -129,7 +129,7 @@ export default function OnboardingChecklist({
       </div>
 
       <div className="mt-5 flex flex-wrap items-center justify-between gap-4">
-        <p className="text-sm text-slate-300">
+        <p className="text-sm text-[var(--ll-text)]">
           {allComplete
             ? "Congratulations. Your teacher setup is ready."
             : `${completedCount} of ${items.length} steps complete.`}
@@ -139,7 +139,7 @@ export default function OnboardingChecklist({
             type="button"
             onClick={markComplete}
             disabled={saving}
-            className="rounded-full bg-emerald-400 px-5 py-2 text-sm font-semibold text-slate-950 disabled:opacity-60"
+            className="rounded-full bg-[var(--ll-yellow-soft)] px-5 py-2 text-sm font-semibold text-[var(--ll-text-faint)] disabled:opacity-60"
           >
             {saving ? "Saving..." : "Mark as complete"}
           </button>
@@ -147,7 +147,7 @@ export default function OnboardingChecklist({
       </div>
 
       {message ? (
-        <p className="mt-3 text-sm text-emerald-200">{message}</p>
+        <p className="mt-3 text-sm text-[var(--ll-yellow)]">{message}</p>
       ) : null}
     </section>
   );

@@ -270,7 +270,7 @@ export default function PeriodicTableScene({ state, onAction }: Props) {
         width={WIDTH}
         height={HEIGHT}
         onClick={selectFromCanvas}
-        className="w-full rounded-lg border border-slate-800 bg-slate-950"
+        className="w-full rounded-lg border border-[var(--ll-border)] bg-[var(--ll-bg)]"
       />
       <div className="flex flex-wrap gap-2">
         {(["table", "bohr", "properties"] as const).map((mode) => (
@@ -279,7 +279,7 @@ export default function PeriodicTableScene({ state, onAction }: Props) {
             type="button"
             onClick={() => onAction({ type: "SET_VIEW_MODE", value: mode })}
             className={`min-h-11 rounded-full px-4 text-sm font-semibold ${
-              state.viewMode === mode ? "bg-cyan-300 text-slate-950" : "border border-slate-700 text-slate-100"
+              state.viewMode === mode ? "bg-[var(--ll-silver-soft)] text-[var(--ll-text-faint)]" : "border border-[var(--ll-border)] text-[var(--ll-text)]"
             }`}
           >
             {mode[0].toUpperCase() + mode.slice(1)}
@@ -290,7 +290,7 @@ export default function PeriodicTableScene({ state, onAction }: Props) {
           onChange={(event) => {
             if (event.target.value) onAction({ type: "HIGHLIGHT_CATEGORY", category: event.target.value });
           }}
-          className="min-h-11 rounded-full border border-slate-700 bg-slate-950 px-4 text-sm text-slate-100"
+          className="min-h-11 rounded-full border border-[var(--ll-border)] bg-[var(--ll-bg)] px-4 text-sm text-[var(--ll-text)]"
         >
           <option value="">Highlight category</option>
           {ELEMENT_CATEGORIES.map((category) => (
@@ -304,7 +304,7 @@ export default function PeriodicTableScene({ state, onAction }: Props) {
             key={property}
             type="button"
             onClick={() => onAction({ type: "HIGHLIGHT_PROPERTY", property })}
-            className="min-h-11 rounded-full border border-slate-700 px-4 text-sm text-slate-100"
+            className="min-h-11 rounded-full border border-[var(--ll-border)] px-4 text-sm text-[var(--ll-text)]"
           >
             {property === "electronegativity" ? "Electronegativity" : property === "meltingPoint" ? "Melting Point" : "Boiling Point"}
           </button>
@@ -312,7 +312,7 @@ export default function PeriodicTableScene({ state, onAction }: Props) {
         <button
           type="button"
           onClick={() => onAction({ type: "CLEAR_SELECTION" })}
-          className="min-h-11 rounded-full border border-slate-700 px-4 text-sm text-slate-100"
+          className="min-h-11 rounded-full border border-[var(--ll-border)] px-4 text-sm text-[var(--ll-text)]"
         >
           Clear selection
         </button>

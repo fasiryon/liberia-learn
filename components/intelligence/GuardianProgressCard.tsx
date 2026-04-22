@@ -30,55 +30,55 @@ export function GuardianProgressCard({
 }) {
   return (
     <Card className="p-6 sm:p-7">
-      <h2 className="text-xl font-semibold text-slate-100">Your child&apos;s progress</h2>
-      <p className="mt-2 text-sm text-slate-400">
+      <h2 className="text-xl font-semibold text-[var(--ll-text)]">Your child&apos;s progress</h2>
+      <p className="mt-2 text-sm text-[var(--ll-text-muted)]">
         A simple view to help you support learning at home.
       </p>
 
       <div className="mt-5 grid gap-4 md:grid-cols-3">
-        <div className="rounded-2xl bg-slate-950/60 p-4">
-          <p className="text-xs text-slate-500">Average score</p>
-          <p className="mt-2 text-3xl font-semibold text-slate-100">
+        <div className="rounded-xl bg-[var(--ll-bg)]/60 p-4">
+          <p className="text-xs text-[var(--ll-text-faint)]">Average score</p>
+          <p className="mt-2 text-3xl font-semibold text-[var(--ll-text)]">
             {Math.round(data.avgScore * 100)}%
           </p>
         </div>
-        <div className="rounded-2xl bg-slate-950/60 p-4">
-          <p className="text-xs text-slate-500">Learning progress</p>
-          <p className="mt-2 text-xl font-semibold text-slate-100">
+        <div className="rounded-xl bg-[var(--ll-bg)]/60 p-4">
+          <p className="text-xs text-[var(--ll-text-faint)]">Learning progress</p>
+          <p className="mt-2 text-xl font-semibold text-[var(--ll-text)]">
             {masteryLabel(data.masteryLevel)}
           </p>
         </div>
-        <div className="rounded-2xl bg-slate-950/60 p-4">
-          <p className="text-xs text-slate-500">Recent direction</p>
-          <p className="mt-2 text-xl font-semibold text-slate-100">
+        <div className="rounded-xl bg-[var(--ll-bg)]/60 p-4">
+          <p className="text-xs text-[var(--ll-text-faint)]">Recent direction</p>
+          <p className="mt-2 text-xl font-semibold text-[var(--ll-text)]">
             {trendLabel(data.improvementTrend)}
           </p>
         </div>
       </div>
 
       <div className="mt-5 grid gap-4 lg:grid-cols-3">
-        <div className="rounded-2xl bg-emerald-500/10 p-4">
-          <p className="text-sm font-semibold text-emerald-200">Doing well</p>
-          <p className="mt-2 text-sm text-slate-200">
+        <div className="rounded-xl bg-[var(--ll-yellow)]/10 p-4">
+          <p className="text-sm font-semibold text-[var(--ll-yellow)]">Doing well</p>
+          <p className="mt-2 text-sm text-[var(--ll-text)]">
             {data.doingWell ?? "Steady effort is showing in the learning record."}
           </p>
         </div>
-        <div className="rounded-2xl bg-amber-500/10 p-4">
-          <p className="text-sm font-semibold text-amber-200">Needs support</p>
-          <p className="mt-2 text-sm text-slate-200">
+        <div className="rounded-xl bg-[var(--ll-yellow-soft)] p-4">
+          <p className="text-sm font-semibold text-[var(--ll-yellow)]">Needs support</p>
+          <p className="mt-2 text-sm text-[var(--ll-text)]">
             {data.needsHelp ?? "Keep checking in on confidence and daily practice."}
           </p>
         </div>
-        <div className="rounded-2xl border border-slate-800 bg-slate-900/80 p-4">
-          <p className="text-sm font-semibold text-slate-100">What you can do this week</p>
+        <div className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/80 p-4">
+          <p className="text-sm font-semibold text-[var(--ll-text)]">What you can do this week</p>
           <div className="mt-2 space-y-2">
             {data.supportSuggestions.length === 0 ? (
-              <p className="text-sm text-slate-300">
+              <p className="text-sm text-[var(--ll-text)]">
                 Keep encouraging steady routines at home.
               </p>
             ) : (
               data.supportSuggestions.slice(0, 3).map((suggestion) => (
-                <p key={suggestion} className="text-sm text-slate-300">
+                <p key={suggestion} className="text-sm text-[var(--ll-text)]">
                   {"- "}
                   {suggestion}
                 </p>
@@ -88,7 +88,7 @@ export function GuardianProgressCard({
         </div>
       </div>
 
-      <p className="mt-5 text-sm text-slate-400">
+      <p className="mt-5 text-sm text-[var(--ll-text-muted)]">
         {data.hasSuggestedSupport
           ? "A little extra encouragement at home could help right now."
           : "Keep supporting the habits that are already helping."}

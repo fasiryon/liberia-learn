@@ -198,8 +198,8 @@ export default function WeatherSystemScene({ state, onAction }: Props) {
 
   return (
     <div className="space-y-4 p-4">
-      <canvas ref={canvasRef} width={WIDTH} height={HEIGHT} className="w-full rounded-lg border border-slate-800 bg-slate-950" />
-      <div className="grid gap-2 text-sm text-slate-100 sm:grid-cols-2 lg:grid-cols-3">
+      <canvas ref={canvasRef} width={WIDTH} height={HEIGHT} className="w-full rounded-lg border border-[var(--ll-border)] bg-[var(--ll-bg)]" />
+      <div className="grid gap-2 text-sm text-[var(--ll-text)] sm:grid-cols-2 lg:grid-cols-3">
         <span>Temperature: {state.temperature.toFixed(0)} C</span>
         <span>Humidity: {state.humidity.toFixed(0)}%</span>
         <span>Pressure: {state.pressure.toFixed(0)} hPa</span>
@@ -209,16 +209,16 @@ export default function WeatherSystemScene({ state, onAction }: Props) {
         <span>Season: {state.season === "wet" ? "Wet" : "Dry"}</span>
       </div>
       <div className="flex flex-wrap gap-2">
-        <button type="button" onClick={() => onAction({ type: state.season === "wet" ? "SET_SEASON" : "SET_SEASON", value: state.season === "wet" ? "dry" : "wet" })} className="min-h-11 rounded-full bg-cyan-300 px-4 text-sm font-semibold text-slate-950">
+        <button type="button" onClick={() => onAction({ type: state.season === "wet" ? "SET_SEASON" : "SET_SEASON", value: state.season === "wet" ? "dry" : "wet" })} className="min-h-11 rounded-full bg-[var(--ll-silver-soft)] px-4 text-sm font-semibold text-[var(--ll-text-faint)]">
           {state.season === "wet" ? "Dry Season" : "Wet Season"}
         </button>
-        <button type="button" onClick={() => onAction({ type: "SIMULATE_STORM" })} className="min-h-11 rounded-full border border-slate-700 px-4 text-sm text-slate-100">
+        <button type="button" onClick={() => onAction({ type: "SIMULATE_STORM" })} className="min-h-11 rounded-full border border-[var(--ll-border)] px-4 text-sm text-[var(--ll-text)]">
           Simulate Storm
         </button>
-        <button type="button" onClick={() => onAction({ type: state.paused ? "PLAY" : "PAUSE" })} className="min-h-11 rounded-full border border-slate-700 px-4 text-sm text-slate-100">
+        <button type="button" onClick={() => onAction({ type: state.paused ? "PLAY" : "PAUSE" })} className="min-h-11 rounded-full border border-[var(--ll-border)] px-4 text-sm text-[var(--ll-text)]">
           {state.paused ? "Play" : "Pause"}
         </button>
-        <button type="button" onClick={() => onAction({ type: "RESET" })} className="min-h-11 rounded-full border border-slate-700 px-4 text-sm text-slate-100">
+        <button type="button" onClick={() => onAction({ type: "RESET" })} className="min-h-11 rounded-full border border-[var(--ll-border)] px-4 text-sm text-[var(--ll-text)]">
           Reset
         </button>
       </div>
@@ -229,7 +229,7 @@ export default function WeatherSystemScene({ state, onAction }: Props) {
           ["Pressure", "SET_PRESSURE", 950, 1050, state.pressure],
           ["Wind Speed", "SET_WIND_SPEED", 0, 150, state.windSpeed],
         ].map(([label, type, min, max, value]) => (
-          <label key={String(type)} className="rounded-lg border border-slate-800 bg-slate-900/70 p-3 text-sm text-slate-100">
+          <label key={String(type)} className="rounded-lg border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 p-3 text-sm text-[var(--ll-text)]">
             <span className="flex justify-between">{label}<strong>{Number(value).toFixed(0)}</strong></span>
             <input
               type="range"
@@ -242,7 +242,7 @@ export default function WeatherSystemScene({ state, onAction }: Props) {
           </label>
         ))}
       </div>
-      <p className="rounded-lg border border-emerald-500/20 bg-emerald-500/10 p-3 text-sm leading-6 text-emerald-50">
+      <p className="rounded-lg border border-emerald-500/20 bg-[var(--ll-yellow)]/10 p-3 text-sm leading-6 text-[var(--ll-yellow)]">
         Liberia has a wet season (May-October) and dry season (November-April). The wet season brings heavy rainfall especially in Monrovia, one of the world&apos;s wettest capitals.
       </p>
     </div>

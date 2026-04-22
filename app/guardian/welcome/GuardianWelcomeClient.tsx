@@ -36,7 +36,7 @@ export default function GuardianWelcomeClient({
         <button
           type="button"
           onClick={handleContinue}
-          className="ll-focus mt-6 min-h-11 w-full rounded-lg bg-[var(--ll-accent)] px-5 py-3 text-base font-semibold text-slate-950"
+          className="ll-focus mt-6 min-h-11 w-full rounded-lg bg-[var(--ll-accent)] px-5 py-3 text-base font-semibold text-[var(--ll-text-faint)]"
         >
           View My Child&apos;s Progress
         </button>

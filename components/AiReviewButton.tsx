@@ -16,7 +16,7 @@ export function AiReviewButton({ submissionId, alreadyReviewed }: Props) {
 
   if (reviewed) {
     return (
-      <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/20 border border-emerald-500/40 px-2.5 py-1 text-xs font-medium text-emerald-300">
+      <span className="inline-flex items-center gap-1 rounded-full bg-[var(--ll-yellow)]/20 border border-emerald-500/40 px-2.5 py-1 text-xs font-medium text-[var(--ll-yellow)]">
         AI Reviewed
       </span>
     );
@@ -50,7 +50,7 @@ export function AiReviewButton({ submissionId, alreadyReviewed }: Props) {
         type="button"
         onClick={handleClick}
         disabled={loading}
-        className="rounded-lg bg-blue-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
+        className="rounded-lg bg-[var(--ll-silver-soft)] px-3 py-1.5 text-xs font-semibold text-[var(--ll-text)] hover:bg-[var(--ll-silver-soft)] disabled:opacity-50 disabled:cursor-not-allowed"
       >
         {loading ? "Reviewing..." : "AI Review"}
       </button>

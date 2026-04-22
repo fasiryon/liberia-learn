@@ -164,12 +164,12 @@ export default function WaveMotionScene({ state, onAction }: Props) {
   }, [onAction, state.paused]);
 
   return (
-    <div className="bg-slate-950 p-3 sm:p-4">
+    <div className="bg-[var(--ll-bg)] p-3 sm:p-4">
       <canvas
         ref={canvasRef}
         width={WIDTH}
         height={HEIGHT}
-        className="h-auto w-full rounded-2xl border border-slate-800 bg-slate-950"
+        className="h-auto w-full rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]"
         aria-label="Wave Motion Lab canvas simulation"
       />
       <div className="mt-3 grid gap-3">
@@ -177,34 +177,34 @@ export default function WaveMotionScene({ state, onAction }: Props) {
           <button
             type="button"
             onClick={() => onAction({ type: "SET_WAVE_TYPE", value: state.waveType === "transverse" ? "longitudinal" : "transverse" })}
-            className="min-h-11 rounded-xl bg-cyan-300 px-3 py-2 text-sm font-semibold text-slate-950"
+            className="min-h-11 rounded-xl bg-[var(--ll-silver-soft)] px-3 py-2 text-sm font-semibold text-[var(--ll-text-faint)]"
           >
             {state.waveType === "transverse" ? "Longitudinal" : "Transverse"}
           </button>
           <button
             type="button"
             onClick={() => onAction(state.paused ? { type: "PLAY" } : { type: "PAUSE" })}
-            className="min-h-11 rounded-xl border border-slate-700 px-3 py-2 text-sm font-semibold text-slate-100"
+            className="min-h-11 rounded-xl border border-[var(--ll-border)] px-3 py-2 text-sm font-semibold text-[var(--ll-text)]"
           >
             {state.paused ? "Play" : "Pause"}
           </button>
           <button
             type="button"
             onClick={() => onAction({ type: "RESET" })}
-            className="min-h-11 rounded-xl border border-slate-700 px-3 py-2 text-sm font-semibold text-slate-100"
+            className="min-h-11 rounded-xl border border-[var(--ll-border)] px-3 py-2 text-sm font-semibold text-[var(--ll-text)]"
           >
             Reset
           </button>
         </div>
-        <label className="text-sm text-slate-100">
+        <label className="text-sm text-[var(--ll-text)]">
           Frequency {state.frequency.toFixed(1)} Hz
           <input className="mt-2 w-full accent-cyan-300" type="range" min="0.1" max="10" step="0.1" value={state.frequency} onChange={(event) => onAction({ type: "SET_FREQUENCY", value: Number(event.target.value) })} />
         </label>
-        <label className="text-sm text-slate-100">
+        <label className="text-sm text-[var(--ll-text)]">
           Amplitude {state.amplitude.toFixed(1)} m
           <input className="mt-2 w-full accent-cyan-300" type="range" min="0.1" max="5" step="0.1" value={state.amplitude} onChange={(event) => onAction({ type: "SET_AMPLITUDE", value: Number(event.target.value) })} />
         </label>
-        <label className="text-sm text-slate-100">
+        <label className="text-sm text-[var(--ll-text)]">
           Speed {state.waveSpeed.toFixed(1)} m/s
           <input className="mt-2 w-full accent-cyan-300" type="range" min="1" max="20" step="0.1" value={state.waveSpeed} onChange={(event) => onAction({ type: "SET_WAVE_SPEED", value: Number(event.target.value) })} />
         </label>

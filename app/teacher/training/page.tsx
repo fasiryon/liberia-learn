@@ -52,40 +52,40 @@ export default async function TrainingCenterPage() {
   const completedCount = progressRecords.filter((p) => p.status === "complete").length;
 
   return (
-    <main className="min-h-screen bg-slate-950 text-slate-50">
+    <main className="min-h-screen bg-[var(--ll-bg)] text-[var(--ll-text)]">
       <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_top,_#10b98122,_transparent_60%)]" />
 
       <div className="mx-auto max-w-4xl px-4 py-8">
         {/* ── Header ─────────────────────────────────────────────────────── */}
         <header className="mb-8 flex items-center justify-between gap-4">
           <div>
-            <p className="mb-1 text-xs uppercase tracking-wide text-emerald-300">
+            <p className="mb-1 text-xs uppercase tracking-wide text-[var(--ll-yellow)]">
               LIBERIALEARN · TRAINING CENTER
             </p>
             <h1 className="text-2xl font-bold md:text-3xl">Your Training</h1>
-            <p className="mt-1 text-sm text-slate-400">
+            <p className="mt-1 text-sm text-[var(--ll-text-muted)]">
               Short lessons to help you use LiberiaLearn with confidence.
             </p>
           </div>
           <Link
             href="/teacher"
-            className="rounded-full border border-slate-700 px-5 py-2.5 text-sm font-semibold hover:bg-slate-900 transition-colors"
+            className="rounded-full border border-[var(--ll-border)] px-5 py-2.5 text-sm font-semibold hover:bg-[var(--ll-bg)] transition-colors"
           >
             ← Back
           </Link>
         </header>
 
         {/* ── Overall progress ───────────────────────────────────────────── */}
-        <section className="mb-8 rounded-2xl border border-slate-800 bg-slate-900/80 p-6">
+        <section className="mb-8 rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/80 p-6">
           <div className="mb-3 flex items-center justify-between">
-            <p className="text-sm font-semibold text-slate-300">Overall progress</p>
-            <p className="text-sm text-slate-400">
+            <p className="text-sm font-semibold text-[var(--ll-text)]">Overall progress</p>
+            <p className="text-sm text-[var(--ll-text-muted)]">
               {completedCount} / {totalModules} modules complete
             </p>
           </div>
-          <div className="h-3 rounded-full bg-slate-800">
+          <div className="h-3 rounded-full bg-[var(--ll-surface)]">
             <div
-              className="h-3 rounded-full bg-emerald-500 transition-all duration-500"
+              className="h-3 rounded-full bg-[var(--ll-yellow)] transition-all duration-500"
               style={{ width: totalModules > 0 ? `${(completedCount / totalModules) * 100}%` : "0%" }}
             />
           </div>
@@ -94,14 +94,14 @@ export default async function TrainingCenterPage() {
         {/* ── Earned badges ──────────────────────────────────────────────── */}
         {badges.length > 0 && (
           <section className="mb-8">
-            <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-slate-400">
+            <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-[var(--ll-text-muted)]">
               Your Badges
             </h2>
             <div className="flex flex-wrap gap-3">
               {badges.map((b) => (
                 <span
                   key={b.name}
-                  className="rounded-full border border-emerald-500/30 bg-emerald-500/10 px-4 py-2 text-sm font-semibold text-emerald-300"
+                  className="rounded-full border border-emerald-500/30 bg-[var(--ll-yellow)]/10 px-4 py-2 text-sm font-semibold text-[var(--ll-yellow)]"
                 >
                   {b.emoji} {b.label}
                 </span>
@@ -125,7 +125,7 @@ export default async function TrainingCenterPage() {
                 : "border-purple-500/40";
 
             const progressBarColor =
-              level === 1 ? "bg-emerald-500" : level === 2 ? "bg-blue-500" : "bg-purple-500";
+              level === 1 ? "bg-[var(--ll-yellow)]" : level === 2 ? "bg-[var(--ll-silver-soft)]" : "bg-[var(--ll-pink-soft)]";
 
             return (
               <section key={level}>
@@ -133,11 +133,11 @@ export default async function TrainingCenterPage() {
                 <div className="mb-4 flex items-center justify-between">
                   <h2 className="text-lg font-bold">{LEVEL_LABELS[level]}</h2>
                   <div className="flex items-center gap-3">
-                    <span className="text-sm text-slate-400">
+                    <span className="text-sm text-[var(--ll-text-muted)]">
                       {done}/{modules.length} complete
                     </span>
                     {levelDone && (
-                      <span className="rounded-full bg-emerald-500/20 px-3 py-1 text-xs font-semibold text-emerald-400">
+                      <span className="rounded-full bg-[var(--ll-yellow)]/20 px-3 py-1 text-xs font-semibold text-[var(--ll-yellow)]">
                         ✓ Certified
                       </span>
                     )}
@@ -145,7 +145,7 @@ export default async function TrainingCenterPage() {
                 </div>
 
                 {/* Level progress bar */}
-                <div className="mb-5 h-2 rounded-full bg-slate-800">
+                <div className="mb-5 h-2 rounded-full bg-[var(--ll-surface)]">
                   <div
                     className={`h-2 rounded-full transition-all duration-500 ${progressBarColor}`}
                     style={{ width: modules.length > 0 ? `${(done / modules.length) * 100}%` : "0%" }}
@@ -160,10 +160,10 @@ export default async function TrainingCenterPage() {
                     const isInProgress = status === "in_progress";
 
                     const cardClass = isComplete
-                      ? "border-emerald-500/30 bg-emerald-500/10"
+                      ? "border-emerald-500/30 bg-[var(--ll-yellow)]/10"
                       : isInProgress
-                      ? "border-blue-500/30 bg-blue-500/10"
-                      : `border-slate-700 bg-slate-900/80 hover:border-slate-600 ${levelBorderColor}`;
+                      ? "border-blue-500/30 bg-[var(--ll-silver-soft)]"
+                      : `border-[var(--ll-border)] bg-[var(--ll-bg)]/80 hover:border-[var(--ll-border)] ${levelBorderColor}`;
 
                     const statusLabel = isComplete
                       ? "Complete ✅"
@@ -175,13 +175,13 @@ export default async function TrainingCenterPage() {
                       <Link
                         key={mod.id}
                         href={`/teacher/training/${mod.id}`}
-                        className={`block rounded-2xl border p-5 transition-all hover:opacity-90 ${cardClass}`}
+                        className={`block rounded-xl border p-5 transition-all hover:opacity-90 ${cardClass}`}
                       >
                         <div className="flex items-start justify-between gap-3">
                           <h3 className="text-base font-semibold leading-snug">{mod.title}</h3>
                         </div>
-                        <p className="mt-1 text-sm text-slate-400">~{mod.estimatedMinutes} min</p>
-                        <p className="mt-3 text-xs font-medium text-slate-500">{statusLabel}</p>
+                        <p className="mt-1 text-sm text-[var(--ll-text-muted)]">~{mod.estimatedMinutes} min</p>
+                        <p className="mt-3 text-xs font-medium text-[var(--ll-text-faint)]">{statusLabel}</p>
                       </Link>
                     );
                   })}

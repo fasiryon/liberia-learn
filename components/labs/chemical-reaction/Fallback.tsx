@@ -11,7 +11,7 @@ export default function ChemicalReactionFallback({
   onAction: (action: ChemicalReactionAction) => void;
 }) {
   return (
-    <div className="space-y-4 rounded-lg border border-slate-800 bg-slate-950 p-4 text-slate-100">
+    <div className="space-y-4 rounded-lg border border-[var(--ll-border)] bg-[var(--ll-bg)] p-4 text-[var(--ll-text)]">
       <h3 className="text-lg font-semibold">Chemical Reaction Lab</h3>
       <div className="grid gap-2 text-sm sm:grid-cols-2">
         <p>Reactant A: {state.reactantA.toFixed(1)} mol</p>
@@ -24,13 +24,13 @@ export default function ChemicalReactionFallback({
         <p>Energy: {state.energyType}</p>
       </div>
       <div className="flex flex-wrap gap-2">
-        <button type="button" onClick={() => onAction({ type: "START_REACTION" })} className="min-h-11 rounded-full bg-cyan-300 px-4 text-sm font-semibold text-slate-950">
+        <button type="button" onClick={() => onAction({ type: "START_REACTION" })} className="min-h-11 rounded-full bg-[var(--ll-silver-soft)] px-4 text-sm font-semibold text-[var(--ll-text-faint)]">
           Start Reaction
         </button>
-        <button type="button" onClick={() => onAction({ type: state.catalyst ? "REMOVE_CATALYST" : "ADD_CATALYST" })} className="min-h-11 rounded-full border border-slate-700 px-4 text-sm">
+        <button type="button" onClick={() => onAction({ type: state.catalyst ? "REMOVE_CATALYST" : "ADD_CATALYST" })} className="min-h-11 rounded-full border border-[var(--ll-border)] px-4 text-sm">
           {state.catalyst ? "Remove Catalyst" : "Add Catalyst"}
         </button>
-        <button type="button" onClick={() => onAction({ type: "RESET" })} className="min-h-11 rounded-full border border-slate-700 px-4 text-sm">
+        <button type="button" onClick={() => onAction({ type: "RESET" })} className="min-h-11 rounded-full border border-[var(--ll-border)] px-4 text-sm">
           Reset
         </button>
       </div>

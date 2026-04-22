@@ -11,11 +11,11 @@ export function getEnvironmentBadgeValue() {
 const STYLES: Record<AppEnvironment, { label: string; className: string }> = {
   production: {
     label: "PRODUCTION",
-    className: "border-emerald-500/30 bg-emerald-500/10 text-emerald-200",
+    className: "border-emerald-500/30 bg-[var(--ll-yellow)]/10 text-[var(--ll-yellow)]",
   },
   demo: {
     label: "DEMO",
-    className: "border-amber-500/30 bg-amber-500/10 text-amber-200",
+    className: "border-amber-500/30 bg-[var(--ll-yellow-soft)] text-[var(--ll-yellow)]",
   },
   staging: {
     label: "STAGING",
@@ -23,7 +23,7 @@ const STYLES: Record<AppEnvironment, { label: string; className: string }> = {
   },
   development: {
     label: "DEVELOPMENT",
-    className: "border-slate-500/30 bg-slate-500/10 text-slate-200",
+    className: "border-[var(--ll-border)]/30 bg-[var(--ll-surface-muted)]/10 text-[var(--ll-text)]",
   },
 };
 

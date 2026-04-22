@@ -53,25 +53,25 @@ export default function DictionaryTool({ onClose }: DictionaryToolProps) {
     <div className="space-y-3 text-sm">
       <div className="flex items-center justify-between">
         <h3 className="font-semibold">Dictionary</h3>
-        <button type="button" aria-label="Close dictionary" className="rounded border border-slate-600 px-2 py-1 text-xs" onClick={() => onClose?.()}>Close</button>
+        <button type="button" aria-label="Close dictionary" className="rounded border border-[var(--ll-border)] px-2 py-1 text-xs" onClick={() => onClose?.()}>Close</button>
       </div>
 
       <div className="flex gap-2">
-        <input aria-label="Search dictionary" value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search words" className="flex-1 rounded bg-slate-900 p-2" />
-        <select aria-label="Filter dictionary by grade level" className="rounded bg-slate-900 p-2" value={gradeFilter} onChange={(e) => setGradeFilter(e.target.value as "all" | "simple" | "advanced")}>
+        <input aria-label="Search dictionary" value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search words" className="flex-1 rounded bg-[var(--ll-bg)] p-2" />
+        <select aria-label="Filter dictionary by grade level" className="rounded bg-[var(--ll-bg)] p-2" value={gradeFilter} onChange={(e) => setGradeFilter(e.target.value as "all" | "simple" | "advanced")}>
           <option value="all">All</option>
           <option value="simple">Simple</option>
           <option value="advanced">Advanced</option>
         </select>
       </div>
 
-      <div className="max-h-[45vh] space-y-2 overflow-auto rounded border border-slate-700 p-2">
+      <div className="max-h-[45vh] space-y-2 overflow-auto rounded border border-[var(--ll-border)] p-2">
         {results.map((entry) => (
-          <article key={`${entry.word}-${entry.definition}`} className="rounded bg-slate-900 p-3">
+          <article key={`${entry.word}-${entry.definition}`} className="rounded bg-[var(--ll-bg)] p-3">
             <p className="font-semibold">{entry.word}</p>
-            <p className="text-xs text-slate-400">{entry.partOfSpeech} · {entry.grade}</p>
+            <p className="text-xs text-[var(--ll-text-muted)]">{entry.partOfSpeech} - {entry.grade}</p>
             <p className="mt-1">{entry.definition}</p>
-            <p className="mt-1 text-xs text-slate-300">Example: {entry.example}</p>
+            <p className="mt-1 text-xs text-[var(--ll-text)]">Example: {entry.example}</p>
           </article>
         ))}
       </div>

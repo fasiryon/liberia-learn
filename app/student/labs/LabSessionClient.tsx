@@ -156,28 +156,28 @@ export function LabSessionClient({ lab, sessionId, initialCompleted }: LabSessio
 
   return (
     <div className="space-y-6">
-      <section className="rounded-xl border border-white/10 bg-slate-900/70 p-6">
+      <section className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 p-6">
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-bold text-slate-100">{lab.title}</h1>
-            <p className="mt-2 text-sm text-slate-400">{lab.payload.labObjective ?? "Complete the lab carefully and record your evidence."}</p>
+            <h1 className="text-2xl font-bold text-[var(--ll-text)]">{lab.title}</h1>
+            <p className="mt-2 text-sm text-[var(--ll-text-muted)]">{lab.payload.labObjective ?? "Complete the lab carefully and record your evidence."}</p>
           </div>
-          <span className="rounded-full border border-cyan-400/20 bg-cyan-500/10 px-3 py-1 text-xs font-semibold text-cyan-200">
+          <span className="rounded-full border border-cyan-400/20 bg-[var(--ll-silver-soft)] px-3 py-1 text-xs font-semibold text-[var(--ll-silver)]">
             {lab.estimatedMinutes} min
           </span>
         </div>
 
         <div className="mt-5 grid gap-4 md:grid-cols-2">
           <div>
-            <h2 className="text-sm font-semibold uppercase tracking-wide text-slate-300">Materials needed</h2>
-            <ul className="mt-2 list-disc space-y-1 pl-5 text-sm text-slate-300">
+            <h2 className="text-sm font-semibold uppercase tracking-wide text-[var(--ll-text)]">Materials needed</h2>
+            <ul className="mt-2 list-disc space-y-1 pl-5 text-sm text-[var(--ll-text)]">
               {(lab.payload.materialsNeeded ?? []).map((item) => (
                 <li key={item}>{item}</li>
               ))}
             </ul>
           </div>
           {lab.payload.safetyNotes ? (
-            <div className="rounded-xl border border-amber-500/20 bg-amber-500/10 p-4 text-sm text-amber-100">
+            <div className="rounded-xl border border-amber-500/20 bg-[var(--ll-yellow-soft)] p-4 text-sm text-[var(--ll-yellow)]">
               <p className="font-semibold">Safety notes</p>
               <p className="mt-2">{lab.payload.safetyNotes}</p>
             </div>
@@ -188,7 +188,7 @@ export function LabSessionClient({ lab, sessionId, initialCompleted }: LabSessio
           <button
             type="button"
             onClick={beginLab}
-            className="ll-interactive mt-6 rounded-xl bg-[var(--ll-accent)] px-5 py-3 text-sm font-semibold text-slate-950"
+            className="ll-interactive mt-6 rounded-xl bg-[var(--ll-accent)] px-5 py-3 text-sm font-semibold text-[var(--ll-text-faint)]"
           >
             Begin Lab
           </button>
@@ -196,30 +196,30 @@ export function LabSessionClient({ lab, sessionId, initialCompleted }: LabSessio
       </section>
 
       {showProcedure && procedure.length > 0 && !procedureComplete ? (
-        <section className="rounded-xl border border-white/10 bg-slate-900/70 p-6">
+        <section className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 p-6">
           <div className="mb-4 flex items-center justify-between">
-            <h2 className="text-lg font-semibold text-slate-100">Procedure</h2>
-            <span className="text-xs text-slate-400">
+            <h2 className="text-lg font-semibold text-[var(--ll-text)]">Procedure</h2>
+            <span className="text-xs text-[var(--ll-text-muted)]">
               Step {stepIndex + 1} of {procedure.length}
             </span>
           </div>
-          <div className="mb-4 h-2 rounded-full bg-slate-800">
+          <div className="mb-4 h-2 rounded-full bg-[var(--ll-surface)]">
             <div
-              className="h-2 rounded-full bg-emerald-500"
+              className="h-2 rounded-full bg-[var(--ll-yellow)]"
               style={{ width: `${((stepIndex + 1) / procedure.length) * 100}%` }}
             />
           </div>
           <div className="space-y-3">
-            <p className="text-lg text-slate-100">{procedure[stepIndex].instruction}</p>
+            <p className="text-lg text-[var(--ll-text)]">{procedure[stepIndex].instruction}</p>
             {procedure[stepIndex].teacherNote ? (
-              <p className="text-sm italic text-slate-400">{procedure[stepIndex].teacherNote}</p>
+              <p className="text-sm italic text-[var(--ll-text-muted)]">{procedure[stepIndex].teacherNote}</p>
             ) : null}
-            <p className="text-sm text-slate-400">Timer: {procedure[stepIndex].durationMinutes} minutes</p>
+            <p className="text-sm text-[var(--ll-text-muted)]">Timer: {procedure[stepIndex].durationMinutes} minutes</p>
           </div>
           <button
             type="button"
             onClick={() => setStepIndex((current) => current + 1)}
-            className="ll-interactive mt-5 rounded-xl bg-[var(--ll-accent)] px-5 py-3 text-sm font-semibold text-slate-950"
+            className="ll-interactive mt-5 rounded-xl bg-[var(--ll-accent)] px-5 py-3 text-sm font-semibold text-[var(--ll-text-faint)]"
           >
             Next Step
           </button>
@@ -227,17 +227,17 @@ export function LabSessionClient({ lab, sessionId, initialCompleted }: LabSessio
       ) : null}
 
       {showProcedure && procedureComplete ? (
-        <section className="rounded-xl border border-white/10 bg-slate-900/70 p-6">
-          <h2 className="text-lg font-semibold text-slate-100">Observation Form</h2>
+        <section className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 p-6">
+          <h2 className="text-lg font-semibold text-[var(--ll-text)]">Observation Form</h2>
           <div className="mt-4 space-y-4">
             {observationFields.map((field) => (
               <label key={field.field} className="block space-y-2">
-                <span className="text-sm font-medium text-slate-200">{field.prompt}</span>
+                <span className="text-sm font-medium text-[var(--ll-text)]">{field.prompt}</span>
                 {field.inputType === "choice" ? (
                   <select
                     value={observations[field.field] ?? ""}
                     onChange={(event) => setObservations((current) => ({ ...current, [field.field]: event.target.value }))}
-                    className="w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-sm text-slate-100"
+                    className="w-full rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)] px-4 py-3 text-sm text-[var(--ll-text)]"
                   >
                     <option value="">Select one</option>
                     {(field.choices ?? []).map((choice) => (
@@ -251,7 +251,7 @@ export function LabSessionClient({ lab, sessionId, initialCompleted }: LabSessio
                     type={field.inputType === "number" ? "number" : "text"}
                     value={observations[field.field] ?? ""}
                     onChange={(event) => setObservations((current) => ({ ...current, [field.field]: event.target.value }))}
-                    className="w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-sm text-slate-100"
+                    className="w-full rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)] px-4 py-3 text-sm text-[var(--ll-text)]"
                   />
                 )}
               </label>
@@ -267,15 +267,15 @@ export function LabSessionClient({ lab, sessionId, initialCompleted }: LabSessio
           </button>
 
           <div className="mt-8 space-y-4">
-            <h3 className="text-lg font-semibold text-slate-100">Analysis Questions</h3>
+            <h3 className="text-lg font-semibold text-[var(--ll-text)]">Analysis Questions</h3>
             {analysisQuestions.map((question, index) => (
               <label key={`${question.question}-${index}`} className="block space-y-2">
-                <span className="text-sm font-medium text-slate-200">{question.question}</span>
+                <span className="text-sm font-medium text-[var(--ll-text)]">{question.question}</span>
                 <textarea
                   rows={4}
                   value={analysisAnswers[index] ?? ""}
                   onChange={(event) => setAnalysisAnswers((current) => ({ ...current, [index]: event.target.value }))}
-                  className="w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-sm text-slate-100"
+                  className="w-full rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)] px-4 py-3 text-sm text-[var(--ll-text)]"
                 />
               </label>
             ))}
@@ -285,7 +285,7 @@ export function LabSessionClient({ lab, sessionId, initialCompleted }: LabSessio
             type="button"
             onClick={submitLab}
             disabled={submitting}
-            className="ll-interactive mt-5 rounded-xl bg-[var(--ll-accent)] px-5 py-3 text-sm font-semibold text-slate-950 disabled:cursor-not-allowed disabled:opacity-60"
+            className="ll-interactive mt-5 rounded-xl bg-[var(--ll-accent)] px-5 py-3 text-sm font-semibold text-[var(--ll-text-faint)] disabled:cursor-not-allowed disabled:opacity-60"
           >
             {submitting ? "Submitting Lab..." : "Submit Lab"}
           </button>
@@ -293,13 +293,13 @@ export function LabSessionClient({ lab, sessionId, initialCompleted }: LabSessio
       ) : null}
 
       {statusMessage ? (
-        <div className="rounded-xl border border-emerald-500/20 bg-emerald-500/10 p-4 text-sm text-emerald-100">
+        <div className="rounded-xl border border-emerald-500/20 bg-[var(--ll-yellow)]/10 p-4 text-sm text-[var(--ll-yellow)]">
           {statusMessage}
         </div>
       ) : null}
 
       {completed ? (
-        <div className="rounded-xl border border-white/10 bg-slate-900/70 p-4 text-sm text-slate-300">
+        <div className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 p-4 text-sm text-[var(--ll-text)]">
           Lab submitted. Your teacher will review your observations.
         </div>
       ) : null}

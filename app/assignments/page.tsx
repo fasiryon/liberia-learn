@@ -84,34 +84,34 @@ export default async function StudentAssignmentsPage() {
       : student.county || "Montserrado";
 
   return (
-    <main className="min-h-screen bg-slate-950 text-slate-50">
+    <main className="min-h-screen bg-[var(--ll-bg)] text-[var(--ll-text)]">
       <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_top,_#22c55e22,_transparent_60%)]" />
 
       <div className="mx-auto max-w-6xl px-4 py-6">
         {/* Header */}
         <header className="mb-6 flex items-center justify-between">
           <div>
-            <p className="text-xs uppercase tracking-wide text-emerald-300">
+            <p className="text-xs uppercase tracking-wide text-[var(--ll-yellow)]">
               LIBERIALEARN
             </p>
             <h1 className="text-2xl font-semibold">
               Homework &amp; assignments
             </h1>
-            <p className="text-xs text-slate-400">
+            <p className="text-xs text-[var(--ll-text-muted)]">
               {studentName} · {location}
             </p>
           </div>
 
           <Link
             href="/dashboard"
-            className="rounded-full border border-slate-700 px-4 py-2 text-xs text-slate-200 hover:bg-slate-900"
+            className="rounded-full border border-[var(--ll-border)] px-4 py-2 text-xs text-[var(--ll-text)] hover:bg-[var(--ll-bg)]"
           >
             ← Back to dashboard
           </Link>
         </header>
 
         {homeworkItems.length === 0 ? (
-          <div className="rounded-2xl border border-slate-800 bg-slate-900/80 p-8 text-center text-sm text-slate-400">
+          <div className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/80 p-8 text-center text-sm text-[var(--ll-text-muted)]">
             No homework yet. Your teachers will assign work here.
           </div>
         ) : (
@@ -120,17 +120,17 @@ export default async function StudentAssignmentsPage() {
               <Link
                 key={hw.id}
                 href={`/assignments/${hw.id}`}
-                className="block rounded-2xl border border-slate-800 bg-slate-900/80 px-4 py-3 hover:border-emerald-500/60"
+                className="block rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/80 px-4 py-3 hover:border-emerald-500/60"
               >
                 <div className="flex items-center justify-between gap-3">
                   <div>
-                    <p className="text-sm font-semibold text-slate-50">
+                    <p className="text-sm font-semibold text-[var(--ll-text)]">
                       {hw.title}
                     </p>
-                    <p className="text-xs text-slate-400">
+                    <p className="text-xs text-[var(--ll-text-muted)]">
                       {hw.className} · {hw.schoolName}
                     </p>
-                    <p className="mt-1 text-[11px] text-slate-500">
+                    <p className="mt-1 text-[11px] text-[var(--ll-text-faint)]">
                       Due:{" "}
                       {hw.dueAt
                         ? new Date(hw.dueAt).toLocaleDateString()
@@ -141,17 +141,17 @@ export default async function StudentAssignmentsPage() {
                   <div className="text-right text-xs">
                     {hw.submitted ? (
                       <div>
-                        <p className="text-emerald-400 font-semibold">
+                        <p className="text-[var(--ll-yellow)] font-semibold">
                           Submitted
                         </p>
                         {hw.score != null && (
-                          <p className="text-emerald-300">
+                          <p className="text-[var(--ll-yellow)]">
                             Score: {hw.score}%
                           </p>
                         )}
                       </div>
                     ) : (
-                      <p className="text-amber-300 font-semibold">
+                      <p className="text-[var(--ll-yellow)] font-semibold">
                         Not submitted
                       </p>
                     )}

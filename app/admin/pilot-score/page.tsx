@@ -7,7 +7,7 @@ type ComponentScore = { name: string; score: number; max: number; detail: string
 type ScoreResult = { total: number; components: ComponentScore[]; grade: string };
 
 const GRADE_COLOR: Record<string, string> = {
-  A: "bg-emerald-500", B: "bg-emerald-500/70", C: "bg-amber-500",
+  A: "bg-[var(--ll-yellow)]", B: "bg-[var(--ll-yellow)]/70", C: "bg-[var(--ll-yellow-soft)]",
   D: "bg-orange-500", F: "bg-red-500",
 };
 
@@ -30,30 +30,30 @@ export default function PilotScorePage() {
       .finally(() => setLoading(false));
   }, []);
 
-  if (loading) return <div className="h-40 rounded-2xl bg-slate-800/50 animate-pulse" />;
+  if (loading) return <div className="h-40 rounded-xl bg-[var(--ll-surface)]/50 animate-pulse" />;
   if (!result) return <p className="text-red-400">Failed to load score</p>;
 
   return (
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-bold">Pilot Readiness Score</h1>
-        <p className="text-sm text-slate-400 mt-1">Your school&apos;s readiness for the MOE pilot</p>
+        <p className="text-sm text-[var(--ll-text-muted)] mt-1">Your school&apos;s readiness for the MOE pilot</p>
       </div>
 
       {/* Overall score */}
-      <div className="rounded-2xl border border-white/10 bg-slate-900/70 p-6 text-center">
+      <div className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 p-6 text-center">
         <div className="inline-flex items-center gap-4">
-          <div className="text-5xl font-bold text-slate-100">{result.total}</div>
+          <div className="text-5xl font-bold text-[var(--ll-text)]">{result.total}</div>
           <div>
-            <span className={`inline-block rounded-full px-3 py-1 text-sm font-bold text-white ${GRADE_COLOR[result.grade] || "bg-slate-500"}`}>
+            <span className={`inline-block rounded-full px-3 py-1 text-sm font-bold text-[var(--ll-text)] ${GRADE_COLOR[result.grade] || "bg-[var(--ll-surface-muted)]"}`}>
               Grade {result.grade}
             </span>
-            <p className="text-xs text-slate-400 mt-1">out of 100</p>
+            <p className="text-xs text-[var(--ll-text-muted)] mt-1">out of 100</p>
           </div>
         </div>
-        <div className="mt-4 h-3 rounded-full bg-slate-800 max-w-md mx-auto">
+        <div className="mt-4 h-3 rounded-full bg-[var(--ll-surface)] max-w-md mx-auto">
           <div
-            className={`h-3 rounded-full ${result.total >= 60 ? "bg-emerald-500" : result.total >= 40 ? "bg-amber-500" : "bg-red-500"}`}
+            className={`h-3 rounded-full ${result.total >= 60 ? "bg-[var(--ll-yellow)]" : result.total >= 40 ? "bg-[var(--ll-yellow-soft)]" : "bg-red-500"}`}
             style={{ width: `${result.total}%` }}
           />
         </div>
@@ -65,20 +65,20 @@ export default function PilotScorePage() {
           const pct = c.max > 0 ? Math.round((c.score / c.max) * 100) : 0;
           const link = IMPROVE_LINKS[c.name];
           return (
-            <div key={c.name} className="rounded-2xl border border-white/10 bg-slate-900/70 p-5">
+            <div key={c.name} className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 p-5">
               <div className="flex items-center justify-between mb-2">
-                <h3 className="text-sm font-semibold text-slate-200">{c.name}</h3>
-                <span className="text-sm font-bold text-slate-300">{c.score}/{c.max}</span>
+                <h3 className="text-sm font-semibold text-[var(--ll-text)]">{c.name}</h3>
+                <span className="text-sm font-bold text-[var(--ll-text)]">{c.score}/{c.max}</span>
               </div>
-              <div className="h-2 rounded-full bg-slate-800 mb-2">
+              <div className="h-2 rounded-full bg-[var(--ll-surface)] mb-2">
                 <div
-                  className={`h-2 rounded-full ${pct >= 100 ? "bg-emerald-500" : pct >= 50 ? "bg-amber-500" : "bg-red-500"}`}
+                  className={`h-2 rounded-full ${pct >= 100 ? "bg-[var(--ll-yellow)]" : pct >= 50 ? "bg-[var(--ll-yellow-soft)]" : "bg-red-500"}`}
                   style={{ width: `${pct}%` }}
                 />
               </div>
-              <p className="text-xs text-slate-400">{c.detail}</p>
+              <p className="text-xs text-[var(--ll-text-muted)]">{c.detail}</p>
               {c.score < c.max && link && (
-                <Link href={link.href} className="text-xs text-emerald-400 hover:underline mt-1 inline-block">
+                <Link href={link.href} className="text-xs text-[var(--ll-yellow)] hover:underline mt-1 inline-block">
                   Improve this score &rarr; {link.label}
                 </Link>
               )}

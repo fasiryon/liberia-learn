@@ -56,25 +56,25 @@ export default function TeacherPlacementsPage() {
   };
 
   return (
-    <main className="min-h-screen bg-slate-950 px-4 py-8 text-slate-50">
+    <main className="min-h-screen bg-[var(--ll-bg)] px-4 py-8 text-[var(--ll-text)]">
       <div className="mx-auto max-w-6xl space-y-6">
         <div className="space-y-2">
-          <p className="text-xs font-semibold uppercase tracking-wide text-emerald-300">Teacher Placement Review</p>
+          <p className="text-xs font-semibold uppercase tracking-wide text-[var(--ll-yellow)]">Teacher Placement Review</p>
           <h1 className="text-3xl font-bold">Student Placement Results</h1>
-          <p className="text-sm text-slate-400">
+          <p className="text-sm text-[var(--ll-text-muted)]">
             Review AI recommendations and confirm or adjust each student&apos;s grade placement.
           </p>
         </div>
 
         <section className="grid gap-4 md:grid-cols-4">
           {[
-            ["Total tested", summary.totalTested, "text-slate-100"],
-            ["Pending review", summary.pendingReview, "text-amber-300"],
+            ["Total tested", summary.totalTested, "text-[var(--ll-text)]"],
+            ["Pending review", summary.pendingReview, "text-[var(--ll-yellow)]"],
             ["Confirmed", summary.confirmed, "text-green-300"],
-            ["Overridden", summary.overridden, "text-blue-300"],
+            ["Overridden", summary.overridden, "text-[var(--ll-silver)]"],
           ].map(([label, value, color]) => (
-            <div key={label} className="rounded-2xl border border-slate-800 bg-slate-900/80 p-5">
-              <p className="text-xs uppercase tracking-wide text-slate-500">{label}</p>
+            <div key={label} className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/80 p-5">
+              <p className="text-xs uppercase tracking-wide text-[var(--ll-text-faint)]">{label}</p>
               <p className={`mt-2 text-3xl font-bold ${color}`}>{value}</p>
             </div>
           ))}
@@ -83,21 +83,21 @@ export default function TeacherPlacementsPage() {
         {loading ? (
           <div className="space-y-3">
             {Array.from({ length: 4 }).map((_, index) => (
-              <div key={index} className="h-20 animate-pulse rounded-2xl bg-slate-900/70" />
+              <div key={index} className="h-20 animate-pulse rounded-xl bg-[var(--ll-bg)]/70" />
             ))}
           </div>
         ) : error ? (
-          <div className="rounded-2xl border border-red-500/30 bg-red-500/10 p-5 text-sm text-red-200">{error}</div>
+          <div className="rounded-xl border border-red-500/30 bg-red-500/10 p-5 text-sm text-red-200">{error}</div>
         ) : !data || data.placements.length === 0 ? (
-          <div className="rounded-2xl border border-slate-800 bg-slate-900/80 p-8 text-center text-sm text-slate-400">
+          <div className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/80 p-8 text-center text-sm text-[var(--ll-text-muted)]">
             No placement tests have been submitted yet.
           </div>
         ) : (
-          <section className="overflow-hidden rounded-3xl border border-slate-800 bg-slate-900/80">
+          <section className="overflow-hidden rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/80">
             <div className="overflow-x-auto">
               <table className="min-w-full text-sm">
                 <thead>
-                  <tr className="border-b border-slate-800 text-left text-xs uppercase tracking-wide text-slate-500">
+                  <tr className="border-b border-[var(--ll-border)] text-left text-xs uppercase tracking-wide text-[var(--ll-text-faint)]">
                     <th className="px-4 py-3">Name</th>
                     <th className="px-4 py-3">Grade</th>
                     <th className="px-4 py-3">Test Date</th>
@@ -117,8 +117,8 @@ export default function TeacherPlacementsPage() {
                 </thead>
                 <tbody>
                   {data.placements.map((placement) => (
-                    <tr key={placement.id} className="border-b border-slate-800/60 text-slate-200">
-                      <td className="px-4 py-4 font-semibold text-slate-100">{placement.studentName}</td>
+                    <tr key={placement.id} className="border-b border-[var(--ll-border)]/60 text-[var(--ll-text)]">
+                      <td className="px-4 py-4 font-semibold text-[var(--ll-text)]">{placement.studentName}</td>
                       <td className="px-4 py-4">Grade {placement.currentGrade ?? "—"}</td>
                       <td className="px-4 py-4">{new Date(placement.testDate).toLocaleDateString("en-LR")}</td>
                       <td className="px-4 py-4">Grade {placement.recommendedGrade}</td>
@@ -135,7 +135,7 @@ export default function TeacherPlacementsPage() {
                       <td className="px-4 py-4">
                         <Link
                           href={`/teacher/placements/${placement.id}`}
-                          className="inline-flex rounded-xl bg-emerald-500 px-4 py-2 font-semibold text-slate-950 hover:bg-emerald-400"
+                          className="inline-flex rounded-xl bg-[var(--ll-yellow)] px-4 py-2 font-semibold text-[var(--ll-text-faint)] hover:bg-[var(--ll-yellow-soft)]"
                         >
                           Review
                         </Link>

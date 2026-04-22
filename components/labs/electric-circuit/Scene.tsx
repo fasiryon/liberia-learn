@@ -155,31 +155,31 @@ export default function ElectricCircuitScene({ state, onAction }: Props) {
   }, [state]);
 
   return (
-    <div className="bg-slate-950 p-3 sm:p-4">
+    <div className="bg-[var(--ll-bg)] p-3 sm:p-4">
       <canvas
         ref={canvasRef}
         width={WIDTH}
         height={HEIGHT}
-        className="h-auto w-full rounded-2xl border border-slate-800 bg-slate-950"
+        className="h-auto w-full rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]"
         aria-label="Electric Circuit Builder canvas simulation"
       />
       <div className="mt-3 grid gap-3">
         <button
           type="button"
           onClick={() => onAction({ type: "SET_CIRCUIT_TYPE", value: state.circuitType === "series" ? "parallel" : "series" })}
-          className="min-h-11 rounded-xl bg-cyan-300 px-3 py-2 text-sm font-semibold text-slate-950"
+          className="min-h-11 rounded-xl bg-[var(--ll-silver-soft)] px-3 py-2 text-sm font-semibold text-[var(--ll-text-faint)]"
         >
           {state.circuitType === "series" ? "Switch to Parallel" : "Switch to Series"}
         </button>
-        <label className="text-sm text-slate-100">
+        <label className="text-sm text-[var(--ll-text)]">
           Voltage {state.voltage.toFixed(1)} V
           <input className="mt-2 w-full accent-cyan-300" type="range" min="0" max="24" step="0.1" value={state.voltage} onChange={(event) => onAction({ type: "SET_VOLTAGE", value: Number(event.target.value) })} />
         </label>
-        <label className="text-sm text-slate-100">
+        <label className="text-sm text-[var(--ll-text)]">
           R1 {Math.round(state.resistance1)} ohms
           <input className="mt-2 w-full accent-cyan-300" type="range" min="1" max="1000" step="1" value={state.resistance1} onChange={(event) => onAction({ type: "SET_RESISTANCE1", value: Number(event.target.value) })} />
         </label>
-        <label className="text-sm text-slate-100">
+        <label className="text-sm text-[var(--ll-text)]">
           R2 {Math.round(state.resistance2)} ohms
           <input className="mt-2 w-full accent-cyan-300" type="range" min="1" max="1000" step="1" value={state.resistance2} onChange={(event) => onAction({ type: "SET_RESISTANCE2", value: Number(event.target.value) })} />
         </label>

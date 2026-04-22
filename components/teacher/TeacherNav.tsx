@@ -25,7 +25,7 @@ type MessageSummary = { read: boolean; fromRole: "guardian" | "teacher" };
 function Badge({ count }: { count: number }) {
   if (count <= 0) return null;
   return (
-    <span className="rounded-full bg-emerald-500 px-2 py-0.5 text-[10px] font-semibold text-slate-950">
+    <span className="rounded-full bg-[var(--ll-yellow)] px-2 py-0.5 text-[10px] font-semibold text-[var(--ll-text-faint)]">
       {count}
     </span>
   );
@@ -55,7 +55,7 @@ export function TeacherNav() {
   }, []);
 
   return (
-    <nav className="mb-8 flex flex-wrap gap-2 border-b border-slate-800 pb-4">
+    <nav className="mb-8 flex flex-wrap gap-2 border-b border-[var(--ll-border)] pb-4">
       {LINKS.map((link) => {
         const active =
           pathname === link.href || (link.href !== "/teacher" && pathname.startsWith(link.href));
@@ -65,8 +65,8 @@ export function TeacherNav() {
             href={link.href}
             className={`inline-flex items-center gap-2 rounded-full px-5 py-2 text-sm font-semibold transition-colors ${
               active
-                ? "bg-slate-100 text-slate-900"
-                : "border border-slate-700 bg-slate-900 text-slate-200 hover:bg-slate-800"
+                ? "bg-[var(--ll-surface-muted)] text-[var(--ll-text-faint)]"
+                : "border border-[var(--ll-border)] bg-[var(--ll-bg)] text-[var(--ll-text)] hover:bg-[var(--ll-surface)]"
             }`}
           >
             <span>{link.label}</span>

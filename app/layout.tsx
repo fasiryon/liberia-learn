@@ -23,7 +23,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={`${inter.className} bg-slate-950 text-slate-50`}>
+      <body className={`${inter.className} bg-[var(--ll-bg)] text-[var(--ll-text)]`}>
         {children}
         <ConsentGate />
         <CookieNotice />

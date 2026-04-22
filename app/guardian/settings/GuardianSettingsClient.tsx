@@ -68,25 +68,25 @@ export default function GuardianSettingsClient() {
   }
 
   return (
-    <main className="min-h-screen bg-slate-950 px-4 py-8 text-slate-50">
+    <main className="min-h-screen bg-[var(--ll-bg)] px-4 py-8 text-[var(--ll-text)]">
       <div className="mx-auto max-w-3xl space-y-6">
         <div>
-          <Link href="/guardian" className="text-sm text-emerald-300 hover:text-emerald-200">
+          <Link href="/guardian" className="text-sm text-[var(--ll-yellow)] hover:text-[var(--ll-yellow)]">
             &larr; Back to Guardian Dashboard
           </Link>
           <h1 className="mt-3 text-3xl font-bold">Guardian Settings</h1>
-          <p className="mt-2 text-sm text-slate-400">
+          <p className="mt-2 text-sm text-[var(--ll-text-muted)]">
             Choose which SMS updates you want to receive for your child.
           </p>
         </div>
 
-        <section className="rounded-3xl border border-white/10 bg-slate-900/80 p-6">
-          <div className="rounded-2xl bg-slate-950/70 p-4">
-            <p className="text-xs uppercase tracking-wide text-slate-500">Phone number</p>
-            <p className="mt-2 text-sm font-semibold text-slate-100">
+        <section className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/80 p-6">
+          <div className="rounded-xl bg-[var(--ll-bg)]/70 p-4">
+            <p className="text-xs uppercase tracking-wide text-[var(--ll-text-faint)]">Phone number</p>
+            <p className="mt-2 text-sm font-semibold text-[var(--ll-text)]">
               {loading ? "Loading..." : phoneNumber || "No phone number on file"}
             </p>
-            <Link href={updatePhoneHref} className="mt-3 inline-flex text-sm text-emerald-300 hover:text-emerald-200">
+            <Link href={updatePhoneHref} className="mt-3 inline-flex text-sm text-[var(--ll-yellow)] hover:text-[var(--ll-yellow)]">
               Update phone number
             </Link>
           </div>
@@ -101,14 +101,14 @@ export default function GuardianSettingsClient() {
                 key={key}
                 type="button"
                 onClick={() => toggle(key as keyof Preferences)}
-                className="flex min-h-11 w-full items-center justify-between rounded-2xl border border-slate-700 bg-slate-950 px-4 py-3 text-left"
+                className="flex min-h-11 w-full items-center justify-between rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)] px-4 py-3 text-left"
               >
-                <span className="text-sm text-slate-100">{label}</span>
+                <span className="text-sm text-[var(--ll-text)]">{label}</span>
                 <span
                   className={`rounded-full px-3 py-1 text-xs font-semibold ${
                     preferences[key as keyof Preferences]
-                      ? "bg-emerald-500/20 text-emerald-300"
-                      : "bg-slate-800 text-slate-400"
+                      ? "bg-[var(--ll-yellow)]/20 text-[var(--ll-yellow)]"
+                      : "bg-[var(--ll-surface)] text-[var(--ll-text-muted)]"
                   }`}
                 >
                   {preferences[key as keyof Preferences] ? "On" : "Off"}
@@ -122,13 +122,13 @@ export default function GuardianSettingsClient() {
               type="button"
               onClick={saveSettings}
               disabled={saving}
-              className="rounded-full bg-emerald-400 px-5 py-2 text-sm font-semibold text-slate-950 disabled:opacity-60"
+              className="rounded-full bg-[var(--ll-yellow-soft)] px-5 py-2 text-sm font-semibold text-[var(--ll-text-faint)] disabled:opacity-60"
             >
               {saving ? "Saving..." : "Save"}
             </button>
-            <p className="text-sm text-slate-400">Standard SMS rates may apply</p>
+            <p className="text-sm text-[var(--ll-text-muted)]">Standard SMS rates may apply</p>
           </div>
-          {message ? <p className="mt-3 text-sm text-slate-300">{message}</p> : null}
+          {message ? <p className="mt-3 text-sm text-[var(--ll-text)]">{message}</p> : null}
         </section>
       </div>
     </main>

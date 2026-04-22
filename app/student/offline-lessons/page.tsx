@@ -49,39 +49,39 @@ export default function OfflineLessonsPage() {
   }
 
   return (
-    <main className="min-h-screen bg-slate-950 px-4 py-8 text-slate-100">
+    <main className="min-h-screen bg-[var(--ll-bg)] px-4 py-8 text-[var(--ll-text)]">
       <div className="mx-auto max-w-2xl space-y-6">
         <div className="flex items-center gap-3">
           <Link
             href="/student/dashboard"
-            className="text-sm text-slate-400 hover:text-slate-200"
+            className="text-sm text-[var(--ll-text-muted)] hover:text-[var(--ll-text)]"
           >
             ← Dashboard
           </Link>
         </div>
 
         <h1 className="text-2xl font-bold tracking-tight">Offline Lessons</h1>
-        <p className="text-sm text-slate-400">
+        <p className="text-sm text-[var(--ll-text-muted)]">
           These lessons are saved to your device and available without an internet connection.
         </p>
 
         {loading && (
           <div className="space-y-2">
             {[1, 2, 3].map((i) => (
-              <div key={i} className="h-16 rounded-xl bg-slate-800 animate-pulse" />
+              <div key={i} className="h-16 rounded-xl bg-[var(--ll-surface)] animate-pulse" />
             ))}
           </div>
         )}
 
         {!loading && lessons.length === 0 && (
-          <div className="rounded-xl border border-slate-700/50 bg-slate-900/60 px-6 py-8 text-center">
-            <p className="text-slate-400 text-sm">No lessons saved for offline use yet.</p>
-            <p className="mt-2 text-xs text-slate-500">
+          <div className="rounded-xl border border-[var(--ll-border)]/50 bg-[var(--ll-bg)]/60 px-6 py-8 text-center">
+            <p className="text-[var(--ll-text-muted)] text-sm">No lessons saved for offline use yet.</p>
+            <p className="mt-2 text-xs text-[var(--ll-text-faint)]">
               Open a lesson and tap &quot;Save for offline&quot; to access it without internet.
             </p>
             <Link
               href="/student/lessons"
-              className="mt-4 inline-block text-sm text-emerald-400 hover:text-emerald-300 underline"
+              className="mt-4 inline-block text-sm text-[var(--ll-yellow)] hover:text-[var(--ll-yellow)] underline"
             >
               Browse lessons
             </Link>
@@ -93,23 +93,23 @@ export default function OfflineLessonsPage() {
             {lessons.map((lesson) => (
               <li
                 key={lesson.contentId}
-                className="flex items-center justify-between rounded-xl border border-slate-700/50 bg-slate-900/60 px-4 py-3"
+                className="flex items-center justify-between rounded-xl border border-[var(--ll-border)]/50 bg-[var(--ll-bg)]/60 px-4 py-3"
               >
                 <div className="min-w-0">
                   <Link
                     href={`/student/lesson/${lesson.contentId}`}
-                    className="truncate text-sm font-medium text-slate-100 hover:text-emerald-300"
+                    className="truncate text-sm font-medium text-[var(--ll-text)] hover:text-[var(--ll-yellow)]"
                   >
                     {lesson.contentId}
                   </Link>
-                  <div className="mt-0.5 flex gap-3 text-xs text-slate-500">
+                  <div className="mt-0.5 flex gap-3 text-xs text-[var(--ll-text-faint)]">
                     <span>Saved {formatDate(lesson.cachedAt)}</span>
                     <span>{formatBytes(lesson.sizeBytes)}</span>
                   </div>
                 </div>
                 <button
                   onClick={() => handleRemove(lesson.contentId)}
-                  className="ml-4 shrink-0 rounded-md px-2 py-1 text-xs text-slate-400 hover:bg-slate-700/60 hover:text-red-400"
+                  className="ml-4 shrink-0 rounded-md px-2 py-1 text-xs text-[var(--ll-text-muted)] hover:bg-[var(--ll-surface-muted)]/60 hover:text-red-400"
                   aria-label={`Remove ${lesson.contentId} from offline cache`}
                 >
                   Remove

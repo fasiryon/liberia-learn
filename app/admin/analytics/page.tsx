@@ -67,7 +67,7 @@ export default function AdminAnalyticsPage() {
       : 1;
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-50 px-4 py-8 sm:px-8">
+    <div className="min-h-screen bg-[var(--ll-bg)] text-[var(--ll-text)] px-4 py-8 sm:px-8">
       <div className="mx-auto max-w-6xl space-y-8">
         {/* Header + Days Selector */}
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
@@ -81,8 +81,8 @@ export default function AdminAnalyticsPage() {
                 onClick={() => setDays(d)}
                 className={`rounded-full px-4 py-1.5 text-xs font-medium transition ${
                   days === d
-                    ? "bg-emerald-500 text-slate-950"
-                    : "border border-slate-700 text-slate-300 hover:border-slate-500"
+                    ? "bg-[var(--ll-yellow)] text-[var(--ll-text-faint)]"
+                    : "border border-[var(--ll-border)] text-[var(--ll-text)] hover:border-[var(--ll-border)]"
                 }`}
               >
                 {d}d
@@ -105,13 +105,13 @@ export default function AdminAnalyticsPage() {
               {cards!.map((c) => (
                 <div
                   key={c.label}
-                  className="rounded-2xl border border-slate-800 bg-slate-900/60 p-5"
+                  className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/60 p-5"
                 >
-                  <p className="text-xs text-slate-400">{c.label}</p>
+                  <p className="text-xs text-[var(--ll-text-muted)]">{c.label}</p>
                   {loading ? (
-                    <div className="mt-2 h-7 w-20 animate-pulse rounded bg-slate-800" />
+                    <div className="mt-2 h-7 w-20 animate-pulse rounded bg-[var(--ll-surface)]" />
                   ) : (
-                    <p className="mt-1 text-2xl font-bold text-emerald-400">
+                    <p className="mt-1 text-2xl font-bold text-[var(--ll-yellow)]">
                       {c.value.toLocaleString()}
                     </p>
                   )}
@@ -120,8 +120,8 @@ export default function AdminAnalyticsPage() {
             </div>
 
             {/* Daily Active Students */}
-            <div className="rounded-2xl border border-slate-800 bg-slate-900/60 p-6">
-              <h2 className="mb-4 text-sm font-semibold text-slate-300">
+            <div className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/60 p-6">
+              <h2 className="mb-4 text-sm font-semibold text-[var(--ll-text)]">
                 Daily Active Students
               </h2>
               {data.dailyActive.length > 0 ? (
@@ -161,36 +161,36 @@ export default function AdminAnalyticsPage() {
                   </LineChart>
                 </ResponsiveContainer>
               ) : (
-                <p className="py-12 text-center text-sm text-slate-500">
+                <p className="py-12 text-center text-sm text-[var(--ll-text-faint)]">
                   No activity data for this period.
                 </p>
               )}
             </div>
 
             {/* Top Lessons */}
-            <div className="rounded-2xl border border-slate-800 bg-slate-900/60 p-6">
-              <h2 className="mb-4 text-sm font-semibold text-slate-300">
+            <div className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/60 p-6">
+              <h2 className="mb-4 text-sm font-semibold text-[var(--ll-text)]">
                 Most Viewed Lessons (Top 10)
               </h2>
               {data.topLessons.length > 0 ? (
                 <ul className="space-y-3">
                   {data.topLessons.map((l, i) => (
                     <li key={l.contentId} className="flex items-center gap-3">
-                      <span className="w-5 text-right text-xs text-slate-500">
+                      <span className="w-5 text-right text-xs text-[var(--ll-text-faint)]">
                         {i + 1}
                       </span>
                       <div className="flex-1">
                         <div className="flex items-center justify-between text-xs">
-                          <span className="text-slate-200 truncate max-w-[70%]">
+                          <span className="text-[var(--ll-text)] truncate max-w-[70%]">
                             {l.contentId}
                           </span>
-                          <span className="text-slate-400">
+                          <span className="text-[var(--ll-text-muted)]">
                             {Number(l.views).toLocaleString()} views
                           </span>
                         </div>
-                        <div className="mt-1 h-1.5 rounded-full bg-slate-800">
+                        <div className="mt-1 h-1.5 rounded-full bg-[var(--ll-surface)]">
                           <div
-                            className="h-full rounded-full bg-emerald-500"
+                            className="h-full rounded-full bg-[var(--ll-yellow)]"
                             style={{
                               width: `${(Number(l.views) / maxViews) * 100}%`,
                             }}
@@ -201,14 +201,14 @@ export default function AdminAnalyticsPage() {
                   ))}
                 </ul>
               ) : (
-                <p className="py-8 text-center text-sm text-slate-500">
+                <p className="py-8 text-center text-sm text-[var(--ll-text-faint)]">
                   No lesson views recorded yet.
                 </p>
               )}
             </div>
 
             {/* Footer note */}
-            <p className="text-center text-xs text-slate-600">
+            <p className="text-center text-xs text-[var(--ll-text-faint)]">
               Data refreshed on page load. Showing last {days} days.
             </p>
           </>

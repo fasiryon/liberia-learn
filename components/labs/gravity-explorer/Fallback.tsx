@@ -81,19 +81,19 @@ export default function GravityFallback({
   }, [onAction, state.paused]);
 
   return (
-    <section className="bg-slate-950 p-3 sm:p-4">
+    <section className="bg-[var(--ll-bg)] p-3 sm:p-4">
       <canvas
         ref={canvasRef}
         width={520}
         height={300}
-        className="h-auto w-full rounded-2xl border border-slate-800 bg-slate-950"
+        className="h-auto w-full rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]"
         aria-label="Gravity Explorer fallback simulation"
       />
       <div className="mt-3 grid grid-cols-3 gap-2">
         <button
           type="button"
           onClick={() => onAction(state.paused ? { type: "PLAY" } : { type: "PAUSE" })}
-          className="ll-interactive inline-flex min-h-11 items-center justify-center gap-1.5 rounded-xl bg-[var(--ll-accent)] px-3 py-2 text-sm font-semibold text-slate-950"
+          className="ll-interactive inline-flex min-h-11 items-center justify-center gap-1.5 rounded-xl bg-[var(--ll-accent)] px-3 py-2 text-sm font-semibold text-[var(--ll-text-faint)]"
         >
           {state.paused
             ? <><Play className="h-4 w-4" strokeWidth={1.5} />Play</>

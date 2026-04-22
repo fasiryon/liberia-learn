@@ -37,7 +37,7 @@ export default function FractionVisualizer({ onClose }: FractionVisualizerProps)
     <div className="space-y-3 text-sm">
       <div className="flex items-center justify-between">
         <h3 className="font-semibold">Fraction Visualizer</h3>
-        <button type="button" aria-label="Close fraction visualizer" className="rounded border border-slate-600 px-2 py-1" onClick={() => onClose?.()}>
+        <button type="button" aria-label="Close fraction visualizer" className="rounded border border-[var(--ll-border)] px-2 py-1" onClick={() => onClose?.()}>
           Close
         </button>
       </div>
@@ -45,32 +45,32 @@ export default function FractionVisualizer({ onClose }: FractionVisualizerProps)
       <div className="grid grid-cols-2 gap-3">
         <label className="space-y-1">
           <span>A numerator</span>
-          <input aria-label="Fraction A numerator" type="number" className="w-full rounded bg-slate-900 p-2" value={aNum} onChange={(e) => setANum(Number(e.target.value || 0))} />
+          <input aria-label="Fraction A numerator" type="number" className="w-full rounded bg-[var(--ll-bg)] p-2" value={aNum} onChange={(e) => setANum(Number(e.target.value || 0))} />
         </label>
         <label className="space-y-1">
           <span>A denominator</span>
-          <input aria-label="Fraction A denominator" type="number" className="w-full rounded bg-slate-900 p-2" value={aDen} onChange={(e) => setADen(Number(e.target.value || 1))} />
+          <input aria-label="Fraction A denominator" type="number" className="w-full rounded bg-[var(--ll-bg)] p-2" value={aDen} onChange={(e) => setADen(Number(e.target.value || 1))} />
         </label>
         <label className="space-y-1">
           <span>B numerator</span>
-          <input aria-label="Fraction B numerator" type="number" className="w-full rounded bg-slate-900 p-2" value={bNum} onChange={(e) => setBNum(Number(e.target.value || 0))} />
+          <input aria-label="Fraction B numerator" type="number" className="w-full rounded bg-[var(--ll-bg)] p-2" value={bNum} onChange={(e) => setBNum(Number(e.target.value || 0))} />
         </label>
         <label className="space-y-1">
           <span>B denominator</span>
-          <input aria-label="Fraction B denominator" type="number" className="w-full rounded bg-slate-900 p-2" value={bDen} onChange={(e) => setBDen(Number(e.target.value || 1))} />
+          <input aria-label="Fraction B denominator" type="number" className="w-full rounded bg-[var(--ll-bg)] p-2" value={bDen} onChange={(e) => setBDen(Number(e.target.value || 1))} />
         </label>
       </div>
 
-      <svg aria-label="Fraction bar comparison" width="100%" height="90" viewBox={`0 0 ${barWidth} 90`} className="rounded bg-slate-900">
+      <svg aria-label="Fraction bar comparison" width="100%" height="90" viewBox={`0 0 ${barWidth} 90`} className="rounded bg-[var(--ll-bg)]">
         <rect x="8" y="14" width={barWidth - 16} height="20" fill="#1e293b" />
         <rect x="8" y="14" width={Math.max(0, Math.min(barWidth - 16, (barWidth - 16) * aDecimal))} height="20" fill="#34d399" />
         <rect x="8" y="52" width={barWidth - 16} height="20" fill="#1e293b" />
         <rect x="8" y="52" width={Math.max(0, Math.min(barWidth - 16, (barWidth - 16) * bDecimal))} height="20" fill="#38bdf8" />
       </svg>
 
-      <div className="grid grid-cols-2 gap-3 rounded bg-slate-900 p-3">
-        <p>A: {safeA.num}/{safeA.den} = {aDecimal.toFixed(4)} · simplified {aSimplified}</p>
-        <p>B: {safeB.num}/{safeB.den} = {bDecimal.toFixed(4)} · simplified {bSimplified}</p>
+      <div className="grid grid-cols-2 gap-3 rounded bg-[var(--ll-bg)] p-3">
+        <p>A: {safeA.num}/{safeA.den} = {aDecimal.toFixed(4)} - simplified {aSimplified}</p>
+        <p>B: {safeB.num}/{safeB.den} = {bDecimal.toFixed(4)} - simplified {bSimplified}</p>
       </div>
     </div>
   );

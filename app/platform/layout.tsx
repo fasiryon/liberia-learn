@@ -31,15 +31,15 @@ export default async function PlatformLayout({
   const environment = getEnvironmentBadgeValue();
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-50">
+    <div className="min-h-screen bg-[var(--ll-bg)] text-[var(--ll-text)]">
       {/* Top nav */}
-      <header className="border-b border-white/10 bg-slate-900/80 backdrop-blur">
+      <header className="border-b border-[var(--ll-border)] bg-[var(--ll-bg)]/80 backdrop-blur">
         <div className="mx-auto flex max-w-7xl items-center gap-6 px-4 py-3">
           <Link href="/platform" className="flex items-center gap-2">
-            <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-violet-500 text-sm font-black text-white">
+            <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-violet-500 text-sm font-black text-[var(--ll-text)]">
               P
             </span>
-            <span className="text-sm font-semibold text-slate-200">
+            <span className="text-sm font-semibold text-[var(--ll-text)]">
               Platform Admin
             </span>
           </Link>
@@ -49,14 +49,14 @@ export default async function PlatformLayout({
               <Link
                 key={n.href}
                 href={n.href}
-                className="text-xs text-slate-400 hover:text-slate-200"
+                className="text-xs text-[var(--ll-text-muted)] hover:text-[var(--ll-text)]"
               >
                 {n.label}
               </Link>
             ))}
           </nav>
 
-          <div className="ml-auto text-xs text-slate-500">
+          <div className="ml-auto text-xs text-[var(--ll-text-faint)]">
             <div className="flex items-center gap-3">
               <EnvironmentBadge environment={environment} />
               <span>{user.email}</span>

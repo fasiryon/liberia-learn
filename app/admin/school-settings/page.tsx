@@ -74,40 +74,40 @@ export default function SchoolSettingsPage() {
 
   if (loading) {
     return (
-      <main className="min-h-screen bg-slate-950 text-slate-50 flex items-center justify-center">
-        <p className="text-sm text-slate-400">Loading...</p>
+      <main className="min-h-screen bg-[var(--ll-bg)] text-[var(--ll-text)] flex items-center justify-center">
+        <p className="text-sm text-[var(--ll-text-muted)]">Loading...</p>
       </main>
     );
   }
 
   return (
-    <main className="min-h-screen bg-slate-950 text-slate-50">
+    <main className="min-h-screen bg-[var(--ll-bg)] text-[var(--ll-text)]">
       <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_top,_#3b82f622,_transparent_60%)]" />
       <div className="mx-auto max-w-2xl px-4 py-6 space-y-8">
         <div>
-          <Link href="/admin" className="text-xs text-emerald-300 hover:text-emerald-200">
+          <Link href="/admin" className="text-xs text-[var(--ll-yellow)] hover:text-[var(--ll-yellow)]">
             &larr; Back to Admin Console
           </Link>
           <h1 className="text-2xl font-bold mt-2">School Settings</h1>
-          <p className="text-sm text-slate-400 mt-1">
+          <p className="text-sm text-[var(--ll-text-muted)] mt-1">
             Configure curriculum policies for your school.
           </p>
         </div>
 
-        <div className="rounded-2xl border border-white/10 bg-slate-900/70 p-6 space-y-6">
+        <div className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 p-6 space-y-6">
           {TOGGLES.map(({ key, label, help }) => (
             <div key={key} className="flex items-start justify-between gap-4">
               <div className="flex-1">
-                <p className="text-sm font-semibold text-slate-100">{label}</p>
-                <p className="text-xs text-slate-400 mt-0.5">{help}</p>
+                <p className="text-sm font-semibold text-[var(--ll-text)]">{label}</p>
+                <p className="text-xs text-[var(--ll-text-muted)] mt-0.5">{help}</p>
               </div>
               <button
                 type="button"
                 onClick={() => setSettings({ ...settings, [key]: !settings[key] })}
                 className={`relative h-7 w-12 rounded-full transition-colors shrink-0 ${
                   settings[key]
-                    ? "bg-emerald-500"
-                    : "bg-slate-700"
+                    ? "bg-[var(--ll-yellow)]"
+                    : "bg-[var(--ll-surface-muted)]"
                 }`}
               >
                 <span
@@ -119,16 +119,16 @@ export default function SchoolSettingsPage() {
             </div>
           ))}
 
-          <div className="pt-4 border-t border-slate-800 flex items-center gap-3">
+          <div className="pt-4 border-t border-[var(--ll-border)] flex items-center gap-3">
             <button
               onClick={handleSave}
               disabled={saving}
-              className="rounded-xl bg-emerald-500 px-6 py-3 text-sm font-semibold text-slate-950 shadow-lg shadow-emerald-500/30 hover:bg-emerald-400 disabled:opacity-50"
+              className="rounded-xl bg-[var(--ll-yellow)] px-6 py-3 text-sm font-semibold text-[var(--ll-text-faint)] shadow-lg shadow-emerald-500/30 hover:bg-[var(--ll-yellow-soft)] disabled:opacity-50"
             >
               {saving ? "Saving..." : "Save Settings"}
             </button>
             {message && (
-              <p className={`text-sm ${message.includes("success") ? "text-emerald-400" : "text-red-400"}`}>
+              <p className={`text-sm ${message.includes("success") ? "text-[var(--ll-yellow)]" : "text-red-400"}`}>
                 {message}
               </p>
             )}

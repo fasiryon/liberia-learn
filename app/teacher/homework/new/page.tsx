@@ -24,10 +24,10 @@ export default async function NewHomeworkPage() {
 
   if (classes.length === 0) {
     return (
-      <main className="min-h-screen bg-slate-950 p-6 text-slate-50">
+      <main className="min-h-screen bg-[var(--ll-bg)] p-6 text-[var(--ll-text)]">
         <div className="max-w-2xl mx-auto space-y-4">
           <h1 className="text-2xl font-bold">Create Homework</h1>
-          <p className="text-sm text-slate-400">
+          <p className="text-sm text-[var(--ll-text-muted)]">
             You don&apos;t have any classes yet. Once classes exist, you&apos;ll
             be able to create homework for them here.
           </p>
@@ -37,7 +37,7 @@ export default async function NewHomeworkPage() {
   }
 
   return (
-    <main className="min-h-screen bg-slate-950 p-6 text-slate-50">
+    <main className="min-h-screen bg-[var(--ll-bg)] p-6 text-[var(--ll-text)]">
       <div className="max-w-2xl mx-auto space-y-6">
         <h1 className="text-2xl font-bold">Create Homework</h1>
         <NewHomeworkForm classes={classes} />
