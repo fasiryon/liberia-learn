@@ -12,6 +12,10 @@ const mockPrismaInstance = vi.hoisted(() => ({
   class: { upsert: vi.fn() },
   curriculumContent: { upsert: vi.fn() },
   scheduledWork: { findFirst: vi.fn(), create: vi.fn(), upsert: vi.fn() },
+  exam: { upsert: vi.fn() },
+  examQuestion: { deleteMany: vi.fn(), createMany: vi.fn() },
+  certificate: { upsert: vi.fn() },
+  learningEvent: { deleteMany: vi.fn(), createMany: vi.fn() },
   enrollment: { findFirst: vi.fn(), create: vi.fn(), upsert: vi.fn() },
   placementTest: { findFirst: vi.fn(), create: vi.fn() },
   $disconnect: vi.fn(),
@@ -28,6 +32,10 @@ vi.mock("@prisma/client", () => ({
     class = mockPrismaInstance.class;
     curriculumContent = mockPrismaInstance.curriculumContent;
     scheduledWork = mockPrismaInstance.scheduledWork;
+    exam = mockPrismaInstance.exam;
+    examQuestion = mockPrismaInstance.examQuestion;
+    certificate = mockPrismaInstance.certificate;
+    learningEvent = mockPrismaInstance.learningEvent;
     enrollment = mockPrismaInstance.enrollment;
     placementTest = mockPrismaInstance.placementTest;
     $disconnect = mockPrismaInstance.$disconnect;
@@ -57,6 +65,12 @@ beforeEach(() => {
   mockPrismaInstance.scheduledWork.findFirst.mockResolvedValue(null);
   mockPrismaInstance.scheduledWork.create.mockResolvedValue({ id: "cha-scheduled-work" });
   mockPrismaInstance.scheduledWork.upsert.mockResolvedValue({ id: "cha-demo-student1-multimedia-lesson" });
+  mockPrismaInstance.exam.upsert.mockResolvedValue({ id: "cha-demo-ratios-exam" });
+  mockPrismaInstance.examQuestion.deleteMany.mockResolvedValue({ count: 0 });
+  mockPrismaInstance.examQuestion.createMany.mockResolvedValue({ count: 2 });
+  mockPrismaInstance.certificate.upsert.mockResolvedValue({ id: "cert-1" });
+  mockPrismaInstance.learningEvent.deleteMany.mockResolvedValue({ count: 0 });
+  mockPrismaInstance.learningEvent.createMany.mockResolvedValue({ count: 5 });
   mockPrismaInstance.enrollment.findFirst.mockResolvedValue(null);
   mockPrismaInstance.enrollment.create.mockResolvedValue({});
   mockPrismaInstance.enrollment.upsert.mockResolvedValue({});

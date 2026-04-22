@@ -54,6 +54,9 @@ export default function AdminCurriculumPage() {
   const [expandedLabs, setExpandedLabs] = useState<string | null>(null);
   const [approving, setApproving] = useState<string | null>(null);
   const [audioGenerating, setAudioGenerating] = useState<string | null>(null);
+  const [audioBatching, setAudioBatching] = useState(false);
+  const [audioProcessing, setAudioProcessing] = useState(false);
+  const [audioBatchMessage, setAudioBatchMessage] = useState<string | null>(null);
 
   async function loadItems() {
     setLoadingItems(true);
@@ -140,6 +143,46 @@ export default function AdminCurriculumPage() {
     }
   }
 
+  async function handleBatchAudio() {
+    setAudioBatching(true);
+    setAudioBatchMessage("Batch queue request sent. Checking lesson audio records...");
+    try {
+      const res = await fetch("/api/admin/curriculum/audio/batch", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ limit: 100 }),
+      });
+      const data = await res.json().catch(() => null);
+      if (!res.ok) throw new Error(data?.error ?? "Batch queue failed");
+      setAudioBatchMessage(`Queued ${data.queued} lessons; reused ${data.reused} generated files.`);
+      await loadItems();
+    } catch (err: any) {
+      setAudioBatchMessage(err.message ?? "Batch queue failed");
+    } finally {
+      setAudioBatching(false);
+    }
+  }
+
+  async function handleProcessAudio() {
+    setAudioProcessing(true);
+    setAudioBatchMessage(null);
+    try {
+      const res = await fetch("/api/admin/curriculum/audio/process", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ limit: 1 }),
+      });
+      const data = await res.json().catch(() => null);
+      if (!res.ok) throw new Error(data?.error ?? "Audio processing failed");
+      setAudioBatchMessage(`Processed ${data.processed} audio job(s).`);
+      await loadItems();
+    } catch (err: any) {
+      setAudioBatchMessage(err.message ?? "Audio processing failed");
+    } finally {
+      setAudioProcessing(false);
+    }
+  }
+
   return (
     <main className="min-h-screen bg-[var(--ll-bg)] text-[var(--ll-text)]">
       <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_top,_#22c55e22,_transparent_60%)]" />
@@ -162,6 +205,27 @@ export default function AdminCurriculumPage() {
               Open Unit Assembly
             </Link>
           </div>
+          <div className="mt-4 flex flex-wrap gap-2">
+            <button
+              type="button"
+              onClick={handleBatchAudio}
+              disabled={audioBatching}
+              className="rounded-lg border border-[var(--ll-yellow)]/30 bg-[var(--ll-yellow-soft)] px-3 py-2 text-xs font-semibold text-[var(--ll-yellow)] disabled:opacity-50"
+            >
+              {audioBatching ? "Queueing audio..." : "Batch generate audio"}
+            </button>
+            <button
+              type="button"
+              onClick={handleProcessAudio}
+              disabled={audioProcessing}
+              className="rounded-lg border border-[var(--ll-border)] bg-[var(--ll-silver-soft)] px-3 py-2 text-xs font-semibold text-[var(--ll-silver)] disabled:opacity-50"
+            >
+              {audioProcessing ? "Processing..." : "Process next audio job"}
+            </button>
+          </div>
+          {audioBatchMessage ? (
+            <p className="mt-2 text-xs text-[var(--ll-text-muted)]">{audioBatchMessage}</p>
+          ) : null}
         </div>
 
         {/* Generate form */}
@@ -338,7 +402,7 @@ export default function AdminCurriculumPage() {
                           {labs.length > 0 && ` - ${labs.length} lab(s)`}
                         </p>
                         <p className="mt-2 text-xs text-[var(--ll-silver)]">
-                          Audio: {item.audioStatus === "GENERATED" ? "Generated" : item.audioStatus === "PENDING" ? "Pending" : item.audioStatus === "STALE" ? "Stale" : "Not Generated"}
+                          Audio: {item.audioStatus === "GENERATED" ? "Generated" : item.audioStatus === "PROCESSING" ? "Processing" : item.audioStatus === "PENDING" ? "Pending" : item.audioStatus === "STALE" ? "Stale" : item.audioStatus === "FAILED" ? "Failed" : "Not Generated"}
                         </p>
                       </div>
                       <div className="flex items-center gap-2 shrink-0">

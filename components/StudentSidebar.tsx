@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { BookOpen } from "lucide-react";
 
 interface StudentSidebarProps {
   school: string;
@@ -28,7 +29,7 @@ export function StudentSidebar({
       </div>
 
       <nav className="flex flex-col gap-2 text-sm">
-        <Link href="/" className={navLinkClass}>
+        <Link href="/dashboard" className={navLinkClass}>
           Dashboard
         </Link>
 
@@ -48,12 +49,13 @@ export function StudentSidebar({
           Exams
         </Link>
 
-        <Link href="/student/certifications" className={navLinkClass}>
-          Certifications
+        <Link href="/student/certificates" className={navLinkClass}>
+          Certificates
         </Link>
 
-        <Link href="/student/textbooks" className={navLinkClass}>
-          Textbooks
+        <Link href="/student/textbooks" className={`${navLinkClass} inline-flex items-center gap-2`} aria-label="Textbooks">
+          <BookOpen className="h-4 w-4" strokeWidth={1.5} aria-hidden="true" />
+          <span className="sr-only">Textbooks</span>
         </Link>
 
         <Link href="/student/transcript" className={navLinkClass}>

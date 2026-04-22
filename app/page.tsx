@@ -79,7 +79,8 @@ export default function HomePage() {
       </header>
 
       <section className="ll-shell pb-10 pt-14 sm:pb-12 sm:pt-20">
-        <div className="max-w-4xl space-y-7">
+        <div className="grid items-end gap-10 lg:grid-cols-[minmax(0,1.1fr)_minmax(320px,0.7fr)]">
+          <div className="space-y-7">
           <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[var(--ll-accent)]">
             National learning platform
           </p>
@@ -105,6 +106,20 @@ export default function HomePage() {
                 For Ministry officials
               </span>
             </Link>
+          </div>
+          </div>
+
+          <div className="grid gap-3 text-sm">
+            {[
+              ["15", "counties supported"],
+              ["3", "lesson modes"],
+              ["5", "reviewer roles"],
+            ].map(([value, label]) => (
+              <div key={label} className="flex items-center justify-between border-b border-[var(--ll-border)] py-4">
+                <span className="text-3xl font-semibold text-[var(--ll-text)]">{value}</span>
+                <span className="text-right text-[var(--ll-text-muted)]">{label}</span>
+              </div>
+            ))}
           </div>
         </div>
       </section>

@@ -10,6 +10,7 @@ const prisma = new PrismaClient();
 
 const DEMO_PASS = "DemoSeed2026!";
 const MOE_PASS = "MOESeed2026!";
+const PLATFORM_PASS = "DemoSeed2026!";
 
 const CHA_SCHOOL_ID = "cha-high-academy";
 const CHA_CLASS_ID = "cha-class-grade9a";
@@ -21,6 +22,7 @@ export async function seedChaDemo() {
     bcrypt.hash(DEMO_PASS, 10),
     bcrypt.hash(MOE_PASS, 10),
   ]);
+  const platformHash = await bcrypt.hash(PLATFORM_PASS, 10);
 
   // â”€â”€ School â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   const school = await prisma.school.upsert({
@@ -243,6 +245,84 @@ To find the cost of 7 oranges, multiply 1:20 by 7. The result is 7:140, so 7 ora
     },
   });
 
+  const demoExam = await prisma.exam.upsert({
+    where: { id: "cha-demo-ratios-exam" },
+    update: {
+      title: "Ratios in Market Prices Check",
+      subject: "MATH",
+      grade: 9,
+      schoolId: school.id,
+      classId: cls.id,
+      createdBy: teacher.id,
+      status: "PUBLISHED",
+      moeStandards: ["MATH.G9.RATIO"],
+      timeLimit: 20,
+      passingScore: 0.7,
+      publishedAt: new Date(),
+    },
+    create: {
+      id: "cha-demo-ratios-exam",
+      title: "Ratios in Market Prices Check",
+      subject: "MATH",
+      grade: 9,
+      schoolId: school.id,
+      classId: cls.id,
+      createdBy: teacher.id,
+      status: "PUBLISHED",
+      moeStandards: ["MATH.G9.RATIO"],
+      timeLimit: 20,
+      passingScore: 0.7,
+      publishedAt: new Date(),
+    },
+  });
+  await prisma.examQuestion.deleteMany({ where: { examId: demoExam.id } });
+  await prisma.examQuestion.createMany({
+    data: [
+      {
+        examId: demoExam.id,
+        prompt: "If 4 oranges cost 80 Liberian dollars, what is the cost of 1 orange?",
+        options: ["20 Liberian dollars", "40 Liberian dollars", "80 Liberian dollars", "160 Liberian dollars"],
+        correctIndex: 0,
+        explanation: "Divide both values by 4. The ratio 4:80 becomes 1:20.",
+        moeCode: "MATH.G9.RATIO",
+      },
+      {
+        examId: demoExam.id,
+        prompt: "Which ratio is equivalent to 2:100?",
+        options: ["1:50", "1:100", "2:50", "4:100"],
+        correctIndex: 0,
+        explanation: "Both 2 and 100 can be divided by 2 to make 1:50.",
+        moeCode: "MATH.G9.RATIO",
+      },
+    ],
+  });
+  await prisma.certificate.upsert({
+    where: {
+      studentId_type_referenceId: {
+        studentId: studentRecord.id,
+        type: "LESSON",
+        referenceId: seededScheduledWorkId,
+      },
+    },
+    update: {},
+    create: {
+      studentId: studentRecord.id,
+      type: "LESSON",
+      referenceId: seededScheduledWorkId,
+      certificateCode: "CHA4P5A1",
+    },
+  });
+  await prisma.learningEvent.deleteMany({ where: { source: "seed:cha-demo" } });
+  await prisma.learningEvent.createMany({
+    data: [
+      { schoolId: school.id, classId: cls.id, userId: studentUser.id, studentId: studentRecord.id, eventType: "LESSON_MODE_CHANGED", source: "seed:cha-demo", contentId: seededLessonContentId, lessonId: seededScheduledWorkId, metadata: { mode: "read" } },
+      { schoolId: school.id, classId: cls.id, userId: studentUser.id, studentId: studentRecord.id, eventType: "LESSON_MODE_CHANGED", source: "seed:cha-demo", contentId: seededLessonContentId, lessonId: seededScheduledWorkId, metadata: { mode: "slides" } },
+      { schoolId: school.id, classId: cls.id, userId: studentUser.id, studentId: studentRecord.id, eventType: "LESSON_MODE_CHANGED", source: "seed:cha-demo", contentId: seededLessonContentId, lessonId: seededScheduledWorkId, metadata: { mode: "listen" } },
+      { schoolId: school.id, classId: cls.id, userId: studentUser.id, studentId: studentRecord.id, eventType: "AUDIO_PLAYBACK_STARTED", source: "seed:cha-demo", contentId: seededLessonContentId, lessonId: seededScheduledWorkId, metadata: { seeded: true } },
+      { schoolId: school.id, classId: cls.id, userId: studentUser.id, studentId: studentRecord.id, eventType: "VIDEO_PLAYBACK_STARTED", source: "seed:cha-demo", contentId: seededLessonContentId, lessonId: seededScheduledWorkId, metadata: { seeded: true } },
+    ],
+  });
+
   // Placement test
   const existingPlacement = await prisma.placementTest.findFirst({
     where: { studentId: studentRecord.id },
@@ -314,12 +394,26 @@ To find the cost of 7 oranges, multiply 1:20 by 7. The result is 7:140, so 7 ora
     update: { hashedPwd: moeHash },
   });
 
+  await prisma.user.upsert({
+    where: { email: "platform.admin@liberialearn.org" },
+    create: {
+      email: "platform.admin@liberialearn.org",
+      name: "LiberiaLearn Platform Admin",
+      role: "ADMIN",
+      hashedPwd: platformHash,
+      schoolId: null,
+      isPlatformAdmin: true,
+    },
+    update: { hashedPwd: platformHash, isPlatformAdmin: true, schoolId: null },
+  });
+
   console.log("[cha-demo] Done. Accounts created:");
   console.log("  admin@cha.edu.lr           / DemoSeed2026! (ADMIN)");
   console.log("  teacher1@cha.edu.lr        / DemoSeed2026! (TEACHER)");
   console.log("  student1@cha.edu.lr        / DemoSeed2026! (STUDENT)");
   console.log("  guardian1@cha.family.lr    / DemoSeed2026! (GUARDIAN)");
   console.log("  official1@moe.gov.lr       / MOESeed2026!  (MOE_OFFICIAL)");
+  console.log("  platform.admin@liberialearn.org / DemoSeed2026! (PLATFORM ADMIN)");
 }
 
 // Direct run

@@ -2,6 +2,7 @@
 import { NextResponse } from "next/server";
 import { requireRole } from "@/lib/auth";
 import { prisma } from "@/lib/db";
+import { getMultimediaAnalytics } from "@/lib/analytics/multimediaAnalytics";
 
 export const dynamic = "force-dynamic";
 
@@ -13,7 +14,7 @@ export async function GET(req: Request) {
     const since = new Date();
     since.setDate(since.getDate() - days);
 
-    const [lessonViews, homeworkSubmits, tutorMessages, homeworkComplete] =
+    const [lessonViews, homeworkSubmits, tutorMessages, homeworkComplete, multimedia] =
       await Promise.all([
         prisma.auditLog.count({
           where: { action: "lesson_view", createdAt: { gte: since }, user: { schoolId: user.schoolId } },
@@ -27,6 +28,7 @@ export async function GET(req: Request) {
         prisma.homeworkSubmission.count({
           where: { submittedAt: { gte: since }, Student: { user: { schoolId: user.schoolId } } },
         }),
+        getMultimediaAnalytics({ days, schoolId: user.schoolId ?? null }),
       ]);
 
     const dailyActive: any[] = await prisma.$queryRaw`
@@ -56,8 +58,15 @@ export async function GET(req: Request) {
     return NextResponse.json({
       period: { days, since: since.toISOString() },
       summary: { lessonViews, homeworkSubmits, tutorMessages, homeworkComplete },
-      dailyActive,
-      topLessons,
+      dailyActive: dailyActive.map((row) => ({
+        date: row.date,
+        users: Number(row.users ?? 0),
+      })),
+      topLessons: topLessons.map((row) => ({
+        contentId: row.contentId,
+        views: Number(row.views ?? 0),
+      })),
+      multimedia,
     });
   } catch (err: any) {
     const status = err?.status ?? 500;

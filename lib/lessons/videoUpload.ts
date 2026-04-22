@@ -67,10 +67,19 @@ export async function uploadLessonVideoToSupabase(input: {
     teacherId: input.teacherId,
     filename: input.file.name,
   });
-  return uploadBinaryToSupabase({
-    bucket: LESSON_VIDEO_BUCKET,
-    path,
-    contentType: input.file.type || "application/octet-stream",
-    body: Buffer.from(await input.file.arrayBuffer()),
-  });
+  const body = Buffer.from(await input.file.arrayBuffer());
+  try {
+    return await uploadBinaryToSupabase({
+      bucket: LESSON_VIDEO_BUCKET,
+      path,
+      contentType: input.file.type || "application/octet-stream",
+      body,
+    });
+  } catch (error: any) {
+    const message = typeof error?.message === "string" ? error.message : "";
+    if (message.includes("Supabase storage is not configured")) {
+      return `data:${input.file.type || "video/webm"};base64,${body.toString("base64")}`;
+    }
+    throw error;
+  }
 }

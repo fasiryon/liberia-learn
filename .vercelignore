@@ -5,3 +5,6 @@ lib.BACKUP-*
 _frontend_old/
 _ARCHIVE_*/
 _patches/
+.git-temp*
+node_modules
+e2e/screenshots

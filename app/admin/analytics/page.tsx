@@ -22,12 +22,19 @@ type Summary = {
 
 type DailyActive = { date: string; users: number };
 type TopLesson = { contentId: string; views: number };
+type MultimediaAnalytics = {
+  lessonModeUsage: Array<{ mode: "read" | "slides" | "listen"; count: number; percentage: number }>;
+  studentEngagement: { activeLearners: number; totalEvents: number; lessonInteractions: number; quizSubmissions: number };
+  audioUsage: { playbackStarts: number; generated: number; pending: number; processing: number; failed: number; estimatedCostUsd: number };
+  videoUsage: { playbackStarts: number; uploaded: number; active: number };
+};
 
 type AnalyticsData = {
   period: { days: number; since: string };
   summary: Summary;
   dailyActive: DailyActive[];
   topLessons: TopLesson[];
+  multimedia: MultimediaAnalytics;
 };
 
 const DAY_OPTIONS = [7, 30, 90] as const;
@@ -117,6 +124,45 @@ export default function AdminAnalyticsPage() {
                   )}
                 </div>
               ))}
+            </div>
+
+            <div className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/60 p-6">
+              <div className="flex flex-col gap-1">
+                <p className="text-xs uppercase tracking-[0.16em] text-[var(--ll-text-faint)]">Multimedia</p>
+                <h2 className="text-sm font-semibold text-[var(--ll-text)]">Lesson Mode Usage</h2>
+              </div>
+              <div className="mt-4 grid gap-3 md:grid-cols-3">
+                {(data.multimedia?.lessonModeUsage ?? []).map((row) => (
+                  <div key={row.mode} className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-surface)] p-4">
+                    <div className="flex items-center justify-between">
+                      <p className="text-sm font-semibold capitalize text-[var(--ll-text)]">{row.mode}</p>
+                      <p className="text-sm text-[var(--ll-yellow)]">{row.percentage.toFixed(1)}%</p>
+                    </div>
+                    <div className="mt-3 h-2 rounded-full bg-[var(--ll-surface-muted)]">
+                      <div className="h-2 rounded-full bg-[var(--ll-yellow)]" style={{ width: `${Math.min(100, row.percentage)}%` }} />
+                    </div>
+                    <p className="mt-2 text-xs text-[var(--ll-text-muted)]">{row.count.toLocaleString()} mode changes</p>
+                  </div>
+                ))}
+              </div>
+              <div className="mt-4 grid gap-3 md:grid-cols-3 lg:grid-cols-6">
+                {[
+                  ["Active learners", data.multimedia?.studentEngagement.activeLearners ?? 0],
+                  ["Lesson events", data.multimedia?.studentEngagement.lessonInteractions ?? 0],
+                  ["Audio starts", data.multimedia?.audioUsage.playbackStarts ?? 0],
+                  ["Generated audio", data.multimedia?.audioUsage.generated ?? 0],
+                  ["Audio cost", `$${(data.multimedia?.audioUsage.estimatedCostUsd ?? 0).toFixed(4)}`],
+                  ["Video starts", data.multimedia?.videoUsage.playbackStarts ?? 0],
+                  ["Active videos", data.multimedia?.videoUsage.active ?? 0],
+                ].map(([label, value]) => (
+                  <div key={label} className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-surface)] p-4">
+                    <p className="text-xs text-[var(--ll-text-muted)]">{label}</p>
+                    <p className="mt-1 text-xl font-semibold text-[var(--ll-silver)]">
+                      {typeof value === "number" ? value.toLocaleString() : value}
+                    </p>
+                  </div>
+                ))}
+              </div>
             </div>
 
             {/* Daily Active Students */}
@@ -217,4 +263,3 @@ export default function AdminAnalyticsPage() {
     </div>
   );
 }
-

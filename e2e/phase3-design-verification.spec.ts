@@ -1,6 +1,6 @@
 import { test, expect } from "@playwright/test";
 
-const BASE = "https://liberia-learn.vercel.app";
+const BASE = process.env.PLAYWRIGHT_BASE_URL ?? "https://liberia-learn.vercel.app";
 
 async function loginStudent(page: import("@playwright/test").Page) {
   await page.goto(`${BASE}/login`);
@@ -19,13 +19,7 @@ test("BrandMark pencil SVG present on homepage", async ({ page }) => {
 
 test("PencilButton present in student lesson view", async ({ page }) => {
   await loginStudent(page);
-  await page.goto(`${BASE}/student/today`);
-  await page.waitForTimeout(2000);
-  const lessonLink = page.locator('a[href^="/student/lessons/"]').first();
-  test.skip((await lessonLink.count()) === 0, "No student lesson link is available in production seed data.");
-
-  await lessonLink.click();
-  await page.waitForURL(/\/student\/lessons\//, { timeout: 15000 });
+  await page.goto(`${BASE}/student/lessons/cha-demo-student1-multimedia-lesson`);
   const pencilBtn = page.locator(
     '[aria-label="Ask the tutor"], [aria-label="Open tools"]',
   ).first();

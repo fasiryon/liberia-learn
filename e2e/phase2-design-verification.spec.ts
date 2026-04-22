@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 
-const BASE = 'https://liberia-learn.vercel.app';
+const BASE = process.env.PLAYWRIGHT_BASE_URL ?? 'https://liberia-learn.vercel.app';
 
 test('no oversized radius on dashboard cards', async ({ page }) => {
   await page.goto(`${BASE}/login`);

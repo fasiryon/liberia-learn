@@ -13,7 +13,7 @@ function stripQuestionAnswers<T extends { correctIndex: number }>(questions: T[]
 export async function GET() {
   try {
     if (!isExamSystemEnabled()) {
-      return NextResponse.json({ error: "Not found" }, { status: 404 });
+      return NextResponse.json({ exams: [], disabled: true });
     }
 
     const user = await requireRole("STUDENT");
