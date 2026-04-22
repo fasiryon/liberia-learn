@@ -26,6 +26,31 @@ export async function GET(
         status: true,
         version: true,
         payload: true,
+        audioAssets: {
+          orderBy: { generatedAt: "desc" },
+          take: 1,
+          select: {
+            id: true,
+            status: true,
+            storageUrl: true,
+            contentVersion: true,
+            estimatedCostUsd: true,
+          },
+        },
+        videoSupplements: {
+          orderBy: { uploadedAt: "desc" },
+          select: {
+            id: true,
+            title: true,
+            description: true,
+            storageUrl: true,
+            durationSeconds: true,
+            fileSize: true,
+            isActive: true,
+            uploadedAt: true,
+            uploadedBy: true,
+          },
+        },
         createdAt: true,
         updatedAt: true,
       },
@@ -45,8 +70,16 @@ export async function GET(
         version: row.version,
         createdAt: row.createdAt,
         updatedAt: row.updatedAt,
+        audioStatus:
+          row.audioAssets[0]?.contentVersion === row.version
+            ? row.audioAssets[0]?.status ?? "NOT_GENERATED"
+            : row.audioAssets[0]?.status === "GENERATED"
+              ? "STALE"
+              : row.audioAssets[0]?.status ?? "NOT_GENERATED",
       },
       payload: row.payload,
+      audio: row.audioAssets[0] ?? null,
+      videos: row.videoSupplements,
     });
   } catch (e: any) {
     console.error("GET /api/curriculum/[contentId] failed:", e);

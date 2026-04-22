@@ -131,6 +131,118 @@ export async function seedChaDemo() {
     });
   }
 
+  const seededLessonContentId = "cha-g9-math-multimedia-demo";
+  const seededScheduledWorkId = "cha-demo-student1-multimedia-lesson";
+  const seededLessonPayload = {
+    title: "Ratios in Market Prices",
+    durationMins: 45,
+    objectives: [
+      "Explain a ratio as a comparison between two quantities.",
+      "Use equivalent ratios to compare market prices.",
+      "Solve a real-world price problem using a ratio table.",
+    ],
+    body: `Ratios help us compare quantities in everyday life. In a market, a buyer may compare the price of rice, cassava, or notebooks by asking how much one unit costs compared with another.
+
+## What a Ratio Means
+
+A ratio compares two quantities. If 2 notebooks cost 100 Liberian dollars, the ratio of notebooks to dollars is 2 to 100. We can write that as 2:100.
+
+Ratios can be simplified when both numbers can be divided by the same amount. The ratio 2:100 can be divided by 2 to become 1:50. That means one notebook costs 50 Liberian dollars.
+
+## Using Equivalent Ratios
+
+Equivalent ratios describe the same relationship using different numbers. If 1 notebook costs 50 Liberian dollars, then 3 notebooks cost 150 Liberian dollars and 5 notebooks cost 250 Liberian dollars.
+
+A ratio table helps us organize this pattern. Each row keeps the same relationship between the number of notebooks and the total cost.
+
+## Market Price Example
+
+A vendor sells 4 oranges for 80 Liberian dollars. To find the cost of 1 orange, divide both parts of the ratio by 4. The ratio 4:80 becomes 1:20, so one orange costs 20 Liberian dollars.
+
+To find the cost of 7 oranges, multiply 1:20 by 7. The result is 7:140, so 7 oranges cost 140 Liberian dollars.
+
+## Key Takeaways
+
+- A ratio compares two quantities.
+- Equivalent ratios keep the same relationship.
+- Ratio tables help solve market price problems step by step.`,
+    body_standard: `Ratios help us compare quantities in everyday life. In a market, a buyer may compare the price of rice, cassava, or notebooks by asking how much one unit costs compared with another.
+
+## What a Ratio Means
+
+A ratio compares two quantities. If 2 notebooks cost 100 Liberian dollars, the ratio of notebooks to dollars is 2 to 100. We can write that as 2:100.
+
+Ratios can be simplified when both numbers can be divided by the same amount. The ratio 2:100 can be divided by 2 to become 1:50. That means one notebook costs 50 Liberian dollars.
+
+## Using Equivalent Ratios
+
+Equivalent ratios describe the same relationship using different numbers. If 1 notebook costs 50 Liberian dollars, then 3 notebooks cost 150 Liberian dollars and 5 notebooks cost 250 Liberian dollars.
+
+A ratio table helps us organize this pattern. Each row keeps the same relationship between the number of notebooks and the total cost.
+
+## Market Price Example
+
+A vendor sells 4 oranges for 80 Liberian dollars. To find the cost of 1 orange, divide both parts of the ratio by 4. The ratio 4:80 becomes 1:20, so one orange costs 20 Liberian dollars.
+
+To find the cost of 7 oranges, multiply 1:20 by 7. The result is 7:140, so 7 oranges cost 140 Liberian dollars.
+
+## Key Takeaways
+
+- A ratio compares two quantities.
+- Equivalent ratios keep the same relationship.
+- Ratio tables help solve market price problems step by step.`,
+  };
+  const todayUtc = new Date();
+  todayUtc.setUTCHours(0, 0, 0, 0);
+  await prisma.curriculumContent.upsert({
+    where: { contentId: seededLessonContentId },
+    update: {
+      title: "Ratios in Market Prices",
+      grade: 9,
+      subject: "MATH",
+      contentType: "lesson",
+      status: "APPROVED",
+      version: "multimedia-demo-v1",
+      payload: seededLessonPayload,
+    },
+    create: {
+      contentId: seededLessonContentId,
+      title: "Ratios in Market Prices",
+      grade: 9,
+      subject: "MATH",
+      contentType: "lesson",
+      status: "APPROVED",
+      version: "multimedia-demo-v1",
+      payload: seededLessonPayload,
+    },
+  });
+  await prisma.scheduledWork.upsert({
+    where: { id: seededScheduledWorkId },
+    update: {
+      contentId: seededLessonContentId,
+      classId: cls.id,
+      scheduledDate: todayUtc,
+      periodNumber: 1,
+      startTime: "08:00",
+      endTime: "08:45",
+      createdById: teacher.id,
+      classFormat: "standard",
+      status: "confirmed",
+    },
+    create: {
+      id: seededScheduledWorkId,
+      contentId: seededLessonContentId,
+      classId: cls.id,
+      scheduledDate: todayUtc,
+      periodNumber: 1,
+      startTime: "08:00",
+      endTime: "08:45",
+      createdById: teacher.id,
+      classFormat: "standard",
+      status: "confirmed",
+    },
+  });
+
   // Placement test
   const existingPlacement = await prisma.placementTest.findFirst({
     where: { studentId: studentRecord.id },
@@ -219,4 +331,3 @@ if (require.main === module) {
     })
     .finally(() => prisma.$disconnect());
 }
-
