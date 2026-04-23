@@ -28,6 +28,42 @@ type MultimediaAnalytics = {
   audioUsage: { playbackStarts: number; generated: number; pending: number; processing: number; failed: number; estimatedCostUsd: number };
   videoUsage: { playbackStarts: number; uploaded: number; active: number };
 };
+type AdminIntelligence = {
+  classPerformanceDistribution: Array<{ label: string; count: number }>;
+  engagementLevels: {
+    totalStudents: number;
+    activeStudents: number;
+    activeRatePct: number;
+    lessonStarts: number;
+    lessonCompletions: number;
+    completionRatePct: number;
+  };
+  teacherEffectiveness: Array<{
+    teacherId: string;
+    teacherName: string;
+    classCount: number;
+    scheduledLessons: number;
+    deliveredLessons: number;
+    deliveryRatePct: number;
+    lessonCompletionRatePct: number;
+    averageQuizScorePct: number | null;
+  }>;
+  weakSubjects: Array<{
+    subject: string;
+    averageQuizScorePct: number | null;
+    lessonCompletionRatePct: number;
+    attempts: number;
+    scheduledLessons: number;
+    reason: string;
+  }>;
+  lowCompletionClasses: Array<{
+    classId: string;
+    className: string;
+    subject: string;
+    completionRatePct: number;
+    scheduledLessons: number;
+  }>;
+};
 
 type AnalyticsData = {
   period: { days: number; since: string };
@@ -35,6 +71,7 @@ type AnalyticsData = {
   dailyActive: DailyActive[];
   topLessons: TopLesson[];
   multimedia: MultimediaAnalytics;
+  intelligence: AdminIntelligence | null;
 };
 
 const DAY_OPTIONS = [7, 30, 90] as const;
@@ -162,6 +199,127 @@ export default function AdminAnalyticsPage() {
                     </p>
                   </div>
                 ))}
+              </div>
+            </div>
+
+            <div className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/60 p-6">
+              <div className="flex flex-col gap-1">
+                <p className="text-xs uppercase tracking-[0.16em] text-[var(--ll-text-faint)]">
+                  School intelligence
+                </p>
+                <h2 className="text-sm font-semibold text-[var(--ll-text)]">
+                  Performance And Engagement
+                </h2>
+              </div>
+              <div className="mt-4 grid gap-3 md:grid-cols-3 lg:grid-cols-6">
+                {[
+                  ["Active students", data.intelligence?.engagementLevels.activeStudents ?? 0],
+                  ["Active rate", `${data.intelligence?.engagementLevels.activeRatePct ?? 0}%`],
+                  ["Lesson starts", data.intelligence?.engagementLevels.lessonStarts ?? 0],
+                  ["Lesson completion", `${data.intelligence?.engagementLevels.completionRatePct ?? 0}%`],
+                  ["Weak subjects", data.intelligence?.weakSubjects.length ?? 0],
+                  ["Low-completion classes", data.intelligence?.lowCompletionClasses.length ?? 0],
+                ].map(([label, value]) => (
+                  <div key={label} className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-surface)] p-4">
+                    <p className="text-xs text-[var(--ll-text-muted)]">{label}</p>
+                    <p className="mt-1 text-xl font-semibold text-[var(--ll-silver)]">
+                      {typeof value === "number" ? value.toLocaleString() : value}
+                    </p>
+                  </div>
+                ))}
+              </div>
+
+              <div className="mt-5 grid gap-4 lg:grid-cols-2">
+                <div className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-surface)] p-4">
+                  <h3 className="text-sm font-semibold text-[var(--ll-text)]">
+                    Class Performance Distribution
+                  </h3>
+                  <div className="mt-4 space-y-3">
+                    {(data.intelligence?.classPerformanceDistribution ?? []).map((band) => {
+                      const total = (data.intelligence?.classPerformanceDistribution ?? []).reduce(
+                        (sum, row) => sum + row.count,
+                        0
+                      );
+                      const width = total > 0 ? (band.count / total) * 100 : 0;
+                      return (
+                        <div key={band.label}>
+                          <div className="flex justify-between text-xs text-[var(--ll-text-muted)]">
+                            <span>{band.label}%</span>
+                            <span>{band.count} classes</span>
+                          </div>
+                          <div className="mt-1 h-2 rounded-full bg-[var(--ll-surface-muted)]">
+                            <div className="h-2 rounded-full bg-[var(--ll-yellow)]" style={{ width: `${width}%` }} />
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                <div className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-surface)] p-4">
+                  <h3 className="text-sm font-semibold text-[var(--ll-text)]">
+                    Teacher Effectiveness Proxy
+                  </h3>
+                  <div className="mt-4 space-y-3">
+                    {(data.intelligence?.teacherEffectiveness ?? []).slice(0, 5).map((teacher) => (
+                      <div key={teacher.teacherId} className="rounded-lg border border-[var(--ll-border)] bg-[var(--ll-bg)]/60 p-3">
+                        <div className="flex items-center justify-between gap-3">
+                          <p className="text-sm font-semibold text-[var(--ll-text)]">{teacher.teacherName}</p>
+                          <p className="text-sm text-[var(--ll-yellow)]">
+                            {teacher.lessonCompletionRatePct}%
+                          </p>
+                        </div>
+                        <p className="mt-1 text-xs text-[var(--ll-text-muted)]">
+                          Delivery {teacher.deliveryRatePct}% &middot; Quiz{" "}
+                          {teacher.averageQuizScorePct == null ? "--" : `${teacher.averageQuizScorePct}%`}
+                        </p>
+                      </div>
+                    ))}
+                    {(data.intelligence?.teacherEffectiveness ?? []).length === 0 ? (
+                      <p className="text-sm text-[var(--ll-text-muted)]">
+                        No teacher effectiveness data for this period.
+                      </p>
+                    ) : null}
+                  </div>
+                </div>
+              </div>
+
+              <div className="mt-5 grid gap-4 lg:grid-cols-2">
+                <div className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-surface)] p-4">
+                  <h3 className="text-sm font-semibold text-[var(--ll-text)]">
+                    Weak Subjects
+                  </h3>
+                  <div className="mt-4 space-y-2">
+                    {(data.intelligence?.weakSubjects ?? []).slice(0, 5).map((subject) => (
+                      <p key={subject.subject} className="text-sm text-[var(--ll-text-muted)]">
+                        <span className="font-semibold text-[var(--ll-text)]">{subject.subject}</span>: {subject.reason}
+                      </p>
+                    ))}
+                    {(data.intelligence?.weakSubjects ?? []).length === 0 ? (
+                      <p className="text-sm text-[var(--ll-text-muted)]">
+                        No weak subject signal for this period.
+                      </p>
+                    ) : null}
+                  </div>
+                </div>
+
+                <div className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-surface)] p-4">
+                  <h3 className="text-sm font-semibold text-[var(--ll-text)]">
+                    Low-Completion Classes
+                  </h3>
+                  <div className="mt-4 space-y-2">
+                    {(data.intelligence?.lowCompletionClasses ?? []).slice(0, 5).map((row) => (
+                      <p key={row.classId} className="text-sm text-[var(--ll-text-muted)]">
+                        <span className="font-semibold text-[var(--ll-text)]">{row.className}</span>: {row.completionRatePct}% completion
+                      </p>
+                    ))}
+                    {(data.intelligence?.lowCompletionClasses ?? []).length === 0 ? (
+                      <p className="text-sm text-[var(--ll-text-muted)]">
+                        No low-completion class signal for this period.
+                      </p>
+                    ) : null}
+                  </div>
+                </div>
               </div>
             </div>
 

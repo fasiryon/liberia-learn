@@ -8,7 +8,7 @@ export const dynamic = "force-dynamic";
 // GET /api/curriculum?grade=5&subject=MATH
 export async function GET(req: Request) {
   try {
-    await requireRole("STUDENT", "TEACHER", "ADMIN");
+    const user = await requireRole("STUDENT", "TEACHER", "ADMIN");
     const { searchParams } = new URL(req.url);
     const gradeParam = searchParams.get("grade");
     const subject = searchParams.get("subject");
@@ -18,9 +18,14 @@ export async function GET(req: Request) {
     const limitParam = searchParams.get("limit");
     const take = limitParam ? Number(limitParam) : takeParam ? Number(takeParam) : 50;
 
+    const statusFilter =
+      user.role === "STUDENT"
+        ? { in: ["published", "APPROVED"] }
+        : { in: ["published", "APPROVED", "pending_approval", "rejected"] };
+
     const rows = await prisma.curriculumContent.findMany({
       where: {
-        status: { in: ["published", "APPROVED"] },
+        status: statusFilter,
         ...(typeof grade === "number" && !Number.isNaN(grade) ? { grade } : {}),
         ...(subject ? { subject } : {}),
       },

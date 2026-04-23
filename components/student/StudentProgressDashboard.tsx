@@ -22,6 +22,59 @@ type ProgressActivity = {
   scorePercent?: number | null;
 };
 
+type ConceptMastery = {
+  conceptKey: string;
+  label: string;
+  masteryPercent: number;
+  confidenceTier: "low" | "medium" | "high";
+  evidenceCount: number;
+};
+
+type SubjectMastery = {
+  subject: string;
+  label: string;
+  masteryPercent: number;
+  confidenceTier: "low" | "medium" | "high";
+  evidenceCount: number;
+  completedLessons: number;
+  totalLessons: number;
+  latestQuizScorePercent: number | null;
+  weakConcepts: ConceptMastery[];
+};
+
+type WeaknessSignal = {
+  type:
+    | "repeated_low_performance"
+    | "incomplete_learning_loop"
+    | "concept_weakness"
+    | "overdue_review";
+  subject: string;
+  label: string;
+  severity: "low" | "medium" | "high";
+  reason: string;
+  evidenceCount: number;
+  href: string | null;
+};
+
+type RecommendedNextAction = {
+  type:
+    | "continue_current_lesson"
+    | "review_weak_lesson"
+    | "retry_quiz"
+    | "recommended_next_lesson";
+  label: string;
+  reason: string;
+  href: string;
+  priority: number;
+};
+
+type StudentLearningIntelligence = {
+  generatedAt: string;
+  masteryBySubject: SubjectMastery[];
+  weaknesses: WeaknessSignal[];
+  recommendedNextActions: RecommendedNextAction[];
+};
+
 type StudentProgressSummary = {
   totalLessonsCompleted: number;
   totalLessonsAssigned: number;
@@ -30,6 +83,7 @@ type StudentProgressSummary = {
   overallCurriculumCompletionPercent: number;
   subjectProgress: SubjectProgressSummary[];
   recentActivity: ProgressActivity[];
+  learningIntelligence: StudentLearningIntelligence;
 };
 
 const EMPTY_SUMMARY: StudentProgressSummary = {
@@ -40,6 +94,12 @@ const EMPTY_SUMMARY: StudentProgressSummary = {
   overallCurriculumCompletionPercent: 0,
   subjectProgress: [],
   recentActivity: [],
+  learningIntelligence: {
+    generatedAt: "",
+    masteryBySubject: [],
+    weaknesses: [],
+    recommendedNextActions: [],
+  },
 };
 
 function activityLabel(type: ProgressActivity["type"]) {
@@ -73,6 +133,21 @@ export default function StudentProgressDashboard() {
           ...data,
           subjectProgress: Array.isArray(data?.subjectProgress) ? data.subjectProgress : [],
           recentActivity: Array.isArray(data?.recentActivity) ? data.recentActivity : [],
+          learningIntelligence: {
+            ...EMPTY_SUMMARY.learningIntelligence,
+            ...(data?.learningIntelligence ?? {}),
+            masteryBySubject: Array.isArray(data?.learningIntelligence?.masteryBySubject)
+              ? data.learningIntelligence.masteryBySubject
+              : [],
+            weaknesses: Array.isArray(data?.learningIntelligence?.weaknesses)
+              ? data.learningIntelligence.weaknesses
+              : [],
+            recommendedNextActions: Array.isArray(
+              data?.learningIntelligence?.recommendedNextActions
+            )
+              ? data.learningIntelligence.recommendedNextActions
+              : [],
+          },
         });
       })
       .catch((loadError: Error) => setError(loadError.message))
@@ -172,6 +247,140 @@ export default function StudentProgressDashboard() {
               </div>
             </section>
 
+            <section className="grid gap-6 xl:grid-cols-[0.95fr_1.05fr]">
+              <div className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/80 p-5 sm:p-6">
+                <h2 className="text-lg font-semibold text-[var(--ll-text)]">
+                  Recommended Next Actions
+                </h2>
+                <p className="mt-1 text-sm text-[var(--ll-text-muted)]">
+                  Determined from scheduled lessons, quiz results, and active support signals.
+                </p>
+                <div className="mt-5 space-y-3">
+                  {summary.learningIntelligence.recommendedNextActions.length === 0 ? (
+                    <p className="text-sm text-[var(--ll-text-muted)]">
+                      No recommendations yet. Open Today to start your next assigned lesson.
+                    </p>
+                  ) : (
+                    summary.learningIntelligence.recommendedNextActions.map((action) => (
+                      <Link
+                        key={`${action.type}-${action.href}`}
+                        href={action.href}
+                        className="block rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 p-4 transition-colors hover:border-[var(--ll-yellow)]/50"
+                      >
+                        <p className="text-xs uppercase tracking-[0.18em] text-[var(--ll-yellow)]">
+                          {action.type.replace(/_/g, " ")}
+                        </p>
+                        <p className="mt-2 text-sm font-semibold text-[var(--ll-text)]">
+                          {action.label}
+                        </p>
+                        <p className="mt-1 text-sm text-[var(--ll-text-muted)]">
+                          {action.reason}
+                        </p>
+                      </Link>
+                    ))
+                  )}
+                </div>
+              </div>
+
+              <div className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/80 p-5 sm:p-6">
+                <h2 className="text-lg font-semibold text-[var(--ll-text)]">
+                  Learning Intelligence
+                </h2>
+                <p className="mt-1 text-sm text-[var(--ll-text-muted)]">
+                  Subject mastery, confidence level, and weak areas from real activity.
+                </p>
+                <div className="mt-5 grid gap-3 md:grid-cols-2">
+                  {summary.learningIntelligence.masteryBySubject.length === 0 ? (
+                    <p className="text-sm text-[var(--ll-text-muted)]">
+                      Mastery signals will appear after lessons or quizzes are completed.
+                    </p>
+                  ) : (
+                    summary.learningIntelligence.masteryBySubject.map((subject) => (
+                      <article
+                        key={subject.subject}
+                        className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 p-4"
+                      >
+                        <div className="flex items-start justify-between gap-3">
+                          <div>
+                            <h3 className="text-sm font-semibold text-[var(--ll-text)]">
+                              {subject.label}
+                            </h3>
+                            <p className="mt-1 text-xs text-[var(--ll-text-muted)]">
+                              Confidence {subject.confidenceTier} &middot; {subject.evidenceCount} signal
+                              {subject.evidenceCount === 1 ? "" : "s"}
+                            </p>
+                          </div>
+                          <p className="text-lg font-semibold text-[var(--ll-yellow)]">
+                            {subject.masteryPercent}%
+                          </p>
+                        </div>
+                        <div className="mt-3 h-2 rounded-full bg-[var(--ll-surface)]">
+                          <div
+                            className="h-2 rounded-full bg-[var(--ll-yellow-soft)]"
+                            style={{ width: `${subject.masteryPercent}%` }}
+                          />
+                        </div>
+                        {subject.weakConcepts.length > 0 ? (
+                          <div className="mt-3 flex flex-wrap gap-2">
+                            {subject.weakConcepts.map((concept) => (
+                              <span
+                                key={concept.conceptKey}
+                                className="rounded-full border border-red-400/20 bg-red-500/10 px-3 py-1 text-xs text-red-200"
+                              >
+                                {concept.label}: {concept.masteryPercent}%
+                              </span>
+                            ))}
+                          </div>
+                        ) : null}
+                      </article>
+                    ))
+                  )}
+                </div>
+              </div>
+            </section>
+
+            <section className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/80 p-5 sm:p-6">
+              <h2 className="text-lg font-semibold text-[var(--ll-text)]">Weakness Signals</h2>
+              <p className="mt-1 text-sm text-[var(--ll-text-muted)]">
+                Patterns that may need review before moving too far ahead.
+              </p>
+              <div className="mt-5 grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+                {summary.learningIntelligence.weaknesses.length === 0 ? (
+                  <p className="text-sm text-[var(--ll-text-muted)]">
+                    No repeated weak signals are active right now.
+                  </p>
+                ) : (
+                  summary.learningIntelligence.weaknesses.map((weakness) => {
+                    const content = (
+                      <article className="h-full rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 p-4">
+                        <p className="text-xs uppercase tracking-[0.18em] text-[var(--ll-text-faint)]">
+                          {weakness.severity} &middot; {weakness.type.replace(/_/g, " ")}
+                        </p>
+                        <p className="mt-2 text-sm font-semibold text-[var(--ll-text)]">
+                          {weakness.label}
+                        </p>
+                        <p className="mt-1 text-sm text-[var(--ll-text-muted)]">
+                          {weakness.reason}
+                        </p>
+                      </article>
+                    );
+
+                    return weakness.href ? (
+                      <Link
+                        key={`${weakness.type}-${weakness.label}-${weakness.href}`}
+                        href={weakness.href}
+                        className="block transition-colors hover:border-[var(--ll-yellow)]/50"
+                      >
+                        {content}
+                      </Link>
+                    ) : (
+                      <div key={`${weakness.type}-${weakness.label}`}>{content}</div>
+                    );
+                  })
+                )}
+              </div>
+            </section>
+
             <section className="grid gap-6 xl:grid-cols-[1.3fr_0.9fr]">
               <div className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/80 p-5 sm:p-6">
                 <div className="flex items-center justify-between gap-3">
@@ -261,7 +470,7 @@ export default function StudentProgressDashboard() {
                             <p className="mt-1 text-xs text-[var(--ll-text-muted)]">
                               {activity.subject.replace(/_/g, " ")}
                               {activity.scorePercent != null
-                                ? ` · Score ${activity.scorePercent}%`
+                                ? ` - Score ${activity.scorePercent}%`
                                 : ""}
                             </p>
                           </div>

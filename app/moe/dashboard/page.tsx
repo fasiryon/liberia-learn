@@ -51,6 +51,46 @@ type DashboardData = {
     audioUsage: { playbackStarts: number; generated: number; pending: number; processing: number; failed: number; estimatedCostUsd: number };
     videoUsage: { playbackStarts: number; uploaded: number; active: number };
   } | null;
+  decisionIntelligence: {
+    districtComparisons: Array<{
+      districtId: string;
+      districtName: string;
+      schoolCount: number;
+      studentCount: number;
+      averageQuizScorePct: number | null;
+      deliveryRatePct: number;
+      activeRatePct: number;
+    }>;
+    schoolComparisons: Array<{
+      schoolId: string;
+      schoolName: string;
+      districtName: string;
+      studentCount: number;
+      averageQuizScorePct: number | null;
+      deliveryRatePct: number;
+      activeRatePct: number;
+    }>;
+    subjectWeaknessHeatmap: Array<{
+      subject: string;
+      districtId: string;
+      districtName: string;
+      averageQuizScorePct: number | null;
+      attempts: number;
+      severity: "low" | "medium" | "high";
+    }>;
+    curriculumAdoptionTrends: Array<{
+      subject: string;
+      scheduledLessons: number;
+      deliveredLessons: number;
+      deliveryRatePct: number;
+    }>;
+    readinessDeliverySummary: {
+      schoolsWithActivity: number;
+      schoolsWithDeliveredLessons: number;
+      deliveryRatePct: number;
+      nationalActiveRatePct: number;
+    };
+  } | null;
 };
 
 type ComplianceDistrict = {
@@ -280,6 +320,158 @@ export default function MoeDashboardPage() {
                   subtitle="Students at risk"
                   valueClassName="text-[var(--ll-danger)]"
                 />
+              </>
+            )}
+          </section>
+
+          <section className="ll-section rounded-xl p-4">
+            <div>
+              <p className="text-[11px] font-medium uppercase tracking-[0.1em] text-[var(--ll-text-faint)]">
+                Decision support
+              </p>
+              <h2 className="mt-2 text-base font-semibold text-[var(--ll-text)]">
+                National Learning Intelligence
+              </h2>
+              <p className="mt-1 text-sm leading-6 text-[var(--ll-text-muted)]">
+                District, school, subject, adoption, and delivery signals from real platform data.
+              </p>
+            </div>
+
+            {loading ? (
+              <div className="mt-5 grid gap-3 md:grid-cols-4">
+                {Array.from({ length: 4 }).map((_, index) => <SkeletonCard key={index} />)}
+              </div>
+            ) : (
+              <>
+                <div className="mt-5 grid gap-3 md:grid-cols-4">
+                  <StatCard
+                    label="Schools With Activity"
+                    value={dashboard?.decisionIntelligence?.readinessDeliverySummary.schoolsWithActivity ?? 0}
+                    valueClassName="text-[var(--ll-text)]"
+                  />
+                  <StatCard
+                    label="Schools Delivering"
+                    value={dashboard?.decisionIntelligence?.readinessDeliverySummary.schoolsWithDeliveredLessons ?? 0}
+                    valueClassName="text-[var(--ll-text)]"
+                  />
+                  <StatCard
+                    label="Delivery Readiness"
+                    value={formatPct(dashboard?.decisionIntelligence?.readinessDeliverySummary.deliveryRatePct)}
+                    valueClassName="text-[var(--ll-warning)]"
+                  />
+                  <StatCard
+                    label="National Active Rate"
+                    value={formatPct(dashboard?.decisionIntelligence?.readinessDeliverySummary.nationalActiveRatePct)}
+                    valueClassName="text-[var(--ll-accent)]"
+                  />
+                </div>
+
+                <div className="mt-5 grid gap-4 lg:grid-cols-2">
+                  <Card className="p-5">
+                    <p className="text-[11px] font-medium uppercase tracking-[0.1em] text-[var(--ll-text-faint)]">
+                      District Comparisons
+                    </p>
+                    <div className="mt-4 space-y-3">
+                      {(dashboard?.decisionIntelligence?.districtComparisons ?? []).slice(0, 6).map((district) => (
+                        <div
+                          key={district.districtId}
+                          className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-surface-muted)] px-4 py-3"
+                        >
+                          <div className="flex items-center justify-between gap-3">
+                            <p className="font-medium text-[var(--ll-text)]">{district.districtName}</p>
+                            <p className="font-semibold text-[var(--ll-accent)]">
+                              {district.averageQuizScorePct == null ? "--" : `${district.averageQuizScorePct}%`}
+                            </p>
+                          </div>
+                          <p className="mt-1 text-xs text-[var(--ll-text-muted)]">
+                            Delivery {district.deliveryRatePct}% &middot; Active {district.activeRatePct}% &middot; {district.schoolCount} schools
+                          </p>
+                        </div>
+                      ))}
+                    </div>
+                  </Card>
+
+                  <Card className="p-5">
+                    <p className="text-[11px] font-medium uppercase tracking-[0.1em] text-[var(--ll-text-faint)]">
+                      Subject Weakness Heatmap
+                    </p>
+                    <div className="mt-4 space-y-3">
+                      {(dashboard?.decisionIntelligence?.subjectWeaknessHeatmap ?? []).slice(0, 6).map((row) => (
+                        <div
+                          key={`${row.districtId}-${row.subject}`}
+                          className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-surface-muted)] px-4 py-3"
+                        >
+                          <div className="flex items-center justify-between gap-3">
+                            <p className="font-medium text-[var(--ll-text)]">
+                              {row.subject} &middot; {row.districtName}
+                            </p>
+                            <span className="rounded-full border border-[var(--ll-warning)]/20 bg-[rgba(250,204,21,0.10)] px-2 py-1 text-[11px] font-medium text-[var(--ll-warning)]">
+                              {row.severity}
+                            </span>
+                          </div>
+                          <p className="mt-1 text-xs text-[var(--ll-text-muted)]">
+                            Avg {row.averageQuizScorePct == null ? "--" : `${row.averageQuizScorePct}%`} across {row.attempts} attempts
+                          </p>
+                        </div>
+                      ))}
+                      {(dashboard?.decisionIntelligence?.subjectWeaknessHeatmap ?? []).length === 0 ? (
+                        <p className="text-sm text-[var(--ll-text-muted)]">
+                          No national subject weakness signal for this period.
+                        </p>
+                      ) : null}
+                    </div>
+                  </Card>
+                </div>
+
+                <div className="mt-5 grid gap-4 lg:grid-cols-2">
+                  <Card className="p-5">
+                    <p className="text-[11px] font-medium uppercase tracking-[0.1em] text-[var(--ll-text-faint)]">
+                      School Comparisons
+                    </p>
+                    <div className="mt-4 space-y-3">
+                      {(dashboard?.decisionIntelligence?.schoolComparisons ?? []).slice(0, 6).map((school) => (
+                        <div
+                          key={school.schoolId}
+                          className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-surface-muted)] px-4 py-3"
+                        >
+                          <div className="flex items-center justify-between gap-3">
+                            <p className="font-medium text-[var(--ll-text)]">{school.schoolName}</p>
+                            <p className="font-semibold text-[var(--ll-accent)]">
+                              {school.averageQuizScorePct == null ? "--" : `${school.averageQuizScorePct}%`}
+                            </p>
+                          </div>
+                          <p className="mt-1 text-xs text-[var(--ll-text-muted)]">
+                            {school.districtName} &middot; Delivery {school.deliveryRatePct}% &middot; Active {school.activeRatePct}%
+                          </p>
+                        </div>
+                      ))}
+                    </div>
+                  </Card>
+
+                  <Card className="p-5">
+                    <p className="text-[11px] font-medium uppercase tracking-[0.1em] text-[var(--ll-text-faint)]">
+                      Curriculum Adoption Trends
+                    </p>
+                    <div className="mt-4 space-y-3">
+                      {(dashboard?.decisionIntelligence?.curriculumAdoptionTrends ?? []).slice(0, 6).map((subject) => (
+                        <div key={subject.subject}>
+                          <div className="flex justify-between text-sm">
+                            <span className="font-medium text-[var(--ll-text)]">{subject.subject}</span>
+                            <span className="text-[var(--ll-text-muted)]">
+                              {subject.deliveredLessons}/{subject.scheduledLessons}
+                            </span>
+                          </div>
+                          <div className="mt-2 h-2 rounded-full bg-[var(--ll-surface-muted)]">
+                            <div
+                              className="h-2 rounded-full bg-[var(--ll-accent)]"
+                              style={{ width: `${Math.min(100, subject.deliveryRatePct)}%` }}
+                            />
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </Card>
+                </div>
               </>
             )}
           </section>

@@ -28,6 +28,7 @@ export const MAX_CACHED_LESSONS = 20;
 export type CachedLessonData = {
   metadata: Record<string, unknown> | null;
   payload: Record<string, unknown> | null;
+  audio?: Record<string, unknown> | null;
 };
 
 export type CachedLessonEntry = {

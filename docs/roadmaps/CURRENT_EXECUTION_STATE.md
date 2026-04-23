@@ -149,13 +149,13 @@ Live execution tracking for the final closeout program.
 - GitHub Actions on latest main: PASS, all 4 workflows green (`PR Triage`, `Runtime Gate 1`, `Deploy ECS Images`, `CI`)
 
 ## Current workstream
-Phase 4.6 UX Flow Integrity + Homepage Upgrade
+Phase 5 Production Intelligence + Curriculum System
 
 ## Current sprint or phase
-Phase 4.6 COMPLETE. Student Today flow, CTA route semantics, student back navigation, dead-link cleanup, and homepage value proof section are implemented and production-verified.
+Phase 5 Phase 6 final gate in progress. Phases 0-5 are implemented and individually gated; Phase 6 integrity audit, generic lesson multimedia parity, and final Playwright coverage are being validated.
 
 ## Current branch
-feat/phase-4-6-flow-integrity
+feat/phase-5-intelligence-system
 
 ## Phase 4.5 Demo Access
 - Student: `student1@cha.edu.lr` / `DemoSeed2026!` lands on `/dashboard`; first click `/student/today`; seeded lesson `/student/lessons/cha-demo-student1-multimedia-lesson`.
@@ -211,6 +211,26 @@ feat/phase-4-6-flow-integrity
 - `npx playwright test` with `PLAYWRIGHT_BASE_URL=https://liberia-learn.vercel.app`: PASS (9 browser tests).
 - Production deploy: PASS, aliased to `https://liberia-learn.vercel.app`; deployment `dpl_HtJ2RmoTxbGqtj8wHZaKyWeR95H1`.
 
+## Phase 5 Production Intelligence Summary
+| Phase | Status | Notes |
+|-------|--------|-------|
+| Phase 0 System inventory | COMPLETE | `docs/PHASE5_SYSTEM_INVENTORY.md` maps analytics, mastery, AI routing, curriculum, dashboards, queue, costs, Today, and multimedia paths. |
+| Phase 1 Learning intelligence | COMPLETE | Student progress and teacher performance surfaces now expose mastery, weaknesses, recommended actions, struggling students, top performers, low-performing lessons, and interventions. |
+| Phase 2 Admin/MOE intelligence | COMPLETE | Existing admin and MOE dashboards include real-data decision support for engagement, performance, teacher effectiveness proxy, district/school comparisons, subject heatmaps, adoption, and readiness. |
+| Phase 3 Curriculum ingestion | COMPLETE | Admin curriculum import accepts PDF, DOCX, JSON, and structured text, parses into existing `CurriculumContent` and `CurriculumVersion`, and enters the existing review flow. |
+| Phase 4 Elite curriculum upgrade | COMPLETE | Prompt registry and AI router now create governed elite upgrade drafts with quality scoring, original preservation, and side-by-side review UX. |
+| Phase 5 Adaptive Today | COMPLETE | `/api/student/today` now returns deterministic `adaptivePlan` prioritizing scheduled work, weak areas, incomplete lessons, and next best actions. |
+| Phase 6 Integrity/QA | IN PROGRESS | `docs/PHASE5_DUPLICATION_AUDIT.md` confirms no duplicate systems; generic library lessons now expose Read/Slides/Listen modes from the same multimedia payload fields. |
+
+## Phase 5 Validation To Date
+- Phase 0 gate: `npx tsc --noEmit` PASS; `npm test` PASS (1951 tests, 274 files); `npm run build` PASS.
+- Phase 1 gate: `npx tsc --noEmit` PASS; `npm test` PASS (1952 tests, 275 files); `npm run build` PASS.
+- Phase 2 gate: `npx tsc --noEmit` PASS; `npm test` PASS (1954 tests, 276 files); `npm run build` PASS.
+- Phase 3 gate: `npx tsc --noEmit` PASS; `npm test` PASS (1956 tests, 277 files); `npm run build` PASS.
+- Phase 4 gate: `npx tsc --noEmit` PASS; `npm test` PASS (1958 tests, 278 files); `npm run build` PASS.
+- Phase 5 gate: `npx tsc --noEmit` PASS; `npm test` PASS (1960 tests, 279 files); `npm run build` PASS.
+- Final Phase 6 gate: pending full sequence.
+
 ## Multimedia Lesson Delivery Sprint seed note
 - Seeded student user: `student1@cha.edu.lr` / `DemoSeed2026!`
 - Seeded lesson title: `Ratios in Market Prices`
@@ -221,21 +241,34 @@ feat/phase-4-6-flow-integrity
 - Recreate fixture: run `npm run seed:cha`, which upserts the CHA school, teacher, student, enrollment, curriculum content, and scheduled work.
 
 ## Worktree status
-Phase 4.6 implemented, seeded, deployed, and browser-verified. Commit, push to main, final deploy, and GitHub Actions confirmation are in progress.
+Phase 5 implementation is complete on `feat/phase-5-intelligence-system`. Final local validation passed. Commit, push to main, production deploy, and GitHub Actions confirmation remain.
 
 ## Overall status
 Sprints 1-16 + 16B + 16C + 16D + 16E + 16F + Dashboard UX complete. All role portals now share a consistent design system: DashboardTopBar, KPI cards, primary actions above fold, and role accent colours.
 
 ## Last completed phase
-Phase 4.6 UX Flow Integrity + Homepage Upgrade
+Phase 5 Production Intelligence + Curriculum System
 
 ## Last commit reference
-Pending Phase 4.6 commit
+Pending Phase 5 commit
 
-## Last successful validation (Dashboard UX)
-- `npx tsc --noEmit`: PASS (0 errors)
-- `npm test`: PASS (1805 tests)
-- `npm run build`: PASS (exit 0)
+## Last successful validation (Phase 5)
+- `npx prisma generate`: PASS
+- `npx tsc --noEmit`: PASS
+- `npm test`: PASS, 279 files / 1960 tests
+- `npm run build`: PASS, 209 app routes generated
+- `npx playwright test`: PASS, 11 tests
+- Playwright verified seeded lesson `/student/lessons/cha-demo-student1-multimedia-lesson` still exposes Read / Slides / Listen.
+- Playwright verified generic library lesson `/student/lesson/cha-g9-math-multimedia-demo` now exposes Read / Slides / Listen.
+
+## Phase 5 Completion Summary
+- Phase 0 inventory documented existing analytics, mastery, recommendations, AI routing, curriculum governance, queue, storage, dashboards, Today sequencing, and multimedia delivery in `docs/PHASE5_SYSTEM_INVENTORY.md`.
+- Phase 1 extended existing student progress and teacher performance surfaces with learning intelligence, weakness detection, confidence tiers, recommended next actions, and class insight blocks.
+- Phase 2 extended existing admin and MOE analytics with real-data decision-support summaries, engagement levels, performance distributions, weak subjects, district/school comparisons, usage trends, and readiness summaries.
+- Phase 3 added curriculum import for PDF, DOCX, JSON, and structured text into existing `CurriculumContent` / `CurriculumVersion` records, with validation and audit logging.
+- Phase 4 added elite curriculum upgrade prompts through the existing prompt registry and routed AI path, preserving original imported content and producing reviewable upgraded drafts with quality score deltas.
+- Phase 5 made `/student/today` adaptive and deterministic by prioritizing scheduled work, weak areas, incomplete lessons, and next best lessons.
+- Phase 6 documented duplication audit in `docs/PHASE5_DUPLICATION_AUDIT.md` and extended Playwright coverage for student, teacher, admin, MOE, guardian, platform admin, video, audio, analytics, and multimedia mode flows.
 
 ## Sprint 16F Deliverables
 | Feature | Route / File | Notes |
@@ -335,4 +368,4 @@ Required before national scale sign-off: Vercel Pro upgrade + seed load-test use
 - `prisma/migrations/20260416_100000_curriculum_version/`
 
 ## Exact next step
-Commit Phase 4.6 flow integrity changes, push to main, redeploy production, and confirm GitHub Actions are green on main.
+Commit Phase 5 intelligence-system changes, push to main, redeploy production, and confirm GitHub Actions are green on main.

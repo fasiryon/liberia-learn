@@ -29,6 +29,17 @@ export type TeacherAtRiskStudent = {
   profileHref: string;
 };
 
+export type TeacherInterventionSuggestion = {
+  type:
+    | "small_group_review"
+    | "student_check_in"
+    | "reteach_lesson"
+    | "extend_practice";
+  label: string;
+  reason: string;
+  priority: "low" | "medium" | "high";
+};
+
 export type TeacherClassPerformance = {
   classId: string;
   className: string;
@@ -42,6 +53,12 @@ export type TeacherClassPerformance = {
   topStudents: TeacherStudentQuizStanding[];
   bottomStudents: TeacherStudentQuizStanding[];
   atRiskStudents: TeacherAtRiskStudent[];
+  intelligence?: {
+    strugglingStudents: TeacherStudentQuizStanding[];
+    topPerformers: TeacherStudentQuizStanding[];
+    lowPerformingLessons: TeacherLessonQuizPerformance[];
+    interventionSuggestions: TeacherInterventionSuggestion[];
+  };
 };
 
 type TeacherAssessmentAttempt = {
@@ -91,6 +108,59 @@ function getAttemptLessonKeys(metadata: JsonRecord | null) {
     scheduledWorkId,
     lessonKey: contentId ?? scheduledWorkId ?? "unknown-lesson",
   };
+}
+
+function buildInterventionSuggestions({
+  completionRate,
+  strugglingStudents,
+  lowPerformingLessons,
+  atRiskStudents,
+}: {
+  completionRate: number;
+  strugglingStudents: TeacherStudentQuizStanding[];
+  lowPerformingLessons: TeacherLessonQuizPerformance[];
+  atRiskStudents: TeacherAtRiskStudent[];
+}): TeacherInterventionSuggestion[] {
+  const suggestions: TeacherInterventionSuggestion[] = [];
+
+  if (lowPerformingLessons.length > 0) {
+    const lesson = lowPerformingLessons[0];
+    suggestions.push({
+      type: "reteach_lesson",
+      label: `Reteach ${lesson.lessonTitle}`,
+      reason: `Average quiz score is ${lesson.averageQuizScore}% across ${lesson.attemptCount} attempt(s).`,
+      priority: lesson.averageQuizScore < 50 ? "high" : "medium",
+    });
+  }
+
+  if (strugglingStudents.length > 0) {
+    suggestions.push({
+      type: "small_group_review",
+      label: "Create a small-group review",
+      reason: `${strugglingStudents.length} student(s) are below 65% average quiz performance.`,
+      priority: strugglingStudents.length >= 3 ? "high" : "medium",
+    });
+  }
+
+  if (atRiskStudents.length > 0) {
+    suggestions.push({
+      type: "student_check_in",
+      label: "Check in with inactive students",
+      reason: `${atRiskStudents.length} student(s) have no recent learning activity for at least 7 days.`,
+      priority: "high",
+    });
+  }
+
+  if (completionRate < 70) {
+    suggestions.push({
+      type: "extend_practice",
+      label: "Assign completion support",
+      reason: `Lesson completion is ${completionRate}%, so students may need structured catch-up time.`,
+      priority: completionRate < 50 ? "high" : "medium",
+    });
+  }
+
+  return suggestions.slice(0, 4);
 }
 
 export async function buildTeacherClassPerformance(
@@ -397,6 +467,23 @@ export async function buildTeacherClassPerformance(
       .filter((row) => row.daysSinceActivity >= 7)
       .sort((a, b) => b.daysSinceActivity - a.daysSinceActivity);
 
+    const lowPerformingLessons = lessonQuizPerformance
+      .filter((lesson) => lesson.averageQuizScore < 70)
+      .slice(0, 3);
+    const strugglingStudents = standingRows
+      .filter((student) => student.averageQuizScore < 65)
+      .sort((a, b) => a.averageQuizScore - b.averageQuizScore)
+      .slice(0, 5);
+    const topPerformers = standingRows
+      .filter((student) => student.averageQuizScore >= 80)
+      .slice(0, 5);
+    const interventionSuggestions = buildInterventionSuggestions({
+      completionRate: lessonCompletionRate,
+      strugglingStudents,
+      lowPerformingLessons,
+      atRiskStudents,
+    });
+
     return {
       classId: cls.id,
       className: cls.name,
@@ -414,6 +501,12 @@ export async function buildTeacherClassPerformance(
       topStudents: standingRows.slice(0, 3),
       bottomStudents: [...standingRows].reverse().slice(0, 3),
       atRiskStudents,
+      intelligence: {
+        strugglingStudents,
+        topPerformers,
+        lowPerformingLessons,
+        interventionSuggestions,
+      },
     } satisfies TeacherClassPerformance;
   });
 }

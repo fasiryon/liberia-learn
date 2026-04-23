@@ -22,6 +22,37 @@ export type TeacherDashboardSummary = {
   studentsStruggling: number;
   activeInterventions: number;
   topConfusionTags: string[];
+  classInsights?: Array<{
+    classId: string;
+    className: string;
+    subject: string;
+    strugglingStudents: Array<{
+      studentId: string;
+      name: string;
+      averageQuizScore: number;
+      attemptCount: number;
+      profileHref: string;
+    }>;
+    topPerformers: Array<{
+      studentId: string;
+      name: string;
+      averageQuizScore: number;
+      attemptCount: number;
+      profileHref: string;
+    }>;
+    lowPerformingLessons: Array<{
+      lessonKey: string;
+      lessonTitle: string;
+      averageQuizScore: number;
+      attemptCount: number;
+    }>;
+    interventionSuggestions: Array<{
+      type: string;
+      label: string;
+      reason: string;
+      priority: "low" | "medium" | "high";
+    }>;
+  }>;
 };
 
 function confusionPriority(item: TeacherConfusionItem): number {
@@ -102,6 +133,7 @@ export function TeacherDashboardScreen({
     (item) => interventionPriority(item) >= 2
   ).length;
   const topAttentionItems = filteredConfusions.slice(0, 3);
+  const classInsights = summary?.classInsights ?? [];
 
   return (
     <div className="space-y-6">
@@ -140,6 +172,123 @@ export function TeacherDashboardScreen({
           }
         />
       </div>
+
+      <Card className="p-5 sm:p-6">
+        <div className="flex flex-wrap items-start justify-between gap-4">
+          <div>
+            <h2 className="text-lg font-semibold text-[var(--ll-text)]">
+              Class Learning Insights
+            </h2>
+            <p className="mt-1 text-sm text-[var(--ll-text-muted)]">
+              Deterministic class patterns from quiz attempts, scheduled work, and progress.
+            </p>
+          </div>
+          <span className="rounded-full border border-[var(--ll-border)] bg-[var(--ll-bg)]/60 px-3 py-1 text-xs font-semibold text-[var(--ll-text)]">
+            {classInsights.length} class{classInsights.length === 1 ? "" : "es"}
+          </span>
+        </div>
+        {classInsights.length === 0 ? (
+          <p className="mt-5 text-sm text-[var(--ll-text-muted)]">
+            Class insight blocks will appear after students complete lessons or quizzes.
+          </p>
+        ) : (
+          <div className="mt-5 grid gap-4 xl:grid-cols-2">
+            {classInsights.map((insight) => (
+              <article
+                key={insight.classId}
+                className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/60 p-4"
+              >
+                <div className="flex items-start justify-between gap-3">
+                  <div>
+                    <h3 className="text-base font-semibold text-[var(--ll-text)]">
+                      {insight.className}
+                    </h3>
+                    <p className="mt-1 text-xs uppercase tracking-wide text-[var(--ll-text-faint)]">
+                      {insight.subject.replace(/_/g, " ")}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="mt-4 grid gap-3 md:grid-cols-2">
+                  <div className="rounded-xl border border-red-500/15 bg-red-500/8 p-3">
+                    <p className="text-xs uppercase tracking-wide text-red-200">
+                      Struggling students
+                    </p>
+                    {insight.strugglingStudents.length === 0 ? (
+                      <p className="mt-2 text-sm text-[var(--ll-text-muted)]">None flagged</p>
+                    ) : (
+                      <div className="mt-2 space-y-1">
+                        {insight.strugglingStudents.slice(0, 3).map((student) => (
+                          <p key={student.studentId} className="text-sm text-[var(--ll-text)]">
+                            {student.name} &middot; {student.averageQuizScore}%
+                          </p>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="rounded-xl border border-emerald-400/15 bg-emerald-400/8 p-3">
+                    <p className="text-xs uppercase tracking-wide text-emerald-200">
+                      Top performers
+                    </p>
+                    {insight.topPerformers.length === 0 ? (
+                      <p className="mt-2 text-sm text-[var(--ll-text-muted)]">Pending evidence</p>
+                    ) : (
+                      <div className="mt-2 space-y-1">
+                        {insight.topPerformers.slice(0, 3).map((student) => (
+                          <p key={student.studentId} className="text-sm text-[var(--ll-text)]">
+                            {student.name} &middot; {student.averageQuizScore}%
+                          </p>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                <div className="mt-4 grid gap-3 md:grid-cols-2">
+                  <div>
+                    <p className="text-xs uppercase tracking-wide text-[var(--ll-text-faint)]">
+                      Low-performing lessons
+                    </p>
+                    <div className="mt-2 space-y-2">
+                      {insight.lowPerformingLessons.length === 0 ? (
+                        <p className="text-sm text-[var(--ll-text-muted)]">
+                          No low-performing lessons identified.
+                        </p>
+                      ) : (
+                        insight.lowPerformingLessons.slice(0, 3).map((lesson) => (
+                          <p key={lesson.lessonKey} className="text-sm text-[var(--ll-text)]">
+                            {lesson.lessonTitle}: {lesson.averageQuizScore}%
+                          </p>
+                        ))
+                      )}
+                    </div>
+                  </div>
+
+                  <div>
+                    <p className="text-xs uppercase tracking-wide text-[var(--ll-text-faint)]">
+                      Intervention suggestions
+                    </p>
+                    <div className="mt-2 space-y-2">
+                      {insight.interventionSuggestions.length === 0 ? (
+                        <p className="text-sm text-[var(--ll-text-muted)]">
+                          No intervention suggestion right now.
+                        </p>
+                      ) : (
+                        insight.interventionSuggestions.slice(0, 3).map((suggestion) => (
+                          <p key={`${suggestion.type}-${suggestion.label}`} className="text-sm text-[var(--ll-text)]">
+                            {suggestion.label}: {suggestion.reason}
+                          </p>
+                        ))
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </article>
+            ))}
+          </div>
+        )}
+      </Card>
 
       <Card className="p-5 sm:p-6">
         <div className="flex flex-wrap items-start justify-between gap-4">

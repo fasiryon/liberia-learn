@@ -9,8 +9,38 @@ type PackData = {
   grade: number;
   subject: string;
   status: string;
+  version?: string;
   payload: any;
 };
+
+function asArray(value: any): string[] {
+  if (Array.isArray(value)) return value.map((entry) => String(entry)).filter(Boolean);
+  if (typeof value === "string" && value.trim()) return [value.trim()];
+  return [];
+}
+
+function excerpt(value: any, maxLength = 900): string {
+  const text = typeof value === "string" ? value : "";
+  if (text.length <= maxLength) return text;
+  return `${text.slice(0, maxLength).trim()}...`;
+}
+
+function qualityScoreBlock(label: string, score: any) {
+  if (!score) return null;
+  return (
+    <div className="rounded-lg border border-[var(--ll-border)] bg-[var(--ll-bg)]/60 p-3">
+      <p className="text-xs font-semibold text-[var(--ll-text-muted)]">{label}</p>
+      <p className="mt-1 text-2xl font-bold text-[var(--ll-yellow)]">{score.overall ?? "N/A"}</p>
+      <div className="mt-2 grid gap-1 text-[11px] text-[var(--ll-text-muted)] sm:grid-cols-2">
+        {Object.entries(score.criteria ?? {}).map(([key, value]) => (
+          <span key={key}>
+            {key}: <strong className="text-[var(--ll-text)]">{String(value)}</strong>
+          </span>
+        ))}
+      </div>
+    </div>
+  );
+}
 
 function statusBadge(status: string) {
   if (status === "published" || status === "APPROVED")
@@ -47,7 +77,19 @@ export default function PackReviewPage() {
       fetch("/api/admin/classes").then((r) => r.json()).catch(() => ({ classes: [] })),
     ])
       .then(([packData, classData]) => {
-        if (packData) setData(packData);
+        if (packData) {
+          const normalized = packData.metadata
+            ? {
+                contentId: packData.metadata.contentId,
+                grade: packData.metadata.grade,
+                subject: packData.metadata.subject,
+                status: packData.metadata.status,
+                version: packData.metadata.version,
+                payload: packData.payload,
+              }
+            : packData;
+          setData(normalized);
+        }
         setClasses(classData?.classes ?? []);
       })
       .catch((err) => setError(err.message))
@@ -129,6 +171,10 @@ export default function PackReviewPage() {
   const termPlan = payload.termPlan;
   const meta = payload.metadata ?? {};
   const isPending = data.status === "pending_approval";
+  const upgradeMetadata = payload.upgradeMetadata;
+  const originalPayload = upgradeMetadata?.originalSnapshot ?? null;
+  const isEliteUpgrade = Boolean(upgradeMetadata);
+  const qualityScores = upgradeMetadata?.qualityScores;
 
   return (
     <main className="min-h-screen bg-[var(--ll-bg)] text-[var(--ll-text)]">
@@ -193,6 +239,118 @@ export default function PackReviewPage() {
             </div>
           )}
         </div>
+
+        {isEliteUpgrade && (
+          <section className="rounded-xl border border-[var(--ll-yellow)]/30 bg-[var(--ll-yellow-soft)]/10 p-5 space-y-4">
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-wide text-[var(--ll-yellow)]">
+                Elite Curriculum Upgrade Draft
+              </p>
+              <h2 className="mt-1 text-lg font-semibold">Original vs upgraded review</h2>
+              <p className="mt-1 text-sm text-[var(--ll-text-muted)]">
+                Original content is preserved under {upgradeMetadata.originalContentId}. This draft stays in the existing approval flow until an admin publishes it.
+              </p>
+            </div>
+            <div className="grid gap-3 md:grid-cols-3">
+              {qualityScoreBlock("Original quality", qualityScores?.before)}
+              {qualityScoreBlock("Upgraded quality", qualityScores?.after)}
+              <div className="rounded-lg border border-[var(--ll-border)] bg-[var(--ll-bg)]/60 p-3">
+                <p className="text-xs font-semibold text-[var(--ll-text-muted)]">Score delta</p>
+                <p className="mt-1 text-2xl font-bold text-[var(--ll-yellow)]">
+                  {qualityScores?.delta >= 0 ? "+" : ""}
+                  {qualityScores?.delta ?? 0}
+                </p>
+                <p className="mt-2 text-xs text-[var(--ll-text-muted)]">
+                  Framework: {upgradeMetadata.governance?.frameworkVersion ?? "LiberiaLearn"}
+                </p>
+              </div>
+            </div>
+            {asArray(upgradeMetadata.improvementsSummary).length > 0 && (
+              <div>
+                <p className="text-xs font-semibold text-[var(--ll-text-muted)]">Key improvements</p>
+                <ul className="mt-2 grid gap-2 text-xs text-[var(--ll-text)] sm:grid-cols-2">
+                  {asArray(upgradeMetadata.improvementsSummary).map((item, index) => (
+                    <li key={index} className="rounded-lg border border-[var(--ll-border)] bg-[var(--ll-bg)]/50 p-2">
+                      {item}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+            <div className="grid gap-4 lg:grid-cols-2">
+              <div className="rounded-lg border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 p-4">
+                <h3 className="text-sm font-semibold">Original Lesson</h3>
+                <p className="mt-1 text-xs text-[var(--ll-text-muted)]">
+                  {originalPayload?.title ?? upgradeMetadata.originalContentId}
+                </p>
+                <div className="mt-3 space-y-3 text-xs text-[var(--ll-text)]">
+                  <div>
+                    <p className="font-semibold text-[var(--ll-text-muted)]">Objectives</p>
+                    <ul className="mt-1 list-disc pl-4">
+                      {asArray(originalPayload?.objectives).map((objective, index) => <li key={index}>{objective}</li>)}
+                    </ul>
+                  </div>
+                  <div>
+                    <p className="font-semibold text-[var(--ll-text-muted)]">Body excerpt</p>
+                    <p className="mt-1 whitespace-pre-wrap text-[var(--ll-text-muted)]">
+                      {excerpt(originalPayload?.body_standard ?? originalPayload?.body)}
+                    </p>
+                  </div>
+                </div>
+              </div>
+              <div className="rounded-lg border border-[var(--ll-yellow)]/30 bg-[var(--ll-bg)]/70 p-4">
+                <h3 className="text-sm font-semibold">Upgraded Draft</h3>
+                <p className="mt-1 text-xs text-[var(--ll-text-muted)]">{payload.title}</p>
+                <div className="mt-3 space-y-3 text-xs text-[var(--ll-text)]">
+                  <div>
+                    <p className="font-semibold text-[var(--ll-text-muted)]">Objectives</p>
+                    <ul className="mt-1 list-disc pl-4">
+                      {asArray(payload.objectives).map((objective, index) => <li key={index}>{objective}</li>)}
+                    </ul>
+                  </div>
+                  <div>
+                    <p className="font-semibold text-[var(--ll-text-muted)]">Body excerpt</p>
+                    <p className="mt-1 whitespace-pre-wrap text-[var(--ll-text-muted)]">
+                      {excerpt(payload.body_standard ?? payload.body)}
+                    </p>
+                  </div>
+                  <div>
+                    <p className="font-semibold text-[var(--ll-text-muted)]">Teacher support</p>
+                    <ul className="mt-1 list-disc pl-4">
+                      {asArray(payload.teacherNotes).slice(0, 4).map((note, index) => <li key={index}>{note}</li>)}
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+        )}
+
+        {!isEliteUpgrade && units.length === 0 && (
+          <section className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 p-5 space-y-4">
+            <h2 className="text-lg font-semibold">Lesson Review</h2>
+            <div className="grid gap-4 md:grid-cols-2">
+              <div>
+                <p className="text-xs font-semibold text-[var(--ll-text-muted)]">Objectives</p>
+                <ul className="mt-2 list-disc pl-4 text-xs text-[var(--ll-text)]">
+                  {asArray(payload.objectives).map((objective, index) => <li key={index}>{objective}</li>)}
+                </ul>
+              </div>
+              <div>
+                <p className="text-xs font-semibold text-[var(--ll-text-muted)]">Teacher notes</p>
+                <ul className="mt-2 list-disc pl-4 text-xs text-[var(--ll-text)]">
+                  {asArray(payload.teacherNotes).map((note, index) => <li key={index}>{note}</li>)}
+                </ul>
+              </div>
+            </div>
+            <div>
+              <p className="text-xs font-semibold text-[var(--ll-text-muted)]">Lesson body</p>
+              <p className="mt-2 whitespace-pre-wrap text-xs text-[var(--ll-text-muted)]">
+                {excerpt(payload.body_standard ?? payload.body, 1600)}
+              </p>
+            </div>
+          </section>
+        )}
 
         {/* Term Plan */}
         {termPlan && (

@@ -17,6 +17,7 @@ import { withRedisCache } from "@/lib/cache/redisCache";
 import { computeNationalGeoPerformance } from "@/lib/reporting/geo/geoAggregator";
 import { logDataAccess } from "@/lib/dataAccess/logDataAccess";
 import { getMultimediaAnalytics } from "@/lib/analytics/multimediaAnalytics";
+import { buildMoeDecisionIntelligence } from "@/lib/analytics/decisionSupport";
 
 export const dynamic = "force-dynamic";
 
@@ -98,6 +99,7 @@ async function buildNationalAggregate() {
     aiTotal,
     aiByFeature,
     multimediaAnalytics,
+    decisionIntelligence,
   ] = await Promise.all([
     prisma.school.count().catch(() => 0),
     prisma.district.count().catch(() => 0),
@@ -164,6 +166,7 @@ async function buildNationalAggregate() {
       )
       .catch(() => [] as { feature: string | null; _count: { _all: number }; _sum: { tokensUsed: number | null } }[]),
     getMultimediaAnalytics({ days: 30, schoolId: null }).catch(() => null),
+    buildMoeDecisionIntelligence(30).catch(() => null),
   ]);
 
   // Build county student counts (by school county, matching geoAggregator logic)
@@ -271,6 +274,7 @@ async function buildNationalAggregate() {
       })),
     },
     multimediaAnalytics,
+    decisionIntelligence,
   };
 }
 
