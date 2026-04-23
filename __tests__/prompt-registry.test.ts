@@ -81,5 +81,34 @@ describe("promptRegistry", () => {
     expect(prompts.some((entry) => entry.key === "curriculum.eliteUpgrade.system")).toBe(true);
     expect(prompts.some((entry) => entry.key === "curriculum.eliteUpgrade.user")).toBe(true);
     expect(prompts.some((entry) => entry.key === "curriculum.eliteUpgrade.assessment")).toBe(true);
+    expect(prompts.some((entry) => entry.key === "curriculum.lesson_upgrade_elite_v1.system")).toBe(true);
+    expect(prompts.some((entry) => entry.key === "curriculum.lesson_upgrade_elite_v1.user")).toBe(true);
+    expect(prompts.some((entry) => entry.key === "curriculum.lesson_upgrade_refinement_v1.user")).toBe(true);
+  });
+
+  it("registers elite upgrade prompts with required structured placeholders", () => {
+    const system = getSystemPrompt("curriculum.lesson_upgrade_elite_v1.system");
+    const user = buildPrompt("curriculum.lesson_upgrade_elite_v1.user", {
+      subject: "MATH",
+      grade: 7,
+      unit: "Ratios",
+      lessonTitle: "Ratios in Market Prices",
+      existing_curriculum_guidelines: "Follow LiberiaLearn curriculum framework.",
+      lessonContent: "{}",
+      objectives: "[]",
+      assessment: "[]",
+      examples: "[]",
+      localContext: "[]",
+    });
+    const refinement = buildPrompt("curriculum.lesson_upgrade_refinement_v1.user", {
+      previousGeneratedLesson: "{}",
+      qualityScore: "{}",
+      weakCategories: "practice, assessment",
+    });
+
+    expect(system).toContain("There is no higher level above this");
+    expect(user).toContain("REQUIRED OUTPUT FORMAT");
+    expect(user).toContain('"quality_score"');
+    expect(refinement).toContain("Revise ONLY the weak areas");
   });
 });

@@ -21,6 +21,51 @@ vi.mock("@/lib/db", () => ({
   },
 }));
 
+function validEliteResponse(score = 94) {
+  const categoryScore = score >= 90 ? 9.4 : 7.2;
+  return {
+    lesson: {
+      title: "Ratios in Market Prices",
+      objectives: [
+        "Explain ratio language using two quantities in market-price situations.",
+        "Compare equivalent ratios and justify which price offer gives better value.",
+      ],
+      sections: [
+        { type: "introduction", content: "Students compare two market bundles and name the quantities." },
+        { type: "explanation", content: "The teacher models ratio notation, equivalent ratios, and value comparison step by step." },
+        { type: "worked_examples", examples: ["Compare 2 cups for 40 LD with 3 cups for 75 LD.", "Scale 1:20 to find 7:140."] },
+        { type: "guided_practice", questions: ["Which bundle has the better price? Explain.", "Write an equivalent ratio."] },
+        { type: "independent_practice", questions: ["Solve three price-ratio comparisons.", "Create one market-ratio example."] },
+        { type: "assessment", questions: ["Explain why 2:3 and 4:6 are equivalent.", "Justify the better-value bundle."] },
+        { type: "misconceptions", items: ["Students may reverse the quantity order in a ratio."] },
+        { type: "real_world_application", content: "Ratios help students compare market prices and farm mixtures in Liberia." },
+        { type: "summary", content: "Students summarize how to compare equivalent ratios and check value." },
+      ],
+      teacher_notes: "Keep the order of quantities visible and ask students to explain each comparison.",
+      student_notes: "A ratio compares two quantities in a fixed order. Use equivalent ratios to compare value.",
+    },
+    quality_score: {
+      clarity: categoryScore,
+      structure: categoryScore,
+      objectives: categoryScore,
+      examples: categoryScore,
+      practice: categoryScore,
+      assessment: categoryScore,
+      misconception: categoryScore,
+      application: categoryScore,
+      transfer: categoryScore,
+      teacher: categoryScore,
+      student: categoryScore,
+      total: score,
+    },
+    improvement_summary: {
+      strengths: ["Clearer objective progression."],
+      weaknesses: score >= 90 ? [] : ["Practice needs stronger transfer."],
+      what_was_improved: ["Strengthened objectives, examples, practice, and assessment evidence."],
+    },
+  };
+}
+
 describe("elite curriculum upgrade", () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -56,54 +101,7 @@ describe("elite curriculum upgrade", () => {
       payload: args.data.payload,
     }));
     mockRoutedCompletion.mockResolvedValue({
-      content: JSON.stringify({
-        title: "Ratios in Market Prices",
-        objectives: [
-          "Explain ratio language using two quantities in market-price situations.",
-          "Compare equivalent ratios and justify which price offer gives better value.",
-        ],
-        body: [
-          "## Opening",
-          "Students review multiplication facts and compare two market bundles.",
-          "## Direct Instruction",
-          "The teacher models ratio notation with rice prices and explains each step.",
-          "## Guided Practice",
-          "Learners solve examples with teacher questioning.",
-          "## Independent Practice",
-          "Students answer mixed problems and explain why.",
-          "## Closing",
-          "Students complete an exit ticket and summarize the strategy.",
-        ].join("\n"),
-        body_standard: null,
-        body_block: null,
-        activities: ["Pairs compare two market bundles and explain the better value."],
-        assessmentQuestions: [
-          "Explain why 2:3 and 4:6 are equivalent.",
-          "Which bundle has the better value? Explain your reasoning.",
-          "Write one ratio from a farm or market context.",
-        ],
-        workedExamples: [
-          "A bag with 2 cups of rice for 40 LD has a ratio of 2:40.",
-          "Compare 3 oranges for 30 LD and 5 oranges for 60 LD step by step.",
-        ],
-        guidedPractice: ["Solve two equivalent-ratio examples with the class."],
-        independentPractice: ["Complete five ratio comparison problems."],
-        formativeChecks: ["Ask learners to explain ratio order.", "Use one exit ticket."],
-        commonMisconceptions: ["Learners may reverse the quantities in a ratio."],
-        teacherNotes: ["Keep the order of quantities visible on the board."],
-        realWorldApplication: "Ratios help students compare market prices and farm mixtures.",
-        careerConnection: "This supports business, agriculture, logistics, and technical trade decisions.",
-        localContextEnrichment: ["Use Liberian dollar market prices."],
-        workforceReadinessEnrichment: ["Compare value before purchasing materials."],
-        improvementsSummary: ["Strengthened objectives and assessment evidence."],
-        qualityRationale: {
-          clarity: "Sections and objectives are explicit.",
-          rigor: "Students explain equivalence and comparison.",
-          sequencing: "The lesson moves from model to guided and independent work.",
-          assessmentQuality: "Questions reveal reasoning.",
-          teacherUsability: "Teacher notes are practical.",
-        },
-      }),
+      content: JSON.stringify(validEliteResponse(94)),
       tier: "smart",
       model: "test-model",
       inputTokens: 1,
@@ -112,26 +110,62 @@ describe("elite curriculum upgrade", () => {
     });
   });
 
-  it("scores lesson quality deterministically", async () => {
-    const { scoreLessonQuality } = await import("@/lib/curriculum/eliteUpgrade");
+  it("scores lesson quality with the required weighted rubric", async () => {
+    const { ELITE_QUALITY_WEIGHTS, scoreLessonQuality } = await import("@/lib/curriculum/eliteUpgrade");
+
+    expect(ELITE_QUALITY_WEIGHTS).toEqual({
+      clarity: 15,
+      structure: 10,
+      objectives: 10,
+      examples: 10,
+      practice: 10,
+      assessment: 10,
+      misconception: 10,
+      application: 10,
+      transfer: 10,
+      teacher: 5,
+      student: 5,
+    });
 
     const score = scoreLessonQuality({
       title: "Ratios in Market Prices",
       grade: 7,
-      objectives: ["Explain ratio language clearly."],
-      body: "Opening. Direct Instruction. Guided Practice. Independent Practice. Closing. Students apply the skill in a market example.",
+      objectives: ["Explain ratio language clearly.", "Compare ratios."],
+      body: "Introduction. Explanation. Guided practice. Independent practice. Summary. Students explain why ratios transfer to market value comparisons.",
       workedExamples: ["Example 1", "Example 2"],
-      independentPractice: ["A", "B", "C"],
-      assessmentQuestions: ["Explain why the ratio is equivalent.", "Answer key included.", "Use evidence."],
-      formativeChecks: ["Check 1", "Check 2"],
-      teacherNotes: ["Use the board."],
+      guidedPractice: ["A", "B"],
+      independentPractice: ["C", "D"],
+      assessmentQuestions: ["Explain why the ratio is equivalent.", "Justify with evidence."],
       commonMisconceptions: ["Reverse order."],
+      teacherNotes: ["Use the board."],
       realWorldApplication: "Use this when comparing market prices in Liberia.",
-      careerConnection: "Useful for work in business and agriculture.",
     });
 
-    expect(score.overall).toBeGreaterThan(70);
-    expect(score.criteria.assessmentQuality).toBeGreaterThan(70);
+    expect(score.total).toBeGreaterThan(70);
+    expect(score.criteria.assessment).toBeGreaterThan(5);
+    expect(score.tier).toMatch(/ELITE|STRONG|ADEQUATE|WEAK|REJECT/);
+  });
+
+  it("rejects invalid JSON safely before creating a draft", async () => {
+    const { createEliteUpgradeDraft } = await import("@/lib/curriculum/eliteUpgrade");
+    mockRoutedCompletion.mockResolvedValueOnce({ content: "not-json" });
+
+    await expect(
+      createEliteUpgradeDraft({ contentId: "math-g7-ratios", userId: "admin-1", schoolId: "school-1" })
+    ).rejects.toThrow(/invalid elite upgrade JSON/i);
+    expect(mockCurriculumContentCreate).not.toHaveBeenCalled();
+  });
+
+  it("rejects missing score fields safely before creating a draft", async () => {
+    const { createEliteUpgradeDraft } = await import("@/lib/curriculum/eliteUpgrade");
+    const invalid = validEliteResponse(94) as any;
+    delete invalid.quality_score.transfer;
+    mockRoutedCompletion.mockResolvedValueOnce({ content: JSON.stringify(invalid) });
+
+    await expect(
+      createEliteUpgradeDraft({ contentId: "math-g7-ratios", userId: "admin-1", schoolId: "school-1" })
+    ).rejects.toThrow();
+    expect(mockCurriculumContentCreate).not.toHaveBeenCalled();
   });
 
   it("creates an AI-upgraded draft without mutating the original content", async () => {
@@ -145,6 +179,7 @@ describe("elite curriculum upgrade", () => {
 
     expect(result.originalContentId).toBe("math-g7-ratios");
     expect(result.draftContentId).toContain("math-g7-ratios-elite-");
+    expect(result.qualityScores.after.total).toBeGreaterThanOrEqual(90);
     expect(mockCurriculumContentFindUnique).toHaveBeenCalledWith(
       expect.objectContaining({ where: { contentId: "math-g7-ratios" } })
     );
@@ -160,6 +195,15 @@ describe("elite curriculum upgrade", () => {
             originalImportedVersion: false,
             upgradeMetadata: expect.objectContaining({
               originalContentId: "math-g7-ratios",
+              qualityRubric: expect.objectContaining({ highestMode: "ELITE" }),
+              qualityScores: expect.objectContaining({
+                after: expect.objectContaining({ tier: "ELITE" }),
+              }),
+              improvementSummary: expect.objectContaining({
+                strengths: expect.any(Array),
+                weaknesses: expect.any(Array),
+                what_was_improved: expect.any(Array),
+              }),
               governance: expect.objectContaining({
                 preservesOriginalContent: true,
               }),
@@ -174,9 +218,31 @@ describe("elite curriculum upgrade", () => {
           feature: "curriculum",
           requestType: "elite_curriculum_upgrade",
           contentId: "math-g7-ratios",
+          promptKey: "curriculum.lesson_upgrade_elite_v1.system",
         }),
       })
     );
   });
-});
 
+  it("runs a refinement pass when the first score is below elite threshold", async () => {
+    const { createEliteUpgradeDraft } = await import("@/lib/curriculum/eliteUpgrade");
+    mockRoutedCompletion
+      .mockResolvedValueOnce({ content: JSON.stringify(validEliteResponse(72)) })
+      .mockResolvedValueOnce({ content: JSON.stringify(validEliteResponse(93)) });
+
+    const result = await createEliteUpgradeDraft({
+      contentId: "math-g7-ratios",
+      userId: "admin-1",
+      schoolId: "school-1",
+    });
+
+    expect(mockRoutedCompletion).toHaveBeenCalledTimes(2);
+    expect(result.refinement).toMatchObject({ attempted: true, applied: true });
+    expect(result.qualityScores.firstPass.total).toBeLessThan(90);
+    expect(result.qualityScores.after.total).toBeGreaterThanOrEqual(90);
+    expect(mockRoutedCompletion.mock.calls[1][0].aiUsage).toMatchObject({
+      requestType: "elite_curriculum_refinement",
+      promptKey: "curriculum.lesson_upgrade_refinement_v1.user",
+    });
+  });
+});

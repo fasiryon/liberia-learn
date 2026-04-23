@@ -228,7 +228,7 @@ export default function AdminCurriculumPage() {
       const data = await res.json().catch(() => null);
       if (!res.ok) throw new Error(data?.error ?? "Elite upgrade failed");
       setUpgradeMessage(
-        `Created elite draft ${data.draftContentId} with quality delta +${data.qualityScores?.delta ?? 0}.`
+        `Created elite draft ${data.draftContentId} at ${data.qualityScores?.after?.total ?? data.qualityScores?.after?.overall ?? "N/A"}/100 with quality delta +${data.qualityScores?.delta ?? 0}.`
       );
       await loadItems();
     } catch (err: any) {
@@ -510,7 +510,7 @@ export default function AdminCurriculumPage() {
                             disabled={upgrading === item.contentId}
                             className="rounded-lg border border-[var(--ll-yellow)]/30 bg-[var(--ll-yellow-soft)] px-3 py-1 text-xs font-semibold text-[var(--ll-yellow)] disabled:opacity-50"
                           >
-                            {upgrading === item.contentId ? "Upgrading..." : "Elite upgrade"}
+                            {upgrading === item.contentId ? "Upgrading..." : "AI Upgrade to Elite"}
                           </button>
                         )}
                         <button
