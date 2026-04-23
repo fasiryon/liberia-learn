@@ -204,6 +204,9 @@ export default function PackReviewPage() {
   const qualityScores = upgradeMetadata?.qualityScores;
   const weakCategories = asArray(upgradeMetadata?.weakCategories);
   const improvementSummary = upgradeMetadata?.improvementSummary;
+  const sectionImprovements = Array.isArray(upgradeMetadata?.sectionImprovements)
+    ? upgradeMetadata.sectionImprovements
+    : [];
 
   return (
     <main className="min-h-screen bg-[var(--ll-bg)] text-[var(--ll-text)]">
@@ -275,9 +278,18 @@ export default function PackReviewPage() {
               <p className="text-xs font-semibold uppercase tracking-wide text-[var(--ll-yellow)]">
                 Elite Curriculum Upgrade Draft
               </p>
+              {upgradeMetadata.goldStandardLesson ? (
+                <span className="mt-2 inline-flex rounded-full border border-[var(--ll-yellow)]/40 bg-[var(--ll-yellow-soft)] px-2.5 py-0.5 text-[11px] font-semibold text-[var(--ll-yellow)]">
+                  Gold Standard Lesson
+                </span>
+              ) : null}
               <h2 className="mt-1 text-lg font-semibold">Original vs upgraded review</h2>
               <p className="mt-1 text-sm text-[var(--ll-text-muted)]">
                 Original content is preserved under {upgradeMetadata.originalContentId}. This draft stays in the existing approval flow until an admin publishes it.
+              </p>
+              <p className="mt-1 text-xs text-[var(--ll-text-muted)]">
+                Score source: {upgradeMetadata.scoreSource === "platform_content_rubric" ? "platform content rubric" : "stored rubric"}.
+                {upgradeMetadata.modelSelfScores?.final?.total ? ` Model self-score: ${upgradeMetadata.modelSelfScores.final.total}.` : ""}
               </p>
             </div>
             <div className="grid gap-3 md:grid-cols-3">
@@ -291,6 +303,9 @@ export default function PackReviewPage() {
                 </p>
                 <p className="mt-2 text-xs text-[var(--ll-text-muted)]">
                   Framework: {upgradeMetadata.governance?.frameworkVersion ?? "LiberiaLearn"}
+                </p>
+                <p className="mt-1 text-xs text-[var(--ll-text-muted)]">
+                  Delta summary: {qualityScores?.before?.total ?? qualityScores?.before?.overall ?? "N/A"} to {qualityScores?.after?.total ?? qualityScores?.after?.overall ?? "N/A"}.
                 </p>
                 {qualityScores?.after?.tier ? (
                   <p className="mt-1 text-xs text-[var(--ll-text-muted)]">
@@ -348,6 +363,19 @@ export default function PackReviewPage() {
                     </ul>
                   </div>
                 ))}
+              </div>
+            ) : null}
+            {sectionImprovements.length > 0 ? (
+              <div>
+                <p className="text-xs font-semibold text-[var(--ll-text-muted)]">Section improvement highlights</p>
+                <div className="mt-2 grid gap-2 md:grid-cols-2">
+                  {sectionImprovements.map((entry: any, index: number) => (
+                    <div key={`${entry.section ?? "section"}-${index}`} className="rounded-lg border border-[var(--ll-border)] bg-[var(--ll-bg)]/50 p-3">
+                      <p className="text-xs font-semibold text-[var(--ll-text)]">{entry.section}</p>
+                      <p className="mt-1 text-xs text-[var(--ll-text-muted)]">{entry.improvement}</p>
+                    </div>
+                  ))}
+                </div>
               </div>
             ) : null}
             <div className="grid gap-4 lg:grid-cols-2">

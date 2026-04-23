@@ -25,9 +25,14 @@ async function login(page: Page, email: string, password: string, role: "student
   await page.waitForURL(/\/dashboard/, { timeout: 20000 });
 }
 
+async function waitForStudentDashboard(page: Page) {
+  await page.getByRole("link", { name: /Open today's lesson/i }).waitFor({ timeout: 30000 });
+}
+
 test("student Today CTAs route to the structured daily flow", async ({ page }) => {
   await login(page, "student1@cha.edu.lr", "DemoSeed2026!", "student");
-  await expect(page.getByRole("heading", { name: /Ready to learn/i })).toBeVisible();
+  await waitForStudentDashboard(page);
+  await expect(page.getByRole("link", { name: /Open today's lesson/i })).toBeVisible();
 
   await page.getByRole("link", { name: /Open today's lesson/i }).click();
   await page.waitForURL(/\/student\/today/, { timeout: 15000 });
@@ -47,6 +52,7 @@ test("student Today CTAs route to the structured daily flow", async ({ page }) =
 
 test("student progress and certificate pages return to dashboard", async ({ page }) => {
   await login(page, "student1@cha.edu.lr", "DemoSeed2026!", "student");
+  await waitForStudentDashboard(page);
 
   await page.getByRole("link", { name: /View my progress/i }).click();
   await page.waitForURL(/\/student\/progress/, { timeout: 15000 });
@@ -59,7 +65,7 @@ test("student progress and certificate pages return to dashboard", async ({ page
   await expect(page.getByRole("heading", { name: "My Certificates" })).toBeVisible();
   await page.getByRole("link", { name: /Back to Dashboard/i }).click();
   await page.waitForURL(/\/dashboard/, { timeout: 15000 });
-  await expect(page.getByRole("heading", { name: /Ready to learn/i })).toBeVisible();
+  await waitForStudentDashboard(page);
 });
 
 test("homepage communicates capabilities without the old metric block", async ({ page }) => {

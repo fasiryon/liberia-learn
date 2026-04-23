@@ -6,17 +6,25 @@ const root = process.cwd();
 const standaloneRoot = join(root, ".next", "standalone");
 const standaloneNext = join(standaloneRoot, ".next");
 
-const envPath = join(root, ".env");
-if (existsSync(envPath)) {
-  const databaseUrlLine = readFileSync(envPath, "utf8")
-    .split(/\r?\n/)
-    .find((line) => line.trim().startsWith("DATABASE_URL="));
-  const databaseUrl = databaseUrlLine
-    ?.replace(/^\s*DATABASE_URL\s*=\s*/, "")
-    .trim()
-    .replace(/^["']+|["']+$/g, "");
-  if (databaseUrl) {
-    process.env.DATABASE_URL = databaseUrl;
+function parseEnvFile(filePath) {
+  const entries = {};
+  for (const rawLine of readFileSync(filePath, "utf8").split(/\r?\n/)) {
+    const line = rawLine.trim();
+    if (!line || line.startsWith("#")) continue;
+    const match = line.match(/^([A-Za-z_][A-Za-z0-9_]*)=(.*)$/);
+    if (!match) continue;
+    const [, key, rawValue] = match;
+    entries[key] = rawValue.trim().replace(/^["']+|["']+$/g, "");
+  }
+  return entries;
+}
+
+for (const fileName of [".env", ".env.production", ".env.vercel.production", ".env.local"]) {
+  const envPath = join(root, fileName);
+  if (!existsSync(envPath)) continue;
+  const entries = parseEnvFile(envPath);
+  for (const [key, value] of Object.entries(entries)) {
+    process.env[key] = value;
   }
 }
 
