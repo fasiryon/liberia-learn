@@ -27,14 +27,20 @@ function excerpt(value: any, maxLength = 900): string {
 
 function qualityScoreBlock(label: string, score: any) {
   if (!score) return null;
+  const total = score.total ?? score.overall ?? "N/A";
   return (
     <div className="rounded-lg border border-[var(--ll-border)] bg-[var(--ll-bg)]/60 p-3">
       <p className="text-xs font-semibold text-[var(--ll-text-muted)]">{label}</p>
-      <p className="mt-1 text-2xl font-bold text-[var(--ll-yellow)]">{score.overall ?? "N/A"}</p>
+      <p className="mt-1 text-2xl font-bold text-[var(--ll-yellow)]">{total}</p>
+      {score.tier ? (
+        <p className="mt-1 text-[11px] font-semibold uppercase tracking-wide text-[var(--ll-text-muted)]">
+          {score.tier}
+        </p>
+      ) : null}
       <div className="mt-2 grid gap-1 text-[11px] text-[var(--ll-text-muted)] sm:grid-cols-2">
         {Object.entries(score.criteria ?? {}).map(([key, value]) => (
           <span key={key}>
-            {key}: <strong className="text-[var(--ll-text)]">{String(value)}</strong>
+            {key}: <strong className="text-[var(--ll-text)]">{String(value)}/10</strong>
           </span>
         ))}
       </div>
@@ -66,6 +72,8 @@ export default function PackReviewPage() {
   const [scheduleClassId, setScheduleClassId] = useState("");
   const [scheduleDate, setScheduleDate] = useState(new Date().toISOString().slice(0, 10));
   const [scheduleMsg, setScheduleMsg] = useState<string | null>(null);
+  const [refining, setRefining] = useState(false);
+  const [refineMsg, setRefineMsg] = useState<string | null>(null);
 
   useEffect(() => {
     Promise.all([
@@ -149,6 +157,25 @@ export default function PackReviewPage() {
     }
   }
 
+  async function handleRefineEliteDraft(originalContentId: string) {
+    setRefining(true);
+    setRefineMsg(null);
+    try {
+      const res = await fetch("/api/admin/curriculum/upgrade", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ contentId: originalContentId }),
+      });
+      const d = await res.json().catch(() => null);
+      if (!res.ok) throw new Error(d?.error || "Elite refinement failed");
+      setRefineMsg(`Created refined elite draft ${d.draftContentId}.`);
+    } catch (err: any) {
+      setRefineMsg(err.message);
+    } finally {
+      setRefining(false);
+    }
+  }
+
   if (loading) {
     return (
       <main className="min-h-screen bg-[var(--ll-bg)] text-[var(--ll-text)] flex items-center justify-center">
@@ -175,6 +202,8 @@ export default function PackReviewPage() {
   const originalPayload = upgradeMetadata?.originalSnapshot ?? null;
   const isEliteUpgrade = Boolean(upgradeMetadata);
   const qualityScores = upgradeMetadata?.qualityScores;
+  const weakCategories = asArray(upgradeMetadata?.weakCategories);
+  const improvementSummary = upgradeMetadata?.improvementSummary;
 
   return (
     <main className="min-h-screen bg-[var(--ll-bg)] text-[var(--ll-text)]">
@@ -263,8 +292,36 @@ export default function PackReviewPage() {
                 <p className="mt-2 text-xs text-[var(--ll-text-muted)]">
                   Framework: {upgradeMetadata.governance?.frameworkVersion ?? "LiberiaLearn"}
                 </p>
+                {qualityScores?.after?.tier ? (
+                  <p className="mt-1 text-xs text-[var(--ll-text-muted)]">
+                    Tier: <strong className="text-[var(--ll-text)]">{qualityScores.after.tier}</strong>
+                  </p>
+                ) : null}
               </div>
             </div>
+            {weakCategories.length > 0 ? (
+              <div className="rounded-lg border border-[var(--ll-yellow)]/30 bg-[var(--ll-bg)]/60 p-3">
+                <div className="flex flex-wrap items-center justify-between gap-3">
+                  <div>
+                    <p className="text-xs font-semibold text-[var(--ll-text-muted)]">Weak categories</p>
+                    <p className="mt-1 text-xs text-[var(--ll-text)]">{weakCategories.join(", ")}</p>
+                  </div>
+                  <button
+                    onClick={() => handleRefineEliteDraft(upgradeMetadata.originalContentId)}
+                    disabled={refining}
+                    className="rounded-lg border border-[var(--ll-yellow)]/30 bg-[var(--ll-yellow-soft)] px-3 py-1.5 text-xs font-semibold text-[var(--ll-yellow)] disabled:opacity-50"
+                  >
+                    {refining ? "Refining..." : "Refine weak categories"}
+                  </button>
+                </div>
+                {upgradeMetadata.refinement?.attempted ? (
+                  <p className="mt-2 text-xs text-[var(--ll-text-muted)]">
+                    Automatic refinement: {upgradeMetadata.refinement.applied ? "applied" : "attempted; first valid draft preserved"}.
+                  </p>
+                ) : null}
+                {refineMsg ? <p className="mt-2 text-xs text-[var(--ll-text-muted)]">{refineMsg}</p> : null}
+              </div>
+            ) : null}
             {asArray(upgradeMetadata.improvementsSummary).length > 0 && (
               <div>
                 <p className="text-xs font-semibold text-[var(--ll-text-muted)]">Key improvements</p>
@@ -277,6 +334,22 @@ export default function PackReviewPage() {
                 </ul>
               </div>
             )}
+            {improvementSummary ? (
+              <div className="grid gap-3 md:grid-cols-3">
+                {[
+                  ["Strengths", improvementSummary.strengths],
+                  ["Weaknesses", improvementSummary.weaknesses],
+                  ["Improved", improvementSummary.what_was_improved],
+                ].map(([label, values]: any) => (
+                  <div key={label} className="rounded-lg border border-[var(--ll-border)] bg-[var(--ll-bg)]/50 p-3">
+                    <p className="text-xs font-semibold text-[var(--ll-text-muted)]">{label}</p>
+                    <ul className="mt-2 list-disc pl-4 text-xs text-[var(--ll-text)]">
+                      {asArray(values).map((item, index) => <li key={index}>{item}</li>)}
+                    </ul>
+                  </div>
+                ))}
+              </div>
+            ) : null}
             <div className="grid gap-4 lg:grid-cols-2">
               <div className="rounded-lg border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 p-4">
                 <h3 className="text-sm font-semibold">Original Lesson</h3>

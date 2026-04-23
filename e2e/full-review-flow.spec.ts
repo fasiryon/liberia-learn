@@ -118,7 +118,7 @@ test("admin audio batch controls and analytics are visible", async ({ page }) =>
   await login(page, "admin@cha.edu.lr", "DemoSeed2026!", "admin");
   await page.goto(`${BASE}/admin/curriculum`);
   await expect(page.getByRole("heading", { name: "Import Existing Curriculum" })).toBeVisible();
-  await expect(page.getByRole("button", { name: /Elite upgrade/i }).first()).toBeVisible();
+  await expect(page.getByRole("button", { name: /AI Upgrade to Elite|Elite upgrade/i }).first()).toBeVisible();
   await expect(page.getByRole("button", { name: /Batch generate audio/i })).toBeVisible();
   await page.getByRole("button", { name: /Batch generate audio/i }).click();
   await expect(page.locator("text=/Queued|reused|Batch queue/")).toBeVisible({ timeout: 20000 });

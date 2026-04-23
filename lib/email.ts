@@ -1,6 +1,5 @@
 // lib/email.ts
-import * as Sentry from "@sentry/nextjs";
-import { Resend } from "resend";
+import type { Resend } from "resend";
 import { logger } from "@/lib/logger";
 
 type RecipientRole = "principal" | "platform_admin" | "teacher" | "student" | "guardian" | "user";
@@ -22,9 +21,15 @@ const FROM =
   process.env.RESEND_FROM_EMAIL ??
   "LiberiaLearn <noreply@liberialearn.edu.lr>";
 
+let resendCtor: typeof import("resend").Resend | null = null;
+
 function getResendClient(): Resend | null {
   const apiKey = process.env.RESEND_API_KEY?.trim();
-  return apiKey ? new Resend(apiKey) : null;
+  if (!apiKey) return null;
+  if (!resendCtor) {
+    resendCtor = require("resend").Resend;
+  }
+  return new resendCtor(apiKey);
 }
 
 function logEmailWarning(input: {
@@ -43,18 +48,23 @@ function logEmailWarning(input: {
   logger.warn("[EMAIL] delivery warning", metadata);
 
   if (process.env.NODE_ENV !== "test") {
-    Sentry.captureMessage("Email delivery warning", {
-      level: "warning",
-      tags: {
-        component: "email",
-        emailType: input.type,
-        recipientRole: input.recipientRole,
-      },
-      extra: {
-        reason: input.reason,
-        provider: metadata.provider,
-      },
-    });
+    try {
+      const Sentry = require("@sentry/nextjs");
+      Sentry.captureMessage("Email delivery warning", {
+        level: "warning",
+        tags: {
+          component: "email",
+          emailType: input.type,
+          recipientRole: input.recipientRole,
+        },
+        extra: {
+          reason: input.reason,
+          provider: metadata.provider,
+        },
+      });
+    } catch {
+      // Email warnings are best-effort; delivery behavior should not depend on telemetry import success.
+    }
   }
 }
 
