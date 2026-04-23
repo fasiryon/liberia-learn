@@ -62,6 +62,11 @@ export interface RouterResult {
   budgetBlocked?: boolean;
 }
 
+function completionTimeoutMs(aiUsage?: AiUsageContext) {
+  const requestType = aiUsage?.requestType ?? "";
+  return requestType.startsWith("elite_curriculum_") ? 120_000 : 30_000;
+}
+
 const GROQ_MODEL = "llama-3.1-8b-instant";
 const OPENAI_MODEL = "gpt-4o-mini";
 const EMBEDDING_MODEL = "text-embedding-3-small";
@@ -170,7 +175,8 @@ export function classifyMessage(message: string): {
 
 async function callOpenAI(
   messages: RouterOptions["messages"],
-  maxTokens: number
+  maxTokens: number,
+  timeoutMs: number
 ): Promise<{ content: string; inputTokens: number; outputTokens: number }> {
   const client = getOpenAIClientOrThrow();
   try {
@@ -180,7 +186,7 @@ async function callOpenAI(
         messages,
         max_tokens: maxTokens,
       },
-      { signal: AbortSignal.timeout(30_000) }
+      { signal: AbortSignal.timeout(timeoutMs) }
     );
 
     return {
@@ -190,7 +196,7 @@ async function callOpenAI(
     };
   } catch (err) {
     if (err instanceof Error && err.name === "AbortError") {
-      throw new Error("AI provider timeout after 30s");
+      throw new Error(`AI provider timeout after ${Math.round(timeoutMs / 1000)}s`);
     }
     throw err;
   }
@@ -267,6 +273,7 @@ export async function routedCompletion(opts: RouterOptions): Promise<RouterResul
     : classifyMessage(lastUserMsg);
 
   const maxTokens = opts.maxTokens ?? 512;
+  const timeoutMs = completionTimeoutMs(opts.aiUsage);
   if (opts.aiUsage) {
     const budget = await checkBudget(opts.aiUsage.feature, opts.aiUsage.schoolId ?? null);
     if (!budget.allowed) {
@@ -308,7 +315,7 @@ export async function routedCompletion(opts: RouterOptions): Promise<RouterResul
         model: GROQ_MODEL,
         messages: opts.messages,
         max_tokens: maxTokens,
-        signal: AbortSignal.timeout(30_000),
+        signal: AbortSignal.timeout(timeoutMs),
       });
 
       const inputTokens = completion.usage?.prompt_tokens ?? 0;
@@ -329,7 +336,7 @@ export async function routedCompletion(opts: RouterOptions): Promise<RouterResul
   }
 
   if (!response) {
-    const result = await callOpenAI(opts.messages, maxTokens);
+    const result = await callOpenAI(opts.messages, maxTokens, timeoutMs);
     response = {
       content: result.content,
       tier: classification.tier,

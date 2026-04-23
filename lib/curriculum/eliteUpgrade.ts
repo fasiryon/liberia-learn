@@ -64,6 +64,18 @@ const SectionSchema = z
   })
   .passthrough();
 
+const REQUIRED_ELITE_SECTION_TYPES = [
+  "introduction",
+  "explanation",
+  "worked_examples",
+  "guided_practice",
+  "independent_practice",
+  "assessment",
+  "misconceptions",
+  "real_world_application",
+  "summary",
+] as const;
+
 const QualityScoreSchema = z.object(
   Object.fromEntries(
     [...ELITE_QUALITY_CRITERIA, "total"].map((key) => [key, z.number()])
@@ -74,7 +86,60 @@ const EliteUpgradeResponseSchema = z.object({
   lesson: z.object({
     title: z.string().min(3),
     objectives: z.array(z.string().min(5)).min(1),
-    sections: z.array(SectionSchema).min(1),
+    sections: z
+      .array(SectionSchema)
+      .min(REQUIRED_ELITE_SECTION_TYPES.length)
+      .superRefine((sections, ctx) => {
+        const seen = new Set<string>();
+        for (const requiredType of REQUIRED_ELITE_SECTION_TYPES) {
+          const section = sections.find((entry) => entry.type === requiredType);
+          if (!section) {
+            ctx.addIssue({
+              code: z.ZodIssueCode.custom,
+              message: `Missing required elite lesson section: ${requiredType}`,
+            });
+            continue;
+          }
+          seen.add(requiredType);
+          if (
+            ["introduction", "explanation", "real_world_application", "summary"].includes(requiredType) &&
+            (!section.content || section.content.trim().length < 20)
+          ) {
+            ctx.addIssue({
+              code: z.ZodIssueCode.custom,
+              message: `Section ${requiredType} must contain meaningful content`,
+            });
+          }
+          if (requiredType === "worked_examples" && toStringArray(section.examples).length < 2) {
+            ctx.addIssue({
+              code: z.ZodIssueCode.custom,
+              message: "Section worked_examples must contain at least 2 examples",
+            });
+          }
+          if (
+            ["guided_practice", "independent_practice"].includes(requiredType) &&
+            toStringArray(section.questions).length < 2
+          ) {
+            ctx.addIssue({
+              code: z.ZodIssueCode.custom,
+              message: `Section ${requiredType} must contain at least 2 questions`,
+            });
+          }
+          if (requiredType === "assessment" && toStringArray(section.questions).length < 3) {
+            ctx.addIssue({
+              code: z.ZodIssueCode.custom,
+              message: "Section assessment must contain at least 3 questions",
+            });
+          }
+          if (requiredType === "misconceptions" && toStringArray(section.items).length < 1) {
+            ctx.addIssue({
+              code: z.ZodIssueCode.custom,
+              message: "Section misconceptions must contain at least 1 item",
+            });
+          }
+        }
+        if (seen.size !== REQUIRED_ELITE_SECTION_TYPES.length) return;
+      }),
     teacher_notes: z.string().min(1),
     student_notes: z.string().min(1),
   }),
@@ -115,8 +180,38 @@ function clampTen(value: number): number {
   return Math.max(0, Math.min(10, Math.round(value * 10) / 10));
 }
 
-function scoreTier(total: number): EliteQualityTier {
-  if (total >= 90) return "ELITE";
+function stripMarkdownFences(content: string) {
+  const text = content.trim();
+  if (!text.startsWith("```")) return text;
+  return text.replace(/^```(?:json)?\s*/i, "").replace(/```\s*$/i, "").trim();
+}
+
+function extractJsonCandidate(content: string) {
+  const text = stripMarkdownFences(content);
+  const firstBrace = text.indexOf("{");
+  const lastBrace = text.lastIndexOf("}");
+  if (firstBrace === -1) return text;
+  if (lastBrace > firstBrace) return text.slice(firstBrace, lastBrace + 1).trim();
+  return text.slice(firstBrace).trim();
+}
+
+function parseJsonCandidate(content: string) {
+  const direct = stripMarkdownFences(content);
+  try {
+    return JSON.parse(direct);
+  } catch {
+    const extracted = extractJsonCandidate(content);
+    if (extracted !== direct) {
+      return JSON.parse(extracted);
+    }
+    throw new Error(
+      `AI returned invalid elite upgrade JSON. First 200 chars: ${content.slice(0, 200)}`
+    );
+  }
+}
+
+function scoreTier(total: number, weakCategories: EliteQualityCriterion[]): EliteQualityTier {
+  if (total >= 90 && weakCategories.length === 0) return "ELITE";
   if (total >= 80) return "STRONG";
   if (total >= 70) return "ADEQUATE";
   if (total >= 60) return "WEAK";
@@ -151,7 +246,7 @@ function normalizeEliteQualityScore(
     weighted,
     overall: total,
     total,
-    tier: scoreTier(total),
+    tier: scoreTier(total, weakCategories),
     weakCategories,
     evidence: ELITE_QUALITY_CRITERIA.map(
       (criterion) =>
@@ -167,6 +262,20 @@ function presenceScore(payload: Record<string, any>, fields: string[]) {
     return typeof value === "string" && value.trim().length > 0;
   }).length;
   return clampTen((present / fields.length) * 10);
+}
+
+function splitInstructionSegments(value: string[]) {
+  return value
+    .flatMap((entry) => entry.split(/\n|;|•|\. (?=[A-Z])/g))
+    .map((entry) => entry.trim())
+    .filter((entry) => entry.length > 12);
+}
+
+function splitActionableTeacherNotes(value: string[]) {
+  return value
+    .flatMap((entry) => entry.split(/\n|;|\u2022/g))
+    .map((entry) => entry.trim())
+    .filter((entry) => entry.length > 12);
 }
 
 function textOf(payload: Record<string, any>) {
@@ -193,6 +302,55 @@ function textOf(payload: Record<string, any>) {
     .toLowerCase();
 }
 
+function truncateText(value: unknown, maxLength: number) {
+  const text = typeof value === "string" ? value.trim() : "";
+  if (!text) return "";
+  if (text.length <= maxLength) return text;
+  return `${text.slice(0, maxLength).trim()}\n...[truncated for elite upgrade prompt]`;
+}
+
+function truncateList(value: unknown, maxItems: number, maxItemLength = 400) {
+  return toStringArray(value)
+    .slice(0, maxItems)
+    .map((entry) => truncateText(entry, maxItemLength))
+    .filter(Boolean);
+}
+
+function buildElitePromptSourcePayload(sourcePayload: Record<string, any>) {
+  return {
+    title: String(sourcePayload.title ?? ""),
+    unitTitle: String(sourcePayload.unitTitle ?? sourcePayload.unit ?? ""),
+    objectives: truncateList(sourcePayload.objectives, 6, 220),
+    body: truncateText(
+      sourcePayload.body_standard ?? sourcePayload.body_block ?? sourcePayload.body ?? "",
+      6000
+    ),
+    workedExamples: truncateList(
+      sourcePayload.workedExamples ?? sourcePayload.examples,
+      4,
+      500
+    ),
+    guidedPractice: truncateList(sourcePayload.guidedPractice, 5, 320),
+    independentPractice: truncateList(sourcePayload.independentPractice, 5, 320),
+    assessment: truncateList(
+      sourcePayload.assessmentQuestions ?? sourcePayload.assessment,
+      6,
+      320
+    ),
+    commonMisconceptions: truncateList(sourcePayload.commonMisconceptions, 4, 240),
+    teacherNotes: truncateList(sourcePayload.teacherNotes ?? sourcePayload.teacher_notes, 4, 320),
+    studentNotes: truncateText(sourcePayload.studentNotes ?? sourcePayload.student_notes ?? "", 500),
+    realWorldApplication: truncateText(sourcePayload.realWorldApplication ?? "", 500),
+    localContextEnrichment: truncateList(
+      sourcePayload.localContextEnrichment ?? sourcePayload.localContext,
+      4,
+      220
+    ),
+    materialsNeeded: truncateList(sourcePayload.materialsNeeded, 6, 120),
+    metadata: asObject(sourcePayload.metadata),
+  };
+}
+
 export function scoreLessonQuality(input: unknown): EliteQualityScore {
   const payload = asObject(input);
   const lessonText = textOf(payload);
@@ -203,6 +361,41 @@ export function scoreLessonQuality(input: unknown): EliteQualityScore {
   const assessment = toStringArray(payload.assessmentQuestions ?? payload.assessment);
   const misconceptions = toStringArray(payload.commonMisconceptions);
   const teacherNotes = toStringArray(payload.teacherNotes ?? payload.teacher_notes);
+  const teacherText = teacherNotes.join(" ").toLowerCase();
+  const teacherSegments = splitActionableTeacherNotes(teacherNotes);
+  const teacherMoveCoverage = [
+    /model|demonstrat|show on the board|think aloud/i.test(teacherText),
+    /check|observe|monitor|circulate|listen for|collect/i.test(teacherText),
+    /reteach|scaffold|differentiat|sentence stem|support|prompt/i.test(teacherText),
+  ].filter(Boolean).length;
+  const studentText = String(payload.studentNotes ?? payload.student_notes ?? "").toLowerCase();
+  const assessmentHighOrderCount = assessment.filter((item) =>
+    /explain|justify|why|apply|compare|analyze|evaluate|transfer/i.test(item)
+  ).length;
+  const assessmentScore = clampTen(
+    Math.min(
+      assessment.length < 4 ? 8.4 : 10,
+      assessment.length * 1.6 +
+        Math.min(2.5, assessmentHighOrderCount * 0.8) +
+        (assessment.length >= 4 ? 1.5 : 0) +
+        (assessment.some((item) => /check|exit ticket|formative|evidence/i.test(item)) ? 0.8 : 0)
+    )
+  );
+  const teacherScore = clampTen(
+    Math.min(
+      teacherSegments.length < 3 || teacherMoveCoverage < 3 ? 8.4 : 10,
+      (teacherText.length >= 120 ? 2.5 : Math.min(2.5, teacherText.length / 48)) +
+        Math.min(3, teacherSegments.length * 1.2) +
+        Math.min(
+          2.5,
+          (teacherText.match(/ask|model|check|reteach|pair|board|observe|prompt|differentiat|monitor|circulate/g) ?? []).length *
+            0.6
+        ) +
+        (/without special equipment|materials|group|partner|independent/i.test(teacherText) ? 1 : 0) +
+        Math.min(1.5, teacherMoveCoverage * 0.5) +
+        (lessonText.includes("teacher") ? 1 : 0)
+    )
+  );
 
   return normalizeEliteQualityScore({
     clarity: clampTen(
@@ -221,9 +414,7 @@ export function scoreLessonQuality(input: unknown): EliteQualityScore {
     objectives: clampTen(Math.min(10, toStringArray(payload.objectives).length * 3.2)),
     examples: clampTen(Math.min(10, workedExamples.length * 4 + (lessonText.includes("step") ? 2 : 0))),
     practice: clampTen(Math.min(10, guidedPractice.length * 3 + independentPractice.length * 3)),
-    assessment: clampTen(
-      Math.min(10, assessment.length * 2.5 + (lessonText.includes("explain") ? 2 : 0))
-    ),
+    assessment: assessmentScore,
     misconception: clampTen(Math.min(10, misconceptions.length * 5)),
     application: clampTen(
       (String(payload.realWorldApplication ?? "").length > 20 ? 5 : 0) +
@@ -238,41 +429,137 @@ export function scoreLessonQuality(input: unknown): EliteQualityScore {
     transfer: clampTen(
       (lessonText.includes("transfer") || lessonText.includes("why") ? 3 : 0) +
         (lessonText.includes("compare") || lessonText.includes("justify") ? 3 : 0) +
-        (lessonText.includes("real-world") || lessonText.includes("real world") ? 2 : 0) +
-        (assessment.some((item) => /explain|justify|why/i.test(item)) ? 2 : 0)
+        (lessonText.includes("real-world") || lessonText.includes("real world") || lessonText.includes("apply") ? 2 : 0) +
+        (assessment.some((item) => /explain|justify|why|apply|transfer/i.test(item)) ? 2 : 0)
     ),
-    teacher: clampTen(Math.min(10, teacherNotes.length * 4 + (lessonText.includes("teacher") ? 2 : 0))),
+    teacher: teacherScore,
     student: clampTen(
-      (lessonText.includes("student") || lessonText.includes("learner") ? 3 : 0) +
+      (studentText.length >= 80 ? 3 : Math.min(3, studentText.length / 27)) +
+        (lessonText.includes("student") || lessonText.includes("learner") ? 2 : 0) +
         (lessonText.includes("practice") ? 3 : 0) +
-        (lessonText.includes("check") ? 2 : 0) +
-        (wordCount >= 300 ? 2 : 0)
+        (lessonText.includes("check") || studentText.includes("check") ? 1 : 0) +
+        (wordCount >= 300 ? 1 : 0)
     ),
     total: 0,
   });
+}
+
+function lessonResponseToScorablePayload(lesson: Record<string, any>) {
+  const sections = Array.isArray(lesson.sections) ? lesson.sections : [];
+  const sectionByType = (type: string) =>
+    asObject(sections.find((section) => asObject(section).type === type));
+  return {
+    title: lesson.title,
+    objectives: toStringArray(lesson.objectives),
+    body: [
+      sectionByType("introduction").content,
+      sectionByType("explanation").content,
+      ...toStringArray(sectionByType("worked_examples").examples),
+      ...toStringArray(sectionByType("guided_practice").questions),
+      ...toStringArray(sectionByType("independent_practice").questions),
+      ...toStringArray(sectionByType("assessment").questions),
+      ...toStringArray(sectionByType("misconceptions").items),
+      sectionByType("real_world_application").content,
+      sectionByType("summary").content,
+    ]
+      .filter((entry) => typeof entry === "string" && entry.trim())
+      .join("\n"),
+    workedExamples: toStringArray(sectionByType("worked_examples").examples),
+    guidedPractice: toStringArray(sectionByType("guided_practice").questions),
+    independentPractice: toStringArray(sectionByType("independent_practice").questions),
+    assessmentQuestions: toStringArray(sectionByType("assessment").questions),
+    commonMisconceptions: toStringArray(sectionByType("misconceptions").items),
+    teacherNotes: toStringArray(lesson.teacher_notes),
+    studentNotes: String(lesson.student_notes ?? ""),
+    realWorldApplication: String(sectionByType("real_world_application").content ?? ""),
+  };
+}
+
+function deriveQualityScoreFromLesson(lesson: Record<string, any>) {
+  const derived = scoreLessonQuality(lessonResponseToScorablePayload(lesson));
+  return {
+    ...Object.fromEntries(
+      ELITE_QUALITY_CRITERIA.map((criterion) => [criterion, derived.criteria[criterion]])
+    ),
+    total: derived.total,
+  } as Record<EliteQualityCriterion | "total", number>;
+}
+
+function deriveImprovementSummaryFromLesson(lesson: Record<string, any>) {
+  const scorable = lessonResponseToScorablePayload(lesson);
+  const derived = scoreLessonQuality(scorable);
+  const strengths = [
+    scorable.objectives.length >= 3 ? "Objectives are explicit and instruction-ready." : "",
+    scorable.workedExamples.length >= 2 ? "Worked examples are present and visible." : "",
+    scorable.guidedPractice.length >= 3 && scorable.independentPractice.length >= 3
+      ? "Practice sequence is structured from guided to independent work."
+      : "",
+    scorable.assessmentQuestions.length >= 3 ? "Assessment evidence is present." : "",
+  ].filter(Boolean);
+  const weaknesses = derived.weakCategories.map(
+    (criterion) => `${criterion} still needs reviewer attention.`
+  );
+  const whatWasImproved = [
+    "Returned lesson content was normalized into the elite upgrade review schema.",
+    scorable.realWorldApplication.length >= 20
+      ? "Real-world application is explicitly included."
+      : "Real-world application remains limited and should be reviewed.",
+    scorable.commonMisconceptions.length >= 2
+      ? "Misconception handling is visible in the generated lesson."
+      : "Misconception handling remains thin and should be reviewed.",
+  ];
+  return {
+    strengths,
+    weaknesses,
+    what_was_improved: whatWasImproved,
+  };
+}
+
+function normalizeEliteUpgradeRaw(raw: unknown) {
+  const payload = asObject(raw);
+  const lesson = asObject(payload.lesson);
+  const qualityScoreParse = QualityScoreSchema.safeParse(payload.quality_score);
+  const improvementSummaryParse = z
+    .object({
+      strengths: z.array(z.string()).default([]),
+      weaknesses: z.array(z.string()).default([]),
+      what_was_improved: z.array(z.string()).default([]),
+    })
+    .safeParse(payload.improvement_summary);
+  return {
+    ...payload,
+    lesson,
+    quality_score: qualityScoreParse.success ? qualityScoreParse.data : deriveQualityScoreFromLesson(lesson),
+    improvement_summary: improvementSummaryParse.success
+      ? improvementSummaryParse.data
+      : deriveImprovementSummaryFromLesson(lesson),
+  };
 }
 
 export function parseEliteUpgradeResponse(content: string): {
   response: EliteUpgradeResponse;
   qualityScore: EliteQualityScore;
 } {
-  let text = content.trim();
-  if (text.startsWith("```")) {
-    text = text.replace(/^```(?:json)?\s*/, "").replace(/```\s*$/, "");
-  }
-
   let raw: unknown;
   try {
-    raw = JSON.parse(text);
-  } catch {
-    throw new Error(`AI returned invalid elite upgrade JSON. First 200 chars: ${content.slice(0, 200)}`);
+    raw = parseJsonCandidate(content);
+  } catch (error) {
+    if (error instanceof Error) throw error;
+    throw new Error(
+      `AI returned invalid elite upgrade JSON. First 200 chars: ${content.slice(0, 200)}`
+    );
   }
 
-  const response = EliteUpgradeResponseSchema.parse(raw);
+  const response = EliteUpgradeResponseSchema.parse(normalizeEliteUpgradeRaw(raw));
   return {
     response,
     qualityScore: normalizeEliteQualityScore(response.quality_score),
   };
+}
+
+function isRetriableEliteUpgradeParseError(error: any) {
+  const message = error?.message ?? String(error ?? "");
+  return error?.name === "ZodError" || /invalid elite upgrade JSON/i.test(message) || /Invalid input:/i.test(message);
 }
 
 function gradeBandCode(grade: number): "G1_3" | "G4_6" | "G7_9" | "G10_12" {
@@ -351,6 +638,54 @@ function sectionList(response: EliteUpgradeResponse, type: string, key: "example
   return toStringArray(section?.[key]);
 }
 
+function labeledBlock(label: string, value: string | string[]) {
+  const body = Array.isArray(value) ? value.filter(Boolean).join("\n") : value;
+  return body ? `${label}:\n${body}` : "";
+}
+
+function buildSectionImprovementSummary(params: {
+  sourcePayload: Record<string, any>;
+  upgrade: EliteUpgradeResponse;
+}) {
+  const originalText = textOf(params.sourcePayload);
+  const summaries = [
+    {
+      section: "objectives",
+      improvement: `${toStringArray(params.sourcePayload.objectives).length} original objective(s) expanded to ${params.upgrade.lesson.objectives.length} precise objective(s).`,
+    },
+    {
+      section: "explanation",
+      improvement: sectionText(params.upgrade, "explanation")
+        ? "Explanation is structured as an explicit teaching sequence with clearer concept progression."
+        : "Explanation still needs reviewer attention.",
+    },
+    {
+      section: "worked examples",
+      improvement: `${sectionList(params.upgrade, "worked_examples", "examples").length} worked example(s) added with visible reasoning.`,
+    },
+    {
+      section: "practice",
+      improvement: `${sectionList(params.upgrade, "guided_practice", "questions").length} guided and ${sectionList(params.upgrade, "independent_practice", "questions").length} independent practice task(s) added.`,
+    },
+    {
+      section: "assessment",
+      improvement: `${sectionList(params.upgrade, "assessment", "questions").length} assessment question(s) added; explanation/justification demand is ${/explain|justify|why/i.test(sectionList(params.upgrade, "assessment", "questions").join(" ")) ? "present" : "not yet visible"}.`,
+    },
+    {
+      section: "misconceptions",
+      improvement: `${sectionList(params.upgrade, "misconceptions", "items").length} misconception item(s) added to prevent common errors.`,
+    },
+    {
+      section: "application",
+      improvement:
+        sectionText(params.upgrade, "real_world_application") && !originalText.includes("real world")
+          ? "Real-world application made explicit for review."
+          : "Real-world application retained and clarified.",
+    },
+  ];
+  return summaries;
+}
+
 function normalizeUpgradePayload(
   sourcePayload: Record<string, any>,
   upgrade: EliteUpgradeResponse,
@@ -362,14 +697,15 @@ function normalizeUpgradePayload(
   const assessmentQuestions = sectionList(upgrade, "assessment", "questions");
   const commonMisconceptions = sectionList(upgrade, "misconceptions", "items");
   const body = [
-    sectionText(upgrade, "introduction"),
-    sectionText(upgrade, "explanation"),
-    workedExamples.length ? `Worked examples:\n${workedExamples.join("\n")}` : "",
-    guidedPractice.length ? `Guided practice:\n${guidedPractice.join("\n")}` : "",
-    independentPractice.length ? `Independent practice:\n${independentPractice.join("\n")}` : "",
-    commonMisconceptions.length ? `Misconceptions:\n${commonMisconceptions.join("\n")}` : "",
-    sectionText(upgrade, "real_world_application"),
-    sectionText(upgrade, "summary"),
+    labeledBlock("Introduction", sectionText(upgrade, "introduction")),
+    labeledBlock("Explanation", sectionText(upgrade, "explanation")),
+    labeledBlock("Worked examples", workedExamples),
+    labeledBlock("Guided practice", guidedPractice),
+    labeledBlock("Independent practice", independentPractice),
+    labeledBlock("Assessment", assessmentQuestions),
+    labeledBlock("Misconceptions", commonMisconceptions),
+    labeledBlock("Real-world application", sectionText(upgrade, "real_world_application")),
+    labeledBlock("Summary", sectionText(upgrade, "summary")),
   ]
     .filter(Boolean)
     .join("\n\n");
@@ -442,6 +778,7 @@ function normalizeUpgradePayload(
       contentId: source.contentId,
       version: source.version,
     },
+    sectionImprovements: buildSectionImprovementSummary({ sourcePayload, upgrade }),
   };
 }
 
@@ -461,6 +798,7 @@ async function runEliteUpgradeCompletion(params: {
   userId: string;
   schoolId?: string | null;
 }) {
+  const promptSourcePayload = buildElitePromptSourcePayload(params.sourcePayload);
   const sourceLessonJson = JSON.stringify(
     {
       contentId: params.source.contentId,
@@ -470,62 +808,151 @@ async function runEliteUpgradeCompletion(params: {
       status: params.source.status,
       version: params.source.version,
       moeAlignments: params.source.moeAlignments,
-      payload: params.sourcePayload,
+      payload: promptSourcePayload,
     },
     null,
     2
   );
   const systemMeta = getPromptMetadata("curriculum.lesson_upgrade_elite_v1.system");
   const userMeta = getPromptMetadata("curriculum.lesson_upgrade_elite_v1.user");
-  const completion = await routedCompletion({
-    messages: [
-      { role: "system", content: getSystemPrompt(systemMeta.key) },
-      {
-        role: "user",
-        content: buildPrompt(userMeta.key, {
-          subject: params.source.subject,
-          grade: params.source.grade,
-          unit: String(params.sourcePayload.unitTitle ?? params.sourcePayload.unit ?? "Current unit"),
-          lessonTitle: String(params.sourcePayload.title ?? params.source.title ?? params.source.contentId),
-          existing_curriculum_guidelines: [
-            buildFrameworkConstraints(params.source.subject, params.source.grade),
-            "Quality rubric:",
-            qualityRubric(),
-          ].join("\n\n"),
-          lessonContent: sourceLessonJson,
-          objectives: JSON.stringify(toStringArray(params.sourcePayload.objectives)),
-          assessment: JSON.stringify(params.sourcePayload.assessment ?? params.sourcePayload.assessmentQuestions ?? []),
-          examples: JSON.stringify(params.sourcePayload.workedExamples ?? params.sourcePayload.examples ?? []),
-          localContext: JSON.stringify(params.sourcePayload.localContextEnrichment ?? params.sourcePayload.localContext ?? []),
-        }),
-      },
-    ],
-    maxTokens: 6000,
-    forceSmartTier: true,
-    aiUsage: {
-      route: "/api/admin/curriculum/upgrade",
-      feature: "curriculum",
-      schoolId: params.schoolId ?? null,
-      userId: params.userId,
-      subject: params.source.subject,
-      contentId: params.source.contentId,
-      promptKey: systemMeta.key,
-      promptVersion: systemMeta.version,
-      promptHash: systemMeta.hash,
-      contentVersion: params.source.version,
-      requestType: "elite_curriculum_upgrade",
-      metadata: {
-        userPromptKey: userMeta.key,
-        userPromptVersion: userMeta.version,
-        sourceRecordId: params.source.id,
-      },
+  const messages = [
+    { role: "system" as const, content: getSystemPrompt(systemMeta.key) },
+    {
+      role: "user" as const,
+      content: buildPrompt(userMeta.key, {
+        subject: params.source.subject,
+        grade: params.source.grade,
+        unit: String(params.sourcePayload.unitTitle ?? params.sourcePayload.unit ?? "Current unit"),
+        lessonTitle: String(params.sourcePayload.title ?? params.source.title ?? params.source.contentId),
+        existing_curriculum_guidelines: [
+          buildFrameworkConstraints(params.source.subject, params.source.grade),
+          "Quality rubric:",
+          qualityRubric(),
+        ].join("\n\n"),
+        lessonContent: sourceLessonJson,
+        objectives: JSON.stringify(toStringArray(params.sourcePayload.objectives)),
+        assessment: JSON.stringify(params.sourcePayload.assessment ?? params.sourcePayload.assessmentQuestions ?? []),
+        examples: JSON.stringify(params.sourcePayload.workedExamples ?? params.sourcePayload.examples ?? []),
+        localContext: JSON.stringify(params.sourcePayload.localContextEnrichment ?? params.sourcePayload.localContext ?? []),
+      }),
     },
-  });
+  ];
 
-  return {
-    ...parseEliteUpgradeResponse(completion.content),
-    promptMetadata: [systemMeta, userMeta],
+  const aiUsageBase = {
+    route: "/api/admin/curriculum/upgrade",
+    feature: "curriculum" as const,
+    schoolId: params.schoolId ?? null,
+    userId: params.userId,
+    subject: params.source.subject,
+    contentId: params.source.contentId,
+    promptKey: systemMeta.key,
+    promptVersion: systemMeta.version,
+    promptHash: systemMeta.hash,
+    contentVersion: params.source.version,
+    requestType: "elite_curriculum_upgrade" as const,
   };
+
+  let lastInvalidJsonContent = "";
+  let lastParseErrorMessage = "";
+  for (let attempt = 0; attempt < 2; attempt += 1) {
+    const completion = await routedCompletion({
+      messages,
+      maxTokens: attempt === 0 ? 10000 : 14000,
+      forceSmartTier: true,
+      aiUsage: {
+        ...aiUsageBase,
+        metadata: {
+          userPromptKey: userMeta.key,
+          userPromptVersion: userMeta.version,
+          sourceRecordId: params.source.id,
+          retryAttempt: attempt,
+        },
+      },
+    });
+
+    try {
+      return {
+        ...parseEliteUpgradeResponse(completion.content),
+        promptMetadata: [systemMeta, userMeta],
+      };
+    } catch (error: any) {
+      if (!isRetriableEliteUpgradeParseError(error)) {
+        throw error;
+      }
+      lastInvalidJsonContent = extractJsonCandidate(completion.content);
+      lastParseErrorMessage = error?.message ?? String(error);
+      if (attempt === 1) break;
+    }
+  }
+
+  if (lastInvalidJsonContent) {
+    let repairErrorMessage = "";
+    for (let repairAttempt = 0; repairAttempt < 2; repairAttempt += 1) {
+      const repaired = await routedCompletion({
+        messages: [
+          { role: "system", content: getSystemPrompt(systemMeta.key) },
+          {
+            role: "user",
+            content: [
+              "Repair the following malformed elite curriculum response into strictly valid JSON.",
+              "The source may be truncated. Reconstruct only enough to produce one complete schema-valid object.",
+              "Keep the same schema with keys lesson, quality_score, and improvement_summary.",
+              "lesson must contain title, objectives, sections, teacher_notes, and student_notes.",
+              `lesson.sections must include exactly these types: ${REQUIRED_ELITE_SECTION_TYPES.join(", ")}.`,
+              "quality_score must be an object containing clarity, structure, objectives, examples, practice, assessment, misconception, application, transfer, teacher, student, and total as numbers.",
+              "improvement_summary must be an object containing strengths, weaknesses, and what_was_improved arrays.",
+              "Do not wrap the JSON in markdown fences.",
+              "Do not include commentary before or after the JSON object.",
+              `Parse failure context: ${lastParseErrorMessage || "invalid_json"}`,
+              repairAttempt === 0
+                ? "Return one complete JSON object only."
+                : [
+                    "Previous repair output was still invalid or truncated.",
+                    "Return a compact but complete lesson to stay within token limits:",
+                    "- exactly 3 objectives",
+                    "- 2 worked examples",
+                    "- 3 guided-practice questions",
+                    "- 3 independent-practice questions",
+                    "- 4 assessment questions",
+                    "- 2 misconception items",
+                    "- concise teacher_notes with 3 semicolon-separated actionable moves",
+                    "- concise student_notes",
+                  ].join("\n"),
+              "Return JSON only with no markdown fences or commentary.",
+              "",
+              lastInvalidJsonContent,
+            ].join("\n"),
+          },
+        ],
+        maxTokens: repairAttempt === 0 ? 12000 : 8000,
+        forceSmartTier: true,
+        aiUsage: {
+          ...aiUsageBase,
+          requestType: "elite_curriculum_upgrade_json_repair",
+          metadata: {
+            userPromptKey: userMeta.key,
+            userPromptVersion: userMeta.version,
+            sourceRecordId: params.source.id,
+            repairTriggered: true,
+            repairAttempt,
+          },
+        },
+      });
+
+      try {
+        return {
+          ...parseEliteUpgradeResponse(repaired.content),
+          promptMetadata: [systemMeta, userMeta],
+        };
+      } catch (error: any) {
+        repairErrorMessage = error?.message ?? String(error);
+      }
+    }
+
+    throw new Error(`Elite upgrade repair output remained invalid. ${repairErrorMessage}`);
+  }
+
+  throw new Error("Elite upgrade completion retry exhausted");
 }
 
 async function tryRefineWeakUpgrade(params: {
@@ -639,16 +1066,18 @@ export async function createEliteUpgradeDraft(input: CreateEliteUpgradeDraftInpu
     userId: input.userId,
     schoolId: input.schoolId,
   });
+  const firstPassPayload = normalizeUpgradePayload(sourcePayload, firstPass.response, source);
+  const firstPassContentScore = scoreLessonQuality(firstPassPayload);
   const refined = await tryRefineWeakUpgrade({
     firstPass: firstPass.response,
-    firstScore: firstPass.qualityScore,
+    firstScore: firstPassContentScore,
     source,
     userId: input.userId,
     schoolId: input.schoolId,
   });
   const upgrade = refined.response;
-  const upgradedScore = refined.qualityScore;
   const upgradedPayload = normalizeUpgradePayload(sourcePayload, upgrade, source);
+  const upgradedScore = scoreLessonQuality(upgradedPayload);
   const scoreDelta = upgradedScore.total - originalScore.total;
   const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
   const contentId = `${source.contentId}-elite-${timestamp.slice(0, 19).toLowerCase()}`;
@@ -693,13 +1122,24 @@ export async function createEliteUpgradeDraft(input: CreateEliteUpgradeDraftInpu
       },
       qualityScores: {
         before: originalScore,
-        firstPass: firstPass.qualityScore,
+        firstPass: firstPassContentScore,
         after: upgradedScore,
         delta: scoreDelta,
       },
+      modelSelfScores: {
+        firstPass: firstPass.qualityScore,
+        final: refined.qualityScore,
+      },
+      scoreSource: "platform_content_rubric",
       improvementSummary: upgrade.improvement_summary,
       improvementsSummary: upgrade.improvement_summary.what_was_improved,
       weakCategories: upgradedScore.weakCategories,
+      sectionImprovements: upgradedPayload.sectionImprovements,
+      goldStandardLesson: upgradedScore.total >= 90 && upgradedScore.weakCategories.length === 0,
+      goldStandardCriteria:
+        upgradedScore.total >= 90 && upgradedScore.weakCategories.length === 0
+          ? "ELITE score from platform content rubric with no hidden weak categories below 9/10."
+          : null,
       refinement: refined.refinement,
       governance: {
         preservesOriginalContent: true,

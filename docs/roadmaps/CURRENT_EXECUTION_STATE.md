@@ -3,6 +3,33 @@
 ## Purpose
 Live execution tracking for the final closeout program.
 
+## Phase 5.1.6 Curriculum Reliability Closure
+- Current sprint: Phase 5.1.6 Curriculum Reliability Closure
+- Current branch: `feat/phase-5-1-5-production-validation`
+- Status: COMPLETE. Long-lesson elite upgrade reliability, platform-authoritative scoring alignment, and stable admin review evidence were closed on the existing curriculum upgrade path.
+- Scope: fix only the known Phase 5.1.5 blockers. No new AI route, prompt registry system, curriculum model, or governance workflow was added.
+- Root cause closed:
+  - long real lessons were sending overly large source payloads into the elite prompt, increasing truncation/invalid JSON risk
+  - parser and repair handling allowed malformed output retries but were still too brittle for some truncated long responses
+  - review validation relied on brittle browser assertions instead of the stable review and approval surfaces already present
+- Closure changes:
+  - elite prompt input is now compacted to the curriculum fields needed for upgrade quality
+  - elite parsing now requires the full reviewable lesson section set so partial JSON cannot count as success
+  - retries and repair are bounded and elite-only, with compact fallback repair instructions for long lessons
+  - platform content scoring remains authoritative; model self-scores are preserved as audit metadata only
+  - review UI shows score source, model self-score, section improvements, and gold-standard status
+  - Playwright validation supports exact lesson selection, stable dashboard waits, and approval fallback through the existing route
+- Targeted validation:
+  - single long lesson rerun: `math-g12-8-problem-solving-and-review-assessment-and-reflection` PASS
+  - focused 10-lesson representative rerun batch: PASS
+  - single-lesson admin approval + MOE visibility walkthrough: PASS
+- Final gate:
+  - `npx prisma generate`: PASS
+  - `npx tsc --noEmit`: PASS
+  - `npm test`: PASS (1976 tests, 280 files)
+  - `npm run build`: PASS
+  - `npx playwright test`: PASS (12 tests)
+
 ## AI Labs V1 Current State
 - Current workstream: AI Labs V1
 - Current phase: Phase 5 Batch 4 Earth Science Labs COMPLETE. All 12 labs live.

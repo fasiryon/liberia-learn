@@ -107,7 +107,11 @@ describe("promptRegistry", () => {
     });
 
     expect(system).toContain("There is no higher level above this");
+    expect(system).toContain("independently rescore");
     expect(user).toContain("REQUIRED OUTPUT FORMAT");
+    expect(user).toContain("CALIBRATION REQUIREMENTS");
+    expect(user).toContain("Include at least 4 assessment questions");
+    expect(user).toContain("Teacher notes must contain at least 3 separate actionable moves");
     expect(user).toContain('"quality_score"');
     expect(refinement).toContain("Revise ONLY the weak areas");
   });
