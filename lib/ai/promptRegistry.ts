@@ -893,6 +893,117 @@ registerPromptDefinition({
 });
 
 registerPromptDefinition({
+  key: "curriculum.eliteUpgrade.system",
+  version: "1.0.0",
+  approvedDynamic: true,
+  template: [
+    "You are the elite curriculum upgrade engine for LiberiaLearn.",
+    "You must obey the existing LiberiaLearn curriculum framework and caller-provided governance constraints.",
+    "Upgrade the provided lesson into the strongest reviewable version the platform supports.",
+    "Return only valid JSON matching the requested schema. No markdown, no prose outside JSON.",
+    "Do not overwrite, ignore, or contradict the original lesson; improve it while preserving its instructional intent.",
+    "Optimize for clarity, rigor, sequencing, mastery, age appropriateness, assessment quality, concept transfer, teacher usability, local grounding, accessibility, and workforce relevance.",
+    "Avoid generic filler, vague AI-sounding language, unnecessary verbosity, and unsupported claims.",
+  ].join("\n"),
+});
+
+registerPromptDefinition({
+  key: "curriculum.eliteUpgrade.user",
+  version: "1.0.0",
+  template: [
+    "Existing curriculum framework constraints:",
+    "{{frameworkConstraints}}",
+    "",
+    "Required upgrade passes:",
+    "{{upgradePasses}}",
+    "",
+    "Quality scoring rubric:",
+    "{{qualityRubric}}",
+    "",
+    "Original lesson JSON:",
+    "{{sourceLessonJson}}",
+    "",
+    "Return JSON with this exact shape:",
+    "{",
+    '  "title": "string",',
+    '  "objectives": ["string"],',
+    '  "body": "string",',
+    '  "body_standard": "string | null",',
+    '  "body_block": "string | null",',
+    '  "activities": ["string"],',
+    '  "assessmentQuestions": ["string"],',
+    '  "workedExamples": ["string"],',
+    '  "guidedPractice": ["string"],',
+    '  "independentPractice": ["string"],',
+    '  "formativeChecks": ["string"],',
+    '  "commonMisconceptions": ["string"],',
+    '  "teacherNotes": ["string"],',
+    '  "realWorldApplication": "string",',
+    '  "careerConnection": "string",',
+    '  "localContextEnrichment": ["string"],',
+    '  "workforceReadinessEnrichment": ["string"],',
+    '  "improvementsSummary": ["string"],',
+    '  "qualityRationale": {',
+    '    "clarity": "string",',
+    '    "rigor": "string",',
+    '    "sequencing": "string",',
+    '    "assessmentQuality": "string",',
+    '    "teacherUsability": "string"',
+    "  }",
+    "}",
+  ].join("\n"),
+});
+
+registerPromptDefinition({
+  key: "curriculum.eliteUpgrade.objectives",
+  version: "1.0.0",
+  template:
+    "Refine objectives so each one is precise, observable, age-appropriate, mastery-oriented, and aligned to the lesson intent.",
+});
+
+registerPromptDefinition({
+  key: "curriculum.eliteUpgrade.examples",
+  version: "1.0.0",
+  template:
+    "Generate worked examples with visible reasoning, step-by-step modeling, at least one Liberia-relevant context when appropriate, and clear transfer beyond memorization.",
+});
+
+registerPromptDefinition({
+  key: "curriculum.eliteUpgrade.misconceptions",
+  version: "1.0.0",
+  template:
+    "Identify likely misconceptions and specify concise corrective moves teachers can use during instruction.",
+});
+
+registerPromptDefinition({
+  key: "curriculum.eliteUpgrade.assessment",
+  version: "1.0.0",
+  template:
+    "Strengthen assessment with formative checks, independent practice, and questions that reveal reasoning rather than answer copying.",
+});
+
+registerPromptDefinition({
+  key: "curriculum.eliteUpgrade.teacherSupport",
+  version: "1.0.0",
+  template:
+    "Add teacher support notes that make the lesson teachable with ordinary preparation in low-resource Liberian classrooms.",
+});
+
+registerPromptDefinition({
+  key: "curriculum.eliteUpgrade.localContext",
+  version: "1.0.0",
+  template:
+    "Enrich the lesson with accurate Liberia-grounded examples only where they clarify the concept and do not distract.",
+});
+
+registerPromptDefinition({
+  key: "curriculum.eliteUpgrade.workforce",
+  version: "1.0.0",
+  template:
+    "Add workforce-readiness connections that are concrete, age-appropriate, and tied to visible skills or livelihoods.",
+});
+
+registerPromptDefinition({
   key: "intervention.recommendation.system",
   version: "1.0.0",
   template: "Return only valid JSON.",

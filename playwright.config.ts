@@ -15,7 +15,7 @@ export default defineConfig({
     trace: "retain-on-failure",
   },
   webServer: {
-    command: "node .next/standalone/server.js",
+    command: "node scripts/playwright-standalone-server.mjs",
     url: process.env.PLAYWRIGHT_BASE_URL,
     reuseExistingServer: true,
     timeout: 120_000,
@@ -23,6 +23,8 @@ export default defineConfig({
       PORT: "3100",
       HOSTNAME: "127.0.0.1",
       NEXTAUTH_URL: "http://127.0.0.1:3100",
+      UPSTASH_REDIS_REST_URL: "",
+      UPSTASH_REDIS_REST_TOKEN: "",
     },
   },
   projects: [

@@ -6,6 +6,14 @@ import Link from "next/link";
 import { trackEvent, EVENTS } from "@/lib/trackEvent";
 import { cacheLessonContent, loadCachedLesson } from "@/lib/lesson-offline-cache";
 
+type LessonMode = "read" | "slides" | "listen";
+
+const MODE_LABELS: Record<LessonMode, string> = {
+  read: "Read",
+  slides: "Slides",
+  listen: "Listen",
+};
+
 export default function LessonViewerPage() {
   const router = useRouter();
   const params = useParams();
@@ -14,9 +22,12 @@ export default function LessonViewerPage() {
   const [loading, setLoading] = useState(true);
   const [metadata, setMetadata] = useState<any>(null);
   const [payload, setPayload] = useState<any>(null);
+  const [audio, setAudio] = useState<any>(null);
   const [error, setError] = useState<string | null>(null);
   const [completed, setCompleted] = useState(false);
   const [servedFromCache, setServedFromCache] = useState(false);
+  const [mode, setMode] = useState<LessonMode>("read");
+  const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
 
   useEffect(() => {
     if (!contentId) return;
@@ -36,8 +47,9 @@ export default function LessonViewerPage() {
         if (data) {
           setMetadata(data.metadata);
           setPayload(data.payload);
+          setAudio(data.audio ?? null);
           // Cache lesson content for offline use after first successful load
-          cacheLessonContent(contentId, { metadata: data.metadata, payload: data.payload });
+          cacheLessonContent(contentId, { metadata: data.metadata, payload: data.payload, audio: data.audio ?? null });
         }
       })
       .catch(async () => {
@@ -46,6 +58,7 @@ export default function LessonViewerPage() {
         if (cached) {
           setMetadata(cached.metadata);
           setPayload(cached.payload);
+          setAudio((cached as any).audio ?? null);
           setServedFromCache(true);
         } else {
           setError("This lesson isn't available offline yet. Please connect to the internet to load it for the first time.");
@@ -91,6 +104,31 @@ export default function LessonViewerPage() {
   const blockBodyText: string = payload?.body_block ?? "";
   const hasBothFormats = Boolean(payload?.body_standard && payload?.body_block);
   const moeAlignments: string[] = Array.isArray(metadata?.moeAlignments) ? metadata.moeAlignments : [];
+  const slideDeck = Array.isArray(payload?.slideDeckSpecs) ? payload.slideDeckSpecs[0] : null;
+  const slides = Array.isArray(slideDeck?.slides)
+    ? slideDeck.slides
+    : [
+        {
+          slideNumber: 1,
+          title: payload?.title ?? contentId,
+          bullets: objectives.length > 0 ? objectives : [standardBodyText.slice(0, 180)],
+          teacherNote: "Use the full lesson text for detail.",
+        },
+        ...activities.slice(0, 5).map((activity, index) => ({
+          slideNumber: index + 2,
+          title: `Activity ${index + 1}`,
+          bullets: [activity],
+          teacherNote: "Pause for student explanation.",
+        })),
+      ].filter((slide) => slide.bullets.some((bullet: string) => bullet.trim().length > 0));
+  const currentSlide = slides[currentSlideIndex] ?? slides[0] ?? null;
+  const audioScripts = Array.isArray(payload?.audioScriptSpecs) ? payload.audioScriptSpecs : [];
+  const generatedAudioReady = audio?.status === "GENERATED" && audio?.storageUrl;
+
+  function switchMode(nextMode: LessonMode) {
+    setMode(nextMode);
+    trackEvent("lesson_mode_changed", { contentId, mode: nextMode, source: "library_lesson" });
+  }
 
   return (
     <main className="min-h-screen bg-[var(--ll-bg)] px-4 py-8">
@@ -133,8 +171,28 @@ export default function LessonViewerPage() {
           )}
         </div>
 
+        <div className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 p-2">
+          <div className="grid grid-cols-3 gap-2">
+            {(["read", "slides", "listen"] as const).map((entry) => (
+              <button
+                key={entry}
+                type="button"
+                onClick={() => switchMode(entry)}
+                className={`rounded-lg px-3 py-2 text-sm font-semibold transition ${
+                  mode === entry
+                    ? "bg-[var(--ll-yellow)] text-[var(--ll-text-faint)]"
+                    : "bg-[var(--ll-surface)] text-[var(--ll-text-muted)] hover:text-[var(--ll-text)]"
+                }`}
+                aria-pressed={mode === entry}
+              >
+                {MODE_LABELS[entry]}
+              </button>
+            ))}
+          </div>
+        </div>
+
         {/* Learning Objectives */}
-        {objectives.length > 0 && (
+        {mode === "read" && objectives.length > 0 && (
           <div className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 p-5 space-y-3">
             <h2 className="text-sm font-semibold text-[var(--ll-text)] uppercase tracking-wide">Learning Objectives</h2>
             <ul className="list-disc list-inside space-y-1 text-sm text-[var(--ll-text)]">
@@ -146,7 +204,7 @@ export default function LessonViewerPage() {
         )}
 
         {/* Body Content */}
-        {(standardBodyText || blockBodyText) && (
+        {mode === "read" && (standardBodyText || blockBodyText) && (
           <div className="space-y-4">
             {standardBodyText && (
               <div className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 p-5">
@@ -183,7 +241,7 @@ export default function LessonViewerPage() {
         )}
 
         {/* Activities */}
-        {activities.length > 0 && (
+        {mode === "read" && activities.length > 0 && (
           <div className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 p-5 space-y-3">
             <h2 className="text-sm font-semibold text-[var(--ll-text)] uppercase tracking-wide">Activities</h2>
             <ol className="list-decimal list-inside space-y-2 text-sm text-[var(--ll-text)]">
@@ -192,6 +250,96 @@ export default function LessonViewerPage() {
               ))}
             </ol>
           </div>
+        )}
+
+        {mode === "slides" && (
+          <section className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 p-5">
+            {currentSlide ? (
+              <div className="space-y-5">
+                <div className="flex items-center justify-between gap-3">
+                  <span className="rounded-full border border-[var(--ll-border)] px-3 py-1 text-xs text-[var(--ll-text-muted)]">
+                    Slide {currentSlideIndex + 1} of {slides.length}
+                  </span>
+                  <span className="text-xs text-[var(--ll-text-faint)]">
+                    {slideDeck?.deckTitle ?? "Lesson deck"}
+                  </span>
+                </div>
+                <div className="min-h-[260px] rounded-xl border border-[var(--ll-border)] bg-[var(--ll-surface)] p-6">
+                  <h2 className="text-2xl font-semibold text-[var(--ll-text)]">
+                    {currentSlide.title}
+                  </h2>
+                  <ul className="mt-5 space-y-3 text-base leading-7 text-[var(--ll-text)]">
+                    {(currentSlide.bullets ?? []).map((bullet: string, index: number) => (
+                      <li key={index} className="flex gap-3">
+                        <span className="mt-2 h-2 w-2 shrink-0 rounded-full bg-[var(--ll-yellow)]" />
+                        <span>{bullet}</span>
+                      </li>
+                    ))}
+                  </ul>
+                  {currentSlide.teacherNote ? (
+                    <p className="mt-5 rounded-lg border border-[var(--ll-border)] bg-[var(--ll-bg)]/60 p-3 text-sm text-[var(--ll-text-muted)]">
+                      {currentSlide.teacherNote}
+                    </p>
+                  ) : null}
+                </div>
+                <div className="flex items-center justify-between gap-3">
+                  <button
+                    type="button"
+                    onClick={() => setCurrentSlideIndex((value) => Math.max(0, value - 1))}
+                    disabled={currentSlideIndex === 0}
+                    className="rounded-lg border border-[var(--ll-border)] px-4 py-2 text-sm font-semibold text-[var(--ll-text)] disabled:opacity-50"
+                  >
+                    Previous
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setCurrentSlideIndex((value) => Math.min(slides.length - 1, value + 1))}
+                    disabled={currentSlideIndex >= slides.length - 1}
+                    className="rounded-lg border border-[var(--ll-border)] px-4 py-2 text-sm font-semibold text-[var(--ll-text)] disabled:opacity-50"
+                  >
+                    Next
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <p className="text-sm text-[var(--ll-text-muted)]">Slides are not available for this lesson yet.</p>
+            )}
+          </section>
+        )}
+
+        {mode === "listen" && (
+          <section className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 p-5 space-y-4">
+            <h2 className="text-sm font-semibold uppercase tracking-wide text-[var(--ll-text)]">Listen Mode</h2>
+            {generatedAudioReady ? (
+              <audio controls className="w-full" src={audio.storageUrl}>
+                <track kind="captions" />
+              </audio>
+            ) : (
+              <div className="rounded-lg border border-[var(--ll-border)] bg-[var(--ll-surface)] p-4">
+                <p className="text-sm text-[var(--ll-text-muted)]">
+                  Generated audio is not available yet. Use the narration script below while audio preparation is pending.
+                </p>
+              </div>
+            )}
+            <div className="space-y-3">
+              {audioScripts.length > 0 ? (
+                audioScripts.map((script: any, index: number) => (
+                  <div key={index} className="rounded-lg border border-[var(--ll-border)] bg-[var(--ll-surface)] p-4">
+                    <p className="text-xs font-semibold uppercase tracking-wide text-[var(--ll-text-faint)]">
+                      {String(script.mode ?? `Script ${index + 1}`).replace(/_/g, " ")}
+                    </p>
+                    <p className="mt-2 whitespace-pre-wrap text-sm leading-6 text-[var(--ll-text)]">
+                      {script.script ?? script.fallbackText ?? "No narration script available."}
+                    </p>
+                  </div>
+                ))
+              ) : (
+                <p className="whitespace-pre-wrap text-sm leading-6 text-[var(--ll-text)]">
+                  {standardBodyText || blockBodyText || "No lesson narration is available yet."}
+                </p>
+              )}
+            </div>
+          </section>
         )}
 
         {/* Mark Complete */}

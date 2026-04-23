@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 import { requireRole } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { getMultimediaAnalytics } from "@/lib/analytics/multimediaAnalytics";
+import { buildAdminSchoolIntelligence } from "@/lib/analytics/decisionSupport";
 
 export const dynamic = "force-dynamic";
 
@@ -14,7 +15,7 @@ export async function GET(req: Request) {
     const since = new Date();
     since.setDate(since.getDate() - days);
 
-    const [lessonViews, homeworkSubmits, tutorMessages, homeworkComplete, multimedia] =
+    const [lessonViews, homeworkSubmits, tutorMessages, homeworkComplete, multimedia, intelligence] =
       await Promise.all([
         prisma.auditLog.count({
           where: { action: "lesson_view", createdAt: { gte: since }, user: { schoolId: user.schoolId } },
@@ -29,6 +30,9 @@ export async function GET(req: Request) {
           where: { submittedAt: { gte: since }, Student: { user: { schoolId: user.schoolId } } },
         }),
         getMultimediaAnalytics({ days, schoolId: user.schoolId ?? null }),
+        user.schoolId
+          ? buildAdminSchoolIntelligence({ schoolId: user.schoolId, days })
+          : Promise.resolve(null),
       ]);
 
     const dailyActive: any[] = await prisma.$queryRaw`
@@ -67,6 +71,7 @@ export async function GET(req: Request) {
         views: Number(row.views ?? 0),
       })),
       multimedia,
+      intelligence,
     });
   } catch (err: any) {
     const status = err?.status ?? 500;

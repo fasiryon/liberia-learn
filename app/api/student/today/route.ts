@@ -2,8 +2,25 @@ import { NextResponse } from "next/server";
 import { requireRole } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { getLessonLabLinks } from "@/lib/lessons/labLinks";
+import { buildStudentLearningIntelligence } from "@/lib/student/learningIntelligence";
 
 export const dynamic = "force-dynamic";
+
+function emptyAdaptivePlan() {
+  return {
+    generatedAt: new Date().toISOString(),
+    smartContinueHref: "/student/lessons",
+    smartContinueLabel: "Browse lessons",
+    smartContinueReason: "No scheduled, incomplete, or weak-area recommendation is available right now.",
+    orderedActions: [],
+    signals: {
+      scheduledToday: 0,
+      incompleteToday: 0,
+      weaknessCount: 0,
+      recommendationCount: 0,
+    },
+  };
+}
 
 export async function GET() {
   try {
@@ -16,12 +33,12 @@ export async function GET() {
     });
 
     if (!student) {
-      return NextResponse.json({ items: [] });
+      return NextResponse.json({ items: [], adaptivePlan: emptyAdaptivePlan() });
     }
 
     const classIds = student.enrollments.map((e) => e.classId);
     if (classIds.length === 0) {
-      return NextResponse.json({ items: [] });
+      return NextResponse.json({ items: [], adaptivePlan: emptyAdaptivePlan() });
     }
 
     // Today's date range (UTC)
@@ -29,28 +46,36 @@ export async function GET() {
     const startOfDay = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()));
     const endOfDay = new Date(startOfDay.getTime() + 86400000);
 
-    const scheduledWork = await prisma.scheduledWork.findMany({
-      where: {
-        classId: { in: classIds },
-        scheduledDate: { gte: startOfDay, lt: endOfDay },
-      },
-      include: {
-        content: {
-          select: {
-            contentId: true,
-            grade: true,
-            subject: true,
-            contentType: true,
-            payload: true,
+    const [scheduledWork, intelligence] = await Promise.all([
+      prisma.scheduledWork.findMany({
+        where: {
+          classId: { in: classIds },
+          scheduledDate: { gte: startOfDay, lt: endOfDay },
+        },
+        include: {
+          content: {
+            select: {
+              contentId: true,
+              grade: true,
+              subject: true,
+              contentType: true,
+              payload: true,
+            },
+          },
+          progress: {
+            where: { studentId: user.id },
+            select: { completedAt: true, startedAt: true },
           },
         },
-        progress: {
-          where: { studentId: user.id },
-          select: { completedAt: true, startedAt: true },
-        },
-      },
-      orderBy: { periodNumber: "asc" },
-    });
+        orderBy: { periodNumber: "asc" },
+      }),
+      buildStudentLearningIntelligence(user).catch(() => ({
+        generatedAt: new Date().toISOString(),
+        masteryBySubject: [],
+        weaknesses: [],
+        recommendedNextActions: [],
+      })),
+    ]);
 
     const items = scheduledWork.map((sw, index) => {
       const payload = sw.content.payload as any;
@@ -87,6 +112,29 @@ export async function GET() {
     const next = current
       ? items.find((item) => item.order > current.order && item.status !== "completed") ?? null
       : null;
+    const adaptiveActions = [
+      ...items
+        .filter((item) => item.status !== "completed")
+        .map((item) => ({
+          type: item.status === "in_progress" ? "continue_current_lesson" : "scheduled_today",
+          label: item.status === "in_progress" ? `Continue ${item.title}` : `Start ${item.title}`,
+          reason: `Scheduled today as ${item.periodNumber ? `period ${item.periodNumber}` : `lesson ${item.order}`}.`,
+          href: item.lessonHref,
+          priority: item.status === "in_progress" ? 110 : 105 - item.order,
+          source: "scheduled_work",
+        })),
+      ...intelligence.recommendedNextActions.map((action) => ({
+        ...action,
+        source: "learning_intelligence",
+      })),
+    ]
+      .sort((left, right) => right.priority - left.priority)
+      .filter(
+        (action, index, list) =>
+          list.findIndex((item) => item.href === action.href) === index
+      )
+      .slice(0, 5);
+    const smartContinue = adaptiveActions[0] ?? null;
 
     return NextResponse.json({
       items,
@@ -95,6 +143,21 @@ export async function GET() {
       remainingCount: items.filter((item) => item.status !== "completed").length,
       currentItemId: current?.id ?? null,
       nextItemId: next?.id ?? null,
+      adaptivePlan: {
+        generatedAt: intelligence.generatedAt,
+        smartContinueHref: smartContinue?.href ?? "/student/lessons",
+        smartContinueLabel: smartContinue?.label ?? "Browse lessons",
+        smartContinueReason:
+          smartContinue?.reason ??
+          "No scheduled, incomplete, or weak-area recommendation is available right now.",
+        orderedActions: adaptiveActions,
+        signals: {
+          scheduledToday: items.length,
+          incompleteToday: items.filter((item) => item.status !== "completed").length,
+          weaknessCount: intelligence.weaknesses.length,
+          recommendationCount: intelligence.recommendedNextActions.length,
+        },
+      },
     });
   } catch (err: any) {
     const status = err?.status || 500;

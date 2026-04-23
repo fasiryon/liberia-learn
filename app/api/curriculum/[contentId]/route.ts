@@ -10,13 +10,17 @@ export async function GET(
   { params }: { params: { contentId: string } }
 ) {
   try {
-    await requireRole("STUDENT", "TEACHER", "ADMIN");
+    const user = await requireRole("STUDENT", "TEACHER", "ADMIN");
     const contentId = params.contentId;
+    const statusFilter =
+      user.role === "STUDENT"
+        ? { in: ["published", "APPROVED"] }
+        : { in: ["published", "APPROVED", "pending_approval", "rejected"] };
 
     const row = await prisma.curriculumContent.findFirst({
       where: {
         contentId,
-        status: { in: ["published", "APPROVED"] },
+        status: statusFilter,
       },
       select: {
         contentId: true,

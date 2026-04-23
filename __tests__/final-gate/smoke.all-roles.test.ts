@@ -163,6 +163,9 @@ vi.mock("@/lib/intelligence/performanceAggregator", () => ({
   getClassPerformanceSummary: vi.fn(async () => ({ avgScore: 0.76, strugglingStudents: 2, trend: "improving" })),
   getStudentPerformanceSummary: vi.fn(async () => ({ avgScore: 84, masteryLevel: "developing", improvementTrend: "improving" })),
 }));
+vi.mock("@/lib/reporting/teacherClassPerformance", () => ({
+  buildTeacherClassPerformance: vi.fn(async () => []),
+}));
 vi.mock("@/lib/intelligence/teacherScope", () => ({
   getTeacherScope: vi.fn(async () => ({
     studentIds: ["student-rec-1"],

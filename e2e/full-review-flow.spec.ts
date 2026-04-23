@@ -78,6 +78,17 @@ test("student reviewer flow has no dead navigation", async ({ page }) => {
   await expect(page.getByRole("heading", { name: /My Textbooks/i })).toBeVisible();
 });
 
+test("generic library lesson exposes Read, Slides, and Listen modes", async ({ page }) => {
+  await login(page, "student1@cha.edu.lr", "DemoSeed2026!", "student");
+  await page.goto(`${BASE}/student/lesson/${SEEDED_CONTENT_ID}`);
+  await expect(page.getByRole("heading", { name: /Ratios in Market Prices/i })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Read" })).toBeVisible();
+  await page.getByRole("button", { name: "Slides" }).click();
+  await expect(page.locator("text=/Slide 1 of/")).toBeVisible();
+  await page.getByRole("button", { name: "Listen" }).click();
+  await expect(page.getByRole("heading", { name: "Listen Mode" })).toBeVisible();
+});
+
 test("teacher uploads and activates a real video supplement", async ({ page }) => {
   await login(page, "teacher1@cha.edu.lr", "DemoSeed2026!", "teacher");
   await page.goto(`${BASE}/teacher/lesson/${SEEDED_CONTENT_ID}`);
@@ -106,6 +117,8 @@ test("student sees active teacher video after upload", async ({ page }) => {
 test("admin audio batch controls and analytics are visible", async ({ page }) => {
   await login(page, "admin@cha.edu.lr", "DemoSeed2026!", "admin");
   await page.goto(`${BASE}/admin/curriculum`);
+  await expect(page.getByRole("heading", { name: "Import Existing Curriculum" })).toBeVisible();
+  await expect(page.getByRole("button", { name: /Elite upgrade/i }).first()).toBeVisible();
   await expect(page.getByRole("button", { name: /Batch generate audio/i })).toBeVisible();
   await page.getByRole("button", { name: /Batch generate audio/i }).click();
   await expect(page.locator("text=/Queued|reused|Batch queue/")).toBeVisible({ timeout: 20000 });
@@ -113,13 +126,14 @@ test("admin audio batch controls and analytics are visible", async ({ page }) =>
   await expect(page.getByRole("heading", { name: "Lesson Mode Usage" })).toBeVisible();
 });
 
-test("MOE and guardian review surfaces show real data", async ({ page }) => {
+test("MOE review surface shows real data", async ({ page }) => {
   await loginMoe(page);
   await expect(page.locator("text=Lesson Mode Usage")).toBeVisible({ timeout: 20000 });
   await expect(page.getByText("Audio Starts")).toBeVisible();
   await expect(page.getByText("Active Videos")).toBeVisible();
+});
 
-  await page.context().clearCookies();
+test("guardian review surface shows linked student data", async ({ page }) => {
   await login(page, "guardian1@cha.family.lr", "DemoSeed2026!", "guardian");
   await page.goto(`${BASE}/guardian`);
   await expect(page.locator("text=/Fatu Kollie|student/i")).toBeVisible({ timeout: 20000 });

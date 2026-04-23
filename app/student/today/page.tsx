@@ -30,6 +30,26 @@ type TodayResponse = {
   remainingCount: number;
   currentItemId: string | null;
   nextItemId: string | null;
+  adaptivePlan?: {
+    generatedAt: string;
+    smartContinueHref: string;
+    smartContinueLabel: string;
+    smartContinueReason: string;
+    orderedActions: Array<{
+      type: string;
+      label: string;
+      reason: string;
+      href: string;
+      priority: number;
+      source: string;
+    }>;
+    signals: {
+      scheduledToday: number;
+      incompleteToday: number;
+      weaknessCount: number;
+      recommendationCount: number;
+    };
+  };
 };
 
 const STATUS_BADGE: Record<string, { label: string; cls: string }> = {
@@ -45,6 +65,7 @@ export default function StudentTodayPage() {
   const [remainingCount, setRemainingCount] = useState(0);
   const [currentItemId, setCurrentItemId] = useState<string | null>(null);
   const [nextItemId, setNextItemId] = useState<string | null>(null);
+  const [adaptivePlan, setAdaptivePlan] = useState<TodayResponse["adaptivePlan"] | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -57,12 +78,14 @@ export default function StudentTodayPage() {
         setRemainingCount(d.remainingCount || 0);
         setCurrentItemId(d.currentItemId ?? null);
         setNextItemId(d.nextItemId ?? null);
+        setAdaptivePlan(d.adaptivePlan ?? null);
       })
       .finally(() => setLoading(false));
   }, []);
 
-  const currentItem = items.find((item) => item.id === currentItemId) ?? items[0] ?? null;
+  const currentItem = items.find((item) => item.id === currentItemId && item.status !== "completed") ?? null;
   const nextItem = items.find((item) => item.id === nextItemId) ?? null;
+  const smartAction = adaptivePlan?.orderedActions?.[0] ?? null;
 
   function timeLabel(item: WorkItem) {
     const period = item.periodNumber ? `Period ${item.periodNumber}` : `Lesson ${item.order}`;
@@ -129,18 +152,34 @@ export default function StudentTodayPage() {
             {[1, 2, 3].map((i) => <SkeletonCard key={i} />)}
           </div>
         ) : items.length === 0 ? (
-          <div className="ll-section p-6 text-center">
-            <BookOpen className="mx-auto mb-3 h-8 w-8 text-[var(--ll-text-faint)]" strokeWidth={1.5} />
-            <p className="text-sm leading-6 text-[var(--ll-text-muted)]">
-              Nothing scheduled yet. Browse the curriculum to start learning.
-            </p>
-            <Link
-              href="/student/lessons"
-              className="ll-command ll-focus mt-4 inline-flex text-sm font-semibold text-[var(--ll-text)]"
-            >
-              Browse lessons
-            </Link>
-          </div>
+          smartAction ? (
+            <section className="rounded-xl border border-[var(--ll-accent)]/35 bg-[var(--ll-accent-soft)] p-5 sm:p-6">
+              <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[var(--ll-accent)]">
+                Recommended for today
+              </p>
+              <h2 className="mt-3 text-2xl font-semibold text-[var(--ll-text)]">{smartAction.label}</h2>
+              <p className="mt-2 text-sm leading-6 text-[var(--ll-text-muted)]">{smartAction.reason}</p>
+              <Link
+                href={adaptivePlan?.smartContinueHref ?? smartAction.href}
+                className="ll-touch-target mt-5 inline-flex items-center justify-center rounded-lg bg-[var(--ll-accent)] px-4 py-3 text-sm font-semibold text-[var(--ll-text-faint)]"
+              >
+                Continue
+              </Link>
+            </section>
+          ) : (
+            <div className="ll-section p-6 text-center">
+              <BookOpen className="mx-auto mb-3 h-8 w-8 text-[var(--ll-text-faint)]" strokeWidth={1.5} />
+              <p className="text-sm leading-6 text-[var(--ll-text-muted)]">
+                Nothing scheduled yet. Browse the curriculum to start learning.
+              </p>
+              <Link
+                href="/student/lessons"
+                className="ll-command ll-focus mt-4 inline-flex text-sm font-semibold text-[var(--ll-text)]"
+              >
+                Browse lessons
+              </Link>
+            </div>
+          )
         ) : (
           <div className="space-y-5">
             <section className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-surface)] p-4">
@@ -176,6 +215,22 @@ export default function StudentTodayPage() {
                   </span>
                 </div>
                 <LessonActions item={currentItem} />
+              </section>
+            ) : null}
+
+            {!currentItem && smartAction ? (
+              <section className="rounded-xl border border-[var(--ll-accent)]/35 bg-[var(--ll-accent-soft)] p-5 sm:p-6">
+                <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[var(--ll-accent)]">
+                  Smart continue
+                </p>
+                <h2 className="mt-3 text-2xl font-semibold text-[var(--ll-text)]">{smartAction.label}</h2>
+                <p className="mt-2 text-sm leading-6 text-[var(--ll-text-muted)]">{smartAction.reason}</p>
+                <Link
+                  href={adaptivePlan?.smartContinueHref ?? smartAction.href}
+                  className="ll-touch-target mt-5 inline-flex items-center justify-center rounded-lg bg-[var(--ll-accent)] px-4 py-3 text-sm font-semibold text-[var(--ll-text-faint)]"
+                >
+                  Continue
+                </Link>
               </section>
             ) : null}
 
@@ -223,6 +278,26 @@ export default function StudentTodayPage() {
                 );
               })}
             </section>
+
+            {adaptivePlan?.orderedActions?.length ? (
+              <section className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-surface)] p-5">
+                <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[var(--ll-text-faint)]">
+                  Recommended next actions
+                </p>
+                <div className="mt-3 grid gap-2">
+                  {adaptivePlan.orderedActions.slice(0, 4).map((action) => (
+                    <Link
+                      key={`${action.type}-${action.href}`}
+                      href={action.href}
+                      className="rounded-lg border border-[var(--ll-border)] bg-[var(--ll-surface-muted)] p-3 text-sm transition-colors hover:border-[var(--ll-border-strong)]"
+                    >
+                      <span className="block font-semibold text-[var(--ll-text)]">{action.label}</span>
+                      <span className="mt-1 block text-xs text-[var(--ll-text-muted)]">{action.reason}</span>
+                    </Link>
+                  ))}
+                </div>
+              </section>
+            ) : null}
           </div>
         )}
       </div>

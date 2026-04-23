@@ -57,6 +57,11 @@ export default function AdminCurriculumPage() {
   const [audioBatching, setAudioBatching] = useState(false);
   const [audioProcessing, setAudioProcessing] = useState(false);
   const [audioBatchMessage, setAudioBatchMessage] = useState<string | null>(null);
+  const [importFile, setImportFile] = useState<File | null>(null);
+  const [importing, setImporting] = useState(false);
+  const [importMessage, setImportMessage] = useState<string | null>(null);
+  const [upgrading, setUpgrading] = useState<string | null>(null);
+  const [upgradeMessage, setUpgradeMessage] = useState<string | null>(null);
 
   async function loadItems() {
     setLoadingItems(true);
@@ -183,6 +188,56 @@ export default function AdminCurriculumPage() {
     }
   }
 
+  async function handleImport(e: React.FormEvent) {
+    e.preventDefault();
+    if (!importFile) return;
+    setImporting(true);
+    setImportMessage(null);
+    try {
+      const formData = new FormData();
+      formData.set("file", importFile);
+      formData.set("subject", subject);
+      formData.set("grade", String(grade));
+      const res = await fetch("/api/admin/curriculum/import", {
+        method: "POST",
+        body: formData,
+      });
+      const data = await res.json().catch(() => null);
+      if (!res.ok) throw new Error(data?.error ?? "Curriculum import failed");
+      setImportMessage(
+        `Imported ${data.lessonCount} lesson(s) across ${data.unitCount} unit(s) as ${data.versionName}.`
+      );
+      setImportFile(null);
+      await loadItems();
+    } catch (err: any) {
+      setImportMessage(err.message ?? "Curriculum import failed");
+    } finally {
+      setImporting(false);
+    }
+  }
+
+  async function handleEliteUpgrade(contentId: string) {
+    setUpgrading(contentId);
+    setUpgradeMessage(null);
+    try {
+      const res = await fetch("/api/admin/curriculum/upgrade", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ contentId }),
+      });
+      const data = await res.json().catch(() => null);
+      if (!res.ok) throw new Error(data?.error ?? "Elite upgrade failed");
+      setUpgradeMessage(
+        `Created elite draft ${data.draftContentId} with quality delta +${data.qualityScores?.delta ?? 0}.`
+      );
+      await loadItems();
+    } catch (err: any) {
+      setUpgradeMessage(err.message ?? "Elite upgrade failed");
+    } finally {
+      setUpgrading(null);
+    }
+  }
+
   return (
     <main className="min-h-screen bg-[var(--ll-bg)] text-[var(--ll-text)]">
       <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_top,_#22c55e22,_transparent_60%)]" />
@@ -226,7 +281,48 @@ export default function AdminCurriculumPage() {
           {audioBatchMessage ? (
             <p className="mt-2 text-xs text-[var(--ll-text-muted)]">{audioBatchMessage}</p>
           ) : null}
+          {upgradeMessage ? (
+            <p className="mt-2 text-xs text-[var(--ll-text-muted)]">{upgradeMessage}</p>
+          ) : null}
         </div>
+
+        <form
+          onSubmit={handleImport}
+          className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 p-6 space-y-4"
+        >
+          <div>
+            <h2 className="text-lg font-semibold">Import Existing Curriculum</h2>
+            <p className="mt-1 text-sm text-[var(--ll-text-muted)]">
+              Upload PDF, DOCX, JSON, or structured text. Imported lessons enter the existing review flow as pending approval.
+            </p>
+          </div>
+          <div className="grid gap-4 sm:grid-cols-[1fr_auto] sm:items-end">
+            <div>
+              <label className="block text-xs font-medium text-[var(--ll-text-muted)] mb-1">
+                Curriculum file
+              </label>
+              <input
+                type="file"
+                accept=".pdf,.docx,.txt,.md,.json,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document,text/plain,application/json"
+                onChange={(event) => setImportFile(event.target.files?.[0] ?? null)}
+                className="w-full rounded-lg border border-[var(--ll-border)] bg-[var(--ll-bg)] px-3 py-2 text-sm text-[var(--ll-text)]"
+              />
+              <p className="mt-1 text-xs text-[var(--ll-text-faint)]">
+                Uses the selected grade and subject as fallback metadata.
+              </p>
+            </div>
+            <button
+              type="submit"
+              disabled={importing || !importFile}
+              className="rounded-xl border border-[var(--ll-yellow)]/30 bg-[var(--ll-yellow-soft)] px-5 py-3 text-sm font-semibold text-[var(--ll-yellow)] disabled:opacity-50"
+            >
+              {importing ? "Importing..." : "Import curriculum"}
+            </button>
+          </div>
+          {importMessage ? (
+            <p className="text-sm text-[var(--ll-text-muted)]">{importMessage}</p>
+          ) : null}
+        </form>
 
         {/* Generate form */}
         <form
@@ -389,6 +485,7 @@ export default function AdminCurriculumPage() {
                 const isExpanded = expandedLabs === item.contentId;
                 const isPending = item.status === "pending_approval" ||
                   item.payload?.approvalStatus === "PENDING_APPROVAL";
+                const isEliteDraft = Boolean(item.payload?.upgradeMetadata);
 
                 return (
                   <div key={item.id} className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/80 p-4 space-y-3">
@@ -407,6 +504,15 @@ export default function AdminCurriculumPage() {
                       </div>
                       <div className="flex items-center gap-2 shrink-0">
                         {statusBadge(item.status, item.payload?.approvalStatus)}
+                        {item.contentType === "lesson" && !isEliteDraft && (
+                          <button
+                            onClick={() => handleEliteUpgrade(item.contentId)}
+                            disabled={upgrading === item.contentId}
+                            className="rounded-lg border border-[var(--ll-yellow)]/30 bg-[var(--ll-yellow-soft)] px-3 py-1 text-xs font-semibold text-[var(--ll-yellow)] disabled:opacity-50"
+                          >
+                            {upgrading === item.contentId ? "Upgrading..." : "Elite upgrade"}
+                          </button>
+                        )}
                         <button
                           onClick={() => handleGenerateAudio(item.contentId)}
                           disabled={audioGenerating === item.contentId}
@@ -427,12 +533,12 @@ export default function AdminCurriculumPage() {
                             {approving === item.contentId ? "..." : "Approve"}
                           </button>
                         )}
-                        {item.contentType === "full_pack" ? (
+                        {item.contentType === "full_pack" || isEliteDraft || isPending ? (
                           <Link
                             href={`/admin/curriculum/${item.contentId}/review`}
                             className="rounded-lg border border-blue-700 bg-[var(--ll-silver-soft)] px-3 py-1 text-xs text-[var(--ll-silver)] hover:text-[var(--ll-silver)]"
                           >
-                            Review Pack
+                            {item.contentType === "full_pack" ? "Review Pack" : "Review"}
                           </Link>
                         ) : (
                           <Link

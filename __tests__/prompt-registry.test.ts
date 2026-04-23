@@ -78,5 +78,8 @@ describe("promptRegistry", () => {
     expect(prompts.some((entry) => entry.key === "teacher.assignment-tutor.user")).toBe(true);
     expect(prompts.some((entry) => entry.key === "teacher.classInsights.system")).toBe(true);
     expect(prompts.some((entry) => entry.key === "teacher.classInsights.user")).toBe(true);
+    expect(prompts.some((entry) => entry.key === "curriculum.eliteUpgrade.system")).toBe(true);
+    expect(prompts.some((entry) => entry.key === "curriculum.eliteUpgrade.user")).toBe(true);
+    expect(prompts.some((entry) => entry.key === "curriculum.eliteUpgrade.assessment")).toBe(true);
   });
 });

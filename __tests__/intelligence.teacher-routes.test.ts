@@ -5,6 +5,7 @@ const mockIsConfusionDetectionEnabled = vi.hoisted(() => vi.fn());
 const mockIsInterventionEngineEnabled = vi.hoisted(() => vi.fn());
 const mockIsInterventionWorkflowEnabled = vi.hoisted(() => vi.fn());
 const mockGetClassPerformanceSummary = vi.hoisted(() => vi.fn());
+const mockBuildTeacherClassPerformance = vi.hoisted(() => vi.fn());
 const mockLogAudit = vi.hoisted(() => vi.fn());
 const mockConfusionFindMany = vi.hoisted(() => vi.fn());
 const mockInterventionFindMany = vi.hoisted(() => vi.fn());
@@ -20,6 +21,9 @@ vi.mock("@/lib/serverFlags", () => ({
 }));
 vi.mock("@/lib/intelligence/performanceAggregator", () => ({
   getClassPerformanceSummary: mockGetClassPerformanceSummary,
+}));
+vi.mock("@/lib/reporting/teacherClassPerformance", () => ({
+  buildTeacherClassPerformance: mockBuildTeacherClassPerformance,
 }));
 vi.mock("@/lib/intelligence/teacherScope", () => ({
   getTeacherScope: mockGetTeacherScope,
@@ -52,6 +56,22 @@ beforeEach(() => {
   mockIsInterventionEngineEnabled.mockReturnValue(true);
   mockIsInterventionWorkflowEnabled.mockReturnValue(true);
   mockGetClassPerformanceSummary.mockResolvedValue({ teacherId: "teacher-1", schoolId: "school-1" });
+  mockBuildTeacherClassPerformance.mockResolvedValue([
+    {
+      classId: "class-1",
+      className: "JSS 1A",
+      subject: "MATH",
+      bottomStudents: [],
+      topStudents: [],
+      lessonQuizPerformance: [],
+      intelligence: {
+        strugglingStudents: [],
+        topPerformers: [],
+        lowPerformingLessons: [],
+        interventionSuggestions: [],
+      },
+    },
+  ]);
   mockGetTeacherScope.mockResolvedValue({
     studentIds: ["student-9", "student-1"],
     students: new Map([
