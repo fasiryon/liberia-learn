@@ -4,6 +4,7 @@ import { prisma } from "@/lib/db";
 import { buildTeacherClassPerformance } from "@/lib/reporting/teacherClassPerformance";
 import { isAdaptiveEngineEnabled } from "@/lib/serverFlags";
 import { buildClassIntelligence } from "@/lib/student/adaptiveRecommendations";
+import { generateTeacherAlerts, getActiveTeacherAlerts } from "@/lib/intelligence/teacherAlerts";
 
 export const dynamic = "force-dynamic";
 
@@ -56,7 +57,6 @@ export async function GET() {
     const startOfDay = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()));
     const endOfDay = new Date(startOfDay.getTime() + 86400000);
 
-    // Today's scheduled work
     const todayWork = await prisma.scheduledWork.findMany({
       where: { classId: { in: classIds }, scheduledDate: { gte: startOfDay, lt: endOfDay } },
       include: {
@@ -69,41 +69,40 @@ export async function GET() {
           },
         },
         content: {
-          select: {
-            payload: true,
-          },
+          select: { payload: true },
         },
       },
       orderBy: { scheduledDate: "asc" },
     });
 
-    // Completion count
-    const completedCount = todayWork.length > 0
-      ? await prisma.studentProgress.count({
-          where: {
-            scheduledWorkId: { in: todayWork.map((w) => w.id) },
-            completedAt: { not: null },
-          },
-        })
-      : 0;
+    const completedCount =
+      todayWork.length > 0
+        ? await prisma.studentProgress.count({
+            where: {
+              scheduledWorkId: { in: todayWork.map((w) => w.id) },
+              completedAt: { not: null },
+            },
+          })
+        : 0;
 
     const totalStudents = await prisma.enrollment.count({ where: { classId: { in: classIds } } });
-    const expectedCompletions = todayWork.length * Math.max(totalStudents / Math.max(classIds.length, 1), 1);
-    const completionRate = expectedCompletions > 0 ? Math.round((completedCount / expectedCompletions) * 100) : 0;
+    const expectedCompletions =
+      todayWork.length * Math.max(totalStudents / Math.max(classIds.length, 1), 1);
+    const completionRate =
+      expectedCompletions > 0 ? Math.round((completedCount / expectedCompletions) * 100) : 0;
 
-    const todayProgress = todayWork.length > 0
-      ? await prisma.studentProgress.findMany({
-          where: {
-            scheduledWorkId: { in: todayWork.map((work) => work.id) },
-          },
-          select: {
-            scheduledWorkId: true,
-            startedAt: true,
-            completedAt: true,
-            exitTicketScore: true,
-          },
-        })
-      : [];
+    const todayProgress =
+      todayWork.length > 0
+        ? await prisma.studentProgress.findMany({
+            where: { scheduledWorkId: { in: todayWork.map((work) => work.id) } },
+            select: {
+              scheduledWorkId: true,
+              startedAt: true,
+              completedAt: true,
+              exitTicketScore: true,
+            },
+          })
+        : [];
 
     const progressByWork = new Map<
       string,
@@ -125,33 +124,35 @@ export async function GET() {
       progressByWork.set(progress.scheduledWorkId, current);
     }
 
-    // Classes without lesson today
     const classesWithWork = new Set(todayWork.map((w) => w.classId));
-    const classesWithoutLesson = classes.filter((c) => !classesWithWork.has(c.id)).map((c) => c.name);
+    const classesWithoutLesson = classes
+      .filter((c) => !classesWithWork.has(c.id))
+      .map((c) => c.name);
 
     const assignmentsPendingGrading = await prisma.assignmentSubmission.count({
       where: {
         score: null,
         turnedInAt: { not: null },
         Assignment: {
-          Class: user.role === "ADMIN"
-            ? { schoolId: user.schoolId! }
-            : { schoolId: user.schoolId!, teacherId: user.id },
+          Class:
+            user.role === "ADMIN"
+              ? { schoolId: user.schoolId! }
+              : { schoolId: user.schoolId!, teacherId: user.id },
         },
       },
     });
 
-    const labsPendingReview = classIds.length > 0
-      ? await prisma.labSession.count({
-          where: {
-            schoolId: user.schoolId!,
-            score: null,
-            scheduledWorkId: { in: todayWork.map((work) => work.id) },
-          },
-        })
-      : 0;
+    const labsPendingReview =
+      classIds.length > 0
+        ? await prisma.labSession.count({
+            where: {
+              schoolId: user.schoolId!,
+              score: null,
+              scheduledWorkId: { in: todayWork.map((work) => work.id) },
+            },
+          })
+        : 0;
 
-    // Recent published lessons
     const recentLessons = await prisma.curriculumContent.findMany({
       where: { status: "APPROVED" },
       select: { contentId: true, payload: true, status: true, createdAt: true },
@@ -190,7 +191,8 @@ export async function GET() {
     const avgMasteryScore =
       groupedAdaptive.length > 0
         ? Math.round(
-            (groupedAdaptive.reduce((sum, entry) => sum + entry.averageScore, 0) / groupedAdaptive.length) *
+            (groupedAdaptive.reduce((sum, entry) => sum + entry.averageScore, 0) /
+              groupedAdaptive.length) *
               100
           ) / 100
         : 0;
@@ -198,6 +200,28 @@ export async function GET() {
       .sort((a, b) => a.averageScore - b.averageScore)
       .slice(0, 3)
       .map((entry) => entry.strandCode);
+
+    // Generate teacher alerts from class signals, then fetch active ones
+    const atRiskStudents = classPerformance.flatMap((cls) =>
+      cls.atRiskStudents.map((s) => ({
+        studentId: s.studentId,
+        name: s.name,
+        classId: s.classId,
+        className: s.className,
+        daysSinceActivity: s.daysSinceActivity,
+        profileHref: s.profileHref,
+      }))
+    );
+
+    await generateTeacherAlerts(user.id, user.schoolId ?? "", {
+      atRiskStudents,
+      interventionRecommendations: classIntelligence?.interventionRecommendations ?? [],
+      weakLessons: classIntelligence?.weakLessons ?? [],
+    }).catch(() => null);
+
+    const teacherAlerts = user.schoolId
+      ? await getActiveTeacherAlerts(user.id, user.schoolId).catch(() => [])
+      : [];
 
     return NextResponse.json({
       scheduledToday: todayWork.length,
@@ -217,12 +241,12 @@ export async function GET() {
           title: (work.content.payload as any)?.title || work.contentId,
           className: work.class.name,
           teacherName: work.class.Teacher?.name ?? "Teacher",
-          durationMinutes:
-            String(work.classFormat ?? "").startsWith("block") ? 90 : 45,
+          durationMinutes: String(work.classFormat ?? "").startsWith("block") ? 90 : 45,
           status: work.isDelivered ? "delivered" : "pending",
           startedCount: progress.started,
           completedCount: progress.completed,
-          averageExitTicketScore: progress.scored > 0 ? Math.round(progress.totalScore / progress.scored) : null,
+          averageExitTicketScore:
+            progress.scored > 0 ? Math.round(progress.totalScore / progress.scored) : null,
         };
       }),
       recentLessons: recentLessons.map((l) => ({
@@ -239,6 +263,7 @@ export async function GET() {
       },
       classPerformance,
       classIntelligence,
+      teacherAlerts,
       schoolCode: school?.code ?? null,
       schoolName: school?.name ?? null,
     });
