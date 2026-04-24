@@ -393,7 +393,7 @@ export default function LoginClient({ showDemoHints, demoGroups, demoDefaults }:
 
         <div className="text-center text-[11px] text-[var(--ll-text-faint)]">
           <Link href="/" className="text-[var(--ll-yellow)] hover:text-[var(--ll-yellow)]">
-            Back to homepage
+            &#8592; Back to LiberiaLearn
           </Link>
         </div>
       </div>

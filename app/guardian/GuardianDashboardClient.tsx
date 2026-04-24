@@ -8,6 +8,7 @@ import { DashboardTopBar } from "@/components/DashboardTopBar";
 import { SkeletonCard } from "@/components/ui/Skeleton";
 import { placementReviewStatusLabels, placementReviewStatusStyles } from "@/lib/placement";
 import { guardianWelcomeStorageKey } from "@/app/guardian/GuardianWelcomeGate";
+import { getGuardianGreeting } from "@/lib/student/greetings";
 
 type GuardianSummary = {
   studentId: string;
@@ -157,12 +158,17 @@ export default function GuardianDashboardClient() {
           userName={selectedDashboardChild?.studentName ? `Viewing: ${selectedDashboardChild.studentName}` : undefined}
         />
 
-        <div>
-          <h1 className="text-2xl font-semibold text-[var(--ll-text)]">Good morning.</h1>
-          <p className="mt-1 text-sm leading-6 text-[var(--ll-text-muted)]">
-            Monitor your child&apos;s learning progress and stay connected with their teacher.
-          </p>
-        </div>
+        {(() => {
+          const greeting = getGuardianGreeting({
+            childName: selectedDashboardChild?.studentName ?? null,
+          });
+          return (
+            <div>
+              <h1 className="text-2xl font-semibold text-[var(--ll-text)]">{greeting.headline}</h1>
+              <p className="mt-1 text-sm leading-6 text-[var(--ll-text-muted)]">{greeting.subtext}</p>
+            </div>
+          );
+        })()}
 
         <GuardianNav />
 

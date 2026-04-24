@@ -41,7 +41,7 @@ export async function GET(
       include: {
         scheduledWork: {
           include: {
-            content: { select: { subject: true, contentType: true, payload: true } },
+            content: { select: { id: true, subject: true, contentType: true, payload: true } },
           },
         },
       },
@@ -50,13 +50,16 @@ export async function GET(
 
     const records = progress.map((p) => {
       const payload = p.scheduledWork.content.payload as any;
+      const contentId = p.scheduledWork.content.id;
       return {
         id: p.id,
+        contentId,
         title: payload?.title || payload?.topic || `${p.scheduledWork.content.subject} Lesson`,
         subject: p.scheduledWork.content.subject,
         completedAt: p.completedAt,
         startedAt: p.startedAt,
         scheduledDate: p.scheduledWork.scheduledDate,
+        quizScore: null as number | null,
       };
     });
 
