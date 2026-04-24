@@ -3,6 +3,7 @@ import { requireRole } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { buildTeacherClassPerformance } from "@/lib/reporting/teacherClassPerformance";
 import { isAdaptiveEngineEnabled } from "@/lib/serverFlags";
+import { buildClassIntelligence } from "@/lib/student/adaptiveRecommendations";
 
 export const dynamic = "force-dynamic";
 
@@ -31,6 +32,9 @@ export async function GET() {
       user.role === "TEACHER" && user.schoolId
         ? await buildTeacherClassPerformance(user.id, user.schoolId)
         : [];
+    const classIntelligence = user.schoolId
+      ? await buildClassIntelligence(classIds, user.schoolId).catch(() => null)
+      : null;
     const adaptiveAttempts = isAdaptiveEngineEnabled()
       ? await (prisma as any).studentAdaptiveAttempt.findMany({
           where: {
@@ -234,6 +238,7 @@ export async function GET() {
         topWeakStrands,
       },
       classPerformance,
+      classIntelligence,
       schoolCode: school?.code ?? null,
       schoolName: school?.name ?? null,
     });

@@ -187,6 +187,49 @@ export async function closeInterventionChain(input: {
   return chain;
 }
 
+// Automatically open an intervention chain when mastery signals cross critical thresholds.
+// Idempotent: skips creation if an open chain for this student already exists from the same source.
+export async function autoTriggerIntervention(input: {
+  studentId: string;
+  schoolId: string | null;
+  subject: string;
+  triggerType: "persistent_low_score" | "critical_mastery" | "stale_incomplete";
+  masteryPercent: number;
+  sourceAssessmentAttemptId?: string | null;
+  metadata?: JsonObject | null;
+}): Promise<{ created: boolean; chainId: string | null }> {
+  const source = `adaptive.auto.${input.triggerType}`;
+
+  const existing = await prisma.interventionChain.findFirst({
+    where: {
+      studentId: input.studentId,
+      schoolId: input.schoolId ?? undefined,
+      status: "open",
+      attributionSource: source,
+    },
+    select: { id: true },
+  });
+
+  if (existing) return { created: false, chainId: existing.id };
+
+  const rationale = {
+    persistent_low_score: `Adaptive engine detected ${input.masteryPercent}% mastery in ${input.subject} with 3+ consecutive low-score attempts.`,
+    critical_mastery: `Adaptive engine detected critical mastery (${input.masteryPercent}%) in ${input.subject} — below 40%.`,
+    stale_incomplete: `Adaptive engine detected a lesson in ${input.subject} started more than 2 days ago but not completed.`,
+  }[input.triggerType];
+
+  const chain = await openInterventionChain({
+    studentId: input.studentId,
+    schoolId: input.schoolId,
+    attributionSource: source,
+    rationale,
+    sourceAssessmentAttemptId: input.sourceAssessmentAttemptId ?? null,
+    metadata: { subject: input.subject, masteryPercent: input.masteryPercent, ...input.metadata },
+  });
+
+  return { created: true, chainId: chain.id };
+}
+
 export async function listOpenInterventionChains(filter: {
   schoolId?: string | null;
   studentId?: string | null;
