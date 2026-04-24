@@ -3,6 +3,7 @@ import { requireRole } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { getLessonLabLinks } from "@/lib/lessons/labLinks";
 import { buildStudentLearningIntelligence } from "@/lib/student/learningIntelligence";
+import { getAdaptiveRecommendations } from "@/lib/student/adaptiveRecommendations";
 
 export const dynamic = "force-dynamic";
 
@@ -46,7 +47,7 @@ export async function GET() {
     const startOfDay = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()));
     const endOfDay = new Date(startOfDay.getTime() + 86400000);
 
-    const [scheduledWork, intelligence] = await Promise.all([
+    const [scheduledWork, intelligence, adaptiveResult] = await Promise.all([
       prisma.scheduledWork.findMany({
         where: {
           classId: { in: classIds },
@@ -74,6 +75,11 @@ export async function GET() {
         masteryBySubject: [],
         weaknesses: [],
         recommendedNextActions: [],
+      })),
+      getAdaptiveRecommendations(student.id, user.schoolId, user.id).catch(() => ({
+        recommendation: null,
+        masteryAlerts: [],
+        contentGap: false,
       })),
     ]);
 
@@ -143,6 +149,20 @@ export async function GET() {
       remainingCount: items.filter((item) => item.status !== "completed").length,
       currentItemId: current?.id ?? null,
       nextItemId: next?.id ?? null,
+      priority: adaptiveResult.recommendation?.type ?? null,
+      recommendation: adaptiveResult.recommendation
+        ? {
+            type: adaptiveResult.recommendation.type,
+            lessonId: adaptiveResult.recommendation.lessonId,
+            scheduledWorkId: adaptiveResult.recommendation.scheduledWorkId,
+            reason: adaptiveResult.recommendation.reason,
+            sourceSignal: adaptiveResult.recommendation.sourceSignal,
+            masteryPercent: adaptiveResult.recommendation.masteryPercent,
+            confidenceTier: adaptiveResult.recommendation.confidenceTier,
+          }
+        : null,
+      masteryAlerts: adaptiveResult.masteryAlerts,
+      contentGap: adaptiveResult.contentGap,
       adaptivePlan: {
         generatedAt: intelligence.generatedAt,
         smartContinueHref: smartContinue?.href ?? "/student/lessons",
