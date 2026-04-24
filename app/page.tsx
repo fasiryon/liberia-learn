@@ -106,7 +106,7 @@ export default function HomePage() {
       </header>
 
       <section className="ll-shell pb-10 pt-14 sm:pb-12 sm:pt-20">
-        <div className="grid items-end gap-10 lg:grid-cols-[minmax(0,1.1fr)_minmax(320px,0.7fr)]">
+        <div className="grid items-center gap-10 lg:grid-cols-[minmax(0,1.1fr)_minmax(320px,0.7fr)]">
           <div className="space-y-7">
           <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[var(--ll-accent)]">
             National learning platform

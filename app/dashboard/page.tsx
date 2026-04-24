@@ -21,6 +21,8 @@ import {
   placementReviewStatusLabels,
   placementReviewStatusStyles,
 } from "@/lib/placement";
+import { getStudentGreeting } from "@/lib/student/greetings";
+import { AchievementBadge } from "@/components/student/AchievementBadge";
 
 export const dynamic = "force-dynamic";
 
@@ -134,13 +136,16 @@ export default async function DashboardPage() {
   const teacherName = firstEnrollment?.Class?.Teacher?.name || "Teacher";
 
   const grades = student.grades || [];
-  const avgGrade =
+  const avgGradeNum =
     grades.length > 0
-      ? (
-          grades.reduce((sum: number, g: any) => sum + g.percent, 0) /
-          grades.length
-        ).toFixed(1)
-      : "72.0";
+      ? grades.reduce((sum: number, g: any) => sum + g.percent, 0) / grades.length
+      : 72.0;
+  const avgGrade = avgGradeNum.toFixed(1);
+
+  const greeting = getStudentGreeting({
+    studentName: student.user?.name?.split(" ")[0] || "Student",
+    avgGrade: avgGradeNum,
+  });
 
   const lessonsThisWeek = grades.length;
   const attendancePercent = "96";
@@ -242,13 +247,15 @@ export default async function DashboardPage() {
             <section className="flex flex-1 flex-col gap-4 rounded-xl border border-[var(--ll-border)] bg-[var(--ll-surface)] p-4 shadow-none">
               {/* Greeting */}
               <div>
-                <p className="text-xs uppercase tracking-[0.1em] text-[var(--ll-text-faint)]">
+                <AchievementBadge avgGrade={avgGradeNum} />
+                <p className="mt-2 text-xs uppercase tracking-[0.1em] text-[var(--ll-text-faint)]">
                   {new Date().toLocaleDateString("en-LR", { weekday: "long", month: "long", day: "numeric" })}
                 </p>
                 <h1 className="mt-1 text-2xl font-semibold text-[var(--ll-text)]">
-                  Good morning, <span className="text-[var(--ll-accent)]">{studentName}</span>. Ready to learn?
+                  {greeting.headline}
                 </h1>
-                <p className="mt-1 text-sm text-[var(--ll-text-muted)]">Placement: {placementGradeLabel} Â· {school}</p>
+                <p className="mt-0.5 text-sm text-[var(--ll-text-muted)]">{greeting.subtext}</p>
+                <p className="mt-1 text-sm text-[var(--ll-text-muted)]">Placement: {placementGradeLabel} · {school}</p>
               </div>
 
               {/* KPI Cards */}
