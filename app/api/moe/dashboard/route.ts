@@ -19,6 +19,7 @@ import { logDataAccess } from "@/lib/dataAccess/logDataAccess";
 import { getMultimediaAnalytics } from "@/lib/analytics/multimediaAnalytics";
 import { buildMoeDecisionIntelligence } from "@/lib/analytics/decisionSupport";
 import { buildMoeCurriculumIntelligence } from "@/lib/student/adaptiveRecommendations";
+import { generateCurriculumFlags, getCurriculumFlagSummary } from "@/lib/intelligence/curriculumFlags";
 
 export const dynamic = "force-dynamic";
 
@@ -312,7 +313,18 @@ async function dashboardGET() {
       metadata: { scope: "national" },
     }).catch(() => {});
 
-    return NextResponse.json(aggregate);
+    // Curriculum flags — live, not cached (generated from curriculum intelligence)
+    const ci = (aggregate as any).curriculumIntelligence;
+    if (ci) {
+      generateCurriculumFlags(
+        ci.weakLessons ?? [],
+        ci.conceptGaps ?? [],
+        null
+      ).catch(() => null);
+    }
+    const curriculumFlagSummary = await getCurriculumFlagSummary(null).catch(() => null);
+
+    return NextResponse.json({ ...aggregate, curriculumFlagSummary });
   } catch (err: unknown) {
     return handleApiError(err);
   }
