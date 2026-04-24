@@ -128,6 +128,12 @@ export default function MoeLoginClient() {
             <br />
             Contact your administrator if you do not have access.
           </div>
+
+          <div className="text-center">
+            <a href="/" className="text-xs text-[var(--ll-silver)] hover:opacity-80">
+              &#8592; Back to LiberiaLearn
+            </a>
+          </div>
         </div>
       </div>
       <PublicFooter />

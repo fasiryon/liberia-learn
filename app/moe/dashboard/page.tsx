@@ -6,6 +6,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Card, StatCard } from "@/components/ui/Card";
 import { DashboardTopBar } from "@/components/DashboardTopBar";
 import { SkeletonCard } from "@/components/ui/Skeleton";
+import { getMoeGreeting } from "@/lib/student/greetings";
 
 type DashboardData = {
   schools: number;
@@ -266,12 +267,15 @@ export default function MoeDashboardPage() {
           subtitle="National Overview — LiberiaLearn"
         />
 
-        <div>
-          <h1 className="text-2xl font-semibold text-[var(--ll-text)]">Good morning. National overview.</h1>
-          <p className="mt-1 text-sm leading-6 text-[var(--ll-text-muted)]">
-            Aggregated indicators across all districts. No student-level data.
-          </p>
-        </div>
+        {(() => {
+          const greeting = getMoeGreeting();
+          return (
+            <div>
+              <h1 className="text-2xl font-semibold text-[var(--ll-text)]">{greeting.headline}</h1>
+              <p className="mt-1 text-sm leading-6 text-[var(--ll-text-muted)]">{greeting.subtext}</p>
+            </div>
+          );
+        })()}
 
         <div className="space-y-5">
           {error && (

@@ -2,10 +2,11 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { ChevronRight } from "lucide-react";
+import { ChevronRight, Users, ClipboardCheck, CalendarDays, BarChart3 } from "lucide-react";
 import { teacherWelcomeStorageKey } from "@/app/teacher/TeacherWelcomeGate";
 import { DashboardTopBar } from "@/components/DashboardTopBar";
 import { SkeletonCard } from "@/components/ui/Skeleton";
+import { getTeacherGreeting } from "@/lib/student/greetings";
 
 type DashboardData = {
   scheduledToday: number;
@@ -170,12 +171,19 @@ export default function TeacherDashboardPage() {
           subtitle={data?.schoolCode ? `Code: ${data.schoolCode}` : undefined}
         />
 
-        <div>
-          <h1 className="text-2xl font-semibold text-[var(--ll-text)]">Good morning.</h1>
-          <p className="mt-1 text-sm leading-6 text-[var(--ll-text-muted)]">
-            {new Date().toLocaleDateString("en-LR", { weekday: "long", month: "long", day: "numeric" })}
-          </p>
-        </div>
+        {(() => {
+          const greeting = getTeacherGreeting({
+            teacherName: data?.schoolName ?? undefined,
+            atRiskCount,
+            lessonsScheduledToday: data?.scheduledToday,
+          });
+          return (
+            <div>
+              <h1 className="text-2xl font-semibold text-[var(--ll-text)]">{greeting.headline}</h1>
+              <p className="mt-1 text-sm leading-6 text-[var(--ll-text-muted)]">{greeting.subtext}</p>
+            </div>
+          );
+        })()}
 
         {loading ? (
           <div className="space-y-3">{[1, 2, 3].map((i) => <SkeletonCard key={i} />)}</div>
@@ -195,7 +203,13 @@ export default function TeacherDashboardPage() {
                 <div className="grid gap-3 sm:grid-cols-2">
                   {atRiskCount > 0 && (
                     <Link href="/teacher/students" className="ll-command ll-focus justify-between">
-                      <span className="text-sm font-semibold text-[var(--ll-text)]">At-risk students</span>
+                      <span className="flex items-center gap-2 text-sm font-semibold text-[var(--ll-text)]">
+                        <span className="relative flex h-2 w-2">
+                          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-orange-400 opacity-75" />
+                          <span className="relative inline-flex h-2 w-2 rounded-full bg-orange-500" />
+                        </span>
+                        At-risk students
+                      </span>
                       <span className="text-sm font-semibold text-[var(--ll-warning)]">{atRiskCount}</span>
                     </Link>
                   )}
@@ -211,19 +225,19 @@ export default function TeacherDashboardPage() {
 
             {/* KPI cards */}
             <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
-              <div className="ll-kpi">
+              <div className="ll-kpi border-t-2 border-t-[var(--ll-yellow)]/30">
                 <p className="text-2xl font-semibold text-[var(--ll-text)]">{data?.scheduledToday || 0}</p>
                 <p className="text-xs text-[var(--ll-text-faint)]">Lessons today</p>
               </div>
-              <div className="ll-kpi">
+              <div className="ll-kpi border-t-2 border-t-[var(--ll-accent)]/30">
                 <p className={`text-2xl font-semibold ${(data?.completionRateToday || 0) === 0 ? "text-[var(--ll-text-faint)]" : "text-[var(--ll-accent)]"}`}>{data?.completionRateToday || 0}%</p>
                 <p className="text-xs text-[var(--ll-text-faint)]">Completion rate</p>
               </div>
-              <div className="ll-kpi">
+              <div className="ll-kpi border-t-2 border-t-[var(--ll-warning)]/30">
                 <p className={`text-2xl font-semibold ${(data?.assignmentsPendingGrading || 0) === 0 ? "text-[var(--ll-text-faint)]" : "text-[var(--ll-warning)]"}`}>{data?.assignmentsPendingGrading || 0}</p>
                 <p className="text-xs text-[var(--ll-text-faint)]">Pending grading</p>
               </div>
-              <div className="ll-kpi">
+              <div className="ll-kpi border-t-2 border-t-[var(--ll-warning)]/20">
                 <p className={`text-2xl font-semibold ${(data?.labsPendingReview || 0) === 0 ? "text-[var(--ll-text-faint)]" : "text-[var(--ll-warning)]"}`}>{data?.labsPendingReview || 0}</p>
                 <p className="text-xs text-[var(--ll-text-faint)]">Labs to review</p>
               </div>
@@ -232,16 +246,20 @@ export default function TeacherDashboardPage() {
             {/* Primary Actions */}
             <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
               <Link href="/teacher/students" className="ll-command ll-focus flex-col items-start">
-                <p className="text-sm font-semibold text-[var(--ll-text)]">View my classes</p>
+                <Users className="h-4 w-4 text-[var(--ll-text-faint)]" strokeWidth={1.5} />
+                <p className="mt-1 text-sm font-semibold text-[var(--ll-text)]">View my classes</p>
               </Link>
               <Link href="/teacher/assignments" className="ll-command ll-focus flex-col items-start">
-                <p className="text-sm font-semibold text-[var(--ll-text)]">Grade assignments</p>
+                <ClipboardCheck className="h-4 w-4 text-[var(--ll-text-faint)]" strokeWidth={1.5} />
+                <p className="mt-1 text-sm font-semibold text-[var(--ll-text)]">Grade assignments</p>
               </Link>
               <Link href="/teacher/schedule" className="ll-command ll-focus flex-col items-start">
-                <p className="text-sm font-semibold text-[var(--ll-text)]">Lesson planner</p>
+                <CalendarDays className="h-4 w-4 text-[var(--ll-text-faint)]" strokeWidth={1.5} />
+                <p className="mt-1 text-sm font-semibold text-[var(--ll-text)]">Lesson planner</p>
               </Link>
               <Link href="/teacher/weekly-report" className="ll-command ll-focus flex-col items-start">
-                <p className="text-sm font-semibold text-[var(--ll-text)]">Weekly report</p>
+                <BarChart3 className="h-4 w-4 text-[var(--ll-text-faint)]" strokeWidth={1.5} />
+                <p className="mt-1 text-sm font-semibold text-[var(--ll-text)]">Weekly report</p>
               </Link>
             </div>
 
