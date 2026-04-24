@@ -134,8 +134,8 @@ export default function LessonViewerPage() {
     <main className="min-h-screen bg-[var(--ll-bg)] px-4 py-8">
       <div className="mx-auto max-w-3xl space-y-6">
         {/* Back */}
-        <Link href="/dashboard" className="inline-block text-sm text-[var(--ll-yellow)] hover:text-[var(--ll-yellow)]">
-          &larr; Back to Dashboard
+        <Link href="/student/today" className="inline-block text-sm text-[var(--ll-yellow)] hover:text-[var(--ll-yellow)]">
+          &larr; Back to today
         </Link>
 
         {/* Offline cache indicator */}

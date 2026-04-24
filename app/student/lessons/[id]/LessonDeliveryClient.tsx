@@ -719,6 +719,12 @@ export default function LessonDeliveryClient({ lessonId }: { lessonId: string })
 
   return (
     <div className="space-y-6 pb-28">
+        <a
+          href="/student/today"
+          className="inline-flex items-center gap-1 text-sm text-[var(--ll-yellow)] hover:opacity-80"
+        >
+          &#8592; Back to today
+        </a>
         <section ref={registerSection("overview")} data-section-id="overview" className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/80 p-5 sm:p-7">
           <div className="flex flex-wrap items-center gap-3 text-xs text-[var(--ll-text)]">
             <span className="rounded-full bg-[var(--ll-yellow)]/15 px-3 py-1 font-semibold text-[var(--ll-yellow)]">{lesson.subject}</span>
