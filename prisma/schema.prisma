@@ -1791,20 +1791,77 @@ model TeacherAction {
 }
 
 model InterventionRecommendation {
-  id                 String   @id @default(cuid())
+  id                 String    @id @default(cuid())
   studentId          String
   lessonId           String?
   recommendationType String
   reason             String
   confidenceScore    Float
-  status             String   @default("pending")
+  status             String    @default("pending")
   expiresAt          DateTime?
   schoolId           String
-  createdAt          DateTime @default(now())
-  student            Student  @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @default(now()) @updatedAt
+  // Phase 5.3 action lifecycle fields
+  idempotencyKey     String?   @unique
+  severity           String    @default("medium")
+  sourceSignal       String?
+  targetType         String?
+  targetId           String?
+  resolvedAt         DateTime?
+  resolvedBy         String?
+  dismissedAt        DateTime?
+  dismissReason      String?
+  student            Student   @relation(fields: [studentId], references: [id], onDelete: Cascade)
 
   @@index([studentId, createdAt])
   @@index([schoolId, status])
+}
+
+model TeacherAlert {
+  id                String    @id @default(cuid())
+  teacherUserId     String
+  schoolId          String
+  studentId         String?
+  alertType         String
+  severity          String    @default("medium")
+  reason            String
+  weakConcept       String?
+  weakLesson        String?
+  recommendedAction String?
+  idempotencyKey    String?   @unique
+  status            String    @default("ACTIVE")
+  reviewedAt        DateTime?
+  reviewedByUserId  String?
+  dismissedAt       DateTime?
+  dismissReason     String?
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  @@index([teacherUserId, status])
+  @@index([schoolId, status])
+}
+
+model CurriculumFlag {
+  id               String    @id @default(cuid())
+  lessonId         String?
+  schoolId         String?
+  flagType         String    @default("FLAG_CURRICULUM_REVIEW")
+  sourceSignal     String
+  severity         String    @default("medium")
+  status           String    @default("ACTIVE")
+  idempotencyKey   String    @unique
+  avgScore         Float?
+  retryRate        Float?
+  schoolCount      Int       @default(1)
+  details          Json?
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+  resolvedAt       DateTime?
+  resolvedByUserId String?
+
+  @@index([lessonId, status])
+  @@index([status])
 }
 
 /// / ===== Scheduled Work (Today's Work) =====
