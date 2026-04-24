@@ -4,6 +4,7 @@ import { prisma } from "@/lib/db";
 import { getLessonLabLinks } from "@/lib/lessons/labLinks";
 import { buildStudentLearningIntelligence } from "@/lib/student/learningIntelligence";
 import { getAdaptiveRecommendations } from "@/lib/student/adaptiveRecommendations";
+import { generateStudentActions, getActiveStudentAction } from "@/lib/intelligence/actionEngine";
 
 export const dynamic = "force-dynamic";
 
@@ -82,6 +83,16 @@ export async function GET() {
         contentGap: false,
       })),
     ]);
+
+    // Fire-and-forget: persist adaptive signals as trackable actions
+    generateStudentActions(student.id, user.schoolId ?? "", {
+      recommendation: adaptiveResult.recommendation,
+      masteryAlerts: adaptiveResult.masteryAlerts,
+      contentGap: adaptiveResult.contentGap,
+      grade: adaptiveResult.recommendation?.grade ?? null,
+    }).catch(() => null);
+
+    const activeAction = await getActiveStudentAction(student.id).catch(() => null);
 
     const items = scheduledWork.map((sw, index) => {
       const payload = sw.content.payload as any;
@@ -163,6 +174,16 @@ export async function GET() {
         : null,
       masteryAlerts: adaptiveResult.masteryAlerts,
       contentGap: adaptiveResult.contentGap,
+      activeAction: activeAction
+        ? {
+            id: activeAction.id,
+            actionType: activeAction.actionType,
+            reason: activeAction.reason,
+            severity: activeAction.severity,
+            href: activeAction.href,
+            sourceSignal: activeAction.sourceSignal,
+          }
+        : null,
       adaptivePlan: {
         generatedAt: intelligence.generatedAt,
         smartContinueHref: smartContinue?.href ?? "/student/lessons",

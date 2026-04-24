@@ -81,6 +81,18 @@ type DashboardData = {
   classesWithoutLesson: string[];
   schoolCode: string | null;
   schoolName: string | null;
+  teacherAlerts?: Array<{
+    id: string;
+    alertType: string;
+    severity: string;
+    reason: string;
+    studentId: string | null;
+    weakConcept: string | null;
+    weakLesson: string | null;
+    recommendedAction: string | null;
+    studentHref: string | null;
+    createdAt: string;
+  }>;
 };
 
 export default function TeacherDashboardPage() {
@@ -159,6 +171,27 @@ export default function TeacherDashboardPage() {
   const atRiskCount =
     data?.classPerformance.reduce((total, cls) => total + cls.atRiskStudents.length, 0) ?? 0;
   const pendingGradingCount = data?.assignmentsPendingGrading ?? 0;
+  const [dismissedAlerts, setDismissedAlerts] = useState<Set<string>>(new Set());
+
+  async function handleDismissAlert(alertId: string) {
+    setDismissedAlerts((prev) => new Set([...prev, alertId]));
+    await fetch("/api/teacher/alerts", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ alertId, action: "dismissed" }),
+    }).catch(() => null);
+  }
+
+  async function handleMarkReviewed(alertId: string) {
+    setDismissedAlerts((prev) => new Set([...prev, alertId]));
+    await fetch("/api/teacher/alerts", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ alertId, action: "reviewed" }),
+    }).catch(() => null);
+  }
+
+  const visibleAlerts = (data?.teacherAlerts ?? []).filter((a) => !dismissedAlerts.has(a.id));
 
   return (
     <div className="ll-dashboard-shell px-4 py-5">
@@ -193,6 +226,70 @@ export default function TeacherDashboardPage() {
               <div className="ll-notice ll-notice-warning">
                 {data.classesWithoutLesson.length} class(es) have no lesson scheduled for today: {data.classesWithoutLesson.join(", ")}
               </div>
+            )}
+
+            {visibleAlerts.length > 0 && (
+              <section
+                data-testid="immediate-attention-panel"
+                className="rounded-xl border border-orange-500/30 bg-orange-500/8 p-4"
+              >
+                <p className="mb-3 text-[11px] font-semibold uppercase tracking-[0.14em] text-orange-400">
+                  Immediate Attention — {visibleAlerts.length} alert{visibleAlerts.length !== 1 ? "s" : ""}
+                </p>
+                <div className="space-y-3">
+                  {visibleAlerts.slice(0, 8).map((alert) => (
+                    <div
+                      key={alert.id}
+                      className="flex flex-col gap-2 rounded-lg border border-[var(--ll-border)] bg-[var(--ll-surface)] p-3 sm:flex-row sm:items-start sm:justify-between"
+                    >
+                      <div className="min-w-0 flex-1">
+                        <div className="flex flex-wrap items-center gap-2">
+                          <span
+                            className={`rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase ${
+                              alert.severity === "high" || alert.severity === "critical"
+                                ? "bg-red-500/15 text-red-300"
+                                : "bg-orange-500/15 text-orange-300"
+                            }`}
+                          >
+                            {alert.severity}
+                          </span>
+                          <span className="text-xs font-medium text-[var(--ll-text-muted)]">
+                            {alert.alertType.replace(/_/g, " ")}
+                          </span>
+                        </div>
+                        <p className="mt-1.5 text-sm text-[var(--ll-text)]">{alert.reason}</p>
+                        {alert.recommendedAction && (
+                          <p className="mt-1 text-xs text-[var(--ll-text-muted)]">
+                            → {alert.recommendedAction}
+                          </p>
+                        )}
+                      </div>
+                      <div className="flex shrink-0 gap-2">
+                        {alert.studentHref && (
+                          <Link
+                            href={alert.studentHref}
+                            className="rounded-md border border-[var(--ll-border)] px-2.5 py-1 text-xs font-medium text-[var(--ll-text)] hover:border-[var(--ll-border-strong)]"
+                          >
+                            View student
+                          </Link>
+                        )}
+                        <button
+                          onClick={() => handleMarkReviewed(alert.id)}
+                          className="rounded-md border border-[var(--ll-border)] px-2.5 py-1 text-xs font-medium text-[var(--ll-text-muted)] hover:border-[var(--ll-border-strong)]"
+                        >
+                          Reviewed
+                        </button>
+                        <button
+                          onClick={() => handleDismissAlert(alert.id)}
+                          className="rounded-md px-2.5 py-1 text-xs text-[var(--ll-text-faint)] hover:text-[var(--ll-text-muted)]"
+                        >
+                          Dismiss
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </section>
             )}
 
             {(atRiskCount > 0 || pendingGradingCount > 0) && (

@@ -23,6 +23,15 @@ type WorkItem = {
   lab: { labId: string; label: string; href: string } | null;
 };
 
+type ActiveAction = {
+  id: string;
+  actionType: string;
+  reason: string;
+  severity: "low" | "medium" | "high" | "critical";
+  href: string;
+  sourceSignal: string | null;
+};
+
 type TodayResponse = {
   items: WorkItem[];
   subjects: string[];
@@ -31,6 +40,7 @@ type TodayResponse = {
   currentItemId: string | null;
   nextItemId: string | null;
   contentGap?: boolean;
+  activeAction?: ActiveAction | null;
   adaptivePlan?: {
     generatedAt: string;
     smartContinueHref: string;
@@ -68,6 +78,7 @@ export default function StudentTodayPage() {
   const [nextItemId, setNextItemId] = useState<string | null>(null);
   const [adaptivePlan, setAdaptivePlan] = useState<TodayResponse["adaptivePlan"] | null>(null);
   const [contentGap, setContentGap] = useState(false);
+  const [activeAction, setActiveAction] = useState<ActiveAction | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -82,6 +93,7 @@ export default function StudentTodayPage() {
         setNextItemId(d.nextItemId ?? null);
         setAdaptivePlan(d.adaptivePlan ?? null);
         setContentGap(d.contentGap ?? false);
+        setActiveAction(d.activeAction ?? null);
       })
       .finally(() => setLoading(false));
   }, []);
@@ -94,6 +106,65 @@ export default function StudentTodayPage() {
     const period = item.periodNumber ? `Period ${item.periodNumber}` : `Lesson ${item.order}`;
     const time = item.startTime && item.endTime ? `, ${item.startTime}-${item.endTime}` : "";
     return `${period}${time}`;
+  }
+
+  const ACTION_SEVERITY_STYLE: Record<string, { border: string; bg: string; badge: string; dot: string }> = {
+    critical: {
+      border: "border-red-500/50",
+      bg: "bg-red-500/10",
+      badge: "bg-red-500/20 text-red-300",
+      dot: "bg-red-400",
+    },
+    high: {
+      border: "border-orange-500/50",
+      bg: "bg-orange-500/10",
+      badge: "bg-orange-500/20 text-orange-300",
+      dot: "bg-orange-400",
+    },
+    medium: {
+      border: "border-[var(--ll-warning)]/40",
+      bg: "bg-[var(--ll-warning)]/8",
+      badge: "bg-[var(--ll-warning)]/20 text-[var(--ll-warning)]",
+      dot: "bg-[var(--ll-warning)]",
+    },
+    low: {
+      border: "border-[var(--ll-accent)]/35",
+      bg: "bg-[var(--ll-accent-soft)]",
+      badge: "bg-[var(--ll-accent)]/20 text-[var(--ll-accent)]",
+      dot: "bg-[var(--ll-accent)]",
+    },
+  };
+
+  const ACTION_LABEL: Record<string, string> = {
+    ASSIGN_REVIEW_LESSON: "Review Required",
+    ASSIGN_PRACTICE: "Practice Required",
+    RECOMMEND_TEACHER_SUPPORT: "Teacher Support Needed",
+    CONTENT_GAP_NOTICE: "Curriculum Gap",
+  };
+
+  function ActiveActionCard({ action }: { action: ActiveAction }) {
+    const style = ACTION_SEVERITY_STYLE[action.severity] ?? ACTION_SEVERITY_STYLE.medium;
+    const label = ACTION_LABEL[action.actionType] ?? "Required Action";
+    return (
+      <section
+        data-testid="active-action-card"
+        className={`rounded-xl border ${style.border} ${style.bg} p-5 sm:p-6`}
+      >
+        <div className="flex items-center gap-2">
+          <span className={`inline-block h-2 w-2 rounded-full ${style.dot}`} />
+          <p className={`rounded-full px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider ${style.badge}`}>
+            {label}
+          </p>
+        </div>
+        <p className="mt-3 text-sm leading-6 text-[var(--ll-text)]">{action.reason}</p>
+        <Link
+          href={action.href}
+          className="ll-touch-target mt-4 inline-flex items-center justify-center rounded-lg bg-[var(--ll-accent)] px-4 py-2.5 text-sm font-semibold text-[var(--ll-text-faint)]"
+        >
+          Act Now
+        </Link>
+      </section>
+    );
   }
 
   function LessonActions({ item }: { item: WorkItem }) {
@@ -149,6 +220,10 @@ export default function StudentTodayPage() {
             </div>
           ) : null}
         </div>
+
+        {activeAction && !loading && (
+          <ActiveActionCard action={activeAction} />
+        )}
 
         {contentGap && !loading && (
           <div className="rounded-xl border border-amber-500/40 bg-amber-500/10 px-4 py-3 text-sm text-amber-300">
