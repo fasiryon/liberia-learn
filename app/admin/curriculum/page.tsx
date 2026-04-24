@@ -21,6 +21,26 @@ type CurriculumItem = {
   createdAt: string;
 };
 
+type GradeStat = {
+  grade: number;
+  approved: number;
+  pipeline: number;
+  total: number;
+  severity: "critical" | "severe" | "adequate";
+};
+
+type SubjectStat = {
+  subject: string;
+  approved: number;
+  pipeline: number;
+};
+
+const SEVERITY_STYLE: Record<GradeStat["severity"], string> = {
+  critical: "border-red-500/40 bg-red-500/10 text-red-300",
+  severe: "border-amber-500/40 bg-amber-500/10 text-amber-300",
+  adequate: "border-emerald-500/30 bg-emerald-500/10 text-emerald-300",
+};
+
 function statusBadge(status: string, payloadStatus?: string) {
   const s = payloadStatus || status;
   if (s === "published" || s === "APPROVED")
@@ -63,6 +83,19 @@ export default function AdminCurriculumPage() {
   const [upgrading, setUpgrading] = useState<string | null>(null);
   const [upgradeMessage, setUpgradeMessage] = useState<string | null>(null);
 
+  // Coverage panel
+  const [gradeStats, setGradeStats] = useState<GradeStat[]>([]);
+  const [subjectStats, setSubjectStats] = useState<SubjectStat[]>([]);
+  const [loadingCoverage, setLoadingCoverage] = useState(true);
+
+  // Bulk approval
+  const [bulkGrade, setBulkGrade] = useState<number | "">("");
+  const [bulkSubject, setBulkSubject] = useState("");
+  const [bulkPreview, setBulkPreview] = useState<CurriculumItem[]>([]);
+  const [bulkPreviewing, setBulkPreviewing] = useState(false);
+  const [bulkApproving, setBulkApproving] = useState(false);
+  const [bulkMessage, setBulkMessage] = useState<string | null>(null);
+
   async function loadItems() {
     setLoadingItems(true);
     try {
@@ -77,7 +110,77 @@ export default function AdminCurriculumPage() {
     }
   }
 
-  useEffect(() => { loadItems(); }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  async function loadCoverage() {
+    setLoadingCoverage(true);
+    try {
+      const res = await fetch("/api/admin/curriculum/coverage", { cache: "no-store" });
+      if (!res.ok) return;
+      const data = await res.json();
+      setGradeStats(data.gradeStats ?? []);
+      setSubjectStats(data.subjectStats ?? []);
+    } catch {
+      // ignore
+    } finally {
+      setLoadingCoverage(false);
+    }
+  }
+
+  useEffect(() => { loadItems(); loadCoverage(); }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  async function handleBulkPreview() {
+    setBulkPreviewing(true);
+    setBulkMessage(null);
+    setBulkPreview([]);
+    try {
+      const params = new URLSearchParams({ limit: "50", status: "pending_approval" });
+      if (bulkGrade !== "") params.set("grade", String(bulkGrade));
+      if (bulkSubject) params.set("subject", bulkSubject);
+      const res = await fetch(`/api/curriculum?${params}`, { cache: "no-store" });
+      const data = await res.json();
+      const pending = (data.items ?? []).filter(
+        (item: CurriculumItem) =>
+          item.status === "pending_approval" ||
+          item.payload?.approvalStatus === "PENDING_APPROVAL"
+      );
+      setBulkPreview(pending);
+    } catch {
+      setBulkMessage("Failed to load preview.");
+    } finally {
+      setBulkPreviewing(false);
+    }
+  }
+
+  async function handleBulkApprove() {
+    if (bulkPreview.length === 0) return;
+    const confirmed = window.confirm(
+      `Approve ${bulkPreview.length} lesson(s)? This cannot be undone without manual intervention.`
+    );
+    if (!confirmed) return;
+    setBulkApproving(true);
+    setBulkMessage(null);
+    let approved = 0;
+    let failed = 0;
+    for (const item of bulkPreview) {
+      try {
+        const res = await fetch("/api/admin/curriculum/approve", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ contentId: item.contentId }),
+        });
+        if (res.ok) {
+          approved += 1;
+        } else {
+          failed += 1;
+        }
+      } catch {
+        failed += 1;
+      }
+    }
+    setBulkMessage(`Approved ${approved} lesson(s).${failed > 0 ? ` ${failed} failed.` : ""}`);
+    setBulkPreview([]);
+    await Promise.all([loadItems(), loadCoverage()]);
+    setBulkApproving(false);
+  }
 
   async function handleGenerate(e: React.FormEvent) {
     e.preventDefault();
@@ -285,6 +388,149 @@ export default function AdminCurriculumPage() {
             <p className="mt-2 text-xs text-[var(--ll-text-muted)]">{upgradeMessage}</p>
           ) : null}
         </div>
+
+        {/* ── Coverage Panel ── */}
+        <section className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 p-6 space-y-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <h2 className="text-lg font-semibold">Coverage Dashboard</h2>
+              <p className="mt-1 text-sm text-[var(--ll-text-muted)]">
+                Approved lessons per grade and subject. Critical &lt; 5, Severe 5–10, Adequate &gt; 10.
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={loadCoverage}
+              className="text-xs text-[var(--ll-yellow)] hover:opacity-80"
+            >
+              Refresh
+            </button>
+          </div>
+
+          {loadingCoverage ? (
+            <p className="text-sm text-[var(--ll-text-muted)]">Loading coverage data…</p>
+          ) : (
+            <>
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[var(--ll-text-faint)] mb-2">
+                  By Grade (approved / pipeline)
+                </p>
+                <div className="grid gap-2 sm:grid-cols-4 lg:grid-cols-6">
+                  {gradeStats.map((gs) => (
+                    <div
+                      key={gs.grade}
+                      className={`rounded-lg border px-3 py-2 text-center text-xs ${SEVERITY_STYLE[gs.severity]}`}
+                    >
+                      <p className="font-semibold">G{gs.grade}</p>
+                      <p className="mt-0.5">{gs.approved} approved</p>
+                      {gs.pipeline > 0 && (
+                        <p className="text-[10px] opacity-75">+{gs.pipeline} pipeline</p>
+                      )}
+                      <p className="mt-0.5 capitalize opacity-70">{gs.severity}</p>
+                    </div>
+                  ))}
+                  {gradeStats.length === 0 && (
+                    <p className="col-span-full text-sm text-[var(--ll-text-muted)]">No lessons found.</p>
+                  )}
+                </div>
+              </div>
+
+              {subjectStats.length > 0 && (
+                <div>
+                  <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[var(--ll-text-faint)] mb-2">
+                    By Subject
+                  </p>
+                  <div className="flex flex-wrap gap-2">
+                    {subjectStats.map((ss) => (
+                      <span
+                        key={ss.subject}
+                        className="rounded-full border border-[var(--ll-border)] bg-[var(--ll-surface-muted)] px-3 py-1 text-xs text-[var(--ll-text)]"
+                      >
+                        {ss.subject.replace(/_/g, " ")}: {ss.approved} approved
+                        {ss.pipeline > 0 ? ` +${ss.pipeline}` : ""}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </>
+          )}
+        </section>
+
+        {/* ── Pipeline Recovery Panel + Bulk Approval ── */}
+        <section className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 p-6 space-y-4">
+          <div>
+            <h2 className="text-lg font-semibold">Pipeline Recovery</h2>
+            <p className="mt-1 text-sm text-[var(--ll-text-muted)]">
+              Filter pending lessons, preview them, then approve in bulk. Quick wins: Grade 7 (+184 pipeline), Grade 5 (+125 pipeline).
+            </p>
+          </div>
+
+          <div className="flex flex-wrap gap-3 items-end">
+            <div>
+              <label className="block text-xs font-medium text-[var(--ll-text-muted)] mb-1">Grade</label>
+              <select
+                value={bulkGrade}
+                onChange={(e) => { setBulkGrade(e.target.value === "" ? "" : Number(e.target.value)); setBulkPreview([]); }}
+                className="rounded-lg border border-[var(--ll-border)] bg-[var(--ll-bg)] px-3 py-2 text-sm text-[var(--ll-text)] focus:outline-none"
+              >
+                <option value="">All grades</option>
+                {Array.from({ length: 12 }, (_, i) => i + 1).map((g) => (
+                  <option key={g} value={g}>Grade {g}</option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <label className="block text-xs font-medium text-[var(--ll-text-muted)] mb-1">Subject</label>
+              <select
+                value={bulkSubject}
+                onChange={(e) => { setBulkSubject(e.target.value); setBulkPreview([]); }}
+                className="rounded-lg border border-[var(--ll-border)] bg-[var(--ll-bg)] px-3 py-2 text-sm text-[var(--ll-text)] focus:outline-none"
+              >
+                <option value="">All subjects</option>
+                {SUBJECTS.map((s) => (
+                  <option key={s} value={s}>{s.replace(/_/g, " ")}</option>
+                ))}
+              </select>
+            </div>
+            <button
+              type="button"
+              onClick={handleBulkPreview}
+              disabled={bulkPreviewing}
+              className="rounded-lg border border-[var(--ll-border)] bg-[var(--ll-surface-muted)] px-4 py-2 text-sm font-semibold text-[var(--ll-text)] disabled:opacity-50"
+            >
+              {bulkPreviewing ? "Loading…" : "Preview pending"}
+            </button>
+          </div>
+
+          {bulkPreview.length > 0 && (
+            <div className="space-y-2">
+              <p className="text-sm font-semibold text-[var(--ll-text)]">
+                {bulkPreview.length} lesson(s) pending approval
+              </p>
+              <div className="max-h-52 overflow-y-auto space-y-1 rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/60 p-3">
+                {bulkPreview.map((item) => (
+                  <div key={item.contentId} className="flex items-center justify-between gap-2 text-xs text-[var(--ll-text)]">
+                    <span className="truncate">{item.payload?.title ?? item.contentId}</span>
+                    <span className="shrink-0 text-[var(--ll-text-muted)]">G{item.grade} · {item.subject}</span>
+                  </div>
+                ))}
+              </div>
+              <button
+                type="button"
+                onClick={handleBulkApprove}
+                disabled={bulkApproving}
+                className="rounded-lg bg-[var(--ll-yellow)] px-5 py-2.5 text-sm font-semibold text-[var(--ll-text-faint)] hover:bg-[var(--ll-yellow-soft)] disabled:opacity-50"
+              >
+                {bulkApproving ? "Approving…" : `Approve all ${bulkPreview.length} lesson(s)`}
+              </button>
+            </div>
+          )}
+
+          {bulkMessage && (
+            <p className="text-sm text-[var(--ll-text-muted)]">{bulkMessage}</p>
+          )}
+        </section>
 
         <form
           onSubmit={handleImport}

@@ -30,6 +30,7 @@ type TodayResponse = {
   remainingCount: number;
   currentItemId: string | null;
   nextItemId: string | null;
+  contentGap?: boolean;
   adaptivePlan?: {
     generatedAt: string;
     smartContinueHref: string;
@@ -66,6 +67,7 @@ export default function StudentTodayPage() {
   const [currentItemId, setCurrentItemId] = useState<string | null>(null);
   const [nextItemId, setNextItemId] = useState<string | null>(null);
   const [adaptivePlan, setAdaptivePlan] = useState<TodayResponse["adaptivePlan"] | null>(null);
+  const [contentGap, setContentGap] = useState(false);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -79,6 +81,7 @@ export default function StudentTodayPage() {
         setCurrentItemId(d.currentItemId ?? null);
         setNextItemId(d.nextItemId ?? null);
         setAdaptivePlan(d.adaptivePlan ?? null);
+        setContentGap(d.contentGap ?? false);
       })
       .finally(() => setLoading(false));
   }, []);
@@ -146,6 +149,13 @@ export default function StudentTodayPage() {
             </div>
           ) : null}
         </div>
+
+        {contentGap && !loading && (
+          <div className="rounded-xl border border-amber-500/40 bg-amber-500/10 px-4 py-3 text-sm text-amber-300">
+            <span className="font-semibold">Curriculum gap detected</span> — some content for your grade is still being
+            prepared. Your teacher will assign available lessons shortly. Contact your teacher if this persists.
+          </div>
+        )}
 
         {loading ? (
           <div className="space-y-3">
