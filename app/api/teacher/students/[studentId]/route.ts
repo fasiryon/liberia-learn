@@ -41,7 +41,7 @@ export async function GET(
       include: {
         scheduledWork: {
           include: {
-            content: { select: { id: true, subject: true, contentType: true, payload: true } },
+            content: { select: { id: true, contentId: true, subject: true, contentType: true, payload: true } },
           },
         },
       },
@@ -50,7 +50,7 @@ export async function GET(
 
     const records = progress.map((p) => {
       const payload = p.scheduledWork.content.payload as any;
-      const contentId = p.scheduledWork.content.id;
+      const contentId = p.scheduledWork.content.contentId;
       return {
         id: p.id,
         contentId,
