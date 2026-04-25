@@ -344,3 +344,58 @@ export async function dismissStudentAction(
     metadata: { actionType: rec.recommendationType, reason },
   }).catch(() => null);
 }
+
+export async function resolveActionsOnLessonComplete(
+  studentId: string,
+  scheduledWorkId: string
+): Promise<void> {
+  const updated = await prisma.interventionRecommendation.updateMany({
+    where: {
+      studentId,
+      status: "ACTIVE",
+      recommendationType: "ASSIGN_REVIEW_LESSON",
+      targetType: "scheduled_work",
+      targetId: scheduledWorkId,
+    },
+    data: { status: "COMPLETED", resolvedAt: new Date() },
+  });
+
+  if (updated.count > 0) {
+    logLearningEvent({
+      eventType: "action.student.resolved",
+      studentId,
+      actor: { type: "system", id: studentId, role: "STUDENT" },
+      target: { type: "student_action", id: scheduledWorkId },
+      metadata: { reason: "lesson_completed", scheduledWorkId, resolvedCount: updated.count },
+    }).catch(() => null);
+  }
+}
+
+export async function resolveActionsOnQuizPass(
+  studentId: string,
+  scheduledWorkId: string,
+  score: number
+): Promise<void> {
+  if (score < 0.7) return;
+
+  const updated = await prisma.interventionRecommendation.updateMany({
+    where: {
+      studentId,
+      status: "ACTIVE",
+      recommendationType: { in: ["ASSIGN_PRACTICE", "ASSIGN_REVIEW_LESSON"] },
+      targetType: "scheduled_work",
+      targetId: scheduledWorkId,
+    },
+    data: { status: "COMPLETED", resolvedAt: new Date() },
+  });
+
+  if (updated.count > 0) {
+    logLearningEvent({
+      eventType: "action.student.resolved",
+      studentId,
+      actor: { type: "system", id: studentId, role: "STUDENT" },
+      target: { type: "student_action", id: scheduledWorkId },
+      metadata: { reason: "quiz_passed", scheduledWorkId, score, resolvedCount: updated.count },
+    }).catch(() => null);
+  }
+}

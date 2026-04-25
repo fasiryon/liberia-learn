@@ -48,6 +48,9 @@ type WeakLesson = {
 
 const INACTIVITY_THRESHOLD_DAYS = 7;
 const WEAK_LESSON_THRESHOLD = 60; // avg score %
+const QUIZ_FAIL_ATTEMPTS_MIN = 3;
+const QUIZ_PASS_SCORE = 0.7; // 0..1 scale
+const QUIZ_FAIL_LOOKBACK_DAYS = 21;
 
 export async function generateTeacherAlerts(
   teacherUserId: string,
@@ -56,6 +59,7 @@ export async function generateTeacherAlerts(
     atRiskStudents: AtRiskStudent[];
     interventionRecommendations: InterventionRec[];
     weakLessons: WeakLesson[];
+    classIds?: string[];
   }
 ): Promise<void> {
   const alerts: Array<{
@@ -109,6 +113,65 @@ export async function generateTeacherAlerts(
         weakLesson: lesson.title,
         recommendedAction: "Re-teach the lesson or schedule a reteach session for the class.",
       });
+    }
+  }
+
+  if (input.classIds && input.classIds.length > 0) {
+    const cutoff = new Date(Date.now() - QUIZ_FAIL_LOOKBACK_DAYS * 86_400_000);
+    const attempts = await prisma.assessmentAttempt.findMany({
+      where: {
+        classId: { in: input.classIds },
+        source: "student.lesson.quiz.submit",
+        submittedAt: { gte: cutoff },
+      },
+      select: { studentId: true, score: true, metadata: true },
+    });
+
+    // Group by (studentId, contentId from metadata)
+    type FailGroup = { scores: number[]; contentId: string };
+    const grouped = new Map<string, FailGroup>();
+    for (const attempt of attempts) {
+      if (!attempt.studentId) continue;
+      const meta = (attempt.metadata ?? {}) as Record<string, unknown>;
+      const contentId = typeof meta.contentId === "string" ? meta.contentId : null;
+      if (!contentId) continue;
+      const key = `${attempt.studentId}::${contentId}`;
+      const existing = grouped.get(key) ?? { scores: [], contentId };
+      existing.scores.push(attempt.score ?? 0);
+      grouped.set(key, existing);
+    }
+
+    // Collect studentIds that need alerts
+    const failingGroups: Array<{ studentId: string; contentId: string; count: number; maxScore: number }> = [];
+    for (const [key, group] of grouped) {
+      const [studentId] = key.split("::");
+      if (group.scores.length < QUIZ_FAIL_ATTEMPTS_MIN) continue;
+      const maxScore = Math.max(...group.scores);
+      if (maxScore >= QUIZ_PASS_SCORE) continue;
+      failingGroups.push({ studentId, contentId: group.contentId, count: group.scores.length, maxScore });
+    }
+
+    if (failingGroups.length > 0) {
+      const uniqueStudentIds = [...new Set(failingGroups.map((g) => g.studentId))];
+      const students = await prisma.student.findMany({
+        where: { id: { in: uniqueStudentIds }, user: { schoolId } },
+        select: { id: true, user: { select: { name: true } } },
+      });
+      const studentNameMap = new Map(students.map((s) => [s.id, s.user?.name ?? "Student"]));
+
+      for (const group of failingGroups) {
+        const studentName = studentNameMap.get(group.studentId) ?? "Student";
+        alerts.push({
+          idempotencyKey: `${teacherUserId}:REPEATED_QUIZ_FAILURE:${group.studentId}:${group.contentId}`,
+          alertType: "REPEATED_QUIZ_FAILURE",
+          severity: "high",
+          reason: `${studentName} has failed the same quiz ${group.count} times (best score: ${Math.round(group.maxScore * 100)}%).`,
+          studentId: group.studentId,
+          weakConcept: null,
+          weakLesson: group.contentId,
+          recommendedAction: "Review the lesson with the student and assign targeted practice.",
+        });
+      }
     }
   }
 

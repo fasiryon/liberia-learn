@@ -217,6 +217,7 @@ export async function GET() {
       atRiskStudents,
       interventionRecommendations: classIntelligence?.interventionRecommendations ?? [],
       weakLessons: classIntelligence?.weakLessons ?? [],
+      classIds,
     }).catch(() => null);
 
     const teacherAlerts = user.schoolId
