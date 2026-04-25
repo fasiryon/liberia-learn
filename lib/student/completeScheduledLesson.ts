@@ -2,6 +2,7 @@ import type { Subject } from "@prisma/client";
 
 import { logAudit } from "@/lib/audit";
 import { prisma } from "@/lib/db";
+import { resolveActionsOnLessonComplete } from "@/lib/intelligence/actionEngine";
 import { notifyLessonCompletion } from "@/lib/lesson-notifications";
 import { updateMasteryProfile } from "@/lib/mastery/masteryService";
 import { gradeToBand } from "@/lib/moe/alignment-engine";
@@ -189,6 +190,8 @@ export async function completeScheduledLesson(input: CompleteLessonInput) {
     studentName: student.user?.name?.trim() || "Student",
     subject: content.subject,
   }).catch(() => null);
+
+  resolveActionsOnLessonComplete(student.id, input.scheduledWorkId).catch(() => null);
 
   return {
     completedAt: progress.completedAt,

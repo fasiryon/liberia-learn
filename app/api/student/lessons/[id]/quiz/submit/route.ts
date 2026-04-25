@@ -6,6 +6,7 @@ import { logAudit } from "@/lib/audit";
 import { awardLessonQuizCertificates } from "@/lib/certificates/certificateService";
 import { prisma } from "@/lib/db";
 import { logLearningEvent } from "@/lib/events/logLearningEvent";
+import { resolveActionsOnQuizPass } from "@/lib/intelligence/actionEngine";
 import { tagMisconception } from "@/lib/intelligence/misconceptions";
 import { recordPerformanceEvent } from "@/lib/intelligence/recordPerformanceEvent";
 import { resolveScheduledLessonContext } from "@/lib/student/resolveScheduledLessonContext";
@@ -278,6 +279,8 @@ export async function POST(
       aiAssistUsed: true,
       lessonId: lesson.scheduledWorkId,
     }).catch(() => null);
+
+    resolveActionsOnQuizPass(lesson.studentId, lesson.scheduledWorkId, score).catch(() => null);
 
     const certificateAwards = await awardLessonQuizCertificates({
       studentId: lesson.studentId,
