@@ -7,6 +7,7 @@ import { teacherWelcomeStorageKey } from "@/app/teacher/TeacherWelcomeGate";
 import { DashboardTopBar } from "@/components/DashboardTopBar";
 import { SkeletonCard } from "@/components/ui/Skeleton";
 import { getTeacherGreeting } from "@/lib/student/greetings";
+import { AlertBell } from "@/components/teacher/AlertBell";
 
 type DashboardData = {
   scheduledToday: number;
@@ -202,6 +203,13 @@ export default function TeacherDashboardPage() {
           roleAccent="text-[var(--ll-text-muted)]"
           userName={data?.schoolName ?? undefined}
           subtitle={data?.schoolCode ? `Code: ${data.schoolCode}` : undefined}
+          rightSlot={
+            <AlertBell
+              alerts={visibleAlerts}
+              onMarkReviewed={handleMarkReviewed}
+              onDismiss={handleDismissAlert}
+            />
+          }
         />
 
         {(() => {
@@ -229,67 +237,26 @@ export default function TeacherDashboardPage() {
             )}
 
             {visibleAlerts.length > 0 && (
-              <section
+              <div
                 data-testid="immediate-attention-panel"
-                className="rounded-xl border border-orange-500/30 bg-orange-500/8 p-4"
+                className="flex items-center justify-between rounded-xl border border-orange-500/20 bg-orange-500/5 px-4 py-3"
               >
-                <p className="mb-3 text-[11px] font-semibold uppercase tracking-[0.14em] text-orange-400">
-                  Immediate Attention — {visibleAlerts.length} alert{visibleAlerts.length !== 1 ? "s" : ""}
-                </p>
-                <div className="space-y-3">
-                  {visibleAlerts.slice(0, 8).map((alert) => (
-                    <div
-                      key={alert.id}
-                      className="flex flex-col gap-2 rounded-lg border border-[var(--ll-border)] bg-[var(--ll-surface)] p-3 sm:flex-row sm:items-start sm:justify-between"
-                    >
-                      <div className="min-w-0 flex-1">
-                        <div className="flex flex-wrap items-center gap-2">
-                          <span
-                            className={`rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase ${
-                              alert.severity === "high" || alert.severity === "critical"
-                                ? "bg-red-500/15 text-red-300"
-                                : "bg-orange-500/15 text-orange-300"
-                            }`}
-                          >
-                            {alert.severity}
-                          </span>
-                          <span className="text-xs font-medium text-[var(--ll-text-muted)]">
-                            {alert.alertType.replace(/_/g, " ")}
-                          </span>
-                        </div>
-                        <p className="mt-1.5 text-sm text-[var(--ll-text)]">{alert.reason}</p>
-                        {alert.recommendedAction && (
-                          <p className="mt-1 text-xs text-[var(--ll-text-muted)]">
-                            → {alert.recommendedAction}
-                          </p>
-                        )}
-                      </div>
-                      <div className="flex shrink-0 gap-2">
-                        {alert.studentHref && (
-                          <Link
-                            href={alert.studentHref}
-                            className="rounded-md border border-[var(--ll-border)] px-2.5 py-1 text-xs font-medium text-[var(--ll-text)] hover:border-[var(--ll-border-strong)]"
-                          >
-                            View student
-                          </Link>
-                        )}
-                        <button
-                          onClick={() => handleMarkReviewed(alert.id)}
-                          className="rounded-md border border-[var(--ll-border)] px-2.5 py-1 text-xs font-medium text-[var(--ll-text-muted)] hover:border-[var(--ll-border-strong)]"
-                        >
-                          Reviewed
-                        </button>
-                        <button
-                          onClick={() => handleDismissAlert(alert.id)}
-                          className="rounded-md px-2.5 py-1 text-xs text-[var(--ll-text-faint)] hover:text-[var(--ll-text-muted)]"
-                        >
-                          Dismiss
-                        </button>
-                      </div>
-                    </div>
-                  ))}
+                <div className="flex items-center gap-2">
+                  <span className="relative flex h-2 w-2">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-orange-400 opacity-75" />
+                    <span className="relative inline-flex h-2 w-2 rounded-full bg-orange-500" />
+                  </span>
+                  <p className="text-sm font-medium text-[var(--ll-text)]">
+                    {visibleAlerts.length} alert{visibleAlerts.length !== 1 ? "s" : ""} need attention
+                  </p>
                 </div>
-              </section>
+                <Link
+                  href="/teacher/alerts"
+                  className="text-xs font-medium text-[var(--ll-text-faint)] hover:text-[var(--ll-text-muted)]"
+                >
+                  Review →
+                </Link>
+              </div>
             )}
 
             {(atRiskCount > 0 || pendingGradingCount > 0) && (
