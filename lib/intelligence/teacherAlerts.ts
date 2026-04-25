@@ -275,12 +275,12 @@ export async function getAllTeacherAlerts(
 
   const statusFilter =
     filter === "active"
-      ? ({ status: "ACTIVE" } as const)
+      ? { status: "ACTIVE" as string }
       : filter === "reviewed"
-      ? ({ status: "REVIEWED" } as const)
+      ? { status: "REVIEWED" as string }
       : filter === "dismissed"
-      ? ({ status: "DISMISSED" } as const)
-      : ({ status: { in: ["ACTIVE", "REVIEWED", "DISMISSED"] } } as const);
+      ? { status: "DISMISSED" as string }
+      : { status: { in: ["ACTIVE", "REVIEWED", "DISMISSED"] as string[] } };
 
   const rows = await prisma.teacherAlert.findMany({
     where: {
