@@ -265,6 +265,48 @@ export async function getActiveTeacherAlerts(
     }));
 }
 
+export async function getAllTeacherAlerts(
+  teacherUserId: string,
+  schoolId: string,
+  filter: "all" | "active" | "reviewed" | "dismissed" = "all"
+): Promise<TeacherAlertItem[]> {
+  const ALERT_MAX_AGE_DAYS = 30;
+  const cutoff = new Date(Date.now() - ALERT_MAX_AGE_DAYS * 86_400_000);
+
+  const statusFilter =
+    filter === "active"
+      ? { status: "ACTIVE" as string }
+      : filter === "reviewed"
+      ? { status: "REVIEWED" as string }
+      : filter === "dismissed"
+      ? { status: "DISMISSED" as string }
+      : { status: { in: ["ACTIVE", "REVIEWED", "DISMISSED"] as string[] } };
+
+  const rows = await prisma.teacherAlert.findMany({
+    where: {
+      teacherUserId,
+      schoolId,
+      ...statusFilter,
+      createdAt: { gte: cutoff },
+    },
+    orderBy: [{ createdAt: "desc" }],
+    take: 50,
+  });
+
+  return rows.map((row) => ({
+    id: row.id,
+    alertType: row.alertType as TeacherAlertType,
+    severity: row.severity,
+    reason: row.reason,
+    studentId: row.studentId ?? null,
+    weakConcept: row.weakConcept ?? null,
+    weakLesson: row.weakLesson ?? null,
+    recommendedAction: row.recommendedAction ?? null,
+    studentHref: row.studentId ? `/teacher/students/${row.studentId}` : null,
+    createdAt: row.createdAt,
+  }));
+}
+
 export async function markAlertReviewed(
   alertId: string,
   reviewedByUserId: string
