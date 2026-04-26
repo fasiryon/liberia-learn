@@ -8,6 +8,7 @@ import { DashboardTopBar } from "@/components/DashboardTopBar";
 import { SkeletonCard } from "@/components/ui/Skeleton";
 import { getTeacherGreeting } from "@/lib/student/greetings";
 import { AlertBell } from "@/components/teacher/AlertBell";
+import { WeeklySentiment } from "@/components/teacher/WeeklySentiment";
 
 type DashboardData = {
   scheduledToday: number;
@@ -173,6 +174,12 @@ export default function TeacherDashboardPage() {
     data?.classPerformance.reduce((total, cls) => total + cls.atRiskStudents.length, 0) ?? 0;
   const pendingGradingCount = data?.assignmentsPendingGrading ?? 0;
   const [dismissedAlerts, setDismissedAlerts] = useState<Set<string>>(new Set());
+  const [onboardingDismissed, setOnboardingDismissed] = useState(false);
+
+  async function dismissOnboardingBanner() {
+    setOnboardingDismissed(true);
+    await fetch("/api/teacher/onboarding/complete", { method: "POST" }).catch(() => null);
+  }
 
   async function handleDismissAlert(alertId: string) {
     setDismissedAlerts((prev) => new Set([...prev, alertId]));
@@ -225,6 +232,26 @@ export default function TeacherDashboardPage() {
             </div>
           );
         })()}
+
+        {!onboardingDismissed && !loading && (
+          <div className="flex items-center justify-between rounded-xl border border-[var(--ll-border)] bg-[var(--ll-surface-muted)] px-4 py-3">
+            <p className="text-sm text-[var(--ll-text-muted)]">
+              New to LiberiaLearn?{" "}
+              <Link href="/teacher/onboarding" className="font-medium text-[var(--ll-yellow)] hover:underline">
+                View setup guide →
+              </Link>
+            </p>
+            <button
+              type="button"
+              onClick={dismissOnboardingBanner}
+              className="text-xs text-[var(--ll-text-faint)] hover:text-[var(--ll-text-muted)]"
+            >
+              Dismiss
+            </button>
+          </div>
+        )}
+
+        {!loading && <WeeklySentiment />}
 
         {loading ? (
           <div className="space-y-3">{[1, 2, 3].map((i) => <SkeletonCard key={i} />)}</div>
