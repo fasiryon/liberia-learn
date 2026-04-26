@@ -51,7 +51,12 @@ async function runQualityGate() {
     // Extra checks beyond the base gate
     const body = String(payload.body ?? "").toLowerCase();
     const hasLiberia = body.includes("liber");
-    const hasTeacherNote = typeof payload.teacherNote === "string" && payload.teacherNote.length > 10;
+    // Factory payloads use `teacherNote`; catalog payloads use `explanation` + body section
+    const hasTeacherNote =
+      (typeof payload.teacherNote === "string" && payload.teacherNote.length > 10) ||
+      (typeof payload.explanation === "string" && payload.explanation.length > 10) ||
+      body.includes("## teacher explanation") ||
+      body.includes("## teacher notes");
     const hasAssessment = typeof payload.assessment === "string" && payload.assessment.length > 10;
     const hasExamples = Array.isArray(payload.workedExamples) && (payload.workedExamples as unknown[]).length > 0;
 
