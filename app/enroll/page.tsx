@@ -33,13 +33,15 @@ export default function SchoolEnrollmentPage() {
     phone: "",
     estimatedStudentEnrollment: "100",
   });
-  const [status, setStatus] = useState<string | null>(null);
+  const [status, setStatus] = useState<"idle" | "success" | "error">("idle");
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
     setBusy(true);
-    setStatus(null);
+    setStatus("idle");
+    setErrorMsg(null);
     try {
       const res = await fetch("/api/enroll", {
         method: "POST",
@@ -51,9 +53,10 @@ export default function SchoolEnrollmentPage() {
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Enrollment failed");
-      setStatus(`Request submitted. Login ID: ${data.loginId}. Temporary password: ${data.temporaryPassword}`);
+      setStatus("success");
     } catch (error: any) {
-      setStatus(error.message || "Enrollment failed");
+      setErrorMsg(error.message || "Enrollment failed");
+      setStatus("error");
     } finally {
       setBusy(false);
     }
@@ -114,7 +117,17 @@ export default function SchoolEnrollmentPage() {
             <button disabled={busy} className="sm:col-span-2 rounded-xl bg-[var(--ll-yellow-soft)] px-5 py-3 text-sm font-bold text-[var(--ll-text-faint)] disabled:opacity-60">
               {busy ? "Submitting..." : "Submit enrollment request"}
             </button>
-            {status ? <p className="sm:col-span-2 rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)] p-3 text-sm text-[var(--ll-text)]">{status}</p> : null}
+            {status === "success" ? (
+              <div className="sm:col-span-2 rounded-xl border border-emerald-500/30 bg-emerald-500/10 p-4 text-sm">
+                <p className="font-semibold text-emerald-400">Application submitted successfully.</p>
+                <p className="mt-1 text-[var(--ll-text-muted)]">Your login credentials have been sent to your email address.</p>
+                <p className="mt-1 text-[var(--ll-text-muted)]">Check your spam folder if you do not receive them within 5 minutes.</p>
+                <Link href="/" className="mt-3 inline-block text-xs text-[var(--ll-yellow)] hover:opacity-80">&larr; Back to homepage</Link>
+              </div>
+            ) : null}
+            {status === "error" && errorMsg ? (
+              <p className="sm:col-span-2 rounded-xl border border-red-500/30 bg-red-500/10 p-3 text-sm text-red-400">{errorMsg}</p>
+            ) : null}
           </form>
         </section>
       </div>

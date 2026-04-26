@@ -27,7 +27,7 @@ const accessPaths = [
     role: "School Administrators",
     description:
       "Review pilot readiness scores, delivery compliance, and school-level intelligence dashboards.",
-    href: "/login?role=admin",
+    href: "/login?role=admin&next=/admin/pilot-score",
     label: "Admin sign-in",
     accent: "border-amber-500/30 bg-[var(--ll-yellow-soft)]",
     buttonClass: "bg-[var(--ll-yellow-soft)] hover:bg-[var(--ll-yellow-soft)] text-[var(--ll-text-faint)]",
