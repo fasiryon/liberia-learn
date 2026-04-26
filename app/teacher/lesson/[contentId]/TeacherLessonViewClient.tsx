@@ -259,8 +259,8 @@ export default function TeacherLessonViewClient({
             {studentContext.score !== null ? (
               <span>
                 Quiz score:{" "}
-                <span className={studentContext.score >= 70 ? "font-semibold text-emerald-400" : "font-semibold text-[var(--ll-yellow)]"}>
-                  {studentContext.score}%
+                <span className={studentContext.score >= 0.7 ? "font-semibold text-emerald-400" : "font-semibold text-[var(--ll-yellow)]"}>
+                  {Math.round(studentContext.score * 100)}%
                 </span>
               </span>
             ) : (
