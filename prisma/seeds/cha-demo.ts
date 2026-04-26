@@ -5,6 +5,7 @@
 
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcryptjs";
+import { Redis } from "@upstash/redis";
 
 const prisma = new PrismaClient();
 
@@ -31,9 +32,10 @@ export async function seedChaDemo() {
       id: CHA_SCHOOL_ID,
       name: "Cha High Academy",
       county: "Montserrado",
+      district: "Montserrado",
       code: "CHA",
     },
-    update: {},
+    update: { district: "Montserrado" },
   });
 
   // â”€â”€ Admin â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
@@ -323,6 +325,33 @@ To find the cost of 7 oranges, multiply 1:20 by 7. The result is 7:140, so 7 ora
     ],
   });
 
+  // Recent assessment attempts — needed for MOE dashboard 30-day window
+  await prisma.assessmentAttempt.deleteMany({ where: { source: "seed:cha-demo" } });
+  await prisma.assessmentAttempt.createMany({
+    data: [
+      {
+        studentId: studentRecord.id,
+        schoolId: school.id,
+        subject: "MATH",
+        grade: 9,
+        score: 0.78,
+        status: "completed",
+        source: "seed:cha-demo",
+        attemptedAt: new Date(),
+      },
+      {
+        studentId: studentRecord.id,
+        schoolId: school.id,
+        subject: "MATH",
+        grade: 9,
+        score: 0.65,
+        status: "completed",
+        source: "seed:cha-demo",
+        attemptedAt: new Date(),
+      },
+    ],
+  });
+
   // Placement test
   const existingPlacement = await prisma.placementTest.findFirst({
     where: { studentId: studentRecord.id },
@@ -406,6 +435,21 @@ To find the cost of 7 oranges, multiply 1:20 by 7. The result is 7:140, so 7 ora
     },
     update: { hashedPwd: platformHash, isPlatformAdmin: true, schoolId: null },
   });
+
+  // Invalidate MOE dashboard Redis cache so re-seeded district data shows immediately
+  try {
+    const redisUrl = process.env.UPSTASH_REDIS_REST_URL?.trim();
+    const redisToken = process.env.UPSTASH_REDIS_REST_TOKEN?.trim();
+    if (redisUrl && redisToken) {
+      const redis = new Redis({ url: redisUrl, token: redisToken });
+      const now = new Date();
+      const month = `${now.getUTCFullYear()}-${String(now.getUTCMonth() + 1).padStart(2, "0")}`;
+      await redis.del(`moe:dashboard:national:v2:${month}`);
+      console.log("[cha-demo] Redis cache invalidated.");
+    }
+  } catch {
+    // Best-effort — cache will expire naturally in 15 minutes
+  }
 
   console.log("[cha-demo] Done. Accounts created:");
   console.log("  admin@cha.edu.lr           / DemoSeed2026! (ADMIN)");

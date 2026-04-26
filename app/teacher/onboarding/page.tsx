@@ -18,8 +18,8 @@ const STEPS = [
     step: 2,
     title: "Schedule your first lesson",
     description: "Assign curriculum lessons to your class.",
-    button: "Open lesson planner",
-    href: "/teacher/lesson-planner",
+    button: "Open schedule",
+    href: "/teacher/schedule",
     Icon: BookOpen,
   },
   {

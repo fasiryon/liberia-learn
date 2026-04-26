@@ -63,7 +63,7 @@ export async function POST(req: Request) {
     return NextResponse.json({
       ok: true, summary, postAudit,
       adminInstructions: [
-        "Generated lessons are PENDING — review at /admin/curriculum/coverage",
+        "Generated lessons are PENDING — review at /admin/curriculum",
         "Bulk approve via the Coverage Dashboard pipeline panel",
         "Re-run this endpoint to generate the next batch",
       ],

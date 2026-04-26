@@ -16,6 +16,7 @@ const mockPrismaInstance = vi.hoisted(() => ({
   examQuestion: { deleteMany: vi.fn(), createMany: vi.fn() },
   certificate: { upsert: vi.fn() },
   learningEvent: { deleteMany: vi.fn(), createMany: vi.fn() },
+  assessmentAttempt: { deleteMany: vi.fn(), createMany: vi.fn() },
   enrollment: { findFirst: vi.fn(), create: vi.fn(), upsert: vi.fn() },
   placementTest: { findFirst: vi.fn(), create: vi.fn() },
   $disconnect: vi.fn(),
@@ -36,6 +37,7 @@ vi.mock("@prisma/client", () => ({
     examQuestion = mockPrismaInstance.examQuestion;
     certificate = mockPrismaInstance.certificate;
     learningEvent = mockPrismaInstance.learningEvent;
+    assessmentAttempt = mockPrismaInstance.assessmentAttempt;
     enrollment = mockPrismaInstance.enrollment;
     placementTest = mockPrismaInstance.placementTest;
     $disconnect = mockPrismaInstance.$disconnect;
@@ -44,6 +46,12 @@ vi.mock("@prisma/client", () => ({
 
 vi.mock("bcryptjs", () => ({
   default: { hash: vi.fn().mockResolvedValue("hashed-pw") },
+}));
+
+vi.mock("@upstash/redis", () => ({
+  Redis: class {
+    del = vi.fn().mockResolvedValue(1);
+  },
 }));
 
 import { seedChaDemo } from "@/prisma/seeds/cha-demo";
@@ -71,6 +79,8 @@ beforeEach(() => {
   mockPrismaInstance.certificate.upsert.mockResolvedValue({ id: "cert-1" });
   mockPrismaInstance.learningEvent.deleteMany.mockResolvedValue({ count: 0 });
   mockPrismaInstance.learningEvent.createMany.mockResolvedValue({ count: 5 });
+  mockPrismaInstance.assessmentAttempt.deleteMany.mockResolvedValue({ count: 0 });
+  mockPrismaInstance.assessmentAttempt.createMany.mockResolvedValue({ count: 2 });
   mockPrismaInstance.enrollment.findFirst.mockResolvedValue(null);
   mockPrismaInstance.enrollment.create.mockResolvedValue({});
   mockPrismaInstance.enrollment.upsert.mockResolvedValue({});
