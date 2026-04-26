@@ -180,6 +180,7 @@ export async function POST(req: Request) {
         name: fullName.trim(),
         role: "TEACHER",
         hashedPwd,
+        mustChangePIN: true,
         schoolId: admin.schoolId,
         guardianCountryCode: "+231",
         guardianPhone: phone || null,
@@ -341,6 +342,7 @@ export async function PATCH(req: Request) {
         where: { id },
         data: {
           hashedPwd,
+          mustChangePIN: true,
           preferredChannel:
             (teacher.TeacherProfile?.phone ?? teacher.guardianPhoneE164) ? "SMS" : "EMAIL",
         },

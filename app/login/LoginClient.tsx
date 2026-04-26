@@ -56,6 +56,9 @@ export function resolvePostLoginDestination(params: {
   if (mustChangePIN && role === "STUDENT") {
     return "/student/change-pin";
   }
+  if (mustChangePIN && role === "TEACHER") {
+    return "/teacher/change-password";
+  }
   return safeNext || (isPlatformAdmin ? "/platform" : defaultRouteForRole(role, mustChangePIN));
 }
 
