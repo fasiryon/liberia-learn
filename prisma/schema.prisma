@@ -63,6 +63,8 @@ model User {
   sentGuardianMessages     GuardianMessage[] @relation("GuardianMessageGuardian")
   receivedGuardianMessages GuardianMessage[] @relation("GuardianMessageTeacher")
   lessonVideos        LessonVideo[]          @relation("LessonVideoTeacher")
+  teacherWelcomeCompletedAt DateTime?
+  teacherSentiments   TeacherSentiment[]
 }
 
 model District {
@@ -1840,6 +1842,18 @@ model TeacherAlert {
 
   @@index([teacherUserId, status])
   @@index([schoolId, status])
+}
+
+model TeacherSentiment {
+  id        String   @id @default(cuid())
+  teacherId String
+  schoolId  String
+  rating    String   // "good" | "okay" | "struggling"
+  createdAt DateTime @default(now())
+  teacher   User     @relation(fields: [teacherId], references: [id], onDelete: Cascade)
+
+  @@index([schoolId, createdAt])
+  @@index([teacherId, createdAt])
 }
 
 model CurriculumFlag {

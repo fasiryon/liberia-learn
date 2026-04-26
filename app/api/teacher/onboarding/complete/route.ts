@@ -6,6 +6,19 @@ import { logDataAccess } from "@/lib/dataAccess/logDataAccess";
 
 export const dynamic = "force-dynamic";
 
+export async function POST() {
+  try {
+    const user = await requireRole("TEACHER", "ADMIN");
+    await prisma.user.update({
+      where: { id: user.id },
+      data: { teacherWelcomeCompletedAt: new Date() },
+    });
+    return NextResponse.json({ ok: true });
+  } catch (err: any) {
+    return NextResponse.json({ error: err?.message ?? "Failed" }, { status: err?.status ?? 500 });
+  }
+}
+
 export async function PATCH() {
   try {
     const user = await requireRole("TEACHER");
