@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 
 import { renderSimpleMarkdown } from "@/lib/lessons";
+import type { StudentSubmissionContext } from "./page";
 
 type CurriculumResponse = {
   metadata: {
@@ -47,8 +48,10 @@ const TIME_OPTIONS = [30, 45, 60, 90] as const;
 
 export default function TeacherLessonViewClient({
   contentId,
+  studentContext,
 }: {
   contentId: string;
+  studentContext?: StudentSubmissionContext | null;
 }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -247,6 +250,30 @@ export default function TeacherLessonViewClient({
           </button>
         </div>
       </div>
+
+      {studentContext ? (
+        <section className="rounded-xl border border-blue-500/30 bg-blue-500/10 p-4 sm:p-5">
+          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-blue-300">Reviewing for student</p>
+          <div className="mt-2 flex flex-wrap items-center gap-4 text-sm text-[var(--ll-text)]">
+            <span className="font-semibold">{studentContext.studentName}</span>
+            {studentContext.score !== null ? (
+              <span>
+                Quiz score:{" "}
+                <span className={studentContext.score >= 70 ? "font-semibold text-emerald-400" : "font-semibold text-[var(--ll-yellow)]"}>
+                  {studentContext.score}%
+                </span>
+              </span>
+            ) : (
+              <span className="text-[var(--ll-text-muted)]">No quiz submission</span>
+            )}
+            {studentContext.submittedAt ? (
+              <span className="text-[var(--ll-text-muted)]">
+                Submitted {new Date(studentContext.submittedAt).toLocaleDateString()}
+              </span>
+            ) : null}
+          </div>
+        </section>
+      ) : null}
 
       <section className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/80 p-5 sm:p-7">
         <div className="flex flex-wrap items-center gap-3 text-xs text-[var(--ll-text)]">

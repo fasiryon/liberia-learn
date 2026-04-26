@@ -135,7 +135,7 @@ export default function TeacherStudentDetailPage() {
                   {r.completedAt ? (
                     <>
                       <Link
-                        href={`/teacher/lesson/${r.contentId}`}
+                        href={`/teacher/lesson/${r.contentId}?studentId=${studentId}`}
                         className="rounded-full border border-[var(--ll-border)] px-2.5 py-0.5 text-[10px] font-medium text-[var(--ll-text-muted)] hover:text-[var(--ll-yellow)] hover:border-[var(--ll-yellow)]/40"
                       >
                         Review
