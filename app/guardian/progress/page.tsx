@@ -1,4 +1,4 @@
-import { notFound, redirect } from "next/navigation";
+import { redirect } from "next/navigation";
 import { getOptionalUser } from "@/lib/auth";
 import { isGuardianProgressViewEnabled } from "@/lib/serverFlags";
 import { GuardianNav } from "@/components/guardian/GuardianNav";
@@ -8,7 +8,7 @@ export const dynamic = "force-dynamic";
 
 export default async function GuardianProgressPage() {
   if (!isGuardianProgressViewEnabled()) {
-    notFound();
+    redirect("/guardian");
   }
 
   const user = await getOptionalUser();

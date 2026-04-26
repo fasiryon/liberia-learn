@@ -12,6 +12,7 @@ import { lessonDurationLabel, renderSimpleMarkdown, selectLessonBody } from "@/l
 import { getLessonLabLinks } from "@/lib/lessons/labLinks";
 import { parseToSlides } from "@/lib/lessons/parseToSlides";
 import { enqueueOfflineRequest } from "@/lib/offline-queue";
+import { SaveForOfflineButton } from "@/components/SaveForOfflineButton";
 import type { LabId } from "@/lib/labs/types";
 import type { PseudoLab, SimulationDefinition } from "@/lib/schemas/labSimulation";
 
@@ -755,6 +756,12 @@ export default function LessonDeliveryClient({ lessonId }: { lessonId: string })
                 {entry}
               </button>
             ))}
+          </div>
+          <div className="mt-3">
+            <SaveForOfflineButton
+              contentId={lesson.contentId}
+              lessonData={{ metadata: null, payload: { title: lesson.title, body: lesson.body } }}
+            />
           </div>
           <div className="mt-5 rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 p-4">
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">

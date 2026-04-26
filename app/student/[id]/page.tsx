@@ -1,4 +1,3 @@
-// app/student/[id]/page.tsx
 "use client";
 
 import { useEffect, useState } from "react";
@@ -25,11 +24,9 @@ export default function StudentProfilePage({ params }: StudentProfilePageProps) 
   useEffect(() => {
     const loadStudent = async () => {
       try {
-        // This assumes you’ll eventually create /api/student/[id]
         const res = await fetch(`/api/student/${id}`);
         if (!res.ok) {
-          // If the API doesn’t exist yet, we still show the page
-          setError("Could not load full profile (API not ready yet).");
+          setError("Could not load profile.");
           setStudent({ id });
           return;
         }
@@ -41,9 +38,8 @@ export default function StudentProfilePage({ params }: StudentProfilePageProps) 
           gradeLevel: data.gradeLevel,
           placementGrade: data.placementGrade,
         });
-      } catch (err) {
-        console.error("Failed to load student profile:", err);
-        setError("Could not load full profile.");
+      } catch {
+        setError("Could not load profile.");
         setStudent({ id });
       } finally {
         setLoading(false);
@@ -75,7 +71,6 @@ export default function StudentProfilePage({ params }: StudentProfilePageProps) 
         </div>
 
         <div className="grid gap-6 md:grid-cols-3">
-          {/* Basic Info */}
           <div className="md:col-span-2 rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/80 p-6">
             <h2 className="text-sm font-semibold uppercase tracking-wide text-[var(--ll-text-muted)] mb-4">
               Basic Information
@@ -87,45 +82,31 @@ export default function StudentProfilePage({ params }: StudentProfilePageProps) 
               <div className="space-y-3 text-sm">
                 <div className="flex justify-between">
                   <span className="text-[var(--ll-text-muted)]">Name</span>
-                  <span className="font-semibold">
-                    {student?.name ?? "Not set"}
-                  </span>
+                  <span className="font-semibold">{student?.name ?? "Not set"}</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-[var(--ll-text-muted)]">Email</span>
-                  <span className="font-semibold">
-                    {student?.email ?? "Not set"}
-                  </span>
+                  <span className="font-semibold">{student?.email ?? "Not set"}</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-[var(--ll-text-muted)]">Grade Level</span>
-                  <span className="font-semibold">
-                    {student?.gradeLevel ?? "Not set"}
-                  </span>
+                  <span className="font-semibold">{student?.gradeLevel ?? "Not set"}</span>
                 </div>
               </div>
             )}
 
             {error && (
-              <p className="mt-4 text-xs text-red-400">
-                {error} You can still view the page; hook this up to your real
-                student API later.
-              </p>
+              <p className="mt-4 text-xs text-[var(--ll-text-muted)]">{error}</p>
             )}
           </div>
 
-          {/* Placement Summary */}
           <div className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/80 p-6">
             <h2 className="text-sm font-semibold uppercase tracking-wide text-[var(--ll-text-muted)] mb-4">
               Placement Summary
             </h2>
-            <p className="text-sm text-[var(--ll-text)] mb-1">
-              Recommended Grade:
-            </p>
+            <p className="text-sm text-[var(--ll-text)] mb-1">Recommended Grade:</p>
             <p className="text-3xl font-bold text-[var(--ll-yellow)] mb-3">
-              {student?.placementGrade
-                ? `Grade ${student.placementGrade}`
-                : "Not set"}
+              {student?.placementGrade ? `Grade ${student.placementGrade}` : "Not set"}
             </p>
             <Link
               href="/placement"
