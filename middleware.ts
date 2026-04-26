@@ -103,6 +103,17 @@ export async function middleware(req: NextRequest) {
     return NextResponse.redirect(url);
   }
 
+  if (
+    (token as any).role === "TEACHER" &&
+    (token as any).mustChangePIN === true &&
+    pathname !== "/teacher/change-password" &&
+    !pathname.startsWith("/api/teacher/change-password")
+  ) {
+    const url = req.nextUrl.clone();
+    url.pathname = "/teacher/change-password";
+    return NextResponse.redirect(url);
+  }
+
   return NextResponse.next();
 }
 

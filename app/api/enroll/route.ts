@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { createSchoolEnrollmentRequest, LIBERIAN_COUNTIES } from "@/lib/school-operations";
+import { checkRateLimit, RATE_LIMIT_POLICIES } from "@/lib/rateLimit";
 
 export const dynamic = "force-dynamic";
 
@@ -17,6 +18,15 @@ const EnrollmentSchema = z.object({
 
 export async function POST(req: Request) {
   try {
+    const ip = req.headers.get("x-forwarded-for") ?? "unknown";
+    const rl = await checkRateLimit(ip, { ...RATE_LIMIT_POLICIES.AUTH, namespace: "enrollment" });
+    if (!rl.allowed) {
+      return NextResponse.json(
+        { error: "Too many enrollment attempts. Try again in an hour." },
+        { status: 429 }
+      );
+    }
+
     const body = await req.json().catch(() => null);
     const parsed = EnrollmentSchema.safeParse(body);
     if (!parsed.success) {
