@@ -60,6 +60,24 @@ const NATIONAL_MAP: NationalSubjectDefinition[] = [
     ],
     lessonsPerUnit: 5, unitsPerYear: 8, useCatalog: false,
   },
+  // ── Upper Primary Grade 5 — CIVICS + COMPUTER_SCIENCE gap closure ────────
+  { grades: [5, 6], storageSubject: "CIVICS", displayName: "Civics and Citizenship", unitThemes: [], lessonsPerUnit: 5, unitsPerYear: 8, useCatalog: true },
+  {
+    grades: [5],
+    storageSubject: "COMPUTER_SCIENCE",
+    displayName: "Introduction to Computing",
+    unitThemes: [
+      "Computers, Devices, and How They Work",
+      "Using a Keyboard, Mouse, and Basic Navigation",
+      "Creating and Saving Files and Documents",
+      "Introduction to the Internet and Online Safety",
+      "Problem Solving and Logical Thinking",
+      "Coding Basics: Sequences and Step-by-Step Instructions",
+      "Digital Citizenship and Responsible Technology Use",
+      "Computing for School Life: Research, Writing, and Sharing",
+    ],
+    lessonsPerUnit: 5, unitsPerYear: 8, useCatalog: false,
+  },
   // ── Junior Secondary Grades 7–9 ──────────────────────────────────────────
   { grades: [7,8,9], storageSubject: "MATH", displayName: "Mathematics", unitThemes: [], lessonsPerUnit: 5, unitsPerYear: 8, useCatalog: true },
   { grades: [7,8,9], storageSubject: "LITERACY", displayName: "English", unitThemes: [], lessonsPerUnit: 5, unitsPerYear: 8, useCatalog: true },
