@@ -13,86 +13,112 @@ import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
-const GAP_COMBOS = [
+export const GAP_COMBOS = [
   { grade: 5, subject: "CIVICS" },
   { grade: 6, subject: "CIVICS" },
   { grade: 5, subject: "COMPUTER_SCIENCE" },
 ];
 
-async function beforeCounts() {
+type LessonRow = {
+  id: string;
+  contentId: string;
+  grade: number;
+  subject: string;
+  payload: unknown;
+};
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type Db = any;
+
+export function passesQualityGate(lesson: LessonRow): boolean {
+  const payload = lesson.payload as Record<string, unknown>;
+  const qr = validatePayloadQuality(payload);
+  if (!qr.passed) return false;
+
+  const body = String(payload.body ?? "").toLowerCase();
+  if (!body.includes("liber")) return false;
+
+  const hasTeacherNote =
+    (typeof payload.teacherNote === "string" && payload.teacherNote.length > 10) ||
+    (typeof payload.explanation === "string" && payload.explanation.length > 10) ||
+    body.includes("## teacher explanation") ||
+    body.includes("## teacher notes");
+  if (!hasTeacherNote) return false;
+
+  if (!(typeof payload.assessment === "string" && payload.assessment.length > 10)) return false;
+  if (!(Array.isArray(payload.workedExamples) && (payload.workedExamples as unknown[]).length > 0)) return false;
+
+  return true;
+}
+
+export async function runQualityGate(db: Db = prisma): Promise<{ failed: string[]; total: number }> {
+  let skip = 0;
+  const batchSize = 100;
+  const failed: string[] = [];
+  let total = 0;
+
+  while (true) {
+    const pending: LessonRow[] = await db.curriculumContent.findMany({
+      where: {
+        status: "pending_approval",
+        version: "ncf-2026.1",
+        OR: GAP_COMBOS.map(({ grade, subject }) => ({ grade, subject })),
+      },
+      select: { id: true, contentId: true, grade: true, subject: true, payload: true },
+      skip,
+      take: batchSize,
+    });
+
+    if (pending.length === 0) break;
+
+    total += pending.length;
+    for (const row of pending) {
+      if (!passesQualityGate(row)) {
+        failed.push(row.contentId);
+      }
+    }
+
+    skip += batchSize;
+  }
+
+  return { failed, total };
+}
+
+export async function approveSafely(failed: string[], db: Db = prisma): Promise<number> {
+  if (failed.length > 0) {
+    console.log(`  Skipping ${failed.length} failed lesson(s) that did not pass quality gate:`);
+    for (const contentId of failed) {
+      console.log(`    SKIPPED: ${contentId}`);
+    }
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const where: any = {
+    status: "pending_approval",
+    version: "ncf-2026.1",
+    OR: GAP_COMBOS.map(({ grade, subject }) => ({ grade, subject })),
+  };
+
+  if (failed.length > 0) {
+    where.contentId = { notIn: failed };
+  }
+
+  const result = await db.curriculumContent.updateMany({
+    where,
+    data: { status: "APPROVED", updatedAt: new Date() },
+  });
+  return result.count as number;
+}
+
+async function beforeCounts(db: Db = prisma) {
   const rows: Array<{ grade: number; subject: string; _count: { id: number } }> = [];
   for (const { grade, subject } of GAP_COMBOS) {
-    const count = await (prisma as any).curriculumContent.count({
+    const count = await db.curriculumContent.count({
       where: { grade, subject, status: "APPROVED" },
     });
     rows.push({ grade, subject, _count: { id: count } });
   }
   return rows;
-}
-
-async function runQualityGate() {
-  const pending = await (prisma as any).curriculumContent.findMany({
-    where: {
-      status: "pending_approval",
-      version: "ncf-2026.1",
-      OR: GAP_COMBOS.map(({ grade, subject }) => ({ grade, subject })),
-    },
-    select: { id: true, contentId: true, grade: true, subject: true, payload: true },
-    take: 500,
-  });
-
-  let passed = 0;
-  let failed = 0;
-  const failures: string[] = [];
-
-  for (const lesson of pending) {
-    const payload = lesson.payload as Record<string, unknown>;
-    const qr = validatePayloadQuality(payload);
-    // Extra checks beyond the base gate
-    const body = String(payload.body ?? "").toLowerCase();
-    const hasLiberia = body.includes("liber");
-    // Factory payloads use `teacherNote`; catalog payloads use `explanation` + body section
-    const hasTeacherNote =
-      (typeof payload.teacherNote === "string" && payload.teacherNote.length > 10) ||
-      (typeof payload.explanation === "string" && payload.explanation.length > 10) ||
-      body.includes("## teacher explanation") ||
-      body.includes("## teacher notes");
-    const hasAssessment = typeof payload.assessment === "string" && payload.assessment.length > 10;
-    const hasExamples = Array.isArray(payload.workedExamples) && (payload.workedExamples as unknown[]).length > 0;
-
-    if (!qr.passed) {
-      failed++;
-      failures.push(`G${lesson.grade} ${lesson.subject} ${lesson.contentId}: ${qr.reason}`);
-    } else if (!hasLiberia) {
-      failed++;
-      failures.push(`G${lesson.grade} ${lesson.subject} ${lesson.contentId}: missing_liberian_context`);
-    } else if (!hasTeacherNote) {
-      failed++;
-      failures.push(`G${lesson.grade} ${lesson.subject} ${lesson.contentId}: missing_teacher_note`);
-    } else if (!hasAssessment) {
-      failed++;
-      failures.push(`G${lesson.grade} ${lesson.subject} ${lesson.contentId}: missing_assessment`);
-    } else if (!hasExamples) {
-      failed++;
-      failures.push(`G${lesson.grade} ${lesson.subject} ${lesson.contentId}: missing_examples`);
-    } else {
-      passed++;
-    }
-  }
-
-  return { total: pending.length, passed, failed, failures, lessons: pending };
-}
-
-async function approveSafely() {
-  const result = await (prisma as any).curriculumContent.updateMany({
-    where: {
-      status: "pending_approval",
-      version: "ncf-2026.1",
-      OR: GAP_COMBOS.map(({ grade, subject }) => ({ grade, subject })),
-    },
-    data: { status: "APPROVED", updatedAt: new Date() },
-  });
-  return result.count as number;
 }
 
 async function main() {
@@ -135,42 +161,47 @@ async function main() {
 
   if (!isDryRun) {
     console.log("\n--- Quality gate ---");
-    const gate = await runQualityGate();
-    console.log(`  Total pending (ncf-2026.1, gap combos): ${gate.total}`);
-    console.log(`  Passed: ${gate.passed}`);
-    console.log(`  Failed: ${gate.failed}`);
-    if (gate.failures.length > 0) {
-      for (const f of gate.failures.slice(0, 10)) console.log(`    FAIL: ${f}`);
+    const { failed, total } = await runQualityGate();
+    const passedCount = total - failed.length;
+    console.log(`  Total pending (ncf-2026.1, gap combos): ${total}`);
+    console.log(`  Passed: ${passedCount}`);
+    console.log(`  Failed: ${failed.length}`);
+    if (failed.length > 0) {
+      for (const f of failed.slice(0, 10)) console.log(`    FAIL: ${f}`);
     }
 
     if (doApprove) {
-      if (gate.failed > 0) {
-        console.log(`\n  Approval BLOCKED — ${gate.failed} lesson(s) failed quality gate.`);
-        process.exitCode = 1;
-      } else if (gate.total === 0) {
+      if (total === 0) {
         console.log("\n  No pending lessons found to approve for these combos.");
       } else {
-        const approvedCount = await approveSafely();
+        if (failed.length > 0) {
+          console.log(`\n  ${failed.length} lesson(s) failed quality gate — approving only the ${passedCount} that passed.`);
+          process.exitCode = 1;
+        }
+        const approvedCount = await approveSafely(failed);
         console.log(`\n  Approved: ${approvedCount} lessons`);
 
-        // Audit log
-        await (prisma as any).auditLog.create({
-          data: {
-            action: "GAP_CLOSURE_APPROVED",
-            resourceType: "CurriculumContent",
-            resourceId: "gap-closure-G5-CIVICS-G6-CIVICS-G5-CS",
-            details: {
-              actor: "system",
-              actorRole: "ADMIN",
-              reason: "Structural gap closure: G5 CIVICS, G6 CIVICS, G5 COMPUTER_SCIENCE",
-              combos: GAP_COMBOS,
-              approvedCount,
-              approvedAt: new Date().toISOString(),
-              version: "ncf-2026.1",
+        if (approvedCount > 0) {
+          await (prisma as any).auditLog.create({
+            data: {
+              action: "GAP_CLOSURE_APPROVED",
+              resourceType: "CurriculumContent",
+              resourceId: "gap-closure-G5-CIVICS-G6-CIVICS-G5-CS",
+              details: {
+                actor: "system",
+                actorRole: "ADMIN",
+                reason: "Structural gap closure: G5 CIVICS, G6 CIVICS, G5 COMPUTER_SCIENCE",
+                combos: GAP_COMBOS,
+                approvedCount,
+                failedCount: failed.length,
+                skippedContentIds: failed,
+                approvedAt: new Date().toISOString(),
+                version: "ncf-2026.1",
+              },
             },
-          },
-        });
-        console.log("  Audit log written.");
+          });
+          console.log("  Audit log written.");
+        }
       }
     }
   }
@@ -197,4 +228,7 @@ async function main() {
   await prisma.$disconnect();
 }
 
-main().catch(err => { console.error(err); prisma.$disconnect(); process.exit(1); });
+// Guard prevents main() from running when this file is imported by tests
+if (!process.env.VITEST) {
+  main().catch(err => { console.error(err); prisma.$disconnect(); process.exit(1); });
+}
