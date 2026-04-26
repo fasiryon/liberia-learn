@@ -70,7 +70,9 @@ export default async function StudentTextbooksPage() {
         {grouped.size === 0 ? (
           <section className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-surface)] p-8 text-center">
             <p className="text-sm text-[var(--ll-text-muted)]">
-              No textbook readings are available for your grade yet. Your teacher can still assign lessons from the curriculum library.
+              {!student?.currentGrade
+                ? "Your grade hasn't been set yet. Ask your teacher to complete your placement so textbooks can load."
+                : "No textbook readings are available for your grade yet. Your teacher can still assign lessons from the curriculum library."}
             </p>
           </section>
         ) : (

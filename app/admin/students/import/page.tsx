@@ -101,9 +101,56 @@ export default function StudentImportPage() {
           <p className="text-xs uppercase tracking-[0.2em] text-[var(--ll-yellow)]">Bulk student import</p>
           <h1 className="mt-2 text-3xl font-bold">Import students by CSV</h1>
           <p className="mt-2 text-sm text-[var(--ll-text)]">
-            Format: firstName,lastName,grade,dateOfBirth,guardianPhone. Batches over 50 students use the existing SQS FIFO queue when configured.
+            Upload a CSV file with student records. Batches over 50 students use the background queue when configured.
           </p>
         </header>
+
+        <section className="mt-5 rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/80 p-5">
+          <div className="flex items-center justify-between gap-3">
+            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[var(--ll-text-faint)]">
+              Required CSV format
+            </p>
+            <a
+              href="/sample-student-import.csv"
+              download
+              className="rounded-lg border border-[var(--ll-border)] px-3 py-1.5 text-xs font-medium text-[var(--ll-text-muted)] hover:text-[var(--ll-text)]"
+            >
+              Download sample
+            </a>
+          </div>
+          <div className="mt-3 overflow-x-auto rounded-xl border border-[var(--ll-border)]">
+            <table className="w-full text-xs">
+              <thead className="bg-[var(--ll-surface-muted)]">
+                <tr className="text-left text-[11px] font-semibold uppercase tracking-[0.1em] text-[var(--ll-text-faint)]">
+                  <th className="px-3 py-2">firstName</th>
+                  <th className="px-3 py-2">lastName</th>
+                  <th className="px-3 py-2">grade</th>
+                  <th className="px-3 py-2">dateOfBirth</th>
+                  <th className="px-3 py-2">guardianPhone</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-[var(--ll-border)] bg-[var(--ll-surface)]">
+                <tr className="text-[var(--ll-text-muted)]">
+                  <td className="px-3 py-2">Fatu</td>
+                  <td className="px-3 py-2">Kollie</td>
+                  <td className="px-3 py-2">9</td>
+                  <td className="px-3 py-2">2011-03-15</td>
+                  <td className="px-3 py-2">0771000001</td>
+                </tr>
+                <tr className="text-[var(--ll-text-muted)]">
+                  <td className="px-3 py-2">James</td>
+                  <td className="px-3 py-2">Pewee</td>
+                  <td className="px-3 py-2">7</td>
+                  <td className="px-3 py-2">2013-06-22</td>
+                  <td className="px-3 py-2"></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <p className="mt-2 text-xs text-[var(--ll-text-faint)]">
+            Required: firstName, lastName, grade (1–12), dateOfBirth (YYYY-MM-DD). Optional: guardianPhone. Max 500 rows per batch.
+          </p>
+        </section>
 
         <section className="mt-5 rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/80 p-5">
           <input type="file" accept=".csv,text/csv" onChange={(e) => loadFile(e.target.files?.[0])} className="w-full rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)] px-3 py-3 text-sm" />

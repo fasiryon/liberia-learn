@@ -72,6 +72,7 @@ const demoLinks = [
   { label: "Teacher sign-in", href: "/login?role=teacher" },
   { label: "Guardian sign-in", href: "/login?role=guardian" },
   { label: "Admin sign-in", href: "/login?role=admin" },
+  { label: "MOE sign-in", href: "/moe/login", muted: true },
 ];
 
 export default function HomePage() {
@@ -177,7 +178,7 @@ export default function HomePage() {
           <div className="mt-6 grid gap-3 md:grid-cols-2 xl:grid-cols-4">
             {demoLinks.map((item) => (
               <Link key={item.label} href={item.href}>
-                <span className="ll-command ll-focus flex h-full min-h-16 text-sm font-medium text-[var(--ll-text)]">
+                <span className={`ll-command ll-focus flex h-full min-h-16 text-sm font-medium ${item.muted ? "text-[var(--ll-text-muted)]" : "text-[var(--ll-text)]"}`}>
                   {item.label}
                 </span>
               </Link>

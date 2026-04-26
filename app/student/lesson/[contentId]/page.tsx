@@ -8,6 +8,41 @@ import { cacheLessonContent, loadCachedLesson } from "@/lib/lesson-offline-cache
 
 type LessonMode = "read" | "slides" | "listen";
 
+type LessonMetadata = {
+  grade?: number;
+  subject?: string;
+  moeAlignments?: string[];
+  [key: string]: unknown;
+};
+
+type AudioScript = {
+  mode?: string;
+  script?: string;
+  fallbackText?: string;
+};
+
+type LessonPayload = {
+  title?: string;
+  objectives?: string[];
+  activities?: string[];
+  body?: string;
+  body_standard?: string;
+  body_block?: string;
+  content?: string;
+  lessonFormat?: string;
+  slideDeckSpecs?: Array<{ deckTitle?: string; slides?: Array<{ slideNumber: number; title: string; bullets: string[]; teacherNote?: string }> }>;
+  audioScriptSpecs?: AudioScript[];
+  [key: string]: unknown;
+};
+
+type LessonAudio = {
+  id?: string;
+  storageUrl?: string | null;
+  status: string;
+  durationSeconds?: number | null;
+  estimatedCostUsd?: number;
+};
+
 const MODE_LABELS: Record<LessonMode, string> = {
   read: "Read",
   slides: "Slides",
@@ -20,9 +55,9 @@ export default function LessonViewerPage() {
   const contentId = params.contentId as string;
 
   const [loading, setLoading] = useState(true);
-  const [metadata, setMetadata] = useState<any>(null);
-  const [payload, setPayload] = useState<any>(null);
-  const [audio, setAudio] = useState<any>(null);
+  const [metadata, setMetadata] = useState<LessonMetadata | null>(null);
+  const [payload, setPayload] = useState<LessonPayload | null>(null);
+  const [audio, setAudio] = useState<LessonAudio | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [completed, setCompleted] = useState(false);
   const [servedFromCache, setServedFromCache] = useState(false);
@@ -58,7 +93,7 @@ export default function LessonViewerPage() {
         if (cached) {
           setMetadata(cached.metadata);
           setPayload(cached.payload);
-          setAudio((cached as any).audio ?? null);
+          setAudio((cached.audio as LessonAudio | undefined) ?? null);
           setServedFromCache(true);
         } else {
           setError("This lesson isn't available offline yet. Please connect to the internet to load it for the first time.");
@@ -323,7 +358,7 @@ export default function LessonViewerPage() {
             )}
             <div className="space-y-3">
               {audioScripts.length > 0 ? (
-                audioScripts.map((script: any, index: number) => (
+                audioScripts.map((script: AudioScript, index: number) => (
                   <div key={index} className="rounded-lg border border-[var(--ll-border)] bg-[var(--ll-surface)] p-4">
                     <p className="text-xs font-semibold uppercase tracking-wide text-[var(--ll-text-faint)]">
                       {String(script.mode ?? `Script ${index + 1}`).replace(/_/g, " ")}
