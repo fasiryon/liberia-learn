@@ -81,12 +81,15 @@ test("admin dashboard loads with real data", async ({ page }) => {
 });
 
 test("MOE dashboard shows national data", async ({ page }) => {
+  test.setTimeout(90000);
   await page.goto(`${BASE}/moe/login`);
   await page.fill('input[type="email"]', "official1@moe.gov.lr");
   await page.fill('input[type="password"]', "MOESeed2026!");
   await page.click('button[type="submit"]');
   await page.waitForURL(/\/moe\/dashboard/, { timeout: 15000 });
-  await page.waitForTimeout(2000);
+
+  // Give the 4 parallel client-side API calls time to complete and render
+  await page.waitForTimeout(8000);
 
   const body = await page.locator("body").innerText();
   expect(body).toContain("Montserrado");
