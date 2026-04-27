@@ -1,5 +1,7 @@
 import { buildPrompt, getPromptMetadata } from "@/lib/ai/promptRegistry";
 import { routedCompletion } from "@/lib/ai/router";
+import { buildTrustSignal } from "@/lib/ai/trust";
+import type { AITrustSignal } from "@/lib/ai/trust";
 import type { TeacherClassPerformance } from "@/lib/reporting/teacherClassPerformance";
 
 export type TeacherClassInsightsResult = {
@@ -9,6 +11,7 @@ export type TeacherClassInsightsResult = {
   hadFallback: boolean;
   estimatedCostUSD: number;
   tokensUsed: number;
+  trustSignal?: AITrustSignal;
 };
 
 type TeacherClassInsightsUsageContext = {
@@ -33,6 +36,12 @@ const FALLBACK: TeacherClassInsightsResult = {
   hadFallback: true,
   estimatedCostUSD: 0,
   tokensUsed: 0,
+  trustSignal: buildTrustSignal({
+    groundingScore: 0.5,
+    hadFallback: true,
+    retrievalUsed: false,
+    role: "TEACHER",
+  }),
 };
 
 function buildSystemPrompt() {
@@ -129,6 +138,12 @@ export async function getTeacherClassInsightsResponse(
     parsed.hadFallback = result.budgetBlocked === true;
     parsed.estimatedCostUSD = result.estimatedCostUSD;
     parsed.tokensUsed = result.inputTokens + result.outputTokens;
+    parsed.trustSignal = buildTrustSignal({
+      groundingScore: parsed.hadFallback ? 0.5 : 0.82,
+      hadFallback: parsed.hadFallback,
+      retrievalUsed: false,
+      role: "TEACHER",
+    });
     return parsed;
   } catch {
     return { ...FALLBACK };

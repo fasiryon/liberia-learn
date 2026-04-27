@@ -3,12 +3,14 @@
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { BookOpen, MessageCircle, BarChart3 } from "lucide-react";
 import { GuardianNav } from "@/components/guardian/GuardianNav";
 import { DashboardTopBar } from "@/components/DashboardTopBar";
 import { SkeletonCard } from "@/components/ui/Skeleton";
 import { placementReviewStatusLabels, placementReviewStatusStyles } from "@/lib/placement";
 import { guardianWelcomeStorageKey } from "@/app/guardian/GuardianWelcomeGate";
 import { getGuardianGreeting } from "@/lib/student/greetings";
+import { RoleQuickStartCards } from "@/components/onboarding/RoleQuickStartCards";
 
 type GuardianSummary = {
   studentId: string;
@@ -181,11 +183,36 @@ export default function GuardianDashboardClient() {
             {error}
           </div>
         ) : !selectedSummary || !selectedDashboardChild ? (
-          <div className="rounded-2xl border border-white/10 bg-slate-900/70 p-8 text-center text-sm text-slate-400">
-            <div className="mx-auto h-20 w-20 rounded-3xl border border-dashed border-slate-700 bg-slate-950/70" />
-            <p className="mt-4 text-slate-300">
-              No students linked to your account yet. Contact your child&apos;s school to get connected.
-            </p>
+          <div className="space-y-5">
+            <div className="rounded-2xl border border-white/10 bg-slate-900/70 p-8 text-center text-sm text-slate-400">
+              <div className="mx-auto h-20 w-20 rounded-3xl border border-dashed border-slate-700 bg-slate-950/70" />
+              <p className="mt-4 text-slate-300">
+                No students linked to your account yet. Contact your child&apos;s school to get connected.
+              </p>
+            </div>
+            <RoleQuickStartCards
+              heading="While you wait — here's how guardians use LiberiaLearn"
+              cards={[
+                {
+                  title: "View child's progress",
+                  description: "Once linked, see grades, attendance, and mastery.",
+                  href: "/guardian/progress",
+                  Icon: BarChart3,
+                },
+                {
+                  title: "Message the teacher",
+                  description: "Send a note to your child's class teacher.",
+                  href: "/guardian/messages",
+                  Icon: MessageCircle,
+                },
+                {
+                  title: "Browse lessons",
+                  description: "See what your child is learning this term.",
+                  href: "/guardian/lessons",
+                  Icon: BookOpen,
+                },
+              ]}
+            />
           </div>
         ) : (
           <>

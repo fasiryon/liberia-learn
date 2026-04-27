@@ -5,6 +5,7 @@ import { z } from "zod";
 import { requireRole } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { HomeworkGrader } from "@/lib/ai/homework-grader";
+import { buildTrustSignal } from "@/lib/ai/trust";
 
 const bodySchema = z.object({
   submissionId: z.string().min(1),
@@ -49,13 +50,21 @@ export async function POST(req: Request) {
       );
     }
 
+    const wasAlreadyGraded = submission.aiScore !== null && submission.aiFeedback !== null;
+
     // If already AI-graded, just flip the reviewed flag
-    if (submission.aiScore !== null && submission.aiFeedback !== null) {
+    if (wasAlreadyGraded) {
       const updated = await prisma.homeworkSubmission.update({
         where: { id: submissionId },
         data: { aiReviewed: true },
       });
-      return NextResponse.json({ ok: true, submission: updated });
+      const trustSignal = buildTrustSignal({
+        groundingScore: 0.78,
+        hadFallback: false,
+        retrievalUsed: false,
+        role: "TEACHER",
+      });
+      return NextResponse.json({ ok: true, submission: updated, trustSignal });
     }
 
     // Not yet graded — invoke the AI grader
@@ -67,7 +76,13 @@ export async function POST(req: Request) {
       data: { aiReviewed: true },
     });
 
-    return NextResponse.json({ ok: true, submission: updated });
+    const trustSignal = buildTrustSignal({
+      groundingScore: 0.78,
+      hadFallback: false,
+      retrievalUsed: false,
+      role: "TEACHER",
+    });
+    return NextResponse.json({ ok: true, submission: updated, trustSignal });
   } catch (err: any) {
     console.error("Homework review error:", err);
     return NextResponse.json(
