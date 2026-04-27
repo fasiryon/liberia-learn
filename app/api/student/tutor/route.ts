@@ -14,7 +14,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { randomUUID } from "crypto";
 import { requireRole } from "@/lib/auth";
-import { isAiTutorEnabled } from "@/lib/serverFlags";
+import { isAiTutorEnabled, isAiTrustIndicatorsEnabled } from "@/lib/serverFlags";
+import { buildTrustSignal } from "@/lib/ai/trust";
 import { logAudit } from "@/lib/audit";
 import { checkAiRateLimit } from "@/lib/ai/rateLimitGuard";
 import { getRateLimitHeaders, rateLimitExceededResponse } from "@/lib/rateLimit";
@@ -125,6 +126,15 @@ export async function POST(req: NextRequest) {
       schoolId: user.schoolId ?? null,
     });
 
+    const trustSignal = isAiTrustIndicatorsEnabled()
+      ? buildTrustSignal({
+          groundingScore: result.confidenceScore,
+          hadFallback: result.hadFallback,
+          retrievalUsed: false,
+          role: "STUDENT",
+        })
+      : undefined;
+
     return NextResponse.json(
       {
         explanation: result.explanation,
@@ -132,6 +142,7 @@ export async function POST(req: NextRequest) {
         guidanceLevel: result.guidanceLevel,
         confidenceScore: result.confidenceScore,
         hadFallback: result.hadFallback,
+        ...(trustSignal ? { trustSignal } : {}),
       },
       { headers: getRateLimitHeaders(rateLimit) }
     );

@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import { requireUser } from "@/lib/auth";
 import { getAiCostDashboardData } from "@/lib/ai/costSummary";
+import { isAiCostDashboardEnabled } from "@/lib/serverFlags";
 
 function formatUsd(value: number) {
   return `$${value.toFixed(2)}`;
@@ -13,6 +14,10 @@ function formatPercent(value: number) {
 export const dynamic = "force-dynamic";
 
 export default async function AdminAiCostsPage() {
+  if (!isAiCostDashboardEnabled()) {
+    redirect("/admin");
+  }
+
   const user = await requireUser();
   if (user.role !== "ADMIN") {
     redirect("/");
@@ -93,6 +98,41 @@ export default async function AdminAiCostsPage() {
           </div>
         </section>
 
+        <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+          <div className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 p-5">
+            <p className="text-xs uppercase tracking-wide text-[var(--ll-text-faint)]">Cost per interaction</p>
+            <p className="mt-2 text-2xl font-bold text-[var(--ll-text)]">
+              {data.today.requestCount > 0 ? formatUsd(data.today.costPerInteraction) : "—"}
+            </p>
+            <p className="mt-1 text-sm text-[var(--ll-text-muted)]">
+              {data.today.requestCount} AI calls today
+            </p>
+          </div>
+          <div className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 p-5">
+            <p className="text-xs uppercase tracking-wide text-[var(--ll-text-faint)]">7-day total cost</p>
+            <p className="mt-2 text-2xl font-bold text-[var(--ll-text)]">
+              {formatUsd(data.sevenDayTrend.reduce((sum, d) => sum + d.costUsd, 0))}
+            </p>
+            <p className="mt-1 text-sm text-[var(--ll-text-muted)]">
+              {data.sevenDayTrend.reduce((sum, d) => sum + d.requestCount, 0).toLocaleString("en-US")} calls in 7 days
+            </p>
+          </div>
+          <div className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 p-5">
+            <p className="text-xs uppercase tracking-wide text-[var(--ll-text-faint)]">Most expensive feature</p>
+            {(() => {
+              const top = Object.entries(data.today.byFeature).sort(([, a], [, b]) => b.costUsd - a.costUsd)[0];
+              return top ? (
+                <>
+                  <p className="mt-2 text-2xl font-bold capitalize text-[var(--ll-text)]">{top[0]}</p>
+                  <p className="mt-1 text-sm text-[var(--ll-text-muted)]">{formatUsd(top[1].costUsd)} today</p>
+                </>
+              ) : (
+                <p className="mt-2 text-sm text-[var(--ll-text-muted)]">No data yet</p>
+              );
+            })()}
+          </div>
+        </section>
+
         <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
           {Object.entries(data.today.byFeature).map(([feature, summary]) => (
             <div key={feature} className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 p-5">
@@ -106,6 +146,29 @@ export default async function AdminAiCostsPage() {
             </div>
           ))}
         </section>
+
+        {data.sevenDayTrend.length > 0 && (
+          <section className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 p-6">
+            <p className="text-xs uppercase tracking-wide text-[var(--ll-text-faint)]">7-Day Cost Trend</p>
+            <div className="mt-4 flex items-end gap-1.5" style={{ height: "80px" }}>
+              {data.sevenDayTrend.map((day) => {
+                const maxCost = Math.max(...data.sevenDayTrend.map((d) => d.costUsd), 0.001);
+                const heightPct = Math.max((day.costUsd / maxCost) * 100, 4);
+                return (
+                  <div key={day.date} className="group relative flex flex-1 flex-col items-center gap-1">
+                    <div
+                      className="w-full rounded-t bg-teal-400/60 transition-all group-hover:bg-teal-400"
+                      style={{ height: `${heightPct}%` }}
+                    />
+                    <p className="text-[9px] text-[var(--ll-text-faint)]">
+                      {day.date.slice(5)}
+                    </p>
+                  </div>
+                );
+              })}
+            </div>
+          </section>
+        )}
 
         <section className="grid gap-4 lg:grid-cols-[1.1fr,0.9fr]">
           <div className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 p-6">
@@ -154,6 +217,47 @@ export default async function AdminAiCostsPage() {
                   </div>
                 ))
               )}
+            </div>
+          </div>
+        </section>
+
+        <section className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 p-6">
+          <p className="text-xs uppercase tracking-wide text-[var(--ll-text-faint)]">Optimization Recommendations</p>
+          <div className="mt-4 space-y-2">
+            {data.recommendations.map((rec) => (
+              <div
+                key={rec}
+                className="flex items-start gap-3 rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/50 px-4 py-3"
+              >
+                <span className="mt-0.5 h-2 w-2 shrink-0 rounded-full bg-teal-400" />
+                <p className="text-sm text-[var(--ll-text-muted)]">{rec}</p>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <section className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 p-6">
+          <p className="text-xs uppercase tracking-wide text-[var(--ll-text-faint)]">Current Cost-Saving Settings</p>
+          <div className="mt-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+            <div className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/50 px-4 py-3">
+              <p className="text-[10px] text-[var(--ll-text-faint)]">Response Caching</p>
+              <p className="mt-1 text-sm font-semibold text-[var(--ll-text)]">Read-only</p>
+              <p className="mt-0.5 text-xs text-[var(--ll-text-muted)]">Configure via ENABLE_RAG_TUTOR env var</p>
+            </div>
+            <div className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/50 px-4 py-3">
+              <p className="text-[10px] text-[var(--ll-text-faint)]">Model Routing</p>
+              <p className="mt-1 text-sm font-semibold text-[var(--ll-text)]">Groq → OpenAI fallback</p>
+              <p className="mt-0.5 text-xs text-[var(--ll-text-muted)]">Fast tier uses llama-3.1-8b-instant</p>
+            </div>
+            <div className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/50 px-4 py-3">
+              <p className="text-[10px] text-[var(--ll-text-faint)]">Max Output Tokens</p>
+              <p className="mt-1 text-sm font-semibold text-[var(--ll-text)]">512 (tutor), 800 (teacher)</p>
+              <p className="mt-0.5 text-xs text-[var(--ll-text-muted)]">Curriculum calls: 2048</p>
+            </div>
+            <div className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/50 px-4 py-3">
+              <p className="text-[10px] text-[var(--ll-text-faint)]">Monthly Budget Cap</p>
+              <p className="mt-1 text-sm font-semibold text-[var(--ll-text)]">{formatUsd(data.thisMonth.budgetCapUsd)}</p>
+              <p className="mt-0.5 text-xs text-[var(--ll-text-muted)]">Set via AI_BUDGET_MONTHLY_CAP_USD</p>
             </div>
           </div>
         </section>
