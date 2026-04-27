@@ -23,6 +23,7 @@ import {
 } from "@/lib/placement";
 import { getStudentGreeting } from "@/lib/student/greetings";
 import { AchievementBadge } from "@/components/student/AchievementBadge";
+import { StudentWelcomeBanner } from "@/components/student/StudentWelcomeBanner";
 
 export const dynamic = "force-dynamic";
 
@@ -245,6 +246,12 @@ export default async function DashboardPage() {
 
             {/* Main Content */}
             <section className="flex flex-1 flex-col gap-4 rounded-xl border border-[var(--ll-border)] bg-[var(--ll-surface)] p-4 shadow-none">
+              {/* First-login welcome panel */}
+              <StudentWelcomeBanner
+                lessonsThisWeek={lessonsThisWeek}
+                studentName={student.user?.name?.split(" ")[0] || undefined}
+              />
+
               {/* Greeting */}
               <div>
                 <AchievementBadge avgGrade={avgGradeNum} />

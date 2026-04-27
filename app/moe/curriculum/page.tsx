@@ -1,6 +1,8 @@
 "use client";
 
 import { FormEvent, useEffect, useState } from "react";
+import { AITrustBadge } from "@/components/ai/AITrustBadge";
+import { AITrustDetails } from "@/components/ai/AITrustDetails";
 
 type CurriculumVersionRow = {
   id: string;
@@ -10,11 +12,32 @@ type CurriculumVersionRow = {
   _count?: { contents: number };
 };
 
+type CurriculumHealthData = {
+  national: {
+    totalContent: number;
+    alignedContent: number;
+    unalignedContent: number;
+    alignmentPct: number;
+  };
+  bySubject: Array<{
+    subject: string;
+    total: number;
+    aligned: number;
+    unaligned: number;
+    alignmentPct: number;
+  }>;
+  generatedAt: string;
+};
+
+const trustEnabled = process.env.NEXT_PUBLIC_ENABLE_AI_TRUST_INDICATORS === "true";
+
 export default function MoeCurriculumPage() {
   const [versions, setVersions] = useState<CurriculumVersionRow[]>([]);
   const [versionName, setVersionName] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
+  const [health, setHealth] = useState<CurriculumHealthData | null>(null);
+  const [healthError, setHealthError] = useState<string | null>(null);
 
   async function loadVersions() {
     const res = await fetch("/api/moe/curriculum/version", { cache: "no-store" });
@@ -27,6 +50,13 @@ export default function MoeCurriculumPage() {
 
   useEffect(() => {
     loadVersions().catch((err) => setError(err.message));
+    fetch("/api/moe/curriculum-health", { cache: "no-store" })
+      .then((r) => r.json())
+      .then((data) => {
+        if (data?.error) throw new Error(data.error);
+        setHealth(data);
+      })
+      .catch((err: Error) => setHealthError(err.message));
   }, []);
 
   async function handleCreate(event: FormEvent) {
@@ -73,6 +103,9 @@ export default function MoeCurriculumPage() {
     }
   }
 
+  const aggregateConfidence = health ? health.national.alignmentPct / 100 : 0;
+  const aggregateFallback = health ? health.national.alignmentPct < 50 : false;
+
   return (
     <div className="space-y-6">
       <section className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 p-6">
@@ -81,6 +114,88 @@ export default function MoeCurriculumPage() {
         <p className="mt-2 max-w-3xl text-sm text-[var(--ll-text-muted)]">
           Create, activate, and archive national curriculum versions. Version state is enforced server-side before publication.
         </p>
+      </section>
+
+      {/* Curriculum Health Panel */}
+      <section className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 p-6">
+        <p className="text-[11px] font-medium uppercase tracking-[0.1em] text-[var(--ll-text-faint)]">
+          Curriculum Health
+        </p>
+        <h2 className="mt-2 text-base font-semibold text-[var(--ll-text)]">MOE Alignment Coverage</h2>
+        <p className="mt-1 text-sm text-[var(--ll-text-muted)]">
+          National curriculum content aligned to MOE standards, by subject.
+        </p>
+
+        {healthError ? (
+          <p className="mt-3 text-sm text-[var(--ll-danger)]">{healthError}</p>
+        ) : health ? (
+          <div className="mt-4 space-y-4">
+            <div className="flex flex-wrap items-center gap-4">
+              <div>
+                <p className="text-[10px] text-[var(--ll-text-faint)]">National alignment</p>
+                <p className="mt-0.5 text-2xl font-semibold text-[var(--ll-text)]">
+                  {health.national.alignmentPct}%
+                </p>
+                <p className="text-xs text-[var(--ll-text-muted)]">
+                  {health.national.alignedContent} / {health.national.totalContent} items aligned
+                </p>
+              </div>
+              {trustEnabled && (
+                <div className="flex flex-col gap-2">
+                  <AITrustBadge
+                    confidenceScore={aggregateConfidence}
+                    hadFallback={aggregateFallback}
+                    view="admin"
+                  />
+                  {(aggregateConfidence < 0.66 || aggregateFallback) && (
+                    <AITrustDetails
+                      confidenceScore={aggregateConfidence}
+                      hadFallback={aggregateFallback}
+                      generatedAt={health.generatedAt}
+                    />
+                  )}
+                </div>
+              )}
+            </div>
+
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm text-[var(--ll-text)]">
+                <thead className="text-left text-xs uppercase tracking-[0.2em] text-[var(--ll-text-faint)]">
+                  <tr>
+                    <th className="pb-3">Subject</th>
+                    <th className="pb-3">Total</th>
+                    <th className="pb-3">Aligned</th>
+                    <th className="pb-3">Coverage</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {health.bySubject.map((row) => (
+                    <tr key={row.subject} className="border-t border-white/5">
+                      <td className="py-2 font-medium">{row.subject}</td>
+                      <td className="py-2">{row.total}</td>
+                      <td className="py-2">{row.aligned}</td>
+                      <td className="py-2">
+                        <span
+                          className={`inline-flex rounded-full px-2 py-0.5 text-[11px] font-medium ${
+                            row.alignmentPct >= 80
+                              ? "bg-[var(--ll-accent-soft)] text-[var(--ll-accent)]"
+                              : row.alignmentPct >= 50
+                                ? "bg-[rgba(250,204,21,0.10)] text-[var(--ll-warning)]"
+                                : "bg-[rgba(251,113,133,0.10)] text-[var(--ll-danger)]"
+                          }`}
+                        >
+                          {row.alignmentPct}%
+                        </span>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        ) : (
+          <div className="mt-4 h-24 animate-pulse rounded-xl bg-[var(--ll-surface-muted)]" />
+        )}
       </section>
 
       <section className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 p-6">

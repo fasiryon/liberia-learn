@@ -9,6 +9,11 @@ import { SkeletonCard } from "@/components/ui/Skeleton";
 import { getTeacherGreeting } from "@/lib/student/greetings";
 import { AlertBell } from "@/components/teacher/AlertBell";
 import { WeeklySentiment } from "@/components/teacher/WeeklySentiment";
+import { AITrustBadge } from "@/components/ai/AITrustBadge";
+import { AITrustDetails } from "@/components/ai/AITrustDetails";
+import type { AITrustSignal } from "@/lib/ai/trust";
+
+const trustEnabled = process.env.NEXT_PUBLIC_ENABLE_AI_TRUST_INDICATORS === "true";
 
 type DashboardData = {
   scheduledToday: number;
@@ -111,6 +116,7 @@ export default function TeacherDashboardPage() {
           strugglingLesson: string;
           reteachApproach: string;
           hadFallback: boolean;
+          trustSignal?: AITrustSignal;
         };
       }
     >
@@ -593,7 +599,30 @@ export default function TeacherDashboardPage() {
                             <p className="mt-2 text-sm text-[var(--ll-text-muted)]">
                               <span className="font-semibold text-[var(--ll-text)]">Reteach approach:</span> {insights.result.reteachApproach}
                             </p>
-                            {insights.result.hadFallback ? (
+                            {trustEnabled && insights.result.trustSignal && (
+                              <div className="mt-3">
+                                <AITrustBadge
+                                  confidenceScore={insights.result.trustSignal.groundingScore}
+                                  hadFallback={insights.result.trustSignal.fallbackUsed}
+                                  retrievalUsed={insights.result.trustSignal.retrievalUsed}
+                                  view="teacher"
+                                />
+                                {(insights.result.trustSignal.confidence === "low" || insights.result.trustSignal.fallbackUsed) && (
+                                  <div className="mt-2">
+                                    <AITrustDetails
+                                      confidenceScore={insights.result.trustSignal.groundingScore}
+                                      hadFallback={insights.result.trustSignal.fallbackUsed}
+                                      retrievalUsed={insights.result.trustSignal.retrievalUsed}
+                                      explainability={insights.result.trustSignal.explainability}
+                                      model={insights.result.trustSignal.model}
+                                      provider={insights.result.trustSignal.provider}
+                                      generatedAt={insights.result.trustSignal.generatedAt}
+                                    />
+                                  </div>
+                                )}
+                              </div>
+                            )}
+                            {!trustEnabled && insights.result.hadFallback ? (
                               <p className="mt-2 text-xs text-[var(--ll-warning)]">Fallback guidance was used for this response.</p>
                             ) : null}
                           </section>
