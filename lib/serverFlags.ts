@@ -614,3 +614,30 @@ export function isExamSystemEnabled(): boolean {
 export function isLiveSmsEnabled(): boolean {
   return process.env.ENABLE_LIVE_SMS === "true";
 }
+
+// ─── Trust, Cost, and Onboarding Sprint Flags ────────────────────────────────
+
+/**
+ * AI trust indicator layer (confidence badge + grounding details on AI outputs).
+ * DEFAULT OFF. Set ENABLE_AI_TRUST_INDICATORS=true to activate.
+ * When enabled, AI tutor and teacher assist responses include trust metadata.
+ */
+export function isAiTrustIndicatorsEnabled(): boolean {
+  return process.env.ENABLE_AI_TRUST_INDICATORS === "true";
+}
+
+/**
+ * AI cost monitoring dashboard for school admins and platform admins.
+ * DEFAULT ON. Set ENABLE_AI_COST_DASHBOARD=false to hide.
+ */
+export function isAiCostDashboardEnabled(): boolean {
+  return process.env.ENABLE_AI_COST_DASHBOARD !== "false";
+}
+
+/**
+ * Polished role-specific onboarding checklists and welcome panels.
+ * DEFAULT ON. Set ENABLE_ROLE_ONBOARDING_POLISH=false to hide.
+ */
+export function isRoleOnboardingPolishEnabled(): boolean {
+  return process.env.ENABLE_ROLE_ONBOARDING_POLISH !== "false";
+}

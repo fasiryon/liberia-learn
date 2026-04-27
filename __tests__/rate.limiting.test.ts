@@ -14,6 +14,7 @@ vi.mock("@/lib/auth", () => ({ requireRole: mockRequireRole }));
 vi.mock("@/lib/serverFlags", () => ({
   isAiTutorEnabled: mockIsAiTutorEnabled,
   getAiBudgetMonthlyCap: mockGetAiBudgetMonthlyCap,
+  isAiTrustIndicatorsEnabled: () => false,
 }));
 vi.mock("@/lib/ai/router", () => ({ routedCompletion: mockRoutedCompletion }));
 vi.mock("@/lib/audit", () => ({ logAudit: mockLogAudit }));

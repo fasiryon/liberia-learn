@@ -1,5 +1,62 @@
 export const SAFE_GROUNDING_THRESHOLD = 0.66;
 
+// ─── AITrustSignal — sprint-level aggregate trust object ─────────────────────
+
+export type AITrustSignal = {
+  confidence: AiConfidence;
+  groundingScore: number;
+  fallbackUsed: boolean;
+  retrievalUsed: boolean;
+  citations: AiCitation[];
+  warning?: string;
+  generatedAt: string;
+  model?: string;
+  provider?: string;
+  explainability?: AiExplainability;
+};
+
+export function buildTrustSignal(input: {
+  groundingScore: number;
+  hadFallback: boolean;
+  retrievalUsed: boolean;
+  role: TrustAudienceRole;
+  sources?: string[];
+  model?: string;
+  provider?: string;
+}): AITrustSignal {
+  const { groundingScore, hadFallback, retrievalUsed, role, model, provider } = input;
+  const sources = input.sources ?? [];
+  const retrievalWeak = retrievalUsed && groundingScore < SAFE_GROUNDING_THRESHOLD;
+  const confidence = deriveConfidence({ groundingScore, hadFallback, retrievalWeak });
+  const explainability = buildExplainability({
+    role,
+    hadFallback,
+    retrievalWeak,
+    groundingScore,
+    sources,
+  });
+
+  let warning: string | undefined;
+  if (hadFallback) {
+    warning = "Answer generated with limited context.";
+  } else if (confidence === "low") {
+    warning = "Limited curriculum grounding — ask your teacher to verify.";
+  }
+
+  return {
+    confidence,
+    groundingScore: roundScore(groundingScore),
+    fallbackUsed: hadFallback,
+    retrievalUsed,
+    citations: [],
+    warning,
+    generatedAt: new Date().toISOString(),
+    model,
+    provider,
+    explainability,
+  };
+}
+
 export type AiConfidence = "high" | "medium" | "low";
 export type CitationSourceType = "curriculum_content" | "policy" | "system";
 

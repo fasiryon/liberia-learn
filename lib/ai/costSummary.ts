@@ -27,6 +27,7 @@ export type AiCostDashboardData = {
     requestCount: number;
     fallbackCount: number;
     fallbackRate: number;
+    costPerInteraction: number;
     byFeature: ByFeatureSummary;
     topSchoolsBySpend: Array<{ schoolId: string; name: string; costUsd: number }>;
   };
@@ -36,6 +37,8 @@ export type AiCostDashboardData = {
     percentUsed: number;
     projectedMonthEndUsd: number;
   };
+  sevenDayTrend: Array<{ date: string; costUsd: number; requestCount: number }>;
+  recommendations: string[];
   alerts: string[];
 };
 
@@ -50,6 +53,38 @@ function startOfMonth() {
   date.setDate(1);
   date.setHours(0, 0, 0, 0);
   return date;
+}
+
+function startOfDayOffset(daysAgo: number) {
+  const date = new Date();
+  date.setHours(0, 0, 0, 0);
+  date.setDate(date.getDate() - daysAgo);
+  return date;
+}
+
+function isoDateOnly(date: Date): string {
+  return date.toISOString().slice(0, 10);
+}
+
+function buildRecommendations(input: {
+  fallbackRate: number;
+  costPerInteraction: number;
+  curriculumFraction: number;
+  totalCostUsd: number;
+}): string[] {
+  const recs: string[] = [];
+  if (input.fallbackRate > 0.15) {
+    recs.push("High fallback rate detected — review high-error AI call sites to improve reliability.");
+  }
+  if (input.costPerInteraction > 0.01) {
+    recs.push("Cost per interaction is above $0.01 — consider enabling response caching for repeated curriculum queries.");
+  }
+  if (input.curriculumFraction > 0.5 && input.totalCostUsd > 0.5) {
+    recs.push("Curriculum generation accounts for over half of AI spend — limit long-form generation to batch workflows.");
+  }
+  recs.push("Use the fast (Groq) tier for simple student questions where available.");
+  recs.push("Review AI usage weekly — costs rise faster than usage when models are called on cached/repeated requests.");
+  return recs;
 }
 
 function getTodayProgress(now: Date) {
@@ -109,6 +144,7 @@ export async function getAiCostDashboardData(
         requestCount: 0,
         fallbackCount: 0,
         fallbackRate: 0,
+        costPerInteraction: 0,
         byFeature: emptyByFeature(),
         topSchoolsBySpend: [],
       },
@@ -118,6 +154,8 @@ export async function getAiCostDashboardData(
         percentUsed: 0,
         projectedMonthEndUsd: 0,
       },
+      sevenDayTrend: [],
+      recommendations: buildRecommendations({ fallbackRate: 0, costPerInteraction: 0, curriculumFraction: 0, totalCostUsd: 0 }),
       alerts: [],
     };
   }
@@ -192,6 +230,24 @@ export async function getAiCostDashboardData(
     }
   }
 
+  const sevenDayTrendRaw = await Promise.all(
+    Array.from({ length: 7 }, (_, i) => {
+      const dayStart = startOfDayOffset(6 - i);
+      const dayEnd = new Date(dayStart);
+      dayEnd.setDate(dayEnd.getDate() + 1);
+      return Promise.all([
+        aiInteractionLogModel.aggregate!({
+          where: { ...whereScope, timestamp: { gte: dayStart, lt: dayEnd } },
+          _sum: { estimatedCostUSD: true },
+        }),
+        (aiInteractionLogModel.count?.({
+          where: { ...whereScope, timestamp: { gte: dayStart, lt: dayEnd } },
+        }) ?? Promise.resolve(0)),
+        Promise.resolve(isoDateOnly(dayStart)),
+      ]).catch(() => [null, 0, isoDateOnly(dayStart)] as const);
+    })
+  );
+
   const alerts: string[] = [];
   const tutorDailyCap = Math.min(getAiTutorDailyBudgetUsd(), getAiBudgetDailyCap());
   const teacherDailyCap = Math.min(getAiTeacherAssistDailyBudgetUsd(), getAiBudgetDailyCap());
@@ -218,13 +274,37 @@ export async function getAiCostDashboardData(
     alerts.push("Platform AI spend is above 90% of the monthly cap.");
   }
 
+  const todayFallbackRate =
+    todayRequestCount > 0 ? Number(todayFallbackCount ?? 0) / todayRequestCount : 0;
+  const costPerInteraction =
+    todayRequestCount > 0 ? todayCost / todayRequestCount : 0;
+  const curriculumFraction =
+    todayCost > 0 ? byFeature.curriculum.costUsd / todayCost : 0;
+
+  const sevenDayTrend = sevenDayTrendRaw.map((entry) => {
+    const [totals, count, date] = entry as [any, number, string];
+    return {
+      date,
+      costUsd: Number(totals?._sum?.estimatedCostUSD ?? 0),
+      requestCount: Number(count ?? 0),
+    };
+  });
+
+  const recommendations = buildRecommendations({
+    fallbackRate: todayFallbackRate,
+    costPerInteraction,
+    curriculumFraction,
+    totalCostUsd: todayCost,
+  });
+
   return {
     today: {
       totalCostUsd: todayCost,
       totalTokens: Number(todayTotals?._sum?.tokensUsed ?? 0),
       requestCount: todayRequestCount,
       fallbackCount: Number(todayFallbackCount ?? 0),
-      fallbackRate: todayRequestCount > 0 ? Number(todayFallbackCount ?? 0) / todayRequestCount : 0,
+      fallbackRate: todayFallbackRate,
+      costPerInteraction,
       byFeature,
       topSchoolsBySpend: topSchoolRows.map((row) => ({
         schoolId: String(row.schoolId),
@@ -238,6 +318,8 @@ export async function getAiCostDashboardData(
       percentUsed: clampPercent((monthCost / Math.max(monthlyCap, 1)) * 100),
       projectedMonthEndUsd: Number((monthCost / getTodayProgress(now)).toFixed(4)),
     },
+    sevenDayTrend,
+    recommendations,
     alerts,
   };
 }

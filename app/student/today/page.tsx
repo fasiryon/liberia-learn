@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { BookOpen, CheckCircle2, FlaskConical, ListChecks } from "lucide-react";
 import { SkeletonCard } from "@/components/ui/Skeleton";
+import { GuidedEmptyState } from "@/components/onboarding/GuidedEmptyState";
 
 type WorkItem = {
   id: string;
@@ -252,18 +253,17 @@ export default function StudentTodayPage() {
               </Link>
             </section>
           ) : (
-            <div className="ll-section p-6 text-center">
-              <BookOpen className="mx-auto mb-3 h-8 w-8 text-[var(--ll-text-faint)]" strokeWidth={1.5} />
-              <p className="text-sm leading-6 text-[var(--ll-text-muted)]">
-                Nothing scheduled yet. Browse the curriculum to start learning.
-              </p>
-              <Link
-                href="/student/lessons"
-                className="ll-command ll-focus mt-4 inline-flex text-sm font-semibold text-[var(--ll-text)]"
-              >
-                Browse lessons
-              </Link>
-            </div>
+            <GuidedEmptyState
+              Icon={BookOpen}
+              heading="Nothing scheduled for today"
+              body="Your teacher hasn't assigned lessons for today yet. Browse the curriculum to keep learning, or save a lesson for offline use."
+              actions={[
+                { label: "Browse lessons", href: "/student/lessons", primary: true },
+                { label: "View saved offline lessons", href: "/student/offline-lessons" },
+                { label: "View my progress", href: "/student/progress" },
+              ]}
+              hint="New lessons appear here each school day when your teacher assigns them."
+            />
           )
         ) : (
           <div className="space-y-5">
