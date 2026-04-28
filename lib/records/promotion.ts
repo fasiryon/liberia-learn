@@ -2,9 +2,11 @@ import { z } from "zod";
 
 export const enrollmentStatusValues = [
   "ACTIVE",
+  "COMPLETED",
   "PROMOTED",
-  "GRADUATED",
+  "RETAINED",
   "TRANSFERRED",
+  "GRADUATED",
 ] as const;
 
 export const enrollmentStatusSchema = z.enum(enrollmentStatusValues);
@@ -18,6 +20,8 @@ export function canTransitionEnrollmentStatus(
   if (currentStatus === nextStatus) return true;
   if (currentStatus === "ACTIVE") return true;
   if (currentStatus === "PROMOTED") return nextStatus === "GRADUATED" || nextStatus === "TRANSFERRED";
+  if (currentStatus === "RETAINED") return nextStatus === "TRANSFERRED";
+  if (currentStatus === "COMPLETED") return nextStatus === "TRANSFERRED";
   return false;
 }
 
