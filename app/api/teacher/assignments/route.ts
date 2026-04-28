@@ -65,7 +65,7 @@ export async function GET() {
             },
           },
         },
-        orderBy: [{ score: "asc" }, { turnedInAt: "desc" }],
+        orderBy: [{ turnedInAt: "desc" }],
       }),
       prisma.assignment.findMany({
         where:
