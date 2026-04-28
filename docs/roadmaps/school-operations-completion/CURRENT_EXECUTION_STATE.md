@@ -4,13 +4,13 @@
 feat/school-operations-completion
 
 ## Current Phase
-Phase 2 — Safe Multi-School Import System
+Phase 3 — Real Timetable / Bell Schedule
 
 ## Status
 COMPLETE
 
 ## Last Completed Phase
-Phase 2 — Safe Multi-School Import System
+Phase 3 — Real Timetable / Bell Schedule
 
 ## Phase 1 Implementation Summary
 
@@ -100,13 +100,70 @@ Phase 2 — Safe Multi-School Import System
   - buildErrorCsv: error_reason column appended
   - API: POST /validate no DB write, POST /confirm writes valid only, skips invalid, GET /template, 403 checks
 
+## Phase 3 Implementation Summary
+
+### Inspection Findings
+- Timetable model: **ALREADY EXISTS** — flat per-period model (one record = one period slot per class/day/teacher/subject)
+- Existing infrastructure: `/api/admin/timetable` CRUD routes, `app/admin/timetable/page.tsx`, `lib/records/schoolOperations.ts` service
+- Existing teacher schedule route: `app/api/teacher/schedule/route.ts` — for ScheduledWork (NOT timetable)
+- Missing: TimetableAssignment model (lesson on specific date), teacher/student timetable view routes, timetable field in today response
+- Design decision: existing `Timetable` model acts as the slot — added `TimetableAssignment` model only
+
+### Schema Changes (migration: 20260427_000001_timetable)
+- New model: `TimetableAssignment` — links Timetable slot to CurriculumContent for a specific date
+  - Unique: `[timetableId, assignedDate]` — one assignment per slot per day (UPSERT semantics)
+  - FK: Timetable (cascade), CurriculumContent (set null), User/assignedBy (cascade)
+  - `assignedDate @db.Date` — calendar date only
+- Timetable model: added `assignments TimetableAssignment[]` back-relation
+- User model: added `timetableAssignments TimetableAssignment[]` back-relation
+- CurriculumContent model: added `timetableAssignments TimetableAssignment[]` back-relation
+
+### New Files
+- `lib/timetable/timetableService.ts` — getTimetableForStudent, getTimetableForTeacher, assignLessonToSlot, removeLessonFromSlot
+- `app/api/teacher/timetable/today/route.ts` — GET teacher's periods for today
+- `app/api/teacher/timetable/[timetableId]/assign/route.ts` — POST/DELETE lesson assignment
+- `app/api/student/timetable/today/route.ts` — GET student's timetable for today
+- `app/teacher/timetable/page.tsx` — teacher timetable view with assign-lesson panel
+
+### Modified Files
+- `app/api/student/today/route.ts` — added `timetable` field (null-safe, sequential after existing Promise.all)
+- `app/student/today/page.tsx` — added TimetableSection component + timetable state (above full day plan, hidden when null)
+- `prisma/schema.prisma` — TimetableAssignment model + back-relations
+
+### Backward Compatibility Confirmed
+- ScheduledWork still works: YES — unchanged, still drives `items[]` in today response
+- Adaptive plan still shows: YES — `adaptivePlan` field unchanged
+- Existing today fields unchanged: YES — `timetable` field appended, no existing field removed
+- Admin timetable CRUD: UNCHANGED — existing routes/service/page all still work
+
+## Gate Results (Phase 3)
+| Gate                | Status                              |
+| ------------------- | ----------------------------------- |
+| npx prisma generate | PASS                                |
+| npx tsc --noEmit    | PASS (0 errors)                     |
+| npx vitest run      | PASS — 2244 tests, 303 files        |
+| npm run build       | PASS                                |
+
+## New Tests (Phase 3)
+- `__tests__/timetable/timetableService.test.ts` — 16 tests
+  - getTimetableForStudent: null for no enrollments, null for no slots, sorted by time, correct weekday, tenant scoping
+  - getTimetableForTeacher: empty array, sorted, schoolId scoping
+  - assignLessonToSlot: success, 404 on non-owner, upsert semantics
+  - removeLessonFromSlot: success, 404 on non-owner
+- `__tests__/timetable/timetableAssignment.test.ts` — 6 tests
+  - POST assign: success, 404, 403, logAudit
+  - DELETE assign: success, 400 missing date
+- `__tests__/timetable/todayEndpoint.test.ts` — 7 tests
+  - timetable null when not configured, period count correct, assignment details, null assignment, backward compat, student not found, service error resilience
+
 ## Risks Active
 - student.currentGrade backward compatibility: PRESERVED
 - AcademicEnrollment unique constraint: RESPECTED
-- Timetable: NOT TOUCHED (Phase 3 scope)
+- TimetableAssignment migration: additive only (new table)
+- lessonUrl in timetable uses `/student/lessons/<contentId>` — lesson page must handle contentId param
 
 ## Next Phase
-Phase 3 — Timetable + Bell Schedule
+Phase 4 — Attendance / Analytics
 
 ## Notes
 Do not push unless explicitly instructed.

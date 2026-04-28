@@ -34,6 +34,7 @@ model User {
   teacherOf           Class[]              @relation("TeacherClasses")
   markedAttendance    Attendance[]         @relation("AttendanceMarkedBy")
   timetableEntries    Timetable[]          @relation("TimetableTeacher")
+  timetableAssignments TimetableAssignment[] @relation("TimetableAssignmentBy")
   teacherAssignments  TeacherAssignment[]  @relation("TeacherAssignmentTeacher")
   homework            Homework[]
   messagesSent        Message[]            @relation("MessagesSent")
@@ -1321,8 +1322,9 @@ model CurriculumContent {
   lessonType      String?         // intro|core|practice|review|assessment
   teacherCreated  Boolean         @default(false)
   versionId       String?
-  scheduledWork   ScheduledWork[]
-  audioAssets     LessonAudio[]
+  scheduledWork        ScheduledWork[]
+  timetableAssignments TimetableAssignment[]
+  audioAssets          LessonAudio[]
   videoSupplements LessonVideo[]
   embeddedAt      DateTime?
   embedding       Unsupported("vector(1536)")?
@@ -1926,13 +1928,33 @@ model Timetable {
   room       String?
   createdAt  DateTime   @default(now())
   updatedAt  DateTime   @updatedAt
-  school     School     @relation(fields: [schoolId], references: [id], onDelete: Cascade)
-  class      Class      @relation(fields: [classId], references: [id], onDelete: Cascade)
-  teacher    User       @relation("TimetableTeacher", fields: [teacherId], references: [id], onDelete: Cascade)
+  school       School                @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+  class        Class                 @relation(fields: [classId], references: [id], onDelete: Cascade)
+  teacher      User                  @relation("TimetableTeacher", fields: [teacherId], references: [id], onDelete: Cascade)
+  assignments  TimetableAssignment[]
 
   @@index([schoolId, dayOfWeek])
   @@index([teacherId, dayOfWeek])
   @@unique([schoolId, classId, dayOfWeek, periodLabel])
+}
+
+model TimetableAssignment {
+  id                  String             @id @default(cuid())
+  timetableId         String
+  timetable           Timetable          @relation(fields: [timetableId], references: [id], onDelete: Cascade)
+  curriculumContentId String?
+  curriculumContent   CurriculumContent? @relation(fields: [curriculumContentId], references: [contentId], onDelete: SetNull)
+  assignedById        String
+  assignedBy          User               @relation("TimetableAssignmentBy", fields: [assignedById], references: [id], onDelete: Cascade)
+  assignedDate        DateTime           @db.Date
+  title               String
+  instructions        String?
+  createdAt           DateTime           @default(now())
+  updatedAt           DateTime           @updatedAt
+
+  @@unique([timetableId, assignedDate])
+  @@index([timetableId, assignedDate])
+  @@index([assignedDate])
 }
 
 model TeacherAssignment {
