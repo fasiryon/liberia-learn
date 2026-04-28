@@ -4,13 +4,13 @@
 feat/school-operations-completion
 
 ## Current Phase
-Phase 3 — Real Timetable / Bell Schedule
+Phase 4 — Classroom Assignment Updates
 
 ## Status
 COMPLETE
 
 ## Last Completed Phase
-Phase 3 — Real Timetable / Bell Schedule
+Phase 4 — Classroom Assignment Updates
 
 ## Phase 1 Implementation Summary
 
@@ -156,15 +156,84 @@ Phase 3 — Real Timetable / Bell Schedule
 - `__tests__/timetable/todayEndpoint.test.ts` — 7 tests
   - timetable null when not configured, period count correct, assignment details, null assignment, backward compat, student not found, service error resilience
 
+## Phase 4 Implementation Summary
+
+### Inspection Findings
+- Student assignment list page: **MISSING** before this phase; only `/student/assignments/[id]` submission page existed.
+- Student assignment list API: **MISSING** before this phase; only `/api/student/assignments/[id]/submit` existed.
+- Teacher assignment page: one-time fetch only, no polling; creation flow navigated back to `/teacher/assignments?created=1`.
+- Teacher student detail page: one-time fetch only, showed scheduled-work progress but no assignment submission feed.
+- Teacher dashboard: one-time fetch only, no class overview polling indicator.
+- Existing polling: present elsewhere for timers/admin curriculum/lesson autosave, but no assignment or submission polling.
+- Existing learning events: `assignment.created` logged; missing `assignment_viewed`, `assignment_list_polled`, `submission_viewed_by_teacher`, `submission_feed_polled`.
+- Mid-session student behavior before Phase 4: a newly created assignment did not appear until manual navigation/reload; no banner or timestamp.
+
+### New Files
+- `lib/hooks/useAssignmentPolling.ts` — client polling hook with default 30-second interval, immediate mount fetch, manual refresh, silent failure handling, cleanup.
+- `lib/assignments/pollingPresentation.ts` — submission sorting, new-submission, score-label, and tenant-filter helpers.
+- `app/api/student/assignments/route.ts` — student-scoped assignment list endpoint with count-change poll logging.
+- `app/student/assignments/page.tsx` — student assignment list with 30-second polling, manual refresh, last-updated timestamp, new banner, badges, sorting, and empty state.
+- `__tests__/polling/assignmentPolling.test.ts` — 6 hook tests.
+- `__tests__/polling/submissionFeed.test.ts` — 4 submission feed helper tests.
+- `__tests__/assignments/assignmentEvents.test.ts` — 4 learning-event tests.
+
+### Modified Files
+- `app/student/assignments/[id]/page.tsx` — logs `assignment_viewed`.
+- `app/student/today/page.tsx` — adds 30-second polling/manual refresh/last-updated timestamp so timetable assignments refresh without reload.
+- `app/api/teacher/students/[studentId]/route.ts` — adds teacher-scoped submissions, newest-first ordering, poll metadata, and submission learning events.
+- `app/teacher/students/[studentId]/page.tsx` — adds submission feed polling, new-submission indicator, manual refresh, last-checked timestamp, and review action.
+- `app/api/teacher/assignments/route.ts` — submission list now sorts by `turnedInAt desc`.
+- `app/teacher/dashboard/page.tsx` — adds 60-second dashboard polling, last-updated timestamp, and new-submission count link.
+
+### Polling Strategy
+- Student assignments: 30-second polling plus manual refresh only.
+- Student Today/timetable: 30-second polling plus manual refresh only.
+- Teacher student submission feed: 30-second polling plus manual refresh only.
+- Teacher dashboard overview: 60-second polling only, with subtle count indicator.
+- No Supabase Realtime, WebSockets, Pusher, Ably, or new realtime vendor introduced.
+
+### Event Logging
+- `assignment_viewed` logs when a student opens an assignment detail page.
+- `assignment_list_polled` logs only when assignment count changes during a poll.
+- `submission_viewed_by_teacher` logs when a teacher opens student detail with submissions.
+- `submission_feed_polled` logs only when submission count changes during a poll.
+- Duplicate poll logging avoided when counts do not change in the same session.
+
+### Timetable Integration
+- Student Today now polls `/api/student/today`; timetable assignments added in Phase 3 are refreshed within 30 seconds or immediately on manual refresh.
+
+### Mobile Considerations
+- Polling controls use `min-h-11` touch targets.
+- Assignment banner stacks full-width on narrow screens.
+- Last-updated text truncates with `truncate`.
+- Layouts use responsive flex/grid classes to avoid horizontal overflow.
+- Mobile 375px behavior was implemented with responsive classes and validated by build, but not manually browser-verified in this session.
+
+### Gate Results (Phase 4)
+| Gate                | Status                              |
+| ------------------- | ----------------------------------- |
+| npx prisma generate | PASS                                |
+| npx tsc --noEmit    | PASS (0 errors)                     |
+| npx vitest run      | PASS — 2258 tests, 306 files        |
+| npm run build       | PASS                                |
+
+### New Tests (Phase 4)
+- `__tests__/polling/assignmentPolling.test.ts` — 6 tests
+- `__tests__/polling/submissionFeed.test.ts` — 4 tests
+- `__tests__/assignments/assignmentEvents.test.ts` — 4 tests
+- Total new: 14 tests
+
 ## Risks Active
 - student.currentGrade backward compatibility: PRESERVED
 - AcademicEnrollment unique constraint: RESPECTED
 - TimetableAssignment migration: additive only (new table)
 - lessonUrl in timetable uses `/student/lessons/<contentId>` — lesson page must handle contentId param
+- Phase 4 is UX/API-only; no schema changes.
 
 ## Next Phase
-Phase 4 — Attendance / Analytics
+Phase 5 — Full-Year Curriculum Organization
 
 ## Notes
 Do not push unless explicitly instructed.
 Run phases sequentially.
+Safe to proceed to Phase 5: YES.

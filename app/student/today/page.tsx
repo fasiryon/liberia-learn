@@ -1,10 +1,11 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import { BookOpen, CheckCircle2, FlaskConical, ListChecks } from "lucide-react";
 import { SkeletonCard } from "@/components/ui/Skeleton";
 import { GuidedEmptyState } from "@/components/onboarding/GuidedEmptyState";
+import { useAssignmentPolling } from "@/lib/hooks/useAssignmentPolling";
 
 type WorkItem = {
   id: string;
@@ -106,24 +107,40 @@ export default function StudentTodayPage() {
   const [activeAction, setActiveAction] = useState<ActiveAction | null>(null);
   const [timetable, setTimetable] = useState<TimetableForDay | null>(null);
   const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
+  const [lastUpdatedAt, setLastUpdatedAt] = useState<string | null>(null);
+
+  const loadToday = useCallback(async () => {
+    const response = await fetch("/api/student/today", { cache: "no-store" });
+    const d = (await response.json()) as TodayResponse;
+    if (!response.ok) throw new Error("Failed to load today");
+    setItems(d.items || []);
+    setSubjects(d.subjects || []);
+    setCompletedCount(d.completedCount || 0);
+    setRemainingCount(d.remainingCount || 0);
+    setCurrentItemId(d.currentItemId ?? null);
+    setNextItemId(d.nextItemId ?? null);
+    setAdaptivePlan(d.adaptivePlan ?? null);
+    setContentGap(d.contentGap ?? false);
+    setActiveAction(d.activeAction ?? null);
+    setTimetable(d.timetable ?? null);
+    setLastUpdatedAt(new Date().toISOString());
+  }, []);
 
   useEffect(() => {
-    fetch("/api/student/today")
-      .then((r) => r.json())
-      .then((d: TodayResponse) => {
-        setItems(d.items || []);
-        setSubjects(d.subjects || []);
-        setCompletedCount(d.completedCount || 0);
-        setRemainingCount(d.remainingCount || 0);
-        setCurrentItemId(d.currentItemId ?? null);
-        setNextItemId(d.nextItemId ?? null);
-        setAdaptivePlan(d.adaptivePlan ?? null);
-        setContentGap(d.contentGap ?? false);
-        setActiveAction(d.activeAction ?? null);
-        setTimetable(d.timetable ?? null);
-      })
-      .finally(() => setLoading(false));
-  }, []);
+    loadToday().finally(() => setLoading(false));
+  }, [loadToday]);
+
+  const { manualRefresh } = useAssignmentPolling(loadToday);
+
+  async function refreshToday() {
+    setRefreshing(true);
+    try {
+      await manualRefresh();
+    } finally {
+      setRefreshing(false);
+    }
+  }
 
   const currentItem = items.find((item) => item.id === currentItemId && item.status !== "completed") ?? null;
   const nextItem = items.find((item) => item.id === nextItemId) ?? null;
@@ -321,11 +338,26 @@ export default function StudentTodayPage() {
               {new Date().toLocaleDateString("en-LR", { weekday: "long", month: "long", day: "numeric" })}
             </p>
           </div>
-          {!loading && items.length > 0 ? (
-            <div className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-surface)] px-4 py-3 text-sm text-[var(--ll-text)]">
-              <span className="font-semibold text-[var(--ll-accent)]">{completedCount}</span> completed
-              <span className="mx-2 text-[var(--ll-text-faint)]">/</span>
-              <span className="font-semibold text-[var(--ll-warning)]">{remainingCount}</span> remaining
+          {!loading ? (
+            <div className="flex min-w-0 flex-col items-start gap-2 sm:items-end">
+              <p className="max-w-full truncate text-xs text-[var(--ll-text-muted)]">
+                Last updated {lastUpdatedAt ? new Date(lastUpdatedAt).toLocaleTimeString("en-LR", { hour: "numeric", minute: "2-digit" }) : "not checked yet"}
+              </p>
+              <div className="flex flex-wrap items-center gap-2">
+                <div className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-surface)] px-4 py-3 text-sm text-[var(--ll-text)]">
+                  <span className="font-semibold text-[var(--ll-accent)]">{completedCount}</span> completed
+                  <span className="mx-2 text-[var(--ll-text-faint)]">/</span>
+                  <span className="font-semibold text-[var(--ll-warning)]">{remainingCount}</span> remaining
+                </div>
+                <button
+                  type="button"
+                  onClick={refreshToday}
+                  disabled={refreshing}
+                  className="inline-flex min-h-11 items-center justify-center rounded-xl border border-[var(--ll-border)] bg-[var(--ll-surface)] px-4 text-sm font-semibold text-[var(--ll-text)] disabled:opacity-60"
+                >
+                  {refreshing ? "Refreshing..." : "Refresh"}
+                </button>
+              </div>
             </div>
           ) : null}
         </div>

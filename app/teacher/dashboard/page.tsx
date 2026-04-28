@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { ChevronRight, Users, ClipboardCheck, CalendarDays, BarChart3 } from "lucide-react";
 import { teacherWelcomeStorageKey } from "@/app/teacher/TeacherWelcomeGate";
@@ -105,6 +105,9 @@ type DashboardData = {
 export default function TeacherDashboardPage() {
   const [data, setData] = useState<DashboardData | null>(null);
   const [loading, setLoading] = useState(true);
+  const [lastUpdatedAt, setLastUpdatedAt] = useState<string | null>(null);
+  const [newSubmissionCount, setNewSubmissionCount] = useState(0);
+  const pendingGradingRef = useRef<number | null>(null);
   const [insightState, setInsightState] = useState<
     Record<
       string,
@@ -133,15 +136,34 @@ export default function TeacherDashboardPage() {
     });
   }
 
+  const loadDashboard = useCallback(async (source: "page" | "poll" = "page") => {
+    const response = await fetch("/api/teacher/dashboard", { cache: "no-store" });
+    const nextData = (await response.json()) as DashboardData;
+    if (!response.ok) throw new Error("Failed to load dashboard");
+    const previousPending = pendingGradingRef.current;
+    const nextPending = nextData.assignmentsPendingGrading ?? 0;
+    if (source === "poll" && previousPending !== null && nextPending > previousPending) {
+      setNewSubmissionCount((current) => current + nextPending - previousPending);
+    }
+    pendingGradingRef.current = nextPending;
+    setData(nextData);
+    setLastUpdatedAt(new Date().toISOString());
+  }, []);
+
   useEffect(() => {
     if (typeof window !== "undefined") {
       window.localStorage.setItem(teacherWelcomeStorageKey, "true");
     }
-    fetch("/api/teacher/dashboard")
-      .then((r) => r.json())
-      .then((d) => setData(d))
+    loadDashboard("page")
       .finally(() => setLoading(false));
-  }, []);
+  }, [loadDashboard]);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      loadDashboard("poll").catch(() => null);
+    }, 60000);
+    return () => clearInterval(interval);
+  }, [loadDashboard]);
 
   async function handleClassInsights(classId: string) {
     setInsightState((current) => ({
@@ -224,6 +246,21 @@ export default function TeacherDashboardPage() {
             />
           }
         />
+
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+          <p className="truncate text-xs text-[var(--ll-text-muted)]">
+            Last updated {lastUpdatedAt ? new Date(lastUpdatedAt).toLocaleTimeString("en-LR", { hour: "numeric", minute: "2-digit" }) : "not checked yet"}
+          </p>
+          {newSubmissionCount > 0 ? (
+            <Link
+              href="/teacher/students?recentSubmissions=1"
+              onClick={() => setNewSubmissionCount(0)}
+              className="w-fit rounded-full bg-[var(--ll-yellow-soft)] px-3 py-1 text-xs font-semibold text-[var(--ll-yellow)]"
+            >
+              {newSubmissionCount} new submission{newSubmissionCount === 1 ? "" : "s"} since last update
+            </Link>
+          ) : null}
+        </div>
 
         {(() => {
           const greeting = getTeacherGreeting({

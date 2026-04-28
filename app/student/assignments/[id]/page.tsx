@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 
 import { requireRole } from "@/lib/auth";
 import { prisma } from "@/lib/db";
+import { logLearningEvent } from "@/lib/events/logLearningEvent";
 
 import AssignmentSubmissionClient from "./AssignmentSubmissionClient";
 
@@ -44,6 +45,18 @@ export default async function StudentAssignmentPage({ params }: { params: { id: 
   }
 
   const submission = assignment.submissions[0] ?? null;
+
+  logLearningEvent({
+    schoolId: user.schoolId,
+    classId: assignment.classId,
+    userId: user.id,
+    studentId: student.id,
+    actor: { type: "student", id: user.id, role: "STUDENT" },
+    target: { type: "assignment", id: assignment.id },
+    eventType: "assignment_viewed",
+    source: "/student/assignments/[id]",
+    metadata: { title: assignment.title },
+  }).catch(() => null);
 
   return (
     <main className="min-h-screen bg-[var(--ll-bg)] px-4 py-8 text-[var(--ll-text)]">

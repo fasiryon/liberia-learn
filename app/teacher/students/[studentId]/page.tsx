@@ -1,8 +1,10 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
+import { useAssignmentPolling } from "@/lib/hooks/useAssignmentPolling";
+import { completedScoreLabel, isNewSubmission, sortSubmissionsNewestFirst } from "@/lib/assignments/pollingPresentation";
 
 type ProgressRecord = {
   id: string;
@@ -15,26 +17,81 @@ type ProgressRecord = {
   quizScore: number | null;
 };
 
+type SubmissionRecord = {
+  id: string;
+  assignmentId: string;
+  assignmentTitle: string;
+  className: string;
+  subject: string;
+  points: number;
+  dueAt: string | null;
+  submittedAt: string | null;
+  score: number | null;
+  feedback: string;
+  content: string;
+};
+
 export default function TeacherStudentDetailPage() {
   const params = useParams();
   const studentId = params.studentId as string;
   const [student, setStudent] = useState<{ id: string; name: string; email: string } | null>(null);
   const [records, setRecords] = useState<ProgressRecord[]>([]);
+  const [submissions, setSubmissions] = useState<SubmissionRecord[]>([]);
+  const [lastCheckedAt, setLastCheckedAt] = useState<string | null>(null);
+  const [refreshingSubmissions, setRefreshingSubmissions] = useState(false);
+  const [hasNewSubmission, setHasNewSubmission] = useState(false);
+  const submissionCountRef = useRef<number | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  const loadStudent = useCallback(async (source: "page" | "poll" | "manual" = "page") => {
+    const query = new URLSearchParams({ source });
+    if (submissionCountRef.current !== null) {
+      query.set("previousSubmissionCount", String(submissionCountRef.current));
+    }
+    const response = await fetch(`/api/teacher/students/${studentId}?${query.toString()}`, { cache: "no-store" });
+    const d = await response.json();
+    if (!response.ok || d.error) throw new Error(d.error ?? "Failed to load student");
+    setStudent(d.student);
+    setRecords(d.records || []);
+    const nextSubmissions = (d.submissions || []) as SubmissionRecord[];
+    if (submissionCountRef.current !== null && nextSubmissions.length > submissionCountRef.current) {
+      setHasNewSubmission(true);
+    }
+    submissionCountRef.current = nextSubmissions.length;
+    setSubmissions(sortSubmissionsNewestFirst(nextSubmissions));
+    setLastCheckedAt(d.serverTime ?? new Date().toISOString());
+    setError(null);
+  }, [studentId]);
+
   useEffect(() => {
-    fetch(`/api/teacher/students/${studentId}`)
-      .then((r) => r.json())
-      .then((d) => {
-        if (d.error) setError(d.error);
-        else {
-          setStudent(d.student);
-          setRecords(d.records || []);
-        }
+    loadStudent("page")
+      .catch((loadError: Error) => {
+        setError(loadError.message);
       })
       .finally(() => setLoading(false));
-  }, [studentId]);
+  }, [loadStudent]);
+
+  const { manualRefresh } = useAssignmentPolling(() => loadStudent("poll"));
+
+  async function refreshSubmissions() {
+    setRefreshingSubmissions(true);
+    try {
+      await manualRefresh();
+    } finally {
+      setRefreshingSubmissions(false);
+    }
+  }
+
+  function reviewSubmission(assignmentId: string) {
+    setHasNewSubmission(false);
+    window.location.href = `/teacher/assignments?assignmentId=${assignmentId}`;
+  }
+
+  function formatCheckedAt() {
+    if (!lastCheckedAt) return "not checked yet";
+    return new Date(lastCheckedAt).toLocaleTimeString("en-LR", { hour: "numeric", minute: "2-digit" });
+  }
 
   if (loading) {
     return (
@@ -78,9 +135,83 @@ export default function TeacherStudentDetailPage() {
       </nav>
 
       <div>
-        <h1 className="text-2xl font-bold mt-1">{student?.name || "Student"}</h1>
+        <div className="flex flex-wrap items-center gap-3">
+          <h1 className="text-2xl font-bold mt-1">{student?.name || "Student"}</h1>
+          {hasNewSubmission ? (
+            <span className="rounded-full bg-[var(--ll-yellow-soft)] px-3 py-1 text-xs font-semibold text-[var(--ll-yellow)]">
+              New submission received
+            </span>
+          ) : null}
+        </div>
         <p className="text-sm text-[var(--ll-text-muted)]">{student?.email}</p>
       </div>
+
+      <section className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 p-5">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <h2 className="text-sm font-semibold text-[var(--ll-text)]">Assignment Submissions</h2>
+            <p className="mt-1 max-w-full truncate text-xs text-[var(--ll-text-muted)]">
+              Last checked: {formatCheckedAt()}
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={refreshSubmissions}
+            disabled={refreshingSubmissions}
+            className="inline-flex min-h-11 items-center justify-center rounded-full border border-[var(--ll-border)] px-4 text-sm font-semibold text-[var(--ll-text)] disabled:opacity-60"
+          >
+            {refreshingSubmissions ? "Refreshing..." : "Refresh submissions"}
+          </button>
+        </div>
+        {submissions.length === 0 ? (
+          <p className="mt-4 text-xs text-[var(--ll-text-faint)]">No assignment submissions yet.</p>
+        ) : (
+          <div className="mt-4 space-y-2">
+            {submissions.map((submission) => {
+              const submittedAt = submission.submittedAt ? new Date(submission.submittedAt) : null;
+              const isRecent = isNewSubmission(submission.submittedAt);
+              const scoreLabel = completedScoreLabel(submission);
+              return (
+                <div
+                  key={submission.id}
+                  className="flex flex-col gap-3 rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/50 px-4 py-3 sm:flex-row sm:items-center sm:justify-between"
+                >
+                  <div className="min-w-0">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <p className={`text-sm ${isRecent ? "font-bold" : "font-medium"} text-[var(--ll-text)]`}>
+                        {student?.name ?? "Student"}
+                      </p>
+                      {isRecent ? (
+                        <span className="rounded-full bg-[var(--ll-yellow-soft)] px-2.5 py-0.5 text-[10px] font-semibold text-[var(--ll-yellow)]">
+                          New
+                        </span>
+                      ) : null}
+                      {scoreLabel ? (
+                        <span className="rounded-full bg-[var(--ll-accent-soft)] px-2.5 py-0.5 text-[10px] font-semibold text-[var(--ll-accent)]">
+                          {scoreLabel}
+                        </span>
+                      ) : null}
+                    </div>
+                    <p className="mt-1 text-sm text-[var(--ll-text-muted)]">
+                      {submission.assignmentTitle} &middot; {submission.subject.replace(/_/g, " ")}
+                    </p>
+                    <p className="mt-1 text-xs text-[var(--ll-text-faint)]">
+                      Submitted {submittedAt ? submittedAt.toLocaleString("en-LR") : "not submitted"}
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => reviewSubmission(submission.assignmentId)}
+                    className="inline-flex min-h-11 items-center justify-center rounded-full bg-[var(--ll-yellow-soft)] px-4 text-sm font-semibold text-[var(--ll-text-faint)]"
+                  >
+                    Review
+                  </button>
+                </div>
+              );
+            })}
+          </div>
+        )}
+      </section>
 
       {/* Subject breakdown */}
       <section className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 p-5">

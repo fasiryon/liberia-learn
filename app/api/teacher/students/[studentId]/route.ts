@@ -1,16 +1,19 @@
 import { NextRequest, NextResponse } from "next/server";
 import { requireRole } from "@/lib/auth";
 import { prisma } from "@/lib/db";
+import { logLearningEvent } from "@/lib/events/logLearningEvent";
 
 export const dynamic = "force-dynamic";
 
 export async function GET(
-  _req: NextRequest,
+  req: NextRequest,
   { params }: { params: Promise<{ studentId: string }> }
 ) {
   try {
     const user = await requireRole("TEACHER", "ADMIN");
     const { studentId } = await params;
+    const previousSubmissionCount = Number(req.nextUrl.searchParams.get("previousSubmissionCount") ?? "NaN");
+    const source = req.nextUrl.searchParams.get("source") ?? "page";
 
     // Verify student is in one of teacher's classes
     const teacherClasses = await prisma.class.findMany({
@@ -63,9 +66,79 @@ export async function GET(
       };
     });
 
+    const submissions = await prisma.assignmentSubmission.findMany({
+      where: {
+        studentId: student.id,
+        Assignment: {
+          Class: {
+            schoolId: user.schoolId!,
+            id: { in: classIds },
+          },
+        },
+      },
+      include: {
+        Assignment: {
+          select: {
+            id: true,
+            title: true,
+            points: true,
+            dueAt: true,
+            Class: { select: { name: true, subject: true } },
+          },
+        },
+      },
+      orderBy: { turnedInAt: "desc" },
+    });
+
+    const newSubmissionCount = Number.isFinite(previousSubmissionCount)
+      ? Math.max(0, submissions.length - previousSubmissionCount)
+      : 0;
+
+    if (source === "poll" && Number.isFinite(previousSubmissionCount) && previousSubmissionCount !== submissions.length) {
+      logLearningEvent({
+        schoolId: user.schoolId,
+        userId: user.id,
+        studentId: student.id,
+        actor: { type: "teacher", id: user.id, role: user.role },
+        target: { type: "student", id: student.id },
+        eventType: "submission_feed_polled",
+        source: "/api/teacher/students/[studentId]",
+        metadata: { submissionCount: submissions.length, newCount: newSubmissionCount },
+      }).catch(() => null);
+    }
+
+    if (source === "page") {
+      logLearningEvent({
+        schoolId: user.schoolId,
+        userId: user.id,
+        studentId: student.id,
+        actor: { type: "teacher", id: user.id, role: user.role },
+        target: { type: "student", id: student.id },
+        eventType: "submission_viewed_by_teacher",
+        source: "/teacher/students/[studentId]",
+        metadata: { submissionCount: submissions.length },
+      }).catch(() => null);
+    }
+
     return NextResponse.json({
       student: { id: student.id, name: student.user.name, email: student.user.email },
       records,
+      submissions: submissions.map((submission) => ({
+        id: submission.id,
+        assignmentId: submission.assignmentId,
+        assignmentTitle: submission.Assignment.title,
+        className: submission.Assignment.Class.name,
+        subject: String(submission.Assignment.Class.subject),
+        points: submission.Assignment.points,
+        dueAt: submission.Assignment.dueAt?.toISOString() ?? null,
+        submittedAt: submission.turnedInAt?.toISOString() ?? null,
+        score: submission.score,
+        feedback: submission.feedback ?? "",
+        content: submission.content ?? "",
+      })),
+      submissionCount: submissions.length,
+      newSubmissionCount,
+      serverTime: new Date().toISOString(),
     });
   } catch (err: any) {
     const status = err?.status || 500;
