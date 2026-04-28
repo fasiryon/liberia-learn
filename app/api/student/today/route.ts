@@ -5,6 +5,7 @@ import { getLessonLabLinks } from "@/lib/lessons/labLinks";
 import { buildStudentLearningIntelligence } from "@/lib/student/learningIntelligence";
 import { getAdaptiveRecommendations } from "@/lib/student/adaptiveRecommendations";
 import { generateStudentActions, getActiveStudentAction } from "@/lib/intelligence/actionEngine";
+import { getTimetableForStudent } from "@/lib/timetable/timetableService";
 
 export const dynamic = "force-dynamic";
 
@@ -93,6 +94,7 @@ export async function GET() {
     }).catch(() => null);
 
     const activeAction = await getActiveStudentAction(student.id).catch(() => null);
+    const timetable = await getTimetableForStudent(student.id, new Date()).catch(() => null);
 
     const items = scheduledWork.map((sw, index) => {
       const payload = sw.content.payload as any;
@@ -199,6 +201,7 @@ export async function GET() {
           recommendationCount: intelligence.recommendedNextActions.length,
         },
       },
+      timetable: timetable ?? null,
     });
   } catch (err: any) {
     const status = err?.status || 500;

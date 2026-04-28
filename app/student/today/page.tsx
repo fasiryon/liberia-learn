@@ -33,6 +33,29 @@ type ActiveAction = {
   sourceSignal: string | null;
 };
 
+type TimetablePeriod = {
+  id: string;
+  periodLabel: string;
+  subject: string | null;
+  startTime: string | null;
+  endTime: string | null;
+  teacherName: string | null;
+  assignment: {
+    id: string;
+    title: string;
+    contentId: string | null;
+    lessonUrl: string | null;
+    instructions: string | null;
+  } | null;
+};
+
+type TimetableForDay = {
+  configured: boolean;
+  date: string;
+  dayName: string;
+  periods: TimetablePeriod[];
+};
+
 type TodayResponse = {
   items: WorkItem[];
   subjects: string[];
@@ -42,6 +65,7 @@ type TodayResponse = {
   nextItemId: string | null;
   contentGap?: boolean;
   activeAction?: ActiveAction | null;
+  timetable?: TimetableForDay | null;
   adaptivePlan?: {
     generatedAt: string;
     smartContinueHref: string;
@@ -80,6 +104,7 @@ export default function StudentTodayPage() {
   const [adaptivePlan, setAdaptivePlan] = useState<TodayResponse["adaptivePlan"] | null>(null);
   const [contentGap, setContentGap] = useState(false);
   const [activeAction, setActiveAction] = useState<ActiveAction | null>(null);
+  const [timetable, setTimetable] = useState<TimetableForDay | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -95,6 +120,7 @@ export default function StudentTodayPage() {
         setAdaptivePlan(d.adaptivePlan ?? null);
         setContentGap(d.contentGap ?? false);
         setActiveAction(d.activeAction ?? null);
+        setTimetable(d.timetable ?? null);
       })
       .finally(() => setLoading(false));
   }, []);
@@ -102,6 +128,88 @@ export default function StudentTodayPage() {
   const currentItem = items.find((item) => item.id === currentItemId && item.status !== "completed") ?? null;
   const nextItem = items.find((item) => item.id === nextItemId) ?? null;
   const smartAction = adaptivePlan?.orderedActions?.[0] ?? null;
+
+  function to12Hour(time: string): string {
+    const [hStr, mStr] = time.split(":");
+    const h = parseInt(hStr, 10);
+    const ampm = h >= 12 ? "PM" : "AM";
+    const h12 = h % 12 === 0 ? 12 : h % 12;
+    return `${h12}:${mStr ?? "00"} ${ampm}`;
+  }
+
+  function periodTimeLabel(period: TimetablePeriod): string {
+    if (period.startTime && period.endTime) {
+      return `${to12Hour(period.startTime)} – ${to12Hour(period.endTime)}`;
+    }
+    if (period.startTime) return to12Hour(period.startTime);
+    return "";
+  }
+
+  function TimetableSection({ data }: { data: TimetableForDay }) {
+    const dateObj = new Date(data.date + "T00:00:00Z");
+    const displayDate = dateObj.toLocaleDateString("en-LR", {
+      weekday: "long",
+      month: "long",
+      day: "numeric",
+      timeZone: "UTC",
+    });
+    return (
+      <section className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-surface)] p-5">
+        <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[var(--ll-text-faint)]">
+          Today&apos;s Schedule — {displayDate}
+        </p>
+        <div className="mt-3 space-y-2">
+          {data.periods.map((period) => (
+            <div
+              key={period.id}
+              className="rounded-lg border border-[var(--ll-border)] bg-[var(--ll-surface-muted)] p-3"
+            >
+              <div className="flex flex-col gap-1 sm:flex-row sm:items-start sm:justify-between">
+                <div className="min-w-0 flex-1">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <span className="text-xs font-semibold text-[var(--ll-text-faint)]">
+                      {periodTimeLabel(period) || period.periodLabel}
+                    </span>
+                    {periodTimeLabel(period) ? (
+                      <span className="text-xs text-[var(--ll-text-faint)]">·</span>
+                    ) : null}
+                    <span className="text-xs font-semibold text-[var(--ll-text-faint)]">
+                      {period.periodLabel}
+                    </span>
+                  </div>
+                  <p className="mt-1 text-sm font-semibold text-[var(--ll-text)]">
+                    {period.subject?.replace(/_/g, " ") ?? "—"}
+                  </p>
+                  {period.teacherName ? (
+                    <p className="mt-0.5 text-xs text-[var(--ll-text-muted)]">
+                      Teacher: {period.teacherName}
+                    </p>
+                  ) : null}
+                  {period.assignment ? (
+                    <p className="mt-1 text-sm text-[var(--ll-text)]">
+                      {period.assignment.title}
+                    </p>
+                  ) : (
+                    <p className="mt-1 text-xs text-[var(--ll-text-faint)]">
+                      No lesson assigned for this period
+                    </p>
+                  )}
+                </div>
+                {period.assignment?.lessonUrl ? (
+                  <Link
+                    href={period.assignment.lessonUrl}
+                    className="ll-touch-target mt-2 inline-flex items-center justify-center rounded-lg bg-[var(--ll-accent)] px-3 py-2 text-xs font-semibold text-[var(--ll-text-faint)] sm:mt-0 sm:ml-3 sm:shrink-0"
+                  >
+                    Open Lesson →
+                  </Link>
+                ) : null}
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+    );
+  }
 
   function timeLabel(item: WorkItem) {
     const period = item.periodNumber ? `Period ${item.periodNumber}` : `Lesson ${item.order}`;
@@ -232,6 +340,10 @@ export default function StudentTodayPage() {
             prepared. Your teacher will assign available lessons shortly. Contact your teacher if this persists.
           </div>
         )}
+
+        {!loading && timetable?.configured ? (
+          <TimetableSection data={timetable} />
+        ) : null}
 
         {loading ? (
           <div className="space-y-3">
