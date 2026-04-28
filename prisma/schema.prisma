@@ -349,6 +349,7 @@ model AcademicYear {
   enrollments AcademicEnrollment[]
   transcripts Transcript[]
   exams       Exam[]
+  curriculumUnits CurriculumUnit[]
 
   @@unique([schoolId, yearLabel])
   @@index([schoolId, isActive])
@@ -1329,6 +1330,7 @@ model CurriculumContent {
   embeddedAt      DateTime?
   embedding       Unsupported("vector(1536)")?
   curriculumVersion CurriculumVersion? @relation(fields: [versionId], references: [id], onDelete: SetNull)
+  lessonPlans       CurriculumLessonPlan[]
 
   @@index([grade, subject])
   @@index([contentType, status])
@@ -2207,21 +2209,64 @@ model CurriculumUnit {
   id                  String   @id @default(cuid())
   unitId              String   @unique @default(cuid())
   name                String
+  title               String?
   description         String?
   subject             String
   grade               Int
-  schoolId            String
+  gradeLevel          Int?
+  schoolId            String?
+  academicYearId      String?
   targetStandardCodes String[]
   weekStart           Int
   weekEnd             Int
-  createdById         String
+  orderIndex          Int?
+  createdById         String?
   createdAt           DateTime @default(now())
   updatedAt           DateTime @updatedAt
 
-  school              School   @relation(fields: [schoolId], references: [id])
-  createdBy           User     @relation("CurriculumUnitCreatedBy", fields: [createdById], references: [id])
+  school              School?   @relation(fields: [schoolId], references: [id])
+  academicYear        AcademicYear? @relation(fields: [academicYearId], references: [id], onDelete: SetNull)
+  createdBy           User?     @relation("CurriculumUnitCreatedBy", fields: [createdById], references: [id])
+  weeks               CurriculumWeek[]
 
   @@index([schoolId, grade, subject])
+  @@index([gradeLevel, subject, orderIndex])
+  @@index([academicYearId])
+}
+
+model CurriculumWeek {
+  id          String   @id @default(cuid())
+  unitId      String
+  weekNumber  Int
+  theme       String
+  orderIndex  Int
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  unit        CurriculumUnit @relation(fields: [unitId], references: [id], onDelete: Cascade)
+  lessonPlans CurriculumLessonPlan[]
+
+  @@unique([unitId, weekNumber])
+  @@index([weekNumber])
+}
+
+model CurriculumLessonPlan {
+  id                  String                 @id @default(cuid())
+  weekId              String
+  curriculumContentId String
+  dayNumber           Int
+  lessonType          CurriculumLessonType   @default(CORE)
+  mappedSource        CurriculumMappedSource @default(EXISTING)
+  orderIndex          Int
+  createdAt           DateTime               @default(now())
+  updatedAt           DateTime               @updatedAt
+
+  week                CurriculumWeek         @relation(fields: [weekId], references: [id], onDelete: Cascade)
+  curriculumContent   CurriculumContent      @relation(fields: [curriculumContentId], references: [contentId], onDelete: Cascade)
+
+  @@unique([curriculumContentId])
+  @@unique([weekId, dayNumber, orderIndex])
+  @@index([weekId, dayNumber])
 }
 
 /// Part 5: Auto-generated assignment suggestions linked to scheduled lessons
@@ -2347,6 +2392,19 @@ enum CurriculumVersionStatus {
   DRAFT
   ACTIVE
   ARCHIVED
+}
+
+enum CurriculumLessonType {
+  CORE
+  REVIEW
+  LAB
+  ASSESSMENT
+  PROJECT
+}
+
+enum CurriculumMappedSource {
+  EXISTING
+  GENERATED
 }
 
 enum PolicyScope {

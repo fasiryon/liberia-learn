@@ -4,13 +4,13 @@
 feat/school-operations-completion
 
 ## Current Phase
-Phase 4 — Classroom Assignment Updates
+Phase 5 — Full-Year Curriculum Organization
 
 ## Status
 COMPLETE
 
 ## Last Completed Phase
-Phase 4 — Classroom Assignment Updates
+Phase 5 — Full-Year Curriculum Organization
 
 ## Phase 1 Implementation Summary
 
@@ -223,17 +223,91 @@ Phase 4 — Classroom Assignment Updates
 - `__tests__/assignments/assignmentEvents.test.ts` — 4 tests
 - Total new: 14 tests
 
+## Phase 5 Implementation Summary
+
+### Critical Pre-Check
+- Timetable lesson links used `/student/lessons/<contentId>`, but the student lesson loader only resolved `ScheduledWork.id`.
+- Fixed `/api/student/work/[scheduledWorkId]` to resolve either scheduled work IDs or raw `CurriculumContent.contentId` from today's timetable assignment.
+- When a timetable contentId is opened, the route finds or creates a same-day `ScheduledWork` so read/slides/listen modes use the existing delivery client and progress saves through the existing completion flow.
+- Back navigation remains the existing `Back to today` link in lesson delivery.
+
+### Schema Changes (migration: `20260428_000000_curriculum_year_mapping`)
+- Added enums: `CurriculumLessonType` (`CORE`, `REVIEW`, `LAB`, `ASSESSMENT`, `PROJECT`) and `CurriculumMappedSource` (`EXISTING`, `GENERATED`).
+- Extended existing `CurriculumUnit` instead of duplicating it: added `title`, `gradeLevel`, `academicYearId`, `orderIndex`; made `schoolId` and `createdById` optional for national/platform-wide mapping.
+- Added `CurriculumWeek` with `unitId`, `weekNumber`, `theme`, `orderIndex`.
+- Added `CurriculumLessonPlan` with `weekId`, `curriculumContentId`, `dayNumber`, `lessonType`, `mappedSource`, `orderIndex`.
+- Added relations from `AcademicYear` and `CurriculumContent`.
+
+### New Files
+- `lib/curriculum/yearPlan.ts` — readiness targets, audit calculations, deterministic mapping engine, no-generation safeguards.
+- `scripts/audit-curriculum-year-readiness.ts` — audit and optional `--map` command.
+- `app/api/admin/curriculum/year-readiness/route.ts` — admin/MOE readiness API, CSV export, mapping trigger.
+- `app/admin/curriculum/year-readiness/page.tsx` — Year Readiness Dashboard.
+- `docs/roadmaps/school-operations-completion/PHASE_6_CONTENT_GENERATION_PROMPT.md` — Phase 6 handoff prompt.
+- Tests:
+  - `__tests__/curriculum/yearPlan.test.ts`
+  - `__tests__/curriculum/yearReadiness.route.test.ts`
+  - `__tests__/student.timetable-contentid-route.test.ts`
+
+### Modified Files
+- `app/api/student/work/[scheduledWorkId]/route.ts` — contentId timetable resolution and scheduled work bridge.
+- `app/moe/curriculum/page.tsx` — adds full-year readiness panel and export link.
+- `prisma/schema.prisma` — Phase 5 schema additions.
+
+### Mapping Results
+- Migration applied successfully via `npx dotenv -e .env.local -- npx prisma migrate deploy` with `DIRECT_URL` set to the reachable database URL for this command.
+- Audit/mapping command completed: `npx dotenv -e .env.local -- npx tsx scripts/audit-curriculum-year-readiness.ts --map`.
+- Existing mapped rows after audit: 88 grade/subject groups, 3,914 total lessons, 3,914 mapped lessons.
+- Readiness range: 1% to 49% against 36 weeks × 5 lessons/week target.
+- Coverage classification: 9 STRONG, 78 PARTIAL, 1 CRITICAL.
+- The optimized mapper reported `generatedContent: false` and `duplicatedLessons: false`.
+
+### Mapping Strategy
+- Group existing approved/published/accepted curriculum by `grade + subject`.
+- Sort deterministically by grade, subject, title, then `contentId`.
+- Create 4-week unit chunks (each unit contains 2–6 weeks; actual target is 4 where possible).
+- Create week records sequentially.
+- Assign lesson days 1–5.
+- Classify lesson types from existing metadata/text only; no content generation.
+- Bulk-create lesson-plan rows with `skipDuplicates` and `mappedSource: EXISTING`.
+
+### Dashboard Behavior
+- Admin dashboard at `/admin/curriculum/year-readiness` shows readiness %, mapped lessons, weeks, units, missing content types, classification, mapping trigger, and CSV export.
+- MOE curriculum page now shows mapped full-year readiness based on real API data and includes CSV export.
+- No fake dashboard data added.
+
+### Safety Confirmation
+- NO content was generated.
+- NO lessons were duplicated.
+- Existing lesson access, scheduled work, timetable, adaptive plan, AI tutor, grading, and dashboards remain compatible.
+
+### Gate Results (Phase 5)
+| Gate                | Status                              |
+| ------------------- | ----------------------------------- |
+| npx prisma generate | PASS                                |
+| npx tsc --noEmit    | PASS (0 errors)                     |
+| npx vitest run      | PASS — 2267 tests, 309 files        |
+| npm run build       | PASS                                |
+
+### New Tests (Phase 5)
+- `__tests__/curriculum/yearPlan.test.ts` — 4 tests
+- `__tests__/curriculum/yearReadiness.route.test.ts` — 4 tests
+- `__tests__/student.timetable-contentid-route.test.ts` — 1 test
+- Total new: 9 tests
+
 ## Risks Active
 - student.currentGrade backward compatibility: PRESERVED
 - AcademicEnrollment unique constraint: RESPECTED
 - TimetableAssignment migration: additive only (new table)
 - lessonUrl in timetable uses `/student/lessons/<contentId>` — lesson page must handle contentId param
 - Phase 4 is UX/API-only; no schema changes.
+- Phase 5 content gaps remain real: readiness max is 49%, so Phase 6 should fill missing weeks/content types only after dry_run + approval.
+- Phase 5 mapping is deterministic and idempotent, but first unoptimized script attempts timed out before bulk-create optimization; final optimized run completed.
 
 ## Next Phase
-Phase 5 — Full-Year Curriculum Organization
+Phase 6 — Missing Content Generation (dry_run + approval first)
 
 ## Notes
 Do not push unless explicitly instructed.
 Run phases sequentially.
-Safe to proceed to Phase 5: YES.
+Safe to proceed to Phase 6: YES.

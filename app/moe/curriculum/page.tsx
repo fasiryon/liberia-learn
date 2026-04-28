@@ -29,6 +29,17 @@ type CurriculumHealthData = {
   generatedAt: string;
 };
 
+type YearReadinessRow = {
+  grade: number;
+  subject: string;
+  readinessPct: number;
+  mappedLessons: number;
+  totalLessons: number;
+  missingWeeks: number[];
+  unitsCovered: number;
+  classification: string;
+};
+
 const trustEnabled = process.env.NEXT_PUBLIC_ENABLE_AI_TRUST_INDICATORS === "true";
 
 export default function MoeCurriculumPage() {
@@ -38,6 +49,7 @@ export default function MoeCurriculumPage() {
   const [saving, setSaving] = useState(false);
   const [health, setHealth] = useState<CurriculumHealthData | null>(null);
   const [healthError, setHealthError] = useState<string | null>(null);
+  const [yearReadiness, setYearReadiness] = useState<YearReadinessRow[]>([]);
 
   async function loadVersions() {
     const res = await fetch("/api/moe/curriculum/version", { cache: "no-store" });
@@ -57,6 +69,13 @@ export default function MoeCurriculumPage() {
         setHealth(data);
       })
       .catch((err: Error) => setHealthError(err.message));
+    fetch("/api/admin/curriculum/year-readiness", { cache: "no-store" })
+      .then((r) => r.json())
+      .then((data) => {
+        if (data?.error) throw new Error(data.error);
+        setYearReadiness(data.rows ?? []);
+      })
+      .catch(() => setYearReadiness([]));
   }, []);
 
   async function handleCreate(event: FormEvent) {
@@ -196,6 +215,52 @@ export default function MoeCurriculumPage() {
         ) : (
           <div className="mt-4 h-24 animate-pulse rounded-xl bg-[var(--ll-surface-muted)]" />
         )}
+      </section>
+
+      <section className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 p-6">
+        <div className="flex flex-wrap items-start justify-between gap-3">
+          <div>
+            <p className="text-[11px] font-medium uppercase tracking-[0.1em] text-[var(--ll-text-faint)]">
+              Full-Year Readiness
+            </p>
+            <h2 className="mt-2 text-base font-semibold text-[var(--ll-text)]">Mapped Curriculum Structure</h2>
+            <p className="mt-1 text-sm text-[var(--ll-text-muted)]">
+              Grade-subject readiness based only on existing approved content mapped into units and weeks.
+            </p>
+          </div>
+          <a
+            href="/api/admin/curriculum/year-readiness?format=csv"
+            className="rounded-full border border-[var(--ll-border)] px-3 py-2 text-xs font-semibold text-[var(--ll-text)]"
+          >
+            Export report
+          </a>
+        </div>
+        <div className="mt-4 overflow-x-auto">
+          <table className="w-full text-sm text-[var(--ll-text)]">
+            <thead className="text-left text-xs uppercase tracking-[0.16em] text-[var(--ll-text-faint)]">
+              <tr>
+                <th className="pb-3">Grade</th>
+                <th className="pb-3">Subject</th>
+                <th className="pb-3">Ready</th>
+                <th className="pb-3">Mapped</th>
+                <th className="pb-3">Missing weeks</th>
+                <th className="pb-3">Units</th>
+              </tr>
+            </thead>
+            <tbody>
+              {yearReadiness.slice(0, 24).map((row) => (
+                <tr key={`${row.grade}-${row.subject}`} className="border-t border-white/5">
+                  <td className="py-2">Grade {row.grade}</td>
+                  <td className="py-2">{row.subject.replace(/_/g, " ")}</td>
+                  <td className="py-2">{row.readinessPct}%</td>
+                  <td className="py-2">{row.mappedLessons}/{row.totalLessons}</td>
+                  <td className="py-2">{row.missingWeeks.length}</td>
+                  <td className="py-2">{row.unitsCovered}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </section>
 
       <section className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 p-6">

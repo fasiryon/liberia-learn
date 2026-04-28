@@ -11,6 +11,141 @@ function isRenderableArtifact(value: unknown): boolean {
 
 export const dynamic = "force-dynamic";
 
+function utcDayRange(date = new Date()) {
+  const start = new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate()));
+  return { start, end: new Date(start.getTime() + 86400000) };
+}
+
+async function resolveScheduledWorkForStudent(input: {
+  lessonRef: string;
+  userId: string;
+  schoolId: string | null | undefined;
+  studentRecordId: string;
+}) {
+  const direct = await prisma.scheduledWork.findUnique({
+    where: { id: input.lessonRef },
+    include: scheduledWorkInclude(input.userId),
+  });
+  if (direct) return direct;
+
+  const { start, end } = utcDayRange();
+  const timetableAssignment = await prisma.timetableAssignment.findFirst({
+    where: {
+      curriculumContentId: input.lessonRef,
+      assignedDate: { gte: start, lt: end },
+      timetable: {
+        schoolId: input.schoolId ?? undefined,
+        class: {
+          enrollments: { some: { studentId: input.studentRecordId } },
+        },
+      },
+    },
+    include: {
+      timetable: {
+        select: {
+          classId: true,
+          periodLabel: true,
+          startTime: true,
+          endTime: true,
+          teacherId: true,
+        },
+      },
+    },
+    orderBy: { createdAt: "asc" },
+  });
+
+  if (!timetableAssignment?.curriculumContentId) return null;
+
+  const existing = await prisma.scheduledWork.findFirst({
+    where: {
+      contentId: timetableAssignment.curriculumContentId,
+      classId: timetableAssignment.timetable.classId,
+      scheduledDate: { gte: start, lt: end },
+    },
+    orderBy: { createdAt: "asc" },
+    include: scheduledWorkInclude(input.userId),
+  });
+  if (existing) return existing;
+
+  return prisma.scheduledWork.create({
+    data: {
+      contentId: timetableAssignment.curriculumContentId,
+      classId: timetableAssignment.timetable.classId,
+      scheduledDate: start,
+      createdById: timetableAssignment.timetable.teacherId,
+      startTime: timetableAssignment.timetable.startTime,
+      endTime: timetableAssignment.timetable.endTime,
+      status: "confirmed",
+    },
+    include: scheduledWorkInclude(input.userId),
+  });
+}
+
+function scheduledWorkInclude(userId: string) {
+  return {
+    content: {
+      select: {
+        contentId: true,
+        payload: true,
+        subject: true,
+        grade: true,
+        contentType: true,
+        version: true,
+        deliveryProfile: true,
+        moeAlignments: true,
+        audioAssets: {
+          orderBy: { generatedAt: "desc" as const },
+          take: 1,
+          select: {
+            id: true,
+            storageUrl: true,
+            voice: true,
+            durationSeconds: true,
+            generatedAt: true,
+            contentVersion: true,
+            status: true,
+            estimatedCostUsd: true,
+          },
+        },
+        videoSupplements: {
+          where: { isActive: true },
+          orderBy: { uploadedAt: "desc" as const },
+          take: 1,
+          select: {
+            id: true,
+            title: true,
+            description: true,
+            storageUrl: true,
+            thumbnailUrl: true,
+            durationSeconds: true,
+            fileSize: true,
+            uploadedAt: true,
+            teacher: { select: { name: true } },
+          },
+        },
+      },
+    },
+    class: {
+      select: {
+        id: true,
+        schoolId: true,
+        name: true,
+        Teacher: { select: { name: true } },
+        School: { select: { name: true } },
+      },
+    },
+    progress: {
+      where: { studentId: userId },
+      select: {
+        completedAt: true,
+        startedAt: true,
+        exitTicketScore: true,
+        exitTicketResponses: true,
+      },
+    },
+  };
+}
+
 export async function GET(
   _req: NextRequest,
   { params }: { params: Promise<{ scheduledWorkId: string }> }
@@ -24,61 +159,18 @@ export async function GET(
     // After:  2 steps — parallel (sw + student) → enrollment.
     // Also: replace `content: true` with explicit select to avoid fetching
     // moeAlignments, deliveryProfile, unitId, status, createdAt (~60% payload reduction).
-    const [sw, student] = await Promise.all([
-      prisma.scheduledWork.findUnique({
-        where: { id: scheduledWorkId },
-        include: {
-          content: {
-            select: {
-              contentId: true,
-              payload: true,
-              subject: true,
-              grade: true,
-              contentType: true,
-              version: true,
-              deliveryProfile: true,
-              moeAlignments: true,
-              audioAssets: {
-                orderBy: { generatedAt: "desc" },
-                take: 1,
-                select: {
-                  id: true,
-                  storageUrl: true,
-                  voice: true,
-                  durationSeconds: true,
-                  generatedAt: true,
-                  contentVersion: true,
-                  status: true,
-                  estimatedCostUsd: true,
-                },
-              },
-              videoSupplements: {
-                where: { isActive: true },
-                orderBy: { uploadedAt: "desc" },
-                take: 1,
-                select: {
-                  id: true,
-                  title: true,
-                  description: true,
-                  storageUrl: true,
-                  thumbnailUrl: true,
-                  durationSeconds: true,
-                  fileSize: true,
-                  uploadedAt: true,
-                  teacher: { select: { name: true } },
-                },
-              },
-            },
-          },
-          class: { select: { id: true, schoolId: true, name: true, Teacher: { select: { name: true } }, School: { select: { name: true } } } },
-          progress: {
-            where: { studentId: user.id },
-            select: { completedAt: true, startedAt: true, exitTicketScore: true, exitTicketResponses: true },
-          },
-        },
-      }),
-      prisma.student.findUnique({ where: { userId: user.id } }),
-    ]);
+    const student = await prisma.student.findUnique({ where: { userId: user.id } });
+
+    if (!student) {
+      return NextResponse.json({ error: "Student not found" }, { status: 404 });
+    }
+
+    const sw = await resolveScheduledWorkForStudent({
+      lessonRef: scheduledWorkId,
+      userId: user.id,
+      schoolId: user.schoolId,
+      studentRecordId: student.id,
+    });
 
     if (!sw) {
       return NextResponse.json({ error: "Not found" }, { status: 404 });
@@ -87,10 +179,6 @@ export async function GET(
     // Tenant isolation
     if (sw.class.schoolId !== user.schoolId) {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
-    }
-
-    if (!student) {
-      return NextResponse.json({ error: "Student not found" }, { status: 404 });
     }
 
     const enrollment = await prisma.enrollment.findUnique({
