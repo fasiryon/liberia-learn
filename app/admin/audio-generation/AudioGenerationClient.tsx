@@ -9,6 +9,13 @@ type QueueStatus = {
   failed: number;
   lastProcessed: string | null;
   totalCostUsd: number;
+  autoModeEnabled?: boolean;
+  cron?: {
+    lastRunAt: string | null;
+    jobsProcessedToday: number;
+    lastRunProcessed: number;
+    lastRunFailed: number;
+  };
 };
 
 type ActionMessage = { kind: "success" | "error"; text: string } | null;
@@ -99,11 +106,31 @@ export function AudioGenerationClient({
 
       <section className="grid gap-4 sm:grid-cols-2">
         <div className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 p-5">
+          <p className="text-xs uppercase tracking-wide text-[var(--ll-text-faint)]">Auto Mode</p>
+          <p className={`mt-2 text-sm font-semibold ${status.autoModeEnabled ? "text-emerald-300" : "text-amber-300"}`}>
+            {status.autoModeEnabled ? "ON" : "OFF"}
+          </p>
+        </div>
+        <div className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 p-5">
           <p className="text-xs uppercase tracking-wide text-[var(--ll-text-faint)]">Last Processed</p>
           <p className="mt-2 text-sm font-medium text-[var(--ll-text)]">
             {status.lastProcessed
               ? new Date(status.lastProcessed).toLocaleString("en-LR")
               : "—"}
+          </p>
+        </div>
+        <div className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 p-5">
+          <p className="text-xs uppercase tracking-wide text-[var(--ll-text-faint)]">Last Cron Run</p>
+          <p className="mt-2 text-sm font-medium text-[var(--ll-text)]">
+            {status.cron?.lastRunAt
+              ? new Date(status.cron.lastRunAt).toLocaleString("en-LR")
+              : "-"}
+          </p>
+        </div>
+        <div className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 p-5">
+          <p className="text-xs uppercase tracking-wide text-[var(--ll-text-faint)]">Jobs Processed Today</p>
+          <p className="mt-2 text-sm font-medium text-[var(--ll-text)]">
+            {(status.cron?.jobsProcessedToday ?? 0).toLocaleString("en-US")}
           </p>
         </div>
         <div className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 p-5">
@@ -189,7 +216,7 @@ export function AudioGenerationClient({
           <p>
             Auth: <code className="rounded bg-[var(--ll-surface)] px-1.5 py-0.5 text-[var(--ll-text)]">Authorization: Bearer $CRON_SECRET</code>
           </p>
-          <p>Default batch: 3 jobs per invocation. Set <code className="rounded bg-[var(--ll-surface)] px-1.5 py-0.5 text-[var(--ll-text)]">CRON_SECRET</code> in Vercel environment variables.</p>
+          <p>Default batch: 5 jobs per invocation. Set <code className="rounded bg-[var(--ll-surface)] px-1.5 py-0.5 text-[var(--ll-text)]">CRON_SECRET</code> in Vercel environment variables.</p>
         </div>
       </section>
     </div>

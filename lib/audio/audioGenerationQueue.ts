@@ -5,8 +5,9 @@ import {
   estimateTtsCostUsd,
   generateLessonAudioNow,
 } from "@/lib/lessons/audioGeneration";
+import { isTtsGenerationStopped } from "@/lib/serverFlags";
 
-const MAX_BATCH_SIZE = 10;
+const MAX_BATCH_SIZE = 5;
 
 export type EnqueueLessonAudioInput = {
   grade: number;
@@ -120,32 +121,45 @@ export async function enqueueLessonAudio(
 
 export async function claimNextAudioJobs(input: {
   limit: number;
-}): Promise<Array<{ id: string; lessonId: string; voice: string; contentVersion: string }>> {
+}): Promise<Array<{ id: string; lessonId: string; voice: string; contentVersion: string; estimatedCostUsd: number }>> {
+  if (isTtsGenerationStopped()) return [];
   const limit = Math.min(MAX_BATCH_SIZE, Math.max(1, input.limit));
 
   const pending = await prisma.lessonAudio.findMany({
     where: { status: "PENDING" },
     orderBy: { generatedAt: "asc" },
     take: limit,
-    select: { id: true, lessonId: true, voice: true, contentVersion: true },
+    select: { id: true, lessonId: true, voice: true, contentVersion: true, estimatedCostUsd: true },
   });
 
   if (pending.length === 0) return [];
 
-  // Mark as PROCESSING to prevent duplicate claims
-  await prisma.lessonAudio.updateMany({
-    where: { id: { in: pending.map((r) => r.id) }, status: "PENDING" },
-    data: { status: "PROCESSING", generatedAt: new Date() },
-  });
+  const claimed = [];
+  const claimedAt = new Date();
+  for (const job of pending) {
+    const result = await prisma.lessonAudio.updateMany({
+      where: { id: job.id, status: "PENDING" },
+      data: { status: "PROCESSING", generatedAt: claimedAt },
+    });
+    if (result.count === 1) claimed.push(job);
+  }
 
-  return pending;
+  return claimed;
+}
+
+export async function releaseClaimedAudioJobs(jobIds: string[]) {
+  if (jobIds.length === 0) return { count: 0 };
+  return prisma.lessonAudio.updateMany({
+    where: { id: { in: jobIds }, status: "PROCESSING" },
+    data: { status: "PENDING" },
+  });
 }
 
 export async function processAudioJob(jobId: string): Promise<ProcessResult> {
   const row = await prisma.lessonAudio.findUnique({
     where: { id: jobId },
     include: {
-      lesson: { select: { contentId: true, version: true, payload: true } },
+      lesson: { select: { contentId: true, version: true, grade: true, subject: true, payload: true } },
     },
   });
 
@@ -163,6 +177,8 @@ export async function processAudioJob(jobId: string): Promise<ProcessResult> {
       contentVersion: row.contentVersion,
       voice: row.voice,
       text,
+      grade: row.lesson.grade,
+      subject: row.lesson.subject,
     });
     return {
       jobId,

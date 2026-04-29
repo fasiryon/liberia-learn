@@ -9,6 +9,13 @@ type QueueStatus = {
   failed: number;
   lastProcessed: string | null;
   estimatedCostUsd: number;
+  autoModeEnabled?: boolean;
+  cron?: {
+    lastRunAt: string | null;
+    jobsProcessedToday: number;
+    lastRunProcessed: number;
+    lastRunFailed: number;
+  };
 };
 
 const GRADE_5_SUBJECTS = ["ENGLISH", "MATH", "SCIENCE", "SOCIAL_STUDIES"];
@@ -102,9 +109,27 @@ export function TextbookGenerationClient({ initialStatus }: { initialStatus: Que
 
       <section className="grid gap-4 sm:grid-cols-2">
         <div className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 p-5">
+          <p className="text-xs uppercase tracking-wide text-[var(--ll-text-faint)]">Auto Mode</p>
+          <p className={`mt-2 text-sm font-semibold ${status.autoModeEnabled ? "text-emerald-300" : "text-amber-300"}`}>
+            {status.autoModeEnabled ? "ON" : "OFF"}
+          </p>
+        </div>
+        <div className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 p-5">
           <p className="text-xs uppercase tracking-wide text-[var(--ll-text-faint)]">Last Processed</p>
           <p className="mt-2 text-sm font-medium text-[var(--ll-text)]">
             {status.lastProcessed ? new Date(status.lastProcessed).toLocaleString("en-LR") : "-"}
+          </p>
+        </div>
+        <div className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 p-5">
+          <p className="text-xs uppercase tracking-wide text-[var(--ll-text-faint)]">Last Cron Run</p>
+          <p className="mt-2 text-sm font-medium text-[var(--ll-text)]">
+            {status.cron?.lastRunAt ? new Date(status.cron.lastRunAt).toLocaleString("en-LR") : "-"}
+          </p>
+        </div>
+        <div className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 p-5">
+          <p className="text-xs uppercase tracking-wide text-[var(--ll-text-faint)]">Jobs Processed Today</p>
+          <p className="mt-2 text-sm font-medium text-[var(--ll-text)]">
+            {(status.cron?.jobsProcessedToday ?? 0).toLocaleString("en-US")}
           </p>
         </div>
         <div className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 p-5">
@@ -127,10 +152,10 @@ export function TextbookGenerationClient({ initialStatus }: { initialStatus: Que
           <button
             type="button"
             disabled={busy !== null}
-            onClick={() => postAction("/api/admin/textbook-generation/process", { limit: 12 }, "Process batch", "process")}
+            onClick={() => postAction("/api/admin/textbook-generation/process", { limit: 2 }, "Process batch", "process")}
             className="rounded-xl bg-blue-600 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-blue-500 disabled:cursor-not-allowed disabled:opacity-60"
           >
-            {busy === "process" ? "Processing..." : "Process Next Batch"}
+            {busy === "process" ? "Processing..." : "Process Next Batch (2)"}
           </button>
           <button
             type="button"

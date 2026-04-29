@@ -6,6 +6,8 @@ const mockUpsert = vi.hoisted(() => vi.fn());
 const mockEnqueueJob = vi.hoisted(() => vi.fn());
 const mockIsQueueConfigured = vi.hoisted(() => vi.fn());
 const mockLogAIInteraction = vi.hoisted(() => vi.fn());
+const mockUploadBinaryToSupabase = vi.hoisted(() => vi.fn());
+const mockSpeechCreate = vi.hoisted(() => vi.fn());
 
 vi.mock("@/lib/db", () => ({
   prisma: {
@@ -27,11 +29,26 @@ vi.mock("@/lib/ai/interactionLog", () => ({
   logAIInteraction: mockLogAIInteraction,
 }));
 
+vi.mock("@/lib/supabaseStorage", () => ({
+  uploadBinaryToSupabase: mockUploadBinaryToSupabase,
+}));
+
+vi.mock("openai", () => ({
+  default: vi.fn().mockImplementation(function () {
+    return { audio: { speech: { create: mockSpeechCreate } } };
+  }),
+}));
+
 describe("lesson audio generation", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mockIsQueueConfigured.mockReturnValue(true);
     mockUpsert.mockImplementation(async (args) => ({ id: "audio-1", ...args.create, ...args.update }));
+    mockUploadBinaryToSupabase.mockImplementation(async (input) => `https://supabase.example/storage/v1/object/public/${input.bucket}/${input.path}`);
+    mockSpeechCreate.mockResolvedValue({
+      arrayBuffer: async () => Buffer.from("mp3").buffer,
+    });
+    vi.stubEnv("OPENAI_API_KEY", "test-key");
   });
 
   it("reuses generated audio for the current version", async () => {
@@ -83,5 +100,36 @@ describe("lesson audio generation", () => {
     mockFindFirst.mockResolvedValueOnce({ id: "audio-1", contentVersion: "old", status: "GENERATED" });
     const result = await getCurrentLessonAudio("lesson-1", "new");
     expect(result.status).toBe("STALE");
+  });
+
+  it("generates long lesson audio as multiple parts under 3500 characters", async () => {
+    const { generateLessonAudioNow } = await import("@/lib/lessons/audioGeneration");
+    mockFindUnique.mockResolvedValueOnce({ audioParts: [] });
+    const text = `${"Sentence one has clear narration. ".repeat(120)}\n\n${"Sentence two continues the lesson. ".repeat(120)}`;
+
+    const result = await generateLessonAudioNow({
+      lessonId: "long-literacy-lesson",
+      contentVersion: "v1",
+      text,
+      grade: 5,
+      subject: "LITERACY",
+    });
+
+    const inputs = mockSpeechCreate.mock.calls.map((call) => call[0].input);
+    expect(inputs.length).toBeGreaterThan(1);
+    expect(inputs.every((input: string) => input.length <= 3500)).toBe(true);
+    expect(mockUploadBinaryToSupabase).toHaveBeenCalledWith(expect.objectContaining({
+      bucket: "lesson-audio",
+      path: expect.stringContaining("grade-5/literacy/long-literacy-lesson/part-1.mp3"),
+    }));
+    expect(mockUpsert).toHaveBeenLastCalledWith(expect.objectContaining({
+      update: expect.objectContaining({
+        status: "GENERATED",
+        audioParts: expect.arrayContaining([
+          expect.objectContaining({ partNumber: 1, status: "GENERATED" }),
+        ]),
+      }),
+    }));
+    expect(result.status).toBe("GENERATED");
   });
 });

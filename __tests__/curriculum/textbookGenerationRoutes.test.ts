@@ -6,6 +6,9 @@ const mockClaim = vi.hoisted(() => vi.fn());
 const mockProcess = vi.hoisted(() => vi.fn());
 const mockRetry = vi.hoisted(() => vi.fn());
 const mockStatus = vi.hoisted(() => vi.fn());
+const mockGetCronRunSummary = vi.hoisted(() => vi.fn());
+const mockLogCronRun = vi.hoisted(() => vi.fn());
+const mockGetCronCostThresholdUsd = vi.hoisted(() => vi.fn());
 
 vi.mock("@/lib/auth", () => ({
   requireRole: mockRequireRole,
@@ -17,6 +20,18 @@ vi.mock("@/lib/textbooks/textbookGenerationQueue", () => ({
   processTextbookJob: mockProcess,
   retryFailed: mockRetry,
   getTextbookQueueStatus: mockStatus,
+  releaseClaimedTextbookJobs: vi.fn(),
+}));
+
+vi.mock("@/lib/automation/cronRunLog", () => ({
+  getCronRunSummary: mockGetCronRunSummary,
+  getCronCostThresholdUsd: mockGetCronCostThresholdUsd,
+  isAutoModeEnabled: () => true,
+  logCronRun: mockLogCronRun,
+  shouldStopForFailureRate: (processed: number, failed: number) => {
+    const total = processed + failed;
+    return total > 0 && failed / total > 0.2;
+  },
 }));
 
 function makeRequest(body: unknown, headers: Record<string, string> = {}) {
@@ -31,6 +46,12 @@ describe("textbook generation admin routes", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mockRequireRole.mockResolvedValue({ id: "admin-1", role: "ADMIN" });
+    mockGetCronRunSummary.mockResolvedValue({
+      lastRunAt: null,
+      jobsProcessedToday: 0,
+      lastRunProcessed: 0,
+      lastRunFailed: 0,
+    });
   });
 
   it("enforces ADMIN auth on enqueue", async () => {
@@ -94,6 +115,8 @@ describe("POST /api/cron/process-textbook-generation", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     vi.stubEnv("CRON_SECRET", "test-cron-secret");
+    mockGetCronCostThresholdUsd.mockReturnValue(Number.POSITIVE_INFINITY);
+    mockLogCronRun.mockResolvedValue(undefined);
   });
 
   it("protects the cron route with CRON_SECRET", async () => {

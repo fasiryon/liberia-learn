@@ -9,7 +9,7 @@ export async function POST(req: Request) {
   try {
     await requireRole("ADMIN");
     const body = await req.json().catch(() => ({}));
-    const limit = Math.min(5, Math.max(1, Number(body?.limit ?? 3)));
+    const limit = Math.min(5, Math.max(1, Number(body?.limit ?? 5)));
 
     const jobs = await claimNextAudioJobs({ limit });
     if (jobs.length === 0) {

@@ -119,6 +119,7 @@ describe("validateEnv", () => {
     mutableEnv().EMAIL_FROM = "noreply@example.com";
     mutableEnv().AT_API_KEY = "at-key";
     mutableEnv().AT_USERNAME = "at-user";
+    mutableEnv().SUPABASE_LESSON_AUDIO_BUCKET = "lesson-audio";
 
     const warnSpy = vi.spyOn(console, "warn").mockImplementation(() => {});
     const { validateEnv } = await importValidateEnvModule();

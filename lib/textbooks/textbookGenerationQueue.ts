@@ -4,8 +4,8 @@ import { compileTextbook, type TextbookFormat } from "@/lib/ai/textbook/textbook
 import { renderTextbookPdfStream } from "@/lib/ai/textbook/textbookPdf";
 import { lessonPdfSupabasePath, uploadLessonPdfToSupabase } from "@/lib/supabaseStorage";
 
-const DEFAULT_BATCH_SIZE = 12;
-const MAX_BATCH_SIZE = 12;
+const DEFAULT_BATCH_SIZE = 2;
+const MAX_BATCH_SIZE = 2;
 const DEFAULT_VERSION = "v1";
 const ESTIMATED_TEXTBOOK_COST_USD = 0;
 
@@ -35,6 +35,7 @@ export type TextbookJob = {
   version: string;
   force: boolean;
   storageUrl: string | null;
+  estimatedCostUsd: number;
 };
 
 function normalizeFormat(format?: string): TextbookFormat {
@@ -101,17 +102,30 @@ export async function claimNextTextbookJobs(input: { limit?: number } = {}): Pro
     where: { status: "PENDING" },
     orderBy: { createdAt: "asc" },
     take: limit,
-    select: { id: true, grade: true, subject: true, format: true, version: true, force: true, storageUrl: true },
+    select: { id: true, grade: true, subject: true, format: true, version: true, force: true, storageUrl: true, estimatedCostUsd: true },
   });
 
   if (pending.length === 0) return [];
 
-  await prisma.textbookGenerationJob.updateMany({
-    where: { id: { in: pending.map((job) => job.id) }, status: "PENDING" },
-    data: { status: "PROCESSING", claimedAt: new Date(), attempts: { increment: 1 } },
-  });
+  const claimed: TextbookJob[] = [];
+  const claimedAt = new Date();
+  for (const job of pending) {
+    const result = await prisma.textbookGenerationJob.updateMany({
+      where: { id: job.id, status: "PENDING" },
+      data: { status: "PROCESSING", claimedAt, attempts: { increment: 1 } },
+    });
+    if (result.count === 1) claimed.push(job);
+  }
 
-  return pending;
+  return claimed;
+}
+
+export async function releaseClaimedTextbookJobs(jobIds: string[]) {
+  if (jobIds.length === 0) return { count: 0 };
+  return prisma.textbookGenerationJob.updateMany({
+    where: { id: { in: jobIds }, status: "PROCESSING" },
+    data: { status: "PENDING" },
+  });
 }
 
 export async function markGenerated(input: {

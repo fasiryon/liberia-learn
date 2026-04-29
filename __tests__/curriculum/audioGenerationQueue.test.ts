@@ -11,6 +11,7 @@ const mockAudioFindFirst = vi.hoisted(() => vi.fn());
 const mockAudioAggregate = vi.hoisted(() => vi.fn());
 const mockGenerateLessonAudioNow = vi.hoisted(() => vi.fn());
 const mockEstimateTtsCostUsd = vi.hoisted(() => vi.fn());
+const mockIsTtsGenerationStopped = vi.hoisted(() => vi.fn());
 
 vi.mock("@/lib/db", () => ({
   prisma: {
@@ -34,6 +35,10 @@ vi.mock("@/lib/lessons/audioGeneration", () => ({
   generateLessonAudioNow: mockGenerateLessonAudioNow,
 }));
 
+vi.mock("@/lib/serverFlags", () => ({
+  isTtsGenerationStopped: mockIsTtsGenerationStopped,
+}));
+
 function approvedLesson(overrides: Record<string, unknown> = {}) {
   return {
     contentId: "english-g5-u1-l1",
@@ -54,6 +59,7 @@ describe("audioGenerationQueue", () => {
     mockAudioUpsert.mockResolvedValue({ id: "audio-1", status: "PENDING" });
     mockAudioUpdate.mockResolvedValue({});
     mockAudioUpdateMany.mockResolvedValue({ count: 1 });
+    mockIsTtsGenerationStopped.mockReturnValue(false);
   });
 
   describe("enqueueLessonAudio", () => {
@@ -119,14 +125,21 @@ describe("audioGenerationQueue", () => {
         { id: "audio-2", lessonId: "lesson-2", voice: "alloy", contentVersion: "v1" },
       ];
       mockAudioFindMany.mockResolvedValueOnce(pendingJobs);
+      // Each job is claimed individually (optimistic lock per row)
+      mockAudioUpdateMany.mockResolvedValue({ count: 1 });
       const { claimNextAudioJobs } = await import("@/lib/audio/audioGenerationQueue");
 
       const result = await claimNextAudioJobs({ limit: 5 });
 
       expect(result).toHaveLength(2);
       expect(result[0]).toMatchObject({ id: "audio-1", lessonId: "lesson-1" });
+      expect(mockAudioUpdateMany).toHaveBeenCalledTimes(2);
       expect(mockAudioUpdateMany).toHaveBeenCalledWith({
-        where: { id: { in: ["audio-1", "audio-2"] }, status: "PENDING" },
+        where: { id: "audio-1", status: "PENDING" },
+        data: expect.objectContaining({ status: "PROCESSING" }),
+      });
+      expect(mockAudioUpdateMany).toHaveBeenCalledWith({
+        where: { id: "audio-2", status: "PENDING" },
         data: expect.objectContaining({ status: "PROCESSING" }),
       });
     });
@@ -141,14 +154,14 @@ describe("audioGenerationQueue", () => {
       expect(mockAudioUpdateMany).not.toHaveBeenCalled();
     });
 
-    it("caps batch at MAX_BATCH_SIZE (10)", async () => {
+    it("caps batch at MAX_BATCH_SIZE (5)", async () => {
       mockAudioFindMany.mockResolvedValueOnce([]);
       const { claimNextAudioJobs } = await import("@/lib/audio/audioGenerationQueue");
 
       await claimNextAudioJobs({ limit: 999 });
 
       expect(mockAudioFindMany).toHaveBeenCalledWith(
-        expect.objectContaining({ take: 10 })
+        expect.objectContaining({ take: 5 })
       );
     });
   });
@@ -163,6 +176,8 @@ describe("audioGenerationQueue", () => {
         lesson: {
           contentId: "lesson-1",
           version: "v1",
+          grade: 5,
+          subject: "ENGLISH",
           payload: { body_standard: "Lesson text here." },
         },
       });
@@ -176,6 +191,9 @@ describe("audioGenerationQueue", () => {
       expect(result).toMatchObject({ jobId: "audio-1", lessonId: "lesson-1", status: "GENERATED" });
       expect(mockGenerateLessonAudioNow).toHaveBeenCalledWith(
         expect.objectContaining({ lessonId: "lesson-1", voice: "alloy", text: "Lesson text here." })
+      );
+      expect(mockGenerateLessonAudioNow).toHaveBeenCalledWith(
+        expect.objectContaining({ grade: 5, subject: "ENGLISH" })
       );
     });
 
@@ -270,6 +288,24 @@ describe("audioGenerationQueue", () => {
         lastProcessed: "2026-04-29T10:00:00.000Z",
         totalCostUsd: 0.123456,
       });
+    });
+  });
+
+  describe("stop flag", () => {
+    it("claimNextAudioJobs returns empty array when TTS_STOP_GENERATION is active", async () => {
+      mockIsTtsGenerationStopped.mockReturnValue(true);
+      const { claimNextAudioJobs } = await import("@/lib/audio/audioGenerationQueue");
+      const result = await claimNextAudioJobs({ limit: 5 });
+      expect(result).toHaveLength(0);
+      expect(mockAudioFindMany).not.toHaveBeenCalled();
+    });
+
+    it("claimNextAudioJobs proceeds normally when stop flag is inactive", async () => {
+      mockIsTtsGenerationStopped.mockReturnValue(false);
+      mockAudioFindMany.mockResolvedValueOnce([]);
+      const { claimNextAudioJobs } = await import("@/lib/audio/audioGenerationQueue");
+      await claimNextAudioJobs({ limit: 5 });
+      expect(mockAudioFindMany).toHaveBeenCalled();
     });
   });
 });

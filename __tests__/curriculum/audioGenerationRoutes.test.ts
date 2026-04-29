@@ -8,6 +8,9 @@ const mockClaim = vi.hoisted(() => vi.fn());
 const mockProcess = vi.hoisted(() => vi.fn());
 const mockRetry = vi.hoisted(() => vi.fn());
 const mockStatus = vi.hoisted(() => vi.fn());
+const mockGetCronRunSummary = vi.hoisted(() => vi.fn());
+const mockLogCronRun = vi.hoisted(() => vi.fn());
+const mockGetCronCostThresholdUsd = vi.hoisted(() => vi.fn());
 
 vi.mock("@/lib/auth", () => ({
   requireRole: mockRequireRole,
@@ -20,6 +23,18 @@ vi.mock("@/lib/audio/audioGenerationQueue", () => ({
   processAudioJob: mockProcess,
   retryFailedJobs: mockRetry,
   getAudioQueueStatus: mockStatus,
+  releaseClaimedAudioJobs: vi.fn(),
+}));
+
+vi.mock("@/lib/automation/cronRunLog", () => ({
+  getCronRunSummary: mockGetCronRunSummary,
+  getCronCostThresholdUsd: mockGetCronCostThresholdUsd,
+  isAutoModeEnabled: () => true,
+  logCronRun: mockLogCronRun,
+  shouldStopForFailureRate: (processed: number, failed: number) => {
+    const total = processed + failed;
+    return total > 0 && failed / total > 0.2;
+  },
 }));
 
 function makeRequest(body: unknown, headers: Record<string, string> = {}) {
@@ -38,6 +53,12 @@ describe("POST /api/admin/audio-generation/enqueue", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mockRequireRole.mockResolvedValue({ id: "admin-1", role: "ADMIN" });
+    mockGetCronRunSummary.mockResolvedValue({
+      lastRunAt: null,
+      jobsProcessedToday: 0,
+      lastRunProcessed: 0,
+      lastRunFailed: 0,
+    });
   });
 
   it("rejects unauthenticated requests", async () => {
@@ -188,6 +209,8 @@ describe("POST /api/cron/process-audio-generation", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     vi.stubEnv("CRON_SECRET", "test-cron-secret-123");
+    mockGetCronCostThresholdUsd.mockReturnValue(Number.POSITIVE_INFINITY);
+    mockLogCronRun.mockResolvedValue(undefined);
   });
 
   it("rejects requests with no Authorization header", async () => {

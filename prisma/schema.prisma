@@ -1343,6 +1343,7 @@ model LessonAudio {
   id               String            @id @default(cuid())
   lessonId         String
   storageUrl       String?
+  audioParts       Json?
   voice            String            @default("alloy")
   durationSeconds  Int?
   generatedAt      DateTime?
