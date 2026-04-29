@@ -35,6 +35,7 @@ model User {
   markedAttendance    Attendance[]         @relation("AttendanceMarkedBy")
   timetableEntries    Timetable[]          @relation("TimetableTeacher")
   timetableAssignments TimetableAssignment[] @relation("TimetableAssignmentBy")
+  textbookJobs        TextbookGenerationJob[] @relation("TextbookGenerationRequestedBy")
   teacherAssignments  TeacherAssignment[]  @relation("TeacherAssignmentTeacher")
   homework            Homework[]
   messagesSent        Message[]            @relation("MessagesSent")
@@ -1372,6 +1373,33 @@ model LessonVideo {
 
   @@index([lessonId, isActive])
   @@index([uploadedBy, uploadedAt])
+}
+
+model TextbookGenerationJob {
+  id               String    @id @default(cuid())
+  grade            Int
+  subject          String
+  format           String    @default("student")
+  version          String    @default("v1")
+  status           String    @default("PENDING")
+  storageUrl       String?
+  storagePath      String?
+  estimatedCostUsd Float     @default(0)
+  durationMs       Int?
+  errorMessage     String?
+  attempts         Int       @default(0)
+  force            Boolean   @default(false)
+  requestedById    String?
+  requestedBy      User?     @relation("TextbookGenerationRequestedBy", fields: [requestedById], references: [id], onDelete: SetNull)
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+  claimedAt        DateTime?
+  generatedAt      DateTime?
+
+  @@unique([grade, subject, format, version])
+  @@index([status, createdAt])
+  @@index([grade, subject, format])
+  @@index([generatedAt])
 }
 
 model CurriculumVersion {

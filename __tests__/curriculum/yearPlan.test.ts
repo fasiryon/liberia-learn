@@ -46,7 +46,29 @@ describe("full-year curriculum planning", () => {
     });
 
     expect(readiness.readinessPct).toBe(Math.round((3 / 180) * 100));
+    expect(readiness.approvedMappedLessons).toBe(3);
+    expect(readiness.draftMappedLessons).toBe(0);
     expect(readiness.classification).toBe("CRITICAL");
+  });
+
+  it("distinguishes approved coverage from draft generated coverage", () => {
+    const readiness = calculateReadiness({
+      grade: 4,
+      subject: "MATH",
+      lessons,
+      mappedContentIds: new Set(["a"]),
+      draftMappedContentIds: new Set(["b"]),
+      mappedWeeks: new Set([1]),
+      draftMappedWeeks: new Set([2]),
+      unitCount: 1,
+    });
+
+    expect(readiness.approvedMappedLessons).toBe(1);
+    expect(readiness.draftMappedLessons).toBe(1);
+    expect(readiness.totalMappedLessons).toBe(2);
+    expect(readiness.readinessPct).toBe(Math.round((1 / 180) * 100));
+    expect(readiness.totalReadinessPct).toBe(Math.round((2 / 180) * 100));
+    expect(readiness.draftGeneratedCoverageLabel).toContain("pending review");
   });
 
   it("derives a stable unit theme from titles", () => {
