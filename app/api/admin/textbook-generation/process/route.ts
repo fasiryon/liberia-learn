@@ -9,7 +9,7 @@ export async function POST(req: Request) {
   try {
     await requireRole("ADMIN");
     const body = await req.json().catch(() => ({}));
-    const limit = Math.min(12, Math.max(1, Number(body?.limit ?? 12)));
+    const limit = Math.min(2, Math.max(1, Number(body?.limit ?? 2)));
     const jobs = await claimNextTextbookJobs({ limit });
     const results = [];
 

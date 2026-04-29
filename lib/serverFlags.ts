@@ -641,3 +641,31 @@ export function isAiCostDashboardEnabled(): boolean {
 export function isRoleOnboardingPolishEnabled(): boolean {
   return process.env.ENABLE_ROLE_ONBOARDING_POLISH !== "false";
 }
+
+// Pipeline cost tracking flags
+
+/** Daily TTS audio budget in USD. Default $5. Set TTS_DAILY_BUDGET_USD. */
+export function getTtsDailyBudgetUsd(): number {
+  const raw = parseFloat(process.env.TTS_DAILY_BUDGET_USD ?? "5");
+  return Number.isFinite(raw) && raw > 0 ? raw : 5;
+}
+
+/** Monthly TTS audio cap in USD. Default $100. Set TTS_MONTHLY_CAP_USD. */
+export function getTtsMonthlyCapUsd(): number {
+  const raw = parseFloat(process.env.TTS_MONTHLY_CAP_USD ?? "100");
+  return Number.isFinite(raw) && raw > 0 ? raw : 100;
+}
+
+/**
+ * Emergency stop for TTS audio generation. DEFAULT OFF.
+ * Set TTS_STOP_GENERATION=true to halt all new audio job claims.
+ * PENDING rows remain intact — nothing is deleted or failed.
+ */
+export function isTtsGenerationStopped(): boolean {
+  return process.env.TTS_STOP_GENERATION === "true";
+}
+
+/** Pipeline cost dashboard. DEFAULT ON. Set ENABLE_COST_DASHBOARD=false to hide. */
+export function isCostDashboardEnabled(): boolean {
+  return process.env.ENABLE_COST_DASHBOARD !== "false";
+}
