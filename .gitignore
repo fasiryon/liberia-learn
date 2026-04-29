@@ -95,3 +95,5 @@ infra/outputs/
 # Local eval artifacts
 evals/results/
 e2e/phase1-design-verification.spec.ts
+
+.env*.local
