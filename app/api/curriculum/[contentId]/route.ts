@@ -39,6 +39,7 @@ export async function GET(
             storageUrl: true,
             contentVersion: true,
             estimatedCostUsd: true,
+            audioParts: true,
           },
         },
         videoSupplements: {

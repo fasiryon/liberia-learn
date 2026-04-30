@@ -13,6 +13,7 @@ import { getLessonLabLinks } from "@/lib/lessons/labLinks";
 import { parseToSlides } from "@/lib/lessons/parseToSlides";
 import { enqueueOfflineRequest } from "@/lib/offline-queue";
 import { SaveForOfflineButton } from "@/components/SaveForOfflineButton";
+import { LessonAudioPlayer, type LessonAudioPart } from "@/components/student/LessonAudioPlayer";
 import type { LabId } from "@/lib/labs/types";
 import type { PseudoLab, SimulationDefinition } from "@/lib/schemas/labSimulation";
 
@@ -53,6 +54,7 @@ type LessonResponse = {
     contentVersion?: string;
     status: "NOT_GENERATED" | "PENDING" | "PROCESSING" | "GENERATED" | "STALE" | "FAILED";
     estimatedCostUsd?: number;
+    audioParts?: LessonAudioPart[] | null;
   };
   activeVideo?: {
     id: string;
@@ -868,32 +870,14 @@ export default function LessonDeliveryClient({ lessonId }: { lessonId: string })
                   </a>
                 ) : null}
               </div>
-              {lesson.audio?.storageUrl && lesson.audio.status === "GENERATED" ? (
-                <audio
-                  className="mt-4 w-full"
-                  controls
-                  src={lesson.audio.storageUrl}
-                  onPlay={(event) => {
-                    event.currentTarget.playbackRate = event.currentTarget.playbackRate || 1;
-                    void fetch("/api/track", {
-                      method: "POST",
-                      headers: { "Content-Type": "application/json" },
-                      body: JSON.stringify({
-                        eventType: "AUDIO_PLAYBACK_STARTED",
-                        contentId: lesson.contentId,
-                        metadata: { lessonId: lesson.id, audioId: lesson.audio?.id },
-                      }),
-                    }).catch(() => {});
-                  }}
+              <div className="mt-4">
+                <LessonAudioPlayer
+                  audio={lesson.audio}
+                  contentId={lesson.contentId}
+                  lessonId={lesson.id}
                 />
-              ) : (
-                <div className="mt-4 rounded-lg border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 px-4 py-3 text-sm text-[var(--ll-text-muted)]">
-                  {audioRequesting || lesson.audio?.status === "PENDING" || lesson.audio?.status === "PROCESSING"
-                    ? "Audio being prepared. You can keep reading now."
-                    : "Audio is not generated yet. Listen mode will queue preparation and keep the lesson readable."}
-                </div>
-              )}
-              {lesson.audio?.storageUrl && lesson.audio.status === "GENERATED" ? (
+              </div>
+              {lesson.audio?.status === "GENERATED" && (lesson.audio?.storageUrl || lesson.audio?.audioParts?.length) ? (
                 <div className="mt-3 flex flex-wrap gap-2 text-xs">
                   {[0.75, 1, 1.25, 1.5].map((speed) => (
                     <button
@@ -901,7 +885,7 @@ export default function LessonDeliveryClient({ lessonId }: { lessonId: string })
                       type="button"
                       className="rounded-full border border-[var(--ll-border)] px-3 py-1 text-[var(--ll-text-muted)]"
                       onClick={() => {
-                        const audio = document.querySelector<HTMLAudioElement>('audio[src="' + lesson.audio?.storageUrl + '"]');
+                        const audio = document.querySelector<HTMLAudioElement>('[data-lesson-audio-player] audio, audio');
                         if (audio) audio.playbackRate = speed;
                       }}
                     >

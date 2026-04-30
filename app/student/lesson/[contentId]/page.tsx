@@ -5,6 +5,7 @@ import { useRouter, useParams } from "next/navigation";
 import Link from "next/link";
 import { trackEvent, EVENTS } from "@/lib/trackEvent";
 import { cacheLessonContent, loadCachedLesson } from "@/lib/lesson-offline-cache";
+import { LessonAudioPlayer, type LessonAudioPart } from "@/components/student/LessonAudioPlayer";
 
 type LessonMode = "read" | "slides" | "listen";
 
@@ -41,6 +42,7 @@ type LessonAudio = {
   status: string;
   durationSeconds?: number | null;
   estimatedCostUsd?: number;
+  audioParts?: LessonAudioPart[] | null;
 };
 
 const MODE_LABELS: Record<LessonMode, string> = {
@@ -158,7 +160,7 @@ export default function LessonViewerPage() {
       ].filter((slide) => slide.bullets.some((bullet: string) => bullet.trim().length > 0));
   const currentSlide = slides[currentSlideIndex] ?? slides[0] ?? null;
   const audioScripts = Array.isArray(payload?.audioScriptSpecs) ? payload.audioScriptSpecs : [];
-  const generatedAudioReady = audio?.status === "GENERATED" && audio?.storageUrl;
+  const generatedAudioReady = audio?.status === "GENERATED" && (audio?.storageUrl || audio?.audioParts?.length);
 
   function switchMode(nextMode: LessonMode) {
     setMode(nextMode);
@@ -346,9 +348,7 @@ export default function LessonViewerPage() {
           <section className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 p-5 space-y-4">
             <h2 className="text-sm font-semibold uppercase tracking-wide text-[var(--ll-text)]">Listen Mode</h2>
             {generatedAudioReady ? (
-              <audio controls className="w-full" src={audio.storageUrl}>
-                <track kind="captions" />
-              </audio>
+              <LessonAudioPlayer audio={audio} contentId={contentId} />
             ) : (
               <div className="rounded-lg border border-[var(--ll-border)] bg-[var(--ll-surface)] p-4">
                 <p className="text-sm text-[var(--ll-text-muted)]">

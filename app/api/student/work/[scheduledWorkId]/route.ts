@@ -105,6 +105,7 @@ function scheduledWorkInclude(userId: string) {
             contentVersion: true,
             status: true,
             estimatedCostUsd: true,
+            audioParts: true,
           },
         },
         videoSupplements: {

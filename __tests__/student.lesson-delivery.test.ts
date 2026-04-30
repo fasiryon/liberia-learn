@@ -140,4 +140,51 @@ describe("student lesson delivery", () => {
     expect(response.status).toBe(200);
     await expect(response.json()).resolves.toMatchObject({ success: true });
   });
+
+  it("builds sequential playable audio parts from generated audioParts", async () => {
+    const { getPlayableAudioParts } = await import("@/components/student/LessonAudioPlayer");
+
+    const parts = getPlayableAudioParts({
+      status: "GENERATED",
+      storageUrl: "https://cdn.example/fallback.mp3",
+      audioParts: [
+        { partNumber: 2, storageUrl: "https://cdn.example/part-2.mp3", status: "GENERATED" },
+        { partNumber: 1, storageUrl: "https://cdn.example/part-1.mp3", status: "GENERATED" },
+        { partNumber: 3, storageUrl: "https://cdn.example/failed.mp3", status: "FAILED" },
+      ],
+    });
+
+    expect(parts).toEqual([
+      { partNumber: 1, storageUrl: "https://cdn.example/part-1.mp3" },
+      { partNumber: 2, storageUrl: "https://cdn.example/part-2.mp3" },
+    ]);
+  });
+
+  it("falls back to storageUrl when audioParts are empty", async () => {
+    const { getPlayableAudioParts } = await import("@/components/student/LessonAudioPlayer");
+
+    expect(
+      getPlayableAudioParts({
+        status: "GENERATED",
+        storageUrl: "https://cdn.example/full-lesson.mp3",
+        audioParts: [],
+      })
+    ).toEqual([{ partNumber: 1, storageUrl: "https://cdn.example/full-lesson.mp3" }]);
+  });
+
+  it("moves next and previous audio sections within bounds", async () => {
+    const { getAdjacentAudioPartIndex } = await import("@/components/student/LessonAudioPlayer");
+
+    expect(getAdjacentAudioPartIndex(0, "next", 3)).toBe(1);
+    expect(getAdjacentAudioPartIndex(1, "previous", 3)).toBe(0);
+    expect(getAdjacentAudioPartIndex(2, "next", 3)).toBe(2);
+    expect(getAdjacentAudioPartIndex(0, "previous", 3)).toBe(0);
+  });
+
+  it("returns no playable audio when generated audio is unavailable", async () => {
+    const { getPlayableAudioParts } = await import("@/components/student/LessonAudioPlayer");
+
+    expect(getPlayableAudioParts({ status: "PENDING", storageUrl: "https://cdn.example/pending.mp3" })).toEqual([]);
+    expect(getPlayableAudioParts({ status: "GENERATED", storageUrl: null, audioParts: [] })).toEqual([]);
+  });
 });
