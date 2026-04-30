@@ -12,6 +12,24 @@ export type ClassWeeklySummary = {
   absencesThisWeek: number;
   atRiskStudentCount: number;
   enrolledStudentCount: number;
+  weakTopics: string[];
+  improvingStudents: string[];
+  studentsNeedingSupport: string[];
+  recommendedNextWeekActions: string[];
+};
+
+export type SavedLessonPlanSummary = {
+  id: string;
+  lessonTitle: string;
+  contentId: string | null;
+  classId: string | null;
+  subject: string | null;
+  plannedDate: string | null;
+  weekStart: string | null;
+  bindingStatus: string;
+  slotType: string | null;
+  slotId: string | null;
+  createdAt: string;
 };
 
 export type TeacherWeeklyReport = {
@@ -23,6 +41,7 @@ export type TeacherWeeklyReport = {
   totalLessons: number;
   totalAbsences: number;
   overallCompletionRate: number;
+  savedLessonPlans: SavedLessonPlanSummary[];
 };
 
 function startOfWeek(date: Date): Date {
@@ -67,6 +86,7 @@ export async function buildTeacherWeeklyReport(
       totalLessons: 0,
       totalAbsences: 0,
       overallCompletionRate: 0,
+      savedLessonPlans: [],
     };
   }
 
@@ -167,6 +187,50 @@ export async function buildTeacherWeeklyReport(
     }
   }
 
+  const savedPlanRows = await (prisma as any).teacherAction
+    .findMany({
+      where: {
+        teacherUserId: teacherId,
+        schoolId,
+        actionType: "lesson_plan_saved",
+        OR: [
+          { occurredAt: { gte: weekStart, lte: weekEnd } },
+          { classId: { in: classIds } },
+        ],
+      },
+      orderBy: { occurredAt: "desc" },
+      take: 25,
+    })
+    .catch(() => [] as any[]);
+
+  const savedLessonPlans: SavedLessonPlanSummary[] = savedPlanRows
+    .map((row: any) => {
+      const metadata = (row.metadata ?? {}) as Record<string, unknown>;
+      const plannedDate = typeof metadata.plannedDate === "string" ? metadata.plannedDate : null;
+      const metadataWeekStart = typeof metadata.weekStart === "string" ? metadata.weekStart : null;
+      const inPlannedWeek =
+        plannedDate == null ||
+        (new Date(`${plannedDate}T00:00:00.000Z`) >= weekStart &&
+          new Date(`${plannedDate}T00:00:00.000Z`) <= weekEnd);
+      const inCreatedWeek = row.occurredAt >= weekStart && row.occurredAt <= weekEnd;
+      if (!inPlannedWeek && !inCreatedWeek) return null;
+      return {
+        id: row.id,
+        lessonTitle:
+          typeof metadata.lessonTitle === "string" ? metadata.lessonTitle : "Saved lesson plan",
+        contentId: row.contentId ?? null,
+        classId: row.classId ?? null,
+        subject: row.subject ?? null,
+        plannedDate,
+        weekStart: metadataWeekStart,
+        bindingStatus: typeof metadata.bindingStatus === "string" ? metadata.bindingStatus : "needs_review",
+        slotType: typeof metadata.slotType === "string" ? metadata.slotType : null,
+        slotId: typeof metadata.slotId === "string" ? metadata.slotId : null,
+        createdAt: row.occurredAt.toISOString(),
+      };
+    })
+    .filter((row: SavedLessonPlanSummary | null): row is SavedLessonPlanSummary => Boolean(row));
+
   const classSummaries: ClassWeeklySummary[] = classes.map((cls) => {
     const enrolled = enrolledByClass.get(cls.id) ?? 0;
     const lessonIds = lessonsByClass.get(cls.id) ?? [];
@@ -198,6 +262,27 @@ export async function buildTeacherWeeklyReport(
       absencesThisWeek: absencesByClass.get(cls.id) ?? 0,
       atRiskStudentCount: atRiskByClass.get(cls.id) ?? 0,
       enrolledStudentCount: enrolled,
+      weakTopics:
+        performance?.intelligence?.lowPerformingLessons.map((lesson) => lesson.lessonTitle) ??
+        (performance?.strugglingLesson?.lessonTitle ? [performance.strugglingLesson.lessonTitle] : []),
+      improvingStudents:
+        performance?.intelligence?.topPerformers.map((student) => student.name).slice(0, 5) ??
+        performance?.topStudents.map((student) => student.name).slice(0, 5) ??
+        [],
+      studentsNeedingSupport:
+        [
+          ...(performance?.intelligence?.strugglingStudents.map((student) => student.name) ?? []),
+          ...(performance?.atRiskStudents.map((student) => student.name) ?? []),
+        ]
+          .filter((name, index, names) => names.indexOf(name) === index)
+          .slice(0, 6),
+      recommendedNextWeekActions:
+        performance?.intelligence?.interventionSuggestions.map((suggestion) => suggestion.label) ??
+        [
+          lessonCompletionRate < 70 ? "Use the first lesson for completion catch-up." : null,
+          performance?.strugglingLesson ? `Reteach ${performance.strugglingLesson.lessonTitle}.` : null,
+          (atRiskByClass.get(cls.id) ?? 0) > 0 ? "Check in with students needing support." : null,
+        ].filter((action): action is string => Boolean(action)),
     };
   });
 
@@ -223,5 +308,6 @@ export async function buildTeacherWeeklyReport(
     totalLessons,
     totalAbsences,
     overallCompletionRate,
+    savedLessonPlans,
   };
 }

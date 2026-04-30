@@ -37,6 +37,7 @@ const MOCK_REPORT = {
   totalLessons: 3,
   totalAbsences: 2,
   overallCompletionRate: 80,
+  savedLessonPlans: [],
 };
 
 describe("GET /api/teacher/weekly-report", () => {

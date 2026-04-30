@@ -2,6 +2,7 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 
 const mockCreateMany = vi.fn();
 const mockFindMany = vi.fn();
+const mockFindFirst = vi.fn();
 const mockUpdate = vi.fn();
 
 vi.mock("@/lib/db", () => ({
@@ -9,6 +10,7 @@ vi.mock("@/lib/db", () => ({
     teacherAlert: {
       createMany: (...args: any[]) => mockCreateMany(...args),
       findMany: (...args: any[]) => mockFindMany(...args),
+      findFirst: (...args: any[]) => mockFindFirst(...args),
       update: (...args: any[]) => mockUpdate(...args),
     },
   },
@@ -43,6 +45,7 @@ function mockAtRiskStudent(overrides: object = {}) {
 beforeEach(() => {
   vi.clearAllMocks();
   mockFindMany.mockResolvedValue([]);
+  mockFindFirst.mockResolvedValue({ id: "alert-1", schoolId: SCHOOL_ID, alertType: "INACTIVE_STUDENT" });
   mockCreateMany.mockResolvedValue({ count: 1 });
   mockUpdate.mockResolvedValue({ teacherUserId: TEACHER_ID, schoolId: SCHOOL_ID, alertType: "INACTIVE_STUDENT" });
 });
@@ -163,7 +166,7 @@ describe("generateTeacherAlerts", () => {
 
 describe("markAlertReviewed", () => {
   it("updates alert status to REVIEWED with timestamp", async () => {
-    await markAlertReviewed("alert-1", TEACHER_ID);
+    await markAlertReviewed("alert-1", TEACHER_ID, SCHOOL_ID);
 
     expect(mockUpdate).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -176,7 +179,8 @@ describe("markAlertReviewed", () => {
 
 describe("dismissTeacherAlert", () => {
   it("updates alert status to DISMISSED with reason", async () => {
-    await dismissTeacherAlert("alert-2", TEACHER_ID, "Not applicable this week");
+    mockFindFirst.mockResolvedValue({ id: "alert-2", schoolId: SCHOOL_ID, alertType: "INACTIVE_STUDENT" });
+    await dismissTeacherAlert("alert-2", TEACHER_ID, SCHOOL_ID, "Not applicable this week");
 
     expect(mockUpdate).toHaveBeenCalledWith(
       expect.objectContaining({

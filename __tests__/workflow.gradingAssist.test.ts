@@ -318,6 +318,28 @@ describe("POST /api/teacher/grading/assist — PII checks", () => {
     const [auditArgs] = mockLogAudit.mock.calls[0];
     expect(auditArgs.details).not.toHaveProperty("studentId");
   });
+
+  it("server anonymizes raw student names, email, and identifiers before AI call", async () => {
+    const body = {
+      ...VALID_BODY,
+      studentName: "Fatu Kollie",
+      submissionContent:
+        "My name is Fatu Kollie. Email fatu.kollie@example.com. Student ID LBR-2026-001. The cell membrane controls diffusion.",
+    };
+
+    const res = await POST(makeReq(body));
+    expect(res.status).toBe(200);
+    const responseBody = await res.json();
+    expect(responseBody.teacherFinalAuthority).toBe(true);
+    expect(Array.isArray(responseBody.feedback)).toBe(true);
+
+    const [opts] = mockRoutedCompletion.mock.calls[0];
+    const allText = opts.messages.map((m: any) => m.content).join(" ");
+    expect(allText).not.toContain("Fatu Kollie");
+    expect(allText).not.toContain("fatu.kollie@example.com");
+    expect(allText).not.toContain("LBR-2026-001");
+    expect(allText).toContain("cell membrane controls diffusion");
+  });
 });
 
 // ─── Input validation ─────────────────────────────────────────────────────────

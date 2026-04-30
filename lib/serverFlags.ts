@@ -184,6 +184,21 @@ export function isAiGradingAssistEnabled(): boolean {
   return process.env.ENABLE_AI_GRADING_ASSIST === "true";
 }
 
+/** Teacher AI lesson planning. DEFAULT ON unless explicitly disabled. */
+export function isTeacherAiPlanningEnabled(): boolean {
+  return process.env.ENABLE_TEACHER_AI_PLANNING !== "false";
+}
+
+/** Teacher-facing intervention alerts. DEFAULT ON unless explicitly disabled. */
+export function isTeacherInterventionAlertsEnabled(): boolean {
+  return process.env.ENABLE_TEACHER_INTERVENTION_ALERTS !== "false";
+}
+
+/** Weekly teacher reports. DEFAULT ON unless explicitly disabled. */
+export function isWeeklyTeacherReportsEnabled(): boolean {
+  return process.env.ENABLE_WEEKLY_TEACHER_REPORTS !== "false";
+}
+
 /**
  * Class-level intervention alert engine (aggregate signals, no student IDs).
  * DEFAULT OFF. When false, GET /api/admin/dashboard/school/interventions returns 404.

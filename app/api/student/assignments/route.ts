@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { requireRole } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { logLearningEvent } from "@/lib/events/logLearningEvent";
+import { isAssignmentVisibleToStudent, listAssignmentTargeting } from "@/lib/assignments/targeting";
 
 export const dynamic = "force-dynamic";
 
@@ -47,11 +48,16 @@ export async function GET(req: NextRequest) {
       orderBy: [{ dueAt: "asc" }, { createdAt: "asc" }],
     });
 
+    const targeting = await listAssignmentTargeting(assignments.map((assignment) => assignment.id));
+    const visibleAssignments = assignments.filter((assignment) =>
+      isAssignmentVisibleToStudent(assignment.id, student.id, targeting)
+    );
+
     const newCount = Number.isFinite(previousCount)
-      ? Math.max(0, assignments.length - previousCount)
+      ? Math.max(0, visibleAssignments.length - previousCount)
       : 0;
 
-    if (source === "poll" && Number.isFinite(previousCount) && previousCount !== assignments.length) {
+    if (source === "poll" && Number.isFinite(previousCount) && previousCount !== visibleAssignments.length) {
       logLearningEvent({
         schoolId: user.schoolId,
         userId: user.id,
@@ -59,7 +65,7 @@ export async function GET(req: NextRequest) {
         actor: { type: "student", id: user.id, role: "STUDENT" },
         eventType: "assignment_list_polled",
         source: "/api/student/assignments",
-        metadata: { assignmentCount: assignments.length, newCount },
+        metadata: { assignmentCount: visibleAssignments.length, newCount },
       }).catch(() => null);
     }
 
@@ -67,7 +73,7 @@ export async function GET(req: NextRequest) {
     const THIRTY_MIN_MS = 30 * 60 * 1000;
 
     return NextResponse.json({
-      assignments: assignments.map((a) => {
+      assignments: visibleAssignments.map((a) => {
         const submission = a.submissions[0] ?? null;
         const isNew = now - a.createdAt.getTime() < THIRTY_MIN_MS;
         const isOverdue =
@@ -95,7 +101,7 @@ export async function GET(req: NextRequest) {
             : null,
         };
       }),
-      count: assignments.length,
+      count: visibleAssignments.length,
       newCount,
       serverTime: new Date().toISOString(),
     });

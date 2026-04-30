@@ -15,6 +15,7 @@ type ScheduleItem = {
   totalStudents: number;
   isDelivered?: boolean;
   deliveredAt?: string | null;
+  lessonPlan?: LessonPlanSummary | null;
 };
 
 type ClassInfo = { id: string; name: string; subject?: string | null };
@@ -29,6 +30,16 @@ type TimetableItem = {
   endTime: string | null;
   room: string | null;
   class: { id: string; name: string; subject: string } | null;
+  lessonPlan?: LessonPlanSummary | null;
+};
+
+type LessonPlanSummary = {
+  id: string;
+  lessonTitle: string;
+  contentId: string | null;
+  classId: string | null;
+  plannedDate: string | null;
+  bindingStatus: string;
 };
 
 const DAY_LABELS = ["Mon", "Tue", "Wed", "Thu", "Fri"];
@@ -67,6 +78,9 @@ export default function TeacherSchedulePage() {
   const [items, setItems] = useState<ScheduleItem[]>([]);
   const [classes, setClasses] = useState<ClassInfo[]>([]);
   const [timetable, setTimetable] = useState<TimetableItem[]>([]);
+  const [savedPlans, setSavedPlans] = useState<LessonPlanSummary[]>([]);
+  const [selectedPlanBySlot, setSelectedPlanBySlot] = useState<Record<string, string>>({});
+  const [bindingSlot, setBindingSlot] = useState<string | null>(null);
   const [weekStart, setWeekStart] = useState("");
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
@@ -86,6 +100,7 @@ export default function TeacherSchedulePage() {
     null
   );
   const [publishSuccess, setPublishSuccess] = useState(false);
+  const [planningMode, setPlanningMode] = useState(false);
 
   function loadSchedule(weekOf?: string) {
     setLoading(true);
@@ -96,6 +111,7 @@ export default function TeacherSchedulePage() {
         setItems(d.items || []);
         setClasses(d.classes || []);
         setTimetable(d.timetable || []);
+        setSavedPlans(d.savedLessonPlans || []);
         setWeekStart(d.weekStart || "");
       })
       .finally(() => setLoading(false));
@@ -109,6 +125,7 @@ export default function TeacherSchedulePage() {
     const params = new URLSearchParams(window.location.search);
     setPublishedClassName(params.get("className"));
     setPublishSuccess(params.get("published") === "1");
+    setPlanningMode(params.get("planning") === "next-week");
   }, []);
 
   const selectedClass = useMemo(
@@ -163,6 +180,66 @@ export default function TeacherSchedulePage() {
     }
     setItems((prev) =>
       prev.map((i) => (i.id === id ? { ...i, isDelivered: true, deliveredAt: new Date().toISOString() } : i))
+    );
+  }
+
+  async function bindPlan(slotId: string) {
+    const planId = selectedPlanBySlot[slotId];
+    if (!planId) {
+      setError("Choose a saved lesson plan first.");
+      return;
+    }
+    setBindingSlot(slotId);
+    setError(null);
+    try {
+      const res = await fetch("/api/teacher/lesson-plan/bind", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ planId, slotId }),
+      });
+      const data = await res.json().catch(() => null);
+      if (!res.ok) throw new Error(data?.error ?? "Unable to bind lesson plan.");
+      loadSchedule(weekStart ? weekStart.slice(0, 10) : undefined);
+    } catch (bindError: any) {
+      setError(bindError?.message ?? "Unable to bind lesson plan.");
+    } finally {
+      setBindingSlot(null);
+    }
+  }
+
+  function planPicker(slotId: string, classId: string, contentId?: string | null) {
+    const options = savedPlans.filter((plan) => {
+      if (plan.bindingStatus === "bound") return false;
+      if (plan.classId && plan.classId !== classId) return false;
+      if (contentId && plan.contentId && plan.contentId !== contentId) return false;
+      return true;
+    });
+    if (options.length === 0) return null;
+    return (
+      <div className="mt-2 space-y-1">
+        <select
+          value={selectedPlanBySlot[slotId] ?? ""}
+          onChange={(event) =>
+            setSelectedPlanBySlot((current) => ({ ...current, [slotId]: event.target.value }))
+          }
+          className="w-full rounded-lg border border-[var(--ll-border)] bg-[var(--ll-bg)] px-2 py-1 text-[10px] text-[var(--ll-text)]"
+        >
+          <option value="">Attach plan...</option>
+          {options.map((plan) => (
+            <option key={plan.id} value={plan.id}>
+              {plan.lessonTitle}
+            </option>
+          ))}
+        </select>
+        <button
+          type="button"
+          onClick={() => bindPlan(slotId)}
+          disabled={bindingSlot === slotId}
+          className="rounded-full border border-[var(--ll-border)] px-2 py-0.5 text-[9px] text-[var(--ll-text)]"
+        >
+          {bindingSlot === slotId ? "Binding..." : "Bind plan"}
+        </button>
+      </div>
     );
   }
 
@@ -288,6 +365,12 @@ export default function TeacherSchedulePage() {
         {publishSuccess && publishedClassName && (
           <div className="rounded-xl border border-emerald-500/30 bg-[var(--ll-yellow)]/10 px-4 py-3 text-sm text-[var(--ll-yellow)]">
             Lesson published to {publishedClassName}.
+          </div>
+        )}
+
+        {planningMode && (
+          <div className="rounded-xl border border-[var(--ll-yellow)]/30 bg-[var(--ll-yellow)]/10 px-4 py-3 text-sm text-[var(--ll-text)]">
+            Use next week lessons below, open a lesson, then choose Plan This Lesson to generate, edit, and save the plan.
           </div>
         )}
 
@@ -449,6 +532,13 @@ export default function TeacherSchedulePage() {
                                 <p className="text-[10px] text-[var(--ll-text-faint)]">
                                   {item.subject.replace(/_/g, " ")}{item.room ? ` - ${item.room}` : ""}
                                 </p>
+                                {item.lessonPlan ? (
+                                  <p className="mt-1 rounded-full bg-[var(--ll-yellow)]/15 px-2 py-0.5 text-[10px] text-[var(--ll-yellow)]">
+                                    Plan: {item.lessonPlan.lessonTitle}
+                                  </p>
+                                ) : (
+                                  planPicker(item.id, item.classId, null)
+                                )}
                               </div>
                             ))}
                           </div>
@@ -523,6 +613,13 @@ export default function TeacherSchedulePage() {
                                     Remove
                                   </button>
                                 </div>
+                                {item.lessonPlan ? (
+                                  <p className="mt-2 rounded-full bg-[var(--ll-yellow)]/15 px-2 py-0.5 text-[9px] text-[var(--ll-yellow)]">
+                                    Plan attached
+                                  </p>
+                                ) : (
+                                  planPicker(item.id, item.classId, item.contentId)
+                                )}
                               </div>
                             );
                           })}

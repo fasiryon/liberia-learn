@@ -4,6 +4,7 @@ import { handleApiError } from "@/lib/errors/apiErrorHandler";
 import { buildTeacherWeeklyReport } from "@/lib/reporting/teacherWeeklyReport";
 import { logLearningEvent } from "@/lib/events/logLearningEvent";
 import { randomUUID } from "crypto";
+import { isWeeklyTeacherReportsEnabled } from "@/lib/serverFlags";
 
 export const dynamic = "force-dynamic";
 
@@ -17,6 +18,10 @@ export const dynamic = "force-dynamic";
 export async function GET(req: NextRequest) {
   const requestId = randomUUID();
   try {
+    if (!isWeeklyTeacherReportsEnabled()) {
+      return NextResponse.json({ error: "weekly_teacher_reports_disabled" }, { status: 404 });
+    }
+
     const user = await requireRole("TEACHER", "ADMIN");
 
     if (!user.schoolId) {
