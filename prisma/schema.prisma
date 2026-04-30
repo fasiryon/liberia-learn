@@ -1403,6 +1403,35 @@ model TextbookGenerationJob {
   @@index([generatedAt])
 }
 
+model GradePipelineJob {
+  id             String    @id @default(cuid())
+  grade          Int       @unique
+  subjects       String[]
+  status         String    @default("NOT_STARTED")
+  currentSubject String?
+  errorMessage   String?
+  attempts       Int       @default(0)
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+  startedAt      DateTime?
+  completedAt    DateTime?
+  failedAt       DateTime?
+
+  @@index([status, createdAt])
+  @@index([completedAt])
+}
+
+model PipelineLock {
+  id        String   @id @default(cuid())
+  lockKey   String   @unique
+  owner     String
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([expiresAt])
+}
+
 model CurriculumVersion {
   id          String                  @id @default(cuid())
   versionName String                  @unique

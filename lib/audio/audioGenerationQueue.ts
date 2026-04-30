@@ -41,6 +41,24 @@ type LessonPayload = {
   audioScriptSpecs?: Array<{ script?: string }>;
 } | null;
 
+async function notifyGradeOrchestrator(input: {
+  grade?: number | null;
+  subject?: string | null;
+  errorMessage?: string;
+}) {
+  if (!input.grade || !input.subject) return;
+  try {
+    const { refreshGradeStatusForQueueEvent } = await import("@/lib/pipeline/gradeOrchestrator");
+    await refreshGradeStatusForQueueEvent({
+      grade: input.grade,
+      subject: input.subject,
+      errorMessage: input.errorMessage,
+    });
+  } catch {
+    // Queue processing must not fail because orchestration status refresh is unavailable.
+  }
+}
+
 function extractAudioText(payload: unknown): string {
   const p = payload as LessonPayload;
   const scripts = Array.isArray(p?.audioScriptSpecs)
@@ -168,6 +186,11 @@ export async function processAudioJob(jobId: string): Promise<ProcessResult> {
   const text = extractAudioText(row.lesson.payload);
   if (!text) {
     await prisma.lessonAudio.update({ where: { id: jobId }, data: { status: "FAILED" } });
+    await notifyGradeOrchestrator({
+      grade: row.lesson.grade,
+      subject: row.lesson.subject,
+      errorMessage: "Lesson has no readable text.",
+    });
     return { jobId, lessonId: row.lessonId, status: "FAILED", error: "Lesson has no readable text." };
   }
 
@@ -180,6 +203,10 @@ export async function processAudioJob(jobId: string): Promise<ProcessResult> {
       grade: row.lesson.grade,
       subject: row.lesson.subject,
     });
+    await notifyGradeOrchestrator({
+      grade: row.lesson.grade,
+      subject: row.lesson.subject,
+    });
     return {
       jobId,
       lessonId: row.lessonId,
@@ -189,6 +216,11 @@ export async function processAudioJob(jobId: string): Promise<ProcessResult> {
   } catch (error: any) {
     const message = error?.message ?? "Audio generation failed.";
     await prisma.lessonAudio.update({ where: { id: jobId }, data: { status: "FAILED" } }).catch(() => {});
+    await notifyGradeOrchestrator({
+      grade: row.lesson.grade,
+      subject: row.lesson.subject,
+      errorMessage: message,
+    });
     return { jobId, lessonId: row.lessonId, status: "FAILED", error: message };
   }
 }

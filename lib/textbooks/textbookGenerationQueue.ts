@@ -9,6 +9,24 @@ const MAX_BATCH_SIZE = 2;
 const DEFAULT_VERSION = "v1";
 const ESTIMATED_TEXTBOOK_COST_USD = 0;
 
+async function notifyGradeOrchestrator(input: {
+  grade?: number | null;
+  subject?: string | null;
+  errorMessage?: string;
+}) {
+  if (!input.grade || !input.subject) return;
+  try {
+    const { refreshGradeStatusForQueueEvent } = await import("@/lib/pipeline/gradeOrchestrator");
+    await refreshGradeStatusForQueueEvent({
+      grade: input.grade,
+      subject: input.subject,
+      errorMessage: input.errorMessage,
+    });
+  } catch {
+    // Textbook generation status should not be rolled back by orchestration refresh errors.
+  }
+}
+
 export type EnqueueTextbookInput = {
   grade: number;
   subject: string;
@@ -183,6 +201,7 @@ export async function processTextbookJob(job: TextbookJob | string) {
     const durationMs = Date.now() - startedAt;
 
     await markGenerated({ id: row.id, storageUrl, storagePath, durationMs });
+    await notifyGradeOrchestrator({ grade: row.grade, subject: row.subject });
     console.info("textbook_generation_generated", {
       jobId: row.id,
       grade: row.grade,
@@ -195,6 +214,7 @@ export async function processTextbookJob(job: TextbookJob | string) {
   } catch (error: any) {
     const message = error?.message ?? "Textbook generation failed.";
     await markFailed(row.id, message).catch(() => {});
+    await notifyGradeOrchestrator({ grade: row.grade, subject: row.subject, errorMessage: message });
     console.warn("textbook_generation_failed", { jobId: row.id, error: message });
     return { jobId: row.id, status: "FAILED", error: message };
   }
