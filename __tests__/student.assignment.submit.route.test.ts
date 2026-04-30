@@ -4,6 +4,7 @@ const mockRequireRole = vi.hoisted(() => vi.fn());
 const mockStudentFindUnique = vi.hoisted(() => vi.fn());
 const mockAssignmentFindUnique = vi.hoisted(() => vi.fn());
 const mockAssignmentSubmissionUpsert = vi.hoisted(() => vi.fn());
+const mockTeacherActionFindMany = vi.hoisted(() => vi.fn());
 const mockLogAudit = vi.hoisted(() => vi.fn());
 const mockNotifyAssignmentSubmitted = vi.hoisted(() => vi.fn());
 
@@ -13,6 +14,7 @@ vi.mock("@/lib/db", () => ({
     student: { findUnique: mockStudentFindUnique },
     assignment: { findUnique: mockAssignmentFindUnique },
     assignmentSubmission: { upsert: mockAssignmentSubmissionUpsert },
+    teacherAction: { findMany: mockTeacherActionFindMany },
   },
 }));
 vi.mock("@/lib/audit", () => ({ logAudit: mockLogAudit }));
@@ -36,6 +38,7 @@ describe("POST /api/student/assignments/[id]/submit", () => {
       Class: { id: "class-1", schoolId: "school-1", School: { name: "Capitol Hill Academy" } },
     });
     mockAssignmentSubmissionUpsert.mockResolvedValue({ id: "submission-1", turnedInAt: new Date("2026-03-13T12:00:00.000Z") });
+    mockTeacherActionFindMany.mockResolvedValue([]);
     mockLogAudit.mockResolvedValue(undefined);
     mockNotifyAssignmentSubmitted.mockResolvedValue(undefined);
   });
@@ -62,6 +65,28 @@ describe("POST /api/student/assignments/[id]/submit", () => {
       user: { name: "Student One", schoolId: "school-1" },
       enrollments: [{ classId: "class-2" }],
     });
+
+    const { POST } = await import("@/app/api/student/assignments/[id]/submit/route");
+    const response = await POST(
+      new Request("http://localhost/api/student/assignments/assignment-1/submit", {
+        method: "POST",
+        body: JSON.stringify({ content: "My assignment response" }),
+        headers: { "Content-Type": "application/json" },
+      }) as any,
+      { params: { id: "assignment-1" } }
+    );
+
+    expect(response.status).toBe(403);
+    expect(mockAssignmentSubmissionUpsert).not.toHaveBeenCalled();
+  });
+
+  it("returns 403 when the assignment targets another student", async () => {
+    mockTeacherActionFindMany.mockResolvedValue([
+      {
+        targetId: "assignment-1",
+        metadata: { targetStudentIds: ["student-2"] },
+      },
+    ]);
 
     const { POST } = await import("@/app/api/student/assignments/[id]/submit/route");
     const response = await POST(

@@ -71,6 +71,39 @@ async function _scheduleGET(req: NextRequest) {
     });
     const enrollMap = Object.fromEntries(enrollmentCounts.map((e) => [e.classId, e._count]));
 
+    const rawSavedPlans = await ((prisma as any).teacherAction?.findMany?.({
+        where: {
+          teacherUserId: user.id,
+          schoolId: user.schoolId!,
+          actionType: "lesson_plan_saved",
+          OR: [{ classId: { in: classIds } }, { contentId: { in: schedule.map((sw) => sw.contentId) } }],
+        },
+        orderBy: { occurredAt: "desc" },
+        take: 100,
+      }) ?? Promise.resolve([] as any[])).catch(() => [] as any[]);
+    const savedPlans = Array.isArray(rawSavedPlans) ? rawSavedPlans : [];
+
+    const planByScheduledWork = new Map<string, any>();
+    const planByContentDate = new Map<string, any>();
+    const planByTimetable = new Map<string, any>();
+    const planOptions = savedPlans.map((plan: any) => {
+      const metadata = (plan.metadata ?? {}) as Record<string, any>;
+      const plannedDate = typeof metadata.plannedDate === "string" ? metadata.plannedDate : null;
+      const scheduledWorkId = typeof metadata.scheduledWorkId === "string" ? metadata.scheduledWorkId : null;
+      const timetableId = typeof metadata.timetableId === "string" ? metadata.timetableId : null;
+      if (scheduledWorkId) planByScheduledWork.set(scheduledWorkId, plan);
+      if (timetableId) planByTimetable.set(timetableId, plan);
+      if (plan.contentId && plannedDate) planByContentDate.set(`${plan.contentId}:${plannedDate}`, plan);
+      return {
+        id: plan.id,
+        lessonTitle: typeof metadata.lessonTitle === "string" ? metadata.lessonTitle : "Saved lesson plan",
+        contentId: plan.contentId ?? null,
+        classId: plan.classId ?? null,
+        plannedDate,
+        bindingStatus: typeof metadata.bindingStatus === "string" ? metadata.bindingStatus : "needs_review",
+      };
+    });
+
     const items = schedule.map((sw) => ({
       id: sw.id,
       classId: sw.classId,
@@ -88,12 +121,37 @@ async function _scheduleGET(req: NextRequest) {
       completionRate: sw.completionRate,
       sessionPairId: sw.sessionPairId,
       status: sw.status,
+      lessonPlan: (() => {
+        const direct = planByScheduledWork.get(sw.id);
+        const byContent = planByContentDate.get(`${sw.contentId}:${sw.scheduledDate.toISOString().slice(0, 10)}`);
+        const plan = direct ?? byContent;
+        if (!plan) return null;
+        const metadata = (plan.metadata ?? {}) as Record<string, any>;
+        return {
+          id: plan.id,
+          lessonTitle: metadata.lessonTitle ?? "Saved lesson plan",
+          bindingStatus: metadata.bindingStatus ?? "needs_review",
+        };
+      })(),
     }));
 
     const response: Record<string, unknown> = {
       items,
       classes,
-      timetable: teacherScope.timetable,
+      timetable: (teacherScope.timetable ?? []).map((slot: any) => {
+        const plan = planByTimetable.get(slot.id);
+        if (!plan) return slot;
+        const metadata = (plan.metadata ?? {}) as Record<string, any>;
+        return {
+          ...slot,
+          lessonPlan: {
+            id: plan.id,
+            lessonTitle: metadata.lessonTitle ?? "Saved lesson plan",
+            bindingStatus: metadata.bindingStatus ?? "needs_review",
+          },
+        };
+      }),
+      savedLessonPlans: planOptions,
       weekStart: monday.toISOString(),
       rangeStart: rangeStart.toISOString(),
       rangeEnd: rangeEnd.toISOString(),

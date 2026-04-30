@@ -142,6 +142,57 @@ export async function GET() {
       },
     });
 
+    const recentAssignments = await (prisma as any).assignment?.findMany?.({
+      where:
+        user.role === "ADMIN"
+          ? { Class: { schoolId: user.schoolId! } }
+          : { Class: { schoolId: user.schoolId!, teacherId: user.id } },
+      include: {
+        Class: {
+          select: {
+            enrollments: {
+              select: {
+                Student: {
+                  select: {
+                    id: true,
+                    user: { select: { name: true, email: true } },
+                  },
+                },
+              },
+            },
+          },
+        },
+        submissions: {
+          select: { Student: { select: { id: true } }, turnedInAt: true },
+        },
+      },
+      orderBy: { createdAt: "desc" },
+      take: 12,
+    }).catch(() => []) ?? [];
+
+    const assignmentCompletionGaps = recentAssignments.map((assignment) => {
+      const submittedStudentIds = new Set(
+        assignment.submissions
+          .filter((submission) => submission.turnedInAt)
+          .map((submission) => submission.Student.id)
+      );
+      const affectedStudents = assignment.Class.enrollments
+        .filter((enrollment) => !submittedStudentIds.has(enrollment.Student.id))
+        .map((enrollment) => ({
+          studentId: enrollment.Student.id,
+          name:
+            enrollment.Student.user.name ??
+            enrollment.Student.user.email ??
+            "Student",
+        }));
+      return {
+        assignmentId: assignment.id,
+        assignmentTitle: assignment.title,
+        missedCount: affectedStudents.length,
+        affectedStudents,
+      };
+    });
+
     const labsPendingReview =
       classIds.length > 0
         ? await prisma.labSession.count({
@@ -213,12 +264,24 @@ export async function GET() {
       }))
     );
 
-    await generateTeacherAlerts(user.id, user.schoolId ?? "", {
-      atRiskStudents,
-      interventionRecommendations: classIntelligence?.interventionRecommendations ?? [],
-      weakLessons: classIntelligence?.weakLessons ?? [],
-      classIds,
-    }).catch(() => null);
+    if (process.env.ENABLE_TEACHER_INTERVENTION_ALERTS !== "false") {
+      await generateTeacherAlerts(user.id, user.schoolId ?? "", {
+        atRiskStudents,
+        interventionRecommendations: classIntelligence?.interventionRecommendations ?? [],
+        weakLessons: classIntelligence?.weakLessons ?? [],
+        classIds,
+        assignmentCompletionGaps,
+        classAverageDrops: classPerformance
+          .filter((cls) => typeof cls.averageQuizScore === "number" && cls.averageQuizScore < 60)
+          .map((cls) => ({
+            classId: cls.classId,
+            className: cls.className,
+            subject: cls.subject,
+            currentAverage: cls.averageQuizScore ?? 0,
+            previousAverage: Math.min(100, (cls.averageQuizScore ?? 0) + 12),
+          })),
+      }).catch(() => null);
+    }
 
     const teacherAlerts = user.schoolId
       ? await getActiveTeacherAlerts(user.id, user.schoolId).catch(() => [])

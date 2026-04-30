@@ -46,6 +46,22 @@ type LessonPlan = {
 
 const TIME_OPTIONS = [30, 45, 60, 90] as const;
 
+function nextWeekdayISO(dayOffset = 7) {
+  const now = new Date();
+  const day = now.getDay();
+  const mondayOffset = ((8 - day) % 7) || dayOffset;
+  const target = new Date(now);
+  target.setDate(now.getDate() + mondayOffset);
+  return target.toISOString().slice(0, 10);
+}
+
+function weekStartISO(dateIso: string) {
+  const date = new Date(dateIso);
+  const day = date.getUTCDay();
+  date.setUTCDate(date.getUTCDate() - ((day + 6) % 7));
+  return date.toISOString().slice(0, 10);
+}
+
 export default function TeacherLessonViewClient({
   contentId,
   studentContext,
@@ -59,10 +75,13 @@ export default function TeacherLessonViewClient({
   const [plannerOpen, setPlannerOpen] = useState(false);
   const [classSize, setClassSize] = useState("35");
   const [timeAvailableMinutes, setTimeAvailableMinutes] = useState<(typeof TIME_OPTIONS)[number]>(45);
+  const [plannedDate, setPlannedDate] = useState(nextWeekdayISO);
   const [specialConsiderations, setSpecialConsiderations] = useState("");
   const [planning, setPlanning] = useState(false);
   const [planError, setPlanError] = useState<string | null>(null);
   const [plan, setPlan] = useState<LessonPlan | null>(null);
+  const [savingPlan, setSavingPlan] = useState(false);
+  const [planSaveMessage, setPlanSaveMessage] = useState<string | null>(null);
   const [videoTitle, setVideoTitle] = useState("Teacher introduction");
   const [videoDescription, setVideoDescription] = useState("");
   const [videoDuration, setVideoDuration] = useState("60");
@@ -155,10 +174,73 @@ export default function TeacherLessonViewClient({
         throw new Error(data?.error ?? "Failed to create lesson plan.");
       }
       setPlan(data);
+      setPlanSaveMessage(null);
     } catch (plannerError: any) {
       setPlanError(plannerError?.message ?? "Failed to create lesson plan.");
     } finally {
       setPlanning(false);
+    }
+  }
+
+  function updatePlanField(field: "warmUpActivity" | "assessmentCheck" | "homeworkSuggestion", value: string) {
+    setPlan((current) => (current ? { ...current, [field]: value } : current));
+  }
+
+  function updateObjective(index: number, value: string) {
+    setPlan((current) => {
+      if (!current) return current;
+      const learningObjectives = [...current.learningObjectives];
+      learningObjectives[index] = value;
+      return { ...current, learningObjectives };
+    });
+  }
+
+  function updatePlanStep(
+    index: number,
+    field: "segment" | "minutes" | "teacherMoves" | "studentExperience",
+    value: string
+  ) {
+    setPlan((current) => {
+      if (!current) return current;
+      const teachingSequence = [...current.teachingSequence];
+      const step = teachingSequence[index];
+      if (!step) return current;
+      teachingSequence[index] = {
+        ...step,
+        [field]: field === "minutes" ? Math.max(1, Number(value) || 1) : value,
+      };
+      return { ...current, teachingSequence };
+    });
+  }
+
+  async function handleSavePlan() {
+    if (!lesson || !plan) return;
+    setSavingPlan(true);
+    setPlanSaveMessage(null);
+    try {
+      const response = await fetch("/api/teacher/lesson-plan", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          action: "save",
+          contentId: lesson.metadata.contentId,
+          lessonTitle,
+          subject: lesson.metadata.subject,
+          gradeLevel: lesson.metadata.grade,
+          plannedDate,
+          weekStart: weekStartISO(plannedDate),
+          plan,
+        }),
+      });
+      const data = await response.json().catch(() => null);
+      if (!response.ok) {
+        throw new Error(data?.error ?? "Failed to save lesson plan.");
+      }
+      setPlanSaveMessage("Saved");
+    } catch (error: any) {
+      setPlanSaveMessage(error?.message ?? "Failed to save lesson plan.");
+    } finally {
+      setSavingPlan(false);
     }
   }
 
@@ -450,6 +532,18 @@ export default function TeacherLessonViewClient({
 
                 <label className="block text-sm text-[var(--ll-text)]">
                   <span className="mb-2 block text-xs font-semibold uppercase tracking-[0.18em] text-[var(--ll-text-muted)]">
+                    Planned Date
+                  </span>
+                  <input
+                    type="date"
+                    value={plannedDate}
+                    onChange={(event) => setPlannedDate(event.target.value)}
+                    className="min-h-12 w-full rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)] px-4 py-3 text-base text-[var(--ll-text)] outline-none transition-colors focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400/60"
+                  />
+                </label>
+
+                <label className="block text-sm text-[var(--ll-text)]">
+                  <span className="mb-2 block text-xs font-semibold uppercase tracking-[0.18em] text-[var(--ll-text-muted)]">
                     Special Considerations
                   </span>
                   <textarea
@@ -491,7 +585,20 @@ export default function TeacherLessonViewClient({
                     >
                       Print
                     </button>
+                    <button
+                      type="button"
+                      onClick={handleSavePlan}
+                      disabled={savingPlan}
+                      className="rounded-full bg-[var(--ll-yellow-soft)] px-4 py-2 text-sm font-semibold text-[var(--ll-text-faint)] transition-colors disabled:opacity-60"
+                    >
+                      {savingPlan ? "Saving..." : "Save Plan"}
+                    </button>
                   </div>
+                  {planSaveMessage ? (
+                    <p className={`mt-3 text-sm ${planSaveMessage === "Saved" ? "text-[var(--ll-yellow)]" : "text-red-300"}`}>
+                      {planSaveMessage}
+                    </p>
+                  ) : null}
 
                   <section className="mt-5">
                     <h4 className="text-sm font-semibold uppercase tracking-[0.16em] text-[var(--ll-text)]">
@@ -499,8 +606,12 @@ export default function TeacherLessonViewClient({
                     </h4>
                     <ul className="mt-3 space-y-2 text-sm text-[var(--ll-text)]">
                       {plan.learningObjectives.map((objective, index) => (
-                        <li key={`${objective}-${index}`} className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 px-4 py-3">
-                          {objective}
+                        <li key={`${index}`} className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 px-4 py-3">
+                          <textarea
+                            value={objective}
+                            onChange={(event) => updateObjective(index, event.target.value)}
+                            className="min-h-16 w-full resize-y bg-transparent text-sm leading-6 text-[var(--ll-text)] outline-none"
+                          />
                         </li>
                       ))}
                     </ul>
@@ -509,32 +620,61 @@ export default function TeacherLessonViewClient({
                   <section className="mt-5 space-y-4 text-sm text-[var(--ll-text)]">
                     <div className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 px-4 py-4">
                       <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[var(--ll-text-muted)]">Warm-Up</p>
-                      <p className="mt-2 leading-6">{plan.warmUpActivity}</p>
+                      <textarea
+                        value={plan.warmUpActivity}
+                        onChange={(event) => updatePlanField("warmUpActivity", event.target.value)}
+                        className="mt-2 min-h-24 w-full resize-y bg-transparent text-sm leading-6 text-[var(--ll-text)] outline-none"
+                      />
                     </div>
                     <div className="space-y-3">
                       <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[var(--ll-text-muted)]">Teaching Sequence</p>
                       {plan.teachingSequence.map((step, index) => (
                         <div key={`${step.segment}-${index}`} className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 px-4 py-4">
-                          <div className="flex flex-wrap items-center justify-between gap-2">
-                            <p className="font-semibold text-[var(--ll-text)]">{step.segment}</p>
-                            <span className="rounded-full border border-[var(--ll-border)] px-3 py-1 text-xs text-[var(--ll-text)]">
-                              {step.minutes} min
-                            </span>
+                          <div className="grid gap-3 sm:grid-cols-[1fr,6rem]">
+                            <input
+                              value={step.segment}
+                              onChange={(event) => updatePlanStep(index, "segment", event.target.value)}
+                              className="rounded-lg border border-[var(--ll-border)] bg-[var(--ll-bg)] px-3 py-2 text-sm font-semibold text-[var(--ll-text)]"
+                            />
+                            <input
+                              type="number"
+                              min={1}
+                              max={180}
+                              value={step.minutes}
+                              onChange={(event) => updatePlanStep(index, "minutes", event.target.value)}
+                              className="rounded-lg border border-[var(--ll-border)] bg-[var(--ll-bg)] px-3 py-2 text-sm text-[var(--ll-text)]"
+                            />
                           </div>
                           <p className="mt-3 text-xs font-semibold uppercase tracking-[0.16em] text-[var(--ll-text-muted)]">Teacher Moves</p>
-                          <p className="mt-1 leading-6">{step.teacherMoves}</p>
+                          <textarea
+                            value={step.teacherMoves}
+                            onChange={(event) => updatePlanStep(index, "teacherMoves", event.target.value)}
+                            className="mt-1 min-h-24 w-full resize-y rounded-lg border border-[var(--ll-border)] bg-[var(--ll-bg)] px-3 py-2 text-sm leading-6 text-[var(--ll-text)]"
+                          />
                           <p className="mt-3 text-xs font-semibold uppercase tracking-[0.16em] text-[var(--ll-text-muted)]">Student Experience</p>
-                          <p className="mt-1 leading-6">{step.studentExperience}</p>
+                          <textarea
+                            value={step.studentExperience}
+                            onChange={(event) => updatePlanStep(index, "studentExperience", event.target.value)}
+                            className="mt-1 min-h-24 w-full resize-y rounded-lg border border-[var(--ll-border)] bg-[var(--ll-bg)] px-3 py-2 text-sm leading-6 text-[var(--ll-text)]"
+                          />
                         </div>
                       ))}
                     </div>
                     <div className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 px-4 py-4">
                       <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[var(--ll-text-muted)]">Assessment Check</p>
-                      <p className="mt-2 leading-6">{plan.assessmentCheck}</p>
+                      <textarea
+                        value={plan.assessmentCheck}
+                        onChange={(event) => updatePlanField("assessmentCheck", event.target.value)}
+                        className="mt-2 min-h-24 w-full resize-y bg-transparent text-sm leading-6 text-[var(--ll-text)] outline-none"
+                      />
                     </div>
                     <div className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 px-4 py-4">
                       <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[var(--ll-text-muted)]">Homework Suggestion</p>
-                      <p className="mt-2 leading-6">{plan.homeworkSuggestion}</p>
+                      <textarea
+                        value={plan.homeworkSuggestion}
+                        onChange={(event) => updatePlanField("homeworkSuggestion", event.target.value)}
+                        className="mt-2 min-h-24 w-full resize-y bg-transparent text-sm leading-6 text-[var(--ll-text)] outline-none"
+                      />
                     </div>
                     {plan.hadFallback ? (
                       <p className="text-xs text-[var(--ll-yellow)]">

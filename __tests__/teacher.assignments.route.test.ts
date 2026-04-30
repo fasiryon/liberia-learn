@@ -124,6 +124,45 @@ describe("/api/teacher/assignments", () => {
     expect(mockTeacherActionCreate).toHaveBeenCalledOnce();
   }, 15_000);
 
+  it("teacher sees targeted remediation assignments normally", async () => {
+    mockAssignmentFindMany.mockResolvedValue([
+      {
+        id: "assignment-1",
+        title: "Targeted remediation",
+        description: "Practice fractions",
+        classId: "class-1",
+        dueAt: null,
+        createdAt: new Date("2026-04-03T09:00:00.000Z"),
+        points: 100,
+        Class: {
+          id: "class-1",
+          name: "JSS 2 Mathematics",
+          subject: "MATH",
+          Teacher: { name: "Teacher A", email: "teacher@example.com" },
+          enrollments: [
+            { Student: { id: "student-1", user: { name: "Student One", email: "s1@example.com" } } },
+            { Student: { id: "student-2", user: { name: "Student Two", email: "s2@example.com" } } },
+          ],
+        },
+        submissions: [{ id: "submission-1", score: null, turnedInAt: null, Student: { id: "student-1", user: { name: "Student One", email: "s1@example.com" } } }],
+      },
+    ]);
+
+    const { GET } = await import("@/app/api/teacher/assignments/route");
+    const response = await GET();
+
+    expect(response.status).toBe(200);
+    await expect(response.json()).resolves.toMatchObject({
+      assignments: [
+        expect.objectContaining({
+          id: "assignment-1",
+          title: "Targeted remediation",
+          studentCount: 2,
+        }),
+      ],
+    });
+  });
+
   it("rejects teachers creating assignments for another teacher's class", async () => {
     mockClassFindUnique.mockResolvedValue({
       id: "class-1",

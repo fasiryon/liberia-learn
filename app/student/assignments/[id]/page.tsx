@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { requireRole } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { logLearningEvent } from "@/lib/events/logLearningEvent";
+import { getAssignmentTargetStudentIds } from "@/lib/assignments/targeting";
 
 import AssignmentSubmissionClient from "./AssignmentSubmissionClient";
 
@@ -41,6 +42,10 @@ export default async function StudentAssignmentPage({ params }: { params: { id: 
 
   const isEnrolled = student.enrollments.some((enrollment) => enrollment.classId === assignment.classId);
   if (!isEnrolled || assignment.Class.schoolId !== user.schoolId) {
+    redirect("/assignments");
+  }
+  const targetStudentIds = await getAssignmentTargetStudentIds(assignment.id);
+  if (targetStudentIds.length > 0 && !targetStudentIds.includes(student.id)) {
     redirect("/assignments");
   }
 

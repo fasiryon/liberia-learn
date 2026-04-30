@@ -42,7 +42,20 @@ type AssignmentSubmissionRow = {
 
 type FormState = Record<
   string,
-  { grade: string; feedback: string; saving: boolean; message: string | null }
+  {
+    grade: string;
+    feedback: string;
+    saving: boolean;
+    assisting: boolean;
+    message: string | null;
+    aiSuggestion?: {
+      suggestedScore: number | null;
+      strengths: string[];
+      areasForDevelopment: string[];
+      suggestedScoreBands: Array<{ label: string; scoreRange: string }>;
+      hadFallback: boolean;
+    } | null;
+  }
 >;
 
 export default function TeacherAssignmentsPage() {
@@ -77,7 +90,9 @@ export default function TeacherAssignmentsPage() {
                 grade: row.score?.toString() ?? "",
                 feedback: row.feedback ?? "",
                 saving: false,
+                assisting: false,
                 message: null,
+                aiSuggestion: null,
               },
             ])
           )
@@ -102,10 +117,77 @@ export default function TeacherAssignmentsPage() {
         grade: current[id]?.grade ?? "",
         feedback: current[id]?.feedback ?? "",
         saving: current[id]?.saving ?? false,
+        assisting: current[id]?.assisting ?? false,
         message: null,
+        aiSuggestion: current[id]?.aiSuggestion ?? null,
         [field]: value,
       },
     }));
+  }
+
+  async function requestAiAssist(submission: AssignmentSubmissionRow) {
+    setFormState((state) => ({
+      ...state,
+      [submission.id]: {
+        grade: state[submission.id]?.grade ?? "",
+        feedback: state[submission.id]?.feedback ?? "",
+        saving: state[submission.id]?.saving ?? false,
+        assisting: true,
+        message: null,
+        aiSuggestion: state[submission.id]?.aiSuggestion ?? null,
+      },
+    }));
+
+    try {
+      const response = await fetch("/api/teacher/grading/assist", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          subject: submission.subject,
+          strandKey: submission.assignmentTitle,
+          rubric: `Grade this assignment out of ${submission.points} point(s). Use the assignment title and response as the grounding source.`,
+          submissionId: submission.id,
+          studentName: submission.studentName,
+          submissionContent: submission.content || "No response recorded.",
+        }),
+      });
+      const data = await response.json().catch(() => null);
+      if (!response.ok) {
+        throw new Error(data?.error ?? "AI grading assistance is unavailable.");
+      }
+
+      setFormState((state) => ({
+        ...state,
+        [submission.id]: {
+          ...state[submission.id],
+          grade:
+            typeof data.suggestedScore === "number"
+              ? String(data.suggestedScore)
+              : state[submission.id]?.grade ?? "",
+          feedback: Array.isArray(data.feedback)
+            ? data.feedback.join("\n")
+            : state[submission.id]?.feedback ?? "",
+          assisting: false,
+          message: data.hadFallback ? "AI fallback guidance added for teacher review." : "AI suggestion added. Review before saving.",
+          aiSuggestion: {
+            suggestedScore: typeof data.suggestedScore === "number" ? data.suggestedScore : null,
+            strengths: Array.isArray(data.strengths) ? data.strengths : [],
+            areasForDevelopment: Array.isArray(data.areasForDevelopment) ? data.areasForDevelopment : [],
+            suggestedScoreBands: Array.isArray(data.suggestedScoreBands) ? data.suggestedScoreBands : [],
+            hadFallback: data.hadFallback === true,
+          },
+        },
+      }));
+    } catch (error: any) {
+      setFormState((state) => ({
+        ...state,
+        [submission.id]: {
+          ...state[submission.id],
+          assisting: false,
+          message: error?.message ?? "AI grading assistance is unavailable.",
+        },
+      }));
+    }
   }
 
   async function saveGrade(id: string) {
@@ -365,7 +447,9 @@ export default function TeacherAssignmentsPage() {
                 grade: "",
                 feedback: "",
                 saving: false,
+                assisting: false,
                 message: null,
+                aiSuggestion: null,
               };
 
               return (
@@ -435,6 +519,14 @@ export default function TeacherAssignmentsPage() {
                   <div className="mt-4 flex flex-wrap items-center gap-3">
                     <button
                       type="button"
+                      onClick={() => requestAiAssist(submission)}
+                      disabled={state.assisting || !submission.content}
+                      className="rounded-full border border-[var(--ll-border)] px-5 py-2 text-sm font-semibold text-[var(--ll-text)] disabled:cursor-not-allowed disabled:opacity-60"
+                    >
+                      {state.assisting ? "Getting AI help..." : "AI grading assist"}
+                    </button>
+                    <button
+                      type="button"
                       onClick={() => saveGrade(submission.id)}
                       disabled={state.saving}
                       className="rounded-full bg-[var(--ll-yellow-soft)] px-5 py-2 text-sm font-semibold text-[var(--ll-text-faint)] disabled:cursor-not-allowed disabled:opacity-60"
@@ -451,6 +543,32 @@ export default function TeacherAssignmentsPage() {
                       </p>
                     ) : null}
                   </div>
+                  {state.aiSuggestion ? (
+                    <div className="mt-4 rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 p-4 text-sm text-[var(--ll-text)]">
+                      <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[var(--ll-text-muted)]">
+                        AI suggestion for teacher review
+                      </p>
+                      <div className="mt-3 grid gap-3 md:grid-cols-3">
+                        <div>
+                          <p className="text-xs text-[var(--ll-text-muted)]">Suggested score</p>
+                          <p className="mt-1 font-semibold">
+                            {state.aiSuggestion.suggestedScore == null ? "No score suggested" : `${state.aiSuggestion.suggestedScore}/100`}
+                          </p>
+                        </div>
+                        <div>
+                          <p className="text-xs text-[var(--ll-text-muted)]">Strengths</p>
+                          <p className="mt-1 text-xs">{state.aiSuggestion.strengths.slice(0, 2).join("; ") || "Review response against rubric."}</p>
+                        </div>
+                        <div>
+                          <p className="text-xs text-[var(--ll-text-muted)]">Improve next</p>
+                          <p className="mt-1 text-xs">{state.aiSuggestion.areasForDevelopment.slice(0, 2).join("; ") || "Add teacher-specific feedback."}</p>
+                        </div>
+                      </div>
+                      <p className="mt-3 text-xs text-[var(--ll-text-faint)]">
+                        Teacher approval is required. Saving the grade uses the editable fields above.
+                      </p>
+                    </div>
+                  ) : null}
                 </section>
               );
             })}

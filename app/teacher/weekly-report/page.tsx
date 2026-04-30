@@ -14,6 +14,10 @@ type ClassSummary = {
   absencesThisWeek: number;
   atRiskStudentCount: number;
   enrolledStudentCount: number;
+  weakTopics: string[];
+  improvingStudents: string[];
+  studentsNeedingSupport: string[];
+  recommendedNextWeekActions: string[];
 };
 
 type WeeklyReport = {
@@ -24,6 +28,19 @@ type WeeklyReport = {
   totalLessons: number;
   totalAbsences: number;
   overallCompletionRate: number;
+  savedLessonPlans: Array<{
+    id: string;
+    lessonTitle: string;
+    contentId: string | null;
+    classId: string | null;
+    subject: string | null;
+    plannedDate: string | null;
+    weekStart: string | null;
+    bindingStatus: string;
+    slotType: string | null;
+    slotId: string | null;
+    createdAt: string;
+  }>;
 };
 
 function formatDate(iso: string) {
@@ -76,6 +93,20 @@ export default function TeacherWeeklyReportPage() {
             </p>
           )}
         </div>
+        <div className="flex flex-wrap gap-2">
+          <Link
+            href="/teacher/schedule?planning=next-week"
+            className="rounded-full bg-[var(--ll-yellow-soft)] px-4 py-2 text-xs font-semibold text-[var(--ll-text-faint)]"
+          >
+            Generate next week plan
+          </Link>
+          <Link
+            href="/teacher/timetable"
+            className="rounded-full border border-[var(--ll-border)] px-4 py-2 text-xs font-semibold text-[var(--ll-text)]"
+          >
+            Open timetable
+          </Link>
+        </div>
 
         {loading && (
           <div className="space-y-3">
@@ -108,6 +139,51 @@ export default function TeacherWeeklyReportPage() {
                 <p className="mt-1 text-xs text-[var(--ll-text-muted)]">Absences</p>
               </div>
             </div>
+
+            {report.savedLessonPlans?.length > 0 ? (
+              <section className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 p-5">
+                <div className="flex items-center justify-between gap-3">
+                  <div>
+                    <h2 className="text-sm font-semibold text-[var(--ll-text)]">Saved lesson plans</h2>
+                    <p className="mt-1 text-xs text-[var(--ll-text-muted)]">
+                      Plans connected to this week or prepared during this report window.
+                    </p>
+                  </div>
+                  <Link href="/teacher/schedule" className="text-xs text-[var(--ll-yellow)] hover:underline">
+                    Schedule lessons
+                  </Link>
+                </div>
+                <div className="mt-4 space-y-2">
+                  {report.savedLessonPlans.slice(0, 5).map((plan) => (
+                    <div key={plan.id} className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/60 p-3">
+                      <div className="flex flex-wrap items-center justify-between gap-2">
+                        <div>
+                          <p className="text-sm font-medium text-[var(--ll-text)]">{plan.lessonTitle}</p>
+                          <p className="mt-1 text-xs text-[var(--ll-text-muted)]">
+                            {[plan.subject?.replace(/_/g, " "), plan.plannedDate ? formatDate(`${plan.plannedDate}T00:00:00.000Z`) : null]
+                              .filter(Boolean)
+                              .join(" · ") || "Saved plan"}
+                          </p>
+                          <p className={`mt-1 text-[11px] ${plan.bindingStatus === "bound" ? "text-[var(--ll-yellow)]" : "text-orange-300"}`}>
+                            {plan.bindingStatus === "bound"
+                              ? `Bound to ${plan.slotType === "timetable" ? "timetable" : "schedule"}`
+                              : "Missing timetable/schedule binding"}
+                          </p>
+                        </div>
+                        {plan.contentId ? (
+                          <Link
+                            href={`/teacher/lesson/${plan.contentId}`}
+                            className="rounded-full border border-[var(--ll-border)] px-3 py-1 text-xs text-[var(--ll-text)]"
+                          >
+                            Edit plan
+                          </Link>
+                        ) : null}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </section>
+            ) : null}
 
             {/* Per-class cards */}
             {report.classes.length === 0 ? (
@@ -150,6 +226,38 @@ export default function TeacherWeeklyReportPage() {
                           {cls.weakestLessonTitle ?? "No lesson quiz data"}
                         </p>
                       </div>
+                    </div>
+
+                    <div className="grid gap-4 text-sm md:grid-cols-2">
+                      <div className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/60 p-3">
+                        <p className="text-xs text-[var(--ll-text-muted)]">Weak topics</p>
+                        <p className="mt-2 text-sm text-[var(--ll-text)]">
+                          {cls.weakTopics.length > 0 ? cls.weakTopics.slice(0, 3).join(", ") : "No weak topic detected"}
+                        </p>
+                      </div>
+                      <div className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/60 p-3">
+                        <p className="text-xs text-[var(--ll-text-muted)]">Improving students</p>
+                        <p className="mt-2 text-sm text-[var(--ll-text)]">
+                          {cls.improvingStudents.length > 0 ? cls.improvingStudents.slice(0, 3).join(", ") : "No trend yet"}
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/60 p-3 text-sm">
+                      <p className="text-xs text-[var(--ll-text-muted)]">Next week actions</p>
+                      <ul className="mt-2 space-y-1 text-[var(--ll-text)]">
+                        {(cls.recommendedNextWeekActions.length > 0
+                          ? cls.recommendedNextWeekActions
+                          : ["Continue current pacing and monitor completion."]
+                        ).slice(0, 4).map((action) => (
+                          <li key={action}>{action}</li>
+                        ))}
+                      </ul>
+                      {cls.studentsNeedingSupport.length > 0 ? (
+                        <p className="mt-3 text-xs text-[var(--ll-text-muted)]">
+                          Support: {cls.studentsNeedingSupport.slice(0, 5).join(", ")}
+                        </p>
+                      ) : null}
                     </div>
 
                     <div className="flex gap-4 text-xs">

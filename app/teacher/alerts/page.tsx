@@ -13,6 +13,15 @@ type AlertItem = {
   weakConcept: string | null;
   weakLesson: string | null;
   recommendedAction: string | null;
+  action: {
+    label: string;
+    actionType: string;
+    targetStudents: string[];
+    targetClassId: string | null;
+    evidence: string;
+    status: "available" | "needs_review" | "unsupported";
+    href: string | null;
+  } | null;
   studentHref: string | null;
   createdAt: string;
 };
@@ -31,6 +40,9 @@ export default function TeacherAlertsPage() {
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<Filter>("all");
   const [localDismissed, setLocalDismissed] = useState<Set<string>>(new Set());
+  const [actionMessages, setActionMessages] = useState<Record<string, string>>({});
+  const [draftedActions, setDraftedActions] = useState<Record<string, string>>({});
+  const [executionStatus, setExecutionStatus] = useState<Record<string, string>>({});
 
   useEffect(() => {
     setLoading(true);
@@ -48,6 +60,58 @@ export default function TeacherAlertsPage() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ alertId, action }),
     }).catch(() => null);
+  }
+
+  async function handleTeacherAction(alert: AlertItem) {
+    if (!alert.action || alert.action.status === "unsupported") return;
+    setActionMessages((current) => ({ ...current, [alert.id]: "Preparing action..." }));
+    try {
+      const response = await fetch("/api/teacher/alerts", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ alertId: alert.id, actionType: alert.action.actionType }),
+      });
+      const data = await response.json().catch(() => null);
+      if (!response.ok) throw new Error(data?.error ?? "Unable to prepare action.");
+      if (data?.teacherActionId) {
+        setDraftedActions((current) => ({ ...current, [alert.id]: data.teacherActionId }));
+        setExecutionStatus((current) => ({ ...current, [alert.id]: "draft" }));
+      }
+      setActionMessages((current) => ({
+        ...current,
+        [alert.id]:
+          alert.action?.status === "needs_review"
+            ? "Action drafted for teacher review."
+            : "Action ready for teacher review.",
+      }));
+    } catch (error: any) {
+      setActionMessages((current) => ({
+        ...current,
+        [alert.id]: error?.message ?? "Unable to prepare action.",
+      }));
+    }
+  }
+
+  async function handleExecute(alert: AlertItem) {
+    const actionId = draftedActions[alert.id];
+    if (!actionId) return;
+    if (!confirm("Confirm and execute this teacher action?")) return;
+    setExecutionStatus((current) => ({ ...current, [alert.id]: "confirmed" }));
+    setActionMessages((current) => ({ ...current, [alert.id]: "Executing action..." }));
+    try {
+      const response = await fetch("/api/teacher/actions/execute", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ actionId }),
+      });
+      const data = await response.json().catch(() => null);
+      if (!response.ok) throw new Error(data?.error ?? "Unable to execute action.");
+      setExecutionStatus((current) => ({ ...current, [alert.id]: data.status ?? "executed" }));
+      setActionMessages((current) => ({ ...current, [alert.id]: data.message ?? "Action executed." }));
+    } catch (error: any) {
+      setExecutionStatus((current) => ({ ...current, [alert.id]: "failed" }));
+      setActionMessages((current) => ({ ...current, [alert.id]: error?.message ?? "Unable to execute action." }));
+    }
   }
 
   const highCount = alerts.filter(
@@ -167,6 +231,25 @@ export default function TeacherAlertsPage() {
                   </div>
 
                   <div className="flex shrink-0 flex-wrap gap-2">
+                    {alert.action && alert.action.status !== "unsupported" && (
+                      <button
+                        type="button"
+                        onClick={() => handleTeacherAction(alert)}
+                        disabled={Boolean(draftedActions[alert.id])}
+                        className="rounded-md bg-[var(--ll-yellow-soft)] px-2.5 py-1 text-xs font-medium text-[var(--ll-text-faint)] hover:bg-[var(--ll-yellow)]"
+                      >
+                        {draftedActions[alert.id] ? "Draft ready" : alert.action.label}
+                      </button>
+                    )}
+                    {draftedActions[alert.id] && executionStatus[alert.id] !== "executed" && (
+                      <button
+                        type="button"
+                        onClick={() => handleExecute(alert)}
+                        className="rounded-md border border-[var(--ll-yellow)]/40 px-2.5 py-1 text-xs font-medium text-[var(--ll-yellow)] hover:bg-[var(--ll-yellow)]/10"
+                      >
+                        Confirm & Execute
+                      </button>
+                    )}
                     {alert.studentHref && (
                       <Link
                         href={alert.studentHref}
@@ -195,6 +278,12 @@ export default function TeacherAlertsPage() {
                     )}
                   </div>
                 </div>
+                {actionMessages[alert.id] ? (
+                  <p className="mt-3 text-xs text-[var(--ll-text-muted)]">
+                    {executionStatus[alert.id] ? `${executionStatus[alert.id]} - ` : ""}
+                    {actionMessages[alert.id]}
+                  </p>
+                ) : null}
               </div>
             ))}
           </div>

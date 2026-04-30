@@ -4,6 +4,7 @@ import { requireRole } from "@/lib/auth";
 import { logAudit } from "@/lib/audit";
 import { notifyAssignmentSubmitted } from "@/lib/assignment-notifications";
 import { prisma } from "@/lib/db";
+import { getAssignmentTargetStudentIds } from "@/lib/assignments/targeting";
 import { recordSloEvent } from "@/lib/slo/tracker";
 
 export async function POST(
@@ -50,6 +51,10 @@ export async function POST(
 
     const isEnrolled = student.enrollments.some((enrollment) => enrollment.classId === assignment.classId);
     if (!isEnrolled || assignment.Class.schoolId !== user.schoolId) {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    }
+    const targetStudentIds = await getAssignmentTargetStudentIds(assignment.id);
+    if (targetStudentIds.length > 0 && !targetStudentIds.includes(student.id)) {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 

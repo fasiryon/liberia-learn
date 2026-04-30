@@ -5,7 +5,7 @@
  * anonymized student submission. Teacher-facing only.
  *
  * Design:
- *   - Input must be fully anonymized: no studentId, name, or identifiers.
+ *   - Input must be fully anonymized by the server route: no studentId, name, or identifiers.
  *   - Punitive language guardrail: reuses the same keyword list as teacherAssist.ts.
  *   - "Teacher final authority" marker is always true in the response — AI is advisory only.
  *   - JSON-structured response; always falls back safely on any error.
@@ -26,7 +26,7 @@ export type GradingAssistInput = {
   rubric: string;
   /**
    * Anonymized submission content (no name, student ID, or school reference).
-   * Caller is responsible for stripping all PII before passing this field.
+   * Server route is responsible for stripping all PII before passing this field.
    */
   submissionContent: string;
   /** Optional: the expected or model answer to compare against. */
@@ -45,6 +45,8 @@ export type ScoreBand = {
 };
 
 export type GradingAssistResult = {
+  /** Suggested editable score. Teacher must approve or change it. */
+  suggestedScore: number | null;
   /** Rubric-aligned feedback on the submission. */
   feedback: string[];
   /** Suggested score bands based on rubric alignment. */
@@ -98,6 +100,7 @@ function hasPunitiveLanguage(result: GradingAssistResult): boolean {
 // ─── Fallback ─────────────────────────────────────────────────────────────────
 
 const FALLBACK: GradingAssistResult = {
+  suggestedScore: null,
   feedback: [
     "Review the submission against the rubric criteria and provide specific written feedback.",
     "Note which criteria have been met and which require further development.",
@@ -185,6 +188,10 @@ function parseAndValidate(raw: string): GradingAssistResult | null {
   if (feedback.length === 0) return null;
 
   return {
+    suggestedScore:
+      typeof r.suggestedScore === "number" && Number.isFinite(r.suggestedScore)
+        ? Math.max(0, Math.min(100, Math.round(r.suggestedScore)))
+        : null,
     feedback,
     suggestedScoreBands: parseScoreBands(r.suggestedScoreBands),
     strengths: toStringArray(r.strengths),
