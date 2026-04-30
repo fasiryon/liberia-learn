@@ -17,10 +17,24 @@ type TeacherExam = {
   resultsPublishedAt: string | null;
 };
 
+type ReadinessSummary = {
+  classSummaries: Array<{
+    classId: string;
+    className: string;
+    subject: string;
+    gradeLevel: number | null;
+    studentCount: number;
+    averageReadiness: number | null;
+    weakTopics: string[];
+    studentsNeedingSupport: Array<{ studentId: string; name: string | null; readinessScore: number | null }>;
+  }>;
+};
+
 export default function TeacherExamsClient() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [exams, setExams] = useState<TeacherExam[]>([]);
+  const [readinessSummary, setReadinessSummary] = useState<ReadinessSummary | null>(null);
   const [submitting, setSubmitting] = useState(false);
 
   async function load() {
@@ -30,6 +44,7 @@ export default function TeacherExamsClient() {
       const data = await response.json();
       if (!response.ok) throw new Error(data.error ?? "Failed to load exams");
       setExams(data.exams ?? []);
+      setReadinessSummary(data.readinessSummary ?? null);
       setError(null);
     } catch (err: any) {
       setError(err.message ?? "Failed to load exams");
@@ -142,6 +157,46 @@ export default function TeacherExamsClient() {
           <div className="rounded-xl border border-red-500/20 bg-red-500/10 p-4 text-sm text-red-200">
             {error}
           </div>
+        ) : null}
+
+        {readinessSummary?.classSummaries?.length ? (
+          <section className="grid gap-4 md:grid-cols-2">
+            {readinessSummary.classSummaries.slice(0, 4).map((summary) => (
+              <article
+                key={summary.classId}
+                className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 p-5"
+              >
+                <div className="flex items-start justify-between gap-3">
+                  <div>
+                    <p className="text-xs uppercase tracking-[0.18em] text-[var(--ll-text-muted)]">
+                      Exam readiness
+                    </p>
+                    <h2 className="mt-1 text-base font-semibold text-[var(--ll-text)]">{summary.className}</h2>
+                    <p className="mt-1 text-xs text-[var(--ll-text-muted)]">
+                      {summary.subject.replace(/_/g, " ")}
+                      {summary.gradeLevel ? ` - Grade ${summary.gradeLevel}` : ""}
+                    </p>
+                  </div>
+                  <p className="text-2xl font-semibold text-[var(--ll-yellow)]">
+                    {summary.averageReadiness != null ? `${Math.round(summary.averageReadiness)}%` : "--"}
+                  </p>
+                </div>
+                <div className="mt-4 text-sm text-[var(--ll-text-muted)]">
+                  {summary.studentsNeedingSupport.length} student
+                  {summary.studentsNeedingSupport.length === 1 ? "" : "s"} need support
+                </div>
+                {summary.weakTopics.length > 0 ? (
+                  <div className="mt-3 flex flex-wrap gap-2">
+                    {summary.weakTopics.slice(0, 3).map((topic) => (
+                      <span key={topic} className="rounded-full border border-red-400/20 bg-red-500/10 px-3 py-1 text-xs text-red-200">
+                        {topic}
+                      </span>
+                    ))}
+                  </div>
+                ) : null}
+              </article>
+            ))}
+          </section>
         ) : null}
 
         <div className="overflow-hidden rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70">

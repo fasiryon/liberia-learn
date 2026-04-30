@@ -2,9 +2,14 @@ import { NextResponse } from "next/server";
 import { requireUser } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { handleApiError } from "@/lib/errors/apiErrorHandler";
+import { buildTeacherExamReadinessSummary } from "@/lib/outcomes/examReadiness";
 import { isExamSystemEnabled } from "@/lib/serverFlags";
 
 export const dynamic = "force-dynamic";
+
+function isExamReadinessRouteEnabled() {
+  return process.env.ENABLE_EXAM_READINESS !== "false";
+}
 
 export async function GET() {
   try {
@@ -44,7 +49,13 @@ export async function GET() {
       },
     });
 
+    const readinessSummary =
+      isExamReadinessRouteEnabled() && user.schoolId
+        ? await buildTeacherExamReadinessSummary(user.id, user.schoolId).catch(() => null)
+        : null;
+
     return NextResponse.json({
+      readinessSummary,
       exams: exams.map((exam) => {
         const attempts = Array.isArray(exam.attempts) ? exam.attempts : [];
         const submittedAttempts = attempts.filter((attempt) => !("submittedAt" in attempt) || Boolean(attempt.submittedAt));

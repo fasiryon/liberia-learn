@@ -2,12 +2,17 @@ import { NextResponse } from "next/server";
 import { requireRole } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { handleApiError } from "@/lib/errors/apiErrorHandler";
+import { buildStudentExamReadiness } from "@/lib/outcomes/examReadiness";
 import { isExamSystemEnabled } from "@/lib/serverFlags";
 
 export const dynamic = "force-dynamic";
 
 function stripQuestionAnswers<T extends { correctIndex: number }>(questions: T[]) {
   return questions.map(({ correctIndex: _correctIndex, ...question }) => question);
+}
+
+function isExamReadinessRouteEnabled() {
+  return process.env.ENABLE_EXAM_READINESS !== "false";
 }
 
 export async function GET() {
@@ -37,6 +42,10 @@ export async function GET() {
     });
 
     return NextResponse.json({
+      readiness:
+        isExamReadinessRouteEnabled()
+          ? await buildStudentExamReadiness(student.id).catch(() => null)
+          : null,
       exams: exams.map((exam) => ({
         id: exam.id,
         title: exam.title,
