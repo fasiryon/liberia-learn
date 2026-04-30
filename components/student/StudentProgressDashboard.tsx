@@ -84,6 +84,13 @@ type StudentProgressSummary = {
   subjectProgress: SubjectProgressSummary[];
   recentActivity: ProgressActivity[];
   learningIntelligence: StudentLearningIntelligence;
+  badges: Array<{ id: string; label: string; earned: boolean; criteria: string; evidence: string[] }>;
+  examReadiness: {
+    readinessScore: number | null;
+    weakSubjects: string[];
+    strongSubjects: string[];
+    nextBestAction: { label: string; href: string; reason: string } | null;
+  } | null;
 };
 
 const EMPTY_SUMMARY: StudentProgressSummary = {
@@ -94,6 +101,8 @@ const EMPTY_SUMMARY: StudentProgressSummary = {
   overallCurriculumCompletionPercent: 0,
   subjectProgress: [],
   recentActivity: [],
+  badges: [],
+  examReadiness: null,
   learningIntelligence: {
     generatedAt: "",
     masteryBySubject: [],
@@ -133,6 +142,8 @@ export default function StudentProgressDashboard() {
           ...data,
           subjectProgress: Array.isArray(data?.subjectProgress) ? data.subjectProgress : [],
           recentActivity: Array.isArray(data?.recentActivity) ? data.recentActivity : [],
+          badges: Array.isArray(data?.badges) ? data.badges : [],
+          examReadiness: data?.examReadiness ?? null,
           learningIntelligence: {
             ...EMPTY_SUMMARY.learningIntelligence,
             ...(data?.learningIntelligence ?? {}),
@@ -243,6 +254,52 @@ export default function StudentProgressDashboard() {
                     className="h-2 rounded-full bg-[var(--ll-yellow-soft)]"
                     style={{ width: `${summary.overallCurriculumCompletionPercent}%` }}
                   />
+                </div>
+              </div>
+            </section>
+
+            <section className="grid gap-6 xl:grid-cols-[0.9fr_1.1fr]">
+              <div className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/80 p-5 sm:p-6">
+                <h2 className="text-lg font-semibold text-[var(--ll-text)]">Exam Readiness</h2>
+                <p className="mt-1 text-sm text-[var(--ll-text-muted)]">
+                  Built from mastery, lesson completion, quizzes, and exam attempts.
+                </p>
+                <p className="mt-5 text-4xl font-semibold text-[var(--ll-yellow)]">
+                  {summary.examReadiness?.readinessScore != null
+                    ? `${Math.round(summary.examReadiness.readinessScore)}%`
+                    : "--"}
+                </p>
+                {summary.examReadiness?.nextBestAction ? (
+                  <Link
+                    href={summary.examReadiness.nextBestAction.href}
+                    className="mt-4 inline-flex min-h-11 items-center rounded-full bg-[var(--ll-yellow)] px-4 py-2 text-sm font-semibold text-[var(--ll-text-faint)]"
+                  >
+                    {summary.examReadiness.nextBestAction.label}
+                  </Link>
+                ) : null}
+              </div>
+
+              <div className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/80 p-5 sm:p-6">
+                <h2 className="text-lg font-semibold text-[var(--ll-text)]">Skill Badges</h2>
+                <p className="mt-1 text-sm text-[var(--ll-text-muted)]">
+                  Earned only when existing learning data meets an explainable rule.
+                </p>
+                <div className="mt-5 flex flex-wrap gap-2">
+                  {summary.badges.filter((badge) => badge.earned).length === 0 ? (
+                    <p className="text-sm text-[var(--ll-text-muted)]">No badges earned yet.</p>
+                  ) : (
+                    summary.badges
+                      .filter((badge) => badge.earned)
+                      .map((badge) => (
+                        <span
+                          key={badge.id}
+                          title={badge.criteria}
+                          className="rounded-full border border-[var(--ll-yellow)]/30 bg-[var(--ll-yellow)]/10 px-3 py-1 text-xs font-semibold text-[var(--ll-yellow)]"
+                        >
+                          {badge.label}
+                        </span>
+                      ))
+                  )}
                 </div>
               </div>
             </section>
