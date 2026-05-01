@@ -4,6 +4,8 @@ import { logAudit } from "@/lib/audit";
 import { handleApiError } from "@/lib/errors/apiErrorHandler";
 import { assertPermission, PERMISSIONS } from "@/lib/permissions";
 import { requireMoeActor } from "@/lib/moe/authority";
+import { isMoeGovernanceWorkflowEnabled, isMoePolicyPushEnabled } from "@/lib/serverFlags";
+import { createMoeDirective, listMoeDirectives, type DirectiveTargetScope } from "@/lib/moe/policyGovernance";
 
 export const dynamic = "force-dynamic";
 const policyPrisma = prisma as typeof prisma & {
@@ -23,7 +25,8 @@ export async function GET() {
       orderBy: [{ policyKey: "asc" }, { createdAt: "desc" }],
     });
 
-    return NextResponse.json({ policies, scope });
+    const directives = isMoeGovernanceWorkflowEnabled() ? await listMoeDirectives() : [];
+    return NextResponse.json({ policies, directives, scope });
   } catch (error) {
     return handleApiError(error, { route: "/api/moe/policies", method: "GET" });
   }
@@ -34,6 +37,11 @@ export async function POST(req: NextRequest) {
     const { user, scope } = await requireMoeActor({ allowDistrict: true });
     assertPermission(user, PERMISSIONS.POLICY_CONTROL);
     const body = (await req.json()) as {
+      title?: string;
+      description?: string;
+      policyType?: string;
+      targetScope?: DirectiveTargetScope;
+      targetFilters?: Record<string, unknown>;
       policyKey?: string;
       scope?: "NATIONAL" | "DISTRICT" | "SCHOOL";
       districtId?: string | null;
@@ -41,6 +49,22 @@ export async function POST(req: NextRequest) {
       config?: Record<string, unknown>;
       isActive?: boolean;
     };
+
+    if (body.title || body.policyType || body.targetScope) {
+      if (!isMoePolicyPushEnabled() || !isMoeGovernanceWorkflowEnabled()) {
+        throw Object.assign(new Error("MOE policy governance workflow is disabled"), { status: 503 });
+      }
+      const directive = await createMoeDirective({
+        userId: user.id,
+        title: body.title ?? "",
+        description: body.description ?? "",
+        policyType: body.policyType ?? "",
+        targetScope: body.targetScope ?? "national",
+        targetFilters: body.targetFilters ?? {},
+        auditMetadata: { source: "/api/moe/policies" },
+      });
+      return NextResponse.json({ directive }, { status: 201 });
+    }
 
     if (!body.policyKey || !body.scope || !body.config) {
       throw Object.assign(new Error("policyKey, scope, and config are required"), { status: 400 });
