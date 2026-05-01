@@ -20,6 +20,7 @@ import { getMultimediaAnalytics } from "@/lib/analytics/multimediaAnalytics";
 import { buildMoeDecisionIntelligence } from "@/lib/analytics/decisionSupport";
 import { buildMoeCurriculumIntelligence } from "@/lib/student/adaptiveRecommendations";
 import { generateCurriculumFlags, getCurriculumFlagSummary } from "@/lib/intelligence/curriculumFlags";
+import { buildMoeOutcomesSummary } from "@/lib/outcomes/examReadiness";
 
 export const dynamic = "force-dynamic";
 
@@ -42,6 +43,10 @@ function getDefaultPeriodRange(): { from: string; to: string } {
     from: `${fromDate.getUTCFullYear()}-${String(fromDate.getUTCMonth() + 1).padStart(2, "0")}`,
     to: `${toYear}-${String(toMonth).padStart(2, "0")}`,
   };
+}
+
+function isExamReadinessRouteEnabled() {
+  return process.env.ENABLE_EXAM_READINESS !== "false";
 }
 
 async function getExamStats() {
@@ -103,6 +108,7 @@ async function buildNationalAggregate() {
     multimediaAnalytics,
     decisionIntelligence,
     curriculumIntelligence,
+    outcomesSummary,
   ] = await Promise.all([
     prisma.school.count().catch(() => 0),
     prisma.district.count().catch(() => 0),
@@ -171,6 +177,9 @@ async function buildNationalAggregate() {
     getMultimediaAnalytics({ days: 30, schoolId: null }).catch(() => null),
     buildMoeDecisionIntelligence(30).catch(() => null),
     buildMoeCurriculumIntelligence().catch(() => null),
+    isExamReadinessRouteEnabled()
+      ? buildMoeOutcomesSummary().catch(() => null)
+      : Promise.resolve(null),
   ]);
 
   // Build county student counts (by school county, matching geoAggregator logic)
@@ -280,6 +289,7 @@ async function buildNationalAggregate() {
     multimediaAnalytics,
     decisionIntelligence,
     curriculumIntelligence,
+    outcomesSummary,
   };
 }
 

@@ -10,6 +10,9 @@
  */
 
 import { prisma } from "@/lib/db";
+import { buildStudentSkillBadges, type StudentSkillBadge } from "@/lib/badges/studentBadges";
+import { buildStudentExamReadiness, type StudentExamReadiness } from "@/lib/outcomes/examReadiness";
+import { buildPathwayHooks, type PathwayHook } from "@/lib/outcomes/pathways";
 
 export type SubjectPassportEntry = {
   subject: string;
@@ -38,6 +41,9 @@ export type StudentPassport = {
     closed: number;
   };
   latestActivityAt: string | null;
+  badges: StudentSkillBadge[];
+  examReadiness: StudentExamReadiness | null;
+  pathwayHooks: PathwayHook[];
 };
 
 function avg(values: number[]): number | null {
@@ -64,8 +70,12 @@ function dominantState(states: (string | null)[]): string | null {
 
 const MASTERED_STATES = new Set(["MASTERED", "CONSOLIDATED"]);
 
+function isOutcomeFlagEnabled(name: string) {
+  return process.env[name] !== "false";
+}
+
 export async function buildStudentPassport(studentId: string): Promise<StudentPassport> {
-  const [masteryProfiles, derivedProgress, interventionChains] = await Promise.all([
+  const [masteryProfiles, derivedProgress, interventionChains, badges, examReadiness] = await Promise.all([
     prisma.studentMasteryProfile.findMany({
       where: { studentId },
       select: {
@@ -93,7 +103,17 @@ export async function buildStudentPassport(studentId: string): Promise<StudentPa
       where: { studentId },
       select: { status: true, openedAt: true },
     }),
+    isOutcomeFlagEnabled("ENABLE_SKILL_BADGES")
+      ? buildStudentSkillBadges(studentId).catch(() => [])
+      : Promise.resolve([]),
+    isOutcomeFlagEnabled("ENABLE_EXAM_READINESS")
+      ? buildStudentExamReadiness(studentId).catch(() => null)
+      : Promise.resolve(null),
   ]);
+  const pathwayHooks =
+    isOutcomeFlagEnabled("ENABLE_PATHWAY_HOOKS") && examReadiness
+      ? buildPathwayHooks(examReadiness, badges)
+      : [];
 
   // Index derived progress by subject+strand for lookups
   const derivedByKey = new Map<string, (typeof derivedProgress)[0]>();
@@ -179,5 +199,8 @@ export async function buildStudentPassport(studentId: string): Promise<StudentPa
     subjects,
     interventionSummary: interventionCounts,
     latestActivityAt: latestActivity ? latestActivity.toISOString() : null,
+    badges,
+    examReadiness,
+    pathwayHooks,
   };
 }

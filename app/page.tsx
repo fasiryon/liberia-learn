@@ -6,23 +6,19 @@ import { PublicFooter } from "@/components/PublicFooter";
 const roleCards = [
   {
     title: "Students",
-    body:
-      "Daily work, adaptive practice, exams, certifications, and offline-safe learning flows built for interrupted connectivity.",
+    body: "Daily work, adaptive practice, exams, certifications, and offline-safe learning flows built for interrupted connectivity.",
   },
   {
     title: "Teachers",
-    body:
-      "Schedule delivery, grading, interventions, grounded AI support, and intelligence views that stay advisory and school-scoped.",
+    body: "Schedule delivery, grading, interventions, grounded AI support, and intelligence views that stay advisory and school-scoped.",
   },
   {
     title: "Guardians",
-    body:
-      "Simple progress summaries, safe home-support suggestions, and no internal school-only confusion detail.",
+    body: "Simple progress summaries, safe home-support suggestions, and no internal school-only confusion detail.",
   },
   {
     title: "Schools",
-    body:
-      "Pilot readiness, compliance reporting, onboarding, prompt governance, and admin visibility without cross-tenant exposure.",
+    body: "Pilot readiness, compliance reporting, onboarding, prompt governance, and admin visibility without cross-tenant exposure.",
   },
 ];
 
@@ -106,43 +102,136 @@ export default function HomePage() {
         </div>
       </header>
 
+      {/* Hero — problem-first restructure */}
       <section className="ll-shell pb-10 pt-14 sm:pb-12 sm:pt-20">
         <div className="grid items-center gap-10 lg:grid-cols-[minmax(0,1.1fr)_minmax(320px,0.7fr)]">
-          <div className="space-y-7">
-          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[var(--ll-accent)]">
-            National learning platform
-          </p>
-
-          <div className="space-y-4">
-            <h1 className="max-w-4xl text-balance text-4xl font-semibold tracking-tight text-[var(--ll-text)] sm:text-5xl lg:text-6xl">
-              Education infrastructure for every Liberian school.
-            </h1>
-            <p className="max-w-2xl text-base leading-7 text-[var(--ll-text-muted)]">
-              Curriculum delivery, AI tutoring, school operations, and national oversight —
-              built for Grades 1–12 across all 15 counties.
+          <div>
+            <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[var(--ll-yellow)] mb-3">
+              National K–12 Education Platform
             </p>
-          </div>
 
-          <div className="flex flex-col gap-3 sm:flex-row">
-            <Link href="/login">
-              <span className="ll-interactive inline-flex min-h-12 items-center justify-center rounded-lg bg-[var(--ll-accent)] px-6 py-3 text-sm font-semibold text-[var(--ll-text-faint)]">
+            <h1 className="text-4xl sm:text-5xl font-semibold text-[var(--ll-text)] leading-[1.1] mb-4">
+              Liberia&apos;s students deserve<br />
+              better than the<br />
+              <span className="text-[var(--ll-yellow)]">status quo.</span>
+            </h1>
+
+            <p className="text-base text-[var(--ll-text-muted)] leading-7 mb-6 max-w-lg">
+              LiberiaLearn gives every school AI-powered lessons, real-time teacher alerts,
+              guardian progress updates, and national Ministry oversight — built for Liberia,
+              from Grade 1 to Grade 12.
+            </p>
+
+            {/* Proof strip — numbers verified from docs/SYSTEM_COMPLETE_SIGNOFF.md (April 25, 2026) */}
+            <div className="flex flex-wrap items-center gap-6 mb-8">
+              <div>
+                <p className="text-2xl font-semibold text-[var(--ll-text)]">3,525</p>
+                <p className="text-xs text-[var(--ll-text-faint)]">Lessons</p>
+              </div>
+              <div className="w-px h-8 bg-[var(--ll-border)] hidden sm:block" />
+              <div>
+                <p className="text-2xl font-semibold text-[var(--ll-text)]">12</p>
+                <p className="text-xs text-[var(--ll-text-faint)]">AI Labs</p>
+              </div>
+              <div className="w-px h-8 bg-[var(--ll-border)] hidden sm:block" />
+              <div>
+                <p className="text-2xl font-semibold text-[var(--ll-text)]">Grades 1–12</p>
+                <p className="text-xs text-[var(--ll-text-faint)]">Full coverage</p>
+              </div>
+            </div>
+
+            <div className="flex flex-wrap gap-3">
+              <a
+                href="/login"
+                className="w-full sm:w-auto inline-flex items-center rounded-lg bg-[var(--ll-yellow)] px-5 py-2.5 text-sm font-semibold text-[var(--ll-bg)] hover:opacity-90 transition-opacity duration-150"
+              >
                 Access the platform
-              </span>
-            </Link>
-            <Link href="/pilot-preview">
-              <span className="ll-interactive inline-flex min-h-12 items-center justify-center rounded-lg border border-[var(--ll-border-strong)] px-6 py-3 text-sm font-medium text-[var(--ll-text)]">
-                For Ministry officials
-              </span>
-            </Link>
-          </div>
+              </a>
+              <a
+                href="/moe/login"
+                className="w-full sm:w-auto inline-flex items-center rounded-lg border border-[var(--ll-border-strong)] px-5 py-2.5 text-sm font-medium text-[var(--ll-text-muted)] hover:border-[var(--ll-yellow)] hover:text-[var(--ll-yellow)] transition-colors duration-150"
+              >
+                Ministry officials →
+              </a>
+            </div>
           </div>
 
           <div className="grid gap-3 sm:grid-cols-2">
             {capabilityBlocks.map((block) => (
               <div key={block.title} className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-surface)] p-4">
                 <div className="mb-3 h-1 w-10 rounded-full bg-[var(--ll-accent)]" />
-                <h2 className="text-sm font-semibold text-[var(--ll-text)]">{block.title}</h2>
-                <p className="mt-2 text-sm leading-6 text-[var(--ll-text-muted)]">{block.body}</p>
+                <h2 className="text-base font-semibold text-[var(--ll-text)]">{block.title}</h2>
+                <p className="mt-2 text-sm text-[var(--ll-text-muted)]">{block.body}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* VSL placeholder — replace div contents with iframe embed once video is recorded */}
+      <section className="w-full py-16 px-4 border-t border-[var(--ll-border)]">
+        <div className="mx-auto max-w-4xl">
+          <div className="text-center mb-8">
+            <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[var(--ll-text-faint)] mb-2">
+              See it in action
+            </p>
+            <h2 className="text-2xl font-semibold text-[var(--ll-text)]">
+              How LiberiaLearn works
+            </h2>
+            <p className="text-sm text-[var(--ll-text-muted)] mt-2 max-w-md mx-auto">
+              Watch how a student, teacher, and Ministry official each experience the platform.
+            </p>
+          </div>
+
+          {/*
+            TODO: Replace this placeholder with
+            real video embed when VSL is recorded.
+
+            YouTube embed:
+            <iframe
+              src="https://www.youtube.com/embed/VIDEO_ID"
+              title="LiberiaLearn platform walkthrough"
+              allow="accelerometer; autoplay;
+                clipboard-write; encrypted-media;
+                gyroscope; picture-in-picture"
+              allowFullScreen
+              className="absolute inset-0 w-full
+                h-full rounded-xl"
+            />
+
+            Replace VIDEO_ID with the YouTube video ID.
+          */}
+
+          {/* Video container — 16:9 aspect ratio */}
+          <div
+            className="relative w-full rounded-xl border border-[var(--ll-border)] bg-[var(--ll-surface)] overflow-hidden"
+            style={{ paddingBottom: "56.25%" }}
+          >
+            <div className="absolute inset-0 flex flex-col items-center justify-center gap-4">
+              <div className="w-16 h-16 rounded-full bg-[var(--ll-yellow-soft)] border border-[var(--ll-yellow)] flex items-center justify-center">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                  <path d="M6 4l14 8-14 8V4z" fill="var(--ll-yellow)" />
+                </svg>
+              </div>
+              <div className="text-center">
+                <p className="text-sm font-medium text-[var(--ll-text)]">Platform walkthrough</p>
+                <p className="text-xs text-[var(--ll-text-faint)] mt-1">
+                  90 seconds — Student, Teacher, Ministry
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Role timestamps below video */}
+          <div className="flex flex-wrap justify-center gap-6 mt-5">
+            {[
+              { time: "0:00", label: "Student experience" },
+              { time: "0:35", label: "Teacher dashboard" },
+              { time: "1:05", label: "Ministry overview" },
+            ].map((item) => (
+              <div key={item.label} className="flex items-center gap-2">
+                <span className="font-mono text-xs text-[var(--ll-yellow)]">{item.time}</span>
+                <span className="text-xs text-[var(--ll-text-faint)]">{item.label}</span>
               </div>
             ))}
           </div>
@@ -166,9 +255,7 @@ export default function HomePage() {
             <p className="text-xs uppercase tracking-[0.14em] text-[var(--ll-text-faint)]">
               Access the platform
             </p>
-            <h2 className="text-2xl font-semibold text-[var(--ll-text)]">
-              Sign in for your role
-            </h2>
+            <h2 className="text-2xl font-semibold text-[var(--ll-text)]">Sign in for your role</h2>
             <p className="max-w-2xl text-sm leading-6 text-[var(--ll-text-muted)]">
               Select your role below to go directly to the sign-in page. Contact your school
               administrator if you need help accessing your account.
@@ -178,7 +265,11 @@ export default function HomePage() {
           <div className="mt-6 grid gap-3 md:grid-cols-2 xl:grid-cols-4">
             {demoLinks.map((item) => (
               <Link key={item.label} href={item.href}>
-                <span className={`ll-command ll-focus flex h-full min-h-16 text-sm font-medium ${item.muted ? "text-[var(--ll-text-muted)]" : "text-[var(--ll-text)]"}`}>
+                <span
+                  className={`ll-command ll-focus flex h-full min-h-16 text-sm font-medium ${
+                    item.muted ? "text-[var(--ll-text-muted)]" : "text-[var(--ll-text)]"
+                  }`}
+                >
                   {item.label}
                 </span>
               </Link>
@@ -208,10 +299,15 @@ export default function HomePage() {
               From enrollment to learning in minutes
             </h2>
             <p className="mt-3 text-sm leading-7 text-[var(--ll-text-muted)]">
-              School administrators enroll online, import student lists, and assign
-              teachers, all without technical support. Students log in and begin working
-              through the national curriculum immediately. Guardians receive progress
-              updates by SMS.
+              School administrators enroll online, import student lists, and assign teachers,
+              all without technical support. Students log in and begin working through the
+              national curriculum immediately. Guardians receive progress updates by SMS.
+            </p>
+            {/* Relocated from old hero: education infrastructure headline + subheadline copy */}
+            <p className="mt-3 text-sm leading-7 text-[var(--ll-text-muted)]">
+              Education infrastructure for every Liberian school — curriculum delivery,
+              AI tutoring, school operations, and national oversight built for Grades 1–12
+              across all 15 counties.
             </p>
             <div className="mt-5 grid gap-2">
               {trustPillars.map((pillar) => (
@@ -230,8 +326,8 @@ export default function HomePage() {
               Request a Ministry briefing
             </h3>
             <p className="mt-3 text-sm leading-6 text-[var(--ll-text-muted)]">
-              LiberiaLearn is ready for national deployment. Schedule a walkthrough for
-              Ministry of Education stakeholders or request access for a pilot school.
+              LiberiaLearn is ready for national deployment. Schedule a walkthrough for Ministry
+              of Education stakeholders or request access for a pilot school.
             </p>
             <div className="flex flex-wrap gap-3 pt-5">
               <Link href="/pilot-preview">
