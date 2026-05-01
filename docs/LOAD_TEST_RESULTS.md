@@ -10,7 +10,7 @@
 - **k6 version:** v1.7.1 (installed via winget)
 - **Test date:** 2026-04-17
 - **Lesson ID used:** `math-g10-5-geometry-and-spatial-thinking-independent-practice` (status: APPROVED)
-- **Credentials:** `student1@cha.edu.lr`, `teacher1@cha.edu.lr`, `admin@cha.edu.lr` — DemoSeed2026! (single credential per role)
+- **Credentials:** `student1@cha.edu.lr`, `teacher1@cha.edu.lr`, `admin@cha.edu.lr` - `<DEMO_PASSWORD>` (single credential per role)
 
 ---
 

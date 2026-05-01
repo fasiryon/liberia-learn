@@ -10,6 +10,7 @@ export type RecommendationType =
 export type ConfidenceTier = "low" | "medium" | "high";
 
 export type MasteryAlertTier = "critical" | "at_risk" | "developing";
+export type PacingSignal = "ahead" | "on_track" | "slightly_behind" | "at_risk";
 
 export type AdaptiveRecommendation = {
   type: RecommendationType;
@@ -31,10 +32,18 @@ export type MasteryAlert = {
   tier: MasteryAlertTier;
 };
 
+export type WeakTopicSequenceItem = {
+  lessonId: string;
+  reason: string;
+  priorityOrder: number;
+};
+
 export type AdaptiveRecommendationResult = {
   recommendation: AdaptiveRecommendation | null;
   masteryAlerts: MasteryAlert[];
   contentGap: boolean;
+  pacingSignal: PacingSignal;
+  weakTopicSequence: WeakTopicSequenceItem[];
 };
 
 function weightedAssessmentScore(scores: number[]): number | null {
@@ -60,6 +69,114 @@ function alertTier(score: number): MasteryAlertTier {
 
 function clamp(v: number) {
   return Math.max(0, Math.min(100, Math.round(v)));
+}
+
+function classifyPacingSignal(
+  scheduledWork: Array<{
+    scheduledDate: Date;
+    progress: Array<{ completedAt: Date | null; startedAt: Date | null }>;
+  }>,
+  startOfToday: Date,
+  twoDaysAgo: Date
+): PacingSignal {
+  const assignedThroughToday = scheduledWork.filter((sw) => sw.scheduledDate <= startOfToday);
+  const overdue = assignedThroughToday.filter((sw) => !sw.progress[0]?.completedAt);
+  const staleIncomplete = scheduledWork.filter((sw) => {
+    const progress = sw.progress[0];
+    return progress?.startedAt && !progress.completedAt && sw.scheduledDate <= twoDaysAgo;
+  });
+  const repeatedIncomplete = staleIncomplete.length >= 2;
+
+  if (overdue.length >= 3 || repeatedIncomplete) return "at_risk";
+  if (overdue.length >= 1 || staleIncomplete.length === 1) return "slightly_behind";
+
+  const completed = scheduledWork.filter((sw) => sw.progress[0]?.completedAt);
+  const earlyCompletions = completed.filter((sw) => {
+    const completedAt = sw.progress[0]?.completedAt;
+    return completedAt ? completedAt < sw.scheduledDate : false;
+  });
+  if (completed.length >= 3 && earlyCompletions.length >= 3) return "ahead";
+
+  return "on_track";
+}
+
+function lessonTitle(payload: unknown, fallback: string) {
+  const record = payload && typeof payload === "object" && !Array.isArray(payload)
+    ? (payload as Record<string, unknown>)
+    : {};
+  return typeof record.title === "string" && record.title.trim()
+    ? record.title.trim()
+    : fallback;
+}
+
+function buildWeakTopicSequence(
+  masteryAlerts: MasteryAlert[],
+  scheduledWork: Array<{
+    id: string;
+    scheduledDate: Date;
+    content: {
+      contentId: string;
+      subject: string;
+      grade: number | null;
+      payload?: unknown;
+    };
+    progress: Array<{ completedAt: Date | null; startedAt: Date | null }>;
+  }>,
+  curriculumFallback: Array<{
+    contentId: string;
+    subject: string;
+    grade: number;
+    payload: unknown;
+    orderInUnit: number | null;
+    createdAt: Date;
+  }>
+): WeakTopicSequenceItem[] {
+  const weakest = masteryAlerts[0];
+  if (!weakest) return [];
+
+  const anchorGrade =
+    scheduledWork.find((sw) => sw.content.subject === weakest.subject)?.content.grade ??
+    curriculumFallback.find((lesson) => lesson.subject === weakest.subject)?.grade ??
+    null;
+  const minGrade = anchorGrade == null ? null : anchorGrade - 1;
+  const maxGrade = anchorGrade == null ? null : anchorGrade + 1;
+  const seen = new Set<string>();
+  const items: WeakTopicSequenceItem[] = [];
+
+  const add = (lesson: { lessonId: string; subject: string; grade: number | null; title: string }) => {
+    if (items.length >= 5 || seen.has(lesson.lessonId)) return;
+    if (lesson.subject !== weakest.subject) return;
+    if (minGrade != null && maxGrade != null && lesson.grade != null) {
+      if (lesson.grade < minGrade || lesson.grade > maxGrade) return;
+    }
+    seen.add(lesson.lessonId);
+    items.push({
+      lessonId: lesson.lessonId,
+      reason: `${weakest.subject} mastery is ${weakest.score}%. Review "${lesson.title}" as advisory support before advancing.`,
+      priorityOrder: items.length + 1,
+    });
+  };
+
+  for (const work of scheduledWork) {
+    if (work.progress[0]?.completedAt) continue;
+    add({
+      lessonId: work.content.contentId,
+      subject: work.content.subject,
+      grade: work.content.grade,
+      title: lessonTitle(work.content.payload, work.content.contentId),
+    });
+  }
+
+  for (const content of curriculumFallback) {
+    add({
+      lessonId: content.contentId,
+      subject: content.subject,
+      grade: content.grade,
+      title: lessonTitle(content.payload, content.contentId),
+    });
+  }
+
+  return items;
 }
 
 // Merge assessment + snapshot + derived into a single 0-100 mastery score per concept-key.
@@ -105,7 +222,7 @@ export async function getAdaptiveRecommendations(
   });
 
   if (!student) {
-    return { recommendation: null, masteryAlerts: [], contentGap: false };
+    return { recommendation: null, masteryAlerts: [], contentGap: false, pacingSignal: "on_track", weakTopicSequence: [] };
   }
 
   const classIds = student.enrollments.map((e) => e.classId);
@@ -155,6 +272,7 @@ export async function getAdaptiveRecommendations(
                 contentId: true,
                 subject: true,
                 grade: true,
+                payload: true,
               },
             },
             progress: {
@@ -381,8 +499,23 @@ export async function getAdaptiveRecommendations(
   // Content gap: if the student has no approved content for their grade
   const studentGrade = recommendation?.grade ?? assessmentAttempts[0]?.grade ?? null;
   const contentGap = studentGrade !== null && (studentGrade === 2 || studentGrade === 9);
+  const pacingSignal = classifyPacingSignal(scheduledWork, startOfToday, twoDaysAgo);
+  const weakest = masteryAlerts[0];
+  const fallbackLessons = weakest
+    ? await prisma.curriculumContent.findMany({
+        where: {
+          status: "APPROVED",
+          subject: weakest.subject,
+          ...(studentGrade != null ? { grade: { gte: studentGrade - 1, lte: studentGrade + 1 } } : {}),
+        },
+        select: { contentId: true, subject: true, grade: true, payload: true, orderInUnit: true, createdAt: true },
+        orderBy: [{ grade: "asc" }, { orderInUnit: "asc" }, { createdAt: "asc" }],
+        take: 12,
+      })
+    : [];
+  const weakTopicSequence = buildWeakTopicSequence(masteryAlerts, scheduledWork, fallbackLessons);
 
-  return { recommendation, masteryAlerts: masteryAlerts.slice(0, 5), contentGap };
+  return { recommendation, masteryAlerts: masteryAlerts.slice(0, 5), contentGap, pacingSignal, weakTopicSequence };
 }
 
 // Build class-level intelligence for the teacher dashboard.
@@ -395,9 +528,11 @@ export async function buildClassIntelligence(
   classAvgMastery: number;
   weakLessons: Array<{ contentId: string; title: string; avgScore: number; attemptCount: number }>;
   interventionRecommendations: Array<{ studentId: string; type: string; reason: string }>;
+  pacingSignalSummaries: Array<{ signal: PacingSignal; count: number; reason: string }>;
+  weakTopicSequenceSummaries: Array<{ subject: string; count: number; reason: string; lessonIds: string[] }>;
 }> {
   if (classIds.length === 0) {
-    return { atRisk: 0, topPerformers: 0, classAvgMastery: 0, weakLessons: [], interventionRecommendations: [] };
+    return { atRisk: 0, topPerformers: 0, classAvgMastery: 0, weakLessons: [], interventionRecommendations: [], pacingSignalSummaries: [], weakTopicSequenceSummaries: [] };
   }
 
   const [enrollments, progressRows, pendingInterventions] = await Promise.all([
@@ -503,7 +638,61 @@ export async function buildClassIntelligence(
     reason: r.reason,
   }));
 
-  return { atRisk, topPerformers, classAvgMastery, weakLessons, interventionRecommendations };
+  const scheduledForPacing = await prisma.scheduledWork.findMany({
+    where: { classId: { in: classIds } },
+    select: {
+      id: true,
+      scheduledDate: true,
+      content: { select: { contentId: true, subject: true, grade: true, payload: true } },
+      progress: {
+        select: { studentId: true, completedAt: true, startedAt: true },
+      },
+    },
+    orderBy: { scheduledDate: "desc" },
+    take: 200,
+  });
+
+  const now = new Date();
+  const startOfToday = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()));
+  const twoDaysAgo = new Date(startOfToday.getTime() - 2 * 86_400_000);
+  const pacingCounts = new Map<PacingSignal, number>();
+  for (const studentId of studentIds) {
+    const perStudentWork = scheduledForPacing.map((work) => ({
+      scheduledDate: work.scheduledDate,
+      progress: work.progress
+        .filter((progress) => progress.studentId === studentId)
+        .map((progress) => ({ completedAt: progress.completedAt, startedAt: progress.startedAt })),
+    }));
+    const signal = classifyPacingSignal(perStudentWork, startOfToday, twoDaysAgo);
+    pacingCounts.set(signal, (pacingCounts.get(signal) ?? 0) + 1);
+  }
+  const pacingSignalSummaries = [...pacingCounts.entries()]
+    .filter(([, count]) => count > 0)
+    .map(([signal, count]) => ({
+      signal,
+      count,
+      reason: `${count} student${count === 1 ? "" : "s"} ${signal.replace(/_/g, " ")} based on scheduled, completed, and stale incomplete work.`,
+    }));
+
+  const weakSubject = weakLessons[0]?.contentId
+    ? scheduledForPacing.find((work) => work.content.contentId === weakLessons[0].contentId)?.content.subject
+    : null;
+  const weakTopicSequenceSummaries = weakSubject
+    ? [
+        {
+          subject: weakSubject,
+          count: atRisk,
+          reason: `${atRisk} student${atRisk === 1 ? "" : "s"} are at_risk in ${weakSubject.toLowerCase()} - recommend remediation sequence.`,
+          lessonIds: scheduledForPacing
+            .filter((work) => work.content.subject === weakSubject)
+            .map((work) => work.content.contentId)
+            .filter((lessonId, index, list) => list.indexOf(lessonId) === index)
+            .slice(0, 5),
+        },
+      ].filter((summary) => summary.count > 0 && summary.lessonIds.length > 0)
+    : [];
+
+  return { atRisk, topPerformers, classAvgMastery, weakLessons, interventionRecommendations, pacingSignalSummaries, weakTopicSequenceSummaries };
 }
 
 // Build national curriculum intelligence for the MOE dashboard.

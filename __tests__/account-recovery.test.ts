@@ -61,6 +61,8 @@ vi.mock("@/lib/db", () => ({
 import { POST as forgotPOST } from "@/app/api/auth/forgot-password/route";
 import { POST as resetPOST } from "@/app/api/auth/reset-password/route";
 
+const TEST_DEMO_PASSWORD = process.env.TEST_DEMO_PASSWORD || "test-demo-password";
+
 function makeReq(path: string, body?: any) {
   return new Request(`http://localhost${path}`, {
     method: "POST",
@@ -120,7 +122,7 @@ describe("RR-3 account recovery", () => {
     const res = await resetPOST(
       makeReq("/api/auth/reset-password", {
         token: "tok-expired",
-        password: "DemoSeed2026!",
+        password: TEST_DEMO_PASSWORD,
       })
     );
     expect(res.status).toBe(400);
@@ -137,7 +139,7 @@ describe("RR-3 account recovery", () => {
     const res = await resetPOST(
       makeReq("/api/auth/reset-password", {
         token: "tok-used",
-        password: "DemoSeed2026!",
+        password: TEST_DEMO_PASSWORD,
       })
     );
     expect(res.status).toBe(400);
@@ -151,7 +153,7 @@ describe("RR-3 account recovery", () => {
     const res2 = await resetPOST(
       makeReq("/api/auth/reset-password", {
         token: "tok-any",
-        password: "DemoSeed2026!",
+        password: TEST_DEMO_PASSWORD,
       })
     );
     expect(res1.status).toBe(404);

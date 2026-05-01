@@ -89,7 +89,7 @@ One test-layer bug was identified and corrected (not a production code fix):
 3. MOE dashboard returns aggregate-only metrics with no PII exposure — appropriate for ministerial-level demonstration
 4. Guardian dashboard surfaces mastery trends and intervention alerts derived from the mastery engine — ready for parent-facing demo
 5. The demo seed (`npm run seed:demo`) provisions all required accounts:
-   - Students/Teachers/Admins: password `DemoSeed2026!`
+   - Students/Teachers/Admins: password `<DEMO_PASSWORD>`
    - MOE Officials (`official1@moe.gov.lr`, `official2@moe.gov.lr`): password `MOESeed2026!`
 6. Required feature flags to enable all demo features:
    ```

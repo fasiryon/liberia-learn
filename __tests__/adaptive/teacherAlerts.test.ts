@@ -162,6 +162,46 @@ describe("generateTeacherAlerts", () => {
     const { data } = mockCreateMany.mock.calls[0][0];
     expect(data[0].severity).toBe("high");
   });
+
+  it("pacing summary creates PACING_SUPPORT_NEEDED alert through teacher flow", async () => {
+    await generateTeacherAlerts(TEACHER_ID, SCHOOL_ID, {
+      atRiskStudents: [],
+      interventionRecommendations: [],
+      weakLessons: [],
+      pacingSignalSummaries: [
+        { signal: "at_risk", count: 3, reason: "3 students are at risk based on overdue work." },
+      ],
+    });
+
+    expect(mockCreateMany).toHaveBeenCalledOnce();
+    const { data } = mockCreateMany.mock.calls[0][0];
+    expect(data[0].alertType).toBe("PACING_SUPPORT_NEEDED");
+    expect(data[0].severity).toBe("high");
+    expect(data[0].reason).toContain("3 students");
+  });
+
+  it("weak-topic sequence summary creates advisory teacher alert", async () => {
+    await generateTeacherAlerts(TEACHER_ID, SCHOOL_ID, {
+      atRiskStudents: [],
+      interventionRecommendations: [],
+      weakLessons: [],
+      weakTopicSequenceSummaries: [
+        {
+          subject: "MATH",
+          count: 3,
+          reason: "3 students are at_risk in fractions - recommend remediation sequence.",
+          lessonIds: ["fractions-1", "fractions-2"],
+        },
+      ],
+    });
+
+    expect(mockCreateMany).toHaveBeenCalledOnce();
+    const { data } = mockCreateMany.mock.calls[0][0];
+    expect(data[0].alertType).toBe("WEAK_TOPIC_SEQUENCE_ADVISED");
+    expect(data[0].weakConcept).toBe("MATH");
+    expect(data[0].weakLesson).toBe("fractions-1");
+    expect(data[0].recommendedAction).toContain("advisory");
+  });
 });
 
 describe("markAlertReviewed", () => {

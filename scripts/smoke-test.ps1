@@ -65,7 +65,13 @@ $studentEmail = "student1@cha.edu.lr"
 $teacherEmail = "teacher1@cha.edu.lr"
 $adminEmail = "admin@cha.edu.lr"
 $moeEmail = "official1@moe.gov.lr"
-$demoPassword = "DemoSeed2026!"
+$demoPassword = $env:DEMO_SEED_PASSWORD
+if ([string]::IsNullOrWhiteSpace($demoPassword)) {
+    if ($env:NODE_ENV -eq "production" -or $env:DEMO_MODE -eq "true") {
+        throw "DEMO_SEED_PASSWORD is required for production/demo smoke tests."
+    }
+    $demoPassword = "local-demo-password-change-me"
+}
 $moePassword = "MOESeed2026!"
 
 $results = @()

@@ -55,6 +55,8 @@ import { POST as inviteStudentPOST } from "@/app/api/rollout/invite/student/rout
 import { POST as inviteStudentBulkPOST } from "@/app/api/rollout/invite/student/bulk/route";
 import { POST as onboardAcceptPOST } from "@/app/api/onboard/accept/route";
 
+const TEST_DEMO_PASSWORD = process.env.TEST_DEMO_PASSWORD || "test-demo-password";
+
 function makeReq(path: string, body?: any) {
   return new Request(`http://localhost${path}`, {
     method: "POST",
@@ -163,7 +165,7 @@ describe("RR-1 invite acceptance", () => {
       makeReq("/api/onboard/accept", {
         token: "tok-expired",
         name: "Student",
-        password: "DemoSeed2026!",
+        password: TEST_DEMO_PASSWORD,
       })
     );
     expect(res.status).toBe(400);
@@ -182,7 +184,7 @@ describe("RR-1 invite acceptance", () => {
       makeReq("/api/onboard/accept", {
         token: "tok-used",
         name: "Student",
-        password: "DemoSeed2026!",
+        password: TEST_DEMO_PASSWORD,
       })
     );
     expect(res.status).toBe(400);
@@ -202,7 +204,7 @@ describe("RR-1 invite acceptance", () => {
       makeReq("/api/onboard/accept", {
         token: "tok-enroll",
         name: "Student",
-        password: "DemoSeed2026!",
+        password: TEST_DEMO_PASSWORD,
       })
     );
     expect(res.status).toBe(404);
