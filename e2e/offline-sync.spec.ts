@@ -1,13 +1,25 @@
 import { test, expect, type Page } from "@playwright/test";
 
 const BASE = "https://liberia-learn.vercel.app";
+const DEMO_STUDENT_EMAIL = process.env.E2E_DEMO_STUDENT_EMAIL;
+const DEMO_STUDENT_PASSWORD = process.env.E2E_DEMO_STUDENT_PASSWORD;
+const HAS_DEMO_STUDENT_CREDENTIALS = Boolean(DEMO_STUDENT_EMAIL && DEMO_STUDENT_PASSWORD);
+
+test.skip(
+  !HAS_DEMO_STUDENT_CREDENTIALS,
+  "Skipping offline sync E2E tests because E2E_DEMO_STUDENT_EMAIL and E2E_DEMO_STUDENT_PASSWORD are not set."
+);
 
 async function loginAsStudent(page: Page) {
+  if (!DEMO_STUDENT_EMAIL || !DEMO_STUDENT_PASSWORD) {
+    throw new Error("Offline sync E2E credentials are not configured.");
+  }
+
   for (let attempt = 0; attempt < 3; attempt++) {
     await page.goto(`${BASE}/login?role=student`);
     await page.getByRole("button", { name: "student", exact: true }).click().catch(() => null);
-    await page.fill('input[type="email"], input[type="text"]', "student1@cha.edu.lr");
-    await page.fill('input[type="password"]', "DemoSeed2026!");
+    await page.fill('input[type="email"], input[type="text"]', DEMO_STUDENT_EMAIL);
+    await page.fill('input[type="password"]', DEMO_STUDENT_PASSWORD);
     await page.getByRole("button", { name: "Continue" }).click();
     try {
       await page.waitForFunction(() => !window.location.pathname.startsWith("/login"), undefined, {

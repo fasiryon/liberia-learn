@@ -9,7 +9,9 @@ export type TeacherAlertType =
   | "UNRESOLVED_INTERVENTION"
   | "CURRICULUM_GAP_AFFECTING_CLASS"
   | "ASSIGNMENT_MISSED_BY_GROUP"
-  | "CLASS_AVERAGE_DROPPED";
+  | "CLASS_AVERAGE_DROPPED"
+  | "PACING_SUPPORT_NEEDED"
+  | "WEAK_TOPIC_SEQUENCE_ADVISED";
 
 export type TeacherAlertStatus = "ACTIVE" | "REVIEWED" | "DISMISSED";
 export type TeacherAlertActionStatus = "available" | "needs_review" | "unsupported";
@@ -73,6 +75,19 @@ type ClassAverageDrop = {
   subject: string;
   currentAverage: number;
   previousAverage: number;
+};
+
+type PacingSignalSummary = {
+  signal: "ahead" | "on_track" | "slightly_behind" | "at_risk";
+  count: number;
+  reason: string;
+};
+
+type WeakTopicSequenceSummary = {
+  subject: string;
+  count: number;
+  reason: string;
+  lessonIds: string[];
 };
 
 const INACTIVITY_THRESHOLD_DAYS = 7;
@@ -139,6 +154,22 @@ function buildTeacherAlertAction(row: TeacherAlertRowLike): TeacherAlertActionPa
         status: "needs_review",
         href: "/teacher/weekly-report",
       };
+    case "PACING_SUPPORT_NEEDED":
+      return {
+        ...base,
+        label: "Review pacing",
+        actionType: "REVIEW_PACING_SUPPORT",
+        status: "needs_review",
+        href: "/teacher/dashboard",
+      };
+    case "WEAK_TOPIC_SEQUENCE_ADVISED":
+      return {
+        ...base,
+        label: "Plan remediation sequence",
+        actionType: "PLAN_REMEDIATION_SEQUENCE",
+        status: "needs_review",
+        href: "/teacher/schedule",
+      };
     case "CURRICULUM_GAP_AFFECTING_CLASS":
       return {
         ...base,
@@ -184,6 +215,8 @@ export async function generateTeacherAlerts(
     classIds?: string[];
     assignmentCompletionGaps?: AssignmentCompletionGap[];
     classAverageDrops?: ClassAverageDrop[];
+    pacingSignalSummaries?: PacingSignalSummary[];
+    weakTopicSequenceSummaries?: WeakTopicSequenceSummary[];
   }
 ): Promise<void> {
   const alerts: Array<{
@@ -267,6 +300,34 @@ export async function generateTeacherAlerts(
       weakConcept: drop.subject,
       weakLesson: null,
       recommendedAction: "Pause new content and reteach the weakest topic before the next assessment.",
+    });
+  }
+
+  for (const summary of input.pacingSignalSummaries ?? []) {
+    if (summary.signal !== "at_risk" && summary.signal !== "slightly_behind") continue;
+    alerts.push({
+      idempotencyKey: `${teacherUserId}:PACING_SUPPORT_NEEDED:${summary.signal}`,
+      alertType: "PACING_SUPPORT_NEEDED",
+      severity: summary.signal === "at_risk" ? "high" : "medium",
+      reason: summary.reason,
+      studentId: null,
+      weakConcept: null,
+      weakLesson: null,
+      recommendedAction: "Review pacing with the class and assign advisory support without changing the official curriculum sequence.",
+    });
+  }
+
+  for (const summary of input.weakTopicSequenceSummaries ?? []) {
+    if (summary.count <= 0 || summary.lessonIds.length === 0) continue;
+    alerts.push({
+      idempotencyKey: `${teacherUserId}:WEAK_TOPIC_SEQUENCE_ADVISED:${summary.subject}:${summary.lessonIds.join("-")}`,
+      alertType: "WEAK_TOPIC_SEQUENCE_ADVISED",
+      severity: summary.count >= 3 ? "high" : "medium",
+      reason: summary.reason,
+      studentId: null,
+      weakConcept: summary.subject,
+      weakLesson: summary.lessonIds[0] ?? null,
+      recommendedAction: "Use the recommended lesson sequence as advisory remediation; do not override the official curriculum plan.",
     });
   }
 
@@ -394,6 +455,8 @@ export async function getActiveTeacherAlerts(
     LOW_MASTERY: 3,
     ASSIGNMENT_MISSED_BY_GROUP: 3,
     CLASS_AVERAGE_DROPPED: 3,
+    PACING_SUPPORT_NEEDED: 3,
+    WEAK_TOPIC_SEQUENCE_ADVISED: 3,
     INACTIVE_STUDENT: 2,
     CURRICULUM_GAP_AFFECTING_CLASS: 1,
   };

@@ -1,6 +1,13 @@
 import { test, expect } from "@playwright/test";
 
 const BASE = process.env.PLAYWRIGHT_BASE_URL ?? "https://liberia-learn.vercel.app";
+const E2E_DEMO_STUDENT_EMAIL = process.env.E2E_DEMO_STUDENT_EMAIL || "student1@cha.edu.lr";
+const E2E_DEMO_STUDENT_PASSWORD = process.env.E2E_DEMO_STUDENT_PASSWORD;
+
+test.skip(
+  !E2E_DEMO_STUDENT_PASSWORD,
+  "Skipping final audit E2E tests because E2E_DEMO_STUDENT_PASSWORD is not set."
+);
 
 test("homepage loads and all role links work", async ({ page }) => {
   await page.goto(BASE);
@@ -22,8 +29,8 @@ test("homepage loads and all role links work", async ({ page }) => {
 
 test("student full journey — login to lesson", async ({ page }) => {
   await page.goto(`${BASE}/login`);
-  await page.fill('input[type="email"]', "student1@cha.edu.lr");
-  await page.fill('input[type="password"]', "DemoSeed2026!");
+  await page.fill('input[type="email"]', E2E_DEMO_STUDENT_EMAIL);
+  await page.fill('input[type="password"]', E2E_DEMO_STUDENT_PASSWORD!);
   await page.click('button[type="submit"]');
   await page.waitForURL(/\/student|\/dashboard/, { timeout: 15000 });
   await page.waitForTimeout(2000);
@@ -47,7 +54,7 @@ test("student full journey — login to lesson", async ({ page }) => {
 test("teacher full journey — login to student review", async ({ page }) => {
   await page.goto(`${BASE}/login`);
   await page.fill('input[type="email"]', "teacher1@cha.edu.lr");
-  await page.fill('input[type="password"]', "DemoSeed2026!");
+  await page.fill('input[type="password"]', E2E_DEMO_STUDENT_PASSWORD!);
   await page.click('button[type="submit"]');
   await page.waitForURL(/\/teacher/, { timeout: 15000 });
   await page.waitForTimeout(2000);
@@ -67,7 +74,7 @@ test("teacher full journey — login to student review", async ({ page }) => {
 test("admin dashboard loads with real data", async ({ page }) => {
   await page.goto(`${BASE}/login`);
   await page.fill('input[type="email"]', "admin@cha.edu.lr");
-  await page.fill('input[type="password"]', "DemoSeed2026!");
+  await page.fill('input[type="password"]', E2E_DEMO_STUDENT_PASSWORD!);
   await page.click('button[type="submit"]');
   await page.waitForURL(/\/admin/, { timeout: 15000 });
   await page.waitForTimeout(2000);
@@ -104,7 +111,7 @@ test("MOE dashboard shows national data", async ({ page }) => {
 test("guardian journey — login to messages", async ({ page }) => {
   await page.goto(`${BASE}/login`);
   await page.fill('input[type="email"]', "guardian1@cha.family.lr");
-  await page.fill('input[type="password"]', "DemoSeed2026!");
+  await page.fill('input[type="password"]', E2E_DEMO_STUDENT_PASSWORD!);
   await page.click('button[type="submit"]');
   await page.waitForURL(/\/guardian|\/dashboard/, { timeout: 15000 });
   await page.waitForTimeout(2000);
@@ -155,8 +162,8 @@ test("mobile 375px — no overflow on key pages", async ({ page }) => {
 
 test("student progress and certificates have back nav", async ({ page }) => {
   await page.goto(`${BASE}/login`);
-  await page.fill('input[type="email"]', "student1@cha.edu.lr");
-  await page.fill('input[type="password"]', "DemoSeed2026!");
+  await page.fill('input[type="email"]', E2E_DEMO_STUDENT_EMAIL);
+  await page.fill('input[type="password"]', E2E_DEMO_STUDENT_PASSWORD!);
   await page.click('button[type="submit"]');
   await page.waitForURL(/\/student|\/dashboard/, { timeout: 15000 });
 

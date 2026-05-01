@@ -13,7 +13,7 @@ vi.mock("@/lib/db", () => ({
     enrollment: { findMany: vi.fn() },
     studentProgress: { findMany: vi.fn() },
     interventionRecommendation: { findMany: vi.fn() },
-    curriculumContent: { groupBy: vi.fn() },
+    curriculumContent: { groupBy: vi.fn(), findMany: vi.fn() },
   },
 }));
 
@@ -64,6 +64,7 @@ beforeEach(() => {
   mockPrisma.masterySnapshot.findMany.mockResolvedValue([]);
   mockPrisma.derivedStudentProgress.findMany.mockResolvedValue([]);
   mockPrisma.scheduledWork.findMany.mockResolvedValue([]);
+  mockPrisma.curriculumContent.findMany.mockResolvedValue([]);
 });
 
 describe("getAdaptiveRecommendations — mastery scoring", () => {
@@ -233,6 +234,74 @@ describe("getAdaptiveRecommendations — mastery scoring", () => {
 
     // ADVANCE requires a next unstarted lesson, which we have none — so no recommendation
     expect(result.recommendation).toBeNull();
+  });
+
+  it("classifies pacing as at_risk for multiple overdue lessons", async () => {
+    mockStudent();
+    mockAttempts([]);
+    mockScheduledWork([
+      { subject: "MATH", started: false, completed: false, daysAgo: 5 },
+      { subject: "MATH", started: false, completed: false, daysAgo: 4 },
+      { subject: "MATH", started: false, completed: false, daysAgo: 3 },
+    ]);
+
+    const result = await getAdaptiveRecommendations("student1", "school1", "user1");
+
+    expect(result.pacingSignal).toBe("at_risk");
+  });
+
+  it("classifies pacing as ahead for consistent early completion", async () => {
+    mockStudent();
+    mockAttempts([]);
+    const scheduled = new Date(Date.now() + 86400000);
+    mockPrisma.scheduledWork.findMany.mockResolvedValueOnce(
+      [0, 1, 2].map((i) => ({
+        id: `work${i}`,
+        scheduledDate: new Date(scheduled.getTime() + i * 86400000),
+        content: { contentId: `content${i}`, subject: "MATH", grade: 5, payload: { title: `Lesson ${i}` } },
+        progress: [{ startedAt: new Date(), completedAt: new Date() }],
+      }))
+    );
+
+    const result = await getAdaptiveRecommendations("student1", "school1", "user1");
+
+    expect(result.pacingSignal).toBe("ahead");
+  });
+
+  it("generates weak-topic sequence with max five lessons and no duplicates", async () => {
+    mockStudent();
+    mockAttempts([{ score: 0.45, subject: "MATH", grade: 5 }]);
+    mockPrisma.scheduledWork.findMany.mockResolvedValueOnce([
+      {
+        id: "work1",
+        scheduledDate: new Date(),
+        content: { contentId: "lesson-a", subject: "MATH", grade: 5, payload: { title: "Fractions A" } },
+        progress: [],
+      },
+      {
+        id: "work2",
+        scheduledDate: new Date(),
+        content: { contentId: "lesson-a", subject: "MATH", grade: 5, payload: { title: "Fractions A Duplicate" } },
+        progress: [],
+      },
+    ]);
+    mockPrisma.curriculumContent.findMany.mockResolvedValueOnce(
+      ["lesson-b", "lesson-c", "lesson-d", "lesson-e", "lesson-f", "lesson-g"].map((contentId, index) => ({
+        contentId,
+        subject: "MATH",
+        grade: index === 5 ? 8 : 5,
+        payload: { title: contentId },
+        orderInUnit: index,
+        createdAt: new Date(),
+      }))
+    );
+
+    const result = await getAdaptiveRecommendations("student1", "school1", "user1");
+
+    expect(result.weakTopicSequence).toHaveLength(5);
+    expect(new Set(result.weakTopicSequence.map((item) => item.lessonId)).size).toBe(5);
+    expect(result.weakTopicSequence.map((item) => item.priorityOrder)).toEqual([1, 2, 3, 4, 5]);
+    expect(result.weakTopicSequence.some((item) => item.lessonId === "lesson-g")).toBe(false);
   });
 });
 

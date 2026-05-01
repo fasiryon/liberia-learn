@@ -6,6 +6,13 @@ import validationSet from "./fixtures/phase5-production-validation-set.json";
 const BASE = process.env.PLAYWRIGHT_BASE_URL ?? "https://liberia-learn.vercel.app";
 const SEEDED_LESSON = "/student/lessons/cha-demo-student1-multimedia-lesson";
 const SEEDED_CONTENT_ID = "cha-g9-math-multimedia-demo";
+const E2E_DEMO_STUDENT_EMAIL = process.env.E2E_DEMO_STUDENT_EMAIL || "student1@cha.edu.lr";
+const E2E_DEMO_STUDENT_PASSWORD = process.env.E2E_DEMO_STUDENT_PASSWORD;
+
+test.skip(
+  !E2E_DEMO_STUDENT_PASSWORD,
+  "Skipping full review E2E tests because E2E_DEMO_STUDENT_PASSWORD is not set."
+);
 
 type ValidationLesson = {
   contentId: string;
@@ -216,7 +223,7 @@ function inspectHumanQuality(payload: any) {
 }
 
 test("student reviewer flow has no dead navigation", async ({ page }) => {
-  await login(page, "student1@cha.edu.lr", "DemoSeed2026!", "student");
+  await login(page, E2E_DEMO_STUDENT_EMAIL, E2E_DEMO_STUDENT_PASSWORD!, "student");
   await page.goto(`${BASE}${SEEDED_LESSON}`);
   await expect(page.getByRole("heading", { name: /Ratios in Market Prices/i })).toBeVisible();
   await page.getByRole("button", { name: "Slides" }).click();
@@ -233,7 +240,7 @@ test("student reviewer flow has no dead navigation", async ({ page }) => {
 });
 
 test("generic library lesson exposes Read, Slides, and Listen modes", async ({ page }) => {
-  await login(page, "student1@cha.edu.lr", "DemoSeed2026!", "student");
+  await login(page, E2E_DEMO_STUDENT_EMAIL, E2E_DEMO_STUDENT_PASSWORD!, "student");
   await page.goto(`${BASE}/student/lesson/${SEEDED_CONTENT_ID}`);
   await expect(page.getByRole("heading", { name: /Ratios in Market Prices/i })).toBeVisible();
   await expect(page.getByRole("button", { name: "Read" })).toBeVisible();
@@ -244,7 +251,7 @@ test("generic library lesson exposes Read, Slides, and Listen modes", async ({ p
 });
 
 test("teacher uploads and activates a real video supplement", async ({ page }) => {
-  await login(page, "teacher1@cha.edu.lr", "DemoSeed2026!", "teacher");
+  await login(page, "teacher1@cha.edu.lr", E2E_DEMO_STUDENT_PASSWORD!, "teacher");
   await page.goto(`${BASE}/teacher/lesson/${SEEDED_CONTENT_ID}`);
   await expect(page.getByRole("heading", { name: /Ratios in Market Prices/i })).toBeVisible();
   const buffer = await makeWebmBuffer(page);
@@ -262,14 +269,14 @@ test("teacher uploads and activates a real video supplement", async ({ page }) =
 });
 
 test("student sees active teacher video after upload", async ({ page }) => {
-  await login(page, "student1@cha.edu.lr", "DemoSeed2026!", "student");
+  await login(page, E2E_DEMO_STUDENT_EMAIL, E2E_DEMO_STUDENT_PASSWORD!, "student");
   await page.goto(`${BASE}${SEEDED_LESSON}`);
   await expect(page.locator("video").first()).toBeVisible({ timeout: 15000 });
   await expect(page.locator("text=/Lesson introduction by/i")).toBeVisible();
 });
 
 test("admin audio batch controls and analytics are visible", async ({ page }) => {
-  await login(page, "admin@cha.edu.lr", "DemoSeed2026!", "admin");
+  await login(page, "admin@cha.edu.lr", E2E_DEMO_STUDENT_PASSWORD!, "admin");
   await page.goto(`${BASE}/admin/curriculum`);
   await expect(page.getByRole("heading", { name: "Import Existing Curriculum" })).toBeVisible();
   await expect(page.getByRole("button", { name: /Batch generate audio/i })).toBeVisible();
@@ -300,7 +307,7 @@ test("admin curriculum production validation captures upgrade, review, approval,
   let approvedLessonTitle: string | null = null;
   let refinementChecked = false;
 
-  await login(page, "admin@cha.edu.lr", "DemoSeed2026!", "admin");
+  await login(page, "admin@cha.edu.lr", E2E_DEMO_STUDENT_PASSWORD!, "admin");
   await page.goto(`${BASE}/admin/curriculum`);
   await expect(page.getByRole("heading", { name: "Import Existing Curriculum" })).toBeVisible();
 
@@ -381,7 +388,7 @@ test("admin curriculum production validation captures upgrade, review, approval,
     }
 
     await clearSession(page);
-    await login(page, "student1@cha.edu.lr", "DemoSeed2026!", "student");
+    await login(page, E2E_DEMO_STUDENT_EMAIL, E2E_DEMO_STUDENT_PASSWORD!, "student");
     await gotoWithRetry(page, `${BASE}/student/lesson/${approvedDraftId}`);
     await expect(
       page.getByRole("heading", { name: new RegExp(escapeRegExp(String(approvedLessonTitle ?? "")), "i") })
@@ -423,13 +430,13 @@ test("MOE review surface shows real data", async ({ page }) => {
 });
 
 test("guardian review surface shows linked student data", async ({ page }) => {
-  await login(page, "guardian1@cha.family.lr", "DemoSeed2026!", "guardian");
+  await login(page, "guardian1@cha.family.lr", E2E_DEMO_STUDENT_PASSWORD!, "guardian");
   await page.goto(`${BASE}/guardian`);
   await expect(page.locator("text=/Fatu Kollie|student/i")).toBeVisible({ timeout: 20000 });
 });
 
 test("platform admin demo account lands in platform console", async ({ page }) => {
-  await login(page, "platform.admin@liberialearn.org", "DemoSeed2026!", "admin");
+  await login(page, "platform.admin@liberialearn.org", E2E_DEMO_STUDENT_PASSWORD!, "admin");
   await page.goto(`${BASE}/platform`);
   await expect(page.getByRole("heading", { name: "Platform Dashboard" })).toBeVisible({ timeout: 20000 });
   await expect(page.getByRole("link", { name: "Schools", exact: true })).toBeVisible();

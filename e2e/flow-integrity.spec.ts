@@ -1,6 +1,13 @@
 import { expect, test, type Page } from "@playwright/test";
 
 const BASE = process.env.PLAYWRIGHT_BASE_URL ?? "https://liberia-learn.vercel.app";
+const E2E_DEMO_STUDENT_EMAIL = process.env.E2E_DEMO_STUDENT_EMAIL || "student1@cha.edu.lr";
+const E2E_DEMO_STUDENT_PASSWORD = process.env.E2E_DEMO_STUDENT_PASSWORD;
+
+test.skip(
+  !E2E_DEMO_STUDENT_PASSWORD,
+  "Skipping flow integrity E2E tests because E2E_DEMO_STUDENT_PASSWORD is not set."
+);
 
 async function gotoWithRetry(page: Page, url: string) {
   for (let attempt = 0; attempt < 2; attempt += 1) {
@@ -30,7 +37,7 @@ async function waitForStudentDashboard(page: Page) {
 }
 
 test("student Today CTAs route to the structured daily flow", async ({ page }) => {
-  await login(page, "student1@cha.edu.lr", "DemoSeed2026!", "student");
+  await login(page, E2E_DEMO_STUDENT_EMAIL, E2E_DEMO_STUDENT_PASSWORD!, "student");
   await waitForStudentDashboard(page);
   await expect(page.getByRole("link", { name: /Open today's lesson/i })).toBeVisible();
 
@@ -51,7 +58,7 @@ test("student Today CTAs route to the structured daily flow", async ({ page }) =
 });
 
 test("student progress and certificate pages return to dashboard", async ({ page }) => {
-  await login(page, "student1@cha.edu.lr", "DemoSeed2026!", "student");
+  await login(page, E2E_DEMO_STUDENT_EMAIL, E2E_DEMO_STUDENT_PASSWORD!, "student");
   await waitForStudentDashboard(page);
 
   await page.getByRole("link", { name: /View my progress/i }).click();

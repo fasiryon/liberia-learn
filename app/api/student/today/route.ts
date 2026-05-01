@@ -82,6 +82,8 @@ export async function GET() {
         recommendation: null,
         masteryAlerts: [],
         contentGap: false,
+        pacingSignal: "on_track" as const,
+        weakTopicSequence: [],
       })),
     ]);
 
@@ -176,6 +178,8 @@ export async function GET() {
         : null,
       masteryAlerts: adaptiveResult.masteryAlerts,
       contentGap: adaptiveResult.contentGap,
+      pacingSignal: adaptiveResult.pacingSignal,
+      weakTopicSequence: adaptiveResult.weakTopicSequence,
       activeAction: activeAction
         ? {
             id: activeAction.id,

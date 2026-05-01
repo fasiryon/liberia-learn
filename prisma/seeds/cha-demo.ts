@@ -9,21 +9,30 @@ import { Redis } from "@upstash/redis";
 
 const prisma = new PrismaClient();
 
-const DEMO_PASS = "DemoSeed2026!";
+const LOCAL_DEMO_SEED_PASSWORD = "local-demo-password-change-me";
 const MOE_PASS = "MOESeed2026!";
-const PLATFORM_PASS = "DemoSeed2026!";
+
+function getDemoSeedPassword(): string {
+  const password = process.env.DEMO_SEED_PASSWORD?.trim();
+  if (password) return password;
+  if (process.env.NODE_ENV === "production" || process.env.DEMO_MODE === "true") {
+    throw new Error("DEMO_SEED_PASSWORD is required for production/demo seed runs.");
+  }
+  return LOCAL_DEMO_SEED_PASSWORD;
+}
 
 const CHA_SCHOOL_ID = "cha-high-academy";
 const CHA_CLASS_ID = "cha-class-grade9a";
 
 export async function seedChaDemo() {
   console.log("[cha-demo] Seeding CHA demo accounts...");
+  const demoPass = getDemoSeedPassword();
 
   const [demoHash, moeHash] = await Promise.all([
-    bcrypt.hash(DEMO_PASS, 10),
+    bcrypt.hash(demoPass, 10),
     bcrypt.hash(MOE_PASS, 10),
   ]);
-  const platformHash = await bcrypt.hash(PLATFORM_PASS, 10);
+  const platformHash = await bcrypt.hash(demoPass, 10);
 
   // â”€â”€ School â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   const school = await prisma.school.upsert({
@@ -452,12 +461,12 @@ To find the cost of 7 oranges, multiply 1:20 by 7. The result is 7:140, so 7 ora
   }
 
   console.log("[cha-demo] Done. Accounts created:");
-  console.log("  admin@cha.edu.lr           / DemoSeed2026! (ADMIN)");
-  console.log("  teacher1@cha.edu.lr        / DemoSeed2026! (TEACHER)");
-  console.log("  student1@cha.edu.lr        / DemoSeed2026! (STUDENT)");
-  console.log("  guardian1@cha.family.lr    / DemoSeed2026! (GUARDIAN)");
+  console.log("  admin@cha.edu.lr           / DEMO_SEED_PASSWORD (ADMIN)");
+  console.log("  teacher1@cha.edu.lr        / DEMO_SEED_PASSWORD (TEACHER)");
+  console.log("  student1@cha.edu.lr        / DEMO_SEED_PASSWORD (STUDENT)");
+  console.log("  guardian1@cha.family.lr    / DEMO_SEED_PASSWORD (GUARDIAN)");
   console.log("  official1@moe.gov.lr       / MOESeed2026!  (MOE_OFFICIAL)");
-  console.log("  platform.admin@liberialearn.org / DemoSeed2026! (PLATFORM ADMIN)");
+  console.log("  platform.admin@liberialearn.org / DEMO_SEED_PASSWORD (PLATFORM ADMIN)");
 }
 
 // Direct run

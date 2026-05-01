@@ -70,6 +70,8 @@ describe("GET /api/student/today — adaptive fields", () => {
         { concept: "MATH", subject: "MATH", score: 45, tier: "at_risk" },
       ],
       contentGap: false,
+      pacingSignal: "slightly_behind",
+      weakTopicSequence: [{ lessonId: "lesson1", reason: "Review fractions", priorityOrder: 1 }],
     });
 
     const res = await GET();
@@ -83,6 +85,8 @@ describe("GET /api/student/today — adaptive fields", () => {
     expect(body.masteryAlerts).toHaveLength(1);
     expect(body.masteryAlerts[0].tier).toBe("at_risk");
     expect(body.contentGap).toBe(false);
+    expect(body.pacingSignal).toBe("slightly_behind");
+    expect(body.weakTopicSequence).toEqual([{ lessonId: "lesson1", reason: "Review fractions", priorityOrder: 1 }]);
   });
 
   it("returns null priority and recommendation when no signals", async () => {
@@ -91,6 +95,8 @@ describe("GET /api/student/today — adaptive fields", () => {
       recommendation: null,
       masteryAlerts: [],
       contentGap: false,
+      pacingSignal: "on_track",
+      weakTopicSequence: [],
     });
 
     const res = await GET();
@@ -99,6 +105,8 @@ describe("GET /api/student/today — adaptive fields", () => {
     expect(body.priority).toBeNull();
     expect(body.recommendation).toBeNull();
     expect(body.masteryAlerts).toHaveLength(0);
+    expect(body.pacingSignal).toBe("on_track");
+    expect(body.weakTopicSequence).toHaveLength(0);
   });
 
   it("returns contentGap=true for grade 9 student", async () => {
@@ -107,6 +115,8 @@ describe("GET /api/student/today — adaptive fields", () => {
       recommendation: null,
       masteryAlerts: [],
       contentGap: true,
+      pacingSignal: "on_track",
+      weakTopicSequence: [],
     });
 
     const res = await GET();
