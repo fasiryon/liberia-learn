@@ -52,6 +52,10 @@ export type MoeOutcomesSummary = {
     suppressed: boolean;
     averageReadiness: number | null;
   }>;
+  badgeAwardsByKey: Array<{
+    badgeKey: string;
+    awardCount: number;
+  }>;
 };
 
 const MIN_AGGREGATE_COHORT = 5;
@@ -293,9 +297,18 @@ export async function buildTeacherExamReadinessSummary(
 }
 
 export async function buildMoeOutcomesSummary(): Promise<MoeOutcomesSummary> {
-  const profiles = await prisma.studentMasteryProfile.findMany({
-    select: { studentId: true, subject: true, currentScore: true },
-  });
+  const [profiles, badgeAwards] = await Promise.all([
+    prisma.studentMasteryProfile.findMany({
+      select: { studentId: true, subject: true, currentScore: true },
+    }),
+    Promise.resolve()
+      .then(() =>
+        prisma.studentBadgeAward.findMany({
+          select: { badgeKey: true },
+        })
+      )
+      .catch(() => [] as Array<{ badgeKey: string }>),
+  ]);
   const bySubject = new Map<string, { studentIds: Set<string>; scores: number[] }>();
   for (const profile of profiles) {
     const subject = String(profile.subject);
@@ -304,6 +317,11 @@ export async function buildMoeOutcomesSummary(): Promise<MoeOutcomesSummary> {
     const score = normalizeScore(profile.currentScore);
     if (score != null) bucket.scores.push(score);
     bySubject.set(subject, bucket);
+  }
+
+  const badgeCounts = new Map<string, number>();
+  for (const award of badgeAwards) {
+    badgeCounts.set(award.badgeKey, (badgeCounts.get(award.badgeKey) ?? 0) + 1);
   }
 
   return {
@@ -320,6 +338,8 @@ export async function buildMoeOutcomesSummary(): Promise<MoeOutcomesSummary> {
           averageReadiness: suppressed ? null : average(bucket.scores),
         };
       }),
+    badgeAwardsByKey: Array.from(badgeCounts.entries())
+      .sort(([a], [b]) => a.localeCompare(b))
+      .map(([badgeKey, awardCount]) => ({ badgeKey, awardCount })),
   };
 }
-

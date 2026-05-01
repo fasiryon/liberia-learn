@@ -29,6 +29,7 @@ type Passport = {
     label: string;
     category: string;
     earned: boolean;
+    earnedAt: string | null;
     evidence: string[];
     criteria: string;
   }>;
@@ -39,7 +40,18 @@ type Passport = {
     recommendedPractice: string[];
     nextBestAction: { label: string; href: string; reason: string } | null;
   } | null;
-  pathwayHooks: Array<{ id: string; label: string; readinessTags: string[]; skillSignals: string[] }>;
+  pathwayHooks: Array<{
+    id: string;
+    pathwayKey: string;
+    label: string;
+    readinessLevel: string;
+    supportingBadges: string[];
+    supportingSubjects: string[];
+    gaps: string[];
+    recommendedNextActions: string[];
+    readinessTags: string[];
+    skillSignals: string[];
+  }>;
 };
 
 function StatBadge({ label, value }: { label: string; value: string | number | null }) {
@@ -199,6 +211,7 @@ export default function StudentPassportPage() {
                         className="rounded-full border border-[var(--ll-yellow)]/30 bg-[var(--ll-yellow)]/10 px-3 py-1 text-xs font-semibold text-[var(--ll-yellow)]"
                       >
                         {badge.label}
+                        {badge.earnedAt ? ` - ${formatDate(badge.earnedAt)}` : ""}
                       </span>
                     ))
                 )}
@@ -217,8 +230,13 @@ export default function StudentPassportPage() {
                 <div key={hook.id} className="rounded-lg border border-[var(--ll-border)] bg-white/5 p-3">
                   <p className="text-sm font-semibold text-[var(--ll-text)]">{hook.label}</p>
                   <p className="mt-1 text-xs text-[var(--ll-text-muted)]">
-                    {hook.skillSignals.join(", ")}
+                    {hook.readinessLevel.replace(/_/g, " ")} - {hook.skillSignals.join(", ")}
                   </p>
+                  {hook.recommendedNextActions.length > 0 ? (
+                    <p className="mt-2 text-xs text-[var(--ll-text-faint)]">
+                      {hook.recommendedNextActions[0]}
+                    </p>
+                  ) : null}
                 </div>
               ))}
             </div>

@@ -84,7 +84,14 @@ type StudentProgressSummary = {
   subjectProgress: SubjectProgressSummary[];
   recentActivity: ProgressActivity[];
   learningIntelligence: StudentLearningIntelligence;
-  badges: Array<{ id: string; label: string; earned: boolean; criteria: string; evidence: string[] }>;
+  badges: Array<{
+    id: string;
+    label: string;
+    earned: boolean;
+    earnedAt: string | null;
+    criteria: string;
+    evidence: string[];
+  }>;
   examReadiness: {
     readinessScore: number | null;
     weakSubjects: string[];
@@ -297,6 +304,7 @@ export default function StudentProgressDashboard() {
                           className="rounded-full border border-[var(--ll-yellow)]/30 bg-[var(--ll-yellow)]/10 px-3 py-1 text-xs font-semibold text-[var(--ll-yellow)]"
                         >
                           {badge.label}
+                          {badge.earnedAt ? ` - ${new Date(badge.earnedAt).toLocaleDateString()}` : ""}
                         </span>
                       ))
                   )}
