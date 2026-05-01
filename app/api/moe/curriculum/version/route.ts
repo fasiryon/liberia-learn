@@ -4,6 +4,8 @@ import { logAudit } from "@/lib/audit";
 import { handleApiError } from "@/lib/errors/apiErrorHandler";
 import { assertPermission, PERMISSIONS } from "@/lib/permissions";
 import { requireMoeActor } from "@/lib/moe/authority";
+import { isCurriculumVersionStandardizationEnabled } from "@/lib/serverFlags";
+import { buildCurriculumVersionDriftSummary } from "@/lib/moe/policyGovernance";
 
 export const dynamic = "force-dynamic";
 const policyPrisma = prisma as typeof prisma & {
@@ -22,8 +24,11 @@ export async function GET() {
       },
       orderBy: [{ status: "asc" }, { createdAt: "desc" }],
     });
+    const driftSummary = isCurriculumVersionStandardizationEnabled()
+      ? await buildCurriculumVersionDriftSummary()
+      : null;
 
-    return NextResponse.json({ versions });
+    return NextResponse.json({ versions, driftSummary });
   } catch (error) {
     return handleApiError(error, { route: "/api/moe/curriculum/version", method: "GET" });
   }

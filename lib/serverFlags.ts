@@ -219,6 +219,21 @@ export function isPathwayHooksEnabled(): boolean {
   return process.env.ENABLE_PATHWAY_HOOKS !== "false";
 }
 
+/** MOE policy push tools. DEFAULT ON unless explicitly disabled. */
+export function isMoePolicyPushEnabled(): boolean {
+  return process.env.ENABLE_MOE_POLICY_PUSH !== "false";
+}
+
+/** MOE directive governance workflow. DEFAULT ON unless explicitly disabled. */
+export function isMoeGovernanceWorkflowEnabled(): boolean {
+  return process.env.ENABLE_MOE_GOVERNANCE_WORKFLOW !== "false";
+}
+
+/** Curriculum version standardization and drift summaries. DEFAULT ON unless explicitly disabled. */
+export function isCurriculumVersionStandardizationEnabled(): boolean {
+  return process.env.ENABLE_CURRICULUM_VERSION_STANDARDIZATION !== "false";
+}
+
 /**
  * Class-level intervention alert engine (aggregate signals, no student IDs).
  * DEFAULT OFF. When false, GET /api/admin/dashboard/school/interventions returns 404.
