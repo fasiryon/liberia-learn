@@ -59,6 +59,9 @@ model User {
   policyConfigsCreated PolicyConfig[] @relation("PolicyConfigCreatedBy")
   policyConfigsUpdated PolicyConfig[] @relation("PolicyConfigUpdatedBy")
   policyOverridesCreated PolicyOverride[] @relation("PolicyOverrideCreatedBy")
+  moePolicyDirectivesCreated MoePolicyDirective[] @relation("MoePolicyDirectiveCreatedBy")
+  moePolicyDirectivesApproved MoePolicyDirective[] @relation("MoePolicyDirectiveApprovedBy")
+  moePolicyDirectivesUpdated MoePolicyDirective[] @relation("MoePolicyDirectiveUpdatedBy")
   // Part 7: lab sessions for this user
   labSessions         LabSession[]         @relation("LabSessionStudent")
   // Guardian messaging
@@ -81,6 +84,7 @@ model District {
   interventionLogs InterventionLog[]
   policyConfigs    PolicyConfig[]
   policyOverrides  PolicyOverride[]
+  moePolicyDirectives MoePolicyDirective[]
 
   @@index([tenantId])
   @@index([isActive])
@@ -148,6 +152,8 @@ model School {
   attendanceEntries      Attendance[]
   policyConfigs          PolicyConfig[]
   policyOverrides        PolicyOverride[]
+  moePolicyDirectives    MoePolicyDirective[]
+  moeDirectiveApplications MoeDirectiveApplication[]
   timetableEntries       Timetable[]
   teacherAssignments     TeacherAssignment[]
   studentImportBatches   StudentImportBatch[]
@@ -175,6 +181,7 @@ model Class {
   timetableEntries Timetable[]
   teacherAssignments TeacherAssignment[]
   exams          Exam[]
+  moeDirectiveApplications MoeDirectiveApplication[]
 }
 
 model Student {
@@ -1510,6 +1517,62 @@ model PolicyOverride {
 
   @@index([policyKey, districtId, schoolId])
   @@index([targetType, targetId])
+}
+
+model MoePolicyDirective {
+  id            String    @id @default(cuid())
+  title         String
+  description   String
+  policyType    String
+  targetScope   String
+  targetFilters Json
+  status        String    @default("draft")
+  createdById   String
+  approvedById  String?
+  updatedById   String?
+  districtId    String?
+  schoolId      String?
+  publishedAt   DateTime?
+  appliedAt     DateTime?
+  rejectedAt    DateTime?
+  archivedAt    DateTime?
+  supersededById String?
+  auditMetadata Json?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  createdBy     User      @relation("MoePolicyDirectiveCreatedBy", fields: [createdById], references: [id], onDelete: Restrict)
+  approvedBy    User?     @relation("MoePolicyDirectiveApprovedBy", fields: [approvedById], references: [id], onDelete: SetNull)
+  updatedBy      User?     @relation("MoePolicyDirectiveUpdatedBy", fields: [updatedById], references: [id], onDelete: SetNull)
+  district       District? @relation(fields: [districtId], references: [id], onDelete: SetNull)
+  school         School?   @relation(fields: [schoolId], references: [id], onDelete: SetNull)
+  applications   MoeDirectiveApplication[]
+
+  @@index([status, targetScope, createdAt])
+  @@index([policyType, status])
+  @@index([districtId, schoolId])
+}
+
+model MoeDirectiveApplication {
+  id            String    @id @default(cuid())
+  directiveId   String
+  schoolId      String?
+  classId       String?
+  grade         Int?
+  subject       String?
+  status        String    @default("needs_review")
+  appliedAt     DateTime?
+  failureReason String?
+  evidence      Json?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  directive     MoePolicyDirective @relation(fields: [directiveId], references: [id], onDelete: Cascade)
+  school        School?   @relation(fields: [schoolId], references: [id], onDelete: SetNull)
+  class         Class?    @relation(fields: [classId], references: [id], onDelete: SetNull)
+
+  @@unique([directiveId, schoolId, classId, grade, subject])
+  @@index([directiveId, status])
+  @@index([schoolId, status])
+  @@index([grade, subject, status])
 }
 
 model RagChunk {

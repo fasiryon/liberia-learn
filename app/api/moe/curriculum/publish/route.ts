@@ -5,6 +5,7 @@ import { handleApiError } from "@/lib/errors/apiErrorHandler";
 import { assertPermission, PERMISSIONS } from "@/lib/permissions";
 import { requireMoeActor } from "@/lib/moe/authority";
 import { validateCurriculumApproval } from "@/lib/policy/policyEngine";
+import { transitionMoeDirective } from "@/lib/moe/policyGovernance";
 
 export const dynamic = "force-dynamic";
 
@@ -12,7 +13,7 @@ export async function POST(req: NextRequest) {
   try {
     const { user } = await requireMoeActor();
     assertPermission(user, PERMISSIONS.CURRICULUM_OVERRIDE);
-    const body = (await req.json()) as { versionId?: string; contentIds?: string[]; archive?: boolean };
+    const body = (await req.json()) as { versionId?: string; contentIds?: string[]; archive?: boolean; directiveId?: string };
     if (!body.versionId) {
       throw Object.assign(new Error("versionId is required"), { status: 400 });
     }
@@ -61,6 +62,15 @@ export async function POST(req: NextRequest) {
       resourceId: result.id,
       details: { contentCount: body.contentIds?.length ?? 0 },
     });
+
+    if (body.directiveId && !body.archive) {
+      await transitionMoeDirective({
+        directiveId: body.directiveId,
+        userId: user.id,
+        nextStatus: "published",
+        reason: "Published with curriculum version activation",
+      });
+    }
 
     return NextResponse.json({ version: result });
   } catch (error) {

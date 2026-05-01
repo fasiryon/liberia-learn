@@ -12,6 +12,20 @@ type CurriculumVersionRow = {
   _count?: { contents: number };
 };
 
+type VersionDriftSummary = {
+  activeVersion: { id: string; versionName: string } | null;
+  totals: { schools: number; classes: number; alignedClasses: number; needsReviewClasses: number };
+  schools: Array<{
+    schoolId: string;
+    schoolName: string;
+    county: string | null;
+    classCount: number;
+    alignedClasses: number;
+    needsReviewClasses: number;
+    status: string;
+  }>;
+};
+
 type CurriculumHealthData = {
   national: {
     totalContent: number;
@@ -50,6 +64,7 @@ export default function MoeCurriculumPage() {
   const [health, setHealth] = useState<CurriculumHealthData | null>(null);
   const [healthError, setHealthError] = useState<string | null>(null);
   const [yearReadiness, setYearReadiness] = useState<YearReadinessRow[]>([]);
+  const [driftSummary, setDriftSummary] = useState<VersionDriftSummary | null>(null);
 
   async function loadVersions() {
     const res = await fetch("/api/moe/curriculum/version", { cache: "no-store" });
@@ -58,6 +73,7 @@ export default function MoeCurriculumPage() {
       throw new Error(data?.error ?? "Failed to load curriculum versions");
     }
     setVersions(data.versions ?? []);
+    setDriftSummary(data.driftSummary ?? null);
   }
 
   useEffect(() => {
@@ -261,6 +277,52 @@ export default function MoeCurriculumPage() {
             </tbody>
           </table>
         </div>
+      </section>
+
+      <section className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 p-6">
+        <div className="flex flex-wrap items-start justify-between gap-4">
+          <div>
+            <p className="text-[11px] font-medium uppercase tracking-[0.1em] text-[var(--ll-text-faint)]">
+              Version Standardization
+            </p>
+            <h2 className="mt-2 text-base font-semibold text-[var(--ll-text)]">Active Version Drift</h2>
+            <p className="mt-1 text-sm text-[var(--ll-text-muted)]">
+              Schools and classes are marked needs review when exact alignment to the active curriculum version cannot be confirmed.
+            </p>
+          </div>
+          <div className="text-right text-sm text-[var(--ll-text)]">
+            <p>{driftSummary?.activeVersion?.versionName ?? "No active version"}</p>
+            <p className="text-xs text-[var(--ll-text-muted)]">
+              {driftSummary?.totals.needsReviewClasses ?? 0} classes need review
+            </p>
+          </div>
+        </div>
+        {driftSummary ? (
+          <div className="mt-4 overflow-x-auto">
+            <table className="w-full text-sm text-[var(--ll-text)]">
+              <thead className="text-left text-xs uppercase tracking-[0.16em] text-[var(--ll-text-faint)]">
+                <tr>
+                  <th className="pb-3">School</th>
+                  <th className="pb-3">County</th>
+                  <th className="pb-3">Aligned</th>
+                  <th className="pb-3">Needs Review</th>
+                  <th className="pb-3">Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                {driftSummary.schools.slice(0, 20).map((row) => (
+                  <tr key={row.schoolId} className="border-t border-white/5">
+                    <td className="py-2">{row.schoolName}</td>
+                    <td className="py-2">{row.county ?? "Unassigned"}</td>
+                    <td className="py-2">{row.alignedClasses}/{row.classCount}</td>
+                    <td className="py-2">{row.needsReviewClasses}</td>
+                    <td className="py-2">{row.status.replace(/_/g, " ")}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        ) : null}
       </section>
 
       <section className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 p-6">
