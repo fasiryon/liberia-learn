@@ -24,6 +24,22 @@ type Passport = {
   subjects: SubjectEntry[];
   interventionSummary: { total: number; open: number; inProgress: number; closed: number };
   latestActivityAt: string | null;
+  badges: Array<{
+    id: string;
+    label: string;
+    category: string;
+    earned: boolean;
+    evidence: string[];
+    criteria: string;
+  }>;
+  examReadiness: {
+    readinessScore: number | null;
+    strongSubjects: string[];
+    weakSubjects: string[];
+    recommendedPractice: string[];
+    nextBestAction: { label: string; href: string; reason: string } | null;
+  } | null;
+  pathwayHooks: Array<{ id: string; label: string; readinessTags: string[]; skillSignals: string[] }>;
 };
 
 function StatBadge({ label, value }: { label: string; value: string | number | null }) {
@@ -137,6 +153,77 @@ export default function StudentPassportPage() {
             </div>
           </div>
         )}
+
+        {passport.examReadiness || passport.badges?.length > 0 ? (
+          <div className="grid gap-4 md:grid-cols-[0.9fr_1.1fr]">
+            {passport.examReadiness ? (
+              <div className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/60 p-5">
+                <h2 className="text-sm font-semibold uppercase tracking-wide text-[var(--ll-text)]">
+                  Exam Readiness
+                </h2>
+                <p className="mt-3 text-3xl font-bold text-[var(--ll-yellow)]">
+                  {passport.examReadiness.readinessScore != null
+                    ? `${Math.round(passport.examReadiness.readinessScore)}%`
+                    : "--"}
+                </p>
+                <p className="mt-2 text-xs text-[var(--ll-text-muted)]">
+                  {passport.examReadiness.nextBestAction?.reason ?? "Readiness builds from mastery, lessons, quizzes, and exams."}
+                </p>
+                {passport.examReadiness.nextBestAction ? (
+                  <Link
+                    href={passport.examReadiness.nextBestAction.href}
+                    className="mt-4 inline-flex min-h-10 items-center rounded-full bg-[var(--ll-yellow)] px-4 text-sm font-semibold text-[var(--ll-text-faint)]"
+                  >
+                    {passport.examReadiness.nextBestAction.label}
+                  </Link>
+                ) : null}
+              </div>
+            ) : null}
+
+            <div className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/60 p-5">
+              <h2 className="text-sm font-semibold uppercase tracking-wide text-[var(--ll-text)]">
+                Skill Badges
+              </h2>
+              <div className="mt-4 flex flex-wrap gap-2">
+                {(passport.badges ?? []).filter((badge) => badge.earned).length === 0 ? (
+                  <p className="text-sm text-[var(--ll-text-muted)]">
+                    Badges appear here when your work meets the published criteria.
+                  </p>
+                ) : (
+                  passport.badges
+                    .filter((badge) => badge.earned)
+                    .map((badge) => (
+                      <span
+                        key={badge.id}
+                        title={badge.criteria}
+                        className="rounded-full border border-[var(--ll-yellow)]/30 bg-[var(--ll-yellow)]/10 px-3 py-1 text-xs font-semibold text-[var(--ll-yellow)]"
+                      >
+                        {badge.label}
+                      </span>
+                    ))
+                )}
+              </div>
+            </div>
+          </div>
+        ) : null}
+
+        {passport.pathwayHooks?.length > 0 ? (
+          <div className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/60 p-5">
+            <h2 className="text-sm font-semibold uppercase tracking-wide text-[var(--ll-text)]">
+              Future Pathway Signals
+            </h2>
+            <div className="mt-4 grid gap-3 sm:grid-cols-2">
+              {passport.pathwayHooks.map((hook) => (
+                <div key={hook.id} className="rounded-lg border border-[var(--ll-border)] bg-white/5 p-3">
+                  <p className="text-sm font-semibold text-[var(--ll-text)]">{hook.label}</p>
+                  <p className="mt-1 text-xs text-[var(--ll-text-muted)]">
+                    {hook.skillSignals.join(", ")}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </div>
+        ) : null}
 
         {/* Subject breakdown */}
         {passport.subjects.length > 0 ? (

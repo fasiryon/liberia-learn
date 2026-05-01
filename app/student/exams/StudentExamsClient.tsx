@@ -12,10 +12,19 @@ type ExamItem = {
   timeLimit: number;
 };
 
+type ExamReadiness = {
+  readinessScore: number | null;
+  strongSubjects: string[];
+  weakSubjects: string[];
+  recommendedPractice: string[];
+  nextBestAction: { label: string; href: string; reason: string } | null;
+};
+
 export default function StudentExamsClient() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [exams, setExams] = useState<ExamItem[]>([]);
+  const [readiness, setReadiness] = useState<ExamReadiness | null>(null);
 
   useEffect(() => {
     fetch("/api/student/exams", { cache: "no-store" })
@@ -23,6 +32,7 @@ export default function StudentExamsClient() {
         const data = await res.json();
         if (!res.ok) throw new Error(data.error ?? "Failed to load exams");
         setExams(data.exams ?? []);
+        setReadiness(data.readiness ?? null);
       })
       .catch((err) => setError(err.message))
       .finally(() => setLoading(false));
@@ -45,6 +55,30 @@ export default function StudentExamsClient() {
           <div className="ll-empty rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 p-8 text-center text-sm text-[var(--ll-text-muted)]">
             No published exams are available yet.
           </div>
+        ) : null}
+
+        {!loading && !error && readiness ? (
+          <section className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 p-5">
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+              <div>
+                <p className="text-xs uppercase tracking-[0.18em] text-[var(--ll-text-muted)]">Exam readiness</p>
+                <p className="mt-2 text-3xl font-semibold text-[var(--ll-yellow)]">
+                  {readiness.readinessScore != null ? `${Math.round(readiness.readinessScore)}%` : "--"}
+                </p>
+                <p className="mt-1 text-sm text-[var(--ll-text-muted)]">
+                  {readiness.nextBestAction?.reason ?? "Readiness is based on mastery, lessons, quizzes, and exam attempts."}
+                </p>
+              </div>
+              {readiness.nextBestAction ? (
+                <Link
+                  href={readiness.nextBestAction.href}
+                  className="inline-flex min-h-11 items-center justify-center rounded-xl bg-[var(--ll-yellow)] px-4 py-2 text-sm font-semibold text-[var(--ll-text-faint)]"
+                >
+                  {readiness.nextBestAction.label}
+                </Link>
+              ) : null}
+            </div>
+          </section>
         ) : null}
 
         <div className="grid gap-4 md:grid-cols-2">

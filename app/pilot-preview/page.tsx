@@ -21,7 +21,8 @@ const accessPaths = [
     href: "/moe/login",
     label: "MOE Portal sign-in",
     accent: "border-blue-500/30 bg-[var(--ll-silver-soft)]",
-    buttonClass: "bg-[var(--ll-silver-soft)] hover:bg-[var(--ll-silver-soft)] text-[var(--ll-text-faint)]",
+    buttonClass:
+      "w-full rounded-lg px-4 py-2.5 text-sm font-semibold bg-[var(--ll-yellow)] text-[var(--ll-bg)] hover:opacity-90 transition-opacity duration-150 min-h-[44px]",
   },
   {
     role: "School Administrators",
@@ -30,7 +31,8 @@ const accessPaths = [
     href: "/login?role=admin&next=/admin/pilot-score",
     label: "Admin sign-in",
     accent: "border-amber-500/30 bg-[var(--ll-yellow-soft)]",
-    buttonClass: "bg-[var(--ll-yellow-soft)] hover:bg-[var(--ll-yellow-soft)] text-[var(--ll-text-faint)]",
+    buttonClass:
+      "w-full rounded-lg px-4 py-2.5 text-sm font-semibold border border-[var(--ll-yellow)] text-[var(--ll-yellow)] bg-[var(--ll-yellow-soft)] hover:opacity-90 transition-opacity duration-150 min-h-[44px]",
   },
   {
     role: "Teachers",
@@ -39,7 +41,8 @@ const accessPaths = [
     href: "/login?role=teacher",
     label: "Teacher sign-in",
     accent: "border-emerald-500/30 bg-[var(--ll-yellow)]/8",
-    buttonClass: "bg-[var(--ll-yellow-soft)] hover:bg-[var(--ll-yellow-soft)] text-[var(--ll-text-faint)]",
+    buttonClass:
+      "w-full rounded-lg px-4 py-2.5 text-sm font-semibold border border-[var(--ll-silver)] text-[var(--ll-silver)] bg-[var(--ll-silver-soft)] hover:opacity-90 transition-opacity duration-150 min-h-[44px]",
   },
 ];
 
@@ -113,9 +116,7 @@ export default function PilotPreviewPage() {
                   <p className="text-sm font-semibold text-[var(--ll-text)]">{path.role}</p>
                   <p className="text-xs leading-5 text-[var(--ll-text-muted)]">{path.description}</p>
                   <Link href={path.href}>
-                    <span
-                      className={`mt-1 inline-flex rounded-full px-4 py-2 text-xs font-semibold ${path.buttonClass}`}
-                    >
+                    <span className={`inline-flex items-center justify-center ${path.buttonClass}`}>
                       {path.label}
                     </span>
                   </Link>

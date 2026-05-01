@@ -199,6 +199,26 @@ export function isWeeklyTeacherReportsEnabled(): boolean {
   return process.env.ENABLE_WEEKLY_TEACHER_REPORTS !== "false";
 }
 
+/** Student certificates and public verification. DEFAULT ON unless explicitly disabled. */
+export function isCertificatesEnabled(): boolean {
+  return process.env.ENABLE_CERTIFICATES !== "false";
+}
+
+/** Computed student skill badges. DEFAULT ON unless explicitly disabled. */
+export function isSkillBadgesEnabled(): boolean {
+  return process.env.ENABLE_SKILL_BADGES !== "false";
+}
+
+/** Deterministic exam readiness scoring. DEFAULT ON unless explicitly disabled. */
+export function isExamReadinessEnabled(): boolean {
+  return process.env.ENABLE_EXAM_READINESS !== "false";
+}
+
+/** Lightweight future pathway hooks. DEFAULT ON unless explicitly disabled. */
+export function isPathwayHooksEnabled(): boolean {
+  return process.env.ENABLE_PATHWAY_HOOKS !== "false";
+}
+
 /**
  * Class-level intervention alert engine (aggregate signals, no student IDs).
  * DEFAULT OFF. When false, GET /api/admin/dashboard/school/interventions returns 404.
