@@ -11,34 +11,36 @@ export type DemoCredential = {
   password: string;
 };
 
+const DEMO_PASSWORD_PLACEHOLDER = process.env.DEMO_SEED_PASSWORD?.trim() || "<DEMO_PASSWORD>";
+
 const DEMO_CREDENTIALS: DemoCredential[] = [
   {
     key: "admin",
     label: "Admin",
     role: "ADMIN",
     email: "admin@cha.edu.lr",
-    password: "DemoSeed2026!",
+    password: DEMO_PASSWORD_PLACEHOLDER,
   },
   {
     key: "teacher",
     label: "Teacher",
     role: "TEACHER",
     email: "teacher1@cha.edu.lr",
-    password: "DemoSeed2026!",
+    password: DEMO_PASSWORD_PLACEHOLDER,
   },
   {
     key: "student",
     label: "Student",
     role: "STUDENT",
     email: "student1@cha.edu.lr",
-    password: "DemoSeed2026!",
+    password: DEMO_PASSWORD_PLACEHOLDER,
   },
   {
     key: "guardian",
     label: "Guardian",
     role: "GUARDIAN",
     email: "guardian1@cha.family.lr",
-    password: "DemoSeed2026!",
+    password: DEMO_PASSWORD_PLACEHOLDER,
   },
   {
     key: "moe",

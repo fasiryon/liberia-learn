@@ -269,6 +269,8 @@ export async function GET() {
         atRiskStudents,
         interventionRecommendations: classIntelligence?.interventionRecommendations ?? [],
         weakLessons: classIntelligence?.weakLessons ?? [],
+        pacingSignalSummaries: classIntelligence?.pacingSignalSummaries ?? [],
+        weakTopicSequenceSummaries: classIntelligence?.weakTopicSequenceSummaries ?? [],
         classIds,
         assignmentCompletionGaps,
         classAverageDrops: classPerformance

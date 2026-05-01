@@ -2,11 +2,18 @@ import { test, expect } from "@playwright/test";
 
 const BASE = process.env.PLAYWRIGHT_BASE_URL ?? "https://liberia-learn.vercel.app";
 const SEEDED_LESSON_PATH = "/student/lessons/cha-demo-student1-multimedia-lesson";
+const E2E_DEMO_STUDENT_EMAIL = process.env.E2E_DEMO_STUDENT_EMAIL || "student1@cha.edu.lr";
+const E2E_DEMO_STUDENT_PASSWORD = process.env.E2E_DEMO_STUDENT_PASSWORD;
+
+test.skip(
+  !E2E_DEMO_STUDENT_PASSWORD,
+  "Skipping multimedia lesson E2E tests because E2E_DEMO_STUDENT_PASSWORD is not set."
+);
 
 async function loginStudent(page: import("@playwright/test").Page) {
   await page.goto(`${BASE}/login`);
-  await page.fill('input[type="email"]', "student1@cha.edu.lr");
-  await page.fill('input[type="password"]', "DemoSeed2026!");
+  await page.fill('input[type="email"]', E2E_DEMO_STUDENT_EMAIL);
+  await page.fill('input[type="password"]', E2E_DEMO_STUDENT_PASSWORD!);
   await page.click('button[type="submit"]');
   await page.waitForURL(/\/(dashboard|student)/, { timeout: 15000 });
 }

@@ -185,11 +185,11 @@ Phase 5 Phase 6 final gate in progress. Phases 0-5 are implemented and individua
 feat/phase-5-intelligence-system
 
 ## Phase 4.5 Demo Access
-- Student: `student1@cha.edu.lr` / `DemoSeed2026!` lands on `/dashboard`; first click `/student/today`; seeded lesson `/student/lessons/cha-demo-student1-multimedia-lesson`.
-- Teacher: `teacher1@cha.edu.lr` / `DemoSeed2026!` lands on `/teacher`; first click curriculum lesson management and video upload.
-- Guardian: `guardian1@cha.family.lr` / `DemoSeed2026!` lands on `/guardian`; sees linked student Fatu Kollie.
-- School Admin: `admin@cha.edu.lr` / `DemoSeed2026!` lands on `/admin`; first click curriculum/audio tools and analytics.
-- Platform Admin: `platform.admin@liberialearn.org` / `DemoSeed2026!` lands on `/platform`; sees platform operations surfaces.
+- Student: `student1@cha.edu.lr` / `<DEMO_PASSWORD>` lands on `/dashboard`; first click `/student/today`; seeded lesson `/student/lessons/cha-demo-student1-multimedia-lesson`.
+- Teacher: `teacher1@cha.edu.lr` / `<DEMO_PASSWORD>` lands on `/teacher`; first click curriculum lesson management and video upload.
+- Guardian: `guardian1@cha.family.lr` / `<DEMO_PASSWORD>` lands on `/guardian`; sees linked student Fatu Kollie.
+- School Admin: `admin@cha.edu.lr` / `<DEMO_PASSWORD>` lands on `/admin`; first click curriculum/audio tools and analytics.
+- Platform Admin: `platform.admin@liberialearn.org` / `<DEMO_PASSWORD>` lands on `/platform`; sees platform operations surfaces.
 - MOE Official: `official1@moe.gov.lr` / `MOESeed2026!` lands on `/moe/dashboard`; sees national analytics.
 
 ## Phase 4.5 Seeded Data Summary
@@ -259,7 +259,7 @@ feat/phase-5-intelligence-system
 - Final Phase 6 gate: pending full sequence.
 
 ## Multimedia Lesson Delivery Sprint seed note
-- Seeded student user: `student1@cha.edu.lr` / `DemoSeed2026!`
+- Seeded student user: `student1@cha.edu.lr` / `<DEMO_PASSWORD>`
 - Seeded lesson title: `Ratios in Market Prices`
 - Seeded lesson content id: `cha-g9-math-multimedia-demo`
 - Seeded scheduled work id: `cha-demo-student1-multimedia-lesson`

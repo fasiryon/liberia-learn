@@ -16,7 +16,16 @@ function getThisWeekDates(): Date[] {
   return Array.from({ length: 5 }, (_, i) => new Date(monday.getTime() + i * 86400000));
 }
 
-const PASS = "DemoSeed2026!";
+const LOCAL_DEMO_SEED_PASSWORD = "local-demo-password-change-me";
+
+function getDemoSeedPassword(): string {
+  const password = process.env.DEMO_SEED_PASSWORD?.trim();
+  if (password) return password;
+  if (process.env.NODE_ENV === "production" || process.env.DEMO_MODE === "true") {
+    throw new Error("DEMO_SEED_PASSWORD is required for production/demo seed runs.");
+  }
+  return LOCAL_DEMO_SEED_PASSWORD;
+}
 
 const FEMALE_NAMES = [
   "Fatu", "Mary", "Grace", "Patience", "Sarah", "Jenneh", "Korto",
@@ -45,7 +54,7 @@ function studentEmail(name: string, schoolCode: string): string {
 async function main() {
   console.log("Seeding LiberiaLearn MOE demo data...");
 
-  const hashed = await bcrypt.hash(PASS, 10);
+  const hashed = await bcrypt.hash(getDemoSeedPassword(), 10);
 
   // ========== SCHOOL 1: CHA High Academy ==========
   const school1 = await prisma.school.upsert({

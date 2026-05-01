@@ -11,7 +11,7 @@
  * Safety:
  *   - BLOCKED in production (NODE_ENV=production)
  *   - Idempotent: second run exits cleanly after detecting existing data
- *   - All seeded passwords are development-only: "DemoSeed2026!"
+ *   - Demo seeded passwords come from DEMO_SEED_PASSWORD.
  *   - MOE accounts: official1@moe.gov.lr / official2@moe.gov.lr / Password: "MOESeed2026!"
  *
  * Feature flags needed to see full demo data:
@@ -38,6 +38,17 @@ type SeedNationalDemoOptions = {
   allowProduction?: boolean;
   logger?: DemoSeedLogger;
 };
+
+const LOCAL_DEMO_SEED_PASSWORD = "local-demo-password-change-me";
+
+function getDemoSeedPassword(): string {
+  const password = process.env.DEMO_SEED_PASSWORD?.trim();
+  if (password) return password;
+  if (process.env.NODE_ENV === "production" || process.env.DEMO_MODE === "true") {
+    throw new Error("DEMO_SEED_PASSWORD is required for production/demo seed runs.");
+  }
+  return LOCAL_DEMO_SEED_PASSWORD;
+}
 
 // ─────────────────────────────────────────────────────────────────────────────
 // PURE EXPORTED FUNCTIONS (testable without DB)
@@ -731,9 +742,10 @@ export async function seedNationalDemo({
     }
 
     logger.log("Starting LiberiaLearn national scale demo seed...");
+    const demoSeedPassword = getDemoSeedPassword();
 
     const [hashed, hashedMoe] = await Promise.all([
-      bcrypt.hash("DemoSeed2026!", 10),
+      bcrypt.hash(demoSeedPassword, 10),
       bcrypt.hash("MOESeed2026!", 10),
     ]);
 
@@ -779,8 +791,9 @@ async function main() {
 
   // ── Password hashes ───────────────────────────────────────────────────────
   console.log("⏳  Hashing passwords…");
+  const demoSeedPassword = getDemoSeedPassword();
   const [hashed, hashedMoe] = await Promise.all([
-    bcrypt.hash("DemoSeed2026!", 10),
+    bcrypt.hash(demoSeedPassword, 10),
     bcrypt.hash("MOESeed2026!", 10),
   ]);
 
@@ -828,7 +841,7 @@ async function main() {
   console.log(`    MOE accts  : 2 (official1@moe.gov.lr, official2@moe.gov.lr)`);
   console.log("");
   console.log("  Demo credentials:");
-  console.log("    Students/Teachers/Admins: DemoSeed2026!");
+  console.log("    Students/Teachers/Admins: DEMO_SEED_PASSWORD");
   console.log("    MOE Officials           : MOESeed2026!");
   console.log("");
   console.log("  Enable these flags to see all demo data:");
