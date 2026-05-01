@@ -139,6 +139,7 @@ model School {
   labSessions            LabSession[]
   guardianMessages       GuardianMessage[]
   exams                  Exam[]
+  badgeAwards            StudentBadgeAward[]
   ragChunks              RagChunk[]
   sloEvents              SloEvent[]
   academicYears          AcademicYear[]
@@ -209,6 +210,7 @@ model Student {
   examAttempts          ExamAttempt[]
   examCertifications    ExamCertification[]
   certificates          Certificate[]
+  badgeAwards           StudentBadgeAward[]
   performanceEvents     StudentPerformanceEvent[]
   confusionSignals      ConfusionSignal[]
   interventionRecommendations InterventionRecommendation[]
@@ -310,6 +312,28 @@ model Certificate {
   @@unique([studentId, type, referenceId])
   @@index([studentId, awardedAt])
   @@index([type, referenceId])
+}
+
+model StudentBadgeAward {
+  id              String   @id @default(cuid())
+  schoolId        String?
+  studentId       String
+  badgeKey        String
+  title           String
+  description     String
+  evidenceType    String
+  evidenceId      String?
+  evidenceSummary Json?
+  awardedAt       DateTime @default(now())
+  criteriaVersion String   @default("v1")
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  student         Student  @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  school          School?  @relation(fields: [schoolId], references: [id], onDelete: SetNull)
+
+  @@unique([studentId, badgeKey, criteriaVersion])
+  @@index([schoolId, badgeKey])
+  @@index([studentId, awardedAt])
 }
 
 model StudentGuardian {

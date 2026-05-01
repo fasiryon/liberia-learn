@@ -21,7 +21,8 @@
         "promote:lessons": "tsx scripts/promote-enriched-lessons.ts",
         "populate:titles": "tsx scripts/populate-lesson-titles.ts",
         "seed:cha": "tsx prisma/seeds/cha-demo.ts",
-        "fix:encoding": "tsx scripts/fix-encoding.ts"
+        "fix:encoding": "tsx scripts/fix-encoding.ts",
+        "backfill:badges": "tsx scripts/backfill-student-badge-awards.ts"
     },
     "dependencies": {
         "@auth/prisma-adapter": "^2.11.1",
