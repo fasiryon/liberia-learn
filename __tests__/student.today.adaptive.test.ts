@@ -163,6 +163,56 @@ describe("student today layered school day", () => {
     expect(body.todayFocus.primaryHref).toBe("/student/lessons/sw-1");
   });
 
+  it("does not crash when a timetable period is missing teacher details", async () => {
+    mockScheduledWorkFindMany.mockResolvedValueOnce([]).mockResolvedValueOnce([]);
+    mockGetTimetableForStudent.mockResolvedValue({
+      configured: true,
+      date: "2026-05-04",
+      dayName: "Monday",
+      periods: [
+        {
+          id: "tt-1",
+          classId: "class-1",
+          periodLabel: "Period 1",
+          subject: "math",
+          startTime: "09:00",
+          endTime: "09:45",
+          teacherName: undefined,
+          assignment: null,
+        },
+      ],
+    });
+
+    const { GET } = await import("@/app/api/student/today/route");
+    const response = await GET();
+    const body = await response.json();
+
+    expect(response.status).toBe(200);
+    expect(body.schoolDay.items[0]).toMatchObject({
+      subject: "MATH",
+      teacherName: null,
+      title: null,
+    });
+  });
+
+  it("does not crash when scheduledWork has no attached lesson content", async () => {
+    mockScheduledWorkFindMany
+      .mockResolvedValueOnce([scheduledWork({ content: null })])
+      .mockResolvedValueOnce([]);
+
+    const { GET } = await import("@/app/api/student/today/route");
+    const response = await GET();
+    const body = await response.json();
+
+    expect(response.status).toBe(200);
+    expect(body.schoolDay.mode).toBe("learning_plan");
+    expect(body.schoolDay.items[0]).toMatchObject({
+      title: "GENERAL Lesson",
+      subject: "GENERAL",
+      primaryAction: { href: "/student/lessons/sw-1" },
+    });
+  });
+
   it("puts old incomplete work under Catch Up instead of the main school day", async () => {
     mockScheduledWorkFindMany
       .mockResolvedValueOnce([])
@@ -187,6 +237,25 @@ describe("student today layered school day", () => {
     expect(body.schoolDay.mode).toBe("learning_plan");
     expect(body.schoolDay.note).toContain("not configured a full timetable");
     expect(body.schoolDay.items[0].source).toBe("scheduled_work");
+  });
+
+  it("renders scheduledWork fallback when timetable exists but has no periods", async () => {
+    mockScheduledWorkFindMany
+      .mockResolvedValueOnce([scheduledWork()])
+      .mockResolvedValueOnce([]);
+    mockGetTimetableForStudent.mockResolvedValue({
+      configured: false,
+      date: "2026-05-04",
+      dayName: "Monday",
+      periods: [],
+    });
+
+    const { GET } = await import("@/app/api/student/today/route");
+    const body = await (await GET()).json();
+
+    expect(body.schoolDay.mode).toBe("learning_plan");
+    expect(body.schoolDay.items).toHaveLength(1);
+    expect(body.schoolDay.items[0].title).toBe("Ratios in Market Prices");
   });
 
   it("returns setup-needed state when there is no timetable or scheduled work", async () => {

@@ -79,6 +79,51 @@ type TodayResponse = {
   };
 };
 
+function fallbackTodayResponse(): TodayResponse {
+  return {
+    items: [],
+    catchUpItems: [],
+    subjects: [],
+    completedCount: 0,
+    remainingCount: 0,
+    pacingSignal: "on_track",
+    weakTopicSequence: [],
+    schoolDay: {
+      mode: "setup_needed",
+      title: "Todays School Day",
+      note: "No school day schedule has been configured yet.",
+      items: [],
+    },
+    todayFocus: {
+      primaryLabel: "Browse lessons",
+      primaryHref: "/student/lessons",
+      currentOrNext: "No current class",
+      status: null,
+    },
+    progressSnapshot: {
+      lessonsCompleted: 0,
+      assignmentsDue: 0,
+      masterySummary: "No mastery alerts",
+    },
+    adaptivePlan: {
+      smartContinueHref: "/student/lessons",
+      smartContinueLabel: "Browse lessons",
+      smartContinueReason: "No scheduled, incomplete, or weak-area recommendation is available right now.",
+      orderedActions: [],
+      signals: {
+        scheduledToday: 0,
+        incompleteToday: 0,
+        weaknessCount: 0,
+        recommendationCount: 0,
+      },
+    },
+  };
+}
+
+function safeArray<T>(value: T[] | null | undefined): T[] {
+  return Array.isArray(value) ? value : [];
+}
+
 const STATUS_STYLE: Record<ScheduleStatus, string> = {
   current: "border-[var(--ll-accent)] bg-[var(--ll-accent-soft)] text-[var(--ll-accent)]",
   upcoming: "border-[var(--ll-border)] bg-[var(--ll-surface-muted)] text-[var(--ll-text-muted)]",
@@ -112,11 +157,48 @@ export default function StudentTodayPage() {
   const [lastUpdatedAt, setLastUpdatedAt] = useState<string | null>(null);
 
   const loadToday = useCallback(async () => {
-    const response = await fetch("/api/student/today", { cache: "no-store" });
-    const payload = (await response.json()) as TodayResponse;
-    if (!response.ok) throw new Error("Failed to load today");
-    setData(payload);
-    setLastUpdatedAt(new Date().toISOString());
+    try {
+      const response = await fetch("/api/student/today", { cache: "no-store" });
+      const payload = (await response.json().catch(() => null)) as TodayResponse | null;
+      if (!response.ok || !payload || typeof payload !== "object") {
+        setData(fallbackTodayResponse());
+      } else {
+        setData({
+          ...fallbackTodayResponse(),
+          ...payload,
+          items: safeArray(payload.items),
+          catchUpItems: safeArray(payload.catchUpItems),
+          subjects: safeArray(payload.subjects),
+          weakTopicSequence: safeArray(payload.weakTopicSequence),
+          schoolDay: {
+            ...fallbackTodayResponse().schoolDay!,
+            ...payload.schoolDay,
+            items: safeArray(payload.schoolDay?.items),
+          },
+          todayFocus: {
+            ...fallbackTodayResponse().todayFocus!,
+            ...payload.todayFocus,
+          },
+          progressSnapshot: {
+            ...fallbackTodayResponse().progressSnapshot!,
+            ...payload.progressSnapshot,
+          },
+          adaptivePlan: {
+            ...fallbackTodayResponse().adaptivePlan!,
+            ...payload.adaptivePlan,
+            orderedActions: safeArray(payload.adaptivePlan?.orderedActions),
+            signals: {
+              ...fallbackTodayResponse().adaptivePlan!.signals,
+              ...payload.adaptivePlan?.signals,
+            },
+          },
+        });
+      }
+      setLastUpdatedAt(new Date().toISOString());
+    } catch {
+      setData(fallbackTodayResponse());
+      setLastUpdatedAt(new Date().toISOString());
+    }
   }, []);
 
   useEffect(() => {
@@ -231,7 +313,7 @@ export default function StudentTodayPage() {
                 </div>
               ) : (
                 <div className="mt-4 space-y-3">
-                  {schoolDay.items.map((item) => (
+                  {safeArray(schoolDay.items).map((item) => (
                     <article
                       key={item.id}
                       className="grid gap-3 rounded-lg border border-[var(--ll-border)] bg-[var(--ll-surface-muted)] p-4 md:grid-cols-[150px_1fr_auto]"
@@ -294,11 +376,11 @@ export default function StudentTodayPage() {
               <div className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-surface)] p-5">
                 <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[var(--ll-text-faint)]">Catch Up</p>
                 <h2 className="mt-1 text-lg font-semibold text-[var(--ll-text)]">Older incomplete work</h2>
-                {data.catchUpItems.length === 0 ? (
+                {safeArray(data.catchUpItems).length === 0 ? (
                   <p className="mt-3 text-sm text-[var(--ll-text-muted)]">No catch-up work right now.</p>
                 ) : (
                   <div className="mt-3 space-y-2">
-                    {data.catchUpItems.map((item) => (
+                    {safeArray(data.catchUpItems).map((item) => (
                       <Link key={item.id} href={item.lessonHref} className="block rounded-lg border border-[var(--ll-border)] bg-[var(--ll-surface-muted)] p-3">
                         <p className="text-sm font-semibold text-[var(--ll-text)]">{item.title}</p>
                         <p className="mt-1 text-xs text-[var(--ll-text-muted)]">{subjectLabel(item.subject)} - {item.status}</p>

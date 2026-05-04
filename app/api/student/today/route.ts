@@ -54,6 +54,37 @@ type TodayWorkItem = {
   } | null;
 };
 
+type SchoolDayStatus = "current" | "upcoming" | "completed" | "missed";
+
+type SchoolDayAction = {
+  label: "Start Lesson" | "Continue" | "Open Assignment" | "Review";
+  href: string;
+};
+
+function asArray<T>(value: T[] | null | undefined): T[] {
+  return Array.isArray(value) ? value : [];
+}
+
+function safeString(value: unknown, fallback: string): string {
+  return typeof value === "string" && value.trim().length > 0
+    ? value
+    : fallback;
+}
+
+function safeNumber(value: unknown, fallback: number): number {
+  return typeof value === "number" && Number.isFinite(value) ? value : fallback;
+}
+
+function safeSubject(value: unknown): string {
+  return safeString(value, "GENERAL").toUpperCase().replace(/\s+/g, "_");
+}
+
+function safePayload(value: unknown): Record<string, any> {
+  return value && typeof value === "object" && !Array.isArray(value)
+    ? (value as Record<string, any>)
+    : {};
+}
+
 function parsePeriodNumber(label: string | null | undefined): number | null {
   if (!label) return null;
   const match = label.match(/\d+/);
@@ -95,11 +126,11 @@ function resolveSlotStatus(params: {
 }
 
 function primaryActionFor(params: {
-  scheduleStatus: string;
+  scheduleStatus: SchoolDayStatus;
   workStatus: TodayWorkStatus | null;
   lessonHref: string | null;
   assignmentHref: string | null;
-}) {
+}): SchoolDayAction {
   if (params.assignmentHref && !params.lessonHref) {
     return { label: "Open Assignment", href: params.assignmentHref };
   }
@@ -226,41 +257,60 @@ export async function GET() {
     const activeAction = await getActiveStudentAction(student.id).catch(() => null);
     const timetable = await getTimetableForStudent(student.id, new Date()).catch(() => null);
 
+    const safeAssignments = asArray(assignments);
+    const safeIntelligence = {
+      generatedAt:
+        typeof intelligence.generatedAt === "string"
+          ? intelligence.generatedAt
+          : new Date().toISOString(),
+      weaknesses: asArray(intelligence.weaknesses),
+      recommendedNextActions: asArray(intelligence.recommendedNextActions),
+    };
+    const safeAdaptiveResult = {
+      recommendation: adaptiveResult.recommendation ?? null,
+      masteryAlerts: asArray(adaptiveResult.masteryAlerts),
+      contentGap: Boolean(adaptiveResult.contentGap),
+      pacingSignal: adaptiveResult.pacingSignal ?? "on_track",
+      weakTopicSequence: asArray(adaptiveResult.weakTopicSequence),
+    };
+
     const assignmentsByWorkId = new Map(
-      assignments
+      safeAssignments
         .filter((assignment) => assignment.scheduledWorkId)
         .map((assignment) => [assignment.scheduledWorkId as string, assignment])
     );
 
-    const mapWorkItem = (sw: (typeof scheduledWork)[number], index: number): TodayWorkItem => {
-      const payload = sw.content.payload as any;
-      const progress = sw.progress[0];
+    const mapWorkItem = (sw: any, index: number): TodayWorkItem => {
+      const content = sw?.content ?? {};
+      const payload = safePayload(content.payload);
+      const subject = safeSubject(content.subject);
+      const grade = safeNumber(content.grade, 0);
+      const contentId = safeString(content.contentId, sw?.contentId ?? sw?.id ?? `work-${index + 1}`);
+      const progress = asArray<any>(sw?.progress)[0] ?? null;
       let status: TodayWorkStatus = "not_started";
       if (progress?.completedAt) status = "completed";
       else if (progress?.startedAt) status = "in_progress";
-      const lab = getLessonLabLinks({
-        subject: sw.content.subject,
-        grade: sw.content.grade,
-      })[0] ?? null;
-      const assignment = assignmentsByWorkId.get(sw.id) ?? null;
+      const lab = getLessonLabLinks({ subject, grade })[0] ?? null;
+      const assignment = assignmentsByWorkId.get(sw?.id) ?? null;
+      const workId = safeString(sw?.id, `work-${index + 1}`);
 
       return {
-        id: sw.id,
-        classId: sw.classId,
-        contentId: sw.content.contentId,
-        title: payload?.title || payload?.topic || `${sw.content.subject} Lesson`,
-        subject: sw.content.subject,
-        grade: sw.content.grade,
-        contentType: sw.content.contentType,
-        estimatedDuration: payload?.durationMins || 45,
-        periodNumber: sw.periodNumber,
-        startTime: sw.startTime,
-        endTime: sw.endTime,
+        id: workId,
+        classId: safeString(sw?.classId, ""),
+        contentId,
+        title: safeString(payload.title, safeString(payload.topic, `${subject} Lesson`)),
+        subject,
+        grade,
+        contentType: safeString(content.contentType, "LESSON"),
+        estimatedDuration: safeNumber(payload.durationMins, 45),
+        periodNumber: typeof sw?.periodNumber === "number" ? sw.periodNumber : null,
+        startTime: typeof sw?.startTime === "string" ? sw.startTime : null,
+        endTime: typeof sw?.endTime === "string" ? sw.endTime : null,
         status,
         completedAt: progress?.completedAt || null,
         order: index + 1,
-        lessonHref: `/student/lessons/${sw.id}`,
-        quizHref: `/student/lessons/${sw.id}#lesson-quiz`,
+        lessonHref: `/student/lessons/${workId}`,
+        quizHref: `/student/lessons/${workId}#lesson-quiz`,
         lab: lab ? { ...lab, href: `/student/labs/${lab.labId}` } : null,
         assignment: assignment
           ? {
@@ -268,7 +318,7 @@ export async function GET() {
               title: assignment.title,
               href: `/student/assignments/${assignment.id}`,
               dueAt: assignment.dueAt?.toISOString() ?? null,
-              status: assignment.submissions.some((submission) => submission.turnedInAt)
+              status: asArray<any>(assignment.submissions).some((submission) => submission.turnedInAt)
                 ? "submitted"
                 : "open",
             }
@@ -276,8 +326,8 @@ export async function GET() {
       };
     };
 
-    const items = scheduledWork.map(mapWorkItem);
-    const catchUpItems = catchUpWork
+    const items = asArray(scheduledWork).map(mapWorkItem);
+    const catchUpItems = asArray(catchUpWork)
       .map(mapWorkItem)
       .filter((item) => item.status !== "completed");
 
@@ -286,7 +336,36 @@ export async function GET() {
       ? items.find((item) => item.order > current.order && item.status !== "completed") ?? null
       : null;
     const nowMinutes = new Date().getHours() * 60 + new Date().getMinutes();
-    const timetablePeriods = timetable?.periods ?? [];
+    const timetablePeriods = asArray(timetable?.periods).map((period: any, index) => ({
+      id: safeString(period?.id, `period-${index + 1}`),
+      classId: safeString(period?.classId, ""),
+      periodLabel: safeString(period?.periodLabel, `Period ${index + 1}`),
+      subject: period?.subject ? safeSubject(period.subject) : null,
+      startTime: typeof period?.startTime === "string" ? period.startTime : null,
+      endTime: typeof period?.endTime === "string" ? period.endTime : null,
+      teacherName:
+        typeof period?.teacherName === "string" && period.teacherName.trim()
+          ? period.teacherName
+          : null,
+      assignment: period?.assignment
+        ? {
+            id: safeString(period.assignment.id, `assignment-${index + 1}`),
+            title: safeString(period.assignment.title, "Assigned work"),
+            contentId:
+              typeof period.assignment.contentId === "string"
+                ? period.assignment.contentId
+                : null,
+            lessonUrl:
+              typeof period.assignment.lessonUrl === "string"
+                ? period.assignment.lessonUrl
+                : null,
+            instructions:
+              typeof period.assignment.instructions === "string"
+                ? period.assignment.instructions
+                : null,
+          }
+        : null,
+    }));
     const workUsedInSchoolDay = new Set<string>();
     const firstOpenIndex = Math.max(
       0,
@@ -296,11 +375,13 @@ export async function GET() {
       })
     );
 
-    function findWorkForPeriod(period: NonNullable<typeof timetable>["periods"][number]) {
+    function findWorkForPeriod(period: (typeof timetablePeriods)[number]) {
       const periodNumber = parsePeriodNumber(period.periodLabel);
       const byPeriod = items.find(
         (item) =>
           !workUsedInSchoolDay.has(item.id) &&
+          item.classId &&
+          period.classId &&
           item.classId === period.classId &&
           periodNumber != null &&
           item.periodNumber === periodNumber
@@ -310,6 +391,8 @@ export async function GET() {
       const byTime = items.find(
         (item) =>
           !workUsedInSchoolDay.has(item.id) &&
+          item.classId &&
+          period.classId &&
           item.classId === period.classId &&
           item.startTime === period.startTime &&
           item.endTime === period.endTime
@@ -319,6 +402,8 @@ export async function GET() {
       return items.find(
         (item) =>
           !workUsedInSchoolDay.has(item.id) &&
+          item.classId &&
+          period.classId &&
           item.classId === period.classId &&
           item.subject === period.subject
       ) ?? null;
@@ -403,7 +488,7 @@ export async function GET() {
           priority: item.status === "in_progress" ? 110 : 105 - item.order,
           source: "scheduled_work",
         })),
-      ...intelligence.recommendedNextActions.map((action) => ({
+      ...safeIntelligence.recommendedNextActions.map((action) => ({
         ...action,
         source: "learning_intelligence",
       })),
@@ -444,8 +529,8 @@ export async function GET() {
       progressSnapshot: {
         lessonsCompleted: items.filter((item) => item.status === "completed").length,
         assignmentsDue: items.filter((item) => item.assignment?.status === "open").length,
-        masterySummary: adaptiveResult.masteryAlerts?.length
-          ? `${adaptiveResult.masteryAlerts.length} mastery alert${adaptiveResult.masteryAlerts.length === 1 ? "" : "s"}`
+        masterySummary: safeAdaptiveResult.masteryAlerts.length
+          ? `${safeAdaptiveResult.masteryAlerts.length} mastery alert${safeAdaptiveResult.masteryAlerts.length === 1 ? "" : "s"}`
           : "No mastery alerts",
       },
       subjects: Array.from(new Set(items.map((item) => item.subject))),
@@ -453,22 +538,22 @@ export async function GET() {
       remainingCount: items.filter((item) => item.status !== "completed").length,
       currentItemId: current?.id ?? null,
       nextItemId: next?.id ?? null,
-      priority: adaptiveResult.recommendation?.type ?? null,
-      recommendation: adaptiveResult.recommendation
+      priority: safeAdaptiveResult.recommendation?.type ?? null,
+      recommendation: safeAdaptiveResult.recommendation
         ? {
-            type: adaptiveResult.recommendation.type,
-            lessonId: adaptiveResult.recommendation.lessonId,
-            scheduledWorkId: adaptiveResult.recommendation.scheduledWorkId,
-            reason: adaptiveResult.recommendation.reason,
-            sourceSignal: adaptiveResult.recommendation.sourceSignal,
-            masteryPercent: adaptiveResult.recommendation.masteryPercent,
-            confidenceTier: adaptiveResult.recommendation.confidenceTier,
+            type: safeAdaptiveResult.recommendation.type,
+            lessonId: safeAdaptiveResult.recommendation.lessonId,
+            scheduledWorkId: safeAdaptiveResult.recommendation.scheduledWorkId,
+            reason: safeAdaptiveResult.recommendation.reason,
+            sourceSignal: safeAdaptiveResult.recommendation.sourceSignal,
+            masteryPercent: safeAdaptiveResult.recommendation.masteryPercent,
+            confidenceTier: safeAdaptiveResult.recommendation.confidenceTier,
           }
         : null,
-      masteryAlerts: adaptiveResult.masteryAlerts,
-      contentGap: adaptiveResult.contentGap,
-      pacingSignal: adaptiveResult.pacingSignal,
-      weakTopicSequence: adaptiveResult.weakTopicSequence,
+      masteryAlerts: safeAdaptiveResult.masteryAlerts,
+      contentGap: safeAdaptiveResult.contentGap,
+      pacingSignal: safeAdaptiveResult.pacingSignal,
+      weakTopicSequence: safeAdaptiveResult.weakTopicSequence,
       activeAction: activeAction
         ? {
             id: activeAction.id,
@@ -480,7 +565,7 @@ export async function GET() {
           }
         : null,
       adaptivePlan: {
-        generatedAt: intelligence.generatedAt,
+        generatedAt: safeIntelligence.generatedAt,
         smartContinueHref: smartContinue?.href ?? "/student/lessons",
         smartContinueLabel: smartContinue?.label ?? "Browse lessons",
         smartContinueReason:
@@ -490,8 +575,8 @@ export async function GET() {
         signals: {
           scheduledToday: items.length,
           incompleteToday: items.filter((item) => item.status !== "completed").length,
-          weaknessCount: intelligence.weaknesses.length,
-          recommendationCount: intelligence.recommendedNextActions.length,
+          weaknessCount: safeIntelligence.weaknesses.length,
+          recommendationCount: safeIntelligence.recommendedNextActions.length,
         },
       },
       timetable: timetable ?? null,
