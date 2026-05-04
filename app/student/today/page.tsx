@@ -4,11 +4,11 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { BookOpen, CheckCircle2, Clock3, ListChecks, RefreshCw, TrendingUp } from "lucide-react";
 import { SkeletonCard } from "@/components/ui/Skeleton";
-import { GuidedEmptyState } from "@/components/onboarding/GuidedEmptyState";
 import { useAssignmentPolling } from "@/lib/hooks/useAssignmentPolling";
 
 type WorkStatus = "not_started" | "in_progress" | "completed";
 type ScheduleStatus = "current" | "upcoming" | "completed" | "missed";
+type TabKey = "schedule" | "catch-up" | "support" | "progress";
 
 type WorkItem = {
   id: string;
@@ -17,7 +17,7 @@ type WorkItem = {
   grade: number;
   status: WorkStatus;
   lessonHref: string;
-  assignment?: { id: string; title: string; href: string; status: "open" | "submitted" } | null;
+  assignment?: { id: string; title: string; href: string; dueAt?: string | null; status: "open" | "submitted" } | null;
 };
 
 type SchoolDayItem = {
@@ -32,15 +32,24 @@ type SchoolDayItem = {
   primaryAction: { label: "Start Lesson" | "Continue" | "Open Assignment" | "Review"; href: string };
 };
 
+type AdaptiveAction = {
+  type: string;
+  label: string;
+  reason: string;
+  href: string;
+  priority: number;
+  source: string;
+};
+
 type TodayResponse = {
   items: WorkItem[];
   catchUpItems: WorkItem[];
   subjects: string[];
   completedCount: number;
   remainingCount: number;
-  contentGap?: boolean;
   pacingSignal?: string;
   weakTopicSequence?: Array<{ lessonId?: string; reason?: string; priorityOrder?: number }>;
+  masteryAlerts?: Array<{ title?: string; message?: string; subject?: string; severity?: string }>;
   schoolDay?: {
     mode: "timetable" | "learning_plan" | "setup_needed";
     title: string;
@@ -62,14 +71,7 @@ type TodayResponse = {
     smartContinueHref: string;
     smartContinueLabel: string;
     smartContinueReason: string;
-    orderedActions: Array<{
-      type: string;
-      label: string;
-      reason: string;
-      href: string;
-      priority: number;
-      source: string;
-    }>;
+    orderedActions: AdaptiveAction[];
     signals: {
       scheduledToday: number;
       incompleteToday: number;
@@ -88,10 +90,11 @@ function fallbackTodayResponse(): TodayResponse {
     remainingCount: 0,
     pacingSignal: "on_track",
     weakTopicSequence: [],
+    masteryAlerts: [],
     schoolDay: {
       mode: "setup_needed",
-      title: "Todays School Day",
-      note: "No school day schedule has been configured yet.",
+      title: "Today's School Day",
+      note: null,
       items: [],
     },
     todayFocus: {
@@ -124,15 +127,8 @@ function safeArray<T>(value: T[] | null | undefined): T[] {
   return Array.isArray(value) ? value : [];
 }
 
-const STATUS_STYLE: Record<ScheduleStatus, string> = {
-  current: "border-[var(--ll-accent)] bg-[var(--ll-accent-soft)] text-[var(--ll-accent)]",
-  upcoming: "border-[var(--ll-border)] bg-[var(--ll-surface-muted)] text-[var(--ll-text-muted)]",
-  completed: "border-[var(--ll-accent)]/30 bg-[var(--ll-accent-soft)] text-[var(--ll-accent)]",
-  missed: "border-[var(--ll-warning)]/40 bg-[rgba(250,204,21,0.10)] text-[var(--ll-warning)]",
-};
-
 function formatTimeRange(value: string | null) {
-  if (!value) return "Time to be announced";
+  if (!value) return "Today";
   return value
     .split("-")
     .map((part) => {
@@ -147,7 +143,16 @@ function formatTimeRange(value: string | null) {
 }
 
 function subjectLabel(subject: string | null | undefined) {
-  return subject ? subject.replace(/_/g, " ") : "School period";
+  return subject ? subject.replace(/_/g, " ") : "General";
+}
+
+function statusLabel(status: WorkStatus | ScheduleStatus) {
+  return status.replace(/_/g, " ");
+}
+
+function dueLabel(item: WorkItem) {
+  if (!item.assignment?.dueAt) return "Due today";
+  return `Due ${new Date(item.assignment.dueAt).toLocaleDateString("en-LR", { month: "short", day: "numeric" })}`;
 }
 
 export default function StudentTodayPage() {
@@ -155,6 +160,7 @@ export default function StudentTodayPage() {
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [lastUpdatedAt, setLastUpdatedAt] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState<TabKey>("schedule");
 
   const loadToday = useCallback(async () => {
     try {
@@ -163,32 +169,35 @@ export default function StudentTodayPage() {
       if (!response.ok || !payload || typeof payload !== "object") {
         setData(fallbackTodayResponse());
       } else {
+        const fallback = fallbackTodayResponse();
         setData({
-          ...fallbackTodayResponse(),
+          ...fallback,
           ...payload,
           items: safeArray(payload.items),
           catchUpItems: safeArray(payload.catchUpItems),
           subjects: safeArray(payload.subjects),
           weakTopicSequence: safeArray(payload.weakTopicSequence),
+          masteryAlerts: safeArray(payload.masteryAlerts),
           schoolDay: {
-            ...fallbackTodayResponse().schoolDay!,
+            ...fallback.schoolDay!,
             ...payload.schoolDay,
+            note: payload.schoolDay?.note ?? null,
             items: safeArray(payload.schoolDay?.items),
           },
           todayFocus: {
-            ...fallbackTodayResponse().todayFocus!,
+            ...fallback.todayFocus!,
             ...payload.todayFocus,
           },
           progressSnapshot: {
-            ...fallbackTodayResponse().progressSnapshot!,
+            ...fallback.progressSnapshot!,
             ...payload.progressSnapshot,
           },
           adaptivePlan: {
-            ...fallbackTodayResponse().adaptivePlan!,
+            ...fallback.adaptivePlan!,
             ...payload.adaptivePlan,
             orderedActions: safeArray(payload.adaptivePlan?.orderedActions),
             signals: {
-              ...fallbackTodayResponse().adaptivePlan!.signals,
+              ...fallback.adaptivePlan!.signals,
               ...payload.adaptivePlan?.signals,
             },
           },
@@ -217,32 +226,56 @@ export default function StudentTodayPage() {
   }
 
   const schoolDay = data?.schoolDay;
-  const focus = data?.todayFocus;
-  const currentOrNext = useMemo(
-    () => schoolDay?.items.find((item) => item.status === "current") ?? schoolDay?.items.find((item) => item.status === "upcoming") ?? schoolDay?.items[0] ?? null,
-    [schoolDay]
-  );
+  const scheduleItems = safeArray(schoolDay?.items);
+  const assignedWork = safeArray(data?.items).filter((item) => item.status !== "completed");
   const adaptiveAction = data?.adaptivePlan?.orderedActions?.[0] ?? null;
+  const currentOrNext = useMemo(
+    () => scheduleItems.find((item) => item.status === "current") ?? scheduleItems.find((item) => item.status === "upcoming") ?? scheduleItems[0] ?? null,
+    [scheduleItems]
+  );
+  const priorityTitle =
+    currentOrNext?.title ??
+    assignedWork[0]?.title ??
+    adaptiveAction?.label ??
+    data?.todayFocus?.currentOrNext ??
+    "No lessons scheduled yet";
+  const priorityReason =
+    currentOrNext
+      ? `${formatTimeRange(currentOrNext.timeRange)} - ${subjectLabel(currentOrNext.subject)}`
+      : assignedWork[0]
+        ? `${subjectLabel(assignedWork[0].subject)} - ${dueLabel(assignedWork[0])}`
+        : adaptiveAction?.reason ?? "Check assignments or browse the curriculum.";
+  const priorityHref =
+    currentOrNext?.primaryAction.href ??
+    assignedWork[0]?.lessonHref ??
+    adaptiveAction?.href ??
+    data?.todayFocus?.primaryHref ??
+    "/student/lessons";
+  const priorityLabel =
+    currentOrNext?.primaryAction.label ??
+    (assignedWork[0] ? "Open lesson" : adaptiveAction ? "Start lesson" : "Browse curriculum");
+  const dateLabel = new Date().toLocaleDateString("en-LR", {
+    weekday: "long",
+    month: "long",
+    day: "numeric",
+  });
 
   return (
     <main className="ll-dashboard-shell">
-      <div className="ll-page-enter mx-auto max-w-6xl space-y-5 px-4 py-5">
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+      <div className="ll-page-enter mx-auto max-w-6xl space-y-4 px-4 py-5">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <Link href="/dashboard" className="text-sm text-[var(--ll-yellow)] hover:text-[var(--ll-yellow)]">
               &larr; Back to Dashboard
             </Link>
-            <h1 className="mt-2 text-3xl font-semibold text-[var(--ll-text)]">Today Focus</h1>
-            <p className="mt-1 text-sm leading-6 text-[var(--ll-text-muted)]">
-              {new Date().toLocaleDateString("en-LR", { weekday: "long", month: "long", day: "numeric" })}
-            </p>
+            <p className="mt-2 text-lg font-semibold text-[var(--ll-text)]">{dateLabel}</p>
           </div>
           {!loading ? (
             <button
               type="button"
               onClick={refreshToday}
               disabled={refreshing}
-              className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl border border-[var(--ll-border)] bg-[var(--ll-surface)] px-4 text-sm font-semibold text-[var(--ll-text)] disabled:opacity-60"
+              className="inline-flex min-h-10 items-center justify-center gap-2 rounded-lg border border-[var(--ll-border)] bg-[var(--ll-surface)] px-4 text-sm font-semibold text-[var(--ll-text)] disabled:opacity-60"
             >
               <RefreshCw className="h-4 w-4" strokeWidth={1.5} />
               {refreshing ? "Refreshing..." : "Refresh"}
@@ -255,165 +288,268 @@ export default function StudentTodayPage() {
             {[1, 2, 3].map((index) => <SkeletonCard key={index} />)}
           </div>
         ) : !data ? (
-          <GuidedEmptyState
-            Icon={BookOpen}
-            heading="No school day schedule has been configured yet."
-            body="Your teacher or school admin needs to configure the school day before lessons can appear here."
-            actions={[{ label: "Browse lessons", href: "/student/lessons", primary: true }]}
-          />
+          <TrueEmptyState />
         ) : (
           <>
-            <section className="rounded-xl border border-[var(--ll-accent)]/35 bg-[var(--ll-accent-soft)] p-5 sm:p-6">
-              <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[var(--ll-accent)]">Layer 1 - Today Focus</p>
-              <div className="mt-3 grid gap-4 lg:grid-cols-[1fr_auto] lg:items-center">
-                <div>
-                  <h2 className="text-2xl font-semibold text-[var(--ll-text)]">
-                    {focus?.currentOrNext ?? currentOrNext?.title ?? "No current class"}
-                  </h2>
-                  <p className="mt-2 text-sm leading-6 text-[var(--ll-text-muted)]">
-                    {currentOrNext
-                      ? `${formatTimeRange(currentOrNext.timeRange)} - ${subjectLabel(currentOrNext.subject)}`
-                      : "No school day schedule has been configured yet."}
-                  </p>
-                </div>
-                <Link
-                  href={focus?.primaryHref ?? currentOrNext?.primaryAction.href ?? "/student/lessons"}
-                  className="ll-touch-target inline-flex items-center justify-center rounded-lg bg-[var(--ll-accent)] px-5 py-3 text-sm font-semibold text-[var(--ll-text-faint)]"
+            <section className="grid gap-3 rounded-lg border border-[var(--ll-accent)]/35 bg-[var(--ll-accent-soft)] p-4 sm:grid-cols-[1fr_auto] sm:items-center">
+              <div>
+                <h1 className="text-lg font-semibold text-[var(--ll-text)]">{priorityTitle}</h1>
+                <p className="mt-1 text-sm text-[var(--ll-text-muted)]">{priorityReason}</p>
+              </div>
+              <Link
+                href={priorityHref}
+                className="ll-touch-target inline-flex items-center justify-center rounded-lg bg-[var(--ll-accent)] px-4 py-2 text-sm font-semibold text-[var(--ll-text-faint)]"
+              >
+                {priorityLabel}
+              </Link>
+            </section>
+
+            <div className="-mx-1 flex gap-2 overflow-x-auto px-1 pb-1">
+              {[
+                ["schedule", "Schedule"],
+                ["catch-up", "Catch Up"],
+                ["support", "Support"],
+                ["progress", "Progress"],
+              ].map(([key, label]) => (
+                <button
+                  key={key}
+                  type="button"
+                  onClick={() => setActiveTab(key as TabKey)}
+                  className={`shrink-0 rounded-full border px-4 py-2 text-sm font-semibold ${
+                    activeTab === key
+                      ? "border-[var(--ll-accent)] bg-[var(--ll-accent-soft)] text-[var(--ll-accent)]"
+                      : "border-[var(--ll-border)] bg-[var(--ll-surface)] text-[var(--ll-text-muted)]"
+                  }`}
                 >
-                  {focus?.primaryLabel ?? currentOrNext?.primaryAction.label ?? "Browse lessons"}
-                </Link>
-              </div>
-            </section>
+                  {label}
+                </button>
+              ))}
+            </div>
 
-            <section className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-surface)] p-5">
-              <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
-                <div>
-                  <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[var(--ll-text-faint)]">Layer 2</p>
-                  <h2 className="mt-1 text-xl font-semibold text-[var(--ll-text)]">Todays School Day</h2>
-                </div>
-                {lastUpdatedAt ? (
-                  <p className="text-xs text-[var(--ll-text-faint)]">
-                    Updated {new Date(lastUpdatedAt).toLocaleTimeString("en-LR", { hour: "numeric", minute: "2-digit" })}
-                  </p>
-                ) : null}
-              </div>
-
-              {schoolDay?.note ? (
-                <p className="mt-3 rounded-lg border border-[var(--ll-border)] bg-[var(--ll-surface-muted)] px-3 py-2 text-sm text-[var(--ll-text-muted)]">
-                  {schoolDay.note}
-                </p>
+            <section className="rounded-lg border border-[var(--ll-border)] bg-[var(--ll-surface)] p-4">
+              {activeTab === "schedule" ? (
+                <ScheduleTab schoolDay={schoolDay} assignedWork={assignedWork} adaptiveAction={adaptiveAction} />
               ) : null}
-
-              {schoolDay?.mode === "setup_needed" || !schoolDay?.items.length ? (
-                <div className="mt-4 rounded-lg border border-[var(--ll-border)] bg-[var(--ll-surface-muted)] p-4">
-                  <p className="font-semibold text-[var(--ll-text)]">No school day schedule has been configured yet.</p>
-                  <p className="mt-1 text-sm text-[var(--ll-text-muted)]">
-                    Once your school configures timetable periods or today&apos;s learning plan, it will appear here.
-                  </p>
-                </div>
-              ) : (
-                <div className="mt-4 space-y-3">
-                  {safeArray(schoolDay.items).map((item) => (
-                    <article
-                      key={item.id}
-                      className="grid gap-3 rounded-lg border border-[var(--ll-border)] bg-[var(--ll-surface-muted)] p-4 md:grid-cols-[150px_1fr_auto]"
-                    >
-                      <div className="flex items-start gap-2 text-sm font-semibold text-[var(--ll-text)]">
-                        <Clock3 className="mt-0.5 h-4 w-4 text-[var(--ll-text-faint)]" strokeWidth={1.5} />
-                        <div>
-                          <p>{formatTimeRange(item.timeRange)}</p>
-                          <p className="mt-1 text-xs font-medium text-[var(--ll-text-faint)]">{item.periodLabel}</p>
-                        </div>
-                      </div>
-                      <div>
-                        <div className="flex flex-wrap items-center gap-2">
-                          <p className="font-semibold text-[var(--ll-text)]">{subjectLabel(item.subject)}</p>
-                          <span className={`rounded-full border px-2 py-0.5 text-[10px] font-semibold uppercase ${STATUS_STYLE[item.status]}`}>
-                            {item.status}
-                          </span>
-                        </div>
-                        {item.teacherName ? <p className="mt-1 text-xs text-[var(--ll-text-muted)]">Teacher: {item.teacherName}</p> : null}
-                        <p className="mt-2 text-sm text-[var(--ll-text-muted)]">
-                          {item.title ?? "No lesson or assignment attached yet"}
-                        </p>
-                      </div>
-                      <Link
-                        href={item.primaryAction.href}
-                        className="ll-touch-target inline-flex items-center justify-center rounded-lg border border-[var(--ll-border-strong)] px-4 py-2 text-sm font-semibold text-[var(--ll-text)]"
-                      >
-                        {item.primaryAction.label}
-                      </Link>
-                    </article>
-                  ))}
-                </div>
-              )}
-            </section>
-
-            <section className="grid gap-4 lg:grid-cols-[1fr_0.8fr]">
-              <div className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-surface)] p-5">
-                <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[var(--ll-text-faint)]">Layer 3 - Learning Support</p>
-                <h2 className="mt-1 text-lg font-semibold text-[var(--ll-text)]">Adaptive recommendation</h2>
-                {adaptiveAction ? (
-                  <Link href={adaptiveAction.href} className="mt-4 block rounded-lg border border-[var(--ll-border)] bg-[var(--ll-surface-muted)] p-4">
-                    <p className="font-semibold text-[var(--ll-text)]">{adaptiveAction.label}</p>
-                    <p className="mt-1 text-sm text-[var(--ll-text-muted)]">{adaptiveAction.reason}</p>
-                  </Link>
-                ) : (
-                  <p className="mt-3 text-sm text-[var(--ll-text-muted)]">No adaptive recommendation is needed right now.</p>
-                )}
-                <div className="mt-4 grid gap-2 sm:grid-cols-2">
-                  <div className="rounded-lg border border-[var(--ll-border)] bg-[var(--ll-surface-muted)] p-3">
-                    <p className="text-xs uppercase text-[var(--ll-text-faint)]">Pacing Signal</p>
-                    <p className="mt-1 text-sm font-semibold text-[var(--ll-text)]">{data.pacingSignal ?? "on_track"}</p>
-                  </div>
-                  <div className="rounded-lg border border-[var(--ll-border)] bg-[var(--ll-surface-muted)] p-3">
-                    <p className="text-xs uppercase text-[var(--ll-text-faint)]">Weak Topic Sequence</p>
-                    <p className="mt-1 text-sm font-semibold text-[var(--ll-text)]">{data.weakTopicSequence?.length ?? 0} items</p>
-                  </div>
-                </div>
-              </div>
-
-              <div className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-surface)] p-5">
-                <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[var(--ll-text-faint)]">Catch Up</p>
-                <h2 className="mt-1 text-lg font-semibold text-[var(--ll-text)]">Older incomplete work</h2>
-                {safeArray(data.catchUpItems).length === 0 ? (
-                  <p className="mt-3 text-sm text-[var(--ll-text-muted)]">No catch-up work right now.</p>
-                ) : (
-                  <div className="mt-3 space-y-2">
-                    {safeArray(data.catchUpItems).map((item) => (
-                      <Link key={item.id} href={item.lessonHref} className="block rounded-lg border border-[var(--ll-border)] bg-[var(--ll-surface-muted)] p-3">
-                        <p className="text-sm font-semibold text-[var(--ll-text)]">{item.title}</p>
-                        <p className="mt-1 text-xs text-[var(--ll-text-muted)]">{subjectLabel(item.subject)} - {item.status}</p>
-                      </Link>
-                    ))}
-                  </div>
-                )}
-              </div>
-            </section>
-
-            <section className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-surface)] p-5">
-              <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[var(--ll-text-faint)]">Layer 4 - Progress Snapshot</p>
-              <div className="mt-4 grid gap-3 sm:grid-cols-3">
-                <div className="ll-kpi">
-                  <CheckCircle2 className="mb-2 h-5 w-5 text-[var(--ll-accent)]" strokeWidth={1.5} />
-                  <p className="text-2xl font-semibold text-[var(--ll-text)]">{data.progressSnapshot?.lessonsCompleted ?? data.completedCount}</p>
-                  <p className="text-xs text-[var(--ll-text-muted)]">Lessons completed</p>
-                </div>
-                <div className="ll-kpi">
-                  <ListChecks className="mb-2 h-5 w-5 text-[var(--ll-warning)]" strokeWidth={1.5} />
-                  <p className="text-2xl font-semibold text-[var(--ll-text)]">{data.progressSnapshot?.assignmentsDue ?? 0}</p>
-                  <p className="text-xs text-[var(--ll-text-muted)]">Assignments due</p>
-                </div>
-                <div className="ll-kpi">
-                  <TrendingUp className="mb-2 h-5 w-5 text-[var(--ll-accent)]" strokeWidth={1.5} />
-                  <p className="text-sm font-semibold text-[var(--ll-text)]">{data.progressSnapshot?.masterySummary ?? "No mastery alerts"}</p>
-                  <p className="text-xs text-[var(--ll-text-muted)]">Mastery summary</p>
-                </div>
-              </div>
+              {activeTab === "catch-up" ? <CatchUpTab items={safeArray(data.catchUpItems)} /> : null}
+              {activeTab === "support" ? (
+                <SupportTab
+                  adaptiveAction={adaptiveAction}
+                  weakTopicSequence={safeArray(data.weakTopicSequence)}
+                  masteryAlerts={safeArray(data.masteryAlerts)}
+                  pacingSignal={data.pacingSignal}
+                />
+              ) : null}
+              {activeTab === "progress" ? (
+                <ProgressTab
+                  snapshot={data.progressSnapshot}
+                  completedCount={data.completedCount}
+                  remainingCount={data.remainingCount}
+                  lastUpdatedAt={lastUpdatedAt}
+                />
+              ) : null}
             </section>
           </>
         )}
       </div>
     </main>
+  );
+}
+
+function ScheduleTab({
+  schoolDay,
+  assignedWork,
+  adaptiveAction,
+}: {
+  schoolDay: TodayResponse["schoolDay"];
+  assignedWork: WorkItem[];
+  adaptiveAction: AdaptiveAction | null;
+}) {
+  const scheduleItems = safeArray(schoolDay?.items);
+
+  if (schoolDay?.mode === "timetable" && scheduleItems.length > 0) {
+    return (
+      <div className="space-y-2">
+        {scheduleItems.map((item) => (
+          <article key={item.id} className="grid gap-2 rounded-lg border border-[var(--ll-border)] bg-[var(--ll-surface-muted)] p-3 sm:grid-cols-[120px_1fr_auto] sm:items-center">
+            <div className="flex items-center gap-2 text-sm font-semibold text-[var(--ll-text)]">
+              <Clock3 className="h-4 w-4 text-[var(--ll-text-faint)]" strokeWidth={1.5} />
+              {formatTimeRange(item.timeRange)}
+            </div>
+            <div>
+              <p className="text-sm font-semibold text-[var(--ll-text)]">{subjectLabel(item.subject)}</p>
+              <p className="text-xs text-[var(--ll-text-muted)]">{item.periodLabel}</p>
+            </div>
+            <Link href={item.primaryAction.href} className="ll-touch-target inline-flex items-center justify-center rounded-lg border border-[var(--ll-border-strong)] px-3 py-2 text-sm font-semibold text-[var(--ll-text)]">
+              Open
+            </Link>
+          </article>
+        ))}
+      </div>
+    );
+  }
+
+  if (assignedWork.length > 0) {
+    return (
+      <div>
+        <h2 className="text-base font-semibold text-[var(--ll-text)]">Today&apos;s assigned work</h2>
+        <div className="mt-3 space-y-2">
+          {assignedWork.map((item) => (
+            <article key={item.id} className="grid gap-2 rounded-lg border border-[var(--ll-border)] bg-[var(--ll-surface-muted)] p-3 sm:grid-cols-[1fr_auto] sm:items-center">
+              <div>
+                <p className="text-sm font-semibold text-[var(--ll-text)]">{item.title}</p>
+                <p className="mt-1 text-xs text-[var(--ll-text-muted)]">
+                  {subjectLabel(item.subject)} - {dueLabel(item)}
+                </p>
+              </div>
+              <Link href={item.lessonHref} className="ll-touch-target inline-flex items-center justify-center rounded-lg bg-[var(--ll-accent)] px-3 py-2 text-sm font-semibold text-[var(--ll-text-faint)]">
+                Open lesson
+              </Link>
+            </article>
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  if (adaptiveAction) {
+    return (
+      <div>
+        <h2 className="text-base font-semibold text-[var(--ll-text)]">Recommended for today</h2>
+        <Link href={adaptiveAction.href} className="mt-3 block rounded-lg border border-[var(--ll-border)] bg-[var(--ll-surface-muted)] p-3">
+          <p className="text-sm font-semibold text-[var(--ll-text)]">{adaptiveAction.label}</p>
+          <p className="mt-1 text-sm text-[var(--ll-text-muted)]">{adaptiveAction.reason}</p>
+          <span className="mt-3 inline-flex rounded-lg bg-[var(--ll-accent)] px-3 py-2 text-sm font-semibold text-[var(--ll-text-faint)]">
+            Start lesson
+          </span>
+        </Link>
+      </div>
+    );
+  }
+
+  return <TrueEmptyState compact />;
+}
+
+function CatchUpTab({ items }: { items: WorkItem[] }) {
+  const incomplete = items.filter((item) => item.status !== "completed");
+  if (incomplete.length === 0) {
+    return <p className="text-sm text-[var(--ll-text-muted)]">You&apos;re all caught up.</p>;
+  }
+  return (
+    <div className="space-y-2">
+      {incomplete.map((item) => (
+        <Link key={item.id} href={item.lessonHref} className="block rounded-lg border border-[var(--ll-border)] bg-[var(--ll-surface-muted)] p-3">
+          <p className="text-sm font-semibold text-[var(--ll-text)]">{item.title}</p>
+          <p className="mt-1 text-xs text-[var(--ll-text-muted)]">
+            {subjectLabel(item.subject)} - Older work - {statusLabel(item.status)}
+          </p>
+        </Link>
+      ))}
+    </div>
+  );
+}
+
+function SupportTab({
+  adaptiveAction,
+  weakTopicSequence,
+  masteryAlerts,
+  pacingSignal,
+}: {
+  adaptiveAction: AdaptiveAction | null;
+  weakTopicSequence: Array<{ lessonId?: string; reason?: string; priorityOrder?: number }>;
+  masteryAlerts: Array<{ title?: string; message?: string; subject?: string; severity?: string }>;
+  pacingSignal?: string;
+}) {
+  const hasSupport = adaptiveAction || weakTopicSequence.length > 0 || masteryAlerts.length > 0;
+  if (!hasSupport) return <p className="text-sm text-[var(--ll-text-muted)]">No support needed right now.</p>;
+  return (
+    <div className="space-y-3">
+      {adaptiveAction ? (
+        <Link href={adaptiveAction.href} className="block rounded-lg border border-[var(--ll-border)] bg-[var(--ll-surface-muted)] p-3">
+          <p className="text-sm font-semibold text-[var(--ll-text)]">{adaptiveAction.label}</p>
+          <p className="mt-1 text-sm text-[var(--ll-text-muted)]">{adaptiveAction.reason}</p>
+        </Link>
+      ) : null}
+      {masteryAlerts.map((alert, index) => (
+        <div key={`${alert.title ?? "alert"}-${index}`} className="rounded-lg border border-[var(--ll-border)] bg-[var(--ll-surface-muted)] p-3">
+          <p className="text-sm font-semibold text-[var(--ll-text)]">{alert.title ?? alert.subject ?? "Mastery alert"}</p>
+          <p className="mt-1 text-sm text-[var(--ll-text-muted)]">{alert.message ?? alert.severity ?? "Review this area soon."}</p>
+        </div>
+      ))}
+      {weakTopicSequence.map((item, index) => (
+        <div key={`${item.lessonId ?? "weak"}-${index}`} className="rounded-lg border border-[var(--ll-border)] bg-[var(--ll-surface-muted)] p-3">
+          <p className="text-sm font-semibold text-[var(--ll-text)]">Weak concept suggestion</p>
+          <p className="mt-1 text-sm text-[var(--ll-text-muted)]">{item.reason ?? "Practice this concept again."}</p>
+        </div>
+      ))}
+      <p className="text-xs text-[var(--ll-text-faint)]">Pacing: {pacingSignal ?? "on_track"}</p>
+    </div>
+  );
+}
+
+function ProgressTab({
+  snapshot,
+  completedCount,
+  remainingCount,
+  lastUpdatedAt,
+}: {
+  snapshot: TodayResponse["progressSnapshot"];
+  completedCount: number;
+  remainingCount: number;
+  lastUpdatedAt: string | null;
+}) {
+  return (
+    <div>
+      <div className="grid gap-3 sm:grid-cols-3">
+        <div className="ll-kpi">
+          <CheckCircle2 className="mb-2 h-5 w-5 text-[var(--ll-accent)]" strokeWidth={1.5} />
+          <p className="text-xl font-semibold text-[var(--ll-text)]">{snapshot?.lessonsCompleted ?? completedCount}</p>
+          <p className="text-xs text-[var(--ll-text-muted)]">Lessons this week</p>
+        </div>
+        <div className="ll-kpi">
+          <ListChecks className="mb-2 h-5 w-5 text-[var(--ll-warning)]" strokeWidth={1.5} />
+          <p className="text-xl font-semibold text-[var(--ll-text)]">{snapshot?.assignmentsDue ?? remainingCount}</p>
+          <p className="text-xs text-[var(--ll-text-muted)]">Average grade</p>
+        </div>
+        <div className="ll-kpi">
+          <TrendingUp className="mb-2 h-5 w-5 text-[var(--ll-accent)]" strokeWidth={1.5} />
+          <p className="text-sm font-semibold text-[var(--ll-text)]">{snapshot?.masterySummary ?? "No mastery alerts"}</p>
+          <p className="text-xs text-[var(--ll-text-muted)]">Streak</p>
+        </div>
+      </div>
+      <div className="mt-4 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+        <Link href="/student/progress" className="text-sm font-semibold text-[var(--ll-yellow)] hover:text-[var(--ll-yellow)]">
+          View full progress
+        </Link>
+        {lastUpdatedAt ? (
+          <p className="text-xs text-[var(--ll-text-faint)]">
+            Updated {new Date(lastUpdatedAt).toLocaleTimeString("en-LR", { hour: "numeric", minute: "2-digit" })}
+          </p>
+        ) : null}
+      </div>
+    </div>
+  );
+}
+
+function TrueEmptyState({ compact = false }: { compact?: boolean }) {
+  return (
+    <div className={`rounded-lg border border-[var(--ll-border)] bg-[var(--ll-surface-muted)] ${compact ? "p-4" : "p-6"}`}>
+      <div className="flex items-start gap-3">
+        <BookOpen className="mt-0.5 h-5 w-5 text-[var(--ll-text-faint)]" strokeWidth={1.5} />
+        <div>
+          <p className="font-semibold text-[var(--ll-text)]">No lessons scheduled yet.</p>
+          <p className="mt-1 text-sm text-[var(--ll-text-muted)]">
+            Your school hasn&apos;t set up today&apos;s schedule yet. Check your assignments or browse the curriculum.
+          </p>
+          <div className="mt-3 flex flex-wrap gap-2">
+            <Link href="/assignments" className="rounded-lg border border-[var(--ll-border)] px-3 py-2 text-sm font-semibold text-[var(--ll-text)]">
+              View assignments
+            </Link>
+            <Link href="/student/lessons" className="rounded-lg bg-[var(--ll-accent)] px-3 py-2 text-sm font-semibold text-[var(--ll-text-faint)]">
+              Browse curriculum
+            </Link>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 }
