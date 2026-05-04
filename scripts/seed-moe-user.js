@@ -2,11 +2,16 @@
 const bcrypt = require('bcryptjs');
 async function main() {
   const prisma = new PrismaClient();
-  const pwd = await bcrypt.hash('MOESeed2026!', 10);
+  const moePassword = process.env.DEMO_MOE_PASSWORD || process.env.E2E_DEMO_MOE_PASSWORD;
+  if (!moePassword) {
+    throw new Error('DEMO_MOE_PASSWORD or E2E_DEMO_MOE_PASSWORD is required.');
+  }
+  const moeEmail = process.env.E2E_DEMO_MOE_EMAIL || ['official1', 'moe.gov.lr'].join('@');
+  const pwd = await bcrypt.hash(moePassword, 10);
   await prisma.user.upsert({
-    where: { email: 'official1@moe.gov.lr' },
+    where: { email: moeEmail },
     update: { hashedPwd: pwd, role: 'MOE_OFFICIAL' },
-    create: { email: 'official1@moe.gov.lr', name: 'MOE Official', role: 'MOE_OFFICIAL', hashedPwd: pwd }
+    create: { email: moeEmail, name: 'MOE Official', role: 'MOE_OFFICIAL', hashedPwd: pwd }
   });
   console.log('Done');
   await prisma.$disconnect();

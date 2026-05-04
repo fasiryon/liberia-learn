@@ -43,6 +43,7 @@ vi.mock("@/lib/db", () => ({
 }));
 
 import { GET } from "@/app/api/moe/dashboard/route";
+import { prisma } from "@/lib/db";
 
 const MOE_USER = { id: "moe-1", role: "MOE_OFFICIAL", isPlatformAdmin: false };
 
@@ -149,6 +150,52 @@ describe("GET /api/moe/dashboard (Sprint 6 enhanced)", () => {
     const bomi = body.countyBreakdown.find((c: { county: string }) => c.county === "Bomi");
     expect(bomi.suppressed).toBe(true);
     expect(bomi.metrics).toBeNull();
+  });
+
+  it("preserves school county labels when geo metrics are unavailable", async () => {
+    mockComputeNationalGeoPerformance.mockResolvedValueOnce({
+      period: { from: "2026-02", to: "2026-04" },
+      counties: [],
+    });
+
+    vi.mocked(prisma.school.count).mockResolvedValue(1);
+    vi.mocked(prisma.district.count).mockResolvedValue(1);
+    vi.mocked(prisma.student.count).mockResolvedValue(6);
+    vi.mocked(prisma.scheduledWork.count)
+      .mockResolvedValueOnce(0)
+      .mockResolvedValueOnce(0);
+    vi.mocked(prisma.interventionLog.count).mockResolvedValue(0);
+    vi.mocked(prisma.school.findMany).mockResolvedValue([
+      { county: "Montserrado", _count: { users: 6 } },
+    ] as any);
+    vi.mocked(prisma.derivedStudentProgress.findMany).mockResolvedValue([]);
+    vi.mocked(prisma.studentMasteryProfile.aggregate).mockResolvedValue({
+      _avg: { currentScore: null },
+    } as any);
+    vi.mocked(prisma.aIInteraction.aggregate).mockResolvedValue({
+      _count: { _all: 0 },
+      _sum: { tokensUsed: null, estimatedCostUSD: null },
+    } as any);
+    vi.mocked(prisma.aIInteraction.groupBy as any).mockResolvedValue([]);
+
+    const res = await GET();
+    const body = await res.json();
+    const montserrado = body.countyBreakdown.find(
+      (county: { county: string }) => county.county === "Montserrado"
+    );
+
+    expect(montserrado).toEqual(
+      expect.objectContaining({
+        county: "Montserrado",
+        hasData: false,
+        suppressed: true,
+        studentCount: null,
+        metrics: null,
+      })
+    );
+    expect(JSON.stringify(body)).not.toContain(process.env.E2E_DEMO_STUDENT_EMAIL ?? "<E2E_DEMO_STUDENT_EMAIL>");
+    expect(body.studentRows).toBeUndefined();
+    expect(body.studentsList).toBeUndefined();
   });
 
   it("returns aggregate-only payload with no individual student rows", async () => {

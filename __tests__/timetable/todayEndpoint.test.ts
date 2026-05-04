@@ -26,6 +26,7 @@ vi.mock("@/lib/db", () => ({
   prisma: {
     student: { findUnique: vi.fn() },
     scheduledWork: { findMany: vi.fn() },
+    assignment: { findMany: vi.fn() },
   },
 }));
 
@@ -94,6 +95,7 @@ beforeEach(() => {
     enrollments: [{ classId: "class-1" }],
   });
   mockPrisma.scheduledWork.findMany.mockResolvedValue([]);
+  mockPrisma.assignment.findMany.mockResolvedValue([]);
 });
 
 describe("/api/student/today — timetable field", () => {
@@ -160,6 +162,10 @@ describe("/api/student/today — timetable field", () => {
     expect(data).toHaveProperty("adaptivePlan");
     // New timetable field
     expect(data).toHaveProperty("timetable");
+    expect(data).toHaveProperty("schoolDay");
+    expect(data).toHaveProperty("todayFocus");
+    expect(data).toHaveProperty("catchUpItems");
+    expect(data).toHaveProperty("progressSnapshot");
   });
 
   it("timetable is null when student record not found", async () => {
