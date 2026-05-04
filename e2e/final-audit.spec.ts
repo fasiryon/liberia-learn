@@ -1,12 +1,29 @@
 import { test, expect } from "@playwright/test";
 
 const BASE = process.env.PLAYWRIGHT_BASE_URL ?? "https://liberia-learn.vercel.app";
-const E2E_DEMO_STUDENT_EMAIL = process.env.E2E_DEMO_STUDENT_EMAIL || "student1@cha.edu.lr";
+const E2E_DEMO_STUDENT_EMAIL = process.env.E2E_DEMO_STUDENT_EMAIL;
 const E2E_DEMO_STUDENT_PASSWORD = process.env.E2E_DEMO_STUDENT_PASSWORD;
+const E2E_DEMO_TEACHER_EMAIL = process.env.E2E_DEMO_TEACHER_EMAIL;
+const E2E_DEMO_TEACHER_PASSWORD = process.env.E2E_DEMO_TEACHER_PASSWORD;
+const E2E_DEMO_ADMIN_EMAIL = process.env.E2E_DEMO_ADMIN_EMAIL;
+const E2E_DEMO_ADMIN_PASSWORD = process.env.E2E_DEMO_ADMIN_PASSWORD;
+const E2E_DEMO_GUARDIAN_EMAIL = process.env.E2E_DEMO_GUARDIAN_EMAIL;
+const E2E_DEMO_GUARDIAN_PASSWORD = process.env.E2E_DEMO_GUARDIAN_PASSWORD;
+const E2E_DEMO_MOE_EMAIL = process.env.E2E_DEMO_MOE_EMAIL;
+const E2E_DEMO_MOE_PASSWORD = process.env.E2E_DEMO_MOE_PASSWORD;
 
 test.skip(
-  !E2E_DEMO_STUDENT_PASSWORD,
-  "Skipping final audit E2E tests because E2E_DEMO_STUDENT_PASSWORD is not set."
+  !E2E_DEMO_STUDENT_EMAIL ||
+    !E2E_DEMO_STUDENT_PASSWORD ||
+    !E2E_DEMO_TEACHER_EMAIL ||
+    !E2E_DEMO_TEACHER_PASSWORD ||
+    !E2E_DEMO_ADMIN_EMAIL ||
+    !E2E_DEMO_ADMIN_PASSWORD ||
+    !E2E_DEMO_GUARDIAN_EMAIL ||
+    !E2E_DEMO_GUARDIAN_PASSWORD ||
+    !E2E_DEMO_MOE_EMAIL ||
+    !E2E_DEMO_MOE_PASSWORD,
+  "Skipping final audit E2E tests because required E2E demo credential environment variables are not set."
 );
 
 test("homepage loads and all role links work", async ({ page }) => {
@@ -29,7 +46,7 @@ test("homepage loads and all role links work", async ({ page }) => {
 
 test("student full journey — login to lesson", async ({ page }) => {
   await page.goto(`${BASE}/login`);
-  await page.fill('input[type="email"]', E2E_DEMO_STUDENT_EMAIL);
+  await page.fill('input[type="email"]', E2E_DEMO_STUDENT_EMAIL!);
   await page.fill('input[type="password"]', E2E_DEMO_STUDENT_PASSWORD!);
   await page.click('button[type="submit"]');
   await page.waitForURL(/\/student|\/dashboard/, { timeout: 15000 });
@@ -53,8 +70,8 @@ test("student full journey — login to lesson", async ({ page }) => {
 
 test("teacher full journey — login to student review", async ({ page }) => {
   await page.goto(`${BASE}/login`);
-  await page.fill('input[type="email"]', "teacher1@cha.edu.lr");
-  await page.fill('input[type="password"]', E2E_DEMO_STUDENT_PASSWORD!);
+  await page.fill('input[type="email"]', E2E_DEMO_TEACHER_EMAIL!);
+  await page.fill('input[type="password"]', E2E_DEMO_TEACHER_PASSWORD!);
   await page.click('button[type="submit"]');
   await page.waitForURL(/\/teacher/, { timeout: 15000 });
   await page.waitForTimeout(2000);
@@ -73,8 +90,8 @@ test("teacher full journey — login to student review", async ({ page }) => {
 
 test("admin dashboard loads with real data", async ({ page }) => {
   await page.goto(`${BASE}/login`);
-  await page.fill('input[type="email"]', "admin@cha.edu.lr");
-  await page.fill('input[type="password"]', E2E_DEMO_STUDENT_PASSWORD!);
+  await page.fill('input[type="email"]', E2E_DEMO_ADMIN_EMAIL!);
+  await page.fill('input[type="password"]', E2E_DEMO_ADMIN_PASSWORD!);
   await page.click('button[type="submit"]');
   await page.waitForURL(/\/admin/, { timeout: 15000 });
   await page.waitForTimeout(2000);
@@ -90,8 +107,8 @@ test("admin dashboard loads with real data", async ({ page }) => {
 test("MOE dashboard shows national data", async ({ page }) => {
   test.setTimeout(90000);
   await page.goto(`${BASE}/moe/login`);
-  await page.fill('input[type="email"]', "official1@moe.gov.lr");
-  await page.fill('input[type="password"]', "MOESeed2026!");
+  await page.fill('input[type="email"]', E2E_DEMO_MOE_EMAIL!);
+  await page.fill('input[type="password"]', E2E_DEMO_MOE_PASSWORD!);
   await page.click('button[type="submit"]');
   await page.waitForURL(/\/moe\/dashboard/, { timeout: 15000 });
 
@@ -100,7 +117,7 @@ test("MOE dashboard shows national data", async ({ page }) => {
 
   const body = await page.locator("body").innerText();
   expect(body).toContain("Montserrado");
-  expect(body).not.toMatch(/student1@cha/);
+  expect(body).not.toContain(E2E_DEMO_STUDENT_EMAIL!);
   expect(body).not.toMatch(/DemoSeed/);
 
   await page.goto(`${BASE}/moe/login`);
@@ -110,8 +127,8 @@ test("MOE dashboard shows national data", async ({ page }) => {
 
 test("guardian journey — login to messages", async ({ page }) => {
   await page.goto(`${BASE}/login`);
-  await page.fill('input[type="email"]', "guardian1@cha.family.lr");
-  await page.fill('input[type="password"]', E2E_DEMO_STUDENT_PASSWORD!);
+  await page.fill('input[type="email"]', E2E_DEMO_GUARDIAN_EMAIL!);
+  await page.fill('input[type="password"]', E2E_DEMO_GUARDIAN_PASSWORD!);
   await page.click('button[type="submit"]');
   await page.waitForURL(/\/guardian|\/dashboard/, { timeout: 15000 });
   await page.waitForTimeout(2000);
@@ -162,7 +179,7 @@ test("mobile 375px — no overflow on key pages", async ({ page }) => {
 
 test("student progress and certificates have back nav", async ({ page }) => {
   await page.goto(`${BASE}/login`);
-  await page.fill('input[type="email"]', E2E_DEMO_STUDENT_EMAIL);
+  await page.fill('input[type="email"]', E2E_DEMO_STUDENT_EMAIL!);
   await page.fill('input[type="password"]', E2E_DEMO_STUDENT_PASSWORD!);
   await page.click('button[type="submit"]');
   await page.waitForURL(/\/student|\/dashboard/, { timeout: 15000 });

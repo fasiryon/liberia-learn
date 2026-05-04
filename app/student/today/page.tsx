@@ -145,6 +145,15 @@ export default function StudentTodayPage() {
   const currentItem = items.find((item) => item.id === currentItemId && item.status !== "completed") ?? null;
   const nextItem = items.find((item) => item.id === nextItemId) ?? null;
   const smartAction = adaptivePlan?.orderedActions?.[0] ?? null;
+  const summaryItem = currentItem ?? nextItem ?? items[0] ?? null;
+  const scheduledPeriodCount = timetable?.periods.length ?? items.length;
+  const progressSummary = `${completedCount} completed and ${remainingCount} remaining`;
+  const recommendationSummary =
+    smartAction?.reason ??
+    adaptivePlan?.smartContinueReason ??
+    (remainingCount > 0
+      ? "Continue the next incomplete lesson in today's plan."
+      : "Review progress and keep learning from the curriculum.");
 
   function to12Hour(time: string): string {
     const [hStr, mStr] = time.split(":");
@@ -224,6 +233,100 @@ export default function StudentTodayPage() {
             </div>
           ))}
         </div>
+      </section>
+    );
+  }
+
+  function ScheduledWorkScheduleSection({ scheduleItems }: { scheduleItems: WorkItem[] }) {
+    const sorted = [...scheduleItems].sort((left, right) => {
+      if (left.periodNumber && right.periodNumber) return left.periodNumber - right.periodNumber;
+      if (left.startTime && right.startTime) return left.startTime.localeCompare(right.startTime);
+      return left.order - right.order;
+    });
+
+    return (
+      <section className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-surface)] p-5">
+        <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[var(--ll-text-faint)]">
+          Today&apos;s Schedule / Timetable
+        </p>
+        <div className="mt-3 space-y-2">
+          {sorted.map((item) => {
+            const badge = STATUS_BADGE[item.status];
+            return (
+              <div
+                key={item.id}
+                className="rounded-lg border border-[var(--ll-border)] bg-[var(--ll-surface-muted)] p-3"
+              >
+                <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                  <div className="min-w-0 flex-1">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <span className="text-xs font-semibold text-[var(--ll-text-faint)]">
+                        {timeLabel(item)}
+                      </span>
+                      <span className="text-xs text-[var(--ll-text-faint)]">Scheduled period</span>
+                    </div>
+                    <p className="mt-1 text-sm font-semibold text-[var(--ll-text)]">{item.title}</p>
+                    <p className="mt-1 text-xs text-[var(--ll-text-muted)]">
+                      {item.subject.replace(/_/g, " ")} - Grade {item.grade} - {item.estimatedDuration} min
+                    </p>
+                  </div>
+                  <div className="flex flex-wrap items-center gap-2 sm:justify-end">
+                    <span className={`rounded-full px-2.5 py-0.5 text-[10px] font-medium ${badge.cls}`}>
+                      {badge.label}
+                    </span>
+                    <Link
+                      href={item.lessonHref}
+                      className="ll-touch-target inline-flex items-center justify-center rounded-lg bg-[var(--ll-accent)] px-3 py-2 text-xs font-semibold text-[var(--ll-text-faint)]"
+                    >
+                      Open Lesson
+                    </Link>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </section>
+    );
+  }
+
+  function MissingTimetableSection() {
+    return (
+      <section className="rounded-xl border border-amber-500/40 bg-amber-500/10 p-5 text-sm text-amber-200">
+        <p className="text-xs font-semibold uppercase tracking-[0.16em] text-amber-300">
+          Timetable not configured
+        </p>
+        <p className="mt-2 leading-6">
+          No timetable periods are attached to this class for today. A teacher or school admin must create
+          timetable periods, assign lessons to those periods, and refresh this page before the school day starts.
+        </p>
+      </section>
+    );
+  }
+
+  function TodaySummarySection() {
+    const subjectSummary =
+      subjects.length > 0
+        ? subjects.map((subject) => subject.replace(/_/g, " ")).join(", ")
+        : summaryItem?.subject.replace(/_/g, " ") ?? "No subject assigned yet";
+    const lessonSummary = summaryItem
+      ? `${summaryItem.title} for ${summaryItem.subject.replace(/_/g, " ")} Grade ${summaryItem.grade}`
+      : "No current lesson has been assigned yet";
+    const scheduleSummary =
+      timetable?.configured
+        ? `${scheduledPeriodCount} timetable period${scheduledPeriodCount === 1 ? "" : "s"} configured for today`
+        : `${items.length} scheduled lesson${items.length === 1 ? "" : "s"} available from today's assignments`;
+
+    return (
+      <section className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-surface)] p-5">
+        <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[var(--ll-text-faint)]">
+          Day summary
+        </p>
+        <p className="mt-2 text-sm leading-6 text-[var(--ll-text-muted)]">
+          Today&apos;s schedule has {scheduleSummary}. Current focus: {lessonSummary}. Subjects for the day:
+          {" "}{subjectSummary}. Progress status: {progressSummary}. Adaptive recommendation:
+          {" "}{recommendationSummary}
+        </p>
       </section>
     );
   }
@@ -375,7 +478,13 @@ export default function StudentTodayPage() {
 
         {!loading && timetable?.configured ? (
           <TimetableSection data={timetable} />
+        ) : !loading && items.length > 0 ? (
+          <ScheduledWorkScheduleSection scheduleItems={items} />
+        ) : !loading ? (
+          <MissingTimetableSection />
         ) : null}
+
+        {!loading ? <TodaySummarySection /> : null}
 
         {loading ? (
           <div className="space-y-3">

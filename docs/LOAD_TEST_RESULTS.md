@@ -10,7 +10,7 @@
 - **k6 version:** v1.7.1 (installed via winget)
 - **Test date:** 2026-04-17
 - **Lesson ID used:** `math-g10-5-geometry-and-spatial-thinking-independent-practice` (status: APPROVED)
-- **Credentials:** `student1@cha.edu.lr`, `teacher1@cha.edu.lr`, `admin@cha.edu.lr` - `<DEMO_PASSWORD>` (single credential per role)
+- **Credentials:** `<E2E_DEMO_STUDENT_EMAIL>`, `<E2E_DEMO_TEACHER_EMAIL>`, `<E2E_DEMO_ADMIN_EMAIL>` - `<DEMO_PASSWORD>` (single credential per role)
 
 ---
 
@@ -63,7 +63,7 @@
   - student today API: <1% pass — API routes timing out under load
   - quiz submit: 0% pass — quiz API saturated
 - **Root cause analysis:**
-  1. **Auth rate limiting (single credential):** 700 student VUs sharing `student1@cha.edu.lr` exhaust the Upstash-distributed 10-logins/15min per-identifier limit. Only ~14% of VUs establish sessions. This is correct security behavior (rate limiting working) but limits test fidelity. Mitigation: seed multiple student accounts for load testing.
+  1. **Auth rate limiting (single credential):** 700 student VUs sharing `<E2E_DEMO_STUDENT_EMAIL>` exhaust the Upstash-distributed 10-logins/15min per-identifier limit. Only ~14% of VUs establish sessions. This is correct security behavior (rate limiting working) but limits test fidelity. Mitigation: seed multiple student accounts for load testing.
   2. **Vercel free tier concurrency cap:** With 1000 VUs hitting `/api/student/today` and quiz submit simultaneously, API routes hit the Hobby plan's concurrent execution ceiling. Max response times hit 60s (Vercel's function kill timeout). HTML pages (served from CDN/edge) remain responsive at 97–99% while serverless API routes saturate.
 
 ### Step 4 — Peak (5000 VUs, 5 min): NOT RUN
@@ -90,7 +90,7 @@
 | Vercel free tier concurrency cap | **HIGH** | Hobby plan serverless function concurrency saturates at ~100–200 concurrent API calls. Upgrade to Pro required for 1000+ VU load. |
 | Single demo credential per role | **HIGH** | 700 student VUs sharing 1 identity = auth rate limiting hits immediately. Production will have unique credentials per user — this is a test infrastructure gap, not an app bug. |
 | ECS worker (1 Fargate task, sequential) | **MEDIUM** | Background job throughput bounded to 1 concurrent job. Not observable in load test but will bottleneck curriculum generation and notification jobs at national scale. |
-| No Student record for demo user | **LOW** | `student1@cha.edu.lr` exists in `User` table but has no `Student` row; AI tutor and quiz endpoints return 404. Seed fix needed for accurate AI/quiz load testing. |
+| No Student record for demo user | **LOW** | `<E2E_DEMO_STUDENT_EMAIL>` exists in `User` table but has no `Student` row; AI tutor and quiz endpoints return 404. Seed fix needed for accurate AI/quiz load testing. |
 | Supabase transaction pooler | **INFO** | PgBouncer active and confirmed. Pool connection limit not hit at 100-VU baseline. Not tested at moderate scale due to API timeouts masking DB behavior. |
 
 ---
@@ -135,7 +135,7 @@ Worker was not observable in k6 load tests (background queue). At rest: SQS dept
 ### Required before national scale sign-off:
 1. **Upgrade to Vercel Pro** (or confirm paid plan is in use) — removes Hobby concurrency cap.
 2. **Seed load-test user pool** — at least 100 unique student accounts for 100-VU baseline, 1000 for moderate.
-3. **Add Student record for demo user** — `student1@cha.edu.lr` needs a `Student` row for quiz/AI tests.
+3. **Add Student record for demo user** — `<E2E_DEMO_STUDENT_EMAIL>` needs a `Student` row for quiz/AI tests.
 4. **Run moderate + peak after Vercel upgrade** — outside Liberia business hours (before 8am or after 6pm GMT).
 5. **Configure ECS auto-scaling** — before background job throughput can be proven at national scale.
 
