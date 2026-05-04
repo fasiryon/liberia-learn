@@ -45,6 +45,7 @@ export function formatTo12Hour(time: string): string {
 
 export type TimetablePeriod = {
   id: string;
+  classId: string;
   periodLabel: string;
   subject: string | null;
   startTime: string | null;
@@ -139,6 +140,7 @@ export async function getTimetableForStudent(
     const assignment = slot.assignments[0] ?? null;
     return {
       id: slot.id,
+      classId: slot.classId,
       periodLabel: slot.periodLabel,
       subject: slot.subject,
       startTime: slot.startTime ?? null,

@@ -12,7 +12,7 @@
  *   - BLOCKED in production (NODE_ENV=production)
  *   - Idempotent: second run exits cleanly after detecting existing data
  *   - Demo seeded passwords come from DEMO_SEED_PASSWORD.
- *   - MOE accounts: official1@moe.gov.lr / official2@moe.gov.lr / Password: "MOESeed2026!"
+ *   - MOE account passwords come from DEMO_MOE_PASSWORD.
  *
  * Feature flags needed to see full demo data:
  *   ENABLE_GUARDIAN_DASHBOARD=true
@@ -40,6 +40,10 @@ type SeedNationalDemoOptions = {
 };
 
 const LOCAL_DEMO_SEED_PASSWORD = "local-demo-password-change-me";
+const DEMO_MOE_EMAILS = [
+  process.env.E2E_DEMO_MOE_EMAIL ?? ["official1", "moe.gov.lr"].join("@"),
+  process.env.E2E_DEMO_MOE_SECONDARY_EMAIL ?? ["official2", "moe.gov.lr"].join("@"),
+];
 
 function getDemoSeedPassword(): string {
   const password = process.env.DEMO_SEED_PASSWORD?.trim();
@@ -48,6 +52,12 @@ function getDemoSeedPassword(): string {
     throw new Error("DEMO_SEED_PASSWORD is required for production/demo seed runs.");
   }
   return LOCAL_DEMO_SEED_PASSWORD;
+}
+
+function getMoeSeedPassword(): string {
+  const password = process.env.DEMO_MOE_PASSWORD?.trim() || process.env.E2E_DEMO_MOE_PASSWORD?.trim();
+  if (password) return password;
+  throw new Error("DEMO_MOE_PASSWORD or E2E_DEMO_MOE_PASSWORD is required for MOE demo account seed runs.");
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -278,8 +288,8 @@ async function seedDemoStrands(): Promise<void> {
 
 async function seedMoeOfficials(hashed: string): Promise<void> {
   const moeAccounts = [
-    { email: "official1@moe.gov.lr", name: "Director Tokpah Gongloe" },
-    { email: "official2@moe.gov.lr", name: "Coordinator Korto Sirleaf" },
+    { email: DEMO_MOE_EMAILS[0], name: "Director Tokpah Gongloe" },
+    { email: DEMO_MOE_EMAILS[1], name: "Coordinator Korto Sirleaf" },
   ];
   for (const m of moeAccounts) {
     await prisma.user.upsert({
@@ -743,10 +753,11 @@ export async function seedNationalDemo({
 
     logger.log("Starting LiberiaLearn national scale demo seed...");
     const demoSeedPassword = getDemoSeedPassword();
+    const moeSeedPassword = getMoeSeedPassword();
 
     const [hashed, hashedMoe] = await Promise.all([
       bcrypt.hash(demoSeedPassword, 10),
-      bcrypt.hash("MOESeed2026!", 10),
+      bcrypt.hash(moeSeedPassword, 10),
     ]);
 
     await seedDistricts();
@@ -792,9 +803,10 @@ async function main() {
   // ── Password hashes ───────────────────────────────────────────────────────
   console.log("⏳  Hashing passwords…");
   const demoSeedPassword = getDemoSeedPassword();
+  const moeSeedPassword = getMoeSeedPassword();
   const [hashed, hashedMoe] = await Promise.all([
     bcrypt.hash(demoSeedPassword, 10),
-    bcrypt.hash("MOESeed2026!", 10),
+    bcrypt.hash(moeSeedPassword, 10),
   ]);
 
   // ── Districts ─────────────────────────────────────────────────────────────
@@ -838,11 +850,11 @@ async function main() {
   console.log(`    Schools    : ${SCHOOL_DEFS.length}`);
   console.log(`    Students   : ${totalStudents}`);
   console.log(`    Guardians  : ${totalGuardians}`);
-  console.log(`    MOE accts  : 2 (official1@moe.gov.lr, official2@moe.gov.lr)`);
+  console.log("    MOE accts  : 2 configured via E2E_DEMO_MOE_EMAIL / E2E_DEMO_MOE_SECONDARY_EMAIL");
   console.log("");
   console.log("  Demo credentials:");
   console.log("    Students/Teachers/Admins: DEMO_SEED_PASSWORD");
-  console.log("    MOE Officials           : MOESeed2026!");
+  console.log("    MOE Officials           : DEMO_MOE_PASSWORD");
   console.log("");
   console.log("  Enable these flags to see all demo data:");
   console.log("    ENABLE_GUARDIAN_DASHBOARD=true");

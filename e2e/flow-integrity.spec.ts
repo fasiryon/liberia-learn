@@ -1,12 +1,12 @@
 import { expect, test, type Page } from "@playwright/test";
 
 const BASE = process.env.PLAYWRIGHT_BASE_URL ?? "https://liberia-learn.vercel.app";
-const E2E_DEMO_STUDENT_EMAIL = process.env.E2E_DEMO_STUDENT_EMAIL || "student1@cha.edu.lr";
+const E2E_DEMO_STUDENT_EMAIL = process.env.E2E_DEMO_STUDENT_EMAIL;
 const E2E_DEMO_STUDENT_PASSWORD = process.env.E2E_DEMO_STUDENT_PASSWORD;
 
 test.skip(
-  !E2E_DEMO_STUDENT_PASSWORD,
-  "Skipping flow integrity E2E tests because E2E_DEMO_STUDENT_PASSWORD is not set."
+  !E2E_DEMO_STUDENT_EMAIL || !E2E_DEMO_STUDENT_PASSWORD,
+  "Skipping flow integrity E2E tests because E2E_DEMO_STUDENT_EMAIL/E2E_DEMO_STUDENT_PASSWORD are not set."
 );
 
 async function gotoWithRetry(page: Page, url: string) {

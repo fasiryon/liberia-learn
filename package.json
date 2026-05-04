@@ -21,6 +21,7 @@
         "promote:lessons": "tsx scripts/promote-enriched-lessons.ts",
         "populate:titles": "tsx scripts/populate-lesson-titles.ts",
         "seed:cha": "tsx prisma/seeds/cha-demo.ts",
+        "e2e:prepare-day1": "tsx scripts/e2e/prepare-day1-env.ts",
         "prisma:generate": "prisma generate",
         "fix:encoding": "tsx scripts/fix-encoding.ts",
         "backfill:badges": "tsx scripts/backfill-student-badge-awards.ts"
