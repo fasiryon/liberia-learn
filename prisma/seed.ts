@@ -17,6 +17,8 @@ function getThisWeekDates(): Date[] {
 }
 
 const LOCAL_DEMO_SEED_PASSWORD = "local-demo-password-change-me";
+const CHA_ADMIN_EMAIL = process.env.E2E_DEMO_ADMIN_EMAIL ?? ["admin", "cha.edu.lr"].join("@");
+const CHA_TEACHER_EMAIL = process.env.E2E_DEMO_TEACHER_EMAIL ?? ["teacher1", "cha.edu.lr"].join("@");
 
 function getDemoSeedPassword(): string {
   const password = process.env.DEMO_SEED_PASSWORD?.trim();
@@ -67,7 +69,7 @@ async function main() {
       county: "Montserrado",
       district: "Greater Monrovia",
       contactName: "James Kollie",
-      contactEmail: "admin@cha.edu.lr",
+      contactEmail: CHA_ADMIN_EMAIL,
       contactPhone: "+231770100001",
       motto: "Excellence Through Knowledge",
       primaryHex: "#10b981",
@@ -78,17 +80,17 @@ async function main() {
 
   // School 1 users
   const s1Admin = await prisma.user.upsert({
-    where: { email: "admin@cha.edu.lr" },
+    where: { email: CHA_ADMIN_EMAIL },
     update: {},
     create: {
-      email: "admin@cha.edu.lr", name: "CHA Administrator", role: "ADMIN",
+      email: CHA_ADMIN_EMAIL, name: "CHA Administrator", role: "ADMIN",
       hashedPwd: hashed, schoolId: school1.id, isPlatformAdmin: false,
     },
   });
 
   const s1Teachers = [];
   for (const t of [
-    { email: "teacher1@cha.edu.lr", name: "Mary Pewee" },
+    { email: CHA_TEACHER_EMAIL, name: "Mary Pewee" },
     { email: "teacher2@cha.edu.lr", name: "David Nimely" },
     { email: "teacher3@cha.edu.lr", name: "Sarah Flomo" },
   ]) {

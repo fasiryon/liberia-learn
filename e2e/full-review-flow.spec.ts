@@ -6,12 +6,29 @@ import validationSet from "./fixtures/phase5-production-validation-set.json";
 const BASE = process.env.PLAYWRIGHT_BASE_URL ?? "https://liberia-learn.vercel.app";
 const SEEDED_LESSON = "/student/lessons/cha-demo-student1-multimedia-lesson";
 const SEEDED_CONTENT_ID = "cha-g9-math-multimedia-demo";
-const E2E_DEMO_STUDENT_EMAIL = process.env.E2E_DEMO_STUDENT_EMAIL || "student1@cha.edu.lr";
+const E2E_DEMO_STUDENT_EMAIL = process.env.E2E_DEMO_STUDENT_EMAIL;
 const E2E_DEMO_STUDENT_PASSWORD = process.env.E2E_DEMO_STUDENT_PASSWORD;
+const E2E_DEMO_TEACHER_EMAIL = process.env.E2E_DEMO_TEACHER_EMAIL;
+const E2E_DEMO_TEACHER_PASSWORD = process.env.E2E_DEMO_TEACHER_PASSWORD;
+const E2E_DEMO_ADMIN_EMAIL = process.env.E2E_DEMO_ADMIN_EMAIL;
+const E2E_DEMO_ADMIN_PASSWORD = process.env.E2E_DEMO_ADMIN_PASSWORD;
+const E2E_DEMO_GUARDIAN_EMAIL = process.env.E2E_DEMO_GUARDIAN_EMAIL;
+const E2E_DEMO_GUARDIAN_PASSWORD = process.env.E2E_DEMO_GUARDIAN_PASSWORD;
+const E2E_DEMO_MOE_EMAIL = process.env.E2E_DEMO_MOE_EMAIL;
+const E2E_DEMO_MOE_PASSWORD = process.env.E2E_DEMO_MOE_PASSWORD;
 
 test.skip(
-  !E2E_DEMO_STUDENT_PASSWORD,
-  "Skipping full review E2E tests because E2E_DEMO_STUDENT_PASSWORD is not set."
+  !E2E_DEMO_STUDENT_EMAIL ||
+    !E2E_DEMO_STUDENT_PASSWORD ||
+    !E2E_DEMO_TEACHER_EMAIL ||
+    !E2E_DEMO_TEACHER_PASSWORD ||
+    !E2E_DEMO_ADMIN_EMAIL ||
+    !E2E_DEMO_ADMIN_PASSWORD ||
+    !E2E_DEMO_GUARDIAN_EMAIL ||
+    !E2E_DEMO_GUARDIAN_PASSWORD ||
+    !E2E_DEMO_MOE_EMAIL ||
+    !E2E_DEMO_MOE_PASSWORD,
+  "Skipping full review E2E tests because required E2E demo credential environment variables are not set."
 );
 
 type ValidationLesson = {
@@ -90,8 +107,8 @@ async function login(page: Page, email: string, password: string, role?: "studen
 async function loginMoe(page: Page) {
   for (let attempt = 0; attempt < 5; attempt += 1) {
     await gotoWithRetry(page, `${BASE}/moe/login`);
-    await page.fill('input[type="email"]', "official1@moe.gov.lr");
-    await page.fill('input[type="password"]', "MOESeed2026!");
+    await page.fill('input[type="email"]', E2E_DEMO_MOE_EMAIL!);
+    await page.fill('input[type="password"]', E2E_DEMO_MOE_PASSWORD!);
     await page.getByRole("button", { name: /sign in/i }).click();
     try {
       await page.waitForURL(/\/moe\/dashboard/, { timeout: 30000 });
@@ -251,7 +268,7 @@ test("generic library lesson exposes Read, Slides, and Listen modes", async ({ p
 });
 
 test("teacher uploads and activates a real video supplement", async ({ page }) => {
-  await login(page, "teacher1@cha.edu.lr", E2E_DEMO_STUDENT_PASSWORD!, "teacher");
+  await login(page, E2E_DEMO_TEACHER_EMAIL!, E2E_DEMO_TEACHER_PASSWORD!, "teacher");
   await page.goto(`${BASE}/teacher/lesson/${SEEDED_CONTENT_ID}`);
   await expect(page.getByRole("heading", { name: /Ratios in Market Prices/i })).toBeVisible();
   const buffer = await makeWebmBuffer(page);
@@ -276,7 +293,7 @@ test("student sees active teacher video after upload", async ({ page }) => {
 });
 
 test("admin audio batch controls and analytics are visible", async ({ page }) => {
-  await login(page, "admin@cha.edu.lr", E2E_DEMO_STUDENT_PASSWORD!, "admin");
+  await login(page, E2E_DEMO_ADMIN_EMAIL!, E2E_DEMO_ADMIN_PASSWORD!, "admin");
   await page.goto(`${BASE}/admin/curriculum`);
   await expect(page.getByRole("heading", { name: "Import Existing Curriculum" })).toBeVisible();
   await expect(page.getByRole("button", { name: /Batch generate audio/i })).toBeVisible();
@@ -307,7 +324,7 @@ test("admin curriculum production validation captures upgrade, review, approval,
   let approvedLessonTitle: string | null = null;
   let refinementChecked = false;
 
-  await login(page, "admin@cha.edu.lr", E2E_DEMO_STUDENT_PASSWORD!, "admin");
+  await login(page, E2E_DEMO_ADMIN_EMAIL!, E2E_DEMO_ADMIN_PASSWORD!, "admin");
   await page.goto(`${BASE}/admin/curriculum`);
   await expect(page.getByRole("heading", { name: "Import Existing Curriculum" })).toBeVisible();
 
@@ -430,7 +447,7 @@ test("MOE review surface shows real data", async ({ page }) => {
 });
 
 test("guardian review surface shows linked student data", async ({ page }) => {
-  await login(page, "guardian1@cha.family.lr", E2E_DEMO_STUDENT_PASSWORD!, "guardian");
+  await login(page, E2E_DEMO_GUARDIAN_EMAIL!, E2E_DEMO_GUARDIAN_PASSWORD!, "guardian");
   await page.goto(`${BASE}/guardian`);
   await expect(page.locator("text=/Fatu Kollie|student/i")).toBeVisible({ timeout: 20000 });
 });

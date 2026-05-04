@@ -1,10 +1,20 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 
-const { mockGetAdaptiveRecommendations, mockBuildStudentLearningIntelligence, mockRequireRole } =
+const {
+  mockGetAdaptiveRecommendations,
+  mockBuildStudentLearningIntelligence,
+  mockRequireRole,
+  mockGenerateStudentActions,
+  mockGetActiveStudentAction,
+  mockGetTimetableForStudent,
+} =
   vi.hoisted(() => ({
     mockGetAdaptiveRecommendations: vi.fn(),
     mockBuildStudentLearningIntelligence: vi.fn(),
     mockRequireRole: vi.fn(),
+    mockGenerateStudentActions: vi.fn(),
+    mockGetActiveStudentAction: vi.fn(),
+    mockGetTimetableForStudent: vi.fn(),
   }));
 
 vi.mock("@/lib/auth", () => ({ requireRole: mockRequireRole }));
@@ -15,10 +25,18 @@ vi.mock("@/lib/student/adaptiveRecommendations", () => ({
   getAdaptiveRecommendations: mockGetAdaptiveRecommendations,
 }));
 vi.mock("@/lib/lessons/labLinks", () => ({ getLessonLabLinks: () => [] }));
+vi.mock("@/lib/intelligence/actionEngine", () => ({
+  generateStudentActions: mockGenerateStudentActions,
+  getActiveStudentAction: mockGetActiveStudentAction,
+}));
+vi.mock("@/lib/timetable/timetableService", () => ({
+  getTimetableForStudent: mockGetTimetableForStudent,
+}));
 vi.mock("@/lib/db", () => ({
   prisma: {
     student: { findUnique: vi.fn() },
     scheduledWork: { findMany: vi.fn() },
+    assignment: { findMany: vi.fn() },
   },
 }));
 
@@ -48,6 +66,10 @@ beforeEach(() => {
     enrollments: [{ classId: "class1" }],
   });
   mockPrisma.scheduledWork.findMany.mockResolvedValue([]);
+  mockPrisma.assignment.findMany.mockResolvedValue([]);
+  mockGenerateStudentActions.mockResolvedValue(null);
+  mockGetActiveStudentAction.mockResolvedValue(null);
+  mockGetTimetableForStudent.mockResolvedValue(null);
 });
 
 describe("GET /api/student/today — adaptive fields", () => {
@@ -77,6 +99,7 @@ describe("GET /api/student/today — adaptive fields", () => {
     const res = await GET();
     const body = await res.json();
 
+    expect(res.status).toBe(200);
     expect(body.priority).toBe("RETRY_ASSESSMENT");
     expect(body.recommendation).not.toBeNull();
     expect(body.recommendation.type).toBe("RETRY_ASSESSMENT");

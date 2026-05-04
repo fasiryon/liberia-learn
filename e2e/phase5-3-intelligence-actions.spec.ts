@@ -1,12 +1,28 @@
 import { test, expect } from "@playwright/test";
 
 const BASE = process.env.PLAYWRIGHT_BASE_URL ?? "https://liberia-learn.vercel.app";
+const E2E_DEMO_STUDENT_EMAIL = process.env.E2E_DEMO_STUDENT_EMAIL;
+const E2E_DEMO_STUDENT_PASSWORD = process.env.E2E_DEMO_STUDENT_PASSWORD;
+const E2E_DEMO_TEACHER_EMAIL = process.env.E2E_DEMO_TEACHER_EMAIL;
+const E2E_DEMO_TEACHER_PASSWORD = process.env.E2E_DEMO_TEACHER_PASSWORD;
+const E2E_DEMO_MOE_EMAIL = process.env.E2E_DEMO_MOE_EMAIL;
+const E2E_DEMO_MOE_PASSWORD = process.env.E2E_DEMO_MOE_PASSWORD;
+
+test.skip(
+  !E2E_DEMO_STUDENT_EMAIL ||
+    !E2E_DEMO_STUDENT_PASSWORD ||
+    !E2E_DEMO_TEACHER_EMAIL ||
+    !E2E_DEMO_TEACHER_PASSWORD ||
+    !E2E_DEMO_MOE_EMAIL ||
+    !E2E_DEMO_MOE_PASSWORD,
+  "Skipping Phase 5.3 E2E tests because required E2E demo credential environment variables are not set."
+);
 
 test.describe("Phase 5.3 — Intelligence Action Automation", () => {
   test("student today page shows active action card when one exists", async ({ page }) => {
     await page.goto(`${BASE}/login`);
-    await page.fill('input[type="email"]', "student1@cha.edu.lr");
-    await page.fill('input[type="password"]', process.env.TEST_PASSWORD ?? "test-password");
+    await page.fill('input[type="email"]', E2E_DEMO_STUDENT_EMAIL!);
+    await page.fill('input[type="password"]', E2E_DEMO_STUDENT_PASSWORD!);
     await page.click('button[type="submit"]');
     await page.waitForURL(/student|dashboard/, { timeout: 10_000 });
 
@@ -31,8 +47,8 @@ test.describe("Phase 5.3 — Intelligence Action Automation", () => {
 
   test("teacher dashboard shows Immediate Attention panel when alerts exist", async ({ page }) => {
     await page.goto(`${BASE}/login`);
-    await page.fill('input[type="email"]', "teacher1@cha.edu.lr");
-    await page.fill('input[type="password"]', process.env.TEST_PASSWORD ?? "test-password");
+    await page.fill('input[type="email"]', E2E_DEMO_TEACHER_EMAIL!);
+    await page.fill('input[type="password"]', E2E_DEMO_TEACHER_PASSWORD!);
     await page.click('button[type="submit"]');
     await page.waitForURL(/teacher|dashboard/, { timeout: 10_000 });
 
@@ -55,8 +71,8 @@ test.describe("Phase 5.3 — Intelligence Action Automation", () => {
 
   test("MOE dashboard aggregate includes curriculum flag summary", async ({ page }) => {
     await page.goto(`${BASE}/moe/login`);
-    await page.fill('input[type="email"]', "official1@moe.gov.lr");
-    await page.fill('input[type="password"]', process.env.TEST_PASSWORD ?? "test-password");
+    await page.fill('input[type="email"]', E2E_DEMO_MOE_EMAIL!);
+    await page.fill('input[type="password"]', E2E_DEMO_MOE_PASSWORD!);
     await page.click('button[type="submit"]');
     await page.waitForURL(/moe|dashboard/, { timeout: 10_000 });
 
@@ -77,8 +93,8 @@ test.describe("Phase 5.3 — Intelligence Action Automation", () => {
 
   test("student action href always leads to a valid page, not 404", async ({ page }) => {
     await page.goto(`${BASE}/login`);
-    await page.fill('input[type="email"]', "student1@cha.edu.lr");
-    await page.fill('input[type="password"]', process.env.TEST_PASSWORD ?? "test-password");
+    await page.fill('input[type="email"]', E2E_DEMO_STUDENT_EMAIL!);
+    await page.fill('input[type="password"]', E2E_DEMO_STUDENT_PASSWORD!);
     await page.click('button[type="submit"]');
     await page.waitForURL(/student|dashboard/, { timeout: 10_000 });
 

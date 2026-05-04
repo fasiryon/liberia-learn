@@ -7,12 +7,12 @@ Write-Host "  URL: https://liberia-learn.vercel.app" -ForegroundColor Cyan
 Write-Host "========================================================`n" -ForegroundColor Cyan
 
 Write-Host "CHA HIGH ACADEMY" -ForegroundColor Green
-Write-Host "  Admin:     admin@cha.edu.lr / <DEMO_PASSWORD>"
-Write-Host "  Teacher:   teacher1@cha.edu.lr / <DEMO_PASSWORD>"
-Write-Host "  Student:   student1@cha.edu.lr / <DEMO_PASSWORD>"
-Write-Host "  Guardian:  guardian1@cha.family.lr / <DEMO_PASSWORD>`n"
+Write-Host "  Admin:     <E2E_DEMO_ADMIN_EMAIL> / <DEMO_PASSWORD>"
+Write-Host "  Teacher:   <E2E_DEMO_TEACHER_EMAIL> / <DEMO_PASSWORD>"
+Write-Host "  Student:   <E2E_DEMO_STUDENT_EMAIL> / <DEMO_PASSWORD>"
+Write-Host "  Guardian:  <E2E_DEMO_GUARDIAN_EMAIL> / <DEMO_PASSWORD>`n"
 
 Write-Host "MINISTRY OF EDUCATION" -ForegroundColor Magenta
-Write-Host "  Official:  official1@moe.gov.lr / MOESeed2026!`n"
+Write-Host "  Official:  <E2E_DEMO_MOE_EMAIL> / <DEMO_MOE_PASSWORD>`n"
 
 Write-Host "This is the only supported demo identity set." -ForegroundColor Yellow
