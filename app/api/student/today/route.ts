@@ -25,6 +25,124 @@ function emptyAdaptivePlan() {
   };
 }
 
+type TodayWorkStatus = "not_started" | "in_progress" | "completed";
+
+type TodayWorkItem = {
+  id: string;
+  classId: string;
+  contentId: string;
+  title: string;
+  subject: string;
+  grade: number;
+  contentType: string;
+  estimatedDuration: number;
+  periodNumber: number | null;
+  startTime: string | null;
+  endTime: string | null;
+  status: TodayWorkStatus;
+  completedAt: Date | null;
+  order: number;
+  lessonHref: string;
+  quizHref: string;
+  lab: { labId: string; label: string; href: string } | null;
+  assignment: {
+    id: string;
+    title: string;
+    href: string;
+    dueAt: string | null;
+    status: "open" | "submitted";
+  } | null;
+};
+
+type SchoolDayStatus = "current" | "upcoming" | "completed" | "missed";
+
+type SchoolDayAction = {
+  label: "Start Lesson" | "Continue" | "Open Assignment" | "Review";
+  href: string;
+};
+
+function asArray<T>(value: T[] | null | undefined): T[] {
+  return Array.isArray(value) ? value : [];
+}
+
+function safeString(value: unknown, fallback: string): string {
+  return typeof value === "string" && value.trim().length > 0
+    ? value
+    : fallback;
+}
+
+function safeNumber(value: unknown, fallback: number): number {
+  return typeof value === "number" && Number.isFinite(value) ? value : fallback;
+}
+
+function safeSubject(value: unknown): string {
+  return safeString(value, "GENERAL").toUpperCase().replace(/\s+/g, "_");
+}
+
+function safePayload(value: unknown): Record<string, any> {
+  return value && typeof value === "object" && !Array.isArray(value)
+    ? (value as Record<string, any>)
+    : {};
+}
+
+function parsePeriodNumber(label: string | null | undefined): number | null {
+  if (!label) return null;
+  const match = label.match(/\d+/);
+  return match ? Number(match[0]) : null;
+}
+
+function minutesFromTime(value: string | null | undefined): number | null {
+  if (!value) return null;
+  const [hours, minutes = "0"] = value.split(":");
+  const h = Number(hours);
+  const m = Number(minutes);
+  return Number.isFinite(h) && Number.isFinite(m) ? h * 60 + m : null;
+}
+
+function timeRange(startTime: string | null, endTime: string | null) {
+  if (startTime && endTime) return `${startTime}-${endTime}`;
+  return startTime ?? endTime ?? null;
+}
+
+function resolveSlotStatus(params: {
+  status: TodayWorkStatus | null;
+  startTime: string | null;
+  endTime: string | null;
+  index: number;
+  firstOpenIndex: number;
+  nowMinutes: number;
+}) {
+  if (params.status === "completed") return "completed";
+
+  const start = minutesFromTime(params.startTime);
+  const end = minutesFromTime(params.endTime);
+  if (start != null && end != null) {
+    if (params.nowMinutes >= start && params.nowMinutes <= end) return "current";
+    if (params.nowMinutes < start) return "upcoming";
+    return "missed";
+  }
+
+  return params.index === params.firstOpenIndex ? "current" : "upcoming";
+}
+
+function primaryActionFor(params: {
+  scheduleStatus: SchoolDayStatus;
+  workStatus: TodayWorkStatus | null;
+  lessonHref: string | null;
+  assignmentHref: string | null;
+}): SchoolDayAction {
+  if (params.assignmentHref && !params.lessonHref) {
+    return { label: "Open Assignment", href: params.assignmentHref };
+  }
+  if (params.scheduleStatus === "completed") {
+    return { label: "Review", href: params.lessonHref ?? params.assignmentHref ?? "/student/progress" };
+  }
+  if (params.workStatus === "in_progress") {
+    return { label: "Continue", href: params.lessonHref ?? params.assignmentHref ?? "/student/lessons" };
+  }
+  return { label: "Start Lesson", href: params.lessonHref ?? params.assignmentHref ?? "/student/lessons" };
+}
+
 export async function GET() {
   try {
     const user = await requireRole("STUDENT");
@@ -49,7 +167,9 @@ export async function GET() {
     const startOfDay = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()));
     const endOfDay = new Date(startOfDay.getTime() + 86400000);
 
-    const [scheduledWork, intelligence, adaptiveResult] = await Promise.all([
+    const catchUpStart = new Date(startOfDay.getTime() - 14 * 86400000);
+
+    const [scheduledWork, catchUpWork, assignments, intelligence, adaptiveResult] = await Promise.all([
       prisma.scheduledWork.findMany({
         where: {
           classId: { in: classIds },
@@ -72,6 +192,45 @@ export async function GET() {
         },
         orderBy: { periodNumber: "asc" },
       }),
+      prisma.scheduledWork.findMany({
+        where: {
+          classId: { in: classIds },
+          scheduledDate: { gte: catchUpStart, lt: startOfDay },
+        },
+        include: {
+          content: {
+            select: {
+              contentId: true,
+              grade: true,
+              subject: true,
+              contentType: true,
+              payload: true,
+            },
+          },
+          progress: {
+            where: { studentId: user.id },
+            select: { completedAt: true, startedAt: true },
+          },
+        },
+        orderBy: [{ scheduledDate: "desc" }, { periodNumber: "asc" }],
+        take: 8,
+      }),
+      prisma.assignment.findMany({
+        where: {
+          classId: { in: classIds },
+          dueAt: { gte: startOfDay, lt: endOfDay },
+        },
+        select: {
+          id: true,
+          title: true,
+          dueAt: true,
+          scheduledWorkId: true,
+          submissions: {
+            where: { studentId: student.id },
+            select: { turnedInAt: true },
+          },
+        },
+      }).catch(() => []),
       buildStudentLearningIntelligence(user).catch(() => ({
         generatedAt: new Date().toISOString(),
         masteryBySubject: [],
@@ -98,41 +257,226 @@ export async function GET() {
     const activeAction = await getActiveStudentAction(student.id).catch(() => null);
     const timetable = await getTimetableForStudent(student.id, new Date()).catch(() => null);
 
-    const items = scheduledWork.map((sw, index) => {
-      const payload = sw.content.payload as any;
-      const progress = sw.progress[0];
-      let status: "not_started" | "in_progress" | "completed" = "not_started";
+    const safeAssignments = asArray(assignments);
+    const safeIntelligence = {
+      generatedAt:
+        typeof intelligence.generatedAt === "string"
+          ? intelligence.generatedAt
+          : new Date().toISOString(),
+      weaknesses: asArray(intelligence.weaknesses),
+      recommendedNextActions: asArray(intelligence.recommendedNextActions),
+    };
+    const safeAdaptiveResult = {
+      recommendation: adaptiveResult.recommendation ?? null,
+      masteryAlerts: asArray(adaptiveResult.masteryAlerts),
+      contentGap: Boolean(adaptiveResult.contentGap),
+      pacingSignal: adaptiveResult.pacingSignal ?? "on_track",
+      weakTopicSequence: asArray(adaptiveResult.weakTopicSequence),
+    };
+
+    const assignmentsByWorkId = new Map(
+      safeAssignments
+        .filter((assignment) => assignment.scheduledWorkId)
+        .map((assignment) => [assignment.scheduledWorkId as string, assignment])
+    );
+
+    const mapWorkItem = (sw: any, index: number): TodayWorkItem => {
+      const content = sw?.content ?? {};
+      const payload = safePayload(content.payload);
+      const subject = safeSubject(content.subject);
+      const grade = safeNumber(content.grade, 0);
+      const contentId = safeString(content.contentId, sw?.contentId ?? sw?.id ?? `work-${index + 1}`);
+      const progress = asArray<any>(sw?.progress)[0] ?? null;
+      let status: TodayWorkStatus = "not_started";
       if (progress?.completedAt) status = "completed";
       else if (progress?.startedAt) status = "in_progress";
-      const lab = getLessonLabLinks({
-        subject: sw.content.subject,
-        grade: sw.content.grade,
-      })[0] ?? null;
+      const lab = getLessonLabLinks({ subject, grade })[0] ?? null;
+      const assignment = assignmentsByWorkId.get(sw?.id) ?? null;
+      const workId = safeString(sw?.id, `work-${index + 1}`);
 
       return {
-        id: sw.id,
-        contentId: sw.content.contentId,
-        title: payload?.title || payload?.topic || `${sw.content.subject} Lesson`,
-        subject: sw.content.subject,
-        grade: sw.content.grade,
-        contentType: sw.content.contentType,
-        estimatedDuration: payload?.durationMins || 45,
-        periodNumber: sw.periodNumber,
-        startTime: sw.startTime,
-        endTime: sw.endTime,
+        id: workId,
+        classId: safeString(sw?.classId, ""),
+        contentId,
+        title: safeString(payload.title, safeString(payload.topic, `${subject} Lesson`)),
+        subject,
+        grade,
+        contentType: safeString(content.contentType, "LESSON"),
+        estimatedDuration: safeNumber(payload.durationMins, 45),
+        periodNumber: typeof sw?.periodNumber === "number" ? sw.periodNumber : null,
+        startTime: typeof sw?.startTime === "string" ? sw.startTime : null,
+        endTime: typeof sw?.endTime === "string" ? sw.endTime : null,
         status,
         completedAt: progress?.completedAt || null,
         order: index + 1,
-        lessonHref: `/student/lessons/${sw.id}`,
-        quizHref: `/student/lessons/${sw.id}#lesson-quiz`,
+        lessonHref: `/student/lessons/${workId}`,
+        quizHref: `/student/lessons/${workId}#lesson-quiz`,
         lab: lab ? { ...lab, href: `/student/labs/${lab.labId}` } : null,
+        assignment: assignment
+          ? {
+              id: assignment.id,
+              title: assignment.title,
+              href: `/student/assignments/${assignment.id}`,
+              dueAt: assignment.dueAt?.toISOString() ?? null,
+              status: asArray<any>(assignment.submissions).some((submission) => submission.turnedInAt)
+                ? "submitted"
+                : "open",
+            }
+          : null,
       };
-    });
+    };
+
+    const items = asArray(scheduledWork).map(mapWorkItem);
+    const catchUpItems = asArray(catchUpWork)
+      .map(mapWorkItem)
+      .filter((item) => item.status !== "completed");
 
     const current = items.find((item) => item.status !== "completed") ?? items[0] ?? null;
     const next = current
       ? items.find((item) => item.order > current.order && item.status !== "completed") ?? null
       : null;
+    const nowMinutes = new Date().getHours() * 60 + new Date().getMinutes();
+    const timetablePeriods = asArray(timetable?.periods).map((period: any, index) => ({
+      id: safeString(period?.id, `period-${index + 1}`),
+      classId: safeString(period?.classId, ""),
+      periodLabel: safeString(period?.periodLabel, `Period ${index + 1}`),
+      subject: period?.subject ? safeSubject(period.subject) : null,
+      startTime: typeof period?.startTime === "string" ? period.startTime : null,
+      endTime: typeof period?.endTime === "string" ? period.endTime : null,
+      teacherName:
+        typeof period?.teacherName === "string" && period.teacherName.trim()
+          ? period.teacherName
+          : null,
+      assignment: period?.assignment
+        ? {
+            id: safeString(period.assignment.id, `assignment-${index + 1}`),
+            title: safeString(period.assignment.title, "Assigned work"),
+            contentId:
+              typeof period.assignment.contentId === "string"
+                ? period.assignment.contentId
+                : null,
+            lessonUrl:
+              typeof period.assignment.lessonUrl === "string"
+                ? period.assignment.lessonUrl
+                : null,
+            instructions:
+              typeof period.assignment.instructions === "string"
+                ? period.assignment.instructions
+                : null,
+          }
+        : null,
+    }));
+    const workUsedInSchoolDay = new Set<string>();
+    const firstOpenIndex = Math.max(
+      0,
+      (timetable?.configured ? timetablePeriods : items).findIndex((entry: any) => {
+        if ("status" in entry) return entry.status !== "completed";
+        return true;
+      })
+    );
+
+    function findWorkForPeriod(period: (typeof timetablePeriods)[number]) {
+      const periodNumber = parsePeriodNumber(period.periodLabel);
+      const byPeriod = items.find(
+        (item) =>
+          !workUsedInSchoolDay.has(item.id) &&
+          item.classId &&
+          period.classId &&
+          item.classId === period.classId &&
+          periodNumber != null &&
+          item.periodNumber === periodNumber
+      );
+      if (byPeriod) return byPeriod;
+
+      const byTime = items.find(
+        (item) =>
+          !workUsedInSchoolDay.has(item.id) &&
+          item.classId &&
+          period.classId &&
+          item.classId === period.classId &&
+          item.startTime === period.startTime &&
+          item.endTime === period.endTime
+      );
+      if (byTime) return byTime;
+
+      return items.find(
+        (item) =>
+          !workUsedInSchoolDay.has(item.id) &&
+          item.classId &&
+          period.classId &&
+          item.classId === period.classId &&
+          item.subject === period.subject
+      ) ?? null;
+    }
+
+    const schoolDayItems = timetable?.configured
+      ? timetablePeriods.map((period, index) => {
+          const work = findWorkForPeriod(period);
+          if (work) workUsedInSchoolDay.add(work.id);
+          const assignmentHref = work?.assignment?.href ?? null;
+          const lessonHref = work?.lessonHref ?? period.assignment?.lessonUrl ?? null;
+          const scheduleStatus = resolveSlotStatus({
+            status: work?.status ?? null,
+            startTime: period.startTime,
+            endTime: period.endTime,
+            index,
+            firstOpenIndex,
+            nowMinutes,
+          });
+          return {
+            id: `period:${period.id}`,
+            source: "timetable",
+            timetableId: period.id,
+            scheduledWorkId: work?.id ?? null,
+            assignmentId: work?.assignment?.id ?? period.assignment?.id ?? null,
+            timeRange: timeRange(period.startTime, period.endTime),
+            periodLabel: period.periodLabel,
+            subject: period.subject,
+            teacherName: period.teacherName,
+            title: work?.assignment?.title ?? work?.title ?? period.assignment?.title ?? null,
+            status: scheduleStatus,
+            primaryAction: primaryActionFor({
+              scheduleStatus,
+              workStatus: work?.status ?? null,
+              lessonHref,
+              assignmentHref,
+            }),
+          };
+        })
+      : items.map((item, index) => {
+          const scheduleStatus = resolveSlotStatus({
+            status: item.status,
+            startTime: item.startTime,
+            endTime: item.endTime,
+            index,
+            firstOpenIndex,
+            nowMinutes,
+          });
+          workUsedInSchoolDay.add(item.id);
+          return {
+            id: `work:${item.id}`,
+            source: "scheduled_work",
+            timetableId: null,
+            scheduledWorkId: item.id,
+            assignmentId: item.assignment?.id ?? null,
+            timeRange: timeRange(item.startTime, item.endTime),
+            periodLabel: item.periodNumber ? `Period ${item.periodNumber}` : `Learning block ${item.order}`,
+            subject: item.subject,
+            teacherName: null,
+            title: item.assignment?.title ?? item.title,
+            status: scheduleStatus,
+            primaryAction: primaryActionFor({
+              scheduleStatus,
+              workStatus: item.status,
+              lessonHref: item.lessonHref,
+              assignmentHref: item.assignment?.href ?? null,
+            }),
+          };
+        });
+
+    const firstActionable = schoolDayItems.find((item) =>
+      ["current", "upcoming", "missed"].includes(item.status)
+    );
     const adaptiveActions = [
       ...items
         .filter((item) => item.status !== "completed")
@@ -144,7 +488,7 @@ export async function GET() {
           priority: item.status === "in_progress" ? 110 : 105 - item.order,
           source: "scheduled_work",
         })),
-      ...intelligence.recommendedNextActions.map((action) => ({
+      ...safeIntelligence.recommendedNextActions.map((action) => ({
         ...action,
         source: "learning_intelligence",
       })),
@@ -159,27 +503,57 @@ export async function GET() {
 
     return NextResponse.json({
       items,
+      catchUpItems,
+      schoolDay: {
+        mode: timetable?.configured ? "timetable" : items.length > 0 ? "learning_plan" : "setup_needed",
+        title: "Todays School Day",
+        note: timetable?.configured
+          ? null
+          : items.length > 0
+            ? "Your school has not configured a full timetable yet, so we are showing todays learning plan."
+            : "No school day schedule has been configured yet.",
+        items: schoolDayItems,
+      },
+      todayFocus: {
+        greeting: "Today Focus",
+        primaryLabel: firstActionable?.primaryAction.label ?? smartContinue?.label ?? "Browse lessons",
+        primaryHref: firstActionable?.primaryAction.href ?? smartContinue?.href ?? "/student/lessons",
+        currentOrNext:
+          firstActionable?.title ??
+          current?.title ??
+          next?.title ??
+          smartContinue?.label ??
+          "No current class",
+        status: firstActionable?.status ?? null,
+      },
+      progressSnapshot: {
+        lessonsCompleted: items.filter((item) => item.status === "completed").length,
+        assignmentsDue: items.filter((item) => item.assignment?.status === "open").length,
+        masterySummary: safeAdaptiveResult.masteryAlerts.length
+          ? `${safeAdaptiveResult.masteryAlerts.length} mastery alert${safeAdaptiveResult.masteryAlerts.length === 1 ? "" : "s"}`
+          : "No mastery alerts",
+      },
       subjects: Array.from(new Set(items.map((item) => item.subject))),
       completedCount: items.filter((item) => item.status === "completed").length,
       remainingCount: items.filter((item) => item.status !== "completed").length,
       currentItemId: current?.id ?? null,
       nextItemId: next?.id ?? null,
-      priority: adaptiveResult.recommendation?.type ?? null,
-      recommendation: adaptiveResult.recommendation
+      priority: safeAdaptiveResult.recommendation?.type ?? null,
+      recommendation: safeAdaptiveResult.recommendation
         ? {
-            type: adaptiveResult.recommendation.type,
-            lessonId: adaptiveResult.recommendation.lessonId,
-            scheduledWorkId: adaptiveResult.recommendation.scheduledWorkId,
-            reason: adaptiveResult.recommendation.reason,
-            sourceSignal: adaptiveResult.recommendation.sourceSignal,
-            masteryPercent: adaptiveResult.recommendation.masteryPercent,
-            confidenceTier: adaptiveResult.recommendation.confidenceTier,
+            type: safeAdaptiveResult.recommendation.type,
+            lessonId: safeAdaptiveResult.recommendation.lessonId,
+            scheduledWorkId: safeAdaptiveResult.recommendation.scheduledWorkId,
+            reason: safeAdaptiveResult.recommendation.reason,
+            sourceSignal: safeAdaptiveResult.recommendation.sourceSignal,
+            masteryPercent: safeAdaptiveResult.recommendation.masteryPercent,
+            confidenceTier: safeAdaptiveResult.recommendation.confidenceTier,
           }
         : null,
-      masteryAlerts: adaptiveResult.masteryAlerts,
-      contentGap: adaptiveResult.contentGap,
-      pacingSignal: adaptiveResult.pacingSignal,
-      weakTopicSequence: adaptiveResult.weakTopicSequence,
+      masteryAlerts: safeAdaptiveResult.masteryAlerts,
+      contentGap: safeAdaptiveResult.contentGap,
+      pacingSignal: safeAdaptiveResult.pacingSignal,
+      weakTopicSequence: safeAdaptiveResult.weakTopicSequence,
       activeAction: activeAction
         ? {
             id: activeAction.id,
@@ -191,7 +565,7 @@ export async function GET() {
           }
         : null,
       adaptivePlan: {
-        generatedAt: intelligence.generatedAt,
+        generatedAt: safeIntelligence.generatedAt,
         smartContinueHref: smartContinue?.href ?? "/student/lessons",
         smartContinueLabel: smartContinue?.label ?? "Browse lessons",
         smartContinueReason:
@@ -201,8 +575,8 @@ export async function GET() {
         signals: {
           scheduledToday: items.length,
           incompleteToday: items.filter((item) => item.status !== "completed").length,
-          weaknessCount: intelligence.weaknesses.length,
-          recommendationCount: intelligence.recommendedNextActions.length,
+          weaknessCount: safeIntelligence.weaknesses.length,
+          recommendationCount: safeIntelligence.recommendedNextActions.length,
         },
       },
       timetable: timetable ?? null,
