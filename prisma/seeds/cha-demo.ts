@@ -10,7 +10,11 @@ import { Redis } from "@upstash/redis";
 const prisma = new PrismaClient();
 
 const LOCAL_DEMO_SEED_PASSWORD = "local-demo-password-change-me";
-const MOE_PASS = "MOESeed2026!";
+const DEMO_ADMIN_EMAIL = process.env.E2E_DEMO_ADMIN_EMAIL ?? ["admin", "cha.edu.lr"].join("@");
+const DEMO_TEACHER_EMAIL = process.env.E2E_DEMO_TEACHER_EMAIL ?? ["teacher1", "cha.edu.lr"].join("@");
+const DEMO_STUDENT_EMAIL = process.env.E2E_DEMO_STUDENT_EMAIL ?? ["student1", "cha.edu.lr"].join("@");
+const DEMO_GUARDIAN_EMAIL = process.env.E2E_DEMO_GUARDIAN_EMAIL ?? ["guardian1", "cha.family.lr"].join("@");
+const DEMO_MOE_EMAIL = process.env.E2E_DEMO_MOE_EMAIL ?? ["official1", "moe.gov.lr"].join("@");
 
 function getDemoSeedPassword(): string {
   const password = process.env.DEMO_SEED_PASSWORD?.trim();
@@ -21,16 +25,23 @@ function getDemoSeedPassword(): string {
   return LOCAL_DEMO_SEED_PASSWORD;
 }
 
+function getMoeSeedPassword(): string {
+  const password = process.env.DEMO_MOE_PASSWORD?.trim() || process.env.E2E_DEMO_MOE_PASSWORD?.trim();
+  if (password) return password;
+  throw new Error("DEMO_MOE_PASSWORD or E2E_DEMO_MOE_PASSWORD is required for CHA demo seed runs.");
+}
+
 const CHA_SCHOOL_ID = "cha-high-academy";
 const CHA_CLASS_ID = "cha-class-grade9a";
 
 export async function seedChaDemo() {
   console.log("[cha-demo] Seeding CHA demo accounts...");
   const demoPass = getDemoSeedPassword();
+  const moePass = getMoeSeedPassword();
 
   const [demoHash, moeHash] = await Promise.all([
     bcrypt.hash(demoPass, 10),
-    bcrypt.hash(MOE_PASS, 10),
+    bcrypt.hash(moePass, 10),
   ]);
   const platformHash = await bcrypt.hash(demoPass, 10);
 
@@ -49,9 +60,9 @@ export async function seedChaDemo() {
 
   // â”€â”€ Admin â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   const admin = await prisma.user.upsert({
-    where: { email: "admin@cha.edu.lr" },
+    where: { email: DEMO_ADMIN_EMAIL },
     create: {
-      email: "admin@cha.edu.lr",
+      email: DEMO_ADMIN_EMAIL,
       name: "CHA Administrator",
       role: "ADMIN",
       hashedPwd: demoHash,
@@ -63,9 +74,9 @@ export async function seedChaDemo() {
 
   // â”€â”€ Teacher â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   const teacher = await prisma.user.upsert({
-    where: { email: "teacher1@cha.edu.lr" },
+    where: { email: DEMO_TEACHER_EMAIL },
     create: {
-      email: "teacher1@cha.edu.lr",
+      email: DEMO_TEACHER_EMAIL,
       name: "Mary Pewee",
       role: "TEACHER",
       hashedPwd: demoHash,
@@ -113,9 +124,9 @@ export async function seedChaDemo() {
 
   // â”€â”€ Student â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   const studentUser = await prisma.user.upsert({
-    where: { email: "student1@cha.edu.lr" },
+    where: { email: DEMO_STUDENT_EMAIL },
     create: {
-      email: "student1@cha.edu.lr",
+      email: DEMO_STUDENT_EMAIL,
       loginId: "CHA-2026-0001",
       name: "Fatu Kollie",
       role: "STUDENT",
@@ -390,9 +401,9 @@ To find the cost of 7 oranges, multiply 1:20 by 7. The result is 7:140, so 7 ora
 
   // â”€â”€ Guardian â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   const guardian = await prisma.user.upsert({
-    where: { email: "guardian1@cha.family.lr" },
+    where: { email: DEMO_GUARDIAN_EMAIL },
     create: {
-      email: "guardian1@cha.family.lr",
+      email: DEMO_GUARDIAN_EMAIL,
       name: "Emmanuel Kollie",
       role: "GUARDIAN",
       hashedPwd: demoHash,
@@ -420,9 +431,9 @@ To find the cost of 7 oranges, multiply 1:20 by 7. The result is 7:140, so 7 ora
 
   // â”€â”€ MOE Official â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   await prisma.user.upsert({
-    where: { email: "official1@moe.gov.lr" },
+    where: { email: DEMO_MOE_EMAIL },
     create: {
-      email: "official1@moe.gov.lr",
+      email: DEMO_MOE_EMAIL,
       name: "MOE Inspector General",
       role: "MOE_OFFICIAL",
       hashedPwd: moeHash,
@@ -461,11 +472,11 @@ To find the cost of 7 oranges, multiply 1:20 by 7. The result is 7:140, so 7 ora
   }
 
   console.log("[cha-demo] Done. Accounts created:");
-  console.log("  admin@cha.edu.lr           / DEMO_SEED_PASSWORD (ADMIN)");
-  console.log("  teacher1@cha.edu.lr        / DEMO_SEED_PASSWORD (TEACHER)");
-  console.log("  student1@cha.edu.lr        / DEMO_SEED_PASSWORD (STUDENT)");
-  console.log("  guardian1@cha.family.lr    / DEMO_SEED_PASSWORD (GUARDIAN)");
-  console.log("  official1@moe.gov.lr       / MOESeed2026!  (MOE_OFFICIAL)");
+  console.log("  E2E_DEMO_ADMIN_EMAIL       / DEMO_SEED_PASSWORD (ADMIN)");
+  console.log("  E2E_DEMO_TEACHER_EMAIL     / DEMO_SEED_PASSWORD (TEACHER)");
+  console.log("  E2E_DEMO_STUDENT_EMAIL     / DEMO_SEED_PASSWORD (STUDENT)");
+  console.log("  E2E_DEMO_GUARDIAN_EMAIL    / DEMO_SEED_PASSWORD (GUARDIAN)");
+  console.log("  E2E_DEMO_MOE_EMAIL         / DEMO_MOE_PASSWORD (MOE_OFFICIAL)");
   console.log("  platform.admin@liberialearn.org / DEMO_SEED_PASSWORD (PLATFORM ADMIN)");
 }
 

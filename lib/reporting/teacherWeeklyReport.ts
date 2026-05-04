@@ -4,6 +4,12 @@ import { buildTeacherClassPerformance } from "@/lib/reporting/teacherClassPerfor
 export type ClassWeeklySummary = {
   classId: string;
   className: string;
+  overview: string;
+  assignmentsSummary: string;
+  weakTopicsSummary: string;
+  topStudentsSummary: string;
+  strugglingStudentsSummary: string;
+  recommendedActionsSummary: string;
   lessonCount: number;
   lessonCompletionRate: number;
   assignmentSubmissionRate: number;
@@ -43,6 +49,14 @@ export type TeacherWeeklyReport = {
   overallCompletionRate: number;
   savedLessonPlans: SavedLessonPlanSummary[];
 };
+
+function formatList(values: string[], fallback: string): string {
+  const cleaned = values.map((value) => value.trim()).filter(Boolean);
+  if (cleaned.length === 0) return fallback;
+  if (cleaned.length === 1) return cleaned[0];
+  if (cleaned.length === 2) return `${cleaned[0]} and ${cleaned[1]}`;
+  return `${cleaned.slice(0, -1).join(", ")}, and ${cleaned[cleaned.length - 1]}`;
+}
 
 function startOfWeek(date: Date): Date {
   const d = new Date(date);
@@ -251,9 +265,58 @@ export async function buildTeacherWeeklyReport(
     const assignmentSubmissionRate =
       enrolled > 0 ? Math.min(100, Math.round((submissions / enrolled) * 100)) : 0;
 
+    const weakTopics =
+      performance?.intelligence?.lowPerformingLessons.map((lesson) => lesson.lessonTitle) ??
+      (performance?.strugglingLesson?.lessonTitle ? [performance.strugglingLesson.lessonTitle] : []);
+    const improvingStudents =
+      performance?.intelligence?.topPerformers.map((student) => student.name).slice(0, 5) ??
+      performance?.topStudents.map((student) => student.name).slice(0, 5) ??
+      [];
+    const studentsNeedingSupport = [
+      ...(performance?.intelligence?.strugglingStudents.map((student) => student.name) ?? []),
+      ...(performance?.atRiskStudents.map((student) => student.name) ?? []),
+    ]
+      .filter((name, index, names) => names.indexOf(name) === index)
+      .slice(0, 6);
+    const recommendedNextWeekActions =
+      performance?.intelligence?.interventionSuggestions.map((suggestion) => suggestion.label) ??
+      [
+        lessonCompletionRate < 70 ? "Use the first lesson for completion catch-up." : null,
+        performance?.strugglingLesson ? `Reteach ${performance.strugglingLesson.lessonTitle}.` : null,
+        (atRiskByClass.get(cls.id) ?? 0) > 0 ? "Check in with students needing support." : null,
+      ].filter((action): action is string => Boolean(action));
+
+    const assignmentsSummary =
+      enrolled > 0
+        ? `${submissions} assignment submission${submissions === 1 ? "" : "s"} were recorded for ${enrolled} enrolled student${enrolled === 1 ? "" : "s"}, giving a ${assignmentSubmissionRate}% submission rate.`
+        : "No enrolled students are attached to this class, so assignment submission rate cannot be calculated.";
+    const weakTopicsSummary =
+      weakTopics.length > 0
+        ? `Weak topics to reteach: ${formatList(weakTopics.slice(0, 3), "none identified")}.`
+        : "No weak topic has enough quiz evidence yet; use the next lesson check-in to confirm understanding.";
+    const topStudentsSummary =
+      improvingStudents.length > 0
+        ? `Top or improving students: ${formatList(improvingStudents.slice(0, 3), "none identified")}.`
+        : "No top-student trend is available yet; review after more quiz or completion evidence is collected.";
+    const strugglingStudentsSummary =
+      studentsNeedingSupport.length > 0
+        ? `Students needing support: ${formatList(studentsNeedingSupport.slice(0, 5), "none identified")}.`
+        : "No student is currently flagged for targeted support in this class.";
+    const recommendedActionsSummary =
+      recommendedNextWeekActions.length > 0
+        ? `Recommended actions: ${formatList(recommendedNextWeekActions.slice(0, 4), "continue monitoring")}.`
+        : "Recommended actions: continue current pacing, monitor completion, and check understanding during the next class.";
+    const overview = `${cls.name} has ${lessonCount} scheduled lesson${lessonCount === 1 ? "" : "s"} this week with ${lessonCompletionRate}% lesson completion, ${assignmentSubmissionRate}% assignment submission, and ${absencesByClass.get(cls.id) ?? 0} absence${(absencesByClass.get(cls.id) ?? 0) === 1 ? "" : "s"}.`;
+
     return {
       classId: cls.id,
       className: cls.name,
+      overview,
+      assignmentsSummary,
+      weakTopicsSummary,
+      topStudentsSummary,
+      strugglingStudentsSummary,
+      recommendedActionsSummary,
       lessonCount,
       lessonCompletionRate,
       assignmentSubmissionRate,
@@ -262,27 +325,10 @@ export async function buildTeacherWeeklyReport(
       absencesThisWeek: absencesByClass.get(cls.id) ?? 0,
       atRiskStudentCount: atRiskByClass.get(cls.id) ?? 0,
       enrolledStudentCount: enrolled,
-      weakTopics:
-        performance?.intelligence?.lowPerformingLessons.map((lesson) => lesson.lessonTitle) ??
-        (performance?.strugglingLesson?.lessonTitle ? [performance.strugglingLesson.lessonTitle] : []),
-      improvingStudents:
-        performance?.intelligence?.topPerformers.map((student) => student.name).slice(0, 5) ??
-        performance?.topStudents.map((student) => student.name).slice(0, 5) ??
-        [],
-      studentsNeedingSupport:
-        [
-          ...(performance?.intelligence?.strugglingStudents.map((student) => student.name) ?? []),
-          ...(performance?.atRiskStudents.map((student) => student.name) ?? []),
-        ]
-          .filter((name, index, names) => names.indexOf(name) === index)
-          .slice(0, 6),
-      recommendedNextWeekActions:
-        performance?.intelligence?.interventionSuggestions.map((suggestion) => suggestion.label) ??
-        [
-          lessonCompletionRate < 70 ? "Use the first lesson for completion catch-up." : null,
-          performance?.strugglingLesson ? `Reteach ${performance.strugglingLesson.lessonTitle}.` : null,
-          (atRiskByClass.get(cls.id) ?? 0) > 0 ? "Check in with students needing support." : null,
-        ].filter((action): action is string => Boolean(action)),
+      weakTopics,
+      improvingStudents,
+      studentsNeedingSupport,
+      recommendedNextWeekActions,
     };
   });
 

@@ -61,10 +61,13 @@ function Get-AuthSession {
     return $session
 }
 
-$studentEmail = "student1@cha.edu.lr"
-$teacherEmail = "teacher1@cha.edu.lr"
-$adminEmail = "admin@cha.edu.lr"
-$moeEmail = "official1@moe.gov.lr"
+$studentEmail = $env:E2E_DEMO_STUDENT_EMAIL
+$teacherEmail = $env:E2E_DEMO_TEACHER_EMAIL
+$adminEmail = $env:E2E_DEMO_ADMIN_EMAIL
+$moeEmail = $env:E2E_DEMO_MOE_EMAIL
+if ([string]::IsNullOrWhiteSpace($studentEmail) -or [string]::IsNullOrWhiteSpace($teacherEmail) -or [string]::IsNullOrWhiteSpace($adminEmail) -or [string]::IsNullOrWhiteSpace($moeEmail)) {
+    throw "E2E demo role email environment variables are required for smoke tests."
+}
 $demoPassword = $env:DEMO_SEED_PASSWORD
 if ([string]::IsNullOrWhiteSpace($demoPassword)) {
     if ($env:NODE_ENV -eq "production" -or $env:DEMO_MODE -eq "true") {
@@ -72,7 +75,13 @@ if ([string]::IsNullOrWhiteSpace($demoPassword)) {
     }
     $demoPassword = "local-demo-password-change-me"
 }
-$moePassword = "MOESeed2026!"
+$moePassword = $env:DEMO_MOE_PASSWORD
+if ([string]::IsNullOrWhiteSpace($moePassword)) {
+    $moePassword = $env:E2E_DEMO_MOE_PASSWORD
+}
+if ([string]::IsNullOrWhiteSpace($moePassword)) {
+    throw "DEMO_MOE_PASSWORD or E2E_DEMO_MOE_PASSWORD is required for smoke tests."
+}
 
 $results = @()
 $results += Test-Endpoint -Name "GET /api/healthz" -Url "$BaseUrl/api/healthz"

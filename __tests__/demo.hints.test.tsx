@@ -5,6 +5,15 @@ import path from "path";
 import { DemoHintsSection } from "@/components/DemoHintsSection";
 import { getDemoCredentials } from "@/lib/demoCredentials";
 
+const demoStudentEmail = process.env.E2E_DEMO_STUDENT_EMAIL || "<E2E_DEMO_STUDENT_EMAIL>";
+const demoTeacherEmail = process.env.E2E_DEMO_TEACHER_EMAIL || "<E2E_DEMO_TEACHER_EMAIL>";
+const demoGuardianEmail = process.env.E2E_DEMO_GUARDIAN_EMAIL || "<E2E_DEMO_GUARDIAN_EMAIL>";
+const demoMoeEmail = process.env.E2E_DEMO_MOE_EMAIL || "<E2E_DEMO_MOE_EMAIL>";
+
+function escaped(value: string) {
+  return value.replaceAll("<", "&lt;").replaceAll(">", "&gt;");
+}
+
 describe("demo hints rendering", () => {
   afterEach(() => {
     delete process.env.DEMO_MODE;
@@ -23,12 +32,12 @@ describe("demo hints rendering", () => {
     Object.assign(process.env, { NODE_ENV: "development", DEMO_MODE: "true" });
     const html = renderToStaticMarkup(<DemoHintsSection variant="login" />);
     expect(html).toContain("Demo Login Hints");
-    expect(html).toContain("student1@cha.edu.lr");
-    expect(html).toContain("teacher1@cha.edu.lr");
-    expect(html).toContain("guardian1@cha.family.lr");
-    expect(html).toContain("official1@moe.gov.lr");
+    expect(html).toContain(escaped(demoStudentEmail));
+    expect(html).toContain(escaped(demoTeacherEmail));
+    expect(html).toContain(escaped(demoGuardianEmail));
+    expect(html).toContain(escaped(demoMoeEmail));
     expect(html).toContain("Password: &lt;DEMO_PASSWORD&gt;");
-    expect(html).toContain("Password: MOESeed2026!");
+    expect(html).toContain("Password: &lt;DEMO_MOE_PASSWORD&gt;");
     expect(html).not.toContain("student1@legacy-demo.lr");
     expect(html).not.toContain("Password: LegacyDemo123!");
   });
@@ -65,9 +74,10 @@ describe("seed scripts do not print demo passwords", () => {
     const contents = fs.readFileSync(seedPath, "utf8");
 
     for (const credential of getDemoCredentials()) {
-      expect(contents).toContain(credential.email);
       expect(contents).toContain(credential.role);
     }
+    expect(contents).toContain("E2E_DEMO_STUDENT_EMAIL");
+    expect(contents).toContain("E2E_DEMO_MOE_EMAIL");
     expect(contents).toContain("DEMO_SEED_PASSWORD");
   });
 });

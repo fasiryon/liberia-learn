@@ -6,6 +6,12 @@ import Link from "next/link";
 type ClassSummary = {
   classId: string;
   className: string;
+  overview: string;
+  assignmentsSummary: string;
+  weakTopicsSummary: string;
+  topStudentsSummary: string;
+  strugglingStudentsSummary: string;
+  recommendedActionsSummary: string;
   lessonCount: number;
   lessonCompletionRate: number;
   assignmentSubmissionRate: number;
@@ -202,6 +208,11 @@ export default function TeacherWeeklyReportPage() {
                       <span className="text-xs text-[var(--ll-text-faint)]">{cls.enrolledStudentCount} students</span>
                     </div>
 
+                    <div className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/60 p-3 text-sm text-[var(--ll-text)]">
+                      <p>{cls.overview}</p>
+                      <p className="mt-2">{cls.assignmentsSummary}</p>
+                    </div>
+
                     <div className="grid grid-cols-2 gap-4 text-sm">
                       <div>
                         <p className="text-xs text-[var(--ll-text-muted)] mb-1">Lesson Completion</p>
@@ -232,19 +243,25 @@ export default function TeacherWeeklyReportPage() {
                       <div className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/60 p-3">
                         <p className="text-xs text-[var(--ll-text-muted)]">Weak topics</p>
                         <p className="mt-2 text-sm text-[var(--ll-text)]">
-                          {cls.weakTopics.length > 0 ? cls.weakTopics.slice(0, 3).join(", ") : "No weak topic detected"}
+                          {cls.weakTopicsSummary}
                         </p>
                       </div>
                       <div className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/60 p-3">
-                        <p className="text-xs text-[var(--ll-text-muted)]">Improving students</p>
+                        <p className="text-xs text-[var(--ll-text-muted)]">Top students</p>
                         <p className="mt-2 text-sm text-[var(--ll-text)]">
-                          {cls.improvingStudents.length > 0 ? cls.improvingStudents.slice(0, 3).join(", ") : "No trend yet"}
+                          {cls.topStudentsSummary}
                         </p>
                       </div>
                     </div>
 
                     <div className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/60 p-3 text-sm">
+                      <p className="text-xs text-[var(--ll-text-muted)]">Struggling students</p>
+                      <p className="mt-2 text-[var(--ll-text)]">{cls.strugglingStudentsSummary}</p>
+                    </div>
+
+                    <div className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/60 p-3 text-sm">
                       <p className="text-xs text-[var(--ll-text-muted)]">Next week actions</p>
+                      <p className="mt-2 text-[var(--ll-text)]">{cls.recommendedActionsSummary}</p>
                       <ul className="mt-2 space-y-1 text-[var(--ll-text)]">
                         {(cls.recommendedNextWeekActions.length > 0
                           ? cls.recommendedNextWeekActions

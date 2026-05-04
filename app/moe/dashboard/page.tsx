@@ -46,6 +46,18 @@ type DashboardData = {
       compositeScore: number;
     }>;
   };
+  countyBreakdown: Array<{
+    county: string;
+    hasData: boolean;
+    suppressed: boolean;
+    studentCount: number | null;
+    metrics: {
+      masteryAvg: number | null;
+      growthAvg: number | null;
+      atRiskPct: number | null;
+      attendanceProxyAvg: number | null;
+    } | null;
+  }>;
   multimediaAnalytics: {
     lessonModeUsage: Array<{ mode: "read" | "slides" | "listen"; count: number; percentage: number }>;
     studentEngagement: { activeLearners: number; totalEvents: number; lessonInteractions: number; quizSubmissions: number };
@@ -251,6 +263,7 @@ export default function MoeDashboardPage() {
   }
 
   const districtRows = compliance?.byDistrict ?? [];
+  const countyRows = dashboard?.countyBreakdown ?? [];
   const districtsRequiringAttention = districtRows.filter(
     (district) =>
       (district.schoolCount ?? 0) > 0 &&
@@ -573,6 +586,46 @@ export default function MoeDashboardPage() {
                       })}
                     </tbody>
                   </table>
+              </div>
+            )}
+          </section>
+
+          <section className="ll-section rounded-xl p-4">
+            <div>
+              <p className="text-[11px] font-medium uppercase tracking-[0.1em] text-[var(--ll-text-faint)]">
+                Counties
+              </p>
+              <h2 className="mt-2 text-base font-semibold text-[var(--ll-text)]">
+                County-Level Aggregation
+              </h2>
+              <p className="mt-1 text-sm leading-6 text-[var(--ll-text-muted)]">
+                All Liberian county labels from the national aggregation, with small cohorts suppressed.
+              </p>
+            </div>
+
+            {loading ? (
+              <div className="mt-4 grid gap-3 md:grid-cols-3">
+                {Array.from({ length: 3 }).map((_, idx) => <SkeletonCard key={idx} />)}
+              </div>
+            ) : countyRows.length === 0 ? (
+              <p className="mt-4 text-sm text-[var(--ll-text-muted)]">
+                County aggregation is not available for this reporting window.
+              </p>
+            ) : (
+              <div className="mt-4 grid gap-3 md:grid-cols-3 xl:grid-cols-5">
+                {countyRows.map((county) => (
+                  <Card key={county.county} className="p-4">
+                    <p className="text-sm font-semibold text-[var(--ll-text)]">{county.county}</p>
+                    <p className="mt-1 text-xs text-[var(--ll-text-muted)]">
+                      {county.suppressed
+                        ? "Small cohort suppressed"
+                        : `${county.studentCount ?? 0} students in reporting cohort`}
+                    </p>
+                    <p className="mt-2 text-xs text-[var(--ll-text-faint)]">
+                      Mastery {formatPct(county.metrics?.masteryAvg == null ? null : county.metrics.masteryAvg * 100)}
+                    </p>
+                  </Card>
+                ))}
               </div>
             )}
           </section>

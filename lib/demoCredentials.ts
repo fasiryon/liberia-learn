@@ -12,42 +12,43 @@ export type DemoCredential = {
 };
 
 const DEMO_PASSWORD_PLACEHOLDER = process.env.DEMO_SEED_PASSWORD?.trim() || "<DEMO_PASSWORD>";
+const MOE_PASSWORD_PLACEHOLDER = process.env.DEMO_MOE_PASSWORD?.trim() || "<DEMO_MOE_PASSWORD>";
 
 const DEMO_CREDENTIALS: DemoCredential[] = [
   {
     key: "admin",
     label: "Admin",
     role: "ADMIN",
-    email: "admin@cha.edu.lr",
+    email: process.env.E2E_DEMO_ADMIN_EMAIL || "<E2E_DEMO_ADMIN_EMAIL>",
     password: DEMO_PASSWORD_PLACEHOLDER,
   },
   {
     key: "teacher",
     label: "Teacher",
     role: "TEACHER",
-    email: "teacher1@cha.edu.lr",
+    email: process.env.E2E_DEMO_TEACHER_EMAIL || "<E2E_DEMO_TEACHER_EMAIL>",
     password: DEMO_PASSWORD_PLACEHOLDER,
   },
   {
     key: "student",
     label: "Student",
     role: "STUDENT",
-    email: "student1@cha.edu.lr",
+    email: process.env.E2E_DEMO_STUDENT_EMAIL || "<E2E_DEMO_STUDENT_EMAIL>",
     password: DEMO_PASSWORD_PLACEHOLDER,
   },
   {
     key: "guardian",
     label: "Guardian",
     role: "GUARDIAN",
-    email: "guardian1@cha.family.lr",
+    email: process.env.E2E_DEMO_GUARDIAN_EMAIL || "<E2E_DEMO_GUARDIAN_EMAIL>",
     password: DEMO_PASSWORD_PLACEHOLDER,
   },
   {
     key: "moe",
     label: "MOE Official",
     role: "MOE_OFFICIAL",
-    email: "official1@moe.gov.lr",
-    password: "MOESeed2026!",
+    email: process.env.E2E_DEMO_MOE_EMAIL || "<E2E_DEMO_MOE_EMAIL>",
+    password: MOE_PASSWORD_PLACEHOLDER,
   },
 ];
 

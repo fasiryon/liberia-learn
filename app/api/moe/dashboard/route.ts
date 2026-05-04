@@ -15,6 +15,7 @@ import { requireMoeActor } from "@/lib/moe/authority";
 import { logLearningEvent } from "@/lib/events/logLearningEvent";
 import { withRedisCache } from "@/lib/cache/redisCache";
 import { computeNationalGeoPerformance } from "@/lib/reporting/geo/geoAggregator";
+import { GEO_COUNTIES } from "@/lib/reporting/geo/counties";
 import { logDataAccess } from "@/lib/dataAccess/logDataAccess";
 import { getMultimediaAnalytics } from "@/lib/analytics/multimediaAnalytics";
 import { buildMoeDecisionIntelligence } from "@/lib/analytics/decisionSupport";
@@ -189,8 +190,26 @@ async function buildNationalAggregate() {
     countyStudentMap.set(s.county, (countyStudentMap.get(s.county) ?? 0) + (s._count?.users ?? 0));
   }
 
-  // Apply cohort suppression: counties with < MIN_COHORT students get suppressed metrics
-  const countyBreakdown = geoResult.counties.map((c) => {
+  const geoCounties =
+    geoResult.counties.length > 0
+      ? geoResult.counties
+      : countyStudentMap.size > 0
+        ? GEO_COUNTIES.map((county) => ({
+            county,
+            hasData: false,
+            metrics: {
+              masteryAvg: null,
+              growthAvg: null,
+              atRiskPct: null,
+              attendanceProxyAvg: null,
+            },
+          }))
+        : [];
+
+  // Apply cohort suppression: counties with < MIN_COHORT students get suppressed metrics.
+  // If the performance aggregate is unavailable but schools still carry county labels,
+  // preserve those real labels and suppress metrics instead of returning an empty county list.
+  const countyBreakdown = geoCounties.map((c) => {
     const countyStudents = countyStudentMap.get(c.county) ?? 0;
     const suppressed = !c.hasData || countyStudents < MIN_COHORT;
     return {

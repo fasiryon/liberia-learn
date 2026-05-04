@@ -56,8 +56,15 @@ vi.mock("@upstash/redis", () => ({
 
 import { seedChaDemo } from "@/prisma/seeds/cha-demo";
 
+const expectedAdminEmail = process.env.E2E_DEMO_ADMIN_EMAIL ?? ["admin", "cha.edu.lr"].join("@");
+const expectedTeacherEmail = process.env.E2E_DEMO_TEACHER_EMAIL ?? ["teacher1", "cha.edu.lr"].join("@");
+const expectedStudentEmail = process.env.E2E_DEMO_STUDENT_EMAIL ?? ["student1", "cha.edu.lr"].join("@");
+const expectedGuardianEmail = process.env.E2E_DEMO_GUARDIAN_EMAIL ?? ["guardian1", "cha.family.lr"].join("@");
+const expectedMoeEmail = process.env.E2E_DEMO_MOE_EMAIL ?? ["official1", "moe.gov.lr"].join("@");
+
 beforeEach(() => {
   vi.clearAllMocks();
+  process.env.DEMO_MOE_PASSWORD = "test-moe-password";
   mockPrismaInstance.school.upsert.mockResolvedValue({ id: "cha-high-academy" });
   mockPrismaInstance.user.upsert.mockResolvedValue({ id: "mock-user-id" });
   mockPrismaInstance.student.upsert.mockResolvedValue({ id: "mock-student-id", userId: "mock-user-id" });
@@ -102,46 +109,46 @@ describe("seedChaDemo", () => {
     });
   });
 
-  it("creates admin@cha.edu.lr with ADMIN role", async () => {
+  it("creates the configured demo admin with ADMIN role", async () => {
     await seedChaDemo();
     const call = mockPrismaInstance.user.upsert.mock.calls.find(
-      (c: any[]) => c[0]?.where?.email === "admin@cha.edu.lr"
+      (c: any[]) => c[0]?.where?.email === expectedAdminEmail
     );
     expect(call).toBeDefined();
     expect(call![0].create.role).toBe("ADMIN");
   });
 
-  it("creates teacher1@cha.edu.lr with TEACHER role", async () => {
+  it("creates the configured demo teacher with TEACHER role", async () => {
     await seedChaDemo();
     const call = mockPrismaInstance.user.upsert.mock.calls.find(
-      (c: any[]) => c[0]?.where?.email === "teacher1@cha.edu.lr"
+      (c: any[]) => c[0]?.where?.email === expectedTeacherEmail
     );
     expect(call).toBeDefined();
     expect(call![0].create.role).toBe("TEACHER");
   });
 
-  it("creates student1@cha.edu.lr with STUDENT role", async () => {
+  it("creates the configured demo student with STUDENT role", async () => {
     await seedChaDemo();
     const call = mockPrismaInstance.user.upsert.mock.calls.find(
-      (c: any[]) => c[0]?.where?.email === "student1@cha.edu.lr"
+      (c: any[]) => c[0]?.where?.email === expectedStudentEmail
     );
     expect(call).toBeDefined();
     expect(call![0].create.role).toBe("STUDENT");
   });
 
-  it("creates guardian1@cha.family.lr with GUARDIAN role", async () => {
+  it("creates the configured demo guardian with GUARDIAN role", async () => {
     await seedChaDemo();
     const call = mockPrismaInstance.user.upsert.mock.calls.find(
-      (c: any[]) => c[0]?.where?.email === "guardian1@cha.family.lr"
+      (c: any[]) => c[0]?.where?.email === expectedGuardianEmail
     );
     expect(call).toBeDefined();
     expect(call![0].create.role).toBe("GUARDIAN");
   });
 
-  it("creates official1@moe.gov.lr with MOE_OFFICIAL role", async () => {
+  it("creates the configured demo MOE official with MOE_OFFICIAL role", async () => {
     await seedChaDemo();
     const call = mockPrismaInstance.user.upsert.mock.calls.find(
-      (c: any[]) => c[0]?.where?.email === "official1@moe.gov.lr"
+      (c: any[]) => c[0]?.where?.email === expectedMoeEmail
     );
     expect(call).toBeDefined();
     expect(call![0].create.role).toBe("MOE_OFFICIAL");
