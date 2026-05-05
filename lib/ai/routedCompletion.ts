@@ -16,6 +16,7 @@ function getGroq() {
 }
 
 export type Tier = "fast" | "smart";
+export type Provider = "openai" | "groq" | "grok";
 
 export type AiUsageContext = {
   route: string;
@@ -29,7 +30,7 @@ export type AiUsageContext = {
   guidanceLevel?: string | null;
   contentId?: string | null;
   lessonId?: string | null;
-  provider?: string | null;
+  provider?: Provider | string | null;
   budgetFallbackContent?: string | null;
   promptKey?: string | null;
   promptVersion?: string | null;
@@ -68,12 +69,16 @@ function completionTimeoutMs(aiUsage?: AiUsageContext) {
 }
 
 const GROQ_MODEL = "llama-3.1-8b-instant";
+const GROK_MODEL = "grok-3";
 const OPENAI_MODEL = "gpt-4o-mini";
 const EMBEDDING_MODEL = "text-embedding-3-small";
+const GROK_COMPLETIONS_ENDPOINT = "https://api.x.ai/v1/chat/completions";
 
 const COSTS = {
   groq_input: 0.1 / 1_000_000,
   groq_output: 0.1 / 1_000_000,
+  grok_input: 3 / 1_000_000,
+  grok_output: 15 / 1_000_000,
   openai_input: 0.15 / 1_000_000,
   openai_output: 0.6 / 1_000_000,
 };
@@ -202,6 +207,56 @@ async function callOpenAI(
   }
 }
 
+async function callGrok(
+  messages: RouterOptions["messages"],
+  maxTokens: number,
+  timeoutMs: number
+): Promise<{ content: string; inputTokens: number; outputTokens: number }> {
+  const apiKey = process.env.XAI_API_KEY;
+  if (!apiKey) {
+    throw new Error("XAI_API_KEY is required to use the Grok provider");
+  }
+
+  try {
+    const response = await fetch(GROK_COMPLETIONS_ENDPOINT, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${apiKey}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        model: GROK_MODEL,
+        messages,
+        max_tokens: maxTokens,
+      }),
+      signal: AbortSignal.timeout(timeoutMs),
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text().catch(() => "");
+      throw new Error(
+        `Grok provider request failed with ${response.status}${errorText ? `: ${errorText}` : ""}`
+      );
+    }
+
+    const completion = (await response.json()) as {
+      choices?: Array<{ message?: { content?: string | null } }>;
+      usage?: { prompt_tokens?: number; completion_tokens?: number };
+    };
+
+    return {
+      content: completion.choices?.[0]?.message?.content ?? "I'm not sure how to answer that.",
+      inputTokens: completion.usage?.prompt_tokens ?? 0,
+      outputTokens: completion.usage?.completion_tokens ?? 0,
+    };
+  } catch (err) {
+    if (err instanceof Error && err.name === "AbortError") {
+      throw new Error(`AI provider timeout after ${Math.round(timeoutMs / 1000)}s`);
+    }
+    throw err;
+  }
+}
+
 function normalizeEmbeddingText(input: string): string {
   const normalized = input.toWellFormed().replace(/\u0000/g, "").replace(/\s+/g, " ").trim();
   if (!normalized) {
@@ -307,8 +362,22 @@ export async function routedCompletion(opts: RouterOptions): Promise<RouterResul
 
   let providerFallbackUsed = false;
   let response: RouterResult | null = null;
+  const requestedProvider = opts.aiUsage?.provider?.trim().toLowerCase();
 
-  if (classification.tier === "fast" && process.env.GROQ_API_KEY) {
+  if (requestedProvider === "grok") {
+    const result = await callGrok(opts.messages, maxTokens, timeoutMs);
+    response = {
+      content: result.content,
+      tier: classification.tier,
+      model: GROK_MODEL,
+      inputTokens: result.inputTokens,
+      outputTokens: result.outputTokens,
+      estimatedCostUSD:
+        result.inputTokens * COSTS.grok_input + result.outputTokens * COSTS.grok_output,
+    };
+  }
+
+  if (!response && classification.tier === "fast" && process.env.GROQ_API_KEY) {
     try {
       const groq = getGroq();
       const completion = await groq.chat.completions.create({

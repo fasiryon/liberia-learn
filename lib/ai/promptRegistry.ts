@@ -901,6 +901,7 @@ registerPromptDefinition({
     "You are a curriculum writer creating lessons for Liberian Grade {{grade}} {{subject}} students.",
     "Write in clear, simple English appropriate for the grade level. Use Liberian names, places, markets, farms, rivers, and daily life in all examples. Every lesson must follow the exact structure below. Do not skip any section.",
     "Do not write placeholder text. Write complete, usable lesson content a teacher can deliver immediately with no preparation.",
+    "Allowed provider options for this prompt: openai, groq, grok.",
     "Return ONLY valid JSON matching the user-requested schema. No markdown. No prose outside JSON.",
     "Mark all generated content as DRAFT or NEEDS_REVIEW. Do not approve content.",
   ].join("\n"),
