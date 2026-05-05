@@ -69,6 +69,7 @@ function completionTimeoutMs(aiUsage?: AiUsageContext) {
 }
 
 const GROQ_MODEL = "llama-3.1-8b-instant";
+const GROQ_SMART_MODEL = "llama-3.3-70b-versatile";
 const GROK_MODEL = "grok-3";
 const OPENAI_MODEL = "gpt-4o-mini";
 const EMBEDDING_MODEL = "text-embedding-3-small";
@@ -77,6 +78,8 @@ const GROK_COMPLETIONS_ENDPOINT = "https://api.x.ai/v1/chat/completions";
 const COSTS = {
   groq_input: 0.1 / 1_000_000,
   groq_output: 0.1 / 1_000_000,
+  groq_smart_input: 0.59 / 1_000_000,
+  groq_smart_output: 0.79 / 1_000_000,
   grok_input: 3 / 1_000_000,
   grok_output: 15 / 1_000_000,
   openai_input: 0.15 / 1_000_000,
@@ -377,11 +380,13 @@ export async function routedCompletion(opts: RouterOptions): Promise<RouterResul
     };
   }
 
-  if (!response && classification.tier === "fast" && process.env.GROQ_API_KEY) {
+  if (!response && process.env.GROQ_API_KEY) {
+    const useSmartGroq = classification.tier === "smart" || opts.forceSmartTier;
+    const groqModel = useSmartGroq ? GROQ_SMART_MODEL : GROQ_MODEL;
     try {
       const groq = getGroq();
       const completion = await groq.chat.completions.create({
-        model: GROQ_MODEL,
+        model: groqModel,
         messages: opts.messages,
         max_tokens: maxTokens,
         signal: AbortSignal.timeout(timeoutMs),
@@ -389,15 +394,16 @@ export async function routedCompletion(opts: RouterOptions): Promise<RouterResul
 
       const inputTokens = completion.usage?.prompt_tokens ?? 0;
       const outputTokens = completion.usage?.completion_tokens ?? 0;
+      const costIn = useSmartGroq ? COSTS.groq_smart_input : COSTS.groq_input;
+      const costOut = useSmartGroq ? COSTS.groq_smart_output : COSTS.groq_output;
 
       response = {
         content: completion.choices[0]?.message?.content ?? "I'm not sure how to answer that.",
-        tier: "fast",
-        model: GROQ_MODEL,
+        tier: useSmartGroq ? "smart" : "fast",
+        model: groqModel,
         inputTokens,
         outputTokens,
-        estimatedCostUSD:
-          inputTokens * COSTS.groq_input + outputTokens * COSTS.groq_output,
+        estimatedCostUSD: inputTokens * costIn + outputTokens * costOut,
       };
     } catch {
       providerFallbackUsed = true;
