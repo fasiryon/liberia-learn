@@ -169,7 +169,7 @@ export default function HomePage() {
       </section>
 
       {/* VSL placeholder — replace div contents with iframe embed once video is recorded */}
-      <section className="w-full py-16 px-4 border-t border-[var(--ll-border)]">
+      <section className="w-full py-10 px-4 border-t border-[var(--ll-border)]">
         <div className="mx-auto max-w-4xl">
           <div className="text-center mb-8">
             <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[var(--ll-text-faint)] mb-2">
@@ -249,8 +249,8 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="ll-shell py-8 sm:py-10">
-        <div className="ll-section rounded-xl p-6">
+      <section className="ll-shell py-6">
+        <div className="ll-section rounded-xl p-4">
           <div className="space-y-2">
             <p className="text-xs uppercase tracking-[0.14em] text-[var(--ll-text-faint)]">
               Access the platform
@@ -278,10 +278,10 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="ll-shell py-8 sm:py-10">
+      <section className="ll-shell py-6">
         <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
           {roleCards.map((card) => (
-            <div key={card.title} className="ll-card p-6">
+            <div key={card.title} className="ll-card p-4">
               <h2 className="text-lg font-semibold text-[var(--ll-text)]">{card.title}</h2>
               <p className="mt-3 text-sm leading-6 text-[var(--ll-text-muted)]">{card.body}</p>
             </div>
@@ -289,9 +289,9 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="ll-shell py-8 sm:py-10">
-        <div className="grid gap-6 lg:grid-cols-[1fr_0.95fr]">
-          <div className="ll-section rounded-xl p-6">
+      <section className="ll-shell py-6">
+        <div className="grid gap-4 lg:grid-cols-[1fr_0.95fr]">
+          <div className="ll-section rounded-xl p-4">
             <p className="text-xs uppercase tracking-[0.14em] text-[var(--ll-text-faint)]">
               What schools get on day one
             </p>
@@ -318,7 +318,7 @@ export default function HomePage() {
             </div>
           </div>
 
-          <div className="ll-section rounded-xl p-6">
+          <div className="ll-section rounded-xl p-4">
             <p className="text-xs uppercase tracking-[0.14em] text-[var(--ll-warning)]">
               For Ministry officials
             </p>

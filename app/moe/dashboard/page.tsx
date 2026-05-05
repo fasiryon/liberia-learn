@@ -384,7 +384,7 @@ export default function MoeDashboardPage() {
                 </div>
 
                 <div className="mt-5 grid gap-4 lg:grid-cols-2">
-                  <Card className="p-5">
+                  <Card className="p-4">
                     <p className="text-[11px] font-medium uppercase tracking-[0.1em] text-[var(--ll-text-faint)]">
                       District Comparisons
                     </p>
@@ -392,7 +392,7 @@ export default function MoeDashboardPage() {
                       {(dashboard?.decisionIntelligence?.districtComparisons ?? []).slice(0, 6).map((district) => (
                         <div
                           key={district.districtId}
-                          className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-surface-muted)] px-4 py-3"
+                          className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-surface-muted)] px-3 py-2"
                         >
                           <div className="flex items-center justify-between gap-3">
                             <p className="font-medium text-[var(--ll-text)]">{district.districtName}</p>
@@ -400,7 +400,7 @@ export default function MoeDashboardPage() {
                               {district.averageQuizScorePct == null ? "--" : `${district.averageQuizScorePct}%`}
                             </p>
                           </div>
-                          <p className="mt-1 text-xs text-[var(--ll-text-muted)]">
+                          <p className="mt-0.5 text-xs text-[var(--ll-text-muted)]">
                             Delivery {district.deliveryRatePct}% &middot; Active {district.activeRatePct}% &middot; {district.schoolCount} schools
                           </p>
                         </div>
@@ -408,7 +408,7 @@ export default function MoeDashboardPage() {
                     </div>
                   </Card>
 
-                  <Card className="p-5">
+                  <Card className="p-4">
                     <p className="text-[11px] font-medium uppercase tracking-[0.1em] text-[var(--ll-text-faint)]">
                       Subject Weakness Heatmap
                     </p>
@@ -416,7 +416,7 @@ export default function MoeDashboardPage() {
                       {(dashboard?.decisionIntelligence?.subjectWeaknessHeatmap ?? []).slice(0, 6).map((row) => (
                         <div
                           key={`${row.districtId}-${row.subject}`}
-                          className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-surface-muted)] px-4 py-3"
+                          className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-surface-muted)] px-3 py-2"
                         >
                           <div className="flex items-center justify-between gap-3">
                             <p className="font-medium text-[var(--ll-text)]">
@@ -441,7 +441,7 @@ export default function MoeDashboardPage() {
                 </div>
 
                 <div className="mt-5 grid gap-4 lg:grid-cols-2">
-                  <Card className="p-5">
+                  <Card className="p-4">
                     <p className="text-[11px] font-medium uppercase tracking-[0.1em] text-[var(--ll-text-faint)]">
                       School Comparisons
                     </p>
@@ -449,7 +449,7 @@ export default function MoeDashboardPage() {
                       {(dashboard?.decisionIntelligence?.schoolComparisons ?? []).slice(0, 6).map((school) => (
                         <div
                           key={school.schoolId}
-                          className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-surface-muted)] px-4 py-3"
+                          className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-surface-muted)] px-3 py-2"
                         >
                           <div className="flex items-center justify-between gap-3">
                             <p className="font-medium text-[var(--ll-text)]">{school.schoolName}</p>
@@ -465,7 +465,7 @@ export default function MoeDashboardPage() {
                     </div>
                   </Card>
 
-                  <Card className="p-5">
+                  <Card className="p-4">
                     <p className="text-[11px] font-medium uppercase tracking-[0.1em] text-[var(--ll-text-faint)]">
                       Curriculum Adoption Trends
                     </p>
@@ -560,7 +560,7 @@ export default function MoeDashboardPage() {
 
                         return (
                           <tr key={d.districtId} className="text-[var(--ll-text-muted)]">
-                            <td className="px-4 py-3 font-medium">
+                            <td className="px-4 py-2 font-medium">
                               <Link
                                 href={`/moe/districts/${d.districtId}`}
                                 className="transition-colors hover:text-[var(--ll-accent)]"
@@ -568,13 +568,13 @@ export default function MoeDashboardPage() {
                                 {d.districtName}
                               </Link>
                             </td>
-                            <td className="px-4 py-3">{d.schoolCount}</td>
-                            <td className="px-4 py-3">{d.studentCount ?? 0}</td>
-                            <td className="px-4 py-3">
+                            <td className="px-4 py-2">{d.schoolCount}</td>
+                            <td className="px-4 py-2">{d.studentCount ?? 0}</td>
+                            <td className="px-4 py-2">
                               {d.scheduledWorkDelivered}/{d.scheduledWorkTotal}
                             </td>
-                            <td className="px-4 py-3">{formatPct(d.compliancePct)}</td>
-                            <td className="px-4 py-3">
+                            <td className="px-4 py-2">{formatPct(d.compliancePct)}</td>
+                            <td className="px-4 py-2">
                               <span
                                 className={`inline-flex rounded-full border px-2.5 py-1 text-[11px] font-medium ${statusClassName}`}
                               >
@@ -814,7 +814,7 @@ export default function MoeDashboardPage() {
                 </div>
 
                 <div className="mt-5 grid gap-4 lg:grid-cols-2">
-                  <Card className="p-5">
+                  <Card className="p-4">
                     <p className="text-[11px] font-medium uppercase tracking-[0.1em] text-[var(--ll-text-faint)]">
                       Top Performing Districts
                     </p>
@@ -822,7 +822,7 @@ export default function MoeDashboardPage() {
                       {(dashboard?.productMetrics.topPerformingDistricts ?? []).map((district) => (
                         <div
                           key={district.districtId}
-                          className="flex items-center justify-between rounded-xl border border-[var(--ll-border)] bg-[var(--ll-surface-muted)] px-4 py-3"
+                          className="flex items-center justify-between rounded-xl border border-[var(--ll-border)] bg-[var(--ll-surface-muted)] px-3 py-2"
                         >
                           <p className="font-medium text-[var(--ll-text)]">{district.districtName}</p>
                           <p className="font-semibold text-[var(--ll-accent)]">{district.compositeScore.toFixed(1)}%</p>
@@ -830,7 +830,7 @@ export default function MoeDashboardPage() {
                       ))}
                     </div>
                   </Card>
-                  <Card className="p-5">
+                  <Card className="p-4">
                     <p className="text-[11px] font-medium uppercase tracking-[0.1em] text-[var(--ll-text-faint)]">
                       Lowest Performing Districts
                     </p>
@@ -838,7 +838,7 @@ export default function MoeDashboardPage() {
                       {(dashboard?.productMetrics.lowestPerformingDistricts ?? []).map((district) => (
                         <div
                           key={district.districtId}
-                          className="flex items-center justify-between rounded-xl border border-[var(--ll-border)] bg-[var(--ll-surface-muted)] px-4 py-3"
+                          className="flex items-center justify-between rounded-xl border border-[var(--ll-border)] bg-[var(--ll-surface-muted)] px-3 py-2"
                         >
                           <p className="font-medium text-[var(--ll-text)]">{district.districtName}</p>
                           <p className="font-semibold text-[var(--ll-danger)]">{district.compositeScore.toFixed(1)}%</p>
@@ -947,9 +947,9 @@ export default function MoeDashboardPage() {
                       <tbody className="divide-y divide-[var(--ll-border)] bg-[var(--ll-surface)]">
                         {(dashboard?.examStats.subjectBreakdown ?? []).map((row) => (
                           <tr key={row.subject} className="text-[var(--ll-text-muted)]">
-                            <td className="px-4 py-3 font-medium text-[var(--ll-text)]">{row.subject}</td>
-                            <td className="px-4 py-3">{row.attempts}</td>
-                            <td className="px-4 py-3">{formatPct(row.passRate)}</td>
+                            <td className="px-4 py-2 font-medium text-[var(--ll-text)]">{row.subject}</td>
+                            <td className="px-4 py-2">{row.attempts}</td>
+                            <td className="px-4 py-2">{formatPct(row.passRate)}</td>
                           </tr>
                         ))}
                       </tbody>
@@ -1022,8 +1022,8 @@ export default function MoeDashboardPage() {
                       <tbody className="divide-y divide-[var(--ll-border)] bg-[var(--ll-surface)]">
                         {(placements?.byDistrict ?? []).map((district) => (
                           <tr key={district.districtId} className="text-[var(--ll-text-muted)]">
-                            <td className="px-4 py-3">
-                              <div className="space-y-1">
+                            <td className="px-4 py-2">
+                              <div className="space-y-0.5">
                                 <p className="font-medium text-[var(--ll-text)]">{district.districtName}</p>
                                 {district.warning ? (
                                   <p className="text-xs text-[var(--ll-warning)]">
@@ -1032,14 +1032,14 @@ export default function MoeDashboardPage() {
                                 ) : null}
                               </div>
                             </td>
-                            <td className="px-4 py-3">{district.studentsPlaced}</td>
-                            <td className="px-4 py-3">{district.overrideRate}%</td>
-                            <td className="px-4 py-3">
+                            <td className="px-4 py-2">{district.studentsPlaced}</td>
+                            <td className="px-4 py-2">{district.overrideRate}%</td>
+                            <td className="px-4 py-2">
                               {district.avgAiConfidence == null
                                 ? "--"
                                 : `${district.avgAiConfidence}%`}
                             </td>
-                            <td className="px-4 py-3 text-[var(--ll-text-faint)]">
+                            <td className="px-4 py-2 text-[var(--ll-text-faint)]">
                               {district.topOverrideReason ?? "--"}
                             </td>
                           </tr>
