@@ -131,7 +131,7 @@ export default function TeacherStudentsPage() {
                     key={`${s.studentId}-${s.className}`}
                     className={`border-b border-[var(--ll-border)]/50 hover:bg-[var(--ll-surface)]/40 transition-colors ${accentBorder}`}
                   >
-                    <td className="px-4 py-3">
+                    <td className="px-4 py-2.5">
                       <Link
                         href={`/teacher/students/${s.studentId}`}
                         className="font-medium text-[var(--ll-text)] hover:text-[var(--ll-yellow)]"
@@ -139,14 +139,14 @@ export default function TeacherStudentsPage() {
                         {s.name}
                       </Link>
                     </td>
-                    <td className="px-4 py-3 text-[var(--ll-text-muted)]">{s.className}</td>
-                    <td className="px-4 py-3 text-center text-[var(--ll-text)]">
+                    <td className="px-4 py-2.5 text-[var(--ll-text-muted)]">{s.className}</td>
+                    <td className="px-4 py-2.5 text-center text-[var(--ll-text)]">
                       {s.lessonsCompletedThisWeek}
                     </td>
-                    <td className="px-4 py-3 text-xs text-[var(--ll-text-faint)]">
+                    <td className="px-4 py-2.5 text-xs text-[var(--ll-text-faint)]">
                       {s.lastActive ? new Date(s.lastActive).toLocaleDateString() : "Never"}
                     </td>
-                    <td className="px-4 py-3 text-center">
+                    <td className="px-4 py-2.5 text-center">
                       <span className={`rounded-full px-2.5 py-0.5 text-[10px] font-medium ${style.cls}`}>
                         {style.label}
                       </span>
