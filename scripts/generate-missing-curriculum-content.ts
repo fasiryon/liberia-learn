@@ -691,8 +691,11 @@ async function main() {
   };
 
   if (!dryRun) {
-    if (grade !== 5 || displaySubject(requestedSubject, subject) !== "ENGLISH" || !effectiveLimit || effectiveLimit > batchSize) {
-      throw new Error("Approved generation scope must be Grade 5 ENGLISH with an effective limit no greater than batch size.");
+    if (!grade || !subject) {
+      throw new Error("Grade and subject are required for approved generation.");
+    }
+    if (!effectiveLimit || effectiveLimit > batchSize) {
+      throw new Error("An effective limit no greater than batch size is required for approved generation.");
     }
     if (plan.lessons.length > batchSize) {
       throw new Error("Generation batch guard failed: plan exceeds batch size.");
