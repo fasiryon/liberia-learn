@@ -424,9 +424,9 @@ export async function routedCompletion(opts: RouterOptions): Promise<RouterResul
   }
 
   if (opts.aiUsage) {
-    void logAIInteraction(
+    await logAIInteraction(
       buildTelemetryInput(opts.aiUsage, response, providerFallbackUsed)
-    );
+    ).catch(() => {});
   }
 
   return response;
