@@ -64,7 +64,7 @@ export function DashboardTopBar({
         {rightSlot}
         <Link
           href="/signout"
-          className="ll-interactive inline-flex items-center gap-1.5 rounded-lg border border-[var(--ll-border-strong)] px-3 py-2 text-sm font-semibold text-[var(--ll-text-muted)] hover:bg-[var(--ll-surface-muted)] hover:text-[var(--ll-text)] focus-visible:outline-none"
+          className="ll-interactive inline-flex items-center gap-1.5 rounded-lg border border-[var(--ll-border-strong)] px-3 py-1.5 text-sm font-semibold text-[var(--ll-text-muted)] hover:bg-[var(--ll-surface-muted)] hover:text-[var(--ll-text)] focus-visible:outline-none"
         >
           <LogOut className="h-4 w-4" strokeWidth={1.5} />
           Log out
