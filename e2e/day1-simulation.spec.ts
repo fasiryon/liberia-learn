@@ -57,6 +57,27 @@ async function expectAdminDashboardReady(page: Page) {
   await expect(page.getByRole("link", { name: /curriculum/i }).first()).toBeVisible({ timeout: 15000 });
 }
 
+async function expectStudentTodayTabbedUx(page: Page) {
+  await expect(page.locator("body")).not.toContainText(/application error|internal server error/i);
+
+  for (const tabName of ["Schedule", "Catch Up", "Support", "Progress"]) {
+    await expect(page.getByRole("button", { name: tabName })).toBeVisible({ timeout: 15000 });
+  }
+}
+
+async function expectStudentTodayScheduleState(page: Page) {
+  const scheduleTab = page.getByRole("button", { name: "Schedule" });
+  await expect(scheduleTab).toBeVisible({ timeout: 15000 });
+  await scheduleTab.click();
+
+  const scheduleState = page
+    .getByText(
+      /Today's assigned work|Recommended for today|Recommended for you today|No lessons scheduled yet\.|Period \d+|Learning block \d+|Open lesson|Start lesson/i
+    )
+    .first();
+  await expect(scheduleState).toBeVisible({ timeout: 15000 });
+}
+
 test("Gate 1  Admin: school setup and roster", async ({ page }) => {
   await gotoWithRetry(page, `${baseUrl}/login`);
   await page.fill('input[type="email"]', credentials.adminEmail!);
@@ -123,20 +144,13 @@ test("Gate 3  Student: morning lesson experience", async ({ page }) => {
 
   await page.goto(`${baseUrl}/student/today`);
   await acceptPolicyIfPresent(page);
-  await expect(page.getByRole("heading", { name: "Today Focus" })).toBeVisible({
-    timeout: 15000,
-  });
-  await expect(page.getByRole("heading", { name: "Todays School Day" })).toBeVisible({
-    timeout: 15000,
-  });
+  await expectStudentTodayTabbedUx(page);
+  await expectStudentTodayScheduleState(page);
   await expect(
     page
-      .getByText(
-        /time to be announced|\d{1,2}:\d{2}\s*(AM|PM)|current|upcoming|catch up|adaptive recommendation|no school day schedule/i
-      )
+      .getByRole("link", { name: /open lesson|start lesson|browse curriculum|view assignments|open/i })
       .first()
   ).toBeVisible({ timeout: 15000 });
-  await expect(page.locator("body")).not.toContainText(/application error|internal server error/i);
 
   const lessonLink = page.getByRole("link", {
     name: /continue lesson|open lesson|continue|start/i,
@@ -184,7 +198,7 @@ test("Gate 3  Student: morning lesson experience", async ({ page }) => {
     await expect(backLink).toBeVisible();
     await backLink.click();
     await page.waitForURL(/\/student\/today/, { timeout: 15000 });
-    await expect(page.getByRole("heading", { name: "Today Focus" })).toBeVisible();
+    await expectStudentTodayTabbedUx(page);
 
     console.log("Slides tab:", slidesVisible);
     console.log("Listen tab:", listenVisible);
@@ -355,17 +369,6 @@ test("Gate 9  Timetable: student schedule view", async ({ page }) => {
   await acceptPolicyIfPresent(page);
   await page.waitForTimeout(SLOW);
 
-  const todayBody = await page.locator("body").innerText();
-
-  const hasTimetable = todayBody.toLowerCase().match(/period|schedule|8:30|am|pm|timetable/i);
-  const hasAdaptivePlan = todayBody.toLowerCase().match(/continue|lesson|today|assigned/i);
-  const hasEmptyState = todayBody.toLowerCase().match(/no school day schedule|setup|catch up/i);
-
-  console.log("Timetable configured:", !!hasTimetable);
-  console.log("Adaptive plan shows:", !!hasAdaptivePlan);
-  console.log("Empty state shows:", !!hasEmptyState);
-
-  expect(todayBody.length).toBeGreaterThan(100);
-  expect(todayBody).toContain("Todays School Day");
-  expect(todayBody).toMatch(/Adaptive recommendation|Catch Up/i);
+  await expectStudentTodayTabbedUx(page);
+  await expectStudentTodayScheduleState(page);
 });
