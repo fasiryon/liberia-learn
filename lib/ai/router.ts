@@ -3,6 +3,7 @@ export {
   routedCompletion,
   routedEmbedding,
   type AiUsageContext,
+  type Provider,
   type RouterOptions,
   type RouterResult,
   type Tier,
