@@ -409,12 +409,12 @@ export default async function AdminConsolePage() {
                 <tbody>
                   {classPerformance.map((row) => (
                     <tr key={row.id} className="border-b border-[var(--ll-border)]/60 text-[var(--ll-text-muted)]">
-                      <td className="px-3 py-3">{row.name}</td>
-                      <td className="px-3 py-3">{row.teacher}</td>
-                      <td className="px-3 py-3">{row.students}</td>
-                      <td className="px-3 py-3">{row.avgMastery}%</td>
-                      <td className="px-3 py-3">{row.attendance}%</td>
-                      <td className="px-3 py-3">{row.lessons}</td>
+                      <td className="px-3 py-2">{row.name}</td>
+                      <td className="px-3 py-2">{row.teacher}</td>
+                      <td className="px-3 py-2">{row.students}</td>
+                      <td className="px-3 py-2">{row.avgMastery}%</td>
+                      <td className="px-3 py-2">{row.attendance}%</td>
+                      <td className="px-3 py-2">{row.lessons}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -464,7 +464,7 @@ export default async function AdminConsolePage() {
             ) : (
               <div className="space-y-2">
                 {atRiskStudents.map((student) => (
-                  <div key={student.studentId} className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-surface-muted)] px-4 py-3">
+                  <div key={student.studentId} className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-surface-muted)] px-3 py-2">
                     <div className="flex flex-wrap items-center justify-between gap-3">
                       <div>
                         <p className="text-sm font-semibold text-[var(--ll-text)]">{student.name}</p>
@@ -490,7 +490,7 @@ export default async function AdminConsolePage() {
                 <p className="text-sm text-[var(--ll-text-faint)]">No recent activity.</p>
               ) : (
                 recentActivity.map((entry) => (
-                  <div key={entry.id} className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-surface-muted)] px-4 py-3">
+                  <div key={entry.id} className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-surface-muted)] px-3 py-2">
                     <p className="text-sm font-semibold text-[var(--ll-text)]">{entry.action.replace(/\./g, " ")}</p>
                     <p className="text-xs text-[var(--ll-text-faint)]">
                       {entry.createdAt.toLocaleString("en-LR", {

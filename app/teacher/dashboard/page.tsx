@@ -360,40 +360,52 @@ export default function TeacherDashboardPage() {
             {/* KPI cards */}
             <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
               <div className="ll-kpi border-t-2 border-t-[var(--ll-yellow)]/30">
-                <p className="text-2xl font-semibold text-[var(--ll-text)]">{data?.scheduledToday || 0}</p>
+                <p className="text-xl font-semibold text-[var(--ll-text)]">{data?.scheduledToday || 0}</p>
                 <p className="text-xs text-[var(--ll-text-faint)]">Lessons today</p>
               </div>
               <div className="ll-kpi border-t-2 border-t-[var(--ll-accent)]/30">
-                <p className={`text-2xl font-semibold ${(data?.completionRateToday || 0) === 0 ? "text-[var(--ll-text-faint)]" : "text-[var(--ll-accent)]"}`}>{data?.completionRateToday || 0}%</p>
+                <p className={`text-xl font-semibold ${(data?.completionRateToday || 0) === 0 ? "text-[var(--ll-text-faint)]" : "text-[var(--ll-accent)]"}`}>{data?.completionRateToday || 0}%</p>
                 <p className="text-xs text-[var(--ll-text-faint)]">Completion rate</p>
               </div>
               <div className="ll-kpi border-t-2 border-t-[var(--ll-warning)]/30">
-                <p className={`text-2xl font-semibold ${(data?.assignmentsPendingGrading || 0) === 0 ? "text-[var(--ll-text-faint)]" : "text-[var(--ll-warning)]"}`}>{data?.assignmentsPendingGrading || 0}</p>
+                <p className={`text-xl font-semibold ${(data?.assignmentsPendingGrading || 0) === 0 ? "text-[var(--ll-text-faint)]" : "text-[var(--ll-warning)]"}`}>{data?.assignmentsPendingGrading || 0}</p>
                 <p className="text-xs text-[var(--ll-text-faint)]">Pending grading</p>
               </div>
               <div className="ll-kpi border-t-2 border-t-[var(--ll-warning)]/20">
-                <p className={`text-2xl font-semibold ${(data?.labsPendingReview || 0) === 0 ? "text-[var(--ll-text-faint)]" : "text-[var(--ll-warning)]"}`}>{data?.labsPendingReview || 0}</p>
+                <p className={`text-xl font-semibold ${(data?.labsPendingReview || 0) === 0 ? "text-[var(--ll-text-faint)]" : "text-[var(--ll-warning)]"}`}>{data?.labsPendingReview || 0}</p>
                 <p className="text-xs text-[var(--ll-text-faint)]">Labs to review</p>
               </div>
             </div>
 
             {/* Primary Actions */}
-            <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
-              <Link href="/teacher/students" className="ll-command ll-focus flex-col items-start">
-                <Users className="h-4 w-4 text-[var(--ll-text-faint)]" strokeWidth={1.5} />
-                <p className="mt-1 text-sm font-semibold text-[var(--ll-text)]">View my classes</p>
+            <div className="grid grid-cols-2 gap-2">
+              <Link href="/teacher/students" className="ll-command ll-focus justify-between">
+                <span className="flex items-center gap-2 text-sm font-semibold text-[var(--ll-text)]">
+                  <Users className="h-4 w-4 text-[var(--ll-text-faint)]" strokeWidth={1.5} />
+                  View my classes
+                </span>
+                <ChevronRight className="h-3.5 w-3.5 text-[var(--ll-text-faint)]" strokeWidth={1.5} />
               </Link>
-              <Link href="/teacher/assignments" className="ll-command ll-focus flex-col items-start">
-                <ClipboardCheck className="h-4 w-4 text-[var(--ll-text-faint)]" strokeWidth={1.5} />
-                <p className="mt-1 text-sm font-semibold text-[var(--ll-text)]">Grade assignments</p>
+              <Link href="/teacher/assignments" className="ll-command ll-focus justify-between">
+                <span className="flex items-center gap-2 text-sm font-semibold text-[var(--ll-text)]">
+                  <ClipboardCheck className="h-4 w-4 text-[var(--ll-text-faint)]" strokeWidth={1.5} />
+                  Grade assignments
+                </span>
+                <ChevronRight className="h-3.5 w-3.5 text-[var(--ll-text-faint)]" strokeWidth={1.5} />
               </Link>
-              <Link href="/teacher/schedule" className="ll-command ll-focus flex-col items-start">
-                <CalendarDays className="h-4 w-4 text-[var(--ll-text-faint)]" strokeWidth={1.5} />
-                <p className="mt-1 text-sm font-semibold text-[var(--ll-text)]">Lesson planner</p>
+              <Link href="/teacher/schedule" className="ll-command ll-focus justify-between">
+                <span className="flex items-center gap-2 text-sm font-semibold text-[var(--ll-text)]">
+                  <CalendarDays className="h-4 w-4 text-[var(--ll-text-faint)]" strokeWidth={1.5} />
+                  Lesson planner
+                </span>
+                <ChevronRight className="h-3.5 w-3.5 text-[var(--ll-text-faint)]" strokeWidth={1.5} />
               </Link>
-              <Link href="/teacher/weekly-report" className="ll-command ll-focus flex-col items-start">
-                <BarChart3 className="h-4 w-4 text-[var(--ll-text-faint)]" strokeWidth={1.5} />
-                <p className="mt-1 text-sm font-semibold text-[var(--ll-text)]">Weekly report</p>
+              <Link href="/teacher/weekly-report" className="ll-command ll-focus justify-between">
+                <span className="flex items-center gap-2 text-sm font-semibold text-[var(--ll-text)]">
+                  <BarChart3 className="h-4 w-4 text-[var(--ll-text-faint)]" strokeWidth={1.5} />
+                  Weekly report
+                </span>
+                <ChevronRight className="h-3.5 w-3.5 text-[var(--ll-text-faint)]" strokeWidth={1.5} />
               </Link>
             </div>
 
@@ -436,25 +448,25 @@ export default function TeacherDashboardPage() {
                   <span className="text-xs text-[var(--ll-text-faint)]">Closed-loop mastery</span>
                 </div>
                 <div className="grid gap-3 md:grid-cols-4">
-                  <div className="rounded-xl bg-[var(--ll-surface-muted)] p-4">
-                    <p className="text-2xl font-semibold text-[var(--ll-text)]">
+                  <div className="rounded-xl bg-[var(--ll-surface-muted)] p-3">
+                    <p className="text-xl font-semibold text-[var(--ll-text)]">
                       {data?.adaptiveStats?.studentsWithGaps ?? 0}
                     </p>
                     <p className="text-xs text-[var(--ll-text-faint)]">Students with gaps</p>
                   </div>
-                  <div className="rounded-xl bg-[var(--ll-surface-muted)] p-4">
-                    <p className={`text-2xl font-semibold ${(data?.adaptiveStats?.totalGapsDetected ?? 0) > 0 ? "text-[var(--ll-warning)]" : "text-[var(--ll-text)]"}`}>
+                  <div className="rounded-xl bg-[var(--ll-surface-muted)] p-3">
+                    <p className={`text-xl font-semibold ${(data?.adaptiveStats?.totalGapsDetected ?? 0) > 0 ? "text-[var(--ll-warning)]" : "text-[var(--ll-text)]"}`}>
                       {data?.adaptiveStats?.totalGapsDetected ?? 0}
                     </p>
                     <p className="text-xs text-[var(--ll-text-faint)]">Total gaps detected</p>
                   </div>
-                  <div className="rounded-xl bg-[var(--ll-surface-muted)] p-4">
-                    <p className="text-2xl font-semibold text-[var(--ll-accent)]">
+                  <div className="rounded-xl bg-[var(--ll-surface-muted)] p-3">
+                    <p className="text-xl font-semibold text-[var(--ll-accent)]">
                       {data?.adaptiveStats?.avgMasteryScore ?? 0}
                     </p>
                     <p className="text-xs text-[var(--ll-text-faint)]">Average mastery score</p>
                   </div>
-                  <div className="rounded-xl bg-[var(--ll-surface-muted)] p-4">
+                  <div className="rounded-xl bg-[var(--ll-surface-muted)] p-3">
                     <p className="text-[11px] font-medium uppercase tracking-[0.1em] text-[var(--ll-text-faint)]">
                       Top weak strands
                     </p>
@@ -512,20 +524,20 @@ export default function TeacherDashboardPage() {
                           </button>
                         </div>
 
-                        <div className="mt-4 grid gap-3 sm:grid-cols-3">
-                          <div className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-surface)] p-4">
+                        <div className="mt-3 grid gap-2 sm:grid-cols-3">
+                          <div className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-surface)] p-3">
                             <p className="text-xs text-[var(--ll-text-faint)]">Lesson completion</p>
-                            <p className="mt-2 text-2xl font-semibold text-[var(--ll-accent)]">{cls.lessonCompletionRate}%</p>
+                            <p className="mt-1 text-xl font-semibold text-[var(--ll-accent)]">{cls.lessonCompletionRate}%</p>
                           </div>
-                          <div className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-surface)] p-4">
+                          <div className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-surface)] p-3">
                             <p className="text-xs text-[var(--ll-text-faint)]">Average quiz score</p>
-                            <p className="mt-2 text-2xl font-semibold text-[var(--ll-text)]">
+                            <p className="mt-1 text-xl font-semibold text-[var(--ll-text)]">
                               {cls.averageQuizScore == null ? "No data" : `${cls.averageQuizScore}%`}
                             </p>
                           </div>
-                          <div className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-surface)] p-4">
+                          <div className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-surface)] p-3">
                             <p className="text-xs text-[var(--ll-text-faint)]">At-risk students</p>
-                            <p className={`mt-2 text-2xl font-semibold ${cls.atRiskStudents.length > 0 ? "text-[var(--ll-warning)]" : "text-[var(--ll-text)]"}`}>{cls.atRiskStudents.length}</p>
+                            <p className={`mt-1 text-xl font-semibold ${cls.atRiskStudents.length > 0 ? "text-[var(--ll-warning)]" : "text-[var(--ll-text)]"}`}>{cls.atRiskStudents.length}</p>
                           </div>
                         </div>
 

@@ -256,25 +256,28 @@ export default function GuardianDashboardClient() {
                 </Link>
               </div>
 
-              <div className="mt-5 grid gap-4 lg:grid-cols-[1.4fr_1fr]">
-                <div className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-surface-muted)] p-4">
+              <div className="mt-4 grid gap-3 lg:grid-cols-[1.4fr_1fr]">
+                <div className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-surface-muted)] p-3">
                   <p className="text-[11px] font-medium uppercase tracking-[0.1em] text-[var(--ll-text-faint)]">Weekly summary</p>
-                  <div className="mt-3 grid gap-3 sm:grid-cols-3">
-                    <div className="rounded-xl bg-[var(--ll-surface)] p-4">
+                  <div className="mt-2 grid gap-2 sm:grid-cols-3">
+                    <div className="rounded-xl bg-[var(--ll-surface)] p-3">
                       <p className="text-xs text-[var(--ll-text-faint)]">Attendance</p>
-                      <p className="mt-2 text-2xl font-semibold text-[var(--ll-text)]">
+                      <p className="mt-1 text-xl font-semibold text-[var(--ll-text)]">
                         {Math.round(selectedDashboardChild.attendance.attendanceRate * 100)}%
                       </p>
+                      <p className="text-[10px] text-[var(--ll-text-faint)]">
+                        {selectedDashboardChild.attendance.presentDays}p · {selectedDashboardChild.attendance.absentDays}a
+                      </p>
                     </div>
-                    <div className="rounded-xl bg-[var(--ll-surface)] p-4">
+                    <div className="rounded-xl bg-[var(--ll-surface)] p-3">
                       <p className="text-xs text-[var(--ll-text-faint)]">Lessons this week</p>
-                      <p className="mt-2 text-2xl font-semibold text-[var(--ll-text)]">
+                      <p className="mt-1 text-xl font-semibold text-[var(--ll-text)]">
                         {selectedSummary.lessonViewsThisWeek}
                       </p>
                     </div>
-                    <div className="rounded-xl bg-[var(--ll-surface)] p-4">
+                    <div className="rounded-xl bg-[var(--ll-surface)] p-3">
                       <p className="text-xs text-[var(--ll-text-faint)]">Progress trajectory</p>
-                      <p className="mt-2 text-2xl font-semibold text-[var(--ll-text)]">
+                      <p className="mt-1 text-xl font-semibold text-[var(--ll-text)]">
                         {selectedDashboardChild.masteryProfile.some((item) => item.trend === "up")
                           ? "Improving"
                           : selectedDashboardChild.masteryProfile.some((item) => item.trend === "down")
@@ -284,42 +287,33 @@ export default function GuardianDashboardClient() {
                     </div>
                   </div>
                 </div>
-                <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-1">
-                <div className="rounded-xl bg-[var(--ll-surface-muted)] p-4">
+                <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-1">
+                <div className="rounded-xl bg-[var(--ll-surface-muted)] p-3">
                   <p className="text-xs text-[var(--ll-text-faint)]">Last homework</p>
-                  <p className="mt-2 text-sm font-semibold text-[var(--ll-text)]">
+                  <p className="mt-1 text-sm font-semibold text-[var(--ll-text)]">
                     {selectedSummary.lastHomework?.title ?? "No submissions yet"}
                   </p>
                   <p className="mt-1 text-xs text-[var(--ll-text-faint)]">
                     Score: {scoreDisplay(selectedSummary.lastHomework)}
                   </p>
                 </div>
-                <div className="rounded-xl bg-[var(--ll-surface-muted)] p-4">
-                  <p className="text-xs text-[var(--ll-text-faint)]">Attendance</p>
-                  <p className="mt-2 text-sm font-semibold text-[var(--ll-text)]">
-                    {Math.round(selectedDashboardChild.attendance.attendanceRate * 100)}%
-                  </p>
-                  <p className="mt-1 text-xs text-[var(--ll-text-faint)]">
-                    {selectedDashboardChild.attendance.presentDays} present · {selectedDashboardChild.attendance.absentDays} absent
-                  </p>
-                </div>
-                <div className="rounded-xl bg-[var(--ll-surface-muted)] p-4">
+                <div className="rounded-xl bg-[var(--ll-surface-muted)] p-3">
                   <p className="text-xs text-[var(--ll-text-faint)]">Placement</p>
-                  <p className="mt-2 text-sm font-semibold text-[var(--ll-text)]">
+                  <p className="mt-1 text-sm font-semibold text-[var(--ll-text)]">
                     {selectedSummary.placement?.band?.replace("_", "-") ?? "Not assessed"}
                   </p>
                   <p className="mt-1 text-xs text-[var(--ll-text-faint)]">
                     {selectedSummary.placement?.levelLabel ?? "Placement result pending"}
                   </p>
                 </div>
-                <div className="rounded-xl bg-[var(--ll-surface-muted)] p-4">
+                <div className="rounded-xl bg-[var(--ll-surface-muted)] p-3">
                   <p className="text-xs text-[var(--ll-text-faint)]">Messages</p>
-                  <p className="mt-2 text-sm font-semibold text-[var(--ll-text)]">
+                  <p className="mt-1 text-sm font-semibold text-[var(--ll-text)]">
                     Stay connected with teachers
                   </p>
                   <Link
                     href="/guardian/messages"
-                    className="ll-touch-target mt-3 inline-flex items-center rounded-lg bg-[var(--ll-accent)] px-4 py-2 text-xs font-semibold text-[var(--ll-text-faint)]"
+                    className="ll-touch-target mt-2 inline-flex items-center rounded-lg bg-[var(--ll-accent)] px-4 py-1.5 text-xs font-semibold text-[var(--ll-text-faint)]"
                   >
                     Open Messages
                   </Link>
@@ -328,7 +322,7 @@ export default function GuardianDashboardClient() {
               </div>
             </section>
 
-            <section className="grid gap-5 lg:grid-cols-2">
+            <section className="grid gap-4 lg:grid-cols-2">
               <div className="ll-section p-4">
                 <div className="flex items-center justify-between gap-3">
                   <div>
@@ -345,7 +339,7 @@ export default function GuardianDashboardClient() {
                       const trendSymbol =
                         item.trend === "up" ? "↑" : item.trend === "down" ? "↓" : "→";
                       return (
-                        <div key={`${item.subject}-${item.strandKey}`} className="rounded-xl bg-[var(--ll-surface-muted)] p-4">
+                        <div key={`${item.subject}-${item.strandKey}`} className="rounded-xl bg-[var(--ll-surface-muted)] p-3">
                           <div className="flex items-center justify-between gap-3">
                             <div>
                               <p className="text-sm font-semibold text-[var(--ll-text)]">
@@ -360,8 +354,8 @@ export default function GuardianDashboardClient() {
                               <p className="text-xs text-[var(--ll-text-faint)]">{trendSymbol} {item.trend}</p>
                             </div>
                           </div>
-                          <div className="mt-3 h-2 rounded-full bg-[var(--ll-surface)]">
-                            <div className="h-2 rounded-full bg-[var(--ll-accent)]" style={{ width: `${percent}%` }} />
+                          <div className="mt-2 h-1.5 rounded-full bg-[var(--ll-surface)]">
+                            <div className="h-1.5 rounded-full bg-[var(--ll-accent)]" style={{ width: `${percent}%` }} />
                           </div>
                         </div>
                       );
@@ -370,44 +364,44 @@ export default function GuardianDashboardClient() {
                 </div>
               </div>
 
-              <div className="space-y-5">
+              <div className="space-y-4">
                 <div className="ll-section p-4">
                   <h3 className="text-base font-semibold text-[var(--ll-text)]">Today&apos;s Activity</h3>
                   <p className="mt-1 text-sm leading-6 text-[var(--ll-text-muted)]">
                     {selectedDashboardChild.studentName}&apos;s activity today.
                   </p>
-                  <div className="mt-4 grid gap-3 sm:grid-cols-4">
-                    <div className="rounded-xl bg-[var(--ll-surface-muted)] p-4">
+                  <div className="mt-3 grid gap-2 sm:grid-cols-4">
+                    <div className="rounded-xl bg-[var(--ll-surface-muted)] p-3">
                       <p className="text-xs text-[var(--ll-text-faint)]">Lessons</p>
-                      <p className="mt-2 text-xl font-semibold text-[var(--ll-text)]">
+                      <p className="mt-1 text-xl font-semibold text-[var(--ll-text)]">
                         {selectedDashboardChild.todayActivity.lessonsCompleted}
                       </p>
                     </div>
-                    <div className="rounded-xl bg-[var(--ll-surface-muted)] p-4">
+                    <div className="rounded-xl bg-[var(--ll-surface-muted)] p-3">
                       <p className="text-xs text-[var(--ll-text-faint)]">Assignments</p>
-                      <p className="mt-2 text-xl font-semibold text-[var(--ll-text)]">
+                      <p className="mt-1 text-xl font-semibold text-[var(--ll-text)]">
                         {selectedDashboardChild.todayActivity.assignmentsSubmitted}
                       </p>
                     </div>
-                    <div className="rounded-xl bg-[var(--ll-surface-muted)] p-4">
+                    <div className="rounded-xl bg-[var(--ll-surface-muted)] p-3">
                       <p className="text-xs text-[var(--ll-text-faint)]">Grades</p>
-                      <p className="mt-2 text-xl font-semibold text-[var(--ll-text)]">
+                      <p className="mt-1 text-xl font-semibold text-[var(--ll-text)]">
                         {selectedDashboardChild.todayActivity.gradesReceived}
                       </p>
                     </div>
-                    <div className="rounded-xl bg-[var(--ll-surface-muted)] p-4">
+                    <div className="rounded-xl bg-[var(--ll-surface-muted)] p-3">
                       <p className="text-xs text-[var(--ll-text-faint)]">Placement</p>
-                      <p className="mt-2 text-xl font-semibold text-[var(--ll-text)]">
+                      <p className="mt-1 text-xl font-semibold text-[var(--ll-text)]">
                         {selectedDashboardChild.todayActivity.placementUpdates}
                       </p>
                     </div>
                   </div>
-                  <div className="mt-4 space-y-3">
+                  <div className="mt-3 space-y-2">
                     {selectedDashboardChild.todayActivity.dailySummary.length === 0 ? (
                       <p className="text-sm text-[var(--ll-text-faint)]">No activity recorded yet today.</p>
                     ) : (
                       selectedDashboardChild.todayActivity.dailySummary.map((summary) => (
-                        <div key={summary} className="rounded-xl bg-[var(--ll-surface-muted)] p-4 text-sm text-[var(--ll-text-muted)]">
+                        <div key={summary} className="rounded-xl bg-[var(--ll-surface-muted)] p-3 text-sm text-[var(--ll-text-muted)]">
                           {summary}
                         </div>
                       ))
@@ -422,7 +416,7 @@ export default function GuardianDashboardClient() {
                       <p className="text-sm text-[var(--ll-text-faint)]">No active alerts. Your child is on track!</p>
                     ) : (
                       selectedDashboardChild.interventionAlerts.map((alert) => (
-                        <div key={`${alert.subject}-${alert.strandKey}-${alert.createdAt}`} className="rounded-xl bg-[var(--ll-surface-muted)] p-4">
+                        <div key={`${alert.subject}-${alert.strandKey}-${alert.createdAt}`} className="rounded-xl bg-[var(--ll-surface-muted)] p-3">
                           <p className="text-sm font-semibold text-[var(--ll-text)]">
                             {alert.subject.replace(/_/g, " ")}
                           </p>
@@ -445,7 +439,7 @@ export default function GuardianDashboardClient() {
                       <p className="text-sm text-[var(--ll-text-faint)]">No upcoming assignments right now.</p>
                     ) : (
                       selectedDashboardChild.upcomingAssignments.slice(0, 4).map((assignment) => (
-                        <div key={`${assignment.title}-${assignment.dueAt}`} className="rounded-xl bg-[var(--ll-surface-muted)] p-4">
+                        <div key={`${assignment.title}-${assignment.dueAt}`} className="rounded-xl bg-[var(--ll-surface-muted)] p-3">
                           <p className="text-sm font-semibold text-[var(--ll-text)]">{assignment.title}</p>
                           <p className="mt-1 text-xs text-[var(--ll-text-faint)]">
                             {assignment.subject.replace(/_/g, " ")} · due {new Date(assignment.dueAt).toLocaleDateString("en-LR")}
@@ -476,7 +470,7 @@ export default function GuardianDashboardClient() {
                       <p className="text-sm text-[var(--ll-text-faint)]">No placement history yet.</p>
                     ) : (
                       selectedDashboardChild.placementHistory.map((placement) => (
-                        <div key={placement.id} className="rounded-xl bg-[var(--ll-surface-muted)] p-4">
+                        <div key={placement.id} className="rounded-xl bg-[var(--ll-surface-muted)] p-3">
                           <div className="flex flex-wrap items-center justify-between gap-3">
                             <p className="text-sm font-semibold text-[var(--ll-text)]">{placement.summary}</p>
                             <span
