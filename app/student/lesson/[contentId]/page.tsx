@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
 import Link from "next/link";
+import ReactMarkdown from "react-markdown";
 import { trackEvent, EVENTS } from "@/lib/trackEvent";
 import { cacheLessonContent, loadCachedLesson } from "@/lib/lesson-offline-cache";
 import { LessonAudioPlayer, type LessonAudioPart } from "@/components/student/LessonAudioPlayer";
@@ -253,8 +254,8 @@ export default function LessonViewerPage() {
                     45 min
                   </span>
                 </div>
-                <div className="prose prose-invert prose-sm max-w-none whitespace-pre-line text-[var(--ll-text)] leading-relaxed">
-                  {standardBodyText}
+                <div className="prose prose-invert prose-sm max-w-none text-[var(--ll-text)] leading-relaxed">
+                  <ReactMarkdown>{standardBodyText}</ReactMarkdown>
                 </div>
               </div>
             )}
@@ -269,8 +270,8 @@ export default function LessonViewerPage() {
                     90 min / A-B day
                   </span>
                 </div>
-                <div className="prose prose-invert prose-sm max-w-none whitespace-pre-line text-[var(--ll-text)] leading-relaxed">
-                  {blockBodyText}
+                <div className="prose prose-invert prose-sm max-w-none text-[var(--ll-text)] leading-relaxed">
+                  <ReactMarkdown>{blockBodyText}</ReactMarkdown>
                 </div>
               </div>
             )}
