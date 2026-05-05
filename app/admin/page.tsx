@@ -1,5 +1,28 @@
 import type { ReactNode } from "react";
 import Link from "next/link";
+
+function formatEventLabel(eventType: string): string {
+  const labels: Record<string, string> = {
+    lesson_view: "Lesson opened",
+    LESSON_MODE_CHANGED: "Lesson mode changed",
+    LESSON_COMPLETED: "Lesson completed",
+    QUIZ_SUBMITTED: "Quiz submitted",
+    "guardian dashboard viewed": "Guardian viewed dashboard",
+    ASSIGNMENT_CREATED: "Assignment created",
+    ASSIGNMENT_SUBMITTED: "Assignment submitted",
+    STUDENT_LOGGED_IN: "Student signed in",
+    TEACHER_LOGGED_IN: "Teacher signed in",
+    INTERVENTION_RESOLVED: "Intervention resolved",
+    "action.student.resolved": "Student action resolved",
+  };
+  return (
+    labels[eventType] ??
+    eventType
+      .replace(/_/g, " ")
+      .toLowerCase()
+      .replace(/^\w/, (c) => c.toUpperCase())
+  );
+}
 import { redirect } from "next/navigation";
 import { getServerSession } from "next-auth";
 import { AlertTriangle, Building2, BookOpen, Bell, BarChart2, Settings } from "lucide-react";
@@ -409,12 +432,12 @@ export default async function AdminConsolePage() {
                 <tbody>
                   {classPerformance.map((row) => (
                     <tr key={row.id} className="border-b border-[var(--ll-border)]/60 text-[var(--ll-text-muted)]">
-                      <td className="px-3 py-2">{row.name}</td>
-                      <td className="px-3 py-2">{row.teacher}</td>
-                      <td className="px-3 py-2">{row.students}</td>
-                      <td className="px-3 py-2">{row.avgMastery}%</td>
-                      <td className="px-3 py-2">{row.attendance}%</td>
-                      <td className="px-3 py-2">{row.lessons}</td>
+                      <td className="px-3 py-2.5">{row.name}</td>
+                      <td className="px-3 py-2.5">{row.teacher}</td>
+                      <td className="px-3 py-2.5">{row.students}</td>
+                      <td className="px-3 py-2.5">{row.avgMastery}%</td>
+                      <td className="px-3 py-2.5">{row.attendance}%</td>
+                      <td className="px-3 py-2.5">{row.lessons}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -453,33 +476,37 @@ export default async function AdminConsolePage() {
                 <h2 className="text-base font-semibold text-[var(--ll-text)]">Students Needing Attention</h2>
                 <p className="text-xs text-[var(--ll-text-faint)]">Active intervention signals across the school.</p>
               </div>
-              {atRiskTotal > 10 ? (
-                <Link href="/admin/students" className="text-xs font-semibold text-[var(--ll-accent)] hover:opacity-80">
-                  View All
-                </Link>
-              ) : null}
             </div>
             {atRiskStudents.length === 0 ? (
               <p className="text-sm text-[var(--ll-text-faint)]">No at-risk alerts. Great work!</p>
             ) : (
               <div className="space-y-2">
-                {atRiskStudents.map((student) => (
-                  <div key={student.studentId} className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-surface-muted)] px-3 py-2">
-                    <div className="flex flex-wrap items-center justify-between gap-3">
-                      <div>
-                        <p className="text-sm font-semibold text-[var(--ll-text)]">{student.name}</p>
-                        <p className="text-xs text-[var(--ll-text-faint)]">
-                          Grade {student.grade ?? "-"} · {student.className ?? "Unassigned"}
-                        </p>
-                      </div>
-                      <div className="text-right">
-                        <p className="text-xs font-semibold text-[var(--ll-warning)]">{student.subject}</p>
-                        <p className="text-[11px] text-[var(--ll-text-faint)]">{student.alertType.replace(/_/g, " ")}</p>
-                      </div>
+                {atRiskStudents.slice(0, 5).map((student) => (
+                  <div
+                    key={student.studentId}
+                    className="flex items-center justify-between px-3 py-2.5 rounded-lg border border-[var(--ll-border)] hover:border-[var(--ll-border-strong)] transition-colors"
+                  >
+                    <div>
+                      <p className="text-sm font-medium text-[var(--ll-text)]">{student.name}</p>
+                      <p className="text-xs text-[var(--ll-text-faint)]">
+                        Grade {student.grade ?? "-"} · {student.className ?? "Unassigned"}
+                      </p>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-xs font-medium text-[var(--ll-yellow)]">{student.subject}</p>
+                      <p className="text-xs text-[var(--ll-text-faint)]">{student.alertType.replace(/_/g, " ")}</p>
                     </div>
                   </div>
                 ))}
               </div>
+            )}
+            {atRiskTotal > 5 && (
+              <a
+                href="/admin/students?filter=at-risk"
+                className="block text-center text-xs text-[var(--ll-yellow)] mt-3 hover:opacity-80"
+              >
+                View all {atRiskTotal} students →
+              </a>
             )}
           </div>
 
@@ -489,9 +516,9 @@ export default async function AdminConsolePage() {
               {recentActivity.length === 0 ? (
                 <p className="text-sm text-[var(--ll-text-faint)]">No recent activity.</p>
               ) : (
-                recentActivity.map((entry) => (
+                recentActivity.slice(0, 5).map((entry) => (
                   <div key={entry.id} className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-surface-muted)] px-3 py-2">
-                    <p className="text-sm font-semibold text-[var(--ll-text)]">{entry.action.replace(/\./g, " ")}</p>
+                    <p className="text-sm font-semibold text-[var(--ll-text)]">{formatEventLabel(entry.action)}</p>
                     <p className="text-xs text-[var(--ll-text-faint)]">
                       {entry.createdAt.toLocaleString("en-LR", {
                         month: "short",
@@ -504,6 +531,14 @@ export default async function AdminConsolePage() {
                 ))
               )}
             </div>
+            {recentActivity.length > 0 && (
+              <Link
+                href="/admin/audit"
+                className="block text-center text-xs text-[var(--ll-yellow)] mt-3 hover:opacity-80"
+              >
+                View full audit log →
+              </Link>
+            )}
           </div>
         </section>
 
