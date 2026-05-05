@@ -44,25 +44,27 @@ export function StudentSidebar({
           Assignments
         </Link>
 
-        <Link href="/student/adaptive" className={navLinkClass}>
+        <Link href="/ai-tutor" className={navLinkClass}>
+          AI Tutor
+        </Link>
+
+        <div className="w-full h-px bg-[var(--ll-border)] my-1" />
+
+        <Link href="/student/adaptive" className={`${navLinkClass} text-[var(--ll-text-faint)]`}>
           My Practice
         </Link>
 
-        <Link href="/student/exams" className={navLinkClass}>
+        <Link href="/student/exams" className={`${navLinkClass} text-[var(--ll-text-faint)]`}>
           Exams
         </Link>
 
-        <Link href="/student/certificates" className={navLinkClass}>
+        <Link href="/student/certificates" className={`${navLinkClass} text-[var(--ll-text-faint)]`}>
           Certificates
         </Link>
 
-        <Link href="/student/textbooks" className={`${navLinkClass} inline-flex items-center gap-2`} aria-label="Textbooks">
+        <Link href="/student/textbooks" className={`${navLinkClass} inline-flex items-center gap-2 text-[var(--ll-text-faint)]`}>
           <BookOpen className="h-4 w-4" strokeWidth={1.5} aria-hidden="true" />
           <span>Textbooks</span>
-        </Link>
-
-        <Link href="/ai-tutor" className={navLinkClass}>
-          AI Tutor
         </Link>
 
         <div className="mt-2 border-t border-[var(--ll-border)] pt-2">
@@ -81,7 +83,7 @@ export function StudentSidebar({
           </button>
           {moreOpen ? (
             <div className="mt-2 flex flex-col gap-2">
-              <Link href="/student/transcript" className={navLinkClass}>
+              <Link href="/student/transcript" className={`${navLinkClass} text-[var(--ll-text-faint)]`}>
                 Transcript
               </Link>
               <Link href="/student/placement" className={navLinkClass}>

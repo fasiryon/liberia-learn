@@ -287,8 +287,6 @@ export default function StudentTodayPage() {
           <div className="space-y-3">
             {[1, 2, 3].map((index) => <SkeletonCard key={index} />)}
           </div>
-        ) : !data ? (
-          <TrueEmptyState />
         ) : (
           <>
             <section className="grid gap-3 rounded-lg border border-[var(--ll-accent)]/35 bg-[var(--ll-accent-soft)] p-4 sm:grid-cols-[1fr_auto] sm:items-center">
@@ -536,9 +534,8 @@ function TrueEmptyState({ compact = false }: { compact?: boolean }) {
       <div className="flex items-start gap-3">
         <BookOpen className="mt-0.5 h-5 w-5 text-[var(--ll-text-faint)]" strokeWidth={1.5} />
         <div>
-          <p className="font-semibold text-[var(--ll-text)]">No lessons scheduled yet.</p>
-          <p className="mt-1 text-sm text-[var(--ll-text-muted)]">
-            Your school hasn&apos;t set up today&apos;s schedule yet. Check your assignments or browse the curriculum.
+          <p className="text-sm text-[var(--ll-text-muted)]">
+            Your school schedule will appear here once your teacher sets it up.
           </p>
           <div className="mt-3 flex flex-wrap gap-2">
             <Link href="/assignments" className="rounded-lg border border-[var(--ll-border)] px-3 py-2 text-sm font-semibold text-[var(--ll-text)]">

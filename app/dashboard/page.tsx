@@ -182,27 +182,42 @@ export default async function DashboardPage() {
                 </div>
               </div>
 
-              <div className="grid gap-3 sm:grid-cols-3">
+              <div className="flex flex-col gap-2">
                 <Link
                   href="/student/today"
-                  className="flex min-h-24 flex-col justify-center gap-1 rounded-lg border border-[var(--ll-border)] bg-[var(--ll-accent-soft)] p-3 hover:bg-[rgba(24,211,158,0.15)]"
+                  className="flex items-center gap-3 ll-command rounded-lg px-4 py-3 hover:border-[var(--ll-yellow)] transition-colors duration-150"
                 >
-                  <p className="text-sm font-semibold text-[var(--ll-accent)]">Continue today&apos;s lesson</p>
-                  <p className="text-xs text-[var(--ll-text-muted)]">Open today&apos;s plan</p>
+                  <div className="flex-1">
+                    <p className="text-sm font-medium text-[var(--ll-text)]">Continue today&apos;s lesson</p>
+                    <p className="text-xs text-[var(--ll-text-faint)] mt-0.5">Open today&apos;s plan</p>
+                  </div>
+                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none" className="text-[var(--ll-text-faint)] flex-shrink-0">
+                    <path d="M6 3l5 5-5 5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
                 </Link>
                 <Link
                   href="/student/progress"
-                  className="flex min-h-24 flex-col justify-center gap-1 rounded-lg border border-[var(--ll-border)] bg-[var(--ll-surface)] p-3 hover:border-[var(--ll-border-strong)]"
+                  className="flex items-center gap-3 ll-command rounded-lg px-4 py-3 hover:border-[var(--ll-yellow)] transition-colors duration-150"
                 >
-                  <p className="text-sm font-semibold text-[var(--ll-text)]">View my progress</p>
-                  <p className="text-xs text-[var(--ll-text-muted)]">Grades and mastery</p>
+                  <div className="flex-1">
+                    <p className="text-sm font-medium text-[var(--ll-text)]">View my progress</p>
+                    <p className="text-xs text-[var(--ll-text-faint)] mt-0.5">Grades and mastery</p>
+                  </div>
+                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none" className="text-[var(--ll-text-faint)] flex-shrink-0">
+                    <path d="M6 3l5 5-5 5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
                 </Link>
                 <Link
                   href="/student/certificates"
-                  className="flex min-h-24 flex-col justify-center gap-1 rounded-lg border border-[var(--ll-border)] bg-[var(--ll-surface)] p-3 hover:border-[var(--ll-border-strong)]"
+                  className="flex items-center gap-3 ll-command rounded-lg px-4 py-3 hover:border-[var(--ll-yellow)] transition-colors duration-150"
                 >
-                  <p className="text-sm font-semibold text-[var(--ll-text)]">My certificates</p>
-                  <p className="text-xs text-[var(--ll-text-muted)]">View earned awards</p>
+                  <div className="flex-1">
+                    <p className="text-sm font-medium text-[var(--ll-text)]">My certificates</p>
+                    <p className="text-xs text-[var(--ll-text-faint)] mt-0.5">View earned awards</p>
+                  </div>
+                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none" className="text-[var(--ll-text-faint)] flex-shrink-0">
+                    <path d="M6 3l5 5-5 5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
                 </Link>
               </div>
 

@@ -64,20 +64,17 @@ export function RoleWelcomePanel({
     <div
       data-testid="role-welcome-panel"
       data-role={role}
-      className={`rounded-xl border ${meta.borderCls} ${meta.bgCls} p-6`}
+      className={`rounded-xl border ${meta.borderCls} ${meta.bgCls} p-4`}
     >
-      <div className="space-y-1">
-        <h2 className={`text-xl font-bold ${meta.accentCls}`}>
+      <div className="space-y-0.5">
+        <h2 className={`text-base font-bold ${meta.accentCls}`}>
           {meta.greeting}{name ? `, ${name}` : ""}
         </h2>
-        <p className="text-sm text-[var(--ll-text-muted)]">{meta.tagline}</p>
+        <p className="text-xs text-[var(--ll-text-muted)]">{meta.tagline}</p>
       </div>
 
-      <div className="mt-5">
-        <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-[var(--ll-text-faint)]">
-          What you can do here
-        </p>
-        <ul className="mt-2 space-y-2">
+      <div className="mt-3">
+        <ul className="space-y-1.5">
           {capabilities.map((cap) => (
             <li key={cap.label} className="flex items-start gap-2">
               <span className={`mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full ${meta.accentCls} bg-current`} />
@@ -92,7 +89,7 @@ export function RoleWelcomePanel({
         </ul>
       </div>
 
-      <div className="mt-5">
+      <div className="mt-3">
         <Link
           href={primaryAction.href}
           className="inline-flex min-h-10 items-center justify-center rounded-lg bg-[var(--ll-accent)] px-5 py-2.5 text-sm font-semibold text-[var(--ll-text-faint)] transition-opacity hover:opacity-90"
