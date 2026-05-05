@@ -23,6 +23,29 @@ function formatEventLabel(eventType: string): string {
       .replace(/^\w/, (c) => c.toUpperCase())
   );
 }
+
+type ActivityEvent = {
+  id: string;
+  action: string;
+  createdAt: Date;
+};
+
+function deduplicateEvents(events: ActivityEvent[]): Array<ActivityEvent & { count: number }> {
+  const result: Array<ActivityEvent & { count: number }> = [];
+
+  for (const event of events) {
+    const label = formatEventLabel(event.action);
+    const last = result[result.length - 1];
+
+    if (last && formatEventLabel(last.action) === label) {
+      last.count += 1;
+    } else {
+      result.push({ ...event, count: 1 });
+    }
+  }
+
+  return result;
+}
 import { redirect } from "next/navigation";
 import { getServerSession } from "next-auth";
 import { AlertTriangle, Building2, BookOpen, Bell, BarChart2, Settings } from "lucide-react";
@@ -116,7 +139,7 @@ export default async function AdminConsolePage() {
     alertType: string;
   }> = [];
   let atRiskTotal = 0;
-  let recentActivity: Array<{ id: string; action: string; createdAt: Date }> = [];
+  let recentActivity: ActivityEvent[] = [];
 
   try {
     const classes = await prisma.class.findMany({
@@ -196,7 +219,7 @@ export default async function AdminConsolePage() {
       prisma.auditLog.findMany({
         where: { schoolId },
         orderBy: { createdAt: "desc" },
-        take: 5,
+        take: 20,
         select: { id: true, action: true, createdAt: true },
       }),
     ]);
@@ -364,6 +387,7 @@ export default async function AdminConsolePage() {
       ],
     },
   ];
+  const deduplicatedRecentActivity = deduplicateEvents(recentActivity);
 
   return (
     <main className="ll-dashboard-shell">
@@ -513,12 +537,16 @@ export default async function AdminConsolePage() {
           <div className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-surface)] p-4">
             <h2 className="text-base font-semibold text-[var(--ll-text)]">Recent Activity</h2>
             <div className="mt-3 space-y-3">
-              {recentActivity.length === 0 ? (
+              {deduplicatedRecentActivity.length === 0 ? (
                 <p className="text-sm text-[var(--ll-text-faint)]">No recent activity.</p>
               ) : (
-                recentActivity.slice(0, 5).map((entry) => (
+                deduplicatedRecentActivity.slice(0, 5).map((entry) => {
+                  const label = formatEventLabel(entry.action);
+                  const displayLabel = entry.count > 1 ? `${entry.count} ${label}` : label;
+
+                  return (
                   <div key={entry.id} className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-surface-muted)] px-3 py-2">
-                    <p className="text-sm font-semibold text-[var(--ll-text)]">{formatEventLabel(entry.action)}</p>
+                    <p className="text-sm font-semibold text-[var(--ll-text)]">{displayLabel}</p>
                     <p className="text-xs text-[var(--ll-text-faint)]">
                       {entry.createdAt.toLocaleString("en-LR", {
                         month: "short",
@@ -528,10 +556,11 @@ export default async function AdminConsolePage() {
                       })}
                     </p>
                   </div>
-                ))
+                  );
+                })
               )}
             </div>
-            {recentActivity.length > 0 && (
+            {deduplicatedRecentActivity.length > 0 && (
               <Link
                 href="/admin/audit"
                 className="block text-center text-xs text-[var(--ll-yellow)] mt-3 hover:opacity-80"
