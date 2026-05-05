@@ -3,32 +3,6 @@ import { LogIn } from "lucide-react";
 import { BrandMark } from "@/components/ui/BrandMark";
 import { PublicFooter } from "@/components/PublicFooter";
 
-const roleCards = [
-  {
-    title: "Students",
-    body: "Daily work, adaptive practice, exams, certifications, and offline-safe learning flows built for interrupted connectivity.",
-  },
-  {
-    title: "Teachers",
-    body: "Schedule delivery, grading, interventions, grounded AI support, and intelligence views that stay advisory and school-scoped.",
-  },
-  {
-    title: "Guardians",
-    body: "Simple progress summaries, safe home-support suggestions, and no internal school-only confusion detail.",
-  },
-  {
-    title: "Schools",
-    body: "Pilot readiness, compliance reporting, onboarding, prompt governance, and admin visibility without cross-tenant exposure.",
-  },
-];
-
-const trustStrip = [
-  "National curriculum",
-  "AI-powered tutoring",
-  "Offline delivery",
-  "Ministry-grade security",
-];
-
 const capabilityBlocks = [
   {
     title: "Curriculum delivery",
@@ -54,21 +28,6 @@ const capabilityBlocks = [
     title: "Student outcomes",
     body: "Progress, exams, certificates, and daily learning paths make achievement visible.",
   },
-];
-
-const trustPillars = [
-  "AI responses grounded in the national curriculum, not the open web",
-  "Every role sees only what they are authorised to see",
-  "School data stays school-scoped, with no cross-institution leakage",
-  "AI usage is monitored and rate-controlled at every entry point",
-];
-
-const demoLinks = [
-  { label: "Student sign-in", href: "/login?role=student" },
-  { label: "Teacher sign-in", href: "/login?role=teacher" },
-  { label: "Guardian sign-in", href: "/login?role=guardian" },
-  { label: "Admin sign-in", href: "/login?role=admin" },
-  { label: "MOE sign-in", href: "/moe/login", muted: true },
 ];
 
 export default function HomePage() {
@@ -102,7 +61,7 @@ export default function HomePage() {
         </div>
       </header>
 
-      {/* Hero — problem-first restructure */}
+      {/* ACT 1 — HERO */}
       <section className="ll-shell pb-10 pt-14 sm:pb-12 sm:pt-20">
         <div className="grid items-center gap-10 lg:grid-cols-[minmax(0,1.1fr)_minmax(320px,0.7fr)]">
           <div>
@@ -200,13 +159,15 @@ export default function HomePage() {
             />
 
             Replace VIDEO_ID with the YouTube video ID.
+            When embedding: restore paddingBottom: '56.25%' for proper 16:9 ratio.
           */}
 
-          {/* Video container — 16:9 aspect ratio */}
+          {/* Video container — compact placeholder height until real video is embedded */}
           <div
             className="relative w-full rounded-xl border border-[var(--ll-border)] bg-[var(--ll-surface)] overflow-hidden"
-            style={{ paddingBottom: "56.25%" }}
+            style={{ height: "200px" }}
           >
+            {/* Restore paddingBottom: '56.25%' when real video is embedded */}
             <div className="absolute inset-0 flex flex-col items-center justify-center gap-4">
               <div className="w-16 h-16 rounded-full bg-[var(--ll-yellow-soft)] border border-[var(--ll-yellow)] flex items-center justify-center">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
@@ -238,109 +199,148 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="ll-shell py-4">
-        <div className="grid gap-3 md:grid-cols-4">
-          {trustStrip.map((item) => (
-            <div key={item} className="ll-card flex items-center gap-3">
-              <span className="h-2 w-2 rounded-full bg-[var(--ll-accent)]" />
-              <span className="text-sm font-medium text-[var(--ll-text)]">{item}</span>
-            </div>
-          ))}
+      {/* ACT 2 — SIGN IN FOR YOUR ROLE (combined sign-in + role descriptions) */}
+      <section className="w-full py-10 px-4 border-t border-[var(--ll-border)]">
+        <div className="mx-auto max-w-5xl">
+
+          <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[var(--ll-text-faint)] mb-6">
+            Sign in for your role
+          </p>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+
+            {/* Student */}
+            <a href="/login"
+              className="ll-section p-4 rounded-xl hover:border-[var(--ll-yellow)] transition-colors duration-150 group">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-sm font-semibold text-[var(--ll-text)]">
+                  Students
+                </span>
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none"
+                  className="text-[var(--ll-text-faint)] group-hover:text-[var(--ll-yellow)] transition-colors">
+                  <path d="M3 7h8M7 3l4 4-4 4"
+                    stroke="currentColor" strokeWidth="1.5"
+                    strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              </div>
+              <p className="text-xs text-[var(--ll-text-faint)] leading-5">
+                Lessons, labs, AI tutor,
+                and daily learning paths.
+              </p>
+            </a>
+
+            {/* Teacher */}
+            <a href="/login"
+              className="ll-section p-4 rounded-xl hover:border-[var(--ll-yellow)] transition-colors duration-150 group">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-sm font-semibold text-[var(--ll-text)]">
+                  Teachers
+                </span>
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none"
+                  className="text-[var(--ll-text-faint)] group-hover:text-[var(--ll-yellow)] transition-colors">
+                  <path d="M3 7h8M7 3l4 4-4 4"
+                    stroke="currentColor" strokeWidth="1.5"
+                    strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              </div>
+              <p className="text-xs text-[var(--ll-text-faint)] leading-5">
+                Scheduling, grading, alerts,
+                and class intelligence.
+              </p>
+            </a>
+
+            {/* Guardian */}
+            <a href="/login"
+              className="ll-section p-4 rounded-xl hover:border-[var(--ll-yellow)] transition-colors duration-150 group">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-sm font-semibold text-[var(--ll-text)]">
+                  Guardians
+                </span>
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none"
+                  className="text-[var(--ll-text-faint)] group-hover:text-[var(--ll-yellow)] transition-colors">
+                  <path d="M3 7h8M7 3l4 4-4 4"
+                    stroke="currentColor" strokeWidth="1.5"
+                    strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              </div>
+              <p className="text-xs text-[var(--ll-text-faint)] leading-5">
+                Child progress, teacher messages,
+                and learning summaries.
+              </p>
+            </a>
+
+            {/* School Admin */}
+            <a href="/login"
+              className="ll-section p-4 rounded-xl hover:border-[var(--ll-yellow)] transition-colors duration-150 group">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-sm font-semibold text-[var(--ll-text)]">
+                  School Administrators
+                </span>
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none"
+                  className="text-[var(--ll-text-faint)] group-hover:text-[var(--ll-yellow)] transition-colors">
+                  <path d="M3 7h8M7 3l4 4-4 4"
+                    stroke="currentColor" strokeWidth="1.5"
+                    strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              </div>
+              <p className="text-xs text-[var(--ll-text-faint)] leading-5">
+                Enrollment, curriculum coverage,
+                pilot readiness, and compliance.
+              </p>
+            </a>
+
+            {/* MOE */}
+            <a href="/moe/login"
+              className="ll-section p-4 rounded-xl hover:border-[var(--ll-silver)] transition-colors duration-150 group sm:col-span-2 lg:col-span-1">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-sm font-semibold text-[var(--ll-text)]">
+                  Ministry Officials
+                </span>
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none"
+                  className="text-[var(--ll-text-faint)] group-hover:text-[var(--ll-silver)] transition-colors">
+                  <path d="M3 7h8M7 3l4 4-4 4"
+                    stroke="currentColor" strokeWidth="1.5"
+                    strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              </div>
+              <p className="text-xs text-[var(--ll-text-faint)] leading-5">
+                National oversight, district analytics,
+                and curriculum governance.
+              </p>
+            </a>
+
+          </div>
+
+          <p className="text-xs text-[var(--ll-text-faint)] mt-4">
+            Don&apos;t have an account?{' '}
+            <a href="/enroll" className="text-[var(--ll-yellow)] hover:opacity-80">
+              Enroll your school →
+            </a>
+          </p>
+
         </div>
       </section>
 
-      <section className="ll-shell py-6">
-        <div className="ll-section rounded-xl p-4">
-          <div className="space-y-2">
-            <p className="text-xs uppercase tracking-[0.14em] text-[var(--ll-text-faint)]">
-              Access the platform
+      {/* ACT 3 — MINISTRY CTA (compact strip) */}
+      <section className="w-full py-8 px-4 border-t border-[var(--ll-border)]">
+        <div className="mx-auto max-w-5xl flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <div>
+            <p className="text-sm font-semibold text-[var(--ll-text)]">
+              Ready for national deployment
             </p>
-            <h2 className="text-2xl font-semibold text-[var(--ll-text)]">Sign in for your role</h2>
-            <p className="max-w-2xl text-sm leading-6 text-[var(--ll-text-muted)]">
-              Select your role below to go directly to the sign-in page. Contact your school
-              administrator if you need help accessing your account.
+            <p className="text-xs text-[var(--ll-text-faint)] mt-1">
+              Schedule a walkthrough for Ministry of Education stakeholders.
             </p>
           </div>
-
-          <div className="mt-6 grid gap-3 md:grid-cols-2 xl:grid-cols-4">
-            {demoLinks.map((item) => (
-              <Link key={item.label} href={item.href}>
-                <span
-                  className={`ll-command ll-focus flex h-full min-h-16 text-sm font-medium ${
-                    item.muted ? "text-[var(--ll-text-muted)]" : "text-[var(--ll-text)]"
-                  }`}
-                >
-                  {item.label}
-                </span>
-              </Link>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section className="ll-shell py-6">
-        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-          {roleCards.map((card) => (
-            <div key={card.title} className="ll-card p-4">
-              <h2 className="text-lg font-semibold text-[var(--ll-text)]">{card.title}</h2>
-              <p className="mt-3 text-sm leading-6 text-[var(--ll-text-muted)]">{card.body}</p>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      <section className="ll-shell py-6">
-        <div className="grid gap-4 lg:grid-cols-[1fr_0.95fr]">
-          <div className="ll-section rounded-xl p-4">
-            <p className="text-xs uppercase tracking-[0.14em] text-[var(--ll-text-faint)]">
-              What schools get on day one
-            </p>
-            <h2 className="mt-3 text-2xl font-semibold text-[var(--ll-text)]">
-              From enrollment to learning in minutes
-            </h2>
-            <p className="mt-3 text-sm leading-7 text-[var(--ll-text-muted)]">
-              School administrators enroll online, import student lists, and assign teachers,
-              all without technical support. Students log in and begin working through the
-              national curriculum immediately. Guardians receive progress updates by SMS.
-            </p>
-            {/* Relocated from old hero: education infrastructure headline + subheadline copy */}
-            <p className="mt-3 text-sm leading-7 text-[var(--ll-text-muted)]">
-              Education infrastructure for every Liberian school — curriculum delivery,
-              AI tutoring, school operations, and national oversight built for Grades 1–12
-              across all 15 counties.
-            </p>
-            <div className="mt-5 grid gap-2">
-              {trustPillars.map((pillar) => (
-                <p key={pillar} className="text-sm text-[var(--ll-text-muted)]">
-                  {pillar}
-                </p>
-              ))}
-            </div>
-          </div>
-
-          <div className="ll-section rounded-xl p-4">
-            <p className="text-xs uppercase tracking-[0.14em] text-[var(--ll-warning)]">
-              For Ministry officials
-            </p>
-            <h3 className="mt-3 text-xl font-semibold text-[var(--ll-text)]">
-              Request a Ministry briefing
-            </h3>
-            <p className="mt-3 text-sm leading-6 text-[var(--ll-text-muted)]">
-              LiberiaLearn is ready for national deployment. Schedule a walkthrough for Ministry
-              of Education stakeholders or request access for a pilot school.
-            </p>
-            <div className="flex flex-wrap gap-3 pt-5">
-              <Link href="/pilot-preview">
-                <span className="inline-flex rounded-lg bg-[var(--ll-warning)] px-5 py-2.5 text-sm font-semibold text-[var(--ll-text-faint)] hover:opacity-90">
-                  Request a briefing
-                </span>
-              </Link>
-              <Link href="/moe/login">
-                <span className="inline-flex rounded-lg border border-[var(--ll-border-strong)] px-5 py-2.5 text-sm font-medium text-[var(--ll-text)] hover:bg-[var(--ll-surface-muted)]">
-                  Ministry login
-                </span>
-              </Link>
-            </div>
+          <div className="flex gap-3 flex-shrink-0">
+            <a href="/pilot-preview"
+              className="rounded-lg px-4 py-2 bg-[var(--ll-yellow)] text-[var(--ll-bg)] text-sm font-medium hover:opacity-90 transition-opacity">
+              Request a briefing
+            </a>
+            <a href="/moe/login"
+              className="rounded-lg px-4 py-2 border border-[var(--ll-border-strong)] text-[var(--ll-text-muted)] text-sm hover:border-[var(--ll-yellow)] hover:text-[var(--ll-yellow)] transition-colors duration-150">
+              Ministry login
+            </a>
           </div>
         </div>
       </section>
