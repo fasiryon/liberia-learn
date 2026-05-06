@@ -1,6 +1,6 @@
 import { config } from "dotenv";
 import { createHash } from "crypto";
-import { prisma } from "@/lib/db";
+import { PrismaClient } from "@prisma/client";
 import { routedCompletion } from "@/lib/ai/router";
 import { buildPrompt, getPromptMetadata, getSystemPrompt } from "@/lib/ai/promptRegistry";
 import {
@@ -25,6 +25,17 @@ import { getYearReadinessReport, mapGeneratedPhase6DraftsToYearPlan } from "@/li
 
 config({ path: ".env.local" });
 config();
+
+const prisma = new PrismaClient({
+  log: ["error"],
+  datasources: {
+    db: {
+      url: process.env.DATABASE_URL?.includes("?")
+        ? process.env.DATABASE_URL + "&connection_limit=3&pool_timeout=30&connect_timeout=30"
+        : process.env.DATABASE_URL + "?connection_limit=3&pool_timeout=30&connect_timeout=30",
+    },
+  },
+});
 
 function hasFlag(flag: string) {
   return process.argv.includes(flag);
@@ -600,6 +611,31 @@ function needsReviewFailureFromGeneratedLesson(lesson: Awaited<ReturnType<typeof
   };
 }
 
+async function generateWithRetry(
+  fn: () => Promise<any>,
+  retries = 3,
+  delayMs = 5000
+): Promise<any> {
+  for (let i = 0; i < retries; i++) {
+    try {
+      return await fn();
+    } catch (e: any) {
+      const isConnectionError =
+        e.message?.includes("connection") ||
+        e.message?.includes("pool") ||
+        e.message?.includes("ECONNRESET") ||
+        e.code === 10054;
+      if (isConnectionError && i < retries - 1) {
+        console.warn("Connection error, retrying in", delayMs / 1000, "s...");
+        await new Promise((r) => setTimeout(r, delayMs));
+        delayMs *= 2;
+        continue;
+      }
+      throw e;
+    }
+  }
+}
+
 async function main() {
   const dryRun = hasFlag("--dry-run");
   const estimateCost = hasFlag("--estimate-cost");
@@ -729,14 +765,16 @@ async function main() {
               weekNumber: lesson.weekNumber,
               dayNumber: lesson.dayNumber,
             });
-        const generatedLesson = await generateLesson(
-          lesson,
-          requestedSubject,
-          selectedTopic.topic,
-          selectedTopic.bucket,
-          { ...runningTopicDistribution },
-          generatedTitles,
-          approved
+        const generatedLesson = await generateWithRetry(
+          () => generateLesson(
+            lesson,
+            requestedSubject,
+            selectedTopic.topic,
+            selectedTopic.bucket,
+            { ...runningTopicDistribution },
+            generatedTitles,
+            approved
+          )
         );
         generatedLessons.push(generatedLesson);
         runningTopicDistribution[selectedTopic.bucket] += 1;
