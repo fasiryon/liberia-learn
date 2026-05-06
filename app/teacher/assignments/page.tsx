@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
+import { AITrustBadge } from "@/components/ai/AITrustBadge";
 import { TeacherNav } from "@/components/teacher/TeacherNav";
 
 type AssignmentRow = {
@@ -49,11 +50,12 @@ type FormState = Record<
     assisting: boolean;
     message: string | null;
     aiSuggestion?: {
-      suggestedScore: number | null;
+      suggestedScore: number;
+      feedback: string;
       strengths: string[];
-      areasForDevelopment: string[];
-      suggestedScoreBands: Array<{ label: string; scoreRange: string }>;
-      hadFallback: boolean;
+      improvements: string[];
+      confidence: "high" | "medium" | "low";
+      warning?: string;
     } | null;
   }
 >;
@@ -139,16 +141,14 @@ export default function TeacherAssignmentsPage() {
     }));
 
     try {
-      const response = await fetch("/api/teacher/grading/assist", {
+      const response = await fetch("/api/teacher/grading-assist", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          subject: submission.subject,
-          strandKey: submission.assignmentTitle,
-          rubric: `Grade this assignment out of ${submission.points} point(s). Use the assignment title and response as the grounding source.`,
           submissionId: submission.id,
-          studentName: submission.studentName,
-          submissionContent: submission.content || "No response recorded.",
+          studentAnswer: submission.content || "No response recorded.",
+          objectives: [submission.assignmentTitle],
+          rubric: `Grade this assignment out of ${submission.points} point(s). Use the assignment title and response as the grounding source.`,
         }),
       });
       const data = await response.json().catch(() => null);
@@ -164,17 +164,19 @@ export default function TeacherAssignmentsPage() {
             typeof data.suggestedScore === "number"
               ? String(data.suggestedScore)
               : state[submission.id]?.grade ?? "",
-          feedback: Array.isArray(data.feedback)
-            ? data.feedback.join("\n")
-            : state[submission.id]?.feedback ?? "",
+          feedback: typeof data.feedback === "string" ? data.feedback : state[submission.id]?.feedback ?? "",
           assisting: false,
-          message: data.hadFallback ? "AI fallback guidance added for teacher review." : "AI suggestion added. Review before saving.",
+          message: "AI suggestion added. Review before saving.",
           aiSuggestion: {
-            suggestedScore: typeof data.suggestedScore === "number" ? data.suggestedScore : null,
+            suggestedScore: typeof data.suggestedScore === "number" ? data.suggestedScore : 0,
+            feedback: typeof data.feedback === "string" ? data.feedback : "",
             strengths: Array.isArray(data.strengths) ? data.strengths : [],
-            areasForDevelopment: Array.isArray(data.areasForDevelopment) ? data.areasForDevelopment : [],
-            suggestedScoreBands: Array.isArray(data.suggestedScoreBands) ? data.suggestedScoreBands : [],
-            hadFallback: data.hadFallback === true,
+            improvements: Array.isArray(data.improvements) ? data.improvements : [],
+            confidence:
+              data.confidence === "high" || data.confidence === "medium" || data.confidence === "low"
+                ? data.confidence
+                : "medium",
+            warning: typeof data.warning === "string" ? data.warning : undefined,
           },
         },
       }));
@@ -190,7 +192,28 @@ export default function TeacherAssignmentsPage() {
     }
   }
 
-  async function saveGrade(id: string) {
+  async function rejectAiAssist(submission: AssignmentSubmissionRow) {
+    await fetch("/api/teacher/grading-assist", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        action: "reject",
+        submissionId: submission.id,
+        studentAnswer: submission.content || "No response recorded.",
+        objectives: [submission.assignmentTitle],
+      }),
+    }).catch(() => null);
+    setFormState((state) => ({
+      ...state,
+      [submission.id]: {
+        ...state[submission.id],
+        aiSuggestion: null,
+        message: "AI suggestion rejected.",
+      },
+    }));
+  }
+
+  async function saveGrade(id: string, aiGradingAssistAction?: "accepted" | "edited") {
     const current = formState[id];
     if (!current) return;
 
@@ -206,6 +229,7 @@ export default function TeacherAssignmentsPage() {
         body: JSON.stringify({
           grade: Number(current.grade),
           feedback: current.feedback,
+          aiGradingAssistAction,
         }),
       });
       const data = await response.json();
@@ -527,7 +551,7 @@ export default function TeacherAssignmentsPage() {
                     </button>
                     <button
                       type="button"
-                      onClick={() => saveGrade(submission.id)}
+                      onClick={() => saveGrade(submission.id, state.aiSuggestion ? "edited" : undefined)}
                       disabled={state.saving}
                       className="rounded-full bg-[var(--ll-yellow-soft)] px-5 py-2 text-sm font-semibold text-[var(--ll-text-faint)] disabled:cursor-not-allowed disabled:opacity-60"
                     >
@@ -548,11 +572,24 @@ export default function TeacherAssignmentsPage() {
                       <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[var(--ll-text-muted)]">
                         AI suggestion for teacher review
                       </p>
+                      <div className="mt-2">
+                        <AITrustBadge
+                          confidenceScore={
+                            state.aiSuggestion.confidence === "high"
+                              ? 0.9
+                              : state.aiSuggestion.confidence === "medium"
+                                ? 0.68
+                                : 0.35
+                          }
+                          hadFallback={state.aiSuggestion.confidence === "low"}
+                          view="teacher"
+                        />
+                      </div>
                       <div className="mt-3 grid gap-3 md:grid-cols-3">
                         <div>
                           <p className="text-xs text-[var(--ll-text-muted)]">Suggested score</p>
                           <p className="mt-1 font-semibold">
-                            {state.aiSuggestion.suggestedScore == null ? "No score suggested" : `${state.aiSuggestion.suggestedScore}/100`}
+                            {state.aiSuggestion.suggestedScore}/100
                           </p>
                         </div>
                         <div>
@@ -561,8 +598,43 @@ export default function TeacherAssignmentsPage() {
                         </div>
                         <div>
                           <p className="text-xs text-[var(--ll-text-muted)]">Improve next</p>
-                          <p className="mt-1 text-xs">{state.aiSuggestion.areasForDevelopment.slice(0, 2).join("; ") || "Add teacher-specific feedback."}</p>
+                          <p className="mt-1 text-xs">{state.aiSuggestion.improvements.slice(0, 2).join("; ") || "Add teacher-specific feedback."}</p>
                         </div>
+                      </div>
+                      {state.aiSuggestion.warning ? (
+                        <p className="mt-3 text-xs text-amber-300">{state.aiSuggestion.warning}</p>
+                      ) : null}
+                      <div className="mt-3 flex flex-wrap gap-2">
+                        <button
+                          type="button"
+                          onClick={() => saveGrade(submission.id, "accepted")}
+                          disabled={state.saving}
+                          className="rounded-full bg-[var(--ll-yellow-soft)] px-4 py-2 text-xs font-semibold text-[var(--ll-text-faint)] disabled:opacity-60"
+                        >
+                          Accept and save
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() =>
+                            setFormState((current) => ({
+                              ...current,
+                              [submission.id]: {
+                                ...current[submission.id],
+                                message: "Edit the grade or feedback above, then save.",
+                              },
+                            }))
+                          }
+                          className="rounded-full border border-[var(--ll-border)] px-4 py-2 text-xs font-semibold text-[var(--ll-text)]"
+                        >
+                          Edit
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => rejectAiAssist(submission)}
+                          className="rounded-full border border-[var(--ll-border)] px-4 py-2 text-xs font-semibold text-[var(--ll-text)]"
+                        >
+                          Reject
+                        </button>
                       </div>
                       <p className="mt-3 text-xs text-[var(--ll-text-faint)]">
                         Teacher approval is required. Saving the grade uses the editable fields above.

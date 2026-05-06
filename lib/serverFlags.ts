@@ -178,10 +178,10 @@ export function isAssignmentTutorEnabled(): boolean {
 
 /**
  * AI-assisted grading feedback loop (teacher-facing, advisory only).
- * DEFAULT OFF. When false, POST /api/teacher/grading/assist returns 404.
+ * DEFAULT ON. When false, grading assist routes return 404.
  */
 export function isAiGradingAssistEnabled(): boolean {
-  return process.env.ENABLE_AI_GRADING_ASSIST === "true";
+  return process.env.ENABLE_AI_GRADING_ASSIST !== "false";
 }
 
 /** Teacher AI lesson planning. DEFAULT ON unless explicitly disabled. */
