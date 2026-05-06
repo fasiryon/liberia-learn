@@ -22,7 +22,7 @@ export default function StudentLessonsPage() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    fetch("/api/curriculum?grade=5")
+    fetch("/api/student/lessons")
       .then((res) => {
         if (res.status === 401 || res.status === 403) {
           router.push("/login");

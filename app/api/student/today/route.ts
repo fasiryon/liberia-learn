@@ -85,6 +85,12 @@ function safePayload(value: unknown): Record<string, any> {
     : {};
 }
 
+const BREAK_LABEL_RE = /break|lunch|recess|assembly/i;
+
+function isBreakPeriod(label: string | null | undefined): boolean {
+  return BREAK_LABEL_RE.test(label ?? "");
+}
+
 function parsePeriodNumber(label: string | null | undefined): number | null {
   if (!label) return null;
   const match = label.match(/\d+/);
@@ -340,7 +346,7 @@ export async function GET() {
       id: safeString(period?.id, `period-${index + 1}`),
       classId: safeString(period?.classId, ""),
       periodLabel: safeString(period?.periodLabel, `Period ${index + 1}`),
-      subject: period?.subject ? safeSubject(period.subject) : null,
+      subject: isBreakPeriod(period?.periodLabel) ? null : (period?.subject ? safeSubject(period.subject) : null),
       startTime: typeof period?.startTime === "string" ? period.startTime : null,
       endTime: typeof period?.endTime === "string" ? period.endTime : null,
       teacherName:
