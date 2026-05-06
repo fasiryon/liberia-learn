@@ -98,5 +98,6 @@ e2e/phase1-design-verification.spec.ts
 
 .env*.local
 .env.e2e.local
+e2e/.env.e2e
 *.mp4
 *.webm

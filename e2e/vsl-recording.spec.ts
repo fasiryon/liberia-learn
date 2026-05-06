@@ -5,6 +5,13 @@ const SLOW = 3000
 const MEDIUM = 2000
 const FAST = 1000
 
+const STUDENT_EMAIL = process.env.E2E_STUDENT_EMAIL ?? 'student1@cha.edu.lr'
+const STUDENT_PASS = process.env.E2E_STUDENT_PASS ?? 'DemoSeed2026!'
+const TEACHER_EMAIL = process.env.E2E_TEACHER_EMAIL ?? 'teacher1@cha.edu.lr'
+const TEACHER_PASS = process.env.E2E_TEACHER_PASS ?? 'DemoSeed2026!'
+const MOE_EMAIL = process.env.E2E_MOE_EMAIL ?? 'official1@moe.gov.lr'
+const MOE_PASS = process.env.E2E_MOE_PASS ?? 'MOESeed2026!'
+
 async function smoothScroll(
   page: any, amount: number
 ) {
@@ -46,11 +53,11 @@ async ({ page }) => {
   await page.waitForTimeout(MEDIUM)
   await page.click('input[type="email"]')
   await page.type('input[type="email"]',
-    'student1@cha.edu.lr', { delay: 80 })
+    STUDENT_EMAIL, { delay: 80 })
   await page.waitForTimeout(500)
   await page.click('input[type="password"]')
   await page.type('input[type="password"]',
-    'DemoSeed2026!', { delay: 60 })
+    STUDENT_PASS, { delay: 60 })
   await page.waitForTimeout(600)
   await page.click('button[type="submit"]')
   await page.waitForURL(/\/student|\/dashboard/,
@@ -135,9 +142,9 @@ async ({ page }) => {
   })
   await page.waitForTimeout(MEDIUM)
   await page.fill('input[type="email"]',
-    'teacher1@cha.edu.lr')
+    TEACHER_EMAIL)
   await page.fill('input[type="password"]',
-    'DemoSeed2026!')
+    TEACHER_PASS)
   await page.click('button[type="submit"]')
   await page.waitForURL(/\/teacher/, {
     timeout: 15000
@@ -184,9 +191,9 @@ async ({ page }) => {
   })
   await page.waitForTimeout(MEDIUM)
   await page.fill('input[type="email"]',
-    'official1@moe.gov.lr')
+    MOE_EMAIL)
   await page.fill('input[type="password"]',
-    'MOESeed2026!')
+    MOE_PASS)
   await page.click('button[type="submit"]')
 
   try {
