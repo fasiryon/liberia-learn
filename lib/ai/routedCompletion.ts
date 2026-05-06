@@ -335,7 +335,7 @@ export async function routedCompletion(opts: RouterOptions): Promise<RouterResul
   if (opts.aiUsage) {
     const budget = await checkBudget(opts.aiUsage.feature, opts.aiUsage.schoolId ?? null);
     if (!budget.allowed) {
-      void logAIInteraction(
+      logAIInteraction(
         buildTelemetryInput(
           opts.aiUsage,
           {
@@ -347,7 +347,7 @@ export async function routedCompletion(opts: RouterOptions): Promise<RouterResul
           },
           true
         )
-      );
+      ).catch((e) => console.warn("Log skipped:", e instanceof Error ? e.message : String(e)));
 
       return {
         content:
@@ -424,9 +424,9 @@ export async function routedCompletion(opts: RouterOptions): Promise<RouterResul
   }
 
   if (opts.aiUsage) {
-    await logAIInteraction(
+    logAIInteraction(
       buildTelemetryInput(opts.aiUsage, response, providerFallbackUsed)
-    ).catch(() => {});
+    ).catch((e) => console.warn("Log skipped:", e instanceof Error ? e.message : String(e)));
   }
 
   return response;
