@@ -3,7 +3,10 @@ import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { requireRole } from "@/lib/auth";
 import { logAudit } from "@/lib/audit";
+import { checkAiRateLimit } from "@/lib/ai/rateLimitGuard";
 import { prisma } from "@/lib/db";
+import { anonymizeForAI } from "@/lib/privacy/anonymizeForAI";
+import { getRateLimitHeaders } from "@/lib/rateLimit";
 import { isAiGradingAssistEnabled } from "@/lib/serverFlags";
 import { getGradingAssistance } from "@/lib/teacher/gradingAssist";
 
@@ -22,6 +25,22 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "ai_grading_assist_disabled" }, { status: 404 });
     }
     const user = await requireRole("TEACHER");
+    const rateLimitResult = await checkAiRateLimit({
+      userId: user.id,
+      role: user.role,
+      endpoint: "/api/teacher/grading-assist",
+      schoolId: user.schoolId ?? undefined,
+    });
+    if (!rateLimitResult.allowed) {
+      return NextResponse.json(
+        { error: "Rate limit exceeded" },
+        {
+          status: 429,
+          headers: getRateLimitHeaders(rateLimitResult),
+        }
+      );
+    }
+
     const body = RequestSchema.parse(await req.json());
 
     const submission = await prisma.assignmentSubmission.findUnique({
@@ -58,10 +77,13 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ ok: true });
     }
 
+    const rawStudentAnswer = submission.content?.trim() || body.studentAnswer;
+    const anonymizedContent = anonymizeForAI(rawStudentAnswer);
+
     const suggestion = await getGradingAssistance({
       teacherId: user.id,
       submissionId: body.submissionId,
-      studentAnswer: submission.content?.trim() || body.studentAnswer,
+      studentAnswer: anonymizedContent.text,
       lessonObjectives: body.objectives,
       rubric: body.rubric,
     });
