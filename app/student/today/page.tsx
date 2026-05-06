@@ -368,19 +368,29 @@ function ScheduleTab({
     return (
       <div className="space-y-2">
         {scheduleItems.map((item) => (
-          <article key={item.id} className="grid gap-2 rounded-lg border border-[var(--ll-border)] bg-[var(--ll-surface-muted)] p-3 sm:grid-cols-[120px_1fr_auto] sm:items-center">
-            <div className="flex items-center gap-2 text-sm font-semibold text-[var(--ll-text)]">
-              <Clock3 className="h-4 w-4 text-[var(--ll-text-faint)]" strokeWidth={1.5} />
-              {formatTimeRange(item.timeRange)}
-            </div>
-            <div>
-              <p className="text-sm font-semibold text-[var(--ll-text)]">{subjectLabel(item.subject)}</p>
+          item.subject === null ? (
+            <article key={item.id} className="grid gap-2 rounded-lg border border-[var(--ll-border)] bg-[var(--ll-surface-muted)]/50 p-3 sm:grid-cols-[120px_1fr] sm:items-center">
+              <div className="flex items-center gap-2 text-xs text-[var(--ll-text-faint)]">
+                <Clock3 className="h-3.5 w-3.5" strokeWidth={1.5} />
+                {formatTimeRange(item.timeRange)}
+              </div>
               <p className="text-xs text-[var(--ll-text-muted)]">{item.periodLabel}</p>
-            </div>
-            <Link href={item.primaryAction.href} className="ll-touch-target inline-flex items-center justify-center rounded-lg border border-[var(--ll-border-strong)] px-3 py-2 text-sm font-semibold text-[var(--ll-text)]">
-              Open
-            </Link>
-          </article>
+            </article>
+          ) : (
+            <article key={item.id} className="grid gap-2 rounded-lg border border-[var(--ll-border)] bg-[var(--ll-surface-muted)] p-3 sm:grid-cols-[120px_1fr_auto] sm:items-center">
+              <div className="flex items-center gap-2 text-sm font-semibold text-[var(--ll-text)]">
+                <Clock3 className="h-4 w-4 text-[var(--ll-text-faint)]" strokeWidth={1.5} />
+                {formatTimeRange(item.timeRange)}
+              </div>
+              <div>
+                <p className="text-sm font-semibold text-[var(--ll-text)]">{subjectLabel(item.subject)}</p>
+                <p className="text-xs text-[var(--ll-text-muted)]">{item.periodLabel}</p>
+              </div>
+              <Link href={item.primaryAction.href} className="ll-touch-target inline-flex items-center justify-center rounded-lg border border-[var(--ll-border-strong)] px-3 py-2 text-sm font-semibold text-[var(--ll-text)]">
+                Open
+              </Link>
+            </article>
+          )
         ))}
       </div>
     );
