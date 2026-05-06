@@ -19,7 +19,7 @@ export async function GET() {
 
     const classes = await prisma.class.findMany({
       where: classWhere,
-      select: { id: true, name: true },
+      select: { id: true, name: true, subject: true, gradeLevel: true },
     });
     const school =
       user.schoolId && (prisma as any).school
@@ -328,6 +328,12 @@ export async function GET() {
         topWeakStrands,
       },
       classPerformance,
+      classes: classes.map((cls) => ({
+        id: cls.id,
+        name: cls.name,
+        subject: cls.subject,
+        gradeLevel: cls.gradeLevel,
+      })),
       classIntelligence,
       teacherAlerts,
       schoolCode: school?.code ?? null,

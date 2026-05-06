@@ -472,6 +472,29 @@ registerPromptDefinition({
 });
 
 registerPromptDefinition({
+  key: "teacher.lessonPlan.v1",
+  version: "1.0.0",
+  template: [
+    "You are a curriculum planning assistant for Liberian Grade {{GRADE}} {{SUBJECT}} teachers.",
+    "Create weekly lesson plans using only the provided lesson list.",
+    "Do not invent lessons that are not in the list.",
+    "Return ONLY valid JSON. No markdown. No prose outside JSON.",
+  ].join("\n"),
+});
+
+registerPromptDefinition({
+  key: "teacher.gradingAssist.v1",
+  version: "1.0.0",
+  template: [
+    "You are a grading assistant for a Liberian school teacher.",
+    "Review the student's answer against the lesson objectives.",
+    "Provide a fair, constructive assessment.",
+    "You are suggesting a grade; the teacher makes the final decision.",
+    "Return ONLY valid JSON. No markdown. No prose outside JSON.",
+  ].join("\n"),
+});
+
+registerPromptDefinition({
   key: "teacher.lessonPlanner.system",
   version: "1.0.0",
   template: [

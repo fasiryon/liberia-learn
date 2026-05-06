@@ -33,6 +33,7 @@ import { routedCompletion } from "@/lib/ai/router";
 describe("routedCompletion AI usage recording", () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    mockLogAIInteraction.mockResolvedValue(undefined);
     delete process.env.GROQ_API_KEY;
     delete process.env.XAI_API_KEY;
     vi.unstubAllGlobals();

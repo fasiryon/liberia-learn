@@ -62,6 +62,7 @@ type DashboardData = {
       profileHref: string;
     }>;
   }>;
+  classes?: Array<{ id: string; name: string; subject: string; gradeLevel: number | null }>;
   adaptiveStats: {
     studentsWithGaps: number;
     totalGapsDetected: number;
@@ -97,11 +98,27 @@ type DashboardData = {
   }>;
 };
 
+type WeeklyPlan = {
+  weekTitle: string;
+  days: Array<{
+    day: string;
+    lessonTitle: string;
+    contentId: string | null;
+    objectives: string[];
+    suggestedActivities: string[];
+    estimatedMinutes: number;
+  }>;
+  teacherNotes: string;
+};
+
 export default function TeacherDashboardPage() {
   const [data, setData] = useState<DashboardData | null>(null);
   const [loading, setLoading] = useState(true);
   const [lastUpdatedAt, setLastUpdatedAt] = useState<string | null>(null);
   const [newSubmissionCount, setNewSubmissionCount] = useState(0);
+  const [weeklyPlan, setWeeklyPlan] = useState<WeeklyPlan | null>(null);
+  const [planning, setPlanning] = useState(false);
+  const [planningMessage, setPlanningMessage] = useState<string | null>(null);
   const pendingGradingRef = useRef<number | null>(null);
   const adaptiveEnabled = process.env.NEXT_PUBLIC_ENABLE_ADAPTIVE_ENGINE !== "false";
   const [codeCopied, setCodeCopied] = useState(false);
@@ -169,6 +186,36 @@ export default function TeacherDashboardPage() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ alertId, action: "reviewed" }),
     }).catch(() => null);
+  }
+
+  async function generateWeeklyPlan() {
+    const cls = data?.classes?.find((entry) => entry.gradeLevel);
+    if (!cls) {
+      setPlanningMessage("No class with a grade level is available for planning.");
+      return;
+    }
+    setPlanning(true);
+    setPlanningMessage(null);
+    const today = new Date();
+    const monday = new Date(today);
+    const day = today.getDay() || 7;
+    monday.setDate(today.getDate() - day + 1);
+    const weekStartDate = monday.toISOString().slice(0, 10);
+    try {
+      const response = await fetch("/api/teacher/lesson-plan", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ classId: cls.id, weekStartDate }),
+      });
+      const result = await response.json();
+      if (!response.ok) throw new Error(result.error ?? "Failed to generate weekly plan");
+      setWeeklyPlan(result.plan as WeeklyPlan);
+      setPlanningMessage(`Draft plan generated for ${cls.name}. Edit before using in class.`);
+    } catch (error: any) {
+      setPlanningMessage(error?.message ?? "Failed to generate weekly plan");
+    } finally {
+      setPlanning(false);
+    }
   }
 
   const visibleAlerts = (data?.teacherAlerts ?? []).filter((a) => !dismissedAlerts.has(a.id));
@@ -485,6 +532,21 @@ export default function TeacherDashboardPage() {
                 </span>
                 <ChevronRight className="h-3.5 w-3.5 text-[var(--ll-text-faint)]" strokeWidth={1.5} />
               </Link>
+              <button
+                type="button"
+                onClick={generateWeeklyPlan}
+                disabled={planning}
+                className="ll-command ll-focus justify-between disabled:cursor-not-allowed disabled:opacity-60"
+              >
+                <span className="flex items-center gap-2 text-sm font-semibold text-[var(--ll-text)]">
+                  <CalendarDays
+                    className="h-4 w-4 text-[var(--ll-text-faint)]"
+                    strokeWidth={1.5}
+                  />
+                  {planning ? "Generating plan..." : "Generate this week's plan"}
+                </span>
+                <ChevronRight className="h-3.5 w-3.5 text-[var(--ll-text-faint)]" strokeWidth={1.5} />
+              </button>
               <Link href="/teacher/weekly-report" className="ll-command ll-focus justify-between">
                 <span className="flex items-center gap-2 text-sm font-semibold text-[var(--ll-text)]">
                   <BarChart3 className="h-4 w-4 text-[var(--ll-text-faint)]" strokeWidth={1.5} />
@@ -493,6 +555,74 @@ export default function TeacherDashboardPage() {
                 <ChevronRight className="h-3.5 w-3.5 text-[var(--ll-text-faint)]" strokeWidth={1.5} />
               </Link>
             </div>
+
+            {(weeklyPlan || planningMessage) && (
+              <section className="ll-section p-4">
+                <div className="flex flex-wrap items-start justify-between gap-3">
+                  <div>
+                    <h2 className="text-base font-semibold text-[var(--ll-text)]">
+                      {weeklyPlan?.weekTitle ?? "Weekly lesson plan"}
+                    </h2>
+                    {planningMessage ? (
+                      <p className="mt-1 text-sm text-[var(--ll-text-muted)]">{planningMessage}</p>
+                    ) : null}
+                  </div>
+                  {weeklyPlan ? (
+                    <button
+                      type="button"
+                      className="rounded-full border border-[var(--ll-border)] px-4 py-2 text-xs font-semibold text-[var(--ll-text)]"
+                      onClick={() => setPlanningMessage("Plan kept as an editable teacher draft.")}
+                    >
+                      Save draft
+                    </button>
+                  ) : null}
+                </div>
+                {weeklyPlan ? (
+                  <div className="mt-4 space-y-3">
+                    {weeklyPlan.days.map((day) => (
+                      <div
+                        key={day.day}
+                        className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-surface-muted)] p-4"
+                      >
+                        <div className="flex flex-wrap items-center justify-between gap-3">
+                          <div>
+                            <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[var(--ll-text-faint)]">
+                              {day.day} · {day.estimatedMinutes} min
+                            </p>
+                            {day.contentId ? (
+                              <Link
+                                href={`/student/lesson/${day.contentId}`}
+                                className="mt-1 block text-sm font-semibold text-[var(--ll-yellow)] hover:underline"
+                              >
+                                {day.lessonTitle}
+                              </Link>
+                            ) : (
+                              <p className="mt-1 text-sm font-semibold text-[var(--ll-text)]">
+                                {day.lessonTitle}
+                              </p>
+                            )}
+                          </div>
+                          <span className="rounded-full border border-[var(--ll-border)] px-3 py-1 text-xs text-[var(--ll-text-muted)]">
+                            {day.contentId ? "Linked lesson" : "No lesson link"}
+                          </span>
+                        </div>
+                        <textarea
+                          className="mt-3 min-h-[88px] w-full rounded-xl border border-[var(--ll-border)] bg-[var(--ll-surface)] px-3 py-2 text-sm text-[var(--ll-text)]"
+                          defaultValue={[
+                            ...day.objectives.map((item) => `Objective: ${item}`),
+                            ...day.suggestedActivities.map((item) => `Activity: ${item}`),
+                          ].join("\n")}
+                        />
+                      </div>
+                    ))}
+                    <textarea
+                      className="min-h-[88px] w-full rounded-xl border border-[var(--ll-border)] bg-[var(--ll-surface)] px-3 py-2 text-sm text-[var(--ll-text)]"
+                      defaultValue={weeklyPlan.teacherNotes}
+                    />
+                  </div>
+                ) : null}
+              </section>
+            )}
 
             {/* Class Performance Intelligence — compact summary rows */}
             <section className="ll-section p-4">
