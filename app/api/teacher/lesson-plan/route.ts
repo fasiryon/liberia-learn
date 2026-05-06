@@ -10,6 +10,7 @@ import { logLearningEvent } from "@/lib/events/logLearningEvent";
 import { recordMetricEvent } from "@/lib/metrics/events";
 import { getRateLimitHeaders, rateLimitExceededResponse } from "@/lib/rateLimit";
 import { isTeacherAiPlanningEnabled } from "@/lib/serverFlags";
+import { generateLessonPlan } from "@/lib/teacher/lessonPlanner";
 
 const LessonPlanSchema = z.object({
   action: z.literal("generate").optional(),
@@ -53,6 +54,12 @@ const SaveLessonPlanSchema = z.object({
   }),
 });
 
+const WeeklyLessonPlanSchema = z.object({
+  classId: z.string().trim().min(1).max(200),
+  weekStartDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
+  existingContentIds: z.array(z.string().trim().min(1).max(200)).max(20).optional(),
+});
+
 export async function POST(req: NextRequest) {
   const traceId = randomUUID();
 
@@ -63,6 +70,53 @@ export async function POST(req: NextRequest) {
 
     const user = await requireRole("TEACHER");
     const rawBody = await req.json();
+    if (rawBody?.classId && rawBody?.weekStartDate && rawBody?.action !== "save") {
+      const body = WeeklyLessonPlanSchema.parse(rawBody);
+      const cls = await prisma.class.findFirst({
+        where: { id: body.classId, schoolId: user.schoolId ?? "", teacherId: user.id },
+        select: { id: true, subject: true, gradeLevel: true },
+      });
+      if (!cls || !cls.gradeLevel) {
+        return NextResponse.json({ error: "Class not found" }, { status: 404 });
+      }
+
+      const rateLimit = await checkAiRateLimit({
+        userId: user.id,
+        role: user.role,
+        endpoint: "/api/teacher/lesson-plan",
+        schoolId: user.schoolId ?? undefined,
+      });
+      if (!rateLimit.allowed) {
+        return rateLimitExceededResponse(rateLimit);
+      }
+
+      const plan = await generateLessonPlan({
+        teacherId: user.id,
+        classId: cls.id,
+        subject: cls.subject,
+        gradeLevel: cls.gradeLevel,
+        weekStartDate: body.weekStartDate,
+        existingContentIds: body.existingContentIds,
+      });
+
+      await logAudit({
+        userId: user.id,
+        action: "ai.teacher.weekly_lesson_plan.requested",
+        resourceType: "ai_teacher_weekly_lesson_plan",
+        resourceId: body.classId,
+        schoolId: user.schoolId ?? null,
+        traceId,
+        details: {
+          weekStartDate: body.weekStartDate,
+          subject: cls.subject,
+          gradeLevel: cls.gradeLevel,
+          linkedContentCount: plan.days.filter((day) => day.contentId).length,
+        },
+      });
+
+      return NextResponse.json({ plan }, { headers: getRateLimitHeaders(rateLimit) });
+    }
+
     if (rawBody?.action === "save") {
       const body = SaveLessonPlanSchema.parse(rawBody);
       if (body.contentId) {
