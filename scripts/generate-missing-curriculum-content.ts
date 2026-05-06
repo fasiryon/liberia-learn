@@ -691,11 +691,14 @@ async function main() {
   };
 
   if (!dryRun) {
-    if (grade !== 5 || displaySubject(requestedSubject, subject) !== "ENGLISH" || !effectiveLimit || effectiveLimit > batchSize) {
-      throw new Error("Approved generation scope must be Grade 5 ENGLISH with an effective limit no greater than batch size.");
+    if (!grade || !subject) {
+      throw new Error("Grade and subject are required for approved generation.");
     }
-    if (plan.lessons.length > batchSize) {
-      throw new Error("Generation batch guard failed: plan exceeds batch size.");
+    if (!effectiveLimit) {
+      throw new Error("An explicit --limit is required for approved generation.");
+    }
+    if (plan.lessons.length > effectiveLimit) {
+      throw new Error("Generation batch guard failed: plan exceeds limit.");
     }
     if (topics && topics.length !== plan.lessons.length) {
       throw new Error("Topic count must match the approved sample lesson count.");
@@ -704,7 +707,7 @@ async function main() {
     const generatedLessons = [];
     const failedLessons = [];
     const generatedTitles: string[] = [];
-    const existingTopicDistribution = topicDistribution(await existingTopicItems({ grade: 5, subject: "ENGLISH" }));
+    const existingTopicDistribution = topicDistribution(await existingTopicItems({ grade, subject }));
     const runningTopicDistribution = { ...existingTopicDistribution };
     const recentTopicBuckets: Grade5EnglishTopicBucket[] = [];
     for (let index = 0; index < plan.lessons.length; index += 1) {
@@ -758,6 +761,11 @@ async function main() {
           fromGeneratedLesson: false,
         });
         console.error(`[PHASE 6] failed ${lesson.plannedContentId}: ${message}`);
+      }
+      // Give fire-and-forget DB telemetry calls time to release the single
+      // connection before the next lesson's assertTitleNotSimilar query starts.
+      if (index < plan.lessons.length - 1) {
+        await new Promise((resolve) => setTimeout(resolve, 2000));
       }
     }
     failedLessons.push(...generatedLessons.filter((lesson) => lesson.status === "NEEDS_REVIEW").map(needsReviewFailureFromGeneratedLesson));

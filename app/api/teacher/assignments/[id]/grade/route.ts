@@ -10,6 +10,7 @@ export const dynamic = "force-dynamic";
 const GradeSchema = z.object({
   grade: z.number().int().min(0).max(100),
   feedback: z.string().trim().min(3).max(2000),
+  aiGradingAssistAction: z.enum(["accepted", "edited"]).optional(),
 });
 
 export async function PATCH(
@@ -86,6 +87,23 @@ export async function PATCH(
         grade: parsed.grade,
       },
     });
+
+    if (parsed.aiGradingAssistAction) {
+      await logAudit({
+        userId: user.id,
+        schoolId: user.schoolId,
+        action:
+          parsed.aiGradingAssistAction === "accepted"
+            ? "ai_grading_assist_accepted"
+            : "ai_grading_assist_edited",
+        resourceType: "assignment_submission",
+        resourceId: updated.id,
+        details: {
+          assignmentId: submission.Assignment.id,
+          grade: parsed.grade,
+        },
+      });
+    }
 
     try {
       await notifyAssignmentGraded({
