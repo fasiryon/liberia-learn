@@ -15,17 +15,20 @@ export default defineConfig({
   },
   reporter: "list",
   use: {
-    trace: "retain-on-failure",
-    baseURL: baseUrl,
-    video: 'on',
+    baseURL: 'https://liberia-learn.vercel.app',
+    video: {
+      mode: 'on',
+      size: { width: 1920, height: 1080 },
+    },
     viewport: { width: 1920, height: 1080 },
     launchOptions: {
       args: [
-        '--start-maximized',
         '--window-size=1920,1080',
+        '--window-position=0,0',
+        '--force-device-scale-factor=1',
         '--disable-infobars',
+        '--no-sandbox',
       ],
-      slowMo: 50,
     },
   },
   webServer: useRemoteBaseUrl

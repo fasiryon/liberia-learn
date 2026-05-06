@@ -32,6 +32,8 @@ type CreatedCredential = {
 
 const GRADES = Array.from({ length: 12 }, (_, i) => i + 1);
 
+const PAGE_SIZE = 15;
+
 export default function AdminStudentsPage() {
   const [students, setStudents] = useState<StudentRow[]>([]);
   const [classes, setClasses] = useState<ClassInfo[]>([]);
@@ -40,6 +42,8 @@ export default function AdminStudentsPage() {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [createdCredential, setCreatedCredential] = useState<CreatedCredential | null>(null);
+  const [studentSearch, setStudentSearch] = useState("");
+  const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
 
   const [form, setForm] = useState({
     firstName: "",
@@ -89,6 +93,20 @@ export default function AdminStudentsPage() {
   }, []);
 
   const selectedClass = useMemo(() => classes.find((c) => c.id === form.classId) ?? null, [classes, form.classId]);
+
+  const filteredStudents = useMemo(() => {
+    const q = studentSearch.toLowerCase().trim();
+    if (!q) return students;
+    return students.filter(
+      (s) =>
+        s.name.toLowerCase().includes(q) ||
+        (s.className ?? "").toLowerCase().includes(q) ||
+        (s.loginId ?? "").toLowerCase().includes(q)
+    );
+  }, [students, studentSearch]);
+
+  const visibleStudents = filteredStudents.slice(0, visibleCount);
+  const hasMoreStudents = filteredStudents.length > visibleCount;
 
   const requiredMissing = !form.firstName.trim() || !form.lastName.trim() || !form.classId || !form.grade;
 
@@ -256,9 +274,23 @@ export default function AdminStudentsPage() {
         )}
 
         <section className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 p-6">
-          <div className="mb-4 flex items-center justify-between">
-            <h2 className="text-lg font-semibold">Enrolled Students</h2>
-            <span className="text-xs text-[var(--ll-text-faint)]">{students.length} total</span>
+          <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+            <div>
+              <h2 className="text-lg font-semibold">Enrolled Students</h2>
+              <span className="text-xs text-[var(--ll-text-faint)]">{students.length} total</span>
+            </div>
+            {!loading && students.length > 0 && (
+              <input
+                type="search"
+                value={studentSearch}
+                onChange={(e) => {
+                  setStudentSearch(e.target.value);
+                  setVisibleCount(PAGE_SIZE);
+                }}
+                placeholder="Search by name, class, or ID…"
+                className="w-full max-w-xs rounded-lg border border-[var(--ll-border)] bg-[var(--ll-bg)] px-3 py-2 text-sm text-[var(--ll-text)] placeholder:text-[var(--ll-text-faint)] outline-none focus:border-[var(--ll-yellow)]/50"
+              />
+            )}
           </div>
 
           {loading ? (
@@ -269,40 +301,63 @@ export default function AdminStudentsPage() {
             </div>
           ) : students.length === 0 ? (
             <div className="rounded-xl border border-[var(--ll-border)] bg-black/10 p-6 text-sm text-[var(--ll-text-muted)]">No students enrolled yet. Add your first student.</div>
+          ) : filteredStudents.length === 0 ? (
+            <p className="text-sm text-[var(--ll-text-faint)]">No students match your search.</p>
           ) : (
-            <div className="overflow-x-auto">
-              <table className="w-full text-sm">
-                <thead>
-                  <tr className="border-b border-[var(--ll-border)] text-left text-xs text-[var(--ll-text-faint)]">
-                    <th className="pb-2 pr-4">Name</th>
-                    <th className="pb-2 pr-4">Grade</th>
-                    <th className="pb-2 pr-4">Class</th>
-                    <th className="pb-2 pr-4">Login ID</th>
-                    <th className="pb-2">Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {students.map((s) => (
-                    <tr key={s.id} className="border-b border-white/5 text-[var(--ll-text)]">
-                      <td className="py-3 pr-4">
-                        <div className="font-medium">{s.name}</div>
-                        <div className="text-[11px] text-[var(--ll-text-faint)]">{s.email}</div>
-                      </td>
-                      <td className="py-3 pr-4">{s.currentGrade ?? "-"}</td>
-                      <td className="py-3 pr-4">{s.className ?? "-"}</td>
-                      <td className="py-3 pr-4">{s.loginId ?? "-"}</td>
-                      <td className="py-3">
-                        <Link
-                          href={`/admin/students/${s.id}`}
-                          className="inline-flex rounded-full border border-[var(--ll-border)] px-2.5 py-1 text-[11px] text-[var(--ll-text)] hover:text-[var(--ll-text)]"
-                        >
-                          View Student
-                        </Link>
-                      </td>
+            <div className="space-y-3">
+              {filteredStudents.length > PAGE_SIZE && (
+                <p className="text-xs text-[var(--ll-text-faint)]">
+                  Showing {Math.min(visibleCount, filteredStudents.length)} of {filteredStudents.length} students
+                </p>
+              )}
+              <div className="overflow-x-auto">
+                <table className="w-full text-sm">
+                  <thead>
+                    <tr className="border-b border-[var(--ll-border)] text-left text-xs text-[var(--ll-text-faint)]">
+                      <th className="pb-2 pr-4">Name</th>
+                      <th className="pb-2 pr-4">Grade</th>
+                      <th className="pb-2 pr-4">Class</th>
+                      <th className="pb-2 pr-4">Login ID</th>
+                      <th className="pb-2">Actions</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody>
+                    {visibleStudents.map((s) => (
+                      <tr key={s.id} className="border-b border-white/5 text-[var(--ll-text)]">
+                        <td className="py-3 pr-4">
+                          <Link
+                            href={`/admin/students/${s.id}`}
+                            className="font-medium text-[var(--ll-text)] hover:text-[var(--ll-yellow)] transition-colors"
+                          >
+                            {s.name}
+                          </Link>
+                          <div className="text-[11px] text-[var(--ll-text-faint)]">{s.email}</div>
+                        </td>
+                        <td className="py-3 pr-4">{s.currentGrade ?? "-"}</td>
+                        <td className="py-3 pr-4">{s.className ?? "-"}</td>
+                        <td className="py-3 pr-4">{s.loginId ?? "-"}</td>
+                        <td className="py-3">
+                          <Link
+                            href={`/admin/students/${s.id}`}
+                            className="inline-flex rounded-full border border-[var(--ll-border)] px-2.5 py-1 text-[11px] text-[var(--ll-text)] hover:text-[var(--ll-text)]"
+                          >
+                            View
+                          </Link>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+              {hasMoreStudents && (
+                <button
+                  type="button"
+                  onClick={() => setVisibleCount((c) => c + PAGE_SIZE)}
+                  className="rounded-lg border border-[var(--ll-border)] bg-[var(--ll-surface)]/50 px-4 py-2 text-sm font-semibold text-[var(--ll-text)] hover:bg-[var(--ll-surface)] transition-colors"
+                >
+                  Load more ({filteredStudents.length - visibleCount} remaining)
+                </button>
+              )}
             </div>
           )}
         </section>
