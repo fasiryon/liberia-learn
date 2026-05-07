@@ -17,6 +17,15 @@ type ProgressRecord = {
   quizScore: number | null;
 };
 
+type TrendsData = {
+  recentScores: number[];
+  scoreTrend: "improving" | "declining" | "stable";
+  subjectAvg: Array<{ subject: string; avg: number }>;
+  lastActiveDaysAgo: number | null;
+  lessonsThisWeek: number;
+  lessonsThisMonth: number;
+};
+
 type SubmissionRecord = {
   id: string;
   assignmentId: string;
@@ -37,6 +46,7 @@ export default function TeacherStudentDetailPage() {
   const [student, setStudent] = useState<{ id: string; name: string; email: string } | null>(null);
   const [records, setRecords] = useState<ProgressRecord[]>([]);
   const [submissions, setSubmissions] = useState<SubmissionRecord[]>([]);
+  const [trends, setTrends] = useState<TrendsData | null>(null);
   const [lastCheckedAt, setLastCheckedAt] = useState<string | null>(null);
   const [refreshingSubmissions, setRefreshingSubmissions] = useState(false);
   const [hasNewSubmission, setHasNewSubmission] = useState(false);
@@ -54,6 +64,7 @@ export default function TeacherStudentDetailPage() {
     if (!response.ok || d.error) throw new Error(d.error ?? "Failed to load student");
     setStudent(d.student);
     setRecords(d.records || []);
+    setTrends(d.trends ?? null);
     const nextSubmissions = (d.submissions || []) as SubmissionRecord[];
     if (submissionCountRef.current !== null && nextSubmissions.length > submissionCountRef.current) {
       setHasNewSubmission(true);
@@ -210,6 +221,78 @@ export default function TeacherStudentDetailPage() {
               );
             })}
           </div>
+        )}
+      </section>
+
+      {/* Learning Trends */}
+      <section className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 p-5">
+        <h2 className="text-sm font-semibold text-[var(--ll-text)] mb-3">Learning Trends</h2>
+        {trends ? (
+          <div className="space-y-4">
+            {/* Activity stats */}
+            <div className="grid grid-cols-3 gap-3">
+              <div className="rounded-lg border border-[var(--ll-border)] bg-[var(--ll-surface)] p-3 text-center">
+                <p className="text-lg font-semibold text-[var(--ll-text)]">{trends.lessonsThisWeek}</p>
+                <p className="text-xs text-[var(--ll-text-faint)]">Lessons this week</p>
+              </div>
+              <div className="rounded-lg border border-[var(--ll-border)] bg-[var(--ll-surface)] p-3 text-center">
+                <p className="text-lg font-semibold text-[var(--ll-text)]">{trends.lessonsThisMonth}</p>
+                <p className="text-xs text-[var(--ll-text-faint)]">Lessons this month</p>
+              </div>
+              <div className="rounded-lg border border-[var(--ll-border)] bg-[var(--ll-surface)] p-3 text-center">
+                <p className="text-lg font-semibold text-[var(--ll-text)]">
+                  {trends.lastActiveDaysAgo == null ? "—" : trends.lastActiveDaysAgo === 0 ? "Today" : `${trends.lastActiveDaysAgo}d ago`}
+                </p>
+                <p className="text-xs text-[var(--ll-text-faint)]">Last active</p>
+              </div>
+            </div>
+
+            {/* Quiz score trend */}
+            {trends.recentScores.length > 0 && (
+              <div>
+                <div className="flex items-center gap-2 mb-2">
+                  <p className="text-xs font-medium text-[var(--ll-text)]">Recent quiz scores</p>
+                  <span className={`rounded-full px-2 py-0.5 text-[10px] font-semibold ${
+                    trends.scoreTrend === "improving" ? "bg-emerald-500/20 text-emerald-400" :
+                    trends.scoreTrend === "declining" ? "bg-red-500/20 text-red-400" :
+                    "bg-[var(--ll-surface)] text-[var(--ll-text-muted)]"
+                  }`}>
+                    {trends.scoreTrend === "improving" ? "↑ Improving" : trends.scoreTrend === "declining" ? "↓ Declining" : "→ Stable"}
+                  </span>
+                </div>
+                <div className="flex flex-wrap items-center gap-1.5 text-xs">
+                  {trends.recentScores.map((score, i) => (
+                    <span
+                      key={i}
+                      className={`rounded-full px-2.5 py-0.5 font-medium ${
+                        score >= 80 ? "bg-emerald-500/20 text-emerald-400" :
+                        score >= 60 ? "bg-[var(--ll-yellow)]/20 text-[var(--ll-yellow)]" :
+                        "bg-red-500/20 text-red-400"
+                      }`}
+                    >
+                      {score}%
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Subject averages */}
+            {trends.subjectAvg.length > 0 && (
+              <div>
+                <p className="text-xs font-medium text-[var(--ll-text)] mb-2">Subject averages</p>
+                <div className="flex flex-wrap gap-2 text-xs">
+                  {trends.subjectAvg.map(({ subject, avg }) => (
+                    <span key={subject} className="rounded-full border border-[var(--ll-border)] bg-[var(--ll-surface)] px-3 py-1 text-[var(--ll-text-muted)]">
+                      {subject}: <span className="font-semibold text-[var(--ll-text)]">{avg}%</span>
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        ) : (
+          <p className="text-xs text-[var(--ll-text-faint)]">No quiz data available yet.</p>
         )}
       </section>
 

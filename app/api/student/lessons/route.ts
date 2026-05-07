@@ -1,13 +1,17 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { requireRole } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { buildCurriculumDisplayTitle } from "@/lib/curriculum/title";
 
 export const dynamic = "force-dynamic";
 
-export async function GET() {
+const PAGE_SIZE = 12;
+
+export async function GET(req: NextRequest) {
   try {
     const user = await requireRole("STUDENT");
+    const page = Math.max(1, Number(req.nextUrl.searchParams.get("page") ?? "1") || 1);
+    const skip = (page - 1) * PAGE_SIZE;
 
     const student = await prisma.student.findUnique({
       where: { userId: user.id },
@@ -18,7 +22,7 @@ export async function GET() {
     });
 
     if (!student) {
-      return NextResponse.json({ grade: null, count: 0, items: [] });
+      return NextResponse.json({ grade: null, count: 0, total: 0, page: 1, totalPages: 0, items: [] });
     }
 
     const where: Record<string, unknown> = {
@@ -37,24 +41,31 @@ export async function GET() {
       where.subject = { in: classSubjects };
     }
 
-    const rows = await prisma.curriculumContent.findMany({
-      where,
-      orderBy: { updatedAt: "desc" },
-      take: 60,
-      select: {
-        contentId: true,
-        title: true,
-        grade: true,
-        subject: true,
-        contentType: true,
-        status: true,
-        payload: true,
-      },
-    });
+    const [total, rows] = await Promise.all([
+      prisma.curriculumContent.count({ where }),
+      prisma.curriculumContent.findMany({
+        where,
+        orderBy: [{ subject: "asc" }, { orderInUnit: "asc" }, { createdAt: "asc" }],
+        take: PAGE_SIZE,
+        skip,
+        select: {
+          contentId: true,
+          title: true,
+          grade: true,
+          subject: true,
+          contentType: true,
+          status: true,
+          payload: true,
+        },
+      }),
+    ]);
 
     return NextResponse.json({
       grade: student.currentGrade,
       count: rows.length,
+      total,
+      page,
+      totalPages: Math.ceil(total / PAGE_SIZE),
       items: rows.map((row) => ({
         contentId: row.contentId,
         title: row.title,

@@ -7,6 +7,7 @@ import ReactMarkdown from "react-markdown";
 import { trackEvent, EVENTS } from "@/lib/trackEvent";
 import { cacheLessonContent, loadCachedLesson } from "@/lib/lesson-offline-cache";
 import { LessonAudioPlayer, type LessonAudioPart } from "@/components/student/LessonAudioPlayer";
+import { getLessonLabLinks } from "@/lib/lessons/labLinks";
 
 type LessonMode = "read" | "slides" | "listen";
 
@@ -137,6 +138,13 @@ export default function LessonViewerPage() {
 
   const objectives: string[] = Array.isArray(payload?.objectives) ? payload.objectives : [];
   const activities: string[] = Array.isArray(payload?.activities) ? payload.activities : [];
+  const scienceSubjects = ["SCIENCE", "BIOLOGY", "CHEMISTRY", "PHYSICS"];
+  const subjectUpper = (metadata?.subject ?? "").toString().toUpperCase();
+  const isScienceLesson = scienceSubjects.some((s) => subjectUpper.includes(s));
+  const relatedLabs = isScienceLesson
+    ? getLessonLabLinks({ subject: subjectUpper.toLowerCase(), grade: Number(metadata?.grade ?? 8) })
+    : [];
+  const relatedLab = relatedLabs[0] ?? null;
   const isBlockOnly = Boolean(payload?.lessonFormat === "block" && payload?.body_block && !payload?.body_standard);
   const standardBodyText: string = isBlockOnly ? "" : payload?.body_standard ?? payload?.body ?? payload?.content ?? "";
   const blockBodyText: string = payload?.body_block ?? "";
@@ -377,6 +385,21 @@ export default function LessonViewerPage() {
             </div>
           </section>
         )}
+
+        {/* Related Lab */}
+        {relatedLab ? (
+          <div className="mt-6 p-4 rounded-xl border border-[var(--ll-yellow)] bg-[var(--ll-yellow-soft)]">
+            <p className="text-sm font-medium text-[var(--ll-text)] mb-2">
+              Ready to explore further?
+            </p>
+            <a
+              href={`/student/labs/${relatedLab.labId}`}
+              className="inline-flex items-center gap-2 rounded-lg px-4 py-2 bg-[var(--ll-yellow)] text-[var(--ll-bg)] text-sm font-medium hover:opacity-90"
+            >
+              {relatedLab.label} →
+            </a>
+          </div>
+        ) : null}
 
         {/* Mark Complete */}
         <div className="flex items-center gap-3">
