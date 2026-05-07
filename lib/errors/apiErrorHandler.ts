@@ -96,6 +96,16 @@ export function handleApiError(err: unknown, context: ApiErrorContext = {}): Nex
         status === 404 ? "NOT_FOUND" : status === 409 ? "CONFLICT" : "BAD_REQUEST";
       return json({ error: authMessage, code, timestamp, requestId }, status);
     }
+
+    if (status >= 500) {
+      const code =
+        typeof (err as { code?: unknown }).code === "string"
+          ? String((err as { code?: unknown }).code)
+          : status === 503
+            ? "SERVICE_UNAVAILABLE"
+            : "INTERNAL_ERROR";
+      return json({ error: authMessage, code, timestamp, requestId }, status);
+    }
   }
 
   if (isPrismaKnownError(err)) {

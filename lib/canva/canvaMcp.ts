@@ -1,6 +1,7 @@
 import Anthropic from "@anthropic-ai/sdk";
+import { logger } from "@/lib/logger";
+import { CANVA_MCP_URL, hasAnthropicApiKey } from "@/lib/canva/config";
 
-const CANVA_MCP_URL = "https://mcp.canva.com/mcp";
 const DEFAULT_MODEL = "claude-sonnet-4-20250514";
 const CANVA_DESIGN_URL_RE = /https:\/\/www\.canva\.com\/design\/[^\s")]+/;
 
@@ -11,8 +12,16 @@ type CanvaGenerationResult = {
 };
 
 function getAnthropicClient() {
-  if (!process.env.ANTHROPIC_API_KEY?.trim()) {
-    throw Object.assign(new Error("Anthropic unavailable"), { status: 503 });
+  if (!hasAnthropicApiKey()) {
+    logger.warn("[CANVA_MCP] Anthropic API key missing", {
+      provider: "anthropic",
+      canvaMcpConfigured: true,
+      reason: "missing_server_env",
+    });
+    throw Object.assign(new Error("Anthropic API key is not configured"), {
+      status: 503,
+      code: "ANTHROPIC_ENV_MISSING",
+    });
   }
   return new Anthropic();
 }

@@ -7,7 +7,9 @@ import { randomUUID } from "crypto";
 import { enqueueJob, JobType } from "@/lib/queue";
 
 function isSchoolOnboardingKitFlagEnabled() {
-  return process.env.ENABLE_SCHOOL_ONBOARDING_KITS === "true";
+  const value = process.env.ENABLE_SCHOOL_ONBOARDING_KITS;
+  if (value != null) return value === "true";
+  return process.env.NODE_ENV !== "production";
 }
 
 export async function POST(request: Request) {
