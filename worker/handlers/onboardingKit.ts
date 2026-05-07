@@ -3,13 +3,20 @@ import { prisma } from "@/lib/db";
 import { sendSchoolOnboardingKit } from "@/lib/email";
 import { generateOnboardingKit } from "@/lib/schools/generateOnboardingKit";
 import { isSchoolOnboardingKitsEnabled } from "@/lib/serverFlags";
+import type { JobDispatchMetadata } from "@/worker/handlers";
 
 type Payload = {
   schoolId: string;
   actorUserId?: string | null;
 };
 
-export async function handleGenerateSchoolOnboardingKitJob(payload: Payload) {
+function getQueueWaitMs(metadata: JobDispatchMetadata) {
+  if (!metadata.enqueuedAt) return null;
+  const enqueuedTime = new Date(metadata.enqueuedAt).getTime();
+  return Number.isFinite(enqueuedTime) ? Math.max(0, Date.now() - enqueuedTime) : null;
+}
+
+export async function handleGenerateSchoolOnboardingKitJob(payload: Payload, metadata: JobDispatchMetadata = {}) {
   if (typeof isSchoolOnboardingKitsEnabled !== "function" || !isSchoolOnboardingKitsEnabled()) return;
   if (!payload?.schoolId) {
     throw new Error("schoolId is required for GENERATE_SCHOOL_ONBOARDING_KIT");
@@ -39,6 +46,12 @@ export async function handleGenerateSchoolOnboardingKitJob(payload: Payload) {
       county: school.county,
       principalName: school.contactName,
       schoolCode: school.code,
+      schoolId: school.id,
+      actorUserId: payload.actorUserId ?? null,
+      route: "worker.onboardingKit",
+      jobName: "GENERATE_SCHOOL_ONBOARDING_KIT",
+      queueWaitMs: getQueueWaitMs(metadata),
+      retryCount: metadata.retryCount ?? null,
     });
     await prisma.school.update({
       where: { id: school.id },

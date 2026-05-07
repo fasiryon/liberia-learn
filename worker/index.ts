@@ -17,6 +17,7 @@ declare const module: undefined | unknown;
 type QueueEnvelope = {
   jobType: JobType;
   payload: unknown;
+  enqueuedAt?: string;
 };
 
 const MAX_RETRIES = 3;
@@ -86,7 +87,10 @@ async function handleMessage(message: Message) {
   logger.info(`[WORKER] Processing ${envelope.jobType}`, {
     messageType: envelope.jobType,
   });
-  await dispatchJob(envelope.jobType, envelope.payload);
+  await dispatchJob(envelope.jobType, envelope.payload, {
+    enqueuedAt: envelope.enqueuedAt,
+    retryCount: Math.max(0, getReceiveCount(message) - 1),
+  });
   void publishMetric({
     metricName: "WorkerJobCompleted",
     value: 1,
