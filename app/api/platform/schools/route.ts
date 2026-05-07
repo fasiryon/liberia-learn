@@ -2,13 +2,18 @@ import { NextRequest, NextResponse } from "next/server";
 import { requireMoePlatformAdmin } from "@/lib/moeAccess";
 import { prisma } from "@/lib/db";
 import { logAudit } from "@/lib/audit";
+import { enqueueJob, JobType } from "@/lib/queue";
+
+function isSchoolOnboardingKitFlagEnabled() {
+  return process.env.ENABLE_SCHOOL_ONBOARDING_KITS === "true";
+}
 
 export const dynamic = "force-dynamic";
 
 /** GET: list all schools */
 export async function GET() {
   try {
-    await requireMoePlatformAdmin();
+    const actor = await requireMoePlatformAdmin();
 
     const schools = await prisma.school.findMany({
       select: {
@@ -41,7 +46,7 @@ export async function GET() {
 /** POST: create a new school */
 export async function POST(req: NextRequest) {
   try {
-    await requireMoePlatformAdmin();
+    const actor = await requireMoePlatformAdmin();
 
     const body = await req.json();
     const { name, county, district, contactName, contactEmail, contactPhone, motto, status } = body;
@@ -64,12 +69,26 @@ export async function POST(req: NextRequest) {
     });
 
     await logAudit({
-      userId: (await requireMoePlatformAdmin()).id,
+      userId: actor.id,
       action: "school.create",
       resourceType: "school",
       resourceId: school.id,
       details: { name: school.name, county: school.county },
     });
+
+    if (isSchoolOnboardingKitFlagEnabled()) {
+      await enqueueJob(JobType.GENERATE_SCHOOL_ONBOARDING_KIT, {
+        schoolId: school.id,
+        actorUserId: actor.id,
+      });
+      await logAudit({
+        userId: actor.id,
+        schoolId: school.id,
+        action: "school.onboarding_kit.enqueued",
+        resourceType: "school",
+        resourceId: school.id,
+      });
+    }
 
     return NextResponse.json({ school }, { status: 201 });
   } catch (err: any) {

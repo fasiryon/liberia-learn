@@ -4,6 +4,11 @@ import { requireUser } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { logAudit } from "@/lib/audit";
 import { randomUUID } from "crypto";
+import { enqueueJob, JobType } from "@/lib/queue";
+
+function isSchoolOnboardingKitFlagEnabled() {
+  return process.env.ENABLE_SCHOOL_ONBOARDING_KITS === "true";
+}
 
 export async function POST(request: Request) {
   const traceId = randomUUID();
@@ -47,6 +52,25 @@ export async function POST(request: Request) {
       traceId,
       details: { name },
     });
+
+    if (isSchoolOnboardingKitFlagEnabled()) {
+      await prisma.school.update({
+        where: { id },
+        data: { onboardingKitStatus: "pending" },
+      });
+      await enqueueJob(JobType.GENERATE_SCHOOL_ONBOARDING_KIT, {
+        schoolId: id,
+        actorUserId: user.id,
+      });
+      await logAudit({
+        userId: user.id,
+        action: "school.onboarding_kit.enqueued",
+        resourceType: "school",
+        resourceId: id,
+        schoolId: id,
+        traceId,
+      });
+    }
 
     return NextResponse.redirect(new URL("/admin/schools", request.url));
   } catch (err: any) {
