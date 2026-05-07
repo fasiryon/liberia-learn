@@ -2,6 +2,7 @@ import type { Subject } from "@prisma/client";
 
 import { logAudit } from "@/lib/audit";
 import { prisma } from "@/lib/db";
+import { checkAndAwardCertificate } from "@/lib/certificates/autoAwardCertificate";
 import { resolveActionsOnLessonComplete } from "@/lib/intelligence/actionEngine";
 import { notifyLessonCompletion } from "@/lib/lesson-notifications";
 import { updateMasteryProfile } from "@/lib/mastery/masteryService";
@@ -192,6 +193,7 @@ export async function completeScheduledLesson(input: CompleteLessonInput) {
   }).catch(() => null);
 
   resolveActionsOnLessonComplete(student.id, input.scheduledWorkId).catch(() => null);
+  checkAndAwardCertificate(student.id, content.subject, content.grade, input.user.id).catch(() => {});
 
   return {
     completedAt: progress.completedAt,

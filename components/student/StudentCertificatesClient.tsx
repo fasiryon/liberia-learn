@@ -12,6 +12,7 @@ type CertificateRecord = {
   awardedAt: string;
   certificateCode: string;
   studentName: string;
+  canvaUrl: string | null;
 };
 
 function labelForType(type: CertificateRecord["type"]) {
@@ -83,7 +84,7 @@ export default function StudentCertificatesClient() {
 
         {!loading && !error && certificates.length === 0 ? (
           <div className="rounded-xl border border-dashed border-[var(--ll-border)] bg-[var(--ll-surface)] p-8 text-center text-sm text-[var(--ll-text-muted)]">
-            Complete lessons and score at least 70% on the quiz to earn your first certificate.
+            Your earned certificates appear here automatically when you complete 80% of a subject.
           </div>
         ) : null}
 
@@ -102,13 +103,25 @@ export default function StudentCertificatesClient() {
                     {labelForType(certificate.type)}
                   </h2>
                 </div>
-                <button
-                  type="button"
-                  onClick={() => window.print()}
-                  className="rounded-full border border-[var(--ll-pink)]/30 bg-[var(--ll-pink-soft)] px-4 py-2 text-xs font-semibold text-[var(--ll-pink)] transition-colors hover:opacity-90 print:hidden"
-                >
-                  Print
-                </button>
+                <div className="flex items-center gap-2 print:hidden">
+                  {certificate.canvaUrl && (
+                    <a
+                      href={certificate.canvaUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="rounded-full border border-[var(--ll-yellow)]/30 bg-[var(--ll-yellow)]/10 px-4 py-2 text-xs font-semibold text-[var(--ll-yellow)] transition-colors hover:opacity-90"
+                    >
+                      View Certificate
+                    </a>
+                  )}
+                  <button
+                    type="button"
+                    onClick={() => window.print()}
+                    className="rounded-full border border-[var(--ll-pink)]/30 bg-[var(--ll-pink-soft)] px-4 py-2 text-xs font-semibold text-[var(--ll-pink)] transition-colors hover:opacity-90"
+                  >
+                    Print
+                  </button>
+                </div>
               </div>
 
               <div className="mt-6 space-y-3 text-sm text-[var(--ll-text-muted)] print:text-[var(--ll-text-faint)]">
