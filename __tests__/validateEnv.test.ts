@@ -22,6 +22,13 @@ function resetRelevantEnv() {
   delete env.AI_DROPOUT_RISK_ENABLED;
   delete env.ENABLE_CURRICULUM_OPTIMIZATION_AI;
   delete env.ENABLE_DELIVERY_PROFILE;
+  delete env.ANTHROPIC_API_KEY;
+  delete env.ENABLE_CANVA_CERTIFICATES;
+  delete env.ENABLE_CANVA_MOE_REPORTS;
+  delete env.ENABLE_CANVA_COURSE_THUMBNAILS;
+  delete env.ENABLE_SCHOOL_ONBOARDING_KITS;
+  delete env.ENABLE_CERTIFICATION_ASSET_GENERATION;
+  delete env.ENABLE_HIGGSFIELD_VIDEO_GENERATION;
   delete env.NEXT_PUBLIC_SENTRY_DSN;
   delete env.SENTRY_DSN;
   delete env.SENTRY_AUTH_TOKEN;
@@ -139,6 +146,18 @@ describe("validateEnv", () => {
     const { validateEnv } = await importValidateEnvModule();
 
     expect(() => validateEnv()).toThrow(/OPENAI_API_KEY/);
+  });
+
+  it("requires ANTHROPIC_API_KEY when a Canva generation flag is enabled", async () => {
+    mutableEnv().DATABASE_URL = "postgres://db";
+    mutableEnv().DIRECT_URL = "postgres://direct";
+    mutableEnv().NEXTAUTH_SECRET = "secret";
+    mutableEnv().NEXTAUTH_URL = "http://localhost:3000";
+    mutableEnv().ENABLE_CANVA_COURSE_THUMBNAILS = "true";
+
+    const { validateEnv } = await importValidateEnvModule();
+
+    expect(() => validateEnv()).toThrow(/ANTHROPIC_API_KEY/);
   });
 });
 

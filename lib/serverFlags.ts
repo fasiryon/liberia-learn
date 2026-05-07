@@ -21,6 +21,12 @@ export type FindingSeverity = (typeof SEVERITY_LEVELS)[number];
 
 import { isDemo } from "@/lib/environment";
 
+function isEnabledInLocalDevByDefault(flagName: string): boolean {
+  const value = process.env[flagName];
+  if (value != null) return value === "true";
+  return process.env.NODE_ENV !== "production";
+}
+
 /**
  * Returns true if findingSeverity meets or exceeds minSeverity.
  * Unknown values are treated conservatively: unknown finding  info (0),
@@ -214,24 +220,24 @@ export function isCanvaMoeReportsEnabled(): boolean {
   return process.env.ENABLE_CANVA_MOE_REPORTS === "true";
 }
 
-/** Canva-backed course thumbnail automation. DEFAULT OFF. */
+/** Canva-backed course thumbnail automation. DEFAULT ON in local/dev, explicit in production. */
 export function isCanvaCourseThumbnailsEnabled(): boolean {
-  return process.env.ENABLE_CANVA_COURSE_THUMBNAILS === "true";
+  return isEnabledInLocalDevByDefault("ENABLE_CANVA_COURSE_THUMBNAILS");
 }
 
-/** Canva-backed school onboarding kit automation. DEFAULT OFF. */
+/** Canva-backed school onboarding kit automation. DEFAULT ON in local/dev, explicit in production. */
 export function isSchoolOnboardingKitsEnabled(): boolean {
-  return process.env.ENABLE_SCHOOL_ONBOARDING_KITS === "true";
+  return isEnabledInLocalDevByDefault("ENABLE_SCHOOL_ONBOARDING_KITS");
 }
 
-/** Certification banner/video asset generation. DEFAULT OFF. */
+/** Certification banner/video asset generation. DEFAULT ON in local/dev, explicit in production. */
 export function isCertificationAssetGenerationEnabled(): boolean {
-  return process.env.ENABLE_CERTIFICATION_ASSET_GENERATION === "true";
+  return isEnabledInLocalDevByDefault("ENABLE_CERTIFICATION_ASSET_GENERATION");
 }
 
-/** Higgsfield video generation. DEFAULT OFF. */
+/** Higgsfield video generation. DEFAULT ON in local/dev, explicit in production. */
 export function isHiggsfieldVideoGenerationEnabled(): boolean {
-  return process.env.ENABLE_HIGGSFIELD_VIDEO_GENERATION === "true";
+  return isEnabledInLocalDevByDefault("ENABLE_HIGGSFIELD_VIDEO_GENERATION");
 }
 
 /** Computed student skill badges. DEFAULT ON unless explicitly disabled. */
