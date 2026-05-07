@@ -1,7 +1,10 @@
 import { JobType } from "@/lib/queue";
 import { handleSnapshotAnalyticsJob } from "@/worker/handlers/analytics";
+import { handleGenerateCertificationAssetsJob } from "@/worker/handlers/certificationAssets";
+import { handleGenerateCourseThumbnailJob } from "@/worker/handlers/courseThumbnail";
 import { handleGenerateEmbeddingsJob } from "@/worker/handlers/embeddings";
 import { handleConfusionDetectionJob } from "@/worker/handlers/intelligence";
+import { handleGenerateSchoolOnboardingKitJob } from "@/worker/handlers/onboardingKit";
 import { handleSendSmsJob } from "@/worker/handlers/sms";
 import { handleGenerateTextbookJob } from "@/worker/handlers/textbook";
 
@@ -17,6 +20,12 @@ export async function dispatchJob(jobType: JobType, payload: unknown) {
       return handleSendSmsJob(payload as { to: string; body: string });
     case JobType.CONFUSION_DETECTION:
       return handleConfusionDetectionJob(payload as { studentId: string; schoolId: string });
+    case JobType.GENERATE_COURSE_THUMBNAIL:
+      return handleGenerateCourseThumbnailJob(payload as { contentId: string; schoolId?: string | null; actorUserId?: string | null });
+    case JobType.GENERATE_SCHOOL_ONBOARDING_KIT:
+      return handleGenerateSchoolOnboardingKitJob(payload as { schoolId: string; actorUserId?: string | null });
+    case JobType.GENERATE_CERTIFICATION_ASSETS:
+      return handleGenerateCertificationAssetsJob(payload as { certificationId: string; actorUserId: string });
     default:
       throw new Error(`Unsupported job type: ${jobType}`);
   }

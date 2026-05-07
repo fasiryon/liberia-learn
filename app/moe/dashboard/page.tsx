@@ -175,6 +175,7 @@ export default function MoeDashboardPage() {
   const [interventions, setInterventions] = useState<InterventionData | null>(null);
   const [placements, setPlacements] = useState<PlacementData | null>(null);
   const [exporting, setExporting] = useState(false);
+  const [generatingReport, setGeneratingReport] = useState(false);
   const [exportError, setExportError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -259,6 +260,23 @@ export default function MoeDashboardPage() {
       setExportError(err.message || "Export failed");
     } finally {
       setExporting(false);
+    }
+  }
+
+  async function handleGenerateReport() {
+    setGeneratingReport(true);
+    setExportError(null);
+    try {
+      const res = await fetch("/api/moe/reports/generate", { method: "POST" });
+      const data = await res.json();
+      if (!res.ok || !data?.canvaUrl) {
+        throw new Error(data?.error || "Report generation failed");
+      }
+      window.open(data.canvaUrl, "_blank", "noopener,noreferrer");
+    } catch (err: any) {
+      setExportError(err.message || "Report generation failed");
+    } finally {
+      setGeneratingReport(false);
     }
   }
 
@@ -658,7 +676,7 @@ export default function MoeDashboardPage() {
               Reports and exports
               <ChevronRight size={14} className="text-[var(--ll-text-faint)]" />
             </summary>
-            <div className="mt-4 grid gap-3 sm:grid-cols-3">
+            <div className="mt-4 grid gap-3 sm:grid-cols-4">
               <Link href="/moe/districts" className="ll-command ll-focus flex-col items-start">
                 <p className="text-sm font-semibold text-[var(--ll-text)]">County breakdown</p>
                 <p className="text-xs text-[var(--ll-text-muted)]">View all district performance</p>
@@ -668,8 +686,18 @@ export default function MoeDashboardPage() {
                 disabled={exporting}
                 className="ll-command ll-focus flex-col items-start text-left disabled:opacity-60"
               >
-                <p className="text-sm font-semibold text-[var(--ll-text)]">Generate report</p>
+                <p className="text-sm font-semibold text-[var(--ll-text)]">Export CSV</p>
                 <p className="text-xs text-[var(--ll-text-muted)]">{exporting ? "Exporting..." : "Export compliance CSV"}</p>
+              </button>
+              <button
+                onClick={handleGenerateReport}
+                disabled={generatingReport}
+                className="rounded-lg bg-[var(--ll-yellow)] px-4 py-2 text-left text-sm font-semibold text-[var(--ll-bg)] hover:opacity-90 disabled:opacity-60"
+              >
+                <span className="block">Generate Progress Report</span>
+                <span className="mt-1 block text-xs font-medium opacity-80">
+                  {generatingReport ? "Generating..." : "Open in Canva"}
+                </span>
               </button>
               <Link href="/moe/audit" className="ll-command ll-focus flex-col items-start">
                 <p className="text-sm font-semibold text-[var(--ll-text)]">View audit log</p>
