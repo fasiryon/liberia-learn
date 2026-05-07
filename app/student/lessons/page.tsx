@@ -28,9 +28,7 @@ export default function StudentLessonsPage() {
 
   const [loading, setLoading] = useState(true);
   const [lessons, setLessons] = useState<LessonItem[]>([]);
-  const [studentId, setStudentId] = useState<string | null>(null);
   const [subjectCompletion, setSubjectCompletion] = useState<SubjectCompletion[]>([]);
-  const [generatingSubject, setGeneratingSubject] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -46,35 +44,12 @@ export default function StudentLessonsPage() {
       .then((data) => {
         if (data) {
           setLessons(data.items ?? []);
-          setStudentId(data.studentId ?? null);
           setSubjectCompletion(data.subjectCompletion ?? []);
         }
       })
       .catch((err) => setError(err.message))
       .finally(() => setLoading(false));
   }, [router]);
-
-  async function generateCertificate(subject: string) {
-    if (!studentId) return;
-    setGeneratingSubject(subject);
-    setError(null);
-    try {
-      const res = await fetch("/api/certificates/generate", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ studentId, subject }),
-      });
-      const data = await res.json();
-      if (!res.ok || !data?.certificateUrl) {
-        throw new Error(data?.error ?? "Certificate generation failed");
-      }
-      window.open(data.certificateUrl, "_blank", "noopener,noreferrer");
-    } catch (err: any) {
-      setError(err?.message ?? "Certificate generation failed");
-    } finally {
-      setGeneratingSubject(null);
-    }
-  }
 
   if (loading) {
     return (
@@ -102,30 +77,12 @@ export default function StudentLessonsPage() {
 
         {subjectCompletion.some((item) => item.completionRate >= 80) && (
           <div className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 p-4">
-            <div className="flex flex-wrap items-center justify-between gap-3">
-              <div>
-                <h2 className="text-sm font-semibold text-[var(--ll-text)]">Subject Certificates</h2>
-                <p className="mt-1 text-xs text-[var(--ll-text-muted)]">
-                  Generate certificates for subjects with at least 80% completion.
-                </p>
-              </div>
-              <div className="flex flex-wrap gap-2">
-                {subjectCompletion
-                  .filter((item) => item.completionRate >= 80)
-                  .map((item) => (
-                    <button
-                      key={item.subject}
-                      type="button"
-                      onClick={() => generateCertificate(item.subject)}
-                      disabled={generatingSubject === item.subject}
-                      className="inline-flex items-center gap-2 rounded-lg bg-[var(--ll-yellow)] px-4 py-2.5 text-sm font-semibold text-[var(--ll-bg)] hover:opacity-90 disabled:opacity-60"
-                    >
-                      <span aria-hidden="true">🎓</span>
-                      {generatingSubject === item.subject ? "Generating..." : `${item.subject} Certificate`}
-                    </button>
-                  ))}
-              </div>
-            </div>
+            <h2 className="text-sm font-semibold text-[var(--ll-text)]">Subject Certificates</h2>
+            <p className="mt-1 text-xs text-[var(--ll-text-muted)]">
+              Your earned certificates appear here automatically when you complete 80% of a subject. Visit{" "}
+              <a href="/student/certificates" className="text-[var(--ll-yellow)] hover:opacity-80">My Certificates</a>{" "}
+              to view and print them.
+            </p>
           </div>
         )}
 

@@ -49,6 +49,7 @@ export type StudentCertificateRecord = {
   awardedAt: string;
   certificateCode: string;
   studentName: string;
+  canvaUrl: string | null;
 };
 
 export type CertificateVerificationRecord = {
@@ -378,6 +379,7 @@ export async function listStudentCertificates(
       referenceId: true,
       awardedAt: true,
       certificateCode: true,
+      canvaUrl: true,
     },
   });
 
@@ -441,6 +443,7 @@ export async function listStudentCertificates(
       awardedAt: certificate.awardedAt.toISOString(),
       certificateCode: certificate.certificateCode,
       studentName,
+      canvaUrl: certificate.canvaUrl ?? null,
     };
   });
 }
