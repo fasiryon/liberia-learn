@@ -22,6 +22,7 @@ import {
   rateLimitExceededResponse,
 } from "@/lib/rateLimit";
 import { logger } from "@/lib/logger";
+import { enqueueCourseThumbnailGeneration } from "@/lib/courses/courseThumbnailQueue";
 
 const RequestSchema = z.object({
   grade: z.number().int().min(1).max(12),
@@ -321,6 +322,14 @@ export async function POST(req: Request) {
         moeAlignmentCodes: (enrichedPayload as any).moeAlignments ?? moeAlignmentCodes,
         approvalStatus,
       });
+    }
+
+    if (mode === "lesson") {
+      await enqueueCourseThumbnailGeneration({
+        contentId: record.contentId,
+        actorUserId: user.id,
+        schoolId: user.schoolId ?? null,
+      }).catch((error) => logger.warn("[CANVA] course thumbnail enqueue failed", { error }));
     }
 
     if (record.status === "published") {

@@ -157,6 +157,10 @@ model School {
   timetableEntries       Timetable[]
   teacherAssignments     TeacherAssignment[]
   studentImportBatches   StudentImportBatch[]
+  certificates           Certificate[]
+  onboardingKitUrl       String?
+  onboardingKitStatus    String                 @default("pending")
+  onboardingGeneratedAt  DateTime?
 }
 
 model Class {
@@ -300,6 +304,9 @@ model ExamCertification {
   score     Float
   issuedAt  DateTime @default(now())
   certCode  String   @unique
+  bannerUrl String?
+  videoUrl  String?
+  assetGenerationStatus String @default("pending")
   student   Student  @relation(fields: [studentId], references: [id], onDelete: Cascade)
   exam      Exam     @relation(fields: [examId], references: [id], onDelete: Cascade)
 
@@ -310,15 +317,24 @@ model ExamCertification {
 model Certificate {
   id              String          @id @default(cuid())
   studentId       String
+  schoolId        String?
   type            CertificateType
   referenceId     String
   awardedAt       DateTime        @default(now())
   certificateCode String          @unique
+  canvaUrl        String?
+  designId        String?
+  status          String          @default("completed")
+  completedAt     DateTime?
+  generatedAt     DateTime?
+  createdAt       DateTime        @default(now())
   student         Student         @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  school          School?         @relation(fields: [schoolId], references: [id], onDelete: SetNull)
 
   @@unique([studentId, type, referenceId])
   @@index([studentId, awardedAt])
   @@index([type, referenceId])
+  @@index([schoolId, status])
 }
 
 model StudentBadgeAward {
@@ -1354,6 +1370,10 @@ model CurriculumContent {
   orderInUnit     Int?
   lessonType      String?         // intro|core|practice|review|assessment
   teacherCreated  Boolean         @default(false)
+  thumbnailUrl     String?
+  thumbnailStatus  String          @default("pending")
+  thumbnailGeneratedAt DateTime?
+  thumbnailError   String?
   versionId       String?
   scheduledWork        ScheduledWork[]
   timetableAssignments TimetableAssignment[]

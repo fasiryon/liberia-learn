@@ -12,6 +12,15 @@ type LessonItem = {
   subject: string;
   contentType: string;
   status: string;
+  thumbnailUrl?: string | null;
+  thumbnailStatus?: string | null;
+};
+
+type SubjectCompletion = {
+  subject: string;
+  total: number;
+  completed: number;
+  completionRate: number;
 };
 
 export default function StudentLessonsPage() {
@@ -19,6 +28,9 @@ export default function StudentLessonsPage() {
 
   const [loading, setLoading] = useState(true);
   const [lessons, setLessons] = useState<LessonItem[]>([]);
+  const [studentId, setStudentId] = useState<string | null>(null);
+  const [subjectCompletion, setSubjectCompletion] = useState<SubjectCompletion[]>([]);
+  const [generatingSubject, setGeneratingSubject] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -32,11 +44,37 @@ export default function StudentLessonsPage() {
         return res.json();
       })
       .then((data) => {
-        if (data) setLessons(data.items ?? []);
+        if (data) {
+          setLessons(data.items ?? []);
+          setStudentId(data.studentId ?? null);
+          setSubjectCompletion(data.subjectCompletion ?? []);
+        }
       })
       .catch((err) => setError(err.message))
       .finally(() => setLoading(false));
   }, [router]);
+
+  async function generateCertificate(subject: string) {
+    if (!studentId) return;
+    setGeneratingSubject(subject);
+    setError(null);
+    try {
+      const res = await fetch("/api/certificates/generate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ studentId, subject }),
+      });
+      const data = await res.json();
+      if (!res.ok || !data?.certificateUrl) {
+        throw new Error(data?.error ?? "Certificate generation failed");
+      }
+      window.open(data.certificateUrl, "_blank", "noopener,noreferrer");
+    } catch (err: any) {
+      setError(err?.message ?? "Certificate generation failed");
+    } finally {
+      setGeneratingSubject(null);
+    }
+  }
 
   if (loading) {
     return (
@@ -62,6 +100,35 @@ export default function StudentLessonsPage() {
 
         <h1 className="text-2xl font-bold text-[var(--ll-text)]">My Lessons</h1>
 
+        {subjectCompletion.some((item) => item.completionRate >= 80) && (
+          <div className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 p-4">
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <div>
+                <h2 className="text-sm font-semibold text-[var(--ll-text)]">Subject Certificates</h2>
+                <p className="mt-1 text-xs text-[var(--ll-text-muted)]">
+                  Generate certificates for subjects with at least 80% completion.
+                </p>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                {subjectCompletion
+                  .filter((item) => item.completionRate >= 80)
+                  .map((item) => (
+                    <button
+                      key={item.subject}
+                      type="button"
+                      onClick={() => generateCertificate(item.subject)}
+                      disabled={generatingSubject === item.subject}
+                      className="inline-flex items-center gap-2 rounded-lg bg-[var(--ll-yellow)] px-4 py-2.5 text-sm font-semibold text-[var(--ll-bg)] hover:opacity-90 disabled:opacity-60"
+                    >
+                      <span aria-hidden="true">🎓</span>
+                      {generatingSubject === item.subject ? "Generating..." : `${item.subject} Certificate`}
+                    </button>
+                  ))}
+              </div>
+            </div>
+          </div>
+        )}
+
         {error && (
           <p className="text-sm text-red-400">{error}</p>
         )}
@@ -77,18 +144,27 @@ export default function StudentLessonsPage() {
             <Link
               key={lesson.contentId}
               href={`/student/lesson/${lesson.contentId}`}
-              className="group rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 p-5 space-y-3 hover:border-emerald-400/30 transition-colors"
+              className="group overflow-hidden rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 hover:border-emerald-400/30 transition-colors"
             >
-              <h2 className="text-sm font-semibold text-[var(--ll-text)] group-hover:text-[var(--ll-yellow)] transition-colors">
-                {lesson.displayTitle}
-              </h2>
-              <div className="flex flex-wrap gap-2">
-                <span className="rounded-full bg-[var(--ll-yellow)]/20 border border-emerald-400/30 px-2.5 py-0.5 text-[11px] font-medium text-[var(--ll-yellow)]">
-                  Grade {lesson.grade}
-                </span>
-                <span className="rounded-full bg-[var(--ll-yellow)]/20 border border-emerald-400/30 px-2.5 py-0.5 text-[11px] font-medium text-[var(--ll-yellow)]">
-                  {lesson.subject}
-                </span>
+              {lesson.thumbnailUrl ? (
+                <img src={lesson.thumbnailUrl} alt="" className="aspect-video w-full object-cover" />
+              ) : (
+                <div className="aspect-video w-full bg-[var(--ll-surface)]">
+                  <div className={lesson.thumbnailStatus === "processing" ? "h-full w-full animate-pulse bg-white/10" : "h-full w-full bg-[linear-gradient(135deg,rgba(34,197,94,0.18),rgba(250,204,21,0.14))]"} />
+                </div>
+              )}
+              <div className="space-y-3 p-5">
+                <h2 className="text-sm font-semibold text-[var(--ll-text)] group-hover:text-[var(--ll-yellow)] transition-colors">
+                  {lesson.displayTitle}
+                </h2>
+                <div className="flex flex-wrap gap-2">
+                  <span className="rounded-full bg-[var(--ll-yellow)]/20 border border-emerald-400/30 px-2.5 py-0.5 text-[11px] font-medium text-[var(--ll-yellow)]">
+                    Grade {lesson.grade}
+                  </span>
+                  <span className="rounded-full bg-[var(--ll-yellow)]/20 border border-emerald-400/30 px-2.5 py-0.5 text-[11px] font-medium text-[var(--ll-yellow)]">
+                    {lesson.subject}
+                  </span>
+                </div>
               </div>
             </Link>
           ))}
