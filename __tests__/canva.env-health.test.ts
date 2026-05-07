@@ -22,8 +22,7 @@ import { GET } from "@/app/api/health/canva/route";
 import { getCanvaMcpHealth } from "@/lib/canva/config";
 
 const ORIGINAL_ANTHROPIC = process.env.ANTHROPIC_API_KEY;
-const ORIGINAL_HIGGSFIELD_URL = process.env.HIGGSFIELD_API_URL;
-const ORIGINAL_HIGGSFIELD_KEY = process.env.HIGGSFIELD_API_KEY;
+const ORIGINAL_HIGGSFIELD_CREDENTIALS = process.env.HIGGSFIELD_CREDENTIALS;
 const ORIGINAL_SQS_QUEUE_URL = process.env.SQS_QUEUE_URL;
 const ORIGINAL_AWS_REGION = process.env.AWS_REGION;
 const ORIGINAL_ENABLE_COURSE_THUMBNAILS = process.env.ENABLE_CANVA_COURSE_THUMBNAILS;
@@ -54,8 +53,7 @@ describe("Canva MCP env health", () => {
     vi.clearAllMocks();
     mockQueryRawUnsafe.mockResolvedValue(assetColumns);
     mockSqsSend.mockResolvedValue({});
-    process.env.HIGGSFIELD_API_URL = "https://platform.higgsfield.ai/higgsfield-ai/soul/standard";
-    process.env.HIGGSFIELD_API_KEY = "higgsfield-test-key";
+    process.env.HIGGSFIELD_CREDENTIALS = "test-key-id:higgsfield-test-secret";
     process.env.SQS_QUEUE_URL = "https://sqs.us-east-1.amazonaws.com/123/liberialearn-jobs.fifo";
     process.env.AWS_REGION = "us-east-1";
     process.env.ENABLE_CANVA_COURSE_THUMBNAILS = "true";
@@ -66,8 +64,7 @@ describe("Canva MCP env health", () => {
 
   afterEach(() => {
     restoreEnv("ANTHROPIC_API_KEY", ORIGINAL_ANTHROPIC);
-    restoreEnv("HIGGSFIELD_API_URL", ORIGINAL_HIGGSFIELD_URL);
-    restoreEnv("HIGGSFIELD_API_KEY", ORIGINAL_HIGGSFIELD_KEY);
+    restoreEnv("HIGGSFIELD_CREDENTIALS", ORIGINAL_HIGGSFIELD_CREDENTIALS);
     restoreEnv("SQS_QUEUE_URL", ORIGINAL_SQS_QUEUE_URL);
     restoreEnv("AWS_REGION", ORIGINAL_AWS_REGION);
     restoreEnv("ENABLE_CANVA_COURSE_THUMBNAILS", ORIGINAL_ENABLE_COURSE_THUMBNAILS);
@@ -100,13 +97,10 @@ describe("Canva MCP env health", () => {
     expect(body.sqs).toEqual(expect.objectContaining({ configured: true, reachable: true }));
     expect(body.higgsfield).toEqual(expect.objectContaining({
       configured: true,
-      authConfigured: true,
-      appearsToBeDashboardPage: false,
-      appearsToBeRuntimeEndpoint: true,
       ready: true,
     }));
     expect(JSON.stringify(body)).not.toContain("secret-test-key");
-    expect(JSON.stringify(body)).not.toContain("higgsfield-test-key");
+    expect(JSON.stringify(body)).not.toContain("higgsfield-test-secret");
   });
 
   it("fails closed with structured 503 when Anthropic env is missing", async () => {
@@ -126,23 +120,18 @@ describe("Canva MCP env health", () => {
     expect(JSON.stringify(body)).not.toMatch(/API_KEY|secret-test-key|sk-/);
   });
 
-  it("reports dashboard Higgsfield URLs as not ready without leaking auth", async () => {
+  it("reports missing credentials as not ready without leaking secrets", async () => {
     process.env.ANTHROPIC_API_KEY = "secret-test-key";
-    process.env.HIGGSFIELD_API_URL = "https://cloud.higgsfield.ai/api-keys";
-    process.env.HIGGSFIELD_API_KEY = "higgsfield-test-key";
+    delete process.env.HIGGSFIELD_CREDENTIALS;
 
     const response = await GET();
     const body = await response.json();
 
     expect(response.status).toBe(503);
     expect(body.higgsfield).toEqual(expect.objectContaining({
-      configured: true,
-      host: "cloud.higgsfield.ai",
-      appearsToBeDashboardPage: true,
-      appearsToBeRuntimeEndpoint: false,
-      authConfigured: true,
+      configured: false,
       ready: false,
     }));
-    expect(JSON.stringify(body)).not.toContain("higgsfield-test-key");
+    expect(JSON.stringify(body)).not.toContain("higgsfield-test-secret");
   });
 });
