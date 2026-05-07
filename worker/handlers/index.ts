@@ -8,7 +8,12 @@ import { handleGenerateSchoolOnboardingKitJob } from "@/worker/handlers/onboardi
 import { handleSendSmsJob } from "@/worker/handlers/sms";
 import { handleGenerateTextbookJob } from "@/worker/handlers/textbook";
 
-export async function dispatchJob(jobType: JobType, payload: unknown) {
+export type JobDispatchMetadata = {
+  enqueuedAt?: string | null;
+  retryCount?: number | null;
+};
+
+export async function dispatchJob(jobType: JobType, payload: unknown, metadata: JobDispatchMetadata = {}) {
   switch (jobType) {
     case JobType.GENERATE_EMBEDDINGS:
       return handleGenerateEmbeddingsJob(payload as { lessonId: string });
@@ -21,11 +26,11 @@ export async function dispatchJob(jobType: JobType, payload: unknown) {
     case JobType.CONFUSION_DETECTION:
       return handleConfusionDetectionJob(payload as { studentId: string; schoolId: string });
     case JobType.GENERATE_COURSE_THUMBNAIL:
-      return handleGenerateCourseThumbnailJob(payload as { contentId: string; schoolId?: string | null; actorUserId?: string | null });
+      return handleGenerateCourseThumbnailJob(payload as { contentId: string; schoolId?: string | null; actorUserId?: string | null }, metadata);
     case JobType.GENERATE_SCHOOL_ONBOARDING_KIT:
-      return handleGenerateSchoolOnboardingKitJob(payload as { schoolId: string; actorUserId?: string | null });
+      return handleGenerateSchoolOnboardingKitJob(payload as { schoolId: string; actorUserId?: string | null }, metadata);
     case JobType.GENERATE_CERTIFICATION_ASSETS:
-      return handleGenerateCertificationAssetsJob(payload as { certificationId: string; actorUserId: string });
+      return handleGenerateCertificationAssetsJob(payload as { certificationId: string; actorUserId: string }, metadata);
     default:
       throw new Error(`Unsupported job type: ${jobType}`);
   }

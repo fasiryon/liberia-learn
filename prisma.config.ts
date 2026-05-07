@@ -13,9 +13,16 @@ function loadEnvFile(path: string, override = false) {
     if (!match) continue;
 
     const [, key, rawValue] = match;
-    if (!override && process.env[key] != null) continue;
+    if ((!override || key === "DATABASE_URL" || key === "DIRECT_URL") && process.env[key] != null) continue;
 
-    process.env[key] = rawValue.replace(/^(['"])(.*)\1$/, "$2");
+    let value = rawValue.trim();
+    if (
+      (value.startsWith('"') && value.endsWith('"')) ||
+      (value.startsWith("'") && value.endsWith("'"))
+    ) {
+      value = value.slice(1, -1);
+    }
+    process.env[key] = value;
   }
 }
 

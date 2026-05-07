@@ -2,6 +2,7 @@ import { logAudit } from "@/lib/audit";
 import { generateCourseThumbnail } from "@/lib/courses/generateCourseThumbnail";
 import { prisma } from "@/lib/db";
 import { isCanvaCourseThumbnailsEnabled } from "@/lib/serverFlags";
+import type { JobDispatchMetadata } from "@/worker/handlers";
 
 type Payload = {
   contentId: string;
@@ -9,7 +10,13 @@ type Payload = {
   actorUserId?: string | null;
 };
 
-export async function handleGenerateCourseThumbnailJob(payload: Payload) {
+function getQueueWaitMs(metadata: JobDispatchMetadata) {
+  if (!metadata.enqueuedAt) return null;
+  const enqueuedTime = new Date(metadata.enqueuedAt).getTime();
+  return Number.isFinite(enqueuedTime) ? Math.max(0, Date.now() - enqueuedTime) : null;
+}
+
+export async function handleGenerateCourseThumbnailJob(payload: Payload, metadata: JobDispatchMetadata = {}) {
   if (typeof isCanvaCourseThumbnailsEnabled !== "function" || !isCanvaCourseThumbnailsEnabled()) return;
   if (!payload?.contentId) {
     throw new Error("contentId is required for GENERATE_COURSE_THUMBNAIL");
@@ -38,6 +45,11 @@ export async function handleGenerateCourseThumbnailJob(payload: Payload) {
       gradeLevel: course.grade,
       schoolName: school?.name ?? null,
       tenantId: payload.schoolId ?? null,
+      actorUserId: payload.actorUserId ?? null,
+      route: "worker.courseThumbnail",
+      jobName: "GENERATE_COURSE_THUMBNAIL",
+      queueWaitMs: getQueueWaitMs(metadata),
+      retryCount: metadata.retryCount ?? null,
     });
     await prisma.curriculumContent.update({
       where: { contentId: payload.contentId },

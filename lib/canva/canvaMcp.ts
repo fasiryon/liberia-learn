@@ -9,6 +9,10 @@ type CanvaGenerationResult = {
   canvaUrl: string;
   designId: string;
   text: string;
+  model: string;
+  inputTokens: number;
+  outputTokens: number;
+  tokensUsed: number;
 };
 
 function getAnthropicClient() {
@@ -33,8 +37,9 @@ function extractDesignId(canvaUrl: string): string {
 
 export async function generateCanvaAsset(prompt: string): Promise<CanvaGenerationResult> {
   const client = getAnthropicClient();
+  const model = process.env.ANTHROPIC_CANVA_MODEL ?? DEFAULT_MODEL;
   const response = await client.messages.create({
-    model: process.env.ANTHROPIC_CANVA_MODEL ?? DEFAULT_MODEL,
+    model,
     max_tokens: 1000,
     mcp_servers: [
       {
@@ -65,5 +70,11 @@ export async function generateCanvaAsset(prompt: string): Promise<CanvaGeneratio
     canvaUrl,
     designId: extractDesignId(canvaUrl),
     text,
+    model,
+    inputTokens: Number((response as any).usage?.input_tokens ?? 0),
+    outputTokens: Number((response as any).usage?.output_tokens ?? 0),
+    tokensUsed:
+      Number((response as any).usage?.input_tokens ?? 0) +
+      Number((response as any).usage?.output_tokens ?? 0),
   };
 }

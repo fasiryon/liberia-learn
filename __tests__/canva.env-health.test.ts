@@ -35,4 +35,21 @@ describe("Canva MCP env health", () => {
     expect(body.canvaMcpUrlHost).toBe("mcp.canva.com");
     expect(JSON.stringify(body)).not.toContain("secret-test-key");
   });
+
+  it("fails closed with structured 503 when Anthropic env is missing", async () => {
+    delete process.env.ANTHROPIC_API_KEY;
+
+    const response = await GET();
+    const body = await response.json();
+
+    expect(response.status).toBe(503);
+    expect(body).toEqual(expect.objectContaining({
+      ok: false,
+      status: "unavailable",
+      code: "CANVA_MCP_UNAVAILABLE",
+      anthropicEnvDetected: false,
+      serverSideOnly: true,
+    }));
+    expect(JSON.stringify(body)).not.toMatch(/API_KEY|secret-test-key|sk-/);
+  });
 });
