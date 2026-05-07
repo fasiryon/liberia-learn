@@ -204,6 +204,36 @@ export function isCertificatesEnabled(): boolean {
   return process.env.ENABLE_CERTIFICATES !== "false";
 }
 
+/** Canva-backed certificate generation. DEFAULT OFF. */
+export function isCanvaCertificatesEnabled(): boolean {
+  return process.env.ENABLE_CANVA_CERTIFICATES === "true";
+}
+
+/** Canva-backed MOE progress report generation. DEFAULT OFF. */
+export function isCanvaMoeReportsEnabled(): boolean {
+  return process.env.ENABLE_CANVA_MOE_REPORTS === "true";
+}
+
+/** Canva-backed course thumbnail automation. DEFAULT OFF. */
+export function isCanvaCourseThumbnailsEnabled(): boolean {
+  return process.env.ENABLE_CANVA_COURSE_THUMBNAILS === "true";
+}
+
+/** Canva-backed school onboarding kit automation. DEFAULT OFF. */
+export function isSchoolOnboardingKitsEnabled(): boolean {
+  return process.env.ENABLE_SCHOOL_ONBOARDING_KITS === "true";
+}
+
+/** Certification banner/video asset generation. DEFAULT OFF. */
+export function isCertificationAssetGenerationEnabled(): boolean {
+  return process.env.ENABLE_CERTIFICATION_ASSET_GENERATION === "true";
+}
+
+/** Higgsfield video generation. DEFAULT OFF. */
+export function isHiggsfieldVideoGenerationEnabled(): boolean {
+  return process.env.ENABLE_HIGGSFIELD_VIDEO_GENERATION === "true";
+}
+
 /** Computed student skill badges. DEFAULT ON unless explicitly disabled. */
 export function isSkillBadgesEnabled(): boolean {
   return process.env.ENABLE_SKILL_BADGES !== "false";

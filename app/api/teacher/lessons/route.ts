@@ -18,6 +18,7 @@ import {
 import { enqueueJob, isQueueConfigured, JobType } from "@/lib/queue";
 import { isTeacherGenerationEnabled } from "@/lib/serverFlags";
 import { logger } from "@/lib/logger";
+import { enqueueCourseThumbnailGeneration } from "@/lib/courses/courseThumbnailQueue";
 
 const SaveLessonSchema = z.object({
   classId: z.string().min(1),
@@ -177,6 +178,20 @@ export async function POST(req: NextRequest) {
             ...updateData,
           },
         });
+
+    const previousPayload = (existing?.payload ?? {}) as Record<string, unknown>;
+    const changedThumbnailInputs =
+      !existing ||
+      previousPayload.title !== body.title ||
+      record.subject !== classRecord.subject ||
+      record.grade !== classGrade;
+    if (changedThumbnailInputs) {
+      await enqueueCourseThumbnailGeneration({
+        contentId: record.contentId,
+        actorUserId: user.id,
+        schoolId: user.schoolId ?? null,
+      }).catch((error) => logger.warn("[CANVA] course thumbnail enqueue failed", { error }));
+    }
 
     await runBestEffortAiWork(record.id, record.contentId, record.status);
 

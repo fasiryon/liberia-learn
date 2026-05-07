@@ -16,6 +16,7 @@ export async function GET(req: NextRequest) {
     const student = await prisma.student.findUnique({
       where: { userId: user.id },
       select: {
+        id: true,
         currentGrade: true,
         enrollments: { select: { Class: { select: { subject: true } } } },
       },
@@ -55,17 +56,59 @@ export async function GET(req: NextRequest) {
           subject: true,
           contentType: true,
           status: true,
+          thumbnailUrl: true,
+          thumbnailStatus: true,
           payload: true,
         },
       }),
     ]);
 
+    const scheduledRows = await prisma.scheduledWork.findMany({
+      where: {
+        class: {
+          enrollments: { some: { studentId: student.id } },
+        },
+        content: { subject: { in: Array.from(new Set(rows.map((row) => row.subject))) } },
+      },
+      select: {
+        id: true,
+        content: { select: { subject: true } },
+      },
+    });
+    const progressRows =
+      scheduledRows.length > 0
+        ? await prisma.studentProgress.findMany({
+            where: {
+              studentId: user.id,
+              scheduledWorkId: { in: scheduledRows.map((row) => row.id) },
+              completedAt: { not: null },
+            },
+            select: { scheduledWorkId: true },
+          })
+        : [];
+    const completedIds = new Set(progressRows.map((row) => row.scheduledWorkId));
+    const subjectTotals = new Map<string, { total: number; completed: number }>();
+    for (const row of scheduledRows) {
+      const subject = row.content.subject;
+      const bucket = subjectTotals.get(subject) ?? { total: 0, completed: 0 };
+      bucket.total += 1;
+      if (completedIds.has(row.id)) bucket.completed += 1;
+      subjectTotals.set(subject, bucket);
+    }
+
     return NextResponse.json({
       grade: student.currentGrade,
+      studentId: student.id,
       count: rows.length,
       total,
       page,
       totalPages: Math.ceil(total / PAGE_SIZE),
+      subjectCompletion: Array.from(subjectTotals.entries()).map(([subject, stats]) => ({
+        subject,
+        total: stats.total,
+        completed: stats.completed,
+        completionRate: stats.total > 0 ? Math.round((stats.completed / stats.total) * 100) : 0,
+      })),
       items: rows.map((row) => ({
         contentId: row.contentId,
         title: row.title,
@@ -73,6 +116,8 @@ export async function GET(req: NextRequest) {
         subject: row.subject,
         contentType: row.contentType,
         status: row.status,
+        thumbnailUrl: row.thumbnailUrl,
+        thumbnailStatus: row.thumbnailStatus,
         displayTitle: buildCurriculumDisplayTitle({
           title: row.title,
           subject: row.subject,

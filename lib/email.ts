@@ -239,6 +239,36 @@ export async function sendSchoolApprovalNotice({
   return sendEmail({ to, subject, html, text, type: "school_approval", recipientRole: "principal" });
 }
 
+export async function sendSchoolOnboardingKit({
+  to,
+  principalName,
+  schoolName,
+  kitUrl,
+}: {
+  to: string;
+  principalName: string;
+  schoolName: string;
+  kitUrl: string;
+}): Promise<EmailSendResult> {
+  const subject = `LiberiaLearn onboarding kit - ${schoolName}`;
+  const text = textBlock([
+    `Hello ${principalName},`,
+    `Your LiberiaLearn onboarding kit for ${schoolName} is ready.`,
+    `Onboarding assets: ${kitUrl}`,
+    "Next steps: review the flyer, share the parent letter, and use the student guide during classroom setup.",
+  ]);
+  const html = brandedLayout({
+    title: subject,
+    preview: `Your onboarding kit for ${schoolName} is ready.`,
+    content:
+      paragraph(`Hello ${escapeHtml(principalName)},`) +
+      paragraph(`Your LiberiaLearn onboarding kit for <strong>${escapeHtml(schoolName)}</strong> is ready.`) +
+      paragraph("Review the flyer, share the parent letter, and use the student guide during classroom setup.") +
+      `<p style="margin:24px 0;text-align:center">${button("Open Onboarding Kit", kitUrl)}</p>`,
+  });
+  return sendEmail({ to, subject, html, text, type: "school_onboarding_kit", recipientRole: "principal" });
+}
+
 export async function sendSchoolRejectionNotice({
   to,
   principalName,
