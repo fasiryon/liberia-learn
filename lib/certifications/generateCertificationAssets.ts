@@ -1,6 +1,31 @@
 import { generateCanvaAsset } from "@/lib/canva/canvaMcp";
 import { logAssetGenerationTelemetry } from "@/lib/assets/generationTelemetry";
 
+function getHiggsfieldAuthHeader(endpoint: string, apiKey: string) {
+  try {
+    const url = new URL(endpoint);
+    if (url.hostname === "platform.higgsfield.ai") {
+      return `Key ${apiKey}`;
+    }
+  } catch {
+    return `Bearer ${apiKey}`;
+  }
+  return `Bearer ${apiKey}`;
+}
+
+function isHiggsfieldDashboardUrl(endpoint: string) {
+  try {
+    const url = new URL(endpoint);
+    return (
+      url.hostname === "cloud.higgsfield.ai" ||
+      url.pathname.includes("api-keys") ||
+      url.pathname.includes("dashboard")
+    );
+  } catch {
+    return false;
+  }
+}
+
 export async function generateCertificationBanner(input: {
   title: string;
   subject: string;
@@ -83,7 +108,7 @@ export async function generateHiggsfieldPromoVideo(input: {
   const route = input.route ?? "worker.certificationAssets";
   const endpoint = process.env.HIGGSFIELD_API_URL?.trim();
   const apiKey = process.env.HIGGSFIELD_API_KEY?.trim();
-  if (!endpoint || !apiKey) {
+  if (!endpoint || !apiKey || isHiggsfieldDashboardUrl(endpoint)) {
     const error = Object.assign(new Error("Higgsfield unavailable"), { status: 503 });
     await logAssetGenerationTelemetry({
       provider: "higgsfield",
@@ -107,12 +132,15 @@ export async function generateHiggsfieldPromoVideo(input: {
     const response = await fetch(endpoint, {
       method: "POST",
       headers: {
-        Authorization: `Bearer ${apiKey}`,
+        Authorization: getHiggsfieldAuthHeader(endpoint, apiKey),
         "Content-Type": "application/json",
+        Accept: "application/json",
       },
       body: JSON.stringify({
         prompt: `Create a short cinematic 15-30 second promo video for the ${input.title} certification pathway in Grade ${input.grade} ${input.subject}. Use an education and future workforce tone suitable for marketing and social media in Liberia.`,
-        durationSeconds: 20,
+        duration: 10,
+        resolution: "720p",
+        aspect_ratio: "16:9",
       }),
     });
 
@@ -121,7 +149,14 @@ export async function generateHiggsfieldPromoVideo(input: {
     }
 
     const data = await response.json();
-    const videoUrl = typeof data?.videoUrl === "string" ? data.videoUrl : "";
+    const videoUrl =
+      typeof data?.videoUrl === "string"
+        ? data.videoUrl
+        : typeof data?.video_url === "string"
+          ? data.video_url
+          : typeof data?.video?.url === "string"
+            ? data.video.url
+            : "";
     if (!videoUrl) {
       throw Object.assign(new Error("Higgsfield URL not returned"), { status: 502 });
     }
