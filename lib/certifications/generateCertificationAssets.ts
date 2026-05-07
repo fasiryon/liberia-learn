@@ -1,30 +1,12 @@
+import { higgsfield } from "@higgsfield/client/v2";
+
 import { generateCanvaAsset } from "@/lib/canva/canvaMcp";
 import { logAssetGenerationTelemetry } from "@/lib/assets/generationTelemetry";
-
-function getHiggsfieldAuthHeader(endpoint: string, apiKey: string) {
-  try {
-    const url = new URL(endpoint);
-    if (url.hostname === "platform.higgsfield.ai") {
-      return `Key ${apiKey}`;
-    }
-  } catch {
-    return `Bearer ${apiKey}`;
-  }
-  return `Bearer ${apiKey}`;
-}
-
-function isHiggsfieldDashboardUrl(endpoint: string) {
-  try {
-    const url = new URL(endpoint);
-    return (
-      url.hostname === "cloud.higgsfield.ai" ||
-      url.pathname.includes("api-keys") ||
-      url.pathname.includes("dashboard")
-    );
-  } catch {
-    return false;
-  }
-}
+import {
+  configureHiggsfieldClient,
+  isHiggsfieldConfigured,
+  HIGGSFIELD_VIDEO_ENDPOINT,
+} from "@/lib/higgsfield/config";
 
 export async function generateCertificationBanner(input: {
   title: string;
@@ -106,12 +88,11 @@ export async function generateHiggsfieldPromoVideo(input: {
 }): Promise<{ videoUrl: string }> {
   const startTime = new Date();
   const route = input.route ?? "worker.certificationAssets";
-  const endpoint = process.env.HIGGSFIELD_API_URL?.trim();
-  const apiKey = process.env.HIGGSFIELD_API_KEY?.trim();
-  if (!endpoint || !apiKey || isHiggsfieldDashboardUrl(endpoint)) {
+
+  if (!isHiggsfieldConfigured()) {
     const error = Object.assign(new Error("Higgsfield unavailable"), { status: 503 });
     await logAssetGenerationTelemetry({
-      provider: "higgsfield",
+      provider: "higgsfield_v2",
       assetType: "certification_video",
       tenantId: input.schoolId ?? null,
       schoolId: input.schoolId ?? null,
@@ -129,40 +110,24 @@ export async function generateHiggsfieldPromoVideo(input: {
   }
 
   try {
-    const response = await fetch(endpoint, {
-      method: "POST",
-      headers: {
-        Authorization: getHiggsfieldAuthHeader(endpoint, apiKey),
-        "Content-Type": "application/json",
-        Accept: "application/json",
-      },
-      body: JSON.stringify({
+    configureHiggsfieldClient();
+    const response = await higgsfield.subscribe(HIGGSFIELD_VIDEO_ENDPOINT, {
+      input: {
         prompt: `Create a short cinematic 15-30 second promo video for the ${input.title} certification pathway in Grade ${input.grade} ${input.subject}. Use an education and future workforce tone suitable for marketing and social media in Liberia.`,
         duration: 10,
-        resolution: "720p",
+        quality: "720p",
         aspect_ratio: "16:9",
-      }),
+      },
+      withPolling: true,
     });
 
-    if (!response.ok) {
-      throw Object.assign(new Error("Higgsfield generation failed"), { status: response.status });
-    }
-
-    const data = await response.json();
-    const videoUrl =
-      typeof data?.videoUrl === "string"
-        ? data.videoUrl
-        : typeof data?.video_url === "string"
-          ? data.video_url
-          : typeof data?.video?.url === "string"
-            ? data.video.url
-            : "";
+    const videoUrl = response.video?.url ?? "";
     if (!videoUrl) {
       throw Object.assign(new Error("Higgsfield URL not returned"), { status: 502 });
     }
 
     await logAssetGenerationTelemetry({
-      provider: "higgsfield",
+      provider: "higgsfield_v2",
       assetType: "certification_video",
       tenantId: input.schoolId ?? null,
       schoolId: input.schoolId ?? null,
@@ -178,7 +143,7 @@ export async function generateHiggsfieldPromoVideo(input: {
     return { videoUrl };
   } catch (error: any) {
     await logAssetGenerationTelemetry({
-      provider: "higgsfield",
+      provider: "higgsfield_v2",
       assetType: "certification_video",
       tenantId: input.schoolId ?? null,
       schoolId: input.schoolId ?? null,

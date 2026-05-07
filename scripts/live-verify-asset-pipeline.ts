@@ -37,7 +37,7 @@ async function main() {
   });
   checks.push({
     name: "/api/health/canva server-only secret handling",
-    ok: healthBody.serverSideOnly === true && !JSON.stringify(healthBody).match(/sk-|API_KEY|HIGGSFIELD_API_KEY|ANTHROPIC_API_KEY/),
+    ok: healthBody.serverSideOnly === true && !JSON.stringify(healthBody).match(/sk-|API_KEY|HIGGSFIELD_CREDENTIALS|ANTHROPIC_API_KEY/),
   });
   checks.push({
     name: "/api/health/canva feature flags",

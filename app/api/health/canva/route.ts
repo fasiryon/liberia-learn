@@ -27,40 +27,11 @@ function isConfigured(value?: string | null) {
   return Boolean(value?.trim());
 }
 
-function getHiggsfieldUrlHealth() {
-  const rawUrl = process.env.HIGGSFIELD_API_URL?.trim() ?? "";
-  let host: string | null = null;
-  let appearsToBeDashboardPage = false;
-  let appearsToBeRuntimeEndpoint = false;
-
-  if (rawUrl) {
-    try {
-      const url = new URL(rawUrl);
-      host = url.hostname;
-      appearsToBeDashboardPage =
-        url.hostname === "cloud.higgsfield.ai" ||
-        url.pathname.includes("api-keys") ||
-        url.pathname.includes("dashboard");
-      appearsToBeRuntimeEndpoint =
-        url.hostname === "platform.higgsfield.ai" &&
-        url.pathname.split("/").filter(Boolean).length >= 2;
-    } catch {
-      appearsToBeDashboardPage = false;
-    }
-  }
-
-  return {
-    configured: isConfigured(rawUrl),
-    host,
-    appearsToBeDashboardPage,
-    appearsToBeRuntimeEndpoint,
-    authConfigured: isConfigured(process.env.HIGGSFIELD_API_KEY),
-    ready:
-      isConfigured(rawUrl) &&
-      isConfigured(process.env.HIGGSFIELD_API_KEY) &&
-      appearsToBeRuntimeEndpoint &&
-      !appearsToBeDashboardPage,
-  };
+function getHiggsfieldHealth() {
+  const creds = process.env.HIGGSFIELD_CREDENTIALS?.trim() ?? "";
+  const parts = creds.split(":");
+  const configured = parts.length === 2 && parts[0].length > 0 && parts[1].length > 0;
+  return { configured, ready: configured };
 }
 
 async function getDatabaseMigrationReadiness() {
@@ -139,7 +110,7 @@ export async function GET() {
     getDatabaseMigrationReadiness(),
     getSqsReadiness(),
   ]);
-  const higgsfield = getHiggsfieldUrlHealth();
+  const higgsfield = getHiggsfieldHealth();
   const featureFlags = {
     canvaCourseThumbnails: isCanvaCourseThumbnailsEnabled(),
     canvaMoeReports: isCanvaMoeReportsEnabled(),
