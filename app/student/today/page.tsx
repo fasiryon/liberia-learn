@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { BookOpen, CheckCircle2, Clock3, ListChecks, RefreshCw, TrendingUp } from "lucide-react";
 import { SkeletonCard } from "@/components/ui/Skeleton";
 import { useAssignmentPolling } from "@/lib/hooks/useAssignmentPolling";
@@ -156,6 +157,7 @@ function dueLabel(item: WorkItem) {
 }
 
 export default function StudentTodayPage() {
+  const router = useRouter();
   const [data, setData] = useState<TodayResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -224,6 +226,24 @@ export default function StudentTodayPage() {
       setRefreshing(false);
     }
   }
+
+  const openPeriodLesson = useCallback(async (subject: string | null, href: string) => {
+    if (href !== "/student/lessons" || !subject) {
+      router.push(href);
+      return;
+    }
+    try {
+      const res = await fetch(`/api/student/next-lesson?subject=${encodeURIComponent(subject)}`, { cache: "no-store" });
+      const lesson = await res.json();
+      if (lesson?.contentId) {
+        router.push(`/student/lesson/${lesson.contentId}`);
+      } else {
+        router.push(`/student/lessons`);
+      }
+    } catch {
+      router.push(`/student/lessons`);
+    }
+  }, [router]);
 
   const schoolDay = data?.schoolDay;
   const scheduleItems = safeArray(schoolDay?.items);
@@ -326,7 +346,7 @@ export default function StudentTodayPage() {
 
             <section className="rounded-lg border border-[var(--ll-border)] bg-[var(--ll-surface)] p-4">
               {activeTab === "schedule" ? (
-                <ScheduleTab schoolDay={schoolDay} assignedWork={assignedWork} adaptiveAction={adaptiveAction} />
+                <ScheduleTab schoolDay={schoolDay} assignedWork={assignedWork} adaptiveAction={adaptiveAction} onOpenPeriod={openPeriodLesson} />
               ) : null}
               {activeTab === "catch-up" ? <CatchUpTab items={safeArray(data.catchUpItems)} /> : null}
               {activeTab === "support" ? (
@@ -357,10 +377,12 @@ function ScheduleTab({
   schoolDay,
   assignedWork,
   adaptiveAction,
+  onOpenPeriod,
 }: {
   schoolDay: TodayResponse["schoolDay"];
   assignedWork: WorkItem[];
   adaptiveAction: AdaptiveAction | null;
+  onOpenPeriod: (subject: string | null, href: string) => void;
 }) {
   const scheduleItems = safeArray(schoolDay?.items);
 
@@ -386,9 +408,13 @@ function ScheduleTab({
                 <p className="text-sm font-semibold text-[var(--ll-text)]">{subjectLabel(item.subject)}</p>
                 <p className="text-xs text-[var(--ll-text-muted)]">{item.periodLabel}</p>
               </div>
-              <Link href={item.primaryAction.href} className="ll-touch-target inline-flex items-center justify-center rounded-lg border border-[var(--ll-border-strong)] px-3 py-2 text-sm font-semibold text-[var(--ll-text)]">
+              <button
+                type="button"
+                onClick={() => onOpenPeriod(item.subject, item.primaryAction.href)}
+                className="ll-touch-target inline-flex items-center justify-center rounded-lg border border-[var(--ll-border-strong)] px-3 py-2 text-sm font-semibold text-[var(--ll-text)]"
+              >
                 Open
-              </Link>
+              </button>
             </article>
           )
         ))}

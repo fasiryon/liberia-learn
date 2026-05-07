@@ -41,22 +41,38 @@ const LAB_GROUPS: Array<{
   },
 ];
 
+function parseGradeBand(gradeBand: string): { min: number; max: number } {
+  const match = gradeBand.match(/(\d+)[^\d]+(\d+)/);
+  if (match) return { min: Number(match[1]), max: Number(match[2]) };
+  const single = gradeBand.match(/(\d+)/);
+  if (single) return { min: Number(single[1]), max: Number(single[1]) };
+  return { min: 1, max: 12 };
+}
+
 export default async function StudentLabsPage() {
   try {
     const user = await requireRole("STUDENT");
     const aiLabsEnabled = isAiLabsEnabled();
 
-    const sessions = await prisma.labSession.findMany({
-      where: { studentId: user.id, schoolId: user.schoolId ?? undefined },
-      orderBy: [{ completedAt: "asc" }, { startedAt: "desc" }],
-      select: {
-        id: true,
-        labId: true,
-        startedAt: true,
-        completedAt: true,
-        score: true,
-      },
-    });
+    const [student, sessions] = await Promise.all([
+      prisma.student.findUnique({
+        where: { userId: user.id },
+        select: { currentGrade: true },
+      }),
+      prisma.labSession.findMany({
+        where: { studentId: user.id, ...(user.schoolId ? { schoolId: user.schoolId } : {}) },
+        orderBy: [{ completedAt: "asc" }, { startedAt: "desc" }],
+        select: {
+          id: true,
+          labId: true,
+          startedAt: true,
+          completedAt: true,
+          score: true,
+        },
+      }),
+    ]);
+
+    const studentGrade = student?.currentGrade ?? null;
 
     const labIds = sessions.map((session) => session.labId);
     const labs = labIds.length
@@ -69,7 +85,7 @@ export default async function StudentLabsPage() {
             estimatedMinutes: true,
             labType: true,
           },
-        })
+        }).catch(() => [])
       : [];
 
     const labMap = new Map(labs.map((lab) => [lab.labId, lab]));
@@ -107,43 +123,65 @@ export default async function StudentLabsPage() {
                 </span>
               ) : null}
             </div>
-            {LAB_GROUPS.map((group) => (
-              <section key={group.subject} className="space-y-3">
-                <div className="flex items-center justify-between gap-3">
-                  <h3 className="text-base font-semibold text-[var(--ll-text)]">{group.subject}</h3>
-                  <span className={`rounded-full border px-3 py-1 text-[11px] font-medium ${group.badgeCls}`}>
-                    {group.labs.length} labs
-                  </span>
-                </div>
-                <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
-                  {group.labs.map((labId) => {
-                    const lab = labRegistry[labId];
-                    if (!lab) return null;
-                    return (
-                      <article key={lab.id} className="flex min-h-64 flex-col rounded-xl border border-[var(--ll-border)] bg-[var(--ll-surface)] p-4 shadow-none">
-                        <div className="flex flex-wrap items-start justify-between gap-2">
-                          <span className={`rounded-full border px-3 py-1 text-[11px] font-medium ${group.badgeCls}`}>
-                            {lab.subject}
-                          </span>
-                          <span className="rounded-full border border-[var(--ll-border)] px-3 py-1 text-[11px] font-medium text-[var(--ll-text-faint)]">
-                            Tier {lab.tier}
-                          </span>
-                        </div>
-                        <h4 className="mt-4 text-base font-semibold leading-6 text-[var(--ll-text)]">{lab.title}</h4>
-                        <p className="mt-1 text-xs text-[var(--ll-text-faint)]">{lab.gradeBand}</p>
-                        <p className="mt-3 flex-1 text-sm leading-6 text-[var(--ll-text-muted)]">{lab.description}</p>
-                        <Link
-                          href={`/student/labs/${lab.id}`}
-                          className="mt-5 inline-flex min-h-11 items-center justify-center rounded-lg bg-[var(--ll-accent)] px-4 py-2 text-sm font-semibold text-[var(--ll-text-faint)] hover:opacity-90"
-                        >
-                          Open Lab
-                        </Link>
-                      </article>
-                    );
-                  })}
-                </div>
-              </section>
-            ))}
+            {(() => {
+              const gradeFilteredGroups = LAB_GROUPS.map((group) => ({
+                ...group,
+                labs: group.labs.filter((labId) => {
+                  const lab = labRegistry[labId];
+                  if (!lab || !studentGrade) return true;
+                  const { min, max } = parseGradeBand(lab.gradeBand);
+                  return studentGrade >= min && studentGrade <= max;
+                }),
+              })).filter((group) => group.labs.length > 0);
+
+              if (gradeFilteredGroups.length === 0) {
+                return (
+                  <div className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-surface-muted)] p-6 text-center">
+                    <p className="text-sm text-[var(--ll-text-muted)]">
+                      No labs available for your grade yet. Check back soon.
+                    </p>
+                  </div>
+                );
+              }
+
+              return gradeFilteredGroups.map((group) => (
+                <section key={group.subject} className="space-y-3">
+                  <div className="flex items-center justify-between gap-3">
+                    <h3 className="text-base font-semibold text-[var(--ll-text)]">{group.subject}</h3>
+                    <span className={`rounded-full border px-3 py-1 text-[11px] font-medium ${group.badgeCls}`}>
+                      {group.labs.length} labs
+                    </span>
+                  </div>
+                  <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+                    {group.labs.map((labId) => {
+                      const lab = labRegistry[labId];
+                      if (!lab) return null;
+                      return (
+                        <article key={lab.id} className="flex min-h-64 flex-col rounded-xl border border-[var(--ll-border)] bg-[var(--ll-surface)] p-4 shadow-none">
+                          <div className="flex flex-wrap items-start justify-between gap-2">
+                            <span className={`rounded-full border px-3 py-1 text-[11px] font-medium ${group.badgeCls}`}>
+                              {lab.subject}
+                            </span>
+                            <span className="rounded-full border border-[var(--ll-border)] px-3 py-1 text-[11px] font-medium text-[var(--ll-text-faint)]">
+                              Tier {lab.tier}
+                            </span>
+                          </div>
+                          <h4 className="mt-4 text-base font-semibold leading-6 text-[var(--ll-text)]">{lab.title}</h4>
+                          <p className="mt-1 text-xs text-[var(--ll-text-faint)]">{lab.gradeBand}</p>
+                          <p className="mt-3 flex-1 text-sm leading-6 text-[var(--ll-text-muted)]">{lab.description}</p>
+                          <Link
+                            href={`/student/labs/${lab.id}`}
+                            className="mt-5 inline-flex min-h-11 items-center justify-center rounded-lg bg-[var(--ll-accent)] px-4 py-2 text-sm font-semibold text-[var(--ll-text-faint)] hover:opacity-90"
+                          >
+                            Open Lab
+                          </Link>
+                        </article>
+                      );
+                    })}
+                  </div>
+                </section>
+              ));
+            })()}
           </section>
 
           <section>

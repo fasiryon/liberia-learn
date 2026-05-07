@@ -6,14 +6,20 @@ import {
 import LoginClient from "./LoginClient";
 
 export default function LoginPage() {
-  const showDemoHints = shouldShowDemoCredentials();
-  const demoGroups = showDemoHints ? getDemoHintGroups() : [];
-  const demoDefaults = showDemoHints
-    ? (() => {
-        const credential = getDemoCredential("student");
-        return { email: credential.email, password: credential.password };
-      })()
-    : null;
+  let showDemoHints = false;
+  let demoGroups: ReturnType<typeof getDemoHintGroups> = [];
+  let demoDefaults: { email: string; password: string } | null = null;
+
+  try {
+    showDemoHints = shouldShowDemoCredentials();
+    if (showDemoHints) {
+      demoGroups = getDemoHintGroups();
+      const credential = getDemoCredential("student");
+      demoDefaults = { email: credential.email, password: credential.password };
+    }
+  } catch {
+    // Non-critical: demo hints are optional. Login still works without them.
+  }
 
   return (
     <LoginClient

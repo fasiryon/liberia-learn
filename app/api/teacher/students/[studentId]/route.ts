@@ -66,6 +66,71 @@ export async function GET(
       };
     });
 
+    let recentAttempts: Array<{ subject: string | null; score: number | null; maxScore: number | null; attemptedAt: Date }> = [];
+    try {
+      recentAttempts = await prisma.assessmentAttempt.findMany({
+        where: { studentId: student.id, schoolId: user.schoolId! },
+        orderBy: { attemptedAt: "desc" },
+        take: 20,
+        select: {
+          subject: true,
+          score: true,
+          maxScore: true,
+          attemptedAt: true,
+        },
+      });
+    } catch {
+      // not critical — proceed with empty
+    }
+
+    const subjectAvgMap: Record<string, { total: number; count: number }> = {};
+    for (const attempt of recentAttempts) {
+      if (attempt.subject && attempt.score != null && attempt.maxScore && attempt.maxScore > 0) {
+        if (!subjectAvgMap[attempt.subject]) subjectAvgMap[attempt.subject] = { total: 0, count: 0 };
+        subjectAvgMap[attempt.subject].total += (attempt.score / attempt.maxScore) * 100;
+        subjectAvgMap[attempt.subject].count++;
+      }
+    }
+
+    const lastActive = progress.length > 0
+      ? progress.reduce((latest, p) => {
+          const ts = p.completedAt ?? p.startedAt;
+          if (!ts) return latest;
+          return !latest || ts > latest ? ts : latest;
+        }, null as Date | null)
+      : null;
+
+    const recentScores = recentAttempts
+      .filter((a) => a.score != null && a.maxScore && a.maxScore > 0)
+      .slice(0, 8)
+      .reverse()
+      .map((a) => Math.round((a.score! / a.maxScore!) * 100));
+
+    let scoreTrend: "improving" | "declining" | "stable" = "stable";
+    if (recentScores.length >= 2) {
+      const half = Math.floor(recentScores.length / 2);
+      const firstHalfAvg = recentScores.slice(0, half).reduce((a, b) => a + b, 0) / half;
+      const secondHalfAvg = recentScores.slice(half).reduce((a, b) => a + b, 0) / (recentScores.length - half);
+      if (secondHalfAvg - firstHalfAvg > 5) scoreTrend = "improving";
+      else if (firstHalfAvg - secondHalfAvg > 5) scoreTrend = "declining";
+    }
+
+    const lessonsThisWeek = progress.filter((p) => {
+      if (!p.completedAt) return false;
+      const weekAgo = new Date(Date.now() - 7 * 86400000);
+      return p.completedAt > weekAgo;
+    }).length;
+
+    const lessonsThisMonth = progress.filter((p) => {
+      if (!p.completedAt) return false;
+      const monthAgo = new Date(Date.now() - 30 * 86400000);
+      return p.completedAt > monthAgo;
+    }).length;
+
+    const daysSinceActive = lastActive
+      ? Math.floor((Date.now() - lastActive.getTime()) / 86400000)
+      : null;
+
     const submissions = await prisma.assignmentSubmission.findMany({
       where: {
         studentId: student.id,
@@ -123,6 +188,17 @@ export async function GET(
     return NextResponse.json({
       student: { id: student.id, name: student.user.name, email: student.user.email },
       records,
+      trends: {
+        recentScores,
+        scoreTrend,
+        subjectAvg: Object.entries(subjectAvgMap).map(([subject, data]) => ({
+          subject,
+          avg: Math.round(data.total / data.count),
+        })),
+        lastActiveDaysAgo: daysSinceActive,
+        lessonsThisWeek,
+        lessonsThisMonth,
+      },
       submissions: submissions.map((submission) => ({
         id: submission.id,
         assignmentId: submission.assignmentId,
