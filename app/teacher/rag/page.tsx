@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import GroundedQueryConsole from "@/components/rag/GroundedQueryConsole";
 import { requireUser } from "@/lib/auth";
 import { isRagTutorEnabled } from "@/lib/serverFlags";
+import { TeacherDashboardBackLink } from "@/app/teacher/TeacherDashboardBackLink";
 
 export default async function TeacherRagPage() {
   const user = await requireUser();
@@ -16,6 +17,7 @@ export default async function TeacherRagPage() {
 
   return (
     <main className="min-h-screen bg-[#f5f7fb] px-6 py-10 text-[var(--ll-text-faint)]">
+      <TeacherDashboardBackLink />
       <GroundedQueryConsole />
     </main>
   );

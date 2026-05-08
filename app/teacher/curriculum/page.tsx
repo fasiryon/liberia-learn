@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { teacherWelcomeStorageKey } from "@/app/teacher/TeacherWelcomeGate";
+import { TeacherDashboardBackLink } from "@/app/teacher/TeacherDashboardBackLink";
 
 const SUBJECTS = [
   "MATH", "SCIENCE", "LITERACY", "CIVICS",
@@ -147,12 +148,7 @@ export default function TeacherCurriculumPage() {
   return (
     <main className="min-h-screen bg-[var(--ll-bg)] px-4 py-8 text-[var(--ll-text)]">
       <div className="mx-auto max-w-4xl space-y-6">
-        <Link
-          href="/teacher"
-          className="inline-block text-sm text-[var(--ll-yellow)] hover:text-[var(--ll-yellow)]"
-        >
-          &larr; Back to Teacher Dashboard
-        </Link>
+        <TeacherDashboardBackLink />
 
         <h1 className="text-2xl font-bold">
           Curriculum &amp; AI Factory

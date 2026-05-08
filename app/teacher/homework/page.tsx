@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/db";
+import { TeacherDashboardBackLink } from "@/app/teacher/TeacherDashboardBackLink";
 
 export const dynamic = "force-dynamic";
 
@@ -87,15 +88,10 @@ export default async function TeacherHomeworkList({
       <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_top,_#3b82f622,_transparent_60%)]" />
 
       <div className="mx-auto max-w-5xl px-4 py-6">
+        <TeacherDashboardBackLink />
         {/* Header */}
         <header className="mb-6 flex items-center justify-between">
           <div>
-            <Link
-              href="/teacher"
-              className="mb-2 inline-block text-sm text-[var(--ll-silver)] hover:underline"
-            >
-              ← Back to teacher dashboard
-            </Link>
             <h1 className="text-2xl font-bold">Homework Assignments</h1>
             <p className="text-sm text-[var(--ll-text-muted)]">
               View and manage homework for your classes.
