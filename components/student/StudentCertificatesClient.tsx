@@ -88,63 +88,90 @@ export default function StudentCertificatesClient() {
           </div>
         ) : null}
 
-        <div className="grid gap-4 md:grid-cols-2">
+        <div className="grid gap-6 md:grid-cols-2">
           {certificates.map((certificate) => (
             <article
               key={certificate.id}
-              className="break-inside-avoid rounded-xl border border-[var(--ll-pink)]/30 bg-[var(--ll-surface)] p-6 shadow-none print:border print:border-[var(--ll-border)] print:bg-white"
+              className="relative overflow-hidden break-inside-avoid rounded-2xl border-2 border-[var(--ll-yellow)] bg-gradient-to-br from-[#1a1500] to-[#0d0d0d] p-8 shadow-xl print:border print:border-[var(--ll-yellow)] print:bg-white"
             >
-              <div className="flex items-start justify-between gap-3">
-                <div>
-                  <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-[var(--ll-pink)] print:text-[var(--ll-text-faint)]">
-                    LiberiaLearn
-                  </p>
-                  <h2 className="mt-2 text-xl font-semibold text-[var(--ll-text)] print:text-[var(--ll-text-faint)]">
-                    {labelForType(certificate.type)}
-                  </h2>
+              {/* Decorative corner accents */}
+              <div className="absolute top-0 left-0 w-16 h-16 border-t-4 border-l-4 border-[var(--ll-yellow)] rounded-tl-xl" />
+              <div className="absolute top-0 right-0 w-16 h-16 border-t-4 border-r-4 border-[var(--ll-yellow)] rounded-tr-xl" />
+              <div className="absolute bottom-0 left-0 w-16 h-16 border-b-4 border-l-4 border-[var(--ll-yellow)] rounded-bl-xl" />
+              <div className="absolute bottom-0 right-0 w-16 h-16 border-b-4 border-r-4 border-[var(--ll-yellow)] rounded-br-xl" />
+
+              {/* Header */}
+              <div className="text-center mb-6">
+                <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-[var(--ll-yellow)] mb-3">
+                  <span className="text-2xl">🎓</span>
                 </div>
-                <div className="flex items-center gap-2 print:hidden">
-                  {certificate.canvaUrl && (
-                    <a
-                      href={certificate.canvaUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="rounded-full border border-[var(--ll-yellow)]/30 bg-[var(--ll-yellow)]/10 px-4 py-2 text-xs font-semibold text-[var(--ll-yellow)] transition-colors hover:opacity-90"
-                    >
-                      View Certificate
-                    </a>
-                  )}
+                <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[var(--ll-yellow)] mb-1">
+                  LiberiaLearn
+                </p>
+                <h2 className="text-2xl font-bold text-[var(--ll-text)] print:text-black">
+                  Certificate of Achievement
+                </h2>
+              </div>
+
+              {/* Body */}
+              <div className="text-center mb-6">
+                <p className="text-sm text-[var(--ll-text-muted)] mb-2">This certifies that</p>
+                <p className="text-3xl font-bold text-[var(--ll-yellow)] mb-2">
+                  {certificate.studentName}
+                </p>
+                <p className="text-sm text-[var(--ll-text-muted)] mb-1">has successfully completed</p>
+                <p className="text-xl font-semibold text-[var(--ll-text)] mb-1 print:text-black">
+                  {certificate.title}
+                </p>
+                <p className="text-sm text-[var(--ll-text-faint)]">
+                  {subjectLabel(certificate.subject)} · {labelForType(certificate.type)}
+                </p>
+              </div>
+
+              {/* Footer */}
+              <div className="flex items-center justify-between pt-4 border-t border-[var(--ll-border)]">
+                <div>
+                  <p className="text-xs text-[var(--ll-text-faint)]">Date Awarded</p>
+                  <p className="text-sm font-medium text-[var(--ll-text)] print:text-black">
+                    {new Date(certificate.awardedAt).toLocaleDateString("en-LR", {
+                      year: "numeric",
+                      month: "long",
+                      day: "numeric",
+                    })}
+                  </p>
+                </div>
+                <div className="text-right">
+                  <p className="text-xs text-[var(--ll-text-faint)]">Verification Code</p>
+                  <p className="text-sm font-mono font-bold text-[var(--ll-yellow)]">
+                    {certificate.certificateCode}
+                  </p>
+                </div>
+              </div>
+
+              {/* Action */}
+              {certificate.canvaUrl ? (
+                <a
+                  href={certificate.canvaUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="mt-4 flex w-full items-center justify-center gap-2 rounded-lg bg-[var(--ll-yellow)] px-4 py-2.5 text-sm font-semibold text-[var(--ll-bg)] hover:opacity-90 transition-opacity print:hidden"
+                >
+                  View Official Certificate →
+                </a>
+              ) : (
+                <div className="mt-4 text-center print:hidden">
+                  <p className="text-xs text-[var(--ll-text-faint)]">
+                    Verify at liberialearn.vercel.app/verify/{certificate.certificateCode}
+                  </p>
                   <button
                     type="button"
                     onClick={() => window.print()}
-                    className="rounded-full border border-[var(--ll-pink)]/30 bg-[var(--ll-pink-soft)] px-4 py-2 text-xs font-semibold text-[var(--ll-pink)] transition-colors hover:opacity-90"
+                    className="mt-2 rounded-lg border border-[var(--ll-yellow)]/30 bg-[var(--ll-yellow)]/10 px-4 py-2 text-xs font-semibold text-[var(--ll-yellow)] transition-colors hover:opacity-90"
                   >
-                    Print
+                    Print Certificate
                   </button>
                 </div>
-              </div>
-
-              <div className="mt-6 space-y-3 text-sm text-[var(--ll-text-muted)] print:text-[var(--ll-text-faint)]">
-                <p>
-                  This certifies that <span className="font-semibold">{certificate.studentName}</span>{" "}
-                  has completed{" "}
-                  <span className="font-semibold">{certificate.title}</span>.
-                </p>
-                <p>Subject: {subjectLabel(certificate.subject)}</p>
-                <p>Date awarded: {new Date(certificate.awardedAt).toLocaleDateString()}</p>
-              </div>
-
-              <div className="mt-6 rounded-xl border border-[var(--ll-border)] bg-[var(--ll-surface-muted)] p-4 print:border-[var(--ll-border)] print:bg-[var(--ll-surface-muted)]">
-                <p className="text-[11px] uppercase tracking-[0.24em] text-[var(--ll-text-faint)]">
-                  Verification Code
-                </p>
-                <p className="mt-2 font-mono text-xs font-semibold tracking-[0.2em] text-[var(--ll-silver)] print:text-[var(--ll-text-faint)]">
-                  {certificate.certificateCode}
-                </p>
-                <p className="mt-2 text-xs text-[var(--ll-text-faint)] print:text-[var(--ll-text-faint)]">
-                  Verify publicly at /verify/{certificate.certificateCode}
-                </p>
-              </div>
+              )}
             </article>
           ))}
         </div>

@@ -28,6 +28,7 @@ export default defineConfig({
         '--disable-infobars',
         '--no-sandbox',
         '--force-device-scale-factor=1',
+        '--kiosk',
       ],
     },
   },
