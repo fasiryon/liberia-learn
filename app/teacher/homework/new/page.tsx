@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import NewHomeworkForm from "./NewHomeworkForm";
+import { TeacherDashboardBackLink } from "@/app/teacher/TeacherDashboardBackLink";
 
 export default async function NewHomeworkPage() {
   const session = await getServerSession(authOptions);
@@ -26,6 +27,7 @@ export default async function NewHomeworkPage() {
     return (
       <main className="min-h-screen bg-[var(--ll-bg)] p-6 text-[var(--ll-text)]">
         <div className="max-w-2xl mx-auto space-y-4">
+          <TeacherDashboardBackLink />
           <h1 className="text-2xl font-bold">Create Homework</h1>
           <p className="text-sm text-[var(--ll-text-muted)]">
             You don&apos;t have any classes yet. Once classes exist, you&apos;ll
@@ -39,6 +41,7 @@ export default async function NewHomeworkPage() {
   return (
     <main className="min-h-screen bg-[var(--ll-bg)] p-6 text-[var(--ll-text)]">
       <div className="max-w-2xl mx-auto space-y-6">
+        <TeacherDashboardBackLink />
         <h1 className="text-2xl font-bold">Create Homework</h1>
         <NewHomeworkForm classes={classes} />
       </div>

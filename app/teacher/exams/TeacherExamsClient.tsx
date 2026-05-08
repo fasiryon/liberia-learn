@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { FormEvent, useEffect, useState } from "react";
+import { TeacherDashboardBackLink } from "@/app/teacher/TeacherDashboardBackLink";
 
 type TeacherExam = {
   id: string;
@@ -93,10 +94,8 @@ export default function TeacherExamsClient() {
     <main className="min-h-screen bg-[var(--ll-bg)] px-4 py-8 text-[var(--ll-text)]">
       <div className="mx-auto max-w-6xl space-y-6">
         <div>
-          <Link href="/teacher" className="text-sm text-[var(--ll-yellow)] hover:text-[var(--ll-yellow)]">
-            &larr; Back to Teacher Dashboard
-          </Link>
-          <h1 className="mt-3 text-3xl font-semibold">Teacher Exam Overview</h1>
+          <TeacherDashboardBackLink />
+          <h1 className="text-3xl font-semibold">Teacher Exam Overview</h1>
         </div>
 
         <form

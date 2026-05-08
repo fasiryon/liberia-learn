@@ -16,6 +16,7 @@ import { prisma } from "@/lib/db";
 import { TRAINING_MODULES, MODULES_BY_LEVEL, LEVEL_LABELS } from "@/lib/training/modules";
 import { computeEarnedBadges } from "@/lib/training/badges";
 import type { ModuleProgressRecord } from "@/lib/training/progress";
+import { TeacherDashboardBackLink } from "@/app/teacher/TeacherDashboardBackLink";
 
 export const dynamic = "force-dynamic";
 
@@ -56,6 +57,7 @@ export default async function TrainingCenterPage() {
       <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_top,_#10b98122,_transparent_60%)]" />
 
       <div className="mx-auto max-w-4xl px-4 py-8">
+        <TeacherDashboardBackLink />
         {/* ── Header ─────────────────────────────────────────────────────── */}
         <header className="mb-8 flex items-center justify-between gap-4">
           <div>

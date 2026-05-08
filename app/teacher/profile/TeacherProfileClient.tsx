@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Link from "next/link";
+import { TeacherDashboardBackLink } from "@/app/teacher/TeacherDashboardBackLink";
 
 export default function TeacherProfileClient() {
   const [bio, setBio] = useState("");
@@ -54,10 +54,8 @@ export default function TeacherProfileClient() {
     <main className="min-h-screen bg-[var(--ll-bg)] px-4 py-8 text-[var(--ll-text)]">
       <div className="mx-auto max-w-3xl space-y-6">
         <div>
-          <Link href="/teacher" className="text-sm text-[var(--ll-yellow)] hover:text-[var(--ll-yellow)]">
-            &larr; Back to Teacher Dashboard
-          </Link>
-          <h1 className="mt-3 text-3xl font-bold">Teacher Profile</h1>
+          <TeacherDashboardBackLink />
+          <h1 className="text-3xl font-bold">Teacher Profile</h1>
           <p className="mt-2 text-sm text-[var(--ll-text-muted)]">
             Add a short teaching bio so students and school staff can understand your classroom focus.
           </p>

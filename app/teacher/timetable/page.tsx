@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Clock, BookOpen, X } from "lucide-react";
 import { SkeletonCard } from "@/components/ui/Skeleton";
+import { TeacherDashboardBackLink } from "@/app/teacher/TeacherDashboardBackLink";
 
 type Period = {
   id: string;
@@ -145,14 +146,9 @@ export default function TeacherTimetablePage() {
     <main className="min-h-screen bg-[var(--ll-bg)] text-[var(--ll-text)]">
       <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_top,_#06b6d422,_transparent_60%)]" />
       <div className="mx-auto max-w-4xl space-y-5 px-4 py-6">
+        <TeacherDashboardBackLink />
         <header>
-          <Link
-            href="/teacher/dashboard"
-            className="text-xs text-[var(--ll-yellow)] hover:text-[var(--ll-yellow)]"
-          >
-            ← Back to Dashboard
-          </Link>
-          <h1 className="mt-2 text-2xl font-bold">My Timetable</h1>
+          <h1 className="text-2xl font-bold">My Timetable</h1>
           <p className="text-sm text-[var(--ll-text-muted)]">
             {todayName()},{" "}
             {new Date().toLocaleDateString("en-LR", {

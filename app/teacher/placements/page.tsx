@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { placementBandStyles, placementReviewStatusStyles } from "@/lib/placement";
 import HelpTooltip from "@/components/ui/HelpTooltip";
+import { TeacherDashboardBackLink } from "@/app/teacher/TeacherDashboardBackLink";
 
 type PlacementListItem = {
   id: string;
@@ -58,6 +59,7 @@ export default function TeacherPlacementsPage() {
   return (
     <main className="min-h-screen bg-[var(--ll-bg)] px-4 py-8 text-[var(--ll-text)]">
       <div className="mx-auto max-w-6xl space-y-6">
+        <TeacherDashboardBackLink />
         <div className="space-y-2">
           <p className="text-xs font-semibold uppercase tracking-wide text-[var(--ll-yellow)]">Teacher Placement Review</p>
           <h1 className="text-3xl font-bold">Student Placement Results</h1>

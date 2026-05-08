@@ -74,6 +74,10 @@ function addMinutes(time: string, minutes: number) {
   return date.toTimeString().slice(0, 5);
 }
 
+function isBreakPeriod(label: string): boolean {
+  return /break|lunch|recess|assembly|free/i.test(label);
+}
+
 export default function TeacherSchedulePage() {
   const [items, setItems] = useState<ScheduleItem[]>([]);
   const [classes, setClasses] = useState<ClassInfo[]>([]);
@@ -336,6 +340,24 @@ export default function TeacherSchedulePage() {
   return (
     <div className="min-h-screen bg-[var(--ll-bg)] text-[var(--ll-text)] px-4 py-8">
       <div className="mx-auto max-w-6xl space-y-6">
+        <div className="flex items-center gap-3 mb-6">
+          <a
+            href="/teacher/dashboard"
+            className="flex items-center gap-1.5 text-sm text-[var(--ll-text-faint)] transition-colors hover:text-[var(--ll-yellow)]"
+          >
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <path
+                d="M10 3L5 8l5 5"
+                stroke="currentColor"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+            Back to Dashboard
+          </a>
+        </div>
+
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div>
             <h1 className="text-2xl font-bold">Weekly Schedule</h1>
@@ -522,16 +544,30 @@ export default function TeacherSchedulePage() {
                           <p className="text-[10px] text-[var(--ll-text-faint)]">No timetable slots</p>
                         ) : (
                           <div className="space-y-2">
-                            {dayItems.map((item) => (
-                              <div key={item.id} className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 p-3">
-                                <p className="text-xs font-semibold text-[var(--ll-text)]">{item.class?.name ?? "Class"}</p>
-                                <p className="text-[11px] text-[var(--ll-text-muted)]">{item.periodLabel}</p>
-                                <p className="mt-1 text-[11px] text-[var(--ll-yellow)]">
+                            {dayItems.map((item) => {
+                              const breakPeriod = isBreakPeriod(item.periodLabel);
+                              const subject = item.subject.replace(/_/g, " ");
+                              return (
+                              <div
+                                key={item.id}
+                                className={`rounded-lg border bg-[var(--ll-bg)]/70 p-3 ${
+                                  breakPeriod
+                                    ? "border-[var(--ll-border)] opacity-60"
+                                    : "border-[var(--ll-border-strong)]"
+                                }`}
+                              >
+                                <p className="text-xs font-semibold text-[var(--ll-text)]">
+                                  {breakPeriod ? item.periodLabel : `${item.periodLabel} - ${subject}`}
+                                </p>
+                                <p className="mt-1 text-[11px] text-[var(--ll-text-muted)]">
                                   {[item.startTime, item.endTime].filter(Boolean).join(" - ") || "Time TBD"}
                                 </p>
-                                <p className="text-[10px] text-[var(--ll-text-faint)]">
-                                  {item.subject.replace(/_/g, " ")}{item.room ? ` - ${item.room}` : ""}
-                                </p>
+                                {!breakPeriod && item.subject && (
+                                  <p className="text-xs text-[var(--ll-yellow)]">
+                                    {subject}
+                                    {item.room ? ` - ${item.room}` : ""}
+                                  </p>
+                                )}
                                 {item.lessonPlan ? (
                                   <p className="mt-1 rounded-full bg-[var(--ll-yellow)]/15 px-2 py-0.5 text-[10px] text-[var(--ll-yellow)]">
                                     Plan: {item.lessonPlan.lessonTitle}
@@ -540,7 +576,7 @@ export default function TeacherSchedulePage() {
                                   planPicker(item.id, item.classId, null)
                                 )}
                               </div>
-                            ))}
+                            )})}
                           </div>
                         )}
                       </div>
@@ -588,9 +624,8 @@ export default function TeacherSchedulePage() {
                               ? "bg-[var(--ll-yellow-soft)] text-[var(--ll-yellow)]"
                               : "bg-[var(--ll-silver-soft)] text-[var(--ll-silver)]";
                             return (
-                              <div key={item.id} className="rounded-lg border border-[var(--ll-border)] bg-[var(--ll-bg)]/50 p-2">
+                              <div key={item.id} className="rounded-lg border border-[var(--ll-border)] bg-[var(--ll-bg)]/50 p-3">
                                 <p className="text-[11px] font-medium text-[var(--ll-text)] truncate">{item.title}</p>
-                                <p className="text-[9px] text-[var(--ll-text-faint)]">{item.className}</p>
                                 <div className="mt-1 flex items-center justify-between">
                                   <span className="text-[9px] text-[var(--ll-yellow)]">{pct}% done</span>
                                   <span className={`rounded-full px-2 py-0.5 text-[9px] ${statusColor}`}>

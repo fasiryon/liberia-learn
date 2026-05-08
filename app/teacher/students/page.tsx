@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
+import { TeacherDashboardBackLink } from "@/app/teacher/TeacherDashboardBackLink";
 
 const PAGE_SIZE = 15;
 
@@ -46,53 +47,31 @@ const STATUS_STYLE: Record<string, { label: string; cls: string }> = {
   },
 };
 
-function StudentTableRow({ s, showClass }: { s: StudentRow | FlatStudent; showClass?: boolean }) {
+function StudentCompactRow({ s }: { s: StudentRow | FlatStudent }) {
   const style = STATUS_STYLE[s.status];
-  const accentBorder =
-    s.status === "at-risk"
-      ? "border-l-2 border-l-orange-500/50"
-      : s.status === "inactive"
-      ? "border-l-2 border-l-red-500/50"
-      : "";
-  const classes = "classes" in s ? s.classes : [s.className];
   return (
-    <tr
-      className={`border-b border-[var(--ll-border)]/50 hover:bg-[var(--ll-surface)]/40 transition-colors ${accentBorder}`}
+    <div
+      className="flex max-w-full items-center justify-between gap-3 rounded-lg border border-[var(--ll-border)] px-4 py-2.5 transition-colors hover:border-[var(--ll-border-strong)]"
     >
-      <td className="px-4 py-2.5">
-        <Link
-          href={`/teacher/students/${s.studentId}`}
-          className="font-medium text-[var(--ll-text)] hover:text-[var(--ll-yellow)] transition-colors"
-        >
-          {s.name}
-        </Link>
-      </td>
-      {showClass && (
-        <td className="px-4 py-2.5">
-          <div className="flex flex-wrap gap-1">
-            {classes.map((cls) => (
-              <span
-                key={cls}
-                className="rounded-full border border-[var(--ll-border)] bg-[var(--ll-surface-muted)] px-2 py-0.5 text-[10px] text-[var(--ll-text-muted)]"
-              >
-                {cls}
-              </span>
-            ))}
-          </div>
-        </td>
-      )}
-      <td className="px-4 py-2.5 text-center text-[var(--ll-text)]">
-        {s.lessonsCompletedThisWeek}
-      </td>
-      <td className="px-4 py-2.5 text-xs text-[var(--ll-text-faint)]">
-        {s.lastActive ? new Date(s.lastActive).toLocaleDateString() : "Never"}
-      </td>
-      <td className="px-4 py-2.5 text-center">
-        <span className={`rounded-full px-2.5 py-0.5 text-[10px] font-medium ${style.cls}`}>
+      <Link
+        href={`/teacher/students/${s.studentId}`}
+        className="min-w-0 flex-1 truncate text-sm font-medium text-[var(--ll-text)] transition-colors hover:text-[var(--ll-yellow)]"
+      >
+        {s.name}
+      </Link>
+
+      <div className="flex flex-shrink-0 items-center gap-4 text-xs text-[var(--ll-text-faint)]">
+        <span className="hidden sm:block">
+          {s.lastActive ? new Date(s.lastActive).toLocaleDateString() : "Never"}
+        </span>
+        <span className="font-medium text-[var(--ll-text)]">
+          {s.lessonsCompletedThisWeek ?? 0}
+        </span>
+        <span className={`rounded-full px-2 py-0.5 text-[10px] font-semibold ${style.cls}`}>
           {style.label}
         </span>
-      </td>
-    </tr>
+      </div>
+    </div>
   );
 }
 
@@ -193,6 +172,7 @@ export default function TeacherStudentsPage() {
 
   return (
     <div className="space-y-5">
+      <TeacherDashboardBackLink />
       <div>
         <h1 className="text-2xl font-bold">My Students</h1>
         <p className="text-sm text-[var(--ll-text-muted)] mt-1">
@@ -248,28 +228,17 @@ export default function TeacherStudentsPage() {
         searchResults.length === 0 ? (
           <p className="text-sm text-[var(--ll-text-faint)]">No students match your search.</p>
         ) : (
-          <div className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 overflow-hidden">
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="border-b border-[var(--ll-border)] text-xs text-[var(--ll-text-muted)]">
-                  <th className="px-4 py-3 text-left">Name</th>
-                  <th className="px-4 py-3 text-left">Class</th>
-                  <th className="px-4 py-3 text-center">This Week</th>
-                  <th className="px-4 py-3 text-left">Last Active</th>
-                  <th className="px-4 py-3 text-center">Status</th>
-                </tr>
-              </thead>
-              <tbody>
-                {searchResults.map((s) => (
-                  <StudentTableRow key={s.studentId} s={s} showClass />
-                ))}
-              </tbody>
-            </table>
+          <div className="w-full max-w-full overflow-hidden rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 p-2">
+            <div className="space-y-2">
+              {searchResults.map((s) => (
+                <StudentCompactRow key={s.studentId} s={s} />
+              ))}
+            </div>
           </div>
         )
       ) : (
         /* Grouped by class */
-        <div className="space-y-3">
+        <div className="w-full max-w-full space-y-3 overflow-hidden">
           {classGroups.map((group) => {
             const isOpen = expanded.has(group.className);
             const visible = getGroupVisible(group.className);
@@ -311,21 +280,13 @@ export default function TeacherStudentsPage() {
                 {/* Expanded table */}
                 {isOpen && (
                   <>
-                    <table className="w-full text-sm border-t border-[var(--ll-border)]">
-                      <thead>
-                        <tr className="border-b border-[var(--ll-border)] text-xs text-[var(--ll-text-muted)]">
-                          <th className="px-4 py-2 text-left">Name</th>
-                          <th className="px-4 py-2 text-center">This Week</th>
-                          <th className="px-4 py-2 text-left">Last Active</th>
-                          <th className="px-4 py-2 text-center">Status</th>
-                        </tr>
-                      </thead>
-                      <tbody>
+                    <div className="w-full max-w-full overflow-hidden border-t border-[var(--ll-border)] p-2">
+                      <div className="space-y-2">
                         {shown.map((s) => (
-                          <StudentTableRow key={s.studentId} s={s} showClass={false} />
+                          <StudentCompactRow key={s.studentId} s={s} />
                         ))}
-                      </tbody>
-                    </table>
+                      </div>
+                    </div>
                     {hasMore && (
                       <div className="px-4 py-2 border-t border-[var(--ll-border)]">
                         <button

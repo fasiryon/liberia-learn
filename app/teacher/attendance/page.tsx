@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { TeacherNav } from "@/components/teacher/TeacherNav";
+import { TeacherDashboardBackLink } from "@/app/teacher/TeacherDashboardBackLink";
 
 type ClassInfo = {
   id: string;
@@ -148,6 +149,7 @@ export default function TeacherAttendancePage() {
   return (
     <main className="min-h-screen bg-[var(--ll-bg)] px-4 py-8 text-[var(--ll-text)]">
       <div className="mx-auto max-w-6xl space-y-6">
+        <TeacherDashboardBackLink />
         <header>
           <h1 className="text-2xl font-bold">Daily Attendance</h1>
           <p className="mt-1 text-sm text-[var(--ll-text-muted)]">
