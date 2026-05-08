@@ -96,10 +96,16 @@ export async function GET(req: NextRequest) {
       subjectTotals.set(subject, bucket);
     }
 
+    const qualityLessons = rows.filter((lesson) => {
+      const payload = lesson.payload as any
+      const content = payload?.content ?? payload?.lessonBody ?? payload?.body ?? ''
+      return typeof content === 'string' && content.length >= 300
+    })
+
     return NextResponse.json({
       grade: student.currentGrade,
       studentId: student.id,
-      count: rows.length,
+      count: qualityLessons.length,
       total,
       page,
       totalPages: Math.ceil(total / PAGE_SIZE),
@@ -109,7 +115,7 @@ export async function GET(req: NextRequest) {
         completed: stats.completed,
         completionRate: stats.total > 0 ? Math.round((stats.completed / stats.total) * 100) : 0,
       })),
-      items: rows.map((row) => ({
+      items: qualityLessons.map((row) => ({
         contentId: row.contentId,
         title: row.title,
         grade: row.grade,
