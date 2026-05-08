@@ -1,5 +1,6 @@
 export type Phase6PersistenceDecision =
   | "created"
+  | "replaced_thin_content"
   | "updated_existing_phase6_draft"
   | "skipped_existing_protected_content";
 
@@ -29,6 +30,9 @@ export function phase6PersistenceDecision(input: {
   qualityPassed: boolean;
 }): Phase6PersistenceDecision {
   if (!input.existing) return "created";
+  if (input.existing.status === "NEEDS_REVIEW" && input.approved && input.qualityPassed) {
+    return "replaced_thin_content";
+  }
   if (canReplaceExistingPhase6Draft({ existing: input.existing, approved: input.approved, qualityPassed: input.qualityPassed })) {
     return "updated_existing_phase6_draft";
   }

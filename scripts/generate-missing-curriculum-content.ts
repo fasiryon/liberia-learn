@@ -144,6 +144,52 @@ async function repairJsonOutput(input: {
   });
 }
 
+async function expandShortLessonContent(input: {
+  generated: Record<string, unknown>;
+  lesson: PlannedMissingLesson;
+  promptMetadata: ReturnType<typeof getPromptMetadata>;
+}) {
+  return routedCompletion({
+    forceSmartTier: true,
+    maxTokens: 5000,
+    messages: [
+      {
+        role: "system",
+        content: "You expand LiberiaLearn lesson JSON. Return ONLY valid JSON matching the input schema. No markdown. No prose outside JSON.",
+      },
+      {
+        role: "user",
+        content: [
+          "Expand the content field to at least 850 words while preserving the same title, objectives, assessmentQuestions, and teacherNotesSummary.",
+          "Keep all required lesson sections in the same order.",
+          "Add substantive explanations, examples, guided practice, and independent practice. Do not add filler.",
+          "Return JSON with title, learningObjectives, content, assessmentQuestions, and teacherNotesSummary.",
+          "Current JSON:",
+          JSON.stringify(input.generated),
+        ].join("\n"),
+      },
+    ],
+    aiUsage: {
+      route: "scripts/generate-missing-curriculum-content",
+      feature: "curriculum",
+      subject: input.lesson.subject,
+      requestType: "elite_curriculum_missing_content_expansion_repair",
+      contentId: input.lesson.plannedContentId,
+      promptKey: input.promptMetadata.key,
+      promptVersion: input.promptMetadata.version,
+      promptHash: input.promptMetadata.hash,
+      contentVersion: "phase6-sample-v1",
+      metadata: {
+        grade: input.lesson.grade,
+        weekNumber: input.lesson.weekNumber,
+        dayNumber: input.lesson.dayNumber,
+        lessonType: input.lesson.lessonType,
+        expansionRepairAttempt: true,
+      },
+    },
+  });
+}
+
 async function repairTitle(input: {
   collidingTitle: string;
   existingTitles: string[];
@@ -198,10 +244,12 @@ function validateGeneratedLesson(payload: Record<string, unknown>) {
   const content = typeof payload.content === "string" ? payload.content.trim() : "";
   const assessmentQuestions = Array.isArray(payload.assessmentQuestions) ? payload.assessmentQuestions : [];
   const teacherNotesSummary = typeof payload.teacherNotesSummary === "string" ? payload.teacherNotesSummary.trim() : "";
+  const wordCount = content.split(/\s+/).filter(Boolean).length;
 
   if (title.length < 5) return { passed: false, reason: "missing_title" };
   if (objectives.length < 3) return { passed: false, reason: "too_few_objectives" };
   if (content.length < 3000) return { passed: false, reason: "content_too_short" };
+  if (wordCount < 800) return { passed: false, reason: "content_under_800_words" };
   if (assessmentQuestions.length < 5) return { passed: false, reason: "too_few_assessment_questions" };
   const validQuestions = assessmentQuestions.every(
     (q) => q && typeof q === "object" && typeof (q as Record<string, unknown>).question === "string" && typeof (q as Record<string, unknown>).expectedAnswer === "string"
@@ -213,6 +261,67 @@ function validateGeneratedLesson(payload: Record<string, unknown>) {
 
 function displaySubject(input: string | undefined, storageSubject: string | undefined) {
   return (input ?? storageSubject ?? "").trim().toUpperCase();
+}
+
+function lessonTextLength(payload: unknown) {
+  if (typeof payload === "string") return payload.length;
+  if (!payload || typeof payload !== "object") return 0;
+  const record = payload as Record<string, unknown>;
+  const content = record.content ?? record.lessonBody ?? record.body ?? record.text ?? "";
+  return typeof content === "string" ? content.length : 0;
+}
+
+function plannedLessonType(value: string | null | undefined): PlannedMissingLesson["lessonType"] {
+  const normalized = value?.toUpperCase();
+  if (normalized === "REVIEW" || normalized === "LAB" || normalized === "ASSESSMENT" || normalized === "PROJECT") {
+    return normalized;
+  }
+  return "CORE";
+}
+
+async function needsReviewReplacementLessons(input: { grade: number; subject: string; limit?: number }) {
+  const rows = await prisma.curriculumContent.findMany({
+    where: {
+      grade: input.grade,
+      subject: input.subject,
+      status: "NEEDS_REVIEW",
+    },
+    orderBy: [{ updatedAt: "asc" }, { contentId: "asc" }],
+    take: input.limit,
+    select: {
+      contentId: true,
+      grade: true,
+      subject: true,
+      lessonType: true,
+      payload: true,
+      lessonPlans: {
+        select: {
+          dayNumber: true,
+          orderIndex: true,
+          lessonType: true,
+          week: { select: { weekNumber: true } },
+        },
+        take: 1,
+      },
+    },
+  });
+
+  return rows
+    .filter((row) => lessonTextLength(row.payload) < 800)
+    .map((row, index): PlannedMissingLesson => {
+      const plan = row.lessonPlans[0];
+      const sequence = index + 1;
+      return {
+        plannedContentId: row.contentId,
+        grade: row.grade,
+        subject: row.subject,
+        weekNumber: plan?.week.weekNumber ?? Math.ceil(sequence / 5),
+        dayNumber: plan?.dayNumber ?? ((sequence - 1) % 5) + 1,
+        lessonType: plannedLessonType(plan?.lessonType ?? row.lessonType),
+        priority: "CRITICAL",
+        reason: "NEEDS_REVIEW thin legacy content replacement",
+      };
+    });
 }
 
 function topicForLesson(lesson: PlannedMissingLesson, topics: string[] | undefined, index: number) {
@@ -459,7 +568,19 @@ async function generateLesson(
       throw new Error("title_collision_after_retry");
     }
   }
-  const baseQuality = validateGeneratedLesson(generated);
+  let baseQuality = validateGeneratedLesson(generated);
+  let contentExpansionSucceeded = false;
+  if (baseQuality.reason === "content_too_short" || baseQuality.reason === "content_under_800_words") {
+    try {
+      const expansionResult = await expandShortLessonContent({ generated, lesson, promptMetadata });
+      repairCostUsd += expansionResult.estimatedCostUSD;
+      generated = extractJsonObject(expansionResult.content);
+      baseQuality = validateGeneratedLesson(generated);
+      contentExpansionSucceeded = baseQuality.passed;
+    } catch {
+      contentExpansionSucceeded = false;
+    }
+  }
   const validationFailures = phase6ValidationFailures({
     title,
     content: String(generated.content ?? ""),
@@ -478,6 +599,7 @@ async function generateLesson(
     title,
     subjectDisplay: displaySubject(requestedSubject, lesson.subject),
     learningObjectives: stringArray(generated.learningObjectives),
+    content: String(generated.content ?? ""),
     lessonContent: String(generated.content ?? ""),
     assessmentQuestions: Array.isArray(generated.assessmentQuestions) ? generated.assessmentQuestions : [],
     teacherNotesSummary: String(generated.teacherNotesSummary ?? ""),
@@ -504,6 +626,7 @@ async function generateLesson(
       qualityFailureReason: quality.reason,
       jsonRepairSucceeded,
       malformedJsonAfterRepair,
+      contentExpansionSucceeded,
       titleRetrySucceeded,
       topicBucket,
       validationFailures,
@@ -520,31 +643,63 @@ async function generateLesson(
   };
   const existing = await prisma.curriculumContent.findUnique({
     where: { contentId: lesson.plannedContentId },
-    select: { contentId: true, status: true },
+    select: {
+      contentId: true,
+      status: true,
+      lessonPlans: {
+        select: {
+          weekId: true,
+          dayNumber: true,
+          lessonType: true,
+          mappedSource: true,
+          orderIndex: true,
+        },
+      },
+    },
   });
   const persistenceAction = phase6PersistenceDecision({
     existing,
     approved,
     qualityPassed: quality.passed,
   });
+  const createData = {
+    contentId: lesson.plannedContentId,
+    title,
+    grade: lesson.grade,
+    subject: lesson.subject,
+    contentType: "lesson",
+    status: quality.passed ? "DRAFT" : "NEEDS_REVIEW",
+    version: "phase6-sample-v1",
+    unitId: `phase6-g${lesson.grade}-${lesson.subject.toLowerCase()}`,
+    orderInUnit: lesson.dayNumber,
+    lessonType: lesson.lessonType.toLowerCase(),
+    teacherCreated: false,
+    hash,
+    payload,
+  };
 
   if (persistenceAction === "created") {
     await prisma.curriculumContent.create({
-      data: {
-      contentId: lesson.plannedContentId,
-      title,
-      grade: lesson.grade,
-      subject: lesson.subject,
-      contentType: "lesson",
-      status: quality.passed ? "DRAFT" : "NEEDS_REVIEW",
-      version: "phase6-sample-v1",
-      unitId: `phase6-g${lesson.grade}-${lesson.subject.toLowerCase()}`,
-      orderInUnit: lesson.dayNumber,
-      lessonType: lesson.lessonType.toLowerCase(),
-      teacherCreated: false,
-      hash,
-      payload,
-      },
+      data: createData,
+    });
+  } else if (persistenceAction === "replaced_thin_content") {
+    const preservedPlans = existing?.lessonPlans ?? [];
+    await prisma.$transaction(async (tx) => {
+      await tx.curriculumContent.delete({ where: { contentId: lesson.plannedContentId } });
+      await tx.curriculumContent.create({ data: createData });
+      if (preservedPlans.length > 0) {
+        await tx.curriculumLessonPlan.createMany({
+          data: preservedPlans.map((plan) => ({
+            weekId: plan.weekId,
+            curriculumContentId: lesson.plannedContentId,
+            dayNumber: plan.dayNumber,
+            lessonType: plan.lessonType,
+            mappedSource: plan.mappedSource,
+            orderIndex: plan.orderIndex,
+          })),
+          skipDuplicates: true,
+        });
+      }
     });
   } else if (persistenceAction === "updated_existing_phase6_draft") {
     await prisma.curriculumContent.update({
@@ -587,6 +742,7 @@ async function generateLesson(
     persistenceAction,
     jsonRepairSucceeded,
     malformedJsonAfterRepair,
+    contentExpansionSucceeded,
     titleRetrySucceeded,
     draftMappedLessons: mapping.draftMappedLessons,
     wordCount: String(generated.content ?? "").trim().split(/\s+/).filter(Boolean).length,
@@ -670,7 +826,33 @@ async function main() {
     batchSize,
     completedContentIds,
   });
-  const plan = !dryRun && effectiveLimit !== undefined ? limitPlanToBatch(fullPlan, effectiveLimit) : fullPlan;
+  let plan = !dryRun && effectiveLimit !== undefined ? limitPlanToBatch(fullPlan, effectiveLimit) : fullPlan;
+  if (!dryRun && grade !== undefined && subject && effectiveLimit !== undefined) {
+    const replacements = await needsReviewReplacementLessons({ grade, subject, limit: effectiveLimit });
+    if (replacements.length > 0) {
+      const replacementIds = new Set(replacements.map((lesson) => lesson.plannedContentId));
+      const remainingSlots = Math.max(0, effectiveLimit - replacements.length);
+      const fillLessons = plan.lessons.filter((lesson) => !replacementIds.has(lesson.plannedContentId)).slice(0, remainingSlots);
+      plan = {
+        ...plan,
+        lessons: [...replacements, ...fillLessons],
+        groups: [
+          {
+            grade,
+            subject,
+            currentLessons: replacements.length,
+            mappedLessons: 0,
+            readinessPct: 0,
+            classification: "CRITICAL",
+            missingWeeks: [...new Set(replacements.map((lesson) => lesson.weekNumber))].sort((left, right) => left - right),
+            lessonsNeeded: replacements.length,
+            plannedLessons: replacements,
+          },
+          ...plan.groups,
+        ],
+      };
+    }
+  }
   assertNoDuplicatePlannedLessons(plan);
 
   const costEstimate = estimateCost ? estimateMissingCurriculumCost(plan) : null;
