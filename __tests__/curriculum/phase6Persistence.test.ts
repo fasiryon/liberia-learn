@@ -19,7 +19,17 @@ describe("Phase 6 missing curriculum persistence policy", () => {
         approved: true,
         qualityPassed: true,
       })
-    ).toBe("updated_existing_phase6_draft");
+    ).toBe("replaced_thin_content");
+  });
+
+  it("allows approved passing reruns to replace legacy NEEDS_REVIEW rows", () => {
+    expect(
+      phase6PersistenceDecision({
+        existing: { contentId: "official-g5-english-w01-d3-core", status: "NEEDS_REVIEW" },
+        approved: true,
+        qualityPassed: true,
+      })
+    ).toBe("replaced_thin_content");
   });
 
   it("does not overwrite APPROVED rows", () => {
