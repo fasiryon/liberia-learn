@@ -755,3 +755,12 @@ export function isTtsGenerationStopped(): boolean {
 export function isCostDashboardEnabled(): boolean {
   return process.env.ENABLE_COST_DASHBOARD !== "false";
 }
+
+/**
+ * Queue-driven NEEDS_REVIEW curriculum regeneration. DEFAULT OFF.
+ * Scripts may still perform dry-run planning while this is off, but worker
+ * enqueues and job processing are gated to prevent accidental production runs.
+ */
+export function isCurriculumRegenQueueEnabled(): boolean {
+  return process.env.ENABLE_CURRICULUM_REGEN_QUEUE === "true";
+}

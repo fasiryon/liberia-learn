@@ -1472,6 +1472,72 @@ model GradePipelineJob {
   @@index([completedAt])
 }
 
+model CurriculumRegenerationRun {
+  id                String   @id @default(cuid())
+  status            String   @default("pending")
+  targetStatus      String   @default("NEEDS_REVIEW")
+  totalPlanned      Int      @default(0)
+  totalProcessed    Int      @default(0)
+  totalApproved     Int      @default(0)
+  totalFailed       Int      @default(0)
+  currentGradeLevel Int?
+  currentSubject    String?
+  startedAt         DateTime?
+  completedAt       DateTime?
+  stoppedReason     String?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  checkpoints       CurriculumRegenerationCheckpoint[]
+  jobs              CurriculumRegenerationJob[]
+
+  @@index([status, createdAt])
+  @@index([targetStatus, status])
+}
+
+model CurriculumRegenerationCheckpoint {
+  id                     String   @id @default(cuid())
+  runId                  String
+  gradeLevel             Int
+  subject                String
+  lastProcessedContentId String?
+  plannedCount           Int      @default(0)
+  processedCount         Int      @default(0)
+  approvedCount          Int      @default(0)
+  failedCount            Int      @default(0)
+  status                 String   @default("pending")
+  updatedAt              DateTime @updatedAt
+  run                    CurriculumRegenerationRun @relation(fields: [runId], references: [id], onDelete: Cascade)
+
+  @@unique([runId, gradeLevel, subject])
+  @@index([status, updatedAt])
+}
+
+model CurriculumRegenerationJob {
+  id                  String   @id @default(cuid())
+  runId               String
+  curriculumContentId String
+  gradeLevel          Int
+  subject             String
+  topic               String?
+  status              String   @default("pending")
+  attempt             Int      @default(0)
+  maxAttempts         Int      @default(3)
+  provider            String?
+  requestedBy         String?
+  schoolId            String?
+  tenantId            String?
+  lastErrorCode       String?
+  lastErrorMessage    String?
+  idempotencyKey      String   @unique
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+  run                 CurriculumRegenerationRun @relation(fields: [runId], references: [id], onDelete: Cascade)
+
+  @@index([runId, status, createdAt])
+  @@index([gradeLevel, subject, status])
+  @@index([curriculumContentId])
+}
+
 model PipelineLock {
   id        String   @id @default(cuid())
   lockKey   String   @unique

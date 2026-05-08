@@ -7,6 +7,11 @@ import { handleConfusionDetectionJob } from "@/worker/handlers/intelligence";
 import { handleGenerateSchoolOnboardingKitJob } from "@/worker/handlers/onboardingKit";
 import { handleSendSmsJob } from "@/worker/handlers/sms";
 import { handleGenerateTextbookJob } from "@/worker/handlers/textbook";
+import {
+  handleCurriculumRegenerationGroupJob,
+  handleCurriculumRegenerationLessonJob,
+  handleCurriculumRegenerationResumeJob,
+} from "@/worker/handlers/curriculumRegeneration";
 
 export type JobDispatchMetadata = {
   enqueuedAt?: string | null;
@@ -31,6 +36,12 @@ export async function dispatchJob(jobType: JobType, payload: unknown, metadata: 
       return handleGenerateSchoolOnboardingKitJob(payload as { schoolId: string; actorUserId?: string | null }, metadata);
     case JobType.GENERATE_CERTIFICATION_ASSETS:
       return handleGenerateCertificationAssetsJob(payload as { certificationId: string; actorUserId: string }, metadata);
+    case JobType.CURRICULUM_REGENERATE_LESSON:
+      return handleCurriculumRegenerationLessonJob(payload as any);
+    case JobType.CURRICULUM_REGENERATE_GROUP:
+      return handleCurriculumRegenerationGroupJob(payload as any);
+    case JobType.CURRICULUM_REGENERATE_RESUME:
+      return handleCurriculumRegenerationResumeJob(payload as any);
     default:
       throw new Error(`Unsupported job type: ${jobType}`);
   }
