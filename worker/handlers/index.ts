@@ -42,6 +42,8 @@ export async function dispatchJob(jobType: JobType, payload: unknown, metadata: 
       return handleCurriculumRegenerationGroupJob(payload as any);
     case JobType.CURRICULUM_REGENERATE_RESUME:
       return handleCurriculumRegenerationResumeJob(payload as any);
+    case JobType.QUEUE_READINESS_PROBE:
+      return { status: "ok" };
     default:
       throw new Error(`Unsupported job type: ${jobType}`);
   }

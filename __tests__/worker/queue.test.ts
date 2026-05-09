@@ -14,14 +14,41 @@ describe("enqueueJob", () => {
   it("sends the job to SQS with group and deduplication ids", async () => {
     sqsMock.on(SendMessageCommand).resolves({});
 
-    await enqueueJob(JobType.SEND_SMS, { to: "+231770000000", body: "Hello" });
+    await enqueueJob(JobType.SEND_SMS, { to: "+231770000000", body: "Hello" }, {
+      messageGroupId: "sms",
+      messageDeduplicationId: "sms-1",
+    });
 
     const calls = sqsMock.commandCalls(SendMessageCommand);
     expect(calls).toHaveLength(1);
     const [call] = calls;
     expect(call.args[0].input.QueueUrl).toBe(process.env.SQS_QUEUE_URL);
+    expect(call.args[0].input.MessageGroupId).toBe("sms");
+    expect(call.args[0].input.MessageDeduplicationId).toBe("sms-1");
+  });
+
+  it("derives FIFO attributes when callers do not override them", async () => {
+    sqsMock.on(SendMessageCommand).resolves({});
+
+    await enqueueJob(JobType.SEND_SMS, { to: "+231770000000", body: "Hello" });
+
+    const [call] = sqsMock.commandCalls(SendMessageCommand);
     expect(call.args[0].input.MessageGroupId).toBe(JobType.SEND_SMS);
     expect(call.args[0].input.MessageDeduplicationId).toMatch(/^[a-f0-9]{64}$/);
+  });
+
+  it("omits FIFO-only attributes for standard queues", async () => {
+    process.env.SQS_QUEUE_URL = "https://sqs.us-east-1.amazonaws.com/queue/liberialearn-jobs";
+    sqsMock.on(SendMessageCommand).resolves({});
+
+    await enqueueJob(JobType.SEND_SMS, { to: "+231770000000", body: "Hello" }, {
+      messageGroupId: "sms",
+      messageDeduplicationId: "sms-1",
+    });
+
+    const [call] = sqsMock.commandCalls(SendMessageCommand);
+    expect(call.args[0].input.MessageGroupId).toBeUndefined();
+    expect(call.args[0].input.MessageDeduplicationId).toBeUndefined();
   });
 
   it("skips enqueue when SQS_QUEUE_URL is missing", async () => {
