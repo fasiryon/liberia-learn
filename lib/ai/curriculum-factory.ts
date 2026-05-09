@@ -44,7 +44,7 @@ function getGenerationMaxTokens(
   contentType: string
 ): number {
   if (contentType !== "lesson") return 2500;
-  if (format === "either") return 6000;
+  if (format === "either") return 9000;
   if (format === "block") return 4000;
   return 3000;
 }
@@ -53,6 +53,7 @@ function buildLessonBodyPrompt(format: "standard" | "block" | "either"): string 
   const standardTemplate = `
 - body_standard must contain these clearly labeled sections for a 45-minute lesson:
   ## Opening (5 minutes)
+  Include explicit "Learning Objective:" and "Introduction:" labels in this section.
   Hook question or scenario using Liberian context.
   Connect to prior knowledge.
   State today's learning objective clearly.
@@ -74,6 +75,7 @@ function buildLessonBodyPrompt(format: "standard" | "block" | "either"): string 
   Include answer key.
 
   ## Closing (7 minutes)
+  Include an explicit "Assessment:" label in this section.
   Summary of key concepts learned today.
   Exit ticket question (links to assessment).
   Preview of next lesson.`;
@@ -81,6 +83,7 @@ function buildLessonBodyPrompt(format: "standard" | "block" | "either"): string 
   const blockTemplate = `
 - body_block must contain these clearly labeled sections for a 90-minute block lesson:
   ## Opening (5 minutes)
+  Include explicit "Learning Objective:" and "Introduction:" labels in this section.
   Hook question or scenario using Liberian context.
   Connect to prior knowledge.
   State today's learning objective clearly.
@@ -101,6 +104,7 @@ function buildLessonBodyPrompt(format: "standard" | "block" | "either"): string 
   If no lab is appropriate, include an extended investigation or group project activity that is still teachable.
 
   ## Independent Work (15 minutes)
+  Include the phrase "Independent Practice" in this section.
   6-8 problems with a wider difficulty range.
   Include answer key.
 
@@ -108,6 +112,7 @@ function buildLessonBodyPrompt(format: "standard" | "block" | "either"): string 
   Discussion prompt connecting the lesson to real Liberian context or current events.
 
   ## Closing (7 minutes)
+  Include an explicit "Assessment:" label in this section.
   Summary of key concepts learned today.
   Exit ticket question.
   Reflection question and preview of next lesson.`;
@@ -219,6 +224,8 @@ function buildLabPrompt(subject: string, grade: number, lessonFormat: "standard"
     "virtualAlternative": string | null
   }
 - Every lab must include a real step-by-step procedure, a real observation form, and analysis questions.
+- Every lab observationForm must include at least 2 fields.
+- Every lab analysisQuestions must include at least 2 questions.
 - Use locally available Liberian materials. Avoid specialised imported equipment unless the virtualAlternative explains the substitute.
 - For guided_walkthrough labs, set offlineCapable to true.`;
 }
@@ -360,6 +367,19 @@ ${lessonBodyHint}`;
     ],
     maxTokens: getGenerationMaxTokens(lessonFormat, input.contentType ?? "lesson"),
     forceSmartTier: input.forceSmartTier ?? true,
+    aiUsage: {
+      route: "curriculum.factory.generate",
+      feature: "curriculum",
+      subject: input.subject,
+      strandKey: input.moeAlignmentCodes?.[0] ?? "curriculum",
+      requestType: "elite_curriculum_generation",
+      promptKey: "lesson.deep",
+      metadata: {
+        grade: input.grade,
+        contentType: input.contentType ?? "lesson",
+        lessonFormat,
+      },
+    },
   });
 
   let raw: unknown;
