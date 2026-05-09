@@ -29,6 +29,13 @@ function resetRelevantEnv() {
   delete env.ENABLE_SCHOOL_ONBOARDING_KITS;
   delete env.ENABLE_CERTIFICATION_ASSET_GENERATION;
   delete env.ENABLE_HIGGSFIELD_VIDEO_GENERATION;
+  delete env.ENABLE_CURRICULUM_REGEN_QUEUE;
+  delete env.SQS_QUEUE_URL;
+  delete env.AWS_REGION;
+  delete env.AWS_ACCESS_KEY_ID;
+  delete env.AWS_SECRET_ACCESS_KEY;
+  delete env.AWS_SESSION_TOKEN;
+  delete env.AWS_PROFILE;
   delete env.NEXT_PUBLIC_SENTRY_DSN;
   delete env.SENTRY_DSN;
   delete env.SENTRY_AUTH_TOKEN;
@@ -158,6 +165,19 @@ describe("validateEnv", () => {
     const { validateEnv } = await importValidateEnvModule();
 
     expect(() => validateEnv()).toThrow(/ANTHROPIC_API_KEY/);
+  });
+
+  it("requires SQS queue env when curriculum regeneration queue is enabled", async () => {
+    mutableEnv().DATABASE_URL = "postgres://db";
+    mutableEnv().DIRECT_URL = "postgres://direct";
+    mutableEnv().NEXTAUTH_SECRET = "secret";
+    mutableEnv().NEXTAUTH_URL = "http://localhost:3000";
+    mutableEnv().ENABLE_CURRICULUM_REGEN_QUEUE = "true";
+
+    const { validateEnv } = await importValidateEnvModule();
+
+    expect(() => validateEnv()).toThrow(/SQS_QUEUE_URL/);
+    expect(() => validateEnv()).toThrow(/AWS_REGION/);
   });
 });
 

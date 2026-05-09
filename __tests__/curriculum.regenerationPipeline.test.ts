@@ -8,6 +8,7 @@ const mockUpdate = vi.hoisted(() => vi.fn());
 const mockUpdateMany = vi.hoisted(() => vi.fn());
 const mockGroupBy = vi.hoisted(() => vi.fn());
 const mockTransaction = vi.hoisted(() => vi.fn());
+const mockUserFindUnique = vi.hoisted(() => vi.fn());
 const mockGenerateCurriculumPayload = vi.hoisted(() => vi.fn());
 const mockEnqueueJob = vi.hoisted(() => vi.fn());
 const mockLogAudit = vi.hoisted(() => vi.fn());
@@ -39,6 +40,9 @@ vi.mock("@/lib/db", () => ({
       findMany: mockFindMany,
       groupBy: mockGroupBy,
     },
+    user: {
+      findUnique: mockUserFindUnique,
+    },
     $transaction: mockTransaction,
   },
 }));
@@ -63,6 +67,7 @@ vi.mock("@/lib/serverFlags", () => ({
 beforeEach(() => {
   vi.clearAllMocks();
   mockRegenFlag.mockReturnValue(true);
+  mockUserFindUnique.mockResolvedValue(null);
   mockTransaction.mockImplementation((fn) =>
     fn({
       curriculumContent: { update: mockUpdate, create: mockCreate },
@@ -105,6 +110,83 @@ describe("curriculum regeneration pipeline", () => {
     expect(result.plan.totalPlanned).toBe(1);
     expect(mockCreate).not.toHaveBeenCalled();
     expect(mockEnqueueJob).not.toHaveBeenCalled();
+  });
+
+  it("enqueues DB-backed regeneration jobs to SQS when configured", async () => {
+    mockFindMany.mockResolvedValueOnce([
+      { contentId: "c1", title: "Plants", grade: 3, subject: "SCIENCE", payload: {}, moeAlignments: [] },
+    ]);
+    mockCreate.mockResolvedValueOnce({ id: "run-1" });
+    mockUpsert
+      .mockResolvedValueOnce({ id: "checkpoint-1" })
+      .mockResolvedValueOnce({
+        id: "job-1",
+        attempt: 0,
+        idempotencyKey: "idem-1",
+      });
+    const { createCurriculumRegenerationRun, buildCurriculumRegenerationIdempotencyKey } = await import("@/lib/curriculum/regenerationQueue");
+
+    await createCurriculumRegenerationRun({ gradeLevel: 3, subject: "science", limit: 1, requestedBy: "script" });
+
+    const idempotencyKey = buildCurriculumRegenerationIdempotencyKey({
+      runId: "run-1",
+      gradeLevel: 3,
+      subject: "SCIENCE",
+      curriculumContentId: "c1",
+    });
+    expect(mockUserFindUnique).toHaveBeenCalledWith({
+      where: { id: "script" },
+      select: { id: true },
+    });
+    expect(mockEnqueueJob).toHaveBeenCalledWith(
+      expect.any(String),
+      expect.objectContaining({
+        runId: "run-1",
+        curriculumContentId: "c1",
+        idempotencyKey,
+        requestedBy: null,
+      }),
+      {
+        messageGroupId: "run-1",
+        messageDeduplicationId: idempotencyKey,
+      }
+    );
+  });
+
+  it("does not use the queue/manual path when queue flag is unavailable", async () => {
+    mockRegenFlag.mockReturnValue(false);
+    mockFindMany.mockResolvedValueOnce([
+      { contentId: "c1", title: "Plants", grade: 3, subject: "SCIENCE", payload: {}, moeAlignments: [] },
+    ]);
+    const { createCurriculumRegenerationRun } = await import("@/lib/curriculum/regenerationQueue");
+
+    await expect(createCurriculumRegenerationRun({ gradeLevel: 3, subject: "science", limit: 1 })).rejects.toThrow(
+      "ENABLE_CURRICULUM_REGEN_QUEUE"
+    );
+    expect(mockCreate).not.toHaveBeenCalled();
+    expect(mockEnqueueJob).not.toHaveBeenCalled();
+  });
+
+  it("uses idempotency upserts instead of duplicate DB replacement creates", async () => {
+    mockFindMany.mockResolvedValueOnce([
+      { contentId: "c1", title: "Plants", grade: 3, subject: "SCIENCE", payload: {}, moeAlignments: [] },
+      { contentId: "c1", title: "Plants", grade: 3, subject: "SCIENCE", payload: {}, moeAlignments: [] },
+    ]);
+    mockCreate.mockResolvedValueOnce({ id: "run-1" });
+    mockUpsert.mockResolvedValue({ id: "job-1", attempt: 0 });
+    const { createCurriculumRegenerationRun } = await import("@/lib/curriculum/regenerationQueue");
+
+    await createCurriculumRegenerationRun({ gradeLevel: 3, subject: "science", limit: 2 });
+
+    const jobUpserts = mockUpsert.mock.calls.filter(([arg]) => arg?.where?.idempotencyKey);
+    expect(jobUpserts).toHaveLength(2);
+    expect(mockCreate).toHaveBeenCalledTimes(1);
+    expect(mockCreate).toHaveBeenCalledWith(expect.objectContaining({
+      data: expect.objectContaining({ status: "pending" }),
+    }));
+    expect(mockCreate).not.toHaveBeenCalledWith(expect.objectContaining({
+      data: expect.objectContaining({ contentId: "c1" }),
+    }));
   });
 
   it("stop marks a run stopped and pending jobs skipped", async () => {

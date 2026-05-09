@@ -15,6 +15,7 @@ export enum JobType {
   CURRICULUM_REGENERATE_LESSON = "curriculum.regenerate.lesson",
   CURRICULUM_REGENERATE_GROUP = "curriculum.regenerate.group",
   CURRICULUM_REGENERATE_RESUME = "curriculum.regenerate.resume",
+  QUEUE_READINESS_PROBE = "queue.readiness.probe",
 }
 
 type QueueEnvelope = {
@@ -42,7 +43,22 @@ export function isQueueConfigured() {
   return getQueueUrl().length > 0;
 }
 
-export async function enqueueJob(jobType: JobType, payload: unknown): Promise<void> {
+export function isFifoQueueUrl(queueUrl = getQueueUrl()) {
+  return queueUrl.trim().toLowerCase().includes(".fifo");
+}
+
+type EnqueueJobOptions = {
+  messageGroupId?: string | null;
+  messageDeduplicationId?: string | null;
+};
+
+function buildDeduplicationId(jobType: JobType, payload: unknown) {
+  return createHash("sha256")
+    .update(`${jobType}:${JSON.stringify(payload)}`)
+    .digest("hex");
+}
+
+export async function enqueueJob(jobType: JobType, payload: unknown, options: EnqueueJobOptions = {}): Promise<void> {
   const queueUrl = getQueueUrl();
   if (!queueUrl) {
     console.warn("[QUEUE] SQS_QUEUE_URL not configured; skipping enqueue", { jobType });
@@ -54,16 +70,18 @@ export async function enqueueJob(jobType: JobType, payload: unknown): Promise<vo
     payload,
     enqueuedAt: new Date().toISOString(),
   };
-  const deduplicationId = createHash("sha256")
-    .update(`${jobType}:${JSON.stringify(payload)}`)
-    .digest("hex");
+  const fifoAttributes = isFifoQueueUrl(queueUrl)
+    ? {
+        MessageGroupId: options.messageGroupId?.trim() || jobType,
+        MessageDeduplicationId: options.messageDeduplicationId?.trim() || buildDeduplicationId(jobType, payload),
+      }
+    : {};
 
   await getSqsClient().send(
     new SendMessageCommand({
       QueueUrl: queueUrl,
       MessageBody: JSON.stringify(body),
-      MessageGroupId: jobType,
-      MessageDeduplicationId: deduplicationId,
+      ...fifoAttributes,
     })
   );
 }

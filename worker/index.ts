@@ -170,7 +170,7 @@ async function processMessage(message: Message) {
   }
 }
 
-async function pollOnce() {
+export async function pollOnce() {
   const response = await sqsClient.send(
     new ReceiveMessageCommand({
       QueueUrl: queueUrl,
@@ -191,7 +191,7 @@ async function pollOnce() {
   }
 }
 
-async function run() {
+export async function run() {
   initWorkerSentry();
 
   if (!queueUrl) {
