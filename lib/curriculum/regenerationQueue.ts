@@ -40,12 +40,20 @@ type NeedsReviewLesson = {
   moeAlignments: unknown;
 };
 
+const TERMINAL_JOB_STATUSES = ["approved", "failed", "skipped"] as const;
+const ACTIVE_JOB_STATUSES = ["pending", "processing"] as const;
+
 function normalizeSubject(subject: string) {
   return subject.trim().toUpperCase().replace(/\s+/g, "_");
 }
 
 function contentHash(payload: unknown) {
   return createHash("sha256").update(JSON.stringify(payload)).digest("hex").slice(0, 40);
+}
+
+function buildRetryDeduplicationId(idempotencyKey: string, attempt?: number | null) {
+  const normalizedAttempt = Math.max(0, Number(attempt ?? 0));
+  return normalizedAttempt > 0 ? `${idempotencyKey}:${normalizedAttempt}` : idempotencyKey;
 }
 
 export function buildCurriculumRegenerationIdempotencyKey(input: {
@@ -220,7 +228,7 @@ export async function createCurriculumRegenerationRun(input: {
       };
       await enqueueJob(JobType.CURRICULUM_REGENERATE_LESSON, queuePayload, {
         messageGroupId: run.id,
-        messageDeduplicationId: idempotencyKey,
+        messageDeduplicationId: buildRetryDeduplicationId(idempotencyKey, job.attempt),
       });
     }
   }
@@ -234,6 +242,71 @@ export async function createCurriculumRegenerationRun(input: {
   });
 
   return { dryRun: false, runId: run.id, plan };
+}
+
+export async function finalizeCurriculumRegenerationRun(runId: string) {
+  const [run, activeJobs, statusCounts, checkpoints] = await Promise.all([
+    prisma.curriculumRegenerationRun.findUnique({ where: { id: runId } }),
+    prisma.curriculumRegenerationJob.count({
+      where: { runId, status: { in: [...ACTIVE_JOB_STATUSES] } },
+    }),
+    prisma.curriculumRegenerationJob.groupBy({
+      by: ["status"],
+      where: { runId },
+      _count: { _all: true },
+    }),
+    prisma.curriculumRegenerationCheckpoint.findMany({ where: { runId } }),
+  ]);
+
+  if (!run || run.status === "completed" || run.status === "completed_with_errors") {
+    return { finalized: false, reason: run ? "already_finalized" : "run_not_found" };
+  }
+
+  if (activeJobs > 0) {
+    return { finalized: false, reason: "active_jobs_remaining", activeJobs };
+  }
+
+  const totalJobs = statusCounts.reduce((sum, row) => sum + row._count._all, 0);
+  const terminalJobs = statusCounts
+    .filter((row) => (TERMINAL_JOB_STATUSES as readonly string[]).includes(row.status))
+    .reduce((sum, row) => sum + row._count._all, 0);
+
+  if (totalJobs === 0 || terminalJobs !== totalJobs) {
+    return { finalized: false, reason: "non_terminal_jobs_remaining", totalJobs, terminalJobs };
+  }
+
+  const failedCount = statusCounts.find((row) => row.status === "failed")?._count._all ?? 0;
+  const now = new Date();
+
+  await prisma.$transaction(async (tx) => {
+    for (const checkpoint of checkpoints) {
+      if (checkpoint.status !== "completed" && checkpoint.processedCount >= checkpoint.plannedCount) {
+        await tx.curriculumRegenerationCheckpoint.update({
+          where: { id: checkpoint.id },
+          data: { status: "completed" },
+        });
+      }
+    }
+
+    await tx.curriculumRegenerationRun.update({
+      where: { id: runId },
+      data: {
+        status: failedCount > 0 ? "completed_with_errors" : "completed",
+        completedAt: run.completedAt ?? now,
+        stoppedReason:
+          failedCount > 0
+            ? `Completed with ${failedCount} failed regeneration job${failedCount === 1 ? "" : "s"}.`
+            : null,
+      },
+    });
+  });
+
+  return {
+    finalized: true,
+    status: failedCount > 0 ? "completed_with_errors" : "completed",
+    failedCount,
+    totalJobs,
+  };
 }
 
 async function markJobFailed(input: {
@@ -279,6 +352,10 @@ async function markJobFailed(input: {
       }
     })
   );
+
+  if (!input.retryable) {
+    await finalizeCurriculumRegenerationRun(input.runId);
+  }
 }
 
 export async function processCurriculumRegenerationLessonJob(payload: CurriculumRegenerationJobPayload) {
@@ -291,6 +368,7 @@ export async function processCurriculumRegenerationLessonJob(payload: Curriculum
   });
   if (!job) throw new Error(`Regeneration job not found for ${payload.idempotencyKey}`);
   if (job.status === "approved" || job.status === "skipped") {
+    await finalizeCurriculumRegenerationRun(job.runId);
     return { jobId: job.id, status: job.status, skipped: true };
   }
 
@@ -343,8 +421,29 @@ export async function processCurriculumRegenerationLessonJob(payload: Curriculum
     });
     if (!lesson || lesson.status !== "NEEDS_REVIEW") {
       await withDbWriteThrottle("curriculum.regeneration.job.skipped", () =>
-        prisma.curriculumRegenerationJob.update({ where: { id: job.id }, data: { status: "skipped" } })
+        prisma.$transaction(async (tx) => {
+          await tx.curriculumRegenerationJob.update({ where: { id: job.id }, data: { status: "skipped" } });
+          await tx.curriculumRegenerationRun.update({
+            where: { id: job.runId },
+            data: { totalProcessed: { increment: 1 } },
+          });
+          await tx.curriculumRegenerationCheckpoint.update({
+            where: {
+              runId_gradeLevel_subject: {
+                runId: job.runId,
+                gradeLevel: job.gradeLevel,
+                subject: job.subject,
+              },
+            },
+            data: {
+              processedCount: { increment: 1 },
+              lastProcessedContentId: job.curriculumContentId,
+              status: "running",
+            },
+          });
+        })
       );
+      await finalizeCurriculumRegenerationRun(job.runId);
       return { jobId: job.id, status: "skipped", skipped: true };
     }
 
@@ -434,6 +533,8 @@ export async function processCurriculumRegenerationLessonJob(payload: Curriculum
       details: { runId: job.runId, curriculumContentId: job.curriculumContentId, status: "DRAFT", contentLength: quality.contentLength },
     });
 
+    await finalizeCurriculumRegenerationRun(job.runId);
+
     return { jobId: job.id, status: "approved", contentId: job.curriculumContentId };
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
@@ -461,7 +562,7 @@ export async function processCurriculumRegenerationLessonJob(payload: Curriculum
     if (retryable) {
       await enqueueJob(JobType.CURRICULUM_REGENERATE_LESSON, { ...payload, attempt: nextAttempt }, {
         messageGroupId: payload.runId,
-        messageDeduplicationId: payload.idempotencyKey,
+        messageDeduplicationId: buildRetryDeduplicationId(payload.idempotencyKey, nextAttempt),
       });
     }
     return { jobId: job.id, status: retryable ? "pending" : "failed", error: message };
@@ -472,12 +573,24 @@ export async function enqueuePendingCurriculumRegenerationJobs(input: Curriculum
   if (!isCurriculumRegenQueueEnabled()) {
     throw new Error("ENABLE_CURRICULUM_REGEN_QUEUE must be true to enqueue regeneration jobs.");
   }
+  const run = await prisma.curriculumRegenerationRun.findUnique({ where: { id: input.runId } });
+  if (!run || run.status === "completed" || run.status === "completed_with_errors" || run.status === "stopped") {
+    return { enqueued: 0, skipped: true };
+  }
+
+  await finalizeCurriculumRegenerationRun(input.runId);
+
+  const refreshedRun = await prisma.curriculumRegenerationRun.findUnique({ where: { id: input.runId } });
+  if (refreshedRun?.status === "completed" || refreshedRun?.status === "completed_with_errors") {
+    return { enqueued: 0, skipped: true };
+  }
+
   const jobs = await prisma.curriculumRegenerationJob.findMany({
     where: {
       runId: input.runId,
       gradeLevel: input.gradeLevel,
       subject: normalizeSubject(input.subject),
-      status: { in: ["pending", "failed"] },
+      status: "pending",
     },
     orderBy: { createdAt: "asc" },
     take: getSubjectConcurrencyProfile(input.subject).batchSize,
@@ -498,9 +611,14 @@ export async function enqueuePendingCurriculumRegenerationJobs(input: Curriculum
     };
     await enqueueJob(JobType.CURRICULUM_REGENERATE_LESSON, payload, {
       messageGroupId: job.runId,
-      messageDeduplicationId: job.idempotencyKey,
+      messageDeduplicationId: buildRetryDeduplicationId(job.idempotencyKey, job.attempt),
     });
   }
+
+  if (jobs.length === 0) {
+    await finalizeCurriculumRegenerationRun(input.runId);
+  }
+
   return { enqueued: jobs.length };
 }
 
