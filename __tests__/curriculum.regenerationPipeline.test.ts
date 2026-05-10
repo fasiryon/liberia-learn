@@ -7,6 +7,7 @@ const mockUpsert = vi.hoisted(() => vi.fn());
 const mockUpdate = vi.hoisted(() => vi.fn());
 const mockUpdateMany = vi.hoisted(() => vi.fn());
 const mockGroupBy = vi.hoisted(() => vi.fn());
+const mockCount = vi.hoisted(() => vi.fn());
 const mockTransaction = vi.hoisted(() => vi.fn());
 const mockUserFindUnique = vi.hoisted(() => vi.fn());
 const mockGenerateCurriculumPayload = vi.hoisted(() => vi.fn());
@@ -38,6 +39,7 @@ vi.mock("@/lib/db", () => ({
       update: mockUpdate,
       updateMany: mockUpdateMany,
       findMany: mockFindMany,
+      count: mockCount,
       groupBy: mockGroupBy,
     },
     user: {
@@ -277,5 +279,123 @@ describe("curriculum regeneration pipeline", () => {
 
     expect(result.passed).toBe(false);
     expect(result.reason).toBe("content_under_800_chars");
+  });
+
+  it("finalizes a run when all jobs are approved", async () => {
+    mockFindUnique.mockResolvedValueOnce({ id: "run-1", status: "running", completedAt: null });
+    mockCount.mockResolvedValueOnce(0);
+    mockGroupBy.mockResolvedValueOnce([{ status: "approved", _count: { _all: 2 } }]);
+    mockFindMany.mockResolvedValueOnce([
+      { id: "checkpoint-1", status: "running", processedCount: 2, plannedCount: 2 },
+    ]);
+    const { finalizeCurriculumRegenerationRun } = await import("@/lib/curriculum/regenerationQueue");
+
+    const result = await finalizeCurriculumRegenerationRun("run-1");
+
+    expect(result).toMatchObject({ finalized: true, status: "completed", failedCount: 0, totalJobs: 2 });
+    expect(mockUpdate).toHaveBeenCalledWith(expect.objectContaining({
+      where: { id: "checkpoint-1" },
+      data: { status: "completed" },
+    }));
+    expect(mockUpdate).toHaveBeenCalledWith(expect.objectContaining({
+      where: { id: "run-1" },
+      data: expect.objectContaining({ status: "completed", stoppedReason: null }),
+    }));
+  });
+
+  it("finalizes a run with failed jobs recorded", async () => {
+    mockFindUnique.mockResolvedValueOnce({ id: "run-1", status: "running", completedAt: null });
+    mockCount.mockResolvedValueOnce(0);
+    mockGroupBy.mockResolvedValueOnce([
+      { status: "approved", _count: { _all: 1 } },
+      { status: "failed", _count: { _all: 1 } },
+    ]);
+    mockFindMany.mockResolvedValueOnce([
+      { id: "checkpoint-1", status: "running", processedCount: 2, plannedCount: 2 },
+    ]);
+    const { finalizeCurriculumRegenerationRun } = await import("@/lib/curriculum/regenerationQueue");
+
+    const result = await finalizeCurriculumRegenerationRun("run-1");
+
+    expect(result).toMatchObject({ finalized: true, status: "completed_with_errors", failedCount: 1 });
+    expect(mockUpdate).toHaveBeenCalledWith(expect.objectContaining({
+      where: { id: "run-1" },
+      data: expect.objectContaining({
+        status: "completed_with_errors",
+        stoppedReason: "Completed with 1 failed regeneration job.",
+      }),
+    }));
+  });
+
+  it("does not finalize while pending jobs remain", async () => {
+    mockFindUnique.mockResolvedValueOnce({ id: "run-1", status: "running", completedAt: null });
+    mockCount.mockResolvedValueOnce(1);
+    mockGroupBy.mockResolvedValueOnce([
+      { status: "approved", _count: { _all: 1 } },
+      { status: "pending", _count: { _all: 1 } },
+    ]);
+    mockFindMany.mockResolvedValueOnce([
+      { id: "checkpoint-1", status: "running", processedCount: 1, plannedCount: 2 },
+    ]);
+    const { finalizeCurriculumRegenerationRun } = await import("@/lib/curriculum/regenerationQueue");
+
+    const result = await finalizeCurriculumRegenerationRun("run-1");
+
+    expect(result).toMatchObject({ finalized: false, reason: "active_jobs_remaining", activeJobs: 1 });
+    expect(mockUpdate).not.toHaveBeenCalledWith(expect.objectContaining({
+      where: { id: "run-1" },
+      data: expect.objectContaining({ status: "completed" }),
+    }));
+  });
+
+  it("does not finalize while processing jobs remain", async () => {
+    mockFindUnique.mockResolvedValueOnce({ id: "run-1", status: "running", completedAt: null });
+    mockCount.mockResolvedValueOnce(1);
+    mockGroupBy.mockResolvedValueOnce([
+      { status: "approved", _count: { _all: 1 } },
+      { status: "processing", _count: { _all: 1 } },
+    ]);
+    mockFindMany.mockResolvedValueOnce([
+      { id: "checkpoint-1", status: "running", processedCount: 1, plannedCount: 2 },
+    ]);
+    const { finalizeCurriculumRegenerationRun } = await import("@/lib/curriculum/regenerationQueue");
+
+    const result = await finalizeCurriculumRegenerationRun("run-1");
+
+    expect(result).toMatchObject({ finalized: false, reason: "active_jobs_remaining", activeJobs: 1 });
+    expect(mockUpdate).not.toHaveBeenCalledWith(expect.objectContaining({
+      where: { id: "run-1" },
+      data: expect.objectContaining({ status: "completed" }),
+    }));
+  });
+
+  it("resume handling does not duplicate completed jobs", async () => {
+    mockFindUnique.mockResolvedValueOnce({ id: "run-1", status: "completed", completedAt: new Date() });
+    const { enqueuePendingCurriculumRegenerationJobs } = await import("@/lib/curriculum/regenerationQueue");
+
+    const result = await enqueuePendingCurriculumRegenerationJobs({
+      runId: "run-1",
+      gradeLevel: 3,
+      subject: "SCIENCE",
+    });
+
+    expect(result).toMatchObject({ enqueued: 0, skipped: true });
+    expect(mockFindMany).not.toHaveBeenCalled();
+    expect(mockEnqueueJob).not.toHaveBeenCalled();
+  });
+
+  it("finalization is idempotent", async () => {
+    mockFindUnique.mockResolvedValueOnce({ id: "run-1", status: "completed", completedAt: new Date() });
+    mockCount.mockResolvedValueOnce(0);
+    mockGroupBy.mockResolvedValueOnce([{ status: "approved", _count: { _all: 2 } }]);
+    mockFindMany.mockResolvedValueOnce([
+      { id: "checkpoint-1", status: "completed", processedCount: 2, plannedCount: 2 },
+    ]);
+    const { finalizeCurriculumRegenerationRun } = await import("@/lib/curriculum/regenerationQueue");
+
+    const result = await finalizeCurriculumRegenerationRun("run-1");
+
+    expect(result).toMatchObject({ finalized: false, reason: "already_finalized" });
+    expect(mockUpdate).not.toHaveBeenCalled();
   });
 });

@@ -2,6 +2,7 @@ import { config } from "dotenv";
 import { prisma } from "@/lib/db";
 import { enqueueJob, JobType } from "@/lib/queue";
 import { isCurriculumRegenQueueEnabled } from "@/lib/serverFlags";
+import { finalizeCurriculumRegenerationRun } from "@/lib/curriculum/regenerationQueue";
 
 config({ path: ".env.local" });
 config();
@@ -15,6 +16,23 @@ async function main() {
   const runId = readArg("--run-id") ?? process.argv[2];
   if (!runId) throw new Error("--run-id is required");
   if (!isCurriculumRegenQueueEnabled()) throw new Error("ENABLE_CURRICULUM_REGEN_QUEUE must be true to resume.");
+
+  const finalization = await finalizeCurriculumRegenerationRun(runId);
+  const run = await prisma.curriculumRegenerationRun.findUnique({
+    where: { id: runId },
+    select: { status: true },
+  });
+  if (run?.status === "completed" || run?.status === "completed_with_errors") {
+    console.log(JSON.stringify({
+      action: "curriculum_regeneration_resume",
+      runId,
+      groupsEnqueued: 0,
+      skipped: true,
+      reason: "run_already_finalized",
+      finalization,
+    }, null, 2));
+    return;
+  }
 
   await prisma.curriculumRegenerationRun.update({
     where: { id: runId },
