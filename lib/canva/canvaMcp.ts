@@ -1,8 +1,9 @@
 import Anthropic from "@anthropic-ai/sdk";
 import { logger } from "@/lib/logger";
 import { CANVA_MCP_URL, hasAnthropicApiKey } from "@/lib/canva/config";
+import { resolveCanvaMcpAuthorizationToken } from "@/lib/canva/canvaOAuth";
 
-const DEFAULT_MODEL = "claude-sonnet-4-20250514";
+const DEFAULT_MODEL = "claude-opus-4-1-20250805";
 const CANVA_DESIGN_URL_RE = /https:\/\/www\.canva\.com\/design\/[^\s")]+/;
 
 type CanvaGenerationResult = {
@@ -38,7 +39,9 @@ function extractDesignId(canvaUrl: string): string {
 export async function generateCanvaAsset(prompt: string): Promise<CanvaGenerationResult> {
   const client = getAnthropicClient();
   const model = process.env.ANTHROPIC_CANVA_MODEL ?? DEFAULT_MODEL;
-  const response = await client.messages.create({
+  const authorizationToken = await resolveCanvaMcpAuthorizationToken();
+  const response = await client.beta.messages.create({
+    betas: ["mcp-client-2025-04-04"],
     model,
     max_tokens: 1000,
     mcp_servers: [
@@ -46,6 +49,7 @@ export async function generateCanvaAsset(prompt: string): Promise<CanvaGeneratio
         type: "url",
         url: CANVA_MCP_URL,
         name: "canva",
+        ...(authorizationToken ? { authorization_token: authorizationToken } : {}),
       },
     ],
     messages: [

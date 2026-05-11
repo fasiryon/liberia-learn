@@ -26,6 +26,8 @@ export default async function OptimizationDashboardPage() {
             <Link className="rounded border border-[var(--ll-border)] px-3 py-2 underline" href="/admin/ops/optimization/tuning">Tuning review</Link>
             <Link className="rounded border border-[var(--ll-border)] px-3 py-2 underline" href="/admin/ops/optimization/rollout">Rollout calibration</Link>
             <Link className="rounded border border-[var(--ll-border)] px-3 py-2 underline" href="/admin/ops/optimization/readiness">Autonomy readiness</Link>
+            <Link className="rounded border border-[var(--ll-border)] px-3 py-2 underline" href="/admin/ops/optimization/outcomes">Outcome closure</Link>
+            <Link className="rounded border border-[var(--ll-border)] px-3 py-2 underline" href="/admin/ops/optimization/evaluation-windows">Evaluation windows</Link>
           </div>
         </header>
         <section className="grid gap-4 md:grid-cols-4">

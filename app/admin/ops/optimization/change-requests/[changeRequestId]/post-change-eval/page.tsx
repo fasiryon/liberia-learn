@@ -6,6 +6,10 @@ import { getPostChangeEvaluationPlan } from "@/lib/autonomous/optimization/postC
 
 export const dynamic = "force-dynamic";
 
+function metricValue(value: unknown) {
+  return typeof value === "number" ? value.toFixed(2) : "pending";
+}
+
 export default async function PostChangeEvalPage({ params }: { params: { changeRequestId: string } }) {
   const user = await requireUser();
   if (!user.isPlatformAdmin && user.role !== "ADMIN") redirect("/");
@@ -56,7 +60,16 @@ export default async function PostChangeEvalPage({ params }: { params: { changeR
 
             {evalPlan.postChangeMetrics && (
               <section className="rounded border bg-[var(--ll-surface)] p-4 space-y-2">
-                <h2 className="text-lg font-semibold">Post-Change Metrics</h2>
+                <h2 className="text-lg font-semibold">Baseline vs Actual</h2>
+                <div className="grid gap-2 text-sm md:grid-cols-3">
+                  {["detectorPrecision", "falsePositiveRate", "falseNegativeRate", "evidenceCoverage", "recommendationAcceptanceRate", "approvalRejectionRate", "rolloutStability", "workflowStability", "operationalEffectivenessDelta"].map((key) => (
+                    <div key={key} className="rounded border border-[var(--ll-border)] p-3">
+                      <div className="font-medium">{key}</div>
+                      <div className="text-[var(--ll-text-muted)]">baseline {metricValue((evalPlan.baselineMetrics as any)?.[key])}</div>
+                      <div>actual {metricValue((evalPlan.postChangeMetrics as any)?.[key])}</div>
+                    </div>
+                  ))}
+                </div>
                 <pre className="overflow-auto rounded bg-black/5 p-3 text-xs">{JSON.stringify(evalPlan.postChangeMetrics, null, 2)}</pre>
               </section>
             )}

@@ -2,6 +2,7 @@ import { prisma } from "@/lib/db";
 import { withDbWriteThrottle } from "@/lib/db/writeThrottle";
 import { isImplementationWorkflowEnabled } from "@/lib/serverFlags";
 import { recordConfigChangeAudit } from "@/lib/autonomous/optimization/configChangeAuditService";
+import { aggregatePostChangeOutcomes } from "@/lib/autonomous/optimization/postChangeOutcomeAggregator";
 import { logLearningEvent } from "@/lib/events/logLearningEvent";
 
 export type EvalActor = {
@@ -39,11 +40,19 @@ async function captureBaselineMetrics(schoolId: string | null): Promise<Record<s
   return {
     capturedAt: new Date().toISOString(),
     windowDays: 30,
+    sampleSize: total + approvalTotal,
     totalEvaluationEvents: total,
     detectorPrecision: precision,
     falsePositiveRate,
+    falseNegativeRate: null,
+    evidenceCoverage: null,
     approvalRejectionRate,
     recommendationAcceptanceRate: null, // Requires additional acceptance tracking
+    rolloutStability: null,
+    workflowStability: null,
+    operationalEffectivenessDelta: null,
+    sparseData: total < 3,
+    confidenceMultiplier: total < 3 ? 0.55 : 1,
   };
 }
 
@@ -138,4 +147,82 @@ export async function createPostChangeEvaluationPlan(input: {
 
 export async function getPostChangeEvaluationPlan(changeRequestId: string) {
   return (prisma as any).postChangeEvaluationPlan.findUnique({ where: { changeRequestId } });
+}
+
+export async function recordPostChangeMetrics(input: {
+  evaluationPlanId?: string;
+  changeRequestId?: string;
+  actorId?: string | null;
+  force?: boolean;
+}) {
+  if (!isImplementationWorkflowEnabled()) {
+    throw Object.assign(new Error("Implementation workflow is disabled"), { status: 404 });
+  }
+  const where = input.evaluationPlanId ? { id: input.evaluationPlanId } : { changeRequestId: input.changeRequestId };
+  const evalPlan = await (prisma as any).postChangeEvaluationPlan.findUnique({
+    where,
+    include: { changeRequest: true },
+  });
+  if (!evalPlan) throw Object.assign(new Error("Post-change evaluation plan not found"), { status: 404 });
+  if (!evalPlan.baselineMetrics) {
+    throw Object.assign(new Error("Cannot record post-change metrics without baseline metrics"), { status: 422, code: "baseline_required" });
+  }
+
+  const rolloutPlan = await (prisma as any).stagedRolloutPlan.findUnique({ where: { changeRequestId: evalPlan.changeRequestId } });
+  if (!rolloutPlan?.rolloutVerification) {
+    throw Object.assign(new Error("Post-change metrics require rollout verification"), { status: 422, code: "rollout_verification_required" });
+  }
+
+  const createdAt = new Date(evalPlan.createdAt);
+  const windowMs = evalPlan.evaluationWindowDays * 24 * 60 * 60 * 1000;
+  const windowClosed = Date.now() >= createdAt.getTime() + windowMs;
+  const status = windowClosed ? "ACTUALS_RECORDED" : "INCOMPLETE_DATA";
+  const actualMetrics = await aggregatePostChangeOutcomes({
+    schoolId: evalPlan.changeRequest?.schoolId ?? null,
+    districtId: evalPlan.changeRequest?.districtId ?? null,
+    evaluationWindowDays: evalPlan.evaluationWindowDays,
+  });
+
+  if (!input.force && !windowClosed && actualMetrics.sampleSize === 0) {
+    throw Object.assign(new Error("Evaluation window is still open and no actual outcome records are available"), {
+      status: 422,
+      code: "evaluation_window_open",
+    });
+  }
+
+  const updated = await withDbWriteThrottle("implementation.postChangeMetrics", () =>
+    (prisma as any).postChangeEvaluationPlan.update({
+      where: { id: evalPlan.id },
+      data: {
+        postChangeMetrics: actualMetrics,
+        status,
+        feedbackLoopStatus: windowClosed ? "actuals_recorded" : "collecting",
+        updatedAt: new Date(),
+      },
+    })
+  );
+
+  await logLearningEvent(
+    {
+      workflowTraceId: evalPlan.traceId ?? null,
+      schoolId: evalPlan.changeRequest?.schoolId ?? null,
+      districtId: evalPlan.changeRequest?.districtId ?? null,
+      actor: { type: "system", id: "postChangeEvaluationService" },
+      target: { type: "PostChangeEvaluationPlan", id: evalPlan.id },
+      eventType: "autonomous.implementation.post_change_metrics.recorded",
+      source: "autonomous.implementation",
+      status,
+      metadata: {
+        changeRequestId: evalPlan.changeRequestId,
+        actualMetrics,
+        sparseData: actualMetrics.sparseData,
+        confidenceMultiplier: actualMetrics.confidenceMultiplier,
+        policyMutation: false,
+        advisoryOnly: true,
+      },
+    },
+    { throwOnError: true }
+  );
+
+  return updated;
 }
