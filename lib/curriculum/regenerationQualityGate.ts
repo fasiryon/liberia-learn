@@ -21,6 +21,14 @@ export type QualityGateResult = {
   contentLength: number;
 };
 
+export type DepthValidationResult = {
+  valid: boolean;
+  slideCount: number;
+  wordCount: number;
+  hasForbidden: boolean;
+  failReasons: string[];
+};
+
 const REQUIRED_SECTIONS = [
   /objective/i,
   /introduction|warm[-\s]?up/i,
@@ -38,7 +46,24 @@ const PLACEHOLDER_PATTERNS = [
   /as an ai language model/i,
   /i'?m sorry/i,
   /i cannot/i,
-  /Ã|Â|â€|â€œ|â€\u009d|�/,
+  /Ã|Â|â€|â€œ|â€|â€˜|ï¿½|â€"/,
+];
+
+const DEPTH_FORBIDDEN_PHRASES = [
+  'Pause for student explanation',
+  'Add content here',
+  'Insert example',
+  'placeholder',
+  'TODO',
+  'TBD',
+  '[content]',
+  '[insert',
+  'lorem ipsum',
+  'add your',
+  'fill in',
+  'write here',
+  'example here',
+  'content goes here',
 ];
 
 function asString(value: unknown) {
@@ -47,6 +72,14 @@ function asString(value: unknown) {
 
 function asArray(value: unknown) {
   return Array.isArray(value) ? value.filter(Boolean) : [];
+}
+
+function countWords(text: string): number {
+  return text.trim().split(/\s+/).filter(Boolean).length;
+}
+
+function countSections(text: string): number {
+  return (text.match(/^##\s+/gm) ?? []).length;
 }
 
 export function extractLessonText(payload: unknown): string {
@@ -87,4 +120,37 @@ export function validateRegeneratedLesson(payload: unknown): QualityGateResult {
   }
 
   return { passed: true, reason: null, contentLength: content.length };
+}
+
+/**
+ * Depth validation gate — enforced before any DB write.
+ * grade <= 6: requires 15+ sections and 1200+ words.
+ * grade >= 7: requires 18+ sections and 1200+ words.
+ * Rejects any output containing forbidden placeholder phrases.
+ * Returns detailed failure reasons so the worker can log them.
+ */
+export function validateLessonDepth(lesson: unknown, grade: number): DepthValidationResult {
+  const content = extractLessonText(lesson);
+  const serialized = typeof lesson === "string" ? lesson : JSON.stringify(lesson ?? "");
+  const minSlides = grade <= 6 ? 15 : 18;
+  const minWords = 1200;
+
+  const slideCount = countSections(content);
+  const wordCount = countWords(content);
+  const hasForbidden = DEPTH_FORBIDDEN_PHRASES.some((phrase) =>
+    serialized.toLowerCase().includes(phrase.toLowerCase())
+  );
+
+  const failReasons: string[] = [];
+  if (slideCount < minSlides) failReasons.push(`slide_count_${slideCount}_below_min_${minSlides}`);
+  if (wordCount < minWords) failReasons.push(`word_count_${wordCount}_below_min_${minWords}`);
+  if (hasForbidden) failReasons.push("forbidden_placeholder_phrase_detected");
+
+  return {
+    valid: failReasons.length === 0,
+    slideCount,
+    wordCount,
+    hasForbidden,
+    failReasons,
+  };
 }

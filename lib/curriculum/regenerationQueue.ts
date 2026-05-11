@@ -6,7 +6,7 @@ import { withProviderRetry, NonRetryableProviderError } from "@/lib/ai/providerR
 import { withDbWriteThrottle } from "@/lib/db/writeThrottle";
 import { enqueueJob, JobType } from "@/lib/queue";
 import { getSubjectConcurrencyProfile } from "@/lib/curriculum/adaptiveConcurrency";
-import { extractLessonText, validateRegeneratedLesson } from "@/lib/curriculum/regenerationQualityGate";
+import { extractLessonText, validateRegeneratedLesson, validateLessonDepth } from "@/lib/curriculum/regenerationQualityGate";
 import { isCurriculumRegenQueueEnabled } from "@/lib/serverFlags";
 
 export type CurriculumRegenerationJobPayload = {
@@ -467,6 +467,24 @@ export async function processCurriculumRegenerationLessonJob(payload: Curriculum
       throw new NonRetryableProviderError(`quality_gate_failure:${quality.reason}`, "quality_gate_failure");
     }
 
+    const depth = validateLessonDepth(generated, lesson.grade);
+    if (!depth.valid) {
+      const reason = depth.failReasons.join(";");
+      await prisma.curriculumContent.update({
+        where: { contentId: job.curriculumContentId },
+        data: {
+          status: "NEEDS_REVIEW",
+          payload: {
+            ...((lesson.payload as Record<string, unknown>) ?? {}),
+            depthValidationFailedAt: new Date().toISOString(),
+            depthValidationReason: reason,
+            depthValidationDetails: { slideCount: depth.slideCount, wordCount: depth.wordCount, hasForbidden: depth.hasForbidden },
+          } as any,
+        },
+      });
+      throw new NonRetryableProviderError(`depth_gate_failure:${reason}`, "quality_gate_failure");
+    }
+
     const nextPayload = {
       ...generated,
       lessonContent: extractLessonText(generated),
@@ -479,6 +497,8 @@ export async function processCurriculumRegenerationLessonJob(payload: Curriculum
         qualityPassed: true,
         qualityFailureReason: null,
         contentLength: quality.contentLength,
+        depthSlideCount: depth.slideCount,
+        depthWordCount: depth.wordCount,
         generatedAt: new Date().toISOString(),
       },
     };
