@@ -32,10 +32,30 @@ type FlatStudent = {
   status: "active" | "at-risk" | "inactive";
 };
 
-const STATUS_STYLE: Record<string, { label: string; cls: string }> = {
+const DAY_MS = 24 * 60 * 60 * 1000;
+
+type ComputedStatus = "active" | "away" | "inactive" | "never-active" | "at-risk";
+
+function computeStatus(
+  apiStatus: "active" | "at-risk" | "inactive",
+  lastActive: string | null
+): ComputedStatus {
+  if (apiStatus === "at-risk") return "at-risk";
+  if (!lastActive) return "never-active";
+  const age = Date.now() - new Date(lastActive).getTime();
+  if (age < 7 * DAY_MS) return "active";
+  if (age < 30 * DAY_MS) return "away";
+  return "inactive";
+}
+
+const STATUS_STYLE: Record<ComputedStatus, { label: string; cls: string }> = {
   active: {
     label: "Active",
     cls: "border border-[var(--ll-yellow)]/30 bg-[var(--ll-yellow)]/10 text-[var(--ll-yellow)]",
+  },
+  away: {
+    label: "Away",
+    cls: "border border-amber-500/30 bg-amber-500/10 text-amber-400",
   },
   "at-risk": {
     label: "At Risk",
@@ -43,12 +63,17 @@ const STATUS_STYLE: Record<string, { label: string; cls: string }> = {
   },
   inactive: {
     label: "Inactive",
-    cls: "border border-red-500/30 bg-red-500/10 text-red-400",
+    cls: "border border-[var(--ll-border)] bg-[var(--ll-surface-muted)] text-[var(--ll-text-faint)]",
+  },
+  "never-active": {
+    label: "Never Active",
+    cls: "border border-[var(--ll-border)] bg-[var(--ll-surface-muted)] text-[var(--ll-text-faint)]",
   },
 };
 
 function StudentCompactRow({ s }: { s: StudentRow | FlatStudent }) {
-  const style = STATUS_STYLE[s.status];
+  const cs = computeStatus(s.status, s.lastActive);
+  const style = STATUS_STYLE[cs];
   return (
     <div
       className="flex max-w-full items-center justify-between gap-3 rounded-lg border border-[var(--ll-border)] px-4 py-2.5 transition-colors hover:border-[var(--ll-border-strong)]"
@@ -111,7 +136,7 @@ export default function TeacherStudentsPage() {
     return Array.from(map.values());
   }, [students]);
 
-  // Group by class
+  // Group by class, sorted by student count desc
   const classGroups = useMemo<ClassGroup[]>(() => {
     const map = new Map<string, Map<string, StudentRow>>();
     for (const s of students) {
@@ -120,13 +145,15 @@ export default function TeacherStudentsPage() {
         map.get(s.className)!.set(s.studentId, s);
       }
     }
-    return Array.from(map.entries()).map(([className, studentMap]) => ({
-      className,
-      students: Array.from(studentMap.values()),
-    }));
+    return Array.from(map.entries())
+      .map(([className, studentMap]) => ({
+        className,
+        students: Array.from(studentMap.values()),
+      }))
+      .sort((a, b) => b.students.length - a.students.length);
   }, [students]);
 
-  // Default: first class expanded
+  // Always expand the first class group on load
   useEffect(() => {
     if (classGroups.length > 0 && expanded.size === 0) {
       setExpanded(new Set([classGroups[0].className]));
@@ -166,12 +193,18 @@ export default function TeacherStudentsPage() {
   }
 
   const totalStudents = flatStudents.length;
-  const activeCount = flatStudents.filter((s) => s.status === "active").length;
+  const activeCount = flatStudents.filter(
+    (s) => computeStatus(s.status, s.lastActive) === "active"
+  ).length;
+  const awayCount = flatStudents.filter(
+    (s) => computeStatus(s.status, s.lastActive) === "away"
+  ).length;
   const atRiskCount = flatStudents.filter((s) => s.status === "at-risk").length;
   const isSearching = searchQuery.trim().length > 0;
 
   return (
-    <div className="space-y-5">
+    <div className="ll-dashboard-shell px-4 py-5">
+    <div className="ll-page-enter mx-auto max-w-5xl space-y-5">
       <TeacherDashboardBackLink />
       <div>
         <h1 className="text-2xl font-bold">My Students</h1>
@@ -189,6 +222,11 @@ export default function TeacherStudentsPage() {
           {activeCount > 0 && (
             <span className="rounded-full border border-[var(--ll-yellow)]/30 bg-[var(--ll-yellow)]/10 px-3 py-1 text-xs text-[var(--ll-yellow)]">
               {activeCount} active
+            </span>
+          )}
+          {awayCount > 0 && (
+            <span className="rounded-full border border-amber-500/30 bg-amber-500/10 px-3 py-1 text-xs text-amber-400">
+              {awayCount} away
             </span>
           )}
           {atRiskCount > 0 && (
@@ -305,6 +343,7 @@ export default function TeacherStudentsPage() {
           })}
         </div>
       )}
+    </div>
     </div>
   );
 }
