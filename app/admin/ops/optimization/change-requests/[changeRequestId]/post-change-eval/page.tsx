@@ -3,19 +3,22 @@ import Link from "next/link";
 import { requireUser } from "@/lib/auth";
 import { getChangeRequest } from "@/lib/autonomous/optimization/optimizationChangeRequestService";
 import { getPostChangeEvaluationPlan } from "@/lib/autonomous/optimization/postChangeEvaluationService";
+import { getRolloutPlan } from "@/lib/autonomous/optimization/stagedRolloutService";
+import { PostChangeEvalActionsPanel } from "@/components/admin/autonomous/PostChangeEvalActionsPanel";
 
 export const dynamic = "force-dynamic";
-
-function metricValue(value: unknown) {
-  return typeof value === "number" ? value.toFixed(2) : "pending";
-}
 
 export default async function PostChangeEvalPage({ params }: { params: { changeRequestId: string } }) {
   const user = await requireUser();
   if (!user.isPlatformAdmin && user.role !== "ADMIN") redirect("/");
 
-  const changeRequest = await getChangeRequest({ id: params.changeRequestId, actor: user });
-  const evalPlan = await getPostChangeEvaluationPlan(params.changeRequestId);
+  const [changeRequest, evalPlan, rolloutPlan] = await Promise.all([
+    getChangeRequest({ id: params.changeRequestId, actor: user }),
+    getPostChangeEvaluationPlan(params.changeRequestId),
+    getRolloutPlan(params.changeRequestId),
+  ]);
+
+  const hasRolloutVerification = Boolean((rolloutPlan as any)?.rolloutVerification);
 
   return (
     <main className="min-h-screen bg-[var(--ll-bg)] px-6 py-8 text-[var(--ll-text)]">
@@ -25,7 +28,10 @@ export default async function PostChangeEvalPage({ params }: { params: { changeR
             <p className="text-sm font-semibold uppercase text-[var(--ll-text-muted)]">Post-Change Evaluation</p>
             <h1 className="text-2xl font-semibold">{changeRequest.title}</h1>
           </div>
-          <Link href={`/admin/ops/optimization/change-requests/${params.changeRequestId}`} className="rounded border px-3 py-1.5 text-sm hover:bg-[var(--ll-surface)]">
+          <Link
+            href={`/admin/ops/optimization/change-requests/${params.changeRequestId}`}
+            className="rounded border px-3 py-1.5 text-sm hover:bg-[var(--ll-surface)]"
+          >
             ← Change Request
           </Link>
         </header>
@@ -35,52 +41,12 @@ export default async function PostChangeEvalPage({ params }: { params: { changeR
             No post-change evaluation plan yet. Record rollout verification first, then create the plan.
           </div>
         ) : (
-          <div className="space-y-4">
-            <section className="rounded border bg-[var(--ll-surface)] p-4 text-sm space-y-1.5">
-              <div className="flex gap-6">
-                <div><span className="text-[var(--ll-text-muted)]">Status:</span> <strong>{evalPlan.status}</strong></div>
-                <div><span className="text-[var(--ll-text-muted)]">Window:</span> <strong>{evalPlan.evaluationWindowDays} days</strong></div>
-                <div><span className="text-[var(--ll-text-muted)]">Feedback loop:</span> <strong>{evalPlan.feedbackLoopStatus}</strong></div>
-              </div>
-            </section>
-
-            <section className="rounded border bg-[var(--ll-surface)] p-4 space-y-2">
-              <h2 className="text-lg font-semibold">Baseline Metrics</h2>
-              {evalPlan.detectorPrecisionBaseline != null && (
-                <div className="text-sm">Detector precision: <strong>{(evalPlan.detectorPrecisionBaseline * 100).toFixed(1)}%</strong></div>
-              )}
-              {evalPlan.falsePositiveRateBaseline != null && (
-                <div className="text-sm">False-positive rate: <strong>{(evalPlan.falsePositiveRateBaseline * 100).toFixed(1)}%</strong></div>
-              )}
-              {evalPlan.approvalRejectionBaseline != null && (
-                <div className="text-sm">Approval rejection rate: <strong>{(evalPlan.approvalRejectionBaseline * 100).toFixed(1)}%</strong></div>
-              )}
-              <pre className="overflow-auto rounded bg-black/5 p-3 text-xs mt-2">{JSON.stringify(evalPlan.baselineMetrics, null, 2)}</pre>
-            </section>
-
-            {evalPlan.postChangeMetrics && (
-              <section className="rounded border bg-[var(--ll-surface)] p-4 space-y-2">
-                <h2 className="text-lg font-semibold">Baseline vs Actual</h2>
-                <div className="grid gap-2 text-sm md:grid-cols-3">
-                  {["detectorPrecision", "falsePositiveRate", "falseNegativeRate", "evidenceCoverage", "recommendationAcceptanceRate", "approvalRejectionRate", "rolloutStability", "workflowStability", "operationalEffectivenessDelta"].map((key) => (
-                    <div key={key} className="rounded border border-[var(--ll-border)] p-3">
-                      <div className="font-medium">{key}</div>
-                      <div className="text-[var(--ll-text-muted)]">baseline {metricValue((evalPlan.baselineMetrics as any)?.[key])}</div>
-                      <div>actual {metricValue((evalPlan.postChangeMetrics as any)?.[key])}</div>
-                    </div>
-                  ))}
-                </div>
-                <pre className="overflow-auto rounded bg-black/5 p-3 text-xs">{JSON.stringify(evalPlan.postChangeMetrics, null, 2)}</pre>
-              </section>
-            )}
-
-            {evalPlan.findings && (
-              <section className="rounded border bg-[var(--ll-surface)] p-4 space-y-2">
-                <h2 className="text-lg font-semibold">Findings</h2>
-                <pre className="overflow-auto rounded bg-black/5 p-3 text-xs">{JSON.stringify(evalPlan.findings, null, 2)}</pre>
-              </section>
-            )}
-          </div>
+          <PostChangeEvalActionsPanel
+            evalPlan={evalPlan}
+            changeRequestId={params.changeRequestId}
+            isPlatformAdmin={user.isPlatformAdmin ?? false}
+            hasRolloutVerification={hasRolloutVerification}
+          />
         )}
       </div>
     </main>

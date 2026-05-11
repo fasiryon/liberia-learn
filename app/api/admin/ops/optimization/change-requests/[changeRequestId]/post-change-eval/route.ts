@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { requireUser } from "@/lib/auth";
+import { requirePlatformAdmin, requireUser } from "@/lib/auth";
 import { completeFeedbackLoop } from "@/lib/autonomous/optimization/feedbackLoopCompletionService";
 import { createPostChangeEvaluationPlan, getPostChangeEvaluationPlan, recordPostChangeMetrics } from "@/lib/autonomous/optimization/postChangeEvaluationService";
 
@@ -20,7 +20,7 @@ export async function GET(req: NextRequest, { params }: { params: { changeReques
 // Body: { evaluationWindowDays?: number, action?: "create" | "record_metrics" | "complete" }
 export async function POST(req: NextRequest, { params }: { params: { changeRequestId: string } }) {
   try {
-    const user = await requireUser();
+    const user = await requirePlatformAdmin();
     const body = await req.json().catch(() => ({}));
     if (body.action === "record_metrics") {
       const evalPlan = await recordPostChangeMetrics({ changeRequestId: params.changeRequestId, actorId: user.id, force: body.force === true });

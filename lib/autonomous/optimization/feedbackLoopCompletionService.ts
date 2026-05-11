@@ -42,6 +42,10 @@ export async function completeFeedbackLoop(input: {
   const findings = generateImplementationFindings({ baselineMetrics: plan.baselineMetrics, actualMetrics });
   if (input.isReplay) return { plan, actualMetrics, findings, replay: true };
 
+  const overallOutcome = findings.overallOutcome;
+  const confidenceScore = findings.effectiveness.confidence;
+  const evaluationWindowClosedAt = new Date();
+
   const updated = await withDbWriteThrottle("implementation.feedbackLoop.complete", () =>
     (prisma as any).postChangeEvaluationPlan.update({
       where: { id: plan.id },
@@ -50,8 +54,18 @@ export async function completeFeedbackLoop(input: {
         findings,
         status: "CLOSED",
         feedbackLoopStatus: "COMPLETE",
+        overallOutcome,
+        confidenceScore,
+        evaluationWindowClosedAt,
         updatedAt: new Date(),
       },
+    })
+  );
+
+  await withDbWriteThrottle("implementation.cr.outcome", () =>
+    (prisma as any).optimizationChangeRequest.update({
+      where: { id: plan.changeRequestId },
+      data: { implementationOutcome: overallOutcome, updatedAt: new Date() },
     })
   );
 
@@ -77,25 +91,31 @@ export async function completeFeedbackLoop(input: {
     { throwOnError: true }
   );
 
-  await recordOperationalMemory({
-    memoryType: plan.changeRequest?.schoolId ? "SCHOOL_PATTERN" : "NATIONAL_PATTERN",
-    scope: plan.changeRequest?.schoolId ? "school" : "national",
-    schoolId: plan.changeRequest?.schoolId ?? null,
-    districtId: plan.changeRequest?.districtId ?? null,
-    targetType: "PostChangeEvaluationPlan",
-    targetId: plan.id,
-    summary: `Implementation feedback loop closed with findings: ${findings.findings.join(", ")}. Effectiveness score ${findings.effectiveness.effectivenessScore}.`,
-    evidenceRefs: { refs: actualMetrics.lineageRefs, closureEventId: (event as any)?.id ?? null },
-    lineage: {
-      evaluationPlanId: plan.id,
-      changeRequestId: plan.changeRequestId,
-      rolloutVerification: rolloutPlan.rolloutVerification,
-      learningEventId: (event as any)?.id ?? null,
-    },
-    confidence: findings.effectiveness.confidence,
-    sensitivity: plan.changeRequest?.schoolId ? "tenant" : "aggregate",
-    actorId: input.actorId ?? null,
-  });
+  try {
+    await recordOperationalMemory({
+      memoryType: plan.changeRequest?.schoolId ? "SCHOOL_PATTERN" : "NATIONAL_PATTERN",
+      scope: plan.changeRequest?.schoolId ? "school" : "national",
+      schoolId: plan.changeRequest?.schoolId ?? null,
+      districtId: plan.changeRequest?.districtId ?? null,
+      targetType: "PostChangeEvaluationPlan",
+      targetId: plan.id,
+      summary: `Implementation feedback loop closed with findings: ${findings.findings.join(", ")}. Effectiveness score ${findings.effectiveness.effectivenessScore}.`,
+      evidenceRefs: { refs: actualMetrics.lineageRefs, closureEventId: (event as any)?.id ?? null },
+      lineage: {
+        evaluationPlanId: plan.id,
+        changeRequestId: plan.changeRequestId,
+        rolloutVerification: rolloutPlan.rolloutVerification,
+        learningEventId: (event as any)?.id ?? null,
+      },
+      confidence: findings.effectiveness.confidence,
+      sensitivity: plan.changeRequest?.schoolId ? "tenant" : "aggregate",
+      actorId: input.actorId ?? null,
+    });
+  } catch (memErr: any) {
+    // Memory recording is best-effort. If ENABLE_AUTONOMOUS_MEMORY is disabled, do not
+    // block the feedback loop closure — the findings are already persisted to the DB.
+    if (memErr?.code !== "autonomous_memory_disabled") throw memErr;
+  }
 
   return { plan: updated, actualMetrics, findings, event };
 }

@@ -3059,6 +3059,7 @@ model OptimizationChangeRequest {
   correlationId                String
   status                       String    @default("DRAFT")
   implementationStatus         String    @default("NOT_STARTED")
+  implementationOutcome        String?   /// POSITIVE | NEGATIVE | MIXED — set when feedback loop closes
   requiresManualImplementation Boolean   @default(true)
   idempotencyKey               String?   @unique
   createdBy                    String?
@@ -3135,6 +3136,9 @@ model PostChangeEvaluationPlan {
   recommendationAcceptanceBaseline Float?
   approvalRejectionBaseline        Float?
   findings                         Json?
+  overallOutcome                   String?   /// POSITIVE | NEGATIVE | MIXED — set when feedback loop closes
+  confidenceScore                  Float?    /// 0.0–1.0 — effectiveness confidence at loop closure
+  evaluationWindowClosedAt         DateTime? /// set when feedback loop closes
   feedbackLoopStatus               String    @default("pending")
   createdBy                        String?
   traceId                          String?

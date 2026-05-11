@@ -9,6 +9,29 @@ export type ImplementationFinding =
   | "rollback_recommended"
   | "rollout_pause_recommended";
 
+export type NormalizedOutcome = "IMPROVED" | "DEGRADED" | "NEUTRAL";
+export type OverallOutcome = "POSITIVE" | "NEGATIVE" | "MIXED";
+
+const FINDING_NORMALIZED: Record<ImplementationFinding, NormalizedOutcome> = {
+  improvement_confirmed: "IMPROVED",
+  no_measurable_improvement: "NEUTRAL",
+  regression_detected: "DEGRADED",
+  insufficient_evidence: "NEUTRAL",
+  rollback_recommended: "DEGRADED",
+  rollout_pause_recommended: "DEGRADED",
+};
+
+function deriveOverallOutcome(findings: ImplementationFinding[]): OverallOutcome {
+  if (findings.includes("regression_detected")) return "NEGATIVE";
+  if (
+    findings.includes("improvement_confirmed") &&
+    !findings.includes("rollback_recommended") &&
+    !findings.includes("rollout_pause_recommended")
+  )
+    return "POSITIVE";
+  return "MIXED";
+}
+
 export function generateImplementationFindings(input: {
   baselineMetrics: Record<string, any> | null | undefined;
   actualMetrics: PostChangeMetricSet | null | undefined;
@@ -29,9 +52,17 @@ export function generateImplementationFindings(input: {
   if (effectiveness.effectivenessScore >= 0.58 && findings.length === 0) findings.push("improvement_confirmed");
   if (effectiveness.effectivenessScore < 0.42) findings.push("regression_detected");
   if (findings.length === 0) findings.push("no_measurable_improvement");
+
+  const overallOutcome = deriveOverallOutcome(findings);
+
   return {
     generatedAt: new Date().toISOString(),
     findings,
+    normalizedFindings: findings.map((f) => ({
+      finding: f,
+      normalizedOutcome: FINDING_NORMALIZED[f] ?? ("NEUTRAL" as NormalizedOutcome),
+    })),
+    overallOutcome,
     effectiveness,
     advisoryOnly: true,
     policyMutation: false,
