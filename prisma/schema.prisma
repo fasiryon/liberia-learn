@@ -3014,3 +3014,114 @@ enum AcademicEnrollmentStatus {
   TRANSFERRED
   GRADUATED
 }
+
+/// Autonomous OS Phase 7: governed change request from an approved optimization proposal.
+/// Policy mutation NEVER happens here — only plan artifacts and review lineage are created.
+model OptimizationChangeRequest {
+  id                           String    @id @default(cuid())
+  proposalEventId              String
+  category                     String
+  title                        String
+  affectedScope                String
+  affectedArea                 String
+  schoolId                     String?
+  districtId                   String?
+  tenantId                     String?
+  expectedImpact               String?
+  riskAssessment               Json?
+  evidenceRefs                 Json?
+  proposedImplementationPlan   Json?
+  rollbackPlan                 Json?
+  requiredReviewerRoles        Json?
+  workflowRunId                String?
+  workflowTraceId              String?
+  correlationId                String
+  status                       String    @default("DRAFT")
+  implementationStatus         String    @default("NOT_STARTED")
+  requiresManualImplementation Boolean   @default(true)
+  idempotencyKey               String?   @unique
+  createdBy                    String?
+  createdAt                    DateTime  @default(now())
+  updatedAt                    DateTime  @updatedAt
+
+  signoffs                     ChangeRequestSignoff[]
+  rolloutPlan                  StagedRolloutPlan?
+  postChangeEval               PostChangeEvaluationPlan?
+
+  @@index([proposalEventId])
+  @@index([schoolId, status, createdAt])
+  @@index([status, createdAt])
+  @@index([correlationId, createdAt])
+}
+
+/// Autonomous OS Phase 7: append-only reviewer sign-off for a governed change request.
+model ChangeRequestSignoff {
+  id              String    @id @default(cuid())
+  changeRequestId String
+  reviewerUserId  String
+  reviewerRole    String
+  schoolId        String?
+  decision        String
+  comment         String?
+  decidedAt       DateTime  @default(now())
+  traceId         String?
+  idempotencyKey  String?   @unique
+  createdAt       DateTime  @default(now())
+
+  changeRequest   OptimizationChangeRequest @relation(fields: [changeRequestId], references: [id])
+
+  @@index([changeRequestId, createdAt])
+  @@index([reviewerUserId, createdAt])
+}
+
+/// Autonomous OS Phase 7: staged rollout plan for a governed change request.
+/// All stages are MANUAL_IMPLEMENTATION_REQUIRED — no live policy mutation occurs.
+model StagedRolloutPlan {
+  id                            String    @id @default(cuid())
+  changeRequestId               String    @unique
+  currentStage                  String    @default("INTERNAL_ONLY")
+  stages                        Json
+  status                        String    @default("DRAFT")
+  requiresManualImplementation  Boolean   @default(true)
+  rollbackTrigger               String?
+  rollbackOwner                 String?
+  rollbackSteps                 Json?
+  rollbackVerificationChecklist Json?
+  expectedRestoredState         Json?
+  rolloutVerification           Json?
+  rollbackVerification          Json?
+  traceId                       String?
+  createdBy                     String?
+  createdAt                     DateTime  @default(now())
+  updatedAt                     DateTime  @updatedAt
+
+  changeRequest                 OptimizationChangeRequest @relation(fields: [changeRequestId], references: [id])
+
+  @@index([changeRequestId])
+  @@index([status, createdAt])
+}
+
+/// Autonomous OS Phase 7: post-change evaluation plan for outcome attribution after rollout.
+model PostChangeEvaluationPlan {
+  id                               String    @id @default(cuid())
+  changeRequestId                  String    @unique
+  baselineMetrics                  Json?
+  postChangeMetrics                Json?
+  evaluationWindowDays             Int       @default(14)
+  status                           String    @default("BASELINE_PENDING")
+  detectorPrecisionBaseline        Float?
+  falsePositiveRateBaseline        Float?
+  recommendationAcceptanceBaseline Float?
+  approvalRejectionBaseline        Float?
+  findings                         Json?
+  feedbackLoopStatus               String    @default("pending")
+  createdBy                        String?
+  traceId                          String?
+  createdAt                        DateTime  @default(now())
+  updatedAt                        DateTime  @updatedAt
+
+  changeRequest                    OptimizationChangeRequest @relation(fields: [changeRequestId], references: [id])
+
+  @@index([changeRequestId])
+  @@index([status, createdAt])
+}

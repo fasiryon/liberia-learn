@@ -841,3 +841,10 @@ export function isFalsePositiveReviewEnabled(): boolean {
 export function isAutonomousOptimizationEnabled(): boolean {
   return process.env.ENABLE_AUTONOMOUS_OPTIMIZATION === "true";
 }
+
+// Autonomous OS Phase 7: governed implementation workflow for approved optimization proposals.
+// Enables the change-request → sign-off → staged-rollout → rollback-verification → post-change-eval path.
+// Default OFF; must not be enabled until all downstream rollout infrastructure is validated.
+export function isImplementationWorkflowEnabled(): boolean {
+  return process.env.ENABLE_IMPLEMENTATION_WORKFLOW === "true";
+}
