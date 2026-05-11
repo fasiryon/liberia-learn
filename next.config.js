@@ -10,6 +10,7 @@ if (process.env.NEXT_PHASE !== "phase-development-server" && process.env.SKIP_EN
 const nextConfig = {
   reactStrictMode: true,
   output: "standalone",
+  staticPageGenerationTimeout: 300,
   async headers() {
     return [
       {

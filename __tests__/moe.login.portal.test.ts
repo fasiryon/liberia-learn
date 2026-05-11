@@ -149,6 +149,23 @@ describe("middleware — /moe/login flag gate", () => {
   });
 });
 
+describe("middleware — Canva OAuth public routes", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    mockGetToken.mockResolvedValue(null);
+  });
+
+  it("allows /api/canva/auth without app auth", async () => {
+    const res = await middleware(makeReq("/api/canva/auth"));
+    expect(res?.status).not.toBeGreaterThanOrEqual(300);
+  });
+
+  it("allows /api/canva/callback without app auth", async () => {
+    const res = await middleware(makeReq("/api/canva/callback"));
+    expect(res?.status).not.toBeGreaterThanOrEqual(300);
+  });
+});
+
 describe("middleware — /moe/dashboard auth guard", () => {
   beforeEach(() => {
     vi.clearAllMocks();

@@ -15,6 +15,8 @@ const PUBLIC_PATHS = [
   "/reset-password",
   "/api/auth/forgot-password",
   "/api/auth/reset-password",
+  "/api/canva/auth",
+  "/api/canva/callback",
   "/pilot-preview",
   "/legal",
   "/privacy",
@@ -120,4 +122,3 @@ export async function middleware(req: NextRequest) {
 export const config = {
   matcher: ["/((?!_next/static|_next/image|favicon.ico).*)"],
 };
-
