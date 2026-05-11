@@ -22,36 +22,47 @@ function repeatSentence(sentence: string, count: number) {
 }
 
 function buildStandardBody() {
+  const s = "Students discuss how rice sellers in Monrovia divide bags into equal parts for customers. ";
   return [
-    "## Opening (5 minutes)",
-    repeatSentence("Students discuss how rice sellers in Monrovia divide bags into equal parts for customers.", 35),
-    "## Direct Instruction (15 minutes)",
-    repeatSentence("The teacher explains the concept with worked examples using Liberian dollars, county names, and step by step solutions.", 95),
-    "## Guided Practice (15 minutes)",
-    repeatSentence("The class solves practice problems together while the teacher points out common mistakes and correct reasoning.", 85),
-    "## Independent Practice (8 minutes)",
-    repeatSentence("Students complete easy medium and challenge problems with an answer key at the end of the section.", 65),
-    "## Closing (7 minutes)",
-    repeatSentence("The lesson closes with a summary exit ticket and preview of the next day.", 40),
+    "## 1. Welcome and Hook\n\n" + repeatSentence(s, 12),
+    "## 2. Learning Objective\n\nObjective: Students will apply fraction concepts. " + repeatSentence(s, 10),
+    "## 3. Prior Knowledge Check\n\nIntroduction: Recall what we learned yesterday. " + repeatSentence(s, 10),
+    "## 4. Concept Introduction\n\n" + repeatSentence(s, 12),
+    "## 5. Key Vocabulary\n\n" + repeatSentence(s, 10),
+    "## 6. Worked Example 1\n\n" + repeatSentence(s, 12),
+    "## 7. Worked Example 2\n\n" + repeatSentence(s, 12),
+    "## 8. Common Mistakes\n\n" + repeatSentence(s, 10),
+    "## 9. Guided Practice Problem 1\n\nGuided Practice: Solve together. " + repeatSentence(s, 10),
+    "## 10. Guided Practice Problem 2\n\n" + repeatSentence(s, 10),
+    "## 11. Guided Practice Problem 3\n\n" + repeatSentence(s, 10),
+    "## 12. Independent Practice Easy\n\nIndependent Practice: complete the tasks. " + repeatSentence(s, 10),
+    "## 13. Independent Practice Medium\n\n" + repeatSentence(s, 10),
+    "## 14. Independent Practice Challenge\n\n" + repeatSentence(s, 10),
+    "## 15. Assessment and Exit Ticket\n\nAssessment: Answer the exit ticket. " + repeatSentence(s, 10),
   ].join("\n\n");
 }
 
 function buildBlockBody() {
+  const s = "The teacher models worked examples with vocabulary review and full step by step reasoning for Liberian learners. ";
   return [
-    "## Opening (5 minutes)",
-    repeatSentence("Students connect the lesson to market prices river transport and daily life in Liberia.", 45),
-    "## Direct Instruction (20 minutes)",
-    repeatSentence("The teacher models several worked examples with careful vocabulary review and full reasoning.", 120),
-    "## Guided Practice (20 minutes)",
-    repeatSentence("Learners solve multiple guided problems while the teacher checks misconceptions and prompts discussion.", 110),
-    "## Lab or Activity (25 minutes)",
-    repeatSentence("Groups conduct an investigation using paper stones water string and notebook observations gathered from the school yard.", 120),
-    "## Independent Work (15 minutes)",
-    repeatSentence("Students complete a longer task sequence that ranges from straightforward items to a challenge problem.", 95),
-    "## Group Discussion (8 minutes)",
-    repeatSentence("The class discusses how the concept connects to Liberian communities and current local realities.", 55),
-    "## Closing (7 minutes)",
-    repeatSentence("The lesson ends with reflection review and a preview of the next session.", 45),
+    "## 1. Welcome and Hook\n\n" + repeatSentence(s, 12),
+    "## 2. Learning Objective\n\nObjective: Students collect and interpret field data. " + repeatSentence(s, 10),
+    "## 3. Prior Knowledge Check\n\nIntroduction: Connect to prior learning. " + repeatSentence(s, 10),
+    "## 4. Concept Introduction Part 1\n\n" + repeatSentence(s, 12),
+    "## 5. Concept Introduction Part 2\n\n" + repeatSentence(s, 12),
+    "## 6. Key Vocabulary\n\n" + repeatSentence(s, 10),
+    "## 7. Worked Example 1\n\n" + repeatSentence(s, 12),
+    "## 8. Worked Example 2\n\n" + repeatSentence(s, 12),
+    "## 9. Worked Example 3\n\n" + repeatSentence(s, 12),
+    "## 10. Common Mistakes\n\n" + repeatSentence(s, 10),
+    "## 11. Guided Practice Problem 1\n\nGuided Practice: work together. " + repeatSentence(s, 10),
+    "## 12. Guided Practice Problem 2\n\n" + repeatSentence(s, 10),
+    "## 13. Guided Practice Problem 3\n\n" + repeatSentence(s, 10),
+    "## 14. Lab or Investigation Activity\n\n" + repeatSentence(s, 15),
+    "## 15. Group Discussion\n\n" + repeatSentence(s, 10),
+    "## 16. Independent Practice Easy and Medium\n\nIndependent Practice: complete tasks. " + repeatSentence(s, 12),
+    "## 17. Independent Practice Challenge\n\n" + repeatSentence(s, 10),
+    "## 18. Assessment Exit Ticket and Reflection\n\nAssessment: exit ticket below. " + repeatSentence(s, 10),
   ].join("\n\n");
 }
 
@@ -114,12 +125,13 @@ describe("generateCurriculumPayload lesson depth", () => {
     });
 
     const prompt = mockRoutedCompletion.mock.calls[0][0].messages[0].content as string;
-    expect(prompt).toContain("## Opening (5 minutes)");
-    expect(prompt).toContain("## Direct Instruction (15 minutes)");
-    expect(prompt).toContain("## Guided Practice (15 minutes)");
-    expect(prompt).toContain("## Independent Practice (8 minutes)");
-    expect(prompt).toContain("## Closing (7 minutes)");
-    expect(payload.body_standard).toContain("## Direct Instruction (15 minutes)");
+    expect(prompt).toContain("## 1. Welcome and Hook");
+    expect(prompt).toContain("## 2. Learning Objective");
+    expect(prompt).toContain("## 9. Guided Practice - Problem 1");
+    expect(prompt).toContain("## 12. Independent Practice - Easy");
+    expect(prompt).toContain("## 15. Assessment and Exit Ticket");
+    expect(prompt).toContain("AT LEAST 15");
+    expect(payload.body_standard).toContain("## 7. Worked Example 2");
     expect(payload.body_standard!.split(/\s+/).filter(Boolean).length).toBeGreaterThanOrEqual(1000);
   });
 
@@ -206,11 +218,12 @@ describe("generateCurriculumPayload lesson depth", () => {
     });
 
     const prompt = mockRoutedCompletion.mock.calls[0][0].messages[0].content as string;
-    expect(prompt).toContain("## Lab or Activity (25 minutes)");
-    expect(prompt).toContain("## Independent Work (15 minutes)");
-    expect(prompt).toContain("## Group Discussion (8 minutes)");
-    expect(prompt).toContain("## Closing (7 minutes)");
-    expect(payload.body_block).toContain("## Lab or Activity (25 minutes)");
+    expect(prompt).toContain("## 14. Lab or Investigation Activity");
+    expect(prompt).toContain("## 16. Independent Practice — Easy and Medium");
+    expect(prompt).toContain("## 15. Group Discussion");
+    expect(prompt).toContain("## 18. Assessment, Exit Ticket, and Reflection");
+    expect(prompt).toContain("AT LEAST 18");
+    expect(payload.body_block).toContain("## 14. Lab or Investigation Activity");
     expect(payload.body_block!.split(/\s+/).filter(Boolean).length).toBeGreaterThanOrEqual(1800);
   });
 

@@ -234,19 +234,31 @@ describe("curriculum regeneration pipeline", () => {
         payload: {},
         moeAlignments: [],
       });
+    const slideWord = "Plants need sunlight water air and nutrients from the soil to grow well in Liberia cassava pepper farms. ";
+    const depthPassingSlides = [
+      `## 1. Welcome and Hook\n\n${slideWord.repeat(12)}`,
+      `## 2. Learning Objective\n\nObjective: Students will explain what plants need to grow. ${slideWord.repeat(10)}`,
+      `## 3. Prior Knowledge Check\n\nIntroduction: What plants do you see near your home? ${slideWord.repeat(10)}`,
+      `## 4. Concept Introduction\n\nGuided Practice: The class discusses what plants need. ${slideWord.repeat(10)}`,
+      `## 5. Key Vocabulary\n\n${slideWord.repeat(10)}`,
+      `## 6. Worked Example 1\n\n${slideWord.repeat(10)}`,
+      `## 7. Worked Example 2\n\n${slideWord.repeat(10)}`,
+      `## 8. Common Mistakes\n\n${slideWord.repeat(10)}`,
+      `## 9. Guided Practice Problem 1\n\n${slideWord.repeat(10)}`,
+      `## 10. Guided Practice Problem 2\n\n${slideWord.repeat(10)}`,
+      `## 11. Guided Practice Problem 3\n\n${slideWord.repeat(10)}`,
+      `## 12. Independent Practice Easy\n\nIndependent Practice: complete the tasks below. ${slideWord.repeat(10)}`,
+      `## 13. Independent Practice Medium\n\n${slideWord.repeat(10)}`,
+      `## 14. Independent Practice Challenge\n\n${slideWord.repeat(10)}`,
+      `## 15. Assessment and Exit Ticket\n\nAssessment: Answer the exit ticket questions. ${slideWord.repeat(10)}`,
+    ].join("\n\n");
     mockGenerateCurriculumPayload.mockResolvedValueOnce({
       title: "Plants Need Light",
       objectives: ["Explain what plants need"],
-      body: [
-        "Objective: Students explain that plants need light, water, air, and soil nutrients.",
-        "Introduction: The teacher asks learners to describe cassava and pepper plants near their homes.",
-        "Guided Practice: The class studies examples and predicts what happens when plants lack sunlight.",
-        "Independent Practice: Students complete examples and explain their reasoning in full sentences.",
-        "Assessment: Exit ticket asks learners to name two plant needs and justify one answer.",
-        "Liberian classroom example ".repeat(80),
-      ].join("\n\n"),
-      body_standard: "Objective Introduction Guided Practice Independent Practice Assessment " + "content ".repeat(180),
+      body: depthPassingSlides,
+      body_standard: depthPassingSlides,
       metadata: {},
+      assessmentQuestions: [{ question: "What do plants need?", expectedAnswer: "Light and water" }],
     });
     const { processCurriculumRegenerationLessonJob } = await import("@/lib/curriculum/regenerationQueue");
 

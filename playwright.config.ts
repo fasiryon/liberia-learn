@@ -29,6 +29,8 @@ export default defineConfig({
         '--no-sandbox',
         '--force-device-scale-factor=1',
         '--kiosk',
+        '--start-fullscreen',
+        '--start-maximized',
       ],
     },
   },

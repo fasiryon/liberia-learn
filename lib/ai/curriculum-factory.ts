@@ -51,71 +51,81 @@ function getGenerationMaxTokens(
 
 function buildLessonBodyPrompt(format: "standard" | "block" | "either"): string {
   const standardTemplate = `
-- body_standard must contain these clearly labeled sections for a 45-minute lesson:
-  ## Opening (5 minutes)
-  Include explicit "Learning Objective:" and "Introduction:" labels in this section.
-  Hook question or scenario using Liberian context.
-  Connect to prior knowledge.
-  State today's learning objective clearly.
-
-  ## Direct Instruction (15 minutes)
-  Explain the concept clearly and completely.
-  Use at least 2 worked examples with full step-by-step solutions shown.
-  Reference Liberian context throughout (markets, rivers, farms, Liberian currency, county names, local names).
-  Define all key vocabulary terms.
-
-  ## Guided Practice (15 minutes)
-  3-4 practice problems for teacher to work through with the class.
-  Show full solutions for each.
-  Include common mistakes to watch for.
-
-  ## Independent Practice (8 minutes)
-  4-5 problems for students to work alone.
-  Vary difficulty (2 easy, 2 medium, 1 challenge).
-  Include answer key.
-
-  ## Closing (7 minutes)
-  Include an explicit "Assessment:" label in this section.
+- body_standard must contain AT LEAST 15 clearly labeled ## sections for a 45-minute lesson.
+  Use these exact slide types in order (add more concept/example/practice slides as needed):
+  ## 1. Welcome and Hook
+  Engaging hook question or story using Liberian context (market, farm, river, county).
+  ## 2. Learning Objective
+  Include explicit "Learning Objective:" label. State what students will know and be able to do.
+  ## 3. Prior Knowledge Check
+  2-3 warm-up questions or a quick recall task linking to what students already know.
+  ## 4. Concept Introduction
+  Include explicit "Introduction:" label. Explain the core concept clearly and completely.
+  ## 5. Key Vocabulary
+  Define all key terms with simple explanations and one example sentence each.
+  ## 6. Worked Example 1
+  Complete step-by-step solution. Name every step. Use Liberian context.
+  ## 7. Worked Example 2
+  Second worked example with a different scenario. Show full solution.
+  ## 8. Common Mistakes to Avoid
+  List 2-3 frequent errors students make and how to correct them.
+  ## 9. Guided Practice - Problem 1
+  Teacher-led problem with full solution. Include teacher prompts.
+  ## 10. Guided Practice - Problem 2
+  Teacher-led problem with full solution. Include teacher prompts.
+  ## 11. Guided Practice - Problem 3
+  Teacher-led problem with full solution. Include common error check.
+  ## 12. Independent Practice - Easy
+  2 straightforward problems. Include answer key.
+  ## 13. Independent Practice - Medium
+  2 medium-difficulty problems. Include answer key.
+  ## 14. Independent Practice - Challenge
+  1 challenge problem with a worked answer for teacher reference.
+  ## 15. Assessment and Exit Ticket
+  Include explicit "Assessment:" label. 2 exit ticket questions students complete before leaving.
   Summary of key concepts learned today.
-  Exit ticket question (links to assessment).
-  Preview of next lesson.`;
+  Preview of what comes next.`;
 
   const blockTemplate = `
-- body_block must contain these clearly labeled sections for a 90-minute block lesson:
-  ## Opening (5 minutes)
-  Include explicit "Learning Objective:" and "Introduction:" labels in this section.
-  Hook question or scenario using Liberian context.
-  Connect to prior knowledge.
-  State today's learning objective clearly.
-
-  ## Direct Instruction (20 minutes)
-  Explain the concept clearly and completely.
-  Use at least 3 worked examples with full step-by-step solutions shown.
-  Reference Liberian context throughout (markets, rivers, farms, Liberian currency, county names, local names).
-  Define all key vocabulary terms.
-
-  ## Guided Practice (20 minutes)
-  5-6 practice problems for teacher-led class work.
-  Show full solutions for each.
-  Include common mistakes to watch for.
-
-  ## Lab or Activity (25 minutes)
-  Include a lab, investigation, or group project activity tied to the lesson objective.
-  If no lab is appropriate, include an extended investigation or group project activity that is still teachable.
-
-  ## Independent Work (15 minutes)
-  Include the phrase "Independent Practice" in this section.
-  6-8 problems with a wider difficulty range.
-  Include answer key.
-
-  ## Group Discussion (8 minutes)
-  Discussion prompt connecting the lesson to real Liberian context or current events.
-
-  ## Closing (7 minutes)
-  Include an explicit "Assessment:" label in this section.
-  Summary of key concepts learned today.
-  Exit ticket question.
-  Reflection question and preview of next lesson.`;
+- body_block must contain AT LEAST 18 clearly labeled ## sections for a 90-minute block lesson.
+  Use these exact slide types in order (add more as needed to reach 18+):
+  ## 1. Welcome and Hook
+  Engaging hook using Liberian context.
+  ## 2. Learning Objective
+  Include explicit "Learning Objective:" label. State both knowledge and skill outcomes.
+  ## 3. Prior Knowledge Check
+  3-4 warm-up questions linking to previous learning.
+  ## 4. Concept Introduction — Part 1
+  Include explicit "Introduction:" label. First part of the concept explanation.
+  ## 5. Concept Introduction — Part 2
+  Second part of the concept, building on Part 1.
+  ## 6. Key Vocabulary
+  Define all key terms with explanations and example sentences.
+  ## 7. Worked Example 1
+  Complete step-by-step solution with Liberian context.
+  ## 8. Worked Example 2
+  Second worked example — different scenario, full solution shown.
+  ## 9. Worked Example 3
+  Third worked example — increasing complexity, full solution shown.
+  ## 10. Common Mistakes to Avoid
+  3-4 frequent errors with correct approaches.
+  ## 11. Guided Practice - Problem 1
+  Teacher-led with full solution and teacher notes.
+  ## 12. Guided Practice - Problem 2
+  Teacher-led with full solution and teacher notes.
+  ## 13. Guided Practice - Problem 3
+  Teacher-led with full solution.
+  ## 14. Lab or Investigation Activity
+  Hands-on activity or investigation. Include procedure, materials, and expected outcome.
+  ## 15. Group Discussion
+  Discussion prompt connecting to real Liberian context or current events.
+  ## 16. Independent Practice — Easy and Medium
+  Include the phrase "Independent Practice". 4 problems (2 easy, 2 medium) with answer key.
+  ## 17. Independent Practice — Challenge and Extension
+  2 challenge problems and 1 extension task. Include worked answers for teacher.
+  ## 18. Assessment, Exit Ticket, and Reflection
+  Include explicit "Assessment:" label. 2-3 exit ticket questions.
+  Lesson summary and preview of next lesson.`;
 
   if (format === "standard") {
     return `${standardTemplate}
@@ -135,23 +145,35 @@ ${blockTemplate}
 }
 
 function buildDepthPrompt(format: "standard" | "block" | "either"): string {
+  const forbiddenClause = `
+- NEVER insert placeholder text. If you cannot fill a section, generate real content instead.
+  FORBIDDEN phrases (will cause automatic rejection): "Pause for student explanation", "Add content here",
+  "Insert example", "placeholder", "TODO", "TBD", "[content]", "[insert", "lorem ipsum",
+  "add your", "fill in", "write here", "example here", "content goes here".`;
+
   if (format === "standard") {
     return `
-- body and body_standard must each be at least 1000 words.
-- Each section must contain full teacher-ready explanations, worked examples, practice, and answer support.`;
+- body and body_standard must each be at least 1500 words (15+ ## sections, each with 60+ words).
+- Each ## section must contain full teacher-ready content — not headings with empty bodies.
+- Every worked example must show the complete step-by-step solution.
+- Every practice section must include an answer key.${forbiddenClause}`;
   }
 
   if (format === "block") {
     return `
-- body and body_block must each be at least 1800 words.
-- Each section must contain full teacher-ready explanations, worked examples, practice, lab/activity detail, and answer support.`;
+- body and body_block must each be at least 2200 words (18+ ## sections, each with 80+ words).
+- Each ## section must contain full teacher-ready content — not headings with empty bodies.
+- Every worked example must show the complete step-by-step solution.
+- Every practice section must include an answer key.
+- The lab/activity section must include procedure steps, materials, and expected results.${forbiddenClause}`;
   }
 
   return `
-- body_standard must be at least 1000 words.
-- body_block must be at least 1800 words.
+- body_standard must be at least 1500 words (15+ ## sections for grades 1–6, each 60+ words).
+- body_block must be at least 2200 words (18+ ## sections for grades 7–12, each 80+ words).
 - body must match body_standard for compatibility.
-- Both versions must be fully developed, not abbreviated summaries.`;
+- Both versions must be fully developed, not abbreviated summaries.
+- Every worked example, practice problem, and assessment must include complete answers.${forbiddenClause}`;
 }
 
 function shouldGenerateLabs(subject: string, grade: number): boolean {
