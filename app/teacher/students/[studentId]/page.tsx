@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
+import { ChevronLeft } from "lucide-react";
 import { useParams } from "next/navigation";
 import { useAssignmentPolling } from "@/lib/hooks/useAssignmentPolling";
 import { completedScoreLabel, isNewSubmission, sortSubmissionsNewestFirst } from "@/lib/assignments/pollingPresentation";
@@ -106,18 +107,26 @@ export default function TeacherStudentDetailPage() {
 
   if (loading) {
     return (
-      <div className="space-y-3">
-        {[1, 2, 3].map((i) => (
-          <div key={i} className="h-14 rounded-xl bg-[var(--ll-surface)]/50 animate-pulse" />
-        ))}
+      <div className="ll-dashboard-shell px-4 py-5">
+        <div className="ll-page-enter mx-auto max-w-5xl">
+          <div className="space-y-3">
+            {[1, 2, 3].map((i) => (
+              <div key={i} className="h-14 rounded-xl bg-[var(--ll-surface)]/50 animate-pulse" />
+            ))}
+          </div>
+        </div>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="rounded-xl border border-red-500/20 bg-[var(--ll-bg)]/70 p-8 text-center">
-        <p className="text-red-400">{error}</p>
+      <div className="ll-dashboard-shell px-4 py-5">
+        <div className="ll-page-enter mx-auto max-w-5xl">
+          <div className="rounded-xl border border-red-500/20 bg-[var(--ll-bg)]/70 p-8 text-center">
+            <p className="text-red-400">{error}</p>
+          </div>
+        </div>
       </div>
     );
   }
@@ -131,7 +140,8 @@ export default function TeacherStudentDetailPage() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="ll-dashboard-shell px-4 py-5">
+    <div className="ll-page-enter mx-auto max-w-5xl space-y-5">
       {/* Breadcrumb */}
       <nav className="flex items-center gap-1.5 text-xs text-[var(--ll-text-faint)]">
         <Link href="/teacher" className="hover:text-[var(--ll-yellow)]">
@@ -144,6 +154,14 @@ export default function TeacherStudentDetailPage() {
         <span>/</span>
         <span className="text-[var(--ll-text-muted)]">{student?.name ?? "Student"}</span>
       </nav>
+
+      <Link
+        href="/teacher/students"
+        className="inline-flex items-center gap-1 text-sm text-[var(--ll-text-muted)] hover:text-[var(--ll-yellow)] mb-4 transition-colors"
+      >
+        <ChevronLeft className="w-4 h-4" />
+        My Students
+      </Link>
 
       <div>
         <div className="flex flex-wrap items-center gap-3">
@@ -373,6 +391,7 @@ export default function TeacherStudentDetailPage() {
           </div>
         )}
       </section>
+    </div>
     </div>
   );
 }
