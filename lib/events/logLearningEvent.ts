@@ -22,6 +22,9 @@ export type LearningEventTarget = {
 };
 
 export type LogLearningEventInput = {
+  workflowRunId?: string | null;
+  workflowTraceId?: string | null;
+  correlationId?: string | null;
   schoolId?: string | null;
   districtId?: string | null;
   classId?: string | null;
@@ -75,6 +78,9 @@ export async function logLearningEvent(
   try {
     return await learningEventModel.create({
       data: {
+        workflowRunId: input.workflowRunId ?? null,
+        workflowTraceId: input.workflowTraceId ?? null,
+        correlationId: input.correlationId ?? null,
         schoolId: input.schoolId ?? null,
         districtId: input.districtId ?? null,
         classId: input.classId ?? null,
