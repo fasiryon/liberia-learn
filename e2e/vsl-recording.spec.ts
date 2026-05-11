@@ -100,37 +100,54 @@ test('LiberiaLearn — 13-Act Platform Story (0:00-2:30)', async ({ page }) => {
     console.log('Act 3 (today page) skipped:', (e as Error).message)
   }
 
-  // ACT 4 (0:32-0:47): Open a lesson from Today or lessons library
+  // ACT 4 (0:32-0:47): Open a Science lesson (shows lab button)
   let lessonOpened = false
   try {
-    const openBtn  = page.getByRole('button', { name: /open/i }).first()
-    const openLink = page.getByRole('link', { name: /open|start|continue/i }).first()
+    await page.goto(`${BASE}/student/today`, { waitUntil: 'domcontentloaded', timeout: 25000 })
+    await page.waitForTimeout(SLOW)
 
-    if (await openBtn.isVisible().catch(() => false)) {
-      await openBtn.click()
-      lessonOpened = true
-    } else if (await openLink.isVisible().catch(() => false)) {
-      await openLink.click()
-      lessonOpened = true
-    }
-
-    if (lessonOpened) {
-      await page.waitForLoadState('domcontentloaded')
-      await page.waitForTimeout(MEDIUM)
-    } else {
-      // Fallback: go to lessons library
-      await page.goto(`${BASE}/student/lessons`, { waitUntil: 'domcontentloaded', timeout: 25000 })
-      await page.waitForTimeout(MEDIUM)
-      const firstLesson = page.getByRole('link').filter({ hasText: /grade|math|science|english/i }).first()
-      if (await firstLesson.isVisible().catch(() => false)) {
-        await firstLesson.click()
-        await page.waitForLoadState('domcontentloaded')
+    // Click the Science period if visible
+    const scienceOpen = page.locator('text=SCIENCE').first()
+    if (await scienceOpen.isVisible().catch(() => false)) {
+      const scienceRow = scienceOpen.locator('../..')
+      const openBtn = scienceRow.getByRole('button', { name: /open/i }).first()
+      if (await openBtn.isVisible().catch(() => false)) {
+        await openBtn.click()
+        await page.waitForURL(/\/lesson\//, { timeout: 10000 })
+        await page.waitForTimeout(SLOW)
         lessonOpened = true
       }
-      await page.waitForTimeout(MEDIUM)
+    }
+
+    if (!lessonOpened) {
+      // Fallback: any Open button on the Today page
+      const openBtn = page.getByRole('button', { name: /open/i }).first()
+      const openLink = page.getByRole('link', { name: /open|start|continue/i }).first()
+      if (await openBtn.isVisible().catch(() => false)) {
+        await openBtn.click()
+        lessonOpened = true
+      } else if (await openLink.isVisible().catch(() => false)) {
+        await openLink.click()
+        lessonOpened = true
+      }
+      if (lessonOpened) {
+        await page.waitForLoadState('domcontentloaded')
+        await page.waitForTimeout(MEDIUM)
+      } else {
+        // Fallback: go to lessons library
+        await page.goto(`${BASE}/student/lessons`, { waitUntil: 'domcontentloaded', timeout: 25000 })
+        await page.waitForTimeout(MEDIUM)
+        const firstLesson = page.getByRole('link').filter({ hasText: /grade|math|science|english/i }).first()
+        if (await firstLesson.isVisible().catch(() => false)) {
+          await firstLesson.click()
+          await page.waitForLoadState('domcontentloaded')
+          lessonOpened = true
+        }
+        await page.waitForTimeout(MEDIUM)
+      }
     }
   } catch (e) {
-    console.log('Act 4 (open lesson) skipped:', (e as Error).message)
+    console.log('Act 4 (open science lesson) skipped:', (e as Error).message)
   }
 
   // ACT 5 (0:47-1:02): Scroll lesson content — Liberian context, worked examples, slides tab
