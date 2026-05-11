@@ -24,7 +24,8 @@
         "e2e:prepare-day1": "tsx scripts/e2e/prepare-day1-env.ts",
         "prisma:generate": "prisma generate",
         "fix:encoding": "tsx scripts/fix-encoding.ts",
-        "backfill:badges": "tsx scripts/backfill-student-badge-awards.ts"
+        "backfill:badges": "tsx scripts/backfill-student-badge-awards.ts",
+        "autonomous:stale-approvals": "tsx scripts/autonomous-stale-approvals.ts"
     },
     "dependencies": {
         "@anthropic-ai/sdk": "^0.95.1",

@@ -12,7 +12,7 @@ jobs:
   run-evals:
     runs-on: ubuntu-latest
     env:
-      DATABASE_URL: ${{ secrets.DATABASE_URL }}
+      DATABASE_URL: ${{ secrets.DIRECT_URL }}
       DIRECT_URL: ${{ secrets.DIRECT_URL }}
       OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
       ENABLE_RAG_TUTOR: "true"

@@ -764,3 +764,80 @@ export function isCostDashboardEnabled(): boolean {
 export function isCurriculumRegenQueueEnabled(): boolean {
   return process.env.ENABLE_CURRICULUM_REGEN_QUEUE === "true";
 }
+
+// Autonomous OS Phase 2: recommend-only deterministic detectors.
+// All default OFF in production; these gates never enable direct action execution.
+export function isDetectorExecutionEnabled(): boolean {
+  return process.env.ENABLE_DETECTOR_EXECUTION === "true";
+}
+
+export function isDetectorRecommendationGenerationEnabled(): boolean {
+  return process.env.ENABLE_DETECTOR_RECOMMENDATIONS === "true";
+}
+
+export function isDetectorMoeAggregationEnabled(): boolean {
+  return process.env.ENABLE_DETECTOR_MOE_AGGREGATION === "true";
+}
+
+export function isGuardianRecommendationsEnabled(): boolean {
+  return process.env.ENABLE_GUARDIAN_RECOMMENDATIONS === "true";
+}
+
+export function isNationalTrendAnalysisEnabled(): boolean {
+  return process.env.ENABLE_NATIONAL_TREND_ANALYSIS === "true";
+}
+
+// Autonomous OS Phase 3: approval-gated actions. Default OFF.
+export function isActionGovernanceEnabled(): boolean {
+  return process.env.ENABLE_ACTION_GOVERNANCE === "true";
+}
+
+export function isActionExecutionEnabled(): boolean {
+  return process.env.ENABLE_ACTION_EXECUTION === "true";
+}
+
+export function isAutonomousRecommendOnlyModeEnabled(): boolean {
+  return process.env.FORCE_AUTONOMOUS_RECOMMEND_ONLY !== "false";
+}
+
+// Autonomous OS Phase 4: governed low-risk execution pilots and hardening.
+// Defaults remain OFF/fail-closed unless explicitly enabled.
+export function isLowRiskAutonomyEnabled(): boolean {
+  return process.env.ENABLE_LOW_RISK_AUTONOMY === "true";
+}
+
+export function isAutonomousEmergencyShutdownEnabled(): boolean {
+  return process.env.AUTONOMOUS_EMERGENCY_SHUTDOWN === "true";
+}
+
+export function isAutonomousDegradedModeEnabled(): boolean {
+  return process.env.ENABLE_AUTONOMOUS_DEGRADED_MODE === "true";
+}
+
+export function isApprovalExpirationWorkerEnabled(): boolean {
+  return process.env.ENABLE_APPROVAL_EXPIRATION_WORKER === "true";
+}
+
+export function isActionRollbackEnabled(): boolean {
+  return process.env.ENABLE_ACTION_ROLLBACK === "true";
+}
+
+// Autonomous OS Phase 5: evaluation and memory-safe learning loops.
+// Evaluation is read/append-only; memory writes and retrieval remain gated.
+export function isAutonomousEvaluationEnabled(): boolean {
+  return process.env.ENABLE_AUTONOMOUS_EVALUATION === "true";
+}
+
+export function isAutonomousMemoryEnabled(): boolean {
+  return process.env.ENABLE_AUTONOMOUS_MEMORY === "true";
+}
+
+export function isFalsePositiveReviewEnabled(): boolean {
+  return process.env.ENABLE_FALSE_POSITIVE_REVIEW === "true";
+}
+
+// Autonomous OS Phase 6: governance-safe optimization proposals.
+// Optimization is recommendation-only; no detector/policy/risk mutation occurs here.
+export function isAutonomousOptimizationEnabled(): boolean {
+  return process.env.ENABLE_AUTONOMOUS_OPTIMIZATION === "true";
+}

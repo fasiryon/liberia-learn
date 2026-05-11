@@ -1290,6 +1290,9 @@ model SloEvent {
 /// Canonical append-only event stream for learner, teacher, and sync events.
 model LearningEvent {
   id                 String    @id @default(cuid())
+  workflowRunId      String?
+  workflowTraceId    String?
+  correlationId      String?
   schoolId           String?
   districtId         String?
   classId            String?
@@ -1332,6 +1335,257 @@ model LearningEvent {
   @@index([contentId, occurredAt])
   @@index([clientEventId, eventType])
   @@index([dedupeKey])
+  @@index([workflowRunId, occurredAt])
+  @@index([workflowTraceId, occurredAt])
+  @@index([correlationId, occurredAt])
+}
+
+/// Autonomous OS Phase 1: durable workflow state.
+/// Queues may wake workers, but this row is the source of truth.
+model WorkflowRun {
+  id                 String    @id @default(cuid())
+  workflowType       String
+  tenantId           String?
+  schoolId           String?
+  districtId         String?
+  partitionKey       String
+  status             String    @default("pending")
+  riskLevel          String    @default("low")
+  traceId            String    @unique
+  correlationId      String
+  idempotencyKey     String?   @unique
+  triggerEventId     String?
+  replayOfRunId      String?
+  isReplay           Boolean   @default(false)
+  replayMode         String    @default("analysis_only")
+  replaySequence     Int?
+  source             String?
+  targetType         String?
+  targetId           String?
+  currentCheckpoint  String?
+  approvalRequired   Boolean   @default(false)
+  approvalRequestId  String?
+  attempt            Int       @default(0)
+  maxAttempts        Int       @default(3)
+  nextRetryAt        DateTime?
+  lockedBy           String?
+  lockedUntil        DateTime?
+  lastErrorCode      String?
+  lastErrorMessage   String?
+  evidenceRefs       Json?
+  queueMetadata      Json?
+  executionMetadata  Json?
+  tracingMetadata    Json?
+  startedAt          DateTime?
+  completedAt        DateTime?
+  cancelledAt        DateTime?
+  deadLetteredAt     DateTime?
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+  version            Int       @default(1)
+
+  @@index([schoolId, status, createdAt])
+  @@index([tenantId, status, createdAt])
+  @@index([districtId, status, createdAt])
+  @@index([partitionKey, status, createdAt])
+  @@index([workflowType, status, createdAt])
+  @@index([triggerEventId])
+  @@index([replayOfRunId])
+  @@index([correlationId, createdAt])
+  @@index([nextRetryAt, status])
+  @@index([lockedUntil])
+}
+
+/// Autonomous OS Phase 1: durable step state for resumable execution.
+model WorkflowStep {
+  id                String    @id @default(cuid())
+  workflowRunId     String
+  stepKey           String
+  status            String    @default("pending")
+  sequence          Int       @default(0)
+  attempt           Int       @default(0)
+  maxAttempts       Int       @default(3)
+  idempotencyKey    String?   @unique
+  traceId           String?
+  startedAt         DateTime?
+  completedAt       DateTime?
+  nextRetryAt       DateTime?
+  lastErrorCode     String?
+  lastErrorMessage  String?
+  inputRefs         Json?
+  outputRefs        Json?
+  executionMetadata Json?
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  @@index([workflowRunId, sequence])
+  @@index([workflowRunId, status])
+  @@index([stepKey, status, createdAt])
+  @@index([nextRetryAt, status])
+}
+
+/// Autonomous OS Phase 1: append-only checkpoints for recovery and replay.
+model WorkflowCheckpoint {
+  id                String   @id @default(cuid())
+  workflowRunId     String
+  checkpointKey     String
+  status            String   @default("recorded")
+  sequence          Int
+  actorType         String?
+  actorId           String?
+  workerId          String?
+  traceId           String?
+  idempotencyKey    String?  @unique
+  state             Json?
+  evidenceRefs      Json?
+  executionMetadata Json?
+  createdAt         DateTime @default(now())
+
+  @@index([workflowRunId, sequence])
+  @@index([workflowRunId, checkpointKey, createdAt])
+  @@index([traceId, createdAt])
+}
+
+/// Autonomous OS Phase 1: bounded agent execution record.
+model AgentRun {
+  id                String    @id @default(cuid())
+  workflowRunId     String
+  agentId           String
+  tenantId          String?
+  schoolId          String?
+  status            String    @default("pending")
+  traceId           String?
+  idempotencyKey    String?   @unique
+  confidence        Float?
+  riskLevel         String?
+  evidenceRefs      Json?
+  inputRefs         Json?
+  outputRefs        Json?
+  startedAt         DateTime?
+  completedAt       DateTime?
+  lastErrorCode     String?
+  lastErrorMessage  String?
+  executionMetadata Json?
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  @@index([workflowRunId, createdAt])
+  @@index([agentId, status, createdAt])
+  @@index([schoolId, status, createdAt])
+}
+
+/// Autonomous OS Phase 1: explainable recommendation or decision output.
+model AgentDecision {
+  id                String   @id @default(cuid())
+  workflowRunId     String
+  agentRunId        String?
+  decisionType      String
+  status            String   @default("proposed")
+  riskLevel         String   @default("low")
+  confidence        Float?
+  requiresApproval  Boolean  @default(false)
+  traceId           String?
+  idempotencyKey    String?  @unique
+  evidenceRefs      Json?
+  decision          Json
+  explanation       Json?
+  createdAt         DateTime @default(now())
+
+  @@index([workflowRunId, createdAt])
+  @@index([agentRunId, createdAt])
+  @@index([status, riskLevel, createdAt])
+}
+
+/// Autonomous OS Phase 1: governed action execution record.
+model ActionExecution {
+  id                String    @id @default(cuid())
+  workflowRunId     String
+  agentDecisionId   String?
+  approvalRequestId String?
+  actionType        String
+  status            String    @default("pending")
+  riskLevel         String    @default("low")
+  tenantId          String?
+  schoolId          String?
+  targetType        String?
+  targetId          String?
+  traceId           String?
+  idempotencyKey    String?   @unique
+  rollbackStatus    String?
+  rollbackRefs      Json?
+  inputRefs         Json?
+  outputRefs        Json?
+  startedAt         DateTime?
+  completedAt       DateTime?
+  lastErrorCode     String?
+  lastErrorMessage  String?
+  executionMetadata Json?
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  @@index([workflowRunId, createdAt])
+  @@index([schoolId, status, createdAt])
+  @@index([actionType, status, createdAt])
+  @@index([approvalRequestId])
+}
+
+/// Autonomous OS Phase 1: approval gate for medium/high risk workflows.
+model ApprovalRequest {
+  id                String    @id @default(cuid())
+  workflowRunId     String
+  actionExecutionId String?
+  status            String    @default("pending")
+  riskLevel         String
+  approvalType      String
+  tenantId          String?
+  schoolId          String?
+  districtId        String?
+  requestedByType   String?
+  requestedById     String?
+  approverRole      String?
+  approverUserId    String?
+  traceId           String?
+  idempotencyKey    String?   @unique
+  evidenceRefs      Json?
+  requestPayload    Json?
+  decisionPayload   Json?
+  requestedAt       DateTime  @default(now())
+  decidedAt         DateTime?
+  expiresAt         DateTime?
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  @@index([workflowRunId, createdAt])
+  @@index([schoolId, status, createdAt])
+  @@index([approverRole, status, createdAt])
+  @@index([traceId, createdAt])
+}
+
+/// Autonomous OS Phase 1: execution trace spans for diagnostics and replay review.
+model ExecutionTrace {
+  id                String    @id @default(cuid())
+  traceId           String
+  workflowRunId     String?
+  parentTraceId     String?
+  spanType          String
+  spanName          String
+  status            String    @default("started")
+  tenantId          String?
+  schoolId          String?
+  actorType         String?
+  actorId           String?
+  startedAt         DateTime  @default(now())
+  endedAt           DateTime?
+  durationMs        Int?
+  metadata          Json?
+  errorCode         String?
+  errorMessage      String?
+  createdAt         DateTime  @default(now())
+
+  @@index([traceId, startedAt])
+  @@index([workflowRunId, startedAt])
+  @@index([schoolId, status, startedAt])
+  @@index([spanType, status, startedAt])
 }
 
 /// / ===== Curriculum Feedback (AI quality feedback loop) =====
