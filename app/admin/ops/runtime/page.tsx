@@ -2,7 +2,9 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { requireUser } from "@/lib/auth";
 import { getRuntimeOverview } from "@/lib/autonomous/runtime/autonomousRuntimeService";
+import { getCronPauseStatus, getManualRuntimeRunHistory } from "@/lib/autonomous/runtime/manualRuntimeRunService";
 import { isRuntimeDashboardEnabled } from "@/lib/serverFlags";
+import ManualRuntimeControls from "@/components/admin/ManualRuntimeControls";
 
 export const dynamic = "force-dynamic";
 
@@ -20,8 +22,16 @@ export default async function RuntimeHubPage() {
   if (!isRuntimeDashboardEnabled()) redirect("/admin/ops");
 
   const overview = await getRuntimeOverview({ schoolId: user.isPlatformAdmin ? null : user.schoolId });
+  const [manualHistory, cronPauseStatus] = user.isPlatformAdmin
+    ? await Promise.all([getManualRuntimeRunHistory(20), getCronPauseStatus()])
+    : [[], { paused: false, configuredCount: null, restoreCount: null }];
   const { health, metrics, backpressure, workerStatus, schedulerStatus } = overview;
   const statusStyle = STATUS_STYLE[health.status] ?? STATUS_STYLE.unknown;
+  const cronRunTimes = schedulerStatus
+    .map((job) => job.lastRunAt)
+    .filter((value): value is string => Boolean(value))
+    .sort();
+  const lastCronRun = cronRunTimes.length > 0 ? cronRunTimes[cronRunTimes.length - 1] : null;
 
   return (
     <main className="min-h-screen bg-[var(--ll-bg)] px-6 py-8 text-[var(--ll-text)]">
@@ -44,6 +54,13 @@ export default async function RuntimeHubPage() {
           )}
           <p className="mt-2 text-xs">{health.timestamp}</p>
         </section>
+
+        {user.isPlatformAdmin && (
+          <ManualRuntimeControls
+            history={manualHistory}
+            cronPaused={cronPauseStatus.paused || schedulerStatus.every((job) => !job.enabled)}
+          />
+        )}
 
         <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
           {[
@@ -71,6 +88,12 @@ export default async function RuntimeHubPage() {
               <Link className="rounded border border-[var(--ll-border)] px-3 py-2 underline" href="/admin/ops/runtime/queue">Queue Backlog</Link>
               <Link className="rounded border border-[var(--ll-border)] px-3 py-2 underline" href="/admin/ops/runtime/recovery">Workflow Recovery</Link>
               <Link className="rounded border border-[var(--ll-border)] px-3 py-2 underline" href="/admin/ops/runtime/dead-letter">Dead-Letter Items</Link>
+              {user.isPlatformAdmin && (
+                <Link className="rounded border border-[var(--ll-border)] px-3 py-2 underline" href="/admin/ops/runtime/runs">Run History</Link>
+              )}
+              {user.isPlatformAdmin && (
+                <Link className="rounded border border-[var(--ll-border)] px-3 py-2 underline" href="/admin/ops/runtime/smoke">Smoke Verification</Link>
+              )}
               <Link className="rounded border border-[var(--ll-border)] px-3 py-2 underline" href="/admin/ops/runtime/cron">Cron Run History</Link>
               <Link className="rounded border border-[var(--ll-border)] px-3 py-2 underline" href="/admin/ops/effectiveness">Effectiveness Dashboard</Link>
             </div>
@@ -78,6 +101,9 @@ export default async function RuntimeHubPage() {
 
           <div className="rounded border border-[var(--ll-border)] bg-[var(--ll-surface)] p-4">
             <h2 className="text-lg font-semibold">Scheduler Status</h2>
+            <p className="mt-1 text-xs text-[var(--ll-text-muted)]">
+              Last cron run: {lastCronRun ? lastCronRun.slice(0, 16).replace("T", " ") : "Never"}
+            </p>
             <div className="mt-3 divide-y divide-[var(--ll-border)] text-sm">
               {schedulerStatus.map((job) => (
                 <div key={job.pipeline} className="flex items-center justify-between py-2">
