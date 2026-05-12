@@ -75,6 +75,14 @@ export default function GuardianDashboardClient() {
   const [unreadMessages, setUnreadMessages] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [reportCardCount, setReportCardCount] = useState(0);
+
+  useEffect(() => {
+    fetch("/api/guardian/report-cards", { cache: "no-store" })
+      .then((r) => r.json())
+      .then((d) => setReportCardCount((d.reportCards ?? []).length))
+      .catch(() => null);
+  }, []);
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -216,6 +224,23 @@ export default function GuardianDashboardClient() {
           </div>
         ) : (
           <>
+            {reportCardCount > 0 && (
+              <div className="flex items-center justify-between rounded-xl border border-[var(--ll-yellow)]/20 bg-[var(--ll-yellow-soft)] px-4 py-3">
+                <div>
+                  <p className="text-sm font-semibold text-[var(--ll-text)]">Report Card Available</p>
+                  <p className="text-xs text-[var(--ll-text-muted)] mt-0.5">
+                    {reportCardCount} published report card{reportCardCount !== 1 ? "s" : ""} ready to view.
+                  </p>
+                </div>
+                <Link
+                  href="/guardian/report-cards"
+                  className="shrink-0 min-h-9 rounded-full bg-[var(--ll-yellow)] px-4 text-xs font-semibold text-[var(--ll-text-faint)] inline-flex items-center"
+                >
+                  View
+                </Link>
+              </div>
+            )}
+
             {dashboardChildren.length > 1 ? (
               <section className="ll-section p-4">
                 <label className="block text-[11px] font-medium uppercase tracking-[0.1em] text-[var(--ll-text-faint)]">Child selector</label>

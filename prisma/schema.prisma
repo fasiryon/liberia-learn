@@ -70,6 +70,7 @@ model User {
   lessonVideos        LessonVideo[]          @relation("LessonVideoTeacher")
   teacherWelcomeCompletedAt DateTime?
   teacherSentiments   TeacherSentiment[]
+  createdReportCards  ReportCard[]         @relation("ReportCardCreator")
 }
 
 model District {
@@ -227,6 +228,7 @@ model Student {
   interventionRecommendations InterventionRecommendation[]
   academicEnrollments   AcademicEnrollment[]
   transcripts           Transcript[]
+  reportCards           ReportCard[]
 }
 
 model Exam {
@@ -412,6 +414,7 @@ model Term {
   endDate        DateTime
   createdAt      DateTime     @default(now())
   academicYear   AcademicYear @relation(fields: [academicYearId], references: [id], onDelete: Cascade)
+  reportCards    ReportCard[]
 
   @@unique([academicYearId, name])
   @@index([academicYearId, startDate])
@@ -452,6 +455,31 @@ model Transcript {
   @@unique([studentId, academicYearId])
   @@index([schoolId, academicYearId])
   @@index([studentId, createdAt])
+}
+
+/// / ===== Report Cards =====
+model ReportCard {
+  id                String    @id @default(cuid())
+  studentId         String
+  termId            String
+  schoolId          String
+  classId           String
+  subjectGrades     Json
+  attendanceSummary Json
+  teacherComment    String?
+  principalComment  String?
+  status            String    @default("DRAFT")
+  generatedAt       DateTime  @default(now())
+  publishedAt       DateTime?
+  createdBy         String
+  student           Student   @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  term              Term      @relation(fields: [termId], references: [id], onDelete: Cascade)
+  creator           User      @relation("ReportCardCreator", fields: [createdBy], references: [id])
+
+  @@unique([studentId, termId])
+  @@index([schoolId, termId])
+  @@index([classId, termId])
+  @@index([studentId, status])
 }
 
 model Meeting {

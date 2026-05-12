@@ -111,6 +111,31 @@ export default async function DashboardPage() {
   const avgGrade = avgGradeNum.toFixed(1);
   const lessonsThisWeek = grades.length;
   const attendancePercent = "96";
+  // Latest published report card for this student
+  let latestReportCard: { id: string; termName: string; attendanceRate: number; topSubject: string } | null = null;
+  if (student) {
+    try {
+      const rc = await prisma.reportCard.findFirst({
+        where: { studentId: student.id, status: "PUBLISHED" },
+        include: { term: { select: { name: true } } },
+        orderBy: { publishedAt: "desc" },
+      });
+      if (rc) {
+        const grades = rc.subjectGrades as any[];
+        const att = rc.attendanceSummary as any;
+        const topSubject = grades.reduce((best: any, g: any) => (!best || g.average > best.average ? g : best), null);
+        latestReportCard = {
+          id: rc.id,
+          termName: rc.term.name,
+          attendanceRate: att?.rate ?? 0,
+          topSubject: topSubject?.subject?.replace(/_/g, " ") ?? "—",
+        };
+      }
+    } catch {
+      // non-critical, ignore
+    }
+  }
+
   const chatMessagesCount = await prisma.chatMessage.count({
     where: {
       studentId: student.id,
@@ -220,6 +245,25 @@ export default async function DashboardPage() {
                   </svg>
                 </Link>
               </div>
+
+              {latestReportCard ? (
+                <Link
+                  href="/student/report-cards"
+                  className="flex items-center gap-3 ll-command rounded-lg px-4 py-3 hover:border-[var(--ll-yellow)] transition-colors duration-150"
+                >
+                  <div className="flex-1">
+                    <p className="text-sm font-medium text-[var(--ll-text)]">
+                      Latest Report Card — {latestReportCard.termName}
+                    </p>
+                    <p className="text-xs text-[var(--ll-text-faint)] mt-0.5">
+                      Top subject: {latestReportCard.topSubject} &middot; Attendance: {latestReportCard.attendanceRate}%
+                    </p>
+                  </div>
+                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none" className="text-[var(--ll-text-faint)] flex-shrink-0">
+                    <path d="M6 3l5 5-5 5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                </Link>
+              ) : null}
 
               <div className="-mx-1 flex gap-2 overflow-x-auto px-1 pb-1 md:hidden">
                 {quickNavItems.map((item) => (
