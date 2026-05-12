@@ -122,6 +122,14 @@ export default function TeacherDashboardPage() {
   const pendingGradingRef = useRef<number | null>(null);
   const adaptiveEnabled = process.env.NEXT_PUBLIC_ENABLE_ADAPTIVE_ENGINE !== "false";
   const [codeCopied, setCodeCopied] = useState(false);
+  const [reportCardNudge, setReportCardNudge] = useState(0);
+
+  useEffect(() => {
+    fetch("/api/teacher/report-cards", { cache: "no-store" })
+      .then((r) => r.json())
+      .then((d) => setReportCardNudge(d.draftWithoutComment ?? 0))
+      .catch(() => null);
+  }, []);
 
   function copySchoolCode() {
     const code = data?.schoolCode;
@@ -336,6 +344,22 @@ export default function TeacherDashboardPage() {
                   className="text-xs font-medium text-[var(--ll-text-faint)] hover:text-[var(--ll-text-muted)]"
                 >
                   Review →
+                </Link>
+              </div>
+            )}
+
+            {/* Report card comment nudge */}
+            {reportCardNudge > 0 && (
+              <div className="flex items-center justify-between rounded-xl border border-[var(--ll-border)] bg-[var(--ll-surface-muted)] px-4 py-3">
+                <p className="text-sm text-[var(--ll-text-muted)]">
+                  <span className="font-semibold text-[var(--ll-text)]">{reportCardNudge}</span>{" "}
+                  student{reportCardNudge !== 1 ? "s" : ""} awaiting your comment on their report card.
+                </p>
+                <Link
+                  href="/teacher/report-cards"
+                  className="shrink-0 text-xs font-medium text-[var(--ll-yellow)] hover:underline"
+                >
+                  Add comments →
                 </Link>
               </div>
             )}
