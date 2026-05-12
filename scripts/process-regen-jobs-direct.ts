@@ -126,12 +126,25 @@ async function processJob(
       topic,
       contentType: "lesson",
       moeAlignmentCodes: alignmentCodes(lesson.moeAlignments),
+      // "either" uses 9000 max_tokens (no JSON truncation). body_block targets
+      // 18+ sections / 2200 words. We prefer body_block for depth validation
+      // since it is always richer than body_standard.
       lessonFormat: "either",
       liberiaContext: true,
       forceSmartTier: true,
     });
 
-    const depth = validateLessonDepth(generated, lesson.grade);
+    // Prefer body_block (the fuller block-format content) for depth validation.
+    // extractLessonText checks lessonContent first, so setting it here ensures
+    // validateLessonDepth measures the richest available lesson text.
+    const gen = generated as Record<string, unknown>;
+    const richContent =
+      (typeof gen.body_block === "string" ? gen.body_block.trim() : "") ||
+      (typeof gen.body_standard === "string" ? gen.body_standard.trim() : "") ||
+      extractLessonText(generated);
+
+    const payloadForValidation = { ...generated, lessonContent: richContent };
+    const depth = validateLessonDepth(payloadForValidation, lesson.grade);
 
     if (!depth.valid) {
       const reason = depth.failReasons.join("; ");
@@ -151,10 +164,9 @@ async function processJob(
       return { status: "fail", slideCount: depth.slideCount, wordCount: depth.wordCount, durationMs: ms };
     }
 
-    const lessonContent = extractLessonText(generated);
     const nextPayload = {
       ...generated,
-      lessonContent,
+      lessonContent: richContent,
       approvalStatus: "APPROVED",
       generationMetadata: {
         ...(typeof generated.metadata === "object" && generated.metadata ? generated.metadata : {}),

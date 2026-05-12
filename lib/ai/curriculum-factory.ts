@@ -45,8 +45,8 @@ function getGenerationMaxTokens(
 ): number {
   if (contentType !== "lesson") return 2500;
   if (format === "either") return 9000;
-  if (format === "block") return 4000;
-  return 3000;
+  if (format === "block") return 8000;
+  return 6000;
 }
 
 function buildLessonBodyPrompt(format: "standard" | "block" | "either"): string {
