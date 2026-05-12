@@ -14,6 +14,7 @@ const LINKS = [
   { href: "/teacher/schedule", label: "Schedule" },
   { href: "/teacher/labs", label: "Labs" },
   { href: "/teacher/events", label: "Events" },
+  { href: "/teacher/discussion", label: "Discussion" },
   { href: "/teacher/exams", label: "Exams" },
   { href: "/teacher/assignments", label: "Assignments" },
   { href: "/teacher/students", label: "Students" },

@@ -74,6 +74,10 @@ model User {
   pushSubscriptions    PushSubscription[]
   hostMeetings         Meeting[]            @relation("MeetingHost")
   meetingAttendances   MeetingAttendee[]    @relation("MeetingAttendees")
+  discussionThreads    DiscussionThread[]   @relation("DiscussionThreadAuthor")
+  discussionPosts      DiscussionPost[]     @relation("DiscussionPostAuthor")
+  discussionUpvotes    DiscussionUpvote[]
+  discussionLastReads  DiscussionLastRead[]
 }
 
 model District {
@@ -191,6 +195,7 @@ model Class {
   teacherAssignments TeacherAssignment[]
   exams          Exam[]
   moeDirectiveApplications MoeDirectiveApplication[]
+  discussionThreads DiscussionThread[]
 }
 
 model Student {
@@ -3268,4 +3273,73 @@ model SchoolEvent {
   @@index([schoolId, eventDate])
   @@index([schoolId, published, eventDate])
   @@index([type, published, eventDate])
+}
+
+/// Sprint 7: class discussion boards.
+model DiscussionThread {
+  id          String           @id @default(cuid())
+  classId     String
+  schoolId    String
+  contentId   String?
+  title       String
+  authorId    String
+  authorRole  String
+  pinned      Boolean          @default(false)
+  locked      Boolean          @default(false)
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+  class       Class            @relation(fields: [classId], references: [id], onDelete: Cascade)
+  author      User             @relation("DiscussionThreadAuthor", fields: [authorId], references: [id])
+  posts       DiscussionPost[]
+  lastReads   DiscussionLastRead[]
+
+  @@index([classId, pinned, updatedAt])
+  @@index([schoolId, classId])
+  @@index([classId, contentId])
+}
+
+model DiscussionPost {
+  id           String          @id @default(cuid())
+  threadId     String
+  authorId     String
+  authorRole   String
+  body         String
+  parentPostId String?
+  upvotes      Int             @default(0)
+  flagged      Boolean         @default(false)
+  pending      Boolean         @default(false)
+  createdAt    DateTime        @default(now())
+  updatedAt    DateTime        @updatedAt
+  thread       DiscussionThread @relation(fields: [threadId], references: [id], onDelete: Cascade)
+  author       User             @relation("DiscussionPostAuthor", fields: [authorId], references: [id])
+  parent       DiscussionPost?  @relation("PostReplies", fields: [parentPostId], references: [id])
+  replies      DiscussionPost[] @relation("PostReplies")
+  upvoters     DiscussionUpvote[]
+
+  @@index([threadId, createdAt])
+  @@index([threadId, pending])
+}
+
+model DiscussionUpvote {
+  id        String   @id @default(cuid())
+  postId    String
+  userId    String
+  createdAt DateTime @default(now())
+  post      DiscussionPost @relation(fields: [postId], references: [id], onDelete: Cascade)
+  user      User           @relation(fields: [userId], references: [id])
+
+  @@unique([postId, userId])
+  @@index([postId])
+}
+
+model DiscussionLastRead {
+  id       String   @id @default(cuid())
+  userId   String
+  threadId String
+  readAt   DateTime @default(now())
+  user     User            @relation(fields: [userId], references: [id])
+  thread   DiscussionThread @relation(fields: [threadId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, threadId])
+  @@index([userId])
 }
