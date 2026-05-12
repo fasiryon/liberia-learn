@@ -848,3 +848,31 @@ export function isAutonomousOptimizationEnabled(): boolean {
 export function isImplementationWorkflowEnabled(): boolean {
   return process.env.ENABLE_IMPLEMENTATION_WORKFLOW === "true";
 }
+
+// Autonomous OS Phase 9: Production Runtime Wiring
+// All default OFF; enable per environment after infrastructure is validated.
+
+/** Master gate for all autonomous OS cron endpoints. DEFAULT OFF. */
+export function isAutonomousCronEnabled(): boolean {
+  return process.env.ENABLE_AUTONOMOUS_CRON === "true";
+}
+
+/** Enables stuck-workflow detection and recovery cron. DEFAULT OFF. */
+export function isWorkflowRecoveryCronEnabled(): boolean {
+  return process.env.ENABLE_WORKFLOW_RECOVERY_CRON === "true";
+}
+
+/** Enables dead-letter inspection cron (read-only scan + audit log). DEFAULT OFF. */
+export function isDeadLetterInspectionCronEnabled(): boolean {
+  return process.env.ENABLE_DEAD_LETTER_INSPECTION_CRON === "true";
+}
+
+/** Enables runtime health snapshot writes via cron. DEFAULT OFF. */
+export function isRuntimeHealthCronEnabled(): boolean {
+  return process.env.ENABLE_RUNTIME_HEALTH_CRON === "true";
+}
+
+/** Enables the /admin/ops/runtime dashboard pages. DEFAULT ON. */
+export function isRuntimeDashboardEnabled(): boolean {
+  return process.env.ENABLE_RUNTIME_DASHBOARD !== "false";
+}

@@ -1,0 +1,53 @@
+import { NextResponse } from "next/server";
+import { processStaleApprovals } from "@/lib/autonomous/actions/staleApprovalWorker";
+import { logAutonomousCronRun } from "@/lib/autonomous/runtime/autonomousCronLog";
+import { isAutonomousCronEnabled, isApprovalExpirationWorkerEnabled } from "@/lib/serverFlags";
+
+export const dynamic = "force-dynamic";
+export const maxDuration = 60;
+
+export async function POST(req: Request) {
+  const cronSecret = process.env.CRON_SECRET;
+  const authHeader = req.headers.get("authorization");
+  if (!cronSecret || authHeader !== `Bearer ${cronSecret}`) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  if (!isAutonomousCronEnabled()) {
+    return NextResponse.json({ skipped: true, reason: "autonomous_cron_disabled" });
+  }
+  if (!isApprovalExpirationWorkerEnabled()) {
+    return NextResponse.json({ skipped: true, reason: "approval_expiration_worker_disabled" });
+  }
+
+  const start = Date.now();
+  try {
+    const body = await req.json().catch(() => ({}));
+    const result = await processStaleApprovals({ dryRun: body?.dryRun === true });
+    const durationMs = Date.now() - start;
+
+    await logAutonomousCronRun({
+      pipeline: "autonomous.stale_approvals",
+      status: "ok",
+      processed: result.expired,
+      failed: 0,
+      durationMs,
+    });
+
+    return NextResponse.json({ ok: true, durationMs, ...result });
+  } catch (error: any) {
+    const durationMs = Date.now() - start;
+    await logAutonomousCronRun({
+      pipeline: "autonomous.stale_approvals",
+      status: "error",
+      processed: 0,
+      failed: 1,
+      durationMs,
+      error: error?.message ?? "Unknown error",
+    }).catch(() => {});
+    return NextResponse.json(
+      { error: error?.message ?? "Cron stale-approvals failed" },
+      { status: 500 }
+    );
+  }
+}
