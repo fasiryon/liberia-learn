@@ -89,6 +89,7 @@ export type AutonomousCronPipeline =
   | "autonomous.dead_letter_inspection";
 
 export type CronRunStatus = "ok" | "skipped" | "error";
+export type SmokeResultStatus = "PASS" | "WARN" | "FAIL" | "SKIPPED";
 
 export type AutonomousCronRunRecord = {
   pipeline: AutonomousCronPipeline;
