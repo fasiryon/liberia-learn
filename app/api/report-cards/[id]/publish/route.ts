@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { requireRole } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { logAudit } from "@/lib/audit";
+import { sendPushToUser } from "@/lib/push/sendPush";
 
 export const dynamic = "force-dynamic";
 
@@ -29,6 +30,18 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
       resourceId: params.id,
       schoolId: user.schoolId ?? undefined,
     });
+
+    const studentUser = await prisma.student.findUnique({
+      where: { id: card.studentId },
+      select: { user: { select: { id: true } } },
+    });
+    if (studentUser?.user?.id) {
+      sendPushToUser(studentUser.user.id, {
+        title: "Report card published",
+        body: "Your term report card is now available.",
+        url: "/student/report-cards",
+      }).catch(() => null);
+    }
 
     return NextResponse.json({ reportCard: updated });
   } catch (e: any) {

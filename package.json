@@ -39,6 +39,7 @@
         "@react-pdf/renderer": "^4.3.2",
         "@sentry/nextjs": "^10.39.0",
         "@sentry/node": "^10.43.0",
+        "@types/web-push": "^3.6.4",
         "@upstash/ratelimit": "^2.0.8",
         "@upstash/redis": "^1.37.0",
         "africastalking": "^0.7.9",
@@ -55,6 +56,7 @@
         "react-markdown": "^10.1.0",
         "recharts": "^3.7.0",
         "resend": "^6.9.2",
+        "web-push": "^3.6.7",
         "zod": "^4.1.12"
     },
     "devDependencies": {

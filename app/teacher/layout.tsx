@@ -2,6 +2,7 @@ import { TeacherShell } from "@/app/teacher/TeacherShell";
 import GlobalAssistantMount from "@/components/rag/GlobalAssistantMount";
 import { getOptionalUser } from "@/lib/auth";
 import { prisma } from "@/lib/db";
+import { PushPermissionPrompt } from "@/components/PushPermissionPrompt";
 
 /**
  * Teacher layout — server component.
@@ -32,6 +33,7 @@ export default async function TeacherLayout({
     <>
       <TeacherShell needsWelcome={needsWelcome}>{children}</TeacherShell>
       <GlobalAssistantMount />
+      <PushPermissionPrompt />
     </>
   );
 }
