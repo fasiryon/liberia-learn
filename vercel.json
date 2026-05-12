@@ -14,7 +14,8 @@
       ]
     }
   ],
-  "crons": [
+  "crons": [],
+  "_cronsPaused_restoreOnProUpgrade": [
     {
       "path": "/api/cron/process-audio-generation",
       "schedule": "*/10 * * * *"
