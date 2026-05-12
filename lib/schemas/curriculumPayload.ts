@@ -43,7 +43,7 @@ const LabObservationFieldSchema = z.object({
   field: z.string().min(1),
   prompt: z.string().min(5),
   inputType: z.enum(["text", "number", "choice"]),
-  choices: z.array(z.string()).nullable(),
+  choices: z.array(z.string()).nullish(),
 });
 
 const LabAnalysisQuestionSchema = z.object({
@@ -146,18 +146,11 @@ export const CurriculumPayloadSchema = z.object({
   }
 
   if (recommendedFormat === "either") {
-    if (!payload.body_standard) {
+    if (!payload.body_standard && !payload.body_block) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
         path: ["body_standard"],
-        message: "body_standard is required when both lesson formats are generated",
-      });
-    }
-    if (!payload.body_block) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        path: ["body_block"],
-        message: "body_block is required when both lesson formats are generated",
+        message: "at least one of body_standard or body_block is required for either-format lessons",
       });
     }
   }
