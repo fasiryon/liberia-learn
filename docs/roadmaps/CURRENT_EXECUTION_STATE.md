@@ -403,7 +403,7 @@ Full build plan: `docs/roadmaps/ONLINE_SCHOOL_BUILD.md`
 | 2 | Assignment Grading + Gradebook | AWAITING APPROVAL |
 | 3 | Term Report Cards | COMPLETE |
 | 4 | Push Notifications + PWA Install | AWAITING APPROVAL |
-| 5 | School Events Calendar | AWAITING APPROVAL |
+| 5 | School Events Calendar | COMPLETE |
 | 6 | Live Class Sessions (Jitsi) | AWAITING APPROVAL |
 | 7 | Class Discussion Boards | AWAITING APPROVAL |
 | 8 | Guardian Portal Enhancement | AWAITING APPROVAL |
@@ -457,3 +457,18 @@ Full build plan: `docs/roadmaps/ONLINE_SCHOOL_BUILD.md`
   - `VAPID_SUBJECT=mailto:admin@liberialearn.edu.lr`
 - Gate: `npx tsc --noEmit` PASS (0 errors), `npx vitest run` PASS (2688 tests / 353 files), `npm run build` PASS
 - 10 new tests in `__tests__/sprint4.push.test.ts`
+
+## Sprint 5 COMPLETE — 2026-05-12
+- SchoolEvent model + migration `20260512_000005_sprint5_school_events` — SHIPPED
+- `lib/push/sendPush.ts` — `sendPushToSchool` helper added — SHIPPED
+- APIs: `GET/POST /api/admin/events`, `PATCH/DELETE /api/admin/events/[id]`, `PATCH /api/admin/events/[id]/publish` — SHIPPED
+- `GET /api/events` — role-scoped visibility filter (ALL/STUDENTS/TEACHERS/GUARDIANS) — SHIPPED
+- `/admin/events` CRUD page: filter tabs, inline form, draft/publish, edit, delete — SHIPPED
+- `components/EventCalendar.tsx` — compact weekly strip + full month grid — SHIPPED
+- EventCalendar compact wired into: student Today, teacher dashboard, guardian dashboard, admin dashboard — SHIPPED
+- Dedicated events pages: `/student/events`, `/teacher/events`, `/guardian/events` — SHIPPED
+- Nav links: StudentSidebar, TeacherNav, GuardianNav — SHIPPED
+- `lib/events/eventSmsScheduler.ts` — 24h guardian SMS reminder, EXAM/MEETING only, skips past — SHIPPED
+- Commit: `64b98f0`
+- Gate: `npx tsc --noEmit` PASS (0 errors), `npx vitest run` PASS (2712 tests / 355 files), `npm run build` PASS
+- 9 new tests in `__tests__/sprint5.events.test.ts`
