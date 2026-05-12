@@ -14,35 +14,5 @@
       ]
     }
   ],
-  "crons": [],
-  "_cronsPaused_restoreOnProUpgrade": [
-    {
-      "path": "/api/cron/process-audio-generation",
-      "schedule": "*/10 * * * *"
-    },
-    {
-      "path": "/api/cron/process-textbook-generation",
-      "schedule": "*/15 * * * *"
-    },
-    {
-      "path": "/api/cron/autonomous/stale-approvals",
-      "schedule": "*/15 * * * *"
-    },
-    {
-      "path": "/api/cron/autonomous/evaluation-windows",
-      "schedule": "0 * * * *"
-    },
-    {
-      "path": "/api/cron/autonomous/workflow-recovery",
-      "schedule": "*/10 * * * *"
-    },
-    {
-      "path": "/api/cron/autonomous/runtime-health",
-      "schedule": "*/5 * * * *"
-    },
-    {
-      "path": "/api/cron/autonomous/dead-letter-inspection",
-      "schedule": "0 */6 * * *"
-    }
-  ]
+  "crons": []
 }
