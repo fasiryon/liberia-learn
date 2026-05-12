@@ -4,6 +4,7 @@ import { requireRole } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { logAudit } from "@/lib/audit";
 import { notifyAssignmentGraded } from "@/lib/assignment-notifications";
+import { sendPushToUser } from "@/lib/push/sendPush";
 
 export const dynamic = "force-dynamic";
 
@@ -96,6 +97,15 @@ export async function POST(
       assignmentTitle: submission.Assignment.title,
       score: parsed.data.grade,
     }).catch(() => null);
+
+    const studentUserId = submission.Student.user.id;
+    if (studentUserId) {
+      sendPushToUser(studentUserId, {
+        title: "Assignment graded",
+        body: `${submission.Assignment.title}: ${parsed.data.grade}/100`,
+        url: "/assignments",
+      }).catch(() => null);
+    }
 
     return NextResponse.json({
       ok: true,

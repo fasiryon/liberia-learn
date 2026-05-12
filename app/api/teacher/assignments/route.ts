@@ -5,6 +5,7 @@ import { notifyAssignmentCreated } from "@/lib/assignment-notifications";
 import { prisma } from "@/lib/db";
 import { logLearningEvent } from "@/lib/events/logLearningEvent";
 import { assignmentCreateSchema } from "@/lib/schemas/assignment";
+import { sendPushToMany } from "@/lib/push/sendPush";
 
 export const dynamic = "force-dynamic";
 
@@ -358,6 +359,20 @@ export async function POST(req: Request) {
       className: assignment.Class.name,
       teacherName: assignment.Class.Teacher?.name ?? assignment.Class.Teacher?.email ?? "Teacher",
       dueAt: assignment.dueAt,
+    }).catch(() => null);
+
+    prisma.enrollment.findMany({
+      where: { classId: assignment.classId },
+      select: { Student: { select: { user: { select: { id: true } } } } },
+    }).then((enrollments) => {
+      const userIds = enrollments.map((e) => e.Student.user.id).filter(Boolean);
+      if (userIds.length) {
+        sendPushToMany(userIds, {
+          title: "New assignment",
+          body: `${assignment.title} — due ${assignment.dueAt ? new Date(assignment.dueAt).toLocaleDateString() : "TBD"}`,
+          url: "/assignments",
+        }).catch(() => null);
+      }
     }).catch(() => null);
 
     return NextResponse.json(

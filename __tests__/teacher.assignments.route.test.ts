@@ -11,11 +11,13 @@ const mockLogAudit = vi.hoisted(() => vi.fn());
 const mockNotifyAssignmentCreated = vi.hoisted(() => vi.fn());
 const mockLogLearningEvent = vi.hoisted(() => vi.fn());
 const mockTeacherActionCreate = vi.hoisted(() => vi.fn());
+const mockEnrollmentFindMany = vi.hoisted(() => vi.fn());
 
 vi.mock("@/lib/auth", () => ({ requireRole: mockRequireRole }));
 vi.mock("@/lib/audit", () => ({ logAudit: mockLogAudit }));
 vi.mock("@/lib/assignment-notifications", () => ({ notifyAssignmentCreated: mockNotifyAssignmentCreated }));
 vi.mock("@/lib/events/logLearningEvent", () => ({ logLearningEvent: mockLogLearningEvent }));
+vi.mock("@/lib/push/sendPush", () => ({ sendPushToMany: vi.fn() }));
 vi.mock("@/lib/db", () => ({
   prisma: {
     assignmentSubmission: {
@@ -36,6 +38,9 @@ vi.mock("@/lib/db", () => ({
     },
     curriculumContent: {
       findUnique: mockCurriculumContentFindUnique,
+    },
+    enrollment: {
+      findMany: mockEnrollmentFindMany,
     },
   },
 }));
@@ -81,6 +86,7 @@ describe("/api/teacher/assignments", () => {
     mockNotifyAssignmentCreated.mockResolvedValue(undefined);
     mockLogLearningEvent.mockResolvedValue(null);
     mockTeacherActionCreate.mockResolvedValue(undefined);
+    mockEnrollmentFindMany.mockResolvedValue([]);
   });
 
   it("creates a teacher-scoped assignment", async () => {
