@@ -70,8 +70,10 @@ model User {
   lessonVideos        LessonVideo[]          @relation("LessonVideoTeacher")
   teacherWelcomeCompletedAt DateTime?
   teacherSentiments   TeacherSentiment[]
-  createdReportCards  ReportCard[]         @relation("ReportCardCreator")
-  pushSubscriptions   PushSubscription[]
+  createdReportCards   ReportCard[]         @relation("ReportCardCreator")
+  pushSubscriptions    PushSubscription[]
+  hostMeetings         Meeting[]            @relation("MeetingHost")
+  meetingAttendances   MeetingAttendee[]    @relation("MeetingAttendees")
 }
 
 model District {
@@ -485,15 +487,26 @@ model ReportCard {
 }
 
 model Meeting {
-  id         String             @id @default(cuid())
-  classId    String
-  startsAt   DateTime
-  endsAt     DateTime
-  attendance AttendanceRecord[]
-  Class      Class              @relation(fields: [classId], references: [id])
+  id          String            @id @default(cuid())
+  classId     String
+  startsAt    DateTime
+  endsAt      DateTime
+  subject     String?
+  periodName  String?
+  jitsiRoomId String?
+  joinUrl     String?
+  liveStatus  String            @default("SCHEDULED")
+  startedAt   DateTime?
+  endedAt     DateTime?
+  hostUserId  String?
+  attendance  AttendanceRecord[]
+  attendees   MeetingAttendee[]
+  host        User?             @relation("MeetingHost", fields: [hostUserId], references: [id])
+  Class       Class             @relation(fields: [classId], references: [id])
 
   // Block 23: composite index for attendance window queries (classId + time range)
   @@index([classId, startsAt])
+  @@index([liveStatus])
 }
 
 model Attendance {
@@ -528,6 +541,18 @@ model AttendanceRecord {
   Student   Student          @relation(fields: [studentId], references: [id])
 
   @@unique([meetingId, studentId], name: "meetingId_studentId")
+}
+
+model MeetingAttendee {
+  id        String   @id @default(cuid())
+  meetingId String
+  userId    String
+  joinedAt  DateTime @default(now())
+  meeting   Meeting  @relation(fields: [meetingId], references: [id], onDelete: Cascade)
+  user      User     @relation("MeetingAttendees", fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([meetingId, userId])
+  @@index([meetingId])
 }
 
 /// / ===== Curriculum =====

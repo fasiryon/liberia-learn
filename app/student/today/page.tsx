@@ -7,6 +7,7 @@ import { BookOpen, CheckCircle2, Clock3, ListChecks, RefreshCw, TrendingUp } fro
 import { SkeletonCard } from "@/components/ui/Skeleton";
 import { useAssignmentPolling } from "@/lib/hooks/useAssignmentPolling";
 import { EventCalendar } from "@/components/EventCalendar";
+import { LiveSessionBanner } from "@/components/LiveSessionBanner";
 
 type WorkStatus = "not_started" | "in_progress" | "completed";
 type ScheduleStatus = "current" | "upcoming" | "completed" | "missed";
@@ -310,6 +311,8 @@ export default function StudentTodayPage() {
           </div>
         ) : (
           <>
+            <LiveSessionBanner />
+
             <section className="grid gap-3 rounded-lg border border-[var(--ll-accent)]/35 bg-[var(--ll-accent-soft)] p-4 sm:grid-cols-[1fr_auto] sm:items-center">
               <div>
                 <h1 className="text-lg font-semibold text-[var(--ll-text)]">{priorityTitle}</h1>
