@@ -71,6 +71,7 @@ model User {
   teacherWelcomeCompletedAt DateTime?
   teacherSentiments   TeacherSentiment[]
   createdReportCards  ReportCard[]         @relation("ReportCardCreator")
+  pushSubscriptions   PushSubscription[]
 }
 
 model District {
@@ -1117,6 +1118,21 @@ model NotificationLog {
 
   @@index([userId, createdAt])
   @@index([status, createdAt])
+}
+
+/// / ===== Push Subscriptions =====
+model PushSubscription {
+  id         String   @id @default(cuid())
+  userId     String
+  endpoint   String   @unique
+  p256dh     String
+  auth       String
+  deviceName String?
+  createdAt  DateTime @default(now())
+  lastUsed   DateTime @default(now())
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
 }
 
 model StudentImportBatch {
@@ -3150,6 +3166,30 @@ model StagedRolloutPlan {
 
   @@index([changeRequestId])
   @@index([status, createdAt])
+}
+
+/// Autonomous OS Phase 10: operator incident investigation notes attached to a workflow run.
+/// Platform-admin only. No student PII. Captures investigation, root cause, recovery, and follow-up.
+model OperatorIncidentNote {
+  id              String    @id @default(cuid())
+  workflowRunId   String
+  /// INVESTIGATION | ROOT_CAUSE | RECOVERY_ACTION | ROLLBACK_NOTE | FOLLOW_UP | RESOLUTION
+  noteType        String
+  /// LOW | MEDIUM | HIGH | CRITICAL
+  severity        String?
+  /// OPEN | IN_PROGRESS | RESOLVED | WONT_FIX
+  status          String    @default("OPEN")
+  body            String
+  createdByUserId String
+  schoolId        String?
+  tenantId        String?
+  resolvedAt      DateTime?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  @@index([workflowRunId, createdAt])
+  @@index([status, createdAt])
+  @@index([createdByUserId, createdAt])
 }
 
 /// Autonomous OS Phase 7: post-change evaluation plan for outcome attribution after rollout.
