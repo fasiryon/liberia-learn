@@ -1,4 +1,5 @@
 import { redirect } from "next/navigation";
+import Link from "next/link";
 
 import { requireRole } from "@/lib/auth";
 import { prisma } from "@/lib/db";
@@ -33,6 +34,14 @@ export default async function StudentAssignmentPage({ params }: { params: { id: 
       submissions: {
         where: { studentId: student.id },
         take: 1,
+        select: {
+          id: true,
+          content: true,
+          score: true,
+          feedback: true,
+          gradedAt: true,
+          turnedInAt: true,
+        },
       },
     },
   });
@@ -50,6 +59,14 @@ export default async function StudentAssignmentPage({ params }: { params: { id: 
   }
 
   const submission = assignment.submissions[0] ?? null;
+  const gradeData = submission
+    ? {
+        score: submission.score,
+        feedback: submission.feedback,
+        gradedAt: submission.gradedAt?.toISOString() ?? null,
+        turnedInAt: submission.turnedInAt?.toISOString() ?? null,
+      }
+    : null;
 
   logLearningEvent({
     schoolId: user.schoolId,
@@ -67,9 +84,15 @@ export default async function StudentAssignmentPage({ params }: { params: { id: 
     <main className="min-h-screen bg-[var(--ll-bg)] px-4 py-8 text-[var(--ll-text)]">
       <div className="mx-auto max-w-4xl space-y-6">
         <header>
-          <p className="text-xs font-semibold uppercase tracking-[0.22em] text-[var(--ll-yellow)]">LiberiaLearn</p>
-          <h1 className="mt-3 text-3xl font-semibold text-[var(--ll-text)]">{assignment.title}</h1>
-          <p className="mt-2 text-sm text-[var(--ll-text-muted)]">{assignment.Class.name}</p>
+          <Link
+            href="/student/assignments"
+            className="inline-flex items-center gap-1 text-sm text-[var(--ll-text-muted)] hover:text-[var(--ll-text)]"
+          >
+            ← Back to Assignments
+          </Link>
+          <p className="mt-3 text-xs font-semibold uppercase tracking-[0.22em] text-[var(--ll-yellow)]">LiberiaLearn</p>
+          <h1 className="mt-2 text-3xl font-semibold text-[var(--ll-text)]">{assignment.title}</h1>
+          <p className="mt-1 text-sm text-[var(--ll-text-muted)]">{assignment.Class.name}</p>
         </header>
 
         <AssignmentSubmissionClient
@@ -77,6 +100,7 @@ export default async function StudentAssignmentPage({ params }: { params: { id: 
           title={assignment.title}
           instructions={assignment.description}
           existingContent={submission?.content ?? ""}
+          gradeData={gradeData}
         />
       </div>
     </main>
