@@ -8,7 +8,7 @@
 
 | # | Sprint | Status | Commit |
 |---|--------|--------|--------|
-| 1 | Lesson Regeneration Direct Processor | IN PROGRESS | — |
+| 1 | Lesson Regeneration Direct Processor | COMPLETE | 7e20684 + da717ff |
 | 2 | Assignment Grading + Gradebook | AWAITING APPROVAL | — |
 | 3 | Term Report Cards | AWAITING APPROVAL | — |
 | 4 | Push Notifications + PWA Install | AWAITING APPROVAL | — |

@@ -399,7 +399,7 @@ Full build plan: `docs/roadmaps/ONLINE_SCHOOL_BUILD.md`
 
 | Sprint | Deliverable | Status |
 |--------|-------------|--------|
-| 1 | Lesson Regeneration Direct Processor | IN PROGRESS |
+| 1 | Lesson Regeneration Direct Processor | COMPLETE |
 | 2 | Assignment Grading + Gradebook | AWAITING APPROVAL |
 | 3 | Term Report Cards | AWAITING APPROVAL |
 | 4 | Push Notifications + PWA Install | AWAITING APPROVAL |
@@ -412,11 +412,24 @@ Full build plan: `docs/roadmaps/ONLINE_SCHOOL_BUILD.md`
 | 11 | Mobile PWA + Offline Enhancement | AWAITING APPROVAL |
 | 12 | Two-Way Student↔Teacher Messaging | AWAITING APPROVAL |
 
-## Sprint 1 Current State
-- `scripts/process-regen-jobs-direct.ts` — CREATED
-- `scripts/regen-status.ts` — CREATED
-- Gate: pending
-- Validation run (--limit 50): pending
+## Sprint 1 COMPLETE — 2026-05-12
+- `scripts/process-regen-jobs-direct.ts` — SHIPPED (commits 7e20684 + da717ff)
+- `scripts/regen-status.ts` — SHIPPED
+- `scripts/spot-check-approved.ts` — SHIPPED
+- Gate: `npx tsc --noEmit` PASS, `npx vitest run` PASS (2601 tests / 348 files), `npm run build` PASS
+- Schema fixes: `LabObservationFieldSchema.choices` .nullish, superRefine "either" → at-least-one
+- Factory fix: max_tokens std 3000→6000, block 4000→8000; lessonFormat "either" (9000) for regen
+- Processor fix: body_block priority for depth validation
+- Validation run (--limit 50 --grade 7): 11 OK / 39 FAILED / 0 SKIPPED
+- Spot-check (3 lessons): all PASS (18 slides, 1237–1355 words)
+- DB state after validation: 3,852 APPROVED (+13), 1,208 NEEDS_REVIEW, 670 PENDING jobs, 114 APPROVED jobs
 
-## Exact next step
-Run Sprint 1 gates, then run --limit 50 validation, then overnight full batch.
+## Sprint 1 Known Limitations
+- G3 SCIENCE: ~5–8% per-attempt pass rate — AI generates 700–1000 words for Grade 3 simple topics; well below 1200-word gate
+- G5 ENGLISH: ~10–20% per-attempt pass rate — AI generates 1000–1150 words; close but below threshold
+- G7 CIVICS: ~22% per-attempt pass rate — AI generates 850–1600 words; higher words pass, lower words fail
+- Jobs with `status: "failed"` are re-processed on the next run. Multiple overnight runs needed to converge backlog.
+- Overnight command: `npx dotenv -e .env.production -- npx tsx scripts/process-regen-jobs-direct.ts`
+
+## Sprint 2 Next Step
+Sprint 2 (Assignment Grading + Gradebook) — AWAITING APPROVAL before starting.
