@@ -22,16 +22,22 @@ export default async function OpsIndexPage() {
       disabled: false,
     },
     {
+      href: "/admin/ops/effectiveness",
+      title: "Autonomous OS Effectiveness",
+      desc: "Executive summary of whether autonomous operations are working",
+      disabled: false,
+    },
+    {
       href: "/admin/ops/workflows",
       title: "Workflows",
       desc: "Autonomous workflow runs and status",
-      disabled: true,
+      disabled: false,
     },
     {
       href: "/admin/ops/detectors",
       title: "Detectors",
       desc: "Operational intelligence detectors",
-      disabled: true,
+      disabled: false,
     },
   ];
 
