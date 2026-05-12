@@ -192,6 +192,15 @@ export default async function AutonomousEffectivenessDashboardPage({ searchParam
               <Link className="rounded border border-[var(--ll-border)] px-3 py-2 underline" href={dashboard.links.outcomes}>Outcomes</Link>
               <Link className="rounded border border-[var(--ll-border)] px-3 py-2 underline" href={dashboard.links.memory}>Memory updates</Link>
             </div>
+            <h2 className="mt-5 text-lg font-semibold">Runtime Operations</h2>
+            <div className="mt-3 grid gap-2 text-sm sm:grid-cols-2">
+              <Link className="rounded border border-[var(--ll-border)] px-3 py-2 underline" href="/admin/ops/runtime">Runtime health</Link>
+              <Link className="rounded border border-[var(--ll-border)] px-3 py-2 underline" href="/admin/ops/runtime/recovery">Workflow failures</Link>
+              <Link className="rounded border border-[var(--ll-border)] px-3 py-2 underline" href="/admin/ops/runtime/dead-letter">Dead-letter items</Link>
+              <Link className="rounded border border-[var(--ll-border)] px-3 py-2 underline" href="/admin/ops/optimization/evaluation-windows">Evaluation windows</Link>
+              <Link className="rounded border border-[var(--ll-border)] px-3 py-2 underline" href="/admin/ops/stale-approvals">Approval SLA</Link>
+              <Link className="rounded border border-[var(--ll-border)] px-3 py-2 underline" href="/admin/ops/runtime/cron">Cron run history</Link>
+            </div>
           </div>
         </section>
       </div>

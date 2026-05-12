@@ -39,6 +39,12 @@ export default async function OpsIndexPage() {
       desc: "Operational intelligence detectors",
       disabled: false,
     },
+    {
+      href: "/admin/ops/runtime",
+      title: "Runtime Dashboard",
+      desc: "Production health, workers, queue, cron, and recovery",
+      disabled: false,
+    },
   ];
 
   return (
