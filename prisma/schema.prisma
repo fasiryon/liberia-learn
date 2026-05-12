@@ -775,6 +775,7 @@ model AssignmentSubmission {
   feedback     String?
   gradedAt     DateTime?
   gradedBy     String?
+  rubricScore  Json?
   Assignment   Assignment @relation(fields: [assignmentId], references: [id])
   Student      Student    @relation(fields: [studentId], references: [id])
 

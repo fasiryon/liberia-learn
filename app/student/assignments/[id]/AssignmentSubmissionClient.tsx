@@ -3,14 +3,23 @@
 import { useMemo, useState } from "react";
 import { enqueueOfflineRequest } from "@/lib/offline-queue";
 
-type AssignmentSubmissionClientProps = {
+type GradeData = {
+  score: number | null;
+  feedback: string | null;
+  gradedAt: string | null;
+  turnedInAt: string | null;
+};
+
+type Props = {
   assignmentId: string;
   title: string;
   instructions: string | null;
   existingContent: string;
+  gradeData?: GradeData | null;
 };
 
-export default function AssignmentSubmissionClient(props: AssignmentSubmissionClientProps) {
+export default function AssignmentSubmissionClient(props: Props) {
+  const { gradeData } = props;
   const [content, setContent] = useState(props.existingContent);
   const [status, setStatus] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
@@ -19,6 +28,9 @@ export default function AssignmentSubmissionClient(props: AssignmentSubmissionCl
     () => content.trim().split(/\s+/).filter(Boolean).length,
     [content]
   );
+
+  const isGraded = gradeData?.score !== null && gradeData?.score !== undefined;
+  const isSubmitted = !!props.existingContent || !!gradeData?.turnedInAt;
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -45,11 +57,82 @@ export default function AssignmentSubmissionClient(props: AssignmentSubmissionCl
       const data = await response.json().catch(() => null);
       if (!response.ok) throw new Error(data?.error ?? "Failed to submit assignment.");
       setStatus("Assignment submitted successfully.");
-    } catch (error: any) {
-      setStatus(error?.message ?? "Failed to submit assignment.");
+    } catch (error: unknown) {
+      const msg = error instanceof Error ? error.message : "Failed to submit assignment.";
+      setStatus(msg);
     } finally {
       setSubmitting(false);
     }
+  }
+
+  if (isGraded && gradeData) {
+    return (
+      <div className="space-y-5">
+        {props.instructions ? (
+          <section className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/80 p-4 text-sm text-[var(--ll-text)]">
+            {props.instructions}
+          </section>
+        ) : null}
+
+        <div className="flex items-center gap-3">
+          <span className="rounded-full border border-emerald-500/20 bg-emerald-500/10 px-3 py-1 text-xs font-semibold text-emerald-300">
+            Graded
+          </span>
+          {gradeData.gradedAt ? (
+            <span className="text-xs text-[var(--ll-text-muted)]">
+              Graded on {new Date(gradeData.gradedAt).toLocaleDateString("en-LR", { year: "numeric", month: "long", day: "numeric" })}
+            </span>
+          ) : null}
+        </div>
+
+        <div className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 p-6 text-center">
+          <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[var(--ll-text-muted)]">Your Score</p>
+          <p className="mt-2 text-5xl font-bold text-[var(--ll-text)]">
+            {gradeData.score}
+            <span className="ml-1 text-2xl font-normal text-[var(--ll-text-muted)]">/ 100</span>
+          </p>
+        </div>
+
+        {gradeData.feedback ? (
+          <div className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 p-5">
+            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[var(--ll-text-muted)]">Teacher Feedback</p>
+            <p className="mt-3 whitespace-pre-wrap text-sm text-[var(--ll-text)]">{gradeData.feedback}</p>
+          </div>
+        ) : null}
+
+        {props.existingContent ? (
+          <div className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/60 p-5">
+            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[var(--ll-text-muted)]">Your Submission</p>
+            <p className="mt-3 whitespace-pre-wrap text-sm text-[var(--ll-text)]">{props.existingContent}</p>
+          </div>
+        ) : null}
+      </div>
+    );
+  }
+
+  if (isSubmitted && !isGraded) {
+    return (
+      <div className="space-y-5">
+        {props.instructions ? (
+          <section className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/80 p-4 text-sm text-[var(--ll-text)]">
+            {props.instructions}
+          </section>
+        ) : null}
+
+        <div className="flex items-center gap-3">
+          <span className="rounded-full border border-amber-400/20 bg-amber-400/10 px-3 py-1 text-xs font-semibold text-amber-300">
+            Submitted — awaiting grade
+          </span>
+        </div>
+
+        {props.existingContent ? (
+          <div className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 p-5">
+            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[var(--ll-text-muted)]">Your Submission</p>
+            <p className="mt-3 whitespace-pre-wrap text-sm text-[var(--ll-text)]">{props.existingContent}</p>
+          </div>
+        ) : null}
+      </div>
+    );
   }
 
   return (
