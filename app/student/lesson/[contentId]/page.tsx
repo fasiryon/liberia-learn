@@ -9,7 +9,7 @@ import { cacheLessonContent, loadCachedLesson } from "@/lib/lesson-offline-cache
 import { LessonAudioPlayer, type LessonAudioPart } from "@/components/student/LessonAudioPlayer";
 import { getLessonLabLinks } from "@/lib/lessons/labLinks";
 
-type LessonMode = "read" | "slides" | "listen";
+type LessonMode = "read" | "slides" | "listen" | "discussion";
 
 type LessonMetadata = {
   grade?: number;
@@ -51,6 +51,7 @@ const MODE_LABELS: Record<LessonMode, string> = {
   read: "Read",
   slides: "Slides",
   listen: "Listen",
+  discussion: "Discussion",
 };
 
 export default function LessonViewerPage() {
@@ -218,8 +219,8 @@ export default function LessonViewerPage() {
         </div>
 
         <div className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 p-2">
-          <div className="grid grid-cols-3 gap-2">
-            {(["read", "slides", "listen"] as const).map((entry) => (
+          <div className="grid grid-cols-4 gap-2">
+            {(["read", "slides", "listen", "discussion"] as const).map((entry) => (
               <button
                 key={entry}
                 type="button"
@@ -383,6 +384,18 @@ export default function LessonViewerPage() {
                 </p>
               )}
             </div>
+          </section>
+        )}
+
+        {mode === "discussion" && (
+          <section className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 p-5 space-y-3">
+            <h2 className="text-sm font-semibold uppercase tracking-wide text-[var(--ll-text)]">Lesson Discussion</h2>
+            <p className="text-sm text-[var(--ll-text-muted)]">
+              Discuss this lesson with your class.{" "}
+              <a href="/student/discussion" className="text-[var(--ll-yellow)]">
+                Go to full discussion boards →
+              </a>
+            </p>
           </section>
         )}
 

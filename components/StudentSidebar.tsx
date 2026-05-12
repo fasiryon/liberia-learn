@@ -58,6 +58,10 @@ export function StudentSidebar({
           Events
         </Link>
 
+        <Link href="/student/discussion" className={`${navLinkClass} text-[var(--ll-text-faint)]`}>
+          Discussion
+        </Link>
+
         <Link href="/student/exams" className={`${navLinkClass} text-[var(--ll-text-faint)]`}>
           Exams
         </Link>
