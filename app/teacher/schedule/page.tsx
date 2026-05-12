@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 type ScheduleItem = {
   id: string;
@@ -40,6 +40,18 @@ type LessonPlanSummary = {
   classId: string | null;
   plannedDate: string | null;
   bindingStatus: string;
+};
+
+type MeetingInfo = {
+  id: string;
+  classId: string;
+  periodName: string | null;
+  subject: string | null;
+  liveStatus: string;
+  joinUrl: string | null;
+  startedAt: string | null;
+  endedAt: string | null;
+  attendeeCount: number;
 };
 
 const DAY_LABELS = ["Mon", "Tue", "Wed", "Thu", "Fri"];
@@ -100,11 +112,21 @@ export default function TeacherSchedulePage() {
     duration: 45,
     notes: "",
   });
+  const [meetings, setMeetings] = useState<MeetingInfo[]>([]);
+  const [meetingOp, setMeetingOp] = useState<Record<string, boolean>>({});
   const [publishedClassName, setPublishedClassName] = useState<string | null>(
     null
   );
   const [publishSuccess, setPublishSuccess] = useState(false);
   const [planningMode, setPlanningMode] = useState(false);
+
+  const loadMeetings = useCallback(() => {
+    const today = new Date().toISOString().slice(0, 10);
+    fetch(`/api/teacher/meetings?date=${today}`)
+      .then((r) => r.json())
+      .then((d) => setMeetings(d.meetings || []))
+      .catch(() => {});
+  }, []);
 
   function loadSchedule(weekOf?: string) {
     setLoading(true);
@@ -123,7 +145,10 @@ export default function TeacherSchedulePage() {
 
   useEffect(() => {
     loadSchedule();
-  }, []);
+    loadMeetings();
+    const interval = setInterval(loadMeetings, 30000);
+    return () => clearInterval(interval);
+  }, [loadMeetings]);
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -245,6 +270,56 @@ export default function TeacherSchedulePage() {
         </button>
       </div>
     );
+  }
+
+  function getMeeting(classId: string, periodName: string): MeetingInfo | null {
+    return meetings.find((m) => m.classId === classId && m.periodName === periodName) ?? null;
+  }
+
+  async function handleScheduleSession(classId: string, periodName: string, subject: string) {
+    const key = `${classId}::${periodName}`;
+    setMeetingOp((prev) => ({ ...prev, [key]: true }));
+    try {
+      const today = new Date().toISOString().slice(0, 10);
+      const res = await fetch("/api/teacher/meetings", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ classId, scheduledDate: today, periodName, subject }),
+      });
+      if (res.ok) loadMeetings();
+      else setError("Unable to schedule session.");
+    } finally {
+      setMeetingOp((prev) => ({ ...prev, [key]: false }));
+    }
+  }
+
+  async function handleStartSession(meetingId: string) {
+    setMeetingOp((prev) => ({ ...prev, [meetingId]: true }));
+    try {
+      const res = await fetch(`/api/teacher/meetings/${meetingId}/start`, { method: "POST" });
+      if (res.ok) {
+        const data = await res.json();
+        if (data.joinUrl) window.open(data.joinUrl, "_blank");
+        loadMeetings();
+      } else {
+        setError("Unable to start session.");
+      }
+    } finally {
+      setMeetingOp((prev) => ({ ...prev, [meetingId]: false }));
+    }
+  }
+
+  async function handleEndSession(meetingId: string) {
+    const ok = confirm("End this live session?");
+    if (!ok) return;
+    setMeetingOp((prev) => ({ ...prev, [meetingId]: true }));
+    try {
+      const res = await fetch(`/api/teacher/meetings/${meetingId}/end`, { method: "PATCH" });
+      if (res.ok) loadMeetings();
+      else setError("Unable to end session.");
+    } finally {
+      setMeetingOp((prev) => ({ ...prev, [meetingId]: false }));
+    }
   }
 
   function isPast(dateStr: string) {
@@ -575,6 +650,63 @@ export default function TeacherSchedulePage() {
                                 ) : (
                                   planPicker(item.id, item.classId, null)
                                 )}
+                                {!breakPeriod && (() => {
+                                  const meeting = getMeeting(item.classId, item.periodLabel);
+                                  const opKey = meeting ? meeting.id : `${item.classId}::${item.periodLabel}`;
+                                  const busy = meetingOp[opKey] ?? false;
+                                  if (!meeting) {
+                                    return (
+                                      <button
+                                        type="button"
+                                        disabled={busy}
+                                        onClick={() => handleScheduleSession(item.classId, item.periodLabel, item.subject)}
+                                        className="mt-2 w-full rounded-lg border border-emerald-500/30 px-2 py-1 text-[10px] font-semibold text-emerald-400 hover:bg-emerald-500/10 disabled:opacity-60"
+                                      >
+                                        {busy ? "Scheduling..." : "Schedule Live Session"}
+                                      </button>
+                                    );
+                                  }
+                                  if (meeting.liveStatus === "SCHEDULED") {
+                                    return (
+                                      <button
+                                        type="button"
+                                        disabled={busy}
+                                        onClick={() => handleStartSession(meeting.id)}
+                                        className="mt-2 w-full rounded-lg bg-emerald-600 px-2 py-1 text-[10px] font-semibold text-white hover:bg-emerald-500 disabled:opacity-60"
+                                      >
+                                        {busy ? "Starting..." : "Start Live Session"}
+                                      </button>
+                                    );
+                                  }
+                                  if (meeting.liveStatus === "LIVE") {
+                                    return (
+                                      <div className="mt-2 space-y-1">
+                                        <div className="flex items-center justify-between gap-1">
+                                          <span className="flex items-center gap-1 text-[10px] text-red-400">
+                                            <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-red-500" />
+                                            Live · {meeting.attendeeCount} joined
+                                          </span>
+                                        </div>
+                                        <button
+                                          type="button"
+                                          disabled={busy}
+                                          onClick={() => handleEndSession(meeting.id)}
+                                          className="w-full rounded-lg bg-red-600 px-2 py-1 text-[10px] font-semibold text-white hover:bg-red-500 disabled:opacity-60"
+                                        >
+                                          {busy ? "Ending..." : "End Session"}
+                                        </button>
+                                      </div>
+                                    );
+                                  }
+                                  const durMin = meeting.startedAt && meeting.endedAt
+                                    ? Math.round((new Date(meeting.endedAt).getTime() - new Date(meeting.startedAt).getTime()) / 60000)
+                                    : null;
+                                  return (
+                                    <p className="mt-2 rounded-full bg-[var(--ll-silver-soft)] px-2 py-0.5 text-[10px] text-[var(--ll-silver)]">
+                                      Session Ended{durMin !== null ? ` · ${durMin}m` : ""}
+                                    </p>
+                                  );
+                                })()}
                               </div>
                             )})}
                           </div>
