@@ -79,3 +79,11 @@ export async function sendPushToUser(userId: string, payload: PushPayload): Prom
 export async function sendPushToMany(userIds: string[], payload: PushPayload): Promise<void> {
   await Promise.all(userIds.map((uid) => sendPushToUser(uid, payload)));
 }
+
+export async function sendPushToSchool(schoolId: string, payload: PushPayload): Promise<void> {
+  const users = await prisma.user.findMany({
+    where: { schoolId },
+    select: { id: true },
+  });
+  await sendPushToMany(users.map((u) => u.id), payload);
+}

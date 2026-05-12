@@ -7,6 +7,7 @@ import { BookOpen, MessageCircle, BarChart3 } from "lucide-react";
 import { GuardianNav } from "@/components/guardian/GuardianNav";
 import { DashboardTopBar } from "@/components/DashboardTopBar";
 import { SkeletonCard } from "@/components/ui/Skeleton";
+import { EventCalendar } from "@/components/EventCalendar";
 import { placementReviewStatusLabels, placementReviewStatusStyles } from "@/lib/placement";
 import { guardianWelcomeStorageKey } from "@/app/guardian/GuardianWelcomeGate";
 import { getGuardianGreeting } from "@/lib/student/greetings";
@@ -345,6 +346,10 @@ export default function GuardianDashboardClient() {
                 </div>
                 </div>
               </div>
+            </section>
+
+            <section className="ll-section p-4">
+              <EventCalendar role="GUARDIAN" compact />
             </section>
 
             <section className="grid gap-4 lg:grid-cols-2">

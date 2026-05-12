@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { BookOpen, CheckCircle2, Clock3, ListChecks, RefreshCw, TrendingUp } from "lucide-react";
 import { SkeletonCard } from "@/components/ui/Skeleton";
 import { useAssignmentPolling } from "@/lib/hooks/useAssignmentPolling";
+import { EventCalendar } from "@/components/EventCalendar";
 
 type WorkStatus = "not_started" | "in_progress" | "completed";
 type ScheduleStatus = "current" | "upcoming" | "completed" | "missed";
@@ -343,6 +344,10 @@ export default function StudentTodayPage() {
                 </button>
               ))}
             </div>
+
+            <section className="rounded-lg border border-[var(--ll-border)] bg-[var(--ll-surface)] p-4">
+              <EventCalendar role="STUDENT" compact />
+            </section>
 
             <section className="rounded-lg border border-[var(--ll-border)] bg-[var(--ll-surface)] p-4">
               {activeTab === "schedule" ? (

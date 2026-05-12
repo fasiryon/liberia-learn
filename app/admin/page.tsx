@@ -53,6 +53,7 @@ import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { AttachDemoSchoolButton } from "./AttachDemoSchoolButton";
 import { DashboardTopBar } from "@/components/DashboardTopBar";
+import { EventCalendar } from "@/components/EventCalendar";
 
 export const dynamic = "force-dynamic";
 
@@ -341,6 +342,7 @@ export default async function AdminConsolePage() {
         { label: "Academic Years", href: "/admin/academic-year" },
         { label: "Timetable", href: "/admin/timetable" },
         { label: "Placements", href: "/admin/placements" },
+        { label: "Events Calendar", href: "/admin/events" },
       ],
     },
     {
@@ -428,6 +430,10 @@ export default async function AdminConsolePage() {
               <p className="text-2xl font-semibold text-[var(--ll-text)]">{s.value}</p>
             </div>
           ))}
+        </section>
+
+        <section className="ll-section p-4">
+          <EventCalendar role="ADMIN" compact />
         </section>
 
         <section className="ll-section p-4">
