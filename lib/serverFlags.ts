@@ -876,3 +876,11 @@ export function isRuntimeHealthCronEnabled(): boolean {
 export function isRuntimeDashboardEnabled(): boolean {
   return process.env.ENABLE_RUNTIME_DASHBOARD !== "false";
 }
+
+// Autonomous OS Phase 10: Replay Console + Incident Investigation UI
+// All default ON (investigation tools are safe read/write-only).
+
+/** Enables replay console and incident investigation UI. DEFAULT ON. */
+export function isReplayConsoleEnabled(): boolean {
+  return process.env.ENABLE_REPLAY_CONSOLE !== "false";
+}

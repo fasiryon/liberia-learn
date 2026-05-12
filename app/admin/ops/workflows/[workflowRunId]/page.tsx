@@ -48,9 +48,17 @@ export default async function WorkflowExecutionDetailPage({
   return (
     <main className="min-h-screen bg-[var(--ll-bg)] px-6 py-8 text-[var(--ll-text)]">
       <div className="mx-auto max-w-6xl space-y-6">
-        <Link href="/admin/ops/workflows" className="text-sm underline">
-          Back to workflows
-        </Link>
+        <div className="flex gap-4">
+          <Link href="/admin/ops/workflows" className="text-sm underline">
+            ← Back to workflows
+          </Link>
+          <Link
+            href={`/admin/ops/workflows/${workflowRun.id}/replay`}
+            className="text-sm underline text-[var(--ll-yellow)]"
+          >
+            Replay Console →
+          </Link>
+        </div>
 
         <header className="space-y-2">
           <p className="text-sm font-semibold uppercase tracking-wide text-[var(--ll-text-muted)]">

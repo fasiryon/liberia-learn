@@ -48,8 +48,11 @@ export default async function DeadLetterPage() {
               {summary.items.map((item) => (
                 <div key={item.workflowRunId} className="grid gap-1 py-3 md:grid-cols-[1fr_auto]">
                   <div>
-                    <Link className="font-mono text-xs underline" href={`/admin/ops/workflows/${item.workflowRunId}`}>
+                    <Link className="font-mono text-xs underline" href={`/admin/ops/runtime/dead-letter/${item.workflowRunId}`}>
                       {item.workflowRunId.slice(0, 16)}…
+                    </Link>
+                    <Link className="ml-2 text-xs underline text-[var(--ll-text-muted)]" href={`/admin/ops/workflows/${item.workflowRunId}`}>
+                      workflow detail
                     </Link>
                     <p className="text-[var(--ll-text-muted)]">
                       {item.workflowType} · attempt {item.attempt}/{item.maxAttempts}
