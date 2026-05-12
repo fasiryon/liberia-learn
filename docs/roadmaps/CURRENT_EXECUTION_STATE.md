@@ -394,5 +394,29 @@ Required before national scale sign-off: Vercel Pro upgrade + seed load-test use
 - `playwright.config.ts`
 - `prisma/migrations/20260416_100000_curriculum_version/`
 
+## Online School Build Program
+Full build plan: `docs/roadmaps/ONLINE_SCHOOL_BUILD.md`
+
+| Sprint | Deliverable | Status |
+|--------|-------------|--------|
+| 1 | Lesson Regeneration Direct Processor | IN PROGRESS |
+| 2 | Assignment Grading + Gradebook | AWAITING APPROVAL |
+| 3 | Term Report Cards | AWAITING APPROVAL |
+| 4 | Push Notifications + PWA Install | AWAITING APPROVAL |
+| 5 | School Events Calendar | AWAITING APPROVAL |
+| 6 | Live Class Sessions (Jitsi) | AWAITING APPROVAL |
+| 7 | Class Discussion Boards | AWAITING APPROVAL |
+| 8 | Guardian Portal Enhancement | AWAITING APPROVAL |
+| 9 | Canva Documents Suite | AWAITING APPROVAL |
+| 10 | Student Portfolio + Capstone | AWAITING APPROVAL |
+| 11 | Mobile PWA + Offline Enhancement | AWAITING APPROVAL |
+| 12 | Two-Way Student↔Teacher Messaging | AWAITING APPROVAL |
+
+## Sprint 1 Current State
+- `scripts/process-regen-jobs-direct.ts` — CREATED
+- `scripts/regen-status.ts` — CREATED
+- Gate: pending
+- Validation run (--limit 50): pending
+
 ## Exact next step
-Commit Phase 5 intelligence-system changes, push to main, redeploy production, and confirm GitHub Actions are green on main.
+Run Sprint 1 gates, then run --limit 50 validation, then overnight full batch.
