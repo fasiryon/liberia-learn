@@ -404,7 +404,7 @@ Full build plan: `docs/roadmaps/ONLINE_SCHOOL_BUILD.md`
 | 3 | Term Report Cards | COMPLETE |
 | 4 | Push Notifications + PWA Install | AWAITING APPROVAL |
 | 5 | School Events Calendar | COMPLETE |
-| 6 | Live Class Sessions (Jitsi) | AWAITING APPROVAL |
+| 6 | Live Class Sessions (Jitsi) | COMPLETE |
 | 7 | Class Discussion Boards | AWAITING APPROVAL |
 | 8 | Guardian Portal Enhancement | AWAITING APPROVAL |
 | 9 | Canva Documents Suite | AWAITING APPROVAL |
@@ -457,6 +457,22 @@ Full build plan: `docs/roadmaps/ONLINE_SCHOOL_BUILD.md`
   - `VAPID_SUBJECT=mailto:admin@liberialearn.edu.lr`
 - Gate: `npx tsc --noEmit` PASS (0 errors), `npx vitest run` PASS (2688 tests / 353 files), `npm run build` PASS
 - 10 new tests in `__tests__/sprint4.push.test.ts`
+
+## Sprint 6 COMPLETE — 2026-05-12
+- Meeting model extended: `jitsiRoomId`, `joinUrl`, `liveStatus`, `startedAt`, `endedAt`, `hostUserId`, `subject`, `periodName`, `attendees` relation — SHIPPED
+- `MeetingAttendee` model added + migration `20260512_000006_sprint6_live_sessions` — SHIPPED
+- `lib/meetings/jitsiService.ts` — `generateJitsiRoomId` (deterministic, URL-safe, ≤64 chars) + `buildJoinUrl` — SHIPPED
+- `lib/push/sendPush.ts` — `sendPushToClass` helper added — SHIPPED
+- APIs: `POST /api/teacher/meetings`, `POST /api/teacher/meetings/[id]/start`, `PATCH /api/teacher/meetings/[id]/end` — SHIPPED
+- APIs: `POST /api/student/meetings/[id]/join`, `GET /api/student/live-sessions/active` — SHIPPED
+- Teacher schedule page: per-timetable-slot Schedule / Start / End session controls, 30s attendee count polling — SHIPPED
+- `/student/live/[meetingId]` — full-screen Jitsi iframe, STUDENT-only, back button, handles SCHEDULED/LIVE/ENDED states — SHIPPED
+- `components/LiveSessionBanner.tsx` — amber pulsing banner polls 30s, dismiss X, wired into `/student/today` — SHIPPED
+- Auto-attendance: PATCH end marks each MeetingAttendee as PRESENT in AttendanceRecord — SHIPPED
+- Push on start: `sendPushToClass` fires "Class is Live Now 🔴" to all enrolled students — SHIPPED
+- Commit: `75707de`
+- Gate: `npx prisma generate` PASS, `npx tsc --noEmit` PASS (0 errors), `npx vitest run` PASS (2734 tests / 357 files), `npm run build` PASS
+- 15 new tests in `__tests__/sprint6.livesessions.test.ts`
 
 ## Sprint 5 COMPLETE — 2026-05-12
 - SchoolEvent model + migration `20260512_000005_sprint5_school_events` — SHIPPED
