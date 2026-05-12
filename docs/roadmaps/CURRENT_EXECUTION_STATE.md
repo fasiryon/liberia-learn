@@ -401,7 +401,7 @@ Full build plan: `docs/roadmaps/ONLINE_SCHOOL_BUILD.md`
 |--------|-------------|--------|
 | 1 | Lesson Regeneration Direct Processor | COMPLETE |
 | 2 | Assignment Grading + Gradebook | AWAITING APPROVAL |
-| 3 | Term Report Cards | AWAITING APPROVAL |
+| 3 | Term Report Cards | COMPLETE |
 | 4 | Push Notifications + PWA Install | AWAITING APPROVAL |
 | 5 | School Events Calendar | AWAITING APPROVAL |
 | 6 | Live Class Sessions (Jitsi) | AWAITING APPROVAL |
@@ -431,5 +431,15 @@ Full build plan: `docs/roadmaps/ONLINE_SCHOOL_BUILD.md`
 - Jobs with `status: "failed"` are re-processed on the next run. Multiple overnight runs needed to converge backlog.
 - Overnight command: `npx dotenv -e .env.production -- npx tsx scripts/process-regen-jobs-direct.ts`
 
-## Sprint 2 Next Step
-Sprint 2 (Assignment Grading + Gradebook) — AWAITING APPROVAL before starting.
+## Sprint 3 COMPLETE — 2026-05-12
+- ReportCard model + migration `20260512_000001_sprint3_report_cards` — SHIPPED (commit b20a15a)
+- `lib/reportCards/generateReportCard.ts` — SHIPPED
+- `/admin/report-cards`, `/teacher/report-cards`, `/student/report-cards`, `/guardian/report-cards` — SHIPPED
+- `/student/report-cards/[id]/print` — A4 print layout, grade table, signatures — SHIPPED
+- All 5 APIs (generate, comment, publish, publish-all, listing routes) — SHIPPED
+- Dashboard widgets: student Latest Report Card card, guardian Report Card Available banner, teacher nudge — SHIPPED
+- Gate: `npx tsc --noEmit` PASS, `npx vitest run` PASS (2655 tests / 351 files), `npm run build` PASS
+- 16 new tests in `__tests__/sprint3.reportcards.test.ts`
+
+## Sprint 4 Next Step
+Sprint 4 (Push Notifications + PWA Install) — AWAITING APPROVAL before starting.
