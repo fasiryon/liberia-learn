@@ -54,6 +54,10 @@ export function StudentSidebar({
           My Practice
         </Link>
 
+        <Link href="/student/events" className={`${navLinkClass} text-[var(--ll-text-faint)]`}>
+          Events
+        </Link>
+
         <Link href="/student/exams" className={`${navLinkClass} text-[var(--ll-text-faint)]`}>
           Exams
         </Link>

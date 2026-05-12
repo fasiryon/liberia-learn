@@ -338,6 +338,7 @@ export async function GET() {
       teacherAlerts,
       schoolCode: school?.code ?? null,
       schoolName: school?.name ?? null,
+      schoolId: user.schoolId ?? null,
     });
   } catch (err: any) {
     console.error("[teacher.dashboard.GET]", err);

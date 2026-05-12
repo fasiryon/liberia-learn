@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { ChevronRight, Users, ClipboardCheck, CalendarDays, BarChart3 } from "lucide-react";
+import { EventCalendar } from "@/components/EventCalendar";
 import { teacherWelcomeStorageKey } from "@/app/teacher/TeacherWelcomeGate";
 import { DashboardTopBar } from "@/components/DashboardTopBar";
 import { SkeletonCard } from "@/components/ui/Skeleton";
@@ -525,6 +526,11 @@ export default function TeacherDashboardPage() {
                 </p>
                 <p className="text-xs text-[var(--ll-text-faint)]">Labs to review</p>
               </div>
+            </div>
+
+            {/* Events widget */}
+            <div className="ll-section p-4">
+              <EventCalendar role="TEACHER" compact />
             </div>
 
             {/* Primary Actions */}

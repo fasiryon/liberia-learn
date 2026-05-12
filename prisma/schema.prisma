@@ -163,6 +163,7 @@ model School {
   onboardingKitUrl       String?
   onboardingKitStatus    String                 @default("pending")
   onboardingGeneratedAt  DateTime?
+  schoolEvents           SchoolEvent[]
 }
 
 model Class {
@@ -3218,4 +3219,28 @@ model PostChangeEvaluationPlan {
 
   @@index([changeRequestId])
   @@index([status, createdAt])
+}
+
+/// Sprint 5: school calendar events with push and SMS notifications.
+model SchoolEvent {
+  id             String    @id @default(cuid())
+  schoolId       String
+  title          String
+  description    String?
+  eventDate      DateTime
+  endDate        DateTime?
+  type           String
+  visibility     String    @default("ALL")
+  sendSms        Boolean   @default(false)
+  sendPush       Boolean   @default(true)
+  published      Boolean   @default(false)
+  createdBy      String
+  smsScheduledAt DateTime?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+  school         School    @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+
+  @@index([schoolId, eventDate])
+  @@index([schoolId, published, eventDate])
+  @@index([type, published, eventDate])
 }
