@@ -400,14 +400,14 @@ Full build plan: `docs/roadmaps/ONLINE_SCHOOL_BUILD.md`
 | Sprint | Deliverable | Status |
 |--------|-------------|--------|
 | 1 | Lesson Regeneration Direct Processor | COMPLETE |
-| 2 | Assignment Grading + Gradebook | AWAITING APPROVAL |
+| 2 | Assignment Grading + Gradebook | COMPLETE |
 | 3 | Term Report Cards | COMPLETE |
-| 4 | Push Notifications + PWA Install | AWAITING APPROVAL |
+| 4 | Push Notifications + PWA Install | COMPLETE |
 | 5 | School Events Calendar | COMPLETE |
 | 6 | Live Class Sessions (Jitsi) | COMPLETE |
-| 7 | Class Discussion Boards | AWAITING APPROVAL |
-| 8 | Guardian Portal Enhancement | AWAITING APPROVAL |
-| 9 | Canva Documents Suite | AWAITING APPROVAL |
+| 7 | Class Discussion Boards | COMPLETE |
+| 8 | Guardian Portal Enhancement | COMPLETE |
+| 9 | Canva Documents Suite | COMPLETE |
 | 10 | Student Portfolio + Capstone | AWAITING APPROVAL |
 | 11 | Mobile PWA + Offline Enhancement | AWAITING APPROVAL |
 | 12 | Two-Way Student↔Teacher Messaging | AWAITING APPROVAL |
@@ -473,6 +473,20 @@ Full build plan: `docs/roadmaps/ONLINE_SCHOOL_BUILD.md`
 - Commit: `75707de`
 - Gate: `npx prisma generate` PASS, `npx tsc --noEmit` PASS (0 errors), `npx vitest run` PASS (2734 tests / 357 files), `npm run build` PASS
 - 15 new tests in `__tests__/sprint6.livesessions.test.ts`
+
+## Sprint 9 COMPLETE — 2026-05-13
+- GeneratedDocument model + migration `20260513_000001_sprint9_generated_documents` — SHIPPED
+- `lib/canva/templates/`: studentIdCard, enrollmentLetter, teacherAppointment, permissionSlip — SHIPPED
+- API routes: `GET /api/admin/documents`, `POST /api/admin/documents/id-cards/generate`, `/enrollment-letter`, `/teacher-appointment`, `/permission-slips` — SHIPPED
+- `app/admin/documents/page.tsx` — tabbed admin UI for ID Cards, Enrollment Letters, Teacher Appointments, Permission Slips, Certificates — SHIPPED
+- Autonomous OS phase 13–15: productSignalService, signalCoverageService (signal telemetry layer) — SHIPPED
+- Predictive intelligence services: institutionalForecastService, trendForecastService, riskTrajectoryService, earlyWarningService, forecastCalibrationDashboardService, predictionReviewService — SHIPPED
+- Autonomous OS admin pages: signals, predictions, forecasting, early-warnings, prediction-review, forecast-calibration — SHIPPED
+- Signal telemetry wired to: push delivery, report card publish, assignment grade, meeting join, lesson complete, enrollment — SHIPPED
+- `app/api/notifications/open` — notification open tracking — SHIPPED
+- Commit: `6c50d46`
+- Gate: `npx tsc --noEmit` PASS (0 errors), `npx vitest run` PASS (2796 tests / 363 files), `npm run build` PASS
+- 11 new tests in `__tests__/sprint9.documents.test.ts`
 
 ## Sprint 5 COMPLETE — 2026-05-12
 - SchoolEvent model + migration `20260512_000005_sprint5_school_events` — SHIPPED
