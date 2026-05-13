@@ -1,6 +1,7 @@
 import webpush from "web-push";
 import { prisma } from "@/lib/db";
 import { logger } from "@/lib/logger";
+import { logProductSignal } from "@/lib/autonomous/signals/productSignalService";
 
 function getVapidConfig() {
   const publicKey = process.env.VAPID_PUBLIC_KEY;
@@ -44,6 +45,9 @@ async function deliver(
 export async function sendPushToUser(userId: string, payload: PushPayload): Promise<void> {
   const subs = await prisma.pushSubscription.findMany({ where: { userId } });
   if (!subs.length) return;
+  const user = await Promise.resolve(
+    (prisma as any).user?.findUnique?.({ where: { id: userId }, select: { schoolId: true, role: true } })
+  ).catch(() => null);
 
   const expiredIds: string[] = [];
 
@@ -65,6 +69,19 @@ export async function sendPushToUser(userId: string, payload: PushPayload): Prom
             subject: payload.title,
             body: payload.body,
             status: "sent",
+          },
+        });
+        await logProductSignal({
+          schoolId: user?.schoolId ?? null,
+          userId,
+          actor: { type: "system", id: "push-service" },
+          target: { type: "push_subscription", id: sub.id },
+          eventType: "push.notification.delivered",
+          source: "lib/push/sendPush",
+          dedupeKey: `push.notification.delivered:${user?.schoolId ?? "unknown"}:${sub.id}:${payload.url ?? "/"}:${Date.now()}`,
+          metadata: {
+            urlPath: payload.url ?? "/",
+            recipientRole: user?.role ?? null,
           },
         });
       }

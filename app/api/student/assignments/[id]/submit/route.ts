@@ -6,6 +6,7 @@ import { notifyAssignmentSubmitted } from "@/lib/assignment-notifications";
 import { prisma } from "@/lib/db";
 import { getAssignmentTargetStudentIds } from "@/lib/assignments/targeting";
 import { recordSloEvent } from "@/lib/slo/tracker";
+import { logProductSignal } from "@/lib/autonomous/signals/productSignalService";
 
 export async function POST(
   req: NextRequest,
@@ -80,6 +81,24 @@ export async function POST(
       resourceId: submission.id,
       details: {
         assignmentId: assignment.id,
+      },
+    });
+
+    await logProductSignal({
+      schoolId: assignment.Class.schoolId,
+      classId: assignment.classId,
+      userId: user.id,
+      studentId: student.id,
+      actor: { type: "student", id: user.id, role: "STUDENT" },
+      target: { type: "assignment_submission", id: submission.id },
+      eventType: "assignment.submitted",
+      source: "/api/student/assignments/[id]/submit",
+      contentId: assignment.contentId ?? null,
+      dedupeKey: `assignment.submitted:${assignment.Class.schoolId}:${submission.id}`,
+      metadata: {
+        assignmentId: assignment.id,
+        submittedAt: submission.turnedInAt?.toISOString() ?? null,
+        contentLength: content.length,
       },
     });
 

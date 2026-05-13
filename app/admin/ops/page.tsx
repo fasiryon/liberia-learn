@@ -40,6 +40,42 @@ export default async function OpsIndexPage() {
       disabled: false,
     },
     {
+      href: "/admin/ops/signals",
+      title: "Signal Coverage",
+      desc: "LearningEvent product signal freshness and detector evidence coverage",
+      disabled: false,
+    },
+    {
+      href: "/admin/ops/predictions",
+      title: "Predictive Intelligence",
+      desc: "Governance-safe forecasts, trajectories, and confidence evidence",
+      disabled: false,
+    },
+    {
+      href: "/admin/ops/early-warnings",
+      title: "Early Warnings",
+      desc: "Approval-gated warning queue generated from real product signals",
+      disabled: false,
+    },
+    {
+      href: "/admin/ops/prediction-review",
+      title: "Prediction Review",
+      desc: "Human review queue and outcome feedback for forecast calibration",
+      disabled: false,
+    },
+    {
+      href: "/admin/ops/forecast-calibration",
+      title: "Forecast Calibration",
+      desc: "Forecast accuracy, false-positive, missed-risk, and confidence movement",
+      disabled: false,
+    },
+    {
+      href: "/admin/ops/forecasting",
+      title: "Forecasting Analytics",
+      desc: "Aggregate-safe institutional forecast confidence and outcomes",
+      disabled: false,
+    },
+    {
       href: "/admin/ops/runtime",
       title: "Runtime Dashboard",
       desc: "Production health, workers, queue, cron, and recovery",

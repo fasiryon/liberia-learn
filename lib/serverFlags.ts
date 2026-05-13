@@ -832,6 +832,25 @@ export function isAutonomousMemoryEnabled(): boolean {
   return process.env.ENABLE_AUTONOMOUS_MEMORY === "true";
 }
 
+// Autonomous OS Phase 13: read/append-only product signal integration.
+// Default ON; set false to stop new product LearningEvent signal writes.
+export function isAutonomousSignalIntegrationEnabled(): boolean {
+  return process.env.ENABLE_AUTONOMOUS_SIGNAL_INTEGRATION !== "false";
+}
+
+// Autonomous OS Phase 14: governance-safe predictive intelligence.
+// Default OFF for rollout safety. Forecast retrieval remains read-only; outcome writes
+// are explicit and append-only when enabled.
+export function isPredictiveIntelligenceEnabled(): boolean {
+  return process.env.ENABLE_PREDICTIVE_INTELLIGENCE === "true";
+}
+
+// Autonomous OS Phase 15: human review workflow for predictions.
+// Requires predictive intelligence and remains recommendation/outcome-recording only.
+export function isPredictionReviewWorkflowEnabled(): boolean {
+  return isPredictiveIntelligenceEnabled() && process.env.ENABLE_PREDICTION_REVIEW_WORKFLOW !== "false";
+}
+
 export function isFalsePositiveReviewEnabled(): boolean {
   return process.env.ENABLE_FALSE_POSITIVE_REVIEW === "true";
 }

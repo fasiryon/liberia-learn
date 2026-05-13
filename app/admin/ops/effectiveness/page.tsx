@@ -155,6 +155,8 @@ export default async function AutonomousEffectivenessDashboardPage({ searchParam
           {metricCard("Memory updates", int(dashboard.metrics.memoryUpdatesCreated), "autonomous.memory.recorded events created.", dashboard.links.memory)}
           {metricCard("Optimization proposals", int(dashboard.metrics.optimizationProposalsCreated), "autonomous.optimization.proposed events created.", dashboard.links.optimization)}
           {metricCard("Approved proposals", int(dashboard.metrics.approvedOptimizationProposals), "Proposals whose latest review is APPROVED.", dashboard.links.optimization)}
+          {metricCard("Product signals", int(dashboard.metrics.signalEventsIngested), `${dashboard.metrics.lowDataSignalWarnings} low-data signal warnings.`, dashboard.links.signals)}
+          {metricCard("Evidence coverage", dashboard.metrics.detectorEvidenceCoverage === null ? "n/a" : pct(dashboard.metrics.detectorEvidenceCoverage), "Detector recommendations backed by LearningEvent evidence.", dashboard.links.signals)}
           {metricCard("Positive outcomes", int(dashboard.metrics.implementationOutcomes.positive), "Closed implementation outcomes marked POSITIVE.", dashboard.links.changeRequests)}
           {metricCard("Negative / mixed", `${dashboard.metrics.implementationOutcomes.negative} / ${dashboard.metrics.implementationOutcomes.mixed}`, "Closed implementation outcomes marked NEGATIVE or MIXED.", dashboard.links.changeRequests)}
         </section>
@@ -191,6 +193,7 @@ export default async function AutonomousEffectivenessDashboardPage({ searchParam
               <Link className="rounded border border-[var(--ll-border)] px-3 py-2 underline" href={dashboard.links.evaluations}>Evaluations</Link>
               <Link className="rounded border border-[var(--ll-border)] px-3 py-2 underline" href={dashboard.links.outcomes}>Outcomes</Link>
               <Link className="rounded border border-[var(--ll-border)] px-3 py-2 underline" href={dashboard.links.memory}>Memory updates</Link>
+              <Link className="rounded border border-[var(--ll-border)] px-3 py-2 underline" href={dashboard.links.signals}>Signal coverage</Link>
             </div>
             <h2 className="mt-5 text-lg font-semibold">Runtime Operations</h2>
             <div className="mt-3 grid gap-2 text-sm sm:grid-cols-2">

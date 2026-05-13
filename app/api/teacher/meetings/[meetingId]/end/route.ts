@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { requireRole } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { logAudit } from "@/lib/audit";
+import { logProductSignal } from "@/lib/autonomous/signals/productSignalService";
 
 export const dynamic = "force-dynamic";
 
@@ -16,7 +17,7 @@ export async function PATCH(
     const meeting = await prisma.meeting.findUnique({
       where: { id: meetingId },
       include: {
-        Class: { select: { teacherId: true } },
+        Class: { select: { id: true, schoolId: true, teacherId: true, subject: true } },
         attendees: { select: { userId: true } },
       },
     });
@@ -70,6 +71,39 @@ export async function PATCH(
       details: { duration, attendeeCount },
       schoolId: user.schoolId,
     });
+
+    await logProductSignal({
+      schoolId: meeting.Class.schoolId,
+      classId: meeting.Class.id,
+      userId: user.id,
+      actor: { type: "user", id: user.id, role: user.role },
+      target: { type: "meeting", id: meeting.id },
+      eventType: "live_session.ended",
+      source: "/api/teacher/meetings/[meetingId]/end",
+      subject: String(meeting.Class.subject),
+      dedupeKey: `live_session.ended:${meeting.Class.schoolId}:${meeting.id}`,
+      metadata: {
+        durationMinutes: duration,
+        attendeeCount,
+      },
+    });
+
+    if (attendeeCount > 0) {
+      await logProductSignal({
+        schoolId: meeting.Class.schoolId,
+        classId: meeting.Class.id,
+        userId: user.id,
+        actor: { type: "user", id: user.id, role: user.role },
+        target: { type: "meeting", id: meeting.id },
+        eventType: "live_session.attendance_marked",
+        source: "/api/teacher/meetings/[meetingId]/end",
+        subject: String(meeting.Class.subject),
+        dedupeKey: `live_session.attendance_marked:${meeting.Class.schoolId}:${meeting.id}`,
+        metadata: {
+          presentCount: attendeeCount,
+        },
+      });
+    }
 
     return NextResponse.json({ duration, attendeeCount });
   } catch (err: any) {

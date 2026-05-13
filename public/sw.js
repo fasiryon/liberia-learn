@@ -319,7 +319,12 @@ self.addEventListener("notificationclick", (event) => {
   event.notification.close();
   const url = (event.notification.data && event.notification.data.url) || "/";
   event.waitUntil(
-    clients.matchAll({ type: "window", includeUncontrolled: true }).then((clientList) => {
+    fetch("/api/notifications/open", {
+      method: "POST",
+      credentials: "include",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ urlPath: url }),
+    }).catch(() => null).then(() => clients.matchAll({ type: "window", includeUncontrolled: true })).then((clientList) => {
       for (const client of clientList) {
         if (client.url === url && "focus" in client) {
           return client.focus();

@@ -7,6 +7,7 @@ import { resolveActionsOnLessonComplete } from "@/lib/intelligence/actionEngine"
 import { notifyLessonCompletion } from "@/lib/lesson-notifications";
 import { updateMasteryProfile } from "@/lib/mastery/masteryService";
 import { gradeToBand } from "@/lib/moe/alignment-engine";
+import { logProductSignal } from "@/lib/autonomous/signals/productSignalService";
 
 type SessionUserLike = {
   id: string;
@@ -179,6 +180,27 @@ export async function completeScheduledLesson(input: CompleteLessonInput) {
     resourceId: input.scheduledWorkId,
     details: {
       exitTicketScore,
+      answeredQuestions: normalizedAnswers.length,
+    },
+  });
+
+  await logProductSignal({
+    schoolId: sw.class.schoolId,
+    classId: sw.class.id,
+    userId: input.user.id,
+    studentId: student.id,
+    actor: { type: "student", id: input.user.id, role: "STUDENT" },
+    target: { type: "scheduledWork", id: input.scheduledWorkId },
+    eventType: "lesson.completed",
+    source: "lib/student/completeScheduledLesson",
+    contentId: sw.contentId ?? null,
+    lessonId: input.scheduledWorkId,
+    subject: content.subject,
+    grade: content.grade,
+    dedupeKey: `lesson.completed:${sw.class.schoolId}:${student.id}:${input.scheduledWorkId}`,
+    metadata: {
+      exitTicketScoreBand:
+        exitTicketScore == null ? "none" : exitTicketScore >= 80 ? "high" : exitTicketScore >= 60 ? "passing" : "needs_support",
       answeredQuestions: normalizedAnswers.length,
     },
   });

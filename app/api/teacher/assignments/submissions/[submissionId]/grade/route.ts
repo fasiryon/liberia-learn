@@ -5,6 +5,7 @@ import { prisma } from "@/lib/db";
 import { logAudit } from "@/lib/audit";
 import { notifyAssignmentGraded } from "@/lib/assignment-notifications";
 import { sendPushToUser } from "@/lib/push/sendPush";
+import { logProductSignal } from "@/lib/autonomous/signals/productSignalService";
 
 export const dynamic = "force-dynamic";
 
@@ -40,10 +41,13 @@ export async function POST(
           select: {
             id: true,
             title: true,
+            classId: true,
+            contentId: true,
             Class: {
               select: {
                 schoolId: true,
                 teacherId: true,
+                subject: true,
                 School: { select: { name: true } },
               },
             },
@@ -87,6 +91,46 @@ export async function POST(
       resourceId: updated.id,
       details: { assignmentId: submission.Assignment.id, grade: parsed.data.grade },
     });
+
+    await logProductSignal({
+      schoolId: user.schoolId,
+      classId: submission.Assignment.classId,
+      userId: user.id,
+      studentId: submission.Student.id,
+      actor: { type: "user", id: user.id, role: user.role },
+      target: { type: "assignment_submission", id: updated.id },
+      eventType: "assignment.graded",
+      source: "/api/teacher/assignments/submissions/[submissionId]/grade",
+      contentId: submission.Assignment.contentId ?? null,
+      subject: String(submission.Assignment.Class.subject),
+      dedupeKey: `assignment.graded:${user.schoolId}:${updated.id}:${updated.gradedAt?.toISOString() ?? "now"}`,
+      metadata: {
+        assignmentId: submission.Assignment.id,
+        scoreBand: parsed.data.grade >= 80 ? "high" : parsed.data.grade >= 60 ? "passing" : "needs_support",
+        hasRubricScore: Boolean(parsed.data.rubricScore),
+      },
+    });
+
+    if (parsed.data.feedback.trim()) {
+      await logProductSignal({
+        schoolId: user.schoolId,
+        classId: submission.Assignment.classId,
+        userId: user.id,
+        studentId: submission.Student.id,
+        actor: { type: "user", id: user.id, role: user.role },
+        target: { type: "assignment_submission", id: updated.id },
+        eventType: "teacher.feedback.created",
+        source: "/api/teacher/assignments/submissions/[submissionId]/grade",
+        contentId: submission.Assignment.contentId ?? null,
+        subject: String(submission.Assignment.Class.subject),
+        dedupeKey: `teacher.feedback.assignment:${user.schoolId}:${updated.id}:${updated.gradedAt?.toISOString() ?? "now"}`,
+        metadata: {
+          assignmentId: submission.Assignment.id,
+          feedbackLength: parsed.data.feedback.length,
+          feedbackChannel: "assignment_grade",
+        },
+      });
+    }
 
     notifyAssignmentGraded({
       actorUserId: user.id,

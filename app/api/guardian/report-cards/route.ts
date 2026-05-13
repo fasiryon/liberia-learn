@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { requireRole } from "@/lib/auth";
 import { prisma } from "@/lib/db";
+import { logProductSignal } from "@/lib/autonomous/signals/productSignalService";
 
 export const dynamic = "force-dynamic";
 
@@ -42,6 +43,23 @@ export async function GET(req: NextRequest) {
       },
       orderBy: { generatedAt: "desc" },
     });
+
+    if (reportCards.length > 0) {
+      await logProductSignal({
+        schoolId: user.schoolId,
+        userId: user.id,
+        studentId: targetStudentId,
+        actor: { type: "user", id: user.id, role: user.role },
+        target: { type: "student", id: targetStudentId },
+        eventType: "guardian.report_card.viewed",
+        source: "/api/guardian/report-cards",
+        dedupeKey: `guardian.report_card.viewed:${user.schoolId ?? "unknown"}:${user.id}:${targetStudentId}:${new Date().toISOString().slice(0, 10)}`,
+        metadata: {
+          reportCardCount: reportCards.length,
+          selectedStudentLinked: true,
+        },
+      });
+    }
 
     return NextResponse.json({ children, reportCards, selectedStudentId: targetStudentId });
   } catch (e: any) {

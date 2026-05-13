@@ -11,6 +11,8 @@ import {
   updateAcademicEnrollmentSchema,
   updateAcademicEnrollmentStatusForSchool,
 } from "@/lib/records/systemOfRecord";
+import { prisma } from "@/lib/db";
+import { generateEnrollmentLetter } from "@/lib/canva/templates/enrollmentLetter";
 
 export const dynamic = "force-dynamic";
 
@@ -56,6 +58,38 @@ export async function POST(req: NextRequest) {
         status: enrollment.status,
       },
     });
+
+    // Auto-trigger enrollment letter generation (fire-and-forget)
+    void prisma.student
+      .findFirst({
+        where: { id: enrollment.studentId },
+        include: {
+          user: { select: { id: true, name: true } },
+          guardians: {
+            include: { guardian: { select: { name: true } } },
+            take: 1,
+          },
+        },
+      })
+      .then(async (student) => {
+        if (!student) return;
+        const guardianName =
+          student.guardians?.[0]?.guardian?.name ?? "Parent/Guardian";
+        await generateEnrollmentLetter(
+          {
+            studentName: student.user.name ?? "Student",
+            guardianName,
+            grade: enrollment.grade ? `Grade ${enrollment.grade}` : "Not specified",
+            schoolName: schoolId,
+            enrollmentDate: new Date().toLocaleDateString("en-LR"),
+            academicYear: `${new Date().getFullYear()}-${new Date().getFullYear() + 1}`,
+          },
+          schoolId,
+          student.user.id,
+          user.id
+        );
+      })
+      .catch(() => null);
 
     return NextResponse.json({ enrollment }, { status: 201 });
   } catch (error) {

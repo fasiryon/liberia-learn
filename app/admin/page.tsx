@@ -343,6 +343,7 @@ export default async function AdminConsolePage() {
         { label: "Timetable", href: "/admin/timetable" },
         { label: "Placements", href: "/admin/placements" },
         { label: "Events Calendar", href: "/admin/events" },
+        { label: "Documents", href: "/admin/documents" },
       ],
     },
     {
