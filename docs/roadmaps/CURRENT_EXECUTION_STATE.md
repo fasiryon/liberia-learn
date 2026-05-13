@@ -408,7 +408,7 @@ Full build plan: `docs/roadmaps/ONLINE_SCHOOL_BUILD.md`
 | 7 | Class Discussion Boards | COMPLETE |
 | 8 | Guardian Portal Enhancement | COMPLETE |
 | 9 | Canva Documents Suite | COMPLETE |
-| 10 | Student Portfolio + Capstone | AWAITING APPROVAL |
+| 10 | Student Portfolio + Capstone | COMPLETE |
 | 11 | Mobile PWA + Offline Enhancement | AWAITING APPROVAL |
 | 12 | Two-Way Student↔Teacher Messaging | AWAITING APPROVAL |
 
@@ -473,6 +473,23 @@ Full build plan: `docs/roadmaps/ONLINE_SCHOOL_BUILD.md`
 - Commit: `75707de`
 - Gate: `npx prisma generate` PASS, `npx tsc --noEmit` PASS (0 errors), `npx vitest run` PASS (2734 tests / 357 files), `npm run build` PASS
 - 15 new tests in `__tests__/sprint6.livesessions.test.ts`
+
+## Sprint 10 COMPLETE — 2026-05-13
+- PortfolioShare model + migration `20260513_000002_sprint10_portfolio_capstone` — SHIPPED
+- CapstoneProject extended: description, skills, teacherId, fileUrls, teacherFeedback, submittedAt, reviewedAt, createdAt — SHIPPED
+- `lib/portfolio/buildPortfolio.ts` — `buildPortfolioSummary` aggregates badges, certs, lessons, quiz avg, streak, subjects — SHIPPED
+- `/student/portfolio` — stats grid, badges, subjects, certs, capstone section, share button + copy URL — SHIPPED
+- `/portfolio/[shareCode]` — public page (firstName + grade + school + stats + badges + subjects; no PII beyond first name) — SHIPPED
+- `POST /api/student/portfolio/share` — creates/returns PortfolioShare; `GET /api/portfolio/[shareCode]` — 404 if inactive — SHIPPED
+- `/student/capstone` — grade-gated G10+, DRAFT/SUBMITTED/APPROVED/REJECTED state machine — SHIPPED
+- `/teacher/capstone` — pending/approved/rejected filter, inline review panel — SHIPPED
+- All 7 capstone APIs (create, patch, submit, revise, teacher list, teacher review) — auth guarded — SHIPPED
+- APPROVED capstone auto-creates PortfolioItem; pushes student on approve/reject — SHIPPED
+- StudentSidebar: "My Portfolio" nav link added — SHIPPED
+- fix(P1): `agentDecision` queries scoped via `workflowRun.schoolId` (tenant isolation) — SHIPPED
+- Commit: `88a5817`
+- Gate: `npx tsc --noEmit` PASS (0 errors), `npx vitest run` PASS (2815 tests / 364 files), `npm run build` PASS
+- 19 new tests in `__tests__/sprint10.portfolio.test.ts`
 
 ## Sprint 9 COMPLETE — 2026-05-13
 - GeneratedDocument model + migration `20260513_000001_sprint9_generated_documents` — SHIPPED
