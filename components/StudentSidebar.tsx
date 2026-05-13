@@ -70,6 +70,10 @@ export function StudentSidebar({
           Certificates
         </Link>
 
+        <Link href="/student/portfolio" className={`${navLinkClass} text-[var(--ll-text-faint)]`}>
+          My Portfolio
+        </Link>
+
         <Link href="/student/textbooks" className={`${navLinkClass} inline-flex items-center gap-2 text-[var(--ll-text-faint)]`}>
           <BookOpen className="h-4 w-4" strokeWidth={1.5} aria-hidden="true" />
           <span>Textbooks</span>

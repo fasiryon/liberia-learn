@@ -107,6 +107,7 @@ export async function getSignalCoverage(input: { scope?: SignalCoverageScope; ra
 
   const decisions = await (prisma as any).agentDecision.findMany({
     where: {
+      workflowRun: scopeWhere(scope),
       decisionType: { startsWith: "detector.recommendation." },
       createdAt: dateWhere(input.range),
     },
