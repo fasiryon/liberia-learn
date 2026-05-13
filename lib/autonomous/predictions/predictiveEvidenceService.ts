@@ -49,7 +49,10 @@ export async function loadPredictiveEvidence(input: { scope: ForecastScope; rang
       },
     }) ?? [],
     (prisma as any).agentDecision?.findMany?.({
-      where: { createdAt: { gte: input.range.from, lte: input.range.to } },
+      where: {
+        workflowRun: forecastScopeWhere(input.scope),
+        createdAt: { gte: input.range.from, lte: input.range.to },
+      },
       orderBy: { createdAt: "desc" },
       take: 1000,
       select: { id: true, workflowRunId: true, decisionType: true, status: true, riskLevel: true, confidence: true, evidenceRefs: true, decision: true, createdAt: true },

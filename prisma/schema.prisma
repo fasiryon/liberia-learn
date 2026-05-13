@@ -80,6 +80,7 @@ model User {
   discussionLastReads  DiscussionLastRead[]
   requestedDocuments   GeneratedDocument[]  @relation("DocumentRequester")
   studentDocuments     GeneratedDocument[]  @relation("DocumentStudent")
+  capstoneReviews      CapstoneProject[]    @relation("CapstoneTeacher")
 }
 
 model District {
@@ -241,6 +242,7 @@ model Student {
   academicEnrollments   AcademicEnrollment[]
   transcripts           Transcript[]
   reportCards           ReportCard[]
+  portfolioShares       PortfolioShare[]
 }
 
 model Exam {
@@ -890,17 +892,40 @@ model HomeworkSubmission {
 
 /// / ===== Capstone / Portfolio / Partners =====
 model CapstoneProject {
-  id         String          @id @default(cuid())
-  studentId  String
-  title      String
-  summary    String?
-  repoUrl    String?
-  mentorId   String?
-  startedAt  DateTime        @default(now())
-  finishedAt DateTime?
-  status     String          @default("ACTIVE")
-  Student    Student         @relation(fields: [studentId], references: [id])
-  artifacts  PortfolioItem[]
+  id              String          @id @default(cuid())
+  studentId       String
+  title           String
+  description     String?
+  summary         String?
+  skills          Json?
+  repoUrl         String?
+  mentorId        String?
+  teacherId       String?
+  fileUrls        Json?
+  teacherFeedback String?
+  startedAt       DateTime        @default(now())
+  submittedAt     DateTime?
+  reviewedAt      DateTime?
+  finishedAt      DateTime?
+  createdAt       DateTime        @default(now())
+  status          String          @default("DRAFT")
+  Student         Student         @relation(fields: [studentId], references: [id])
+  Teacher         User?           @relation("CapstoneTeacher", fields: [teacherId], references: [id])
+  artifacts       PortfolioItem[]
+
+  @@index([studentId, status])
+  @@index([teacherId, status])
+}
+
+model PortfolioShare {
+  id        String   @id @default(cuid())
+  studentId String
+  shareCode String   @unique @default(cuid())
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  Student   Student  @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  @@index([studentId, isActive])
 }
 
 model PortfolioItem {
