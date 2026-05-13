@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { requireRole } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { generateReportCard } from "@/lib/reportCards/generateReportCard";
+import { logProductSignal } from "@/lib/autonomous/signals/productSignalService";
 
 export const dynamic = "force-dynamic";
 
@@ -51,6 +52,23 @@ export async function POST(req: NextRequest) {
         errors.push(`Student ${Student.id}: ${e.message}`);
       }
     }
+
+    await logProductSignal({
+      schoolId: user.schoolId,
+      classId,
+      userId: user.id,
+      actor: { type: "user", id: user.id, role: user.role },
+      target: { type: "report_card_batch", id: `${classId}:${termId}` },
+      eventType: "report_card.generated",
+      source: "/api/admin/report-cards/generate",
+      termId,
+      dedupeKey: `report_card.generated:${user.schoolId}:${classId}:${termId}:${generated}:${skipped}`,
+      metadata: {
+        generatedCount: generated,
+        skippedCount: skipped,
+        errorCount: errors.length,
+      },
+    });
 
     return NextResponse.json({ generated, skipped, errors });
   } catch (e: any) {

@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/db";
+import { getSignalCoverage } from "@/lib/autonomous/signals/signalCoverageService";
 
 export type EffectivenessDashboardScope = {
   schoolId?: string | null;
@@ -215,6 +216,9 @@ export async function getAutonomousEffectivenessDashboard(input: {
   if (actions.length < 5) warnings.push("Action execution sample is below 5; execution and rollback rates are sparse.");
   if (closedEvaluations < 3) warnings.push("Fewer than 3 post-change evaluations have closed in this window.");
   if (postChangePlans.some((plan: any) => plan.postChangeMetrics?.sparseData === true)) warnings.push("At least one post-change evaluation marked its persisted evidence as sparse.");
+  const signalCoverage = await getSignalCoverage({ scope: { schoolId: scope.schoolId ?? null, aggregateSafe: scope.aggregateOnly === true }, range: input.range });
+  if (signalCoverage.totalEvents < 10) warnings.push("Product signal coverage is below 10 events; detector evidence may be incomplete.");
+  if (signalCoverage.topMissingSignalTypes.length > 0) warnings.push("Some expected product signal types are missing from LearningEvent coverage.");
 
   return {
     range: input.range,
@@ -239,6 +243,9 @@ export async function getAutonomousEffectivenessDashboard(input: {
       memoryUpdatesCreated: memoryEvents.length,
       optimizationProposalsCreated: optimizationProposals.length,
       approvedOptimizationProposals: approvedProposalIds.length,
+      signalEventsIngested: signalCoverage.totalEvents,
+      detectorEvidenceCoverage: signalCoverage.coverage.detectorEvidenceCoverage,
+      lowDataSignalWarnings: signalCoverage.warnings.length,
     },
     links: {
       workflows: "/admin/ops/workflows",
@@ -249,6 +256,7 @@ export async function getAutonomousEffectivenessDashboard(input: {
       memory: "/admin/ops/memory",
       optimization: "/admin/ops/optimization",
       changeRequests: "/admin/ops/optimization/change-requests",
+      signals: "/admin/ops/signals",
     },
     counts: {
       completedWorkflows,
@@ -264,6 +272,7 @@ export async function getAutonomousEffectivenessDashboard(input: {
       rollbackCount,
       postChangePlans: postChangePlans.length,
       closedEvaluations,
+      signalCategories: signalCoverage.byCategory.length,
     },
     recent: {
       workflows: workflows.slice(0, 8),
@@ -271,6 +280,8 @@ export async function getAutonomousEffectivenessDashboard(input: {
       approvals: approvals.slice(0, 8),
       changeRequests: changeRequests.slice(0, 8),
       postChangeTrends: trendRows,
+      signalCoverage: signalCoverage.byCategory,
+      topMissingSignalTypes: signalCoverage.topMissingSignalTypes,
     },
     warnings,
   };

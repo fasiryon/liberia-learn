@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { requireRole } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { resolveLessonTitle } from "@/lib/lessons/resolveLessonTitle";
+import { logProductSignal } from "@/lib/autonomous/signals/productSignalService";
 
 function isRenderableArtifact(value: unknown): boolean {
   if (!value || typeof value !== "object") return false;
@@ -195,6 +196,24 @@ export async function GET(
     if (!progress) {
       await prisma.studentProgress.create({
         data: { studentId: user.id, scheduledWorkId: sw.id, startedAt: new Date() },
+      });
+      await logProductSignal({
+        schoolId: sw.class.schoolId,
+        classId: sw.class.id,
+        userId: user.id,
+        studentId: student.id,
+        actor: { type: "student", id: user.id, role: "STUDENT" },
+        target: { type: "scheduledWork", id: sw.id },
+        eventType: "lesson.started",
+        source: "/api/student/work/[scheduledWorkId]",
+        contentId: sw.content.contentId,
+        lessonId: sw.id,
+        subject: String(sw.content.subject),
+        grade: sw.content.grade,
+        dedupeKey: `lesson.started:${sw.class.schoolId}:${student.id}:${sw.id}`,
+        metadata: {
+          classFormat: sw.classFormat ?? "standard",
+        },
       });
     }
 

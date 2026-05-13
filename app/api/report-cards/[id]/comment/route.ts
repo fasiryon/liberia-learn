@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { requireRole } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { logAudit } from "@/lib/audit";
+import { logProductSignal } from "@/lib/autonomous/signals/productSignalService";
 
 export const dynamic = "force-dynamic";
 
@@ -44,6 +45,43 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
       schoolId: user.schoolId ?? undefined,
       details: { fields: Object.keys(data) },
     });
+
+    await logProductSignal({
+      schoolId: card.schoolId,
+      classId: card.classId,
+      userId: user.id,
+      studentId: card.studentId,
+      actor: { type: "user", id: user.id, role: user.role },
+      target: { type: "report_card", id: card.id },
+      eventType: "report_card.comment_updated",
+      source: "/api/report-cards/[id]/comment",
+      termId: card.termId,
+      dedupeKey: `report_card.comment_updated:${card.schoolId}:${card.id}:${Object.keys(data).sort().join(",")}`,
+      metadata: {
+        fields: Object.keys(data),
+        hasTeacherComment: teacherComment !== undefined,
+        hasPrincipalComment: principalComment !== undefined,
+      },
+    });
+
+    if (teacherComment !== undefined) {
+      await logProductSignal({
+        schoolId: card.schoolId,
+        classId: card.classId,
+        userId: user.id,
+        studentId: card.studentId,
+        actor: { type: "user", id: user.id, role: user.role },
+        target: { type: "report_card", id: card.id },
+        eventType: "teacher.feedback.created",
+        source: "/api/report-cards/[id]/comment",
+        termId: card.termId,
+        dedupeKey: `teacher.feedback.report_card:${card.schoolId}:${card.id}`,
+        metadata: {
+          feedbackChannel: "report_card_comment",
+          feedbackLength: teacherComment.length,
+        },
+      });
+    }
 
     return NextResponse.json({ reportCard: updated });
   } catch (e: any) {

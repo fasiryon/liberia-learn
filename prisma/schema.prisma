@@ -78,6 +78,8 @@ model User {
   discussionPosts      DiscussionPost[]     @relation("DiscussionPostAuthor")
   discussionUpvotes    DiscussionUpvote[]
   discussionLastReads  DiscussionLastRead[]
+  requestedDocuments   GeneratedDocument[]  @relation("DocumentRequester")
+  studentDocuments     GeneratedDocument[]  @relation("DocumentStudent")
 }
 
 model District {
@@ -170,6 +172,7 @@ model School {
   onboardingKitStatus    String                 @default("pending")
   onboardingGeneratedAt  DateTime?
   schoolEvents           SchoolEvent[]
+  generatedDocuments     GeneratedDocument[]
 }
 
 model Class {
@@ -3342,4 +3345,27 @@ model DiscussionLastRead {
 
   @@unique([userId, threadId])
   @@index([userId])
+}
+
+/// Sprint 9: generated documents via Canva MCP (ID cards, letters, appointments, permission slips).
+model GeneratedDocument {
+  id            String   @id @default(cuid())
+  schoolId      String
+  studentId     String?
+  type          String
+  status        String   @default("PENDING")
+  canvaDesignId String?
+  canvaUrl      String?
+  downloadUrl   String?
+  metadata      Json?
+  requestedBy   String
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  school        School   @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+  student       User?    @relation("DocumentStudent", fields: [studentId], references: [id])
+  requester     User     @relation("DocumentRequester", fields: [requestedBy], references: [id])
+
+  @@index([schoolId, type, status])
+  @@index([studentId, type])
+  @@index([schoolId, createdAt])
 }

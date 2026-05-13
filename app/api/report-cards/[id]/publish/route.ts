@@ -3,6 +3,7 @@ import { requireRole } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { logAudit } from "@/lib/audit";
 import { sendPushToUser } from "@/lib/push/sendPush";
+import { logProductSignal } from "@/lib/autonomous/signals/productSignalService";
 
 export const dynamic = "force-dynamic";
 
@@ -29,6 +30,22 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
       resourceType: "ReportCard",
       resourceId: params.id,
       schoolId: user.schoolId ?? undefined,
+    });
+
+    await logProductSignal({
+      schoolId: card.schoolId,
+      classId: card.classId,
+      userId: user.id,
+      studentId: card.studentId,
+      actor: { type: "user", id: user.id, role: user.role },
+      target: { type: "report_card", id: card.id },
+      eventType: "report_card.published",
+      source: "/api/report-cards/[id]/publish",
+      termId: card.termId,
+      dedupeKey: `report_card.published:${card.schoolId}:${card.id}`,
+      metadata: {
+        status: "PUBLISHED",
+      },
     });
 
     const studentUser = await prisma.student.findUnique({
