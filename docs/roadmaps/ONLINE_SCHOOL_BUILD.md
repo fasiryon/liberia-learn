@@ -9,14 +9,14 @@
 | # | Sprint | Status | Commit |
 |---|--------|--------|--------|
 | 1 | Lesson Regeneration Direct Processor | COMPLETE | 7e20684 + da717ff |
-| 2 | Assignment Grading + Gradebook | AWAITING APPROVAL | — |
-| 3 | Term Report Cards | AWAITING APPROVAL | — |
-| 4 | Push Notifications + PWA Install | AWAITING APPROVAL | — |
-| 5 | School Events Calendar | AWAITING APPROVAL | — |
-| 6 | Live Class Sessions (Jitsi) | AWAITING APPROVAL | — |
-| 7 | Class Discussion Boards | AWAITING APPROVAL | — |
-| 8 | Guardian Portal Enhancement | AWAITING APPROVAL | — |
-| 9 | Canva Documents Suite | AWAITING APPROVAL | — |
+| 2 | Assignment Grading + Gradebook | COMPLETE | cacc349 |
+| 3 | Term Report Cards | COMPLETE | b20a15a |
+| 4 | Push Notifications + PWA Install | COMPLETE | 8430e0e |
+| 5 | School Events Calendar | COMPLETE | 64b98f0 |
+| 6 | Live Class Sessions (Jitsi) | COMPLETE | 75707de |
+| 7 | Class Discussion Boards | COMPLETE | 1629ada |
+| 8 | Guardian Portal Enhancement | COMPLETE | add212a |
+| 9 | Canva Documents Suite | COMPLETE | 6c50d46 |
 | 10 | Student Portfolio + Capstone | AWAITING APPROVAL | — |
 | 11 | Mobile PWA + Offline Enhancement | AWAITING APPROVAL | — |
 | 12 | Two-Way Student↔Teacher Messaging | AWAITING APPROVAL | — |
