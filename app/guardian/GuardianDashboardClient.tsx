@@ -77,11 +77,22 @@ export default function GuardianDashboardClient() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [reportCardCount, setReportCardCount] = useState(0);
+  const [nextEvent, setNextEvent] = useState<{ title: string; eventDate: string } | null>(null);
 
   useEffect(() => {
     fetch("/api/guardian/report-cards", { cache: "no-store" })
       .then((r) => r.json())
       .then((d) => setReportCardCount((d.reportCards ?? []).length))
+      .catch(() => null);
+  }, []);
+
+  useEffect(() => {
+    fetch("/api/events?limit=1", { cache: "no-store" })
+      .then((r) => r.json())
+      .then((d) => {
+        const events = Array.isArray(d) ? d : d.events ?? [];
+        setNextEvent(events[0] ?? null);
+      })
       .catch(() => null);
   }, []);
 
@@ -225,6 +236,73 @@ export default function GuardianDashboardClient() {
           </div>
         ) : (
           <>
+            {/* KPI Cards */}
+            <section className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+              <Link href="/guardian/attendance" className="ll-section p-4 hover:bg-[var(--ll-surface-muted)] transition block">
+                <p className="text-xs text-[var(--ll-text-faint)] uppercase tracking-wide">Attendance Rate</p>
+                <p className={`mt-1 text-2xl font-bold ${
+                  selectedDashboardChild.attendance.attendanceRate >= 0.8
+                    ? "text-emerald-400"
+                    : selectedDashboardChild.attendance.attendanceRate >= 0.6
+                    ? "text-amber-400"
+                    : "text-red-400"
+                }`}>
+                  {Math.round(selectedDashboardChild.attendance.attendanceRate * 100)}%
+                </p>
+                <p className="text-xs text-[var(--ll-text-faint)]">
+                  {selectedDashboardChild.attendance.presentDays} present · {selectedDashboardChild.attendance.absentDays} absent
+                </p>
+              </Link>
+
+              <Link href="/guardian/grades" className="ll-section p-4 hover:bg-[var(--ll-surface-muted)] transition block">
+                <p className="text-xs text-[var(--ll-text-faint)] uppercase tracking-wide">Latest Grade</p>
+                {selectedDashboardChild.recentGrades.length > 0 ? (
+                  <>
+                    <p className="mt-1 text-base font-semibold text-[var(--ll-text)]">
+                      {selectedDashboardChild.recentGrades[0].subject.replace(/_/g, " ")}
+                    </p>
+                    <p className="text-2xl font-bold text-[var(--ll-yellow)]">
+                      {selectedDashboardChild.recentGrades[0].score}/{selectedDashboardChild.recentGrades[0].maxScore}
+                    </p>
+                  </>
+                ) : (
+                  <p className="mt-1 text-sm text-[var(--ll-text-muted)]">No grades yet</p>
+                )}
+              </Link>
+
+              <Link href="/guardian/events" className="ll-section p-4 hover:bg-[var(--ll-surface-muted)] transition block">
+                <p className="text-xs text-[var(--ll-text-faint)] uppercase tracking-wide">Upcoming Event</p>
+                {nextEvent ? (
+                  <>
+                    <p className="mt-1 text-base font-semibold text-[var(--ll-text)]">{nextEvent.title}</p>
+                    <p className="text-xs text-[var(--ll-text-faint)]">{new Date(nextEvent.eventDate).toLocaleDateString("en-LR")}</p>
+                  </>
+                ) : (
+                  <p className="mt-1 text-sm text-[var(--ll-text-muted)]">No upcoming events</p>
+                )}
+              </Link>
+
+              <Link href="/guardian/messages" className="ll-section p-4 hover:bg-[var(--ll-surface-muted)] transition block">
+                <p className="text-xs text-[var(--ll-text-faint)] uppercase tracking-wide">Unread Messages</p>
+                <p className={`mt-1 text-2xl font-bold ${unreadMessages > 0 ? "text-[var(--ll-yellow)]" : "text-[var(--ll-text-muted)]"}`}>
+                  {unreadMessages}
+                </p>
+                <p className="text-xs text-[var(--ll-text-faint)]">{unreadMessages > 0 ? "from teachers" : "all caught up"}</p>
+              </Link>
+
+              <Link href="/guardian/report-cards" className="ll-section p-4 hover:bg-[var(--ll-surface-muted)] transition block">
+                <p className="text-xs text-[var(--ll-text-faint)] uppercase tracking-wide">Report Card</p>
+                {reportCardCount > 0 ? (
+                  <>
+                    <p className="mt-1 text-base font-semibold text-emerald-400">Available</p>
+                    <p className="text-xs text-[var(--ll-text-faint)]">{reportCardCount} published</p>
+                  </>
+                ) : (
+                  <p className="mt-1 text-sm text-[var(--ll-text-muted)]">None published yet</p>
+                )}
+              </Link>
+            </section>
+
             {reportCardCount > 0 && (
               <div className="flex items-center justify-between rounded-xl border border-[var(--ll-yellow)]/20 bg-[var(--ll-yellow-soft)] px-4 py-3">
                 <div>
