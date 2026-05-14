@@ -3,6 +3,13 @@
 ## Purpose
 Live execution tracking for the final closeout program.
 
+## Fix 1 — Connection Pool (connection_limit=1)
+- `lib/db.ts` now injects `connection_limit=1` into the database URL programmatically if not already present.
+- `prisma/schema.prisma` datasource has both `url = env("DATABASE_URL")` and `directUrl = env("DIRECT_URL")`.
+- **DATABASE_URL** must be the Supabase PgBouncer pooled URL (port 6543, pgbouncer=true in query string).
+- **DIRECT_URL** must be the direct Postgres URL (port 5432, no pgbouncer param) — used by Prisma Migrate.
+- `connection_limit=1` prevents connection exhaustion in serverless (each function instance uses 1 connection via PgBouncer).
+
 ## Phase 5.1.6 Curriculum Reliability Closure
 - Current sprint: Phase 5.1.6 Curriculum Reliability Closure
 - Current branch: `feat/phase-5-1-5-production-validation`

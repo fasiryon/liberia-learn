@@ -2,6 +2,7 @@ import { requireRole } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import { ChevronLeft } from "lucide-react";
 
 export default async function TeacherDiscussionListPage() {
   const user = await requireRole("TEACHER").catch(() => null);
@@ -34,8 +35,15 @@ export default async function TeacherDiscussionListPage() {
   }));
 
   return (
-    <main className="min-h-screen bg-[var(--ll-bg)] px-4 py-8 ll-page-enter">
-      <div className="mx-auto max-w-3xl space-y-6">
+    <main className="ll-dashboard-shell px-4 py-5">
+      <div className="ll-page-enter mx-auto max-w-5xl space-y-5">
+        <Link
+          href="/teacher/dashboard"
+          className="inline-flex items-center gap-1 text-sm text-[var(--ll-text-muted)] hover:text-[var(--ll-yellow)] mb-4 transition-colors"
+        >
+          <ChevronLeft className="w-4 h-4" />
+          Dashboard
+        </Link>
         <h1 className="text-2xl font-bold text-[var(--ll-text)]">Discussion Boards</h1>
         {classData.length === 0 ? (
           <p className="text-sm text-[var(--ll-text-muted)]">No classes found.</p>

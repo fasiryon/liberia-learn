@@ -4,9 +4,17 @@ type LessonPayload = {
   body_block?: string | null;
 };
 
-export function selectLessonBody(payload: LessonPayload, classFormat?: string | null) {
+export function selectLessonBody(
+  payload: LessonPayload,
+  classFormat?: string | null,
+  mode?: string | null
+) {
   const format = classFormat ?? "standard";
   if (format === "block_a" || format === "block_b" || format === "block_single") {
+    return payload.body_block ?? payload.body_standard ?? payload.body ?? "";
+  }
+  // For slides mode: prefer body_block (has ## headings for structured slides)
+  if (mode === "slides") {
     return payload.body_block ?? payload.body_standard ?? payload.body ?? "";
   }
   return payload.body_standard ?? payload.body_block ?? payload.body ?? "";
@@ -25,9 +33,9 @@ export function renderSimpleMarkdown(markdown: string) {
     .map((block) => block.trim())
     .filter(Boolean)
     .map((block) => {
-      if (block.startsWith("### ")) return `<h3>${escapeHtml(block.slice(4))}</h3>`;
-      if (block.startsWith("## ")) return `<h2>${escapeHtml(block.slice(3))}</h2>`;
-      if (block.startsWith("# ")) return `<h1>${escapeHtml(block.slice(2))}</h1>`;
+      if (block.startsWith("### ")) return `<strong>${escapeHtml(block.slice(4))}</strong>`;
+      if (block.startsWith("## ")) return `<strong>${escapeHtml(block.slice(3))}</strong>`;
+      if (block.startsWith("# ")) return `<strong>${escapeHtml(block.slice(2))}</strong>`;
       if (block.startsWith("- ")) {
         const items = block
           .split("\n")

@@ -9,11 +9,16 @@ const globalForPrisma = globalThis as unknown as {
 };
 
 function createPrismaClient(databaseUrl?: string) {
+  const rawUrl = databaseUrl ?? process.env.DATABASE_URL;
+  let url = rawUrl;
+  if (url && !url.includes("connection_limit")) {
+    url = url.includes("?") ? `${url}&connection_limit=1` : `${url}?connection_limit=1`;
+  }
   return new PrismaClient({
-    ...(databaseUrl
+    ...(url
       ? {
           datasources: {
-            db: { url: databaseUrl },
+            db: { url },
           },
         }
       : {}),

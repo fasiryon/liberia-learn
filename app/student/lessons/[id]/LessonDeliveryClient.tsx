@@ -418,9 +418,10 @@ export default function LessonDeliveryClient({ lessonId }: { lessonId: string })
         body_standard: lesson.bodyStandard,
         body_block: lesson.bodyBlock,
       },
-      lesson.classFormat
+      lesson.classFormat,
+      mode
     );
-  }, [lesson]);
+  }, [lesson, mode]);
 
   const slides = useMemo(() => {
     if (!lesson) return [];
