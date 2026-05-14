@@ -321,8 +321,9 @@ export function enrichGeneratedLesson(input: EnrichmentInput) {
     buildSectionBody("Home and Guardian Connection", `${bundle.guardianSupport}\n\n${bundle.materialsNotes}`),
   ].join("\n\n");
 
+  const enrichMinWords = input.grade <= 3 ? 700 : input.grade <= 6 ? 900 : 1200;
   const booster = createWordCountBooster(topic, input.grade, input.subject);
-  while (countWords(bodyStandard) + countWords(bodyBlock) < 1200) {
+  while (countWords(bodyStandard) + countWords(bodyBlock) < enrichMinWords) {
     bodyStandard = `${bodyStandard}\n\n${buildSectionBody("Additional Teacher Notes", booster)}`;
     bodyBlock = `${bodyBlock}\n\n${buildSectionBody("Additional Reflection and Review", booster)}`;
   }
@@ -381,9 +382,10 @@ export function enrichGeneratedLesson(input: EnrichmentInput) {
 
   const wordCount = countLessonWords(mergedPayload as LessonPayload);
 
+  const minWordsThreshold = input.grade <= 3 ? 700 : input.grade <= 6 ? 900 : 1200;
   return {
     payload: mergedPayload,
     wordCount,
-    belowThreshold: wordCount < 1200,
+    belowThreshold: wordCount < minWordsThreshold,
   };
 }

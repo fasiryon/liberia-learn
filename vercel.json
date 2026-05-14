@@ -15,7 +15,14 @@
     }
   ],
   "crons": [
-    { "path": "/api/cron/assignment-due-reminders", "schedule": "0 18 * * *" },
-    { "path": "/api/cron/rebuild-leaderboards", "schedule": "0 20 * * *" }
+    { "path": "/api/cron/assignment-due-reminders",                              "schedule": "0 18 * * *" },
+    { "path": "/api/cron/rebuild-leaderboards",                                  "schedule": "0 20 * * *" },
+    { "path": "/api/cron/process-audio-generation",                              "schedule": "*/10 * * * *" },
+    { "path": "/api/cron/process-textbook-generation",                           "schedule": "*/15 * * * *" },
+    { "path": "/api/admin/ops/cron/autonomous/stale-approvals",                  "schedule": "*/15 * * * *" },
+    { "path": "/api/admin/ops/cron/autonomous/evaluation-windows",               "schedule": "0 * * * *" },
+    { "path": "/api/admin/ops/cron/autonomous/workflow-recovery",                "schedule": "*/10 * * * *" },
+    { "path": "/api/admin/ops/cron/autonomous/runtime-health",                   "schedule": "*/5 * * * *" },
+    { "path": "/api/admin/ops/cron/autonomous/dead-letter-inspection",           "schedule": "0 */6 * * *" }
   ]
 }
