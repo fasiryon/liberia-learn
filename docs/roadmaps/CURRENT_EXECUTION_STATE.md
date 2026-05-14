@@ -410,7 +410,7 @@ Full build plan: `docs/roadmaps/ONLINE_SCHOOL_BUILD.md`
 | 9 | Canva Documents Suite | COMPLETE |
 | 10 | Student Portfolio + Capstone | COMPLETE |
 | 11 | Mobile PWA + Offline Enhancement | COMPLETE |
-| 12 | Two-Way Student↔Teacher Messaging | AWAITING APPROVAL |
+| 12 | Two-Way Student↔Teacher Messaging | COMPLETE |
 
 ## Sprint 1 COMPLETE — 2026-05-12
 - `scripts/process-regen-jobs-direct.ts` — SHIPPED (commits 7e20684 + da717ff)
@@ -507,6 +507,24 @@ Full build plan: `docs/roadmaps/ONLINE_SCHOOL_BUILD.md`
 - Commit: `1a94b11`
 - Gate: `npx prisma generate` PASS, `npx tsc --noEmit` PASS (0 errors), `npx vitest run` PASS (2844 tests / 365 files), `npm run build` PASS
 - 27 new tests in `__tests__/sprint11.pwa.test.ts`
+
+## Sprint 12 COMPLETE — 2026-05-13
+- `Message` model extended: `senderRole`, `recipientRole`, `threadKey`, `read` fields + `MessageReadReceipt` model — SHIPPED
+- Migration `20260513_000003_sprint12_unified_messaging` — SHIPPED
+- `GET/POST /api/student/messages` — thread list with unread counts, rate-limited 10/day per teacher — SHIPPED
+- `GET /api/student/messages/unread-count` — unread badge count for StudentSidebar polling — SHIPPED
+- `GET /api/student/my-teachers` — enrolled teacher list for compose modal — SHIPPED
+- `POST /api/teacher/messages/reply` — teacher reply with threadKey validation + push to student — SHIPPED
+- `GET /api/teacher/messages/student-threads` — teacher view of student thread list — SHIPPED
+- `GET /api/admin/messages/stats` — aggregate counts only, no message bodies (privacy) — SHIPPED
+- `app/student/messages/page.tsx` — thread sidebar + chat bubbles + compose modal + read receipts (✓/✓✓) — SHIPPED
+- `app/teacher/messages/page.tsx` — tabbed Guardian Messages / Student Messages with unread badge — SHIPPED
+- `app/admin/communications/page.tsx` — message volume stats + privacy shield notice — SHIPPED
+- `components/StudentSidebar.tsx` — Messages nav link + red unread badge (polls every 60s) — SHIPPED
+- `components/admin/AdminNav.tsx` — Communications link added — SHIPPED
+- Commit: `adc1b75`
+- Gate: `npx prisma generate` PASS, `npx tsc --noEmit` PASS (0 errors), `npx vitest run` PASS (2864 tests / 366 files), `npm run build` PASS
+- 20 new tests in `__tests__/sprint12.messaging.test.ts`
 
 ## Sprint 9 COMPLETE — 2026-05-13
 - GeneratedDocument model + migration `20260513_000001_sprint9_generated_documents` — SHIPPED
