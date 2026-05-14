@@ -409,7 +409,7 @@ Full build plan: `docs/roadmaps/ONLINE_SCHOOL_BUILD.md`
 | 8 | Guardian Portal Enhancement | COMPLETE |
 | 9 | Canva Documents Suite | COMPLETE |
 | 10 | Student Portfolio + Capstone | COMPLETE |
-| 11 | Mobile PWA + Offline Enhancement | AWAITING APPROVAL |
+| 11 | Mobile PWA + Offline Enhancement | COMPLETE |
 | 12 | Two-Way Student↔Teacher Messaging | AWAITING APPROVAL |
 
 ## Sprint 1 COMPLETE — 2026-05-12
@@ -490,6 +490,23 @@ Full build plan: `docs/roadmaps/ONLINE_SCHOOL_BUILD.md`
 - Commit: `88a5817`
 - Gate: `npx tsc --noEmit` PASS (0 errors), `npx vitest run` PASS (2815 tests / 364 files), `npm run build` PASS
 - 19 new tests in `__tests__/sprint10.portfolio.test.ts`
+
+## Sprint 11 COMPLETE — 2026-05-13
+- `components/PwaInstallPrompt.tsx` — 30s delay, beforeinstallprompt, 14-day dismiss, permanent install flag — SHIPPED
+- `components/OfflineReadyBadge.tsx` — Cache API check, green checkmark / download icon, on-click cache trigger — SHIPPED
+- `components/DataUsageBar.tsx` — navigator.storage.estimate, colour-coded bar, Low Data Mode toggle (localStorage) — SHIPPED
+- `lib/offline/assignmentDraftQueue.ts` — saveDraftOffline / getDraftOffline / removeDraftOffline / listPendingDrafts — SHIPPED
+- `lib/lesson-offline-cache.ts` — MAX_CACHED_LESSONS raised to 50 — SHIPPED
+- `public/sw.js` — syncAssignmentDrafts + `sync` event handler for `submit-assignment-drafts` tag — SHIPPED
+- `public/manifest.json` — screenshots array (home + today), categories, description hardened — SHIPPED
+- `public/screenshots/` — home.png + today.png placeholder images — SHIPPED
+- Layout wiring: student, teacher, guardian layouts all mount `PwaInstallPrompt` — SHIPPED
+- `app/student/assignments/[id]/AssignmentSubmissionClient.tsx` — draft pre-fill banner, keystroke save, offline submit path, removeDraft on success — SHIPPED
+- `app/student/today/page.tsx` — `OfflineReadyBadge` wired on each lesson item — SHIPPED
+- `app/student/lessons/page.tsx` — `OfflineReadyBadge` wired on each lesson card — SHIPPED
+- Commit: `1a94b11`
+- Gate: `npx prisma generate` PASS, `npx tsc --noEmit` PASS (0 errors), `npx vitest run` PASS (2844 tests / 365 files), `npm run build` PASS
+- 27 new tests in `__tests__/sprint11.pwa.test.ts`
 
 ## Sprint 9 COMPLETE — 2026-05-13
 - GeneratedDocument model + migration `20260513_000001_sprint9_generated_documents` — SHIPPED
