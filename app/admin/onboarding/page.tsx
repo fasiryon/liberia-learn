@@ -1,85 +1,113 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { CredentialDeliveryActions } from "@/components/CredentialDeliveryActions";
+import { useEffect, useState, useRef } from "react";
+import { CheckCircle2, Circle, AlertTriangle, Upload } from "lucide-react";
 
-const COUNTIES = [
-  "Bomi", "Bong", "Gbarpolu", "Grand Bassa", "Grand Cape Mount", "Grand Gedeh",
-  "Grand Kru", "Lofa", "Margibi", "Maryland", "Montserrado", "Nimba",
-  "River Cess", "River Gee", "Sinoe",
-];
+const SUBJECTS = ["MATH", "SCIENCE", "ENGLISH", "CIVICS", "COMPUTER_SCIENCE", "HISTORY", "ART", "PE"] as const;
+const SCHOOL_TYPES = ["PRIMARY", "SECONDARY", "BOTH"];
 
-type TeacherCredential = {
-  userId: string;
-  loginId: string;
-  tempPin: string;
-  phone: string | null;
+type OnboardingData = {
+  school: {
+    id: string; name: string; county: string | null; motto: string | null;
+    contactName: string | null; primaryHex: string | null; logoUrl: string | null;
+    onboardingStep: number; contactPhone: string | null; schoolType: string | null;
+  } | null;
+  teacherCount: number;
+  classCount: number;
+  studentCount: number;
+  onboarding: { step: number; completed: boolean };
 };
+
+function ProgressBar({ step, total }: { step: number; total: number }) {
+  return (
+    <div className="space-y-2">
+      <div className="flex items-center justify-between text-xs text-[var(--ll-text-muted)]">
+        <span>Step {step} of {total}</span>
+        <span>{Math.round((step / total) * 100)}% complete</span>
+      </div>
+      <div className="h-2 w-full rounded-full bg-[var(--ll-surface)]">
+        <div
+          className="h-2 rounded-full bg-[var(--ll-yellow)] transition-all duration-300"
+          style={{ width: `${(step / total) * 100}%` }}
+        />
+      </div>
+    </div>
+  );
+}
 
 export default function OnboardingPage() {
   const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const [teacherSaving, setTeacherSaving] = useState(false);
-  const [school, setSchool] = useState<any>(null);
-  const [teacherCount, setTeacherCount] = useState(0);
-  const [classCount, setClassCount] = useState(0);
+  const [data, setData] = useState<OnboardingData | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [successMsg, setSuccessMsg] = useState<string | null>(null);
 
+  // Step 1 fields
   const [name, setName] = useState("");
-  const [county, setCounty] = useState("");
-  const [motto, setMotto] = useState("");
+  const [address, setAddress] = useState("");
   const [principal, setPrincipal] = useState("");
-
-  const [primaryHex, setPrimaryHex] = useState("#10b981");
+  const [phone, setPhone] = useState("");
+  const [schoolType, setSchoolType] = useState("");
+  const [grades, setGrades] = useState<number[]>([]);
   const [logoUrl, setLogoUrl] = useState("");
 
+  // Step 2 fields
   const [teacherName, setTeacherName] = useState("");
   const [teacherEmail, setTeacherEmail] = useState("");
-  const [teacherPhone, setTeacherPhone] = useState("");
-  const [teacherLoginId, setTeacherLoginId] = useState("");
-  const [teacherAdded, setTeacherAdded] = useState(false);
+  const [teacherSubject, setTeacherSubject] = useState("");
+  const [teacherSaving, setTeacherSaving] = useState(false);
   const [teacherError, setTeacherError] = useState<string | null>(null);
-  const [teacherCredential, setTeacherCredential] = useState<TeacherCredential | null>(null);
+  const [csvImporting, setCsvImporting] = useState(false);
+  const [importResult, setImportResult] = useState<string | null>(null);
+  const teacherCsvRef = useRef<HTMLInputElement>(null);
 
-  const [className, setClassName] = useState("");
-  const [gradeLevel, setGradeLevel] = useState("7");
-  const [classCreated, setClassCreated] = useState(false);
+  // Step 3 fields
+  const [studentCsv, setStudentCsv] = useState("");
+  const [csvPreview, setCsvPreview] = useState<any[] | null>(null);
+  const [csvTotal, setCsvTotal] = useState(0);
+  const [studentImporting, setStudentImporting] = useState(false);
+  const studentCsvRef = useRef<HTMLInputElement>(null);
+
+  // Step 4 fields — timetable: grade → subject
+  const [timetable, setTimetable] = useState<Record<number, string>>({});
+  const [timetableSaving, setTimetableSaving] = useState(false);
 
   useEffect(() => {
     fetch("/api/admin/onboarding")
       .then((r) => r.json())
-      .then((d) => {
+      .then((d: OnboardingData) => {
+        setData(d);
         if (d.school) {
-          setSchool(d.school);
           setName(d.school.name || "");
-          setCounty(d.school.county || "");
-          setMotto(d.school.motto || "");
+          setAddress(d.school.county || "");
           setPrincipal(d.school.contactName || "");
-          setPrimaryHex(d.school.primaryHex || "#10b981");
+          setPhone(d.school.contactPhone || "");
+          setSchoolType(d.school.schoolType || "");
           setLogoUrl(d.school.logoUrl || "");
-          setTeacherCount(d.teacherCount || 0);
-          setClassCount(d.classCount || 0);
-          if (d.school.onboardingStep > 0 && d.school.onboardingStep < 5) {
-            setStep(d.school.onboardingStep + 1);
-          } else if (d.school.onboardingStep >= 5) {
-            setStep(5);
-          }
         }
+        const savedStep = d.onboarding?.step ?? 1;
+        setStep(Math.min(savedStep, 5));
       })
       .finally(() => setLoading(false));
   }, []);
 
-  async function saveStep(stepNum: number, data: any) {
+  async function advanceStep(n: number, body: object = {}) {
     setSaving(true);
+    setError(null);
     try {
-      const res = await fetch("/api/admin/onboarding", {
-        method: "PATCH",
+      const res = await fetch(`/api/admin/onboarding/step/${n}`, {
+        method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ step: stepNum, data }),
+        body: JSON.stringify(body),
       });
-      if (!res.ok) throw new Error("Save failed");
+      const json = await res.json();
+      if (!res.ok) { setError(json.error ?? "Save failed"); return false; }
+      setStep(n + 1);
+      setData((prev) => prev ? { ...prev, onboarding: { ...prev.onboarding, step: n } } : prev);
       return true;
     } catch {
+      setError("Save failed. Please try again.");
       return false;
     } finally {
       setSaving(false);
@@ -87,48 +115,26 @@ export default function OnboardingPage() {
   }
 
   async function handleStep1() {
-    const ok = await saveStep(1, { name, county, motto, contactName: principal });
-    if (ok) setStep(2);
-  }
-
-  async function handleStep2() {
-    const ok = await saveStep(2, { primaryHex, logoUrl });
-    if (ok) setStep(3);
+    await advanceStep(1, { name, address, principalName: principal, phone, schoolType, grades, logoUrl });
   }
 
   async function handleAddTeacher() {
     if (!teacherName) return;
     setTeacherSaving(true);
     setTeacherError(null);
-    setTeacherCredential(null);
     try {
       const res = await fetch("/api/admin/teachers", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          fullName: teacherName,
-          email: teacherEmail || undefined,
-          phone: teacherPhone || undefined,
-          loginId: teacherLoginId || undefined,
-        }),
+        body: JSON.stringify({ fullName: teacherName, email: teacherEmail || undefined }),
       });
-      const data = await res.json();
-      if (!res.ok) {
-        setTeacherError(data.error ?? "Could not add teacher.");
-        return;
-      }
-      setTeacherAdded(true);
-      setTeacherCount((c) => c + 1);
-      setTeacherCredential({
-        userId: data.userId,
-        loginId: data.loginId,
-        tempPin: data.tempPin,
-        phone: data.phone ?? null,
-      });
+      const json = await res.json();
+      if (!res.ok) { setTeacherError(json.error ?? "Could not add teacher"); return; }
       setTeacherName("");
       setTeacherEmail("");
-      setTeacherPhone("");
-      setTeacherLoginId("");
+      setTeacherSubject("");
+      setData((prev) => prev ? { ...prev, teacherCount: prev.teacherCount + 1 } : prev);
+      setImportResult(`Teacher "${teacherName}" added.`);
     } catch {
       setTeacherError("Could not add teacher.");
     } finally {
@@ -136,208 +142,448 @@ export default function OnboardingPage() {
     }
   }
 
-  async function handleStep3() {
-    const ok = await saveStep(3, {});
-    if (ok) setStep(4);
-  }
-
-  async function handleCreateClass() {
-    if (!className) return;
+  async function handleTeacherCsvImport() {
+    const file = teacherCsvRef.current?.files?.[0];
+    if (!file) return;
+    setCsvImporting(true);
+    setImportResult(null);
+    const text = await file.text();
     try {
-      await fetch("/api/admin/classes", {
+      const res = await fetch("/api/admin/onboarding/import-teachers", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name: className, grade: parseInt(gradeLevel), subject: "MATH" }),
+        body: JSON.stringify({ csv: text }),
       });
-      setClassCreated(true);
-      setClassCount((c) => c + 1);
-    } catch {}
+      const json = await res.json();
+      if (!res.ok) { setImportResult(`Error: ${json.error}`); return; }
+      setData((prev) => prev ? { ...prev, teacherCount: prev.teacherCount + json.created } : prev);
+      setImportResult(`Imported ${json.created} teachers. Skipped: ${json.skipped}. ${json.errors?.length ? `Errors: ${json.errors.join(", ")}` : ""}`);
+    } catch {
+      setImportResult("Import failed.");
+    } finally {
+      setCsvImporting(false);
+    }
+  }
+
+  async function handleStep2() {
+    await advanceStep(2);
+  }
+
+  async function handleStudentCsvPreview() {
+    const file = studentCsvRef.current?.files?.[0];
+    if (!file) return;
+    const text = await file.text();
+    setStudentCsv(text);
+    const res = await fetch("/api/admin/onboarding/import-students", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ csv: text, preview: true }),
+    });
+    const json = await res.json();
+    if (!res.ok) { setError(json.error); return; }
+    setCsvPreview(json.rows);
+    setCsvTotal(json.total);
+  }
+
+  async function handleStudentCsvImport() {
+    if (!studentCsv) return;
+    setStudentImporting(true);
+    setError(null);
+    try {
+      const res = await fetch("/api/admin/onboarding/import-students", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ csv: studentCsv }),
+      });
+      const json = await res.json();
+      if (!res.ok) { setError(json.error); return; }
+      setData((prev) => prev ? { ...prev, studentCount: prev.studentCount + json.created } : prev);
+      setCsvPreview(null);
+      setSuccessMsg(`${json.created} students imported successfully.`);
+    } catch {
+      setError("Import failed.");
+    } finally {
+      setStudentImporting(false);
+    }
+  }
+
+  async function handleStep3() {
+    await advanceStep(3);
+  }
+
+  async function handleSaveTimetable() {
+    if (Object.keys(timetable).length === 0) return;
+    setTimetableSaving(true);
+    setError(null);
+    try {
+      // Create a Class record for each grade+subject entry
+      for (const [gradeStr, subject] of Object.entries(timetable)) {
+        const gradeLevel = parseInt(gradeStr, 10);
+        if (!subject) continue;
+        await fetch("/api/admin/classes", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ name: `Grade ${gradeLevel} ${subject}`, grade: gradeLevel, subject }),
+        }).catch(() => {});
+      }
+      setData((prev) => prev ? { ...prev, classCount: prev.classCount + Object.keys(timetable).length } : prev);
+      setSuccessMsg("Timetable saved — classes created.");
+    } finally {
+      setTimetableSaving(false);
+    }
   }
 
   async function handleStep4() {
-    const ok = await saveStep(4, {});
-    if (ok) setStep(5);
+    await advanceStep(4);
   }
 
-  async function handleFinish() {
-    await saveStep(5, {});
-    window.location.href = "/admin";
+  async function handleComplete() {
+    setSaving(true);
+    setError(null);
+    try {
+      const res = await fetch("/api/admin/onboarding/complete", { method: "POST" });
+      if (!res.ok) { const j = await res.json(); setError(j.error); return; }
+      window.location.href = "/admin?onboarding=done";
+    } finally {
+      setSaving(false);
+    }
   }
 
-  if (loading) return <div className="p-8"><div className="h-40 animate-pulse rounded-xl bg-[var(--ll-surface)]/50" /></div>;
+  function toggleGrade(g: number) {
+    setGrades((prev) => prev.includes(g) ? prev.filter((x) => x !== g) : [...prev, g]);
+  }
 
-  const STEPS = ["School Identity", "Branding", "Add Teacher", "Create Class", "Ready!"];
+  if (loading) {
+    return (
+      <main className="ll-dashboard-shell">
+        <div className="ll-page-enter mx-auto max-w-2xl px-4 py-5">
+          <div className="h-64 animate-pulse rounded-xl bg-[var(--ll-surface)]/50" />
+        </div>
+      </main>
+    );
+  }
+
+  const STEPS = ["School Profile", "Add Teachers", "Import Students", "Set Timetable", "Go Live"];
 
   return (
-    <div className="mx-auto max-w-2xl space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold">School Setup</h1>
-        <p className="mt-1 text-sm text-[var(--ll-text-muted)]">Get your school ready in 5 easy steps</p>
-      </div>
+    <main className="ll-dashboard-shell">
+      <div className="ll-page-enter mx-auto max-w-2xl space-y-6 px-4 py-5">
+        <div>
+          <a href="/admin" className="text-xs text-[var(--ll-text-muted)] hover:text-[var(--ll-text)]">← Back to Admin</a>
+          <h1 className="mt-2 text-2xl font-bold text-[var(--ll-text)]">School Setup Wizard</h1>
+          <p className="mt-1 text-sm text-[var(--ll-text-muted)]">Get your school ready for Day 1 in 5 steps</p>
+        </div>
 
-      <div className="flex gap-1">
-        {STEPS.map((s, i) => (
-          <div key={i} className="flex-1">
-            <div className={`h-1.5 rounded-full ${i + 1 <= step ? "bg-[var(--ll-yellow)]" : "bg-[var(--ll-surface)]"}`} />
-            <p className={`mt-1 text-[10px] ${i + 1 === step ? "text-[var(--ll-yellow)]" : "text-[var(--ll-text-faint)]"}`}>{s}</p>
-          </div>
-        ))}
-      </div>
+        <ProgressBar step={step} total={STEPS.length} />
 
-      <div className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 p-6">
-        {step === 1 && (
-          <div className="space-y-4">
-            <h2 className="text-lg font-semibold">Step 1: School Identity</h2>
-            <div className="space-y-3">
-              <div>
-                <label className="text-xs text-[var(--ll-text-muted)]">School Name</label>
-                <input value={name} onChange={(e) => setName(e.target.value)} className="mt-1 w-full rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)] px-4 py-3 text-sm text-[var(--ll-text)]" />
-              </div>
-              <div>
-                <label className="text-xs text-[var(--ll-text-muted)]">County</label>
-                <select value={county} onChange={(e) => setCounty(e.target.value)} className="mt-1 w-full rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)] px-4 py-3 text-sm text-[var(--ll-text)]">
-                  <option value="">Select county...</option>
-                  {COUNTIES.map((c) => <option key={c} value={c}>{c}</option>)}
-                </select>
-              </div>
-              <div>
-                <label className="text-xs text-[var(--ll-text-muted)]">School Motto</label>
-                <input value={motto} onChange={(e) => setMotto(e.target.value)} className="mt-1 w-full rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)] px-4 py-3 text-sm text-[var(--ll-text)]" />
-              </div>
-              <div>
-                <label className="text-xs text-[var(--ll-text-muted)]">Principal Name</label>
-                <input value={principal} onChange={(e) => setPrincipal(e.target.value)} className="mt-1 w-full rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)] px-4 py-3 text-sm text-[var(--ll-text)]" />
-              </div>
+        <div className="flex gap-1">
+          {STEPS.map((s, i) => (
+            <div key={i} className="flex-1">
+              <div className={`h-1 rounded-full ${i + 1 < step ? "bg-[var(--ll-yellow)]" : i + 1 === step ? "bg-[var(--ll-yellow)]/60" : "bg-[var(--ll-surface)]"}`} />
+              <p className={`mt-1 hidden text-[10px] sm:block ${i + 1 === step ? "text-[var(--ll-yellow)]" : "text-[var(--ll-text-faint)]"}`}>{s}</p>
             </div>
-            <button onClick={handleStep1} disabled={saving || !name} className="w-full rounded-xl bg-[var(--ll-yellow)] px-6 py-3 text-sm font-semibold text-[var(--ll-text)] hover:bg-[var(--ll-yellow-soft)] disabled:opacity-50">
-              {saving ? "Saving..." : "Continue"}
-            </button>
+          ))}
+        </div>
+
+        {error && (
+          <div className="flex items-center gap-2 rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-3">
+            <AlertTriangle className="h-4 w-4 text-red-400 shrink-0" />
+            <p className="text-sm text-red-400">{error}</p>
+          </div>
+        )}
+        {successMsg && (
+          <div className="flex items-center gap-2 rounded-xl border border-emerald-500/30 bg-emerald-500/10 px-4 py-3">
+            <CheckCircle2 className="h-4 w-4 text-emerald-400 shrink-0" />
+            <p className="text-sm text-emerald-400">{successMsg}</p>
           </div>
         )}
 
-        {step === 2 && (
-          <div className="space-y-4">
-            <h2 className="text-lg font-semibold">Step 2: School Branding</h2>
-            <div className="space-y-3">
-              <div>
-                <label className="text-xs text-[var(--ll-text-muted)]">Primary Color</label>
-                <div className="mt-1 flex items-center gap-3">
-                  <input type="color" value={primaryHex} onChange={(e) => setPrimaryHex(e.target.value)} className="h-10 w-10 cursor-pointer rounded" />
-                  <span className="text-sm text-[var(--ll-text)]">{primaryHex}</span>
+        <div className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 p-6">
+
+          {/* STEP 1 — School Profile */}
+          {step === 1 && (
+            <div className="space-y-4">
+              <h2 className="text-lg font-semibold text-[var(--ll-text)]">Step 1: School Profile</h2>
+              <div className="grid gap-3 sm:grid-cols-2">
+                <div>
+                  <label className="text-xs text-[var(--ll-text-muted)]">School Name *</label>
+                  <input value={name} onChange={(e) => setName(e.target.value)}
+                    className="mt-1 w-full rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)] px-4 py-3 text-sm text-[var(--ll-text)]" />
+                </div>
+                <div>
+                  <label className="text-xs text-[var(--ll-text-muted)]">School Address</label>
+                  <input value={address} onChange={(e) => setAddress(e.target.value)}
+                    placeholder="County, District"
+                    className="mt-1 w-full rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)] px-4 py-3 text-sm text-[var(--ll-text)]" />
+                </div>
+                <div>
+                  <label className="text-xs text-[var(--ll-text-muted)]">Principal Name</label>
+                  <input value={principal} onChange={(e) => setPrincipal(e.target.value)}
+                    className="mt-1 w-full rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)] px-4 py-3 text-sm text-[var(--ll-text)]" />
+                </div>
+                <div>
+                  <label className="text-xs text-[var(--ll-text-muted)]">School Phone</label>
+                  <input value={phone} onChange={(e) => setPhone(e.target.value)}
+                    placeholder="+231 XX XXX XXXX"
+                    className="mt-1 w-full rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)] px-4 py-3 text-sm text-[var(--ll-text)]" />
+                </div>
+                <div>
+                  <label className="text-xs text-[var(--ll-text-muted)]">School Type</label>
+                  <select value={schoolType} onChange={(e) => setSchoolType(e.target.value)}
+                    className="mt-1 w-full rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)] px-4 py-3 text-sm text-[var(--ll-text)]">
+                    <option value="">Select type...</option>
+                    {SCHOOL_TYPES.map((t) => <option key={t} value={t}>{t}</option>)}
+                  </select>
+                </div>
+                <div>
+                  <label className="text-xs text-[var(--ll-text-muted)]">Logo URL (optional)</label>
+                  <input value={logoUrl} onChange={(e) => setLogoUrl(e.target.value)}
+                    placeholder="https://..."
+                    className="mt-1 w-full rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)] px-4 py-3 text-sm text-[var(--ll-text)]" />
                 </div>
               </div>
               <div>
-                <label className="text-xs text-[var(--ll-text-muted)]">Logo URL (optional)</label>
-                <input value={logoUrl} onChange={(e) => setLogoUrl(e.target.value)} placeholder="https://..." className="mt-1 w-full rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)] px-4 py-3 text-sm text-[var(--ll-text)]" />
+                <label className="text-xs text-[var(--ll-text-muted)]">Grades Offered</label>
+                <div className="mt-2 flex flex-wrap gap-2">
+                  {Array.from({ length: 12 }, (_, i) => i + 1).map((g) => (
+                    <button
+                      key={g}
+                      type="button"
+                      onClick={() => toggleGrade(g)}
+                      className={`rounded-lg border px-3 py-1.5 text-xs font-medium transition-colors ${grades.includes(g) ? "border-[var(--ll-yellow)] bg-[var(--ll-yellow)]/10 text-[var(--ll-yellow)]" : "border-[var(--ll-border)] text-[var(--ll-text-muted)] hover:text-[var(--ll-text)]"}`}
+                    >
+                      G{g}
+                    </button>
+                  ))}
+                </div>
               </div>
-              <div className="rounded-xl border border-[var(--ll-border)] p-4" style={{ borderColor: `${primaryHex}40` }}>
-                <div className="flex items-center gap-2">
-                  <div className="flex h-8 w-8 items-center justify-center rounded-lg text-xs font-bold text-[var(--ll-text)]" style={{ backgroundColor: primaryHex }}>
-                    {name?.[0] || "S"}
+              <button
+                onClick={handleStep1}
+                disabled={saving || !name}
+                className="w-full rounded-xl bg-[var(--ll-yellow)] px-6 py-3 text-sm font-semibold text-[var(--ll-text)] hover:bg-[var(--ll-yellow-soft)] disabled:opacity-50"
+              >
+                {saving ? "Saving..." : "Continue →"}
+              </button>
+            </div>
+          )}
+
+          {/* STEP 2 — Add Teachers */}
+          {step === 2 && (
+            <div className="space-y-5">
+              <h2 className="text-lg font-semibold text-[var(--ll-text)]">Step 2: Add Teachers</h2>
+              <p className="text-xs text-[var(--ll-text-muted)]">
+                {data?.teacherCount ?? 0} teacher(s) added. At least 1 required to proceed.
+              </p>
+
+              <div className="rounded-xl border border-[var(--ll-border)] p-4 space-y-3">
+                <h3 className="text-sm font-semibold text-[var(--ll-text)]">Add Teacher</h3>
+                <div className="grid gap-3 sm:grid-cols-2">
+                  <div>
+                    <label className="text-xs text-[var(--ll-text-muted)]">Name *</label>
+                    <input value={teacherName} onChange={(e) => setTeacherName(e.target.value)}
+                      className="mt-1 w-full rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)] px-4 py-2.5 text-sm text-[var(--ll-text)]" />
                   </div>
-                  <span className="text-sm font-semibold" style={{ color: primaryHex }}>{name || "Your School"}</span>
+                  <div>
+                    <label className="text-xs text-[var(--ll-text-muted)]">Email (optional)</label>
+                    <input value={teacherEmail} onChange={(e) => setTeacherEmail(e.target.value)}
+                      type="email"
+                      className="mt-1 w-full rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)] px-4 py-2.5 text-sm text-[var(--ll-text)]" />
+                  </div>
+                </div>
+                {teacherError && <p className="text-xs text-red-400">{teacherError}</p>}
+                {importResult && <p className="text-xs text-[var(--ll-yellow)]">{importResult}</p>}
+                <button
+                  onClick={handleAddTeacher}
+                  disabled={!teacherName || teacherSaving}
+                  className="rounded-xl border border-[var(--ll-border)] px-4 py-2.5 text-sm font-medium text-[var(--ll-text)] hover:border-[var(--ll-border-strong)] disabled:opacity-50"
+                >
+                  {teacherSaving ? "Adding..." : "Add Teacher"}
+                </button>
+              </div>
+
+              <div className="rounded-xl border border-[var(--ll-border)] p-4 space-y-3">
+                <h3 className="text-sm font-semibold text-[var(--ll-text)]">Import from CSV</h3>
+                <p className="text-xs text-[var(--ll-text-muted)]">Columns: <code>name, email, subject, grades</code>. Temp password: <code>School@2026!</code></p>
+                <div className="flex items-center gap-3">
+                  <label className="flex cursor-pointer items-center gap-2 rounded-xl border border-[var(--ll-border)] px-4 py-2.5 text-sm text-[var(--ll-text)] hover:border-[var(--ll-border-strong)]">
+                    <Upload className="h-4 w-4" />
+                    Choose CSV
+                    <input ref={teacherCsvRef} type="file" accept=".csv" className="hidden" onChange={handleTeacherCsvImport} />
+                  </label>
+                  {csvImporting && <span className="text-xs text-[var(--ll-text-muted)]">Importing...</span>}
                 </div>
               </div>
-            </div>
-            <div className="flex gap-3">
-              <button onClick={() => { saveStep(2, {}); setStep(3); }} className="flex-1 rounded-xl border border-[var(--ll-border)] px-6 py-3 text-sm text-[var(--ll-text-muted)] hover:text-[var(--ll-text)]">Skip</button>
-              <button onClick={handleStep2} disabled={saving} className="flex-1 rounded-xl bg-[var(--ll-yellow)] px-6 py-3 text-sm font-semibold text-[var(--ll-text)] hover:bg-[var(--ll-yellow-soft)] disabled:opacity-50">
-                {saving ? "Saving..." : "Continue"}
-              </button>
-            </div>
-          </div>
-        )}
 
-        {step === 3 && (
-          <div className="space-y-4">
-            <h2 className="text-lg font-semibold">Step 3: Add Your First Teacher</h2>
-            <p className="text-xs text-[var(--ll-text-muted)]">{teacherCount} teacher(s) already added</p>
-            <div className="space-y-3">
-              <div>
-                <label className="text-xs text-[var(--ll-text-muted)]">Teacher Name</label>
-                <input value={teacherName} onChange={(e) => setTeacherName(e.target.value)} className="mt-1 w-full rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)] px-4 py-3 text-sm text-[var(--ll-text)]" />
-              </div>
-              <div>
-                <label className="text-xs text-[var(--ll-text-muted)]">Teacher ID (optional)</label>
-                <input value={teacherLoginId} onChange={(e) => setTeacherLoginId(e.target.value)} placeholder="TCH-2026-001" className="mt-1 w-full rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)] px-4 py-3 text-sm text-[var(--ll-text)]" />
-              </div>
-              <div>
-                <label className="text-xs text-[var(--ll-text-muted)]">Phone Number (optional)</label>
-                <input value={teacherPhone} onChange={(e) => setTeacherPhone(e.target.value)} placeholder="+231 XX XXX XXXX" className="mt-1 w-full rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)] px-4 py-3 text-sm text-[var(--ll-text)]" />
-              </div>
-              <div>
-                <label className="text-xs text-[var(--ll-text-muted)]">Email (optional)</label>
-                <input value={teacherEmail} onChange={(e) => setTeacherEmail(e.target.value)} type="email" className="mt-1 w-full rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)] px-4 py-3 text-sm text-[var(--ll-text)]" />
-              </div>
-              {teacherAdded && <p className="text-xs text-[var(--ll-yellow)]">Teacher added successfully.</p>}
-              {teacherError && <p className="text-xs text-red-400">{teacherError}</p>}
-              <button onClick={handleAddTeacher} disabled={!teacherName || teacherSaving} className="rounded-xl border border-emerald-500/30 bg-[var(--ll-yellow)]/10 px-4 py-3 text-sm text-[var(--ll-yellow)] hover:bg-[var(--ll-yellow)]/20 disabled:opacity-50">
-                {teacherSaving ? "Adding Teacher..." : "Add Teacher"}
+              <button
+                onClick={handleStep2}
+                disabled={saving || (data?.teacherCount ?? 0) < 1}
+                className="w-full rounded-xl bg-[var(--ll-yellow)] px-6 py-3 text-sm font-semibold text-[var(--ll-text)] hover:bg-[var(--ll-yellow-soft)] disabled:opacity-50"
+              >
+                {saving ? "Saving..." : (data?.teacherCount ?? 0) < 1 ? "Add at least 1 teacher first" : "Continue →"}
               </button>
             </div>
-            {teacherCredential && (
-              <div className="rounded-xl border border-emerald-500/30 bg-[var(--ll-yellow)]/10 p-4">
-                <h3 className="text-lg font-semibold text-[var(--ll-yellow)]">Teacher added successfully</h3>
-                <p className="mt-2 text-sm text-[var(--ll-text)]">Teacher ID: <span className="font-semibold text-[var(--ll-text)]">{teacherCredential.loginId}</span></p>
-                <p className="mt-1 text-sm text-[var(--ll-text)]">Temporary PIN: <span className="font-semibold text-[var(--ll-text)]">{teacherCredential.tempPin}</span></p>
-                <div className="mt-4">
-                  <CredentialDeliveryActions userId={teacherCredential.userId} pin={teacherCredential.tempPin} phone={teacherCredential.phone} />
+          )}
+
+          {/* STEP 3 — Import Students */}
+          {step === 3 && (
+            <div className="space-y-5">
+              <h2 className="text-lg font-semibold text-[var(--ll-text)]">Step 3: Import Student Roster</h2>
+              <p className="text-xs text-[var(--ll-text-muted)]">
+                {data?.studentCount ?? 0} student(s) imported. At least 1 required to proceed.
+              </p>
+              <p className="text-xs text-[var(--ll-text-muted)]">Columns: <code>firstName, lastName, grade, guardianEmail, guardianPhone</code>. Student temp password: <code>Student@2026!</code></p>
+
+              <div className="flex items-center gap-3">
+                <label className="flex cursor-pointer items-center gap-2 rounded-xl border border-[var(--ll-border)] px-4 py-2.5 text-sm text-[var(--ll-text)] hover:border-[var(--ll-border-strong)]">
+                  <Upload className="h-4 w-4" />
+                  Choose CSV
+                  <input ref={studentCsvRef} type="file" accept=".csv" className="hidden" onChange={handleStudentCsvPreview} />
+                </label>
+              </div>
+
+              {csvPreview && csvPreview.length > 0 && (
+                <div className="space-y-3">
+                  <p className="text-xs text-[var(--ll-text-muted)]">Preview — first 5 of {csvTotal} rows:</p>
+                  <div className="ll-scroll-table">
+                    <table className="min-w-full text-xs">
+                      <thead>
+                        <tr className="border-b border-[var(--ll-border)] text-left text-[var(--ll-text-faint)]">
+                          <th className="px-3 py-2">First Name</th>
+                          <th className="px-3 py-2">Last Name</th>
+                          <th className="px-3 py-2">Grade</th>
+                          <th className="px-3 py-2">Guardian Email</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {csvPreview.map((row, i) => (
+                          <tr key={i} className="border-b border-[var(--ll-border)]/60 text-[var(--ll-text-muted)]">
+                            <td className="px-3 py-2">{row.firstName}</td>
+                            <td className="px-3 py-2">{row.lastName}</td>
+                            <td className="px-3 py-2">{row.grade}</td>
+                            <td className="px-3 py-2">{row.guardianEmail || "—"}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                  <button
+                    onClick={handleStudentCsvImport}
+                    disabled={studentImporting}
+                    className="rounded-xl bg-[var(--ll-yellow)] px-6 py-2.5 text-sm font-semibold text-[var(--ll-text)] hover:bg-[var(--ll-yellow-soft)] disabled:opacity-50"
+                  >
+                    {studentImporting ? `Importing ${csvTotal} students...` : `Confirm Import (${csvTotal} students)`}
+                  </button>
                 </div>
-              </div>
-            )}
-            <div className="flex gap-3">
-              <button onClick={() => { saveStep(3, {}); setStep(4); }} className="flex-1 rounded-xl border border-[var(--ll-border)] px-6 py-3 text-sm text-[var(--ll-text-muted)] hover:text-[var(--ll-text)]">Skip</button>
-              <button onClick={handleStep3} disabled={saving} className="flex-1 rounded-xl bg-[var(--ll-yellow)] px-6 py-3 text-sm font-semibold text-[var(--ll-text)] hover:bg-[var(--ll-yellow-soft)] disabled:opacity-50">Continue</button>
-            </div>
-          </div>
-        )}
+              )}
 
-        {step === 4 && (
-          <div className="space-y-4">
-            <h2 className="text-lg font-semibold">Step 4: Create Your First Class</h2>
-            <p className="text-xs text-[var(--ll-text-muted)]">{classCount} class(es) already created</p>
-            <div className="space-y-3">
-              <div>
-                <label className="text-xs text-[var(--ll-text-muted)]">Class Name</label>
-                <input value={className} onChange={(e) => setClassName(e.target.value)} placeholder="e.g. Grade 7A" className="mt-1 w-full rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)] px-4 py-3 text-sm text-[var(--ll-text)]" />
-              </div>
-              <div>
-                <label className="text-xs text-[var(--ll-text-muted)]">Grade Level</label>
-                <select value={gradeLevel} onChange={(e) => setGradeLevel(e.target.value)} className="mt-1 w-full rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)] px-4 py-3 text-sm text-[var(--ll-text)]">
-                  {Array.from({ length: 12 }, (_, i) => i + 1).map((g) => <option key={g} value={g}>Grade {g}</option>)}
-                </select>
-              </div>
-              {classCreated && <p className="text-xs text-[var(--ll-yellow)]">Class created!</p>}
-              <button onClick={handleCreateClass} disabled={!className} className="rounded-xl border border-emerald-500/30 bg-[var(--ll-yellow)]/10 px-4 py-3 text-sm text-[var(--ll-yellow)] hover:bg-[var(--ll-yellow)]/20 disabled:opacity-50">
-                Create Class
+              <button
+                onClick={handleStep3}
+                disabled={saving || (data?.studentCount ?? 0) < 1}
+                className="w-full rounded-xl bg-[var(--ll-yellow)] px-6 py-3 text-sm font-semibold text-[var(--ll-text)] hover:bg-[var(--ll-yellow-soft)] disabled:opacity-50"
+              >
+                {saving ? "Saving..." : (data?.studentCount ?? 0) < 1 ? "Import at least 1 student first" : "Continue →"}
               </button>
             </div>
-            <div className="flex gap-3">
-              <button onClick={() => { saveStep(4, {}); setStep(5); }} className="flex-1 rounded-xl border border-[var(--ll-border)] px-6 py-3 text-sm text-[var(--ll-text-muted)] hover:text-[var(--ll-text)]">Skip</button>
-              <button onClick={handleStep4} disabled={saving} className="flex-1 rounded-xl bg-[var(--ll-yellow)] px-6 py-3 text-sm font-semibold text-[var(--ll-text)] hover:bg-[var(--ll-yellow-soft)] disabled:opacity-50">Continue</button>
-            </div>
-          </div>
-        )}
+          )}
 
-        {step === 5 && (
-          <div className="space-y-4 text-center">
-            <div className="text-4xl">Graduation</div>
-            <h2 className="text-lg font-semibold">You&apos;re Ready!</h2>
-            <p className="text-sm text-[var(--ll-text-muted)]">Your school is set up and ready for the pilot.</p>
-            <div className="space-y-2 rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/50 p-4 text-left">
-              <p className="text-sm text-[var(--ll-text)]"><span className="text-[var(--ll-yellow)]">School:</span> {name}</p>
-              <p className="text-sm text-[var(--ll-text)]"><span className="text-[var(--ll-yellow)]">County:</span> {county || "Not set"}</p>
-              <p className="text-sm text-[var(--ll-text)]"><span className="text-[var(--ll-yellow)]">Teachers:</span> {teacherCount}</p>
-              <p className="text-sm text-[var(--ll-text)]"><span className="text-[var(--ll-yellow)]">Classes:</span> {classCount}</p>
+          {/* STEP 4 — Timetable */}
+          {step === 4 && (
+            <div className="space-y-5">
+              <h2 className="text-lg font-semibold text-[var(--ll-text)]">Step 4: Set Timetable</h2>
+              <p className="text-xs text-[var(--ll-text-muted)]">
+                Assign a primary subject per grade. A class will be created for each grade+subject pair.
+              </p>
+
+              <div className="space-y-2">
+                {(grades.length > 0 ? grades : [7, 8, 9]).map((g) => (
+                  <div key={g} className="flex items-center gap-3">
+                    <span className="w-16 text-sm font-medium text-[var(--ll-text)]">Grade {g}</span>
+                    <select
+                      value={timetable[g] ?? ""}
+                      onChange={(e) => setTimetable((prev) => ({ ...prev, [g]: e.target.value }))}
+                      className="flex-1 rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)] px-4 py-2.5 text-sm text-[var(--ll-text)]"
+                    >
+                      <option value="">Select subject...</option>
+                      {SUBJECTS.map((s) => <option key={s} value={s}>{s}</option>)}
+                    </select>
+                  </div>
+                ))}
+              </div>
+
+              <button
+                onClick={() => {
+                  const defaults: Record<number, string> = {};
+                  (grades.length > 0 ? grades : [7, 8, 9]).forEach((g) => {
+                    defaults[g] = g <= 6 ? "MATH" : g <= 9 ? "SCIENCE" : "ENGLISH";
+                  });
+                  setTimetable(defaults);
+                }}
+                className="rounded-xl border border-[var(--ll-border)] px-4 py-2 text-xs text-[var(--ll-text-muted)] hover:text-[var(--ll-text)]"
+              >
+                Use default timetable
+              </button>
+
+              <div className="flex gap-3">
+                <button
+                  onClick={handleSaveTimetable}
+                  disabled={timetableSaving || Object.keys(timetable).length === 0}
+                  className="rounded-xl border border-[var(--ll-border)] px-4 py-2.5 text-sm font-medium text-[var(--ll-text)] hover:border-[var(--ll-border-strong)] disabled:opacity-50"
+                >
+                  {timetableSaving ? "Saving..." : "Save Timetable"}
+                </button>
+                <button
+                  onClick={handleStep4}
+                  disabled={saving}
+                  className="flex-1 rounded-xl bg-[var(--ll-yellow)] px-6 py-3 text-sm font-semibold text-[var(--ll-text)] hover:bg-[var(--ll-yellow-soft)] disabled:opacity-50"
+                >
+                  {saving ? "Saving..." : "Continue →"}
+                </button>
+              </div>
             </div>
-            <button onClick={handleFinish} className="w-full rounded-xl bg-[var(--ll-yellow)] px-6 py-3 text-sm font-semibold text-[var(--ll-text)] hover:bg-[var(--ll-yellow-soft)]">
-              Go to Admin Console
-            </button>
-          </div>
-        )}
+          )}
+
+          {/* STEP 5 — Verify + Go Live */}
+          {step === 5 && (
+            <div className="space-y-5">
+              <h2 className="text-lg font-semibold text-[var(--ll-text)]">Step 5: Verify &amp; Go Live</h2>
+
+              <div className="space-y-3 rounded-xl border border-[var(--ll-border)] p-4">
+                {[
+                  { label: "School profile saved", done: !!data?.school?.name },
+                  { label: `${data?.teacherCount ?? 0} teacher(s) added`, done: (data?.teacherCount ?? 0) >= 1 },
+                  { label: `${data?.studentCount ?? 0} student(s) enrolled`, done: (data?.studentCount ?? 0) >= 1 },
+                  { label: `${data?.classCount ?? 0} class(es) configured`, done: (data?.classCount ?? 0) >= 1 },
+                  { label: "First lesson delivery verified", done: false },
+                ].map((item, i) => (
+                  <div key={i} className="flex items-center gap-3">
+                    {item.done
+                      ? <CheckCircle2 className="h-5 w-5 text-[var(--ll-yellow)] shrink-0" />
+                      : <Circle className="h-5 w-5 text-[var(--ll-text-faint)] shrink-0" />}
+                    <span className={`text-sm ${item.done ? "text-[var(--ll-text)]" : "text-[var(--ll-text-muted)]"}`}>{item.label}</span>
+                  </div>
+                ))}
+              </div>
+
+              <a
+                href="/student/today"
+                target="_blank"
+                rel="noreferrer"
+                className="flex items-center justify-center gap-2 rounded-xl border border-[var(--ll-border)] px-6 py-3 text-sm font-medium text-[var(--ll-text)] hover:border-[var(--ll-border-strong)]"
+              >
+                Preview Student Experience ↗
+              </a>
+
+              <button
+                onClick={handleComplete}
+                disabled={saving}
+                className="w-full rounded-xl bg-[var(--ll-yellow)] px-6 py-3 text-sm font-semibold text-[var(--ll-text)] hover:bg-[var(--ll-yellow-soft)] disabled:opacity-50"
+              >
+                {saving ? "Completing..." : "Mark Setup Complete"}
+              </button>
+            </div>
+          )}
+        </div>
       </div>
-    </div>
+    </main>
   );
 }
-
-

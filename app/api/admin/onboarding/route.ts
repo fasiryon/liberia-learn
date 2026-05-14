@@ -11,18 +11,31 @@ export async function GET() {
     const user = await requireRole("ADMIN");
     if (!user.schoolId) return NextResponse.json({ error: "No school" }, { status: 400 });
 
-    const school = await prisma.school.findUnique({
-      where: { id: user.schoolId },
-      select: {
-        id: true, name: true, county: true, motto: true, contactName: true,
-        primaryHex: true, logoUrl: true, onboardingStep: true,
-      },
+    const [school, teacherCount, classCount, studentCount] = await Promise.all([
+      prisma.school.findUnique({
+        where: { id: user.schoolId },
+        select: {
+          id: true, name: true, county: true, motto: true, contactName: true,
+          primaryHex: true, logoUrl: true, onboardingStep: true, contactPhone: true,
+          schoolType: true,
+        },
+      }),
+      prisma.user.count({ where: { schoolId: user.schoolId, role: "TEACHER" } }),
+      prisma.class.count({ where: { schoolId: user.schoolId } }),
+      prisma.user.count({ where: { schoolId: user.schoolId, role: "STUDENT" } }),
+    ]);
+
+    // Auto-create SchoolOnboarding record on first visit
+    let onboarding = await prisma.schoolOnboarding.findUnique({
+      where: { schoolId: user.schoolId },
     });
+    if (!onboarding) {
+      onboarding = await prisma.schoolOnboarding.create({
+        data: { schoolId: user.schoolId, step: 1 },
+      });
+    }
 
-    const teacherCount = await prisma.user.count({ where: { schoolId: user.schoolId, role: "TEACHER" } });
-    const classCount = await prisma.class.count({ where: { schoolId: user.schoolId } });
-
-    return NextResponse.json({ school, teacherCount, classCount });
+    return NextResponse.json({ school, teacherCount, classCount, studentCount, onboarding });
   } catch (err: any) {
     return NextResponse.json({ error: err.message }, { status: err?.status || 500 });
   }

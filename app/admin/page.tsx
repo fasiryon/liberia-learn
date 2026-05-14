@@ -316,11 +316,13 @@ export default async function AdminConsolePage() {
     recentActivity = [];
   }
 
-  const schoolDetail = await prisma.school.findUnique({
-    where: { id: schoolId },
-    select: { onboardingStep: true },
-  });
-  const onboardingIncomplete = !schoolDetail?.onboardingStep || schoolDetail.onboardingStep < 5;
+  const [schoolDetail, onboardingRecord] = await Promise.all([
+    prisma.school.findUnique({ where: { id: schoolId }, select: { onboardingStep: true } }),
+    prisma.schoolOnboarding.findUnique({ where: { schoolId }, select: { completed: true } }),
+  ]);
+  const onboardingIncomplete =
+    !onboardingRecord?.completed &&
+    (teacherCount < 2 || !schoolDetail?.onboardingStep || schoolDetail.onboardingStep < 5);
 
   const stats = [
     { label: "Total Students", value: studentCount },
