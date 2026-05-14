@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
-import { Send } from "lucide-react";
+import { Send, ChevronLeft } from "lucide-react";
 import { MessagingCenter } from "@/components/messaging/MessagingCenter";
 
 type StudentThread = {
@@ -224,11 +224,14 @@ export default function TeacherMessagesPage() {
     }`;
 
   return (
-    <main className="min-h-screen bg-[var(--ll-bg)] text-[var(--ll-text)]">
-      <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_top,_#3b82f622,_transparent_60%)]" />
-      <div className="mx-auto max-w-6xl px-4 py-8 space-y-6">
-        <Link href="/teacher" className="text-xs text-[var(--ll-yellow)] hover:opacity-80">
-          &larr; Back to Dashboard
+    <main className="ll-dashboard-shell px-4 py-5 text-[var(--ll-text)]">
+      <div className="ll-page-enter mx-auto max-w-5xl space-y-5">
+        <Link
+          href="/teacher/dashboard"
+          className="inline-flex items-center gap-1 text-sm text-[var(--ll-text-muted)] hover:text-[var(--ll-yellow)] mb-4 transition-colors"
+        >
+          <ChevronLeft className="w-4 h-4" />
+          Dashboard
         </Link>
         <h1 className="text-2xl font-bold">Messages</h1>
 

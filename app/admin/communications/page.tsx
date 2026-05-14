@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { MessageCircle, Users, TrendingUp, Shield, Flag } from "lucide-react";
+import { MessageCircle, Users, TrendingUp, Shield, Flag, ChevronLeft } from "lucide-react";
 
 type MessageStats = {
   totalToday: number;
@@ -29,10 +29,14 @@ export default function AdminCommunicationsPage() {
   }, []);
 
   return (
-    <main className="min-h-screen bg-[var(--ll-bg)] px-4 py-8 text-[var(--ll-text)]">
-      <div className="mx-auto max-w-4xl space-y-6">
-        <Link href="/admin" className="text-xs text-[var(--ll-yellow)] hover:opacity-80">
-          &larr; Back to Admin
+    <main className="ll-dashboard-shell px-4 py-5 text-[var(--ll-text)]">
+      <div className="ll-page-enter mx-auto max-w-5xl space-y-5">
+        <Link
+          href="/admin/dashboard"
+          className="inline-flex items-center gap-1 text-sm text-[var(--ll-text-muted)] hover:text-[var(--ll-yellow)] mb-4 transition-colors"
+        >
+          <ChevronLeft className="w-4 h-4" />
+          Dashboard
         </Link>
         <div>
           <h1 className="text-2xl font-bold">Communications</h1>

@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { ChevronLeft } from "lucide-react";
 import type { SubjectGrade, AttendanceSummary } from "@/lib/reportCards/generateReportCard";
 
 type ReportCardItem = {
@@ -43,12 +44,16 @@ export default function StudentReportCardsPage() {
   }, []);
 
   return (
-    <main className="min-h-screen bg-[var(--ll-bg)] px-4 py-8 text-[var(--ll-text)]">
-      <div className="mx-auto max-w-3xl space-y-6">
+    <main className="ll-dashboard-shell px-4 py-5 text-[var(--ll-text)]">
+      <div className="ll-page-enter mx-auto max-w-5xl space-y-5">
+        <Link
+          href="/student/today"
+          className="inline-flex items-center gap-1 text-sm text-[var(--ll-text-muted)] hover:text-[var(--ll-yellow)] mb-4 transition-colors"
+        >
+          <ChevronLeft className="w-4 h-4" />
+          Dashboard
+        </Link>
         <div>
-          <Link href="/dashboard" className="text-sm text-[var(--ll-yellow)]">
-            &larr; Back to Dashboard
-          </Link>
           <h1 className="mt-2 text-3xl font-semibold">My Report Cards</h1>
           <p className="mt-1 text-sm text-[var(--ll-text-muted)]">
             Published report cards from your school.
