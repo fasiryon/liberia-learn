@@ -508,6 +508,25 @@ Full build plan: `docs/roadmaps/ONLINE_SCHOOL_BUILD.md`
 - Gate: `npx prisma generate` PASS, `npx tsc --noEmit` PASS (0 errors), `npx vitest run` PASS (2844 tests / 365 files), `npm run build` PASS
 - 27 new tests in `__tests__/sprint11.pwa.test.ts`
 
+## Sprint 13 COMPLETE — 2026-05-14
+- Upstash rate limit already wired (existing `checkRateLimit` auto-selects Upstash when env vars set) — CONFIRMED
+- Message pagination: `GET /api/student/messages?threadKey=&before=&take=50` + `nextCursor` — SHIPPED
+- 15s active-thread poll in student + teacher messages pages — SHIPPED
+- Student soft-delete: `DELETE /api/student/messages/[messageId]` + `deletedBySender` field — SHIPPED
+- `[Message retracted]` shown to teacher for soft-deleted messages — SHIPPED
+- `lib/messaging/keywordFilter.ts` + auto-flag on POST for both student + teacher routes — SHIPPED
+- `GET /api/admin/messages/flags` + `PATCH /api/admin/messages/[id]` flag review — SHIPPED
+- `/admin/communications/flags` page: pending/dismissed/actioned tabs + Dismiss/Action Taken workflow — SHIPPED
+- `flaggedMessages` stat wired to real DB count in `/api/admin/messages/stats` — SHIPPED
+- `POST /api/messages/upload-attachment` (Vercel Blob, 5 MB max, images + PDF) — SHIPPED
+- Attachment send/receive in student + teacher message bubbles (inline image / PDF download) — SHIPPED
+- `lib/push/sendPush.ts` SMS fallback when no VAPID subscription + user has phone — SHIPPED
+- `e2e/messaging.spec.ts` — 5 Playwright tests (skip-guarded on missing env creds) — SHIPPED
+- Migration `20260513_000004_sprint13_message_hardening` applied to production — SHIPPED
+- Commit: `70b3bff`
+- Gate: `npx prisma generate` PASS, `npx tsc --noEmit` PASS (0 errors), `npx vitest run` PASS (2885 tests / 367 files), `npm run build` PASS
+- 21 new tests in `__tests__/sprint13.messaging-hardening.test.ts`
+
 ## Sprint 12 COMPLETE — 2026-05-13
 - `Message` model extended: `senderRole`, `recipientRole`, `threadKey`, `read` fields + `MessageReadReceipt` model — SHIPPED
 - Migration `20260513_000003_sprint12_unified_messaging` — SHIPPED
