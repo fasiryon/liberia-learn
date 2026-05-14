@@ -8,6 +8,7 @@ import { SkeletonCard } from "@/components/ui/Skeleton";
 import { useAssignmentPolling } from "@/lib/hooks/useAssignmentPolling";
 import { EventCalendar } from "@/components/EventCalendar";
 import { LiveSessionBanner } from "@/components/LiveSessionBanner";
+import { OfflineReadyBadge } from "@/components/OfflineReadyBadge";
 
 type WorkStatus = "not_started" | "in_progress" | "completed";
 type ScheduleStatus = "current" | "upcoming" | "completed" | "missed";
@@ -439,9 +440,12 @@ function ScheduleTab({
             <article key={item.id} className="grid gap-2 rounded-lg border border-[var(--ll-border)] bg-[var(--ll-surface-muted)] p-3 sm:grid-cols-[1fr_auto] sm:items-center">
               <div>
                 <p className="text-sm font-semibold text-[var(--ll-text)]">{item.title}</p>
-                <p className="mt-1 text-xs text-[var(--ll-text-muted)]">
-                  {subjectLabel(item.subject)} - {dueLabel(item)}
-                </p>
+                <div className="mt-1 flex flex-wrap items-center gap-2">
+                  <p className="text-xs text-[var(--ll-text-muted)]">
+                    {subjectLabel(item.subject)} - {dueLabel(item)}
+                  </p>
+                  <OfflineReadyBadge lessonId={item.id} href={item.lessonHref} />
+                </div>
               </div>
               <Link href={item.lessonHref} className="ll-touch-target inline-flex items-center justify-center rounded-lg bg-[var(--ll-accent)] px-3 py-2 text-sm font-semibold text-[var(--ll-text-faint)]">
                 Open lesson

@@ -78,8 +78,8 @@ describe("lesson offline cache — Sprint 15 extensions", () => {
     expect(entry?.sizeBytes).toBeGreaterThan(0);
   });
 
-  it("MAX_CACHED_LESSONS is 20", () => {
-    expect(MAX_CACHED_LESSONS).toBe(20);
+  it("MAX_CACHED_LESSONS is 50 (increased in sprint 11)", () => {
+    expect(MAX_CACHED_LESSONS).toBe(50);
   });
 
   it("isCacheAtCapacity returns false when below limit", async () => {

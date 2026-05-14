@@ -1,7 +1,8 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { enqueueOfflineRequest } from "@/lib/offline-queue";
+import { saveDraftOffline, getDraftOffline, removeDraftOffline } from "@/lib/offline/assignmentDraftQueue";
 
 type GradeData = {
   score: number | null;
@@ -23,11 +24,26 @@ export default function AssignmentSubmissionClient(props: Props) {
   const [content, setContent] = useState(props.existingContent);
   const [status, setStatus] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
+  const [draftBanner, setDraftBanner] = useState<string | null>(null);
 
-  const wordCount = useMemo(
-    () => content.trim().split(/\s+/).filter(Boolean).length,
-    [content]
-  );
+  useEffect(() => {
+    if (props.existingContent) return;
+    getDraftOffline(props.assignmentId).then((draft) => {
+      if (!draft) return;
+      setContent(draft.body);
+      const savedTime = new Date(draft.savedAt).toLocaleString("en-LR", { hour: "2-digit", minute: "2-digit", month: "short", day: "numeric" });
+      setDraftBanner(`You have an unsaved draft from ${savedTime}`);
+    });
+  }, [props.assignmentId, props.existingContent]);
+
+  function handleContentChange(value: string) {
+    setContent(value);
+    if (!props.existingContent) {
+      saveDraftOffline(props.assignmentId, value);
+    }
+  }
+
+  const wordCount = content.trim().split(/\s+/).filter(Boolean).length;
 
   const isGraded = gradeData?.score !== null && gradeData?.score !== undefined;
   const isSubmitted = !!props.existingContent || !!gradeData?.turnedInAt;
@@ -45,7 +61,13 @@ export default function AssignmentSubmissionClient(props: Props) {
           payload: { content },
           dedupeKey: `assignment-submission:${props.assignmentId}`,
         });
-        setStatus("Saved offline. Will submit when you reconnect.");
+        saveDraftOffline(props.assignmentId, content);
+        if (typeof navigator !== "undefined" && "serviceWorker" in navigator) {
+          navigator.serviceWorker.ready
+            .then((reg) => (reg as any).sync?.register("submit-assignment-drafts"))
+            .catch(() => null);
+        }
+        setStatus("Saved offline — will submit when reconnected");
         return;
       }
 
@@ -56,6 +78,8 @@ export default function AssignmentSubmissionClient(props: Props) {
       });
       const data = await response.json().catch(() => null);
       if (!response.ok) throw new Error(data?.error ?? "Failed to submit assignment.");
+      await removeDraftOffline(props.assignmentId);
+      setDraftBanner(null);
       setStatus("Assignment submitted successfully.");
     } catch (error: unknown) {
       const msg = error instanceof Error ? error.message : "Failed to submit assignment.";
@@ -143,11 +167,17 @@ export default function AssignmentSubmissionClient(props: Props) {
         </section>
       ) : null}
 
+      {draftBanner ? (
+        <div className="rounded-lg border border-amber-500/30 bg-amber-500/10 px-4 py-3 text-sm text-amber-300">
+          {draftBanner}
+        </div>
+      ) : null}
+
       <label className="block">
         <span className="mb-2 block text-sm font-medium text-[var(--ll-text)]">Your response</span>
         <textarea
           value={content}
-          onChange={(event) => setContent(event.target.value)}
+          onChange={(event) => handleContentChange(event.target.value)}
           className="min-h-56 w-full rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/80 px-4 py-3 text-sm text-[var(--ll-text)] outline-none focus:border-emerald-400 focus:ring-1 focus:ring-emerald-400/60"
           placeholder="Write your assignment response here..."
           required

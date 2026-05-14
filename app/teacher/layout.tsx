@@ -3,6 +3,7 @@ import GlobalAssistantMount from "@/components/rag/GlobalAssistantMount";
 import { getOptionalUser } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { PushPermissionPrompt } from "@/components/PushPermissionPrompt";
+import { PwaInstallPrompt } from "@/components/PwaInstallPrompt";
 
 /**
  * Teacher layout — server component.
@@ -34,6 +35,7 @@ export default async function TeacherLayout({
       <TeacherShell needsWelcome={needsWelcome}>{children}</TeacherShell>
       <GlobalAssistantMount />
       <PushPermissionPrompt />
+      <PwaInstallPrompt />
     </>
   );
 }

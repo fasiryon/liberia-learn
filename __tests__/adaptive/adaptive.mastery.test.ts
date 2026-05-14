@@ -335,6 +335,81 @@ describe("buildClassIntelligence", () => {
     expect(result.topPerformers).toBe(1);
     expect(result.classAvgMastery).toBe(71);
   });
+
+  it("uses student user IDs, not enrollment student record IDs, when classifying pacing progress", async () => {
+    const completedAt = new Date();
+    mockPrisma.enrollment.findMany.mockResolvedValueOnce([
+      { studentId: "student-record-1", Student: { userId: "user-1" } },
+    ]);
+    mockPrisma.studentProgress.findMany.mockResolvedValueOnce([]);
+    mockPrisma.interventionRecommendation.findMany.mockResolvedValueOnce([]);
+    mockPrisma.derivedStudentProgress.findMany.mockResolvedValueOnce([]);
+    mockPrisma.scheduledWork.findMany.mockResolvedValueOnce(
+      [1, 2, 3].map((daysAgo) => ({
+        id: `work-${daysAgo}`,
+        scheduledDate: new Date(Date.now() - daysAgo * 86_400_000),
+        content: { contentId: `math-${daysAgo}`, subject: "MATH", grade: 5, payload: { title: `Math ${daysAgo}` } },
+        progress: [{ studentId: "user-1", startedAt: completedAt, completedAt }],
+      }))
+    );
+
+    const result = await buildClassIntelligence(["class1"], "school1");
+
+    expect(result.pacingSignalSummaries).toContainEqual(
+      expect.objectContaining({ signal: "on_track", count: 1 })
+    );
+    expect(result.pacingSignalSummaries.some((summary) => summary.signal === "at_risk")).toBe(false);
+  });
+
+  it("counts only students affected by the weak subject lesson for weak-topic sequence summaries", async () => {
+    mockPrisma.enrollment.findMany.mockResolvedValueOnce([
+      { studentId: "student-record-1", Student: { userId: "user-1" } },
+      { studentId: "student-record-2", Student: { userId: "user-2" } },
+      { studentId: "student-record-3", Student: { userId: "user-3" } },
+    ]);
+    mockPrisma.studentProgress.findMany.mockResolvedValueOnce([
+      {
+        studentId: "user-1",
+        scheduledWorkId: "work-math",
+        exitTicketScore: 45,
+        scheduledWork: {
+          contentId: "math-weak",
+          content: { subject: "MATH", payload: { title: "Fractions" } },
+        },
+      },
+    ]);
+    mockPrisma.interventionRecommendation.findMany.mockResolvedValueOnce([]);
+    mockPrisma.derivedStudentProgress.findMany.mockResolvedValueOnce([
+      { studentId: "student-record-1", currentScore: 0.85 },
+      { studentId: "student-record-2", currentScore: 0.45 },
+      { studentId: "student-record-3", currentScore: 0.50 },
+    ]);
+    mockPrisma.scheduledWork.findMany.mockResolvedValueOnce([
+      {
+        id: "work-math",
+        scheduledDate: new Date(),
+        content: { contentId: "math-weak", subject: "MATH", grade: 5, payload: { title: "Fractions" } },
+        progress: [],
+      },
+      {
+        id: "work-science",
+        scheduledDate: new Date(),
+        content: { contentId: "science-next", subject: "SCIENCE", grade: 5, payload: { title: "Plants" } },
+        progress: [],
+      },
+    ]);
+
+    const result = await buildClassIntelligence(["class1"], "school1");
+
+    expect(result.atRisk).toBe(2);
+    expect(result.weakTopicSequenceSummaries).toEqual([
+      expect.objectContaining({
+        subject: "MATH",
+        count: 1,
+        lessonIds: ["math-weak"],
+      }),
+    ]);
+  });
 });
 
 describe("buildMoeCurriculumIntelligence", () => {

@@ -4,7 +4,7 @@
  * components/SaveForOfflineButton.tsx
  *
  * Per-lesson button that explicitly caches lesson content to IndexedDB.
- * Prompts user to remove older lessons when MAX_CACHED_LESSONS (20) is reached.
+ * Prompts user to remove older lessons when MAX_CACHED_LESSONS (50) is reached.
  */
 
 import { useEffect, useState } from "react";

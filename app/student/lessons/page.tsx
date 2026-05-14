@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { OfflineReadyBadge } from "@/components/OfflineReadyBadge";
 
 type LessonItem = {
   contentId: string;
@@ -114,13 +115,14 @@ export default function StudentLessonsPage() {
                 <h2 className="text-sm font-semibold text-[var(--ll-text)] group-hover:text-[var(--ll-yellow)] transition-colors">
                   {lesson.displayTitle}
                 </h2>
-                <div className="flex flex-wrap gap-2">
+                <div className="flex flex-wrap items-center gap-2">
                   <span className="rounded-full bg-[var(--ll-yellow)]/20 border border-emerald-400/30 px-2.5 py-0.5 text-[11px] font-medium text-[var(--ll-yellow)]">
                     Grade {lesson.grade}
                   </span>
                   <span className="rounded-full bg-[var(--ll-yellow)]/20 border border-emerald-400/30 px-2.5 py-0.5 text-[11px] font-medium text-[var(--ll-yellow)]">
                     {lesson.subject}
                   </span>
+                  <OfflineReadyBadge lessonId={lesson.contentId} href={`/student/lesson/${lesson.contentId}`} />
                 </div>
               </div>
             </Link>

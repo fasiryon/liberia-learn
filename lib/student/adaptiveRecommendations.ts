@@ -538,7 +538,14 @@ export async function buildClassIntelligence(
   const [enrollments, progressRows, pendingInterventions] = await Promise.all([
     prisma.enrollment.findMany({
       where: { classId: { in: classIds } },
-      select: { studentId: true },
+      select: {
+        studentId: true,
+        Student: {
+          select: {
+            userId: true,
+          },
+        },
+      },
     }),
     prisma.studentProgress.findMany({
       where: {
@@ -546,12 +553,13 @@ export async function buildClassIntelligence(
         exitTicketScore: { not: null },
       },
       select: {
+        studentId: true,
         scheduledWorkId: true,
         exitTicketScore: true,
         scheduledWork: {
           select: {
             contentId: true,
-            content: { select: { payload: true } },
+            content: { select: { payload: true, subject: true } },
           },
         },
       },
@@ -575,6 +583,9 @@ export async function buildClassIntelligence(
   ]);
 
   const studentIds = [...new Set(enrollments.map((e) => e.studentId))];
+  const studentUserIds = [
+    ...new Set(enrollments.map((e) => e.Student?.userId).filter((id): id is string => Boolean(id))),
+  ];
 
   // Per-student mastery from derived progress
   const derivedRows = await prisma.derivedStudentProgress.findMany({
@@ -610,16 +621,32 @@ export async function buildClassIntelligence(
   // Weak lessons: group exit ticket scores by contentId
   const lessonScores = new Map<
     string,
-    { title: string; scores: number[]; contentId: string }
+    { title: string; scores: number[]; contentId: string; subject: string | null; affectedStudentUserIds: Set<string> }
   >();
   for (const row of progressRows) {
     if (typeof row.exitTicketScore !== "number") continue;
     const contentId = row.scheduledWork.contentId;
     const payload = row.scheduledWork.content?.payload as Record<string, unknown> | null;
     const title = (payload?.title as string) ?? contentId;
-    const bucket = lessonScores.get(contentId) ?? { title, scores: [], contentId };
+    const bucket = lessonScores.get(contentId) ?? {
+      title,
+      scores: [],
+      contentId,
+      subject: row.scheduledWork.content?.subject ?? null,
+      affectedStudentUserIds: new Set<string>(),
+    };
     bucket.scores.push(row.exitTicketScore);
+    if (row.exitTicketScore < 70) {
+      bucket.affectedStudentUserIds.add(row.studentId);
+    }
     lessonScores.set(contentId, bucket);
+  }
+  const lessonWeakness = new Map<string, { subject: string | null; affectedStudentCount: number }>();
+  for (const bucket of lessonScores.values()) {
+    lessonWeakness.set(bucket.contentId, {
+      subject: bucket.subject,
+      affectedStudentCount: bucket.affectedStudentUserIds.size,
+    });
   }
   const weakLessons = [...lessonScores.values()]
     .map((b) => ({
@@ -656,11 +683,11 @@ export async function buildClassIntelligence(
   const startOfToday = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()));
   const twoDaysAgo = new Date(startOfToday.getTime() - 2 * 86_400_000);
   const pacingCounts = new Map<PacingSignal, number>();
-  for (const studentId of studentIds) {
+  for (const studentUserId of studentUserIds) {
     const perStudentWork = scheduledForPacing.map((work) => ({
       scheduledDate: work.scheduledDate,
       progress: work.progress
-        .filter((progress) => progress.studentId === studentId)
+        .filter((progress) => progress.studentId === studentUserId)
         .map((progress) => ({ completedAt: progress.completedAt, startedAt: progress.startedAt })),
     }));
     const signal = classifyPacingSignal(perStudentWork, startOfToday, twoDaysAgo);
@@ -674,15 +701,19 @@ export async function buildClassIntelligence(
       reason: `${count} student${count === 1 ? "" : "s"} ${signal.replace(/_/g, " ")} based on scheduled, completed, and stale incomplete work.`,
     }));
 
-  const weakSubject = weakLessons[0]?.contentId
-    ? scheduledForPacing.find((work) => work.content.contentId === weakLessons[0].contentId)?.content.subject
-    : null;
+  const primaryWeakLesson = weakLessons[0] ?? null;
+  const primaryWeakness = primaryWeakLesson ? lessonWeakness.get(primaryWeakLesson.contentId) : null;
+  const weakSubject = primaryWeakness?.subject ??
+    (primaryWeakLesson
+      ? scheduledForPacing.find((work) => work.content.contentId === primaryWeakLesson.contentId)?.content.subject
+      : null);
+  const weakTopicAffectedCount = primaryWeakness?.affectedStudentCount ?? 0;
   const weakTopicSequenceSummaries = weakSubject
     ? [
         {
           subject: weakSubject,
-          count: atRisk,
-          reason: `${atRisk} student${atRisk === 1 ? "" : "s"} are at_risk in ${weakSubject.toLowerCase()} - recommend remediation sequence.`,
+          count: weakTopicAffectedCount,
+          reason: `${weakTopicAffectedCount} student${weakTopicAffectedCount === 1 ? "" : "s"} need ${weakSubject.toLowerCase()} remediation based on the weak lesson sequence.`,
           lessonIds: scheduledForPacing
             .filter((work) => work.content.subject === weakSubject)
             .map((work) => work.content.contentId)
