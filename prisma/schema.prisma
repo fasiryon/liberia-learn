@@ -40,6 +40,7 @@ model User {
   homework            Homework[]
   messagesSent        Message[]            @relation("MessagesSent")
   messagesReceived    Message[]            @relation("MessagesReceived")
+  messageReadReceipts MessageReadReceipt[]
   notificationLogs    NotificationLog[]
   guardianConsents    GuardianConsent[]    @relation("GuardianConsentGuardian")
   smsDeliveryLogs     SMSDeliveryLog[]     @relation("SMSDeliveryLogGuardian")
@@ -766,15 +767,35 @@ model ReviewSchedule {
 
 /// / ===== Communication & Audit =====
 model Message {
-  id         String   @id @default(cuid())
-  classId    String?
-  fromUserId String
-  toUserId   String
-  body       String
-  createdAt  DateTime @default(now())
-  Class      Class?   @relation(fields: [classId], references: [id])
-  fromUser   User     @relation("MessagesSent", fields: [fromUserId], references: [id])
-  toUser     User     @relation("MessagesReceived", fields: [toUserId], references: [id])
+  id            String   @id @default(cuid())
+  classId       String?
+  fromUserId    String
+  toUserId      String
+  body          String
+  createdAt     DateTime @default(now())
+  senderRole    String   @default("GUARDIAN")
+  recipientRole String   @default("TEACHER")
+  threadKey     String   @default("")
+  read          Boolean  @default(false)
+  Class         Class?   @relation(fields: [classId], references: [id])
+  fromUser      User     @relation("MessagesSent", fields: [fromUserId], references: [id])
+  toUser        User     @relation("MessagesReceived", fields: [toUserId], references: [id])
+  readReceipts  MessageReadReceipt[]
+
+  @@index([threadKey, createdAt])
+  @@index([toUserId, createdAt])
+  @@index([fromUserId, createdAt])
+}
+
+model MessageReadReceipt {
+  id        String   @id @default(cuid())
+  messageId String
+  userId    String
+  readAt    DateTime @default(now())
+  message   Message  @relation(fields: [messageId], references: [id])
+  user      User     @relation(fields: [userId], references: [id])
+
+  @@unique([messageId, userId])
 }
 
 model AuditLog {

@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { BookOpen, ChevronDown } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 interface StudentSidebarProps {
   school: string;
@@ -19,6 +19,19 @@ export function StudentSidebar({
   studentName,
 }: StudentSidebarProps) {
   const [moreOpen, setMoreOpen] = useState(false);
+  const [unreadMessages, setUnreadMessages] = useState(0);
+
+  useEffect(() => {
+    function fetchUnread() {
+      fetch("/api/student/messages/unread-count", { cache: "no-store" })
+        .then((r) => r.json())
+        .then((d) => { if (typeof d?.count === "number") setUnreadMessages(d.count); })
+        .catch(() => null);
+    }
+    fetchUnread();
+    const interval = setInterval(fetchUnread, 60_000);
+    return () => clearInterval(interval);
+  }, []);
 
   return (
     <aside className="flex w-full flex-col gap-4 rounded-xl border border-[var(--ll-border)] bg-[var(--ll-surface)] p-4 shadow-none md:w-64">
@@ -68,6 +81,15 @@ export function StudentSidebar({
 
         <Link href="/student/certificates" className={`${navLinkClass} text-[var(--ll-text-faint)]`}>
           Certificates
+        </Link>
+
+        <Link href="/student/messages" className={`${navLinkClass} relative inline-flex items-center gap-2 text-[var(--ll-text-faint)]`}>
+          <span>Messages</span>
+          {unreadMessages > 0 && (
+            <span className="inline-flex h-5 min-w-[20px] items-center justify-center rounded-full bg-red-500 px-1 text-[10px] font-bold text-white">
+              {unreadMessages}
+            </span>
+          )}
         </Link>
 
         <Link href="/student/portfolio" className={`${navLinkClass} text-[var(--ll-text-faint)]`}>
