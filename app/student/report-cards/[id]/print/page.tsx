@@ -4,6 +4,8 @@ import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import type { SubjectGrade, AttendanceSummary } from "@/lib/reportCards/generateReportCard";
 import { PrintButton } from "./PrintButton";
+import Link from "next/link";
+import { ChevronLeft } from "lucide-react";
 
 export const dynamic = "force-dynamic";
 
@@ -83,6 +85,16 @@ export default async function PrintReportCardPage({
         }
         body { font-family: Georgia, serif; background: white; color: #111; }
       `}</style>
+
+      <div className="no-print print:hidden px-4 py-3">
+        <Link
+          href="/student/report-cards"
+          className="inline-flex items-center gap-1 text-sm text-gray-600 hover:text-gray-900 transition-colors"
+        >
+          <ChevronLeft className="w-4 h-4" />
+          Report Cards
+        </Link>
+      </div>
 
       <main
         style={{

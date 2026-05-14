@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
-import { Flag, Shield } from "lucide-react";
+import { Flag, Shield, ChevronLeft } from "lucide-react";
 
 type FlagItem = {
   id: string;
@@ -80,13 +80,15 @@ export default function AdminFlagsPage() {
     }`;
 
   return (
-    <main className="min-h-screen bg-[var(--ll-bg)] px-4 py-8 text-[var(--ll-text)]">
-      <div className="mx-auto max-w-5xl space-y-6">
-        <div className="flex items-center gap-3">
-          <Link href="/admin/communications" className="text-xs text-[var(--ll-yellow)] hover:opacity-80">
-            &larr; Back to Communications
-          </Link>
-        </div>
+    <main className="ll-dashboard-shell px-4 py-5 text-[var(--ll-text)]">
+      <div className="ll-page-enter mx-auto max-w-5xl space-y-5">
+        <Link
+          href="/admin/communications"
+          className="inline-flex items-center gap-1 text-sm text-[var(--ll-text-muted)] hover:text-[var(--ll-yellow)] mb-4 transition-colors"
+        >
+          <ChevronLeft className="w-4 h-4" />
+          Communications
+        </Link>
 
         <div className="flex items-center justify-between gap-4">
           <div className="flex items-center gap-3">

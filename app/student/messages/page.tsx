@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { MessageCircle, Send, Trash2, Paperclip, X } from "lucide-react";
+import { MessageCircle, Send, Trash2, Paperclip, X, ChevronLeft } from "lucide-react";
 
 type MessageItem = {
   id: string;
@@ -214,12 +214,16 @@ export default function StudentMessagesPage() {
   }
 
   return (
-    <main className="min-h-screen bg-[var(--ll-bg)] px-4 py-6 text-[var(--ll-text)]">
-      <div className="mx-auto max-w-5xl space-y-5">
+    <main className="ll-dashboard-shell px-4 py-5 text-[var(--ll-text)]">
+      <div className="ll-page-enter mx-auto max-w-5xl space-y-5">
         <div className="flex items-center justify-between gap-4">
           <div>
-            <Link href="/dashboard" className="text-xs text-[var(--ll-yellow)] hover:opacity-80">
-              &larr; Back to Dashboard
+            <Link
+              href="/student/today"
+              className="inline-flex items-center gap-1 text-sm text-[var(--ll-text-muted)] hover:text-[var(--ll-yellow)] mb-4 transition-colors"
+            >
+              <ChevronLeft className="w-4 h-4" />
+              Dashboard
             </Link>
             <h1 className="mt-1 text-2xl font-bold">
               Messages

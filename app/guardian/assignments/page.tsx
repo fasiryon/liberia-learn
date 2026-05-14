@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { ChevronLeft } from "lucide-react";
 import { GuardianNav } from "@/components/guardian/GuardianNav";
 import { DashboardTopBar } from "@/components/DashboardTopBar";
 import { SkeletonCard } from "@/components/ui/Skeleton";
@@ -96,6 +97,13 @@ export default function GuardianAssignmentsPage() {
   return (
     <main className="ll-dashboard-shell px-4 py-5">
       <div className="ll-page-enter mx-auto max-w-5xl space-y-5">
+        <Link
+          href="/guardian/dashboard"
+          className="inline-flex items-center gap-1 text-sm text-[var(--ll-text-muted)] hover:text-[var(--ll-yellow)] mb-4 transition-colors"
+        >
+          <ChevronLeft className="w-4 h-4" />
+          Dashboard
+        </Link>
         <DashboardTopBar
           roleLabel="Guardian"
           roleBadgeBg="bg-[var(--ll-pink-soft)] border-purple-500/20"

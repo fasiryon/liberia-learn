@@ -1,7 +1,8 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { CalendarDays, Plus, Eye, EyeOff, Trash2, Pencil, X, Check } from "lucide-react";
+import Link from "next/link";
+import { CalendarDays, Plus, Eye, EyeOff, Trash2, Pencil, X, Check, ChevronLeft } from "lucide-react";
 
 type SchoolEvent = {
   id: string;
@@ -156,8 +157,15 @@ export default function AdminEventsPage() {
   }
 
   return (
-    <main className="ll-dashboard-shell">
-      <div className="ll-page-enter mx-auto max-w-5xl space-y-6 px-4 py-5">
+    <main className="ll-dashboard-shell px-4 py-5">
+      <div className="ll-page-enter mx-auto max-w-5xl space-y-5">
+        <Link
+          href="/admin/dashboard"
+          className="inline-flex items-center gap-1 text-sm text-[var(--ll-text-muted)] hover:text-[var(--ll-yellow)] mb-4 transition-colors"
+        >
+          <ChevronLeft className="w-4 h-4" />
+          Dashboard
+        </Link>
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <CalendarDays className="h-6 w-6 text-[var(--ll-accent)]" strokeWidth={1.5} />

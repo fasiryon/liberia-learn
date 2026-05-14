@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
+import { ChevronLeft } from "lucide-react";
 
 type ClassOption = { id: string; name: string; subject: string };
 type Term = { id: string; name: string; yearLabel?: string };
@@ -66,6 +67,13 @@ export default function TeacherReportCardsPage() {
   return (
     <main className="ll-dashboard-shell px-4 py-5 text-[var(--ll-text)]">
       <div className="ll-page-enter mx-auto max-w-5xl space-y-6">
+        <Link
+          href="/teacher/dashboard"
+          className="inline-flex items-center gap-1 text-sm text-[var(--ll-text-muted)] hover:text-[var(--ll-yellow)] mb-4 transition-colors"
+        >
+          <ChevronLeft className="w-4 h-4" />
+          Dashboard
+        </Link>
         <div>
           <h1 className="text-3xl font-bold">Report Cards</h1>
           <p className="mt-1 text-sm text-[var(--ll-text-muted)]">

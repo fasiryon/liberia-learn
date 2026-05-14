@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { ChevronLeft } from "lucide-react";
 
 type Question = {
   idx: number;
@@ -56,8 +57,12 @@ export default function AssessmentAnalyticsPage({
   return (
     <main className="ll-dashboard-shell">
       <div className="ll-page-enter mx-auto max-w-5xl space-y-5 px-4 py-5">
-        <Link href="/teacher/dashboard" className="text-sm text-[var(--ll-yellow)] hover:text-[var(--ll-yellow)]">
-          &larr; Back to Dashboard
+        <Link
+          href="/teacher/gradebook"
+          className="inline-flex items-center gap-1 text-sm text-[var(--ll-text-muted)] hover:text-[var(--ll-yellow)] mb-4 transition-colors"
+        >
+          <ChevronLeft className="w-4 h-4" />
+          Gradebook
         </Link>
 
         {loading ? (
