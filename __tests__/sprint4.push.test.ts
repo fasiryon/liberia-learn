@@ -15,6 +15,10 @@ const { mockPrisma, mockWebPush, mockGetServerSession } = vi.hoisted(() => {
     student: {
       findUnique: vi.fn(),
     },
+    user: {
+      findUnique: vi.fn().mockResolvedValue({ schoolId: null, role: "STUDENT", guardianPhoneE164: null }),
+      findMany: vi.fn(),
+    },
   };
   const mockWebPush = {
     setVapidDetails: vi.fn(),
@@ -33,6 +37,7 @@ vi.mock("@/lib/auth", () => ({
 }));
 vi.mock("next-auth", () => ({ getServerSession: mockGetServerSession }));
 vi.mock("@/lib/audit", () => ({ logAudit: vi.fn() }));
+vi.mock("@/lib/autonomous/signals/productSignalService", () => ({ logProductSignal: vi.fn() }));
 
 // ===== Tests =====
 

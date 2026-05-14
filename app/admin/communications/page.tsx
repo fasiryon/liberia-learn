@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { MessageCircle, Users, TrendingUp, Shield } from "lucide-react";
+import { MessageCircle, Users, TrendingUp, Shield, Flag } from "lucide-react";
 
 type MessageStats = {
   totalToday: number;
@@ -77,13 +77,15 @@ export default function AdminCommunicationsPage() {
                 value={stats.guardianToTeacher}
                 accent="amber"
               />
-              <StatCard
-                icon={<Shield className="h-5 w-5" strokeWidth={1.5} />}
-                label="Flagged Messages"
-                value={stats.flaggedMessages}
-                accent="red"
-                note="Flag system coming in a future sprint"
-              />
+              <Link href="/admin/communications/flags" className="block">
+                <StatCard
+                  icon={<Flag className="h-5 w-5" strokeWidth={1.5} />}
+                  label="Flagged — Pending Review"
+                  value={stats.flaggedMessages}
+                  accent="red"
+                  note={stats.flaggedMessages > 0 ? "Click to review flags →" : "No pending flags"}
+                />
+              </Link>
             </div>
           </div>
         ) : null}

@@ -192,6 +192,8 @@ describe("GET /api/student/messages (threads)", () => {
         recipientRole: "TEACHER",
         threadKey: "student-1:teacher-1",
         createdAt: new Date("2026-05-13T10:00:00Z"),
+        deletedBySender: false,
+        attachmentUrl: null, attachmentName: null, attachmentType: null,
         fromUser: { id: "student-1", name: "Alice", role: "STUDENT" },
         toUser: { id: "teacher-1", name: "Mr Smith", role: "TEACHER" },
         readReceipts: [],
@@ -199,7 +201,8 @@ describe("GET /api/student/messages (threads)", () => {
     ]);
     mockPrisma.messageReadReceipt.upsert.mockResolvedValue({});
     const { GET } = await import("@/app/api/student/messages/route");
-    const res = await GET();
+    const req = { nextUrl: new URL("http://localhost/api/student/messages"), json: async () => ({}) } as any;
+    const res = await GET(req);
     const data = await res.json();
     expect(data.threads).toHaveLength(1);
     expect(data.threads[0].otherName).toBe("Mr Smith");
@@ -217,6 +220,8 @@ describe("GET /api/student/messages (threads)", () => {
         recipientRole: "STUDENT",
         threadKey: "student-1:teacher-1",
         createdAt: new Date(),
+        deletedBySender: false,
+        attachmentUrl: null, attachmentName: null, attachmentType: null,
         fromUser: { id: "teacher-1", name: "Mr Smith", role: "TEACHER" },
         toUser: { id: "student-1", name: "Alice", role: "STUDENT" },
         readReceipts: [],
@@ -224,7 +229,8 @@ describe("GET /api/student/messages (threads)", () => {
     ]);
     mockPrisma.messageReadReceipt.upsert.mockResolvedValue({});
     const { GET } = await import("@/app/api/student/messages/route");
-    await GET();
+    const req2 = { nextUrl: new URL("http://localhost/api/student/messages"), json: async () => ({}) } as any;
+    await GET(req2);
     expect(mockPrisma.messageReadReceipt.upsert).toHaveBeenCalledWith(
       expect.objectContaining({ where: { messageId_userId: { messageId: "m1", userId: "student-1" } } })
     );

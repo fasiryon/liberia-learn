@@ -18,6 +18,22 @@ export interface PushPayload {
   icon?: string;
 }
 
+export interface PushResult {
+  sent: number;
+  failed: number;
+  smsFallback: number;
+}
+
+const SMS_FALLBACK_TYPES = [
+  "New Assignment",
+  "Assignment Graded",
+  "Class is Live Now",
+  "New Message",
+  "Message from Student",
+  "Reply from your teacher",
+  "Message from Guardian",
+];
+
 async function deliver(
   endpoint: string,
   p256dh: string,
@@ -42,21 +58,51 @@ async function deliver(
   }
 }
 
-export async function sendPushToUser(userId: string, payload: PushPayload): Promise<void> {
-  const subs = await prisma.pushSubscription.findMany({ where: { userId } });
-  if (!subs.length) return;
-  const user = await Promise.resolve(
-    (prisma as any).user?.findUnique?.({ where: { id: userId }, select: { schoolId: true, role: true } })
-  ).catch(() => null);
+export async function sendPushToUser(userId: string, payload: PushPayload): Promise<PushResult> {
+  const result: PushResult = { sent: 0, failed: 0, smsFallback: 0 };
+
+  const [subs, user] = await Promise.all([
+    prisma.pushSubscription.findMany({ where: { userId } }),
+    prisma.user.findUnique({ where: { id: userId }, select: { schoolId: true, role: true, guardianPhoneE164: true } }).catch(() => null),
+  ]);
+
+  if (!subs.length) {
+    // No push subscriptions — try SMS fallback for supported notification types
+    if (SMS_FALLBACK_TYPES.includes(payload.title) && user?.guardianPhoneE164) {
+      try {
+        const { sendSMS } = await import("@/lib/sms");
+        const smsBody = `${payload.title}: ${payload.body}`.slice(0, 160);
+        const smsResult = await sendSMS(user.guardianPhoneE164, smsBody);
+        if (smsResult.ok) {
+          result.smsFallback = 1;
+          await prisma.notificationLog.create({
+            data: {
+              userId,
+              channel: "sms",
+              recipient: user.guardianPhoneE164.slice(0, 20),
+              subject: payload.title,
+              body: smsBody,
+              status: "sent",
+            },
+          }).catch(() => null);
+        }
+      } catch {
+        // Silent — SMS fallback is best-effort
+      }
+    }
+    return result;
+  }
 
   const expiredIds: string[] = [];
 
   await Promise.all(
     subs.map(async (sub) => {
-      const result = await deliver(sub.endpoint, sub.p256dh, sub.auth, payload);
-      if (result === "expired") {
+      const deliveryResult = await deliver(sub.endpoint, sub.p256dh, sub.auth, payload);
+      if (deliveryResult === "expired") {
         expiredIds.push(sub.id);
-      } else if (result === "sent") {
+        result.failed += 1;
+      } else if (deliveryResult === "sent") {
+        result.sent += 1;
         await prisma.pushSubscription.update({
           where: { id: sub.id },
           data: { lastUsed: new Date() },
@@ -84,6 +130,8 @@ export async function sendPushToUser(userId: string, payload: PushPayload): Prom
             recipientRole: user?.role ?? null,
           },
         });
+      } else {
+        result.failed += 1;
       }
     }),
   );
@@ -91,6 +139,8 @@ export async function sendPushToUser(userId: string, payload: PushPayload): Prom
   if (expiredIds.length) {
     await prisma.pushSubscription.deleteMany({ where: { id: { in: expiredIds } } });
   }
+
+  return result;
 }
 
 export async function sendPushToMany(userIds: string[], payload: PushPayload): Promise<void> {

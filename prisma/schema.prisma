@@ -767,24 +767,39 @@ model ReviewSchedule {
 
 /// / ===== Communication & Audit =====
 model Message {
-  id            String   @id @default(cuid())
-  classId       String?
-  fromUserId    String
-  toUserId      String
-  body          String
-  createdAt     DateTime @default(now())
-  senderRole    String   @default("GUARDIAN")
-  recipientRole String   @default("TEACHER")
-  threadKey     String   @default("")
-  read          Boolean  @default(false)
-  Class         Class?   @relation(fields: [classId], references: [id])
-  fromUser      User     @relation("MessagesSent", fields: [fromUserId], references: [id])
-  toUser        User     @relation("MessagesReceived", fields: [toUserId], references: [id])
-  readReceipts  MessageReadReceipt[]
+  id                String    @id @default(cuid())
+  classId           String?
+  fromUserId        String
+  toUserId          String
+  body              String
+  createdAt         DateTime  @default(now())
+  senderRole        String    @default("GUARDIAN")
+  recipientRole     String    @default("TEACHER")
+  threadKey         String    @default("")
+  read              Boolean   @default(false)
+  // Soft-delete (sender retraction)
+  deletedBySender   Boolean   @default(false)
+  deletedAt         DateTime?
+  // Keyword flag workflow
+  flagged           Boolean   @default(false)
+  flagReason        String?
+  flaggedAt         DateTime?
+  flagReviewedAt    DateTime?
+  flagReviewedBy    String?
+  flagResolution    String?
+  // Attachment
+  attachmentUrl     String?
+  attachmentName    String?
+  attachmentType    String?
+  Class             Class?    @relation(fields: [classId], references: [id])
+  fromUser          User      @relation("MessagesSent", fields: [fromUserId], references: [id])
+  toUser            User      @relation("MessagesReceived", fields: [toUserId], references: [id])
+  readReceipts      MessageReadReceipt[]
 
   @@index([threadKey, createdAt])
   @@index([toUserId, createdAt])
   @@index([fromUserId, createdAt])
+  @@index([flagged])
 }
 
 model MessageReadReceipt {

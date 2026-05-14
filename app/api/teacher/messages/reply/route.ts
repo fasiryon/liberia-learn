@@ -4,6 +4,7 @@ import { requireUser } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { logAudit } from "@/lib/audit";
 import { sendPushToUser } from "@/lib/push/sendPush";
+import { shouldFlag } from "@/lib/messaging/keywordFilter";
 
 export const dynamic = "force-dynamic";
 
@@ -64,6 +65,8 @@ export async function POST(req: NextRequest) {
       ? (existingMessage.fromUserId === recipientId ? existingMessage.senderRole : existingMessage.recipientRole)
       : "STUDENT";
 
+    const flagged = shouldFlag(sanitized);
+
     const message = await prisma.message.create({
       data: {
         id: randomUUID(),
@@ -73,12 +76,15 @@ export async function POST(req: NextRequest) {
         senderRole: "TEACHER",
         recipientRole,
         threadKey,
+        flagged,
+        flaggedAt: flagged ? new Date() : null,
+        flagReason: flagged ? "keyword_match" : null,
       },
     });
 
     void logAudit({
       userId: user.id,
-      action: "teacher.message.reply.sent",
+      action: flagged ? "message.auto_flagged" : "teacher.message.reply.sent",
       resourceType: "message",
       resourceId: message.id,
       schoolId: user.schoolId ?? undefined,
