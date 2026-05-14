@@ -418,6 +418,8 @@ Full build plan: `docs/roadmaps/ONLINE_SCHOOL_BUILD.md`
 | 10 | Student Portfolio + Capstone | COMPLETE |
 | 11 | Mobile PWA + Offline Enhancement | COMPLETE |
 | 12 | Two-Way Student↔Teacher Messaging | COMPLETE |
+| 13 | Messaging Hardening + Attachments | COMPLETE |
+| 14 | Video delivery, analytics, guardian parity, FTS, a11y, gamification | COMPLETE |
 
 ## Sprint 1 COMPLETE — 2026-05-12
 - `scripts/process-regen-jobs-direct.ts` — SHIPPED (commits 7e20684 + da717ff)
@@ -551,6 +553,40 @@ Full build plan: `docs/roadmaps/ONLINE_SCHOOL_BUILD.md`
 - Commit: `adc1b75`
 - Gate: `npx prisma generate` PASS, `npx tsc --noEmit` PASS (0 errors), `npx vitest run` PASS (2864 tests / 366 files), `npm run build` PASS
 - 20 new tests in `__tests__/sprint12.messaging.test.ts`
+
+## Sprint 14 COMPLETE — 2026-05-14
+- LessonVideo upload migrated from Supabase to Vercel Blob (50 MB cap, MP4/WebM) — SHIPPED
+- Video tab added to LessonDeliveryClient.tsx (hidden when no active video) — SHIPPED
+- `AssessmentAttemptDetail` model + migration `20260514_000001_sprint14_features` — SHIPPED
+- Per-question assessment analytics: `GET /api/teacher/analytics/assessment/[contentId]` — SHIPPED
+- `/teacher/analytics/assessment/[contentId]` page: Q breakdown, correct rate color codes — SHIPPED
+- Guardian push: assignment posted + live session started fire-and-forget — SHIPPED
+- `GET /api/guardian/assignments` + `/guardian/assignments` page + GuardianNav link — SHIPPED
+- FTS gin indexes on CurriculumContent + SchoolEvent — SHIPPED
+- `GET /api/search` role-scoped full-text search — SHIPPED
+- `components/GlobalSearch.tsx` command-palette overlay wired to student + teacher layouts — SHIPPED
+- Skip nav link in `app/layout.tsx` — SHIPPED
+- `role="log" aria-live="polite"` on message feed; `role="grid"` on EventCalendar — SHIPPED
+- `StudentStreak` + `WeeklyLeaderboard` schema models — SHIPPED
+- `lib/gamification/streakService.ts` + `lib/gamification/leaderboardService.ts` — SHIPPED
+- Streak updated fire-and-forget on lesson complete — SHIPPED
+- Streak display on Today page (🔥 X day streak, gold glow ≥7, badge ≥30) — SHIPPED
+- `/student/leaderboard/[classId]` page: podium, table, opt-out — SHIPPED
+- `POST /api/cron/rebuild-leaderboards` daily cron at 0 20 * * * — SHIPPED
+- StudentSidebar: Leaderboard nav link added — SHIPPED
+- Commit: `fc3bf21`
+- Gate: `npx prisma generate` PASS, `npx tsc --noEmit` PASS (0 errors), `npx vitest run` PASS (2904 tests / 368 files), `npm run build` PASS
+- 19 new tests in `__tests__/sprint14.features.test.ts`
+
+## Fix Session — 2026-05-14 (post-Sprint-14)
+- `lib/db.ts`: `connection_limit=1` now injected programmatically if not in DATABASE_URL — SHIPPED
+- `lib/lessons.ts`: `selectLessonBody` accepts `mode` param; slides mode prefers `body_block` — SHIPPED
+- `lib/lessons.ts`: `renderSimpleMarkdown` strips `##` heading markers for clean Listen display — SHIPPED
+- `app/student/discussion/page.tsx` + `app/teacher/discussion/page.tsx`: `ll-dashboard-shell` + back link — SHIPPED
+- Commit: `0a6b314`
+- Shell/nav audit: 29 pages audited; 9 needed shell fix; 20 needed back link — all fixed — SHIPPED
+- Commit: `1e2a957`
+- Gate: `npx tsc --noEmit` PASS, `npx vitest run` PASS (2904 tests / 368 files), `npm run build` PASS
 
 ## Sprint 9 COMPLETE — 2026-05-13
 - GeneratedDocument model + migration `20260513_000001_sprint9_generated_documents` — SHIPPED

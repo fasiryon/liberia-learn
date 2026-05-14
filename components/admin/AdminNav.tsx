@@ -28,6 +28,7 @@ const BASE_NAV_LINKS = [
   { label: "Audit Log", href: "/admin/audit" },
   { label: "Compliance", href: "/admin/compliance" },
   { label: "Data Downloads", href: "/admin/governance/exports" },
+  { label: "Announcements", href: "/admin/announcements" },
   { label: "Communications", href: "/admin/communications" },
   { label: "Seed Demo Data", href: "/admin/seed" },
   { label: "Schools", href: "/admin/schools" },

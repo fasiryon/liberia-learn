@@ -3,6 +3,7 @@ import { requireRole } from "@/lib/auth";
 import { logAudit } from "@/lib/audit";
 import { notifyAssignmentCreated } from "@/lib/assignment-notifications";
 import { prisma } from "@/lib/db";
+import { createInboxNotification } from "@/lib/notifications/inboxService";
 import { logLearningEvent } from "@/lib/events/logLearningEvent";
 import { assignmentCreateSchema } from "@/lib/schemas/assignment";
 import { sendPushToMany } from "@/lib/push/sendPush";
@@ -374,6 +375,17 @@ export async function POST(req: Request) {
             body: `${assignment.title} — due ${assignment.dueAt ? new Date(assignment.dueAt).toLocaleDateString() : "TBD"}`,
             url: "/assignments",
           }).catch(() => null);
+          // Inbox notifications for enrolled students
+          await Promise.all(
+            userIds.map((uid) =>
+              createInboxNotification(uid, {
+                title: "New Assignment",
+                body: `${assignment.title} — due ${assignment.dueAt ? new Date(assignment.dueAt).toLocaleDateString() : "TBD"}`,
+                url: "/assignments",
+                type: "assignment",
+              })
+            )
+          ).catch(() => null);
         }
         // Guardian push
         const guardianIds = [...new Set(

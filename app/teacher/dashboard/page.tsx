@@ -11,6 +11,8 @@ import { SkeletonCard } from "@/components/ui/Skeleton";
 import { getTeacherGreeting } from "@/lib/student/greetings";
 import { AlertBell } from "@/components/teacher/AlertBell";
 import { WeeklySentiment } from "@/components/teacher/WeeklySentiment";
+import { AnnouncementBanner } from "@/components/AnnouncementBanner";
+import { NotificationBell } from "@/components/NotificationBell";
 
 type DashboardData = {
   scheduledToday: number;
@@ -242,6 +244,7 @@ export default function TeacherDashboardPage() {
           rightSlot={
             <div className="flex items-center gap-2">
               <GlobalSearch />
+              <NotificationBell />
               <AlertBell
                 alerts={visibleAlerts}
                 onMarkReviewed={handleMarkReviewed}
@@ -272,6 +275,8 @@ export default function TeacherDashboardPage() {
             </Link>
           ) : null}
         </div>
+
+        <AnnouncementBanner />
 
         {(() => {
           const greeting = getTeacherGreeting({

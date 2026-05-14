@@ -4,6 +4,7 @@ import { requireRole } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { logAudit } from "@/lib/audit";
 import { notifyAssignmentGraded } from "@/lib/assignment-notifications";
+import { createInboxNotification } from "@/lib/notifications/inboxService";
 
 export const dynamic = "force-dynamic";
 
@@ -118,6 +119,16 @@ export async function PATCH(
     } catch (notificationError) {
       console.error("Assignment grade notification failed", notificationError);
     }
+
+    // Inbox notification — fire-and-forget
+    void (async () => {
+      await createInboxNotification(submission.Student.user.id, {
+        title: "Assignment Graded",
+        body: `Your submission for "${submission.Assignment.title}" received ${parsed.grade}/100`,
+        url: "/assignments",
+        type: "grade",
+      });
+    })().catch(() => null);
 
     return NextResponse.json({
       ok: true,

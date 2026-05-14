@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { BookOpen, ChevronDown } from "lucide-react";
 import { useEffect, useState } from "react";
+import { NotificationBell } from "@/components/NotificationBell";
 
 interface StudentSidebarProps {
   school: string;
@@ -36,12 +37,17 @@ export function StudentSidebar({
   return (
     <aside className="flex w-full flex-col gap-4 rounded-xl border border-[var(--ll-border)] bg-[var(--ll-surface)] p-4 shadow-none md:w-64">
       <div className="rounded-lg bg-[var(--ll-surface-muted)] p-4">
-        <p className="text-[11px] uppercase tracking-wide text-[var(--ll-text-faint)]">
-          Student
-        </p>
-        <p className="text-sm font-semibold text-[var(--ll-text)]">{studentName}</p>
-        <p className="mt-1 text-[11px] text-[var(--ll-text-muted)]">{school}</p>
-        <p className="text-[11px] text-[var(--ll-text-muted)]">Teacher: {teacherName}</p>
+        <div className="flex items-start justify-between gap-2">
+          <div>
+            <p className="text-[11px] uppercase tracking-wide text-[var(--ll-text-faint)]">
+              Student
+            </p>
+            <p className="text-sm font-semibold text-[var(--ll-text)]">{studentName}</p>
+            <p className="mt-1 text-[11px] text-[var(--ll-text-muted)]">{school}</p>
+            <p className="text-[11px] text-[var(--ll-text-muted)]">Teacher: {teacherName}</p>
+          </div>
+          <NotificationBell />
+        </div>
       </div>
 
       <nav className="flex flex-col gap-2 text-sm">
