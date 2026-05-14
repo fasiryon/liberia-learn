@@ -9,6 +9,8 @@ import { useAssignmentPolling } from "@/lib/hooks/useAssignmentPolling";
 import { EventCalendar } from "@/components/EventCalendar";
 import { LiveSessionBanner } from "@/components/LiveSessionBanner";
 import { OfflineReadyBadge } from "@/components/OfflineReadyBadge";
+import { AnnouncementBanner } from "@/components/AnnouncementBanner";
+import { WeeklyProgressChart, type WeekEntry } from "@/components/student/WeeklyProgressChart";
 
 type WorkStatus = "not_started" | "in_progress" | "completed";
 type ScheduleStatus = "current" | "upcoming" | "completed" | "missed";
@@ -169,6 +171,7 @@ export default function StudentTodayPage() {
   const [lastUpdatedAt, setLastUpdatedAt] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<TabKey>("schedule");
   const [streak, setStreak] = useState<StreakData | null>(null);
+  const [weeklyData, setWeeklyData] = useState<WeekEntry[]>([]);
 
   const loadToday = useCallback(async () => {
     try {
@@ -226,6 +229,13 @@ export default function StudentTodayPage() {
     fetch("/api/student/streak", { cache: "no-store" })
       .then((r) => (r.ok ? r.json() : null))
       .then((d) => { if (d) setStreak(d); })
+      .catch(() => null);
+  }, []);
+
+  useEffect(() => {
+    fetch("/api/student/progress/weekly", { cache: "no-store" })
+      .then((r) => (r.ok ? r.json() : null))
+      .then((d) => { if (d?.weeks) setWeeklyData(d.weeks); })
       .catch(() => null);
   }, []);
 
@@ -296,6 +306,7 @@ export default function StudentTodayPage() {
   return (
     <main className="ll-dashboard-shell">
       <div className="ll-page-enter mx-auto max-w-6xl space-y-4 px-4 py-5">
+        <AnnouncementBanner />
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <Link href="/dashboard" className="text-sm text-[var(--ll-yellow)] hover:text-[var(--ll-yellow)]">
@@ -397,12 +408,15 @@ export default function StudentTodayPage() {
                 />
               ) : null}
               {activeTab === "progress" ? (
-                <ProgressTab
-                  snapshot={data.progressSnapshot}
-                  completedCount={data.completedCount}
-                  remainingCount={data.remainingCount}
-                  lastUpdatedAt={lastUpdatedAt}
-                />
+                <div className="space-y-4">
+                  <ProgressTab
+                    snapshot={data.progressSnapshot}
+                    completedCount={data.completedCount}
+                    remainingCount={data.remainingCount}
+                    lastUpdatedAt={lastUpdatedAt}
+                  />
+                  {weeklyData.length > 0 && <WeeklyProgressChart data={weeklyData} />}
+                </div>
               ) : null}
             </section>
           </>

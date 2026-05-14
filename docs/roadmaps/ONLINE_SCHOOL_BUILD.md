@@ -17,9 +17,11 @@
 | 7 | Class Discussion Boards | COMPLETE | 1629ada |
 | 8 | Guardian Portal Enhancement | COMPLETE | add212a |
 | 9 | Canva Documents Suite | COMPLETE | 6c50d46 |
-| 10 | Student Portfolio + Capstone | AWAITING APPROVAL | — |
-| 11 | Mobile PWA + Offline Enhancement | AWAITING APPROVAL | — |
-| 12 | Two-Way Student↔Teacher Messaging | AWAITING APPROVAL | — |
+| 10 | Student Portfolio + Capstone | COMPLETE | 88a5817 |
+| 11 | Mobile PWA + Offline Enhancement | COMPLETE | 1a94b11 |
+| 12 | Two-Way Student↔Teacher Messaging | COMPLETE | adc1b75 |
+| 13 | Messaging Hardening + Attachments | COMPLETE | 70b3bff |
+| 14 | Video, Analytics, Guardian Parity, FTS, A11y, Gamification | COMPLETE | fc3bf21 |
 
 ---
 

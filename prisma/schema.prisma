@@ -83,6 +83,8 @@ model User {
   requestedDocuments   GeneratedDocument[]  @relation("DocumentRequester")
   studentDocuments     GeneratedDocument[]  @relation("DocumentStudent")
   capstoneReviews      CapstoneProject[]    @relation("CapstoneTeacher")
+  announcements        Announcement[]       @relation("AnnouncementAuthor")
+  notificationInboxItems NotificationInboxItem[]
 }
 
 model District {
@@ -176,6 +178,7 @@ model School {
   onboardingGeneratedAt  DateTime?
   schoolEvents           SchoolEvent[]
   generatedDocuments     GeneratedDocument[]
+  announcements          Announcement[]
 }
 
 model Class {
@@ -3468,4 +3471,39 @@ model GeneratedDocument {
   @@index([schoolId, type, status])
   @@index([studentId, type])
   @@index([schoolId, createdAt])
+}
+
+/// Sprint 15: school-wide announcements with audience targeting.
+model Announcement {
+  id          String    @id @default(cuid())
+  schoolId    String
+  title       String
+  body        String
+  audience    String    @default("ALL")
+  isPinned    Boolean   @default(false)
+  publishedAt DateTime?
+  expiresAt   DateTime?
+  createdBy   String
+  createdAt   DateTime  @default(now())
+  school      School    @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+  author      User      @relation("AnnouncementAuthor", fields: [createdBy], references: [id], onDelete: Cascade)
+
+  @@index([schoolId, publishedAt])
+  @@index([schoolId, audience, publishedAt])
+}
+
+/// Sprint 15: per-user in-app notification inbox items.
+model NotificationInboxItem {
+  id        String   @id @default(cuid())
+  userId    String
+  title     String
+  body      String
+  url       String?
+  type      String   @default("info")
+  isRead    Boolean  @default(false)
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, isRead])
+  @@index([userId, createdAt])
 }

@@ -12,6 +12,7 @@ import { placementReviewStatusLabels, placementReviewStatusStyles } from "@/lib/
 import { guardianWelcomeStorageKey } from "@/app/guardian/GuardianWelcomeGate";
 import { getGuardianGreeting } from "@/lib/student/greetings";
 import { RoleQuickStartCards } from "@/components/onboarding/RoleQuickStartCards";
+import { AnnouncementBanner } from "@/components/AnnouncementBanner";
 
 type GuardianSummary = {
   studentId: string;
@@ -195,6 +196,8 @@ export default function GuardianDashboardClient() {
           roleAccent="text-[var(--ll-text-muted)]"
           userName={selectedDashboardChild?.studentName ? `Viewing: ${selectedDashboardChild.studentName}` : undefined}
         />
+
+        <AnnouncementBanner />
 
         {(() => {
           const greeting = getGuardianGreeting({

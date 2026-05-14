@@ -27,8 +27,9 @@ export async function GET(req: NextRequest) {
   try {
     const user = await requireUser();
     assertTeacherAccess(user);
-    const classId = req.nextUrl.searchParams.get("classId");
-    const date = req.nextUrl.searchParams.get("date");
+    const searchParams = (req as any).nextUrl?.searchParams ?? new URL(req.url).searchParams;
+    const classId = searchParams.get("classId");
+    const date = searchParams.get("date");
     const context = await listTeacherAttendanceContext(user, classId, date ? new Date(date) : undefined);
 
     return NextResponse.json({

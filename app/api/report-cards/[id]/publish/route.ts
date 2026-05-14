@@ -4,6 +4,7 @@ import { prisma } from "@/lib/db";
 import { logAudit } from "@/lib/audit";
 import { sendPushToUser } from "@/lib/push/sendPush";
 import { logProductSignal } from "@/lib/autonomous/signals/productSignalService";
+import { createInboxNotification } from "@/lib/notifications/inboxService";
 
 export const dynamic = "force-dynamic";
 
@@ -50,7 +51,10 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
 
     const studentUser = await prisma.student.findUnique({
       where: { id: card.studentId },
-      select: { user: { select: { id: true } } },
+      select: {
+        user: { select: { id: true } },
+        guardians: { select: { guardianId: true } },
+      },
     });
     if (studentUser?.user?.id) {
       sendPushToUser(studentUser.user.id, {
@@ -58,6 +62,22 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
         body: "Your term report card is now available.",
         url: "/student/report-cards",
       }).catch(() => null);
+      // Inbox notification for student
+      void createInboxNotification(studentUser.user.id, {
+        title: "Report Card Published",
+        body: "Your term report card is now available to view.",
+        url: "/student/report-cards",
+        type: "report_card",
+      }).catch(() => null);
+      // Inbox notifications for guardians
+      for (const { guardianId } of studentUser.guardians ?? []) {
+        void createInboxNotification(guardianId, {
+          title: "Report Card Published",
+          body: "Your child's term report card is now available.",
+          url: "/guardian/report-cards",
+          type: "report_card",
+        }).catch(() => null);
+      }
     }
 
     return NextResponse.json({ reportCard: updated });
