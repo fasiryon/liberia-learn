@@ -4,6 +4,7 @@ import GlobalAssistantMount from "@/components/rag/GlobalAssistantMount";
 import { LegalFooter } from "@/components/LegalFooter";
 import { getOptionalUser } from "@/lib/auth";
 import { PushPermissionPrompt } from "@/components/PushPermissionPrompt";
+import { PwaInstallPrompt } from "@/components/PwaInstallPrompt";
 
 export default async function StudentLayout({
   children,
@@ -21,6 +22,7 @@ export default async function StudentLayout({
       <GlobalAssistantMount positionClassName="bottom-40 right-4" />
       <SyncManager isPlatformAdmin={isPlatformAdmin} />
       <PushPermissionPrompt />
+      <PwaInstallPrompt />
     </>
   );
 }

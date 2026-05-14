@@ -1,3 +1,4 @@
+import { DataUsageBar } from "@/components/DataUsageBar";
 import { DashboardTopBar } from "@/components/DashboardTopBar";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { LegalFooter } from "@/components/LegalFooter";
@@ -276,6 +277,8 @@ export default async function DashboardPage() {
                   </Link>
                 ))}
               </div>
+
+              <DataUsageBar />
             </section>
           </div>
         </div>

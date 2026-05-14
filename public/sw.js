@@ -7,8 +7,13 @@ const APP_SHELL = [
   "/offline.html",
   "/student/dashboard",
   "/student/lessons",
+  "/student/today",
+  "/student/assignments",
+  "/student/portfolio",
 ];
 const SYNC_TAG = "liberialearn-sync";
+const ASSIGNMENT_DRAFT_SYNC_TAG = "submit-assignment-drafts";
+const DRAFT_PREFIX = "assignment-draft::";
 const QUEUE_PREFIX = "liberialearn_offline_queue::";
 const IDB_NAME = "keyval-store";
 const IDB_STORE = "keyval";
@@ -286,16 +291,78 @@ self.addEventListener("fetch", (event) => {
   );
 });
 
+async function readAllDraftEntries() {
+  return openQueueDatabase()
+    .then(
+      (db) =>
+        new Promise((resolve, reject) => {
+          const transaction = db.transaction(IDB_STORE, "readonly");
+          const store = transaction.objectStore(IDB_STORE);
+          const keysRequest = store.getAllKeys();
+          const valuesRequest = store.getAll();
+          transaction.oncomplete = () => {
+            const keys = keysRequest.result || [];
+            const values = valuesRequest.result || [];
+            const drafts = [];
+            for (let i = 0; i < keys.length; i++) {
+              if (typeof keys[i] === "string" && keys[i].startsWith(DRAFT_PREFIX)) {
+                drafts.push({ key: keys[i], assignmentId: keys[i].slice(DRAFT_PREFIX.length), ...(values[i] || {}) });
+              }
+            }
+            resolve(drafts);
+          };
+          transaction.onerror = () => reject(transaction.error || new Error("Unable to read drafts"));
+        })
+    )
+    .catch(() => []);
+}
+
+async function deleteDraftEntry(key) {
+  return openQueueDatabase()
+    .then(
+      (db) =>
+        new Promise((resolve, reject) => {
+          const transaction = db.transaction(IDB_STORE, "readwrite");
+          transaction.objectStore(IDB_STORE).delete(key);
+          transaction.oncomplete = () => resolve();
+          transaction.onerror = () => reject(transaction.error);
+        })
+    )
+    .catch(() => null);
+}
+
+async function syncAssignmentDrafts() {
+  const drafts = await readAllDraftEntries();
+  for (const draft of drafts) {
+    if (!draft.assignmentId || !draft.body) continue;
+    try {
+      const response = await fetch(`/api/student/assignments/${draft.assignmentId}/submit`, {
+        method: "POST",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ content: draft.body }),
+      });
+      if (response.ok) {
+        await deleteDraftEntry(draft.key);
+      }
+    } catch {
+      // leave in queue for next sync attempt
+    }
+  }
+}
+
 // Background sync requires browser to remain open.
 // Queue persists in IndexedDB but replay requires
 // app to be reopened after connectivity restored.
 // Planned: push-triggered sync in v1.1
 self.addEventListener("sync", (event) => {
-  if (event.tag !== SYNC_TAG) {
+  if (event.tag === SYNC_TAG) {
+    event.waitUntil(flushOfflineQueue());
     return;
   }
-
-  event.waitUntil(flushOfflineQueue());
+  if (event.tag === ASSIGNMENT_DRAFT_SYNC_TAG) {
+    event.waitUntil(syncAssignmentDrafts());
+  }
 });
 
 // ===== Push Notifications =====

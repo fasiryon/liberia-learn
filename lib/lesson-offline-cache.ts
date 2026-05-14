@@ -11,7 +11,7 @@
  * Uses the shared lifecycle policy (7-day TTL, 25 MB cap) from offline-cache.
  *
  * Sprint 15 additions:
- *  - MAX_CACHED_LESSONS = 20 (LRU eviction prompt when exceeded)
+ *  - MAX_CACHED_LESSONS = 50 (LRU eviction prompt when exceeded)
  *  - listCachedLessons() — enumerate cached content IDs + metadata
  *  - removeCachedLesson() — explicit deletion
  *  - getCachedLessonCount() — how many lessons are cached
@@ -23,7 +23,7 @@ import { cachePack, getCachedPack, invalidatePack, getCacheStats, getMetadata } 
 const LESSON_SCOPE = "lesson";
 const LESSON_AUDIO_SCOPE = "lesson-audio";
 
-export const MAX_CACHED_LESSONS = 20;
+export const MAX_CACHED_LESSONS = 50;
 
 export type CachedLessonData = {
   metadata: Record<string, unknown> | null;
