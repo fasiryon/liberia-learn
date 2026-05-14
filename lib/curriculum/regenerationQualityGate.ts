@@ -122,18 +122,31 @@ export function validateRegeneratedLesson(payload: unknown): QualityGateResult {
   return { passed: true, reason: null, contentLength: content.length };
 }
 
+function getMinWords(grade: number): number {
+  if (grade <= 3) return 700;
+  if (grade <= 6) return 900;
+  return 1200;
+}
+
+function getMinSlides(grade: number): number {
+  if (grade <= 3) return 10;
+  if (grade <= 6) return 12;
+  return 15;
+}
+
 /**
  * Depth validation gate — enforced before any DB write.
- * grade <= 6: requires 15+ sections and 1200+ words.
- * grade >= 7: requires 18+ sections and 1200+ words.
+ * G1–G3: 10+ sections and 700+ words.
+ * G4–G6: 12+ sections and 900+ words.
+ * G7+:   15+ sections and 1200+ words.
  * Rejects any output containing forbidden placeholder phrases.
  * Returns detailed failure reasons so the worker can log them.
  */
 export function validateLessonDepth(lesson: unknown, grade: number): DepthValidationResult {
   const content = extractLessonText(lesson);
   const serialized = typeof lesson === "string" ? lesson : JSON.stringify(lesson ?? "");
-  const minSlides = grade <= 6 ? 15 : 18;
-  const minWords = 1200;
+  const minSlides = getMinSlides(grade);
+  const minWords = getMinWords(grade);
 
   const slideCount = countSections(content);
   const wordCount = countWords(content);
