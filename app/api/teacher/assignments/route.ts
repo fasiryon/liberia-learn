@@ -361,19 +361,37 @@ export async function POST(req: Request) {
       dueAt: assignment.dueAt,
     }).catch(() => null);
 
-    prisma.enrollment.findMany({
-      where: { classId: assignment.classId },
-      select: { Student: { select: { user: { select: { id: true } } } } },
-    }).then((enrollments) => {
-      const userIds = enrollments.map((e) => e.Student.user.id).filter(Boolean);
-      if (userIds.length) {
-        sendPushToMany(userIds, {
-          title: "New assignment",
-          body: `${assignment.title} — due ${assignment.dueAt ? new Date(assignment.dueAt).toLocaleDateString() : "TBD"}`,
-          url: "/assignments",
-        }).catch(() => null);
+    void (async () => {
+      try {
+        const enrollments = await prisma.enrollment.findMany({
+          where: { classId: assignment.classId },
+          select: { Student: { select: { user: { select: { id: true } }, guardians: { select: { guardianId: true } } } } },
+        });
+        const userIds = enrollments.map((e: any) => e.Student.user.id).filter(Boolean) as string[];
+        if (userIds.length) {
+          sendPushToMany(userIds, {
+            title: "New assignment",
+            body: `${assignment.title} — due ${assignment.dueAt ? new Date(assignment.dueAt).toLocaleDateString() : "TBD"}`,
+            url: "/assignments",
+          }).catch(() => null);
+        }
+        // Guardian push
+        const guardianIds = [...new Set(
+          enrollments.flatMap((e: any) => e.Student.guardians.map((g: any) => g.guardianId as string))
+        )];
+        if (guardianIds.length) {
+          const subjectStr = String(assignment.Class.subject).replace(/_/g, " ");
+          const dueDateStr = assignment.dueAt ? new Date(assignment.dueAt).toLocaleDateString() : "TBD";
+          sendPushToMany(guardianIds, {
+            title: "New Assignment Posted",
+            body: `${subjectStr}: ${assignment.title} due ${dueDateStr}`,
+            url: "/guardian/assignments",
+          }).catch(() => null);
+        }
+      } catch {
+        // Fire-and-forget — silent fail
       }
-    }).catch(() => null);
+    })();
 
     return NextResponse.json(
       {

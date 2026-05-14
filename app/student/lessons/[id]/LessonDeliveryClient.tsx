@@ -75,7 +75,7 @@ type TutorMessage = {
 };
 
 type SimulationValue = number | string | boolean | string[];
-type LessonMode = "read" | "slides" | "listen";
+type LessonMode = "read" | "slides" | "listen" | "video";
 
 export type LessonProgressState = {
   scrollPosition: number;
@@ -743,8 +743,8 @@ export default function LessonDeliveryClient({ lessonId }: { lessonId: string })
               Stay focused on the lesson, then complete the exit ticket at the end.
             </div>
           </div>
-          <div className="mt-5 grid grid-cols-3 rounded-xl border border-[var(--ll-border)] bg-[var(--ll-surface)] p-1 text-sm sm:inline-grid sm:min-w-[24rem]">
-            {(["read", "slides", "listen"] as const).map((entry) => (
+          <div className={`mt-5 rounded-xl border border-[var(--ll-border)] bg-[var(--ll-surface)] p-1 text-sm sm:inline-grid sm:min-w-[24rem] ${lesson.activeVideo ? "grid grid-cols-4" : "grid grid-cols-3"}`}>
+            {(["read", "slides", "listen", ...(lesson.activeVideo ? ["video"] : [])] as LessonMode[]).map((entry) => (
               <button
                 key={entry}
                 type="button"
@@ -813,7 +813,7 @@ export default function LessonDeliveryClient({ lessonId }: { lessonId: string })
           </div>
         </section>
 
-        {lesson.activeVideo ? (
+        {mode === "video" && lesson.activeVideo ? (
           <section className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/80 p-4 sm:p-5">
             <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--ll-pink)]">
               Lesson introduction by {lesson.activeVideo.teacherName}
@@ -842,6 +842,7 @@ export default function LessonDeliveryClient({ lessonId }: { lessonId: string })
             />
             <button
               type="button"
+              aria-label="Download video for offline viewing"
               className="mt-3 rounded-lg border border-[var(--ll-border)] px-3 py-2 text-xs text-[var(--ll-text-muted)]"
               onClick={() => alert(`Video is ${Math.ceil((lesson.activeVideo?.fileSize ?? 0) / 1024 / 1024)}MB. Download only on a reliable connection.`)}
             >
@@ -850,7 +851,7 @@ export default function LessonDeliveryClient({ lessonId }: { lessonId: string })
           </section>
         ) : null}
 
-        <section ref={registerSection("lesson-content")} data-section-id="lesson-content" className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/80 p-5 sm:p-7">
+        <section ref={registerSection("lesson-content")} data-section-id="lesson-content" className={`rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/80 p-5 sm:p-7${mode === "video" ? " hidden" : ""}`}>
           {mode === "listen" ? (
             <div className="mb-6 rounded-xl border border-[var(--ll-silver)]/20 bg-[var(--ll-silver-soft)] p-4">
               <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">

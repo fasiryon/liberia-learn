@@ -6,6 +6,7 @@ import { ChevronRight, Users, ClipboardCheck, CalendarDays, BarChart3 } from "lu
 import { EventCalendar } from "@/components/EventCalendar";
 import { teacherWelcomeStorageKey } from "@/app/teacher/TeacherWelcomeGate";
 import { DashboardTopBar } from "@/components/DashboardTopBar";
+import { GlobalSearch } from "@/components/GlobalSearch";
 import { SkeletonCard } from "@/components/ui/Skeleton";
 import { getTeacherGreeting } from "@/lib/student/greetings";
 import { AlertBell } from "@/components/teacher/AlertBell";
@@ -239,11 +240,14 @@ export default function TeacherDashboardPage() {
           userName={data?.schoolName ?? undefined}
           subtitle={data?.schoolCode ? `Code: ${data.schoolCode}` : undefined}
           rightSlot={
-            <AlertBell
-              alerts={visibleAlerts}
-              onMarkReviewed={handleMarkReviewed}
-              onDismiss={handleDismissAlert}
-            />
+            <div className="flex items-center gap-2">
+              <GlobalSearch />
+              <AlertBell
+                alerts={visibleAlerts}
+                onMarkReviewed={handleMarkReviewed}
+                onDismiss={handleDismissAlert}
+              />
+            </div>
           }
         />
 

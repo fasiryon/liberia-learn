@@ -1,16 +1,13 @@
-import { uploadBinaryToSupabase } from "@/lib/supabaseStorage";
-
 export const LESSON_VIDEO_BUCKET = "lesson-video";
-export const MAX_LESSON_VIDEO_BYTES = 500 * 1024 * 1024;
+export const MAX_LESSON_VIDEO_BYTES = 50 * 1024 * 1024; // 50MB for Vercel Blob
 export const MAX_LESSON_VIDEO_SECONDS = 15 * 60;
 
 const ACCEPTED_VIDEO_TYPES = new Set([
   "video/mp4",
   "video/webm",
-  "video/quicktime",
 ]);
 
-const ACCEPTED_EXTENSIONS = new Set(["mp4", "webm", "mov"]);
+const ACCEPTED_EXTENSIONS = new Set(["mp4", "webm"]);
 
 export function validateLessonVideoFile(input: {
   fileName: string;
@@ -20,13 +17,13 @@ export function validateLessonVideoFile(input: {
 }) {
   const extension = input.fileName.split(".").pop()?.toLowerCase() ?? "";
   if (!ACCEPTED_VIDEO_TYPES.has(input.contentType) && !ACCEPTED_EXTENSIONS.has(extension)) {
-    throw new Error("Only MP4, WebM, or MOV videos are supported.");
+    throw Object.assign(new Error("Only MP4 or WebM videos are supported."), { status: 400 });
   }
   if (input.size > MAX_LESSON_VIDEO_BYTES) {
-    throw new Error("Video must be 500MB or smaller.");
+    throw Object.assign(new Error("Video must be 50MB or smaller."), { status: 413 });
   }
   if (input.durationSeconds > MAX_LESSON_VIDEO_SECONDS) {
-    throw new Error("Video must be 15 minutes or shorter.");
+    throw Object.assign(new Error("Video must be 15 minutes or shorter."), { status: 400 });
   }
 }
 
@@ -39,7 +36,7 @@ export function lessonVideoStoragePath(input: {
   teacherId: string;
   filename: string;
 }) {
-  return `lessons/video/${sanitizeSegment(input.lessonId)}/${sanitizeSegment(input.teacherId)}/${Date.now()}-${sanitizeSegment(input.filename)}`;
+  return `lessons/${sanitizeSegment(input.lessonId)}/${Date.now()}-${sanitizeSegment(input.filename)}`;
 }
 
 export function canManageLessonVideo(input: {
@@ -57,29 +54,21 @@ export function selectActiveLessonVideo<T extends { isActive: boolean; uploadedA
     .sort((a, b) => new Date(b.uploadedAt).getTime() - new Date(a.uploadedAt).getTime())[0] ?? null;
 }
 
-export async function uploadLessonVideoToSupabase(input: {
+export async function uploadLessonVideoToVercelBlob(input: {
   lessonId: string;
   teacherId: string;
   file: File;
-}) {
+}): Promise<string> {
+  const { put } = await import("@vercel/blob");
   const path = lessonVideoStoragePath({
     lessonId: input.lessonId,
     teacherId: input.teacherId,
     filename: input.file.name,
   });
-  const body = Buffer.from(await input.file.arrayBuffer());
-  try {
-    return await uploadBinaryToSupabase({
-      bucket: LESSON_VIDEO_BUCKET,
-      path,
-      contentType: input.file.type || "application/octet-stream",
-      body,
-    });
-  } catch (error: any) {
-    const message = typeof error?.message === "string" ? error.message : "";
-    if (message.includes("Supabase storage is not configured")) {
-      return `data:${input.file.type || "video/webm"};base64,${body.toString("base64")}`;
-    }
-    throw error;
-  }
+  const buffer = Buffer.from(await input.file.arrayBuffer());
+  const blob = await put(path, buffer, {
+    access: "public",
+    contentType: input.file.type || "video/mp4",
+  });
+  return blob.url;
 }

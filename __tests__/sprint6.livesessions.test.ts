@@ -91,7 +91,7 @@ vi.mock("@/lib/db", () => ({
 }));
 
 vi.mock("@/lib/audit", () => ({ logAudit: vi.fn() }));
-vi.mock("@/lib/push/sendPush", () => ({ sendPushToClass: vi.fn() }));
+vi.mock("@/lib/push/sendPush", () => ({ sendPushToClass: vi.fn(), sendPushToMany: vi.fn().mockResolvedValue(undefined) }));
 
 import { NextRequest } from "next/server";
 import { requireRole } from "@/lib/auth";

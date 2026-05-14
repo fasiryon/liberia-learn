@@ -8,6 +8,7 @@ import { notifyLessonCompletion } from "@/lib/lesson-notifications";
 import { updateMasteryProfile } from "@/lib/mastery/masteryService";
 import { gradeToBand } from "@/lib/moe/alignment-engine";
 import { logProductSignal } from "@/lib/autonomous/signals/productSignalService";
+import { updateStreak } from "@/lib/gamification/streakService";
 
 type SessionUserLike = {
   id: string;
@@ -216,6 +217,7 @@ export async function completeScheduledLesson(input: CompleteLessonInput) {
 
   resolveActionsOnLessonComplete(student.id, input.scheduledWorkId).catch(() => null);
   checkAndAwardCertificate(student.id, content.subject, content.grade, input.user.id).catch(() => {});
+  void updateStreak(input.user.id).catch(() => null);
 
   return {
     completedAt: progress.completedAt,

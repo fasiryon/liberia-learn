@@ -207,6 +207,25 @@ export async function POST(
       select: { id: true },
     });
 
+    // Create per-question detail records (fire-and-forget)
+    if (submission.answers.length > 0) {
+      void prisma.assessmentAttemptDetail.createMany({
+        data: submission.answers.map((answer, idx) => {
+          const question = questionMap.get(answer.questionId);
+          const selectedAnswer = question?.options[answer.selectedIndex] ?? String(answer.selectedIndex);
+          const correctAnswer = question ? (question.options[question.correctIndex] ?? String(question.correctIndex)) : "";
+          return {
+            attemptId: assessmentAttempt.id,
+            questionIdx: idx,
+            questionText: question?.question ?? `Question ${idx + 1}`,
+            selectedAnswer,
+            correctAnswer,
+            isCorrect: answer.selectedIndex === (question?.correctIndex ?? -1),
+          };
+        }),
+      }).catch(() => null);
+    }
+
     if (incorrectAnswers.length > 0) {
       await tagMisconception({
         studentId: lesson.studentId,
