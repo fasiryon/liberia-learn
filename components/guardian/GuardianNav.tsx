@@ -8,6 +8,7 @@ const LINKS = [
   { href: "/guardian/dashboard", label: "Overview" },
   { href: "/guardian/attendance", label: "Attendance" },
   { href: "/guardian/grades", label: "Grades" },
+  { href: "/guardian/assignments", label: "Assignments" },
   { href: "/guardian/progress", label: "Progress" },
   { href: "/guardian/events", label: "Events" },
   { href: "/guardian/messages", label: "Messages", badgeKey: "messages" },

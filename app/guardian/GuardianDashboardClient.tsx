@@ -78,6 +78,7 @@ export default function GuardianDashboardClient() {
   const [error, setError] = useState<string | null>(null);
   const [reportCardCount, setReportCardCount] = useState(0);
   const [nextEvent, setNextEvent] = useState<{ title: string; eventDate: string } | null>(null);
+  const [upcomingAssignmentsCount, setUpcomingAssignmentsCount] = useState(0);
 
   useEffect(() => {
     fetch("/api/guardian/report-cards", { cache: "no-store" })
@@ -95,6 +96,21 @@ export default function GuardianDashboardClient() {
       })
       .catch(() => null);
   }, []);
+
+  useEffect(() => {
+    if (!selectedChildId) return;
+    const now = new Date();
+    const in7Days = new Date(now.getTime() + 7 * 86400000);
+    fetch(`/api/guardian/assignments?studentId=${encodeURIComponent(selectedChildId)}`, { cache: "no-store" })
+      .then((r) => r.json())
+      .then((d) => {
+        const count = (d.assignments ?? []).filter(
+          (a: any) => a.status === "upcoming" && a.dueAt && new Date(a.dueAt) < in7Days
+        ).length;
+        setUpcomingAssignmentsCount(count);
+      })
+      .catch(() => null);
+  }, [selectedChildId]);
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -300,6 +316,14 @@ export default function GuardianDashboardClient() {
                 ) : (
                   <p className="mt-1 text-sm text-[var(--ll-text-muted)]">None published yet</p>
                 )}
+              </Link>
+
+              <Link href="/guardian/assignments" className="ll-section p-4 hover:bg-[var(--ll-surface-muted)] transition block">
+                <p className="text-xs text-[var(--ll-text-faint)] uppercase tracking-wide">Assignments Due</p>
+                <p className={`mt-1 text-2xl font-bold ${upcomingAssignmentsCount > 0 ? "text-amber-400" : "text-[var(--ll-text-muted)]"}`}>
+                  {upcomingAssignmentsCount}
+                </p>
+                <p className="text-xs text-[var(--ll-text-faint)]">in the next 7 days</p>
               </Link>
             </section>
 

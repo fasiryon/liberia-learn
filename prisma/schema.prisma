@@ -72,6 +72,7 @@ model User {
   teacherWelcomeCompletedAt DateTime?
   teacherSentiments   TeacherSentiment[]
   createdReportCards   ReportCard[]         @relation("ReportCardCreator")
+  studentStreak        StudentStreak?
   pushSubscriptions    PushSubscription[]
   hostMeetings         Meeting[]            @relation("MeetingHost")
   meetingAttendances   MeetingAttendee[]    @relation("MeetingAttendees")
@@ -2163,12 +2164,50 @@ model AssessmentAttempt {
   attemptedAt      DateTime  @default(now())
   submittedAt      DateTime?
   createdAt        DateTime  @default(now())
+  details          AssessmentAttemptDetail[]
 
   @@index([assessmentId, attemptedAt])
   @@index([studentId, attemptedAt])
   @@index([schoolId, subject, attemptedAt])
   @@index([sourceEventId])
   @@index([chainId, attemptedAt])
+}
+
+model AssessmentAttemptDetail {
+  id             String            @id @default(cuid())
+  attemptId      String
+  questionIdx    Int
+  questionText   String
+  selectedAnswer String
+  correctAnswer  String
+  isCorrect      Boolean
+  timeSpentSecs  Int?
+  attempt        AssessmentAttempt @relation(fields: [attemptId], references: [id], onDelete: Cascade)
+
+  @@index([attemptId, questionIdx])
+}
+
+model StudentStreak {
+  id             String    @id @default(cuid())
+  studentId      String    @unique
+  currentStreak  Int       @default(0)
+  longestStreak  Int       @default(0)
+  lastActiveDate DateTime?
+  optOut         Boolean   @default(false)
+  updatedAt      DateTime  @updatedAt
+  student        User      @relation(fields: [studentId], references: [id], onDelete: Cascade)
+}
+
+model WeeklyLeaderboard {
+  id        String   @id @default(cuid())
+  classId   String
+  schoolId  String
+  weekStart DateTime
+  entries   Json
+  createdAt DateTime @default(now())
+
+  @@unique([classId, weekStart])
+  @@index([classId, weekStart])
 }
 
 model ConfusionSignal {

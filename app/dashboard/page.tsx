@@ -1,6 +1,7 @@
 import { DataUsageBar } from "@/components/DataUsageBar";
 import { DashboardTopBar } from "@/components/DashboardTopBar";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
+import { GlobalSearch } from "@/components/GlobalSearch";
 import { LegalFooter } from "@/components/LegalFooter";
 import { StudentSidebar } from "@/components/StudentSidebar";
 import { AchievementBadge } from "@/components/student/AchievementBadge";
@@ -170,6 +171,7 @@ export default async function DashboardPage() {
             roleAccent="text-[var(--ll-accent)]"
             userName={studentName}
             subtitle={`${className} - ${county}`}
+            rightSlot={<GlobalSearch />}
           />
 
           <div className="flex flex-1 flex-col gap-4 md:flex-row">

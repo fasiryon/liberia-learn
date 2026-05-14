@@ -159,6 +159,8 @@ function dueLabel(item: WorkItem) {
   return `Due ${new Date(item.assignment.dueAt).toLocaleDateString("en-LR", { month: "short", day: "numeric" })}`;
 }
 
+type StreakData = { currentStreak: number; longestStreak: number; optOut: boolean };
+
 export default function StudentTodayPage() {
   const router = useRouter();
   const [data, setData] = useState<TodayResponse | null>(null);
@@ -166,6 +168,7 @@ export default function StudentTodayPage() {
   const [refreshing, setRefreshing] = useState(false);
   const [lastUpdatedAt, setLastUpdatedAt] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<TabKey>("schedule");
+  const [streak, setStreak] = useState<StreakData | null>(null);
 
   const loadToday = useCallback(async () => {
     try {
@@ -218,6 +221,13 @@ export default function StudentTodayPage() {
   useEffect(() => {
     loadToday().finally(() => setLoading(false));
   }, [loadToday]);
+
+  useEffect(() => {
+    fetch("/api/student/streak", { cache: "no-store" })
+      .then((r) => (r.ok ? r.json() : null))
+      .then((d) => { if (d) setStreak(d); })
+      .catch(() => null);
+  }, []);
 
   const { manualRefresh } = useAssignmentPolling(loadToday);
 
@@ -305,6 +315,26 @@ export default function StudentTodayPage() {
             </button>
           ) : null}
         </div>
+
+        {streak && !streak.optOut ? (
+          <div className={`flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-semibold ${
+            streak.currentStreak >= 30
+              ? "border border-amber-400/40 bg-amber-400/10 text-amber-400"
+              : streak.currentStreak >= 7
+                ? "border border-yellow-400/40 bg-yellow-400/10 text-yellow-400"
+                : "border border-[var(--ll-border)] bg-[var(--ll-surface)] text-[var(--ll-text-muted)]"
+          }`}>
+            <span aria-hidden="true">🔥</span>
+            {streak.currentStreak === 0 ? (
+              <span>Start your streak today!</span>
+            ) : (
+              <span>
+                {streak.currentStreak} day streak
+                {streak.currentStreak >= 30 ? " 🏆" : ""}
+              </span>
+            )}
+          </div>
+        ) : null}
 
         {loading ? (
           <div className="space-y-3">

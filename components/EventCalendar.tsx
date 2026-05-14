@@ -262,14 +262,14 @@ function FullView({
         </button>
       </div>
 
-      <div className="grid grid-cols-7 gap-px rounded-lg border border-[var(--ll-border)] overflow-hidden bg-[var(--ll-border)]">
+      <div role="grid" aria-label="Event calendar" className="grid grid-cols-7 gap-px rounded-lg border border-[var(--ll-border)] overflow-hidden bg-[var(--ll-border)]">
         {["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"].map((d) => (
-          <div key={d} className="bg-[var(--ll-surface-muted)] py-1.5 text-center text-[10px] font-semibold uppercase text-[var(--ll-text-faint)]">
+          <div key={d} role="columnheader" className="bg-[var(--ll-surface-muted)] py-1.5 text-center text-[10px] font-semibold uppercase text-[var(--ll-text-faint)]">
             {d}
           </div>
         ))}
         {cells.map((day, i) => {
-          if (!day) return <div key={`empty-${i}`} className="bg-[var(--ll-surface)] min-h-[3rem]" />;
+          if (!day) return <div key={`empty-${i}`} role="gridcell" className="bg-[var(--ll-surface)] min-h-[3rem]" />;
           const ds = dayStr(day);
           const dayEvents = eventsForDay(day);
           const isToday = ds === todayStr;
@@ -277,7 +277,9 @@ function FullView({
           return (
             <button
               key={ds}
+              role="gridcell"
               type="button"
+              aria-label={`${day} ${isToday ? "(today)" : ""}${dayEvents.length > 0 ? `, ${dayEvents.length} event${dayEvents.length > 1 ? "s" : ""}` : ""}`}
               onClick={() => setSelectedDay(isSelected ? null : ds)}
               className={`relative flex min-h-[3rem] flex-col items-start gap-1 p-1.5 text-left transition-colors ${
                 isSelected

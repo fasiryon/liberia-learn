@@ -1,9 +1,9 @@
 import { describe, expect, it, vi } from "vitest";
 
-const mockUploadBinaryToSupabase = vi.hoisted(() => vi.fn());
+const mockPut = vi.hoisted(() => vi.fn());
 
-vi.mock("@/lib/supabaseStorage", () => ({
-  uploadBinaryToSupabase: mockUploadBinaryToSupabase,
+vi.mock("@vercel/blob", () => ({
+  put: mockPut,
 }));
 
 import {
@@ -12,12 +12,12 @@ import {
   canManageLessonVideo,
   lessonVideoStoragePath,
   selectActiveLessonVideo,
-  uploadLessonVideoToSupabase,
+  uploadLessonVideoToVercelBlob,
   validateLessonVideoFile,
 } from "@/lib/lessons/videoUpload";
 
 describe("lesson video upload validation", () => {
-  it("enforces size limit", () => {
+  it("enforces 50MB size limit", () => {
     expect(() =>
       validateLessonVideoFile({
         fileName: "lesson.mp4",
@@ -25,7 +25,7 @@ describe("lesson video upload validation", () => {
         size: MAX_LESSON_VIDEO_BYTES + 1,
         durationSeconds: 60,
       })
-    ).toThrow(/500MB/);
+    ).toThrow(/50MB/);
   });
 
   it("enforces duration limit", () => {
@@ -39,7 +39,7 @@ describe("lesson video upload validation", () => {
     ).toThrow(/15 minutes/);
   });
 
-  it("accepts only supported formats", () => {
+  it("accepts only supported formats (MP4, WebM)", () => {
     expect(() =>
       validateLessonVideoFile({
         fileName: "lesson.avi",
@@ -47,17 +47,16 @@ describe("lesson video upload validation", () => {
         size: 100,
         durationSeconds: 60,
       })
-    ).toThrow(/MP4, WebM, or MOV/);
+    ).toThrow(/MP4 or WebM/);
   });
 
-  it("creates a scoped teacher lesson path", () => {
+  it("creates a scoped lesson path", () => {
     const path = lessonVideoStoragePath({
       lessonId: "lesson 1",
       teacherId: "teacher 1",
       filename: "Intro Clip.MP4",
     });
-    expect(path).toContain("lessons/video/lesson-1/teacher-1/");
-    expect(path.endsWith("intro-clip.mp4")).toBe(true);
+    expect(path).toContain("lessons/lesson-1/");
   });
 
   it("allows only the uploading teacher or an admin to manage a video", () => {
@@ -76,13 +75,18 @@ describe("lesson video upload validation", () => {
     expect(selected?.id).toBe("newer");
   });
 
-  it("uses inline storage only when Supabase storage is not configured", async () => {
-    mockUploadBinaryToSupabase.mockRejectedValueOnce(new Error("Supabase storage is not configured"));
-    const url = await uploadLessonVideoToSupabase({
+  it("uploads to Vercel Blob and returns the URL", async () => {
+    mockPut.mockResolvedValueOnce({ url: "https://blob.vercel.app/lessons/test.mp4" });
+    const url = await uploadLessonVideoToVercelBlob({
       lessonId: "lesson-1",
       teacherId: "teacher-1",
-      file: new File([new Uint8Array([1, 2, 3])], "intro.webm", { type: "video/webm" }),
+      file: new File([new Uint8Array([1, 2, 3])], "intro.mp4", { type: "video/mp4" }),
     });
-    expect(url).toBe("data:video/webm;base64,AQID");
+    expect(url).toBe("https://blob.vercel.app/lessons/test.mp4");
+    expect(mockPut).toHaveBeenCalledWith(
+      expect.stringContaining("lessons/lesson-1/"),
+      expect.any(Buffer),
+      expect.objectContaining({ access: "public", contentType: "video/mp4" })
+    );
   });
 });

@@ -3,7 +3,7 @@ import { requireRole } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { logAudit } from "@/lib/audit";
 import { generateJitsiRoomId, buildJoinUrl } from "@/lib/meetings/jitsiService";
-import { sendPushToClass } from "@/lib/push/sendPush";
+import { sendPushToClass, sendPushToMany } from "@/lib/push/sendPush";
 
 export const dynamic = "force-dynamic";
 
@@ -62,6 +62,35 @@ export async function POST(
       body: `${subjectLabel} class has started. Join now.`,
       url: `/student/live/${meetingId}`,
     });
+
+    // Guardian push — notify guardians of enrolled students (fire-and-forget)
+    void (async () => {
+      try {
+        const enrollments = await prisma.enrollment.findMany({
+          where: { classId: meeting.classId },
+          select: {
+            Student: {
+              select: {
+                user: { select: { name: true } },
+                guardians: { select: { guardianId: true } },
+              },
+            },
+          },
+        });
+        for (const enrollment of enrollments) {
+          const guardianIds = enrollment.Student.guardians.map((g: { guardianId: string }) => g.guardianId);
+          if (!guardianIds.length) continue;
+          const childFirstName = enrollment.Student.user.name?.split(" ")[0] ?? "your child";
+          await sendPushToMany(guardianIds, {
+            title: "Live Class Started 🔴",
+            body: `${childFirstName}'s ${subjectLabel} class is live now`,
+            url: "/guardian/attendance",
+          }).catch(() => null);
+        }
+      } catch {
+        // Fire-and-forget — silent fail
+      }
+    })();
 
     return NextResponse.json({ joinUrl: updated.joinUrl, jitsiRoomId: updated.jitsiRoomId });
   } catch (err: any) {

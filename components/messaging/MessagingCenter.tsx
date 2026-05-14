@@ -319,7 +319,7 @@ export function MessagingCenter({ role, emptyState }: MessagingCenterProps) {
           </p>
         </div>
 
-        <div className="flex-1 space-y-3 overflow-y-auto px-5 py-4">
+        <div role="log" aria-live="polite" aria-label="Message feed" className="flex-1 space-y-3 overflow-y-auto px-5 py-4">
           {activeThread?.messages.map((message) => {
             const ownMessage = message.fromRole === role;
             return (

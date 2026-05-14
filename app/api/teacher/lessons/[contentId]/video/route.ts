@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { requireRole } from "@/lib/auth";
 import { prisma } from "@/lib/db";
-import { uploadLessonVideoToSupabase, validateLessonVideoFile } from "@/lib/lessons/videoUpload";
+import { uploadLessonVideoToVercelBlob, validateLessonVideoFile } from "@/lib/lessons/videoUpload";
 import { logLearningEvent } from "@/lib/events/logLearningEvent";
 
 export const dynamic = "force-dynamic";
@@ -34,11 +34,12 @@ export async function POST(
       durationSeconds,
     });
 
-    const storageUrl = await uploadLessonVideoToSupabase({
+    const storageUrl = await uploadLessonVideoToVercelBlob({
       lessonId: content.contentId,
       teacherId: user.id,
       file,
     });
+
     const video = await prisma.lessonVideo.create({
       data: {
         lessonId: content.contentId,
