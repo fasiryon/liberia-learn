@@ -11,6 +11,7 @@ type StudentThread = {
   otherName: string;
   lastMessage: { body: string; createdAt: string } | null;
   unreadCount: number;
+  nextCursor: string | null;
   messages: Array<{
     id: string;
     body: string;
@@ -18,6 +19,10 @@ type StudentThread = {
     fromUserId: string;
     createdAt: string;
     read: boolean;
+    deletedBySender: boolean;
+    attachmentUrl: string | null;
+    attachmentName: string | null;
+    attachmentType: string | null;
   }>;
 };
 
@@ -59,6 +64,13 @@ function StudentMessagesTab() {
   useEffect(() => {
     if (!activeThread && threads[0]) setActiveKey(threads[0].threadKey);
   }, [activeThread, threads]);
+
+  // 15s poll on active thread
+  useEffect(() => {
+    if (!activeKey) return;
+    const interval = setInterval(() => { loadThreads(); }, 15_000);
+    return () => clearInterval(interval);
+  }, [activeKey, loadThreads]);
 
   async function handleReply() {
     if (!activeThread || !draft.trim()) return;
@@ -137,15 +149,28 @@ function StudentMessagesTab() {
         <div className="flex-1 space-y-3 overflow-y-auto px-5 py-4">
           {activeThread?.messages.map((msg) => {
             const mine = msg.senderRole === "TEACHER";
+            const isRetracted = msg.deletedBySender;
             return (
               <div key={msg.id} className={`flex ${mine ? "justify-end" : "justify-start"}`}>
                 <div className={`max-w-[85%] rounded-xl px-4 py-3 text-sm ${
-                  mine
+                  isRetracted
+                    ? "bg-[var(--ll-surface-muted)]/50 text-[var(--ll-text-faint)] italic"
+                    : mine
                     ? "bg-[var(--ll-yellow)] text-[var(--ll-text-faint)]"
                     : "bg-[var(--ll-surface-muted)] text-[var(--ll-text-faint)]"
                 }`}>
                   <p className="text-[11px] opacity-70 mb-1">{timeAgo(msg.createdAt)}</p>
                   <p className="whitespace-pre-wrap break-words">{msg.body}</p>
+                  {!isRetracted && msg.attachmentUrl && msg.attachmentType?.startsWith("image/") && (
+                    <a href={msg.attachmentUrl} target="_blank" rel="noopener noreferrer" className="block mt-2">
+                      <img src={msg.attachmentUrl} alt={msg.attachmentName ?? "attachment"} className="max-w-[200px] rounded-lg border border-white/10 object-cover" />
+                    </a>
+                  )}
+                  {!isRetracted && msg.attachmentUrl && !msg.attachmentType?.startsWith("image/") && (
+                    <a href={msg.attachmentUrl} target="_blank" rel="noopener noreferrer" className="mt-2 inline-flex items-center gap-1.5 text-xs opacity-80 hover:opacity-100">
+                      📎 {msg.attachmentName ?? "Attachment"}
+                    </a>
+                  )}
                 </div>
               </div>
             );

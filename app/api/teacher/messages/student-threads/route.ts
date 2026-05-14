@@ -1,17 +1,60 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { randomUUID } from "crypto";
 import { requireUser } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 
 export const dynamic = "force-dynamic";
 
-export async function GET() {
+const PAGE_SIZE = 50;
+
+export async function GET(req: NextRequest) {
   try {
     const user = await requireUser();
     if (user.role !== "TEACHER") {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
+    const { searchParams } = req.nextUrl;
+    const threadKey = searchParams.get("threadKey");
+    const before = searchParams.get("before");
+
+    // Paginated single-thread mode
+    if (threadKey) {
+      const messages = await prisma.message.findMany({
+        where: {
+          threadKey,
+          OR: [{ fromUserId: user.id }, { toUserId: user.id }],
+          ...(before ? { createdAt: { lt: new Date(before) } } : {}),
+        },
+        orderBy: { createdAt: "desc" },
+        take: PAGE_SIZE,
+        include: {
+          readReceipts: { where: { userId: user.id }, select: { id: true } },
+        },
+      });
+
+      const nextCursor = messages.length === PAGE_SIZE
+        ? messages[messages.length - 1].createdAt.toISOString()
+        : null;
+
+      return NextResponse.json({
+        messages: messages.reverse().map((m) => ({
+          id: m.id,
+          body: m.deletedBySender ? "[Message retracted]" : m.body,
+          senderRole: m.senderRole,
+          fromUserId: m.fromUserId,
+          createdAt: m.createdAt.toISOString(),
+          read: m.toUserId !== user.id || m.readReceipts.length > 0,
+          deletedBySender: m.deletedBySender,
+          attachmentUrl: m.attachmentUrl ?? null,
+          attachmentName: m.attachmentName ?? null,
+          attachmentType: m.attachmentType ?? null,
+        })),
+        nextCursor,
+      });
+    }
+
+    // Thread list mode
     const messages = await prisma.message.findMany({
       where: {
         OR: [{ fromUserId: user.id }, { toUserId: user.id }],
@@ -25,7 +68,6 @@ export async function GET() {
       },
     });
 
-    // Group into threads
     const threadMap = new Map<string, {
       threadKey: string;
       otherId: string;
@@ -61,23 +103,33 @@ export async function GET() {
 
     const threads = Array.from(threadMap.values())
       .map((thread) => {
-        const last = thread.messages[thread.messages.length - 1];
+        const recent = thread.messages.slice(-PAGE_SIZE);
+        const last = recent[recent.length - 1];
         const unreadCount = thread.messages.filter(
           (m) => m.toUserId === user.id && m.readReceipts.length === 0
         ).length;
+        const hasMore = thread.messages.length > PAGE_SIZE;
+        const nextCursor = hasMore
+          ? thread.messages[thread.messages.length - PAGE_SIZE - 1].createdAt.toISOString()
+          : null;
         return {
           threadKey: thread.threadKey,
           otherId: thread.otherId,
           otherName: thread.otherName,
           lastMessage: last ? { body: last.body.slice(0, 60), createdAt: last.createdAt.toISOString() } : null,
           unreadCount,
-          messages: thread.messages.map((m) => ({
+          nextCursor,
+          messages: recent.map((m) => ({
             id: m.id,
-            body: m.body,
+            body: m.deletedBySender ? "[Message retracted]" : m.body,
             senderRole: m.senderRole,
             fromUserId: m.fromUserId,
             createdAt: m.createdAt.toISOString(),
             read: m.toUserId !== user.id || m.readReceipts.length > 0,
+            deletedBySender: m.deletedBySender,
+            attachmentUrl: m.attachmentUrl ?? null,
+            attachmentName: m.attachmentName ?? null,
+            attachmentType: m.attachmentType ?? null,
           })),
         };
       })

@@ -16,20 +16,16 @@ export async function GET() {
 
     const schoolFilter = user.isPlatformAdmin ? {} : { fromUser: { schoolId: user.schoolId } };
 
-    const [totalToday, studentToTeacher, teacherToStudent, guardianToTeacher] = await Promise.all([
-      // Total student↔teacher messages today
+    const [totalToday, studentToTeacher, teacherToStudent, guardianToTeacher, flaggedMessages] = await Promise.all([
       prisma.message.count({
         where: { createdAt: { gte: todayStart }, senderRole: { in: ["STUDENT", "TEACHER"] }, ...schoolFilter },
       }),
-      // Student → Teacher today
       prisma.message.count({
         where: { createdAt: { gte: todayStart }, senderRole: "STUDENT", ...schoolFilter },
       }),
-      // Teacher → Student today
       prisma.message.count({
         where: { createdAt: { gte: todayStart }, senderRole: "TEACHER", recipientRole: "STUDENT", ...schoolFilter },
       }),
-      // Guardian → Teacher today (GuardianMessage)
       prisma.guardianMessage.count({
         where: {
           sentAt: { gte: todayStart },
@@ -37,15 +33,22 @@ export async function GET() {
           ...(user.isPlatformAdmin ? {} : { school: { id: user.schoolId ?? "" } }),
         },
       }),
+      // Unflagged = pending review
+      prisma.message.count({
+        where: {
+          flagged: true,
+          flagReviewedAt: null,
+          ...(user.isPlatformAdmin ? {} : { fromUser: { schoolId: user.schoolId } }),
+        },
+      }),
     ]);
 
-    // Aggregate totals (no message bodies returned)
     return NextResponse.json({
       totalToday,
       studentToTeacher,
       teacherToStudent,
       guardianToTeacher,
-      flaggedMessages: 0, // flag system not yet implemented
+      flaggedMessages,
     });
   } catch (err: any) {
     return NextResponse.json({ error: err?.message ?? "Internal error" }, { status: err?.status ?? 500 });
