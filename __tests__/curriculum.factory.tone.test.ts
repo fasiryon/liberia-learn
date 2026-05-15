@@ -81,7 +81,7 @@ describe("generateCurriculumPayload — toneGuidance injection", () => {
     const call = mockRoutedCompletion.mock.calls[0][0];
     const systemPrompt: string = call.messages[0].content;
     expect(systemPrompt).toContain(toneGuidance(1));
-    expect(systemPrompt).toContain("early elementary");
+    expect(systemPrompt).toContain("early primary students");
   });
 
   it("injects grade 6 tone guidance into system prompt", async () => {
@@ -94,7 +94,7 @@ describe("generateCurriculumPayload — toneGuidance injection", () => {
     const call = mockRoutedCompletion.mock.calls[0][0];
     const systemPrompt: string = call.messages[0].content;
     expect(systemPrompt).toContain(toneGuidance(6));
-    expect(systemPrompt).toContain("upper elementary");
+    expect(systemPrompt).toContain("upper primary students");
   });
 
   it("injects grade 9 tone guidance into system prompt", async () => {
@@ -107,7 +107,7 @@ describe("generateCurriculumPayload — toneGuidance injection", () => {
     const call = mockRoutedCompletion.mock.calls[0][0];
     const systemPrompt: string = call.messages[0].content;
     expect(systemPrompt).toContain(toneGuidance(9));
-    expect(systemPrompt).toContain("middle school");
+    expect(systemPrompt).toContain("junior secondary students");
   });
 
   it("injects grade 12 tone guidance into system prompt", async () => {
@@ -120,6 +120,6 @@ describe("generateCurriculumPayload — toneGuidance injection", () => {
     const call = mockRoutedCompletion.mock.calls[0][0];
     const systemPrompt: string = call.messages[0].content;
     expect(systemPrompt).toContain(toneGuidance(12));
-    expect(systemPrompt).toContain("high school");
+    expect(systemPrompt).toContain("senior secondary students");
   });
 });
