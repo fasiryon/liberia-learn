@@ -58,9 +58,9 @@ describe("standardizeTone", () => {
 
 describe("toneGuidance", () => {
   it("returns appropriate guidance per grade band", () => {
-    expect(toneGuidance(1)).toContain("early elementary");
-    expect(toneGuidance(5)).toContain("upper elementary");
-    expect(toneGuidance(8)).toContain("middle school");
-    expect(toneGuidance(11)).toContain("high school");
+    expect(toneGuidance(1)).toContain("early primary students");
+    expect(toneGuidance(5)).toContain("upper primary students");
+    expect(toneGuidance(8)).toContain("junior secondary students");
+    expect(toneGuidance(11)).toContain("senior secondary students");
   });
 });

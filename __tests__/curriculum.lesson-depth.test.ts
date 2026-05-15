@@ -125,12 +125,12 @@ describe("generateCurriculumPayload lesson depth", () => {
     });
 
     const prompt = mockRoutedCompletion.mock.calls[0][0].messages[0].content as string;
-    expect(prompt).toContain("## 1. Welcome and Hook");
-    expect(prompt).toContain("## 2. Learning Objective");
-    expect(prompt).toContain("## 9. Guided Practice - Problem 1");
-    expect(prompt).toContain("## 12. Independent Practice - Easy");
-    expect(prompt).toContain("## 15. Assessment and Exit Ticket");
-    expect(prompt).toContain("AT LEAST 15");
+    expect(prompt).toContain("## 1. Hook — The Real-World Challenge");
+    expect(prompt).toContain("## 2. Learning Objectives");
+    expect(prompt).toContain("## 10. Guided Practice — Problem 1");
+    expect(prompt).toContain("## 13. Independent Practice — Tier 1 Foundational");
+    expect(prompt).toContain("## 17. Assessment, Exit Ticket, and Lesson Summary");
+    expect(prompt).toContain("AT LEAST 17");
     expect(payload.body_standard).toContain("## 7. Worked Example 2");
     expect(payload.body_standard!.split(/\s+/).filter(Boolean).length).toBeGreaterThanOrEqual(1000);
   });
@@ -218,11 +218,11 @@ describe("generateCurriculumPayload lesson depth", () => {
     });
 
     const prompt = mockRoutedCompletion.mock.calls[0][0].messages[0].content as string;
-    expect(prompt).toContain("## 14. Lab or Investigation Activity");
-    expect(prompt).toContain("## 16. Independent Practice — Easy and Medium");
-    expect(prompt).toContain("## 15. Group Discussion");
-    expect(prompt).toContain("## 18. Assessment, Exit Ticket, and Reflection");
-    expect(prompt).toContain("AT LEAST 18");
+    expect(prompt).toContain("## 15. Investigation Activity");
+    expect(prompt).toContain("## 17. Independent Practice — Tiers 1 and 2");
+    expect(prompt).toContain("## 16. Group Discussion and Cross-Curricular Connection");
+    expect(prompt).toContain("## 20. Assessment, Exit Ticket, and Lesson Summary");
+    expect(prompt).toContain("AT LEAST 20");
     expect(payload.body_block).toContain("## 14. Lab or Investigation Activity");
     expect(payload.body_block!.split(/\s+/).filter(Boolean).length).toBeGreaterThanOrEqual(1800);
   });
