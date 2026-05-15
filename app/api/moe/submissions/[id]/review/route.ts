@@ -27,10 +27,10 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
       return NextResponse.json({ error: "Notes are required when returning a submission" }, { status: 400 });
     }
 
-    const submission = await (prisma as any).moeSubmission.findUnique({ where: { id: params.id } });
+    const submission = await prisma.moeSubmission.findUnique({ where: { id: params.id } });
     if (!submission) return NextResponse.json({ error: "Not found" }, { status: 404 });
 
-    const updated = await (prisma as any).moeSubmission.update({
+    const updated = await prisma.moeSubmission.update({
       where: { id: params.id },
       data: {
         status,

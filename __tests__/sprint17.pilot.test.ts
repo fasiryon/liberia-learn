@@ -67,7 +67,7 @@ function makeRequest(method: string, url: string, body?: unknown) {
 }
 
 function makeFormRequest(url: string, formData: FormData) {
-  return new Request(`http://localhost${url}`, { method: "POST", body: formData });
+  return new Request(`http://localhost${url}`, { method: "POST", body: formData }) as any;
 }
 
 const adminUser = { id: "admin1", role: "ADMIN", schoolId: "school1", name: "Admin User", email: "admin@test.com", isPlatformAdmin: false };
@@ -100,7 +100,7 @@ describe("MoeSubmission — admin create", () => {
     fd.append("file", new File([pdfBlob], "report.pdf", { type: "application/pdf" }));
 
     const req = makeFormRequest("/api/admin/moe-submissions", fd);
-    const res = await adminPostSubmission(req);
+    const res = await adminPostSubmission(req as any);
     expect(res.status).toBe(201);
     const data = await res.json();
     expect(data.status).toBe("SUBMITTED");
@@ -117,7 +117,7 @@ describe("MoeSubmission — admin create", () => {
     fd.append("file", new File(["data"], "file.docx", { type: "application/vnd.openxmlformats-officedocument.wordprocessingml.document" }));
 
     const req = makeFormRequest("/api/admin/moe-submissions", fd);
-    const res = await adminPostSubmission(req);
+    const res = await adminPostSubmission(req as any);
     expect(res.status).toBe(400);
     const data = await res.json();
     expect(data.error).toMatch(/PDF/i);
@@ -130,7 +130,7 @@ describe("MoeSubmission — admin create", () => {
     fd.append("title", "Test");
     fd.append("file", new File(["d"], "file.pdf", { type: "application/pdf" }));
     const req = makeFormRequest("/api/admin/moe-submissions", fd);
-    const res = await adminPostSubmission(req);
+    const res = await adminPostSubmission(req as any);
     expect(res.status).toBe(403);
   });
 

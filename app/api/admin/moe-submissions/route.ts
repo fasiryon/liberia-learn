@@ -20,7 +20,7 @@ export async function GET() {
     const schoolId = user.schoolId;
     if (!schoolId) return NextResponse.json({ error: "No school" }, { status: 400 });
 
-    const submissions = await (prisma as any).moeSubmission.findMany({
+    const submissions = await prisma.moeSubmission.findMany({
       where: { schoolId },
       orderBy: { submittedAt: "desc" },
       take: 100,
@@ -66,7 +66,7 @@ export async function POST(req: NextRequest) {
     const blobPath = `moe-submissions/${schoolId}/${Date.now()}-${file.name.replace(/[^a-z0-9._-]/gi, "_")}`;
     const blob = await put(blobPath, file, { access: "public" });
 
-    const submission = await (prisma as any).moeSubmission.create({
+    const submission = await prisma.moeSubmission.create({
       data: {
         schoolId,
         schoolName: school?.name ?? "Unknown School",
