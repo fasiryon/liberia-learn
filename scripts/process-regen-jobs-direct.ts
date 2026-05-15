@@ -126,20 +126,18 @@ async function processJob(
       topic,
       contentType: "lesson",
       moeAlignmentCodes: alignmentCodes(lesson.moeAlignments),
-      // "either" uses 9000 max_tokens (no JSON truncation). body_block targets
-      // 18+ sections / 2200 words. We prefer body_block for depth validation
-      // since it is always richer than body_standard.
-      lessonFormat: "either",
+      // "standard" generates only body_standard (45-min version).
+      // Generating both standard+block ("either") roughly doubles output size
+      // and causes JSON truncation/corruption with Groq models.
+      // body_standard with the new 17-section prompt is 2500+ words which
+      // satisfies the depth gate. body_block can be added later on demand.
+      lessonFormat: "standard",
       liberiaContext: true,
       forceSmartTier: true,
     });
 
-    // Prefer body_block (the fuller block-format content) for depth validation.
-    // extractLessonText checks lessonContent first, so setting it here ensures
-    // validateLessonDepth measures the richest available lesson text.
     const gen = generated as Record<string, unknown>;
     const richContent =
-      (typeof gen.body_block === "string" ? gen.body_block.trim() : "") ||
       (typeof gen.body_standard === "string" ? gen.body_standard.trim() : "") ||
       extractLessonText(generated);
 

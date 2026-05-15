@@ -51,6 +51,8 @@ export interface RouterOptions {
   maxTokens?: number;
   forceSmartTier?: boolean;
   aiUsage?: AiUsageContext;
+  /** When set to "json", instructs the model to return only valid JSON (JSON mode). */
+  responseFormat?: "json" | "text";
 }
 
 export interface RouterResult {
@@ -65,7 +67,9 @@ export interface RouterResult {
 
 function completionTimeoutMs(aiUsage?: AiUsageContext) {
   const requestType = aiUsage?.requestType ?? "";
-  return requestType.startsWith("elite_curriculum_") ? 120_000 : 30_000;
+  // Elite curriculum generation prompts are large (5000+ input tokens + long output).
+  // Allow 4 minutes so Groq/OpenAI can complete without aborting mid-response.
+  return requestType.startsWith("elite_curriculum_") ? 240_000 : 30_000;
 }
 
 const GROQ_MODEL = "llama-3.1-8b-instant";
@@ -184,7 +188,8 @@ export function classifyMessage(message: string): {
 async function callOpenAI(
   messages: RouterOptions["messages"],
   maxTokens: number,
-  timeoutMs: number
+  timeoutMs: number,
+  responseFormat?: "json" | "text"
 ): Promise<{ content: string; inputTokens: number; outputTokens: number }> {
   const client = getOpenAIClientOrThrow();
   try {
@@ -193,6 +198,7 @@ async function callOpenAI(
         model: OPENAI_MODEL,
         messages,
         max_tokens: maxTokens,
+        ...(responseFormat === "json" ? { response_format: { type: "json_object" } } : {}),
       },
       { signal: AbortSignal.timeout(timeoutMs) }
     );
@@ -380,7 +386,11 @@ export async function routedCompletion(opts: RouterOptions): Promise<RouterResul
     };
   }
 
-  if (!response && process.env.GROQ_API_KEY) {
+  // Skip Groq when caller explicitly requests openai (e.g. curriculum generation
+  // where JSON consistency and longer outputs are more important than cost).
+  const skipGroq = requestedProvider === "openai";
+
+  if (!response && !skipGroq && process.env.GROQ_API_KEY) {
     const useSmartGroq = classification.tier === "smart" || opts.forceSmartTier;
     const groqModel = useSmartGroq ? GROQ_SMART_MODEL : GROQ_MODEL;
     try {
@@ -390,6 +400,7 @@ export async function routedCompletion(opts: RouterOptions): Promise<RouterResul
         messages: opts.messages,
         max_tokens: maxTokens,
         signal: AbortSignal.timeout(timeoutMs),
+        ...(opts.responseFormat === "json" ? { response_format: { type: "json_object" } } : {}),
       });
 
       const inputTokens = completion.usage?.prompt_tokens ?? 0;
@@ -411,7 +422,7 @@ export async function routedCompletion(opts: RouterOptions): Promise<RouterResul
   }
 
   if (!response) {
-    const result = await callOpenAI(opts.messages, maxTokens, timeoutMs);
+    const result = await callOpenAI(opts.messages, maxTokens, timeoutMs, opts.responseFormat);
     response = {
       content: result.content,
       tier: classification.tier,

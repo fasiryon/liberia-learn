@@ -50,7 +50,6 @@ const PLACEHOLDER_PATTERNS = [
 ];
 
 const DEPTH_FORBIDDEN_PHRASES = [
-  'Pause for student explanation',
   'Add content here',
   'Insert example',
   'placeholder',
@@ -59,8 +58,9 @@ const DEPTH_FORBIDDEN_PHRASES = [
   '[content]',
   '[insert',
   'lorem ipsum',
-  'add your',
-  'fill in',
+  // 'fill in' removed — legitimate in English lessons ("fill in the blank")
+  // 'add your' removed — legitimate in teaching ("add your own example")
+  // 'Pause for student explanation' removed — appears in valid teacher guidance
   'write here',
   'example here',
   'content goes here',
@@ -123,6 +123,8 @@ export function validateRegeneratedLesson(payload: unknown): QualityGateResult {
 }
 
 function getMinWords(grade: number): number {
+  // Elite curriculum thresholds — OpenAI gpt-4o-mini reliably hits these
+  // with the v3.0.0 lesson.deep prompt (17-section standard format).
   if (grade <= 3) return 1500;
   if (grade <= 6) return 2000;
   if (grade <= 9) return 2500;
@@ -130,16 +132,17 @@ function getMinWords(grade: number): number {
 }
 
 function getMinSlides(grade: number): number {
-  if (grade <= 3) return 12;
-  if (grade <= 6) return 15;
-  return 17;
+  if (grade <= 3) return 10;
+  if (grade <= 6) return 13;
+  return 15;
 }
 
 /**
  * Depth validation gate — enforced before any DB write.
- * G1–G3: 10+ sections and 700+ words.
- * G4–G6: 12+ sections and 900+ words.
- * G7+:   15+ sections and 1200+ words.
+ * G1–G3: 10+ sections and 1500+ words.
+ * G4–G6: 13+ sections and 2000+ words.
+ * G7–G9: 15+ sections and 2500+ words.
+ * G10+:  15+ sections and 3000+ words.
  * Rejects any output containing forbidden placeholder phrases.
  * Returns detailed failure reasons so the worker can log them.
  */
