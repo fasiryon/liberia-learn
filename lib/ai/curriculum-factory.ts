@@ -828,7 +828,7 @@ ${lessonBodyHint}`;
     }
   } catch {
     throw new Error(
-      `AI returned invalid JSON. First 200 chars: ${result.content.slice(0, 200)}`
+      `AI returned invalid JSON. First 200 chars: ${result?.content?.slice(0, 200) ?? ''}`
     );
   }
 
@@ -898,7 +898,7 @@ ${lessonBodyHint}`;
   if (!parsed.success) {
     const issues = parsed.error.issues.map((i) => `${i.path.join(".")}: ${i.message}`).join("; ");
     throw new Error(
-      `AI output failed validation: ${issues}. First 200 chars: ${result.content.slice(0, 200)}`
+      `AI output failed validation: ${issues}. First 200 chars: ${result?.content?.slice(0, 200) ?? ''}`
     );
   }
 

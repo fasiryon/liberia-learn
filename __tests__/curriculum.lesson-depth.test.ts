@@ -3,6 +3,15 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 const mockRoutedCompletion = vi.hoisted(() => vi.fn());
 const mockIsDeliveryProfileEnabled = vi.hoisted(() => vi.fn());
 
+// Two-pass Pass 1 returns plain Markdown under 1200 words, causing the factory
+// to fall back to single-pass OpenAI. For standard/either formats calls[0] is
+// always the Pass 1 call; calls[1] is the single-pass fallback.
+const PASS1_FALLBACK = {
+  content: "Short body.",
+  model: "llama-3.3-70b-versatile",
+  estimatedCostUSD: 0,
+};
+
 vi.mock("@/lib/ai/router", () => ({
   routedCompletion: mockRoutedCompletion,
 }));
@@ -81,40 +90,42 @@ describe("generateCurriculumPayload lesson depth", () => {
   });
 
   it("injects all required standard lesson sections into the prompt", async () => {
-    mockRoutedCompletion.mockResolvedValueOnce(
-      makeCompletion({
-        title: "Fractions in Market Trading",
-        grade: 5,
-        subject: "MATH",
-        lessonFormat: "standard",
-        objectives: ["Understand fractions in context"],
-        body: buildStandardBody(),
-        body_standard: buildStandardBody(),
-        activities: ["Fraction strip practice"],
-        moeAlignments: ["MATH-G5-NS-01"],
-        metadata: { topic: "Fractions", locale: "LR", generatedAt: new Date().toISOString() },
-        deliveryProfile: {
-          estimatedMinutes: 45,
-          recommendedFormat: "standard",
-          phases: [{ name: "Opening", durationMinutes: 5, description: "Hook" }],
-          standardVersion: {
+    mockRoutedCompletion
+      .mockResolvedValueOnce(PASS1_FALLBACK)
+      .mockResolvedValueOnce(
+        makeCompletion({
+          title: "Fractions in Market Trading",
+          grade: 5,
+          subject: "MATH",
+          lessonFormat: "standard",
+          objectives: ["Understand fractions in context"],
+          body: buildStandardBody(),
+          body_standard: buildStandardBody(),
+          activities: ["Fraction strip practice"],
+          moeAlignments: ["MATH-G5-NS-01"],
+          metadata: { topic: "Fractions", locale: "LR", generatedAt: new Date().toISOString() },
+          deliveryProfile: {
+            estimatedMinutes: 45,
+            recommendedFormat: "standard",
             phases: [{ name: "Opening", durationMinutes: 5, description: "Hook" }],
-            omittedActivities: [],
+            standardVersion: {
+              phases: [{ name: "Opening", durationMinutes: 5, description: "Hook" }],
+              omittedActivities: [],
+            },
+            blockVersion: {
+              phases: [{ name: "Opening", durationMinutes: 5, description: "Hook" }],
+              extensions: [],
+            },
+            exitTicket: {
+              questions: [
+                { question: "What is one half?", type: "short_answer", standardCode: "MATH-G5-NS-01", choices: [] },
+                { question: "Choose the fraction.", type: "mcq", standardCode: "MATH-G5-NS-01", choices: ["1/2", "1/3"] },
+              ],
+            },
+            toolsRequired: [],
           },
-          blockVersion: {
-            phases: [{ name: "Opening", durationMinutes: 5, description: "Hook" }],
-            extensions: [],
-          },
-          exitTicket: {
-            questions: [
-              { question: "What is one half?", type: "short_answer", standardCode: "MATH-G5-NS-01", choices: [] },
-              { question: "Choose the fraction.", type: "mcq", standardCode: "MATH-G5-NS-01", choices: ["1/2", "1/3"] },
-            ],
-          },
-          toolsRequired: [],
-        },
-      })
-    );
+        })
+      );
 
     const payload = await generateCurriculumPayload({
       grade: 5,
@@ -124,7 +135,9 @@ describe("generateCurriculumPayload lesson depth", () => {
       liberiaContext: true,
     });
 
-    const prompt = mockRoutedCompletion.mock.calls[0][0].messages[0].content as string;
+    // calls[0] is the two-pass Pass 1 call; calls[1] is the single-pass fallback
+    // whose system prompt contains the lesson section template.
+    const prompt = mockRoutedCompletion.mock.calls[1][0].messages[0].content as string;
     expect(prompt).toContain("## 1. Hook — The Real-World Challenge");
     expect(prompt).toContain("## 2. Learning Objectives");
     expect(prompt).toContain("## 10. Guided Practice — Problem 1");
@@ -228,9 +241,11 @@ describe("generateCurriculumPayload lesson depth", () => {
   });
 
   it("returns both lesson bodies when lessonFormat is either", async () => {
-    mockRoutedCompletion.mockResolvedValueOnce(
-      makeCompletion({
-        title: "Fractions for Markets and Measurement",
+    mockRoutedCompletion
+      .mockResolvedValueOnce(PASS1_FALLBACK)
+      .mockResolvedValueOnce(
+        makeCompletion({
+          title: "Fractions for Markets and Measurement",
         grade: 6,
         subject: "MATH",
         lessonFormat: "either",
