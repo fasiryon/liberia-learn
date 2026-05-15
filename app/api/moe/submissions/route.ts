@@ -24,7 +24,7 @@ export async function GET(req: NextRequest) {
     if (type) where.type = type;
     if (status) where.status = status;
 
-    const submissions = await (prisma as any).moeSubmission.findMany({
+    const submissions = await prisma.moeSubmission.findMany({
       where,
       orderBy: { submittedAt: "desc" },
       take: 200,

@@ -13,7 +13,7 @@ export async function POST(req: NextRequest) {
     if (!SUPPORTED.includes(language)) {
       return NextResponse.json({ error: "Unsupported language" }, { status: 400 });
     }
-    await prisma.user.update({ where: { id: user.id }, data: { languagePreference: language } as any });
+    await prisma.user.update({ where: { id: user.id }, data: { languagePreference: language } });
     return NextResponse.json({ language });
   } catch (err: any) {
     return NextResponse.json({ error: err.message }, { status: err.status ?? 500 });
