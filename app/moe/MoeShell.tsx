@@ -15,6 +15,7 @@ const NAV_ITEMS = [
   { href: "/moe/compliance", label: "Compliance" },
   { href: "/moe/alerts", label: "Alerts" },
   { href: "/moe/exports", label: "Exports" },
+  { href: "/moe/submissions", label: "School Submissions" },
 ];
 
 export default function MoeShell({

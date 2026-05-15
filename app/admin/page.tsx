@@ -371,6 +371,7 @@ export default async function AdminConsolePage() {
         { label: "Notifications", href: "/admin/notifications" },
         { label: "Guardian Links", href: "/admin/guardian-link" },
         { label: "Onboarding", href: "/admin/onboarding" },
+        { label: "MOE Submissions", href: "/admin/moe-submissions" },
       ],
     },
     {

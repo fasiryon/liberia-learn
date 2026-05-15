@@ -4,6 +4,7 @@ import Link from "next/link";
 import { BookOpen, ChevronDown } from "lucide-react";
 import { useEffect, useState } from "react";
 import { NotificationBell } from "@/components/NotificationBell";
+import { LanguageSelector } from "@/components/LanguageSelector";
 
 interface StudentSidebarProps {
   school: string;
@@ -135,6 +136,9 @@ export function StudentSidebar({
               </Link>
             </div>
           ) : null}
+        </div>
+        <div className="mt-4 border-t border-[var(--ll-border)] pt-3">
+          <LanguageSelector compact />
         </div>
       </nav>
     </aside>

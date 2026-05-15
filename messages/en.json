@@ -1,0 +1,36 @@
+{
+  "nav": {
+    "dashboard": "Dashboard",
+    "lessons": "Lessons",
+    "assignments": "Assignments",
+    "messages": "Messages",
+    "events": "Events",
+    "portfolio": "My Portfolio",
+    "discussion": "Discussion",
+    "leaderboard": "Leaderboard",
+    "logout": "Log out"
+  },
+  "student": {
+    "welcome": "Good morning",
+    "todaySchedule": "Today's Schedule",
+    "noLessons": "No lessons scheduled today",
+    "markComplete": "Mark as Complete",
+    "streak": "day streak",
+    "startStreak": "Start your streak today!"
+  },
+  "lesson": {
+    "read": "Read",
+    "slides": "Slides",
+    "listen": "Listen",
+    "discussion": "Discussion",
+    "backToToday": "Back to today"
+  },
+  "common": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "submit": "Submit",
+    "loading": "Loading...",
+    "error": "Something went wrong",
+    "back": "Back"
+  }
+}
