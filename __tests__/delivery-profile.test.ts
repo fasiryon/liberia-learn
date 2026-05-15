@@ -87,6 +87,15 @@ function makeCompletion(payload: object) {
   };
 }
 
+// Two-pass Pass 1 returns plain Markdown prose. This response is under 1200 words,
+// so the factory discards it and falls back to single-pass OpenAI — which is what
+// these tests exercise.
+const PASS1_FALLBACK = {
+  content: "Short body.",
+  model: "llama-3.3-70b-versatile",
+  estimatedCostUSD: 0,
+};
+
 // ─── Tests ────────────────────────────────────────────────────────────────────
 
 describe("generateCurriculumPayload — deliveryProfile flag", () => {
@@ -99,9 +108,11 @@ describe("generateCurriculumPayload — deliveryProfile flag", () => {
   describe("ENABLE_DELIVERY_PROFILE=false", () => {
     it("does not include deliveryProfile in the returned payload", async () => {
       mockIsDeliveryProfileEnabled.mockReturnValue(false);
-      mockRoutedCompletion.mockResolvedValueOnce(
-        makeCompletion({ ...BASE_PAYLOAD, deliveryProfile: VALID_DELIVERY_PROFILE })
-      );
+      mockRoutedCompletion
+        .mockResolvedValueOnce(PASS1_FALLBACK)
+        .mockResolvedValueOnce(
+          makeCompletion({ ...BASE_PAYLOAD, deliveryProfile: VALID_DELIVERY_PROFILE })
+        );
 
       const result = await generateCurriculumPayload({
         grade: 4,
@@ -115,12 +126,16 @@ describe("generateCurriculumPayload — deliveryProfile flag", () => {
 
     it("does not inject deliveryProfile prompt into system message", async () => {
       mockIsDeliveryProfileEnabled.mockReturnValue(false);
-      mockRoutedCompletion.mockResolvedValueOnce(makeCompletion(BASE_PAYLOAD));
+      mockRoutedCompletion
+        .mockResolvedValueOnce(PASS1_FALLBACK)
+        .mockResolvedValueOnce(makeCompletion(BASE_PAYLOAD));
 
       await generateCurriculumPayload({ grade: 4, subject: "MATH", topic: "Fractions", liberiaContext: true });
 
+      // calls[0] is the two-pass Pass 1 call; calls[1] is the single-pass fallback whose
+      // system prompt reflects the flag state.
       const systemPrompt: string =
-        mockRoutedCompletion.mock.calls[0][0].messages[0].content;
+        mockRoutedCompletion.mock.calls[1][0].messages[0].content;
       expect(systemPrompt).not.toContain("deliveryProfile");
       expect(systemPrompt).not.toContain("estimatedMinutes");
       expect(systemPrompt).not.toContain("exitTicket");
@@ -128,7 +143,9 @@ describe("generateCurriculumPayload — deliveryProfile flag", () => {
 
     it("succeeds even when AI returns no deliveryProfile field", async () => {
       mockIsDeliveryProfileEnabled.mockReturnValue(false);
-      mockRoutedCompletion.mockResolvedValueOnce(makeCompletion(BASE_PAYLOAD));
+      mockRoutedCompletion
+        .mockResolvedValueOnce(PASS1_FALLBACK)
+        .mockResolvedValueOnce(makeCompletion(BASE_PAYLOAD));
 
       const result = await generateCurriculumPayload({
         grade: 4,
@@ -143,7 +160,9 @@ describe("generateCurriculumPayload — deliveryProfile flag", () => {
     it("strips deliveryProfile even when AI unexpectedly returns one", async () => {
       mockIsDeliveryProfileEnabled.mockReturnValue(false);
       const withProfile = { ...BASE_PAYLOAD, deliveryProfile: VALID_DELIVERY_PROFILE };
-      mockRoutedCompletion.mockResolvedValueOnce(makeCompletion(withProfile));
+      mockRoutedCompletion
+        .mockResolvedValueOnce(PASS1_FALLBACK)
+        .mockResolvedValueOnce(makeCompletion(withProfile));
 
       const result = await generateCurriculumPayload({
         grade: 4,
@@ -161,14 +180,18 @@ describe("generateCurriculumPayload — deliveryProfile flag", () => {
   describe("ENABLE_DELIVERY_PROFILE=true", () => {
     it("injects deliveryProfile prompt into the system message", async () => {
       mockIsDeliveryProfileEnabled.mockReturnValue(true);
-      mockRoutedCompletion.mockResolvedValueOnce(
-        makeCompletion({ ...BASE_PAYLOAD, deliveryProfile: VALID_DELIVERY_PROFILE })
-      );
+      mockRoutedCompletion
+        .mockResolvedValueOnce(PASS1_FALLBACK)
+        .mockResolvedValueOnce(
+          makeCompletion({ ...BASE_PAYLOAD, deliveryProfile: VALID_DELIVERY_PROFILE })
+        );
 
       await generateCurriculumPayload({ grade: 4, subject: "MATH", topic: "Fractions", liberiaContext: true });
 
+      // calls[0] is the two-pass Pass 1 call; calls[1] is the single-pass fallback whose
+      // system prompt reflects the flag state.
       const systemPrompt: string =
-        mockRoutedCompletion.mock.calls[0][0].messages[0].content;
+        mockRoutedCompletion.mock.calls[1][0].messages[0].content;
       expect(systemPrompt).toContain("deliveryProfile");
       expect(systemPrompt).toContain("estimatedMinutes");
       expect(systemPrompt).toContain("exitTicket");
@@ -177,9 +200,11 @@ describe("generateCurriculumPayload — deliveryProfile flag", () => {
 
     it("returns payload with valid deliveryProfile when AI output is well-formed", async () => {
       mockIsDeliveryProfileEnabled.mockReturnValue(true);
-      mockRoutedCompletion.mockResolvedValueOnce(
-        makeCompletion({ ...BASE_PAYLOAD, deliveryProfile: VALID_DELIVERY_PROFILE })
-      );
+      mockRoutedCompletion
+        .mockResolvedValueOnce(PASS1_FALLBACK)
+        .mockResolvedValueOnce(
+          makeCompletion({ ...BASE_PAYLOAD, deliveryProfile: VALID_DELIVERY_PROFILE })
+        );
 
       const result = await generateCurriculumPayload({
         grade: 4,
@@ -196,9 +221,11 @@ describe("generateCurriculumPayload — deliveryProfile flag", () => {
 
     it("includes valid toolsRequired with known toolKey", async () => {
       mockIsDeliveryProfileEnabled.mockReturnValue(true);
-      mockRoutedCompletion.mockResolvedValueOnce(
-        makeCompletion({ ...BASE_PAYLOAD, deliveryProfile: VALID_DELIVERY_PROFILE })
-      );
+      mockRoutedCompletion
+        .mockResolvedValueOnce(PASS1_FALLBACK)
+        .mockResolvedValueOnce(
+          makeCompletion({ ...BASE_PAYLOAD, deliveryProfile: VALID_DELIVERY_PROFILE })
+        );
 
       const result = await generateCurriculumPayload({
         grade: 4,
@@ -230,9 +257,11 @@ describe("generateCurriculumPayload — deliveryProfile flag", () => {
           },
         ],
       };
-      mockRoutedCompletion.mockResolvedValueOnce(
-        makeCompletion({ ...BASE_PAYLOAD, deliveryProfile: profileWithUnknownTool })
-      );
+      mockRoutedCompletion
+        .mockResolvedValueOnce(PASS1_FALLBACK)
+        .mockResolvedValueOnce(
+          makeCompletion({ ...BASE_PAYLOAD, deliveryProfile: profileWithUnknownTool })
+        );
 
       const result = await generateCurriculumPayload({
         grade: 4,
@@ -260,9 +289,11 @@ describe("generateCurriculumPayload — deliveryProfile flag", () => {
           ],
         },
       };
-      mockRoutedCompletion.mockResolvedValueOnce(
-        makeCompletion({ ...BASE_PAYLOAD, deliveryProfile: badProfile })
-      );
+      mockRoutedCompletion
+        .mockResolvedValueOnce(PASS1_FALLBACK)
+        .mockResolvedValueOnce(
+          makeCompletion({ ...BASE_PAYLOAD, deliveryProfile: badProfile })
+        );
 
       await expect(
         generateCurriculumPayload({ grade: 4, subject: "MATH", topic: "Fractions", liberiaContext: true })
@@ -282,9 +313,11 @@ describe("generateCurriculumPayload — deliveryProfile flag", () => {
           ],
         },
       };
-      mockRoutedCompletion.mockResolvedValueOnce(
-        makeCompletion({ ...BASE_PAYLOAD, deliveryProfile: badProfile })
-      );
+      mockRoutedCompletion
+        .mockResolvedValueOnce(PASS1_FALLBACK)
+        .mockResolvedValueOnce(
+          makeCompletion({ ...BASE_PAYLOAD, deliveryProfile: badProfile })
+        );
 
       await expect(
         generateCurriculumPayload({ grade: 4, subject: "MATH", topic: "Fractions", liberiaContext: true })
@@ -293,9 +326,11 @@ describe("generateCurriculumPayload — deliveryProfile flag", () => {
 
     it("accepts exitTicket with exactly 2 questions (lower bound)", async () => {
       mockIsDeliveryProfileEnabled.mockReturnValue(true);
-      mockRoutedCompletion.mockResolvedValueOnce(
-        makeCompletion({ ...BASE_PAYLOAD, deliveryProfile: VALID_DELIVERY_PROFILE })
-      );
+      mockRoutedCompletion
+        .mockResolvedValueOnce(PASS1_FALLBACK)
+        .mockResolvedValueOnce(
+          makeCompletion({ ...BASE_PAYLOAD, deliveryProfile: VALID_DELIVERY_PROFILE })
+        );
 
       const result = await generateCurriculumPayload({
         grade: 4,
@@ -319,9 +354,11 @@ describe("generateCurriculumPayload — deliveryProfile flag", () => {
           ],
         },
       };
-      mockRoutedCompletion.mockResolvedValueOnce(
-        makeCompletion({ ...BASE_PAYLOAD, deliveryProfile: threeQProfile })
-      );
+      mockRoutedCompletion
+        .mockResolvedValueOnce(PASS1_FALLBACK)
+        .mockResolvedValueOnce(
+          makeCompletion({ ...BASE_PAYLOAD, deliveryProfile: threeQProfile })
+        );
 
       const result = await generateCurriculumPayload({
         grade: 4,
@@ -335,11 +372,13 @@ describe("generateCurriculumPayload — deliveryProfile flag", () => {
 
     it("throws when AI returns invalid JSON entirely", async () => {
       mockIsDeliveryProfileEnabled.mockReturnValue(true);
-      mockRoutedCompletion.mockResolvedValueOnce({
-        content: "Sorry, I cannot generate that content.",
-        model: "gpt-4o-mini",
-        estimatedCostUSD: 0,
-      });
+      mockRoutedCompletion
+        .mockResolvedValueOnce(PASS1_FALLBACK)
+        .mockResolvedValueOnce({
+          content: "Sorry, I cannot generate that content.",
+          model: "gpt-4o-mini",
+          estimatedCostUSD: 0,
+        });
 
       await expect(
         generateCurriculumPayload({ grade: 4, subject: "MATH", topic: "Fractions", liberiaContext: true })

@@ -66,58 +66,69 @@ function makeCompletion(payload: object) {
   };
 }
 
+// Two-pass Pass 1 returns plain Markdown prose under 1200 words, causing the
+// factory to fall back to single-pass OpenAI. calls[1] is the single-pass call
+// whose system prompt contains toneGuidance and all other injected hints.
+const PASS1_FALLBACK = {
+  content: "Short body.",
+  model: "llama-3.3-70b-versatile",
+  estimatedCostUSD: 0,
+};
+
 describe("generateCurriculumPayload — toneGuidance injection", () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
 
   it("injects grade 1 tone guidance into system prompt", async () => {
-    mockRoutedCompletion.mockResolvedValueOnce(
-      makeCompletion({ ...VALID_PAYLOAD, grade: 1 })
-    );
+    mockRoutedCompletion
+      .mockResolvedValueOnce(PASS1_FALLBACK)
+      .mockResolvedValueOnce(makeCompletion({ ...VALID_PAYLOAD, grade: 1 }));
 
     await generateCurriculumPayload({ grade: 1, subject: "LITERACY", topic: "Alphabet", liberiaContext: true });
 
-    const call = mockRoutedCompletion.mock.calls[0][0];
+    // calls[0] is the two-pass Pass 1 call; calls[1] is the single-pass fallback
+    // whose system prompt reflects toneGuidance and all injected hints.
+    const call = mockRoutedCompletion.mock.calls[1][0];
     const systemPrompt: string = call.messages[0].content;
     expect(systemPrompt).toContain(toneGuidance(1));
     expect(systemPrompt).toContain("early primary students");
   });
 
   it("injects grade 6 tone guidance into system prompt", async () => {
-    mockRoutedCompletion.mockResolvedValueOnce(
-      makeCompletion({ ...VALID_PAYLOAD, grade: 6 })
-    );
+    mockRoutedCompletion
+      .mockResolvedValueOnce(PASS1_FALLBACK)
+      .mockResolvedValueOnce(makeCompletion({ ...VALID_PAYLOAD, grade: 6 }));
 
     await generateCurriculumPayload({ grade: 6, subject: "MATH", topic: "Fractions", liberiaContext: true });
 
-    const call = mockRoutedCompletion.mock.calls[0][0];
+    const call = mockRoutedCompletion.mock.calls[1][0];
     const systemPrompt: string = call.messages[0].content;
     expect(systemPrompt).toContain(toneGuidance(6));
     expect(systemPrompt).toContain("upper primary students");
   });
 
   it("injects grade 9 tone guidance into system prompt", async () => {
-    mockRoutedCompletion.mockResolvedValueOnce(
-      makeCompletion({ ...VALID_PAYLOAD, grade: 9 })
-    );
+    mockRoutedCompletion
+      .mockResolvedValueOnce(PASS1_FALLBACK)
+      .mockResolvedValueOnce(makeCompletion({ ...VALID_PAYLOAD, grade: 9 }));
 
     await generateCurriculumPayload({ grade: 9, subject: "SCIENCE", topic: "Ecosystems", liberiaContext: true });
 
-    const call = mockRoutedCompletion.mock.calls[0][0];
+    const call = mockRoutedCompletion.mock.calls[1][0];
     const systemPrompt: string = call.messages[0].content;
     expect(systemPrompt).toContain(toneGuidance(9));
     expect(systemPrompt).toContain("junior secondary students");
   });
 
   it("injects grade 12 tone guidance into system prompt", async () => {
-    mockRoutedCompletion.mockResolvedValueOnce(
-      makeCompletion({ ...VALID_PAYLOAD, grade: 12 })
-    );
+    mockRoutedCompletion
+      .mockResolvedValueOnce(PASS1_FALLBACK)
+      .mockResolvedValueOnce(makeCompletion({ ...VALID_PAYLOAD, grade: 12 }));
 
     await generateCurriculumPayload({ grade: 12, subject: "CIVICS", topic: "Government", liberiaContext: true });
 
-    const call = mockRoutedCompletion.mock.calls[0][0];
+    const call = mockRoutedCompletion.mock.calls[1][0];
     const systemPrompt: string = call.messages[0].content;
     expect(systemPrompt).toContain(toneGuidance(12));
     expect(systemPrompt).toContain("senior secondary students");
