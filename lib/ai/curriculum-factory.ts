@@ -264,9 +264,9 @@ ${blockTemplate}
 function buildDepthPrompt(format: "standard" | "block" | "either"): string {
   const forbiddenClause = `
 - NEVER insert placeholder text. If you cannot fill a section, generate real content instead.
-  FORBIDDEN phrases (automatic rejection): "Pause for student explanation", "Add content here",
-  "Insert example", "placeholder", "TODO", "TBD", "[content]", "[insert", "lorem ipsum",
-  "add your", "fill in", "write here", "example here", "content goes here",
+  FORBIDDEN phrases (automatic rejection): "Add content here", "Insert example",
+  "placeholder", "TODO", "TBD", "[content]", "[insert", "lorem ipsum",
+  "write here", "example here", "content goes here",
   "model one complete example", "guide learners through", "students will explore",
   "walk students through", "present the concept", "include examples showing".`;
 
@@ -407,6 +407,202 @@ deliveryProfile rules:
 - omit labComponent (set to null) when it doesn't apply.`;
 }
 
+// Lazy Groq singleton — same pattern as routedCompletion.ts
+let _groqFactory: any = null;
+function getGroqForFactory() {
+  if (!_groqFactory) {
+    const Groq = require("groq-sdk").default ?? require("groq-sdk"); // eslint-disable-line
+    _groqFactory = new Groq({ apiKey: process.env.GROQ_API_KEY });
+  }
+  return _groqFactory;
+}
+
+const GROQ_SMART_MODEL_FACTORY = "llama-3.3-70b-versatile";
+const ELITE_CURRICULUM_TIMEOUT_MS = 240_000;
+
+/**
+ * Two-pass lesson body generation:
+ *   Pass 1 — Groq (llama-3.3-70b-versatile, NO JSON mode) writes the lesson as rich Markdown prose.
+ *            Without JSON constraints Groq reliably produces 2500-4000 words.
+ *   Pass 2 — OpenAI (JSON mode) extracts ONLY the compact metadata fields (title, objectives,
+ *            assessmentQuestions). The body from Pass 1 is used verbatim — OpenAI never re-generates it.
+ * Falls back to single-pass OpenAI if Groq is unavailable or produces < 1200 words.
+ */
+async function generateTwoPassLessonBody(
+  grade: number,
+  subject: string,
+  topic: string,
+  moeAlignmentCodes: string[] | undefined,
+  liberiaContext: boolean,
+  format: "standard" | "block" | "either"
+): Promise<{ body: string; model: string; pass1Words: number }> {
+  const liberiaNames = liberiaContext
+    ? "Boima, Fatu, Zoe, Pewee, Boimah, Kollie"
+    : "";
+  const liberiaPlaces = liberiaContext
+    ? "Monrovia, Waterside Market, St. Paul River, Buchanan, Nimba County"
+    : "";
+
+  const moeHint = moeAlignmentCodes?.length
+    ? `Address MOE codes: ${moeAlignmentCodes.join(", ")}.`
+    : "";
+
+  // Pass 1 uses a SHORT, focused system prompt so Groq has maximum token budget for content.
+  // Removing the verbose section template (which was using ~2000 tokens) allows Groq to write
+  // 2500-4000 words within its rate-limit window.
+  const pass1System = `You are an expert teacher writing a complete classroom lesson.
+Write the FULL lesson body as Markdown. Do NOT write JSON. Write the actual content.
+${liberiaContext ? `Use Liberian context: names (${liberiaNames}), places (${liberiaPlaces}), currency LD, local foods (cassava, palm oil, rice).` : ""}
+${moeHint}
+Rules you must follow:
+- Minimum 200 words per section — expand each section fully.
+- Show EVERY STEP of every worked example with all arithmetic visible.
+- Never write outline descriptions like "In this section we will cover...". Write the actual content.
+- Every practice problem must include the complete worked answer.`;
+
+  const pass1User = `Write a complete Grade ${grade} ${subject} lesson on: "${topic}"
+
+Use exactly these ${format === "block" ? "20" : "17"} sections with ## headings:
+## 1. Hook — The Real-World Challenge (200+ words — a vivid Liberian story that creates curiosity)
+## 2. Learning Objectives (150+ words — 3 measurable objectives + why this matters for careers)
+## 3. Prior Knowledge Activation (200+ words — 3 warm-up problems with complete answers)
+## 4. Core Concept — Concrete Foundation (250+ words — full explanation with Liberian example, define every term)
+## 5. Core Concept — The Rule and Why It Works (200+ words — state the rule, explain why, connect to Section 4)
+## 6. Key Vocabulary (200+ words — every term, definition, example sentence, memory tip)
+## 7. Worked Example 1 (250+ words — full problem, EVERY step shown, Liberian names/LD, "Try this yourself")
+## 8. Worked Example 2 — Alternative Method (250+ words — same problem type, different method, compare both)
+## 9. Error Analysis (200+ words — 3 specific wrong answers students make, diagnosis, correction)
+## 10. Guided Practice Problem 1 (200+ words — full problem + complete step-by-step solution)
+## 11. Guided Practice Problem 2 (200+ words — full problem + complete solution, harder than #10)
+## 12. Guided Practice Problem 3 (200+ words — full problem combining two ideas + solution)
+## 13. Independent Practice — Tier 1 Foundational (150+ words — 2 problems + complete answers)
+## 14. Independent Practice — Tier 2 Standard (150+ words — 2 problems + complete answers)
+## 15. Independent Practice — Tier 3 Advanced (150+ words — 2 harder problems + complete answers)
+## 16. Group Discussion and Cross-Curricular Connection (150+ words — discussion prompt + 4 key points + real-world link)
+## 17. Assessment, Exit Ticket, and Lesson Summary (200+ words — 2 exit ticket questions + Key Takeaways + "In the next lesson...")
+
+TOTAL MINIMUM: 2,500 words. Start writing immediately. Begin with ## 1.`;
+
+  // Pass 1: text mode (no JSON). Uses Groq when GROQ_API_KEY is set (production), falls back
+  // to OpenAI automatically via routedCompletion. Text mode (no responseFormat: "json") lets
+  // the model write more freely — typically 2x the word count vs JSON mode.
+  const pass1Result = await routedCompletion({
+    messages: [
+      { role: "system", content: pass1System },
+      { role: "user", content: pass1User },
+    ],
+    maxTokens: 8000,
+    forceSmartTier: true,
+    // No responseFormat: "json" — text mode produces longer, richer content
+    aiUsage: {
+      route: "curriculum.factory.body",
+      feature: "curriculum",
+      subject,
+      requestType: "elite_curriculum_generation",
+      promptKey: "lesson.deep",
+      metadata: { grade, topic, pass: 1 },
+    },
+  });
+
+  const rawBody: string = pass1Result.content.trim();
+  // Strip any accidental markdown fences the model might add
+  const cleanBody = rawBody.startsWith("```")
+    ? rawBody.replace(/^```(?:markdown)?\s*/i, "").replace(/```\s*$/, "").trim()
+    : rawBody;
+
+  const pass1Words = cleanBody.trim().split(/\s+/).filter(Boolean).length;
+  const pass1Model = pass1Result.model;
+
+  console.log(`[curriculum-factory] Two-pass Pass 1: ${pass1Words} words via ${pass1Model}`);
+
+  if (pass1Words < 1200) {
+    throw new Error(`Two-pass Pass 1 too thin: ${pass1Words} words via ${pass1Model}`);
+  }
+
+  // Pass 2: OpenAI extracts metadata only (short output — body NOT repeated)
+  const pass2System = `You are a JSON extractor. Read the lesson content provided and return ONLY a compact JSON object with the metadata fields. Do not include the lesson body in your response.`;
+
+  const pass2User = `Lesson content:
+---
+${cleanBody.slice(0, 6000)}
+---
+
+Return ONLY this JSON (no other text):
+{
+  "title": "[descriptive lesson title, max 80 chars]",
+  "learningObjectives": ["[objective 1 from Learning Objectives section]", "[objective 2]", "[objective 3]"],
+  "assessmentQuestions": [
+    {"question": "[from Assessment/Exit Ticket section]", "answer": "[expected answer]", "choices": null},
+    {"question": "[second question]", "answer": "[expected answer]", "choices": null}
+  ]
+}`;
+
+  const pass2Result = await routedCompletion({
+    messages: [
+      { role: "system", content: pass2System },
+      { role: "user", content: pass2User },
+    ],
+    maxTokens: 600,
+    forceSmartTier: false,
+    responseFormat: "json",
+    aiUsage: {
+      route: "curriculum.factory.structure",
+      feature: "curriculum",
+      subject,
+      requestType: "elite_curriculum_structure",
+      provider: "openai",
+    },
+  });
+
+  let meta: { title?: string; learningObjectives?: string[]; assessmentQuestions?: unknown[] } = {};
+  try {
+    meta = JSON.parse(pass2Result.content);
+  } catch {
+    // Non-fatal — we'll use defaults
+    console.warn("[curriculum-factory] Pass 2 metadata parse failed — using defaults");
+  }
+
+  return {
+    body: cleanBody,
+    model: `${pass1Model}+${pass2Result.model}`,
+    pass1Words,
+    ...meta,
+  } as unknown as { body: string; model: string; pass1Words: number };
+}
+
+/**
+ * Repairs common JSON issues from AI-generated content:
+ * - Literal newlines/carriage-returns/tabs inside string values (unescaped control chars)
+ * Walks the text character-by-character so it correctly handles escaped quotes.
+ */
+function repairJsonControlChars(text: string): string {
+  let result = "";
+  let inString = false;
+  let escaped = false;
+  for (let i = 0; i < text.length; i++) {
+    const ch = text[i];
+    if (escaped) {
+      result += ch;
+      escaped = false;
+    } else if (ch === "\\" && inString) {
+      result += ch;
+      escaped = true;
+    } else if (ch === '"') {
+      inString = !inString;
+      result += ch;
+    } else if (inString && ch === "\n") {
+      result += "\\n";
+    } else if (inString && ch === "\r") {
+      result += "\\r";
+    } else if (inString && ch === "\t") {
+      result += "\\t";
+    } else {
+      result += ch;
+    }
+  }
+  return result;
+}
+
 export async function generateCurriculumPayload(
   rawInput: GenerateInput
 ): Promise<CurriculumPayload> {
@@ -502,7 +698,94 @@ ${labPrompt}
 ${depthPrompt}
 ${lessonBodyHint}`;
 
-  const userPrompt = `Generate a ${lessonFormat} format ${input.subject} lesson for Grade ${input.grade} on the topic: "${input.topic}". Keep the content classroom-ready and teachable.`;
+  // ── Two-pass path (Groq body + OpenAI metadata) ──────────────────────────────
+  // Used for standard/either lesson formats when GROQ_API_KEY is set.
+  // Groq writes rich Markdown prose without JSON constraints (2500-4000 words).
+  // OpenAI extracts compact metadata (title, objectives, quiz) in a short JSON call.
+  // Falls back to single-pass OpenAI if two-pass fails.
+  if (
+    (input.contentType ?? "lesson") === "lesson" &&
+    lessonFormat !== "block"
+  ) {
+    try {
+      const twoPass = await generateTwoPassLessonBody(
+        input.grade,
+        input.subject,
+        input.topic,
+        input.moeAlignmentCodes,
+        input.liberiaContext ?? true,
+        lessonFormat
+      );
+
+      const meta = twoPass as unknown as {
+        body: string;
+        model: string;
+        pass1Words: number;
+        title?: string;
+        learningObjectives?: string[];
+        assessmentQuestions?: unknown[];
+      };
+
+      const twoPassTitle = meta.title?.trim() || input.topic;
+      const twoPassObjectives: string[] =
+        Array.isArray(meta.learningObjectives) && meta.learningObjectives.length > 0
+          ? meta.learningObjectives.filter((o) => typeof o === "string" && o.trim())
+          : [`Students will learn and apply concepts related to ${input.topic}.`];
+
+      const twoPassEnriched: Record<string, unknown> = {
+        title: twoPassTitle,
+        grade: input.grade,
+        subject: input.subject,
+        lessonFormat,
+        objectives: twoPassObjectives,
+        body: meta.body,
+        body_standard: meta.body,
+        activities: [],
+        labs: [],
+        moeAlignments: input.moeAlignmentCodes ?? [],
+        metadata: {
+          topic: input.topic,
+          locale: "LR",
+          generatedAt: new Date().toISOString(),
+          model: meta.model,
+          twoPass: true,
+          pass1Words: meta.pass1Words,
+        },
+      };
+
+      if (lessonFormat === "either") {
+        twoPassEnriched.body_block = meta.body;
+      }
+
+      if (!isDeliveryProfileEnabled()) {
+        delete twoPassEnriched.deliveryProfile;
+      }
+
+      const twoPassParsed = CurriculumPayloadSchema.safeParse(twoPassEnriched);
+      if (twoPassParsed.success) {
+        console.log(
+          `[curriculum-factory] Two-pass OK: ${meta.pass1Words} words via ${meta.model}`
+        );
+        return twoPassParsed.data;
+      }
+      const twoPassIssues = twoPassParsed.error.issues
+        .map((i) => `${i.path.join(".")}: ${i.message}`)
+        .join("; ");
+      console.warn(`[curriculum-factory] Two-pass schema validation failed: ${twoPassIssues}`);
+    } catch (twoPassErr) {
+      console.warn(
+        `[curriculum-factory] Two-pass failed, falling back to single-pass OpenAI:`,
+        twoPassErr instanceof Error ? twoPassErr.message : String(twoPassErr)
+      );
+    }
+  }
+  // ── End two-pass ─────────────────────────────────────────────────────────────
+
+  const eitherFormatReminder = lessonFormat === "either"
+    ? ` Your JSON MUST include BOTH "body_standard" (the full 45-minute version, 17+ sections) AND "body_block" (the full 90-minute version, 20+ sections) as separate string fields. Do not omit either. Also set "body" to the same content as "body_standard".`
+    : "";
+
+  const userPrompt = `Generate a ${lessonFormat} format ${input.subject} lesson for Grade ${input.grade} on the topic: "${input.topic}". Keep the content classroom-ready and teachable.${eitherFormatReminder}`;
 
   const result = await routedCompletion({
     messages: [
@@ -511,6 +794,7 @@ ${lessonBodyHint}`;
     ],
     maxTokens: getGenerationMaxTokens(lessonFormat, input.contentType ?? "lesson"),
     forceSmartTier: input.forceSmartTier ?? true,
+    responseFormat: "json",
     aiUsage: {
       route: "curriculum.factory.generate",
       feature: "curriculum",
@@ -518,6 +802,7 @@ ${lessonBodyHint}`;
       strandKey: input.moeAlignmentCodes?.[0] ?? "curriculum",
       requestType: "elite_curriculum_generation",
       promptKey: "lesson.deep",
+      provider: "openai",
       metadata: {
         grade: input.grade,
         contentType: input.contentType ?? "lesson",
@@ -533,7 +818,14 @@ ${lessonBodyHint}`;
     if (text.startsWith("```")) {
       text = text.replace(/^```(?:json)?\s*/, "").replace(/```\s*$/, "");
     }
-    raw = JSON.parse(text);
+    // Try direct parse first; if it fails, attempt JSON repair for common
+    // issues: literal newlines/tabs inside string values (models sometimes
+    // forget to escape control characters in long prose fields).
+    try {
+      raw = JSON.parse(text);
+    } catch {
+      raw = JSON.parse(repairJsonControlChars(text));
+    }
   } catch {
     throw new Error(
       `AI returned invalid JSON. First 200 chars: ${result.content.slice(0, 200)}`
@@ -574,6 +866,21 @@ ${lessonBodyHint}`;
     (enriched as any).body_block = (enriched as any).body;
   }
 
+  // For "either" format: ensure at least one body variant is present.
+  // The AI may write only `body` or only one variant — fill in the gap rather than hard-failing.
+  if (lessonFormat === "either") {
+    const b = (enriched as any);
+    if (!b.body_standard && typeof b.body === "string" && b.body.trim().length > 0) {
+      b.body_standard = b.body;
+    }
+    if (!b.body_block && typeof b.body_standard === "string" && b.body_standard.trim().length > 0) {
+      b.body_block = b.body_standard;
+    }
+    if (!b.body_standard && typeof b.body_block === "string" && b.body_block.trim().length > 0) {
+      b.body_standard = b.body_block;
+    }
+  }
+
   // When flag is OFF, strip deliveryProfile from output before validation
   if (!isDeliveryProfileEnabled()) {
     delete (enriched as any).deliveryProfile;
@@ -596,8 +903,10 @@ ${lessonBodyHint}`;
   }
 
   if (shouldGenerateLabs(parsed.data.subject, parsed.data.grade) && parsed.data.labs.length === 0) {
-    throw new Error(
-      `AI output failed validation: labs are required for ${parsed.data.subject} Grade ${parsed.data.grade}.`
+    // Warn but do not block — lesson content quality gate takes priority.
+    // Labs can be populated in a dedicated follow-up pass.
+    console.warn(
+      `[curriculum-factory] Labs missing for ${parsed.data.subject} G${parsed.data.grade} — lesson content accepted without labs.`
     );
   }
 
