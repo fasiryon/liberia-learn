@@ -8,37 +8,50 @@
 export function toneGuidance(grade: number): string {
   if (grade <= 3) {
     return (
-      "Write for early elementary students (grades 1-3). " +
-      "Use very simple, short sentences (5-8 words). " +
-      "Use basic vocabulary that a 6-8 year old would understand. " +
-      "Include encouraging language. Avoid abstract concepts. " +
-      "Use concrete examples with familiar objects."
+      "Write for early primary students (Grades 1–3, ages 6–9). " +
+      "Sentence length: 8–14 words maximum. Use only words a child this age already knows, or define new words immediately with a physical example they can see or touch. " +
+      "Speak directly to the student: 'You are going to learn...' not 'Students will learn...' " +
+      "All examples must involve objects students can count, group, sort, or compare — no abstract variables. " +
+      "Use Liberian names and local objects (yams, coins, buckets, stones). " +
+      "Every instruction must be a single, clear action: 'Count the yams. Write the number.' " +
+      "Even at this level, teach the WHY behind each step in simple words: 'We write the bigger number on top because it helps us subtract without making mistakes.' " +
+      "Be warm and encouraging — frame difficulty as a puzzle to solve, not a barrier."
     );
   }
   if (grade <= 6) {
     return (
-      "Write for upper elementary students (grades 4-6). " +
-      "Use clear, moderate-length sentences. " +
-      "Introduce subject-specific vocabulary with brief definitions. " +
-      "Include real-world examples relevant to Liberian students. " +
-      "Use a friendly, supportive tone."
+      "Write for upper primary students (Grades 4–6, ages 9–12). " +
+      "Always present the concrete, physical example BEFORE stating the abstract rule. Never lead with a formula. " +
+      "Introduce subject-specific vocabulary explicitly: state the term, define it in plain language, then use it in a Liberian context sentence. " +
+      "After any rule or formula, immediately show it working on a specific number or situation. " +
+      "Begin asking 'Why does this work?' — students at this level can start to reason, not just calculate. " +
+      "Connect every skill to something real: market arithmetic, farm measurements, sports statistics. " +
+      "Challenge the strongest students: add a stretch question or a 'Can you find another way?' prompt. " +
+      "Sentence length 15–20 words. Tone: curious and rigorous — treat students as capable thinkers, not passive receivers."
     );
   }
   if (grade <= 9) {
     return (
-      "Write for middle school students (grades 7-9). " +
-      "Use academic language appropriate for young teenagers. " +
-      "Include technical vocabulary with context clues. " +
-      "Encourage critical thinking with discussion questions. " +
-      "Connect concepts to real-world applications in Liberia."
+      "Write for junior secondary students (Grades 7–9, ages 12–15). " +
+      "Use full academic register: subject-specific terminology, formal sentence structures, technical precision. " +
+      "For every core problem, show at least two solution methods where applicable and compare their efficiency. " +
+      "Require students to write explanations in their own words — not just fill in blanks. " +
+      "Connect every topic to careers and higher education: 'Engineers at Liberia's Freeport use this formula to calculate load bearing. If you study civil engineering, this is where it starts.' " +
+      "Include Socratic questions embedded in worked examples: 'Why do we do this step before that one?', 'What would happen if the numbers were negative?' " +
+      "Standards should approach national exam level (WAEC/BECE) on standard problems, and reach pre-competition level on challenge problems. " +
+      "Cross-curricular connections are mandatory: a science lesson should connect to mathematics; a history lesson should connect to data analysis or economics."
     );
   }
   return (
-    "Write for high school students (grades 10-12). " +
-    "Use full academic register with discipline-specific terminology. " +
-    "Expect students to handle complex, multi-step reasoning. " +
-    "Include analysis, synthesis, and evaluation activities. " +
-    "Reference Liberian and global contexts."
+    "Write for senior secondary students (Grades 10–12, ages 15–18). " +
+    "Use university-preparatory language and discipline-specific terminology throughout. " +
+    "Standard problems should match WAEC Senior Secondary Certificate level. Challenge problems should approach SAT, A-Level, or national Olympiad level. " +
+    "Show multiple methods, proofs, and derivations — not just procedures. Students must see HOW formulas are derived, not just use them. " +
+    "Include analytical and synthesis tasks: compare methodologies, evaluate assumptions, propose extensions. " +
+    "Connect explicitly to university entrance requirements: 'This concept appears in first-year calculus at the University of Liberia and on the SAT Math section.' " +
+    "Reference global and Liberian contexts equally: economic data from Liberia's Central Bank, scientific research from Liberian universities, historical analysis of Liberian law. " +
+    "Expect students to construct multi-paragraph written justifications for mathematical or scientific claims. " +
+    "Tone: peer-level intellectual rigor — write as if preparing a student for a scholarship interview."
   );
 }
 

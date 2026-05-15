@@ -123,15 +123,16 @@ export function validateRegeneratedLesson(payload: unknown): QualityGateResult {
 }
 
 function getMinWords(grade: number): number {
-  if (grade <= 3) return 700;
-  if (grade <= 6) return 900;
-  return 1200;
+  if (grade <= 3) return 1500;
+  if (grade <= 6) return 2000;
+  if (grade <= 9) return 2500;
+  return 3000;
 }
 
 function getMinSlides(grade: number): number {
-  if (grade <= 3) return 10;
-  if (grade <= 6) return 12;
-  return 15;
+  if (grade <= 3) return 12;
+  if (grade <= 6) return 15;
+  return 17;
 }
 
 /**
