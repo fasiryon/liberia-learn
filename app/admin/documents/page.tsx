@@ -71,8 +71,17 @@ export default function AdminDocumentsPage() {
   const [selectedStudentId, setSelectedStudentId] = useState("");
   const [selectedEventId, setSelectedEventId] = useState("");
   const [generating, setGenerating] = useState(false);
+  const [generatingAll, setGeneratingAll] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
+  const [canvaConnected, setCanvaConnected] = useState<boolean | null>(null);
+
+  useEffect(() => {
+    fetch("/api/admin/canva/status")
+      .then((r) => r.ok ? r.json() : { connected: false })
+      .then((d) => setCanvaConnected(d.connected ?? false))
+      .catch(() => setCanvaConnected(false));
+  }, []);
 
   useEffect(() => {
     // Load selectors — gracefully handle missing endpoints
@@ -173,6 +182,28 @@ export default function AdminDocumentsPage() {
     }
   }
 
+  async function handleGenerateAll() {
+    if (!canvaConnected) return;
+    setGeneratingAll(true);
+    setError(null);
+    setSuccess(null);
+    try {
+      const res = await fetch("/api/admin/documents/id-cards/generate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ classId: "all" }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error ?? "Generation failed");
+      setSuccess(`Generating ID cards for all students (${data.generated ?? 0} queued)`);
+      await loadDocs(activeTab);
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "Failed to generate");
+    } finally {
+      setGeneratingAll(false);
+    }
+  }
+
   return (
     <main className="ll-dashboard-shell px-4 py-5">
       <div className="ll-page-enter mx-auto max-w-5xl space-y-6">
@@ -184,6 +215,21 @@ export default function AdminDocumentsPage() {
           Dashboard
         </Link>
         <h1 className="text-2xl font-bold text-[var(--ll-text)]">Documents</h1>
+
+        {/* Canva status banner */}
+        {canvaConnected === false && (
+          <div className="rounded-xl border border-amber-500/30 bg-amber-500/10 px-4 py-3 text-sm text-amber-300">
+            <span className="font-semibold">⚠️ Canva is not connected.</span>{" "}
+            ID cards and certificates cannot be generated until you connect Canva. Get your token from{" "}
+            <span className="font-mono">claude.ai → Settings → Connected apps → Canva</span>, then add it as{" "}
+            <span className="font-mono">CANVA_MCP_AUTHORIZATION_TOKEN</span> in Vercel.
+          </div>
+        )}
+        {canvaConnected === true && (
+          <div className="rounded-xl border border-emerald-500/30 bg-emerald-500/10 px-4 py-3 text-sm text-emerald-400">
+            ✓ Canva connected. Document generation is active.
+          </div>
+        )}
 
         {/* Tabs */}
         <div className="flex flex-wrap gap-2">
@@ -266,14 +312,26 @@ export default function AdminDocumentsPage() {
             )}
             {error && <p className="text-xs text-red-400">{error}</p>}
             {success && <p className="text-xs text-emerald-400">{success}</p>}
-            <button
-              type="button"
-              onClick={handleGenerate}
-              disabled={generating}
-              className="rounded-xl bg-[var(--ll-yellow)] px-4 py-2 text-sm font-semibold text-[var(--ll-bg)] disabled:opacity-50"
-            >
-              {generating ? "Generating..." : `Generate ${TAB_LABELS[activeTab]}`}
-            </button>
+            <div className="flex flex-wrap gap-2">
+              <button
+                type="button"
+                onClick={handleGenerate}
+                disabled={generating || canvaConnected === false}
+                className="rounded-xl bg-[var(--ll-yellow)] px-4 py-2 text-sm font-semibold text-[var(--ll-bg)] disabled:opacity-50"
+              >
+                {generating ? "Generating..." : `Generate ${TAB_LABELS[activeTab]}`}
+              </button>
+              {activeTab === "ID_CARDS" && (
+                <button
+                  type="button"
+                  onClick={handleGenerateAll}
+                  disabled={generatingAll || canvaConnected === false}
+                  className="rounded-xl border border-[var(--ll-border)] px-4 py-2 text-sm font-semibold text-[var(--ll-text-muted)] hover:text-[var(--ll-text)] disabled:opacity-50"
+                >
+                  {generatingAll ? "Generating…" : "Generate All ID Cards"}
+                </button>
+              )}
+            </div>
           </div>
         )}
 

@@ -1,0 +1,36 @@
+{
+  "nav": {
+    "dashboard": "Nyɔ-nyɔ",
+    "lessons": "Ɓa-kɔ",
+    "assignments": "Ɓa-wɛ",
+    "messages": "Nyɛ-ɓa",
+    "events": "Nyɔ-ɓa",
+    "portfolio": "Nyu Ɓa-kɔ",
+    "discussion": "Dyɛ-nyɔ",
+    "leaderboard": "Ɓa-tɛ",
+    "logout": "Dyɛ"
+  },
+  "student": {
+    "welcome": "Nyɔ-wɛ",
+    "todaySchedule": "Nyɔ Ɓa-kɔ",
+    "noLessons": "Ɓa-kɔ dyɛ nyɔ",
+    "markComplete": "Ɓa-kɔ Dyɛ",
+    "streak": "nyɔ-wɛ",
+    "startStreak": "Ɓa-kɔ pɛ nyɔ!"
+  },
+  "lesson": {
+    "read": "Ɓa",
+    "slides": "Nyɛ-ɓa",
+    "listen": "Nyɔ",
+    "discussion": "Dyɛ-nyɔ",
+    "backToToday": "Nyɔ dyɛ"
+  },
+  "common": {
+    "save": "Ɓa",
+    "cancel": "Dyɛ",
+    "submit": "Tɛ",
+    "loading": "Nyɔ...",
+    "error": "Dyɛ wɛ",
+    "back": "Dyɛ"
+  }
+}

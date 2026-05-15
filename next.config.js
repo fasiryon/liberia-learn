@@ -1,4 +1,6 @@
 const { withSentryConfig } = require("@sentry/nextjs");
+const createNextIntlPlugin = require("next-intl/plugin");
+const withNextIntl = createNextIntlPlugin("./i18n.ts");
 
 // Validate required env vars at build time.
 if (process.env.NEXT_PHASE !== "phase-development-server" && process.env.SKIP_ENV_VALIDATION !== "true") {
@@ -35,8 +37,10 @@ const shouldEnableSentryBuildPlugin =
   typeof process.env.SENTRY_PROJECT === "string" &&
   process.env.SENTRY_PROJECT.trim().length > 0;
 
+const nextIntlConfig = withNextIntl(nextConfig);
+
 module.exports = shouldEnableSentryBuildPlugin
-  ? withSentryConfig(nextConfig, {
+  ? withSentryConfig(nextIntlConfig, {
       org: process.env.SENTRY_ORG,
       project: process.env.SENTRY_PROJECT,
       authToken: process.env.SENTRY_AUTH_TOKEN,
@@ -44,4 +48,4 @@ module.exports = shouldEnableSentryBuildPlugin
       telemetry: false,
       widenClientFileUpload: false,
     })
-  : nextConfig;
+  : nextIntlConfig;
