@@ -39,6 +39,7 @@
         "@react-pdf/renderer": "^4.3.2",
         "@sentry/nextjs": "^10.39.0",
         "@sentry/node": "^10.43.0",
+        "@swc/helpers": "^0.5.21",
         "@types/web-push": "^3.6.4",
         "@upstash/ratelimit": "^2.0.8",
         "@upstash/redis": "^1.37.0",
