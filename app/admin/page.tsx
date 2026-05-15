@@ -393,6 +393,7 @@ export default async function AdminConsolePage() {
       links: [
         { label: "School Branding", href: "/admin/school-branding" },
         { label: "School Settings", href: "/admin/school-settings" },
+        { label: "Canva Integration", href: "/admin/settings/canva" },
         { label: "Schools", href: "/admin/schools" },
         { label: "Seed Demo Data", href: "/admin/seed" },
       ],
