@@ -262,6 +262,13 @@ export default function AdminReportCardsPage() {
                       <div className="flex items-center justify-center gap-2">
                         {s.reportCard ? (
                           <>
+                            <a
+                              href={`/api/reports/progress/${s.id}${termId ? `?termId=${termId}` : ""}`}
+                              download
+                              className="rounded-full border border-emerald-600/40 bg-emerald-950/20 px-3 py-1 text-xs font-semibold text-emerald-400 hover:border-emerald-500/60"
+                            >
+                              PDF Report
+                            </a>
                             <Link
                               href={`/student/report-cards/${s.reportCard.id}/print`}
                               target="_blank"

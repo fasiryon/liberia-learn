@@ -137,13 +137,22 @@ export default function TeacherReportCardsPage() {
                     )}
                   </div>
                   {s.reportCard ? (
-                    <Link
-                      href={`/student/report-cards/${s.reportCard.id}/print`}
-                      target="_blank"
-                      className="shrink-0 rounded-full border border-[var(--ll-border)] px-3 py-1 text-xs text-[var(--ll-text-muted)] hover:text-[var(--ll-text)]"
-                    >
-                      Preview
-                    </Link>
+                    <div className="flex items-center gap-2 shrink-0">
+                      <a
+                        href={`/api/reports/progress/${s.id}${termId ? `?termId=${termId}` : ""}`}
+                        download
+                        className="rounded-full border border-emerald-600/40 bg-emerald-950/20 px-3 py-1 text-xs font-semibold text-emerald-400 hover:border-emerald-500/60"
+                      >
+                        PDF Report
+                      </a>
+                      <Link
+                        href={`/student/report-cards/${s.reportCard.id}/print`}
+                        target="_blank"
+                        className="rounded-full border border-[var(--ll-border)] px-3 py-1 text-xs text-[var(--ll-text-muted)] hover:text-[var(--ll-text)]"
+                      >
+                        Preview
+                      </Link>
+                    </div>
                   ) : null}
                 </div>
 

@@ -107,13 +107,24 @@ export default function GuardianReportCardsPage() {
                         Academic Year {card.term.academicYear.yearLabel}
                       </p>
                     </div>
-                    <Link
-                      href={`/student/report-cards/${card.id}/print`}
-                      target="_blank"
-                      className="shrink-0 min-h-9 rounded-full border border-[var(--ll-border)] px-4 text-xs font-semibold text-[var(--ll-text-muted)] hover:text-[var(--ll-text)] inline-flex items-center"
-                    >
-                      Print / Download
-                    </Link>
+                    <div className="flex items-center gap-2 shrink-0">
+                      {selectedStudentId && (
+                        <a
+                          href={`/api/reports/progress/${selectedStudentId}`}
+                          download
+                          className="min-h-9 rounded-full border border-emerald-600/40 bg-emerald-950/20 px-4 text-xs font-semibold text-emerald-400 hover:border-emerald-500/60 inline-flex items-center"
+                        >
+                          Download PDF Report
+                        </a>
+                      )}
+                      <Link
+                        href={`/student/report-cards/${card.id}/print`}
+                        target="_blank"
+                        className="min-h-9 rounded-full border border-[var(--ll-border)] px-4 text-xs font-semibold text-[var(--ll-text-muted)] hover:text-[var(--ll-text)] inline-flex items-center"
+                      >
+                        Print / Download
+                      </Link>
+                    </div>
                   </div>
 
                   <div className="overflow-x-auto">

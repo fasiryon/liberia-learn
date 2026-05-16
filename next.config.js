@@ -13,6 +13,9 @@ const nextConfig = {
   reactStrictMode: true,
   output: "standalone",
   staticPageGenerationTimeout: 300,
+  experimental: {
+    serverComponentsExternalPackages: ["@react-pdf/renderer"],
+  },
   async headers() {
     return [
       {
