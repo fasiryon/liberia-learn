@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { GenerateResetCodeButton } from "@/components/admin/GenerateResetCodeButton";
 
 type StudentDetail = {
   id: string;
@@ -143,9 +144,12 @@ export default function AdminStudentDetailPage({ params }: { params: { id: strin
               {student.email} {student.school ? `• ${student.school.name}` : ""}
             </p>
           </div>
-          <Link href="/admin/students" className="inline-flex rounded-xl border border-[var(--ll-border)] px-4 py-2 text-sm text-[var(--ll-text)] hover:bg-[var(--ll-surface)]">
-            Back to students
-          </Link>
+          <div className="flex items-center gap-2 flex-wrap">
+            <GenerateResetCodeButton studentId={params.id} />
+            <Link href="/admin/students" className="inline-flex rounded-xl border border-[var(--ll-border)] px-4 py-2 text-sm text-[var(--ll-text)] hover:bg-[var(--ll-surface)]">
+              Back to students
+            </Link>
+          </div>
         </div>
 
         <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">

@@ -1124,6 +1124,7 @@ model PasswordResetToken {
   id        String    @id @default(cuid())
   token     String    @unique @default(cuid())
   tokenHash String?   @unique
+  adminCode String?
   userId    String
   expiresAt DateTime
   usedAt    DateTime?

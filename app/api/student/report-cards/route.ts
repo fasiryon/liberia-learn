@@ -26,7 +26,7 @@ export async function GET() {
       orderBy: { generatedAt: "desc" },
     });
 
-    return NextResponse.json({ reportCards });
+    return NextResponse.json({ studentId: student.id, reportCards });
   } catch (e: any) {
     if (e.status === 401) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     if (e.status === 403) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
