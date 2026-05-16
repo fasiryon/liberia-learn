@@ -41,6 +41,9 @@ export default async function StudentAssignmentPage({ params }: { params: { id: 
           feedback: true,
           gradedAt: true,
           turnedInAt: true,
+          teacherApproved: true,
+          autoReleasedAt: true,
+          aiFeedback: true,
         },
       },
     },
@@ -62,9 +65,11 @@ export default async function StudentAssignmentPage({ params }: { params: { id: 
   const gradeData = submission
     ? {
         score: submission.score,
-        feedback: submission.feedback,
+        feedback: submission.feedback ?? submission.aiFeedback ?? null,
         gradedAt: submission.gradedAt?.toISOString() ?? null,
         turnedInAt: submission.turnedInAt?.toISOString() ?? null,
+        teacherApproved: submission.teacherApproved,
+        autoReleasedAt: submission.autoReleasedAt?.toISOString() ?? null,
       }
     : null;
 

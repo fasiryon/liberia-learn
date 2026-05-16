@@ -71,6 +71,9 @@ export async function GET(req: NextRequest) {
               score: true,
               gradedAt: true,
               feedback: true,
+              aiGrade: true,
+              teacherApproved: true,
+              autoReleasedAt: true,
             },
           })
         : [];
@@ -95,6 +98,9 @@ export async function GET(req: NextRequest) {
         grade: s.score,
         gradedAt: s.gradedAt?.toISOString() ?? null,
         feedback: s.feedback,
+        aiGrade: s.aiGrade ?? null,
+        teacherApproved: s.teacherApproved,
+        autoReleasedAt: s.autoReleasedAt ? s.autoReleasedAt.toISOString() : null,
       })),
     });
   } catch (err: unknown) {

@@ -7,7 +7,16 @@ import { ChevronLeft } from "lucide-react";
 type ClassOption = { id: string; name: string; subject: string };
 type StudentRow = { id: string; name: string };
 type AssignmentCol = { id: string; title: string; points: number; dueAt: string | null };
-type SubmissionCell = { id: string; studentId: string; assignmentId: string; grade: number | null; gradedAt: string | null };
+type SubmissionCell = {
+  id: string;
+  studentId: string;
+  assignmentId: string;
+  grade: number | null;
+  gradedAt: string | null;
+  aiGrade: number | null;
+  teacherApproved: boolean;
+  autoReleasedAt: string | null;
+};
 
 type GradebookData = {
   classes: ClassOption[];
@@ -29,6 +38,7 @@ export default function GradebookPage() {
   const [classId, setClassId] = useState<string>("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [pendingAiOnly, setPendingAiOnly] = useState(false);
 
   const fetchData = useCallback((cid: string) => {
     setLoading(true);
@@ -57,18 +67,36 @@ export default function GradebookPage() {
   }
 
   const cellMap = useMemo(() => {
-    const map = new Map<string, number | null>();
+    const map = new Map<string, SubmissionCell>();
     for (const s of data?.submissions ?? []) {
-      map.set(`${s.studentId}:${s.assignmentId}`, s.grade);
+      map.set(`${s.studentId}:${s.assignmentId}`, s);
     }
     return map;
   }, [data?.submissions]);
 
+  const pendingAiCount = useMemo(
+    () =>
+      (data?.submissions ?? []).filter(
+        (s) => s.aiGrade !== null && !s.teacherApproved && !s.autoReleasedAt,
+      ).length,
+    [data?.submissions],
+  );
+
+  const visibleAssignments = useMemo(() => {
+    if (!pendingAiOnly) return data?.assignments ?? [];
+    const aidsWithPending = new Set(
+      (data?.submissions ?? [])
+        .filter((s) => s.aiGrade !== null && !s.teacherApproved && !s.autoReleasedAt)
+        .map((s) => s.assignmentId),
+    );
+    return (data?.assignments ?? []).filter((a) => aidsWithPending.has(a.id));
+  }, [data?.assignments, data?.submissions, pendingAiOnly]);
+
   const studentAverages = useMemo(() => {
     const avgs = new Map<string, number | null>();
     for (const student of data?.students ?? []) {
-      const scores = (data?.assignments ?? [])
-        .map((a) => cellMap.get(`${student.id}:${a.id}`) ?? null)
+      const scores = visibleAssignments
+        .map((a) => cellMap.get(`${student.id}:${a.id}`)?.grade ?? null)
         .filter((v) => v !== null) as number[];
       avgs.set(
         student.id,
@@ -76,11 +104,11 @@ export default function GradebookPage() {
       );
     }
     return avgs;
-  }, [data?.students, data?.assignments, cellMap]);
+  }, [data?.students, visibleAssignments, cellMap]);
 
   const classes = data?.classes ?? [];
   const students = data?.students ?? [];
-  const assignments = data?.assignments ?? [];
+  const assignments = visibleAssignments;
 
   return (
     <main className="ll-dashboard-shell px-4 py-5 text-[var(--ll-text)]">
@@ -99,12 +127,19 @@ export default function GradebookPage() {
               Student grades across all assignments.
             </p>
           </div>
-          <Link
-            href="/teacher/assignments/grading"
-            className="rounded-full border border-[var(--ll-border)] px-4 py-2 text-sm text-[var(--ll-text-muted)] hover:text-[var(--ll-text)]"
-          >
-            Go to Grading Inbox
-          </Link>
+          <div className="flex items-center gap-3">
+            <Link
+              href="/teacher/assignments/grading"
+              className="relative rounded-full border border-[var(--ll-border)] px-4 py-2 text-sm text-[var(--ll-text-muted)] hover:text-[var(--ll-text)]"
+            >
+              Grading Inbox
+              {pendingAiCount > 0 ? (
+                <span className="absolute -right-1.5 -top-1.5 flex h-4 w-4 items-center justify-center rounded-full bg-amber-400 text-[10px] font-bold text-black">
+                  {pendingAiCount}
+                </span>
+              ) : null}
+            </Link>
+          </div>
         </div>
 
         <div className="flex flex-wrap gap-4">
@@ -126,7 +161,20 @@ export default function GradebookPage() {
             </label>
           </div>
           {classId ? (
-            <div className="flex items-end">
+            <div className="flex items-end gap-3">
+              {pendingAiCount > 0 ? (
+                <button
+                  type="button"
+                  onClick={() => setPendingAiOnly((v) => !v)}
+                  className={`min-h-11 rounded-full border px-4 text-sm font-medium transition-colors ${
+                    pendingAiOnly
+                      ? "border-amber-400/40 bg-amber-400/10 text-amber-300"
+                      : "border-[var(--ll-border)] text-[var(--ll-text-muted)] hover:text-[var(--ll-text)]"
+                  }`}
+                >
+                  {pendingAiOnly ? "All Assignments" : `Pending AI (${pendingAiCount})`}
+                </button>
+              ) : null}
               <a
                 href={`/api/teacher/gradebook/export?classId=${classId}`}
                 className="inline-flex min-h-11 items-center rounded-full bg-[var(--ll-yellow-soft)] px-5 text-sm font-semibold text-[var(--ll-text-faint)]"
@@ -179,10 +227,17 @@ export default function GradebookPage() {
                         {student.name}
                       </td>
                       {assignments.map((a) => {
-                        const score = cellMap.get(`${student.id}:${a.id}`) ?? null;
+                        const cell = cellMap.get(`${student.id}:${a.id}`) ?? null;
+                        const score = cell?.grade ?? null;
+                        const hasPendingAI = cell ? cell.aiGrade !== null && !cell.teacherApproved && !cell.autoReleasedAt : false;
                         return (
                           <td key={a.id} className={`px-3 py-3 text-center font-semibold ${scoreColor(score)}`}>
-                            {score !== null ? score : <span className="text-[var(--ll-text-faint)]">–</span>}
+                            <span className="inline-flex items-center justify-center gap-1">
+                              {hasPendingAI ? (
+                                <span className="inline-block h-2 w-2 rounded-full bg-amber-400" title="Pending AI grade approval" />
+                              ) : null}
+                              {score !== null ? score : <span className="text-[var(--ll-text-faint)]">–</span>}
+                            </span>
                           </td>
                         );
                       })}

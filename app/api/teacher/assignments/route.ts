@@ -189,6 +189,13 @@ export async function GET() {
         score: submission.score,
         feedback: submission.feedback ?? "",
         content: submission.content ?? "",
+        aiGrade: submission.aiGrade ?? null,
+        aiFeedback: submission.aiFeedback ?? null,
+        aiRationale: submission.aiRationale ?? null,
+        aiGradedAt: submission.aiGradedAt ? submission.aiGradedAt.toISOString() : null,
+        teacherApproved: submission.teacherApproved,
+        approvedAt: submission.approvedAt ? submission.approvedAt.toISOString() : null,
+        autoReleasedAt: submission.autoReleasedAt ? submission.autoReleasedAt.toISOString() : null,
       })),
     });
   } catch (err: any) {

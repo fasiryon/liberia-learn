@@ -9,6 +9,8 @@ type GradeData = {
   feedback: string | null;
   gradedAt: string | null;
   turnedInAt: string | null;
+  teacherApproved?: boolean;
+  autoReleasedAt?: string | null;
 };
 
 type Props = {
@@ -98,16 +100,27 @@ export default function AssignmentSubmissionClient(props: Props) {
           </section>
         ) : null}
 
-        <div className="flex items-center gap-3">
-          <span className="rounded-full border border-emerald-500/20 bg-emerald-500/10 px-3 py-1 text-xs font-semibold text-emerald-300">
-            Graded
-          </span>
+        <div className="flex flex-wrap items-center gap-3">
+          {gradeData.autoReleasedAt && !gradeData.teacherApproved ? (
+            <span className="rounded-full border border-gray-500/20 bg-gray-500/10 px-3 py-1 text-xs font-semibold text-gray-300">
+              Graded by AI
+            </span>
+          ) : (
+            <span className="rounded-full border border-emerald-500/20 bg-emerald-500/10 px-3 py-1 text-xs font-semibold text-emerald-300">
+              Graded by Teacher
+            </span>
+          )}
           {gradeData.gradedAt ? (
             <span className="text-xs text-[var(--ll-text-muted)]">
-              Graded on {new Date(gradeData.gradedAt).toLocaleDateString("en-LR", { year: "numeric", month: "long", day: "numeric" })}
+              {new Date(gradeData.gradedAt).toLocaleDateString("en-LR", { year: "numeric", month: "long", day: "numeric" })}
             </span>
           ) : null}
         </div>
+        {gradeData.autoReleasedAt && !gradeData.teacherApproved ? (
+          <p className="text-xs text-[var(--ll-text-muted)]">
+            Your teacher may review this grade. Check back later.
+          </p>
+        ) : null}
 
         <div className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 p-6 text-center">
           <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[var(--ll-text-muted)]">Your Score</p>
@@ -119,7 +132,7 @@ export default function AssignmentSubmissionClient(props: Props) {
 
         {gradeData.feedback ? (
           <div className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 p-5">
-            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[var(--ll-text-muted)]">Teacher Feedback</p>
+            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[var(--ll-text-muted)]">Feedback</p>
             <p className="mt-3 whitespace-pre-wrap text-sm text-[var(--ll-text)]">{gradeData.feedback}</p>
           </div>
         ) : null}

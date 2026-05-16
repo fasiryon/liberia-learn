@@ -23,6 +23,7 @@
     { "path": "/api/admin/ops/cron/autonomous/evaluation-windows",               "schedule": "0 * * * *" },
     { "path": "/api/admin/ops/cron/autonomous/workflow-recovery",                "schedule": "*/10 * * * *" },
     { "path": "/api/admin/ops/cron/autonomous/runtime-health",                   "schedule": "*/5 * * * *" },
-    { "path": "/api/admin/ops/cron/autonomous/dead-letter-inspection",           "schedule": "0 */6 * * *" }
+    { "path": "/api/admin/ops/cron/autonomous/dead-letter-inspection",           "schedule": "0 */6 * * *" },
+    { "path": "/api/cron/release-stale-grades",                                  "schedule": "0 */6 * * *" }
   ]
 }

@@ -7,6 +7,7 @@ import { prisma } from "@/lib/db";
 import { getAssignmentTargetStudentIds } from "@/lib/assignments/targeting";
 import { recordSloEvent } from "@/lib/slo/tracker";
 import { logProductSignal } from "@/lib/autonomous/signals/productSignalService";
+import { gradeHomework } from "@/lib/ai/homeworkGrader";
 
 export async function POST(
   req: NextRequest,
@@ -110,6 +111,27 @@ export async function POST(
       studentName: student.user.name?.trim() || "Student",
       assignmentTitle: assignment.title,
     }).catch(() => null);
+
+    // Fire-and-forget AI grading — does not block submission response
+    void (async () => {
+      try {
+        const gradeResult = await gradeHomework(
+          { content },
+          { title: assignment.title, description: assignment.description ?? null },
+        );
+        await prisma.assignmentSubmission.update({
+          where: { id: submission.id },
+          data: {
+            aiGrade: gradeResult.grade,
+            aiFeedback: gradeResult.feedback,
+            aiRationale: gradeResult.rationale,
+            aiGradedAt: new Date(),
+          },
+        });
+      } catch {
+        // Silent — AI grading is best-effort
+      }
+    })();
 
     recordSloEvent({
       service: "submit",

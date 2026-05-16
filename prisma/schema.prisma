@@ -876,22 +876,31 @@ model Assignment {
 }
 
 model AssignmentSubmission {
-  id           String     @id @default(cuid())
-  assignmentId String
-  studentId    String
-  turnedInAt   DateTime?
-  content      String?
-  score        Int?
-  feedback     String?
-  gradedAt     DateTime?
-  gradedBy     String?
-  rubricScore  Json?
-  Assignment   Assignment @relation(fields: [assignmentId], references: [id])
-  Student      Student    @relation(fields: [studentId], references: [id])
+  id              String     @id @default(cuid())
+  assignmentId    String
+  studentId       String
+  turnedInAt      DateTime?
+  content         String?
+  score           Int?
+  feedback        String?
+  gradedAt        DateTime?
+  gradedBy        String?
+  rubricScore     Json?
+  // Sprint 20: AI homework grading
+  aiGrade         Int?
+  aiFeedback      String?
+  aiGradedAt      DateTime?
+  aiRationale     String?
+  teacherApproved Boolean    @default(false)
+  approvedAt      DateTime?
+  autoReleasedAt  DateTime?
+  Assignment      Assignment @relation(fields: [assignmentId], references: [id])
+  Student         Student    @relation(fields: [studentId], references: [id])
 
   @@unique([assignmentId, studentId])
   // Block 23: student-first + time index for assignment completion queries in risk routes
   @@index([studentId, turnedInAt])
+  @@index([aiGradedAt, teacherApproved, autoReleasedAt])
 }
 
 /// / ===== Homework (AI + Teacher) =====
