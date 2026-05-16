@@ -1,6 +1,12 @@
 // scripts/verify-week-schedule.ts — Verification script for full week curriculum
 // Run: npx ts-node --compiler-options '{"module":"CommonJS"}' scripts/verify-week-schedule.ts
 
+// Use direct Postgres URL for local scripts
+// (bypasses Prisma Accelerate requirement)
+if (process.env.DIRECT_URL) {
+  process.env.DATABASE_URL = process.env.DIRECT_URL
+}
+
 import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();

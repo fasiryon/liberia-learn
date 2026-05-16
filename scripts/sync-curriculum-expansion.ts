@@ -1,3 +1,9 @@
+// Use direct Postgres URL for local scripts
+// (bypasses Prisma Accelerate requirement)
+if (process.env.DIRECT_URL) {
+  process.env.DATABASE_URL = process.env.DIRECT_URL
+}
+
 import { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/db";
 import { buildCurriculumExpansionRecords, summarizeCurriculumExpansion } from "@/lib/curriculum/factoryExpansion";

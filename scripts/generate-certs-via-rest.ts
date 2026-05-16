@@ -10,6 +10,12 @@
  *     npx tsx scripts/generate-certs-via-rest.ts
  */
 
+// Use direct Postgres URL for local scripts
+// (bypasses Prisma Accelerate requirement)
+if (process.env.DIRECT_URL) {
+  process.env.DATABASE_URL = process.env.DIRECT_URL
+}
+
 import { PrismaClient } from "@prisma/client";
 import { resolveCanvaMcpAuthorizationToken } from "../lib/canva/canvaOAuth";
 

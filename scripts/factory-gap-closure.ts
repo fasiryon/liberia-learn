@@ -8,6 +8,12 @@
  *   approve  — approve lessons written in this run (version=ncf-2026.1, specific combos)
  *   full     — generate + approve in one pass
  */
+// Use direct Postgres URL for local scripts
+// (bypasses Prisma Accelerate requirement)
+if (process.env.DIRECT_URL) {
+  process.env.DATABASE_URL = process.env.DIRECT_URL
+}
+
 import { generateNationalBatch, auditNationalCoverage, validatePayloadQuality } from "../lib/curriculum/nationalFactory";
 import { PrismaClient } from "@prisma/client";
 
