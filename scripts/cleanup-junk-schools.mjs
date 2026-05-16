@@ -1,4 +1,11 @@
 import { PrismaClient } from "@prisma/client";
+
+// Use direct Postgres URL for local scripts
+// (bypasses Prisma Accelerate requirement)
+if (process.env.DIRECT_URL) {
+  process.env.DATABASE_URL = process.env.DIRECT_URL
+}
+
 const p = new PrismaClient();
 
 const validIds = ["school_mca", "school_pcs", "school_krs"];

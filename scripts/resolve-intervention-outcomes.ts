@@ -1,6 +1,12 @@
 // scripts/resolve-intervention-outcomes.ts
 // Run: npx ts-node --compiler-options '{"module":"CommonJS"}' scripts/resolve-intervention-outcomes.ts
 
+// Use direct Postgres URL for local scripts
+// (bypasses Prisma Accelerate requirement)
+if (process.env.DIRECT_URL) {
+  process.env.DATABASE_URL = process.env.DIRECT_URL
+}
+
 import { PrismaClient } from "@prisma/client";
 import { isInterventionOutcomesEnabled } from "../lib/serverFlags";
 import { resolveInterventionOutcomesBatch } from "../lib/metrics/impact/interventionOutcomeResolver";

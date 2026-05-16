@@ -1,4 +1,10 @@
-﻿const { PrismaClient } = require('@prisma/client');
+﻿// Use direct Postgres URL for local scripts
+// (bypasses Prisma Accelerate requirement)
+if (process.env.DIRECT_URL) {
+  process.env.DATABASE_URL = process.env.DIRECT_URL
+}
+
+const { PrismaClient } = require('@prisma/client');
 const bcrypt = require('bcryptjs');
 async function main() {
   const prisma = new PrismaClient();

@@ -1,3 +1,9 @@
+// Use direct Postgres URL for local scripts
+// (bypasses Prisma Accelerate requirement)
+if (process.env.DIRECT_URL) {
+  process.env.DATABASE_URL = process.env.DIRECT_URL
+}
+
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import path from "node:path";
 import { PrismaClient, type Role } from "@prisma/client";

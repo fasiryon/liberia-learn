@@ -1,6 +1,12 @@
 ﻿import "dotenv/config";
 import { PrismaClient } from "@prisma/client";
 
+// Use direct Postgres URL for local scripts
+// (bypasses Prisma Accelerate requirement)
+if (process.env.DIRECT_URL) {
+  process.env.DATABASE_URL = process.env.DIRECT_URL
+}
+
 function safeParse(name, v) {
   if (!v) return { name, present: false };
   try {

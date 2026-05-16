@@ -1,3 +1,9 @@
+// Use direct Postgres URL for local scripts
+// (bypasses Prisma Accelerate requirement)
+if (process.env.DIRECT_URL) {
+  process.env.DATABASE_URL = process.env.DIRECT_URL
+}
+
 import { config } from "dotenv";
 import { createHash } from "crypto";
 import { PrismaClient } from "@prisma/client";

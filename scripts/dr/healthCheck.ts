@@ -11,6 +11,12 @@
  *   npx ts-node scripts/dr/healthCheck.ts --json
  */
 
+// Use direct Postgres URL for local scripts
+// (bypasses Prisma Accelerate requirement)
+if (process.env.DIRECT_URL) {
+  process.env.DATABASE_URL = process.env.DIRECT_URL
+}
+
 import { prisma } from "@/lib/db";
 
 export interface HealthCheckResult {
