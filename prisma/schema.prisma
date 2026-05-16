@@ -86,6 +86,8 @@ model User {
   announcements        Announcement[]       @relation("AnnouncementAuthor")
   notificationInboxItems NotificationInboxItem[]
   languagePreference     String?               @default("en")
+  tutorConversations     TutorConversation[]   @relation("TutorConversationStudent")
+  lessonHelpFlags        LessonHelpFlag[]      @relation("LessonHelpFlagStudent")
 }
 
 model District {
@@ -1804,8 +1806,10 @@ model CurriculumContent {
   videoSupplements LessonVideo[]
   embeddedAt      DateTime?
   embedding       Unsupported("vector(1536)")?
-  curriculumVersion CurriculumVersion? @relation(fields: [versionId], references: [id], onDelete: SetNull)
-  lessonPlans       CurriculumLessonPlan[]
+  curriculumVersion  CurriculumVersion?  @relation(fields: [versionId], references: [id], onDelete: SetNull)
+  lessonPlans        CurriculumLessonPlan[]
+  tutorConversations TutorConversation[] @relation("TutorConversationContent")
+  lessonHelpFlags    LessonHelpFlag[]    @relation("LessonHelpFlagContent")
 
   @@index([grade, subject])
   @@index([contentType, status])
@@ -3545,4 +3549,33 @@ model MoeSubmission {
   @@index([schoolId])
   @@index([status])
   @@index([submittedAt])
+}
+
+model TutorConversation {
+  id             String            @id @default(cuid())
+  studentId      String
+  contentId      String
+  schoolId       String
+  messages       Json
+  questionsAsked Int               @default(0)
+  sessionDate    DateTime          @default(now())
+  createdAt      DateTime          @default(now())
+  updatedAt      DateTime          @updatedAt
+  student        User              @relation("TutorConversationStudent", fields: [studentId], references: [id])
+  content        CurriculumContent @relation("TutorConversationContent", fields: [contentId], references: [contentId])
+
+  @@index([studentId, contentId, sessionDate])
+}
+
+model LessonHelpFlag {
+  id        String            @id @default(cuid())
+  studentId String
+  contentId String
+  note      String?
+  resolved  Boolean           @default(false)
+  createdAt DateTime          @default(now())
+  student   User              @relation("LessonHelpFlagStudent", fields: [studentId], references: [id])
+  content   CurriculumContent @relation("LessonHelpFlagContent", fields: [contentId], references: [contentId])
+
+  @@index([studentId, contentId])
 }

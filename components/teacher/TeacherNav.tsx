@@ -20,6 +20,7 @@ const LINKS = [
   { href: "/teacher/students", label: "Students" },
   { href: "/teacher/intelligence", label: "Intelligence" },
   { href: "/teacher/placements", label: "Placements" },
+  { href: "/teacher/tutor-analytics", label: "Tutor Insights" },
 ];
 
 type MessageSummary = { read: boolean; fromRole: "guardian" | "teacher" };

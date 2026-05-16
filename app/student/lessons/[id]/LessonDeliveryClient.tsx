@@ -1,9 +1,10 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, Flag } from "lucide-react";
 
 import { LessonQuizPanel } from "@/components/student/LessonQuizPanel";
+import { TutorChatWidget } from "@/components/TutorChatWidget";
 import { StudentLessonHelpPanel } from "@/components/student/StudentLessonHelpPanel";
 import LessonLabPanel from "@/components/labs/LessonLabPanel";
 import { PencilButton, PencilButtonFloat } from "@/components/ui/PencilButton";
@@ -374,6 +375,10 @@ export default function LessonDeliveryClient({ lessonId }: { lessonId: string })
   const [tutorLoading, setTutorLoading] = useState(false);
   const [currentSection, setCurrentSection] = useState("overview");
   const [sectionOrder, setSectionOrder] = useState<string[]>(["overview", "lesson-content", "exit-ticket"]);
+  const [flagPanelOpen, setFlagPanelOpen] = useState(false);
+  const [flagNote, setFlagNote] = useState("");
+  const [flagSubmitting, setFlagSubmitting] = useState(false);
+  const [flagDone, setFlagDone] = useState(false);
   const sectionRefs = useRef<Record<string, HTMLElement | null>>({});
   const hasRestoredProgressRef = useRef(false);
 
@@ -675,6 +680,25 @@ export default function LessonDeliveryClient({ lessonId }: { lessonId: string })
     }
   }
 
+  async function submitLessonFlag() {
+    if (!lesson || flagSubmitting) return;
+    setFlagSubmitting(true);
+    try {
+      await fetch(`/api/student/lesson/${lesson.contentId}/flag`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ note: flagNote }),
+      });
+      setFlagDone(true);
+      setFlagPanelOpen(false);
+      setFlagNote("");
+    } catch {
+      // best-effort
+    } finally {
+      setFlagSubmitting(false);
+    }
+  }
+
   async function handleSubmitExitTicket() {
     if (!lesson) return;
     setSubmitting(true);
@@ -737,7 +761,50 @@ export default function LessonDeliveryClient({ lessonId }: { lessonId: string })
           </div>
           <div className="mt-4 flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
             <div>
-              <h1 className="text-3xl font-semibold text-[var(--ll-text)]">{lesson.title}</h1>
+              <div className="flex items-center gap-3">
+                <h1 className="text-3xl font-semibold text-[var(--ll-text)]">{lesson.title}</h1>
+                <button
+                  type="button"
+                  aria-label="Flag this lesson for teacher help"
+                  title={flagDone ? "Flagged — your teacher has been notified" : "Flag this lesson for help"}
+                  onClick={() => flagDone ? undefined : setFlagPanelOpen((v) => !v)}
+                  className={`shrink-0 rounded-full p-1.5 transition-colors ${flagDone ? "text-red-500" : "text-[var(--ll-text-muted)] hover:text-red-400"}`}
+                >
+                  <Flag size={18} />
+                </button>
+              </div>
+              {flagPanelOpen && !flagDone && (
+                <div className="mt-3 rounded-xl border border-[var(--ll-border)] bg-[var(--ll-surface-muted)] p-3 text-sm">
+                  <p className="font-semibold text-[var(--ll-text)]">Flag for teacher help</p>
+                  <textarea
+                    value={flagNote}
+                    onChange={(e) => setFlagNote(e.target.value)}
+                    placeholder="Optional: what are you struggling with?"
+                    rows={2}
+                    className="mt-2 w-full rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/80 px-3 py-2 text-sm text-[var(--ll-text)] outline-none"
+                  />
+                  <div className="mt-2 flex gap-2">
+                    <button
+                      type="button"
+                      onClick={submitLessonFlag}
+                      disabled={flagSubmitting}
+                      className="rounded-lg bg-red-500/20 px-3 py-1.5 text-xs font-semibold text-red-400"
+                    >
+                      {flagSubmitting ? "Flagging…" : "Confirm Flag"}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setFlagPanelOpen(false)}
+                      className="rounded-lg border border-[var(--ll-border)] px-3 py-1.5 text-xs text-[var(--ll-text-muted)]"
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                </div>
+              )}
+              {flagDone && (
+                <p className="mt-1 text-xs text-red-400">🚩 Flagged — your teacher has been notified</p>
+              )}
               <p className="mt-2 text-base text-[var(--ll-text)]">Teacher: {lesson.teacherName}</p>
             </div>
             <div className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/55 px-4 py-3 text-sm text-[var(--ll-text)]">
@@ -1158,6 +1225,11 @@ export default function LessonDeliveryClient({ lessonId }: { lessonId: string })
           />
         </div>
       ) : null}
+      <TutorChatWidget
+        contentId={lesson.contentId}
+        grade={lesson.grade}
+        subject={lesson.subject}
+      />
     </div>
   );
 }
