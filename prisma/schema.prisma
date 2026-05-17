@@ -69,6 +69,7 @@ model User {
   sentGuardianMessages     GuardianMessage[] @relation("GuardianMessageGuardian")
   receivedGuardianMessages GuardianMessage[] @relation("GuardianMessageTeacher")
   lessonVideos        LessonVideo[]          @relation("LessonVideoTeacher")
+  videoWatchEvents    VideoWatchEvent[]      @relation("VideoWatchEvents")
   teacherWelcomeCompletedAt DateTime?
   teacherSentiments   TeacherSentiment[]
   createdReportCards   ReportCard[]         @relation("ReportCardCreator")
@@ -184,6 +185,7 @@ model School {
   announcements          Announcement[]
   schoolOnboarding       SchoolOnboarding?
   moeSubmissions         MoeSubmission[]
+  storageQuota           SchoolStorageQuota?
 }
 
 model Class {
@@ -1852,15 +1854,51 @@ model LessonVideo {
   description     String?
   storageUrl      String
   thumbnailUrl    String?
+  thumbnailFile   String?
   durationSeconds Int
   fileSize        Int
   uploadedAt      DateTime          @default(now())
   isActive        Boolean           @default(false)
+  status          String            @default("PENDING")
+  schoolId        String?
+  approvedBy      String?
+  approvedAt      DateTime?
+  rejectedReason  String?
+  viewCount       Int               @default(0)
+  storageBytes    Int?
   lesson          CurriculumContent @relation(fields: [lessonId], references: [contentId], onDelete: Cascade)
   teacher         User              @relation("LessonVideoTeacher", fields: [uploadedBy], references: [id], onDelete: Cascade)
+  watchEvents     VideoWatchEvent[]
 
   @@index([lessonId, isActive])
   @@index([uploadedBy, uploadedAt])
+  @@index([status])
+  @@index([schoolId, status])
+}
+
+model VideoWatchEvent {
+  id          String      @id @default(cuid())
+  videoId     String
+  studentId   String
+  watchedSecs Int
+  totalSecs   Int
+  completedAt DateTime?
+  createdAt   DateTime    @default(now())
+  video       LessonVideo @relation(fields: [videoId], references: [id], onDelete: Cascade)
+  student     User        @relation("VideoWatchEvents", fields: [studentId], references: [id], onDelete: Cascade)
+
+  @@unique([videoId, studentId])
+  @@index([videoId])
+  @@index([studentId])
+}
+
+model SchoolStorageQuota {
+  id         String   @id @default(cuid())
+  schoolId   String   @unique
+  usedBytes  Int      @default(0)
+  limitBytes Int      @default(5368709120)
+  updatedAt  DateTime @updatedAt
+  school     School   @relation(fields: [schoolId], references: [id], onDelete: Cascade)
 }
 
 model TextbookGenerationJob {

@@ -65,6 +65,7 @@ type LessonResponse = {
     thumbnailUrl: string | null;
     durationSeconds: number;
     fileSize: number;
+    viewCount: number;
     uploadedAt: string;
     teacherName: string;
   } | null;
@@ -354,6 +355,90 @@ function SimulationCard({ definition }: { definition: SimulationDefinition }) {
         </div>
       </div>
     </article>
+  );
+}
+
+type ActiveVideo = NonNullable<LessonResponse["activeVideo"]>;
+
+function VideoSection({
+  video,
+  contentId,
+  lessonId,
+}: {
+  video: ActiveVideo;
+  contentId: string;
+  lessonId: string;
+}) {
+  const isOnline = typeof navigator !== "undefined" ? navigator.onLine : true;
+  const watchIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
+
+  useEffect(() => {
+    void fetch("/api/track", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        eventType: "VIDEO_PLAYBACK_STARTED",
+        contentId,
+        metadata: { lessonId, videoId: video.id },
+      }),
+    }).catch(() => {});
+  }, [contentId, lessonId, video.id]);
+
+  useEffect(() => {
+    const el = videoRef.current;
+    if (!el) return;
+
+    function sendWatch() {
+      if (!el) return;
+      void fetch(`/api/student/video/${video.id}/watch`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          watchedSecs: Math.round(el.currentTime),
+          totalSecs: Math.round(el.duration || video.durationSeconds || 0),
+        }),
+      }).catch(() => {});
+    }
+
+    watchIntervalRef.current = setInterval(sendWatch, 30000);
+    el.addEventListener("ended", sendWatch);
+
+    return () => {
+      if (watchIntervalRef.current) clearInterval(watchIntervalRef.current);
+      el.removeEventListener("ended", sendWatch);
+    };
+  }, [video.id, video.durationSeconds]);
+
+  if (!isOnline) {
+    return (
+      <section className="rounded-xl border border-amber-500/30 bg-amber-500/10 p-5 text-center text-sm text-amber-400">
+        Video requires an internet connection. Connect to watch this lesson video.
+      </section>
+    );
+  }
+
+  return (
+    <section className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/80 p-4 sm:p-5">
+      <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--ll-pink)]">
+        Lesson introduction by {video.teacherName}
+      </p>
+      <h2 className="mt-2 text-lg font-semibold text-[var(--ll-text)]">{video.title}</h2>
+      {video.description ? (
+        <p className="mt-1 text-sm text-[var(--ll-text-muted)]">{video.description}</p>
+      ) : null}
+      <video
+        ref={videoRef}
+        className="mt-4 w-full rounded-xl border border-[var(--ll-border)] bg-[var(--ll-graphite)]"
+        controls
+        preload="metadata"
+        poster={video.thumbnailUrl ?? undefined}
+        src={video.storageUrl}
+      />
+      <p className="mt-2 text-xs text-[var(--ll-text-faint)]">
+        {video.viewCount} student{video.viewCount !== 1 ? "s" : ""} watched this video
+      </p>
+    </section>
   );
 }
 
@@ -882,41 +967,11 @@ export default function LessonDeliveryClient({ lessonId }: { lessonId: string })
         </section>
 
         {mode === "video" && lesson.activeVideo ? (
-          <section className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/80 p-4 sm:p-5">
-            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--ll-pink)]">
-              Lesson introduction by {lesson.activeVideo.teacherName}
-            </p>
-            <h2 className="mt-2 text-lg font-semibold text-[var(--ll-text)]">{lesson.activeVideo.title}</h2>
-            {lesson.activeVideo.description ? (
-              <p className="mt-1 text-sm text-[var(--ll-text-muted)]">{lesson.activeVideo.description}</p>
-            ) : null}
-            <video
-              className="mt-4 w-full rounded-xl border border-[var(--ll-border)] bg-[var(--ll-graphite)]"
-              controls
-              preload="metadata"
-              poster={lesson.activeVideo.thumbnailUrl ?? undefined}
-              src={lesson.activeVideo.storageUrl}
-              onPlay={() => {
-                void fetch("/api/track", {
-                  method: "POST",
-                  headers: { "Content-Type": "application/json" },
-                  body: JSON.stringify({
-                    eventType: "VIDEO_PLAYBACK_STARTED",
-                    contentId: lesson.contentId,
-                    metadata: { lessonId: lesson.id, videoId: lesson.activeVideo?.id },
-                  }),
-                }).catch(() => {});
-              }}
-            />
-            <button
-              type="button"
-              aria-label="Download video for offline viewing"
-              className="mt-3 rounded-lg border border-[var(--ll-border)] px-3 py-2 text-xs text-[var(--ll-text-muted)]"
-              onClick={() => alert(`Video is ${Math.ceil((lesson.activeVideo?.fileSize ?? 0) / 1024 / 1024)}MB. Download only on a reliable connection.`)}
-            >
-              Download video for offline
-            </button>
-          </section>
+          <VideoSection
+            video={lesson.activeVideo}
+            contentId={lesson.contentId}
+            lessonId={lesson.id}
+          />
         ) : null}
 
         <section ref={registerSection("lesson-content")} data-section-id="lesson-content" className={`rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/80 p-5 sm:p-7${mode === "video" ? " hidden" : ""}`}>
