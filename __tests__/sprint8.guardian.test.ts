@@ -22,6 +22,7 @@ const {
     guardianMessage: { findMany: vi.fn(), create: vi.fn() },
     enrollment: { findFirst: vi.fn(), findMany: vi.fn() },
     school: { findUnique: vi.fn() },
+    teacherAlertPreference: { findUnique: vi.fn().mockResolvedValue(null) },
     $transaction: vi.fn(),
   };
   const mockLogAudit = vi.fn().mockResolvedValue(undefined);
@@ -331,6 +332,7 @@ describe("Guardian messages — two-way messaging", () => {
       Class: { schoolId: "school-1" },
     });
     mockPrisma.guardianMessage.create.mockResolvedValueOnce({ id: "msg-2" });
+    mockPrisma.teacherAlertPreference.findUnique.mockResolvedValueOnce(null); // defaults → alertGuardianMessage: true
 
     const { POST } = await import("@/app/api/guardian/messages/route");
     const req = makeRequest("http://localhost/api/guardian/messages", "POST", {
@@ -340,11 +342,13 @@ describe("Guardian messages — two-way messaging", () => {
     });
     await POST(req);
 
-    // sendPushToUser should be called with the TEACHER's userId
-    expect(mockSendPushToUser).toHaveBeenCalledWith(
-      "teacher-1",
-      expect.objectContaining({ title: "New message" })
-    );
+    // sendPushToUser runs in a fire-and-forget IIFE; wait for it to settle
+    await vi.waitFor(() => {
+      expect(mockSendPushToUser).toHaveBeenCalledWith(
+        "teacher-1",
+        expect.objectContaining({ title: "New message" })
+      );
+    });
   });
 
   it("10. guardian receives push notification when teacher sends a reply", async () => {

@@ -5,6 +5,7 @@ import { prisma } from "@/lib/db";
 import { isGuardianDashboardEnabled } from "@/lib/serverFlags";
 import { logAudit } from "@/lib/audit";
 import { sendPushToUser } from "@/lib/push/sendPush";
+import { getTeacherAlertPref } from "@/lib/alert-prefs";
 
 export const dynamic = "force-dynamic";
 
@@ -225,12 +226,27 @@ export async function POST(req: NextRequest) {
       traceId,
     });
 
-    const recipientId = user.role === "TEACHER" ? resolvedGuardianId : resolvedTeacherId;
-    sendPushToUser(recipientId, {
-      title: "New message",
-      body: sanitized.length > 80 ? sanitized.slice(0, 77) + "…" : sanitized,
-      url: user.role === "TEACHER" ? "/guardian/messages" : "/teacher/messages",
-    }).catch(() => null);
+    if (user.role === "GUARDIAN") {
+      void (async () => {
+        try {
+          const pref = await getTeacherAlertPref(resolvedTeacherId);
+          if (!pref.alertGuardianMessage) return;
+          await sendPushToUser(resolvedTeacherId, {
+            title: "New message",
+            body: sanitized.length > 80 ? sanitized.slice(0, 77) + "…" : sanitized,
+            url: "/teacher/messages",
+          });
+        } catch {
+          // Best-effort
+        }
+      })();
+    } else {
+      sendPushToUser(resolvedGuardianId, {
+        title: "New message",
+        body: sanitized.length > 80 ? sanitized.slice(0, 77) + "…" : sanitized,
+        url: "/guardian/messages",
+      }).catch(() => null);
+    }
 
     return NextResponse.json({ messageId: message.id }, { status: 201 });
   } catch (err: any) {
