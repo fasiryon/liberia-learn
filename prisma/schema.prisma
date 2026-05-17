@@ -71,6 +71,8 @@ model User {
   lessonVideos        LessonVideo[]          @relation("LessonVideoTeacher")
   videoWatchEvents    VideoWatchEvent[]      @relation("VideoWatchEvents")
   googleId               String?               @unique
+  tourCompletedAt        DateTime?
+  privacyAcceptedAt      DateTime?
   teacherAlertPrefs      TeacherAlertPreference?
   teacherWelcomeCompletedAt DateTime?
   teacherSentiments   TeacherSentiment[]

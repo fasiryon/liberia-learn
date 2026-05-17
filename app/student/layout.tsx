@@ -3,8 +3,11 @@ import OfflineBanner from "./OfflineBanner";
 import GlobalAssistantMount from "@/components/rag/GlobalAssistantMount";
 import { LegalFooter } from "@/components/LegalFooter";
 import { getOptionalUser } from "@/lib/auth";
+import { prisma } from "@/lib/db";
 import { PushPermissionPrompt } from "@/components/PushPermissionPrompt";
 import { PwaInstallPrompt } from "@/components/PwaInstallPrompt";
+import { StudentTourMount } from "@/components/tours/TourMount";
+import { PrivacyGateMount } from "@/components/PrivacyGateMount";
 
 export default async function StudentLayout({
   children,
@@ -13,6 +16,18 @@ export default async function StudentLayout({
 }) {
   const user = await getOptionalUser();
   const isPlatformAdmin = user?.isPlatformAdmin === true;
+
+  let showPrivacyGate = false;
+  let showTour = false;
+
+  if (user?.role === "STUDENT") {
+    const record = await prisma.user.findUnique({
+      where: { id: user.id },
+      select: { privacyAcceptedAt: true, tourCompletedAt: true },
+    });
+    showPrivacyGate = !record?.privacyAcceptedAt;
+    showTour = !!record?.privacyAcceptedAt && !record?.tourCompletedAt;
+  }
 
   return (
     <>
@@ -23,6 +38,8 @@ export default async function StudentLayout({
       <SyncManager isPlatformAdmin={isPlatformAdmin} />
       <PushPermissionPrompt />
       <PwaInstallPrompt />
+      <PrivacyGateMount showGate={showPrivacyGate} />
+      <StudentTourMount showTour={showTour} />
     </>
   );
 }

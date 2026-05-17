@@ -4,6 +4,7 @@ import { getOptionalUser } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { PushPermissionPrompt } from "@/components/PushPermissionPrompt";
 import { PwaInstallPrompt } from "@/components/PwaInstallPrompt";
+import { TeacherTourMount } from "@/components/tours/TourMount";
 
 /**
  * Teacher layout — server component.
@@ -30,9 +31,20 @@ export default async function TeacherLayout({
         )?.isOnboarded
       : false;
 
+  const showTour =
+    user?.role === "TEACHER"
+      ? !(
+          await prisma.user.findUnique({
+            where: { id: user.id },
+            select: { tourCompletedAt: true },
+          })
+        )?.tourCompletedAt
+      : false;
+
   return (
     <>
       <TeacherShell needsWelcome={needsWelcome}>{children}</TeacherShell>
+      <TeacherTourMount showTour={!!showTour} />
       <GlobalAssistantMount />
       <PushPermissionPrompt />
       <PwaInstallPrompt />
