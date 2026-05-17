@@ -8,6 +8,7 @@ type Settings = {
   approvalRequired: boolean;
   allowTeacherPublish: boolean;
   allowBlueprintAdoption: boolean;
+  googleSsoEnabled: boolean;
 };
 
 const TOGGLES: Array<{ key: keyof Settings; label: string; help: string }> = [
@@ -26,6 +27,11 @@ const TOGGLES: Array<{ key: keyof Settings; label: string; help: string }> = [
     label: "Allow Blueprint Adoption",
     help: "Teachers can adopt pre-built national curriculum blueprints for their classes.",
   },
+  {
+    key: "googleSsoEnabled",
+    label: "Google SSO for Teachers",
+    help: "Allow teachers to sign in with their Google Workspace account.",
+  },
 ];
 
 export default function SchoolSettingsPage() {
@@ -34,6 +40,7 @@ export default function SchoolSettingsPage() {
     approvalRequired: true,
     allowTeacherPublish: false,
     allowBlueprintAdoption: true,
+    googleSsoEnabled: true,
   });
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);

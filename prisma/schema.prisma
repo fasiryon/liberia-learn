@@ -70,6 +70,7 @@ model User {
   receivedGuardianMessages GuardianMessage[] @relation("GuardianMessageTeacher")
   lessonVideos        LessonVideo[]          @relation("LessonVideoTeacher")
   videoWatchEvents    VideoWatchEvent[]      @relation("VideoWatchEvents")
+  googleId               String?               @unique
   teacherWelcomeCompletedAt DateTime?
   teacherSentiments   TeacherSentiment[]
   createdReportCards   ReportCard[]         @relation("ReportCardCreator")
@@ -138,6 +139,7 @@ model School {
   pilotNotes             String?
   contactEmailVerified   Boolean                @default(false)
   contactPhoneVerified   Boolean                @default(false)
+  googleSsoEnabled       Boolean                @default(true)
   schoolType             String?
   estimatedEnrollment    Int?
   approvedAt             DateTime?

@@ -1,6 +1,7 @@
 import type { NextAuthOptions } from "next-auth";
 import { getServerSession } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
+import GoogleProvider from "next-auth/providers/google";
 import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/db";
 import { normalizeLoginId, normalizeCredentialPhone } from "@/lib/login-identifiers";
@@ -124,6 +125,16 @@ export async function authorizeCredentials(rawCredentials?: RawCredentialInput |
 export const authOptions: NextAuthOptions = {
   session: { strategy: "jwt" },
   providers: [
+    GoogleProvider({
+      clientId: process.env.GOOGLE_CLIENT_ID!,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+      authorization: {
+        params: {
+          hd: undefined,
+          prompt: "select_account",
+        },
+      },
+    }),
     CredentialsProvider({
       name: "Credentials",
       credentials: {
@@ -138,7 +149,55 @@ export const authOptions: NextAuthOptions = {
     }),
   ],
   callbacks: {
-    async jwt({ token, user }) {
+    async signIn({ user, account }) {
+      if (account?.provider === "google") {
+        if (!user.email) return false;
+
+        const dbUser = await prisma.user.findUnique({
+          where: { email: user.email },
+          select: { id: true, role: true, googleId: true, school: { select: { googleSsoEnabled: true } } },
+        });
+
+        if (dbUser) {
+          if (dbUser.role !== "TEACHER") return false;
+          if (dbUser.school && dbUser.school.googleSsoEnabled === false) return false;
+          if (!dbUser.googleId) {
+            await prisma.user.update({
+              where: { email: user.email },
+              data: { googleId: user.id },
+            });
+          }
+        } else {
+          await prisma.user.create({
+            data: {
+              email: user.email,
+              name: user.name ?? "New Teacher",
+              role: "TEACHER",
+              hashedPwd: "",
+              googleId: user.id,
+            },
+          });
+        }
+        return true;
+      }
+      return true;
+    },
+    async jwt({ token, user, account }) {
+      if (account?.provider === "google" && token.email) {
+        const dbUser = await prisma.user.findUnique({
+          where: { email: token.email as string },
+          select: { id: true, role: true, schoolId: true, isPlatformAdmin: true, loginId: true, mustChangePIN: true },
+        });
+        if (dbUser) {
+          token.id = dbUser.id;
+          token.role = dbUser.role;
+          token.schoolId = dbUser.schoolId ?? null;
+          token.isPlatformAdmin = dbUser.isPlatformAdmin ?? false;
+          token.loginId = dbUser.loginId ?? null;
+          token.mustChangePIN = dbUser.mustChangePIN ?? false;
+        }
+        return token;
+      }
       if (user) {
         token.id = (user as any).id;
         token.role = (user as any).role;
