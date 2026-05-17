@@ -360,6 +360,7 @@ export default async function AdminConsolePage() {
       links: [
         { label: "Curriculum / AI Factory", href: "/admin/curriculum" },
         { label: "Curriculum Units", href: "/admin/curriculum/units" },
+        { label: "Content Review", href: "/admin/content-review" },
         { label: "Homework", href: "/admin/homework" },
         { label: "Exams", href: "/admin/exams" },
       ],
