@@ -93,6 +93,9 @@ model User {
   languagePreference     String?               @default("en")
   tutorConversations     TutorConversation[]   @relation("TutorConversationStudent")
   lessonHelpFlags        LessonHelpFlag[]      @relation("LessonHelpFlagStudent")
+  editedLessons          CurriculumContent[]   @relation("LessonEditor")
+  lessonVersionsAuthored LessonVersion[]       @relation("LessonVersionAuthor")
+  lessonSharesCreated    LessonShare[]         @relation("LessonShareCreator")
 }
 
 model District {
@@ -191,6 +194,7 @@ model School {
   schoolOnboarding       SchoolOnboarding?
   moeSubmissions         MoeSubmission[]
   storageQuota           SchoolStorageQuota?
+  lessonShares           LessonShare[]
 }
 
 model Class {
@@ -1816,6 +1820,10 @@ model CurriculumContent {
   thumbnailGeneratedAt DateTime?
   thumbnailError   String?
   versionId       String?
+  // Sprint 25: teacher content creation
+  editedById      String?
+  editedAt        DateTime?
+  editReviewStatus String?        @default("PENDING")
   scheduledWork        ScheduledWork[]
   timetableAssignments TimetableAssignment[]
   audioAssets          LessonAudio[]
@@ -1826,11 +1834,15 @@ model CurriculumContent {
   lessonPlans        CurriculumLessonPlan[]
   tutorConversations TutorConversation[] @relation("TutorConversationContent")
   lessonHelpFlags    LessonHelpFlag[]    @relation("LessonHelpFlagContent")
+  editedBy           User?               @relation("LessonEditor", fields: [editedById], references: [id])
+  lessonVersions     LessonVersion[]
+  lessonShares       LessonShare[]
 
   @@index([grade, subject])
   @@index([contentType, status])
   @@index([unitId, orderInUnit])
   @@index([versionId, status])
+  @@index([editedById, editReviewStatus])
 }
 
 model LessonAudio {
@@ -3645,4 +3657,33 @@ model TeacherAlertPreference {
   digestHour           Int      @default(7)
   createdAt            DateTime @default(now())
   updatedAt            DateTime @updatedAt
+}
+
+/// Sprint 25: version snapshot of a teacher-edited lesson.
+model LessonVersion {
+  id        String            @id @default(cuid())
+  lessonId  String
+  lesson    CurriculumContent @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  authorId  String
+  author    User              @relation("LessonVersionAuthor", fields: [authorId], references: [id])
+  bodyHtml  String            @db.Text
+  metadata  Json?
+  createdAt DateTime          @default(now())
+
+  @@index([lessonId, createdAt])
+}
+
+/// Sprint 25: school-scoped lesson share between teachers.
+model LessonShare {
+  id         String            @id @default(cuid())
+  lessonId   String
+  lesson     CurriculumContent @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  sharedById String
+  sharedBy   User              @relation("LessonShareCreator", fields: [sharedById], references: [id])
+  schoolId   String
+  school     School            @relation(fields: [schoolId], references: [id])
+  createdAt  DateTime          @default(now())
+
+  @@unique([lessonId, schoolId])
+  @@index([schoolId])
 }
