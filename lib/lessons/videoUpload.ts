@@ -1,5 +1,5 @@
 export const LESSON_VIDEO_BUCKET = "lesson-video";
-export const MAX_LESSON_VIDEO_BYTES = 50 * 1024 * 1024; // 50MB for Vercel Blob
+export const MAX_LESSON_VIDEO_BYTES = 200 * 1024 * 1024; // 200MB
 export const MAX_LESSON_VIDEO_SECONDS = 15 * 60;
 
 const ACCEPTED_VIDEO_TYPES = new Set([
@@ -20,7 +20,7 @@ export function validateLessonVideoFile(input: {
     throw Object.assign(new Error("Only MP4 or WebM videos are supported."), { status: 400 });
   }
   if (input.size > MAX_LESSON_VIDEO_BYTES) {
-    throw Object.assign(new Error("Video must be 50MB or smaller."), { status: 413 });
+    throw Object.assign(new Error("Video must be 200MB or smaller."), { status: 413 });
   }
   if (input.durationSeconds > MAX_LESSON_VIDEO_SECONDS) {
     throw Object.assign(new Error("Video must be 15 minutes or shorter."), { status: 400 });

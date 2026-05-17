@@ -17,7 +17,7 @@ import {
 } from "@/lib/lessons/videoUpload";
 
 describe("lesson video upload validation", () => {
-  it("enforces 50MB size limit", () => {
+  it("enforces 200MB size limit", () => {
     expect(() =>
       validateLessonVideoFile({
         fileName: "lesson.mp4",
@@ -25,7 +25,7 @@ describe("lesson video upload validation", () => {
         size: MAX_LESSON_VIDEO_BYTES + 1,
         durationSeconds: 60,
       })
-    ).toThrow(/50MB/);
+    ).toThrow(/200MB/);
   });
 
   it("enforces duration limit", () => {

@@ -25,6 +25,10 @@ vi.mock("@/lib/db", () => ({
   prisma: {
     curriculumContent: { findUnique: vi.fn() },
     lessonVideo: { create: vi.fn(), findFirst: vi.fn(), findUnique: vi.fn(), delete: vi.fn() },
+    schoolStorageQuota: {
+      upsert: vi.fn().mockResolvedValue({ usedBytes: 0, limitBytes: 5368709120 }),
+      findUnique: vi.fn(),
+    },
     assessmentAttempt: {
       create: vi.fn(),
       findMany: vi.fn(),
@@ -54,8 +58,8 @@ vi.mock("@/lib/db", () => ({
   },
 }));
 
-vi.mock("@/lib/audit", () => ({ logAudit: vi.fn() }));
-vi.mock("@/lib/events/logLearningEvent", () => ({ logLearningEvent: vi.fn() }));
+vi.mock("@/lib/audit", () => ({ logAudit: vi.fn().mockResolvedValue(undefined) }));
+vi.mock("@/lib/events/logLearningEvent", () => ({ logLearningEvent: vi.fn().mockResolvedValue(undefined) }));
 vi.mock("@/lib/push/sendPush", () => ({
   sendPushToMany: vi.fn().mockResolvedValue(undefined),
   sendPushToClass: vi.fn().mockResolvedValue(undefined),
@@ -99,6 +103,7 @@ describe("Sprint 14 - Video upload to Vercel Blob", () => {
       contentId: "c1", subject: "MATH", grade: 6,
     });
     mockPrisma.lessonVideo.create.mockResolvedValueOnce({ id: "v1", storageUrl: "https://blob.vercel.app/test.mp4" });
+    mockPrisma.user.findMany.mockResolvedValueOnce([]);
 
     const { POST } = await import("@/app/api/teacher/lessons/[contentId]/video/route");
     const form = new FormData();

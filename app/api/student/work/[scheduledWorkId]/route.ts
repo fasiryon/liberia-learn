@@ -110,8 +110,8 @@ function scheduledWorkInclude(userId: string) {
           },
         },
         videoSupplements: {
-          where: { isActive: true },
-          orderBy: { uploadedAt: "desc" as const },
+          where: { status: "APPROVED" },
+          orderBy: { approvedAt: "desc" as const },
           take: 1,
           select: {
             id: true,
@@ -121,6 +121,7 @@ function scheduledWorkInclude(userId: string) {
             thumbnailUrl: true,
             durationSeconds: true,
             fileSize: true,
+            viewCount: true,
             uploadedAt: true,
             teacher: { select: { name: true } },
           },
@@ -265,6 +266,7 @@ export async function GET(
         ? {
             ...activeVideo,
             teacherName: activeVideo.teacher?.name ?? "Teacher",
+            viewCount: activeVideo.viewCount ?? 0,
           }
         : null,
       deliveryProfile,
