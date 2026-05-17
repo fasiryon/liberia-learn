@@ -18,6 +18,7 @@ export async function GET() {
         approvalRequired: true,
         allowTeacherPublish: true,
         allowBlueprintAdoption: true,
+        googleSsoEnabled: true,
       },
     });
     return NextResponse.json(school ?? {});
@@ -43,6 +44,7 @@ export async function PATCH(req: NextRequest) {
     if (typeof body.approvalRequired === "boolean") data.approvalRequired = body.approvalRequired;
     if (typeof body.allowTeacherPublish === "boolean") data.allowTeacherPublish = body.allowTeacherPublish;
     if (typeof body.allowBlueprintAdoption === "boolean") data.allowBlueprintAdoption = body.allowBlueprintAdoption;
+    if (typeof body.googleSsoEnabled === "boolean") data.googleSsoEnabled = body.googleSsoEnabled;
 
     if (Object.keys(data).length === 0) {
       return NextResponse.json({ error: "No valid fields to update" }, { status: 400 });
@@ -55,6 +57,7 @@ export async function PATCH(req: NextRequest) {
         approvalRequired: true,
         allowTeacherPublish: true,
         allowBlueprintAdoption: true,
+        googleSsoEnabled: true,
       },
     });
 
