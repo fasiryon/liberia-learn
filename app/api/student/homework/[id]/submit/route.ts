@@ -2,6 +2,8 @@
 import { NextResponse } from "next/server";
 import { requireRole } from "@/lib/auth";
 import { prisma } from "@/lib/db";
+import { sendPushToUser } from "@/lib/push/sendPush";
+import { getTeacherAlertPref } from "@/lib/alert-prefs";
 
 type RouteContext = {
   params: { id: string };
@@ -64,6 +66,26 @@ export async function POST(req: Request, context: RouteContext) {
         submittedAt: new Date(),
       },
     });
+
+    // Fire-and-forget push alert to teacher
+    void (async () => {
+      try {
+        const hw = await prisma.homework.findUnique({
+          where: { id: homeworkId },
+          select: { title: true, createdById: true },
+        });
+        if (!hw) return;
+        const pref = await getTeacherAlertPref(hw.createdById);
+        if (!pref.alertNewSubmission) return;
+        await sendPushToUser(hw.createdById, {
+          title: "New Submission",
+          body: `A student submitted "${hw.title}"`,
+          url: `/teacher/assignments`,
+        });
+      } catch {
+        // Best-effort — never block the response
+      }
+    })();
 
     // After submit, send them back to the same homework page
     return NextResponse.redirect(

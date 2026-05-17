@@ -71,6 +71,7 @@ model User {
   lessonVideos        LessonVideo[]          @relation("LessonVideoTeacher")
   videoWatchEvents    VideoWatchEvent[]      @relation("VideoWatchEvents")
   googleId               String?               @unique
+  teacherAlertPrefs      TeacherAlertPreference?
   teacherWelcomeCompletedAt DateTime?
   teacherSentiments   TeacherSentiment[]
   createdReportCards   ReportCard[]         @relation("ReportCardCreator")
@@ -3627,4 +3628,19 @@ model LessonHelpFlag {
   content   CurriculumContent @relation("LessonHelpFlagContent", fields: [contentId], references: [contentId])
 
   @@index([studentId, contentId])
+}
+
+/// Sprint 23: per-teacher push alert preferences.
+model TeacherAlertPreference {
+  id                   String   @id @default(cuid())
+  teacherId            String   @unique
+  teacher              User     @relation(fields: [teacherId], references: [id], onDelete: Cascade)
+  alertLowGrade        Boolean  @default(true)
+  alertInactive        Boolean  @default(true)
+  alertNewSubmission   Boolean  @default(true)
+  alertGuardianMessage Boolean  @default(true)
+  dailyDigest          Boolean  @default(false)
+  digestHour           Int      @default(7)
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
 }
