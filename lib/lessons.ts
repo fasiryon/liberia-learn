@@ -28,15 +28,19 @@ export function lessonDurationLabel(classFormat?: string | null) {
 }
 
 export function renderSimpleMarkdown(markdown: string) {
+  if (!markdown) return "";
   return markdown
     .split(/\n{2,}/)
     .map((block) => block.trim())
     .filter(Boolean)
     .map((block) => {
-      if (block.startsWith("### ")) return `<strong>${escapeHtml(block.slice(4))}</strong>`;
-      if (block.startsWith("## ")) return `<strong>${escapeHtml(block.slice(3))}</strong>`;
-      if (block.startsWith("# ")) return `<strong>${escapeHtml(block.slice(2))}</strong>`;
-      if (block.startsWith("- ")) {
+      if (block.startsWith("### ")) return `<h3>${escapeHtml(block.slice(4))}</h3>`;
+      if (block.startsWith("## ")) return `<h2>${escapeHtml(block.slice(3))}</h2>`;
+      if (block.startsWith("# ")) return `<h2>${escapeHtml(block.slice(2))}</h2>`;
+      if (block.startsWith("**") && block.endsWith("**") && !block.slice(2, -2).includes("\n")) {
+        return `<h3>${escapeHtml(block.slice(2, -2))}</h3>`;
+      }
+      if (block.startsWith("- ") || block.split("\n").every((l) => l.trim().startsWith("- "))) {
         const items = block
           .split("\n")
           .filter((line) => line.trim().startsWith("- "))

@@ -1031,11 +1031,12 @@ export default function LessonDeliveryClient({ lessonId }: { lessonId: string })
               </div>
               <article className="min-h-[24rem] rounded-xl border border-[var(--ll-border-strong)] bg-[var(--ll-surface)] p-5 transition-colors sm:p-7">
                 <p className="text-sm font-semibold text-[var(--ll-text-muted)]">
-                  Slide {currentSlideIndex + 1} of {slides.length}
+                  Section {currentSlideIndex + 1} of {slides.length}
                 </p>
                 <h2 className="mt-3 text-2xl font-semibold text-[var(--ll-text)]">{currentSlide.title}</h2>
                 <div
-                  className="prose prose-invert mt-5 max-w-none prose-headings:text-[var(--ll-text)] prose-p:text-[var(--ll-text)] prose-p:text-[1rem] prose-p:leading-8 prose-li:text-[var(--ll-text)] prose-li:text-[1rem] prose-li:leading-8"
+                  className="prose prose-invert mt-5 max-w-none overflow-y-auto prose-headings:text-[var(--ll-text)] prose-p:text-[var(--ll-text)] prose-p:text-[1rem] prose-p:leading-8 prose-li:text-[var(--ll-text)] prose-li:text-[1rem] prose-li:leading-8"
+                  style={{ maxHeight: "55vh" }}
                   dangerouslySetInnerHTML={{ __html: renderSimpleMarkdown(currentSlide.content) }}
                 />
               </article>
@@ -1068,10 +1069,22 @@ export default function LessonDeliveryClient({ lessonId }: { lessonId: string })
               </div>
             </div>
           ) : (
-            <div
-              className="prose prose-invert max-w-[680px] prose-headings:text-[var(--ll-text)] prose-p:text-[var(--ll-text)] prose-p:text-[1rem] prose-p:leading-8 prose-li:text-[var(--ll-text)] prose-li:text-[1rem] prose-li:leading-8"
-              dangerouslySetInnerHTML={{ __html: renderSimpleMarkdown(renderedBody) }}
-            />
+            <>
+              {renderedBody && (
+                <p className="mb-3 text-xs text-[var(--ll-text-faint)]">
+                  {(() => {
+                    const words = renderedBody.replace(/<[^>]+>/g, " ").split(/\s+/).filter(Boolean).length;
+                    const mins = Math.ceil(words / 200);
+                    return `~${words.toLocaleString()} words · ${mins} min read`;
+                  })()}
+                </p>
+              )}
+              <div
+                className="prose prose-invert max-w-none overflow-y-auto rounded-lg prose-headings:text-[var(--ll-text)] prose-h2:text-xl prose-h3:text-base prose-p:text-[var(--ll-text)] prose-p:text-[1rem] prose-p:leading-8 prose-li:text-[var(--ll-text)] prose-li:text-[1rem] prose-li:leading-8"
+                style={{ maxHeight: "65vh", minHeight: "300px" }}
+                dangerouslySetInnerHTML={{ __html: renderSimpleMarkdown(renderedBody) }}
+              />
+            </>
           )}
         </section>
 
