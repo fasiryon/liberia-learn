@@ -96,6 +96,10 @@ model User {
   editedLessons          CurriculumContent[]   @relation("LessonEditor")
   lessonVersionsAuthored LessonVersion[]       @relation("LessonVersionAuthor")
   lessonSharesCreated    LessonShare[]         @relation("LessonShareCreator")
+  // Sprint 26: student phone for SMS quiz delivery
+  phone                  String?
+  smsStudentSessions     SmsSession[]          @relation("SmsStudent")
+  portfolioCredentials   PortfolioCredential[]
 }
 
 model District {
@@ -195,6 +199,8 @@ model School {
   moeSubmissions         MoeSubmission[]
   storageQuota           SchoolStorageQuota?
   lessonShares           LessonShare[]
+  // Sprint 26: league table snapshots
+  leagueSnapshots        LeagueSnapshot[]
 }
 
 model Class {
@@ -882,6 +888,9 @@ model Assignment {
   contentId        String?
   moeStandardCodes String[]               @default([])
   generationMethod String?                // "manual"|"ai_generated"|"suggested"
+  // Sprint 26: SMS quiz delivery
+  smsEnabled       Boolean                @default(false)
+  smsSessions      SmsSession[]
   Class            Class                  @relation(fields: [classId], references: [id])
   submissions      AssignmentSubmission[]
 }
@@ -3686,4 +3695,76 @@ model LessonShare {
 
   @@unique([lessonId, schoolId])
   @@index([schoolId])
+}
+
+/// Sprint 26: two-way SMS quiz delivery session.
+model SmsSession {
+  id           String        @id @default(cuid())
+  assignmentId String
+  assignment   Assignment    @relation(fields: [assignmentId], references: [id])
+  studentPhone String
+  studentId    String?
+  student      User?         @relation("SmsStudent", fields: [studentId], references: [id])
+  questions    Json
+  currentIndex Int           @default(0)
+  score        Int           @default(0)
+  status       String        @default("ACTIVE")
+  expiresAt    DateTime
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  responses    SmsResponse[]
+
+  @@index([studentPhone, status])
+  @@index([assignmentId])
+}
+
+/// Sprint 26: individual answer within an SMS quiz session.
+model SmsResponse {
+  id          String     @id @default(cuid())
+  sessionId   String
+  session     SmsSession @relation(fields: [sessionId], references: [id])
+  questionIdx Int
+  answer      String
+  correct     Boolean
+  createdAt   DateTime   @default(now())
+
+  @@index([sessionId])
+}
+
+/// Sprint 26: weekly school performance snapshot for the national league table.
+model LeagueSnapshot {
+  id               String   @id @default(cuid())
+  schoolId         String
+  school           School   @relation(fields: [schoolId], references: [id])
+  term             String
+  avgGrade         Float
+  attendance       Float
+  lessonCompletion Float
+  studentCount     Int
+  countyRank       Int?
+  nationalRank     Int?
+  createdAt        DateTime @default(now())
+
+  @@unique([schoolId, term])
+  @@index([term, nationalRank])
+}
+
+/// Sprint 26: QR-verifiable PDF transcript credential.
+model PortfolioCredential {
+  id              String   @id @default(cuid())
+  studentId       String
+  student         User     @relation(fields: [studentId], references: [id])
+  verifyToken     String   @unique @default(cuid())
+  term            String
+  schoolName      String
+  studentName     String
+  grade           String
+  avgScore        Float
+  attendance      Float
+  lessonsComplete Int
+  blobUrl         String?
+  generatedAt     DateTime @default(now())
+  expiresAt       DateTime
+
+  @@unique([studentId, term])
 }

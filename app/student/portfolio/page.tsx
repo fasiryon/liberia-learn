@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
-import { BookOpen, BarChart2, Award, Star, FlaskConical, Flame, Copy, Check } from "lucide-react";
+import { BookOpen, BarChart2, Award, Star, FlaskConical, Flame, Copy, Check, FileDown } from "lucide-react";
 
 type PortfolioData = {
   firstName: string;
@@ -34,6 +34,8 @@ export default function StudentPortfolioPage() {
   const [shareUrl, setShareUrl] = useState<string | null>(null);
   const [sharing, setSharing] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [generating, setGenerating] = useState(false);
+  const [transcriptUrl, setTranscriptUrl] = useState<string | null>(null);
 
   const loadPortfolio = useCallback(async () => {
     setLoading(true);
@@ -67,6 +69,19 @@ export default function StudentPortfolioPage() {
     await navigator.clipboard.writeText(shareUrl).catch(() => null);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
+  }
+
+  async function handleGenerateTranscript() {
+    setGenerating(true);
+    try {
+      const res = await fetch("/api/student/portfolio/generate", { method: "POST" });
+      if (res.ok) {
+        const d = await res.json();
+        setTranscriptUrl(d.blobUrl ?? `/credential/${d.verifyToken}`);
+      }
+    } finally {
+      setGenerating(false);
+    }
   }
 
   if (loading) {
@@ -127,6 +142,31 @@ export default function StudentPortfolioPage() {
                   </button>
                 </div>
               )}
+              {/* Download Transcript */}
+              {!transcriptUrl ? (
+                <button
+                  type="button"
+                  onClick={handleGenerateTranscript}
+                  disabled={generating}
+                  className="flex items-center gap-2 rounded-xl border border-[var(--ll-border)] px-4 py-2 text-sm text-[var(--ll-text-muted)] hover:text-[var(--ll-text)] disabled:opacity-50"
+                >
+                  <FileDown className="h-4 w-4" />
+                  {generating ? "Generating transcript…" : "Download Transcript"}
+                </button>
+              ) : (
+                <a
+                  href={transcriptUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="flex items-center gap-2 rounded-xl border border-[var(--ll-border)] px-4 py-2 text-sm text-[var(--ll-yellow)] hover:opacity-80"
+                >
+                  <FileDown className="h-4 w-4" />
+                  Open Transcript (QR-verifiable)
+                </a>
+              )}
+              <p className="text-[10px] text-[var(--ll-text-faint)]">
+                This QR-verifiable PDF is accepted by Liberian schools as an official learning record.
+              </p>
             </div>
           </div>
         </div>
