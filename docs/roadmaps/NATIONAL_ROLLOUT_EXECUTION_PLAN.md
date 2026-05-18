@@ -1,0 +1,370 @@
+# LiberiaLearn — National Rollout Execution Plan
+
+This plan governs the path from **current production baseline** to **world-class national rollout** (all Liberia, no controlled pilot). Execute one sprint at a time unless a section explicitly allows parallel work within the same phase.
+
+**Companion docs:**
+- `docs/roadmaps/CURRENT_EXECUTION_STATE.md` — live status (update after each sprint)
+- `docs/roadmaps/IMPLEMENT.md` — agent runbook
+- `docs/LOAD_TEST_RESULTS.md` — baseline load evidence
+- `docs/PHASE5_2_CURRICULUM_AUDIT_REPORT.md` — content coverage baseline
+- `docs/ops/SCALE_READINESS.md` — architecture limits
+
+**National sign-off criteria (all must pass before public national launch):**
+1. k6 production load: 1,000+ unique students, p95 &lt; 2s, error rate &lt; 1%
+2. k6 school-day spike: 5,000 concurrent (outside school hours first)
+3. Curriculum: Grades 1–12 × core subjects ≥ 15 APPROVED lessons each (ENGLISH where applicable)
+4. Security: middleware on all portals, tenant guard on APIs, Upstash mandatory in prod
+5. Ops: on-call rotation, unified monitoring, Playwright on main deploy, quarterly rollback drill
+6. MOE: refreshed production certification + signed coverage matrix
+
+---
+
+## Sprint index
+
+| Sprint | Name | Phase | Workstream | Status | Gate |
+|--------|------|-------|------------|--------|------|
+| NR-0 | Program Baseline + Doc Sync | 0 | All | PENDING | NOT RUN |
+| NR-1 | Production Infra Upgrade | 0 | Scale | PENDING | NOT RUN |
+| NR-2 | ECS Worker Autoscale + Queue SLOs | 0 | Scale | PENDING | NOT RUN |
+| NR-3 | Load-Test Identity Pool | 0 | Scale | PENDING | NOT RUN |
+| NR-4 | k6 Moderate (1K VU) Production Proof | 1 | Scale | PENDING | NOT RUN |
+| NR-5 | k6 Peak (5K VU) + AI Burst Gate | 1 | Scale | PENDING | NOT RUN |
+| NR-6 | Middleware Portal Hardening | 2 | Security | PENDING | NOT RUN |
+| NR-7 | Systematic Tenant Access Guard | 2 | Security | PENDING | NOT RUN |
+| NR-8 | RBAC Expansion + SSO Onboarding Fix | 2 | Security | PENDING | NOT RUN |
+| NR-9 | Audit Immutability + Pen Test Remediation | 2 | Security | PENDING | NOT RUN |
+| NR-10 | Student Fail-Closed Curriculum Routing | 3 | Content | PENDING | NOT RUN |
+| NR-11 | MOE Published Backlog Approval Sprint | 3 | Content | PENDING | NOT RUN |
+| NR-12 | Critical Grade Deserts (G2, G9) | 3 | Content | PENDING | NOT RUN |
+| NR-13 | Grades 5–8 Gap Closure + ENGLISH | 3 | Content | PENDING | NOT RUN |
+| NR-14 | National Audio Pipeline Completion | 3 | Content | PENDING | NOT RUN |
+| NR-15 | Unified Ops Dashboard + Alerting | 4 | Ops | PENDING | NOT RUN |
+| NR-16 | Playwright CI + Phase 6 Close on Main | 4 | Ops | PENDING | NOT RUN |
+| NR-17 | DR Drill + Export Circuit Breaker Under Load | 4 | Ops | PENDING | NOT RUN |
+| NR-18 | MOE Coverage Dashboard + Certification Refresh | 5 | MOE | PENDING | NOT RUN |
+| NR-19 | County Seed + Bulk School Onboarding | 5 | GTM | PENDING | NOT RUN |
+| NR-20 | National Support + Training Package | 5 | GTM | PENDING | NOT RUN |
+| NR-21 | National Launch Sign-Off Gate | 6 | All | PENDING | NOT RUN |
+
+---
+
+## How execution works
+
+1. Read `AGENTS.md`, this file, and `docs/roadmaps/CURRENT_EXECUTION_STATE.md` before touching code.
+2. Execute only the first sprint marked `PENDING`, unless explicitly instructed otherwise.
+3. **No new product features** (labs, autonomous OS, net-new AI routes) until NR-5 passes — national closeout only.
+4. Run the sprint gate exactly as written. All steps must pass before the next sprint.
+5. After a passed gate: commit, push, confirm CI green, update this table and `CURRENT_EXECUTION_STATE.md`, stop.
+6. Load tests (NR-4, NR-5, NR-17): run **outside** Liberian school hours (before 07:30 GMT or after 15:30 GMT) per `docs/DEPLOYMENT_DISCIPLINE.md`.
+7. Deploy discipline: clean working tree, 4 CI workflows green, no `--force` deploy from dirty tree.
+
+### Standard code gate (every sprint unless overridden)
+
+1. `npx prisma generate`
+2. `npx tsc --noEmit`
+3. `npx vitest run` (or `npm test`)
+4. `npm run build`
+
+### Standard commit message
+
+```
+feat: NR-[N] complete — [sprint name]
+```
+
+---
+
+## Phase 0 — Infrastructure foundation (Weeks 1–2)
+
+### NR-0 — Program Baseline + Doc Sync
+
+- **Branch:** `feat/nr-0-baseline`
+- **Inspect:** `MASTER_EXECUTION_PLAN.md` vs `CURRENT_EXECUTION_STATE.md`; confirm `main` has Phase 5 + Online School sprints; list open branches.
+- **Deliverables:**
+  - Add `## National Rollout Program` section to `CURRENT_EXECUTION_STATE.md` pointing here
+  - Mark completed historical sprints in `MASTER_EXECUTION_PLAN.md` or add deprecation note at top linking to this plan
+  - Snapshot: Vercel plan tier, Supabase tier, ECS desired count, Upstash configured Y/N
+- **Gate:** Standard code gate + written baseline snapshot in `CURRENT_EXECUTION_STATE.md`
+
+### NR-1 — Production Infra Upgrade
+
+- **Branch:** `feat/nr-1-infra-upgrade`
+- **Deliverables:**
+  - Vercel **Pro** (or Enterprise) confirmed on production project
+  - `UPSTASH_REDIS_REST_URL` + `UPSTASH_REDIS_REST_TOKEN` set in Vercel prod; deploy fails or warns if missing
+  - `DATABASE_URL` pooled (6543, `pgbouncer=true`); `DIRECT_URL` for migrate only
+  - Document monthly cost envelope in `docs/ops/SCALE_READINESS.md`
+- **Gate:** Standard code gate + `GET /api/health` 200 on production + env checklist signed in state doc
+
+### NR-2 — ECS Worker Autoscale + Queue SLOs
+
+- **Branch:** `feat/nr-2-worker-autoscale`
+- **Inspect:** `infra/ecs/`, `worker/index.ts`, `docs/ops/WORKER_DEPLOYMENT.md`, SQS queue depth metrics
+- **Deliverables:**
+  - Application Auto Scaling on ECS service (min 1, max N on queue depth / message age)
+  - CloudWatch alarm or documented manual threshold for queue age &gt; 15 min
+  - Synthetic queue flood test: 500 jobs enqueued, drain within SLA (document actual time)
+- **Gate:** Standard code gate + flood test evidence in `docs/LOAD_TEST_RESULTS.md` (new section)
+
+### NR-3 — Load-Test Identity Pool
+
+- **Branch:** `feat/nr-3-load-test-pool`
+- **Deliverables:**
+  - Script: `scripts/seed-load-test-pool.ts` — 1,000+ students across 50+ schools, unique credentials
+  - Fix demo student: `Student` row for E2E demo user (quiz/AI load accuracy)
+  - k6 scripts use credential pool rotation (no single shared student)
+- **Gate:** Standard code gate + script dry-run creates ≥1000 users + `docs/LOAD_TEST_RESULTS.md` pool documented
+
+---
+
+## Phase 1 — Production load proof (Weeks 2–4)
+
+### NR-4 — k6 Moderate (1K VU) Production Proof
+
+- **Branch:** `feat/nr-4-k6-moderate` (scripts + docs; infra from NR-1)
+- **Run:** `load-tests/moderate.js` against production with load-test pool, outside school hours
+- **Targets:** p95 &lt; 2000ms, error rate &lt; 1%, student today API &gt; 95% success
+- **Gate:** Standard code gate + moderate scenario **PASS** recorded in `docs/LOAD_TEST_RESULTS.md`
+
+### NR-5 — k6 Peak (5K VU) + AI Burst Gate
+
+- **Branch:** `feat/nr-5-k6-peak`
+- **Run:** `load-tests/peak.js` + dedicated 200-VU AI tutor scenario
+- **Targets:** Peak p95 &lt; 5000ms, errors &lt; 5%; AI p95 &lt; 5000ms; budget guard no runaway spend
+- **Gate:** Standard code gate + peak + AI **PASS** in load doc + **freeze** on non-essential feature work until NR-21
+
+---
+
+## Phase 2 — Security hardening (Weeks 3–6, may overlap Phase 1 after NR-4)
+
+### NR-6 — Middleware Portal Hardening
+
+- **Branch:** `feat/nr-6-middleware-hardening`
+- **Deliverables:**
+  - `middleware.ts`: require auth + role for `/admin/*` and `/platform/*` (parity with `/moe/*`)
+  - Integration tests for unauthorized redirect/401 on all three portals
+- **Gate:** Standard code gate + new middleware tests pass
+
+### NR-7 — Systematic Tenant Access Guard
+
+- **Branch:** `feat/nr-7-tenant-guard`
+- **Deliverables:**
+  - `lib/tenant/assertSchoolAccess.ts` (or equivalent) — single API for school scope
+  - Apply to all `app/api/student/`, `app/api/teacher/`, `app/api/admin/` routes that read/write tenant data
+  - Extend `__tests__/growth.tenant-isolation.test.ts` pattern to critical API sample (min 20 routes)
+- **Gate:** Standard code gate + tenant isolation tests pass; no regression in existing mastery tenant tests
+
+### NR-8 — RBAC Expansion + SSO Onboarding Fix
+
+- **Branch:** `feat/nr-8-rbac-sso`
+- **Deliverables:**
+  - `assertPermission` on all governance/export/curriculum override routes (grep audit → fix list)
+  - Google SSO: block active session until `schoolId` assigned (invite or school code flow)
+  - `MOE_SUPER_ADMIN` added to `SessionUser` type if used in schema
+- **Gate:** Standard code gate + `__tests__/permissions.test.ts` / runtime gate pass
+
+### NR-9 — Audit Immutability + Pen Test Remediation
+
+- **Branch:** `feat/nr-9-audit-pentest`
+- **Deliverables:**
+  - DB triggers or RLS: `AuditLog` append-only at database layer
+  - External pen test completed; all CRITICAL/HIGH remediated or accepted with MOE sign-off
+- **Gate:** Standard code gate + pen test report linked in `docs/MOE_PRODUCTION_CERTIFICATION.md` (remediation table)
+
+---
+
+## Phase 3 — National curriculum (Weeks 4–10)
+
+**Coverage rule:** ≥ 15 `APPROVED` lessons per grade × subject (from `docs/PHASE5_2_CURRICULUM_AUDIT_REPORT.md`).
+
+### NR-10 — Student Fail-Closed Curriculum Routing
+
+- **Branch:** `feat/nr-10-curriculum-routing`
+- **Deliverables:**
+  - `/api/student/today`, adaptive plan, lesson catalog: only `APPROVED` content
+  - Admin/MOE coverage API: grade × subject counts
+- **Gate:** Standard code gate + tests: unapproved content never returned to student role
+
+### NR-11 — MOE Published Backlog Approval Sprint
+
+- **Branch:** `feat/nr-11-approve-backlog` (ops + content; may be MOE-led with engineering support)
+- **Target:** Clear **389 published** lessons (priority G5, G7 per audit)
+- **Deliverables:**
+  - Bulk approve workflow or scripted MOE approval with audit trail
+  - Post-approval: coverage dashboard shows G5/G7 green
+- **Gate:** Standard code gate + DB query evidence: published backlog &lt; 50 remaining
+
+### NR-12 — Critical Grade Deserts (G2, G9)
+
+- **Branch:** `feat/nr-12-grade-deserts`
+- **Deliverables:**
+  - Regen + QA for Grade 2 and Grade 9 until ≥15 APPROVED per core subject
+  - Factory tuning for known low pass rates (G3 SCIENCE, G5 ENGLISH, G7 CIVICS) documented
+- **Gate:** Standard code gate + coverage matrix row for G2 and G9 all green
+
+### NR-13 — Grades 5–8 Gap Closure + ENGLISH
+
+- **Branch:** `feat/nr-13-grades-5-8`
+- **Target:** G5–G8 ≥15 APPROVED per subject; ENGLISH &gt; 0 nationally; SOCIAL_STUDIES 5–9 filled
+- **Gate:** Standard code gate + full G5–G8 matrix green on coverage dashboard
+
+### NR-14 — National Audio Pipeline Completion
+
+- **Branch:** `feat/nr-14-national-audio`
+- **Inspect:** `docs/roadmaps/national-curriculum-pipeline/EXECUTION.md`
+- **Deliverables:**
+  - All APPROVED lessons: `LessonAudio` GENERATED or explicit `audioOptOut` flag
+  - Worker/autoscale from NR-2 proven under audio batch load
+- **Gate:** Standard code gate + audit script: &lt; 1% APPROVED lessons missing audio without opt-out
+
+---
+
+## Phase 4 — Reliability & operations (Weeks 6–10)
+
+### NR-15 — Unified Ops Dashboard + Alerting
+
+- **Branch:** `feat/nr-15-ops-dashboard`
+- **Deliverables:**
+  - Single operator view: error rate, queue depth, DB pool hint, AI spend 24h, active schools, curriculum gaps
+  - Alerts: Sentry → Slack/PagerDuty; uptime on `/api/health`; queue age &gt; 15 min
+  - On-call roster doc: `docs/ops/ON_CALL.md`
+- **Gate:** Standard code gate + tabletop incident drill (documented)
+
+### NR-16 — Playwright CI + Phase 6 Close on Main
+
+- **Branch:** `feat/nr-16-ci-playwright`
+- **Deliverables:**
+  - GitHub Actions: Playwright smoke on `main` deploy (or nightly against production URL)
+  - Merge `feat/phase-5-intelligence-system` (or equivalent) — Phase 6 gate complete
+  - `npx playwright test` PASS on production URL
+- **Gate:** Full gate + Playwright CI green + Phase 6 marked COMPLETE in state doc
+
+### NR-17 — DR Drill + Export Circuit Breaker Under Load
+
+- **Branch:** `feat/nr-17-dr-exports`
+- **Deliverables:**
+  - Quarterly rollback drill executed; notes in `docs/ops/DR_DRILL_LOG.md`
+  - MOE export under 500 concurrent users: no API starvation (queue or circuit breaker)
+  - `ENABLE_GOV_CIRCUIT_BREAKER` tested
+- **Gate:** Standard code gate + DR log entry + load test note for export isolation
+
+---
+
+## Phase 5 — MOE trust & national GTM (Weeks 8–12)
+
+### NR-18 — MOE Coverage Dashboard + Certification Refresh
+
+- **Branch:** `feat/nr-18-moe-certification`
+- **Deliverables:**
+  - MOE portal: national coverage heatmap (grade × subject × county)
+  - Refresh `docs/MOE_PRODUCTION_CERTIFICATION.md` with k6 NR-4/NR-5 results (not synthetic-only claims)
+  - MOE signed coverage matrix PDF referenced in repo
+- **Gate:** Standard code gate + certification doc dated + MOE sign-off recorded
+
+### NR-19 — County Seed + Bulk School Onboarding
+
+- **Branch:** `feat/nr-19-county-onboarding`
+- **Deliverables:**
+  - Seed or import path for all **15 counties** (not demo-only Montserrado)
+  - Bulk import tested: 500 students/school CSV under 5 min
+  - School self-registration fraud controls documented
+- **Gate:** Standard code gate + import integration test + 3 non-demo schools onboarded in staging
+
+### NR-20 — National Support + Training Package
+
+- **Branch:** `feat/nr-20-national-training`
+- **Deliverables:**
+  - Principal/admin/teacher training decks + videos (English; Kpelle/Bassa where available)
+  - Helpdesk: phone/WhatsApp + ticket SLA documented
+  - `ENABLE_LIVE_SMS=true` production checklist (Africa's Talking / Twilio Liberia)
+  - District platform dashboard: replace placeholder in `app/platform/page.tsx`
+- **Gate:** Standard code gate + training URLs in `docs/rollout/NATIONAL_TRAINING.md` + district portal live
+
+---
+
+## Phase 6 — National launch (Week 12–14)
+
+### NR-21 — National Launch Sign-Off Gate
+
+- **Branch:** `release/national-v1.0.0`
+- **Checklist (all required):**
+
+| # | Criterion | Evidence |
+|---|-----------|----------|
+| 1 | k6 1K VU PASS | `docs/LOAD_TEST_RESULTS.md` |
+| 2 | k6 5K VU PASS | `docs/LOAD_TEST_RESULTS.md` |
+| 3 | Curriculum matrix 100% | MOE coverage dashboard + signed matrix |
+| 4 | NR-6–NR-9 security complete | Tests + pen test report |
+| 5 | Upstash mandatory prod | Env policy + deploy check |
+| 6 | Worker autoscale proven | NR-2 flood test |
+| 7 | Playwright CI green | GitHub Actions |
+| 8 | On-call + DR drill | `docs/ops/ON_CALL.md`, `DR_DRILL_LOG.md` |
+| 9 | MOE certification refreshed | `docs/MOE_PRODUCTION_CERTIFICATION.md` |
+| 10 | 4 CI workflows green on release commit | GitHub |
+| 11 | Vercel production deploy outside school hours | Deploy log |
+| 12 | No P0/P1 open security findings | Pen test tracker |
+
+- **Gate:** All 12 checklist items ✅ + tag `national-v1.0.0` + public announcement only after MOE written approval
+
+---
+
+## Parallel work rules
+
+| Allowed parallel | Not allowed |
+|------------------|-------------|
+| NR-1 + NR-0 | NR-5 before NR-4 |
+| NR-6 + NR-10 (different files) | New labs/features during Phase 1 |
+| NR-11 (MOE ops) + NR-15 | NR-21 before NR-4 and NR-13 |
+| NR-18 + NR-14 after NR-10 | Skip pen test (NR-9) |
+
+---
+
+## Workstream summary
+
+| Workstream | Sprints | Outcome |
+|------------|---------|---------|
+| **Scale** | NR-1 – NR-5 | Proven 1K–5K VU on production |
+| **Security** | NR-6 – NR-9 | Defense in depth + pen test clean |
+| **Content** | NR-10 – NR-14 | Full national curriculum + audio |
+| **Ops** | NR-15 – NR-17 | SLOs, CI, DR, exports safe under load |
+| **MOE & GTM** | NR-18 – NR-20 | Counties, training, support, certification |
+| **Launch** | NR-21 | Tagged national release |
+
+---
+
+## Timeline estimate
+
+| Phase | Calendar | Sprints |
+|-------|----------|---------|
+| 0 — Infra | Weeks 1–2 | NR-0 – NR-3 |
+| 1 — Load proof | Weeks 2–4 | NR-4 – NR-5 |
+| 2 — Security | Weeks 3–6 | NR-6 – NR-9 |
+| 3 — Curriculum | Weeks 4–10 | NR-10 – NR-14 |
+| 4 — Ops | Weeks 6–10 | NR-15 – NR-17 |
+| 5 — MOE/GTM | Weeks 8–12 | NR-18 – NR-20 |
+| 6 — Launch | Weeks 12–14 | NR-21 |
+
+**Total: ~12–14 weeks** with dedicated engineering + MOE reviewer capacity. Curriculum (NR-11–NR-14) is the longest pole.
+
+---
+
+## Non-negotiable spend
+
+| Item | Purpose |
+|------|---------|
+| Vercel Pro+ | API concurrency |
+| Supabase scale + pooler | DB headroom |
+| Upstash | Distributed rate limits |
+| ECS autoscale | Background jobs |
+| Pen test vendor | MOE trust |
+| MOE reviewer time | Approve 389+ lessons |
+| On-call (2+ people) | School-hours incidents |
+
+---
+
+## What NOT to do during this program
+
+- Do not treat synthetic `nationalScaleSmoke.test.ts` as production load proof
+- Do not announce national launch before NR-21 checklist complete
+- Do not add major new product surfaces until NR-5 passes
+- Do not run k6 peak during Liberian school hours
+- Do not weaken RBAC, tenant isolation, or audit logging to pass a gate
