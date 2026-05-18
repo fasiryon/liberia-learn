@@ -53,8 +53,8 @@ CREATE INDEX IF NOT EXISTS "WeeklyLeaderboard_classId_weekStart_idx"
   ON "WeeklyLeaderboard"("classId", "weekStart");
 
 -- FTS indexes
-CREATE INDEX CONCURRENTLY IF NOT EXISTS curriculum_content_fts
+CREATE INDEX IF NOT EXISTS curriculum_content_fts
   ON "CurriculumContent" USING gin(to_tsvector('english', coalesce(title, '') || ' ' || coalesce(subject, '')));
 
-CREATE INDEX CONCURRENTLY IF NOT EXISTS school_event_fts
+CREATE INDEX IF NOT EXISTS school_event_fts
   ON "SchoolEvent" USING gin(to_tsvector('english', coalesce(title, '') || ' ' || coalesce(description, '')));

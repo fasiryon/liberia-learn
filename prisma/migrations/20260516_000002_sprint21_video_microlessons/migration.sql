@@ -15,8 +15,8 @@ ALTER TABLE "LessonVideo"
 UPDATE "LessonVideo" SET "status" = 'APPROVED' WHERE "isActive" = true;
 
 -- Indexes on new LessonVideo fields
-CREATE INDEX CONCURRENTLY IF NOT EXISTS "LessonVideo_status_idx"          ON "LessonVideo"("status");
-CREATE INDEX CONCURRENTLY IF NOT EXISTS "LessonVideo_schoolId_status_idx"  ON "LessonVideo"("schoolId", "status");
+CREATE INDEX IF NOT EXISTS "LessonVideo_status_idx"          ON "LessonVideo"("status");
+CREATE INDEX IF NOT EXISTS "LessonVideo_schoolId_status_idx"  ON "LessonVideo"("schoolId", "status");
 
 -- VideoWatchEvent model
 CREATE TABLE IF NOT EXISTS "VideoWatchEvent" (
@@ -33,8 +33,8 @@ CREATE TABLE IF NOT EXISTS "VideoWatchEvent" (
   CONSTRAINT "VideoWatchEvent_studentId_fkey" FOREIGN KEY ("studentId") REFERENCES "User"("id")        ON DELETE CASCADE
 );
 
-CREATE INDEX CONCURRENTLY IF NOT EXISTS "VideoWatchEvent_videoId_idx"   ON "VideoWatchEvent"("videoId");
-CREATE INDEX CONCURRENTLY IF NOT EXISTS "VideoWatchEvent_studentId_idx" ON "VideoWatchEvent"("studentId");
+CREATE INDEX IF NOT EXISTS "VideoWatchEvent_videoId_idx"   ON "VideoWatchEvent"("videoId");
+CREATE INDEX IF NOT EXISTS "VideoWatchEvent_studentId_idx" ON "VideoWatchEvent"("studentId");
 
 -- SchoolStorageQuota model
 CREATE TABLE IF NOT EXISTS "SchoolStorageQuota" (

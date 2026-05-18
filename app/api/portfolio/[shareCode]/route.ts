@@ -1,8 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { buildPortfolioSummary } from "@/lib/portfolio/buildPortfolio";
+import { isPortfolioFlagEnabled } from "@/lib/flags";
 
 export async function GET(_req: NextRequest, { params }: { params: { shareCode: string } }) {
+  if (!(await isPortfolioFlagEnabled())) {
+    return NextResponse.json({ error: "portfolio_disabled" }, { status: 404 });
+  }
+
   const share = await (prisma as any).portfolioShare.findUnique({
     where: { shareCode: params.shareCode },
     select: { studentId: true, isActive: true },

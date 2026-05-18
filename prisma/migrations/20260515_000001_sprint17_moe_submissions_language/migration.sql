@@ -18,10 +18,16 @@ CREATE TABLE IF NOT EXISTS "MoeSubmission" (
   CONSTRAINT "MoeSubmission_pkey" PRIMARY KEY ("id")
 );
 
-ALTER TABLE "MoeSubmission"
-  ADD CONSTRAINT "MoeSubmission_schoolId_fkey"
-  FOREIGN KEY ("schoolId") REFERENCES "School"("id")
-  ON DELETE RESTRICT ON UPDATE CASCADE;
+DO $$ BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_constraint WHERE conname = 'MoeSubmission_schoolId_fkey'
+  ) THEN
+    ALTER TABLE "MoeSubmission"
+      ADD CONSTRAINT "MoeSubmission_schoolId_fkey"
+      FOREIGN KEY ("schoolId") REFERENCES "School"("id")
+      ON DELETE RESTRICT ON UPDATE CASCADE;
+  END IF;
+END $$;
 
 CREATE INDEX IF NOT EXISTS "MoeSubmission_schoolId_idx" ON "MoeSubmission"("schoolId");
 CREATE INDEX IF NOT EXISTS "MoeSubmission_status_idx" ON "MoeSubmission"("status");

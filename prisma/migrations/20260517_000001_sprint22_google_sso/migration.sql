@@ -1,5 +1,5 @@
 -- Sprint 22: Add Google SSO fields
 ALTER TABLE "User" ADD COLUMN IF NOT EXISTS "googleId" TEXT;
-CREATE UNIQUE INDEX CONCURRENTLY IF NOT EXISTS "User_googleId_key" ON "User"("googleId");
+CREATE UNIQUE INDEX IF NOT EXISTS "User_googleId_key" ON "User"("googleId");
 
 ALTER TABLE "School" ADD COLUMN IF NOT EXISTS "googleSsoEnabled" BOOLEAN NOT NULL DEFAULT true;

@@ -5,6 +5,7 @@ import {
   type AiBudgetFeature,
   type LogAIInteractionInput,
 } from "@/lib/ai/interactionLog";
+import { openAiBreaker, groqBreaker } from "@/lib/ai/circuit-breaker";
 
 let _groq: any = null;
 function getGroq() {
@@ -71,6 +72,13 @@ function completionTimeoutMs(aiUsage?: AiUsageContext) {
   // Allow 4 minutes so Groq/OpenAI can complete without aborting mid-response.
   return requestType.startsWith("elite_curriculum_") ? 240_000 : 30_000;
 }
+
+const AI_UNAVAILABLE_MESSAGE =
+  "I'm having trouble connecting right now. Please try again in a minute, or ask your teacher for help.";
+
+// Sentinel model name used when the Groq circuit breaker is open — causes the
+// caller to fall through to OpenAI rather than treating this as a real result.
+const GROQ_CB_SKIP_MODEL = "__groq_cb_skip__";
 
 const GROQ_MODEL = "llama-3.1-8b-instant";
 const GROQ_SMART_MODEL = "llama-3.3-70b-versatile";
@@ -393,7 +401,15 @@ export async function routedCompletion(opts: RouterOptions): Promise<RouterResul
   if (!response && !skipGroq && process.env.GROQ_API_KEY) {
     const useSmartGroq = classification.tier === "smart" || opts.forceSmartTier;
     const groqModel = useSmartGroq ? GROQ_SMART_MODEL : GROQ_MODEL;
-    try {
+    const groqSkipFallback: RouterResult = {
+      content: "",
+      tier: useSmartGroq ? "smart" : "fast",
+      model: GROQ_CB_SKIP_MODEL,
+      inputTokens: 0,
+      outputTokens: 0,
+      estimatedCostUSD: 0,
+    };
+    const groqResult = await groqBreaker.call(async () => {
       const groq = getGroq();
       const completion = await groq.chat.completions.create({
         model: groqModel,
@@ -402,36 +418,48 @@ export async function routedCompletion(opts: RouterOptions): Promise<RouterResul
         signal: AbortSignal.timeout(timeoutMs),
         ...(opts.responseFormat === "json" ? { response_format: { type: "json_object" } } : {}),
       });
-
       const inputTokens = completion.usage?.prompt_tokens ?? 0;
       const outputTokens = completion.usage?.completion_tokens ?? 0;
       const costIn = useSmartGroq ? COSTS.groq_smart_input : COSTS.groq_input;
       const costOut = useSmartGroq ? COSTS.groq_smart_output : COSTS.groq_output;
-
-      response = {
+      return {
         content: completion.choices[0]?.message?.content ?? "I'm not sure how to answer that.",
-        tier: useSmartGroq ? "smart" : "fast",
+        tier: (useSmartGroq ? "smart" : "fast") as Tier,
         model: groqModel,
         inputTokens,
         outputTokens,
         estimatedCostUSD: inputTokens * costIn + outputTokens * costOut,
-      };
-    } catch {
+      } satisfies RouterResult;
+    }, groqSkipFallback);
+
+    if (groqResult.model !== GROQ_CB_SKIP_MODEL) {
+      response = groqResult;
+    } else {
       providerFallbackUsed = true;
     }
   }
 
   if (!response) {
-    const result = await callOpenAI(opts.messages, maxTokens, timeoutMs, opts.responseFormat);
-    response = {
-      content: result.content,
+    const openAiFallback: RouterResult = {
+      content: AI_UNAVAILABLE_MESSAGE,
       tier: classification.tier,
-      model: OPENAI_MODEL,
-      inputTokens: result.inputTokens,
-      outputTokens: result.outputTokens,
-      estimatedCostUSD:
-        result.inputTokens * COSTS.openai_input + result.outputTokens * COSTS.openai_output,
+      model: "__openai_cb_fallback__",
+      inputTokens: 0,
+      outputTokens: 0,
+      estimatedCostUSD: 0,
     };
+    response = await openAiBreaker.call(async () => {
+      const result = await callOpenAI(opts.messages, maxTokens, timeoutMs, opts.responseFormat);
+      return {
+        content: result.content,
+        tier: classification.tier,
+        model: OPENAI_MODEL,
+        inputTokens: result.inputTokens,
+        outputTokens: result.outputTokens,
+        estimatedCostUSD:
+          result.inputTokens * COSTS.openai_input + result.outputTokens * COSTS.openai_output,
+      } satisfies RouterResult;
+    }, openAiFallback);
   }
 
   if (opts.aiUsage) {

@@ -15,6 +15,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { randomUUID } from "crypto";
 import { requireRole } from "@/lib/auth";
 import { isAiTutorEnabled, isAiTrustIndicatorsEnabled } from "@/lib/serverFlags";
+import { isAiTutorFlagEnabled } from "@/lib/flags";
 import { buildTrustSignal } from "@/lib/ai/trust";
 import { logAudit } from "@/lib/audit";
 import { checkAiRateLimit } from "@/lib/ai/rateLimitGuard";
@@ -32,7 +33,13 @@ export async function POST(req: NextRequest) {
   const startedAt = Date.now();
 
   try {
+    // Primary gate: server-side env var (fail-closed, testable via vi.mock)
     if (!isAiTutorEnabled()) {
+      return NextResponse.json({ error: "ai_tutor_disabled" }, { status: 404 });
+    }
+    // Edge Config kill-switch: can disable instantly without redeploy
+    // Defaults ON when Edge Config is unavailable (env var already guards)
+    if (!(await isAiTutorFlagEnabled())) {
       return NextResponse.json({ error: "ai_tutor_disabled" }, { status: 404 });
     }
 

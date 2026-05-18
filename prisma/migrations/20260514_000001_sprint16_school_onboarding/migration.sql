@@ -14,7 +14,13 @@ CREATE TABLE IF NOT EXISTS "SchoolOnboarding" (
 CREATE UNIQUE INDEX IF NOT EXISTS "SchoolOnboarding_schoolId_key"
     ON "SchoolOnboarding"("schoolId");
 
-ALTER TABLE "SchoolOnboarding"
-    ADD CONSTRAINT "SchoolOnboarding_schoolId_fkey"
-    FOREIGN KEY ("schoolId") REFERENCES "School"("id")
-    ON DELETE RESTRICT ON UPDATE CASCADE;
+DO $$ BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_constraint WHERE conname = 'SchoolOnboarding_schoolId_fkey'
+  ) THEN
+    ALTER TABLE "SchoolOnboarding"
+      ADD CONSTRAINT "SchoolOnboarding_schoolId_fkey"
+      FOREIGN KEY ("schoolId") REFERENCES "School"("id")
+      ON DELETE RESTRICT ON UPDATE CASCADE;
+  END IF;
+END $$;

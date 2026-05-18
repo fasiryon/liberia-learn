@@ -18,6 +18,7 @@ import { sendGuardianSMS } from "@/lib/guardian/sms-service";
 import { logAudit } from "@/lib/audit";
 import { isValidLiberianPhone } from "@/lib/sms/validators";
 import { logger } from "@/lib/logger";
+import { isSmsFlagEnabled } from "@/lib/flags";
 import type { GuardianMessageType } from "@/lib/guardian/sms-templates";
 
 export type SmsNotificationInput = {
@@ -56,6 +57,10 @@ type DispatchResult = {
 export async function dispatchSmsNotification(
   input: SmsNotificationInput
 ): Promise<DispatchResult> {
+  if (!(await isSmsFlagEnabled())) {
+    return { dispatched: false, reason: "sms_disabled" };
+  }
+
   // Validate Liberian phone format when provided
   if (input.guardianPhone) {
     if (!isValidLiberianPhone(input.guardianPhone)) {

@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
+import { withRedisCache } from "@/lib/cache/redisCache";
+import { isLeagueTableFlagEnabled } from "@/lib/flags";
 
 export const dynamic = "force-dynamic";
 
@@ -12,20 +14,29 @@ function currentTerm(): string {
 }
 
 export async function GET(req: NextRequest) {
+  if (!(await isLeagueTableFlagEnabled())) {
+    return NextResponse.json({ error: "league_table_disabled" }, { status: 404 });
+  }
+
   const { searchParams } = new URL(req.url);
   const term = searchParams.get("term") ?? currentTerm();
   const county = searchParams.get("county") ?? undefined;
 
-  const whereCounty = county ? { school: { county } } : {};
+  const cacheKey = county ? `cache:league:${term}:county:${county}` : `cache:league:${term}`;
 
-  const snapshots = await prisma.leagueSnapshot.findMany({
-    where: { term, ...whereCounty },
-    orderBy: { nationalRank: "asc" },
-    include: {
-      school: { select: { name: true, county: true, district: true } },
-    },
-    take: 200,
-  });
+  const snapshots = await withRedisCache(
+    cacheKey,
+    3600,
+    () =>
+      prisma.leagueSnapshot.findMany({
+        where: { term, ...(county ? { school: { county } } : {}) },
+        orderBy: { nationalRank: "asc" },
+        include: {
+          school: { select: { name: true, county: true, district: true } },
+        },
+        take: 200,
+      })
+  );
 
   const rows = snapshots.map((s) => ({
     id: s.id,

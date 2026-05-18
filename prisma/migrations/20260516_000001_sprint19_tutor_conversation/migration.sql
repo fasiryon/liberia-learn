@@ -1,5 +1,5 @@
 -- CreateTable
-CREATE TABLE "TutorConversation" (
+CREATE TABLE IF NOT EXISTS "TutorConversation" (
     "id" TEXT NOT NULL,
     "studentId" TEXT NOT NULL,
     "contentId" TEXT NOT NULL,
@@ -14,7 +14,7 @@ CREATE TABLE "TutorConversation" (
 );
 
 -- CreateTable
-CREATE TABLE "LessonHelpFlag" (
+CREATE TABLE IF NOT EXISTS "LessonHelpFlag" (
     "id" TEXT NOT NULL,
     "studentId" TEXT NOT NULL,
     "contentId" TEXT NOT NULL,
@@ -26,19 +26,32 @@ CREATE TABLE "LessonHelpFlag" (
 );
 
 -- CreateIndex
-CREATE INDEX "TutorConversation_studentId_contentId_sessionDate_idx" ON "TutorConversation"("studentId", "contentId", "sessionDate");
+CREATE INDEX IF NOT EXISTS "TutorConversation_studentId_contentId_sessionDate_idx" ON "TutorConversation"("studentId", "contentId", "sessionDate");
 
 -- CreateIndex
-CREATE INDEX "LessonHelpFlag_studentId_contentId_idx" ON "LessonHelpFlag"("studentId", "contentId");
+CREATE INDEX IF NOT EXISTS "LessonHelpFlag_studentId_contentId_idx" ON "LessonHelpFlag"("studentId", "contentId");
 
 -- AddForeignKey
-ALTER TABLE "TutorConversation" ADD CONSTRAINT "TutorConversation_studentId_fkey" FOREIGN KEY ("studentId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+DO $$ BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'TutorConversation_studentId_fkey') THEN
+    ALTER TABLE "TutorConversation" ADD CONSTRAINT "TutorConversation_studentId_fkey" FOREIGN KEY ("studentId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+  END IF;
+END $$;
 
--- AddForeignKey
-ALTER TABLE "TutorConversation" ADD CONSTRAINT "TutorConversation_contentId_fkey" FOREIGN KEY ("contentId") REFERENCES "CurriculumContent"("contentId") ON DELETE RESTRICT ON UPDATE CASCADE;
+DO $$ BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'TutorConversation_contentId_fkey') THEN
+    ALTER TABLE "TutorConversation" ADD CONSTRAINT "TutorConversation_contentId_fkey" FOREIGN KEY ("contentId") REFERENCES "CurriculumContent"("contentId") ON DELETE RESTRICT ON UPDATE CASCADE;
+  END IF;
+END $$;
 
--- AddForeignKey
-ALTER TABLE "LessonHelpFlag" ADD CONSTRAINT "LessonHelpFlag_studentId_fkey" FOREIGN KEY ("studentId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+DO $$ BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'LessonHelpFlag_studentId_fkey') THEN
+    ALTER TABLE "LessonHelpFlag" ADD CONSTRAINT "LessonHelpFlag_studentId_fkey" FOREIGN KEY ("studentId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+  END IF;
+END $$;
 
--- AddForeignKey
-ALTER TABLE "LessonHelpFlag" ADD CONSTRAINT "LessonHelpFlag_contentId_fkey" FOREIGN KEY ("contentId") REFERENCES "CurriculumContent"("contentId") ON DELETE RESTRICT ON UPDATE CASCADE;
+DO $$ BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'LessonHelpFlag_contentId_fkey') THEN
+    ALTER TABLE "LessonHelpFlag" ADD CONSTRAINT "LessonHelpFlag_contentId_fkey" FOREIGN KEY ("contentId") REFERENCES "CurriculumContent"("contentId") ON DELETE RESTRICT ON UPDATE CASCADE;
+  END IF;
+END $$;
