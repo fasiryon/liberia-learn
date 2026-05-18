@@ -18,6 +18,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { logAudit } from "@/lib/audit";
+import { checkRateLimit, rateLimitExceededResponse } from "@/lib/rateLimit";
 
 const STOP_KEYWORDS = new Set([
   "stop", "unsubscribe", "optout", "opt-out", "cancel", "end", "quit",
@@ -28,6 +29,10 @@ function isStopMessage(body: string): boolean {
 }
 
 export async function POST(request: NextRequest) {
+  const ip = request.headers.get("x-forwarded-for") ?? "unknown";
+  const rl = await checkRateLimit(ip, { windowMs: 60_000, limit: 20, namespace: "sms-stop" });
+  if (!rl.allowed) return rateLimitExceededResponse(rl);
+
   let phone: string | null = null;
   let messageBody: string | null = null;
 

@@ -2,8 +2,10 @@ import chokidar from 'chokidar'
 import Anthropic from '@anthropic-ai/sdk'
 import fs from 'fs/promises'
 import path from 'path'
+import { fileURLToPath } from 'url'
 
-const VAULT = 'C:/Users/fasir/liberia-learn/os-vault'
+const __dirname = path.dirname(fileURLToPath(import.meta.url))
+const VAULT = path.resolve(__dirname, '..')
 const QUEUE = path.join(VAULT, 'QUEUE')
 const GENERATED = path.join(VAULT, 'GENERATED')
 const SYSTEM_MD = path.join(VAULT, 'SYSTEM/CLAUDE.md')
