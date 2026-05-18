@@ -3,6 +3,24 @@
 ## Purpose
 Live execution tracking for the final closeout program.
 
+## National Rollout Program (active)
+- **Plan:** `docs/roadmaps/NATIONAL_ROLLOUT_EXECUTION_PLAN.md`
+- **Current sprint:** NR-0 — Program Baseline + Doc Sync
+- **Status:** IN_PROGRESS (2026-05-18)
+- **Target:** World-class national rollout (all Liberia) — 22 sprints NR-0 through NR-21
+- **Next sprint:** NR-1 — Production Infra Upgrade (requires NR-0 gate to pass)
+
+### NR-0 Progress (2026-05-18)
+- Vercel: Pro plan confirmed (15 crons active/40), team farquema-siryons-projects, Node 22.x, latest prod deployment ERROR (investigate before NR-1)
+- Upstash Redis: SET in production, in-memory fallback present in lib/rateLimit.ts (LOW risk)
+- ECS Worker: cluster "liberia-learn" NOT FOUND — SQS_QUEUE_URL set but no cluster deployed (HIGH risk, blocks NR-2)
+- Security: /admin and /platform bypass middleware (page-level auth); 397/471 route files guarded; 88 files use isPlatformAdmin
+- feat/phase-5-intelligence-system: OPEN (unmerged)
+- MASTER_EXECUTION_PLAN.md: Sprints 2–16E synced to COMPLETE
+- doc/ops/NR0_BASELINE.md: created
+- scripts/db-connection-audit.ts and scripts/curriculum-coverage-audit.ts: created
+- PENDING: run production DB script, populate curriculum grid, confirm Vercel error, SQS queue depth
+
 ## Fix 1 — Connection Pool (connection_limit=1)
 - `lib/db.ts` now injects `connection_limit=1` into the database URL programmatically if not already present.
 - `prisma/schema.prisma` datasource has both `url = env("DATABASE_URL")` and `directUrl = env("DIRECT_URL")`.
