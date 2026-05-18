@@ -1,4 +1,6 @@
 // prisma/seeds/moe-standards.ts
+// Total: 63 codes — MATH(20) + SCIENCE(11) + LITERACY(11) + CIVICS(6) + CS(7) + ENGINEERING(8)
+// ACTION-2(Engineering G1_3–G10_12), ACTION-4(CS G1_3), ACTION-5(CS G4_6 hardware) closed.
 import { PrismaClient } from "@prisma/client";
 import { pathToFileURL } from "url";
 
