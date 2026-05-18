@@ -72,6 +72,23 @@ if (!prismaWithUse.__auditMiddlewareRegistered && typeof prismaWithUse.$use === 
   prismaWithUse.__auditMiddlewareRegistered = true;
 }
 
+const prismaWithTimeout = prisma as PrismaClient & {
+  __timeoutMiddlewareRegistered?: boolean;
+  $use?: (fn: (params: any, next: (params: any) => Promise<any>) => Promise<any>) => void;
+};
+
+const DB_QUERY_TIMEOUT_MS = 8_000;
+
+if (!prismaWithTimeout.__timeoutMiddlewareRegistered && typeof prismaWithTimeout.$use === "function") {
+  prismaWithTimeout.$use(async (params, next) => {
+    const timeout = new Promise<never>((_, reject) =>
+      setTimeout(() => reject(new Error(`DB query timeout after ${DB_QUERY_TIMEOUT_MS}ms`)), DB_QUERY_TIMEOUT_MS)
+    );
+    return Promise.race([next(params), timeout]);
+  });
+  prismaWithTimeout.__timeoutMiddlewareRegistered = true;
+}
+
 const shouldEnableRdsDualWrite =
   process.env.ENABLE_RDS_DUAL_WRITE === "true" &&
   typeof process.env.RDS_DATABASE_URL === "string" &&
