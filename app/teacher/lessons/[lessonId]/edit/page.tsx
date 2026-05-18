@@ -27,6 +27,7 @@ export default function LessonEditPage() {
   const [toast, setToast] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [dirty, setDirty] = useState(false);
+  const [regenAudio, setRegenAudio] = useState(false);
 
   useEffect(() => {
     fetch(`/api/teacher/lessons/${lessonId}/detail`)
@@ -119,6 +120,29 @@ export default function LessonEditPage() {
               className="rounded-xl bg-[var(--ll-yellow-soft)] px-4 py-2 text-sm font-semibold text-[var(--ll-text-faint)] disabled:opacity-50"
             >
               {submitting ? "Submitting..." : "Submit for Review"}
+            </button>
+            <button
+              type="button"
+              disabled={regenAudio || !lesson}
+              onClick={async () => {
+                if (!lesson) return;
+                setRegenAudio(true);
+                setError(null);
+                try {
+                  const res = await fetch(`/api/teacher/lessons/${lesson.contentId}/regenerate-audio`, { method: "POST" });
+                  const data = await res.json();
+                  if (!res.ok) throw new Error(data.error ?? "Audio generation failed");
+                  setToast("Audio generated successfully");
+                  setTimeout(() => setToast(null), 4000);
+                } catch (err: any) {
+                  setError(err.message);
+                } finally {
+                  setRegenAudio(false);
+                }
+              }}
+              className="rounded-xl border border-[var(--ll-border)] px-4 py-2 text-sm disabled:opacity-50"
+            >
+              {regenAudio ? "Generating…" : "Regenerate Audio"}
             </button>
           </div>
         </div>
