@@ -44,7 +44,18 @@ export async function dispatchJob(jobType: JobType, payload: unknown, metadata: 
       return handleCurriculumRegenerationResumeJob(payload as any);
     case JobType.QUEUE_READINESS_PROBE:
       return { status: "ok" };
+    case JobType.HEALTH_CHECK:
+      console.log("[HEALTH_CHECK] Worker alive —", new Date().toISOString());
+      return { status: "ok", ts: new Date().toISOString() };
+    // Known-but-unhandled types: ack without crashing so they don't fill the DLQ.
+    case JobType.GENERATE_LESSON_AUDIO:
+    case JobType.STUDENT_IMPORT:
+    case JobType.AUTONOMOUS_WORKFLOW_RUN:
+      console.warn(`[WORKER] Job type ${jobType} not yet implemented — acking without processing`);
+      return { status: "noop", jobType };
     default:
-      throw new Error(`Unsupported job type: ${jobType}`);
+      // Unknown types are acked (not re-queued) to prevent DLQ flooding.
+      console.warn(`[WORKER] Unknown job type: ${jobType} — acking`);
+      return { status: "unknown", jobType };
   }
 }

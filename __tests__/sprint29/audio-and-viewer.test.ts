@@ -139,9 +139,9 @@ describe("POST regenerate-audio", () => {
       scheduledWork: [{ class: { schoolId: "other-school", teacherId: "other-teacher" } }],
     });
 
-    const { POST } = await import("@/app/api/teacher/lessons/[id]/regenerate-audio/route");
+    const { POST } = await import("@/app/api/teacher/lessons/[contentId]/regenerate-audio/route");
     const req = new Request("http://localhost/api/teacher/lessons/content-1/regenerate-audio", { method: "POST" });
-    const res = await POST(req as any, { params: { id: "content-1" } });
+    const res = await POST(req as any, { params: { contentId: "content-1" } });
     expect(res.status).toBe(403);
   });
 
@@ -158,9 +158,9 @@ describe("POST regenerate-audio", () => {
       scheduledWork: [],
     });
 
-    const { POST } = await import("@/app/api/teacher/lessons/[id]/regenerate-audio/route");
+    const { POST } = await import("@/app/api/teacher/lessons/[contentId]/regenerate-audio/route");
     const req = new Request("http://localhost/api/teacher/lessons/content-1/regenerate-audio", { method: "POST" });
-    const res = await POST(req as any, { params: { id: "content-1" } });
+    const res = await POST(req as any, { params: { contentId: "content-1" } });
     const body = await res.json();
 
     expect(res.status).toBe(200);
