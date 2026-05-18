@@ -1,0 +1,81 @@
+{
+  "name": "LiberiaLearn Daily Project Pulse",
+  "nodes": [
+    {
+      "name": "Cron Trigger",
+      "type": "n8n-nodes-base.cron",
+      "parameters": {
+        "triggerTimes": {
+          "item": [{ "hour": 6, "minute": 0 }]
+        }
+      },
+      "position": [0, 0]
+    },
+    {
+      "name": "Read CLAUDE.md",
+      "type": "n8n-nodes-base.readBinaryFile",
+      "parameters": {
+        "filePath": "={{ $env.VAULT_PATH }}/SYSTEM/CLAUDE.md"
+      },
+      "position": [200, 0]
+    },
+    {
+      "name": "Read Workflow Prompt",
+      "type": "n8n-nodes-base.readBinaryFile",
+      "parameters": {
+        "filePath": "={{ $env.VAULT_PATH }}/SYSTEM/workflows/01-daily-project-pulse.md"
+      },
+      "position": [200, 100]
+    },
+    {
+      "name": "Call Claude API",
+      "type": "n8n-nodes-base.httpRequest",
+      "parameters": {
+        "url": "https://api.anthropic.com/v1/messages",
+        "method": "POST",
+        "headers": {
+          "x-api-key": "={{ $env.ANTHROPIC_API_KEY }}",
+          "anthropic-version": "2023-06-01",
+          "content-type": "application/json"
+        },
+        "body": {
+          "model": "claude-sonnet-4-20250514",
+          "max_tokens": 2000,
+          "system": "You are the LiberiaLearn project operations assistant. Context:\n\n{{ $node['Read CLAUDE.md'].data }}",
+          "messages": [
+            {
+              "role": "user",
+              "content": "{{ $node['Read Workflow Prompt'].data }}"
+            }
+          ]
+        }
+      },
+      "position": [400, 0]
+    },
+    {
+      "name": "Write Output to Vault",
+      "type": "n8n-nodes-base.writeBinaryFile",
+      "parameters": {
+        "filePath": "={{ $env.VAULT_PATH }}/GENERATED/briefings/{{ $now.format('YYYY-MM-DD') }}-project-pulse.md",
+        "data": "={{ $node['Call Claude API'].json.content[0].text }}"
+      },
+      "position": [600, 0]
+    },
+    {
+      "name": "Log Operation",
+      "type": "n8n-nodes-base.appendToFile",
+      "parameters": {
+        "filePath": "={{ $env.VAULT_PATH }}/SYSTEM/logs/operations.md",
+        "data": "\n- {{ $now.toISO() }} | daily-pulse | wrote GENERATED/briefings/{{ $now.format('YYYY-MM-DD') }}-project-pulse.md"
+      },
+      "position": [800, 0]
+    }
+  ],
+  "connections": {
+    "Cron Trigger": { "main": [[ { "node": "Read CLAUDE.md" }, { "node": "Read Workflow Prompt" } ]] },
+    "Read CLAUDE.md": { "main": [[ { "node": "Call Claude API" } ]] },
+    "Read Workflow Prompt": { "main": [[ { "node": "Call Claude API" } ]] },
+    "Call Claude API": { "main": [[ { "node": "Write Output to Vault" } ]] },
+    "Write Output to Vault": { "main": [[ { "node": "Log Operation" } ]] }
+  }
+}

@@ -101,3 +101,9 @@ e2e/phase1-design-verification.spec.ts
 e2e/.env.e2e
 *.mp4
 *.webm
+
+# os-vault runtime — QUEUE processing artifacts and generated AI outputs
+os-vault/QUEUE/
+os-vault/daemon/node_modules/
+os-vault/GENERATED/**/*-OUTPUT-*.md
+os-vault/.obsidian/

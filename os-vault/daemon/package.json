@@ -1,0 +1,13 @@
+{
+  "name": "liberialearn-os-daemon",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "start": "node watcher.mjs",
+    "dev": "node --watch watcher.mjs"
+  },
+  "dependencies": {
+    "chokidar": "^3.6.0",
+    "@anthropic-ai/sdk": "^0.39.0"
+  }
+}
