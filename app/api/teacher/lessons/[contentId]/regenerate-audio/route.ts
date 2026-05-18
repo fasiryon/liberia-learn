@@ -10,14 +10,14 @@ export const dynamic = "force-dynamic";
 
 export async function POST(
   _req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: { contentId: string } }
 ) {
   try {
     const user = await requireRole("TEACHER");
 
     const lesson = await prisma.curriculumContent.findFirst({
       where: {
-        OR: [{ id: params.id }, { contentId: params.id }],
+        OR: [{ id: params.contentId }, { contentId: params.contentId }],
       },
       select: {
         id: true,

@@ -22,8 +22,19 @@ async function main() {
 
   const users = await prisma.user.count();
   const schools = await prisma.school.count();
-  const lessons = await prisma.lesson.count();
-  const approvedLessons = await prisma.lesson.count({ where: { status: "APPROVED" } });
+
+  const totalContent = await prisma.curriculumContent.count();
+  const approvedContent = await prisma.curriculumContent.count({
+    where: { status: { in: ["APPROVED", "published"] } },
+  });
+  const needsReview = await prisma.curriculumContent.count({ where: { status: "NEEDS_REVIEW" } });
+  const pending = await prisma.curriculumContent.count({ where: { status: "PENDING" } });
+  const noAudio = await prisma.curriculumContent.count({
+    where: {
+      status: { in: ["APPROVED", "published"] },
+      audioAssets: { none: {} },
+    },
+  });
 
   console.log("\n=== DATABASE BASELINE ===");
   console.log("DATABASE_URL mode:", pooled);
@@ -34,9 +45,11 @@ async function main() {
   console.log("\n=== DATA COUNTS ===");
   console.log("Users:", users);
   console.log("Schools:", schools);
-  console.log("Total lessons:", lessons);
-  console.log("APPROVED lessons:", approvedLessons);
-  console.log("Pending/review:", lessons - approvedLessons);
+  console.log("Total curriculum content:", totalContent);
+  console.log("APPROVED/published:", approvedContent);
+  console.log("NEEDS_REVIEW:", needsReview);
+  console.log("PENDING:", pending);
+  console.log("APPROVED but no audio:", noAudio);
 }
 
 main().catch(console.error).finally(() => prisma.$disconnect());
