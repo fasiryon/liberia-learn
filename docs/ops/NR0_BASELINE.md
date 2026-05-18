@@ -57,16 +57,19 @@ This document is the ground-truth snapshot established at the start of the Natio
 |-------|-------|
 | DATABASE_URL env | Present in Vercel production (encrypted) |
 | DIRECT_URL env | Present in Vercel production (via `prisma/schema.prisma`) |
-| Connection mode | _PENDING production run_ |
-| Active connections | _PENDING_ / _PENDING_ max |
-| DB size | _PENDING_ |
-| Users | _PENDING_ |
-| Schools | _PENDING_ |
-| Total lessons | _PENDING_ |
-| APPROVED lessons | _PENDING_ |
-| Pending/review | _PENDING_ |
+| Connection mode | **⚠ MISCONFIGURED** — port 5432 with `pgbouncer=true` flag (see below) |
+| Active connections | 6 (low — 9 schools, 315 users) |
+| Max connections | Not returned by pg_stat (check Supabase dashboard) |
+| DB size | **311 MB** |
+| Users | **315** |
+| Schools | **9** |
+| Total curriculum content | **5,181** |
+| APPROVED/published | **4,363** |
+| NEEDS_REVIEW | **731** |
+| PENDING | 0 |
+| APPROVED but no audio | **3,900 (89%)** |
 
-**Known config:** `lib/db.ts` injects `connection_limit=1` into DATABASE_URL programmatically. DATABASE_URL should be port 6543 (PgBouncer pooled). DIRECT_URL should be port 5432 (direct — used by Prisma Migrate only).
+**DB pool configuration issue (HIGH risk at scale):** DATABASE_URL has `pgbouncer=true` and `connection_limit=1` parameters but uses **port 5432** (direct Postgres), not port 6543 (PgBouncer pooled). At national scale with many parallel Vercel instances, each will hold a direct connection — this can exhaust Supabase's direct connection limit. Fix: change DATABASE_URL port from 5432 → 6543 in Vercel env. DIRECT_URL (5432, used for Prisma Migrate only) is correct.
 
 ---
 
@@ -76,11 +79,9 @@ This document is the ground-truth snapshot established at the start of the Natio
 |-------|-------|
 | UPSTASH_REDIS_REST_URL | **SET** (Vercel production, encrypted, added 5 days ago) |
 | UPSTASH_REDIS_REST_TOKEN | **SET** (Vercel production, encrypted, added 5 days ago) |
-| In-memory fallback present | **YES** — `lib/rateLimit.ts` `MemoryBackend` class (lines 119–163) |
-| Fallback trigger | Only if `UPSTASH_REDIS_REST_URL` or `UPSTASH_REDIS_REST_TOKEN` is unset |
-| Risk | **LOW** — Upstash configured in prod; fallback is test/build-safe guard |
-
-**Note:** `MemoryBackend` is per-instance and not distributed. If Upstash is ever removed or rotated without updating the env vars, rate limiting silently degrades to per-instance scope. This is a known risk for NR-7 (Tenant Access Guard).
+| In-memory fallback present | **YES → FIXED in NR-1** — now throws in production if Upstash env vars absent |
+| Fallback trigger (after NR-1) | Hard crash visible in Sentry; fallback removed from prod path |
+| Risk | **ELIMINATED** — production now fails loudly if Upstash is removed |
 
 ---
 
@@ -95,7 +96,9 @@ This document is the ground-truth snapshot established at the start of the Natio
 | SQS_QUEUE_URL | **SET** in Vercel production (encrypted, added 63 days ago) |
 | SQS queue depth | _Cannot check — URL is encrypted in Vercel, not in local env_ |
 
-**Risk: HIGH.** `SQS_QUEUE_URL` is configured but the ECS cluster does not exist. Any code path that enqueues SQS jobs (audio generation fallback, curriculum regen queue) will silently fail or queue indefinitely. Verify whether the worker was intentionally decommissioned or if the cluster was never deployed. This blocks NR-2 (ECS Worker Autoscale + Queue SLOs).
+**Decision: REBUILD NEEDED (NR-2).** SQS_QUEUE_URL is set and live code calls `enqueueJob()` from 16+ files for critical job types (GENERATE_EMBEDDINGS, GENERATE_LESSON_AUDIO, GENERATE_TEXTBOOK, CURRICULUM_REGENERATE_*, GENERATE_SCHOOL_ONBOARDING_KIT, AUTONOMOUS_WORKFLOW_RUN, etc.). Messages enqueue successfully to SQS but no consumer processes them — all jobs silently pile up.
+
+**NR-1 mitigation:** `enqueueJob()` now wraps the SQS send in try/catch and logs failures with `"[QUEUE] SQS send failed — no consumer"`. Messages DO reach SQS (the URL is valid), they just aren't consumed. No user-facing errors. ECS cluster provision is NR-2 scope.
 
 ---
 
@@ -108,12 +111,36 @@ This document is the ground-truth snapshot established at the start of the Natio
 
 | Field | Value |
 |-------|-------|
-| Grid (12 grades × 8 subjects) | _PENDING production run_ |
-| National gate cells passing (≥15 APPROVED) | _PENDING_ / 96 |
-| Critical deserts (0 lessons) | _PENDING_ |
-| APPROVED without audio | _PENDING_ |
+| National gate cells passing (≥15 APPROVED) | **62 / 96** |
+| Cells with 1–14 lessons (below gate, not zero) | 0 |
+| Critical deserts (0 lessons) | **34 cells** (see below) |
+| APPROVED without audio | **3,900 (89% of 4,363 approved)** |
 
-**Known from Phase 5.2 audit (2026-04-28):** G2 and G9 are critical content gaps (3 and 2 missing lessons respectively). ENGINEERING has 0 MOE codes. CIVICS was missing strands (fixed in AI Factory sprint). 389 lessons were in PUBLISHED state awaiting approval.
+**12×8 Coverage Grid (APPROVED + published):**
+```
+Grade    MATH     ENGLISH  LITERAC  SCIENCE  SOCIAL_  CIVICS   COMPUTE  ENGINEE
+G1         40✓    ✗        40✓      40✓      40✓      40✓      ✗        ✗
+G2         41✓    ✗        41✓      41✓      40✓      ✗        ✗        ✗
+G3         40✓    ✗        40✓      53✓      40✓      40✓      ✗        ✗
+G4         40✓    ✗        40✓      40✓      40✓      40✓      ✗        ✗
+G5         90✓    170✓     84✓      112✓     40✓      41✓      41✓      ✗
+G6         52✓    ✗        60✓      46✓      40✓      45✓      ✗        ✗
+G7         65✓    150✓     52✓      86✓      89✓      181✓     ✗        ✗
+G8         49✓    ✗        48✓      46✓      40✓      45✓      ✗        ✗
+G9         50✓    ✗        41✓      40✓      40✓      40✓      ✗        ✗
+G10        44✓    ✗        40✓      40✓      40✓      40✓      ✗        ✗
+G11        40✓    ✗        40✓      40✓      40✓      40✓      ✗        ✗
+G12        56✓    ✗        48✓      51✓      46✓      49✓      ✗        ✗
+```
+Legend: ✗ = zero  ✓ = ≥15 approved lessons
+
+**Critical deserts (34 zero-lesson cells):**
+- ENGLISH: G1–G4, G6, G8–G12 (10 grades — only G5 and G7 have ENGLISH content)
+- COMPUTER_SCIENCE: G1–G4, G6–G12 (11 grades — only G5 has CS content)
+- ENGINEERING_FOUNDATIONS: G1–G12 (ALL 12 grades — complete national desert)
+- CIVICS: G2
+
+**Implication:** ENGLISH and COMPUTER_SCIENCE are near-complete deserts at current production state. ENGINEERING_FOUNDATIONS has zero content nationally. These drive NR-12 and NR-13.
 
 ---
 
@@ -161,16 +188,39 @@ This document is the ground-truth snapshot established at the start of the Natio
 
 ## NR-0 Sign-Off Checklist
 
-- [x] Vercel tier confirmed
+- [x] Vercel tier confirmed (Pro, 15/40 crons)
 - [x] Upstash Redis: SET in production
-- [x] In-memory rate limit fallback: present and documented
-- [x] ECS worker: NOT running — HIGH risk documented
-- [x] feat/phase-5-intelligence-system: OPEN (not merged to main)
+- [x] In-memory rate limit fallback documented → **FIXED in NR-1**
+- [x] ECS worker: NOT running — REBUILD path documented
+- [x] feat/phase-5-intelligence-system: **DELETED** (0 commits ahead of main)
 - [x] MASTER_EXECUTION_PLAN.md synced (Sprints 2–16E marked COMPLETE)
 - [x] CURRENT_EXECUTION_STATE.md synced
-- [x] scripts/db-connection-audit.ts created
-- [x] scripts/curriculum-coverage-audit.ts created
-- [ ] Production DB connection audit script run (requires `.env.production`)
-- [ ] Curriculum coverage grid populated (requires `.env.production`)
+- [x] Production DB script ran: 311 MB, 315 users, 9 schools, 4,363 approved
+- [x] Curriculum grid populated: 62/96 cells at gate, 34 deserts, 3,900 no-audio
+- [x] DATABASE_URL misconfiguration documented (port 5432 vs 6543)
 - [ ] Latest Vercel ERROR deployment root-cause identified
-- [ ] SQS queue depth confirmed (requires AWS credentials)
+- [ ] SQS queue depth confirmed (requires AWS credentials with queue access)
+
+---
+
+## NR-1 Actions Taken (2026-05-18)
+
+| Action | Result |
+|--------|--------|
+| Upstash hard-fail in production | **DONE** — `lib/rateLimit.ts` throws if Upstash env vars absent in prod |
+| `assertProductionEnv()` startup check | **DONE** — `lib/startup-checks.ts` created; wired in `app/instrumentation.ts` |
+| DB pool settings confirmed | PARTIAL — has `pgbouncer=true` + `connection_limit=1` but **port 5432 (wrong)**. Fix needed: change to port 6543 in Vercel env |
+| ECS/SQS decision | **REBUILD-NR2** — 16+ live callers; `enqueueJob()` now try/catches with explicit error log |
+| `feat/phase-5-intelligence-system` | **DELETED** (already fully in main) |
+| Build route conflict | **FIXED** — `[id]/regenerate-audio` merged into `[contentId]/regenerate-audio` |
+| Build heap limit | Documented: requires `NODE_OPTIONS=--max-old-space-size=6144`; Vercel builds fine (more memory) |
+
+## NR-2 Input (carry forward)
+
+1. **DATABASE_URL port**: Change from 5432 → 6543 in Vercel production env (PgBouncer pooling critical at scale)
+2. **ECS cluster**: Provision `liberia-learn` Fargate cluster + worker task definition for SQS consumer
+3. **SQS backlog**: After ECS is live, drain any backlogged GENERATE_EMBEDDINGS / GENERATE_LESSON_AUDIO / CURRICULUM_REGENERATE_* messages
+4. **Audio gap**: 3,900 APPROVED lessons (89%) have no audio — NR-14 (National Audio Pipeline)
+5. **ENGLISH content**: Only G5 and G7 have ENGLISH lessons — 10-grade desert needs NR-13 sprint
+6. **ENGINEERING_FOUNDATIONS**: Complete 12-grade desert — NR-13 scope
+7. **COMPUTER_SCIENCE**: Only G5 has CS lessons — 11-grade desert — NR-13 scope

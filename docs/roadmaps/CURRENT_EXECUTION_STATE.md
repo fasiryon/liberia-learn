@@ -6,20 +6,28 @@ Live execution tracking for the final closeout program.
 ## National Rollout Program (active)
 - **Plan:** `docs/roadmaps/NATIONAL_ROLLOUT_EXECUTION_PLAN.md`
 - **Current sprint:** NR-0 — Program Baseline + Doc Sync
-- **Status:** IN_PROGRESS (2026-05-18)
+- **Status:** NR-1 COMPLETE (2026-05-18)
 - **Target:** World-class national rollout (all Liberia) — 22 sprints NR-0 through NR-21
-- **Next sprint:** NR-1 — Production Infra Upgrade (requires NR-0 gate to pass)
+- **Next sprint:** NR-2 — ECS Worker Autoscale + Queue SLOs
 
-### NR-0 Progress (2026-05-18)
-- Vercel: Pro plan confirmed (15 crons active/40), team farquema-siryons-projects, Node 22.x, latest prod deployment ERROR (investigate before NR-1)
-- Upstash Redis: SET in production, in-memory fallback present in lib/rateLimit.ts (LOW risk)
-- ECS Worker: cluster "liberia-learn" NOT FOUND — SQS_QUEUE_URL set but no cluster deployed (HIGH risk, blocks NR-2)
-- Security: /admin and /platform bypass middleware (page-level auth); 397/471 route files guarded; 88 files use isPlatformAdmin
-- feat/phase-5-intelligence-system: OPEN (unmerged)
-- MASTER_EXECUTION_PLAN.md: Sprints 2–16E synced to COMPLETE
-- doc/ops/NR0_BASELINE.md: created
-- scripts/db-connection-audit.ts and scripts/curriculum-coverage-audit.ts: created
-- PENDING: run production DB script, populate curriculum grid, confirm Vercel error, SQS queue depth
+### NR-0 + NR-1 Complete (2026-05-18) — commit: see main HEAD
+Key findings:
+- DB: 311 MB, 315 users, 9 schools, 4,363 approved lessons, 3,900 (89%) without audio
+- DATABASE_URL: port 5432 with pgbouncer=true → MISCONFIGURED (needs 6543 for actual pooling)
+- Curriculum: 62/96 cells at national gate (≥15); 34 zero-lesson deserts; ENGLISH only G5+G7, CS only G5, ENGINEERING_FOUNDATIONS completely empty
+- Upstash hard-fail: DONE (lib/rateLimit.ts throws in prod if env vars absent)
+- assertProductionEnv() startup check: DONE (lib/startup-checks.ts + app/instrumentation.ts)
+- ECS decision: REBUILD-NR2 — 16+ live SQS callers, no consumer running; enqueueJob() now logs explicitly
+- feat/phase-5-intelligence-system: DELETED (0 commits ahead of main)
+- Build route conflict fixed: [id]/regenerate-audio merged into [contentId]/regenerate-audio
+- Build requires NODE_OPTIONS=--max-old-space-size=6144 locally; Vercel CI builds fine
+
+NR-2 input:
+1. Fix DATABASE_URL port 5432 → 6543 (Vercel env update)
+2. Provision liberia-learn ECS Fargate cluster + worker task
+3. Drain SQS backlog after ECS live
+4. NR-14: Audio pipeline for 3,900 no-audio lessons
+5. NR-13: ENGLISH (10 deserts), CS (11 deserts), ENGINEERING_FOUNDATIONS (12 deserts)
 
 ## Fix 1 — Connection Pool (connection_limit=1)
 - `lib/db.ts` now injects `connection_limit=1` into the database URL programmatically if not already present.

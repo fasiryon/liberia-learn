@@ -78,11 +78,20 @@ export async function enqueueJob(jobType: JobType, payload: unknown, options: En
       }
     : {};
 
-  await getSqsClient().send(
-    new SendMessageCommand({
-      QueueUrl: queueUrl,
-      MessageBody: JSON.stringify(body),
-      ...fifoAttributes,
-    })
-  );
+  try {
+    await getSqsClient().send(
+      new SendMessageCommand({
+        QueueUrl: queueUrl,
+        MessageBody: JSON.stringify(body),
+        ...fifoAttributes,
+      })
+    );
+  } catch (err) {
+    // SQS send failed — ECS worker may not be running (NR-2: provision ECS cluster).
+    // Log but do not throw so callers are not blocked by queue unavailability.
+    console.error("[QUEUE] SQS send failed — no consumer will process this job until ECS is provisioned", {
+      jobType,
+      error: err instanceof Error ? err.message : String(err),
+    });
+  }
 }

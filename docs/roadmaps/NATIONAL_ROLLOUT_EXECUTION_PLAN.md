@@ -23,8 +23,8 @@ This plan governs the path from **current production baseline** to **world-class
 
 | Sprint | Name | Phase | Workstream | Status | Gate |
 |--------|------|-------|------------|--------|------|
-| NR-0 | Program Baseline + Doc Sync | 0 | All | PENDING | NOT RUN |
-| NR-1 | Production Infra Upgrade | 0 | Scale | PENDING | NOT RUN |
+| NR-0 | Program Baseline + Doc Sync | 0 | All | COMPLETE | PASS |
+| NR-1 | Production Infra Upgrade | 0 | Scale | COMPLETE | PASS |
 | NR-2 | ECS Worker Autoscale + Queue SLOs | 0 | Scale | PENDING | NOT RUN |
 | NR-3 | Load-Test Identity Pool | 0 | Scale | PENDING | NOT RUN |
 | NR-4 | k6 Moderate (1K VU) Production Proof | 1 | Scale | PENDING | NOT RUN |

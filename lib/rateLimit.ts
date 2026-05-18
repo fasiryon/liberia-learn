@@ -237,6 +237,17 @@ export function createBackend(runtimeOverrides?: Partial<RateLimitRuntimeContext
     return new UpstashBackend();
   }
 
+  // In production, missing Upstash credentials must be a visible crash — not a silent
+  // per-instance fallback that gives different limits across parallel Vercel instances.
+  if (runtime.production) {
+    throw new Error(
+      "[RateLimit] UPSTASH_REDIS_REST_URL and UPSTASH_REDIS_REST_TOKEN are required in " +
+        "production. Set them in Vercel env vars. Do not remove them."
+    );
+  }
+
+  // Non-production environments (preview, local dev) fall back to in-memory.
+  warnMemoryOnce();
   return new MemoryBackend();
 }
 
