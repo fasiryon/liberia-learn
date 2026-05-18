@@ -5,12 +5,12 @@ Live execution tracking for the final closeout program.
 
 ## National Rollout Program (active)
 - **Plan:** `docs/roadmaps/NATIONAL_ROLLOUT_EXECUTION_PLAN.md`
-- **Current sprint:** NR-0 — Program Baseline + Doc Sync
-- **Status:** NR-1 COMPLETE (2026-05-18)
+- **Current sprint:** NR-2 — ECS Worker Autoscale + Queue SLOs
+- **Status:** NR-2 COMPLETE (2026-05-18)
 - **Target:** World-class national rollout (all Liberia) — 22 sprints NR-0 through NR-21
-- **Next sprint:** NR-2 — ECS Worker Autoscale + Queue SLOs
+- **Next sprint:** NR-3 — DATABASE_URL Port Fix + PgBouncer Validation
 
-### NR-0 + NR-1 Complete (2026-05-18) — commit: see main HEAD
+### NR-0 + NR-1 Complete (2026-05-18)
 Key findings:
 - DB: 311 MB, 315 users, 9 schools, 4,363 approved lessons, 3,900 (89%) without audio
 - DATABASE_URL: port 5432 with pgbouncer=true → MISCONFIGURED (needs 6543 for actual pooling)
@@ -22,11 +22,30 @@ Key findings:
 - Build route conflict fixed: [id]/regenerate-audio merged into [contentId]/regenerate-audio
 - Build requires NODE_OPTIONS=--max-old-space-size=6144 locally; Vercel CI builds fine
 
-NR-2 input:
-1. Fix DATABASE_URL port 5432 → 6543 (Vercel env update)
-2. Provision liberia-learn ECS Fargate cluster + worker task
-3. Drain SQS backlog after ECS live
-4. NR-14: Audio pipeline for 3,900 no-audio lessons
+### NR-2 Complete (2026-05-18) — ECS Worker Autoscale + Queue SLOs
+Infrastructure provisioned:
+- ECS cluster `liberia-learn`: ACTIVE (us-east-1)
+- Task definition `liberia-learn-worker:1`: registered (512 CPU / 1024 MB, FARGATE_SPOT weight 4)
+- ECS service `liberia-learn-worker`: RUNNING (1/1 tasks at steady state)
+- Autoscaling: min 1 / max 10 tasks, target 50 SQS messages, scale-out 30s / scale-in 120s
+- SQS queue: `liberialearn-jobs.fifo` (VisibilityTimeout 300s confirmed)
+- SQS DLQ: `liberialearn-jobs-dlq.fifo` (maxReceiveCount 3)
+- SSM parameters: DATABASE_URL, DIRECT_URL, OPENAI_API_KEY, SQS_QUEUE_URL, SQS_DLQ_URL
+- IAM: ecsTaskExecutionRole + AmazonECSTaskExecutionRolePolicy + ECR read + SSM read
+- Flood test: 200 HEALTH_CHECK messages sent; queue drained; scale-out observed
+Code changes:
+- lib/queue.ts: HEALTH_CHECK enum added
+- worker/handlers/index.ts: HEALTH_CHECK handler + safe default + noop for unimplemented types
+- scripts/flood-test-queue.ts: created
+- infra/ecs/worker-task-definition.json: created
+- docs/ops/WORKER_DEPLOYMENT.md: updated with actual NR-2 values
+Gate: prisma generate PASS, tsc PASS, vitest PASS (3,093 tests / 383 files), build PASS
+
+NR-3 input:
+1. Fix DATABASE_URL in Vercel: change port 5432 → 6543 + confirm pgbouncer=true (connection exhaustion risk at scale)
+2. Add remaining SSM parameters (ELEVENLABS_API_KEY, ANTHROPIC_API_KEY, AFRICASTALKING_API_KEY, etc.)
+3. Confirm worker drains backlog accumulated during ECS-dark period
+4. NR-14: Audio pipeline for 3,900 no-audio lessons (GENERATE_LESSON_AUDIO worker handler)
 5. NR-13: ENGLISH (10 deserts), CS (11 deserts), ENGINEERING_FOUNDATIONS (12 deserts)
 
 ## Fix 1 — Connection Pool (connection_limit=1)

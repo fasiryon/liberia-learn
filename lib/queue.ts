@@ -17,6 +17,7 @@ export enum JobType {
   CURRICULUM_REGENERATE_RESUME = "curriculum.regenerate.resume",
   QUEUE_READINESS_PROBE = "queue.readiness.probe",
   AUTONOMOUS_WORKFLOW_RUN = "autonomous.workflow.run",
+  HEALTH_CHECK = "HEALTH_CHECK",
 }
 
 type QueueEnvelope = {
