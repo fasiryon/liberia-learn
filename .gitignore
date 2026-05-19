@@ -107,3 +107,6 @@ os-vault/QUEUE/
 os-vault/daemon/node_modules/
 os-vault/GENERATED/**/*-OUTPUT-*.md
 os-vault/.obsidian/
+
+# Load-test fixtures — contain production JWT tokens, never commit
+load-tests/fixtures/student-tokens.json

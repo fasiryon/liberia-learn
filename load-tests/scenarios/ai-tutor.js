@@ -6,20 +6,20 @@
  * Expects graceful fallback (not 500) when AI budget is exhausted.
  */
 
+import { SharedArray } from "k6/data";
 import http from "k6/http";
 import { check, sleep } from "k6";
 import { Counter, Trend } from "k6/metrics";
 
 const BASE_URL = __ENV.BASE_URL || "https://liberia-learn.vercel.app";
-const STUDENT_TOKEN = __ENV.STUDENT_TOKEN || "";
+
+// Load token pool once, shared across all VUs
+const tokens = new SharedArray("students", function () {
+  return JSON.parse(open("../fixtures/student-tokens.json"));
+});
 
 const tutorFallbacks = new Counter("tutor_fallback_responses");
 const tutorDuration = new Trend("tutor_request_duration", true);
-
-const HEADERS = {
-  "Content-Type": "application/json",
-  Authorization: `Bearer ${STUDENT_TOKEN}`,
-};
 
 const SAMPLE_QUESTIONS = [
   "Can you explain fractions to me?",
@@ -30,7 +30,13 @@ const SAMPLE_QUESTIONS = [
 ];
 
 export function ai_tutor() {
+  const { token } = tokens[__VU % tokens.length];
   const question = SAMPLE_QUESTIONS[Math.floor(Math.random() * SAMPLE_QUESTIONS.length)];
+
+  const headers = {
+    "Content-Type": "application/json",
+    Cookie: `next-auth.session-token=${token}`,
+  };
 
   const res = http.post(
     `${BASE_URL}/api/student/tutor`,
@@ -46,7 +52,7 @@ export function ai_tutor() {
       gradeBand: "upper_primary",
       requestType: "explain",
     }),
-    { headers: HEADERS }
+    { headers }
   );
 
   tutorDuration.add(res.timings.duration);
