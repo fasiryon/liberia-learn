@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { requireRole } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { buildCurriculumDisplayTitle } from "@/lib/curriculum/title";
+import { withRedisCache } from "@/lib/cache/redisCache";
 
 export const dynamic = "force-dynamic";
 
@@ -41,6 +42,9 @@ export async function GET(req: NextRequest) {
     if (classSubjects.length > 0) {
       where.subject = { in: classSubjects };
     }
+
+    const cacheKey = `cache:lessons:${user.id}:page:${page}`;
+    const lessonsData = await withRedisCache(cacheKey, 600, async () => {
 
     const [total, rows] = await Promise.all([
       prisma.curriculumContent.count({ where }),
@@ -102,7 +106,7 @@ export async function GET(req: NextRequest) {
       return typeof content === 'string' && content.length >= 300
     })
 
-    return NextResponse.json({
+    return {
       grade: student.currentGrade,
       studentId: student.id,
       count: qualityLessons.length,
@@ -131,7 +135,10 @@ export async function GET(req: NextRequest) {
           payload: row.payload,
         }),
       })),
-    });
+    };
+    }); // end withRedisCache
+
+    return NextResponse.json(lessonsData);
   } catch (e: any) {
     const status = e?.status || 500;
     return NextResponse.json({ error: e.message }, { status });
