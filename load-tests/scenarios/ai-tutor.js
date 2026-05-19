@@ -21,6 +21,9 @@ const tokens = new SharedArray("students", function () {
 const tutorFallbacks = new Counter("tutor_fallback_responses");
 const tutorDuration = new Trend("tutor_request_duration", true);
 
+// 404=flag disabled, 429=rate limited, 503=budget exhausted — acceptable under load
+const tutorCallback = http.expectedStatuses(200, 404, 429, 503);
+
 const SAMPLE_QUESTIONS = [
   "Can you explain fractions to me?",
   "What is the water cycle?",
@@ -52,7 +55,7 @@ export function ai_tutor() {
       gradeBand: "upper_primary",
       requestType: "explain",
     }),
-    { headers }
+    { headers, responseCallback: tutorCallback }
   );
 
   tutorDuration.add(res.timings.duration);
