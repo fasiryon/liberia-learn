@@ -6,6 +6,7 @@ import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/db";
 import { normalizeLoginId, normalizeCredentialPhone } from "@/lib/login-identifiers";
 import { checkRateLimit } from "@/lib/rateLimit";
+import { withRedisCache } from "@/lib/cache/redisCache";
 
 type RawCredentialInput = {
   email?: string;
@@ -254,27 +255,45 @@ export async function getOptionalUser(): Promise<SessionUser | null> {
   };
 }
 
+type FreshnessRecord = {
+  passwordChangedAt: string | null;
+  schoolId: string | null;
+  isPlatformAdmin: boolean;
+  schoolStatus: string | null;
+};
+
 async function assertSessionFresh(user: SessionUser) {
-  const record = await prisma.user.findUnique({
-    where: { id: user.id },
-    select: {
-      passwordChangedAt: true,
-      schoolId: true,
-      isPlatformAdmin: true,
-      school: { select: { status: true } },
-    },
-  });
+  // Cache DB freshness check for 120s — reduces DB load from O(VUs) to O(distinct users / 2min).
+  // Tradeoff: password changes and school deactivations take up to 120s to propagate.
+  const record = await withRedisCache<FreshnessRecord>(
+    `cache:session-fresh:${user.id}`,
+    120,
+    async () => {
+      const dbRecord = await prisma.user.findUnique({
+        where: { id: user.id },
+        select: {
+          passwordChangedAt: true,
+          schoolId: true,
+          isPlatformAdmin: true,
+          school: { select: { status: true } },
+        },
+      });
+      if (!dbRecord) throw Object.assign(new Error("Unauthorized"), { status: 401 });
+      return {
+        passwordChangedAt: dbRecord.passwordChangedAt?.toISOString() ?? null,
+        schoolId: dbRecord.schoolId,
+        isPlatformAdmin: dbRecord.isPlatformAdmin,
+        schoolStatus: dbRecord.school?.status ?? null,
+      };
+    }
+  );
 
-  if (!record) {
-    throw Object.assign(new Error("Unauthorized"), { status: 401 });
-  }
-
-  if (record.schoolId && !record.isPlatformAdmin && record.school?.status !== "ACTIVE") {
+  if (record.schoolId && !record.isPlatformAdmin && record.schoolStatus !== "ACTIVE") {
     throw Object.assign(new Error("School inactive"), { status: 403 });
   }
 
   if (!user.iat || !record.passwordChangedAt) return;
-  const changedAtMs = record.passwordChangedAt.getTime();
+  const changedAtMs = new Date(record.passwordChangedAt).getTime();
   if (user.iat * 1000 < changedAtMs) {
     throw Object.assign(new Error("Session expired"), { status: 401 });
   }
