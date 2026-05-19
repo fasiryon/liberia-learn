@@ -43,54 +43,82 @@ export async function GET(req: NextRequest) {
       where.subject = { in: classSubjects };
     }
 
-    const cacheKey = `cache:lessons:${user.id}:page:${page}`;
-    const lessonsData = await withRedisCache(cacheKey, 600, async () => {
+    // Shared content cache key — same for all students with same grade+subjects.
+    // Content list (expensive table scan) is shared; per-student progress is separate.
+    const gradeStr = student.currentGrade ?? "null";
+    const subjectsStr = classSubjects.sort().join(",") || "all";
+    const contentKey = `cache:lessons:g${gradeStr}:${subjectsStr}:p${page}`;
 
-    const [total, rows] = await Promise.all([
-      prisma.curriculumContent.count({ where }),
-      prisma.curriculumContent.findMany({
-        where,
-        orderBy: [{ subject: "asc" }, { orderInUnit: "asc" }, { createdAt: "asc" }],
-        take: PAGE_SIZE,
-        skip,
-        select: {
-          contentId: true,
-          title: true,
-          grade: true,
-          subject: true,
-          contentType: true,
-          status: true,
-          thumbnailUrl: true,
-          thumbnailStatus: true,
-          payload: true,
-        },
-      }),
-    ]);
+    const contentCache = await withRedisCache(contentKey, 600, async () => {
+      const [total, rows] = await Promise.all([
+        prisma.curriculumContent.count({ where }),
+        prisma.curriculumContent.findMany({
+          where,
+          orderBy: [{ subject: "asc" }, { orderInUnit: "asc" }, { createdAt: "asc" }],
+          take: PAGE_SIZE,
+          skip,
+          select: {
+            contentId: true,
+            title: true,
+            grade: true,
+            subject: true,
+            contentType: true,
+            status: true,
+            thumbnailUrl: true,
+            thumbnailStatus: true,
+            payload: true,
+          },
+        }),
+      ]);
+      const qualityLessons = rows.filter((lesson) => {
+        const payload = lesson.payload as any;
+        const content = payload?.content ?? payload?.lessonBody ?? payload?.body ?? "";
+        return typeof content === "string" && content.length >= 300;
+      });
+      return {
+        total,
+        count: qualityLessons.length,
+        totalPages: Math.ceil(total / PAGE_SIZE),
+        items: qualityLessons.map((row) => ({
+          contentId: row.contentId,
+          title: row.title,
+          grade: row.grade,
+          subject: row.subject,
+          contentType: row.contentType,
+          status: row.status,
+          thumbnailUrl: row.thumbnailUrl,
+          thumbnailStatus: row.thumbnailStatus,
+          displayTitle: buildCurriculumDisplayTitle({
+            title: row.title,
+            subject: row.subject,
+            gradeLevel: row.grade,
+            payload: row.payload,
+          }),
+        })),
+        rowSubjects: rows.map((r) => r.subject),
+      };
+    });
 
+    // Per-student completion progress (fast; no-op for unenrolled students)
     const scheduledRows = await prisma.scheduledWork.findMany({
       where: {
-        class: {
-          enrollments: { some: { studentId: student.id } },
-        },
-        content: { subject: { in: Array.from(new Set(rows.map((row) => row.subject))) } },
+        class: { enrollments: { some: { studentId: student.id } } },
+        content: { subject: { in: Array.from(new Set(contentCache.rowSubjects)) } },
       },
-      select: {
-        id: true,
-        content: { select: { subject: true } },
-      },
+      select: { id: true, content: { select: { subject: true } } },
     });
     const progressRows =
       scheduledRows.length > 0
         ? await prisma.studentProgress.findMany({
             where: {
               studentId: user.id,
-              scheduledWorkId: { in: scheduledRows.map((row) => row.id) },
+              scheduledWorkId: { in: scheduledRows.map((r) => r.id) },
               completedAt: { not: null },
             },
             select: { scheduledWorkId: true },
           })
         : [];
-    const completedIds = new Set(progressRows.map((row) => row.scheduledWorkId));
+    const completedIds = new Set(progressRows.map((r) => r.scheduledWorkId));
     const subjectTotals = new Map<string, { total: number; completed: number }>();
     for (const row of scheduledRows) {
       const subject = row.content.subject;
@@ -100,45 +128,21 @@ export async function GET(req: NextRequest) {
       subjectTotals.set(subject, bucket);
     }
 
-    const qualityLessons = rows.filter((lesson) => {
-      const payload = lesson.payload as any
-      const content = payload?.content ?? payload?.lessonBody ?? payload?.body ?? ''
-      return typeof content === 'string' && content.length >= 300
-    })
-
-    return {
+    return NextResponse.json({
       grade: student.currentGrade,
       studentId: student.id,
-      count: qualityLessons.length,
-      total,
+      count: contentCache.count,
+      total: contentCache.total,
       page,
-      totalPages: Math.ceil(total / PAGE_SIZE),
+      totalPages: contentCache.totalPages,
       subjectCompletion: Array.from(subjectTotals.entries()).map(([subject, stats]) => ({
         subject,
         total: stats.total,
         completed: stats.completed,
         completionRate: stats.total > 0 ? Math.round((stats.completed / stats.total) * 100) : 0,
       })),
-      items: qualityLessons.map((row) => ({
-        contentId: row.contentId,
-        title: row.title,
-        grade: row.grade,
-        subject: row.subject,
-        contentType: row.contentType,
-        status: row.status,
-        thumbnailUrl: row.thumbnailUrl,
-        thumbnailStatus: row.thumbnailStatus,
-        displayTitle: buildCurriculumDisplayTitle({
-          title: row.title,
-          subject: row.subject,
-          gradeLevel: row.grade,
-          payload: row.payload,
-        }),
-      })),
-    };
-    }); // end withRedisCache
-
-    return NextResponse.json(lessonsData);
+      items: contentCache.items,
+    });
   } catch (e: any) {
     const status = e?.status || 500;
     return NextResponse.json({ error: e.message }, { status });
