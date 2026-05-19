@@ -110,3 +110,5 @@ os-vault/.obsidian/
 
 # Load-test fixtures — contain production JWT tokens, never commit
 load-tests/fixtures/student-tokens.json
+load-tests/fixtures/load-test.env
+load-tests/results/*.json

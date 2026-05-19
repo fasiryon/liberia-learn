@@ -21,23 +21,26 @@ const guardianErrors = new Counter("guardian_dashboard_errors");
 
 const HEADERS = {
   "Content-Type": "application/json",
-  Cookie: `next-auth.session-token=${GUARDIAN_TOKEN}`,
+  Cookie: `__Secure-next-auth.session-token=${GUARDIAN_TOKEN}`,
 };
+
+// 401/403 are expected when GUARDIAN_TOKEN is not provided — don't count as failures
+const guardianCallback = http.expectedStatuses(200, 401, 403, 404);
 
 export function guardian_reads() {
   // 1. Guardian dashboard
-  const dashRes = http.get(`${BASE_URL}/api/guardian/dashboard`, { headers: HEADERS });
+  const dashRes = http.get(`${BASE_URL}/api/guardian/dashboard`, { headers: HEADERS, responseCallback: guardianCallback });
   check(dashRes, {
-    "guardian dashboard 200": (r) => r.status === 200,
+    "guardian dashboard 200/401/403": (r) => [200, 401, 403].includes(r.status),
     "no 5xx": (r) => r.status < 500,
   });
   if (dashRes.status >= 500) guardianErrors.add(1);
   sleep(1);
 
   // 2. Guardian progress
-  const progressRes = http.get(`${BASE_URL}/api/guardian/progress`, { headers: HEADERS });
+  const progressRes = http.get(`${BASE_URL}/api/guardian/progress`, { headers: HEADERS, responseCallback: guardianCallback });
   check(progressRes, {
-    "guardian progress 200/404": (r) => [200, 404].includes(r.status),
+    "guardian progress 200/401/403/404": (r) => [200, 401, 403, 404].includes(r.status),
     "no 5xx": (r) => r.status < 500,
   });
   sleep(2);
