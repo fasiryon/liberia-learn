@@ -8,5 +8,6 @@ _patches/
 .git-temp*
 node_modules
 e2e/screenshots
+load-tests/results/
 .env
 .env*
