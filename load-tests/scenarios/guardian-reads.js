@@ -3,6 +3,11 @@
  *
  * Simulates 500 concurrent guardians polling their child's progress.
  * Read-heavy; validates Redis caching and DB connection pool.
+ *
+ * Note: Uses a shared GUARDIAN_TOKEN env var (single guardian account)
+ * since guardian test accounts are not part of the 1,000-student seed pool.
+ * For full multi-account guardian load testing, extend seed-load-test-users.ts
+ * to create guardian accounts and generate tokens via generate-load-test-tokens.ts.
  */
 
 import http from "k6/http";
@@ -16,7 +21,7 @@ const guardianErrors = new Counter("guardian_dashboard_errors");
 
 const HEADERS = {
   "Content-Type": "application/json",
-  Authorization: `Bearer ${GUARDIAN_TOKEN}`,
+  Cookie: `next-auth.session-token=${GUARDIAN_TOKEN}`,
 };
 
 export function guardian_reads() {

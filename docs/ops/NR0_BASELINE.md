@@ -215,6 +215,46 @@ Legend: ✗ = zero  ✓ = ≥15 approved lessons
 | Build route conflict | **FIXED** — `[id]/regenerate-audio` merged into `[contentId]/regenerate-audio` |
 | Build heap limit | Documented: requires `NODE_OPTIONS=--max-old-space-size=6144`; Vercel builds fine (more memory) |
 
+## NR-3 Actions Taken (2026-05-19)
+
+### Database Pool (NR-3 update)
+
+| Field | Value |
+|-------|-------|
+| DATABASE_URL | PgBouncer port 6543 ✓ (updated NR-3) |
+| Hostname | aws-1-us-east-2.pooler.supabase.com |
+| connection_limit | 1 ✓ |
+| pgbouncer | true ✓ |
+| pool_timeout | 20 ✓ |
+| DIRECT_URL | Port 5432 unchanged (Prisma Migrate only) |
+
+Full DATABASE_URL format applied to Vercel production:
+```
+postgresql://postgres.[ref]:[password]@aws-1-us-east-2.pooler.supabase.com:6543/postgres?pgbouncer=true&connection_limit=1&pool_timeout=20
+```
+
+### Load-Test Identity Pool
+
+| Item | Value |
+|------|-------|
+| Schools created | 10 (lt-school-01 through lt-school-10) |
+| Students created | 1,000 (100 per school) |
+| Email pattern | `lt-sXX-uYYY@loadtest.liberialearn.internal` |
+| Password | LoadTest2026! (bcrypt hash stored in DB) |
+| Token fixture | `load-tests/fixtures/student-tokens.json` (gitignored) |
+| Seed script | `scripts/seed-load-test-users.ts` |
+| Token script | `scripts/generate-load-test-tokens.ts` |
+| Cleanup script | `scripts/cleanup-load-test-users.ts` (run after NR-5) |
+
+### k6 Scenario Updates
+All 4 scenarios updated to use `SharedArray` token pool:
+- `load-tests/scenarios/student-browse.js` ✓
+- `load-tests/scenarios/submission-spike.js` ✓
+- `load-tests/scenarios/ai-tutor.js` ✓
+- `load-tests/scenarios/guardian-reads.js` ✓ (still uses GUARDIAN_TOKEN env var — no guardian seed pool yet)
+
+---
+
 ## NR-2 Input (carry forward)
 
 1. **DATABASE_URL port**: Change from 5432 → 6543 in Vercel production env (PgBouncer pooling critical at scale)
