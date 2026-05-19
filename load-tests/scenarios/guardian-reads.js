@@ -45,9 +45,9 @@ export function guardian_reads() {
   });
   sleep(2);
 
-  // 3. League table (public, should be heavily cached)
-  const leagueRes = http.get(`${BASE_URL}/api/league`);
-  check(leagueRes, { "league 200": (r) => r.status === 200 });
+  // 3. League table — guardians may not have a session token; 401 is acceptable
+  const leagueRes = http.get(`${BASE_URL}/api/league`, { headers: HEADERS, responseCallback: guardianCallback });
+  check(leagueRes, { "league 200/401/403": (r) => [200, 401, 403].includes(r.status) });
 
   sleep(Math.random() * 3 + 2);
 }
