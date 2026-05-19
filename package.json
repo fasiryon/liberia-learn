@@ -25,7 +25,12 @@
     "prisma:generate": "prisma generate",
     "fix:encoding": "tsx scripts/fix-encoding.ts",
     "backfill:badges": "tsx scripts/backfill-student-badge-awards.ts",
-    "autonomous:stale-approvals": "tsx scripts/autonomous-stale-approvals.ts"
+    "autonomous:stale-approvals": "tsx scripts/autonomous-stale-approvals.ts",
+    "load-test:seed": "tsx scripts/seed-load-test-users.ts",
+    "load-test:tokens": "tsx scripts/generate-load-test-tokens.ts",
+    "load-test:export-env": "tsx scripts/export-load-test-credentials.ts",
+    "load-test:peak": "k6 run load-tests/peak.js",
+    "load-test:ai-burst": "k6 run load-tests/ai-burst.js"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.95.1",

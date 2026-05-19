@@ -32,14 +32,14 @@ export function submission_spike() {
 
   const headers = {
     "Content-Type": "application/json",
-    Cookie: `next-auth.session-token=${token}`,
+    Cookie: `__Secure-next-auth.session-token=${token}`,
   };
 
   // Quiz submission (404 acceptable — load-test students have no scheduled work)
   const quizRes = http.post(
     `${BASE_URL}/api/student/lessons/${swId}/quiz/submit`,
     JSON.stringify({ answers: [{ questionId: "q1", answer: "A" }], scheduledWorkId: swId }),
-    { headers }
+    { headers, responseCallback: http.expectedStatuses(200, 201, 400, 404) }
   );
 
   const ok = check(quizRes, {
