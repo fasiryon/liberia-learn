@@ -5,7 +5,7 @@
   "scripts": {
     "postinstall": "node scripts/patch-vitest-offline-wildcard.mjs",
     "dev": "next dev",
-    "build": "prisma generate && NODE_OPTIONS=\"--max-old-space-size=4096\" next build",
+    "build": "prisma generate && cross-env NODE_OPTIONS=\"--max-old-space-size=4096\" next build",
     "start": "next start",
     "lint": "next lint",
     "generate-icons": "node scripts/generate-icons.mjs",
@@ -85,6 +85,7 @@
     "@types/react-dom": "^18.0.0",
     "@vitejs/plugin-react": "^5.1.4",
     "autoprefixer": "^10.4.24",
+    "cross-env": "^10.1.0",
     "dotenv-cli": "^11.0.0",
     "eslint": "^8.57.1",
     "eslint-config-next": "^14.2.35",

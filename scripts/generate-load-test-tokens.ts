@@ -41,10 +41,13 @@ async function main() {
       token: await encode({
         token: {
           sub: s.id,
+          id: s.id,    // session callback reads token.id, not sub
           email: s.email,
           name: s.name,
           role: s.role,
           schoolId: s.schoolId,
+          isPlatformAdmin: false,
+          mustChangePIN: false,
         },
         secret,
         maxAge: 30 * 24 * 60 * 60, // 30 days

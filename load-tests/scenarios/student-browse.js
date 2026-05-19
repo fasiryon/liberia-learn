@@ -26,7 +26,8 @@ export function student_browse() {
 
   const headers = {
     "Content-Type": "application/json",
-    Cookie: `next-auth.session-token=${token}`,
+    // NextAuth v4 uses __Secure- prefix on HTTPS production
+    Cookie: `__Secure-next-auth.session-token=${token}`,
   };
 
   // 1. Student today dashboard

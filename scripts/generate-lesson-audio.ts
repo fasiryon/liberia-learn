@@ -12,7 +12,12 @@
  *   Default --limit 50 processes ~50 lessons.
  *   Use --limit to run in batches and monitor quota in ElevenLabs dashboard.
  */
+// Strip surrounding quotes added by some dotenv loaders (e.g. dotenv-cli with .env.local)
+function cleanEnv(key: string) {
+  if (process.env[key]) process.env[key] = process.env[key]!.replace(/^["']|["']$/g, "");
+}
 if (process.env.DIRECT_URL) process.env.DATABASE_URL = process.env.DIRECT_URL;
+cleanEnv("DATABASE_URL");
 
 import { prisma } from "@/lib/db";
 import { selectLessonBody } from "@/lib/lessons";
