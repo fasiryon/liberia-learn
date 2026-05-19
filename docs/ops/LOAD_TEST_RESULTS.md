@@ -1,4 +1,40 @@
-# Load Test Results — Sprint 27
+# Load Test Results
+
+## NR-4 Run — 2026-05-19 — 1,000 VU Production Test
+
+### Infrastructure
+- Vercel: Pro
+- DB: PgBouncer port 6543 (aws-1-us-east-2.pooler.supabase.com)
+- ECS worker: 1–10 tasks autoscale
+- Upstash Redis: active
+
+### Results by scenario
+| Scenario         | p50 | p95 | p99 | Error rate | Peak VUs |
+|------------------|-----|-----|-----|------------|----------|
+| student_browse   | — | — | — | — | — |
+| submission_spike | — | — | — | — | — |
+| ai_tutor         | — | — | — | — | — |
+| guardian_reads   | — | — | — | — | — |
+| **GLOBAL**       | — | — | — | — | — |
+
+### Threshold verdict
+p95 < 2000ms: PENDING  
+Error rate < 1%: PENDING
+
+### Bottlenecks identified
+_To be filled after run_
+
+### DB connections at peak
+Active: — / Max: —
+
+### ECS worker peak tasks
+—
+
+### National gate: PENDING
+
+---
+
+## Sprint 27 Run — 2026-05-17
 
 ## Summary
 
