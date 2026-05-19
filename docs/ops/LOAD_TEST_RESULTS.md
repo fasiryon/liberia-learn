@@ -4,33 +4,62 @@
 
 ### Infrastructure
 - Vercel: Pro
-- DB: PgBouncer port 6543 (aws-1-us-east-2.pooler.supabase.com)
+- DB: PgBouncer port 6543 (aws-0-us-east-1.pooler.supabase.com)
 - ECS worker: 1–10 tasks autoscale
 - Upstash Redis: active
+- k6: v1.7.1
+
+### Pre-run fixes applied
+- `CRON_SECRET` added to Vercel production (was missing — caused MIDDLEWARE_INVOCATION_FAILED on every cold start since NR-1)
+- `ENABLE_UNIT_ASSEMBLY` re-set with clean value (prior value had trailing newline)
+- `.vercelignore` updated to exclude `load-tests/results/` (prevents 2.4 GB JSON from blocking CLI deploys)
+- Two redeployments triggered; middleware confirmed healthy (health: 200, DB/AI OK)
 
 ### Results by scenario
-| Scenario         | p50 | p95 | p99 | Error rate | Peak VUs |
-|------------------|-----|-----|-----|------------|----------|
-| student_browse   | — | — | — | — | — |
-| submission_spike | — | — | — | — | — |
-| ai_tutor         | — | — | — | — | — |
-| guardian_reads   | — | — | — | — | — |
-| **GLOBAL**       | — | — | — | — | — |
+| Scenario         | p50     | p95      | p99      | Error rate | Peak VUs |
+|------------------|---------|----------|----------|------------|----------|
+| student_browse   | 18,699ms| 40,037ms | 60,007ms | ~89% check fail | 2,000 |
+| submission_spike | 77ms    | 103ms    | —        | 0% check pass¹ | 500 |
+| ai_tutor         | 88ms    | 120ms    | —        | 0% (tutor OK) | 300 |
+| guardian_reads   | 76ms    | 102ms    | —        | 0% check pass¹ | 500 |
+| **GLOBAL**       | 80ms    | 35,955ms | —        | **81.44%** | 2,216 |
+
+¹ Fixture issue: student tokens used for guardian/submission endpoints (returns 403); not an infrastructure failure — server responded at p95 < 150ms for those scenarios.
 
 ### Threshold verdict
-p95 < 2000ms: PENDING  
-Error rate < 1%: PENDING
+p95 < 2000ms: **FAIL** (35,955ms — driven entirely by student_browse scenario)  
+Error rate < 1%: **FAIL** (81.44% — 119,162 of 146,315 requests)
 
 ### Bottlenecks identified
-_To be filled after run_
+
+**B1 — League endpoint collapses at 2,000 VUs (student_browse)**
+- `/api/league` check pass rate: 24% at peak load; timeouts at 60s max
+- Root cause: Redis-cached league snapshot evicted or lock-contended under 2,000 concurrent readers; requests fall through to a DB query that serializes and queues
+- Fix needed: increase Redis TTL, add request coalescing / singleflight on cache miss, or reduce student_browse peak VU target to match current DB pool capacity
+
+**B2 — Guardian tokens not generated (guardian_reads)**
+- `generate-load-test-tokens.ts` only queries `@loadtest.liberialearn.internal` students
+- Guardian API routes return 403 for student tokens — server is fast (p95=102ms) but all checks fail
+- Fix needed: seed guardian load-test users and generate their tokens before NR-5
+
+**B3 — Submission fixture mismatch (submission_spike)**
+- All 36,001 submission calls return non-200 (likely 403 or 422 — wrong payload/token scope)
+- Fix needed: verify submission endpoint auth and request payload in `scenarios/submission-spike.js`
 
 ### DB connections at peak
-Active: — / Max: —
+Not monitored during run (parallel terminal session unavailable); check Supabase dashboard for 21:00–21:10 UTC window.
 
 ### ECS worker peak tasks
-—
+Not monitored during run; check AWS ECS console for 21:00–21:10 UTC window.
 
-### National gate: PENDING
+### National gate: **FAIL**
+p95 = 35,955ms (gate: < 2,000ms) | error rate = 81.44% (gate: < 1%)
+
+**NR-5 pre-conditions:**
+1. Fix league endpoint caching/coalescing to handle 2,000 VUs within 1,500ms p95
+2. Generate guardian load-test tokens (seed `GuardianUser` fixture data)
+3. Verify submission_spike scenario payload matches current API contract
+4. Re-run full 1,000 VU test and confirm PASS
 
 ---
 
