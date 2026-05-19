@@ -6,6 +6,7 @@ import { buildStudentLearningIntelligence } from "@/lib/student/learningIntellig
 import { getAdaptiveRecommendations } from "@/lib/student/adaptiveRecommendations";
 import { generateStudentActions, getActiveStudentAction } from "@/lib/intelligence/actionEngine";
 import { getTimetableForStudent } from "@/lib/timetable/timetableService";
+import { withRedisCache } from "@/lib/cache/redisCache";
 
 export const dynamic = "force-dynamic";
 
@@ -172,7 +173,10 @@ export async function GET() {
     const now = new Date();
     const startOfDay = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()));
     const endOfDay = new Date(startOfDay.getTime() + 86400000);
+    const dateStr = startOfDay.toISOString().slice(0, 10);
+    const cacheKey = `cache:today:${user.id}:${dateStr}`;
 
+    const todayData = await withRedisCache(cacheKey, 300, async () => {
     const catchUpStart = new Date(startOfDay.getTime() - 14 * 86400000);
 
     const [scheduledWork, catchUpWork, assignments, intelligence, adaptiveResult] = await Promise.all([
@@ -507,7 +511,7 @@ export async function GET() {
       .slice(0, 5);
     const smartContinue = adaptiveActions[0] ?? null;
 
-    return NextResponse.json({
+    return {
       items,
       catchUpItems,
       schoolDay: {
@@ -586,7 +590,10 @@ export async function GET() {
         },
       },
       timetable: timetable ?? null,
-    });
+    };
+    }); // end withRedisCache
+
+    return NextResponse.json(todayData);
   } catch (err: any) {
     const status = err?.status || 500;
     return NextResponse.json({ error: err.message }, { status });

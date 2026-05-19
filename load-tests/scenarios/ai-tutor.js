@@ -35,7 +35,7 @@ export function ai_tutor() {
 
   const headers = {
     "Content-Type": "application/json",
-    Cookie: `next-auth.session-token=${token}`,
+    Cookie: `__Secure-next-auth.session-token=${token}`,
   };
 
   const res = http.post(
