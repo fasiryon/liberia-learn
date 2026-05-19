@@ -176,7 +176,7 @@ export async function GET() {
     const dateStr = startOfDay.toISOString().slice(0, 10);
     const cacheKey = `cache:today:${user.id}:${dateStr}`;
 
-    const todayData = await withRedisCache(cacheKey, 300, async () => {
+    const todayData = await withRedisCache(cacheKey, 900, async () => {
     const catchUpStart = new Date(startOfDay.getTime() - 14 * 86400000);
 
     const [scheduledWork, catchUpWork, assignments, intelligence, adaptiveResult] = await Promise.all([
