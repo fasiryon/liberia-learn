@@ -46,15 +46,24 @@ async function main() {
 
     for (let u = 1; u <= STUDENTS_PER_SCHOOL; u++) {
       const email = `lt-s${String(s).padStart(2, "0")}-u${String(u).padStart(3, "0")}@loadtest.liberialearn.internal`
-      await prisma.user.upsert({
+      const user = await prisma.user.upsert({
         where: { email },
-        update: {},
+        update: { schoolId: school.id },
         create: {
           email,
           name: `Load Test Student ${s}-${u}`,
           role: "STUDENT",
           hashedPwd: passwordHash,
           schoolId: school.id,
+        },
+      })
+      await prisma.student.upsert({
+        where: { userId: user.id },
+        update: { currentGrade: 9 },
+        create: {
+          userId: user.id,
+          currentGrade: 9,
+          county: "Montserrado",
         },
       })
       if (u % 50 === 0) process.stdout.write(".")

@@ -3,7 +3,10 @@ import { prisma } from "@/lib/db";
 import { withRedisCache } from "@/lib/cache/redisCache";
 import { isLeagueTableFlagEnabled } from "@/lib/flags";
 
-export const dynamic = "force-dynamic";
+// Public aggregate data — CDN caches for 5min, stale-while-revalidate 1hr.
+// Removing force-dynamic so Vercel CDN can coalesce concurrent cache-miss
+// requests into a single upstream call (singleflight at the edge layer).
+export const revalidate = 300;
 
 function currentTerm(): string {
   const now = new Date();
@@ -60,7 +63,7 @@ export async function GET(req: NextRequest) {
     { term, updatedAt, rows },
     {
       headers: {
-        "Cache-Control": "public, max-age=3600, stale-while-revalidate=600",
+        "Cache-Control": "public, s-maxage=300, stale-while-revalidate=3600",
       },
     },
   );

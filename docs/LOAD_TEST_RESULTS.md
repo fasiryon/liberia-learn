@@ -140,3 +140,45 @@ Worker was not observable in k6 load tests (background queue). At rest: SQS dept
 5. **Configure ECS auto-scaling** — before background job throughput can be proven at national scale.
 
 ### Threshold proven: **100-VU concurrent users with sub-600ms p95 response times.**
+
+---
+
+## National Rollout — NR-4 (1K VU moderate)
+
+| Field | Value |
+|-------|-------|
+| Sprint | NR-4 |
+| Script | `load-tests/moderate.js` |
+| Pool | 1,000 `lt-*@loadtest.liberialearn.internal` students (or token pool) |
+| Targets | p95 &lt; 2000ms, error rate &lt; 1%, student today API &gt; 95% success |
+| Status | **IN PROGRESS** — see `load-tests/results/run-1000vu-*.json` (local artifact, gitignored) |
+
+Record final PASS/FAIL metrics here when NR-4 completes.
+
+---
+
+## National Rollout — NR-5 (5K VU peak + 200 VU AI burst)
+
+| Field | Value |
+|-------|-------|
+| Sprint | NR-5 |
+| Scripts | `load-tests/peak.js`, `load-tests/ai-burst.js` |
+| Runbook | `docs/ops/NR5_LOAD_TEST_RUNBOOK.md` |
+| Prerequisite | NR-4 **PASS** |
+| Peak targets | p95 &lt; 5000ms, errors &lt; 5% |
+| AI burst targets | 200 VU, tutor p95 &lt; 5000ms, budget guard fallbacks tracked |
+| Status | **NOT RUN** — scripts ready on `feat/nr-5-k6-peak` |
+
+### NR-5 execution
+
+```powershell
+# After seed + tokens (see runbook):
+.\scripts\run-nr5-load-tests.ps1 -Scenario both
+```
+
+| Scenario | VUs | Duration | p95 | Error Rate | Result |
+|----------|-----|----------|-----|------------|--------|
+| Peak | 5000 | 5m | — | — | NOT RUN |
+| AI burst | 200 | 5m | — | — | NOT RUN |
+
+**On NR-5 PASS:** freeze non-essential feature work until NR-21 (per `NATIONAL_ROLLOUT_EXECUTION_PLAN.md`).
