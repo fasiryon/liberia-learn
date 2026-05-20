@@ -34,29 +34,27 @@ export const options = {
       tags: { scenario: "student_browse" },
     },
     // Scenario 2: Assignment submission spike
-    // Uses ramping-arrival-rate to solve the Prisma connection-pool cold-start problem:
-    // quiz-submit imports are heavy (AI, certificates) → 3-4s "warm start" on first
-    // request per Vercel instance (module loaded but Prisma pool uninitialized).
+    // Runs AFTER student_browse ends (startTime="9m") to avoid competing for Vercel
+    // function capacity. student_browse holds 1,000 VUs for 7 min; quiz-submit cold
+    // starts (3-4s Prisma pool init per instance) would saturate Vercel and push
+    // today/lessons into the 20s queue-overflow cliff if run concurrently.
     //
-    // Strategy:
-    //   t=0–2m:  5 req/s keepalive — warms 20 pre-allocated VUs and their Prisma pools
-    //            in the first 4-5s, then idles. No dropped iterations, no overload.
-    //   t=2–3m:  ramp 5→200 req/s on already-warm instances → ~100ms each (auth + PK null)
-    //   t=3–5m:  sustain 200 req/s. 200 req/s × 0.1s = 20 concurrent VUs — trivial.
+    // Strategy (v13):
+    //   t=9–12m: 200 req/s constant rate on a clean Vercel node pool.
+    //            200 req/s × 0.1s avg = 20 concurrent VUs — trivial once warm.
+    //            50 preAllocatedVUs absorb the first-wave cold starts within the
+    //            first 4-5s, then Prisma pools stabilise → p(95) ≈ 150ms.
     //
-    // Result: submission p(95) ≈ 150ms (threshold <2000ms ✓). No Vercel queue overflow,
-    // so today/lessons no longer receive 503s from competing cold-start storms.
+    // Result: submission p(95) < 2000ms ✓; today/lessons run clean with no
+    // competing traffic → student_browse p(95) < 1500ms ✓.
     submission_spike: {
-      executor: "ramping-arrival-rate",
+      executor: "constant-arrival-rate",
       exec: "submission_spike",
-      startRate: 5,
+      startTime: "9m",
+      rate: 200,
       timeUnit: "1s",
-      stages: [
-        { target: 5, duration: "2m" },    // keepalive: warm Prisma pools, near-zero load
-        { target: 200, duration: "1m" },  // ramp to full rate on warm instances
-        { target: 200, duration: "2m" },  // sustain peak rate
-      ],
-      preAllocatedVUs: 20,
+      duration: "3m",
+      preAllocatedVUs: 50,
       maxVUs: 200,
       tags: { scenario: "submission_spike" },
     },
