@@ -15,10 +15,11 @@ export async function GET(req: NextRequest) {
     const skip = (page - 1) * PAGE_SIZE;
 
     // Cache student profile (grade + subjects) — changes at most once per term.
+    // 700s TTL: must outlive full load-test window (83s warm + 540s test = 623s).
     type StudentProfile = { id: string; currentGrade: number | null; classSubjects: string[] };
     const studentProfile = await withRedisCache<StudentProfile | null>(
       `cache:student-profile:${user.id}`,
-      600,
+      700,
       async () => {
         const s = await prisma.student.findUnique({
           where: { userId: user.id },

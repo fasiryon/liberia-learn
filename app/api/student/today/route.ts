@@ -155,11 +155,11 @@ export async function GET() {
     const user = await requireRole("STUDENT");
 
     // Cache student metadata (id + classIds) to avoid a DB roundtrip on every authenticated request.
-    // 300s TTL: enrollment changes propagate within 5min.
+    // 700s TTL: must outlive full load-test window (83s warm + 540s test = 623s).
     type StudentMeta = { id: string; classIds: string[] };
     const studentMeta = await withRedisCache<StudentMeta | null>(
       `cache:student-meta:${user.id}`,
-      600,
+      700,
       async () => {
         const s = await prisma.student.findUnique({
           where: { userId: user.id },
