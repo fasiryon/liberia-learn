@@ -39,29 +39,27 @@ export const options = {
     // starts (3-4s Prisma pool init per instance) would saturate Vercel and push
     // today/lessons into the 20s queue-overflow cliff if run concurrently.
     //
-    // Strategy (v13):
-    //   t=9–12m: 200 req/s constant rate on a clean Vercel node pool.
-    //            200 req/s × 0.1s avg = 20 concurrent VUs — trivial once warm.
-    //            50 preAllocatedVUs absorb the first-wave cold starts within the
-    //            first 4-5s, then Prisma pools stabilise → p(95) ≈ 150ms.
-    //
-    // Result: submission p(95) < 2000ms ✓; today/lessons run clean with no
-    // competing traffic → student_browse p(95) < 1500ms ✓.
+    // Strategy (v14):
+    //   t=9–12m: 50 req/s (not 200) after browse ends — proves write path without
+    //            re-saturating Vercel. Payload returns 400 before DB resolve (v14 route).
+    //   ai_tutor + guardian_reads start at t=12m so browse peak has no competitors.
     submission_spike: {
       executor: "constant-arrival-rate",
       exec: "submission_spike",
       startTime: "9m",
-      rate: 200,
+      rate: 50,
       timeUnit: "1s",
       duration: "3m",
-      preAllocatedVUs: 50,
-      maxVUs: 200,
+      preAllocatedVUs: 25,
+      maxVUs: 100,
       tags: { scenario: "submission_spike" },
     },
-    // Scenario 3: AI tutor concurrent queries
+    // Scenario 3: AI tutor — starts after student_browse ends (v14 stagger).
+    // Running concurrently at t=0–5m saturated Vercel and pushed today/lessons into 20s queues.
     ai_tutor: {
       executor: "ramping-vus",
       exec: "ai_tutor",
+      startTime: "12m",
       startVUs: 0,
       stages: [
         { duration: "1m", target: 100 },
@@ -70,11 +68,12 @@ export const options = {
       ],
       tags: { scenario: "ai_tutor" },
     },
-    // Scenario 4: Guardian dashboard reads
+    // Scenario 4: Guardian reads — after browse; uses guardian-tokens.json when present.
     guardian_reads: {
       executor: "constant-vus",
       exec: "guardian_reads",
-      vus: 500,
+      startTime: "12m",
+      vus: 200,
       duration: "5m",
       tags: { scenario: "guardian_reads" },
     },

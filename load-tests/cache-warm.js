@@ -4,9 +4,8 @@
  * caches (today + lessons) are populated in Redis, preventing DB
  * overload during the peak-ramp phase of the load test.
  *
- * Note: quiz-submit Vercel instances are NOT pre-warmed here. The
- * submission_spike scenario uses ramping-arrival-rate (5 req/s for 2min)
- * which self-warms Prisma connection pools before hitting peak rate.
+ * v14: ai_tutor and guardian_reads start after student_browse (t=12m).
+ * submission_spike runs at 50 req/s from t=9m (after browse peak).
  *
  * Usage:
  *   k6 run load-tests/cache-warm.js

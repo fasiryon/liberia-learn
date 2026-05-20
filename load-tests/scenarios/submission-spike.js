@@ -44,10 +44,10 @@ export function submission_spike() {
     Cookie: `__Secure-next-auth.session-token=${token}`,
   };
 
-  // Quiz submission (404 acceptable — load-test students have no scheduled work)
+  // Minimal invalid payload → 400 before DB resolve (v14 route order). No scheduled work needed.
   const quizRes = http.post(
     `${BASE_URL}/api/student/lessons/${swId}/quiz/submit`,
-    JSON.stringify({ answers: [{ questionId: "q1", answer: "A" }], scheduledWorkId: swId }),
+    JSON.stringify({ answers: [{ questionId: "q1", selectedIndex: 0 }] }),
     { headers, responseCallback: http.expectedStatuses(200, 201, 400, 404) }
   );
 

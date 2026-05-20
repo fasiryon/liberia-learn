@@ -68,6 +68,20 @@ async function main() {
       })
       if (u % 50 === 0) process.stdout.write(".")
     }
+    // One guardian per school, linked via school membership (guardian reads use school scope).
+    const guardianEmail = `lt-g${String(s).padStart(2, "0")}@loadtest.liberialearn.internal`
+    await prisma.user.upsert({
+      where: { email: guardianEmail },
+      update: { schoolId: school.id },
+      create: {
+        email: guardianEmail,
+        name: `Load Test Guardian ${s}`,
+        role: "GUARDIAN",
+        hashedPwd: passwordHash,
+        schoolId: school.id,
+      },
+    })
+
     console.log(`\nSchool ${s}/${SCHOOLS} complete (schoolId: ${school.id})`)
   }
 
