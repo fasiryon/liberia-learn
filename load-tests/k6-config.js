@@ -34,13 +34,18 @@ export const options = {
       tags: { scenario: "student_browse" },
     },
     // Scenario 2: Assignment submission spike
+    // startTime "2m": lets student_browse warm Vercel instances first before the
+    // submission burst. preAllocatedVUs reduced from 500→50 to prevent a 500-instance
+    // cold-start storm at t=0 (UUID lookups are fast; 50 VUs handle 200 req/s @ 250ms).
     submission_spike: {
       executor: "constant-arrival-rate",
       exec: "submission_spike",
+      startTime: "2m",
       rate: 200,
       timeUnit: "1s",
       duration: "3m",
-      preAllocatedVUs: 500,
+      preAllocatedVUs: 50,
+      maxVUs: 200,
       tags: { scenario: "submission_spike" },
     },
     // Scenario 3: AI tutor concurrent queries
