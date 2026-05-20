@@ -21,21 +21,13 @@ function getRedis(): Redis | null {
   const url = process.env.UPSTASH_REDIS_REST_URL?.trim();
   const token = process.env.UPSTASH_REDIS_REST_TOKEN?.trim();
   if (!url || !token) return null;
-  // cache: 'no-store' prevents Next.js App Router from caching Redis GET
-  // responses — without it, a null response on first access is served
-  // indefinitely by Next.js, causing perpetual DB fallback for every request.
-  // 500ms abort: fail-fast so a slow Upstash call doesn't block the handler.
-  _redis = new Redis({
-    url,
-    token,
-    fetchApi: (input, init) => {
-      const ctrl = new AbortController();
-      const timer = setTimeout(() => ctrl.abort(), 500);
-      return fetch(input, { ...(init ?? {}), cache: "no-store", signal: ctrl.signal }).finally(
-        () => clearTimeout(timer)
-      );
-    },
-  });
+  // cache:'no-store' is passed through to fetch() by the @upstash/redis SDK,
+  // bypassing Next.js App Router's fetch cache. Without it, a null GET response
+  // on first access is served indefinitely by Next.js, causing perpetual DB
+  // fallback on every request even after redis.set() stores a value.
+  // retry:false + 500ms AbortSignal = single attempt, fail-fast on slow Upstash.
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  _redis = new Redis({ url, token, cache: "no-store", retry: false, signal: () => AbortSignal.timeout(500) } as any);
   return _redis;
 }
 
