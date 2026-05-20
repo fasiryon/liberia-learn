@@ -20,10 +20,19 @@ const tokens = new SharedArray("students", function () {
 
 const submissionErrors = new Counter("submission_errors");
 
-// Rotate through demo scheduled work IDs to spread DB load
+// UUID-format IDs that don't exist in DB → fast null-lookup → 404 (accepted).
+// Non-UUID strings (e.g. "demo-sw-001") cause a Prisma type error → 500.
 const SCHEDULED_WORK_IDS = [
-  "demo-sw-001", "demo-sw-002", "demo-sw-003", "demo-sw-004", "demo-sw-005",
-  "demo-sw-006", "demo-sw-007", "demo-sw-008", "demo-sw-009", "demo-sw-010",
+  "00000000-0000-0000-0000-000000000001",
+  "00000000-0000-0000-0000-000000000002",
+  "00000000-0000-0000-0000-000000000003",
+  "00000000-0000-0000-0000-000000000004",
+  "00000000-0000-0000-0000-000000000005",
+  "00000000-0000-0000-0000-000000000006",
+  "00000000-0000-0000-0000-000000000007",
+  "00000000-0000-0000-0000-000000000008",
+  "00000000-0000-0000-0000-000000000009",
+  "00000000-0000-0000-0000-000000000010",
 ];
 
 export function submission_spike() {
