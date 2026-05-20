@@ -27,7 +27,6 @@ function getRedis(): Redis | null {
   // fallback on every request even after redis.set() stores a value.
   // retry:false = 1 attempt only. 2000ms signal = fail-fast on dead Upstash
   // without aborting writes that Upstash needs >500ms to acknowledge under load.
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   _redis = new Redis({ url, token, cache: "no-store", retry: false, signal: () => AbortSignal.timeout(2000) } as any);
   return _redis;
 }
