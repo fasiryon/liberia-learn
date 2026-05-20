@@ -6,8 +6,8 @@
  * wrapped function runs directly (no cache).
  *
  * L1 (process cache): module-level Map, per-Vercel-instance, TTL capped at
- * 120s. Absorbs concurrent requests for the same key with zero network
- * overhead, eliminating the Upstash thundering-herd problem at 1000 VUs.
+ * 300s. Absorbs concurrent requests for the same key at zero network overhead,
+ * and keeps warm-phase instances serving L1 hits through the full browse window.
  *
  * L2 (Redis): cross-instance warm-up and longer TTL persistence. Uses
  * cache:"no-store" to bypass Next.js App Router fetch caching (without it
@@ -27,7 +27,9 @@ const processCache = new Map<string, { value: unknown; expires: number }>();
 /** Coalesce concurrent cache misses for the same key (thundering-herd guard). */
 const inflight = new Map<string, Promise<unknown>>();
 
-const PROCESS_CACHE_MAX_TTL_MS = 120_000;
+// 5-minute L1 TTL: keeps warm-phase instances serving L1 hits through the
+// entire 9-minute browse window without needing a Redis round-trip.
+const PROCESS_CACHE_MAX_TTL_MS = 300_000;
 // In the Vitest environment, skip L1 so each test gets a fresh call to fn().
 const SKIP_PROCESS_CACHE = typeof process !== "undefined" && !!process.env.VITEST;
 
@@ -65,10 +67,20 @@ export async function withRedisCache<T>(
 
   const redis = getRedis();
 
-  // L2: Redis — cross-instance warm-up
+  // L2: Redis — cross-instance warm-up.
+  // Fail-fast (300ms) so Upstash overload under 1,000-VU concurrency doesn't
+  // block the response. DB fallback handles the miss without the 30s wait.
+  // redis.set() keeps no timeout: fire-and-forget, so SET latency never blocks
+  // the caller even if Upstash is slow to acknowledge the write.
   if (redis) {
     try {
-      const cached = await redis.get<T>(key);
+      const cached = await new Promise<T | null>((resolve, reject) => {
+        const timer = setTimeout(() => resolve(null), 300);
+        redis
+          .get<T>(key)
+          .then((val) => { clearTimeout(timer); resolve(val); })
+          .catch((err) => { clearTimeout(timer); reject(err); });
+      });
       if (cached !== null && cached !== undefined) {
         if (!SKIP_PROCESS_CACHE) {
           processCache.set(key, {
