@@ -19,6 +19,15 @@ const nextConfig = {
   async headers() {
     return [
       {
+        source: "/api/league",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "public, s-maxage=300, stale-while-revalidate=3600",
+          },
+        ],
+      },
+      {
         source: "/(.*)",
         headers: [
           { key: "X-Frame-Options", value: "DENY" },

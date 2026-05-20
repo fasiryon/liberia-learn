@@ -33,21 +33,19 @@ export function student_browse() {
   // 1. Student today dashboard
   const todayRes = http.get(`${BASE_URL}/api/student/today`, { headers });
   check(todayRes, { "today 200": (r) => r.status === 200 });
-  sleep(1); // user reads today dashboard
+  sleep(2); // reading time — lowers effective RPS at 1,000 VUs (v14)
 
   // 2. Lesson catalogue page 1
   const lessonsRes = http.get(`${BASE_URL}/api/student/lessons?page=1`, { headers });
   check(lessonsRes, { "lessons 200": (r) => r.status === 200 });
   lessonViewDuration.add(lessonsRes.timings.duration);
   if (lessonsRes.status !== 200) lessonViewErrors.add(1);
-  sleep(3); // user browses the lesson list (was 1s; increased because lessons now returns
-            // ~200ms instead of ~6s after the unenrolled-student cache fix — explicit
-            // reading-time sleep prevents Vercel concurrency from doubling at peak)
+  sleep(4); // browsing time — keeps Vercel concurrency below saturation at 1K VUs
 
   // 3. League table (should be Redis-cached)
   const leagueRes = http.get(`${BASE_URL}/api/league`, { headers });
   check(leagueRes, { "league 200": (r) => r.status === 200 });
-  sleep(1); // user reads league table
+  sleep(2); // user reads league table
 
   // 4. Health check
   const healthRes = http.get(`${BASE_URL}/api/health`);

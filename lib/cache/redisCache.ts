@@ -13,6 +13,9 @@ import { Redis } from "@upstash/redis";
 
 let _redis: Redis | null = null;
 
+/** Coalesce concurrent cache misses for the same key (thundering-herd guard). */
+const inflight = new Map<string, Promise<unknown>>();
+
 function getRedis(): Redis | null {
   if (_redis) return _redis;
   const url = process.env.UPSTASH_REDIS_REST_URL?.trim();
@@ -46,17 +49,29 @@ export async function withRedisCache<T>(
     }
   }
 
-  const result = await fn();
-
-  if (redis) {
-    try {
-      await redis.set(key, result, { ex: ttl });
-    } catch {
-      // Best-effort — don't fail the request if caching fails
-    }
+  const existing = inflight.get(key);
+  if (existing) {
+    return existing as Promise<T>;
   }
 
-  return result;
+  const pending = (async () => {
+    try {
+      const result = await fn();
+      if (redis) {
+        try {
+          await redis.set(key, result, { ex: ttl });
+        } catch {
+          // Best-effort — don't fail the request if caching fails
+        }
+      }
+      return result;
+    } finally {
+      inflight.delete(key);
+    }
+  })();
+
+  inflight.set(key, pending);
+  return pending;
 }
 
 /** Invalidate a cache key (best-effort). */

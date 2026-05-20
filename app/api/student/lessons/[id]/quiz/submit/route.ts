@@ -83,8 +83,8 @@ export async function POST(
 ) {
   try {
     const user = await requireRole("STUDENT");
-    const lesson = await resolveScheduledLessonContext(user, params.id);
     const submission = normalizeSubmission((await req.json()) as QuizSubmissionBody);
+    const lesson = await resolveScheduledLessonContext(user, params.id);
 
     const questionMap = new Map(
       submission.questions.map((question) => [question.id, question] as const)
