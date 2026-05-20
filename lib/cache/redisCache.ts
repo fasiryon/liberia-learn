@@ -28,6 +28,8 @@ const processCache = new Map<string, { value: unknown; expires: number }>();
 const inflight = new Map<string, Promise<unknown>>();
 
 const PROCESS_CACHE_MAX_TTL_MS = 120_000;
+// In the Vitest environment, skip L1 so each test gets a fresh call to fn().
+const SKIP_PROCESS_CACHE = typeof process !== "undefined" && !!process.env.VITEST;
 
 function getRedis(): Redis | null {
   if (_redis) return _redis;
@@ -54,9 +56,11 @@ export async function withRedisCache<T>(
   const now = Date.now();
 
   // L1: in-process cache — zero latency per Vercel instance
-  const l1 = processCache.get(key);
-  if (l1 && l1.expires > now) {
-    return l1.value as T;
+  if (!SKIP_PROCESS_CACHE) {
+    const l1 = processCache.get(key);
+    if (l1 && l1.expires > now) {
+      return l1.value as T;
+    }
   }
 
   const redis = getRedis();
@@ -66,10 +70,12 @@ export async function withRedisCache<T>(
     try {
       const cached = await redis.get<T>(key);
       if (cached !== null && cached !== undefined) {
-        processCache.set(key, {
-          value: cached,
-          expires: now + Math.min(ttl * 1000, PROCESS_CACHE_MAX_TTL_MS),
-        });
+        if (!SKIP_PROCESS_CACHE) {
+          processCache.set(key, {
+            value: cached,
+            expires: now + Math.min(ttl * 1000, PROCESS_CACHE_MAX_TTL_MS),
+          });
+        }
         return cached;
       }
     } catch {
@@ -86,10 +92,12 @@ export async function withRedisCache<T>(
     try {
       const result = await fn();
       // Populate both layers
-      processCache.set(key, {
-        value: result,
-        expires: Date.now() + Math.min(ttl * 1000, PROCESS_CACHE_MAX_TTL_MS),
-      });
+      if (!SKIP_PROCESS_CACHE) {
+        processCache.set(key, {
+          value: result,
+          expires: Date.now() + Math.min(ttl * 1000, PROCESS_CACHE_MAX_TTL_MS),
+        });
+      }
       if (redis) {
         // Fire-and-forget so Upstash write latency doesn't block the caller.
         redis.set(key, result, { ex: ttl }).catch(() => {});
