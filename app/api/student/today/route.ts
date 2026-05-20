@@ -159,7 +159,7 @@ export async function GET() {
     type StudentMeta = { id: string; classIds: string[] };
     const studentMeta = await withRedisCache<StudentMeta | null>(
       `cache:student-meta:${user.id}`,
-      300,
+      600,
       async () => {
         const s = await prisma.student.findUnique({
           where: { userId: user.id },

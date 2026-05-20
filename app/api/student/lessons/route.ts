@@ -18,7 +18,7 @@ export async function GET(req: NextRequest) {
     type StudentProfile = { id: string; currentGrade: number | null; classSubjects: string[] };
     const studentProfile = await withRedisCache<StudentProfile | null>(
       `cache:student-profile:${user.id}`,
-      300,
+      600,
       async () => {
         const s = await prisma.student.findUnique({
           where: { userId: user.id },
@@ -111,7 +111,23 @@ export async function GET(req: NextRequest) {
       };
     });
 
-    // Per-student completion progress (fast; no-op for unenrolled students)
+    // Unenrolled students have no scheduled work — skip the DB query entirely.
+    // Without this guard, every lessons request runs a scheduledWork JOIN through
+    // enrollments, which saturates PgBouncer at high concurrency even when it returns [].
+    if (classSubjects.length === 0) {
+      return NextResponse.json({
+        grade: currentGrade,
+        studentId,
+        count: contentCache.count,
+        total: contentCache.total,
+        page,
+        totalPages: contentCache.totalPages,
+        subjectCompletion: [],
+        items: contentCache.items,
+      });
+    }
+
+    // Per-student completion progress (enrolled students only)
     const scheduledRows = await prisma.scheduledWork.findMany({
       where: {
         class: { enrollments: { some: { studentId: studentId } } },
