@@ -21,13 +21,14 @@ export { student_browse, submission_spike, ai_tutor, guardian_reads };
 export const options = {
   scenarios: {
     // Scenario 1: Student browsing lessons (read-heavy)
+    // Peak 1,000 VUs — matches national-gate spec; 2,000 exceeded Vercel concurrency limit.
     student_browse: {
       executor: "ramping-vus",
       exec: "student_browse",
       startVUs: 0,
       stages: [
-        { duration: "2m", target: 500 },
-        { duration: "5m", target: 2000 },
+        { duration: "2m", target: 250 },
+        { duration: "5m", target: 1000 },
         { duration: "2m", target: 0 },
       ],
       tags: { scenario: "student_browse" },
