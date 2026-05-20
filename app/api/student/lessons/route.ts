@@ -14,30 +14,42 @@ export async function GET(req: NextRequest) {
     const page = Math.max(1, Number(req.nextUrl.searchParams.get("page") ?? "1") || 1);
     const skip = (page - 1) * PAGE_SIZE;
 
-    const student = await prisma.student.findUnique({
-      where: { userId: user.id },
-      select: {
-        id: true,
-        currentGrade: true,
-        enrollments: { select: { Class: { select: { subject: true } } } },
-      },
-    });
+    // Cache student profile (grade + subjects) — changes at most once per term.
+    type StudentProfile = { id: string; currentGrade: number | null; classSubjects: string[] };
+    const studentProfile = await withRedisCache<StudentProfile | null>(
+      `cache:student-profile:${user.id}`,
+      300,
+      async () => {
+        const s = await prisma.student.findUnique({
+          where: { userId: user.id },
+          select: {
+            id: true,
+            currentGrade: true,
+            enrollments: { select: { Class: { select: { subject: true } } } },
+          },
+        });
+        if (!s) return null;
+        return {
+          id: s.id,
+          currentGrade: s.currentGrade,
+          classSubjects: s.enrollments.map((e) => e.Class?.subject).filter(Boolean) as string[],
+        };
+      }
+    );
 
-    if (!student) {
+    if (!studentProfile) {
       return NextResponse.json({ grade: null, count: 0, total: 0, page: 1, totalPages: 0, items: [] });
     }
+
+    const { id: studentId, currentGrade, classSubjects } = studentProfile;
 
     const where: Record<string, unknown> = {
       status: { in: ["published", "APPROVED"] },
     };
 
-    if (student.currentGrade) {
-      where.grade = student.currentGrade;
+    if (currentGrade) {
+      where.grade = currentGrade;
     }
-
-    const classSubjects = student.enrollments
-      .map((e) => e.Class?.subject)
-      .filter(Boolean) as string[];
 
     if (classSubjects.length > 0) {
       where.subject = { in: classSubjects };
@@ -45,7 +57,7 @@ export async function GET(req: NextRequest) {
 
     // Shared content cache key — same for all students with same grade+subjects.
     // Content list (expensive table scan) is shared; per-student progress is separate.
-    const gradeStr = student.currentGrade ?? "null";
+    const gradeStr = currentGrade ?? "null";
     const subjectsStr = classSubjects.sort().join(",") || "all";
     const contentKey = `cache:lessons:g${gradeStr}:${subjectsStr}:p${page}`;
 
@@ -102,7 +114,7 @@ export async function GET(req: NextRequest) {
     // Per-student completion progress (fast; no-op for unenrolled students)
     const scheduledRows = await prisma.scheduledWork.findMany({
       where: {
-        class: { enrollments: { some: { studentId: student.id } } },
+        class: { enrollments: { some: { studentId: studentId } } },
         content: { subject: { in: Array.from(new Set(contentCache.rowSubjects)) } },
       },
       select: { id: true, content: { select: { subject: true } } },
@@ -129,8 +141,8 @@ export async function GET(req: NextRequest) {
     }
 
     return NextResponse.json({
-      grade: student.currentGrade,
-      studentId: student.id,
+      grade: currentGrade,
+      studentId: studentId,
       count: contentCache.count,
       total: contentCache.total,
       page,
