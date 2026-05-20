@@ -61,7 +61,7 @@ export async function GET(req: NextRequest) {
     const subjectsStr = classSubjects.sort().join(",") || "all";
     const contentKey = `cache:lessons:g${gradeStr}:${subjectsStr}:p${page}`;
 
-    const contentCache = await withRedisCache(contentKey, 600, async () => {
+    const contentCache = await withRedisCache(contentKey, 900, async () => {
       const [total, rows] = await Promise.all([
         prisma.curriculumContent.count({ where }),
         prisma.curriculumContent.findMany({
