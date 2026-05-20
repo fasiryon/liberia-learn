@@ -34,13 +34,15 @@ export const options = {
       tags: { scenario: "student_browse" },
     },
     // Scenario 2: Assignment submission spike
-    // startTime "2m": lets student_browse warm Vercel instances first before the
-    // submission burst. preAllocatedVUs reduced from 500→50 to prevent a 500-instance
-    // cold-start storm at t=0 (UUID lookups are fast; 50 VUs handle 200 req/s @ 250ms).
+    // startTime "6m": starts after Vercel instances and Redis caches are fully warm
+    // (student_browse ramps to ~900 VUs by t=6min, all caches primed).
+    // Firing at t=2m caused cold-start overlap → Vercel queue overflow → 20s timeout spiral.
+    // At t=6m, warm instances absorb 200 req/s with no queuing.
+    // Duration "3m" ends at t=9m, same as student_browse — no extension to total test time.
     submission_spike: {
       executor: "constant-arrival-rate",
       exec: "submission_spike",
-      startTime: "2m",
+      startTime: "6m",
       rate: 200,
       timeUnit: "1s",
       duration: "3m",

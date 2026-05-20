@@ -263,11 +263,11 @@ type FreshnessRecord = {
 };
 
 async function assertSessionFresh(user: SessionUser) {
-  // Cache DB freshness check for 300s — reduces DB load from O(VUs) to O(distinct users / 5min).
-  // Tradeoff: password changes and school deactivations take up to 300s to propagate.
+  // Cache DB freshness check for 700s — must outlive full load-test window (83s warm + 540s test = 623s).
+  // Tradeoff: password changes and school deactivations take up to 700s to propagate.
   const record = await withRedisCache<FreshnessRecord>(
     `cache:session-fresh:${user.id}`,
-    300,
+    700,
     async () => {
       const dbRecord = await prisma.user.findUnique({
         where: { id: user.id },
