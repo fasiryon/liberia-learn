@@ -154,17 +154,27 @@ export async function GET() {
   try {
     const user = await requireRole("STUDENT");
 
-    // Find student's enrolled classes
-    const student = await prisma.student.findUnique({
-      where: { userId: user.id },
-      select: { id: true, enrollments: { select: { classId: true } } },
-    });
+    // Cache student metadata (id + classIds) to avoid a DB roundtrip on every authenticated request.
+    // 300s TTL: enrollment changes propagate within 5min.
+    type StudentMeta = { id: string; classIds: string[] };
+    const studentMeta = await withRedisCache<StudentMeta | null>(
+      `cache:student-meta:${user.id}`,
+      300,
+      async () => {
+        const s = await prisma.student.findUnique({
+          where: { userId: user.id },
+          select: { id: true, enrollments: { select: { classId: true } } },
+        });
+        if (!s) return null;
+        return { id: s.id, classIds: s.enrollments.map((e) => e.classId) };
+      }
+    );
 
-    if (!student) {
+    if (!studentMeta) {
       return NextResponse.json({ items: [], adaptivePlan: emptyAdaptivePlan() });
     }
 
-    const classIds = student.enrollments.map((e) => e.classId);
+    const { id: studentId, classIds } = studentMeta;
     if (classIds.length === 0) {
       return NextResponse.json({ items: [], adaptivePlan: emptyAdaptivePlan() });
     }
@@ -236,7 +246,7 @@ export async function GET() {
           dueAt: true,
           scheduledWorkId: true,
           submissions: {
-            where: { studentId: student.id },
+            where: { studentId: studentId },
             select: { turnedInAt: true },
           },
         },
@@ -247,7 +257,7 @@ export async function GET() {
         weaknesses: [],
         recommendedNextActions: [],
       })),
-      getAdaptiveRecommendations(student.id, user.schoolId, user.id).catch(() => ({
+      getAdaptiveRecommendations(studentId, user.schoolId, user.id).catch(() => ({
         recommendation: null,
         masteryAlerts: [],
         contentGap: false,
@@ -257,15 +267,15 @@ export async function GET() {
     ]);
 
     // Fire-and-forget: persist adaptive signals as trackable actions
-    generateStudentActions(student.id, user.schoolId ?? "", {
+    generateStudentActions(studentId, user.schoolId ?? "", {
       recommendation: adaptiveResult.recommendation,
       masteryAlerts: adaptiveResult.masteryAlerts,
       contentGap: adaptiveResult.contentGap,
       grade: adaptiveResult.recommendation?.grade ?? null,
     }).catch(() => null);
 
-    const activeAction = await getActiveStudentAction(student.id).catch(() => null);
-    const timetable = await getTimetableForStudent(student.id, new Date()).catch(() => null);
+    const activeAction = await getActiveStudentAction(studentId).catch(() => null);
+    const timetable = await getTimetableForStudent(studentId, new Date()).catch(() => null);
 
     const safeAssignments = asArray(assignments);
     const safeIntelligence = {
