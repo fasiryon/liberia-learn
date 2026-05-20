@@ -65,11 +65,10 @@ export async function withRedisCache<T>(
     try {
       const result = await fn();
       if (redis) {
-        try {
-          await redis.set(key, result, { ex: ttl });
-        } catch {
-          // Best-effort — don't fail the request if caching fails
-        }
+        // Fire-and-forget: don't await the set so it doesn't add Upstash write
+        // latency to the response. The 2000ms AbortSignal in getRedis() gives
+        // the write enough time to complete without blocking the caller.
+        redis.set(key, result, { ex: ttl }).catch(() => {});
       }
       return result;
     } finally {
