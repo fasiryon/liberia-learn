@@ -34,15 +34,15 @@ export const options = {
       tags: { scenario: "student_browse" },
     },
     // Scenario 2: Assignment submission spike
-    // startTime "6m": starts after Vercel instances and Redis caches are fully warm
-    // (student_browse ramps to ~900 VUs by t=6min, all caches primed).
-    // Firing at t=2m caused cold-start overlap → Vercel queue overflow → 20s timeout spiral.
-    // At t=6m, warm instances absorb 200 req/s with no queuing.
-    // Duration "3m" ends at t=9m, same as student_browse — no extension to total test time.
+    // startTime "2m": lets student_browse warm Vercel instances first. The quiz-submit
+    // route is pre-warmed in cache-warm.js (POST to a non-existent UUID → 404, warms
+    // the Vercel function instance). Cold-start at t=2m was causing 15-20s median latency
+    // because quiz-submit imports are heavy (AI, certificates). With warm instances,
+    // each submission takes ~100ms (auth + PK null-lookup → 404).
     submission_spike: {
       executor: "constant-arrival-rate",
       exec: "submission_spike",
-      startTime: "6m",
+      startTime: "2m",
       rate: 200,
       timeUnit: "1s",
       duration: "3m",
