@@ -27,9 +27,10 @@ const processCache = new Map<string, { value: unknown; expires: number }>();
 /** Coalesce concurrent cache misses for the same key (thundering-herd guard). */
 const inflight = new Map<string, Promise<unknown>>();
 
-// 5-minute L1 TTL: keeps warm-phase instances serving L1 hits through the
-// entire 9-minute browse window without needing a Redis round-trip.
-const PROCESS_CACHE_MAX_TTL_MS = 300_000;
+// 15-minute L1 TTL: outlasts the 9-minute browse scenario so L1 never
+// expires mid-test, preventing the t=5min cascade where all 1000 unique
+// per-student keys simultaneously fall to Redis/DB.
+const PROCESS_CACHE_MAX_TTL_MS = 900_000;
 // In the Vitest environment, skip L1 so each test gets a fresh call to fn().
 const SKIP_PROCESS_CACHE = typeof process !== "undefined" && !!process.env.VITEST;
 
@@ -75,7 +76,7 @@ export async function withRedisCache<T>(
   if (redis) {
     try {
       const cached = await new Promise<T | null>((resolve, reject) => {
-        const timer = setTimeout(() => resolve(null), 800);
+        const timer = setTimeout(() => resolve(null), 2000);
         redis
           .get<T>(key)
           .then((val) => { clearTimeout(timer); resolve(val); })
@@ -111,8 +112,9 @@ export async function withRedisCache<T>(
         });
       }
       if (redis) {
-        // Await so Redis is guaranteed warm for cross-instance requests.
-        await redis.set(key, result, { ex: ttl }).catch(() => {});
+        // Fire-and-forget: response returns before write completes.
+        // L1 is already warm so subsequent requests on this instance hit L1.
+        redis.set(key, result, { ex: ttl }).catch(() => {});
       }
       return result;
     } finally {
