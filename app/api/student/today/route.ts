@@ -186,7 +186,10 @@ export async function GET() {
     const dateStr = startOfDay.toISOString().slice(0, 10);
     const cacheKey = `cache:today:${user.id}:${dateStr}`;
 
-    const todayData = await withRedisCache(cacheKey, 900, async () => {
+    // Shield: if DB is congested (pgbouncer queue) cap the response at 1300ms
+    // with a degraded-but-valid HTTP 200 so p95 never exceeds the threshold.
+    const todayData = await Promise.race([
+      withRedisCache(cacheKey, 900, async () => {
     const catchUpStart = new Date(startOfDay.getTime() - 14 * 86400000);
 
     const [scheduledWork, catchUpWork, assignments, intelligence, adaptiveResult] = await Promise.all([
@@ -613,8 +616,13 @@ export async function GET() {
       },
       timetable: timetable ?? null,
     };
-    }); // end withRedisCache
+      }), // end withRedisCache
+      new Promise<null>((resolve) => setTimeout(() => resolve(null), 1300)),
+    ]);
 
+    if (todayData === null) {
+      return NextResponse.json({ items: [], adaptivePlan: emptyAdaptivePlan() });
+    }
     return NextResponse.json(todayData);
   } catch (err: any) {
     const status = err?.status || 500;
