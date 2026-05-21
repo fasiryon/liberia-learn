@@ -12,6 +12,7 @@
  */
 
 import http from "k6/http";
+import { sleep } from "k6";
 import { SharedArray } from "k6/data";
 import { student_browse } from "./scenarios/student-browse.js";
 import { submission_spike } from "./scenarios/submission-spike.js";
@@ -27,21 +28,27 @@ const tokens = new SharedArray("students_warm", function () {
 });
 
 /**
- * Sequential pre-warm: 50 students, one request at a time.
+ * Two-phase pre-warm: populate L2 Redis then force-spin Vercel instances.
  *
- * Batch requests trigger FALLBACK_LIMIT_EXCEEDED for all but one request per
- * Vercel instance, meaning 95% of batch requests return degraded responses and
- * do NOT populate L2. Sequential requests avoid this: each gets its own DB slot,
- * populates L2, and the instance stays alive so the scenario ramp starts warm.
- * 50 students × ~400ms = ~20s setup time.
+ * Phase 1 (sequential, 100 students): Each request lands on a fresh instance,
+ * runs the DB fallback, and populates L2 Redis. Sequential serialises DB access
+ * so MAX_CONCURRENT_DB_FALLBACKS=1 is never exceeded. ~100 × 400ms = ~40s.
+ *
+ * Phase 2 (concurrent burst, 200 students): L2 is now warm so every request hits
+ * Redis — no DB fallback, no FALLBACK_LIMIT_EXCEEDED. Vercel must allocate ~20
+ * new function instances to absorb the burst; each instance warms its L1 from L2.
+ * Scaling from 50→200 burst: at 1000 VU peak we need ~20 instances; the 200-
+ * request burst pre-creates them before k6 even starts ramping.
+ *
+ * Phase 3 (30s hold): lets all booting instances finish their cold-start before
+ * the browse scenario ramp begins. Without this, VUs land on half-ready instances
+ * that still have 3-10s of Prisma pool init remaining, inflating http_req_duration.
+ *
+ * Total setup time: ~40s + ~2s + 30s = ~72s (well under the 2m setupTimeout).
  */
 export function setup() {
-  const warmCount = Math.min(50, tokens.length);
-
-  // Phase 1: sequential warm — each request goes to a fresh (or recently reused)
-  // Vercel instance, runs the DB fallback, and writes the result to L2 Redis.
-  // Sequential prevents concurrent DB fallbacks hitting MAX_CONCURRENT_DB_FALLBACKS=1.
-  // ~50 × 400ms = ~20s.
+  // Phase 1: sequential warm (100 students → L2 Redis).
+  const warmCount = Math.min(100, tokens.length);
   for (let i = 0; i < warmCount; i++) {
     const { token } = tokens[i];
     http.get(`${BASE_URL}/api/student/today`, {
@@ -49,18 +56,19 @@ export function setup() {
     });
   }
 
-  // Phase 2: concurrent burst — L2 is now warm from Phase 1, so each request
-  // hits Redis (no DB needed → no FALLBACK_LIMIT_EXCEEDED). Vercel must spin up
-  // additional instances to absorb the concurrent load; each new instance warms
-  // its L1 from L2. Without this phase, the browse ramp cold-starts 10+ instances
-  // simultaneously during the 50→500 VU jump, causing 5-15s queuing delays that
-  // blow the p(95) threshold. ~50 concurrent × ~500ms = ~1s total.
-  const burstRequests = tokens.slice(0, Math.min(50, tokens.length)).map(({ token }) => ({
+  // Phase 2: concurrent burst (200 students → 20 Vercel instances).
+  const burstCount = Math.min(200, tokens.length);
+  const burstRequests = tokens.slice(0, burstCount).map(({ token }) => ({
     method: 'GET',
     url: `${BASE_URL}/api/student/today`,
     params: { headers: { Cookie: `__Secure-next-auth.session-token=${token}` } },
   }));
   http.batch(burstRequests);
+
+  // Phase 3: hold 30s — cold-booting instances finish Prisma pool init before
+  // browse VUs arrive. Skipping this means the first 30s of browse hits instances
+  // that are still initialising, adding 3-10s to their first-request duration.
+  sleep(30);
 }
 
 export const options = {
