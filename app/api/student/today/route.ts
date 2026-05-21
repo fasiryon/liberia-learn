@@ -274,8 +274,20 @@ export async function GET() {
       grade: adaptiveResult.recommendation?.grade ?? null,
     }).catch(() => null);
 
-    const activeAction = await getActiveStudentAction(studentId).catch(() => null);
-    const timetable = await getTimetableForStudent(studentId, new Date()).catch(() => null);
+    // Run in parallel and cache so DB is not hit on every request at 1K VUs.
+    // Action TTL=60s (changes when resolved/generated); timetable TTL=300s (day-stable).
+    const [activeAction, timetable] = await Promise.all([
+      withRedisCache(
+        `cache:action:${studentId}:${dateStr}`,
+        60,
+        () => getActiveStudentAction(studentId).catch(() => null)
+      ),
+      withRedisCache(
+        `cache:timetable:${studentId}:${dateStr}`,
+        300,
+        () => getTimetableForStudent(studentId, new Date()).catch(() => null)
+      ),
+    ]);
 
     const safeAssignments = asArray(assignments);
     const safeIntelligence = {
