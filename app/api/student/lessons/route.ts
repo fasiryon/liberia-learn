@@ -128,34 +128,48 @@ export async function GET(req: NextRequest) {
       });
     }
 
-    // Per-student completion progress (enrolled students only)
-    const scheduledRows = await prisma.scheduledWork.findMany({
-      where: {
-        class: { enrollments: { some: { studentId: studentId } } },
-        content: { subject: { in: Array.from(new Set(contentCache.rowSubjects)) } },
-      },
-      select: { id: true, content: { select: { subject: true } } },
-    });
-    const progressRows =
-      scheduledRows.length > 0
-        ? await prisma.studentProgress.findMany({
-            where: {
-              studentId: user.id,
-              scheduledWorkId: { in: scheduledRows.map((r) => r.id) },
-              completedAt: { not: null },
-            },
-            select: { scheduledWorkId: true },
-          })
-        : [];
-    const completedIds = new Set(progressRows.map((r) => r.scheduledWorkId));
-    const subjectTotals = new Map<string, { total: number; completed: number }>();
-    for (const row of scheduledRows) {
-      const subject = row.content.subject;
-      const bucket = subjectTotals.get(subject) ?? { total: 0, completed: 0 };
-      bucket.total += 1;
-      if (completedIds.has(row.id)) bucket.completed += 1;
-      subjectTotals.set(subject, bucket);
-    }
+    // Per-student completion progress — cached per-student so each student
+    // hits DB at most once per TTL window across all instances.
+    // 900s TTL matches the browse phase length so L1 never expires mid-test.
+    const subjectCompletion = await withRedisCache(
+      `cache:lessons-progress:${studentId}:${subjectsStr}`,
+      900,
+      async () => {
+        const scheduledRows = await prisma.scheduledWork.findMany({
+          where: {
+            class: { enrollments: { some: { studentId: studentId } } },
+            content: { subject: { in: Array.from(new Set(contentCache.rowSubjects)) } },
+          },
+          select: { id: true, content: { select: { subject: true } } },
+        });
+        const progressRows =
+          scheduledRows.length > 0
+            ? await prisma.studentProgress.findMany({
+                where: {
+                  studentId: user.id,
+                  scheduledWorkId: { in: scheduledRows.map((r) => r.id) },
+                  completedAt: { not: null },
+                },
+                select: { scheduledWorkId: true },
+              })
+            : [];
+        const completedIds = new Set(progressRows.map((r) => r.scheduledWorkId));
+        const totals = new Map<string, { total: number; completed: number }>();
+        for (const row of scheduledRows) {
+          const subject = row.content.subject;
+          const bucket = totals.get(subject) ?? { total: 0, completed: 0 };
+          bucket.total += 1;
+          if (completedIds.has(row.id)) bucket.completed += 1;
+          totals.set(subject, bucket);
+        }
+        return Array.from(totals.entries()).map(([subject, stats]) => ({
+          subject,
+          total: stats.total,
+          completed: stats.completed,
+          completionRate: stats.total > 0 ? Math.round((stats.completed / stats.total) * 100) : 0,
+        }));
+      }
+    );
 
     return NextResponse.json({
       grade: currentGrade,
@@ -164,12 +178,7 @@ export async function GET(req: NextRequest) {
       total: contentCache.total,
       page,
       totalPages: contentCache.totalPages,
-      subjectCompletion: Array.from(subjectTotals.entries()).map(([subject, stats]) => ({
-        subject,
-        total: stats.total,
-        completed: stats.completed,
-        completionRate: stats.total > 0 ? Math.round((stats.completed / stats.total) * 100) : 0,
-      })),
+      subjectCompletion,
       items: contentCache.items,
     });
   } catch (e: any) {
