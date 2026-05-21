@@ -11,6 +11,8 @@
  *   npm install -g k6   (or: choco install k6  on Windows)
  */
 
+import http from "k6/http";
+import { SharedArray } from "k6/data";
 import { student_browse } from "./scenarios/student-browse.js";
 import { submission_spike } from "./scenarios/submission-spike.js";
 import { ai_tutor } from "./scenarios/ai-tutor.js";
@@ -18,7 +20,33 @@ import { guardian_reads } from "./scenarios/guardian-reads.js";
 
 export { student_browse, submission_spike, ai_tutor, guardian_reads };
 
+const BASE_URL = __ENV.BASE_URL || "https://liberia-learn.vercel.app";
+
+const tokens = new SharedArray("students_warm", function () {
+  return JSON.parse(open("./fixtures/student-tokens.json"));
+});
+
+/**
+ * Pre-warm L2 Redis for all 1,000 student keys before scenarios start.
+ * Sends 20 parallel requests per batch so setup completes in ~30s.
+ * Eliminates cold-cache tail latency (which drives browse p95 to 4s+).
+ */
+export function setup() {
+  const batchSize = 20;
+  for (let i = 0; i < tokens.length; i += batchSize) {
+    const slice = tokens.slice(i, i + batchSize);
+    const batch = slice.map(({ token }) => [
+      "GET",
+      `${BASE_URL}/api/student/today`,
+      null,
+      { headers: { Cookie: `__Secure-next-auth.session-token=${token}` } },
+    ]);
+    http.batch(batch);
+  }
+}
+
 export const options = {
+  setupTimeout: "2m",
   scenarios: {
     // Scenario 1: Student browsing lessons (read-heavy)
     // Peak 1,000 VUs — matches national-gate spec; 2,000 exceeded Vercel concurrency limit.
