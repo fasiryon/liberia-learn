@@ -112,9 +112,13 @@ export async function withRedisCache<T>(
         });
       }
       if (redis) {
-        // Fire-and-forget: response returns before write completes.
-        // L1 is already warm so subsequent requests on this instance hit L1.
-        redis.set(key, result, { ex: ttl }).catch(() => {});
+        // Bounded await: guarantees Redis is populated during low-concurrency
+        // warm phases (<100ms). Under heavy load the 500ms cap fires so the
+        // caller isn't blocked, and L1 (already warm) handles further requests.
+        await Promise.race([
+          redis.set(key, result, { ex: ttl }).catch(() => {}),
+          new Promise<void>((resolve) => setTimeout(resolve, 500)),
+        ]);
       }
       return result;
     } finally {
