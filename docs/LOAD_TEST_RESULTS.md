@@ -148,12 +148,42 @@ Worker was not observable in k6 load tests (background queue). At rest: SQS dept
 | Field | Value |
 |-------|-------|
 | Sprint | NR-4 |
-| Script | `load-tests/moderate.js` |
-| Pool | 1,000 `lt-*@loadtest.liberialearn.internal` students (or token pool) |
-| Targets | p95 &lt; 2000ms, error rate &lt; 1%, student today API &gt; 95% success |
-| Status | **IN PROGRESS** — see `load-tests/results/run-1000vu-*.json` (local artifact, gitignored) |
+| Script | `load-tests/k6-config.js` (4-scenario config) |
+| Pool | 1,000 `lt-*@loadtest.liberialearn.internal` students + token pool |
+| Targets | browse p95 &lt; 1500ms, global p95 &lt; 2000ms, error rate &lt; 1% |
+| Status | **IN PROGRESS — v28 best run (2026-05-21)** |
 
-Record final PASS/FAIL metrics here when NR-4 completes.
+### NR-4 v28 results (latest — commit 858eb69)
+
+| Metric | v28 Value | Threshold | Result |
+|--------|-----------|-----------|--------|
+| browse p(95) | 8140ms | < 1500ms | FAIL |
+| global p(95) | 5743ms | < 2000ms | FAIL |
+| http_req_failed rate | 0.20% | < 1% | PASS |
+| today 200 check | 17502/17512 (99.9%) | > 95% | PASS |
+| submission p(95) | 173ms | < 2000ms | PASS |
+| ai_tutor p(95) | 220ms | < 3000ms | PASS |
+
+### NR-4C Diagnosis (2026-05-21)
+
+**Auth failure hypothesis ruled out.** Inspecting `run-v28-20260521.json` failed-request entries confirms the 10 "today 200" check failures are **TCP connection timeouts** from the k6 client machine (`wsarecv: connection attempt failed / established connection failed`), not server-side auth rejections. The auth stack is correct:
+- `middleware.ts`: returns 401 JSON for unauthenticated `/api/*` requests (not a redirect)
+- `lib/auth.ts`: `requireUser()` throws 401/403 on auth failure, caught by `_computeToday()` → returns JSON
+- Token generator: includes all required fields (`sub`, `id`, `email`, `name`, `role`, `schoolId`, `isPlatformAdmin`, `mustChangePIN`)
+- Cookie prefix: `__Secure-next-auth.session-token` correct for HTTPS production
+
+**Actual root cause: Vercel cold-start queue latency during VU ramp.**
+- browse median = 90ms (fast) — cold-start requests pull p(95) to 8140ms
+- `http_req_connecting` max = 15110ms — Vercel instances booting during 50→500 VU jump
+- Sequential setup warm (v28) pre-warms 1-2 instances; the 50→500 ramp needs 10+ → cold starts cascade
+
+**NR-4C fixes applied (commit TBD):**
+1. `k6-config.js` `setup()`: added Phase 2 concurrent burst (50 simultaneous requests via `http.batch()`) — L2 is warm from Phase 1 so these hit Redis (no `FALLBACK_LIMIT_EXCEEDED`); forces Vercel to pre-create 10-20 instances
+2. `k6-config.js` browse stages: added 200 VU intermediate stage (same total 9m duration: 1m+2m+2m+2m+2m) — gives Vercel time to scale instances between each step before the next jump
+
+**Next run target:** browse p(95) < 1500ms, global p(95) < 2000ms, error rate < 0.5%
+
+Record final PASS/FAIL metrics here when NR-4C run completes.
 
 ---
 

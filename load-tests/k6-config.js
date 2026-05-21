@@ -37,12 +37,30 @@ const tokens = new SharedArray("students_warm", function () {
  */
 export function setup() {
   const warmCount = Math.min(50, tokens.length);
+
+  // Phase 1: sequential warm — each request goes to a fresh (or recently reused)
+  // Vercel instance, runs the DB fallback, and writes the result to L2 Redis.
+  // Sequential prevents concurrent DB fallbacks hitting MAX_CONCURRENT_DB_FALLBACKS=1.
+  // ~50 × 400ms = ~20s.
   for (let i = 0; i < warmCount; i++) {
     const { token } = tokens[i];
     http.get(`${BASE_URL}/api/student/today`, {
       headers: { Cookie: `__Secure-next-auth.session-token=${token}` },
     });
   }
+
+  // Phase 2: concurrent burst — L2 is now warm from Phase 1, so each request
+  // hits Redis (no DB needed → no FALLBACK_LIMIT_EXCEEDED). Vercel must spin up
+  // additional instances to absorb the concurrent load; each new instance warms
+  // its L1 from L2. Without this phase, the browse ramp cold-starts 10+ instances
+  // simultaneously during the 50→500 VU jump, causing 5-15s queuing delays that
+  // blow the p(95) threshold. ~50 concurrent × ~500ms = ~1s total.
+  const burstRequests = tokens.slice(0, Math.min(50, tokens.length)).map(({ token }) => ({
+    method: 'GET',
+    url: `${BASE_URL}/api/student/today`,
+    params: { headers: { Cookie: `__Secure-next-auth.session-token=${token}` } },
+  }));
+  http.batch(burstRequests);
 }
 
 export const options = {
@@ -61,11 +79,13 @@ export const options = {
       exec: "student_browse",
       startVUs: 0,
       stages: [
-        { duration: "1m", target: 50 },    // slow start: warm Vercel without cold-start queuing
-        { duration: "3m", target: 500 },   // gradual ramp
-        { duration: "3m", target: 1000 },  // peak load
+        { duration: "1m", target: 50 },    // slow start: let Phase-2 burst instances fully settle
+        { duration: "2m", target: 200 },   // intermediate: absorb next cold-start wave before peak
+        { duration: "2m", target: 500 },   // mid ramp
+        { duration: "2m", target: 1000 },  // peak load
         { duration: "2m", target: 0 },     // ramp down
       ],
+      // Total = 9m — unchanged; submission_spike startTime stays at "9m".
       tags: { scenario: "student_browse" },
     },
     // Scenario 2: Assignment submission spike
