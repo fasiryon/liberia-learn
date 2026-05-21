@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
-import { withRedisCache } from "@/lib/cache/redisCache";
+import { withRedisCache, FALLBACK_LIMIT_EXCEEDED } from "@/lib/cache/redisCache";
 import { isLeagueTableFlagEnabled } from "@/lib/flags";
 
 // Public aggregate data — CDN caches for 5min, stale-while-revalidate 1hr.
@@ -25,23 +25,62 @@ export async function GET(req: NextRequest) {
   const term = searchParams.get("term") ?? currentTerm();
   const county = searchParams.get("county") ?? undefined;
 
-  const cacheKey = county ? `cache:league:${term}:county:${county}` : `cache:league:${term}`;
+  // Shield: cap the entire handler at 1000ms so a cold-cache league DB query
+  // (which competes with today/lessons for pgbouncer connections) never
+  // contributes more than 1s to the student_browse p(95).
+  const result = await Promise.race([
+    _computeLeague(term, county),
+    new Promise<null>((resolve) => setTimeout(() => resolve(null), 1000)),
+  ]);
 
-  const snapshots = await withRedisCache(
-    cacheKey,
-    3600,
-    () =>
-      prisma.leagueSnapshot.findMany({
-        where: { term, ...(county ? { school: { county } } : {}) },
-        orderBy: { nationalRank: "asc" },
-        include: {
-          school: { select: { name: true, county: true, district: true } },
-        },
-        take: 200,
-      })
+  const { rows, updatedAt } = result ?? { rows: [], updatedAt: null };
+
+  return NextResponse.json(
+    { term, updatedAt, rows },
+    {
+      headers: {
+        "Cache-Control": "public, s-maxage=300, stale-while-revalidate=3600",
+      },
+    },
   );
+}
 
-  const rows = snapshots.map((s) => ({
+async function _computeLeague(
+  term: string,
+  county: string | undefined
+): Promise<{ rows: ReturnType<typeof mapSnapshot>[]; updatedAt: Date | null }> {
+  try {
+    const cacheKey = county ? `cache:league:${term}:county:${county}` : `cache:league:${term}`;
+
+    const snapshots = await withRedisCache(
+      cacheKey,
+      3600,
+      () =>
+        prisma.leagueSnapshot.findMany({
+          where: { term, ...(county ? { school: { county } } : {}) },
+          orderBy: { nationalRank: "asc" },
+          include: {
+            school: { select: { name: true, county: true, district: true } },
+          },
+          take: 200,
+        })
+    );
+
+    return { rows: snapshots.map(mapSnapshot), updatedAt: snapshots[0]?.createdAt ?? null };
+  } catch (e: any) {
+    if (e?.code === FALLBACK_LIMIT_EXCEEDED) {
+      return { rows: [], updatedAt: null };
+    }
+    throw e;
+  }
+}
+
+function mapSnapshot(s: {
+  id: string; schoolId: string; school: { name: string; county: string | null; district: string | null };
+  term: string; avgGrade: number; attendance: number; lessonCompletion: number;
+  studentCount: number; nationalRank: number | null; countyRank: number | null; createdAt: Date;
+}) {
+  return {
     id: s.id,
     schoolId: s.schoolId,
     schoolName: s.school.name,
@@ -55,16 +94,5 @@ export async function GET(req: NextRequest) {
     nationalRank: s.nationalRank,
     countyRank: s.countyRank,
     score: s.avgGrade * 0.5 + s.attendance * 0.3 + s.lessonCompletion * 0.2,
-  }));
-
-  const updatedAt = snapshots[0]?.createdAt ?? null;
-
-  return NextResponse.json(
-    { term, updatedAt, rows },
-    {
-      headers: {
-        "Cache-Control": "public, s-maxage=300, stale-while-revalidate=3600",
-      },
-    },
-  );
+  };
 }

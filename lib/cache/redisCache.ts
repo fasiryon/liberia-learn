@@ -86,17 +86,26 @@ export async function withRedisCache<T>(
     }
   }
 
+  // Concurrency guard — checked BEFORE the Redis GET so over-limit requests
+  // return in < 1ms rather than waiting up to 500ms for a Redis response that
+  // won't be used anyway. Nested calls bypass the limit via AsyncLocalStorage.
+  const isNestedCall = insideFallback.getStore() === true;
+  if (!isNestedCall && activeDbFallbacks >= MAX_CONCURRENT_DB_FALLBACKS) {
+    throw Object.assign(new Error(FALLBACK_LIMIT_EXCEEDED), {
+      code: FALLBACK_LIMIT_EXCEEDED,
+    });
+  }
+
   const redis = getRedis();
 
   // L2: Redis — cross-instance warm-up.
-  // Fail-fast (300ms) so Upstash overload under 1,000-VU concurrency doesn't
-  // block the response. DB fallback handles the miss without the 30s wait.
-  // redis.set() keeps no timeout: fire-and-forget, so SET latency never blocks
-  // the caller even if Upstash is slow to acknowledge the write.
+  // 500ms cap: Upstash REST API responds in 10-100ms under normal load; the
+  // 500ms budget leaves ample margin while preventing slow Redis calls from
+  // consuming the 1300ms shield budget before the fallback limit fires.
   if (redis) {
     try {
       const cached = await new Promise<T | null>((resolve, reject) => {
-        const timer = setTimeout(() => resolve(null), 2000);
+        const timer = setTimeout(() => resolve(null), 500);
         redis
           .get<T>(key)
           .then((val) => { clearTimeout(timer); resolve(val); })
@@ -121,12 +130,8 @@ export async function withRedisCache<T>(
     return existing as Promise<T>;
   }
 
-  // Concurrency guard: if too many top-level DB fallbacks are already running,
-  // fail fast so the calling route can return a degraded HTTP 200 immediately
-  // rather than queuing behind pgbouncer for 10-16s.
-  // Nested calls (inside an active fallback fn()) bypass this check via
-  // AsyncLocalStorage so they never hit the limit themselves.
-  const isNestedCall = insideFallback.getStore() === true;
+  // Second concurrency check: handles the race between the pre-check above and
+  // this point (another request may have taken the last slot during the Redis GET).
   if (!isNestedCall && activeDbFallbacks >= MAX_CONCURRENT_DB_FALLBACKS) {
     throw Object.assign(new Error(FALLBACK_LIMIT_EXCEEDED), {
       code: FALLBACK_LIMIT_EXCEEDED,
