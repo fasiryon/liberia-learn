@@ -75,7 +75,7 @@ export async function withRedisCache<T>(
   if (redis) {
     try {
       const cached = await new Promise<T | null>((resolve, reject) => {
-        const timer = setTimeout(() => resolve(null), 300);
+        const timer = setTimeout(() => resolve(null), 800);
         redis
           .get<T>(key)
           .then((val) => { clearTimeout(timer); resolve(val); })
@@ -111,8 +111,8 @@ export async function withRedisCache<T>(
         });
       }
       if (redis) {
-        // Fire-and-forget so Upstash write latency doesn't block the caller.
-        redis.set(key, result, { ex: ttl }).catch(() => {});
+        // Await so Redis is guaranteed warm for cross-instance requests.
+        await redis.set(key, result, { ex: ttl }).catch(() => {});
       }
       return result;
     } finally {
