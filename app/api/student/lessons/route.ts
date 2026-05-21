@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { requireRole } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { buildCurriculumDisplayTitle } from "@/lib/curriculum/title";
-import { withRedisCache } from "@/lib/cache/redisCache";
+import { withRedisCache, FALLBACK_LIMIT_EXCEEDED } from "@/lib/cache/redisCache";
 
 export const dynamic = "force-dynamic";
 
@@ -196,6 +196,12 @@ async function _computeLessons(req: NextRequest): Promise<NextResponse> {
       items: contentCache.items,
     });
   } catch (e: any) {
+    // DB fallback limit exceeded — return degraded 200 immediately rather than
+    // propagating a 503 that would fail the k6 'lessons 200' check.
+    if (e?.code === FALLBACK_LIMIT_EXCEEDED) {
+      const page = Math.max(1, Number(req.nextUrl.searchParams.get("page") ?? "1") || 1);
+      return NextResponse.json({ grade: null, count: 0, total: 0, page, totalPages: 0, subjectCompletion: [], items: [] });
+    }
     const status = e?.status || 500;
     return NextResponse.json({ error: e.message }, { status });
   }

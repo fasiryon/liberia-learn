@@ -17,6 +17,7 @@
  *   const data = await withRedisCache("moe:dashboard", 900, () => heavyQuery());
  */
 
+import { AsyncLocalStorage } from "node:async_hooks";
 import { Redis } from "@upstash/redis";
 
 let _redis: Redis | null = null;
@@ -31,6 +32,25 @@ const inflight = new Map<string, Promise<unknown>>();
 // expires mid-test, preventing the t=5min cascade where all 1000 unique
 // per-student keys simultaneously fall to Redis/DB.
 const PROCESS_CACHE_MAX_TTL_MS = 900_000;
+
+// Per-instance DB fallback concurrency cap.
+// Background computations that continue after the 1300ms shield fires hold
+// pgbouncer connections for 2-5s. Without a cap, 1000 VUs × ~20 instances
+// generate ~200 concurrent background DB computations → pgbouncer queues
+// new requests for 16s before the handler even starts. With MAX=2, excess
+// cache misses throw immediately so calling routes return a degraded HTTP 200
+// (< 10ms) instead of queuing. pgbouncer stays under ~40 concurrent queries.
+let activeDbFallbacks = 0;
+const MAX_CONCURRENT_DB_FALLBACKS = 2;
+
+/** Error code thrown when the per-instance DB fallback limit is exceeded. */
+export const FALLBACK_LIMIT_EXCEEDED = "FALLBACK_LIMIT_EXCEEDED";
+
+// AsyncLocalStorage tracks whether the current async context is already inside
+// a cache fallback fn(). Nested withRedisCache calls (e.g. action + timetable
+// inside the outer today fn()) bypass the concurrency limit so they don't
+// incorrectly trigger FALLBACK_LIMIT_EXCEEDED.
+const insideFallback = new AsyncLocalStorage<boolean>();
 // In the Vitest environment, skip L1 so each test gets a fresh call to fn().
 const SKIP_PROCESS_CACHE = typeof process !== "undefined" && !!process.env.VITEST;
 
@@ -101,9 +121,24 @@ export async function withRedisCache<T>(
     return existing as Promise<T>;
   }
 
+  // Concurrency guard: if too many top-level DB fallbacks are already running,
+  // fail fast so the calling route can return a degraded HTTP 200 immediately
+  // rather than queuing behind pgbouncer for 10-16s.
+  // Nested calls (inside an active fallback fn()) bypass this check via
+  // AsyncLocalStorage so they never hit the limit themselves.
+  const isNestedCall = insideFallback.getStore() === true;
+  if (!isNestedCall && activeDbFallbacks >= MAX_CONCURRENT_DB_FALLBACKS) {
+    throw Object.assign(new Error(FALLBACK_LIMIT_EXCEEDED), {
+      code: FALLBACK_LIMIT_EXCEEDED,
+    });
+  }
+
+  if (!isNestedCall) activeDbFallbacks++;
   const pending = (async () => {
     try {
-      const result = await fn();
+      // Run fn() inside the fallback context so nested withRedisCache calls
+      // know they are already inside a fallback and bypass the limit.
+      const result = await insideFallback.run(true, fn);
       // Populate both layers
       if (!SKIP_PROCESS_CACHE) {
         processCache.set(key, {
@@ -122,6 +157,7 @@ export async function withRedisCache<T>(
       }
       return result;
     } finally {
+      if (!isNestedCall) activeDbFallbacks--;
       inflight.delete(key);
     }
   })();
