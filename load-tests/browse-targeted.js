@@ -2,7 +2,6 @@
 // Mirrors the setup warm and ramp strategy from k6-config.js at 200 VU scale.
 import { student_browse } from "./scenarios/student-browse.js";
 import { SharedArray } from "k6/data";
-import { sleep } from "k6";
 import http from "k6/http";
 
 const BASE_URL = __ENV.BASE_URL || "https://liberia-learn.vercel.app";
@@ -13,23 +12,23 @@ const tokens = new SharedArray("students_warm", function () {
 
 // Mirrors k6-config.js setup(): Phase 1 sequential (L2 warm) + Phase 2 concurrent burst (instance warm).
 export function setup() {
-  // Phase 1: sequential warm (100 → L2 Redis). ~40s.
-  const warmCount = Math.min(100, tokens.length);
+  // Phase 1: sequential warm (50 → L2 Redis). ~20s.
+  const warmCount = Math.min(50, tokens.length);
   for (let i = 0; i < warmCount; i++) {
     const { token } = tokens[i];
     http.get(`${BASE_URL}/api/student/today`, {
       headers: { Cookie: `__Secure-next-auth.session-token=${token}` },
     });
   }
-  // Phase 2: concurrent burst (200 → spin up ~20 Vercel instances). ~2s.
-  const burstRequests = tokens.slice(0, Math.min(200, tokens.length)).map(({ token }) => ({
+  // Phase 2: concurrent burst (50 → spin up Vercel instances). ~1s.
+  // No sleep after: Vercel scales down idle instances after ~15-30s inactivity;
+  // a long post-burst sleep reverses the pre-warm benefit.
+  const burstRequests = tokens.slice(0, Math.min(50, tokens.length)).map(({ token }) => ({
     method: "GET",
     url: `${BASE_URL}/api/student/today`,
     params: { headers: { Cookie: `__Secure-next-auth.session-token=${token}` } },
   }));
   http.batch(burstRequests);
-  // Phase 3: hold 30s so booting instances finish Prisma pool init.
-  sleep(30);
 }
 
 export const options = {
