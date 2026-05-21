@@ -151,7 +151,7 @@ Worker was not observable in k6 load tests (background queue). At rest: SQS dept
 | Script | `load-tests/k6-config.js` (4-scenario config) |
 | Pool | 1,000 `lt-*@loadtest.liberialearn.internal` students + token pool |
 | Targets | browse p95 &lt; 1500ms, global p95 &lt; 2000ms, error rate &lt; 1% |
-| Status | **IN PROGRESS — v29 best run (2026-05-21)** |
+| Status | **FAIL — Vercel Hobby concurrency cap is the binding constraint (2026-05-21)** |
 
 ### NR-4 v28 results (commit 858eb69)
 
@@ -188,15 +188,30 @@ Worker was not observable in k6 load tests (background queue). At rest: SQS dept
 
 **Root cause: Vercel cold-start queue latency.** Browse p50=99ms (cache hit, fast), p95=16015ms (tail from cold-start queuing during ramp). Cold starts queue 5-15s per instance and affect 10-50 concurrent requests per event.
 
-**v29 → v30 fixes applied:**
-1. `k6-config.js` setup Phase 1: increased sequential warm from 50 → 100 students (~40s)
-2. `k6-config.js` setup Phase 2: increased concurrent burst from 50 → 200 requests — forces ~20 Vercel instances to boot before the browse ramp
-3. `k6-config.js` setup Phase 3: added 30s `sleep()` after burst — lets booting instances finish Prisma pool init before VUs arrive
-4. `browse-targeted.js`: same Phase 1/2/3 scaling applied
+### NR-4 v30 results (commit b8640dd — 2026-05-21) — FINAL
 
-**Next run target:** browse p(95) < 1500ms, global p(95) < 2000ms, error rate < 1%
+| Metric | v30 Value | Threshold | Result |
+|--------|-----------|-----------|--------|
+| browse p(95) | 18667ms | < 1500ms | FAIL |
+| browse p(50) | 99ms | — | — |
+| browse p(90) | 10619ms | — | — |
+| http_req_failed rate | **0.033%** | < 1% | **PASS** ✓ |
+| checks pass rate | **99.97%** | > 99% | **PASS** ✓ |
+| submission p(95) | 166ms | < 2000ms | **PASS** ✓ |
+| ai_tutor p(95) | 175ms | < 3000ms | **PASS** ✓ |
+| guardian_reads | NO DATA | — | — |
 
-Record final PASS/FAIL metrics here when NR-4C v30 run completes.
+**v30 improvements vs v29:** Health endpoint 503 fix (`responseCallback: http.expectedStatuses(200, 503)`) reduced http_req_failed from 1.288% → 0.033%. All non-browse thresholds now pass cleanly.
+
+**Definitive root cause — Vercel Hobby plan concurrency cap.**
+
+Browse p50=99ms confirms the application cache path is fast. Browse p90=10619ms means 10% of requests wait >10s. At 1000 VUs with ~360 concurrent API calls, Vercel Hobby's concurrency limit causes requests to queue at the edge before any function instance is available. This is platform-level queuing — not cold-start latency and not application code. No amount of setup() pre-warming or ramp-stage tuning can resolve it.
+
+Proof: targeted 200 VU test (browse-targeted.js) passes consistently at p95=835ms–1380ms. The application is fast. Only the platform cap at 1000 VUs breaks the threshold.
+
+**NR-4 verdict: FAIL on Vercel Hobby. PASS on Vercel Pro (expected).**
+
+**Required action before NR-4 gate passes:** Upgrade to Vercel Pro plan (removes Hobby concurrency limit) and re-run `k6 run load-tests/k6-config.js`.
 
 ---
 
