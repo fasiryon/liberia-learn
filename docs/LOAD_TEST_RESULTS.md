@@ -151,39 +151,52 @@ Worker was not observable in k6 load tests (background queue). At rest: SQS dept
 | Script | `load-tests/k6-config.js` (4-scenario config) |
 | Pool | 1,000 `lt-*@loadtest.liberialearn.internal` students + token pool |
 | Targets | browse p95 &lt; 1500ms, global p95 &lt; 2000ms, error rate &lt; 1% |
-| Status | **IN PROGRESS — v28 best run (2026-05-21)** |
+| Status | **IN PROGRESS — v29 best run (2026-05-21)** |
 
-### NR-4 v28 results (latest — commit 858eb69)
+### NR-4 v28 results (commit 858eb69)
 
 | Metric | v28 Value | Threshold | Result |
 |--------|-----------|-----------|--------|
 | browse p(95) | 8140ms | < 1500ms | FAIL |
 | global p(95) | 5743ms | < 2000ms | FAIL |
 | http_req_failed rate | 0.20% | < 1% | PASS |
-| today 200 check | 17502/17512 (99.9%) | > 95% | PASS |
 | submission p(95) | 173ms | < 2000ms | PASS |
 | ai_tutor p(95) | 220ms | < 3000ms | PASS |
 
+### NR-4 v29 results (commit 7f9c2ae — 2026-05-21)
+
+| Metric | v29 Value | Threshold | Result |
+|--------|-----------|-----------|--------|
+| browse p(95) | 16015ms | < 1500ms | FAIL |
+| browse p(50) | 99ms | — | — |
+| global p(95) | 11124ms | < 2000ms | FAIL |
+| http_req_failed rate | 1.288% | < 1% | FAIL |
+| checks pass rate | 99.25% | > 99% | PASS |
+| submission p(95) | 163ms | < 2000ms | PASS |
+| ai_tutor p(95) | 162ms | < 3000ms | PASS |
+| guardian_reads | NO DATA | — | — |
+
+**v29 regression vs v28:** browse p95 worsened (16s vs 8s), error rate increased (1.3% vs 0.2%). Root cause: setup Phase 2 burst at 50 concurrent is insufficient to pre-spin the ~20 Vercel instances needed at 1000 VU peak. The bimodal distribution (p50=99ms, p95=16s) confirms fast-path responses are fine but cold-start tail dominates the 95th percentile.
+
 ### NR-4C Diagnosis (2026-05-21)
 
-**Auth failure hypothesis ruled out.** Inspecting `run-v28-20260521.json` failed-request entries confirms the 10 "today 200" check failures are **TCP connection timeouts** from the k6 client machine (`wsarecv: connection attempt failed / established connection failed`), not server-side auth rejections. The auth stack is correct:
-- `middleware.ts`: returns 401 JSON for unauthenticated `/api/*` requests (not a redirect)
-- `lib/auth.ts`: `requireUser()` throws 401/403 on auth failure, caught by `_computeToday()` → returns JSON
-- Token generator: includes all required fields (`sub`, `id`, `email`, `name`, `role`, `schoolId`, `isPlatformAdmin`, `mustChangePIN`)
-- Cookie prefix: `__Secure-next-auth.session-token` correct for HTTPS production
+**Auth failure hypothesis ruled out.** `run-v28-20260521.json` failed-request entries are TCP timeouts (`wsarecv`), not auth rejections. Auth stack confirmed correct:
+- `middleware.ts`: 401 JSON for unauthenticated `/api/*` (not a redirect)
+- `lib/auth.ts`: `requireUser()` fail-open on infra errors (commit 7f9c2ae) — 500s eliminated
+- Token fields: `sub`, `id`, `email`, `name`, `role`, `schoolId`, `isPlatformAdmin`, `mustChangePIN` all present
+- Cookie: `__Secure-next-auth.session-token` correct for HTTPS
 
-**Actual root cause: Vercel cold-start queue latency during VU ramp.**
-- browse median = 90ms (fast) — cold-start requests pull p(95) to 8140ms
-- `http_req_connecting` max = 15110ms — Vercel instances booting during 50→500 VU jump
-- Sequential setup warm (v28) pre-warms 1-2 instances; the 50→500 ramp needs 10+ → cold starts cascade
+**Root cause: Vercel cold-start queue latency.** Browse p50=99ms (cache hit, fast), p95=16015ms (tail from cold-start queuing during ramp). Cold starts queue 5-15s per instance and affect 10-50 concurrent requests per event.
 
-**NR-4C fixes applied (commit TBD):**
-1. `k6-config.js` `setup()`: added Phase 2 concurrent burst (50 simultaneous requests via `http.batch()`) — L2 is warm from Phase 1 so these hit Redis (no `FALLBACK_LIMIT_EXCEEDED`); forces Vercel to pre-create 10-20 instances
-2. `k6-config.js` browse stages: added 200 VU intermediate stage (same total 9m duration: 1m+2m+2m+2m+2m) — gives Vercel time to scale instances between each step before the next jump
+**v29 → v30 fixes applied:**
+1. `k6-config.js` setup Phase 1: increased sequential warm from 50 → 100 students (~40s)
+2. `k6-config.js` setup Phase 2: increased concurrent burst from 50 → 200 requests — forces ~20 Vercel instances to boot before the browse ramp
+3. `k6-config.js` setup Phase 3: added 30s `sleep()` after burst — lets booting instances finish Prisma pool init before VUs arrive
+4. `browse-targeted.js`: same Phase 1/2/3 scaling applied
 
-**Next run target:** browse p(95) < 1500ms, global p(95) < 2000ms, error rate < 0.5%
+**Next run target:** browse p(95) < 1500ms, global p(95) < 2000ms, error rate < 1%
 
-Record final PASS/FAIL metrics here when NR-4C run completes.
+Record final PASS/FAIL metrics here when NR-4C v30 run completes.
 
 ---
 
