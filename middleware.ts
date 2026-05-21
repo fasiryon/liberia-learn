@@ -40,28 +40,59 @@ export async function middleware(req: NextRequest) {
     return NextResponse.next();
   }
 
-  // ── /moe/* — require auth AND MOE_OFFICIAL role ───────────────────────────
-  if (pathname.startsWith("/moe/")) {
+  // ── Protected portals — single getToken call ────────────────────────────
+  // /moe/* — MOE_OFFICIAL or isPlatformAdmin
+  // /admin/* — ADMIN or isPlatformAdmin
+  // /platform/* — isPlatformAdmin only
+  const isPortalRoute =
+    pathname.startsWith("/moe/") ||
+    pathname === "/admin" ||
+    pathname.startsWith("/admin/") ||
+    pathname === "/platform" ||
+    pathname.startsWith("/platform/");
+
+  if (isPortalRoute) {
     const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
+
+    if (pathname.startsWith("/moe/")) {
+      if (!token) {
+        const url = req.nextUrl.clone();
+        url.pathname = "/moe/login";
+        return NextResponse.redirect(url);
+      }
+      if (!isMoeAuthorized(token as any)) {
+        const url = req.nextUrl.clone();
+        url.pathname = roleDefaultPortal((token as any).role);
+        return NextResponse.redirect(url);
+      }
+      return NextResponse.next();
+    }
+
+    // /admin/* and /platform/* — unauthenticated → /login
     if (!token) {
       const url = req.nextUrl.clone();
-      url.pathname = "/moe/login";
+      url.pathname = "/login";
+      url.searchParams.set("next", pathname);
       return NextResponse.redirect(url);
     }
-    if (!isMoeAuthorized(token as any)) {
-      const url = req.nextUrl.clone();
-      url.pathname = roleDefaultPortal((token as any).role);
-      return NextResponse.redirect(url);
-    }
-    return NextResponse.next();
-  }
 
-  // Let /admin and /platform pages render (rely on server-side auth in the page itself)
-  if (pathname === "/admin" || pathname.startsWith("/admin/")) {
-    return NextResponse.next();
-  }
-  if (pathname === "/platform" || pathname.startsWith("/platform/")) {
-    return NextResponse.next();
+    if (pathname === "/admin" || pathname.startsWith("/admin/")) {
+      if ((token as any).role !== "ADMIN" && !(token as any).isPlatformAdmin) {
+        const url = req.nextUrl.clone();
+        url.pathname = "/unauthorized";
+        return NextResponse.redirect(url);
+      }
+      return NextResponse.next();
+    }
+
+    if (pathname === "/platform" || pathname.startsWith("/platform/")) {
+      if (!(token as any).isPlatformAdmin) {
+        const url = req.nextUrl.clone();
+        url.pathname = "/unauthorized";
+        return NextResponse.redirect(url);
+      }
+      return NextResponse.next();
+    }
   }
   // Allow Next internals/static + health checks
   if (
