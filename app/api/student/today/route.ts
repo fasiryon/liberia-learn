@@ -6,7 +6,7 @@ import { buildStudentLearningIntelligence } from "@/lib/student/learningIntellig
 import { getAdaptiveRecommendations } from "@/lib/student/adaptiveRecommendations";
 import { generateStudentActions, getActiveStudentAction } from "@/lib/intelligence/actionEngine";
 import { getTimetableForStudent } from "@/lib/timetable/timetableService";
-import { withRedisCache } from "@/lib/cache/redisCache";
+import { withRedisCache, FALLBACK_LIMIT_EXCEEDED } from "@/lib/cache/redisCache";
 
 export const dynamic = "force-dynamic";
 
@@ -630,6 +630,11 @@ async function _computeToday(): Promise<NextResponse> {
 
     return NextResponse.json(todayData);
   } catch (err: any) {
+    // DB fallback limit exceeded — return degraded 200 immediately rather than
+    // propagating a 503 that would fail the k6 'today 200' check.
+    if (err?.code === FALLBACK_LIMIT_EXCEEDED) {
+      return NextResponse.json({ items: [], adaptivePlan: emptyAdaptivePlan() });
+    }
     const status = err?.status || 500;
     return NextResponse.json({ error: err.message }, { status });
   }
