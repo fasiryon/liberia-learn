@@ -41,7 +41,7 @@ const PROCESS_CACHE_MAX_TTL_MS = 900_000;
 // cache misses throw immediately so calling routes return a degraded HTTP 200
 // (< 10ms) instead of queuing. pgbouncer stays under ~40 concurrent queries.
 let activeDbFallbacks = 0;
-const MAX_CONCURRENT_DB_FALLBACKS = 2;
+const MAX_CONCURRENT_DB_FALLBACKS = 1;
 
 /** Error code thrown when the per-instance DB fallback limit is exceeded. */
 export const FALLBACK_LIMIT_EXCEEDED = "FALLBACK_LIMIT_EXCEEDED";
@@ -105,7 +105,7 @@ export async function withRedisCache<T>(
   if (redis) {
     try {
       const cached = await new Promise<T | null>((resolve, reject) => {
-        const timer = setTimeout(() => resolve(null), 500);
+        const timer = setTimeout(() => resolve(null), 1500);
         redis
           .get<T>(key)
           .then((val) => { clearTimeout(timer); resolve(val); })
