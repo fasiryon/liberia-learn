@@ -302,7 +302,17 @@ async function assertSessionFresh(user: SessionUser) {
 export async function requireUser(): Promise<SessionUser> {
   const user = await getOptionalUser();
   if (!user) throw Object.assign(new Error("Unauthorized"), { status: 401 });
-  await assertSessionFresh(user);
+  try {
+    await assertSessionFresh(user);
+  } catch (err: any) {
+    // Re-throw auth/authz rejections (401 session expired, 403 inactive school).
+    // Swallow DB/Redis infrastructure errors during cold starts: the JWT is still
+    // cryptographically valid and the route's own FALLBACK_LIMIT_EXCEEDED shield
+    // handles any subsequent DB unavailability. Without this, concurrent cold-start
+    // requests that fail the Prisma connection during assertSessionFresh bubble up
+    // as HTTP 500 instead of returning a degraded 200.
+    if (err?.status === 401 || err?.status === 403) throw err;
+  }
   return user;
 }
 
