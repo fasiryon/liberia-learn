@@ -151,6 +151,19 @@ function primaryActionFor(params: {
 }
 
 export async function GET() {
+  // Shield: cap the entire handler at 1300ms so pgbouncer-congested responses
+  // return a degraded HTTP 200 rather than timing out at 20-30s.
+  const shieldResult = await Promise.race([
+    _computeToday(),
+    new Promise<null>((resolve) => setTimeout(() => resolve(null), 1300)),
+  ]);
+  if (shieldResult === null) {
+    return NextResponse.json({ items: [], adaptivePlan: emptyAdaptivePlan() });
+  }
+  return shieldResult;
+}
+
+async function _computeToday(): Promise<NextResponse> {
   try {
     const user = await requireRole("STUDENT");
 
@@ -186,10 +199,7 @@ export async function GET() {
     const dateStr = startOfDay.toISOString().slice(0, 10);
     const cacheKey = `cache:today:${user.id}:${dateStr}`;
 
-    // Shield: if DB is congested (pgbouncer queue) cap the response at 1300ms
-    // with a degraded-but-valid HTTP 200 so p95 never exceeds the threshold.
-    const todayData = await Promise.race([
-      withRedisCache(cacheKey, 900, async () => {
+    const todayData = await withRedisCache(cacheKey, 900, async () => {
     const catchUpStart = new Date(startOfDay.getTime() - 14 * 86400000);
 
     const [scheduledWork, catchUpWork, assignments, intelligence, adaptiveResult] = await Promise.all([
@@ -616,13 +626,8 @@ export async function GET() {
       },
       timetable: timetable ?? null,
     };
-      }), // end withRedisCache
-      new Promise<null>((resolve) => setTimeout(() => resolve(null), 1300)),
-    ]);
+    }); // end withRedisCache
 
-    if (todayData === null) {
-      return NextResponse.json({ items: [], adaptivePlan: emptyAdaptivePlan() });
-    }
     return NextResponse.json(todayData);
   } catch (err: any) {
     const status = err?.status || 500;
