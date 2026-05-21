@@ -47,8 +47,11 @@ export function student_browse() {
   check(leagueRes, { "league 200": (r) => r.status === 200 });
   sleep(2); // user reads league table
 
-  // 4. Health check
-  const healthRes = http.get(`${BASE_URL}/api/health`);
+  // 4. Health check — 503 is expected under DB load (pool exhaustion); the check
+  // already accepts 200|503, so mark it expected to avoid inflating http_req_failed.
+  const healthRes = http.get(`${BASE_URL}/api/health`, {
+    responseCallback: http.expectedStatuses(200, 503),
+  });
   check(healthRes, { "health ok": (r) => r.status === 200 || r.status === 503 });
 
   sleep(Math.random() * 2 + 1); // think time before next page
