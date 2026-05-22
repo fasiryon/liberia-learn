@@ -2,6 +2,7 @@
 import { NextResponse } from "next/server";
 import { requireRole } from "@/lib/auth";
 import { prisma } from "@/lib/db";
+import { checkSchoolAccess } from "@/lib/tenant/assert-school-access";
 import { isGuardianPortalEnabled } from "@/lib/serverFlags";
 import { getPlacementOutcomeText, getPlacementReviewStatus } from "@/lib/placement";
 
@@ -27,6 +28,16 @@ export async function GET(
         { error: "You do not have access to this student" },
         { status: 403 }
       );
+    }
+
+    // Verify guardian is in the same school as the student (cross-school guard)
+    const studentSchool = await prisma.student.findUnique({
+      where: { id: studentId },
+      select: { user: { select: { schoolId: true } } },
+    });
+    if (studentSchool?.user?.schoolId && user.schoolId) {
+      const denied = await checkSchoolAccess(user, studentSchool.user.schoolId);
+      if (denied) return denied;
     }
 
     const student = await prisma.student.findUnique({
