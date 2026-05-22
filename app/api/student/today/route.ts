@@ -166,6 +166,9 @@ export async function GET() {
 async function _computeToday(): Promise<NextResponse> {
   try {
     const user = await requireRole("STUDENT");
+    if (!user.schoolId) {
+      return NextResponse.json({ error: "School context required" }, { status: 403 });
+    }
 
     // Cache student metadata (id + classIds) to avoid a DB roundtrip on every authenticated request.
     // 700s TTL: must outlive full load-test window (83s warm + 540s test = 623s).
