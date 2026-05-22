@@ -4,6 +4,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { randomUUID } from "crypto";
 import { requireUser } from "@/lib/auth";
+import { assertPermission, PERMISSIONS } from "@/lib/permissions";
 import { handleApiError } from "@/lib/errors/apiErrorHandler";
 import { isGovCircuitBreakerTripped } from "@/lib/serverFlags";
 import { approveExportJob, rejectExportJob } from "@/lib/exports/exportJobService";
@@ -24,6 +25,7 @@ export async function POST(
     if (!user.isPlatformAdmin) {
       return NextResponse.json({ error: "Platform admin only" }, { status: 403 });
     }
+    assertPermission(user, PERMISSIONS.GOVERNANCE_EXPORT_NATIONAL);
 
     const body = await req.json().catch(() => ({}));
     const decision: "approve" | "reject" = body.decision === "reject" ? "reject" : "approve";

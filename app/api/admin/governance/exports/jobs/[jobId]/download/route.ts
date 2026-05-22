@@ -5,6 +5,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { randomUUID } from "crypto";
 import { requireUser } from "@/lib/auth";
+import { assertPermission, PERMISSIONS } from "@/lib/permissions";
 import { handleApiError } from "@/lib/errors/apiErrorHandler";
 import { isGovCircuitBreakerTripped } from "@/lib/serverFlags";
 import { getExportDownload } from "@/lib/exports/exportJobService";
@@ -25,6 +26,7 @@ export async function GET(
     if (!user.isPlatformAdmin) {
       return NextResponse.json({ error: "Platform admin only" }, { status: 403 });
     }
+    assertPermission(user, PERMISSIONS.GOVERNANCE_EXPORT_NATIONAL);
 
     const downloadUrl = await getExportDownload({
       jobId: params.jobId,

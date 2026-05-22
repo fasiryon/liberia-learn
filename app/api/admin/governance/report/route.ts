@@ -1,6 +1,7 @@
 import { randomUUID } from "crypto";
 import { NextRequest, NextResponse } from "next/server";
 import { requireUser } from "@/lib/auth";
+import { assertPermission, PERMISSIONS } from "@/lib/permissions";
 import { logAudit } from "@/lib/audit";
 import { buildGovernanceReport, type GovernanceReportPeriod } from "@/lib/governance/report";
 import { isGovCircuitBreakerTripped } from "@/lib/serverFlags";
@@ -20,9 +21,7 @@ export async function GET(req: NextRequest) {
     }
 
     const user = await requireUser();
-    if (!user.isPlatformAdmin && user.role !== "MOE_OFFICIAL") {
-      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
-    }
+    assertPermission(user, PERMISSIONS.COMPLIANCE_AUDIT_READ);
 
     const { searchParams } = new URL(req.url);
     const period = parsePeriod(searchParams.get("period"));

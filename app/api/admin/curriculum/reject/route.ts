@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { requireRole } from "@/lib/auth";
+import { assertPermission, PERMISSIONS } from "@/lib/permissions";
 import { prisma } from "@/lib/db";
 import { logAudit } from "@/lib/audit";
 import { isCurriculumFeedbackEnabled } from "@/lib/serverFlags";
@@ -18,7 +19,8 @@ const RequestSchema = z.object({
  */
 export async function POST(req: Request) {
   try {
-    const user = await requireRole("ADMIN", "TEACHER");
+    const user = await requireRole("ADMIN");
+    assertPermission(user, PERMISSIONS.CURRICULUM_APPROVE);
 
     const body = await req.json();
     const parsed = RequestSchema.safeParse(body);

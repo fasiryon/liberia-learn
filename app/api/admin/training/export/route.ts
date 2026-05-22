@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { requireRole } from "@/lib/auth";
+import { assertPermission, PERMISSIONS } from "@/lib/permissions";
 import { buildTrainingExport } from "@/lib/exports/trainingExport";
 import { parsePilotOnly, resolveScopeParams } from "@/lib/reporting/scope";
 
@@ -8,6 +9,7 @@ export const dynamic = "force-dynamic";
 export async function GET(req: NextRequest) {
   try {
     const user = await requireRole("ADMIN");
+    assertPermission(user, PERMISSIONS.GOVERNANCE_EXPORT_SCHOOL);
     const { searchParams } = new URL(req.url);
 
     const { scope, scopeId } = resolveScopeParams({
