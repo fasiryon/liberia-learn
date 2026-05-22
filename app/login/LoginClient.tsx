@@ -87,7 +87,16 @@ export default function LoginClient({ showDemoHints, demoGroups, demoDefaults }:
     if (typeof window !== "undefined") {
       const params = new URLSearchParams(window.location.search);
       setNextUrl(params.get("next") || params.get("callbackUrl") || null);
-      setFlashMessage(params.get("message"));
+      const errorParam = params.get("error");
+      if (errorParam === "InviteRequired") {
+        setFlashMessage(
+          "A school invite is required before signing in with Google. Ask your administrator to send you an invite."
+        );
+      } else if (errorParam === "InvalidInvite") {
+        setFlashMessage("Your invite link is invalid or has expired. Request a new one from your administrator.");
+      } else {
+        setFlashMessage(params.get("message"));
+      }
       const requestedRole = params.get("role");
       if (
         requestedRole === "student" ||
@@ -280,7 +289,11 @@ export default function LoginClient({ showDemoHints, demoGroups, demoDefaults }:
         </div>
 
         {flashMessage && (
-          <p className="rounded-lg border border-emerald-800 bg-[var(--ll-yellow-soft)] px-3 py-3 text-sm text-[var(--ll-yellow)]">
+          <p className={`rounded-lg border px-3 py-3 text-sm ${
+            flashMessage.startsWith("A school invite") || flashMessage.startsWith("Your invite")
+              ? "border-red-800 bg-red-950/40 text-red-400"
+              : "border-emerald-800 bg-[var(--ll-yellow-soft)] text-[var(--ll-yellow)]"
+          }`}>
             {flashMessage}
           </p>
         )}

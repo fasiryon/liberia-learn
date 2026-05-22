@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { isMoePortalEnabled } from "@/lib/serverFlags";
 import { prisma } from "@/lib/db";
 import { requireMoeExportUser } from "@/lib/moe/exportUtils";
+import { assertPermission, PERMISSIONS } from "@/lib/permissions";
 
 export const dynamic = "force-dynamic";
 
@@ -19,7 +20,8 @@ export async function GET() {
   }
 
   try {
-    await requireMoeExportUser();
+    const user = await requireMoeExportUser();
+    assertPermission(user, PERMISSIONS.GOVERNANCE_EXPORT_MOE);
     const generatedAt = new Date();
     const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
 

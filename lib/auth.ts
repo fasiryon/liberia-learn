@@ -168,17 +168,52 @@ export const authOptions: NextAuthOptions = {
               data: { googleId: user.id },
             });
           }
-        } else {
-          await prisma.user.create({
-            data: {
-              email: user.email,
-              name: user.name ?? "New Teacher",
-              role: "TEACHER",
-              hashedPwd: "",
-              googleId: user.id,
-            },
-          });
+          return true;
         }
+
+        // New Google user — require a school invite for this email address.
+        const invite = await prisma.inviteToken.findFirst({
+          where: {
+            email: user.email!.toLowerCase(),
+            tokenType: "SSO_INVITE",
+            usedAt: null,
+            expiresAt: { gt: new Date() },
+          },
+          select: { id: true, schoolId: true, role: true },
+        });
+
+        if (!invite) {
+          return "/login?error=InviteRequired";
+        }
+
+        const newUser = await prisma.user.create({
+          data: {
+            email: user.email!.toLowerCase(),
+            name: user.name ?? "New Teacher",
+            role: invite.role as "TEACHER" | "ADMIN",
+            hashedPwd: "",
+            googleId: user.id,
+            schoolId: invite.schoolId,
+          },
+        });
+
+        await prisma.inviteToken.update({
+          where: { id: invite.id },
+          data: { usedAt: new Date() },
+        });
+
+        void prisma.auditLog
+          .create({
+            data: {
+              userId: newUser.id,
+              action: "auth.google_sso.account_created",
+              resourceType: "user",
+              resourceId: newUser.id,
+              schoolId: invite.schoolId,
+            },
+          })
+          .catch(() => null);
+
         return true;
       }
       return true;

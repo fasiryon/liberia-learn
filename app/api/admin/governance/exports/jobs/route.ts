@@ -6,6 +6,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { randomUUID } from "crypto";
 import { requireUser } from "@/lib/auth";
+import { assertPermission, PERMISSIONS } from "@/lib/permissions";
 import { handleApiError } from "@/lib/errors/apiErrorHandler";
 import { isGovExportsEnabled, isGovCircuitBreakerTripped } from "@/lib/serverFlags";
 import {
@@ -41,6 +42,7 @@ export async function GET(req: NextRequest) {
     if (!user.isPlatformAdmin) {
       return NextResponse.json({ error: "Platform admin only" }, { status: 403 });
     }
+    assertPermission(user, PERMISSIONS.GOVERNANCE_EXPORT_NATIONAL);
 
     const { searchParams } = new URL(req.url);
     const approvalStatus = searchParams.get("approvalStatus") ?? undefined;
@@ -68,6 +70,7 @@ export async function POST(req: NextRequest) {
     if (!user.isPlatformAdmin) {
       return NextResponse.json({ error: "Platform admin only" }, { status: 403 });
     }
+    assertPermission(user, PERMISSIONS.GOVERNANCE_EXPORT_NATIONAL);
 
     const body = await req.json();
     const { exportType, scope, scopeId, format, filters, schoolId } = body;

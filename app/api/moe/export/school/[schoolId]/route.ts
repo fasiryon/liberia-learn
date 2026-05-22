@@ -8,6 +8,7 @@ import {
   logStudentCohortExport,
   requireMoeExportUser,
 } from "@/lib/moe/exportUtils";
+import { assertPermission, PERMISSIONS } from "@/lib/permissions";
 import { logDataAccess } from "@/lib/dataAccess/logDataAccess";
 
 export const dynamic = "force-dynamic";
@@ -22,6 +23,7 @@ export async function GET(
 
   try {
     const user = await requireMoeExportUser();
+    assertPermission(user, PERMISSIONS.GOVERNANCE_EXPORT_MOE);
     const schoolId = params.schoolId;
     await logStudentCohortExport({ userId: user.id, schoolId });
     void logDataAccess({

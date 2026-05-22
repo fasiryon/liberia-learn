@@ -7,6 +7,7 @@ import {
   requireMoeExportUser,
   schoolMetricsToCsvRows,
 } from "@/lib/moe/exportUtils";
+import { assertPermission, PERMISSIONS } from "@/lib/permissions";
 import { recordSloEvent } from "@/lib/slo/tracker";
 import { logDataAccess } from "@/lib/dataAccess/logDataAccess";
 
@@ -20,6 +21,7 @@ export async function GET() {
 
   try {
     const user = await requireMoeExportUser();
+    assertPermission(user, PERMISSIONS.GOVERNANCE_EXPORT_MOE);
     const exportDate = formatExportDate();
     const rows = schoolMetricsToCsvRows(await getSchoolExportMetrics(), exportDate);
     void logDataAccess({

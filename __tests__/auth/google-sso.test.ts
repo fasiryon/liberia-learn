@@ -6,6 +6,13 @@ const mockPrisma = {
     create: vi.fn(),
     update: vi.fn(),
   },
+  inviteToken: {
+    findFirst: vi.fn(),
+    update: vi.fn(),
+  },
+  auditLog: {
+    create: vi.fn().mockResolvedValue({}),
+  },
 };
 
 vi.mock("@/lib/db", () => ({ prisma: mockPrisma }));
@@ -29,9 +36,26 @@ describe("Google SSO signIn callback", () => {
     vi.resetModules();
   });
 
-  it("auto-provisions a TEACHER user on first Google sign-in", async () => {
+  it("blocks first-time Google sign-in without a school invite (NR-8)", async () => {
     mockPrisma.user.findUnique.mockResolvedValueOnce(null);
-    mockPrisma.user.create.mockResolvedValueOnce({ id: "new-user-id" });
+    mockPrisma.inviteToken.findFirst.mockResolvedValueOnce(null);
+
+    const signIn = await getSignInCallback();
+    const result = await signIn({ user: googleUser, account: googleAccount });
+
+    expect(result).toBe("/login?error=InviteRequired");
+    expect(mockPrisma.user.create).not.toHaveBeenCalled();
+  });
+
+  it("provisions a TEACHER user on first Google sign-in with a valid school invite", async () => {
+    mockPrisma.user.findUnique.mockResolvedValueOnce(null);
+    mockPrisma.inviteToken.findFirst.mockResolvedValueOnce({
+      id: "invite-1",
+      schoolId: "school-abc",
+      role: "TEACHER",
+    });
+    mockPrisma.user.create.mockResolvedValueOnce({ id: "new-user-id", schoolId: "school-abc" });
+    mockPrisma.inviteToken.update.mockResolvedValueOnce({});
 
     const signIn = await getSignInCallback();
     const result = await signIn({ user: googleUser, account: googleAccount });
@@ -43,8 +67,12 @@ describe("Google SSO signIn callback", () => {
         role: "TEACHER",
         googleId: "google-uid-123",
         hashedPwd: "",
+        schoolId: "school-abc",
       }),
     });
+    expect(mockPrisma.inviteToken.update).toHaveBeenCalledWith(
+      expect.objectContaining({ where: { id: "invite-1" } })
+    );
   });
 
   it("links googleId on existing teacher without one — no duplicate user", async () => {

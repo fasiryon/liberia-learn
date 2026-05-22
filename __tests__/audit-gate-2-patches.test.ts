@@ -218,7 +218,7 @@ describe("Audit Gate 2 — Category 4: logAudit patch verification", () => {
   describe("POST /api/admin/curriculum/reject — logAudit includes schoolId", () => {
     beforeEach(() => {
       vi.clearAllMocks();
-      mockRequireRole.mockResolvedValue(TEACHER_USER);
+      mockRequireRole.mockResolvedValue(ADMIN_USER);
       mockIsCurriculumFeedbackEnabled.mockReturnValue(false);
       mockCurriculumContentFindUnique.mockResolvedValue(CONTENT_RECORD);
       mockCurriculumContentUpdate.mockResolvedValue({ ...CONTENT_RECORD, status: "rejected" });
