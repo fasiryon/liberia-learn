@@ -97,11 +97,8 @@ export async function resetDemoSchools(params: {
         },
       },
     }),
-    prisma.auditLog.deleteMany({
-      where: {
-        schoolId: { in: schoolIds },
-      },
-    }),
+    // AuditLog is intentionally excluded — immutable by DB trigger (NR-9).
+    // Audit records persist through demo resets by design.
     prisma.scheduledWork.deleteMany({
       where: {
         class: {
