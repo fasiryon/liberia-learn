@@ -3,6 +3,8 @@ import { requireUser } from "@/lib/auth";
 import { assertPermission, PERMISSIONS } from "@/lib/permissions";
 import { prisma } from "@/lib/db";
 import { Redis } from "@upstash/redis";
+import { GRADES, SUBJECTS, NATIONAL_GATE, type CoverageCell, type CoverageResult } from "@/lib/curriculum/coverageShared";
+export { GRADES, SUBJECTS, NATIONAL_GATE, type CoverageCell, type CoverageResult };
 
 export const dynamic = "force-dynamic";
 
@@ -16,31 +18,8 @@ try {
 export const COVERAGE_CACHE_KEY = "cache:curriculum:coverage";
 const CACHE_TTL = 1800; // 30 minutes
 
-export const GRADES = ["G1", "G2", "G3", "G4", "G5", "G6", "G7", "G8", "G9", "G10", "G11", "G12"];
-export const SUBJECTS = ["MATH", "SCIENCE", "LITERACY", "ENGLISH", "SOCIAL_STUDIES", "CIVICS", "CS", "ENGINEERING"];
 const APPROVED_STATUSES = new Set(["published", "APPROVED"]);
 const PENDING_STATUSES = new Set(["pending", "PENDING", "pending_approval", "PENDING_APPROVAL"]);
-export const NATIONAL_GATE = 15;
-
-export type CoverageCell = {
-  approved: number;
-  pending: number;
-  needsReview: number;
-  withAudio: number;
-  meetsGate: boolean;
-};
-
-export type CoverageResult = {
-  matrix: Record<string, Record<string, CoverageCell>>;
-  summary: {
-    totalCells: number;
-    passingCells: number;
-    coveragePercent: number;
-    nationalGate: number;
-    generatedAt: string;
-  };
-  deserts: Array<{ grade: string; subject: string }>;
-};
 
 export async function buildCoverageMatrix(): Promise<CoverageResult> {
   // Single scan of all lesson rows + audio IDs in parallel

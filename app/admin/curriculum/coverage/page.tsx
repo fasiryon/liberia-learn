@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { GRADES, SUBJECTS, NATIONAL_GATE, type CoverageResult, type CoverageCell } from "@/app/api/admin/curriculum/coverage/route";
+import { GRADES, SUBJECTS, NATIONAL_GATE, type CoverageResult, type CoverageCell } from "@/lib/curriculum/coverageShared";
 
 function cellColor(cell: CoverageCell): string {
   if (cell.approved === 0) return "bg-red-500/20 text-red-400 border-red-500/30";
