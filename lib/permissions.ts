@@ -66,6 +66,8 @@ export const PERMISSIONS = {
   CURRICULUM_OVERRIDE: "curriculum:content:override",
   /** Create and manage curriculum versions. */
   CURRICULUM_VERSION_MANAGE: "curriculum:version:manage",
+  /** View the curriculum coverage matrix (grade × subject). */
+  CURRICULUM_COVERAGE_VIEW: "curriculum:coverage:view",
   /** Create and manage MOE delivery policies. */
   POLICY_CONTROL: "policy:moe:control",
   /** Change a user's role. ADMIN (own school) + platform admin. */
@@ -93,6 +95,7 @@ export const ROLE_PERMISSIONS: Record<string, ReadonlySet<Permission>> = {
     PERMISSIONS.OPS_FINDINGS_MANAGE,
     PERMISSIONS.OPS_AI_EXPLAIN,
     PERMISSIONS.CURRICULUM_APPROVE,
+    PERMISSIONS.CURRICULUM_COVERAGE_VIEW,
     PERMISSIONS.USER_CHANGE_ROLE,
     // Block 12
     PERMISSIONS.DASHBOARD_SCHOOL_IMPACT,
@@ -116,6 +119,7 @@ export const ROLE_PERMISSIONS: Record<string, ReadonlySet<Permission>> = {
     PERMISSIONS.CURRICULUM_APPROVE,
     PERMISSIONS.CURRICULUM_OVERRIDE,
     PERMISSIONS.CURRICULUM_VERSION_MANAGE,
+    PERMISSIONS.CURRICULUM_COVERAGE_VIEW,
     PERMISSIONS.POLICY_CONTROL,
     PERMISSIONS.GOVERNANCE_EXPORT_MOE,
     PERMISSIONS.COMPLIANCE_AUDIT_READ,
@@ -131,6 +135,7 @@ export const ROLE_PERMISSIONS: Record<string, ReadonlySet<Permission>> = {
     PERMISSIONS.CURRICULUM_APPROVE,
     PERMISSIONS.CURRICULUM_OVERRIDE,
     PERMISSIONS.CURRICULUM_VERSION_MANAGE,
+    PERMISSIONS.CURRICULUM_COVERAGE_VIEW,
     PERMISSIONS.POLICY_CONTROL,
     PERMISSIONS.GOVERNANCE_EXPORT_MOE,
     PERMISSIONS.COMPLIANCE_AUDIT_READ,

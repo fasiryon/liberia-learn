@@ -6,6 +6,11 @@ import { prisma } from "@/lib/db";
 import { logAudit } from "@/lib/audit";
 import { isCurriculumFeedbackEnabled } from "@/lib/serverFlags";
 import { deleteCurriculumContentRagChunks } from "@/lib/ai/rag/ragIngestionService";
+import { Redis } from "@upstash/redis";
+import { COVERAGE_CACHE_KEY } from "@/app/api/admin/curriculum/coverage/route";
+
+let redis: Redis | null = null;
+try { redis = Redis.fromEnv(); } catch { /* Redis not configured */ }
 
 const RequestSchema = z.object({
   contentId: z.string().min(1),
@@ -95,6 +100,9 @@ export async function POST(req: Request) {
         );
       }
     }
+
+    // Invalidate coverage cache — rejection moves content out of the approved pool
+    if (redis) redis.del(COVERAGE_CACHE_KEY).catch(() => null);
 
     return NextResponse.json({ ok: true, contentId, status: "rejected" });
   } catch (err: any) {
