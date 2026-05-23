@@ -4,6 +4,7 @@ import Link from "next/link";
 
 const BASE_NAV_LINKS = [
   { label: "Curriculum / AI Factory", href: "/admin/curriculum" },
+  { label: "Curriculum Coverage", href: "/admin/curriculum/coverage" },
   { label: "Curriculum Units", href: "/admin/curriculum/units" },
   { label: "Homework", href: "/admin/homework" },
   { label: "Analytics", href: "/admin/analytics" },

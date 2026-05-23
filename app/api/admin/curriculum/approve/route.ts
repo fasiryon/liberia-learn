@@ -8,6 +8,11 @@ import { embedLesson } from "@/lib/ai/rag/embeddingService";
 import { syncCurriculumContentRagChunks } from "@/lib/ai/rag/ragIngestionService";
 import { enqueueJob, isQueueConfigured, JobType } from "@/lib/queue";
 import { logger } from "@/lib/logger";
+import { Redis } from "@upstash/redis";
+import { COVERAGE_CACHE_KEY } from "@/app/api/admin/curriculum/coverage/route";
+
+let redis: Redis | null = null;
+try { redis = Redis.fromEnv(); } catch { /* Redis not configured */ }
 
 /**
  * POST /api/admin/curriculum/approve
@@ -111,6 +116,9 @@ export async function POST(req: Request) {
         logger.warn("[TELEMETRY] Best-effort curriculum approval feedback failed", { error: telemetryError });
       }
     }
+
+    // Invalidate coverage cache so the next matrix request reflects the newly approved lesson
+    if (redis) redis.del(COVERAGE_CACHE_KEY).catch(() => null);
 
     return NextResponse.json({ ok: true, contentId, status: "published" });
   } catch (err: any) {

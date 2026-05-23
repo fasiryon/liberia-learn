@@ -82,6 +82,8 @@ async function resolveScheduledWorkForStudent(input: {
   });
 }
 
+const APPROVED_CONTENT_STATUSES = new Set(["published", "APPROVED"]);
+
 function scheduledWorkInclude(userId: string) {
   return {
     content: {
@@ -91,6 +93,7 @@ function scheduledWorkInclude(userId: string) {
         subject: true,
         grade: true,
         contentType: true,
+        status: true,
         version: true,
         deliveryProfile: true,
         moeAlignments: true,
@@ -177,6 +180,11 @@ export async function GET(
 
     if (!sw) {
       return NextResponse.json({ error: "Not found" }, { status: 404 });
+    }
+
+    // Fail-closed: students may only access approved content
+    if (!APPROVED_CONTENT_STATUSES.has(sw.content.status)) {
+      return NextResponse.json({ error: "Lesson not found or not yet approved" }, { status: 404 });
     }
 
     // Tenant isolation

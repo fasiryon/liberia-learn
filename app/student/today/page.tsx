@@ -622,22 +622,21 @@ function ProgressTab({
 
 function TrueEmptyState({ compact = false }: { compact?: boolean }) {
   return (
-    <div className={`rounded-lg border border-[var(--ll-border)] bg-[var(--ll-surface-muted)] ${compact ? "p-4" : "p-6"}`}>
-      <div className="flex items-start gap-3">
-        <BookOpen className="mt-0.5 h-5 w-5 text-[var(--ll-text-faint)]" strokeWidth={1.5} />
-        <div>
-          <p className="text-sm text-[var(--ll-text-muted)]">
-            Your school schedule will appear here once your teacher sets it up.
-          </p>
-          <div className="mt-3 flex flex-wrap gap-2">
-            <Link href="/assignments" className="rounded-lg border border-[var(--ll-border)] px-3 py-2 text-sm font-semibold text-[var(--ll-text)]">
-              View assignments
-            </Link>
-            <Link href="/student/lessons" className="rounded-lg bg-[var(--ll-accent)] px-3 py-2 text-sm font-semibold text-[var(--ll-text-faint)]">
-              Browse curriculum
-            </Link>
-          </div>
-        </div>
+    <div className={`flex flex-col items-center justify-center gap-4 text-center ${compact ? "py-8" : "py-16"}`}>
+      <BookOpen className="h-12 w-12 text-[var(--ll-text-faint)]" strokeWidth={1.5} />
+      <div>
+        <h3 className="text-lg font-semibold text-[var(--ll-text)]">No lessons available yet</h3>
+        <p className="mx-auto mt-2 max-w-sm text-sm text-[var(--ll-text-muted)]">
+          Your teacher is preparing lessons for your grade. Check back soon — new content is added regularly.
+        </p>
+      </div>
+      <div className="flex flex-wrap justify-center gap-2">
+        <Link href="/assignments" className="rounded-lg border border-[var(--ll-border)] px-3 py-2 text-sm font-semibold text-[var(--ll-text)]">
+          View assignments
+        </Link>
+        <Link href="/student/lessons" className="rounded-lg bg-[var(--ll-accent)] px-3 py-2 text-sm font-semibold text-[var(--ll-text-faint)]">
+          Browse curriculum
+        </Link>
       </div>
     </div>
   );

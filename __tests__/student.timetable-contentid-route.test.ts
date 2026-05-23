@@ -42,6 +42,7 @@ function scheduledWork(id = "sw-created") {
       subject: "MATH",
       grade: 4,
       contentType: "lesson",
+      status: "published",
       version: "v1",
       deliveryProfile: { exitTicket: { questions: [] } },
       moeAlignments: [],
