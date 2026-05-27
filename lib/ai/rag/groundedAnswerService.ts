@@ -13,10 +13,10 @@ import {
 } from "@/lib/ai/rag/assistantActions";
 import {
   type RetrievalContext,
-  retrieveRelevantChunks,
   type RetrievedChunk,
   type RetrievalMode,
 } from "@/lib/ai/rag/retrievalService";
+import { hybridRetrieve } from "@/lib/ai/rag/hybridRetrieval";
 import type { SessionUser } from "@/lib/auth";
 import {
   buildCitations,
@@ -411,7 +411,7 @@ export async function answerGroundedQuestion(input: QueryInput): Promise<Grounde
   const mode = inferRetrievalMode(input);
   const chunks =
     input.chunks ??
-    (await retrieveRelevantChunks({
+    (await hybridRetrieve({
       question: input.question,
       schoolId: input.schoolId,
       subject: input.subject,
