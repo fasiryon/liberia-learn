@@ -1,14 +1,16 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-const mockRetrieveRelevantChunks = vi.hoisted(() => vi.fn());
+// groundedAnswerService calls hybridRetrieve (not retrieveRelevantChunks directly).
+// Mock hybridRetrieve so tests control the chunk set without touching the real DB.
+const mockHybridRetrieve = vi.hoisted(() => vi.fn());
 const mockRoutedCompletion = vi.hoisted(() => vi.fn());
 const mockGetCachedValue = vi.hoisted(() => vi.fn());
 const mockSetCachedValue = vi.hoisted(() => vi.fn());
 const mockBuildAiCacheKey = vi.hoisted(() => vi.fn(() => "cache-key"));
 const mockHashCacheQuery = vi.hoisted(() => vi.fn(() => "query-hash"));
 
-vi.mock("@/lib/ai/rag/retrievalService", () => ({
-  retrieveRelevantChunks: mockRetrieveRelevantChunks,
+vi.mock("@/lib/ai/rag/hybridRetrieval", () => ({
+  hybridRetrieve: mockHybridRetrieve,
 }));
 
 vi.mock("@/lib/ai/routedCompletion", () => ({
@@ -34,7 +36,7 @@ describe("answerGroundedQuestion", () => {
   });
 
   it("falls back safely when retrieved chunks are unusable", async () => {
-    mockRetrieveRelevantChunks.mockResolvedValue([
+    mockHybridRetrieve.mockResolvedValue([
       {
         id: "chunk-1",
         sourceType: "policy_document",
@@ -48,6 +50,7 @@ describe("answerGroundedQuestion", () => {
         scope: "GLOBAL",
         sourceLabel: "docs/governance/DATA_GOVERNANCE.md",
         similarity: 0.41,
+        rankingScore: 0.41,
       },
     ]);
 
@@ -57,7 +60,7 @@ describe("answerGroundedQuestion", () => {
       role: "ADMIN",
     });
 
-    expect(mockRetrieveRelevantChunks).toHaveBeenCalledWith(
+    expect(mockHybridRetrieve).toHaveBeenCalledWith(
       expect.objectContaining({ mode: "policy" })
     );
     expect(result.retrievalWeak).toBe(true);
@@ -70,7 +73,7 @@ describe("answerGroundedQuestion", () => {
   });
 
   it("does not fallback when chunks exist even if retrieval is weak", async () => {
-    mockRetrieveRelevantChunks.mockResolvedValue([
+    mockHybridRetrieve.mockResolvedValue([
       {
         id: "chunk-1",
         sourceType: "curriculum_content",
@@ -84,6 +87,7 @@ describe("answerGroundedQuestion", () => {
         scope: "SCHOOL",
         sourceLabel: "teacher-fractions",
         similarity: 0.41,
+        rankingScore: 0.41,
       },
     ]);
     mockRoutedCompletion.mockResolvedValue({
@@ -114,7 +118,7 @@ describe("answerGroundedQuestion", () => {
   });
 
   it("falls back when chunks are empty", async () => {
-    mockRetrieveRelevantChunks.mockResolvedValue([]);
+    mockHybridRetrieve.mockResolvedValue([]);
 
     const result = await answerGroundedQuestion({
       question: "What is a fraction?",
@@ -128,7 +132,7 @@ describe("answerGroundedQuestion", () => {
   });
 
   it("uses classroom mode for subject/grade questions and returns grounded curriculum sources", async () => {
-    mockRetrieveRelevantChunks.mockResolvedValue([
+    mockHybridRetrieve.mockResolvedValue([
       {
         id: "chunk-1",
         sourceType: "curriculum_content",
@@ -142,6 +146,7 @@ describe("answerGroundedQuestion", () => {
         scope: "SCHOOL",
         sourceLabel: "teacher-fractions",
         similarity: 0.91,
+        rankingScore: 0.91,
       },
     ]);
     mockRoutedCompletion.mockResolvedValue({
@@ -164,7 +169,7 @@ describe("answerGroundedQuestion", () => {
       role: "STUDENT",
     });
 
-    expect(mockRetrieveRelevantChunks).toHaveBeenCalledWith(
+    expect(mockHybridRetrieve).toHaveBeenCalledWith(
       expect.objectContaining({ mode: "classroom" })
     );
     expect(result.retrievalWeak).toBe(false);
@@ -182,7 +187,7 @@ describe("answerGroundedQuestion", () => {
   });
 
   it("allows explicit mixed mode without accidental policy preference", async () => {
-    mockRetrieveRelevantChunks.mockResolvedValue([
+    mockHybridRetrieve.mockResolvedValue([
       {
         id: "chunk-2",
         sourceType: "policy_document",
@@ -196,6 +201,7 @@ describe("answerGroundedQuestion", () => {
         scope: "GLOBAL",
         sourceLabel: "docs/governance/SECURITY_MODEL.md",
         similarity: 0.88,
+        rankingScore: 0.88,
       },
     ]);
     mockRoutedCompletion.mockResolvedValue({
@@ -217,7 +223,7 @@ describe("answerGroundedQuestion", () => {
       role: "ADMIN",
     });
 
-    expect(mockRetrieveRelevantChunks).toHaveBeenCalledWith(
+    expect(mockHybridRetrieve).toHaveBeenCalledWith(
       expect.objectContaining({ mode: "mixed" })
     );
     expect(result.retrievalWeak).toBe(false);

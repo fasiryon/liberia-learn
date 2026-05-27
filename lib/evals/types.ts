@@ -64,6 +64,8 @@ export type EvalCaseResult = {
       "id" | "sourceId" | "sourceLabel" | "sourceType" | "subject" | "grade" | "schoolId"
     >
   >;
+  /** Present when the hybrid pipeline ran with metadata collection. */
+  hybridMetrics?: HybridRetrievalMetrics;
 };
 
 export type EvalAggregateMetrics = {
@@ -93,6 +95,31 @@ export type EvalRunResult = {
   passed: boolean;
   aggregate: EvalAggregateMetrics;
   cases: EvalCaseResult[];
+  /** Hybrid pipeline stage comparison (present when cases include hybridMetrics). */
+  hybridAggregate?: HybridAggregateMetrics;
 };
 
 export type EvalRunSummary = EvalRunResult;
+
+/** Per-case comparison of retrieval quality across pipeline stages. */
+export type HybridRetrievalMetrics = {
+  /** Recall@5 using dense vector retrieval only. */
+  denseOnlyRecallAt5: number;
+  /** Recall@5 using BM25 sparse retrieval only. */
+  sparseOnlyRecallAt5: number;
+  /** Recall@5 after RRF + Cohere rerank (the full hybrid pipeline). */
+  hybridRecallAt5: number;
+  /**
+   * Delta: hybridRecallAt5 − pre-rerank recall@5.
+   * Positive values indicate the Cohere reranker improved result ordering.
+   */
+  rerankImprovement: number;
+};
+
+/** Aggregate hybrid metrics across all eval cases. */
+export type HybridAggregateMetrics = {
+  avgDenseOnlyRecallAt5: number;
+  avgSparseOnlyRecallAt5: number;
+  avgHybridRecallAt5: number;
+  avgRerankImprovement: number;
+};

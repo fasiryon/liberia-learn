@@ -4,10 +4,10 @@ import { prisma } from "@/lib/db";
 import { answerGroundedQuestion } from "@/lib/ai/rag/groundedAnswerService";
 import { resolveAllowedMode } from "@/lib/ai/rag/assistantAccess";
 import {
-  retrieveRelevantChunks,
   type RetrievalContext,
   type RetrievalContextMode,
 } from "@/lib/ai/rag/retrievalService";
+import { hybridRetrieveWithMetadata } from "@/lib/ai/rag/hybridRetrieval";
 import { isEvalDbLoggingEnabled } from "@/lib/serverFlags";
 import { evaluateAnswerMetrics } from "@/lib/evals/answer";
 import {
@@ -20,6 +20,8 @@ import type {
   EvalCaseResult,
   EvalRunResult,
   EvalRole,
+  HybridRetrievalMetrics,
+  HybridAggregateMetrics,
 } from "@/lib/evals/types";
 import type { RetrievedChunk } from "@/lib/ai/rag/retrievalService";
 import { logger } from "@/lib/logger";
@@ -117,6 +119,35 @@ function aggregateCaseMetrics(caseResults: EvalCaseResult[]): EvalAggregateMetri
     avgLengthScore: sum.lengthScore / divisor,
     fallbackRate: sum.fallbacks / divisor,
     refusalRate: sum.refusals / divisor,
+  };
+}
+
+function aggregateHybridMetrics(
+  caseResults: EvalCaseResult[]
+): HybridAggregateMetrics | undefined {
+  const hybridCases = caseResults.filter((r) => r.hybridMetrics != null);
+  if (hybridCases.length === 0) {
+    return undefined;
+  }
+
+  const divisor = hybridCases.length;
+  const sum = hybridCases.reduce(
+    (acc, r) => {
+      const m = r.hybridMetrics!;
+      acc.dense += m.denseOnlyRecallAt5;
+      acc.sparse += m.sparseOnlyRecallAt5;
+      acc.hybrid += m.hybridRecallAt5;
+      acc.rerank += m.rerankImprovement;
+      return acc;
+    },
+    { dense: 0, sparse: 0, hybrid: 0, rerank: 0 }
+  );
+
+  return {
+    avgDenseOnlyRecallAt5: sum.dense / divisor,
+    avgSparseOnlyRecallAt5: sum.sparse / divisor,
+    avgHybridRecallAt5: sum.hybrid / divisor,
+    avgRerankImprovement: sum.rerank / divisor,
   };
 }
 
@@ -272,7 +303,9 @@ export async function runEvalCases(
     };
     const context = buildEvalContext(effectiveCase);
     const audienceScope = buildEvalAudienceScope(effectiveCase);
-    const retrievedChunks = await retrieveRelevantChunks({
+
+    // Use the full hybrid pipeline and capture intermediate results for metrics.
+    const hybridResult = await hybridRetrieveWithMetadata({
       question: effectiveCase.question,
       schoolId: effectiveCase.schoolId,
       subject: effectiveCase.subject ?? null,
@@ -283,6 +316,7 @@ export async function runEvalCases(
       mode: effectiveCase.mode,
       context,
     });
+    const retrievedChunks = hybridResult.chunks;
 
     const grounded = await answerGroundedQuestion({
       question: effectiveCase.question,
@@ -307,6 +341,28 @@ export async function runEvalCases(
       chunks: retrievedChunks,
       hadFallback: grounded.hadFallback,
     });
+
+    // Compute hybrid pipeline stage metrics for diagnostic comparison.
+    const denseOnlyRecallAt5 = evaluateRetrievalMetrics(
+      evalCase.expectedChunkIds ?? [],
+      hybridResult.denseResults
+    ).recallAt5;
+    const sparseOnlyRecallAt5 = evaluateRetrievalMetrics(
+      evalCase.expectedChunkIds ?? [],
+      hybridResult.sparseResults
+    ).recallAt5;
+    const hybridRecallAt5 = retrieval.recallAt5;
+    const preRerankRecallAt5 = evaluateRetrievalMetrics(
+      evalCase.expectedChunkIds ?? [],
+      hybridResult.preRerankResults
+    ).recallAt5;
+
+    const hybridMetrics: HybridRetrievalMetrics = {
+      denseOnlyRecallAt5,
+      sparseOnlyRecallAt5,
+      hybridRecallAt5,
+      rerankImprovement: hybridRecallAt5 - preRerankRecallAt5,
+    };
 
     const result: EvalCaseResult = {
       caseId: evalCase.id,
@@ -339,6 +395,7 @@ export async function runEvalCases(
         grade: chunk.grade,
         schoolId: chunk.schoolId,
       })),
+      hybridMetrics,
     };
 
     result.passed = evaluateCasePass(result);
@@ -349,6 +406,7 @@ export async function runEvalCases(
   }
 
   const aggregate = aggregateCaseMetrics(caseResults);
+  const hybridAggregate = aggregateHybridMetrics(caseResults);
   const output: EvalRunResult = {
     runAt: new Date().toISOString(),
     datasetSize: caseResults.length,
@@ -361,6 +419,7 @@ export async function runEvalCases(
     passed: evaluateRunPass(aggregate),
     aggregate,
     cases: caseResults,
+    ...(hybridAggregate ? { hybridAggregate } : {}),
   };
 
   const outputDir = options.outputDir ?? path.join(process.cwd(), "evals", "results");

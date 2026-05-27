@@ -1,10 +1,11 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-const mockRetrieveRelevantChunks = vi.hoisted(() => vi.fn());
+// groundedAnswerService calls hybridRetrieve, not retrieveRelevantChunks directly.
+const mockHybridRetrieve = vi.hoisted(() => vi.fn());
 const mockRoutedCompletion = vi.hoisted(() => vi.fn());
 
-vi.mock("@/lib/ai/rag/retrievalService", () => ({
-  retrieveRelevantChunks: mockRetrieveRelevantChunks,
+vi.mock("@/lib/ai/rag/hybridRetrieval", () => ({
+  hybridRetrieve: mockHybridRetrieve,
 }));
 
 vi.mock("@/lib/ai/routedCompletion", () => ({
@@ -19,7 +20,7 @@ describe("AI trust response format", () => {
   });
 
   it("returns groundingScore, sourcesUsed, and high confidence for strongly grounded answers", async () => {
-    mockRetrieveRelevantChunks.mockResolvedValue([
+    mockHybridRetrieve.mockResolvedValue([
       {
         id: "chunk-1",
         sourceType: "curriculum_content",
@@ -65,7 +66,7 @@ describe("AI trust response format", () => {
   });
 
   it("forces low confidence when groundingScore is below the safe threshold", async () => {
-    mockRetrieveRelevantChunks.mockResolvedValue([
+    mockHybridRetrieve.mockResolvedValue([
       {
         id: "chunk-weak",
         sourceType: "curriculum_content",
@@ -106,7 +107,7 @@ describe("AI trust response format", () => {
   });
 
   it("includes fallbackReason when fallback triggers", async () => {
-    mockRetrieveRelevantChunks.mockResolvedValue([]);
+    mockHybridRetrieve.mockResolvedValue([]);
 
     const result = await answerGroundedQuestion({
       question: "What does the policy say about attendance?",
