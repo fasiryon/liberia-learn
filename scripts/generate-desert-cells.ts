@@ -50,20 +50,20 @@ function readKvArg(prefix: string): string | undefined {
 
 // ─── Subject normalisation ────────────────────────────────────────────────────
 
-function normaliseSubject(raw: string): string {
-  const upper = raw.toUpperCase();
-  if (upper === "COMPUTER_SCIENCE" || upper === "CS") return "CS";
-  if (upper === "ENGINEERING_FOUNDATIONS" || upper === "ENGINEERING") return "ENGINEERING";
-  if (upper === "ENGLISH") return "ENGLISH";
-  if (upper === "CIVICS") return "CIVICS";
-  return upper;
-}
+const SUBJECT_ALIASES: Record<string, string> = {
+  "CS": "COMPUTER_SCIENCE",
+  "COMPUTER_SCIENCE": "COMPUTER_SCIENCE",
+  "ENGINEERING": "ENGINEERING_FOUNDATIONS",
+  "ENGINEERING_FOUNDATIONS": "ENGINEERING_FOUNDATIONS",
+  "ENGLISH": "ENGLISH",
+  "CIVICS": "CIVICS",
+};
 
 // ─── Title bank lookup ────────────────────────────────────────────────────────
 
 function getTitleBank(subject: string): Record<string, string[]> {
-  if (subject === "CS") return CS_TITLES;
-  if (subject === "ENGINEERING") return ENGINEERING_TITLES;
+  if (subject === "COMPUTER_SCIENCE") return CS_TITLES;
+  if (subject === "ENGINEERING_FOUNDATIONS") return ENGINEERING_TITLES;
   if (subject === "ENGLISH") return ENGLISH_TITLES;
   if (subject === "CIVICS") return CIVICS_TITLES;
   return {};
@@ -100,7 +100,8 @@ async function main() {
     process.exit(1);
   }
 
-  const subject = normaliseSubject(rawSubject);
+  const canonicalSubject = SUBJECT_ALIASES[(rawSubject ?? "").toUpperCase()] ?? (rawSubject ?? "").toUpperCase();
+  const subject = canonicalSubject;
   const titleBank = getTitleBank(subject);
 
   if (Object.keys(titleBank).length === 0) {
