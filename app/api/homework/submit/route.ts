@@ -1,7 +1,8 @@
-﻿import { requireTenant } from "@/lib/tenant"
+import { requireTenant } from "@/lib/tenant"
 // app/api/homework/submit/route.ts
 // FIXED: was fully unauthenticated and accepted studentId from request body.
 // Now: session required, studentId derived from session only.
+// NR-14A: added clientSubmissionId for offline idempotency — same UUID ⟹ same record.
 
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
@@ -24,7 +25,7 @@ export async function POST(req: Request) {
     }
 
     const body = await req.json();
-    const { homeworkId, answers } = body ?? {};
+    const { homeworkId, answers, clientSubmissionId } = body ?? {};
 
     if (!homeworkId || !answers) {
       return NextResponse.json(
@@ -37,6 +38,21 @@ export async function POST(req: Request) {
         { error: "answers must be an array" },
         { status: 400 }
       );
+    }
+
+    // NR-14A: Idempotency fast-path — if the client already has a confirmed
+    // submission with this UUID, return it without hitting the DB again.
+    if (clientSubmissionId) {
+      try {
+        const existing = await prisma.homeworkSubmission.findUnique({
+          where: { clientSubmissionId },
+        });
+        if (existing) {
+          return NextResponse.json({ ok: true, submission: existing }, { status: 200 });
+        }
+      } catch {
+        // clientSubmissionId column may not exist on older DB — fall through to upsert
+      }
     }
 
     // Verify homework exists and student is enrolled in that class
@@ -61,7 +77,7 @@ export async function POST(req: Request) {
       );
     }
 
-    // Upsert so double-submits are safe
+    // Upsert so double-submits are safe (belt + suspenders alongside clientSubmissionId)
     const submission = await prisma.homeworkSubmission.upsert({
       where: {
         homeworkId_studentId: {
@@ -74,14 +90,17 @@ export async function POST(req: Request) {
         studentId: student.id,
         answers,
         submittedAt: new Date(),
+        ...(clientSubmissionId ? { clientSubmissionId } : {}),
       },
       update: {
         answers,
         submittedAt: new Date(),
+        // Only set clientSubmissionId once — don't overwrite with null on subsequent syncs
+        ...(clientSubmissionId ? { clientSubmissionId } : {}),
       },
     });
 
-    return NextResponse.json({ success: true, submission }, { status: 200 });
+    return NextResponse.json({ ok: true, submission }, { status: 200 });
   } catch (err: any) {
     const status = err?.status ?? 500;
     return NextResponse.json(

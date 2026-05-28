@@ -946,18 +946,20 @@ model Homework {
 }
 
 model HomeworkSubmission {
-  id           String   @id @default(cuid())
-  homeworkId   String
-  studentId    String
-  aiFeedback   Json?
-  aiScore      Float?
-  answers      Json?
-  submittedAt  DateTime @default(now())
-  teacherNotes String?
-  teacherScore Float?
-  aiReviewed   Boolean  @default(false)
-  Homework     Homework @relation(fields: [homeworkId], references: [id])
-  Student      Student  @relation(fields: [studentId], references: [id])
+  id                 String   @id @default(cuid())
+  homeworkId         String
+  studentId          String
+  /// NR-14A: client-generated UUID for offline idempotency — nullable, unique when set
+  clientSubmissionId String?  @unique
+  aiFeedback         Json?
+  aiScore            Float?
+  answers            Json?
+  submittedAt        DateTime @default(now())
+  teacherNotes       String?
+  teacherScore       Float?
+  aiReviewed         Boolean  @default(false)
+  Homework           Homework @relation(fields: [homeworkId], references: [id])
+  Student            Student  @relation(fields: [studentId], references: [id])
 
   @@unique([homeworkId, studentId])
   // Block 23: student-first + time index for evidence-velocity queries in risk routes

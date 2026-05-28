@@ -1,12 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import {
-  getReadyQueue,
-  markSyncFailure,
-  markSyncSuccess,
-  getQueueStats,
-} from "@/lib/offline-queue";
+import { getQueueStats } from "@/lib/offline-queue";
+import { flushSubmissionQueue } from "@/lib/offline/flushQueue";
 import { getCacheStats, purgeExpiredPacks, purgePartitionPacks } from "@/lib/offline-cache";
 import { detectAndSetActiveSessionPartition, type SessionPartition } from "@/lib/offline-session";
 
@@ -42,39 +38,14 @@ export default function SyncManager({
   }
 
   async function doSync() {
-    const queue = await getReadyQueue(partition ?? undefined);
-    if (queue.length === 0) return;
-
-    setSyncing(true);
-    try {
-      const successIds: string[] = [];
-      const failedIds: string[] = [];
-
-      for (const item of queue) {
-        try {
-          const res = await fetch(item.endpoint ?? "/api/student/sync", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(item.payload ?? {}),
-          });
-
-          if (res.ok) successIds.push(item.id);
-          else failedIds.push(item.id);
-        } catch {
-          failedIds.push(item.id);
-        }
-      }
-
-      await markSyncSuccess(successIds, partition ?? undefined);
-      await markSyncFailure(failedIds, "server_error", partition ?? undefined);
-      setSyncResult(`${successIds.length} items synced successfully`);
+    const result = await flushSubmissionQueue(partition ?? undefined);
+    if (result.flushed > 0) {
+      setSyncing(true);
+      setSyncResult(`${result.flushed} item${result.flushed > 1 ? "s" : ""} synced`);
       setTimeout(() => setSyncResult(null), 5000);
-    } catch {
-      await markSyncFailure(queue.map((q) => q.id), "network_error", partition ?? undefined);
-    } finally {
       setSyncing(false);
-      await refreshStats(partition);
     }
+    await refreshStats(partition);
   }
 
   useEffect(() => {
@@ -86,24 +57,52 @@ export default function SyncManager({
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
-    // Sync on mount/partition change if online
+    // Flush on mount / partition change if online
     if (navigator.onLine) doSync();
 
-    // Sync when coming back online
-    const handler = () => doSync();
-    window.addEventListener("online", handler);
-    return () => window.removeEventListener("online", handler);
+    // Flush when coming back online (belt-and-suspenders for iOS Safari
+    // which doesn't support BackgroundSync)
+    const onOnline = () => doSync();
+    window.addEventListener("online", onOnline);
+
+    // SW notifies us after a BackgroundSync flush
+    const onSwMessage = (e: MessageEvent) => {
+      if (e.data?.type === "offline-sync-complete" || e.data?.type === "FLUSH_SUBMISSION_QUEUE") {
+        refreshStats(partition);
+        if (e.data?.syncedCount > 0) {
+          setSyncResult(`${e.data.syncedCount} item${e.data.syncedCount > 1 ? "s" : ""} synced`);
+          setTimeout(() => setSyncResult(null), 5000);
+        }
+      }
+    };
+    navigator.serviceWorker?.addEventListener("message", onSwMessage);
+
+    return () => {
+      window.removeEventListener("online", onOnline);
+      navigator.serviceWorker?.removeEventListener("message", onSwMessage);
+    };
   }, [partition]); // eslint-disable-line react-hooks/exhaustive-deps
 
+  // Refresh badge count every 10 s so it stays current
   useEffect(() => {
-    refreshStats(partition);
-  }, [syncing, syncResult, partition]);
+    const interval = setInterval(() => refreshStats(partition), 10_000);
+    return () => clearInterval(interval);
+  }, [partition]);
+
+  const pending = stats.queuePending;
 
   return (
-    <div className="fixed bottom-4 right-4 z-50">
+    <div className="fixed bottom-4 right-4 z-50 flex flex-col items-end gap-2">
+      {/* Pending submissions badge — visible to all students when there's a queue */}
+      {pending > 0 && !syncing && !syncResult && (
+        <div className="rounded-lg bg-amber-100 border border-amber-300 px-4 py-2 text-sm text-amber-900 shadow">
+          {pending} item{pending > 1 ? "s" : ""} saved offline — will sync when you&apos;re back online
+        </div>
+      )}
+
       {syncing && (
         <div className="rounded-xl bg-[var(--ll-yellow-soft)] border border-amber-500/30 px-4 py-2 text-sm text-[var(--ll-yellow)]">
-          Syncing offline work...
+          Syncing offline work…
         </div>
       )}
       {syncResult && (
@@ -111,7 +110,8 @@ export default function SyncManager({
           {syncResult}
         </div>
       )}
-      {isPlatformAdmin ? (
+
+      {isPlatformAdmin && (
         <div className="mt-2 rounded-xl bg-[var(--ll-bg)]/90 border border-[var(--ll-border)] px-4 py-3 text-xs text-[var(--ll-text)]">
           <div className="font-semibold text-[var(--ll-text)]">Offline stats</div>
           <div className="mt-1">Queue pending: {stats.queuePending}</div>
@@ -129,7 +129,7 @@ export default function SyncManager({
             Purge cache
           </button>
         </div>
-      ) : null}
+      )}
     </div>
   );
 }
