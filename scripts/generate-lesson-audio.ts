@@ -3,14 +3,18 @@
  * Uploads MP3 to Supabase and stores URL in LessonAudio model.
  *
  * Usage:
- *   npx dotenv -e .env.local -- npx tsx scripts/generate-lesson-audio.ts
- *   npx dotenv -e .env.local -- npx tsx scripts/generate-lesson-audio.ts --subject MATH
- *   npx dotenv -e .env.local -- npx tsx scripts/generate-lesson-audio.ts --grade 7 --limit 20
+ *   npx dotenv -e .env.production -e .env.local -- npx tsx scripts/generate-lesson-audio.ts
+ *   npx dotenv -e .env.production -e .env.local -- npx tsx scripts/generate-lesson-audio.ts --subject MATH
+ *   npx dotenv -e .env.production -e .env.local -- npx tsx scripts/generate-lesson-audio.ts --grade G1 --limit 40
  *
- * Rate limiting: ElevenLabs Starter = 30k chars/month, Creator = 100k/month.
- *   Turbo v2 = ~$0.30/1k chars on paid tier.
- *   Default --limit 50 processes ~50 lessons.
- *   Use --limit to run in batches and monitor quota in ElevenLabs dashboard.
+ * Requires env vars: ELEVENLABS_API_KEY, DIRECT_URL (DB), SUPABASE_URL/NEXT_PUBLIC_SUPABASE_URL,
+ *   SUPABASE_SERVICE_ROLE_KEY (or SUPABASE_ANON_KEY).
+ *   See docs/ops/NR14_AUDIO_PIPELINE.md for full setup.
+ *
+ * Rate limiting: Check https://elevenlabs.io/app/subscription for quota.
+ *   Max chars/request: 4,800 (eleven_turbo_v2).
+ *   Default --limit 50 processes ~50 lessons per run.
+ *   Accepts --grade as "G1" or "1" (both work).
  */
 // Strip surrounding quotes added by some dotenv loaders (e.g. dotenv-cli with .env.local)
 function cleanEnv(key: string) {
@@ -32,7 +36,11 @@ function getArg(name: string): string | null {
 }
 
 const subjectFilter = getArg("subject")?.toUpperCase() ?? null;
-const gradeFilter = getArg("grade") ? parseInt(getArg("grade")!, 10) : null;
+// Accept both "G1" and "1" formats; grade is Int in DB
+const rawGrade = getArg("grade");
+const gradeFilter = rawGrade
+  ? parseInt(rawGrade.replace(/^[Gg]/, ""), 10)
+  : null;
 const limit = getArg("limit") ? parseInt(getArg("limit")!, 10) : 50;
 
 async function main() {
@@ -41,11 +49,13 @@ async function main() {
 
   const where: any = {
     status: "APPROVED",
+    // Only fetch lessons without a GENERATED audio record
+    audioAssets: { none: { status: "GENERATED" } },
   };
   if (subjectFilter) where.subject = subjectFilter;
-  if (gradeFilter) where.grade = gradeFilter;
+  if (gradeFilter !== null && !isNaN(gradeFilter)) where.grade = gradeFilter;
 
-  const lessons = await prisma.curriculumContent.findMany({
+  const toProcess = await prisma.curriculumContent.findMany({
     where,
     select: {
       contentId: true,
@@ -54,21 +64,14 @@ async function main() {
       subject: true,
       version: true,
       payload: true,
-      audioAssets: {
-        where: { status: "GENERATED" },
-        take: 1,
-        select: { id: true },
-      },
     },
-    orderBy: { updatedAt: "desc" },
+    orderBy: { grade: "asc" },
     take: limit,
   });
 
-  const toProcess = lessons.filter((l) => l.audioAssets.length === 0);
   const total = toProcess.length;
-  const skipped = lessons.length - total;
 
-  console.log(`Found ${lessons.length} APPROVED lessons, ${skipped} already have audio, processing ${total}\n`);
+  console.log(`Found ${total} APPROVED lessons without audio (limit=${limit})\n`);
 
   let ok = 0;
   let fail = 0;
@@ -165,7 +168,7 @@ async function main() {
   }
 
   const estCost = estimateElevenLabsCostUsd(" ".repeat(totalChars));
-  console.log(`\nDone: ${ok} OK | ${skipped} SKIP | ${fail} FAIL`);
+  console.log(`\nDone: ${ok} OK | ${fail} FAIL`);
   console.log(`Estimated cost: ${totalChars.toLocaleString()} chars used (~$${estCost.toFixed(4)})`);
 }
 
