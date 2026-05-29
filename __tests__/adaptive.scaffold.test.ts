@@ -3,7 +3,7 @@
  *
  * Tests for:
  *   1. routeStuck scaffold preference (with a real LessonVariant in mock DB)
- *   2. generateScaffold quality gate logic
+ *   2. generateScaffold quality gate logic (≥400w absolute floor + stub guard)
  *   3. GET /api/adaptive/scaffold/[variantId] endpoint
  */
 
@@ -79,12 +79,16 @@ describe("routeStuck — scaffold routing", () => {
 });
 
 // ── generateScaffold quality gate ────────────────────────────────────────────
+//
+// New gate (NR-14B-ii fix): absolute floor ≥400 words only.
+// Ratio-of-parent is NOT checked — a 700-word scaffold of a 3500-word lesson
+// is correct and good. Stub guard rejects parents with <300 words.
 
 describe("generateScaffold", () => {
   beforeEach(() => vi.clearAllMocks());
 
-  const parentBody =
-    "A ".repeat(800) + "b ".repeat(200); // 1000 words — ensures ratio math works
+  // 1000-word parent — well above the 300-word stub threshold
+  const parentBody = "A ".repeat(800) + "b ".repeat(200);
   const baseInput = {
     lessonId: "lesson-1",
     parentBody,
@@ -93,19 +97,17 @@ describe("generateScaffold", () => {
     title: "Fractions",
   };
 
-  it("returns scaffold when quality gate passes (≥300 words, ≥40% of parent)", async () => {
-    // 450 words — 45% of 1000-word parent
+  it("returns scaffold when ≥400 words (absolute floor)", async () => {
     const scaffoldBody = "Word ".repeat(450);
     mockRouted.mockResolvedValueOnce({ content: scaffoldBody });
 
     const result = await generateScaffold(baseInput);
     expect(result).not.toBeNull();
-    expect(result!.wordCount).toBeGreaterThanOrEqual(300);
-    expect(result!.ratioOfParent).toBeGreaterThanOrEqual(0.40);
+    expect(result!.wordCount).toBeGreaterThanOrEqual(400);
   });
 
-  it("retries once when first attempt fails quality gate (too short)", async () => {
-    const tooShort = "Word ".repeat(100); // 100 words — below 300 minimum
+  it("retries once when first attempt is below 400-word floor", async () => {
+    const tooShort = "Word ".repeat(100); // 100 words — below 400 floor
     const goodBody = "Word ".repeat(450);
     mockRouted
       .mockResolvedValueOnce({ content: tooShort })
@@ -116,7 +118,7 @@ describe("generateScaffold", () => {
     expect(mockRouted).toHaveBeenCalledTimes(2);
   });
 
-  it("returns null when both attempts fail quality gate", async () => {
+  it("returns null when both attempts are below 400-word floor", async () => {
     const tooShort = "Word ".repeat(100);
     mockRouted
       .mockResolvedValueOnce({ content: tooShort })
@@ -136,50 +138,56 @@ describe("generateScaffold", () => {
     expect(result).toBeNull();
   });
 
-  it("returns null when scaffold has ≥300 words but is <40% of parent length", async () => {
-    // Parent is 1000 words; 350-word scaffold is 35% — below ratio threshold
-    const belowRatio = "Word ".repeat(350);
-    mockRouted
-      .mockResolvedValueOnce({ content: belowRatio })
-      .mockResolvedValueOnce({ content: belowRatio });
-
-    const result = await generateScaffold(baseInput);
-    expect(result).toBeNull();
-  });
-
-  it("passes with short parent if scaffold meets absolute minimum (≥300 words)", async () => {
-    // Parent is only 500 words — 400 word scaffold is 80% which is ≥40%
-    const shortParent = "Word ".repeat(500);
-    const goodScaffold = "Word ".repeat(400);
-    mockRouted.mockResolvedValueOnce({ content: goodScaffold });
-
-    const result = await generateScaffold({ ...baseInput, parentBody: shortParent });
-    expect(result).not.toBeNull();
-    expect(result!.ratioOfParent).toBeCloseTo(0.8, 1);
-  });
-
-  it("passes for long parents (>1500w) with relaxed 20% ratio", async () => {
-    // Parent is 3500 words — 700 word scaffold is 20% which meets the long-parent gate
+  it("passes for long parents (3500w) with a 700-word scaffold (20% ratio) — ratio NOT checked", async () => {
+    // Old gate would have rejected this. New gate accepts it.
     const longParent = "Word ".repeat(3500);
     const scaffold = "Word ".repeat(700);
     mockRouted.mockResolvedValueOnce({ content: scaffold });
 
     const result = await generateScaffold({ ...baseInput, parentBody: longParent });
     expect(result).not.toBeNull();
-    expect(result!.ratioOfParent).toBeCloseTo(0.2, 1);
     expect(result!.wordCount).toBe(700);
+    // ratioOfParent is recorded but no longer a gate — just informational
+    expect(result!.ratioOfParent).toBeCloseTo(0.2, 1);
   });
 
-  it("fails for long parents when scaffold is <20% even though ≥300 words", async () => {
-    // Parent is 3500 words — 500 word scaffold is 14% — below 20% long-parent gate
+  it("passes for long parents with a 400-word scaffold (11% ratio) — ratio NOT checked", async () => {
+    // A 400-word scaffold of a 3500-word lesson is the hardest case the old gate rejected.
     const longParent = "Word ".repeat(3500);
-    const tooSmall = "Word ".repeat(500);
-    mockRouted
-      .mockResolvedValueOnce({ content: tooSmall })
-      .mockResolvedValueOnce({ content: tooSmall });
+    const scaffold = "Word ".repeat(400);
+    mockRouted.mockResolvedValueOnce({ content: scaffold });
 
     const result = await generateScaffold({ ...baseInput, parentBody: longParent });
+    expect(result).not.toBeNull();
+    expect(result!.wordCount).toBe(400);
+  });
+
+  it("stub guard: returns null without calling AI when parent is <300 words", async () => {
+    // A 200-word parent is a stub — scaffolding it would fabricate content
+    const stubParent = "Word ".repeat(200);
+
+    const result = await generateScaffold({ ...baseInput, parentBody: stubParent });
     expect(result).toBeNull();
+    // AI must NOT be called for stubs
+    expect(mockRouted).not.toHaveBeenCalled();
+  });
+
+  it("stub guard: returns null for a 35-word parent (classic stub case)", async () => {
+    const tinyParent = "Word ".repeat(35);
+
+    const result = await generateScaffold({ ...baseInput, parentBody: tinyParent });
+    expect(result).toBeNull();
+    expect(mockRouted).not.toHaveBeenCalled();
+  });
+
+  it("stub guard boundary: accepts a 300-word parent (at the threshold)", async () => {
+    const borderlineParent = "Word ".repeat(300);
+    const goodScaffold = "Word ".repeat(420);
+    mockRouted.mockResolvedValueOnce({ content: goodScaffold });
+
+    const result = await generateScaffold({ ...baseInput, parentBody: borderlineParent });
+    expect(result).not.toBeNull();
+    expect(mockRouted).toHaveBeenCalledTimes(1);
   });
 });
 

@@ -9,10 +9,17 @@
  *   - Breaks concepts into smaller steps
  *   - Uses simpler vocabulary (one grade level easier)
  *   - Adds concrete Liberian daily-life examples
- *   - Is ~40-60% of the original length
  *   - Shares the same learning objective
  *
- * Quality gate: ≥300 words AND ≥40% of parent body length.
+ * Quality gate: ABSOLUTE floor of ≥400 words only.
+ * Ratio-of-parent is intentionally NOT checked — a 700-word scaffold of a
+ * 3500-word lesson is correct (18% ratio) while a 420-word scaffold of a
+ * 35-word parent stub is content fabrication, not simplification.
+ *
+ * Stub guard: if parent body < 300 words, scaffolding is refused up-front.
+ * You cannot simplify a stub — that would be generating new content, not
+ * breaking down existing content.
+ *
  * If the first attempt fails the gate, retries once then returns null.
  *
  * Uses routedCompletion (never direct OpenAI/Groq).
@@ -33,10 +40,8 @@ export type ScaffoldFailure = {
   attempts: number;
 };
 
-const MIN_WORDS = 300;
-const MIN_RATIO = 0.40;         // scaffold must be ≥40% of parent length...
-const LONG_PARENT_THRESHOLD = 1500; // ...unless the parent is >1500 words,
-const MIN_RATIO_LONG = 0.20;   // in which case 20% is sufficient (300w of a 1500w lesson)
+const MIN_WORDS = 400;           // scaffold must be ≥400 words (absolute floor)
+const MIN_PARENT_WORDS = 300;   // parent must have ≥300 words — below this is a stub, not a lesson
 
 function countWords(text: string): number {
   return text.split(/\s+/).filter(Boolean).length;
@@ -89,6 +94,18 @@ export async function generateScaffold(input: {
   title: string;
 }): Promise<ScaffoldResult | null> {
   const parentWordCount = countWords(input.parentBody);
+
+  // Stub guard: refuse to scaffold a parent that has fewer than 300 words.
+  // A 35-word paragraph is not a lesson — generating a scaffold from it would
+  // be fabricating new content, not simplifying existing content.
+  if (parentWordCount < MIN_PARENT_WORDS) {
+    console.warn(
+      `[generateScaffold] parent too thin to scaffold: ` +
+        `${parentWordCount} words (min ${MIN_PARENT_WORDS}) — lessonId=${input.lessonId}`
+    );
+    return null;
+  }
+
   const tone = toneGuidance(input.grade);
 
   for (let attempt = 1; attempt <= 2; attempt++) {
@@ -125,19 +142,16 @@ export async function generateScaffold(input: {
       const wordCount = countWords(body);
       const ratioOfParent = parentWordCount > 0 ? wordCount / parentWordCount : 1;
 
-      // Quality gate: must be substantial and proportionate to parent.
-      // Long parents (>1500 words) use a relaxed ratio so we don't discard
-      // a perfectly good 700-word scaffold of a 3500-word lesson.
-      const effectiveMinRatio =
-        parentWordCount > LONG_PARENT_THRESHOLD ? MIN_RATIO_LONG : MIN_RATIO;
-      if (wordCount >= MIN_WORDS && ratioOfParent >= effectiveMinRatio) {
+      // Quality gate: absolute word floor only.
+      // Ratio is NOT checked — a 700-word scaffold of a 3500-word lesson is
+      // correct (18% ratio). The AI was asked to distil, not reproduce.
+      if (wordCount >= MIN_WORDS) {
         return { body, wordCount, parentWordCount, ratioOfParent };
       }
 
       console.warn(
         `[generateScaffold] Attempt ${attempt} failed quality gate: ` +
-          `${wordCount} words (min ${MIN_WORDS}), ratio ${ratioOfParent.toFixed(2)} (min ${MIN_RATIO}) — ` +
-          `lessonId=${input.lessonId}`
+          `${wordCount} words (min ${MIN_WORDS}) — lessonId=${input.lessonId}`
       );
     } catch (err) {
       console.error(`[generateScaffold] Attempt ${attempt} error for lessonId=${input.lessonId}:`, err);

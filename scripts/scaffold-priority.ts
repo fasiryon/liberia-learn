@@ -3,7 +3,7 @@
  *
  * Builds the priority queue for scaffold generation.
  *
- * Two modes:
+ * Three modes:
  *
  *   MODE A — data-driven (when StuckEvent data exists, post-pilot):
  *     Ranks lessons by stuck-event count. Lessons triggering the most
@@ -17,6 +17,14 @@
  *       where students encounter new concepts for the first time
  *     - Skip lessons that already have a scaffold variant
  *
+ *   MODE C — requeue-skipped (after a quality gate fix):
+ *     Re-queues lessons that were previously skipped due to the ratio
+ *     quality gate (now removed). These are long, hard lessons that had
+ *     correct short scaffolds rejected. Detects them by checking which
+ *     lessons have NO scaffold variant but ARE in the heuristic priority
+ *     range and have a parent body ≥ 300 words (not a stub).
+ *     Excludes lessons that already have a scaffold variant.
+ *
  * Output:
  *   Writes a JSON file to scripts/data/scaffold-queue.json
  *   that scripts/generate-scaffolds.ts reads.
@@ -27,6 +35,9 @@
  *
  *   # Data-driven (after pilot traffic):
  *   npx dotenv -e .env.production -- npx tsx scripts/scaffold-priority.ts --mode data --limit 400
+ *
+ *   # Re-queue previously-skipped long hard lessons (after quality gate fix):
+ *   npx dotenv -e .env.production -- npx tsx scripts/scaffold-priority.ts --mode requeue-skipped --limit 50
  */
 
 import { PrismaClient } from "@prisma/client";
@@ -124,6 +135,91 @@ async function modeHeuristic(limit: number): Promise<ScaffoldQueueItem[]> {
   return queue;
 }
 
+/**
+ * MODE C — requeue-skipped
+ *
+ * Finds lessons that:
+ *   - Are in the heuristic priority range (MATH+SCIENCE G4-G9)
+ *   - Have NO scaffold/simplified variant yet (i.e. were previously skipped)
+ *   - Have a parent body ≥ 300 words (not a stub — real lessons that had
+ *     correct scaffolds rejected by the old ratio gate)
+ *
+ * These are exactly the long hard lessons the ratio gate wrongly rejected.
+ */
+async function modeRequeueSkipped(limit: number): Promise<ScaffoldQueueItem[]> {
+  console.log(`  [requeue-skipped] Finding long hard lessons previously skipped by ratio gate...`);
+
+  // Get already-scaffolded IDs so we never re-queue them
+  const scaffolded = new Set(
+    (
+      await prisma.lessonVariant.findMany({
+        where: { variantType: { in: ["scaffold", "simplified"] } },
+        select: { lessonId: true },
+      })
+    ).map((v) => v.lessonId)
+  );
+
+  console.log(`  [requeue-skipped] ${scaffolded.size} lessons already have scaffolds — excluded`);
+
+  // Pull all heuristic-range lessons without scaffolds, with their body
+  const candidates = await prisma.curriculumContent.findMany({
+    where: {
+      status: { in: ["published", "APPROVED"] },
+      subject: { in: HEURISTIC_SUBJECTS },
+      grade: { gte: HEURISTIC_GRADE_MIN, lte: HEURISTIC_GRADE_MAX },
+      NOT: { id: { in: Array.from(scaffolded) } },
+    },
+    select: {
+      id: true,
+      contentId: true,
+      title: true,
+      grade: true,
+      subject: true,
+      unitId: true,
+      orderInUnit: true,
+      payload: true,
+    },
+    orderBy: [{ subject: "asc" }, { grade: "asc" }, { unitId: "asc" }, { orderInUnit: "asc" }],
+  });
+
+  console.log(`  [requeue-skipped] ${candidates.length} unscaffolded lessons in priority range`);
+
+  // Filter to those with a real parent body (≥300 words) — stubs are excluded
+  // because the new stub guard in generateScaffold will refuse them anyway
+  const MIN_PARENT_WORDS = 300;
+  function countWords(text: string): number {
+    return text.split(/\s+/).filter(Boolean).length;
+  }
+
+  const longLessons = candidates.filter((c) => {
+    const payload = c.payload as {
+      body?: string | null;
+      body_standard?: string | null;
+      body_block?: string | null;
+    } | null;
+    const body =
+      (payload?.body_standard ?? payload?.body_block ?? payload?.body ?? "").trim();
+    return countWords(body) >= MIN_PARENT_WORDS;
+  });
+
+  console.log(
+    `  [requeue-skipped] ${longLessons.length} lessons have parent body ≥${MIN_PARENT_WORDS} words (previously skipped by ratio gate)`
+  );
+
+  const queue: ScaffoldQueueItem[] = longLessons.slice(0, limit).map((lesson, idx) => ({
+    lessonId: lesson.id,
+    contentId: lesson.contentId,
+    title: lesson.title ?? `${lesson.subject} G${lesson.grade} Lesson`,
+    grade: lesson.grade,
+    subject: lesson.subject,
+    unitId: lesson.unitId,
+    orderInUnit: lesson.orderInUnit,
+    priority: longLessons.length - idx,
+  }));
+
+  return queue;
+}
+
 async function modeData(limit: number): Promise<ScaffoldQueueItem[]> {
   console.log("  [data-driven] Ranking lessons by stuck event count...");
 
@@ -201,7 +297,8 @@ async function main() {
   const mode = (args.find((a) => a.startsWith("--mode="))?.split("=")[1] ??
     (args.includes("--mode") ? args[args.indexOf("--mode") + 1] : "heuristic")) as
     | "heuristic"
-    | "data";
+    | "data"
+    | "requeue-skipped";
   const limitArg = args.find((a) => a.startsWith("--limit="))?.split("=")[1] ??
     (args.includes("--limit") ? args[args.indexOf("--limit") + 1] : "400");
   const limit = parseInt(limitArg, 10);
@@ -211,6 +308,8 @@ async function main() {
   let queue: ScaffoldQueueItem[];
   if (mode === "data") {
     queue = await modeData(limit);
+  } else if (mode === "requeue-skipped") {
+    queue = await modeRequeueSkipped(limit);
   } else {
     queue = await modeHeuristic(limit);
   }
