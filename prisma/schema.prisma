@@ -270,6 +270,11 @@ model Student {
   transcripts           Transcript[]
   reportCards           ReportCard[]
   portfolioShares       PortfolioShare[]
+  // NR-14B adaptive engine
+  studentSessions       StudentSession[]
+  stuckEvents           StuckEvent[]
+  adaptiveMastery       AdaptiveMasteryRecord[]
+  learningPathQueue     LearningPathQueue[]
 }
 
 model Exam {
@@ -3769,4 +3774,94 @@ model PortfolioCredential {
   expiresAt       DateTime
 
   @@unique([studentId, term])
+}
+
+/// / ===== NR-14B Adaptive Learning Engine =====
+
+/// Per-lesson session — tracks time, question attempts, and stuck signals.
+model StudentSession {
+  id                 String    @id @default(cuid())
+  studentId          String
+  lessonId           String    // scheduledWorkId (ScheduledWork.id)
+  startedAt          DateTime  @default(now())
+  endedAt            DateTime?
+  totalMs            Int       @default(0)
+  questionsAttempted Int       @default(0)
+  questionsCorrect   Int       @default(0)
+  stuckEventCount    Int       @default(0)
+  student            Student   @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  @@index([studentId, lessonId])
+  @@index([startedAt])
+}
+
+/// Prerequisite graph — which lessons must be completed before another.
+model LessonPrerequisite {
+  id                   String @id @default(cuid())
+  lessonId             String // the lesson that has prerequisites (CurriculumContent.id)
+  prerequisiteLessonId String // the lesson that must come first (CurriculumContent.id)
+  strength             String @default("required") // required | recommended
+
+  @@unique([lessonId, prerequisiteLessonId])
+  @@index([lessonId])
+  @@index([prerequisiteLessonId])
+}
+
+/// Simplified / scaffolded variants of a lesson body for stuck students.
+model LessonVariant {
+  id          String   @id @default(cuid())
+  lessonId    String   // CurriculumContent.id
+  variantType String   // scaffold | simplified | enrichment
+  body        String   @db.Text
+  createdAt   DateTime @default(now())
+
+  @@index([lessonId, variantType])
+}
+
+/// Unit-level rolling mastery for NR-14B adaptive engine.
+/// Uses skillKey ("SUBJECT:GN:unitId") instead of a FK to avoid collision
+/// with the existing MasteryRecord (Block 7B, skill-FK-based).
+model AdaptiveMasteryRecord {
+  id                 String    @id @default(cuid())
+  studentId          String
+  skillKey           String    // e.g. "MATH:G5:unit_abc123"
+  score              Float     @default(0)   // 0..1 rolling EMA
+  consecutiveCorrect Int       @default(0)
+  masteredAt         DateTime?
+  updatedAt          DateTime  @updatedAt
+  student            Student   @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  @@unique([studentId, skillKey])
+  @@index([studentId])
+}
+
+/// Fired when a student is detected as stuck on a lesson.
+model StuckEvent {
+  id        String   @id @default(cuid())
+  studentId String
+  lessonId  String   // scheduledWorkId
+  sessionId String?  // StudentSession.id
+  signal    String   // wrong_answers | slow_response | repeat_attempts
+  detail    Json?
+  routedTo  String?  // scaffold | prerequisite | ai_tutor
+  createdAt DateTime @default(now())
+  student   Student  @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  @@index([studentId, lessonId])
+  @@index([createdAt])
+}
+
+/// Queue of lessons that need to be completed for a student (prerequisites, remediation, next steps).
+model LearningPathQueue {
+  id         String    @id @default(cuid())
+  studentId  String
+  lessonId   String    // CurriculumContent.id or scheduledWorkId
+  reason     String    // prerequisite_gap | remediation | next_in_sequence
+  priority   Int       @default(0)
+  resolvedAt DateTime?
+  createdAt  DateTime  @default(now())
+  student    Student   @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  @@unique([studentId, lessonId])
+  @@index([studentId, resolvedAt])
 }
