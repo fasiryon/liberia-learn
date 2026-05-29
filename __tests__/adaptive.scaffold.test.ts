@@ -157,6 +157,30 @@ describe("generateScaffold", () => {
     expect(result).not.toBeNull();
     expect(result!.ratioOfParent).toBeCloseTo(0.8, 1);
   });
+
+  it("passes for long parents (>1500w) with relaxed 20% ratio", async () => {
+    // Parent is 3500 words — 700 word scaffold is 20% which meets the long-parent gate
+    const longParent = "Word ".repeat(3500);
+    const scaffold = "Word ".repeat(700);
+    mockRouted.mockResolvedValueOnce({ content: scaffold });
+
+    const result = await generateScaffold({ ...baseInput, parentBody: longParent });
+    expect(result).not.toBeNull();
+    expect(result!.ratioOfParent).toBeCloseTo(0.2, 1);
+    expect(result!.wordCount).toBe(700);
+  });
+
+  it("fails for long parents when scaffold is <20% even though ≥300 words", async () => {
+    // Parent is 3500 words — 500 word scaffold is 14% — below 20% long-parent gate
+    const longParent = "Word ".repeat(3500);
+    const tooSmall = "Word ".repeat(500);
+    mockRouted
+      .mockResolvedValueOnce({ content: tooSmall })
+      .mockResolvedValueOnce({ content: tooSmall });
+
+    const result = await generateScaffold({ ...baseInput, parentBody: longParent });
+    expect(result).toBeNull();
+  });
 });
 
 // ── GET /api/adaptive/scaffold/[variantId] ────────────────────────────────────
