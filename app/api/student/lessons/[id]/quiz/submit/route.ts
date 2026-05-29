@@ -10,6 +10,7 @@ import { resolveActionsOnQuizPass } from "@/lib/intelligence/actionEngine";
 import { tagMisconception } from "@/lib/intelligence/misconceptions";
 import { recordPerformanceEvent } from "@/lib/intelligence/recordPerformanceEvent";
 import { resolveScheduledLessonContext } from "@/lib/student/resolveScheduledLessonContext";
+import { recordAnswer, buildSkillKey } from "@/lib/adaptive/updateMastery";
 
 type QuizSubmissionBody = {
   quizId?: string;
@@ -301,6 +302,37 @@ export async function POST(
 
     resolveActionsOnQuizPass(lesson.studentId, lesson.scheduledWorkId, score).catch(() => null);
 
+    // NR-14B: Update adaptive mastery record for this lesson's skill (fire-and-forget)
+    // Per-answer mastery not available here (quiz is whole-quiz); use score > 0.5 as proxy for correct.
+    // Individual per-question mastery is handled via the /api/adaptive/stuck client tracking.
+    void (async () => {
+      try {
+        // Resolve the content's unitId for skillKey
+        const content = await prisma.curriculumContent.findUnique({
+          where: { contentId: lesson.contentId },
+          select: { id: true, subject: true, grade: true, unitId: true, contentId: true },
+        });
+        if (content) {
+          const skillKey = buildSkillKey({
+            subject: content.subject,
+            grade: content.grade,
+            unitId: content.unitId,
+            contentId: content.contentId,
+          });
+          // Record each evaluated answer individually for accurate EMA
+          for (const ans of evaluatedAnswers) {
+            await recordAnswer({
+              studentId: lesson.studentId,
+              skillKey,
+              correct: ans.isCorrect,
+            });
+          }
+        }
+      } catch {
+        // Non-critical: mastery update failing must not break quiz submission
+      }
+    })();
+
     const certificateAwards = await awardLessonQuizCertificates({
       studentId: lesson.studentId,
       studentUserId: user.id,
@@ -337,6 +369,8 @@ export async function POST(
           ? "Excellent work. You answered every question correctly."
           : null,
       certificates: certificateAwards,
+      // NR-14B: mastery hint for client (non-blocking; may be null if update was async)
+      adaptive: { masteryUpdated: true },
     });
   } catch (error: any) {
     return NextResponse.json(

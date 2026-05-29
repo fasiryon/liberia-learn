@@ -15,6 +15,7 @@ import { parseToSlides } from "@/lib/lessons/parseToSlides";
 import { enqueueOfflineRequest } from "@/lib/offline-queue";
 import { SaveForOfflineButton } from "@/components/SaveForOfflineButton";
 import { LessonAudioPlayer, type LessonAudioPart } from "@/components/student/LessonAudioPlayer";
+import { StuckHelper } from "@/components/adaptive/StuckHelper";
 import type { LabId } from "@/lib/labs/types";
 import type { PseudoLab, SimulationDefinition } from "@/lib/schemas/labSimulation";
 
@@ -1205,6 +1206,17 @@ export default function LessonDeliveryClient({ lessonId }: { lessonId: string })
 
         <div id="lesson-quiz">
           <LessonQuizPanel lessonId={lesson.id} lessonStatus={lesson.status} />
+          {/* NR-14B: Adaptive stuck detection — mounts alongside the quiz panel */}
+          <StuckHelper
+            lessonId={lesson.contentId}
+            lessonTitle={lesson.title}
+            subject={lesson.subject}
+            strandKey={lesson.subject.toLowerCase()}
+            grade={lesson.grade}
+            gradeBand={gradeToTutorBand(lesson.grade) === "lower" ? "lower" : "upper"}
+            lessonBody={lesson.body ?? ""}
+            onAiTutor={aiTutorEnabled ? () => setHelpPanelOpen(true) : undefined}
+          />
         </div>
 
         <div className="sticky bottom-3 z-10">

@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { MasteryBadge } from "@/components/adaptive/MasteryBadge";
 
 type SubjectProgressSummary = {
   subject: string;
@@ -131,10 +132,28 @@ function activityLabel(type: ProgressActivity["type"]) {
   }
 }
 
+type AdaptiveMasteryRow = {
+  skillKey: string;
+  score: number;
+  consecutiveCorrect: number;
+  masteredAt: string | null;
+};
+
 export default function StudentProgressDashboard() {
   const [summary, setSummary] = useState<StudentProgressSummary>(EMPTY_SUMMARY);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [adaptiveMastery, setAdaptiveMastery] = useState<AdaptiveMasteryRow[]>([]);
+
+  // NR-14B: Load adaptive mastery records
+  useEffect(() => {
+    fetch("/api/adaptive/mastery", { cache: "no-store" })
+      .then((r) => r.json())
+      .then((data) => {
+        if (Array.isArray(data?.records)) setAdaptiveMastery(data.records);
+      })
+      .catch(() => null); // non-critical
+  }, []);
 
   useEffect(() => {
     fetch("/api/student/progress", { cache: "no-store" })
@@ -403,6 +422,41 @@ export default function StudentProgressDashboard() {
                 </div>
               </div>
             </section>
+
+            {/* NR-14B: Adaptive mastery per lesson unit */}
+            {adaptiveMastery.length > 0 && (
+              <section className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/80 p-5 sm:p-6">
+                <h2 className="text-lg font-semibold text-[var(--ll-text)]">Lesson Mastery</h2>
+                <p className="mt-1 text-sm text-[var(--ll-text-muted)]">
+                  Rolling mastery score per lesson unit — earned through quizzes.
+                </p>
+                <div className="mt-4 flex flex-wrap gap-3">
+                  {adaptiveMastery.slice(0, 12).map((row) => {
+                    // skillKey format: SUBJECT:GN:unitId — derive a readable label
+                    const parts = row.skillKey.split(":");
+                    const label = parts.slice(0, 2).join(" G").replace("G", "G") + (parts[1] ? "" : "");
+                    const subject = parts[0] ?? "";
+                    const grade = parts[1]?.replace("G", "") ?? "";
+                    const readableLabel = `${subject} G${grade}`;
+                    return (
+                      <div
+                        key={row.skillKey}
+                        className="flex items-center gap-2 rounded-lg border border-[var(--ll-border)] bg-[var(--ll-bg)] px-3 py-2"
+                        title={row.skillKey}
+                      >
+                        <MasteryBadge
+                          score={row.score}
+                          mastered={row.masteredAt !== null}
+                          masteredAt={row.masteredAt}
+                          size="sm"
+                        />
+                        <span className="text-xs text-[var(--ll-text-muted)]">{readableLabel}</span>
+                      </div>
+                    );
+                  })}
+                </div>
+              </section>
+            )}
 
             <section className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/80 p-5 sm:p-6">
               <h2 className="text-lg font-semibold text-[var(--ll-text)]">Weakness Signals</h2>
