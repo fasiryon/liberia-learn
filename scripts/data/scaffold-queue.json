@@ -1,0 +1,1426 @@
+{
+  "mode": "heuristic",
+  "builtAt": "2026-05-29T16:14:17.977Z",
+  "queue": [
+    {
+      "lessonId": "cmndz0uf70000voxgnwxd68ys",
+      "contentId": "math-g4-1-number-sense-and-place-value-foundations",
+      "title": "Number Sense and Place Value: Foundations",
+      "grade": 4,
+      "subject": "MATH",
+      "unitId": "math-g4-1-number-sense-and-place-value",
+      "orderInUnit": 1,
+      "priority": 142
+    },
+    {
+      "lessonId": "cmndz0vx90005voxgobify8xu",
+      "contentId": "math-g4-2-operations-and-mental-strategies-foundations",
+      "title": "Operations and Mental Strategies: Foundations",
+      "grade": 4,
+      "subject": "MATH",
+      "unitId": "math-g4-2-operations-and-mental-strategies",
+      "orderInUnit": 1,
+      "priority": 141
+    },
+    {
+      "lessonId": "cmndz0wvg000avoxgasrbpc3g",
+      "contentId": "math-g4-3-fractions-decimals-and-ratios-foundations",
+      "title": "Fractions, Decimals, and Ratios: Foundations",
+      "grade": 4,
+      "subject": "MATH",
+      "unitId": "math-g4-3-fractions-decimals-and-ratios",
+      "orderInUnit": 1,
+      "priority": 140
+    },
+    {
+      "lessonId": "cmndz0xuw000fvoxgeb0afrcz",
+      "contentId": "math-g4-4-measurement-and-estimation-foundations",
+      "title": "Measurement and Estimation: Foundations",
+      "grade": 4,
+      "subject": "MATH",
+      "unitId": "math-g4-4-measurement-and-estimation",
+      "orderInUnit": 1,
+      "priority": 139
+    },
+    {
+      "lessonId": "cmndz0yvt000kvoxg4yqm4ehy",
+      "contentId": "math-g4-5-geometry-and-spatial-thinking-foundations",
+      "title": "Geometry and Spatial Thinking: Foundations",
+      "grade": 4,
+      "subject": "MATH",
+      "unitId": "math-g4-5-geometry-and-spatial-thinking",
+      "orderInUnit": 1,
+      "priority": 138
+    },
+    {
+      "lessonId": "cmndz0zv4000pvoxgro20qm0a",
+      "contentId": "math-g4-6-data-and-representation-foundations",
+      "title": "Data and Representation: Foundations",
+      "grade": 4,
+      "subject": "MATH",
+      "unitId": "math-g4-6-data-and-representation",
+      "orderInUnit": 1,
+      "priority": 137
+    },
+    {
+      "lessonId": "cmndz10v1000uvoxgckr4fdzx",
+      "contentId": "math-g4-7-patterns-algebra-and-functions-foundations",
+      "title": "Patterns, Algebra, and Functions: Foundations",
+      "grade": 4,
+      "subject": "MATH",
+      "unitId": "math-g4-7-patterns-algebra-and-functions",
+      "orderInUnit": 1,
+      "priority": 136
+    },
+    {
+      "lessonId": "cmndz11t9000zvoxgy9fpfak4",
+      "contentId": "math-g4-8-problem-solving-and-review-foundations",
+      "title": "Problem Solving and Review: Foundations",
+      "grade": 4,
+      "subject": "MATH",
+      "unitId": "math-g4-8-problem-solving-and-review",
+      "orderInUnit": 1,
+      "priority": 135
+    },
+    {
+      "lessonId": "cmoeadcl101f4vor40e6mymgx",
+      "contentId": "math-g5-1-number-sense-and-place-value-teacher-modeling",
+      "title": "Number Sense and Place Value: Teacher Modeling",
+      "grade": 5,
+      "subject": "MATH",
+      "unitId": "math-g5-1-number-sense-and-place-value",
+      "orderInUnit": 2,
+      "priority": 134
+    },
+    {
+      "lessonId": "cmoeade0701f7vor4mcwr2f4d",
+      "contentId": "math-g5-2-operations-and-mental-strategies-foundations",
+      "title": "Operations and Mental Strategies: Foundations",
+      "grade": 5,
+      "subject": "MATH",
+      "unitId": "math-g5-2-operations-and-mental-strategies",
+      "orderInUnit": 1,
+      "priority": 133
+    },
+    {
+      "lessonId": "cmoeadfzb01fcvor44g67gz52",
+      "contentId": "math-g5-3-fractions-decimals-and-ratios-foundations",
+      "title": "Fractions, Decimals, and Ratios: Foundations",
+      "grade": 5,
+      "subject": "MATH",
+      "unitId": "math-g5-3-fractions-decimals-and-ratios",
+      "orderInUnit": 1,
+      "priority": 132
+    },
+    {
+      "lessonId": "cmoeadhyh01fhvor41c3rgz1h",
+      "contentId": "math-g5-4-measurement-and-estimation-teacher-modeling",
+      "title": "Measurement and Estimation: Teacher Modeling",
+      "grade": 5,
+      "subject": "MATH",
+      "unitId": "math-g5-4-measurement-and-estimation",
+      "orderInUnit": 2,
+      "priority": 131
+    },
+    {
+      "lessonId": "cmoeadj8001fkvor4cjdzq2pq",
+      "contentId": "math-g5-5-geometry-and-spatial-thinking-foundations",
+      "title": "Geometry and Spatial Thinking: Foundations",
+      "grade": 5,
+      "subject": "MATH",
+      "unitId": "math-g5-5-geometry-and-spatial-thinking",
+      "orderInUnit": 1,
+      "priority": 130
+    },
+    {
+      "lessonId": "cmoeadl5r01fpvor40ymu6q4x",
+      "contentId": "math-g5-6-data-and-representation-foundations",
+      "title": "Data and Representation: Foundations",
+      "grade": 5,
+      "subject": "MATH",
+      "unitId": "math-g5-6-data-and-representation",
+      "orderInUnit": 1,
+      "priority": 129
+    },
+    {
+      "lessonId": "cmoeadn3b01fuvor4nf3j25qe",
+      "contentId": "math-g5-7-patterns-algebra-and-functions-foundations",
+      "title": "Patterns, Algebra, and Functions: Foundations",
+      "grade": 5,
+      "subject": "MATH",
+      "unitId": "math-g5-7-patterns-algebra-and-functions",
+      "orderInUnit": 1,
+      "priority": 128
+    },
+    {
+      "lessonId": "cmoeadp2g01fzvor40m6qr3q1",
+      "contentId": "math-g5-8-problem-solving-and-review-foundations",
+      "title": "Problem Solving and Review: Foundations",
+      "grade": 5,
+      "subject": "MATH",
+      "unitId": "math-g5-8-problem-solving-and-review",
+      "orderInUnit": 1,
+      "priority": 127
+    },
+    {
+      "lessonId": "cmn9e7zkp0005voiwaek3ya28",
+      "contentId": "math-g5-addition-and-subtraction-reasoning-foundations",
+      "title": "Addition and Subtraction Reasoning: Foundations",
+      "grade": 5,
+      "subject": "MATH",
+      "unitId": "math-g5-addition-and-subtraction-reasoning",
+      "orderInUnit": 1,
+      "priority": 126
+    },
+    {
+      "lessonId": "cmn9jd5hf000gvotgbioazkil",
+      "contentId": "math-g5-algebraic-patterns-and-expressions-foundations",
+      "title": "Algebraic Patterns and Expressions: Foundations",
+      "grade": 5,
+      "subject": "MATH",
+      "unitId": "math-g5-algebraic-patterns-and-expressions",
+      "orderInUnit": 1,
+      "priority": 125
+    },
+    {
+      "lessonId": "cmn9jcdqb000dvotgyldqtgry",
+      "contentId": "math-g5-data-representation-and-interpretation-foundations",
+      "title": "Data Representation and Interpretation: Foundations",
+      "grade": 5,
+      "subject": "MATH",
+      "unitId": "math-g5-data-representation-and-interpretation",
+      "orderInUnit": 1,
+      "priority": 124
+    },
+    {
+      "lessonId": "cmn9j99gf0001votgezoaihtu",
+      "contentId": "math-g5-decimals-and-percentages-foundations",
+      "title": "Decimals and Percentages: Foundations",
+      "grade": 5,
+      "subject": "MATH",
+      "unitId": "math-g5-decimals-and-percentages",
+      "orderInUnit": 1,
+      "priority": 123
+    },
+    {
+      "lessonId": "cmn9jesqx000mvotgxzzb4nji",
+      "contentId": "math-g5-exam-strategy-and-mathematical-communication-foundations",
+      "title": "Mathematical Strategies for Real-World Business Challenges",
+      "grade": 5,
+      "subject": "MATH",
+      "unitId": "math-g5-exam-strategy-and-mathematical-communication",
+      "orderInUnit": 1,
+      "priority": 122
+    },
+    {
+      "lessonId": "cmn9eawbn000bvoiws7jzhuih",
+      "contentId": "math-g5-fractions-and-equivalence-foundations",
+      "title": "Understanding Fractions Through Real-World Scenarios",
+      "grade": 5,
+      "subject": "MATH",
+      "unitId": "math-g5-fractions-and-equivalence",
+      "orderInUnit": 1,
+      "priority": 121
+    },
+    {
+      "lessonId": "cmn9jbm36000avotggppgxdxt",
+      "contentId": "math-g5-geometry-and-spatial-reasoning-foundations",
+      "title": "Geometry and Spatial Reasoning: Foundations",
+      "grade": 5,
+      "subject": "MATH",
+      "unitId": "math-g5-geometry-and-spatial-reasoning",
+      "orderInUnit": 1,
+      "priority": 120
+    },
+    {
+      "lessonId": "cmn9jav8m0007votguh2cbhdx",
+      "contentId": "math-g5-measurement-and-estimation-foundations",
+      "title": "Measurement and Estimation in Real-Life Scenarios",
+      "grade": 5,
+      "subject": "MATH",
+      "unitId": "math-g5-measurement-and-estimation",
+      "orderInUnit": 1,
+      "priority": 119
+    },
+    {
+      "lessonId": "cmn9e9j830008voiw8czt6yde",
+      "contentId": "math-g5-multiplication-and-division-strategies-foundations",
+      "title": "Multiplication and Division Strategies: Foundations",
+      "grade": 5,
+      "subject": "MATH",
+      "unitId": "math-g5-multiplication-and-division-strategies",
+      "orderInUnit": 1,
+      "priority": 118
+    },
+    {
+      "lessonId": "cmn9e6dji0002voiwpuljubk5",
+      "contentId": "math-g5-number-sense-and-place-value-foundations",
+      "title": "Understanding Number Sense and Place Value in Real Life",
+      "grade": 5,
+      "subject": "MATH",
+      "unitId": "math-g5-number-sense-and-place-value",
+      "orderInUnit": 1,
+      "priority": 117
+    },
+    {
+      "lessonId": "cmn9je086000jvotg66fe075t",
+      "contentId": "math-g5-problem-solving-in-context-foundations",
+      "title": "Problem Solving in Context: Foundations",
+      "grade": 5,
+      "subject": "MATH",
+      "unitId": "math-g5-problem-solving-in-context",
+      "orderInUnit": 1,
+      "priority": 116
+    },
+    {
+      "lessonId": "cmn9ja1pc0004votgwq29yxe9",
+      "contentId": "math-g5-ratio-and-proportion-foundations",
+      "title": "Ratio and Proportion: Foundations",
+      "grade": 5,
+      "subject": "MATH",
+      "unitId": "math-g5-ratio-and-proportion",
+      "orderInUnit": 1,
+      "priority": 115
+    },
+    {
+      "lessonId": "cmoea9ed10168vor4q8bm8jc8",
+      "contentId": "math-g6-1-number-sense-and-place-value-foundations",
+      "title": "Number Sense and Place Value: Foundations",
+      "grade": 6,
+      "subject": "MATH",
+      "unitId": "math-g6-1-number-sense-and-place-value",
+      "orderInUnit": 1,
+      "priority": 114
+    },
+    {
+      "lessonId": "cmoea9gc5016dvor4zq7k4f1h",
+      "contentId": "math-g6-2-operations-and-mental-strategies-foundations",
+      "title": "Operations and Mental Strategies: Foundations",
+      "grade": 6,
+      "subject": "MATH",
+      "unitId": "math-g6-2-operations-and-mental-strategies",
+      "orderInUnit": 1,
+      "priority": 113
+    },
+    {
+      "lessonId": "cmoea9iba016ivor4deja6w2x",
+      "contentId": "math-g6-3-fractions-decimals-and-ratios-foundations",
+      "title": "Fractions, Decimals, and Ratios: Foundations",
+      "grade": 6,
+      "subject": "MATH",
+      "unitId": "math-g6-3-fractions-decimals-and-ratios",
+      "orderInUnit": 1,
+      "priority": 112
+    },
+    {
+      "lessonId": "cmoea9kae016nvor4461wni00",
+      "contentId": "math-g6-4-measurement-and-estimation-foundations",
+      "title": "Measurement and Estimation: Foundations",
+      "grade": 6,
+      "subject": "MATH",
+      "unitId": "math-g6-4-measurement-and-estimation",
+      "orderInUnit": 1,
+      "priority": 111
+    },
+    {
+      "lessonId": "cmoea9m9i016svor4ga8go9ho",
+      "contentId": "math-g6-5-geometry-and-spatial-thinking-foundations",
+      "title": "Geometry and Spatial Thinking: Foundations",
+      "grade": 6,
+      "subject": "MATH",
+      "unitId": "math-g6-5-geometry-and-spatial-thinking",
+      "orderInUnit": 1,
+      "priority": 110
+    },
+    {
+      "lessonId": "cmoea9o8l016xvor4hpijxpsy",
+      "contentId": "math-g6-6-data-and-representation-foundations",
+      "title": "Data and Representation: Foundations",
+      "grade": 6,
+      "subject": "MATH",
+      "unitId": "math-g6-6-data-and-representation",
+      "orderInUnit": 1,
+      "priority": 109
+    },
+    {
+      "lessonId": "cmoea9qak0172vor49foxsdj5",
+      "contentId": "math-g6-7-patterns-algebra-and-functions-foundations",
+      "title": "Patterns, Algebra, and Functions: Foundations",
+      "grade": 6,
+      "subject": "MATH",
+      "unitId": "math-g6-7-patterns-algebra-and-functions",
+      "orderInUnit": 1,
+      "priority": 108
+    },
+    {
+      "lessonId": "cmoea9s9n0177vor4qbe2g9p0",
+      "contentId": "math-g6-8-problem-solving-and-review-foundations",
+      "title": "Problem Solving and Review: Foundations",
+      "grade": 6,
+      "subject": "MATH",
+      "unitId": "math-g6-8-problem-solving-and-review",
+      "orderInUnit": 1,
+      "priority": 107
+    },
+    {
+      "lessonId": "cmoeaemvu01i6vor4u3zch5hq",
+      "contentId": "math-g7-1-number-sense-and-place-value-foundations",
+      "title": "Number Sense and Place Value: Foundations",
+      "grade": 7,
+      "subject": "MATH",
+      "unitId": "math-g7-1-number-sense-and-place-value",
+      "orderInUnit": 1,
+      "priority": 106
+    },
+    {
+      "lessonId": "cmoeaeov001ibvor4a1h43u08",
+      "contentId": "math-g7-2-operations-and-mental-strategies-foundations",
+      "title": "Operations and Mental Strategies: Foundations",
+      "grade": 7,
+      "subject": "MATH",
+      "unitId": "math-g7-2-operations-and-mental-strategies",
+      "orderInUnit": 1,
+      "priority": 105
+    },
+    {
+      "lessonId": "cmoeaeqx101igvor4ydr3plq3",
+      "contentId": "math-g7-3-fractions-decimals-and-ratios-foundations",
+      "title": "Fractions, Decimals, and Ratios: Foundations",
+      "grade": 7,
+      "subject": "MATH",
+      "unitId": "math-g7-3-fractions-decimals-and-ratios",
+      "orderInUnit": 1,
+      "priority": 104
+    },
+    {
+      "lessonId": "cmoeaesw001ilvor4ystxlyvi",
+      "contentId": "math-g7-4-measurement-and-estimation-teacher-modeling",
+      "title": "Measurement and Estimation: Teacher Modeling",
+      "grade": 7,
+      "subject": "MATH",
+      "unitId": "math-g7-4-measurement-and-estimation",
+      "orderInUnit": 2,
+      "priority": 103
+    },
+    {
+      "lessonId": "cmoeaeu2o01iovor44gao5eup",
+      "contentId": "math-g7-5-geometry-and-spatial-thinking-foundations",
+      "title": "Geometry and Spatial Thinking: Foundations",
+      "grade": 7,
+      "subject": "MATH",
+      "unitId": "math-g7-5-geometry-and-spatial-thinking",
+      "orderInUnit": 1,
+      "priority": 102
+    },
+    {
+      "lessonId": "cmoeaevz001itvor4lit1rvl2",
+      "contentId": "math-g7-6-data-and-representation-foundations",
+      "title": "Data and Representation: Foundations",
+      "grade": 7,
+      "subject": "MATH",
+      "unitId": "math-g7-6-data-and-representation",
+      "orderInUnit": 1,
+      "priority": 101
+    },
+    {
+      "lessonId": "cmoeaexy201iyvor4lma0p93l",
+      "contentId": "math-g7-7-patterns-algebra-and-functions-foundations",
+      "title": "Patterns, Algebra, and Functions: Foundations",
+      "grade": 7,
+      "subject": "MATH",
+      "unitId": "math-g7-7-patterns-algebra-and-functions",
+      "orderInUnit": 1,
+      "priority": 100
+    },
+    {
+      "lessonId": "cmoeaezx701j3vor477s5mh7b",
+      "contentId": "math-g7-8-problem-solving-and-review-foundations",
+      "title": "Problem Solving and Review: Foundations",
+      "grade": 7,
+      "subject": "MATH",
+      "unitId": "math-g7-8-problem-solving-and-review",
+      "orderInUnit": 1,
+      "priority": 99
+    },
+    {
+      "lessonId": "cmn9jyigr002mvotgenqzpe38",
+      "contentId": "math-g7-addition-and-subtraction-reasoning-foundations",
+      "title": "Understanding Addition and Subtraction in Real-Life Scenarios",
+      "grade": 7,
+      "subject": "MATH",
+      "unitId": "math-g7-addition-and-subtraction-reasoning",
+      "orderInUnit": 1,
+      "priority": 98
+    },
+    {
+      "lessonId": "cmn9k50ul003avotgx1khuo6c",
+      "contentId": "math-g7-algebraic-patterns-and-expressions-foundations",
+      "title": "Exploring Algebraic Patterns and Expressions through Real-World Problems",
+      "grade": 7,
+      "subject": "MATH",
+      "unitId": "math-g7-algebraic-patterns-and-expressions",
+      "orderInUnit": 1,
+      "priority": 97
+    },
+    {
+      "lessonId": "cmn9k46h40037votg8762gg3n",
+      "contentId": "math-g7-data-representation-and-interpretation-foundations",
+      "title": "Understanding Data Representation and Interpretation",
+      "grade": 7,
+      "subject": "MATH",
+      "unitId": "math-g7-data-representation-and-interpretation",
+      "orderInUnit": 1,
+      "priority": 96
+    },
+    {
+      "lessonId": "cmn9k10ww002vvotge2xf3eh8",
+      "contentId": "math-g7-decimals-and-percentages-foundations",
+      "title": "Understanding Decimals and Percentages through Budgeting",
+      "grade": 7,
+      "subject": "MATH",
+      "unitId": "math-g7-decimals-and-percentages",
+      "orderInUnit": 1,
+      "priority": 95
+    },
+    {
+      "lessonId": "cmn9k6k6k003gvotgnlvl9nxn",
+      "contentId": "math-g7-exam-strategy-and-mathematical-communication-foundations",
+      "title": "Math Communication and Budgeting Skills for Real-World Success",
+      "grade": 7,
+      "subject": "MATH",
+      "unitId": "math-g7-exam-strategy-and-mathematical-communication",
+      "orderInUnit": 1,
+      "priority": 94
+    },
+    {
+      "lessonId": "cmn9k07y1002svotgshlc1ibc",
+      "contentId": "math-g7-fractions-and-equivalence-foundations",
+      "title": "Understanding Fractions Through Real-World Applications",
+      "grade": 7,
+      "subject": "MATH",
+      "unitId": "math-g7-fractions-and-equivalence",
+      "orderInUnit": 1,
+      "priority": 93
+    },
+    {
+      "lessonId": "cmn97m3e70000vo88yol3biug",
+      "contentId": "math-g7-equivalent-fractions-foundations",
+      "title": "Understanding and Identifying Equivalent Fractions",
+      "grade": 7,
+      "subject": "MATH",
+      "unitId": "math-g7-fractions-ratios",
+      "orderInUnit": 1,
+      "priority": 92
+    },
+    {
+      "lessonId": "cmn9k3em00034votgqiqp2neq",
+      "contentId": "math-g7-geometry-and-spatial-reasoning-foundations",
+      "title": "Calculating the Area of Geometric Shapes in Real-World Applications",
+      "grade": 7,
+      "subject": "MATH",
+      "unitId": "math-g7-geometry-and-spatial-reasoning",
+      "orderInUnit": 1,
+      "priority": 91
+    },
+    {
+      "lessonId": "cmn9k2l6f0031votgglcz68ep",
+      "contentId": "math-g7-measurement-and-estimation-foundations",
+      "title": "Understanding Measurement and Estimation in Daily Life",
+      "grade": 7,
+      "subject": "MATH",
+      "unitId": "math-g7-measurement-and-estimation",
+      "orderInUnit": 1,
+      "priority": 90
+    },
+    {
+      "lessonId": "cmn9jzbki002pvotgmyf69fik",
+      "contentId": "math-g7-multiplication-and-division-strategies-foundations",
+      "title": "Understanding Multiplication and Division Through Real-World Scenarios",
+      "grade": 7,
+      "subject": "MATH",
+      "unitId": "math-g7-multiplication-and-division-strategies",
+      "orderInUnit": 1,
+      "priority": 89
+    },
+    {
+      "lessonId": "cmn9k5srz003dvotgun2pdldr",
+      "contentId": "math-g7-problem-solving-in-context-foundations",
+      "title": "Real-World Money Management with Boima, Fatu, and Pewee",
+      "grade": 7,
+      "subject": "MATH",
+      "unitId": "math-g7-problem-solving-in-context",
+      "orderInUnit": 1,
+      "priority": 88
+    },
+    {
+      "lessonId": "cmn9k1u01002yvotg4wvy22fd",
+      "contentId": "math-g7-ratio-and-proportion-foundations",
+      "title": "Understanding Ratios and Proportions through Real-Life Scenarios",
+      "grade": 7,
+      "subject": "MATH",
+      "unitId": "math-g7-ratio-and-proportion",
+      "orderInUnit": 1,
+      "priority": 87
+    },
+    {
+      "lessonId": "cmouh1xxz007svoxccsp2b9qi",
+      "contentId": "draft-phase6-g7-math-w32-d1-core",
+      "title": "Budgeting for Groceries: A Real-World Mathematical Challenge",
+      "grade": 7,
+      "subject": "MATH",
+      "unitId": "phase6-g7-math",
+      "orderInUnit": 1,
+      "priority": 86
+    },
+    {
+      "lessonId": "cmoeab8yw01aovor4nfv9g3k4",
+      "contentId": "math-g8-1-number-sense-and-place-value-foundations",
+      "title": "Number Sense and Place Value: Foundations",
+      "grade": 8,
+      "subject": "MATH",
+      "unitId": "math-g8-1-number-sense-and-place-value",
+      "orderInUnit": 1,
+      "priority": 85
+    },
+    {
+      "lessonId": "cmoeabay001atvor44e2pr4hw",
+      "contentId": "math-g8-2-operations-and-mental-strategies-foundations",
+      "title": "Operations and Mental Strategies: Foundations",
+      "grade": 8,
+      "subject": "MATH",
+      "unitId": "math-g8-2-operations-and-mental-strategies",
+      "orderInUnit": 1,
+      "priority": 84
+    },
+    {
+      "lessonId": "cmoeabcx401ayvor4t1fey0z7",
+      "contentId": "math-g8-3-fractions-decimals-and-ratios-foundations",
+      "title": "Fractions, Decimals, and Ratios: Foundations",
+      "grade": 8,
+      "subject": "MATH",
+      "unitId": "math-g8-3-fractions-decimals-and-ratios",
+      "orderInUnit": 1,
+      "priority": 83
+    },
+    {
+      "lessonId": "cmoeabetf01b3vor46jdjp28z",
+      "contentId": "math-g8-4-measurement-and-estimation-foundations",
+      "title": "Measurement and Estimation: Foundations",
+      "grade": 8,
+      "subject": "MATH",
+      "unitId": "math-g8-4-measurement-and-estimation",
+      "orderInUnit": 1,
+      "priority": 82
+    },
+    {
+      "lessonId": "cmoeabgsi01b8vor4rhnwg3vy",
+      "contentId": "math-g8-5-geometry-and-spatial-thinking-foundations",
+      "title": "Geometry and Spatial Thinking: Foundations",
+      "grade": 8,
+      "subject": "MATH",
+      "unitId": "math-g8-5-geometry-and-spatial-thinking",
+      "orderInUnit": 1,
+      "priority": 81
+    },
+    {
+      "lessonId": "cmoeabirl01bdvor4l7z3cxqu",
+      "contentId": "math-g8-6-data-and-representation-foundations",
+      "title": "Data and Representation: Foundations",
+      "grade": 8,
+      "subject": "MATH",
+      "unitId": "math-g8-6-data-and-representation",
+      "orderInUnit": 1,
+      "priority": 80
+    },
+    {
+      "lessonId": "cmoeabktl01bivor4340e7n55",
+      "contentId": "math-g8-7-patterns-algebra-and-functions-foundations",
+      "title": "Patterns, Algebra, and Functions: Foundations",
+      "grade": 8,
+      "subject": "MATH",
+      "unitId": "math-g8-7-patterns-algebra-and-functions",
+      "orderInUnit": 1,
+      "priority": 79
+    },
+    {
+      "lessonId": "cmoeabmrw01bnvor48e80dyli",
+      "contentId": "math-g8-8-problem-solving-and-review-foundations",
+      "title": "Problem Solving and Review: Foundations",
+      "grade": 8,
+      "subject": "MATH",
+      "unitId": "math-g8-8-problem-solving-and-review",
+      "orderInUnit": 1,
+      "priority": 78
+    },
+    {
+      "lessonId": "cmoe9yue700govor4xogfka28",
+      "contentId": "math-g9-1-number-sense-and-place-value-foundations",
+      "title": "Number Sense and Place Value: Foundations",
+      "grade": 9,
+      "subject": "MATH",
+      "unitId": "math-g9-1-number-sense-and-place-value",
+      "orderInUnit": 1,
+      "priority": 77
+    },
+    {
+      "lessonId": "cmoe9yw7l00gtvor4pr3iyobm",
+      "contentId": "math-g9-2-operations-and-mental-strategies-foundations",
+      "title": "Operations and Mental Strategies: Foundations",
+      "grade": 9,
+      "subject": "MATH",
+      "unitId": "math-g9-2-operations-and-mental-strategies",
+      "orderInUnit": 1,
+      "priority": 76
+    },
+    {
+      "lessonId": "cmoe9yy3v00gyvor4ti5fs58f",
+      "contentId": "math-g9-3-fractions-decimals-and-ratios-foundations",
+      "title": "Fractions, Decimals, and Ratios: Foundations",
+      "grade": 9,
+      "subject": "MATH",
+      "unitId": "math-g9-3-fractions-decimals-and-ratios",
+      "orderInUnit": 1,
+      "priority": 75
+    },
+    {
+      "lessonId": "cmoe9z03100h3vor4zy7kkjs6",
+      "contentId": "math-g9-4-measurement-and-estimation-foundations",
+      "title": "Measurement and Estimation: Foundations",
+      "grade": 9,
+      "subject": "MATH",
+      "unitId": "math-g9-4-measurement-and-estimation",
+      "orderInUnit": 1,
+      "priority": 74
+    },
+    {
+      "lessonId": "cmoe9z22300h8vor4vxqocr06",
+      "contentId": "math-g9-5-geometry-and-spatial-thinking-foundations",
+      "title": "Geometry and Spatial Thinking: Foundations",
+      "grade": 9,
+      "subject": "MATH",
+      "unitId": "math-g9-5-geometry-and-spatial-thinking",
+      "orderInUnit": 1,
+      "priority": 73
+    },
+    {
+      "lessonId": "cmoe9z41900hdvor4b9box04b",
+      "contentId": "math-g9-6-data-and-representation-foundations",
+      "title": "Data and Representation: Foundations",
+      "grade": 9,
+      "subject": "MATH",
+      "unitId": "math-g9-6-data-and-representation",
+      "orderInUnit": 1,
+      "priority": 72
+    },
+    {
+      "lessonId": "cmoe9z5xh00hivor4l3h043zx",
+      "contentId": "math-g9-7-patterns-algebra-and-functions-foundations",
+      "title": "Patterns, Algebra, and Functions: Foundations",
+      "grade": 9,
+      "subject": "MATH",
+      "unitId": "math-g9-7-patterns-algebra-and-functions",
+      "orderInUnit": 1,
+      "priority": 71
+    },
+    {
+      "lessonId": "cmoe9z7wl00hnvor4ueag3dij",
+      "contentId": "math-g9-8-problem-solving-and-review-foundations",
+      "title": "Problem Solving and Review: Foundations",
+      "grade": 9,
+      "subject": "MATH",
+      "unitId": "math-g9-8-problem-solving-and-review",
+      "orderInUnit": 1,
+      "priority": 70
+    },
+    {
+      "lessonId": "cmndz0wl70000vowklqyotay4",
+      "contentId": "science-g4-1-observation-and-scientific-thinking-foundations",
+      "title": "Observation and Scientific Thinking: Foundations",
+      "grade": 4,
+      "subject": "SCIENCE",
+      "unitId": "science-g4-1-observation-and-scientific-thinking",
+      "orderInUnit": 1,
+      "priority": 69
+    },
+    {
+      "lessonId": "cmndz0xoh0005vowk20iewugx",
+      "contentId": "science-g4-2-living-things-foundations",
+      "title": "Living Things: Foundations",
+      "grade": 4,
+      "subject": "SCIENCE",
+      "unitId": "science-g4-2-living-things",
+      "orderInUnit": 1,
+      "priority": 68
+    },
+    {
+      "lessonId": "cmndz0yq8000avowkghdszsqr",
+      "contentId": "science-g4-3-human-body-and-health-foundations",
+      "title": "Human Body and Health: Foundations",
+      "grade": 4,
+      "subject": "SCIENCE",
+      "unitId": "science-g4-3-human-body-and-health",
+      "orderInUnit": 1,
+      "priority": 67
+    },
+    {
+      "lessonId": "cmndz0zqa000fvowk0bufnmxi",
+      "contentId": "science-g4-4-matter-and-materials-foundations",
+      "title": "Matter and Materials: Foundations",
+      "grade": 4,
+      "subject": "SCIENCE",
+      "unitId": "science-g4-4-matter-and-materials",
+      "orderInUnit": 1,
+      "priority": 66
+    },
+    {
+      "lessonId": "cmndz10rj000kvowkkdzv1v1g",
+      "contentId": "science-g4-5-energy-light-and-sound-foundations",
+      "title": "Energy, Light, and Sound: Foundations",
+      "grade": 4,
+      "subject": "SCIENCE",
+      "unitId": "science-g4-5-energy-light-and-sound",
+      "orderInUnit": 1,
+      "priority": 65
+    },
+    {
+      "lessonId": "cmndz11s1000pvowk7mjuriwo",
+      "contentId": "science-g4-6-earth-water-and-weather-foundations",
+      "title": "Earth, Water, and Weather: Foundations",
+      "grade": 4,
+      "subject": "SCIENCE",
+      "unitId": "science-g4-6-earth-water-and-weather",
+      "orderInUnit": 1,
+      "priority": 64
+    },
+    {
+      "lessonId": "cmndz12s4000uvowk7elkjujf",
+      "contentId": "science-g4-7-environment-and-sustainability-foundations",
+      "title": "Environment and Sustainability: Foundations",
+      "grade": 4,
+      "subject": "SCIENCE",
+      "unitId": "science-g4-7-environment-and-sustainability",
+      "orderInUnit": 1,
+      "priority": 63
+    },
+    {
+      "lessonId": "cmndz13sx000zvowkikcreueq",
+      "contentId": "science-g4-8-science-review-and-application-foundations",
+      "title": "Science Review and Application: Foundations",
+      "grade": 4,
+      "subject": "SCIENCE",
+      "unitId": "science-g4-8-science-review-and-application",
+      "orderInUnit": 1,
+      "priority": 62
+    },
+    {
+      "lessonId": "cmoeae8fb01h8vor4oxg5h0fz",
+      "contentId": "science-g5-1-observation-and-scientific-thinking-foundations",
+      "title": "Observation and Scientific Thinking: Foundations",
+      "grade": 5,
+      "subject": "SCIENCE",
+      "unitId": "science-g5-1-observation-and-scientific-thinking",
+      "orderInUnit": 1,
+      "priority": 61
+    },
+    {
+      "lessonId": "cmoeaeaef01hdvor4h065ufw1",
+      "contentId": "science-g5-2-living-things-foundations",
+      "title": "Living Things: Foundations",
+      "grade": 5,
+      "subject": "SCIENCE",
+      "unitId": "science-g5-2-living-things",
+      "orderInUnit": 1,
+      "priority": 60
+    },
+    {
+      "lessonId": "cmoeaecdk01hivor4mysct3da",
+      "contentId": "science-g5-3-human-body-and-health-teacher-modeling",
+      "title": "Human Body and Health: Teacher Modeling",
+      "grade": 5,
+      "subject": "SCIENCE",
+      "unitId": "science-g5-3-human-body-and-health",
+      "orderInUnit": 2,
+      "priority": 59
+    },
+    {
+      "lessonId": "cmoeaedhe01hlvor4sexa7g3i",
+      "contentId": "science-g5-4-matter-and-materials-teacher-modeling",
+      "title": "Matter and Materials: Teacher Modeling",
+      "grade": 5,
+      "subject": "SCIENCE",
+      "unitId": "science-g5-4-matter-and-materials",
+      "orderInUnit": 2,
+      "priority": 58
+    },
+    {
+      "lessonId": "cmoeaeeo101hovor45wmlx4ig",
+      "contentId": "science-g5-5-energy-light-and-sound-teacher-modeling",
+      "title": "Energy, Light, and Sound: Teacher Modeling",
+      "grade": 5,
+      "subject": "SCIENCE",
+      "unitId": "science-g5-5-energy-light-and-sound",
+      "orderInUnit": 2,
+      "priority": 57
+    },
+    {
+      "lessonId": "cmoeaefxj01hrvor425xhvwpu",
+      "contentId": "science-g5-6-earth-water-and-weather-foundations",
+      "title": "Earth, Water, and Weather: Foundations",
+      "grade": 5,
+      "subject": "SCIENCE",
+      "unitId": "science-g5-6-earth-water-and-weather",
+      "orderInUnit": 1,
+      "priority": 56
+    },
+    {
+      "lessonId": "cmoeaei2b01hwvor4ihocd7hh",
+      "contentId": "science-g5-7-environment-and-sustainability-foundations",
+      "title": "Environment and Sustainability: Foundations",
+      "grade": 5,
+      "subject": "SCIENCE",
+      "unitId": "science-g5-7-environment-and-sustainability",
+      "orderInUnit": 1,
+      "priority": 55
+    },
+    {
+      "lessonId": "cmoeaek4b01i1vor49js4sljd",
+      "contentId": "science-g5-8-science-review-and-application-foundations",
+      "title": "Science Review and Application: Foundations",
+      "grade": 5,
+      "subject": "SCIENCE",
+      "unitId": "science-g5-8-science-review-and-application",
+      "orderInUnit": 1,
+      "priority": 54
+    },
+    {
+      "lessonId": "cmn9jqjyk001vvotgqyuqq529",
+      "contentId": "science-g5-animal-systems-and-habitats-foundations",
+      "title": "Animal Systems and Habitats: Foundations",
+      "grade": 5,
+      "subject": "SCIENCE",
+      "unitId": "science-g5-animal-systems-and-habitats",
+      "orderInUnit": 1,
+      "priority": 53
+    },
+    {
+      "lessonId": "cmn9jw0ap002gvotghjucehqr",
+      "contentId": "science-g5-data-in-science-foundations",
+      "title": "Data in Science: Foundations",
+      "grade": 5,
+      "subject": "SCIENCE",
+      "unitId": "science-g5-data-in-science",
+      "orderInUnit": 1,
+      "priority": 52
+    },
+    {
+      "lessonId": "cmn9jtnrc0027votgxd9yfnn3",
+      "contentId": "science-g5-earth-weather-and-water-foundations",
+      "title": "Earth, Weather, and Water: Foundations",
+      "grade": 5,
+      "subject": "SCIENCE",
+      "unitId": "science-g5-earth-weather-and-water",
+      "orderInUnit": 1,
+      "priority": 51
+    },
+    {
+      "lessonId": "cmn9jv7il002dvotgc9kjbos3",
+      "contentId": "science-g5-ecosystems-and-environment-foundations",
+      "title": "Ecosystems and Environment: Foundations",
+      "grade": 5,
+      "subject": "SCIENCE",
+      "unitId": "science-g5-ecosystems-and-environment",
+      "orderInUnit": 1,
+      "priority": 50
+    },
+    {
+      "lessonId": "cmn9jsvgi0024votg7qa3ky3v",
+      "contentId": "science-g5-energy-light-and-sound-foundations",
+      "title": "Energy, Light, and Sound: Foundations",
+      "grade": 5,
+      "subject": "SCIENCE",
+      "unitId": "science-g5-energy-light-and-sound",
+      "orderInUnit": 1,
+      "priority": 49
+    },
+    {
+      "lessonId": "cmn9js3cv0021votgt9oetefk",
+      "contentId": "science-g5-forces-and-motion-foundations",
+      "title": "Forces and Motion: Foundations",
+      "grade": 5,
+      "subject": "SCIENCE",
+      "unitId": "science-g5-forces-and-motion",
+      "orderInUnit": 1,
+      "priority": 48
+    },
+    {
+      "lessonId": "cmn9jug3f002avotgj2zljy7u",
+      "contentId": "science-g5-human-body-and-health-foundations",
+      "title": "Human Body and Health: Foundations",
+      "grade": 5,
+      "subject": "SCIENCE",
+      "unitId": "science-g5-human-body-and-health",
+      "orderInUnit": 1,
+      "priority": 47
+    },
+    {
+      "lessonId": "cmn9joyd6001pvotgquf5a1k8",
+      "contentId": "science-g5-living-things-and-their-needs-foundations",
+      "title": "Exploring the Needs of Living Things and Their Interconnections",
+      "grade": 5,
+      "subject": "SCIENCE",
+      "unitId": "science-g5-living-things-and-their-needs",
+      "orderInUnit": 1,
+      "priority": 46
+    },
+    {
+      "lessonId": "cmn9jrcd9001yvotgk89wcvkj",
+      "contentId": "science-g5-matter-and-materials-foundations",
+      "title": "Understanding Matter and Materials through Real-World Challenges",
+      "grade": 5,
+      "subject": "SCIENCE",
+      "unitId": "science-g5-matter-and-materials",
+      "orderInUnit": 1,
+      "priority": 45
+    },
+    {
+      "lessonId": "cmn9jprij001svotg78i446zk",
+      "contentId": "science-g5-plant-systems-and-food-making-foundations",
+      "title": "Plant Systems and Food Making: Foundations",
+      "grade": 5,
+      "subject": "SCIENCE",
+      "unitId": "science-g5-plant-systems-and-food-making",
+      "orderInUnit": 1,
+      "priority": 44
+    },
+    {
+      "lessonId": "cmn97m7cl0005vo88xjrxu93s",
+      "contentId": "science-g5-plant-parts-and-jobs",
+      "title": "Plant Parts and Their Jobs",
+      "grade": 5,
+      "subject": "SCIENCE",
+      "unitId": "science-g5-plants-light-food",
+      "orderInUnit": 1,
+      "priority": 43
+    },
+    {
+      "lessonId": "cmn9jxqtz002jvotgy91uc5ox",
+      "contentId": "science-g5-scientific-problem-solving-foundations",
+      "title": "Scientific Problem Solving and Water Pollution in Monrovia",
+      "grade": 5,
+      "subject": "SCIENCE",
+      "unitId": "science-g5-scientific-problem-solving",
+      "orderInUnit": 1,
+      "priority": 42
+    },
+    {
+      "lessonId": "cmoeaabgv018gvor4n351x1go",
+      "contentId": "science-g6-1-observation-and-scientific-thinking-foundations",
+      "title": "Observation and Scientific Thinking: Foundations",
+      "grade": 6,
+      "subject": "SCIENCE",
+      "unitId": "science-g6-1-observation-and-scientific-thinking",
+      "orderInUnit": 1,
+      "priority": 41
+    },
+    {
+      "lessonId": "cmoeaadfy018lvor4bd11evnr",
+      "contentId": "science-g6-2-living-things-foundations",
+      "title": "Living Things: Foundations",
+      "grade": 6,
+      "subject": "SCIENCE",
+      "unitId": "science-g6-2-living-things",
+      "orderInUnit": 1,
+      "priority": 40
+    },
+    {
+      "lessonId": "cmoeaafc9018qvor4s98hac6u",
+      "contentId": "science-g6-3-human-body-and-health-foundations",
+      "title": "Human Body and Health: Foundations",
+      "grade": 6,
+      "subject": "SCIENCE",
+      "unitId": "science-g6-3-human-body-and-health",
+      "orderInUnit": 1,
+      "priority": 39
+    },
+    {
+      "lessonId": "cmoeaahbj018vvor4rt3brhus",
+      "contentId": "science-g6-4-matter-and-materials-foundations",
+      "title": "Matter and Materials: Foundations",
+      "grade": 6,
+      "subject": "SCIENCE",
+      "unitId": "science-g6-4-matter-and-materials",
+      "orderInUnit": 1,
+      "priority": 38
+    },
+    {
+      "lessonId": "cmoeaajag0190vor4xsnh03xg",
+      "contentId": "science-g6-5-energy-light-and-sound-foundations",
+      "title": "Energy, Light, and Sound: Foundations",
+      "grade": 6,
+      "subject": "SCIENCE",
+      "unitId": "science-g6-5-energy-light-and-sound",
+      "orderInUnit": 1,
+      "priority": 37
+    },
+    {
+      "lessonId": "cmoeaal9k0195vor44sk57on2",
+      "contentId": "science-g6-6-earth-water-and-weather-foundations",
+      "title": "Earth, Water, and Weather: Foundations",
+      "grade": 6,
+      "subject": "SCIENCE",
+      "unitId": "science-g6-6-earth-water-and-weather",
+      "orderInUnit": 1,
+      "priority": 36
+    },
+    {
+      "lessonId": "cmoeaan8u019avor40ir0rz13",
+      "contentId": "science-g6-7-environment-and-sustainability-foundations",
+      "title": "Environment and Sustainability: Foundations",
+      "grade": 6,
+      "subject": "SCIENCE",
+      "unitId": "science-g6-7-environment-and-sustainability",
+      "orderInUnit": 1,
+      "priority": 35
+    },
+    {
+      "lessonId": "cmoeaapan019fvor4t2nxnts7",
+      "contentId": "science-g6-8-science-review-and-application-foundations",
+      "title": "Science Review and Application: Foundations",
+      "grade": 6,
+      "subject": "SCIENCE",
+      "unitId": "science-g6-8-science-review-and-application",
+      "orderInUnit": 1,
+      "priority": 34
+    },
+    {
+      "lessonId": "cmox45uzd002qvo6o3v4rd0oc",
+      "contentId": "draft-phase6-g7-science-w30-d1-core",
+      "title": "Expressing Opinions with Reasons in Liberian Contexts",
+      "grade": 7,
+      "subject": "SCIENCE",
+      "unitId": "phase6-g7-science",
+      "orderInUnit": 1,
+      "priority": 33
+    },
+    {
+      "lessonId": "cmoeaf2j101j8vor4zrx8si9v",
+      "contentId": "science-g7-1-observation-and-scientific-thinking-foundations",
+      "title": "Observation and Scientific Thinking: Foundations",
+      "grade": 7,
+      "subject": "SCIENCE",
+      "unitId": "science-g7-1-observation-and-scientific-thinking",
+      "orderInUnit": 1,
+      "priority": 32
+    },
+    {
+      "lessonId": "cmoeaf4gv01jdvor4hmpv8ths",
+      "contentId": "science-g7-2-living-things-foundations",
+      "title": "Living Things: Foundations",
+      "grade": 7,
+      "subject": "SCIENCE",
+      "unitId": "science-g7-2-living-things",
+      "orderInUnit": 1,
+      "priority": 31
+    },
+    {
+      "lessonId": "cmoeaf6eh01jivor4fw7x737s",
+      "contentId": "science-g7-3-human-body-and-health-teacher-modeling",
+      "title": "Human Body and Health: Teacher Modeling",
+      "grade": 7,
+      "subject": "SCIENCE",
+      "unitId": "science-g7-3-human-body-and-health",
+      "orderInUnit": 2,
+      "priority": 30
+    },
+    {
+      "lessonId": "cmoeaf7l401jlvor4kcbqvbtd",
+      "contentId": "science-g7-4-matter-and-materials-teacher-modeling",
+      "title": "Matter and Materials: Teacher Modeling",
+      "grade": 7,
+      "subject": "SCIENCE",
+      "unitId": "science-g7-4-matter-and-materials",
+      "orderInUnit": 2,
+      "priority": 29
+    },
+    {
+      "lessonId": "cmoeaf8rs01jovor4bb3wjwjj",
+      "contentId": "science-g7-5-energy-light-and-sound-teacher-modeling",
+      "title": "Energy, Light, and Sound: Teacher Modeling",
+      "grade": 7,
+      "subject": "SCIENCE",
+      "unitId": "science-g7-5-energy-light-and-sound",
+      "orderInUnit": 2,
+      "priority": 28
+    },
+    {
+      "lessonId": "cmoeaf9yg01jrvor4o96j5wfk",
+      "contentId": "science-g7-6-earth-water-and-weather-foundations",
+      "title": "Earth, Water, and Weather: Foundations",
+      "grade": 7,
+      "subject": "SCIENCE",
+      "unitId": "science-g7-6-earth-water-and-weather",
+      "orderInUnit": 1,
+      "priority": 27
+    },
+    {
+      "lessonId": "cmoeafbxj01jwvor4fqdsfeo9",
+      "contentId": "science-g7-7-environment-and-sustainability-foundations",
+      "title": "Environment and Sustainability: Foundations",
+      "grade": 7,
+      "subject": "SCIENCE",
+      "unitId": "science-g7-7-environment-and-sustainability",
+      "orderInUnit": 1,
+      "priority": 26
+    },
+    {
+      "lessonId": "cmoeafdwn01k1vor4pcyy98xm",
+      "contentId": "science-g7-8-science-review-and-application-foundations",
+      "title": "Science Review and Application: Foundations",
+      "grade": 7,
+      "subject": "SCIENCE",
+      "unitId": "science-g7-8-science-review-and-application",
+      "orderInUnit": 1,
+      "priority": 25
+    },
+    {
+      "lessonId": "cmn9kpkap005dvotgzwrrs4s9",
+      "contentId": "science-g7-data-in-science-foundations",
+      "title": "Understanding Data Collection and Its Importance in Community Issues",
+      "grade": 7,
+      "subject": "SCIENCE",
+      "unitId": "science-g7-data-in-science",
+      "orderInUnit": 1,
+      "priority": 24
+    },
+    {
+      "lessonId": "cmn9kn2y80054votgbgobz6be",
+      "contentId": "science-g7-earth-weather-and-water-foundations",
+      "title": "Understanding Weather Systems and Their Impact on Communities",
+      "grade": 7,
+      "subject": "SCIENCE",
+      "unitId": "science-g7-earth-weather-and-water",
+      "orderInUnit": 1,
+      "priority": 23
+    },
+    {
+      "lessonId": "cmn9kowg1005bvotg6ziino90",
+      "contentId": "science-g7-ecosystems-and-environment-application",
+      "title": "Understanding Ecosystems and Environmental Impact in Liberia",
+      "grade": 7,
+      "subject": "SCIENCE",
+      "unitId": "science-g7-ecosystems-and-environment",
+      "orderInUnit": 2,
+      "priority": 22
+    },
+    {
+      "lessonId": "cmn9kl7rn004yvotgcc6bisir",
+      "contentId": "science-g7-forces-and-motion-foundations",
+      "title": "Exploring Forces and Motion Through Real-World Scenarios",
+      "grade": 7,
+      "subject": "SCIENCE",
+      "unitId": "science-g7-forces-and-motion",
+      "orderInUnit": 1,
+      "priority": 21
+    },
+    {
+      "lessonId": "cmn9kijr3004ovotg0c56f3lj",
+      "contentId": "science-g7-living-things-and-their-needs-performance",
+      "title": "Living Things and Their Needs",
+      "grade": 7,
+      "subject": "SCIENCE",
+      "unitId": "science-g7-living-things-and-their-needs",
+      "orderInUnit": 3,
+      "priority": 20
+    },
+    {
+      "lessonId": "cmn9kkwta004xvotgzvxinrk3",
+      "contentId": "science-g7-matter-and-materials-performance",
+      "title": "Understanding Matter and Its Environmental Impact",
+      "grade": 7,
+      "subject": "SCIENCE",
+      "unitId": "science-g7-matter-and-materials",
+      "orderInUnit": 3,
+      "priority": 19
+    },
+    {
+      "lessonId": "cmn9khqv6004lvotg4bnnsu94",
+      "contentId": "science-g7-scientific-observation-and-investigation-performance",
+      "title": "Scientific Observation and Investigation: Performance and Reflection",
+      "grade": 7,
+      "subject": "SCIENCE",
+      "unitId": "science-g7-scientific-observation-and-investigation",
+      "orderInUnit": 3,
+      "priority": 18
+    },
+    {
+      "lessonId": "cmn9kqda8005gvotg01sdfn5r",
+      "contentId": "science-g7-scientific-problem-solving-foundations",
+      "title": "Investigating the Disappearance of Fish in St. Paul River",
+      "grade": 7,
+      "subject": "SCIENCE",
+      "unitId": "science-g7-scientific-problem-solving",
+      "orderInUnit": 1,
+      "priority": 17
+    },
+    {
+      "lessonId": "cmoeac5zv01cwvor43xm0x8jp",
+      "contentId": "science-g8-1-observation-and-scientific-thinking-foundations",
+      "title": "Observation and Scientific Thinking: Foundations",
+      "grade": 8,
+      "subject": "SCIENCE",
+      "unitId": "science-g8-1-observation-and-scientific-thinking",
+      "orderInUnit": 1,
+      "priority": 16
+    },
+    {
+      "lessonId": "cmoeac81v01d1vor4vljnfg4d",
+      "contentId": "science-g8-2-living-things-foundations",
+      "title": "Living Things: Foundations",
+      "grade": 8,
+      "subject": "SCIENCE",
+      "unitId": "science-g8-2-living-things",
+      "orderInUnit": 1,
+      "priority": 15
+    },
+    {
+      "lessonId": "cmoeaca0y01d6vor4xg94fq2o",
+      "contentId": "science-g8-3-human-body-and-health-foundations",
+      "title": "Human Body and Health: Foundations",
+      "grade": 8,
+      "subject": "SCIENCE",
+      "unitId": "science-g8-3-human-body-and-health",
+      "orderInUnit": 1,
+      "priority": 14
+    },
+    {
+      "lessonId": "cmoeacc0101dbvor4ppctvtbc",
+      "contentId": "science-g8-4-matter-and-materials-foundations",
+      "title": "Matter and Materials: Foundations",
+      "grade": 8,
+      "subject": "SCIENCE",
+      "unitId": "science-g8-4-matter-and-materials",
+      "orderInUnit": 1,
+      "priority": 13
+    },
+    {
+      "lessonId": "cmoeacdz601dgvor4zqqxpk79",
+      "contentId": "science-g8-5-energy-light-and-sound-foundations",
+      "title": "Energy, Light, and Sound: Foundations",
+      "grade": 8,
+      "subject": "SCIENCE",
+      "unitId": "science-g8-5-energy-light-and-sound",
+      "orderInUnit": 1,
+      "priority": 12
+    },
+    {
+      "lessonId": "cmoeacfy901dlvor4k05guq45",
+      "contentId": "science-g8-6-earth-water-and-weather-foundations",
+      "title": "Earth, Water, and Weather: Foundations",
+      "grade": 8,
+      "subject": "SCIENCE",
+      "unitId": "science-g8-6-earth-water-and-weather",
+      "orderInUnit": 1,
+      "priority": 11
+    },
+    {
+      "lessonId": "cmoeachxe01dqvor4lyrlxyh8",
+      "contentId": "science-g8-7-environment-and-sustainability-foundations",
+      "title": "Environment and Sustainability: Foundations",
+      "grade": 8,
+      "subject": "SCIENCE",
+      "unitId": "science-g8-7-environment-and-sustainability",
+      "orderInUnit": 1,
+      "priority": 10
+    },
+    {
+      "lessonId": "cmoeacjzc01dvvor4r2r3dtsl",
+      "contentId": "science-g8-8-science-review-and-application-foundations",
+      "title": "Science Review and Application: Foundations",
+      "grade": 8,
+      "subject": "SCIENCE",
+      "unitId": "science-g8-8-science-review-and-application",
+      "orderInUnit": 1,
+      "priority": 9
+    },
+    {
+      "lessonId": "cmoe9zr3s00iwvor48xsj19bu",
+      "contentId": "science-g9-1-observation-and-scientific-thinking-foundations",
+      "title": "Observation and Scientific Thinking: Foundations",
+      "grade": 9,
+      "subject": "SCIENCE",
+      "unitId": "science-g9-1-observation-and-scientific-thinking",
+      "orderInUnit": 1,
+      "priority": 8
+    },
+    {
+      "lessonId": "cmoe9zt0300j1vor4ws6e0v9a",
+      "contentId": "science-g9-2-living-things-foundations",
+      "title": "Living Things: Foundations",
+      "grade": 9,
+      "subject": "SCIENCE",
+      "unitId": "science-g9-2-living-things",
+      "orderInUnit": 1,
+      "priority": 7
+    },
+    {
+      "lessonId": "cmoe9zuz500j6vor44753p8hn",
+      "contentId": "science-g9-3-human-body-and-health-foundations",
+      "title": "Human Body and Health: Foundations",
+      "grade": 9,
+      "subject": "SCIENCE",
+      "unitId": "science-g9-3-human-body-and-health",
+      "orderInUnit": 1,
+      "priority": 6
+    },
+    {
+      "lessonId": "cmoe9zwy900jbvor46t0x0mt7",
+      "contentId": "science-g9-4-matter-and-materials-foundations",
+      "title": "Matter and Materials: Foundations",
+      "grade": 9,
+      "subject": "SCIENCE",
+      "unitId": "science-g9-4-matter-and-materials",
+      "orderInUnit": 1,
+      "priority": 5
+    },
+    {
+      "lessonId": "cmoe9zz0800jgvor4bxgmjuu3",
+      "contentId": "science-g9-5-energy-light-and-sound-foundations",
+      "title": "Energy, Light, and Sound: Foundations",
+      "grade": 9,
+      "subject": "SCIENCE",
+      "unitId": "science-g9-5-energy-light-and-sound",
+      "orderInUnit": 1,
+      "priority": 4
+    },
+    {
+      "lessonId": "cmoea00zb00jlvor4pn8kc1ni",
+      "contentId": "science-g9-6-earth-water-and-weather-foundations",
+      "title": "Earth, Water, and Weather: Foundations",
+      "grade": 9,
+      "subject": "SCIENCE",
+      "unitId": "science-g9-6-earth-water-and-weather",
+      "orderInUnit": 1,
+      "priority": 3
+    },
+    {
+      "lessonId": "cmoea031a00jqvor4a48l6pko",
+      "contentId": "science-g9-7-environment-and-sustainability-foundations",
+      "title": "Environment and Sustainability: Foundations",
+      "grade": 9,
+      "subject": "SCIENCE",
+      "unitId": "science-g9-7-environment-and-sustainability",
+      "orderInUnit": 1,
+      "priority": 2
+    },
+    {
+      "lessonId": "cmoea04xk00jvvor4am17r393",
+      "contentId": "science-g9-8-science-review-and-application-foundations",
+      "title": "Science Review and Application: Foundations",
+      "grade": 9,
+      "subject": "SCIENCE",
+      "unitId": "science-g9-8-science-review-and-application",
+      "orderInUnit": 1,
+      "priority": 1
+    }
+  ]
+}
