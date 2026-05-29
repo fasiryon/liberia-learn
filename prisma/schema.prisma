@@ -275,6 +275,7 @@ model Student {
   stuckEvents           StuckEvent[]
   adaptiveMastery       AdaptiveMasteryRecord[]
   learningPathQueue     LearningPathQueue[]
+  gradedSubmissions     GradedSubmission[]
 }
 
 model Exam {
@@ -969,6 +970,31 @@ model HomeworkSubmission {
   @@unique([homeworkId, studentId])
   // Block 23: student-first + time index for evidence-velocity queries in risk routes
   @@index([studentId, submittedAt])
+}
+
+/// NR-14C: in-lesson essay and code submission + auto-grading.
+/// Separate from HomeworkSubmission (teacher-assigned) — this is for
+/// in-lesson exercises the student submits directly within the lesson flow.
+model GradedSubmission {
+  id                 String    @id @default(cuid())
+  studentId          String
+  lessonId           String    // CurriculumContent.id
+  exerciseType       String    // "essay" | "code"
+  promptId           String?   // which exercise within the lesson (nullable until structured prompts land)
+  submissionText     String    @db.Text
+  score              Float?    // 0..1 (advisory, never a hard gate)
+  maxScore           Float     @default(1)
+  rubricBreakdown    Json?     // { criterion: { score, comment }, ... }
+  feedback           String?   @db.Text
+  status             String    @default("pending") // pending | graded | failed
+  gradedAt           DateTime?
+  /// NR-14A idempotency pattern — client-generated UUID
+  clientSubmissionId String?   @unique
+  createdAt          DateTime  @default(now())
+  student            Student   @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  @@index([studentId, lessonId])
+  @@index([status])
 }
 
 /// / ===== Capstone / Portfolio / Partners =====
