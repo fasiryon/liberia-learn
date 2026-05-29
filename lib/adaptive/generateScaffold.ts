@@ -34,7 +34,9 @@ export type ScaffoldFailure = {
 };
 
 const MIN_WORDS = 300;
-const MIN_RATIO = 0.40; // scaffold must be ≥40% of parent length
+const MIN_RATIO = 0.40;         // scaffold must be ≥40% of parent length...
+const LONG_PARENT_THRESHOLD = 1500; // ...unless the parent is >1500 words,
+const MIN_RATIO_LONG = 0.20;   // in which case 20% is sufficient (300w of a 1500w lesson)
 
 function countWords(text: string): number {
   return text.split(/\s+/).filter(Boolean).length;
@@ -104,7 +106,7 @@ export async function generateScaffold(input: {
             }),
           },
         ],
-        maxTokens: 2000,
+        maxTokens: 2500, // 2500 to handle long-parent scaffolds (up to ~1900 words)
         forceSmartTier: false, // fast tier is fine for scaffold (simpler output)
         aiUsage: {
           route: "scripts/generate-scaffolds",
@@ -123,8 +125,12 @@ export async function generateScaffold(input: {
       const wordCount = countWords(body);
       const ratioOfParent = parentWordCount > 0 ? wordCount / parentWordCount : 1;
 
-      // Quality gate: must be substantial and proportionate to parent
-      if (wordCount >= MIN_WORDS && ratioOfParent >= MIN_RATIO) {
+      // Quality gate: must be substantial and proportionate to parent.
+      // Long parents (>1500 words) use a relaxed ratio so we don't discard
+      // a perfectly good 700-word scaffold of a 3500-word lesson.
+      const effectiveMinRatio =
+        parentWordCount > LONG_PARENT_THRESHOLD ? MIN_RATIO_LONG : MIN_RATIO;
+      if (wordCount >= MIN_WORDS && ratioOfParent >= effectiveMinRatio) {
         return { body, wordCount, parentWordCount, ratioOfParent };
       }
 
