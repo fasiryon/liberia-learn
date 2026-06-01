@@ -3891,3 +3891,41 @@ model LearningPathQueue {
   @@unique([studentId, lessonId])
   @@index([studentId, resolvedAt])
 }
+
+/// / ===== NR-14D: Code Exercises + AI Literacy =====
+
+/// Gradeable Python coding exercise attached to a CS lesson.
+/// Reference solution is self-validated via Judge0 before persisting.
+model CodeExercise {
+  id                String    @id @default(cuid())
+  lessonId          String    // CurriculumContent.id (cuid PK)
+  promptId          String    @unique  // stable idempotency key, e.g. "{contentId}:code:1"
+  title             String
+  description       String    @db.Text
+  starterCode       String    @db.Text
+  referenceSolution String    @db.Text
+  languageId        Int       @default(71)  // Python 3 (matches NR-14C allowlist)
+  testCases         Json      // [{ stdin, expectedStdout, hidden: bool }]
+  difficulty        String    @default("intro")  // intro | guided | challenge
+  validatedAt       DateTime?  // when reference solution last passed all test cases
+  createdAt         DateTime  @default(now())
+
+  @@index([lessonId])
+}
+
+/// AI literacy exercise for critical thinking about AI outputs, bias, and ethics.
+/// Four types: prompt_engineering | bias_detection | ethics_scenario | output_critique
+model AILiteracyExercise {
+  id                       String    @id @default(cuid())
+  lessonId                 String    // CurriculumContent.id (cuid PK)
+  promptId                 String    @unique
+  title                    String
+  type                     String    // prompt_engineering | bias_detection | ethics_scenario | output_critique
+  scenario                 String    @db.Text
+  studentPromptInstruction String?   @db.Text  // used for prompt_engineering type
+  rubric                   Json      // criterion-based rubric
+  gradedBy                 String    @default("llm")  // llm | self_check
+  createdAt                DateTime  @default(now())
+
+  @@index([lessonId])
+}
