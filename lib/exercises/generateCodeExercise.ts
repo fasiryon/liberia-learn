@@ -28,6 +28,15 @@ export type GenerateCodeExerciseResult =
   | { success: true; exercise: GeneratedExercise }
   | { success: false; reason: string };
 
+/**
+ * Strip prompt strings from input() calls — models consistently use input('prompt: ')
+ * despite instructions. This turns `input('Enter value: ')` → `input()` so that
+ * input() prompts don't appear in stdout and break the expectedStdout comparison.
+ */
+function stripInputPrompts(code: string): string {
+  return code.replace(/input\s*\(\s*(['"`][^'"`]*['"`])\s*\)/g, "input()");
+}
+
 function safeParseExerciseJSON(raw: string): GeneratedExercise | null {
   const cleaned = raw.replace(/^```(?:json)?\s*/i, "").replace(/\s*```$/, "");
   try {
@@ -100,57 +109,76 @@ Return ONLY valid JSON — no preamble, no code fences:
   ]
 }
 
-Rules:
-- Python 3 only (Judge0 language_id 71)
-- referenceSolution MUST produce expectedStdout exactly (stripped, no extra spaces) for every test case
-- 2 visible test cases + 1 hidden edge case
-- stdin is what goes to input() — use empty string "" if no input needed
-- expectedStdout is the exact print() output, newline-terminated by Python
-- Use "Try writing..." not "Implement" — encouraging tone
-- Match ONLY the lesson concept (no recursion in a loops lesson)
-- No imports beyond standard library`;
+CRITICAL RULES — read each one carefully:
+1. Python 3 only (Judge0 language_id 71)
+2. NEVER pass a prompt string to input(). Write input() NOT input("Enter value: "). The prompt UI is in the description, not the code. Every input() call must be bare.
+3. NEVER print anything except the final result. No "Enter your name:" messages. Only the answer goes to stdout.
+4. expectedStdout is ONLY the final print() output — nothing else goes to stdout
+5. stdin has one value per line for each input() call; use "" if no input needed
+6. 2 visible test cases + 1 hidden edge case
+7. referenceSolution MUST pass all test cases with NO extra output
+8. Use "Try writing..." not "Implement" — encouraging tone
+9. Match ONLY the lesson concept (no recursion in a loops lesson)
+10. No imports beyond standard library`;
 
-  const result = await routedCompletion({
-    messages: [{ role: "user", content: prompt }],
-    maxTokens: 1200,
-    forceSmartTier: true,
-    aiUsage: {
-      route: "lib/exercises/generateCodeExercise",
-      feature: "curriculum",
-      requestType: "code_exercise_generation",
-    },
-  });
-
-  const exercise = safeParseExerciseJSON(result.content);
-  if (!exercise) {
-    return { success: false, reason: "invalid_json" };
-  }
-
-  // SELF-VALIDATE: run reference solution through Judge0 against every test case.
-  // If it fails ANY test case, the exercise is broken — never persist it.
-  let validationResult;
-  try {
-    validationResult = await gradeCode({
-      sourceCode: exercise.referenceSolution,
-      languageId: 71,
-      testCases: exercise.testCases.map((tc) => ({
-        stdin: tc.stdin,
-        expectedStdout: tc.expectedStdout,
-      })),
+  // Attempt up to 3 generations — LLM is non-deterministic, a retry often succeeds
+  for (let attempt = 1; attempt <= 3; attempt++) {
+    const result = await routedCompletion({
+      messages: [{ role: "user", content: prompt }],
+      maxTokens: 1200,
+      forceSmartTier: true,
+      aiUsage: {
+        route: "lib/exercises/generateCodeExercise",
+        feature: "curriculum",
+        requestType: "code_exercise_generation",
+      },
     });
-  } catch (err) {
-    return {
-      success: false,
-      reason: `judge0_error: ${err instanceof Error ? err.message : String(err)}`,
-    };
-  }
 
-  if (validationResult.passed !== validationResult.total) {
+    const raw = safeParseExerciseJSON(result.content);
+    if (!raw) {
+      if (attempt < 3) continue;
+      return { success: false, reason: "invalid_json" };
+    }
+
+    // Strip prompt strings from input() calls — models reliably use input('prompt...')
+    // despite instructions, which pollutes stdout and breaks expectedStdout comparison.
+    const exercise: GeneratedExercise = {
+      ...raw,
+      referenceSolution: stripInputPrompts(raw.referenceSolution),
+      starterCode: stripInputPrompts(raw.starterCode),
+    };
+
+    // SELF-VALIDATE: run reference solution through Judge0 against every test case.
+    // If it fails ANY test case, the exercise is broken — retry or give up.
+    let validationResult;
+    try {
+      validationResult = await gradeCode({
+        sourceCode: exercise.referenceSolution,
+        languageId: 71,
+        testCases: exercise.testCases.map((tc) => ({
+          stdin: tc.stdin,
+          expectedStdout: tc.expectedStdout,
+        })),
+      });
+    } catch (err) {
+      return {
+        success: false,
+        reason: `judge0_error: ${err instanceof Error ? err.message : String(err)}`,
+      };
+    }
+
+    if (validationResult.passed === validationResult.total) {
+      return { success: true, exercise };
+    }
+
+    // Validation failed — log and retry if attempts remain
+    if (attempt < 3) continue;
+
     return {
       success: false,
       reason: `reference_solution_failed: ${validationResult.passed}/${validationResult.total} test cases`,
     };
   }
 
-  return { success: true, exercise };
+  return { success: false, reason: "max_attempts_exceeded" };
 }
