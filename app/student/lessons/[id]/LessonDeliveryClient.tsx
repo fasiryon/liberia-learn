@@ -16,6 +16,8 @@ import { enqueueOfflineRequest } from "@/lib/offline-queue";
 import { SaveForOfflineButton } from "@/components/SaveForOfflineButton";
 import { LessonAudioPlayer, type LessonAudioPart } from "@/components/student/LessonAudioPlayer";
 import { StuckHelper } from "@/components/adaptive/StuckHelper";
+import { CodeSubmit } from "@/components/grading/CodeSubmit";
+import { AILiteracySubmit } from "@/components/grading/AILiteracySubmit";
 import type { LabId } from "@/lib/labs/types";
 import type { PseudoLab, SimulationDefinition } from "@/lib/schemas/labSimulation";
 
@@ -70,6 +72,25 @@ type LessonResponse = {
     uploadedAt: string;
     teacherName: string;
   } | null;
+  codeExercises?: Array<{
+    id: string;
+    promptId: string;
+    title: string;
+    description: string;
+    starterCode: string;
+    languageId: number;
+    testCases: Array<{ stdin: string; expectedStdout: string }>;
+    difficulty: string;
+  }>;
+  aiLiteracyExercises?: Array<{
+    id: string;
+    promptId: string;
+    title: string;
+    type: string;
+    scenario: string;
+    studentPromptInstruction: string | null;
+    rubricCriteria: Array<{ key: string; label: string; weight: number }>;
+  }>;
 };
 
 type TutorMessage = {
@@ -628,6 +649,8 @@ export default function LessonDeliveryClient({ lessonId }: { lessonId: string })
 
     const nextSectionOrder = ["overview", "lesson-content"];
     if (lesson.objectives.length > 0) nextSectionOrder.push("objectives");
+    if ((lesson.codeExercises?.length ?? 0) > 0) nextSectionOrder.push("code-exercises");
+    if ((lesson.aiLiteracyExercises?.length ?? 0) > 0) nextSectionOrder.push("ai-literacy");
     if (lesson.pseudoLabs.length > 0) nextSectionOrder.push("lab-activity");
     if (lesson.simulationDefinitions.length > 0) nextSectionOrder.push("simulations");
     nextSectionOrder.push("exit-ticket");
@@ -1101,6 +1124,51 @@ export default function LessonDeliveryClient({ lessonId }: { lessonId: string })
             </ul>
           </section>
         ) : null}
+
+      {(lesson.codeExercises?.length ?? 0) > 0 ? (
+        <section ref={registerSection("code-exercises")} data-section-id="code-exercises" className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/80 p-5 sm:p-7">
+          <h2 className="text-lg font-semibold text-[var(--ll-text)]">Coding Exercise</h2>
+          <p className="mt-1 text-sm text-[var(--ll-text-muted)]">Write Python code and run it against test cases. Your submission is graded automatically.</p>
+          <div className="mt-4 space-y-6">
+            {lesson.codeExercises!.map((ex) => (
+              <CodeSubmit
+                key={ex.id}
+                lessonId={lesson.id}
+                promptId={ex.promptId}
+                prompt={`${ex.title}\n\n${ex.description}`}
+                language="python"
+                testCases={ex.testCases.map((tc, i) => ({
+                  stdin: tc.stdin,
+                  expectedStdout: tc.expectedStdout,
+                  label: `Sample ${i + 1}`,
+                }))}
+              />
+            ))}
+          </div>
+        </section>
+      ) : null}
+
+      {(lesson.aiLiteracyExercises?.length ?? 0) > 0 ? (
+        <section ref={registerSection("ai-literacy")} data-section-id="ai-literacy" className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/80 p-5 sm:p-7">
+          <h2 className="text-lg font-semibold text-[var(--ll-text)]">AI Literacy Exercise</h2>
+          <p className="mt-1 text-sm text-[var(--ll-text-muted)]">Think critically about AI — there is no single right answer for most of these.</p>
+          <div className="mt-4 space-y-6">
+            {lesson.aiLiteracyExercises!.map((ex) => (
+              <AILiteracySubmit
+                key={ex.id}
+                lessonId={lesson.id}
+                exerciseId={ex.id}
+                promptId={ex.promptId}
+                title={ex.title}
+                type={ex.type as "prompt_engineering" | "bias_detection" | "ethics_scenario" | "output_critique"}
+                scenario={ex.scenario}
+                studentPromptInstruction={ex.studentPromptInstruction}
+                rubricCriteria={ex.rubricCriteria}
+              />
+            ))}
+          </div>
+        </section>
+      ) : null}
 
       {lesson.pseudoLabs.length > 0 ? (
         <section ref={registerSection("lab-activity")} data-section-id="lab-activity" className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/80 p-5 sm:p-7">

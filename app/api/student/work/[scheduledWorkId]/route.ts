@@ -88,6 +88,7 @@ function scheduledWorkInclude(userId: string) {
   return {
     content: {
       select: {
+        id: true,
         contentId: true,
         payload: true,
         subject: true,
@@ -229,6 +230,55 @@ export async function GET(
     const payload = sw.content.payload as any;
     const deliveryProfile = (sw.content.deliveryProfile as any) ?? payload?.deliveryProfile ?? null;
     const latestAudio = sw.content.audioAssets[0] ?? null;
+
+    // NR-14D: fetch exercises for CS lessons in parallel
+    const [rawCodeExercises, rawAILiteracyExercises] =
+      sw.content.subject === "COMPUTER_SCIENCE"
+        ? await Promise.all([
+            prisma.codeExercise.findMany({
+              where: { lessonId: sw.content.id },
+              select: {
+                id: true,
+                promptId: true,
+                title: true,
+                description: true,
+                starterCode: true,
+                languageId: true,
+                testCases: true,
+                difficulty: true,
+              },
+              orderBy: { createdAt: "asc" },
+            }),
+            prisma.aILiteracyExercise.findMany({
+              where: { lessonId: sw.content.id },
+              select: {
+                id: true,
+                promptId: true,
+                title: true,
+                type: true,
+                scenario: true,
+                studentPromptInstruction: true,
+                rubric: true,
+              },
+              orderBy: { createdAt: "asc" },
+            }),
+          ])
+        : [[], []];
+
+    // Visible test cases only — hidden cases never sent to client
+    const codeExercises = rawCodeExercises.map((ex) => ({
+      ...ex,
+      testCases: (ex.testCases as Array<{ stdin: string; expectedStdout: string; hidden: boolean }>)
+        .filter((tc) => !tc.hidden)
+        .map((tc) => ({ stdin: tc.stdin, expectedStdout: tc.expectedStdout })),
+    }));
+
+    const aiLiteracyExercises = rawAILiteracyExercises.map((ex) => ({
+      ...ex,
+      rubricCriteria: ((ex.rubric as { criteria?: Array<{ key: string; label: string; weight: number }> })?.criteria ?? []).map(
+        (c) => ({ key: c.key, label: c.label, weight: c.weight })
+      ),
+    }));
     const audioStatus =
       latestAudio?.contentVersion === sw.content.version
         ? latestAudio.status
@@ -284,6 +334,8 @@ export async function GET(
       status: progress?.completedAt ? "completed" : progress?.startedAt ? "in_progress" : "not_started",
       completedAt: progress?.completedAt || null,
       startedAt: progress?.startedAt || null,
+      codeExercises,
+      aiLiteracyExercises,
     });
   } catch (err: any) {
     const status = err?.status || 500;
