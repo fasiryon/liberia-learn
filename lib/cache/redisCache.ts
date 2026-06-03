@@ -125,6 +125,9 @@ export async function withRedisCache<T>(
     }
   }
 
+  // Inflight check before concurrency guard: concurrent requests for the same
+  // key reuse the in-progress promise at zero cost, so they never consume a
+  // fallback slot and never return a spurious empty response on first load.
   const existing = inflight.get(key);
   if (existing) {
     return existing as Promise<T>;

@@ -57,6 +57,12 @@ const NAV: NavSection[] = [
     ],
   },
   {
+    section: "HELP",
+    items: [
+      { label: "Help & Guides", href: "/help" },
+    ],
+  },
+  {
     section: "SETTINGS",
     collapsible: true,
     defaultCollapsed: true,

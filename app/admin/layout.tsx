@@ -11,7 +11,7 @@ export default function AdminLayout({
     <div className="flex min-h-screen bg-[var(--ll-bg)]">
       <AdminSidebar />
       <div className="flex flex-col flex-1 min-w-0">
-        <div className="flex-1">{children}</div>
+        <div className="flex-1 pt-6 px-6">{children}</div>
         <LegalFooter variant="portal" />
       </div>
       <GlobalAssistantMount />
