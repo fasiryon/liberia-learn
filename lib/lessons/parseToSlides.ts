@@ -52,15 +52,29 @@ function isTakeawayTitle(title: string) {
   return /(takeaway|conclusion|summary|remember|review|key point)/i.test(title);
 }
 
+function extractTakeawaysFromSection(content: string): string {
+  const lines = content.split('\n');
+  const startIdx = lines.findIndex(l => /key takeaways?:/i.test(l));
+  if (startIdx !== -1) {
+    // skip the "Key Takeaways:" header line itself — slide title already says "Key Takeaways"
+    return lines.slice(startIdx + 1).join('\n').trim();
+  }
+  return content;
+}
+
 function fallbackTakeaways(markdown: string) {
-  const paragraphs = paragraphGroups(markdown, 1).slice(-3);
-  if (paragraphs.length === 0) return "- Review the full lesson text.\n- Ask the tutor if anything is unclear.\n- Complete the quiz when ready.";
-  return paragraphs
-    .map((paragraph) => paragraph.replace(/^[-*]\s*/, "").replace(/\s+/g, " ").trim())
-    .filter(Boolean)
-    .slice(0, 3)
-    .map((paragraph) => `- ${paragraph}`)
-    .join("\n");
+  // Extract any existing bullet/numbered list items from the body as summary
+  const bullets = normalizeLines(markdown)
+    .split('\n')
+    .filter(line => /^[-*]\s+.{20,}/.test(line))
+    .slice(-5);
+  if (bullets.length >= 2) return bullets.join('\n');
+  // Last resort: last 2-3 paragraphs condensed
+  const paragraphs = paragraphGroups(markdown, 1).slice(-3)
+    .map(p => p.replace(/^[-*]\s*/, '').replace(/\s+/g, ' ').trim())
+    .filter(p => p.length > 30);
+  if (paragraphs.length > 0) return paragraphs.map(p => `- ${p.slice(0, 120)}`).join('\n');
+  return '- Review this lesson and complete the exit ticket.';
 }
 
 export function parseToSlides(input: {
@@ -99,16 +113,30 @@ export function parseToSlides(input: {
 
   const existingFinal = baseSections[baseSections.length - 1];
   if (existingFinal && isTakeawayTitle(existingFinal.title)) {
-    const finalContent = existingFinal.content.join("\n").trim();
-    if (!slides.some((slide) => slide.title === existingFinal.title && slide.content === finalContent)) {
-      slides.push({ title: existingFinal.title, content: finalContent });
+    const sectionContent = existingFinal.content.join("\n").trim();
+    const extracted = extractTakeawaysFromSection(sectionContent);
+    // If we successfully extracted a takeaway sub-section (different from the raw content),
+    // or the section already contains bullet points, replace the last slide with a clean
+    // "Key Takeaways" slide so the mixed assessment/exit-ticket content is stripped.
+    if (extracted !== sectionContent || /^[-*]\s+/m.test(extracted)) {
+      // Remove the already-pushed version of this section (added in the loop above)
+      const existingIdx = slides.findIndex((slide) => slide.title === existingFinal.title);
+      if (existingIdx !== -1) {
+        slides.splice(existingIdx, 1);
+      }
+      slides.push({ title: "Key Takeaways", content: extracted });
+      return slides.map((slide, zeroIndex) => ({
+        ...slide,
+        index: zeroIndex + 1,
+        isFirst: zeroIndex === 0,
+        isLast: zeroIndex === slides.length - 1,
+      }));
     }
-  } else {
-    slides.push({
-      title: "Key Takeaways",
-      content: input.takeawaySummary?.trim() || fallbackTakeaways(content),
-    });
   }
+  slides.push({
+    title: "Key Takeaways",
+    content: input.takeawaySummary?.trim() || fallbackTakeaways(content),
+  });
 
   return slides.map((slide, zeroIndex) => ({
     ...slide,

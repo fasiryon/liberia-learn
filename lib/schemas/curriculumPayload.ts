@@ -120,6 +120,18 @@ export const CurriculumPayloadSchema = z.object({
     })
     .optional(),
   deliveryProfile: DeliveryProfileSchema.optional(),
+  takeawaySummary: z.string().optional(),
+  demoReady: z.boolean().optional(),
+  problemSets: z.array(
+    z.object({
+      id: z.string(),
+      sectionId: z.string(),
+      label: z.string().optional(),
+      studentPrompt: z.string(),
+      workingSpace: z.string().optional(),
+      answerKey: z.string(),
+    })
+  ).optional().default([]),
 }).superRefine((payload, ctx) => {
   const recommendedFormat = payload.lessonFormat ?? payload.deliveryProfile?.recommendedFormat;
 
@@ -157,6 +169,7 @@ export const CurriculumPayloadSchema = z.object({
 });
 
 export type CurriculumPayload = z.infer<typeof CurriculumPayloadSchema>;
+export type ProblemSet = NonNullable<CurriculumPayload["problemSets"]>[number];
 
 export const GenerateInputSchema = z.object({
   grade: z.number().int().min(1).max(12),
