@@ -388,9 +388,28 @@ function SimulationCard({ definition }: { definition: SimulationDefinition }) {
   );
 }
 
-function ProblemRevealSection({ problemSets }: { problemSets: LessonResponse['problemSets'] }) {
+function ProblemRevealSection({ lessonId, problemSets }: { lessonId: string; problemSets: LessonResponse['problemSets'] }) {
   const [revealed, setRevealed] = useState<Record<string, boolean>>({});
+  const [answers, setAnswers] = useState<Record<string, string | null>>({});
+  const [loading, setLoading] = useState<Record<string, boolean>>({});
+
   if (!problemSets || problemSets.length === 0) return null;
+
+  async function revealAnswer(ps: LessonResponse['problemSets'][number]) {
+    if (revealed[ps.id]) return;
+    setLoading((prev) => ({ ...prev, [ps.id]: true }));
+    try {
+      const res = await fetch(`/api/student/work/${lessonId}/problem-answer/${ps.id}`);
+      const data = res.ok ? await res.json().catch(() => null) : null;
+      setAnswers((prev) => ({ ...prev, [ps.id]: data?.answerKey ?? null }));
+    } catch {
+      setAnswers((prev) => ({ ...prev, [ps.id]: null }));
+    } finally {
+      setRevealed((prev) => ({ ...prev, [ps.id]: true }));
+      setLoading((prev) => ({ ...prev, [ps.id]: false }));
+    }
+  }
+
   return (
     <section className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/80 p-5 sm:p-7">
       <h2 className="text-lg font-semibold text-[var(--ll-text)]">Practice Problems</h2>
@@ -411,20 +430,23 @@ function ProblemRevealSection({ problemSets }: { problemSets: LessonResponse['pr
             {revealed[ps.id] ? (
               <div className="mt-4 rounded-lg border border-emerald-500/30 bg-emerald-500/10 p-3">
                 <p className="mb-1 text-xs font-semibold uppercase tracking-widest text-emerald-400">Answer</p>
-                {/* TODO: wire to a teacher-only reveal-answer endpoint in a future sprint.
-                    answerKey is stripped server-side and never sent to the client. */}
-                <div
-                  className="prose prose-invert max-w-none text-sm prose-p:text-[var(--ll-text)] prose-li:text-[var(--ll-text)]"
-                  dangerouslySetInnerHTML={{ __html: renderSimpleMarkdown(ps.studentPrompt) }}
-                />
+                {answers[ps.id] ? (
+                  <div
+                    className="prose prose-invert max-w-none text-sm prose-p:text-[var(--ll-text)] prose-li:text-[var(--ll-text)]"
+                    dangerouslySetInnerHTML={{ __html: renderSimpleMarkdown(answers[ps.id]!) }}
+                  />
+                ) : (
+                  <p className="text-sm text-[var(--ll-text-muted)]">Check your work with your teacher.</p>
+                )}
               </div>
             ) : (
               <button
                 type="button"
-                className="mt-4 rounded-lg border border-[var(--ll-border)] px-4 py-2 text-sm font-medium text-[var(--ll-text-muted)] hover:border-[var(--ll-yellow)] hover:text-[var(--ll-yellow)]"
-                onClick={() => setRevealed((prev) => ({ ...prev, [ps.id]: true }))}
+                disabled={loading[ps.id]}
+                className="mt-4 rounded-lg border border-[var(--ll-border)] px-4 py-2 text-sm font-medium text-[var(--ll-text-muted)] hover:border-[var(--ll-yellow)] hover:text-[var(--ll-yellow)] disabled:opacity-50"
+                onClick={() => revealAnswer(ps)}
               >
-                Reveal answer
+                {loading[ps.id] ? "Loading…" : "Reveal answer"}
               </button>
             )}
           </article>
@@ -1166,13 +1188,14 @@ export default function LessonDeliveryClient({ lessonId }: { lessonId: string })
                 style={{ maxHeight: "65vh", minHeight: "300px" }}
                 dangerouslySetInnerHTML={{ __html: renderSimpleMarkdown(renderedBody) }}
               />
+              {lesson.problemSets && lesson.problemSets.length > 0 ? (
+                <div className="mt-6">
+                  <ProblemRevealSection lessonId={lesson.id} problemSets={lesson.problemSets} />
+                </div>
+              ) : null}
             </>
           )}
         </section>
-
-        {lesson.problemSets && lesson.problemSets.length > 0 ? (
-          <ProblemRevealSection problemSets={lesson.problemSets} />
-        ) : null}
 
         {lesson.objectives.length > 0 ? (
           <section ref={registerSection("objectives")} data-section-id="objectives" className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/80 p-5 sm:p-7">

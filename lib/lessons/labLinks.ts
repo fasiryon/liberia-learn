@@ -49,5 +49,24 @@ export function getLessonLabLinks(input: {
     labs.push({ labId: "tectonic-plates", label: "Open Tectonic Plates Lab" });
   }
 
+  // General "SCIENCE" subject (used by hero lessons and bulk generation):
+  // Route to the most relevant lab by grade band.
+  if (subject === "science") {
+    if (input.grade >= 5 && input.grade <= 7) {
+      labs.push({ labId: "ecosystem-balance", label: "Open Ecosystem Lab" });
+    }
+    if (input.grade >= 7 && input.grade <= 9) {
+      labs.push({ labId: "weather-system", label: "Open Weather Lab" });
+    }
+    if (input.grade >= 8 && input.grade <= 10) {
+      labs.push({ labId: "human-heart", label: "Open Biology Lab" });
+      labs.push({ labId: "cell-division", label: "Open Cell Division Lab" });
+    }
+    if (input.grade >= 9 && input.grade <= 12) {
+      labs.push({ labId: "molecule-motion", label: "Open Chemistry Lab" });
+      labs.push({ labId: "periodic-table", label: "Open Periodic Table Lab" });
+    }
+  }
+
   return labs;
 }
