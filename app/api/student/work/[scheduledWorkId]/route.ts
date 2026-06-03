@@ -336,6 +336,17 @@ export async function GET(
       startedAt: progress?.startedAt || null,
       codeExercises,
       aiLiteracyExercises,
+      takeawaySummary: (payload as any)?.takeawaySummary ?? null,
+      problemSets: Array.isArray((payload as any)?.problemSets)
+        ? (payload as any).problemSets.map((ps: any) => ({
+            id: ps.id,
+            sectionId: ps.sectionId,
+            label: ps.label ?? null,
+            studentPrompt: ps.studentPrompt,
+            workingSpace: ps.workingSpace ?? null,
+            // answerKey intentionally OMITTED — never sent to students
+          }))
+        : [],
     });
   } catch (err: any) {
     const status = err?.status || 500;
