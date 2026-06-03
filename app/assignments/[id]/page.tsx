@@ -157,7 +157,7 @@ export default async function HomeworkDetailPage({ params }: PageProps) {
           >
             {questions.length === 0 && (
               <p className="text-xs text-[var(--ll-text-muted)]">
-                No questions found for this homework.
+                Your teacher has not added questions to this homework yet. Check back soon.
               </p>
             )}
 

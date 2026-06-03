@@ -6,7 +6,12 @@ const mockUserFindFirst = vi.hoisted(() => vi.fn());
 const mockSendCredentialSms = vi.hoisted(() => vi.fn());
 
 vi.mock("@/lib/auth", () => ({ requireRole: mockRequireRole }));
-vi.mock("@/lib/db", () => ({ prisma: { user: { findFirst: mockUserFindFirst } } }));
+vi.mock("@/lib/db", () => ({
+  prisma: {
+    user: { findFirst: mockUserFindFirst },
+    curriculumContent: { count: vi.fn().mockResolvedValue(5832) },
+  },
+}));
 vi.mock("@/lib/credentials", () => ({ sendCredentialSms: mockSendCredentialSms }));
 
 import { POST as sendCredentialPOST } from "@/app/api/admin/credentials/send/route";
@@ -76,8 +81,9 @@ describe("credential card page + homepage", () => {
     expect(html).toContain("liberialearn.edu.lr");
   });
 
-  it("homepage exposes the MOE login link", () => {
-    const html = renderToStaticMarkup(<HomePage />);
+  it("homepage exposes the MOE login link", async () => {
+    const element = await HomePage();
+    const html = renderToStaticMarkup(element);
     expect(html).toContain("Ministry Officials");
     expect(html).toContain("/moe/login");
   });

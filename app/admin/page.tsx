@@ -382,7 +382,6 @@ export default async function AdminConsolePage() {
         { label: "Analytics", href: "/admin/analytics" },
         { label: "AI Costs", href: "/admin/ai-costs" },
         { label: "Reports", href: "/admin/reports" },
-        { label: "Audit Log", href: "/admin/audit" },
         { label: "Compliance", href: "/admin/compliance" },
         { label: "Data Downloads", href: "/admin/governance/exports" },
         { label: "Pilot Score", href: "/admin/pilot-score" },
@@ -395,6 +394,7 @@ export default async function AdminConsolePage() {
       links: [
         { label: "School Branding", href: "/admin/school-branding" },
         { label: "School Settings", href: "/admin/school-settings" },
+        { label: "Audit Log", href: "/admin/audit" },
         { label: "Canva Integration", href: "/admin/settings/canva" },
         { label: "Schools", href: "/admin/schools" },
         { label: "Seed Demo Data", href: "/admin/seed" },
@@ -444,6 +444,83 @@ export default async function AdminConsolePage() {
           ))}
         </section>
 
+        {/* Zone A — What needs attention today */}
+        <section className="grid gap-4 lg:grid-cols-[1.2fr,0.8fr]">
+          <div className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-surface)] p-4">
+            <div className="mb-3 flex items-center justify-between gap-3">
+              <div>
+                <h2 className="text-base font-semibold text-[var(--ll-text)]">Students Needing Attention</h2>
+                <p className="text-xs text-[var(--ll-text-faint)]">Active intervention signals across the school.</p>
+              </div>
+              <Link href="/admin/students?filter=at-risk" className="text-xs text-[var(--ll-yellow)] hover:opacity-80 shrink-0">
+                View all →
+              </Link>
+            </div>
+            {atRiskStudents.length === 0 ? (
+              <p className="text-sm text-[var(--ll-text-faint)]">No at-risk alerts. Great work!</p>
+            ) : (
+              <div className="space-y-2">
+                {atRiskStudents.slice(0, 5).map((student) => (
+                  <div
+                    key={student.studentId}
+                    className="flex items-center justify-between px-3 py-2.5 rounded-lg border border-[var(--ll-border)] hover:border-[var(--ll-border-strong)] transition-colors"
+                  >
+                    <div>
+                      <p className="text-sm font-medium text-[var(--ll-text)]">{student.name}</p>
+                      <p className="text-xs text-[var(--ll-text-faint)]">
+                        Grade {student.grade ?? "-"} · {student.className ?? "Unassigned"}
+                      </p>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-xs font-medium text-[var(--ll-yellow)]">{student.subject}</p>
+                      <p className="text-xs text-[var(--ll-text-faint)]">{student.alertType.replace(/_/g, " ")}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+            {atRiskTotal > 5 && (
+              <p className="text-xs text-[var(--ll-text-faint)] mt-3">{atRiskTotal - 5} more students need attention.</p>
+            )}
+          </div>
+
+          <div className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-surface)] p-4">
+            <h2 className="text-base font-semibold text-[var(--ll-text)]">Recent Activity</h2>
+            <div className="mt-3 space-y-3">
+              {deduplicatedRecentActivity.length === 0 ? (
+                <p className="text-sm text-[var(--ll-text-faint)]">No recent activity.</p>
+              ) : (
+                deduplicatedRecentActivity.slice(0, 5).map((entry) => {
+                  const label = formatEventLabel(entry.action);
+                  const displayLabel = entry.count > 1 ? `${entry.count} ${label}` : label;
+
+                  return (
+                  <div key={entry.id} className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-surface-muted)] px-3 py-2">
+                    <p className="text-sm font-semibold text-[var(--ll-text)]">{displayLabel}</p>
+                    <p className="text-xs text-[var(--ll-text-faint)]">
+                      {entry.createdAt.toLocaleString("en-LR", {
+                        month: "short",
+                        day: "numeric",
+                        hour: "numeric",
+                        minute: "2-digit",
+                      })}
+                    </p>
+                  </div>
+                  );
+                })
+              )}
+            </div>
+            {deduplicatedRecentActivity.length > 0 && (
+              <Link
+                href="/admin/audit"
+                className="block text-center text-xs text-[var(--ll-yellow)] mt-3 hover:opacity-80"
+              >
+                View full audit log →
+              </Link>
+            )}
+          </div>
+        </section>
+
         <section className="ll-section p-4">
           <EventCalendar role="ADMIN" compact />
         </section>
@@ -488,7 +565,7 @@ export default async function AdminConsolePage() {
           )}
         </section>
 
-        {/* Grouped navigation sections */}
+        {/* Zone B — Daily operations */}
         <section className="space-y-4">
           {navGroups.map((group) => (
             <div key={group.label} className="ll-section p-4">
@@ -509,84 +586,6 @@ export default async function AdminConsolePage() {
               </div>
             </div>
           ))}
-        </section>
-
-        <section className="grid gap-4 lg:grid-cols-[1.2fr,0.8fr]">
-          <div className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-surface)] p-4">
-            <div className="mb-3 flex items-center justify-between gap-3">
-              <div>
-                <h2 className="text-base font-semibold text-[var(--ll-text)]">Students Needing Attention</h2>
-                <p className="text-xs text-[var(--ll-text-faint)]">Active intervention signals across the school.</p>
-              </div>
-            </div>
-            {atRiskStudents.length === 0 ? (
-              <p className="text-sm text-[var(--ll-text-faint)]">No at-risk alerts. Great work!</p>
-            ) : (
-              <div className="space-y-2">
-                {atRiskStudents.slice(0, 5).map((student) => (
-                  <div
-                    key={student.studentId}
-                    className="flex items-center justify-between px-3 py-2.5 rounded-lg border border-[var(--ll-border)] hover:border-[var(--ll-border-strong)] transition-colors"
-                  >
-                    <div>
-                      <p className="text-sm font-medium text-[var(--ll-text)]">{student.name}</p>
-                      <p className="text-xs text-[var(--ll-text-faint)]">
-                        Grade {student.grade ?? "-"} · {student.className ?? "Unassigned"}
-                      </p>
-                    </div>
-                    <div className="text-right">
-                      <p className="text-xs font-medium text-[var(--ll-yellow)]">{student.subject}</p>
-                      <p className="text-xs text-[var(--ll-text-faint)]">{student.alertType.replace(/_/g, " ")}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-            {atRiskTotal > 5 && (
-              <a
-                href="/admin/students?filter=at-risk"
-                className="block text-center text-xs text-[var(--ll-yellow)] mt-3 hover:opacity-80"
-              >
-                View all {atRiskTotal} students →
-              </a>
-            )}
-          </div>
-
-          <div className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-surface)] p-4">
-            <h2 className="text-base font-semibold text-[var(--ll-text)]">Recent Activity</h2>
-            <div className="mt-3 space-y-3">
-              {deduplicatedRecentActivity.length === 0 ? (
-                <p className="text-sm text-[var(--ll-text-faint)]">No recent activity.</p>
-              ) : (
-                deduplicatedRecentActivity.slice(0, 5).map((entry) => {
-                  const label = formatEventLabel(entry.action);
-                  const displayLabel = entry.count > 1 ? `${entry.count} ${label}` : label;
-
-                  return (
-                  <div key={entry.id} className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-surface-muted)] px-3 py-2">
-                    <p className="text-sm font-semibold text-[var(--ll-text)]">{displayLabel}</p>
-                    <p className="text-xs text-[var(--ll-text-faint)]">
-                      {entry.createdAt.toLocaleString("en-LR", {
-                        month: "short",
-                        day: "numeric",
-                        hour: "numeric",
-                        minute: "2-digit",
-                      })}
-                    </p>
-                  </div>
-                  );
-                })
-              )}
-            </div>
-            {deduplicatedRecentActivity.length > 0 && (
-              <Link
-                href="/admin/audit"
-                className="block text-center text-xs text-[var(--ll-yellow)] mt-3 hover:opacity-80"
-              >
-                View full audit log →
-              </Link>
-            )}
-          </div>
         </section>
 
       </div>
