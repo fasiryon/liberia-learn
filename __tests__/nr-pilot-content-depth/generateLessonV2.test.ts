@@ -1,4 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
+import type { RouterOptions } from "@/lib/ai/routedCompletion";
 
 // Mock routedCompletion
 vi.mock("@/lib/ai/router", () => ({
@@ -7,6 +8,14 @@ vi.mock("@/lib/ai/router", () => ({
 
 import { routedCompletion } from "@/lib/ai/router";
 import { generateLessonV2 } from "@/lib/curriculum/generateLessonV2";
+
+// 2000-word padding used by expansion mock to make thin sections pass all floors.
+const EXPANSION_PAD = Array(200)
+  .fill(
+    "Boima studied mathematics in Monrovia and learned that every step of the borrowing method must be shown clearly " +
+    "so students in Liberia can check their work accurately at Waterside Market or in classrooms across Nimba County."
+  )
+  .join(" ");
 
 const MOCK_BODY = `## 1. Hook — The Real-World Challenge
 Boima walked to Waterside Market in Monrovia with 847 LD in his pocket. He needed to buy cassava for LD 593.
@@ -216,9 +225,26 @@ const MOCK_META = JSON.stringify({
 describe("generateLessonV2", () => {
   beforeEach(() => {
     vi.mocked(routedCompletion).mockReset();
-    vi.mocked(routedCompletion)
-      .mockResolvedValueOnce({ content: MOCK_BODY, model: "llama-3.3-70b-versatile" } as any)
-      .mockResolvedValueOnce({ content: MOCK_META, model: "gpt-4o-mini" } as any);
+    // Route mock calls by aiUsage.route so expansion calls don't consume the Pass-2 mock:
+    //   curriculum.v2.body  → MOCK_BODY (Pass 1)
+    //   curriculum.v2.expand → current section text + padding (expansion)
+    //   curriculum.v2.meta  → MOCK_META (Pass 2)
+    vi.mocked(routedCompletion).mockImplementation((opts: RouterOptions) => {
+      const route = opts.aiUsage?.route ?? "";
+      if (route === "curriculum.v2.meta") {
+        return Promise.resolve({ content: MOCK_META, model: "gpt-4o-mini", tier: "fast", inputTokens: 0, outputTokens: 0, estimatedCostUSD: 0 } as any);
+      }
+      if (route === "curriculum.v2.expand") {
+        // Extract the current section text from the expansion prompt so we preserve
+        // the ## headings, then append padding to exceed all per-section floors.
+        const userMsg = opts.messages.find((m) => m.role === "user")?.content ?? "";
+        const currentMatch = userMsg.match(/---\n([\s\S]*?)\n---/);
+        const currentText = currentMatch ? currentMatch[1] : "";
+        return Promise.resolve({ content: currentText + "\n\n" + EXPANSION_PAD, model: "gpt-4o", tier: "smart", inputTokens: 0, outputTokens: 0, estimatedCostUSD: 0 } as any);
+      }
+      // Default: Pass 1 (curriculum.v2.body)
+      return Promise.resolve({ content: MOCK_BODY, model: "llama-3.3-70b-versatile", tier: "smart", inputTokens: 0, outputTokens: 0, estimatedCostUSD: 0 } as any);
+    });
   });
 
   it("returns a valid CurriculumPayload with all V2 fields", async () => {
@@ -277,5 +303,32 @@ describe("generateLessonV2", () => {
     await expect(
       generateLessonV2({ grade: 5, subject: "MATH", topic: "Subtraction" })
     ).rejects.toThrow("too thin");
+  });
+
+  it("calls routedCompletion with modelOverride when model is specified", async () => {
+    await generateLessonV2({
+      grade: 5,
+      subject: "MATH",
+      topic: "Subtraction with Borrowing",
+      model: "gpt-4o",
+    });
+    const pass1Call = vi.mocked(routedCompletion).mock.calls.find(
+      (args) => (args[0] as RouterOptions).aiUsage?.route === "curriculum.v2.body"
+    );
+    expect(pass1Call).toBeTruthy();
+    expect((pass1Call![0] as RouterOptions).modelOverride).toBe("gpt-4o");
+  });
+
+  it("fires expansion calls when sections are below floor", async () => {
+    await generateLessonV2({
+      grade: 5,
+      subject: "MATH",
+      topic: "Subtraction with Borrowing",
+    });
+    const expandCalls = vi.mocked(routedCompletion).mock.calls.filter(
+      (args) => (args[0] as RouterOptions).aiUsage?.route === "curriculum.v2.expand"
+    );
+    // MOCK_BODY has thin Direct Instruction, Worked Examples, etc. → at least 1 expansion call
+    expect(expandCalls.length).toBeGreaterThan(0);
   });
 });

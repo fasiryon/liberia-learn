@@ -106,6 +106,7 @@ async function main() {
         subject: lesson.subject,
         topic: lesson.topic,
         demoReady: true,
+        model: 'gpt-4o',
       });
 
       const { payload } = result;
