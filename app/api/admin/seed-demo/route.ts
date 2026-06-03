@@ -155,9 +155,20 @@ export async function POST() {
     }
     logs.push(`Newly enrolled: ${enrolled}`);
 
-    // Create homework if none
+    const defaultHwQuestions = [
+      { question: "What is 245 + 378?", type: "FR" },
+      { question: "What is 500 - 167?", type: "FR" },
+      {
+        question:
+          "A market woman has 456 Liberian dollars. She spends 189. How much is left?",
+        type: "FR",
+      },
+    ];
+
+    // Create homework if none, or backfill questions if existing homework lacks them
     let hw = await prisma.homework.findFirst({
       where: { classId: cls.id },
+      select: { id: true, title: true, questions: true },
     });
     if (!hw) {
       hw = await prisma.homework.create({
@@ -169,22 +180,48 @@ export async function POST() {
           createdById: teacher.id,
           instructions:
             "Solve each problem step by step. Write your final answer clearly.",
-          questions: [
-            { question: "What is 245 + 378?", type: "FR" },
-            { question: "What is 500 - 167?", type: "FR" },
-            {
-              question:
-                "A market woman has 456 Liberian dollars. She spends 189. How much is left?",
-              type: "FR",
-            },
-          ],
+          questions: defaultHwQuestions,
           dueAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
         },
       });
       logs.push(`Created homework: ${hw.title}`);
     } else {
-      logs.push(`Homework exists: ${hw.title}`);
+      const hasQuestions = Array.isArray(hw.questions) && (hw.questions as any[]).length > 0;
+      if (!hasQuestions) {
+        await prisma.homework.update({
+          where: { id: hw.id },
+          data: { questions: defaultHwQuestions },
+        });
+        logs.push(`Backfilled questions on homework: ${hw.title}`);
+      } else {
+        logs.push(`Homework exists: ${hw.title}`);
+      }
     }
+
+    // Backfill questions on all homework in this school that have none
+    const emptyHomework = await prisma.homework.findMany({
+      where: { Class: { schoolId } },
+      select: { id: true, title: true, questions: true, Class: { select: { subject: true } } },
+    });
+    let backfilledCount = 0;
+    for (const item of emptyHomework) {
+      const hasQ = Array.isArray(item.questions) && (item.questions as any[]).length > 0;
+      if (!hasQ) {
+        const subjectLabel = item.Class?.subject ?? "this subject";
+        await prisma.homework.update({
+          where: { id: item.id },
+          data: {
+            questions: [
+              `Explain in your own words one key concept you learned in ${subjectLabel} this week.`,
+              `Give two real-life examples of how ${subjectLabel} is used in everyday life in Liberia.`,
+              `What is one question you still have about ${subjectLabel}? Try to answer it yourself.`,
+            ],
+          },
+        });
+        backfilledCount++;
+      }
+    }
+    if (backfilledCount > 0) logs.push(`Backfilled questions on ${backfilledCount} homework record(s)`);
 
     // Create submission from first student
     if (studentUsers.length > 0) {
@@ -219,6 +256,38 @@ export async function POST() {
           });
           logs.push("Created sample submission");
         }
+      }
+    }
+
+    // Ensure today's scheduled lesson exists so the student Today page isn't empty
+    const content = await prisma.curriculumContent.findFirst({
+      where: { grade: 4, subject: "MATH", status: { in: ["published", "APPROVED"] } },
+      select: { contentId: true },
+    });
+    if (content) {
+      const now = new Date();
+      const todayUTC = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()));
+      const nextDayUTC = new Date(todayUTC.getTime() + 86_400_000);
+
+      const existingToday = await prisma.scheduledWork.findFirst({
+        where: { classId: cls.id, scheduledDate: { gte: todayUTC, lt: nextDayUTC } },
+        select: { id: true },
+      });
+      if (!existingToday) {
+        await prisma.scheduledWork.create({
+          data: {
+            classId: cls.id,
+            contentId: content.contentId,
+            scheduledDate: todayUTC,
+            createdById: teacher.id,
+            isDelivered: false,
+            classFormat: "standard",
+            status: "confirmed",
+          },
+        });
+        logs.push("Created today's scheduled lesson (Today page fix)");
+      } else {
+        logs.push("Today's scheduled lesson already exists");
       }
     }
 

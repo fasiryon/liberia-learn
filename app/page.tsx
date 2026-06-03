@@ -2,6 +2,9 @@ import Link from "next/link";
 import { LogIn } from "lucide-react";
 import { BrandMark } from "@/components/ui/BrandMark";
 import { PublicFooter } from "@/components/PublicFooter";
+import { prisma } from "@/lib/db";
+
+export const revalidate = 86400;
 
 const capabilityBlocks = [
   {
@@ -30,7 +33,17 @@ const capabilityBlocks = [
   },
 ];
 
-export default function HomePage() {
+export default async function HomePage() {
+  let approvedLessonCount = 5832;
+  try {
+    approvedLessonCount = await prisma.curriculumContent.count({
+      where: { status: { in: ["published", "APPROVED"] } },
+    });
+  } catch {
+    // fallback to last-known value on DB error
+  }
+  const lessonStat = approvedLessonCount.toLocaleString("en-US");
+
   return (
     <main className="ll-page min-h-screen text-[var(--ll-text)]">
       <header className="border-b border-[var(--ll-border)] bg-[var(--ll-bg)]">
@@ -81,16 +94,15 @@ export default function HomePage() {
               from Grade 1 to Grade 12.
             </p>
 
-            {/* Proof strip — numbers verified from docs/SYSTEM_COMPLETE_SIGNOFF.md (April 25, 2026) */}
             <div className="flex flex-wrap items-center gap-6 mb-8">
               <div>
-                <p className="text-2xl font-semibold text-[var(--ll-text)]">3,525</p>
-                <p className="text-xs text-[var(--ll-text-faint)]">Lessons</p>
+                <p className="text-2xl font-semibold text-[var(--ll-text)]">{lessonStat}</p>
+                <p className="text-xs text-[var(--ll-text-faint)]">Approved lessons</p>
               </div>
               <div className="w-px h-8 bg-[var(--ll-border)] hidden sm:block" />
               <div>
-                <p className="text-2xl font-semibold text-[var(--ll-text)]">12</p>
-                <p className="text-xs text-[var(--ll-text-faint)]">AI Labs</p>
+                <p className="text-2xl font-semibold text-[var(--ll-text)]">8</p>
+                <p className="text-xs text-[var(--ll-text-faint)]">Subjects</p>
               </div>
               <div className="w-px h-8 bg-[var(--ll-border)] hidden sm:block" />
               <div>

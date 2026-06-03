@@ -244,6 +244,19 @@ function schoolDaysBack(n: number): Date[] {
   return result.reverse(); // oldest first
 }
 
+// Returns school-day dates (Mon-Fri) going forward N days from today (inclusive)
+function schoolDaysForward(n: number): Date[] {
+  const result: Date[] = [];
+  let cursor = new Date();
+  cursor.setUTCHours(0, 0, 0, 0);
+  while (result.length < n) {
+    const dow = cursor.getUTCDay();
+    if (dow !== 0 && dow !== 6) result.push(new Date(cursor));
+    cursor = new Date(cursor.getTime() + 86_400_000);
+  }
+  return result;
+}
+
 // Returns a random-ish school-hour timestamp (8am-4pm UTC) for a given base date
 function schoolHourTs(baseDate: Date, offset: number): Date {
   const hour = 8 + (offset % 8);
@@ -426,9 +439,14 @@ async function seedSchool(
 
       // Homework paired with each assignment
       const hwId = `hw-${code}-${ti}-${ai}`;
+      const hwQuestions = [
+        `Explain in your own words one key concept you learned in ${cs.label} this week.`,
+        `Give two real-life examples of how ${cs.label} is used in everyday life in Liberia.`,
+        `What is one question you still have about ${cs.label}? Try to answer it yourself.`,
+      ];
       await prisma.homework.upsert({
         where: { id: hwId },
-        update: {},
+        update: { questions: hwQuestions },
         create: {
           id: hwId,
           classId,
@@ -436,6 +454,7 @@ async function seedSchool(
           dueAt,
           createdById: teacher.id,
           instructions: `Complete the exercises on ${cs.label}.`,
+          questions: hwQuestions,
         },
       });
     }
@@ -444,15 +463,17 @@ async function seedSchool(
     const deliveryDays = schoolDaysBack(30).slice(-5);
     const contentKey = `demo-content-${cs.subject.toLowerCase().slice(0, 3)}-g4_6`;
     const contentFallback = "demo-content-math-g4_6";
+    const validContentIds = [
+      "demo-content-math-g1_3", "demo-content-math-g4_6", "demo-content-math-g7_9",
+      "demo-content-sci-g1_3", "demo-content-sci-g4_6", "demo-content-sci-g7_9",
+      "demo-content-lit-g1_3", "demo-content-lit-g4_6", "demo-content-civ-g4_6",
+      "demo-content-cs-g4_6",
+    ];
+    const resolvedContent = validContentIds.includes(contentKey) ? contentKey : contentFallback;
+
     for (let li = 0; li < deliveryDays.length; li++) {
       const swId = `sw-${code}-${ti}-${li}`;
       const deliveredAt = schoolHourTs(deliveryDays[li], li + ti);
-      const resolvedContent = [
-        "demo-content-math-g1_3", "demo-content-math-g4_6", "demo-content-math-g7_9",
-        "demo-content-sci-g1_3", "demo-content-sci-g4_6", "demo-content-sci-g7_9",
-        "demo-content-lit-g1_3", "demo-content-lit-g4_6", "demo-content-civ-g4_6",
-        "demo-content-cs-g4_6",
-      ].includes(contentKey) ? contentKey : contentFallback;
 
       await prisma.scheduledWork.upsert({
         where: { id: swId },
@@ -468,6 +489,26 @@ async function seedSchool(
           classFormat: "standard",
           status: "confirmed",
           completionRate: 75 + (li * 5) % 25,
+        },
+      });
+    }
+
+    // Upcoming ScheduledWork (today + next 2 school days) so the Today page isn't empty
+    const upcomingDays = schoolDaysForward(3);
+    for (let li = 0; li < upcomingDays.length; li++) {
+      const swId = `sw-${code}-${ti}-upcoming-${li}`;
+      await prisma.scheduledWork.upsert({
+        where: { id: swId },
+        update: {},
+        create: {
+          id: swId,
+          contentId: resolvedContent,
+          classId,
+          scheduledDate: upcomingDays[li],
+          createdById: teacher.id,
+          isDelivered: false,
+          classFormat: "standard",
+          status: "confirmed",
         },
       });
     }
