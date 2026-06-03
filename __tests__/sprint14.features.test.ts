@@ -259,7 +259,7 @@ describe("Sprint 14 - Guardian assignments API", () => {
         id: "a1",
         title: "Math Homework",
         description: null,
-        dueAt: new Date("2026-06-01"),
+        dueAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
         points: 100,
         createdAt: new Date(),
         classId: "class-1",

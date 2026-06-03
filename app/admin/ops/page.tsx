@@ -10,6 +10,12 @@ export default async function OpsIndexPage() {
 
   const sections = [
     {
+      href: "/admin/ops/health",
+      title: "System Health",
+      desc: "DB, Redis, AI spend, pipeline, usage, and queue — one-glance platform health",
+      disabled: false,
+    },
+    {
       href: "/admin/ops/curriculum-regeneration",
       title: "Curriculum Regeneration",
       desc: "Monitor and manage lesson regeneration",
