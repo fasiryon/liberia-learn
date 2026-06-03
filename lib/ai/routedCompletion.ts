@@ -54,6 +54,8 @@ export interface RouterOptions {
   aiUsage?: AiUsageContext;
   /** When set to "json", instructs the model to return only valid JSON (JSON mode). */
   responseFormat?: "json" | "text";
+  /** Override the OpenAI model. Only applies when the request routes to OpenAI (not Groq/Grok). */
+  modelOverride?: string;
 }
 
 export interface RouterResult {
@@ -197,13 +199,15 @@ async function callOpenAI(
   messages: RouterOptions["messages"],
   maxTokens: number,
   timeoutMs: number,
-  responseFormat?: "json" | "text"
+  responseFormat?: "json" | "text",
+  modelOverride?: string
 ): Promise<{ content: string; inputTokens: number; outputTokens: number }> {
   const client = getOpenAIClientOrThrow();
+  const model = modelOverride ?? OPENAI_MODEL;
   try {
     const completion = await client.chat.completions.create(
       {
-        model: OPENAI_MODEL,
+        model,
         messages,
         max_tokens: maxTokens,
         ...(responseFormat === "json" ? { response_format: { type: "json_object" } } : {}),
@@ -394,9 +398,9 @@ export async function routedCompletion(opts: RouterOptions): Promise<RouterResul
     };
   }
 
-  // Skip Groq when caller explicitly requests openai (e.g. curriculum generation
-  // where JSON consistency and longer outputs are more important than cost).
-  const skipGroq = requestedProvider === "openai";
+  // Skip Groq when caller explicitly requests openai or specifies a model override
+  // (model overrides only apply to the OpenAI path).
+  const skipGroq = requestedProvider === "openai" || !!opts.modelOverride;
 
   if (!response && !skipGroq && process.env.GROQ_API_KEY) {
     const useSmartGroq = classification.tier === "smart" || opts.forceSmartTier;
@@ -449,11 +453,12 @@ export async function routedCompletion(opts: RouterOptions): Promise<RouterResul
       estimatedCostUSD: 0,
     };
     response = await openAiBreaker.call(async () => {
-      const result = await callOpenAI(opts.messages, maxTokens, timeoutMs, opts.responseFormat);
+      const result = await callOpenAI(opts.messages, maxTokens, timeoutMs, opts.responseFormat, opts.modelOverride);
+      const usedModel = opts.modelOverride ?? OPENAI_MODEL;
       return {
         content: result.content,
         tier: classification.tier,
-        model: OPENAI_MODEL,
+        model: usedModel,
         inputTokens: result.inputTokens,
         outputTokens: result.outputTokens,
         estimatedCostUSD:

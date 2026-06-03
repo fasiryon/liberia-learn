@@ -2,6 +2,7 @@
 //
 // V2 lesson generator — structured 17-section format with:
 //   - Higher word floors than V1 (3,500+ words total)
+//   - Per-section enforcement with targeted expansion calls
 //   - Structured [STUDENT_PROBLEM_START/END] + [ANSWER_START/END] markers
 //   - Problem set extraction (student prompts separated from answer keys)
 //   - Student body sanitization (answer blocks stripped before delivery)
@@ -33,6 +34,8 @@ export type GenerateLessonV2Input = {
   topic: string;
   demoReady?: boolean;
   moeAlignmentCodes?: string[];
+  /** Override OpenAI model (e.g. "gpt-4o" for hero set, "gpt-4o-mini" for bulk). */
+  model?: string;
 };
 
 export type GenerateLessonV2Result = {
@@ -53,6 +56,25 @@ type ExtractedProblem = {
   answerKey: string;
 };
 
+type SectionCheckGroup = {
+  nums: number[];
+  label: string;
+  floor: number;
+};
+
+// ─── Per-section floor groups ─────────────────────────────────────────────────
+// Maps to the 17-section V2 template. Each group can span multiple section numbers.
+// Floors match the sprint spec (Phase 1).
+
+const SECTION_CHECK_GROUPS: SectionCheckGroup[] = [
+  { nums: [1], label: "Hook", floor: 200 },
+  { nums: [4, 5], label: "Direct Instruction (Core Concepts)", floor: 1500 },
+  { nums: [7, 8], label: "Worked Examples", floor: 800 },
+  { nums: [10, 11, 12], label: "Guided Practice", floor: 1200 },
+  { nums: [13, 14, 15], label: "Independent Practice", floor: 600 },
+  { nums: [17], label: "Assessment & Summary", floor: 200 },
+];
+
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
 function countWords(text: string): number {
@@ -62,7 +84,6 @@ function countWords(text: string): number {
 function extractTakeaways(body: string): string {
   const match = body.match(/Key Takeaways?:\s*\n((?:\s*[-*]\s+.+\n?)+)/i);
   if (match) return match[1].trim();
-  // fallback: last 5 bullet points in the body
   const bullets = body.split("\n").filter((l) => /^[-*]\s+.{20,}/.test(l)).slice(-5);
   return bullets.length >= 2
     ? bullets.join("\n")
@@ -112,11 +133,41 @@ function extractProblemSets(body: string): ExtractedProblem[] {
 }
 
 function buildStudentBody(rawBody: string): string {
-  let body = rawBody
+  const body = rawBody
     .replace(/\[STUDENT_PROBLEM_START:\w+\]/g, "")
     .replace(/\[STUDENT_PROBLEM_END:\w+\]/g, "")
     .replace(/\[ANSWER_START:\w+\][\s\S]*?\[ANSWER_END:\w+\]/g, "");
   return body.trim();
+}
+
+/** Parse rawBody into a map of section number → section text (including heading). */
+function parseSections(body: string): Map<number, string> {
+  const sections = new Map<number, string>();
+  const regex = /^(## (\d+)\. )/gm;
+  const matches = [...body.matchAll(regex)];
+  for (let i = 0; i < matches.length; i++) {
+    const num = parseInt(matches[i][2], 10);
+    const start = matches[i].index!;
+    const end = i + 1 < matches.length ? matches[i + 1].index! : body.length;
+    sections.set(num, body.slice(start, end));
+  }
+  return sections;
+}
+
+/** Return section groups that are below their word floor. */
+function findThinGroups(
+  sections: Map<number, string>
+): Array<{ group: SectionCheckGroup; combinedText: string; actualWords: number }> {
+  const thin: Array<{ group: SectionCheckGroup; combinedText: string; actualWords: number }> = [];
+  for (const group of SECTION_CHECK_GROUPS) {
+    const texts = group.nums.map((n) => sections.get(n) ?? "").filter(Boolean);
+    const combinedText = texts.join("\n\n");
+    const actualWords = countWords(combinedText);
+    if (actualWords < group.floor) {
+      thin.push({ group, combinedText, actualWords });
+    }
+  }
+  return thin;
 }
 
 // ─── Prompt builders ──────────────────────────────────────────────────────────
@@ -278,12 +329,147 @@ Return ONLY this JSON (no other text):
 }`;
 }
 
+function buildExpansionUser(
+  groupLabel: string,
+  currentText: string,
+  targetWords: number,
+  grade: number,
+  subject: string,
+  topic: string
+): string {
+  return `You are expanding a section of a Grade ${grade} ${subject} lesson on "${topic}".
+
+The section "${groupLabel}" is currently ${countWords(currentText)} words but needs at least ${targetWords} words.
+
+Current content:
+---
+${currentText}
+---
+
+Rewrite this section to be at least ${targetWords} words by:
+- Adding more detail to every explanation
+- Expanding each worked example to show every arithmetic step
+- Adding more checks for student understanding
+- Using more Liberian context (names: Boima, Fatu, Pewee; places: Monrovia, Nimba; currency: LD$)
+
+IMPORTANT:
+- Do NOT change the section topic
+- Preserve any [STUDENT_PROBLEM_START/END:id] and [ANSWER_START/END:id] markers exactly
+- Keep the ## heading(s) at the top
+- Return ONLY the expanded section text, nothing else`;
+}
+
+// ─── Per-section expansion ────────────────────────────────────────────────────
+
+async function expandThinSections(
+  rawBody: string,
+  grade: number,
+  subject: string,
+  topic: string,
+  modelOverride: string | undefined,
+  timeoutMs: number
+): Promise<string> {
+  let body = rawBody;
+  const MAX_EXPANSION_ATTEMPTS = 3;
+
+  for (let attempt = 0; attempt < MAX_EXPANSION_ATTEMPTS; attempt++) {
+    const sections = parseSections(body);
+    const thinGroups = findThinGroups(sections);
+
+    if (thinGroups.length === 0) {
+      console.log(`[generateLessonV2] All sections pass floor checks.`);
+      break;
+    }
+
+    console.log(
+      `[generateLessonV2] Expansion attempt ${attempt + 1}: ${thinGroups.length} thin section(s) — ` +
+        thinGroups
+          .map((t) => `${t.group.label} (${t.actualWords}/${t.group.floor}w)`)
+          .join(", ")
+    );
+
+    for (const { group, combinedText, actualWords } of thinGroups) {
+      console.log(
+        `  Expanding "${group.label}": ${actualWords} → target ${group.floor} words`
+      );
+      try {
+        const expansionResult = await routedCompletion({
+          messages: [
+            {
+              role: "system",
+              content: `You are an expert Liberian teacher. Expand the given lesson section to meet the minimum word count. Write rich, detailed teaching content in Markdown prose.`,
+            },
+            {
+              role: "user",
+              content: buildExpansionUser(group.label, combinedText, group.floor, grade, subject, topic),
+            },
+          ],
+          maxTokens: 6000,
+          forceSmartTier: true,
+          modelOverride,
+          aiUsage: {
+            route: "curriculum.v2.expand",
+            feature: "curriculum",
+            subject,
+            requestType: "elite_curriculum_generation",
+            metadata: { grade, topic, group: group.label, attempt },
+          },
+        });
+
+        const expandedText = expansionResult.content.trim();
+        const expandedWords = countWords(expandedText);
+        console.log(`    Result: ${expandedWords} words via ${expansionResult.model}`);
+
+        // Replace the original section(s) in body with the expanded version
+        // Find the first heading of this group in the body
+        const firstNum = group.nums[0];
+        const lastNum = group.nums[group.nums.length - 1];
+
+        const firstHeadingRegex = new RegExp(`^## ${firstNum}\\.`, "m");
+        const firstMatch = body.match(firstHeadingRegex);
+        if (!firstMatch || firstMatch.index == null) continue;
+
+        // Find the end: the heading after lastNum in body (or end of body)
+        const afterLastRegex = new RegExp(`^## ${lastNum + 1}\\.`, "m");
+        const afterMatch = body.match(afterLastRegex);
+
+        const replaceStart = firstMatch.index;
+        const replaceEnd = afterMatch?.index ?? body.length;
+
+        body =
+          body.slice(0, replaceStart) +
+          expandedText +
+          "\n\n" +
+          body.slice(replaceEnd);
+      } catch (err) {
+        console.warn(
+          `  Expansion call failed for "${group.label}": ${err instanceof Error ? err.message : String(err)}`
+        );
+      }
+    }
+  }
+
+  // Final check — log any sections still below floor (don't fail, just warn)
+  const finalSections = parseSections(body);
+  const stillThin = findThinGroups(finalSections);
+  if (stillThin.length > 0) {
+    console.warn(
+      `[generateLessonV2] After ${MAX_EXPANSION_ATTEMPTS} expansion attempts, ` +
+        `${stillThin.length} section(s) still below floor: ` +
+        stillThin.map((t) => `${t.group.label} (${t.actualWords}/${t.group.floor}w)`).join(", ")
+    );
+  }
+
+  return body;
+}
+
 // ─── Main generator ───────────────────────────────────────────────────────────
 
 export async function generateLessonV2(
   input: GenerateLessonV2Input
 ): Promise<GenerateLessonV2Result> {
-  const { grade, subject, topic, demoReady, moeAlignmentCodes } = input;
+  const { grade, subject, topic, demoReady, moeAlignmentCodes, model: modelOverride } = input;
+  const timeoutMs = 240_000;
 
   // ── Pass 1: body generation (text mode, high token budget) ───────────────────
   const pass1Result = await routedCompletion({
@@ -291,9 +477,9 @@ export async function generateLessonV2(
       { role: "system", content: buildPass1System(grade, subject, moeAlignmentCodes) },
       { role: "user", content: buildPass1User(grade, subject, topic) },
     ],
-    maxTokens: 10000,
+    maxTokens: 16000,
     forceSmartTier: true,
-    // No responseFormat: "json" — text mode produces longer, richer content
+    modelOverride,
     aiUsage: {
       route: "curriculum.v2.body",
       feature: "curriculum",
@@ -326,7 +512,20 @@ export async function generateLessonV2(
   // Soft warning: < 3000 words is below the target floor
   if (pass1Words < 3000) {
     console.warn(
-      `[generateLessonV2] Pass 1 below 3000-word floor: ${pass1Words} words. Continuing.`
+      `[generateLessonV2] Pass 1 below 3000-word floor: ${pass1Words} words. Running expansion.`
+    );
+  }
+
+  // ── Per-section enforcement (Phase 1) ────────────────────────────────────────
+  rawBody = await expandThinSections(rawBody, grade, subject, topic, modelOverride, timeoutMs);
+
+  const expandedWords = countWords(rawBody);
+  console.log(`[generateLessonV2] After expansion: ${expandedWords} words total`);
+
+  // Hard fail if still below 2,000 after expansion (shouldn't happen)
+  if (expandedWords < 2000) {
+    throw new GenerateLessonV2Error(
+      `Lesson still too thin after expansion: ${expandedWords} words`
     );
   }
 
