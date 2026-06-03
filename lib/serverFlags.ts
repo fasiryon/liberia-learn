@@ -687,7 +687,7 @@ export function isDeliveryComplianceReportingEnabled(): boolean {
  * Fail-closed: must be explicitly enabled.
  */
 export function isExamSystemEnabled(): boolean {
-  return process.env.ENABLE_EXAM_SYSTEM === "true";
+  return process.env.ENABLE_EXAM_SYSTEM?.trim() === "true";
 }
 
 /**
