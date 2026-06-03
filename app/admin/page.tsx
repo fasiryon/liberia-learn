@@ -1,4 +1,3 @@
-import type { ReactNode } from "react";
 import Link from "next/link";
 
 function formatEventLabel(eventType: string): string {
@@ -48,7 +47,7 @@ function deduplicateEvents(events: ActivityEvent[]): Array<ActivityEvent & { cou
 }
 import { redirect } from "next/navigation";
 import { getServerSession } from "next-auth";
-import { AlertTriangle, Building2, BookOpen, Bell, BarChart2, Settings } from "lucide-react";
+import { AlertTriangle } from "lucide-react";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { AttachDemoSchoolButton } from "./AttachDemoSchoolButton";
@@ -56,9 +55,6 @@ import { DashboardTopBar } from "@/components/DashboardTopBar";
 import { EventCalendar } from "@/components/EventCalendar";
 
 export const dynamic = "force-dynamic";
-
-const TRAINING_ENABLED = process.env.NEXT_PUBLIC_ENABLE_TRAINING_CENTER === "true";
-
 
 export default async function AdminConsolePage() {
   const session = await getServerSession(authOptions);
@@ -337,70 +333,6 @@ export default async function AdminConsolePage() {
     { label: "Attendance (30d)", value: `${attendanceRate30d}%` },
   ];
 
-  const navGroups: Array<{ label: string; icon: ReactNode; links: { label: string; href: string }[] }> = [
-    {
-      label: "School Operations",
-      icon: <Building2 className="h-3.5 w-3.5 shrink-0" strokeWidth={1.5} />,
-      links: [
-        { label: "Students", href: "/admin/students" },
-        { label: "Teachers", href: "/admin/teachers" },
-        { label: "Classes", href: "/admin/classes" },
-        { label: "Enrollments", href: "/admin/enrollment" },
-        { label: "Teacher Assignments", href: "/admin/assignments" },
-        { label: "Academic Years", href: "/admin/academic-year" },
-        { label: "Timetable", href: "/admin/timetable" },
-        { label: "Placements", href: "/admin/placements" },
-        { label: "Events Calendar", href: "/admin/events" },
-        { label: "Documents", href: "/admin/documents" },
-      ],
-    },
-    {
-      label: "Curriculum",
-      icon: <BookOpen className="h-3.5 w-3.5 shrink-0" strokeWidth={1.5} />,
-      links: [
-        { label: "Curriculum / AI Factory", href: "/admin/curriculum" },
-        { label: "Curriculum Units", href: "/admin/curriculum/units" },
-        { label: "Content Review", href: "/admin/content-review" },
-        { label: "Homework", href: "/admin/homework" },
-        { label: "Exams", href: "/admin/exams" },
-      ],
-    },
-    {
-      label: "Communications",
-      icon: <Bell className="h-3.5 w-3.5 shrink-0" strokeWidth={1.5} />,
-      links: [
-        { label: "Notifications", href: "/admin/notifications" },
-        { label: "Guardian Links", href: "/admin/guardian-link" },
-        { label: "Onboarding", href: "/admin/onboarding" },
-        { label: "MOE Submissions", href: "/admin/moe-submissions" },
-      ],
-    },
-    {
-      label: "Analytics & Compliance",
-      icon: <BarChart2 className="h-3.5 w-3.5 shrink-0" strokeWidth={1.5} />,
-      links: [
-        { label: "Analytics", href: "/admin/analytics" },
-        { label: "AI Costs", href: "/admin/ai-costs" },
-        { label: "Reports", href: "/admin/reports" },
-        { label: "Compliance", href: "/admin/compliance" },
-        { label: "Data Downloads", href: "/admin/governance/exports" },
-        { label: "Pilot Score", href: "/admin/pilot-score" },
-        ...(TRAINING_ENABLED ? [{ label: "Training Adoption", href: "/admin/training/adoption" }] : []),
-      ],
-    },
-    {
-      label: "Settings",
-      icon: <Settings className="h-3.5 w-3.5 shrink-0" strokeWidth={1.5} />,
-      links: [
-        { label: "School Branding", href: "/admin/school-branding" },
-        { label: "School Settings", href: "/admin/school-settings" },
-        { label: "Audit Log", href: "/admin/audit" },
-        { label: "Canva Integration", href: "/admin/settings/canva" },
-        { label: "Schools", href: "/admin/schools" },
-        { label: "Seed Demo Data", href: "/admin/seed" },
-      ],
-    },
-  ];
   const deduplicatedRecentActivity = deduplicateEvents(recentActivity);
 
   return (
@@ -563,29 +495,6 @@ export default async function AdminConsolePage() {
               </table>
             </div>
           )}
-        </section>
-
-        {/* Zone B — Daily operations */}
-        <section className="space-y-4">
-          {navGroups.map((group) => (
-            <div key={group.label} className="ll-section p-4">
-              <p className="mb-3 flex items-center gap-1.5 text-[11px] font-medium uppercase tracking-[0.1em] text-[var(--ll-text-faint)]">
-                {group.icon}
-                {group.label}
-              </p>
-              <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
-                {group.links.map((link) => (
-                  <Link
-                    key={link.href}
-                    href={link.href}
-                    className="ll-command ll-focus text-sm font-medium text-[var(--ll-text)]"
-                  >
-                    {link.label}
-                  </Link>
-                ))}
-              </div>
-            </div>
-          ))}
         </section>
 
       </div>
