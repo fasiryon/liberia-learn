@@ -40,14 +40,9 @@ const UTC_DAY_TO_WEEKDAY: Record<number, string> = {
 
 const BREAK_LABEL_RE = /break|lunch|recess|assembly/i;
 
-// Hardcoded contentId pins for cha-class-grade9a periods where the Timetable.subject
-// (constrained by the Subject enum) differs from the desired demo content subject.
-// ENGLISH is not in the Subject enum so P2's timetable row stays as LITERACY,
-// but we pin the SW to the ENGLISH G7 hero directly to avoid two LITERACY periods on
-// the same demo day.
-const TIMETABLE_PERIOD_CONTENT_OVERRIDE: Record<number, string> = {
-  2: "hero-english-g7-vocabulary-in-context-reading-west-african-texts",
-};
+// No period overrides needed — ENGLISH is now a native Subject enum value.
+// P2 uses subject=ENGLISH which resolves to the ENGLISH G7 hero via normal lookup.
+const TIMETABLE_PERIOD_CONTENT_OVERRIDE: Record<number, string> = {};
 
 function parsePeriodNumber(label: string | null | undefined): number | null {
   if (!label) return null;
@@ -61,6 +56,7 @@ function parsePeriodNumber(label: string | null | undefined): number | null {
 const CONTENT_SUBJECT_CHAIN: Record<string, string[]> = {
   MATH: ["MATH"],
   LITERACY: ["LITERACY", "ENGLISH"],
+  ENGLISH: ["ENGLISH", "LITERACY"],
   SCIENCE: ["SCIENCE"],
   CIVICS: ["CIVICS", "SOCIAL_STUDIES"],
   COMPUTER_SCIENCE: ["COMPUTER_SCIENCE"],

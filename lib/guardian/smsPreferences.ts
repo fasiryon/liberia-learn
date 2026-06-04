@@ -2,12 +2,14 @@ export type GuardianSmsPreferences = {
   attendance: boolean;
   examResults: boolean;
   lowPerformance: boolean;
+  weeklyDigest: boolean;
 };
 
 const DEFAULT_GUARDIAN_SMS_PREFERENCES: GuardianSmsPreferences = {
   attendance: true,
   examResults: true,
   lowPerformance: true,
+  weeklyDigest: true,
 };
 
 export function readGuardianSmsPreferences(
@@ -21,23 +23,20 @@ export function readGuardianSmsPreferences(
           attendance: false,
           examResults: false,
           lowPerformance: false,
+          weeklyDigest: false,
         };
   }
 
   const record = value as Record<string, unknown>;
   return {
     attendance:
-      typeof record.attendance === "boolean"
-        ? record.attendance
-        : fallbackOptIn,
+      typeof record.attendance === "boolean" ? record.attendance : fallbackOptIn,
     examResults:
-      typeof record.examResults === "boolean"
-        ? record.examResults
-        : fallbackOptIn,
+      typeof record.examResults === "boolean" ? record.examResults : fallbackOptIn,
     lowPerformance:
-      typeof record.lowPerformance === "boolean"
-        ? record.lowPerformance
-        : fallbackOptIn,
+      typeof record.lowPerformance === "boolean" ? record.lowPerformance : fallbackOptIn,
+    weeklyDigest:
+      typeof record.weeklyDigest === "boolean" ? record.weeklyDigest : fallbackOptIn,
   };
 }
 
@@ -45,6 +44,7 @@ export function isGuardianSmsOptedIn(preferences: GuardianSmsPreferences) {
   return (
     preferences.attendance ||
     preferences.examResults ||
-    preferences.lowPerformance
+    preferences.lowPerformance ||
+    preferences.weeklyDigest
   );
 }

@@ -40,8 +40,14 @@ const templateRegistry: Record<GuardianTemplateKey, TemplateDefinition> = {
   },
   weekly_digest: {
     requiredFields: ["studentName", "lessonsCompleted", "avgScore"],
-    render: (payload) =>
-      `LiberiaLearn Weekly Update: ${String(payload.studentName)} completed ${String(payload.lessonsCompleted)} lesson(s) this week. Avg score: ${String(payload.avgScore)}%. Keep it up! Reply STOP to unsubscribe.`,
+    render: (payload) => {
+      const base = `LiberiaLearn: ${String(payload.studentName)} finished ${String(payload.lessonsCompleted)} lesson(s) this week, ${String(payload.avgScore)}% avg.`;
+      const tip = payload.actionTip
+        ? ` ${String(payload.actionTip)}`
+        : ` Keep it up!`;
+      const stop = ` Reply STOP to opt out.`;
+      return (base + tip + stop).slice(0, 160);
+    },
   },
   assignment_due: {
     requiredFields: ["studentName", "subject", "dueDate"],
