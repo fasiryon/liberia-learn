@@ -226,7 +226,7 @@ async function _computeToday(): Promise<NextResponse> {
             select: { completedAt: true, startedAt: true },
           },
         },
-        orderBy: { periodNumber: "asc" },
+        orderBy: [{ periodNumber: "asc" }, { startTime: "asc" }],
       }),
       prisma.scheduledWork.findMany({
         where: {
