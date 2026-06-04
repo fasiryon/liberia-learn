@@ -369,7 +369,7 @@ async function main() {
       const scheduledDate = weekDates[lesson.day];
       await prisma.scheduledWork.upsert({
         where: { id: swId },
-        update: { periodNumber: lesson.periodNumber, startTime: lesson.startTime, endTime: lesson.endTime },
+        update: { scheduledDate, periodNumber: lesson.periodNumber, startTime: lesson.startTime, endTime: lesson.endTime },
         create: {
           id: swId,
           contentId: lesson.contentId,
