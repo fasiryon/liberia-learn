@@ -69,6 +69,9 @@ const HERO_LESSONS = [
   { grade: 7, subject: 'ENGINEERING', topic: 'Water Systems Engineering: Clean Water Solutions for Communities' },
   { grade: 9, subject: 'ENGINEERING', topic: 'Renewable Energy: Solar and Hydro Power for Rural Liberia' },
   { grade: 5, subject: 'ENGINEERING', topic: 'Problem-Solving with the Engineering Design Process' },
+
+  // ── WAVE-1C patch: second LITERACY G7 hero so P2 and P6 show distinct lessons (index 35) ──
+  { grade: 7, subject: 'LITERACY', topic: 'Poetry and Figurative Language in West African Voices' },
 ];
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────

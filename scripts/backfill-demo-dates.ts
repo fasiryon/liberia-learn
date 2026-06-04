@@ -242,12 +242,21 @@ async function main() {
         const weekday = UTC_DAY_TO_WEEKDAY[schoolDay.getUTCDay()];
         const entries = byWeekday.get(weekday) ?? [];
 
+        // Per-day per-subject counter: duplicate-subject periods (e.g. P2 + P6
+        // both LITERACY) get different hero slots via an incremented offset.
+        const subjectUseCount = new Map<string, number>();
+
         for (const entry of entries) {
           // Skip break/lunch periods
           if (BREAK_LABEL_RE.test(entry.periodLabel)) continue;
 
           const periodNum = parsePeriodNumber(entry.periodLabel);
-          const content = findContent(entry.subject as string, dayIdx);
+          const subject = entry.subject as string;
+          const useCount = subjectUseCount.get(subject) ?? 0;
+          subjectUseCount.set(subject, useCount + 1);
+
+          // dayIdx * 10 + useCount: unique cycle index per day per occurrence
+          const content = findContent(subject, dayIdx * 10 + useCount);
 
           if (!content) {
             console.log(`  ⚠ No content for ${entry.subject} (${entry.periodLabel}) on ${weekday}`);
