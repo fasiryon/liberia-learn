@@ -86,9 +86,19 @@ export async function withRedisCache<T>(
     }
   }
 
-  // Concurrency guard — checked BEFORE the Redis GET so over-limit requests
-  // return in < 1ms rather than waiting up to 500ms for a Redis response that
-  // won't be used anyway. Nested calls bypass the limit via AsyncLocalStorage.
+  // Inflight check FIRST: concurrent requests for the same key join the
+  // in-progress DB promise at zero cost — they never consume a fallback slot
+  // and never receive a spurious empty response on first load.
+  // This MUST come before the concurrency guard; otherwise the guard rejects
+  // concurrent requests before they can join the inflight promise.
+  const existing = inflight.get(key);
+  if (existing) {
+    return existing as Promise<T>;
+  }
+
+  // Concurrency guard — checked AFTER the inflight check so only requests that
+  // have no in-progress promise to join are counted against the limit.
+  // Nested calls bypass the limit via AsyncLocalStorage.
   const isNestedCall = insideFallback.getStore() === true;
   if (!isNestedCall && activeDbFallbacks >= MAX_CONCURRENT_DB_FALLBACKS) {
     throw Object.assign(new Error(FALLBACK_LIMIT_EXCEEDED), {
@@ -125,16 +135,8 @@ export async function withRedisCache<T>(
     }
   }
 
-  // Inflight check before concurrency guard: concurrent requests for the same
-  // key reuse the in-progress promise at zero cost, so they never consume a
-  // fallback slot and never return a spurious empty response on first load.
-  const existing = inflight.get(key);
-  if (existing) {
-    return existing as Promise<T>;
-  }
-
-  // Second concurrency check: handles the race between the pre-check above and
-  // this point (another request may have taken the last slot during the Redis GET).
+  // Second concurrency check: handles the race where another request took the
+  // last fallback slot while this one was waiting for the Redis GET.
   if (!isNestedCall && activeDbFallbacks >= MAX_CONCURRENT_DB_FALLBACKS) {
     throw Object.assign(new Error(FALLBACK_LIMIT_EXCEEDED), {
       code: FALLBACK_LIMIT_EXCEEDED,
