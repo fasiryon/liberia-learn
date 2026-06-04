@@ -82,14 +82,8 @@ async function main() {
 
   const teacherBySchool = new Map(teacherMap.map(t => [t.schoolId, t.id]));
 
-  // ── 2. Fetch approved content for each class (all at once) ────────────────
+  // ── 2. Fetch approved content for each class — prefer hero lessons ─────────
 
-  // Build unique (subject, grade) pairs
-  type Pair = { subject: string; grade: number | null };
-  const pairs: Pair[] = demoClasses.map(c => ({ subject: c.subject as string, grade: c.gradeLevel }));
-
-  // Fetch up to 10 approved content IDs for each unique subject
-  const uniqueSubjects = [...new Set(pairs.map(p => p.subject))];
   const contentBySubjectGrade = new Map<string, string[]>();
 
   for (const cls of demoClasses) {
@@ -99,37 +93,53 @@ async function main() {
 
     if (contentBySubjectGrade.has(key)) continue;
 
-    const where = grade != null
-      ? { subject: subject as any, grade, status: { in: ["APPROVED", "published"] } }
-      : { subject: subject as any, status: { in: ["APPROVED", "published"] } };
+    // Try hero content first (isHero=true, APPROVED/published)
+    const heroWhere = grade != null
+      ? { subject: subject as any, grade, isHero: true, status: { in: ["APPROVED", "published"] } }
+      : { subject: subject as any, isHero: true, status: { in: ["APPROVED", "published"] } };
 
-    const rows = await prisma.curriculumContent.findMany({
-      where: where as any,
+    let rows = await prisma.curriculumContent.findMany({
+      where: heroWhere as any,
       select: { contentId: true },
       take: 10,
       orderBy: { createdAt: "asc" },
     });
+
+    if (rows.length > 0) {
+      console.log(`  ✓ Hero content for ${subject} (grade ${grade ?? "any"}): ${rows[0].contentId}`);
+    } else {
+      // Fall back to any approved/published content
+      const fallbackWhere = grade != null
+        ? { subject: subject as any, grade, status: { in: ["APPROVED", "published"] } }
+        : { subject: subject as any, status: { in: ["APPROVED", "published"] } };
+
+      rows = await prisma.curriculumContent.findMany({
+        where: fallbackWhere as any,
+        select: { contentId: true },
+        take: 10,
+        orderBy: { createdAt: "asc" },
+      });
+
+      console.log(`  ⚠ No hero for ${subject} (grade ${grade ?? "any"}) — fallback V1: ${rows[0]?.contentId ?? "NONE"}`);
+    }
 
     contentBySubjectGrade.set(key, rows.map(r => r.contentId));
   }
 
   // ── 3. Build ScheduledWork create-data ─────────────────────────────────────
 
-  // Find existing SW for these classes in the next 14 days to skip duplicates
   const futureStart = schoolDays[0];
   const futureEnd = new Date(futureStart.getTime() + 14 * 86400000);
 
-  const existingSW = await prisma.scheduledWork.findMany({
+  // Delete future SW (no progress yet) so hero + dedup logic applies cleanly
+  const deleted = await prisma.scheduledWork.deleteMany({
     where: {
       classId: { in: demoClasses.map(c => c.id) },
-      scheduledDate: { gte: futureStart, lt: futureEnd },
+      scheduledDate: { gte: futureStart },
+      progress: { none: {} },
     },
-    select: { classId: true, scheduledDate: true, contentId: true },
   });
-
-  const existingKeys = new Set(existingSW.map(sw =>
-    `${sw.classId}:${sw.scheduledDate.toISOString().slice(0, 10)}:${sw.contentId}`
-  ));
+  console.log(`  ✓ Cleared stale future SW (no progress): ${deleted.count}`);
 
   const swToCreate: {
     classId: string;
@@ -139,6 +149,9 @@ async function main() {
     status: string;
     periodNumber: number;
   }[] = [];
+
+  // Track which subjects have already been scheduled per day to prevent duplicates
+  const usedSubjectDates = new Set<string>();
 
   for (const cls of demoClasses) {
     const subject = cls.subject as string;
@@ -162,10 +175,14 @@ async function main() {
 
     for (let i = 0; i < schoolDays.length; i++) {
       const scheduledDate = schoolDays[i];
-      const contentId = contentIds[i % contentIds.length];
-      const swKey = `${cls.id}:${scheduledDate.toISOString().slice(0, 10)}:${contentId}`;
+      const dateStr = scheduledDate.toISOString().slice(0, 10);
 
-      if (existingKeys.has(swKey)) continue;
+      // Phase 3: ensure each subject appears at most once per day across all demo classes
+      const subjectDateKey = `${subject}:${dateStr}`;
+      if (usedSubjectDates.has(subjectDateKey)) continue;
+      usedSubjectDates.add(subjectDateKey);
+
+      const contentId = contentIds[i % contentIds.length];
 
       swToCreate.push({
         classId: cls.id,
@@ -173,17 +190,16 @@ async function main() {
         scheduledDate,
         createdById,
         status: "confirmed",
-        periodNumber: 1,
+        periodNumber: i + 1,
       });
     }
   }
 
-  // createMany in one shot
   const swResult = await prisma.scheduledWork.createMany({
     data: swToCreate,
     skipDuplicates: true,
   });
-  console.log(`  ✓ ScheduledWork created: ${swResult.count} (${swToCreate.length - swResult.count} skipped)`);
+  console.log(`  ✓ ScheduledWork created: ${swResult.count}`);
 
   // ── 4. Roll Assignment.dueAt forward ──────────────────────────────────────
 

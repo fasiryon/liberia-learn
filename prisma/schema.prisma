@@ -1861,6 +1861,7 @@ model CurriculumContent {
   thumbnailStatus  String          @default("pending")
   thumbnailGeneratedAt DateTime?
   thumbnailError   String?
+  isHero          Boolean         @default(false)
   versionId       String?
   // Sprint 25: teacher content creation
   editedById      String?
