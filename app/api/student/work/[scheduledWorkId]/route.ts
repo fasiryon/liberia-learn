@@ -23,13 +23,28 @@ async function resolveScheduledWorkForStudent(input: {
   schoolId: string | null | undefined;
   studentRecordId: string;
 }) {
+  const { start, end } = utcDayRange();
+
+  // Path 1: direct ScheduledWork ID lookup (legacy hrefs, progress-preserved records)
   const direct = await prisma.scheduledWork.findUnique({
     where: { id: input.lessonRef },
     include: scheduledWorkInclude(input.userId),
   });
   if (direct) return direct;
 
-  const { start, end } = utcDayRange();
+  // Path 2: stable contentId lookup — used by Today page v1D+ which builds hrefs
+  // from CurriculumContent.contentId instead of ScheduledWork.id. This means
+  // the lesson URL survives backfill runs that delete and recreate SW records.
+  const byContent = await prisma.scheduledWork.findFirst({
+    where: {
+      contentId: input.lessonRef,
+      class: { enrollments: { some: { studentId: input.studentRecordId } } },
+      scheduledDate: { gte: start, lt: end },
+    },
+    orderBy: [{ periodNumber: "asc" }, { startTime: "asc" }],
+    include: scheduledWorkInclude(input.userId),
+  });
+  if (byContent) return byContent;
   const timetableAssignment = await prisma.timetableAssignment.findFirst({
     where: {
       curriculumContentId: input.lessonRef,

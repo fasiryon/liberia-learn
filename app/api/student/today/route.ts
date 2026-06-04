@@ -357,8 +357,8 @@ async function _computeToday(): Promise<NextResponse> {
         status,
         completedAt: progress?.completedAt || null,
         order: index + 1,
-        lessonHref: `/student/lessons/${workId}`,
-        quizHref: `/student/lessons/${workId}#lesson-quiz`,
+        lessonHref: `/student/lessons/${contentId}`,
+        quizHref: `/student/lessons/${contentId}#lesson-quiz`,
         lab: lab ? { ...lab, href: `/student/labs/${lab.labId}` } : null,
         assignment: assignment
           ? {

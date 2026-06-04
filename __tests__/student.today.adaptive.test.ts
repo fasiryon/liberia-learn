@@ -160,7 +160,7 @@ describe("student today layered school day", () => {
       scheduledWorkId: "sw-1",
       title: "Ratios in Market Prices",
     });
-    expect(body.todayFocus.primaryHref).toBe("/student/lessons/sw-1");
+    expect(body.todayFocus.primaryHref).toBe("/student/lessons/content-1");
   });
 
   it("does not crash when a timetable period is missing teacher details", async () => {
@@ -276,7 +276,7 @@ describe("student today layered school day", () => {
     const { GET } = await import("@/app/api/student/today/route");
     const body = await (await GET()).json();
 
-    expect(body.todayFocus.primaryHref).toBe("/student/lessons/sw-1");
+    expect(body.todayFocus.primaryHref).toBe("/student/lessons/content-1");
     expect(body.adaptivePlan.orderedActions.some((action: any) => action.source === "learning_intelligence")).toBe(true);
   });
 });
