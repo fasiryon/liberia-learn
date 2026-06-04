@@ -7,6 +7,7 @@ type Preferences = {
   attendance: boolean;
   examResults: boolean;
   lowPerformance: boolean;
+  weeklyDigest: boolean;
 };
 
 export default function GuardianSettingsClient() {
@@ -16,6 +17,7 @@ export default function GuardianSettingsClient() {
     attendance: true,
     examResults: true,
     lowPerformance: true,
+    weeklyDigest: true,
   });
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -93,9 +95,10 @@ export default function GuardianSettingsClient() {
 
           <div className="mt-5 space-y-3">
             {[
-              ["attendance", "Attendance"],
+              ["attendance", "Attendance alerts"],
               ["examResults", "Exam results"],
               ["lowPerformance", "Low performance warnings"],
+              ["weeklyDigest", "Weekly progress digest (SMS every Saturday)"],
             ].map(([key, label]) => (
               <button
                 key={key}

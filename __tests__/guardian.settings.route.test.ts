@@ -78,6 +78,7 @@ describe("GET/PATCH /api/guardian/settings", () => {
             attendance: false,
             examResults: true,
             lowPerformance: false,
+            weeklyDigest: true,
           },
         }),
       })
