@@ -62,6 +62,13 @@ const HERO_LESSONS = [
   { grade: 6, subject: 'MATH', topic: 'Ratios and Proportions: Real-World Applications' },
   { grade: 6, subject: 'SCIENCE', topic: 'The Human Body Systems' },
   { grade: 2, subject: 'SCIENCE', topic: 'Living Things and Their Needs' },
+
+  // ── WAVE-1C: ENGINEERING heroes for CHA demo timetable (indices 30-34) ──
+  { grade: 5, subject: 'ENGINEERING', topic: 'Simple Machines: Levers, Pulleys and Inclined Planes in Liberia' },
+  { grade: 7, subject: 'ENGINEERING', topic: 'Structural Design: Building Bridges with Local Materials' },
+  { grade: 7, subject: 'ENGINEERING', topic: 'Water Systems Engineering: Clean Water Solutions for Communities' },
+  { grade: 9, subject: 'ENGINEERING', topic: 'Renewable Energy: Solar and Hydro Power for Rural Liberia' },
+  { grade: 5, subject: 'ENGINEERING', topic: 'Problem-Solving with the Engineering Design Process' },
 ];
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────

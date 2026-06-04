@@ -3,9 +3,10 @@
  *
  * NR-PILOT-CRITICAL: Demo date refresh
  *
- * All seeded ScheduledWork / Assignment / Homework records have hardcoded
- * dates from March–May 2026. Today is 2026-06-03+. This script rolls the
- * demo data forward so the Today page and Homework pages show live content.
+ * Rolls demo data forward so the Today page shows live content.
+ * For cha-class-grade9a: driven by TimetableEntry rows — one ScheduledWork
+ * per non-break period per school day, with proper startTime/endTime.
+ * For other pool classes: one SW per class per day (backward-compat).
  *
  * Usage:
  *   npx dotenv -e .env.production -- npx tsx scripts/backfill-demo-dates.ts
@@ -28,6 +29,40 @@ function nextSchoolDays(count: number): Date[] {
   }
   return days;
 }
+
+const UTC_DAY_TO_WEEKDAY: Record<number, string> = {
+  1: "MONDAY",
+  2: "TUESDAY",
+  3: "WEDNESDAY",
+  4: "THURSDAY",
+  5: "FRIDAY",
+};
+
+const BREAK_LABEL_RE = /break|lunch|recess|assembly/i;
+
+function parsePeriodNumber(label: string | null | undefined): number | null {
+  if (!label) return null;
+  // Match "Period N" pattern first, fall back to first digit
+  const m = label.match(/\bperiod\s+(\d+)\b/i) ?? label.match(/(\d+)/);
+  return m ? parseInt(m[1] ?? m[0], 10) : null;
+}
+
+// For each Timetable subject, define content lookup order.
+// Tries each subject string against the DB in order.
+const CONTENT_SUBJECT_CHAIN: Record<string, string[]> = {
+  MATH: ["MATH"],
+  LITERACY: ["LITERACY", "ENGLISH"],
+  SCIENCE: ["SCIENCE"],
+  CIVICS: ["CIVICS", "SOCIAL_STUDIES"],
+  COMPUTER_SCIENCE: ["COMPUTER_SCIENCE"],
+  ENGINEERING: ["ENGINEERING"],
+  ARTS: ["ARTS"],
+  PE: ["PE"],
+  CAREER: ["CAREER"],
+};
+
+// Grade preference order for content lookup (closest to G7 first)
+const GRADE_PREFERENCE = [7, 6, 8, 5, 9, 10, 2, 3, 4, 11, 12, 1];
 
 const SAMPLE_QUESTIONS = [
   [
@@ -58,19 +93,24 @@ const SAMPLE_QUESTIONS = [
 ];
 
 async function main() {
-  console.log("▶ NR-PILOT-CRITICAL: backfill-demo-dates");
+  console.log("▶ NR-PILOT-CRITICAL: backfill-demo-dates (WAVE-1C revision)");
 
   const schoolDays = nextSchoolDays(7);
   console.log(`  School days: ${schoolDays.map(d => d.toISOString().slice(0, 10)).join(", ")}`);
-
-  // ── 1. Gather demo school/class/teacher data ──────────────────────────────
 
   const demoSchoolIds = ["school-cha"];
 
   const [demoClasses, teacherMap] = await Promise.all([
     prisma.class.findMany({
       where: { schoolId: { in: demoSchoolIds } },
-      select: { id: true, name: true, subject: true, gradeLevel: true, teacherId: true, schoolId: true },
+      select: {
+        id: true, name: true, subject: true, gradeLevel: true, teacherId: true, schoolId: true,
+        timetableEntries: {
+          select: {
+            id: true, dayOfWeek: true, periodLabel: true, startTime: true, endTime: true, subject: true
+          }
+        }
+      },
     }),
     prisma.user.findMany({
       where: { schoolId: { in: demoSchoolIds }, role: "TEACHER" },
@@ -82,59 +122,77 @@ async function main() {
 
   const teacherBySchool = new Map(teacherMap.map(t => [t.schoolId, t.id]));
 
-  // ── 2. Fetch approved content for each class — prefer hero lessons ─────────
+  // ── Pre-fetch all hero content indexed by subject:grade ──────────────────
 
-  const contentBySubjectGrade = new Map<string, string[]>();
+  const allHeroContent = await prisma.curriculumContent.findMany({
+    where: { isHero: true, status: { in: ["APPROVED", "published"] } },
+    select: { contentId: true, subject: true, grade: true },
+    orderBy: { createdAt: "asc" },
+  });
 
-  for (const cls of demoClasses) {
-    const subject = cls.subject as string;
-    const grade = cls.gradeLevel;
-    const key = `${subject}:${grade ?? "any"}`;
-
-    if (contentBySubjectGrade.has(key)) continue;
-
-    // Try hero content first (isHero=true, APPROVED/published)
-    const heroWhere = grade != null
-      ? { subject: subject as any, grade, isHero: true, status: { in: ["APPROVED", "published"] } }
-      : { subject: subject as any, isHero: true, status: { in: ["APPROVED", "published"] } };
-
-    let rows = await prisma.curriculumContent.findMany({
-      where: heroWhere as any,
-      select: { contentId: true },
-      take: 10,
-      orderBy: { createdAt: "asc" },
-    });
-
-    if (rows.length > 0) {
-      console.log(`  ✓ Hero content for ${subject} (grade ${grade ?? "any"}): ${rows[0].contentId}`);
-    } else {
-      // Fall back to any approved/published content
-      const fallbackWhere = grade != null
-        ? { subject: subject as any, grade, status: { in: ["APPROVED", "published"] } }
-        : { subject: subject as any, status: { in: ["APPROVED", "published"] } };
-
-      rows = await prisma.curriculumContent.findMany({
-        where: fallbackWhere as any,
-        select: { contentId: true },
-        take: 10,
-        orderBy: { createdAt: "asc" },
-      });
-
-      console.log(`  ⚠ No hero for ${subject} (grade ${grade ?? "any"}) — fallback V1: ${rows[0]?.contentId ?? "NONE"}`);
-    }
-
-    contentBySubjectGrade.set(key, rows.map(r => r.contentId));
+  // Group by "subject:grade" → contentId[]
+  const heroIndex = new Map<string, string[]>();
+  for (const c of allHeroContent) {
+    const key = `${c.subject}:${c.grade}`;
+    if (!heroIndex.has(key)) heroIndex.set(key, []);
+    heroIndex.get(key)!.push(c.contentId);
   }
 
-  // ── 3. Build ScheduledWork create-data ─────────────────────────────────────
+  // V1 fallback: any approved content grouped by subject:grade
+  const allV1Content = await prisma.curriculumContent.findMany({
+    where: { isHero: false, status: { in: ["APPROVED", "published"] } },
+    select: { contentId: true, subject: true, grade: true },
+    take: 500,
+    orderBy: { createdAt: "asc" },
+  });
+  const v1Index = new Map<string, string[]>();
+  for (const c of allV1Content) {
+    const key = `${c.subject}:${c.grade}`;
+    if (!v1Index.has(key)) v1Index.set(key, []);
+    v1Index.get(key)!.push(c.contentId);
+  }
 
+  /** Find best contentId for a subject, cycling by dayIndex for variety. */
+  function findContent(subject: string, dayIndex: number): { contentId: string; isHero: boolean } | null {
+    const chain = CONTENT_SUBJECT_CHAIN[subject] ?? [subject];
+
+    // 1. Hero content: try each subject alias, each grade in preference order
+    for (const subj of chain) {
+      for (const grade of GRADE_PREFERENCE) {
+        const ids = heroIndex.get(`${subj}:${grade}`);
+        if (ids && ids.length > 0) {
+          return { contentId: ids[dayIndex % ids.length], isHero: true };
+        }
+      }
+    }
+
+    // 2. V1 fallback
+    for (const subj of chain) {
+      for (const grade of GRADE_PREFERENCE) {
+        const ids = v1Index.get(`${subj}:${grade}`);
+        if (ids && ids.length > 0) {
+          return { contentId: ids[dayIndex % ids.length], isHero: false };
+        }
+      }
+    }
+
+    return null;
+  }
+
+  // ── Identify timetable-driven class (cha-class-grade9a) ────────────────────
+
+  const TIMETABLE_CLASS_ID = "cha-class-grade9a";
+  const timetableClass = demoClasses.find(c => c.id === TIMETABLE_CLASS_ID);
+  const poolClasses = demoClasses.filter(c => c.id !== TIMETABLE_CLASS_ID);
+
+  // ── Delete stale future SW (no progress) for all demo classes ─────────────
+
+  const allClassIds = demoClasses.map(c => c.id);
   const futureStart = schoolDays[0];
-  const futureEnd = new Date(futureStart.getTime() + 14 * 86400000);
 
-  // Delete future SW (no progress yet) so hero + dedup logic applies cleanly
   const deleted = await prisma.scheduledWork.deleteMany({
     where: {
-      classId: { in: demoClasses.map(c => c.id) },
+      classId: { in: allClassIds },
       scheduledDate: { gte: futureStart },
       progress: { none: {} },
     },
@@ -147,53 +205,143 @@ async function main() {
     scheduledDate: Date;
     createdById: string;
     status: string;
-    periodNumber: number;
+    periodNumber?: number;
+    startTime?: string;
+    endTime?: string;
   }[] = [];
 
-  // Track which subjects have already been scheduled per day to prevent duplicates
+  // ── Build SW for timetable-driven class ───────────────────────────────────
+
+  if (timetableClass && timetableClass.timetableEntries.length > 0) {
+    const teacherId = timetableClass.teacherId ?? teacherBySchool.get(timetableClass.schoolId) ?? "";
+
+    if (!teacherId) {
+      console.log(`  ⚠ No teacher for ${TIMETABLE_CLASS_ID}`);
+    } else {
+      // Group timetable entries by weekday
+      const byWeekday = new Map<string, typeof timetableClass.timetableEntries>();
+      for (const entry of timetableClass.timetableEntries) {
+        const day = entry.dayOfWeek as string;
+        if (!byWeekday.has(day)) byWeekday.set(day, []);
+        byWeekday.get(day)!.push(entry);
+      }
+
+      // Sort each day's entries by startTime
+      for (const entries of byWeekday.values()) {
+        entries.sort((a, b) => {
+          const ta = a.startTime ?? "99:99";
+          const tb = b.startTime ?? "99:99";
+          return ta.localeCompare(tb);
+        });
+      }
+
+      let totalPeriods = 0;
+
+      for (let dayIdx = 0; dayIdx < schoolDays.length; dayIdx++) {
+        const schoolDay = schoolDays[dayIdx];
+        const weekday = UTC_DAY_TO_WEEKDAY[schoolDay.getUTCDay()];
+        const entries = byWeekday.get(weekday) ?? [];
+
+        for (const entry of entries) {
+          // Skip break/lunch periods
+          if (BREAK_LABEL_RE.test(entry.periodLabel)) continue;
+
+          const periodNum = parsePeriodNumber(entry.periodLabel);
+          const content = findContent(entry.subject as string, dayIdx);
+
+          if (!content) {
+            console.log(`  ⚠ No content for ${entry.subject} (${entry.periodLabel}) on ${weekday}`);
+            continue;
+          }
+
+          swToCreate.push({
+            classId: TIMETABLE_CLASS_ID,
+            contentId: content.contentId,
+            scheduledDate: schoolDay,
+            createdById: teacherId,
+            status: "confirmed",
+            ...(periodNum != null ? { periodNumber: periodNum } : {}),
+            ...(entry.startTime ? { startTime: entry.startTime } : {}),
+            ...(entry.endTime ? { endTime: entry.endTime } : {}),
+          });
+
+          if (dayIdx === 0) {
+            console.log(
+              `  ✓ ${weekday} P${periodNum ?? "?"} ${entry.startTime ?? "??"}-${entry.endTime ?? "??"} | ${entry.subject} | ${content.isHero ? "HERO" : "V1"}`
+            );
+          }
+          totalPeriods++;
+        }
+      }
+
+      console.log(`  ✓ Timetable-driven SW planned: ${totalPeriods} (${schoolDays.length} days × ${totalPeriods / schoolDays.length} periods/day avg)`);
+    }
+  } else {
+    console.log(`  ⚠ ${TIMETABLE_CLASS_ID} not found or has no timetable entries — skipping timetable-driven SW`);
+  }
+
+  // ── Build SW for pool classes (one per class per day, dedup by subject×date) ─
+
   const usedSubjectDates = new Set<string>();
 
-  for (const cls of demoClasses) {
+  for (const cls of poolClasses) {
     const subject = cls.subject as string;
-    const key = `${subject}:${cls.gradeLevel ?? "any"}`;
-    const contentIds = contentBySubjectGrade.get(key) ?? [];
+    const grade = cls.gradeLevel ?? null;
+    const key = `${subject}:${grade ?? "any"}`;
 
-    if (contentIds.length === 0) {
-      console.log(`  ⚠ No approved content for ${cls.id} (${subject} grade ${cls.gradeLevel})`);
-      continue;
-    }
-
-    const createdById =
-      cls.teacherId ??
-      teacherBySchool.get(cls.schoolId) ??
-      "";
-
-    if (!createdById) {
-      console.log(`  ⚠ No teacher found for class ${cls.id}`);
-      continue;
-    }
+    const teacherId = cls.teacherId ?? teacherBySchool.get(cls.schoolId) ?? "";
+    if (!teacherId) continue;
 
     for (let i = 0; i < schoolDays.length; i++) {
       const scheduledDate = schoolDays[i];
       const dateStr = scheduledDate.toISOString().slice(0, 10);
-
-      // Phase 3: ensure each subject appears at most once per day across all demo classes
       const subjectDateKey = `${subject}:${dateStr}`;
       if (usedSubjectDates.has(subjectDateKey)) continue;
       usedSubjectDates.add(subjectDateKey);
 
-      const contentId = contentIds[i % contentIds.length];
+      // For pool classes, search hero for exact grade first, then any
+      let contentId: string | null = null;
+      let chain = CONTENT_SUBJECT_CHAIN[subject] ?? [subject];
+
+      const grades = grade != null
+        ? [grade, ...GRADE_PREFERENCE.filter(g => g !== grade)]
+        : GRADE_PREFERENCE;
+
+      for (const subj of chain) {
+        for (const g of grades) {
+          const ids = heroIndex.get(`${subj}:${g}`);
+          if (ids && ids.length > 0) { contentId = ids[i % ids.length]; break; }
+        }
+        if (contentId) break;
+      }
+
+      if (!contentId) {
+        for (const subj of chain) {
+          for (const g of grades) {
+            const ids = v1Index.get(`${subj}:${g}`);
+            if (ids && ids.length > 0) { contentId = ids[i % ids.length]; break; }
+          }
+          if (contentId) break;
+        }
+      }
+
+      if (!contentId) {
+        console.log(`  ⚠ No content for ${key} (${cls.name})`);
+        continue;
+      }
 
       swToCreate.push({
         classId: cls.id,
         contentId,
         scheduledDate,
-        createdById,
+        createdById: teacherId,
         status: "confirmed",
         periodNumber: i + 1,
       });
     }
   }
+
+  // ── Create all SW records ──────────────────────────────────────────────────
 
   const swResult = await prisma.scheduledWork.createMany({
     data: swToCreate,
@@ -201,11 +349,11 @@ async function main() {
   });
   console.log(`  ✓ ScheduledWork created: ${swResult.count}`);
 
-  // ── 4. Roll Assignment.dueAt forward ──────────────────────────────────────
+  // ── Roll Assignment.dueAt forward ─────────────────────────────────────────
 
   const pastAssignments = await prisma.assignment.findMany({
     where: {
-      classId: { in: demoClasses.map(c => c.id) },
+      classId: { in: allClassIds },
       dueAt: { lt: new Date() },
     },
     select: { id: true },
@@ -222,10 +370,10 @@ async function main() {
   );
   console.log(`  ✓ Assignment.dueAt rolled forward: ${pastAssignments.length}`);
 
-  // ── 5. Roll Homework.dueAt forward + populate questions ───────────────────
+  // ── Roll Homework.dueAt forward + populate questions ─────────────────────
 
   const homework = await prisma.homework.findMany({
-    where: { classId: { in: demoClasses.map(c => c.id) } },
+    where: { classId: { in: allClassIds } },
     select: { id: true, dueAt: true, questions: true },
     orderBy: { dueAt: "asc" },
   });
@@ -243,7 +391,8 @@ async function main() {
   );
   console.log(`  ✓ Homework updated: ${homework.length} (dueAt + questions)`);
 
-  console.log("\n✅ Done. student1@cha.edu.lr should now see lessons on the Today page.");
+  console.log("\n✅ Done. student1@cha.edu.lr should now see a properly structured school day.");
+  console.log("   Each period has a real start time and a hero lesson assigned.");
 }
 
 main()
