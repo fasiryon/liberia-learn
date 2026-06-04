@@ -27,6 +27,7 @@ import { parseArgs } from 'node:util';
 // ─── Hero lessons catalog ─────────────────────────────────────────────────────
 
 const HERO_LESSONS = [
+  // ── WAVE-1A originals (indices 0-19) ─────────────────────────────────────
   { grade: 2, subject: 'MATH', topic: 'Place Value: Tens and Ones' },
   { grade: 2, subject: 'MATH', topic: 'Addition with Two-Digit Numbers' },
   { grade: 5, subject: 'MATH', topic: 'Understanding Fractions' },
@@ -47,6 +48,20 @@ const HERO_LESSONS = [
   { grade: 9, subject: 'SOCIAL_STUDIES', topic: 'Liberian History: Independence and the Modern State' },
   { grade: 6, subject: 'COMPUTER_SCIENCE', topic: 'Introduction to Python Programming' },
   { grade: 9, subject: 'COMPUTER_SCIENCE', topic: 'AI Literacy: How Machine Learning Works' },
+
+  // ── WAVE-1B: Hard gaps — demo blockers (indices 20-24) ───────────────────
+  { grade: 5, subject: 'CIVICS', topic: 'Rights and Responsibilities in a Liberian Community' },
+  { grade: 7, subject: 'CIVICS', topic: 'Democracy and Representation in Liberia' },
+  { grade: 9, subject: 'CIVICS', topic: 'Branches of Government and Checks and Balances' },
+  { grade: 5, subject: 'ENGLISH', topic: 'Grammar Foundations: Parts of Speech with Liberian Stories' },
+  { grade: 7, subject: 'ENGLISH', topic: 'Vocabulary in Context: Reading West African Texts' },
+
+  // ── WAVE-1B: Soft gaps — demo-path subjects (indices 25-29) ─────────────
+  { grade: 5, subject: 'LITERACY', topic: 'Narrative Writing: Personal Stories with Liberian Settings' },
+  { grade: 7, subject: 'SOCIAL_STUDIES', topic: 'African Geography and Culture: West Africa in Focus' },
+  { grade: 6, subject: 'MATH', topic: 'Ratios and Proportions: Real-World Applications' },
+  { grade: 6, subject: 'SCIENCE', topic: 'The Human Body Systems' },
+  { grade: 2, subject: 'SCIENCE', topic: 'Living Things and Their Needs' },
 ];
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
@@ -126,6 +141,7 @@ async function main() {
           hash,
           payload: payloadJson,
           lessonType: 'core',
+          isHero: true,
         },
         update: {
           title: payload.title,
@@ -133,6 +149,7 @@ async function main() {
           version: '2.0.0',
           hash,
           payload: payloadJson,
+          isHero: true,
         },
       });
 
