@@ -52,19 +52,56 @@ export function getLessonLabLinks(input: {
   // General "SCIENCE" subject (used by hero lessons and bulk generation):
   // Route to the most relevant lab by grade band.
   if (subject === "science") {
+    if (input.grade >= 1 && input.grade <= 4) {
+      labs.push({ labId: "ecosystem-balance", label: "Open Ecosystem Lab" });
+    }
     if (input.grade >= 5 && input.grade <= 7) {
       labs.push({ labId: "ecosystem-balance", label: "Open Ecosystem Lab" });
+      labs.push({ labId: "water-cycle", label: "Open Water Cycle Lab" });
+      labs.push({ labId: "light-and-shadow", label: "Open Light & Shadow Lab" });
     }
     if (input.grade >= 7 && input.grade <= 9) {
       labs.push({ labId: "weather-system", label: "Open Weather Lab" });
+      labs.push({ labId: "cell-structure", label: "Open Cell Structure Lab" });
     }
     if (input.grade >= 8 && input.grade <= 10) {
       labs.push({ labId: "human-heart", label: "Open Biology Lab" });
       labs.push({ labId: "cell-division", label: "Open Cell Division Lab" });
+      labs.push({ labId: "earthquake-waves", label: "Open Earthquake Lab" });
     }
     if (input.grade >= 9 && input.grade <= 12) {
       labs.push({ labId: "molecule-motion", label: "Open Chemistry Lab" });
       labs.push({ labId: "periodic-table", label: "Open Periodic Table Lab" });
+      labs.push({ labId: "chemical-reactions", label: "Open Reactions Lab" });
+    }
+  }
+
+  // ENGINEERING — physical simulation labs matched to design/mechanics topics
+  if (subject === "engineering" || subject.includes("engineering")) {
+    if (input.grade >= 5 && input.grade <= 6) {
+      labs.push({ labId: "simple-machines", label: "Open Simple Machines Lab" });
+      labs.push({ labId: "gravity-explorer", label: "Open Gravity Lab" });
+      labs.push({ labId: "light-and-shadow", label: "Open Light & Shadow Lab" });
+    }
+    if (input.grade >= 7 && input.grade <= 9) {
+      labs.push({ labId: "gravity-explorer", label: "Open Gravity Lab" });
+      labs.push({ labId: "pendulum-lab", label: "Open Pendulum Lab" });
+      labs.push({ labId: "electric-circuits", label: "Open Circuits Lab" });
+      labs.push({ labId: "water-cycle", label: "Open Water Systems Lab" });
+    }
+    if (input.grade >= 10) {
+      labs.push({ labId: "wave-motion", label: "Open Wave Lab" });
+      labs.push({ labId: "electric-circuit", label: "Open Circuit Lab" });
+    }
+  }
+
+  // COMPUTER_SCIENCE — circuits and logic labs
+  if (subject === "computer_science" || subject.includes("computer")) {
+    if (input.grade >= 4 && input.grade <= 8) {
+      labs.push({ labId: "electric-circuits", label: "Open Circuits Lab" });
+    }
+    if (input.grade >= 7 && input.grade <= 12) {
+      labs.push({ labId: "electric-circuit", label: "Open Circuit Lab" });
     }
   }
 
