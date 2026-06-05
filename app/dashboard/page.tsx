@@ -11,6 +11,7 @@ import { prisma } from "@/lib/db";
 import { logger } from "@/lib/logger";
 import { getStudentGreeting } from "@/lib/student/greetings";
 import { ChevronLeft } from "lucide-react";
+import { DistrictRankWidget } from "@/components/league/DistrictRankWidget";
 import { getServerSession } from "next-auth";
 import Link from "next/link";
 import { redirect } from "next/navigation";
@@ -103,6 +104,7 @@ export default async function DashboardPage() {
   const county = student.county || "Montserrado";
   const firstEnrollment = student.enrollments[0];
   const school = firstEnrollment?.Class?.School?.name || "Demo School";
+  const schoolId = firstEnrollment?.Class?.School?.id ?? null;
   const className = firstEnrollment?.Class?.name || "Grade 6 Mathematics";
   const teacherName = firstEnrollment?.Class?.Teacher?.name || "Teacher";
   const grades = student.grades || [];
@@ -209,6 +211,8 @@ export default async function DashboardPage() {
                   <p className="mt-1 text-xs text-[var(--ll-text-faint)]">AI questions this week</p>
                 </div>
               </div>
+
+              {schoolId && <DistrictRankWidget schoolId={schoolId} />}
 
               <div className="flex flex-col gap-2">
                 <Link

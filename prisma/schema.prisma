@@ -3793,10 +3793,30 @@ model LeagueSnapshot {
   studentCount     Int
   countyRank       Int?
   nationalRank     Int?
+  districtRank     Int?
   createdAt        DateTime @default(now())
 
   @@unique([schoolId, term])
   @@index([term, nationalRank])
+}
+
+/// Wave 3D: weekly school-vs-school district competition snapshot.
+model LeagueWeekSnapshot {
+  id              String   @id @default(cuid())
+  district        String
+  weekStart       DateTime
+  weekEnd         DateTime
+  schoolId        String
+  schoolName      String
+  rank            Int
+  score           Float
+  pointsTotal     Float
+  enrollmentCount Int
+  createdAt       DateTime @default(now())
+
+  @@unique([district, weekStart, schoolId])
+  @@index([district, weekStart])
+  @@index([schoolId, weekStart])
 }
 
 /// Sprint 26: QR-verifiable PDF transcript credential.
