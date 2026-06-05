@@ -115,7 +115,15 @@ export default async function OpsHealthPage() {
               Snapshot of platform health at a glance. Auto-refreshes every 30 s.
             </p>
           </div>
-          <RefreshButton />
+          <div className="flex items-center gap-3">
+            <Link
+              href="/moe/live"
+              className="rounded-lg bg-amber-400 px-4 py-2 text-sm font-semibold text-[#080e1c] hover:bg-amber-300 transition-colors"
+            >
+              View Live (TV Mode)
+            </Link>
+            <RefreshButton />
+          </div>
         </header>
 
         {/* Overall banner */}
