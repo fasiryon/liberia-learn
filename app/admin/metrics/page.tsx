@@ -6,6 +6,7 @@ import {
   type MetricValue,
   type ProductMetricsPeriod,
 } from "@/lib/reporting/productMetrics";
+import { AdminDistrictLeagueSection } from "@/components/league/AdminDistrictLeagueSection";
 
 export const dynamic = "force-dynamic";
 
@@ -136,6 +137,8 @@ export default async function AdminMetricsPage({
             <MetricCard label="Active Teachers Percent" metric={data.platformMetrics.activeTeachersPercent} />
           </div>
         </section>
+
+        {schoolId && <AdminDistrictLeagueSection schoolId={schoolId} />}
       </div>
     </main>
   );

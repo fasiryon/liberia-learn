@@ -25,7 +25,7 @@ export async function POST(req: NextRequest) {
 
   const schools = await prisma.school.findMany({
     where: { status: "ACTIVE" },
-    select: { id: true, county: true },
+    select: { id: true, county: true, district: true },
   });
 
   let processed = 0;
@@ -99,15 +99,16 @@ export async function POST(req: NextRequest) {
     }
   }
 
-  // Compute composite scores and assign national + county ranks
+  // Compute composite scores and assign national + county + district ranks
   const snapshots = await prisma.leagueSnapshot.findMany({
     where: { term },
-    include: { school: { select: { county: true } } },
+    include: { school: { select: { county: true, district: true } } },
   });
 
   const scored = snapshots.map((s) => ({
     id: s.id,
     county: s.school.county ?? "Unknown",
+    district: s.school.district ?? "Unknown",
     composite: s.avgGrade * 0.5 + s.attendance * 0.3 + s.lessonCompletion * 0.2,
   }));
 
@@ -118,6 +119,7 @@ export async function POST(req: NextRequest) {
     id: s.id,
     nationalRank: i + 1,
     county: s.county,
+    district: s.district,
   }));
 
   // County ranks
@@ -126,17 +128,31 @@ export async function POST(req: NextRequest) {
     if (!byCounty[s.county]) byCounty[s.county] = [];
     byCounty[s.county].push(s);
   }
-  // Already sorted by composite desc, so index+1 is the county rank
   const countyRanks: Record<string, number> = {};
   for (const [, list] of Object.entries(byCounty)) {
     list.forEach((s, i) => { countyRanks[s.id] = i + 1; });
+  }
+
+  // District ranks
+  const byDistrict: Record<string, typeof nationalUpdates> = {};
+  for (const s of nationalUpdates) {
+    if (!byDistrict[s.district]) byDistrict[s.district] = [];
+    byDistrict[s.district].push(s);
+  }
+  const districtRanks: Record<string, number> = {};
+  for (const [, list] of Object.entries(byDistrict)) {
+    list.forEach((s, i) => { districtRanks[s.id] = i + 1; });
   }
 
   await Promise.all(
     nationalUpdates.map((s) =>
       prisma.leagueSnapshot.update({
         where: { id: s.id },
-        data: { nationalRank: s.nationalRank, countyRank: countyRanks[s.id] ?? null },
+        data: {
+          nationalRank: s.nationalRank,
+          countyRank: countyRanks[s.id] ?? null,
+          districtRank: districtRanks[s.id] ?? null,
+        },
       }),
     ),
   );

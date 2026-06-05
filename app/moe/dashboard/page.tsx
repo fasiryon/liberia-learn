@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { ChevronRight } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
+import { MoeDistrictLeagueSection } from "@/components/league/MoeDistrictLeagueSection";
 import { Card, StatCard } from "@/components/ui/Card";
 import { DashboardTopBar } from "@/components/DashboardTopBar";
 import { SkeletonCard } from "@/components/ui/Skeleton";
@@ -1079,6 +1080,8 @@ export default function MoeDashboardPage() {
               </>
             )}
           </section>
+
+          <MoeDistrictLeagueSection />
         </div>
       </div>
     </main>

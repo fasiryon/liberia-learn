@@ -13,6 +13,7 @@ import { AlertBell } from "@/components/teacher/AlertBell";
 import { WeeklySentiment } from "@/components/teacher/WeeklySentiment";
 import { AnnouncementBanner } from "@/components/AnnouncementBanner";
 import { NotificationBell } from "@/components/NotificationBell";
+import { DistrictRankWidget } from "@/components/league/DistrictRankWidget";
 
 type DashboardData = {
   scheduledToday: number;
@@ -88,6 +89,7 @@ type DashboardData = {
   classesWithoutLesson: string[];
   schoolCode: string | null;
   schoolName: string | null;
+  schoolId: string | null;
   teacherAlerts?: Array<{
     id: string;
     alertType: string;
@@ -293,6 +295,8 @@ export default function TeacherDashboardPage() {
             </div>
           );
         })()}
+
+        {data?.schoolId && <DistrictRankWidget schoolId={data.schoolId} />}
 
         {!onboardingDismissed && !loading && (
           <div className="flex items-center justify-between rounded-xl border border-[var(--ll-border)] bg-[var(--ll-surface-muted)] px-4 py-3">
