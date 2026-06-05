@@ -14,6 +14,7 @@ import { WeeklySentiment } from "@/components/teacher/WeeklySentiment";
 import { AnnouncementBanner } from "@/components/AnnouncementBanner";
 import { NotificationBell } from "@/components/NotificationBell";
 import { DistrictRankWidget } from "@/components/league/DistrictRankWidget";
+import { DownloadPackButton } from "@/components/packs/DownloadPackButton";
 
 type DashboardData = {
   scheduledToday: number;
@@ -597,6 +598,10 @@ export default function TeacherDashboardPage() {
                 </span>
                 <ChevronRight className="h-3.5 w-3.5 text-[var(--ll-text-faint)]" strokeWidth={1.5} />
               </Link>
+              <DownloadPackButton
+                classId={data?.classes?.[0]?.id}
+                audience="teacher"
+              />
             </div>
 
             {(weeklyPlan || planningMessage) && (

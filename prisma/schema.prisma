@@ -3966,3 +3966,29 @@ model AILiteracyExercise {
 
   @@index([lessonId])
 }
+
+/// WAVE-3E: Offline lesson pack download — one row per generated zip.
+/// Teachers and students can request a week's lessons bundled as a downloadable zip.
+/// Pack is uploaded to Vercel Blob; blobUrl is the stable download link.
+model OfflinePack {
+  id            String    @id @default(cuid())
+  requestedById String
+  classId       String?
+  studentId     String?
+  weekStart     DateTime
+  weekEnd       DateTime
+  audience      String    @default("student")  // "student" | "teacher"
+  status        String    @default("pending")  // "pending" | "generating" | "ready" | "failed"
+  blobUrl       String?
+  blobKey       String?
+  sizeBytes     Int?
+  lessonCount   Int?
+  failureReason String?
+  createdAt     DateTime  @default(now())
+  completedAt   DateTime?
+  expiresAt     DateTime?
+
+  @@index([requestedById, weekStart])
+  @@index([status])
+  @@index([expiresAt])
+}
