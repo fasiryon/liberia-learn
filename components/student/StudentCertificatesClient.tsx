@@ -15,6 +15,16 @@ type CertificateRecord = {
   canvaUrl: string | null;
 };
 
+async function shareToWhatsApp(certificateId: string) {
+  const res = await fetch(`/api/certificates/${certificateId}/share`, {
+    method: "POST",
+  });
+  if (!res.ok) return;
+  const data = await res.json() as { whatsappText: string };
+  const waLink = `https://wa.me/?text=${encodeURIComponent(data.whatsappText)}`;
+  window.open(waLink, "_blank", "noopener,noreferrer");
+}
+
 function labelForType(type: CertificateRecord["type"]) {
   return type === "LESSON" ? "Lesson Certificate" : "Subject Certificate";
 }
@@ -27,6 +37,7 @@ export default function StudentCertificatesClient() {
   const [certificates, setCertificates] = useState<CertificateRecord[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [sharing, setSharing] = useState<string | null>(null);
 
   useEffect(() => {
     fetch("/api/student/certificates", { cache: "no-store" })
@@ -149,29 +160,43 @@ export default function StudentCertificatesClient() {
               </div>
 
               {/* Action */}
-              {certificate.canvaUrl ? (
-                <a
-                  href={certificate.canvaUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="mt-4 flex w-full items-center justify-center gap-2 rounded-lg bg-[var(--ll-yellow)] px-4 py-2.5 text-sm font-semibold text-[var(--ll-bg)] hover:opacity-90 transition-opacity print:hidden"
-                >
-                  View Official Certificate →
-                </a>
-              ) : (
-                <div className="mt-4 text-center print:hidden">
-                  <p className="text-xs text-[var(--ll-text-faint)]">
-                    Verify at liberialearn.vercel.app/verify/{certificate.certificateCode}
-                  </p>
-                  <button
-                    type="button"
-                    onClick={() => window.print()}
-                    className="mt-2 rounded-lg border border-[var(--ll-yellow)]/30 bg-[var(--ll-yellow)]/10 px-4 py-2 text-xs font-semibold text-[var(--ll-yellow)] transition-colors hover:opacity-90"
+              <div className="mt-4 flex flex-col gap-2 print:hidden">
+                {certificate.canvaUrl ? (
+                  <a
+                    href={certificate.canvaUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex w-full items-center justify-center gap-2 rounded-lg bg-[var(--ll-yellow)] px-4 py-2.5 text-sm font-semibold text-[var(--ll-bg)] hover:opacity-90 transition-opacity"
                   >
-                    Print Certificate
-                  </button>
-                </div>
-              )}
+                    View Official Certificate →
+                  </a>
+                ) : (
+                  <div className="text-center">
+                    <p className="text-xs text-[var(--ll-text-faint)]">
+                      Verify at liberialearn.vercel.app/verify/{certificate.certificateCode}
+                    </p>
+                    <button
+                      type="button"
+                      onClick={() => window.print()}
+                      className="mt-2 rounded-lg border border-[var(--ll-yellow)]/30 bg-[var(--ll-yellow)]/10 px-4 py-2 text-xs font-semibold text-[var(--ll-yellow)] transition-colors hover:opacity-90"
+                    >
+                      Print Certificate
+                    </button>
+                  </div>
+                )}
+                <button
+                  type="button"
+                  disabled={sharing === certificate.id}
+                  onClick={async () => {
+                    setSharing(certificate.id);
+                    await shareToWhatsApp(certificate.id).catch(() => null);
+                    setSharing(null);
+                  }}
+                  className="flex w-full items-center justify-center gap-2 rounded-lg border border-emerald-500/40 bg-emerald-500/10 px-4 py-2.5 text-sm font-semibold text-emerald-400 transition-colors hover:opacity-90 disabled:opacity-60"
+                >
+                  {sharing === certificate.id ? "Opening WhatsApp…" : "Share to WhatsApp"}
+                </button>
+              </div>
             </article>
           ))}
         </div>

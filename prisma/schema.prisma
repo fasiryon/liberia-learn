@@ -364,26 +364,41 @@ model ExamCertification {
 }
 
 model Certificate {
-  id              String          @id @default(cuid())
+  id              String             @id @default(cuid())
   studentId       String
   schoolId        String?
   type            CertificateType
   referenceId     String
-  awardedAt       DateTime        @default(now())
-  certificateCode String          @unique
+  awardedAt       DateTime           @default(now())
+  certificateCode String             @unique
   canvaUrl        String?
   designId        String?
-  status          String          @default("completed")
+  status          String             @default("completed")
   completedAt     DateTime?
   generatedAt     DateTime?
-  createdAt       DateTime        @default(now())
-  student         Student         @relation(fields: [studentId], references: [id], onDelete: Cascade)
-  school          School?         @relation(fields: [schoolId], references: [id], onDelete: SetNull)
+  createdAt       DateTime           @default(now())
+  student         Student            @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  school          School?            @relation(fields: [schoolId], references: [id], onDelete: SetNull)
+  shares          CertificateShare[]
 
   @@unique([studentId, type, referenceId])
   @@index([studentId, awardedAt])
   @@index([type, referenceId])
   @@index([schoolId, status])
+}
+
+model CertificateShare {
+  id            String      @id @default(cuid())
+  certificateId String
+  certificate   Certificate @relation(fields: [certificateId], references: [id], onDelete: Cascade)
+  sharedById    String
+  shareToken    String      @unique
+  channel       String      @default("whatsapp")
+  clickCount    Int         @default(0)
+  createdAt     DateTime    @default(now())
+
+  @@index([certificateId])
+  @@index([sharedById])
 }
 
 model StudentBadgeAward {
