@@ -301,7 +301,11 @@ export async function awardLessonQuizCertificates(
 
   const classIds = enrollments.map((enrollment) => enrollment.classId);
   if (classIds.length === 0) {
-    return { lessonAwarded: lessonAward.created, subjectAwarded: false };
+    return {
+      lessonAwarded: lessonAward.created,
+      lessonCertificateId: lessonAward.certificateId,
+      subjectAwarded: false,
+    };
   }
 
   const [scheduledWorks, lessonCertificates] = await Promise.all([
@@ -334,7 +338,11 @@ export async function awardLessonQuizCertificates(
     requiredLessonIds.every((lessonId) => earnedLessonIds.has(lessonId));
 
   if (!qualifiesForSubjectCertificate) {
-    return { lessonAwarded: lessonAward.created, subjectAwarded: false };
+    return {
+      lessonAwarded: lessonAward.created,
+      lessonCertificateId: lessonAward.certificateId,
+      subjectAwarded: false,
+    };
   }
 
   const subjectAward = await awardCertificate({
@@ -351,6 +359,7 @@ export async function awardLessonQuizCertificates(
 
   return {
     lessonAwarded: lessonAward.created,
+    lessonCertificateId: lessonAward.certificateId,
     subjectAwarded: subjectAward.created,
   };
 }

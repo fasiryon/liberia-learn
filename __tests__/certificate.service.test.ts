@@ -78,7 +78,7 @@ describe("awardLessonQuizCertificates", () => {
       quizScore: 0.6,
     });
 
-    expect(result).toEqual({ lessonAwarded: false, subjectAwarded: false });
+    expect(result).toMatchObject({ lessonAwarded: false, subjectAwarded: false });
     expect(mockCertificateCreate).not.toHaveBeenCalled();
   });
 
@@ -117,7 +117,7 @@ describe("awardLessonQuizCertificates", () => {
       quizScore: 0.85,
     });
 
-    expect(result).toEqual({ lessonAwarded: true, subjectAwarded: true });
+    expect(result).toMatchObject({ lessonAwarded: true, subjectAwarded: true });
     expect(mockCertificateCreate).toHaveBeenCalledTimes(2);
     expect(mockNotificationLogCreate).toHaveBeenCalledTimes(2);
     expect(mockLogAudit).toHaveBeenCalledTimes(2);

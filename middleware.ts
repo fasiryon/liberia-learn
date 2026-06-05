@@ -25,6 +25,9 @@ const PUBLIC_PATHS = [
   "/contact",
   "/register",
   "/guardian/register",
+  "/share/certificate",
+  "/verify",
+  "/api/certificates",
 ];
 
 function isPublicPath(pathname: string) {

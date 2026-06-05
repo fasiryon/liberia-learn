@@ -3,6 +3,39 @@
 import Link from "next/link";
 import { useMemo, useState } from "react";
 
+function WhatsAppShareButton({ certificateId }: { certificateId: string }) {
+  const [loading, setLoading] = useState(false);
+
+  async function handleClick() {
+    setLoading(true);
+    try {
+      const res = await fetch(`/api/certificates/${certificateId}/share`, {
+        method: "POST",
+      });
+      if (!res.ok) return;
+      const data = await res.json() as { whatsappText: string };
+      window.open(
+        `https://wa.me/?text=${encodeURIComponent(data.whatsappText)}`,
+        "_blank",
+        "noopener,noreferrer"
+      );
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  return (
+    <button
+      type="button"
+      disabled={loading}
+      onClick={handleClick}
+      className="rounded-lg border border-emerald-500/40 bg-emerald-500/10 px-3 py-1.5 text-xs font-semibold text-emerald-400 transition-colors hover:opacity-90 disabled:opacity-60"
+    >
+      {loading ? "Opening…" : "Share to WhatsApp"}
+    </button>
+  );
+}
+
 type LessonQuizQuestion = {
   id: string;
   question: string;
@@ -38,6 +71,7 @@ type LessonQuizResult = {
   certificates?: {
     lessonAwarded: boolean;
     subjectAwarded: boolean;
+    lessonCertificateId?: string;
   };
 };
 
@@ -254,12 +288,17 @@ export function LessonQuizPanel({
                     ? "You earned a lesson certificate for this lesson."
                     : "You earned a subject certificate."}
               </p>
-              <Link
-                href="/student/certificates"
-                className="mt-3 inline-flex text-sm font-semibold text-[var(--ll-yellow)] underline underline-offset-4"
-              >
-                View certificates
-              </Link>
+              <div className="mt-3 flex flex-wrap items-center gap-3">
+                <Link
+                  href="/student/certificates"
+                  className="text-sm font-semibold text-[var(--ll-yellow)] underline underline-offset-4"
+                >
+                  View certificates
+                </Link>
+                {result.certificates.lessonCertificateId ? (
+                  <WhatsAppShareButton certificateId={result.certificates.lessonCertificateId} />
+                ) : null}
+              </div>
             </div>
           ) : null}
 
