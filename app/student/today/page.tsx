@@ -9,6 +9,7 @@ import { useAssignmentPolling } from "@/lib/hooks/useAssignmentPolling";
 import { EventCalendar } from "@/components/EventCalendar";
 import { LiveSessionBanner } from "@/components/LiveSessionBanner";
 import { OfflineReadyBadge } from "@/components/OfflineReadyBadge";
+import { DownloadPackButton } from "@/components/packs/DownloadPackButton";
 import { AnnouncementBanner } from "@/components/AnnouncementBanner";
 import { WeeklyProgressChart, type WeekEntry } from "@/components/student/WeeklyProgressChart";
 
@@ -315,15 +316,18 @@ export default function StudentTodayPage() {
             <p className="mt-2 text-lg font-semibold text-[var(--ll-text)]">{dateLabel}</p>
           </div>
           {!loading ? (
-            <button
-              type="button"
-              onClick={refreshToday}
-              disabled={refreshing}
-              className="inline-flex min-h-10 items-center justify-center gap-2 rounded-lg border border-[var(--ll-border)] bg-[var(--ll-surface)] px-4 text-sm font-semibold text-[var(--ll-text)] disabled:opacity-60"
-            >
-              <RefreshCw className="h-4 w-4" strokeWidth={1.5} />
-              {refreshing ? "Refreshing..." : "Refresh"}
-            </button>
+            <div className="flex items-center gap-2">
+              <DownloadPackButton audience="student" compact />
+              <button
+                type="button"
+                onClick={refreshToday}
+                disabled={refreshing}
+                className="inline-flex min-h-10 items-center justify-center gap-2 rounded-lg border border-[var(--ll-border)] bg-[var(--ll-surface)] px-4 text-sm font-semibold text-[var(--ll-text)] disabled:opacity-60"
+              >
+                <RefreshCw className="h-4 w-4" strokeWidth={1.5} />
+                {refreshing ? "Refreshing..." : "Refresh"}
+              </button>
+            </div>
           ) : null}
         </div>
 
