@@ -16,6 +16,7 @@ const NAV_ITEMS = [
   { href: "/moe/alerts", label: "Alerts" },
   { href: "/moe/exports", label: "Exports" },
   { href: "/moe/submissions", label: "School Submissions" },
+  { href: "/moe/live", label: "Live Dashboard" },
 ];
 
 export default function MoeShell({
@@ -26,6 +27,11 @@ export default function MoeShell({
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
+
+  // Live dashboard is fullscreen — bypass nav shell
+  if (pathname === "/moe/live") {
+    return <>{children}</>;
+  }
 
   return (
     <div className="min-h-screen bg-[#0b1120] text-[var(--ll-text)]">
