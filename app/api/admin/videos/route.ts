@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { getDownloadUrl } from "@vercel/blob";
+import { head } from "@vercel/blob";
 import { requireRole } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 
@@ -40,11 +40,15 @@ export async function GET(req: Request) {
       where: { schoolId: admin.schoolId ?? undefined, status: "PENDING" },
     });
 
-    const signedVideos = videos.map((v) => ({
-      ...v,
-      storageUrl: getDownloadUrl(v.storageUrl),
-      thumbnailUrl: v.thumbnailUrl ? getDownloadUrl(v.thumbnailUrl) : null,
-    }));
+    const signedVideos = await Promise.all(
+      videos.map(async (v) => {
+        const [vHead, tHead] = await Promise.all([
+          head(v.storageUrl),
+          v.thumbnailUrl ? head(v.thumbnailUrl) : Promise.resolve(null),
+        ]);
+        return { ...v, storageUrl: vHead.downloadUrl, thumbnailUrl: tHead?.downloadUrl ?? null };
+      })
+    );
     return NextResponse.json({ videos: signedVideos, pendingCount });
   } catch (error: any) {
     return NextResponse.json({ error: error?.message ?? "Failed" }, { status: error?.status ?? 500 });

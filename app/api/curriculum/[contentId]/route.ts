@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { getDownloadUrl } from "@vercel/blob";
+import { head } from "@vercel/blob";
 import { prisma } from "@/lib/db";
 import { requireRole } from "@/lib/auth";
 
@@ -86,11 +86,15 @@ export async function GET(
       },
       payload: row.payload,
       audio: row.audioAssets[0] ?? null,
-      videos: row.videoSupplements.map((v) => ({
-        ...v,
-        storageUrl: getDownloadUrl(v.storageUrl),
-        thumbnailUrl: v.thumbnailUrl ? getDownloadUrl(v.thumbnailUrl) : null,
-      })),
+      videos: await Promise.all(
+        row.videoSupplements.map(async (v) => {
+          const [vHead, tHead] = await Promise.all([
+            head(v.storageUrl),
+            v.thumbnailUrl ? head(v.thumbnailUrl) : Promise.resolve(null),
+          ]);
+          return { ...v, storageUrl: vHead.downloadUrl, thumbnailUrl: tHead?.downloadUrl ?? null };
+        })
+      ),
     });
   } catch (e: any) {
     console.error("GET /api/curriculum/[contentId] failed:", e);

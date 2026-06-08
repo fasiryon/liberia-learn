@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { getDownloadUrl } from "@vercel/blob";
+import { head } from "@vercel/blob";
 import { requireRole } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 
@@ -22,7 +22,8 @@ export async function GET(
     if (pack.requestedById !== user.id && user.role === "STUDENT") {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
-    return NextResponse.redirect(getDownloadUrl(pack.blobUrl));
+    const { downloadUrl } = await head(pack.blobUrl);
+    return NextResponse.redirect(downloadUrl);
   } catch (err: any) {
     return NextResponse.json({ error: err?.message ?? "Failed" }, { status: err?.status ?? 500 });
   }
