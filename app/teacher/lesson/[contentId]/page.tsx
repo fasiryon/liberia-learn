@@ -1,6 +1,7 @@
 import { requireRole } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import TeacherLessonViewClient from "./TeacherLessonViewClient";
+// TeacherVideoUpload is rendered inside TeacherLessonViewClient for teacher video management
 
 export type StudentSubmissionContext = {
   studentName: string;

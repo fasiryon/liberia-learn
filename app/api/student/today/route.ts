@@ -628,6 +628,7 @@ async function _computeToday(): Promise<NextResponse> {
         },
       },
       timetable: timetable ?? null,
+      schoolId: user.schoolId ?? null,
     };
     }); // end withRedisCache
 
