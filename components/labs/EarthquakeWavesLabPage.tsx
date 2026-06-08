@@ -184,7 +184,7 @@ export default function EarthquakeWavesLabPage() {
       </div>
 
       <p className="text-xs text-[var(--ll-text-faint)]">
-        P-waves are compressional (travel through solid and liquid); S-waves are shear (solids only — that's how we know Earth's outer core is liquid). Seismograph shows ground movement at a monitoring station.
+        P-waves are compressional (travel through solid and liquid); S-waves are shear (solids only &mdash; that&apos;s how we know Earth&apos;s outer core is liquid). Seismograph shows ground movement at a monitoring station.
       </p>
     </section>
   );
