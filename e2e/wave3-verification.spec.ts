@@ -125,7 +125,8 @@ test.describe("Wave 3 E2E Tests", () => {
     await signIn(page, "student1@cha.edu.lr");
 
     // Trigger pack generation via the authenticated browser session
-    const packResult = await page.evaluate(async () => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const packResult: any = await page.evaluate(async () => {
       const res = await fetch("/api/packs/week", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -133,14 +134,14 @@ test.describe("Wave 3 E2E Tests", () => {
       });
       const text = await res.text();
       if (!res.ok) return { error: `HTTP ${res.status}: ${text.slice(0, 400)}`, downloadUrl: null };
-      try { return JSON.parse(text) as { downloadUrl: string; lessonCount: number }; } catch { return { error: text.slice(0, 400), downloadUrl: null }; }
+      try { return JSON.parse(text); } catch { return { error: text.slice(0, 400), downloadUrl: null }; }
     });
     console.log("  Pack result:", JSON.stringify(packResult));
 
     expect(packResult?.error, `Pack API error: ${packResult?.error}`).toBeFalsy();
     expect(packResult, "Pack API must return a result").not.toBeNull();
-    expect(packResult!.downloadUrl, "Must have a downloadUrl").toBeTruthy();
-    console.log(`  Pack generated: ${packResult!.lessonCount} lessons`);
+    expect(packResult?.downloadUrl, "Must have a downloadUrl").toBeTruthy();
+    console.log(`  Pack generated: ${packResult?.lessonCount} lessons`);
 
     // Download ZIP bytes via the authenticated page
     const zipBytes: number[] = await page.evaluate(async (url: string) => {
