@@ -100,6 +100,8 @@ model User {
   phone                  String?
   smsStudentSessions     SmsSession[]          @relation("SmsStudent")
   portfolioCredentials   PortfolioCredential[]
+  // Wave 4A
+  teacherLessonAssignments TeacherLessonAssignment[] @relation("TeacherLessonAssignments")
 }
 
 model District {
@@ -227,6 +229,8 @@ model Class {
   exams          Exam[]
   moeDirectiveApplications MoeDirectiveApplication[]
   discussionThreads DiscussionThread[]
+  // Wave 4A
+  teacherLessonAssignments TeacherLessonAssignment[]
 }
 
 model Student {
@@ -1882,6 +1886,14 @@ model CurriculumContent {
   editedById      String?
   editedAt        DateTime?
   editReviewStatus String?        @default("PENDING")
+  // Wave 4A: teacher lesson creation fields
+  learningObjectives   Json      @default("[]")
+  visibility           String    @default("class_only")
+  parentLessonId       String?
+  lessonVersion        Int       @default(1)
+  publishedAt          DateTime?
+  rejectionReason      String?
+  schoolId             String?
   scheduledWork        ScheduledWork[]
   timetableAssignments TimetableAssignment[]
   audioAssets          LessonAudio[]
@@ -1895,12 +1907,14 @@ model CurriculumContent {
   editedBy           User?               @relation("LessonEditor", fields: [editedById], references: [id])
   lessonVersions     LessonVersion[]
   lessonShares       LessonShare[]
+  teacherLessonAssignments TeacherLessonAssignment[]
 
   @@index([grade, subject])
   @@index([contentType, status])
   @@index([unitId, orderInUnit])
   @@index([versionId, status])
   @@index([editedById, editReviewStatus])
+  @@index([schoolId, visibility])
 }
 
 model LessonAudio {
@@ -3691,16 +3705,33 @@ model TutorConversation {
 }
 
 model LessonHelpFlag {
-  id        String            @id @default(cuid())
-  studentId String
-  contentId String
-  note      String?
-  resolved  Boolean           @default(false)
-  createdAt DateTime          @default(now())
-  student   User              @relation("LessonHelpFlagStudent", fields: [studentId], references: [id])
-  content   CurriculumContent @relation("LessonHelpFlagContent", fields: [contentId], references: [contentId])
+  id         String            @id @default(cuid())
+  studentId  String
+  contentId  String
+  note       String?
+  resolved   Boolean           @default(false)
+  createdAt  DateTime          @default(now())
+  flagType   String?
+  resolvedAt DateTime?
+  student    User              @relation("LessonHelpFlagStudent", fields: [studentId], references: [id])
+  content    CurriculumContent @relation("LessonHelpFlagContent", fields: [contentId], references: [contentId])
 
-  @@index([studentId, contentId])
+  @@unique([studentId, contentId])
+}
+
+model TeacherLessonAssignment {
+  id           String            @id @default(cuid())
+  contentId    String
+  classId      String
+  assignedById String
+  scheduledFor DateTime?
+  assignedAt   DateTime          @default(now())
+  content      CurriculumContent @relation(fields: [contentId], references: [contentId], onDelete: Cascade)
+  class        Class             @relation(fields: [classId], references: [id], onDelete: Cascade)
+  assignedBy   User              @relation("TeacherLessonAssignments", fields: [assignedById], references: [id], onDelete: Cascade)
+
+  @@unique([contentId, classId])
+  @@index([classId, scheduledFor])
 }
 
 /// Sprint 23: per-teacher push alert preferences.
