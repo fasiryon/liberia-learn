@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getDownloadUrl } from "@vercel/blob";
+import { head } from "@vercel/blob";
 import { requireRole } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { resolveLessonTitle } from "@/lib/lessons/resolveLessonTitle";
@@ -337,13 +337,17 @@ export async function GET(
           }
         : { status: "NOT_GENERATED" },
       activeVideo: activeVideo
-        ? {
-            ...activeVideo,
-            storageUrl: getDownloadUrl(activeVideo.storageUrl),
-            thumbnailUrl: activeVideo.thumbnailUrl ? getDownloadUrl(activeVideo.thumbnailUrl) : null,
-            teacherName: activeVideo.teacher?.name ?? "Teacher",
-            viewCount: activeVideo.viewCount ?? 0,
-          }
+        ? await (async () => {
+            const videoHead = await head(activeVideo.storageUrl);
+            const thumbHead = activeVideo.thumbnailUrl ? await head(activeVideo.thumbnailUrl) : null;
+            return {
+              ...activeVideo,
+              storageUrl: videoHead.downloadUrl,
+              thumbnailUrl: thumbHead?.downloadUrl ?? null,
+              teacherName: activeVideo.teacher?.name ?? "Teacher",
+              viewCount: activeVideo.viewCount ?? 0,
+            };
+          })()
         : null,
       deliveryProfile,
       moeAlignments: sw.content.moeAlignments ?? [],

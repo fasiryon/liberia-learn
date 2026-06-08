@@ -194,19 +194,21 @@ test.describe("Wave 3 E2E Tests", () => {
       await videoSection.getByPlaceholder("Duration seconds").fill("30");
       await videoSection.getByRole("button", { name: "Upload video" }).click();
 
-      // Wait for upload response (success or error)
-      await page.waitForTimeout(2000); // let submit fire
-      await page.screenshot({ path: ss("e2e2a-after-click") });
+      // Wait for the button to leave "Uploading..." state
+      await expect(
+        videoSection.getByRole("button", { name: "Upload video" })
+      ).toBeVisible({ timeout: 45_000 });
 
-      // Message can be: "Video uploaded…", "Video upload failed.", "Choose an MP4…",
-      // or a Prisma error string — match anything that appears in the message slot
-      const msgLocator = videoSection.locator("p").last(); // last p = message slot
-      await expect(msgLocator).toBeVisible({ timeout: 45_000 });
-      const msgText = await msgLocator.textContent();
-      console.log(`  Upload response: ${msgText}`);
+      // The success/error message p is directly inside the <form> (after the button)
+      // Use getByText on the form to avoid grabbing video-list size labels
+      const successMsg = videoSection.locator("form").getByText(/Video uploaded/i);
+      const errorMsg   = videoSection.locator("form").getByText(/Video upload failed|failed/i);
+      const hasSuccess = await successMsg.isVisible().catch(() => false);
+      const hasError   = await errorMsg.textContent().catch(() => null);
+      console.log(`  Upload result: success=${hasSuccess} error=${hasError}`);
 
-      // Assert success — must NOT contain failure keywords
-      expect(msgText, "Upload must succeed").toMatch(/Video uploaded/);
+      await page.screenshot({ path: ss("e2e2a-teacher-upload-success") });
+      expect(hasSuccess, `Upload failed — error: ${hasError}`).toBe(true);
 
       console.log(`  ✓ Upload succeeded — title: ${videoTitle}`);
       await page.screenshot({ path: ss("e2e2a-teacher-upload-success") });
