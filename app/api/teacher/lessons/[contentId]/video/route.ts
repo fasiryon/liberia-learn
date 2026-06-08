@@ -83,7 +83,7 @@ export async function POST(
       const blob = await put(
         `thumbnails/${content.contentId}/${Date.now()}-thumb.${ext}`,
         Buffer.from(await thumbnailFile.arrayBuffer()),
-        { access: "public", contentType: thumbnailFile.type || "image/jpeg" }
+        { access: "private", contentType: thumbnailFile.type || "image/jpeg" }
       );
       thumbnailUrl = blob.url;
     }

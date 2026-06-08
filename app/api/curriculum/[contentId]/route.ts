@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { getDownloadUrl } from "@vercel/blob";
 import { prisma } from "@/lib/db";
 import { requireRole } from "@/lib/auth";
 
@@ -49,6 +50,7 @@ export async function GET(
             title: true,
             description: true,
             storageUrl: true,
+            thumbnailUrl: true,
             durationSeconds: true,
             fileSize: true,
             isActive: true,
@@ -84,7 +86,11 @@ export async function GET(
       },
       payload: row.payload,
       audio: row.audioAssets[0] ?? null,
-      videos: row.videoSupplements,
+      videos: row.videoSupplements.map((v) => ({
+        ...v,
+        storageUrl: getDownloadUrl(v.storageUrl),
+        thumbnailUrl: v.thumbnailUrl ? getDownloadUrl(v.thumbnailUrl) : null,
+      })),
     });
   } catch (e: any) {
     console.error("GET /api/curriculum/[contentId] failed:", e);

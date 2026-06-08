@@ -159,7 +159,7 @@ export async function generatePack(packId: string): Promise<PackResult> {
 
     const blobKey = `offline-packs/${pack.requestedById}/${packId}.zip`;
     const blob = await put(blobKey, zipBuffer, {
-      access: "public",
+      access: "private",
       contentType: "application/zip",
     });
 
