@@ -116,7 +116,7 @@ test.describe("Wave 3 Screenshot Pass", () => {
 // ═══════════════════════════════════════════════════════════
 
 test.describe("Wave 3 E2E Tests", () => {
-  test.setTimeout(120_000);
+  test.setTimeout(180_000);
 
   // ─────────────────────────────────────────────────────────
   // E2E-1: Student pack contains no answerKey (security gate)
@@ -141,19 +141,28 @@ test.describe("Wave 3 E2E Tests", () => {
     expect(packResult?.error, `Pack API error: ${packResult?.error}`).toBeFalsy();
     expect(packResult, "Pack API must return a result").not.toBeNull();
     expect(packResult?.downloadUrl, "Must have a downloadUrl").toBeTruthy();
-    console.log(`  Pack generated: ${packResult?.lessonCount} lessons`);
+    console.log(`  Pack generated: ${packResult?.lessonCount} lessons — download: ${packResult?.downloadUrl}`);
 
-    // Download ZIP bytes via the authenticated page
-    const zipBytes: number[] = await page.evaluate(async (url: string) => {
-      const res = await fetch(url);
-      const ab = await res.arrayBuffer();
-      return Array.from(new Uint8Array(ab));
-    }, packResult!.downloadUrl);
+    // downloadUrl is now a server-proxy route (/api/packs/[id]/download)
+    // Use Playwright download API to capture the ZIP through the browser session
+    const downloadUrl = packResult?.downloadUrl as string;
+    const fullUrl = downloadUrl.startsWith("/")
+      ? `${BASE}${downloadUrl}`
+      : downloadUrl;
 
-    expect(zipBytes.length, "ZIP must not be empty").toBeGreaterThan(0);
+    const [download] = await Promise.all([
+      page.waitForEvent("download", { timeout: 60_000 }),
+      page.evaluate((url: string) => { window.location.href = url; }, fullUrl),
+    ]);
+
+    const downloadPath = await download.path();
+    expect(downloadPath, "Download path must exist").toBeTruthy();
+
+    const zipData = fs.readFileSync(downloadPath!);
+    expect(zipData.length, "ZIP must not be empty").toBeGreaterThan(0);
 
     // Parse ZIP with JSZip and scan every file for "answerKey"
-    const zip = await JSZip.loadAsync(Buffer.from(zipBytes));
+    const zip = await JSZip.loadAsync(zipData);
     const fileNames = Object.keys(zip.files).filter((n) => !zip.files[n].dir);
     console.log(`  ZIP contains ${fileNames.length} files`);
 
@@ -195,21 +204,11 @@ test.describe("Wave 3 E2E Tests", () => {
       await videoSection.getByPlaceholder("Duration seconds").fill("30");
       await videoSection.getByRole("button", { name: "Upload video" }).click();
 
-      // Wait for the button to leave "Uploading..." state
+      // Wait for success message (upload takes a few seconds to blob store)
       await expect(
-        videoSection.getByRole("button", { name: "Upload video" })
+        videoSection.locator("form").getByText(/Video uploaded/i),
+        "Upload must succeed within 45s"
       ).toBeVisible({ timeout: 45_000 });
-
-      // The success/error message p is directly inside the <form> (after the button)
-      // Use getByText on the form to avoid grabbing video-list size labels
-      const successMsg = videoSection.locator("form").getByText(/Video uploaded/i);
-      const errorMsg   = videoSection.locator("form").getByText(/Video upload failed|failed/i);
-      const hasSuccess = await successMsg.isVisible().catch(() => false);
-      const hasError   = await errorMsg.textContent().catch(() => null);
-      console.log(`  Upload result: success=${hasSuccess} error=${hasError}`);
-
-      await page.screenshot({ path: ss("e2e2a-teacher-upload-success") });
-      expect(hasSuccess, `Upload failed — error: ${hasError}`).toBe(true);
 
       console.log(`  ✓ Upload succeeded — title: ${videoTitle}`);
       await page.screenshot({ path: ss("e2e2a-teacher-upload-success") });
@@ -218,14 +217,12 @@ test.describe("Wave 3 E2E Tests", () => {
       const adminPage = await context.newPage();
       await signIn(adminPage, "admin@cha.edu.lr");
       await adminPage.goto(`${BASE}/admin/video-moderation`);
-      await adminPage.waitForLoadState("networkidle");
-      await adminPage.waitForTimeout(1500);
 
       // The video should appear in the PENDING tab (default)
       await expect(
         adminPage.getByText(videoTitle),
         `Video "${videoTitle}" must appear in PENDING queue`
-      ).toBeVisible({ timeout: 15_000 });
+      ).toBeVisible({ timeout: 20_000 });
 
       // Click the Approve button for this video
       const videoItem = adminPage.locator("article, div").filter({ hasText: videoTitle }).first();

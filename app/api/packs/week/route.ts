@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from "next/server";
-import { head } from "@vercel/blob";
 import { requireRole } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { generatePack, resolveWeekBounds } from "@/lib/packs/generatePack";
@@ -49,7 +48,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({
       packId: result.packId,
       status: "ready",
-      downloadUrl: (await head(result.blobUrl)).downloadUrl,
+      downloadUrl: `/api/packs/${result.packId}/download`,
       sizeBytes: result.sizeBytes,
       lessonCount: result.lessonCount,
     });

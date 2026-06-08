@@ -1,5 +1,4 @@
 import { NextResponse } from "next/server";
-import { head } from "@vercel/blob";
 import { requireRole } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 
@@ -28,11 +27,9 @@ export async function GET() {
     },
   });
 
-  const signedPacks = await Promise.all(
-    packs.map(async (p) => ({
-      ...p,
-      blobUrl: p.blobUrl ? (await head(p.blobUrl)).downloadUrl : null,
-    }))
-  );
-  return NextResponse.json({ packs: signedPacks });
+  const servedPacks = packs.map((p) => ({
+    ...p,
+    blobUrl: p.blobUrl ? `/api/packs/${p.id}/download` : null,
+  }));
+  return NextResponse.json({ packs: servedPacks });
 }
