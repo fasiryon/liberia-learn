@@ -224,9 +224,15 @@ test.describe("Wave 3 E2E Tests", () => {
         `Video "${videoTitle}" must appear in PENDING queue`
       ).toBeVisible({ timeout: 20_000 });
 
-      // Click the Approve button for this video
-      const videoItem = adminPage.locator("article, div").filter({ hasText: videoTitle }).first();
-      const approveBtn = videoItem.getByRole("button", { name: /^Approve$/ });
+      // Click the Approve button scoped to this video's card.
+      // Use chained filter() to find the innermost div that contains BOTH
+      // the title text AND an Approve button, avoiding outer containers.
+      const videoCard = adminPage.locator("div").filter({
+        has: adminPage.locator("p").filter({ hasText: videoTitle }),
+      }).filter({
+        has: adminPage.getByRole("button", { name: /^Approve$/ }),
+      }).last(); // last() = innermost matching div
+      const approveBtn = videoCard.getByRole("button", { name: /^Approve$/ }).first();
       await approveBtn.scrollIntoViewIfNeeded();
       await approveBtn.click();
 
