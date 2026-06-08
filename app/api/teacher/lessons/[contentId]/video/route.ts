@@ -13,10 +13,10 @@ const MAX_THUMBNAIL_BYTES = 2 * 1024 * 1024; // 2MB
 async function checkAndUpdateQuota(schoolId: string, fileSize: number): Promise<void> {
   const quota = await prisma.schoolStorageQuota.upsert({
     where: { schoolId },
-    create: { schoolId, usedBytes: 0, limitBytes: 5368709120 },
+    create: { schoolId, usedBytes: BigInt(0), limitBytes: BigInt(5368709120) },
     update: {},
   });
-  if (quota.usedBytes + fileSize > quota.limitBytes) {
+  if (BigInt(quota.usedBytes) + BigInt(fileSize) > BigInt(quota.limitBytes)) {
     throw Object.assign(
       new Error("Storage quota exceeded. Contact your school admin."),
       { status: 413 }
@@ -27,8 +27,8 @@ async function checkAndUpdateQuota(schoolId: string, fileSize: number): Promise<
 async function incrementQuota(schoolId: string, fileSize: number): Promise<void> {
   await prisma.schoolStorageQuota.upsert({
     where: { schoolId },
-    create: { schoolId, usedBytes: fileSize, limitBytes: 5368709120 },
-    update: { usedBytes: { increment: fileSize } },
+    create: { schoolId, usedBytes: BigInt(fileSize), limitBytes: BigInt(5368709120) },
+    update: { usedBytes: { increment: BigInt(fileSize) } },
   });
 }
 
