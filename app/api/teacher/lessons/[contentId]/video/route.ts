@@ -184,14 +184,19 @@ export async function GET(
       },
     });
 
-    // Storage quota info
+    // Storage quota info (BigInt → Number for JSON serialization)
     let storageInfo: { usedBytes: number; limitBytes: number } | null = null;
     if (user.schoolId) {
       const quota = await prisma.schoolStorageQuota.findUnique({
         where: { schoolId: user.schoolId },
         select: { usedBytes: true, limitBytes: true },
       });
-      storageInfo = quota;
+      if (quota) {
+        storageInfo = {
+          usedBytes: Number(quota.usedBytes),
+          limitBytes: Number(quota.limitBytes),
+        };
+      }
     }
 
     return NextResponse.json({ videos, storageInfo });
