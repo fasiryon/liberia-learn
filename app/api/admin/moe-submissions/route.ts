@@ -64,7 +64,7 @@ export async function POST(req: NextRequest) {
     const school = await prisma.school.findUnique({ where: { id: schoolId }, select: { name: true } });
 
     const blobPath = `moe-submissions/${schoolId}/${Date.now()}-${file.name.replace(/[^a-z0-9._-]/gi, "_")}`;
-    const blob = await put(blobPath, file, { access: "public" });
+    const blob = await put(blobPath, file, { access: "private" });
 
     const submission = await prisma.moeSubmission.create({
       data: {

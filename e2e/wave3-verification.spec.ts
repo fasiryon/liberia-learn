@@ -194,13 +194,18 @@ test.describe("Wave 3 E2E Tests", () => {
       await videoSection.getByPlaceholder("Duration seconds").fill("30");
       await videoSection.getByRole("button", { name: "Upload video" }).click();
 
-      // Wait for either success or error message
-      const msgLocator = videoSection.locator("p").filter({ hasText: /uploaded|failed|error/i });
+      // Wait for upload response (success or error)
+      await page.waitForTimeout(2000); // let submit fire
+      await page.screenshot({ path: ss("e2e2a-after-click") });
+
+      // Message can be: "Video uploaded…", "Video upload failed.", "Choose an MP4…",
+      // or a Prisma error string — match anything that appears in the message slot
+      const msgLocator = videoSection.locator("p").last(); // last p = message slot
       await expect(msgLocator).toBeVisible({ timeout: 45_000 });
       const msgText = await msgLocator.textContent();
       console.log(`  Upload response: ${msgText}`);
 
-      // Success message: "Video uploaded. Activate it when ready for students."
+      // Assert success — must NOT contain failure keywords
       expect(msgText, "Upload must succeed").toMatch(/Video uploaded/);
 
       console.log(`  ✓ Upload succeeded — title: ${videoTitle}`);

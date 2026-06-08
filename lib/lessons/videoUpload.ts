@@ -67,7 +67,7 @@ export async function uploadLessonVideoToVercelBlob(input: {
   });
   const buffer = Buffer.from(await input.file.arrayBuffer());
   const blob = await put(path, buffer, {
-    access: "public",
+    access: "private",
     contentType: input.file.type || "video/mp4",
   });
   return blob.url;

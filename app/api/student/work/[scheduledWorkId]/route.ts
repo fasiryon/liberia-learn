@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { getDownloadUrl } from "@vercel/blob";
 import { requireRole } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { resolveLessonTitle } from "@/lib/lessons/resolveLessonTitle";
@@ -338,6 +339,8 @@ export async function GET(
       activeVideo: activeVideo
         ? {
             ...activeVideo,
+            storageUrl: getDownloadUrl(activeVideo.storageUrl),
+            thumbnailUrl: activeVideo.thumbnailUrl ? getDownloadUrl(activeVideo.thumbnailUrl) : null,
             teacherName: activeVideo.teacher?.name ?? "Teacher",
             viewCount: activeVideo.viewCount ?? 0,
           }
