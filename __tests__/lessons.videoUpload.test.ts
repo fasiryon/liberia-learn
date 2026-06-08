@@ -86,7 +86,7 @@ describe("lesson video upload validation", () => {
     expect(mockPut).toHaveBeenCalledWith(
       expect.stringContaining("lessons/lesson-1/"),
       expect.any(Buffer),
-      expect.objectContaining({ access: "public", contentType: "video/mp4" })
+      expect.objectContaining({ access: "private", contentType: "video/mp4" })
     );
   });
 });
