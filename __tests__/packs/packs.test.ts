@@ -114,7 +114,7 @@ describe("POST /api/packs/week", () => {
     const res = await callRoute({ classId: "cls-1", weekStart: "2026-06-09", audience: "teacher" });
     const data = await res.json();
     expect(data.status).toBe("ready");
-    expect(data.downloadUrl).toBe("https://blob.test/packs/teacher-1/pack-1.zip");
+    expect(data.downloadUrl).toBe("/api/packs/pack-1/download");
     expect(data.lessonCount).toBe(0);
   });
 
@@ -123,7 +123,7 @@ describe("POST /api/packs/week", () => {
     expect(mockPut).toHaveBeenCalledOnce();
     const [blobKey, , opts] = mockPut.mock.calls[0];
     expect(blobKey).toMatch(/offline-packs\/teacher-1\/pack-1\.zip/);
-    expect(opts.access).toBe("public");
+    expect(opts.access).toBe("private");
   });
 
   it("marks pack ready after successful upload", async () => {

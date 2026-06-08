@@ -34,7 +34,7 @@ describe("GET /api/admin/videos", () => {
 
   it("returns 200 with videos array and pendingCount for admin", async () => {
     const mockFindMany = vi.fn(async () => [
-      { id: "v1", title: "Video 1", status: "PENDING" },
+      { id: "v1", title: "Video 1", status: "PENDING", storageUrl: "https://blob.test/v1.mp4", thumbnailUrl: null },
     ]);
     const mockCount = vi.fn(async () => 1);
     vi.doMock("@/lib/auth", () => ({
@@ -52,6 +52,9 @@ describe("GET /api/admin/videos", () => {
           count: mockCount,
         },
       },
+    }));
+    vi.doMock("@vercel/blob", () => ({
+      head: vi.fn(async () => ({ downloadUrl: "https://signed.test/v1.mp4" })),
     }));
     const { GET } = await import("@/app/api/admin/videos/route");
     const res = await GET(
