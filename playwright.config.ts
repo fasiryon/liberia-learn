@@ -7,7 +7,7 @@ const useRemoteBaseUrl = /^https?:\/\/(?!127\.0\.0\.1(?::\d+)?\/?$)(?!localhost(
 
 export default defineConfig({
   testDir: "./e2e",
-  testMatch: /(full-review-flow|flow-integrity|phase5-3-intelligence-actions|offline-sync|day1-simulation|vsl-recording|messaging|wave3-verification)\.spec\.ts/,
+  testMatch: /(full-review-flow|flow-integrity|phase5-3-intelligence-actions|offline-sync|day1-simulation|vsl-recording|messaging|wave3-verification|pre-vsl-admin|pre-vsl-student-walkthrough)\.spec\.ts/,
   workers: 1,
   timeout: 60_000,
   expect: {
