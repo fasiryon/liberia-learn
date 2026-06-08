@@ -100,7 +100,7 @@ describe("editReviewStatus state machine — PATCH /api/admin/content-review/[le
   beforeEach(() => { vi.resetModules(); });
   afterEach(() => { vi.resetAllMocks(); });
 
-  function makeRequest(body: object) {
+  function makeRequest(body: object): any {
     return new Request("http://localhost/", {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
@@ -110,7 +110,8 @@ describe("editReviewStatus state machine — PATCH /api/admin/content-review/[le
 
   function setupMocks(
     currentStatus: string | null,
-    updateFn = vi.fn(async () => ({
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    updateFn: any = vi.fn(async () => ({
       id: "cc-1", editReviewStatus: "APPROVED", status: "published", publishedAt: new Date(),
     }))
   ) {
