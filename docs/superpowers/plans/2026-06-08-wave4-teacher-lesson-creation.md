@@ -936,11 +936,40 @@ export default function ContentReviewPage() {
 }
 ```
 
+- [ ] **Playwright smoke test — admin moderation tabs render**
+
+Before committing the UI, verify the three tabs render. Check if `.playwright-mcp/` exists in the repo (it does — Playwright MCP is available). Write a smoke test:
+
+```typescript
+// e2e/wave4c-moderation-tabs.spec.ts
+import { test, expect } from "@playwright/test";
+
+test("admin content-review page renders all three tabs", async ({ page }) => {
+  // Requires: test admin session or bypass auth in test env
+  // If auth blocks, use page.goto with cookie or skip with test.skip("requires auth")
+  await page.goto("/admin/content-review");
+  await expect(page.getByRole("button", { name: /pending/i })).toBeVisible();
+  await expect(page.getByRole("button", { name: /approved/i })).toBeVisible();
+  await expect(page.getByRole("button", { name: /rejected/i })).toBeVisible();
+});
+
+test("clicking Approved tab changes active tab", async ({ page }) => {
+  await page.goto("/admin/content-review");
+  await page.getByRole("button", { name: /approved/i }).click();
+  // Active tab has yellow background class
+  await expect(page.getByRole("button", { name: /approved/i })).toHaveClass(/ll-yellow/);
+});
+```
+
+Run: `npx playwright test e2e/wave4c-moderation-tabs.spec.ts --reporter=line`
+
+If auth prevents browser tests from reaching the page, add `test.skip()` with a note and add an alternative: visually inspect tab rendering in the compiled component by checking that `setTab` state wiring exists in the new page file via `Grep`.
+
 - [ ] **Commit**
 
 ```bash
-git add app/admin/content-review/page.tsx app/api/admin/content-review/route.ts
-git commit -m "feat: wave4c moderation UI — 3 tabs, preview, emergency unpublish"
+git add app/admin/content-review/page.tsx app/api/admin/content-review/route.ts e2e/wave4c-moderation-tabs.spec.ts
+git commit -m "feat: wave4c moderation UI — 3 tabs, preview, emergency unpublish + smoke test"
 ```
 
 ---
@@ -1814,27 +1843,41 @@ Add a "From your teachers" section in the Today page JSX, rendered when `teacher
 )}
 ```
 
-- [ ] **Add teacherAuthorName badge to lesson viewer page**
+- [ ] **Subtask 11a — Patch /api/curriculum/[contentId] to expose teacherAuthorName**
 
-Teacher lessons render at `/student/lesson/[contentId]/page.tsx` which fetches from `/api/curriculum/[contentId]`. Add the badge after the title `<h1>` block (around line 197):
+This step is required for the badge to render. Without it `metadata.teacherAuthorName` is always `undefined`.
+
+```
+# Find the exact file first:
+Glob: app/api/curriculum/[contentId]/route.ts
+```
+
+In that route, locate the Prisma `select` on `curriculumContent` and add:
+```typescript
+editedBy: { select: { name: true } },
+teacherCreated: true,
+```
+
+In the response object where `metadata` is built, add:
+```typescript
+teacherAuthorName: content.teacherCreated && content.editedBy?.name
+  ? content.editedBy.name
+  : null,
+```
+
+Run `npx tsc --noEmit` after this change to confirm no type errors.
+
+- [ ] **Subtask 11b — Add teacherAuthorName badge to lesson viewer page**
+
+Teacher lessons render at `/student/lesson/[contentId]/page.tsx`. After the `<h1>` title block (around line 197), add:
 
 ```tsx
-// After </h1> for the lesson title, before the badge div:
 {metadata?.teacherAuthorName && (
   <span className="inline-block rounded-full border border-[var(--ll-border)] px-2.5 py-0.5 text-xs text-[var(--ll-text-muted)]">
     From {String(metadata.teacherAuthorName)}
   </span>
 )}
 ```
-
-The `/api/curriculum/[contentId]` route returns `metadata` which includes all payload metadata. Find that route and add `teacherAuthorName` to the metadata response:
-
-```typescript
-// In the metadata object returned by /api/curriculum/[contentId]:
-teacherAuthorName: content.teacherCreated && content.editedBy?.name ? content.editedBy.name : null,
-```
-
-Find `/api/curriculum/[contentId]` using `Glob` — it's the route that `fetch('/api/curriculum/${contentId}')` hits. Add `editedBy: { select: { name: true } }` to the content select, and include `teacherAuthorName` in the metadata field.
 
 - [ ] **Commit**
 
@@ -1915,7 +1958,10 @@ teacherCreated?: boolean;
 teacherAuthorName?: string | null;
 
 // After the main works loop, add a similar loop for teacherAssignments + schoolWideContent:
-const seenTeacherContentIds = new Set<string>();
+// Seed with contentIds already in the works loop to prevent double-packing
+const seenTeacherContentIds = new Set<string>(
+  works.map((w) => w.content?.contentId).filter((id): id is string => Boolean(id))
+);
 for (const ta of [...teacherAssignments, ...schoolWideContent.map((c) => ({ content: c, scheduledFor: null, id: c.id }))]) {
   const c = "content" in ta ? ta.content : ta;
   if (seenTeacherContentIds.has(c.contentId)) continue;
