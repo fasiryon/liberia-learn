@@ -1970,8 +1970,8 @@ model VideoWatchEvent {
 model SchoolStorageQuota {
   id         String   @id @default(cuid())
   schoolId   String   @unique
-  usedBytes  Int      @default(0)
-  limitBytes Int      @default(5368709120)
+  usedBytes  BigInt   @default(0)
+  limitBytes BigInt   @default(5368709120)
   updatedAt  DateTime @updatedAt
   school     School   @relation(fields: [schoolId], references: [id], onDelete: Cascade)
 }

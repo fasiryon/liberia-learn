@@ -43,13 +43,19 @@ export async function POST(req: NextRequest) {
     },
   });
 
-  const result = await generatePack(pack.id);
-
-  return NextResponse.json({
-    packId: result.packId,
-    status: "ready",
-    downloadUrl: result.blobUrl,
-    sizeBytes: result.sizeBytes,
-    lessonCount: result.lessonCount,
-  });
+  try {
+    const result = await generatePack(pack.id);
+    return NextResponse.json({
+      packId: result.packId,
+      status: "ready",
+      downloadUrl: result.blobUrl,
+      sizeBytes: result.sizeBytes,
+      lessonCount: result.lessonCount,
+    });
+  } catch (err: any) {
+    return NextResponse.json(
+      { error: err?.message ?? "Pack generation failed" },
+      { status: err?.status ?? 500 }
+    );
+  }
 }
