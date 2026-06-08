@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import WhatsAppShareButton from "@/components/student/WhatsAppShareButton";
 
 type CertificateRecord = {
   id: string;
@@ -15,16 +16,6 @@ type CertificateRecord = {
   canvaUrl: string | null;
 };
 
-async function shareToWhatsApp(certificateId: string) {
-  const res = await fetch(`/api/certificates/${certificateId}/share`, {
-    method: "POST",
-  });
-  if (!res.ok) return;
-  const data = await res.json() as { whatsappText: string };
-  const waLink = `https://wa.me/?text=${encodeURIComponent(data.whatsappText)}`;
-  window.open(waLink, "_blank", "noopener,noreferrer");
-}
-
 function labelForType(type: CertificateRecord["type"]) {
   return type === "LESSON" ? "Lesson Certificate" : "Subject Certificate";
 }
@@ -37,7 +28,6 @@ export default function StudentCertificatesClient() {
   const [certificates, setCertificates] = useState<CertificateRecord[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [sharing, setSharing] = useState<string | null>(null);
 
   useEffect(() => {
     fetch("/api/student/certificates", { cache: "no-store" })
@@ -184,18 +174,9 @@ export default function StudentCertificatesClient() {
                     </button>
                   </div>
                 )}
-                <button
-                  type="button"
-                  disabled={sharing === certificate.id}
-                  onClick={async () => {
-                    setSharing(certificate.id);
-                    await shareToWhatsApp(certificate.id).catch(() => null);
-                    setSharing(null);
-                  }}
-                  className="flex w-full items-center justify-center gap-2 rounded-lg border border-emerald-500/40 bg-emerald-500/10 px-4 py-2.5 text-sm font-semibold text-emerald-400 transition-colors hover:opacity-90 disabled:opacity-60"
-                >
-                  {sharing === certificate.id ? "Opening WhatsApp…" : "Share to WhatsApp"}
-                </button>
+                <div className="w-full">
+                  <WhatsAppShareButton certificateId={certificate.id} />
+                </div>
               </div>
             </article>
           ))}

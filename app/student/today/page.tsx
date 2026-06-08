@@ -12,6 +12,7 @@ import { OfflineReadyBadge } from "@/components/OfflineReadyBadge";
 import { DownloadPackButton } from "@/components/packs/DownloadPackButton";
 import { AnnouncementBanner } from "@/components/AnnouncementBanner";
 import { WeeklyProgressChart, type WeekEntry } from "@/components/student/WeeklyProgressChart";
+import { DistrictRankWidget } from "@/components/league/DistrictRankWidget";
 
 type WorkStatus = "not_started" | "in_progress" | "completed";
 type ScheduleStatus = "current" | "upcoming" | "completed" | "missed";
@@ -54,6 +55,7 @@ type TodayResponse = {
   subjects: string[];
   completedCount: number;
   remainingCount: number;
+  schoolId?: string | null;
   pacingSignal?: string;
   weakTopicSequence?: Array<{ lessonId?: string; reason?: string; priorityOrder?: number }>;
   masteryAlerts?: Array<{ title?: string; message?: string; subject?: string; severity?: string }>;
@@ -420,6 +422,7 @@ export default function StudentTodayPage() {
                     lastUpdatedAt={lastUpdatedAt}
                   />
                   {weeklyData.length > 0 && <WeeklyProgressChart data={weeklyData} />}
+                  {data.schoolId && <DistrictRankWidget schoolId={data.schoolId} />}
                 </div>
               ) : null}
             </section>

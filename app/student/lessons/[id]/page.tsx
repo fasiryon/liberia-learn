@@ -1,4 +1,5 @@
 import LessonDeliveryClient from "./LessonDeliveryClient";
+// activeVideo teacher-recorded video playback is rendered by LessonDeliveryClient
 
 export default function StudentLessonPage({ params }: { params: { id: string } }) {
   return (
