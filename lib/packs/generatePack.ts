@@ -67,6 +67,57 @@ export async function generatePack(packId: string): Promise<PackResult> {
       },
     });
 
+    // Derive schoolId for school_wide query (OfflinePack has no schoolId field)
+    const packClass = pack.classId
+      ? await prisma.class.findUnique({ where: { id: pack.classId }, select: { schoolId: true } })
+      : null;
+    const packSchoolId = packClass?.schoolId ?? null;
+
+    // Fetch teacher-assigned lessons for this class/week
+    const teacherAssignments = pack.classId
+      ? await prisma.teacherLessonAssignment.findMany({
+          where: {
+            classId: pack.classId,
+            OR: [
+              { scheduledFor: null },
+              { scheduledFor: { gte: pack.weekStart, lt: pack.weekEnd } },
+            ],
+            content: { editReviewStatus: "APPROVED" },
+          },
+          include: {
+            content: {
+              select: {
+                id: true, contentId: true, payload: true, subject: true, grade: true,
+                contentType: true, editedBy: { select: { name: true } },
+                audioAssets: {
+                  where: { status: "GENERATED" },
+                  orderBy: { generatedAt: "desc" },
+                  take: 1,
+                  select: { id: true, storageUrl: true, durationSeconds: true },
+                },
+              },
+            },
+          },
+        })
+      : [];
+
+    // Fetch school-wide teacher lessons
+    const schoolWideContent = packSchoolId
+      ? await prisma.curriculumContent.findMany({
+          where: { visibility: "school_wide", schoolId: packSchoolId, editReviewStatus: "APPROVED" },
+          select: {
+            id: true, contentId: true, payload: true, subject: true, grade: true,
+            contentType: true, editedBy: { select: { name: true } },
+            audioAssets: {
+              where: { status: "GENERATED" },
+              orderBy: { generatedAt: "desc" },
+              take: 1,
+              select: { id: true, storageUrl: true, durationSeconds: true },
+            },
+          },
+        })
+      : [];
+
     const zip = new JSZip();
     const manifestLessons: Array<{
       id: string;
@@ -77,6 +128,8 @@ export async function generatePack(packId: string): Promise<PackResult> {
       scheduledDate: string;
       periodNumber: number | null;
       hasAudio: boolean;
+      teacherCreated?: boolean;
+      teacherAuthorName?: string | null;
     }> = [];
 
     for (const work of works) {
@@ -137,6 +190,51 @@ export async function generatePack(packId: string): Promise<PackResult> {
         scheduledDate: work.scheduledDate.toISOString(),
         periodNumber: work.periodNumber,
         hasAudio,
+      });
+    }
+
+    // Dedup against works already bundled
+    const seenTeacherContentIds = new Set<string>(
+      works.map((w) => w.content?.contentId).filter((id): id is string => Boolean(id))
+    );
+
+    const teacherItems = [
+      ...teacherAssignments.map((ta) => ({ c: ta.content, source: "assigned" })),
+      ...schoolWideContent.map((c) => ({ c, source: "school_wide" })),
+    ];
+
+    for (const { c } of teacherItems) {
+      if (seenTeacherContentIds.has(c.contentId)) continue;
+      seenTeacherContentIds.add(c.contentId);
+
+      const payload = c.payload as Record<string, unknown> | null;
+      const title = (payload as any)?.title ?? (payload as any)?.lessonTitle ?? c.contentId;
+      const lessonPayload = pack.audience === "student" ? stripStudentKeys(payload) : payload;
+
+      const folder = zip.folder(`lessons/${c.contentId}`);
+      if (!folder) continue;
+
+      folder.file("lesson.json", JSON.stringify({
+        id: c.id, contentId: c.contentId, subject: c.subject, grade: c.grade,
+        contentType: c.contentType, payload: lessonPayload,
+        teacherCreated: true, teacherAuthorName: c.editedBy?.name ?? null,
+      }, null, 2));
+
+      const audio = c.audioAssets[0];
+      let hasAudio = false;
+      if (audio?.storageUrl) {
+        try {
+          const res = await fetch(audio.storageUrl);
+          if (res.ok) { folder.file("audio.mp3", await res.arrayBuffer()); hasAudio = true; }
+        } catch { /* non-fatal */ }
+      }
+
+      manifestLessons.push({
+        id: c.id, contentId: c.contentId,
+        title: String(title ?? c.contentId), subject: String(c.subject),
+        grade: c.grade ?? 0, scheduledDate: pack.weekStart.toISOString(),
+        periodNumber: null, hasAudio,
+        teacherCreated: true, teacherAuthorName: c.editedBy?.name ?? null,
       });
     }
 
