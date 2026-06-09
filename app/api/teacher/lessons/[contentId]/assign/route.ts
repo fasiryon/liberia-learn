@@ -28,6 +28,17 @@ export async function POST(
       return NextResponse.json({ error: "lesson_not_approved" }, { status: 403 });
     }
 
+    // Verify the target class belongs to the teacher's school
+    if (user.schoolId) {
+      const targetClass = await prisma.class.findUnique({
+        where: { id: body.classId },
+        select: { schoolId: true },
+      });
+      if (!targetClass || targetClass.schoolId !== user.schoolId) {
+        return NextResponse.json({ error: "class_not_in_school" }, { status: 403 });
+      }
+    }
+
     try {
       const assignment = await prisma.teacherLessonAssignment.create({
         data: {

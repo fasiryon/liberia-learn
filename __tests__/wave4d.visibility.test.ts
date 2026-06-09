@@ -24,6 +24,7 @@ describe("POST /api/teacher/lessons/[contentId]/assign", () => {
         curriculumContent: {
           findUnique: vi.fn(async () => ({ contentId: "c-1", editedById: "t-1", editReviewStatus: "APPROVED" })),
         },
+        class: { findUnique: vi.fn(async () => ({ schoolId: "s-1" })) },
         teacherLessonAssignment: { create: mockCreate },
       },
     }));
@@ -43,6 +44,7 @@ describe("POST /api/teacher/lessons/[contentId]/assign", () => {
         curriculumContent: {
           findUnique: vi.fn(async () => ({ contentId: "c-1", editedById: "t-1", editReviewStatus: "APPROVED" })),
         },
+        class: { findUnique: vi.fn(async () => ({ schoolId: "s-1" })) },
         teacherLessonAssignment: { create: vi.fn(async () => { throw dupError; }) },
       },
     }));
