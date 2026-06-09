@@ -212,3 +212,57 @@ describe("POST /api/admin/content-review/[lessonId]/unpublish", () => {
     }));
   });
 });
+
+// ── GET /api/admin/content-review — tab filtering ────────────────────────────
+
+describe("GET /api/admin/content-review tab filtering", () => {
+  beforeEach(() => { vi.resetModules(); });
+  afterEach(() => { vi.resetAllMocks(); });
+
+  it("status=APPROVED queries editReviewStatus='APPROVED'", async () => {
+    const mockFindMany = vi.fn(async () => []);
+    const mockCount = vi.fn(async () => 0);
+    vi.doMock("@/lib/auth", () => ({
+      requireRole: vi.fn(async () => ({ id: "a-1", role: "ADMIN", schoolId: "s-1" })),
+    }));
+    vi.doMock("@/lib/db", () => ({
+      prisma: { curriculumContent: { findMany: mockFindMany, count: mockCount } },
+    }));
+    const { GET } = await import("@/app/api/admin/content-review/route");
+    const res = await GET(new Request("http://localhost/api/admin/content-review?status=APPROVED") as any);
+    expect(res.status).toBe(200);
+    expect(mockFindMany).toHaveBeenCalledWith(expect.objectContaining({
+      where: expect.objectContaining({ editReviewStatus: "APPROVED" }),
+    }));
+  });
+
+  it("status=REJECTED queries editReviewStatus='REJECTED'", async () => {
+    const mockFindMany = vi.fn(async () => []);
+    const mockCount = vi.fn(async () => 0);
+    vi.doMock("@/lib/auth", () => ({
+      requireRole: vi.fn(async () => ({ id: "a-1", role: "ADMIN", schoolId: "s-1" })),
+    }));
+    vi.doMock("@/lib/db", () => ({
+      prisma: { curriculumContent: { findMany: mockFindMany, count: mockCount } },
+    }));
+    const { GET } = await import("@/app/api/admin/content-review/route");
+    await GET(new Request("http://localhost/api/admin/content-review?status=REJECTED") as any);
+    expect(mockFindMany).toHaveBeenCalledWith(expect.objectContaining({
+      where: expect.objectContaining({ editReviewStatus: "REJECTED" }),
+    }));
+  });
+
+  it("response always includes pendingCount regardless of tab", async () => {
+    vi.doMock("@/lib/auth", () => ({
+      requireRole: vi.fn(async () => ({ id: "a-1", role: "ADMIN", schoolId: "s-1" })),
+    }));
+    vi.doMock("@/lib/db", () => ({
+      prisma: { curriculumContent: { findMany: vi.fn(async () => []), count: vi.fn(async () => 5) } },
+    }));
+    const { GET } = await import("@/app/api/admin/content-review/route");
+    const res = await GET(new Request("http://localhost/api/admin/content-review?status=APPROVED") as any);
+    const body = await res.json();
+    expect(typeof body.pendingCount).toBe("number");
+    expect(body.pendingCount).toBe(5);
+  });
+});

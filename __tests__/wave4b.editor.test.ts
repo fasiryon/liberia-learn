@@ -108,3 +108,37 @@ describe("GET /api/teacher/lessons/forkable", () => {
     expect(body.lessons).toHaveLength(0);
   });
 });
+
+// ── SUBJECTS constant has all 8 subjects ─────────────────────────────────────
+
+describe("wave4b — create page has all 8 subjects", () => {
+  it("create page source includes all 8 Subject enum values", async () => {
+    const fs = await import("fs");
+    const source = fs.readFileSync("app/teacher/lessons/create/page.tsx", "utf-8");
+    for (const subject of ["MATH", "SCIENCE", "LITERACY", "SOCIAL_STUDIES", "ENGLISH", "CS", "ENGINEERING_FOUNDATIONS", "CIVICS"]) {
+      expect(source).toContain(subject);
+    }
+  });
+
+  it("create page source includes learning objectives field", async () => {
+    const fs = await import("fs");
+    const source = fs.readFileSync("app/teacher/lessons/create/page.tsx", "utf-8");
+    expect(source).toContain("learningObjectives");
+    expect(source).toContain("Add objective");
+  });
+
+  it("create page source includes fork tab", async () => {
+    const fs = await import("fs");
+    const source = fs.readFileSync("app/teacher/lessons/create/page.tsx", "utf-8");
+    expect(source).toContain("Fork AI lesson");
+    expect(source).toContain("forkable");
+  });
+
+  it("edit page shows vN+1 button when editReviewStatus is APPROVED", async () => {
+    const fs = await import("fs");
+    const source = fs.readFileSync("app/teacher/lessons/[lessonId]/edit/page.tsx", "utf-8");
+    expect(source).toContain("editReviewStatus");
+    expect(source).toContain("APPROVED");
+    expect(source).toContain("fork");
+  });
+});

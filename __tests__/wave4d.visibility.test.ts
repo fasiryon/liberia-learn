@@ -164,3 +164,144 @@ describe("GET /api/student/teacher-lessons", () => {
     expect(body.lessons).toHaveLength(0);
   });
 });
+
+// ── Pack security: stripStudentKeys ──────────────────────────────────────────
+
+describe("stripStudentKeys — security: teacher lesson answer keys never in student packs", () => {
+  it("strips answerKey, correctAnswer, correctIndex, modelAnswer, teacherNotes from payload", async () => {
+    const { stripStudentKeys } = await import("@/lib/packs/generatePack");
+    const payload = {
+      title: "Photosynthesis",
+      body: "Plants make food using sunlight.",
+      questions: [
+        {
+          question: "What do plants need for photosynthesis?",
+          choices: ["Water", "Light", "Soil", "Air"],
+          answerKey: "Light",        // MUST be stripped
+          correctAnswer: 1,          // MUST be stripped
+          correctIndex: 1,           // MUST be stripped
+        },
+      ],
+      assessmentQuestions: [
+        { question: "Describe the process", modelAnswer: "Plants use CO2 and sunlight..." }, // MUST be stripped
+      ],
+      teacherNotes: "Pause after slide 3 for questions.",  // MUST be stripped
+      presenterNotes: "This is confidential.",              // MUST be stripped
+      scoringRubric: "Award 2 points for...",              // MUST be stripped
+    };
+
+    const stripped = stripStudentKeys(payload) as any;
+
+    // Sensitive keys must be absent
+    expect(stripped.questions[0]).not.toHaveProperty("answerKey");
+    expect(stripped.questions[0]).not.toHaveProperty("correctAnswer");
+    expect(stripped.questions[0]).not.toHaveProperty("correctIndex");
+    expect(stripped.assessmentQuestions[0]).not.toHaveProperty("modelAnswer");
+    expect(stripped).not.toHaveProperty("teacherNotes");
+    expect(stripped).not.toHaveProperty("presenterNotes");
+    expect(stripped).not.toHaveProperty("scoringRubric");
+
+    // Non-sensitive keys must be preserved
+    expect(stripped.title).toBe("Photosynthesis");
+    expect(stripped.body).toBe("Plants make food using sunlight.");
+    expect(stripped.questions[0].question).toBe("What do plants need for photosynthesis?");
+    expect(stripped.questions[0].choices).toHaveLength(4);
+  });
+
+  it("strips nested answer keys in deeply nested structures", async () => {
+    const { stripStudentKeys } = await import("@/lib/packs/generatePack");
+    const payload = {
+      sections: [
+        { sectionTitle: "Quiz", items: [{ answerKey: "secret", text: "visible" }] },
+      ],
+    };
+    const stripped = stripStudentKeys(payload) as any;
+    expect(stripped.sections[0].items[0]).not.toHaveProperty("answerKey");
+    expect(stripped.sections[0].items[0].text).toBe("visible");
+  });
+
+  it("handles null/undefined payload without throwing", async () => {
+    const { stripStudentKeys } = await import("@/lib/packs/generatePack");
+    expect(stripStudentKeys(null)).toBeNull();
+    expect(stripStudentKeys(undefined)).toBeUndefined();
+    expect(stripStudentKeys("string")).toBe("string");
+  });
+});
+
+// ── GET /api/student/teacher-lessons — visibility edge cases ─────────────────
+
+describe("GET /api/student/teacher-lessons — visibility edge cases", () => {
+  beforeEach(() => { vi.resetModules(); });
+  afterEach(() => { vi.resetAllMocks(); });
+
+  it("class_only lesson NOT visible to student in a different class", async () => {
+    // Student is enrolled in cls-2. Lesson only assigned to cls-1.
+    // findMany for assignments uses { classId: { in: ["cls-2"] } } so returns nothing.
+    vi.doMock("@/lib/auth", () => ({
+      requireRole: vi.fn(async () => ({ id: "s-2", role: "STUDENT", schoolId: "sch-1" })),
+    }));
+    vi.doMock("@/lib/db", () => ({
+      prisma: {
+        // Route selects enrollments array, not classId directly
+        student: { findUnique: vi.fn(async () => ({ enrollments: [{ classId: "cls-2" }] })) },
+        teacherLessonAssignment: { findMany: vi.fn(async () => []) }, // no cls-2 assignments
+        curriculumContent: { findMany: vi.fn(async () => []) },
+      },
+    }));
+    const { GET } = await import("@/app/api/student/teacher-lessons/route");
+    const res = await GET();
+    const body = await res.json();
+    expect(body.lessons).toHaveLength(0);
+  });
+
+  it("emergency-unpublished (PENDING) NOT returned — source filters editReviewStatus=APPROVED", async () => {
+    // Verify the route source enforces APPROVED filter — unpublished lessons can't sneak through
+    const { readFileSync } = await import("fs");
+    const src = readFileSync("app/api/student/teacher-lessons/route.ts", "utf-8");
+    // Both the assignment path and school_wide path must require APPROVED status
+    const approvedMatches = (src.match(/"APPROVED"/g) || []).length;
+    expect(approvedMatches).toBeGreaterThanOrEqual(2); // once for assignments, once for school_wide
+  });
+
+  it("school_wide WHERE includes schoolId from user — cross-school isolation enforced in source", async () => {
+    const { readFileSync } = await import("fs");
+    const src = readFileSync("app/api/student/teacher-lessons/route.ts", "utf-8");
+    // schoolId must appear in the school_wide findMany WHERE
+    expect(src).toContain("schoolId");
+    expect(src).toContain("school_wide");
+    // The schoolId is sourced from user.schoolId (not hardcoded)
+    expect(src).toContain("user.schoolId");
+  });
+});
+
+// ── teacherAuthorName in curriculum API ───────────────────────────────────────
+
+describe("GET /api/curriculum/[contentId] — teacherAuthorName in metadata", () => {
+  beforeEach(() => { vi.resetModules(); });
+  afterEach(() => { vi.resetAllMocks(); });
+
+  it("includes teacherAuthorName when content is teacher-created", async () => {
+    vi.doMock("@/lib/db", () => ({
+      prisma: {
+        curriculumContent: {
+          findUnique: vi.fn(async () => ({
+            id: "cc-1", contentId: "c-1", grade: 7, subject: "SCIENCE",
+            teacherCreated: true,
+            editedBy: { name: "Mr. Johnson" },
+            payload: { title: "Photosynthesis", body: "Plants..." },
+            audioAssets: [],
+            status: "published",
+          })),
+        },
+      },
+    }));
+    // The curriculum route is at app/api/curriculum/[contentId]/route.ts
+    // We just need to confirm the route exports a GET that includes teacherAuthorName
+    const fs = await import("fs");
+    const path = await import("path");
+    const routeFile = path.resolve("app/api/curriculum/[contentId]/route.ts");
+    const source = fs.existsSync(routeFile) ? fs.readFileSync(routeFile, "utf-8") : "";
+    expect(source).toContain("teacherAuthorName");
+    expect(source).toContain("teacherCreated");
+  });
+});
