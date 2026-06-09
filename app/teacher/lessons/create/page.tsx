@@ -85,6 +85,7 @@ export default function LessonCreatePage() {
           estimatedMinutes: 45,
           status: "draft",
           source: "TEACHER",
+          learningObjectives: objectives.filter(Boolean),
         }),
       });
       const data = await res.json();
