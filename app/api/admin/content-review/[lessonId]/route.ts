@@ -58,13 +58,15 @@ export async function PATCH(
     const isApprove = body.editReviewStatus === "APPROVED";
     const isReject = body.editReviewStatus === "REJECTED";
 
+    const rejectionReason = isReject && body.editReviewStatus === "REJECTED" ? body.rejectionReason : undefined;
+
     const updated = await prisma.curriculumContent.update({
       where: { id: lesson.id },
       data: {
         editReviewStatus: body.editReviewStatus,
         status: isApprove ? "published" : "draft",
         ...(isApprove ? { publishedAt: new Date() } : {}),
-        ...(isReject ? { rejectionReason: (body as any).rejectionReason } : {}),
+        ...(isReject ? { rejectionReason } : {}),
       },
     });
 
@@ -79,14 +81,14 @@ export async function PATCH(
       resourceId: lesson.contentId,
       schoolId: user.schoolId ?? null,
       traceId,
-      details: isReject ? { rejectionReason: (body as any).rejectionReason } : {},
+      details: isReject ? { rejectionReason } : {},
     });
 
     if (lesson.editedById) {
       const title = lesson.title ?? "Your lesson";
       const notifBody = isApprove
         ? `"${title}" was approved and is now published.`
-        : `"${title}" was not approved. Reason: ${(body as any).rejectionReason}`;
+        : `"${title}" was not approved. Reason: ${rejectionReason}`;
       await prisma.notificationInboxItem.create({
         data: {
           userId: lesson.editedById,
