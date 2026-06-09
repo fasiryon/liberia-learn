@@ -7,7 +7,7 @@ describe("PATCH /api/admin/content-review/[lessonId] state machine", () => {
   beforeEach(() => { vi.resetModules(); });
   afterEach(() => { vi.resetAllMocks(); });
 
-  function makeReq(body: object) {
+  function makeReq(body: object): any {
     return new Request("http://localhost/", {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
@@ -17,7 +17,8 @@ describe("PATCH /api/admin/content-review/[lessonId] state machine", () => {
 
   function setupMocks(
     currentStatus: string | null,
-    updateFn = vi.fn(async () => ({
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    updateFn: any = vi.fn(async () => ({
       id: "cc-1", editReviewStatus: "APPROVED", status: "published",
     }))
   ) {
@@ -86,12 +87,14 @@ describe("PATCH /api/admin/content-review/[lessonId] state machine", () => {
       data: expect.objectContaining({ status: "published", editReviewStatus: "APPROVED" }),
     }));
     // publishedAt must be set (a Date, not null)
-    const callData = mockUpdate.mock.calls[0][0].data;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const callData = (mockUpdate.mock.calls[0] as any)[0].data;
     expect(callData.publishedAt).toBeInstanceOf(Date);
   });
 
   it("reject: stores rejectionReason in update call", async () => {
-    const mockUpdate = vi.fn(async () => ({ id: "cc-1", editReviewStatus: "REJECTED" }));
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const mockUpdate: any = vi.fn(async () => ({ id: "cc-1", editReviewStatus: "REJECTED", status: "draft" }));
     setupMocks("PENDING", mockUpdate);
     const { PATCH } = await import("@/app/api/admin/content-review/[lessonId]/route");
     await PATCH(makeReq({ editReviewStatus: "REJECTED", rejectionReason: "Factually wrong" }), { params: { lessonId: "cc-1" } });
@@ -133,7 +136,7 @@ describe("POST /api/admin/content-review/[lessonId]/unpublish", () => {
   beforeEach(() => { vi.resetModules(); });
   afterEach(() => { vi.resetAllMocks(); });
 
-  function makeReq(body: object = {}) {
+  function makeReq(body: object = {}): any {
     return new Request("http://localhost/", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
