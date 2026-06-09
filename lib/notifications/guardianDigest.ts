@@ -39,7 +39,7 @@ export async function composeGuardianDigest(input: DigestInput): Promise<DigestR
         where: { studentId: { in: studentIds } },
         select: {
           studentId: true,
-          student: { select: { user: { select: { name: true, schoolId: true } } } },
+          student: { select: { userId: true, user: { select: { name: true, schoolId: true } } } },
         },
       },
     },
@@ -73,9 +73,13 @@ export async function composeGuardianDigest(input: DigestInput): Promise<DigestR
   const studentFirstName = primaryStudent.student.user.name?.split(" ")[0] ?? "your child";
 
   // --- Aggregate lesson progress for the week ---
+  // StudentProgress.studentId stores User.id (see completeScheduledLesson),
+  // while activeStudentIds are Student.id values — map through the linked
+  // student records. Querying with Student.id here silently matched nothing.
+  const activeUserIds = linkedStudents.map((sg) => sg.student.userId);
   const progress = await prisma.studentProgress.findMany({
     where: {
-      studentId: { in: activeStudentIds },
+      studentId: { in: activeUserIds },
       startedAt: { gte: weekStart, lte: weekEnd },
     },
     select: {
