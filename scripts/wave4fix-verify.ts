@@ -42,7 +42,7 @@ async function main() {
 
   const assignments = await prisma.teacherLessonAssignment.findMany({
     where: { contentId: content.contentId },
-    select: { id: true, classId: true, scheduledFor: true, createdAt: true },
+    select: { id: true, classId: true, scheduledFor: true, assignedAt: true },
   });
   console.log("ASSIGNMENTS:", JSON.stringify(assignments, null, 2));
 

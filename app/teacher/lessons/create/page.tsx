@@ -85,6 +85,8 @@ export default function LessonCreatePage() {
           estimatedMinutes: 45,
           status: "draft",
           source: "TEACHER",
+          subject: form.subject,
+          grade: form.grade,
           learningObjectives: objectives.filter(Boolean),
         }),
       });

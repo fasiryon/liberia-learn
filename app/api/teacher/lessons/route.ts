@@ -20,6 +20,17 @@ import { isTeacherGenerationEnabled } from "@/lib/serverFlags";
 import { logger } from "@/lib/logger";
 import { enqueueCourseThumbnailGeneration } from "@/lib/courses/courseThumbnailQueue";
 
+const TEACHER_SUBJECTS = [
+  "MATH",
+  "SCIENCE",
+  "LITERACY",
+  "SOCIAL_STUDIES",
+  "ENGLISH",
+  "CS",
+  "ENGINEERING_FOUNDATIONS",
+  "CIVICS",
+] as const;
+
 const SaveLessonSchema = z.object({
   classId: z.string().min(1),
   title: z.string().trim().min(3).max(200),
@@ -29,6 +40,10 @@ const SaveLessonSchema = z.object({
   status: z.enum(["draft", "published"]),
   standardCode: z.string().trim().min(1).max(100).optional(),
   contentId: z.string().trim().min(1).optional(),
+  // wave4b: teacher-chosen subject/grade override the class-derived defaults
+  subject: z.enum(TEACHER_SUBJECTS).optional(),
+  grade: z.number().int().min(1).max(12).optional(),
+  learningObjectives: z.array(z.string().trim().min(1).max(300)).max(8).optional(),
 });
 
 function teacherGenerationDisabledResponse() {
@@ -127,7 +142,7 @@ export async function POST(req: NextRequest) {
       },
     };
 
-    const classGrade = inferClassGrade(classRecord.enrollments);
+    const classGrade = body.grade ?? inferClassGrade(classRecord.enrollments);
     if (classGrade == null) {
       return NextResponse.json(
         { error: "Unable to determine class grade level from enrolled students" },
@@ -138,7 +153,7 @@ export async function POST(req: NextRequest) {
     const updateData = {
       title: body.title,
       grade: classGrade,
-      subject: classRecord.subject,
+      subject: body.subject ?? classRecord.subject,
       contentType: "lesson",
       status: body.status === "published" ? "published" : "draft",
       version: new Date().toISOString().slice(0, 10),
@@ -147,6 +162,11 @@ export async function POST(req: NextRequest) {
         ? ([{ code: standard.code, description: standard.description }] as any)
         : ([] as any),
       teacherCreated: true,
+      // wave4-fix: editedById drives "My Lessons", fork ownership, and the
+      // teacherAuthorName badge; schoolId drives school_wide visibility.
+      editedById: user.id,
+      schoolId: user.schoolId ?? null,
+      learningObjectives: (body.learningObjectives ?? []) as any,
     };
 
     const existing =
