@@ -6,7 +6,7 @@ describe("POST /api/teacher/lessons/[contentId]/assign", () => {
   beforeEach(() => { vi.resetModules(); });
   afterEach(() => { vi.resetAllMocks(); });
 
-  function makeReq(body: object) {
+  function makeReq(body: object): any {
     return new Request("http://localhost/", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -83,7 +83,7 @@ describe("GET /api/student/teacher-lessons", () => {
     }));
     vi.doMock("@/lib/db", () => ({
       prisma: {
-        student: { findUnique: vi.fn(async () => ({ classId: "cls-1" })) },
+        student: { findUnique: vi.fn(async () => ({ enrollments: [{ classId: "cls-1" }] })) },
         teacherLessonAssignment: {
           findMany: vi.fn(async () => [{
             id: "tla-1", scheduledFor: null,
@@ -97,7 +97,7 @@ describe("GET /api/student/teacher-lessons", () => {
       },
     }));
     const { GET } = await import("@/app/api/student/teacher-lessons/route");
-    const res = await GET(new Request("http://localhost/api/student/teacher-lessons"));
+    const res = await GET();
     expect(res.status).toBe(200);
     const body = await res.json();
     expect(body.lessons).toHaveLength(1);
@@ -111,13 +111,13 @@ describe("GET /api/student/teacher-lessons", () => {
     }));
     vi.doMock("@/lib/db", () => ({
       prisma: {
-        student: { findUnique: vi.fn(async () => ({ classId: "cls-1" })) },
+        student: { findUnique: vi.fn(async () => ({ enrollments: [{ classId: "cls-1" }] })) },
         teacherLessonAssignment: { findMany: vi.fn(async () => []) },
         curriculumContent: { findMany: vi.fn(async () => []) },
       },
     }));
     const { GET } = await import("@/app/api/student/teacher-lessons/route");
-    const res = await GET(new Request("http://localhost/api/student/teacher-lessons"));
+    const res = await GET();
     const body = await res.json();
     expect(body.lessons).toHaveLength(0);
   });
@@ -128,7 +128,7 @@ describe("GET /api/student/teacher-lessons", () => {
     }));
     vi.doMock("@/lib/db", () => ({
       prisma: {
-        student: { findUnique: vi.fn(async () => ({ classId: "cls-1" })) },
+        student: { findUnique: vi.fn(async () => ({ enrollments: [{ classId: "cls-1" }] })) },
         teacherLessonAssignment: { findMany: vi.fn(async () => []) },
         curriculumContent: {
           findMany: vi.fn(async () => [{
@@ -139,7 +139,7 @@ describe("GET /api/student/teacher-lessons", () => {
       },
     }));
     const { GET } = await import("@/app/api/student/teacher-lessons/route");
-    const res = await GET(new Request("http://localhost/api/student/teacher-lessons"));
+    const res = await GET();
     const body = await res.json();
     expect(body.lessons).toHaveLength(1);
     expect(body.lessons[0].title).toBe("School Wide Lesson");
@@ -151,13 +151,13 @@ describe("GET /api/student/teacher-lessons", () => {
     }));
     vi.doMock("@/lib/db", () => ({
       prisma: {
-        student: { findUnique: vi.fn(async () => ({ classId: null })) },
+        student: { findUnique: vi.fn(async () => ({ enrollments: [] })) },
         teacherLessonAssignment: { findMany: vi.fn(async () => []) },
         curriculumContent: { findMany: vi.fn(async () => []) },
       },
     }));
     const { GET } = await import("@/app/api/student/teacher-lessons/route");
-    const res = await GET(new Request("http://localhost/api/student/teacher-lessons"));
+    const res = await GET();
     const body = await res.json();
     expect(body.lessons).toHaveLength(0);
   });
