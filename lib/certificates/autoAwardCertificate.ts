@@ -44,9 +44,12 @@ export async function checkAndAwardCertificate(
     });
     if (existing) return;
 
-    // Total approved lessons for this subject+grade
+    // Total approved lessons for this subject+grade.
+    // Approved statuses in production are "APPROVED" and "published"
+    // (see NR-10 content routing); "approved" kept for legacy rows.
+    const APPROVED_STATUSES = ["APPROVED", "published", "approved"];
     const totalLessons = await prisma.curriculumContent.count({
-      where: { subject, grade, status: "approved" },
+      where: { subject, grade, status: { in: APPROVED_STATUSES } },
     });
     if (totalLessons === 0) return;
 
@@ -68,7 +71,7 @@ export async function checkAndAwardCertificate(
         studentId: student.userId,
         completedAt: { not: null },
         scheduledWork: {
-          content: { subject, grade, status: "approved" },
+          content: { subject, grade, status: { in: APPROVED_STATUSES } },
           ...(schoolId ? { class: { schoolId } } : {}),
         },
       },

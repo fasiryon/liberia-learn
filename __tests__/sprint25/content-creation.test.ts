@@ -18,6 +18,7 @@ const mockLessonShareUpsert = vi.hoisted(() => vi.fn());
 const mockLessonShareDeleteMany = vi.hoisted(() => vi.fn());
 const mockClassFindFirst = vi.hoisted(() => vi.fn());
 const mockTeacherAlertPrefFindUnique = vi.hoisted(() => vi.fn());
+const mockNotifInboxCreate = vi.hoisted(() => vi.fn());
 const mockCurriculumContentFindMany = vi.hoisted(() => vi.fn());
 const mockAssignmentCreate = vi.hoisted(() => vi.fn());
 const mockClassFindMany = vi.hoisted(() => vi.fn());
@@ -50,6 +51,9 @@ vi.mock("@/lib/db", () => ({
     },
     teacherAlertPreference: {
       findUnique: mockTeacherAlertPrefFindUnique,
+    },
+    notificationInboxItem: {
+      create: mockNotifInboxCreate,
     },
     assignment: {
       create: mockAssignmentCreate,
@@ -199,18 +203,22 @@ describe("GET /api/teacher/lessons/[id]/versions", () => {
 });
 
 describe("Admin PATCH /api/admin/content-review/[lessonId]", () => {
-  it("sets status=approved and editReviewStatus=APPROVED on approve", async () => {
+  it("sets status=published and editReviewStatus=APPROVED on approve (wave4c state machine)", async () => {
     mockRequireRole.mockResolvedValue(admin);
     mockCurriculumContentFindUnique.mockResolvedValue({
       id: "lesson-db-id-1",
       contentId: "content-1",
+      title: "Lesson One",
       editedById: "teacher-1",
+      editReviewStatus: "PENDING", // state machine: only PENDING → APPROVED allowed
     });
     mockCurriculumContentUpdate.mockResolvedValue({
       id: "lesson-db-id-1",
       editReviewStatus: "APPROVED",
-      status: "approved",
+      status: "published",
     });
+    mockNotifInboxCreate.mockResolvedValue({ id: "notif-1" });
+    mockSendPushToUser.mockResolvedValue(undefined);
 
     const req = makeRequest("PATCH", "http://localhost/api/admin/content-review/lesson-db-id-1", {
       editReviewStatus: "APPROVED",
@@ -221,10 +229,11 @@ describe("Admin PATCH /api/admin/content-review/[lessonId]", () => {
     expect(data.editReviewStatus).toBe("APPROVED");
     expect(mockCurriculumContentUpdate).toHaveBeenCalledWith(
       expect.objectContaining({
-        data: expect.objectContaining({ editReviewStatus: "APPROVED", status: "approved" }),
+        data: expect.objectContaining({ editReviewStatus: "APPROVED", status: "published" }),
       })
     );
-    expect(mockSendPushToUser).not.toHaveBeenCalled();
+    // Teacher is notified of the approval (inbox + push)
+    expect(mockNotifInboxCreate).toHaveBeenCalled();
   });
 
   it("sets editReviewStatus=REJECTED and fires push notification to teacher", async () => {
@@ -232,18 +241,21 @@ describe("Admin PATCH /api/admin/content-review/[lessonId]", () => {
     mockCurriculumContentFindUnique.mockResolvedValue({
       id: "lesson-db-id-1",
       contentId: "content-1",
+      title: "Lesson One",
       editedById: "teacher-1",
+      editReviewStatus: "PENDING", // state machine: only PENDING → REJECTED allowed
     });
     mockCurriculumContentUpdate.mockResolvedValue({
       id: "lesson-db-id-1",
       editReviewStatus: "REJECTED",
       status: "draft",
     });
-    mockTeacherAlertPrefFindUnique.mockResolvedValue({ alertNewSubmission: true });
+    mockNotifInboxCreate.mockResolvedValue({ id: "notif-1" });
+    mockSendPushToUser.mockResolvedValue(undefined);
 
     const req = makeRequest("PATCH", "http://localhost/api/admin/content-review/lesson-db-id-1", {
       editReviewStatus: "REJECTED",
-      rejectionNote: "Needs more detail",
+      rejectionReason: "Needs more detail", // wave4c schema: rejectionReason (required, 1-500 chars)
     });
     const res = await adminPatchLesson(req, baseLessonParamsByLessonId);
     expect(res.status).toBe(200);

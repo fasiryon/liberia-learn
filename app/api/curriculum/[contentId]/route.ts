@@ -79,6 +79,7 @@ export async function GET(
         version: row.version,
         createdAt: row.createdAt,
         updatedAt: row.updatedAt,
+        teacherCreated: row.teacherCreated ?? false,
         teacherAuthorName: row.teacherCreated && row.editedBy?.name
           ? row.editedBy.name
           : null,

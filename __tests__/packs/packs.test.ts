@@ -17,6 +17,10 @@ const mockPackFindUniqueOrThrow = vi.hoisted(() => vi.fn());
 const mockPackFindMany = vi.hoisted(() => vi.fn().mockResolvedValue([]));
 const mockSWFindMany = vi.hoisted(() => vi.fn().mockResolvedValue([]));
 const mockStudentFindUnique = vi.hoisted(() => vi.fn());
+// wave4d: generatePack also fetches teacher lessons + school_wide content
+const mockClassFindUnique = vi.hoisted(() => vi.fn().mockResolvedValue({ schoolId: "sch-1" }));
+const mockTLAFindMany = vi.hoisted(() => vi.fn().mockResolvedValue([]));
+const mockCCFindMany = vi.hoisted(() => vi.fn().mockResolvedValue([]));
 
 const mockPut = vi.hoisted(() => vi.fn().mockResolvedValue({ url: "https://blob.test/packs/teacher-1/pack-1.zip" }));
 const mockDel = vi.hoisted(() => vi.fn().mockResolvedValue(undefined));
@@ -34,6 +38,9 @@ vi.mock("@/lib/db", () => ({
     },
     scheduledWork: { findMany: mockSWFindMany },
     student: { findUnique: mockStudentFindUnique },
+    class: { findUnique: mockClassFindUnique },
+    teacherLessonAssignment: { findMany: mockTLAFindMany },
+    curriculumContent: { findMany: mockCCFindMany },
   },
 }));
 
