@@ -15,7 +15,7 @@ const STUDENT_STRIP_KEYS = new Set([
   "modelAnswer",
 ]);
 
-function stripStudentKeys(obj: unknown): unknown {
+export function stripStudentKeys(obj: unknown): unknown {
   if (Array.isArray(obj)) return obj.map(stripStudentKeys);
   if (obj && typeof obj === "object") {
     const out: Record<string, unknown> = {};
