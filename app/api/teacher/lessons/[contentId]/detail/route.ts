@@ -21,6 +21,8 @@ export async function GET(
         payload: true,
         editedById: true,
         editReviewStatus: true,
+        lessonVersion: true,
+        learningObjectives: true,
         scheduledWork: { select: { classId: true }, take: 1 },
       },
     });
@@ -53,6 +55,8 @@ export async function GET(
       title: lesson.title,
       bodyHtml,
       editReviewStatus: lesson.editReviewStatus,
+      lessonVersion: lesson.lessonVersion,
+      learningObjectives: Array.isArray(lesson.learningObjectives) ? lesson.learningObjectives : [],
     });
   } catch (error) {
     return handleApiError(error, {
