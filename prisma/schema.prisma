@@ -1894,6 +1894,8 @@ model CurriculumContent {
   publishedAt          DateTime?
   rejectionReason      String?
   schoolId             String?
+  // Wave 4B: fork lineage tracking
+  derivedFromContentId String?
   scheduledWork        ScheduledWork[]
   timetableAssignments TimetableAssignment[]
   audioAssets          LessonAudio[]
