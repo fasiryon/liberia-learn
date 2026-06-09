@@ -102,8 +102,10 @@ describe("GET /api/moe/teacher-lessons", () => {
         curriculumContent: {
           count: vi.fn(async () => 12),
           groupBy: vi.fn(async () => [{ schoolId: "sch-1", _count: { id: 5 } }]),
+          findMany: vi.fn(async () => []),
         },
         school: { findMany: vi.fn(async () => [{ id: "sch-1", name: "CHA School" }]) },
+        teacherLessonAssignment: { groupBy: vi.fn(async () => []) },
       },
     }));
     const { GET } = await import("@/app/api/moe/teacher-lessons/route");

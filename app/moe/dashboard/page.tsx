@@ -4,6 +4,7 @@ import Link from "next/link";
 import { ChevronRight } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { MoeDistrictLeagueSection } from "@/components/league/MoeDistrictLeagueSection";
+import { TeacherContentPanel } from "@/components/moe/TeacherContentPanel";
 import { Card, StatCard } from "@/components/ui/Card";
 import { DashboardTopBar } from "@/components/DashboardTopBar";
 import { SkeletonCard } from "@/components/ui/Skeleton";
@@ -922,6 +923,8 @@ export default function MoeDashboardPage() {
               </>
             )}
           </section>
+
+          <TeacherContentPanel />
 
           <section className="ll-section rounded-xl p-4">
             <div>

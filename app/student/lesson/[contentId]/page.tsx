@@ -15,6 +15,7 @@ type LessonMetadata = {
   grade?: number;
   subject?: string;
   moeAlignments?: string[];
+  teacherCreated?: boolean;
   [key: string]: unknown;
 };
 
@@ -110,6 +111,13 @@ export default function LessonViewerPage() {
   const handleComplete = () => {
     trackEvent(EVENTS.LESSON_COMPLETE, { contentId });
     setCompleted(true);
+    // Teacher-created lessons aren't on the timetable, so completion must be
+    // recorded explicitly — feeds StudentProgress → certificate/digest/league.
+    if (metadata?.teacherCreated) {
+      fetch(`/api/student/teacher-lessons/${contentId}/complete`, { method: "POST" }).catch(() => {
+        // Fire-and-forget: completion UI shouldn't block on network.
+      });
+    }
   };
 
   if (loading) {
