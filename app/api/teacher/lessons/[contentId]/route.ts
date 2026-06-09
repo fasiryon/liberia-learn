@@ -10,6 +10,7 @@ const PatchSchema = z.object({
   title: z.string().trim().min(1).max(200).optional(),
   bodyHtml: z.string().max(200000).optional(),
   editReviewStatus: z.enum(["PENDING", "APPROVED", "REJECTED"]).optional(),
+  learningObjectives: z.array(z.string().max(300)).max(8).optional(),
 });
 
 export async function PATCH(
@@ -97,6 +98,9 @@ export async function PATCH(
         editedAt: new Date(),
         ...(body.editReviewStatus !== undefined
           ? { editReviewStatus: body.editReviewStatus }
+          : {}),
+        ...(body.learningObjectives !== undefined
+          ? { learningObjectives: body.learningObjectives }
           : {}),
       },
     });

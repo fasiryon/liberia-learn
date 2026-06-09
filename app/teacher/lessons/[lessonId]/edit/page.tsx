@@ -12,6 +12,8 @@ type Lesson = {
   title: string | null;
   bodyHtml: string;
   editReviewStatus: string | null;
+  lessonVersion?: number;
+  learningObjectives?: string[];
 };
 
 export default function LessonEditPage() {
@@ -21,6 +23,7 @@ export default function LessonEditPage() {
   const [lesson, setLesson] = useState<Lesson | null>(null);
   const [title, setTitle] = useState("");
   const [bodyHtml, setBodyHtml] = useState("");
+  const [objectives, setObjectives] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [submitting, setSubmitting] = useState(false);
@@ -37,6 +40,7 @@ export default function LessonEditPage() {
         setLesson(data);
         setTitle(data.title ?? "");
         setBodyHtml(data.bodyHtml ?? "");
+        setObjectives(Array.isArray(data.learningObjectives) ? data.learningObjectives : []);
       })
       .catch(() => setError("Failed to load lesson"))
       .finally(() => setLoading(false));
@@ -65,6 +69,7 @@ export default function LessonEditPage() {
         body: JSON.stringify({
           title: title.trim(),
           bodyHtml,
+          learningObjectives: objectives.filter(Boolean),
           ...(reviewStatus ? { editReviewStatus: reviewStatus } : {}),
         }),
       });
@@ -99,8 +104,8 @@ export default function LessonEditPage() {
       <div className="mx-auto max-w-5xl space-y-5">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
-            <Link href="/teacher/curriculum" className="text-sm text-[var(--ll-yellow)]">
-              Back to curriculum
+            <Link href="/teacher/lessons" className="text-sm text-[var(--ll-yellow)]">
+              Back to my lessons
             </Link>
             <h1 className="mt-2 text-2xl font-bold">Edit Lesson</h1>
           </div>
@@ -113,14 +118,34 @@ export default function LessonEditPage() {
             >
               {saving ? "Saving..." : "Save Draft"}
             </button>
-            <button
-              type="button"
-              onClick={() => save("PENDING")}
-              disabled={saving || submitting}
-              className="rounded-xl bg-[var(--ll-yellow-soft)] px-4 py-2 text-sm font-semibold text-[var(--ll-text-faint)] disabled:opacity-50"
-            >
-              {submitting ? "Submitting..." : "Submit for Review"}
-            </button>
+            {lesson?.editReviewStatus === "APPROVED" ? (
+              <button
+                type="button"
+                onClick={async () => {
+                  if (!lesson) return;
+                  setSaving(true);
+                  try {
+                    const r = await fetch(`/api/teacher/lessons/${lesson.contentId}/fork`, { method: "POST" });
+                    const d = await r.json();
+                    if (r.ok) router.push(`/teacher/lessons/${d.id}/edit`);
+                    else setError(d.error ?? "Fork failed");
+                  } catch { setError("Fork failed"); } finally { setSaving(false); }
+                }}
+                disabled={saving}
+                className="rounded-xl bg-[var(--ll-yellow-soft)] px-4 py-2 text-sm font-semibold text-[var(--ll-text-faint)] disabled:opacity-50"
+              >
+                Create v{(lesson.lessonVersion ?? 1) + 1}
+              </button>
+            ) : (
+              <button
+                type="button"
+                onClick={() => save("PENDING")}
+                disabled={saving || submitting}
+                className="rounded-xl bg-[var(--ll-yellow-soft)] px-4 py-2 text-sm font-semibold text-[var(--ll-text-faint)] disabled:opacity-50"
+              >
+                {submitting ? "Submitting…" : "Submit for Review"}
+              </button>
+            )}
             <button
               type="button"
               disabled={regenAudio || !lesson}
@@ -167,6 +192,47 @@ export default function LessonEditPage() {
               className="mt-1 w-full rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)] px-3 py-2 text-sm"
             />
           </div>
+
+          <div>
+            <label className="block text-xs text-[var(--ll-text-muted)]">Learning objectives (max 8)</label>
+            <div className="mt-1 space-y-2">
+              {objectives.map((obj, i) => (
+                <div key={i} className="flex gap-2">
+                  <input
+                    value={obj}
+                    onChange={(e) => {
+                      setObjectives((prev) => prev.map((o, j) => j === i ? e.target.value : o));
+                      setDirty(true);
+                    }}
+                    placeholder={`Objective ${i + 1}`}
+                    className="flex-1 rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)] px-3 py-2 text-sm"
+                  />
+                  {objectives.length > 1 && (
+                    <button
+                      type="button"
+                      onClick={() => { setObjectives((prev) => prev.filter((_, j) => j !== i)); setDirty(true); }}
+                      className="text-xs text-red-400 hover:text-red-300"
+                    >Remove</button>
+                  )}
+                </div>
+              ))}
+              {objectives.length < 8 && (
+                <button
+                  type="button"
+                  onClick={() => { setObjectives((prev) => [...prev, ""]); setDirty(true); }}
+                  className="text-xs text-[var(--ll-yellow)]"
+                >+ Add objective</button>
+              )}
+              {objectives.length === 0 && (
+                <button
+                  type="button"
+                  onClick={() => { setObjectives([""]); setDirty(true); }}
+                  className="text-xs text-[var(--ll-yellow)]"
+                >+ Add objective</button>
+              )}
+            </div>
+          </div>
+
           <div>
             <label className="block text-xs text-[var(--ll-text-muted)]">Lesson content</label>
             <div className="mt-1">
