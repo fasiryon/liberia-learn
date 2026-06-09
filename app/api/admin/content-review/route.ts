@@ -26,13 +26,20 @@ export async function GET(req: NextRequest) {
         subject: true,
         editReviewStatus: true,
         editedAt: true,
+        publishedAt: true,
+        rejectionReason: true,
+        learningObjectives: true,
         editedBy: {
           select: { id: true, name: true, schoolId: true, school: { select: { name: true } } },
         },
       },
     });
 
-    return NextResponse.json({ lessons });
+    const pendingCount = await prisma.curriculumContent.count({
+      where: { editReviewStatus: "PENDING", editedById: { not: null } },
+    });
+
+    return NextResponse.json({ lessons, pendingCount });
   } catch (error) {
     return handleApiError(error, { route: "/api/admin/content-review", method: "GET", requestId: traceId });
   }
