@@ -31,6 +31,8 @@ export async function GET(
         status: true,
         version: true,
         payload: true,
+        teacherCreated: true,
+        editedBy: { select: { name: true } },
         audioAssets: {
           orderBy: { generatedAt: "desc" },
           take: 1,
@@ -77,6 +79,9 @@ export async function GET(
         version: row.version,
         createdAt: row.createdAt,
         updatedAt: row.updatedAt,
+        teacherAuthorName: row.teacherCreated && row.editedBy?.name
+          ? row.editedBy.name
+          : null,
         audioStatus:
           row.audioAssets[0]?.contentVersion === row.version
             ? row.audioAssets[0]?.status ?? "NOT_GENERATED"

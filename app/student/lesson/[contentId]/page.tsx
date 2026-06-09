@@ -197,6 +197,11 @@ export default function LessonViewerPage() {
           <h1 className="text-2xl font-bold text-[var(--ll-text)]">
             {payload?.title ?? contentId}
           </h1>
+          {(metadata as any)?.teacherAuthorName && (
+            <span className="inline-block rounded-full border border-[var(--ll-border)] px-2.5 py-0.5 text-xs text-[var(--ll-text-muted)]">
+              From {String((metadata as any).teacherAuthorName)}
+            </span>
+          )}
           <div className="flex flex-wrap gap-2">
             <span className="rounded-full bg-[var(--ll-yellow)]/20 border border-emerald-400/30 px-3 py-0.5 text-xs font-medium text-[var(--ll-yellow)]">
               Grade {metadata?.grade}

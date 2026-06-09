@@ -175,6 +175,10 @@ export default function StudentTodayPage() {
   const [activeTab, setActiveTab] = useState<TabKey>("schedule");
   const [streak, setStreak] = useState<StreakData | null>(null);
   const [weeklyData, setWeeklyData] = useState<WeekEntry[]>([]);
+  const [teacherLessons, setTeacherLessons] = useState<Array<{
+    id: string; title: string | null; subject: string;
+    teacherAuthorName: string | null; lessonHref: string;
+  }>>([]);
 
   const loadToday = useCallback(async () => {
     try {
@@ -239,6 +243,13 @@ export default function StudentTodayPage() {
     fetch("/api/student/progress/weekly", { cache: "no-store" })
       .then((r) => (r.ok ? r.json() : null))
       .then((d) => { if (d?.weeks) setWeeklyData(d.weeks); })
+      .catch(() => null);
+  }, []);
+
+  useEffect(() => {
+    fetch("/api/student/teacher-lessons")
+      .then((r) => r.json())
+      .then((d) => setTeacherLessons(d.lessons ?? []))
       .catch(() => null);
   }, []);
 
@@ -426,6 +437,26 @@ export default function StudentTodayPage() {
                 </div>
               ) : null}
             </section>
+
+            {teacherLessons.length > 0 && (
+              <section className="space-y-2">
+                <h2 className="text-sm font-semibold uppercase tracking-wide text-[var(--ll-text-muted)]">
+                  From your teachers
+                </h2>
+                {teacherLessons.map((l) => (
+                  <Link key={l.id} href={l.lessonHref}
+                    className="flex items-center justify-between rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 px-4 py-3 hover:bg-[var(--ll-border)]/20">
+                    <div>
+                      <p className="text-sm font-medium">{l.title ?? "Untitled"}</p>
+                      <p className="text-xs text-[var(--ll-text-muted)]">
+                        {l.subject.replace(/_/g, " ")}{l.teacherAuthorName ? ` · From ${l.teacherAuthorName}` : ""}
+                      </p>
+                    </div>
+                    <span className="text-xs text-[var(--ll-yellow)]">Start →</span>
+                  </Link>
+                ))}
+              </section>
+            )}
           </>
         )}
       </div>
