@@ -11,17 +11,17 @@ export async function GET() {
 
     const student = await prisma.student.findUnique({
       where: { userId: user.id },
-      select: { classId: true },
+      select: { enrollments: { select: { classId: true } } },
     });
-    const classId = student?.classId ?? null;
+    const classIds = student?.enrollments.map((e) => e.classId) ?? [];
     const schoolId = user.schoolId ?? null;
     const now = new Date();
 
     // Path 1: class_only assigned lessons
-    const assignments = classId
+    const assignments = classIds.length > 0
       ? await prisma.teacherLessonAssignment.findMany({
           where: {
-            classId,
+            classId: { in: classIds },
             OR: [{ scheduledFor: null }, { scheduledFor: { lte: now } }],
             content: { editReviewStatus: "APPROVED" },
           },
