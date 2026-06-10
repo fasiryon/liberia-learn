@@ -42,11 +42,11 @@ const templateRegistry: Record<GuardianTemplateKey, TemplateDefinition> = {
     requiredFields: ["studentName", "lessonsCompleted", "avgScore"],
     render: (payload) => {
       const base = `LiberiaLearn: ${String(payload.studentName)} finished ${String(payload.lessonsCompleted)} lesson(s) this week, ${String(payload.avgScore)}% avg.`;
-      const tip = payload.actionTip
-        ? ` ${String(payload.actionTip)}`
-        : ` Keep it up!`;
       const stop = ` Reply STOP to opt out.`;
-      return (base + tip + stop).slice(0, 160);
+      const budget = 160 - base.length - stop.length;
+      const tipRaw = payload.actionTip ? ` ${String(payload.actionTip)}` : ` Keep it up!`;
+      const tip = budget >= tipRaw.length ? tipRaw : tipRaw.slice(0, budget);
+      return base + tip + stop;
     },
   },
   assignment_due: {
