@@ -8,6 +8,16 @@ import { trackEvent, EVENTS } from "@/lib/trackEvent";
 import { cacheLessonContent, loadCachedLesson } from "@/lib/lesson-offline-cache";
 import { LessonAudioPlayer, type LessonAudioPart } from "@/components/student/LessonAudioPlayer";
 import { getLessonLabLinks } from "@/lib/lessons/labLinks";
+import { looksLikeHtml, renderSimpleMarkdown } from "@/lib/lessons";
+
+// Teacher-created lessons store HTML bodies; ReactMarkdown would show the
+// tags as literal text, so HTML bodies render via the sanitized HTML path.
+function LessonBody({ text }: { text: string }) {
+  if (looksLikeHtml(text)) {
+    return <div dangerouslySetInnerHTML={{ __html: renderSimpleMarkdown(text) }} />;
+  }
+  return <ReactMarkdown>{text}</ReactMarkdown>;
+}
 
 type LessonMode = "read" | "slides" | "listen" | "discussion";
 
@@ -166,7 +176,10 @@ export default function LessonViewerPage() {
         {
           slideNumber: 1,
           title: payload?.title ?? contentId,
-          bullets: objectives.length > 0 ? objectives : [standardBodyText.slice(0, 180)],
+          bullets:
+            objectives.length > 0
+              ? objectives
+              : [standardBodyText.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim().slice(0, 180)],
           teacherNote: "Use the full lesson text for detail.",
         },
         ...activities.slice(0, 5).map((activity, index) => ({
@@ -277,7 +290,7 @@ export default function LessonViewerPage() {
                   </span>
                 </div>
                 <div className="prose prose-invert prose-sm max-w-none text-[var(--ll-text)] leading-relaxed">
-                  <ReactMarkdown>{standardBodyText}</ReactMarkdown>
+                  <LessonBody text={standardBodyText} />
                 </div>
               </div>
             )}
@@ -293,7 +306,7 @@ export default function LessonViewerPage() {
                   </span>
                 </div>
                 <div className="prose prose-invert prose-sm max-w-none text-[var(--ll-text)] leading-relaxed">
-                  <ReactMarkdown>{blockBodyText}</ReactMarkdown>
+                  <LessonBody text={blockBodyText} />
                 </div>
               </div>
             )}
@@ -393,7 +406,13 @@ export default function LessonViewerPage() {
                 ))
               ) : (
                 <p className="whitespace-pre-wrap text-sm leading-6 text-[var(--ll-text)]">
-                  {standardBodyText || blockBodyText || "No lesson narration is available yet."}
+                  {(() => {
+                    const narration = standardBodyText || blockBodyText;
+                    if (!narration) return "No lesson narration is available yet.";
+                    return looksLikeHtml(narration)
+                      ? narration.replace(/<[^>]+>/g, " ").replace(/[ \t]+/g, " ").trim()
+                      : narration;
+                  })()}
                 </p>
               )}
             </div>

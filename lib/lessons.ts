@@ -27,8 +27,29 @@ export function lessonDurationLabel(classFormat?: string | null) {
   return "45-min period";
 }
 
+// Teacher-authored lessons (Wave 4 create flow) store the body as HTML
+// (<p>...</p>), while AI-generated lessons store markdown. Escaping HTML
+// bodies shows students literal tags, so HTML passes through sanitized.
+const HTML_BLOCK_RE = /^\s*<(p|h[1-6]|ul|ol|li|div|section|article|blockquote|table|figure|pre|strong|em|br)\b/i;
+
+export function looksLikeHtml(value: string) {
+  return HTML_BLOCK_RE.test(value);
+}
+
+export function sanitizeLessonHtml(html: string) {
+  return html
+    .replace(/<script\b[\s\S]*?(<\/script>|$)/gi, "")
+    .replace(/<style\b[\s\S]*?(<\/style>|$)/gi, "")
+    .replace(/<\/?(iframe|object|embed|form|input|button|link|meta|base)\b[^>]*>/gi, "")
+    .replace(/\son\w+\s*=\s*"[^"]*"/gi, "")
+    .replace(/\son\w+\s*=\s*'[^']*'/gi, "")
+    .replace(/\son\w+\s*=\s*[^\s>]+/gi, "")
+    .replace(/(href|src)\s*=\s*(["']?)\s*javascript:[^"'>\s]*\2/gi, '$1="#"');
+}
+
 export function renderSimpleMarkdown(markdown: string) {
   if (!markdown) return "";
+  if (looksLikeHtml(markdown)) return sanitizeLessonHtml(markdown);
   return markdown
     .split(/\n{2,}/)
     .map((block) => block.trim())
