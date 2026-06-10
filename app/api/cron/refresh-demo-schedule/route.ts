@@ -31,7 +31,8 @@ export async function GET(req: NextRequest) {
   }
 
   const weekDates = getThisWeekDates(); // [0]=Mon … [4]=Fri
-  const today = weekDates[0]; // fallback for weekend dates
+  const now = new Date();
+  const today = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()));
 
   const scheduledWorks = await prisma.scheduledWork.findMany({
     where: { classId: { in: DEMO_CLASS_IDS } },
