@@ -151,11 +151,13 @@ function primaryActionFor(params: {
 }
 
 export async function GET() {
-  // Shield: cap the entire handler at 1300ms so pgbouncer-congested responses
+  // Shield: cap the entire handler at 8000ms so pgbouncer-congested responses
   // return a degraded HTTP 200 rather than timing out at 20-30s.
+  // 8s budget: enough for a cold Redis miss + parallel DB queries on first morning load.
+  // Under real load (warm cache) the inner function returns in <100ms.
   const shieldResult = await Promise.race([
     _computeToday(),
-    new Promise<null>((resolve) => setTimeout(() => resolve(null), 1300)),
+    new Promise<null>((resolve) => setTimeout(() => resolve(null), 8000)),
   ]);
   if (shieldResult === null) {
     return NextResponse.json({ items: [], adaptivePlan: emptyAdaptivePlan() });
