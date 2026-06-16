@@ -385,7 +385,7 @@ export default function StudentTodayPage() {
               </Link>
             </section>
 
-            <div className="-mx-1 flex gap-2 overflow-x-auto px-1 pb-1">
+            <div data-testid="today-schedule-loaded" className="-mx-1 flex gap-2 overflow-x-auto px-1 pb-1">
               {[
                 ["schedule", "Schedule"],
                 ["catch-up", "Catch Up"],

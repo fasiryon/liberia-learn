@@ -322,7 +322,7 @@ export default function MoeDashboardPage() {
             {loading ? (
               Array.from({ length: 4 }).map((_, idx) => <SkeletonCard key={idx} />)
             ) : (
-              <>
+              <div data-testid="moe-stats-loaded" className="contents">
                 <StatCard
                   label="Schools Active"
                   value={dashboard?.schools ?? 0}
@@ -357,7 +357,7 @@ export default function MoeDashboardPage() {
                   subtitle="Students at risk"
                   valueClassName="text-[var(--ll-danger)]"
                 />
-              </>
+              </div>
             )}
           </section>
 

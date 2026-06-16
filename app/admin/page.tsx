@@ -367,7 +367,7 @@ export default async function AdminConsolePage() {
         )}
 
         {/* KPI cards */}
-        <section className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+        <section data-testid="admin-stats-loaded" className="grid grid-cols-2 gap-3 sm:grid-cols-4">
           {stats.map((s) => (
             <div key={s.label} className="ll-kpi">
               <p className="text-[11px] font-medium uppercase tracking-[0.1em] text-[var(--ll-text-faint)] mb-1">{s.label}</p>

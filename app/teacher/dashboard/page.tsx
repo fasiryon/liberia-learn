@@ -329,7 +329,7 @@ export default function TeacherDashboardPage() {
             ))}
           </div>
         ) : (
-          <>
+          <div data-testid="teacher-classes-loaded" className="contents">
             {/* Warning banner */}
             {data?.classesWithoutLesson && data.classesWithoutLesson.length > 0 && (
               <div className="ll-notice ll-notice-warning">
@@ -858,7 +858,7 @@ export default function TeacherDashboardPage() {
                 </div>
               </section>
             )}
-          </>
+          </div>
         )}
       </div>
     </div>
