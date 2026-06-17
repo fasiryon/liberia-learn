@@ -100,7 +100,11 @@ const SAMPLE_QUESTIONS = [
 async function main() {
   console.log("▶ NR-PILOT-CRITICAL: backfill-demo-dates (WAVE-1C revision)");
 
-  const schoolDays = nextSchoolDays(7);
+  // Window length is configurable: `--days=N` (default 7 school days).
+  // A longer window is a safety net so the demo can't lapse between refreshes.
+  const daysArg = process.argv.find((a) => a.startsWith("--days="));
+  const dayCount = Math.max(1, Number(daysArg?.split("=")[1] ?? 7) || 7);
+  const schoolDays = nextSchoolDays(dayCount);
   console.log(`  School days: ${schoolDays.map(d => d.toISOString().slice(0, 10)).join(", ")}`);
 
   const demoSchoolIds = ["school-cha"];
@@ -204,6 +208,19 @@ async function main() {
   });
   console.log(`  ✓ Cleared stale future SW (no progress): ${deleted.count}`);
 
+  // Idempotency guard: SW that survived the delete (they have progress and were
+  // intentionally kept) must NOT be recreated, or the Today page shows the same
+  // period twice. Build a set of existing (class|date|period) keys.
+  const survivingSW = await prisma.scheduledWork.findMany({
+    where: { classId: { in: allClassIds }, scheduledDate: { gte: futureStart } },
+    select: { classId: true, scheduledDate: true, periodNumber: true },
+  });
+  const existingKey = new Set(
+    survivingSW.map(
+      (s) => `${s.classId}|${s.scheduledDate.toISOString().slice(0, 10)}|${s.periodNumber ?? "?"}`
+    )
+  );
+
   const swToCreate: {
     classId: string;
     contentId: string;
@@ -257,6 +274,12 @@ async function main() {
 
           const periodNum = parsePeriodNumber(entry.periodLabel);
           const subject = entry.subject as string;
+
+          // Skip periods that already have a SW on this date (idempotent re-run)
+          const ttKey = `${TIMETABLE_CLASS_ID}|${schoolDay.toISOString().slice(0, 10)}|${periodNum ?? "?"}`;
+          if (existingKey.has(ttKey)) continue;
+          existingKey.add(ttKey);
+
           const useCount = subjectUseCount.get(subject) ?? 0;
           subjectUseCount.set(subject, useCount + 1);
 
@@ -315,6 +338,11 @@ async function main() {
       const subjectDateKey = `${subject}:${dateStr}`;
       if (usedSubjectDates.has(subjectDateKey)) continue;
       usedSubjectDates.add(subjectDateKey);
+
+      // Skip if this class already has a SW on this date/period (idempotent re-run)
+      const poolKey = `${cls.id}|${dateStr}|${i + 1}`;
+      if (existingKey.has(poolKey)) continue;
+      existingKey.add(poolKey);
 
       // For pool classes, search hero for exact grade first, then any
       let contentId: string | null = null;

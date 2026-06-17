@@ -173,26 +173,24 @@ test("LiberiaLearn VSL Recording", async ({ page }) => {
   }
 
   // ── Open SCIENCE lesson ───────────────────────────────────────────────────
-  // Prefer timetable card → fallback to direct lessons list
-  const scienceArticle = page.locator("article").filter({ hasText: /science/i })
-  const hasScienceCard = (await scienceArticle.count()) > 0
-  if (hasScienceCard) {
-    await scienceArticle.first().scrollIntoViewIfNeeded()
-    await hold(2500) // camera pause on the SCIENCE period card
-    await scienceArticle.first().getByRole("button", { name: /open/i }).click()
-    await page.waitForLoadState("load")
-    await page.waitForLoadState("networkidle", { timeout: 15000 }).catch(() => {})
-    await page.waitForTimeout(2000)
-  } else {
-    // No timetable articles — navigate directly to curriculum
-    await load(page, `${BASE}/student/lessons?subject=SCIENCE`)
-    await page.waitForSelector("a[href*='/student/lesson/']", { timeout: 20000 })
-    await hold(1500) // camera pause on the lessons list
-    await page.locator("a[href*='/student/lesson/']").first().click()
-    await page.waitForLoadState("load")
-    await page.waitForLoadState("networkidle", { timeout: 15000 }).catch(() => {})
-    await page.waitForTimeout(2000)
+  // This must come from the real 1-8 period timetable (the actual SCIENCE
+  // period — period 3 in seeded data) so the lab shown afterward is clearly
+  // part of that subject's real curriculum lesson, not a separate demo card.
+  // If the timetable hasn't rendered yet (cold-start), retry the same page
+  // rather than falling back to a different page/lesson.
+  let scienceArticle = page.locator("article").filter({ hasText: /science/i })
+  for (let attempt = 0; attempt < 4 && (await scienceArticle.count()) === 0; attempt++) {
+    await load(page, `${BASE}/student/today`)
+    await waitForDashboardReady(page, "today-schedule-loaded")
+    await page.waitForTimeout(1000)
+    scienceArticle = page.locator("article").filter({ hasText: /science/i })
   }
+  await scienceArticle.first().scrollIntoViewIfNeeded()
+  await hold(2500) // camera pause on the SCIENCE period card
+  await scienceArticle.first().getByRole("button", { name: /open/i }).click()
+  await page.waitForLoadState("load")
+  await page.waitForLoadState("networkidle", { timeout: 15000 }).catch(() => {})
+  await page.waitForTimeout(2000)
   await page.waitForSelector("main, h1", { timeout: 25000 })
   await hold(4500) // "structured lesson — clear objective, rich content, slides"
 

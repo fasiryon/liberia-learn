@@ -24,6 +24,7 @@ const p = new PrismaClient();
 
   const keys = [
     `cache:today:${user.id}:${dateStr}`,
+    `cache:today:lastgood:${user.id}`,
     `cache:timetable:${student.id}:${dateStr}`,
     `cache:student-meta:${user.id}`,
   ];
