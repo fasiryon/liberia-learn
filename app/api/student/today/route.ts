@@ -6,7 +6,7 @@ import { buildStudentLearningIntelligence } from "@/lib/student/learningIntellig
 import { getAdaptiveRecommendations } from "@/lib/student/adaptiveRecommendations";
 import { generateStudentActions, getActiveStudentAction } from "@/lib/intelligence/actionEngine";
 import { getTimetableForStudent } from "@/lib/timetable/timetableService";
-import { withRedisCache, FALLBACK_LIMIT_EXCEEDED } from "@/lib/cache/redisCache";
+import { withRedisCache, FALLBACK_LIMIT_EXCEEDED, getCachedValue, setCachedValue } from "@/lib/cache/redisCache";
 
 export const dynamic = "force-dynamic";
 
@@ -160,6 +160,17 @@ export async function GET() {
     new Promise<null>((resolve) => setTimeout(() => resolve(null), 8000)),
   ]);
   if (shieldResult === null) {
+    // The schedule itself (which periods, which subjects, which lessons) is
+    // stable day to day — only the date label and completion status change.
+    // Rather than flash an empty "no lessons today" dashboard on a cold
+    // start, serve the last successfully computed snapshot for this student
+    // while the real computation keeps running in the background and
+    // refreshes the short-TTL cache for the next request.
+    const user = await requireRole("STUDENT").catch(() => null);
+    if (user) {
+      const stale = await getCachedValue(`cache:today:lastgood:${user.id}`);
+      if (stale) return NextResponse.json(stale);
+    }
     return NextResponse.json({ items: [], adaptivePlan: emptyAdaptivePlan() });
   }
   return shieldResult;
@@ -633,6 +644,10 @@ async function _computeToday(): Promise<NextResponse> {
       schoolId: user.schoolId ?? null,
     };
     }); // end withRedisCache
+
+    // Best-effort, fire-and-forget: keep a long-TTL "last known good" copy so
+    // a future cold-start shield timeout has real data to fall back to.
+    setCachedValue(`cache:today:lastgood:${user.id}`, todayData, 7 * 86400).catch(() => {});
 
     return NextResponse.json(todayData);
   } catch (err: any) {

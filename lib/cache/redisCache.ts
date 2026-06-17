@@ -187,3 +187,38 @@ export async function invalidateCache(key: string): Promise<void> {
     // Ignore
   }
 }
+
+/**
+ * Best-effort read for stale-while-revalidate fallbacks — short timeout,
+ * never throws. Use to serve a "last known good" snapshot when the primary
+ * computation misses its shield budget, instead of an empty response.
+ */
+export async function getCachedValue<T>(key: string, timeoutMs = 1200): Promise<T | null> {
+  const redis = getRedis();
+  if (!redis) return null;
+  try {
+    return await new Promise<T | null>((resolve) => {
+      const timer = setTimeout(() => resolve(null), timeoutMs);
+      redis
+        .get<T>(key)
+        .then((v) => { clearTimeout(timer); resolve(v ?? null); })
+        .catch(() => { clearTimeout(timer); resolve(null); });
+    });
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Best-effort write, safe to call without awaiting — used to persist a
+ * long-TTL "last known good" snapshot alongside the normal short-TTL cache.
+ */
+export async function setCachedValue<T>(key: string, value: T, ttlSeconds: number): Promise<void> {
+  const redis = getRedis();
+  if (!redis) return;
+  try {
+    await redis.set(key, value, { ex: ttlSeconds });
+  } catch {
+    // best-effort
+  }
+}
