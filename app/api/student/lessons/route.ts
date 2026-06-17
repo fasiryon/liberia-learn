@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { requireRole } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { buildCurriculumDisplayTitle } from "@/lib/curriculum/title";
-import { withRedisCache, FALLBACK_LIMIT_EXCEEDED } from "@/lib/cache/redisCache";
+import { withRedisCache, FALLBACK_LIMIT_EXCEEDED, getCachedValue, setCachedValue } from "@/lib/cache/redisCache";
 
 export const dynamic = "force-dynamic";
 
@@ -17,6 +17,17 @@ export async function GET(req: NextRequest) {
   ]);
   if (shieldResult === null) {
     const page = Math.max(1, Number(req.nextUrl.searchParams.get("page") ?? "1") || 1);
+    // The lesson catalog for a student's grade barely changes day to day —
+    // serve the last successfully computed page-1 listing instead of an
+    // empty "no lessons" flash while the real query keeps running in the
+    // background and refreshes the short-TTL cache for next time.
+    if (page === 1) {
+      const user = await requireRole("STUDENT").catch(() => null);
+      if (user) {
+        const stale = await getCachedValue(`cache:lessons:lastgood:${user.id}`);
+        if (stale) return NextResponse.json(stale);
+      }
+    }
     return NextResponse.json({ grade: null, count: 0, total: 0, page, totalPages: 0, subjectCompletion: [], items: [] });
   }
   return shieldResult;
@@ -185,7 +196,7 @@ async function _computeLessons(req: NextRequest): Promise<NextResponse> {
       }
     );
 
-    return NextResponse.json({
+    const responseBody = {
       grade: currentGrade,
       studentId: studentId,
       count: contentCache.count,
@@ -194,7 +205,15 @@ async function _computeLessons(req: NextRequest): Promise<NextResponse> {
       totalPages: contentCache.totalPages,
       subjectCompletion,
       items: contentCache.items,
-    });
+    };
+
+    if (page === 1) {
+      // Best-effort, fire-and-forget: keep a long-TTL "last known good" copy
+      // so a future cold-start shield timeout has real data to fall back to.
+      setCachedValue(`cache:lessons:lastgood:${user.id}`, responseBody, 7 * 86400).catch(() => {});
+    }
+
+    return NextResponse.json(responseBody);
   } catch (e: any) {
     // DB fallback limit exceeded — return degraded 200 immediately rather than
     // propagating a 503 that would fail the k6 'lessons 200' check.
