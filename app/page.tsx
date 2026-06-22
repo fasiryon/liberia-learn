@@ -169,9 +169,12 @@ export default async function HomePage() {
           {/* Role timestamps below video */}
           <div className="flex flex-wrap justify-center gap-6 mt-5">
             {[
-              { time: "0:00", label: "Student experience" },
-              { time: "0:35", label: "Teacher dashboard" },
-              { time: "1:05", label: "Ministry overview" },
+              { time: "0:00", label: "Overview" },
+              { time: "0:32", label: "Student" },
+              { time: "2:37", label: "Teacher" },
+              { time: "3:24", label: "School Admin" },
+              { time: "3:57", label: "Guardian" },
+              { time: "4:39", label: "Ministry of Education" },
             ].map((item) => (
               <div key={item.label} className="flex items-center gap-2">
                 <span className="font-mono text-xs text-[var(--ll-yellow)]">{item.time}</span>
