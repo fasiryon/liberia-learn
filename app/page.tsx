@@ -139,7 +139,7 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* VSL placeholder — replace div contents with iframe embed once video is recorded */}
+      {/* VSL — LiberiaLearn platform walkthrough (YouTube embed) */}
       <section className="w-full py-10 px-4 border-t border-[var(--ll-border)]">
         <div className="mx-auto max-w-4xl">
           <div className="text-center mb-8">
@@ -154,45 +154,16 @@ export default async function HomePage() {
             </p>
           </div>
 
-          {/*
-            TODO: Replace this placeholder with
-            real video embed when VSL is recorded.
-
-            YouTube embed:
+          {/* VSL — LiberiaLearn platform walkthrough */}
+          <div className="relative w-full max-w-4xl mx-auto aspect-video rounded-2xl overflow-hidden shadow-2xl border border-[var(--ll-border)]">
             <iframe
-              src="https://www.youtube.com/embed/VIDEO_ID"
-              title="LiberiaLearn platform walkthrough"
-              allow="accelerometer; autoplay;
-                clipboard-write; encrypted-media;
-                gyroscope; picture-in-picture"
+              className="absolute inset-0 w-full h-full"
+              src="https://www.youtube.com/embed/OA4pzAnqpuc?rel=0&modestbranding=1"
+              title="LiberiaLearn Platform Demo"
+              frameBorder="0"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
               allowFullScreen
-              className="absolute inset-0 w-full
-                h-full rounded-xl"
             />
-
-            Replace VIDEO_ID with the YouTube video ID.
-            When embedding: restore paddingBottom: '56.25%' for proper 16:9 ratio.
-          */}
-
-          {/* Video container — compact placeholder height until real video is embedded */}
-          <div
-            className="relative w-full rounded-xl border border-[var(--ll-border)] bg-[var(--ll-surface)] overflow-hidden"
-            style={{ height: "200px" }}
-          >
-            {/* Restore paddingBottom: '56.25%' when real video is embedded */}
-            <div className="absolute inset-0 flex flex-col items-center justify-center gap-4">
-              <div className="w-16 h-16 rounded-full bg-[var(--ll-yellow-soft)] border border-[var(--ll-yellow)] flex items-center justify-center">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                  <path d="M6 4l14 8-14 8V4z" fill="var(--ll-yellow)" />
-                </svg>
-              </div>
-              <div className="text-center">
-                <p className="text-sm font-medium text-[var(--ll-text)]">Platform walkthrough</p>
-                <p className="text-xs text-[var(--ll-text-faint)] mt-1">
-                  90 seconds — Student, Teacher, Ministry
-                </p>
-              </div>
-            </div>
           </div>
 
           {/* Role timestamps below video */}
