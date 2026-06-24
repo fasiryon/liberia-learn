@@ -4,6 +4,16 @@ Each alert has a trigger, a recipient, and a "what to do when it fires" note.
 All alerts land in **OPS_ALERT_EMAIL** (set this in Vercel env vars before pilot).
 Alerts 1 and 5 should also go to **OPS_ALERT_PHONE** (SMS) because they are page-me incidents.
 
+> **⚠️ BLOCKER (WAVE 5A / A3, 2026-06-24):** `OPS_ALERT_EMAIL` (`liberialearn52@gmail.com`),
+> `OPS_ALERT_PHONE` (`+16672212732`), `SQS_DLQ_URL`, `SQS_QUEUE_URL`, `SENTRY_DSN` and
+> `NEXT_PUBLIC_SENTRY_DSN` are now set in Vercel Production. **However, no email provider is
+> configured: `RESEND_API_KEY` is unset**, so `sendEmail` short-circuits to
+> `{ ok: true, id: "email-disabled" }` and **ops-alert emails are silently dropped — they
+> never reach the inbox.** SMS is also inert (`/api/health` → `sms: "unavailable"`; live SMS
+> not enabled + no Africa's Talking/Twilio creds). **Until `RESEND_API_KEY` is set, the
+> alert-delivery drill cannot pass.** This is the one A3 item still open — it needs a Resend
+> API key (or alternate provider) added to Vercel Prod, then a redeploy.
+
 ---
 
 ## Alert 1 — Production deployment failed
@@ -51,7 +61,7 @@ tune the threshold based on actual baseline error rates.
 **Drill log**:
 | Date | Time to delivery | Recipient confirmed |
 |------|-----------------|-------------------|
-| 2026-06-24 | PENDING — FA verification | WAVE 5A / A3: drill could not be auto-run. Confirm `SENTRY_DSN` is set in Vercel Production, trigger one authenticated error, and confirm it lands in Sentry within 60s, then fill this row. Endpoints probed during A3 (`/api/student/work/__nonexistent__`, malformed `/api/grading/essay` POST) returned clean 401s (auth-gated, no server error emitted). |
+| 2026-06-24 | ~2 min (ingest+index) | ✅ PASS. WAVE 5A / A3: `SENTRY_DSN` + `NEXT_PUBLIC_SENTRY_DSN` set in Vercel Prod (from project `liberialearn-web`), redeployed. Drill: logged in as `student1`, sent malformed JSON to `POST /api/discussion/posts` (unguarded `req.json()`). Prod returned HTTP 500; Sentry captured issue **LIBERIALEARN-WEB-T** — `SyntaxError: Unexpected token … is not valid JSON`, culprit `POST /api/discussion/posts`. Note: earlier-probed endpoints (`/api/student/teacher-lessons/[id]/complete`) swallow errors in try/catch and do NOT emit Sentry events. |
 
 ---
 
