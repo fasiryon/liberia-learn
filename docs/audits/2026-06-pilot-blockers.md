@@ -15,7 +15,7 @@ All 6 Doc A items addressed. Status per item below; full detail follows in the o
 - **axios + lodash + joi all enter the tree solely via `africastalking@0.7.9`.** A single dependency bump of the SMS SDK (or replacing it) would clear three high/moderate CVEs at once. Worth a Doc B ticket.
 - **CSP enforcing-mode cutover** is a follow-up: the two known inline scripts need nonces/hashes before flipping `-Report-Only` off.
 
-Commit SHAs: _(filled at commit time below)_
+Commit SHAs: `28a3e6b` (WAVE 5A fix sprint — A1/A2/A4 + docs).
 
 ---
 
