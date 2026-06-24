@@ -1,3 +1,24 @@
+# ✅ RESOLVED — WAVE 5A Fix Sprint (2026-06-24)
+
+All 6 Doc A items addressed. Status per item below; full detail follows in the original audit.
+
+| Item | Status | Summary |
+|------|--------|---------|
+| **A1** — Stored XSS sanitizer | **FIXED** | `sanitizeLessonHtml` rewritten on `isomorphic-dompurify` (allowlist of tags/attrs matching `renderSimpleMarkdown`; forbids script/style/svg/math/iframe/object/embed/form, all event handlers, `data:`/unknown schemes). 13 new tests in `__tests__/lib/lessons.sanitize.test.ts` pin every known bypass vector (`<svg/onload>`, `<img/onerror>`, entity-encoded `javascript:`, `data:text/html`, `<iframe javascript:>`, MathML-wrapped `<script>`, pre-encoded entities). All pass. |
+| **A2** — Content-Security-Policy | **FIXED (report-only)** | CSP added to `next.config.js` `headers()` as `Content-Security-Policy-Report-Only` for one deploy. Known inline scripts (`app/admin/credential-card/page.tsx`, `components/LowBandwidthModeScript.tsx`) + YouTube embed are covered by `script-src`/`frame-src`. Switch to enforcing `Content-Security-Policy` after one clean report-only deploy (add nonces to the two inline scripts first). |
+| **A3** — Observability env | **DEFERRED → FA** | Cannot be auto-verified from this environment (no Vercel CLI / dashboard / Sentry inbox access). FA must confirm `SENTRY_DSN`, `OPS_ALERT_EMAIL`, `OPS_ALERT_PHONE`, `SQS_DLQ_URL` are set in Vercel Production, then run the error+alert drill. Probe endpoints returned clean 401s (auth-gated, no error emitted). Drill row added to `docs/ops/ALERTS.md` marked PENDING. |
+| **A4** — Demo credential leak | **FIXED** | ⚠️ Confirmed live + exploitable: `official1@moe.gov.lr` / `DemoSeed2026!` authenticated to a real **MOE_OFFICIAL** prod account (id `cmmsb7q5r000nvo78y0m36411`, **444 audit-log entries** — account was actively used). **Password rotated** in prod (new strong value; old leaked password verified to no longer authenticate). New password stored only in local untracked `.env.e2e`. `.env.e2e` added to `.gitignore` and `git rm --cached`'d. **History scrub deferred to FA** (destructive `filter-branch`/BFG; exploit is already closed since the old password is dead — scrub is hygiene for the now-useless string). Account NOT deleted (active demo/VSL account). |
+| **A5** — Migration state | **VERIFIED** | `GET https://liberia-learn.vercel.app/api/health` → `checks.migrations === "ok"`. No drift. (`checks.sms === "unavailable"` is unrelated to this sprint.) |
+| **A6** — npm audit | **VERIFIED / documented** | `npm audit fix` (no `--force`) applied nothing — all 12 residual vulns require breaking major bumps (`next@16`, `next-auth@3`). Down from 42 at audit time. Production-relevant residuals (`axios`, `lodash`, `joi`) are **all transitive via `africastalking@0.7.9`** only; not reachable: SMS path calls SDK methods with fixed Africa's Talking API URLs (no user-controlled URL → axios SSRF/proxy CVEs), and we never call `_.template` or import lodash/joi directly. `next`/`postcss`/`esbuild`/`glob`/`uuid`(via next-auth) are framework/build/dev-tooling — out of scope for a P0 fix sprint, logged for Doc B. |
+
+**New findings surfaced (logged, not actioned in A — see Doc B):**
+- **axios + lodash + joi all enter the tree solely via `africastalking@0.7.9`.** A single dependency bump of the SMS SDK (or replacing it) would clear three high/moderate CVEs at once. Worth a Doc B ticket.
+- **CSP enforcing-mode cutover** is a follow-up: the two known inline scripts need nonces/hashes before flipping `-Report-Only` off.
+
+Commit SHAs: _(filled at commit time below)_
+
+---
+
 # DOC A — Pilot Blockers (SEVERITY: CRITICAL)
 
 **Audit:** WAVE 5 — Comprehensive National-Rollout Readiness Audit

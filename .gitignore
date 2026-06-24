@@ -34,6 +34,8 @@ test-*.log
 
 # Environment files
 .env
+.env.e2e
+.env.vercel-check
 .env.local
 .env.*.local
 .env.development
