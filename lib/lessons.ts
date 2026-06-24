@@ -1,3 +1,5 @@
+import DOMPurify from "isomorphic-dompurify";
+
 type LessonPayload = {
   body?: string | null;
   body_standard?: string | null;
@@ -36,15 +38,54 @@ export function looksLikeHtml(value: string) {
   return HTML_BLOCK_RE.test(value);
 }
 
+// Allowlist mirrors what renderSimpleMarkdown emits, plus the inline/structural
+// tags teachers legitimately author via the Wave 4 rich-text editor. Anything
+// not on this list (script, style, svg, math, iframe, object, embed, form, …)
+// is removed by DOMPurify along with all event handlers and unsafe URI schemes.
+const LESSON_ALLOWED_TAGS = [
+  "p",
+  "h1",
+  "h2",
+  "h3",
+  "h4",
+  "h5",
+  "h6",
+  "ul",
+  "ol",
+  "li",
+  "strong",
+  "em",
+  "code",
+  "pre",
+  "blockquote",
+  "a",
+  "img",
+  "br",
+  "hr",
+];
+
+// Global attribute allowlist. `a` only ever needs href; `img` only needs
+// src/alt. DOMPurify also enforces its own safe-URI policy, which strips
+// javascript:/data:/vbscript: schemes (data: is not in DOMPurify's default
+// allowed-URI regexp), so encoded-scheme bypasses are neutralised too.
+const LESSON_ALLOWED_ATTR = ["href", "src", "alt"];
+
 export function sanitizeLessonHtml(html: string) {
-  return html
-    .replace(/<script\b[\s\S]*?(<\/script>|$)/gi, "")
-    .replace(/<style\b[\s\S]*?(<\/style>|$)/gi, "")
-    .replace(/<\/?(iframe|object|embed|form|input|button|link|meta|base)\b[^>]*>/gi, "")
-    .replace(/\son\w+\s*=\s*"[^"]*"/gi, "")
-    .replace(/\son\w+\s*=\s*'[^']*'/gi, "")
-    .replace(/\son\w+\s*=\s*[^\s>]+/gi, "")
-    .replace(/(href|src)\s*=\s*(["']?)\s*javascript:[^"'>\s]*\2/gi, '$1="#"');
+  return DOMPurify.sanitize(html, {
+    ALLOWED_TAGS: LESSON_ALLOWED_TAGS,
+    ALLOWED_ATTR: LESSON_ALLOWED_ATTR,
+    // Belt-and-braces: explicitly forbid the highest-risk elements even though
+    // the allowlist already excludes them.
+    FORBID_TAGS: ["script", "style", "iframe", "object", "embed", "form", "svg", "math"],
+    FORBID_ATTR: ["style"],
+    // Never allow data: URIs (would re-enable data:text/html script payloads).
+    ALLOW_DATA_ATTR: false,
+    // Drop unknown protocols rather than keeping them as text.
+    ALLOW_UNKNOWN_PROTOCOLS: false,
+    // Keep text content of removed nodes (matches prior behaviour for benign
+    // wrappers) but strip the elements themselves.
+    KEEP_CONTENT: true,
+  });
 }
 
 export function renderSimpleMarkdown(markdown: string) {

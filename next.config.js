@@ -35,6 +35,29 @@ const nextConfig = {
           { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
           { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=()" },
           { key: "Strict-Transport-Security", value: "max-age=63072000; includeSubDomains; preload" },
+          // A2 — Content-Security-Policy. Shipped in Report-Only mode first so
+          // CSP violations (inline scripts in credential-card + LowBandwidthMode,
+          // YouTube embeds, third-party beacons) surface in the browser console /
+          // Sentry without breaking the page. Switch the key to
+          // "Content-Security-Policy" (enforcing) after one deploy once the
+          // report stream is clean and the two known inline scripts carry nonces.
+          {
+            key: "Content-Security-Policy-Report-Only",
+            value: [
+              "default-src 'self'",
+              "script-src 'self' 'unsafe-inline' https://www.youtube.com https://*.vercel-insights.com https://*.sentry.io",
+              "style-src 'self' 'unsafe-inline'",
+              "img-src 'self' data: blob: https:",
+              "media-src 'self' blob: https:",
+              "connect-src 'self' https://*.sentry.io https://*.vercel-insights.com https://api.elevenlabs.io https://api.openai.com https://api.groq.com",
+              "frame-src 'self' https://www.youtube.com https://www.youtube-nocookie.com",
+              "font-src 'self' data:",
+              "object-src 'none'",
+              "base-uri 'self'",
+              "form-action 'self'",
+              "frame-ancestors 'none'",
+            ].join("; "),
+          },
         ],
       },
     ];

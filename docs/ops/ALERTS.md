@@ -51,7 +51,7 @@ tune the threshold based on actual baseline error rates.
 **Drill log**:
 | Date | Time to delivery | Recipient confirmed |
 |------|-----------------|-------------------|
-| | | |
+| 2026-06-24 | PENDING — FA verification | WAVE 5A / A3: drill could not be auto-run. Confirm `SENTRY_DSN` is set in Vercel Production, trigger one authenticated error, and confirm it lands in Sentry within 60s, then fill this row. Endpoints probed during A3 (`/api/student/work/__nonexistent__`, malformed `/api/grading/essay` POST) returned clean 401s (auth-gated, no server error emitted). |
 
 ---
 

@@ -40,6 +40,10 @@ describe("student lesson delivery", () => {
     vi.clearAllMocks();
   });
 
+  // First test in this file to dynamically import @/lib/lessons, which now
+  // pulls in isomorphic-dompurify (jsdom) for HTML sanitization. The cold jsdom
+  // import can exceed the default 5s budget under full-suite parallel load, so
+  // this case gets the same generous timeout the route tests use.
   it("selects the standard lesson body for standard formats", async () => {
     const { selectLessonBody } = await import("@/lib/lessons");
     expect(
@@ -51,7 +55,7 @@ describe("student lesson delivery", () => {
         "standard"
       )
     ).toContain("Standard lesson body");
-  });
+  }, ROUTE_TIMEOUT_MS);
 
   it("selects the block lesson body for block formats", async () => {
     const { selectLessonBody } = await import("@/lib/lessons");
