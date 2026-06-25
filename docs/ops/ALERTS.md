@@ -5,14 +5,18 @@ All alerts land in **OPS_ALERT_EMAIL** (set this in Vercel env vars before pilot
 Alerts 1 and 5 should also go to **OPS_ALERT_PHONE** (SMS) because they are page-me incidents.
 
 > **⚠️ BLOCKER (WAVE 5A / A3, 2026-06-24):** `OPS_ALERT_EMAIL` (`liberialearn52@gmail.com`),
-> `OPS_ALERT_PHONE` (`+16672212732`), `SQS_DLQ_URL`, `SQS_QUEUE_URL`, `SENTRY_DSN` and
-> `NEXT_PUBLIC_SENTRY_DSN` are now set in Vercel Production. **However, no email provider is
-> configured: `RESEND_API_KEY` is unset**, so `sendEmail` short-circuits to
-> `{ ok: true, id: "email-disabled" }` and **ops-alert emails are silently dropped — they
-> never reach the inbox.** SMS is also inert (`/api/health` → `sms: "unavailable"`; live SMS
-> not enabled + no Africa's Talking/Twilio creds). **Until `RESEND_API_KEY` is set, the
-> alert-delivery drill cannot pass.** This is the one A3 item still open — it needs a Resend
-> API key (or alternate provider) added to Vercel Prod, then a redeploy.
+> `OPS_ALERT_PHONE` (`+16672212732`), `SQS_DLQ_URL`, `SQS_QUEUE_URL`, `SENTRY_DSN`,
+> `NEXT_PUBLIC_SENTRY_DSN`, and now `RESEND_API_KEY` are all set in Vercel Production.
+> **Remaining blocker: no verified Resend sending domain.** A live drill against the real
+> Resend API (valid key) was rejected: *"The liberialearn.edu.lr domain is not verified"* —
+> and the `onboarding@resend.dev` test sender only delivers to the Resend account owner, which
+> is not `liberialearn52@gmail.com`. The default `FROM` is `noreply@liberialearn.edu.lr`
+> (`lib/email.ts`). So `sendEmail` reaches Resend but Resend drops the message →
+> **ops-alert emails (and ALL transactional email) are still undeliverable.** SMS is also inert
+> (`/api/health` → `sms:"unavailable"`). **To close:** (1) verify a sending domain at
+> https://resend.com/domains (add the DNS records), (2) optionally set `EMAIL_FROM` to an
+> address on that domain, (3) redeploy, (4) re-run the drill. Sentry capture is already
+> verified working (see Alert 2 drill log).
 
 ---
 
