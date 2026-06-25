@@ -158,4 +158,13 @@
 
 ---
 
-### Doc B total: 19 items · estimated ~1 week
+### B20 — Verify Resend sending domain
+- **Severity:** HIGH (blocks all transactional email)
+- **Perspectives:** SRE/DevOps, Guardian
+- **Source:** WAVE 5A / A3 (deferred from Sprint 5A, 2026-06-25)
+- **Description:** Verify Resend sending domain. Current state: API key is set in Vercel production but no domain is verified. Either verify liberialearn.edu.lr (already added, failed DNS) or verify a Resend subdomain (e.g. veemalo.resend.app). Once verified, set EMAIL_FROM in Vercel, redeploy, and confirm alert email delivery to liberialearn52@gmail.com. Estimated: 30-60 min once DNS access is available. Also enables guardian digest email delivery.
+- **Estimated fix time:** 30–60 min (once DNS access is available).
+
+---
+
+### Doc B total: 20 items · estimated ~1 week
