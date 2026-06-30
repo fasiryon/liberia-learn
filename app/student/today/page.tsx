@@ -10,6 +10,7 @@ import { EventCalendar } from "@/components/EventCalendar";
 import { LiveSessionBanner } from "@/components/LiveSessionBanner";
 import { OfflineReadyBadge } from "@/components/OfflineReadyBadge";
 import { DownloadPackButton } from "@/components/packs/DownloadPackButton";
+import { ThisWeeksUnits } from "@/components/student/ThisWeeksUnits";
 import { AnnouncementBanner } from "@/components/AnnouncementBanner";
 import { WeeklyProgressChart, type WeekEntry } from "@/components/student/WeeklyProgressChart";
 import { DistrictRankWidget } from "@/components/league/DistrictRankWidget";
@@ -410,6 +411,8 @@ export default function StudentTodayPage() {
             <section className="rounded-lg border border-[var(--ll-border)] bg-[var(--ll-surface)] p-4">
               <EventCalendar role="STUDENT" compact />
             </section>
+
+            {activeTab === "schedule" ? <ThisWeeksUnits /> : null}
 
             <section className="rounded-lg border border-[var(--ll-border)] bg-[var(--ll-surface)] p-4">
               {activeTab === "schedule" ? (
