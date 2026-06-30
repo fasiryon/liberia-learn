@@ -1260,7 +1260,7 @@ export default function LessonDeliveryClient({ lessonId }: { lessonId: string })
         </section>
       ) : null}
 
-        <section ref={registerSection("exit-ticket")} data-section-id="exit-ticket" className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/80 p-5 sm:p-7">
+        <section ref={registerSection("exit-ticket")} data-section-id="exit-ticket" data-tour="assessment" className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/80 p-5 sm:p-7">
           <h2 className="text-lg font-semibold text-[var(--ll-text)]">Complete Assessment</h2>
           <p className="mt-1 text-sm text-[var(--ll-text-muted)]">Answer these questions to finish the lesson — your teacher uses this to see how you did.</p>
           <div className="mt-4 space-y-5">
