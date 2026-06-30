@@ -5,6 +5,7 @@ import { ChevronLeft, ChevronRight, Flag } from "lucide-react";
 
 import { LessonQuizPanel } from "@/components/student/LessonQuizPanel";
 import { ProblemRevealSection } from "@/components/student/ProblemRevealSection";
+import { UnitSequenceSidebar } from "@/components/student/UnitSequenceSidebar";
 import { TutorChatWidget } from "@/components/TutorChatWidget";
 import { StudentLessonHelpPanel } from "@/components/student/StudentLessonHelpPanel";
 import LessonLabPanel from "@/components/labs/LessonLabPanel";
@@ -1010,6 +1011,10 @@ export default function LessonDeliveryClient({ lessonId }: { lessonId: string })
             contentId={lesson.contentId}
             lessonId={lesson.id}
           />
+        ) : null}
+
+        {lesson.contentId ? (
+          <UnitSequenceSidebar contentId={lesson.contentId} scheduledWorkId={lessonId} />
         ) : null}
 
         <section ref={registerSection("lesson-content")} data-section-id="lesson-content" className={`rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/80 p-5 sm:p-7${mode === "video" ? " hidden" : ""}`}>
