@@ -113,7 +113,7 @@ export default function GuardianMessagesPage() {
                 {recipients.length > 1 && (
                   <div>
                     <label className="block text-xs font-medium text-[var(--ll-text-faint)] mb-1">
-                      Regarding
+                      Send to teacher
                     </label>
                     <select
                       value={selectedIdx}

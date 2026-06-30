@@ -18,10 +18,11 @@ export async function GET() {
 
     const studentIds = links.map((l) => l.studentId);
 
+    // No `distinct: ["studentId"]` here — a child enrolled in several classes
+    // has several teachers, and the guardian must be able to reach each one.
     const enrollments = await prisma.enrollment.findMany({
       where: { studentId: { in: studentIds } },
       select: { studentId: true, Class: { select: { teacherId: true } } },
-      distinct: ["studentId"],
     });
 
     const teacherIds = [...new Set(enrollments.map((e) => e.Class.teacherId))];
@@ -30,19 +31,31 @@ export async function GET() {
       select: { id: true, name: true },
     });
     const teacherMap = new Map(teachers.map((t) => [t.id, t.name ?? "Teacher"]));
-    const enrollmentMap = new Map(enrollments.map((e) => [e.studentId, e.Class.teacherId]));
+    const studentNameMap = new Map(
+      links.map((l) => [l.studentId, l.student.user.name ?? "Student"])
+    );
 
-    const result = links
-      .filter((l) => enrollmentMap.has(l.studentId))
-      .map((l) => {
-        const teacherId = enrollmentMap.get(l.studentId)!;
-        return {
-          studentId: l.studentId,
-          studentName: l.student.user.name ?? "Student",
-          teacherId,
-          teacherName: teacherMap.get(teacherId) ?? "Teacher",
-        };
+    // One recipient per (student, teacher) pair, de-duplicated.
+    const seen = new Set<string>();
+    const result: Array<{
+      studentId: string;
+      studentName: string;
+      teacherId: string;
+      teacherName: string;
+    }> = [];
+    for (const enrollment of enrollments) {
+      const teacherId = enrollment.Class.teacherId;
+      const key = `${enrollment.studentId}:${teacherId}`;
+      if (seen.has(key)) continue;
+      if (!studentNameMap.has(enrollment.studentId)) continue;
+      seen.add(key);
+      result.push({
+        studentId: enrollment.studentId,
+        studentName: studentNameMap.get(enrollment.studentId)!,
+        teacherId,
+        teacherName: teacherMap.get(teacherId) ?? "Teacher",
       });
+    }
 
     return NextResponse.json(result);
   } catch (err: any) {
