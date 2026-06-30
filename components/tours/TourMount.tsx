@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { TeacherTour } from "./TeacherTour";
-import { StudentTour } from "./StudentTour";
+import { StudentJourney } from "./StudentJourney";
 import { GuardianTour } from "./GuardianTour";
 
 async function markTourComplete() {
@@ -16,9 +16,9 @@ export function TeacherTourMount({ showTour }: { showTour: boolean }) {
 }
 
 export function StudentTourMount({ showTour }: { showTour: boolean }) {
-  const [show, setShow] = useState(showTour);
-  if (!show) return null;
-  return <StudentTour onComplete={() => { setShow(false); void markTourComplete(); }} />;
+  // Always mounted so the multi-page journey can also activate on ?tour=true
+  // (e.g. a replay link handed to principals). It self-gates on `active`.
+  return <StudentJourney autoStart={showTour} />;
 }
 
 export function GuardianTourMount({ showTour }: { showTour: boolean }) {

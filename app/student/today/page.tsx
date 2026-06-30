@@ -414,7 +414,7 @@ export default function StudentTodayPage() {
 
             {activeTab === "schedule" ? <ThisWeeksUnits /> : null}
 
-            <section className="rounded-lg border border-[var(--ll-border)] bg-[var(--ll-surface)] p-4">
+            <section data-tour="today-schedule" className="rounded-lg border border-[var(--ll-border)] bg-[var(--ll-surface)] p-4">
               {activeTab === "schedule" ? (
                 <ScheduleTab schoolDay={schoolDay} assignedWork={assignedWork} adaptiveAction={adaptiveAction} onOpenPeriod={openPeriodLesson} />
               ) : null}

@@ -62,7 +62,7 @@ export default function StudentCertificatesClient() {
                 My Progress
               </Link>
             </nav>
-            <h1 className="mt-2 text-3xl font-semibold text-[var(--ll-text)] print:text-[var(--ll-text-faint)]">
+            <h1 data-tour="certificates-list" className="mt-2 text-3xl font-semibold text-[var(--ll-text)] print:text-[var(--ll-text-faint)]">
               My Certificates
             </h1>
             <p className="mt-2 text-sm text-[var(--ll-text-muted)] print:text-[var(--ll-text-faint)]">

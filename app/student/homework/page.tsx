@@ -32,7 +32,7 @@ export default async function StudentHomeworkList() {
   return (
     <main className="min-h-screen bg-[var(--ll-bg)] p-6 text-[var(--ll-text)]">
       <div className="mx-auto max-w-3xl space-y-6">
-        <h1 className="text-2xl font-bold">Your Homework</h1>
+        <h1 data-tour="homework-list" className="text-2xl font-bold">Your Homework</h1>
 
         <div className="space-y-3">
           {allHomework.length === 0 ? (

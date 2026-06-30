@@ -171,7 +171,7 @@ export function ProblemRevealSection({
   if (!problemSets || problemSets.length === 0) return null;
 
   return (
-    <section className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/80 p-5 sm:p-7">
+    <section data-tour="practice" className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/80 p-5 sm:p-7">
       <h2 className="text-lg font-semibold text-[var(--ll-text)]">Practice Problems</h2>
       <p className="mt-1 text-sm text-[var(--ll-text-muted)]">
         Work through each problem, then reveal the answer to check your work. You can hide it again
