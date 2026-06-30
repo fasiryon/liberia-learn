@@ -113,7 +113,10 @@ export function isGovCircuitBreakerTripped(): boolean {
  * When false, POST /api/student/tutor returns 404.
  */
 export function isAiTutorEnabled(): boolean {
-  return process.env.AI_TUTOR_ENABLED === "true";
+  // .trim() tolerates trailing CRLF / whitespace that `vercel env pull`
+  // and dashboard copy-paste can append to the stored value — a strict
+  // === "true" comparison silently 404'd the tutor for "true\r\n".
+  return process.env.AI_TUTOR_ENABLED?.trim() === "true";
 }
 
 /**
