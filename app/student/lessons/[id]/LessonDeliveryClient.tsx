@@ -931,7 +931,7 @@ export default function LessonDeliveryClient({ lessonId }: { lessonId: string })
               <p className="mt-2 text-base text-[var(--ll-text)]">Teacher: {lesson.teacherName}</p>
             </div>
             <div className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/55 px-4 py-3 text-sm text-[var(--ll-text)]">
-              Stay focused on the lesson, then complete the exit ticket at the end.
+              Stay focused on the lesson, then complete the assessment at the end.
             </div>
           </div>
           <div className={`mt-5 rounded-xl border border-[var(--ll-border)] bg-[var(--ll-surface)] p-1 text-sm sm:inline-grid sm:min-w-[24rem] ${lesson.activeVideo ? "grid grid-cols-4" : "grid grid-cols-3"}`}>
@@ -1093,7 +1093,7 @@ export default function LessonDeliveryClient({ lessonId }: { lessonId: string })
                     onClick={() => scrollToSection("exit-ticket")}
                     className="ll-touch-target rounded-xl bg-[var(--ll-yellow-soft)] px-4 py-3 text-sm font-semibold text-[var(--ll-yellow)]"
                   >
-                    Go to quiz
+                    Go to assessment
                   </button>
                 ) : (
                   <button
@@ -1256,7 +1256,8 @@ export default function LessonDeliveryClient({ lessonId }: { lessonId: string })
       ) : null}
 
         <section ref={registerSection("exit-ticket")} data-section-id="exit-ticket" className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/80 p-5 sm:p-7">
-          <h2 className="text-lg font-semibold text-[var(--ll-text)]">Exit Ticket</h2>
+          <h2 className="text-lg font-semibold text-[var(--ll-text)]">Complete Assessment</h2>
+          <p className="mt-1 text-sm text-[var(--ll-text-muted)]">Answer these questions to finish the lesson — your teacher uses this to see how you did.</p>
           <div className="mt-4 space-y-5">
             {exitTicketQuestions.map((question, index) => (
               <div key={`${question.question}-${index}`} className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/60 p-4">
@@ -1357,7 +1358,7 @@ export default function LessonDeliveryClient({ lessonId }: { lessonId: string })
                   disabled={submitting || lesson.status === "completed"}
                   className="ll-touch-target rounded-xl bg-[var(--ll-yellow-soft)] px-5 py-3 text-sm font-semibold text-[var(--ll-text-faint)] disabled:cursor-not-allowed disabled:bg-[var(--ll-surface-muted)] disabled:text-[var(--ll-text-muted)]"
                 >
-                  {lesson.status === "completed" ? "Lesson already completed" : submitting ? "Submitting..." : "Submit exit ticket"}
+                  {lesson.status === "completed" ? "Lesson already completed" : submitting ? "Submitting..." : "Submit Assessment"}
                 </button>
               </div>
             </div>
