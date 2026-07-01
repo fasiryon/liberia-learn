@@ -66,7 +66,6 @@ export function TeacherNav() {
           <Link
             key={link.href}
             href={link.href}
-            data-tour={link.tour}
             className={`inline-flex items-center gap-2 rounded-full px-5 py-2 text-sm font-semibold transition-colors ${
               active
                 ? "bg-[var(--ll-surface-muted)] text-[var(--ll-text-faint)]"
