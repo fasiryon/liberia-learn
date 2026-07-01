@@ -6,6 +6,8 @@ import { getServerSession } from "next-auth";
 import { notFound } from "next/navigation";
 import { authOptions } from "@/lib/auth";
 import { getMoePortalAllowlist, isMoePortalEnabled } from "@/lib/serverFlags";
+import { prisma } from "@/lib/db";
+import { OfficialTourMount } from "@/components/tours/TourMount";
 import MoeShell from "./MoeShell";
 
 export const metadata: Metadata = {
@@ -59,9 +61,19 @@ export default async function MoeLayout({
     return <>{children}</>;
   }
 
+  const showTour = user.email
+    ? !(
+        await prisma.user.findUnique({
+          where: { email: user.email },
+          select: { tourCompletedAt: true },
+        })
+      )?.tourCompletedAt
+    : false;
+
   return (
     <MoeShell user={{ name: user.name, email: user.email }}>
       {children}
+      <OfficialTourMount showTour={!!showTour} />
     </MoeShell>
   );
 }

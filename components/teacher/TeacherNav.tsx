@@ -4,11 +4,11 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 
-const LINKS = [
-  { href: "/teacher", label: "Overview" },
-  { href: "/teacher/homework", label: "Homework" },
-  { href: "/teacher/curriculum", label: "Curriculum" },
-  { href: "/teacher/messages", label: "Messages", badgeKey: "messages" },
+const LINKS: { href: string; label: string; badgeKey?: string; tour?: string }[] = [
+  { href: "/teacher", label: "Overview", tour: "teacher-overview" },
+  { href: "/teacher/homework", label: "Homework", tour: "teacher-homework" },
+  { href: "/teacher/curriculum", label: "Curriculum", tour: "teacher-curriculum" },
+  { href: "/teacher/messages", label: "Messages", badgeKey: "messages", tour: "teacher-messages" },
   { href: "/teacher/delivery-report", label: "Delivery Report" },
   { href: "/teacher/attendance", label: "Attendance" },
   { href: "/teacher/schedule", label: "Schedule" },
@@ -18,7 +18,7 @@ const LINKS = [
   { href: "/teacher/exams", label: "Exams" },
   { href: "/teacher/assignments", label: "Assignments" },
   { href: "/teacher/students", label: "Students" },
-  { href: "/teacher/intelligence", label: "Intelligence" },
+  { href: "/teacher/intelligence", label: "Intelligence", tour: "teacher-intelligence" },
   { href: "/teacher/placements", label: "Placements" },
   { href: "/teacher/tutor-analytics", label: "Tutor Insights" },
 ];
@@ -66,6 +66,7 @@ export function TeacherNav() {
           <Link
             key={link.href}
             href={link.href}
+            data-tour={link.tour}
             className={`inline-flex items-center gap-2 rounded-full px-5 py-2 text-sm font-semibold transition-colors ${
               active
                 ? "bg-[var(--ll-surface-muted)] text-[var(--ll-text-faint)]"

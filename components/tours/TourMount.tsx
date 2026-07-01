@@ -1,19 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { TeacherTour } from "./TeacherTour";
 import { StudentJourney } from "./StudentJourney";
-import { GuardianTour } from "./GuardianTour";
-
-async function markTourComplete() {
-  await fetch("/api/user/tour-complete", { method: "PATCH" });
-}
-
-export function TeacherTourMount({ showTour }: { showTour: boolean }) {
-  const [show, setShow] = useState(showTour);
-  if (!show) return null;
-  return <TeacherTour onComplete={() => { setShow(false); void markTourComplete(); }} />;
-}
+import { RoleTour } from "./RoleTour";
 
 export function StudentTourMount({ showTour }: { showTour: boolean }) {
   // Always mounted so the multi-page journey can also activate on ?tour=true
@@ -21,8 +9,20 @@ export function StudentTourMount({ showTour }: { showTour: boolean }) {
   return <StudentJourney autoStart={showTour} />;
 }
 
+// Role tours are always mounted too, so ?tour=true re-triggers them even after
+// the first-login auto-start has completed. Each self-gates inside RoleTour.
+export function TeacherTourMount({ showTour }: { showTour: boolean }) {
+  return <RoleTour role="teacher" autoStart={showTour} />;
+}
+
 export function GuardianTourMount({ showTour }: { showTour: boolean }) {
-  const [show, setShow] = useState(showTour);
-  if (!show) return null;
-  return <GuardianTour onComplete={() => { setShow(false); void markTourComplete(); }} />;
+  return <RoleTour role="guardian" autoStart={showTour} />;
+}
+
+export function AdminTourMount({ showTour }: { showTour: boolean }) {
+  return <RoleTour role="admin" autoStart={showTour} />;
+}
+
+export function OfficialTourMount({ showTour }: { showTour: boolean }) {
+  return <RoleTour role="official" autoStart={showTour} />;
 }

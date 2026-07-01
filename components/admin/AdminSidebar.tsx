@@ -76,7 +76,17 @@ const NAV: NavSection[] = [
   },
 ];
 
-function SidebarContent({ onClose }: { onClose?: () => void }) {
+// Tour anchors live on the always-visible desktop sidebar only (the component
+// renders twice — mobile + desktop — so anchoring both would duplicate ids and
+// point driver.js at the off-screen mobile copy).
+const ADMIN_TOUR_ANCHORS: Record<string, string> = {
+  "/admin/curriculum": "admin-curriculum",
+  "/admin/content-review": "admin-content-review",
+  "/admin/analytics": "admin-analytics",
+  "/admin/reports": "admin-reports",
+};
+
+function SidebarContent({ onClose, anchored }: { onClose?: () => void; anchored?: boolean }) {
   const pathname = usePathname();
   const [collapsed, setCollapsed] = useState<Record<string, boolean>>(() => {
     const init: Record<string, boolean> = {};
@@ -98,6 +108,7 @@ function SidebarContent({ onClose }: { onClose?: () => void }) {
         <Link
           href="/admin"
           onClick={onClose}
+          data-tour={anchored ? "admin-dashboard" : undefined}
           className={`text-sm font-bold rounded-md px-2 py-1 transition-colors ${
             pathname === "/admin"
               ? "text-[var(--ll-yellow)]"
@@ -150,6 +161,7 @@ function SidebarContent({ onClose }: { onClose?: () => void }) {
                     <Link
                       href={item.href}
                       onClick={onClose}
+                      data-tour={anchored ? ADMIN_TOUR_ANCHORS[item.href] : undefined}
                       className={`block rounded-md px-3 py-1.5 text-sm transition-colors ${
                         isActive(item.href)
                           ? "bg-[var(--ll-yellow)] text-[#1a1200] font-semibold"
@@ -202,7 +214,7 @@ export function AdminSidebar() {
 
       {/* Desktop sidebar — sticky, 240px wide */}
       <aside className="hidden md:flex flex-col w-60 shrink-0 sticky top-0 h-screen border-r border-[var(--ll-border)] bg-[var(--ll-bg)]">
-        <SidebarContent />
+        <SidebarContent anchored />
       </aside>
     </>
   );
