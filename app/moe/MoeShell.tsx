@@ -9,14 +9,14 @@ type MoeUser = {
   email?: string | null;
 };
 
-const NAV_ITEMS = [
-  { href: "/moe/dashboard", label: "Dashboard" },
-  { href: "/moe/districts", label: "Districts" },
-  { href: "/moe/compliance", label: "Compliance" },
+const NAV_ITEMS: { href: string; label: string; tour?: string }[] = [
+  { href: "/moe/dashboard", label: "Dashboard", tour: "moe-dashboard" },
+  { href: "/moe/districts", label: "Districts", tour: "moe-districts" },
+  { href: "/moe/compliance", label: "Compliance", tour: "moe-compliance" },
   { href: "/moe/alerts", label: "Alerts" },
-  { href: "/moe/exports", label: "Exports" },
+  { href: "/moe/exports", label: "Exports", tour: "moe-exports" },
   { href: "/moe/submissions", label: "School Submissions" },
-  { href: "/moe/live", label: "Live Dashboard" },
+  { href: "/moe/live", label: "Live Dashboard", tour: "moe-live" },
 ];
 
 export default function MoeShell({
@@ -58,6 +58,7 @@ export default function MoeShell({
                 <Link
                   key={item.href}
                   href={item.href}
+                  data-tour={item.tour}
                   className={`rounded-full px-3 py-1.5 transition ${
                     active
                       ? "bg-[var(--ll-yellow)]/20 text-[var(--ll-yellow)]"

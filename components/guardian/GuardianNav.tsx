@@ -4,15 +4,15 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 
-const LINKS = [
-  { href: "/guardian/dashboard", label: "Overview" },
+const LINKS: { href: string; label: string; badgeKey?: string; tour?: string }[] = [
+  { href: "/guardian/dashboard", label: "Overview", tour: "guardian-overview" },
   { href: "/guardian/attendance", label: "Attendance" },
-  { href: "/guardian/grades", label: "Grades" },
-  { href: "/guardian/assignments", label: "Assignments" },
+  { href: "/guardian/grades", label: "Grades", tour: "guardian-grades" },
+  { href: "/guardian/assignments", label: "Assignments", tour: "guardian-assignments" },
   { href: "/guardian/progress", label: "Progress" },
   { href: "/guardian/events", label: "Events" },
-  { href: "/guardian/messages", label: "Messages", badgeKey: "messages" },
-  { href: "/guardian/settings", label: "Settings" },
+  { href: "/guardian/messages", label: "Messages", badgeKey: "messages", tour: "guardian-messages" },
+  { href: "/guardian/settings", label: "Settings", tour: "guardian-settings" },
 ];
 
 export function GuardianNav() {
@@ -46,6 +46,7 @@ export function GuardianNav() {
           <Link
             key={link.href}
             href={link.href}
+            data-tour={link.tour}
             className={`inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold ${
               active
                 ? "bg-[var(--ll-yellow-soft)] text-[var(--ll-text-faint)]"
