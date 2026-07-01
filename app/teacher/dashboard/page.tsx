@@ -497,7 +497,7 @@ export default function TeacherDashboardPage() {
             </details>
 
             {/* KPI cards */}
-            <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
+            <div data-tour="teacher-overview" className="grid grid-cols-2 gap-3 md:grid-cols-4">
               <div className="ll-kpi border-t-2 border-t-[var(--ll-yellow)]/30">
                 <p className="text-xl font-semibold text-[var(--ll-text)]">
                   {data?.scheduledToday || 0}
@@ -549,14 +549,14 @@ export default function TeacherDashboardPage() {
 
             {/* Primary Actions */}
             <div className="grid grid-cols-2 gap-2">
-              <Link href="/teacher/students" className="ll-command ll-focus justify-between">
+              <Link href="/teacher/students" data-tour="teacher-classes" className="ll-command ll-focus justify-between">
                 <span className="flex items-center gap-2 text-sm font-semibold text-[var(--ll-text)]">
                   <Users className="h-4 w-4 text-[var(--ll-text-faint)]" strokeWidth={1.5} />
                   View my classes
                 </span>
                 <ChevronRight className="h-3.5 w-3.5 text-[var(--ll-text-faint)]" strokeWidth={1.5} />
               </Link>
-              <Link href="/teacher/assignments" className="ll-command ll-focus justify-between">
+              <Link href="/teacher/assignments" data-tour="teacher-grading" className="ll-command ll-focus justify-between">
                 <span className="flex items-center gap-2 text-sm font-semibold text-[var(--ll-text)]">
                   <ClipboardCheck
                     className="h-4 w-4 text-[var(--ll-text-faint)]"
@@ -566,7 +566,7 @@ export default function TeacherDashboardPage() {
                 </span>
                 <ChevronRight className="h-3.5 w-3.5 text-[var(--ll-text-faint)]" strokeWidth={1.5} />
               </Link>
-              <Link href="/teacher/schedule" className="ll-command ll-focus justify-between">
+              <Link href="/teacher/schedule" data-tour="teacher-planner" className="ll-command ll-focus justify-between">
                 <span className="flex items-center gap-2 text-sm font-semibold text-[var(--ll-text)]">
                   <CalendarDays
                     className="h-4 w-4 text-[var(--ll-text-faint)]"
@@ -591,7 +591,7 @@ export default function TeacherDashboardPage() {
                 </span>
                 <ChevronRight className="h-3.5 w-3.5 text-[var(--ll-text-faint)]" strokeWidth={1.5} />
               </button>
-              <Link href="/teacher/weekly-report" className="ll-command ll-focus justify-between">
+              <Link href="/teacher/weekly-report" data-tour="teacher-report" className="ll-command ll-focus justify-between">
                 <span className="flex items-center gap-2 text-sm font-semibold text-[var(--ll-text)]">
                   <BarChart3 className="h-4 w-4 text-[var(--ll-text-faint)]" strokeWidth={1.5} />
                   Weekly report

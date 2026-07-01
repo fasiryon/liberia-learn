@@ -18,36 +18,38 @@ export type RoleTourStep = {
 
 export type TourRole = "teacher" | "guardian" | "admin" | "official";
 
+// Anchored to the teacher dashboard (the landing page), which uses a card
+// layout rather than the TeacherNav pill bar.
 const TEACHER_STEPS: RoleTourStep[] = [
   {
     selector: "[data-tour='teacher-overview']",
-    title: "Your class at a glance",
-    body: "This is your overview — delivery, submissions, and alerts for every class you teach.",
+    title: "Your day at a glance",
+    body: "Lessons scheduled today, completion rate, and how much grading is waiting — your whole day in one row.",
     side: "bottom",
   },
   {
-    selector: "[data-tour='teacher-curriculum']",
-    title: "Assign lessons",
-    body: "Browse the MOE-aligned curriculum and assign lessons to your classes. Lessons are sequenced into units that build on each other.",
-    side: "bottom",
+    selector: "[data-tour='teacher-classes']",
+    title: "Your classes",
+    body: "Open any class to see student rosters, progress, and who is falling behind on a topic.",
+    side: "top",
   },
   {
-    selector: "[data-tour='teacher-homework']",
+    selector: "[data-tour='teacher-grading']",
     title: "Grade & approve",
-    body: "Review homework here — including AI-assisted grading on writing and code that you approve before it reaches students.",
-    side: "bottom",
+    body: "Review and grade assignments — including AI-assisted grading on writing and code that you approve before students see it.",
+    side: "top",
   },
   {
-    selector: "[data-tour='teacher-intelligence']",
-    title: "See who is stuck",
-    body: "Class intelligence surfaces students who are falling behind on a topic so you can step in early.",
-    side: "bottom",
+    selector: "[data-tour='teacher-planner']",
+    title: "Plan & assign lessons",
+    body: "Plan the week and assign MOE-aligned lessons — sequenced into units that build on each other, not random.",
+    side: "top",
   },
   {
-    selector: "[data-tour='teacher-messages']",
-    title: "Reach guardians",
-    body: "Message a student's guardians directly. That's the tour — explore your classes from here!",
-    side: "bottom",
+    selector: "[data-tour='teacher-report']",
+    title: "Track outcomes",
+    body: "Weekly performance across your classes. That's the tour — explore from here!",
+    side: "top",
   },
 ];
 
