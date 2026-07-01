@@ -9,6 +9,7 @@ import { cacheLessonContent, loadCachedLesson } from "@/lib/lesson-offline-cache
 import { LessonAudioPlayer, type LessonAudioPart } from "@/components/student/LessonAudioPlayer";
 import { getLessonLabLinks } from "@/lib/lessons/labLinks";
 import { looksLikeHtml, renderSimpleMarkdown } from "@/lib/lessons";
+import { UnitSequenceSidebar } from "@/components/student/UnitSequenceSidebar";
 
 // Teacher-created lessons store HTML bodies; ReactMarkdown would show the
 // tags as literal text, so HTML bodies render via the sanitized HTML path.
@@ -243,6 +244,9 @@ export default function LessonViewerPage() {
             </div>
           )}
         </div>
+
+        {/* Lesson sequence within its unit (renders nothing when the lesson has no unit). */}
+        <UnitSequenceSidebar contentId={contentId} />
 
         <div className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 p-2">
           <div className="grid grid-cols-4 gap-2">
