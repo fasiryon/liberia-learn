@@ -66,3 +66,32 @@ Assessment.
 - Optionally create curated `CurriculumUnit` rows (names/descriptions) for the
   highest-traffic units so the synthesised names can be replaced with editorial
   ones.
+
+---
+
+## Post-verification update (2 July 2026 — Phase 2 live-verification fix pass)
+
+Clicking through production surfaced a bigger problem than the subject-level
+gaps above: **every lesson on the demo student's Today page is a `hero-*`
+showcase lesson, and all 35 hero lessons had `unitId = null`.** So the unit-map
+sidebar and "This week's units" rendered on *none* of the lessons a principal
+actually opens — the flagship feature was invisible on the whole demo path.
+
+Fixes applied (see `scripts/phase2-map-hero-units.ts`):
+
+- **27 of 35 hero lessons** slotted into the front of a real, same-subject/grade
+  curriculum unit (`unitId` + `orderInUnit`), content untouched. The demo
+  student now sees the sidebar on the Math/Science/Civics/Literacy heroes and
+  four populated units under "This week's units".
+- **8 heroes remain unmapped** — the 2 COMPUTER_SCIENCE, 2 ENGLISH, and 4
+  ENGINEERING heroes have no clean matching unit (the same deserts listed
+  above). They degrade gracefully (no sidebar), and are the priority for the
+  future content pass.
+- The unit-sequence sidebar is now also mounted on the singular library viewer
+  (`/student/lesson/[contentId]`), so the Unit Overview → lesson path keeps its
+  sequence context.
+
+Caveat: hero lessons are now members of a real unit, so any student viewing
+that unit's sequence sees the hero as lesson 1. Acceptable pre-pilot (heroes are
+approved, thematically-matched content); revisit if a curated content pass
+replaces the hero placements.
