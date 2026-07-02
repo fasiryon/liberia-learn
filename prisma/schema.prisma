@@ -1868,6 +1868,8 @@ model CurriculumContent {
   version         String
   payload         Json
   moeAlignments   Json?
+  // Phase 5A: WAEC syllabus topic ids (from lib/waec/syllabus.ts) tagged onto G9+ content
+  waecSyllabusTopics String[]     @default([])
   hash            String?         @unique
   createdAt       DateTime        @default(now())
   updatedAt       DateTime        @updatedAt
