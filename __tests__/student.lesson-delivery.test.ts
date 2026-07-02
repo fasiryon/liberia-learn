@@ -14,12 +14,16 @@ vi.mock("@/lib/auth", () => ({
   requireRole: mockRequireRole,
 }));
 
+const mockStrandFindUnique = vi.hoisted(() => vi.fn());
+const mockStrandFindFirst = vi.hoisted(() => vi.fn());
+
 vi.mock("@/lib/db", () => ({
   prisma: {
     scheduledWork: { findUnique: mockScheduledWorkFindUnique },
     student: { findUnique: mockStudentFindUnique },
     enrollment: { findUnique: mockEnrollmentFindUnique },
     studentProgress: { upsert: mockStudentProgressUpsert },
+    strandCatalog: { findUnique: mockStrandFindUnique, findFirst: mockStrandFindFirst },
   },
 }));
 
@@ -38,6 +42,10 @@ vi.mock("@/lib/mastery/masteryService", () => ({
 describe("student lesson delivery", () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    // Strand resolution fallback: no exact strand, but a subject/band strand exists,
+    // so mastery writes still resolve a valid StrandCatalog target.
+    mockStrandFindUnique.mockResolvedValue(null);
+    mockStrandFindFirst.mockResolvedValue({ strandKey: "fractions_decimals" });
   });
 
   // First test in this file to dynamically import @/lib/lessons, which now
