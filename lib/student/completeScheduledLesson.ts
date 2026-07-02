@@ -1,4 +1,5 @@
-import type { Subject } from "@prisma/client";
+import { recordMetricEvent } from "@/lib/metrics/events";
+import { resolveMasteryStrandForLesson } from "@/lib/mastery/resolveStrand";
 
 import { logAudit } from "@/lib/audit";
 import { prisma } from "@/lib/db";
@@ -6,7 +7,6 @@ import { checkAndAwardCertificate } from "@/lib/certificates/autoAwardCertificat
 import { resolveActionsOnLessonComplete } from "@/lib/intelligence/actionEngine";
 import { notifyLessonCompletion } from "@/lib/lesson-notifications";
 import { updateMasteryProfile } from "@/lib/mastery/masteryService";
-import { gradeToBand } from "@/lib/moe/alignment-engine";
 import { logProductSignal } from "@/lib/autonomous/signals/productSignalService";
 import { updateStreak } from "@/lib/gamification/streakService";
 
@@ -25,23 +25,6 @@ type CompleteLessonInput = {
   scheduledWorkId: string;
   exitTicketAnswers?: ExitTicketAnswer[];
 };
-
-function coerceSubject(subject: string): Subject {
-  const normalized = subject.toUpperCase();
-  const subjectMap: Record<string, Subject> = {
-    MATH: "MATH",
-    MATHEMATICS: "MATH",
-    SCIENCE: "SCIENCE",
-    LITERACY: "LITERACY",
-    CIVICS: "CIVICS",
-    COMPUTER_SCIENCE: "COMPUTER_SCIENCE",
-    ENGINEERING: "ENGINEERING",
-    ARTS: "ARTS",
-    PE: "PE",
-    CAREER: "CAREER",
-  };
-  return subjectMap[normalized] ?? "LITERACY";
-}
 
 function scoreExitTicket(questions: any[], answers: ExitTicketAnswer[]) {
   if (!Array.isArray(questions) || questions.length === 0) return null;
@@ -79,9 +62,11 @@ export async function completeScheduledLesson(input: CompleteLessonInput) {
         select: {
           grade: true,
           subject: true,
+          title: true,
           payload: true,
           deliveryProfile: true,
           moeAlignments: true,
+          waecSyllabusTopics: true,
         },
       },
     },
@@ -156,21 +141,48 @@ export async function completeScheduledLesson(input: CompleteLessonInput) {
     const moeAlignmentCode = Array.isArray(content.moeAlignments)
       ? (content.moeAlignments as Array<{ code?: string }>).find((entry) => entry?.code)?.code
       : null;
-    const strandKey = (standardCode ?? moeAlignmentCode ?? `${content.subject}`.toLowerCase()).toString().toLowerCase();
     const normalizedScore = Math.min(1, Math.max(0, exitTicketScore / 100));
+    const telemetryScope = { scope: "school" as const, scopeId: sw.class.schoolId, schoolId: sw.class.schoolId };
 
-    await updateMasteryProfile({
-      studentId: student.id,
-      schoolId: sw.class.schoolId,
-      subject: coerceSubject(content.subject),
-      strandKey,
-      gradeBand: gradeToBand(content.grade),
-      newScore: normalizedScore,
-      wasAiAssisted: false,
-      totalAttempts: 1,
-      aiAssistedAttempts: 0,
-      recentScores: [normalizedScore],
+    // Phase 5A: resolve a StrandCatalog-valid target BEFORE writing so the mastery FK
+    // never mismatches (the root cause the old silent .catch(() => null) hid).
+    const strand = await resolveMasteryStrandForLesson({
+      contentSubject: `${content.subject}`,
+      grade: content.grade,
+      title: (content as any).title ?? null,
+      text: typeof payload?.title === "string" ? payload.title : null,
+      waecTopics: (content as any).waecSyllabusTopics ?? [],
+      standardCode: standardCode ?? null,
+      moeAlignmentCode: moeAlignmentCode ?? null,
     }).catch(() => null);
+
+    if (strand) {
+      await updateMasteryProfile({
+        studentId: student.id,
+        schoolId: sw.class.schoolId,
+        subject: strand.subject,
+        strandKey: strand.strandKey,
+        gradeBand: strand.gradeBand,
+        newScore: normalizedScore,
+        wasAiAssisted: false,
+        totalAttempts: 1,
+        aiAssistedAttempts: 0,
+        recentScores: [normalizedScore],
+      }).catch((err) => {
+        // Surface residual write failures instead of silently swallowing them.
+        recordMetricEvent(
+          "mastery.write_failed",
+          { subject: strand.subject, strandKey: strand.strandKey, reason: err instanceof Error ? err.message : String(err) },
+          { ...telemetryScope, severity: "warning" }
+        ).catch(() => {});
+      });
+    } else {
+      recordMetricEvent(
+        "mastery.strand_unresolved",
+        { subject: `${content.subject}`, grade: content.grade },
+        { ...telemetryScope, severity: "warning" }
+      ).catch(() => {});
+    }
   }
 
   await logAudit({

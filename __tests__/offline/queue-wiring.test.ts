@@ -67,7 +67,7 @@ vi.mock("@/lib/db", () => ({
       findUnique: mockLabSessionFindUnique,
       update: mockLabSessionUpdate,
     },
-    strandCatalog: { findFirst: mockStrandFindFirst },
+    strandCatalog: { findFirst: mockStrandFindFirst, findUnique: vi.fn().mockResolvedValue(null) },
   },
 }));
 
