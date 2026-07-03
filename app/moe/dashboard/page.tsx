@@ -9,6 +9,7 @@ import { Card, StatCard } from "@/components/ui/Card";
 import { DashboardTopBar } from "@/components/DashboardTopBar";
 import { SkeletonCard } from "@/components/ui/Skeleton";
 import { getMoeGreeting } from "@/lib/student/greetings";
+import { WaecMoePanel } from "@/components/waec/WaecPanels";
 
 type DashboardData = {
   schools: number;
@@ -317,6 +318,9 @@ export default function MoeDashboardPage() {
               <p className="mt-1 text-sm">{error}</p>
             </div>
           )}
+
+          {/* National WAEC readiness */}
+          <WaecMoePanel />
 
           <section className="grid gap-3 grid-cols-2 sm:grid-cols-4">
             {loading ? (
