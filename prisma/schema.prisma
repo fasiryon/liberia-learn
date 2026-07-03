@@ -2844,6 +2844,23 @@ model StudentAdaptiveAttempt {
   @@index([studentId, completedAt])
 }
 
+/// Phase 5A: cached WAEC-style practice question bank (generated via routedCompletion,
+/// since the lesson corpus is prose and has no structured questions). correctIndex is
+/// never sent to clients; grading happens server-side.
+model WaecPracticeItem {
+  id           String   @id @default(cuid())
+  subjectId    String   // WaecSubjectId, e.g. "waec_physics"
+  topicId      String   // syllabus topic id, e.g. "physics.mechanics"
+  prompt       String
+  options      Json     // string[]
+  correctIndex Int
+  explanation  String?
+  grade        Int      @default(11)
+  createdAt    DateTime @default(now())
+
+  @@index([subjectId, topicId])
+}
+
 /// / ===== Platform Transfer Tokens =====
 model PlatformTransferToken {
   id              String    @id @default(cuid())
