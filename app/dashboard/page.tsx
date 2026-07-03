@@ -4,6 +4,7 @@ import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { GlobalSearch } from "@/components/GlobalSearch";
 import { LegalFooter } from "@/components/LegalFooter";
 import { StudentSidebar } from "@/components/StudentSidebar";
+import { WAEC_MIN_GRADE } from "@/lib/waec/eligibility";
 import { AchievementBadge } from "@/components/student/AchievementBadge";
 import { StudentWelcomeBanner } from "@/components/student/StudentWelcomeBanner";
 import { authOptions } from "@/lib/auth";
@@ -177,7 +178,12 @@ export default async function DashboardPage() {
           />
 
           <div className="flex flex-1 flex-col gap-4 md:flex-row">
-            <StudentSidebar school={school} teacherName={teacherName} studentName={studentName} />
+            <StudentSidebar
+              school={school}
+              teacherName={teacherName}
+              studentName={studentName}
+              showWaec={(student.currentGrade ?? 0) >= WAEC_MIN_GRADE}
+            />
 
             <section className="flex flex-1 flex-col gap-4 rounded-xl border border-[var(--ll-border)] bg-[var(--ll-surface)] p-4 shadow-none">
               <StudentWelcomeBanner

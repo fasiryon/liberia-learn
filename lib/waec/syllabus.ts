@@ -290,6 +290,16 @@ export function getWaecSubject(id: WaecSubjectId): WaecSubject | undefined {
   return BY_ID.get(id);
 }
 
+/** URL slug for a subject ("waec_physics" → "physics"). */
+export function waecSlug(id: WaecSubjectId): string {
+  return id.replace(/^waec_/, "");
+}
+
+/** Resolve a URL slug back to its WAEC subject ("physics" → waec_physics). */
+export function waecSubjectFromSlug(slug: string): WaecSubject | undefined {
+  return BY_ID.get(`waec_${slug}` as WaecSubjectId);
+}
+
 /** Map a free-form CurriculumContent.subject string to its WAEC subject, if any. */
 export function contentSubjectToWaec(subject: string | null | undefined): WaecSubject | undefined {
   if (!subject) return undefined;
