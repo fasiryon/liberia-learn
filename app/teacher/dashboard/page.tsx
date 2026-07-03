@@ -15,6 +15,7 @@ import { AnnouncementBanner } from "@/components/AnnouncementBanner";
 import { NotificationBell } from "@/components/NotificationBell";
 import { DistrictRankWidget } from "@/components/league/DistrictRankWidget";
 import { DownloadPackButton } from "@/components/packs/DownloadPackButton";
+import { WaecTeacherPanel } from "@/components/waec/WaecPanels";
 
 type DashboardData = {
   scheduledToday: number;
@@ -541,6 +542,9 @@ export default function TeacherDashboardPage() {
                 <p className="text-xs text-[var(--ll-text-faint)]">Labs to review</p>
               </div>
             </div>
+
+            {/* WAEC readiness (only renders if the teacher has Grade 9+ students) */}
+            <WaecTeacherPanel />
 
             {/* Events widget */}
             <div className="ll-section p-4">
