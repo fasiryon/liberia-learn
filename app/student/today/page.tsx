@@ -12,6 +12,7 @@ import { OfflineReadyBadge } from "@/components/OfflineReadyBadge";
 import { DownloadPackButton } from "@/components/packs/DownloadPackButton";
 import { ThisWeeksUnits } from "@/components/student/ThisWeeksUnits";
 import { AnnouncementBanner } from "@/components/AnnouncementBanner";
+import { WaecTodayCta } from "@/components/waec/WaecTodayCta";
 import { WeeklyProgressChart, type WeekEntry } from "@/components/student/WeeklyProgressChart";
 import { DistrictRankWidget } from "@/components/league/DistrictRankWidget";
 
@@ -372,6 +373,8 @@ export default function StudentTodayPage() {
         ) : (
           <>
             <LiveSessionBanner />
+
+            <WaecTodayCta />
 
             <section className="grid gap-3 rounded-lg border border-[var(--ll-accent)]/35 bg-[var(--ll-accent-soft)] p-4 sm:grid-cols-[1fr_auto] sm:items-center">
               <div>

@@ -185,6 +185,54 @@ export default async function HomePage() {
         </div>
       </section>
 
+      {/* WAEC Prep — explicit positioning below the VSL */}
+      <section className="w-full py-12 px-4 border-t border-[var(--ll-border)] bg-gradient-to-b from-[var(--ll-yellow)]/[0.04] to-transparent">
+        <div className="mx-auto max-w-5xl grid gap-8 md:grid-cols-2 md:items-center">
+          <div>
+            <div className="inline-flex items-center gap-2 rounded-full border border-[var(--ll-yellow)]/30 bg-[var(--ll-yellow)]/10 px-3 py-1">
+              <span className="text-[11px] font-bold uppercase tracking-wide text-[var(--ll-yellow)]">WAEC · WASSCE</span>
+            </div>
+            <h2 className="mt-3 text-2xl font-semibold text-[var(--ll-text)]">WAEC Prep, built in</h2>
+            <p className="mt-3 text-sm leading-6 text-[var(--ll-text-muted)]">
+              Every Grade 9–12 student gets a dedicated WAEC Prep track. LiberiaLearn measures
+              real readiness for each WAEC subject — Mathematics, English, the sciences and more —
+              against the official WASSCE syllabus, and turns weak topics into timed, exam-style
+              practice.
+            </p>
+            <p className="mt-2 text-sm leading-6 text-[var(--ll-text-muted)]">
+              Teachers see class readiness at a glance and the Ministry sees it nationally, ranked
+              by county — so WAEC performance is tracked, not guessed.
+            </p>
+          </div>
+
+          {/* Branded preview of the WAEC dashboard */}
+          <div className="rounded-2xl border border-[var(--ll-border)] bg-[var(--ll-surface)] p-4 shadow-2xl">
+            <p className="mb-3 text-[11px] font-semibold uppercase tracking-wide text-[var(--ll-text-faint)]">WAEC readiness</p>
+            <div className="grid grid-cols-2 gap-2">
+              {[
+                { s: "Mathematics", v: 88, c: "#22c55e" },
+                { s: "English", v: 82, c: "#22c55e" },
+                { s: "Physics", v: 81, c: "#22c55e" },
+                { s: "Chemistry", v: 90, c: "#22c55e" },
+              ].map((x) => (
+                <div key={x.s} className="rounded-lg border border-[var(--ll-border)] bg-[var(--ll-surface-muted)] p-3">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs text-[var(--ll-text)]">{x.s}</span>
+                    <span className="text-sm font-bold" style={{ color: x.c }}>{x.v}%</span>
+                  </div>
+                  <div className="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-[var(--ll-bg)]">
+                    <div className="h-full rounded-full" style={{ width: `${x.v}%`, background: x.c }} />
+                  </div>
+                </div>
+              ))}
+            </div>
+            <p className="mt-3 text-[11px] text-[var(--ll-text-faint)]">
+              Readiness computed from mastery across the WAEC syllabus — never estimated.
+            </p>
+          </div>
+        </div>
+      </section>
+
       {/* ACT 2 — SIGN IN FOR YOUR ROLE (combined sign-in + role descriptions) */}
       <section className="w-full py-10 px-4 border-t border-[var(--ll-border)]">
         <div className="mx-auto max-w-5xl">
