@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { BookOpen, ChevronDown } from "lucide-react";
+import { BookOpen, ChevronDown, GraduationCap } from "lucide-react";
 import { useEffect, useState } from "react";
 import { NotificationBell } from "@/components/NotificationBell";
 import { LanguageSelector } from "@/components/LanguageSelector";
@@ -10,6 +10,8 @@ interface StudentSidebarProps {
   school: string;
   teacherName: string;
   studentName: string;
+  /** Grade 9+ only — shows the branded WAEC Prep link. */
+  showWaec?: boolean;
 }
 
 const navLinkClass =
@@ -19,6 +21,7 @@ export function StudentSidebar({
   school,
   teacherName,
   studentName,
+  showWaec = false,
 }: StudentSidebarProps) {
   const [moreOpen, setMoreOpen] = useState(false);
   const [unreadMessages, setUnreadMessages] = useState(0);
@@ -63,6 +66,16 @@ export function StudentSidebar({
         <Link href="/assignments" className={navLinkClass}>
           Assignments
         </Link>
+
+        {showWaec && (
+          <Link
+            href="/student/waec"
+            className="inline-flex items-center gap-2 rounded-lg border border-[var(--ll-yellow)]/30 bg-[var(--ll-yellow)]/10 px-4 py-2 font-semibold text-[var(--ll-yellow)] transition hover:bg-[var(--ll-yellow)]/15"
+          >
+            <GraduationCap className="h-4 w-4" strokeWidth={1.75} aria-hidden="true" />
+            <span>WAEC Prep</span>
+          </Link>
+        )}
 
         <Link href="/ai-tutor" className={navLinkClass}>
           AI Tutor
