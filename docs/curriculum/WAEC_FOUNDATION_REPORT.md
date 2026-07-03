@@ -85,6 +85,21 @@ explicit go-ahead rather than deciding unilaterally.
 4. **`NEXT_PUBLIC_ENABLE_MASTERY_ENGINE` is a Vercel env flag** — activate in production before
    Surface if any mastery UI is gated on it (the write path is not gated and already active).
 
+## SPRINT 5A-SURFACE addendum
+
+- **PATH A is not viable for practice questions.** The Grade 9+ corpus is **prose lessons**
+  (objectives, worked examples, prose "assessment") with **no structured questions** anywhere
+  (0 exit-ticket / quiz objects across 400 sampled tagged lessons). Tagging produced topic
+  labels, not a question bank. Practice therefore uses **PATH B**: WAEC-style MCQs are
+  **generated via `routedCompletion` and cached** in a new `WaecPracticeItem` bank (migration
+  `20260703_000001_waec_practice_item`). 120 questions pre-generated for Math/English/Physics/
+  Chemistry/Biology. **Doc B:** a real WAEC past-paper item bank is future content work.
+- **Geography & Literature deferred** (per decision): Geography has no mastery strand (needs a
+  `Subject`-enum expansion); Literature has no dedicated content. Both render as "coming soon".
+- Surfaces built: `/student/waec` (G9+ gated dashboard) + `/student/waec/[subject]` detail +
+  `/student/waec/[subject]/practice`; teacher & MOE WAEC panels; homepage "WAEC Prep, built in"
+  section; Today G9+ CTA.
+
 ## Gate status
 
 - TypeScript: `tsc --noEmit` clean.
