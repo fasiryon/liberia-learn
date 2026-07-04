@@ -20,7 +20,7 @@ export type LessonMediaInput = {
 
 export type LessonMediaOutcome = {
   category: ImageCategory;
-  status: "GENERATED" | "CURATED" | "SKIPPED" | "FAILED";
+  status: "GENERATED" | "CURATED" | "SKIPPED" | "FAILED" | "PENDING";
   cost: number;
   provider: string | null;
   inlineCount: number;
@@ -34,6 +34,13 @@ export type ProcessOptions = {
   dryRun?: boolean;
   /** Remaining USD budget; inline generation stops when exhausted. */
   budgetRemaining?: number;
+  /**
+   * When a PHOTO lesson finds no curated match, do NOT fall back to AI
+   * generation. Returns status "PENDING" with an empty update so the lesson
+   * can be retried later (e.g. after a rate-limit cooldown). Used by the
+   * photo-only batch when Fal is unavailable.
+   */
+  disableAiFallback?: boolean;
 };
 
 export async function processLessonMedia(
@@ -65,6 +72,10 @@ export async function processLessonMedia(
           imageCategory: "PHOTO", imageGenerationStatus: "CURATED", imageGenerationCost: 0,
         },
       };
+    }
+    // No curated match: retry later instead of burning an AI fallback when disabled.
+    if (opts.disableAiFallback) {
+      return { category, status: "PENDING", cost: 0, provider: null, inlineCount: 0, update: {} };
     }
   }
 
