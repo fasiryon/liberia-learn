@@ -4,6 +4,8 @@ import { requireRole } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { resolveLessonTitle } from "@/lib/lessons/resolveLessonTitle";
 import { logProductSignal } from "@/lib/autonomous/signals/productSignalService";
+import { signHero, signInlineIllustrations } from "@/lib/media/blobStorage";
+import type { HeroImageMeta, InlineIllustration } from "@/lib/media/types";
 
 function isRenderableArtifact(value: unknown): boolean {
   if (!value || typeof value !== "object") return false;
@@ -114,6 +116,10 @@ function scheduledWorkInclude(userId: string) {
         version: true,
         deliveryProfile: true,
         moeAlignments: true,
+        heroImageUrl: true,
+        heroImageMeta: true,
+        inlineIllustrations: true,
+        imageCategory: true,
         audioAssets: {
           orderBy: { generatedAt: "desc" as const },
           take: 1,
@@ -303,6 +309,12 @@ export async function GET(
           : latestAudio?.status ?? "NOT_GENERATED";
     const activeVideo = sw.content.videoSupplements[0] ?? null;
 
+    // Phase 4A: sign hero + inline illustration urls for delivery.
+    const [heroSigned, inlineSigned] = await Promise.all([
+      signHero(sw.content.heroImageUrl, sw.content.heroImageMeta as HeroImageMeta | null),
+      signInlineIllustrations(sw.content.inlineIllustrations as InlineIllustration[] | null),
+    ]);
+
     return NextResponse.json({
       id: sw.id,
       contentId: sw.content.contentId,
@@ -351,6 +363,9 @@ export async function GET(
         : null,
       deliveryProfile,
       moeAlignments: sw.content.moeAlignments ?? [],
+      heroImage: heroSigned,
+      inlineIllustrations: inlineSigned,
+      imageCategory: sw.content.imageCategory ?? null,
       exitTicketScore: progress?.exitTicketScore ?? null,
       exitTicketResponses: progress?.exitTicketResponses ?? null,
       status: progress?.completedAt ? "completed" : progress?.startedAt ? "in_progress" : "not_started",

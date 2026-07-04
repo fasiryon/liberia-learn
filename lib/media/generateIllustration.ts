@@ -6,6 +6,7 @@ import { structuralGate, visionQualityCheck } from "./imageQA";
 import type { GradeBand } from "./types";
 
 export type IllustrationResult = {
+  ok: true;
   bytes: Buffer;
   contentType: string;
   prompt: string;
@@ -14,6 +15,7 @@ export type IllustrationResult = {
 };
 
 export type IllustrationRejection = {
+  ok: false;
   bytes: null;
   reason: string;
   attempts: number;
@@ -74,8 +76,8 @@ export async function generateLessonIllustration(input: {
       continue;
     }
 
-    return { bytes, contentType: image.contentType, prompt, attempts: attempt, cost };
+    return { ok: true, bytes, contentType: image.contentType, prompt, attempts: attempt, cost };
   }
 
-  return { bytes: null, reason: lastReason, attempts: 2, cost };
+  return { ok: false, bytes: null, reason: lastReason, attempts: 2, cost };
 }

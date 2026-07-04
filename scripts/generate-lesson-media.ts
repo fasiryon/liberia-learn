@@ -151,9 +151,9 @@ async function main() {
       stat.attempts++;
       spentUSD += hero.cost;
 
-      if (hero.bytes === null) {
+      if (!hero.ok) {
         stat.rejects++;
-        rejections.push({ contentId: lesson.contentId, subject: lesson.subject, kind: "hero", reason: hero.reason });
+        rejections.push({ contentId: lesson.contentId, subject: lesson.subject, kind: "hero", reason: "reason" in hero ? hero.reason : "unknown" });
         await persist(lesson.contentId, { imageCategory: category, imageGenerationStatus: "FAILED", imageGenerationCost: hero.cost });
         maybeAbort(lesson.subject);
         continue;
@@ -178,9 +178,9 @@ async function main() {
           stat.attempts++;
           spentUSD += ill.cost;
           lessonCost += ill.cost;
-          if (ill.bytes === null) {
+          if (!ill.ok) {
             stat.rejects++;
-            rejections.push({ contentId: lesson.contentId, subject: lesson.subject, kind: "inline", reason: ill.reason });
+            rejections.push({ contentId: lesson.contentId, subject: lesson.subject, kind: "inline", reason: "reason" in ill ? ill.reason : "unknown" });
             continue;
           }
           const p = lessonMediaPath({ lessonId: lesson.contentId, kind: "inline", index: inline.length, ext: "jpg" });

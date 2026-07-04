@@ -38,8 +38,8 @@ export async function uploadLessonImage(input: {
   contentType?: string;
 }): Promise<string> {
   const { put } = await import("@vercel/blob");
-  const body =
-    input.data instanceof ArrayBuffer ? Buffer.from(input.data) : (input.data as Buffer | Uint8Array);
+  const body: Buffer =
+    input.data instanceof ArrayBuffer ? Buffer.from(input.data) : Buffer.from(input.data as Uint8Array);
   const blob = await put(input.path, body, {
     access: "private",
     contentType: input.contentType || "image/webp",
