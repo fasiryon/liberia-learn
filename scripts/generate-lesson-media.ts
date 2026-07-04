@@ -46,9 +46,17 @@ const limit = arg("limit") ? parseInt(arg("limit")!, 10) : undefined;
 const dryRun = flag("dry-run");
 const force = flag("force");
 const heroesOnly = flag("heroes-only");
+// Photo-only: process only PHOTO lessons, never fall back to AI (leaves
+// un-curated lessons PENDING for retry). Throttles + cools down on rate limits.
+const photoOnly = flag("photo-only");
+const throttleMs = arg("throttle-ms") ? parseInt(arg("throttle-ms")!, 10) : 300;
+const COOLDOWN_MS = 60_000;
+const COOLDOWN_AFTER_CONSECUTIVE_PENDING = 6;
 
 let spentUSD = 0;
 let generated = 0;
+let curatedPending = 0;
+let consecutivePending = 0;
 let skippedBudget = 0;
 const rejections: any[] = [];
 const subjectStats: Record<string, { attempts: number; rejects: number; aborted: boolean }> = {};
@@ -70,7 +78,7 @@ async function persist(contentId: string, data: any) {
 
 async function main() {
   console.log("\n=== PHASE 4A LESSON MEDIA BATCH ===");
-  console.log({ subjectsFilter, gradesFilter, limit, dryRun, force, heroesOnly });
+  console.log({ subjectsFilter, gradesFilter, limit, dryRun, force, heroesOnly, photoOnly, throttleMs });
 
   const where: any = { status: { in: APPROVED } };
   if (subjectsFilter) where.subject = { in: subjectsFilter };
@@ -94,6 +102,12 @@ async function main() {
     const stat = subjStat(lesson.subject);
     const start = new Date();
 
+    // Photo-only: skip anything that isn't PHOTO (don't touch Fal).
+    if (photoOnly && category !== "PHOTO") {
+      skippedBudget++;
+      continue;
+    }
+
     // ABSTRACT -> skip
     if (category === "ABSTRACT") {
       await persist(lesson.contentId, { imageCategory: "ABSTRACT", imageGenerationStatus: "SKIPPED" });
@@ -112,7 +126,7 @@ async function main() {
           contentId: lesson.contentId, title: lesson.title, subject: lesson.subject,
           grade: lesson.grade, body: bodyOf(lesson.payload), topics: lesson.waecSyllabusTopics,
         },
-        { heroesOnly, dryRun, budgetRemaining: HARD_STOP_USD - spentUSD }
+        { heroesOnly, dryRun, budgetRemaining: HARD_STOP_USD - spentUSD, disableAiFallback: photoOnly }
       );
 
       spentUSD += outcome.cost;
@@ -120,6 +134,20 @@ async function main() {
         stat.attempts++;
         if (outcome.status === "FAILED") stat.rejects++;
       }
+
+      // PENDING = curation found no match (likely rate-limited). Leave as-is,
+      // cool down after a run of consecutive misses, and retry on a later pass.
+      if (outcome.status === "PENDING") {
+        curatedPending++;
+        consecutivePending++;
+        if (consecutivePending >= COOLDOWN_AFTER_CONSECUTIVE_PENDING) {
+          console.log(`\n  … ${consecutivePending} consecutive misses — cooling down ${COOLDOWN_MS / 1000}s (rate limit?)\n`);
+          await sleep(COOLDOWN_MS);
+          consecutivePending = 0;
+        }
+        continue;
+      }
+      consecutivePending = 0;
 
       await persist(lesson.contentId, outcome.update);
 
@@ -142,10 +170,10 @@ async function main() {
       await persist(lesson.contentId, { imageCategory: category, imageGenerationStatus: "FAILED" });
     }
 
-    if (generated > 0 && generated % 500 === 0) {
-      console.log(`\n  --- Budget checkpoint: ${generated} lessons, $${spentUSD.toFixed(2)} spent ---\n`);
+    if (generated > 0 && generated % 250 === 0) {
+      console.log(`\n  --- Checkpoint: ${generated} curated, ${curatedPending} pending, $${spentUSD.toFixed(2)} spent ---\n`);
     }
-    await sleep(250);
+    await sleep(throttleMs);
   }
 
   // rejection log
@@ -155,7 +183,7 @@ async function main() {
   }
 
   console.log("\n=== SUMMARY ===");
-  console.log({ generated, rejected: rejections.length, skippedBudget, spentUSD: Number(spentUSD.toFixed(3)) });
+  console.log({ generated, curatedPending, rejected: rejections.length, skippedBudget, spentUSD: Number(spentUSD.toFixed(3)) });
   console.log("Per-subject:", subjectStats);
   await prisma.$disconnect();
 }
