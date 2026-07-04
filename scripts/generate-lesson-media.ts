@@ -21,13 +21,9 @@ cleanEnv("DATABASE_URL");
 import fs from "fs";
 import path from "path";
 import { prisma } from "@/lib/db";
-import { categorizeLesson, gradeBand } from "@/lib/media/categorize";
-import { curatePhoto } from "@/lib/media/photoCuration";
-import { generateLessonIllustration } from "@/lib/media/generateIllustration";
-import { planInlineIllustrations } from "@/lib/media/inlinePlan";
-import { lessonMediaPath, uploadLessonImage } from "@/lib/media/blobStorage";
+import { categorizeLesson } from "@/lib/media/categorize";
+import { processLessonMedia } from "@/lib/media/processLesson";
 import { logAssetGenerationTelemetry } from "@/lib/assets/generationTelemetry";
-import type { HeroImageMeta, InlineIllustration } from "@/lib/media/types";
 
 const APPROVED = ["published", "APPROVED"];
 const HARD_STOP_USD = 28;
@@ -53,8 +49,6 @@ const heroesOnly = flag("heroes-only");
 
 let spentUSD = 0;
 let generated = 0;
-let firstPassOk = 0;
-let retryOk = 0;
 let skippedBudget = 0;
 const rejections: any[] = [];
 const subjectStats: Record<string, { attempts: number; rejects: number; aborted: boolean }> = {};
@@ -97,7 +91,6 @@ async function main() {
       continue;
     }
     const category = categorizeLesson(lesson.subject, lesson.title);
-    const band = gradeBand(lesson.grade);
     const stat = subjStat(lesson.subject);
     const start = new Date();
 
@@ -113,94 +106,37 @@ async function main() {
       continue;
     }
 
-    const altBase = `${lesson.title ?? "Lesson"} — ${lesson.subject.toLowerCase().replace(/_/g, " ")}`;
-
     try {
-      if (category === "PHOTO") {
-        const curated = await curatePhoto({
-          title: lesson.title,
-          subject: lesson.subject,
-          topics: lesson.waecSyllabusTopics,
-          altBase,
-        });
-        if (curated) {
-          await persist(lesson.contentId, {
-            heroImageUrl: curated.imageUrl,
-            heroImageMeta: curated.meta as any,
-            imageCategory: "PHOTO",
-            imageGenerationStatus: "CURATED",
-            imageGenerationCost: 0,
-          });
-          generated++;
-          await logAssetGenerationTelemetry({
-            provider: curated.provider, model: "curated", assetType: "lesson_hero_photo",
-            tenantId: null, route: "script.generate-lesson-media", startTime: start, endTime: new Date(),
-            success: true, estimatedCostUSD: 0, metadata: { contentId: lesson.contentId, category },
-          });
-          console.log(`  [PHOTO] ${lesson.subject} G${lesson.grade} "${(lesson.title ?? "").slice(0, 40)}" <- ${curated.provider}`);
-          continue;
-        }
-        // fall through to AI photorealistic fallback
+      const outcome = await processLessonMedia(
+        {
+          contentId: lesson.contentId, title: lesson.title, subject: lesson.subject,
+          grade: lesson.grade, body: bodyOf(lesson.payload), topics: lesson.waecSyllabusTopics,
+        },
+        { heroesOnly, dryRun, budgetRemaining: HARD_STOP_USD - spentUSD }
+      );
+
+      spentUSD += outcome.cost;
+      if (outcome.provider === "fal") {
+        stat.attempts++;
+        if (outcome.status === "FAILED") stat.rejects++;
       }
 
-      // VISUAL (or PHOTO fallback) -> generate hero
-      const photoreal = category === "PHOTO";
-      const hero = await generateLessonIllustration({
-        subjectFocus: lesson.title ?? lesson.subject, subject: lesson.subject, band, photoreal,
-      });
-      stat.attempts++;
-      spentUSD += hero.cost;
+      await persist(lesson.contentId, outcome.update);
 
-      if (!hero.ok) {
-        stat.rejects++;
-        rejections.push({ contentId: lesson.contentId, subject: lesson.subject, kind: "hero", reason: "reason" in hero ? hero.reason : "unknown" });
-        await persist(lesson.contentId, { imageCategory: category, imageGenerationStatus: "FAILED", imageGenerationCost: hero.cost });
+      if (outcome.status === "FAILED") {
+        rejections.push({ contentId: lesson.contentId, subject: lesson.subject, kind: "hero", reason: outcome.reason });
         maybeAbort(lesson.subject);
         continue;
       }
-      if (hero.attempts === 1) firstPassOk++; else retryOk++;
+      if (outcome.status === "GENERATED" || outcome.status === "CURATED") generated++;
 
-      const heroPath = lessonMediaPath({ lessonId: lesson.contentId, kind: "hero", ext: "jpg" });
-      const heroUrl = dryRun ? `dryrun://${heroPath}` : await uploadLessonImage({ path: heroPath, data: hero.bytes, contentType: hero.contentType });
-      const heroMeta: HeroImageMeta = {
-        alt: altBase, caption: null, provider: "fal", source: null,
-        license: "AI-generated (Flux schnell)", credit: null, category,
-      };
-
-      // Inline (VISUAL only, unless --heroes-only)
-      const inline: InlineIllustration[] = [];
-      let lessonCost = hero.cost;
-      if (category === "VISUAL" && !heroesOnly) {
-        const specs = planInlineIllustrations({ title: lesson.title, body: bodyOf(lesson.payload) });
-        for (const spec of specs) {
-          if (spentUSD >= HARD_STOP_USD) break;
-          const ill = await generateLessonIllustration({ subjectFocus: spec.subjectFocus, subject: lesson.subject, band, isDiagram: true });
-          stat.attempts++;
-          spentUSD += ill.cost;
-          lessonCost += ill.cost;
-          if (!ill.ok) {
-            stat.rejects++;
-            rejections.push({ contentId: lesson.contentId, subject: lesson.subject, kind: "inline", reason: "reason" in ill ? ill.reason : "unknown" });
-            continue;
-          }
-          const p = lessonMediaPath({ lessonId: lesson.contentId, kind: "inline", index: inline.length, ext: "jpg" });
-          const url = dryRun ? `dryrun://${p}` : await uploadLessonImage({ path: p, data: ill.bytes, contentType: ill.contentType });
-          inline.push({ position: spec.position, url, alt: spec.subjectFocus, provider: "fal", license: "AI-generated (Flux schnell)" });
-        }
-      }
-
-      await persist(lesson.contentId, {
-        heroImageUrl: heroUrl, heroImageMeta: heroMeta as any,
-        inlineIllustrations: inline.length ? (inline as any) : undefined,
-        imageCategory: category, imageGenerationStatus: "GENERATED", imageGenerationCost: lessonCost,
-      });
-      generated++;
       await logAssetGenerationTelemetry({
-        provider: "fal", model: "flux-schnell", assetType: "lesson_illustration",
-        tenantId: null, route: "script.generate-lesson-media", startTime: start, endTime: new Date(),
-        success: true, estimatedCostUSD: lessonCost, metadata: { contentId: lesson.contentId, category, inline: inline.length },
+        provider: outcome.provider ?? "none", model: outcome.category === "PHOTO" && outcome.provider !== "fal" ? "curated" : "flux-schnell",
+        assetType: "lesson_media", tenantId: null, route: "script.generate-lesson-media",
+        startTime: start, endTime: new Date(), success: true, estimatedCostUSD: outcome.cost,
+        metadata: { contentId: lesson.contentId, category: outcome.category, inline: outcome.inlineCount },
       });
-      console.log(`  [${category}] ${lesson.subject} G${lesson.grade} "${(lesson.title ?? "").slice(0, 36)}" hero+${inline.length} inline  $${spentUSD.toFixed(3)}`);
+      console.log(`  [${outcome.status}] ${lesson.subject} G${lesson.grade} "${(lesson.title ?? "").slice(0, 36)}" hero+${outcome.inlineCount} inline  $${spentUSD.toFixed(3)}`);
     } catch (e: any) {
       rejections.push({ contentId: lesson.contentId, subject: lesson.subject, kind: "error", reason: e?.message });
       await persist(lesson.contentId, { imageCategory: category, imageGenerationStatus: "FAILED" });
@@ -219,7 +155,7 @@ async function main() {
   }
 
   console.log("\n=== SUMMARY ===");
-  console.log({ generated, firstPassOk, retryOk, rejected: rejections.length, skippedBudget, spentUSD: Number(spentUSD.toFixed(3)) });
+  console.log({ generated, rejected: rejections.length, skippedBudget, spentUSD: Number(spentUSD.toFixed(3)) });
   console.log("Per-subject:", subjectStats);
   await prisma.$disconnect();
 }
