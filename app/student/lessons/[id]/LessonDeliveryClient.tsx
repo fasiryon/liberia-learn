@@ -12,6 +12,8 @@ import LessonLabPanel from "@/components/labs/LessonLabPanel";
 import { PencilButton, PencilButtonFloat } from "@/components/ui/PencilButton";
 import { gradeToTutorBand } from "@/lib/ai/studentLessonSupport";
 import { lessonDurationLabel, renderSimpleMarkdown, selectLessonBody } from "@/lib/lessons";
+import { LessonHero, type HeroImageMetaLike, type InlineIllustrationLike } from "@/components/lesson/LessonImage";
+import { LessonBody } from "@/components/lesson/LessonBody";
 import { getLessonLabLinks } from "@/lib/lessons/labLinks";
 import { parseToSlides } from "@/lib/lessons/parseToSlides";
 import { enqueueOfflineRequest } from "@/lib/offline-queue";
@@ -48,6 +50,9 @@ type LessonResponse = {
     };
   } | null;
   objectives: string[];
+  heroImage?: { url: string; meta: HeroImageMetaLike } | null;
+  inlineIllustrations?: InlineIllustrationLike[] | null;
+  imageCategory?: string | null;
   pseudoLabs: PseudoLab[];
   simulationDefinitions: SimulationDefinition[];
   status: "not_started" | "in_progress" | "completed";
@@ -1018,6 +1023,9 @@ export default function LessonDeliveryClient({ lessonId }: { lessonId: string })
         ) : null}
 
         <section ref={registerSection("lesson-content")} data-section-id="lesson-content" className={`rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/80 p-5 sm:p-7${mode === "video" ? " hidden" : ""}`}>
+          {lesson.heroImage?.url ? (
+            <LessonHero url={lesson.heroImage.url} meta={lesson.heroImage.meta} />
+          ) : null}
           {mode === "listen" ? (
             <div className="mb-6 rounded-xl border border-[var(--ll-silver)]/20 bg-[var(--ll-silver-soft)] p-4">
               <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
@@ -1122,11 +1130,7 @@ export default function LessonDeliveryClient({ lessonId }: { lessonId: string })
                   })()}
                 </p>
               )}
-              <div
-                className="prose prose-invert max-w-none overflow-y-auto rounded-lg prose-headings:text-[var(--ll-text)] prose-h2:text-xl prose-h3:text-base prose-p:text-[var(--ll-text)] prose-p:text-[1rem] prose-p:leading-8 prose-li:text-[var(--ll-text)] prose-li:text-[1rem] prose-li:leading-8"
-                style={{ maxHeight: "65vh", minHeight: "300px" }}
-                dangerouslySetInnerHTML={{ __html: renderSimpleMarkdown(renderedBody) }}
-              />
+              <LessonBody renderedBody={renderedBody} inline={lesson.inlineIllustrations} />
               {lesson.problemSets && lesson.problemSets.length > 0 ? (
                 <div className="mt-6">
                   <ProblemRevealSection lessonId={lesson.id} problemSets={lesson.problemSets} />

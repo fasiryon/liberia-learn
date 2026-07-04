@@ -1,8 +1,41 @@
 import JSZip from "jszip";
 import { put } from "@vercel/blob";
 import { prisma } from "@/lib/db";
+import { signMediaUrl } from "@/lib/media/blobStorage";
 
 const APPROVED_STATUSES = ["published", "APPROVED"];
+
+// Phase 4A: cap hero images per pack so the zip stays well under the 30MB budget.
+const PACK_IMAGE_BUDGET_BYTES = 8 * 1024 * 1024; // 8MB of illustrations per pack
+
+/**
+ * Bundle a lesson hero image into its pack folder, respecting a shared media
+ * budget. Returns bytes written (0 if skipped). Non-fatal on any failure.
+ */
+async function bundleHeroImage(
+  folder: JSZip,
+  content: { heroImageUrl?: string | null; heroImageMeta?: unknown },
+  budget: { used: number }
+): Promise<{ hasImage: boolean; caption: unknown }> {
+  if (!content.heroImageUrl || budget.used >= PACK_IMAGE_BUDGET_BYTES) {
+    return { hasImage: false, caption: null };
+  }
+  try {
+    const signed = (await signMediaUrl(content.heroImageUrl)) ?? content.heroImageUrl;
+    const res = await fetch(signed);
+    if (!res.ok) return { hasImage: false, caption: null };
+    const buf = await res.arrayBuffer();
+    if (budget.used + buf.byteLength > PACK_IMAGE_BUDGET_BYTES) {
+      return { hasImage: false, caption: null };
+    }
+    budget.used += buf.byteLength;
+    folder.file("hero.jpg", buf);
+    folder.file("hero.meta.json", JSON.stringify(content.heroImageMeta ?? {}, null, 2));
+    return { hasImage: true, caption: content.heroImageMeta };
+  } catch {
+    return { hasImage: false, caption: null };
+  }
+}
 
 // Keys stripped from lesson payload for student packs
 const STUDENT_STRIP_KEYS = new Set([
@@ -56,6 +89,8 @@ export async function generatePack(packId: string): Promise<PackResult> {
             subject: true,
             grade: true,
             contentType: true,
+            heroImageUrl: true,
+            heroImageMeta: true,
             audioAssets: {
               where: { status: "GENERATED" },
               orderBy: { generatedAt: "desc" },
@@ -89,6 +124,7 @@ export async function generatePack(packId: string): Promise<PackResult> {
               select: {
                 id: true, contentId: true, payload: true, subject: true, grade: true,
                 contentType: true, editedBy: { select: { name: true } },
+                heroImageUrl: true, heroImageMeta: true,
                 audioAssets: {
                   where: { status: "GENERATED" },
                   orderBy: { generatedAt: "desc" },
@@ -108,6 +144,7 @@ export async function generatePack(packId: string): Promise<PackResult> {
           select: {
             id: true, contentId: true, payload: true, subject: true, grade: true,
             contentType: true, editedBy: { select: { name: true } },
+            heroImageUrl: true, heroImageMeta: true,
             audioAssets: {
               where: { status: "GENERATED" },
               orderBy: { generatedAt: "desc" },
@@ -119,6 +156,7 @@ export async function generatePack(packId: string): Promise<PackResult> {
       : [];
 
     const zip = new JSZip();
+    const imageBudget = { used: 0 };
     const manifestLessons: Array<{
       id: string;
       contentId: string;
@@ -181,6 +219,9 @@ export async function generatePack(packId: string): Promise<PackResult> {
         }
       }
 
+      // Phase 4A: bundle hero illustration within the pack media budget
+      await bundleHeroImage(folder, c, imageBudget);
+
       manifestLessons.push({
         id: work.id,
         contentId: c.contentId,
@@ -228,6 +269,8 @@ export async function generatePack(packId: string): Promise<PackResult> {
           if (res.ok) { folder.file("audio.mp3", await res.arrayBuffer()); hasAudio = true; }
         } catch { /* non-fatal */ }
       }
+
+      await bundleHeroImage(folder, c, imageBudget);
 
       manifestLessons.push({
         id: c.id, contentId: c.contentId,
