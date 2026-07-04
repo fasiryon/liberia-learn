@@ -1883,6 +1883,13 @@ model CurriculumContent {
   thumbnailGeneratedAt DateTime?
   thumbnailError   String?
   isHero          Boolean         @default(false)
+  // Phase 4A: hybrid lesson media (hero + inline illustrations / curated photos)
+  heroImageUrl          String?
+  heroImageMeta         Json?          // { alt, caption, source, license, credit, provider, category }
+  inlineIllustrations   Json?          // [{ position, url, alt, caption, source, license, provider }]
+  imageGenerationStatus String         @default("PENDING") // PENDING|GENERATED|CURATED|SKIPPED|FAILED
+  imageGenerationCost   Float?
+  imageCategory         String?        // VISUAL|PHOTO|ABSTRACT
   versionId       String?
   // Sprint 25: teacher content creation
   editedById      String?
@@ -1919,6 +1926,7 @@ model CurriculumContent {
   @@index([versionId, status])
   @@index([editedById, editReviewStatus])
   @@index([schoolId, visibility])
+  @@index([imageCategory, imageGenerationStatus])
 }
 
 model LessonAudio {
