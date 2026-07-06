@@ -4052,3 +4052,84 @@ model OfflinePack {
   @@index([status])
   @@index([expiresAt])
 }
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Sprint 6.0a — Agent Platform Foundation (LLM agent harness).
+// Distinct from the generic Agent/AgentTask (Family A) and the dormant
+// Autonomous OS AgentRun/AgentDecision (Family B) — see
+// docs/superpowers/specs/2026-07-06-agent-platform-foundation-design.md
+// ─────────────────────────────────────────────────────────────────────────────
+
+model AgentInvocation {
+  id               String     @id @default(cuid())
+  agentName        String
+  agentVersion     String
+  goalId           String?
+  userId           String?
+  triggeredBy      String // USER | SCHEDULE | EVENT | GOAL_CONTINUATION
+  input            Json
+  output           Json?
+  toolCalls        Json       @default("[]")
+  llmTokensIn      Int        @default(0)
+  llmTokensOut     Int        @default(0)
+  llmCostUSD       Float      @default(0)
+  toolCostUnits    Int        @default(0)
+  latencyMs        Int        @default(0)
+  status           String // SUCCESS | FAILURE | ESCALATED | TIMEOUT | COST_CAPPED | FEATURE_DISABLED
+  errorMessage     String?
+  escalationReason String?
+  createdAt        DateTime   @default(now())
+  goal             AgentGoal? @relation(fields: [goalId], references: [id])
+
+  @@index([agentName, createdAt])
+  @@index([userId, createdAt])
+  @@index([goalId])
+}
+
+model AgentGoal {
+  id                  String            @id @default(cuid())
+  agentName           String
+  initiatedBy         String
+  goalDescription     String
+  status              String            @default("OPEN") // OPEN|IN_PROGRESS|PAUSED_FOR_HUMAN|PAUSED_FOR_SCHEDULE|COMPLETED|FAILED|CANCELLED
+  state               Json              @default("{}")
+  pauseReason         String?
+  pauseUntil          DateTime?
+  humanReviewRequired Boolean           @default(false)
+  createdAt           DateTime          @default(now())
+  updatedAt           DateTime          @updatedAt
+  completedAt         DateTime?
+  invocations         AgentInvocation[]
+
+  @@index([status, updatedAt])
+  @@index([initiatedBy])
+}
+
+model AgentCostAccounting {
+  id                 String   @id @default(cuid())
+  agentName          String
+  date               DateTime @db.Date
+  totalInvocations   Int      @default(0)
+  totalLlmCostUSD    Float    @default(0)
+  totalToolCostUnits Int      @default(0)
+  uniqueUsers        Int      @default(0)
+
+  @@unique([agentName, date])
+}
+
+model EscalationQueue {
+  id           String    @id @default(cuid())
+  agentName    String
+  invocationId String
+  goalId       String?
+  userId       String?
+  reason       String
+  priority     String    @default("MEDIUM") // LOW | MEDIUM | HIGH
+  assignedTo   String?
+  status       String    @default("OPEN") // OPEN | IN_PROGRESS | RESOLVED | CLOSED
+  createdAt    DateTime  @default(now())
+  resolvedAt   DateTime?
+  resolution   String?
+
+  @@index([status, priority, createdAt])
+}

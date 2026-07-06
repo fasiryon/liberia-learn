@@ -74,6 +74,8 @@ export const PERMISSIONS = {
   USER_CHANGE_ROLE: "user:account:change_role",
   /** Suppress a student cohort from national reporting. MOE_OFFICIAL + platform admin. */
   COHORT_SUPPRESS: "cohort:reporting:suppress",
+  /** View the agent platform admin surfaces (invocations, cost, goals, escalations). */
+  AGENT_PLATFORM_VIEW: "agent:platform:view",
 } as const;
 
 export type Permission = (typeof PERMISSIONS)[keyof typeof PERMISSIONS];
@@ -97,6 +99,7 @@ export const ROLE_PERMISSIONS: Record<string, ReadonlySet<Permission>> = {
     PERMISSIONS.CURRICULUM_APPROVE,
     PERMISSIONS.CURRICULUM_COVERAGE_VIEW,
     PERMISSIONS.USER_CHANGE_ROLE,
+    PERMISSIONS.AGENT_PLATFORM_VIEW,
     // Block 12
     PERMISSIONS.DASHBOARD_SCHOOL_IMPACT,
     PERMISSIONS.DASHBOARD_SCHOOL_INTERVENTIONS,
