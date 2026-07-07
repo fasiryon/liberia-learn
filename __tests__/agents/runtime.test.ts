@@ -15,6 +15,21 @@ vi.mock("@/lib/agents/invocationLog", () => ({
 vi.mock("@/lib/agents/costAccounting", () => ({
   recordSpend: (...args: unknown[]) => recordSpend(...args),
 }));
+// Cross-cutting deps default to no-op / allow so these tests focus on the loop.
+vi.mock("@/lib/agents/costEnforcement", () => ({
+  checkCostCaps: vi.fn(async () => ({ allowed: true })),
+}));
+vi.mock("@/lib/agents/moderation", () => ({
+  moderateText: vi.fn(async () => ({ verdict: "SAFE" })),
+}));
+vi.mock("@/lib/agents/translation", () => ({
+  detectLanguage: vi.fn(async () => "en"),
+  translateToEnglish: vi.fn(async (t: string) => t),
+  translateFromEnglish: vi.fn(async (t: string) => t),
+}));
+vi.mock("@/lib/agents/escalation", () => ({
+  enqueueEscalation: vi.fn(async () => ({ id: "esc-1" })),
+}));
 
 import { registerAgent } from "@/lib/agents/registry";
 import { registerTool } from "@/lib/agents/toolRegistry";
