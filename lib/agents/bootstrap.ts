@@ -7,3 +7,4 @@ import "@/lib/agents/prompts";
 import "@/lib/agents/infraPrompts";
 import "@/lib/agents/tools/echo.tool";
 import "@/lib/agents/agents/echo.agent";
+import "@/lib/agents/goals/goalEcho";
