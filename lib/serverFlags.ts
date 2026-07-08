@@ -906,3 +906,12 @@ export function isRuntimeDashboardEnabled(): boolean {
 export function isReplayConsoleEnabled(): boolean {
   return process.env.ENABLE_REPLAY_CONSOLE !== "false";
 }
+
+/**
+ * Agent platform scheduler/goal tick cron. DEFAULT OFF.
+ * Set AGENT_CRON_ENABLED=true to let the tick endpoint advance goals and run
+ * scheduled agents. No user-facing agent ships yet, so this stays off in prod.
+ */
+export function isAgentCronEnabled(): boolean {
+  return process.env.AGENT_CRON_ENABLED?.trim() === "true";
+}
