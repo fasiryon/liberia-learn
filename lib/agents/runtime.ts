@@ -2,7 +2,7 @@ import { routedCompletion } from "@/lib/ai/routedCompletion";
 import { getSystemPrompt } from "@/lib/ai/promptRegistry";
 import { getAgent } from "@/lib/agents/registry";
 import { toolsForAgent } from "@/lib/agents/toolRegistry";
-import { isAgentEnabled } from "@/lib/agents/flags";
+import { resolveAgentEnabled } from "@/lib/agents/control";
 import { persistInvocation } from "@/lib/agents/invocationLog";
 import { recordSpend } from "@/lib/agents/costAccounting";
 import { roundUSD } from "@/lib/agents/money";
@@ -287,8 +287,8 @@ export async function runAgent(
     };
   };
 
-  // 1. Kill switch.
-  if (!isAgentEnabled(agent.featureFlag)) {
+  // 1. Kill switch (admin DB override wins over the env flag).
+  if (!(await resolveAgentEnabled(agent.name, agent.featureFlag))) {
     return earlyReturn("FEATURE_DISABLED", "feature_disabled");
   }
 

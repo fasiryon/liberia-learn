@@ -34,6 +34,9 @@ vi.mock("@/lib/agents/translation", () => ({
 vi.mock("@/lib/agents/escalation", () => ({
   enqueueEscalation: (...a: unknown[]) => enqueueEscalation(...a),
 }));
+vi.mock("@/lib/agents/control", () => ({
+  resolveAgentEnabled: vi.fn(async (_n: string, flag: string) => process.env[flag]?.trim() === "true"),
+}));
 
 import { registerAgent } from "@/lib/agents/registry";
 import { registerTool } from "@/lib/agents/toolRegistry";

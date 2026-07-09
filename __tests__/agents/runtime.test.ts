@@ -30,6 +30,10 @@ vi.mock("@/lib/agents/translation", () => ({
 vi.mock("@/lib/agents/escalation", () => ({
   enqueueEscalation: vi.fn(async () => ({ id: "esc-1" })),
 }));
+// Kill switch resolves to the env flag (no DB override) in these tests.
+vi.mock("@/lib/agents/control", () => ({
+  resolveAgentEnabled: vi.fn(async (_n: string, flag: string) => process.env[flag]?.trim() === "true"),
+}));
 
 import { registerAgent } from "@/lib/agents/registry";
 import { registerTool } from "@/lib/agents/toolRegistry";
