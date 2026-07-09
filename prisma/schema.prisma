@@ -4119,6 +4119,16 @@ model AgentCostAccounting {
   @@unique([agentName, date])
 }
 
+// Sprint 6.0d: runtime kill-switch override from the admin dashboard.
+// enabledOverride null = defer to the agent's env feature flag; true/false wins.
+model AgentControl {
+  id              String   @id @default(cuid())
+  agentName       String   @unique
+  enabledOverride Boolean?
+  updatedBy       String?
+  updatedAt       DateTime @updatedAt
+}
+
 model EscalationQueue {
   id           String    @id @default(cuid())
   agentName    String

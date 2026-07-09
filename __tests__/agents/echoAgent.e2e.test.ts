@@ -27,6 +27,9 @@ vi.mock("@/lib/agents/translation", () => ({
 vi.mock("@/lib/agents/escalation", () => ({
   enqueueEscalation: vi.fn(async () => ({ id: "esc-1" })),
 }));
+vi.mock("@/lib/agents/control", () => ({
+  resolveAgentEnabled: vi.fn(async (_n: string, flag: string) => process.env[flag]?.trim() === "true"),
+}));
 
 // Registers echo agent + tool + file-loaded prompt as a side effect.
 import "@/lib/agents/bootstrap";
