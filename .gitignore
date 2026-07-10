@@ -115,3 +115,6 @@ load-tests/fixtures/student-tokens.json
 load-tests/fixtures/guardian-tokens.json
 load-tests/fixtures/load-test.env
 load-tests/results/*.json
+
+# Fine-tune datasets (lesson content, not for git)
+scripts/finetune/data/
