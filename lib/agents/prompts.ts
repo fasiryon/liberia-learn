@@ -16,3 +16,9 @@ registerPromptDefinition({
   version: "1.0.0",
   template: loadPromptFile("./prompts/echo.md"),
 });
+
+registerPromptDefinition({
+  key: "agent.liberialearn-family.system",
+  version: "1.0.0",
+  template: loadPromptFile("./prompts/liberialearn-family.md"),
+});

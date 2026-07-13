@@ -8,3 +8,6 @@ import "@/lib/agents/infraPrompts";
 import "@/lib/agents/tools/echo.tool";
 import "@/lib/agents/agents/echo.agent";
 import "@/lib/agents/goals/goalEcho";
+import "@/lib/agents/tools/guardian.tools";
+import "@/lib/agents/tools/safeguarding.tools";
+import "@/lib/agents/agents/liberialearn-family.agent";

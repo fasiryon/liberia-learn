@@ -5,7 +5,11 @@ export type EscalationPriority = "LOW" | "MEDIUM" | "HIGH";
 
 export interface EnqueueEscalationInput {
   agentName: string;
-  invocationId: string;
+  /**
+   * Nullable: a tool (e.g. safeguarding.escalate) can fire mid-loop, before
+   * the enclosing AgentInvocation row is persisted at the end of runAgent.
+   */
+  invocationId?: string | null;
   goalId?: string | null;
   userId?: string | null;
   reason: string;
@@ -21,7 +25,7 @@ export async function enqueueEscalation(
   const row = (await prisma.escalationQueue.create({
     data: {
       agentName: input.agentName,
-      invocationId: input.invocationId,
+      invocationId: input.invocationId ?? null,
       goalId: input.goalId ?? null,
       userId: input.userId ?? null,
       reason: input.reason,
