@@ -56,6 +56,27 @@ Verified run (2026-07-10, read-only): 60 approved G4-6 MATH/SCIENCE lessons ->
 54 train / 6 val, ~67k train tokens, **~$0.61** estimated (3 epochs). Full corpus
 (~5,900 lessons) would be a larger but still modest one-time cost.
 
+### Verified end-to-end (minus paid trigger) - 2026-07-13
+Ran the full OpenAI integration path against the live API using the 60-lesson
+G4-6 MATH/SCIENCE export (54 train examples), stopping short of the paid
+`fineTuning.jobs.create` call:
+
+- **Auth** - `OPENAI_API_KEY` pulled fresh from Vercel production env, `.trim()`
+  applied (carry-forward rule 4); no CRLF/whitespace found. `client.models.list()`
+  succeeded (123 models visible). PASS.
+- **Upload** - `files.create({ purpose: "fine-tune" })` on the 54-example train
+  file. PASS - file id `file-6j12N41JeRruLKxSk5HpAp`.
+- **Retrieve** - `files.retrieve()` returned `status: "processed"` on the first
+  poll (~5s, well under the 30-60s expected window for a file this small). PASS.
+- **Delete** - `files.delete()` returned `{ deleted: true }`. PASS.
+- Total wall time for auth+upload+retrieve+delete: ~5.1s. No rate limits, no
+  unexpected error shapes. `getOpenAIClientOrNull()` in `lib/ai/openaiClient.ts`
+  does not itself `.trim()` the key - relies on the caller/env being clean.
+  The live pulled key had no whitespace, so this did not surface as a bug here,
+  but it is a latent landmine if a future Vercel env write reintroduces CRLF.
+  The only remaining step to a real fine-tuned model is `--confirm` on
+  `scripts/finetune/submit-finetune.ts`, which is a paid call and stays gated.
+
 ## Wiring the fine-tuned model into production
 Add the fine-tuned model id behind a feature flag and route to it via
 `routedCompletion` (it already supports `modelOverride` for OpenAI). A/B log
