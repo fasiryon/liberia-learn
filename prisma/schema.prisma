@@ -4132,7 +4132,9 @@ model AgentControl {
 model EscalationQueue {
   id           String    @id @default(cuid())
   agentName    String
-  invocationId String
+  // Nullable: a tool (e.g. safeguarding.escalate) can fire mid-loop, before the
+  // enclosing AgentInvocation row is persisted at the end of runAgent.
+  invocationId String?
   goalId       String?
   userId       String?
   reason       String
@@ -4144,4 +4146,22 @@ model EscalationQueue {
   resolution   String?
 
   @@index([status, priority, createdAt])
+}
+
+// Sprint 6.1: Guardian Agent (LiberiaLearn Family) conversation state, keyed by
+// inbound phone number. guardianId/verifiedAt are intentionally NOT a Prisma
+// relation to User yet — the identity-resolution rules that populate them are
+// still pending review (docs/agents/GUARDIAN_IDENTITY_VERIFICATION.md).
+model GuardianConversation {
+  id                   String    @id @default(cuid())
+  guardianPhone        String    @unique
+  guardianId           String?
+  verifiedAt           DateTime?
+  verificationAttempts Int       @default(0)
+  state                Json      @default("{}")
+  createdAt            DateTime  @default(now())
+  updatedAt            DateTime  @updatedAt
+  expiresAt            DateTime
+
+  @@index([expiresAt])
 }

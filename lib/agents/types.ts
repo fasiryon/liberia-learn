@@ -14,7 +14,9 @@ export type AgentRole =
   | "principal"
   | "guardian"
   | "moe"
-  | "admin";
+  | "admin"
+  /** Trusted infrastructure caller (e.g. an SMS webhook), not a human role. */
+  | "system";
 
 /** Domain a tool belongs to (for grouping / governance). */
 export type ToolDomain =
