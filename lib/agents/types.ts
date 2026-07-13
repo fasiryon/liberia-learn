@@ -74,6 +74,14 @@ export interface ToolContext {
   schoolId?: string | null;
   traceId?: string | null;
   agentName: string;
+  /**
+   * Student IDs the caller has been granted temporary, per-conversation
+   * access to via the Student-ID + name identity challenge (Sprint 6.1,
+   * docs/agents/GUARDIAN_IDENTITY_VERIFICATION.md option (a)) - distinct
+   * from userId, which is only ever set for a resolved, permanent
+   * guardian identity (the known-number path).
+   */
+  grantedStudentIds?: string[] | null;
 }
 
 export interface ToolDefinition<I = any, O = any> {

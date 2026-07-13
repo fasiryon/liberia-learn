@@ -4148,6 +4148,20 @@ model EscalationQueue {
   @@index([status, priority, createdAt])
 }
 
+// Sprint 6.1: per-guardian SMS delivery cost accounting (escalation point 4).
+// Keyed by phone (not guardianId) so it covers unverified/pre-challenge
+// traffic too, not just resolved guardian identities.
+model GuardianSmsCostAccounting {
+  id               String   @id @default(cuid())
+  guardianPhone    String
+  date             DateTime @db.Date
+  outboundCount    Int      @default(0)
+  outboundSegments Int      @default(0)
+  estimatedCostUSD Float    @default(0)
+
+  @@unique([guardianPhone, date])
+}
+
 // Sprint 6.1: Guardian Agent (LiberiaLearn Family) conversation state, keyed by
 // inbound phone number. guardianId/verifiedAt are intentionally NOT a Prisma
 // relation to User yet — the identity-resolution rules that populate them are

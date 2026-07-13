@@ -35,4 +35,17 @@ describe("assertGuardianOf", () => {
       where: { studentId_guardianId: { studentId: "student-1", guardianId: "guardian-1" } },
     });
   });
+
+  it("resolves via a per-conversation grantedStudentIds match without a DB lookup (Spec 1 challenge grant)", async () => {
+    await expect(
+      assertGuardianOf({ agentName: "x", userId: null, grantedStudentIds: ["student-1"] }, "student-1")
+    ).resolves.toBeUndefined();
+    expect(mockPrisma.studentGuardian.findUnique).not.toHaveBeenCalled();
+  });
+
+  it("does not grant access to a student not in grantedStudentIds, and falls through to the normal 401", async () => {
+    await expect(
+      assertGuardianOf({ agentName: "x", userId: null, grantedStudentIds: ["other-student"] }, "student-1")
+    ).rejects.toMatchObject({ status: 401 });
+  });
 });

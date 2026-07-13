@@ -8,6 +8,8 @@ const {
   mockSendPushToUser,
   mockGetTeacherAlertPref,
   mockLogAudit,
+  mockEnqueueEscalation,
+  mockCreateInboxNotification,
 } = vi.hoisted(() => {
   const mockPrisma = {
     studentGuardian: { findUnique: vi.fn() },
@@ -20,7 +22,7 @@ const {
     homework: { findMany: vi.fn() },
     assignmentSubmission: { findMany: vi.fn() },
     homeworkSubmission: { findMany: vi.fn() },
-    user: { findUnique: vi.fn() },
+    user: { findUnique: vi.fn(), findMany: vi.fn() },
     guardianMessage: { create: vi.fn() },
   };
   return {
@@ -31,6 +33,8 @@ const {
     mockSendPushToUser: vi.fn(),
     mockGetTeacherAlertPref: vi.fn(),
     mockLogAudit: vi.fn(),
+    mockEnqueueEscalation: vi.fn(),
+    mockCreateInboxNotification: vi.fn(),
   };
 });
 
@@ -43,6 +47,8 @@ vi.mock("@/lib/guardian/sms-service", () => ({ sendGuardianSMS: mockSendGuardian
 vi.mock("@/lib/push/sendPush", () => ({ sendPushToUser: mockSendPushToUser }));
 vi.mock("@/lib/alert-prefs", () => ({ getTeacherAlertPref: mockGetTeacherAlertPref }));
 vi.mock("@/lib/audit", () => ({ logAudit: mockLogAudit }));
+vi.mock("@/lib/agents/escalation", () => ({ enqueueEscalation: mockEnqueueEscalation }));
+vi.mock("@/lib/notifications/inboxService", () => ({ createInboxNotification: mockCreateInboxNotification }));
 
 import {
   getStudentProgressTool,
@@ -51,6 +57,7 @@ import {
   getTeacherContactTool,
   triggerDigestNowTool,
   flagForTeacherTool,
+  requestPhoneUpdateTool,
 } from "@/lib/agents/tools/guardian.tools";
 
 const GUARDIAN_CTX = { agentName: "liberialearn-family", userId: "guardian-1", userRole: "system" as const };
@@ -65,6 +72,8 @@ function resetAll() {
   mockSendPushToUser.mockReset();
   mockGetTeacherAlertPref.mockReset();
   mockLogAudit.mockReset();
+  mockEnqueueEscalation.mockReset();
+  mockCreateInboxNotification.mockReset();
 }
 
 describe("guardian.getStudentProgress", () => {
@@ -338,5 +347,59 @@ describe("guardian.flagForTeacher", () => {
 
     const result = await flagForTeacherTool.handler({ studentId: "student-1", message: "hi" }, GUARDIAN_CTX);
     expect(result).toEqual({ messageId: "msg-1", deliveryStatus: "delivered" });
+  });
+});
+
+describe("guardian.requestPhoneUpdate", () => {
+  beforeEach(() => resetAll());
+
+  it("rejects a caller with no resolved guardian identity (challenge-only grant)", async () => {
+    await expect(
+      requestPhoneUpdateTool.handler({ reason: "new SIM" }, { agentName: "x", userId: null })
+    ).rejects.toMatchObject({ status: 401 });
+    expect(mockEnqueueEscalation).not.toHaveBeenCalled();
+  });
+
+  it("never writes User.guardianPhoneE164 - only flags the request", async () => {
+    mockPrisma.user.findUnique.mockResolvedValue({
+      guardianOf: [{ student: { user: { schoolId: "school-1" } } }],
+    });
+    mockPrisma.user.findMany.mockResolvedValue([{ id: "admin-1" }]);
+    mockEnqueueEscalation.mockResolvedValue({ id: "esc-1" });
+
+    const result = await requestPhoneUpdateTool.handler({ reason: "my number changed" }, GUARDIAN_CTX);
+
+    expect(result).toEqual({ escalationId: "esc-1" });
+    expect(mockPrisma.user.findUnique).not.toHaveBeenCalledWith(
+      expect.objectContaining({ data: expect.anything() })
+    );
+    expect(mockEnqueueEscalation).toHaveBeenCalledWith(
+      expect.objectContaining({ priority: "LOW", userId: "guardian-1", schoolId: "school-1" })
+    );
+  });
+
+  it("notifies ADMIN-role users at the guardian's school", async () => {
+    mockPrisma.user.findUnique.mockResolvedValue({
+      guardianOf: [{ student: { user: { schoolId: "school-1" } } }],
+    });
+    mockPrisma.user.findMany.mockResolvedValue([{ id: "admin-1" }, { id: "admin-2" }]);
+    mockEnqueueEscalation.mockResolvedValue({ id: "esc-1" });
+
+    await requestPhoneUpdateTool.handler({ reason: "new SIM" }, GUARDIAN_CTX);
+
+    expect(mockPrisma.user.findMany).toHaveBeenCalledWith(
+      expect.objectContaining({ where: { role: "ADMIN", schoolId: "school-1" } })
+    );
+    expect(mockCreateInboxNotification).toHaveBeenCalledTimes(2);
+  });
+
+  it("still succeeds without a resolvable schoolId (no admins to notify)", async () => {
+    mockPrisma.user.findUnique.mockResolvedValue({ guardianOf: [] });
+    mockEnqueueEscalation.mockResolvedValue({ id: "esc-1" });
+
+    const result = await requestPhoneUpdateTool.handler({ reason: "new SIM" }, GUARDIAN_CTX);
+
+    expect(result).toEqual({ escalationId: "esc-1" });
+    expect(mockPrisma.user.findMany).not.toHaveBeenCalled();
   });
 });

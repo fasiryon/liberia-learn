@@ -9,6 +9,8 @@ import type { ToolContext } from "@/lib/agents/types";
  * separate, still-pending concern (docs/agents/GUARDIAN_IDENTITY_VERIFICATION.md).
  */
 export async function assertGuardianOf(ctx: ToolContext, studentId: string): Promise<void> {
+  if (ctx.grantedStudentIds?.includes(studentId)) return;
+
   if (!ctx.userId) {
     throw Object.assign(new Error("Caller is not a verified guardian."), { status: 401 });
   }
