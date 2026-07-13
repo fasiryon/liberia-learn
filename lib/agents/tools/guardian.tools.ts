@@ -7,6 +7,8 @@ import { sendGuardianSMS } from "@/lib/guardian/sms-service";
 import { sendPushToUser } from "@/lib/push/sendPush";
 import { getTeacherAlertPref } from "@/lib/alert-prefs";
 import { logAudit } from "@/lib/audit";
+import { enqueueEscalation } from "@/lib/agents/escalation";
+import { createInboxNotification } from "@/lib/notifications/inboxService";
 import type { ToolDefinition } from "@/lib/agents/types";
 
 const SUBJECTS = [
@@ -415,3 +417,71 @@ export const flagForTeacherTool: ToolDefinition<
   },
 };
 registerTool(flagForTeacherTool);
+
+// ─── guardian.requestPhoneUpdate ────────────────────────────────────────────
+
+const requestPhoneUpdateInput = z.object({ reason: z.string().min(1).max(500) });
+const requestPhoneUpdateOutput = z.object({ escalationId: z.string() });
+
+/**
+ * Sprint 6.1, GUARDIAN_PHONE_UPDATE.md (approved): the agent never updates
+ * User.guardianPhoneE164 itself - a challenge-based per-conversation
+ * verification (Deliverable 5 option (a)) proves "knows this student's ID
+ * and name," not "is the specific guardian whose number is on file," so
+ * letting it rewrite the identity anchor would be a privilege escalation.
+ * This only flags the request for a human (principal/admin) to act on with
+ * an audit trail. Requires a resolved, known-number identity (ctx.userId) -
+ * a challenge-only grant has no User.id to attach the request to.
+ */
+export const requestPhoneUpdateTool: ToolDefinition<
+  z.infer<typeof requestPhoneUpdateInput>,
+  z.infer<typeof requestPhoneUpdateOutput>
+> = {
+  name: "guardian.requestPhoneUpdate",
+  description: "Flag a guardian's phone-number-change request for the school to action. Never updates the number directly.",
+  domain: "guardian",
+  inputSchema: requestPhoneUpdateInput,
+  outputSchema: requestPhoneUpdateOutput,
+  auditTag: "agent.tool.guardian.requestPhoneUpdate",
+  estimatedCostUnits: 1,
+  requiresAuth: ["guardian", "system"],
+  handler: async (input, ctx) => {
+    if (!ctx.userId) {
+      throw Object.assign(new Error("Phone-update requests require a resolved guardian identity."), { status: 401 });
+    }
+
+    const guardian = await prisma.user.findUnique({
+      where: { id: ctx.userId },
+      select: {
+        guardianOf: { take: 1, select: { student: { select: { user: { select: { schoolId: true } } } } } },
+      },
+    });
+    const schoolId = guardian?.guardianOf[0]?.student.user.schoolId ?? null;
+
+    const { id: escalationId } = await enqueueEscalation({
+      agentName: "liberialearn-family",
+      invocationId: null,
+      userId: ctx.userId,
+      reason: `guardian phone-update request: ${input.reason}`,
+      priority: "LOW",
+      traceId: ctx.traceId ?? null,
+      schoolId,
+    });
+
+    if (schoolId) {
+      const admins = await prisma.user.findMany({ where: { role: "ADMIN", schoolId }, select: { id: true } });
+      await Promise.all(
+        admins.map((a) =>
+          createInboxNotification(a.id, {
+            title: "Guardian phone-update request",
+            body: `A guardian requested a phone number update: ${input.reason}`.slice(0, 200),
+            type: "guardian_phone_update",
+          })
+        )
+      );
+    }
+
+    return { escalationId };
+  },
+};
+registerTool(requestPhoneUpdateTool);

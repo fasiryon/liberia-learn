@@ -17,6 +17,17 @@ vi.mock("@/lib/db", () => ({ prisma: mockPrisma }));
 vi.mock("@/lib/agents/runtime", () => ({ runAgent: mockRunAgent }));
 vi.mock("@/lib/sms", () => ({ sendSMS: mockSendSMS }));
 vi.mock("@/lib/agents/bootstrap", () => ({}));
+vi.mock("@/lib/agents/sms/identityVerification", () => ({
+  resolveKnownGuardian: vi.fn(async () => null),
+  extractChallengeAttempt: vi.fn(() => null),
+  resolveChallenge: vi.fn(),
+  emptyRateLimitState: () => ({ attemptTimestamps: [] }),
+}));
+vi.mock("@/lib/agents/sms/smsCost", () => ({
+  checkSmsCostCap: vi.fn(async () => ({ allowed: true })),
+  countSmsSegments: (t: string) => Math.ceil((t?.length ?? 0) / 160) || 1,
+  recordSmsSpend: vi.fn(async () => undefined),
+}));
 
 import { POST } from "@/app/api/dev/simulate-inbound-sms/route";
 
@@ -85,7 +96,7 @@ describe("POST /api/dev/simulate-inbound-sms", () => {
 
     expect(mockRunAgent).toHaveBeenCalledWith(
       "liberialearn-family",
-      "How is my son",
+      expect.stringContaining("How is my son"),
       expect.objectContaining({ userRole: "system", userId: null })
     );
     expect(mockSendSMS).toHaveBeenCalledWith("+231770000111", "Hi. This is LiberiaLearn Family.");

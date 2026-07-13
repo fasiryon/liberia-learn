@@ -30,6 +30,8 @@ export interface RunContext {
   traceId?: string | null;
   triggeredBy?: TriggeredBy;
   goalId?: string | null;
+  /** See ToolContext.grantedStudentIds. */
+  grantedStudentIds?: string[] | null;
   /** Max LLM turns before a safety stop. Default 20. */
   maxDepth?: number;
   /** Wall-clock budget for the whole invocation. Default 60s. */
@@ -217,6 +219,7 @@ async function runLoop(
         schoolId: opts.ctx.schoolId ?? null,
         traceId: opts.ctx.traceId ?? null,
         agentName: agent.name,
+        grantedStudentIds: opts.ctx.grantedStudentIds ?? null,
       });
       toolCostUnits += tool.estimatedCostUnits;
       toolCalls.push({ tool: tool.name, args: parsed.data, result: out, costUnits: tool.estimatedCostUnits, ok: true });

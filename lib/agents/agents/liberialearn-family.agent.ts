@@ -26,6 +26,7 @@ export const liberialearnFamilyAgent: AgentDefinition = {
     "guardian.getTeacherContact",
     "guardian.triggerDigestNow",
     "guardian.flagForTeacher",
+    "guardian.requestPhoneUpdate",
     "safeguarding.escalate",
   ],
   temperature: 0.3,

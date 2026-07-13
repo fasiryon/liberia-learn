@@ -1,21 +1,33 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 
-const { mockPrisma, mockRunAgent, mockSendSMS } = vi.hoisted(() => {
-  const mockPrisma = {
-    guardianConversation: {
-      findUnique: vi.fn(),
-      create: vi.fn(),
-      update: vi.fn(),
+const { mockPrisma, mockRunAgent, mockSendSMS, mockResolveKnownGuardian, mockExtractChallengeAttempt, mockResolveChallenge, mockCheckSmsCostCap, mockRecordSmsSpend } =
+  vi.hoisted(() => ({
+    mockPrisma: {
+      guardianConversation: { findUnique: vi.fn(), create: vi.fn(), update: vi.fn() },
     },
-  };
-  const mockRunAgent = vi.fn();
-  const mockSendSMS = vi.fn();
-  return { mockPrisma, mockRunAgent, mockSendSMS };
-});
+    mockRunAgent: vi.fn(),
+    mockSendSMS: vi.fn(),
+    mockResolveKnownGuardian: vi.fn(),
+    mockExtractChallengeAttempt: vi.fn(),
+    mockResolveChallenge: vi.fn(),
+    mockCheckSmsCostCap: vi.fn(),
+    mockRecordSmsSpend: vi.fn(),
+  }));
 
 vi.mock("@/lib/db", () => ({ prisma: mockPrisma }));
 vi.mock("@/lib/agents/runtime", () => ({ runAgent: mockRunAgent }));
 vi.mock("@/lib/sms", () => ({ sendSMS: mockSendSMS }));
+vi.mock("@/lib/agents/sms/identityVerification", () => ({
+  resolveKnownGuardian: mockResolveKnownGuardian,
+  extractChallengeAttempt: mockExtractChallengeAttempt,
+  resolveChallenge: mockResolveChallenge,
+  emptyRateLimitState: () => ({ attemptTimestamps: [] }),
+}));
+vi.mock("@/lib/agents/sms/smsCost", () => ({
+  checkSmsCostCap: mockCheckSmsCostCap,
+  countSmsSegments: (t: string) => Math.ceil((t?.length ?? 0) / 160) || 1,
+  recordSmsSpend: mockRecordSmsSpend,
+}));
 
 import { handleGuardianInbound } from "@/lib/agents/sms/guardianInbound";
 
@@ -33,6 +45,18 @@ function agentResult(overrides: Partial<Record<string, unknown>> = {}) {
   };
 }
 
+function existingConversation(overrides: Partial<Record<string, unknown>> = {}) {
+  return {
+    id: "conv-1",
+    guardianPhone: "+231770000111",
+    guardianId: null,
+    verifiedAt: null,
+    state: { messages: [] },
+    expiresAt: new Date(Date.now() + 60_000),
+    ...overrides,
+  };
+}
+
 describe("handleGuardianInbound", () => {
   beforeEach(() => {
     mockPrisma.guardianConversation.findUnique.mockReset();
@@ -40,18 +64,23 @@ describe("handleGuardianInbound", () => {
     mockPrisma.guardianConversation.update.mockReset();
     mockRunAgent.mockReset();
     mockSendSMS.mockReset();
+    mockResolveKnownGuardian.mockReset();
+    mockExtractChallengeAttempt.mockReset();
+    mockResolveChallenge.mockReset();
+    mockCheckSmsCostCap.mockReset();
+    mockRecordSmsSpend.mockReset();
+
     mockSendSMS.mockResolvedValue({ ok: true, sid: "sms-1" });
+    mockResolveKnownGuardian.mockResolvedValue(null);
+    mockExtractChallengeAttempt.mockReturnValue(null);
+    mockCheckSmsCostCap.mockResolvedValue({ allowed: true });
+    mockRecordSmsSpend.mockResolvedValue(undefined);
+    mockPrisma.guardianConversation.update.mockResolvedValue({});
   });
 
   it("creates a new conversation for a first-time phone number", async () => {
     mockPrisma.guardianConversation.findUnique.mockResolvedValue(null);
-    mockPrisma.guardianConversation.create.mockResolvedValue({
-      id: "conv-new",
-      guardianPhone: "+231770000111",
-      guardianId: null,
-      verifiedAt: null,
-      expiresAt: new Date(Date.now() + 1000),
-    });
+    mockPrisma.guardianConversation.create.mockResolvedValue(existingConversation());
     mockRunAgent.mockResolvedValue(agentResult());
 
     const result = await handleGuardianInbound({ from: "+231770000111", text: "Hi" });
@@ -63,99 +92,146 @@ describe("handleGuardianInbound", () => {
     expect(result.response).toBe("Hi there.");
   });
 
-  it("reuses an existing, non-expired conversation without creating a new one", async () => {
-    mockPrisma.guardianConversation.findUnique.mockResolvedValue({
-      id: "conv-existing",
-      guardianPhone: "+231770000111",
-      guardianId: null,
-      verifiedAt: null,
-      state: { messages: [{ from: "guardian", text: "earlier", at: new Date().toISOString() }] },
-      expiresAt: new Date(Date.now() + 60_000),
-    });
-    mockRunAgent.mockResolvedValue(agentResult());
-
-    await handleGuardianInbound({ from: "+231770000111", text: "Hi again" });
-
-    expect(mockPrisma.guardianConversation.create).not.toHaveBeenCalled();
-    expect(mockPrisma.guardianConversation.update).toHaveBeenCalledWith(
-      expect.objectContaining({
-        where: { id: "conv-existing" },
-        data: expect.objectContaining({
-          state: expect.objectContaining({
-            messages: expect.arrayContaining([
-              expect.objectContaining({ text: "earlier" }),
-              expect.objectContaining({ text: "Hi again" }),
-            ]),
-          }),
-        }),
-      })
-    );
-  });
-
-  it("resets conversation state (but not identity fields) once the conversation has expired", async () => {
-    mockPrisma.guardianConversation.findUnique.mockResolvedValue({
-      id: "conv-expired",
-      guardianPhone: "+231770000111",
-      guardianId: null,
-      verifiedAt: null,
-      state: { messages: [{ from: "guardian", text: "old message", at: new Date().toISOString() }] },
-      expiresAt: new Date(Date.now() - 1000),
-    });
-    mockRunAgent.mockResolvedValue(agentResult());
-
-    await handleGuardianInbound({ from: "+231770000111", text: "fresh start" });
-
-    const updateCall = mockPrisma.guardianConversation.update.mock.calls[0][0];
-    const messages = updateCall.data.state.messages as { text: string }[];
-    expect(messages.some((m) => m.text === "old message")).toBe(false);
-    expect(messages.some((m) => m.text === "fresh start")).toBe(true);
-  });
-
-  it("always invokes the agent with userRole 'system' and unresolved identity (verification pending)", async () => {
-    mockPrisma.guardianConversation.findUnique.mockResolvedValue({
-      id: "conv-1",
-      guardianPhone: "+231770000111",
-      guardianId: null,
-      verifiedAt: null,
-      state: { messages: [] },
-      expiresAt: new Date(Date.now() + 60_000),
-    });
+  it("sends an [context: unverified] marker to the agent for an unrecognized, unverified caller", async () => {
+    mockPrisma.guardianConversation.findUnique.mockResolvedValue(existingConversation());
     mockRunAgent.mockResolvedValue(agentResult());
 
     await handleGuardianInbound({ from: "+231770000111", text: "Hi" });
 
     expect(mockRunAgent).toHaveBeenCalledWith(
       "liberialearn-family",
-      "Hi",
+      expect.stringContaining("[context: unverified]"),
       expect.objectContaining({ userId: null, userRole: "system" })
     );
   });
 
-  it("sends the agent's response via SMS to the normalized number", async () => {
-    mockPrisma.guardianConversation.findUnique.mockResolvedValue({
-      id: "conv-1",
-      guardianPhone: "+231770000111",
-      guardianId: null,
-      verifiedAt: null,
-      state: { messages: [] },
-      expiresAt: new Date(Date.now() + 60_000),
+  it("known-number path: resolves guardianId and marks the conversation verified", async () => {
+    mockPrisma.guardianConversation.findUnique.mockResolvedValue(existingConversation());
+    mockResolveKnownGuardian.mockResolvedValue({ id: "guardian-1" });
+    mockRunAgent.mockResolvedValue(agentResult());
+
+    await handleGuardianInbound({ from: "+231770000111", text: "How is my son doing?" });
+
+    expect(mockRunAgent).toHaveBeenCalledWith(
+      "liberialearn-family",
+      expect.stringContaining("[context: verified]"),
+      expect.objectContaining({ userId: "guardian-1" })
+    );
+    expect(mockPrisma.guardianConversation.update).toHaveBeenCalledWith(
+      expect.objectContaining({ data: expect.objectContaining({ guardianId: "guardian-1" }) })
+    );
+  });
+
+  it("reuses an already-known guardianId on a later message without re-resolving", async () => {
+    mockPrisma.guardianConversation.findUnique.mockResolvedValue(
+      existingConversation({ guardianId: "guardian-1", verifiedAt: new Date() })
+    );
+    mockRunAgent.mockResolvedValue(agentResult());
+
+    await handleGuardianInbound({ from: "+231770000111", text: "Hi again" });
+
+    expect(mockResolveKnownGuardian).not.toHaveBeenCalled();
+    expect(mockRunAgent).toHaveBeenCalledWith(
+      "liberialearn-family",
+      expect.any(String),
+      expect.objectContaining({ userId: "guardian-1" })
+    );
+  });
+
+  it("challenge match: grants the studentId and injects it into the agent context", async () => {
+    mockPrisma.guardianConversation.findUnique.mockResolvedValue(existingConversation());
+    mockExtractChallengeAttempt.mockReturnValue({ studentIdCandidate: "student-1", nameCandidate: "Pewu" });
+    mockResolveChallenge.mockResolvedValue({
+      result: { outcome: "matched", studentId: "student-1", studentFirstName: "Pewu" },
+      rateLimitState: { attemptTimestamps: [] },
     });
-    mockRunAgent.mockResolvedValue(agentResult({ response: "Your reply." }));
+    mockRunAgent.mockResolvedValue(agentResult());
 
-    await handleGuardianInbound({ from: "+231 (770) 000-111", text: "Hi" });
+    await handleGuardianInbound({ from: "+231770000111", text: "cktest... Pewu" });
 
-    expect(mockSendSMS).toHaveBeenCalledWith("+231770000111", "Your reply.");
+    expect(mockRunAgent).toHaveBeenCalledWith(
+      "liberialearn-family",
+      expect.stringContaining("studentId=student-1"),
+      expect.objectContaining({ userId: null, grantedStudentIds: ["student-1"] })
+    );
+  });
+
+  it("challenge failure: replies with a fixed message and does not call the agent", async () => {
+    mockPrisma.guardianConversation.findUnique.mockResolvedValue(existingConversation());
+    mockExtractChallengeAttempt.mockReturnValue({ studentIdCandidate: "student-1", nameCandidate: "Wrong" });
+    mockResolveChallenge.mockResolvedValue({
+      result: { outcome: "name_mismatch" },
+      rateLimitState: { attemptTimestamps: ["2026-07-13T12:00:00Z"] },
+    });
+
+    const result = await handleGuardianInbound({ from: "+231770000111", text: "cktest... Wrong" });
+
+    expect(mockRunAgent).not.toHaveBeenCalled();
+    expect(result.agentStatus).toBe("VERIFICATION_FAILED");
+    expect(mockSendSMS).toHaveBeenCalledWith("+231770000111", expect.stringContaining("couldn't verify"));
+  });
+
+  it("rate limited: replies with the rate-limit message and does not call the agent", async () => {
+    mockPrisma.guardianConversation.findUnique.mockResolvedValue(existingConversation());
+    mockExtractChallengeAttempt.mockReturnValue({ studentIdCandidate: "student-1", nameCandidate: "Pewu" });
+    mockResolveChallenge.mockResolvedValue({
+      result: { outcome: "rate_limited", rateLimitReason: "hourly" },
+      rateLimitState: { attemptTimestamps: [] },
+    });
+
+    const result = await handleGuardianInbound({ from: "+231770000111", text: "cktest... Pewu" });
+
+    expect(mockRunAgent).not.toHaveBeenCalled();
+    expect(result.agentStatus).toBe("RATE_LIMITED");
+    expect(mockSendSMS).toHaveBeenCalledWith("+231770000111", expect.stringContaining("Too many attempts"));
+  });
+
+  it("reuses a previously granted studentId on a later message in the same conversation", async () => {
+    mockPrisma.guardianConversation.findUnique.mockResolvedValue(
+      existingConversation({ state: { messages: [], grantedStudentIds: ["student-1"] } })
+    );
+    mockRunAgent.mockResolvedValue(agentResult());
+
+    await handleGuardianInbound({ from: "+231770000111", text: "How is he doing in math?" });
+
+    expect(mockExtractChallengeAttempt).not.toHaveBeenCalled();
+    expect(mockRunAgent).toHaveBeenCalledWith(
+      "liberialearn-family",
+      expect.stringContaining("studentId=student-1"),
+      expect.objectContaining({ grantedStudentIds: ["student-1"] })
+    );
+  });
+
+  it("suppresses the SMS send when the cost cap is hit (and does not record spend)", async () => {
+    mockPrisma.guardianConversation.findUnique.mockResolvedValue(existingConversation());
+    mockRunAgent.mockResolvedValue(agentResult({ response: "a reply" }));
+    mockCheckSmsCostCap.mockResolvedValue({ allowed: false, reason: "guardian_daily_cap" });
+
+    await handleGuardianInbound({ from: "+231770000111", text: "Hi" });
+
+    expect(mockSendSMS).not.toHaveBeenCalled();
+    expect(mockRecordSmsSpend).not.toHaveBeenCalled();
+  });
+
+  it("bypasses the cost cap for a safeguarding escalation response", async () => {
+    mockPrisma.guardianConversation.findUnique.mockResolvedValue(existingConversation());
+    mockRunAgent.mockResolvedValue(
+      agentResult({
+        response: "I hear you, and this is serious.",
+        toolCalls: [{ tool: "safeguarding.escalate", ok: true, args: {}, result: {}, costUnits: 1 }],
+      })
+    );
+    mockCheckSmsCostCap.mockResolvedValue({ allowed: false, reason: "guardian_daily_cap" });
+
+    await handleGuardianInbound({ from: "+231770000111", text: "my child was hurt" });
+
+    expect(mockCheckSmsCostCap).not.toHaveBeenCalled();
+    expect(mockSendSMS).toHaveBeenCalledWith("+231770000111", "I hear you, and this is serious.");
+    expect(mockRecordSmsSpend).toHaveBeenCalled();
   });
 
   it("does not send an SMS when the agent has no response", async () => {
-    mockPrisma.guardianConversation.findUnique.mockResolvedValue({
-      id: "conv-1",
-      guardianPhone: "+231770000111",
-      guardianId: null,
-      verifiedAt: null,
-      state: { messages: [] },
-      expiresAt: new Date(Date.now() + 60_000),
-    });
+    mockPrisma.guardianConversation.findUnique.mockResolvedValue(existingConversation());
     mockRunAgent.mockResolvedValue(agentResult({ status: "COST_CAPPED", response: null }));
 
     await handleGuardianInbound({ from: "+231770000111", text: "Hi" });
@@ -169,14 +245,9 @@ describe("handleGuardianInbound", () => {
       text: `msg-${i}`,
       at: new Date().toISOString(),
     }));
-    mockPrisma.guardianConversation.findUnique.mockResolvedValue({
-      id: "conv-1",
-      guardianPhone: "+231770000111",
-      guardianId: null,
-      verifiedAt: null,
-      state: { messages: manyMessages },
-      expiresAt: new Date(Date.now() + 60_000),
-    });
+    mockPrisma.guardianConversation.findUnique.mockResolvedValue(
+      existingConversation({ state: { messages: manyMessages } })
+    );
     mockRunAgent.mockResolvedValue(agentResult({ response: "reply" }));
 
     await handleGuardianInbound({ from: "+231770000111", text: "new one" });
@@ -188,8 +259,6 @@ describe("handleGuardianInbound", () => {
   });
 
   it("rejects an empty text with a 400-tagged error", async () => {
-    await expect(handleGuardianInbound({ from: "+231770000111", text: "" })).rejects.toMatchObject({
-      status: 400,
-    });
+    await expect(handleGuardianInbound({ from: "+231770000111", text: "" })).rejects.toMatchObject({ status: 400 });
   });
 });

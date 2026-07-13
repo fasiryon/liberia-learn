@@ -20,7 +20,7 @@ describe("liberialearn-family agent registration", () => {
     expect(agent.rolesAllowed).toEqual(["system"]);
   });
 
-  it("allowlists exactly the 7 guardian/safeguarding tools by exact name (no glob)", () => {
+  it("allowlists exactly the 8 guardian/safeguarding tools by exact name (no glob)", () => {
     const agent = getAgent("liberialearn-family");
     expect(agent.toolAllowlist.sort()).toEqual(
       [
@@ -30,6 +30,7 @@ describe("liberialearn-family agent registration", () => {
         "guardian.getTeacherContact",
         "guardian.triggerDigestNow",
         "guardian.flagForTeacher",
+        "guardian.requestPhoneUpdate",
         "safeguarding.escalate",
       ].sort()
     );
