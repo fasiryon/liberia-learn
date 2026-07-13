@@ -1,6 +1,11 @@
 # Guardian Phone Number Update (Sprint 6.1, escalation point 2)
 
-STATUS: DRAFT - awaiting human review. Not implemented.
+STATUS: APPROVED and implemented (2026-07-13). `guardian.requestPhoneUpdate`
+tool (`lib/agents/tools/guardian.tools.ts`) - agent refuses to change the
+number itself, flags an `EscalationQueue` entry (LOW) plus an inbox
+notification to `ADMIN`-role users at the guardian's school. Requires a
+resolved known-number identity (`ctx.userId`); a challenge-only grant has no
+`User.id` to attach the request to, so it isn't offered in that state.
 
 ## Why this is an escalation point
 Data integrity: `User.guardianPhoneE164` is the anchor identity signal for the
@@ -74,14 +79,37 @@ get told to go through the school, and a human resolves the conflict with
 whatever verification a school already does in person (ID, enrollment
 records) - not a problem the agent platform needs to solve.
 
-## Questions for the human
-1. Confirm "principal/admin only, with audit trail" as the update path, and
-   point to (or confirm need to build) the actual admin UI/route that performs
-   it - Deliverable 6 stops here without knowing whether this already exists.
-2. Confirm the old-number conversation-state cleanup should be part of that
-   admin action's implementation (not the agent platform's).
-3. Is `guardian.flagForTeacher` the right delivery mechanism for "guardian
-   wants a phone update," or should this go to a different queue (it's not a
-   teacher-facing message, it's an admin/principal action)? Given there's no
-   PRINCIPAL Role in the schema (see [[GUARDIAN_SAFEGUARDING]]), this may need
-   the same "who exactly gets notified" answer as the safeguarding spec.
+## Resolution (2026-07-13)
+1. **Approved**: admin-only with an audit trail (`enqueueEscalation` +
+   `logAudit` pattern, consistent with the rest of the agent platform). The
+   actual admin UI/route that performs the `guardianPhoneE164` write was
+   **not confirmed to exist** during this sprint - the agent-side flagging
+   is built and shipped, but whoever picks up the `EscalationQueue`/inbox
+   notification today has to make the Prisma write by hand (or via existing
+   generic admin tooling, if any) until a dedicated route exists. Not
+   blocking for this sprint per the approval, but real friction until fixed.
+2. Not yet built - the old-number `GuardianConversation` cleanup depends on
+   the admin action from item 1 existing first. Tracked as a dependency, not
+   implemented.
+3. **Resolved**: neither `guardian.flagForTeacher` nor a safeguarding-style
+   queue - built as its own tool (`guardian.requestPhoneUpdate`) writing to
+   `EscalationQueue` (LOW priority) plus `createInboxNotification` for
+   `ADMIN`-role users at the guardian's school. This sidesteps the "no
+   PRINCIPAL role" question because ADMIN is a proportionate proxy for a
+   routine, low-stakes request - unlike safeguarding, where the user
+   explicitly wants a higher bar (a designated safety-staff field) before
+   shipping notification.
+
+## Doc B: fast principal phone-update flow (requested at approval, not built)
+The approved-with-clarification note asked for a **fast** principal
+phone-update path, since "ask the school, they'll follow up" implicitly
+risks becoming a week-long turnaround if the only mechanism is a generic
+admin queue. Not designed or built this sprint. Sketch for a future pass:
+a dedicated `/admin/guardian-phone-updates` inbox view (read `EscalationQueue`
+filtered to `reason LIKE 'guardian phone-update request%'`) with a one-click
+"update number" action that writes `User.guardianPhoneE164` directly (with
+`logAudit`) and invalidates the old `GuardianConversation` row in the same
+transaction - collapsing today's two-step "notice -> manual Prisma write"
+into one UI action for the person who already gets notified. Needs product
+input on where this UI lives (school-scoped admin dashboard vs. a shared
+platform-admin surface) before it's built.

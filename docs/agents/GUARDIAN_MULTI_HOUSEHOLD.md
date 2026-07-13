@@ -1,7 +1,29 @@
 # Guardian Multi-Household Handling (Sprint 6.1, escalation point 3)
 
-STATUS: DRAFT - findings + proposed handling, awaiting human review. Not
-implemented beyond what the schema already supports natively.
+STATUS: APPROVED with additions (2026-07-13), implemented.
+
+## Approved additions
+- **Any verified guardian gets full, equal access to the student's school
+  data.** The agent does not detect, mediate, or withhold information over
+  guardian-vs-guardian disputes - that is a school matter. Encoded directly
+  in the system prompt (`lib/agents/prompts/liberialearn-family.md`, under
+  "Verification context" and the out-of-scope list) rather than in code -
+  there was nothing to build, since `assertGuardianOf` already grants equal
+  access to any linked guardian; the addition is a behavioral guarantee, not
+  a new access-control mechanism.
+- **Extended family (grandparents, aunts, uncles) get no agent access unless
+  added as an explicit `StudentGuardian` record by school admin.** Already
+  true by construction - `assertGuardianOf` only grants access via a
+  `StudentGuardian` row or an active per-conversation challenge grant, never
+  by relation/kinship inference. No code change needed; covered by the
+  existing `guardianAuth.test.ts` rejection tests (an unlinked caller is
+  rejected regardless of who they claim to be).
+- **Safeguarding escalations go to the school, never automatically to other
+  guardians.** Recorded as a locked-in constraint in
+  `docs/agents/GUARDIAN_SAFEGUARDING.md` for whenever that spec's
+  notification wiring is built (it isn't yet - Spec 5 is not approved).
+  Also stated directly in the system prompt's safeguarding rule ("never
+  mention or imply that another guardian will be told").
 
 ## Investigation: can a Student have multiple Guardian records today?
 **Yes, already.** `StudentGuardian`:
@@ -80,12 +102,14 @@ implemented:
   the per-phone-number, per-studentId model already generalizes to N
   guardians correctly.
 
-## Questions for the human
-1. Confirm the shared-household-phone disambiguation ("Reply A for X, B for
-   Y") is in scope for the identity-verification implementation, or whether
-   it should be explicitly deferred to a later sprint (acceptable interim:
-   known-number path picks the guardian with the most recent
-   `StudentGuardian` link, or just the first `User` match, and this is
-   revisited if it causes real confusion in pilot).
-2. Any known real households in the pilot cohort that already share a single
-   phone across guardians, worth checking before deciding priority?
+## Resolution (2026-07-13)
+Shared-household-phone disambiguation was **not** built as an active "Reply A
+for X, B for Y" flow - not in scope of what was approved this round.
+Implemented instead as the safer default floated in the original draft:
+`resolveKnownGuardian()` (`lib/agents/sms/identityVerification.ts`) requires
+**exactly one** `GUARDIAN` User to match the inbound phone number; if two or
+more share it, the known-number path does not fire at all, and the caller
+falls through to the Student-ID + name challenge instead (temporary,
+per-conversation access, never silently bound to the wrong guardian's
+identity). Revisit the "ask which guardian" UX if pilot data shows this
+causes real friction for shared-phone households.

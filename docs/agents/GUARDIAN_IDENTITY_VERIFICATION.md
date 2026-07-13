@@ -1,8 +1,33 @@
 # Guardian Identity Verification (Sprint 6.1, escalation point 1)
 
-STATUS: DRAFT - awaiting human review. Not implemented. `resolveGuardianIdentity()`
-in `lib/agents/sms/guardianInbound.ts` is a stub that always returns unverified;
-no `guardian.*` tool call can succeed until this spec is approved and built.
+STATUS: APPROVED and implemented (2026-07-13). Known-number resolution +
+Student-ID/name challenge live in `lib/agents/sms/identityVerification.ts`,
+wired into `lib/agents/sms/guardianInbound.ts`.
+
+## Name-matching clarification (requested at approval)
+`matchesGuardianChallengeName()` (`lib/agents/sms/nameMatch.ts`) strips
+diacritics (Unicode NFD decomposition), is case/punctuation-insensitive, and
+allows a single-token partial name - "Pewu" matches "Pewu Gongloe" - since
+the Student ID has already narrowed the search to one specific student, so
+the name is a confirmation factor, not the primary identifier. Tokens longer
+than 3 letters tolerate small edit-distance typos (Levenshtein <=1 for
+tokens under 7 letters, <=2 for longer ones); tokens of 3 letters or fewer
+require an exact match, since fuzzy-matching short strings produces too many
+false positives to mean anything. This is a **general algorithm, not a
+hardcoded table of Liberian name variants** - no verified source for such a
+table exists in this repo, and a general approach degrades gracefully
+instead of silently failing on a name pattern it wasn't specifically primed
+for. Revisit if real pilot usage shows systematic false negatives on
+specific name patterns.
+
+## Operational caveat found during implementation
+There is no human-facing "Student ID" field in the schema separate from
+`Student.id` (an internal Prisma cuid, e.g. `ckx7h2j...`). The challenge
+literally uses that string. **This means schools must hand guardians the
+actual internal ID** (e.g. printed on an enrollment card) for the challenge
+to be usable - not a code gap, but a rollout/ops item worth flagging before
+pilot: is there an existing enrollment artifact that already prints this ID,
+or does one need to be created?
 
 ## Why this is an escalation point
 Security-sensitive (this is the only gate between an arbitrary SMS sender and a
@@ -113,17 +138,17 @@ Never verify via information a child could post publicly - teacher name,
 school name, class name. Only Student ID + full name are used as the
 challenge, per section 3.
 
-## Questions for the human
-1. Approve option (a) for the challenge-verification identity model (grants
-   per-studentId access for the conversation, not a `User.id` guardian
-   binding)? This requires extending `assertGuardianOf`/`ToolContext` beyond
-   what shipped in Deliverables 1-4.
-2. Is `guardianPhoneE164` data quality trustworthy enough for the known-number
-   path to be the primary flow, or should even known numbers get a light
-   challenge on first contact?
-3. Where does `verificationAttempts` rate-limit state live - new columns on
-   `GuardianConversation`, or reuse `state` JSON? (Recommend new typed columns;
-   JSON blob rate-limit state is harder to query for the admin review queue.)
-4. Confirm 2/hour, 5/day, temp-block are the right numbers for a first pilot
-   (a legitimate guardian mistyping a Student ID twice is plausible; five real
-   attempts is unlikely).
+## Resolution (2026-07-13)
+1. **Approved**: option (a) implemented - `ToolContext.grantedStudentIds`,
+   `assertGuardianOf` checks it before falling back to the `StudentGuardian`
+   DB join.
+2. Not separately re-litigated at approval; shipped as originally proposed
+   (known-number is the primary fast path). Revisit if pilot data shows
+   `guardianPhoneE164` quality issues.
+3. Implemented as `state.verification.attemptTimestamps` inside
+   `GuardianConversation.state` JSON, not new typed columns - simpler given
+   the low query need at pilot scale (EscalationQueue already gets a row per
+   failed/blocked attempt for admin visibility, which is queryable normally;
+   the JSON blob is only ever read back for the same phone number's own rate
+   check, never queried across guardians).
+4. **Approved as proposed**: 2/hour, 5/day.
