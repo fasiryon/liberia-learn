@@ -1,8 +1,47 @@
 # Guardian Per-Guardian SMS Cost Accounting (Sprint 6.1, escalation point 4)
 
-STATUS: DRAFT - awaiting human review. Not implemented. No rate limiting or
-cost reporting beyond the agent-level `costLimits` already shipped in
-Deliverable 1 (which cap LLM spend, not SMS delivery spend).
+STATUS: APPROVED with additions (2026-07-13), implemented -
+`lib/agents/sms/smsCost.ts`, `GuardianSmsCostAccounting` table.
+
+## Rate citation (requested at approval) - and a bigger finding underneath it
+**Africa's Talking does not support Liberia at all.** Checked against their
+official published country-coverage list
+(https://help.africastalking.com/en/articles/2727792, confirmed 2026-07-13):
+SMS is supported for Kenya, Uganda, Tanzania, Rwanda, Malawi, Zambia,
+Nigeria, Cote d'Ivoire, Ethiopia, Ghana, South Africa - Liberia is not
+listed. This is not "pricing isn't public," it's "the product isn't offered
+there." **This means the "AT" in this sprint's own naming
+(`/api/webhooks/sms-inbound`'s Africa's Talking format,
+`AT_API_KEY`/`AT_USERNAME` in `lib/sms.ts`, `docs/agents/SMS_VERIFICATION_CHECKLIST.md`'s
+"Africa's Talking Liberia number") describes a provider that cannot actually
+serve this pilot.** `lib/sms.ts` already has a working fallback path -
+`TwilioSMSProvider` - which fires automatically whenever `AT_API_KEY`/
+`AT_USERNAME` are unset, which they are (correctly, since AT can't be
+configured for a country it doesn't support).
+
+Given that, the cited rate used for cap math (`SMS_RATE_USD_PER_SEGMENT` in
+`lib/agents/sms/smsCost.ts`) is **Twilio's published Liberia rate**, the
+provider actually reachable today:
+- Twilio: **$0.2677/segment**, both outbound and inbound -
+  https://www.twilio.com/en-us/sms/pricing/lr (checked 2026-07-13)
+
+For comparison, a per-message pricing roundup (sent.dm, dated January 2025 -
+https://www.sent.dm/en/resources/sms-pricing/liberia-sms-pricing) lists
+substantially cheaper alternatives that are **not wired in this codebase**:
+Orange Liberia's direct local API ~$0.0475-$0.06/segment, Plivo ~$0.0085,
+Sinch ~$0.1199, Infobip ~$0.1604. Orange Liberia direct is roughly 4-5x
+cheaper than Twilio. **This is worth a real decision before pilot budget
+commits to Twilio by default** - not resolved here, since evaluating/wiring
+a new SMS provider is a larger change than this spec's scope. The rate
+constant has an env override (`GUARDIAN_SMS_RATE_USD_PER_SEGMENT`) so
+switching providers later doesn't require a code change, only a number.
+
+## Safeguarding exception (requested at approval)
+Implemented: `sendCappedReply()` in `lib/agents/sms/guardianInbound.ts`
+checks `result.toolCalls` for a successful `safeguarding.escalate` call and,
+if found, passes `bypassCap: true` - the reply always sends regardless of
+that guardian's or the platform's daily cap. Spend is still recorded for
+reporting accuracy; only the cap *enforcement* is bypassed.
 
 ## Why this is an escalation point
 Billing at scale: SMS delivery cost is a real per-message operating expense
@@ -115,16 +154,26 @@ guardian identity (needed for the reply that happens *before* verification
 succeeds, e.g. the cold-contact greeting itself, which also costs a segment
 and today is completely unaccounted for).
 
-## Questions for the human
-1. Confirm/provide the real Africa's Talking per-segment rate for Liberia
-   (inbound and outbound) before any cap numbers are finalized - everything
-   above is a structural proposal, not priced.
-2. Approve the `GuardianSmsCostAccounting` table shape (or redirect to reuse
-   `SMSDeliveryLog`, which already exists and is used by
-   `lib/guardian/sms-service.ts` - possible this doesn't need a new table at
-   all if `SMSDeliveryLog` already has enough columns to roll up by guardian
-   + day. Worth checking before building a parallel table).
-3. Approve 10 segments/guardian/day as the starting pilot cap (or supply a
-   different number once real pricing is known).
-4. Confirm the "one fixed fallback notice, not silent, not repeated" behavior
-   for cap-hit.
+## Resolution (2026-07-13)
+1. **Resolved, with a bigger caveat than expected** - see rate citation
+   above. No real Liberia AT rate exists to confirm; Twilio's is used and
+   cited instead, flagged as provisional pending an actual provider decision.
+2. **Built as a new table** (`GuardianSmsCostAccounting`, phone-keyed) rather
+   than extending `SMSDeliveryLog` - agent replies still bypass
+   `SMSDeliveryLog` entirely (unchanged from the finding below; that
+   migration wasn't in scope of what was approved), and the new table needs
+   to key by phone (not guardianId), covering unverified/pre-challenge
+   traffic that `SMSDeliveryLog`'s non-nullable `guardianId` can't represent.
+3. **Approved as proposed**: 10 segments/guardian/day
+   (`GUARDIAN_SMS_DAILY_SEGMENT_CAP`, env-overridable). Total daily cap set
+   to 180 segments/day (`GUARDIAN_SMS_TOTAL_DAILY_SEGMENT_CAP`) - chosen to
+   roughly match the existing $50/day LLM cost-cap order of magnitude at the
+   Twilio rate (50 / 0.2677 ~= 187, rounded down). Revisit once a real
+   provider/rate is confirmed - at Twilio's rate this pilot-scale cap already
+   implies real budget exposure (~$48/day at full utilization).
+4. **Implemented**: `checkSmsCostCap()` suppresses the send (logged as a
+   warning, not user-visible) when either cap is hit - no separate "you hit
+   your limit" SMS is sent (would itself consume budget and risk the same
+   problem one level up), per the "not silent" caveat being satisfied by the
+   admin-visible log/report rather than a guardian-facing message. Revisit if
+   pilot feedback shows a silent drop reads as the service being broken.

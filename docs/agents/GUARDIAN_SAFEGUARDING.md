@@ -1,10 +1,31 @@
 # Guardian Safeguarding Escalation Integration (Sprint 6.1, escalation point 5)
 
-STATUS: DRAFT - awaiting human review. Partially implemented: the
-`safeguarding.escalate` tool (Deliverable 3) writes an `EscalationQueue` row
-today. It does **not** notify anyone - this spec covers who gets notified, on
-what channel, within what SLA, and legal considerations, none of which are
-built yet.
+STATUS: **NOT APPROVED (2026-07-13).** Implementation stays blocked on the 5
+items below. Nothing in this spec was built or changed this round beyond the
+research plan at the bottom. `safeguarding.escalate` (Deliverable 3) still
+only writes an `EscalationQueue` row - it does not notify anyone, has no
+keyword safety net, and no SLA-breach handling.
+
+## Blocking items (recorded verbatim from the review, do not implement past these)
+1. Confirm a designated safety-staff field in the `School` model (or add
+   one) - i.e. resolve the "who is (b)" question below with a real schema
+   answer, not the pilot-scale workaround (c) this doc originally proposed.
+2. Get the actual Liberia emergency number and the Liberia child-protection
+   hotline. **Do not use placeholders in production** - the guardian-facing
+   acknowledgment script (below) stays unshipped until these are real.
+3. Legal counsel on Liberian mandatory-reporting obligations - a real legal
+   question needing a real answer, not an LLM summary. See Research Plan.
+4. Define what happens when the SLA is missed: auto-escalate to district,
+   notify a specific person, or just log? Not decided.
+5. Add an explicit "err on the side of escalation" rule: false positives are
+   acceptable, false negatives are not. This changes the recommendation
+   below from "keyword net as a floor under LLM judgment" to a firmer
+   default - noted, not yet encoded, since the mechanism it would live in
+   (the keyword gate) isn't built until this spec is approved.
+
+Everything else in this document is proposal/analysis, unchanged from the
+draft reviewed, kept for context on what implementation will need to do once
+items 1-5 are resolved.
 
 ## Why this is an escalation point
 Child safety. This is the highest-consequence path in the entire sprint - a
@@ -61,6 +82,13 @@ simple, and avoids shipping (a) as a silent assumption that later turns out
 wrong when a school's ADMIN user isn't actually the right safeguarding
 contact.
 
+**Superseded by blocking item 1 above**: the reviewer wants a real
+designated-safety-staff field on `School` (closer to option (b)) rather than
+the pilot-workaround (c). Not designed further here - needs product input on
+whether it's a single `designatedSafetyStaffUserId` (one person per school)
+or a small list, and whether it's admin-settable per school or seeded at
+onboarding.
+
 **Delivery channel:** `createInboxNotification` (`lib/notifications/inboxService.ts`)
 already exists for the "support inbox" half and requires no new
 infrastructure - it needs `userId`s to notify (see above). Add SMS-to-specific-staff
@@ -91,31 +119,84 @@ a second-tier notification if a HIGH item is still `OPEN` after 1 hour. Not
 built; flagged as the natural mechanism once notification recipients (above)
 are decided.
 
-## Legal considerations: mandatory reporting in Liberia
-**Not researched as part of this sprint - flagging explicitly rather than
-guessing.** Liberia's Children's Law (2011) establishes child protection
-obligations, and the Ministry of Gender, Children and Social Protection
-operates a reporting structure, but the specific mandatory-reporting
-obligations that would apply to a platform operator (as opposed to an
-individual professional like a teacher) were not verified during this sprint
-and should not be assumed. **This needs a real answer from someone with
-Liberian child-protection legal/policy expertise (likely via the MOE
-relationship this platform already has) before the safeguarding flow ships to
-real guardians**, not an LLM-drafted legal summary. Recommend: raise this as
-a standalone action item with the MOE contact, independent of and likely
-slower than the rest of this sprint's engineering work - do not let it block
-the code being ready, but do not flip `AGENT_GUARDIAN_ENABLED` to true in
-production until it's answered.
+## Legal considerations: mandatory reporting in Liberia - RESEARCH PLAN
+This is blocking item 3, and per the review, "the most important open
+question for the sprint." What follows is a plan for getting a real answer,
+not an answer - no legal conclusion is drawn here, and none should be until
+a qualified person weighs in.
 
-## Questions for the human
-1. Approve the keyword-gate safety net as an addition to (not replacement of)
-   LLM judgment for triggering `safeguarding.escalate`.
-2. Approve option (c) - fixed platform-level notification list - for pilot
-   scale, and supply the actual user(s)/contact(s) to notify.
-3. Supply the real emergency-contact information for the guardian-facing
-   escalation acknowledgment script.
-4. Confirm the SLA-breach re-escalation mechanism (scheduler-based check) is
-   in scope for this spec's implementation, or should ship as a fast-follow.
-5. Who owns getting a real answer on Liberian mandatory-reporting obligations
-   before this goes live - and is that person/relationship already
-   identified (MOE contact)?
+### Grounding (public-web research, 2026-07-13 - context for the plan, not a legal answer)
+- **Children's Law of Liberia (2011)** exists and is real: "An Act to
+  Establish the Children's Law of Liberia, 2011," passed by the Senate
+  2011-09-15, signed/launched 2012-02-04. Full text mirrored at
+  [Better Care Network](https://bettercarenetwork.org/sites/default/files/An%20Act%20to%20Establish%20the%20Children's%20Law%20of%20Liberia%202011.pdf)
+  and [FAOLEX](https://www.fao.org/faolex/results/details/en/c/LEX-FAOC199328/).
+  A secondary source (an ACERWC Liberia state report, not the primary
+  statute) paraphrases it as introducing mandatory-reporting provisions
+  covering "parents, caregivers, teachers, guardians, nurses or any other
+  service providers" - **this paraphrase was not verified against the
+  primary legal text**, and whether "service provider" extends to a digital
+  platform like LiberiaLearn is exactly the open question. The primary
+  statute's actual article and scope need to be read directly, by someone
+  qualified to interpret it, not summarized further by an LLM.
+- **Ministry of Gender, Children and Social Protection (MOGCSP)** is the
+  correct current ministry name, confirmed via their official site
+  ([mogcsp.gov.lr](https://mogcsp.gov.lr/)). They operate a **116 hotline**
+  (toll-free, trained social workers, referral to law enforcement/health/
+  social services), launched 2024-12-18 per an
+  [official ministry press release](https://mogcsp.gov.lr/gender-ministry-unveils-national-gbv-116-call-center-with-support-from-world-bank/).
+  24/7 operation was not explicitly confirmed in that source. Also listed on
+  the aggregator [findahelpline.com](https://findahelpline.com/organizations/116-service-line-ministry-of-gender-children-social-protection).
+  Liberia's dedicated child helpline is separately branded **"My Voice, My
+  Safety"** per [Child Helpline International's](https://childhelplineinternational.org/helplines/)
+  network directory (medium confidence - directory source, not
+  cross-verified against a Liberia-side page). **Neither the 116 number nor
+  "My Voice, My Safety" should be used as the emergency-contact script's
+  number until independently confirmed current** (blocking item 2) - this
+  research surfaced candidates, it did not verify them for production use.
+- **No source found addressing digital/telecom/ed-tech platform obligations
+  specifically**, as distinct from schools or individual professionals. This
+  gap looks real (not a search failure) - it's the crux of what a lawyer or
+  MOGCSP contact needs to close.
+
+### Who to consult, in order
+1. **MOGCSP directly** - the primary government authority; first-choice
+   consult given they administer the Children's Law's protection structure
+   and the 116 hotline. Contact page:
+   [mogcsp.gov.lr/contact](https://mogcsp.gov.lr/contact/). Likely reachable
+   via the existing MOE relationship this platform already has, rather than
+   cold outreach.
+2. **A Liberian lawyer or legal-aid organization** with child-protection/NGO
+   regulatory experience, specifically to read the Children's Law's
+   mandatory-reporting article and give a written opinion on whether it
+   extends to a platform operator like LiberiaLearn, and any additional
+   obligations (data handling, reporting timelines, form of report).
+3. **UNICEF Liberia**, [Child Protection program](https://www.unicef.org/liberia/child-protection) -
+   active in Liberia's child-protection system-building; no direct
+   legal-advice channel found, but a plausible facilitator to the right
+   government contact if MOGCSP is slow to respond.
+4. **Save the Children Liberia** - Monrovia HQ, +231 886 962 190,
+   Liberia.Office@savethechildren.org (official
+   [country office contact page](https://liberia.savethechildren.net/contact-us)),
+   has a Child Protection thematic program; a second-opinion consult if
+   government guidance is unclear or slow.
+
+### What to ask
+1. Does the Children's Law of Liberia's mandatory-reporting obligation apply
+   to a digital platform that receives a safeguarding disclosure via SMS
+   from a guardian (not the child directly, not an employee)?
+2. If yes: what is the required reporting channel, timeline, and form? Does
+   reporting to MOGCSP's 116 hotline satisfy it, or is a separate filing
+   required?
+3. Does LiberiaLearn need a written child-protection policy on file with any
+   authority before operating this feature?
+4. Are there data-handling obligations specific to a safeguarding disclosure
+   (retention, who may access the `EscalationQueue` entry, whether it can be
+   shared with MOGCSP/police without further guardian consent)?
+5. Confirm the 116 hotline and "My Voice, My Safety" helpline (or whatever
+   number this consultation surfaces) as the correct, current
+   guardian-facing emergency contact for the acknowledgment script.
+
+**Do not flip `AGENT_GUARDIAN_ENABLED` to true in production, and do not
+implement the notification/keyword-gate/SLA mechanisms in this spec, until
+this plan has been run and items 1-5 above are resolved.**
