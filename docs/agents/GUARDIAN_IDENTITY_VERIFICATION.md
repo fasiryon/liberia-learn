@@ -20,14 +20,18 @@ instead of silently failing on a name pattern it wasn't specifically primed
 for. Revisit if real pilot usage shows systematic false negatives on
 specific name patterns.
 
-## Operational caveat found during implementation
-There is no human-facing "Student ID" field in the schema separate from
-`Student.id` (an internal Prisma cuid, e.g. `ckx7h2j...`). The challenge
-literally uses that string. **This means schools must hand guardians the
-actual internal ID** (e.g. printed on an enrollment card) for the challenge
-to be usable - not a code gap, but a rollout/ops item worth flagging before
-pilot: is there an existing enrollment artifact that already prints this ID,
-or does one need to be created?
+## Operational caveat - RESOLVED (2026-07-13, Finding 1)
+The original draft flagged that there was no human-facing "Student ID"
+separate from the internal cuid. Fixed: `Student.humanReadableStudentId`
+(`lib/students/humanReadableId.ts`) - a 6-8 char code from a restricted
+alphabet (no O/0, no I/1, always contains at least one letter and one
+digit), auto-generated on every new enrollment
+(`app/api/onboard/accept`, `app/api/register/student`,
+`app/api/admin/students`), backfilled for all 188 existing students
+(2026-07-13). The identity challenge now matches against this field, not
+the raw cuid. Enrollment materials/documentation still need to be updated
+to print/reference this code as "the Student ID" - that's an ops/content
+task outside this repo's code, not tracked further here.
 
 ## Why this is an escalation point
 Security-sensitive (this is the only gate between an arbitrary SMS sender and a

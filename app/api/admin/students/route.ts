@@ -8,6 +8,7 @@ import bcrypt from "bcryptjs";
 import { generatePin } from "@/lib/credentials";
 import { normalizeCredentialPhone, slugifyLoginSeed } from "@/lib/login-identifiers";
 import { generateStudentId } from "@/lib/studentId";
+import { createUniqueHumanReadableStudentId } from "@/lib/students/humanReadableId";
 
 export const dynamic = "force-dynamic";
 
@@ -183,8 +184,9 @@ export async function POST(req: Request) {
         },
       });
 
+      const humanReadableStudentId = await createUniqueHumanReadableStudentId(tx);
       const newStudent = await tx.student.create({
-        data: { userId: newUser.id, currentGrade: grade, dateOfBirth: dob },
+        data: { userId: newUser.id, currentGrade: grade, dateOfBirth: dob, humanReadableStudentId },
       });
 
       await tx.enrollment.create({ data: { studentId: newStudent.id, classId } });

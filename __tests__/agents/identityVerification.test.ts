@@ -19,10 +19,10 @@ import {
   resolveChallenge,
 } from "@/lib/agents/sms/identityVerification";
 
-const FAKE_ID = "ckx7h2j9k0000qzrmn831p4a"; // cuid-shaped
+const FAKE_ID = "7XK2M9P"; // humanReadableStudentId-shaped: 7 chars, has a digit
 
 describe("extractChallengeAttempt", () => {
-  it("extracts a cuid-shaped token and treats the rest as the name", () => {
+  it("extracts a humanReadableStudentId-shaped token and treats the rest as the name", () => {
     const result = extractChallengeAttempt(`${FAKE_ID} Pewu Gongloe`);
     expect(result).toEqual({ studentIdCandidate: FAKE_ID, nameCandidate: "Pewu Gongloe" });
   });
@@ -31,6 +31,21 @@ describe("extractChallengeAttempt", () => {
     const result = extractChallengeAttempt(`My child's id is ${FAKE_ID} and name is Pewu`);
     expect(result?.studentIdCandidate).toBe(FAKE_ID);
     expect(result?.nameCandidate).toContain("Pewu");
+  });
+
+  it("is uppercase-normalized regardless of input case", () => {
+    const result = extractChallengeAttempt(`${FAKE_ID.toLowerCase()} Pewu Gongloe`);
+    expect(result?.studentIdCandidate).toBe(FAKE_ID);
+  });
+
+  it("does not false-positive on an ordinary all-letter word of 6-8 chars", () => {
+    // "SCIENCE" and "STUDENT" are both 7-letter, all-alphabetic words with no digit.
+    expect(extractChallengeAttempt("How is my son doing in SCIENCE class?")).toBeNull();
+    expect(extractChallengeAttempt("Please help my STUDENT with homework")).toBeNull();
+  });
+
+  it("does not match a token containing ambiguous characters (O, 0, I, 1)", () => {
+    expect(extractChallengeAttempt("ABCD01 Pewu")).toBeNull(); // has 0 and 1
   });
 
   it("returns null for an ordinary question with no ID-shaped token", () => {

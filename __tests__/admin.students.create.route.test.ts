@@ -13,6 +13,7 @@ const mockUserFindFirst = vi.hoisted(() => vi.fn());
 const mockUserFindUnique = vi.hoisted(() => vi.fn());
 const mockUserCreate = vi.hoisted(() => vi.fn());
 const mockStudentCreate = vi.hoisted(() => vi.fn());
+const mockStudentFindUnique = vi.hoisted(() => vi.fn());
 const mockEnrollmentCreate = vi.hoisted(() => vi.fn());
 
 vi.mock("@/lib/auth", () => ({
@@ -54,6 +55,7 @@ vi.mock("@/lib/db", () => ({
     },
     student: {
       create: mockStudentCreate,
+      findUnique: mockStudentFindUnique,
     },
     enrollment: {
       create: mockEnrollmentCreate,
@@ -93,12 +95,13 @@ describe("POST /api/admin/students", () => {
       guardianPhoneE164: "norm:+231770000000",
     });
     mockStudentCreate.mockResolvedValue({ id: "student-1", currentGrade: 6 });
+    mockStudentFindUnique.mockResolvedValue(null);
     mockEnrollmentCreate.mockResolvedValue({ id: "enrollment-1" });
     mockLogAudit.mockResolvedValue(undefined);
     mockTransaction.mockImplementation(async (cb: any) => {
       const tx = {
         user: { create: mockUserCreate },
-        student: { create: mockStudentCreate },
+        student: { create: mockStudentCreate, findUnique: mockStudentFindUnique },
         enrollment: { create: mockEnrollmentCreate },
       };
       return cb(tx);

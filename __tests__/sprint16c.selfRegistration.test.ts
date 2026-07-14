@@ -99,7 +99,7 @@ describe("POST /api/register/student", () => {
     mockPrismaTransaction.mockImplementation(async (fn: Function) => {
       return fn({
         user: { create: vi.fn().mockResolvedValue({ id: "user-1", email: "james@cha.edu.lr", loginId: "JAMES-KOLLIE" }) },
-        student: { create: vi.fn().mockResolvedValue({ id: "student-1" }) },
+        student: { create: vi.fn().mockResolvedValue({ id: "student-1" }), findUnique: vi.fn().mockResolvedValue(null) },
         enrollment: { create: vi.fn().mockResolvedValue({}) },
       });
     });
@@ -176,7 +176,7 @@ describe("POST /api/register/student", () => {
     mockPrismaTransaction.mockImplementation(async (fn: Function) => {
       return fn({
         user: { create: vi.fn().mockResolvedValue({ id: "user-1", email: "james@cha.edu.lr", loginId: "JAMES-KOLLIE" }) },
-        student: { create: vi.fn().mockResolvedValue({ id: "student-1" }) },
+        student: { create: vi.fn().mockResolvedValue({ id: "student-1" }), findUnique: vi.fn().mockResolvedValue(null) },
         enrollment: { create: vi.fn().mockResolvedValue({}) },
       });
     });
@@ -192,7 +192,7 @@ describe("POST /api/register/student", () => {
     mockPrismaTransaction.mockImplementation(async (fn: Function) => {
       return fn({
         user: { create: vi.fn().mockResolvedValue({ id: "user-1", email: "james-kollie@no-email.liberialearn.internal", loginId: "JAMES-KOLLIE" }) },
-        student: { create: vi.fn().mockResolvedValue({ id: "student-1" }) },
+        student: { create: vi.fn().mockResolvedValue({ id: "student-1" }), findUnique: vi.fn().mockResolvedValue(null) },
         enrollment: { create: vi.fn().mockResolvedValue({}) },
       });
     });

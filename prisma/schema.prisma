@@ -51,6 +51,7 @@ model User {
   student             Student?
   guardianOf          StudentGuardian[]
   studentProgress     StudentProgress[]
+  designatedSafetyStaffForSchools School[]        @relation("SchoolDesignatedSafetyStaff")
   TeacherProfile      TeacherProfile?
   TrainingProgress    TrainingProgress[]
   school              School?              @relation(fields: [schoolId], references: [id])
@@ -157,6 +158,12 @@ model School {
   approvedAt             DateTime?
   rejectedAt             DateTime?
   rejectionReason        String?
+  // Sprint 6.1 Spec 5 (safeguarding): the school contact who receives HIGH
+  // safeguarding escalations alongside ADMIN-role users at the school.
+  // Nullable during migration; required for pilot schools during onboarding
+  // (not enforced at the DB level - see docs/agents/GUARDIAN_SAFEGUARDING.md).
+  designatedSafetyStaffUserId String?
+  designatedSafetyStaff  User?                  @relation("SchoolDesignatedSafetyStaff", fields: [designatedSafetyStaffUserId], references: [id])
   AuditLog               AuditLog[]
   classes                Class[]
   inviteTokens           InviteToken[]
@@ -242,6 +249,12 @@ model Student {
   createdAt             DateTime                @default(now())
   currentGrade          Int?
   deletedAt             DateTime?
+  // Sprint 6.1 Finding 1: guardian-facing Student ID (the internal cuid is
+  // unusable for the SMS identity challenge). 6-8 char alphanumeric,
+  // excludes O/0 and I/1, guaranteed to contain both a letter and a digit
+  // (see lib/students/humanReadableId.ts). Nullable until the backfill
+  // script runs; auto-generated on every new enrollment going forward.
+  humanReadableStudentId String?                @unique
   assignmentSubmissions AssignmentSubmission[]
   attendance            AttendanceRecord[]
   operationalAttendance Attendance[]

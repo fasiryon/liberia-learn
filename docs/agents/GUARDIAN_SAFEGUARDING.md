@@ -1,31 +1,63 @@
 # Guardian Safeguarding Escalation Integration (Sprint 6.1, escalation point 5)
 
-STATUS: **NOT APPROVED (2026-07-13).** Implementation stays blocked on the 5
-items below. Nothing in this spec was built or changed this round beyond the
-research plan at the bottom. `safeguarding.escalate` (Deliverable 3) still
-only writes an `EscalationQueue` row - it does not notify anyone, has no
-keyword safety net, and no SLA-breach handling.
+STATUS: **APPROVED and implemented (2026-07-14).** Legal direction came back
+via counsel: **LiberiaLearn has no mandatory reporting obligation.** The
+agent's role is detect, acknowledge, resource, and alert the school, nothing
+more (see Gates below). All 6 gates (A-F) implemented except gate B is
+**partially** done: the 116 child-protection hotline is real and wired, but
+a general Liberia police/emergency number was not verified (web search hit a
+session rate limit mid-implementation) - the acknowledgment script says
+"call the police" without a specific number rather than guess. See
+[[GUARDIAN_COST_ACCOUNTING]]-adjacent honesty principle: no placeholder
+numbers in production, so this stays as prose until a real number is found.
 
-## Blocking items (recorded verbatim from the review, do not implement past these)
-1. Confirm a designated safety-staff field in the `School` model (or add
-   one) - i.e. resolve the "who is (b)" question below with a real schema
-   answer, not the pilot-scale workaround (c) this doc originally proposed.
-2. Get the actual Liberia emergency number and the Liberia child-protection
-   hotline. **Do not use placeholders in production** - the guardian-facing
-   acknowledgment script (below) stays unshipped until these are real.
-3. Legal counsel on Liberian mandatory-reporting obligations - a real legal
-   question needing a real answer, not an LLM summary. See Research Plan.
-4. Define what happens when the SLA is missed: auto-escalate to district,
-   notify a specific person, or just log? Not decided.
-5. Add an explicit "err on the side of escalation" rule: false positives are
-   acceptable, false negatives are not. This changes the recommendation
-   below from "keyword net as a floor under LLM judgment" to a firmer
-   default - noted, not yet encoded, since the mechanism it would live in
-   (the keyword gate) isn't built until this spec is approved.
+## Implementation gates (recorded verbatim from the direction, 2026-07-14)
+A. **Done.** `School.designatedSafetyStaffUserId` (nullable, migration
+   `20260713_000003_safeguarding_and_student_id`).
+B. **Partially done.** 116 hotline wired as a real constant
+   (`lib/agents/safeguarding/resources.ts`), cited against an official
+   MOGCSP source. Police number NOT wired - not verified, see above.
+C. **Done.** `lib/agents/safeguarding/keywordGate.ts` - deterministic,
+   high-recall pattern list, checked before the LLM loop runs.
+D. **Done.** `lib/agents/safeguarding/notify.ts` - ADMIN-role users at the
+   school plus `designatedSafetyStaffUserId`, via existing inbox + push
+   infrastructure (no new delivery channel built).
+E. **Done.** Keyword-gate path always logs `EscalationQueue` at `HIGH`.
+   The LLM-judgment path (`safeguarding.escalate` tool) still lets the
+   agent choose `HIGH`/`MEDIUM` for its own judgment calls.
+F. **Done.** `scripts/verify-guardian-agent-e2e.ts`, run twice against real
+   prod demo data (guardian1@cha.family.lr / Pewu Gongloe, Grade 7,
+   student code `C9T5CE4`). All 8 messages from the original Deliverable 10
+   spec behave correctly: known-number greeting, weekly-report/progress
+   answers with real mastery data, the safeguarding trigger (fixed 116
+   acknowledgment, `EscalationQueue` HIGH, `NotificationInboxItem` for the
+   school ADMIN), a warm follow-up after the safeguarding message, the
+   unknown-number challenge, a successful Student-ID+name verification, and
+   a post-verification follow-up. First run surfaced and fixed a real bug
+   (below); second run passed clean. Also incidentally exercised Spec 4's
+   cost cap for real: two replies were suppressed by the per-guardian daily
+   segment cap mid-run, and the safeguarding reply still went through
+   despite the cap already being hit, confirming the bypass works.
 
-Everything else in this document is proposal/analysis, unchanged from the
-draft reviewed, kept for context on what implementation will need to do once
-items 1-5 are resolved.
+**Bug found and fixed during Gate F**: the known-number verification path
+told the agent `[context: verified]` with no studentId at all (unlike the
+challenge-grant path, which always included one). Every `guardian.*` tool
+call requiring a studentId failed - the LLM invented a literal `"<id>"`
+placeholder rather than asking or refusing. Fixed in
+`lib/agents/sms/guardianInbound.ts`: the known-number path now resolves
+every `StudentGuardian` link and includes each as
+`{studentId=<id> name=<firstName>}` in the context line, so the agent has
+real IDs to work with (and can ask which child, for a guardian with more
+than one). System prompt updated to document the new context format and to
+explicitly forbid inventing a studentId.
+
+**Not addressed this round** (was blocking item 4 in the prior draft, not
+in the new gate list, so left alone rather than inventing behavior): what
+happens on an SLA miss. `EscalationQueue.status`/`createdAt` make a breach
+queryable, but nothing alerts on one yet.
+
+Everything below is the original proposal/analysis, kept for context, with
+resolution notes inserted where the direction changed or confirmed it.
 
 ## Why this is an escalation point
 Child safety. This is the highest-consequence path in the entire sprint - a
@@ -43,18 +75,19 @@ default (regex on "hurt"/"hit"/"missing" will both over-trigger on idioms and
 under-trigger on paraphrase), but pure LLM judgment as the *only* safety net
 is a single point of failure if the model mis-reads a message.
 
-**Recommendation:** add a narrow, high-recall (not high-precision) keyword
-safety net *in addition to* the agent's judgment, not instead of it - a
-short list of terms (hurt, hit, abuse, threatened, missing, following, scared,
-unsafe, self-harm and close variants) that, if present anywhere in an inbound
-message, force a mandatory `safeguarding.escalate` call regardless of what
-the agent's own reasoning concludes, even if the final classification is
-`MEDIUM` rather than `HIGH`. This trades some false positives (a keyword
-match on an unrelated message costs one `LOW`/`MEDIUM` queue entry - cheap)
-for a hard floor under the "the LLM might just get it wrong" risk. This is
-new code (not yet built) that would sit in `lib/agents/sms/guardianInbound.ts`
-or a new `lib/agents/safeguarding/keywordGate.ts`, checked before/alongside
-the agent's own tool-call decision.
+**Implemented (2026-07-14), per Gate C and Gate 5's "err on the side of
+escalation" rule.** `lib/agents/safeguarding/keywordGate.ts`: a high-recall
+pattern list (hurt/hit/abuse/threatened/missing/following/scared/unsafe/
+self-harm/suicide/rape/molest/kidnap/trafficking and close variants),
+checked in `lib/agents/sms/guardianInbound.ts` *before* the LLM loop runs at
+all. A match short-circuits the entire message: no LLM call, a fixed
+guaranteed-correct acknowledgment (real 116 number, no LLM paraphrase risk
+under a 300-token cap), an `EscalationQueue` row at `HIGH`, and a school
+notification, deterministically. The agent's own judgment (via
+`safeguarding.escalate`) remains a second, LLM-driven catch-all for concerns
+this list doesn't anticipate - a floor, not a replacement. False positives
+are accepted by design (a keyword hit on an unrelated message costs one
+`HIGH` queue entry, cheap and reviewable).
 
 ## Who receives HIGH priority escalations?
 **Concrete finding, not a design choice:** there is no `PRINCIPAL` value in
@@ -82,30 +115,35 @@ simple, and avoids shipping (a) as a silent assumption that later turns out
 wrong when a school's ADMIN user isn't actually the right safeguarding
 contact.
 
-**Superseded by blocking item 1 above**: the reviewer wants a real
-designated-safety-staff field on `School` (closer to option (b)) rather than
-the pilot-workaround (c). Not designed further here - needs product input on
-whether it's a single `designatedSafetyStaffUserId` (one person per school)
-or a small list, and whether it's admin-settable per school or seeded at
-onboarding.
+**Resolved (Gate A, 2026-07-14):** `School.designatedSafetyStaffUserId`
+(single person per school, nullable at the DB level, expected to be
+required as part of pilot-school onboarding - not enforced by a DB
+constraint, since it can't be known at the point existing schools were
+created). `lib/agents/safeguarding/notify.ts` notifies the union of
+ADMIN-role users at the school (the "principal" proxy, since no PRINCIPAL
+Role exists) and this field, deduplicated.
 
-**Delivery channel:** `createInboxNotification` (`lib/notifications/inboxService.ts`)
-already exists for the "support inbox" half and requires no new
-infrastructure - it needs `userId`s to notify (see above). Add SMS-to-specific-staff
-as a second channel only if inbox-notification response time in
-pilot proves too slow - not built now, since it multiplies the
-cost-accounting question in [[GUARDIAN_COST_ACCOUNTING]] and adds outbound
-SMS spend for a feature not yet validated as necessary.
+**Delivery channel (Gate D, implemented):** both `createInboxNotification`
+and `sendPushToUser` (`lib/notifications/inboxService.ts`,
+`lib/push/sendPush.ts`), no new channel built. Push failures are logged and
+swallowed (the inbox notification is the durable record; push is
+best-effort speed).
 
 ## What does the agent tell the guardian while escalating?
-Warm acknowledgment, next step, never dismiss - already specified in the
-system prompt's out-of-scope handling. Concrete script needed (not yet
-drafted precisely enough to ship): something like "I hear you, and this is
-serious. I'm making sure someone at the school knows right away. If your
-child is in immediate danger, please call [emergency contact] now." The
-bracketed emergency contact needs a real number/authority before this ships -
-**flagging, not filling in, since this is exactly the kind of detail that
-must not be guessed.**
+**Implemented (Gate B, partial).** For the keyword-gate path (the common
+case), the message is fixed and guaranteed-correct, not LLM-composed:
+"I hear you, and this is serious. I've alerted the school right away. If
+your child is in immediate danger, call the police now. For more help,
+Liberia's child protection hotline is 116." (`lib/agents/safeguarding/resources.ts`).
+The 116 number is real and cited (MOGCSP official press release, see
+Research Plan below). **The police reference has no specific number** - a
+general Liberia emergency/police number was not verified during this
+implementation (web search hit a session rate limit; this is a retry, not a
+permanent gap). Do not fill in a number without a citation as strong as the
+116 one. For the LLM-judgment path (`safeguarding.escalate` called by the
+agent's own reasoning), the system prompt embeds the same script so the
+agent's composed response uses the real number too, with lower formatting
+guarantees than the deterministic path.
 
 ## SLA for human response to a HIGH escalation
 Sprint brief suggests <1 hour during school hours. This is not enforceable by

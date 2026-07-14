@@ -17,6 +17,10 @@ import {
   type RateLimitState,
 } from "@/lib/agents/sms/identityVerification";
 import { checkSmsCostCap, countSmsSegments, recordSmsSpend } from "@/lib/agents/sms/smsCost";
+import { detectSafeguardingKeywords } from "@/lib/agents/safeguarding/keywordGate";
+import { notifySchoolSafeguarding } from "@/lib/agents/safeguarding/notify";
+import { SAFEGUARDING_ACKNOWLEDGMENT_MESSAGE } from "@/lib/agents/safeguarding/resources";
+import { enqueueEscalation } from "@/lib/agents/escalation";
 import { logger } from "@/lib/logger";
 
 const CONVERSATION_TTL_MS = 24 * 60 * 60 * 1000;
@@ -56,6 +60,34 @@ async function sendReply(phone: string, body: string, traceId: string): Promise<
   }
 }
 
+/**
+ * Resolve a schoolId to notify for a safeguarding escalation, from whatever
+ * identity is available (may be neither, if the caller is fully
+ * unverified - that case is logged but not notified, since there is no
+ * school to target).
+ */
+async function resolveSchoolIdForSafeguarding(
+  userId: string | null,
+  grantedStudentIds: string[] | null
+): Promise<string | null> {
+  if (userId) {
+    const guardian = await prisma.user.findUnique({
+      where: { id: userId },
+      select: { guardianOf: { take: 1, select: { student: { select: { user: { select: { schoolId: true } } } } } } },
+    });
+    const schoolId = guardian?.guardianOf[0]?.student.user.schoolId;
+    if (schoolId) return schoolId;
+  }
+  if (grantedStudentIds?.length) {
+    const student = await prisma.student.findUnique({
+      where: { id: grantedStudentIds[grantedStudentIds.length - 1] },
+      select: { user: { select: { schoolId: true } } },
+    });
+    if (student?.user.schoolId) return student.user.schoolId;
+  }
+  return null;
+}
+
 export async function handleGuardianInbound(input: { from: string; text: string }): Promise<GuardianInboundResult> {
   const normalized = parseInboundSms(input);
   const now = new Date();
@@ -93,7 +125,19 @@ export async function handleGuardianInbound(input: { from: string; text: string 
   }
 
   if (userId) {
-    contextLine = "[context: verified]";
+    // Known-number guardians aren't scoped to one studentId the way a
+    // challenge grant is - resolve every linked student so the agent has a
+    // real studentId to pass to guardian.* tools, instead of hallucinating
+    // one (observed in Deliverable 10 E2E testing: without this, the LLM
+    // invented a literal "<id>" placeholder and every tool call failed).
+    const linkedStudents = await prisma.studentGuardian.findMany({
+      where: { guardianId: userId },
+      select: { student: { select: { id: true, user: { select: { name: true } } } } },
+    });
+    const studentList = linkedStudents
+      .map((sg) => `{studentId=${sg.student.id} name=${sg.student.user.name?.split(" ")[0] ?? "unknown"}}`)
+      .join(", ");
+    contextLine = studentList ? `[context: verified students=[${studentList}]]` : "[context: verified]";
   } else if (state.grantedStudentIds?.length) {
     // Already granted earlier in this conversation - reuse without re-challenging.
     contextLine = `[context: verified studentId=${state.grantedStudentIds[state.grantedStudentIds.length - 1]}]`;
@@ -142,6 +186,53 @@ export async function handleGuardianInbound(input: { from: string; text: string 
   }
 
   state.messages.push({ from: "guardian", text: normalized.text, at: normalized.receivedAt });
+  state.messages = state.messages.slice(-MAX_STORED_MESSAGES);
+
+  // --- Safeguarding keyword gate (Sprint 6.1 Spec 5, Gate C - a deterministic
+  // floor under the agent's own judgment; "false positives acceptable, false
+  // negatives are not"). Bypasses the LLM entirely for this message so the
+  // acknowledgment text and resources are guaranteed correct, not
+  // LLM-composed under a 300-token cap. ---
+  if (detectSafeguardingKeywords(normalized.text)) {
+    await persistConversation(conversation.id, state, now, {
+      userId: newlyKnownGuardian ? userId : conversation.guardianId,
+      verifiedAt: newlyKnownGuardian ? now : conversation.verifiedAt,
+    });
+
+    const schoolId = await resolveSchoolIdForSafeguarding(userId, state.grantedStudentIds ?? null);
+    const { id: escalationId } = await enqueueEscalation({
+      agentName: "liberialearn-family",
+      invocationId: null,
+      userId: userId ?? null,
+      reason: "safeguarding (keyword gate): possible concern in guardian message",
+      priority: "HIGH",
+      traceId,
+      schoolId,
+    });
+
+    if (schoolId) {
+      await notifySchoolSafeguarding(schoolId, `Guardian message flagged for safeguarding review (escalation ${escalationId}).`);
+    } else {
+      logger.warn("[guardian.inbound] safeguarding escalation has no resolvable schoolId - school not notified", {
+        traceId,
+        escalationId,
+      });
+    }
+
+    // Never rate/cost-limited (approved Spec 4 exception), but spend is still
+    // recorded for reporting accuracy.
+    await sendReply(phone, SAFEGUARDING_ACKNOWLEDGMENT_MESSAGE, traceId);
+    await recordSmsSpend(phone, countSmsSegments(SAFEGUARDING_ACKNOWLEDGMENT_MESSAGE));
+
+    return {
+      from: normalized.from,
+      normalizedFrom: phone,
+      handled: true,
+      agentStatus: "SAFEGUARDING_ESCALATED",
+      response: SAFEGUARDING_ACKNOWLEDGMENT_MESSAGE,
+      invocationId: null,
+    };
+  }
 
   const agentInput = `${contextLine}\n${normalized.text}`;
   const result = await runAgent("liberialearn-family", agentInput, {
