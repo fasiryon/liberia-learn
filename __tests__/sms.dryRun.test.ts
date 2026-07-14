@@ -6,7 +6,7 @@ vi.mock("@/lib/logger", () => ({
   logger: { info: mockLoggerInfo, warn: vi.fn(), error: vi.fn() },
 }));
 
-import { DryRunSMSProvider } from "@/lib/sms/dry-run-provider";
+import { DryRunSMSProvider } from "@/lib/sms/providers/dry-run";
 
 describe("DryRunSMSProvider", () => {
   let provider: DryRunSMSProvider;

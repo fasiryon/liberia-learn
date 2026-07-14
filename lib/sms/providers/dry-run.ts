@@ -1,5 +1,5 @@
 /**
- * lib/sms/dry-run-provider.ts
+ * lib/sms/providers/dry-run.ts
  *
  * Safe no-op SMS adapter used when ENABLE_LIVE_SMS is not "true".
  * Logs the intended send without making any real network call.
@@ -28,7 +28,7 @@ export class DryRunSMSProvider implements SMSProvider {
 
   async send(input: SMSProviderSendParams): Promise<SMSProviderSendResult> {
     const dryRunId = `dry-run-${randomUUID()}`;
-    logger.info("[SMS-DRY-RUN] SMS not sent — live SMS disabled (ENABLE_LIVE_SMS not set)", {
+    logger.info("[SMS-DRY-RUN] SMS not sent - live SMS disabled (ENABLE_LIVE_SMS not set)", {
       to: input.to.slice(0, 4) + "****",
       bodyLength: input.body.length,
       idempotencyKey: input.idempotencyKey,

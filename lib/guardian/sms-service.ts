@@ -20,7 +20,7 @@ import { recordMetricEvent } from "@/lib/metrics/events";
 import { logAudit } from "@/lib/audit";
 import { renderGuardianTemplate, getDefaultTemplateKey, type GuardianMessageType, type GuardianTemplateKey } from "@/lib/guardian/sms-templates";
 import type { SMSProvider } from "@/lib/sms/provider";
-import { TwilioSMSProvider } from "@/lib/sms/twilio-provider";
+import { TwilioSMSProvider } from "@/lib/sms/providers/twilio";
 
 type SendGuardianSMSInput = {
   schoolId: string;

@@ -36,6 +36,34 @@ a new SMS provider is a larger change than this spec's scope. The rate
 constant has an env override (`GUARDIAN_SMS_RATE_USD_PER_SEGMENT`) so
 switching providers later doesn't require a code change, only a number.
 
+### Follow-up round (2026-07-14) - provider decision confirmed for pilot, Doc B for scale
+Explicit direction: do not implement Orange Liberia this sprint. Twilio is
+fine for pilot scale (20-100 guardians) - at that volume and the ~10
+segment/guardian/day cap, worst case is a few hundred dollars/month, not
+the scale where the 4-5x rate gap matters enough to justify a new
+integration mid-pilot.
+
+**Doc B (pre-scale requirement, not pilot-blocking):** before scaling past
+pilot size, evaluate and wire Orange Liberia's direct local API (or another
+cheaper provider) as an `SMSProvider` implementation
+(`lib/sms/providers/orange-liberia.ts`, same interface as
+`lib/sms/providers/twilio.ts`/`africastalking.ts` - the provider structure
+was cleaned up specifically so this slots in without touching call sites).
+At scale (hundreds+ guardians), the 4-5x per-segment gap between Twilio and
+Orange Liberia direct becomes real budget, not a rounding error.
+
+**SMS provider structure cleanup (2026-07-14, Finding 2):** `lib/sms/twilio-provider.ts`
+and `lib/sms/dry-run-provider.ts` moved to `lib/sms/providers/twilio.ts` and
+`lib/sms/providers/dry-run.ts`. The inline Africa's Talking branch that used
+to live directly in `lib/sms.ts` is now `lib/sms/providers/africastalking.ts`,
+implementing the same `SMSProvider` interface as every other provider
+instead of being special-cased. `lib/sms.ts`'s `sendSMS()` now selects
+uniformly: dry-run if live SMS is disabled, else Africa's Talking if
+configured (it never will be for real Liberia traffic, kept only because
+`AT_API_KEY`/`AT_USERNAME` are an existing checked env convention
+elsewhere - health checks, env validation), else Twilio. Structural cleanup
+only, no behavior change for real traffic.
+
 ## Safeguarding exception (requested at approval)
 Implemented: `sendCappedReply()` in `lib/agents/sms/guardianInbound.ts`
 checks `result.toolCalls` for a successful `safeguarding.escalate` call and,
