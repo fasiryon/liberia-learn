@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
+import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 
 const { mockPrisma } = vi.hoisted(() => ({
   mockPrisma: {
@@ -11,7 +11,7 @@ const { mockPrisma } = vi.hoisted(() => ({
 }));
 vi.mock("@/lib/db", () => ({ prisma: mockPrisma }));
 
-import { countSmsSegments, checkSmsCostCap, recordSmsSpend, SMS_RATE_USD_PER_SEGMENT } from "@/lib/agents/sms/smsCost";
+import { countSmsSegments, checkSmsCostCap, recordSmsSpend, getActiveSmsRateUsdPerSegment } from "@/lib/agents/sms/smsCost";
 
 describe("countSmsSegments", () => {
   it("counts a short GSM-7 message as 1 segment", () => {
@@ -36,9 +36,26 @@ describe("countSmsSegments", () => {
   });
 });
 
-describe("SMS_RATE_USD_PER_SEGMENT", () => {
-  it("defaults to the cited Twilio Liberia rate", () => {
-    expect(SMS_RATE_USD_PER_SEGMENT).toBeCloseTo(0.2677, 4);
+describe("getActiveSmsRateUsdPerSegment", () => {
+  const original = process.env.SMS_PROVIDER;
+  afterEach(() => {
+    if (original === undefined) delete process.env.SMS_PROVIDER;
+    else process.env.SMS_PROVIDER = original;
+  });
+
+  it("defaults to the cited Twilio Liberia rate when no provider is explicitly selected", () => {
+    delete process.env.SMS_PROVIDER;
+    expect(getActiveSmsRateUsdPerSegment()).toBeCloseTo(0.2677, 4);
+  });
+
+  it("uses the cited Orange Liberia rate when SMS_PROVIDER=orange", () => {
+    process.env.SMS_PROVIDER = "orange";
+    expect(getActiveSmsRateUsdPerSegment()).toBeCloseTo(0.06, 4);
+  });
+
+  it("uses the Twilio rate when SMS_PROVIDER=twilio explicitly", () => {
+    process.env.SMS_PROVIDER = "twilio";
+    expect(getActiveSmsRateUsdPerSegment()).toBeCloseTo(0.2677, 4);
   });
 });
 
