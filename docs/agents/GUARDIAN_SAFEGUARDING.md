@@ -1,22 +1,25 @@
 # Guardian Safeguarding Escalation Integration (Sprint 6.1, escalation point 5)
 
-STATUS: **APPROVED and implemented (2026-07-14).** Legal direction came back
-via counsel: **LiberiaLearn has no mandatory reporting obligation.** The
-agent's role is detect, acknowledge, resource, and alert the school, nothing
-more (see Gates below). All 6 gates (A-F) implemented except gate B is
-**partially** done: the 116 child-protection hotline is real and wired, but
-a general Liberia police/emergency number was not verified (web search hit a
-session rate limit mid-implementation) - the acknowledgment script says
-"call the police" without a specific number rather than guess. See
-[[GUARDIAN_COST_ACCOUNTING]]-adjacent honesty principle: no placeholder
-numbers in production, so this stays as prose until a real number is found.
+STATUS: **APPROVED and fully implemented (2026-07-14, closed 2026-07-14).**
+Legal direction came back via counsel: **LiberiaLearn has no mandatory
+reporting obligation.** The agent's role is detect, acknowledge, resource,
+and alert the school, nothing more (see Gates below). All 6 gates (A-F) are
+now done - Gate B's police number (the last open item from this sprint) was
+confirmed 2026-07-14.
 
 ## Implementation gates (recorded verbatim from the direction, 2026-07-14)
 A. **Done.** `School.designatedSafetyStaffUserId` (nullable, migration
    `20260713_000003_safeguarding_and_student_id`).
-B. **Partially done.** 116 hotline wired as a real constant
-   (`lib/agents/safeguarding/resources.ts`), cited against an official
-   MOGCSP source. Police number NOT wired - not verified, see above.
+B. **Done (closed 2026-07-14).** 116 child-protection hotline and the
+   police number are both real constants in
+   `lib/agents/safeguarding/resources.ts`, both cited. Police number:
+   **0770-800-911**, confirmed via an official Liberia National Police
+   (LNP) public safety notice - Liberia's national operations number for
+   police assistance, crime reporting, and emergency response. **911 is
+   explicitly not in use in Liberia** - do not fall back to it anywhere.
+   Repo-wide grep for "911" confirmed no other reference to it as a
+   Liberia emergency number (one unrelated hit: a lesson-count table in
+   `docs/ops/NR14_AUDIO_PIPELINE.md`).
 C. **Done.** `lib/agents/safeguarding/keywordGate.ts` - deterministic,
    high-recall pattern list, checked before the LLM loop runs.
 D. **Done.** `lib/agents/safeguarding/notify.ts` - ADMIN-role users at the
@@ -130,20 +133,19 @@ swallowed (the inbox notification is the durable record; push is
 best-effort speed).
 
 ## What does the agent tell the guardian while escalating?
-**Implemented (Gate B, partial).** For the keyword-gate path (the common
+**Implemented (Gate B, done).** For the keyword-gate path (the common
 case), the message is fixed and guaranteed-correct, not LLM-composed:
 "I hear you, and this is serious. I've alerted the school right away. If
-your child is in immediate danger, call the police now. For more help,
-Liberia's child protection hotline is 116." (`lib/agents/safeguarding/resources.ts`).
-The 116 number is real and cited (MOGCSP official press release, see
-Research Plan below). **The police reference has no specific number** - a
-general Liberia emergency/police number was not verified during this
-implementation (web search hit a session rate limit; this is a retry, not a
-permanent gap). Do not fill in a number without a citation as strong as the
-116 one. For the LLM-judgment path (`safeguarding.escalate` called by the
-agent's own reasoning), the system prompt embeds the same script so the
-agent's composed response uses the real number too, with lower formatting
-guarantees than the deterministic path.
+your child is in immediate danger, please call the police at 0770-800-911.
+For more help, Liberia's child protection hotline is 116."
+(`lib/agents/safeguarding/resources.ts`). Both numbers are real and cited:
+116 via the MOGCSP official press release (see Research Plan below);
+0770-800-911 via an official LNP public safety notice (2026-07-14) - and
+explicitly not 911, which is not in use in Liberia. For the LLM-judgment
+path (`safeguarding.escalate` called by the agent's own reasoning), the
+system prompt embeds the same script so the agent's composed response uses
+the real numbers too, with lower formatting guarantees than the
+deterministic path.
 
 ## SLA for human response to a HIGH escalation
 Sprint brief suggests <1 hour during school hours. This is not enforceable by
