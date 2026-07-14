@@ -33,7 +33,7 @@ const {
 
 vi.mock("@/lib/db", () => ({ prisma: mockPrisma }));
 vi.mock("@/lib/agents/runtime", () => ({ runAgent: mockRunAgent }));
-vi.mock("@/lib/sms", () => ({ sendSMS: mockSendSMS }));
+vi.mock("@/lib/sms", () => ({ sendSMS: mockSendSMS, sendTwoWaySMS: mockSendSMS }));
 vi.mock("@/lib/agents/sms/identityVerification", () => ({
   resolveKnownGuardian: mockResolveKnownGuardian,
   extractChallengeAttempt: mockExtractChallengeAttempt,

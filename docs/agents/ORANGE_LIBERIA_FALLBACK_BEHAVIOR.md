@@ -1,11 +1,25 @@
 # Orange Liberia Fallback Behavior (Orange Liberia integration, escalation point)
 
-STATUS: DRAFT - awaiting review. Not implemented. `OrangeSMSProvider.send()`
-currently behaves like every other provider on failure: returns
-`{ ok: false, error, retryable }` to its caller with no cross-provider
-fallback or alerting beyond what already exists (a caller-level warn log -
-see `lib/agents/sms/guardianInbound.ts:sendReply`). This document is about
-whether to add something beyond that, not a description of what ships today.
+STATUS: **APPROVED and implemented (2026-07-14).**
+1. **Option A (alert and stop)** - no auto-fallback to Twilio on failure.
+   Unchanged from before: `OrangeSMSProvider.send()` (and every other
+   provider) just returns `{ ok: false, error, retryable }`.
+2. **Alert mechanism**: `lib/sms/failureTracking.ts:recordSmsSendFailure()`
+   - a metric event (`MetricEvent` name `"sms.failed"`, tagged with
+   `provider`) on every failed send, always-on. When the SAME provider
+   crosses 3 failures within a rolling 60-minute window, a `MEDIUM`
+   `EscalationQueue` entry fires once per cluster (exactly at the 3rd
+   failure in the window, not on every failure past it, so a sustained
+   outage doesn't spam the queue).
+3. **Scope**: wired into every current Orange-reachable send path - both
+   `lib/sms.ts:sendSMS()` (guardian agent conversational replies) and
+   `lib/guardian/sms-service.ts:sendGuardianSMS()` (weekly digest and other
+   templated guardian sends). `sendGuardianSMS`'s default provider changed
+   from a hardcoded `TwilioSMSProvider` to `selectSmsProvider()` (the same
+   `SMS_PROVIDER`-driven selection `lib/sms.ts` already used) - without
+   this, Orange could never actually be selected for the digest path at
+   all, which is its realistic near-term role (see the cost-accounting doc).
+   No special-casing for a hypothetical future non-guardian use.
 
 ## The question
 If `SMS_PROVIDER=orange` is the active provider and a send fails (network
@@ -43,29 +57,15 @@ outage, at the cost of:
   (Orange's `deliveryInfoNotification` webhook, once/if built, would never
   fire for a message that actually went out via Twilio).
 
-## Recommendation
-**Option A (alert and stop)** for guardian-facing messages, consistent with
-the sprint brief's own lean. The cost-tracking and correlation problems in
-Option B are solvable but add real complexity for a failure mode (provider
-outage) that should be rare and is better surfaced to a human than papered
-over automatically - matching the same philosophy already applied to
-`safeguarding.escalate` (never silently take an action that could confuse
-what actually happened).
-
-If approved, "alert" needs a concrete mechanism - options, not yet decided:
-- A `logger.error` plus an existing metric event (`recordMetricEvent`,
-  already used elsewhere in the SMS stack) that ops dashboards can alert on.
-- An `EscalationQueue` entry (LOW/MEDIUM) if delivery failures should be
-  reviewable the same way safeguarding/phone-update requests are - probably
-  overkill for a single failed send, more appropriate if failures cluster
-  (e.g. N failures in an hour).
-
-## Questions for the human
-1. Approve Option A (alert and stop) as proposed, or Option B (auto-fallback
-   to Twilio) despite the cost/correlation tradeoffs?
-2. If Option A: which alert mechanism - metric event, EscalationQueue entry,
-   both, or something else? At what failure threshold (every failure, or
-   only clusters)?
-3. Does this apply to ALL Orange sends, or specifically guardian-facing ones
-   (as opposed to, say, a future non-guardian bulk-SMS use of Orange, if one
-   ever exists)?
+## Resolution (2026-07-14)
+1. **Option A approved as proposed.**
+2. **Both mechanisms, as suggested**: always-on metric event per failure,
+   `EscalationQueue` MEDIUM specifically at a 3-failures/60-minutes-per-
+   provider cluster threshold (not LOW - clustered delivery failures are a
+   real operational signal, not background noise).
+3. **All current Orange-reachable sends** (guardian digest + guardian agent
+   replies) - no special-casing for a hypothetical future non-guardian use.
+   Implemented in `lib/sms/failureTracking.ts`, wired into both
+   `lib/sms.ts:sendSMS()` and `lib/guardian/sms-service.ts:sendGuardianSMS()`.
+   Tests: `__tests__/sms.failureTracking.test.ts`, plus coverage added to
+   `__tests__/sms.test.ts` and `__tests__/guardian.sms.reliability.test.ts`.

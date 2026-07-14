@@ -17,10 +17,11 @@ function getSmsDeliveryLogDelegate() {
 }
 
 import { recordMetricEvent } from "@/lib/metrics/events";
+import { recordSmsSendFailure } from "@/lib/sms/failureTracking";
 import { logAudit } from "@/lib/audit";
 import { renderGuardianTemplate, getDefaultTemplateKey, type GuardianMessageType, type GuardianTemplateKey } from "@/lib/guardian/sms-templates";
 import type { SMSProvider } from "@/lib/sms/provider";
-import { TwilioSMSProvider } from "@/lib/sms/providers/twilio";
+import { selectSmsProvider } from "@/lib/sms";
 
 type SendGuardianSMSInput = {
   schoolId: string;
@@ -85,7 +86,7 @@ function toIdempotencyKey(input: SendGuardianSMSInput) {
 }
 
 export async function sendGuardianSMS(input: SendGuardianSMSInput, deps?: ServiceDeps) {
-  const provider = deps?.provider ?? new TwilioSMSProvider();
+  const provider = deps?.provider ?? selectSmsProvider();
   const retryPolicy: RetryPolicy = {
     maxAttempts: deps?.retryPolicy?.maxAttempts ?? defaultRetryPolicy.maxAttempts,
     baseBackoffMs: deps?.retryPolicy?.baseBackoffMs ?? defaultRetryPolicy.baseBackoffMs,
@@ -303,17 +304,13 @@ export async function sendGuardianSMS(input: SendGuardianSMSInput, deps?: Servic
     }
 
     const retryable = Boolean(normalizedResult.retryable);
-    await recordMetricEvent(
-      "sms.failed",
-      { messageType: input.messageType, templateKey: templateKey ?? null, attempt, retryable },
-      {
-        scope: "school",
-        scopeId: input.schoolId,
-        schoolId: input.schoolId,
-        severity: "error",
-        kind: "counter",
-        userId: input.actorUserId ?? null,
-      }
+    // Alert-and-stop (approved Orange fallback behavior): no auto-fallback
+    // to another provider on failure - just the metric event + clustering
+    // check below (docs/agents/ORANGE_LIBERIA_FALLBACK_BEHAVIOR.md).
+    await recordSmsSendFailure(
+      provider.name,
+      { scope: "school", scopeId: input.schoolId, schoolId: input.schoolId, userId: input.actorUserId ?? null },
+      { messageType: input.messageType, templateKey: templateKey ?? null, attempt, retryable }
     );
 
     if (!retryable || attempt >= retryPolicy.maxAttempts) {
