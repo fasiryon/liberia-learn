@@ -43,14 +43,32 @@ segment/guardian/day cap, worst case is a few hundred dollars/month, not
 the scale where the 4-5x rate gap matters enough to justify a new
 integration mid-pilot.
 
-**Doc B (pre-scale requirement, not pilot-blocking):** before scaling past
-pilot size, evaluate and wire Orange Liberia's direct local API (or another
-cheaper provider) as an `SMSProvider` implementation
-(`lib/sms/providers/orange-liberia.ts`, same interface as
-`lib/sms/providers/twilio.ts`/`africastalking.ts` - the provider structure
-was cleaned up specifically so this slots in without touching call sites).
-At scale (hundreds+ guardians), the 4-5x per-segment gap between Twilio and
-Orange Liberia direct becomes real budget, not a rounding error.
+**Doc B - RESOLVED, wired (2026-07-14).** `lib/sms/providers/orange.ts`
+implements `SMSProvider` (outbound only - see below), selectable via
+`SMS_PROVIDER=orange` (`lib/sms.ts`). `getActiveSmsRateUsdPerSegment()`
+(`lib/agents/sms/smsCost.ts`) now follows that same selection, so cap math
+uses Orange's real cited rate (**$0.06/segment**, Orange's own published
+starting price - "Bundles from 100 to 50,000 SMS: starting at 0.06$ per
+message," https://developer.orange.com/apis/sms-liberia, checked
+2026-07-14; billed against prepaid airtime, not invoiced like Twilio) when
+Orange is the active provider, and Twilio's rate otherwise (unchanged
+default). **Switching to Orange as the default is still a separate,
+later decision** - `SMS_PROVIDER` defaults to the existing Twilio/AT
+auto-detect behavior; Orange only activates via explicit opt-in.
+
+**Important limitation found during wiring: Orange's documented API appears
+to be outbound-only.** Four official Orange developer pages (overview,
+getting-started, API reference, FAQ) describe sending SMS and
+delivery-status callbacks only - no mobile-originated (MO) / inbound-SMS
+endpoint or webhook format is documented anywhere. This means Orange cannot
+(yet, as far as confirmed) receive a guardian's reply - only send digests
+and already-established-conversation replies. The inbound webhook handler
+was NOT built pending direct confirmation from Orange developer support
+(requires an authenticated Orange developer-portal account to submit their
+contact form - a business step, not something this integration can resolve
+on its own). See `lib/sms/providers/orange.ts` for full citation detail, and
+`docs/agents/ORANGE_LIBERIA_FALLBACK_BEHAVIOR.md` for the send-failure
+escalation point (draft, awaiting review).
 
 **SMS provider structure cleanup (2026-07-14, Finding 2):** `lib/sms/twilio-provider.ts`
 and `lib/sms/dry-run-provider.ts` moved to `lib/sms/providers/twilio.ts` and

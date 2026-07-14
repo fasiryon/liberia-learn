@@ -3,25 +3,36 @@
  * APPROVED with the rate-citation and safeguarding-exception clarifications
  * below). docs/agents/GUARDIAN_COST_ACCOUNTING.md.
  *
- * IMPORTANT PROVIDER FINDING: Africa's Talking does not support Liberia at
- * all (confirmed against their published country-coverage list, 2026-07-13 -
- * no Liberia SMS product exists to price). The rate cited here is Twilio's
- * published Liberia rate, because lib/sms.ts's actual live fallback (when
- * AT_API_KEY/AT_USERNAME are unset, which they are - AT isn't viable) is
- * TwilioSMSProvider. This is the honest, citable number for a provider that
- * is actually wired and reachable today, NOT necessarily the final answer -
- * Orange Liberia's direct API was found priced roughly 4-5x cheaper
- * ($0.0475-$0.06/segment vs Twilio's $0.2677) and is worth evaluating before
- * committing pilot budget to Twilio by default. See GUARDIAN_COST_ACCOUNTING.md
- * for the full citation trail.
+ * PROVIDER-AWARE RATE (updated for the Orange Liberia integration): the rate
+ * used for cap math now follows lib/sms.ts's SMS_PROVIDER selection, since
+ * Twilio and Orange are priced roughly 4-5x apart. Africa's Talking does not
+ * support Liberia at all (confirmed against their published country-coverage
+ * list, 2026-07-13 - no Liberia SMS product exists to price), so it is never
+ * the active-rate branch even if selected.
  */
 import { prisma } from "@/lib/db";
 
 /** USD per SMS segment, Twilio published rate for Liberia (+231), both
  * outbound and inbound. Source: https://www.twilio.com/en-us/sms/pricing/lr
- * (checked 2026-07-13). Override via env once the actual production
- * provider/rate is confirmed. */
-export const SMS_RATE_USD_PER_SEGMENT = Number(process.env.GUARDIAN_SMS_RATE_USD_PER_SEGMENT ?? 0.2677);
+ * (checked 2026-07-13). */
+const TWILIO_RATE_USD_PER_SEGMENT = Number(process.env.GUARDIAN_SMS_TWILIO_RATE_USD_PER_SEGMENT ?? 0.2677);
+
+/** USD per SMS segment, Orange Liberia's own published starting price
+ * ("Bundles from 100 to 50,000 SMS: starting at 0.06$ per message", billed
+ * against prepaid airtime). Source: https://developer.orange.com/apis/sms-liberia
+ * (checked 2026-07-14). Larger bundles are cheaper per message; this is the
+ * conservative (highest) starting-tier price. */
+const ORANGE_RATE_USD_PER_SEGMENT = Number(process.env.GUARDIAN_SMS_ORANGE_RATE_USD_PER_SEGMENT ?? 0.06);
+
+/** The per-segment rate for whichever provider lib/sms.ts would actually
+ * select right now (mirrors its SMS_PROVIDER selection logic). Defaults to
+ * the Twilio rate, matching lib/sms.ts's own default when no provider is
+ * explicitly selected. */
+export function getActiveSmsRateUsdPerSegment(): number {
+  const explicit = process.env.SMS_PROVIDER?.trim().toLowerCase();
+  if (explicit === "orange") return ORANGE_RATE_USD_PER_SEGMENT;
+  return TWILIO_RATE_USD_PER_SEGMENT;
+}
 
 /** Per-guardian daily segment cap. Default 10 segments/day - conservative
  * pilot starting point (a normal conversation of a few short replies stays
@@ -95,7 +106,7 @@ export async function checkSmsCostCap(
 /** Record actual spend after a send (or a suppressed send, for reporting). */
 export async function recordSmsSpend(guardianPhone: string, segments: number, at: Date = new Date()): Promise<void> {
   const date = dayKeyUTC(at);
-  const costUSD = segments * SMS_RATE_USD_PER_SEGMENT;
+  const costUSD = segments * getActiveSmsRateUsdPerSegment();
   await prisma.guardianSmsCostAccounting.upsert({
     where: { guardianPhone_date: { guardianPhone, date } },
     create: {
