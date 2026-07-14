@@ -1,6 +1,7 @@
 // lib/sms.ts - Backward-compatible wrapper for SMS sending.
-import { TwilioSMSProvider } from "@/lib/sms/twilio-provider";
-import { DryRunSMSProvider } from "@/lib/sms/dry-run-provider";
+import { TwilioSMSProvider } from "@/lib/sms/providers/twilio";
+import { DryRunSMSProvider } from "@/lib/sms/providers/dry-run";
+import { AfricasTalkingSMSProvider } from "@/lib/sms/providers/africastalking";
 import { isLiveSmsEnabled } from "@/lib/serverFlags";
 
 export async function sendSMS(to: string, body: string): Promise<{ ok: boolean; sid?: string; error?: string }> {
@@ -11,39 +12,11 @@ export async function sendSMS(to: string, body: string): Promise<{ ok: boolean; 
     return { ok: result.ok, sid: result.providerMessageId, error: result.error };
   }
 
-  const africaTalkingApiKey = (process.env.AT_API_KEY ?? process.env.AFRICA_TALKING_API_KEY)?.trim();
-  const africaTalkingUsername = (process.env.AT_USERNAME ?? process.env.AFRICA_TALKING_USERNAME)?.trim();
-
-  if (africaTalkingApiKey && africaTalkingUsername) {
-    try {
-      const AfricaTalking = require("africastalking");
-      const client = AfricaTalking({
-        apiKey: africaTalkingApiKey,
-        username: africaTalkingUsername,
-      });
-      const response = await client.SMS.send({
-        to: [to],
-        message: body,
-        ...(process.env.AFRICA_TALKING_SENDER_ID
-          ? { from: process.env.AFRICA_TALKING_SENDER_ID }
-          : {}),
-      });
-      const recipient = response?.SMSMessageData?.Recipients?.[0];
-
-      return {
-        ok: Number(recipient?.statusCode ?? 0) < 400,
-        sid: recipient?.messageId,
-        error: Number(recipient?.statusCode ?? 0) >= 400 ? recipient?.status : undefined,
-      };
-    } catch (error) {
-      return {
-        ok: false,
-        error: error instanceof Error ? error.message : String(error),
-      };
-    }
-  }
-
-  const provider = new TwilioSMSProvider();
+  // Africa's Talking does not support Liberia (see
+  // lib/sms/providers/africastalking.ts) - this branch is unreachable for
+  // real Liberia traffic, kept only because AT_API_KEY/AT_USERNAME are an
+  // existing checked env convention elsewhere in the app.
+  const provider = AfricasTalkingSMSProvider.isConfigured() ? new AfricasTalkingSMSProvider() : new TwilioSMSProvider();
   const result = await provider.send({ to, body });
   return {
     ok: result.ok,
