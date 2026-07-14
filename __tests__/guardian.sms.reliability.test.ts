@@ -15,11 +15,15 @@ const { prismaMock } = vi.hoisted(() => ({
       findUnique: vi.fn(),
       findFirst: vi.fn(),
     },
+    metricEvent: {
+      findMany: vi.fn(),
+    },
   },
 }));
 
-const { recordMetricEventMock } = vi.hoisted(() => ({
+const { recordMetricEventMock, enqueueEscalationMock } = vi.hoisted(() => ({
   recordMetricEventMock: vi.fn(),
+  enqueueEscalationMock: vi.fn(),
 }));
 
 vi.mock("@/lib/db", () => ({
@@ -28,6 +32,10 @@ vi.mock("@/lib/db", () => ({
 
 vi.mock("@/lib/metrics/events", () => ({
   recordMetricEvent: recordMetricEventMock,
+}));
+
+vi.mock("@/lib/agents/escalation", () => ({
+  enqueueEscalation: enqueueEscalationMock,
 }));
 
 import { sendGuardianSMS } from "@/lib/guardian/sms-service";
@@ -80,7 +88,9 @@ describe("guardian SMS reliability", () => {
     prismaMock.smsDeliveryLog.create.mockResolvedValue({ id: "log-1", status: "queued" });
     prismaMock.smsDeliveryLog.update.mockResolvedValue({ id: "log-1", status: "sent" });
     prismaMock.smsDeliveryLog.count.mockResolvedValue(0); // not throttled by default
+    prismaMock.metricEvent.findMany.mockResolvedValue([]); // no failure clustering by default
     recordMetricEventMock.mockResolvedValue(undefined);
+    enqueueEscalationMock.mockResolvedValue({ id: "esc-1" });
   });
 
   // ----------------------------------------------------------------

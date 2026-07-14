@@ -56,19 +56,34 @@ default). **Switching to Orange as the default is still a separate,
 later decision** - `SMS_PROVIDER` defaults to the existing Twilio/AT
 auto-detect behavior; Orange only activates via explicit opt-in.
 
-**Important limitation found during wiring: Orange's documented API appears
-to be outbound-only.** Four official Orange developer pages (overview,
-getting-started, API reference, FAQ) describe sending SMS and
-delivery-status callbacks only - no mobile-originated (MO) / inbound-SMS
-endpoint or webhook format is documented anywhere. This means Orange cannot
-(yet, as far as confirmed) receive a guardian's reply - only send digests
-and already-established-conversation replies. The inbound webhook handler
-was NOT built pending direct confirmation from Orange developer support
-(requires an authenticated Orange developer-portal account to submit their
-contact form - a business step, not something this integration can resolve
-on its own). See `lib/sms/providers/orange.ts` for full citation detail, and
-`docs/agents/ORANGE_LIBERIA_FALLBACK_BEHAVIOR.md` for the send-failure
-escalation point (draft, awaiting review).
+**Confirmed limitation: Orange is outbound-only.** Four official Orange
+developer pages (overview, getting-started, API reference, FAQ) describe
+sending SMS and delivery-status callbacks only - no mobile-originated (MO)
+/ inbound-SMS endpoint or webhook format is documented anywhere. The
+inbound webhook handler was NOT built. See
+`docs/agents/ORANGE_LIBERIA_INBOUND_CONFIRMATION.md` for the exact next
+step to close this gap definitively (an action item for the human - it
+needs an Orange developer-portal account this integration doesn't have
+access to).
+
+**What this means operationally, stated plainly: two-way Guardian agent
+conversations remain on Twilio regardless of Orange rollout, unless/until
+inbound support is confirmed.** This isn't just documentation - it's
+enforced in code. `lib/sms.ts` exposes two separate provider selectors:
+`selectSmsProvider()` (honors `SMS_PROVIDER=orange`, used by the one-way
+digest path in `lib/guardian/sms-service.ts`) and
+`selectTwoWaySmsProvider()` (used by the guardian agent's conversational
+replies in `lib/agents/sms/guardianInbound.ts` - **never** returns Orange,
+even when `SMS_PROVIDER=orange` is set globally for the digest path).
+Without this split, setting `SMS_PROVIDER=orange` to get cheaper digests
+would have silently also routed conversational replies through a provider
+that can't receive the guardian's next message. **Orange's realistic
+near-term role is cost reduction on one-way sends (the weekly digest), not
+a Twilio replacement for the conversational agent.**
+
+See `lib/sms/providers/orange.ts` for full citation detail, and
+`docs/agents/ORANGE_LIBERIA_FALLBACK_BEHAVIOR.md` for the approved
+send-failure behavior.
 
 **SMS provider structure cleanup (2026-07-14, Finding 2):** `lib/sms/twilio-provider.ts`
 and `lib/sms/dry-run-provider.ts` moved to `lib/sms/providers/twilio.ts` and

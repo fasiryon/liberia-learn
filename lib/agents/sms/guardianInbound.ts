@@ -6,7 +6,7 @@
  */
 import { randomUUID } from "crypto";
 import { prisma } from "@/lib/db";
-import { sendSMS } from "@/lib/sms";
+import { sendTwoWaySMS } from "@/lib/sms";
 import { runAgent } from "@/lib/agents/runtime";
 import { parseInboundSms, normalizeMsisdn } from "@/lib/agents/sms/inbound";
 import {
@@ -54,7 +54,10 @@ const CHALLENGE_FAILED_MESSAGE =
   "I couldn't verify that. Please reply with your child's Student ID and full name exactly as given by the school.";
 
 async function sendReply(phone: string, body: string, traceId: string): Promise<void> {
-  const sendResult = await sendSMS(phone, body);
+  // sendTwoWaySMS, not sendSMS: this is the outbound leg of a two-way
+  // conversation, and Orange doesn't support the inbound leg yet - see
+  // lib/sms.ts:selectTwoWaySmsProvider.
+  const sendResult = await sendTwoWaySMS(phone, body);
   if (!sendResult.ok) {
     logger.warn("[guardian.inbound] SMS reply failed to send", { traceId, error: sendResult.error });
   }

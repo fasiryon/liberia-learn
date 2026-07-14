@@ -15,7 +15,7 @@ const { mockPrisma, mockRunAgent, mockSendSMS } = vi.hoisted(() => {
 
 vi.mock("@/lib/db", () => ({ prisma: mockPrisma }));
 vi.mock("@/lib/agents/runtime", () => ({ runAgent: mockRunAgent }));
-vi.mock("@/lib/sms", () => ({ sendSMS: mockSendSMS }));
+vi.mock("@/lib/sms", () => ({ sendSMS: mockSendSMS, sendTwoWaySMS: mockSendSMS }));
 vi.mock("@/lib/agents/bootstrap", () => ({}));
 vi.mock("@/lib/agents/sms/identityVerification", () => ({
   resolveKnownGuardian: vi.fn(async () => null),
