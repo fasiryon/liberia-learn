@@ -28,6 +28,13 @@ vi.mock("@/lib/agents/sms/smsCost", () => ({
   countSmsSegments: (t: string) => Math.ceil((t?.length ?? 0) / 160) || 1,
   recordSmsSpend: vi.fn(async () => undefined),
 }));
+vi.mock("@/lib/agents/safeguarding/keywordGate", () => ({
+  detectSafeguardingKeywords: vi.fn(() => false),
+}));
+vi.mock("@/lib/agents/safeguarding/notify", () => ({
+  notifySchoolSafeguarding: vi.fn(async () => ({ notifiedUserIds: [] })),
+}));
+vi.mock("@/lib/agents/escalation", () => ({ enqueueEscalation: vi.fn(async () => ({ id: "esc-1" })) }));
 
 import { POST } from "@/app/api/dev/simulate-inbound-sms/route";
 

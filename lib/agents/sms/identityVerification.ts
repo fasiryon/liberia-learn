@@ -29,11 +29,17 @@ const DAILY_LIMIT = 5;
 const HOUR_MS = 60 * 60 * 1000;
 const DAY_MS = 24 * HOUR_MS;
 
-/** A token that looks like a Prisma cuid (student.id), the current stand-in
- * for "Student ID" - there is no separate human-facing student code in the
- * schema today. Operationally this means the school must give guardians the
- * literal internal ID string; flagged as a rollout concern, not a code gap. */
-const ID_CANDIDATE_RE = /\bc[a-z0-9]{20,}\b/i;
+/**
+ * A token shaped like a Student.humanReadableStudentId (Sprint 6.1 Finding 1):
+ * 6-8 chars from the restricted alphabet (no O/0, no I/1), REQUIRED to
+ * contain at least one digit. That last requirement is deliberate: an
+ * ordinary English word is all-letters, so requiring a digit means this
+ * regex essentially never false-positives on normal conversational text
+ * ("Reply 1 for..." doesn't match either - "1" alone isn't 6-8 chars).
+ * Case-insensitive; codes are generated uppercase but guardians may type
+ * lowercase.
+ */
+const ID_CANDIDATE_RE = /\b(?=[A-HJ-NP-Z2-9]{6,8}\b)(?=[A-HJ-NP-Z2-9]*[2-9])[A-HJ-NP-Z2-9]{6,8}\b/i;
 
 export interface ChallengeAttempt {
   studentIdCandidate: string;
@@ -45,7 +51,7 @@ export interface ChallengeAttempt {
 export function extractChallengeAttempt(text: string): ChallengeAttempt | null {
   const match = text.match(ID_CANDIDATE_RE);
   if (!match) return null;
-  const studentIdCandidate = match[0].toLowerCase();
+  const studentIdCandidate = match[0].toUpperCase();
   const nameCandidate = (text.slice(0, match.index) + " " + text.slice(match.index! + match[0].length)).trim();
   if (!nameCandidate) return null;
   return { studentIdCandidate, nameCandidate };
@@ -125,7 +131,7 @@ export async function resolveChallenge(
   }
 
   const student = await prisma.student.findUnique({
-    where: { id: attempt.studentIdCandidate },
+    where: { humanReadableStudentId: attempt.studentIdCandidate },
     select: { id: true, user: { select: { name: true } } },
   });
 

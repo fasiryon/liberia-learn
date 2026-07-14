@@ -6,6 +6,7 @@ import { logLearningEvent } from "@/lib/events/logLearningEvent";
 import { sendStudentWelcome } from "@/lib/email";
 import { normalizeCredentialPhone, slugifyLoginSeed, normalizeLoginId } from "@/lib/login-identifiers";
 import { checkRateLimit, RATE_LIMIT_POLICIES, rateLimitExceededResponse } from "@/lib/rateLimit";
+import { createUniqueHumanReadableStudentId } from "@/lib/students/humanReadableId";
 
 export const dynamic = "force-dynamic";
 
@@ -116,11 +117,13 @@ export async function POST(req: NextRequest) {
       select: { id: true, email: true, loginId: true },
     });
 
+    const humanReadableStudentId = await createUniqueHumanReadableStudentId(tx);
     const student = await tx.student.create({
       data: {
         userId: user.id,
         dateOfBirth: dob,
         currentGrade: gradeNum,
+        humanReadableStudentId,
       },
       select: { id: true },
     });

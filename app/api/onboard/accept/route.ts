@@ -5,6 +5,7 @@ import { z } from "zod";
 import crypto from "crypto";
 import { logAudit } from "@/lib/audit";
 import { findInviteByToken } from "@/lib/inviteTokens";
+import { createUniqueHumanReadableStudentId } from "@/lib/students/humanReadableId";
 import { isEnrollmentInvitesEnabled } from "@/lib/serverFlags";
 
 const Schema = z.object({
@@ -101,8 +102,9 @@ export async function POST(req: Request) {
       });
 
       if (role === "STUDENT") {
+        const humanReadableStudentId = await createUniqueHumanReadableStudentId(tx);
         await tx.student.create({
-          data: { userId: newUser.id },
+          data: { userId: newUser.id, humanReadableStudentId },
         });
       }
 

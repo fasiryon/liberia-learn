@@ -2,7 +2,7 @@ import { registerAgent } from "@/lib/agents/registry";
 import type { AgentDefinition } from "@/lib/agents/types";
 
 /**
- * LiberiaLearn Family — the guardian-facing SMS agent (Sprint 6.1). Invoked by
+ * LiberiaLearn Family, the guardian-facing SMS agent (Sprint 6.1). Invoked by
  * the SMS webhook (a trusted infrastructure caller, not a human clicking a
  * button), hence rolesAllowed: ["system"] rather than ["guardian"]. Per-student
  * data access is authorized inside each guardian.* tool handler against the
@@ -10,7 +10,7 @@ import type { AgentDefinition } from "@/lib/agents/types";
  *
  * NOTE: `temperature` is declared per the sprint spec (predictable, low-variance
  * replies) but lib/ai/routedCompletion.ts does not yet thread a temperature
- * parameter through to the underlying LLM call — same limitation the echo
+ * parameter through to the underlying LLM call, same limitation the echo
  * agent has today. Wiring it through touches shared AI routing used by every
  * caller in the app and is out of scope for this sprint; flagged in the
  * sprint report.

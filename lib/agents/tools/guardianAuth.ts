@@ -4,7 +4,7 @@ import type { ToolContext } from "@/lib/agents/types";
 /**
  * Authorization check shared by every guardian.* tool: does the caller
  * (ctx.userId) have a StudentGuardian link to studentId? This assumes
- * ctx.userId already reflects a resolved, trusted identity — the SMS-side
+ * ctx.userId already reflects a resolved, trusted identity - the SMS-side
  * question of how an inbound phone number maps to a guardian's User.id is a
  * separate, still-pending concern (docs/agents/GUARDIAN_IDENTITY_VERIFICATION.md).
  */

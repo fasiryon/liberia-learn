@@ -1,14 +1,23 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 
-const { mockEnqueueEscalation } = vi.hoisted(() => ({ mockEnqueueEscalation: vi.fn() }));
+const { mockEnqueueEscalation, mockNotifySchoolSafeguarding, mockPrisma } = vi.hoisted(() => ({
+  mockEnqueueEscalation: vi.fn(),
+  mockNotifySchoolSafeguarding: vi.fn(),
+  mockPrisma: { student: { findUnique: vi.fn() } },
+}));
 vi.mock("@/lib/agents/escalation", () => ({ enqueueEscalation: mockEnqueueEscalation }));
+vi.mock("@/lib/agents/safeguarding/notify", () => ({ notifySchoolSafeguarding: mockNotifySchoolSafeguarding }));
+vi.mock("@/lib/db", () => ({ prisma: mockPrisma }));
 
 import { safeguardingEscalateTool } from "@/lib/agents/tools/safeguarding.tools";
 
 describe("safeguarding.escalate", () => {
   beforeEach(() => {
     mockEnqueueEscalation.mockReset();
+    mockNotifySchoolSafeguarding.mockReset();
+    mockPrisma.student.findUnique.mockReset();
     mockEnqueueEscalation.mockResolvedValue({ id: "esc-1" });
+    mockNotifySchoolSafeguarding.mockResolvedValue({ notifiedUserIds: [] });
   });
 
   it("creates an EscalationQueue entry with invocationId null (fires mid-loop)", async () => {
@@ -28,16 +37,41 @@ describe("safeguarding.escalate", () => {
         schoolId: "school-1",
       })
     );
+    expect(mockPrisma.student.findUnique).not.toHaveBeenCalled(); // schoolId already on ctx
   });
 
-  it("includes the studentId in the escalation reason for traceability", async () => {
+  it("resolves schoolId from the studentId when ctx.schoolId is not set", async () => {
+    mockPrisma.student.findUnique.mockResolvedValue({ user: { schoolId: "school-9" } });
+
     await safeguardingEscalateTool.handler(
       { studentId: "student-42", reason: "distress language", priority: "MEDIUM" },
       { agentName: "liberialearn-family", userId: null }
     );
+
+    expect(mockPrisma.student.findUnique).toHaveBeenCalledWith(
+      expect.objectContaining({ where: { id: "student-42" } })
+    );
     const call = mockEnqueueEscalation.mock.calls[0][0];
     expect(call.reason).toContain("student-42");
     expect(call.reason).toContain("distress language");
+    expect(call.schoolId).toBe("school-9");
+  });
+
+  it("notifies the school when a schoolId is available", async () => {
+    await safeguardingEscalateTool.handler(
+      { studentId: "student-1", reason: "concern", priority: "HIGH" },
+      { agentName: "liberialearn-family", userId: "guardian-1", schoolId: "school-1" }
+    );
+    expect(mockNotifySchoolSafeguarding).toHaveBeenCalledWith("school-1", expect.any(String));
+  });
+
+  it("does not attempt notification when no schoolId can be resolved", async () => {
+    mockPrisma.student.findUnique.mockResolvedValue(null);
+    await safeguardingEscalateTool.handler(
+      { studentId: "ghost-student", reason: "concern", priority: "MEDIUM" },
+      { agentName: "liberialearn-family", userId: null }
+    );
+    expect(mockNotifySchoolSafeguarding).not.toHaveBeenCalled();
   });
 
   it("is allowed for any role (requiresAuth includes every AgentRole)", () => {

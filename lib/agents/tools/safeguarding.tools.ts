@@ -1,6 +1,8 @@
 import { z } from "zod";
+import { prisma } from "@/lib/db";
 import { registerTool } from "@/lib/agents/toolRegistry";
 import { enqueueEscalation } from "@/lib/agents/escalation";
+import { notifySchoolSafeguarding } from "@/lib/agents/safeguarding/notify";
 import type { AgentRole, ToolDefinition } from "@/lib/agents/types";
 
 const ALL_ROLES: AgentRole[] = ["student", "teacher", "principal", "guardian", "moe", "admin", "system"];
@@ -17,17 +19,18 @@ const escalateOutput = z.object({
 
 /**
  * Called only on the calling agent's own judgment that a message describes a
- * safeguarding concern — never merely because the guardian asked for an
- * escalation (see docs/agents/prompts/liberialearn-family.md).
+ * safeguarding concern, never merely because the guardian asked for an
+ * escalation (see lib/agents/prompts/liberialearn-family.md). This is the
+ * LLM-judgment path, a secondary catch-all for concerns the deterministic
+ * keyword gate (lib/agents/safeguarding/keywordGate.ts, run before the LLM
+ * loop in lib/agents/sms/guardianInbound.ts) doesn't anticipate.
  *
- * This writes the EscalationQueue row (the same mechanism output-moderation
- * escalations already use, invocationId nullable because this fires mid-loop
- * before the enclosing AgentInvocation is persisted). It does NOT yet notify a
- * principal or a support inbox: there is no PRINCIPAL Role in the schema today
- * (Role enum: TEACHER/STUDENT/GUARDIAN/ADMIN/DISTRICT_ADMIN/MOE_*), so "who
- * gets notified, on what channel, within what SLA" is exactly the open
- * question in docs/agents/GUARDIAN_SAFEGUARDING.md — deliberately deferred
- * pending that review.
+ * This writes the EscalationQueue row (invocationId nullable because this
+ * fires mid-loop before the enclosing AgentInvocation is persisted) and
+ * notifies the school via notifySchoolSafeguarding - ADMIN-role users at the
+ * student's school plus School.designatedSafetyStaffUserId, if set (Sprint
+ * 6.1 Spec 5, approved). Priority is not forced to HIGH here (the caller
+ * passes it); the deterministic keyword-gate path always uses HIGH.
  */
 export const safeguardingEscalateTool: ToolDefinition<
   z.infer<typeof escalateInput>,
@@ -42,6 +45,15 @@ export const safeguardingEscalateTool: ToolDefinition<
   estimatedCostUnits: 1,
   requiresAuth: ALL_ROLES,
   handler: async (input, ctx) => {
+    let schoolId = ctx.schoolId ?? null;
+    if (!schoolId) {
+      const student = await prisma.student.findUnique({
+        where: { id: input.studentId },
+        select: { user: { select: { schoolId: true } } },
+      });
+      schoolId = student?.user.schoolId ?? null;
+    }
+
     const { id } = await enqueueEscalation({
       agentName: ctx.agentName,
       invocationId: null,
@@ -49,8 +61,13 @@ export const safeguardingEscalateTool: ToolDefinition<
       reason: `safeguarding: ${input.reason} (studentId=${input.studentId})`,
       priority: input.priority,
       traceId: ctx.traceId ?? null,
-      schoolId: ctx.schoolId ?? null,
+      schoolId,
     });
+
+    if (schoolId) {
+      await notifySchoolSafeguarding(schoolId, `Guardian message flagged for safeguarding review (escalation ${id}).`);
+    }
+
     return { escalationId: id, assignedTo: null };
   },
 };
