@@ -21,6 +21,11 @@ const ROUTES = [
   "@/app/api/cron/process-textbook-generation/route",
   "@/app/api/cron/release-stale-grades/route",
   "@/app/api/crons/league-snapshot/route",
+  "@/app/api/cron/autonomous/stale-approvals/route",
+  "@/app/api/cron/autonomous/evaluation-windows/route",
+  "@/app/api/cron/autonomous/workflow-recovery/route",
+  "@/app/api/cron/autonomous/runtime-health/route",
+  "@/app/api/cron/autonomous/dead-letter-inspection/route",
 ];
 
 describe("cron routes export a GET handler (Vercel Cron invokes via GET, not POST)", () => {
