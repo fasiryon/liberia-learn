@@ -111,6 +111,17 @@ export async function middleware(req: NextRequest) {
     return NextResponse.next();
   }
 
+  // Cron routes authenticate themselves via a CRON_SECRET Bearer header, not
+  // a NextAuth session - Vercel's scheduler (and any Bearer-token caller,
+  // e.g. Ops Sentinel's retryCron) never carries a session cookie, so the
+  // getToken() check below would 401 every invocation before it ever reaches
+  // the route's own CRON_SECRET verification. Every route.ts under these two
+  // prefixes independently checks CRON_SECRET - confirmed for all 24 routes
+  // before adding this bypass.
+  if (pathname.startsWith("/api/cron/") || pathname.startsWith("/api/crons/")) {
+    return NextResponse.next();
+  }
+
   // Allow public paths
   if (isPublicPath(pathname)) {
     return NextResponse.next();

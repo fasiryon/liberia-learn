@@ -110,4 +110,12 @@ describe("middleware auth — /admin and /platform portal guards", () => {
     expect(isNext(loginRes)).toBe(true)
     expect(isNext(privacyRes)).toBe(true)
   })
+
+  it("13. /api/cron/* and /api/crons/* → next() without getToken call (regression: cron requests carry a CRON_SECRET Bearer header, never a session cookie, so they must bypass the NextAuth gate entirely)", async () => {
+    const cronRes = await middleware(makeReq("/api/cron/check-dlq"))
+    const cronsRes = await middleware(makeReq("/api/crons/league-snapshot"))
+    expect(mockGetToken).not.toHaveBeenCalled()
+    expect(isNext(cronRes)).toBe(true)
+    expect(isNext(cronsRes)).toBe(true)
+  })
 })
