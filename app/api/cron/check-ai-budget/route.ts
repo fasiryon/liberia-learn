@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { getAISpend } from "@/lib/ops/aiSpend";
 import { sendOpsAlert } from "@/lib/ops/alerts";
+import { recordCronHeartbeat } from "@/lib/ops/cronHeartbeat";
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 30;
@@ -55,6 +56,8 @@ export async function POST(req: Request) {
       channel: "email",
     });
   }
+
+  await recordCronHeartbeat("check-ai-budget").catch(() => {}); // best-effort, never fail the cron on a heartbeat write
 
   return NextResponse.json({
     checked: true,

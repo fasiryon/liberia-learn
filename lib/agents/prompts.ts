@@ -22,3 +22,9 @@ registerPromptDefinition({
   version: "1.0.0",
   template: loadPromptFile("./prompts/liberialearn-family.md"),
 });
+
+registerPromptDefinition({
+  key: "agent.ops-sentinel.system",
+  version: "1.0.0",
+  template: loadPromptFile("./prompts/ops-sentinel.md"),
+});
