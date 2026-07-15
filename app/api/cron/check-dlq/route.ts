@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { getQueueDepths } from "@/lib/ops/queueDepths";
 import { sendOpsAlert } from "@/lib/ops/alerts";
+import { recordCronHeartbeat } from "@/lib/ops/cronHeartbeat";
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 30;
@@ -39,6 +40,8 @@ export async function POST(req: Request) {
       channel: "email",
     });
   }
+
+  await recordCronHeartbeat("check-dlq").catch(() => {}); // best-effort, never fail the cron on a heartbeat write
 
   return NextResponse.json({
     checked: true,

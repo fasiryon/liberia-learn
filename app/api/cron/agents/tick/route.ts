@@ -10,6 +10,7 @@ import { NextResponse } from "next/server";
 import { isAgentCronEnabled } from "@/lib/serverFlags";
 import "@/lib/agents/bootstrap"; // registers goal handlers
 import { tickGoals } from "@/lib/agents/goals/tick";
+import { recordCronHeartbeat } from "@/lib/ops/cronHeartbeat";
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 60;
@@ -26,6 +27,7 @@ async function handle(req: Request) {
 
   const start = Date.now();
   const result = await tickGoals();
+  await recordCronHeartbeat("agents-tick").catch(() => {}); // best-effort, never fail the cron on a heartbeat write
   return NextResponse.json({ ok: true, durationMs: Date.now() - start, ...result });
 }
 
