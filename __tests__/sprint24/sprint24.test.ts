@@ -13,6 +13,10 @@ const mockUserUpdate   = vi.hoisted(() => vi.fn().mockResolvedValue({ id: "user-
 const mockStudentFindMany = vi.hoisted(() => vi.fn().mockResolvedValue([]));
 const mockGradeFindMany   = vi.hoisted(() => vi.fn().mockResolvedValue([]));
 const mockAttendanceFindMany = vi.hoisted(() => vi.fn().mockResolvedValue([]));
+const mockUserFindMany = vi.hoisted(() => vi.fn().mockResolvedValue([]));
+const mockStudentGuardianFindMany = vi.hoisted(() => vi.fn().mockResolvedValue([]));
+const mockEscalationQueueFindMany = vi.hoisted(() => vi.fn().mockResolvedValue([]));
+const mockAgentInvocationFindMany = vi.hoisted(() => vi.fn().mockResolvedValue([]));
 
 const mockPut  = vi.hoisted(() => vi.fn().mockResolvedValue({ url: "https://blob.example/backups/2026-05-17/students.csv" }));
 const mockList = vi.hoisted(() => vi.fn().mockResolvedValue({ blobs: [] }));
@@ -25,10 +29,13 @@ vi.mock("@/lib/auth", () => ({
 
 vi.mock("@/lib/db", () => ({
   prisma: {
-    user: { update: mockUserUpdate },
+    user: { update: mockUserUpdate, findMany: mockUserFindMany },
     student: { findMany: mockStudentFindMany },
     grade: { findMany: mockGradeFindMany },
     attendance: { findMany: mockAttendanceFindMany },
+    studentGuardian: { findMany: mockStudentGuardianFindMany },
+    escalationQueue: { findMany: mockEscalationQueueFindMany },
+    agentInvocation: { findMany: mockAgentInvocationFindMany },
   },
 }));
 
@@ -131,14 +138,16 @@ describe("nightly-backup POST", () => {
     expect(res.status).toBe(401);
   });
 
-  it("uploads three CSV files and returns backed_up list", async () => {
+  it("uploads all 7 CSV files (2026-07-15: extended beyond students/grades/attendance) and returns backed_up list", async () => {
     const req = cronRequest();
     const res = await backupPost(req);
     const body = await res.json();
     expect(res.status).toBe(200);
-    expect(body.backed_up).toEqual(expect.arrayContaining(["students", "grades", "attendance"]));
+    expect(body.backed_up).toEqual(
+      expect.arrayContaining(["students", "grades", "attendance", "users", "student_guardians", "escalation_queue", "agent_invocations"])
+    );
     expect(body.date).toMatch(/^\d{4}-\d{2}-\d{2}$/);
-    expect(mockPut).toHaveBeenCalledTimes(3);
+    expect(mockPut).toHaveBeenCalledTimes(7);
   });
 
   it("CSV contains correct headers for students", async () => {

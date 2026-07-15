@@ -24,7 +24,7 @@ export async function POST(req: Request) {
 
   const date = new Date().toISOString().split("T")[0];
 
-  const [students, grades, attendance] = await Promise.all([
+  const [students, grades, attendance, users, studentGuardians, escalations, agentInvocations] = await Promise.all([
     prisma.student.findMany({
       select: {
         id: true,
@@ -56,6 +56,67 @@ export async function POST(req: Request) {
       take: 50000,
       orderBy: { date: "desc" },
     }),
+    // Stopgap coverage (2026-07-15) beyond the free Supabase tier having no
+    // platform backups at all: auth records, guardian contact info, and the
+    // safeguarding escalation/invocation history - not a replacement for a
+    // real database-level backup, just the highest-consequence tables to
+    // not lose while the platform-tier decision is pending.
+    prisma.user.findMany({
+      select: {
+        id: true,
+        email: true,
+        loginId: true,
+        hashedPwd: true,
+        name: true,
+        role: true,
+        schoolId: true,
+        isPlatformAdmin: true,
+        guardianCountryCode: true,
+        guardianPhone: true,
+        guardianPhoneE164: true,
+        preferredChannel: true,
+        smsOptIn: true,
+        mustChangePIN: true,
+        createdAt: true,
+      },
+    }),
+    prisma.studentGuardian.findMany({
+      select: { id: true, studentId: true, guardianId: true, relation: true },
+    }),
+    prisma.escalationQueue.findMany({
+      select: {
+        id: true,
+        agentName: true,
+        invocationId: true,
+        goalId: true,
+        userId: true,
+        reason: true,
+        priority: true,
+        assignedTo: true,
+        status: true,
+        createdAt: true,
+        resolvedAt: true,
+        resolution: true,
+      },
+    }),
+    prisma.agentInvocation.findMany({
+      select: {
+        id: true,
+        agentName: true,
+        agentVersion: true,
+        goalId: true,
+        userId: true,
+        triggeredBy: true,
+        input: true,
+        output: true,
+        status: true,
+        errorMessage: true,
+        escalationReason: true,
+        createdAt: true,
+      },
+      take: 50000,
+      orderBy: { createdAt: "desc" },
+    }),
   ]);
 
   const studentsCsv = toCSV(
@@ -73,10 +134,45 @@ export async function POST(req: Request) {
     attendance.map((a) => [a.id, a.studentId ?? "", a.classId ?? "", a.date?.toISOString() ?? "", a.status ?? ""])
   );
 
+  const usersCsv = toCSV(
+    ["id", "email", "loginId", "hashedPwd", "name", "role", "schoolId", "isPlatformAdmin", "guardianCountryCode", "guardianPhone", "guardianPhoneE164", "preferredChannel", "smsOptIn", "mustChangePIN", "createdAt"],
+    users.map((u) => [
+      u.id, u.email, u.loginId ?? "", u.hashedPwd ?? "", u.name ?? "", u.role, u.schoolId ?? "",
+      String(u.isPlatformAdmin), u.guardianCountryCode, u.guardianPhone ?? "", u.guardianPhoneE164 ?? "",
+      u.preferredChannel, String(u.smsOptIn), String(u.mustChangePIN), u.createdAt.toISOString(),
+    ])
+  );
+
+  const studentGuardiansCsv = toCSV(
+    ["id", "studentId", "guardianId", "relation"],
+    studentGuardians.map((sg) => [sg.id, sg.studentId, sg.guardianId, sg.relation ?? ""])
+  );
+
+  const escalationsCsv = toCSV(
+    ["id", "agentName", "invocationId", "goalId", "userId", "reason", "priority", "assignedTo", "status", "createdAt", "resolvedAt", "resolution"],
+    escalations.map((e) => [
+      e.id, e.agentName, e.invocationId ?? "", e.goalId ?? "", e.userId ?? "", e.reason, e.priority,
+      e.assignedTo ?? "", e.status, e.createdAt.toISOString(), e.resolvedAt?.toISOString() ?? "", e.resolution ?? "",
+    ])
+  );
+
+  const agentInvocationsCsv = toCSV(
+    ["id", "agentName", "agentVersion", "goalId", "userId", "triggeredBy", "input", "output", "status", "errorMessage", "escalationReason", "createdAt"],
+    agentInvocations.map((a) => [
+      a.id, a.agentName, a.agentVersion, a.goalId ?? "", a.userId ?? "", a.triggeredBy,
+      JSON.stringify(a.input), a.output ? JSON.stringify(a.output) : "", a.status,
+      a.errorMessage ?? "", a.escalationReason ?? "", a.createdAt.toISOString(),
+    ])
+  );
+
   const uploads = await Promise.allSettled([
     put(`backups/${date}/students.csv`, studentsCsv, { access: "private", contentType: "text/csv" }),
     put(`backups/${date}/grades.csv`, gradesCsv, { access: "private", contentType: "text/csv" }),
     put(`backups/${date}/attendance.csv`, attendanceCsv, { access: "private", contentType: "text/csv" }),
+    put(`backups/${date}/users.csv`, usersCsv, { access: "private", contentType: "text/csv" }),
+    put(`backups/${date}/student_guardians.csv`, studentGuardiansCsv, { access: "private", contentType: "text/csv" }),
+    put(`backups/${date}/escalation_queue.csv`, escalationsCsv, { access: "private", contentType: "text/csv" }),
+    put(`backups/${date}/agent_invocations.csv`, agentInvocationsCsv, { access: "private", contentType: "text/csv" }),
   ]);
 
   // Prune blobs older than 90 days
@@ -92,7 +188,11 @@ export async function POST(req: Request) {
   }
 
   const backed_up = uploads
-    .map((r, i) => (r.status === "fulfilled" ? ["students", "grades", "attendance"][i] : null))
+    .map((r, i) =>
+      r.status === "fulfilled"
+        ? ["students", "grades", "attendance", "users", "student_guardians", "escalation_queue", "agent_invocations"][i]
+        : null
+    )
     .filter(Boolean);
 
   return NextResponse.json({ backed_up, date });
