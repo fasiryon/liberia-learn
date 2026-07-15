@@ -165,14 +165,23 @@ export async function POST(req: Request) {
     ])
   );
 
+  // allowOverwrite: true - @vercel/blob's put() defaults to throwing if a
+  // blob already exists at the same pathname. Since the pathname is keyed
+  // only by date, any second run on the same UTC date (a retry, a manual
+  // re-trigger, a future double-fire) would otherwise silently fail to
+  // update that day's file - confirmed directly in production (2026-07-15):
+  // a second manual trigger left students/grades/attendance.csv holding
+  // stale content from the first run while the route still returned 200
+  // with no indication anything failed, since Promise.allSettled swallows
+  // the rejection reason.
   const uploads = await Promise.allSettled([
-    put(`backups/${date}/students.csv`, studentsCsv, { access: "private", contentType: "text/csv" }),
-    put(`backups/${date}/grades.csv`, gradesCsv, { access: "private", contentType: "text/csv" }),
-    put(`backups/${date}/attendance.csv`, attendanceCsv, { access: "private", contentType: "text/csv" }),
-    put(`backups/${date}/users.csv`, usersCsv, { access: "private", contentType: "text/csv" }),
-    put(`backups/${date}/student_guardians.csv`, studentGuardiansCsv, { access: "private", contentType: "text/csv" }),
-    put(`backups/${date}/escalation_queue.csv`, escalationsCsv, { access: "private", contentType: "text/csv" }),
-    put(`backups/${date}/agent_invocations.csv`, agentInvocationsCsv, { access: "private", contentType: "text/csv" }),
+    put(`backups/${date}/students.csv`, studentsCsv, { access: "private", contentType: "text/csv", allowOverwrite: true }),
+    put(`backups/${date}/grades.csv`, gradesCsv, { access: "private", contentType: "text/csv", allowOverwrite: true }),
+    put(`backups/${date}/attendance.csv`, attendanceCsv, { access: "private", contentType: "text/csv", allowOverwrite: true }),
+    put(`backups/${date}/users.csv`, usersCsv, { access: "private", contentType: "text/csv", allowOverwrite: true }),
+    put(`backups/${date}/student_guardians.csv`, studentGuardiansCsv, { access: "private", contentType: "text/csv", allowOverwrite: true }),
+    put(`backups/${date}/escalation_queue.csv`, escalationsCsv, { access: "private", contentType: "text/csv", allowOverwrite: true }),
+    put(`backups/${date}/agent_invocations.csv`, agentInvocationsCsv, { access: "private", contentType: "text/csv", allowOverwrite: true }),
   ]);
 
   // Prune blobs older than 90 days
