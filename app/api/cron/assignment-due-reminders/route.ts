@@ -18,3 +18,6 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: err?.message ?? "Internal error" }, { status: 500 });
   }
 }
+
+// Vercel Cron Jobs invoke via GET, not POST - see docs/ops/CRON_MIDDLEWARE_FIX.md.
+export const GET = POST;

@@ -37,3 +37,6 @@ export async function POST(req: Request) {
 
   return NextResponse.json({ deleted, errors, checked: expiredPacks.length });
 }
+
+// Vercel Cron Jobs invoke via GET, not POST - see docs/ops/CRON_MIDDLEWARE_FIX.md.
+export const GET = POST;

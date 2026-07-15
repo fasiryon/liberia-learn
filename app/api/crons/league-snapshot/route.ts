@@ -159,3 +159,6 @@ export async function POST(req: NextRequest) {
 
   return NextResponse.json({ schools_processed: processed, term });
 }
+
+// Vercel Cron Jobs invoke via GET, not POST - see docs/ops/CRON_MIDDLEWARE_FIX.md.
+export const GET = POST;

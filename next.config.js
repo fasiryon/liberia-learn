@@ -15,6 +15,15 @@ const nextConfig = {
   staticPageGenerationTimeout: 300,
   experimental: {
     serverComponentsExternalPackages: ["@react-pdf/renderer"],
+    // Next's automatic output-file-tracing missed lib/agents/prompts/*.md at
+    // runtime (readFileSync(new URL(..., import.meta.url)) isn't statically
+    // analyzable the way a literal path is) - ENOENT'd every agent-platform
+    // cron route (agents-tick, ops-sentinel) that transitively loads
+    // lib/agents/bootstrap. Force-include the whole prompts directory for
+    // every route rather than enumerating routes/files one at a time.
+    outputFileTracingIncludes: {
+      "/*": ["./lib/agents/prompts/**/*.md"],
+    },
   },
   async headers() {
     return [
