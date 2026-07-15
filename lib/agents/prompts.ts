@@ -1,14 +1,25 @@
 import { readFileSync } from "fs";
+import { join } from "path";
 import { registerPromptDefinition } from "@/lib/ai/promptRegistry";
 
 /**
  * Agent system prompts are loaded from files (not hardcoded in the agent
- * definition), then registered into the shared promptRegistry. The
- * `new URL(..., import.meta.url)` form lets the bundler trace and emit the .md
- * asset for serverless deploys.
+ * definition), then registered into the shared promptRegistry.
+ *
+ * Resolved against process.cwd(), not `new URL(..., import.meta.url)` -
+ * webpack statically bakes import.meta.url into a BUILD-time absolute path
+ * (confirmed: locally a Windows file:// path, on Vercel's remote builder
+ * `/vercel/path0/...`), which never exists at Lambda RUNTIME (`/var/task`) -
+ * this 500'd every agent-platform cron in production
+ * (docs/ops/CRON_MIDDLEWARE_FIX.md) regardless of whether the file was
+ * correctly included in the deploy bundle (outputFileTracingIncludes in
+ * next.config.js is still required for that half - this fixes the other
+ * half, the runtime path itself). process.cwd() is the function's actual
+ * runtime root on Vercel, matching where output:"standalone" copies traced
+ * files to.
  */
 function loadPromptFile(relativePath: string): string {
-  return readFileSync(new URL(relativePath, import.meta.url), "utf8");
+  return readFileSync(join(process.cwd(), "lib/agents", relativePath), "utf8");
 }
 
 registerPromptDefinition({
