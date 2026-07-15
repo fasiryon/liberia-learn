@@ -73,6 +73,14 @@ describe("GET /api/cron/nightly-backup", () => {
     );
   });
 
+  it("passes allowOverwrite:true on every upload (regression: a same-day re-trigger must not silently fail to update)", async () => {
+    await GET(req("Bearer secret123"));
+    expect(put).toHaveBeenCalledTimes(7);
+    for (const call of put.mock.calls) {
+      expect(call[2]).toMatchObject({ allowOverwrite: true });
+    }
+  });
+
   it("includes hashedPwd in the users export (needed to actually restore login capability)", async () => {
     prismaMock.user.findMany.mockResolvedValue([
       {
