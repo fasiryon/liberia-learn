@@ -50,22 +50,49 @@ separate, already-tracked, non-blocking cleanup item). Confirmed two of the
 handle a missing/empty body gracefully (`req.json().catch(() => ({}))`), so
 aliasing GET is safe for them too - a GET request never carries a body.
 
-### Bug 3 — `echo.md` missing from the serverless bundle (fixed)
+### Bug 3 — `echo.md` ENOENT: two separate problems, not one (both fixed)
 
 With bugs 1 and 2 fixed, `agents-tick` and `ops-sentinel` (the two routes
 that already exported both `GET`/`POST`) still 500'd:
-`ENOENT: .../lib/agents/prompts/echo.md`. `loadPromptFile()`
-(`lib/agents/prompts.ts`) reads prompt files at runtime via
-`readFileSync(new URL(relativePath, import.meta.url))` - a pattern Next's
-automatic output-file-tracing (`@vercel/nft`) failed to statically resolve
-for at least this one file, so `echo.md` never made it into the deployed
-function bundle. Any agent-platform cron route that transitively imports
-`lib/agents/bootstrap` (which eagerly loads every prompt file) hit this.
+`ENOENT: .../lib/agents/prompts/echo.md`. This turned out to be two
+independent bugs stacked on each other - fixing the first one and
+redeploying was not enough; production still 500'd identically afterward,
+which is what surfaced the second.
 
-Fix: `next.config.js` `experimental.outputFileTracingIncludes: { "/*":
-["./lib/agents/prompts/**/*.md"] }` - force-includes the whole prompts
-directory in every route's bundle, rather than enumerating routes/files one
-at a time (guards against the next prompt file added hitting the same gap).
+**3a - the file wasn't in the deployed bundle.** `loadPromptFile()`
+(`lib/agents/prompts.ts`) read prompt files via
+`readFileSync(new URL(relativePath, import.meta.url))`. Next's automatic
+output-file-tracing (`@vercel/nft`) failed to statically resolve this
+pattern for `echo.md`, so it never made it into the deployed function
+bundle. Fix: `next.config.js` `experimental.outputFileTracingIncludes: {
+"/*": ["./lib/agents/prompts/**/*.md"] }`.
+
+**3b - even once included, the runtime code looked in the wrong place.**
+Verified locally after 3a's fix and redeploy: production still 500'd with
+the identical ENOENT. Traced the compiled chunk directly
+(`grep -oE "file://[^\"')]*prompts\.ts" .next/server/chunks/*.js`): webpack
+statically replaces `import.meta.url` with a **build-time** absolute path
+baked into the bundle (locally a Windows `file:///C:/Users/...` path; on
+Vercel's remote builder, `/vercel/path0/...` - which is exactly the path in
+the production error). Neither exists at Lambda **runtime**
+(`/var/task/...`), so the file read was always doomed regardless of
+whether the file shipped - `outputFileTracingIncludes` fixed a real problem
+but was never sufficient on its own for this code pattern.
+
+Fix: `loadPromptFile()` now resolves via
+`join(process.cwd(), "lib/agents", relativePath)` - `process.cwd()` is the
+function's actual runtime root on Vercel, matching where
+`output: "standalone"` copies traced files to.
+
+**Verification method that actually caught 3b** (checking
+`.next/standalone/lib/agents/prompts/echo.md` exists, or `.nft.json`
+listing it, both looked correct and were *not enough* - neither reflects
+runtime path resolution): ran the real deployable artifact locally exactly
+as Vercel would -
+`cd .next/standalone && CRON_SECRET=test PORT=3488 node server.js`, then
+curled the routes directly. Got a clean `200 {"skipped":true,...}` from
+both `agents-tick` and `ops-sentinel` (feature flags off locally, but no
+crash) - only after this did the fix redeploy.
 
 ## Verification status
 
