@@ -1,6 +1,6 @@
 import type { EvalCase } from "@/lib/evals/types";
 
-const DEFAULT_SCHOOL_ID = process.env.EVAL_SCHOOL_ID ?? "school-eval";
+const DEFAULT_SCHOOL_ID = process.env.EVAL_SCHOOL_ID || "school-eval";
 
 export const EVAL_DATASET: EvalCase[] = [
   {
