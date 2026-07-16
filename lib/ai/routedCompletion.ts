@@ -415,13 +415,23 @@ export async function routedCompletion(opts: RouterOptions): Promise<RouterResul
     };
     const groqResult = await groqBreaker.call(async () => {
       const groq = getGroq();
-      const completion = await groq.chat.completions.create({
-        model: groqModel,
-        messages: opts.messages,
-        max_tokens: maxTokens,
-        signal: AbortSignal.timeout(timeoutMs),
-        ...(opts.responseFormat === "json" ? { response_format: { type: "json_object" } } : {}),
-      });
+      // `signal` must be a second (request-options) argument, not a body field -
+      // the groq-sdk (unlike the OpenAI SDK's tolerant body parsing) rejects an
+      // unrecognized `signal` property in the request body with a 400
+      // "property 'signal' is unsupported" error. Passing it inside the first
+      // object silently 400'd every single Groq call ever made through this
+      // path (moderation, translation, every "fast"/"smart" tier completion),
+      // which the circuit breaker then swallowed and fell through to OpenAI -
+      // Groq has never actually been reached in production until this fix.
+      const completion = await groq.chat.completions.create(
+        {
+          model: groqModel,
+          messages: opts.messages,
+          max_tokens: maxTokens,
+          ...(opts.responseFormat === "json" ? { response_format: { type: "json_object" } } : {}),
+        },
+        { signal: AbortSignal.timeout(timeoutMs) }
+      );
       const inputTokens = completion.usage?.prompt_tokens ?? 0;
       const outputTokens = completion.usage?.completion_tokens ?? 0;
       const costIn = useSmartGroq ? COSTS.groq_smart_input : COSTS.groq_input;
