@@ -4192,3 +4192,30 @@ model GuardianConversation {
 
   @@index([expiresAt])
 }
+
+// Sprint 6.2: Content QA / Grading agent. A single advisory-review record
+// covering all 4 submission types (lesson/video/essay/code). Deliberately
+// NOT a Prisma relation to CurriculumContent/LessonVideo/GradedSubmission —
+// submissionId is polymorphic across those tables, same loose-reference
+// pattern EscalationQueue already uses for userId/goalId/invocationId.
+// This table is purely additive and is never read by, nor written by, the
+// existing grading/moderation write-paths (Escalation Point 1: the live
+// essay/code submission routes and GradedSubmission.score are intentionally
+// untouched this sprint — content-qa is a review-only overlay on top).
+model ContentQaReview {
+  id             String    @id @default(cuid())
+  agentName      String    @default("content-qa")
+  submissionId   String
+  submissionType String // "lesson" | "video" | "essay" | "code"
+  score          Float? // curriculum-alignment score (lesson) or QA confidence-in-existing-grade (essay/code); null for video (metadata-only, no numeric score)
+  confidence     Float // 0..1, agent's confidence in this assessment
+  feedback       String?   @db.Text
+  rubricUsed     String?
+  status         String    @default("PENDING_TEACHER_REVIEW") // PENDING_TEACHER_REVIEW | ACKNOWLEDGED | DISMISSED
+  reviewedBy     String?
+  reviewedAt     DateTime?
+  createdAt      DateTime  @default(now())
+
+  @@index([submissionType, status])
+  @@index([submissionId])
+}

@@ -51,6 +51,10 @@ describe("GET /api/admin/videos", () => {
           findMany: mockFindMany,
           count: mockCount,
         },
+        // Sprint 6.2: content-qa flags joined onto the video list, advisory only.
+        contentQaReview: {
+          findMany: vi.fn(async () => []),
+        },
       },
     }));
     vi.doMock("@vercel/blob", () => ({

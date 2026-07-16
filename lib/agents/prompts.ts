@@ -39,3 +39,9 @@ registerPromptDefinition({
   version: "1.0.0",
   template: loadPromptFile("./prompts/ops-sentinel.md"),
 });
+
+registerPromptDefinition({
+  key: "agent.content-qa.system",
+  version: "1.0.0",
+  template: loadPromptFile("./prompts/content-qa.md"),
+});

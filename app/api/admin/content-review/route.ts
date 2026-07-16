@@ -39,7 +39,28 @@ export async function GET(req: NextRequest) {
       where: { editReviewStatus: "PENDING", editedById: { not: null } },
     });
 
-    return NextResponse.json({ lessons, pendingCount });
+    // Sprint 6.2: attach content-qa agent flags, if any, for the lessons on
+    // this page — advisory only, does not affect editReviewStatus itself.
+    const contentIds = lessons.map((l) => l.contentId);
+    const qaReviews = contentIds.length
+      ? await prisma.contentQaReview.findMany({
+          where: { submissionType: "lesson", submissionId: { in: contentIds } },
+          orderBy: { createdAt: "desc" },
+          select: { id: true, submissionId: true, score: true, confidence: true, feedback: true, status: true, createdAt: true },
+        })
+      : [];
+    const qaReviewsByContentId = new Map<string, typeof qaReviews>();
+    for (const review of qaReviews) {
+      const list = qaReviewsByContentId.get(review.submissionId) ?? [];
+      list.push(review);
+      qaReviewsByContentId.set(review.submissionId, list);
+    }
+    const lessonsWithQa = lessons.map((lesson) => ({
+      ...lesson,
+      qaReviews: qaReviewsByContentId.get(lesson.contentId) ?? [],
+    }));
+
+    return NextResponse.json({ lessons: lessonsWithQa, pendingCount });
   } catch (error) {
     return handleApiError(error, { route: "/api/admin/content-review", method: "GET", requestId: traceId });
   }

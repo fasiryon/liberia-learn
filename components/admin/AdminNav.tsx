@@ -32,6 +32,7 @@ const BASE_NAV_LINKS = [
   { label: "Compliance", href: "/admin/compliance" },
   { label: "Data Downloads", href: "/admin/governance/exports" },
   { label: "Video Moderation", href: "/admin/video-moderation" },
+  { label: "Content Review", href: "/admin/content-review" },
   { label: "Announcements", href: "/admin/announcements" },
   { label: "Communications", href: "/admin/communications" },
   { label: "Seed Demo Data", href: "/admin/seed" },

@@ -13,3 +13,5 @@ import "@/lib/agents/tools/safeguarding.tools";
 import "@/lib/agents/agents/liberialearn-family.agent";
 import "@/lib/agents/tools/opsSentinel.tools";
 import "@/lib/agents/agents/ops-sentinel.agent";
+import "@/lib/agents/tools/contentqa.tools";
+import "@/lib/agents/agents/content-qa.agent";
