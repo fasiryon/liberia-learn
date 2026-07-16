@@ -188,7 +188,7 @@ describe("POST /api/admin/agents/moe-narrative-report/run", () => {
     expect(runAgent).toHaveBeenCalledWith(
       "moe-narrative-report",
       expect.stringContaining("scope: national"),
-      expect.objectContaining({ userRole: "admin", triggeredBy: "USER" })
+      expect.objectContaining({ userRole: "system", triggeredBy: "USER" })
     );
   });
 });

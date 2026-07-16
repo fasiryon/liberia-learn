@@ -57,9 +57,14 @@ export async function POST(req: NextRequest) {
       .filter(Boolean)
       .join("\n");
 
+    // userRole here is "system", not "admin" - this agent's rolesAllowed is
+    // ["system"] (spec: invoked by schedule or an explicit trigger, never a
+    // chat interface). The platform-admin check above already gates who may
+    // hit this HTTP endpoint; userRole is what the invocation is attributed
+    // as internally, matching content-qa-sweep's identical pattern.
     const result = await runAgent("moe-narrative-report", instruction, {
       userId: user.id,
-      userRole: "admin",
+      userRole: "system",
       schoolId: user.schoolId ?? null,
       traceId: randomUUID(),
       triggeredBy: "USER",
