@@ -8,6 +8,7 @@ const setAgentControl = vi.fn();
 const listEscalations = vi.fn();
 const assignEscalation = vi.fn();
 const resolveEscalation = vi.fn();
+const isEscalationInSchool = vi.fn();
 const goalFindMany = vi.fn();
 
 vi.mock("@/lib/auth", () => ({ requireUser: (...a: unknown[]) => requireUser(...a) }));
@@ -22,6 +23,7 @@ vi.mock("@/lib/agents/admin/escalations", () => ({
   listEscalations: (...a: unknown[]) => listEscalations(...a),
   assignEscalation: (...a: unknown[]) => assignEscalation(...a),
   resolveEscalation: (...a: unknown[]) => resolveEscalation(...a),
+  isEscalationInSchool: (...a: unknown[]) => isEscalationInSchool(...a),
 }));
 vi.mock("@/lib/agents/bootstrap", () => ({}));
 
@@ -45,7 +47,7 @@ function jreq(url: string, body?: unknown) {
 describe("agent dashboard routes", () => {
   beforeEach(() => {
     [requireUser, listAgentsWithStats, costDashboard, triggerMonitor, setAgentControl,
-     listEscalations, assignEscalation, resolveEscalation, goalFindMany].forEach((m) => m.mockReset());
+     listEscalations, assignEscalation, resolveEscalation, isEscalationInSchool, goalFindMany].forEach((m) => m.mockReset());
     requireUser.mockResolvedValue(admin);
     listAgentsWithStats.mockResolvedValue([{ name: "echo", invocationCount: 3 }]);
     costDashboard.mockResolvedValue({ perAgent: [], trend: [], topUsers: [] });
@@ -54,6 +56,9 @@ describe("agent dashboard routes", () => {
     setAgentControl.mockResolvedValue(undefined);
     assignEscalation.mockResolvedValue({ id: "e1" });
     resolveEscalation.mockResolvedValue({ id: "e1" });
+    // Sprint 6.2-night tenant-scoping fix: this admin's schoolId (s1) is in
+    // scope for the escalation under test by default in these route tests.
+    isEscalationInSchool.mockResolvedValue(true);
   });
 
   it("GET /api/admin/agents denies non-admins", async () => {
