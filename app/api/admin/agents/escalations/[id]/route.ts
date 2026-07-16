@@ -1,13 +1,27 @@
 /** PATCH /api/admin/agents/escalations/[id] — assign or resolve a queue item. */
 import { NextRequest, NextResponse } from "next/server";
 import { requireAgentAdmin, agentAdminStatus } from "@/lib/agents/admin/guard";
-import { assignEscalation, resolveEscalation } from "@/lib/agents/admin/escalations";
+import { assignEscalation, resolveEscalation, isEscalationInSchool } from "@/lib/agents/admin/escalations";
 
 export async function PATCH(req: NextRequest, ctx: { params: Promise<{ id: string }> }) {
   try {
     const user = await requireAgentAdmin();
     const { id } = await ctx.params;
     const body = await req.json().catch(() => ({}));
+
+    // Tenant scoping (2026-07-16 security fix), defense-in-depth: a school
+    // ADMIN cannot assign/resolve an escalation outside their own school,
+    // even if they already know or guess its ID. A true platform admin
+    // bypasses this check entirely, same as the list endpoint.
+    if (!user.isPlatformAdmin) {
+      if (!user.schoolId) {
+        return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+      }
+      const inScope = await isEscalationInSchool(id, user.schoolId);
+      if (!inScope) {
+        return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+      }
+    }
 
     if (body?.action === "resolve") {
       const resolution = typeof body.resolution === "string" ? body.resolution : "";

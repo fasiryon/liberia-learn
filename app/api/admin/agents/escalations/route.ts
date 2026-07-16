@@ -5,9 +5,13 @@ import { listEscalations, type EscalationFilter } from "@/lib/agents/admin/escal
 
 export async function GET(req: NextRequest) {
   try {
-    await requireAgentAdmin();
+    const user = await requireAgentAdmin();
     const filter = (new URL(req.url).searchParams.get("status") as EscalationFilter) ?? "OPEN";
-    return NextResponse.json({ escalations: await listEscalations(filter) });
+    // Tenant scoping (2026-07-16 security fix): a school ADMIN passes their
+    // own schoolId and sees only their school's escalations. A true
+    // platform admin passes null and sees everything, same as before.
+    const schoolId = user.isPlatformAdmin ? null : user.schoolId ?? null;
+    return NextResponse.json({ escalations: await listEscalations(filter, schoolId) });
   } catch (err) {
     return NextResponse.json({ error: "request_failed" }, { status: agentAdminStatus(err) });
   }
