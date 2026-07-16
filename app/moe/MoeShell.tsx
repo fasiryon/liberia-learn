@@ -15,6 +15,7 @@ const NAV_ITEMS: { href: string; label: string; tour?: string }[] = [
   { href: "/moe/compliance", label: "Compliance", tour: "moe-compliance" },
   { href: "/moe/alerts", label: "Alerts" },
   { href: "/moe/exports", label: "Exports", tour: "moe-exports" },
+  { href: "/moe/reports/narrative", label: "Narrative Reports" },
   { href: "/moe/submissions", label: "School Submissions" },
   { href: "/moe/live", label: "Live Dashboard", tour: "moe-live" },
 ];

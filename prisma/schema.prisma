@@ -4219,3 +4219,30 @@ model ContentQaReview {
   @@index([submissionType, status])
   @@index([submissionId])
 }
+
+// Sprint 6.3: MOE Narrative-Report agent. One row per generated report.
+// Escalation Point 1 (approved): stores BOTH the narrative text and a
+// structured data snapshot, rather than reconstructing the snapshot on
+// demand at diff-time - a report is meant to be an auditable historical
+// record, and reconstructing it later from moereport.getScopeData would
+// silently reinterpret history if underlying aggregation logic changes.
+// changesSummary stores detectNotableChanges' deterministic output verbatim
+// so the review UI can show exactly what the LLM was told, separate from
+// the prose it wrote. status is DRAFT only in this sprint - no code path
+// anywhere sets any other value; publishing/sending is out of scope.
+model ReportDraft {
+  id             String   @id @default(cuid())
+  agentName      String   @default("moe-narrative-report")
+  scope          String // "national" | "district" | "school"
+  scopeId        String?
+  periodType     String // "monthly" | "quarterly"
+  periodStart    DateTime
+  periodEnd      DateTime
+  narrativeText  String   @db.Text
+  dataSnapshot   Json
+  changesSummary Json?
+  status         String   @default("DRAFT")
+  createdAt      DateTime @default(now())
+
+  @@index([scope, scopeId, periodType, createdAt])
+}

@@ -45,3 +45,9 @@ registerPromptDefinition({
   version: "1.0.0",
   template: loadPromptFile("./prompts/content-qa.md"),
 });
+
+registerPromptDefinition({
+  key: "agent.moe-narrative-report.system",
+  version: "1.0.0",
+  template: loadPromptFile("./prompts/moe-narrative-report.md"),
+});
