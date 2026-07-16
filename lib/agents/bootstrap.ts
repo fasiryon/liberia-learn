@@ -15,3 +15,5 @@ import "@/lib/agents/tools/opsSentinel.tools";
 import "@/lib/agents/agents/ops-sentinel.agent";
 import "@/lib/agents/tools/contentqa.tools";
 import "@/lib/agents/agents/content-qa.agent";
+import "@/lib/agents/tools/moereport.tools";
+import "@/lib/agents/agents/moe-narrative-report.agent";

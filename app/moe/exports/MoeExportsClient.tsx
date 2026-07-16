@@ -154,6 +154,20 @@ export default function MoeExportsClient({ districts, schools }: MoeExportsClien
           </Card>
 
           <Card className="p-6">
+            <h2 className="text-xl font-semibold text-[var(--ll-text)]">Narrative Reports</h2>
+            <p className="mt-2 text-sm text-[var(--ll-text)]">
+              Read draft written progress reports generated from platform data, alongside the numbers
+              they were built from.
+            </p>
+            <a
+              href="/moe/reports/narrative"
+              className="mt-5 inline-flex min-h-11 items-center rounded-xl border border-[var(--ll-border)] px-5 py-2 text-sm font-semibold text-[var(--ll-text)]"
+            >
+              Open Narrative Reports
+            </a>
+          </Card>
+
+          <Card className="p-6">
             <h2 className="text-xl font-semibold text-[var(--ll-text)]">Printable Summary</h2>
             <p className="mt-2 text-sm text-[var(--ll-text)]">
               Open a print-optimized HTML summary report for ministry sharing.
