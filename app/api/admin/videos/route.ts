@@ -40,13 +40,35 @@ export async function GET(req: Request) {
       where: { schoolId: admin.schoolId ?? undefined, status: "PENDING" },
     });
 
+    // Sprint 6.2: attach content-qa agent flags, if any — advisory only,
+    // does not affect video.status itself.
+    const videoIds = videos.map((v) => v.id);
+    const qaReviews = videoIds.length
+      ? await prisma.contentQaReview.findMany({
+          where: { submissionType: "video", submissionId: { in: videoIds }, status: "PENDING_TEACHER_REVIEW" },
+          orderBy: { createdAt: "desc" },
+          select: { id: true, submissionId: true, score: true, confidence: true, feedback: true, status: true, createdAt: true },
+        })
+      : [];
+    const qaReviewsByVideoId = new Map<string, typeof qaReviews>();
+    for (const review of qaReviews) {
+      const list = qaReviewsByVideoId.get(review.submissionId) ?? [];
+      list.push(review);
+      qaReviewsByVideoId.set(review.submissionId, list);
+    }
+
     const signedVideos = await Promise.all(
       videos.map(async (v) => {
         const [vHead, tHead] = await Promise.all([
           head(v.storageUrl),
           v.thumbnailUrl ? head(v.thumbnailUrl) : Promise.resolve(null),
         ]);
-        return { ...v, storageUrl: vHead.downloadUrl, thumbnailUrl: tHead?.downloadUrl ?? null };
+        return {
+          ...v,
+          storageUrl: vHead.downloadUrl,
+          thumbnailUrl: tHead?.downloadUrl ?? null,
+          qaReviews: qaReviewsByVideoId.get(v.id) ?? [],
+        };
       })
     );
     return NextResponse.json({ videos: signedVideos, pendingCount });

@@ -45,6 +45,7 @@
     { "path": "/api/cron/guardian-weekly-digest",                                     "schedule": "0 12 * * 6" },
     { "path": "/api/cron/cleanup-offline-packs",                                       "schedule": "0 3 * * 0" },
     { "path": "/api/cron/cleanup-rejected-videos",                                      "schedule": "0 3 * * *" },
-    { "path": "/api/cron/agents/tick",                                                  "schedule": "*/10 * * * *" }
+    { "path": "/api/cron/agents/tick",                                                  "schedule": "*/10 * * * *" },
+    { "path": "/api/cron/content-qa-sweep",                                             "schedule": "*/15 * * * *" }
   ]
 }

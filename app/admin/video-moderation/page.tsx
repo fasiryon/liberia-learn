@@ -19,6 +19,16 @@ type VideoItem = {
   approvedAt: string | null;
   lesson: { contentId: string; subject: string; grade: number };
   teacher: { name: string | null };
+  qaReviews?: QaReview[];
+};
+
+type QaReview = {
+  id: string;
+  score: number | null;
+  confidence: number;
+  feedback: string | null;
+  status: string;
+  createdAt: string;
 };
 
 type Tab = "PENDING" | "APPROVED" | "REJECTED";
@@ -157,6 +167,20 @@ export default function VideoModerationPage() {
                     <p className="mt-2 text-sm font-medium text-red-400">
                       Rejected: {video.rejectedReason}
                     </p>
+                  )}
+                  {video.qaReviews && video.qaReviews.length > 0 && (
+                    <div className="mt-2 space-y-1">
+                      {video.qaReviews.map((r) => (
+                        <p
+                          key={r.id}
+                          className="flex items-center gap-1.5 rounded-lg border border-amber-500/30 bg-amber-500/10 px-2.5 py-1 text-xs text-amber-300"
+                        >
+                          <span className="font-semibold">AI QA flag</span>
+                          <span>· confidence {(r.confidence * 100).toFixed(0)}%</span>
+                          {r.feedback && <span className="text-amber-200/80">— {r.feedback}</span>}
+                        </p>
+                      ))}
+                    </div>
                   )}
                 </div>
                 {video.thumbnailUrl && (

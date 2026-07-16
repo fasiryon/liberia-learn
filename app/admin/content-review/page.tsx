@@ -18,6 +18,16 @@ type ReviewLesson = {
   rejectionReason: string | null;
   learningObjectives?: string[];
   editedBy: { id: string; name: string | null; school: { name: string } | null } | null;
+  qaReviews?: QaReview[];
+};
+
+type QaReview = {
+  id: string;
+  score: number | null;
+  confidence: number;
+  feedback: string | null;
+  status: string;
+  createdAt: string;
 };
 
 export default function ContentReviewPage() {
@@ -165,6 +175,23 @@ export default function ContentReviewPage() {
                   </p>
                   {lesson.rejectionReason && (
                     <p className="mt-1 text-sm text-red-400">Rejected: {lesson.rejectionReason}</p>
+                  )}
+                  {lesson.qaReviews && lesson.qaReviews.length > 0 && (
+                    <div className="mt-2 space-y-1">
+                      {lesson.qaReviews
+                        .filter((r) => r.status === "PENDING_TEACHER_REVIEW")
+                        .map((r) => (
+                          <p
+                            key={r.id}
+                            className="flex items-center gap-1.5 rounded-lg border border-amber-500/30 bg-amber-500/10 px-2.5 py-1 text-xs text-amber-300"
+                          >
+                            <span className="font-semibold">AI QA flag</span>
+                            {r.score !== null && <span>· score {(r.score * 100).toFixed(0)}%</span>}
+                            <span>· confidence {(r.confidence * 100).toFixed(0)}%</span>
+                            {r.feedback && <span className="text-amber-200/80">— {r.feedback}</span>}
+                          </p>
+                        ))}
+                    </div>
                   )}
                 </div>
                 <button
