@@ -45,17 +45,22 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "period_required" }, { status: 400 });
     }
 
+    // Deliberately verbose and explicit (not just terse key:value pairs) -
+    // a short instruction classifies as the "fast" tier (a small model),
+    // which was observed calling the tool by a wrong abbreviated name
+    // (e.g. "moe.getScopeData" instead of "moereport.getScopeData",
+    // apparently reading the "(moe)" domain tag in the tool listing as a
+    // shorter alias) across multiple real attempts. Restating the exact
+    // tool name repeatedly, and pushing the message length past
+    // classifyMessage's smart-tier threshold, both reduce that risk - the
+    // larger "smart" tier model handles the correct name reliably.
     const instruction = [
-      "Generate a narrative report.",
-      `scope: ${scope}`,
-      scopeId ? `scopeId: ${scopeId}` : null,
-      `periodType: ${periodType}`,
-      `periodStart: ${periodStart}`,
-      `periodEnd: ${periodEnd}`,
-      "Call moereport.getScopeData first with these exact values, then follow your instructions.",
-    ]
-      .filter(Boolean)
-      .join("\n");
+      `Generate a narrative MOE progress report for the following request.`,
+      `Requested scope: ${scope}${scopeId ? ` (scopeId: ${scopeId})` : " (no scopeId - this is the whole nation, not one district or school)"}.`,
+      `Requested period type: ${periodType}, covering ${periodStart} through ${periodEnd} inclusive.`,
+      `Your first tool call must be exactly "moereport.getScopeData" (the full name, including the "moereport." prefix - do not shorten it to "moe" or call it "getScopeData" without the prefix) with scope=${scope}, ${scopeId ? `scopeId=${scopeId}, ` : ""}periodStart=${periodStart}, and periodEnd=${periodEnd}.`,
+      `After that succeeds, follow the rest of your system instructions: check for a prior report with moereport.getPriorReport, compare with moereport.detectNotableChanges if one exists, write the narrative, and save it with moereport.saveDraftReport.`,
+    ].join(" ");
 
     // userRole here is "system", not "admin" - this agent's rolesAllowed is
     // ["system"] (spec: invoked by schedule or an explicit trigger, never a
