@@ -1,6 +1,14 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { NextRequest } from "next/server";
 
+// @sentry/nextjs's real module does OpenTelemetry/instrumentation setup on
+// first import, which occasionally pushes the first cold-imported test in
+// this file (via app/api/student/flag-content/route -> handleApiError) past
+// vitest's default 5000ms timeout - a pure test-infra flake unrelated to the
+// route's own logic. Mocking it removes the real SDK from the import graph
+// entirely rather than papering over the symptom with a longer timeout.
+vi.mock("@sentry/nextjs", () => ({ captureException: vi.fn() }));
+
 // ── POST /api/student/flag-content ───────────────────────────────────────────
 
 describe("POST /api/student/flag-content", () => {
