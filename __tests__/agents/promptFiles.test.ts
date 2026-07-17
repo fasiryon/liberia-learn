@@ -15,7 +15,7 @@ import { join } from "path";
  * reintroduces an import.meta.url-based path or a typo'd relative path.
  */
 describe("agent prompt files resolve from process.cwd(), not import.meta.url", () => {
-  it.each(["echo.md", "liberialearn-family.md", "ops-sentinel.md", "content-qa.md", "moe-narrative-report.md"])(
+  it.each(["echo.md", "liberialearn-family.md", "ops-sentinel.md", "content-qa.md", "moe-narrative-report.md", "district-update.md"])(
     "lib/agents/prompts/%s exists and is readable via a process.cwd()-relative path",
     (filename) => {
       const content = readFileSync(join(process.cwd(), "lib/agents/prompts", filename), "utf8");

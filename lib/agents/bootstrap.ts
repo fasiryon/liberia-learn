@@ -17,3 +17,5 @@ import "@/lib/agents/tools/contentqa.tools";
 import "@/lib/agents/agents/content-qa.agent";
 import "@/lib/agents/tools/moereport.tools";
 import "@/lib/agents/agents/moe-narrative-report.agent";
+import "@/lib/agents/tools/districtupdate.tools";
+import "@/lib/agents/agents/district-update.agent";
