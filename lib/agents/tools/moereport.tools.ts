@@ -63,7 +63,7 @@ function round2(n: number): number {
 
 const getScopeDataInput = z.object({
   scope: z.enum(SCOPES),
-  scopeId: z.string().optional(),
+  scopeId: z.string().nullish(),
   periodStart: z.string(),
   periodEnd: z.string(),
 });
@@ -152,7 +152,7 @@ registerTool(moereportGetScopeDataTool);
 
 const getPriorReportInput = z.object({
   scope: z.enum(SCOPES),
-  scopeId: z.string().optional(),
+  scopeId: z.string().nullish(),
   periodType: z.enum(PERIOD_TYPES),
 });
 const priorReportSchema = z.object({
@@ -305,13 +305,17 @@ registerTool(moereportDetectNotableChangesTool);
 
 const saveDraftReportInput = z.object({
   scope: z.enum(SCOPES),
-  scopeId: z.string().optional(),
+  // .nullish() (not just .optional()): the calling LLM commonly emits an
+  // explicit JSON `null` for "not applicable" rather than omitting the key
+  // entirely - both mean the same thing here (national scope, no changes
+  // summary), so both must validate.
+  scopeId: z.string().nullish(),
   periodType: z.enum(PERIOD_TYPES),
   periodStart: z.string(),
   periodEnd: z.string(),
   narrativeText: z.string().min(1),
   dataSnapshot: scopeDataSchema,
-  changesSummary: z.array(changeSchema).optional(),
+  changesSummary: z.array(changeSchema).nullish(),
 });
 const saveDraftReportOutput = z.object({ reportId: z.string() });
 

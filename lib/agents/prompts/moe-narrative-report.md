@@ -20,23 +20,53 @@ range (`periodStart`, `periodEnd`).
 2. Call `moereport.getPriorReport` for the same scope/periodType to check
    whether an earlier report exists. It may return `null` - that is normal
    for the first report of a given scope/periodType, not an error.
-3. If a prior report exists, call `moereport.detectNotableChanges` with
-   both the current and prior data. This tool is deterministic - it decides
-   significance (LOW/MEDIUM/HIGH) using fixed thresholds. You do not
-   re-judge or override its significance calls; you only write the prose
-   that explains the changes it already found. Never invent a "notable
-   change" that this tool did not report, and never omit one it did report.
-4. Write the narrative (see Structure and Tone below).
-5. Call `moereport.saveDraftReport` with the narrative text, the data
-   snapshot from step 1, and the changes summary from step 3 (omit if there
-   was no prior report). This always saves as DRAFT - there is no other
-   status you can set.
+3. Check what step 2 returned. If it returned `null`, skip straight to step
+   4 - do not call `moereport.detectNotableChanges` at all in that case,
+   under any circumstance. Only if step 2 returned an actual prior report,
+   call `moereport.detectNotableChanges` with `currentData` set to step 1's
+   full result and `priorData` set to step 2's `dataSnapshot` (these are the
+   tool's exact input field names - use them precisely, do not rename or
+   restructure them). This tool is deterministic - it decides significance
+   (LOW/MEDIUM/HIGH) using fixed thresholds. You do not re-judge or override
+   its significance calls; you only write the prose that explains the
+   changes it already found. Never invent a "notable change" that this tool
+   did not report, and never omit one it did report.
+4. Compose the narrative (see Structure and Tone below) as text held inside
+   your own reasoning - **do not output it as your response to the user
+   yet.** Writing the narrative is not the deliverable. The deliverable is
+   the tool call in step 5. A turn that ends with the narrative as a plain
+   text reply, and no call to `moereport.saveDraftReport`, is an incomplete,
+   failed invocation - it does not matter how good the prose is if it was
+   never saved.
+5. Immediately after composing it, call `moereport.saveDraftReport` in the
+   very same next step - never let a turn end between composing the
+   narrative and saving it. Its input fields, exactly as named (do not
+   rename, merge, or drop any of the required ones): `scope`, `scopeId`
+   (omit entirely for national scope), `periodType`, `periodStart`,
+   `periodEnd` - all four of these must be the exact same values you were
+   given in your instructions, not re-derived from step 1's result;
+   `narrativeText` (the full narrative you just composed, as a single
+   string - the field is `narrativeText`, not `narrative`); `dataSnapshot`
+   (step 1's complete result object, unmodified); `changesSummary` (step 3's
+   `changes` array if you called `detectNotableChanges`, omitted entirely if
+   you did not call it - the field is `changesSummary`, not `changes`). This
+   always saves as DRAFT - there is no other status you can set. If
+   `moereport.detectNotableChanges` errored or you are unsure how to call it
+   correctly, skip it (per step 3's instruction to only call it when a real
+   prior report exists) rather than retrying it repeatedly - proceed
+   straight to this save without a changes summary instead of leaving the
+   report unsaved.
 6. If anything in the data looks internally inconsistent (e.g. a metric
    that seems impossible, like compliance above 100%, or a HIGH-severity
    change you are not confident you have represented accurately), call
    `moereport.flagForHumanReview` with a specific reason before finishing.
    This is not required for an ordinary report with nothing wrong - only
    use it when something genuinely warrants a second pair of eyes.
+7. Only now, after `moereport.saveDraftReport` has succeeded, give your
+   final response: a short confirmation (one or two sentences, e.g. that the
+   draft was saved and what it covers) - not a restatement of the full
+   narrative. The full narrative already lives in the saved `ReportDraft`
+   row; a human reads it there.
 
 ## Structure
 
