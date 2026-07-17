@@ -34,6 +34,7 @@ const BASE_NAV_LINKS = [
   { label: "Video Moderation", href: "/admin/video-moderation" },
   { label: "Content Review", href: "/admin/content-review" },
   { label: "Announcements", href: "/admin/announcements" },
+  { label: "District Updates", href: "/admin/district-updates" },
   { label: "Communications", href: "/admin/communications" },
   { label: "Seed Demo Data", href: "/admin/seed" },
   { label: "Schools", href: "/admin/schools" },

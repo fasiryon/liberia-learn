@@ -51,3 +51,9 @@ registerPromptDefinition({
   version: "1.0.0",
   template: loadPromptFile("./prompts/moe-narrative-report.md"),
 });
+
+registerPromptDefinition({
+  key: "agent.district-update.system",
+  version: "1.0.0",
+  template: loadPromptFile("./prompts/district-update.md"),
+});

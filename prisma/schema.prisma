@@ -4246,3 +4246,26 @@ model ReportDraft {
 
   @@index([scope, scopeId, periodType, createdAt])
 }
+
+// Sprint 6.4: District Competition / School-Update agent. One row per
+// generated draft (standings narrative or milestone celebration). Same
+// storage posture as ReportDraft: narrative + snapshot together, DRAFT-only
+// status with no code path to anything else. Deliberately separate from
+// Announcement (the existing manual publish system) - this agent supplies
+// draft text a human copies into Announcement or sends elsewhere; it never
+// writes to Announcement directly (Escalation Point 1: build alongside, not
+// into, the existing system).
+model DistrictUpdateDraft {
+  id             String   @id @default(cuid())
+  agentName      String   @default("district-update")
+  type           String // "standings" | "milestone"
+  scope          String // "district" | "school" | "class"
+  scopeId        String
+  draftText      String   @db.Text
+  dataSnapshot   Json
+  changesSummary Json?
+  status         String   @default("DRAFT")
+  createdAt      DateTime @default(now())
+
+  @@index([type, scope, scopeId, createdAt])
+}
