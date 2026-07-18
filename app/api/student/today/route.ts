@@ -7,6 +7,23 @@ import { getAdaptiveRecommendations } from "@/lib/student/adaptiveRecommendation
 import { generateStudentActions, getActiveStudentAction } from "@/lib/intelligence/actionEngine";
 import { getTimetableForStudent } from "@/lib/timetable/timetableService";
 import { withRedisCache, FALLBACK_LIMIT_EXCEEDED, getCachedValue, setCachedValue } from "@/lib/cache/redisCache";
+import { isWaecEligible } from "@/lib/waec/eligibility";
+import { getStudentWaecReadinessAll, type SubjectReadiness } from "@/lib/waec/readiness";
+import { waecSlug } from "@/lib/waec/syllabus";
+import { getCertificateProximity } from "@/lib/certificates/certificateProgress";
+import {
+  rankNextBestActions,
+  scoreRevisitPrerequisite,
+  scoreOverdue,
+  scoreCriticalMastery,
+  scoreScheduledToday,
+  scoreWaecPractice,
+  scoreRetryAssessment,
+  scoreReview,
+  CONTINUE_PRIORITY,
+  ADVANCE_PRIORITY,
+  type NextActionCandidate,
+} from "@/lib/student/nextBestAction";
 
 export const dynamic = "force-dynamic";
 
@@ -35,6 +52,7 @@ type TodayWorkItem = {
   title: string;
   subject: string;
   grade: number;
+  scheduledDate: Date;
   contentType: string;
   estimatedDuration: number;
   periodNumber: number | null;
@@ -185,17 +203,17 @@ async function _computeToday(): Promise<NextResponse> {
 
     // Cache student metadata (id + classIds) to avoid a DB roundtrip on every authenticated request.
     // 700s TTL: must outlive full load-test window (83s warm + 540s test = 623s).
-    type StudentMeta = { id: string; classIds: string[] };
+    type StudentMeta = { id: string; classIds: string[]; currentGrade: number | null };
     const studentMeta = await withRedisCache<StudentMeta | null>(
       `cache:student-meta:${user.id}`,
       700,
       async () => {
         const s = await prisma.student.findUnique({
           where: { userId: user.id },
-          select: { id: true, enrollments: { select: { classId: true } } },
+          select: { id: true, currentGrade: true, enrollments: { select: { classId: true } } },
         });
         if (!s) return null;
-        return { id: s.id, classIds: s.enrollments.map((e) => e.classId) };
+        return { id: s.id, classIds: s.enrollments.map((e) => e.classId), currentGrade: s.currentGrade ?? null };
       }
     );
 
@@ -203,7 +221,7 @@ async function _computeToday(): Promise<NextResponse> {
       return NextResponse.json({ items: [], adaptivePlan: emptyAdaptivePlan() });
     }
 
-    const { id: studentId, classIds } = studentMeta;
+    const { id: studentId, classIds, currentGrade } = studentMeta;
     if (classIds.length === 0) {
       return NextResponse.json({ items: [], adaptivePlan: emptyAdaptivePlan() });
     }
@@ -218,7 +236,7 @@ async function _computeToday(): Promise<NextResponse> {
     const todayData = await withRedisCache(cacheKey, 900, async () => {
     const catchUpStart = new Date(startOfDay.getTime() - 14 * 86400000);
 
-    const [scheduledWork, catchUpWork, assignments, intelligence, adaptiveResult] = await Promise.all([
+    const [scheduledWork, catchUpWork, assignments, overdueAssignments, intelligence, adaptiveResult, waecReadiness] = await Promise.all([
       prisma.scheduledWork.findMany({
         where: {
           classId: { in: classIds },
@@ -280,6 +298,21 @@ async function _computeToday(): Promise<NextResponse> {
           },
         },
       }).catch(() => []),
+      prisma.assignment.findMany({
+        where: {
+          classId: { in: classIds },
+          dueAt: { lt: startOfDay },
+          submissions: { none: { studentId } },
+        },
+        select: {
+          id: true,
+          title: true,
+          dueAt: true,
+          scheduledWorkId: true,
+        },
+        orderBy: { dueAt: "desc" },
+        take: 5,
+      }).catch(() => []),
       buildStudentLearningIntelligence(user).catch(() => ({
         generatedAt: new Date().toISOString(),
         masteryBySubject: [],
@@ -288,11 +321,15 @@ async function _computeToday(): Promise<NextResponse> {
       })),
       getAdaptiveRecommendations(studentId, user.schoolId, user.id).catch(() => ({
         recommendation: null,
+        candidates: [],
         masteryAlerts: [],
         contentGap: false,
         pacingSignal: "on_track" as const,
         weakTopicSequence: [],
       })),
+      isWaecEligible(currentGrade)
+        ? getStudentWaecReadinessAll(studentId).catch(() => [])
+        : Promise.resolve([]),
     ]);
 
     // Fire-and-forget: persist adaptive signals as trackable actions
@@ -329,11 +366,30 @@ async function _computeToday(): Promise<NextResponse> {
     };
     const safeAdaptiveResult = {
       recommendation: adaptiveResult.recommendation ?? null,
+      candidates: asArray((adaptiveResult as { candidates?: unknown[] }).candidates),
       masteryAlerts: asArray(adaptiveResult.masteryAlerts),
       contentGap: Boolean(adaptiveResult.contentGap),
       pacingSignal: adaptiveResult.pacingSignal ?? "on_track",
       weakTopicSequence: asArray(adaptiveResult.weakTopicSequence),
     };
+    const safeOverdueAssignments = asArray(overdueAssignments);
+    const safeWaecReadiness = asArray(waecReadiness);
+
+    const overdueWorkIds = safeOverdueAssignments
+      .map((a) => a.scheduledWorkId)
+      .filter((id): id is string => typeof id === "string");
+    const overdueSubjectByWorkId = new Map<string, string>();
+    if (overdueWorkIds.length > 0) {
+      const overdueWork = await prisma.scheduledWork
+        .findMany({
+          where: { id: { in: overdueWorkIds } },
+          select: { id: true, content: { select: { subject: true } } },
+        })
+        .catch(() => []);
+      for (const w of overdueWork) {
+        if (w.content?.subject) overdueSubjectByWorkId.set(w.id, w.content.subject);
+      }
+    }
 
     const assignmentsByWorkId = new Map(
       safeAssignments
@@ -362,6 +418,7 @@ async function _computeToday(): Promise<NextResponse> {
         title: safeString(payload.title, safeString(payload.topic, `${subject} Lesson`)),
         subject,
         grade,
+        scheduledDate: sw?.scheduledDate instanceof Date ? sw.scheduledDate : new Date(sw?.scheduledDate ?? Date.now()),
         contentType: safeString(content.contentType, "LESSON"),
         estimatedDuration: safeNumber(payload.durationMins, 45),
         periodNumber: typeof sw?.periodNumber === "number" ? sw.periodNumber : null,
@@ -562,6 +619,186 @@ async function _computeToday(): Promise<NextResponse> {
       .slice(0, 5);
     const smartContinue = adaptiveActions[0] ?? null;
 
+    // Sprint 6.7: deterministic "what should this student do next" ranking.
+    // Every candidate is built from data already fetched above, no parallel
+    // data sources. See lib/student/nextBestAction.ts for the scoring model.
+    const scheduledStatusByWorkId = new Map(
+      schoolDayItems
+        .filter((entry) => entry.scheduledWorkId)
+        .map((entry) => [entry.scheduledWorkId as string, entry.status])
+    );
+
+    const nextBestCandidates: NextActionCandidate[] = [];
+
+    for (const c of safeAdaptiveResult.candidates as Array<{
+      type: string;
+      lessonId: string | null;
+      subject: string;
+      reason: string;
+      sourceSignal: string;
+      masteryPercent: number | null;
+    }>) {
+      if (!c.lessonId) continue;
+      const href = `/student/lessons/${c.lessonId}`;
+      if (c.type === "REVISIT_PREREQUISITE") {
+        nextBestCandidates.push({
+          type: "REVISIT_PREREQUISITE",
+          priority: scoreRevisitPrerequisite(c.masteryPercent ?? 60),
+          label: `Review ${c.subject}`,
+          reason: c.reason,
+          href,
+          subject: c.subject,
+          masteryPercent: c.masteryPercent,
+          lastSignalAt: null,
+        });
+      } else if (c.type === "RETRY_ASSESSMENT") {
+        nextBestCandidates.push({
+          type: "RETRY_ASSESSMENT",
+          priority: scoreRetryAssessment(c.masteryPercent ?? 50),
+          label: "Retry quiz",
+          reason: c.reason,
+          href: `${href}#lesson-quiz`,
+          subject: c.subject,
+          masteryPercent: c.masteryPercent,
+          lastSignalAt: null,
+        });
+      } else if (c.type === "REVIEW" && c.sourceSignal !== "student_progress.stale_incomplete" && c.masteryPercent != null) {
+        nextBestCandidates.push({
+          type: "REVIEW",
+          priority: scoreReview(c.masteryPercent),
+          label: `Review ${c.subject}`,
+          reason: c.reason,
+          href,
+          subject: c.subject,
+          masteryPercent: c.masteryPercent,
+          lastSignalAt: null,
+        });
+      } else if (c.type === "CONTINUE") {
+        nextBestCandidates.push({
+          type: "CONTINUE",
+          priority: CONTINUE_PRIORITY,
+          label: `Continue ${c.subject}`,
+          reason: c.reason,
+          href,
+          subject: c.subject,
+          masteryPercent: c.masteryPercent,
+          lastSignalAt: null,
+        });
+      } else if (c.type === "ADVANCE") {
+        nextBestCandidates.push({
+          type: "ADVANCE",
+          priority: ADVANCE_PRIORITY,
+          label: `Start ${c.subject}`,
+          reason: c.reason,
+          href,
+          subject: c.subject,
+          masteryPercent: c.masteryPercent,
+          lastSignalAt: null,
+        });
+      }
+    }
+
+    // Today's scheduled items still count, but only as SCHEDULED_TODAY, not the
+    // hardcoded 105-110 priority that used to make them always win.
+    for (const item of items) {
+      if (item.status === "completed") continue;
+      const isCurrentPeriod = scheduledStatusByWorkId.get(item.id) === "current";
+      nextBestCandidates.push({
+        type: "SCHEDULED_TODAY",
+        priority: scoreScheduledToday(isCurrentPeriod),
+        label: item.status === "in_progress" ? `Continue ${item.title}` : `Start ${item.title}`,
+        reason: isCurrentPeriod ? "This is your current class period." : "Scheduled as part of today's learning plan.",
+        href: item.lessonHref,
+        subject: item.subject,
+        masteryPercent: null,
+        lastSignalAt: null,
+      });
+    }
+
+    // Overdue: past-due assignments (real due dates, teacher accountability).
+    for (const assignment of safeOverdueAssignments as Array<{
+      id: string;
+      title: string;
+      dueAt: Date | null;
+      scheduledWorkId: string | null;
+    }>) {
+      if (!assignment.dueAt) continue;
+      const daysOverdue = Math.max(0, Math.floor((now.getTime() - assignment.dueAt.getTime()) / 86_400_000));
+      nextBestCandidates.push({
+        type: "OVERDUE",
+        priority: scoreOverdue(daysOverdue),
+        label: `Overdue: ${assignment.title}`,
+        reason: `This assignment was due ${daysOverdue === 0 ? "today" : `${daysOverdue} day${daysOverdue === 1 ? "" : "s"} ago`}.`,
+        href: `/student/assignments/${assignment.id}`,
+        subject: (assignment.scheduledWorkId && overdueSubjectByWorkId.get(assignment.scheduledWorkId)) ?? "GENERAL",
+        masteryPercent: null,
+        lastSignalAt: assignment.dueAt.toISOString(),
+      });
+    }
+
+    // Overdue: lessons abandoned mid-progress from the catch-up window.
+    for (const item of catchUpItems) {
+      const daysOverdue = Math.max(0, Math.floor((startOfDay.getTime() - item.scheduledDate.getTime()) / 86_400_000));
+      if (daysOverdue < 2) continue;
+      nextBestCandidates.push({
+        type: "OVERDUE",
+        priority: scoreOverdue(daysOverdue),
+        label: `Catch up: ${item.title}`,
+        reason: `This lesson was scheduled ${daysOverdue} days ago and is still not started.`,
+        href: item.lessonHref,
+        subject: item.subject,
+        masteryPercent: null,
+        lastSignalAt: item.scheduledDate.toISOString(),
+      });
+    }
+
+    // Critical mastery: the single weakest subject, when it has a real lesson to point to.
+    const topAlert = safeAdaptiveResult.masteryAlerts[0];
+    const topWeakLesson = safeAdaptiveResult.weakTopicSequence[0];
+    if (topAlert?.tier === "critical" && topWeakLesson?.lessonId) {
+      nextBestCandidates.push({
+        type: "CRITICAL_MASTERY",
+        priority: scoreCriticalMastery(topAlert.score),
+        label: `Review ${topAlert.subject}`,
+        reason: topWeakLesson.reason,
+        href: `/student/lessons/${topWeakLesson.lessonId}`,
+        subject: topAlert.subject,
+        masteryPercent: topAlert.score,
+        lastSignalAt: null,
+      });
+    }
+
+    // WAEC practice: weakest assessed subject below the practice threshold (Grade 9+ only).
+    const weakestWaec = (safeWaecReadiness as SubjectReadiness[])
+      .filter((s) => s.available && s.readiness != null && s.readiness < 75)
+      .sort((a, b) => (a.readiness as number) - (b.readiness as number))[0];
+    if (weakestWaec && weakestWaec.readiness != null) {
+      nextBestCandidates.push({
+        type: "WAEC_PRACTICE",
+        priority: scoreWaecPractice(weakestWaec.readiness),
+        label: `WAEC ${weakestWaec.name} practice`,
+        reason: `Your ${weakestWaec.name} WAEC readiness is ${weakestWaec.readiness}%${weakestWaec.nextFocusName ? `, next focus: ${weakestWaec.nextFocusName}` : ""}.`,
+        href: `/student/waec/${waecSlug(weakestWaec.subjectId)}/practice`,
+        subject: weakestWaec.name,
+        masteryPercent: weakestWaec.readiness,
+        lastSignalAt: null,
+      });
+    }
+
+    const { hero: heroCandidate, waecSecondary } = rankNextBestActions(nextBestCandidates);
+
+    let unlocks: Awaited<ReturnType<typeof getCertificateProximity>> = null;
+    if (heroCandidate && currentGrade != null) {
+      unlocks = await getCertificateProximity(
+        studentId,
+        user.id,
+        heroCandidate.subject,
+        currentGrade,
+        user.schoolId ?? null
+      ).catch(() => null);
+      if (unlocks?.alreadyAwarded) unlocks = null;
+    }
+
     return {
       items,
       catchUpItems,
@@ -640,6 +877,25 @@ async function _computeToday(): Promise<NextResponse> {
           recommendationCount: safeIntelligence.recommendedNextActions.length,
         },
       },
+      heroRecommendation: heroCandidate
+        ? {
+            type: heroCandidate.type,
+            label: heroCandidate.label,
+            reason: heroCandidate.reason,
+            href: heroCandidate.href,
+            subject: heroCandidate.subject,
+            priority: heroCandidate.priority,
+          }
+        : null,
+      waecSecondaryCard: waecSecondary
+        ? {
+            label: waecSecondary.label,
+            reason: waecSecondary.reason,
+            href: waecSecondary.href,
+            subject: waecSecondary.subject,
+          }
+        : null,
+      unlocks,
       timetable: timetable ?? null,
       schoolId: user.schoolId ?? null,
     };
