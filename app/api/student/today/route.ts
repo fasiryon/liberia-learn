@@ -223,7 +223,31 @@ async function _computeToday(): Promise<NextResponse> {
 
     const { id: studentId, classIds, currentGrade } = studentMeta;
     if (classIds.length === 0) {
-      return NextResponse.json({ items: [], adaptivePlan: emptyAdaptivePlan() });
+      // No class enrollment yet, but WAEC readiness is computed straight from
+      // mastery data and never depended on class enrollment. A WAEC-eligible
+      // student in this state should still get a real recommendation instead
+      // of a bare empty page (Sprint 6.7 Deliverable 1: this was the exact
+      // gap found in the real walkthrough of a Grade 11 WAEC-track student).
+      const emptyStatePayload: Record<string, unknown> = { items: [], adaptivePlan: emptyAdaptivePlan() };
+      if (isWaecEligible(currentGrade)) {
+        const readiness = await getStudentWaecReadinessAll(studentId).catch(() => [] as SubjectReadiness[]);
+        const weakest = readiness
+          .filter((s) => s.available && s.readiness != null && s.readiness < 75)
+          .sort((a, b) => (a.readiness as number) - (b.readiness as number))[0];
+        if (weakest && weakest.readiness != null) {
+          const reason = `Your ${weakest.name} WAEC readiness is ${weakest.readiness}%${weakest.nextFocusName ? `, next focus: ${weakest.nextFocusName}` : ""}.`;
+          emptyStatePayload.heroRecommendation = {
+            type: "WAEC_PRACTICE",
+            label: `WAEC ${weakest.name} practice`,
+            reason,
+            href: `/student/waec/${waecSlug(weakest.subjectId)}/practice`,
+            subject: weakest.name,
+            priority: scoreWaecPractice(weakest.readiness),
+          };
+          emptyStatePayload.waecSecondaryCard = null;
+        }
+      }
+      return NextResponse.json(emptyStatePayload);
     }
 
     // Today's date range (UTC)
