@@ -40,6 +40,8 @@ export type WeakTopicSequenceItem = {
 
 export type AdaptiveRecommendationResult = {
   recommendation: AdaptiveRecommendation | null;
+  /** Every scored candidate, highest priority first; the full field the top pick was drawn from. */
+  candidates: AdaptiveRecommendation[];
   masteryAlerts: MasteryAlert[];
   contentGap: boolean;
   pacingSignal: PacingSignal;
@@ -222,7 +224,7 @@ export async function getAdaptiveRecommendations(
   });
 
   if (!student) {
-    return { recommendation: null, masteryAlerts: [], contentGap: false, pacingSignal: "on_track", weakTopicSequence: [] };
+    return { recommendation: null, candidates: [], masteryAlerts: [], contentGap: false, pacingSignal: "on_track", weakTopicSequence: [] };
   }
 
   const classIds = student.enrollments.map((e) => e.classId);
@@ -515,7 +517,7 @@ export async function getAdaptiveRecommendations(
     : [];
   const weakTopicSequence = buildWeakTopicSequence(masteryAlerts, scheduledWork, fallbackLessons);
 
-  return { recommendation, masteryAlerts: masteryAlerts.slice(0, 5), contentGap, pacingSignal, weakTopicSequence };
+  return { recommendation, candidates, masteryAlerts: masteryAlerts.slice(0, 5), contentGap, pacingSignal, weakTopicSequence };
 }
 
 // Build class-level intelligence for the teacher dashboard.
