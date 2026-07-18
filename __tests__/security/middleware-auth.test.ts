@@ -118,4 +118,32 @@ describe("middleware auth — /admin and /platform portal guards", () => {
     expect(isNext(cronRes)).toBe(true)
     expect(isNext(cronsRes)).toBe(true)
   })
+
+  it("14. /enroll and /api/enroll → next() without getToken call (Sprint 6.5: restored self-serve school registration entry point)", async () => {
+    const pageRes = await middleware(makeReq("/enroll"))
+    const apiRes = await middleware(makeReq("/api/enroll"))
+    expect(mockGetToken).not.toHaveBeenCalled()
+    expect(isNext(pageRes)).toBe(true)
+    expect(isNext(apiRes)).toBe(true)
+  })
+
+  it("15. /onboard → requires auth (Sprint 6.5: insecure dev create-school page removed, no longer public)", async () => {
+    mockGetToken.mockResolvedValue(null)
+    const res = await middleware(makeReq("/onboard"))
+    expect(locationOf(res)).toContain("/login")
+  })
+
+  it("16. /onboard/accept and /api/onboard/accept → next() without getToken call (invite-acceptance flow stays public for anonymous invitees)", async () => {
+    const pageRes = await middleware(makeReq("/onboard/accept"))
+    const apiRes = await middleware(makeReq("/api/onboard/accept"))
+    expect(mockGetToken).not.toHaveBeenCalled()
+    expect(isNext(pageRes)).toBe(true)
+    expect(isNext(apiRes)).toBe(true)
+  })
+
+  it("17. /api/onboard/invite → requires auth (admin-only action, never should have been covered by a blanket public prefix)", async () => {
+    mockGetToken.mockResolvedValue(null)
+    const res = await middleware(makeReq("/api/onboard/invite"))
+    expect(res.status).toBe(401)
+  })
 })

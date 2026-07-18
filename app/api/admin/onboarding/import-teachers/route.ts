@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { requireRole } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { logAudit } from "@/lib/audit";
-import crypto from "crypto";
+import bcrypt from "bcryptjs";
 
 export const dynamic = "force-dynamic";
 
@@ -69,7 +69,7 @@ export async function POST(req: NextRequest) {
 
         const loginId = `TCH-${Date.now().toString(36).toUpperCase()}-${Math.random().toString(36).slice(2, 5).toUpperCase()}`;
         const tempPin = "School@2026!";
-        const hashedPwd = crypto.createHash("sha256").update(tempPin).digest("hex");
+        const hashedPwd = await bcrypt.hash(tempPin, 12);
         const email = row.email || `${loginId.toLowerCase()}@no-email.liberialearn.internal`;
 
         await prisma.user.create({

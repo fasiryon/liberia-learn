@@ -176,6 +176,26 @@ describe("School Onboarding", () => {
       const body = await res.json();
       expect(body.created).toBe(1);
     });
+
+    it("Sprint 6.5 regression: hashes the temp password with bcrypt, not sha256 — must round-trip through bcrypt.compare so login actually works with the password the wizard displays", async () => {
+      mockAdmin();
+      mockPrisma.user.findFirst.mockResolvedValue(null);
+      mockPrisma.user.create.mockResolvedValueOnce({ id: "stu-user-1" });
+      mockPrisma.student.findUnique.mockResolvedValue({ id: "student-1" });
+
+      const csv = "firstName,lastName,grade\nFatu,Kollie,9";
+
+      const { POST } = await import("@/app/api/admin/onboarding/import-students/route");
+      await POST({ json: async () => ({ csv }) } as any);
+
+      const bcrypt = (await import("bcryptjs")).default;
+      const studentCreateCall = mockPrisma.user.create.mock.calls.find(
+        (call: any[]) => call[0]?.data?.role === "STUDENT"
+      );
+      expect(studentCreateCall).toBeDefined();
+      const hashedPwd = studentCreateCall![0].data.hashedPwd;
+      expect(await bcrypt.compare("Student@2026!", hashedPwd)).toBe(true);
+    });
   });
 
   describe("POST /api/admin/onboarding/step/4 — creates Class records per subject/grade", () => {
@@ -251,6 +271,20 @@ describe("School Onboarding", () => {
 
       expect(res.status).toBe(200);
       expect(body.created).toBe(1);
+    });
+
+    it("Sprint 6.5 regression: hashes the temp password with bcrypt, not sha256 — must round-trip through bcrypt.compare so login actually works with the password the wizard displays", async () => {
+      mockAdmin();
+      mockPrisma.user.findFirst.mockResolvedValue(null);
+      mockPrisma.user.create.mockResolvedValue({ id: "t1" });
+
+      const csv = "name,email,subject,grades\nMr. Kollie,kollie@school.edu,MATH,7-9";
+      const { POST } = await import("@/app/api/admin/onboarding/import-teachers/route");
+      await POST({ json: async () => ({ csv }) } as any);
+
+      const bcrypt = (await import("bcryptjs")).default;
+      const hashedPwd = mockPrisma.user.create.mock.calls[0][0].data.hashedPwd;
+      expect(await bcrypt.compare("School@2026!", hashedPwd)).toBe(true);
     });
 
     it("rejects CSV without name column", async () => {
