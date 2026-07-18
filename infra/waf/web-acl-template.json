@@ -1,0 +1,87 @@
+{
+  "Name": "liberialearn-cloudfront-waf",
+  "Scope": "CLOUDFRONT",
+  "Description": "LiberiaLearn CloudFront edge protection with AWS managed rules and IP rate limiting.",
+  "DefaultAction": {
+    "Allow": {}
+  },
+  "VisibilityConfig": {
+    "SampledRequestsEnabled": true,
+    "CloudWatchMetricsEnabled": true,
+    "MetricName": "liberialearn-cloudfront-waf"
+  },
+  "Rules": [
+    {
+      "Name": "liberialearn-aws-common-rules",
+      "Priority": 0,
+      "Statement": {
+        "ManagedRuleGroupStatement": {
+          "VendorName": "AWS",
+          "Name": "AWSManagedRulesCommonRuleSet"
+        }
+      },
+      "OverrideAction": {
+        "None": {}
+      },
+      "VisibilityConfig": {
+        "SampledRequestsEnabled": true,
+        "CloudWatchMetricsEnabled": true,
+        "MetricName": "liberialearn-aws-common-rules"
+      }
+    },
+    {
+      "Name": "liberialearn-known-bad-inputs",
+      "Priority": 1,
+      "Statement": {
+        "ManagedRuleGroupStatement": {
+          "VendorName": "AWS",
+          "Name": "AWSManagedRulesKnownBadInputsRuleSet"
+        }
+      },
+      "OverrideAction": {
+        "None": {}
+      },
+      "VisibilityConfig": {
+        "SampledRequestsEnabled": true,
+        "CloudWatchMetricsEnabled": true,
+        "MetricName": "liberialearn-known-bad-inputs"
+      }
+    },
+    {
+      "Name": "liberialearn-amazon-ip-reputation",
+      "Priority": 2,
+      "Statement": {
+        "ManagedRuleGroupStatement": {
+          "VendorName": "AWS",
+          "Name": "AWSManagedRulesAmazonIpReputationList"
+        }
+      },
+      "OverrideAction": {
+        "None": {}
+      },
+      "VisibilityConfig": {
+        "SampledRequestsEnabled": true,
+        "CloudWatchMetricsEnabled": true,
+        "MetricName": "liberialearn-amazon-ip-reputation"
+      }
+    },
+    {
+      "Name": "liberialearn-rate-limit",
+      "Priority": 3,
+      "Statement": {
+        "RateBasedStatement": {
+          "Limit": 2000,
+          "AggregateKeyType": "IP"
+        }
+      },
+      "Action": {
+        "Block": {}
+      },
+      "VisibilityConfig": {
+        "SampledRequestsEnabled": true,
+        "CloudWatchMetricsEnabled": true,
+        "MetricName": "liberialearn-rate-limit"
+      }
+    }
+  ]
+}

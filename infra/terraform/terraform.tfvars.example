@@ -1,0 +1,31 @@
+aws_region                    = "us-east-1"
+environment                   = "production"
+project_name                  = "liberialearn"
+static_bucket_name            = "liberialearn-exports-258048833400"
+cloudfront_distribution_id    = "E176M9UAMBHZJM"
+cloudfront_domain_name        = "d3s42kkog4ti6v.cloudfront.net"
+cloudfront_comment            = "LiberiaLearn CloudFront Distribution"
+cloudfront_origin_id          = "S3Origin"
+origin_access_control_name    = "liberialearn-oac"
+origin_access_control_id      = "E2NBSIZPE9COJO"
+web_acl_name                  = "liberialearn-cloudfront-waf"
+web_acl_id                    = "30607df0-fbc0-4b96-9469-f8f37fb50002"
+rate_limit                    = 2000
+
+# Leave both logging flags false until the existing live stack has been imported
+# and `terraform plan -refresh-only` shows no unexpected drift.
+enable_cloudfront_standard_logging = false
+enable_waf_logging                 = false
+
+# Optional override. By default Terraform derives:
+# liberialearn-edge-logs-258048833400
+edge_log_bucket_name = null
+
+cloudfront_log_prefix = "cloudfront/"
+waf_log_prefix        = "waf/"
+log_retention_days    = 90
+
+tags = {
+  Portfolio = "true"
+  Owner     = "Farquema Siryon"
+}
