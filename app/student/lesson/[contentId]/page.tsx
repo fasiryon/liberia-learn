@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
 import Link from "next/link";
 import ReactMarkdown from "react-markdown";
@@ -10,6 +10,7 @@ import { LessonAudioPlayer, type LessonAudioPart } from "@/components/student/Le
 import { getLessonLabLinks } from "@/lib/lessons/labLinks";
 import { looksLikeHtml, renderSimpleMarkdown } from "@/lib/lessons";
 import { UnitSequenceSidebar } from "@/components/student/UnitSequenceSidebar";
+import { LessonFullscreenButton } from "@/components/lesson/LessonFullscreenButton";
 
 // Teacher-created lessons store HTML bodies; ReactMarkdown would show the
 // tags as literal text, so HTML bodies render via the sanitized HTML path.
@@ -80,6 +81,7 @@ export default function LessonViewerPage() {
   const [servedFromCache, setServedFromCache] = useState(false);
   const [mode, setMode] = useState<LessonMode>("read");
   const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
+  const slideFullscreenRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     if (!contentId) return;
@@ -332,16 +334,19 @@ export default function LessonViewerPage() {
         {mode === "slides" && (
           <section className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 p-5">
             {currentSlide ? (
-              <div className="space-y-5">
+              <div ref={slideFullscreenRef} className="ll-slide-fullscreen space-y-5 rounded-xl bg-[var(--ll-bg)]">
                 <div className="flex items-center justify-between gap-3">
                   <span className="rounded-full border border-[var(--ll-border)] px-3 py-1 text-xs text-[var(--ll-text-muted)]">
                     Slide {currentSlideIndex + 1} of {slides.length}
                   </span>
-                  <span className="text-xs text-[var(--ll-text-faint)]">
-                    {slideDeck?.deckTitle ?? "Lesson deck"}
-                  </span>
+                  <div className="flex flex-wrap items-center justify-end gap-3">
+                    <span className="text-xs text-[var(--ll-text-faint)]">
+                      {slideDeck?.deckTitle ?? "Lesson deck"}
+                    </span>
+                    <LessonFullscreenButton targetRef={slideFullscreenRef} />
+                  </div>
                 </div>
-                <div className="min-h-[260px] rounded-xl border border-[var(--ll-border)] bg-[var(--ll-surface)] p-6">
+                <div className="ll-slide-fullscreen-card min-h-[260px] rounded-xl border border-[var(--ll-border)] bg-[var(--ll-surface)] p-6">
                   <h2 className="text-2xl font-semibold text-[var(--ll-text)]">
                     {currentSlide.title}
                   </h2>

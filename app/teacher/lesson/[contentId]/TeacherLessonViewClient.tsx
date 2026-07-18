@@ -1,9 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 import { renderSimpleMarkdown } from "@/lib/lessons";
+import { parseToSlides } from "@/lib/lessons/parseToSlides";
+import { LessonFullscreenButton } from "@/components/lesson/LessonFullscreenButton";
 import { TeacherVideoUpload } from "@/components/teacher/TeacherVideoUpload";
 import type { StudentSubmissionContext } from "./page";
 
@@ -18,6 +20,7 @@ type CurriculumResponse = {
     title?: string;
     body?: string;
     body_standard?: string;
+    body_block?: string;
     objectives?: string[];
   };
   videos?: Array<{
@@ -46,6 +49,7 @@ type LessonPlan = {
 };
 
 const TIME_OPTIONS = [30, 45, 60, 90] as const;
+type LessonViewMode = "read" | "slides";
 
 function nextWeekdayISO(dayOffset = 7) {
   const now = new Date();
@@ -83,6 +87,9 @@ export default function TeacherLessonViewClient({
   const [plan, setPlan] = useState<LessonPlan | null>(null);
   const [savingPlan, setSavingPlan] = useState(false);
   const [planSaveMessage, setPlanSaveMessage] = useState<string | null>(null);
+  const [viewMode, setViewMode] = useState<LessonViewMode>("read");
+  const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
+  const slideFullscreenRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -120,6 +127,7 @@ export default function TeacherLessonViewClient({
   const lessonTitle = lesson?.payload?.title ?? contentId;
   const lessonBody =
     lesson?.payload?.body_standard ??
+    lesson?.payload?.body_block ??
     lesson?.payload?.body ??
     "";
   const objectives = Array.isArray(lesson?.payload?.objectives)
@@ -130,6 +138,20 @@ export default function TeacherLessonViewClient({
     () => renderSimpleMarkdown(lessonBody),
     [lessonBody]
   );
+  const slides = useMemo(() => {
+    return parseToSlides({
+      title: lessonTitle,
+      content: lessonBody,
+    });
+  }, [lessonBody, lessonTitle]);
+  const currentSlide = slides[Math.min(currentSlideIndex, Math.max(0, slides.length - 1))] ?? null;
+
+  useEffect(() => {
+    if (currentSlideIndex > Math.max(0, slides.length - 1)) {
+      setCurrentSlideIndex(Math.max(0, slides.length - 1));
+    }
+  }, [currentSlideIndex, slides.length]);
+
   const assignmentHref = useMemo(() => {
     const params = new URLSearchParams({
       contentId,
@@ -312,6 +334,26 @@ export default function TeacherLessonViewClient({
         <h1 className="mt-4 text-3xl font-semibold text-[var(--ll-text)]">{lessonTitle}</h1>
       </section>
 
+      <div className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 p-2">
+        <div className="grid grid-cols-2 gap-2 sm:max-w-sm">
+          {(["read", "slides"] as const).map((entry) => (
+            <button
+              key={entry}
+              type="button"
+              onClick={() => setViewMode(entry)}
+              className={`rounded-lg px-3 py-2 text-sm font-semibold transition ${
+                viewMode === entry
+                  ? "bg-[var(--ll-yellow)] text-[var(--ll-text-faint)]"
+                  : "bg-[var(--ll-surface)] text-[var(--ll-text-muted)] hover:text-[var(--ll-text)]"
+              }`}
+              aria-pressed={viewMode === entry}
+            >
+              {entry === "read" ? "Read" : "Slides"}
+            </button>
+          ))}
+        </div>
+      </div>
+
       {objectives.length > 0 ? (
         <section className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/80 p-5 sm:p-7">
           <h2 className="text-lg font-semibold text-[var(--ll-text)]">Learning Objectives</h2>
@@ -328,12 +370,61 @@ export default function TeacherLessonViewClient({
         </section>
       ) : null}
 
-      <section className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/80 p-5 sm:p-7">
-        <div
-          className="prose prose-invert max-w-[720px] prose-headings:text-[var(--ll-text)] prose-p:text-[var(--ll-text)] prose-p:text-[1rem] prose-p:leading-8 prose-li:text-[var(--ll-text)] prose-li:text-[1rem] prose-li:leading-8"
-          dangerouslySetInnerHTML={{ __html: renderedBody }}
-        />
-      </section>
+      {viewMode === "read" ? (
+        <section className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/80 p-5 sm:p-7">
+          <div
+            className="prose prose-invert max-w-[720px] prose-headings:text-[var(--ll-text)] prose-p:text-[var(--ll-text)] prose-p:text-[1rem] prose-p:leading-8 prose-li:text-[var(--ll-text)] prose-li:text-[1rem] prose-li:leading-8"
+            dangerouslySetInnerHTML={{ __html: renderedBody }}
+          />
+        </section>
+      ) : (
+        <section className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/80 p-5 sm:p-7">
+          {currentSlide ? (
+            <div ref={slideFullscreenRef} className="ll-slide-fullscreen space-y-5 rounded-xl bg-[var(--ll-bg)]">
+              <div className="h-2 overflow-hidden rounded-full bg-[var(--ll-surface-muted)]">
+                <div
+                  className="h-full rounded-full bg-[var(--ll-yellow)] transition-all"
+                  style={{ width: `${((currentSlideIndex + 1) / Math.max(1, slides.length)) * 100}%` }}
+                />
+              </div>
+              <article className="ll-slide-fullscreen-card min-h-[24rem] rounded-xl border border-[var(--ll-border-strong)] bg-[var(--ll-surface)] p-5 transition-colors sm:p-7">
+                <div className="flex flex-wrap items-center justify-between gap-3">
+                  <p className="text-sm font-semibold text-[var(--ll-text-muted)]">
+                    Section {currentSlideIndex + 1} of {slides.length}
+                  </p>
+                  <LessonFullscreenButton targetRef={slideFullscreenRef} />
+                </div>
+                <h2 className="mt-3 text-2xl font-semibold text-[var(--ll-text)]">{currentSlide.title}</h2>
+                <div
+                  className="prose prose-invert mt-5 max-w-none overflow-y-auto prose-headings:text-[var(--ll-text)] prose-p:text-[var(--ll-text)] prose-p:text-[1rem] prose-p:leading-8 prose-li:text-[var(--ll-text)] prose-li:text-[1rem] prose-li:leading-8"
+                  style={{ maxHeight: "55vh" }}
+                  dangerouslySetInnerHTML={{ __html: renderSimpleMarkdown(currentSlide.content) }}
+                />
+              </article>
+              <div className="grid gap-2 sm:flex sm:items-center sm:justify-between">
+                <button
+                  type="button"
+                  disabled={currentSlideIndex === 0}
+                  onClick={() => setCurrentSlideIndex((value) => Math.max(0, value - 1))}
+                  className="ll-touch-target rounded-xl border border-[var(--ll-border)] px-4 py-3 text-sm text-[var(--ll-text)] disabled:opacity-40"
+                >
+                  Previous slide
+                </button>
+                <button
+                  type="button"
+                  disabled={currentSlideIndex >= slides.length - 1}
+                  onClick={() => setCurrentSlideIndex((value) => Math.min(slides.length - 1, value + 1))}
+                  className="ll-touch-target rounded-xl bg-[var(--ll-silver-soft)] px-4 py-3 text-sm font-semibold text-[var(--ll-text-faint)] disabled:opacity-40"
+                >
+                  Next slide
+                </button>
+              </div>
+            </div>
+          ) : (
+            <p className="text-sm text-[var(--ll-text-muted)]">Slides are not available for this lesson yet.</p>
+          )}
+        </section>
+      )}
 
       <TeacherVideoUpload contentId={contentId} initialVideos={lesson.videos ?? []} />
 
