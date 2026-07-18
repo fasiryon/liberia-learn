@@ -235,10 +235,10 @@ async function _computeToday(): Promise<NextResponse> {
           .filter((s) => s.available && s.readiness != null && s.readiness < 75)
           .sort((a, b) => (a.readiness as number) - (b.readiness as number))[0];
         if (weakest && weakest.readiness != null) {
-          const reason = `Your ${weakest.name} WAEC readiness is ${weakest.readiness}%${weakest.nextFocusName ? `, next focus: ${weakest.nextFocusName}` : ""}.`;
+          const reason = `Your ${weakest.name} readiness is ${weakest.readiness}%${weakest.nextFocusName ? `, next focus: ${weakest.nextFocusName}` : ""}.`;
           emptyStatePayload.heroRecommendation = {
             type: "WAEC_PRACTICE",
-            label: `WAEC ${weakest.name} practice`,
+            label: `${weakest.name} practice`,
             reason,
             href: `/student/waec/${waecSlug(weakest.subjectId)}/practice`,
             subject: weakest.name,
@@ -800,8 +800,8 @@ async function _computeToday(): Promise<NextResponse> {
       nextBestCandidates.push({
         type: "WAEC_PRACTICE",
         priority: scoreWaecPractice(weakestWaec.readiness),
-        label: `WAEC ${weakestWaec.name} practice`,
-        reason: `Your ${weakestWaec.name} WAEC readiness is ${weakestWaec.readiness}%${weakestWaec.nextFocusName ? `, next focus: ${weakestWaec.nextFocusName}` : ""}.`,
+        label: `${weakestWaec.name} practice`,
+        reason: `Your ${weakestWaec.name} readiness is ${weakestWaec.readiness}%${weakestWaec.nextFocusName ? `, next focus: ${weakestWaec.nextFocusName}` : ""}.`,
         href: `/student/waec/${waecSlug(weakestWaec.subjectId)}/practice`,
         subject: weakestWaec.name,
         masteryPercent: weakestWaec.readiness,
