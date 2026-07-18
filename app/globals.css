@@ -240,6 +240,25 @@ textarea {
   box-shadow: var(--ll-focus);
 }
 
+.ll-slide-fullscreen:fullscreen,
+.ll-slide-fullscreen:-webkit-full-screen {
+  width: 100vw;
+  height: 100vh;
+  overflow: auto;
+  background: var(--ll-bg);
+  padding: clamp(1rem, 2vw, 2rem);
+}
+
+.ll-slide-fullscreen:fullscreen .ll-slide-fullscreen-card,
+.ll-slide-fullscreen:-webkit-full-screen .ll-slide-fullscreen-card {
+  min-height: calc(100vh - 9rem);
+}
+
+.ll-slide-fullscreen:fullscreen .prose,
+.ll-slide-fullscreen:-webkit-full-screen .prose {
+  max-height: calc(100vh - 18rem) !important;
+}
+
 /* ── Page enter animation ────────────────────────────────────────────────── */
 .ll-page-enter {
   animation: fadeUp 200ms ease-out both;

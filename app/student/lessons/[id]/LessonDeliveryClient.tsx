@@ -14,6 +14,8 @@ import { gradeToTutorBand } from "@/lib/ai/studentLessonSupport";
 import { lessonDurationLabel, renderSimpleMarkdown, selectLessonBody } from "@/lib/lessons";
 import { LessonHero, type HeroImageMetaLike, type InlineIllustrationLike } from "@/components/lesson/LessonImage";
 import { LessonBody } from "@/components/lesson/LessonBody";
+import { LessonFullscreenButton } from "@/components/lesson/LessonFullscreenButton";
+import { exitLessonFullscreen } from "@/lib/lesson/fullscreen";
 import { getLessonLabLinks } from "@/lib/lessons/labLinks";
 import { parseToSlides } from "@/lib/lessons/parseToSlides";
 import { enqueueOfflineRequest } from "@/lib/offline-queue";
@@ -503,6 +505,7 @@ export default function LessonDeliveryClient({ lessonId }: { lessonId: string })
   const [flagSubmitting, setFlagSubmitting] = useState(false);
   const [flagDone, setFlagDone] = useState(false);
   const sectionRefs = useRef<Record<string, HTMLElement | null>>({});
+  const slideFullscreenRef = useRef<HTMLDivElement | null>(null);
   const hasRestoredProgressRef = useRef(false);
 
   useEffect(() => {
@@ -613,6 +616,15 @@ export default function LessonDeliveryClient({ lessonId }: { lessonId: string })
     target.scrollIntoView({ behavior: "smooth", block: "start" });
     setCurrentSection(sectionId);
   }, []);
+
+  const goToAssessmentFromSlides = useCallback(async () => {
+    try {
+      await exitLessonFullscreen();
+    } catch {
+      // Continue to the assessment even if the browser denies fullscreen exit.
+    }
+    window.setTimeout(() => scrollToSection("exit-ticket"), 0);
+  }, [scrollToSection]);
 
   const openLessonLab = useCallback((labId: LabId) => {
     setOpenLabId(labId);
@@ -1073,17 +1085,20 @@ export default function LessonDeliveryClient({ lessonId }: { lessonId: string })
           ) : null}
 
           {mode === "slides" && currentSlide ? (
-            <div className="space-y-5">
+            <div ref={slideFullscreenRef} className="ll-slide-fullscreen space-y-5 rounded-xl bg-[var(--ll-bg)]">
               <div className="h-2 overflow-hidden rounded-full bg-[var(--ll-surface-muted)]">
                 <div
                   className="h-full rounded-full bg-[var(--ll-yellow)] transition-all"
                   style={{ width: `${((currentSlideIndex + 1) / Math.max(1, slides.length)) * 100}%` }}
                 />
               </div>
-              <article className="min-h-[24rem] rounded-xl border border-[var(--ll-border-strong)] bg-[var(--ll-surface)] p-5 transition-colors sm:p-7">
-                <p className="text-sm font-semibold text-[var(--ll-text-muted)]">
-                  Section {currentSlideIndex + 1} of {slides.length}
-                </p>
+              <article className="ll-slide-fullscreen-card min-h-[24rem] rounded-xl border border-[var(--ll-border-strong)] bg-[var(--ll-surface)] p-5 transition-colors sm:p-7">
+                <div className="flex flex-wrap items-center justify-between gap-3">
+                  <p className="text-sm font-semibold text-[var(--ll-text-muted)]">
+                    Section {currentSlideIndex + 1} of {slides.length}
+                  </p>
+                  <LessonFullscreenButton targetRef={slideFullscreenRef} />
+                </div>
                 <h2 className="mt-3 text-2xl font-semibold text-[var(--ll-text)]">{currentSlide.title}</h2>
                 <div
                   className="prose prose-invert mt-5 max-w-none overflow-y-auto prose-headings:text-[var(--ll-text)] prose-p:text-[var(--ll-text)] prose-p:text-[1rem] prose-p:leading-8 prose-li:text-[var(--ll-text)] prose-li:text-[1rem] prose-li:leading-8"
@@ -1103,7 +1118,7 @@ export default function LessonDeliveryClient({ lessonId }: { lessonId: string })
                 {currentSlide.isLast ? (
                   <button
                     type="button"
-                    onClick={() => scrollToSection("exit-ticket")}
+                    onClick={goToAssessmentFromSlides}
                     className="ll-touch-target rounded-xl bg-[var(--ll-yellow-soft)] px-4 py-3 text-sm font-semibold text-[var(--ll-yellow)]"
                   >
                     Go to assessment
