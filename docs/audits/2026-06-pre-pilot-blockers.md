@@ -165,6 +165,22 @@
 - **Description:** Verify Resend sending domain. Current state: API key is set in Vercel production but no domain is verified. Either verify liberialearn.edu.lr (already added, failed DNS) or verify a Resend subdomain (e.g. veemalo.resend.app). Once verified, set EMAIL_FROM in Vercel, redeploy, and confirm alert email delivery to liberialearn52@gmail.com. Estimated: 30-60 min once DNS access is available. Also enables guardian digest email delivery.
 - **Estimated fix time:** 30–60 min (once DNS access is available).
 
+### B21 — Twilio trial account limitations block real guardian SMS at pilot scale
+- **Severity:** HIGH (blocks real-family guardian SMS)
+- **Perspectives:** Guardian, SRE/DevOps
+- **Source:** Sprint 6.1 / Orange Liberia integration production wiring (2026-07-15)
+- **Description:** `TWILIO_ACCOUNT_SID`/`TWILIO_AUTH_TOKEN`/`TWILIO_PHONE_NUMBER` are now set in Vercel production, but on a Twilio **trial** account — every outbound message is prefixed with a "trial account" notice and can only be sent to individually pre-verified numbers in the Twilio console. Sufficient for internal testing (echo agent, cron verification, manual end-to-end SMS to the developer's own verified number) but cannot reach real, unverified guardian phone numbers at pilot scale. Requires upgrading to either (1) a paid Twilio account (removes trial restrictions and the message prefix, allows sending to any number), or (2) a different provider with confirmed real Liberia coverage. This is independent of the Orange/Twilio architecture decision (Orange remains outbound-only/digest; Twilio remains the two-way conversational provider) — the blocker is account tier, not provider choice.
+- **Acceptance criteria:** `AGENT_GUARDIAN_ENABLED` must not go live with real families until the Twilio account is upgraded off the trial tier (or a confirmed-coverage alternative is in place).
+- **Estimated fix time:** Twilio account upgrade is a billing/verification action, not code (est. <1 hour once approved); no code change required.
+
+### B22 — Onboarding wizard never schedules a school's first lesson
+- **Severity:** MEDIUM (a fully onboarded school still looks broken to its first teacher)
+- **Perspectives:** Teacher, Admin
+- **Source:** Sprint 6.5 Deliverable 1 real walkthrough (2026-07-17)
+- **Description:** Nothing in the 5-step admin onboarding wizard (`/admin/onboarding`) ever creates a `ScheduledWork` row. A school that completes every step (profile, teachers, students, timetable, go-live) still shows each teacher "0 lessons today" on first login, because scheduling a lesson is a separate, undiscoverable action nowhere referenced by the wizard. Step 5's own readiness checklist item "First lesson delivery verified" is hardcoded `done: false` in `app/admin/onboarding/page.tsx` and can never turn green, regardless of real state. This is a real product gap (the wizard needs a step or a nudge that gets a first lesson on the calendar), not a quick bug fix, and was explicitly scoped out of Sprint 6.5 Deliverable 2 to stay within the sprint's per-deliverable time cap.
+- **Acceptance criteria:** Either the wizard's timetable step (Step 4) creates at least one real `ScheduledWork` row per class, or Step 5's checklist computes "first lesson delivered" from real data and clearly directs the admin to schedule one before declaring onboarding complete.
+- **Estimated fix time:** Not scoped; likely a half-day to one-day product/UX task for a future sprint (wizard flow design + ScheduledWork creation + Step 5 checklist wiring).
+
 ---
 
-### Doc B total: 20 items · estimated ~1 week
+### Doc B total: 22 items · estimated ~1 week

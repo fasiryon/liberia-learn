@@ -141,7 +141,6 @@ async function createPlatformAdminNotifications(
     where: {
       role: "ADMIN",
       isPlatformAdmin: true,
-      email: { not: null },
     },
     select: { id: true, email: true },
   });

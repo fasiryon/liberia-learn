@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { requireRole } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { logAudit } from "@/lib/audit";
-import crypto from "crypto";
+import bcrypt from "bcryptjs";
 
 export const dynamic = "force-dynamic";
 
@@ -84,7 +84,7 @@ export async function POST(req: NextRequest) {
         const grade = parseInt(row.grade, 10) || null;
         const loginId = `STU-${Date.now().toString(36).toUpperCase()}-${Math.random().toString(36).slice(2, 5).toUpperCase()}`;
         const tempPin = "Student@2026!";
-        const hashedPwd = crypto.createHash("sha256").update(tempPin).digest("hex");
+        const hashedPwd = await bcrypt.hash(tempPin, 12);
         const email = `${loginId.toLowerCase()}@no-email.liberialearn.internal`;
 
         const studentUser = await prisma.user.create({
@@ -108,7 +108,7 @@ export async function POST(req: NextRequest) {
         if (row.guardianEmail || row.guardianPhone) {
           const guardianEmail = row.guardianEmail || `guardian-${loginId.toLowerCase()}@no-email.liberialearn.internal`;
           const guardianLoginId = `GRD-${Date.now().toString(36).toUpperCase()}-${Math.random().toString(36).slice(2, 5).toUpperCase()}`;
-          const guardianHashed = crypto.createHash("sha256").update("Student@2026!").digest("hex");
+          const guardianHashed = await bcrypt.hash("Student@2026!", 12);
 
           const existingGuardian = row.guardianEmail
             ? await prisma.user.findFirst({ where: { email: row.guardianEmail } })

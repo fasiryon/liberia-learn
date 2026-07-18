@@ -7,9 +7,10 @@ import { isMoeAuthorized, roleDefaultPortal } from "@/lib/moe/routeGuard";
 const PUBLIC_PATHS = [
   "/",
   "/login",
-  "/onboard",
-  "/api/onboard",
-  "/api/onboard/school",
+  "/enroll",
+  "/api/enroll",
+  "/onboard/accept",
+  "/api/onboard/accept",
   "/api/auth",
   "/forgot-password",
   "/reset-password",
