@@ -181,6 +181,14 @@
 - **Acceptance criteria:** Either the wizard's timetable step (Step 4) creates at least one real `ScheduledWork` row per class, or Step 5's checklist computes "first lesson delivered" from real data and clearly directs the admin to schedule one before declaring onboarding complete.
 - **Estimated fix time:** Not scoped; likely a half-day to one-day product/UX task for a future sprint (wizard flow design + ScheduledWork creation + Step 5 checklist wiring).
 
+### B23 — Fork-notification cross-talk observed during Sprint 6.5 (process note, not a code defect)
+- **Severity:** LOW / informational (no incorrect action was ever taken; monitoring item)
+- **Perspectives:** Engineering process, SRE/DevOps
+- **Source:** Sprint 6.5 Deliverable 0 background fork investigations (2026-07-17)
+- **Description:** Two background fork completion notifications arrived with correct `task-id` and correct task-name fields, but `result` content that clearly belonged to a different task and was voiced in first-person coordinator-narration style (content only a coordinator tracking multiple forks could plausibly write, not an individual subagent). Not prompt injection (no adversarial content involved) — looks like a content-attribution bug in the notification delivery mechanism itself, cause unknown/unverified. Neither notification's false content was acted on — both were independently re-verified against real source before use, per standing practice. Separately, the two originating forks never delivered genuine completion signals at all within ~30 minutes; the investigating session proceeded with its own direct investigation instead rather than waiting further or trusting the cross-talked notifications.
+- **Acceptance criteria:** Standing practice going forward: continue treating any fork/subagent notification content as unverified until independently confirmed against real source/production state — this session is now a concrete, specific reason that discipline exists, not just a general precaution. Open, unresolved: whether this is a one-off environmental glitch or a recurring characteristic of the fork-notification pipeline.
+- **Estimated fix time:** N/A this session (correctly out of scope for a feature sprint). If this recurs in a future session, that's the signal it's systemic rather than a one-off, worth raising directly with Anthropic if so.
+
 ---
 
-### Doc B total: 22 items · estimated ~1 week
+### Doc B total: 23 items · estimated ~1 week
