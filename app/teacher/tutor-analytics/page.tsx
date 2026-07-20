@@ -4,13 +4,9 @@ import { useEffect, useState } from "react";
 import { TeacherNav } from "@/components/teacher/TeacherNav";
 import Link from "next/link";
 
-type LessonRow = {
-  contentId: string;
-  title: string | null;
+type SubjectRow = {
   subject: string;
-  grade: number;
   questions: number;
-  flags: number;
 };
 
 type StudentRow = {
@@ -24,7 +20,7 @@ type Analytics = {
   totalQuestions: number;
   uniqueStudents: number;
   mostFlaggedLesson: string | null;
-  lessonBreakdown: LessonRow[];
+  subjectBreakdown: SubjectRow[];
   studentBreakdown: StudentRow[];
 };
 
@@ -82,41 +78,27 @@ export default function TutorAnalyticsPage() {
               </div>
             </div>
 
-            {/* Lesson breakdown */}
+            {/* Subject breakdown */}
             <section className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/80 p-5">
               <h2 className="text-base font-semibold text-[var(--ll-text)]">
-                Lessons students need most help with
+                Subjects students ask the AI tutor about most
               </h2>
-              {data.lessonBreakdown.length === 0 ? (
+              {data.subjectBreakdown.length === 0 ? (
                 <p className="mt-4 text-sm text-[var(--ll-text-muted)]">No tutor usage this week.</p>
               ) : (
                 <div className="mt-4 overflow-x-auto">
                   <table className="w-full text-sm text-[var(--ll-text)]">
                     <thead>
                       <tr className="border-b border-[var(--ll-border)] text-left text-xs font-semibold uppercase tracking-[0.15em] text-[var(--ll-text-muted)]">
-                        <th className="pb-3 pr-4">Lesson</th>
                         <th className="pb-3 pr-4">Subject</th>
-                        <th className="pb-3 pr-4">Grade</th>
-                        <th className="pb-3 pr-4">Questions</th>
-                        <th className="pb-3">Flags</th>
+                        <th className="pb-3">Questions</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-[var(--ll-border)]">
-                      {data.lessonBreakdown.map((row) => (
-                        <tr key={row.contentId}>
-                          <td className="py-3 pr-4 font-medium">{row.title ?? row.contentId}</td>
-                          <td className="py-3 pr-4 text-[var(--ll-text-muted)]">{row.subject}</td>
-                          <td className="py-3 pr-4 text-[var(--ll-text-muted)]">{row.grade}</td>
-                          <td className="py-3 pr-4">{row.questions}</td>
-                          <td className="py-3">
-                            {row.flags > 0 ? (
-                              <span className="rounded-full bg-red-500/15 px-2 py-0.5 text-xs font-semibold text-red-400">
-                                {row.flags} 🚩
-                              </span>
-                            ) : (
-                              <span className="text-[var(--ll-text-muted)]">0</span>
-                            )}
-                          </td>
+                      {data.subjectBreakdown.map((row) => (
+                        <tr key={row.subject}>
+                          <td className="py-3 pr-4 font-medium">{row.subject}</td>
+                          <td className="py-3">{row.questions}</td>
                         </tr>
                       ))}
                     </tbody>

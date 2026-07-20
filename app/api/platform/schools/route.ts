@@ -5,8 +5,8 @@ import { logAudit } from "@/lib/audit";
 import { enqueueJob, JobType } from "@/lib/queue";
 
 function isSchoolOnboardingKitFlagEnabled() {
-  const value = process.env.ENABLE_SCHOOL_ONBOARDING_KITS;
-  if (value != null) return value === "true";
+  const value = process.env.ENABLE_SCHOOL_ONBOARDING_KITS?.trim();
+  if (value != null && value !== "") return value === "true";
   return process.env.NODE_ENV !== "production";
 }
 

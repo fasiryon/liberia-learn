@@ -12,7 +12,7 @@ function stripQuestionAnswers<T extends { correctIndex: number }>(questions: T[]
 }
 
 function isExamReadinessRouteEnabled() {
-  return process.env.ENABLE_EXAM_READINESS !== "false";
+  return process.env.ENABLE_EXAM_READINESS?.trim() !== "false";
 }
 
 export async function GET() {

@@ -70,7 +70,7 @@ const defaultRetryPolicy: RetryPolicy = {
 
 const defaultThrottlePolicy: ThrottlePolicy = {
   // Default enabled — operators set SMS_THROTTLE_ENABLED=false to disable
-  enabled: process.env.SMS_THROTTLE_ENABLED !== "false",
+  enabled: process.env.SMS_THROTTLE_ENABLED?.trim() !== "false",
   windowHours: Number(process.env.SMS_THROTTLE_WINDOW_HOURS ?? 24),
   maxPerWindow: Number(process.env.SMS_THROTTLE_MAX_PER_WINDOW ?? 3),
 };

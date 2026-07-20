@@ -90,7 +90,7 @@ if (!prismaWithTimeout.__timeoutMiddlewareRegistered && typeof prismaWithTimeout
 }
 
 const shouldEnableRdsDualWrite =
-  process.env.ENABLE_RDS_DUAL_WRITE === "true" &&
+  process.env.ENABLE_RDS_DUAL_WRITE?.trim() === "true" &&
   typeof process.env.RDS_DATABASE_URL === "string" &&
   process.env.RDS_DATABASE_URL.trim().length > 0;
 

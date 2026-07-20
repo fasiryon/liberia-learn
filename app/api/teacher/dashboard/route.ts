@@ -264,7 +264,7 @@ export async function GET() {
       }))
     );
 
-    if (process.env.ENABLE_TEACHER_INTERVENTION_ALERTS !== "false") {
+    if (process.env.ENABLE_TEACHER_INTERVENTION_ALERTS?.trim() !== "false") {
       await generateTeacherAlerts(user.id, user.schoolId ?? "", {
         atRiskStudents,
         interventionRecommendations: classIntelligence?.interventionRecommendations ?? [],

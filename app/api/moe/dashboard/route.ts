@@ -47,7 +47,7 @@ function getDefaultPeriodRange(): { from: string; to: string } {
 }
 
 function isExamReadinessRouteEnabled() {
-  return process.env.ENABLE_EXAM_READINESS !== "false";
+  return process.env.ENABLE_EXAM_READINESS?.trim() !== "false";
 }
 
 async function getExamStats() {

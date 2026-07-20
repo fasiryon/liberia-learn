@@ -109,7 +109,7 @@ export async function checkFeatureFlags(): Promise<HealthCheckResult> {
   }
 
   // Ensure MOE portal has correct access control env
-  if (process.env.ENABLE_MOE_PORTAL === "true" && !process.env.MOE_PORTAL_ALLOWLIST) {
+  if (process.env.ENABLE_MOE_PORTAL?.trim() === "true" && !process.env.MOE_PORTAL_ALLOWLIST) {
     warnings.push("ENABLE_MOE_PORTAL is on but MOE_PORTAL_ALLOWLIST is not set");
   }
 

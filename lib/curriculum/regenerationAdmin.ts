@@ -13,7 +13,7 @@ function numericEnv(name: string, fallback: number) {
 }
 
 export function isCurriculumRegenSchedulerEnabled() {
-  return process.env.ENABLE_CURRICULUM_REGEN_SCHEDULER === "true";
+  return process.env.ENABLE_CURRICULUM_REGEN_SCHEDULER?.trim() === "true";
 }
 
 export function getSchedulerConfig() {

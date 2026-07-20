@@ -8,7 +8,7 @@ import { isExamSystemEnabled } from "@/lib/serverFlags";
 export const dynamic = "force-dynamic";
 
 function isExamReadinessRouteEnabled() {
-  return process.env.ENABLE_EXAM_READINESS !== "false";
+  return process.env.ENABLE_EXAM_READINESS?.trim() !== "false";
 }
 
 export async function GET() {

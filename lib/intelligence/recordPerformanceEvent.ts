@@ -17,7 +17,7 @@ export async function recordPerformanceEvent(params: {
   lessonId?: string;
 }): Promise<void> {
   try {
-    if (process.env.ENABLE_PERFORMANCE_EVENTS === "false") {
+    if (process.env.ENABLE_PERFORMANCE_EVENTS?.trim() === "false") {
       return;
     }
 

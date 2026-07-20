@@ -35,26 +35,27 @@ export async function GET(_req: NextRequest) {
       totalQuestions: 0,
       uniqueStudents: 0,
       mostFlaggedLesson: null,
-      lessonBreakdown: [],
+      subjectBreakdown: [],
       studentBreakdown: [],
     });
   }
 
-  // Aggregate TutorConversation records — counts only, no message bodies
-  const conversations = await prisma.tutorConversation.findMany({
+  // Real tutor usage now comes from AIInteraction (feature: "tutor"), written
+  // by the consolidated GlobalAssistantShell -> /api/rag/query path. That
+  // path isn't lesson-scoped the way the old per-lesson chat widget was
+  // (no contentId), so this is a subject-level breakdown, not a per-lesson
+  // one — see Tutor Architecture Consolidation.
+  const interactions = await prisma.aIInteraction.findMany({
     where: {
       studentId: { in: studentUserIds },
-      sessionDate: { gte: weekAgo },
+      feature: "tutor",
+      createdAt: { gte: weekAgo },
     },
-    select: {
-      studentId: true,
-      contentId: true,
-      questionsAsked: true,
-      content: { select: { title: true, subject: true, grade: true } },
-    },
+    select: { studentId: true, subject: true },
   });
 
-  // Aggregate flags
+  // Lesson "I don't understand this" flags are a separate, still lesson-scoped
+  // feature (StudentLessonHelpPanel), unrelated to the tutor chat itself.
   const flags = await prisma.lessonHelpFlag.findMany({
     where: {
       studentId: { in: studentUserIds },
@@ -73,35 +74,23 @@ export async function GET(_req: NextRequest) {
     flagsByStudent[flag.studentId] = (flagsByStudent[flag.studentId] ?? 0) + 1;
   }
 
-  // Lesson breakdown
-  const lessonMap: Record<
-    string,
-    { title: string | null; subject: string; grade: number; questions: number; flags: number }
-  > = {};
-  for (const conv of conversations) {
-    const existing = lessonMap[conv.contentId];
-    if (existing) {
-      existing.questions += conv.questionsAsked;
-    } else {
-      lessonMap[conv.contentId] = {
-        title: conv.content.title ?? null,
-        subject: conv.content.subject,
-        grade: conv.content.grade,
-        questions: conv.questionsAsked,
-        flags: flagsByContent[conv.contentId] ?? 0,
-      };
-    }
+  // Subject breakdown
+  const subjectCounts: Record<string, number> = {};
+  for (const interaction of interactions) {
+    const subject = interaction.subject ?? "General";
+    subjectCounts[subject] = (subjectCounts[subject] ?? 0) + 1;
   }
 
-  const lessonBreakdown = Object.entries(lessonMap)
-    .map(([contentId, data]) => ({ contentId, ...data }))
+  const subjectBreakdown = Object.entries(subjectCounts)
+    .map(([subject, questions]) => ({ subject, questions }))
     .sort((a, b) => b.questions - a.questions);
 
   // Student breakdown — aggregate counts without exposing message content
   const studentQuestions: Record<string, number> = {};
-  for (const conv of conversations) {
-    studentQuestions[conv.studentId] =
-      (studentQuestions[conv.studentId] ?? 0) + conv.questionsAsked;
+  for (const interaction of interactions) {
+    if (!interaction.studentId) continue;
+    studentQuestions[interaction.studentId] =
+      (studentQuestions[interaction.studentId] ?? 0) + 1;
   }
 
   const studentNameMap: Record<string, string> = {};
@@ -118,21 +107,28 @@ export async function GET(_req: NextRequest) {
     }))
     .sort((a, b) => b.questions - a.questions);
 
-  const totalQuestions = conversations.reduce((sum, c) => sum + c.questionsAsked, 0);
-  const uniqueStudents = new Set(conversations.map((c) => c.studentId)).size;
+  const totalQuestions = interactions.length;
+  const uniqueStudents = new Set(
+    interactions.map((i) => i.studentId).filter((id): id is string => id != null)
+  ).size;
 
   const mostFlaggedEntry = Object.entries(flagsByContent).sort(
     ([, a], [, b]) => b - a
   )[0];
-  const mostFlaggedLesson = mostFlaggedEntry
-    ? (lessonMap[mostFlaggedEntry[0]]?.title ?? mostFlaggedEntry[0])
-    : null;
+  let mostFlaggedLesson: string | null = null;
+  if (mostFlaggedEntry) {
+    const content = await prisma.curriculumContent.findUnique({
+      where: { contentId: mostFlaggedEntry[0] },
+      select: { title: true },
+    });
+    mostFlaggedLesson = content?.title ?? mostFlaggedEntry[0];
+  }
 
   return NextResponse.json({
     totalQuestions,
     uniqueStudents,
     mostFlaggedLesson,
-    lessonBreakdown,
+    subjectBreakdown,
     studentBreakdown,
   });
 }

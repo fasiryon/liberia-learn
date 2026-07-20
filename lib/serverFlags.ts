@@ -21,9 +21,26 @@ export type FindingSeverity = (typeof SEVERITY_LEVELS)[number];
 
 import { isDemo } from "@/lib/environment";
 
+/**
+ * Shared boolean env-flag reader every isXEnabled() below routes through.
+ * Always compares the trimmed value: `vercel env add` piped from `echo`
+ * and dashboard copy/paste can silently append a trailing CRLF, and a bare
+ * `=== "true"` / `!== "false"` comparison then fails even though the value
+ * reads as "true"/"false" everywhere else (the AI tutor CRLF bug this
+ * pattern is named after). Pass `defaultEnabled: true` for a DEFAULT ON
+ * flag (unset or unrecognized value stays enabled, only explicit "false"
+ * disables it); omit it for a DEFAULT OFF flag (only explicit "true"
+ * enables it).
+ */
+function isFlagEnabled(name: string, defaultEnabled = false): boolean {
+  const value = process.env[name]?.trim();
+  if (value == null || value === "") return defaultEnabled;
+  return defaultEnabled ? value !== "false" : value === "true";
+}
+
 function isEnabledInLocalDevByDefault(flagName: string): boolean {
-  const value = process.env[flagName];
-  if (value != null) return value === "true";
+  const value = process.env[flagName]?.trim();
+  if (value != null && value !== "") return value === "true";
   return process.env.NODE_ENV !== "production";
 }
 
@@ -43,7 +60,7 @@ export function severityMeetsThreshold(
 
 /** Ops AI explanations endpoint. Default OFF (must be explicitly enabled). */
 export function isOpsAiEnabled(): boolean {
-  return process.env.OPS_AI_EXPLANATIONS_ENABLED === "true";
+  return isFlagEnabled("OPS_AI_EXPLANATIONS_ENABLED");
 }
 
 /** Minimum severity for AI explanation requests. Default "warn". */
@@ -63,7 +80,7 @@ export function getOpsAiMinSeverity(): FindingSeverity {
  */
 export function isGovExportsEnabled(): boolean {
   if (isGovCircuitBreakerTripped()) return false;
-  return process.env.ENABLE_GOV_EXPORTS !== "false";
+  return isFlagEnabled("ENABLE_GOV_EXPORTS", true);
 }
 
 /**
@@ -72,7 +89,7 @@ export function isGovExportsEnabled(): boolean {
  * Requires platform-admin role AND this flag to export PII.
  */
 export function isGovStudentPiiExportEnabled(): boolean {
-  return process.env.ENABLE_GOV_STUDENT_PII_EXPORT === "true";
+  return isFlagEnabled("ENABLE_GOV_STUDENT_PII_EXPORT");
 }
 
 /**
@@ -81,7 +98,7 @@ export function isGovStudentPiiExportEnabled(): boolean {
  */
 export function isGovNationalExportEnabled(): boolean {
   if (isGovCircuitBreakerTripped()) return false;
-  return process.env.ENABLE_GOV_NATIONAL_EXPORT !== "false";
+  return isFlagEnabled("ENABLE_GOV_NATIONAL_EXPORT", true);
 }
 
 /**
@@ -90,7 +107,7 @@ export function isGovNationalExportEnabled(): boolean {
  */
 export function isGovAuditSearchEnabled(): boolean {
   if (isGovCircuitBreakerTripped()) return false;
-  return process.env.ENABLE_GOV_AUDIT_SEARCH !== "false";
+  return isFlagEnabled("ENABLE_GOV_AUDIT_SEARCH", true);
 }
 
 /**
@@ -102,7 +119,7 @@ export function isGovAuditSearchEnabled(): boolean {
  * DEFAULT false (circuit is normally OPEN = not tripped).
  */
 export function isGovCircuitBreakerTripped(): boolean {
-  return process.env.ENABLE_GOV_CIRCUIT_BREAKER === "true";
+  return isFlagEnabled("ENABLE_GOV_CIRCUIT_BREAKER");
 }
 
 //  AI Stabilization Flags (Block 10) 
@@ -113,10 +130,7 @@ export function isGovCircuitBreakerTripped(): boolean {
  * When false, POST /api/student/tutor returns 404.
  */
 export function isAiTutorEnabled(): boolean {
-  // .trim() tolerates trailing CRLF / whitespace that `vercel env pull`
-  // and dashboard copy-paste can append to the stored value — a strict
-  // === "true" comparison silently 404'd the tutor for "true\r\n".
-  return process.env.AI_TUTOR_ENABLED?.trim() === "true";
+  return isFlagEnabled("AI_TUTOR_ENABLED");
 }
 
 /**
@@ -125,7 +139,7 @@ export function isAiTutorEnabled(): boolean {
  * When false, POST /api/teacher/assist returns 404.
  */
 export function isAiTeacherAssistEnabled(): boolean {
-  return process.env.AI_TEACHER_ASSIST_ENABLED === "true";
+  return isFlagEnabled("AI_TEACHER_ASSIST_ENABLED");
 }
 
 /** Max AI tutor calls per authenticated user per day. Default 20. */
@@ -136,23 +150,17 @@ export function getAiTutorDailyLimit(): number {
 
 /** RAG-grounded student tutor retrieval. DEFAULT OFF. */
 export function isRagTutorEnabled(): boolean {
-  // .trim() tolerates trailing CRLF / whitespace that `vercel env add` and
-  // dashboard copy-paste can append to the stored value (same landmine as
-  // isAiTutorEnabled() above).
-  return (
-    process.env.ENABLE_RAG_TUTOR?.trim() === "true" ||
-    process.env.NEXT_PUBLIC_ENABLE_RAG_TUTOR?.trim() === "true"
-  );
+  return isFlagEnabled("ENABLE_RAG_TUTOR") || isFlagEnabled("NEXT_PUBLIC_ENABLE_RAG_TUTOR");
 }
 
 /** Eval run summary logging. DEFAULT OFF. */
 export function isEvalDbLoggingEnabled(): boolean {
-  return process.env.ENABLE_EVAL_DB_LOGGING === "true";
+  return isFlagEnabled("ENABLE_EVAL_DB_LOGGING");
 }
 
 /** Teacher lesson generation and co-creation. DEFAULT OFF. */
 export function isTeacherGenerationEnabled(): boolean {
-  return process.env.ENABLE_TEACHER_GENERATION === "true";
+  return isFlagEnabled("ENABLE_TEACHER_GENERATION");
 }
 
 /** Max teacher assist calls per teacher per day. Default 50. */
@@ -168,7 +176,7 @@ export function getAiTeacherAssistDailyLimit(): number {
  * DEFAULT OFF. When false, all impact dashboard routes return 404.
  */
 export function isImpactAnalyticsEnabled(): boolean {
-  return process.env.ENABLE_IMPACT_ANALYTICS === "true";
+  return isFlagEnabled("ENABLE_IMPACT_ANALYTICS");
 }
 
 /**
@@ -177,7 +185,7 @@ export function isImpactAnalyticsEnabled(): boolean {
  * When true, each GET /impact call stores a snapshot row for historical trend use.
  */
 export function isImpactSnapshotsEnabled(): boolean {
-  return process.env.ENABLE_IMPACT_SNAPSHOTS === "true";
+  return isFlagEnabled("ENABLE_IMPACT_SNAPSHOTS");
 }
 
 /**
@@ -185,7 +193,7 @@ export function isImpactSnapshotsEnabled(): boolean {
  * DEFAULT OFF. When false, POST /api/teacher/assignment/tutor returns 404.
  */
 export function isAssignmentTutorEnabled(): boolean {
-  return process.env.ENABLE_ASSIGNMENT_TUTOR === "true";
+  return isFlagEnabled("ENABLE_ASSIGNMENT_TUTOR");
 }
 
 /**
@@ -193,37 +201,37 @@ export function isAssignmentTutorEnabled(): boolean {
  * DEFAULT ON. When false, grading assist routes return 404.
  */
 export function isAiGradingAssistEnabled(): boolean {
-  return process.env.ENABLE_AI_GRADING_ASSIST !== "false";
+  return isFlagEnabled("ENABLE_AI_GRADING_ASSIST", true);
 }
 
 /** Teacher AI lesson planning. DEFAULT ON unless explicitly disabled. */
 export function isTeacherAiPlanningEnabled(): boolean {
-  return process.env.ENABLE_TEACHER_AI_PLANNING !== "false";
+  return isFlagEnabled("ENABLE_TEACHER_AI_PLANNING", true);
 }
 
 /** Teacher-facing intervention alerts. DEFAULT ON unless explicitly disabled. */
 export function isTeacherInterventionAlertsEnabled(): boolean {
-  return process.env.ENABLE_TEACHER_INTERVENTION_ALERTS !== "false";
+  return isFlagEnabled("ENABLE_TEACHER_INTERVENTION_ALERTS", true);
 }
 
 /** Weekly teacher reports. DEFAULT ON unless explicitly disabled. */
 export function isWeeklyTeacherReportsEnabled(): boolean {
-  return process.env.ENABLE_WEEKLY_TEACHER_REPORTS !== "false";
+  return isFlagEnabled("ENABLE_WEEKLY_TEACHER_REPORTS", true);
 }
 
 /** Student certificates and public verification. DEFAULT ON unless explicitly disabled. */
 export function isCertificatesEnabled(): boolean {
-  return process.env.ENABLE_CERTIFICATES !== "false";
+  return isFlagEnabled("ENABLE_CERTIFICATES", true);
 }
 
 /** Canva-backed certificate generation. DEFAULT OFF. */
 export function isCanvaCertificatesEnabled(): boolean {
-  return process.env.ENABLE_CANVA_CERTIFICATES === "true";
+  return isFlagEnabled("ENABLE_CANVA_CERTIFICATES");
 }
 
 /** Canva-backed MOE progress report generation. DEFAULT OFF. */
 export function isCanvaMoeReportsEnabled(): boolean {
-  return process.env.ENABLE_CANVA_MOE_REPORTS === "true";
+  return isFlagEnabled("ENABLE_CANVA_MOE_REPORTS");
 }
 
 /** Canva-backed course thumbnail automation. DEFAULT ON in local/dev, explicit in production. */
@@ -248,32 +256,32 @@ export function isHiggsfieldVideoGenerationEnabled(): boolean {
 
 /** Computed student skill badges. DEFAULT ON unless explicitly disabled. */
 export function isSkillBadgesEnabled(): boolean {
-  return process.env.ENABLE_SKILL_BADGES !== "false";
+  return isFlagEnabled("ENABLE_SKILL_BADGES", true);
 }
 
 /** Deterministic exam readiness scoring. DEFAULT ON unless explicitly disabled. */
 export function isExamReadinessEnabled(): boolean {
-  return process.env.ENABLE_EXAM_READINESS !== "false";
+  return isFlagEnabled("ENABLE_EXAM_READINESS", true);
 }
 
 /** Lightweight future pathway hooks. DEFAULT ON unless explicitly disabled. */
 export function isPathwayHooksEnabled(): boolean {
-  return process.env.ENABLE_PATHWAY_HOOKS !== "false";
+  return isFlagEnabled("ENABLE_PATHWAY_HOOKS", true);
 }
 
 /** MOE policy push tools. DEFAULT ON unless explicitly disabled. */
 export function isMoePolicyPushEnabled(): boolean {
-  return process.env.ENABLE_MOE_POLICY_PUSH !== "false";
+  return isFlagEnabled("ENABLE_MOE_POLICY_PUSH", true);
 }
 
 /** MOE directive governance workflow. DEFAULT ON unless explicitly disabled. */
 export function isMoeGovernanceWorkflowEnabled(): boolean {
-  return process.env.ENABLE_MOE_GOVERNANCE_WORKFLOW !== "false";
+  return isFlagEnabled("ENABLE_MOE_GOVERNANCE_WORKFLOW", true);
 }
 
 /** Curriculum version standardization and drift summaries. DEFAULT ON unless explicitly disabled. */
 export function isCurriculumVersionStandardizationEnabled(): boolean {
-  return process.env.ENABLE_CURRICULUM_VERSION_STANDARDIZATION !== "false";
+  return isFlagEnabled("ENABLE_CURRICULUM_VERSION_STANDARDIZATION", true);
 }
 
 /**
@@ -281,7 +289,7 @@ export function isCurriculumVersionStandardizationEnabled(): boolean {
  * DEFAULT OFF. When false, GET /api/admin/dashboard/school/interventions returns 404.
  */
 export function isInterventionAlertsEnabled(): boolean {
-  return process.env.ENABLE_INTERVENTION_ALERTS === "true";
+  return isFlagEnabled("ENABLE_INTERVENTION_ALERTS");
 }
 
 /**
@@ -289,7 +297,7 @@ export function isInterventionAlertsEnabled(): boolean {
  * DEFAULT OFF. When false, interventions endpoints return 404.
  */
 export function isAiInterventionsEnabled(): boolean {
-  return process.env.ENABLE_AI_INTERVENTIONS === "true";
+  return isFlagEnabled("ENABLE_AI_INTERVENTIONS");
 }
 
 /**
@@ -297,7 +305,7 @@ export function isAiInterventionsEnabled(): boolean {
  * DEFAULT OFF. When false, outcomes endpoints return 404 and jobs noop.
  */
 export function isInterventionOutcomesEnabled(): boolean {
-  return process.env.ENABLE_INTERVENTION_OUTCOMES === "true";
+  return isFlagEnabled("ENABLE_INTERVENTION_OUTCOMES");
 }
 
 /**
@@ -305,7 +313,7 @@ export function isInterventionOutcomesEnabled(): boolean {
  * DEFAULT OFF. Requires OPENAI_API_KEY at request time.
  */
 export function isAiInterventionsAiEnhanced(): boolean {
-  return process.env.AI_INTERVENTIONS_AI_ENHANCED === "true";
+  return isFlagEnabled("AI_INTERVENTIONS_AI_ENHANCED");
 }
 
 /**
@@ -313,7 +321,7 @@ export function isAiInterventionsAiEnhanced(): boolean {
  * DEFAULT OFF. When false, district endpoints return 404.
  */
 export function isDistrictIntelligenceEnabled(): boolean {
-  return process.env.ENABLE_DISTRICT_INTELLIGENCE === "true";
+  return isFlagEnabled("ENABLE_DISTRICT_INTELLIGENCE");
 }
 
 /**
@@ -359,76 +367,76 @@ export function getAiLabsDailyBudgetUsd(): number {
 
 /** Adaptive learning engine. DEFAULT ON. Set ENABLE_ADAPTIVE_ENGINE=false to disable. */
 export function isAdaptiveEngineEnabled(): boolean {
-  return process.env.ENABLE_ADAPTIVE_ENGINE !== "false";
+  return isFlagEnabled("ENABLE_ADAPTIVE_ENGINE", true);
 }
 
 export function isConfusionDetectionEnabled(): boolean {
-  return process.env.ENABLE_CONFUSION_DETECTION === "true";
+  return isFlagEnabled("ENABLE_CONFUSION_DETECTION");
 }
 
 /** Teacher intervention recommendation engine. DEFAULT ON. */
 export function isInterventionEngineEnabled(): boolean {
-  return process.env.ENABLE_INTERVENTION_ENGINE !== "false";
+  return isFlagEnabled("ENABLE_INTERVENTION_ENGINE", true);
 }
 
 export function isPerformanceEventsEnabled(): boolean {
-  return process.env.ENABLE_PERFORMANCE_EVENTS !== "false";
+  return isFlagEnabled("ENABLE_PERFORMANCE_EVENTS", true);
 }
 
 export function isPromptRegistryEnabled(): boolean {
-  return process.env.ENABLE_PROMPT_REGISTRY !== "false";
+  return isFlagEnabled("ENABLE_PROMPT_REGISTRY", true);
 }
 
 export function isAuditImmutabilityEnabled(): boolean {
-  return process.env.ENABLE_AUDIT_IMMUTABILITY !== "false";
+  return isFlagEnabled("ENABLE_AUDIT_IMMUTABILITY", true);
 }
 
 export function isTeacherIntelligenceDashboardEnabled(): boolean {
-  return process.env.ENABLE_TEACHER_INTELLIGENCE_DASHBOARD !== "false";
+  return isFlagEnabled("ENABLE_TEACHER_INTELLIGENCE_DASHBOARD", true);
 }
 
 export function isGuardianProgressViewEnabled(): boolean {
-  return process.env.ENABLE_GUARDIAN_PROGRESS_VIEW !== "false";
+  return isFlagEnabled("ENABLE_GUARDIAN_PROGRESS_VIEW", true);
 }
 
 export function isPilotReadinessDashboardEnabled(): boolean {
-  return process.env.ENABLE_PILOT_READINESS_DASHBOARD !== "false";
+  return isFlagEnabled("ENABLE_PILOT_READINESS_DASHBOARD", true);
 }
 
 export function isPilotReadinessEnabled(): boolean {
-  return process.env.ENABLE_PILOT_READINESS !== "false";
+  return isFlagEnabled("ENABLE_PILOT_READINESS", true);
 }
 
 /** Teacher intervention workflow actions. DEFAULT ON. */
 export function isInterventionWorkflowEnabled(): boolean {
-  return process.env.ENABLE_INTERVENTION_WORKFLOW !== "false";
+  return isFlagEnabled("ENABLE_INTERVENTION_WORKFLOW", true);
 }
 
 //  Block 21: Classroom Toolkit Flags 
 
 /** Master gate for Classroom Toolkit. DEFAULT OFF. */
 export function isClassroomToolkitEnabled(): boolean {
-  return process.env.ENABLE_CLASSROOM_TOOLKIT === "true";
+  return isFlagEnabled("ENABLE_CLASSROOM_TOOLKIT");
 }
 
 /** Calculator tools gate. DEFAULT OFF. */
 export function isToolkitCalculatorEnabled(): boolean {
-  return process.env.ENABLE_TOOLKIT_CALCULATOR === "true";
+  return isFlagEnabled("ENABLE_TOOLKIT_CALCULATOR");
 }
 
 /** Science tools gate. DEFAULT OFF. */
 export function isToolkitScienceToolsEnabled(): boolean {
-  return process.env.ENABLE_TOOLKIT_SCIENCE_TOOLS === "true";
+  return isFlagEnabled("ENABLE_TOOLKIT_SCIENCE_TOOLS");
 }
 
 /** Geometry tools gate. DEFAULT OFF. */
 export function isToolkitGeoToolsEnabled(): boolean {
-  return process.env.ENABLE_TOOLKIT_GEO_TOOLS === "true";
+  return isFlagEnabled("ENABLE_TOOLKIT_GEO_TOOLS");
 }
 
 /** Timer tool gate. DEFAULT OFF. */
 export function isToolkitTimerEnabled(): boolean {
-  return process.env.ENABLE_TOOLKIT_TIMER === "true";
+  return isFlagEnabled("ENABLE_TOOLKIT_TIMER");
 }
 
 /**
@@ -436,14 +444,14 @@ export function isToolkitTimerEnabled(): boolean {
  * DEFAULT OFF. When false, growth routes return 404.
  */
 export function isLongitudinalTrackingEnabled(): boolean {
-  return process.env.ENABLE_LONGITUDINAL_TRACKING === "true";
+  return isFlagEnabled("ENABLE_LONGITUDINAL_TRACKING");
 }
 
 //  Block 16: Predictive Dropout Risk Flags
 
 /** Master switch for dropout risk scoring routes. DEFAULT OFF. */
 export function isDropoutRiskEnabled(): boolean {
-  return process.env.ENABLE_DROPOUT_RISK === "true";
+  return isFlagEnabled("ENABLE_DROPOUT_RISK");
 }
 
 /**
@@ -451,7 +459,7 @@ export function isDropoutRiskEnabled(): boolean {
  * DEFAULT OFF. Requires explicit enable + audit/telemetry if used.
  */
 export function isDropoutRiskAiEnabled(): boolean {
-  return process.env.AI_DROPOUT_RISK_ENABLED === "true";
+  return isFlagEnabled("AI_DROPOUT_RISK_ENABLED");
 }
 
 /**
@@ -459,7 +467,7 @@ export function isDropoutRiskAiEnabled(): boolean {
  * DEFAULT OFF. When false, national curriculum signals endpoint returns 404.
  */
 export function isCurriculumOptimizationEnabled(): boolean {
-  return process.env.ENABLE_CURRICULUM_OPTIMIZATION === "true";
+  return isFlagEnabled("ENABLE_CURRICULUM_OPTIMIZATION");
 }
 
 /**
@@ -467,7 +475,7 @@ export function isCurriculumOptimizationEnabled(): boolean {
  * DEFAULT OFF. Deterministic strand ranking works regardless of this flag.
  */
 export function isCurriculumOptimizationAiEnabled(): boolean {
-  return process.env.ENABLE_CURRICULUM_OPTIMIZATION_AI === "true";
+  return isFlagEnabled("ENABLE_CURRICULUM_OPTIMIZATION_AI");
 }
 
 //  Block 19: Geo Intelligence Flags
@@ -477,7 +485,7 @@ export function isCurriculumOptimizationAiEnabled(): boolean {
  * DEFAULT OFF. When false, geo-performance endpoints return 404.
  */
 export function isGeoIntelligenceEnabled(): boolean {
-  return process.env.ENABLE_GEO_INTELLIGENCE === "true";
+  return isFlagEnabled("ENABLE_GEO_INTELLIGENCE");
 }
 
 //  Block 20: National Insights Flags
@@ -487,14 +495,14 @@ export function isGeoIntelligenceEnabled(): boolean {
  * DEFAULT OFF. When false, national insights endpoint returns 404.
  */
 export function isNationalInsightsEnabled(): boolean {
-  return process.env.ENABLE_NATIONAL_INSIGHTS === "true";
+  return isFlagEnabled("ENABLE_NATIONAL_INSIGHTS");
 }
 
 //  Block RR-4: MOE Portal Flag + Allowlist
 
 /** MOE/District portal. DEFAULT OFF. */
 export function isMoePortalEnabled(): boolean {
-  return process.env.ENABLE_MOE_PORTAL === "true";
+  return isFlagEnabled("ENABLE_MOE_PORTAL");
 }
 
 /**
@@ -504,7 +512,7 @@ export function isMoePortalEnabled(): boolean {
  * Production default should be "true" — see docs/ENV_VARS.md.
  */
 export function isMoeLoginPortalEnabled(): boolean {
-  return process.env.ENABLE_MOE_LOGIN_PORTAL === "true";
+  return isFlagEnabled("ENABLE_MOE_LOGIN_PORTAL");
 }
 
 /** Optional allowlist (comma-separated emails/domains). Empty = allow all. */
@@ -531,21 +539,15 @@ export function isDemoModeEnabled(): boolean {
  *  to hide the portal again.
  */
 export function isGuardianPortalEnabled(): boolean {
-  if (
-    process.env.ENABLE_GUARDIAN_PORTAL === "false" ||
-    process.env.NEXT_PUBLIC_ENABLE_GUARDIAN_PORTAL === "false"
-  ) {
-    return false;
-  }
   return (
-    process.env.ENABLE_GUARDIAN_PORTAL !== "false" &&
-    process.env.NEXT_PUBLIC_ENABLE_GUARDIAN_PORTAL !== "false"
+    isFlagEnabled("ENABLE_GUARDIAN_PORTAL", true) &&
+    isFlagEnabled("NEXT_PUBLIC_ENABLE_GUARDIAN_PORTAL", true)
   );
 }
 
 /** Guardian linking APIs (token acceptance + admin invites). DEFAULT ON. */
 export function isGuardianLinkingEnabled(): boolean {
-  return process.env.ENABLE_GUARDIAN_LINKING !== "false";
+  return isFlagEnabled("ENABLE_GUARDIAN_LINKING", true);
 }
 
 /**
@@ -554,19 +556,19 @@ export function isGuardianLinkingEnabled(): boolean {
  * When false, /api/guardian/dashboard and /api/guardian/messages return 404.
  */
 export function isGuardianDashboardEnabled(): boolean {
-  return process.env.ENABLE_GUARDIAN_DASHBOARD !== "false";
+  return isFlagEnabled("ENABLE_GUARDIAN_DASHBOARD", true);
 }
 
 //  Block RR-1/RR-3: Enrollment Invites + Account Recovery Flags
 
 /** Enrollment invite APIs (admin + teacher). DEFAULT OFF. */
 export function isEnrollmentInvitesEnabled(): boolean {
-  return process.env.ENABLE_ENROLLMENT_INVITES === "true";
+  return isFlagEnabled("ENABLE_ENROLLMENT_INVITES");
 }
 
 /** Account recovery APIs (forgot/reset password). DEFAULT OFF. */
 export function isAccountRecoveryEnabled(): boolean {
-  return process.env.ENABLE_ACCOUNT_RECOVERY === "true";
+  return isFlagEnabled("ENABLE_ACCOUNT_RECOVERY");
 }
 
 //  AI Factory: Curriculum Feedback Loop (Gap 3)
@@ -578,7 +580,7 @@ export function isAccountRecoveryEnabled(): boolean {
  * Telemetry failures never crash approval/rejection requests.
  */
 export function isCurriculumFeedbackEnabled(): boolean {
-  return process.env.ENABLE_CURRICULUM_FEEDBACK === "true";
+  return isFlagEnabled("ENABLE_CURRICULUM_FEEDBACK");
 }
 
 // ─── Integrated Lesson Delivery Engine Flags (Parts 1–8) ───────────────────
@@ -589,7 +591,7 @@ export function isCurriculumFeedbackEnabled(): boolean {
  * DEFAULT OFF.
  */
 export function isDeliveryProfileEnabled(): boolean {
-  return process.env.ENABLE_DELIVERY_PROFILE === "true";
+  return isFlagEnabled("ENABLE_DELIVERY_PROFILE");
 }
 
 /**
@@ -598,7 +600,7 @@ export function isDeliveryProfileEnabled(): boolean {
  * DEFAULT OFF.
  */
 export function isLessonDeliveryTrackingEnabled(): boolean {
-  return process.env.ENABLE_LESSON_DELIVERY_TRACKING === "true";
+  return isFlagEnabled("ENABLE_LESSON_DELIVERY_TRACKING");
 }
 
 /**
@@ -607,7 +609,7 @@ export function isLessonDeliveryTrackingEnabled(): boolean {
  * DEFAULT OFF.
  */
 export function isAbBlockSchedulingEnabled(): boolean {
-  return process.env.ENABLE_AB_BLOCK_SCHEDULING === "true";
+  return isFlagEnabled("ENABLE_AB_BLOCK_SCHEDULING");
 }
 
 /**
@@ -615,7 +617,7 @@ export function isAbBlockSchedulingEnabled(): boolean {
  * DEFAULT OFF.
  */
 export function isUnitGroupingEnabled(): boolean {
-  return process.env.ENABLE_UNIT_GROUPING === "true";
+  return isFlagEnabled("ENABLE_UNIT_GROUPING");
 }
 
 /**
@@ -623,7 +625,7 @@ export function isUnitGroupingEnabled(): boolean {
  * DEFAULT OFF.
  */
 export function isUnitAssemblyEnabled(): boolean {
-  return process.env.ENABLE_UNIT_ASSEMBLY === "true";
+  return isFlagEnabled("ENABLE_UNIT_ASSEMBLY");
 }
 
 /**
@@ -631,7 +633,7 @@ export function isUnitAssemblyEnabled(): boolean {
  * DEFAULT ON.
  */
 export function isTextbookCompilerEnabled(): boolean {
-  return process.env.ENABLE_TEXTBOOK_COMPILER !== "false";
+  return isFlagEnabled("ENABLE_TEXTBOOK_COMPILER", true);
 }
 
 /**
@@ -640,7 +642,7 @@ export function isTextbookCompilerEnabled(): boolean {
  * DEFAULT OFF.
  */
 export function isAssignmentLessonLinkageEnabled(): boolean {
-  return process.env.ENABLE_ASSIGNMENT_LESSON_LINKAGE === "true";
+  return isFlagEnabled("ENABLE_ASSIGNMENT_LESSON_LINKAGE");
 }
 
 /**
@@ -649,7 +651,7 @@ export function isAssignmentLessonLinkageEnabled(): boolean {
  * DEFAULT ON.
  */
 export function isAiAssignmentGenerationEnabled(): boolean {
-  return process.env.ENABLE_AI_ASSIGNMENT_GENERATION !== "false";
+  return isFlagEnabled("ENABLE_AI_ASSIGNMENT_GENERATION", true);
 }
 
 /**
@@ -658,7 +660,7 @@ export function isAiAssignmentGenerationEnabled(): boolean {
  * DEFAULT OFF.
  */
 export function isToolkitLessonIntegrationEnabled(): boolean {
-  return process.env.ENABLE_TOOLKIT_LESSON_INTEGRATION === "true";
+  return isFlagEnabled("ENABLE_TOOLKIT_LESSON_INTEGRATION");
 }
 
 /**
@@ -667,7 +669,7 @@ export function isToolkitLessonIntegrationEnabled(): boolean {
  * DEFAULT OFF.
  */
 export function isVirtualLabsEnabled(): boolean {
-  return process.env.ENABLE_VIRTUAL_LABS === "true";
+  return isFlagEnabled("ENABLE_VIRTUAL_LABS");
 }
 
 /**
@@ -676,7 +678,7 @@ export function isVirtualLabsEnabled(): boolean {
  * DEFAULT OFF.
  */
 export function isAiLabsEnabled(): boolean {
-  return process.env.ENABLE_AI_LABS === "true";
+  return isFlagEnabled("ENABLE_AI_LABS");
 }
 
 /**
@@ -685,7 +687,7 @@ export function isAiLabsEnabled(): boolean {
  * DEFAULT OFF.
  */
 export function isDeliveryComplianceReportingEnabled(): boolean {
-  return process.env.ENABLE_DELIVERY_COMPLIANCE_REPORTING === "true";
+  return isFlagEnabled("ENABLE_DELIVERY_COMPLIANCE_REPORTING");
 }
 
 /**
@@ -693,7 +695,7 @@ export function isDeliveryComplianceReportingEnabled(): boolean {
  * Fail-closed: must be explicitly enabled.
  */
 export function isExamSystemEnabled(): boolean {
-  return process.env.ENABLE_EXAM_SYSTEM?.trim() === "true";
+  return isFlagEnabled("ENABLE_EXAM_SYSTEM");
 }
 
 /**
@@ -704,7 +706,7 @@ export function isExamSystemEnabled(): boolean {
  * Africa's Talking or Twilio (whichever provider credentials are present).
  */
 export function isLiveSmsEnabled(): boolean {
-  return process.env.ENABLE_LIVE_SMS === "true";
+  return isFlagEnabled("ENABLE_LIVE_SMS");
 }
 
 // ─── Trust, Cost, and Onboarding Sprint Flags ────────────────────────────────
@@ -715,7 +717,7 @@ export function isLiveSmsEnabled(): boolean {
  * When enabled, AI tutor and teacher assist responses include trust metadata.
  */
 export function isAiTrustIndicatorsEnabled(): boolean {
-  return process.env.ENABLE_AI_TRUST_INDICATORS === "true";
+  return isFlagEnabled("ENABLE_AI_TRUST_INDICATORS");
 }
 
 /**
@@ -723,7 +725,7 @@ export function isAiTrustIndicatorsEnabled(): boolean {
  * DEFAULT ON. Set ENABLE_AI_COST_DASHBOARD=false to hide.
  */
 export function isAiCostDashboardEnabled(): boolean {
-  return process.env.ENABLE_AI_COST_DASHBOARD !== "false";
+  return isFlagEnabled("ENABLE_AI_COST_DASHBOARD", true);
 }
 
 /**
@@ -731,7 +733,7 @@ export function isAiCostDashboardEnabled(): boolean {
  * DEFAULT ON. Set ENABLE_ROLE_ONBOARDING_POLISH=false to hide.
  */
 export function isRoleOnboardingPolishEnabled(): boolean {
-  return process.env.ENABLE_ROLE_ONBOARDING_POLISH !== "false";
+  return isFlagEnabled("ENABLE_ROLE_ONBOARDING_POLISH", true);
 }
 
 // Pipeline cost tracking flags
@@ -754,12 +756,12 @@ export function getTtsMonthlyCapUsd(): number {
  * PENDING rows remain intact — nothing is deleted or failed.
  */
 export function isTtsGenerationStopped(): boolean {
-  return process.env.TTS_STOP_GENERATION === "true";
+  return isFlagEnabled("TTS_STOP_GENERATION");
 }
 
 /** Pipeline cost dashboard. DEFAULT ON. Set ENABLE_COST_DASHBOARD=false to hide. */
 export function isCostDashboardEnabled(): boolean {
-  return process.env.ENABLE_COST_DASHBOARD !== "false";
+  return isFlagEnabled("ENABLE_COST_DASHBOARD", true);
 }
 
 /**
@@ -767,7 +769,7 @@ export function isCostDashboardEnabled(): boolean {
  * DEFAULT ON. Set ENABLE_AI_QUALITY_DASHBOARD=false to hide.
  */
 export function isAiQualityDashboardEnabled(): boolean {
-  return process.env.ENABLE_AI_QUALITY_DASHBOARD !== "false";
+  return isFlagEnabled("ENABLE_AI_QUALITY_DASHBOARD", true);
 }
 
 /**
@@ -776,110 +778,110 @@ export function isAiQualityDashboardEnabled(): boolean {
  * enqueues and job processing are gated to prevent accidental production runs.
  */
 export function isCurriculumRegenQueueEnabled(): boolean {
-  return process.env.ENABLE_CURRICULUM_REGEN_QUEUE === "true";
+  return isFlagEnabled("ENABLE_CURRICULUM_REGEN_QUEUE");
 }
 
 // Autonomous OS Phase 2: recommend-only deterministic detectors.
 // All default OFF in production; these gates never enable direct action execution.
 export function isDetectorExecutionEnabled(): boolean {
-  return process.env.ENABLE_DETECTOR_EXECUTION === "true";
+  return isFlagEnabled("ENABLE_DETECTOR_EXECUTION");
 }
 
 export function isDetectorRecommendationGenerationEnabled(): boolean {
-  return process.env.ENABLE_DETECTOR_RECOMMENDATIONS === "true";
+  return isFlagEnabled("ENABLE_DETECTOR_RECOMMENDATIONS");
 }
 
 export function isDetectorMoeAggregationEnabled(): boolean {
-  return process.env.ENABLE_DETECTOR_MOE_AGGREGATION === "true";
+  return isFlagEnabled("ENABLE_DETECTOR_MOE_AGGREGATION");
 }
 
 export function isGuardianRecommendationsEnabled(): boolean {
-  return process.env.ENABLE_GUARDIAN_RECOMMENDATIONS === "true";
+  return isFlagEnabled("ENABLE_GUARDIAN_RECOMMENDATIONS");
 }
 
 export function isNationalTrendAnalysisEnabled(): boolean {
-  return process.env.ENABLE_NATIONAL_TREND_ANALYSIS === "true";
+  return isFlagEnabled("ENABLE_NATIONAL_TREND_ANALYSIS");
 }
 
 // Autonomous OS Phase 3: approval-gated actions. Default OFF.
 export function isActionGovernanceEnabled(): boolean {
-  return process.env.ENABLE_ACTION_GOVERNANCE === "true";
+  return isFlagEnabled("ENABLE_ACTION_GOVERNANCE");
 }
 
 export function isActionExecutionEnabled(): boolean {
-  return process.env.ENABLE_ACTION_EXECUTION === "true";
+  return isFlagEnabled("ENABLE_ACTION_EXECUTION");
 }
 
 export function isAutonomousRecommendOnlyModeEnabled(): boolean {
-  return process.env.FORCE_AUTONOMOUS_RECOMMEND_ONLY !== "false";
+  return isFlagEnabled("FORCE_AUTONOMOUS_RECOMMEND_ONLY", true);
 }
 
 // Autonomous OS Phase 4: governed low-risk execution pilots and hardening.
 // Defaults remain OFF/fail-closed unless explicitly enabled.
 export function isLowRiskAutonomyEnabled(): boolean {
-  return process.env.ENABLE_LOW_RISK_AUTONOMY === "true";
+  return isFlagEnabled("ENABLE_LOW_RISK_AUTONOMY");
 }
 
 export function isAutonomousEmergencyShutdownEnabled(): boolean {
-  return process.env.AUTONOMOUS_EMERGENCY_SHUTDOWN === "true";
+  return isFlagEnabled("AUTONOMOUS_EMERGENCY_SHUTDOWN");
 }
 
 export function isAutonomousDegradedModeEnabled(): boolean {
-  return process.env.ENABLE_AUTONOMOUS_DEGRADED_MODE === "true";
+  return isFlagEnabled("ENABLE_AUTONOMOUS_DEGRADED_MODE");
 }
 
 export function isApprovalExpirationWorkerEnabled(): boolean {
-  return process.env.ENABLE_APPROVAL_EXPIRATION_WORKER === "true";
+  return isFlagEnabled("ENABLE_APPROVAL_EXPIRATION_WORKER");
 }
 
 export function isActionRollbackEnabled(): boolean {
-  return process.env.ENABLE_ACTION_ROLLBACK === "true";
+  return isFlagEnabled("ENABLE_ACTION_ROLLBACK");
 }
 
 // Autonomous OS Phase 5: evaluation and memory-safe learning loops.
 // Evaluation is read/append-only; memory writes and retrieval remain gated.
 export function isAutonomousEvaluationEnabled(): boolean {
-  return process.env.ENABLE_AUTONOMOUS_EVALUATION === "true";
+  return isFlagEnabled("ENABLE_AUTONOMOUS_EVALUATION");
 }
 
 export function isAutonomousMemoryEnabled(): boolean {
-  return process.env.ENABLE_AUTONOMOUS_MEMORY === "true";
+  return isFlagEnabled("ENABLE_AUTONOMOUS_MEMORY");
 }
 
 // Autonomous OS Phase 13: read/append-only product signal integration.
 // Default ON; set false to stop new product LearningEvent signal writes.
 export function isAutonomousSignalIntegrationEnabled(): boolean {
-  return process.env.ENABLE_AUTONOMOUS_SIGNAL_INTEGRATION !== "false";
+  return isFlagEnabled("ENABLE_AUTONOMOUS_SIGNAL_INTEGRATION", true);
 }
 
 // Autonomous OS Phase 14: governance-safe predictive intelligence.
 // Default OFF for rollout safety. Forecast retrieval remains read-only; outcome writes
 // are explicit and append-only when enabled.
 export function isPredictiveIntelligenceEnabled(): boolean {
-  return process.env.ENABLE_PREDICTIVE_INTELLIGENCE === "true";
+  return isFlagEnabled("ENABLE_PREDICTIVE_INTELLIGENCE");
 }
 
 // Autonomous OS Phase 15: human review workflow for predictions.
 // Requires predictive intelligence and remains recommendation/outcome-recording only.
 export function isPredictionReviewWorkflowEnabled(): boolean {
-  return isPredictiveIntelligenceEnabled() && process.env.ENABLE_PREDICTION_REVIEW_WORKFLOW !== "false";
+  return isPredictiveIntelligenceEnabled() && isFlagEnabled("ENABLE_PREDICTION_REVIEW_WORKFLOW", true);
 }
 
 export function isFalsePositiveReviewEnabled(): boolean {
-  return process.env.ENABLE_FALSE_POSITIVE_REVIEW === "true";
+  return isFlagEnabled("ENABLE_FALSE_POSITIVE_REVIEW");
 }
 
 // Autonomous OS Phase 6: governance-safe optimization proposals.
 // Optimization is recommendation-only; no detector/policy/risk mutation occurs here.
 export function isAutonomousOptimizationEnabled(): boolean {
-  return process.env.ENABLE_AUTONOMOUS_OPTIMIZATION === "true";
+  return isFlagEnabled("ENABLE_AUTONOMOUS_OPTIMIZATION");
 }
 
 // Autonomous OS Phase 7: governed implementation workflow for approved optimization proposals.
 // Enables the change-request → sign-off → staged-rollout → rollback-verification → post-change-eval path.
 // Default OFF; must not be enabled until all downstream rollout infrastructure is validated.
 export function isImplementationWorkflowEnabled(): boolean {
-  return process.env.ENABLE_IMPLEMENTATION_WORKFLOW === "true";
+  return isFlagEnabled("ENABLE_IMPLEMENTATION_WORKFLOW");
 }
 
 // Autonomous OS Phase 9: Production Runtime Wiring
@@ -887,27 +889,27 @@ export function isImplementationWorkflowEnabled(): boolean {
 
 /** Master gate for all autonomous OS cron endpoints. DEFAULT OFF. */
 export function isAutonomousCronEnabled(): boolean {
-  return process.env.ENABLE_AUTONOMOUS_CRON === "true";
+  return isFlagEnabled("ENABLE_AUTONOMOUS_CRON");
 }
 
 /** Enables stuck-workflow detection and recovery cron. DEFAULT OFF. */
 export function isWorkflowRecoveryCronEnabled(): boolean {
-  return process.env.ENABLE_WORKFLOW_RECOVERY_CRON === "true";
+  return isFlagEnabled("ENABLE_WORKFLOW_RECOVERY_CRON");
 }
 
 /** Enables dead-letter inspection cron (read-only scan + audit log). DEFAULT OFF. */
 export function isDeadLetterInspectionCronEnabled(): boolean {
-  return process.env.ENABLE_DEAD_LETTER_INSPECTION_CRON === "true";
+  return isFlagEnabled("ENABLE_DEAD_LETTER_INSPECTION_CRON");
 }
 
 /** Enables runtime health snapshot writes via cron. DEFAULT OFF. */
 export function isRuntimeHealthCronEnabled(): boolean {
-  return process.env.ENABLE_RUNTIME_HEALTH_CRON === "true";
+  return isFlagEnabled("ENABLE_RUNTIME_HEALTH_CRON");
 }
 
 /** Enables the /admin/ops/runtime dashboard pages. DEFAULT ON. */
 export function isRuntimeDashboardEnabled(): boolean {
-  return process.env.ENABLE_RUNTIME_DASHBOARD !== "false";
+  return isFlagEnabled("ENABLE_RUNTIME_DASHBOARD", true);
 }
 
 // Autonomous OS Phase 10: Replay Console + Incident Investigation UI
@@ -915,7 +917,7 @@ export function isRuntimeDashboardEnabled(): boolean {
 
 /** Enables replay console and incident investigation UI. DEFAULT ON. */
 export function isReplayConsoleEnabled(): boolean {
-  return process.env.ENABLE_REPLAY_CONSOLE !== "false";
+  return isFlagEnabled("ENABLE_REPLAY_CONSOLE", true);
 }
 
 /**
@@ -924,5 +926,5 @@ export function isReplayConsoleEnabled(): boolean {
  * scheduled agents. No user-facing agent ships yet, so this stays off in prod.
  */
 export function isAgentCronEnabled(): boolean {
-  return process.env.AGENT_CRON_ENABLED?.trim() === "true";
+  return isFlagEnabled("AGENT_CRON_ENABLED");
 }

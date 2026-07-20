@@ -52,7 +52,7 @@ function sanitizeMetadata(value: Record<string, unknown> | null | undefined): Re
 }
 
 export async function logProductSignal(input: LogLearningEventInput, options?: { throwOnError?: boolean }) {
-  if (process.env.ENABLE_AUTONOMOUS_SIGNAL_INTEGRATION === "false") return null;
+  if (process.env.ENABLE_AUTONOMOUS_SIGNAL_INTEGRATION?.trim() === "false") return null;
 
   try {
     const learningEventModel = (prisma as any).learningEvent;
