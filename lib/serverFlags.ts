@@ -136,9 +136,12 @@ export function getAiTutorDailyLimit(): number {
 
 /** RAG-grounded student tutor retrieval. DEFAULT OFF. */
 export function isRagTutorEnabled(): boolean {
+  // .trim() tolerates trailing CRLF / whitespace that `vercel env add` and
+  // dashboard copy-paste can append to the stored value (same landmine as
+  // isAiTutorEnabled() above).
   return (
-    process.env.ENABLE_RAG_TUTOR === "true" ||
-    process.env.NEXT_PUBLIC_ENABLE_RAG_TUTOR === "true"
+    process.env.ENABLE_RAG_TUTOR?.trim() === "true" ||
+    process.env.NEXT_PUBLIC_ENABLE_RAG_TUTOR?.trim() === "true"
   );
 }
 
