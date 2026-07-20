@@ -92,13 +92,14 @@ test.describe("Wave 3 Screenshot Pass", () => {
     console.log("✓ Screenshot 5: student certificates page");
   });
 
-  test("6 · /ai-tutor — Back to Dashboard link", async ({ page }) => {
+  test("6 · /ai-tutor — redirects into the grounded /student/ai-tutor experience", async ({ page }) => {
     await signIn(page, "student1@cha.edu.lr");
     await page.goto(`${BASE}/ai-tutor`);
+    await expect(page).toHaveURL(/\/student\/ai-tutor$/, { timeout: 15_000 });
     const backLink = page.getByRole("link", { name: /back to dashboard/i });
     await expect(backLink).toBeVisible({ timeout: 15_000 });
     await page.screenshot({ path: ss("6-ai-tutor-back-link") });
-    console.log("✓ Screenshot 6: AI tutor back-to-dashboard link");
+    console.log("✓ Screenshot 6: AI tutor redirects to /student/ai-tutor");
   });
 
   test("7 · /admin/video-moderation — Moderation queue renders", async ({ page }) => {

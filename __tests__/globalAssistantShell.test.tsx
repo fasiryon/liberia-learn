@@ -234,6 +234,86 @@ describe("GlobalAssistantShell", () => {
     expect(html).toContain(">Cancel<");
   });
 
+  it("expands to a full-page layout with no minimize/toggle affordances on the dedicated /student/ai-tutor route", () => {
+    mockUsePathname.mockReturnValue("/student/ai-tutor");
+
+    const html = renderToStaticMarkup(
+      <GlobalAssistantShell
+        roleConfig={getAssistantRoleConfig("STUDENT")!}
+        initialGrade={5}
+        suggestedSubjects={["MATHEMATICS"]}
+        initialOpen
+      />
+    );
+
+    // Full-page sizing, not the floating-bubble sizing used everywhere else.
+    expect(html).toContain("inset-4");
+    expect(html).not.toContain("max-h-[70vh]");
+    expect(html).not.toContain("max-w-md");
+    // No way to accidentally strand the student on a blank page with the
+    // panel closed and no floating trigger left to reopen it.
+    expect(html).not.toContain(">Minimize<");
+    expect(html).not.toContain(">Assistant</p>");
+  });
+
+  it("real citations and source cards render on the dedicated /student/ai-tutor route (grounded, not the old bare-string chat)", () => {
+    mockUsePathname.mockReturnValue("/student/ai-tutor");
+
+    const html = renderToStaticMarkup(
+      <GlobalAssistantShell
+        roleConfig={getAssistantRoleConfig("STUDENT")!}
+        initialGrade={5}
+        suggestedSubjects={["MATHEMATICS"]}
+        initialOpen
+        initialMessages={[
+          {
+            id: "message-1",
+            question: "Explain fractions",
+            result: {
+              answer: "Fractions describe equal parts of a whole.",
+              retrievalWeak: false,
+              hadFallback: false,
+              isWeakGrounding: false,
+              actions: [],
+              sources: [
+                {
+                  id: "source-1",
+                  title: "Introduction to Fractions",
+                  excerpt: "Fractions are parts of a whole.",
+                  sourceType: "lesson",
+                  sourceLabel: "grade-5-fractions",
+                  similarity: 0.91,
+                  groundingStrength: "grounded",
+                },
+              ],
+            },
+          },
+        ]}
+      />
+    );
+
+    expect(html).toContain("Fractions describe equal parts of a whole.");
+    expect(html).toContain("Introduction to Fractions");
+    expect(html).toContain("📗 Lesson");
+  });
+
+  it("leaves floating-widget behavior for other roles/pages unchanged", () => {
+    mockUsePathname.mockReturnValue("/teacher");
+
+    const html = renderToStaticMarkup(
+      <GlobalAssistantShell
+        roleConfig={getAssistantRoleConfig("TEACHER")!}
+        initialGrade={7}
+        suggestedSubjects={["MATH"]}
+        initialOpen
+      />
+    );
+
+    expect(html).toContain("max-h-[70vh]");
+    expect(html).toContain("max-w-md");
+    expect(html).toContain(">Minimize<");
+  });
+
   it("builds the explain-differently follow-up prompt", () => {
     expect(
       buildExplainDifferentlyQuestion({

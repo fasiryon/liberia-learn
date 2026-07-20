@@ -77,7 +77,7 @@ export function StudentSidebar({
           </Link>
         )}
 
-        <Link href="/ai-tutor" className={navLinkClass}>
+        <Link href="/student/ai-tutor" className={navLinkClass}>
           AI Tutor
         </Link>
 

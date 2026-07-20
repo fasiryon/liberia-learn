@@ -202,6 +202,9 @@ export default function GlobalAssistantShell({
 }: Props) {
   const pathname = usePathname() ?? "/";
   const storageKey = "liberialearn-global-assistant-open";
+  // The nav-visible "AI Tutor" page IS this shell, auto-opened and expanded
+  // rather than a separate chat implementation (Tutor Architecture Consolidation).
+  const isDedicatedPage = pathname === "/student/ai-tutor";
   const role = roleConfig.role;
   const isTeacherOrAdmin = role === "TEACHER" || role === "ADMIN";
   const isStudent = role === "STUDENT";
@@ -226,11 +229,16 @@ export default function GlobalAssistantShell({
   const scrollRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
+    if (isDedicatedPage) {
+      setOpen(true);
+      return;
+    }
+
     const saved = window.localStorage.getItem(storageKey);
     if (saved === "true") {
       setOpen(true);
     }
-  }, []);
+  }, [isDedicatedPage]);
 
   useEffect(() => {
     window.localStorage.setItem(storageKey, open ? "true" : "false");
@@ -554,12 +562,20 @@ export default function GlobalAssistantShell({
 
   return (
     <div
-      className={`fixed z-50 flex flex-col items-end gap-2 ${
-        positionClassName ?? "bottom-24 right-5"
+      className={`fixed z-50 flex flex-col gap-2 ${
+        isDedicatedPage
+          ? "inset-4 items-stretch justify-center md:inset-10"
+          : `items-end ${positionClassName ?? "bottom-24 right-5"}`
       }`}
     >
       {open ? (
-        <section className="flex max-h-[70vh] w-[min(92vw,24rem)] max-w-md flex-col overflow-hidden rounded-xl border border-emerald-400/20 bg-[var(--ll-bg)]/95 shadow-[0_20px_60px_rgba(2,6,23,0.72)] backdrop-blur">
+        <section
+          className={`flex flex-col overflow-hidden rounded-xl border border-emerald-400/20 bg-[var(--ll-bg)]/95 shadow-[0_20px_60px_rgba(2,6,23,0.72)] backdrop-blur ${
+            isDedicatedPage
+              ? "h-full max-h-full w-full"
+              : "max-h-[70vh] w-[min(92vw,24rem)] max-w-md"
+          }`}
+        >
           <div className="border-b border-[var(--ll-border)] bg-gradient-to-r from-slate-900 via-slate-900 to-emerald-950/60 px-4 py-3.5">
             <div className="flex items-start justify-between gap-3">
               <div>
@@ -578,6 +594,7 @@ export default function GlobalAssistantShell({
                   {roleConfig.label}. {roleConfig.emptyStateBody}
                 </p>
               </div>
+              {isDedicatedPage ? null : (
               <button
                 type="button"
                 onClick={() => setOpen(false)}
@@ -585,6 +602,7 @@ export default function GlobalAssistantShell({
               >
                 Minimize
               </button>
+              )}
             </div>
           </div>
 
@@ -876,6 +894,7 @@ export default function GlobalAssistantShell({
         </section>
       ) : null}
 
+      {isDedicatedPage ? null : (
       <button
         type="button"
         onClick={() => setOpen((current) => !current)}
@@ -891,6 +910,7 @@ export default function GlobalAssistantShell({
           </p>
         </div>
       </button>
+      )}
     </div>
   );
 }

@@ -116,12 +116,15 @@ test("W4 · Download Week pack — ZIP lands and contains lessons, no answerKey"
   await page.screenshot({ path: ss("W4-pack-downloaded") });
 });
 
-test("W5 · AI Tutor page loads with back-to-dashboard link", async ({ page }) => {
+test("W5 · AI Tutor page loads the grounded assistant (Tutor Architecture Consolidation)", async ({ page }) => {
   await signIn(page, "student1@cha.edu.lr");
   await page.goto(`${BASE}/ai-tutor`);
+  await expect(page).toHaveURL(/\/student\/ai-tutor$/, { timeout: 15_000 });
+  const heading = page.getByRole("heading", { name: /ai tutor/i });
+  await expect(heading).toBeVisible({ timeout: 15_000 });
   const backLink = page.getByRole("link", { name: /back to dashboard/i });
   await expect(backLink).toBeVisible({ timeout: 15_000 });
-  console.log("  AI Tutor: back link confirmed");
+  console.log("  AI Tutor: redirected to /student/ai-tutor, page loaded");
   await page.screenshot({ path: ss("W5-ai-tutor") });
 });
 

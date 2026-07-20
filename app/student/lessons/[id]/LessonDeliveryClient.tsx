@@ -6,7 +6,6 @@ import { ChevronLeft, ChevronRight, Flag } from "lucide-react";
 import { LessonQuizPanel } from "@/components/student/LessonQuizPanel";
 import { ProblemRevealSection } from "@/components/student/ProblemRevealSection";
 import { UnitSequenceSidebar } from "@/components/student/UnitSequenceSidebar";
-import { TutorChatWidget } from "@/components/TutorChatWidget";
 import { StudentLessonHelpPanel } from "@/components/student/StudentLessonHelpPanel";
 import LessonLabPanel from "@/components/labs/LessonLabPanel";
 import { PencilButton, PencilButtonFloat } from "@/components/ui/PencilButton";
@@ -1417,11 +1416,6 @@ export default function LessonDeliveryClient({ lessonId }: { lessonId: string })
           />
         </div>
       ) : null}
-      <TutorChatWidget
-        contentId={lesson.contentId}
-        grade={lesson.grade}
-        subject={lesson.subject}
-      />
     </div>
   );
 }
