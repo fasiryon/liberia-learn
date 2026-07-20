@@ -63,7 +63,7 @@ describe("computeEarnedBadges", () => {
   it("returns Level 1 badge when all Level 1 modules are complete", () => {
     const badges = computeEarnedBadges(completeAll(1));
     expect(badges).toHaveLength(1);
-    expect(badges[0].name).toBe("level_1_certified");
+    expect(badges[0].name).toBe("level_1_training_badge");
     expect(badges[0].level).toBe(1);
   });
 
@@ -80,13 +80,13 @@ describe("computeEarnedBadges", () => {
   it("returns Level 2 badge when all Level 2 modules are complete", () => {
     const badges = computeEarnedBadges(completeAll(2));
     expect(badges).toHaveLength(1);
-    expect(badges[0].name).toBe("level_2_certified");
+    expect(badges[0].name).toBe("level_2_training_badge");
   });
 
   it("returns Level 3 badge when all Level 3 modules are complete", () => {
     const badges = computeEarnedBadges(completeAll(3));
     expect(badges).toHaveLength(1);
-    expect(badges[0].name).toBe("level_3_certified");
+    expect(badges[0].name).toBe("level_3_training_badge");
   });
 
   it("returns all 3 badges when every module is complete", () => {
@@ -99,9 +99,9 @@ describe("computeEarnedBadges", () => {
     const badges = computeEarnedBadges(all);
     expect(badges).toHaveLength(3);
     expect(badges.map((b) => b.name)).toEqual([
-      "level_1_certified",
-      "level_2_certified",
-      "level_3_certified",
+      "level_1_training_badge",
+      "level_2_training_badge",
+      "level_3_training_badge",
     ]);
   });
 
@@ -149,9 +149,9 @@ describe("isLevelComplete", () => {
 // ─────────────────────────────────────────────────────────────────────────────
 describe("LEVEL_BADGES", () => {
   it("has correct names and levels", () => {
-    expect(LEVEL_BADGES[1].name).toBe("level_1_certified");
-    expect(LEVEL_BADGES[2].name).toBe("level_2_certified");
-    expect(LEVEL_BADGES[3].name).toBe("level_3_certified");
+    expect(LEVEL_BADGES[1].name).toBe("level_1_training_badge");
+    expect(LEVEL_BADGES[2].name).toBe("level_2_training_badge");
+    expect(LEVEL_BADGES[3].name).toBe("level_3_training_badge");
     expect(LEVEL_BADGES[1].level).toBe(1);
     expect(LEVEL_BADGES[2].level).toBe(2);
     expect(LEVEL_BADGES[3].level).toBe(3);

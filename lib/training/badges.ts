@@ -4,7 +4,7 @@
  * Pure badge computation helpers for the Training Center.
  *
  * A badge is earned when ALL modules at a given level are complete.
- * Badges are not persisted in the DB for V1 — they are derived from
+ * Badges are not persisted in the DB for V1. They are derived from
  * TrainingProgress on each request.  This keeps the schema minimal and
  * avoids synchronisation issues.
  *
@@ -24,9 +24,9 @@ export type Badge = {
 };
 
 export const LEVEL_BADGES: Record<1 | 2 | 3, Badge> = {
-  1: { name: "level_1_certified", level: 1, label: "Level 1 Certified", emoji: "🥉" },
-  2: { name: "level_2_certified", level: 2, label: "Level 2 Certified", emoji: "🥈" },
-  3: { name: "level_3_certified", level: 3, label: "Level 3 Certified", emoji: "🏅" },
+  1: { name: "level_1_training_badge", level: 1, label: "Level 1 Training Badge", emoji: "🥉" },
+  2: { name: "level_2_training_badge", level: 2, label: "Level 2 Training Badge", emoji: "🥈" },
+  3: { name: "level_3_training_badge", level: 3, label: "Level 3 Training Badge", emoji: "🏅" },
 };
 
 /** Returns true when every module in the given level has status=complete. */

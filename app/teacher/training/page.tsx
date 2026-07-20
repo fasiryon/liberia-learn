@@ -2,7 +2,7 @@
  * app/teacher/training/page.tsx  (Server Component)
  *
  * Training Center landing page.
- * Shows Levels 1–3 with per-module status, progress bars, and earned badges.
+ * Shows Levels 1-3 with per-module status, progress bars, and earned badges.
  *
  * Feature-gated: redirects to /teacher when ENABLE_TRAINING_CENTER is false.
  * Auth: TEACHER or ADMIN only.
@@ -10,26 +10,24 @@
 
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
+import { requireUser } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { TRAINING_MODULES, MODULES_BY_LEVEL, LEVEL_LABELS } from "@/lib/training/modules";
 import { computeEarnedBadges } from "@/lib/training/badges";
 import type { ModuleProgressRecord } from "@/lib/training/progress";
 import { TeacherDashboardBackLink } from "@/app/teacher/TeacherDashboardBackLink";
+import { isTrainingCenterEnabled } from "@/lib/serverFlags";
 
 export const dynamic = "force-dynamic";
 
 export default async function TrainingCenterPage() {
   // ── Feature gate ──────────────────────────────────────────────────────────
-  if (process.env.NEXT_PUBLIC_ENABLE_TRAINING_CENTER !== "true") {
+  if (!isTrainingCenterEnabled()) {
     redirect("/teacher");
   }
 
   // ── Auth ──────────────────────────────────────────────────────────────────
-  const session = await getServerSession(authOptions);
-  const user = session?.user as { id?: string; role?: string; name?: string | null } | undefined;
-
+  const user = await requireUser().catch(() => null);
   if (!user?.id) redirect("/login");
   if (user.role !== "TEACHER" && user.role !== "ADMIN") redirect("/");
 
@@ -140,7 +138,7 @@ export default async function TrainingCenterPage() {
                     </span>
                     {levelDone && (
                       <span className="rounded-full bg-[var(--ll-yellow)]/20 px-3 py-1 text-xs font-semibold text-[var(--ll-yellow)]">
-                        ✓ Certified
+                        Training Badge Earned
                       </span>
                     )}
                   </div>
@@ -192,6 +190,25 @@ export default async function TrainingCenterPage() {
             );
           })}
         </div>
+
+        <section className="mt-8 rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/80 p-6">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <div>
+              <h2 className="text-lg font-semibold text-[var(--ll-text)]">
+                LiberiaLearn Training Completion Record
+              </h2>
+              <p className="mt-1 text-sm text-[var(--ll-text-muted)]">
+                Available when all {totalModules} training modules are complete.
+              </p>
+            </div>
+            <Link
+              href="/teacher/training/completion-record"
+              className="rounded-full border border-[var(--ll-border)] px-4 py-2 text-sm font-semibold text-[var(--ll-text)] hover:border-[var(--ll-border-strong)]"
+            >
+              View record
+            </Link>
+          </div>
+        </section>
       </div>
     </main>
   );

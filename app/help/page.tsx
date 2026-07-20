@@ -2,6 +2,12 @@ import Link from "next/link";
 
 const GUIDES = [
   {
+    role: "Student",
+    href: "/help/student",
+    description: "Find lessons, complete work, track progress, and use support tools",
+    color: "#f59e0b",
+  },
+  {
     role: "Admin",
     href: "/help/admin",
     description: "Create classes, enroll students, manage your school",
@@ -12,6 +18,12 @@ const GUIDES = [
     href: "/help/teacher",
     description: "Assign homework, review submissions, track class progress",
     color: "#60a5fa",
+  },
+  {
+    role: "Guardian",
+    href: "/help/guardian",
+    description: "Review learner progress, support plans, events, and messages",
+    color: "#f472b6",
   },
   {
     role: "MOE Official",

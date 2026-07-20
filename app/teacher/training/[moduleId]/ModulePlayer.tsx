@@ -6,9 +6,9 @@
  * Interactive step-by-step module reader.
  *
  * Flow:
- *   1. On mount → fires training.module_opened telemetry + calls /api/teacher/training/open.
- *   2. "Next Step" → fires training.module_step_completed telemetry + advances step counter.
- *   3. Last step "Mark Complete" → calls /api/teacher/training/complete → shows celebration screen.
+ *   1. On mount calls /api/teacher/training/open and tracks training.module_opened.
+ *   2. "Next Step" tracks training.module_step_completed and advances the step counter.
+ *   3. Last step "Mark Complete" calls /api/teacher/training/complete and shows the completion screen.
  *
  * Design principles (Low-Literacy UX Standard):
  *   • Big, full-width buttons with large text.
@@ -50,7 +50,7 @@ export function ModulePlayer({ module }: Props) {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ moduleId: module.id }),
-    }).catch(() => {}); // Silently fail — telemetry must not break UX
+    }).catch(() => {}); // Silently fail. Telemetry must not break UX.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -122,7 +122,7 @@ export function ModulePlayer({ module }: Props) {
               <p className="text-lg font-bold text-[var(--ll-yellow)]">
                 🏅 Level {module.level} Complete!
               </p>
-              <p className="mt-1 text-sm text-[var(--ll-text-muted)]">You have earned a new certification badge.</p>
+              <p className="mt-1 text-sm text-[var(--ll-text-muted)]">You have earned a new training badge.</p>
             </div>
           )}
 

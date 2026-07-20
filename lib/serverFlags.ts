@@ -736,6 +736,18 @@ export function isRoleOnboardingPolishEnabled(): boolean {
   return isFlagEnabled("ENABLE_ROLE_ONBOARDING_POLISH", true);
 }
 
+/**
+ * Teacher training center. DEFAULT ON unless explicitly disabled.
+ * Supports the legacy NEXT_PUBLIC_ENABLE_TRAINING_CENTER flag, but reads it
+ * through the server flag helper so Vercel CRLF values are trimmed.
+ */
+export function isTrainingCenterEnabled(): boolean {
+  return (
+    isFlagEnabled("ENABLE_TRAINING_CENTER", true) &&
+    isFlagEnabled("NEXT_PUBLIC_ENABLE_TRAINING_CENTER", true)
+  );
+}
+
 // Pipeline cost tracking flags
 
 /** Daily TTS audio budget in USD. Default $5. Set TTS_DAILY_BUDGET_USD. */

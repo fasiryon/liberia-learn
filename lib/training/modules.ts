@@ -9,7 +9,7 @@
  * Keeping module content here (not in the DB) means:
  *   • Zero extra queries on the training landing page.
  *   • Content updates ship as code, not DB patches.
- *   • SSR-safe – no window/localStorage access.
+ *   SSR-safe, no window/localStorage access.
  *
  * Feature-flagged by: NEXT_PUBLIC_ENABLE_TRAINING_CENTER
  */
@@ -22,7 +22,7 @@ export type TrainingStep = {
 };
 
 export type TrainingModuleDef = {
-  /** Stable ID — matches TrainingModule.code in the DB. */
+  /** Stable ID. Matches TrainingModule.code in the DB. */
   id: string;
   title: string;
   level: 1 | 2 | 3;
@@ -33,7 +33,7 @@ export type TrainingModuleDef = {
 // ─── 8 modules, 3 levels ────────────────────────────────────────────────────
 
 export const TRAINING_MODULES: TrainingModuleDef[] = [
-  // ── Level 1: Foundations ─────────────────────────────────────────────────
+  // Level 1: Foundations
   {
     id: "l1-login-nav",
     title: "Login & Navigation Basics",
@@ -109,7 +109,7 @@ export const TRAINING_MODULES: TrainingModuleDef[] = [
         screenshotPlaceholder: "Lesson form with title, grade, and subject fields",
       },
       {
-        text: "Type the lesson content — objectives, activities, and teacher notes. Keep the language simple.",
+        text: "Type the lesson content: objectives, activities, and teacher notes. Keep the language simple.",
         screenshotPlaceholder: "Lesson content editor",
       },
       {
@@ -145,7 +145,7 @@ export const TRAINING_MODULES: TrainingModuleDef[] = [
       },
       {
         text: "Tap 'Save'. Students in that class will see the assignment when they next log in.",
-        screenshotPlaceholder: "Save button — assignment confirmed in list",
+        screenshotPlaceholder: "Save button, assignment confirmed in list",
       },
       {
         text: "You can view all assignments by tapping 'Homework' from the top navigation of the Teacher Dashboard.",
@@ -202,7 +202,7 @@ export const TRAINING_MODULES: TrainingModuleDef[] = [
         screenshotPlaceholder: "Message type selector: Absence, At Risk, Praise",
       },
       {
-        text: "The system will send a short SMS to the guardian. Only 3 messages per guardian per day are allowed — this protects guardians from message flooding.",
+        text: "The system will send a short SMS to the guardian. Only 3 messages per guardian per day are allowed. This protects guardians from message flooding.",
         screenshotPlaceholder: "SMS send confirmation",
       },
       {
@@ -231,7 +231,7 @@ export const TRAINING_MODULES: TrainingModuleDef[] = [
         screenshotPlaceholder: "Student scores and lesson progress summary",
       },
       {
-        text: "For school-wide reports — such as how many students passed a topic — ask your Admin to check the Analytics section.",
+        text: "For school-wide reports, such as how many students passed a topic, ask your Admin to check the Analytics section.",
         screenshotPlaceholder: "Admin Analytics overview screen",
       },
       {
@@ -254,14 +254,14 @@ export const TRAINING_MODULES: TrainingModuleDef[] = [
       },
       {
         text: "Tap the '?' Help button to open the Guided Onboarding tour. It shows you the key features step by step.",
-        screenshotPlaceholder: "Guided Onboarding modal — Step 1 of 5",
+        screenshotPlaceholder: "Guided Onboarding modal, Step 1 of 5",
       },
       {
         text: "You can dismiss the tour at any step and reopen it any time by tapping '?' again.",
       },
       {
         text: "Tap the 'Aa' Accessibility button to turn on Accessibility Mode. This makes text larger and buttons easier to tap.",
-        screenshotPlaceholder: "Aa toggle button — accessibility mode active state",
+        screenshotPlaceholder: "Aa toggle button, accessibility mode active state",
       },
       {
         text: "Both settings are saved automatically and will stay on the next time you log in. They are stored on your device.",
@@ -272,7 +272,7 @@ export const TRAINING_MODULES: TrainingModuleDef[] = [
 
 // ─── Lookup helpers ──────────────────────────────────────────────────────────
 
-/** Modules grouped by level — avoids repeated `.filter()` in rendering code. */
+/** Modules grouped by level. Avoids repeated `.filter()` in rendering code. */
 export const MODULES_BY_LEVEL: Record<1 | 2 | 3, TrainingModuleDef[]> = {
   1: TRAINING_MODULES.filter((m) => m.level === 1),
   2: TRAINING_MODULES.filter((m) => m.level === 2),
@@ -284,7 +284,7 @@ export function getModuleById(id: string): TrainingModuleDef | undefined {
 }
 
 export const LEVEL_LABELS: Record<1 | 2 | 3, string> = {
-  1: "Level 1 — Foundations",
-  2: "Level 2 — Core Features",
-  3: "Level 3 — Advanced Tools",
+  1: "Level 1 - Foundations",
+  2: "Level 2 - Core Features",
+  3: "Level 3 - Advanced Tools",
 };

@@ -2,7 +2,7 @@
  * app/admin/training/adoption/page.tsx  (Server Component)
  *
  * School Training Adoption Dashboard for admins.
- * Shows aggregate counts only — no teacher-level PII.
+ * Shows aggregate counts only. No teacher-level PII.
  *
  * Feature-gated: redirects to /admin when ENABLE_TRAINING_CENTER is false.
  * Auth: ADMIN role required.
@@ -11,27 +11,25 @@
 
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
+import { requireUser } from "@/lib/auth";
 import { getSchoolAdoptionStats } from "@/lib/training/progress";
 import { MODULES_BY_LEVEL, LEVEL_LABELS } from "@/lib/training/modules";
+import { isTrainingCenterEnabled } from "@/lib/serverFlags";
 
 export const dynamic = "force-dynamic";
 
 export default async function TrainingAdoptionPage() {
   // ── Feature gate ──────────────────────────────────────────────────────────
-  if (process.env.NEXT_PUBLIC_ENABLE_TRAINING_CENTER !== "true") {
+  if (!isTrainingCenterEnabled()) {
     redirect("/admin");
   }
 
   // ── Auth ──────────────────────────────────────────────────────────────────
-  const session = await getServerSession(authOptions);
-  const user = session?.user as { id?: string; role?: string; schoolId?: string | null } | undefined;
-
+  const user = await requireUser().catch(() => null);
   if (!user?.id) redirect("/login");
   if (user.role !== "ADMIN") redirect("/");
 
-  // ── Session JWT may have stale null schoolId — handle gracefully ──────────
+  // Session JWT may have stale null schoolId. Handle gracefully.
   const schoolId = user.schoolId ?? null;
   if (!schoolId) {
     return (
@@ -99,7 +97,7 @@ export default async function TrainingAdoptionPage() {
             </p>
             <h1 className="text-2xl font-bold md:text-3xl">Training Adoption</h1>
             <p className="mt-1 text-sm text-[var(--ll-text-muted)]">
-              School-wide teacher training progress. Counts only — no individual teacher data.
+              School-wide teacher training progress. Counts only. No individual teacher data.
             </p>
           </div>
           <Link
@@ -164,7 +162,7 @@ export default async function TrainingAdoptionPage() {
           <p className="text-sm text-[var(--ll-text-muted)]">
             <span className="font-semibold text-[var(--ll-text)]">Tip:</span> Share the Training Center
             link with teachers so they can complete modules at their own pace.
-            Each module takes 5–7 minutes and can be done on a phone.
+            Each module takes 5-7 minutes and can be done on a phone.
           </p>
         </div>
       </div>

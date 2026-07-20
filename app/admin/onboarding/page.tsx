@@ -69,7 +69,7 @@ export default function OnboardingPage() {
   const [studentImporting, setStudentImporting] = useState(false);
   const studentCsvRef = useRef<HTMLInputElement>(null);
 
-  // Step 4 fields — timetable: grade → subject
+  // Step 4 fields: timetable by grade and subject
   const [timetable, setTimetable] = useState<Record<number, string>>({});
   const [timetableSaving, setTimetableSaving] = useState(false);
 
@@ -227,7 +227,7 @@ export default function OnboardingPage() {
         }).catch(() => {});
       }
       setData((prev) => prev ? { ...prev, classCount: prev.classCount + Object.keys(timetable).length } : prev);
-      setSuccessMsg("Timetable saved — classes created.");
+      setSuccessMsg("Timetable saved. Classes created.");
     } finally {
       setTimetableSaving(false);
     }
@@ -272,6 +272,12 @@ export default function OnboardingPage() {
           <a href="/admin" className="text-xs text-[var(--ll-text-muted)] hover:text-[var(--ll-text)]">← Back to Admin</a>
           <h1 className="mt-2 text-2xl font-bold text-[var(--ll-text)]">School Setup Wizard</h1>
           <p className="mt-1 text-sm text-[var(--ll-text-muted)]">Get your school ready for Day 1 in 5 steps</p>
+          <a
+            href="/admin/onboarding/launch-checklist"
+            className="mt-3 inline-flex min-h-10 items-center rounded-full border border-[var(--ll-border)] px-4 py-2 text-xs font-semibold text-[var(--ll-text)] hover:border-[var(--ll-border-strong)]"
+          >
+            Open launch checklist
+          </a>
         </div>
 
         <ProgressBar step={step} total={STEPS.length} />
@@ -300,7 +306,7 @@ export default function OnboardingPage() {
 
         <div className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 p-6">
 
-          {/* STEP 1 — School Profile */}
+          {/* STEP 1: School Profile */}
           {step === 1 && (
             <div className="space-y-4">
               <h2 className="text-lg font-semibold text-[var(--ll-text)]">Step 1: School Profile</h2>
@@ -367,7 +373,7 @@ export default function OnboardingPage() {
             </div>
           )}
 
-          {/* STEP 2 — Add Teachers */}
+          {/* STEP 2: Add Teachers */}
           {step === 2 && (
             <div className="space-y-5">
               <h2 className="text-lg font-semibold text-[var(--ll-text)]">Step 2: Add Teachers</h2>
@@ -424,7 +430,7 @@ export default function OnboardingPage() {
             </div>
           )}
 
-          {/* STEP 3 — Import Students */}
+          {/* STEP 3: Import Students */}
           {step === 3 && (
             <div className="space-y-5">
               <h2 className="text-lg font-semibold text-[var(--ll-text)]">Step 3: Import Student Roster</h2>
@@ -443,7 +449,7 @@ export default function OnboardingPage() {
 
               {csvPreview && csvPreview.length > 0 && (
                 <div className="space-y-3">
-                  <p className="text-xs text-[var(--ll-text-muted)]">Preview — first 5 of {csvTotal} rows:</p>
+                  <p className="text-xs text-[var(--ll-text-muted)]">Preview: first 5 of {csvTotal} rows:</p>
                   <div className="ll-scroll-table">
                     <table className="min-w-full text-xs">
                       <thead>
@@ -460,7 +466,7 @@ export default function OnboardingPage() {
                             <td className="px-3 py-2">{row.firstName}</td>
                             <td className="px-3 py-2">{row.lastName}</td>
                             <td className="px-3 py-2">{row.grade}</td>
-                            <td className="px-3 py-2">{row.guardianEmail || "—"}</td>
+                            <td className="px-3 py-2">{row.guardianEmail || "-"}</td>
                           </tr>
                         ))}
                       </tbody>
@@ -486,7 +492,7 @@ export default function OnboardingPage() {
             </div>
           )}
 
-          {/* STEP 4 — Timetable */}
+          {/* STEP 4: Timetable */}
           {step === 4 && (
             <div className="space-y-5">
               <h2 className="text-lg font-semibold text-[var(--ll-text)]">Step 4: Set Timetable</h2>
@@ -542,7 +548,7 @@ export default function OnboardingPage() {
             </div>
           )}
 
-          {/* STEP 5 — Verify + Go Live */}
+          {/* STEP 5: Verify + Go Live */}
           {step === 5 && (
             <div className="space-y-5">
               <h2 className="text-lg font-semibold text-[var(--ll-text)]">Step 5: Verify &amp; Go Live</h2>

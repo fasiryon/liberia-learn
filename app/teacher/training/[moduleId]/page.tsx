@@ -9,10 +9,10 @@
  */
 
 import { redirect, notFound } from "next/navigation";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
+import { requireUser } from "@/lib/auth";
 import { getModuleById } from "@/lib/training/modules";
 import { ModulePlayer } from "./ModulePlayer";
+import { isTrainingCenterEnabled } from "@/lib/serverFlags";
 
 interface Props {
   params: { moduleId: string };
@@ -22,14 +22,12 @@ export const dynamic = "force-dynamic";
 
 export default async function TrainingModulePage({ params }: Props) {
   // ── Feature gate ──────────────────────────────────────────────────────────
-  if (process.env.NEXT_PUBLIC_ENABLE_TRAINING_CENTER !== "true") {
+  if (!isTrainingCenterEnabled()) {
     redirect("/teacher");
   }
 
   // ── Auth ──────────────────────────────────────────────────────────────────
-  const session = await getServerSession(authOptions);
-  const user = session?.user as { id?: string; role?: string } | undefined;
-
+  const user = await requireUser().catch(() => null);
   if (!user?.id) redirect("/login");
   if (user.role !== "TEACHER" && user.role !== "ADMIN") redirect("/");
 
