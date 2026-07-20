@@ -51,6 +51,7 @@ test-*.log
 .vercel
 .claude/
 .worktrees/
+.playwright-mcp/
 
 # OS / editor noise
 .DS_Store

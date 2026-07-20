@@ -16,6 +16,7 @@ jobs:
       DIRECT_URL: ${{ secrets.DIRECT_URL }}
       OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
       ENABLE_RAG_TUTOR: "true"
+      ENABLE_EVAL_DB_LOGGING: "true"
       EVAL_SCHOOL_ID: ${{ secrets.EVAL_SCHOOL_ID }}
     steps:
       - uses: actions/checkout@v4

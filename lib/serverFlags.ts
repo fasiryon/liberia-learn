@@ -760,6 +760,14 @@ export function isCostDashboardEnabled(): boolean {
 }
 
 /**
+ * AI quality/safety evaluation dashboard (Sprint 6.8) for platform admins.
+ * DEFAULT ON. Set ENABLE_AI_QUALITY_DASHBOARD=false to hide.
+ */
+export function isAiQualityDashboardEnabled(): boolean {
+  return process.env.ENABLE_AI_QUALITY_DASHBOARD !== "false";
+}
+
+/**
  * Queue-driven NEEDS_REVIEW curriculum regeneration. DEFAULT OFF.
  * Scripts may still perform dry-run planning while this is off, but worker
  * enqueues and job processing are gated to prevent accidental production runs.

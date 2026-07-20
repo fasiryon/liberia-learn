@@ -170,6 +170,9 @@ export async function POST(req: NextRequest) {
         contextMode,
         sourceCount: result.sources.length,
         retrievalWeak: result.retrievalWeak,
+        groundingScore: result.groundingScore,
+        hadFallback: result.hadFallback,
+        confidence: result.confidence,
       },
     });
     return NextResponse.json(result, { headers: getRateLimitHeaders(rateLimit) });
