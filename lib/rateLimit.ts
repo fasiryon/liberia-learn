@@ -2,8 +2,13 @@ import { Ratelimit } from "@upstash/ratelimit";
 import { Redis } from "@upstash/redis";
 import { NextResponse } from "next/server";
 
+export type RateLimitIncrementResult = {
+  count: number;
+  allowed: boolean;
+};
+
 export interface RateLimitBackend {
-  increment(key: string, windowMs: number, limit: number): Promise<number>;
+  increment(key: string, windowMs: number, limit: number): Promise<RateLimitIncrementResult>;
   remaining(key: string, limit: number): Promise<number>;
   reset(key: string): Promise<void>;
 }
@@ -123,17 +128,17 @@ class MemoryBackend implements RateLimitBackend {
     warnMemoryOnce();
   }
 
-  async increment(key: string, windowMs: number): Promise<number> {
+  async increment(key: string, windowMs: number, limit: number): Promise<RateLimitIncrementResult> {
     const now = Date.now();
     const current = this.state.get(key);
 
     if (!current || now > current.resetAt) {
       this.state.set(key, { count: 1, resetAt: now + windowMs });
-      return 1;
+      return { count: 1, allowed: 1 <= limit };
     }
 
     current.count += 1;
-    return current.count;
+    return { count: current.count, allowed: current.count <= limit };
   }
 
   async remaining(key: string, limit: number): Promise<number> {
@@ -200,7 +205,7 @@ class UpstashBackend implements RateLimitBackend {
     return limiter;
   }
 
-  async increment(key: string, windowMs: number, limit: number): Promise<number> {
+  async increment(key: string, windowMs: number, limit: number): Promise<RateLimitIncrementResult> {
     const result = await this.getLimiter(windowMs, limit).limit(key);
     const count = Math.max(0, limit - result.remaining);
 
@@ -210,7 +215,10 @@ class UpstashBackend implements RateLimitBackend {
       count,
     });
 
-    return count;
+    // Do not derive allowed from remaining: the Upstash library clamps remaining
+    // at 0, so limit - remaining can never exceed limit and a count <= limit
+    // check would always pass. result.success is the library's own verdict.
+    return { count, allowed: result.success };
   }
 
   async remaining(key: string, limit: number): Promise<number> {
@@ -291,11 +299,10 @@ export async function checkRateLimit(key: string, options: RateLimitOptions): Pr
   const backend = getRateLimitBackend();
   const namespace = options.namespace?.trim() || "global";
   const namespacedKey = `${namespace}:${key}`;
-  const count = await backend.increment(namespacedKey, options.windowMs, options.limit);
+  const { allowed } = await backend.increment(namespacedKey, options.windowMs, options.limit);
   const remaining = await backend.remaining(namespacedKey, options.limit);
   const resetAt = getResetAtForKey(backend, namespacedKey, options.windowMs);
   const descriptor = getBackendDescriptor(backend);
-  const allowed = count <= options.limit;
   const retryAfter = Math.max(0, Math.ceil((resetAt - Date.now()) / 1000));
 
   return {
