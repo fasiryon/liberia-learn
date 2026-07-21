@@ -1,9 +1,8 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-// ─── Hoisted mocks ────────────────────────────────────────────────────────────
-
+// Hoisted mocks
 const mockSchoolCount = vi.hoisted(() => vi.fn());
-const mockQueryRaw    = vi.hoisted(() => vi.fn());
+const mockQueryRaw = vi.hoisted(() => vi.fn());
 
 vi.mock("@/lib/db", () => ({
   prisma: {
@@ -14,27 +13,34 @@ vi.mock("@/lib/db", () => ({
 
 import { GET } from "@/app/api/health/route";
 
-// ─── Helpers ──────────────────────────────────────────────────────────────────
+function clearHealthEnv() {
+  delete process.env.OPENAI_API_KEY;
+  delete process.env.AT_API_KEY;
+  delete process.env.AFRICA_TALKING_API_KEY;
+  delete process.env.AT_USERNAME;
+  delete process.env.AFRICA_TALKING_USERNAME;
+  delete process.env.TWILIO_ACCOUNT_SID;
+  delete process.env.TWILIO_AUTH_TOKEN;
+  delete process.env.TWILIO_PHONE_NUMBER;
+  delete process.env.ORANGE_CLIENT_ID;
+  delete process.env.ORANGE_CLIENT_SECRET;
+  delete process.env.ORANGE_SENDER_NUMBER;
+  delete process.env.SMS_PROVIDER;
+  delete process.env.ENABLE_LIVE_SMS;
+}
 
 function setupHealthyDefaults() {
   mockSchoolCount.mockResolvedValue(5);
-  // checkMigrations: 0 pending rows
   mockQueryRaw.mockImplementation(async () => [{ pending: BigInt(0) }]);
   process.env.OPENAI_API_KEY = "sk-test-key";
-  process.env.AT_API_KEY     = "at-test-key";
 }
-
-// ─── Tests ────────────────────────────────────────────────────────────────────
 
 describe("GET /api/health", () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    delete process.env.OPENAI_API_KEY;
-    delete process.env.AT_API_KEY;
+    clearHealthEnv();
     setupHealthyDefaults();
   });
-
-  // ── Healthy ─────────────────────────────────────────────────────────────────
 
   it("returns 200 with status=healthy when all checks pass", async () => {
     const res = await GET();
@@ -45,6 +51,15 @@ describe("GET /api/health", () => {
     expect(body.checks.database).toBe("ok");
     expect(body.checks.migrations).toBe("ok");
     expect(body.checks.aiFactory).toBe("ok");
+    expect(body.checks.sms).toBe("ok");
+  });
+
+  it("treats disabled live SMS as healthy dry-run SMS", async () => {
+    const res = await GET();
+    const body = await res.json();
+
+    expect(res.status).toBe(200);
+    expect(body.status).toBe("healthy");
     expect(body.checks.sms).toBe("ok");
   });
 
@@ -60,8 +75,6 @@ describe("GET /api/health", () => {
     expect(new Date(body.timestamp).getTime()).not.toBeNaN();
   });
 
-  // ── Degraded: AI key missing ─────────────────────────────────────────────
-
   it("returns 200 with status=degraded when OPENAI_API_KEY is absent", async () => {
     delete process.env.OPENAI_API_KEY;
 
@@ -73,10 +86,8 @@ describe("GET /api/health", () => {
     expect(body.checks.database).toBe("ok");
   });
 
-  // ── Degraded: SMS key missing ────────────────────────────────────────────
-
-  it("returns 200 with status=degraded when AT_API_KEY is absent", async () => {
-    delete process.env.AT_API_KEY;
+  it("returns 200 with status=degraded when live SMS has no provider credentials", async () => {
+    process.env.ENABLE_LIVE_SMS = "true";
 
     const res = await GET();
     expect(res.status).toBe(200);
@@ -85,7 +96,31 @@ describe("GET /api/health", () => {
     expect(body.checks.sms).toBe("unavailable");
   });
 
-  // ── Degraded: pending migrations ────────────────────────────────────────
+  it("returns healthy when live SMS has Twilio credentials", async () => {
+    process.env.ENABLE_LIVE_SMS = "true";
+    process.env.SMS_PROVIDER = "twilio";
+    process.env.TWILIO_ACCOUNT_SID = "AC_test";
+    process.env.TWILIO_AUTH_TOKEN = "twilio-token";
+    process.env.TWILIO_PHONE_NUMBER = "+2315550000";
+
+    const res = await GET();
+    const body = await res.json();
+    expect(body.status).toBe("healthy");
+    expect(body.checks.sms).toBe("ok");
+  });
+
+  it("returns degraded when explicit Orange SMS lacks Orange credentials", async () => {
+    process.env.ENABLE_LIVE_SMS = "true";
+    process.env.SMS_PROVIDER = "orange";
+    process.env.TWILIO_ACCOUNT_SID = "AC_test";
+    process.env.TWILIO_AUTH_TOKEN = "twilio-token";
+    process.env.TWILIO_PHONE_NUMBER = "+2315550000";
+
+    const res = await GET();
+    const body = await res.json();
+    expect(body.status).toBe("degraded");
+    expect(body.checks.sms).toBe("unavailable");
+  });
 
   it("returns 200 with status=degraded when unapplied migrations exist", async () => {
     mockQueryRaw.mockImplementation(async () => [{ pending: BigInt(2) }]);
@@ -96,8 +131,6 @@ describe("GET /api/health", () => {
     expect(body.status).toBe("degraded");
     expect(body.checks.migrations).toBe("pending");
   });
-
-  // ── Unhealthy: database down ─────────────────────────────────────────────
 
   it("returns 503 when database is unreachable", async () => {
     mockSchoolCount.mockRejectedValue(new Error("ECONNREFUSED"));
@@ -118,16 +151,11 @@ describe("GET /api/health", () => {
     expect(body.checks.migrations).toBe("error");
   });
 
-  // ── Auth ────────────────────────────────────────────────────────────────────
-
-  it("does not require authentication — public route", async () => {
-    // No auth mocks set up — the route should still succeed
+  it("does not require authentication - public route", async () => {
     const res = await GET();
     expect(res.status).not.toBe(401);
     expect(res.status).not.toBe(403);
   });
-
-  // ── Response shape ──────────────────────────────────────────────────────────
 
   it("response body always contains status, version, timestamp, checks", async () => {
     const res = await GET();
@@ -142,4 +170,3 @@ describe("GET /api/health", () => {
     expect(body.checks).toHaveProperty("sms");
   });
 });
-

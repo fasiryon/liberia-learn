@@ -21,17 +21,17 @@ import { isTrainingCenterEnabled } from "@/lib/serverFlags";
 export const dynamic = "force-dynamic";
 
 export default async function TrainingCenterPage() {
-  // ── Feature gate ──────────────────────────────────────────────────────────
+  // Feature gate
   if (!isTrainingCenterEnabled()) {
     redirect("/teacher");
   }
 
-  // ── Auth ──────────────────────────────────────────────────────────────────
+  // Auth
   const user = await requireUser().catch(() => null);
   if (!user?.id) redirect("/login");
   if (user.role !== "TEACHER" && user.role !== "ADMIN") redirect("/");
 
-  // ── Progress data ─────────────────────────────────────────────────────────
+  // Progress data
   const rawProgress = await prisma.trainingProgress.findMany({
     where: { teacherUserId: user.id },
     select: { moduleId: true, status: true, startedAt: true, completedAt: true },
@@ -56,7 +56,7 @@ export default async function TrainingCenterPage() {
 
       <div className="mx-auto max-w-4xl px-4 py-8">
         <TeacherDashboardBackLink />
-        {/* ── Header ─────────────────────────────────────────────────────── */}
+        {/* Header */}
         <header className="mb-8 flex items-center justify-between gap-4">
           <div>
             <p className="mb-1 text-xs uppercase tracking-wide text-[var(--ll-yellow)]">
@@ -75,7 +75,7 @@ export default async function TrainingCenterPage() {
           </Link>
         </header>
 
-        {/* ── Overall progress ───────────────────────────────────────────── */}
+        {/* Overall progress */}
         <section className="mb-8 rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/80 p-6">
           <div className="mb-3 flex items-center justify-between">
             <p className="text-sm font-semibold text-[var(--ll-text)]">Overall progress</p>
@@ -91,7 +91,7 @@ export default async function TrainingCenterPage() {
           </div>
         </section>
 
-        {/* ── Earned badges ──────────────────────────────────────────────── */}
+        {/* Earned badges */}
         {badges.length > 0 && (
           <section className="mb-8">
             <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-[var(--ll-text-muted)]">
@@ -110,7 +110,7 @@ export default async function TrainingCenterPage() {
           </section>
         )}
 
-        {/* ── Level sections ─────────────────────────────────────────────── */}
+        {/* Level sections */}
         <div className="space-y-10">
           {([1, 2, 3] as const).map((level) => {
             const modules = MODULES_BY_LEVEL[level];

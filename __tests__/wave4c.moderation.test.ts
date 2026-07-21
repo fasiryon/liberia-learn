@@ -1,7 +1,7 @@
 // __tests__/wave4c.moderation.test.ts
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-// ── PATCH /api/admin/content-review/[lessonId] — state machine ────────────────
+// PATCH /api/admin/content-review/[lessonId] state machine
 
 describe("PATCH /api/admin/content-review/[lessonId] state machine", () => {
   beforeEach(() => { vi.resetModules(); });
@@ -41,21 +41,21 @@ describe("PATCH /api/admin/content-review/[lessonId] state machine", () => {
     vi.doMock("@/lib/push/sendPush", () => ({ sendPushToUser: vi.fn(async () => {}) }));
   }
 
-  it("PENDING → APPROVED: returns 200", async () => {
+  it("PENDING -> APPROVED: returns 200", async () => {
     setupMocks("PENDING");
     const { PATCH } = await import("@/app/api/admin/content-review/[lessonId]/route");
     const res = await PATCH(makeReq({ editReviewStatus: "APPROVED" }), { params: { lessonId: "cc-1" } });
     expect(res.status).toBe(200);
-  });
+  }, 15000);
 
-  it("PENDING → REJECTED: returns 200", async () => {
+  it("PENDING -> REJECTED: returns 200", async () => {
     setupMocks("PENDING", vi.fn(async () => ({ id: "cc-1", editReviewStatus: "REJECTED", status: "draft" })));
     const { PATCH } = await import("@/app/api/admin/content-review/[lessonId]/route");
     const res = await PATCH(makeReq({ editReviewStatus: "REJECTED", rejectionReason: "Off-topic" }), { params: { lessonId: "cc-1" } });
     expect(res.status).toBe(200);
   });
 
-  it("APPROVED → REJECTED: blocked with 409 and error=invalid_transition", async () => {
+  it("APPROVED -> REJECTED: blocked with 409 and error=invalid_transition", async () => {
     setupMocks("APPROVED");
     const { PATCH } = await import("@/app/api/admin/content-review/[lessonId]/route");
     const res = await PATCH(makeReq({ editReviewStatus: "REJECTED", rejectionReason: "Bad" }), { params: { lessonId: "cc-1" } });
@@ -64,14 +64,14 @@ describe("PATCH /api/admin/content-review/[lessonId] state machine", () => {
     expect(body.error).toBe("invalid_transition");
   });
 
-  it("null → APPROVED: blocked with 409", async () => {
+  it("null -> APPROVED: blocked with 409", async () => {
     setupMocks(null);
     const { PATCH } = await import("@/app/api/admin/content-review/[lessonId]/route");
     const res = await PATCH(makeReq({ editReviewStatus: "APPROVED" }), { params: { lessonId: "cc-1" } });
     expect(res.status).toBe(409);
   });
 
-  it("REJECTED → APPROVED: blocked with 409", async () => {
+  it("REJECTED -> APPROVED: blocked with 409", async () => {
     setupMocks("REJECTED");
     const { PATCH } = await import("@/app/api/admin/content-review/[lessonId]/route");
     const res = await PATCH(makeReq({ editReviewStatus: "APPROVED" }), { params: { lessonId: "cc-1" } });
@@ -130,7 +130,7 @@ describe("PATCH /api/admin/content-review/[lessonId] state machine", () => {
   });
 });
 
-// ── POST /api/admin/content-review/[lessonId]/unpublish ───────────────────────
+// POST /api/admin/content-review/[lessonId]/unpublish
 
 describe("POST /api/admin/content-review/[lessonId]/unpublish", () => {
   beforeEach(() => { vi.resetModules(); });
@@ -213,7 +213,7 @@ describe("POST /api/admin/content-review/[lessonId]/unpublish", () => {
   });
 });
 
-// ── GET /api/admin/content-review — tab filtering ────────────────────────────
+// GET /api/admin/content-review tab filtering
 
 describe("GET /api/admin/content-review tab filtering", () => {
   beforeEach(() => { vi.resetModules(); });

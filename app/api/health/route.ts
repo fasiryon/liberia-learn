@@ -1,7 +1,7 @@
 /**
  * GET /api/health
  *
- * Public health check endpoint — no auth required.
+ * Public health check endpoint - no auth required.
  * Used by load balancers, uptime monitors, and the deploy verification step.
  *
  * Response shape:
@@ -18,12 +18,13 @@
  * }
  *
  * HTTP status:
- *   200 — healthy or degraded (load balancer keeps serving)
- *   503 — unhealthy (database unreachable; take out of rotation)
+ *   200 - healthy or degraded (load balancer keeps serving)
+ *   503 - unhealthy (database unreachable; take out of rotation)
  */
 
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
+import { isLiveSmsEnabled } from "@/lib/serverFlags";
 
 export const dynamic = "force-dynamic";
 
@@ -64,8 +65,40 @@ function checkAiFactory(): "ok" | "unavailable" {
   return process.env.OPENAI_API_KEY ? "ok" : "unavailable";
 }
 
+function hasTwilioConfig(): boolean {
+  return Boolean(
+    process.env.TWILIO_ACCOUNT_SID?.trim() &&
+      process.env.TWILIO_AUTH_TOKEN?.trim() &&
+      process.env.TWILIO_PHONE_NUMBER?.trim()
+  );
+}
+
+function hasAfricasTalkingConfig(): boolean {
+  return Boolean(
+    (process.env.AT_API_KEY ?? process.env.AFRICA_TALKING_API_KEY)?.trim() &&
+      (process.env.AT_USERNAME ?? process.env.AFRICA_TALKING_USERNAME)?.trim()
+  );
+}
+
+function hasOrangeConfig(): boolean {
+  return Boolean(
+    process.env.ORANGE_CLIENT_ID?.trim() &&
+      process.env.ORANGE_CLIENT_SECRET?.trim() &&
+      process.env.ORANGE_SENDER_NUMBER?.trim()
+  );
+}
+
 function checkSms(): "ok" | "unavailable" {
-  return process.env.AT_API_KEY ? "ok" : "unavailable";
+  if (!isLiveSmsEnabled()) return "ok";
+
+  const explicitProvider = process.env.SMS_PROVIDER?.trim().toLowerCase();
+  if (explicitProvider === "orange") return hasOrangeConfig() ? "ok" : "unavailable";
+  if (explicitProvider === "twilio") return hasTwilioConfig() ? "ok" : "unavailable";
+  if (explicitProvider === "africastalking" || explicitProvider === "africa's talking") {
+    return hasAfricasTalkingConfig() ? "ok" : "unavailable";
+  }
+
+  return hasAfricasTalkingConfig() || hasTwilioConfig() ? "ok" : "unavailable";
 }
 
 export async function GET() {
