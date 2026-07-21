@@ -52,6 +52,7 @@ describe("GET /api/health", () => {
     expect(body.checks.migrations).toBe("ok");
     expect(body.checks.aiFactory).toBe("ok");
     expect(body.checks.sms).toBe("ok");
+    expect(body.checks.smsMode).toBe("dry_run");
   });
 
   it("treats disabled live SMS as healthy dry-run SMS", async () => {
@@ -61,6 +62,7 @@ describe("GET /api/health", () => {
     expect(res.status).toBe(200);
     expect(body.status).toBe("healthy");
     expect(body.checks.sms).toBe("ok");
+    expect(body.checks.smsMode).toBe("dry_run");
   });
 
   it("includes version 1.0.0", async () => {
@@ -94,9 +96,10 @@ describe("GET /api/health", () => {
     const body = await res.json();
     expect(body.status).toBe("degraded");
     expect(body.checks.sms).toBe("unavailable");
+    expect(body.checks.smsMode).toBe("live_unconfigured");
   });
 
-  it("returns healthy when live SMS has Twilio credentials", async () => {
+  it("returns healthy and unverified mode when live SMS has Twilio credentials", async () => {
     process.env.ENABLE_LIVE_SMS = "true";
     process.env.SMS_PROVIDER = "twilio";
     process.env.TWILIO_ACCOUNT_SID = "AC_test";
@@ -107,6 +110,7 @@ describe("GET /api/health", () => {
     const body = await res.json();
     expect(body.status).toBe("healthy");
     expect(body.checks.sms).toBe("ok");
+    expect(body.checks.smsMode).toBe("live_configured_unverified");
   });
 
   it("returns degraded when explicit Orange SMS lacks Orange credentials", async () => {
@@ -120,6 +124,21 @@ describe("GET /api/health", () => {
     const body = await res.json();
     expect(body.status).toBe("degraded");
     expect(body.checks.sms).toBe("unavailable");
+    expect(body.checks.smsMode).toBe("live_unconfigured");
+  });
+
+  it("returns healthy and unverified mode when explicit Orange SMS has credentials", async () => {
+    process.env.ENABLE_LIVE_SMS = "true";
+    process.env.SMS_PROVIDER = "orange";
+    process.env.ORANGE_CLIENT_ID = "orange-client";
+    process.env.ORANGE_CLIENT_SECRET = "orange-secret";
+    process.env.ORANGE_SENDER_NUMBER = "+2315550000";
+
+    const res = await GET();
+    const body = await res.json();
+    expect(body.status).toBe("healthy");
+    expect(body.checks.sms).toBe("ok");
+    expect(body.checks.smsMode).toBe("live_configured_unverified");
   });
 
   it("returns 200 with status=degraded when unapplied migrations exist", async () => {
@@ -168,5 +187,6 @@ describe("GET /api/health", () => {
     expect(body.checks).toHaveProperty("migrations");
     expect(body.checks).toHaveProperty("aiFactory");
     expect(body.checks).toHaveProperty("sms");
+    expect(body.checks).toHaveProperty("smsMode");
   });
 });

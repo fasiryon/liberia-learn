@@ -14,6 +14,7 @@
  *     migrations: "ok" | "pending" | "error",
  *     aiFactory:  "ok" | "unavailable",
  *     sms:        "ok" | "unavailable",
+ *     smsMode:    "dry_run" | "live_unconfigured" | "live_configured_unverified",
  *   }
  * }
  *
@@ -29,6 +30,16 @@ import { isLiveSmsEnabled } from "@/lib/serverFlags";
 export const dynamic = "force-dynamic";
 
 const VERSION = "1.0.0";
+
+type SmsHealthMode =
+  | "dry_run"
+  | "live_unconfigured"
+  | "live_configured_unverified";
+
+type SmsHealth = {
+  status: "ok" | "unavailable";
+  mode: SmsHealthMode;
+};
 
 async function checkDatabase(): Promise<"ok" | "error"> {
   try {
@@ -88,17 +99,31 @@ function hasOrangeConfig(): boolean {
   );
 }
 
-function checkSms(): "ok" | "unavailable" {
-  if (!isLiveSmsEnabled()) return "ok";
-
-  const explicitProvider = process.env.SMS_PROVIDER?.trim().toLowerCase();
-  if (explicitProvider === "orange") return hasOrangeConfig() ? "ok" : "unavailable";
-  if (explicitProvider === "twilio") return hasTwilioConfig() ? "ok" : "unavailable";
-  if (explicitProvider === "africastalking" || explicitProvider === "africa's talking") {
-    return hasAfricasTalkingConfig() ? "ok" : "unavailable";
+function checkSms(): SmsHealth {
+  if (!isLiveSmsEnabled()) {
+    return { status: "ok", mode: "dry_run" };
   }
 
-  return hasAfricasTalkingConfig() || hasTwilioConfig() ? "ok" : "unavailable";
+  const explicitProvider = process.env.SMS_PROVIDER?.trim().toLowerCase();
+  if (explicitProvider === "orange") {
+    return hasOrangeConfig()
+      ? { status: "ok", mode: "live_configured_unverified" }
+      : { status: "unavailable", mode: "live_unconfigured" };
+  }
+  if (explicitProvider === "twilio") {
+    return hasTwilioConfig()
+      ? { status: "ok", mode: "live_configured_unverified" }
+      : { status: "unavailable", mode: "live_unconfigured" };
+  }
+  if (explicitProvider === "africastalking" || explicitProvider === "africa's talking") {
+    return hasAfricasTalkingConfig()
+      ? { status: "ok", mode: "live_configured_unverified" }
+      : { status: "unavailable", mode: "live_unconfigured" };
+  }
+
+  return hasAfricasTalkingConfig() || hasTwilioConfig()
+    ? { status: "ok", mode: "live_configured_unverified" }
+    : { status: "unavailable", mode: "live_unconfigured" };
 }
 
 export async function GET() {
@@ -108,9 +133,11 @@ export async function GET() {
   ]);
 
   const aiFactory = checkAiFactory();
-  const sms = checkSms();
+  const smsHealth = checkSms();
+  const sms = smsHealth.status;
+  const smsMode = smsHealth.mode;
 
-  const checks = { database, migrations, aiFactory, sms };
+  const checks = { database, migrations, aiFactory, sms, smsMode };
 
   let status: "healthy" | "degraded" | "unhealthy";
   if (database === "error") {
