@@ -24,6 +24,7 @@ const PUBLIC_PATHS = [
   "/terms",
   "/data-policy",
   "/contact",
+  "/help",
   "/register",
   "/guardian/register",
   "/share/certificate",
@@ -44,10 +45,10 @@ export async function middleware(req: NextRequest) {
     return NextResponse.next();
   }
 
-  // ── Protected portals — single getToken call ────────────────────────────
-  // /moe/* — MOE_OFFICIAL or isPlatformAdmin
-  // /admin/* — ADMIN or isPlatformAdmin
-  // /platform/* — isPlatformAdmin only
+  // Protected portals. Single getToken call.
+  // /moe/* requires MOE_OFFICIAL or isPlatformAdmin.
+  // /admin/* requires ADMIN or isPlatformAdmin.
+  // /platform/* requires isPlatformAdmin.
   const isPortalRoute =
     pathname.startsWith("/moe/") ||
     pathname === "/admin" ||
@@ -72,7 +73,7 @@ export async function middleware(req: NextRequest) {
       return NextResponse.next();
     }
 
-    // /admin/* and /platform/* — unauthenticated → /login
+    // /admin/* and /platform/* unauthenticated requests go to /login.
     if (!token) {
       const url = req.nextUrl.clone();
       url.pathname = "/login";
