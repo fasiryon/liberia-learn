@@ -701,6 +701,7 @@ async function findOrCreateGuardianForPhone(schoolId: string, phone: string, act
   const existing = await prisma.user.findFirst({
     where: {
       role: "GUARDIAN",
+      schoolId,
       guardianPhoneE164: phoneE164,
     },
     select: { id: true },
@@ -741,13 +742,14 @@ type ImportProcessSummary = {
   credentials: Array<{ name: string; username: string; temporaryPassword: string }>;
 };
 
-export async function processStudentImportBatch(batchId: string) {
+export async function processStudentImportBatch(batchId: string, expectedSchoolId?: string) {
   const batch = await prisma.studentImportBatch.findUnique({
     where: { id: batchId },
     select: {
       id: true,
       schoolId: true,
       createdById: true,
+      status: true,
       resultSummary: true,
     },
   });
@@ -756,13 +758,33 @@ export async function processStudentImportBatch(batchId: string) {
     throw Object.assign(new Error("Import batch not found"), { status: 404 });
   }
 
+  if (expectedSchoolId && batch.schoolId !== expectedSchoolId) {
+    throw Object.assign(new Error("Import batch school mismatch"), { status: 403 });
+  }
+
+  if (batch.status === "COMPLETED") {
+    const completed = (batch.resultSummary ?? {}) as {
+      created?: number;
+      errors?: Array<{ rowNumber: number; message: string }>;
+    };
+    return {
+      created: completed.created ?? 0,
+      errors: completed.errors ?? [],
+      credentials: [],
+    };
+  }
+
   const payload = (batch.resultSummary ?? {}) as { rows?: ImportRowInput[] };
   const rows = Array.isArray(payload.rows) ? payload.rows : [];
 
-  await prisma.studentImportBatch.update({
-    where: { id: batchId },
+  const claim = await prisma.studentImportBatch.updateMany({
+    where: { id: batchId, schoolId: batch.schoolId, status: { in: ["PENDING", "QUEUED", "FAILED"] } },
     data: { status: "PROCESSING", processedRows: 0 },
   });
+
+  if (claim.count !== 1) {
+    throw Object.assign(new Error("Import batch is already processing"), { status: 409 });
+  }
 
   const school = await prisma.school.findUnique({
     where: { id: batch.schoolId },
@@ -770,6 +792,19 @@ export async function processStudentImportBatch(batchId: string) {
   });
 
   if (!school?.code) {
+    await prisma.studentImportBatch.update({
+      where: { id: batchId },
+      data: {
+        status: "FAILED",
+        errorCount: rows.length,
+        completedAt: new Date(),
+        resultSummary: {
+          rows,
+          created: 0,
+          errors: [{ rowNumber: 0, message: "School code is required before importing students" }],
+        },
+      },
+    });
     throw Object.assign(new Error("School code is required before importing students"), { status: 400 });
   }
 
@@ -931,7 +966,18 @@ export async function createStudentImportBatch(input: {
   });
 
   if (shouldQueue) {
-    await enqueueJob(JobType.STUDENT_IMPORT, { batchId: batch.id, schoolId: input.schoolId });
+    const enqueued = await enqueueJob(
+      JobType.STUDENT_IMPORT,
+      { batchId: batch.id, schoolId: input.schoolId },
+      { messageGroupId: input.schoolId, messageDeduplicationId: batch.id }
+    );
+    if (!enqueued) {
+      await prisma.studentImportBatch.update({
+        where: { id: batch.id },
+        data: { status: "FAILED", completedAt: new Date(), errorCount: input.rows.length },
+      });
+      throw Object.assign(new Error("Import queue is unavailable"), { status: 503 });
+    }
     return { batchId: batch.id, status: batch.status };
   }
 
@@ -961,7 +1007,8 @@ export async function getImportBatchForSchool(schoolId: string, batchId: string)
     throw Object.assign(new Error("Import batch not found"), { status: 404 });
   }
 
-  return batch;
+  const { credentialCsv, ...publicBatch } = batch;
+  return { ...publicBatch, hasCredentials: Boolean(credentialCsv) };
 }
 
 export async function consumeImportBatchCredentialCsv(schoolId: string, batchId: string) {

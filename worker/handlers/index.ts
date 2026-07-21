@@ -5,7 +5,9 @@ import { handleGenerateCourseThumbnailJob } from "@/worker/handlers/courseThumbn
 import { handleGenerateEmbeddingsJob } from "@/worker/handlers/embeddings";
 import { handleConfusionDetectionJob } from "@/worker/handlers/intelligence";
 import { handleGenerateSchoolOnboardingKitJob } from "@/worker/handlers/onboardingKit";
+import { handleOneRosterImportJob } from "@/worker/handlers/oneRosterImport";
 import { handleSendSmsJob } from "@/worker/handlers/sms";
+import { handleStudentImportJob } from "@/worker/handlers/studentImport";
 import { handleGenerateTextbookJob } from "@/worker/handlers/textbook";
 import {
   handleCurriculumRegenerationGroupJob,
@@ -30,6 +32,10 @@ export async function dispatchJob(jobType: JobType, payload: unknown, metadata: 
       return handleSendSmsJob(payload as { to: string; body: string });
     case JobType.CONFUSION_DETECTION:
       return handleConfusionDetectionJob(payload as { studentId: string; schoolId: string });
+    case JobType.STUDENT_IMPORT:
+      return handleStudentImportJob(payload as { batchId: string; schoolId: string });
+    case JobType.ONEROSTER_IMPORT:
+      return handleOneRosterImportJob(payload as { batchId: string; schoolId: string });
     case JobType.GENERATE_COURSE_THUMBNAIL:
       return handleGenerateCourseThumbnailJob(payload as { contentId: string; schoolId?: string | null; actorUserId?: string | null }, metadata);
     case JobType.GENERATE_SCHOOL_ONBOARDING_KIT:
@@ -45,17 +51,16 @@ export async function dispatchJob(jobType: JobType, payload: unknown, metadata: 
     case JobType.QUEUE_READINESS_PROBE:
       return { status: "ok" };
     case JobType.HEALTH_CHECK:
-      console.log("[HEALTH_CHECK] Worker alive —", new Date().toISOString());
+      console.log("[HEALTH_CHECK] Worker alive:", new Date().toISOString());
       return { status: "ok", ts: new Date().toISOString() };
     // Known-but-unhandled types: ack without crashing so they don't fill the DLQ.
     case JobType.GENERATE_LESSON_AUDIO:
-    case JobType.STUDENT_IMPORT:
     case JobType.AUTONOMOUS_WORKFLOW_RUN:
-      console.warn(`[WORKER] Job type ${jobType} not yet implemented — acking without processing`);
+      console.warn(`[WORKER] Job type ${jobType} not yet implemented; acking without processing`);
       return { status: "noop", jobType };
     default:
       // Unknown types are acked (not re-queued) to prevent DLQ flooding.
-      console.warn(`[WORKER] Unknown job type: ${jobType} — acking`);
+      console.warn(`[WORKER] Unknown job type: ${jobType}; acking`);
       return { status: "unknown", jobType };
   }
 }

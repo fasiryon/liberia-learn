@@ -1,4 +1,4 @@
-# Worker Service Runbook — NR-2
+# Worker Service Runbook - NR-2
 
 ## Architecture
 
@@ -33,11 +33,12 @@ messages from the production FIFO queue.
 | `GENERATE_SCHOOL_ONBOARDING_KIT` | `handlers/onboardingKit.ts` | Live |
 | `GENERATE_CERTIFICATION_ASSETS` | `handlers/certificationAssets.ts` | Live |
 | `CURRICULUM_REGENERATE_*` | `handlers/curriculumRegeneration.ts` | Live |
-| `HEALTH_CHECK` | inline — logs timestamp | Live |
-| `QUEUE_READINESS_PROBE` | inline — returns ok | Live |
-| `GENERATE_LESSON_AUDIO` | — | Noop (not yet implemented) |
-| `STUDENT_IMPORT` | — | Noop (not yet implemented) |
-| `AUTONOMOUS_WORKFLOW_RUN` | — | Noop (not yet implemented) |
+| `HEALTH_CHECK` | inline, logs timestamp | Live |
+| `QUEUE_READINESS_PROBE` | inline, returns ok | Live |
+| `GENERATE_LESSON_AUDIO` | None | Noop (not yet implemented) |
+| `STUDENT_IMPORT` | `handlers/studentImport.ts` | Live |
+| `ONEROSTER_IMPORT` | `handlers/oneRosterImport.ts` | Live |
+| `AUTONOMOUS_WORKFLOW_RUN` | None | Noop (not yet implemented) |
 
 Unknown job types are acked without processing to prevent DLQ flooding.
 

@@ -31,6 +31,7 @@ const BASE_NAV_LINKS = [
   { label: "Audit Log", href: "/admin/audit" },
   { label: "Compliance", href: "/admin/compliance" },
   { label: "Data Downloads", href: "/admin/governance/exports" },
+  { label: "Interoperability", href: "/admin/interoperability" },
   { label: "Video Moderation", href: "/admin/video-moderation" },
   { label: "Content Review", href: "/admin/content-review" },
   { label: "Announcements", href: "/admin/announcements" },

@@ -169,7 +169,7 @@ async function importGuardians(
         });
       } else {
         warnings.push(
-          `Guardian '${fullName}': no student named '${studentName}' found — imported without student link.`
+          `Guardian '${fullName}': no student named '${studentName}' found - imported without student link.`
         );
       }
 
@@ -213,6 +213,9 @@ export async function POST(req: NextRequest) {
     const failedRowsCsv = invalid.length > 0 ? buildErrorCsv(originalHeaders, invalid) : null;
 
     let imported = 0;
+    let accepted = 0;
+    let batchId: string | null = null;
+    let batchStatus: string | null = null;
     const writeErrors: Array<{ row: ImportRow; reason: string }> = [];
 
     if (body.importType === "students" && valid.length > 0) {
@@ -232,8 +235,10 @@ export async function POST(req: NextRequest) {
         rows: importRows,
       });
 
-      // batchResult.batchId reflects what was actually processed
-      imported = valid.length;
+      accepted = valid.length;
+      batchId = batchResult.batchId;
+      batchStatus = batchResult.status;
+      imported = batchResult.status === "COMPLETED" ? valid.length : 0;
 
       await logAudit({
         userId: user.id,
@@ -241,7 +246,7 @@ export async function POST(req: NextRequest) {
         action: "admin.bulk_import.students",
         resourceType: "student_import_batch",
         resourceId: batchResult.batchId,
-        details: { imported, skipped, importType: "students" },
+        details: { imported, accepted, skipped, importType: "students", status: batchStatus },
       });
     } else if (body.importType === "teachers" && valid.length > 0) {
       const result = await importTeachers(valid, schoolId, user.id);
@@ -273,6 +278,9 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({
       imported,
+      accepted,
+      batchId,
+      status: batchStatus,
       skipped,
       errors: writeErrors.map((e) => ({ row: e.row, reason: e.reason })),
       failedRowsCsv,

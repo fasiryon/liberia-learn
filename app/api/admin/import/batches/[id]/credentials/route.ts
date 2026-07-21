@@ -16,7 +16,7 @@ export async function GET(_req: Request, { params }: { params: { id: string } })
       status: 200,
       headers: {
         "Content-Type": "text/csv; charset=utf-8",
-        "Content-Disposition": `attachment; filename="student-import-credentials-${params.id}.csv"`,
+        "Content-Disposition": `attachment; filename="import-credentials-${params.id}.csv"`,
         "Cache-Control": "private, no-store",
       },
     });

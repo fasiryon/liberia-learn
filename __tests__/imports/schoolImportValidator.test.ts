@@ -501,7 +501,7 @@ describe("POST /api/admin/import/confirm", () => {
 
   it("calls createStudentImportBatch for valid student rows", async () => {
     mockRequireRole.mockResolvedValueOnce(ADMIN_USER);
-    mockCreateStudentImportBatch.mockResolvedValueOnce({ batchId: "batch-1" });
+    mockCreateStudentImportBatch.mockResolvedValueOnce({ batchId: "batch-1", status: "COMPLETED" });
 
     const res = await confirmPost(
       makePost("http://localhost/api/admin/import/confirm", {
@@ -522,12 +522,14 @@ describe("POST /api/admin/import/confirm", () => {
     expect(res.status).toBe(200);
     expect(mockCreateStudentImportBatch).toHaveBeenCalledOnce();
     expect(data.imported).toBe(1);
+    expect(data.accepted).toBe(1);
+    expect(data.status).toBe("COMPLETED");
     expect(data.skipped).toBe(0);
   });
 
   it("skips invalid rows and only writes valid ones", async () => {
     mockRequireRole.mockResolvedValueOnce(ADMIN_USER);
-    mockCreateStudentImportBatch.mockResolvedValueOnce({ batchId: "batch-2" });
+    mockCreateStudentImportBatch.mockResolvedValueOnce({ batchId: "batch-2", status: "COMPLETED" });
 
     const res = await confirmPost(
       makePost("http://localhost/api/admin/import/confirm", {
@@ -557,6 +559,23 @@ describe("POST /api/admin/import/confirm", () => {
     expect(data.imported).toBe(1);
     expect(data.skipped).toBe(1);
     expect(data.failedRowsCsv).toBeTruthy();
+  });
+
+  it("reports queued student rows as accepted but not yet imported", async () => {
+    mockRequireRole.mockResolvedValueOnce(ADMIN_USER);
+    mockCreateStudentImportBatch.mockResolvedValueOnce({ batchId: "batch-3", status: "QUEUED" });
+
+    const res = await confirmPost(
+      makePost("http://localhost/api/admin/import/confirm", {
+        importType: "students",
+        schoolId: "school-1",
+        rows: [{ firstName: "Fatu", lastName: "Kollie", grade: "7", dateOfBirth: "2012-03-15" }],
+      })
+    );
+    const data = await res.json();
+
+    expect(res.status).toBe(200);
+    expect(data).toMatchObject({ imported: 0, accepted: 1, batchId: "batch-3", status: "QUEUED" });
   });
 
   it("rejects non-admin with 403", async () => {

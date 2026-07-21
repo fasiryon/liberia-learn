@@ -14,7 +14,7 @@ describe("enqueueJob", () => {
   it("sends the job to SQS with group and deduplication ids", async () => {
     sqsMock.on(SendMessageCommand).resolves({});
 
-    await enqueueJob(JobType.SEND_SMS, { to: "+231770000000", body: "Hello" }, {
+    const enqueued = await enqueueJob(JobType.SEND_SMS, { to: "+231770000000", body: "Hello" }, {
       messageGroupId: "sms",
       messageDeduplicationId: "sms-1",
     });
@@ -25,16 +25,18 @@ describe("enqueueJob", () => {
     expect(call.args[0].input.QueueUrl).toBe(process.env.SQS_QUEUE_URL);
     expect(call.args[0].input.MessageGroupId).toBe("sms");
     expect(call.args[0].input.MessageDeduplicationId).toBe("sms-1");
+    expect(enqueued).toBe(true);
   });
 
   it("derives FIFO attributes when callers do not override them", async () => {
     sqsMock.on(SendMessageCommand).resolves({});
 
-    await enqueueJob(JobType.SEND_SMS, { to: "+231770000000", body: "Hello" });
+    const enqueued = await enqueueJob(JobType.SEND_SMS, { to: "+231770000000", body: "Hello" });
 
     const [call] = sqsMock.commandCalls(SendMessageCommand);
     expect(call.args[0].input.MessageGroupId).toBe(JobType.SEND_SMS);
     expect(call.args[0].input.MessageDeduplicationId).toMatch(/^[a-f0-9]{64}$/);
+    expect(enqueued).toBe(true);
   });
 
   it("omits FIFO-only attributes for standard queues", async () => {
@@ -55,10 +57,25 @@ describe("enqueueJob", () => {
     delete process.env.SQS_QUEUE_URL;
     const warnSpy = vi.spyOn(console, "warn").mockImplementation(() => {});
 
-    await enqueueJob(JobType.SEND_SMS, { to: "+231770000000", body: "Hello" });
+    const enqueued = await enqueueJob(JobType.SEND_SMS, { to: "+231770000000", body: "Hello" });
 
     expect(sqsMock.commandCalls(SendMessageCommand)).toHaveLength(0);
     expect(warnSpy).toHaveBeenCalled();
+    expect(enqueued).toBe(false);
     warnSpy.mockRestore();
+  });
+
+  it("returns false when SQS rejects the send", async () => {
+    sqsMock.on(SendMessageCommand).rejects(new Error("SQS unavailable"));
+    const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+
+    const enqueued = await enqueueJob(JobType.ONEROSTER_IMPORT, {
+      batchId: "batch-1",
+      schoolId: "school-1",
+    });
+
+    expect(enqueued).toBe(false);
+    expect(errorSpy).toHaveBeenCalled();
+    errorSpy.mockRestore();
   });
 });

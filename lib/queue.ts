@@ -9,6 +9,7 @@ export enum JobType {
   SEND_SMS = "SEND_SMS",
   CONFUSION_DETECTION = "CONFUSION_DETECTION",
   STUDENT_IMPORT = "STUDENT_IMPORT",
+  ONEROSTER_IMPORT = "ONEROSTER_IMPORT",
   GENERATE_COURSE_THUMBNAIL = "GENERATE_COURSE_THUMBNAIL",
   GENERATE_SCHOOL_ONBOARDING_KIT = "GENERATE_SCHOOL_ONBOARDING_KIT",
   GENERATE_CERTIFICATION_ASSETS = "GENERATE_CERTIFICATION_ASSETS",
@@ -60,11 +61,11 @@ function buildDeduplicationId(jobType: JobType, payload: unknown) {
     .digest("hex");
 }
 
-export async function enqueueJob(jobType: JobType, payload: unknown, options: EnqueueJobOptions = {}): Promise<void> {
+export async function enqueueJob(jobType: JobType, payload: unknown, options: EnqueueJobOptions = {}): Promise<boolean> {
   const queueUrl = getQueueUrl();
   if (!queueUrl) {
     console.warn("[QUEUE] SQS_QUEUE_URL not configured; skipping enqueue", { jobType });
-    return;
+    return false;
   }
 
   const body: QueueEnvelope = {
@@ -87,12 +88,14 @@ export async function enqueueJob(jobType: JobType, payload: unknown, options: En
         ...fifoAttributes,
       })
     );
+    return true;
   } catch (err) {
-    // SQS send failed — ECS worker may not be running (NR-2: provision ECS cluster).
+    // SQS send failed. The ECS worker may not be running (NR-2: provision ECS cluster).
     // Log but do not throw so callers are not blocked by queue unavailability.
-    console.error("[QUEUE] SQS send failed — no consumer will process this job until ECS is provisioned", {
+    console.error("[QUEUE] SQS send failed; no consumer will process this job until ECS is provisioned", {
       jobType,
       error: err instanceof Error ? err.message : String(err),
     });
+    return false;
   }
 }

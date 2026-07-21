@@ -14,6 +14,7 @@ const nextConfig = {
   output: "standalone",
   staticPageGenerationTimeout: 300,
   experimental: {
+    cpus: 2,
     serverComponentsExternalPackages: ["@react-pdf/renderer"],
     // Next's automatic output-file-tracing missed lib/agents/prompts/*.md at
     // runtime (readFileSync(new URL(..., import.meta.url)) isn't statically
@@ -44,7 +45,7 @@ const nextConfig = {
           { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
           { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=()" },
           { key: "Strict-Transport-Security", value: "max-age=63072000; includeSubDomains; preload" },
-          // A2 — Content-Security-Policy. Shipped in Report-Only mode first so
+          // A2 Content-Security-Policy. Shipped in Report-Only mode first so
           // CSP violations (inline scripts in credential-card + LowBandwidthMode,
           // YouTube embeds, third-party beacons) surface in the browser console /
           // Sentry without breaking the page. Switch the key to
