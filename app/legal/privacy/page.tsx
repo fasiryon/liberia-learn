@@ -29,9 +29,10 @@ export default function PrivacyPolicyPage() {
         <p className="mt-2">
           Student-level information is limited to authorized users with a legitimate education role. A teacher of
           record may see students assigned to their classes. A school administrator may see student records for their
-          own school. A guardian may see information for their linked child. Ministry of Education users see aggregate
-          national, county, district, school, or subject reporting only; MOE views do not permit individual student
-          drilldown.
+          own school. A guardian may see information for their linked child. Ministry of Education dashboard views show
+          aggregate national, county, district, school, or subject reporting. Authorized MOE exports may include
+          pseudonymized school-cohort learner rows for oversight review, but they do not include student names, emails,
+          phone numbers, guardian contact details, or raw student identifiers.
         </p>
       </section>
 

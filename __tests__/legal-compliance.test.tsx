@@ -4,6 +4,8 @@ import { renderToStaticMarkup } from "react-dom/server";
 import PrivacyPolicyPage from "@/app/legal/privacy/page";
 import TermsOfServicePage from "@/app/legal/terms/page";
 import DataForMinorsPage from "@/app/legal/data-for-minors/page";
+import DataRetentionPolicyPage from "@/app/legal/data-retention/page";
+import ProcurementSecurityPacketPage from "@/app/legal/procurement-security-packet/page";
 import ContactPage from "@/app/contact/page";
 import { LegalFooter } from "@/components/LegalFooter";
 import {
@@ -26,7 +28,8 @@ describe("Sprint 16F legal pages", () => {
     expect(html).toContain("Privacy Policy");
     expect(html).toContain("name, grade, school, learning activity");
     expect(html).toContain("guardian contact information");
-    expect(html).toContain("MOE views do not permit individual student");
+    expect(html).toContain("Ministry of Education dashboard views show");
+    expect(html).toContain("pseudonymized school-cohort learner rows");
     expect(html).toContain("Supabase/Postgres");
     expect(html).toContain("Vercel edge network");
     expect(html).toContain("active account lifetime plus 2 years");
@@ -59,6 +62,28 @@ describe("Sprint 16F legal pages", () => {
     expect(html).toContain("data-requests@liberialearn.org");
   });
 
+  it("renders the data retention policy with honest current-state language", () => {
+    const html = renderToStaticMarkup(<DataRetentionPolicyPage />);
+
+    expect(html).toContain("Data Retention Policy");
+    expect(html).toContain("not yet implemented");
+    expect(html).toContain("scheduled retention enforcement");
+    expect(html).toContain("Supabase free tier");
+    expect(html).toContain("not a full database backup");
+    expect(html).toContain("manual and policy-bound");
+  });
+
+  it("renders the procurement security packet with known limitations", () => {
+    const html = renderToStaticMarkup(<ProcurementSecurityPacketPage />);
+
+    expect(html).toContain("Procurement and Security Packet");
+    expect(html).toContain("dry-run mode");
+    expect(html).toContain("live_configured_unverified");
+    expect(html).toContain("reactive and queryable rather than proactive");
+    expect(html).toContain("not a full database backup");
+    expect(html).toContain("Single sign-on is available on request");
+  });
+
   it("renders the contact page", () => {
     const html = renderToStaticMarkup(<ContactPage />);
 
@@ -77,6 +102,8 @@ describe("Sprint 16F footer and cookie notice", () => {
     expect(html).toContain("/legal/privacy");
     expect(html).toContain("/legal/terms");
     expect(html).toContain("/legal/data-for-minors");
+    expect(html).toContain("/legal/data-retention");
+    expect(html).toContain("/legal/procurement-security-packet");
     expect(html).toContain("/contact");
   });
 

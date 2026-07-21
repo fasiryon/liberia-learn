@@ -4,6 +4,8 @@ export const legalFooterLinks = [
   { label: "Privacy Policy", href: "/legal/privacy" },
   { label: "Terms of Service", href: "/legal/terms" },
   { label: "Data Policy for Minors", href: "/legal/data-for-minors" },
+  { label: "Data Retention", href: "/legal/data-retention" },
+  { label: "Procurement Packet", href: "/legal/procurement-security-packet" },
   { label: "Contact", href: "/contact" },
 ];
 
