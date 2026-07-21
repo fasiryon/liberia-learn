@@ -6,6 +6,14 @@ Prepared: July 21, 2026
 
 LiberiaLearn has real production controls for role-based access, school tenant isolation, audit logging, governed aggregate exports, health checks, and public legal/privacy pages. This packet is current-state accurate. It lists implemented controls and known gaps separately so Ministry or procurement reviewers are not given aspirational claims as if they were live guarantees.
 
+## Current limitations at a glance
+
+- SMS health is currently dry-run healthy, not live-provider verified.
+- Backups are stopgap CSV exports, not full database point-in-time recovery.
+- Safeguarding escalation status is reactive and queryable, not proactive alerting.
+- Retention enforcement is manual today; scheduled purge or anonymization is planned.
+- Some governed export job types need generation-path completion before they can be claimed complete.
+
 ## Architecture
 
 LiberiaLearn is a Next.js application deployed on Vercel with Supabase/Postgres as the primary database. Prisma is used for database access. The application uses server-side route handlers for protected operations and public route handlers for health and legal surfaces.
@@ -66,4 +74,3 @@ Single sign-on is available on request and should be scoped once a specific inst
 | Full backup and restore | CSV stopgap backups exist; no full DB point-in-time restore posture on Supabase free tier | Upgrade Supabase, enable managed backups/PITR, run restore drills |
 | Safeguarding alerting | Reactive/queryable status exists | Build proactive notifications and delivery evidence |
 | Export job generation | Some job approval/download surfaces exist without generation for all listed types | Audit each type and implement missing generation paths |
-

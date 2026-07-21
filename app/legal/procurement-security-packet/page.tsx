@@ -14,6 +14,17 @@ export default function ProcurementSecurityPacketPage() {
         </p>
       </section>
 
+      <section className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-surface)] p-5">
+        <h2 className="text-xl font-semibold text-[var(--ll-text)]">Current Limitations at a Glance</h2>
+        <ul className="mt-3 space-y-2">
+          <li>- SMS health is currently dry-run healthy, not live-provider verified.</li>
+          <li>- Backups are stopgap CSV exports, not full database point-in-time recovery.</li>
+          <li>- Safeguarding escalation status is reactive and queryable, not proactive alerting.</li>
+          <li>- Retention enforcement is manual today; scheduled purge or anonymization is planned.</li>
+          <li>- Some governed export job types need generation-path completion before they can be claimed complete.</li>
+        </ul>
+      </section>
+
       <section>
         <h2 className="text-xl font-semibold text-[var(--ll-text)]">Architecture Summary</h2>
         <p className="mt-2">

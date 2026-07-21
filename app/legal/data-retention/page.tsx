@@ -14,6 +14,16 @@ export default function DataRetentionPolicyPage() {
         </p>
       </section>
 
+      <section className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-surface)] p-5">
+        <h2 className="text-xl font-semibold text-[var(--ll-text)]">Current Limitations at a Glance</h2>
+        <ul className="mt-3 space-y-2">
+          <li>- Automated retention enforcement is not yet implemented.</li>
+          <li>- Deletion and retention review is currently manual and policy-bound.</li>
+          <li>- Current backups are stopgap CSV backups, not full database point-in-time recovery.</li>
+          <li>- Supabase managed backup and restore capability requires the planned paid-tier upgrade.</li>
+        </ul>
+      </section>
+
       <section>
         <h2 className="text-xl font-semibold text-[var(--ll-text)]">Current Practice</h2>
         <p className="mt-2">

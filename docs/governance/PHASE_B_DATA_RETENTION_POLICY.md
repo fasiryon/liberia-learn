@@ -6,6 +6,13 @@ Effective date: July 21, 2026
 
 This policy describes LiberiaLearn's current retention practice and the enforcement work still planned. It is written for Ministry, procurement, and security review. It does not claim automation that is not implemented in code today.
 
+## Current limitations at a glance
+
+- Automated retention enforcement is not yet implemented.
+- Deletion and retention review is currently manual and policy-bound.
+- Current backups are stopgap CSV backups, not full database point-in-time recovery.
+- Supabase managed backup and restore capability requires the planned paid-tier upgrade.
+
 ## Current practice
 
 Student, guardian, teacher, school, assignment, progress, attendance, and operational records are retained while the school or account remains active. Retention after school offboarding or account closure is currently handled through operational review rather than an automated scheduled purge or anonymization job.
@@ -35,4 +42,3 @@ The required future sprint is a real retention-enforcement workflow:
 - audit evidence for every action
 - exceptions for legal, school-record, safeguarding, or procurement holds
 - operational report showing rows reviewed, rows changed, and rows held
-

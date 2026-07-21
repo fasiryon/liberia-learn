@@ -66,6 +66,7 @@ describe("Sprint 16F legal pages", () => {
     const html = renderToStaticMarkup(<DataRetentionPolicyPage />);
 
     expect(html).toContain("Data Retention Policy");
+    expect(html).toContain("Current Limitations at a Glance");
     expect(html).toContain("not yet implemented");
     expect(html).toContain("scheduled retention enforcement");
     expect(html).toContain("Supabase free tier");
@@ -77,6 +78,7 @@ describe("Sprint 16F legal pages", () => {
     const html = renderToStaticMarkup(<ProcurementSecurityPacketPage />);
 
     expect(html).toContain("Procurement and Security Packet");
+    expect(html).toContain("Current Limitations at a Glance");
     expect(html).toContain("dry-run mode");
     expect(html).toContain("live_configured_unverified");
     expect(html).toContain("reactive and queryable rather than proactive");
