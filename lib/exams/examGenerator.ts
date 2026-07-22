@@ -160,6 +160,22 @@ async function requestExam(
     throw new Error(`Exam generator returned ${exam.questions.length} questions, expected ${params.questionCount}.`);
   }
 
+  // Models occasionally append a per-question suffix to an otherwise-correct moeCode
+  // (e.g. "MATH.G7.RATIO.1") despite the prompt instruction to copy it exactly, most
+  // often when only one standard was requested across several questions. Normalize
+  // to the base standard when the suffixed value unambiguously extends exactly one
+  // requested code, rather than discarding an otherwise-valid exam over formatting.
+  for (const question of exam.questions) {
+    if (!params.moeStandards.includes(question.moeCode)) {
+      const matches = params.moeStandards.filter(
+        (standard) => question.moeCode.startsWith(standard) && question.moeCode !== standard
+      );
+      if (matches.length === 1) {
+        question.moeCode = matches[0];
+      }
+    }
+  }
+
   for (const question of exam.questions) {
     if (!params.moeStandards.includes(question.moeCode)) {
       throw new Error(`Question moeCode ${question.moeCode} was not in the requested MOE standards.`);

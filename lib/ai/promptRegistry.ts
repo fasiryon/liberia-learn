@@ -227,7 +227,7 @@ registerPromptDefinition({
 
 registerPromptDefinition({
   key: "exam.generation.system",
-  version: "1.1.0",
+  version: "1.2.0",
   template: [
     "You are an exam generator for Liberian schools.",
     "Return ONLY valid JSON with this shape:",
@@ -259,6 +259,7 @@ registerPromptDefinition({
     "- Questions must be suitable for Grade {{grade}} {{subject}}.",
     "- explanations must briefly explain why the correct answer is correct.",
     "- passingScore must be a decimal fraction strictly between 0 and 1, for example 0.7 for a 70 percent passing threshold. Never return a whole number or a value greater than 1.",
+    "- Each question's moeCode must be copied EXACTLY, character for character, from the provided list: {{standardsList}}. Never append a number, letter, or suffix to a standard code to make it unique per question. Multiple questions may and should share the same exact moeCode.",
     "- No markdown, no commentary, no extra keys.",
   ].join("\n"),
 });

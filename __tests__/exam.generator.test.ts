@@ -149,6 +149,68 @@ describe("generateExam", () => {
     ).rejects.toThrow();
   });
 
+  it("normalizes a per-question suffix appended to an otherwise-correct moeCode", async () => {
+    mockRoutedCompletion.mockResolvedValueOnce({
+      content: JSON.stringify({
+        title: "Grade 7 Math Exam",
+        subject: "MATH",
+        grade: 7,
+        moeStandards: ["MATH.G7.RATIO"],
+        timeLimit: 60,
+        passingScore: 0.7,
+        questions: Array.from({ length: 5 }, (_, index) => ({
+          prompt: `Question ${index + 1}`,
+          options: ["A", "B", "C", "D"],
+          correctIndex: 0,
+          explanation: "Because this is the correct answer.",
+          moeCode: `MATH.G7.RATIO.${index + 1}`,
+          points: 1,
+        })),
+      }),
+    });
+
+    const exam = await generateExam({
+      subject: "MATH",
+      grade: 7,
+      moeStandards: ["MATH.G7.RATIO"],
+      questionCount: 5,
+      timeLimit: 60,
+    });
+
+    expect(exam.questions.every((question) => question.moeCode === "MATH.G7.RATIO")).toBe(true);
+  });
+
+  it("still fails a moeCode that does not unambiguously extend a single requested standard", async () => {
+    mockRoutedCompletion.mockResolvedValue({
+      content: JSON.stringify({
+        title: "Grade 7 Math Exam",
+        subject: "MATH",
+        grade: 7,
+        moeStandards: ["MATH.G7.RATIO", "MATH.G7.NUM"],
+        timeLimit: 60,
+        passingScore: 0.7,
+        questions: Array.from({ length: 4 }, (_, index) => ({
+          prompt: `Question ${index + 1}`,
+          options: ["A", "B", "C", "D"],
+          correctIndex: 0,
+          explanation: "Because this is the correct answer.",
+          moeCode: "MATH.G7.UNRELATED",
+          points: 1,
+        })),
+      }),
+    });
+
+    await expect(
+      generateExam({
+        subject: "MATH",
+        grade: 7,
+        moeStandards: ["MATH.G7.RATIO", "MATH.G7.NUM"],
+        questionCount: 4,
+        timeLimit: 60,
+      })
+    ).rejects.toThrow();
+  });
+
   it("throws if AI returns malformed response after retry", async () => {
     mockRoutedCompletion
       .mockResolvedValueOnce({ content: "{bad json" })
