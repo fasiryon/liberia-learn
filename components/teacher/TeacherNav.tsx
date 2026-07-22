@@ -8,6 +8,8 @@ const LINKS: { href: string; label: string; badgeKey?: string; tour?: string }[]
   { href: "/teacher", label: "Overview", tour: "teacher-overview" },
   { href: "/teacher/homework", label: "Homework", tour: "teacher-homework" },
   { href: "/teacher/curriculum", label: "Curriculum", tour: "teacher-curriculum" },
+  { href: "/teacher/standards", label: "Standards" },
+  { href: "/teacher/skills", label: "Skills Library" },
   { href: "/teacher/messages", label: "Messages", badgeKey: "messages", tour: "teacher-messages" },
   { href: "/teacher/delivery-report", label: "Delivery Report" },
   { href: "/teacher/attendance", label: "Attendance" },
