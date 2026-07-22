@@ -479,7 +479,7 @@ export async function getPilotReadinessReport(
 export async function getOnboardingReadinessReport(
   schoolId: string
 ): Promise<OnboardingReadinessReport> {
-  const [school, teacherCount, classCount, pilotReadiness] = await Promise.all([
+  const [school, teacherCount, classCount, activeAcademicYear, pilotReadiness] = await Promise.all([
     prisma.school.findUnique({
       where: { id: schoolId },
       select: {
@@ -490,6 +490,7 @@ export async function getOnboardingReadinessReport(
     }),
     prisma.user.count({ where: { schoolId, role: "TEACHER" } }),
     prisma.class.count({ where: { schoolId } }),
+    prisma.academicYear.findFirst({ where: { schoolId, isActive: true }, select: { id: true } }),
     getPilotReadinessReport(schoolId),
   ]);
 
@@ -512,6 +513,15 @@ export async function getOnboardingReadinessReport(
         ...(teacherCount > 0 ? [] : ["Add at least one teacher"]),
         ...(classCount > 0 ? [] : ["Create at least one class"]),
       ],
+    },
+    {
+      id: "academic-year-configured",
+      title: "Academic year configured",
+      href: "/admin/academic-year",
+      complete: Boolean(activeAcademicYear),
+      missing: activeAcademicYear
+        ? []
+        : ["Create and activate an academic year for this school. Exams, report cards, transcripts, and grade promotion all require one."],
     },
     {
       id: "curriculum-published",

@@ -33,6 +33,7 @@ type HarnessState = {
   pilotReadinessDashboardEnabled?: boolean;
   pilotReadinessEnabled?: boolean;
   evalDbLoggingEnabled?: boolean;
+  hasActiveAcademicYear?: boolean;
 };
 
 export async function loadReadinessService(overrides: HarnessState = {}) {
@@ -71,6 +72,7 @@ export async function loadReadinessService(overrides: HarnessState = {}) {
     pilotReadinessDashboardEnabled: true,
     pilotReadinessEnabled: true,
     evalDbLoggingEnabled: false,
+    hasActiveAcademicYear: true,
     ...overrides,
   };
 
@@ -155,6 +157,9 @@ export async function loadReadinessService(overrides: HarnessState = {}) {
       },
       evalRun: {
         findFirst: vi.fn(async () => state.latestEvalRun),
+      },
+      academicYear: {
+        findFirst: vi.fn(async () => (state.hasActiveAcademicYear ? { id: "ay-1" } : null)),
       },
     },
   }));
