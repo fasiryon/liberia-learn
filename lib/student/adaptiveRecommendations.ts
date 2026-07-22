@@ -48,7 +48,7 @@ export type AdaptiveRecommendationResult = {
   weakTopicSequence: WeakTopicSequenceItem[];
 };
 
-function weightedAssessmentScore(scores: number[]): number | null {
+export function weightedAssessmentScore(scores: number[]): number | null {
   if (scores.length === 0) return null;
   if (scores.length === 1) return scores[0];
   if (scores.length === 2) return scores[0] * 0.6 + scores[1] * 0.4;
@@ -63,7 +63,7 @@ function confidenceTier(signalCount: number): ConfidenceTier {
   return "low";
 }
 
-function alertTier(score: number): MasteryAlertTier {
+export function alertTier(score: number): MasteryAlertTier {
   if (score < 40) return "critical";
   if (score < 65) return "at_risk";
   return "developing";
@@ -183,7 +183,7 @@ function buildWeakTopicSequence(
 
 // Merge assessment + snapshot + derived into a single 0-100 mastery score per concept-key.
 // Weighting: 60% assessments, 25% mastery snapshot, 15% derived progress.
-function combinedMastery(
+export function combinedMastery(
   assessmentScore: number | null,
   snapshotScore: number | null,
   derivedScore: number | null
