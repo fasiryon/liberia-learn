@@ -141,6 +141,20 @@ async function requestExam(
     throw new Error(`Exam generator returned invalid JSON. First 200 chars: ${result.content.slice(0, 200)}`);
   }
 
+  // Models occasionally return passingScore as a percentage (e.g. 70) instead of
+  // the required 0-1 fraction despite the prompt instruction. Normalize the common
+  // case rather than failing the whole generation on an otherwise-valid response.
+  if (
+    parsedJson &&
+    typeof parsedJson === "object" &&
+    typeof (parsedJson as { passingScore?: unknown }).passingScore === "number"
+  ) {
+    const rawPassingScore = (parsedJson as { passingScore: number }).passingScore;
+    if (rawPassingScore > 1 && rawPassingScore <= 100) {
+      (parsedJson as { passingScore: number }).passingScore = rawPassingScore / 100;
+    }
+  }
+
   const exam = GeneratedExamSchema.parse(parsedJson);
   if (exam.questions.length !== params.questionCount) {
     throw new Error(`Exam generator returned ${exam.questions.length} questions, expected ${params.questionCount}.`);

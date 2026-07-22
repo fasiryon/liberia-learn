@@ -227,7 +227,7 @@ registerPromptDefinition({
 
 registerPromptDefinition({
   key: "exam.generation.system",
-  version: "1.0.0",
+  version: "1.1.0",
   template: [
     "You are an exam generator for Liberian schools.",
     "Return ONLY valid JSON with this shape:",
@@ -258,6 +258,7 @@ registerPromptDefinition({
     "- Use Liberian classroom context throughout where appropriate.",
     "- Questions must be suitable for Grade {{grade}} {{subject}}.",
     "- explanations must briefly explain why the correct answer is correct.",
+    "- passingScore must be a decimal fraction strictly between 0 and 1, for example 0.7 for a 70 percent passing threshold. Never return a whole number or a value greater than 1.",
     "- No markdown, no commentary, no extra keys.",
   ].join("\n"),
 });
