@@ -103,6 +103,7 @@ function getClassModel() {
 }
 
 export async function assertExamScopeContext(schoolId: string, input: ExamScopeContext) {
+  const academicYearOmitted = input.academicYearId === undefined;
   const normalized = {
     academicYearId: input.academicYearId ?? null,
     classId: input.classId ?? null,
@@ -110,13 +111,18 @@ export async function assertExamScopeContext(schoolId: string, input: ExamScopeC
   const academicYearModel = getAcademicYearModel();
   const classModel = getClassModel();
 
-  if (!normalized.academicYearId && !normalized.classId && academicYearModel?.findFirst) {
+  if (academicYearOmitted && academicYearModel?.findFirst) {
     const activeAcademicYear = await academicYearModel.findFirst({
       where: { schoolId, isActive: true },
       select: { id: true },
     });
     if (activeAcademicYear) {
       normalized.academicYearId = activeAcademicYear.id;
+    } else {
+      throw Object.assign(
+        new Error("An academic year is required before creating an exam. Create and activate an academic year for this school first."),
+        { status: 409 }
+      );
     }
   }
 

@@ -5,6 +5,7 @@ const mockIsExamSystemEnabled = vi.hoisted(() => vi.fn());
 const mockGenerateExamWithUsage = vi.hoisted(() => vi.fn());
 const mockExamCreate = vi.hoisted(() => vi.fn());
 const mockLogAudit = vi.hoisted(() => vi.fn());
+const mockAcademicYearFindFirst = vi.hoisted(() => vi.fn());
 
 vi.mock("@/lib/auth", () => ({ requireRole: mockRequireRole }));
 vi.mock("@/lib/serverFlags", () => ({ isExamSystemEnabled: mockIsExamSystemEnabled }));
@@ -14,6 +15,7 @@ vi.mock("@/lib/db", () => ({
   prisma: {
     exam: { create: mockExamCreate },
     aiInteractionLog: { create: vi.fn().mockResolvedValue(undefined) },
+    academicYear: { findFirst: mockAcademicYearFindFirst },
   },
 }));
 
@@ -56,6 +58,7 @@ describe("POST /api/admin/exams/generate", () => {
     });
     mockExamCreate.mockResolvedValue({ id: "exam-1" });
     mockLogAudit.mockResolvedValue(undefined);
+    mockAcademicYearFindFirst.mockResolvedValue({ id: "ay-1" });
   });
 
   it("requires ADMIN or TEACHER session", async () => {
@@ -88,5 +91,21 @@ describe("POST /api/admin/exams/generate", () => {
     mockIsExamSystemEnabled.mockReturnValue(false);
     const res = await POST(makeReq({ subject: "MATH", grade: 6, moeStandards: ["M1"] }));
     expect(res.status).toBe(404);
+  });
+
+  it("fails loudly instead of silently creating a yearless exam when the school has no active academic year", async () => {
+    mockAcademicYearFindFirst.mockResolvedValue(null);
+    const res = await POST(makeReq({ subject: "MATH", grade: 6, moeStandards: ["M1"] }));
+    expect(res.status).toBe(409);
+    expect(mockExamCreate).not.toHaveBeenCalled();
+  });
+
+  it("still creates the exam when an explicit academicYearId is provided and no active year is resolvable", async () => {
+    mockAcademicYearFindFirst.mockResolvedValue({ id: "ay-explicit" });
+    const res = await POST(
+      makeReq({ subject: "MATH", grade: 6, moeStandards: ["M1"], academicYearId: "ay-explicit" })
+    );
+    expect(res.status).toBe(200);
+    expect(mockExamCreate).toHaveBeenCalled();
   });
 });

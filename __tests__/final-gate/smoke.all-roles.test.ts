@@ -89,6 +89,7 @@ async function dbReturn(model: string, method: string, args: any) {
   if (model === "strandCatalog" && method === "findFirst") return { subject: "MATH", strandKey: "MATH.NUM.1" };
   if (model === "exam" && method === "findMany") return [{ id: "exam-1", title: "Midterm Mathematics", subject: "MATH", grade: 7, status: "PUBLISHED", timeLimit: 45, passingScore: 0.7, moeStandards: ["M1"], questions: QUESTIONS, attempts: [{ passed: true, score: 0.8, integrityFlags: [] }], _count: { questions: QUESTIONS.length }, createdAt: new Date() }];
   if (model === "exam" && method === "findFirst") return { id: "exam-1", title: "Midterm Mathematics", subject: "MATH", grade: 7, status: "PUBLISHED", schoolId: "school-a", timeLimit: 45, passingScore: 0.7, questions: QUESTIONS, _count: { questions: QUESTIONS.length } };
+  if (model === "academicYear" && method === "findFirst") return { id: "academic-year-a" };
   if (model === "exam" && method === "create") return { id: "exam-created-1" };
   if (model === "exam" && method === "update") return { id: "exam-created-1", status: "PUBLISHED" };
   if (model === "exam" && method === "count") return 3;
