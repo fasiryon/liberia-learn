@@ -57,3 +57,9 @@ registerPromptDefinition({
   version: "1.0.0",
   template: loadPromptFile("./prompts/district-update.md"),
 });
+
+registerPromptDefinition({
+  key: "agent.morning-brief.system",
+  version: "1.0.0",
+  template: loadPromptFile("./prompts/morning-brief.md"),
+});

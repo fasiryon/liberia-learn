@@ -19,3 +19,5 @@ import "@/lib/agents/tools/moereport.tools";
 import "@/lib/agents/agents/moe-narrative-report.agent";
 import "@/lib/agents/tools/districtupdate.tools";
 import "@/lib/agents/agents/district-update.agent";
+import "@/lib/agents/tools/morningbrief.tools";
+import "@/lib/agents/agents/morning-brief.agent";

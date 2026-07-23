@@ -11,6 +11,7 @@ const LINKS: { href: string; label: string; badgeKey?: string; tour?: string }[]
   { href: "/teacher/standards", label: "Standards" },
   { href: "/teacher/skills", label: "Skills Library" },
   { href: "/teacher/differentiation", label: "Differentiation" },
+  { href: "/teacher/brief", label: "Morning Brief" },
   { href: "/teacher/messages", label: "Messages", badgeKey: "messages", tour: "teacher-messages" },
   { href: "/teacher/delivery-report", label: "Delivery Report" },
   { href: "/teacher/attendance", label: "Attendance" },

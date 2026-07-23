@@ -4269,3 +4269,22 @@ model DistrictUpdateDraft {
 
   @@index([type, scope, scopeId, createdAt])
 }
+
+// Sprint 7.4: Morning Brief agent. One row per teacher per school day - a
+// short in-app digest generated on top of Sprint 7.2's differentiation
+// rollup and real overdue-grading counts, never a new signal pipeline.
+// Unique on (teacherUserId, briefDate) so a re-run of the sweep for a day
+// that already has a brief is a safe no-op read, not a duplicate write.
+model TeacherMorningBrief {
+  id           String   @id @default(cuid())
+  agentName    String   @default("morning-brief")
+  teacherUserId String
+  schoolId     String
+  briefDate    DateTime
+  briefText    String   @db.Text
+  dataSnapshot Json
+  createdAt    DateTime @default(now())
+
+  @@unique([teacherUserId, briefDate])
+  @@index([schoolId, briefDate])
+}
