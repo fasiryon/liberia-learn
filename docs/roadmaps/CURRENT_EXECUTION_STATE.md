@@ -505,10 +505,10 @@ Full build plan: `docs/roadmaps/ONLINE_SCHOOL_BUILD.md`
 - Layout wiring: student, teacher, guardian layouts — SHIPPED
 - Push triggers: assignment graded, assignment created (sendPushToMany to class), report card published, guardian message received — SHIPPED
 - Pre-existing tsc errors fixed: `incidentTimelineService.ts`, ops notes/replay routes — SHIPPED
-- VAPID keys generated (add to Vercel dashboard):
-  - `VAPID_PUBLIC_KEY=BK26gEHi2ZU00edoE5egQ8fk5LLerd-mHTlcvRFAfCLe5APfIez7K1yVD1BGX_D7W_C1IPSnJL58SuSCsVWnPo4`
-  - `VAPID_PRIVATE_KEY=***REMOVED-COMPROMISED-VAPID-PRIVATE-KEY***`
-  - `VAPID_SUBJECT=mailto:admin@liberialearn.edu.lr`
+- VAPID keys generated for deployment. The original private key was mistakenly
+  committed here and is now considered compromised; it must not be reused.
+  Store the replacement key pair only in the deployment secret manager. The
+  non-secret subject remains `mailto:admin@liberialearn.edu.lr`.
 - Gate: `npx tsc --noEmit` PASS (0 errors), `npx vitest run` PASS (2688 tests / 353 files), `npm run build` PASS
 - 10 new tests in `__tests__/sprint4.push.test.ts`
 
