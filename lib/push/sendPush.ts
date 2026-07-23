@@ -4,9 +4,9 @@ import { logger } from "@/lib/logger";
 import { logProductSignal } from "@/lib/autonomous/signals/productSignalService";
 
 function getVapidConfig() {
-  const publicKey = process.env.VAPID_PUBLIC_KEY;
-  const privateKey = process.env.VAPID_PRIVATE_KEY;
-  const subject = process.env.VAPID_SUBJECT || "mailto:admin@liberialearn.edu.lr";
+  const publicKey = process.env.VAPID_PUBLIC_KEY?.trim();
+  const privateKey = process.env.VAPID_PRIVATE_KEY?.trim();
+  const subject = process.env.VAPID_SUBJECT?.trim() || "mailto:admin@liberialearn.edu.lr";
   if (!publicKey || !privateKey) return null;
   return { publicKey, privateKey, subject };
 }

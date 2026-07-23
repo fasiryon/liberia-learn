@@ -113,6 +113,27 @@ describe("sendPush — lib/push/sendPush", () => {
     await sendPushToMany(["u1", "u2", "u3"], { title: "Batch", body: "Hi" });
     expect(mockPrisma.pushSubscription.findMany).toHaveBeenCalledTimes(3);
   });
+
+  it("trims a trailing CRLF/whitespace from VAPID env vars before calling setVapidDetails", async () => {
+    process.env.VAPID_PUBLIC_KEY = "pub-key\r\n";
+    process.env.VAPID_PRIVATE_KEY = "priv-key\n";
+    process.env.VAPID_SUBJECT = "mailto:test@test.com\r\n";
+    mockPrisma.pushSubscription.findMany.mockResolvedValueOnce([
+      { id: "sub-1", endpoint: "https://push.example.com/1", p256dh: "key1", auth: "auth1" },
+    ]);
+    mockWebPush.sendNotification.mockResolvedValueOnce({});
+    mockPrisma.pushSubscription.update.mockResolvedValueOnce({});
+    mockPrisma.notificationLog.create.mockResolvedValueOnce({});
+
+    const { sendPushToUser } = await import("@/lib/push/sendPush");
+    await sendPushToUser("user-1", { title: "Hello", body: "World" });
+
+    expect(mockWebPush.setVapidDetails).toHaveBeenCalledWith(
+      "mailto:test@test.com",
+      "pub-key",
+      "priv-key"
+    );
+  });
 });
 
 describe("GET /api/notifications/vapid-public-key", () => {
@@ -132,6 +153,14 @@ describe("GET /api/notifications/vapid-public-key", () => {
     const { GET } = await import("@/app/api/notifications/vapid-public-key/route");
     const res = await GET();
     expect(res.status).toBe(200);
+    const json = await res.json();
+    expect(json.publicKey).toBe("my-vapid-key");
+  });
+
+  it("trims a trailing CRLF/whitespace from VAPID_PUBLIC_KEY before returning it", async () => {
+    process.env.VAPID_PUBLIC_KEY = "my-vapid-key\r\n";
+    const { GET } = await import("@/app/api/notifications/vapid-public-key/route");
+    const res = await GET();
     const json = await res.json();
     expect(json.publicKey).toBe("my-vapid-key");
   });
