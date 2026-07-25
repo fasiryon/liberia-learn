@@ -36,11 +36,18 @@ function asPayload(value: unknown): LessonPayload {
 }
 
 function toAlignmentCodes(value: unknown): string[] | undefined {
-  if (!Array.isArray(value)) {
+  // moeAlignments may be the legacy bare array, or the canonical
+  // {contentId, standards, alignedAt, method} object the alignment engine writes.
+  const arrayValue = Array.isArray(value)
+    ? value
+    : value && typeof value === "object" && Array.isArray((value as { standards?: unknown }).standards)
+      ? (value as { standards: unknown[] }).standards
+      : undefined;
+  if (!arrayValue) {
     return undefined;
   }
 
-  const codes = value
+  const codes = arrayValue
     .map((entry) => {
       if (typeof entry === "string") return entry.trim();
       if (entry && typeof entry === "object" && typeof (entry as { code?: unknown }).code === "string") {

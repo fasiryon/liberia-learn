@@ -4,6 +4,7 @@ import { prisma } from "@/lib/db";
 import { logAudit } from "@/lib/audit";
 import { isAbBlockSchedulingEnabled, isAssignmentLessonLinkageEnabled, isVirtualLabsEnabled } from "@/lib/serverFlags";
 import { randomUUID } from "crypto";
+import { readMoeAlignmentCodes } from "@/lib/moe/alignmentReader";
 
 export const dynamic = "force-dynamic";
 
@@ -65,8 +66,7 @@ export async function POST(req: Request) {
     // Part 7: virtual lab auto-binding
     let suggestedLabs: any = undefined;
     if (isVirtualLabsEnabled() && content.moeAlignments) {
-      const alignments = content.moeAlignments as Array<{ code: string }>;
-      const codes = alignments.map((a) => a.code).filter(Boolean);
+      const codes = readMoeAlignmentCodes(content.moeAlignments);
       if (codes.length > 0) {
         const labs = await prisma.virtualLab.findMany({
           where: {
@@ -130,8 +130,7 @@ export async function POST(req: Request) {
 
     // Part 5: auto-create AssignmentSuggestion when exit ticket present
     if (isAssignmentLessonLinkageEnabled() && deliveryProfile?.exitTicket?.questions?.length) {
-      const alignments = content.moeAlignments as Array<{ code: string }> | null;
-      const moeCodes = alignments ? alignments.map((a) => a.code).filter(Boolean) : [];
+      const moeCodes = readMoeAlignmentCodes(content.moeAlignments);
       const title = (content.payload as any)?.title ?? "Lesson";
       const suggestedDue = new Date(scheduledDate);
       suggestedDue.setDate(suggestedDue.getDate() + 1);

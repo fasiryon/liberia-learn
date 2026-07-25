@@ -12,6 +12,7 @@ import { randomUUID } from "crypto";
 import { withRequestLogging } from "@/lib/logging/requestLogger";
 import { handleApiError } from "@/lib/errors/apiErrorHandler";
 import { listTeacherScheduleForUser } from "@/lib/records/schoolOperations";
+import { readMoeAlignmentCodes } from "@/lib/moe/alignmentReader";
 
 export const dynamic = "force-dynamic";
 
@@ -164,8 +165,7 @@ async function _scheduleGET(req: NextRequest) {
       // MOE standards coverage — unique codes from all items' moeAlignments
       const allCodes = new Set<string>();
       for (const sw of schedule) {
-        const alignments = sw.content.moeAlignments as Array<{ code: string }> | null;
-        if (alignments) alignments.forEach((a) => a.code && allCodes.add(a.code));
+        for (const code of readMoeAlignmentCodes(sw.content.moeAlignments)) allCodes.add(code);
       }
 
       // Planned vs delivered
@@ -277,8 +277,7 @@ export async function POST(req: NextRequest) {
     // Part 7: virtual lab auto-binding
     let suggestedLabs: any = undefined;
     if (isVirtualLabsEnabled() && content?.moeAlignments) {
-      const alignments = content.moeAlignments as Array<{ code: string }>;
-      const codes = alignments.map((a) => a.code).filter(Boolean);
+      const codes = readMoeAlignmentCodes(content.moeAlignments);
       if (codes.length > 0) {
         const labs = await prisma.virtualLab.findMany({
           where: {
@@ -324,10 +323,7 @@ export async function POST(req: NextRequest) {
       siblingData = { date: siblingDate, format: classFormat === "block_a" ? "block_b" : "block_a" };
     }
 
-    const alignmentsForSuggestion = content?.moeAlignments as Array<{ code: string }> | null;
-    const moeCodes = alignmentsForSuggestion
-      ? alignmentsForSuggestion.map((a) => a.code).filter(Boolean)
-      : [];
+    const moeCodes = readMoeAlignmentCodes(content?.moeAlignments);
     const lessonTitle = (content?.payload as any)?.title ?? "Lesson";
     const suggestedDue = new Date(scheduledDate);
     suggestedDue.setDate(suggestedDue.getDate() + 1);

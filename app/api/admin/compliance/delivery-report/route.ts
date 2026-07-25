@@ -4,6 +4,7 @@ import { prisma } from "@/lib/db";
 import { isDeliveryComplianceReportingEnabled } from "@/lib/serverFlags";
 import { withRequestLogging } from "@/lib/logging/requestLogger";
 import { handleApiError } from "@/lib/errors/apiErrorHandler";
+import { readMoeAlignmentCodes } from "@/lib/moe/alignmentReader";
 
 export const dynamic = "force-dynamic";
 
@@ -83,8 +84,7 @@ async function deliveryReportGET(req: NextRequest) {
     // Unique MOE codes covered in delivered lessons
     const coveredCodes = new Set<string>();
     for (const sw of schedule.filter((s) => s.isDelivered)) {
-      const alignments = sw.content.moeAlignments as Array<{ code: string }> | null;
-      if (alignments) alignments.forEach((a) => a.code && coveredCodes.add(a.code));
+      for (const code of readMoeAlignmentCodes(sw.content.moeAlignments)) coveredCodes.add(code);
     }
 
     const scheduleIds = schedule.map((sw) => sw.id);

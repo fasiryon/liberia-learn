@@ -8,6 +8,7 @@ import { requireUser } from "@/lib/auth";
 import { isMoePortalEnabled } from "@/lib/serverFlags";
 import { logAudit } from "@/lib/audit";
 import { prisma } from "@/lib/db";
+import { hasGenuineMoeAlignment } from "@/lib/moe/alignmentReader";
 
 export const dynamic = "force-dynamic";
 
@@ -23,7 +24,7 @@ export async function GET() {
     }
 
     const allContent = await prisma.curriculumContent.findMany({
-      where: { status: { in: ["published", "accepted"] } },
+      where: { status: { in: ["APPROVED", "published", "approved"] } },
       select: { subject: true, moeAlignments: true, status: true },
     });
 
@@ -34,7 +35,7 @@ export async function GET() {
         subjectMap[c.subject] = { total: 0, aligned: 0 };
       }
       subjectMap[c.subject].total++;
-      if (c.moeAlignments) subjectMap[c.subject].aligned++;
+      if (hasGenuineMoeAlignment(c.moeAlignments)) subjectMap[c.subject].aligned++;
     }
 
     const bySubject = Object.entries(subjectMap).map(([subject, counts]) => ({
@@ -47,7 +48,7 @@ export async function GET() {
     }));
 
     const totalContent = allContent.length;
-    const alignedContent = allContent.filter((c) => c.moeAlignments).length;
+    const alignedContent = allContent.filter((c) => hasGenuineMoeAlignment(c.moeAlignments)).length;
 
     void logAudit({
       userId: user.id,

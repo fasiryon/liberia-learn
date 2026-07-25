@@ -4,6 +4,7 @@ import { prisma } from "@/lib/db";
 import { logAudit } from "@/lib/audit";
 import { isVirtualLabsEnabled } from "@/lib/serverFlags";
 import { gradeToBand } from "@/lib/moe/alignment-engine";
+import { readMoeAlignmentCodes } from "@/lib/moe/alignmentReader";
 import { updateMasteryProfile } from "@/lib/mastery/masteryService";
 import { enqueue } from "@/lib/offline/offlineQueue";
 import type { Subject } from "@prisma/client";
@@ -125,7 +126,7 @@ async function triggerMasteryUpdate(
   // Load content for subject + grade via scheduledWork chain
   let subject: string | null = null;
   let grade: number | null = null;
-  let moeAlignments: Array<{ code: string }> = [];
+  let codes: string[] = [];
 
   if (session.scheduledWorkId) {
     const sw = await prisma.scheduledWork.findUnique({
@@ -137,7 +138,7 @@ async function triggerMasteryUpdate(
     if (sw) {
       subject = sw.content.subject;
       grade = sw.content.grade;
-      moeAlignments = (sw.content.moeAlignments as Array<{ code: string }>) ?? [];
+      codes = readMoeAlignmentCodes(sw.content.moeAlignments);
     }
   }
 
@@ -148,7 +149,6 @@ async function triggerMasteryUpdate(
 
   const gradeBand = gradeToBand(grade);
   const normalizedScore = Math.min(1, Math.max(0, session.score / 100));
-  const codes = moeAlignments.map((a) => a.code).filter(Boolean);
   if (codes.length === 0) return;
 
   // Look up a strand in StrandCatalog that matches subject + gradeBand

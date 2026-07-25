@@ -3,6 +3,7 @@ import { requireRole } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { isAiAssignmentGenerationEnabled } from "@/lib/serverFlags";
 import { generateAssessmentItems } from "@/lib/curriculum-helpers";
+import { readMoeAlignmentCodes } from "@/lib/moe/alignmentReader";
 
 export const dynamic = "force-dynamic";
 
@@ -76,8 +77,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Content not found" }, { status: 404 });
     }
 
-    const alignments = content.moeAlignments as Array<{ code: string }> | null;
-    const moeAlignmentCodes = alignments ? alignments.map((a) => a.code).filter(Boolean) : [];
+    const moeAlignmentCodes = readMoeAlignmentCodes(content.moeAlignments);
     const topic = (content.payload as any)?.title ?? "Lesson";
 
     const questions = generateAssessmentItems(

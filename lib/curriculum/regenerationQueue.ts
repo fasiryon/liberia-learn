@@ -68,8 +68,15 @@ export function buildCurriculumRegenerationIdempotencyKey(input: {
 }
 
 function alignmentCodes(value: unknown): string[] | undefined {
-  if (!Array.isArray(value)) return undefined;
-  const codes = value
+  // moeAlignments may be the legacy bare array, or the canonical
+  // {contentId, standards, alignedAt, method} object the alignment engine writes.
+  const arrayValue = Array.isArray(value)
+    ? value
+    : value && typeof value === "object" && Array.isArray((value as { standards?: unknown }).standards)
+      ? (value as { standards: unknown[] }).standards
+      : undefined;
+  if (!arrayValue) return undefined;
+  const codes = arrayValue
     .map((item) => {
       if (typeof item === "string") return item.trim();
       if (item && typeof item === "object" && typeof (item as { code?: unknown }).code === "string") {

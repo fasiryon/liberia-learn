@@ -190,7 +190,7 @@ export async function buildCurriculumVersionDriftSummary() {
     }),
     activeVersion
       ? prisma.curriculumContent.findMany({
-          where: { versionId: activeVersion.id, status: { in: ["published", "accepted"] } },
+          where: { versionId: activeVersion.id, status: { in: ["APPROVED", "published", "approved"] } },
           select: { grade: true, subject: true },
         })
       : Promise.resolve([]),

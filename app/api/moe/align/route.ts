@@ -6,6 +6,7 @@ import {
   alignAllContent,
 } from "@/lib/moe/alignment-engine";
 import { prisma } from "@/lib/db";
+import { hasGenuineMoeAlignment } from "@/lib/moe/alignmentReader";
 
 export const dynamic = "force-dynamic";
 
@@ -59,15 +60,16 @@ export async function GET(req: Request) {
     const isReport = searchParams.get("report") === "true";
 
     if (!isReport) {
+      const statusFilter = { in: ["APPROVED", "published", "approved"] };
       const [total, aligned, unaligned] = await Promise.all([
         prisma.curriculumContent.count({
-          where: { status: "accepted" },
+          where: { status: statusFilter },
         }),
         prisma.curriculumContent.count({
-          where: { status: "accepted", NOT: { moeAlignments: null } },
+          where: { status: statusFilter, NOT: { moeAlignments: null } },
         }),
         prisma.curriculumContent.count({
-          where: { status: "accepted", moeAlignments: null },
+          where: { status: statusFilter, moeAlignments: null },
         }),
       ]);
 
@@ -76,7 +78,7 @@ export async function GET(req: Request) {
 
     // Full report
     const allContent = await prisma.curriculumContent.findMany({
-      where: { status: "accepted" },
+      where: { status: { in: ["APPROVED", "published", "approved"] } },
       select: {
         id: true,
         subject: true,
@@ -134,7 +136,7 @@ export async function GET(req: Request) {
             ? Math.round((coveredCodes.size / allStandards.length) * 100)
             : 0,
         totalLessons: allContent.length,
-        alignedLessons: allContent.filter((c) => c.moeAlignments).length,
+        alignedLessons: allContent.filter((c) => hasGenuineMoeAlignment(c.moeAlignments)).length,
       },
       bySubjectBand,
     });

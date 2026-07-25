@@ -92,11 +92,13 @@ export default async function AiQualityDashboardPage() {
           <StatCard
             label="Curriculum-grounding coverage"
             value={formatPercent(data.curriculumGrounding.coveragePct)}
-            detail={`${data.curriculumGrounding.checkedLessons.toLocaleString(
+            detail={`${data.curriculumGrounding.matchedLessons.toLocaleString(
               "en-US"
             )} of ${data.curriculumGrounding.totalLessons.toLocaleString(
               "en-US"
-            )} lessons checked against MOE standards`}
+            )} lessons have a genuine MOE standard match (${data.curriculumGrounding.checkedLessons.toLocaleString(
+              "en-US"
+            )} checked, ${formatPercent(data.curriculumGrounding.checkedPct)} processed)`}
           />
 
           {data.citationCoverage.status === "measurable" ? (

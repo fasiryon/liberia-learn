@@ -24,7 +24,9 @@ const SUBJECT_MAP: Record<string, Subject> = {
   reading: "LITERACY",
   civics: "CIVICS",
   "social studies": "CIVICS",
+  social_studies: "CIVICS",
   "computer science": "COMPUTER_SCIENCE",
+  computer_science: "COMPUTER_SCIENCE",
   computing: "COMPUTER_SCIENCE",
   ict: "COMPUTER_SCIENCE",
   engineering: "ENGINEERING",
@@ -199,8 +201,8 @@ export async function alignContentToMOE(
 export async function alignAllContent(
   opts: { force?: boolean } = {}
 ): Promise<{ success: number; failed: number }> {
-  // Include both "published" (approved content) and "accepted" (legacy status)
-  const where: any = { status: { in: ["published", "accepted"] } };
+  // Real production status values only: "accepted" matches zero rows in prod
+  const where: any = { status: { in: ["APPROVED", "published", "approved"] } };
   if (!opts.force) {
     where.moeAlignments = null;
   }

@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 import { requireUser } from "@/lib/auth";
 import { logAudit } from "@/lib/audit";
 import { prisma } from "@/lib/db";
+import { hasGenuineMoeAlignment } from "@/lib/moe/alignmentReader";
 
 export const dynamic = "force-dynamic";
 
@@ -26,7 +27,7 @@ export async function GET() {
     const traceId = randomUUID();
     const [allContent, allStandards] = await Promise.all([
       prisma.curriculumContent.findMany({
-        where: { status: { in: ["accepted", "published"] } },
+        where: { status: { in: ["APPROVED", "published", "approved"] } },
         select: { moeAlignments: true },
       }),
       prisma.standard.findMany({
@@ -103,7 +104,7 @@ export async function GET() {
         coveragePct:
           allStandards.length > 0 ? Math.round((coveredCodes.size / allStandards.length) * 100) : 0,
         totalLessons: allContent.length,
-        alignedLessons: allContent.filter((content) => content.moeAlignments).length,
+        alignedLessons: allContent.filter((content) => hasGenuineMoeAlignment(content.moeAlignments)).length,
       },
       bySubject: Array.from(bySubject.values())
         .map(formatSubjectCoverage)

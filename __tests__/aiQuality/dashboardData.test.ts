@@ -27,7 +27,7 @@ describe("getAiQualityDashboardData", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mockEvalRunFindMany.mockResolvedValue([]);
-    mockQueryRaw.mockResolvedValue([{ total: 0n, checked: 0n }]);
+    mockQueryRaw.mockResolvedValue([{ total: 0n, checked: 0n, matched: 0n }]);
     mockAuditLogFindMany.mockResolvedValue([]);
     mockContentQaReviewCount.mockResolvedValue(0);
     mockPerformanceEventCount.mockResolvedValue(0);
@@ -46,7 +46,7 @@ describe("getAiQualityDashboardData", () => {
         passed: true,
       },
     ]);
-    mockQueryRaw.mockResolvedValue([{ total: 6192n, checked: 491n }]);
+    mockQueryRaw.mockResolvedValue([{ total: 6192n, checked: 491n, matched: 45n }]);
 
     const { getAiQualityDashboardData } = await import("@/lib/aiQuality/dashboardData");
     const data = await getAiQualityDashboardData();
@@ -54,7 +54,9 @@ describe("getAiQualityDashboardData", () => {
     // Real, measured metrics
     expect(data.groundedness.status).toBe("measurable");
     expect(data.curriculumGrounding.measurable).toBe(true);
-    expect(data.curriculumGrounding.coveragePct).toBeCloseTo((491 / 6192) * 100, 6);
+    // "coverage" means genuine non-empty standard match only, never the checked count
+    expect(data.curriculumGrounding.coveragePct).toBeCloseTo((45 / 6192) * 100, 6);
+    expect(data.curriculumGrounding.checkedPct).toBeCloseTo((491 / 6192) * 100, 6);
 
     // Honest gaps -- never silently rendered as a fake current number
     expect(data.citationCoverage.status).toBe("gap");

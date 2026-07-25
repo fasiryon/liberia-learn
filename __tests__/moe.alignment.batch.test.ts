@@ -34,11 +34,11 @@ const PUBLISHED_RECORD = {
   moeAlignments: null,
 };
 
-const ACCEPTED_RECORD = {
-  id: "rec-acc-1",
+const APPROVED_RECORD = {
+  id: "rec-app-1",
   grade: 3,
   subject: "science",
-  status: "accepted",
+  status: "APPROVED",
   payload: { title: "Plants", objectives: ["Understand plants"] },
   moeAlignments: null,
 };
@@ -52,23 +52,25 @@ describe("alignAllContent — status filter", () => {
     mockUpdate.mockResolvedValue({});
   });
 
-  it("queries for both published and accepted status", async () => {
+  it("queries for the real production status values (APPROVED/published/approved)", async () => {
     await alignAllContent();
 
     expect(mockFindMany).toHaveBeenCalledOnce();
     const callArg = mockFindMany.mock.calls[0][0];
-    expect(callArg.where.status).toEqual({ in: ["published", "accepted"] });
+    expect(callArg.where.status).toEqual({ in: ["APPROVED", "published", "approved"] });
   });
 
-  it("excludes pending_approval and rejected content", async () => {
+  it("excludes accepted, pending_approval, and rejected content", async () => {
     await alignAllContent();
 
     const callArg = mockFindMany.mock.calls[0][0];
     const statusFilter = callArg.where.status;
     // Must be object with "in" array — not a plain string
     expect(typeof statusFilter).toBe("object");
+    expect(statusFilter.in).toContain("APPROVED");
     expect(statusFilter.in).toContain("published");
-    expect(statusFilter.in).toContain("accepted");
+    expect(statusFilter.in).toContain("approved");
+    expect(statusFilter.in).not.toContain("accepted");
     expect(statusFilter.in).not.toContain("pending_approval");
     expect(statusFilter.in).not.toContain("rejected");
   });
@@ -90,7 +92,7 @@ describe("alignAllContent — status filter", () => {
   it("processes published records returned by the query", async () => {
     mockFindMany.mockResolvedValueOnce([
       { id: PUBLISHED_RECORD.id },
-      { id: ACCEPTED_RECORD.id },
+      { id: APPROVED_RECORD.id },
     ]);
     // Make findUnique return null so alignContentToMOE throws and we count failures
     // (we just want to verify loop runs for both records)

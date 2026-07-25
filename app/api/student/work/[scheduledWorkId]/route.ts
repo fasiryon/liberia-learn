@@ -6,6 +6,7 @@ import { resolveLessonTitle } from "@/lib/lessons/resolveLessonTitle";
 import { logProductSignal } from "@/lib/autonomous/signals/productSignalService";
 import { signHero, signInlineIllustrations } from "@/lib/media/blobStorage";
 import type { HeroImageMeta, InlineIllustration } from "@/lib/media/types";
+import { readMoeAlignmentCodes } from "@/lib/moe/alignmentReader";
 
 function isRenderableArtifact(value: unknown): boolean {
   if (!value || typeof value !== "object") return false;
@@ -362,7 +363,7 @@ export async function GET(
           })()
         : null,
       deliveryProfile,
-      moeAlignments: sw.content.moeAlignments ?? [],
+      moeAlignments: readMoeAlignmentCodes(sw.content.moeAlignments),
       heroImage: heroSigned,
       inlineIllustrations: inlineSigned,
       imageCategory: sw.content.imageCategory ?? null,
