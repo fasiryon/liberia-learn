@@ -31,6 +31,7 @@ import {
   extractLessonText,
 } from "@/lib/curriculum/regenerationQualityGate";
 import { createHash } from "crypto";
+import { logAudit } from "@/lib/audit";
 
 const localEnvPath = resolve(process.cwd(), ".env.local");
 if (existsSync(localEnvPath)) loadEnv({ path: localEnvPath });
@@ -168,6 +169,24 @@ async function processJob(
           lastErrorMessage: reason.slice(0, 2000),
         },
       });
+      // This script requires the content to already be NEEDS_REVIEW before
+      // touching it, and never reverts that on failure - a failed job here
+      // leaves the content stuck (and, since NEEDS_REVIEW fails the
+      // student-facing APPROVED_CONTENT_STATUSES gate, unreachable to
+      // students) with nothing but a job row nobody proactively checks.
+      // Durable, searchable signal so this doesn't go unnoticed indefinitely.
+      await logAudit({
+        action: "curriculum.regeneration.job.failed",
+        resourceType: "curriculum_content",
+        resourceId: lesson.contentId,
+        details: {
+          runId: job.runId,
+          jobId: job.id,
+          reason: "depth_gate_failure",
+          message: reason.slice(0, 2000),
+          contentStatus: lesson.status,
+        },
+      });
       const ms = Date.now() - start;
       console.log(
         `${label} — ${topic} — FAIL (depth: ${depth.slideCount} slides, ${depth.wordCount} words) [${msToSecs(ms)}]`
@@ -235,6 +254,20 @@ async function processJob(
         attempt: { increment: 1 },
         lastErrorCode: "generation_error",
         lastErrorMessage: message.slice(0, 2000),
+      },
+    });
+    // Same unbounded-exposure gap as the depth-gate-failure branch above -
+    // durable signal so content stuck at NEEDS_REVIEW after a hard error
+    // doesn't go unnoticed indefinitely.
+    await logAudit({
+      action: "curriculum.regeneration.job.failed",
+      resourceType: "curriculum_content",
+      resourceId: job.curriculumContentId,
+      details: {
+        runId: job.runId,
+        jobId: job.id,
+        reason: "generation_error",
+        message: message.slice(0, 2000),
       },
     });
     const ms = Date.now() - start;
