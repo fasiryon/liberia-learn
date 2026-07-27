@@ -477,6 +477,14 @@ export async function processCurriculumRegenerationLessonJob(payload: Curriculum
     const depth = validateLessonDepth(generated, lesson.grade);
     if (!depth.valid) {
       const reason = depth.failReasons.join(";");
+      // status is a no-op write, not a revert: this function requires
+      // lesson.status === "NEEDS_REVIEW" as a precondition before it will
+      // even start generating (see the check above), so it is already
+      // NEEDS_REVIEW here. Nothing is being reverted or changed by this
+      // write - only the payload's diagnostic fields below are new. Kept
+      // explicit (rather than dropped) so the intended post-failure status
+      // is unambiguous to a future reader, since there is no stored
+      // prior-status field on CurriculumContent to fall back on.
       await prisma.curriculumContent.update({
         where: { contentId: job.curriculumContentId },
         data: {

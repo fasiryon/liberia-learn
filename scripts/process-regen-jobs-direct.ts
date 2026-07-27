@@ -119,6 +119,10 @@ async function processJob(
   });
 
   if (!lesson || lesson.status !== "NEEDS_REVIEW") {
+    // CurriculumContent.status is intentionally left untouched here: this
+    // branch only fires when the content is NOT NEEDS_REVIEW (i.e. some
+    // other process already moved it on), so mutating it would clobber
+    // that other process's decision, not "revert" anything.
     await prisma.curriculumRegenerationJob.update({
       where: { id: job.id },
       data: { status: "skipped", lastErrorCode: "not_needs_review", lastErrorMessage: `Skipped: content status is ${lesson?.status ?? "not_found"}` },
@@ -170,11 +174,16 @@ async function processJob(
         },
       });
       // This script requires the content to already be NEEDS_REVIEW before
-      // touching it, and never reverts that on failure - a failed job here
-      // leaves the content stuck (and, since NEEDS_REVIEW fails the
-      // student-facing APPROVED_CONTENT_STATUSES gate, unreachable to
-      // students) with nothing but a job row nobody proactively checks.
-      // Durable, searchable signal so this doesn't go unnoticed indefinitely.
+      // touching it, and CurriculumContent.status/payload are never written
+      // in this branch - there is no "revert" to perform, since the status
+      // never changes away from the precondition value in the first place.
+      // No prior-status field exists on CurriculumContent or
+      // CurriculumRegenerationJob to revert to even if one were wanted. A
+      // failed job leaves content exactly as gated as it already was (still
+      // NEEDS_REVIEW, still failing the student-facing
+      // APPROVED_CONTENT_STATUSES gate) with nothing but a job row nobody
+      // proactively checks. Durable, searchable signal so this doesn't go
+      // unnoticed indefinitely.
       await logAudit({
         action: "curriculum.regeneration.job.failed",
         resourceType: "curriculum_content",
@@ -256,9 +265,10 @@ async function processJob(
         lastErrorMessage: message.slice(0, 2000),
       },
     });
-    // Same unbounded-exposure gap as the depth-gate-failure branch above -
-    // durable signal so content stuck at NEEDS_REVIEW after a hard error
-    // doesn't go unnoticed indefinitely.
+    // Same as the depth-gate-failure branch above: CurriculumContent is
+    // never written here either, so nothing needs reverting. Durable
+    // signal so content stuck at NEEDS_REVIEW after a hard error doesn't
+    // go unnoticed indefinitely.
     await logAudit({
       action: "curriculum.regeneration.job.failed",
       resourceType: "curriculum_content",
