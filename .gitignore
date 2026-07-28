@@ -119,3 +119,6 @@ load-tests/results/*.json
 
 # Fine-tune datasets (lesson content, not for git)
 scripts/finetune/data/
+
+# Subagent-driven-development scratch workspaces (per-plan, not for git)
+.superpowers/
