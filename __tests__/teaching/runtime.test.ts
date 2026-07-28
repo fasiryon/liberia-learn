@@ -64,7 +64,9 @@ describe("runTeachingTurn", () => {
 
     expect(mockRunAgent).toHaveBeenCalledWith(
       "teaching-runtime",
-      expect.stringContaining("Fractions are parts of a whole."),
+      expect.stringMatching(
+        /Teaching session ID: sess-1[\s\S]*Fractions are parts of a whole\./
+      ),
       expect.objectContaining({ userId: "teacher-1", userRole: "system", schoolId: "school-1" })
     );
     expect(result.responseText).toBe("Fractions represent parts of a whole.");
@@ -138,6 +140,32 @@ describe("runTeachingTurn", () => {
     await expect(
       runTeachingTurn("sess-1", { role: "facilitator", text: "Hi" }, { userRole: "TEACHER" })
     ).rejects.toThrow(/not active/i);
+  });
+
+  it("does not persist a turn when the agent is disabled or otherwise unavailable", async () => {
+    mockRunAgent.mockResolvedValue({
+      status: "FEATURE_DISABLED",
+      response: null,
+      invocationId: null,
+      toolCalls: [],
+      llmCostUSD: 0,
+      llmTokensIn: 0,
+      llmTokensOut: 0,
+      toolCostUnits: 0,
+      error: "feature_disabled",
+    });
+
+    await expect(
+      runTeachingTurn(
+        "sess-1",
+        { role: "facilitator", text: "Start." },
+        { userRole: "TEACHER" }
+      )
+    ).rejects.toMatchObject({
+      code: "teaching_agent_unavailable",
+      status: 503,
+    });
+    expect(mockPrisma.teachingTurn.create).not.toHaveBeenCalled();
   });
 
   it("increments turnIndex based on prior turn count", async () => {

@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
+import "@/lib/agents/bootstrap";
 import { requireRole } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { runTeachingTurn } from "@/lib/teaching/runtime";

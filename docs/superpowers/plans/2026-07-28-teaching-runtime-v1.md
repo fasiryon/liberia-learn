@@ -876,6 +876,10 @@ This is the core of the feature: loads session state, runs the Lesson Director, 
 > `TeachingSession.nextTurnIndex Int @default(0)` with an additive migration,
 > atomically increment it before invocation, and use the reserved value minus
 > one. Keep the unique constraint as the final database backstop.
+> The runtime message must also include the exact `sessionId` required by both
+> teaching tool schemas, and a non-`SUCCESS` agent status must fail closed
+> without persisting a fabricated turn. Every production route that reaches
+> `runAgent()` must import `lib/agents/bootstrap`.
 
 **Files:**
 - Create: `lib/teaching/types.ts`

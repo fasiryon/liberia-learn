@@ -6,6 +6,7 @@ import type { AlignmentMode } from "@/lib/teaching/alignment";
 import type { TurnInput, TurnResult } from "@/lib/teaching/types";
 
 function buildTurnMessage(params: {
+  sessionId: string;
   role: "facilitator" | "student";
   text: string;
   narration: string;
@@ -21,6 +22,7 @@ function buildTurnMessage(params: {
       : "Guardrail mode: DEFERRED. Narrate ONLY the literal lesson content below. If this input needs anything beyond it, call teaching.flagOutOfScope and give a short honest deferral.";
 
   return [
+    `Teaching session ID: ${params.sessionId}. Use this exact ID for every teaching tool call.`,
     `Grade ${params.grade} ${params.subject} lesson.`,
     `Lesson objectives: ${params.objectives.join("; ") || "none listed"}.`,
     `Lesson content: ${params.narration}`,
@@ -69,6 +71,7 @@ export async function runTeachingTurn(
   const guardrailMode = session.alignmentMode as AlignmentMode;
 
   const message = buildTurnMessage({
+    sessionId,
     role: input.role,
     text: input.text,
     narration,
@@ -86,6 +89,14 @@ export async function runTeachingTurn(
     traceId: sessionId,
     triggeredBy: "USER",
   });
+  if (result.status !== "SUCCESS") {
+    throw Object.assign(
+      new Error(
+        `Teaching agent did not complete successfully (status: ${result.status})`
+      ),
+      { status: 503, code: "teaching_agent_unavailable" }
+    );
+  }
 
   const deferred = result.toolCalls.some((toolCall) => toolCall.tool === "teaching.flagOutOfScope" && toolCall.ok);
   const whisperCall = result.toolCalls.find(
