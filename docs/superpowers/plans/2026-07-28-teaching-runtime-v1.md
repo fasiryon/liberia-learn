@@ -1709,6 +1709,13 @@ git commit -m "feat(teaching): add explicit authenticated session-start route"
 
 ## Task 12: Turn API route
 
+> **Checkpoint correction, 2026-07-28:** The original route snippet below is
+> superseded. Before invoking the runtime, scope `TeachingSession` by session
+> id and authenticated school. Teachers must additionally match
+> `facilitatorId`; school admins may operate sessions in their own tenant.
+> Validate role, non-empty text, and optional correctness with Zod. Return 404
+> for inaccessible sessions without revealing cross-tenant existence.
+
 **Files:**
 - Create: `app/api/teaching/sessions/[sessionId]/turn/route.ts`
 - Test: append to `__tests__/api/teachingSessions.test.ts` (new `describe` block)

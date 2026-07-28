@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 
-const { mockPrisma, mockRequireRole } = vi.hoisted(() => {
+const { mockPrisma, mockRequireRole, mockRunTeachingTurn } = vi.hoisted(() => {
   const prisma = {
     curriculumContent: { findFirst: vi.fn() },
     teachingSession: {
@@ -16,13 +16,18 @@ const { mockPrisma, mockRequireRole } = vi.hoisted(() => {
   return {
     mockPrisma: prisma,
     mockRequireRole: vi.fn(),
+    mockRunTeachingTurn: vi.fn(),
   };
 });
 
 vi.mock("@/lib/db", () => ({ prisma: mockPrisma }));
 vi.mock("@/lib/auth", () => ({ requireRole: mockRequireRole }));
+vi.mock("@/lib/teaching/runtime", () => ({
+  runTeachingTurn: mockRunTeachingTurn,
+}));
 
 import { POST } from "@/app/api/teaching/sessions/route";
+import { POST as postTurn } from "@/app/api/teaching/sessions/[sessionId]/turn/route";
 
 const TEACHER = {
   id: "teacher-1",
@@ -76,6 +81,18 @@ beforeEach(() => {
   mockPrisma.$transaction
     .mockReset()
     .mockImplementation((callback) => callback(mockPrisma));
+  mockPrisma.teachingSession.findFirst
+    .mockReset()
+    .mockResolvedValue({ id: "sess-1" });
+  mockRunTeachingTurn.mockReset().mockResolvedValue({
+    turnIndex: 0,
+    responseText: "Fractions are parts of a whole.",
+    guardrailMode: "FULL_CONFIDENCE",
+    deferred: false,
+    lessonDirectorAction: "continue",
+    whisperSent: false,
+    llmCostUSD: 0.001,
+  });
 });
 
 describe("POST /api/teaching/sessions", () => {
@@ -157,5 +174,66 @@ describe("POST /api/teaching/sessions", () => {
     const res = await POST(jsonRequest({ contentId: "content-1" }));
     expect(res.status).toBe(403);
     expect(mockPrisma.teachingSession.create).not.toHaveBeenCalled();
+  });
+});
+
+describe("POST /api/teaching/sessions/[sessionId]/turn", () => {
+  it("scopes a teacher to their own session within their school", async () => {
+    await postTurn(
+      jsonRequest({ role: "student", text: "Explain fractions." }),
+      { params: Promise.resolve({ sessionId: "sess-1" }) }
+    );
+
+    expect(mockPrisma.teachingSession.findFirst).toHaveBeenCalledWith({
+      where: {
+        id: "sess-1",
+        schoolId: "school-1",
+        facilitatorId: "teacher-1",
+      },
+      select: { id: true },
+    });
+  });
+
+  it("submits a validated turn through the teaching runtime", async () => {
+    const res = await postTurn(
+      jsonRequest({
+        role: "student",
+        text: "Explain fractions.",
+        correct: null,
+      }),
+      { params: Promise.resolve({ sessionId: "sess-1" }) }
+    );
+
+    expect(mockRunTeachingTurn).toHaveBeenCalledWith(
+      "sess-1",
+      {
+        role: "student",
+        text: "Explain fractions.",
+        correct: null,
+      },
+      { userRole: "TEACHER" }
+    );
+    expect(res.status).toBe(200);
+  });
+
+  it("returns 404 without invoking the runtime for an inaccessible session", async () => {
+    mockPrisma.teachingSession.findFirst.mockResolvedValue(null);
+    const res = await postTurn(
+      jsonRequest({ role: "student", text: "Explain fractions." }),
+      { params: Promise.resolve({ sessionId: "other-session" }) }
+    );
+
+    expect(res.status).toBe(404);
+    expect(mockRunTeachingTurn).not.toHaveBeenCalled();
+  });
+
+  it("rejects an invalid or empty turn", async () => {
+    const res = await postTurn(
+      jsonRequest({ role: "student", text: "" }),
+      { params: Promise.resolve({ sessionId: "sess-1" }) }
+    );
+
+    expect(res.status).toBe(400);
+    expect(mockRunTeachingTurn).not.toHaveBeenCalled();
   });
 });
