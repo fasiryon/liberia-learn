@@ -1526,6 +1526,14 @@ git commit -m "feat(teaching): add end-of-session Teaching Ledger builder"
 
 ## Task 11: Start-session API route
 
+> **Checkpoint correction, 2026-07-28:** The original request shape and route
+> snippet below are superseded. Accept only stable `contentId`. Derive
+> `schoolId` from the authenticated facilitator and derive grade/subject from
+> the visible approved lesson. Scope the lesson lookup to national content or
+> the authenticated school, query by `CurriculumContent.contentId`, and create
+> the session plus `AuditLog` inside one transaction. A school-less platform
+> admin cannot open a classroom session without an explicit tenant assignment.
+
 **Files:**
 - Create: `app/api/teaching/sessions/route.ts`
 - Test: `__tests__/api/teachingSessions.test.ts` (this task's portion)
