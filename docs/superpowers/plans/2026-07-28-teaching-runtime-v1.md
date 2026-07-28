@@ -1194,13 +1194,31 @@ git commit -m "feat(teaching): add per-turn orchestration on top of runAgent"
 
 Genuinely new (confirmed absent in investigation): audio-only mode and a printable worksheet fallback for when the projector, internet, or power drops. Integrates with the existing `lib/lesson-offline-cache.ts` (`loadCachedLesson`) rather than inventing a parallel offline system.
 
+> **Approved architecture correction, 2026-07-28:** `loadCachedLesson()` is a
+> `"use client"` IndexedDB reader. A server API route cannot read the
+> facilitator device's cache, and an offline browser cannot reach that route.
+> The original Task 9 implementation steps below are superseded. Implement
+> pure formatters in `lib/teaching/recovery.ts`, browser cache access in
+> `lib/teaching/recovery.client.ts`, and the reusable facilitator surface in
+> `components/teaching/TeachingRecoveryControls.tsx`. Task 13 records degraded
+> mode and audit state only when connectivity exists. It never imports the
+> client cache or returns recovery content.
+
 **Files:**
-- Create: `lib/teaching/recovery.ts`
+- Create: `lib/teaching/recovery.ts` (pure formatters, no cache access)
+- Create: `lib/teaching/recovery.client.ts` (`"use client"` cache adapter)
+- Create: `components/teaching/TeachingRecoveryControls.tsx`
 - Test: `__tests__/teaching/recovery.test.ts`
 
 **Interfaces:**
-- Consumes: `loadCachedLesson(contentId: string): Promise<CachedLessonData | null>` from `lib/lesson-offline-cache.ts:75` (`CachedLessonData = { metadata, payload, audio? }`); `getLessonNarration`, `getLessonSlides` from Task 2.
-- Produces: `getAudioOnlyFallback(contentId: string): Promise<{ narration: string; audioUrl: string | null } | null>`, `getPrintableWorksheet(contentId: string): Promise<{ title: string; objectives: string[]; sections: { heading: string; bullets: string[] }[] } | null>` , consumed by Task 13 (degrade API route).
+- Pure formatter consumes: `CachedLessonData` plus `getLessonNarration` and
+  `getLessonSlides`.
+- Client adapter consumes: `loadCachedLesson(contentId)` from the existing
+  browser IndexedDB cache.
+- Produces: `buildAudioOnlyFallback`, `buildPrintableWorksheet`,
+  client-only `getAudioOnlyFallback`, client-only `getPrintableWorksheet`,
+  and `TeachingRecoveryControls`.
+- Task 13 does not consume these client functions.
 
 - [ ] **Step 1: Write the failing test**
 
@@ -1754,8 +1772,20 @@ git commit -m "feat(teaching): add turn submission route"
 - Test: append to `__tests__/api/teachingSessions.test.ts`
 
 **Interfaces:**
-- Consumes: `getAudioOnlyFallback`, `getPrintableWorksheet` from Task 9; `prisma.teachingSession.update`.
-- Produces: `POST /api/teaching/sessions/[sessionId]/degrade`.
+- Consumes: `prisma.teachingSession.findFirst/update`,
+  `prisma.auditLog.create`, and authenticated user scope.
+- Produces: `POST /api/teaching/sessions/[sessionId]/degrade`, a best-effort
+  connected-state record only. Recovery content is loaded and rendered
+  client-side before this request is attempted.
+
+> **Approved architecture correction, 2026-07-28:** The original Task 13
+> test and implementation snippets below are superseded. Do not import
+> `lib/teaching/recovery.client.ts` or any IndexedDB-backed module into this
+> route. Scope the session query to the facilitator and school for teachers,
+> preserve admin tenant scope, update only the scoped row, write
+> `teaching.session.degrade` to `AuditLog`, and return `{ mode, recorded:
+> true }`. The client recovery surface remains functional if this request
+> cannot be sent.
 
 - [ ] **Step 1: Add the failing test block**
 
