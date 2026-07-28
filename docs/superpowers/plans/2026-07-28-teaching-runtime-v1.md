@@ -2,23 +2,23 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Ship a turn-based AI Teaching Runtime — one live-classroom agent with four internal responsibilities (Teach, Orchestrate/Lesson Director, Verify/Knowledge Guardrails, Ledger) plus Facilitator Whisper Mode and Teaching Recovery — built entirely on Sprint 6.0's existing agent harness, with real per-session cost measured on both an aligned and an unaligned lesson before it is ever called classroom-ready.
+**Goal:** Ship a turn-based AI Teaching Runtime , one live-classroom agent with four internal responsibilities (Teach, Orchestrate/Lesson Director, Verify/Knowledge Guardrails, Ledger) plus Facilitator Whisper Mode and Teaching Recovery , built entirely on Sprint 6.0's existing agent harness, with real per-session cost measured on both an aligned and an unaligned lesson before it is ever called classroom-ready.
 
-**Architecture:** A new `teaching-runtime` `AgentDefinition` registered in the existing `lib/agents/` harness. Each classroom "turn" (one facilitator/student exchange) is one `runAgent("teaching-runtime", ...)` call — no continuous audio/video streaming in v1 (that is explicitly deferred to v2, per the approved escalation). An orchestration layer in `lib/teaching/` sits in front of `runAgent()`: it loads session state, runs a pure/deterministic Lesson Director pacing decision, assembles the per-turn grounding context (lesson text + guardrail-mode instruction + pacing hint) into the `userInput` string, calls `runAgent()`, and persists the result as a `TeachingTurn` row. Two new agent tools (`teaching.sendWhisperPrompt`, `teaching.flagOutOfScope`) give the LLM structured, auditable ways to trigger the two side effects that must never be conflated with ordinary narration: a private push to the facilitator's device, and an explicit "this is outside verified content" signal. Three new, additive-only Prisma tables (`TeachingSession`, `TeachingTurn`, `TeachingLedger`) capture lifecycle, per-turn detail, and the end-of-session structured record, modeled directly on `ReportDraft`/`DistrictUpdateDraft`'s narrative+snapshot storage pattern.
+**Architecture:** A new `teaching-runtime` `AgentDefinition` registered in the existing `lib/agents/` harness. Each classroom "turn" (one facilitator/student exchange) is one `runAgent("teaching-runtime", ...)` call , no continuous audio/video streaming in v1 (that is explicitly deferred to v2, per the approved escalation). An orchestration layer in `lib/teaching/` sits in front of `runAgent()`: it loads session state, runs a pure/deterministic Lesson Director pacing decision, assembles the per-turn grounding context (lesson text + guardrail-mode instruction + pacing hint) into the `userInput` string, calls `runAgent()`, and persists the result as a `TeachingTurn` row. Two new agent tools (`teaching.sendWhisperPrompt`, `teaching.flagOutOfScope`) give the LLM structured, auditable ways to trigger the two side effects that must never be conflated with ordinary narration: a private push to the facilitator's device, and an explicit "this is outside verified content" signal. Three new, additive-only Prisma tables (`TeachingSession`, `TeachingTurn`, `TeachingLedger`) capture lifecycle, per-turn detail, and the end-of-session structured record, modeled directly on `ReportDraft`/`DistrictUpdateDraft`'s narrative+snapshot storage pattern.
 
-**Tech Stack:** Next.js App Router API routes, Prisma/PostgreSQL, existing `lib/agents/` harness (`runAgent`, `AgentRegistry`, `ToolRegistry`, cost accounting, `EscalationQueue`), `routedCompletion()` (via the harness only — no direct LLM calls), existing Web Push/VAPID (`sendPushToUser`), Vitest.
+**Tech Stack:** Next.js App Router API routes, Prisma/PostgreSQL, existing `lib/agents/` harness (`runAgent`, `AgentRegistry`, `ToolRegistry`, cost accounting, `EscalationQueue`), `routedCompletion()` (via the harness only , no direct LLM calls), existing Web Push/VAPID (`sendPushToUser`), Vitest.
 
 ## Global Constraints
 
 - `contentId` in URLs/params, never `sw.id` (ScheduledWork id).
 - Hero/narration content lives in `payload.body` (with `body_standard`/`body_block` variants) on `CurriculumContent`, never a separate field.
 - `DIRECT_URL`/5432 for standalone batch scripts writing more than ~25 rows; the normal Prisma client from `@/lib/db` (pooler/6543) is correct for everything else, including this plan's API routes and the cost-sim script (sequential single-row writes via the same client every other agent uses, not a bulk backfill).
-- `.trim()` on every `process.env` read for a Vercel env var, routed through `isFlagEnabled()`/`isAgentEnabled()` — never a bare `process.env.X === "true"`.
-- No em dashes in any output text or committed file (comments, prompts, docs, code) — use commas, periods, or parentheses instead.
+- `.trim()` on every `process.env` read for a Vercel env var, routed through `isFlagEnabled()`/`isAgentEnabled()` , never a bare `process.env.X === "true"`.
+- No em dashes in any output text or committed file (comments, prompts, docs, code) , use commas, periods, or parentheses instead.
 - `requireUser()` (or `requireRole()`, which wraps it) from `lib/auth`, never `getServerSession()` directly.
-- All LLM calls go through `routedCompletion()` — for this feature, exclusively via `runAgent()`, never a bespoke `routedCompletion()` call outside the harness.
-- Standalone `tsc --noEmit` is known to OOM/timeout at this repo's scale — use `next build`'s own type-check as the authoritative gate.
-- Agent role gate: per established codebase convention (`liberialearn-family`, `district-update`, `content-qa`, `morning-brief` all do this), `rolesAllowed: ["system"]` even though a human (teacher) ultimately triggers the flow — real authorization happens at the API route via `requireRole()` before the orchestrator ever calls `runAgent()`. Do not set `rolesAllowed: ["teacher"]`.
+- All LLM calls go through `routedCompletion()` , for this feature, exclusively via `runAgent()`, never a bespoke `routedCompletion()` call outside the harness.
+- Standalone `tsc --noEmit` is known to OOM/timeout at this repo's scale , use `next build`'s own type-check as the authoritative gate.
+- Agent role gate: per established codebase convention (`liberialearn-family`, `district-update`, `content-qa`, `morning-brief` all do this), `rolesAllowed: ["system"]` even though a human (teacher) ultimately triggers the flow , real authorization happens at the API route via `requireRole()` before the orchestrator ever calls `runAgent()`. Do not set `rolesAllowed: ["teacher"]`.
 
 ---
 
@@ -62,7 +62,7 @@ __tests__/api/teachingSessions.test.ts                            (NEW)
 
 ---
 
-## Task 1: Additive schema — TeachingSession, TeachingTurn, TeachingLedger
+## Task 1: Additive schema , TeachingSession, TeachingTurn, TeachingLedger
 
 **Files:**
 - Modify: `prisma/schema.prisma` (append near `DistrictUpdateDraft`, around line 4271)
@@ -191,7 +191,7 @@ Reuses the same derivation logic as `app/student/lesson/[contentId]/page.tsx` (n
 - Test: `__tests__/teaching/lessonContent.test.ts`
 
 **Interfaces:**
-- Produces: `getLessonNarration(payload: unknown): string`, `getLessonSlides(payload: unknown): LessonSlide[]`, `type LessonSlide = { title: string; bullets: string[] }` — consumed by Task 8 (`runtime.ts`) and Task 9 (`recovery.ts`).
+- Produces: `getLessonNarration(payload: unknown): string`, `getLessonSlides(payload: unknown): LessonSlide[]`, `type LessonSlide = { title: string; bullets: string[] }` , consumed by Task 8 (`runtime.ts`) and Task 9 (`recovery.ts`).
 
 - [ ] **Step 1: Write the failing test**
 
@@ -316,7 +316,7 @@ git commit -m "feat(teaching): add pure lesson narration/slide extraction"
 
 **Interfaces:**
 - Consumes: `hasGenuineMoeAlignment(value: unknown): boolean` from `lib/moe/alignmentReader.ts:55`.
-- Produces: `type AlignmentMode = "FULL_CONFIDENCE" | "DEFERRED"`, `determineAlignmentMode(moeAlignments: unknown): AlignmentMode` — consumed by Task 11 (session-start route) and Task 8 (`runtime.ts`).
+- Produces: `type AlignmentMode = "FULL_CONFIDENCE" | "DEFERRED"`, `determineAlignmentMode(moeAlignments: unknown): AlignmentMode` , consumed by Task 11 (session-start route) and Task 8 (`runtime.ts`).
 
 - [ ] **Step 1: Write the failing test**
 
@@ -392,7 +392,7 @@ Pure, deterministic pacing logic (genuinely new per the investigation, no prior 
 - Test: `__tests__/teaching/lessonDirector.test.ts`
 
 **Interfaces:**
-- Produces: `type LessonDirectorAction = "continue" | "pause" | "comprehension_check" | "revisit_prerequisite" | "regroup" | "exit_ticket"`, `interface TurnSignal { role: "facilitator" | "student"; correct?: boolean | null }`, `decideNextAction(priorTurns: TurnSignal[], turnIndex: number): LessonDirectorAction` — consumed by Task 8 (`runtime.ts`).
+- Produces: `type LessonDirectorAction = "continue" | "pause" | "comprehension_check" | "revisit_prerequisite" | "regroup" | "exit_ticket"`, `interface TurnSignal { role: "facilitator" | "student"; correct?: boolean | null }`, `decideNextAction(priorTurns: TurnSignal[], turnIndex: number): LessonDirectorAction` , consumed by Task 8 (`runtime.ts`).
 
 - [ ] **Step 1: Write the failing test**
 
@@ -504,7 +504,7 @@ git commit -m "feat(teaching): add deterministic turn-by-turn Lesson Director pa
 - Modify: `lib/agents/prompts.ts`
 
 **Interfaces:**
-- Produces: prompt registry key `"agent.teaching-runtime.system"` — consumed by Task 6 (`teaching-runtime.agent.ts`).
+- Produces: prompt registry key `"agent.teaching-runtime.system"` , consumed by Task 6 (`teaching-runtime.agent.ts`).
 
 - [ ] **Step 1: Write the prompt file**
 
@@ -563,7 +563,7 @@ git commit -m "feat(teaching): add teaching runtime system prompt"
 
 **Interfaces:**
 - Consumes: `sendPushToUser(userId: string, payload: PushPayload): Promise<PushResult>` from `lib/push/sendPush.ts:61` where `PushResult = { sent: number; failed: number; smsFallback: number }`; `registerTool` from `lib/agents/toolRegistry.ts:10`; `prisma` from `@/lib/db`.
-- Produces: `teachingSendWhisperPromptTool`, `teachingFlagOutOfScopeTool` (both `ToolDefinition`), registered under names `"teaching.sendWhisperPrompt"` and `"teaching.flagOutOfScope"` — consumed by Task 7 (`teaching-runtime.agent.ts` toolAllowlist) and Task 8 (`runtime.ts`, which inspects `RunResult.toolCalls` for these names).
+- Produces: `teachingSendWhisperPromptTool`, `teachingFlagOutOfScopeTool` (both `ToolDefinition`), registered under names `"teaching.sendWhisperPrompt"` and `"teaching.flagOutOfScope"` , consumed by Task 7 (`teaching-runtime.agent.ts` toolAllowlist) and Task 8 (`runtime.ts`, which inspects `RunResult.toolCalls` for these names).
 
 - [ ] **Step 1: Write the failing test**
 
@@ -737,7 +737,7 @@ git commit -m "feat(teaching): add Whisper Mode and out-of-scope agent tools"
 
 **Interfaces:**
 - Consumes: `registerAgent` from `lib/agents/registry.ts`, `AgentDefinition` type from `lib/agents/types.ts`.
-- Produces: agent name `"teaching-runtime"`, feature flag `"AGENT_TEACHING_RUNTIME_ENABLED"` — consumed by Task 8 (`runtime.ts`'s `runAgent("teaching-runtime", ...)` call).
+- Produces: agent name `"teaching-runtime"`, feature flag `"AGENT_TEACHING_RUNTIME_ENABLED"` , consumed by Task 8 (`runtime.ts`'s `runAgent("teaching-runtime", ...)` call).
 
 - [ ] **Step 1: Write the failing test**
 
@@ -855,7 +855,7 @@ This is the core of the feature: loads session state, runs the Lesson Director, 
 
 **Interfaces:**
 - Consumes: `runAgent(agentName, userInput, ctx): Promise<RunResult>` from `lib/agents/runtime.ts:241` (`RunResult = { status, response, invocationId, toolCalls, llmCostUSD, llmTokensIn, llmTokensOut, toolCostUnits, error? }`, `ToolCallRecord = { tool, args, result?, error?, costUnits, ok }`); `getLessonNarration`/`getLessonSlides` from Task 2; `decideNextAction`/`TurnSignal` from Task 4; `prisma` from `@/lib/db`.
-- Produces: `runTeachingTurn(sessionId: string, input: TurnInput, ctx: { userRole: string }): Promise<TurnResult>` — consumed by Task 12 (turn API route).
+- Produces: `runTeachingTurn(sessionId: string, input: TurnInput, ctx: { userRole: string }): Promise<TurnResult>` , consumed by Task 12 (turn API route).
 
 - [ ] **Step 1: Write the shared types**
 
@@ -1178,7 +1178,7 @@ Genuinely new (confirmed absent in investigation): audio-only mode and a printab
 
 **Interfaces:**
 - Consumes: `loadCachedLesson(contentId: string): Promise<CachedLessonData | null>` from `lib/lesson-offline-cache.ts:75` (`CachedLessonData = { metadata, payload, audio? }`); `getLessonNarration`, `getLessonSlides` from Task 2.
-- Produces: `getAudioOnlyFallback(contentId: string): Promise<{ narration: string; audioUrl: string | null } | null>`, `getPrintableWorksheet(contentId: string): Promise<{ title: string; objectives: string[]; sections: { heading: string; bullets: string[] }[] } | null>` — consumed by Task 13 (degrade API route).
+- Produces: `getAudioOnlyFallback(contentId: string): Promise<{ narration: string; audioUrl: string | null } | null>`, `getPrintableWorksheet(contentId: string): Promise<{ title: string; objectives: string[]; sections: { heading: string; bullets: string[] }[] } | null>` , consumed by Task 13 (degrade API route).
 
 - [ ] **Step 1: Write the failing test**
 
@@ -1310,7 +1310,7 @@ Modeled directly on `moereportSaveDraftReportTool`'s pattern (`lib/agents/tools/
 - Test: `__tests__/teaching/ledger.test.ts`
 
 **Interfaces:**
-- Produces: `buildAndSaveLedger(sessionId: string): Promise<{ ledgerId: string }>` — consumed by Task 14 (end-session API route).
+- Produces: `buildAndSaveLedger(sessionId: string): Promise<{ ledgerId: string }>` , consumed by Task 14 (end-session API route).
 
 - [ ] **Step 1: Write the failing test**
 
@@ -1482,7 +1482,7 @@ git commit -m "feat(teaching): add end-of-session Teaching Ledger builder"
 
 **Interfaces:**
 - Consumes: `requireRole(...roles: string[]): Promise<SessionUser>` from `lib/auth.ts:354` (`SessionUser.role` is one of `"STUDENT"|"TEACHER"|"ADMIN"|"GUARDIAN"|"DISTRICT_ADMIN"|"MOE_OFFICIAL"`); `determineAlignmentMode` from Task 3; `getLessonNarration`, `getLessonSlides` from Task 2; `prisma`.
-- Produces: `POST /api/teaching/sessions` — session activation (Escalation Point 4: explicit authenticated action, logged before the runtime does anything).
+- Produces: `POST /api/teaching/sessions` , session activation (Escalation Point 4: explicit authenticated action, logged before the runtime does anything).
 
 - [ ] **Step 1: Write the failing test**
 
