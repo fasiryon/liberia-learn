@@ -33,10 +33,14 @@ export function readMoeAlignmentEntries(value: unknown): MoeAlignmentCode[] {
     const standards = (value as { standards?: unknown }).standards;
     if (Array.isArray(standards)) {
       return standards
-        .filter(
-          (s): s is MoeAlignmentCode =>
-            Boolean(s) && typeof s === "object" && typeof (s as { code?: unknown }).code === "string"
-        );
+        .map((s) => {
+          if (typeof s === "string") return { code: s };
+          if (s && typeof s === "object" && typeof (s as { code?: unknown }).code === "string") {
+            return s as MoeAlignmentCode;
+          }
+          return null;
+        })
+        .filter((entry): entry is MoeAlignmentCode => entry != null && Boolean(entry.code));
     }
   }
 
