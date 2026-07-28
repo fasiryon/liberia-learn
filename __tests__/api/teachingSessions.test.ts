@@ -1,6 +1,11 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 
-const { mockPrisma, mockRequireRole, mockRunTeachingTurn } = vi.hoisted(() => {
+const {
+  mockPrisma,
+  mockRequireRole,
+  mockRunTeachingTurn,
+  mockBuildAndSaveLedger,
+} = vi.hoisted(() => {
   const prisma = {
     curriculumContent: { findFirst: vi.fn() },
     teachingSession: {
@@ -18,6 +23,7 @@ const { mockPrisma, mockRequireRole, mockRunTeachingTurn } = vi.hoisted(() => {
     mockPrisma: prisma,
     mockRequireRole: vi.fn(),
     mockRunTeachingTurn: vi.fn(),
+    mockBuildAndSaveLedger: vi.fn(),
   };
 });
 
@@ -26,10 +32,14 @@ vi.mock("@/lib/auth", () => ({ requireRole: mockRequireRole }));
 vi.mock("@/lib/teaching/runtime", () => ({
   runTeachingTurn: mockRunTeachingTurn,
 }));
+vi.mock("@/lib/teaching/ledger", () => ({
+  buildAndSaveLedger: mockBuildAndSaveLedger,
+}));
 
 import { POST } from "@/app/api/teaching/sessions/route";
 import { POST as postTurn } from "@/app/api/teaching/sessions/[sessionId]/turn/route";
 import { POST as postDegrade } from "@/app/api/teaching/sessions/[sessionId]/degrade/route";
+import { POST as postEnd } from "@/app/api/teaching/sessions/[sessionId]/end/route";
 
 const TEACHER = {
   id: "teacher-1",
@@ -89,6 +99,9 @@ beforeEach(() => {
   mockPrisma.teachingSession.updateMany
     .mockReset()
     .mockResolvedValue({ count: 1 });
+  mockPrisma.teachingLedger.findFirst
+    .mockReset()
+    .mockResolvedValue({ id: "ledger-1" });
   mockRunTeachingTurn.mockReset().mockResolvedValue({
     turnIndex: 0,
     responseText: "Fractions are parts of a whole.",
@@ -98,6 +111,9 @@ beforeEach(() => {
     whisperSent: false,
     llmCostUSD: 0.001,
   });
+  mockBuildAndSaveLedger
+    .mockReset()
+    .mockResolvedValue({ ledgerId: "ledger-1" });
 });
 
 describe("POST /api/teaching/sessions", () => {
@@ -305,5 +321,101 @@ describe("POST /api/teaching/sessions/[sessionId]/degrade", () => {
 
     expect(res.status).toBe(400);
     expect(mockPrisma.teachingSession.updateMany).not.toHaveBeenCalled();
+  });
+});
+
+describe("POST /api/teaching/sessions/[sessionId]/end", () => {
+  it("blocks new turns, builds the ledger, then atomically completes and audits", async () => {
+    mockPrisma.teachingSession.findFirst.mockResolvedValue({
+      id: "sess-1",
+      status: "ACTIVE",
+    });
+
+    const res = await postEnd(jsonRequest({}), {
+      params: Promise.resolve({ sessionId: "sess-1" }),
+    });
+
+    expect(mockPrisma.teachingSession.updateMany.mock.calls[0][0]).toEqual({
+      where: {
+        id: "sess-1",
+        schoolId: "school-1",
+        facilitatorId: "teacher-1",
+        status: "ACTIVE",
+      },
+      data: {
+        status: "ENDING",
+        endedAt: expect.any(Date),
+      },
+    });
+    expect(mockBuildAndSaveLedger).toHaveBeenCalledWith("sess-1");
+    expect(mockPrisma.teachingSession.updateMany.mock.calls[1][0]).toEqual({
+      where: {
+        id: "sess-1",
+        schoolId: "school-1",
+        facilitatorId: "teacher-1",
+        status: "ENDING",
+      },
+      data: { status: "COMPLETED" },
+    });
+    expect(mockPrisma.auditLog.create).toHaveBeenCalledWith({
+      data: expect.objectContaining({
+        action: "teaching.session.end",
+        resourceId: "sess-1",
+        schoolId: "school-1",
+        details: { ledgerId: "ledger-1" },
+      }),
+    });
+    await expect(res.json()).resolves.toEqual({
+      ledgerId: "ledger-1",
+      status: "COMPLETED",
+    });
+  });
+
+  it("returns an existing scoped ledger when completion is retried", async () => {
+    mockPrisma.teachingSession.findFirst.mockResolvedValue({
+      id: "sess-1",
+      status: "COMPLETED",
+    });
+
+    const res = await postEnd(jsonRequest({}), {
+      params: Promise.resolve({ sessionId: "sess-1" }),
+    });
+
+    expect(mockPrisma.teachingLedger.findFirst).toHaveBeenCalledWith({
+      where: { sessionId: "sess-1", schoolId: "school-1" },
+      select: { id: true },
+    });
+    expect(mockBuildAndSaveLedger).not.toHaveBeenCalled();
+    await expect(res.json()).resolves.toEqual({
+      ledgerId: "ledger-1",
+      status: "COMPLETED",
+    });
+  });
+
+  it("returns 404 without a ledger write for an inaccessible session", async () => {
+    mockPrisma.teachingSession.findFirst.mockResolvedValue(null);
+    const res = await postEnd(jsonRequest({}), {
+      params: Promise.resolve({ sessionId: "other-session" }),
+    });
+
+    expect(res.status).toBe(404);
+    expect(mockBuildAndSaveLedger).not.toHaveBeenCalled();
+  });
+
+  it("does not mark the session completed when ledger persistence fails", async () => {
+    mockPrisma.teachingSession.findFirst.mockResolvedValue({
+      id: "sess-1",
+      status: "ACTIVE",
+    });
+    mockBuildAndSaveLedger.mockRejectedValue(new Error("ledger write failed"));
+
+    await expect(
+      postEnd(jsonRequest({}), {
+        params: Promise.resolve({ sessionId: "sess-1" }),
+      })
+    ).rejects.toThrow("ledger write failed");
+
+    expect(mockPrisma.teachingSession.updateMany).toHaveBeenCalledOnce();
+    expect(mockPrisma.auditLog.create).not.toHaveBeenCalled();
   });
 });

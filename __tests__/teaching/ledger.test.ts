@@ -5,7 +5,7 @@ const { mockPrisma } = vi.hoisted(() => ({
     teachingSession: { findUnique: vi.fn() },
     teachingTurn: { findMany: vi.fn() },
     curriculumContent: { findUnique: vi.fn() },
-    teachingLedger: { create: vi.fn() },
+    teachingLedger: { upsert: vi.fn() },
   },
 }));
 
@@ -97,10 +97,10 @@ beforeEach(() => {
   mockPrisma.teachingSession.findUnique.mockReset().mockResolvedValue(SESSION);
   mockPrisma.teachingTurn.findMany.mockReset().mockResolvedValue(TURNS);
   mockPrisma.curriculumContent.findUnique.mockReset().mockResolvedValue(CONTENT);
-  mockPrisma.teachingLedger.create
+  mockPrisma.teachingLedger.upsert
     .mockReset()
-    .mockImplementation(({ data }) =>
-      Promise.resolve({ id: "ledger-1", ...data })
+    .mockImplementation(({ create }) =>
+      Promise.resolve({ id: "ledger-1", ...create })
     );
 });
 
@@ -112,8 +112,11 @@ describe("buildAndSaveLedger", () => {
     expect(mockPrisma.curriculumContent.findUnique).toHaveBeenCalledWith(
       expect.objectContaining({ where: { contentId: "content-1" } })
     );
-    const createArgs =
-      mockPrisma.teachingLedger.create.mock.calls[0][0].data;
+    const upsertArgs =
+      mockPrisma.teachingLedger.upsert.mock.calls[0][0];
+    const createArgs = upsertArgs.create;
+    expect(upsertArgs.where).toEqual({ sessionId: "sess-1" });
+    expect(upsertArgs.update.transcript).toHaveLength(3);
     expect(createArgs.sessionId).toBe("sess-1");
     expect(createArgs.objectives).toEqual(["Understand fractions"]);
     expect(createArgs.standardsCovered).toEqual(["MOE-MATH-G7-01"]);

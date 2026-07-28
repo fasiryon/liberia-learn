@@ -96,6 +96,17 @@ export async function runTeachingTurn(
   );
   const responseText = result.response ?? "I could not generate a response for this turn.";
 
+  const activeSession = await prisma.teachingSession.findUnique({
+    where: { id: sessionId },
+    select: { status: true },
+  });
+  if (activeSession?.status !== "ACTIVE") {
+    throw Object.assign(
+      new Error("Teaching session ended before this turn completed"),
+      { status: 409 }
+    );
+  }
+
   await prisma.teachingTurn.create({
     data: {
       sessionId,

@@ -1922,6 +1922,14 @@ git commit -m "feat(teaching): add Teaching Recovery degraded-mode route"
 
 ## Task 14: End-session API route
 
+> **Checkpoint correction, 2026-07-28:** The original route snippet below is
+> superseded. Scope the session by authenticated school and facilitator,
+> transition `ACTIVE` to `ENDING` before building the ledger so no new turn
+> index can be reserved, and make ledger persistence idempotent with an upsert
+> on unique `sessionId`. Transition `ENDING` to `COMPLETED` and write
+> `teaching.session.end` atomically only after the ledger exists. A repeated
+> request for an already-completed session returns the scoped existing ledger.
+
 **Files:**
 - Create: `app/api/teaching/sessions/[sessionId]/end/route.ts`
 - Test: append to `__tests__/api/teachingSessions.test.ts`

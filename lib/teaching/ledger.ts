@@ -54,41 +54,47 @@ export async function buildAndSaveLedger(
     (turn) => turn.whisperPrompt !== null
   ).length;
 
-  const ledger = await prisma.teachingLedger.create({
-    data: {
-      sessionId,
-      contentId: session.contentId,
-      facilitatorId: session.facilitatorId,
-      schoolId: session.schoolId,
-      grade: session.grade,
-      subject: session.subject,
-      standardsCovered,
-      objectives,
-      resourcesUsed: {
-        slideCount: getLessonSlides(payload).length,
-        audioAssetId: content?.audioAssets[0]?.id ?? null,
-      },
-      questionsAsked,
-      aggregatedResponses: {
-        totalTurns: turns.length,
-        deferredTurns: outOfScopeQuestions.length,
-        whisperPromptsIssued,
-      },
-      quizResults: null,
-      homeworkAssigned: null,
-      transcript: turns.map((turn) => ({
-        turnIndex: turn.turnIndex,
-        role: turn.role,
-        inputText: turn.inputText,
-        responseText: turn.responseText,
-        deferred: turn.deferred,
-        lessonDirectorAction: turn.lessonDirectorAction,
-        createdAt: turn.createdAt.toISOString(),
-      })),
-      confidenceFlags,
-      outOfScopeQuestions,
-      status: "DRAFT",
+  const ledgerData = {
+    contentId: session.contentId,
+    facilitatorId: session.facilitatorId,
+    schoolId: session.schoolId,
+    grade: session.grade,
+    subject: session.subject,
+    standardsCovered,
+    objectives,
+    resourcesUsed: {
+      slideCount: getLessonSlides(payload).length,
+      audioAssetId: content?.audioAssets[0]?.id ?? null,
     },
+    questionsAsked,
+    aggregatedResponses: {
+      totalTurns: turns.length,
+      deferredTurns: outOfScopeQuestions.length,
+      whisperPromptsIssued,
+    },
+    quizResults: null,
+    homeworkAssigned: null,
+    transcript: turns.map((turn) => ({
+      turnIndex: turn.turnIndex,
+      role: turn.role,
+      inputText: turn.inputText,
+      responseText: turn.responseText,
+      deferred: turn.deferred,
+      lessonDirectorAction: turn.lessonDirectorAction,
+      createdAt: turn.createdAt.toISOString(),
+    })),
+    confidenceFlags,
+    outOfScopeQuestions,
+    status: "DRAFT",
+  };
+
+  const ledger = await prisma.teachingLedger.upsert({
+    where: { sessionId },
+    create: {
+      sessionId,
+      ...ledgerData,
+    },
+    update: ledgerData,
   });
 
   return { ledgerId: ledger.id };

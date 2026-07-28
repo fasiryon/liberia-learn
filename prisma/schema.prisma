@@ -4288,7 +4288,7 @@ model TeachingSession {
   grade         String
   subject       String
   alignmentMode String // "FULL_CONFIDENCE" | "DEFERRED"
-  status        String    @default("ACTIVE") // "ACTIVE" | "COMPLETED" | "ABORTED"
+  status        String    @default("ACTIVE") // "ACTIVE" | "ENDING" | "COMPLETED" | "ABORTED"
   degradedMode  String? // null | "AUDIO_ONLY" | "WORKSHEET" | "FACILITATOR_SCRIPT"
   nextTurnIndex Int       @default(0) // atomically reserved before each turn invocation
   startedAt     DateTime  @default(now())
