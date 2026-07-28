@@ -55,7 +55,9 @@ export async function runTeachingTurn(
   if (input.role === "student") signals.push({ role: "student", correct: input.correct ?? null });
   const action = decideNextAction(signals, turnIndex);
 
-  const content = await prisma.curriculumContent.findUnique({ where: { id: session.contentId } });
+  const content = await prisma.curriculumContent.findUnique({
+    where: { contentId: session.contentId },
+  });
   const narration = getLessonNarration(content?.payload);
   const objectives = ((content?.payload as Record<string, unknown> | undefined)?.objectives as string[]) ?? [];
   const guardrailMode = session.alignmentMode as AlignmentMode;

@@ -68,6 +68,9 @@ describe("runTeachingTurn", () => {
     expect(result.guardrailMode).toBe("FULL_CONFIDENCE");
     expect(result.deferred).toBe(false);
     expect(result.turnIndex).toBe(0);
+    expect(mockPrisma.curriculumContent.findUnique).toHaveBeenCalledWith({
+      where: { contentId: "content-1" },
+    });
     expect(mockPrisma.teachingTurn.create).toHaveBeenCalledOnce();
   });
 
