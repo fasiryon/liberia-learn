@@ -1347,6 +1347,14 @@ git commit -m "feat(teaching): add audio-only and printable-worksheet degraded m
 
 Modeled directly on `moereportSaveDraftReportTool`'s pattern (`lib/agents/tools/moereport.tools.ts:328-356`): narrative + structured snapshot saved together, never reconstructed later.
 
+> **Checkpoint correction, 2026-07-28:** The original fixture and
+> implementation snippets below are superseded where they read
+> `payload.moeAlignments` or query `CurriculumContent.id`. The authoritative
+> standards field is `CurriculumContent.moeAlignments` and must be normalized
+> with `readMoeAlignmentCodes()`. Query by stable `contentId`, record real
+> `slideCount` and generated `audioAssetId`, and serialize transcript dates to
+> ISO strings before storing them in JSON.
+
 **Files:**
 - Create: `lib/teaching/ledger.ts`
 - Test: `__tests__/teaching/ledger.test.ts`
