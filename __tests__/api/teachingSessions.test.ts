@@ -7,6 +7,7 @@ const { mockPrisma, mockRequireRole, mockRunTeachingTurn } = vi.hoisted(() => {
       create: vi.fn(),
       findFirst: vi.fn(),
       update: vi.fn(),
+      updateMany: vi.fn(),
     },
     teachingTurn: { findFirst: vi.fn() },
     teachingLedger: { findFirst: vi.fn() },
@@ -28,6 +29,7 @@ vi.mock("@/lib/teaching/runtime", () => ({
 
 import { POST } from "@/app/api/teaching/sessions/route";
 import { POST as postTurn } from "@/app/api/teaching/sessions/[sessionId]/turn/route";
+import { POST as postDegrade } from "@/app/api/teaching/sessions/[sessionId]/degrade/route";
 
 const TEACHER = {
   id: "teacher-1",
@@ -84,6 +86,9 @@ beforeEach(() => {
   mockPrisma.teachingSession.findFirst
     .mockReset()
     .mockResolvedValue({ id: "sess-1" });
+  mockPrisma.teachingSession.updateMany
+    .mockReset()
+    .mockResolvedValue({ count: 1 });
   mockRunTeachingTurn.mockReset().mockResolvedValue({
     turnIndex: 0,
     responseText: "Fractions are parts of a whole.",
@@ -235,5 +240,70 @@ describe("POST /api/teaching/sessions/[sessionId]/turn", () => {
 
     expect(res.status).toBe(400);
     expect(mockRunTeachingTurn).not.toHaveBeenCalled();
+  });
+});
+
+describe("POST /api/teaching/sessions/[sessionId]/degrade", () => {
+  it("atomically records a teacher-scoped degraded mode and audit event", async () => {
+    const res = await postDegrade(
+      jsonRequest({ reason: "projector" }),
+      { params: Promise.resolve({ sessionId: "sess-1" }) }
+    );
+
+    expect(mockPrisma.teachingSession.updateMany).toHaveBeenCalledWith({
+      where: {
+        id: "sess-1",
+        schoolId: "school-1",
+        facilitatorId: "teacher-1",
+      },
+      data: { degradedMode: "AUDIO_ONLY" },
+    });
+    expect(mockPrisma.auditLog.create).toHaveBeenCalledWith({
+      data: expect.objectContaining({
+        action: "teaching.session.degrade",
+        resourceId: "sess-1",
+        schoolId: "school-1",
+        details: {
+          reason: "projector",
+          mode: "AUDIO_ONLY",
+        },
+      }),
+    });
+    await expect(res.json()).resolves.toEqual({
+      mode: "AUDIO_ONLY",
+      recorded: true,
+    });
+  });
+
+  it("records WORKSHEET for internet or power recovery", async () => {
+    const res = await postDegrade(
+      jsonRequest({ reason: "internet" }),
+      { params: Promise.resolve({ sessionId: "sess-1" }) }
+    );
+    await expect(res.json()).resolves.toEqual({
+      mode: "WORKSHEET",
+      recorded: true,
+    });
+  });
+
+  it("returns 404 and writes no audit event for an inaccessible session", async () => {
+    mockPrisma.teachingSession.updateMany.mockResolvedValue({ count: 0 });
+    const res = await postDegrade(
+      jsonRequest({ reason: "power" }),
+      { params: Promise.resolve({ sessionId: "other-session" }) }
+    );
+
+    expect(res.status).toBe(404);
+    expect(mockPrisma.auditLog.create).not.toHaveBeenCalled();
+  });
+
+  it("rejects an unknown recovery reason", async () => {
+    const res = await postDegrade(
+      jsonRequest({ reason: "unknown" }),
+      { params: Promise.resolve({ sessionId: "sess-1" }) }
+    );
+
+    expect(res.status).toBe(400);
+    expect(mockPrisma.teachingSession.updateMany).not.toHaveBeenCalled();
   });
 });
