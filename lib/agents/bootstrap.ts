@@ -21,3 +21,5 @@ import "@/lib/agents/tools/districtupdate.tools";
 import "@/lib/agents/agents/district-update.agent";
 import "@/lib/agents/tools/morningbrief.tools";
 import "@/lib/agents/agents/morning-brief.agent";
+import "@/lib/agents/tools/teaching.tools";
+import "@/lib/agents/agents/teaching-runtime.agent";
