@@ -4270,6 +4270,88 @@ model DistrictUpdateDraft {
   @@index([type, scope, scopeId, createdAt])
 }
 
+// AI Teaching Runtime v1. Additive only (Escalation Point 6: no existing
+// table touched). TeachingSession is the per-classroom lifecycle row created
+// by an explicit authenticated "Start Teaching Session" action (Escalation
+// Point 4). alignmentMode is decided ONCE at session start from a live
+// hasGenuineMoeAlignment() check and never re-evaluated mid-session
+// (Escalation Point 1). TeachingTurn is one row per turn-based invocation
+// (Escalation Point 2: turn-based, not continuous streaming) - each turn
+// maps to exactly one runAgent("teaching-runtime") call. TeachingLedger is
+// the structured end-of-session record, same narrative+snapshot storage
+// posture as ReportDraft/DistrictUpdateDraft.
+model TeachingSession {
+  id            String    @id @default(cuid())
+  contentId     String
+  facilitatorId String
+  schoolId      String
+  grade         String
+  subject       String
+  alignmentMode String // "FULL_CONFIDENCE" | "DEFERRED"
+  status        String    @default("ACTIVE") // "ACTIVE" | "COMPLETED" | "ABORTED"
+  degradedMode  String? // null | "AUDIO_ONLY" | "WORKSHEET" | "FACILITATOR_SCRIPT"
+  startedAt     DateTime  @default(now())
+  endedAt       DateTime?
+  createdAt     DateTime  @default(now())
+
+  turns  TeachingTurn[]
+  ledger TeachingLedger?
+
+  @@index([facilitatorId, startedAt])
+  @@index([schoolId, startedAt])
+  @@index([contentId])
+}
+
+model TeachingTurn {
+  id                    String   @id @default(cuid())
+  sessionId             String
+  turnIndex             Int
+  role                  String // "facilitator" | "student"
+  inputText             String   @db.Text
+  responseText          String   @db.Text
+  guardrailMode         String // "FULL_CONFIDENCE" | "DEFERRED", copied from session at write time
+  deferred              Boolean  @default(false)
+  lessonDirectorAction  String // "continue" | "pause" | "comprehension_check" | "revisit_prerequisite" | "regroup" | "exit_ticket"
+  whisperPrompt         Json? // { title, body } when a Whisper Mode push was sent this turn
+  llmCostUSD            Float    @default(0)
+  latencyMs             Int      @default(0)
+  createdAt             DateTime @default(now())
+
+  session TeachingSession @relation(fields: [sessionId], references: [id])
+
+  @@unique([sessionId, turnIndex])
+  @@index([sessionId, createdAt])
+}
+
+model TeachingLedger {
+  id                  String   @id @default(cuid())
+  sessionId           String   @unique
+  contentId           String
+  facilitatorId       String
+  schoolId            String
+  grade               String
+  subject             String
+  standardsCovered    Json // string[] of MOE standard codes actually cited during the session
+  objectives          Json // string[] copied from the lesson payload
+  resourcesUsed       Json // { slideCount, audioAssetId } used during delivery
+  questionsAsked      Json // [{ turnIndex, role, text }]
+  aggregatedResponses Json // summary counts (correct/incorrect/deferred), not a second raw transcript
+  quizResults         Json?
+  homeworkAssigned    Json?
+  transcript          Json // full ordered turn array, denormalized snapshot (same posture as ReportDraft.dataSnapshot)
+  confidenceFlags     Json // [{ turnIndex, mode, deferred }]
+  outOfScopeQuestions Json // [{ turnIndex, text }]
+  facilitatorNotes    String?  @db.Text
+  narrativeText       String?  @db.Text
+  status              String   @default("DRAFT")
+  createdAt           DateTime @default(now())
+
+  session TeachingSession @relation(fields: [sessionId], references: [id])
+
+  @@index([schoolId, createdAt])
+  @@index([facilitatorId, createdAt])
+}
+
 // Sprint 7.4: Morning Brief agent. One row per teacher per school day - a
 // short in-app digest generated on top of Sprint 7.2's differentiation
 // rollup and real overdue-grading counts, never a new signal pipeline.
