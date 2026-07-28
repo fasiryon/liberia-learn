@@ -59,6 +59,12 @@ registerPromptDefinition({
 });
 
 registerPromptDefinition({
+  key: "agent.teaching-runtime.system",
+  version: "1.0.0",
+  template: loadPromptFile("./prompts/teaching-runtime.md"),
+});
+
+registerPromptDefinition({
   key: "agent.morning-brief.system",
   version: "1.0.0",
   template: loadPromptFile("./prompts/morning-brief.md"),
