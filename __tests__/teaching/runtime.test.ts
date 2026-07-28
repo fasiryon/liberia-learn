@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 
 const { mockPrisma, mockRunAgent } = vi.hoisted(() => ({
   mockPrisma: {
-    teachingSession: { findUnique: vi.fn() },
+    teachingSession: { findUnique: vi.fn(), update: vi.fn() },
     teachingTurn: { findMany: vi.fn(), create: vi.fn() },
     curriculumContent: { findUnique: vi.fn() },
   },
@@ -32,6 +32,9 @@ const CONTENT = {
 
 beforeEach(() => {
   mockPrisma.teachingSession.findUnique.mockReset().mockResolvedValue(SESSION);
+  mockPrisma.teachingSession.update
+    .mockReset()
+    .mockResolvedValue({ nextTurnIndex: 1 });
   mockPrisma.teachingTurn.findMany.mockReset().mockResolvedValue([]);
   mockPrisma.teachingTurn.create
     .mockReset()
@@ -138,6 +141,7 @@ describe("runTeachingTurn", () => {
   });
 
   it("increments turnIndex based on prior turn count", async () => {
+    mockPrisma.teachingSession.update.mockResolvedValue({ nextTurnIndex: 3 });
     mockPrisma.teachingTurn.findMany.mockResolvedValue([
       { turnIndex: 0, role: "facilitator", deferred: false },
       { turnIndex: 1, role: "student", deferred: false },
@@ -159,5 +163,40 @@ describe("runTeachingTurn", () => {
       { userRole: "TEACHER" }
     );
     expect(result.turnIndex).toBe(2);
+  });
+
+  it("atomically reserves distinct indexes for parallel turn submissions", async () => {
+    mockPrisma.teachingSession.update
+      .mockResolvedValueOnce({ nextTurnIndex: 1 })
+      .mockResolvedValueOnce({ nextTurnIndex: 2 });
+    mockRunAgent.mockResolvedValue({
+      status: "SUCCESS",
+      response: "A grounded response.",
+      invocationId: "inv-parallel",
+      toolCalls: [],
+      llmCostUSD: 0.001,
+      llmTokensIn: 90,
+      llmTokensOut: 20,
+      toolCostUnits: 0,
+    });
+
+    const [first, second] = await Promise.all([
+      runTeachingTurn(
+        "sess-1",
+        { role: "student", text: "First question." },
+        { userRole: "TEACHER" }
+      ),
+      runTeachingTurn(
+        "sess-1",
+        { role: "student", text: "Second question." },
+        { userRole: "TEACHER" }
+      ),
+    ]);
+
+    expect([first.turnIndex, second.turnIndex].sort()).toEqual([0, 1]);
+    const storedIndexes = mockPrisma.teachingTurn.create.mock.calls
+      .map(([args]) => args.data.turnIndex)
+      .sort();
+    expect(storedIndexes).toEqual([0, 1]);
   });
 });

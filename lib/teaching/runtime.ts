@@ -41,12 +41,18 @@ export async function runTeachingTurn(
     throw Object.assign(new Error(`Teaching session is not active (status: ${session.status})`), { status: 409 });
   }
 
+  const reservation = await prisma.teachingSession.update({
+    where: { id: sessionId, status: "ACTIVE" },
+    data: { nextTurnIndex: { increment: 1 } },
+    select: { nextTurnIndex: true },
+  });
+  const turnIndex = reservation.nextTurnIndex - 1;
+
   const priorTurns = await prisma.teachingTurn.findMany({
     where: { sessionId },
     orderBy: { turnIndex: "asc" },
     select: { turnIndex: true, role: true, deferred: true },
   });
-  const turnIndex = priorTurns.length;
 
   const signals: TurnSignal[] = priorTurns.map((turn) => ({
     role: turn.role as "facilitator" | "student",

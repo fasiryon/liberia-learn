@@ -870,6 +870,13 @@ git commit -m "feat(teaching): register teaching-runtime agent"
 
 This is the core of the feature: loads session state, runs the Lesson Director, assembles the per-turn grounding message, calls `runAgent()`, and persists a `TeachingTurn`.
 
+> **Checkpoint correction, 2026-07-28:** `priorTurns.length` is not a safe
+> turn allocator. Parallel requests can choose the same index and collide on
+> `TeachingTurn(sessionId, turnIndex)`. Add
+> `TeachingSession.nextTurnIndex Int @default(0)` with an additive migration,
+> atomically increment it before invocation, and use the reserved value minus
+> one. Keep the unique constraint as the final database backstop.
+
 **Files:**
 - Create: `lib/teaching/types.ts`
 - Create: `lib/teaching/runtime.ts`

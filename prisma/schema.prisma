@@ -4290,6 +4290,7 @@ model TeachingSession {
   alignmentMode String // "FULL_CONFIDENCE" | "DEFERRED"
   status        String    @default("ACTIVE") // "ACTIVE" | "COMPLETED" | "ABORTED"
   degradedMode  String? // null | "AUDIO_ONLY" | "WORKSHEET" | "FACILITATOR_SCRIPT"
+  nextTurnIndex Int       @default(0) // atomically reserved before each turn invocation
   startedAt     DateTime  @default(now())
   endedAt       DateTime?
   createdAt     DateTime  @default(now())
