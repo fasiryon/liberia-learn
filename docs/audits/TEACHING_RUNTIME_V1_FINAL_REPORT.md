@@ -4,7 +4,7 @@ Date: 2026-07-29
 
 Branch: `feat/teaching-runtime-v1`
 
-Status: COMPLETE on preview and approved for merge after final review. The
+Status: COMPLETE and merged to `main` at `61bc3279` after final review. The
 production feature flag remains disabled.
 
 Preview: `https://liberia-learn-m35foesnv-farquema-siryons-projects.vercel.app`
@@ -419,9 +419,9 @@ That committed snapshot reports:
 - Build: PASS
 - Encoding repair command: PASS
 
-### Uncommitted follow-up state
+### Follow-up review disposition
 
-The mobile-audit worktree also contains later hardening in six paths:
+The mobile-audit worktree contained later hardening in six paths:
 
 - modified `app/api/admin/placements/[id]/route.ts`
 - modified `package.json`
@@ -430,15 +430,25 @@ The mobile-audit worktree also contains later hardening in six paths:
 - untracked `__tests__/mojibake.test.ts`
 - untracked `lib/encoding/mojibake.ts`
 
-Those follow-up edits were not merged, committed, or revalidated as part of
-this teaching-runtime cycle and must not be represented as shipped. The
-validated audit also notes that a broader legacy source-text encoding sweep
-may still be warranted.
+The branch was fast-forwarded to current `main` before review. The placement
+authorization and encoding changes were legitimate in intent, but review found
+that the encoding test accepted partially repaired mojibake. That expectation
+was corrected locally. Focused tests then passed 10/10 and TypeScript passed.
+
+The required unmodified full Vitest suite did not pass: multiple unrelated
+legacy tests exceeded their five-second timeouts and the suite exceeded the
+command ceiling. Because the normal gate remained red, none of the six
+follow-ups were committed. They were explicitly discarded, their temporary
+stash was dropped, and the stale worktree and redundant local branch were
+removed. They must not be represented as shipped or pending in Git.
+
+The validated audit also notes that a broader legacy source-text encoding
+sweep may still be warranted.
 
 ## Next step
 
-Review and merge `feat/teaching-runtime-v1` to `main`. Keep
-`AGENT_TEACHING_RUNTIME_ENABLED` disabled in production until a deliberate
+Keep `AGENT_TEACHING_RUNTIME_ENABLED` disabled in production until a deliberate
 release decision and a facilitator device with an active push subscription are
-available for delivery verification. Review and commit or discard the separate
-mobile-audit follow-up worktree before merging its validated audit commit.
+available for delivery verification. The validated mobile-audit commit is
+already in `main`; its rejected follow-ups require a new scoped implementation
+and a clean full gate if they are reconsidered later.

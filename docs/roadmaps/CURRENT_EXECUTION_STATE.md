@@ -11,11 +11,13 @@ Live execution tracking for the final closeout program.
   row in the canonical plan
 - **Pre-NR-3 verification:** confirm the live production `DATABASE_URL` uses
   the pooled endpoint before accepting NR-1's historical completion claim
-- **Teaching Runtime v1:** all 16 tasks complete and validated; production
-  remains disabled until deliberate release approval and real-device Whisper
-  push verification
-- **Mobile audit:** validated commit `d8da8453` is already in `main`; six later
-  worktree paths remain uncommitted, unvalidated, and unshipped
+- **Teaching Runtime v1:** all 16 tasks merged to `main` at `61bc3279`;
+  production remains disabled until deliberate release approval and
+  real-device Whisper push verification
+- **Mobile audit:** validated commit `d8da8453` is in `main`; six later
+  follow-up paths failed the required full gate and were explicitly discarded
+- **Stale worktrees:** mobile-audit and load-test-validation worktrees were
+  removed after their merged/equivalent committed work was verified
 - **Unattended loop:** design agreed in principle, driver not built; do not
   imply that pending sprints are running automatically
 - **Execution limit:** one sprint per unattended cycle, then stop and report
@@ -24,8 +26,6 @@ Live execution tracking for the final closeout program.
 
 Pending work outside the NR sprint index:
 
-- review the six mobile-audit follow-up paths and either gate and commit them
-  or explicitly discard them
 - confirm Supabase, ElevenLabs, Fal.ai, and curriculum daily-budget status
   before paid generation; ElevenLabs balance and pricing require independent
   verification before audio spend
@@ -44,8 +44,7 @@ historical sections to select work.
 - **Plan:** `docs/superpowers/plans/2026-07-28-teaching-runtime-v1.md`
 - **Final report:** `docs/audits/TEACHING_RUNTIME_V1_FINAL_REPORT.md`
 - **Branch:** `feat/teaching-runtime-v1`
-- **Status:** Tasks 1 through 16 COMPLETE, final review gate passed, approved
-  for merge to `main`
+- **Status:** Tasks 1 through 16 COMPLETE and merged to `main` at `61bc3279`
 - **Preview:** `https://liberia-learn-m35foesnv-farquema-siryons-projects.vercel.app`
 - **Production flag:** remains disabled
 - **Sprint scope:** 41 files covering additive persistence, alignment and
@@ -72,12 +71,14 @@ historical sections to select work.
   release and live push-device verification.
 
 ### Mobile audit handoff included with final cycle summary
-- Validated commit `d8da8453` is already an ancestor of `main`; the separate
-  `fix/mobile-audit-issues` worktree remains only because of later follow-ups.
+- Validated commit `d8da8453` is an ancestor of `main`.
 - Its recorded gate is TypeScript PASS, Vitest PASS (1,541 tests / 204 files),
   build PASS, and encoding repair PASS.
-- Six later follow-up paths remain uncommitted in that worktree and were not
-  included or revalidated in the teaching-runtime cycle.
+- Six later follow-up paths were reviewed on current `main`. Focused tests
+  passed 10/10 and TypeScript passed, but the required unmodified full suite
+  failed on unrelated five-second timeout tests and exceeded the command
+  ceiling. The follow-ups were therefore not committed and were explicitly
+  discarded. The stale worktree and redundant local branch were removed.
 
 ## National Rollout Program (active)
 - **Plan:** `docs/roadmaps/NATIONAL_ROLLOUT_EXECUTION_PLAN.md`
