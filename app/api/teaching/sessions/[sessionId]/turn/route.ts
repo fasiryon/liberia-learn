@@ -44,8 +44,26 @@ export async function POST(
     return NextResponse.json({ error: "Invalid turn" }, { status: 400 });
   }
 
-  const result = await runTeachingTurn(session.id, parsed.data, {
-    userRole: user.role,
-  });
-  return NextResponse.json(result);
+  try {
+    const result = await runTeachingTurn(session.id, parsed.data, {
+      userRole: user.role,
+    });
+    return NextResponse.json(result);
+  } catch (error) {
+    const status =
+      typeof (error as { status?: unknown })?.status === "number" &&
+      (error as { status: number }).status >= 400 &&
+      (error as { status: number }).status <= 599
+        ? (error as { status: number }).status
+        : 500;
+    return NextResponse.json(
+      {
+        error:
+          status === 503
+            ? "Teaching runtime temporarily unavailable"
+            : "Teaching turn failed",
+      },
+      { status }
+    );
+  }
 }

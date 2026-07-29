@@ -4,10 +4,20 @@ import { registerTool } from "@/lib/agents/toolRegistry";
 import { sendPushToUser } from "@/lib/push/sendPush";
 import type { ToolDefinition } from "@/lib/agents/types";
 
-const sendWhisperPromptInput = z.object({
-  sessionId: z.string(),
-  message: z.string().min(1).max(300),
-});
+const sendWhisperPromptInput = z.preprocess(
+  (value) => {
+    if (!value || typeof value !== "object") return value;
+    const input = value as Record<string, unknown>;
+    return {
+      sessionId: input.sessionId ?? input.session_id,
+      message: input.message,
+    };
+  },
+  z.object({
+    sessionId: z.string(),
+    message: z.string().min(1).max(300),
+  })
+);
 const sendWhisperPromptOutput = z.object({ sent: z.boolean() });
 
 export const teachingSendWhisperPromptTool: ToolDefinition<
@@ -41,10 +51,20 @@ export const teachingSendWhisperPromptTool: ToolDefinition<
   },
 };
 
-const flagOutOfScopeInput = z.object({
-  sessionId: z.string(),
-  question: z.string().min(1).max(500),
-});
+const flagOutOfScopeInput = z.preprocess(
+  (value) => {
+    if (!value || typeof value !== "object") return value;
+    const input = value as Record<string, unknown>;
+    return {
+      sessionId: input.sessionId ?? input.session_id,
+      question: input.question ?? input.message,
+    };
+  },
+  z.object({
+    sessionId: z.string(),
+    question: z.string().min(1).max(500),
+  })
+);
 const flagOutOfScopeOutput = z.object({ logged: z.boolean() });
 
 export const teachingFlagOutOfScopeTool: ToolDefinition<

@@ -257,6 +257,23 @@ describe("POST /api/teaching/sessions/[sessionId]/turn", () => {
     expect(res.status).toBe(400);
     expect(mockRunTeachingTurn).not.toHaveBeenCalled();
   });
+
+  it("returns a structured 503 when the teaching agent fails closed", async () => {
+    mockPrisma.teachingSession.findFirst.mockResolvedValue({ id: "sess-1" });
+    mockRunTeachingTurn.mockRejectedValue(
+      Object.assign(new Error("Teaching agent unavailable"), { status: 503 })
+    );
+
+    const response = await postTurn(
+      jsonRequest({ role: "student", text: "Please explain again." }),
+      { params: Promise.resolve({ sessionId: "sess-1" }) }
+    );
+
+    expect(response.status).toBe(503);
+    await expect(response.json()).resolves.toEqual({
+      error: "Teaching runtime temporarily unavailable",
+    });
+  });
 });
 
 describe("POST /api/teaching/sessions/[sessionId]/degrade", () => {

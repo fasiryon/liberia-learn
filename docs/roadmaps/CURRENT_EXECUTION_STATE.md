@@ -3,6 +3,34 @@
 ## Purpose
 Live execution tracking for the final closeout program.
 
+## AI Teaching Runtime v1 (completed 2026-07-29)
+- **Plan:** `docs/superpowers/plans/2026-07-28-teaching-runtime-v1.md`
+- **Final report:** `docs/audits/TEACHING_RUNTIME_V1_FINAL_REPORT.md`
+- **Branch:** `feat/teaching-runtime-v1`
+- **Status:** Task 16 COMPLETE on validated preview
+- **Preview:** `https://liberia-learn-m35foesnv-farquema-siryons-projects.vercel.app`
+- **Production flag:** remains disabled
+- **Gate:** Prisma PASS; TypeScript PASS with 6144 MB heap; Vitest PASS
+  (4,407 tests / 537 files); build PASS
+- **Task 15 measured cost:** aligned 50-turn session $0.032309; unaligned
+  50-turn session $0.013708
+- **Task 16 walkthrough:** aligned 10 turns / 1 deferral / WORKSHEET recovery;
+  unaligned 10 turns / 5 deferrals; Whisper tool persisted; both ledgers saved
+- **Runtime issue closed:** teaching tool argument aliases are normalized before
+  strict validation, exact tool schemas are reinforced in the prompt, and
+  fail-closed agent errors return structured 503 responses
+- **Next step:** review and merge the teaching-runtime branch. Keep the
+  production feature flag off pending a deliberate release and live push-device
+  verification.
+
+### Mobile audit handoff included with final cycle summary
+- Validated commit `d8da8453` remains in the separate
+  `fix/mobile-audit-issues` worktree.
+- Its recorded gate is TypeScript PASS, Vitest PASS (1,541 tests / 204 files),
+  build PASS, and encoding repair PASS.
+- Six later follow-up paths remain uncommitted in that worktree and were not
+  included or revalidated in the teaching-runtime cycle.
+
 ## National Rollout Program (active)
 - **Plan:** `docs/roadmaps/NATIONAL_ROLLOUT_EXECUTION_PLAN.md`
 - **Current sprint:** NR-2 — ECS Worker Autoscale + Queue SLOs

@@ -24,6 +24,18 @@ beforeEach(() => {
 });
 
 describe("teachingSendWhisperPromptTool", () => {
+  it("normalizes the observed snake_case session id alias before validation", () => {
+    expect(
+      teachingSendWhisperPromptTool.inputSchema.parse({
+        session_id: "sess-1",
+        message: "Try a concrete example.",
+      })
+    ).toEqual({
+      sessionId: "sess-1",
+      message: "Try a concrete example.",
+    });
+  });
+
   it("pushes to the session's facilitator and reports sent", async () => {
     mockPrisma.teachingSession.findUnique.mockResolvedValue({ facilitatorId: "teacher-1" });
     mockSendPushToUser.mockResolvedValue({ sent: 1, failed: 0, smsFallback: 0 });
@@ -68,6 +80,18 @@ describe("teachingSendWhisperPromptTool", () => {
 });
 
 describe("teachingFlagOutOfScopeTool", () => {
+  it("normalizes observed session_id and message aliases before validation", () => {
+    expect(
+      teachingFlagOutOfScopeTool.inputSchema.parse({
+        session_id: "sess-1",
+        message: "What is the capital of France?",
+      })
+    ).toEqual({
+      sessionId: "sess-1",
+      question: "What is the capital of France?",
+    });
+  });
+
   it("always logs successfully", async () => {
     const result = await teachingFlagOutOfScopeTool.handler(
       { sessionId: "sess-1", question: "What is the capital of France?" },
