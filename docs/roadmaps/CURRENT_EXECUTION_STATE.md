@@ -38,9 +38,9 @@ Live execution tracking for the final closeout program.
 ## National Rollout Program (active)
 - **Plan:** `docs/roadmaps/NATIONAL_ROLLOUT_EXECUTION_PLAN.md`
 - **Current sprint:** NR-2 — ECS Worker Autoscale + Queue SLOs
-- **Status:** NR-2 COMPLETE (2026-05-18)
+- **Status:** NR-2 COMPLETE (2026-05-18). Re-verified live against AWS on 2026-07-28 after the sprint index table was found marking it PENDING (a stale table, not a real regression): ECS service `liberia-learn-worker` ACTIVE 1/1, autoscaling target `service/liberia-learn/liberia-learn-worker` min1/max10 with a target-tracking policy on `ApproximateNumberOfMessagesVisible` for `liberialearn-jobs.fifo` at target 50 (scale-out 30s / scale-in 120s), both `liberialearn-jobs.fifo` and its DLQ present. Sprint index table corrected to match.
 - **Target:** World-class national rollout (all Liberia) — 22 sprints NR-0 through NR-21
-- **Next sprint:** NR-3 — DATABASE_URL Port Fix + PgBouncer Validation
+- **Next sprint:** NR-3 — Load-Test Identity Pool (per the plan's actual NR-3 definition). Note: this line previously read "DATABASE_URL Port Fix + PgBouncer Validation", which does not match any defined NR-3 scope in the plan. That item traces back to a real open finding from NR-0/NR-1 ("DATABASE_URL: port 5432 with pgbouncer=true, MISCONFIGURED, needs 6543 for actual pooling") that was never confirmed fixed or folded into a numbered sprint. Flagged here, not silently resolved: verify current Vercel production DATABASE_URL port before NR-3 starts, since NR-1 (marked COMPLETE) lists pooled DATABASE_URL as one of its own deliverables.
 
 ### NR-0 + NR-1 Complete (2026-05-18)
 Key findings:
