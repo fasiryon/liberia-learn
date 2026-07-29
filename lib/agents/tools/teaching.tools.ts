@@ -24,6 +24,9 @@ export const teachingSendWhisperPromptTool: ToolDefinition<
   estimatedCostUnits: 0,
   requiresAuth: ["system"],
   handler: async (input) => {
+    if (process.env.TEACHING_RUNTIME_COST_SIM?.trim() === "true") {
+      return { sent: false };
+    }
     const session = await prisma.teachingSession.findUnique({
       where: { id: input.sessionId },
       select: { facilitatorId: true },

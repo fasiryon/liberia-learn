@@ -1,5 +1,4 @@
 import { prisma } from "@/lib/db";
-import { logAudit } from "@/lib/audit";
 import { withDbWriteThrottle } from "@/lib/db/writeThrottle";
 import { roundUSD } from "@/lib/agents/money";
 import type {
@@ -29,49 +28,55 @@ export interface PersistInvocationInput {
   traceId?: string | null;
 }
 
-/** Persist one AgentInvocation and write a correlated audit record. */
+/** Persist one AgentInvocation and its correlated audit record atomically. */
 export async function persistInvocation(
   input: PersistInvocationInput
 ): Promise<{ id: string }> {
   const row = (await withDbWriteThrottle("agent.invocation.persist", () =>
-    prisma.agentInvocation.create({
-      data: {
-        agentName: input.agentName,
-        agentVersion: input.agentVersion,
-        goalId: input.goalId ?? null,
-        userId: input.userId ?? null,
-        triggeredBy: input.triggeredBy,
-        input: (input.input ?? {}) as object,
-        output: (input.output ?? undefined) as object | undefined,
-        toolCalls: input.toolCalls as unknown as object,
-        llmTokensIn: input.llmTokensIn,
-        llmTokensOut: input.llmTokensOut,
-        llmCostUSD: roundUSD(input.llmCostUSD),
-        toolCostUnits: input.toolCostUnits,
-        latencyMs: input.latencyMs,
-        status: input.status,
-        errorMessage: input.errorMessage ?? null,
-        escalationReason: input.escalationReason ?? null,
-      },
+    prisma.$transaction(async (tx) => {
+      const invocation = await tx.agentInvocation.create({
+        data: {
+          agentName: input.agentName,
+          agentVersion: input.agentVersion,
+          goalId: input.goalId ?? null,
+          userId: input.userId ?? null,
+          triggeredBy: input.triggeredBy,
+          input: (input.input ?? {}) as object,
+          output: (input.output ?? undefined) as object | undefined,
+          toolCalls: input.toolCalls as unknown as object,
+          llmTokensIn: input.llmTokensIn,
+          llmTokensOut: input.llmTokensOut,
+          llmCostUSD: roundUSD(input.llmCostUSD),
+          toolCostUnits: input.toolCostUnits,
+          latencyMs: input.latencyMs,
+          status: input.status,
+          errorMessage: input.errorMessage ?? null,
+          escalationReason: input.escalationReason ?? null,
+        },
+      });
+
+      await tx.auditLog.create({
+        data: {
+          userId: input.userId ?? null,
+          action: "agent.invocation",
+          resourceType: "AgentInvocation",
+          resourceId: invocation.id,
+          traceId: input.traceId ?? null,
+          schoolId: input.schoolId ?? null,
+          details: {
+            agentName: input.agentName,
+            agentVersion: input.agentVersion,
+            status: input.status,
+            triggeredBy: input.triggeredBy,
+            llmCostUSD: roundUSD(input.llmCostUSD),
+            toolCostUnits: input.toolCostUnits,
+          },
+        },
+      });
+
+      return invocation;
     })
   )) as { id: string };
-
-  await logAudit({
-    userId: input.userId ?? null,
-    action: "agent.invocation",
-    resourceType: "AgentInvocation",
-    resourceId: row.id,
-    traceId: input.traceId ?? null,
-    schoolId: input.schoolId ?? null,
-    details: {
-      agentName: input.agentName,
-      agentVersion: input.agentVersion,
-      status: input.status,
-      triggeredBy: input.triggeredBy,
-      llmCostUSD: roundUSD(input.llmCostUSD),
-      toolCostUnits: input.toolCostUnits,
-    },
-  });
 
   return { id: row.id };
 }

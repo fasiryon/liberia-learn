@@ -86,4 +86,23 @@ describe("AI budget guard", () => {
     expect(mockWarn).toHaveBeenCalled();
     expect(mockError).toHaveBeenCalled();
   });
+
+  it("fails closed when the budget query is unavailable", async () => {
+    mockAggregate.mockRejectedValue(new Error("pool unavailable"));
+
+    const result = await checkBudget("curriculum", "school-1");
+
+    expect(result).toMatchObject({
+      allowed: false,
+      remaining: 0,
+      fallbackReason: "budget_check_unavailable",
+    });
+    expect(mockError).toHaveBeenCalledWith(
+      "[AI_BUDGET] budget check failed; failing closed",
+      expect.objectContaining({
+        feature: "curriculum",
+        schoolId: "school-1",
+      })
+    );
+  });
 });

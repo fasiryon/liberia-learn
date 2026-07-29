@@ -18,7 +18,10 @@ export type BudgetResult = {
   dailyCap: number;
   monthlyUsed: number;
   monthlyCap: number;
-  fallbackReason?: "daily_cap_reached" | "monthly_cap_reached";
+  fallbackReason?:
+    | "daily_cap_reached"
+    | "monthly_cap_reached"
+    | "budget_check_unavailable";
 };
 
 function getStartOfDay() {
@@ -58,13 +61,18 @@ export async function checkBudget(feature: AiBudgetFeature, schoolId?: string | 
   const monthlyCap = getAiBudgetMonthlyCap();
 
   if (!aiInteractionLogModel?.aggregate) {
+    logger.error("[AI_BUDGET] budget check unavailable; failing closed", {
+      feature,
+      schoolId: schoolId ?? null,
+    });
     return {
-      allowed: true,
-      remaining: Math.min(dailyCap, monthlyCap),
+      allowed: false,
+      remaining: 0,
       dailyUsed: 0,
       dailyCap,
       monthlyUsed: 0,
       monthlyCap,
+      fallbackReason: "budget_check_unavailable",
     };
   }
 
@@ -141,19 +149,20 @@ export async function checkBudget(feature: AiBudgetFeature, schoolId?: string | 
       monthlyCap,
     };
   } catch (error) {
-    logger.warn("[AI_BUDGET] budget check failed open", {
+    logger.error("[AI_BUDGET] budget check failed; failing closed", {
       feature,
       schoolId: schoolId ?? null,
       error,
     });
 
     return {
-      allowed: true,
-      remaining: Math.min(dailyCap, monthlyCap),
+      allowed: false,
+      remaining: 0,
       dailyUsed: 0,
       dailyCap,
       monthlyUsed: 0,
       monthlyCap,
+      fallbackReason: "budget_check_unavailable",
     };
   }
 }

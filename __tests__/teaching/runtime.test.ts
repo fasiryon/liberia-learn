@@ -107,6 +107,52 @@ describe("runTeachingTurn", () => {
     expect(result.deferred).toBe(true);
   });
 
+  it("persists an honest teacher-referred deferral even when the model skips the tool call", async () => {
+    mockRunAgent.mockResolvedValue({
+      status: "SUCCESS",
+      response:
+        "I don't know that one for certain, let's check with your teacher.",
+      invocationId: "inv-safe-deferral",
+      toolCalls: [],
+      llmCostUSD: 0.001,
+      llmTokensIn: 90,
+      llmTokensOut: 20,
+      toolCostUnits: 0,
+    });
+
+    const result = await runTeachingTurn(
+      "sess-1",
+      { role: "student", text: "What is the capital of France?" },
+      { userRole: "TEACHER" }
+    );
+
+    expect(result.deferred).toBe(true);
+    expect(mockPrisma.teachingTurn.create).toHaveBeenCalledWith({
+      data: expect.objectContaining({ deferred: true }),
+    });
+  });
+
+  it("does not infer a deferral from uncertainty without a teacher referral", async () => {
+    mockRunAgent.mockResolvedValue({
+      status: "SUCCESS",
+      response: "I am not sure which fraction you mean. Please point to it.",
+      invocationId: "inv-uncertain",
+      toolCalls: [],
+      llmCostUSD: 0.001,
+      llmTokensIn: 90,
+      llmTokensOut: 20,
+      toolCostUnits: 0,
+    });
+
+    const result = await runTeachingTurn(
+      "sess-1",
+      { role: "student", text: "Which fraction?" },
+      { userRole: "TEACHER" }
+    );
+
+    expect(result.deferred).toBe(false);
+  });
+
   it("reports whisperSent true when the agent calls teaching.sendWhisperPrompt successfully", async () => {
     mockRunAgent.mockResolvedValue({
       status: "SUCCESS",

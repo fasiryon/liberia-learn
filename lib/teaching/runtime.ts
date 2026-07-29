@@ -32,6 +32,14 @@ function buildTurnMessage(params: {
   ].join("\n\n");
 }
 
+function isHonestDeferralResponse(responseText: string): boolean {
+  const uncertainty =
+    /\b(?:i do not know|i don't know|i am not sure|i'm not sure|not certain)\b/i;
+  const teacherReferral =
+    /\b(?:check|ask|confirm|talk)\b[\s\S]{0,40}\b(?:teacher|facilitator)\b/i;
+  return uncertainty.test(responseText) && teacherReferral.test(responseText);
+}
+
 export async function runTeachingTurn(
   sessionId: string,
   input: TurnInput,
@@ -98,7 +106,6 @@ export async function runTeachingTurn(
     );
   }
 
-  const deferred = result.toolCalls.some((toolCall) => toolCall.tool === "teaching.flagOutOfScope" && toolCall.ok);
   const whisperCall = result.toolCalls.find(
     (toolCall) => toolCall.tool === "teaching.sendWhisperPrompt" && toolCall.ok
   );
@@ -106,6 +113,11 @@ export async function runTeachingTurn(
     whisperCall && (whisperCall.result as { sent?: boolean } | undefined)?.sent
   );
   const responseText = result.response ?? "I could not generate a response for this turn.";
+  const deferred =
+    result.toolCalls.some(
+      (toolCall) =>
+        toolCall.tool === "teaching.flagOutOfScope" && toolCall.ok
+    ) || isHonestDeferralResponse(responseText);
 
   const activeSession = await prisma.teachingSession.findUnique({
     where: { id: sessionId },

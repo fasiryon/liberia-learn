@@ -2014,6 +2014,16 @@ git commit -m "feat(teaching): add session-end route that builds the Teaching Le
 
 Per Escalation Point 3 (as amended): build the minimal turn loop, run a real scripted 40 to 60 turn simulated class period through it, report real dollars per session, and do this against BOTH a genuinely-aligned lesson and an unaligned one so Knowledge Guardrails' effect on cost is measured directly rather than assumed.
 
+> **Checkpoint correction, 2026-07-28:** The original script below is
+> superseded. Query by stable `contentId`, derive alignment mode independently
+> for each live lesson, import agent bootstrap, and use a real school-scoped
+> teacher so invocation audit foreign keys remain valid. Set the process-local
+> `TEACHING_RUNTIME_COST_SIM` flag so Whisper tool calls are measured but never
+> notify a real teacher. Auto-select candidates with
+> `hasGenuineMoeAlignment()`. Run a one-turn-per-lesson paid probe first and
+> hard-stop if either measured per-invocation cost exceeds $0.005; only then run
+> the approved 50-turn-per-lesson simulation.
+
 **Files:**
 - Create: `scripts/teaching-runtime-cost-sim.ts`
 

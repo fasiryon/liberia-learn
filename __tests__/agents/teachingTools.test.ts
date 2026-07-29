@@ -18,6 +18,7 @@ import {
 const CTX = { agentName: "teaching-runtime", userId: null, userRole: "system" as const, traceId: "trace-1" };
 
 beforeEach(() => {
+  delete process.env.TEACHING_RUNTIME_COST_SIM;
   mockPrisma.teachingSession.findUnique.mockReset();
   mockSendPushToUser.mockReset();
 });
@@ -52,6 +53,17 @@ describe("teachingSendWhisperPromptTool", () => {
     mockSendPushToUser.mockResolvedValue({ sent: 0, failed: 0, smsFallback: 0 });
     const result = await teachingSendWhisperPromptTool.handler({ sessionId: "sess-1", message: "x" }, CTX);
     expect(result).toEqual({ sent: false });
+  });
+
+  it("suppresses real push side effects during the paid cost simulation", async () => {
+    process.env.TEACHING_RUNTIME_COST_SIM = "true";
+    const result = await teachingSendWhisperPromptTool.handler(
+      { sessionId: "sess-1", message: "x" },
+      CTX
+    );
+    expect(result).toEqual({ sent: false });
+    expect(mockPrisma.teachingSession.findUnique).not.toHaveBeenCalled();
+    expect(mockSendPushToUser).not.toHaveBeenCalled();
   });
 });
 

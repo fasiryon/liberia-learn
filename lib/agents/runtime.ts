@@ -145,7 +145,10 @@ async function runLoop(
       modelOverride: agent.llmModel,
       aiUsage: {
         route: `agent/${agent.name}`,
-        feature: "agent_platform" as never,
+        // Teaching and other agent content calls use the routed AI curriculum
+        // budget. Agent-specific daily/per-invocation caps are enforced
+        // separately by checkCostCaps() above.
+        feature: "curriculum",
         userId: opts.ctx.userId ?? null,
         schoolId: opts.ctx.schoolId ?? null,
         requestType: `agent_${agent.name}`,

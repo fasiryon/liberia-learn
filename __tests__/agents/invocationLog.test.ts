@@ -1,19 +1,15 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 
-const create = vi.fn();
-const logAudit = vi.fn();
+const { create, createAudit, transaction } = vi.hoisted(() => ({
+  create: vi.fn(),
+  createAudit: vi.fn(),
+  transaction: vi.fn(),
+}));
 
 vi.mock("@/lib/db", () => ({
   prisma: {
-    agentInvocation: {
-      get create() {
-        return create;
-      },
-    },
+    $transaction: transaction,
   },
-}));
-vi.mock("@/lib/audit", () => ({
-  logAudit: (...args: unknown[]) => logAudit(...args),
 }));
 vi.mock("@/lib/db/writeThrottle", () => ({
   withDbWriteThrottle: (_label: string, fn: () => Promise<unknown>) => fn(),
@@ -24,9 +20,17 @@ import { persistInvocation } from "@/lib/agents/invocationLog";
 describe("persistInvocation", () => {
   beforeEach(() => {
     create.mockReset();
-    logAudit.mockReset();
+    createAudit.mockReset();
+    transaction.mockReset();
     create.mockResolvedValue({ id: "inv-1" });
-    logAudit.mockResolvedValue(undefined);
+    createAudit.mockResolvedValue({ id: "audit-1" });
+    transaction.mockImplementation(
+      (callback: (tx: unknown) => Promise<unknown>) =>
+        callback({
+          agentInvocation: { create },
+          auditLog: { create: createAudit },
+        })
+    );
   });
 
   it("writes an AgentInvocation row with rounded cost and returns it", async () => {
@@ -72,12 +76,36 @@ describe("persistInvocation", () => {
       latencyMs: 1,
       status: "FEATURE_DISABLED",
     });
-    expect(logAudit).toHaveBeenCalledTimes(1);
-    const audit = logAudit.mock.calls[0][0];
+    expect(transaction).toHaveBeenCalledTimes(1);
+    expect(createAudit).toHaveBeenCalledTimes(1);
+    const audit = createAudit.mock.calls[0][0].data;
     expect(audit.action).toBe("agent.invocation");
     expect(audit.resourceType).toBe("AgentInvocation");
     expect(audit.resourceId).toBe("inv-1");
     expect(audit.userId).toBe("u1");
     expect(audit.details.status).toBe("FEATURE_DISABLED");
+  });
+
+  it("rejects the whole transaction when the audit row cannot be written", async () => {
+    createAudit.mockRejectedValue(new Error("audit unavailable"));
+
+    await expect(
+      persistInvocation({
+        agentName: "echo",
+        agentVersion: "1.0.0",
+        userId: "u1",
+        triggeredBy: "USER",
+        input: {},
+        toolCalls: [],
+        llmTokensIn: 0,
+        llmTokensOut: 0,
+        llmCostUSD: 0,
+        toolCostUnits: 0,
+        latencyMs: 1,
+        status: "SUCCESS",
+      })
+    ).rejects.toThrow("audit unavailable");
+
+    expect(transaction).toHaveBeenCalledTimes(1);
   });
 });
