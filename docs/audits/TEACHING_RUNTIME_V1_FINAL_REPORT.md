@@ -4,7 +4,8 @@ Date: 2026-07-29
 
 Branch: `feat/teaching-runtime-v1`
 
-Status: COMPLETE on preview. The production feature flag remains disabled.
+Status: COMPLETE on preview and approved for merge after final review. The
+production feature flag remains disabled.
 
 Preview: `https://liberia-learn-m35foesnv-farquema-siryons-projects.vercel.app`
 
@@ -327,19 +328,38 @@ prompt and tool enforced rather than a deterministic post-response verifier.
 
 - `npx prisma generate`: PASS
 - `npx tsc --noEmit`: PASS with `NODE_OPTIONS=--max-old-space-size=6144`
-- Focused teaching regressions: PASS, 28 tests
-- `npx vitest run`: PASS, 4,407 tests in 537 files
+- Final focused teaching review: PASS, 39 tests
+- `npx vitest run`: PASS, 4,409 tests in 537 files
 - `npm run build`: PASS, 378 static pages generated
 - Vercel preview deployment: READY
 
-One full-suite attempt saw an unrelated audio dry-run test exceed its
-five-second timeout under parallel load. The test passed alone in 1.63 seconds,
-and the unchanged full-suite retry passed all 4,407 tests.
+An earlier pre-review full-suite attempt saw an unrelated audio dry-run test
+exceed its five-second timeout under parallel load. The test passed alone in
+1.63 seconds, the unchanged retry passed, and the later final merge suite
+passed all 4,409 tests without that timeout.
+
+## Final merge review
+
+The merge review integrated current `main`, including the live NR-2
+reconciliation, and then re-ran the complete gate. Review found one tenant
+boundary gap before merge: `teaching.sendWhisperPrompt` trusted the
+model-supplied session ID. Both teaching tools now require the requested
+session to match the invocation trace. Whisper additionally queries by the
+invocation facilitator and school before a push can be attempted. Regression
+tests prove that cross-session targets fail before a database read or push.
+
+The degradation route now records mode changes only for an `ACTIVE` session.
+The production Vercel environment was inspected during final review and has no
+`AGENT_TEACHING_RUNTIME_ENABLED` variable, leaving the runtime disabled by
+default.
 
 ## V1 boundaries and remaining release work
 
 - This is a turn-based runtime, not continuous microphone, camera, or video
   streaming.
+- V1 delivers the governed runtime, APIs, and a reusable recovery component.
+  It does not yet mount a complete facilitator classroom UI; the certified
+  walkthrough exercised the authenticated APIs directly.
 - Grounding is enforced by prompt, constrained context, tool signaling,
   moderation, audit, and observed behavior. V1 does not contain a
   deterministic post-response verifier that can mathematically guarantee every

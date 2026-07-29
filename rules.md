@@ -1,5 +1,11 @@
 # LiberiaLearn Global Rules
 
+> **SUPERSEDED FOR LIVE EXECUTION (2026-07-29).** This legacy product rules
+> document is retained for historical context only. Use `CLAUDE.md`,
+> `AGENTS.md`, `docs/roadmaps/NATIONAL_ROLLOUT_EXECUTION_PLAN.md`,
+> `docs/roadmaps/CURRENT_EXECUTION_STATE.md`, and
+> `docs/agents/ADVISOR_ESCALATION_CONTRACT.md` for current execution.
+
 > **Version:** 1.0  
 > **Maintainer:** LiberiaLearn Core Team  
 > **Last Updated:** 2025-10-24  

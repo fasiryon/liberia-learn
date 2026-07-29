@@ -1,4 +1,11 @@
-# LiberiaLearn  Final Closeout Execution Plan
+# LiberiaLearn Final Closeout Execution Plan
+
+> **SUPERSEDED FOR LIVE EXECUTION (2026-07-29).** This is a historical
+> closeout record. Its completed sprint table must not be used to choose new
+> work. The canonical live plan is
+> `docs/roadmaps/NATIONAL_ROLLOUT_EXECUTION_PLAN.md`; resume state is
+> `docs/roadmaps/CURRENT_EXECUTION_STATE.md`; escalation rules are in
+> `docs/agents/ADVISOR_ESCALATION_CONTRACT.md`.
 
 This plan governs the final 22-sprint closeout of LiberiaLearn from the validated Phase 15 baseline. Codex must execute one sprint at a time, inspect first, pass the full gate, commit/push, update state, and stop before beginning the next sprint.
 

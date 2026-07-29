@@ -3,19 +3,57 @@
 ## Purpose
 Live execution tracking for the final closeout program.
 
+## Resume here
+
+- **Canonical plan:** `docs/roadmaps/NATIONAL_ROLLOUT_EXECUTION_PLAN.md`
+- **Escalation contract:** `docs/agents/ADVISOR_ESCALATION_CONTRACT.md`
+- **Next national sprint:** NR-3, Load-Test Identity Pool, the first `PENDING`
+  row in the canonical plan
+- **Pre-NR-3 verification:** confirm the live production `DATABASE_URL` uses
+  the pooled endpoint before accepting NR-1's historical completion claim
+- **Teaching Runtime v1:** all 16 tasks complete and validated; production
+  remains disabled until deliberate release approval and real-device Whisper
+  push verification
+- **Mobile audit:** validated commit `d8da8453` is already in `main`; six later
+  worktree paths remain uncommitted, unvalidated, and unshipped
+- **Unattended loop:** design agreed in principle, driver not built; do not
+  imply that pending sprints are running automatically
+- **Execution limit:** one sprint per unattended cycle, then stop and report
+- **Gate trust:** independently re-derive at least one concrete claim from live
+  state at every reported success gate
+
+Pending work outside the NR sprint index:
+
+- review the six mobile-audit follow-up paths and either gate and commit them
+  or explicitly discard them
+- confirm Supabase, ElevenLabs, Fal.ai, and curriculum daily-budget status
+  before paid generation; ElevenLabs balance and pricing require independent
+  verification before audio spend
+- ask FA whether the drafted Minister Jarso Jallah outreach was ever sent
+- re-verify the production homework and labs pipeline counts before relying on
+  the stale readiness brief
+- keep managed-device deployment deferred until a real pilot's hardware and IT
+  constraints are known
+- Curriculum Health / Content Lifecycle Agent remains queued as
+  detect-and-propose only, with irreversible actions routed to escalation
+
+Historical detail follows. Use the block above to resume; do not scan the
+historical sections to select work.
+
 ## AI Teaching Runtime v1 (completed 2026-07-29)
 - **Plan:** `docs/superpowers/plans/2026-07-28-teaching-runtime-v1.md`
 - **Final report:** `docs/audits/TEACHING_RUNTIME_V1_FINAL_REPORT.md`
 - **Branch:** `feat/teaching-runtime-v1`
-- **Status:** Tasks 1 through 16 COMPLETE on validated preview
+- **Status:** Tasks 1 through 16 COMPLETE, final review gate passed, approved
+  for merge to `main`
 - **Preview:** `https://liberia-learn-m35foesnv-farquema-siryons-projects.vercel.app`
 - **Production flag:** remains disabled
 - **Sprint scope:** 41 files covering additive persistence, alignment and
   pacing, the governed agent and tools, atomic turn orchestration, offline
   recovery, four tenant-scoped APIs, ledger generation, cost measurement,
   tests, and final certification
-- **Gate:** Prisma PASS; TypeScript PASS with 6144 MB heap; Vitest PASS
-  (4,407 tests / 537 files); build PASS
+- **Final merge gate:** Prisma PASS; TypeScript PASS with 6144 MB heap; Vitest
+  PASS (4,409 tests / 537 files); build PASS
 - **Task 15 measured cost:** aligned 50-turn session $0.032309; unaligned
   50-turn session $0.013708
 - **Task 16 walkthrough:** aligned 10 turns / 1 deferral / WORKSHEET recovery;
@@ -23,13 +61,19 @@ Live execution tracking for the final closeout program.
 - **Runtime issue closed:** teaching tool argument aliases are normalized before
   strict validation, exact tool schemas are reinforced in the prompt, and
   fail-closed agent errors return structured 503 responses
-- **Next step:** review and merge the teaching-runtime branch. Keep the
-  production feature flag off pending a deliberate release and live push-device
-  verification.
+- **Final review hardening:** Whisper and out-of-scope tools require the model
+  target to match the active invocation's session trace; Whisper also verifies
+  facilitator and school before reading or sending. Degraded mode can be
+  recorded only while a session is active.
+- **Production feature flag check:** Vercel production has no
+  `AGENT_TEACHING_RUNTIME_ENABLED` variable, so the runtime remains disabled by
+  default.
+- **Next step:** keep the production feature flag off pending a deliberate
+  release and live push-device verification.
 
 ### Mobile audit handoff included with final cycle summary
-- Validated commit `d8da8453` remains in the separate
-  `fix/mobile-audit-issues` worktree.
+- Validated commit `d8da8453` is already an ancestor of `main`; the separate
+  `fix/mobile-audit-issues` worktree remains only because of later follow-ups.
 - Its recorded gate is TypeScript PASS, Vitest PASS (1,541 tests / 204 files),
   build PASS, and encoding repair PASS.
 - Six later follow-up paths remain uncommitted in that worktree and were not

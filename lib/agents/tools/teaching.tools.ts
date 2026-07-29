@@ -2,7 +2,26 @@ import { z } from "zod";
 import { prisma } from "@/lib/db";
 import { registerTool } from "@/lib/agents/toolRegistry";
 import { sendPushToUser } from "@/lib/push/sendPush";
-import type { ToolDefinition } from "@/lib/agents/types";
+import type { ToolContext, ToolDefinition } from "@/lib/agents/types";
+
+function assertTeachingSessionContext(
+  sessionId: string,
+  ctx: ToolContext
+): asserts ctx is ToolContext & {
+  userId: string;
+  schoolId: string;
+  traceId: string;
+} {
+  if (
+    ctx.agentName !== "teaching-runtime" ||
+    !ctx.traceId ||
+    sessionId !== ctx.traceId ||
+    !ctx.userId ||
+    !ctx.schoolId
+  ) {
+    throw new Error("Teaching session context mismatch");
+  }
+}
 
 const sendWhisperPromptInput = z.preprocess(
   (value) => {
@@ -33,12 +52,17 @@ export const teachingSendWhisperPromptTool: ToolDefinition<
   auditTag: "teaching.whisper_sent",
   estimatedCostUnits: 0,
   requiresAuth: ["system"],
-  handler: async (input) => {
+  handler: async (input, ctx) => {
+    assertTeachingSessionContext(input.sessionId, ctx);
     if (process.env.TEACHING_RUNTIME_COST_SIM?.trim() === "true") {
       return { sent: false };
     }
-    const session = await prisma.teachingSession.findUnique({
-      where: { id: input.sessionId },
+    const session = await prisma.teachingSession.findFirst({
+      where: {
+        id: input.sessionId,
+        facilitatorId: ctx.userId,
+        schoolId: ctx.schoolId,
+      },
       select: { facilitatorId: true },
     });
     if (!session) return { sent: false };
@@ -80,7 +104,8 @@ export const teachingFlagOutOfScopeTool: ToolDefinition<
   auditTag: "teaching.out_of_scope_flagged",
   estimatedCostUnits: 0,
   requiresAuth: ["system"],
-  handler: async () => {
+  handler: async (input, ctx) => {
+    assertTeachingSessionContext(input.sessionId, ctx);
     return { logged: true };
   },
 };

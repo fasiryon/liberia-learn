@@ -1,5 +1,11 @@
 # LiberiaLearn MVP Specification
 
+> **SUPERSEDED FOR LIVE EXECUTION (2026-07-29).** This legacy MVP specification
+> is retained for product history only. It is not the live implementation
+> plan. Use `CLAUDE.md`,
+> `docs/roadmaps/NATIONAL_ROLLOUT_EXECUTION_PLAN.md`, and
+> `docs/roadmaps/CURRENT_EXECUTION_STATE.md`.
+
 ## Vision
 LiberiaLearn is a national Grade 1–12 education system designed to raise Liberia’s academic standards to the level of Japan, Korea, and China. 
 It focuses on STEM excellence while keeping full subject coverage: literacy, civics, arts, and career readiness.

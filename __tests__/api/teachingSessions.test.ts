@@ -288,6 +288,7 @@ describe("POST /api/teaching/sessions/[sessionId]/degrade", () => {
         id: "sess-1",
         schoolId: "school-1",
         facilitatorId: "teacher-1",
+        status: "ACTIVE",
       },
       data: { degradedMode: "AUDIO_ONLY" },
     });

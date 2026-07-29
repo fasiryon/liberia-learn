@@ -43,7 +43,7 @@ export async function POST(
 
   const recorded = await prisma.$transaction(async (tx) => {
     const updated = await tx.teachingSession.updateMany({
-      where: scope,
+      where: { ...scope, status: "ACTIVE" },
       data: { degradedMode: mode },
     });
     if (updated.count !== 1) return false;
