@@ -7,9 +7,13 @@ Live execution tracking for the final closeout program.
 - **Plan:** `docs/superpowers/plans/2026-07-28-teaching-runtime-v1.md`
 - **Final report:** `docs/audits/TEACHING_RUNTIME_V1_FINAL_REPORT.md`
 - **Branch:** `feat/teaching-runtime-v1`
-- **Status:** Task 16 COMPLETE on validated preview
+- **Status:** Tasks 1 through 16 COMPLETE on validated preview
 - **Preview:** `https://liberia-learn-m35foesnv-farquema-siryons-projects.vercel.app`
 - **Production flag:** remains disabled
+- **Sprint scope:** 41 files covering additive persistence, alignment and
+  pacing, the governed agent and tools, atomic turn orchestration, offline
+  recovery, four tenant-scoped APIs, ledger generation, cost measurement,
+  tests, and final certification
 - **Gate:** Prisma PASS; TypeScript PASS with 6144 MB heap; Vitest PASS
   (4,407 tests / 537 files); build PASS
 - **Task 15 measured cost:** aligned 50-turn session $0.032309; unaligned

@@ -22,6 +22,198 @@ teaching tools. The tool boundary now normalizes only those observed aliases
 before strict Zod validation, the prompt gives exact argument examples, and
 agent failures return a structured fail-closed 503 instead of an empty 500.
 
+## Full sprint scope
+
+This report closes the complete 16-task AI Teaching Runtime v1 sprint, not
+only the Task 16 gate. The branch changes 41 files across persistence, agent
+governance, runtime orchestration, API delivery, offline recovery, testing,
+cost measurement, and documentation.
+
+The delivered classroom lifecycle is:
+
+1. An authenticated teacher or same-school admin starts a session against an
+   approved global or school-owned lesson.
+2. The runtime decides `FULL_CONFIDENCE` or `DEFERRED` once from the lesson's
+   live MOE alignment and stores the decision on the session.
+3. Each classroom exchange reserves a unique turn index atomically, derives a
+   deterministic Lesson Director pacing action, and makes exactly one governed
+   `runAgent("teaching-runtime", ...)` invocation.
+4. The agent receives literal lesson content, objectives, grade, subject,
+   guardrail mode, and the pacing hint. It can use only the two allowlisted
+   teaching tools.
+5. The completed turn stores narration, guardrail behavior, tool activity,
+   pacing action, cost, and ordering. Failed attempts do not reuse an already
+   reserved turn index.
+6. A connectivity or equipment failure can switch the classroom to cached
+   audio-only material or a printable worksheet while recording the degraded
+   mode when the server is reachable.
+7. Ending the session blocks new turns, builds one idempotent structured
+   ledger, completes the lifecycle, and writes the correlated audit event.
+
+## Task-by-task completion
+
+| Task | Status | Delivered result |
+|---:|---|---|
+| 1 | COMPLETE | Added `TeachingSession`, `TeachingTurn`, and `TeachingLedger`, plus an atomic `nextTurnIndex` sequence, using additive migrations and indexes. |
+| 2 | COMPLETE | Added pure lesson narration and slide extraction with `body_standard`, `body_block`, legacy body, HTML cleanup, objective fallback, and tests. |
+| 3 | COMPLETE | Added live per-lesson alignment classification using the existing canonical MOE alignment reader. |
+| 4 | COMPLETE | Added deterministic Lesson Director pacing for continue, pause, comprehension check, prerequisite revisit, and exit ticket decisions. |
+| 5 | COMPLETE | Registered the governed system prompt for grounded teaching, honest deferral, exact tool arguments, and private Whisper behavior. |
+| 6 | COMPLETE | Added allowlisted `teaching.sendWhisperPrompt` and `teaching.flagOutOfScope` tools with strict schemas, audit tags, push reuse, and cost-simulation notification suppression. |
+| 7 | COMPLETE | Registered the feature-flagged `teaching-runtime` agent with low temperature, bounded output, tool allowlist, and per-invocation, per-user, and daily cost caps. |
+| 8 | COMPLETE | Added per-turn orchestration on the existing agent harness, atomic ordering, curriculum context assembly, honest-deferral detection, cost capture, and fail-closed agent handling. |
+| 9 | COMPLETE | Added device-cache-based audio-only and printable worksheet recovery formatters, browser adapters, controls, and tests. |
+| 10 | COMPLETE | Added an idempotent ledger builder with standards, objectives, resources, questions, response aggregates, transcript, confidence flags, deferrals, and Whisper counts. |
+| 11 | COMPLETE | Added the authenticated session-start API with approved-content checks, school isolation, one-time alignment selection, and transactional start auditing. |
+| 12 | COMPLETE | Added the authenticated turn API with teacher ownership or same-school admin scope, Zod input validation, runtime invocation, and structured failure responses. |
+| 13 | COMPLETE | Added the degraded-mode API with school and facilitator scoping plus an atomic `teaching.session.degrade` audit event. |
+| 14 | COMPLETE | Added race-safe and idempotent completion using `ACTIVE` to `ENDING` to `COMPLETED`, ledger upsert, scoped replay, and transactional end auditing. |
+| 15 | COMPLETE | Added and ran the paid cost simulator against real aligned and unaligned lessons, including one-turn ceiling probes and two 50-turn sessions. |
+| 16 | COMPLETE | Passed the full gate, deployed an enabled preview, completed real aligned and unaligned walkthroughs, verified recovery, Whisper persistence, and ledgers, and fixed the defect found live. |
+
+## Major implementation areas
+
+### Persistence and concurrency
+
+- Three new sprint-owned tables were added without changing the meaning or
+  access rules of existing domain tables.
+- `TeachingTurn(sessionId, turnIndex)` is unique.
+- `TeachingSession.nextTurnIndex` is incremented atomically before an agent
+  call, preventing concurrent requests from selecting the same turn number.
+- A failed or moderated invocation leaves a visible sequence gap instead of
+  reusing an index and obscuring that an attempt occurred.
+- The end route moves the session to `ENDING` before ledger construction so a
+  new turn cannot be accepted during completion.
+- `TeachingLedger.sessionId` is unique and the builder uses upsert, making a
+  repeated completion request idempotent.
+
+### Governed teaching agent
+
+- All model work goes through the existing routed agent harness. There are no
+  direct provider calls in the teaching runtime.
+- One turn equals one invocation. Continuous audio/video streaming was
+  intentionally excluded from v1.
+- The agent is protected by `AGENT_TEACHING_RUNTIME_ENABLED`, a two-tool
+  allowlist, output limits, budget routing, and agent cost caps.
+- The runtime persists the real per-turn model cost and the platform persists
+  the full correlated `AgentInvocation`.
+- Agent invocation and audit rows are now written in one transaction. If the
+  audit write fails, the invocation persistence fails with it.
+- The shared AI budget guard now fails closed when usage data is unavailable
+  instead of allowing unmetered calls.
+
+### Knowledge Guardrails and classroom pacing
+
+- Genuine MOE alignment produces `FULL_CONFIDENCE`; absent, empty, malformed,
+  or placeholder alignment produces `DEFERRED`.
+- `FULL_CONFIDENCE` responses are instructed to remain grounded in the lesson
+  and identify the source topic in teacher-friendly language.
+- `DEFERRED` responses are limited to literal lesson content and must use the
+  out-of-scope tool plus an honest teacher-referred deferral when more
+  knowledge would be required.
+- The deterministic Lesson Director uses recent student outcomes and turn
+  thresholds to request comprehension checks, prerequisite revisits, pauses,
+  and exit tickets.
+
+### Facilitator Whisper Mode
+
+- The agent can send a private coaching nudge through the existing VAPID push
+  service.
+- Whisper content is recorded on the corresponding teaching turn and counted
+  in the final ledger.
+- The paid simulation suppresses real notification delivery while still
+  measuring the tool-call behavior.
+- Live persistence was verified. Device delivery remains pending because the
+  selected test facilitator had no active push subscription.
+
+### Teaching Recovery
+
+- Projector failure selects cached `AUDIO_ONLY` delivery.
+- Internet or power failure selects a cached printable `WORKSHEET`.
+- Recovery reads the existing browser lesson cache and therefore remains
+  usable when the server cannot be reached.
+- If online, the client records the degradation reason and mode through the
+  scoped API. Local recovery is not blocked if that audit request cannot be
+  delivered immediately.
+
+### Authentication, tenant isolation, and auditability
+
+- Start, turn, degrade, and end routes require `TEACHER` or `ADMIN`.
+- Every route requires a school-scoped user.
+- A teacher can access only their own session in their school. An admin can
+  operate only on sessions in the admin's school.
+- Session start accepts only approved global content or approved content owned
+  by the same school.
+- Start, degradation, end, tool activity, and every agent invocation are
+  auditable.
+- The runtime's internal agent role remains `system`, following the existing
+  harness convention, only after the human-facing API route authorizes the
+  caller.
+
+## Full branch file inventory
+
+### Data and migrations
+
+- `prisma/schema.prisma`
+- `prisma/migrations/20260728_000001_teaching_runtime_v1/migration.sql`
+- `prisma/migrations/20260728_000002_teaching_turn_sequence/migration.sql`
+
+### Teaching runtime
+
+- `lib/teaching/alignment.ts`
+- `lib/teaching/ledger.ts`
+- `lib/teaching/lessonContent.ts`
+- `lib/teaching/lessonDirector.ts`
+- `lib/teaching/recovery.client.ts`
+- `lib/teaching/recovery.ts`
+- `lib/teaching/runtime.ts`
+- `lib/teaching/types.ts`
+
+### Agent platform integration
+
+- `lib/agents/agents/teaching-runtime.agent.ts`
+- `lib/agents/bootstrap.ts`
+- `lib/agents/invocationLog.ts`
+- `lib/agents/prompts.ts`
+- `lib/agents/prompts/teaching-runtime.md`
+- `lib/agents/runtime.ts`
+- `lib/agents/tools/teaching.tools.ts`
+- `lib/ai/budgetGuard.ts`
+
+### API and recovery interface
+
+- `app/api/teaching/sessions/route.ts`
+- `app/api/teaching/sessions/[sessionId]/turn/route.ts`
+- `app/api/teaching/sessions/[sessionId]/degrade/route.ts`
+- `app/api/teaching/sessions/[sessionId]/end/route.ts`
+- `components/teaching/TeachingRecoveryControls.tsx`
+
+### Cost measurement
+
+- `scripts/teaching-runtime-cost-sim.ts`
+
+### Tests
+
+- `__tests__/agents/invocationLog.test.ts`
+- `__tests__/agents/teachingRuntimeAgent.test.ts`
+- `__tests__/agents/teachingTools.test.ts`
+- `__tests__/ai.budget.test.ts`
+- `__tests__/api/teachingSessions.test.ts`
+- `__tests__/teaching/alignment.test.ts`
+- `__tests__/teaching/ledger.test.ts`
+- `__tests__/teaching/lessonContent.test.ts`
+- `__tests__/teaching/lessonDirector.test.ts`
+- `__tests__/teaching/recovery.test.ts`
+- `__tests__/teaching/recoveryComponent.test.tsx`
+- `__tests__/teaching/runtime.test.ts`
+
+### Plan, state, and repository metadata
+
+- `.gitignore`
+- `docs/superpowers/plans/2026-07-28-teaching-runtime-v1.md`
+- `docs/audits/TEACHING_RUNTIME_V1_FINAL_REPORT.md`
+- `docs/roadmaps/CURRENT_EXECUTION_STATE.md`
+
 ## Task 15 cost measurement
 
 The required paid 50-turn simulations used fresh, real curriculum records and
@@ -144,17 +336,61 @@ One full-suite attempt saw an unrelated audio dry-run test exceed its
 five-second timeout under parallel load. The test passed alone in 1.63 seconds,
 and the unchanged full-suite retry passed all 4,407 tests.
 
+## V1 boundaries and remaining release work
+
+- This is a turn-based runtime, not continuous microphone, camera, or video
+  streaming.
+- Grounding is enforced by prompt, constrained context, tool signaling,
+  moderation, audit, and observed behavior. V1 does not contain a
+  deterministic post-response verifier that can mathematically guarantee every
+  generated sentence is grounded.
+- The preview is validated, but production is not enabled or released.
+- Live Whisper persistence is proven, but delivery to a real facilitator
+  device still requires an active push subscription.
+- Quiz scoring, homework assignment, facilitator notes, and finalized
+  narrative fields exist in the ledger shape but are not populated by the v1
+  turn loop.
+
 ## Mobile audit cycle summary
 
-The separate `fix/mobile-audit-issues` worktree contains validated commit
-`d8da8453`, covering:
+The requested mobile audit was completed separately on
+`fix/mobile-audit-issues`. Its validated commit is `d8da8453`, with 21 files
+changed, 1,149 insertions, and 492 deletions.
 
-- admin student and placement detail routes and pages
-- normalized placement response details
-- removal of post-login demo hints
-- safe feature-flag messages instead of raw codes
-- `/teacher` dashboard consolidation
-- user-facing encoding repair
+### Findings and resolutions
+
+| Finding | Resolution in validated commit |
+|---|---|
+| P0: the admin student list exposed a detail workflow without a working student detail destination. | Added the admin student detail page, tenant-scoped API route, shared detail loader, and list navigation. |
+| P0: teacher and admin placement workflows could not provide a complete, normalized attempt review. | Added the admin placement detail page and API, normalized both role-specific payloads, and exposed question, selected answer, correctness, and concept data. |
+| Post-login dashboards still exposed demo-oriented hints and credentials messaging. | Removed the hints from admin, general, guardian, and platform dashboard surfaces. |
+| Disabled features could expose internal feature-flag codes to users. | Replaced raw codes with safe user-facing messages in affected curriculum, placement, and lesson-creation pages. |
+| `/teacher` duplicated a large dashboard implementation and could drift from `/teacher/dashboard`. | Consolidated the entry point by redirecting `/teacher` to the canonical teacher dashboard. |
+| A live user-facing class label contained mojibake. | Added an encoding repair command and repaired the detected label. |
+
+### Validated mobile-audit files
+
+- `app/admin/curriculum/units/page.tsx`
+- `app/admin/page.tsx`
+- `app/admin/placements/[placementId]/page.tsx`
+- `app/admin/placements/page.tsx`
+- `app/admin/students/[id]/page.tsx`
+- `app/admin/students/page.tsx`
+- `app/api/admin/placements/[id]/route.ts`
+- `app/api/admin/students/[id]/route.ts`
+- `app/api/teacher/placements/[id]/route.ts`
+- `app/dashboard/page.tsx`
+- `app/guardian/GuardianDashboardClient.tsx`
+- `app/guardian/dashboard/page.tsx`
+- `app/platform/page.tsx`
+- `app/teacher/create-lesson/page.tsx`
+- `app/teacher/page.tsx`
+- `app/teacher/placements/[placementId]/page.tsx`
+- `docs/roadmaps/CURRENT_EXECUTION_STATE.md`
+- `lib/adminStudentDetail.ts`
+- `lib/placementDetail.ts`
+- `package.json`
+- `scripts/fix-encoding.ts`
 
 That committed snapshot reports:
 
@@ -163,11 +399,21 @@ That committed snapshot reports:
 - Build: PASS
 - Encoding repair command: PASS
 
-The mobile-audit worktree also contains later uncommitted hardening in six
-paths: the admin placement route, `package.json`, the encoding script, two test
-files, and `lib/encoding/`. Those follow-up edits were not merged, committed, or
-revalidated as part of this teaching-runtime cycle and must not be represented
-as shipped.
+### Uncommitted follow-up state
+
+The mobile-audit worktree also contains later hardening in six paths:
+
+- modified `app/api/admin/placements/[id]/route.ts`
+- modified `package.json`
+- modified `scripts/fix-encoding.ts`
+- untracked `__tests__/admin.placement-detail.route.test.ts`
+- untracked `__tests__/mojibake.test.ts`
+- untracked `lib/encoding/mojibake.ts`
+
+Those follow-up edits were not merged, committed, or revalidated as part of
+this teaching-runtime cycle and must not be represented as shipped. The
+validated audit also notes that a broader legacy source-text encoding sweep
+may still be warranted.
 
 ## Next step
 
