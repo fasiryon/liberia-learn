@@ -4,11 +4,58 @@
  * no PRINCIPAL Role in the schema) plus School.designatedSafetyStaffUserId
  * (Gate A), deduplicated. Uses existing infrastructure only (inbox +
  * push), per the instruction not to build new delivery channels.
+ *
+ * NR-9.5: a real production check (2026-07-30) found 17/23 schools have
+ * neither an ADMIN nor a designatedSafetyStaffUserId - the userIds.size===0
+ * branch below is not hypothetical. It now also alerts a platform-level
+ * fallback contact by email so a real human is reachable even when a school
+ * has nobody assigned, rather than only a swallowed warning log.
  */
 import { prisma } from "@/lib/db";
 import { createInboxNotification } from "@/lib/notifications/inboxService";
 import { sendPushToUser } from "@/lib/push/sendPush";
+import { sendEmail } from "@/lib/email";
 import { logger } from "@/lib/logger";
+
+/**
+ * Email the platform-level safeguarding fallback contact
+ * (PLATFORM_SAFEGUARDING_ESCALATION_EMAIL). Used when a school has nobody to
+ * notify at all, and by the SLA-miss checker's 24h escalation tier. Returns
+ * null (not an error) when the env var is unset, logging a warning so the
+ * gap stays visible rather than silently failing.
+ */
+export async function notifyPlatformSafeguardingFallback(
+  reason: string
+): Promise<{ ok: boolean; skipped?: true } | null> {
+  const to = process.env.PLATFORM_SAFEGUARDING_ESCALATION_EMAIL?.trim();
+  if (!to) {
+    logger.warn("[safeguarding.notify] PLATFORM_SAFEGUARDING_ESCALATION_EMAIL not set, cannot alert platform fallback", {
+      reason,
+    });
+    return null;
+  }
+
+  const subject = "Safeguarding escalation needs attention";
+  const text = `A safeguarding escalation needs attention and could not be (or was not) resolved through the normal school-level channel.\n\nReason: ${reason}\n\nReview: ${process.env.NEXTAUTH_URL ?? "https://liberia-learn.vercel.app"}/admin/escalations`;
+  const result = await sendEmail({
+    to,
+    subject,
+    html: `<p>${text.replace(/\n/g, "<br/>")}</p>`,
+    text,
+    type: "safeguarding_platform_fallback",
+    recipientRole: "platform_admin",
+    transactional: true,
+  });
+
+  if (!result.ok) {
+    logger.error("[safeguarding.notify] platform fallback email failed to send", {
+      reason,
+      error: result.error,
+    });
+  }
+
+  return { ok: result.ok };
+}
 
 export async function notifySchoolSafeguarding(schoolId: string, reason: string): Promise<{ notifiedUserIds: string[] }> {
   const [admins, school] = await Promise.all([
@@ -38,6 +85,9 @@ export async function notifySchoolSafeguarding(schoolId: string, reason: string)
 
   if (userIds.size === 0) {
     logger.warn("[safeguarding.notify] no ADMIN or designated safety staff found for school", { schoolId });
+    await notifyPlatformSafeguardingFallback(
+      `School ${schoolId} has no ADMIN and no designated safety staff to receive a safeguarding alert. ${reason}`
+    );
   }
 
   return { notifiedUserIds: [...userIds] };

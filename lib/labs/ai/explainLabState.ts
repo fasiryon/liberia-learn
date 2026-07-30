@@ -6,6 +6,16 @@ import {
   buildLabStateExplainerSystemPrompt,
   getLabExplainerPromptMetadata,
 } from "@/lib/labs/ai/prompts";
+import { moderateText } from "@/lib/agents/moderation";
+import { enqueueEscalation } from "@/lib/agents/escalation";
+
+/**
+ * NR-9.5: output-only moderation. There is no free-text student input into
+ * this function (previousState/nextState are structured lab-runtime values,
+ * actionType comes from the validated LabAction union, not raw text), so
+ * only the model's generated explanation needs checking before it reaches
+ * the student.
+ */
 
 type ExplainLabStateParams = {
   labId: string;
@@ -101,6 +111,28 @@ export async function explainLabState(input: ExplainLabStateParams): Promise<str
       ],
     });
 
+    const explanation = under120Words(result.content) || FALLBACK_EXPLANATION;
+    const outputVerdict = await moderateText(explanation, "output");
+    if (outputVerdict.verdict === "UNSAFE") {
+      await enqueueEscalation({
+        agentName: "lib.labs.ai.explainLabState",
+        userId: input.userId ?? null,
+        reason: `Lab state explainer output flagged unsafe for a K-12 audience (lab: ${lab.id}).`,
+        priority: "HIGH",
+        schoolId: input.schoolId ?? null,
+      });
+      await logExplainerCall({
+        input,
+        labId: lab.id,
+        promptVersion,
+        promptHash,
+        result,
+        fallbackUsed: true,
+        latencyMs: Date.now() - startedAt,
+      });
+      return FALLBACK_EXPLANATION;
+    }
+
     await logExplainerCall({
       input,
       labId: lab.id,
@@ -110,7 +142,7 @@ export async function explainLabState(input: ExplainLabStateParams): Promise<str
       fallbackUsed: false,
       latencyMs: Date.now() - startedAt,
     });
-    return under120Words(result.content) || FALLBACK_EXPLANATION;
+    return explanation;
   } catch {
     await logExplainerCall({
       input,

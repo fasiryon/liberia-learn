@@ -8,6 +8,12 @@ const mockGetCachedValue = vi.hoisted(() => vi.fn());
 const mockSetCachedValue = vi.hoisted(() => vi.fn());
 const mockBuildAiCacheKey = vi.hoisted(() => vi.fn(() => "cache-key"));
 const mockHashCacheQuery = vi.hoisted(() => vi.fn(() => "query-hash"));
+const mockModerateText = vi.hoisted(() =>
+  vi.fn(async (): Promise<{ verdict: "SAFE" | "UNSAFE" | "UNCERTAIN"; reason?: string }> => ({
+    verdict: "SAFE",
+  }))
+);
+const mockEnqueueEscalation = vi.hoisted(() => vi.fn(async () => ({ id: "escalation-1" })));
 
 vi.mock("@/lib/ai/rag/hybridRetrieval", () => ({
   hybridRetrieve: mockHybridRetrieve,
@@ -24,6 +30,17 @@ vi.mock("@/lib/ai/cache", () => ({
   hashCacheQuery: mockHashCacheQuery,
 }));
 
+// NR-9.5: moderateText internally calls @/lib/ai/routedCompletion too, which
+// is already mocked above for the tutor's own answer generation. Mocking
+// moderation separately keeps it from consuming that queue and breaking
+// call-count assertions on mockRoutedCompletion.
+vi.mock("@/lib/agents/moderation", () => ({
+  moderateText: mockModerateText,
+}));
+vi.mock("@/lib/agents/escalation", () => ({
+  enqueueEscalation: mockEnqueueEscalation,
+}));
+
 import {
   answerGroundedQuestion,
   normalizeGroundedSourceType,
@@ -33,6 +50,7 @@ describe("answerGroundedQuestion", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mockGetCachedValue.mockReturnValue(null);
+    mockModerateText.mockResolvedValue({ verdict: "SAFE" });
   });
 
   it("falls back safely when retrieved chunks are unusable", async () => {
@@ -299,5 +317,120 @@ describe("answerGroundedQuestion", () => {
     expect(result.tokensUsed).toBe(0);
     expect(result.estimatedCost).toBe(0);
     expect(mockRoutedCompletion).not.toHaveBeenCalled();
+  });
+
+  it("blocks unsafe input before any retrieval or LLM call (NR-9.5)", async () => {
+    mockModerateText.mockResolvedValueOnce({ verdict: "UNSAFE", reason: "unsafe_input" });
+
+    const result = await answerGroundedQuestion({
+      question: "something unsafe",
+      schoolId: "school-1",
+      role: "STUDENT",
+    });
+
+    expect(result.fallbackReason).toBe("input_moderation_blocked");
+    expect(result.answer).toContain("can't help with that");
+    expect(mockHybridRetrieve).not.toHaveBeenCalled();
+    expect(mockRoutedCompletion).not.toHaveBeenCalled();
+  });
+
+  it("regenerates once on unsafe output, then escalates and blocks if still unsafe (NR-9.5)", async () => {
+    mockHybridRetrieve.mockResolvedValue([
+      {
+        id: "chunk-1",
+        sourceType: "curriculum_content",
+        sourceId: "curr-1",
+        title: "Fractions Lesson",
+        content: "Fractions are equal parts of a whole.",
+        chunkIndex: 0,
+        subject: "MATH",
+        grade: 5,
+        schoolId: "school-1",
+        scope: "SCHOOL",
+        sourceLabel: "teacher-fractions",
+        similarity: 0.91,
+        rankingScore: 0.91,
+      },
+    ]);
+    mockRoutedCompletion.mockResolvedValue({
+      content: JSON.stringify({ answer: "an unsafe answer", sourceIds: ["chunk-1"] }),
+      estimatedCostUSD: 0.001,
+      inputTokens: 10,
+      outputTokens: 10,
+      model: "gpt-4o-mini",
+      tier: "smart",
+    });
+    // input SAFE, then output UNSAFE twice (initial + retry)
+    mockModerateText
+      .mockResolvedValueOnce({ verdict: "SAFE" })
+      .mockResolvedValueOnce({ verdict: "UNSAFE", reason: "unsafe_output" })
+      .mockResolvedValueOnce({ verdict: "UNSAFE", reason: "unsafe_output" });
+
+    const result = await answerGroundedQuestion({
+      question: "What is a fraction?",
+      schoolId: "school-1",
+      subject: "MATH",
+      grade: 5,
+      role: "STUDENT",
+    });
+
+    expect(mockRoutedCompletion).toHaveBeenCalledTimes(2);
+    expect(result.fallbackReason).toBe("output_moderation_unsafe");
+    expect(result.answer).toContain("can't help with that");
+    expect(mockEnqueueEscalation).toHaveBeenCalledWith(
+      expect.objectContaining({ priority: "HIGH", schoolId: "school-1" })
+    );
+  });
+
+  it("uses the regenerated answer when the retry passes moderation (NR-9.5)", async () => {
+    mockHybridRetrieve.mockResolvedValue([
+      {
+        id: "chunk-1",
+        sourceType: "curriculum_content",
+        sourceId: "curr-1",
+        title: "Fractions Lesson",
+        content: "Fractions are equal parts of a whole.",
+        chunkIndex: 0,
+        subject: "MATH",
+        grade: 5,
+        schoolId: "school-1",
+        scope: "SCHOOL",
+        sourceLabel: "teacher-fractions",
+        similarity: 0.91,
+        rankingScore: 0.91,
+      },
+    ]);
+    mockRoutedCompletion
+      .mockResolvedValueOnce({
+        content: JSON.stringify({ answer: "an unsafe answer", sourceIds: ["chunk-1"] }),
+        estimatedCostUSD: 0.001,
+        inputTokens: 10,
+        outputTokens: 10,
+        model: "gpt-4o-mini",
+        tier: "smart",
+      })
+      .mockResolvedValueOnce({
+        content: JSON.stringify({ answer: "a safe regenerated answer", sourceIds: ["chunk-1"] }),
+        estimatedCostUSD: 0.001,
+        inputTokens: 10,
+        outputTokens: 10,
+        model: "gpt-4o-mini",
+        tier: "smart",
+      });
+    mockModerateText
+      .mockResolvedValueOnce({ verdict: "SAFE" })
+      .mockResolvedValueOnce({ verdict: "UNSAFE", reason: "unsafe_output" })
+      .mockResolvedValueOnce({ verdict: "SAFE" });
+
+    const result = await answerGroundedQuestion({
+      question: "What is a fraction?",
+      schoolId: "school-1",
+      subject: "MATH",
+      grade: 5,
+      role: "STUDENT",
+    });
+
+    expect(result.answer).toBe("a safe regenerated answer");
+    expect(mockEnqueueEscalation).not.toHaveBeenCalled();
   });
 });

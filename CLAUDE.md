@@ -8,9 +8,15 @@ entry point for resuming work.
 Read these files before selecting or changing work:
 
 1. `AGENTS.md`
-2. `docs/roadmaps/NATIONAL_ROLLOUT_EXECUTION_PLAN.md`
-3. `docs/roadmaps/CURRENT_EXECUTION_STATE.md`
-4. `docs/agents/ADVISOR_ESCALATION_CONTRACT.md`
+2. `docs/roadmaps/CONSOLIDATED_BACKLOG.md`
+3. `docs/roadmaps/NATIONAL_ROLLOUT_EXECUTION_PLAN.md`
+4. `docs/roadmaps/CURRENT_EXECUTION_STATE.md`
+5. `docs/agents/ADVISOR_ESCALATION_CONTRACT.md`
+
+`docs/roadmaps/CONSOLIDATED_BACKLOG.md` is the canonical project-wide backlog.
+`docs/roadmaps/NATIONAL_ROLLOUT_EXECUTION_PLAN.md` is authoritative for NR
+sprint order and gates, but it is not the complete inventory of outstanding
+work.
 
 `docs/roadmaps/MASTER_EXECUTION_PLAN.md`, `rules.md`, and `SPEC.md` are
 historical references. They are superseded for live execution and must not be

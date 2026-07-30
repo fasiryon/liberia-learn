@@ -1,26 +1,40 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
+import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 
-const { mockPrisma, mockCreateInboxNotification, mockSendPushToUser } = vi.hoisted(() => ({
+const { mockPrisma, mockCreateInboxNotification, mockSendPushToUser, mockSendEmail } = vi.hoisted(() => ({
   mockPrisma: {
     user: { findMany: vi.fn() },
     school: { findUnique: vi.fn() },
   },
   mockCreateInboxNotification: vi.fn(),
   mockSendPushToUser: vi.fn(),
+  mockSendEmail: vi.fn(),
 }));
 vi.mock("@/lib/db", () => ({ prisma: mockPrisma }));
 vi.mock("@/lib/notifications/inboxService", () => ({ createInboxNotification: mockCreateInboxNotification }));
 vi.mock("@/lib/push/sendPush", () => ({ sendPushToUser: mockSendPushToUser }));
+vi.mock("@/lib/email", () => ({ sendEmail: mockSendEmail }));
 
-import { notifySchoolSafeguarding } from "@/lib/agents/safeguarding/notify";
+import { notifySchoolSafeguarding, notifyPlatformSafeguardingFallback } from "@/lib/agents/safeguarding/notify";
 
 describe("notifySchoolSafeguarding", () => {
+  const originalFallbackEmail = process.env.PLATFORM_SAFEGUARDING_ESCALATION_EMAIL;
+
   beforeEach(() => {
     mockPrisma.user.findMany.mockReset();
     mockPrisma.school.findUnique.mockReset();
     mockCreateInboxNotification.mockReset();
     mockSendPushToUser.mockReset();
     mockSendPushToUser.mockResolvedValue(undefined);
+    mockSendEmail.mockReset();
+    mockSendEmail.mockResolvedValue({ ok: true, id: "email-1" });
+  });
+
+  afterEach(() => {
+    if (originalFallbackEmail === undefined) {
+      delete process.env.PLATFORM_SAFEGUARDING_ESCALATION_EMAIL;
+    } else {
+      process.env.PLATFORM_SAFEGUARDING_ESCALATION_EMAIL = originalFallbackEmail;
+    }
   });
 
   it("notifies ADMIN-role users at the school", async () => {
@@ -72,5 +86,74 @@ describe("notifySchoolSafeguarding", () => {
 
     expect(result.notifiedUserIds).toEqual([]);
     expect(mockCreateInboxNotification).not.toHaveBeenCalled();
+  });
+
+  it("NR-9.5: alerts the platform fallback when a school has nobody to notify", async () => {
+    process.env.PLATFORM_SAFEGUARDING_ESCALATION_EMAIL = "ops@example.com";
+    mockPrisma.user.findMany.mockResolvedValue([]);
+    mockPrisma.school.findUnique.mockResolvedValue({ designatedSafetyStaffUserId: null });
+
+    await notifySchoolSafeguarding("school-1", "concern raised");
+
+    expect(mockSendEmail).toHaveBeenCalledTimes(1);
+    expect(mockSendEmail).toHaveBeenCalledWith(
+      expect.objectContaining({ to: "ops@example.com", type: "safeguarding_platform_fallback" })
+    );
+  });
+
+  it("NR-9.5: does not attempt the platform fallback email when the school has real recipients", async () => {
+    process.env.PLATFORM_SAFEGUARDING_ESCALATION_EMAIL = "ops@example.com";
+    mockPrisma.user.findMany.mockResolvedValue([{ id: "admin-1" }]);
+    mockPrisma.school.findUnique.mockResolvedValue({ designatedSafetyStaffUserId: null });
+
+    await notifySchoolSafeguarding("school-1", "concern raised");
+
+    expect(mockSendEmail).not.toHaveBeenCalled();
+  });
+});
+
+describe("notifyPlatformSafeguardingFallback", () => {
+  const originalFallbackEmail = process.env.PLATFORM_SAFEGUARDING_ESCALATION_EMAIL;
+
+  beforeEach(() => {
+    mockSendEmail.mockReset();
+    mockSendEmail.mockResolvedValue({ ok: true, id: "email-1" });
+  });
+
+  afterEach(() => {
+    if (originalFallbackEmail === undefined) {
+      delete process.env.PLATFORM_SAFEGUARDING_ESCALATION_EMAIL;
+    } else {
+      process.env.PLATFORM_SAFEGUARDING_ESCALATION_EMAIL = originalFallbackEmail;
+    }
+  });
+
+  it("sends to the configured address and reports ok", async () => {
+    process.env.PLATFORM_SAFEGUARDING_ESCALATION_EMAIL = "ops@example.com";
+
+    const result = await notifyPlatformSafeguardingFallback("test reason");
+
+    expect(result).toEqual({ ok: true });
+    expect(mockSendEmail).toHaveBeenCalledWith(
+      expect.objectContaining({ to: "ops@example.com", recipientRole: "platform_admin" })
+    );
+  });
+
+  it("returns null and does not throw when the env var is unset", async () => {
+    delete process.env.PLATFORM_SAFEGUARDING_ESCALATION_EMAIL;
+
+    const result = await notifyPlatformSafeguardingFallback("test reason");
+
+    expect(result).toBeNull();
+    expect(mockSendEmail).not.toHaveBeenCalled();
+  });
+
+  it("reports ok:false without throwing when the email provider fails", async () => {
+    process.env.PLATFORM_SAFEGUARDING_ESCALATION_EMAIL = "ops@example.com";
+    mockSendEmail.mockResolvedValue({ ok: false, error: "domain not verified" });
+
+    const result = await notifyPlatformSafeguardingFallback("test reason");
+
+    expect(result).toEqual({ ok: false });
   });
 });
