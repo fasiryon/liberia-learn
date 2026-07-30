@@ -13,6 +13,8 @@
  */
 
 import { routedCompletion } from "@/lib/ai/router";
+import { moderateText } from "@/lib/agents/moderation";
+import { enqueueEscalation } from "@/lib/agents/escalation";
 import type { AILiteracyExerciseType, AILiteracyRubricCriterion } from "../exercises/generateAILiteracy";
 
 export type AILiteracyCriterionResult = {
@@ -68,6 +70,19 @@ const TYPE_GUIDANCE: Record<AILiteracyExerciseType, string> = {
 /**
  * Grade an AI literacy exercise submission.
  */
+function neutralBlockedResult(rubric: { criteria: AILiteracyRubricCriterion[] }): AILiteracyGradeResult {
+  const breakdown: Record<string, AILiteracyCriterionResult> = {};
+  for (const c of rubric.criteria) {
+    breakdown[c.key] = { score: 0.5, comment: "Your teacher will review this response." };
+  }
+  return {
+    score: 0.5,
+    breakdown,
+    feedback: "Your response has been received. Your teacher will review and provide feedback soon.",
+    tooShort: false,
+  };
+}
+
 export async function gradeAILiteracy(input: {
   studentResponse: string;
   exerciseType: AILiteracyExerciseType;
@@ -79,6 +94,16 @@ export async function gradeAILiteracy(input: {
   const wordCount = countWords(input.studentResponse);
   if (wordCount < MIN_WORDS) {
     return { tooShort: true, wordCount, minWords: MIN_WORDS };
+  }
+
+  const inputVerdict = await moderateText(input.studentResponse.slice(0, 4000), "input");
+  if (inputVerdict.verdict === "UNSAFE") {
+    await enqueueEscalation({
+      agentName: "lib.grading.gradeAILiteracy",
+      reason: `AI literacy exercise response flagged unsafe on input moderation (exerciseType: ${input.exerciseType}, grade: ${input.grade}).`,
+      priority: "HIGH",
+    });
+    return neutralBlockedResult(input.rubric);
   }
 
   const typeGuidance = TYPE_GUIDANCE[input.exerciseType];
@@ -140,6 +165,17 @@ Return ONLY valid JSON — no preamble, no code fences:
       typeof raw.comment === "string" ? raw.comment : "Keep developing this skill.";
     breakdown[criterion.key] = { score, comment };
     totalScore += score * criterion.weight;
+  }
+
+  const feedbackText = [feedback, ...Object.values(breakdown).map((b) => b.comment)].join("\n");
+  const outputVerdict = await moderateText(feedbackText, "output");
+  if (outputVerdict.verdict === "UNSAFE") {
+    await enqueueEscalation({
+      agentName: "lib.grading.gradeAILiteracy",
+      reason: `AI literacy grading output flagged unsafe for a K-12 audience (exerciseType: ${input.exerciseType}, grade: ${input.grade}).`,
+      priority: "HIGH",
+    });
+    return neutralBlockedResult(input.rubric);
   }
 
   return { score: totalScore, breakdown, feedback, tooShort: false };

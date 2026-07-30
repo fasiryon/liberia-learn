@@ -19,6 +19,8 @@
  */
 
 import { routedCompletion } from "@/lib/ai/router";
+import { moderateText } from "@/lib/agents/moderation";
+import { enqueueEscalation } from "@/lib/agents/escalation";
 
 export const MIN_WORDS_TO_GRADE = 50;
 
@@ -95,6 +97,16 @@ function safeParseGradeJSON(raw: string): {
  *
  * @returns EssayGradeResult on success, EssayTooShortResult if under 50 words
  */
+const NEUTRAL_BLOCKED_FEEDBACK = "Your essay has been received. Your teacher will review and provide feedback soon.";
+
+function neutralBlockedResult(rubric: EssayRubric): EssayGradeResult {
+  const breakdown: Record<string, EssayCriterionResult> = {};
+  for (const c of rubric.criteria) {
+    breakdown[c.key] = { score: 0.5, comment: "Your teacher will review this section." };
+  }
+  return { score: 0.5, breakdown, feedback: NEUTRAL_BLOCKED_FEEDBACK, tooShort: false };
+}
+
 export async function gradeEssay(input: {
   essayText: string;
   grade: number;
@@ -108,6 +120,16 @@ export async function gradeEssay(input: {
   }
 
   const rubric = input.rubric ?? DEFAULT_RUBRIC;
+
+  const inputVerdict = await moderateText(input.essayText.slice(0, 8000), "input");
+  if (inputVerdict.verdict === "UNSAFE") {
+    await enqueueEscalation({
+      agentName: "lib.grading.gradeEssay",
+      reason: `Essay submission flagged unsafe on input moderation (subject: ${input.subject}, grade: ${input.grade}).`,
+      priority: "HIGH",
+    });
+    return neutralBlockedResult(rubric);
+  }
   const gradeLabel = input.grade <= 6 ? "primary" : "secondary";
 
   const systemPrompt = `You are a fair, encouraging Grade ${input.grade} (${gradeLabel} level) teacher in Liberia grading a student essay.
@@ -171,6 +193,17 @@ Return ONLY valid JSON — no preamble, no code fences:
       typeof parsed.feedback === "string" && parsed.feedback.length > 10
         ? parsed.feedback
         : "Well done for completing your essay. Keep practising — every essay makes you a stronger writer!";
+
+    const feedbackText = [feedback, ...Object.values(breakdown).map((b) => b.comment)].join("\n");
+    const outputVerdict = await moderateText(feedbackText, "output");
+    if (outputVerdict.verdict === "UNSAFE") {
+      await enqueueEscalation({
+        agentName: "lib.grading.gradeEssay",
+        reason: `Essay grading output flagged unsafe for a K-12 audience (subject: ${input.subject}, grade: ${input.grade}).`,
+        priority: "HIGH",
+      });
+      return neutralBlockedResult(rubric);
+    }
 
     return { score, breakdown, feedback, tooShort: false };
   } catch {

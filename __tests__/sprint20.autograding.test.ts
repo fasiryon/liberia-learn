@@ -19,6 +19,17 @@ vi.mock("@/lib/ai/routedCompletion", () => ({
   routedCompletion: vi.fn(),
 }));
 
+// NR-9.6: mock moderation separately from routedCompletion (see
+// grading.essay.test.ts for why) so existing call-count assertions stay accurate.
+const mockModerateText = vi.hoisted(() =>
+  vi.fn(async (): Promise<{ verdict: "SAFE" | "UNSAFE" | "UNCERTAIN"; reason?: string }> => ({
+    verdict: "SAFE",
+  }))
+);
+const mockEnqueueEscalation = vi.hoisted(() => vi.fn(async () => ({ id: "escalation-1" })));
+vi.mock("@/lib/agents/moderation", () => ({ moderateText: mockModerateText }));
+vi.mock("@/lib/agents/escalation", () => ({ enqueueEscalation: mockEnqueueEscalation }));
+
 // ─── imports after mocks ───────────────────────────────────────────────────────
 import { gradeHomework } from "@/lib/ai/homeworkGrader";
 import { releaseStaleAIGrades } from "@/lib/ai/staleGradeReleaser";
@@ -108,6 +119,37 @@ describe("gradeHomework", () => {
     const result = await gradeHomework({ content: "answer" }, { title: "Test", description: null });
     expect(result.grade).toBe(50);
     expect(result.feedback).toContain("received");
+  });
+
+  it("NR-9.6: blocks unsafe submission input before calling the LLM and escalates", async () => {
+    mockModerateText.mockResolvedValueOnce({ verdict: "UNSAFE", reason: "unsafe_input" });
+
+    const result = await gradeHomework({ content: "something unsafe" }, { title: "Test", description: null });
+
+    expect(result.rationale).toContain("safety moderation");
+    expect(mockRouted).not.toHaveBeenCalled();
+    expect(mockEnqueueEscalation).toHaveBeenCalledWith(expect.objectContaining({ priority: "HIGH" }));
+  });
+
+  it("NR-9.6: regenerates once on unsafe output, then escalates and blocks if still unsafe", async () => {
+    mockRouted.mockResolvedValue({
+      content: JSON.stringify({ grade: 80, feedback: "unsafe", rationale: "unsafe", perQuestionFeedback: [] }),
+      tier: "fast",
+      model: "llama-3.1-8b",
+      inputTokens: 50,
+      outputTokens: 40,
+      estimatedCostUSD: 0,
+    });
+    mockModerateText
+      .mockResolvedValueOnce({ verdict: "SAFE" }) // input
+      .mockResolvedValueOnce({ verdict: "UNSAFE" }) // first output check
+      .mockResolvedValueOnce({ verdict: "UNSAFE" }); // retry output check
+
+    const result = await gradeHomework({ content: "answer" }, { title: "Test", description: null });
+
+    expect(mockRouted).toHaveBeenCalledTimes(2);
+    expect(result.rationale).toContain("safety moderation");
+    expect(mockEnqueueEscalation).toHaveBeenCalledWith(expect.objectContaining({ priority: "HIGH" }));
   });
 });
 
@@ -266,16 +308,39 @@ describe("Student assignment grade badge logic", () => {
     expect(isTeacherGraded).toBe(true);
   });
 
-  it("student sees feedback after AI auto-release", () => {
+  // NR-9.6: app/student/assignments/[id]/page.tsx now gates the raw
+  // aiFeedback fallback behind teacherApproved/autoReleasedAt, since
+  // aiFeedback is written the moment fire-and-forget grading finishes
+  // (immediately) while score/feedback only populate on real release.
+  // Showing aiFeedback unconditionally, as this test previously asserted,
+  // was the actual exposure path NR-9.6 closed.
+  function isReleased(submission: { teacherApproved: boolean; autoReleasedAt: string | null }): boolean {
+    return Boolean(submission.teacherApproved || submission.autoReleasedAt);
+  }
+
+  it("student sees feedback after AI auto-release (released: autoReleasedAt is set)", () => {
     const submission = {
       score: 70,
-      feedback: null,
+      feedback: null as string | null,
       aiFeedback: "You demonstrated good understanding.",
       autoReleasedAt: new Date().toISOString(),
       teacherApproved: false,
     };
 
-    const visibleFeedback = submission.feedback ?? submission.aiFeedback;
+    const visibleFeedback = submission.feedback ?? (isReleased(submission) ? submission.aiFeedback : null);
     expect(visibleFeedback).toBe("You demonstrated good understanding.");
+  });
+
+  it("student does NOT see raw aiFeedback before release (no teacherApproved, no autoReleasedAt)", () => {
+    const submission = {
+      score: null as number | null,
+      feedback: null as string | null,
+      aiFeedback: "Raw unmoderated AI text.",
+      autoReleasedAt: null,
+      teacherApproved: false,
+    };
+
+    const visibleFeedback = submission.feedback ?? (isReleased(submission) ? submission.aiFeedback : null);
+    expect(visibleFeedback).toBeNull();
   });
 });
