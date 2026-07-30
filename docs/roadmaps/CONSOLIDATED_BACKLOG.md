@@ -2,10 +2,11 @@
 
 **Status:** Canonical project-wide backlog  
 **Reconciled:** 2026-07-30  
-**Next national sprint:** NR-9.5, Child Safety Hardening (reordered ahead of
-NR-3 on 2026-07-30 by explicit user decision — see the entry below and
-`NATIONAL_ROLLOUT_EXECUTION_PLAN.md`'s "How execution works" step 2). NR-3,
-Load-Test Identity Pool, follows once NR-9.5 completes.
+**Next national sprint:** NR-9.6, Grading Surface Moderation Audit (added
+2026-07-30, reordered ahead of NR-3 for the same reason NR-9.5 was — see
+`NATIONAL_ROLLOUT_EXECUTION_PLAN.md`'s "How execution works" step 2). NR-9.5,
+Child Safety Hardening, is COMPLETE and merged (PR #62). NR-3, Load-Test
+Identity Pool, follows once NR-9.6 completes.
 
 ## Authority and maintenance
 
@@ -45,8 +46,9 @@ order and do not skip the first pending sprint.
 
 | Sprint | Reconciled status |
 |---|---|
-| NR-9.5 Child Safety Hardening | **COMPLETE (2026-07-30).** Folds B25 + C33. SLA-miss escalation (4h/24h ladder) + AI tutor moderation (groundedAnswerService.ts + labAnalyzer.ts) built, tested, live-walkthrough-verified, pushed (`f8c9529b`, `9622f2df`). Not yet merged to `main`. See `project_nr9_5_child_safety_hardening.md` in session memory for full evidence. |
-| NR-3 Load-Test Identity Pool | **VALID — next sprint.** `DATABASE_URL` pooling already verified 2026-07-30 (see below); no longer a blocker. |
+| NR-9.5 Child Safety Hardening | **COMPLETE + MERGED (2026-07-30, PR #62).** Folds B25 + C33. SLA-miss escalation (4h/24h ladder) + AI tutor/lab moderation (groundedAnswerService.ts, planLabAction.ts, explainLabState.ts) + platform fallback contact, all real-walkthrough-verified. A full-codebase sweep before merge found and fixed a second real gap (the lab-AI surfaces) and found-but-deferred a third (grading cluster, now NR-9.6). See `project_nr9_5_child_safety_hardening.md` in session memory for full evidence. |
+| NR-9.6 Grading Surface Moderation Audit | **VALID — next sprint (added 2026-07-30).** Investigates `homeworkGrader.ts`/`homework-grader.ts` duplication and Sprint 20's 72h auto-release real behavior before applying `moderateText()` to `gradeEssay.ts`/`gradeAILiteracy.ts` if confirmed. Full spec in `NATIONAL_ROLLOUT_EXECUTION_PLAN.md`. |
+| NR-3 Load-Test Identity Pool | **VALID — follows NR-9.6.** `DATABASE_URL` pooling already verified 2026-07-30 (see below); no longer a blocker. |
 | NR-4 k6 Moderate 1K VU | **VALID — blocked by NR-3.** No production 1K-VU proof is recorded. |
 | NR-5 k6 Peak 5K VU + AI Burst | **VALID — blocked by NR-4.** No peak or AI-burst proof is recorded. |
 | NR-6 Middleware Portal Hardening | **VALID.** Formal portal-wide middleware gate remains outstanding. |

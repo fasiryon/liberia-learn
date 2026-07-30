@@ -7,17 +7,24 @@ Live execution tracking for the final closeout program.
 
 - **Canonical plan:** `docs/roadmaps/NATIONAL_ROLLOUT_EXECUTION_PLAN.md`
 - **Escalation contract:** `docs/agents/ADVISOR_ESCALATION_CONTRACT.md`
-- **NR-9.5 — Child Safety Hardening: COMPLETE (2026-07-30).** Commits
-  `f8c9529b` (implementation) + `9622f2df` (real-walkthrough bugfix) on
-  `agent/consolidated-backlog`, pushed, PR Triage green. Gate: prisma
-  generate PASS, tsc PASS, vitest PASS (4,426 tests / 538 files, baseline
-  was 4,409/537), build PASS, zero schema changes, real live walkthrough
-  against production PASS (see `docs/roadmaps/CONSOLIDATED_BACKLOG.md` /
-  memory for full evidence). Not yet merged to `main` — awaiting human
-  review per standing branch discipline.
-- **Next national sprint:** NR-3 — Load-Test Identity Pool, the first
-  remaining `PENDING` row. `DATABASE_URL` pooling already verified
-  2026-07-30, no longer a blocker.
+- **NR-9.5 — Child Safety Hardening: COMPLETE + MERGED (2026-07-30, PR #62,
+  merge commit `b3dde0d9`).** Commits `f8c9529b`..`72e5c8c6` on
+  `agent/consolidated-backlog`. Gate: prisma generate PASS, tsc PASS,
+  vitest PASS (4,431 tests / 540 files, baseline was 4,409/537), build
+  PASS, zero schema changes, real live walkthrough against production
+  PASS on all fixed surfaces (see `project_nr9_5_child_safety_hardening.md`
+  in session memory for full evidence). A user-requested full-codebase
+  sweep before merge found and fixed a second real gap (`planLabAction.ts`
+  / `explainLabState.ts`, the actual live lab-AI surfaces) and
+  found-but-deferred a third (grading cluster — now NR-9.6).
+- **NR-9.6 — Grading Surface Moderation Audit: added 2026-07-30, PENDING.**
+  Full spec in `NATIONAL_ROLLOUT_EXECUTION_PLAN.md`. Investigate before
+  implementing: `homeworkGrader.ts` vs `homework-grader.ts` duplication,
+  and whether Sprint 20's 72h auto-release actually lets raw unmoderated
+  text reach a student. Reordered ahead of NR-3, same as NR-9.5 was.
+- **Next national sprint:** NR-9.6, then NR-3 — Load-Test Identity Pool.
+  `DATABASE_URL` pooling already verified 2026-07-30, no longer a blocker
+  for NR-3 once NR-9.6 completes.
 - **Pre-NR-3 verification: DONE (2026-07-30).** Production `DATABASE_URL` is
   confirmed pooled (`aws-1-us-east-2.pooler.supabase.com:6543`,
   `pgbouncer=true`), set once on 2026-05-19 (the day after NR-1's completion
@@ -102,7 +109,7 @@ historical sections to select work.
 - **Current sprint:** NR-2 — ECS Worker Autoscale + Queue SLOs
 - **Status:** NR-2 COMPLETE (2026-05-18). Re-verified live against AWS on 2026-07-28 after the sprint index table was found marking it PENDING (a stale table, not a real regression): ECS service `liberia-learn-worker` ACTIVE 1/1, autoscaling target `service/liberia-learn/liberia-learn-worker` min1/max10 with a target-tracking policy on `ApproximateNumberOfMessagesVisible` for `liberialearn-jobs.fifo` at target 50 (scale-out 30s / scale-in 120s), both `liberialearn-jobs.fifo` and its DLQ present. Sprint index table corrected to match.
 - **Target:** World-class national rollout (all Liberia) — 22 sprints NR-0 through NR-21
-- **Next sprint:** **NR-9.5 — Child Safety Hardening**, reordered ahead of NR-3 on 2026-07-30 (see "Resume here" above and the plan's "How execution works" step 2). NR-3 — Load-Test Identity Pool follows after. Note: NR-3's line previously read "DATABASE_URL Port Fix + PgBouncer Validation", which does not match any defined NR-3 scope in the plan. That item traced back to a real open finding from NR-0/NR-1 ("DATABASE_URL: port 5432 with pgbouncer=true, MISCONFIGURED, needs 6543 for actual pooling") that had never been confirmed fixed. **Verified 2026-07-30:** production `DATABASE_URL` is pooled (`...pooler.supabase.com:6543`, `pgbouncer=true`), set 2026-05-19 and unmodified since per Vercel's env-var metadata — see `docs/roadmaps/CONSOLIDATED_BACKLOG.md`. NR-1's deliverable is genuinely satisfied; NR-3 is unblocked once NR-9.5 completes.
+- **Next sprint:** **NR-9.6 — Grading Surface Moderation Audit**, added 2026-07-30 and reordered ahead of NR-3 the same way NR-9.5 was (see "Resume here" above and the plan's "How execution works" step 2). NR-9.5 — Child Safety Hardening is COMPLETE and merged (PR #62). NR-3 — Load-Test Identity Pool follows after NR-9.6. Note: NR-3's line previously read "DATABASE_URL Port Fix + PgBouncer Validation", which does not match any defined NR-3 scope in the plan. That item traced back to a real open finding from NR-0/NR-1 ("DATABASE_URL: port 5432 with pgbouncer=true, MISCONFIGURED, needs 6543 for actual pooling") that had never been confirmed fixed. **Verified 2026-07-30:** production `DATABASE_URL` is pooled (`...pooler.supabase.com:6543`, `pgbouncer=true`), set 2026-05-19 and unmodified since per Vercel's env-var metadata — see `docs/roadmaps/CONSOLIDATED_BACKLOG.md`. NR-1's deliverable is genuinely satisfied; NR-3 is unblocked once NR-9.6 completes.
 
 ### NR-0 + NR-1 Complete (2026-05-18)
 Key findings:
