@@ -7,6 +7,8 @@ import {
   getLabPlannerPromptMetadata,
 } from "@/lib/labs/ai/prompts";
 import type { LabAction, LabId, PlannedLabAction } from "@/lib/labs/types";
+import { moderateText } from "@/lib/agents/moderation";
+import { enqueueEscalation } from "@/lib/agents/escalation";
 
 type PlanLabActionParams = {
   labId: string;
@@ -103,6 +105,18 @@ export async function planLabAction(input: PlanLabActionParams): Promise<Planned
   let result: Awaited<ReturnType<typeof routedCompletion>> | null = null;
   let labIdForLog = input.labId;
 
+  const inputVerdict = await moderateText(input.studentRequest, "input");
+  if (inputVerdict.verdict === "UNSAFE") {
+    await enqueueEscalation({
+      agentName: "lib.labs.ai.planLabAction",
+      userId: input.userId ?? null,
+      reason: `Lab action request flagged unsafe on input moderation (lab: ${input.labId}).`,
+      priority: "HIGH",
+      schoolId: input.schoolId ?? null,
+    });
+    return rejected("I can't help with that. If you need support, please talk to your teacher or a trusted adult.", "input_moderation_blocked");
+  }
+
   try {
     if (!isValidLabId(input.labId)) {
       const planned = rejected("That lab is not available yet.", "unknown_lab");
@@ -140,6 +154,28 @@ export async function planLabAction(input: PlanLabActionParams): Promise<Planned
 
       try {
         const planned = parsePlannedAction(result.content);
+        const outputVerdict = await moderateText(planned.userFacingMessage, "output");
+        if (outputVerdict.verdict === "UNSAFE") {
+          await enqueueEscalation({
+            agentName: "lib.labs.ai.planLabAction",
+            userId: input.userId ?? null,
+            reason: `Lab action planner output flagged unsafe for a K-12 audience (lab: ${lab.id}).`,
+            priority: "HIGH",
+            schoolId: input.schoolId ?? null,
+          });
+          const blocked = rejected("I can't help with that. If you need support, please talk to your teacher or a trusted adult.", "output_moderation_unsafe");
+          await logPlannerCall({
+            input,
+            labId: lab.id,
+            promptVersion,
+            promptHash,
+            result,
+            rejected: true,
+            reason: blocked.reason,
+            latencyMs: Date.now() - startedAt,
+          });
+          return blocked;
+        }
         await logPlannerCall({
           input,
           labId: lab.id,

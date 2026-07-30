@@ -97,7 +97,7 @@ Sources:
 | B17 Empty/error-state quality pass | **VALID.** No comprehensive signed audit exists. |
 | B18 MOE and Guardian error boundaries | **VALID.** Both segment-level boundaries remain absent. |
 | B19 Low-end Android/3G performance | **VALID.** No device/network measurement evidence. |
-| B20 Resend sending domain | **POSSIBLY STALE.** Requires current provider-dashboard confirmation. |
+| B20 Resend sending domain | **CONFIRMED STILL BROKEN, ELEVATED TO SAFETY-CRITICAL (2026-07-30).** Live Resend API check during NR-9.5 confirms `liberialearn.edu.lr` domain status is still `"failed"` — unverified since first found 2026-06-24, over a month with no fix. This is no longer just "all transactional email is undeliverable": it now directly blocks NR-9.5's real 24-hour safeguarding escalation email (the platform-level fallback contact) from ever actually sending. The code is correct and fails loud (logged, not swallowed) rather than silently — but the channel itself does not work. **Action needed, not just tracking:** FA (or whoever holds Resend/DNS access) must complete domain verification at resend.com/domains. Treat this at safety-escalation priority, not generic infra backlog priority, until closed. |
 | B21 Twilio trial limitations | **POSSIBLY STALE.** Requires current account/provider confirmation. |
 | B22 Onboarding schedules first lesson | **VALID.** Wizard completion remains hardcoded without creating scheduled work. |
 | B23 Agent notification cross-talk | **PROCESS NOTE, NOT CODE BACKLOG.** Preserve as a concurrency and verification warning. |

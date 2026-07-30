@@ -3,6 +3,12 @@ import type { LabDefinition } from "@/lib/labs/types";
 
 const mockRoutedCompletion = vi.hoisted(() => vi.fn());
 const mockLogAIInteraction = vi.hoisted(() => vi.fn());
+const mockModerateText = vi.hoisted(() =>
+  vi.fn(async (): Promise<{ verdict: "SAFE" | "UNSAFE" | "UNCERTAIN"; reason?: string }> => ({
+    verdict: "SAFE",
+  }))
+);
+const mockEnqueueEscalation = vi.hoisted(() => vi.fn(async () => ({ id: "escalation-1" })));
 
 vi.mock("@/lib/ai/routedCompletion", () => ({
   routedCompletion: mockRoutedCompletion,
@@ -10,6 +16,17 @@ vi.mock("@/lib/ai/routedCompletion", () => ({
 
 vi.mock("@/lib/ai/interactionLog", () => ({
   logAIInteraction: mockLogAIInteraction,
+}));
+
+// NR-9.5: moderateText internally calls @/lib/ai/routedCompletion too, which
+// is already mocked above for the planner's own completion. Mocking
+// moderation separately keeps it from consuming that queue and breaking
+// call-count assertions on mockRoutedCompletion.
+vi.mock("@/lib/agents/moderation", () => ({
+  moderateText: mockModerateText,
+}));
+vi.mock("@/lib/agents/escalation", () => ({
+  enqueueEscalation: mockEnqueueEscalation,
 }));
 
 import { labRegistry } from "@/lib/labs/registry";
@@ -33,6 +50,7 @@ describe("planLabAction", () => {
     vi.clearAllMocks();
     delete labRegistry["gravity-explorer"];
     mockLogAIInteraction.mockResolvedValue(null);
+    mockModerateText.mockResolvedValue({ verdict: "SAFE" });
   });
 
   it("returns rejected: true on JSON parse failure", async () => {
