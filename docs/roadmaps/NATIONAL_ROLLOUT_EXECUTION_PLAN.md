@@ -26,6 +26,7 @@ This plan governs the path from **current production baseline** to **world-class
 | NR-0 | Program Baseline + Doc Sync | 0 | All | COMPLETE | PASS |
 | NR-1 | Production Infra Upgrade | 0 | Scale | COMPLETE | PASS |
 | NR-2 | ECS Worker Autoscale + Queue SLOs | 0 | Scale | COMPLETE | PASS (verified live against AWS 2026-07-28: ECS service active 1/1, autoscaling min1/max10 target-tracking on SQS depth=50, both queues present) |
+| NR-9.5 | Child Safety Hardening (Safeguarding Alerting + AI Moderation Audit) | 2 (executed early) | Security | **PENDING — NEXT** | NOT RUN |
 | NR-3 | Load-Test Identity Pool | 0 | Scale | PENDING | NOT RUN |
 | NR-4 | k6 Moderate (1K VU) Production Proof | 1 | Scale | PENDING | NOT RUN |
 | NR-5 | k6 Peak (5K VU) + AI Burst Gate | 1 | Scale | PENDING | NOT RUN |
@@ -38,10 +39,13 @@ This plan governs the path from **current production baseline** to **world-class
 | NR-12 | Critical Grade Deserts (G2, G9) | 3 | Content | PENDING | NOT RUN |
 | NR-13 | Grades 5–8 Gap Closure + ENGLISH | 3 | Content | PENDING | NOT RUN |
 | NR-14 | National Audio Pipeline Completion | 3 | Content | PENDING | NOT RUN |
+| NR-14.5 | Auto-Grading Fairness Review | 3 | Content | PENDING | NOT RUN |
 | NR-15 | Unified Ops Dashboard + Alerting | 4 | Ops | PENDING | NOT RUN |
 | NR-16 | Playwright CI + Phase 6 Close on Main | 4 | Ops | PENDING | NOT RUN |
 | NR-17 | DR Drill + Export Circuit Breaker Under Load | 4 | Ops | PENDING | NOT RUN |
+| NR-17.5 | Data Retention Enforcement + Minors Legal Mapping | 4 | Ops/MOE | PENDING | NOT RUN |
 | NR-18 | MOE Coverage Dashboard + Certification Refresh | 5 | MOE | PENDING | NOT RUN |
+| NR-18.5 | Governed Export Completeness | 5 | MOE | PENDING | NOT RUN |
 | NR-19 | County Seed + Bulk School Onboarding | 5 | GTM | PENDING | NOT RUN |
 | NR-20 | National Support + Training Package | 5 | GTM | PENDING | NOT RUN |
 | NR-21 | National Launch Sign-Off Gate | 6 | All | PENDING | NOT RUN |
@@ -51,7 +55,7 @@ This plan governs the path from **current production baseline** to **world-class
 ## How execution works
 
 1. Read `AGENTS.md`, this file, and `docs/roadmaps/CURRENT_EXECUTION_STATE.md` before touching code.
-2. Execute only the first sprint marked `PENDING`, unless explicitly instructed otherwise.
+2. Execute only the first sprint marked `PENDING` **in the Sprint index table's actual row order**, unless explicitly instructed otherwise. Row order is not always numeric order: **NR-9.5 was deliberately reordered ahead of NR-3 on 2026-07-30** by explicit user decision — child-safety readiness (a known gap in proactive safeguarding alerting and AI tutor moderation, on the exact population this project exists to protect) is a different category of risk than scale/load readiness, and this project has precedent for handling real safety findings with immediate urgency rather than queuing them behind whatever was already in flight (Sprint 6.1 safeguarding work, tenant-scoping fixes). Its sprint ID keeps the `NR-9.5` number for backlog-mapping continuity (it stays linked to Doc B25 + C33); only its table position moved. Do not "fix" the table back into strict numeric order without checking with the user first — the numbering gap is intentional.
 3. **Feature work runs as a separate, parallel track, not a strict prerequisite.** The original "no new product features until NR-5" freeze was never actually followed (Sprint 6.0 through 7.5's entire agent platform, AI Labs V1, and the Teaching Runtime v1 sprint all shipped or were approved while NR-2 through NR-5 sat PENDING) and is corrected here rather than left contradicting reality (2026-07-28). NR sprints and product/agent-platform sprints (tracked separately, see `docs/roadmaps/CURRENT_EXECUTION_STATE.md`) may proceed concurrently. The one thing that still genuinely blocks on NR-5: do not announce or execute the national public launch (NR-21) before peak load is proven.
 4. Run the sprint gate exactly as written. All steps must pass before the next sprint.
 5. After a passed gate: commit, push, confirm CI green, update this table and `CURRENT_EXECUTION_STATE.md`, stop.
@@ -170,6 +174,20 @@ feat: NR-[N] complete — [sprint name]
   - External pen test completed; all CRITICAL/HIGH remediated or accepted with MOE sign-off
 - **Gate:** Standard code gate + pen test report linked in `docs/MOE_PRODUCTION_CERTIFICATION.md` (remediation table)
 
+### NR-9.5 — Child Safety Hardening (Safeguarding Alerting + AI Moderation Audit)
+
+> **Execution note (2026-07-30):** despite living here in the Phase 2 write-up
+> (its thematic home, and where its ID comes from), this sprint was reordered
+> in the Sprint index table to run immediately after NR-2, ahead of NR-3. It
+> is the actual next sprint. See "How execution works," step 2.
+
+- **Branch:** `feat/nr-9-5-child-safety`
+- **Folded from:** Doc B item B25 (safeguarding alerting is reactive/queryable, not proactive — flagged HIGHER PRIORITY/SAFETY-CRITICAL) and Doc C item C33 (student-facing AI tutor input/output moderation, T1)
+- **Deliverables:**
+  - Proactive safeguarding alerting: responsible-recipient routing, delivery evidence, retry/failure handling, audit logging, and an operations view showing open/acknowledged/escalated/failed-alert states — do not claim proactive notification until notifications are actually sent, delivered, logged, and visible for review
+  - AI tutor input moderation (off-topic / unsafe student prompts) and output safety review for minors, with logging, across `lib/ai/rag/groundedAnswerService.ts` and any other student-facing AI surface
+- **Gate:** Standard code gate + a real forced-trigger test proving a safeguarding alert is actually delivered end-to-end (not just logged) + moderation test cases for at least one unsafe input and one unsafe output path
+
 ---
 
 ## Phase 3 — National curriculum (Weeks 4–10)
@@ -216,6 +234,15 @@ feat: NR-[N] complete — [sprint name]
   - Worker/autoscale from NR-2 proven under audio batch load
 - **Gate:** Standard code gate + audit script: &lt; 1% APPROVED lessons missing audio without opt-out
 
+### NR-14.5 — Auto-Grading Fairness Review
+
+- **Branch:** `feat/nr-14-5-grading-fairness`
+- **Folded from:** Doc C item C35 (auto-grading fairness review — essay/code/AI-literacy, T2)
+- **Deliverables:**
+  - Bias audit of WAEC-rubric essay grading, Judge0 code grading, and AI-literacy grading (all advisory per NR-14B/C/D)
+  - Confirm teacher-override is always available and discoverable on every auto-graded item before national high-stakes use
+- **Gate:** Standard code gate + documented fairness audit findings + remediation for any confirmed bias
+
 ---
 
 ## Phase 4 — Reliability & operations (Weeks 6–10)
@@ -247,6 +274,15 @@ feat: NR-[N] complete — [sprint name]
   - `ENABLE_GOV_CIRCUIT_BREAKER` tested
 - **Gate:** Standard code gate + DR log entry + load test note for export isolation
 
+### NR-17.5 — Data Retention Enforcement + Minors Legal Mapping
+
+- **Branch:** `feat/nr-17-5-retention-legal`
+- **Folded from:** Doc B item B24 (retention policy not enforced by scheduled purge/anonymization) and Doc C item C14 (Liberian data-protection legal mapping, T1)
+- **Deliverables:**
+  - Scheduled retention workflow: identify eligible records by data class per the published active-account-lifetime-plus-2-years policy, purge or anonymize, preserve required audit/safeguarding/school-record exceptions, write audit evidence for every action — production-safe dry-run reporting before any destructive execution
+  - Explicit mapping of `docs/PRIVACY_GOVERNANCE.md` to Liberian legal requirements for minors' data (legal review; calendar time, not just engineering)
+- **Gate:** Standard code gate + dry-run report reviewed before enabling destructive execution + legal mapping doc signed off
+
 ---
 
 ## Phase 5 — MOE trust & national GTM (Weeks 8–12)
@@ -259,6 +295,16 @@ feat: NR-[N] complete — [sprint name]
   - Refresh `docs/MOE_PRODUCTION_CERTIFICATION.md` with k6 NR-4/NR-5 results (not synthetic-only claims)
   - MOE signed coverage matrix PDF referenced in repo
 - **Gate:** Standard code gate + certification doc dated + MOE sign-off recorded
+
+### NR-18.5 — Governed Export Completeness
+
+- **Branch:** `feat/nr-18-5-export-completeness`
+- **Folded from:** Doc B item B26 (governed export job generation incomplete for some listed types, e.g. `intervention_effectiveness`, `ai_usage`)
+- **Deliverables:**
+  - Inventory every `ExportJobRequest.exportType`; identify which have real generation and storage paths
+  - Implement missing generation paths or remove unavailable types from request options
+  - Round-trip test for each supported export type
+- **Gate:** Standard code gate + round-trip test evidence for every listed export type
 
 ### NR-19 — County Seed + Bulk School Onboarding
 

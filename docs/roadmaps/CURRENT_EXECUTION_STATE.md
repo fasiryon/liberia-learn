@@ -7,10 +7,24 @@ Live execution tracking for the final closeout program.
 
 - **Canonical plan:** `docs/roadmaps/NATIONAL_ROLLOUT_EXECUTION_PLAN.md`
 - **Escalation contract:** `docs/agents/ADVISOR_ESCALATION_CONTRACT.md`
-- **Next national sprint:** NR-3, Load-Test Identity Pool, the first `PENDING`
-  row in the canonical plan
-- **Pre-NR-3 verification:** confirm the live production `DATABASE_URL` uses
-  the pooled endpoint before accepting NR-1's historical completion claim
+- **Next national sprint:** **NR-9.5 — Child Safety Hardening** (safeguarding
+  alerting + AI tutor moderation audit), the first `PENDING` row in the
+  canonical plan's Sprint index table. Deliberately reordered ahead of NR-3 on
+  2026-07-30 by explicit user decision — child-safety risk is a different
+  category than scale risk and doesn't wait behind load-test proof. NR-3
+  (Load-Test Identity Pool) is next after NR-9.5 completes. See the plan's
+  "How execution works" step 2 for the reasoning; do not silently resequence
+  back to numeric order.
+- **Pre-NR-3 verification: DONE (2026-07-30).** Production `DATABASE_URL` is
+  confirmed pooled (`aws-1-us-east-2.pooler.supabase.com:6543`,
+  `pgbouncer=true`), set once on 2026-05-19 (the day after NR-1's completion
+  date) and unmodified since per Vercel's own env-var metadata as of
+  2026-07-23. `DIRECT_URL` correctly targets the unpooled host on 5432.
+  Evidence and method in `docs/roadmaps/CONSOLIDATED_BACKLOG.md` under
+  "Additional memory-generated work". NR-3 is unblocked to start. Side
+  finding: the stored `VERCEL_TOKEN` in `.env.local` is dead
+  (`invalidToken`) — refresh it before the next session needs a live REST
+  pull instead of a cached snapshot.
 - **Teaching Runtime v1:** all 16 tasks merged to `main` at `61bc3279`;
   production remains disabled until deliberate release approval and
   real-device Whisper push verification
@@ -85,7 +99,7 @@ historical sections to select work.
 - **Current sprint:** NR-2 — ECS Worker Autoscale + Queue SLOs
 - **Status:** NR-2 COMPLETE (2026-05-18). Re-verified live against AWS on 2026-07-28 after the sprint index table was found marking it PENDING (a stale table, not a real regression): ECS service `liberia-learn-worker` ACTIVE 1/1, autoscaling target `service/liberia-learn/liberia-learn-worker` min1/max10 with a target-tracking policy on `ApproximateNumberOfMessagesVisible` for `liberialearn-jobs.fifo` at target 50 (scale-out 30s / scale-in 120s), both `liberialearn-jobs.fifo` and its DLQ present. Sprint index table corrected to match.
 - **Target:** World-class national rollout (all Liberia) — 22 sprints NR-0 through NR-21
-- **Next sprint:** NR-3 — Load-Test Identity Pool (per the plan's actual NR-3 definition). Note: this line previously read "DATABASE_URL Port Fix + PgBouncer Validation", which does not match any defined NR-3 scope in the plan. That item traces back to a real open finding from NR-0/NR-1 ("DATABASE_URL: port 5432 with pgbouncer=true, MISCONFIGURED, needs 6543 for actual pooling") that was never confirmed fixed or folded into a numbered sprint. Flagged here, not silently resolved: verify current Vercel production DATABASE_URL port before NR-3 starts, since NR-1 (marked COMPLETE) lists pooled DATABASE_URL as one of its own deliverables.
+- **Next sprint:** **NR-9.5 — Child Safety Hardening**, reordered ahead of NR-3 on 2026-07-30 (see "Resume here" above and the plan's "How execution works" step 2). NR-3 — Load-Test Identity Pool follows after. Note: NR-3's line previously read "DATABASE_URL Port Fix + PgBouncer Validation", which does not match any defined NR-3 scope in the plan. That item traced back to a real open finding from NR-0/NR-1 ("DATABASE_URL: port 5432 with pgbouncer=true, MISCONFIGURED, needs 6543 for actual pooling") that had never been confirmed fixed. **Verified 2026-07-30:** production `DATABASE_URL` is pooled (`...pooler.supabase.com:6543`, `pgbouncer=true`), set 2026-05-19 and unmodified since per Vercel's env-var metadata — see `docs/roadmaps/CONSOLIDATED_BACKLOG.md`. NR-1's deliverable is genuinely satisfied; NR-3 is unblocked once NR-9.5 completes.
 
 ### NR-0 + NR-1 Complete (2026-05-18)
 Key findings:

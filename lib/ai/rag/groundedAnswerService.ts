@@ -27,6 +27,8 @@ import {
   type AiConfidence,
   type AiExplainability,
 } from "@/lib/ai/trust";
+import { moderateText } from "@/lib/agents/moderation";
+import { enqueueEscalation } from "@/lib/agents/escalation";
 
 const MIN_TOP_SIMILARITY = 0.72;
 const MIN_AVG_SIMILARITY = 0.66;
@@ -167,6 +169,47 @@ function buildWeakRetrievalAnswerForInput(
     }),
     tokensUsed: input.tokensUsed ?? 0,
     estimatedCost: input.estimatedCost ?? 0,
+  };
+}
+
+function buildModerationBlockedAnswer(
+  chunks: RetrievedChunk[],
+  input: Pick<QueryInput, "role" | "question" | "subject" | "grade" | "context">,
+  fallbackReason: "input_moderation_blocked" | "output_moderation_unsafe"
+): GroundedAnswerResult {
+  const weakSources = chunks.slice(0, 3).map((chunk) => toSource(chunk, "weak"));
+  const groundingScore = computeGroundingScore(weakSources.map((source) => source.similarity));
+  return {
+    answer:
+      "I can't help with that question. If you need support, please talk to your teacher or a trusted adult.",
+    sources: weakSources,
+    retrievalWeak: true,
+    hadFallback: true,
+    cacheHit: false,
+    isWeakGrounding: true,
+    actions: buildAssistantActions({
+      role: input.role,
+      question: input.question,
+      subject: input.subject,
+      gradeLevel:
+        input.context?.gradeLevel ??
+        (typeof input.grade === "number" ? String(input.grade) : null),
+      context: input.context,
+    }),
+    confidence: "low",
+    groundingScore,
+    sourcesUsed: 0,
+    citations: [],
+    fallbackReason,
+    explanation: buildExplainability({
+      role: input.role,
+      hadFallback: true,
+      retrievalWeak: true,
+      groundingScore,
+      sources: [],
+    }),
+    tokensUsed: 0,
+    estimatedCost: 0,
   };
 }
 
@@ -385,6 +428,11 @@ ${context}`;
 }
 
 export async function answerGroundedQuestion(input: QueryInput): Promise<GroundedAnswerResult> {
+  const inputVerdict = await moderateText(input.question, "input");
+  if (inputVerdict.verdict === "UNSAFE") {
+    return buildModerationBlockedAnswer(input.chunks ?? [], input, "input_moderation_blocked");
+  }
+
   const cacheKey = buildAiCacheKey(
     input.schoolId,
     input.role,
@@ -432,18 +480,19 @@ export async function answerGroundedQuestion(input: QueryInput): Promise<Grounde
   }
 
   try {
+    const messages: { role: "system" | "user"; content: string }[] = [
+      {
+        role: "system",
+        content:
+          "You are a grounded LiberiaLearn assistant. Answer only from retrieved content and never invent sources.",
+      },
+      {
+        role: "user",
+        content: buildPrompt(input.question, chunks, input.role),
+      },
+    ];
     const response = await routedCompletion({
-      messages: [
-        {
-          role: "system",
-          content:
-            "You are a grounded LiberiaLearn assistant. Answer only from retrieved content and never invent sources.",
-        },
-        {
-          role: "user",
-          content: buildPrompt(input.question, chunks, input.role),
-        },
-      ],
+      messages,
       maxTokens: 500,
       forceSmartTier: true,
       aiUsage: {
@@ -469,7 +518,7 @@ export async function answerGroundedQuestion(input: QueryInput): Promise<Grounde
       },
     });
     const usage = getAiUsageMetrics(response);
-    const parsed = parseGroundedAnswerResponse(response.content);
+    let parsed = parseGroundedAnswerResponse(response.content);
     if (!parsed || !parsed.answer.trim() || isExplicitRefusal(parsed.answer)) {
       return buildWeakRetrievalAnswerForInput(chunks, {
         ...input,
@@ -477,6 +526,50 @@ export async function answerGroundedQuestion(input: QueryInput): Promise<Grounde
         tokensUsed: usage.tokensUsed,
         estimatedCost: usage.estimatedCostUSD,
       });
+    }
+
+    // Output moderation, reusing runtime.ts's exact pattern: one regeneration
+    // attempt with an explicit K-12 safety instruction, then escalate and
+    // return no raw content if still unsafe on retry.
+    const out1 = await moderateText(parsed.answer, "output");
+    if (out1.verdict === "UNSAFE") {
+      messages.push(
+        { role: "user", content: parsed.answer },
+        {
+          role: "user",
+          content:
+            "Your previous response was flagged as inappropriate for a K-12 audience. Provide a safe, age-appropriate response.",
+        }
+      );
+      const retryResponse = await routedCompletion({
+        messages,
+        maxTokens: 500,
+        forceSmartTier: true,
+        aiUsage: {
+          route: input.usageContext?.route ?? "/api/rag/query",
+          feature: "tutor",
+          schoolId: input.schoolId,
+          userId: input.usageContext?.userId ?? null,
+          studentId: input.usageContext?.studentId ?? input.usageContext?.userId ?? null,
+          subject: input.subject ?? null,
+          requestType: "rag_grounded_answer_retry",
+          promptKey: RAG_GROUNDED_PROMPT_KEY,
+          promptVersion: RAG_GROUNDED_PROMPT_VERSION,
+        },
+      });
+      const retryParsed = parseGroundedAnswerResponse(retryResponse.content);
+      const out2 = retryParsed ? await moderateText(retryParsed.answer, "output") : null;
+      if (!retryParsed || out2?.verdict === "UNSAFE") {
+        await enqueueEscalation({
+          agentName: "rag.groundedAnswerService",
+          userId: input.usageContext?.userId ?? null,
+          reason: `AI tutor output flagged unsafe twice for a K-12 audience (question hash: ${cacheKey}).`,
+          priority: "HIGH",
+          schoolId: input.schoolId,
+        });
+        return buildModerationBlockedAnswer(chunks, input, "output_moderation_unsafe");
+      }
+      parsed = retryParsed;
     }
 
     const allowedIds = new Set(chunks.map((chunk) => chunk.id));
