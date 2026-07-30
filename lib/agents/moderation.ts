@@ -1,6 +1,15 @@
 import { routedCompletion } from "@/lib/ai/routedCompletion";
 import { getSystemPrompt } from "@/lib/ai/promptRegistry";
 import { logger } from "@/lib/logger";
+// The moderation prompts are registered as a side effect of this import.
+// Previously only lib/agents/bootstrap.ts imported infraPrompts, so any
+// caller of moderateText() that did not go through the runAgent() harness
+// (e.g. groundedAnswerService.ts, labAnalyzer.ts - NR-9.5) silently failed
+// open to UNCERTAIN with "Prompt registry entry not found." Importing here
+// makes moderateText self-sufficient regardless of caller. ES-module
+// caching means this runs exactly once per process even though
+// bootstrap.ts also imports it.
+import "@/lib/agents/infraPrompts";
 
 export type ModerationVerdict = "SAFE" | "UNSAFE" | "UNCERTAIN";
 
