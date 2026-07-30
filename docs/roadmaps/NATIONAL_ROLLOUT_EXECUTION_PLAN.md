@@ -26,7 +26,7 @@ This plan governs the path from **current production baseline** to **world-class
 | NR-0 | Program Baseline + Doc Sync | 0 | All | COMPLETE | PASS |
 | NR-1 | Production Infra Upgrade | 0 | Scale | COMPLETE | PASS |
 | NR-2 | ECS Worker Autoscale + Queue SLOs | 0 | Scale | COMPLETE | PASS (verified live against AWS 2026-07-28: ECS service active 1/1, autoscaling min1/max10 target-tracking on SQS depth=50, both queues present) |
-| NR-9.5 | Child Safety Hardening (Safeguarding Alerting + AI Moderation Audit) | 2 (executed early) | Security | **PENDING — NEXT** | NOT RUN |
+| NR-9.5 | Child Safety Hardening (Safeguarding Alerting + AI Moderation Audit) | 2 (executed early) | Security | COMPLETE | PASS (2026-07-30, commits f8c9529b + 9622f2df on `agent/consolidated-backlog`) |
 | NR-3 | Load-Test Identity Pool | 0 | Scale | PENDING | NOT RUN |
 | NR-4 | k6 Moderate (1K VU) Production Proof | 1 | Scale | PENDING | NOT RUN |
 | NR-5 | k6 Peak (5K VU) + AI Burst Gate | 1 | Scale | PENDING | NOT RUN |

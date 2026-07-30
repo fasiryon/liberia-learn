@@ -45,8 +45,8 @@ order and do not skip the first pending sprint.
 
 | Sprint | Reconciled status |
 |---|---|
-| NR-9.5 Child Safety Hardening | **VALID — next sprint (reordered 2026-07-30).** Folds B25 (safeguarding alerting) + C33 (AI tutor moderation audit). Runs ahead of NR-3 by explicit user decision: child-safety risk on the population this project exists to protect is a different category than scale risk, and doesn't queue behind load-test proof. |
-| NR-3 Load-Test Identity Pool | **VALID — follows NR-9.5.** `DATABASE_URL` pooling already verified 2026-07-30 (see below); no longer a blocker. |
+| NR-9.5 Child Safety Hardening | **COMPLETE (2026-07-30).** Folds B25 + C33. SLA-miss escalation (4h/24h ladder) + AI tutor moderation (groundedAnswerService.ts + labAnalyzer.ts) built, tested, live-walkthrough-verified, pushed (`f8c9529b`, `9622f2df`). Not yet merged to `main`. See `project_nr9_5_child_safety_hardening.md` in session memory for full evidence. |
+| NR-3 Load-Test Identity Pool | **VALID — next sprint.** `DATABASE_URL` pooling already verified 2026-07-30 (see below); no longer a blocker. |
 | NR-4 k6 Moderate 1K VU | **VALID — blocked by NR-3.** No production 1K-VU proof is recorded. |
 | NR-5 k6 Peak 5K VU + AI Burst | **VALID — blocked by NR-4.** No peak or AI-burst proof is recorded. |
 | NR-6 Middleware Portal Hardening | **VALID.** Formal portal-wide middleware gate remains outstanding. |

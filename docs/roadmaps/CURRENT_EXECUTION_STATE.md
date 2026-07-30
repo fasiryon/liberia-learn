@@ -7,14 +7,17 @@ Live execution tracking for the final closeout program.
 
 - **Canonical plan:** `docs/roadmaps/NATIONAL_ROLLOUT_EXECUTION_PLAN.md`
 - **Escalation contract:** `docs/agents/ADVISOR_ESCALATION_CONTRACT.md`
-- **Next national sprint:** **NR-9.5 — Child Safety Hardening** (safeguarding
-  alerting + AI tutor moderation audit), the first `PENDING` row in the
-  canonical plan's Sprint index table. Deliberately reordered ahead of NR-3 on
-  2026-07-30 by explicit user decision — child-safety risk is a different
-  category than scale risk and doesn't wait behind load-test proof. NR-3
-  (Load-Test Identity Pool) is next after NR-9.5 completes. See the plan's
-  "How execution works" step 2 for the reasoning; do not silently resequence
-  back to numeric order.
+- **NR-9.5 — Child Safety Hardening: COMPLETE (2026-07-30).** Commits
+  `f8c9529b` (implementation) + `9622f2df` (real-walkthrough bugfix) on
+  `agent/consolidated-backlog`, pushed, PR Triage green. Gate: prisma
+  generate PASS, tsc PASS, vitest PASS (4,426 tests / 538 files, baseline
+  was 4,409/537), build PASS, zero schema changes, real live walkthrough
+  against production PASS (see `docs/roadmaps/CONSOLIDATED_BACKLOG.md` /
+  memory for full evidence). Not yet merged to `main` — awaiting human
+  review per standing branch discipline.
+- **Next national sprint:** NR-3 — Load-Test Identity Pool, the first
+  remaining `PENDING` row. `DATABASE_URL` pooling already verified
+  2026-07-30, no longer a blocker.
 - **Pre-NR-3 verification: DONE (2026-07-30).** Production `DATABASE_URL` is
   confirmed pooled (`aws-1-us-east-2.pooler.supabase.com:6543`,
   `pgbouncer=true`), set once on 2026-05-19 (the day after NR-1's completion
