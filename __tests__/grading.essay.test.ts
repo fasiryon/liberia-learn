@@ -36,6 +36,18 @@ vi.mock("@/lib/adaptive/updateMastery", () => ({
     .mockReturnValue("ENGLISH:G8:unit-essay"),
 }));
 
+// NR-9.6: moderateText internally calls routedCompletion too (a different
+// module, @/lib/ai/routedCompletion, but mocking it separately avoids any
+// ambiguity and keeps existing call-count assertions on mockRouted accurate.
+const mockModerateText = vi.hoisted(() =>
+  vi.fn(async (): Promise<{ verdict: "SAFE" | "UNSAFE" | "UNCERTAIN"; reason?: string }> => ({
+    verdict: "SAFE",
+  }))
+);
+const mockEnqueueEscalation = vi.hoisted(() => vi.fn(async () => ({ id: "escalation-1" })));
+vi.mock("@/lib/agents/moderation", () => ({ moderateText: mockModerateText }));
+vi.mock("@/lib/agents/escalation", () => ({ enqueueEscalation: mockEnqueueEscalation }));
+
 import { gradeEssay, isEssayGradeResult, DEFAULT_RUBRIC, MIN_WORDS_TO_GRADE } from "@/lib/grading/gradeEssay";
 import { prisma } from "@/lib/db";
 import { routedCompletion } from "@/lib/ai/router";
@@ -153,6 +165,39 @@ describe("gradeEssay", () => {
     // Neutral: does not throw, returns 0.5 + fallback feedback
     expect(result.score).toBeCloseTo(0.5, 2);
     expect(result.feedback).toContain("teacher will review");
+  });
+
+  it("NR-9.6: blocks unsafe essay input before calling the LLM and escalates", async () => {
+    mockModerateText.mockResolvedValueOnce({ verdict: "UNSAFE", reason: "unsafe_input" });
+
+    const raw = await gradeEssay(baseInput);
+    expect(raw.tooShort).toBe(false);
+    const result = raw as import("@/lib/grading/gradeEssay").EssayGradeResult;
+    expect(result.feedback).toContain("teacher will review");
+    expect(mockRouted).not.toHaveBeenCalled();
+    expect(mockEnqueueEscalation).toHaveBeenCalledWith(expect.objectContaining({ priority: "HIGH" }));
+  });
+
+  it("NR-9.6: blocks unsafe grading output and escalates", async () => {
+    mockRouted.mockResolvedValueOnce({
+      content: JSON.stringify({
+        criteria: {
+          content:   { score: 0.9, comment: "unsafe comment" },
+          structure: { score: 0.8, comment: "ok" },
+          language:  { score: 0.7, comment: "ok" },
+          mechanics: { score: 1.0, comment: "ok" },
+        },
+        feedback: "unsafe feedback",
+      }),
+    });
+    mockModerateText
+      .mockResolvedValueOnce({ verdict: "SAFE" }) // input
+      .mockResolvedValueOnce({ verdict: "UNSAFE" }); // output
+
+    const raw = await gradeEssay(baseInput);
+    const result = raw as import("@/lib/grading/gradeEssay").EssayGradeResult;
+    expect(result.feedback).toContain("teacher will review");
+    expect(mockEnqueueEscalation).toHaveBeenCalledWith(expect.objectContaining({ priority: "HIGH" }));
   });
 });
 

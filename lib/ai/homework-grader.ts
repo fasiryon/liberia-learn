@@ -1,6 +1,8 @@
 // lib/ai/homework-grader.ts
 import { prisma } from "@/lib/db";
 import { routedCompletion } from "@/lib/ai/routedCompletion";
+import { moderateText } from "@/lib/agents/moderation";
+import { enqueueEscalation } from "@/lib/agents/escalation";
 const AGENT_ID = "homework-grader";
 
 
@@ -137,7 +139,18 @@ const started = Date.now();try {
           answers,
         },
       };
-      const scrubbedPayload = scrubPII(payload);
+      const scrubbedPayload = scrubPII(payload) as typeof payload;
+
+      const inputVerdict = await moderateText(JSON.stringify(scrubbedPayload.submission), "input");
+      if (inputVerdict.verdict === "UNSAFE") {
+        await enqueueEscalation({
+          agentName: "lib.ai.homework-grader",
+          userId: submission.Student.user.id,
+          reason: `Homework submission flagged unsafe on input moderation (submissionId: ${submissionId}).`,
+          priority: "HIGH",
+        });
+        throw new Error("content_moderation_blocked_input");
+      }
 
       // Ask the model to grade
       const completion = await routedCompletion({
@@ -189,6 +202,21 @@ const started = Date.now();try {
         !Array.isArray(parsed.questions)
       ) {
         throw new Error("Grading result missing expected fields.");
+      }
+
+      const feedbackText = [
+        parsed.overallFeedback,
+        ...parsed.questions.map((q) => q.feedback),
+      ].join("\n");
+      const outputVerdict = await moderateText(feedbackText, "output");
+      if (outputVerdict.verdict === "UNSAFE") {
+        await enqueueEscalation({
+          agentName: "lib.ai.homework-grader",
+          userId: submission.Student.user.id,
+          reason: `Homework grading output flagged unsafe for a K-12 audience (submissionId: ${submissionId}).`,
+          priority: "HIGH",
+        });
+        throw new Error("content_moderation_blocked_output");
       }
 
       // Save back to DB

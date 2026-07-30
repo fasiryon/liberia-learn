@@ -27,7 +27,7 @@ This plan governs the path from **current production baseline** to **world-class
 | NR-1 | Production Infra Upgrade | 0 | Scale | COMPLETE | PASS |
 | NR-2 | ECS Worker Autoscale + Queue SLOs | 0 | Scale | COMPLETE | PASS (verified live against AWS 2026-07-28: ECS service active 1/1, autoscaling min1/max10 target-tracking on SQS depth=50, both queues present) |
 | NR-9.5 | Child Safety Hardening (Safeguarding Alerting + AI Moderation Audit) | 2 (executed early) | Security | COMPLETE | PASS (2026-07-30, commits f8c9529b..72e5c8c6, merged via PR #62) |
-| NR-9.6 | Grading Surface Moderation Audit | 2 (executed early) | Security | **PENDING — NEXT** | NOT RUN |
+| NR-9.6 | Grading Surface Moderation Audit | 2 (executed early) | Security | COMPLETE | PASS (2026-07-30) |
 | NR-3 | Load-Test Identity Pool | 0 | Scale | PENDING | NOT RUN |
 | NR-4 | k6 Moderate (1K VU) Production Proof | 1 | Scale | PENDING | NOT RUN |
 | NR-5 | k6 Peak (5K VU) + AI Burst Gate | 1 | Scale | PENDING | NOT RUN |
@@ -191,10 +191,20 @@ feat: NR-[N] complete — [sprint name]
 
 ### NR-9.6 — Grading Surface Moderation Audit
 
-> **Execution note (2026-07-30):** reordered ahead of NR-3, same as NR-9.5,
-> for the same reason: this is a real, safety-adjacent gap on the exact
-> population this project exists to protect, found (not fixed) during
-> NR-9.5's own moderation-import sweep. It is the actual next sprint.
+> **Execution note (2026-07-30): COMPLETE.** Investigation found:
+> `homeworkGrader.ts`/`homework-grader.ts` are NOT accidental duplicates
+> (two genuinely separate features, Assignment vs Homework, not
+> consolidated). The Homework flow was already safely gated
+> (`aiReviewed`); the Assignment flow was not — the 72h auto-release timer
+> only governs the *official* score/feedback fields, while the student
+> page already showed raw unmoderated `aiFeedback` immediately via an
+> unconditional fallback, regardless of the timer. Both
+> `AssignmentSubmission` and `GradedSubmission` (essay/AI-literacy) had
+> zero real rows in production at investigation time — real, reachable,
+> currently-unprotected code, but not yet exercised by a real student.
+> Fixed: moderation on all 4 grading functions + the display-gate
+> tightening (the more important fix, closes the actual exposure path).
+> All verified live against production with real adversarial input.
 
 - **Branch:** `feat/nr-9-6-grading-moderation`
 - **Origin:** found during NR-9.5's full-codebase sweep for the same

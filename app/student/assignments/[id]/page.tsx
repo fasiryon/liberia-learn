@@ -62,10 +62,16 @@ export default async function StudentAssignmentPage({ params }: { params: { id: 
   }
 
   const submission = assignment.submissions[0] ?? null;
+  // NR-9.6: only fall back to raw aiFeedback once the submission has been
+  // officially released (teacher-approved or auto-released past the 72h
+  // SLA) - matches the gate the Homework flow (app/api/homework/[id])
+  // already gets right. Before release, aiFeedback is unmoderated and must
+  // not reach the student directly.
+  const isReleased = Boolean(submission?.teacherApproved || submission?.autoReleasedAt);
   const gradeData = submission
     ? {
         score: submission.score,
-        feedback: submission.feedback ?? submission.aiFeedback ?? null,
+        feedback: submission.feedback ?? (isReleased ? submission.aiFeedback : null) ?? null,
         gradedAt: submission.gradedAt?.toISOString() ?? null,
         turnedInAt: submission.turnedInAt?.toISOString() ?? null,
         teacherApproved: submission.teacherApproved,

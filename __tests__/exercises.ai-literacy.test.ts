@@ -48,6 +48,17 @@ vi.mock("@/lib/adaptive/updateMastery", () => ({
   buildSkillKey: vi.fn().mockReturnValue("CS:G7:unit-ai"),
 }));
 
+// NR-9.6: mock moderation separately from routedCompletion (see
+// grading.essay.test.ts for why) so existing call-count assertions stay accurate.
+const mockModerateText = vi.hoisted(() =>
+  vi.fn(async (): Promise<{ verdict: "SAFE" | "UNSAFE" | "UNCERTAIN"; reason?: string }> => ({
+    verdict: "SAFE",
+  }))
+);
+const mockEnqueueEscalation = vi.hoisted(() => vi.fn(async () => ({ id: "escalation-1" })));
+vi.mock("@/lib/agents/moderation", () => ({ moderateText: mockModerateText }));
+vi.mock("@/lib/agents/escalation", () => ({ enqueueEscalation: mockEnqueueEscalation }));
+
 import { gradeAILiteracy, isAILiteracyGradeResult } from "@/lib/grading/gradeAILiteracy";
 import { routedCompletion } from "@/lib/ai/router";
 import { prisma } from "@/lib/db";
@@ -218,6 +229,56 @@ describe("gradeAILiteracy", () => {
       expect(result.breakdown.identification.score).toBe(0.5);
       expect(result.feedback).toBeTruthy();
     }
+  });
+
+  it("NR-9.6: blocks unsafe response input before calling the LLM and escalates", async () => {
+    mockModerateText.mockResolvedValueOnce({ verdict: "UNSAFE", reason: "unsafe_input" });
+
+    const response =
+      "This is a long enough response about AI bias and how it affects Liberian students who live in rural areas without electricity. I believe the text is biased because it assumes everyone owns a smartphone.";
+
+    const result = await gradeAILiteracy({
+      studentResponse: response,
+      exerciseType: "bias_detection",
+      scenario: "AI text with bias...",
+      studentPromptInstruction: null,
+      rubric: BIAS_RUBRIC,
+      grade: 6,
+    });
+
+    expect(isAILiteracyGradeResult(result)).toBe(true);
+    if (isAILiteracyGradeResult(result)) {
+      expect(result.feedback).toContain("teacher will review");
+    }
+    expect(mockRoute).not.toHaveBeenCalled();
+    expect(mockEnqueueEscalation).toHaveBeenCalledWith(expect.objectContaining({ priority: "HIGH" }));
+  });
+
+  it("NR-9.6: blocks unsafe grading output and escalates", async () => {
+    mockRoute.mockResolvedValue({
+      content: makeGradeJSON(["identification", "explanation", "alternative"], [0.9, 0.8, 0.7]),
+    });
+    mockModerateText
+      .mockResolvedValueOnce({ verdict: "SAFE" }) // input
+      .mockResolvedValueOnce({ verdict: "UNSAFE" }); // output
+
+    const response =
+      "This is a long enough response about AI bias and how it affects Liberian students who live in rural areas without electricity. I believe the text is biased because it assumes everyone owns a smartphone.";
+
+    const result = await gradeAILiteracy({
+      studentResponse: response,
+      exerciseType: "bias_detection",
+      scenario: "AI text with bias...",
+      studentPromptInstruction: null,
+      rubric: BIAS_RUBRIC,
+      grade: 6,
+    });
+
+    expect(isAILiteracyGradeResult(result)).toBe(true);
+    if (isAILiteracyGradeResult(result)) {
+      expect(result.feedback).toContain("teacher will review");
+    }
+    expect(mockEnqueueEscalation).toHaveBeenCalledWith(expect.objectContaining({ priority: "HIGH" }));
   });
 });
 
