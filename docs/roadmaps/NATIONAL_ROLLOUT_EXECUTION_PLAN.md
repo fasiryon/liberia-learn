@@ -26,7 +26,8 @@ This plan governs the path from **current production baseline** to **world-class
 | NR-0 | Program Baseline + Doc Sync | 0 | All | COMPLETE | PASS |
 | NR-1 | Production Infra Upgrade | 0 | Scale | COMPLETE | PASS |
 | NR-2 | ECS Worker Autoscale + Queue SLOs | 0 | Scale | COMPLETE | PASS (verified live against AWS 2026-07-28: ECS service active 1/1, autoscaling min1/max10 target-tracking on SQS depth=50, both queues present) |
-| NR-9.5 | Child Safety Hardening (Safeguarding Alerting + AI Moderation Audit) | 2 (executed early) | Security | COMPLETE | PASS (2026-07-30, commits f8c9529b + 9622f2df on `agent/consolidated-backlog`) |
+| NR-9.5 | Child Safety Hardening (Safeguarding Alerting + AI Moderation Audit) | 2 (executed early) | Security | COMPLETE | PASS (2026-07-30, commits f8c9529b..72e5c8c6, merged via PR #62) |
+| NR-9.6 | Grading Surface Moderation Audit | 2 (executed early) | Security | **PENDING — NEXT** | NOT RUN |
 | NR-3 | Load-Test Identity Pool | 0 | Scale | PENDING | NOT RUN |
 | NR-4 | k6 Moderate (1K VU) Production Proof | 1 | Scale | PENDING | NOT RUN |
 | NR-5 | k6 Peak (5K VU) + AI Burst Gate | 1 | Scale | PENDING | NOT RUN |
@@ -55,7 +56,7 @@ This plan governs the path from **current production baseline** to **world-class
 ## How execution works
 
 1. Read `AGENTS.md`, this file, and `docs/roadmaps/CURRENT_EXECUTION_STATE.md` before touching code.
-2. Execute only the first sprint marked `PENDING` **in the Sprint index table's actual row order**, unless explicitly instructed otherwise. Row order is not always numeric order: **NR-9.5 was deliberately reordered ahead of NR-3 on 2026-07-30** by explicit user decision — child-safety readiness (a known gap in proactive safeguarding alerting and AI tutor moderation, on the exact population this project exists to protect) is a different category of risk than scale/load readiness, and this project has precedent for handling real safety findings with immediate urgency rather than queuing them behind whatever was already in flight (Sprint 6.1 safeguarding work, tenant-scoping fixes). Its sprint ID keeps the `NR-9.5` number for backlog-mapping continuity (it stays linked to Doc B25 + C33); only its table position moved. Do not "fix" the table back into strict numeric order without checking with the user first — the numbering gap is intentional.
+2. Execute only the first sprint marked `PENDING` **in the Sprint index table's actual row order**, unless explicitly instructed otherwise. Row order is not always numeric order: **NR-9.5 was deliberately reordered ahead of NR-3 on 2026-07-30**, and **NR-9.6 was added and reordered the same way immediately after**, both by explicit user decision — child-safety readiness (safeguarding alerting, AI moderation across the tutor/lab/grading surfaces, on the exact population this project exists to protect) is a different category of risk than scale/load readiness, and this project has precedent for handling real safety findings with immediate urgency rather than queuing them behind whatever was already in flight (Sprint 6.1 safeguarding work, tenant-scoping fixes). NR-9.6 exists at all because NR-9.5's own full-codebase moderation sweep found a second real gap outside its original scope and the user chose a clean follow-up sprint over appending a rushed sixth deliverable. Do not "fix" the table back into strict numeric order without checking with the user first — the numbering gaps are intentional.
 3. **Feature work runs as a separate, parallel track, not a strict prerequisite.** The original "no new product features until NR-5" freeze was never actually followed (Sprint 6.0 through 7.5's entire agent platform, AI Labs V1, and the Teaching Runtime v1 sprint all shipped or were approved while NR-2 through NR-5 sat PENDING) and is corrected here rather than left contradicting reality (2026-07-28). NR sprints and product/agent-platform sprints (tracked separately, see `docs/roadmaps/CURRENT_EXECUTION_STATE.md`) may proceed concurrently. The one thing that still genuinely blocks on NR-5: do not announce or execute the national public launch (NR-21) before peak load is proven.
 4. Run the sprint gate exactly as written. All steps must pass before the next sprint.
 5. After a passed gate: commit, push, confirm CI green, update this table and `CURRENT_EXECUTION_STATE.md`, stop.
@@ -187,6 +188,64 @@ feat: NR-[N] complete — [sprint name]
   - Proactive safeguarding alerting: responsible-recipient routing, delivery evidence, retry/failure handling, audit logging, and an operations view showing open/acknowledged/escalated/failed-alert states — do not claim proactive notification until notifications are actually sent, delivered, logged, and visible for review
   - AI tutor input moderation (off-topic / unsafe student prompts) and output safety review for minors, with logging, across `lib/ai/rag/groundedAnswerService.ts` and any other student-facing AI surface
 - **Gate:** Standard code gate + a real forced-trigger test proving a safeguarding alert is actually delivered end-to-end (not just logged) + moderation test cases for at least one unsafe input and one unsafe output path
+
+### NR-9.6 — Grading Surface Moderation Audit
+
+> **Execution note (2026-07-30):** reordered ahead of NR-3, same as NR-9.5,
+> for the same reason: this is a real, safety-adjacent gap on the exact
+> population this project exists to protect, found (not fixed) during
+> NR-9.5's own moderation-import sweep. It is the actual next sprint.
+
+- **Branch:** `feat/nr-9-6-grading-moderation`
+- **Origin:** found during NR-9.5's full-codebase sweep for the same
+  "unmoderated bespoke `routedCompletion()` call" pattern that was fixed in
+  `groundedAnswerService.ts`, `labAnalyzer.ts`, `planLabAction.ts`, and
+  `explainLabState.ts`. Deliberately NOT folded into NR-9.5 — real
+  investigation work belongs in its own clean sprint, not appended to an
+  already-complete one.
+- **Advisor mode. Investigate and report before implementing**, same
+  discipline as NR-9.5:
+  1. `lib/ai/homeworkGrader.ts` (`gradeHomework`) and `lib/ai/homework-grader.ts`
+     (`HomeworkGrader` class) are both live, parallel implementations —
+     confirmed the latter is called from `lib/ai/rubric-generator.ts`'s
+     `gradeSubmissionWithRubric` fallback path. Before touching either:
+     confirm which is actually primary in production (real call-site/usage
+     audit, same method as NR-9.5's AIInteraction volume check), which is a
+     fallback, and whether the duplication is intentional or accidental —
+     same category of question as the earlier tutor-path consolidation
+     ([[project_tutor_architecture_consolidation_queue]]).
+  2. Confirm the real current behavior of Sprint 20's 72-hour
+     teacher-approval auto-release: does an un-reviewed auto-release let
+     **raw, unmoderated AI-generated feedback text** reach the student
+     directly, or does the auto-release only affect the grade/score
+     becoming visible while feedback text follows some other path? This
+     distinction determines real urgency and must be established from real
+     code/data, not assumed.
+  3. `lib/grading/gradeEssay.ts` and `lib/grading/gradeAILiteracy.ts` — same
+     audit: do they take real student-authored free text as input, does
+     their output reach the student without review, real usage volume.
+- **Escalation points (stop, do not implement without review):**
+  1. Whether to fix `homeworkGrader.ts` and `homework-grader.ts` both, or
+     consolidate/deprecate one, once the primary-vs-fallback investigation
+     above reports back — a real product/architecture decision, not purely
+     technical.
+  2. If the 72h auto-release investigation finds raw unmoderated text
+     genuinely reaches students, whether the auto-release *policy* itself
+     (not just moderation) needs a change — a real product decision on
+     grading turnaround vs. safety tradeoff.
+  3. Any schema change touching a production-live table.
+  4. Alert/escalation channel and recipient logic for anything this sprint
+     finds and needs to escalate — reuse existing infrastructure
+     (`enqueueEscalation`, `notifySchoolSafeguarding`/platform fallback from
+     NR-9.5), do not build a new channel.
+- **Deliverable:** if the audit confirms a real gap, apply the same
+  `moderateText()` input-block / output-block-and-escalate pattern used
+  throughout NR-9.5 to `gradeEssay.ts` and `gradeAILiteracy.ts` (and
+  whichever of the two homework-grader implementations the investigation
+  confirms is live), reusing infrastructure throughout.
+- **Gate:** Standard code gate + real walkthrough verified against a real
+  adversarial input in production, the same way NR-9.5 verified its own
+  fixes (not passing tests alone).
 
 ---
 
