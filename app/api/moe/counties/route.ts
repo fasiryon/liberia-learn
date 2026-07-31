@@ -13,6 +13,7 @@ import { withRedisCache } from "@/lib/cache/redisCache";
 import { computeNationalGeoPerformance } from "@/lib/reporting/geo/geoAggregator";
 import { buildNationalInsights } from "@/lib/reporting/national/nationalInsightsAggregator";
 import { computeNationalCurriculumSignals } from "@/lib/reporting/curriculum/nationalCurriculumSignals";
+import { excludeSyntheticSchoolWhere, excludeSyntheticUserWhere } from "@/lib/loadTest/syntheticIdentity";
 
 export const dynamic = "force-dynamic";
 
@@ -41,9 +42,10 @@ async function buildCountyPayload(from: string, to: string) {
     Promise.resolve()
       .then(() =>
         prisma.school.findMany({
+          where: excludeSyntheticSchoolWhere,
           select: {
             county: true,
-            _count: { select: { users: { where: { role: "STUDENT" } } } },
+            _count: { select: { users: { where: { role: "STUDENT", ...excludeSyntheticUserWhere } } } },
           },
         })
       )

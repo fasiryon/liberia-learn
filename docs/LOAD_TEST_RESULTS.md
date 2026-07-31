@@ -143,6 +143,107 @@ Worker was not observable in k6 load tests (background queue). At rest: SQS dept
 
 ---
 
+## National Rollout — NR-3 (Load-Test Identity Pool)
+
+| Field | Value |
+|-------|-------|
+| Sprint | NR-3 |
+| Script | `scripts/seed-load-test-pool.ts` (idempotent; retries transient pooled-connection resets) |
+| Date | 2026-07-31 |
+| Status | **COMPLETE** |
+
+### What existed before this sprint (investigated, not assumed)
+
+A prior NR-3 attempt (commits `fd34f4b7`/`341a94bf`, ~2026-05-19) had already created
+1,000 `lt-*@loadtest.liberialearn.internal` User rows across 10 `lt-school-*` School
+rows in production. Two real defects were found in that prior pool, verified directly
+against live data rather than assumed from the code:
+
+1. **Zero of the 1,000 existing load-test users had a `Student` row** (verified by
+   direct `userId` lookup, not just a relation join). This explains the near-total
+   failures in the historical `run-1000vu-20260519.json` result (submission checks
+   0/36001 passed, guardian dashboard checks 0/22414 passed) — the pool's identities
+   could not reach any student-gated surface.
+2. **No code anywhere excluded the pool from real reporting.** Grepped the full
+   `app/` and `lib/` tree for `loadtest`/`lt-school` — zero hits outside the seed/
+   cleanup scripts themselves. `School.count()` returned 23 in production, 10 of
+   which (43%) were the fake load-test schools, with zero isolation.
+
+### What this sprint built
+
+- **Fixed pairing, not rebuilt**: `scripts/seed-load-test-pool.ts` is idempotent and
+  backfills the missing `Student` rows for the original 1,000 users while additively
+  seeding 40 new schools (`lt-school-11`..`50`, 20 students each) to clear the NR-3
+  spec's 50+ school requirement, without touching the original 10.
+- **Isolation, string-match only (no schema change this sprint)**: added
+  `lib/loadTest/syntheticIdentity.ts` exporting `excludeSyntheticSchoolWhere` /
+  `excludeSyntheticUserWhere`, applied to the 6 surfaces confirmed to render
+  School/User counts or lists to a human: `app/api/moe/dashboard/route.ts`,
+  `app/api/moe/counties/route.ts`, `app/api/platform/stats/route.ts`,
+  `app/api/platform/schools/route.ts`, `app/admin/schools/page.tsx`, and
+  `app/api/crons/league-snapshot/route.ts` (the last one matters because without it
+  the 50 fake schools would have entered real national/county/district league
+  rankings visible to real students and teachers). A durable `isSynthetic` schema
+  flag on `School`/`User` was proposed as a **separate, non-blocking escalation**
+  per user direction — not implemented this sprint. The other ~25 lib files that
+  touch `School`/`User`/`Student` models (SMS, push, onboarding, exports, etc.) were
+  not audited; they're lower-exposure (operational code, not human-facing counts)
+  and are better covered by the schema flag once that lands than by chasing every
+  file individually by string convention.
+- **E2E demo student: confirmed non-issue, not fixed.** The Sprint 16E-era gap
+  (`<E2E_DEMO_STUDENT_EMAIL>` had no `Student` row) is already closed — verified
+  directly against production that `student1@cha.edu.lr`, `student1@liberialearn.dev`,
+  and `waec-demo-g11@cha.edu.lr` all have real `Student` rows today. No code change
+  was needed or made for this item.
+- Retired `scripts/seed-load-test-users.ts` in favor of `scripts/seed-load-test-pool.ts`
+  (same naming convention, same downstream interface — `generate-load-test-tokens.ts`,
+  `export-load-test-credentials.ts`, `cleanup-load-test-users.ts`, and
+  `load-tests/k6-config.js`'s `SharedArray` all continue to work unchanged).
+- `load-tests/scenarios/student-browse.js` and `guardian-reads.js` already rotated
+  through the token pool via `tokens[__VU % tokens.length]` — no k6 script changes
+  were needed for credential rotation.
+
+### Real dry-run evidence (production, 2026-07-31)
+
+| Check | Result |
+|---|---|
+| Schools with `lt-school-` prefix | **50** (was 10) |
+| Load-test Users (`@loadtest.liberialearn.internal`) | **1,850** (1,800 students + 50 guardians) |
+| Load-test Student rows | **1,800** (all — was 0) |
+| Real login round-trip | `lt-s01-u001@loadtest.liberialearn.internal` completed a genuine NextAuth credentials flow (CSRF → login → session) against production and reached `GET /api/student/today` with a real `200`, not a 404 — proves the Student pairing is genuinely reachable, not just present in the DB |
+| Isolation filter, verified against live counts | `School.count()`: total 63 / real (filtered) 13 / synthetic 50. `User.count()`: total 2,168 / real 318 / synthetic 1,850. `Student.count()`: total 1,988 / real 188 / synthetic 1,800. Real counts (13 schools, 318 users, 188 students) match this session's pre-sprint baseline exactly. |
+| Tokens generated | `load-tests/fixtures/student-tokens.json` (1,800), `guardian-tokens.json` (50) |
+
+**Bug caught during isolation verification, not shipped**: the first version of
+`excludeSyntheticSchoolWhere` (`code: { not: { startsWith: "lt-school-" } }` alone)
+silently excluded any real school with a `null` `code` too — standard SQL
+three-valued-logic behavior (`NOT NULL` evaluates to `NULL`, which a `WHERE`
+clause treats as "exclude"). First real-data check showed only 7 "real" schools
+instead of the expected 13; fixed to explicitly `OR`-in `{ code: null }` and
+re-verified against live data before shipping.
+
+### Lifecycle
+
+Persist, reseed-safe: the pool stays in production between NR-4 and NR-5 runs.
+`scripts/cleanup-load-test-users.ts` tears it down only after both are complete and
+documented, per its own header comment (unchanged this sprint).
+
+### DIRECT_URL note
+
+`DIRECT_URL` (`db.bnphuinpvgpmebcsvmsp.supabase.co:5432`) was confirmed unreachable
+from this working environment again this sprint (direct Prisma connection test,
+`P1017`-class "Can't reach database server"). Likely cause: Supabase's direct
+connection endpoint is IPv6-only without the IPv4 add-on, and this environment
+appears to be IPv4-only — consistent with every prior session's identical failure
+pattern, not investigated further since the pooled connection is a confirmed
+working path. The pooled `DATABASE_URL` (port 6543, `pgbouncer=true`,
+`connection_limit=1`) was used for the full ~1,850-row seed, sequential writes with
+retry/backoff for the pooled connection's occasional transient resets
+(`P1017` mid-run, recovered automatically). `docs/agents/ADVISOR_ESCALATION_CONTRACT.md`
+carry-forward rule 3 has been corrected to match.
+
+---
+
 ## National Rollout — NR-4 (1K VU moderate)
 
 | Field | Value |

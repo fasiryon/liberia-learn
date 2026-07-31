@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
+import { excludeSyntheticSchoolWhere } from "@/lib/loadTest/syntheticIdentity";
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 300;
@@ -24,7 +25,7 @@ export async function POST(req: NextRequest) {
   const termStart = new Date(now.getFullYear(), now.getMonth() <= 3 ? 0 : now.getMonth() <= 7 ? 4 : 8, 1);
 
   const schools = await prisma.school.findMany({
-    where: { status: "ACTIVE" },
+    where: { status: "ACTIVE", ...excludeSyntheticSchoolWhere },
     select: { id: true, county: true, district: true },
   });
 

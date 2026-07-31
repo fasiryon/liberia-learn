@@ -29,7 +29,16 @@ For everything else, proceed without escalation. Record any escalation (reason p
 
 1. contentId in URLs, not scheduledWork.id (sw.id).
 2. Hero content lives in payload.body.
-3. DIRECT_URL (port 5432) for batch writes of 25 or fewer; pooler (port 6543) for production reads.
+3. DIRECT_URL (port 5432) is intermittently unreachable from this working
+   environment (most recently confirmed 2026-07-30 via a direct Prisma
+   connection test against production). Test it fresh each session before
+   relying on it; do not assume it works from a stale note. When
+   unreachable, use the pooled DATABASE_URL (port 6543, pgbouncer=true,
+   connection_limit=1) for batch writes of any size, sequential (not
+   concurrent, to avoid starving the single pooled connection) — this has
+   been confirmed to handle several thousand real production writes
+   reliably. Prefer DIRECT_URL for large batch writes only when it is
+   confirmed reachable that session.
 4. .trim() on Vercel env vars (learned from the AI tutor CRLF bug).
 5. No em dashes in any output or file.
 

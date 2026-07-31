@@ -1,14 +1,14 @@
 /**
- * Removes all load-test data created by seed-load-test-users.ts.
+ * Removes all load-test data created by seed-load-test-pool.ts.
  * Run ONLY after NR-4/NR-5 are complete and documented.
  *
  *   npx dotenv -e .env.production -- npx tsx scripts/cleanup-load-test-users.ts
  */
 
-// Use direct Postgres URL for deletions (bypasses PgBouncer)
-if (process.env.DIRECT_URL) {
-  process.env.DATABASE_URL = process.env.DIRECT_URL
-}
+// DIRECT_URL has been intermittently unreachable from this working
+// environment (confirmed again 2026-07-30); use the pooled DATABASE_URL
+// as-is rather than overriding it. See docs/agents/ADVISOR_ESCALATION_CONTRACT.md
+// carry-forward rule 3.
 
 import { PrismaClient } from "@prisma/client"
 

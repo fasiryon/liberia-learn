@@ -3,6 +3,7 @@ import { requireMoePlatformAdmin } from "@/lib/moeAccess";
 import { prisma } from "@/lib/db";
 import { logAudit } from "@/lib/audit";
 import { enqueueJob, JobType } from "@/lib/queue";
+import { excludeSyntheticSchoolWhere } from "@/lib/loadTest/syntheticIdentity";
 
 function isSchoolOnboardingKitFlagEnabled() {
   const value = process.env.ENABLE_SCHOOL_ONBOARDING_KITS?.trim();
@@ -18,6 +19,7 @@ export async function GET() {
     const actor = await requireMoePlatformAdmin();
 
     const schools = await prisma.school.findMany({
+      where: excludeSyntheticSchoolWhere,
       select: {
         id: true,
         name: true,

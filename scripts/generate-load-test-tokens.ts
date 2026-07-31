@@ -3,14 +3,14 @@
  * Writes load-tests/fixtures/student-tokens.json and guardian-tokens.json (gitignored).
  * Tokens are valid for 30 days.
  *
- * Run after seed-load-test-users.ts:
+ * Run after seed-load-test-pool.ts:
  *   npx dotenv -e .env.production -- npx tsx scripts/generate-load-test-tokens.ts
  */
 
-// Use direct Postgres URL for reads (bypasses PgBouncer)
-if (process.env.DIRECT_URL) {
-  process.env.DATABASE_URL = process.env.DIRECT_URL
-}
+// DIRECT_URL has been intermittently unreachable from this working
+// environment (confirmed again 2026-07-30); use the pooled DATABASE_URL
+// as-is rather than overriding it. See docs/agents/ADVISOR_ESCALATION_CONTRACT.md
+// carry-forward rule 3.
 
 import { PrismaClient } from "@prisma/client"
 import { encode } from "next-auth/jwt"
@@ -36,7 +36,7 @@ async function main() {
   const guardians = users.filter((u) => u.role === "GUARDIAN")
 
   if (students.length === 0) {
-    throw new Error("No load-test students found. Run seed-load-test-users.ts first.")
+    throw new Error("No load-test students found. Run seed-load-test-pool.ts first.")
   }
 
   async function encodeToken(u: (typeof users)[number]) {
@@ -75,7 +75,7 @@ async function main() {
     writeFileSync(guardianPath, JSON.stringify(guardianTokens, null, 2))
     console.log(`Written ${guardianTokens.length} tokens to ${guardianPath}`)
   } else {
-    console.log("No guardians found — run seed-load-test-users.ts to create lt-g* guardians.")
+    console.log("No guardians found — run seed-load-test-pool.ts to create lt-g* guardians.")
   }
 }
 

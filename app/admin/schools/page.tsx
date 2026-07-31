@@ -2,6 +2,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { requireUser } from "@/lib/auth";
 import { prisma } from "@/lib/db";
+import { excludeSyntheticSchoolWhere } from "@/lib/loadTest/syntheticIdentity";
 
 export const dynamic = "force-dynamic";
 
@@ -12,7 +13,9 @@ export default async function AdminSchoolsPage() {
   }
 
   const schools = await prisma.school.findMany({
-    where: user.isPlatformAdmin ? undefined : { id: user.schoolId ?? "__no_school__" },
+    where: user.isPlatformAdmin
+      ? excludeSyntheticSchoolWhere
+      : { id: user.schoolId ?? "__no_school__" },
     orderBy: { name: "asc" },
   });
 
