@@ -117,6 +117,9 @@ load-tests/fixtures/guardian-tokens.json
 load-tests/fixtures/load-test.env
 load-tests/results/*.json
 
+# Kill-switch local verification scratch (mode file, test run output, abort events)
+scripts/load-test-kill-switch/tmp/
+
 # Fine-tune datasets (lesson content, not for git)
 scripts/finetune/data/
 
