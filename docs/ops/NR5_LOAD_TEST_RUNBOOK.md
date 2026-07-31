@@ -27,14 +27,22 @@ npx dotenv -e .env.production -- npx tsx scripts/export-load-test-credentials.ts
 
 ## Run peak (token pool — recommended)
 
-Avoids login rate-limit storm at 5K VU:
+Avoids login rate-limit storm at 5K VU. **Run through the kill-switch
+supervisor, not bare `k6 run`** — see `docs/ops/LOAD_TEST_KILL_SWITCH.md`.
+An unenforced abort mechanism matters even more at 5x NR-4's concurrency:
 
 ```powershell
 $env:BASE_URL = "https://liberia-learn.vercel.app"
 $env:LOAD_TEST_LESSON_ID = "math-g10-5-geometry-and-spatial-thinking-independent-practice"
 $env:LOAD_TEST_USE_TOKEN_POOL = "true"
 $date = Get-Date -Format "yyyyMMdd"
-k6 run load-tests/peak.js --out "json=load-tests/results/peak-$date.json"
+npx tsx scripts/load-test-kill-switch/supervisor.ts `
+  --script load-tests/peak.js `
+  --out "load-tests/results/peak-$date.json" `
+  --p95-threshold-ms 10000 --p95-window-s 60 `
+  --error-rate-threshold 0.05 --error-window-s 30 `
+  --check-interval-ms 3000 --min-samples 20 `
+  --event-file "load-tests/results/peak-$date-abort-event.json"
 ```
 
 ## Run AI burst (200 VU)
