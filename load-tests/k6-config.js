@@ -27,33 +27,50 @@ const tokens = new SharedArray("students_warm", function () {
 });
 
 /**
- * Two-phase pre-warm: populate L2 Redis then force-spin Vercel instances.
+ * Two-phase pre-warm: populate L2 Redis for every token this run can use,
+ * then force-spin additional Vercel instances.
  *
- * Phase 1 (sequential, 50 students): Each request lands on a fresh instance,
- * runs the DB fallback, and populates L2 Redis. Sequential serialises DB access
- * so MAX_CONCURRENT_DB_FALLBACKS=1 is never exceeded. ~50 × 400ms = ~20s.
+ * Phase 1 (batched, PREWARM_BATCH_SIZE-concurrent, warmCount tokens): each
+ * batch's concurrent requests populate L2 Redis via the real DB fallback.
+ * Batch size matches MAX_CONCURRENT_DB_FALLBACKS in lib/cache/redisCache.ts
+ * so a batch landing on a single Vercel instance never self-inflicts
+ * FALLBACK_LIMIT_EXCEEDED. warmCount = min(1000, tokens.length) — for a
+ * 1000-VU run, student_browse.js selects tokens[__VU % tokens.length], which
+ * for VU 1..1000 against a 1800-token pool only ever selects indices 1..1000
+ * (verified: 1000 < 1800, so no wraparound) — token indices beyond warmCount
+ * are never touched by this run, so pre-warming them would be wasted work.
  *
- * Phase 2 (concurrent burst, 50 students): L2 is now warm so every request hits
- * Redis — no DB fallback, no FALLBACK_LIMIT_EXCEEDED. Vercel must allocate
- * additional instances to absorb the burst; each warms its L1 from L2.
- * Setup completes immediately so VUs arrive on still-warm instances — adding a
- * sleep here causes Vercel to scale-to-zero the pre-warmed instances before
- * the browse ramp starts, which reverses the benefit.
+ * This exists because NR-4's 2026-07-31 production run found the prior
+ * 50-student pre-warm left ~950 VUs hitting a genuinely cold cache on their
+ * first request as the ramp introduced them, and the resulting DB-fallback
+ * serialization (then MAX_CONCURRENT_DB_FALLBACKS=1) was the dominant
+ * contributor to that run's 19.97s p95 (see docs/LOAD_TEST_RESULTS.md).
+ * Pre-warming all tokens this run uses converts the browse scenario into a
+ * measurement of steady-state serving capacity. That is a deliberate choice,
+ * not an oversight: a real national rollout doesn't have every student
+ * request their first page in the same few minutes either. Cold-burst
+ * behavior (e.g. a whole school logging in at 8am) is a different, real
+ * scenario this run does not test — flagged as a follow-up, not silently
+ * folded into this measurement.
  *
- * Total setup time: ~20s + ~2s = ~22s (well under the 2m setupTimeout).
+ * Phase 2 (concurrent burst, 50 already-warm students): L2 is warm from
+ * Phase 1, so every request hits Redis only, no DB fallback. Vercel must
+ * allocate additional instances to absorb the burst; each warms its L1 from
+ * L2. Setup completes immediately so VUs arrive on still-warm instances —
+ * adding a sleep here causes Vercel to scale-to-zero the pre-warmed
+ * instances before the browse ramp starts, which reverses the benefit.
  */
 export function setup() {
-  const warmCount = Math.min(50, tokens.length);
+  const PREWARM_BATCH_SIZE = 3; // matches MAX_CONCURRENT_DB_FALLBACKS (lib/cache/redisCache.ts)
+  const warmCount = Math.min(1000, tokens.length);
 
-  // Phase 1: sequential warm — each request goes to a fresh (or recently reused)
-  // Vercel instance, runs the DB fallback, and writes the result to L2 Redis.
-  // Sequential prevents concurrent DB fallbacks hitting MAX_CONCURRENT_DB_FALLBACKS=1.
-  // ~50 × 400ms = ~20s.
-  for (let i = 0; i < warmCount; i++) {
-    const { token } = tokens[i];
-    http.get(`${BASE_URL}/api/student/today`, {
-      headers: { Cookie: `__Secure-next-auth.session-token=${token}` },
-    });
+  for (let i = 0; i < warmCount; i += PREWARM_BATCH_SIZE) {
+    const batch = tokens.slice(i, i + PREWARM_BATCH_SIZE).map(({ token }) => ({
+      method: "GET",
+      url: `${BASE_URL}/api/student/today`,
+      params: { headers: { Cookie: `__Secure-next-auth.session-token=${token}` } },
+    }));
+    http.batch(batch);
   }
 
   // Phase 2: concurrent burst — L2 is now warm from Phase 1, so each request
@@ -71,7 +88,12 @@ export function setup() {
 }
 
 export const options = {
-  setupTimeout: "2m",
+  // Raised from 2m: pre-warming ~1000 tokens in batches of 3 (~334 batches)
+  // against real production DB latency for the full 7-query todayData path
+  // (not the cheap studentMeta-only path the old 50-token/2m budget was
+  // tuned against) needs real margin. Empirically timed before trusting this
+  // for a full run — see docs/LOAD_TEST_RESULTS.md.
+  setupTimeout: "15m",
   scenarios: {
     // Scenario 1: Student browsing lessons (read-heavy)
     // Peak 1,000 VUs — matches national-gate spec; 2,000 exceeded Vercel concurrency limit.
