@@ -76,8 +76,43 @@ Live execution tracking for the final closeout program.
   notification-only, no kill-switch) — fix before NR-5 (5,000 VU) is
   attempted. Gate: prisma generate/tsc/vitest (4441 tests/541 files, 2
   confirmed-flaky timeout reruns)/build all PASS.
-- **Next national sprint:** fix the `MAX_CONCURRENT_DB_FALLBACKS` cache-stampede
-  bottleneck and re-run NR-4 before attempting NR-5.
+- **Load-test kill-switch: BUILT, VERIFIED, and FIRED FOR REAL (2026-07-31,
+  PR #67, merge commit `4c2cfbf8`).** Built before touching the cache fix, per
+  explicit user direction, as a distinct safety-critical deliverable —
+  `scripts/load-test-kill-switch/supervisor.ts` wraps `k6 run`, tails its
+  streamed `--out json` output, computes a true rolling-window p95/error-rate,
+  and sends SIGTERM/SIGKILL to the k6 child the instant either breaches,
+  with no dependency on a human watching. Verified locally against a
+  controllable mock server (healthy control, latency breach, error-rate
+  breach, all three passed) before ever touching production — see
+  `docs/ops/LOAD_TEST_KILL_SWITCH.md`. It then fired for real on the actual
+  NR-4 re-run below, proving itself in the exact scenario it was built for.
+- **`MAX_CONCURRENT_DB_FALLBACKS` re-tune (2026-07-31, PR #68, merge commit
+  `30c1833d`): investigated, fixed, deployed — but the fix did not resolve
+  NR-4.** Investigation found the prior MAX=1 value was deliberately tuned
+  (not an oversight) but calibrated entirely against a load-test pool with
+  zero `Student` rows the whole time (NR-3 fixed that gap the same day),
+  meaning the tuning never once exercised the expensive path it was
+  ostensibly protecting. Raised MAX 1->3 (grounded in a live-queried
+  `max_connections=60`) and broadened the k6 pre-warm from 50 to all 1,000
+  tokens a 1000-VU run uses. Small-scale validation (30 tokens) passed
+  clean. **A second, real production re-run using this fix was then
+  attempted and aborted by the kill-switch during the pre-warm phase itself**
+  (2026-07-31 22:09-22:15 GMT) — p95 hit 15.2s sustained over 60s before the
+  timed scenario even began. Further investigation during validation also
+  found the synthetic load-test students have zero class enrollment, so the
+  specific mechanism PR #68 blamed (`todayData`'s 7-query path) is not even
+  reachable by this population — the real mechanism is Redis-GET-dominated
+  cold-cache latency on cheaper per-student lookups, and something about
+  *sustained* duration (not just concurrency at a point in time) that a
+  short validation window didn't surface. No lasting production damage:
+  `/api/health` 200 before and after, DB connections 1 active/17 total (of
+  60) post-abort, no residual pressure. Full detail in
+  `docs/LOAD_TEST_RESULTS.md`.
+- **Next national sprint:** investigate the sustained-duration degradation
+  mechanism (distinct from the concurrency-at-a-point-in-time mechanism
+  already ruled adequately understood) before attempting NR-4 a third time.
+  Do not attempt NR-5 until NR-4 genuinely passes.
 - **Teaching Runtime v1:** all 16 tasks merged to `main` at `61bc3279`;
   production remains disabled until deliberate release approval and
   real-device Whisper push verification

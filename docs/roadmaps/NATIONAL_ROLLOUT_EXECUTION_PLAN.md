@@ -29,7 +29,7 @@ This plan governs the path from **current production baseline** to **world-class
 | NR-9.5 | Child Safety Hardening (Safeguarding Alerting + AI Moderation Audit) | 2 (executed early) | Security | COMPLETE | PASS (2026-07-30, commits f8c9529b..72e5c8c6, merged via PR #62) |
 | NR-9.6 | Grading Surface Moderation Audit | 2 (executed early) | Security | COMPLETE | PASS (2026-07-30) |
 | NR-3 | Load-Test Identity Pool | 0 | Scale | COMPLETE | PASS (2026-07-31, prisma generate/tsc/vitest 4441 tests-541 files/build all PASS, real production dry-run evidence in `docs/LOAD_TEST_RESULTS.md`) |
-| NR-4 | k6 Moderate (1K VU) Production Proof | 1 | Scale | FAIL | FAIL (2026-07-31, real production run: p95 19.97s vs <2000ms target, error rate 0.30% PASS, student-today success 100% PASS; root cause is `MAX_CONCURRENT_DB_FALLBACKS=1` cache-stampede limiter under a fully-cold 1,000-student pool, not Vercel plan tier; see `docs/LOAD_TEST_RESULTS.md`) |
+| NR-4 | k6 Moderate (1K VU) Production Proof | 1 | Scale | FAIL | FAIL x2 (2026-07-31). Run 1: p95 19.97s vs <2000ms target. Run 2 (after `MAX_CONCURRENT_DB_FALLBACKS` re-tune + pre-warm broadening, PR #68): aborted by the new kill-switch (PR #67) during pre-warm itself, p95 15.2s sustained 60s, never reached the timed scenario. Sustained-duration degradation mechanism not yet understood; see `docs/LOAD_TEST_RESULTS.md`. |
 | NR-5 | k6 Peak (5K VU) + AI Burst Gate | 1 | Scale | PENDING | NOT RUN |
 | NR-6 | Middleware Portal Hardening | 2 | Security | PENDING | NOT RUN |
 | NR-7 | Systematic Tenant Access Guard | 2 | Security | PENDING | NOT RUN |
