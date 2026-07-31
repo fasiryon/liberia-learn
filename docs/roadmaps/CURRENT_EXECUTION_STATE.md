@@ -53,7 +53,31 @@ Live execution tracking for the final closeout program.
   students / 1,800 synthetic — exact match to the recorded evidence) —
   see `docs/LOAD_TEST_RESULTS.md` for full detail. Not yet committed/pushed
   as of this note.
-- **Next national sprint:** NR-4 — k6 Moderate (1K VU) Production Proof.
+- **NR-4 — k6 Moderate (1K VU) Production Proof: FAIL (2026-07-31).** PR #65
+  (NR-3) was found unmerged at sprint start and was merged (`54dc7181`) before
+  this run; production had never actually served the synthetic-school
+  exclusion code until this session's deploy. Real k6 run against production
+  (`load-tests/k6-config.js`, the pool-integrated harness — `load-tests/moderate.js`
+  was investigated and found not wired to the NR-3 token pool at all) on
+  2026-07-31 19:07-19:26 GMT: http_req_duration p95 **19.97s** (target
+  <2000ms) FAIL, error rate **0.30%** (target <1%) PASS, student-today API
+  success **100%** (target >95%) PASS. Overall FAIL — not all three targets
+  met. Real root cause found: `lib/cache/redisCache.ts`'s
+  `MAX_CONCURRENT_DB_FALLBACKS=1` per-instance limiter became the bottleneck
+  under the first-ever run against the full 1,000-student pool with genuinely
+  unique cold cache keys, not the Vercel plan tier (confirmed Pro this
+  session). `ai_tutor` scenario also showed 32-46s real AI-backend latency
+  under 100-300 VU concurrency, a separate issue. AI spend during the run:
+  $0.155, entirely on synthetic `lt-school-*` IDs, confirming per-school
+  budget isolation works. No lasting infra damage: `/api/health` 200 before
+  and after, ECS/SQS clean post-run. Full detail in
+  `docs/LOAD_TEST_RESULTS.md`. Process gap disclosed in that doc: the agreed
+  abort criteria were not actively enforced during the run (monitor was
+  notification-only, no kill-switch) — fix before NR-5 (5,000 VU) is
+  attempted. Gate: prisma generate/tsc/vitest (4441 tests/541 files, 2
+  confirmed-flaky timeout reruns)/build all PASS.
+- **Next national sprint:** fix the `MAX_CONCURRENT_DB_FALLBACKS` cache-stampede
+  bottleneck and re-run NR-4 before attempting NR-5.
 - **Teaching Runtime v1:** all 16 tasks merged to `main` at `61bc3279`;
   production remains disabled until deliberate release approval and
   real-device Whisper push verification
