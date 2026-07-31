@@ -56,28 +56,41 @@ describe("withRedisCache — inflight coalescing", () => {
     expect(results.map((r) => r.status)).toEqual(["fulfilled", "fulfilled", "fulfilled"]);
   });
 
-  it("DIFFERENT keys: second key is rejected when fallback slot is taken", async () => {
-    // key2 must be fired while key1 is in-flight (not yet resolved)
-    let resolveKey1!: (v: string) => void;
-    const key1Fn = vi.fn().mockReturnValue(
-      new Promise<string>((resolve) => { resolveKey1 = resolve; })
+  it("DIFFERENT keys: (MAX_CONCURRENT_DB_FALLBACKS+1)th key is rejected once all slots are taken", async () => {
+    // MAX_CONCURRENT_DB_FALLBACKS = 3 (lib/cache/redisCache.ts). Fill all 3
+    // slots with distinct in-flight keys, then confirm a 4th distinct key is
+    // rejected while they're still pending, and succeeds once one frees up.
+    const SLOTS = 3;
+    const resolvers: Array<(v: string) => void> = [];
+    const fns = Array.from({ length: SLOTS }, (_, i) =>
+      vi.fn().mockReturnValue(
+        new Promise<string>((resolve) => { resolvers[i] = resolve; })
+      )
     );
-    const key2Fn = vi.fn().mockResolvedValue("key2-result");
+    const overflowFn = vi.fn().mockResolvedValue("overflow-result");
 
-    const key1 = `test-diff-a-${Date.now()}`;
-    const key2 = `test-diff-b-${Date.now()}`;
+    const prefix = `test-diff-${Date.now()}`;
+    const keys = Array.from({ length: SLOTS }, (_, i) => `${prefix}-${i}`);
+    const overflowKey = `${prefix}-overflow`;
 
-    // Start key1 (takes the slot) but don't await it yet
-    const p1 = withRedisCache(key1, 60, key1Fn);
+    // Take all SLOTS fallback slots with distinct pending keys.
+    const pendings = keys.map((key, i) => withRedisCache(key, 60, fns[i]));
 
-    // key2 fires while key1's fallback is running → should be rejected
-    const p2Result = await withRedisCache(key2, 60, key2Fn).catch((e) => e);
+    // One more distinct key while all slots are taken → should be rejected.
+    const overflowResult = await withRedisCache(overflowKey, 60, overflowFn).catch((e) => e);
+    expect((overflowResult as any)?.code).toBe(FALLBACK_LIMIT_EXCEEDED);
+    expect(overflowFn).not.toHaveBeenCalled();
 
-    // Now let key1 finish
-    resolveKey1("key1-result");
-    await p1;
+    // Free one slot, then the same key should now succeed.
+    resolvers[0]("result-0");
+    await pendings[0];
+    const afterFreeResult = await withRedisCache(overflowKey, 60, overflowFn);
+    expect(afterFreeResult).toBe("overflow-result");
+    expect(overflowFn).toHaveBeenCalledTimes(1);
 
-    expect((p2Result as any)?.code).toBe(FALLBACK_LIMIT_EXCEEDED);
-    expect(key2Fn).not.toHaveBeenCalled();
+    // Clean up remaining slots.
+    resolvers[1]("result-1");
+    resolvers[2]("result-2");
+    await Promise.all(pendings.slice(1));
   });
 });

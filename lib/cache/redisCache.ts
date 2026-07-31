@@ -34,14 +34,29 @@ const inflight = new Map<string, Promise<unknown>>();
 const PROCESS_CACHE_MAX_TTL_MS = 900_000;
 
 // Per-instance DB fallback concurrency cap.
-// Background computations that continue after the 1300ms shield fires hold
-// pgbouncer connections for 2-5s. Without a cap, 1000 VUs × ~20 instances
-// generate ~200 concurrent background DB computations → pgbouncer queues
-// new requests for 16s before the handler even starts. With MAX=2, excess
-// cache misses throw immediately so calling routes return a degraded HTTP 200
-// (< 10ms) instead of queuing. pgbouncer stays under ~40 concurrent queries.
+// Background computations that continue after the shield fires hold pgbouncer
+// connections for 2-5s; the expensive path (e.g. student/today's todayData)
+// issues up to 7 parallel queries per outer call. Without a cap, many
+// concurrent cache misses across the Vercel fleet can queue at pgbouncer for
+// seconds before a handler even starts. Production's direct max_connections
+// is 60 (confirmed live via `SHOW max_connections`, 2026-07-31) — a small,
+// real ceiling shared with all non-load-test traffic (real students,
+// workers, cron, migrations). A per-instance counter cannot bound the
+// cross-instance aggregate (that would need a distributed limiter, e.g. via
+// Redis; not built here), so this is deliberately conservative: MAX=3 caps
+// worst-case per-instance exposure at 3*7=21 queries, leaving real headroom
+// under 60 even if 2 instances are simultaneously maxed (42) — unlike the
+// prior MAX=1/MAX=2 values, which were tuned entirely against a load-test
+// pool that had zero real Student rows (found and fixed by NR-3,
+// 2026-07-31) and therefore never once exercised this expensive path during
+// the tuning that produced them. The primary defense against the "many
+// students cold at once" pattern this constant alone cannot fully solve is
+// pre-warming the cache before the timed test window
+// (load-tests/k6-config.js setup()), not this counter — this counter is a
+// backstop for whatever residual concurrent misses occur despite pre-warm,
+// including real unpredictable bursts in production.
 let activeDbFallbacks = 0;
-const MAX_CONCURRENT_DB_FALLBACKS = 1;
+const MAX_CONCURRENT_DB_FALLBACKS = 3;
 
 /** Error code thrown when the per-instance DB fallback limit is exceeded. */
 export const FALLBACK_LIMIT_EXCEEDED = "FALLBACK_LIMIT_EXCEEDED";
