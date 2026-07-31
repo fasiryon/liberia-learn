@@ -254,6 +254,88 @@ carry-forward rule 3 has been corrected to match.
 | Targets | browse p95 &lt; 1500ms, global p95 &lt; 2000ms, error rate &lt; 1% |
 | Status | **FAIL — Vercel Hobby concurrency cap is the binding constraint (2026-05-21)** |
 
+### NR-4 re-run on Vercel Pro (2026-07-31) — FAIL, new root cause found
+
+**Escalation resolutions (all approved by user before this run):**
+1. Script: `load-tests/k6-config.js` (not `load-tests/moderate.js` — investigated and found
+   not wired to the NR-3 token pool; it predates the pool and expects manually-supplied
+   `STUDENT_EMAILS`/`STUDENT_PASSWORDS` env vars instead).
+2. Run window: 2026-07-31 19:07-19:26 GMT (Friday evening, after the 15:30 GMT school-hours
+   cutoff per `docs/DEPLOYMENT_DISCIPLINE.md`; Liberia is GMT year-round, no DST).
+3. AI tutor scenario ceiling: $10 hard, separate from the existing $5/day-per-school
+   production budget guard.
+4. Abort criteria: 5xx rate > 5% sustained 30s OR p95 > 10s sustained 60s.
+
+**Pre-run state confirmed live:** PR #65 (NR-3) was found unmerged and was merged
+(`54dc7181`) before this run — production had never actually served the synthetic-school
+exclusion code until this session's deploy. Pool counts verified exact match to NR-3's
+record (63 schools/50 synthetic, 2,168 users/1,850 synthetic, 1,988 students/1,800
+synthetic). Token fixtures fresh and matching. Vercel plan confirmed Pro by the user
+directly (not independently re-derivable via the available CLI/MCP tools — no exposed
+billing/plan-tier lookup). AI budget: $0 spent today pre-run, full headroom. ECS/SQS
+healthy (1/1 running, both queues empty). Gate: prisma generate/tsc/vitest (4441/541,
+2 flaky timeouts confirmed non-regressions on isolated re-run)/build all PASS.
+
+**Process gap, disclosed:** the abort criteria above were never actually enforced in
+real time. The monitor set up during the run only watched for literal error/threshold
+log lines and could not compute a sustained p95/5xx window or kill the k6 process; it
+had no active intervention path. The run went to full completion (~19 minutes) rather
+than aborting early despite blowing past the p95>10s/60s bar well before the halfway
+point. This means real users experienced elevated latency for the full run duration
+that an actually-enforced abort would have cut short. This is a real limitation to fix
+before NR-5 (5,000 VU) is attempted, not a one-off.
+
+**Results (real k6 output, `load-tests/results/nr4-run-20260731.json`):**
+
+| Metric | Value | Threshold | Result |
+|--------|-------|-----------|--------|
+| http_req_duration p(95) (global) | **19.97s** | < 2000ms | **FAIL** |
+| http_req_duration p(95) {student_browse} | 19.47s | < 1500ms | FAIL |
+| http_req_duration p(95) {guardian_reads} | 20.09s | < 1000ms | FAIL |
+| http_req_duration p(95) {ai_tutor} | 45.88s | < 3000ms | FAIL |
+| http_req_duration p(95) {submission_spike} | 161.35ms | < 2000ms | PASS |
+| http_req_failed rate | **0.30%** | < 1% | **PASS** |
+| student `/api/student/today` success ("today 200" check) | **100%** (zero failures recorded) | > 95% | **PASS** |
+| checks_succeeded (all checks) | 99.53% (78,234/78,598) | — | — |
+| "no 5xx" check | 98% (15,303/15,479 pass, 176 fail) | — | — |
+| "guardian dashboard 200/401/403" check | 94% (3,063/3,239 pass, 176 fail) | — | — |
+| "tutor responds" check | 99% (1,433/1,445 pass, 12 fail) | — | — |
+
+**Sprint verdict against the 3 named targets: p95<2000ms FAIL, error rate<1% PASS,
+student-today success>95% PASS. Overall: FAIL** (not all three targets met).
+
+**Real root cause found — NOT the Vercel Hobby cap this time.** The account is on Pro
+(user-confirmed) yet the identical bimodal fast-median/extreme-tail signature from the
+May 2026 Hobby-tier runs reappeared, and in the `ai_tutor` scenario it was worse
+(avg 32.37s, median 40.09s per request). The proximate application-level cause is
+`lib/cache/redisCache.ts`'s `MAX_CONCURRENT_DB_FALLBACKS = 1` (per-instance cap,
+intended to fail fast on cache miss rather than let pgbouncer queue). This session was
+the first NR-4 run against the full 1,000-student pool with genuinely unique per-student
+cache keys — every student's first request this run was a cold-cache miss, so the
+1-per-instance fallback limiter itself became the bottleneck the design comment says it
+prevents. The `ai_tutor` scenario has no such shield at all and is a real AI-backend
+call every iteration; its 32-46s latency is the AI provider round-trip under 100-300 VU
+concurrency, not a Vercel or cache issue.
+
+**AI spend during the run (verified against `AiInteractionLog`):** $0.155 total, entirely
+on 7 of the 50 synthetic `lt-school-*` IDs (verified by direct School table lookup — none
+were real schools). Confirms the per-school budget scoping in `lib/ai/budgetGuard.ts`
+genuinely isolates load-test AI spend from real schools' $5/day tutor budget, as designed.
+Well under the $10 ceiling; the ceiling itself was not actively monitored during the run
+(same disclosed gap as the abort criteria above) but did not matter here since actual
+spend was two orders of magnitude below it.
+
+**Post-run infrastructure check:** `/api/health` returned `200 healthy` both before and
+after the run. ECS worker service still `ACTIVE` 1/1, both `liberialearn-jobs.fifo` and
+its DLQ empty (0 messages) post-run — no backlog or lasting damage from the
+`submission_spike` scenario's quiz submissions.
+
+**Required before NR-4 can pass:** raise or remove the per-instance
+`MAX_CONCURRENT_DB_FALLBACKS` cap in a way that scales with real instance count (or
+otherwise re-architect the cold-cache stampede path for a fully-cold 1,000-unique-student
+pool), and separately investigate `ai_tutor`'s real backend latency under concurrency
+before NR-5's AI burst scenario is attempted. Neither is a Vercel plan-tier problem.
+
 ### NR-4 v28 results (commit 858eb69)
 
 | Metric | v28 Value | Threshold | Result |
