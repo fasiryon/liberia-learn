@@ -35,19 +35,25 @@ Live execution tracking for the final closeout program.
   zero schema changes, real live walkthrough verified all 4 surfaces
   block a real adversarial input plus the display-gate before/after
   release, using test data created and fully cleaned up.
-- **Next national sprint:** NR-3 — Load-Test Identity Pool.
-  `DATABASE_URL` pooling already verified 2026-07-30, no longer a
-  blocker.
-- **Pre-NR-3 verification: DONE (2026-07-30).** Production `DATABASE_URL` is
-  confirmed pooled (`aws-1-us-east-2.pooler.supabase.com:6543`,
-  `pgbouncer=true`), set once on 2026-05-19 (the day after NR-1's completion
-  date) and unmodified since per Vercel's own env-var metadata as of
-  2026-07-23. `DIRECT_URL` correctly targets the unpooled host on 5432.
-  Evidence and method in `docs/roadmaps/CONSOLIDATED_BACKLOG.md` under
-  "Additional memory-generated work". NR-3 is unblocked to start. Side
-  finding: the stored `VERCEL_TOKEN` in `.env.local` is dead
-  (`invalidToken`) — refresh it before the next session needs a live REST
-  pull instead of a cached snapshot.
+- **NR-3 — Load-Test Identity Pool: COMPLETE (2026-07-31).** Branch
+  `feat/nr-3-load-test-pool`. Repaired a prior half-finished NR-3 attempt
+  (1,000 users across 10 schools with zero `Student` rows, verified live
+  before assuming) via idempotent `scripts/seed-load-test-pool.ts`, and
+  additively seeded 40 more schools to clear the 50+ school requirement.
+  Added string-match synthetic-identity exclusion
+  (`lib/loadTest/syntheticIdentity.ts`) to the 6 human-facing surfaces that
+  render School/User counts, including the national league snapshot cron
+  (without it, 50 fake schools would have entered real league rankings). A
+  durable `isSynthetic` schema flag was proposed as a separate,
+  non-blocking follow-up escalation, not implemented this sprint. Gate:
+  prisma generate PASS, tsc PASS, vitest 4,441 tests / 541 files PASS
+  (no regression from NR-9.6 baseline), build PASS. Production dry-run
+  evidence independently re-derived this session against live counts
+  (63 schools / 50 synthetic, 2,168 users / 1,850 synthetic, 1,988
+  students / 1,800 synthetic — exact match to the recorded evidence) —
+  see `docs/LOAD_TEST_RESULTS.md` for full detail. Not yet committed/pushed
+  as of this note.
+- **Next national sprint:** NR-4 — k6 Moderate (1K VU) Production Proof.
 - **Teaching Runtime v1:** all 16 tasks merged to `main` at `61bc3279`;
   production remains disabled until deliberate release approval and
   real-device Whisper push verification

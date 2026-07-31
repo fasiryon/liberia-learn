@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { requireMoePlatformAdmin } from "@/lib/moeAccess";
 import { prisma } from "@/lib/db";
+import { excludeSyntheticSchoolWhere, excludeSyntheticUserWhere } from "@/lib/loadTest/syntheticIdentity";
 
 export const dynamic = "force-dynamic";
 
@@ -10,15 +11,16 @@ export async function GET() {
 
     const [schoolCount, userCount, studentCount, teacherCount, curriculumCount] =
       await Promise.all([
-        prisma.school.count(),
-        prisma.user.count(),
-        prisma.user.count({ where: { role: "STUDENT" } }),
-        prisma.user.count({ where: { role: "TEACHER" } }),
+        prisma.school.count({ where: excludeSyntheticSchoolWhere }),
+        prisma.user.count({ where: excludeSyntheticUserWhere }),
+        prisma.user.count({ where: { role: "STUDENT", ...excludeSyntheticUserWhere } }),
+        prisma.user.count({ where: { role: "TEACHER", ...excludeSyntheticUserWhere } }),
         prisma.curriculumContent.count(),
       ]);
 
     // Per-school breakdown
     const schools = await prisma.school.findMany({
+      where: excludeSyntheticSchoolWhere,
       select: {
         id: true,
         name: true,

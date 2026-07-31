@@ -22,6 +22,7 @@ import { buildMoeDecisionIntelligence } from "@/lib/analytics/decisionSupport";
 import { buildMoeCurriculumIntelligence } from "@/lib/student/adaptiveRecommendations";
 import { generateCurriculumFlags, getCurriculumFlagSummary } from "@/lib/intelligence/curriculumFlags";
 import { buildMoeOutcomesSummary } from "@/lib/outcomes/examReadiness";
+import { excludeSyntheticSchoolWhere, excludeSyntheticUserWhere } from "@/lib/loadTest/syntheticIdentity";
 
 export const dynamic = "force-dynamic";
 
@@ -111,9 +112,9 @@ async function buildNationalAggregate() {
     curriculumIntelligence,
     outcomesSummary,
   ] = await Promise.all([
-    prisma.school.count().catch(() => 0),
+    prisma.school.count({ where: excludeSyntheticSchoolWhere }).catch(() => 0),
     prisma.district.count().catch(() => 0),
-    prisma.student.count({ where: { deletedAt: null } }).catch(() => 0),
+    prisma.student.count({ where: { deletedAt: null, user: excludeSyntheticUserWhere } }).catch(() => 0),
     prisma.scheduledWork.count().catch(() => 0),
     prisma.scheduledWork.count({ where: { isDelivered: true } }).catch(() => 0),
     prisma.interventionLog.count({ where: { generatedAt: { gte: thirtyDaysAgo } } }).catch(() => 0),
@@ -127,9 +128,10 @@ async function buildNationalAggregate() {
     Promise.resolve()
       .then(() =>
         prisma.school.findMany({
+          where: excludeSyntheticSchoolWhere,
           select: {
             county: true,
-            _count: { select: { users: { where: { role: "STUDENT" } } } },
+            _count: { select: { users: { where: { role: "STUDENT", ...excludeSyntheticUserWhere } } } },
           },
         })
       )

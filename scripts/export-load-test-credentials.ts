@@ -2,7 +2,7 @@
  * Exports comma-separated credential lists for k6 env vars.
  * Writes load-tests/fixtures/load-test-env.sample (no secrets in repo — copy locally).
  *
- * Run after seed-load-test-users.ts:
+ * Run after seed-load-test-pool.ts:
  *   npx dotenv -e .env.production -- npx tsx scripts/export-load-test-credentials.ts
  */
 
@@ -10,9 +10,10 @@ import { PrismaClient } from "@prisma/client"
 import { mkdirSync, writeFileSync } from "fs"
 import path from "path"
 
-if (process.env.DIRECT_URL) {
-  process.env.DATABASE_URL = process.env.DIRECT_URL
-}
+// DIRECT_URL has been intermittently unreachable from this working
+// environment (confirmed again 2026-07-30); use the pooled DATABASE_URL
+// as-is rather than overriding it. See docs/agents/ADVISOR_ESCALATION_CONTRACT.md
+// carry-forward rule 3.
 
 const prisma = new PrismaClient()
 const PASSWORD = "LoadTest2026!"
@@ -26,7 +27,7 @@ async function main() {
   })
 
   if (students.length === 0) {
-    throw new Error("No load-test students found. Run seed-load-test-users.ts first.")
+    throw new Error("No load-test students found. Run seed-load-test-pool.ts first.")
   }
 
   const emails = students.map((s) => s.email)
