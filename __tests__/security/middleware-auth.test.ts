@@ -157,3 +157,52 @@ describe("middleware auth - /admin and /platform portal guards", () => {
     expect(isNext(guardianHelpRes)).toBe(true)
   })
 })
+
+describe("middleware auth - /api/admin and /api/platform authentication backstop (NR-6)", () => {
+  beforeEach(() => {
+    vi.clearAllMocks()
+  })
+
+  it("19. /api/admin/* with no token returns 401 JSON, not a redirect", async () => {
+    mockGetToken.mockResolvedValue(null)
+    const res = await middleware(makeReq("/api/admin/agents"))
+    expect(res.status).toBe(401)
+    expect(locationOf(res)).toBeNull()
+    const body = await res.json()
+    expect(body).toEqual({ ok: false, error: "Unauthorized" })
+  })
+
+  it("20. /api/platform/* with no token returns 401 JSON, not a redirect", async () => {
+    mockGetToken.mockResolvedValue(null)
+    const res = await middleware(makeReq("/api/platform/stats"))
+    expect(res.status).toBe(401)
+    expect(locationOf(res)).toBeNull()
+    const body = await res.json()
+    expect(body).toEqual({ ok: false, error: "Unauthorized" })
+  })
+
+  it("21. /api/admin/* with any authenticated token (including non-ADMIN) passes through to the route", async () => {
+    // Deliberately not ADMIN/platformAdmin: middleware must not role-gate
+    // this namespace, since some routes legitimately allow other roles
+    // (e.g. TEACHER approving a TEACHER-scoped item) and enforce the real
+    // check themselves. See middleware.ts's isPortalApiRoute comment.
+    mockGetToken.mockResolvedValue({ role: "TEACHER", isPlatformAdmin: false } as any)
+    const res = await middleware(makeReq("/api/admin/ops/approvals/req-1/approve"))
+    expect(isNext(res)).toBe(true)
+  })
+
+  it("22. /api/platform/* with any authenticated token passes through to the route", async () => {
+    mockGetToken.mockResolvedValue({ role: "STUDENT", isPlatformAdmin: false } as any)
+    const res = await middleware(makeReq("/api/platform/stats"))
+    expect(isNext(res)).toBe(true)
+  })
+
+  it("23. /api/admin/* backstop is checked before PUBLIC_PATHS, even if pathname collides with a public prefix", async () => {
+    // /api/admin/canva/callback is not in PUBLIC_PATHS today, but this
+    // guards the invariant regardless of future PUBLIC_PATHS edits: the
+    // backstop check happens before isPublicPath is ever consulted.
+    mockGetToken.mockResolvedValue(null)
+    const res = await middleware(makeReq("/api/admin/canva/callback"))
+    expect(res.status).toBe(401)
+  })
+})

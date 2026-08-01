@@ -421,6 +421,113 @@ Variance is 7–18s across runs with identical code. Root cause: Vercel shared-i
 
 **Required action before NR-4 gate passes:** Upgrade to Vercel Pro plan (removes Hobby concurrency limit) and re-run `k6 run load-tests/k6-config.js`. Best-case Hobby run shows p90=1466ms — application is fast; only platform queuing prevents a clean p95 pass.
 
+### NR-4 second re-run attempt, aborted by kill-switch during pre-warm (2026-07-31, 22:09-22:15 GMT)
+
+Follow-up to the `MAX_CONCURRENT_DB_FALLBACKS` re-tune (PR #68) and kill-switch
+(PR #67, see `docs/ops/LOAD_TEST_KILL_SWITCH.md`). Both merged and deployed
+before this attempt. Run launched through
+`scripts/load-test-kill-switch/supervisor.ts` wrapping
+`load-tests/k6-config.js`, same abort criteria as the first run
+(p95 > 10s sustained 60s, error rate > 5% sustained 30s).
+
+**Correction found during pre-run validation, before this attempt:** small-scale
+testing (`scripts/load-test-kill-switch/prewarm-timing-validation.js`,
+30 tokens) found the synthetic load-test students have **zero class
+enrollment** (`enrollments: []`, verified directly against production). This
+means `/api/student/today`'s expensive `todayData` computation — the specific
+mechanism PR #68's commit message blamed for the first run's 19.97s p95 — is
+never actually reached by this population; the route returns early on the
+`classIds.length === 0` check. The real applicable mechanism is more likely
+Redis-GET-dominated cold-cache latency on the cheaper per-student lookups
+(`studentMeta`/`studentProfile`), amplified by concurrency — confirmed via
+`scripts/load-test-kill-switch/cold-path-diagnosis.js`: a single cold request
+with zero contention already costs ~700-1600ms, and concurrency 2→20 pushed
+the slowest single request from ~900ms to ~2.8s. PR #68's fix (raise the
+concurrency cap, pre-warm before the timed window) still targets a real
+mechanism, just not the one originally described.
+
+**Result: the kill-switch fired during `setup()` — the run never reached the
+timed scenario.** `student_browse` was still at 0% when the abort triggered.
+
+| Field | Value |
+|---|---|
+| Aborted at | 2026-07-31T22:15:11.485Z (~5.5 min into the run) |
+| Trigger | p95 latency 15,232ms > 10,000ms over trailing 60s (57 samples) |
+| Evidence file | `load-tests/results/nr4-rerun-20260731-abort-event.json` |
+| k6 process | confirmed terminated (`tasklist` showed zero `k6.exe`), not orphaned |
+| Production health post-abort | `/api/health` 200 healthy |
+| DB connections post-abort | 1 active / 17 total (of 60 max) — no residual pressure, no leak |
+
+**This is a real, sobering finding, not a lesser outcome than a clean pass:**
+the broadened pre-warm itself — batches of only 3 concurrent requests, far
+gentler than the real 1,000-VU ramp — degraded to a 15s+ p95 sustained over
+a full minute, well before the actual timed test even began. The earlier
+30-token validation (total elapsed 15s) was too short to reveal this; the
+degradation apparently compounds over sustained duration (roughly 5+ minutes
+of continuous batches), not just concurrency level, which the short
+validation and the concurrency-ramp diagnosis (also only ~20s total) both
+missed.
+
+**What worked exactly as intended:** the kill-switch (PR #67) fired
+automatically, without anyone watching in real time, and stopped a real
+production run that was degrading — precisely the scenario it was built and
+verified for. Real users were protected for longer than they would have been
+under the first run's passive monitor.
+
+**What did not work:** the `MAX_CONCURRENT_DB_FALLBACKS` re-tune and pre-warm
+broadening (PR #68) has not been shown to fix the platform's real bottleneck.
+The sustained-duration degradation pattern points to something PR #68 did not
+address — a candidate worth investigating: connections or some other resource
+not being released/recycled fast enough under sustained (not just concurrent)
+load, which a short validation window cannot surface.
+
+**Next step:** investigate the sustained-duration degradation mechanism
+specifically (not just concurrency at a point in time) before attempting
+another production run.
+
+### Sustained-load diagnosis at fixed low concurrency (2026-08-01) — clean, but rules out only one variable
+
+Follow-up diagnostic, run through the same kill-switch supervisor, targeting
+the "sustained duration alone" variable specifically. Used a fresh, never-
+touched 300-token slice (`load-tests/fixtures/student-tokens.json` indices
+1400-1700) at fixed batch size 3 (matching `MAX_CONCURRENT_DB_FALLBACKS=3`),
+run alongside `scripts/load-test-kill-switch/db-connection-poller.ts` polling
+real `pg_stat_activity` every 15s.
+
+**Result: no abort, no degradation.** 100 batches / 300 requests over 105.8s:
+p95=1.29s, max=2.92s, 0% errors, no upward trend from batch 1 through batch
+100 (values oscillate ~700ms-1.3s throughout). DB connections stayed flat at
+total=16 (active=1) during the run, settling to total=13 afterward — no
+buildup, no pressure.
+
+**Conclusion: sustained duration alone, at low fixed concurrency, does not
+reproduce the 15s+ p95 seen in the real pre-warm abort.** This diagnostic
+only isolated one variable (duration without real concurrency) and found it
+clean — it does not clear the platform, since the real 1,000-VU run generates
+concurrency this diagnostic never approached.
+
+**Real root cause candidate found, verified live (2026-08-01):** Supabase
+organization "Farquema" (owns the active `liberia-learn-db` project,
+`bnphuinpvgpmebcsvmsp`) is confirmed on the **free** plan via
+`get_organization` — not Pro. This had not been checked before; prior
+investigation confirmed Vercel's plan tier but never Supabase's. A free-tier
+Postgres instance runs on small shared-CPU compute with tight connection/
+pooler ceilings, which would explain the evidence better than either prior
+hypothesis:
+- Explains why `MAX_CONCURRENT_DB_FALLBACKS` retuning (PR #68, grounded in a
+  live-queried `max_connections=60` — itself likely a free-tier default) did
+  not fix NR-4.
+- Explains why this session's low-concurrency (3) diagnostic looked
+  completely healthy while the real 1,000-VU run degraded severely — free-tier
+  compute handles light load fine; it's real concurrent load that would
+  saturate shared CPU/pooler capacity in a way this diagnostic never
+  generated.
+
+**Not yet done:** no Supabase Pro upgrade has been made, and no diagnostic
+combining sustained duration *with* meaningful (not full 1,000-VU) concurrency
+has been run to confirm this candidate directly. Both are open next steps,
+not completed work.
+
 ---
 
 ## National Rollout — NR-5 (5K VU peak + 200 VU AI burst)
