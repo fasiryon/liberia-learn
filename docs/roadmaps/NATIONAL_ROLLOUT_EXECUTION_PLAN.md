@@ -160,6 +160,16 @@ feat: NR-[N] complete — [sprint name]
 
 ### NR-8 — RBAC Expansion + SSO Onboarding Fix
 
+> **Carry-forward from NR-7 (2026-08-01):** NR-7's audit script and initial
+> triage pass were built around a tenant-scoping heuristic (has auth, but no
+> `schoolId` reference) and would not reliably have caught the
+> `post-change-eval` GET finding, which had zero authorization of any kind —
+> not even a role check, a different and more severe category than
+> "role-checked but not tenant-scoped." When auditing
+> `assertPermission`/governance/export/curriculum-override routes for NR-8,
+> explicitly check each route for the presence of *any* auth call at all
+> before checking whether that auth is sufficiently scoped — do not rely on
+> a purely tenant-focused grep to surface a route with no gate whatsoever.
 - **Branch:** `feat/nr-8-rbac-sso`
 - **Deliverables:**
   - `assertPermission` on all governance/export/curriculum override routes (grep audit → fix list)

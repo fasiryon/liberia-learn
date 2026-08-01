@@ -168,6 +168,12 @@ Source: `docs/audits/2026-06-national-rollout-roadmap.md`
 | 17/23 schools have zero ADMIN and zero `designatedSafetyStaffUserId` | **VALID, real production finding (2026-07-30).** Would notify nobody if a real safeguarding concern arose there. Most are load-test/walkthrough junk schools, but real-looking names are in the list: Monrovia Central School, Nimba County Academy, Bong Community School. NR-9.5 added a platform-level email fallback (`PLATFORM_SAFEGUARDING_ESCALATION_EMAIL`) so this no longer means "notifies nobody at all," but a real safety-staff/admin assignment per school is still the correct fix and is a data/onboarding task, not an engineering one. Whoever owns school onboarding should assign `School.designatedSafetyStaffUserId` (or at least one ADMIN user) for every real (non-test) school. |
 | 23/23 schools have `designatedSafetyStaffUserId = null` | **VALID.** Expected to be set during pilot-school onboarding per Sprint 6.1's original spec; never enforced or followed up on. Same owner/fix as the row above. |
 
+## Follow-ups found during NR-7 (tenant access guard)
+
+| Item | Status |
+|---|---|
+| School-level AI agent cost/usage visibility for school ADMINs | **VALID, new 2026-08-01.** NR-7 closed a real cross-school data leak by requiring `requirePlatformAdmin()` on `admin/agents/{cost,goals,triggers,route,[name]/toggle}` (a school ADMIN could previously see every other school's per-user AI spend and flip the platform-wide agent kill switch). Correct fix, but it also means ordinary school ADMINs now have zero visibility into their own school's AI agent usage/cost, because `AgentInvocation`/`AgentCostAccounting`/`AgentGoal`/`AgentControl` have no `schoolId` column at all — there was never a real per-school view to fall back to. If school-level AI cost visibility is wanted as a real feature, it needs a schema change (add `schoolId` to these tables, backfill where derivable, wire it into every invocation-recording path) plus proper per-school-filtered queries — not a permission relaxation back to the pre-NR-7 state, which was the actual vulnerability. Not scoped or started. |
+
 ## Additional memory-generated work
 
 These findings came from retained project/session memory and were verified

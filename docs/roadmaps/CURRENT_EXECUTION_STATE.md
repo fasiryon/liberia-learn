@@ -192,8 +192,20 @@ Live execution tracking for the final closeout program.
   received a full manual trace. Not yet pushed to remote or opened as a
   PR; a human still needs to review and merge per standing branch
   discipline.
+- **NR-7 merged to `main` (2026-08-01, PR #72, merge commit `b30a08a8`).**
 - **Next national sprint: NR-8 — RBAC Expansion + SSO Onboarding Fix.**
-  Not started as of this note.
+  Not started as of this note. Carry-forward from NR-7: its investigation
+  must explicitly check for routes with no authorization check at all
+  (the `post-change-eval` GET category), not only role-checked-but-not-
+  tenant-scoped routes — a purely tenant-focused heuristic would not
+  reliably surface a route missing auth entirely. See the NR-8 plan entry
+  in `NATIONAL_ROLLOUT_EXECUTION_PLAN.md` for the full note.
+- **Follow-up backlog item from NR-7:** school-level AI agent cost/usage
+  visibility for school ADMINs is now zero (previously a real cross-school
+  leak, correctly closed). If wanted as a real feature, needs a schema
+  change (`schoolId` on `AgentInvocation`/`AgentCostAccounting`/etc.) plus
+  proper per-school filtering, not a permission relaxation. See
+  `CONSOLIDATED_BACKLOG.md`, "Follow-ups found during NR-7."
 - **Teaching Runtime v1:** all 16 tasks merged to `main` at `61bc3279`;
   production remains disabled until deliberate release approval and
   real-device Whisper push verification
