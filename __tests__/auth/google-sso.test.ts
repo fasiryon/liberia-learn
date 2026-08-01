@@ -80,6 +80,7 @@ describe("Google SSO signIn callback", () => {
       id: "existing-id",
       role: "TEACHER",
       googleId: null,
+      schoolId: "school-abc",
       school: { googleSsoEnabled: true },
     });
     mockPrisma.user.update.mockResolvedValueOnce({});
@@ -123,11 +124,27 @@ describe("Google SSO signIn callback", () => {
     expect(result).toBe(false);
   });
 
+  it("blocks existing teacher with schoolId: null (NR-8)", async () => {
+    mockPrisma.user.findUnique.mockResolvedValueOnce({
+      id: "orphan-id",
+      role: "TEACHER",
+      googleId: "google-uid-123",
+      schoolId: null,
+      school: null,
+    });
+
+    const signIn = await getSignInCallback();
+    const result = await signIn({ user: googleUser, account: googleAccount });
+
+    expect(result).toBe("/login?error=SchoolAssignmentRequired");
+  });
+
   it("does not update googleId when it is already set", async () => {
     mockPrisma.user.findUnique.mockResolvedValueOnce({
       id: "teacher-id",
       role: "TEACHER",
       googleId: "google-uid-123",
+      schoolId: "school-abc",
       school: { googleSsoEnabled: true },
     });
 

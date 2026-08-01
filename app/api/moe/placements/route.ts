@@ -4,6 +4,7 @@ import { prisma } from "@/lib/db";
 import { isMoePortalEnabled } from "@/lib/serverFlags";
 import { logAudit } from "@/lib/audit";
 import { withRequestLogging } from "@/lib/logging/requestLogger";
+import { isMoeSuperRole } from "@/lib/moe/rbac";
 
 export const dynamic = "force-dynamic";
 
@@ -23,7 +24,7 @@ async function placementsGET() {
   }
 
   const user = await requireUser();
-  if (user.role !== "MOE_OFFICIAL" && !user.isPlatformAdmin) {
+  if (!user.isPlatformAdmin && !isMoeSuperRole(user.role)) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 

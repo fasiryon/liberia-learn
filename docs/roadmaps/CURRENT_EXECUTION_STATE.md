@@ -193,13 +193,47 @@ Live execution tracking for the final closeout program.
   PR; a human still needs to review and merge per standing branch
   discipline.
 - **NR-7 merged to `main` (2026-08-01, PR #72, merge commit `b30a08a8`).**
-- **Next national sprint: NR-8 — RBAC Expansion + SSO Onboarding Fix.**
-  Not started as of this note. Carry-forward from NR-7: its investigation
-  must explicitly check for routes with no authorization check at all
-  (the `post-change-eval` GET category), not only role-checked-but-not-
-  tenant-scoped routes — a purely tenant-focused heuristic would not
-  reliably surface a route missing auth entirely. See the NR-8 plan entry
-  in `NATIONAL_ROLLOUT_EXECUTION_PLAN.md` for the full note.
+- **NR-8 — RBAC Expansion + SSO Onboarding Fix: COMPLETE (2026-08-01), not
+  yet pushed/merged.** Branch `feat/nr-8-rbac-sso`. Discovered a prior
+  May 22 pre-plan commit (`42d467ed`, already on `main`) had already built
+  most of deliverables 1 and 2: `assertPermission` on 12 governance/export/
+  override routes, and the Google SSO invite-required gate for new users.
+  This sprint's real contribution: (1) added `MOE_SUPER_ADMIN` and
+  `MOE_DISTRICT_ADMIN` to `SessionUser.role`'s TypeScript union in
+  `lib/auth.ts` (deliverable 3 — both roles already existed in the Prisma
+  `Role` enum and in `lib/permissions.ts`'s `ROLE_PERMISSIONS`, just never
+  reflected in the type), which also surfaced and fixed a real downstream
+  gap in `lib/ai/trust.ts`'s `TrustAudienceRole`; (2) following the NR-7
+  carry-forward instruction to check for missing-auth-entirely (not just
+  missing-tenant-scope), audited every `app/api/moe/*` route and found 11
+  routes gating on the literal string `role !== "MOE_OFFICIAL"`, silently
+  excluding `MOE_SUPER_ADMIN` even though it is a senior/equal MOE role
+  (already correctly honored by `requireMoeActor`-backed routes like
+  dashboard/counties/districts). Two of those (`submissions`,
+  `submissions/[id]/review`) additionally used
+  `requireRole("MOE_OFFICIAL", "PLATFORM_ADMIN")` — "PLATFORM_ADMIN" is not
+  a value in the Prisma `Role` enum, so that branch could never match any
+  real user; a real platform admin's role is "ADMIN" with a separate
+  `isPlatformAdmin` flag, making this dead code guaranteed to 403 every
+  platform admin. All 11 fixed to use the existing `isMoeSuperRole` helper
+  from `lib/moe/rbac.ts`, matching the pattern already used correctly
+  elsewhere; (3) hardened the Google SSO `signIn` callback for deliverable
+  2's literal wording ("block active session until schoolId assigned") —
+  the existing invite gate only covers brand-new users; `User.schoolId` is
+  nullable in schema, so an existing TEACHER row could theoretically have
+  `schoolId: null` and still receive an active Google-SSO session. Added an
+  explicit block (`/login?error=SchoolAssignmentRequired`) for that case.
+  No separate self-service "school code" SSO flow was built — none existed
+  to extend, and the deliverable's core protective intent (never issue a
+  schoolId-less session) is now closed on both the account-creation and
+  existing-login paths. Gate: prisma generate PASS, tsc PASS, vitest 4,488
+  tests / 543 files PASS (baseline 4,466/542, +22 new), build PASS, zero
+  schema changes. Fixing 8 pre-existing test files that mocked the old
+  `requireRole` gate (now `requireUser`) was part of reaching a genuinely
+  green gate, not scope creep — the mandatory gate requires the full suite
+  to pass, and those tests were asserting on the old (buggy) contract.
+- **Next national sprint: NR-9 — Audit Immutability + Pen Test
+  Remediation.** Not started as of this note.
 - **Follow-up backlog item from NR-7:** school-level AI agent cost/usage
   visibility for school ADMINs is now zero (previously a real cross-school
   leak, correctly closed). If wanted as a real feature, needs a schema

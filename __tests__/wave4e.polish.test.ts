@@ -100,7 +100,7 @@ describe("GET /api/moe/teacher-lessons", () => {
 
   it("returns totalPublished count and bySchool breakdown", async () => {
     vi.doMock("@/lib/auth", () => ({
-      requireRole: vi.fn(async () => ({ id: "m-1", role: "MOE_OFFICIAL" })),
+      requireUser: vi.fn(async () => ({ id: "m-1", role: "MOE_OFFICIAL", isPlatformAdmin: false })),
     }));
     vi.doMock("@/lib/cache/redisCache", () => ({
       withRedisCache: vi.fn(async (_key: string, _ttl: number, fn: () => Promise<unknown>) => fn()),

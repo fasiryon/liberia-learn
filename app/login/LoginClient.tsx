@@ -94,6 +94,10 @@ export default function LoginClient({ showDemoHints, demoGroups, demoDefaults }:
         );
       } else if (errorParam === "InvalidInvite") {
         setFlashMessage("Your invite link is invalid or has expired. Request a new one from your administrator.");
+      } else if (errorParam === "SchoolAssignmentRequired") {
+        setFlashMessage(
+          "Your account is not yet assigned to a school. Ask your administrator to complete your school assignment before signing in with Google."
+        );
       } else {
         setFlashMessage(params.get("message"));
       }

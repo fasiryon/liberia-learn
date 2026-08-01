@@ -92,6 +92,13 @@ const TEACHER_USER = {
   schoolId: "school-1",
 };
 
+const MOE_SUPER_ADMIN_USER = {
+  id: "moe-super-1",
+  role: "MOE_SUPER_ADMIN" as const,
+  isPlatformAdmin: false,
+  email: "super@moe.gov.lr",
+};
+
 async function callGET(handler: () => Promise<Response>): Promise<{ status: number; body: any }> {
   const res = await handler();
   const body = await res.json();
@@ -292,6 +299,42 @@ describe("MOE Portal — isPlatformAdmin access (200)", () => {
   });
 
   it("intervention-impact: isPlatformAdmin gets 200", async () => {
+    const { status } = await callGET(interventionImpactGET);
+    expect(status).toBe(200);
+  });
+});
+
+// NR-8: these routes previously gated on the literal string "MOE_OFFICIAL",
+// which silently excluded MOE_SUPER_ADMIN even though it is a senior/equal
+// MOE role per lib/moe/rbac.ts's isMoeSuperRole (already honored correctly
+// by requireMoeActor-backed routes like dashboard/counties/districts). Fixed
+// to use isMoeSuperRole consistently; this locks the fix in.
+describe("MOE Portal — MOE_SUPER_ADMIN access (200, NR-8 fix)", () => {
+  beforeEach(() => {
+    mockRequireUser.mockResolvedValue(MOE_SUPER_ADMIN_USER);
+  });
+
+  it("dashboard: MOE_SUPER_ADMIN gets 200", async () => {
+    const { status } = await callGET(dashboardGET);
+    expect(status).toBe(200);
+  });
+
+  it("standards-coverage: MOE_SUPER_ADMIN gets 200", async () => {
+    const { status } = await callGET(standardsCoverageGET);
+    expect(status).toBe(200);
+  });
+
+  it("delivery-compliance: MOE_SUPER_ADMIN gets 200", async () => {
+    const { status } = await callGET(deliveryComplianceGET);
+    expect(status).toBe(200);
+  });
+
+  it("curriculum-health: MOE_SUPER_ADMIN gets 200", async () => {
+    const { status } = await callGET(curriculumHealthGET);
+    expect(status).toBe(200);
+  });
+
+  it("intervention-impact: MOE_SUPER_ADMIN gets 200", async () => {
     const { status } = await callGET(interventionImpactGET);
     expect(status).toBe(200);
   });

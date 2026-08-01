@@ -147,7 +147,7 @@ describe("MoeSubmission — admin create", () => {
 // ── MOE Submission — MOE portal ───────────────────────────────────────────────
 describe("MoeSubmission — MOE portal", () => {
   it("MOE official can list all submissions", async () => {
-    mockRequireRole.mockResolvedValue(moeUser);
+    mockRequireUser.mockResolvedValue(moeUser);
     mockMoeSubmissionFindMany.mockResolvedValue([{ id: "sub1", schoolId: "school1" }]);
     const res = await moeGetSubmissions(makeRequest("GET", "/api/moe/submissions") as any);
     expect(res.status).toBe(200);
@@ -155,13 +155,13 @@ describe("MoeSubmission — MOE portal", () => {
   });
 
   it("non-MOE cannot access MOE submissions (403)", async () => {
-    mockRequireRole.mockRejectedValue(Object.assign(new Error("Forbidden"), { status: 403 }));
+    mockRequireUser.mockResolvedValue({ id: "t1", role: "TEACHER", isPlatformAdmin: false, schoolId: "school1" });
     const res = await moeGetSubmissions(makeRequest("GET", "/api/moe/submissions") as any);
     expect(res.status).toBe(403);
   });
 
   it("MOE can update submission status to UNDER_REVIEW", async () => {
-    mockRequireRole.mockResolvedValue(moeUser);
+    mockRequireUser.mockResolvedValue(moeUser);
     mockMoeSubmissionFindUnique.mockResolvedValue({ id: "sub1", schoolId: "school1", title: "Term Report" });
     mockMoeSubmissionUpdate.mockResolvedValue({ id: "sub1", status: "UNDER_REVIEW" });
 
@@ -175,7 +175,7 @@ describe("MoeSubmission — MOE portal", () => {
   });
 
   it("MOE status update fires push notification to school admins", async () => {
-    mockRequireRole.mockResolvedValue(moeUser);
+    mockRequireUser.mockResolvedValue(moeUser);
     mockMoeSubmissionFindUnique.mockResolvedValue({ id: "sub1", schoolId: "school1", title: "Term Report" });
     mockMoeSubmissionUpdate.mockResolvedValue({ id: "sub1", status: "ACKNOWLEDGED" });
     mockUserFindMany.mockResolvedValue([{ id: "admin1" }, { id: "admin2" }]);
@@ -190,7 +190,7 @@ describe("MoeSubmission — MOE portal", () => {
   });
 
   it("RETURNED status requires moeNotes (400)", async () => {
-    mockRequireRole.mockResolvedValue(moeUser);
+    mockRequireUser.mockResolvedValue(moeUser);
     const res = await moeReviewSubmission(
       makeRequest("PATCH", "/api/moe/submissions/sub1/review", { status: "RETURNED" }) as any,
       { params: { id: "sub1" } }
