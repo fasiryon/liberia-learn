@@ -131,9 +131,34 @@ Live execution tracking for the final closeout program.
   per the plan's own "NR-5 before NR-4: not allowed" rule, which this
   exception does not touch. Do not resume NR-5 or NR-4 attempt #3 without
   re-confirming the budget situation with the user.
-- **Next national sprint: NR-6 — Middleware Portal Hardening**, started
-  2026-08-01 under the exception above. See `NATIONAL_ROLLOUT_EXECUTION_PLAN.md`
-  sprint index and Parallel work rules table for the corresponding entries.
+- **NR-6 — Middleware Portal Hardening: COMPLETE (2026-08-01, PR #70, merge
+  commit `4eb18d44`).** Audited all 226 routes under `app/api/admin/` and
+  `app/api/platform/`: every route already enforced real authorization
+  (direct `requireRole()`/`requirePlatformAdmin()`, named wrappers, or
+  record-scoped service-layer checks like `canApprove`/`canSignoff` for
+  routes where the legitimate approver role varies per record, e.g. a
+  TEACHER approving a TEACHER-scoped item). Zero unprotected routes found.
+  Added an authentication-only middleware backstop for `/api/admin/*` and
+  `/api/platform/*` (deliberately not role-gated, to avoid breaking those
+  non-ADMIN flows) plus 5 integration tests. Gate: prisma generate/tsc/
+  vitest 4446 tests-541 files (baseline 4441/541)/build all PASS, CI green,
+  zero schema changes. **Live post-merge walkthrough against production**
+  as `teacher1@liberialearn.dev` (real TEACHER session, password verified
+  against the live bcrypt hash, not a doc): `GET /api/admin/agents` → 403,
+  `GET /api/platform/stats` → 403 "platform admin required", `GET /admin`
+  page → redirect to `/unauthorized` (control group, confirms no page-level
+  regression). Unauthenticated: pages 307 to `/login`, API routes 401. The
+  pre-merge preview walkthrough for this same check failed for an unrelated
+  reason (Vercel Preview has no Upstash Redis env vars, so the rate-limiter's
+  deliberate hard-fail blocks all preview login) — logged as its own backlog
+  item in `CONSOLIDATED_BACKLOG.md`, not fixed under NR-6's scope.
+- **Next national sprint: NR-7 — Systematic Tenant Access Guard.** Also does
+  not depend on the Supabase Pro decision. User has flagged it as worth
+  prioritizing given this project's repeated history of tenant-scoping bugs
+  surfacing only after the fact (Sprint 6.2's `/admin/agents` Escalations
+  tab, logged elsewhere in this doc's history) — a systematic route-wide
+  audit is the proactive version of that same fix. Not started as of this
+  note.
 - **Teaching Runtime v1:** all 16 tasks merged to `main` at `61bc3279`;
   production remains disabled until deliberate release approval and
   real-device Whisper push verification
