@@ -26,6 +26,7 @@ import { GET as detailGET } from "@/app/api/moe/narrative-reports/[id]/route";
 import { POST as runPOST } from "@/app/api/admin/agents/moe-narrative-report/run/route";
 
 const MOE_USER = { id: "moe-1", role: "MOE_OFFICIAL", isPlatformAdmin: false, schoolId: null };
+const MOE_SUPER_ADMIN = { id: "moe-super-1", role: "MOE_SUPER_ADMIN", isPlatformAdmin: false, schoolId: null };
 const PLATFORM_ADMIN = { id: "admin-1", role: "ADMIN", isPlatformAdmin: true, schoolId: null };
 const TEACHER = { id: "t-1", role: "TEACHER", isPlatformAdmin: false, schoolId: "s-1" };
 
@@ -70,6 +71,13 @@ describe("GET /api/moe/narrative-reports", () => {
     expect(res.status).toBe(200);
     const body = await res.json();
     expect(body.reports).toHaveLength(1);
+  });
+
+  it("NR-8: returns 200 for MOE_SUPER_ADMIN (previously excluded by a literal MOE_OFFICIAL-only check)", async () => {
+    requireUser.mockResolvedValue(MOE_SUPER_ADMIN);
+    reportDraftFindMany.mockResolvedValue([]);
+    const res = await listGET(req("http://x/api/moe/narrative-reports"));
+    expect(res.status).toBe(200);
   });
 
   it("filters by scope query param when provided", async () => {
@@ -125,6 +133,20 @@ describe("GET /api/moe/narrative-reports/[id]", () => {
     const body = await res.json();
     expect(body.report.narrativeText).toBe("Report body.");
     expect(body.report.status).toBe("DRAFT");
+  });
+
+  it("NR-8: returns 200 for MOE_SUPER_ADMIN (previously excluded by a literal MOE_OFFICIAL-only check)", async () => {
+    requireUser.mockResolvedValue(MOE_SUPER_ADMIN);
+    reportDraftFindUnique.mockResolvedValue({
+      id: "r1",
+      narrativeText: "Report body.",
+      dataSnapshot: {},
+      changesSummary: null,
+      status: "DRAFT",
+    });
+    const { req: r, ctx } = reqWithParams("http://x/api/moe/narrative-reports/r1", "r1");
+    const res = await detailGET(r, ctx);
+    expect(res.status).toBe(200);
   });
 });
 

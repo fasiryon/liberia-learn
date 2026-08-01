@@ -1,14 +1,18 @@
 import { NextResponse } from "next/server";
-import { requireRole } from "@/lib/auth";
+import { requireUser } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { handleApiError } from "@/lib/errors/apiErrorHandler";
 import { withRedisCache } from "@/lib/cache/redisCache";
+import { isMoeSuperRole } from "@/lib/moe/rbac";
 
 export const dynamic = "force-dynamic";
 
 export async function GET(_req?: Request) {
   try {
-    await requireRole("MOE_OFFICIAL");
+    const user = await requireUser();
+    if (!user.isPlatformAdmin && !isMoeSuperRole(user.role)) {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    }
 
     const data = await withRedisCache("moe:teacher-lessons", 1800, async () => {
       const [totalPublished, bySchoolRaw, schools, topAssignedRaw] = await Promise.all([

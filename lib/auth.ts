@@ -156,12 +156,17 @@ export const authOptions: NextAuthOptions = {
 
         const dbUser = await prisma.user.findUnique({
           where: { email: user.email },
-          select: { id: true, role: true, googleId: true, school: { select: { googleSsoEnabled: true } } },
+          select: { id: true, role: true, googleId: true, schoolId: true, school: { select: { googleSsoEnabled: true } } },
         });
 
         if (dbUser) {
           if (dbUser.role !== "TEACHER") return false;
           if (dbUser.school && dbUser.school.googleSsoEnabled === false) return false;
+          // NR-8: a TEACHER row can theoretically exist with schoolId: null
+          // (User.schoolId is nullable in schema). Never issue an active
+          // session for that state — the invite/school-code flow is the
+          // only path that should assign it.
+          if (!dbUser.schoolId) return "/login?error=SchoolAssignmentRequired";
           if (!dbUser.googleId) {
             await prisma.user.update({
               where: { email: user.email },
@@ -265,7 +270,7 @@ export type SessionUser = {
   email?: string | null;
   loginId?: string | null;
   name?: string | null;
-  role: "STUDENT" | "TEACHER" | "ADMIN" | "GUARDIAN" | "DISTRICT_ADMIN" | "MOE_OFFICIAL";
+  role: "STUDENT" | "TEACHER" | "ADMIN" | "GUARDIAN" | "DISTRICT_ADMIN" | "MOE_OFFICIAL" | "MOE_SUPER_ADMIN" | "MOE_DISTRICT_ADMIN";
   schoolId?: string | null;
   isPlatformAdmin?: boolean;
   iat?: number | null;

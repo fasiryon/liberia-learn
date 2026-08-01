@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
-import { requireRole } from "@/lib/auth";
+import { requireUser } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { isMoePortalEnabled } from "@/lib/serverFlags";
+import { isMoeSuperRole } from "@/lib/moe/rbac";
 
 export const dynamic = "force-dynamic";
 
@@ -9,8 +10,8 @@ export async function GET(req: NextRequest) {
   try {
     if (!isMoePortalEnabled()) return NextResponse.json({ error: "Not found" }, { status: 404 });
 
-    const user = await requireRole("MOE_OFFICIAL", "PLATFORM_ADMIN");
-    if (user.role !== "MOE_OFFICIAL" && !user.isPlatformAdmin) {
+    const user = await requireUser();
+    if (!user.isPlatformAdmin && !isMoeSuperRole(user.role)) {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 

@@ -1,19 +1,20 @@
 // app/api/moe/align/route.ts
 import { NextResponse } from "next/server";
-import { requireRole } from "@/lib/auth";
+import { requireUser } from "@/lib/auth";
 import {
   alignContentToMOE,
   alignAllContent,
 } from "@/lib/moe/alignment-engine";
 import { prisma } from "@/lib/db";
 import { hasGenuineMoeAlignment } from "@/lib/moe/alignmentReader";
+import { isMoeSuperRole } from "@/lib/moe/rbac";
 
 export const dynamic = "force-dynamic";
 
 export async function POST(req: Request) {
   try {
-    const actor = await requireRole("MOE_OFFICIAL");
-    if (!actor.isPlatformAdmin && actor.role !== "MOE_OFFICIAL") {
+    const actor = await requireUser();
+    if (!actor.isPlatformAdmin && !isMoeSuperRole(actor.role)) {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
@@ -51,8 +52,8 @@ export async function POST(req: Request) {
 
 export async function GET(req: Request) {
   try {
-    const actor = await requireRole("MOE_OFFICIAL");
-    if (!actor.isPlatformAdmin && actor.role !== "MOE_OFFICIAL") {
+    const actor = await requireUser();
+    if (!actor.isPlatformAdmin && !isMoeSuperRole(actor.role)) {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 

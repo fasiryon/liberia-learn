@@ -79,6 +79,7 @@ describe("NR-8 Google SSO — signIn callback", () => {
       id: "user-1",
       role: "TEACHER",
       googleId: null,
+      schoolId: "school-x",
       school: { googleSsoEnabled: true },
     });
     mockUserUpdate.mockResolvedValue({});
@@ -160,6 +161,21 @@ describe("NR-8 Google SSO — signIn callback", () => {
     const result = await callSignIn(googleUser("teacher@disabled.lr"), googleAccount);
 
     expect(result).toBe(false);
+  });
+
+  it("15b. existing TEACHER with schoolId: null (nullable in schema, never checked by the invite gate) → returns /login?error=SchoolAssignmentRequired, no session issued", async () => {
+    mockUserFindUnique.mockResolvedValue({
+      id: "user-orphan",
+      role: "TEACHER",
+      googleId: "gid-existing",
+      schoolId: null,
+      school: null,
+    });
+
+    const result = await callSignIn(googleUser("orphan@school.lr"), googleAccount);
+
+    expect(result).toBe("/login?error=SchoolAssignmentRequired");
+    expect(mockUserUpdate).not.toHaveBeenCalled();
   });
 
   it("15. existing Google user with non-TEACHER role → returns false", async () => {

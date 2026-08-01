@@ -58,6 +58,21 @@ describe("moe placements route", () => {
     expect(response.status).toBe(403);
   }, 15_000);
 
+  it("NR-8: returns 200 for MOE_SUPER_ADMIN (previously excluded by a literal MOE_OFFICIAL-only check)", async () => {
+    mockRequireUser.mockResolvedValue({
+      id: "moe-super-1",
+      role: "MOE_SUPER_ADMIN",
+      isPlatformAdmin: false,
+    });
+    mockPlacementFindMany.mockResolvedValue([]);
+    mockSchoolFindMany.mockResolvedValue([]);
+
+    const { GET } = await import("@/app/api/moe/placements/route");
+    const response = await GET();
+
+    expect(response.status).toBe(200);
+  }, 15_000);
+
   it("returns district override patterns without PII", async () => {
     mockPlacementFindMany.mockResolvedValue([
       {

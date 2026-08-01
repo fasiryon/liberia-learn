@@ -203,7 +203,7 @@ describe("GET /api/moe/teacher-lessons — topAssigned", () => {
 
   it("returns topAssigned with title, author, and assignmentCount", async () => {
     vi.doMock("@/lib/auth", () => ({
-      requireRole: vi.fn(async () => ({ id: "m-1", role: "MOE_OFFICIAL" })),
+      requireUser: vi.fn(async () => ({ id: "m-1", role: "MOE_OFFICIAL", isPlatformAdmin: false })),
     }));
     vi.doMock("@/lib/cache/redisCache", () => ({
       withRedisCache: vi.fn(async (_key: string, _ttl: number, fn: () => Promise<unknown>) => fn()),
@@ -244,7 +244,7 @@ describe("GET /api/moe/teacher-lessons — topAssigned", () => {
 
   it("returns empty topAssigned when no assignments exist", async () => {
     vi.doMock("@/lib/auth", () => ({
-      requireRole: vi.fn(async () => ({ id: "m-1", role: "MOE_OFFICIAL" })),
+      requireUser: vi.fn(async () => ({ id: "m-1", role: "MOE_OFFICIAL", isPlatformAdmin: false })),
     }));
     vi.doMock("@/lib/cache/redisCache", () => ({
       withRedisCache: vi.fn(async (_key: string, _ttl: number, fn: () => Promise<unknown>) => fn()),

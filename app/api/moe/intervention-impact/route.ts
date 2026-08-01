@@ -8,6 +8,7 @@ import { requireUser } from "@/lib/auth";
 import { isMoePortalEnabled } from "@/lib/serverFlags";
 import { logAudit } from "@/lib/audit";
 import { prisma } from "@/lib/db";
+import { isMoeSuperRole } from "@/lib/moe/rbac";
 
 export const dynamic = "force-dynamic";
 
@@ -18,7 +19,7 @@ export async function GET() {
     }
 
     const user = await requireUser();
-    if (user.role !== "MOE_OFFICIAL" && !user.isPlatformAdmin) {
+    if (!user.isPlatformAdmin && !isMoeSuperRole(user.role)) {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
