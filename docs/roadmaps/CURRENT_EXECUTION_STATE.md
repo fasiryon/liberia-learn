@@ -232,8 +232,35 @@ Live execution tracking for the final closeout program.
   `requireRole` gate (now `requireUser`) was part of reaching a genuinely
   green gate, not scope creep — the mandatory gate requires the full suite
   to pass, and those tests were asserting on the old (buggy) contract.
-- **Next national sprint: NR-9 — Audit Immutability + Pen Test
-  Remediation.** Not started as of this note.
+- **NR-8 merged to `main` (2026-08-01, PR #73, merge commit `757e0191`).**
+- **NR-9 — Audit Immutability + Pen Test Remediation: PARTIAL, closed for
+  engineering purposes (2026-08-01, docs-only, no branch/PR needed).**
+  Deliverable 1 (DB-layer `AuditLog` immutability) was already built by a
+  May 22 pre-plan commit (`84da491c`, same day as the NR-7/NR-8 pre-plan
+  work). Rather than trust the commit message, independently re-verified it
+  live against production Postgres today via direct read-only query
+  (`mcp__claude_ai_Supabase__execute_sql` against project
+  `bnphuinpvgpmebcsvmsp`): `pg_trigger` confirms both `audit_log_no_update`
+  and `audit_log_no_delete` exist on the live `AuditLog` table with
+  `tgenabled='O'` (active); `pg_proc` confirms both trigger functions still
+  contain the original `RAISE EXCEPTION` body with no silent drift to a
+  no-op; `_prisma_migrations` confirms `20260522_000001_audit_immutability`
+  has `finished_at` set and `rolled_back_at` null, meaning it was actually
+  deployed via `prisma migrate deploy`, not merely present in the repo.
+  This is exactly the class of claim this project has been burned by before
+  (stale Supabase tier, DATABASE_URL port confusion) — worth the extra
+  verification step rather than assuming a prior session's commit message
+  was accurate. No code changes were needed. Deliverable 2 (external
+  penetration test, CRITICAL/HIGH findings remediated or accepted with MOE
+  sign-off) cannot be performed by an engineering session — it requires
+  actually engaging a third-party vendor. A scope brief
+  (`docs/security/PEN_TEST_BRIEF.md`) was drafted May 22 but no vendor was
+  ever engaged, and `docs/MOE_PRODUCTION_CERTIFICATION.md` has no
+  remediation table. **User-confirmed 2026-08-01: defer deliverable 2 as a
+  standing external-action backlog item (see `CONSOLIDATED_BACKLOG.md`),
+  close NR-9 for engineering purposes.**
+- **Next national sprint: NR-10 — Student Fail-Closed Curriculum Routing.**
+  Not started as of this note.
 - **Follow-up backlog item from NR-7:** school-level AI agent cost/usage
   visibility for school ADMINs is now zero (previously a real cross-school
   leak, correctly closed). If wanted as a real feature, needs a schema

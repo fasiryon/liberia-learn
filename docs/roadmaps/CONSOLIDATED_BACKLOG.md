@@ -2,13 +2,14 @@
 
 **Status:** Canonical project-wide backlog  
 **Reconciled:** 2026-08-01  
-**Next national sprint:** NR-7, Systematic Tenant Access Guard. NR-3
-(Load-Test Identity Pool) and NR-6 (Middleware Portal Hardening) are both
-COMPLETE. NR-4/NR-5 (k6 load proofs) are explicitly deferred on Supabase Pro
-budget, not abandoned — NR-6 was deliberately reordered ahead of them as a
-user-approved exception; NR-7 does not depend on the Supabase decision
-either. See `NATIONAL_ROLLOUT_EXECUTION_PLAN.md` and
-`CURRENT_EXECUTION_STATE.md` for full detail.
+**Next national sprint:** NR-10, Student Fail-Closed Curriculum Routing.
+NR-3, NR-6, NR-7, and NR-8 are all COMPLETE and merged. NR-4/NR-5 (k6 load
+proofs) are explicitly deferred on Supabase Pro budget, not abandoned. NR-9
+is PARTIAL: its DB-layer AuditLog immutability deliverable is done and
+live-verified in production; its external-pen-test deliverable is deferred
+pending a real vendor engagement (see the NR-9 row below). See
+`NATIONAL_ROLLOUT_EXECUTION_PLAN.md` and `CURRENT_EXECUTION_STATE.md` for
+full detail.
 
 ## Authority and maintenance
 
@@ -56,7 +57,7 @@ order and do not skip the first pending sprint.
 | NR-6 Middleware Portal Hardening | **COMPLETE (2026-08-01, PR #70).** Started out of sequence, ahead of NR-4/NR-5, as a user-directed budget-driven reorder (see NR-4 row). Audited all 226 routes under `app/api/admin/`/`app/api/platform/`; found zero unprotected routes (every route already enforces real authorization, some via record-scoped service-layer checks where the legitimate role varies per record). Added an authentication-only backstop in `middleware.ts` for `/api/admin/*`/`/api/platform/*` (deliberately not role-gated, to avoid breaking legitimate non-ADMIN flows like a TEACHER approving a TEACHER-scoped item) plus 5 integration tests. See `project_nr6_middleware_portal_hardening.md` in session memory. |
 | NR-7 Systematic Tenant Access Guard | **VALID.** Existing tenant controls do not replace the required route-wide IDOR audit. |
 | NR-8 RBAC Expansion + SSO Fix | **VALID.** Governance/export permission audit and school-assignment SSO gate remain. |
-| NR-9 Audit Immutability + Pen Test | **VALID.** Database-layer append-only enforcement and external penetration testing remain. |
+| NR-9 Audit Immutability + Pen Test | **PARTIAL, 2026-08-01.** Database-layer append-only enforcement is DONE and live-verified in production (triggers confirmed active via direct Postgres query, not just trusted from the commit). External penetration testing remains — see the standing external-action item below. |
 | NR-10 Student Fail-Closed Curriculum Routing | **VALID.** Approved-only routing must be proven across every student content path. |
 | NR-11 MOE Published Backlog Approval | **VALID.** Requires fresh production backlog counts and MOE approval evidence. |
 | NR-12 Critical Grade Deserts | **VALID.** Requires live coverage evidence for Grades 2 and 9. |
@@ -181,6 +182,7 @@ against the current repository where local evidence was available.
 
 | Item | Reconciled status |
 |---|---|
+| External penetration test (NR-9 deliverable 2) | **VALID EXTERNAL ACTION, new 2026-08-01.** DB-layer audit-log immutability (NR-9's other deliverable) is done and live-verified. This one genuinely requires engaging a real third-party pen-testing vendor — not something an engineering session can perform. A scope brief already exists at `docs/security/PEN_TEST_BRIEF.md` (drafted 2026-05-22, grey-box web app test, P0/P1/P2 attack surface, demo accounts, known-fixed-issues list) and is ready to hand to a vendor as-is; review it for currency before sending, since it references NR-6/NR-8 fixes by name and should be re-checked against whatever has shipped since. Once a vendor returns findings, remediate CRITICAL/HIGH and record the remediation table in `docs/MOE_PRODUCTION_CERTIFICATION.md` per the gate. User explicitly deferred this 2026-08-01 rather than have it block NR-9's closure. |
 | Production pooled `DATABASE_URL` verification | **DONE / VERIFIED 2026-07-30.** Confirmed `aws-1-us-east-2.pooler.supabase.com:6543` with `pgbouncer=true` via a `vercel env pull --environment=production` snapshot (`.env.production`, pulled 2026-06-01) cross-checked against the Vercel project's env-var metadata (`GET /v9/projects/.../env`, dumped 2026-07-23): the production `DATABASE_URL` variable's `createdAt` equals `updatedAt` at 2026-05-19T17:12:51Z (the day after NR-1's completion date) with no update since, and no later change is possible without moving that timestamp. `DIRECT_URL` correctly targets the unpooled host on 5432. No live-today API pull was possible — the stored `VERCEL_TOKEN` in `.env.local` returns `invalidToken` on every REST call and the Vercel CLI is not installed; see the new operational item below. |
 | Vercel REST API token is dead | **VALID.** `VERCEL_TOKEN` in `.env.local` (the one a 2026-07 session added "for future Vercel API access") is revoked/expired — every `api.vercel.com` call returns `{"error":{"invalidToken":true}}`. The Vercel MCP plugin tools still work (separate OAuth), covering projects/deployments/logs, but not encrypted env-var *values*. Generate a fresh token and update `.env.local` before relying on direct API/CLI env pulls again. |
 | Whisper Mode release | **VALID.** Keep the feature flag disabled until deliberate approval and a real device with an active push subscription receives delivery. |
