@@ -485,6 +485,49 @@ load, which a short validation window cannot surface.
 specifically (not just concurrency at a point in time) before attempting
 another production run.
 
+### Sustained-load diagnosis at fixed low concurrency (2026-08-01) — clean, but rules out only one variable
+
+Follow-up diagnostic, run through the same kill-switch supervisor, targeting
+the "sustained duration alone" variable specifically. Used a fresh, never-
+touched 300-token slice (`load-tests/fixtures/student-tokens.json` indices
+1400-1700) at fixed batch size 3 (matching `MAX_CONCURRENT_DB_FALLBACKS=3`),
+run alongside `scripts/load-test-kill-switch/db-connection-poller.ts` polling
+real `pg_stat_activity` every 15s.
+
+**Result: no abort, no degradation.** 100 batches / 300 requests over 105.8s:
+p95=1.29s, max=2.92s, 0% errors, no upward trend from batch 1 through batch
+100 (values oscillate ~700ms-1.3s throughout). DB connections stayed flat at
+total=16 (active=1) during the run, settling to total=13 afterward — no
+buildup, no pressure.
+
+**Conclusion: sustained duration alone, at low fixed concurrency, does not
+reproduce the 15s+ p95 seen in the real pre-warm abort.** This diagnostic
+only isolated one variable (duration without real concurrency) and found it
+clean — it does not clear the platform, since the real 1,000-VU run generates
+concurrency this diagnostic never approached.
+
+**Real root cause candidate found, verified live (2026-08-01):** Supabase
+organization "Farquema" (owns the active `liberia-learn-db` project,
+`bnphuinpvgpmebcsvmsp`) is confirmed on the **free** plan via
+`get_organization` — not Pro. This had not been checked before; prior
+investigation confirmed Vercel's plan tier but never Supabase's. A free-tier
+Postgres instance runs on small shared-CPU compute with tight connection/
+pooler ceilings, which would explain the evidence better than either prior
+hypothesis:
+- Explains why `MAX_CONCURRENT_DB_FALLBACKS` retuning (PR #68, grounded in a
+  live-queried `max_connections=60` — itself likely a free-tier default) did
+  not fix NR-4.
+- Explains why this session's low-concurrency (3) diagnostic looked
+  completely healthy while the real 1,000-VU run degraded severely — free-tier
+  compute handles light load fine; it's real concurrent load that would
+  saturate shared CPU/pooler capacity in a way this diagnostic never
+  generated.
+
+**Not yet done:** no Supabase Pro upgrade has been made, and no diagnostic
+combining sustained duration *with* meaningful (not full 1,000-VU) concurrency
+has been run to confirm this candidate directly. Both are open next steps,
+not completed work.
+
 ---
 
 ## National Rollout — NR-5 (5K VU peak + 200 VU AI burst)

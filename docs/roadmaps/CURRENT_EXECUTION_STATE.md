@@ -109,10 +109,31 @@ Live execution tracking for the final closeout program.
   `/api/health` 200 before and after, DB connections 1 active/17 total (of
   60) post-abort, no residual pressure. Full detail in
   `docs/LOAD_TEST_RESULTS.md`.
-- **Next national sprint:** investigate the sustained-duration degradation
-  mechanism (distinct from the concurrency-at-a-point-in-time mechanism
-  already ruled adequately understood) before attempting NR-4 a third time.
-  Do not attempt NR-5 until NR-4 genuinely passes.
+- **NR-4 investigation update (2026-08-01):** a sustained-load diagnosis at
+  fixed low concurrency (300 fresh tokens, batch size 3, ~106s, through the
+  kill-switch) came back clean — p95 1.29s, no degradation trend, DB
+  connections flat. This rules out "duration alone at low concurrency" but
+  not the real 1,000-VU concurrency level. Separately, **Supabase org
+  "Farquema" (owns `liberia-learn-db`) was confirmed live to be on the
+  **free** plan**, not Pro — this had never been checked before (only
+  Vercel's tier was confirmed). Free-tier Postgres compute/pooler limits are
+  now the leading root-cause candidate for NR-4's degradation, better fitting
+  the evidence than the prior `MAX_CONCURRENT_DB_FALLBACKS` framing. Not yet
+  done: no Pro upgrade, no diagnostic combining sustained duration with real
+  concurrency. See `docs/LOAD_TEST_RESULTS.md` for full detail.
+- **NR-4 explicitly deferred on budget, not abandoned (2026-08-01).** User
+  does not currently have budget for the Supabase Pro upgrade, the leading
+  root-cause candidate identified 2026-08-01. Rather than idle, user
+  directed a deliberate reorder: skip ahead to NR-6 (Security phase) now,
+  come back to NR-4 once funded. This is a documented, user-approved
+  exception to the standing "do not skip sprints" rule, not a silent skip.
+  **NR-5 remains blocked on NR-4 passing** — the reorder covers NR-6 only,
+  per the plan's own "NR-5 before NR-4: not allowed" rule, which this
+  exception does not touch. Do not resume NR-5 or NR-4 attempt #3 without
+  re-confirming the budget situation with the user.
+- **Next national sprint: NR-6 — Middleware Portal Hardening**, started
+  2026-08-01 under the exception above. See `NATIONAL_ROLLOUT_EXECUTION_PLAN.md`
+  sprint index and Parallel work rules table for the corresponding entries.
 - **Teaching Runtime v1:** all 16 tasks merged to `main` at `61bc3279`;
   production remains disabled until deliberate release approval and
   real-device Whisper push verification

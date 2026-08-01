@@ -29,9 +29,9 @@ This plan governs the path from **current production baseline** to **world-class
 | NR-9.5 | Child Safety Hardening (Safeguarding Alerting + AI Moderation Audit) | 2 (executed early) | Security | COMPLETE | PASS (2026-07-30, commits f8c9529b..72e5c8c6, merged via PR #62) |
 | NR-9.6 | Grading Surface Moderation Audit | 2 (executed early) | Security | COMPLETE | PASS (2026-07-30) |
 | NR-3 | Load-Test Identity Pool | 0 | Scale | COMPLETE | PASS (2026-07-31, prisma generate/tsc/vitest 4441 tests-541 files/build all PASS, real production dry-run evidence in `docs/LOAD_TEST_RESULTS.md`) |
-| NR-4 | k6 Moderate (1K VU) Production Proof | 1 | Scale | FAIL | FAIL x2 (2026-07-31). Run 1: p95 19.97s vs <2000ms target. Run 2 (after `MAX_CONCURRENT_DB_FALLBACKS` re-tune + pre-warm broadening, PR #68): aborted by the new kill-switch (PR #67) during pre-warm itself, p95 15.2s sustained 60s, never reached the timed scenario. Sustained-duration degradation mechanism not yet understood; see `docs/LOAD_TEST_RESULTS.md`. |
-| NR-5 | k6 Peak (5K VU) + AI Burst Gate | 1 | Scale | PENDING | NOT RUN |
-| NR-6 | Middleware Portal Hardening | 2 | Security | PENDING | NOT RUN |
+| NR-4 | k6 Moderate (1K VU) Production Proof | 1 | Scale | FAIL / BLOCKED (budget) | FAIL x2 (2026-07-31). Run 1: p95 19.97s vs <2000ms target. Run 2 (after `MAX_CONCURRENT_DB_FALLBACKS` re-tune + pre-warm broadening, PR #68): aborted by the new kill-switch (PR #67) during pre-warm itself, p95 15.2s sustained 60s, never reached the timed scenario. Sustained-duration degradation mechanism not yet understood; see `docs/LOAD_TEST_RESULTS.md`. Leading root-cause candidate is Supabase free-tier compute/pooler limits (confirmed 2026-08-01, org "Farquema" is not on Pro). **2026-08-01: explicitly deferred, not abandoned** — user does not currently have budget for the Supabase Pro upgrade. Re-attempt once funded. |
+| NR-5 | k6 Peak (5K VU) + AI Burst Gate | 1 | Scale | PENDING (blocked on NR-4) | NOT RUN. Still cannot start until NR-4 genuinely passes, per this plan's own parallel-work rule ("NR-5 before NR-4" = not allowed). Unaffected by the NR-4 budget deferral below. |
+| NR-6 | Middleware Portal Hardening | 2 | Security | PENDING (started out of sequence) | NOT RUN. **2026-08-01: deliberately started ahead of NR-4/NR-5**, a documented reorder, not a skip — see `CURRENT_EXECUTION_STATE.md` Resume block for the reasoning (NR-4 blocked on Supabase Pro budget, no reason to idle Security-phase work while funds are pending). |
 | NR-7 | Systematic Tenant Access Guard | 2 | Security | PENDING | NOT RUN |
 | NR-8 | RBAC Expansion + SSO Onboarding Fix | 2 | Security | PENDING | NOT RUN |
 | NR-9 | Audit Immutability + Pen Test Remediation | 2 | Security | PENDING | NOT RUN |
@@ -430,6 +430,7 @@ feat: NR-[N] complete — [sprint name]
 | NR-6 + NR-10 (different files) | New labs/features during Phase 1 |
 | NR-11 (MOE ops) + NR-15 | NR-21 before NR-4 and NR-13 |
 | NR-18 + NR-14 after NR-10 | Skip pen test (NR-9) |
+| NR-6 while NR-4 is budget-blocked (2026-08-01, user-directed exception — see `CURRENT_EXECUTION_STATE.md`) | NR-21 still requires NR-4/NR-5 PASS regardless of this exception |
 
 ---
 
