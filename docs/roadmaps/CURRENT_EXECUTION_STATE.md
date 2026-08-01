@@ -259,8 +259,44 @@ Live execution tracking for the final closeout program.
   remediation table. **User-confirmed 2026-08-01: defer deliverable 2 as a
   standing external-action backlog item (see `CONSOLIDATED_BACKLOG.md`),
   close NR-9 for engineering purposes.**
-- **Next national sprint: NR-10 — Student Fail-Closed Curriculum Routing.**
-  Not started as of this note.
+- **NR-10 — Student Fail-Closed Curriculum Routing: COMPLETE (2026-08-01), not
+  yet pushed/merged.** Branch `feat/nr-10-curriculum-routing`, commit
+  `83c86dbc`. Investigation found most of this sprint's deliverables already
+  existed from a `2026-05-23` pre-plan commit (`775b59bb`, same pattern as the
+  May 22 pre-plan work found during NR-7/NR-8/NR-9): the student
+  work-detail route (`/api/student/work/[scheduledWorkId]`) already
+  fail-closes on content status with an explicit comment and 4 passing
+  tests; the lesson catalog (`/api/student/lessons`) already scopes its
+  `curriculumContent` query to `{ in: ["published", "APPROVED"] }`; and the
+  admin/MOE coverage API (`/api/admin/curriculum/coverage`) already computes
+  the full grade x subject matrix, gated by a `CURRICULUM_COVERAGE_VIEW`
+  permission held by `ADMIN`/`MOE_OFFICIAL`/`MOE_SUPER_ADMIN`, with real
+  dashboard pages at `/admin/curriculum/coverage` and
+  `/moe/curriculum/coverage`. The one real gap the pre-plan commit missed:
+  `/api/student/today`'s own `scheduledWork.findMany` queries (both the
+  current-day and 14-day catch-up windows) never filtered on
+  `content.status` at all, so a scheduled lesson backed by DRAFT,
+  NEEDS_REVIEW, or pending_approval content would still render as a Today
+  card (title/subject/grade visible) even though opening it correctly
+  404'd via the already-fixed work-detail route. Fixed by adding
+  `content: { status: { in: ["published", "APPROVED"] } }` to both
+  `scheduledWork.findMany` where-clauses in
+  `app/api/student/today/route.ts`, matching the existing convention used
+  by every other student-facing route. Verified live in production via
+  direct Postgres query (`mcp__claude_ai_Supabase__execute_sql` against
+  project `bnphuinpvgpmebcsvmsp`) that all 5 `CurriculumContent.status`
+  values actually in use are `APPROVED` (1052), `published` (37), `DRAFT`
+  (10), `pending_approval` (2), `NEEDS_REVIEW` (1) — confirming the fix's
+  allow-list matches real data rather than an assumed enum. Added
+  regression tests: 2 new tests in `__tests__/timetable/todayEndpoint.test.ts`
+  asserting both scheduledWork queries scope to the 2-item approved
+  allow-list and that a draft-content row is filtered out of the response
+  `items`, plus a new `__tests__/nr10.fail-closed-curriculum-routing.test.ts`
+  locking in the lesson catalog's existing filter with the same pattern.
+  Gate: prisma generate PASS, tsc PASS, vitest 4,492 tests / 544 files PASS
+  (baseline 4,488/543, +4 new), build PASS, zero schema changes. Not yet
+  pushed to remote or opened as a PR; a human still needs to review and
+  merge per standing branch discipline.
 - **Follow-up backlog item from NR-7:** school-level AI agent cost/usage
   visibility for school ADMINs is now zero (previously a real cross-school
   leak, correctly closed). If wanted as a real feature, needs a schema
