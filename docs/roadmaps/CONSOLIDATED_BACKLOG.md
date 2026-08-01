@@ -1,10 +1,14 @@
 # LiberiaLearn Consolidated Backlog
 
 **Status:** Canonical project-wide backlog  
-**Reconciled:** 2026-07-30  
-**Next national sprint:** NR-3, Load-Test Identity Pool. NR-9.5 (Child Safety
-Hardening) and NR-9.6 (Grading Surface Moderation Audit) are both COMPLETE —
-NR-9.5 merged (PR #62), NR-9.6 pushed and gated, pending its own merge.
+**Reconciled:** 2026-08-01  
+**Next national sprint:** NR-7, Systematic Tenant Access Guard. NR-3
+(Load-Test Identity Pool) and NR-6 (Middleware Portal Hardening) are both
+COMPLETE. NR-4/NR-5 (k6 load proofs) are explicitly deferred on Supabase Pro
+budget, not abandoned — NR-6 was deliberately reordered ahead of them as a
+user-approved exception; NR-7 does not depend on the Supabase decision
+either. See `NATIONAL_ROLLOUT_EXECUTION_PLAN.md` and
+`CURRENT_EXECUTION_STATE.md` for full detail.
 
 ## Authority and maintenance
 
@@ -49,7 +53,7 @@ order and do not skip the first pending sprint.
 | NR-3 Load-Test Identity Pool | **VALID — next sprint.** `DATABASE_URL` pooling already verified 2026-07-30 (see below); no longer a blocker. |
 | NR-4 k6 Moderate 1K VU | **VALID — blocked by NR-3.** No production 1K-VU proof is recorded. |
 | NR-5 k6 Peak 5K VU + AI Burst | **VALID — blocked by NR-4.** No peak or AI-burst proof is recorded. |
-| NR-6 Middleware Portal Hardening | **VALID.** Formal portal-wide middleware gate remains outstanding. |
+| NR-6 Middleware Portal Hardening | **COMPLETE (2026-08-01, PR #70).** Started out of sequence, ahead of NR-4/NR-5, as a user-directed budget-driven reorder (see NR-4 row). Audited all 226 routes under `app/api/admin/`/`app/api/platform/`; found zero unprotected routes (every route already enforces real authorization, some via record-scoped service-layer checks where the legitimate role varies per record). Added an authentication-only backstop in `middleware.ts` for `/api/admin/*`/`/api/platform/*` (deliberately not role-gated, to avoid breaking legitimate non-ADMIN flows like a TEACHER approving a TEACHER-scoped item) plus 5 integration tests. See `project_nr6_middleware_portal_hardening.md` in session memory. |
 | NR-7 Systematic Tenant Access Guard | **VALID.** Existing tenant controls do not replace the required route-wide IDOR audit. |
 | NR-8 RBAC Expansion + SSO Fix | **VALID.** Governance/export permission audit and school-assignment SSO gate remain. |
 | NR-9 Audit Immutability + Pen Test | **VALID.** Database-layer append-only enforcement and external penetration testing remain. |
@@ -196,6 +200,7 @@ against the current repository where local evidence was available.
 | Teacher lesson-editor LaTeX support | **DEFERRED V2.** Core TipTap editing is built; math authoring is not. |
 | External outcome/pathway integrations | **DEFERRED / PARTNER-GATED.** Current pathway connectors remain placeholders. |
 | Training V2 persistent badges and individual adoption analytics | **DEFERRED PRODUCT OPTIONS.** Not part of the current mandatory training scope. |
+| Upstash Redis credentials missing on Vercel Preview environment | **VALID, new 2026-08-01 (found during NR-6).** `UPSTASH_REDIS_REST_URL`/`UPSTASH_REDIS_REST_TOKEN` are set in production but not on Preview, so the deliberate rate-limiter hard-fail (`lib/rateLimit.ts`, NR-0/NR-1's Upstash hard-fail control, working as designed) blocks all login on every PR preview deployment — confirmed live on PR #70's preview URL, unrelated to that PR's own change. This made a genuine pre-merge authenticated-flow walkthrough impossible for NR-6; the gap was covered instead with targeted unit tests plus a full code audit, which was accepted as sufficient this once, but should not become the standing substitute. Add Upstash credentials to the Preview environment (same values as production, or a dedicated preview-scoped Upstash database for isolation) before the next sprint that needs to verify an authenticated flow pre-merge — this project's real bugs have repeatedly only surfaced via an actual login and click-through, not tests alone (see e.g. NR-9.5/NR-9.6's live-walkthrough findings). |
 
 ## Completed or explicitly resolved memory notes
 
