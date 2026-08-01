@@ -1,11 +1,12 @@
 /** POST /api/admin/agents/[name]/toggle — set the runtime kill-switch override. */
 import { NextRequest, NextResponse } from "next/server";
-import { requireAgentAdmin, agentAdminStatus } from "@/lib/agents/admin/guard";
+import { requirePlatformAdmin } from "@/lib/auth";
+import { agentAdminStatus } from "@/lib/agents/admin/guard";
 import { setAgentControl } from "@/lib/agents/control";
 
 export async function POST(req: NextRequest, ctx: { params: Promise<{ name: string }> }) {
   try {
-    const user = await requireAgentAdmin();
+    const user = await requirePlatformAdmin();
     const { name } = await ctx.params;
     const body = await req.json().catch(() => ({}));
     // enabled: true | false | null (null clears the override → defer to env flag)

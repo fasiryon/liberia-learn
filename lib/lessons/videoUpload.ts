@@ -40,10 +40,14 @@ export function lessonVideoStoragePath(input: {
 }
 
 export function canManageLessonVideo(input: {
-  user: { id: string; role: string };
-  video: { uploadedBy: string };
+  user: { id: string; role: string; schoolId?: string | null; isPlatformAdmin?: boolean };
+  video: { uploadedBy: string; schoolId?: string | null };
 }) {
-  return input.user.role === "ADMIN" || input.video.uploadedBy === input.user.id;
+  if (input.video.uploadedBy === input.user.id) return true;
+  if (input.user.isPlatformAdmin) return true;
+  if (input.user.role !== "ADMIN") return false;
+  // ADMIN may only manage videos uploaded within their own school's tenant.
+  return Boolean(input.user.schoolId) && input.user.schoolId === input.video.schoolId;
 }
 
 export function selectActiveLessonVideo<T extends { isActive: boolean; uploadedAt: Date | string }>(

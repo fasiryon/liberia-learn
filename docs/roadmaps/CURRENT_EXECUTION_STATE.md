@@ -152,13 +152,48 @@ Live execution tracking for the final closeout program.
   reason (Vercel Preview has no Upstash Redis env vars, so the rate-limiter's
   deliberate hard-fail blocks all preview login) — logged as its own backlog
   item in `CONSOLIDATED_BACKLOG.md`, not fixed under NR-6's scope.
-- **Next national sprint: NR-7 — Systematic Tenant Access Guard.** Also does
-  not depend on the Supabase Pro decision. User has flagged it as worth
-  prioritizing given this project's repeated history of tenant-scoping bugs
-  surfacing only after the fact (Sprint 6.2's `/admin/agents` Escalations
-  tab, logged elsewhere in this doc's history) — a systematic route-wide
-  audit is the proactive version of that same fix. Not started as of this
-  note.
+- **NR-7 — Systematic Tenant Access Guard: COMPLETE (2026-08-01), not yet
+  pushed/merged.** Branch `feat/nr-7-tenant-guard`, commit `37f9c5f9`.
+  Discovered `lib/tenant/assert-school-access.ts` (`assertSchoolAccess`/
+  `checkSchoolAccess`) already existed from a May 22 pre-plan commit but was
+  applied to only 3 routes; reused it rather than building a new guard.
+  Re-ran the existing regex-based audit script (`scripts/audit-school-isolation.ts`)
+  fresh: 549 total API routes, 109 HIGH/MEDIUM-flagged candidates within
+  `app/api/{student,teacher,admin}/` (out of 367 in that scope). All 109
+  were read and triaged for real (not just the heuristic) via three parallel
+  read-only investigations, one per directory. Most were false positives
+  (real auth/ownership checks present under differently-named helpers, or
+  queries self-scoped to the session user with no client-supplied
+  cross-tenant ID ever trusted). Found and fixed 3 genuine cross-tenant
+  gaps: (1) `canManageLessonVideo` let any school's ADMIN manage/delete
+  another school's lesson video by ID, plus the sibling GET listing leaked
+  every school's videos for a shared lesson to any ADMIN; (2)
+  `admin/ops/optimization/change-requests/[id]/post-change-eval` GET had no
+  tenant check at all (not even a role check) - any authenticated user of
+  any role could read another school's evaluation plan by guessing the ID,
+  unlike every sibling route on the same resource; (3)
+  `admin/agents/{cost,goals,triggers,route,[name]/toggle}` let any school
+  ADMIN see platform-wide per-user AI spend and flip the platform-wide
+  agent kill switch, because the underlying models (AgentInvocation/
+  AgentGoal/AgentControl/AgentCostAccounting) have no schoolId column at
+  all - switched those 5 routes to `requirePlatformAdmin()` rather than
+  attempting a schema-level per-school retrofit, which would be
+  disproportionate to this fix. Extended the
+  `growth.tenant-isolation.test.ts` / `school-isolation.test.ts` pattern
+  with 20 new tests covering ~26 distinct routes (comfortably past the
+  plan's min-20 bar), mixing full route-level regression tests for the 3
+  fixes above with unit tests against the shared `resolveScopeParams` /
+  `forecastScopeForUser` functions that back the admin/ops and
+  admin/training surfaces. Gate: prisma generate PASS, tsc PASS, vitest
+  4,466 tests / 542 files PASS (baseline 4,446/541), build PASS, zero
+  schema changes. **Scope caveat:** the ~258 routes the audit script
+  marked OK (contains a literal `schoolId` reference) were not
+  individually re-read line-by-line - only the 109 flagged candidates
+  received a full manual trace. Not yet pushed to remote or opened as a
+  PR; a human still needs to review and merge per standing branch
+  discipline.
+- **Next national sprint: NR-8 — RBAC Expansion + SSO Onboarding Fix.**
+  Not started as of this note.
 - **Teaching Runtime v1:** all 16 tasks merged to `main` at `61bc3279`;
   production remains disabled until deliberate release approval and
   real-device Whisper push verification

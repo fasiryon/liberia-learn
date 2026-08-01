@@ -1,13 +1,14 @@
 /** GET /api/admin/agents/goals — goal browser (filter by status, default OPEN+IN_PROGRESS+paused). */
 import { NextRequest, NextResponse } from "next/server";
-import { requireAgentAdmin, agentAdminStatus } from "@/lib/agents/admin/guard";
+import { requirePlatformAdmin } from "@/lib/auth";
+import { agentAdminStatus } from "@/lib/agents/admin/guard";
 import { prisma } from "@/lib/db";
 
 const OPEN_STATUSES = ["OPEN", "IN_PROGRESS", "PAUSED_FOR_HUMAN", "PAUSED_FOR_SCHEDULE"];
 
 export async function GET(req: NextRequest) {
   try {
-    await requireAgentAdmin();
+    await requirePlatformAdmin();
     const status = new URL(req.url).searchParams.get("status");
     const where = status
       ? status === "all"

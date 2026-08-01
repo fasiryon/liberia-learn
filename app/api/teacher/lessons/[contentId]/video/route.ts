@@ -164,7 +164,11 @@ export async function GET(
     const videos = await prisma.lessonVideo.findMany({
       where: {
         lessonId: params.contentId,
-        uploadedBy: user.role === "ADMIN" ? undefined : user.id,
+        ...(user.isPlatformAdmin
+          ? {}
+          : user.role === "ADMIN"
+            ? { schoolId: user.schoolId }
+            : { uploadedBy: user.id }),
       },
       orderBy: { uploadedAt: "desc" },
       select: {

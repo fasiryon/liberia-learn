@@ -145,8 +145,20 @@ export async function createPostChangeEvaluationPlan(input: {
   return evalPlan;
 }
 
-export async function getPostChangeEvaluationPlan(changeRequestId: string) {
-  return (prisma as any).postChangeEvaluationPlan.findUnique({ where: { changeRequestId } });
+export async function getPostChangeEvaluationPlan(changeRequestId: string, actor: EvalActor) {
+  const evalPlan = await (prisma as any).postChangeEvaluationPlan.findUnique({
+    where: { changeRequestId },
+    include: { changeRequest: { select: { schoolId: true } } },
+  });
+  if (!evalPlan) return null;
+
+  const schoolId = evalPlan.changeRequest?.schoolId ?? null;
+  if (!actor.isPlatformAdmin && !(schoolId && actor.role === "ADMIN" && actor.schoolId === schoolId) && actor.role !== "MOE_OFFICIAL") {
+    throw Object.assign(new Error("Forbidden"), { status: 403 });
+  }
+
+  const { changeRequest, ...plan } = evalPlan;
+  return plan;
 }
 
 export async function recordPostChangeMetrics(input: {

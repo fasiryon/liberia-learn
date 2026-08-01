@@ -24,7 +24,7 @@ export default async function ChangeRequestDetailPage({ params }: { params: { ch
   const changeRequest = await getChangeRequest({ id: params.changeRequestId, actor: user });
   const [rolloutPlan, evalPlan] = await Promise.all([
     getRolloutPlan(params.changeRequestId),
-    getPostChangeEvaluationPlan(params.changeRequestId),
+    getPostChangeEvaluationPlan(params.changeRequestId, user),
   ]);
 
   const signoffs: any[] = changeRequest.signoffs ?? [];

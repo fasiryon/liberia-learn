@@ -59,11 +59,19 @@ describe("lesson video upload validation", () => {
     expect(path).toContain("lessons/lesson-1/");
   });
 
-  it("allows only the uploading teacher or an admin to manage a video", () => {
-    const video = { uploadedBy: "teacher-1" };
+  it("allows only the uploading teacher or a same-school admin to manage a video", () => {
+    const video = { uploadedBy: "teacher-1", schoolId: "school-1" };
     expect(canManageLessonVideo({ user: { id: "teacher-1", role: "TEACHER" }, video })).toBe(true);
     expect(canManageLessonVideo({ user: { id: "teacher-2", role: "TEACHER" }, video })).toBe(false);
-    expect(canManageLessonVideo({ user: { id: "admin-1", role: "ADMIN" }, video })).toBe(true);
+    expect(
+      canManageLessonVideo({ user: { id: "admin-1", role: "ADMIN", schoolId: "school-1" }, video })
+    ).toBe(true);
+    expect(
+      canManageLessonVideo({ user: { id: "admin-2", role: "ADMIN", schoolId: "school-2" }, video })
+    ).toBe(false);
+    expect(
+      canManageLessonVideo({ user: { id: "platform-1", role: "ADMIN", isPlatformAdmin: true }, video })
+    ).toBe(true);
   });
 
   it("selects only the latest active video for students", () => {
