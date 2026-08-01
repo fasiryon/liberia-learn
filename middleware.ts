@@ -45,6 +45,23 @@ export async function middleware(req: NextRequest) {
     return NextResponse.next();
   }
 
+  // /api/admin/* and /api/platform/* authentication backstop. This is
+  // deliberately authentication-only, not role-gated: unlike the page
+  // routes below, several of these API routes are legitimately callable by
+  // non-ADMIN/non-platform-admin roles (e.g. a TEACHER approving a
+  // TEACHER-scoped item via lib/autonomous/actions/approvalDecisionService.ts),
+  // with the correct, sometimes record-scoped, authorization already
+  // enforced inside each route/service. A blanket role gate here would
+  // silently break those flows. Checked before isPublicPath below so a
+  // future PUBLIC_PATHS edit can't accidentally exempt this namespace.
+  if (pathname.startsWith("/api/admin/") || pathname.startsWith("/api/platform/")) {
+    const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
+    if (!token) {
+      return NextResponse.json({ ok: false, error: "Unauthorized" }, { status: 401 });
+    }
+    return NextResponse.next();
+  }
+
   // Protected portals. Single getToken call.
   // /moe/* requires MOE_OFFICIAL or isPlatformAdmin.
   // /admin/* requires ADMIN or isPlatformAdmin.
