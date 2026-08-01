@@ -11,7 +11,14 @@ const resolveEscalation = vi.fn();
 const isEscalationInSchool = vi.fn();
 const goalFindMany = vi.fn();
 
-vi.mock("@/lib/auth", () => ({ requireUser: (...a: unknown[]) => requireUser(...a) }));
+vi.mock("@/lib/auth", () => ({
+  requireUser: (...a: unknown[]) => requireUser(...a),
+  requirePlatformAdmin: async (...a: unknown[]) => {
+    const user = await requireUser(...a);
+    if (!user.isPlatformAdmin) throw Object.assign(new Error("Forbidden - platform admin required"), { status: 403 });
+    return user;
+  },
+}));
 vi.mock("@/lib/db", () => ({ prisma: { agentGoal: { findMany: (...a: unknown[]) => goalFindMany(...a) } } }));
 vi.mock("@/lib/agents/admin/stats", () => ({
   listAgentsWithStats: (...a: unknown[]) => listAgentsWithStats(...a),
@@ -35,6 +42,7 @@ import { GET as escGET } from "@/app/api/admin/agents/escalations/route";
 import { PATCH as escPATCH } from "@/app/api/admin/agents/escalations/[id]/route";
 
 const admin = { id: "a1", role: "ADMIN", schoolId: "s1", isPlatformAdmin: false };
+const platformAdmin = { id: "pa1", role: "ADMIN", schoolId: null, isPlatformAdmin: true };
 const student = { id: "s2", role: "STUDENT", schoolId: "s1", isPlatformAdmin: false };
 
 function jreq(url: string, body?: unknown) {
@@ -68,21 +76,46 @@ describe("agent dashboard routes", () => {
     expect(listAgentsWithStats).not.toHaveBeenCalled();
   });
 
-  it("GET /api/admin/agents returns stats for admins", async () => {
+  it("GET /api/admin/agents denies a school ADMIN (platform-wide data, no per-school scoping exists)", async () => {
+    requireUser.mockResolvedValue(admin);
+    const res = await agentsGET();
+    expect(res.status).toBe(403);
+    expect(listAgentsWithStats).not.toHaveBeenCalled();
+  });
+
+  it("GET /api/admin/agents returns stats for a platform admin", async () => {
+    requireUser.mockResolvedValue(platformAdmin);
     const res = await agentsGET();
     expect(res.status).toBe(200);
     expect((await res.json()).agents).toHaveLength(1);
   });
 
-  it("POST toggle sets the agent control override", async () => {
+  it("POST toggle denies a school ADMIN (platform-wide kill switch)", async () => {
+    requireUser.mockResolvedValue(admin);
+    const res = await togglePOST(jreq("http://x/api/admin/agents/echo/toggle", { enabled: false }), {
+      params: Promise.resolve({ name: "echo" }),
+    });
+    expect(res.status).toBe(403);
+    expect(setAgentControl).not.toHaveBeenCalled();
+  });
+
+  it("POST toggle sets the agent control override for a platform admin", async () => {
+    requireUser.mockResolvedValue(platformAdmin);
     const res = await togglePOST(jreq("http://x/api/admin/agents/echo/toggle", { enabled: false }), {
       params: Promise.resolve({ name: "echo" }),
     });
     expect(res.status).toBe(200);
-    expect(setAgentControl).toHaveBeenCalledWith("echo", false, "a1");
+    expect(setAgentControl).toHaveBeenCalledWith("echo", false, "pa1");
+  });
+
+  it("GET cost / goals deny a school ADMIN (platform-wide data, no per-school scoping exists)", async () => {
+    requireUser.mockResolvedValue(admin);
+    expect((await costGET()).status).toBe(403);
+    expect((await goalsGET(jreq("http://x/api/admin/agents/goals"))).status).toBe(403);
   });
 
   it("GET cost / goals / escalations return their payloads", async () => {
+    requireUser.mockResolvedValue(platformAdmin);
     expect((await costGET()).status).toBe(200);
     const goals = await goalsGET(jreq("http://x/api/admin/agents/goals"));
     expect((await goals.json()).goals).toHaveLength(1);

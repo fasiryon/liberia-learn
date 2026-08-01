@@ -16,7 +16,7 @@ export async function PATCH(
     const isActive = body?.isActive === true;
     const existing = await prisma.lessonVideo.findUnique({
       where: { id: params.videoId },
-      select: { id: true, lessonId: true, uploadedBy: true },
+      select: { id: true, lessonId: true, uploadedBy: true, schoolId: true },
     });
     if (!existing || existing.lessonId !== params.contentId) {
       return NextResponse.json({ error: "Not found" }, { status: 404 });
@@ -52,7 +52,7 @@ export async function DELETE(
 
     const existing = await prisma.lessonVideo.findUnique({
       where: { id: params.videoId },
-      select: { id: true, lessonId: true, uploadedBy: true, storageUrl: true },
+      select: { id: true, lessonId: true, uploadedBy: true, storageUrl: true, schoolId: true },
     });
     if (!existing || existing.lessonId !== params.contentId) {
       return NextResponse.json({ error: "Not found" }, { status: 404 });

@@ -14,7 +14,7 @@ export default async function PostChangeEvalPage({ params }: { params: { changeR
 
   const [changeRequest, evalPlan, rolloutPlan] = await Promise.all([
     getChangeRequest({ id: params.changeRequestId, actor: user }),
-    getPostChangeEvaluationPlan(params.changeRequestId),
+    getPostChangeEvaluationPlan(params.changeRequestId, user),
     getRolloutPlan(params.changeRequestId),
   ]);
 

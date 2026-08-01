@@ -115,11 +115,29 @@ describe("validateLessonVideoFile", () => {
 // ── canManageLessonVideo ──────────────────────────────────────────────────────
 
 describe("canManageLessonVideo", () => {
-  it("ADMIN can manage any video (different uploadedBy)", () => {
+  it("ADMIN can manage a video uploaded within their own school (different uploadedBy)", () => {
     expect(
       canManageLessonVideo({
-        user: { id: "admin-1", role: "ADMIN" },
-        video: { uploadedBy: "teacher-99" },
+        user: { id: "admin-1", role: "ADMIN", schoolId: "school-1" },
+        video: { uploadedBy: "teacher-99", schoolId: "school-1" },
+      })
+    ).toBe(true);
+  });
+
+  it("ADMIN cannot manage a video uploaded in a different school", () => {
+    expect(
+      canManageLessonVideo({
+        user: { id: "admin-1", role: "ADMIN", schoolId: "school-1" },
+        video: { uploadedBy: "teacher-99", schoolId: "school-2" },
+      })
+    ).toBe(false);
+  });
+
+  it("platform admin can manage a video in any school", () => {
+    expect(
+      canManageLessonVideo({
+        user: { id: "platform-1", role: "ADMIN", isPlatformAdmin: true },
+        video: { uploadedBy: "teacher-99", schoolId: "school-2" },
       })
     ).toBe(true);
   });

@@ -8,8 +8,11 @@ export const dynamic = "force-dynamic";
 // GET /api/admin/ops/optimization/change-requests/[changeRequestId]/post-change-eval
 export async function GET(req: NextRequest, { params }: { params: { changeRequestId: string } }) {
   try {
-    await requireUser();
-    const evalPlan = await getPostChangeEvaluationPlan(params.changeRequestId);
+    const user = await requireUser();
+    if (!user.isPlatformAdmin && user.role !== "ADMIN" && user.role !== "MOE_OFFICIAL") {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    }
+    const evalPlan = await getPostChangeEvaluationPlan(params.changeRequestId, user);
     return NextResponse.json({ evalPlan: evalPlan ?? null });
   } catch (error: any) {
     return NextResponse.json({ error: error?.message ?? "Failed to get evaluation plan" }, { status: error?.status ?? 500 });
@@ -27,7 +30,7 @@ export async function POST(req: NextRequest, { params }: { params: { changeReque
       return NextResponse.json({ ok: true, evalPlan });
     }
     if (body.action === "complete") {
-      const existing = await getPostChangeEvaluationPlan(params.changeRequestId);
+      const existing = await getPostChangeEvaluationPlan(params.changeRequestId, user);
       if (!existing) return NextResponse.json({ error: "Post-change evaluation plan not found" }, { status: 404 });
       const result = await completeFeedbackLoop({ evaluationPlanId: existing.id, actorId: user.id });
       return NextResponse.json({ ok: true, result });
