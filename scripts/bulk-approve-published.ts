@@ -1,42 +1,44 @@
 // Approves NEEDS_REVIEW lessons that meet quality thresholds.
 //
-// IMPORTANT (NR-11, 2026-08-02): this is an automated content-quality gate,
-// not a substitute for human/MOE curriculum review. It checks word count,
-// content length, and placeholder titles only — it has no way to judge
-// pedagogical accuracy, cultural appropriateness, or curriculum alignment.
-// Rows it approves carry payload.bulkApproved=true and no approver identity
-// (unlike a real human approval via /api/admin/curriculum/approve, which
-// records approvedByUserId and is written to AuditLog). As of 2026-08-01,
-// roughly 65% of all APPROVED/published content in production (712 of 1,089
-// rows) was approved this way, with zero human review and zero audit trail.
-// Do not treat "APPROVED"/"published" status as evidence of MOE sign-off.
+// IMPORTANT (NR-11, 2026-08-02 -> risk-triage 2026-08-03): this used to be a
+// pure automated content-quality gate with no human involvement at all. It
+// now routes its highest-risk passing candidates to a real human/MOE
+// reviewer instead of auto-approving silently — see
+// docs/superpowers/specs/2026-08-03-curriculum-risk-triage-design.md and
+// lib/curriculum/riskTriage.ts. Everything that still auto-approves is now
+// audit-logged and risk-stamped for the first time (unlike the pre-triage
+// behavior, where 712 of 1,089 APPROVED/published rows carried no approver
+// identity at all).
 //
-// Quality gates (a lesson must pass ALL to be approved):
+// Quality gates (a lesson must pass ALL to be a triage candidate):
 //   1. word count >= grade-band minimum:
 //        G1-G3: 400 words  |  G4-G6: 600 words  |  G7-G12: 800 words
 //   2. Has substantive content (text length >= 200 chars — filters empty shells)
 //   3. Title is not a placeholder ("untitled", "test", "draft", etc.)
 //
-// Sets status → "published" and payload.approvalStatus → "APPROVED" to match
-// the approve route in /api/admin/curriculum/approve.
-//
 // Usage:
-//   # Dry run (shows what would be approved, changes nothing):
+//   # Dry run (shows what would happen, changes nothing):
 //   npx dotenv -e .env.production -- npx tsx scripts/bulk-approve-published.ts --dry-run
 //
 //   # Priority grades first (G5 and G7 have the most critical deserts):
 //   npx dotenv -e .env.production -- npx tsx scripts/bulk-approve-published.ts --grades=5,7
 //
-//   # Approve all passing lessons:
+//   # Run against all passing lessons:
 //   npx dotenv -e .env.production -- npx tsx scripts/bulk-approve-published.ts
 
 if (process.env.DIRECT_URL) {
   process.env.DATABASE_URL = process.env.DIRECT_URL;
 }
 
-import { PrismaClient } from "@prisma/client";
-
-const prisma = new PrismaClient();
+import { prisma } from "@/lib/db";
+import {
+  computeRiskScore,
+  isFirstOfKindCell,
+  isWorthFlagging,
+  getFlaggedCountInWindow,
+  triageAndApprove,
+  WEEKLY_REVIEW_BUDGET,
+} from "@/lib/curriculum/riskTriage";
 
 const PLACEHOLDER_TITLES = [
   "untitled",
@@ -113,6 +115,7 @@ async function main() {
   console.log();
 
   let approved = 0;
+  let flagged = 0;
   let rejected = 0;
   const rejectReasons: string[] = [];
 
@@ -149,35 +152,72 @@ async function main() {
       continue;
     }
 
-    if (!dryRun) {
-      const existingPayload = (lesson.payload as Record<string, unknown>) ?? {};
-      await prisma.curriculumContent.update({
-        where: { contentId: lesson.contentId },
-        data: {
-          status: "published",
-          payload: {
-            ...existingPayload,
-            approvalStatus: "APPROVED",
-            approvedAt: new Date().toISOString(),
-            bulkApproved: true,
-          },
-        },
+    if (dryRun) {
+      // Read-only preview: same scoring/budget logic triageAndApprove uses,
+      // but no writes — mirrors what a real run would decide.
+      const isFirstOfKind = await isFirstOfKindCell(lesson.grade, lesson.subject);
+      const { score, reasons } = computeRiskScore({
+        grade: lesson.grade,
+        subject: lesson.subject,
+        isFirstOfKind,
+        wordCount: words,
+        minWordCount: minWords,
       });
+      const worthFlagging = isWorthFlagging(score);
+      let wouldFlag = false;
+      if (worthFlagging) {
+        const flaggedCount = await getFlaggedCountInWindow().catch(() => WEEKLY_REVIEW_BUDGET);
+        wouldFlag = flaggedCount < WEEKLY_REVIEW_BUDGET;
+      }
+      if (wouldFlag) {
+        flagged++;
+        process.stdout.write(
+          `[WOULD FLAG] G${lesson.grade} ${lesson.subject} — ${lesson.title ?? lesson.contentId} (score ${score}: ${reasons.join(", ")})\n`
+        );
+      } else {
+        approved++;
+        process.stdout.write(
+          `[WOULD APPROVE] G${lesson.grade} ${lesson.subject} — ${lesson.title ?? lesson.contentId} (${words}w, score ${score})\n`
+        );
+      }
+      continue;
     }
 
-    approved++;
-    if (approved <= 20 || approved % 50 === 0) {
-      const action = dryRun ? "WOULD APPROVE" : "APPROVED";
-      process.stdout.write(
-        `[${action}] G${lesson.grade} ${lesson.subject} — ${lesson.title ?? lesson.contentId} (${words}w)\n`
-      );
-    } else if (approved === 21) {
-      process.stdout.write("... (showing every 50th after first 20)\n");
+    const result = await triageAndApprove(
+      {
+        contentId: lesson.contentId,
+        grade: lesson.grade,
+        subject: lesson.subject,
+        payload: (lesson.payload as Record<string, unknown>) ?? {},
+        wordCount: words,
+        minWordCount: minWords,
+      },
+      "system:bulk-approve-published",
+      "published"
+    );
+
+    if (result.action === "flagged") {
+      flagged++;
+      if (flagged <= 20) {
+        process.stdout.write(
+          `[FLAGGED FOR REVIEW] G${lesson.grade} ${lesson.subject} — ${lesson.title ?? lesson.contentId} (score ${result.riskScore}: ${result.riskReasons.join(", ")})\n`
+        );
+      }
+    } else {
+      approved++;
+      if (approved <= 20 || approved % 50 === 0) {
+        process.stdout.write(
+          `[APPROVED] G${lesson.grade} ${lesson.subject} — ${lesson.title ?? lesson.contentId} (${words}w, score ${result.riskScore})\n`
+        );
+      } else if (approved === 21) {
+        process.stdout.write("... (showing every 50th after first 20)\n");
+      }
     }
   }
 
   console.log("\n========= SUMMARY =========");
   console.log(`${dryRun ? "Would approve" : "Approved"}: ${approved}`);
+  console.log(`${dryRun ? "Would flag for review" : "Flagged for review"}: ${flagged}`);
   console.log(`Skipped (below quality gate): ${rejected}`);
 
   if (rejectReasons.length > 0) {
