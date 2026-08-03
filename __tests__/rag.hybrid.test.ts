@@ -12,6 +12,10 @@
 
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
+vi.mock("@/lib/agents/moderation", () => ({
+  moderateText: vi.fn(async () => ({ verdict: "SAFE" })),
+}));
+
 // ─── hoisted mock factories ────────────────────────────────────────────────
 const mockPrismaQueryRaw = vi.hoisted(() => vi.fn());
 const mockRetrieveRelevantChunks = vi.hoisted(() => vi.fn());

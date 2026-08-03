@@ -1,17 +1,21 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 
-const { mockPrisma, mockLogAudit, mockNotifySchoolSafeguarding, mockNotifyPlatformFallback } = vi.hoisted(() => ({
+const { mockPrisma, mockLogAudit, mockLogAuditRequired, mockNotifySchoolSafeguarding, mockNotifyPlatformFallback } = vi.hoisted(() => ({
   mockPrisma: {
     escalationQueue: { findMany: vi.fn() },
     auditLog: { findFirst: vi.fn() },
   },
   mockLogAudit: vi.fn(),
+  mockLogAuditRequired: vi.fn(),
   mockNotifySchoolSafeguarding: vi.fn(),
   mockNotifyPlatformFallback: vi.fn(),
 }));
 
 vi.mock("@/lib/db", () => ({ prisma: mockPrisma }));
-vi.mock("@/lib/audit", () => ({ logAudit: mockLogAudit }));
+vi.mock("@/lib/audit", () => ({
+  logAudit: mockLogAudit,
+  logAuditRequired: mockLogAuditRequired,
+}));
 vi.mock("@/lib/agents/safeguarding/notify", () => ({
   notifySchoolSafeguarding: mockNotifySchoolSafeguarding,
   notifyPlatformSafeguardingFallback: mockNotifyPlatformFallback,
@@ -30,8 +34,20 @@ describe("runSafeguardingSlaCheck", () => {
     mockPrisma.escalationQueue.findMany.mockReset();
     mockPrisma.auditLog.findFirst.mockReset();
     mockLogAudit.mockReset();
+    mockLogAuditRequired.mockReset();
     mockNotifySchoolSafeguarding.mockReset();
     mockNotifyPlatformFallback.mockReset();
+    mockLogAudit.mockResolvedValue(true);
+    mockLogAuditRequired.mockResolvedValue(undefined);
+    mockNotifySchoolSafeguarding.mockResolvedValue({
+      notifiedUserIds: ["admin-1"],
+      intendedUserIds: ["admin-1"],
+      pushDeliveredUserIds: ["admin-1"],
+      fallback: null,
+      delivered: true,
+      failures: [],
+    });
+    mockNotifyPlatformFallback.mockResolvedValue({ ok: true });
     // Default: schoolId resolves, no existing SLA markers.
     mockPrisma.auditLog.findFirst.mockResolvedValue(null);
   });
@@ -41,7 +57,14 @@ describe("runSafeguardingSlaCheck", () => {
 
     const result = await runSafeguardingSlaCheck();
 
-    expect(result).toEqual({ checked: 0, fourHourAlertsSent: 0, twentyFourHourAlertsSent: 0, errors: [] });
+    expect(result).toEqual({
+      checked: 0,
+      fourHourAlertsSent: 0,
+      fourHourAlertsFailed: 0,
+      twentyFourHourAlertsSent: 0,
+      twentyFourHourAlertsFailed: 0,
+      errors: [],
+    });
     expect(mockNotifySchoolSafeguarding).not.toHaveBeenCalled();
     expect(mockNotifyPlatformFallback).not.toHaveBeenCalled();
   });
@@ -74,7 +97,7 @@ describe("runSafeguardingSlaCheck", () => {
     expect(mockNotifySchoolSafeguarding).toHaveBeenCalledTimes(1);
     expect(mockNotifySchoolSafeguarding).toHaveBeenCalledWith("school-1", expect.stringContaining("4 hours"));
     expect(mockNotifyPlatformFallback).not.toHaveBeenCalled();
-    expect(mockLogAudit).toHaveBeenCalledWith(
+    expect(mockLogAuditRequired).toHaveBeenCalledWith(
       expect.objectContaining({ action: "agent.escalation.sla_alert_4h", resourceId: "esc-1", schoolId: "school-1" })
     );
   });
@@ -113,7 +136,7 @@ describe("runSafeguardingSlaCheck", () => {
     expect(mockNotifySchoolSafeguarding).not.toHaveBeenCalled();
   });
 
-  it("still writes the audit marker and does not crash when no schoolId resolves", async () => {
+  it("uses the platform fallback when no schoolId resolves", async () => {
     mockPrisma.auditLog.findFirst.mockResolvedValue(null); // no "agent.escalation" audit row found either
     mockPrisma.escalationQueue.findMany.mockResolvedValue([
       { id: "esc-1", reason: "safeguarding: x", createdAt: hoursAgo(5) },
@@ -123,8 +146,57 @@ describe("runSafeguardingSlaCheck", () => {
 
     expect(result.fourHourAlertsSent).toBe(1);
     expect(mockNotifySchoolSafeguarding).not.toHaveBeenCalled();
-    expect(mockLogAudit).toHaveBeenCalledWith(
+    expect(mockNotifyPlatformFallback).toHaveBeenCalledTimes(1);
+    expect(mockLogAuditRequired).toHaveBeenCalledWith(
       expect.objectContaining({ action: "agent.escalation.sla_alert_4h", schoolId: null })
+    );
+  });
+
+  it("records failure without a success marker so the next run can retry", async () => {
+    mockPrisma.auditLog.findFirst.mockImplementation(async ({ where }: any) => {
+      if (where.action === "agent.escalation") return { schoolId: "school-1" };
+      return null;
+    });
+    mockPrisma.escalationQueue.findMany.mockResolvedValue([
+      { id: "esc-1", reason: "safeguarding: x", createdAt: hoursAgo(5) },
+    ]);
+    mockNotifySchoolSafeguarding.mockResolvedValue({
+      notifiedUserIds: [],
+      intendedUserIds: ["admin-1"],
+      pushDeliveredUserIds: [],
+      fallback: null,
+      delivered: false,
+      failures: [{ channel: "inbox", userId: "admin-1", error: "database down" }],
+    });
+
+    const result = await runSafeguardingSlaCheck();
+
+    expect(result.fourHourAlertsSent).toBe(0);
+    expect(result.fourHourAlertsFailed).toBe(1);
+    expect(mockLogAuditRequired).not.toHaveBeenCalled();
+    expect(mockLogAudit).toHaveBeenCalledWith(
+      expect.objectContaining({ action: "agent.escalation.sla_alert_4h_failed" })
+    );
+  });
+
+  it("requires confirmed platform delivery before marking the 24h tier sent", async () => {
+    mockPrisma.auditLog.findFirst.mockImplementation(async ({ where }: any) => {
+      if (where.action === "agent.escalation") return { schoolId: "school-1" };
+      if (where.action === "agent.escalation.sla_alert_4h") return { id: "marker-4h" };
+      return null;
+    });
+    mockPrisma.escalationQueue.findMany.mockResolvedValue([
+      { id: "esc-1", reason: "safeguarding: x", createdAt: hoursAgo(30) },
+    ]);
+    mockNotifyPlatformFallback.mockResolvedValue({ ok: false, error: "domain not verified" });
+
+    const result = await runSafeguardingSlaCheck();
+
+    expect(result.twentyFourHourAlertsSent).toBe(0);
+    expect(result.twentyFourHourAlertsFailed).toBe(1);
+    expect(mockLogAuditRequired).not.toHaveBeenCalled();
+    expect(mockLogAudit).toHaveBeenCalledWith(
+      expect.objectContaining({ action: "agent.escalation.sla_alert_24h_failed" })
     );
   });
 

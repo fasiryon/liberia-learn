@@ -6,6 +6,7 @@ const mockIsAiTutorEnabled = vi.hoisted(() => vi.fn());
 const mockIsRagTutorEnabled = vi.hoisted(() => vi.fn());
 const mockGetAiBudgetMonthlyCap = vi.hoisted(() => vi.fn());
 const mockRoutedCompletion = vi.hoisted(() => vi.fn());
+const mockModerateText = vi.hoisted(() => vi.fn());
 const mockLogAudit = vi.hoisted(() => vi.fn());
 const mockRecordMetricEvent = vi.hoisted(() => vi.fn());
 const mockAiInteractionLogAggregate = vi.hoisted(() => vi.fn());
@@ -19,6 +20,7 @@ vi.mock("@/lib/serverFlags", () => ({
   isAiTrustIndicatorsEnabled: () => false,
 }));
 vi.mock("@/lib/ai/router", () => ({ routedCompletion: mockRoutedCompletion }));
+vi.mock("@/lib/agents/moderation", () => ({ moderateText: mockModerateText }));
 vi.mock("@/lib/audit", () => ({ logAudit: mockLogAudit }));
 vi.mock("@/lib/metrics/events", () => ({ recordMetricEvent: mockRecordMetricEvent }));
 vi.mock("@/lib/db", () => ({
@@ -72,6 +74,7 @@ beforeEach(async () => {
   mockAiInteractionLogCreate.mockResolvedValue({ id: "log-1" });
   mockLogAudit.mockResolvedValue(undefined);
   mockRecordMetricEvent.mockResolvedValue(undefined);
+  mockModerateText.mockResolvedValue({ verdict: "SAFE" });
   mockRoutedCompletion.mockResolvedValue({
     content: JSON.stringify({
       explanation: "A fraction represents a part of a whole.",
@@ -173,5 +176,29 @@ describe("POST /api/student/tutor", () => {
     expect(body.hadFallback).toBe(true);
     expect(typeof body.explanation).toBe("string");
     expect(body.explanation.length).toBeGreaterThan(0);
+  });
+
+  it("does not call the tutor model when minor input moderation is not SAFE", async () => {
+    mockModerateText.mockResolvedValueOnce({ verdict: "UNCERTAIN", reason: "provider_down" });
+
+    const response = await POST(makeReq());
+    const body = await response.json();
+
+    expect(response.status).toBe(200);
+    expect(body.hadFallback).toBe(true);
+    expect(mockRoutedCompletion).not.toHaveBeenCalled();
+  });
+
+  it("does not expose model output when minor output moderation is not SAFE", async () => {
+    mockModerateText
+      .mockResolvedValueOnce({ verdict: "SAFE" })
+      .mockResolvedValueOnce({ verdict: "UNCERTAIN", reason: "provider_down" });
+
+    const response = await POST(makeReq());
+    const body = await response.json();
+
+    expect(response.status).toBe(200);
+    expect(body.hadFallback).toBe(true);
+    expect(body.explanation).not.toContain("A fraction represents");
   });
 });

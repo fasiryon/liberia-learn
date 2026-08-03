@@ -17,6 +17,21 @@ import { sendPushToUser } from "@/lib/push/sendPush";
 import { sendEmail } from "@/lib/email";
 import { logger } from "@/lib/logger";
 
+export type PlatformSafeguardingDelivery = {
+  ok: boolean;
+  skipped?: true;
+  error?: string;
+};
+
+export type SchoolSafeguardingDelivery = {
+  notifiedUserIds: string[];
+  intendedUserIds: string[];
+  pushDeliveredUserIds: string[];
+  fallback: PlatformSafeguardingDelivery | null;
+  delivered: boolean;
+  failures: Array<{ channel: "inbox" | "push"; userId: string; error: string }>;
+};
+
 /**
  * Email the platform-level safeguarding fallback contact
  * (PLATFORM_SAFEGUARDING_ESCALATION_EMAIL). Used when a school has nobody to
@@ -26,13 +41,17 @@ import { logger } from "@/lib/logger";
  */
 export async function notifyPlatformSafeguardingFallback(
   reason: string
-): Promise<{ ok: boolean; skipped?: true } | null> {
+): Promise<PlatformSafeguardingDelivery> {
   const to = process.env.PLATFORM_SAFEGUARDING_ESCALATION_EMAIL?.trim();
   if (!to) {
     logger.warn("[safeguarding.notify] PLATFORM_SAFEGUARDING_ESCALATION_EMAIL not set, cannot alert platform fallback", {
       reason,
     });
-    return null;
+    return {
+      ok: false,
+      skipped: true,
+      error: "fallback_email_not_configured",
+    };
   }
 
   const subject = "Safeguarding escalation needs attention";
@@ -54,10 +73,16 @@ export async function notifyPlatformSafeguardingFallback(
     });
   }
 
-  return { ok: result.ok };
+  return {
+    ok: result.ok,
+    ...(result.ok ? {} : { error: result.error ?? "fallback_email_failed" }),
+  };
 }
 
-export async function notifySchoolSafeguarding(schoolId: string, reason: string): Promise<{ notifiedUserIds: string[] }> {
+export async function notifySchoolSafeguarding(
+  schoolId: string,
+  reason: string
+): Promise<SchoolSafeguardingDelivery> {
   const [admins, school] = await Promise.all([
     prisma.user.findMany({ where: { role: "ADMIN", schoolId }, select: { id: true } }),
     prisma.school.findUnique({ where: { id: schoolId }, select: { designatedSafetyStaffUserId: true } }),
@@ -69,26 +94,54 @@ export async function notifySchoolSafeguarding(schoolId: string, reason: string)
   const title = "Safeguarding concern - immediate attention needed";
   const body = reason.length > 200 ? reason.slice(0, 197) + "..." : reason;
 
+  const intendedUserIds = [...userIds];
+  const notifiedUserIds: string[] = [];
+  const pushDeliveredUserIds: string[] = [];
+  const failures: SchoolSafeguardingDelivery["failures"] = [];
+
   await Promise.all(
-    [...userIds].map(async (userId) => {
-      await createInboxNotification(userId, { title, body, type: "safeguarding" });
+    intendedUserIds.map(async (userId) => {
+      try {
+        await createInboxNotification(userId, { title, body, type: "safeguarding" });
+        notifiedUserIds.push(userId);
+      } catch (err) {
+        const error = err instanceof Error ? err.message : String(err);
+        failures.push({ channel: "inbox", userId, error });
+        logger.error("[safeguarding.notify] inbox delivery failed", {
+          userId,
+          message: error,
+        });
+        return;
+      }
+
       try {
         await sendPushToUser(userId, { title, body, url: "/admin/escalations" });
+        pushDeliveredUserIds.push(userId);
       } catch (err) {
+        const error = err instanceof Error ? err.message : String(err);
+        failures.push({ channel: "push", userId, error });
         logger.warn("[safeguarding.notify] push failed, inbox notification still recorded", {
           userId,
-          message: err instanceof Error ? err.message : String(err),
+          message: error,
         });
       }
     })
   );
 
+  let fallback: PlatformSafeguardingDelivery | null = null;
   if (userIds.size === 0) {
     logger.warn("[safeguarding.notify] no ADMIN or designated safety staff found for school", { schoolId });
-    await notifyPlatformSafeguardingFallback(
+    fallback = await notifyPlatformSafeguardingFallback(
       `School ${schoolId} has no ADMIN and no designated safety staff to receive a safeguarding alert. ${reason}`
     );
   }
 
-  return { notifiedUserIds: [...userIds] };
+  return {
+    notifiedUserIds,
+    intendedUserIds,
+    pushDeliveredUserIds,
+    fallback,
+    delivered: notifiedUserIds.length > 0 || fallback?.ok === true,
+    failures,
+  };
 }

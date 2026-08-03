@@ -1,5 +1,6 @@
 import { routedCompletion } from "@/lib/ai/router";
 import { getPrompt } from "@/lib/ai/promptRegistry";
+import { moderateText } from "@/lib/agents/moderation";
 import type { DifficultyTier } from "@/lib/adaptive/difficultyAdapter";
 import type { MasteryGap } from "@/lib/adaptive/gapDetector";
 
@@ -138,6 +139,18 @@ export async function generateTargetedPracticeWithUsage(
         }
       : undefined,
   });
+
+  if (result.budgetBlocked !== true) {
+    const outputVerdict = await moderateText(result.content, "output", {
+      audience: "minor",
+    });
+    if (outputVerdict.verdict !== "SAFE") {
+      throw Object.assign(
+        new Error("adaptive_practice_moderation_blocked"),
+        { status: 503 }
+      );
+    }
+  }
 
   return {
     practice: parsePracticeSet(result.content, gap, difficultyTier),
