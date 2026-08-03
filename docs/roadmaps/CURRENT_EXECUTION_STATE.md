@@ -359,8 +359,22 @@ Live execution tracking for the final closeout program.
   drafts but has no UI buttons wired to the POST approve/reject/bulk_approve
   actions, so a human (MOE or ADMIN) would currently have to call the API
   directly. Building that UI is a real, separable follow-up, not an access
-  fix. Gate: prisma generate PASS, tsc PASS, vitest PASS (see next commit
-  for exact count), build PASS, zero schema changes.
+  fix. Gate: prisma generate PASS, tsc PASS, vitest 4,512 tests / 545 files
+  PASS (baseline 4,492/544, +20 new), build PASS, zero schema changes.
+- **NR-11 merged to `main` (2026-08-03, PR #75, merge commit `7b3f07e2`).**
+- **Next national sprint: NR-12 — Critical Grade Deserts (G2, G9).** Not
+  started as of this note. Target per the plan: regen + QA for Grade 2 and
+  Grade 9 until >=15 APPROVED per core subject, plus documented factory
+  tuning for known low-pass-rate cells (G3 SCIENCE, G5 ENGLISH, G7 CIVICS).
+  Given NR-11's finding, re-verify live coverage numbers fresh at NR-12
+  start rather than trusting the April audit's grade-desert figures (G2: 3
+  lessons, G9: 2 lessons) — both the underlying content population and the
+  approval-status semantics have changed materially since that audit.
+  Also worth deciding explicitly at NR-12 start: should newly generated
+  Grade 2/9 content go through genuine human/MOE review, or continue
+  through the same automated quality-gate scripts that approved ~95% of
+  existing content? That policy question was raised but not resolved by
+  NR-11 and directly affects how NR-12 should close its own lessons.
 - **Follow-up backlog item from NR-7:** school-level AI agent cost/usage
   visibility for school ADMINs is now zero (previously a real cross-school
   leak, correctly closed). If wanted as a real feature, needs a schema
