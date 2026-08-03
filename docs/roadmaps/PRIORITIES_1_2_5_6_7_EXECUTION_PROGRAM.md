@@ -11,8 +11,8 @@ claim is allowed until the applicable gates below pass.
 
 ### P1-A: Minor AI safety and safeguarding delivery truth
 
-Status: COMPLETE locally on `codex/trust-remediation-1`; awaiting human review
-and merge.
+Status: COMPLETE and merged through PR #76 on 2026-08-03, merge commit
+`8f3ad56d`.
 
 Deliverables:
 
@@ -39,8 +39,8 @@ Gate:
 
 ### P1-B: Tenant isolation, revocation, and required audit transitions
 
-Status: COMPLETE locally on `codex/trust-remediation-2`; stacked on P1-A and
-awaiting human review and merge.
+Status: COMPLETE and merged through PR #77 on 2026-08-03, merge commit
+`c9363568`.
 
 Deliverables:
 
