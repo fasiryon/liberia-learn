@@ -40,8 +40,8 @@ export async function gradeHomework(
 ): Promise<HomeworkGradeResult> {
   const content = submission.content?.trim() ?? "";
 
-  const inputVerdict = await moderateText(content, "input");
-  if (inputVerdict.verdict === "UNSAFE") {
+  const inputVerdict = await moderateText(content, "input", { audience: "minor" });
+  if (inputVerdict.verdict !== "SAFE") {
     await enqueueEscalation({
       agentName: "lib.ai.homeworkGrader",
       reason: `Assignment submission flagged unsafe on input moderation (assignment: ${assignment.title}).`,
@@ -92,8 +92,8 @@ ${content}`;
   try {
     const graded = await callAndParse();
     const feedbackText = [graded.feedback, graded.rationale, ...graded.perQuestionFeedback].join("\n");
-    const outputVerdict = await moderateText(feedbackText, "output");
-    if (outputVerdict.verdict === "UNSAFE") {
+    const outputVerdict = await moderateText(feedbackText, "output", { audience: "minor" });
+    if (outputVerdict.verdict !== "SAFE") {
       messages.push(
         { role: "user", content: JSON.stringify(graded) },
         {
@@ -105,8 +105,8 @@ ${content}`;
       try {
         const retried = await callAndParse();
         const retriedText = [retried.feedback, retried.rationale, ...retried.perQuestionFeedback].join("\n");
-        const retryVerdict = await moderateText(retriedText, "output");
-        if (retryVerdict.verdict === "UNSAFE") {
+        const retryVerdict = await moderateText(retriedText, "output", { audience: "minor" });
+        if (retryVerdict.verdict !== "SAFE") {
           throw new Error("still_unsafe_after_retry");
         }
         return retried;

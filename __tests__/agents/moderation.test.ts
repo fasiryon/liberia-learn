@@ -48,6 +48,26 @@ describe("moderateText", () => {
     expect(r.verdict).toBe("UNCERTAIN");
   });
 
+  it("fails closed for a minor when the classifier errors", async () => {
+    routedCompletion.mockRejectedValueOnce(new Error("provider down"));
+    const r = await moderateText("some text", "output", { audience: "minor" });
+    expect(r).toEqual({
+      verdict: "UNSAFE",
+      reason: "minor_fail_closed:moderation_error",
+    });
+  });
+
+  it("fails closed for a minor when the classifier is uncertain", async () => {
+    routedCompletion.mockResolvedValue(
+      llm(JSON.stringify({ verdict: "UNCERTAIN", reason: "borderline" }))
+    );
+    const r = await moderateText("some text", "input", { audience: "minor" });
+    expect(r).toEqual({
+      verdict: "UNSAFE",
+      reason: "minor_fail_closed:borderline",
+    });
+  });
+
   it("uses the output-moderation prompt for output kind", async () => {
     routedCompletion.mockResolvedValue(llm(JSON.stringify({ verdict: "SAFE" })));
     await moderateText("the answer is 4", "output");

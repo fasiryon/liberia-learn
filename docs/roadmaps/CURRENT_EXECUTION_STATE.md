@@ -7,6 +7,33 @@ Live execution tracking for the final closeout program.
 
 - **Canonical plan:** `docs/roadmaps/NATIONAL_ROLLOUT_EXECUTION_PLAN.md`
 - **Escalation contract:** `docs/agents/ADVISOR_ESCALATION_CONTRACT.md`
+- **P1-A Minor AI Safety + Safeguarding Delivery Truth: COMPLETE locally,
+  not merged (2026-08-03).** Branch `codex/trust-remediation-1`, based on
+  `origin/main` at `829a4a71` in an isolated worktree because Claude is
+  concurrently implementing curriculum risk triage. No changed files overlap
+  Claude's branch. Added an explicit minor-audience moderation policy that
+  converts `UNCERTAIN` to `UNSAFE`; main student tutor input and output are
+  now moderated; adaptive-practice and newly generated WAEC content are
+  blocked before use or persistence unless moderation is `SAFE`; and existing
+  student grading, lab, and RAG paths now treat every non-safe result as
+  blocked. Safeguarding delivery now records intended recipients separately
+  from confirmed durable inbox delivery, exposes channel failures, does not
+  write success markers after failed delivery, remains retryable while the
+  success marker is absent, and requires confirmed platform fallback delivery
+  for the 24-hour tier. Added `logAuditRequired()` for sensitive completion
+  transitions and used it for safeguarding success markers. No schema changes.
+  Independent verification: forced moderation-provider failure and explicit
+  `UNCERTAIN` both return `UNSAFE` for a minor audience; route-level tests prove
+  the student tutor does not call or expose the model in those states; forced
+  inbox and fallback-email failures create failure actions rather than sent
+  markers. Gate: `npx prisma generate` PASS; `npx tsc --noEmit` PASS with the
+  known 6144 MB local heap allowance; `npx vitest run` PASS, 4,524 tests in
+  547 files; `npm run build` PASS with exit 0 and `.next/BUILD_ID` produced.
+  The build retained pre-existing missing-local-env and lint warnings. Program
+  sequencing for requested priorities 1, 2, 5, 6, and 7 is documented in
+  `docs/roadmaps/PRIORITIES_1_2_5_6_7_EXECUTION_PROGRAM.md`. Next after human
+  review and merge: P1-B tenant isolation, offline revocation, and required
+  audit transitions. Do not start it in this cycle.
 - **NR-9.5 — Child Safety Hardening: COMPLETE + MERGED (2026-07-30, PR #62,
   merge commit `b3dde0d9`).** Commits `f8c9529b`..`72e5c8c6` on
   `agent/consolidated-backlog`. Gate: prisma generate PASS, tsc PASS,

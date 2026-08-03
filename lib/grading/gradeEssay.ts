@@ -121,8 +121,8 @@ export async function gradeEssay(input: {
 
   const rubric = input.rubric ?? DEFAULT_RUBRIC;
 
-  const inputVerdict = await moderateText(input.essayText.slice(0, 8000), "input");
-  if (inputVerdict.verdict === "UNSAFE") {
+  const inputVerdict = await moderateText(input.essayText.slice(0, 8000), "input", { audience: "minor" });
+  if (inputVerdict.verdict !== "SAFE") {
     await enqueueEscalation({
       agentName: "lib.grading.gradeEssay",
       reason: `Essay submission flagged unsafe on input moderation (subject: ${input.subject}, grade: ${input.grade}).`,
@@ -195,8 +195,8 @@ Return ONLY valid JSON — no preamble, no code fences:
         : "Well done for completing your essay. Keep practising — every essay makes you a stronger writer!";
 
     const feedbackText = [feedback, ...Object.values(breakdown).map((b) => b.comment)].join("\n");
-    const outputVerdict = await moderateText(feedbackText, "output");
-    if (outputVerdict.verdict === "UNSAFE") {
+    const outputVerdict = await moderateText(feedbackText, "output", { audience: "minor" });
+    if (outputVerdict.verdict !== "SAFE") {
       await enqueueEscalation({
         agentName: "lib.grading.gradeEssay",
         reason: `Essay grading output flagged unsafe for a K-12 audience (subject: ${input.subject}, grade: ${input.grade}).`,

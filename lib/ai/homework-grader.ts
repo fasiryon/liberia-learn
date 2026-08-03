@@ -141,8 +141,8 @@ const started = Date.now();try {
       };
       const scrubbedPayload = scrubPII(payload) as typeof payload;
 
-      const inputVerdict = await moderateText(JSON.stringify(scrubbedPayload.submission), "input");
-      if (inputVerdict.verdict === "UNSAFE") {
+      const inputVerdict = await moderateText(JSON.stringify(scrubbedPayload.submission), "input", { audience: "minor" });
+      if (inputVerdict.verdict !== "SAFE") {
         await enqueueEscalation({
           agentName: "lib.ai.homework-grader",
           userId: submission.Student.user.id,
@@ -208,8 +208,8 @@ const started = Date.now();try {
         parsed.overallFeedback,
         ...parsed.questions.map((q) => q.feedback),
       ].join("\n");
-      const outputVerdict = await moderateText(feedbackText, "output");
-      if (outputVerdict.verdict === "UNSAFE") {
+      const outputVerdict = await moderateText(feedbackText, "output", { audience: "minor" });
+      if (outputVerdict.verdict !== "SAFE") {
         await enqueueEscalation({
           agentName: "lib.ai.homework-grader",
           userId: submission.Student.user.id,

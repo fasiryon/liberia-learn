@@ -9,7 +9,7 @@ vi.mock("@/lib/db", () => ({
   },
 }));
 
-import { logAudit } from "@/lib/audit";
+import { logAudit, logAuditRequired } from "@/lib/audit";
 import { prisma } from "@/lib/db";
 
 describe("logAudit", () => {
@@ -54,5 +54,13 @@ describe("logAudit", () => {
     await expect(
       logAudit({ action: "fail.test" })
     ).resolves.not.toThrow();
+  });
+
+  it("throws for a required audit write failure", async () => {
+    (prisma.auditLog.create as any).mockRejectedValueOnce(new Error("DB error"));
+
+    await expect(
+      logAuditRequired({ action: "sensitive.transition" })
+    ).rejects.toThrow("DB error");
   });
 });
