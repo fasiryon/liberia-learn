@@ -3,8 +3,7 @@
 **Status:** Canonical project-wide backlog  
 **Reconciled:** 2026-08-01  
 **Next national sprint:** NR-11, MOE Published Backlog Approval.
-NR-3, NR-6, NR-7, NR-8, and NR-10 are all COMPLETE (NR-10 not yet
-pushed/merged). NR-4/NR-5 (k6 load proofs) are explicitly deferred on
+NR-3, NR-6, NR-7, NR-8, and NR-10 are all COMPLETE and merged. NR-4/NR-5 (k6 load proofs) are explicitly deferred on
 Supabase Pro budget, not abandoned. NR-9 is PARTIAL: its DB-layer AuditLog
 immutability deliverable is done and live-verified in production; its
 external-pen-test deliverable is deferred pending a real vendor engagement
@@ -58,7 +57,7 @@ order and do not skip the first pending sprint.
 | NR-7 Systematic Tenant Access Guard | **VALID.** Existing tenant controls do not replace the required route-wide IDOR audit. |
 | NR-8 RBAC Expansion + SSO Fix | **VALID.** Governance/export permission audit and school-assignment SSO gate remain. |
 | NR-9 Audit Immutability + Pen Test | **PARTIAL, 2026-08-01.** Database-layer append-only enforcement is DONE and live-verified in production (triggers confirmed active via direct Postgres query, not just trusted from the commit). External penetration testing remains — see the standing external-action item below. |
-| NR-10 Student Fail-Closed Curriculum Routing | **COMPLETE (2026-08-01), not yet pushed/merged.** Branch `feat/nr-10-curriculum-routing`, commit `83c86dbc`. Most deliverables (work-detail gate, lesson catalog filter, admin+MOE coverage dashboards) already existed from a 2026-05-23 pre-plan commit (`775b59bb`); the real gap found and fixed this sprint was `/api/student/today`'s own scheduledWork queries never filtering on content status. |
+| NR-10 Student Fail-Closed Curriculum Routing | **COMPLETE + MERGED (2026-08-02, PR #74, merge commit `ccdcab84`).** Most deliverables (work-detail gate, lesson catalog filter, admin+MOE coverage dashboards) already existed from a 2026-05-23 pre-plan commit (`775b59bb`); the real gap found and fixed this sprint was `/api/student/today`'s own scheduledWork queries never filtering on content status. |
 | NR-11 MOE Published Backlog Approval | **VALID.** Requires fresh production backlog counts and MOE approval evidence. |
 | NR-12 Critical Grade Deserts | **VALID.** Requires live coverage evidence for Grades 2 and 9. |
 | NR-13 Grades 5–8 Gap Closure | **VALID.** Requires live coverage evidence, including English and Social Studies. |

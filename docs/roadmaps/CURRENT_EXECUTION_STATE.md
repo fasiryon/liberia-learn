@@ -294,9 +294,14 @@ Live execution tracking for the final closeout program.
   `items`, plus a new `__tests__/nr10.fail-closed-curriculum-routing.test.ts`
   locking in the lesson catalog's existing filter with the same pattern.
   Gate: prisma generate PASS, tsc PASS, vitest 4,492 tests / 544 files PASS
-  (baseline 4,488/543, +4 new), build PASS, zero schema changes. Not yet
-  pushed to remote or opened as a PR; a human still needs to review and
-  merge per standing branch discipline.
+  (baseline 4,488/543, +4 new), build PASS, zero schema changes.
+- **NR-10 merged to `main` (2026-08-02, PR #74, merge commit `ccdcab84`).**
+- **Next national sprint: NR-11 — MOE Published Backlog Approval Sprint.**
+  Not started as of this note. Target per the plan: clear the published
+  backlog (priority G5, G7). The plan's own text cites "389 published"
+  lessons, but a live query during NR-10 (2026-08-01) found only 37 rows
+  with `status = 'published'` in production — that count must be
+  re-verified fresh at NR-11 start, not trusted from either source.
 - **Follow-up backlog item from NR-7:** school-level AI agent cost/usage
   visibility for school ADMINs is now zero (previously a real cross-school
   leak, correctly closed). If wanted as a real feature, needs a schema
