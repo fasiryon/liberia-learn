@@ -43,6 +43,9 @@ function emptyAdaptivePlan() {
   };
 }
 
+// Fail-closed: students may only see scheduled work backed by approved content.
+const APPROVED_CONTENT_STATUSES = ["published", "APPROVED"];
+
 type TodayWorkStatus = "not_started" | "in_progress" | "completed";
 
 type TodayWorkItem = {
@@ -265,6 +268,7 @@ async function _computeToday(): Promise<NextResponse> {
         where: {
           classId: { in: classIds },
           scheduledDate: { gte: startOfDay, lt: endOfDay },
+          content: { status: { in: APPROVED_CONTENT_STATUSES } },
         },
         include: {
           content: {
@@ -287,6 +291,7 @@ async function _computeToday(): Promise<NextResponse> {
         where: {
           classId: { in: classIds },
           scheduledDate: { gte: catchUpStart, lt: startOfDay },
+          content: { status: { in: APPROVED_CONTENT_STATUSES } },
         },
         include: {
           content: {

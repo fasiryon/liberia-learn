@@ -191,3 +191,60 @@ describe("/api/student/today — timetable field", () => {
     expect(data.timetable).toBeNull();
   });
 });
+
+describe("/api/student/today — fail-closed curriculum routing (NR-10)", () => {
+  it("both today and catch-up scheduledWork queries scope content to approved statuses only", async () => {
+    await GET();
+
+    expect(mockPrisma.scheduledWork.findMany).toHaveBeenCalledTimes(2);
+    for (const call of mockPrisma.scheduledWork.findMany.mock.calls) {
+      const where = call[0]?.where;
+      expect(where?.content?.status?.in).toEqual(
+        expect.arrayContaining(["published", "APPROVED"])
+      );
+      // Only the two approved-equivalent statuses may ever be reachable —
+      // draft/pending/needs-review content must never be requested for a student.
+      expect(where.content.status.in).toHaveLength(2);
+    }
+  });
+
+  it("never surfaces a scheduled-work item whose content is not approved", async () => {
+    mockPrisma.scheduledWork.findMany.mockImplementation(async ({ where }: any) => {
+      const allowed: string[] = where?.content?.status?.in ?? [];
+      const rows = [
+        {
+          id: "sw-approved",
+          classId: "class-1",
+          contentId: "content-approved",
+          content: { contentId: "content-approved", grade: 9, subject: "MATH", contentType: "LESSON", payload: {}, status: "APPROVED" },
+          progress: [],
+          order: 1,
+          periodNumber: 1,
+          startTime: null,
+          endTime: null,
+        },
+        {
+          id: "sw-draft",
+          classId: "class-1",
+          contentId: "content-draft",
+          content: { contentId: "content-draft", grade: 9, subject: "MATH", contentType: "LESSON", payload: {}, status: "DRAFT" },
+          progress: [],
+          order: 2,
+          periodNumber: 2,
+          startTime: null,
+          endTime: null,
+        },
+      ];
+      // Mimic real Prisma relation filtering: a WHERE clause on the content
+      // relation excludes rows whose content status is not in the allow-list.
+      return rows.filter((r) => allowed.includes(r.content.status));
+    });
+
+    const res = await GET();
+    const data = await res.json();
+
+    expect(res.status).toBe(200);
+    const returnedContentIds = (data.items ?? []).map((item: any) => item.contentId);
+    expect(returnedContentIds).not.toContain("content-draft");
+  });
+});
