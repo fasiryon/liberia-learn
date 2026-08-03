@@ -28,7 +28,12 @@ export async function PATCH(
     // If activating, deactivate all others for the same lesson
     if (isActive) {
       await prisma.lessonVideo.updateMany({
-        where: { lessonId: params.contentId, isActive: true, id: { not: existing.id } },
+        where: {
+          lessonId: params.contentId,
+          schoolId: existing.schoolId,
+          isActive: true,
+          id: { not: existing.id },
+        },
         data: { isActive: false },
       });
     }

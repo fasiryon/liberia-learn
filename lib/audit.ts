@@ -14,6 +14,12 @@ export type AuditEntry = {
   schoolId?: string | null;
 };
 
+type AuditWriteClient = {
+  auditLog?: {
+    create(args: any): PromiseLike<unknown>;
+  };
+};
+
 async function writeAudit({
   userId,
   action,
@@ -23,12 +29,12 @@ async function writeAudit({
   ipAddress,
   traceId,
   schoolId,
-}: AuditEntry): Promise<void> {
-  if (!prisma?.auditLog?.create) {
+}: AuditEntry, client: AuditWriteClient = prisma): Promise<void> {
+  if (!client?.auditLog?.create) {
     throw new Error("audit_log_unavailable");
   }
 
-  await prisma.auditLog.create({
+  await client.auditLog.create({
     data: {
       userId: userId ?? null,
       action,
@@ -57,6 +63,6 @@ export async function logAudit(entry: AuditEntry): Promise<boolean> {
  * Use for safety, approval, access-control, and other sensitive transitions
  * that must not be reported as complete without durable audit evidence.
  */
-export async function logAuditRequired(entry: AuditEntry): Promise<void> {
-  await writeAudit(entry);
+export async function logAuditRequired(entry: AuditEntry, client: AuditWriteClient = prisma): Promise<void> {
+  await writeAudit(entry, client);
 }

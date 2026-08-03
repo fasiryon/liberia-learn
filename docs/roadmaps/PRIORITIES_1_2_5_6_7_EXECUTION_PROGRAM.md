@@ -39,6 +39,9 @@ Gate:
 
 ### P1-B: Tenant isolation, revocation, and required audit transitions
 
+Status: COMPLETE locally on `codex/trust-remediation-2`; stacked on P1-A and
+awaiting human review and merge.
+
 Deliverables:
 
 - Fix school scoping when activating lesson videos.

@@ -20,15 +20,17 @@ const {
   logAuditMock: vi.fn(),
 }));
 
-vi.mock("@/lib/db", () => ({
-  prisma: {
+vi.mock("@/lib/db", () => {
+  const tx = { curriculumContent: { update: curriculumContentUpdate } };
+  return { prisma: {
     curriculumContent: { findMany: curriculumContentFindMany, update: curriculumContentUpdate },
     curriculumRegenerationRun: { findMany: runFindMany, groupBy: runGroupBy },
     curriculumRegenerationJob: { groupBy: jobGroupBy, findMany: jobFindMany },
     auditLog: { findMany: auditFindMany },
-  },
-}));
-vi.mock("@/lib/audit", () => ({ logAudit: logAuditMock }));
+    $transaction: vi.fn(async (callback: any) => callback(tx)),
+  } };
+});
+vi.mock("@/lib/audit", () => ({ logAudit: logAuditMock, logAuditRequired: logAuditMock }));
 
 function passingPayload() {
   return {
@@ -115,7 +117,10 @@ describe("curriculum regeneration admin helpers", () => {
       expect.objectContaining({ contentId: "bad", ok: false }),
     ]);
     expect(curriculumContentUpdate).toHaveBeenCalledTimes(1);
-    expect(logAuditMock).toHaveBeenCalledWith(expect.objectContaining({ action: "curriculum.review.approve" }));
+    expect(logAuditMock).toHaveBeenCalledWith(
+      expect.objectContaining({ action: "curriculum.review.approve" }),
+      expect.anything()
+    );
   });
 
   it("rejects weak drafts with an audit event", async () => {
@@ -137,7 +142,9 @@ describe("curriculum regeneration admin helpers", () => {
       where: { contentId: "weak" },
       data: expect.objectContaining({ status: "rejected" }),
     }));
-    expect(logAuditMock).toHaveBeenCalledWith(expect.objectContaining({ action: "curriculum.review.reject" }));
+    expect(logAuditMock).toHaveBeenCalledWith(
+      expect.objectContaining({ action: "curriculum.review.reject" }),
+      expect.anything()
+    );
   });
 });
-

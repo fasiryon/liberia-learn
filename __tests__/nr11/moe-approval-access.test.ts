@@ -25,7 +25,7 @@ const mockListCurriculumDrafts = vi.hoisted(() => vi.fn(async () => []));
 const mockReviewCurriculumDraft = vi.hoisted(() => vi.fn());
 
 vi.mock("@/lib/auth", () => ({ requireUser: mockRequireUser }));
-vi.mock("@/lib/audit", () => ({ logAudit: mockLogAudit }));
+vi.mock("@/lib/audit", () => ({ logAudit: mockLogAudit, logAuditRequired: mockLogAudit }));
 vi.mock("@/lib/serverFlags", () => ({ isCurriculumFeedbackEnabled: () => false }));
 vi.mock("@/lib/ai/rag/embeddingService", () => ({ embedLesson: vi.fn(async () => {}) }));
 vi.mock("@/lib/ai/rag/ragIngestionService", () => ({
@@ -41,6 +41,9 @@ vi.mock("@/lib/db", () => ({
       findUnique: mockCurriculumContentFindUnique,
       update: mockCurriculumContentUpdate,
     },
+    $transaction: vi.fn(async (callback: any) => callback({
+      curriculumContent: { update: mockCurriculumContentUpdate },
+    })),
   },
 }));
 vi.mock("@/lib/curriculum/regenerationAdmin", () => ({

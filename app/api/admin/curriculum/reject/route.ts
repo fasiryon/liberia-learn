@@ -3,7 +3,7 @@ import { z } from "zod";
 import { requireUser } from "@/lib/auth";
 import { assertPermission, PERMISSIONS } from "@/lib/permissions";
 import { prisma } from "@/lib/db";
-import { logAudit } from "@/lib/audit";
+import { logAuditRequired } from "@/lib/audit";
 import { isCurriculumFeedbackEnabled } from "@/lib/serverFlags";
 import { deleteCurriculumContentRagChunks } from "@/lib/ai/rag/ragIngestionService";
 import { Redis } from "@upstash/redis";
@@ -53,21 +53,22 @@ export async function POST(req: Request) {
       rejectedAt: new Date().toISOString(),
     };
 
-    await prisma.curriculumContent.update({
-      where: { contentId },
-      data: {
-        status: "rejected",
-        payload: updatedPayload,
-      },
-    });
-
-    await logAudit({
-      userId: user.id,
-      action: "curriculum.reject",
-      resourceType: "curriculum",
-      resourceId: contentId,
-      details: { hasRejectionReason: !!rejectionReason },
-      schoolId: user.schoolId ?? undefined,
+    await prisma.$transaction(async (tx) => {
+      await tx.curriculumContent.update({
+        where: { contentId },
+        data: {
+          status: "rejected",
+          payload: updatedPayload,
+        },
+      });
+      await logAuditRequired({
+        userId: user.id,
+        action: "curriculum.reject",
+        resourceType: "curriculum",
+        resourceId: contentId,
+        details: { hasRejectionReason: !!rejectionReason },
+        schoolId: user.schoolId ?? undefined,
+      }, tx);
     });
 
     try {
