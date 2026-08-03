@@ -1,3 +1,9 @@
+// IMPORTANT (NR-11, 2026-08-02): this promotes generated content straight to
+// APPROVED using an automated structural gate (word count, section presence)
+// only. It is not a substitute for human/MOE review, records no reviewer
+// identity, and writes nothing to AuditLog. See bulk-approve-published.ts
+// for the sibling script and the production evidence of how much live
+// content was approved this way rather than by a human.
 import { config } from "dotenv";
 import { prisma } from "@/lib/db";
 import { evaluatePromotionCandidate } from "@/lib/curriculum/promotionPass";

@@ -296,12 +296,71 @@ Live execution tracking for the final closeout program.
   Gate: prisma generate PASS, tsc PASS, vitest 4,492 tests / 544 files PASS
   (baseline 4,488/543, +4 new), build PASS, zero schema changes.
 - **NR-10 merged to `main` (2026-08-02, PR #74, merge commit `ccdcab84`).**
-- **Next national sprint: NR-11 — MOE Published Backlog Approval Sprint.**
-  Not started as of this note. Target per the plan: clear the published
-  backlog (priority G5, G7). The plan's own text cites "389 published"
-  lessons, but a live query during NR-10 (2026-08-01) found only 37 rows
-  with `status = 'published'` in production — that count must be
-  re-verified fresh at NR-11 start, not trusted from either source.
+- **NR-11 — MOE Published Backlog Approval Sprint: REFRAMED and PARTIALLY
+  COMPLETE (2026-08-02), not yet pushed/merged.** Investigation (user-directed,
+  before writing any code) found the plan's premise does not match production
+  reality. The plan's "389 published lessons awaiting MOE approval" target
+  traces to `docs/PHASE5_2_CURRICULUM_AUDIT_REPORT.md` (2026-04-23), which
+  explicitly documented `status = "published"` as a **pre-approval** state at
+  that time (389 published + 143 pending_approval, "not served to students
+  until approved"). That is no longer true: `/api/admin/curriculum/approve`
+  now sets `status: "published"` as the **result** of approval, and every
+  student-facing route (including the NR-10 fix) treats `published` and
+  `APPROVED` as equivalent, already-approved statuses. Live production counts
+  (2026-08-01/02): `APPROVED` 1,052, `published` 37, `DRAFT` 10,
+  `pending_approval` 2, `NEEDS_REVIEW` 1 — the genuine awaiting-review backlog
+  is 13 rows, already under the plan's own "<50 remaining" gate.
+  **Real finding: the original ~389+143 backlog was not resolved by MOE
+  review.** Two standalone CLI scripts —
+  `scripts/bulk-approve-published.ts` (word-count/content-length/placeholder-
+  title heuristics) and `scripts/promote-enriched-lessons.ts` (structural
+  quality gate, attributed to `"system:promotion-pass-2b"`) — auto-approved
+  it. Direct production query: of 1,089 rows now `APPROVED`/`published`,
+  **712 carry no approver identity at all** (`payload.approvedByUserId` is
+  null, consistent with the bulk script), only **7 rows** have a real
+  human `approvedByUserId`, and `AuditLog` shows only **41 audited approval
+  actions** (`curriculum.approve` + `curriculum.review.approve`) in the
+  entire project history — against 1,089 rows in an approved-equivalent
+  status. Roughly 95%+ of live national curriculum content was approved by
+  a script checking word counts and placeholder titles, not reviewed by a
+  human or MOE official. This is directly relevant to NR-18 (MOE Dashboard +
+  Certification): any national certification claim resting on "content is
+  approved" currently means "content passed an automated quality gate,"
+  not "MOE reviewed it." `docs/MOE_PRODUCTION_CERTIFICATION.md` already
+  disclaims making an MOE-approval claim, so no existing certification
+  document is contradicted, but this should stay visible for NR-18 planning.
+  **User-directed scope for this sprint (2026-08-02): reframe, don't
+  re-review.** Do not attempt to re-review the 1,000+ already-live lessons.
+  Instead: (1) document the reality clearly (this entry, plus header
+  comments added to both auto-approval scripts) and (2) fix the concrete,
+  fixable bug found alongside this investigation — `MOE_OFFICIAL` and
+  `MOE_SUPER_ADMIN` already hold `PERMISSIONS.CURRICULUM_APPROVE` in
+  `lib/permissions.ts`, but every route that lets a human actually approve
+  or reject content hard-required `role === "ADMIN"`
+  (`requireRole("ADMIN")`) or `isPlatformAdmin`
+  (`requirePlatformAdmin()`), silently locking MOE roles out of approval
+  entirely — the same class of bug NR-8 found and fixed across `/api/moe/*`
+  routes. Fixed 4 call sites to use `requireUser()` +
+  `assertPermission(user, PERMISSIONS.CURRICULUM_APPROVE)` (matching the
+  existing coverage-API pattern) instead of a hardcoded role check:
+  `app/api/admin/curriculum/approve/route.ts`,
+  `app/api/admin/curriculum/reject/route.ts`,
+  `app/api/admin/ops/curriculum-review/route.ts` (GET + POST, replacing
+  `requirePlatformAdmin()`), and the page-level gate in
+  `app/admin/ops/curriculum-review/page.tsx` (replacing an
+  `isPlatformAdmin`-only redirect with the same permission check). Added
+  20 new regression tests in `__tests__/nr11/moe-approval-access.test.ts`
+  proving `ADMIN`/`MOE_OFFICIAL`/`MOE_SUPER_ADMIN` can now use all four
+  surfaces and `TEACHER`/`STUDENT` are still denied; updated 2 existing
+  test files (`curriculum.feedback.test.ts`,
+  `audit-gate-2-patches.test.ts`) whose auth mocks assumed the old
+  `requireRole` call. **Known gap, not fixed this sprint (kept small on
+  purpose):** `/admin/ops/curriculum-review` is read-only — it lists
+  drafts but has no UI buttons wired to the POST approve/reject/bulk_approve
+  actions, so a human (MOE or ADMIN) would currently have to call the API
+  directly. Building that UI is a real, separable follow-up, not an access
+  fix. Gate: prisma generate PASS, tsc PASS, vitest PASS (see next commit
+  for exact count), build PASS, zero schema changes.
 - **Follow-up backlog item from NR-7:** school-level AI agent cost/usage
   visibility for school ADMINs is now zero (previously a real cross-school
   leak, correctly closed). If wanted as a real feature, needs a schema

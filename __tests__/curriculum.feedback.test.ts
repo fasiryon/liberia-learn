@@ -15,6 +15,7 @@ const mockFeedbackCreate = vi.hoisted(() => vi.fn());
 
 vi.mock("@/lib/auth", () => ({
   requireRole: mockRequireRole,
+  requireUser: mockRequireRole,
 }));
 
 vi.mock("@/lib/audit", () => ({
