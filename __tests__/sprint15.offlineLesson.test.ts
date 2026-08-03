@@ -17,6 +17,9 @@ vi.mock("@/lib/offline-session", () => ({
   resolveSessionPartition: vi.fn(() => ({ key: "default" })),
   detectAndSetActiveSessionPartition: vi.fn(() => null),
 }));
+vi.mock("@/lib/content-availability-manifest", () => ({
+  verifyContentAvailabilityManifest: vi.fn(async () => true),
+}));
 
 import {
   cacheLessonContent,
@@ -29,6 +32,25 @@ import {
   MAX_CACHED_LESSONS,
 } from "@/lib/lesson-offline-cache";
 
+function signedManifest(contentId: string) {
+  return {
+    payload: { contentId, version: "1", revoked: false, issuedAt: "2026-08-03T00:00:00.000Z" },
+    signature: "test-signature",
+    keyId: "test-key",
+  };
+}
+
+function cacheTestLesson(
+  contentId: string,
+  data: { metadata: Record<string, unknown> | null; payload: Record<string, unknown> | null }
+) {
+  return cacheLessonContent(
+    contentId,
+    { ...data, metadata: { ...(data.metadata ?? {}), version: "1" } },
+    signedManifest(contentId)
+  );
+}
+
 describe("lesson offline cache — Sprint 15 extensions", () => {
   beforeEach(() => {
     store.clear();
@@ -39,13 +61,13 @@ describe("lesson offline cache — Sprint 15 extensions", () => {
   });
 
   it("isLessonCached returns true after caching", async () => {
-    await cacheLessonContent("abc", { metadata: null, payload: { title: "Test" } });
+    await cacheTestLesson("abc", { metadata: null, payload: { title: "Test" } });
     expect(await isLessonCached("abc")).toBe(true);
   });
 
   it("listCachedLessons returns cached entries", async () => {
-    await cacheLessonContent("lesson-1", { metadata: { grade: 7 }, payload: null });
-    await cacheLessonContent("lesson-2", { metadata: { grade: 8 }, payload: null });
+    await cacheTestLesson("lesson-1", { metadata: { grade: 7 }, payload: null });
+    await cacheTestLesson("lesson-2", { metadata: { grade: 8 }, payload: null });
     const list = await listCachedLessons();
     const ids = list.map((l) => l.contentId);
     expect(ids).toContain("lesson-1");
@@ -54,20 +76,20 @@ describe("lesson offline cache — Sprint 15 extensions", () => {
 
   it("getCachedLessonCount returns correct count", async () => {
     expect(await getCachedLessonCount()).toBe(0);
-    await cacheLessonContent("l1", { metadata: null, payload: null });
-    await cacheLessonContent("l2", { metadata: null, payload: null });
+    await cacheTestLesson("l1", { metadata: null, payload: null });
+    await cacheTestLesson("l2", { metadata: null, payload: null });
     expect(await getCachedLessonCount()).toBe(2);
   });
 
   it("removeCachedLesson removes the entry", async () => {
-    await cacheLessonContent("to-remove", { metadata: null, payload: { title: "Old" } });
+    await cacheTestLesson("to-remove", { metadata: null, payload: { title: "Old" } });
     expect(await isLessonCached("to-remove")).toBe(true);
     await removeCachedLesson("to-remove");
     expect(await isLessonCached("to-remove")).toBe(false);
   });
 
   it("listCachedLessons returns entries with cachedAt and sizeBytes", async () => {
-    await cacheLessonContent("rich-lesson", {
+    await cacheTestLesson("rich-lesson", {
       metadata: { grade: 9 },
       payload: { title: "Algebra" },
     });
@@ -83,7 +105,7 @@ describe("lesson offline cache — Sprint 15 extensions", () => {
   });
 
   it("isCacheAtCapacity returns false when below limit", async () => {
-    await cacheLessonContent("only-one", { metadata: null, payload: null });
+    await cacheTestLesson("only-one", { metadata: null, payload: null });
     expect(await isCacheAtCapacity()).toBe(false);
   });
 });

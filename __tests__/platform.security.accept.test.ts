@@ -8,10 +8,13 @@ const mockIsMoePortalEnabled = vi.hoisted(() => vi.fn());
 const mockTokenFindFirst = vi.hoisted(() => vi.fn());
 const mockTransaction = vi.hoisted(() => vi.fn());
 const mockLogAudit = vi.hoisted(() => vi.fn());
+const mockUserUpdate = vi.hoisted(() => vi.fn());
+const mockUserCount = vi.hoisted(() => vi.fn());
+const mockTokenUpdate = vi.hoisted(() => vi.fn());
 
 vi.mock("@/lib/auth", () => ({ requireUser: mockRequireUser }));
 vi.mock("@/lib/serverFlags", () => ({ isMoePortalEnabled: mockIsMoePortalEnabled }));
-vi.mock("@/lib/audit", () => ({ logAudit: mockLogAudit }));
+vi.mock("@/lib/audit", () => ({ logAudit: mockLogAudit, logAuditRequired: mockLogAudit }));
 vi.mock("@/lib/db", () => ({
   prisma: {
     platformTransferToken: { findFirst: mockTokenFindFirst },
@@ -49,7 +52,13 @@ beforeEach(() => {
   mockIsMoePortalEnabled.mockReturnValue(true);
   mockRequireUser.mockResolvedValue({ id: "recipient-1" });
   mockTokenFindFirst.mockResolvedValue(makeRecord());
-  mockTransaction.mockResolvedValue(undefined);
+  mockUserUpdate.mockResolvedValue({});
+  mockUserCount.mockResolvedValue(2);
+  mockTokenUpdate.mockResolvedValue({});
+  mockTransaction.mockImplementation(async (callback: any) => callback({
+    user: { update: mockUserUpdate, count: mockUserCount },
+    platformTransferToken: { update: mockTokenUpdate },
+  }));
   mockLogAudit.mockResolvedValue(undefined);
 });
 
@@ -124,5 +133,12 @@ describe("POST /api/platform/security/accept", () => {
     );
     const res = await POST(makeReq({ token: VALID_TOKEN }));
     expect(res.status).toBe(200);
+  });
+
+  it("does not promote when the required audit write fails", async () => {
+    mockLogAudit.mockRejectedValueOnce(new Error("audit unavailable"));
+    const res = await POST(makeReq({ token: VALID_TOKEN }));
+    expect(res.status).toBe(500);
+    expect(mockTransaction).toHaveBeenCalledOnce();
   });
 });

@@ -48,6 +48,20 @@ Sentry runtime behavior is now explicit:
 - Worker capture is active only when `SENTRY_DSN` is set.
 - Without a DSN, the app still emits structured JSON logs but Sentry is inactive.
 
+## Offline curriculum signing
+
+Offline lesson caching is fail closed unless all three manifest values are configured:
+
+- `CONTENT_MANIFEST_PRIVATE_KEY`: server-only RSA private key in PKCS#8 PEM format.
+- `CONTENT_MANIFEST_KEY_ID`: deployment-controlled identifier for the active key.
+- `NEXT_PUBLIC_CONTENT_MANIFEST_PUBLIC_KEY`: matching RSA public key in SPKI PEM format.
+
+The API signs the lesson ID, content version, revocation state, and issue time.
+The client verifies the signature before writing or opening cached curriculum.
+Changing the public key requires a rebuild because `NEXT_PUBLIC_*` values are
+compiled into the client bundle. Never place the private key in a
+`NEXT_PUBLIC_*` variable.
+
 ## Canonical env names
 
 Use these names in new deployments:

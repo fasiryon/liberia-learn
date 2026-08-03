@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { requireUser } from "@/lib/auth";
 import { assertPermission, PERMISSIONS } from "@/lib/permissions";
 import { prisma } from "@/lib/db";
-import { logAudit } from "@/lib/audit";
+import { logAuditRequired } from "@/lib/audit";
 import { isCurriculumFeedbackEnabled } from "@/lib/serverFlags";
 import { embedLesson } from "@/lib/ai/rag/embeddingService";
 import { syncCurriculumContentRagChunks } from "@/lib/ai/rag/ragIngestionService";
@@ -48,20 +48,21 @@ export async function POST(req: Request) {
       approvedAt: new Date().toISOString(),
     };
 
-    await prisma.curriculumContent.update({
-      where: { contentId },
-      data: {
-        status: "published",
-        payload: updatedPayload,
-      },
-    });
-
-    await logAudit({
-      userId: user.id,
-      action: "curriculum.approve",
-      resourceType: "curriculum",
-      resourceId: contentId,
-      schoolId: user.schoolId ?? undefined,
+    await prisma.$transaction(async (tx) => {
+      await tx.curriculumContent.update({
+        where: { contentId },
+        data: {
+          status: "published",
+          payload: updatedPayload,
+        },
+      });
+      await logAuditRequired({
+        userId: user.id,
+        action: "curriculum.approve",
+        resourceType: "curriculum",
+        resourceId: contentId,
+        schoolId: user.schoolId ?? undefined,
+      }, tx);
     });
 
     if (isQueueConfigured()) {

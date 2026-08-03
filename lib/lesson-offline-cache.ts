@@ -19,9 +19,14 @@
  */
 
 import { cachePack, getCachedPack, invalidatePack, getCacheStats, getMetadata } from "@/lib/offline-cache";
+import {
+  verifyContentAvailabilityManifest,
+  type SignedContentAvailabilityManifest,
+} from "@/lib/content-availability-manifest";
 
 const LESSON_SCOPE = "lesson";
 const LESSON_AUDIO_SCOPE = "lesson-audio";
+const LESSON_MANIFEST_SCOPE = "lesson-availability";
 
 export const MAX_CACHED_LESSONS = 50;
 
@@ -45,10 +50,16 @@ export type CachedLessonEntry = {
  */
 export async function cacheLessonContent(
   contentId: string,
-  data: CachedLessonData
+  data: CachedLessonData,
+  manifest?: SignedContentAvailabilityManifest | null
 ): Promise<boolean> {
   try {
-    await cachePack(LESSON_SCOPE, contentId, "1", data);
+    if (!manifest || !(await verifyContentAvailabilityManifest(manifest))) return false;
+    if (manifest.payload.contentId !== contentId || manifest.payload.revoked || !manifest.payload.version) return false;
+    const contentVersion = typeof data.metadata?.version === "string" ? data.metadata.version : null;
+    if (contentVersion !== manifest.payload.version) return false;
+    await cachePack(LESSON_SCOPE, contentId, contentVersion, data);
+    await cachePack(LESSON_MANIFEST_SCOPE, contentId, contentVersion, manifest);
     return true;
   } catch {
     // IndexedDB unavailable (private browsing, quota exceeded) — silently skip
@@ -76,9 +87,43 @@ export async function loadCachedLesson(
   contentId: string
 ): Promise<CachedLessonData | null> {
   try {
+    const manifest = await getCachedPack<SignedContentAvailabilityManifest>(LESSON_MANIFEST_SCOPE, contentId);
+    if (!manifest || !(await verifyContentAvailabilityManifest(manifest))) {
+      await invalidatePack(LESSON_SCOPE, contentId);
+      return null;
+    }
+    if (manifest.payload.contentId !== contentId || manifest.payload.revoked || !manifest.payload.version) {
+      await invalidatePack(LESSON_SCOPE, contentId);
+      return null;
+    }
+    const metadata = await getMetadata();
+    const lessonMetadata = metadata.find((entry) => entry.scope === LESSON_SCOPE && entry.scopeId === contentId);
+    if (!lessonMetadata || lessonMetadata.packVersion !== manifest.payload.version) {
+      await invalidatePack(LESSON_SCOPE, contentId);
+      return null;
+    }
     return await getCachedPack<CachedLessonData>(LESSON_SCOPE, contentId);
   } catch {
     return null;
+  }
+}
+
+/** Apply a newly fetched signed version or revocation decision to local content. */
+export async function refreshLessonAvailability(
+  manifest: SignedContentAvailabilityManifest
+): Promise<boolean> {
+  try {
+    if (!(await verifyContentAvailabilityManifest(manifest))) return false;
+    const { contentId, version, revoked } = manifest.payload;
+    const metadata = await getMetadata();
+    const cached = metadata.find((entry) => entry.scope === LESSON_SCOPE && entry.scopeId === contentId);
+    if (revoked || !version || (cached && cached.packVersion !== version)) {
+      await invalidatePack(LESSON_SCOPE, contentId);
+    }
+    await cachePack(LESSON_MANIFEST_SCOPE, contentId, version ?? "revoked", manifest);
+    return true;
+  } catch {
+    return false;
   }
 }
 
@@ -100,6 +145,7 @@ export async function isLessonCached(contentId: string): Promise<boolean> {
 export async function removeCachedLesson(contentId: string): Promise<void> {
   try {
     await invalidatePack(LESSON_SCOPE, contentId);
+    await invalidatePack(LESSON_MANIFEST_SCOPE, contentId);
   } catch {
     // Best-effort — never throws
   }

@@ -7,6 +7,35 @@ Live execution tracking for the final closeout program.
 
 - **Canonical plan:** `docs/roadmaps/NATIONAL_ROLLOUT_EXECUTION_PLAN.md`
 - **Escalation contract:** `docs/agents/ADVISOR_ESCALATION_CONTRACT.md`
+- **P1-B Tenant Isolation, Revocation, and Required Audit Transitions:
+  COMPLETE locally, not merged (2026-08-03).** Branch
+  `codex/trust-remediation-2`, stacked on the pushed P1-A commit `e32d5310`
+  because P1-A is not yet on `origin/main`. The work is isolated from Claude's
+  concurrent curriculum risk-triage worktree with no changed-file overlap.
+  Lesson-video activation now deactivates competitors only within the video's
+  school. Curriculum reads limit school-owned content to the caller's tenant
+  and resolve private URLs only for active, approved videos in that same
+  school. Offline lesson fallback now runs only after a transport failure;
+  HTTP rejection is authoritative and evicts the cached lesson. Cached
+  curriculum requires an RSA-signed availability manifest, verifies lesson ID
+  and version before use, and is evicted after a signed revocation or newer
+  version refresh. Curriculum approve, reject, draft review, platform-admin
+  transfer generation, transfer acceptance, and self-demotion now place the
+  mutation and required audit write in one database transaction. No schema
+  changes. Independent verification against the P1-A source confirmed the
+  activation query lacked school scope before and contains it after; the build
+  artifact `.next/BUILD_ID` exists. Gate: `npx prisma generate` PASS;
+  `npx tsc --noEmit` PASS with the known 6144 MB local heap allowance;
+  focused P1-B regression set PASS, 124 tests in 13 files; full
+  `npx vitest run` PASS, 4,535 tests in 550 files; `npm run build` PASS with
+  exit 0 after network permission allowed the configured Google font fetch.
+  The build retained pre-existing missing-local-env, lint, dynamic-render, and
+  standalone junction warnings. Deployment must configure
+  `CONTENT_MANIFEST_PRIVATE_KEY`, `CONTENT_MANIFEST_KEY_ID`, and
+  `NEXT_PUBLIC_CONTENT_MANIFEST_PUBLIC_KEY`; without them, online lessons work
+  but offline curriculum caching fails closed. Next after human review and
+  merge: P1-C privileged identity hardening. Stop at its provider and live
+  User-schema escalation points.
 - **P1-A Minor AI Safety + Safeguarding Delivery Truth: COMPLETE locally,
   not merged (2026-08-03).** Branch `codex/trust-remediation-1`, based on
   `origin/main` at `829a4a71` in an isolated worktree because Claude is
@@ -31,9 +60,8 @@ Live execution tracking for the final closeout program.
   547 files; `npm run build` PASS with exit 0 and `.next/BUILD_ID` produced.
   The build retained pre-existing missing-local-env and lint warnings. Program
   sequencing for requested priorities 1, 2, 5, 6, and 7 is documented in
-  `docs/roadmaps/PRIORITIES_1_2_5_6_7_EXECUTION_PROGRAM.md`. Next after human
-  review and merge: P1-B tenant isolation, offline revocation, and required
-  audit transitions. Do not start it in this cycle.
+  `docs/roadmaps/PRIORITIES_1_2_5_6_7_EXECUTION_PROGRAM.md`. P1-B was continued
+  in the next separately authorized cycle and is recorded above.
 - **NR-9.5 — Child Safety Hardening: COMPLETE + MERGED (2026-07-30, PR #62,
   merge commit `b3dde0d9`).** Commits `f8c9529b`..`72e5c8c6` on
   `agent/consolidated-backlog`. Gate: prisma generate PASS, tsc PASS,

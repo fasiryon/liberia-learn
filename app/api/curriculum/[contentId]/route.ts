@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { head } from "@vercel/blob";
 import { prisma } from "@/lib/db";
 import { requireRole } from "@/lib/auth";
+import { signContentAvailability } from "@/lib/content-availability-manifest.server";
 
 export const dynamic = "force-dynamic";
 
@@ -22,6 +23,14 @@ export async function GET(
       where: {
         contentId,
         status: statusFilter,
+        ...(user.isPlatformAdmin
+          ? {}
+          : {
+              OR: [
+                { schoolId: null },
+                ...(user.schoolId ? [{ schoolId: user.schoolId }] : []),
+              ],
+            }),
       },
       select: {
         contentId: true,
@@ -46,6 +55,11 @@ export async function GET(
           },
         },
         videoSupplements: {
+          where: {
+            schoolId: user.schoolId ?? "__no_school__",
+            status: "APPROVED",
+            isActive: true,
+          },
           orderBy: { uploadedAt: "desc" },
           select: {
             id: true,
@@ -66,7 +80,14 @@ export async function GET(
     });
 
     if (!row) {
-      return NextResponse.json({ error: "Not found", contentId }, { status: 404 });
+      return NextResponse.json(
+        {
+          error: "Not found",
+          contentId,
+          offlineManifest: signContentAvailability({ contentId, version: null, revoked: true }),
+        },
+        { status: 404 }
+      );
     }
 
     return NextResponse.json({
@@ -92,6 +113,7 @@ export async function GET(
       },
       payload: row.payload,
       audio: row.audioAssets[0] ?? null,
+      offlineManifest: signContentAvailability({ contentId: row.contentId, version: row.version, revoked: false }),
       videos: await Promise.all(
         row.videoSupplements.map(async (v) => {
           const [vHead, tHead] = await Promise.all([
