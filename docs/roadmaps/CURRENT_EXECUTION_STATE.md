@@ -8,10 +8,10 @@ Live execution tracking for the final closeout program.
 - **Canonical plan:** `docs/roadmaps/NATIONAL_ROLLOUT_EXECUTION_PLAN.md`
 - **Escalation contract:** `docs/agents/ADVISOR_ESCALATION_CONTRACT.md`
 - **P1-B Tenant Isolation, Revocation, and Required Audit Transitions:
-  COMPLETE locally, not merged (2026-08-03).** Branch
-  `codex/trust-remediation-2`, stacked on the pushed P1-A commit `e32d5310`
-  because P1-A is not yet on `origin/main`. The work is isolated from Claude's
-  concurrent curriculum risk-triage worktree with no changed-file overlap.
+  COMPLETE + MERGED (2026-08-03, PR #77, merge commit `c9363568`).** The work
+  was reviewed and merged after P1-A in dependency order. It remained isolated
+  from Claude's concurrent curriculum risk-triage worktree with no changed-file
+  overlap.
   Lesson-video activation now deactivates competitors only within the video's
   school. Curriculum reads limit school-owned content to the caller's tenant
   and resolve private URLs only for active, approved videos in that same
@@ -33,15 +33,14 @@ Live execution tracking for the final closeout program.
   standalone junction warnings. Deployment must configure
   `CONTENT_MANIFEST_PRIVATE_KEY`, `CONTENT_MANIFEST_KEY_ID`, and
   `NEXT_PUBLIC_CONTENT_MANIFEST_PUBLIC_KEY`; without them, online lessons work
-  but offline curriculum caching fails closed. Next after human review and
-  merge: P1-C privileged identity hardening. Stop at its provider and live
-  User-schema escalation points.
-- **P1-A Minor AI Safety + Safeguarding Delivery Truth: COMPLETE locally,
-  not merged (2026-08-03).** Branch `codex/trust-remediation-1`, based on
-  `origin/main` at `829a4a71` in an isolated worktree because Claude is
-  concurrently implementing curriculum risk triage. No changed files overlap
-  Claude's branch. Added an explicit minor-audience moderation policy that
-  converts `UNCERTAIN` to `UNSAFE`; main student tutor input and output are
+  but offline curriculum caching fails closed. Next: P1-C privileged identity
+  hardening. Stop at its provider and live User-schema escalation points.
+- **P1-A Minor AI Safety + Safeguarding Delivery Truth: COMPLETE + MERGED
+  (2026-08-03, PR #76, merge commit `8f3ad56d`).** The implementation branch
+  was based on `origin/main` at `829a4a71` in an isolated worktree because
+  Claude was concurrently implementing curriculum risk triage. No changed
+  files overlap Claude's branch. Added an explicit minor-audience moderation
+  policy that converts `UNCERTAIN` to `UNSAFE`; main student tutor input and output are
   now moderated; adaptive-practice and newly generated WAEC content are
   blocked before use or persistence unless moderation is `SAFE`; and existing
   student grading, lab, and RAG paths now treat every non-safe result as
