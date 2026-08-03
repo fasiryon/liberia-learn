@@ -175,7 +175,7 @@ describe("Audit Gate 2 — Category 4: logAudit patch verification", () => {
   describe("POST /api/admin/curriculum/approve — logAudit includes schoolId", () => {
     beforeEach(() => {
       vi.clearAllMocks();
-      mockRequireRole.mockResolvedValue(ADMIN_USER);
+      mockRequireUser.mockResolvedValue(ADMIN_USER);
       mockIsCurriculumFeedbackEnabled.mockReturnValue(false);
       mockCurriculumContentFindUnique.mockResolvedValue(CONTENT_RECORD);
       mockCurriculumContentUpdate.mockResolvedValue({ ...CONTENT_RECORD, status: "published" });
@@ -218,7 +218,7 @@ describe("Audit Gate 2 — Category 4: logAudit patch verification", () => {
   describe("POST /api/admin/curriculum/reject — logAudit includes schoolId", () => {
     beforeEach(() => {
       vi.clearAllMocks();
-      mockRequireRole.mockResolvedValue(ADMIN_USER);
+      mockRequireUser.mockResolvedValue(ADMIN_USER);
       mockIsCurriculumFeedbackEnabled.mockReturnValue(false);
       mockCurriculumContentFindUnique.mockResolvedValue(CONTENT_RECORD);
       mockCurriculumContentUpdate.mockResolvedValue({ ...CONTENT_RECORD, status: "rejected" });
@@ -636,7 +636,7 @@ describe("Audit Gate 2 — Category 3: PII governance", () => {
   describe("POST /api/admin/curriculum/approve — no PII in response", () => {
     it("response contains only ok, contentId, status — no student or user data", async () => {
       vi.clearAllMocks();
-      mockRequireRole.mockResolvedValue(ADMIN_USER);
+      mockRequireUser.mockResolvedValue(ADMIN_USER);
       mockIsCurriculumFeedbackEnabled.mockReturnValue(false);
       mockCurriculumContentFindUnique.mockResolvedValue(CONTENT_RECORD);
       mockCurriculumContentUpdate.mockResolvedValue({ ...CONTENT_RECORD, status: "published" });

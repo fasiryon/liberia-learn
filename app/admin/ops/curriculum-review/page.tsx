@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 import { requireUser } from "@/lib/auth";
+import { hasPermission, PERMISSIONS } from "@/lib/permissions";
 import { listCurriculumDrafts } from "@/lib/curriculum/regenerationAdmin";
 
 export const dynamic = "force-dynamic";
@@ -15,7 +16,7 @@ function parseGrade(value?: string) {
 
 export default async function CurriculumReviewPage({ searchParams }: Props) {
   const user = await requireUser();
-  if (!user.isPlatformAdmin) redirect("/");
+  if (!hasPermission(user, PERMISSIONS.CURRICULUM_APPROVE)) redirect("/");
   const drafts = await listCurriculumDrafts({
     grade: parseGrade(searchParams?.grade),
     subject: searchParams?.subject,

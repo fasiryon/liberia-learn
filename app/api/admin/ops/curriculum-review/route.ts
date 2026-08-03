@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
-import { requirePlatformAdmin } from "@/lib/auth";
+import { requireUser } from "@/lib/auth";
+import { assertPermission, PERMISSIONS } from "@/lib/permissions";
 import { listCurriculumDrafts, reviewCurriculumDraft } from "@/lib/curriculum/regenerationAdmin";
 
 export const dynamic = "force-dynamic";
@@ -20,7 +21,8 @@ function numberParam(value: string | null) {
 
 export async function GET(req: Request) {
   try {
-    await requirePlatformAdmin();
+    const user = await requireUser();
+    assertPermission(user, PERMISSIONS.CURRICULUM_APPROVE);
     const url = new URL(req.url);
     const drafts = await listCurriculumDrafts({
       grade: numberParam(url.searchParams.get("grade")),
@@ -39,7 +41,8 @@ export async function GET(req: Request) {
 
 export async function POST(req: Request) {
   try {
-    const actor = await requirePlatformAdmin();
+    const actor = await requireUser();
+    assertPermission(actor, PERMISSIONS.CURRICULUM_APPROVE);
     const parsed = PostSchema.safeParse(await req.json());
     if (!parsed.success) {
       return NextResponse.json({ error: "Invalid input", details: parsed.error.issues }, { status: 400 });

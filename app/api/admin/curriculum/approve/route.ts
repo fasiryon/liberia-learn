@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { requireRole } from "@/lib/auth";
+import { requireUser } from "@/lib/auth";
 import { assertPermission, PERMISSIONS } from "@/lib/permissions";
 import { prisma } from "@/lib/db";
 import { logAudit } from "@/lib/audit";
@@ -21,7 +21,7 @@ try { redis = Redis.fromEnv(); } catch { /* Redis not configured */ }
  */
 export async function POST(req: Request) {
   try {
-    const user = await requireRole("ADMIN");
+    const user = await requireUser();
     assertPermission(user, PERMISSIONS.CURRICULUM_APPROVE);
 
     const body = await req.json();

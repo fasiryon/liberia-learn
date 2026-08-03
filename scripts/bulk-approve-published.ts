@@ -1,5 +1,16 @@
 // Approves NEEDS_REVIEW lessons that meet quality thresholds.
 //
+// IMPORTANT (NR-11, 2026-08-02): this is an automated content-quality gate,
+// not a substitute for human/MOE curriculum review. It checks word count,
+// content length, and placeholder titles only — it has no way to judge
+// pedagogical accuracy, cultural appropriateness, or curriculum alignment.
+// Rows it approves carry payload.bulkApproved=true and no approver identity
+// (unlike a real human approval via /api/admin/curriculum/approve, which
+// records approvedByUserId and is written to AuditLog). As of 2026-08-01,
+// roughly 65% of all APPROVED/published content in production (712 of 1,089
+// rows) was approved this way, with zero human review and zero audit trail.
+// Do not treat "APPROVED"/"published" status as evidence of MOE sign-off.
+//
 // Quality gates (a lesson must pass ALL to be approved):
 //   1. word count >= grade-band minimum:
 //        G1-G3: 400 words  |  G4-G6: 600 words  |  G7-G12: 800 words
