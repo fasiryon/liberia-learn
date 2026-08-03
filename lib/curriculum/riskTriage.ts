@@ -91,3 +91,35 @@ export function computeRiskScore(input: RiskFactorInput): RiskScoreResult {
 export function isWorthFlagging(score: number): boolean {
   return score >= FLAG_THRESHOLD;
 }
+
+export async function isFirstOfKindCell(grade: number, subject: string): Promise<boolean> {
+  const count = await prisma.curriculumContent.count({
+    where: {
+      contentType: "lesson",
+      grade,
+      subject: subject.trim().toUpperCase(),
+      status: { in: APPROVED_STATUSES },
+    },
+  });
+  return count === 0;
+}
+
+export async function getFlaggedCountInWindow(): Promise<number> {
+  const since = new Date(Date.now() - BUDGET_WINDOW_DAYS * 24 * 60 * 60 * 1000);
+  return prisma.curriculumContent.count({
+    where: {
+      payload: { path: ["riskFlagged"], equals: true },
+      updatedAt: { gte: since },
+    },
+  });
+}
+
+/** Live backlog count for the "N lessons awaiting your review" page badge. */
+export async function countRiskFlaggedAwaitingReview(): Promise<number> {
+  return prisma.curriculumContent.count({
+    where: {
+      status: "NEEDS_REVIEW",
+      payload: { path: ["riskFlagged"], equals: true },
+    },
+  });
+}
