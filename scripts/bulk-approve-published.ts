@@ -26,10 +26,6 @@
 //   # Run against all passing lessons:
 //   npx dotenv -e .env.production -- npx tsx scripts/bulk-approve-published.ts
 
-if (process.env.DIRECT_URL) {
-  process.env.DATABASE_URL = process.env.DIRECT_URL;
-}
-
 import { prisma } from "@/lib/db";
 import {
   computeRiskScore,
@@ -166,7 +162,7 @@ async function main() {
       const worthFlagging = isWorthFlagging(score);
       let wouldFlag = false;
       if (worthFlagging) {
-        const flaggedCount = await getFlaggedCountInWindow().catch(() => WEEKLY_REVIEW_BUDGET);
+        const flaggedCount = await getFlaggedCountInWindow().catch(() => 0);
         wouldFlag = flaggedCount < WEEKLY_REVIEW_BUDGET;
       }
       if (wouldFlag) {
