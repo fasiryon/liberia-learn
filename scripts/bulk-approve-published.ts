@@ -11,8 +11,7 @@
 // identity at all).
 //
 // Quality gates (a lesson must pass ALL to be a triage candidate):
-//   1. word count >= grade-band minimum:
-//        G1-G3: 400 words  |  G4-G6: 600 words  |  G7-G12: 800 words
+//   1. word count >= the shared 3,500-word approval minimum
 //   2. Has substantive content (text length >= 200 chars - filters empty shells)
 //   3. Title is not a placeholder ("untitled", "test", "draft", etc.)
 //
@@ -39,6 +38,7 @@ import {
   triageAndApprove,
   WEEKLY_REVIEW_BUDGET,
 } from "@/lib/curriculum/riskTriage";
+import { MIN_APPROVABLE_LESSON_WORDS } from "@/lib/curriculum/lessonQualityThresholds";
 
 const PLACEHOLDER_TITLES = [
   "untitled",
@@ -49,15 +49,6 @@ const PLACEHOLDER_TITLES = [
   "tbd",
   "lesson title",
 ];
-
-// Grade-band word minimums - these plain-text lessons (~700-900 words) use a
-// different format than the block/standard lessons (which target 1200+).
-const MIN_WORDS_BY_GRADE: Record<number, number> = {
-  1: 400, 2: 400, 3: 400,
-  4: 600, 5: 600, 6: 600,
-  7: 800, 8: 800, 9: 800,
-  10: 800, 11: 800, 12: 800,
-};
 
 function extractText(payload: unknown): string {
   if (!payload || typeof payload !== "object" || Array.isArray(payload)) return "";
@@ -124,7 +115,7 @@ async function main() {
     const text = extractText(lesson.payload);
     const depthWords = getDepthWordCount(lesson.payload);
     const words = depthWords ?? wordCount(text);
-    const minWords = MIN_WORDS_BY_GRADE[lesson.grade] ?? 400;
+    const minWords = MIN_APPROVABLE_LESSON_WORDS;
     const titleLower = (lesson.title ?? "").toLowerCase();
 
     const wordGate = words >= minWords;

@@ -374,14 +374,19 @@ Live execution tracking for the final closeout program.
   audit-logged. Reviewer email is best-effort and permission-derived, and the
   existing curriculum-review API/page now exposes the live flagged backlog
   count. Human approve/reject routes remain outside automated triage. Zero
-  schema changes. Gate: `npx prisma generate` PASS; final-tree TypeScript PASS
+  schema changes. A pre-merge review corrected legacy threshold drift: the
+  automated approval and audit paths now share a single 3,500-word minimum,
+  matching `generateLessonV2.ts`; the previous bulk 400/600/800 and promotion
+  1,200 values can no longer publish undersized lessons. Gate:
+  `npx prisma generate` PASS; final-tree TypeScript PASS
   with incremental caching disabled after the incremental runner twice hung
   without diagnostics; exact `npx vitest run` PASS (4,542 tests / 550 files);
   `npm run build` PASS. The required production dry run was read-only and
-  found one `NEEDS_REVIEW` lesson, G9 MATH, which would auto-approve at risk
-  score 0; a separate read-only production status audit independently
+  found one `NEEDS_REVIEW` lesson, G9 MATH, at 3,787 words and risk score 2
+  (borderline margin above 3,500). A separate
+  read-only production status audit independently
   confirmed exactly one G9 MATH `NEEDS_REVIEW` row and that it exceeds the
-  1,200-word readiness threshold. Direct Postgres on port 5432 was unreachable
+  3,500-word approval threshold. Direct Postgres on port 5432 was unreachable
   this session; the independent verification succeeded through the pooled
   port-6543 `DATABASE_URL`, matching the standing carry-forward rule.
 - **Next national sprint: NR-12 — Critical Grade Deserts (G2, G9).** Not

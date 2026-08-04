@@ -1,4 +1,5 @@
 import { CurriculumPayloadSchema } from "@/lib/schemas/curriculumPayload";
+import { MIN_APPROVABLE_LESSON_WORDS } from "@/lib/curriculum/lessonQualityThresholds";
 
 type LessonPayload = Record<string, any>;
 
@@ -321,6 +322,8 @@ export function enrichGeneratedLesson(input: EnrichmentInput) {
     buildSectionBody("Home and Guardian Connection", `${bundle.guardianSupport}\n\n${bundle.materialsNotes}`),
   ].join("\n\n");
 
+  // This is only the legacy deterministic enrichment floor. It is not an
+  // approval threshold; belowThreshold uses the shared 3,500-word minimum.
   const enrichMinWords = input.grade <= 3 ? 700 : input.grade <= 6 ? 900 : 1200;
   const booster = createWordCountBooster(topic, input.grade, input.subject);
   while (countWords(bodyStandard) + countWords(bodyBlock) < enrichMinWords) {
@@ -382,10 +385,9 @@ export function enrichGeneratedLesson(input: EnrichmentInput) {
 
   const wordCount = countLessonWords(mergedPayload as LessonPayload);
 
-  const minWordsThreshold = input.grade <= 3 ? 700 : input.grade <= 6 ? 900 : 1200;
   return {
     payload: mergedPayload,
     wordCount,
-    belowThreshold: wordCount < minWordsThreshold,
+    belowThreshold: wordCount < MIN_APPROVABLE_LESSON_WORDS,
   };
 }

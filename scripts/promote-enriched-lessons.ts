@@ -6,6 +6,7 @@ import { config } from "dotenv";
 import { prisma } from "@/lib/db";
 import { evaluatePromotionCandidate } from "@/lib/curriculum/promotionPass";
 import { triageAndApprove } from "@/lib/curriculum/riskTriage";
+import { MIN_APPROVABLE_LESSON_WORDS } from "@/lib/curriculum/lessonQualityThresholds";
 
 config({ path: ".env.local" });
 config();
@@ -71,7 +72,7 @@ async function main() {
             subject: row.subject,
             payload: decision.normalizedPayload,
             wordCount: decision.words,
-            minWordCount: 1200,
+            minWordCount: MIN_APPROVABLE_LESSON_WORDS,
           },
           approvedBy,
           "APPROVED"

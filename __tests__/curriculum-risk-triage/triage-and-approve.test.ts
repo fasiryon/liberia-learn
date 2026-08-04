@@ -21,8 +21,8 @@ const LOW_RISK_CANDIDATE = {
   subject: "MATH",
   payload: { existing: "field" },
   approvalMetadata: { approvalStatus: "APPROVED", bulkApproved: true },
-  wordCount: 2000,
-  minWordCount: 800,
+  wordCount: 5000,
+  minWordCount: 3500,
 };
 
 const HIGH_RISK_CANDIDATE = {
@@ -30,8 +30,8 @@ const HIGH_RISK_CANDIDATE = {
   grade: 2,
   subject: "SOCIAL_STUDIES",
   payload: { existing: "field" },
-  wordCount: 410,
-  minWordCount: 400,
+  wordCount: 3550,
+  minWordCount: 3500,
 };
 
 beforeEach(() => {

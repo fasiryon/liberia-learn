@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { enrichGeneratedLesson } from "@/lib/curriculum/generatedLessonEnricher";
 
 describe("generated lesson enricher", () => {
-  it("expands generated lessons above the promotion word threshold without changing progression metadata", () => {
+  it("reports legacy enriched lessons below the 3500-word approval threshold", () => {
     const result = enrichGeneratedLesson({
       contentId: "math-g3-1-foundations",
       grade: 3,
@@ -30,8 +30,8 @@ describe("generated lesson enricher", () => {
       },
     });
 
-    expect(result.wordCount).toBeGreaterThanOrEqual(1200);
-    expect(result.belowThreshold).toBe(false);
+    expect(result.wordCount).toBeLessThan(3500);
+    expect(result.belowThreshold).toBe(true);
     expect(result.payload.primaryConcept).toBe("addition");
     expect(result.payload.prerequisites).toEqual(["counting"]);
     expect(result.payload.nextConcepts).toEqual(["subtraction"]);

@@ -5,6 +5,12 @@
 the authoritative closeout evidence is recorded in
 `docs/roadmaps/CURRENT_EXECUTION_STATE.md`.
 
+**Threshold correction (2026-08-04):** The minimum approvable lesson size is
+3,500 instructional words. Lower 400/600/800 and 1,200-word values preserved
+in original snippets below are superseded by
+`MIN_APPROVABLE_LESSON_WORDS` in
+`lib/curriculum/lessonQualityThresholds.ts`.
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** Replace silent script-driven curriculum auto-approval with a risk-scored
