@@ -1,12 +1,11 @@
-// IMPORTANT (NR-11, 2026-08-02): this promotes generated content straight to
-// APPROVED using an automated structural gate (word count, section presence)
-// only. It is not a substitute for human/MOE review, records no reviewer
-// identity, and writes nothing to AuditLog. See bulk-approve-published.ts
-// for the sibling script and the production evidence of how much live
-// content was approved this way rather than by a human.
+// IMPORTANT (NR-11, 2026-08-02 -> risk-triage 2026-08-03): generated content
+// that passes the structural gate now goes through the shared risk-triage
+// layer. High-risk candidates are held for human/MOE review; every other
+// automated approval is risk-stamped and audit-logged.
 import { config } from "dotenv";
 import { prisma } from "@/lib/db";
 import { evaluatePromotionCandidate } from "@/lib/curriculum/promotionPass";
+import { triageAndApprove } from "@/lib/curriculum/riskTriage";
 
 config({ path: ".env.local" });
 config();
@@ -40,6 +39,7 @@ async function main() {
   });
 
   let promoted = 0;
+  let flagged = 0;
   let failed = 0;
   let promotedWords = 0;
 
@@ -64,16 +64,31 @@ async function main() {
       );
 
       if (decision.action === "promote") {
-        await prisma.curriculumContent.update({
-          where: { id: row.id },
-          data: {
-            status: "APPROVED",
+        const result = await triageAndApprove(
+          {
+            contentId: row.contentId,
+            grade: row.grade,
+            subject: row.subject,
             payload: decision.normalizedPayload,
+            wordCount: decision.words,
+            minWordCount: 1200,
           },
-        });
-        promoted += 1;
-        promotedWords += decision.words;
-        console.log(`Promoted: ${row.subject} Grade ${row.grade} - ${decision.words} words`);
+          approvedBy,
+          "APPROVED"
+        );
+
+        if (result.action === "flagged") {
+          flagged += 1;
+          console.log(
+            `Flagged for review: ${row.subject} Grade ${row.grade} - ${decision.words} words (score ${result.riskScore})`
+          );
+        } else {
+          promoted += 1;
+          promotedWords += decision.words;
+          console.log(
+            `Promoted: ${row.subject} Grade ${row.grade} - ${decision.words} words (score ${result.riskScore})`
+          );
+        }
         continue;
       }
 
@@ -95,6 +110,7 @@ async function main() {
 
   console.log("Promotion complete.");
   console.log(`Promoted: ${promoted} lessons`);
+  console.log(`Flagged for review: ${flagged} lessons`);
   console.log(`Failed gates: ${failed} lessons`);
   console.log(`Total APPROVED now: ${totalApproved} lessons`);
   console.log(`Average word count of promoted: ${promoted > 0 ? Math.round(promotedWords / promoted) : 0} words`);

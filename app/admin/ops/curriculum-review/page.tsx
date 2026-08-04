@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { requireUser } from "@/lib/auth";
 import { hasPermission, PERMISSIONS } from "@/lib/permissions";
 import { listCurriculumDrafts } from "@/lib/curriculum/regenerationAdmin";
+import { countRiskFlaggedAwaitingReview } from "@/lib/curriculum/riskTriage";
 
 export const dynamic = "force-dynamic";
 
@@ -17,19 +18,29 @@ function parseGrade(value?: string) {
 export default async function CurriculumReviewPage({ searchParams }: Props) {
   const user = await requireUser();
   if (!hasPermission(user, PERMISSIONS.CURRICULUM_APPROVE)) redirect("/");
-  const drafts = await listCurriculumDrafts({
-    grade: parseGrade(searchParams?.grade),
-    subject: searchParams?.subject,
-    status: searchParams?.status ?? "DRAFT",
-    limit: 75,
-  });
+  const [drafts, riskFlaggedAwaitingReview] = await Promise.all([
+    listCurriculumDrafts({
+      grade: parseGrade(searchParams?.grade),
+      subject: searchParams?.subject,
+      status: searchParams?.status ?? "DRAFT",
+      limit: 75,
+    }),
+    countRiskFlaggedAwaitingReview(),
+  ]);
 
   return (
     <main className="min-h-screen bg-[var(--ll-bg)] px-6 py-8 text-[var(--ll-text)]">
       <div className="mx-auto max-w-7xl space-y-6">
         <header>
           <p className="text-sm font-semibold uppercase tracking-wide text-[var(--ll-text-muted)]">Platform Operations</p>
-          <h1 className="text-2xl font-semibold">Curriculum Draft Review</h1>
+          <div className="flex flex-wrap items-center gap-3">
+            <h1 className="text-2xl font-semibold">Curriculum Draft Review</h1>
+            {riskFlaggedAwaitingReview > 0 ? (
+              <span className="rounded-full bg-amber-100 px-3 py-1 text-sm font-medium text-amber-900">
+                {riskFlaggedAwaitingReview} flagged by risk-triage awaiting your review
+              </span>
+            ) : null}
+          </div>
         </header>
 
         <form className="flex flex-wrap gap-3 rounded border border-[var(--ll-border)] bg-[var(--ll-surface)] p-4">
@@ -87,4 +98,3 @@ export default async function CurriculumReviewPage({ searchParams }: Props) {
     </main>
   );
 }
-

@@ -3,7 +3,7 @@
 // Risk-based triage between the existing mechanical quality gates
 // (regenerationQualityGate.ts / promotionPass.ts / the inline gate in
 // bulk-approve-published.ts) and a final approval status. Only called from
-// automated/script-driven approval paths — never from the human-driven
+// automated/script-driven approval paths - never from the human-driven
 // approve/reject routes (app/api/admin/curriculum/approve|reject/route.ts,
 // app/api/admin/ops/curriculum-review/route.ts). See
 // docs/superpowers/specs/2026-08-03-curriculum-risk-triage-design.md.
@@ -23,7 +23,7 @@ export const GRADE_BAND_RISK: Record<GradeBand, number> = {
 
 // Subjects scored as sensitive. Deliberately limited to the two subjects that
 // actually exist in CurriculumContent.subject values today (see
-// lib/curriculum/coverageShared.ts SUBJECTS) — CIVICS and SOCIAL_STUDIES.
+// lib/curriculum/coverageShared.ts SUBJECTS) - CIVICS and SOCIAL_STUDIES.
 export const SENSITIVE_SUBJECTS = new Set(["CIVICS", "SOCIAL_STUDIES"]);
 export const SUBJECT_SENSITIVITY_SCORE = 2;
 export const FIRST_OF_KIND_SCORE = 3;
@@ -57,7 +57,7 @@ export type RiskScoreResult = {
   reasons: string[];
 };
 
-/** Pure, deterministic, no I/O — see design doc's computeRiskScore section. */
+/** Pure, deterministic, no I/O - see design doc's computeRiskScore section. */
 export function computeRiskScore(input: RiskFactorInput): RiskScoreResult {
   let score = 0;
   const reasons: string[] = [];
@@ -90,4 +90,160 @@ export function computeRiskScore(input: RiskFactorInput): RiskScoreResult {
 
 export function isWorthFlagging(score: number): boolean {
   return score >= FLAG_THRESHOLD;
+}
+
+export async function isFirstOfKindCell(grade: number, subject: string): Promise<boolean> {
+  const count = await prisma.curriculumContent.count({
+    where: {
+      contentType: "lesson",
+      grade,
+      subject: subject.trim().toUpperCase(),
+      status: { in: APPROVED_STATUSES },
+    },
+  });
+  return count === 0;
+}
+
+export async function getFlaggedCountInWindow(): Promise<number> {
+  const since = new Date(Date.now() - BUDGET_WINDOW_DAYS * 24 * 60 * 60 * 1000);
+  return prisma.curriculumContent.count({
+    where: {
+      payload: { path: ["riskFlagged"], equals: true },
+      updatedAt: { gte: since },
+    },
+  });
+}
+
+/** Live backlog count for the "N lessons awaiting your review" page badge. */
+export async function countRiskFlaggedAwaitingReview(): Promise<number> {
+  return prisma.curriculumContent.count({
+    where: {
+      status: "NEEDS_REVIEW",
+      payload: { path: ["riskFlagged"], equals: true },
+    },
+  });
+}
+
+export type TriageCandidate = {
+  contentId: string;
+  grade: number;
+  subject: string;
+  payload: Record<string, any>;
+  /** Existing caller metadata that is valid only after approval. */
+  approvalMetadata?: Record<string, any>;
+  wordCount: number;
+  minWordCount: number;
+};
+
+export type TriageResult =
+  | { action: "flagged"; contentId: string; riskScore: number; riskReasons: string[] }
+  | {
+      action: "approved";
+      contentId: string;
+      riskScore: number;
+      riskReasons: string[];
+      budgetExceeded: boolean;
+    };
+
+/**
+ * Orchestrates one candidate through risk scoring, the weekly review budget,
+ * and the final DB write. Called only from automated/script-driven approval
+ * paths - see the module header comment. `approvedStatus` lets each caller
+ * keep its own existing "approved" status string ("published" for
+ * bulk-approve-published.ts, "APPROVED" for promote-enriched-lessons.ts).
+ */
+export async function triageAndApprove(
+  candidate: TriageCandidate,
+  actorLabel: string,
+  approvedStatus: string
+): Promise<TriageResult> {
+  const isFirstOfKind = await isFirstOfKindCell(candidate.grade, candidate.subject);
+  const { score, reasons } = computeRiskScore({
+    grade: candidate.grade,
+    subject: candidate.subject,
+    isFirstOfKind,
+    wordCount: candidate.wordCount,
+    minWordCount: candidate.minWordCount,
+  });
+
+  const worthFlagging = isWorthFlagging(score);
+  let overBudget = false;
+
+  if (worthFlagging) {
+    try {
+      const flaggedCount = await getFlaggedCountInWindow();
+      overBudget = flaggedCount >= WEEKLY_REVIEW_BUDGET;
+    } catch (error) {
+      logger.warn("[riskTriage] budget check failed, failing closed to flagged", {
+        contentId: candidate.contentId,
+        error,
+      });
+      overBudget = false;
+    }
+  }
+
+  const shouldFlag = worthFlagging && !overBudget;
+
+  if (worthFlagging && overBudget) {
+    logger.warn("[riskTriage] weekly review budget exhausted, auto-approving a high-risk candidate", {
+      contentId: candidate.contentId,
+      riskScore: score,
+      riskReasons: reasons,
+    });
+  }
+
+  if (shouldFlag) {
+    await prisma.curriculumContent.update({
+      where: { contentId: candidate.contentId },
+      data: {
+        status: "NEEDS_REVIEW",
+        payload: {
+          ...candidate.payload,
+          riskFlagged: true,
+          riskScore: score,
+          riskReasons: reasons,
+          flaggedAt: new Date().toISOString(),
+        },
+      },
+    });
+    await logAudit({
+      action: "curriculum.risk.flagged",
+      resourceType: "curriculum",
+      resourceId: candidate.contentId,
+      details: { riskScore: score, riskReasons: reasons, actor: actorLabel },
+    });
+    await notifyRiskReviewers(candidate.contentId, score, reasons).catch((error) => {
+      logger.warn("[riskTriage] reviewer notification failed", {
+        contentId: candidate.contentId,
+        error,
+      });
+    });
+    return { action: "flagged", contentId: candidate.contentId, riskScore: score, riskReasons: reasons };
+  }
+
+  await prisma.curriculumContent.update({
+    where: { contentId: candidate.contentId },
+    data: {
+      status: approvedStatus,
+      payload: {
+        ...candidate.payload,
+        ...candidate.approvalMetadata,
+        riskScore: score,
+        riskReasons: reasons,
+      },
+    },
+  });
+  await logAudit({
+    action: "curriculum.risk.autoapproved",
+    resourceType: "curriculum",
+    resourceId: candidate.contentId,
+    details: { riskScore: score, riskReasons: reasons, actor: actorLabel, budgetExceeded: overBudget },
+  });
+  return {
+    action: "approved",
+    contentId: candidate.contentId,
+    riskScore: score,
+    riskReasons: reasons,
+    budgetExceeded: overBudget,
+  };
 }

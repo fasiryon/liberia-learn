@@ -362,6 +362,28 @@ Live execution tracking for the final closeout program.
   fix. Gate: prisma generate PASS, tsc PASS, vitest 4,512 tests / 545 files
   PASS (baseline 4,492/544, +20 new), build PASS, zero schema changes.
 - **NR-11 merged to `main` (2026-08-03, PR #75, merge commit `7b3f07e2`).**
+- **Curriculum risk-triage prerequisite for NR-12: COMPLETE (2026-08-04),
+  pending human review/merge.** Branch `feat/curriculum-risk-triage`. Replaced
+  silent script-driven curriculum approval with a shared rule-based risk
+  scorer and DB-backed `triageAndApprove` path for
+  `scripts/bulk-approve-published.ts` and
+  `scripts/promote-enriched-lessons.ts`. High-risk candidates are held in
+  `NEEDS_REVIEW` under a global rolling seven-day budget of 8; lower-risk or
+  budget-excess candidates retain each pipeline's existing approved status
+  and approval metadata, while every automated decision is risk-stamped and
+  audit-logged. Reviewer email is best-effort and permission-derived, and the
+  existing curriculum-review API/page now exposes the live flagged backlog
+  count. Human approve/reject routes remain outside automated triage. Zero
+  schema changes. Gate: `npx prisma generate` PASS; final-tree TypeScript PASS
+  with incremental caching disabled after the incremental runner twice hung
+  without diagnostics; exact `npx vitest run` PASS (4,542 tests / 550 files);
+  `npm run build` PASS. The required production dry run was read-only and
+  found one `NEEDS_REVIEW` lesson, G9 MATH, which would auto-approve at risk
+  score 0; a separate read-only production status audit independently
+  confirmed exactly one G9 MATH `NEEDS_REVIEW` row and that it exceeds the
+  1,200-word readiness threshold. Direct Postgres on port 5432 was unreachable
+  this session; the independent verification succeeded through the pooled
+  port-6543 `DATABASE_URL`, matching the standing carry-forward rule.
 - **Next national sprint: NR-12 — Critical Grade Deserts (G2, G9).** Not
   started as of this note. Target per the plan: regen + QA for Grade 2 and
   Grade 9 until >=15 APPROVED per core subject, plus documented factory
@@ -370,11 +392,9 @@ Live execution tracking for the final closeout program.
   start rather than trusting the April audit's grade-desert figures (G2: 3
   lessons, G9: 2 lessons) — both the underlying content population and the
   approval-status semantics have changed materially since that audit.
-  Also worth deciding explicitly at NR-12 start: should newly generated
-  Grade 2/9 content go through genuine human/MOE review, or continue
-  through the same automated quality-gate scripts that approved ~95% of
-  existing content? That policy question was raised but not resolved by
-  NR-11 and directly affects how NR-12 should close its own lessons.
+  The NR-11 review-policy question is now resolved by the risk-triage
+  prerequisite above: newly generated Grade 2/9 content must use the shared
+  triage path, with the highest-risk subset held for genuine human/MOE review.
 - **Follow-up backlog item from NR-7:** school-level AI agent cost/usage
   visibility for school ADMINs is now zero (previously a real cross-school
   leak, correctly closed). If wanted as a real feature, needs a schema
