@@ -23,6 +23,7 @@ const mockCurriculumContentFindUnique = vi.hoisted(() => vi.fn());
 const mockCurriculumContentUpdate = vi.hoisted(() => vi.fn());
 const mockListCurriculumDrafts = vi.hoisted(() => vi.fn(async () => []));
 const mockReviewCurriculumDraft = vi.hoisted(() => vi.fn());
+const mockCountRiskFlaggedAwaitingReview = vi.hoisted(() => vi.fn(async () => 0));
 
 vi.mock("@/lib/auth", () => ({ requireUser: mockRequireUser }));
 vi.mock("@/lib/audit", () => ({ logAudit: mockLogAudit, logAuditRequired: mockLogAudit }));
@@ -49,6 +50,9 @@ vi.mock("@/lib/db", () => ({
 vi.mock("@/lib/curriculum/regenerationAdmin", () => ({
   listCurriculumDrafts: mockListCurriculumDrafts,
   reviewCurriculumDraft: mockReviewCurriculumDraft,
+}));
+vi.mock("@/lib/curriculum/riskTriage", () => ({
+  countRiskFlaggedAwaitingReview: mockCountRiskFlaggedAwaitingReview,
 }));
 
 import { POST as approvePost } from "@/app/api/admin/curriculum/approve/route";
@@ -110,6 +114,15 @@ describe.each([
     mockRequireUser.mockResolvedValue(user);
     const res = await reviewGet(new Request("http://localhost/api/admin/ops/curriculum-review") as any);
     expect(res.status).toBe(200);
+  });
+
+  it("GET /api/admin/ops/curriculum-review includes the risk-triage backlog count", async () => {
+    mockRequireUser.mockResolvedValue(user);
+    mockCountRiskFlaggedAwaitingReview.mockResolvedValue(3);
+    const res = await reviewGet(new Request("http://localhost/api/admin/ops/curriculum-review") as any);
+    await expect(res.json()).resolves.toEqual(
+      expect.objectContaining({ riskFlaggedAwaitingReview: 3 })
+    );
   });
 
   it("POST /api/admin/ops/curriculum-review (bulk_approve) succeeds", async () => {

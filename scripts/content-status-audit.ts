@@ -6,6 +6,7 @@ if (process.env.DIRECT_URL) {
 }
 
 import { PrismaClient } from "@prisma/client";
+import { MIN_APPROVABLE_LESSON_WORDS } from "@/lib/curriculum/lessonQualityThresholds";
 
 const prisma = new PrismaClient();
 
@@ -82,13 +83,6 @@ async function main() {
     select: { contentId: true, grade: true, subject: true, title: true, payload: true },
   });
 
-  const MIN_WORDS_BY_GRADE: Record<number, number> = {
-    1: 1200, 2: 1200, 3: 1200,
-    4: 1200, 5: 1200, 6: 1200,
-    7: 1200, 8: 1200, 9: 1200,
-    10: 1200, 11: 1200, 12: 1200,
-  };
-
   let ready = 0;
   let thin = 0;
   const thinLessons: string[] = [];
@@ -96,7 +90,7 @@ async function main() {
   for (const lesson of published) {
     const depthCount = getDepthWordCount(lesson.payload);
     const words = depthCount ?? extractWords(lesson.payload);
-    const min = MIN_WORDS_BY_GRADE[lesson.grade] ?? 1200;
+    const min = MIN_APPROVABLE_LESSON_WORDS;
     if (words >= min) {
       ready++;
     } else {
@@ -106,8 +100,8 @@ async function main() {
   }
 
   console.log(`Total NEEDS_REVIEW lessons: ${published.length}`);
-  console.log(`≥1200 words (ready to approve): ${ready}`);
-  console.log(`<1200 words (needs regen):      ${thin}`);
+  console.log(`>=${MIN_APPROVABLE_LESSON_WORDS} words (ready to approve): ${ready}`);
+  console.log(`<${MIN_APPROVABLE_LESSON_WORDS} words (needs regen):      ${thin}`);
 
   if (thinLessons.length > 0) {
     console.log("\nThin lessons (first 20):");

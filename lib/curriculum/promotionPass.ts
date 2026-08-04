@@ -1,4 +1,5 @@
 import { countLessonWords } from "@/lib/curriculum/generatedLessonEnricher";
+import { MIN_APPROVABLE_LESSON_WORDS } from "@/lib/curriculum/lessonQualityThresholds";
 
 export type PromotionRecord = {
   contentId: string;
@@ -135,11 +136,11 @@ export function evaluatePromotionCandidate(record: PromotionRecord, approvedAtIs
     };
   }
 
-  if (words < 1200) {
+  if (words < MIN_APPROVABLE_LESSON_WORDS) {
     return {
       action: "skip",
       gate: 1,
-      reason: `word count ${words} below 1200`,
+      reason: `word count ${words} below ${MIN_APPROVABLE_LESSON_WORDS}`,
       words,
     };
   }
