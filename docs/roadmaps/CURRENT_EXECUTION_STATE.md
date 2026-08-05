@@ -7,6 +7,20 @@ Live execution tracking for the final closeout program.
 
 - **Canonical plan:** `docs/roadmaps/NATIONAL_ROLLOUT_EXECUTION_PLAN.md`
 - **Escalation contract:** `docs/agents/ADVISOR_ESCALATION_CONTRACT.md`
+- **Flag (2026-08-05): a separate P1-series workstream runs on `main` outside
+  the NR sequence.** `docs/roadmaps/PRIORITIES_1_2_5_6_7_EXECUTION_PROGRAM.md`
+  (Priorities 1/2/5/6/7 — trust, curriculum authority, offline, distribution,
+  experimentation) is canonical for that track and is not itself listed in
+  `NATIONAL_ROLLOUT_EXECUTION_PLAN.md`. It has been run concurrently by a
+  different agent on `codex/*` branches, in isolated worktrees, specifically
+  to avoid overlap with NR work in progress — see the P1-A/B/C entries below
+  for the isolation notes. A session resuming NR work from a branch that
+  predates these merges will not see this program at all: `git fetch origin
+  && git merge origin/main` (or rebase) before assuming the NR table is the
+  full picture — CLAUDE.md already says it isn't. P1-A and P1-B are merged
+  and operationally complete; P1-C is merged but MFA enforcement is
+  explicitly NOT yet active (see its entry below for the exact pending
+  steps); P1-D and P2 through P7 have not started.
 - **P1-C Privileged Identity Hardening: ENGINEERING COMPLETE on review branch
   (2026-08-05), production activation pending.** Branch
   `codex/privileged-mfa-hardening`. Added Auth0-managed MFA for `ADMIN`,

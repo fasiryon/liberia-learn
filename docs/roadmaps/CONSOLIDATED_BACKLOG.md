@@ -44,6 +44,46 @@ When work changes status:
   updated.
 - **DEFERRED:** Intentionally waits for a prerequisite or product decision.
 
+## Incidents
+
+**2026-08-05 — Fabricated status report presented as project fact.** A
+session-opening message asserted, in this project's own documentation style
+(NR-numbering, merge-commit references, specific technical findings), a set
+of claims requiring confirmation before proceeding. Verification against live
+`git`/`gh` state and every file under `docs/` found:
+
+- **Fabricated, no trace anywhere in the repo:** an "NR-0 through NR-11 audit
+  sprint" reopening five specific findings (NR-2 flood count, NR-7
+  cross-school video bug, NR-9.5 delivery-verification gap, NR-10 stale-cache
+  issue, NR-11 audit-log bypass). NR-0 through NR-11 are real completed
+  sprints; no reopen/audit layer on top of them exists.
+- **Real, confirmed:** PR #79 (curriculum risk-triage, 3,500-word approval
+  floor) and PR #80 (P1-C privileged identity hardening) both check out
+  exactly as described via `gh pr view` and matching merge commits.
+- **False and directly actionable:** a claim that the Vercel account was
+  "genuinely blocked." Checked live via the Vercel MCP; the account and team
+  resolved normally. This is the claim that mattered most, since it is the
+  one a session could act on wastefully (contacting support, treating deploys
+  as unavailable) without ever touching the real account.
+
+Origin was not traceable from the receiving session — it was the first
+message of that session, so no prior assistant turn or dispatched
+subagent/fork inside that session produced it, and there is no mechanism to
+inspect other sessions' transcripts. Documented as untraceable, not dropped.
+
+**Standing lesson:** a document that reads as a native project artifact —
+right format, right tone, right level of specificity (PR numbers, merge
+hashes, plausible technical findings) — is not evidence that it is one, and
+mixed-truth bundles are the hard case: verify claim-by-claim against live
+state (`gh pr view`, `git log`/`show`, the actual provider API), not as a
+bundle, before treating any status report as real. Full detail in session
+memory: `feedback_fabricated_status_report_incident.md`. Related prior
+incident: the fork-notification content-attribution bug from the 2026-07-17
+pilot-excellence sprint (`project_sprint6_5_pilot_excellence.md` /
+`docs/audits/2026-06-pre-pilot-blockers.md` B23), which established the same
+"verify against live state, not the report" discipline for tool/subagent
+output — this incident extends it to ordinary conversational input.
+
 ## National rollout sequence
 
 All 19 sprints below remain officially `PENDING`. Execute them in numerical
