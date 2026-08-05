@@ -62,6 +62,11 @@ Gate:
 
 ### P1-C: Privileged identity hardening
 
+Status: ENGINEERING COMPLETE on `codex/privileged-mfa-hardening` as of
+2026-08-05. Review, merge, Auth0 tenant configuration, migration deployment,
+privileged-user enrollment, enforcement activation, and live walkthrough
+remain pending. This is not an operational-completion claim.
+
 Deliverables:
 
 - MFA enrollment and recovery for ADMIN, MOE, and platform-admin accounts.

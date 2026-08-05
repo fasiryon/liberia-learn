@@ -32,6 +32,20 @@ This keeps local and production builds truthful: AI providers are not treated as
 
 `ENABLE_AI_ASSIGNMENT_GENERATION` and `ENABLE_TEXTBOOK_COMPILER` do not require `OPENAI_API_KEY` in the current codebase. Both routes are deterministic and operate on existing curriculum data.
 
+When `PRIVILEGED_MFA_ENFORCEMENT_ENABLED=true`, all of these are required:
+
+- `AUTH0_CLIENT_ID`
+- `AUTH0_CLIENT_SECRET`
+- `AUTH0_ISSUER`
+- `AUTH0_M2M_CLIENT_ID`
+- `AUTH0_M2M_CLIENT_SECRET`
+
+`PRIVILEGED_STEP_UP_MAX_AGE_SECONDS` defaults to 600 and is clamped between
+60 and 1800 seconds. Keep enforcement disabled until the P1-C migration is
+applied, privileged identities are provisioned in Auth0, the post-login MFA
+Action is deployed, and recovery ownership is confirmed. See
+`docs/security/PRIVILEGED_MFA_RUNBOOK.md`.
+
 ## Recommended but optional
 
 Warnings are emitted when these are unset:

@@ -6,8 +6,10 @@ const mockUserCount = vi.hoisted(() => vi.fn());
 const mockUserUpdate = vi.hoisted(() => vi.fn());
 const mockTransferCreate = vi.hoisted(() => vi.fn());
 const mockLogAudit = vi.hoisted(() => vi.fn());
+const mockRequirePrivilegedStepUp = vi.hoisted(() => vi.fn());
 
 vi.mock("@/lib/moeAccess", () => ({ requireMoePlatformAdmin: mockRequireMoePlatformAdmin }));
+vi.mock("@/lib/auth", () => ({ requirePrivilegedStepUp: mockRequirePrivilegedStepUp }));
 vi.mock("@/lib/audit", () => ({ logAudit: mockLogAudit, logAuditRequired: mockLogAudit }));
 vi.mock("@/lib/db", () => {
   const tx = {
@@ -42,6 +44,7 @@ beforeEach(() => {
   mockUserUpdate.mockResolvedValue({});
   mockTransferCreate.mockResolvedValue({ id: "token-1" });
   mockLogAudit.mockResolvedValue(undefined);
+  mockRequirePrivilegedStepUp.mockResolvedValue({ id: "platform-admin-1" });
 });
 
 describe("POST /api/platform/security/transfer", () => {

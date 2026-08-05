@@ -10,6 +10,11 @@ declare module "next-auth" {
       iat?: number | null;
       name?: string | null;
       email?: string | null;
+      authProvider?: string | null;
+      mfaVerifiedAt?: number | null;
+      assuranceExpiresAt?: number | null;
+      securityVersion?: number | null;
+      privilegedSessionId?: string | null;
     };
   }
 }
@@ -20,5 +25,10 @@ declare module "next-auth/jwt" {
     schoolId?: string | null;
     isPlatformAdmin?: boolean;
     iat?: number;
+    authProvider?: string | null;
+    mfaVerifiedAt?: number | null;
+    assuranceExpiresAt?: number | null;
+    securityVersion?: number | null;
+    privilegedSessionId?: string | null;
   }
 }

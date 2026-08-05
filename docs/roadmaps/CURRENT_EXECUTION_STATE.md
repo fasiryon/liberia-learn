@@ -7,6 +7,35 @@ Live execution tracking for the final closeout program.
 
 - **Canonical plan:** `docs/roadmaps/NATIONAL_ROLLOUT_EXECUTION_PLAN.md`
 - **Escalation contract:** `docs/agents/ADVISOR_ESCALATION_CONTRACT.md`
+- **P1-C Privileged Identity Hardening: ENGINEERING COMPLETE on review branch
+  (2026-08-05), production activation pending.** Branch
+  `codex/privileged-mfa-hardening`. Added Auth0-managed MFA for `ADMIN`,
+  `DISTRICT_ADMIN`, MOE roles, and platform administrators without storing
+  authenticator secrets or recovery codes in LiberiaLearn. Privileged Auth0
+  sign-in now requires verified email and MFA claims, links the provider
+  subject to the local user, and creates a server-side assurance ledger.
+  Sensitive exports, curriculum approval, role changes, and national controls
+  require recent step-up authentication. Privileged sessions fail closed and
+  are invalidated after role, school, password, platform-admin, or MFA-state
+  changes. Added rate-limited MFA recovery reset, required audit writes,
+  security-version rotation, and a two-person, time-limited audited break-glass
+  tool. Added additive `PrivilegedIdentity` and
+  `PrivilegedSessionAssurance` models and an operational runbook. The
+  `/auth/step-up` page renders its `useSearchParams()` client beneath React
+  `Suspense`, closing the production-build prerender failure found at the
+  final gate. After fast-forward integration with `origin/main` at
+  `0cefc6d1`, the final gate passed: `npx prisma generate` PASS;
+  `npx tsc --noEmit` PASS; exact `npx vitest run` PASS, 4,595 tests in 561
+  files; `npm run build` PASS with exit 0 and `.next/BUILD_ID`
+  `fm721VgRLszx8Zv8mdTWX`; `git diff --check` PASS. The build retained
+  pre-existing missing-local-env, lint, dynamic-render, observability,
+  Upstash, and Windows standalone-symlink warnings. Do not enable
+  `PRIVILEGED_MFA_ENFORCEMENT_ENABLED` until the Auth0 tenant and Post Login
+  Action are configured, migration `20260803_000001_privileged_identity_hardening`
+  is deployed, all privileged identities are enrolled, recovery ownership is
+  confirmed, and Preview plus production live walkthroughs pass. Next program
+  sprint after review and activation evidence: P1-D infrastructure and
+  independent security proof.
 - **P1-B Tenant Isolation, Revocation, and Required Audit Transitions:
   COMPLETE + MERGED (2026-08-03, PR #77, merge commit `c9363568`).** The work
   was reviewed and merged after P1-A in dependency order. It remained isolated

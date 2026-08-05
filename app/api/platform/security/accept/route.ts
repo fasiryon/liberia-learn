@@ -1,6 +1,6 @@
 import crypto from "crypto";
 import { NextResponse } from "next/server";
-import { requireUser } from "@/lib/auth";
+import { requirePrivilegedStepUp, requireUser } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { logAuditRequired } from "@/lib/audit";
 import { isMoePortalEnabled } from "@/lib/serverFlags";
@@ -14,6 +14,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Not found" }, { status: 404 });
     }
     const user = await requireUser();
+    await requirePrivilegedStepUp(user);
     const body = await req.json();
     const { token, demoteSender } = body;
 

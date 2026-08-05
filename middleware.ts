@@ -3,6 +3,13 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { getToken } from "next-auth/jwt";
 import { isMoeAuthorized, roleDefaultPortal } from "@/lib/moe/routeGuard";
+import {
+  getStepUpCallbackUrl,
+  hasRecentPrivilegedStepUp,
+  isPrivilegedAccount,
+  isPrivilegedMfaEnforced,
+  isSensitivePrivilegedRequest,
+} from "@/lib/auth/privilegedIdentity";
 
 const PUBLIC_PATHS = [
   "/",
@@ -37,6 +44,23 @@ function isPublicPath(pathname: string) {
   return false;
 }
 
+function privilegedStepUpResponse(req: NextRequest, token: Record<string, unknown>) {
+  if (!isPrivilegedMfaEnforced()) return null;
+  if (!isSensitivePrivilegedRequest(req.nextUrl.pathname, req.method)) return null;
+  if (!isPrivilegedAccount(token as any)) return null;
+  if (hasRecentPrivilegedStepUp(token as any)) return null;
+
+  return NextResponse.json(
+    {
+      ok: false,
+      error: "Step-up authentication required",
+      code: "PRIVILEGED_STEP_UP_REQUIRED",
+      stepUpUrl: getStepUpCallbackUrl(req.nextUrl.pathname, req.nextUrl.search),
+    },
+    { status: 428 }
+  );
+}
+
 export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
 
@@ -59,6 +83,8 @@ export async function middleware(req: NextRequest) {
     if (!token) {
       return NextResponse.json({ ok: false, error: "Unauthorized" }, { status: 401 });
     }
+    const stepUpResponse = privilegedStepUpResponse(req, token as any);
+    if (stepUpResponse) return stepUpResponse;
     return NextResponse.next();
   }
 
@@ -157,6 +183,9 @@ export async function middleware(req: NextRequest) {
 }
     return NextResponse.redirect(url);
   }
+
+  const stepUpResponse = privilegedStepUpResponse(req, token as any);
+  if (stepUpResponse) return stepUpResponse;
 
   if (
     (token as any).role === "STUDENT" &&

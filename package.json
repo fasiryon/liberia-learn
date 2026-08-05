@@ -30,7 +30,8 @@
     "load-test:tokens": "tsx scripts/generate-load-test-tokens.ts",
     "load-test:export-env": "tsx scripts/export-load-test-credentials.ts",
     "load-test:peak": "k6 run load-tests/peak.js",
-    "load-test:ai-burst": "k6 run load-tests/ai-burst.js"
+    "load-test:ai-burst": "k6 run load-tests/ai-burst.js",
+    "security:break-glass": "tsx scripts/manage-privileged-break-glass.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.95.1",

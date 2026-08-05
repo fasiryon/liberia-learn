@@ -3,12 +3,14 @@ import { requireMoePlatformAdmin } from "@/lib/moeAccess";
 import { prisma } from "@/lib/db";
 import { logAuditRequired } from "@/lib/audit";
 import { generateTokenPair } from "@/lib/tokens";
+import { requirePrivilegedStepUp } from "@/lib/auth";
 
 export const dynamic = "force-dynamic";
 
 export async function POST(req: Request) {
   try {
     const user = await requireMoePlatformAdmin();
+    await requirePrivilegedStepUp(user);
     const body = await req.json().catch(() => ({}));
     const intendedUserId =
       typeof body?.intendedUserId === "string" ? body.intendedUserId.trim() : "";

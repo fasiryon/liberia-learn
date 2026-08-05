@@ -11,8 +11,12 @@ const mockLogAudit = vi.hoisted(() => vi.fn());
 const mockUserUpdate = vi.hoisted(() => vi.fn());
 const mockUserCount = vi.hoisted(() => vi.fn());
 const mockTokenUpdate = vi.hoisted(() => vi.fn());
+const mockRequirePrivilegedStepUp = vi.hoisted(() => vi.fn());
 
-vi.mock("@/lib/auth", () => ({ requireUser: mockRequireUser }));
+vi.mock("@/lib/auth", () => ({
+  requireUser: mockRequireUser,
+  requirePrivilegedStepUp: mockRequirePrivilegedStepUp,
+}));
 vi.mock("@/lib/serverFlags", () => ({ isMoePortalEnabled: mockIsMoePortalEnabled }));
 vi.mock("@/lib/audit", () => ({ logAudit: mockLogAudit, logAuditRequired: mockLogAudit }));
 vi.mock("@/lib/db", () => ({
@@ -60,6 +64,7 @@ beforeEach(() => {
     platformTransferToken: { update: mockTokenUpdate },
   }));
   mockLogAudit.mockResolvedValue(undefined);
+  mockRequirePrivilegedStepUp.mockResolvedValue({ id: "recipient-1" });
 });
 
 describe("POST /api/platform/security/accept", () => {

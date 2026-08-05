@@ -2,12 +2,14 @@ import { NextResponse } from "next/server";
 import { requireMoePlatformAdmin } from "@/lib/moeAccess";
 import { prisma } from "@/lib/db";
 import { logAuditRequired } from "@/lib/audit";
+import { requirePrivilegedStepUp } from "@/lib/auth";
 
 export const dynamic = "force-dynamic";
 
 export async function POST() {
   try {
     const user = await requireMoePlatformAdmin();
+    await requirePrivilegedStepUp(user);
 
     // Break-glass: require at least 2 platform admins
     const adminCount = await prisma.user.count({ where: { isPlatformAdmin: true } });
