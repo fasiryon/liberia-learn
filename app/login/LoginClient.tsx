@@ -20,6 +20,8 @@ type LoginClientProps = {
   showDemoHints: boolean;
   demoGroups: DemoHintGroup[];
   demoDefaults: { email: string; password: string } | null;
+  auth0Configured?: boolean;
+  privilegedMfaRequired?: boolean;
 };
 
 function defaultRouteForRole(role: string, mustChangePIN = false): string {
@@ -64,7 +66,13 @@ export function resolvePostLoginDestination(params: {
 
 const TOUCH_INPUT = "min-h-11 w-full rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 px-3 py-3 text-base text-[var(--ll-text)] outline-none placeholder:text-[var(--ll-text-faint)] focus:border-emerald-400 focus:ring-1 focus:ring-emerald-400/60";
 
-export default function LoginClient({ showDemoHints, demoGroups, demoDefaults }: LoginClientProps) {
+export default function LoginClient({
+  showDemoHints,
+  demoGroups,
+  demoDefaults,
+  auth0Configured = false,
+  privilegedMfaRequired = false,
+}: LoginClientProps) {
   const router = useRouter();
   const [nextUrl, setNextUrl] = useState<string | null>(null);
   const [flashMessage, setFlashMessage] = useState<string | null>(null);
@@ -82,6 +90,7 @@ export default function LoginClient({ showDemoHints, demoGroups, demoDefaults }:
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const guardianEnabled = FEATURE_FLAGS.ENABLE_GUARDIAN_PORTAL;
+  const managedAdminLogin = role === "admin" && auth0Configured;
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -97,6 +106,10 @@ export default function LoginClient({ showDemoHints, demoGroups, demoDefaults }:
       } else if (errorParam === "SchoolAssignmentRequired") {
         setFlashMessage(
           "Your account is not yet assigned to a school. Ask your administrator to complete your school assignment before signing in with Google."
+        );
+      } else if (errorParam === "MfaRequired") {
+        setFlashMessage(
+          "Privileged access requires a verified email and a completed multi-factor challenge."
         );
       } else {
         setFlashMessage(params.get("message"));
@@ -322,6 +335,28 @@ export default function LoginClient({ showDemoHints, demoGroups, demoDefaults }:
           </div>
         </div>
 
+        {managedAdminLogin ? (
+          <div className="space-y-3">
+            <p className="rounded-lg border border-emerald-800 bg-[var(--ll-yellow-soft)] px-3 py-3 text-xs text-[var(--ll-text)]">
+              Administrator access uses managed multi-factor authentication.
+            </p>
+            <button
+              type="button"
+              onClick={() => signIn("auth0", { callbackUrl: nextUrl ?? "/admin" })}
+              className="flex min-h-12 w-full items-center justify-center rounded-xl bg-[var(--ll-yellow)] px-4 py-3 text-base font-semibold text-[var(--ll-text-faint)]"
+            >
+              Continue with secure administrator sign-in
+            </button>
+          </div>
+        ) : null}
+
+        {managedAdminLogin && !privilegedMfaRequired ? (
+          <p className="text-center text-xs text-[var(--ll-text-muted)]">
+            Managed MFA is staged. Local sign-in remains available until enforcement is enabled.
+          </p>
+        ) : null}
+
+        {!managedAdminLogin || !privilegedMfaRequired ? (
         <form onSubmit={handleSubmit} className="space-y-4 text-sm">
           <div className="space-y-1">
             <label className="block text-xs font-medium text-[var(--ll-text)]">{identifierLabel}</label>
@@ -373,6 +408,7 @@ export default function LoginClient({ showDemoHints, demoGroups, demoDefaults }:
             {loading ? "Signing in..." : "Continue"}
           </button>
         </form>
+        ) : null}
 
         {role === "teacher" && (
           <>
@@ -451,5 +487,3 @@ export default function LoginClient({ showDemoHints, demoGroups, demoDefaults }:
     </main>
   );
 }
-
-

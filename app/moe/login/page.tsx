@@ -4,6 +4,7 @@
 
 import { isMoeLoginPortalEnabled } from "@/lib/serverFlags";
 import MoeLoginClient from "./MoeLoginClient";
+import { isAuth0Configured, isPrivilegedMfaEnforced } from "@/lib/auth/privilegedIdentity";
 
 export const metadata = {
   title: "MOE Portal - Sign In",
@@ -21,5 +22,10 @@ export default function MoeLoginPage() {
     );
   }
 
-  return <MoeLoginClient />;
+  return (
+    <MoeLoginClient
+      auth0Configured={isAuth0Configured()}
+      privilegedMfaRequired={isPrivilegedMfaEnforced()}
+    />
+  );
 }

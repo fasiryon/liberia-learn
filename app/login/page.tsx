@@ -4,6 +4,7 @@ import {
   shouldShowDemoCredentials,
 } from "@/lib/demoCredentials";
 import LoginClient from "./LoginClient";
+import { isAuth0Configured, isPrivilegedMfaEnforced } from "@/lib/auth/privilegedIdentity";
 
 export default function LoginPage() {
   let showDemoHints = false;
@@ -26,6 +27,8 @@ export default function LoginPage() {
       showDemoHints={showDemoHints}
       demoGroups={demoGroups}
       demoDefaults={demoDefaults}
+      auth0Configured={isAuth0Configured()}
+      privilegedMfaRequired={isPrivilegedMfaEnforced()}
     />
   );
 }
