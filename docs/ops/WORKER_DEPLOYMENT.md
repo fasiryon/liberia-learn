@@ -161,8 +161,16 @@ Run outside school hours (Mon–Fri 08:00–15:00 GMT):
 npx dotenv -e .env.production -- npx tsx scripts/flood-test-queue.ts
 ```
 
-Sends 200 `HEALTH_CHECK` messages; confirm worker drains to 0 within ~5 minutes and
-autoscaling kicked in (expect 3–5 tasks at peak).
+The P1-D proof sends exactly 500 `HEALTH_CHECK` messages across independent FIFO
+message groups. It refuses to start unless visible, in-flight, and delayed queue
+depths are all zero. After enqueueing, it requires an observed nonzero backlog
+followed by two consecutive zero-depth polls. Preserve the printed JSON result as
+the drain-time evidence. Confirm autoscaling kicked in (expect 3–5 tasks at peak).
+
+Known-but-unimplemented jobs publish `WorkerJobNoop`, and unrecognized jobs
+publish `WorkerJobUnknown`. Only work that actually ran publishes
+`WorkerJobCompleted`; all three outcomes are still deleted from the queue so an
+unsupported message cannot create an unbounded retry or DLQ loop.
 
 ## IAM roles
 

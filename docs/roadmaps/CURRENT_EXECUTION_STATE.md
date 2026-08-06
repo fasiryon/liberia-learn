@@ -7,6 +7,25 @@ Live execution tracking for the final closeout program.
 
 - **Canonical plan:** `docs/roadmaps/NATIONAL_ROLLOUT_EXECUTION_PLAN.md`
 - **Escalation contract:** `docs/agents/ADVISOR_ESCALATION_CONTRACT.md`
+- **P1-D Infrastructure and Independent Security Proof: ENGINEERING SLICE
+  COMPLETE on `codex/p1d-infrastructure-proof` (2026-08-06), live proof
+  pending.** The worker now distinguishes real completion from known no-op and
+  unknown job acknowledgements through separate metrics and logs. The flood
+  utility now requires exactly 500 jobs, an empty queue before start, an
+  observed backlog, and two consecutive zero-depth polls before emitting drain
+  timing evidence. Added focused regressions and the vendor procurement
+  checklist. The mandatory local gate passed: `npx prisma generate` PASS;
+  `npx tsc --noEmit` PASS with the documented 6144 MB heap allowance; exact
+  `npx vitest run` PASS, 4,602 tests in 563 files; `npm run build` PASS with
+  exit 0 after marking `/api/admin/content-review` dynamic because its auth
+  path reads request headers. The build retained existing lint, telemetry,
+  browser-data, and dynamic-handler log warnings. The read-only production
+  dry-run did not start: `aws sts get-caller-identity` and the ECS/SQS queries
+  are blocked by an invalid configured AWS session token. Do not run the
+  500-job flood until credentials are refreshed and the owner approves a
+  production test window outside school hours. The external penetration test
+  remains pending vendor selection, contract, credentials, and test-window
+  approval.
 - **P1-C Privileged Identity Hardening: ENGINEERING COMPLETE on review branch
   (2026-08-05), production activation pending.** Branch
   `codex/privileged-mfa-hardening`. Added Auth0-managed MFA for `ADMIN`,
