@@ -32,6 +32,20 @@ This keeps local and production builds truthful: AI providers are not treated as
 
 `ENABLE_AI_ASSIGNMENT_GENERATION` and `ENABLE_TEXTBOOK_COMPILER` do not require `OPENAI_API_KEY` in the current codebase. Both routes are deterministic and operate on existing curriculum data.
 
+When `PRIVILEGED_MFA_ENFORCEMENT_ENABLED=true`, all of these are required:
+
+- `AUTH0_CLIENT_ID`
+- `AUTH0_CLIENT_SECRET`
+- `AUTH0_ISSUER`
+- `AUTH0_M2M_CLIENT_ID`
+- `AUTH0_M2M_CLIENT_SECRET`
+
+`PRIVILEGED_STEP_UP_MAX_AGE_SECONDS` defaults to 600 and is clamped between
+60 and 1800 seconds. Keep enforcement disabled until the P1-C migration is
+applied, privileged identities are provisioned in Auth0, the post-login MFA
+Action is deployed, and recovery ownership is confirmed. See
+`docs/security/PRIVILEGED_MFA_RUNBOOK.md`.
+
 ## Recommended but optional
 
 Warnings are emitted when these are unset:
@@ -47,6 +61,20 @@ Sentry runtime behavior is now explicit:
 - Server and edge capture are active only when `SENTRY_DSN` or `NEXT_PUBLIC_SENTRY_DSN` is set.
 - Worker capture is active only when `SENTRY_DSN` is set.
 - Without a DSN, the app still emits structured JSON logs but Sentry is inactive.
+
+## Offline curriculum signing
+
+Offline lesson caching is fail closed unless all three manifest values are configured:
+
+- `CONTENT_MANIFEST_PRIVATE_KEY`: server-only RSA private key in PKCS#8 PEM format.
+- `CONTENT_MANIFEST_KEY_ID`: deployment-controlled identifier for the active key.
+- `NEXT_PUBLIC_CONTENT_MANIFEST_PUBLIC_KEY`: matching RSA public key in SPKI PEM format.
+
+The API signs the lesson ID, content version, revocation state, and issue time.
+The client verifies the signature before writing or opening cached curriculum.
+Changing the public key requires a rebuild because `NEXT_PUBLIC_*` values are
+compiled into the client bundle. Never place the private key in a
+`NEXT_PUBLIC_*` variable.
 
 ## Canonical env names
 

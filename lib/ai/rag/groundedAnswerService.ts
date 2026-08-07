@@ -399,6 +399,13 @@ function buildAudienceInstruction(role: SessionUser["role"]): string {
   return "Answer like a grounded school assistant for teachers and administrators.";
 }
 
+function isModerationBlockedForRole(
+  verdict: Awaited<ReturnType<typeof moderateText>>["verdict"],
+  role: SessionUser["role"]
+): boolean {
+  return verdict === "UNSAFE" || (role === "STUDENT" && verdict !== "SAFE");
+}
+
 function buildPrompt(question: string, chunks: RetrievedChunk[], role: SessionUser["role"]): string {
   const context = chunks
     .map(
@@ -428,8 +435,9 @@ ${context}`;
 }
 
 export async function answerGroundedQuestion(input: QueryInput): Promise<GroundedAnswerResult> {
-  const inputVerdict = await moderateText(input.question, "input");
-  if (inputVerdict.verdict === "UNSAFE") {
+  const moderationOptions = input.role === "STUDENT" ? { audience: "minor" as const } : undefined;
+  const inputVerdict = await moderateText(input.question, "input", moderationOptions);
+  if (isModerationBlockedForRole(inputVerdict.verdict, input.role)) {
     return buildModerationBlockedAnswer(input.chunks ?? [], input, "input_moderation_blocked");
   }
 
@@ -531,8 +539,8 @@ export async function answerGroundedQuestion(input: QueryInput): Promise<Grounde
     // Output moderation, reusing runtime.ts's exact pattern: one regeneration
     // attempt with an explicit K-12 safety instruction, then escalate and
     // return no raw content if still unsafe on retry.
-    const out1 = await moderateText(parsed.answer, "output");
-    if (out1.verdict === "UNSAFE") {
+    const out1 = await moderateText(parsed.answer, "output", moderationOptions);
+    if (isModerationBlockedForRole(out1.verdict, input.role)) {
       messages.push(
         { role: "user", content: parsed.answer },
         {
@@ -558,8 +566,10 @@ export async function answerGroundedQuestion(input: QueryInput): Promise<Grounde
         },
       });
       const retryParsed = parseGroundedAnswerResponse(retryResponse.content);
-      const out2 = retryParsed ? await moderateText(retryParsed.answer, "output") : null;
-      if (!retryParsed || out2?.verdict === "UNSAFE") {
+      const out2 = retryParsed
+        ? await moderateText(retryParsed.answer, "output", moderationOptions)
+        : null;
+      if (!retryParsed || !out2 || isModerationBlockedForRole(out2.verdict, input.role)) {
         await enqueueEscalation({
           agentName: "rag.groundedAnswerService",
           userId: input.usageContext?.userId ?? null,

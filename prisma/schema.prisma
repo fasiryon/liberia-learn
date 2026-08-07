@@ -48,6 +48,7 @@ model User {
   metricEvents        MetricEvent[]
   passwordResetTokens PasswordResetToken[]
   sessions            Session[]
+  privilegedIdentity  PrivilegedIdentity?
   student             Student?
   guardianOf          StudentGuardian[]
   studentProgress     StudentProgress[]
@@ -1274,6 +1275,48 @@ model Session {
   userId       String
   expires      DateTime
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+/// Managed-provider identity state for ADMIN, MOE, and platform-admin users.
+/// MFA secrets and recovery codes remain with the identity provider.
+model PrivilegedIdentity {
+  id                   String   @id @default(cuid())
+  userId               String   @unique
+  provider             String   @default("auth0")
+  providerSubject      String?  @unique
+  securityVersion      Int      @default(1)
+  mfaEnrolledAt        DateTime?
+  mfaChangedAt         DateTime?
+  lastMfaAt            DateTime?
+  recoveryResetAt      DateTime?
+  breakGlassUntil      DateTime?
+  breakGlassReason     String?
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+  user                 User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  sessions             PrivilegedSessionAssurance[]
+
+  @@index([provider, providerSubject])
+  @@index([breakGlassUntil])
+}
+
+/// Server-side assurance ledger for privileged JWT sessions.
+model PrivilegedSessionAssurance {
+  id                   String   @id @default(cuid())
+  identityId           String
+  sessionId            String   @unique
+  assuranceMethod      String
+  authenticatedAt      DateTime
+  mfaVerifiedAt        DateTime?
+  securityVersion      Int
+  expiresAt            DateTime
+  revokedAt            DateTime?
+  lastSeenAt           DateTime @default(now())
+  createdAt            DateTime @default(now())
+  identity             PrivilegedIdentity @relation(fields: [identityId], references: [id], onDelete: Cascade)
+
+  @@index([identityId, revokedAt, expiresAt])
+  @@index([expiresAt])
 }
 
 model VerificationToken {

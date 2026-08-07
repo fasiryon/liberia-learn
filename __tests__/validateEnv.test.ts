@@ -10,6 +10,12 @@ function resetRelevantEnv() {
   delete env.DIRECT_URL;
   delete env.NEXTAUTH_SECRET;
   delete env.NEXTAUTH_URL;
+  delete env.PRIVILEGED_MFA_ENFORCEMENT_ENABLED;
+  delete env.AUTH0_CLIENT_ID;
+  delete env.AUTH0_CLIENT_SECRET;
+  delete env.AUTH0_ISSUER;
+  delete env.AUTH0_M2M_CLIENT_ID;
+  delete env.AUTH0_M2M_CLIENT_SECRET;
   delete env.OPENAI_API_KEY;
   delete env.AI_TUTOR_ENABLED;
   delete env.AI_TEACHER_ASSIST_ENABLED;
@@ -178,6 +184,36 @@ describe("validateEnv", () => {
 
     expect(() => validateEnv()).toThrow(/SQS_QUEUE_URL/);
     expect(() => validateEnv()).toThrow(/AWS_REGION/);
+  });
+
+  it("requires Auth0 application and recovery credentials when privileged MFA is enforced", async () => {
+    mutableEnv().DATABASE_URL = "postgres://db";
+    mutableEnv().DIRECT_URL = "postgres://direct";
+    mutableEnv().NEXTAUTH_SECRET = "secret";
+    mutableEnv().NEXTAUTH_URL = "http://localhost:3000";
+    mutableEnv().PRIVILEGED_MFA_ENFORCEMENT_ENABLED = "true";
+
+    const { validateEnv } = await importValidateEnvModule();
+
+    expect(() => validateEnv()).toThrow(/AUTH0_CLIENT_ID/);
+    expect(() => validateEnv()).toThrow(/AUTH0_M2M_CLIENT_SECRET/);
+  });
+
+  it("accepts complete Auth0 configuration when privileged MFA is enforced", async () => {
+    mutableEnv().DATABASE_URL = "postgres://db";
+    mutableEnv().DIRECT_URL = "postgres://direct";
+    mutableEnv().NEXTAUTH_SECRET = "secret";
+    mutableEnv().NEXTAUTH_URL = "http://localhost:3000";
+    mutableEnv().PRIVILEGED_MFA_ENFORCEMENT_ENABLED = "true";
+    mutableEnv().AUTH0_CLIENT_ID = "client";
+    mutableEnv().AUTH0_CLIENT_SECRET = "client-secret";
+    mutableEnv().AUTH0_ISSUER = "https://tenant.auth0.com";
+    mutableEnv().AUTH0_M2M_CLIENT_ID = "m2m";
+    mutableEnv().AUTH0_M2M_CLIENT_SECRET = "m2m-secret";
+
+    const { validateEnv } = await importValidateEnvModule();
+
+    expect(() => validateEnv()).not.toThrow();
   });
 });
 

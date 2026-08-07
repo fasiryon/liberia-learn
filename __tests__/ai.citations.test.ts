@@ -11,6 +11,10 @@ vi.mock("@/lib/ai/routedCompletion", () => ({
   routedCompletion: mockRoutedCompletion,
 }));
 
+vi.mock("@/lib/agents/moderation", () => ({
+  moderateText: vi.fn(async () => ({ verdict: "SAFE" })),
+}));
+
 import { answerGroundedQuestion } from "@/lib/ai/rag/groundedAnswerService";
 
 describe("AI citations", () => {

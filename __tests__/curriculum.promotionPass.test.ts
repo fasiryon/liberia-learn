@@ -7,8 +7,8 @@ function buildPayload(overrides: Record<string, any> = {}) {
     grade: 4,
     subject: "MATH",
     body: "placeholder",
-    body_standard: `${"word ".repeat(650)} ## Teacher Explanation ${"word ".repeat(50)}`,
-    body_block: `${"word ".repeat(650)} ## Assessment Questions ${"word ".repeat(50)}`,
+    body_standard: `${"word ".repeat(1750)} ## Teacher Explanation ${"word ".repeat(50)}`,
+    body_block: `${"word ".repeat(1750)} ## Assessment Questions ${"word ".repeat(50)}`,
     explanation: "Detailed explanation",
     workedExamples: ["Example 1"],
     guidedPractice: ["Practice 1", "Practice 2"],
@@ -39,7 +39,7 @@ describe("promotion pass", () => {
     }
   });
 
-  it("skips lesson below 1200 words", () => {
+  it("skips lesson below 3500 words", () => {
     const decision = evaluatePromotionCandidate({
       contentId: "math-g4-short",
       grade: 4,
@@ -113,8 +113,8 @@ describe("promotion pass", () => {
         guidedPractice: ["One stored practice item"],
         independentPractice: ["One stored independent item"],
         activities: ["Activity 1", "Activity 2", "Activity 3"],
-        body_standard: `${"word ".repeat(650)} ## Guided Practice ${"word ".repeat(40)} ## Independent Practice ${"word ".repeat(40)} ## Assessment Questions ${"word ".repeat(40)}`,
-        body_block: `${"word ".repeat(650)} ## Guided Group Work ${"word ".repeat(40)} ## Independent or Project Work ${"word ".repeat(40)} ## Assessment and Reflection ${"word ".repeat(40)}`,
+        body_standard: `${"word ".repeat(1750)} ## Guided Practice ${"word ".repeat(40)} ## Independent Practice ${"word ".repeat(40)} ## Assessment Questions ${"word ".repeat(40)}`,
+        body_block: `${"word ".repeat(1750)} ## Guided Group Work ${"word ".repeat(40)} ## Independent or Project Work ${"word ".repeat(40)} ## Assessment and Reflection ${"word ".repeat(40)}`,
       }),
     });
 

@@ -49,7 +49,7 @@ vi.mock("@/lib/auth", () => ({
   requireRole: mockRequireRole,
   requireUser: mockRequireUser,
 }));
-vi.mock("@/lib/audit", () => ({ logAudit: mockLogAudit }));
+vi.mock("@/lib/audit", () => ({ logAudit: mockLogAudit, logAuditRequired: mockLogAudit }));
 
 vi.mock("@/lib/serverFlags", async () => {
   const actual = await vi.importActual<any>("@/lib/serverFlags");
@@ -96,6 +96,9 @@ vi.mock("@/lib/db", () => ({
     enrollment:    { findMany: mockEnrollmentFindMany },
     student:       { findUnique: mockStudentFindUnique },
     strandCatalog: { findFirst: mockStrandCatalogFindFirst },
+    $transaction: vi.fn(async (callback: any) => callback({
+      curriculumContent: { update: mockCurriculumContentUpdate },
+    })),
   },
 }));
 

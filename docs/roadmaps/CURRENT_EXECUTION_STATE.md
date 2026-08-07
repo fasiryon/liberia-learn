@@ -7,6 +7,89 @@ Live execution tracking for the final closeout program.
 
 - **Canonical plan:** `docs/roadmaps/NATIONAL_ROLLOUT_EXECUTION_PLAN.md`
 - **Escalation contract:** `docs/agents/ADVISOR_ESCALATION_CONTRACT.md`
+- **P1-C Privileged Identity Hardening: ENGINEERING COMPLETE on review branch
+  (2026-08-05), production activation pending.** Branch
+  `codex/privileged-mfa-hardening`. Added Auth0-managed MFA for `ADMIN`,
+  `DISTRICT_ADMIN`, MOE roles, and platform administrators without storing
+  authenticator secrets or recovery codes in LiberiaLearn. Privileged Auth0
+  sign-in now requires verified email and MFA claims, links the provider
+  subject to the local user, and creates a server-side assurance ledger.
+  Sensitive exports, curriculum approval, role changes, and national controls
+  require recent step-up authentication. Privileged sessions fail closed and
+  are invalidated after role, school, password, platform-admin, or MFA-state
+  changes. Added rate-limited MFA recovery reset, required audit writes,
+  security-version rotation, and a two-person, time-limited audited break-glass
+  tool. Added additive `PrivilegedIdentity` and
+  `PrivilegedSessionAssurance` models and an operational runbook. The
+  `/auth/step-up` page renders its `useSearchParams()` client beneath React
+  `Suspense`, closing the production-build prerender failure found at the
+  final gate. After fast-forward integration with `origin/main` at
+  `0cefc6d1`, the final gate passed: `npx prisma generate` PASS;
+  `npx tsc --noEmit` PASS; exact `npx vitest run` PASS, 4,595 tests in 561
+  files; `npm run build` PASS with exit 0 and `.next/BUILD_ID`
+  `fm721VgRLszx8Zv8mdTWX`; `git diff --check` PASS. The build retained
+  pre-existing missing-local-env, lint, dynamic-render, observability,
+  Upstash, and Windows standalone-symlink warnings. Do not enable
+  `PRIVILEGED_MFA_ENFORCEMENT_ENABLED` until the Auth0 tenant and Post Login
+  Action are configured, migration `20260803_000001_privileged_identity_hardening`
+  is deployed, all privileged identities are enrolled, recovery ownership is
+  confirmed, and Preview plus production live walkthroughs pass. Next program
+  sprint after review and activation evidence: P1-D infrastructure and
+  independent security proof.
+- **P1-B Tenant Isolation, Revocation, and Required Audit Transitions:
+  COMPLETE + MERGED (2026-08-03, PR #77, merge commit `c9363568`).** The work
+  was reviewed and merged after P1-A in dependency order. It remained isolated
+  from Claude's concurrent curriculum risk-triage worktree with no changed-file
+  overlap.
+  Lesson-video activation now deactivates competitors only within the video's
+  school. Curriculum reads limit school-owned content to the caller's tenant
+  and resolve private URLs only for active, approved videos in that same
+  school. Offline lesson fallback now runs only after a transport failure;
+  HTTP rejection is authoritative and evicts the cached lesson. Cached
+  curriculum requires an RSA-signed availability manifest, verifies lesson ID
+  and version before use, and is evicted after a signed revocation or newer
+  version refresh. Curriculum approve, reject, draft review, platform-admin
+  transfer generation, transfer acceptance, and self-demotion now place the
+  mutation and required audit write in one database transaction. No schema
+  changes. Independent verification against the P1-A source confirmed the
+  activation query lacked school scope before and contains it after; the build
+  artifact `.next/BUILD_ID` exists. Gate: `npx prisma generate` PASS;
+  `npx tsc --noEmit` PASS with the known 6144 MB local heap allowance;
+  focused P1-B regression set PASS, 124 tests in 13 files; full
+  `npx vitest run` PASS, 4,535 tests in 550 files; `npm run build` PASS with
+  exit 0 after network permission allowed the configured Google font fetch.
+  The build retained pre-existing missing-local-env, lint, dynamic-render, and
+  standalone junction warnings. Deployment must configure
+  `CONTENT_MANIFEST_PRIVATE_KEY`, `CONTENT_MANIFEST_KEY_ID`, and
+  `NEXT_PUBLIC_CONTENT_MANIFEST_PUBLIC_KEY`; without them, online lessons work
+  but offline curriculum caching fails closed. Next: P1-C privileged identity
+  hardening. Stop at its provider and live User-schema escalation points.
+- **P1-A Minor AI Safety + Safeguarding Delivery Truth: COMPLETE + MERGED
+  (2026-08-03, PR #76, merge commit `8f3ad56d`).** The implementation branch
+  was based on `origin/main` at `829a4a71` in an isolated worktree because
+  Claude was concurrently implementing curriculum risk triage. No changed
+  files overlap Claude's branch. Added an explicit minor-audience moderation
+  policy that converts `UNCERTAIN` to `UNSAFE`; main student tutor input and output are
+  now moderated; adaptive-practice and newly generated WAEC content are
+  blocked before use or persistence unless moderation is `SAFE`; and existing
+  student grading, lab, and RAG paths now treat every non-safe result as
+  blocked. Safeguarding delivery now records intended recipients separately
+  from confirmed durable inbox delivery, exposes channel failures, does not
+  write success markers after failed delivery, remains retryable while the
+  success marker is absent, and requires confirmed platform fallback delivery
+  for the 24-hour tier. Added `logAuditRequired()` for sensitive completion
+  transitions and used it for safeguarding success markers. No schema changes.
+  Independent verification: forced moderation-provider failure and explicit
+  `UNCERTAIN` both return `UNSAFE` for a minor audience; route-level tests prove
+  the student tutor does not call or expose the model in those states; forced
+  inbox and fallback-email failures create failure actions rather than sent
+  markers. Gate: `npx prisma generate` PASS; `npx tsc --noEmit` PASS with the
+  known 6144 MB local heap allowance; `npx vitest run` PASS, 4,524 tests in
+  547 files; `npm run build` PASS with exit 0 and `.next/BUILD_ID` produced.
+  The build retained pre-existing missing-local-env and lint warnings. Program
+  sequencing for requested priorities 1, 2, 5, 6, and 7 is documented in
+  `docs/roadmaps/PRIORITIES_1_2_5_6_7_EXECUTION_PROGRAM.md`. P1-B was continued
+  in the next separately authorized cycle and is recorded above.
 - **NR-9.5 — Child Safety Hardening: COMPLETE + MERGED (2026-07-30, PR #62,
   merge commit `b3dde0d9`).** Commits `f8c9529b`..`72e5c8c6` on
   `agent/consolidated-backlog`. Gate: prisma generate PASS, tsc PASS,
@@ -362,6 +445,33 @@ Live execution tracking for the final closeout program.
   fix. Gate: prisma generate PASS, tsc PASS, vitest 4,512 tests / 545 files
   PASS (baseline 4,492/544, +20 new), build PASS, zero schema changes.
 - **NR-11 merged to `main` (2026-08-03, PR #75, merge commit `7b3f07e2`).**
+- **Curriculum risk-triage prerequisite for NR-12: COMPLETE (2026-08-04),
+  pending human review/merge.** Branch `feat/curriculum-risk-triage`. Replaced
+  silent script-driven curriculum approval with a shared rule-based risk
+  scorer and DB-backed `triageAndApprove` path for
+  `scripts/bulk-approve-published.ts` and
+  `scripts/promote-enriched-lessons.ts`. High-risk candidates are held in
+  `NEEDS_REVIEW` under a global rolling seven-day budget of 8; lower-risk or
+  budget-excess candidates retain each pipeline's existing approved status
+  and approval metadata, while every automated decision is risk-stamped and
+  audit-logged. Reviewer email is best-effort and permission-derived, and the
+  existing curriculum-review API/page now exposes the live flagged backlog
+  count. Human approve/reject routes remain outside automated triage. Zero
+  schema changes. A pre-merge review corrected legacy threshold drift: the
+  automated approval and audit paths now share a single 3,500-word minimum,
+  matching `generateLessonV2.ts`; the previous bulk 400/600/800 and promotion
+  1,200 values can no longer publish undersized lessons. Gate:
+  `npx prisma generate` PASS; final-tree TypeScript PASS
+  with incremental caching disabled after the incremental runner twice hung
+  without diagnostics; exact `npx vitest run` PASS (4,542 tests / 550 files);
+  `npm run build` PASS. The required production dry run was read-only and
+  found one `NEEDS_REVIEW` lesson, G9 MATH, at 3,787 words and risk score 2
+  (borderline margin above 3,500). A separate
+  read-only production status audit independently
+  confirmed exactly one G9 MATH `NEEDS_REVIEW` row and that it exceeds the
+  3,500-word approval threshold. Direct Postgres on port 5432 was unreachable
+  this session; the independent verification succeeded through the pooled
+  port-6543 `DATABASE_URL`, matching the standing carry-forward rule.
 - **Next national sprint: NR-12 — Critical Grade Deserts (G2, G9).** Not
   started as of this note. Target per the plan: regen + QA for Grade 2 and
   Grade 9 until >=15 APPROVED per core subject, plus documented factory
@@ -370,11 +480,9 @@ Live execution tracking for the final closeout program.
   start rather than trusting the April audit's grade-desert figures (G2: 3
   lessons, G9: 2 lessons) — both the underlying content population and the
   approval-status semantics have changed materially since that audit.
-  Also worth deciding explicitly at NR-12 start: should newly generated
-  Grade 2/9 content go through genuine human/MOE review, or continue
-  through the same automated quality-gate scripts that approved ~95% of
-  existing content? That policy question was raised but not resolved by
-  NR-11 and directly affects how NR-12 should close its own lessons.
+  The NR-11 review-policy question is now resolved by the risk-triage
+  prerequisite above: newly generated Grade 2/9 content must use the shared
+  triage path, with the highest-risk subset held for genuine human/MOE review.
 - **Follow-up backlog item from NR-7:** school-level AI agent cost/usage
   visibility for school ADMINs is now zero (previously a real cross-school
   leak, correctly closed). If wanted as a real feature, needs a schema

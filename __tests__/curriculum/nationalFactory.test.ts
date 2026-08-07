@@ -45,6 +45,7 @@ vi.mock("@/lib/db", () => ({
 
 vi.mock("@/lib/auth", () => ({
   requireRole: vi.fn().mockResolvedValue({ id: "admin-1", role: "ADMIN" }),
+  requirePrivilegedStepUp: vi.fn().mockResolvedValue({ id: "admin-1", role: "ADMIN" }),
 }));
 
 vi.mock("@/lib/curriculum/generationEngine", () => ({

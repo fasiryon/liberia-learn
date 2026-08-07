@@ -44,6 +44,7 @@ describe("notifySchoolSafeguarding", () => {
     const result = await notifySchoolSafeguarding("school-1", "concern raised");
 
     expect(result.notifiedUserIds.sort()).toEqual(["admin-1", "admin-2"]);
+    expect(result.delivered).toBe(true);
     expect(mockCreateInboxNotification).toHaveBeenCalledTimes(2);
     expect(mockSendPushToUser).toHaveBeenCalledTimes(2);
   });
@@ -64,7 +65,24 @@ describe("notifySchoolSafeguarding", () => {
     const result = await notifySchoolSafeguarding("school-1", "concern raised");
 
     expect(result.notifiedUserIds).toEqual(["admin-1"]);
+    expect(result.delivered).toBe(true);
+    expect(result.failures).toEqual([]);
     expect(mockCreateInboxNotification).toHaveBeenCalledTimes(1);
+  });
+
+  it("reports a failed delivery when the durable inbox write fails", async () => {
+    mockPrisma.user.findMany.mockResolvedValue([{ id: "admin-1" }]);
+    mockPrisma.school.findUnique.mockResolvedValue({ designatedSafetyStaffUserId: null });
+    mockCreateInboxNotification.mockRejectedValue(new Error("database down"));
+
+    const result = await notifySchoolSafeguarding("school-1", "concern raised");
+
+    expect(result.notifiedUserIds).toEqual([]);
+    expect(result.delivered).toBe(false);
+    expect(result.failures).toEqual([
+      expect.objectContaining({ channel: "inbox", userId: "admin-1" }),
+    ]);
+    expect(mockSendPushToUser).not.toHaveBeenCalled();
   });
 
   it("still records the inbox notification even when push fails", async () => {
@@ -75,6 +93,10 @@ describe("notifySchoolSafeguarding", () => {
     const result = await notifySchoolSafeguarding("school-1", "concern raised");
 
     expect(result.notifiedUserIds).toEqual(["admin-1"]);
+    expect(result.delivered).toBe(true);
+    expect(result.failures).toEqual([
+      expect.objectContaining({ channel: "push", userId: "admin-1" }),
+    ]);
     expect(mockCreateInboxNotification).toHaveBeenCalledTimes(1);
   });
 
@@ -85,6 +107,7 @@ describe("notifySchoolSafeguarding", () => {
     const result = await notifySchoolSafeguarding("school-1", "concern raised");
 
     expect(result.notifiedUserIds).toEqual([]);
+    expect(result.delivered).toBe(false);
     expect(mockCreateInboxNotification).not.toHaveBeenCalled();
   });
 
@@ -139,12 +162,16 @@ describe("notifyPlatformSafeguardingFallback", () => {
     );
   });
 
-  it("returns null and does not throw when the env var is unset", async () => {
+  it("reports a skipped failed delivery when the env var is unset", async () => {
     delete process.env.PLATFORM_SAFEGUARDING_ESCALATION_EMAIL;
 
     const result = await notifyPlatformSafeguardingFallback("test reason");
 
-    expect(result).toBeNull();
+    expect(result).toEqual({
+      ok: false,
+      skipped: true,
+      error: "fallback_email_not_configured",
+    });
     expect(mockSendEmail).not.toHaveBeenCalled();
   });
 
@@ -154,6 +181,6 @@ describe("notifyPlatformSafeguardingFallback", () => {
 
     const result = await notifyPlatformSafeguardingFallback("test reason");
 
-    expect(result).toEqual({ ok: false });
+    expect(result).toEqual({ ok: false, error: "domain not verified" });
   });
 });

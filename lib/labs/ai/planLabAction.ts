@@ -105,8 +105,8 @@ export async function planLabAction(input: PlanLabActionParams): Promise<Planned
   let result: Awaited<ReturnType<typeof routedCompletion>> | null = null;
   let labIdForLog = input.labId;
 
-  const inputVerdict = await moderateText(input.studentRequest, "input");
-  if (inputVerdict.verdict === "UNSAFE") {
+  const inputVerdict = await moderateText(input.studentRequest, "input", { audience: "minor" });
+  if (inputVerdict.verdict !== "SAFE") {
     await enqueueEscalation({
       agentName: "lib.labs.ai.planLabAction",
       userId: input.userId ?? null,
@@ -154,8 +154,8 @@ export async function planLabAction(input: PlanLabActionParams): Promise<Planned
 
       try {
         const planned = parsePlannedAction(result.content);
-        const outputVerdict = await moderateText(planned.userFacingMessage, "output");
-        if (outputVerdict.verdict === "UNSAFE") {
+        const outputVerdict = await moderateText(planned.userFacingMessage, "output", { audience: "minor" });
+        if (outputVerdict.verdict !== "SAFE") {
           await enqueueEscalation({
             agentName: "lib.labs.ai.planLabAction",
             userId: input.userId ?? null,

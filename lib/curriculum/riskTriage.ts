@@ -3,7 +3,7 @@
 // Risk-based triage between the existing mechanical quality gates
 // (regenerationQualityGate.ts / promotionPass.ts / the inline gate in
 // bulk-approve-published.ts) and a final approval status. Only called from
-// automated/script-driven approval paths — never from the human-driven
+// automated/script-driven approval paths - never from the human-driven
 // approve/reject routes (app/api/admin/curriculum/approve|reject/route.ts,
 // app/api/admin/ops/curriculum-review/route.ts). See
 // docs/superpowers/specs/2026-08-03-curriculum-risk-triage-design.md.
@@ -23,7 +23,7 @@ export const GRADE_BAND_RISK: Record<GradeBand, number> = {
 
 // Subjects scored as sensitive. Deliberately limited to the two subjects that
 // actually exist in CurriculumContent.subject values today (see
-// lib/curriculum/coverageShared.ts SUBJECTS) — CIVICS and SOCIAL_STUDIES.
+// lib/curriculum/coverageShared.ts SUBJECTS) - CIVICS and SOCIAL_STUDIES.
 export const SENSITIVE_SUBJECTS = new Set(["CIVICS", "SOCIAL_STUDIES"]);
 export const SUBJECT_SENSITIVITY_SCORE = 2;
 export const FIRST_OF_KIND_SCORE = 3;
@@ -57,7 +57,7 @@ export type RiskScoreResult = {
   reasons: string[];
 };
 
-/** Pure, deterministic, no I/O — see design doc's computeRiskScore section. */
+/** Pure, deterministic, no I/O - see design doc's computeRiskScore section. */
 export function computeRiskScore(input: RiskFactorInput): RiskScoreResult {
   let score = 0;
   const reasons: string[] = [];
@@ -129,6 +129,8 @@ export type TriageCandidate = {
   grade: number;
   subject: string;
   payload: Record<string, any>;
+  /** Existing caller metadata that is valid only after approval. */
+  approvalMetadata?: Record<string, any>;
   wordCount: number;
   minWordCount: number;
 };
@@ -146,7 +148,7 @@ export type TriageResult =
 /**
  * Orchestrates one candidate through risk scoring, the weekly review budget,
  * and the final DB write. Called only from automated/script-driven approval
- * paths — see the module header comment. `approvedStatus` lets each caller
+ * paths - see the module header comment. `approvedStatus` lets each caller
  * keep its own existing "approved" status string ("published" for
  * bulk-approve-published.ts, "APPROVED" for promote-enriched-lessons.ts).
  */
@@ -225,6 +227,7 @@ export async function triageAndApprove(
       status: approvedStatus,
       payload: {
         ...candidate.payload,
+        ...candidate.approvalMetadata,
         riskScore: score,
         riskReasons: reasons,
       },

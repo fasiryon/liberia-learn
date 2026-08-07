@@ -3,6 +3,7 @@ import { z } from "zod";
 import { requireUser } from "@/lib/auth";
 import { assertPermission, PERMISSIONS } from "@/lib/permissions";
 import { listCurriculumDrafts, reviewCurriculumDraft } from "@/lib/curriculum/regenerationAdmin";
+import { countRiskFlaggedAwaitingReview } from "@/lib/curriculum/riskTriage";
 
 export const dynamic = "force-dynamic";
 
@@ -24,13 +25,16 @@ export async function GET(req: Request) {
     const user = await requireUser();
     assertPermission(user, PERMISSIONS.CURRICULUM_APPROVE);
     const url = new URL(req.url);
-    const drafts = await listCurriculumDrafts({
-      grade: numberParam(url.searchParams.get("grade")),
-      subject: url.searchParams.get("subject") ?? undefined,
-      status: url.searchParams.get("status") ?? "DRAFT",
-      limit: numberParam(url.searchParams.get("limit")),
-    });
-    return NextResponse.json({ drafts });
+    const [drafts, riskFlaggedAwaitingReview] = await Promise.all([
+      listCurriculumDrafts({
+        grade: numberParam(url.searchParams.get("grade")),
+        subject: url.searchParams.get("subject") ?? undefined,
+        status: url.searchParams.get("status") ?? "DRAFT",
+        limit: numberParam(url.searchParams.get("limit")),
+      }),
+      countRiskFlaggedAwaitingReview(),
+    ]);
+    return NextResponse.json({ drafts, riskFlaggedAwaitingReview });
   } catch (err: any) {
     return NextResponse.json(
       { error: err?.status === 403 ? "Forbidden" : err?.message ?? "Unauthorized" },
@@ -56,4 +60,3 @@ export async function POST(req: Request) {
     );
   }
 }
-

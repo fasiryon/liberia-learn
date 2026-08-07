@@ -112,8 +112,8 @@ export async function explainLabState(input: ExplainLabStateParams): Promise<str
     });
 
     const explanation = under120Words(result.content) || FALLBACK_EXPLANATION;
-    const outputVerdict = await moderateText(explanation, "output");
-    if (outputVerdict.verdict === "UNSAFE") {
+    const outputVerdict = await moderateText(explanation, "output", { audience: "minor" });
+    if (outputVerdict.verdict !== "SAFE") {
       await enqueueEscalation({
         agentName: "lib.labs.ai.explainLabState",
         userId: input.userId ?? null,

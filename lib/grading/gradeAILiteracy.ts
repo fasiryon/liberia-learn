@@ -96,8 +96,8 @@ export async function gradeAILiteracy(input: {
     return { tooShort: true, wordCount, minWords: MIN_WORDS };
   }
 
-  const inputVerdict = await moderateText(input.studentResponse.slice(0, 4000), "input");
-  if (inputVerdict.verdict === "UNSAFE") {
+  const inputVerdict = await moderateText(input.studentResponse.slice(0, 4000), "input", { audience: "minor" });
+  if (inputVerdict.verdict !== "SAFE") {
     await enqueueEscalation({
       agentName: "lib.grading.gradeAILiteracy",
       reason: `AI literacy exercise response flagged unsafe on input moderation (exerciseType: ${input.exerciseType}, grade: ${input.grade}).`,
@@ -168,8 +168,8 @@ Return ONLY valid JSON — no preamble, no code fences:
   }
 
   const feedbackText = [feedback, ...Object.values(breakdown).map((b) => b.comment)].join("\n");
-  const outputVerdict = await moderateText(feedbackText, "output");
-  if (outputVerdict.verdict === "UNSAFE") {
+  const outputVerdict = await moderateText(feedbackText, "output", { audience: "minor" });
+  if (outputVerdict.verdict !== "SAFE") {
     await enqueueEscalation({
       agentName: "lib.grading.gradeAILiteracy",
       reason: `AI literacy grading output flagged unsafe for a K-12 audience (exerciseType: ${input.exerciseType}, grade: ${input.grade}).`,

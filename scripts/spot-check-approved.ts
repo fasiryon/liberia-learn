@@ -8,6 +8,7 @@ import { existsSync } from "node:fs";
 import { resolve } from "node:path";
 import { config as loadEnv } from "dotenv";
 import { PrismaClient } from "@prisma/client";
+import { MIN_APPROVABLE_LESSON_WORDS } from "@/lib/curriculum/lessonQualityThresholds";
 
 const localEnvPath = resolve(process.cwd(), ".env.local");
 if (existsSync(localEnvPath)) loadEnv({ path: localEnvPath });
@@ -50,7 +51,7 @@ async function main() {
       console.log(`Job ID   : ${gen.regenerationJobId}`);
     }
     const passCheck = ((gen?.depthSlideCount ?? slideCount) as number) >= (l.grade <= 6 ? 15 : 18) &&
-                      ((gen?.depthWordCount ?? wordCount) as number) >= 1200;
+                      ((gen?.depthWordCount ?? wordCount) as number) >= MIN_APPROVABLE_LESSON_WORDS;
     console.log(`Gate     : ${passCheck ? "✓ PASS" : "✗ FAIL"}`);
   }
 

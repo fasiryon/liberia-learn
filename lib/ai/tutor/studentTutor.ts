@@ -8,6 +8,7 @@
 import { buildLessonPromptExcerpt } from "@/lib/ai/lessonPromptContext";
 import { buildPrompt, getPromptMetadata } from "@/lib/ai/promptRegistry";
 import { routedCompletion } from "@/lib/ai/router";
+import { moderateText } from "@/lib/agents/moderation";
 
 export type TutorRequestType =
   | "explain"
@@ -186,6 +187,13 @@ export async function getStudentTutorResponse(
   usageContext?: StudentTutorUsageContext
 ): Promise<StudentTutorResult> {
   try {
+    const inputVerdict = await moderateText(input.studentQuestion, "input", {
+      audience: "minor",
+    });
+    if (inputVerdict.verdict !== "SAFE") {
+      return { ...FALLBACK };
+    }
+
     const result = await routedCompletion({
       messages: [
         { role: "system", content: buildSystemPrompt(input) },
@@ -219,6 +227,15 @@ export async function getStudentTutorResponse(
 
     const validated = parseAndValidate(result.content);
     if (!validated) {
+      return { ...FALLBACK };
+    }
+
+    const outputVerdict = await moderateText(
+      [validated.explanation, validated.practicePrompt].filter(Boolean).join("\n"),
+      "output",
+      { audience: "minor" }
+    );
+    if (outputVerdict.verdict !== "SAFE") {
       return { ...FALLBACK };
     }
 

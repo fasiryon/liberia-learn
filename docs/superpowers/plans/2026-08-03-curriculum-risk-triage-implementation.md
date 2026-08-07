@@ -1,5 +1,16 @@
 # Curriculum Risk-Triage Implementation Plan
 
+**Status:** Implemented and validated on `feat/curriculum-risk-triage` on
+2026-08-04. The task checkboxes below preserve the original execution plan;
+the authoritative closeout evidence is recorded in
+`docs/roadmaps/CURRENT_EXECUTION_STATE.md`.
+
+**Threshold correction (2026-08-04):** The minimum approvable lesson size is
+3,500 instructional words. Lower 400/600/800 and 1,200-word values preserved
+in original snippets below are superseded by
+`MIN_APPROVABLE_LESSON_WORDS` in
+`lib/curriculum/lessonQualityThresholds.ts`.
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** Replace silent script-driven curriculum auto-approval with a risk-scored
@@ -9,13 +20,13 @@ else with a full audit trail for the first time.
 
 **Architecture:** A new pure-scoring function (`computeRiskScore`) plus a DB-backed
 orchestrator (`triageAndApprove`) sit in `lib/curriculum/riskTriage.ts`, called only
-from automated/script-driven approval paths — never from the human-driven
+from automated/script-driven approval paths - never from the human-driven
 approve/reject routes NR-11 fixed. Flagged lessons get `status: "NEEDS_REVIEW"`
 (already fail-closed to students per NR-10) instead of an approved status. A
 sibling module (`lib/curriculum/riskTriageNotify.ts`) emails everyone holding
 `PERMISSIONS.CURRICULUM_APPROVE` when something is flagged.
 
-**Tech Stack:** TypeScript, Prisma (PostgreSQL — JSON path filters via
+**Tech Stack:** TypeScript, Prisma (PostgreSQL - JSON path filters via
 `payload: { path: [...], equals: ... }` are already proven in this codebase, see
 `lib/ops/cronHeartbeat.ts:48`), Vitest, Next.js API routes, Resend (`lib/email.ts`).
 
@@ -29,14 +40,14 @@ sibling module (`lib/curriculum/riskTriageNotify.ts`) emails everyone holding
   `app/api/admin/curriculum/approve/route.ts`.
 - `triageAndApprove` and its helpers must never be imported by
   `app/api/admin/curriculum/approve/route.ts`, `app/api/admin/curriculum/reject/route.ts`,
-  or `app/api/admin/ops/curriculum-review/route.ts` — those are the human-driven
+  or `app/api/admin/ops/curriculum-review/route.ts` - those are the human-driven
   routes NR-11 fixed and are out of scope for this change.
 - Notification failures (email provider down) must never block an approval/flagging
-  decision — log a warning and continue, matching the existing best-effort pattern
+  decision - log a warning and continue, matching the existing best-effort pattern
   in `lib/agents/safeguarding/notify.ts`.
 - Budget-check failures (a DB error while counting the trailing-7-day flagged rows)
   must fail closed to flagging, not to silent auto-approval.
-- Every new DB-backed function lives behind `@/lib/db`'s `prisma` singleton — no
+- Every new DB-backed function lives behind `@/lib/db`'s `prisma` singleton - no
   new ad-hoc `PrismaClient` instances (this plan also removes the one in
   `scripts/bulk-approve-published.ts` for consistency, since it must call into
   `lib/curriculum/riskTriage.ts` which itself uses the shared singleton).
@@ -47,26 +58,26 @@ sibling module (`lib/curriculum/riskTriageNotify.ts`) emails everyone holding
 
 ## File Structure
 
-- **Create** `lib/curriculum/riskTriage.ts` — risk scoring, first-of-kind lookup,
+- **Create** `lib/curriculum/riskTriage.ts` - risk scoring, first-of-kind lookup,
   weekly budget check, backlog count for the review-page badge, and the
   `triageAndApprove` orchestrator. All DB access via `@/lib/db`'s `prisma`.
-- **Create** `lib/curriculum/riskTriageNotify.ts` — emails every user holding
+- **Create** `lib/curriculum/riskTriageNotify.ts` - emails every user holding
   `PERMISSIONS.CURRICULUM_APPROVE` (or `isPlatformAdmin`) when a lesson is flagged.
   Separate file because it has its own concern (recipient lookup + email sending)
   and its own mocking surface in tests.
-- **Modify** `lib/curriculum/coverageShared.ts` — add one shared constant,
+- **Modify** `lib/curriculum/coverageShared.ts` - add one shared constant,
   `APPROVED_STATUSES`, so `riskTriage.ts`'s first-of-kind query and the existing
   coverage matrix never drift on what "approved" means.
-- **Modify** `scripts/bulk-approve-published.ts` — call `triageAndApprove` instead
+- **Modify** `scripts/bulk-approve-published.ts` - call `triageAndApprove` instead
   of writing `status: "published"` directly; preview mode (`--dry-run`) uses the
   read-only pieces (`computeRiskScore`, `isFirstOfKindCell`, `getFlaggedCountInWindow`)
   so it still makes zero writes.
-- **Modify** `scripts/promote-enriched-lessons.ts` — same wiring, using
+- **Modify** `scripts/promote-enriched-lessons.ts` - same wiring, using
   `approvedStatus: "APPROVED"` (its existing convention) instead of `"published"`.
-- **Modify** `app/api/admin/ops/curriculum-review/route.ts` — `GET` response gains
+- **Modify** `app/api/admin/ops/curriculum-review/route.ts` - `GET` response gains
   one extra field, `riskFlaggedAwaitingReview` (a live count), no behavior change
   to auth or the existing `drafts` payload.
-- **Modify** `app/admin/ops/curriculum-review/page.tsx` — render that count as a
+- **Modify** `app/admin/ops/curriculum-review/page.tsx` - render that count as a
   small badge in the page header.
 - **Create** `__tests__/curriculum-risk-triage/risk-score.test.ts`,
   `db-helpers.test.ts`, `notify.test.ts`, `triage-and-approve.test.ts`,
@@ -238,7 +249,7 @@ describe("isWorthFlagging", () => {
 - [ ] **Step 3: Run the test to verify it fails**
 
 Run: `npx vitest run __tests__/curriculum-risk-triage/risk-score.test.ts`
-Expected: FAIL — `Cannot find module '@/lib/curriculum/riskTriage'` (file doesn't exist yet).
+Expected: FAIL - `Cannot find module '@/lib/curriculum/riskTriage'` (file doesn't exist yet).
 
 - [ ] **Step 4: Create `lib/curriculum/riskTriage.ts` with the scoring functions**
 
@@ -248,7 +259,7 @@ Expected: FAIL — `Cannot find module '@/lib/curriculum/riskTriage'` (file does
 // Risk-based triage between the existing mechanical quality gates
 // (regenerationQualityGate.ts / promotionPass.ts / the inline gate in
 // bulk-approve-published.ts) and a final approval status. Only called from
-// automated/script-driven approval paths — never from the human-driven
+// automated/script-driven approval paths - never from the human-driven
 // approve/reject routes (app/api/admin/curriculum/approve|reject/route.ts,
 // app/api/admin/ops/curriculum-review/route.ts). See
 // docs/superpowers/specs/2026-08-03-curriculum-risk-triage-design.md.
@@ -268,7 +279,7 @@ export const GRADE_BAND_RISK: Record<GradeBand, number> = {
 
 // Subjects scored as sensitive. Deliberately limited to the two subjects that
 // actually exist in CurriculumContent.subject values today (see
-// lib/curriculum/coverageShared.ts SUBJECTS) — CIVICS and SOCIAL_STUDIES.
+// lib/curriculum/coverageShared.ts SUBJECTS) - CIVICS and SOCIAL_STUDIES.
 export const SENSITIVE_SUBJECTS = new Set(["CIVICS", "SOCIAL_STUDIES"]);
 export const SUBJECT_SENSITIVITY_SCORE = 2;
 export const FIRST_OF_KIND_SCORE = 3;
@@ -302,7 +313,7 @@ export type RiskScoreResult = {
   reasons: string[];
 };
 
-/** Pure, deterministic, no I/O — see design doc's computeRiskScore section. */
+/** Pure, deterministic, no I/O - see design doc's computeRiskScore section. */
 export function computeRiskScore(input: RiskFactorInput): RiskScoreResult {
   let score = 0;
   const reasons: string[] = [];
@@ -342,7 +353,7 @@ export function isWorthFlagging(score: number): boolean {
 
 Run: `npx vitest run __tests__/curriculum-risk-triage/risk-score.test.ts`
 Expected: PASS (all cases). Note this step will still fail to *import* cleanly
-until Task 4 creates `riskTriageNotify.ts` — if so, temporarily stub it by
+until Task 4 creates `riskTriageNotify.ts` - if so, temporarily stub it by
 creating an empty `export async function notifyRiskReviewers() {}` in
 `lib/curriculum/riskTriageNotify.ts` now; Task 4 replaces it with the real
 implementation. Confirm the stub file exists before running this step.
@@ -356,7 +367,7 @@ git commit -m "feat: curriculum risk-triage scoring (computeRiskScore, gradeBand
 
 ---
 
-## Task 2: DB-backed helpers — first-of-kind lookup, budget count, backlog count
+## Task 2: DB-backed helpers - first-of-kind lookup, budget count, backlog count
 
 **Files:**
 - Modify: `lib/curriculum/riskTriage.ts`
@@ -448,7 +459,7 @@ describe("countRiskFlaggedAwaitingReview", () => {
 - [ ] **Step 2: Run tests to verify they fail**
 
 Run: `npx vitest run __tests__/curriculum-risk-triage/db-helpers.test.ts`
-Expected: FAIL — the three functions are not exported yet.
+Expected: FAIL - the three functions are not exported yet.
 
 - [ ] **Step 3: Add the DB-backed helpers to `lib/curriculum/riskTriage.ts`**
 
@@ -578,7 +589,7 @@ describe("notifyRiskReviewers", () => {
 - [ ] **Step 2: Run tests to verify they fail**
 
 Run: `npx vitest run __tests__/curriculum-risk-triage/notify.test.ts`
-Expected: FAIL — stub `notifyRiskReviewers` doesn't match this behavior.
+Expected: FAIL - stub `notifyRiskReviewers` doesn't match this behavior.
 
 - [ ] **Step 3: Implement `lib/curriculum/riskTriageNotify.ts`**
 
@@ -588,7 +599,7 @@ Replace the Task-1 stub entirely with:
 // lib/curriculum/riskTriageNotify.ts
 //
 // Emails every user who holds PERMISSIONS.CURRICULUM_APPROVE (queried live via
-// hasPermission/ROLE_PERMISSIONS, not a hardcoded contact list — so ADMIN,
+// hasPermission/ROLE_PERMISSIONS, not a hardcoded contact list - so ADMIN,
 // MOE_OFFICIAL, MOE_SUPER_ADMIN, and any future role granted the permission are
 // covered automatically) plus platform admins, when riskTriage.ts flags a
 // lesson for review. Best-effort: failures here must never block the
@@ -678,7 +689,7 @@ git commit -m "feat: curriculum risk-triage reviewer notification"
   `notifyRiskReviewers` (Task 3); `logAudit` (`@/lib/audit`); `prisma` (`@/lib/db`).
 - Produces: `TriageCandidate`, `TriageResult` types and
   `triageAndApprove(candidate: TriageCandidate, actorLabel: string, approvedStatus: string): Promise<TriageResult>`
-  — this is the exact signature Task 5/6 (script migrations) call.
+  - this is the exact signature Task 5/6 (script migrations) call.
 
 - [ ] **Step 1: Write the failing tests**
 
@@ -833,7 +844,7 @@ describe("triageAndApprove", () => {
 - [ ] **Step 2: Run tests to verify they fail**
 
 Run: `npx vitest run __tests__/curriculum-risk-triage/triage-and-approve.test.ts`
-Expected: FAIL — `triageAndApprove` is not exported yet.
+Expected: FAIL - `triageAndApprove` is not exported yet.
 
 - [ ] **Step 3: Implement `triageAndApprove`**
 
@@ -862,7 +873,7 @@ export type TriageResult =
 /**
  * Orchestrates one candidate through risk scoring, the weekly review budget,
  * and the final DB write. Called only from automated/script-driven approval
- * paths — see the module header comment. `approvedStatus` lets each caller
+ * paths - see the module header comment. `approvedStatus` lets each caller
  * keep its own existing "approved" status string ("published" for
  * bulk-approve-published.ts, "APPROVED" for promote-enriched-lessons.ts).
  */
@@ -981,13 +992,13 @@ git commit -m "feat: curriculum risk-triage triageAndApprove orchestrator"
 
 ---
 
-## Task 5: Regression test — human-driven routes stay untouched
+## Task 5: Regression test - human-driven routes stay untouched
 
 **Files:**
 - Test: `__tests__/curriculum-risk-triage/human-routes-untouched.test.ts`
 
 **Interfaces:**
-- Consumes: nothing new — reads source files as text.
+- Consumes: nothing new - reads source files as text.
 
 - [ ] **Step 1: Write the test**
 
@@ -1000,7 +1011,7 @@ import path from "node:path";
 
 // Curriculum risk-triage (lib/curriculum/riskTriage.ts) must only ever be
 // called from automated/script-driven approval paths. A human clicking
-// Approve/Reject on these three routes already IS the review — triage must
+// Approve/Reject on these three routes already IS the review - triage must
 // never intercept that path. This locks the boundary in as a regression
 // guard, since a future edit adding an import here would silently reintroduce
 // automated status changes on a human-driven route.
@@ -1022,7 +1033,7 @@ describe("human-driven curriculum routes never import risk-triage", () => {
 - [ ] **Step 2: Run the test to verify it passes immediately**
 
 Run: `npx vitest run __tests__/curriculum-risk-triage/human-routes-untouched.test.ts`
-Expected: PASS (nothing has touched these files yet — this test locks in the
+Expected: PASS (nothing has touched these files yet - this test locks in the
 current, correct state before Tasks 6-8 modify anything nearby).
 
 - [ ] **Step 3: Commit**
@@ -1054,7 +1065,7 @@ Rewrite `scripts/bulk-approve-published.ts` in full:
 // IMPORTANT (NR-11, 2026-08-02 -> risk-triage 2026-08-03): this used to be a
 // pure automated content-quality gate with no human involvement at all. It
 // now routes its highest-risk passing candidates to a real human/MOE
-// reviewer instead of auto-approving silently — see
+// reviewer instead of auto-approving silently - see
 // docs/superpowers/specs/2026-08-03-curriculum-risk-triage-design.md and
 // lib/curriculum/riskTriage.ts. Everything that still auto-approves is now
 // audit-logged and risk-stamped for the first time (unlike the pre-triage
@@ -1064,7 +1075,7 @@ Rewrite `scripts/bulk-approve-published.ts` in full:
 // Quality gates (a lesson must pass ALL to be a triage candidate):
 //   1. word count >= grade-band minimum:
 //        G1-G3: 400 words  |  G4-G6: 600 words  |  G7-G12: 800 words
-//   2. Has substantive content (text length >= 200 chars — filters empty shells)
+//   2. Has substantive content (text length >= 200 chars - filters empty shells)
 //   3. Title is not a placeholder ("untitled", "test", "draft", etc.)
 //
 // Usage:
@@ -1101,7 +1112,7 @@ const PLACEHOLDER_TITLES = [
   "lesson title",
 ];
 
-// Grade-band word minimums — these plain-text lessons (~700-900 words) use a
+// Grade-band word minimums - these plain-text lessons (~700-900 words) use a
 // different format than the block/standard lessons (which target 1200+).
 const MIN_WORDS_BY_GRADE: Record<number, number> = {
   1: 400, 2: 400, 3: 400,
@@ -1161,7 +1172,7 @@ async function main() {
   });
 
   console.log(`\nFound ${candidates.length} NEEDS_REVIEW lessons to evaluate`);
-  if (dryRun) console.log("DRY RUN — no changes will be made");
+  if (dryRun) console.log("DRY RUN - no changes will be made");
   if (gradeFilter) console.log(`Grade filter: G${gradeFilter.join(", G")}`);
   console.log();
 
@@ -1184,28 +1195,28 @@ async function main() {
     if (!contentGate) {
       rejected++;
       rejectReasons.push(
-        `[EMPTY]  G${lesson.grade} ${lesson.subject} — "${lesson.title ?? lesson.contentId}" — no body content`
+        `[EMPTY]  G${lesson.grade} ${lesson.subject} - "${lesson.title ?? lesson.contentId}" - no body content`
       );
       continue;
     }
     if (!wordGate) {
       rejected++;
       rejectReasons.push(
-        `[THIN]   G${lesson.grade} ${lesson.subject} — "${lesson.title ?? lesson.contentId}" — ${words} words (min ${minWords})`
+        `[THIN]   G${lesson.grade} ${lesson.subject} - "${lesson.title ?? lesson.contentId}" - ${words} words (min ${minWords})`
       );
       continue;
     }
     if (!titleGate) {
       rejected++;
       rejectReasons.push(
-        `[TITLE]  G${lesson.grade} ${lesson.subject} — placeholder title: "${lesson.title}"`
+        `[TITLE]  G${lesson.grade} ${lesson.subject} - placeholder title: "${lesson.title}"`
       );
       continue;
     }
 
     if (dryRun) {
       // Read-only preview: same scoring/budget logic triageAndApprove uses,
-      // but no writes — mirrors what a real run would decide.
+      // but no writes - mirrors what a real run would decide.
       const isFirstOfKind = await isFirstOfKindCell(lesson.grade, lesson.subject);
       const { score, reasons } = computeRiskScore({
         grade: lesson.grade,
@@ -1223,12 +1234,12 @@ async function main() {
       if (wouldFlag) {
         flagged++;
         process.stdout.write(
-          `[WOULD FLAG] G${lesson.grade} ${lesson.subject} — ${lesson.title ?? lesson.contentId} (score ${score}: ${reasons.join(", ")})\n`
+          `[WOULD FLAG] G${lesson.grade} ${lesson.subject} - ${lesson.title ?? lesson.contentId} (score ${score}: ${reasons.join(", ")})\n`
         );
       } else {
         approved++;
         process.stdout.write(
-          `[WOULD APPROVE] G${lesson.grade} ${lesson.subject} — ${lesson.title ?? lesson.contentId} (${words}w, score ${score})\n`
+          `[WOULD APPROVE] G${lesson.grade} ${lesson.subject} - ${lesson.title ?? lesson.contentId} (${words}w, score ${score})\n`
         );
       }
       continue;
@@ -1251,14 +1262,14 @@ async function main() {
       flagged++;
       if (flagged <= 20) {
         process.stdout.write(
-          `[FLAGGED FOR REVIEW] G${lesson.grade} ${lesson.subject} — ${lesson.title ?? lesson.contentId} (score ${result.riskScore}: ${result.riskReasons.join(", ")})\n`
+          `[FLAGGED FOR REVIEW] G${lesson.grade} ${lesson.subject} - ${lesson.title ?? lesson.contentId} (score ${result.riskScore}: ${result.riskReasons.join(", ")})\n`
         );
       }
     } else {
       approved++;
       if (approved <= 20 || approved % 50 === 0) {
         process.stdout.write(
-          `[APPROVED] G${lesson.grade} ${lesson.subject} — ${lesson.title ?? lesson.contentId} (${words}w, score ${result.riskScore})\n`
+          `[APPROVED] G${lesson.grade} ${lesson.subject} - ${lesson.title ?? lesson.contentId} (${words}w, score ${result.riskScore})\n`
         );
       } else if (approved === 21) {
         process.stdout.write("... (showing every 50th after first 20)\n");
@@ -1292,7 +1303,7 @@ main().catch(console.error).finally(() => prisma.$disconnect());
 - [ ] **Step 2: Type-check the script in isolation**
 
 Run: `npx tsc --noEmit`
-Expected: PASS — no type errors introduced (this also validates the whole
+Expected: PASS - no type errors introduced (this also validates the whole
 project still compiles, since a script-level path-alias mistake would surface
 here).
 
@@ -1328,7 +1339,7 @@ Rewrite `scripts/promote-enriched-lessons.ts` in full:
 // promote generated content straight to APPROVED using an automated
 // structural gate only, with no human involvement, no reviewer identity, and
 // nothing written to AuditLog. It now routes its highest-risk passing
-// candidates to a real human/MOE reviewer instead — see
+// candidates to a real human/MOE reviewer instead - see
 // docs/superpowers/specs/2026-08-03-curriculum-risk-triage-design.md and
 // lib/curriculum/riskTriage.ts. See bulk-approve-published.ts for the sibling
 // script and the production evidence of how much live content was approved
@@ -1484,7 +1495,7 @@ git commit -m "feat: wire promote-enriched-lessons.ts onto curriculum risk-triag
 - Consumes: `countRiskFlaggedAwaitingReview` from `@/lib/curriculum/riskTriage`
   (Task 2).
 
-- [ ] **Step 1: Write the failing test — GET response includes the new field**
+- [ ] **Step 1: Write the failing test - GET response includes the new field**
 
 Edit `__tests__/nr11/moe-approval-access.test.ts`: add a mock for the new
 dependency and one assertion. First add this mock near the other `vi.mock` calls
@@ -1514,13 +1525,13 @@ test):
 - [ ] **Step 2: Run the test to verify it fails**
 
 Run: `npx vitest run __tests__/nr11/moe-approval-access.test.ts`
-Expected: FAIL — `body.riskFlaggedAwaitingReview` is `undefined` (route doesn't
+Expected: FAIL - `body.riskFlaggedAwaitingReview` is `undefined` (route doesn't
 return it yet), and the new top-level `vi.mock("@/lib/curriculum/riskTriage")`
 has nothing real to mock against yet in the route.
 
 - [ ] **Step 3: Add the count to the route's GET response**
 
-Edit `app/api/admin/ops/curriculum-review/route.ts` — add the import and change
+Edit `app/api/admin/ops/curriculum-review/route.ts` - add the import and change
 the `GET` handler's return:
 
 ```ts
@@ -1561,7 +1572,7 @@ Expected: PASS (all existing NR-11 assertions plus the new one)
 
 - [ ] **Step 5: Render the badge on the review page**
 
-Edit `app/admin/ops/curriculum-review/page.tsx` — add the import and fetch, then
+Edit `app/admin/ops/curriculum-review/page.tsx` - add the import and fetch, then
 render the badge in the header. Change:
 
 ```ts
@@ -1660,19 +1671,19 @@ npm run build
 ```
 
 Expected: all four PASS. Record the exact test count (e.g. `4,5XX tests / 5XX
-files`) for the closeout note in Step 3 — do not guess it from memory.
+files`) for the closeout note in Step 3 - do not guess it from memory.
 
 - [ ] **Step 2: Manually dry-run `bulk-approve-published.ts` against production data (read-only)**
 
 This is the closest thing to a live proof this plan can give without writing to
-production — `--dry-run` makes zero database writes.
+production - `--dry-run` makes zero database writes.
 
 Run: `npx dotenv -e .env.production -- npx tsx scripts/bulk-approve-published.ts --dry-run`
 
 Expected: script runs to completion, prints a mix of `[WOULD APPROVE]` and
 `[WOULD FLAG]` lines (confirms real production NEEDS_REVIEW rows now produce
 both outcomes, not just approvals), and the `SUMMARY` block's `Would flag for
-review` count is 0 or a small number bounded near `WEEKLY_REVIEW_BUDGET` (8) —
+review` count is 0 or a small number bounded near `WEEKLY_REVIEW_BUDGET` (8) -
 if it's far higher, treat that as a signal to revisit `FLAG_THRESHOLD` before
 this is used for a real (non-dry-run) pass, not something to silently accept.
 
@@ -1681,7 +1692,7 @@ this is used for a real (non-dry-run) pass, not something to silently accept.
 Add a new bullet at the same place recent entries were added (after the most
 recent NR-12 bullet), following the existing entry style: what shipped, the
 real gate numbers from Step 1, and the dry-run evidence from Step 2. Do not
-mark NR-12 itself as started — this closes only the risk-triage
+mark NR-12 itself as started - this closes only the risk-triage
 prerequisite.
 
 - [ ] **Step 4: Commit the doc closeout**

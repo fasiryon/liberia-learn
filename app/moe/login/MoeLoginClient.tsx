@@ -7,7 +7,13 @@ import { PublicFooter } from "@/components/PublicFooter";
 
 const MOE_RESTRICTED_ERROR = "This portal is restricted to Ministry officials.";
 
-export default function MoeLoginClient() {
+export default function MoeLoginClient({
+  auth0Configured,
+  privilegedMfaRequired,
+}: {
+  auth0Configured: boolean;
+  privilegedMfaRequired: boolean;
+}) {
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -73,6 +79,24 @@ export default function MoeLoginClient() {
             </div>
           </div>
 
+          {auth0Configured ? (
+            <div className="space-y-3">
+              <button
+                type="button"
+                onClick={() => signIn("auth0", { callbackUrl: "/moe/dashboard" })}
+                className="flex min-h-12 w-full items-center justify-center rounded-lg bg-[var(--ll-silver-soft)] px-4 py-3 text-sm font-semibold text-[var(--ll-text)]"
+              >
+                Continue with secure MOE sign-in
+              </button>
+              {!privilegedMfaRequired ? (
+                <p className="text-center text-xs text-[var(--ll-text-muted)]">
+                  Managed MFA is staged. Local sign-in remains available until enforcement is enabled.
+                </p>
+              ) : null}
+            </div>
+          ) : null}
+
+          {!auth0Configured || !privilegedMfaRequired ? (
           <form onSubmit={handleSubmit} className="space-y-4 text-sm">
             <div className="space-y-1.5">
               <label className="block text-xs font-semibold uppercase tracking-wide text-[var(--ll-silver)]">
@@ -122,6 +146,7 @@ export default function MoeLoginClient() {
               {loading ? "Signing in..." : "Sign in to MOE Portal"}
             </button>
           </form>
+          ) : null}
 
           <div className="text-center text-[11px] text-[var(--ll-text-faint)]">
             MOE accounts are provisioned by the Ministry ICT Directorate.

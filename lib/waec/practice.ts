@@ -8,6 +8,7 @@
  */
 import { prisma } from "@/lib/db";
 import { routedCompletion } from "@/lib/ai/routedCompletion";
+import { moderateText } from "@/lib/agents/moderation";
 import { updateMasteryProfile } from "@/lib/mastery/masteryService";
 import { gradeToBand } from "@/lib/moe/alignment-engine";
 import { getWaecSubject, getTopic, type WaecSubjectId } from "@/lib/waec/syllabus";
@@ -44,6 +45,11 @@ async function generateForTopic(subjectId: WaecSubjectId, topicId: string, grade
     maxTokens: 1100,
     aiUsage: { route: "lib/waec/practice", feature: "curriculum", requestType: "waec_practice_gen", subject: subjectId },
   });
+
+  const outputVerdict = await moderateText(res.content, "output", {
+    audience: "minor",
+  });
+  if (outputVerdict.verdict !== "SAFE") return 0;
 
   let parsed: any;
   try { parsed = JSON.parse(res.content); } catch { return 0; }

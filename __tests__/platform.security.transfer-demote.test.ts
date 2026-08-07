@@ -6,11 +6,13 @@ const mockUserCount = vi.hoisted(() => vi.fn());
 const mockUserUpdate = vi.hoisted(() => vi.fn());
 const mockTransferCreate = vi.hoisted(() => vi.fn());
 const mockLogAudit = vi.hoisted(() => vi.fn());
+const mockRequirePrivilegedStepUp = vi.hoisted(() => vi.fn());
 
 vi.mock("@/lib/moeAccess", () => ({ requireMoePlatformAdmin: mockRequireMoePlatformAdmin }));
-vi.mock("@/lib/audit", () => ({ logAudit: mockLogAudit }));
-vi.mock("@/lib/db", () => ({
-  prisma: {
+vi.mock("@/lib/auth", () => ({ requirePrivilegedStepUp: mockRequirePrivilegedStepUp }));
+vi.mock("@/lib/audit", () => ({ logAudit: mockLogAudit, logAuditRequired: mockLogAudit }));
+vi.mock("@/lib/db", () => {
+  const tx = {
     user: {
       findUnique: mockUserFindUnique,
       count: mockUserCount,
@@ -19,8 +21,9 @@ vi.mock("@/lib/db", () => ({
     platformTransferToken: {
       create: mockTransferCreate,
     },
-  },
-}));
+  };
+  return { prisma: { ...tx, $transaction: vi.fn(async (callback: any) => callback(tx)) } };
+});
 
 import { POST as transferPOST } from "@/app/api/platform/security/transfer/route";
 import { POST as demotePOST } from "@/app/api/platform/security/demote/route";
@@ -41,6 +44,7 @@ beforeEach(() => {
   mockUserUpdate.mockResolvedValue({});
   mockTransferCreate.mockResolvedValue({ id: "token-1" });
   mockLogAudit.mockResolvedValue(undefined);
+  mockRequirePrivilegedStepUp.mockResolvedValue({ id: "platform-admin-1" });
 });
 
 describe("POST /api/platform/security/transfer", () => {
@@ -77,6 +81,12 @@ describe("POST /api/platform/security/transfer", () => {
       })
     );
   });
+
+  it("does not report token generation as successful when required audit storage fails", async () => {
+    mockLogAudit.mockRejectedValueOnce(new Error("audit unavailable"));
+    const res = await transferPOST(makeTransferReq({ intendedUserId: "recipient-1" }));
+    expect(res.status).toBe(500);
+  });
 });
 
 describe("POST /api/platform/security/demote", () => {
@@ -102,7 +112,14 @@ describe("POST /api/platform/security/demote", () => {
       expect.objectContaining({
         userId: "platform-admin-1",
         action: "platform.admin.demote",
-      })
+      }),
+      expect.anything()
     );
+  });
+
+  it("does not report demotion as successful when required audit storage fails", async () => {
+    mockLogAudit.mockRejectedValueOnce(new Error("audit unavailable"));
+    const res = await demotePOST();
+    expect(res.status).toBe(500);
   });
 });

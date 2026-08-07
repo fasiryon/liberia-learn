@@ -1,6 +1,6 @@
 ﻿import { NextResponse } from "next/server";
 import { z } from "zod";
-import { requireRole } from "@/lib/auth";
+import { requirePrivilegedStepUp, requireRole } from "@/lib/auth";
 import {
   auditNationalCoverage,
   generateNationalBatch,
@@ -11,7 +11,8 @@ export const dynamic = "force-dynamic";
 
 export async function GET() {
   try {
-    await requireRole("ADMIN");
+    const user = await requireRole("ADMIN");
+    await requirePrivilegedStepUp(user);
     const report = await auditNationalCoverage();
     const plan = buildGenerationPlan({});
     return NextResponse.json({
@@ -47,7 +48,8 @@ const PostSchema = z.object({
 
 export async function POST(req: Request) {
   try {
-    await requireRole("ADMIN");
+    const user = await requireRole("ADMIN");
+    await requirePrivilegedStepUp(user);
     const body = await req.json();
     const parsed = PostSchema.safeParse(body);
     if (!parsed.success) {

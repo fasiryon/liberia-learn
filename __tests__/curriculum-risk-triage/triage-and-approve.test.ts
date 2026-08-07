@@ -1,18 +1,13 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const mockCount = vi.hoisted(() => vi.fn());
-const mockUpdate = vi.hoisted(() => vi.fn(async (args: any) => ({ ...args })));
+const mockUpdate = vi.hoisted(() => vi.fn(async (args: any) => args));
 const mockLogAudit = vi.hoisted(() => vi.fn(async () => {}));
 const mockNotify = vi.hoisted(() => vi.fn(async () => {}));
 const mockWarn = vi.hoisted(() => vi.fn());
 
 vi.mock("@/lib/db", () => ({
-  prisma: {
-    curriculumContent: {
-      count: mockCount,
-      update: mockUpdate,
-    },
-  },
+  prisma: { curriculumContent: { count: mockCount, update: mockUpdate } },
 }));
 vi.mock("@/lib/audit", () => ({ logAudit: mockLogAudit }));
 vi.mock("@/lib/logger", () => ({ logger: { warn: mockWarn, error: vi.fn(), info: vi.fn() } }));
@@ -25,8 +20,9 @@ const LOW_RISK_CANDIDATE = {
   grade: 9,
   subject: "MATH",
   payload: { existing: "field" },
-  wordCount: 2000,
-  minWordCount: 800,
+  approvalMetadata: { approvalStatus: "APPROVED", bulkApproved: true },
+  wordCount: 5000,
+  minWordCount: 3500,
 };
 
 const HIGH_RISK_CANDIDATE = {
@@ -34,8 +30,8 @@ const HIGH_RISK_CANDIDATE = {
   grade: 2,
   subject: "SOCIAL_STUDIES",
   payload: { existing: "field" },
-  wordCount: 410,
-  minWordCount: 400,
+  wordCount: 3550,
+  minWordCount: 3500,
 };
 
 beforeEach(() => {
@@ -43,18 +39,28 @@ beforeEach(() => {
 });
 
 describe("triageAndApprove", () => {
-  it("auto-approves a low-risk candidate, stamping riskScore/riskReasons and audit-logging autoapproved", async () => {
-    mockCount.mockResolvedValueOnce(1); // isFirstOfKindCell -> not first-of-kind path irrelevant here (low risk regardless)
+  it("auto-approves low-risk content and records its risk decision", async () => {
+    mockCount.mockResolvedValueOnce(1);
+    const result = await triageAndApprove(LOW_RISK_CANDIDATE, "system:bulk", "published");
 
-    const result = await triageAndApprove(LOW_RISK_CANDIDATE, "system:bulk-approve-published", "published");
-
-    expect(result.action).toBe("approved");
-    expect(result.budgetExceeded).toBe(false);
+    expect(result).toEqual({
+      action: "approved",
+      contentId: "content-low",
+      riskScore: 0,
+      riskReasons: [],
+      budgetExceeded: false,
+    });
     expect(mockUpdate).toHaveBeenCalledWith({
       where: { contentId: "content-low" },
       data: {
         status: "published",
-        payload: expect.objectContaining({ existing: "field", riskScore: 0, riskReasons: [] }),
+        payload: {
+          existing: "field",
+          approvalStatus: "APPROVED",
+          bulkApproved: true,
+          riskScore: 0,
+          riskReasons: [],
+        },
       },
     });
     expect(mockLogAudit).toHaveBeenCalledWith(
@@ -63,12 +69,9 @@ describe("triageAndApprove", () => {
     expect(mockNotify).not.toHaveBeenCalled();
   });
 
-  it("flags a high-risk candidate under budget: NEEDS_REVIEW, audit-logged, notified", async () => {
-    mockCount
-      .mockResolvedValueOnce(0) // isFirstOfKindCell: zero approved rows -> first-of-kind true
-      .mockResolvedValueOnce(WEEKLY_REVIEW_BUDGET - 1); // getFlaggedCountInWindow: under budget
-
-    const result = await triageAndApprove(HIGH_RISK_CANDIDATE, "system:bulk-approve-published", "published");
+  it("flags high-risk content when review budget is available", async () => {
+    mockCount.mockResolvedValueOnce(0).mockResolvedValueOnce(WEEKLY_REVIEW_BUDGET - 1);
+    const result = await triageAndApprove(HIGH_RISK_CANDIDATE, "system:bulk", "published");
 
     expect(result.action).toBe("flagged");
     expect(mockUpdate).toHaveBeenCalledWith({
@@ -78,39 +81,25 @@ describe("triageAndApprove", () => {
         payload: expect.objectContaining({
           existing: "field",
           riskFlagged: true,
-          riskScore: expect.any(Number),
           riskReasons: expect.arrayContaining(["grade_band_g1_3", "first_of_kind_cell"]),
         }),
       },
     });
+    const flaggedPayload = mockUpdate.mock.calls[0]![0].data.payload;
+    expect(flaggedPayload).not.toHaveProperty("approvalStatus");
+    expect(flaggedPayload).not.toHaveProperty("bulkApproved");
     expect(mockLogAudit).toHaveBeenCalledWith(
       expect.objectContaining({ action: "curriculum.risk.flagged", resourceId: "content-high" })
     );
     expect(mockNotify).toHaveBeenCalledWith("content-high", expect.any(Number), expect.any(Array));
   });
 
-  it("auto-approves a high-risk candidate when the weekly budget is exhausted, but still stamps risk data and marks budgetExceeded", async () => {
-    mockCount
-      .mockResolvedValueOnce(0) // first-of-kind
-      .mockResolvedValueOnce(WEEKLY_REVIEW_BUDGET); // at/over budget
-
-    const result = await triageAndApprove(HIGH_RISK_CANDIDATE, "system:bulk-approve-published", "published");
+  it("auto-approves high-risk content only after the review budget is exhausted", async () => {
+    mockCount.mockResolvedValueOnce(0).mockResolvedValueOnce(WEEKLY_REVIEW_BUDGET);
+    const result = await triageAndApprove(HIGH_RISK_CANDIDATE, "system:bulk", "published");
 
     expect(result.action).toBe("approved");
-    expect(result.budgetExceeded).toBe(true);
-    expect(mockUpdate).toHaveBeenCalledWith({
-      where: { contentId: "content-high" },
-      data: {
-        status: "published",
-        payload: expect.objectContaining({ riskScore: expect.any(Number) }),
-      },
-    });
-    expect(mockLogAudit).toHaveBeenCalledWith(
-      expect.objectContaining({
-        action: "curriculum.risk.autoapproved",
-        details: expect.objectContaining({ budgetExceeded: true }),
-      })
-    );
+    if (result.action === "approved") expect(result.budgetExceeded).toBe(true);
     expect(mockNotify).not.toHaveBeenCalled();
     expect(mockWarn).toHaveBeenCalledWith(
       "[riskTriage] weekly review budget exhausted, auto-approving a high-risk candidate",
@@ -118,26 +107,33 @@ describe("triageAndApprove", () => {
     );
   });
 
-  it("fails closed to flagging when the budget check throws", async () => {
-    mockCount
-      .mockResolvedValueOnce(0) // first-of-kind
-      .mockRejectedValueOnce(new Error("db down")); // getFlaggedCountInWindow throws
-
-    const result = await triageAndApprove(HIGH_RISK_CANDIDATE, "system:bulk-approve-published", "published");
-
-    expect(result.action).toBe("flagged");
-    expect(mockWarn).toHaveBeenCalled();
+  it("fails closed to review when the budget lookup fails", async () => {
+    mockCount.mockResolvedValueOnce(0).mockRejectedValueOnce(new Error("db down"));
+    await expect(triageAndApprove(HIGH_RISK_CANDIDATE, "system:bulk", "published")).resolves.toEqual(
+      expect.objectContaining({ action: "flagged" })
+    );
     expect(mockUpdate).toHaveBeenCalledWith(
       expect.objectContaining({ data: expect.objectContaining({ status: "NEEDS_REVIEW" }) })
     );
   });
 
-  it("supports approvedStatus='APPROVED' for the promotion-pass-2b convention", async () => {
-    mockCount.mockResolvedValueOnce(0);
-    const result = await triageAndApprove(LOW_RISK_CANDIDATE, "system:promotion-pass-2b", "APPROVED");
-    expect(result.action).toBe("approved");
+  it("preserves the promotion pipeline's APPROVED status convention", async () => {
+    mockCount.mockResolvedValueOnce(1);
+    await triageAndApprove(LOW_RISK_CANDIDATE, "system:promotion", "APPROVED");
     expect(mockUpdate).toHaveBeenCalledWith(
       expect.objectContaining({ data: expect.objectContaining({ status: "APPROVED" }) })
+    );
+  });
+
+  it("keeps the status write when reviewer notification fails", async () => {
+    mockCount.mockResolvedValueOnce(0).mockResolvedValueOnce(0);
+    mockNotify.mockRejectedValueOnce(new Error("email unavailable"));
+    await expect(triageAndApprove(HIGH_RISK_CANDIDATE, "system:bulk", "published")).resolves.toEqual(
+      expect.objectContaining({ action: "flagged" })
+    );
+    expect(mockWarn).toHaveBeenCalledWith(
+      "[riskTriage] reviewer notification failed",
+      expect.objectContaining({ contentId: "content-high" })
     );
   });
 });

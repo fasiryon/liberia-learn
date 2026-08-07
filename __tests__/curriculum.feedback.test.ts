@@ -20,6 +20,7 @@ vi.mock("@/lib/auth", () => ({
 
 vi.mock("@/lib/audit", () => ({
   logAudit: mockLogAudit,
+  logAuditRequired: mockLogAudit,
 }));
 
 vi.mock("@/lib/serverFlags", async () => {
@@ -56,6 +57,9 @@ vi.mock("@/lib/db", () => ({
     curriculumFeedback: {
       create: mockFeedbackCreate,
     },
+    $transaction: vi.fn(async (callback: any) => callback({
+      curriculumContent: { update: mockUpdate },
+    })),
   },
 }));
 

@@ -1,8 +1,8 @@
 import crypto from "crypto";
 import { NextResponse } from "next/server";
-import { requireUser } from "@/lib/auth";
+import { requirePrivilegedStepUp, requireUser } from "@/lib/auth";
 import { prisma } from "@/lib/db";
-import { logAudit } from "@/lib/audit";
+import { logAuditRequired } from "@/lib/audit";
 import { isMoePortalEnabled } from "@/lib/serverFlags";
 import { hashToken } from "@/lib/tokens";
 
@@ -14,6 +14,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Not found" }, { status: 404 });
     }
     const user = await requireUser();
+    await requirePrivilegedStepUp(user);
     const body = await req.json();
     const { token, demoteSender } = body;
 
@@ -70,17 +71,16 @@ export async function POST(req: Request) {
           });
         }
       }
-    });
-
-    await logAudit({
-      userId: user.id,
-      action: "platform.transfer.accept",
-      resourceType: "platform",
-      details: {
-        fromUserId: record.createdBy,
-        toUserId: user.id,
-        demotedSender: !!demoteSender,
-      },
+      await logAuditRequired({
+        userId: user.id,
+        action: "platform.transfer.accept",
+        resourceType: "platform",
+        details: {
+          fromUserId: record.createdBy,
+          toUserId: user.id,
+          demotedSender: !!demoteSender,
+        },
+      }, tx);
     });
 
     return NextResponse.json({ ok: true, promoted: true });

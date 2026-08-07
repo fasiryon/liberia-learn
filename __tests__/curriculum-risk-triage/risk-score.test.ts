@@ -27,8 +27,8 @@ describe("computeRiskScore", () => {
       grade: 9,
       subject: "MATH",
       isFirstOfKind: false,
-      wordCount: 2000,
-      minWordCount: 800,
+      wordCount: 5000,
+      minWordCount: 3500,
     });
     expect(result.score).toBe(0);
     expect(result.reasons).toEqual([]);
@@ -39,8 +39,8 @@ describe("computeRiskScore", () => {
       grade: 2,
       subject: "MATH",
       isFirstOfKind: false,
-      wordCount: 2000,
-      minWordCount: 400,
+      wordCount: 5000,
+      minWordCount: 3500,
     });
     expect(result.reasons).toContain("grade_band_g1_3");
     expect(result.score).toBeGreaterThan(0);
@@ -51,8 +51,8 @@ describe("computeRiskScore", () => {
       grade: 9,
       subject: "CIVICS",
       isFirstOfKind: false,
-      wordCount: 2000,
-      minWordCount: 800,
+      wordCount: 5000,
+      minWordCount: 3500,
     });
     expect(civics.reasons).toContain("sensitive_subject_civics");
 
@@ -60,8 +60,8 @@ describe("computeRiskScore", () => {
       grade: 9,
       subject: "social_studies",
       isFirstOfKind: false,
-      wordCount: 2000,
-      minWordCount: 800,
+      wordCount: 5000,
+      minWordCount: 3500,
     });
     expect(social.reasons).toContain("sensitive_subject_social_studies");
   });
@@ -71,8 +71,8 @@ describe("computeRiskScore", () => {
       grade: 9,
       subject: "MATH",
       isFirstOfKind: true,
-      wordCount: 2000,
-      minWordCount: 800,
+      wordCount: 5000,
+      minWordCount: 3500,
     });
     expect(result.reasons).toContain("first_of_kind_cell");
   });
@@ -82,8 +82,8 @@ describe("computeRiskScore", () => {
       grade: 9,
       subject: "MATH",
       isFirstOfKind: false,
-      wordCount: 850, // 800 * 1.0625, inside the 1.15 threshold
-      minWordCount: 800,
+      wordCount: 3700,
+      minWordCount: 3500,
     });
     expect(borderline.reasons).toContain("borderline_quality_gate_margin");
 
@@ -91,8 +91,8 @@ describe("computeRiskScore", () => {
       grade: 9,
       subject: "MATH",
       isFirstOfKind: false,
-      wordCount: 2000,
-      minWordCount: 800,
+      wordCount: 5000,
+      minWordCount: 3500,
     });
     expect(comfortable.reasons).not.toContain("borderline_quality_gate_margin");
   });
@@ -102,8 +102,8 @@ describe("computeRiskScore", () => {
       grade: 2,
       subject: "SOCIAL_STUDIES",
       isFirstOfKind: true,
-      wordCount: 410,
-      minWordCount: 400,
+      wordCount: 3550,
+      minWordCount: 3500,
     });
     expect(result.reasons).toEqual([
       "grade_band_g1_3",

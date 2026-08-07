@@ -12,6 +12,8 @@
  * See docs/adr/0008-moe-governance-controls.md for decision rationale.
  */
 
+import { assertRecentPrivilegedStepUp } from "@/lib/auth/privilegedIdentity";
+
 export const PERMISSIONS = {
   //  Compliance & Audit
   /** View the paginated audit log for the admin's school (or all schools for platform admin). */
@@ -79,6 +81,19 @@ export const PERMISSIONS = {
 } as const;
 
 export type Permission = (typeof PERMISSIONS)[keyof typeof PERMISSIONS];
+
+const STEP_UP_PERMISSIONS = new Set<Permission>([
+  PERMISSIONS.COMPLIANCE_AUDIT_EXPORT,
+  PERMISSIONS.GOVERNANCE_EXPORT_SCHOOL,
+  PERMISSIONS.GOVERNANCE_EXPORT_NATIONAL,
+  PERMISSIONS.GOVERNANCE_EXPORT_MOE,
+  PERMISSIONS.GOVERNANCE_EXPORT_PII,
+  PERMISSIONS.CURRICULUM_APPROVE,
+  PERMISSIONS.CURRICULUM_OVERRIDE,
+  PERMISSIONS.CURRICULUM_VERSION_MANAGE,
+  PERMISSIONS.POLICY_CONTROL,
+  PERMISSIONS.USER_CHANGE_ROLE,
+]);
 
 /**
  * Per-role explicit allow lists.
@@ -177,12 +192,22 @@ export function hasPermission(
  * Use at the top of API route handlers after requireRole().
  */
 export function assertPermission(
-  user: { role: string; isPlatformAdmin?: boolean },
+  user: {
+    role: string;
+    isPlatformAdmin?: boolean;
+    authProvider?: string | null;
+    mfaVerifiedAt?: number | null;
+    assuranceExpiresAt?: number | null;
+    securityVersion?: number | null;
+    privilegedSessionId?: string | null;
+  },
   permission: Permission
 ): void {
   if (!hasPermission(user, permission)) {
     throw Object.assign(new Error("Forbidden"), { status: 403 });
   }
+  if (STEP_UP_PERMISSIONS.has(permission)) {
+    assertRecentPrivilegedStepUp(user);
+  }
 }
-
 

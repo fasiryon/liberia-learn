@@ -276,9 +276,15 @@ describe("POST /api/admin/curriculum/approve — cache invalidation", () => {
       })),
       update: vi.fn(async () => ({})),
     };
+    (prismaMock as any).$transaction = vi.fn(async (callback: any) => callback({
+      curriculumContent: (prismaMock as any).curriculumContent,
+    }));
     (prismaMock as any).curriculumFeedback = { create: vi.fn(async () => ({})) };
     vi.doMock("@/lib/db", () => ({ prisma: prismaMock }));
-    vi.doMock("@/lib/audit", () => ({ logAudit: vi.fn(async () => {}) }));
+    vi.doMock("@/lib/audit", () => ({
+      logAudit: vi.fn(async () => {}),
+      logAuditRequired: vi.fn(async () => {}),
+    }));
     vi.doMock("@/lib/serverFlags", () => ({
       isCurriculumFeedbackEnabled: () => false,
       isTeacherGenerationEnabled: () => true,

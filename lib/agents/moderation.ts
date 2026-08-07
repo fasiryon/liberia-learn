@@ -18,6 +18,28 @@ export interface ModerationResult {
   reason?: string;
 }
 
+export type ModerationAudience = "general" | "minor";
+
+export interface ModerationOptions {
+  audience?: ModerationAudience;
+}
+
+function applyAudiencePolicy(
+  result: ModerationResult,
+  options?: ModerationOptions
+): ModerationResult {
+  if (options?.audience === "minor" && result.verdict === "UNCERTAIN") {
+    return {
+      verdict: "UNSAFE",
+      reason: result.reason
+        ? `minor_fail_closed:${result.reason}`
+        : "minor_fail_closed:uncertain",
+    };
+  }
+
+  return result;
+}
+
 function stripFences(raw: string): string {
   return raw.trim().replace(/^```(?:json)?/i, "").replace(/```$/i, "").trim();
 }
@@ -29,7 +51,8 @@ function stripFences(raw: string): string {
  */
 export async function moderateText(
   text: string,
-  kind: "input" | "output"
+  kind: "input" | "output",
+  options?: ModerationOptions
 ): Promise<ModerationResult> {
   if (!text || !text.trim()) return { verdict: "SAFE" };
 
@@ -59,14 +82,23 @@ export async function moderateText(
     };
     const verdict = parsed.verdict;
     if (verdict === "SAFE" || verdict === "UNSAFE" || verdict === "UNCERTAIN") {
-      return { verdict, reason: parsed.reason || undefined };
+      return applyAudiencePolicy(
+        { verdict, reason: parsed.reason || undefined },
+        options
+      );
     }
-    return { verdict: "UNCERTAIN", reason: "unrecognized_verdict" };
+    return applyAudiencePolicy(
+      { verdict: "UNCERTAIN", reason: "unrecognized_verdict" },
+      options
+    );
   } catch (e) {
     logger.warn("[agent.moderation] classifier failed — failing open to UNCERTAIN", {
       kind,
       message: e instanceof Error ? e.message.slice(0, 200) : String(e),
     });
-    return { verdict: "UNCERTAIN", reason: "moderation_error" };
+    return applyAudiencePolicy(
+      { verdict: "UNCERTAIN", reason: "moderation_error" },
+      options
+    );
   }
 }

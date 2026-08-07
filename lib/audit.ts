@@ -1,16 +1,7 @@
 // lib/audit.ts — Immutable audit logging helper
 import { prisma } from "@/lib/db";
 
-export async function logAudit({
-  userId,
-  action,
-  resourceType,
-  resourceId,
-  details,
-  ipAddress,
-  traceId,
-  schoolId,
-}: {
+export type AuditEntry = {
   userId?: string | null;
   action: string;
   resourceType?: string;
@@ -21,26 +12,57 @@ export async function logAudit({
   traceId?: string | null;
   /** Block 6: tenant school ID for tenant-scoped audit queries. */
   schoolId?: string | null;
-}) {
+};
+
+type AuditWriteClient = {
+  auditLog?: {
+    create(args: any): PromiseLike<unknown>;
+  };
+};
+
+async function writeAudit({
+  userId,
+  action,
+  resourceType,
+  resourceId,
+  details,
+  ipAddress,
+  traceId,
+  schoolId,
+}: AuditEntry, client: AuditWriteClient = prisma): Promise<void> {
+  if (!client?.auditLog?.create) {
+    throw new Error("audit_log_unavailable");
+  }
+
+  await client.auditLog.create({
+    data: {
+      userId: userId ?? null,
+      action,
+      resourceType: resourceType ?? null,
+      resourceId: resourceId ?? null,
+      details: (details as any) ?? undefined,
+      ipAddress: ipAddress ?? null,
+      traceId: traceId ?? null,
+      schoolId: schoolId ?? null,
+    },
+  });
+}
+
+export async function logAudit(entry: AuditEntry): Promise<boolean> {
   try {
-    // AuditLog is append-only by design.
-    // DELETE and UPDATE operations on AuditLog are forbidden.
-    // This is enforced at the application layer.
-    if (!prisma?.auditLog?.create) return;
-    await prisma.auditLog.create({
-      data: {
-        userId: userId ?? null,
-        action,
-        resourceType: resourceType ?? null,
-        resourceId: resourceId ?? null,
-        details: (details as any) ?? undefined,
-        ipAddress: ipAddress ?? null,
-        traceId: traceId ?? null,
-        schoolId: schoolId ?? null,
-      },
-    });
+    await writeAudit(entry);
+    return true;
   } catch (err) {
     // Audit logging should never break the main flow
     console.error("[AUDIT] Failed to log:", err);
+    return false;
   }
+}
+
+/**
+ * Use for safety, approval, access-control, and other sensitive transitions
+ * that must not be reported as complete without durable audit evidence.
+ */
+export async function logAuditRequired(entry: AuditEntry, client: AuditWriteClient = prisma): Promise<void> {
+  await writeAudit(entry, client);
 }

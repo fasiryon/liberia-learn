@@ -5,7 +5,12 @@ import { useRouter, useParams } from "next/navigation";
 import Link from "next/link";
 import ReactMarkdown from "react-markdown";
 import { trackEvent, EVENTS } from "@/lib/trackEvent";
-import { cacheLessonContent, loadCachedLesson } from "@/lib/lesson-offline-cache";
+import {
+  cacheLessonContent,
+  loadCachedLesson,
+  refreshLessonAvailability,
+  removeCachedLesson,
+} from "@/lib/lesson-offline-cache";
 import { LessonAudioPlayer, type LessonAudioPart } from "@/components/student/LessonAudioPlayer";
 import { getLessonLabLinks } from "@/lib/lessons/labLinks";
 import { looksLikeHtml, renderSimpleMarkdown } from "@/lib/lessons";
@@ -88,26 +93,11 @@ export default function LessonViewerPage() {
 
     trackEvent(EVENTS.LESSON_VIEW, { contentId });
 
-    fetch(`/api/curriculum/${contentId}`)
-      .then((res) => {
-        if (res.status === 401 || res.status === 403) {
-          router.push("/login");
-          return null;
-        }
-        if (!res.ok) throw new Error("Lesson not found");
-        return res.json();
-      })
-      .then((data) => {
-        if (data) {
-          setMetadata(data.metadata);
-          setPayload(data.payload);
-          setAudio(data.audio ?? null);
-          // Cache lesson content for offline use after first successful load
-          cacheLessonContent(contentId, { metadata: data.metadata, payload: data.payload, audio: data.audio ?? null });
-        }
-      })
-      .catch(async () => {
-        // Network failure — attempt to serve from local cache
+    async function loadLesson() {
+      let res: Response;
+      try {
+        res = await fetch(`/api/curriculum/${contentId}`);
+      } catch {
         const cached = await loadCachedLesson(contentId);
         if (cached) {
           setMetadata(cached.metadata);
@@ -117,8 +107,41 @@ export default function LessonViewerPage() {
         } else {
           setError("This lesson isn't available offline yet. Please connect to the internet to load it for the first time.");
         }
-      })
-      .finally(() => setLoading(false));
+        return;
+      }
+
+      if (res.status === 401 || res.status === 403) {
+        await removeCachedLesson(contentId);
+        router.push("/login");
+        return;
+      }
+      if (!res.ok) {
+        const rejection = await res.json().catch(() => null);
+        if (rejection?.offlineManifest) {
+          const refreshed = await refreshLessonAvailability(rejection.offlineManifest);
+          if (!refreshed) await removeCachedLesson(contentId);
+        } else {
+          await removeCachedLesson(contentId);
+        }
+        setError("This lesson is no longer available.");
+        return;
+      }
+      const data = await res.json().catch(() => null);
+      if (!data) {
+        setError("The lesson response was invalid. Please try again.");
+        return;
+      }
+      setMetadata(data.metadata);
+      setPayload(data.payload);
+      setAudio(data.audio ?? null);
+      cacheLessonContent(
+        contentId,
+        { metadata: data.metadata, payload: data.payload, audio: data.audio ?? null },
+        data.offlineManifest
+      );
+    }
+
+    loadLesson().finally(() => setLoading(false));
   }, [contentId, router]);
 
   const handleComplete = () => {

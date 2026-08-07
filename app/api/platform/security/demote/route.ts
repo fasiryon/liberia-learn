@@ -1,13 +1,15 @@
 import { NextResponse } from "next/server";
 import { requireMoePlatformAdmin } from "@/lib/moeAccess";
 import { prisma } from "@/lib/db";
-import { logAudit } from "@/lib/audit";
+import { logAuditRequired } from "@/lib/audit";
+import { requirePrivilegedStepUp } from "@/lib/auth";
 
 export const dynamic = "force-dynamic";
 
 export async function POST() {
   try {
     const user = await requireMoePlatformAdmin();
+    await requirePrivilegedStepUp(user);
 
     // Break-glass: require at least 2 platform admins
     const adminCount = await prisma.user.count({ where: { isPlatformAdmin: true } });
@@ -18,16 +20,17 @@ export async function POST() {
       );
     }
 
-    await prisma.user.update({
-      where: { id: user.id },
-      data: { isPlatformAdmin: false },
-    });
-
-    await logAudit({
-      userId: user.id,
-      action: "platform.admin.demote",
-      resourceType: "platform",
-      details: { demotedUserId: user.id },
+    await prisma.$transaction(async (tx) => {
+      await tx.user.update({
+        where: { id: user.id },
+        data: { isPlatformAdmin: false },
+      });
+      await logAuditRequired({
+        userId: user.id,
+        action: "platform.admin.demote",
+        resourceType: "platform",
+        details: { demotedUserId: user.id },
+      }, tx);
     });
 
     return NextResponse.json({ ok: true, demoted: true });

@@ -53,8 +53,8 @@ export async function analyzeLabSession(params: {
   conclusions: string;
   gradeLevel: number;
 }): Promise<LabAnalysis> {
-  const inputVerdict = await moderateText(params.conclusions, "input");
-  if (inputVerdict.verdict === "UNSAFE") {
+  const inputVerdict = await moderateText(params.conclusions, "input", { audience: "minor" });
+  if (inputVerdict.verdict !== "SAFE") {
     await enqueueEscalation({
       agentName: "lib.ai.lab.labAnalyzer",
       reason: `Lab session conclusions flagged unsafe on input moderation (lab: ${params.lab.title}).`,
@@ -106,8 +106,8 @@ export async function analyzeLabSession(params: {
   // Output moderation, same pattern as runtime.ts and groundedAnswerService:
   // one regeneration attempt with an explicit K-12 safety instruction, then
   // escalate and return a safe fallback if still unsafe on retry.
-  const out1 = await moderateText(extractFeedbackText(analysis), "output");
-  if (out1.verdict === "UNSAFE") {
+  const out1 = await moderateText(extractFeedbackText(analysis), "output", { audience: "minor" });
+  if (out1.verdict !== "SAFE") {
     messages.push(
       { role: "user" as const, content: JSON.stringify(analysis) },
       {
@@ -119,8 +119,8 @@ export async function analyzeLabSession(params: {
     try {
       const retryResult = await routedCompletion({ forceSmartTier: true, maxTokens: 900, messages });
       const retryAnalysis = parseAnalysis(retryResult.content);
-      const out2 = await moderateText(extractFeedbackText(retryAnalysis), "output");
-      if (out2.verdict === "UNSAFE") {
+      const out2 = await moderateText(extractFeedbackText(retryAnalysis), "output", { audience: "minor" });
+      if (out2.verdict !== "SAFE") {
         throw new Error("still_unsafe_after_retry");
       }
       analysis = retryAnalysis;
