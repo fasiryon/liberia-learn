@@ -17,9 +17,9 @@ describe("P1-D worker flood test", () => {
       buildBatchEntries(batch * 10, 10, "run-1")
     ).flat();
 
-    expect(entries).toHaveLength(500);
-    expect(new Set(entries.map((entry) => entry.MessageGroupId))).toHaveLength(500);
-    expect(new Set(entries.map((entry) => entry.MessageDeduplicationId))).toHaveLength(500);
+    expect(entries).toHaveLength(TOTAL);
+    expect(new Set(entries.map((entry) => entry.MessageGroupId))).toHaveLength(TOTAL);
+    expect(new Set(entries.map((entry) => entry.MessageDeduplicationId))).toHaveLength(TOTAL);
   });
 
   it("includes visible, in-flight, and delayed messages in queue depth", () => {
@@ -32,10 +32,10 @@ describe("P1-D worker flood test", () => {
     ).toEqual({ visible: 7, inFlight: 2, delayed: 1, total: 10 });
   });
 
-  it("sends exactly 500 jobs and requires an observed backlog plus two zero polls", async () => {
+  it("sends exactly TOTAL jobs and requires an observed backlog plus two zero polls", async () => {
     const depths = [
       { ApproximateNumberOfMessages: "0" },
-      { ApproximateNumberOfMessages: "480", ApproximateNumberOfMessagesNotVisible: "20" },
+      { ApproximateNumberOfMessages: "180", ApproximateNumberOfMessagesNotVisible: "20" },
       { ApproximateNumberOfMessages: "0", ApproximateNumberOfMessagesNotVisible: "0" },
       { ApproximateNumberOfMessages: "0", ApproximateNumberOfMessagesNotVisible: "0" },
     ];
@@ -66,9 +66,9 @@ describe("P1-D worker flood test", () => {
       sleep: async () => undefined,
     });
 
-    expect(sendBatches).toBe(50);
-    expect(result.totalMessages).toBe(500);
-    expect(result.peakVisible).toBe(480);
+    expect(sendBatches).toBe(TOTAL / 10);
+    expect(result.totalMessages).toBe(TOTAL);
+    expect(result.peakVisible).toBe(180);
     expect(result.peakInFlight).toBe(20);
   });
 

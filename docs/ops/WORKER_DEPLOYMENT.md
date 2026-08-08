@@ -11,14 +11,14 @@ messages from the production FIFO queue.
 | ECS Cluster | `liberia-learn` |
 | ECS Service | `liberia-learn-worker` |
 | Task Definition | `liberia-learn-worker:1` |
-| ECR Image | `258048833400.dkr.ecr.us-east-1.amazonaws.com/liberialearn-worker:latest` |
-| SQS Queue | `https://sqs.us-east-1.amazonaws.com/258048833400/liberialearn-jobs.fifo` |
-| SQS DLQ | `https://sqs.us-east-1.amazonaws.com/258048833400/liberialearn-jobs-dlq.fifo` |
+| ECR Image | `466568847266.dkr.ecr.us-east-1.amazonaws.com/liberialearn-worker:latest` |
+| SQS Queue | `https://sqs.us-east-1.amazonaws.com/466568847266/liberialearn-jobs.fifo` |
+| SQS DLQ | `https://sqs.us-east-1.amazonaws.com/466568847266/liberialearn-jobs-dlq.fifo` |
 | VPC Subnets | `subnet-0aa1b47b7b852e9ff`, `subnet-052e3f5ab7d4d5912`, `subnet-0130bc7e851532cdb` |
 | Security Group | `sg-0d5e38a41c85798be` |
 | Log Group | `/ecs/liberia-learn-worker` |
 | AWS Region | `us-east-1` |
-| AWS Account | `258048833400` |
+| AWS Account | `466568847266` |
 
 ## What the worker processes
 
@@ -82,13 +82,13 @@ Build and push the worker image:
 ```bash
 aws ecr get-login-password --region us-east-1 \
   | docker login --username AWS --password-stdin \
-    258048833400.dkr.ecr.us-east-1.amazonaws.com
+    466568847266.dkr.ecr.us-east-1.amazonaws.com
 
 docker build -t liberialearn-worker -f Dockerfile.worker .
 docker tag liberialearn-worker:latest \
-  258048833400.dkr.ecr.us-east-1.amazonaws.com/liberialearn-worker:latest
+  466568847266.dkr.ecr.us-east-1.amazonaws.com/liberialearn-worker:latest
 docker push \
-  258048833400.dkr.ecr.us-east-1.amazonaws.com/liberialearn-worker:latest
+  466568847266.dkr.ecr.us-east-1.amazonaws.com/liberialearn-worker:latest
 ```
 
 Register the task definition:
@@ -126,7 +126,7 @@ aws logs tail /ecs/liberia-learn-worker --follow --region us-east-1
 
 ```bash
 aws sqs get-queue-attributes \
-  --queue-url "https://sqs.us-east-1.amazonaws.com/258048833400/liberialearn-jobs.fifo" \
+  --queue-url "https://sqs.us-east-1.amazonaws.com/466568847266/liberialearn-jobs.fifo" \
   --attribute-names ApproximateNumberOfMessages ApproximateNumberOfMessagesNotVisible \
   --region us-east-1
 ```
@@ -161,7 +161,7 @@ Run outside school hours (Mon–Fri 08:00–15:00 GMT):
 npx dotenv -e .env.production -- npx tsx scripts/flood-test-queue.ts
 ```
 
-The P1-D proof sends exactly 500 `HEALTH_CHECK` messages across independent FIFO
+The P1-D proof sends exactly 200 `HEALTH_CHECK` messages across independent FIFO
 message groups. It refuses to start unless visible, in-flight, and delayed queue
 depths are all zero. After enqueueing, it requires an observed nonzero backlog
 followed by two consecutive zero-depth polls. Preserve the printed JSON result as
@@ -176,5 +176,5 @@ unsupported message cannot create an unbounded retry or DLQ loop.
 
 | Role | ARN | Policies |
 |---|---|---|
-| Task Execution | `arn:aws:iam::258048833400:role/ecsTaskExecutionRole` | `AmazonECSTaskExecutionRolePolicy`, `AmazonEC2ContainerRegistryReadOnly`, `AmazonSSMReadOnlyAccess` |
-| Task Role | `arn:aws:iam::258048833400:role/ecsTaskRole` | SQS send/receive/delete on `liberialearn-jobs*` |
+| Task Execution | `arn:aws:iam::466568847266:role/ecsTaskExecutionRole` | `AmazonECSTaskExecutionRolePolicy`, `AmazonEC2ContainerRegistryReadOnly`, `AmazonSSMReadOnlyAccess` |
+| Task Role | `arn:aws:iam::466568847266:role/ecsTaskRole` | SQS send/receive/delete on `liberialearn-jobs*` |

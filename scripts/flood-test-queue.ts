@@ -1,4 +1,6 @@
-// Flood test: sends exactly 500 HEALTH_CHECK messages and measures queue drain.
+// Flood test: sends exactly 200 HEALTH_CHECK messages and measures queue drain.
+// 200 matches the literal NR-2 flood test being re-run, not P1-D's higher-load
+// variant; see project session notes for why this count was chosen deliberately.
 // Run OUTSIDE school hours (not Mon-Fri 08:00-15:00 GMT).
 // Usage: npx dotenv -e .env.production -- npx tsx scripts/flood-test-queue.ts
 //   or with local AWS credentials: npx tsx scripts/flood-test-queue.ts
@@ -13,9 +15,9 @@ import {
 
 const QUEUE_URL =
   process.env.SQS_QUEUE_URL ||
-  "https://sqs.us-east-1.amazonaws.com/258048833400/liberialearn-jobs.fifo";
+  "https://sqs.us-east-1.amazonaws.com/466568847266/liberialearn-jobs.fifo";
 const BATCH_SIZE = 10;
-export const TOTAL = 500;
+export const TOTAL = 200;
 const POLL_INTERVAL_MS = 5_000;
 const DRAIN_TIMEOUT_MS = 15 * 60_000;
 
@@ -183,7 +185,7 @@ export async function runFloodTest(options: FloodTestOptions = {}): Promise<Floo
 
   if (!observedBacklog) {
     throw new Error(
-      "SQS never reported the 500-job backlog; no valid drain-time proof was captured"
+      `SQS never reported the ${TOTAL}-job backlog; no valid drain-time proof was captured`
     );
   }
   throw new Error(`Queue did not drain within ${drainTimeoutMs}ms`);

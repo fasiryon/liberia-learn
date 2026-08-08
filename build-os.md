@@ -164,7 +164,7 @@ Every field must be populated from what you actually found.
 [Populate from scan — exact framework, ORM, auth library, all key packages with versions]
 
 **AWS Infrastructure:**
-- Account: 258048833400
+- Account: 466568847266
 - Region: us-east-1
 - Compute: ECS Fargate (containerized)
 - Database: RDS PostgreSQL via Prisma
@@ -1121,7 +1121,7 @@ See: [[Current-Phase]]
 
 ## Deployment Info
 - Pipeline: GitHub Actions → ECR → ECS
-- Account: 258048833400 / us-east-1
+- Account: 466568847266 / us-east-1
 - Test command: [from scan]
 ```
 

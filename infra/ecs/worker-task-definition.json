@@ -4,12 +4,12 @@
   "requiresCompatibilities": ["FARGATE"],
   "cpu": "512",
   "memory": "1024",
-  "executionRoleArn": "arn:aws:iam::258048833400:role/ecsTaskExecutionRole",
-  "taskRoleArn": "arn:aws:iam::258048833400:role/ecsTaskRole",
+  "executionRoleArn": "arn:aws:iam::466568847266:role/ecsTaskExecutionRole",
+  "taskRoleArn": "arn:aws:iam::466568847266:role/ecsTaskRole",
   "containerDefinitions": [
     {
       "name": "worker",
-      "image": "258048833400.dkr.ecr.us-east-1.amazonaws.com/liberialearn-worker:latest",
+      "image": "466568847266.dkr.ecr.us-east-1.amazonaws.com/liberialearn-worker:latest",
       "essential": true,
       "environment": [
         { "name": "NODE_ENV", "value": "production" },
@@ -19,23 +19,23 @@
       "secrets": [
         {
           "name": "DATABASE_URL",
-          "valueFrom": "arn:aws:ssm:us-east-1:258048833400:parameter/liberialearn/DATABASE_URL"
+          "valueFrom": "arn:aws:ssm:us-east-1:466568847266:parameter/liberialearn/DATABASE_URL"
         },
         {
           "name": "DIRECT_URL",
-          "valueFrom": "arn:aws:ssm:us-east-1:258048833400:parameter/liberialearn/DIRECT_URL"
+          "valueFrom": "arn:aws:ssm:us-east-1:466568847266:parameter/liberialearn/DIRECT_URL"
         },
         {
           "name": "SQS_QUEUE_URL",
-          "valueFrom": "arn:aws:ssm:us-east-1:258048833400:parameter/liberialearn/SQS_QUEUE_URL"
+          "valueFrom": "arn:aws:ssm:us-east-1:466568847266:parameter/liberialearn/SQS_QUEUE_URL"
         },
         {
           "name": "SQS_DLQ_URL",
-          "valueFrom": "arn:aws:ssm:us-east-1:258048833400:parameter/liberialearn/SQS_DLQ_URL"
+          "valueFrom": "arn:aws:ssm:us-east-1:466568847266:parameter/liberialearn/SQS_DLQ_URL"
         },
         {
           "name": "OPENAI_API_KEY",
-          "valueFrom": "arn:aws:ssm:us-east-1:258048833400:parameter/liberialearn/OPENAI_API_KEY"
+          "valueFrom": "arn:aws:ssm:us-east-1:466568847266:parameter/liberialearn/OPENAI_API_KEY"
         }
       ],
       "logConfiguration": {
