@@ -4,22 +4,22 @@
   "requiresCompatibilities": ["FARGATE"],
   "cpu": "256",
   "memory": "512",
-  "executionRoleArn": "arn:aws:iam::258048833400:role/ecsTaskExecutionRole",
-  "taskRoleArn": "arn:aws:iam::258048833400:role/ecsTaskRole",
+  "executionRoleArn": "arn:aws:iam::466568847266:role/ecsTaskExecutionRole",
+  "taskRoleArn": "arn:aws:iam::466568847266:role/ecsTaskRole",
   "containerDefinitions": [{
     "name": "liberialearn-worker",
-    "image": "258048833400.dkr.ecr.us-east-1.amazonaws.com/liberialearn-worker:latest",
+    "image": "466568847266.dkr.ecr.us-east-1.amazonaws.com/liberialearn-worker:latest",
     "essential": true,
     "environment": [
       { "name": "NODE_ENV", "value": "production" },
       { "name": "AWS_REGION", "value": "us-east-1" }
     ],
     "secrets": [
-      { "name": "DATABASE_URL", "valueFrom": "arn:aws:secretsmanager:us-east-1:258048833400:secret:liberialearn/DATABASE_URL-ZOBURW" },
-      { "name": "DIRECT_URL", "valueFrom": "arn:aws:secretsmanager:us-east-1:258048833400:secret:liberialearn/DIRECT_URL-c6k7nR" },
-      { "name": "SQS_QUEUE_URL", "valueFrom": "arn:aws:secretsmanager:us-east-1:258048833400:secret:liberialearn/SQS_QUEUE_URL-Y1hkXj" },
-      { "name": "OPENAI_API_KEY", "valueFrom": "arn:aws:secretsmanager:us-east-1:258048833400:secret:liberialearn/OPENAI_API_KEY-kQPTUv" },
-      { "name": "GROQ_API_KEY", "valueFrom": "arn:aws:secretsmanager:us-east-1:258048833400:secret:liberialearn/GROQ_API_KEY-7Tp5q5" }
+      { "name": "DATABASE_URL", "valueFrom": "arn:aws:secretsmanager:us-east-1:466568847266:secret:liberialearn/DATABASE_URL-ZOBURW" },
+      { "name": "DIRECT_URL", "valueFrom": "arn:aws:secretsmanager:us-east-1:466568847266:secret:liberialearn/DIRECT_URL-c6k7nR" },
+      { "name": "SQS_QUEUE_URL", "valueFrom": "arn:aws:secretsmanager:us-east-1:466568847266:secret:liberialearn/SQS_QUEUE_URL-Y1hkXj" },
+      { "name": "OPENAI_API_KEY", "valueFrom": "arn:aws:secretsmanager:us-east-1:466568847266:secret:liberialearn/OPENAI_API_KEY-kQPTUv" },
+      { "name": "GROQ_API_KEY", "valueFrom": "arn:aws:secretsmanager:us-east-1:466568847266:secret:liberialearn/GROQ_API_KEY-7Tp5q5" }
     ],
     "logConfiguration": {
       "logDriver": "awslogs",

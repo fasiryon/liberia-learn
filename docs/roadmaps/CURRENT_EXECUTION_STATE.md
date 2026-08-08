@@ -7,6 +7,70 @@ Live execution tracking for the final closeout program.
 
 - **Canonical plan:** `docs/roadmaps/NATIONAL_ROLLOUT_EXECUTION_PLAN.md`
 - **Escalation contract:** `docs/agents/ADVISOR_ESCALATION_CONTRACT.md`
+- **AWS account migration: `258048833400` -> `466568847266` (2026-08-07/08).**
+  The old account went into an AWS billing hold (past-due invoices; account
+  suspended, all API credentials returned `InvalidClientTokenId`) and was
+  judged not worth reactivating versus rebuilding on the owner's other
+  existing account (`466568847266`, previously an idle `liberiago-staging`
+  profile, now the only AWS account in use going forward). Everything
+  AWS-side was rebuilt from scratch and independently verified live, not
+  just via API "created" responses: ECR repo + worker image (multi-stage
+  `worker/Dockerfile`, fixed a real `.dockerignore` gap where `load-tests`
+  (4.4GB of accumulated k6 result logs), `.claude`/`.worktrees` worktree
+  checkouts, and `.next` were leaking into the build context; fixed a real
+  `npm ci` failure where the `postinstall` script depends on a file not yet
+  copied into the `deps` build stage, resolved with `--ignore-scripts` since
+  that script only patches vitest's local CLI and is irrelevant to the
+  worker image); `ecsTaskExecutionRole` + `ecsTaskRole` IAM roles; SQS main
+  FIFO queue + DLQ (VisibilityTimeout 300s, redrive after 3 receives,
+  matching original); `liberia-learn` ECS cluster + service on the default
+  VPC (min1/max10 target-tracking autoscaling on SQS
+  `ApproximateNumberOfMessagesVisible`, target 50, FARGATE_SPOT weight 4);
+  CloudWatch log group; SSM SecureString parameters for
+  DATABASE_URL/DIRECT_URL/OPENAI_API_KEY (pulled from the real
+  `.env.production` values) plus the new SQS URLs. Service reached steady
+  state at 1/1 running; worker startup log confirmed pointed at the correct
+  new queue with DLQ configured. Split IAM credentials by privilege instead
+  of reusing one broad user everywhere: `liberialearn-deploy`
+  (AdministratorAccess, for infra work only) vs. a new
+  `liberialearn-app-runtime` user scoped to `cloudwatch:PutMetricData` only
+  (verified via grep that this is the only AWS action the Next.js app itself
+  performs, distinct from the worker) — the latter's keys are what went into
+  Vercel production env vars, not the admin user's. Updated Vercel
+  production `AWS_REGION`/`AWS_ACCESS_KEY_ID`/`AWS_SECRET_ACCESS_KEY`/
+  `SQS_QUEUE_URL`/`SQS_DLQ_URL` to the new account/queues; **a new production
+  deploy has not been triggered, so these are not yet live** on the running
+  deployment. Updated the hardcoded old account ID (`258048833400`) across
+  `docs/ops/WORKER_DEPLOYMENT.md`, `infra/ecs/worker-task-definition.json`,
+  `infra/ecs-worker-task-definition.json`, `build-os.md`, and
+  `scripts/flood-test-queue.ts`'s fallback queue URL.
+- **P1-D Infrastructure and Independent Security Proof: flood-test drain
+  proof COMPLETE and live-verified (2026-08-08).** Corrected an internal
+  disagreement first: the P1-D program doc's "500-job flood" text does not
+  match the literal historical NR-2 test, which sent 200
+  (`scripts/flood-test-queue.ts` `TOTAL = 200` on record); the user
+  explicitly chose to re-run the literal 200-message NR-2 test rather than a
+  new, non-comparable 500-message variant, so `TOTAL` was reverted to 200
+  and the associated unit tests (`__tests__/scripts/floodTestQueue.test.ts`)
+  updated to match — all 4 pass. Ran for real against the new account's live
+  infrastructure (Saturday 2026-08-08 01:48 UTC, outside the Mon-Fri
+  08:00-15:00 GMT restriction): 200 messages enqueued in 642ms, queue fully
+  drained 10.1s after enqueue finished (10.8s total), peak visible backlog
+  139, peak in-flight 2. Independently confirmed the worker actually
+  processed every message (not just that SQS silently dropped them): exactly
+  600 matching CloudWatch log lines (3 per message: processing-start,
+  HEALTH_CHECK-alive, processed) for the 200-message run. Service settled
+  back to 1/1 running after the brief spike; the 10-second backlog window
+  was too short to trigger the autoscaling policy's evaluation period, which
+  is expected at this load level, not a defect. The worker-completion-metric
+  fix (`WorkerJobCompleted`/`WorkerJobNoop`/`WorkerJobUnknown` split in
+  `worker/index.ts`) and the flood-test rewrite (empty-queue precondition,
+  observed-backlog + two-zero-poll drain confirmation) both came from the
+  earlier `codex/p1d-infrastructure-proof` engineering slice and are
+  unchanged by this account migration beyond the queue-URL and TOTAL fixes
+  above. Remaining P1-D deliverable: the external penetration test, still
+  pending vendor selection, contract, credentials, and test-window approval
+  per `docs/security/PEN_TEST_VENDOR_ENGAGEMENT.md`.
 - **P1-C Privileged Identity Hardening: ENGINEERING COMPLETE on review branch
   (2026-08-05), production activation pending.** Branch
   `codex/privileged-mfa-hardening`. Added Auth0-managed MFA for `ADMIN`,

@@ -87,23 +87,45 @@ async function handleMessage(message: Message) {
   logger.info(`[WORKER] Processing ${envelope.jobType}`, {
     messageType: envelope.jobType,
   });
-  await dispatchJob(envelope.jobType, envelope.payload, {
+  const result = await dispatchJob(envelope.jobType, envelope.payload, {
     enqueuedAt: envelope.enqueuedAt,
     retryCount: Math.max(0, getReceiveCount(message) - 1),
   });
+  // dispatchJob returns { status: "noop" } for known-but-unimplemented job
+  // types and { status: "unknown" } for unrecognized ones (see
+  // worker/handlers/index.ts). Neither ran real work, so neither should be
+  // reported as a completed job. Only the message ack below applies to them,
+  // to avoid DLQ flooding without claiming false success.
+  const resultStatus = (result as { status?: unknown } | null | undefined)?.status;
+  const metricName =
+    resultStatus === "noop"
+      ? "WorkerJobNoop"
+      : resultStatus === "unknown"
+        ? "WorkerJobUnknown"
+        : "WorkerJobCompleted";
   void publishMetric({
-    metricName: "WorkerJobCompleted",
+    metricName,
     value: 1,
     unit: "Count",
     dimensions: { JobType: envelope.jobType },
   }).catch((error) => {
-    logger.error("[CloudWatch] failed to publish WorkerJobCompleted", { error });
+    logger.error(`[CloudWatch] failed to publish ${metricName}`, { error });
   });
   await deleteMessage(message);
-  logger.info(`[WORKER] Processed ${envelope.jobType} in ${Date.now() - startedAt}ms`, {
-    messageType: envelope.jobType,
-    durationMs: Date.now() - startedAt,
-  });
+  const durationMs = Date.now() - startedAt;
+  if (resultStatus === "noop" || resultStatus === "unknown") {
+    logger.warn(`[WORKER] Acknowledged ${envelope.jobType} without processing`, {
+      messageType: envelope.jobType,
+      durationMs,
+      resultStatus,
+    });
+  } else {
+    logger.info(`[WORKER] Processed ${envelope.jobType} in ${durationMs}ms`, {
+      messageType: envelope.jobType,
+      durationMs,
+      resultStatus: resultStatus ?? "ok",
+    });
+  }
 }
 
 async function processMessage(message: Message) {

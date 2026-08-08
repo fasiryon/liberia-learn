@@ -4,6 +4,8 @@ import { requireRole } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { handleApiError } from "@/lib/errors/apiErrorHandler";
 
+export const dynamic = "force-dynamic";
+
 export async function GET(req: NextRequest) {
   const traceId = randomUUID();
   try {
