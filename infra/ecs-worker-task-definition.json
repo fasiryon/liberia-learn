@@ -12,7 +12,8 @@
     "essential": true,
     "environment": [
       { "name": "NODE_ENV", "value": "production" },
-      { "name": "AWS_REGION", "value": "us-east-1" }
+      { "name": "AWS_REGION", "value": "us-east-1" },
+      { "name": "CLOUDWATCH_NAMESPACE", "value": "LiberiaLearn/Worker" }
     ],
     "secrets": [
       { "name": "DATABASE_URL", "valueFrom": "arn:aws:secretsmanager:us-east-1:466568847266:secret:liberialearn/DATABASE_URL-ZOBURW" },
