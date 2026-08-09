@@ -36,6 +36,7 @@
   "dependencies": {
     "@anthropic-ai/sdk": "^0.95.1",
     "@auth/prisma-adapter": "^2.11.1",
+    "@aws-sdk/client-cloudwatch": "^3.1106.0",
     "@aws-sdk/client-s3": "^3.1010.0",
     "@aws-sdk/client-sqs": "^3.1009.0",
     "@aws-sdk/s3-request-presigner": "^3.1010.0",
