@@ -6,6 +6,7 @@ import {
   buildCsv,
   formatExportDate,
   logStudentCohortExport,
+  MIN_COHORT_SIZE,
   requireMoeExportUser,
 } from "@/lib/moe/exportUtils";
 import { assertPermission, PERMISSIONS } from "@/lib/permissions";
@@ -77,48 +78,85 @@ export async function GET(
       )
     );
 
-    const rows = students.map((student, index) => {
-      const attendanceTotal = student.attendance.length;
-      const attendancePresent = student.attendance.filter(
-        (record) => record.status === "PRESENT"
-      ).length;
+    const exportDate = formatExportDate();
+
+    // A cohort smaller than MIN_COHORT_SIZE makes per-student rows
+    // trivially re-identifiable (grade + band + score is near-unique in a
+    // tiny population), even with a pseudonymized student ID. Fall back to
+    // an aggregate-only summary instead of per-row data.
+    let csv: string;
+    if (students.length > 0 && students.length < MIN_COHORT_SIZE) {
+      const totalExamAttempts = students.reduce(
+        (sum, student) => sum + student.examAttempts.length,
+        0
+      );
       const avgExamScore =
-        student.examAttempts.length > 0
+        totalExamAttempts > 0
           ? Math.round(
-              (student.examAttempts.reduce((sum, attempt) => sum + attempt.score, 0) /
-                student.examAttempts.length) *
+              (students.reduce(
+                (sum, student) =>
+                  sum + student.examAttempts.reduce((s, a) => s + a.score, 0),
+                0
+              ) /
+                totalExamAttempts) *
                 10000
             ) / 100
           : 0;
+      const totalLessonsCompleted = lessonCompletionCounts.reduce(
+        (sum, count) => sum + count,
+        0
+      );
+      const interventionCount = students.filter(
+        (student) => student.interventionRecommendations.length > 0
+      ).length;
 
-      return [
-        anonymizeStudentId(student.id, schoolId),
-        student.currentGrade ?? "",
-        student.placementTests[0]?.band ?? "",
-        lessonCompletionCounts[index] ?? 0,
-        avgExamScore,
-        student.assignmentSubmissions.length,
-        attendanceTotal > 0
-          ? Math.round((attendancePresent / attendanceTotal) * 10000) / 100
-          : 0,
-        student.interventionRecommendations.length > 0 ? "Yes" : "No",
-      ];
-    });
+      csv = buildCsv(
+        ["Cohort Size", "Avg Exam Score", "Total Lessons Completed", "Students With Active Intervention"],
+        [[students.length, avgExamScore, totalLessonsCompleted, interventionCount]]
+      );
+    } else {
+      const rows = students.map((student, index) => {
+        const attendanceTotal = student.attendance.length;
+        const attendancePresent = student.attendance.filter(
+          (record) => record.status === "PRESENT"
+        ).length;
+        const avgExamScore =
+          student.examAttempts.length > 0
+            ? Math.round(
+                (student.examAttempts.reduce((sum, attempt) => sum + attempt.score, 0) /
+                  student.examAttempts.length) *
+                  10000
+              ) / 100
+            : 0;
 
-    const exportDate = formatExportDate();
-    const csv = buildCsv(
-      [
-        "Student ID",
-        "Grade",
-        "Placement Band",
-        "Lessons Completed",
-        "Avg Exam Score",
-        "Assignments Submitted",
-        "Attendance Rate %",
-        "Intervention Flag",
-      ],
-      rows
-    );
+        return [
+          anonymizeStudentId(student.id, schoolId),
+          student.currentGrade ?? "",
+          student.placementTests[0]?.band ?? "",
+          lessonCompletionCounts[index] ?? 0,
+          avgExamScore,
+          student.assignmentSubmissions.length,
+          attendanceTotal > 0
+            ? Math.round((attendancePresent / attendanceTotal) * 10000) / 100
+            : 0,
+          student.interventionRecommendations.length > 0 ? "Yes" : "No",
+        ];
+      });
+
+      csv = buildCsv(
+        [
+          "Student ID",
+          "Grade",
+          "Placement Band",
+          "Lessons Completed",
+          "Avg Exam Score",
+          "Assignments Submitted",
+          "Attendance Rate %",
+          "Intervention Flag",
+        ],
+        rows
+      );
+    }
 
     return new NextResponse(csv, {
       headers: {

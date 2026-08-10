@@ -16,6 +16,11 @@ export type SchoolExportMetrics = {
   guardianEngagementPct: number;
 };
 
+/// Minimum cohort size before per-student export rows are suppressed in
+/// favor of an aggregate-only summary, to prevent re-identification of
+/// individual minors in small schools/classes.
+export const MIN_COHORT_SIZE = 5;
+
 function csvEscape(value: string | number): string {
   return `"${String(value).replace(/"/g, '""')}"`;
 }

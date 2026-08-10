@@ -68,3 +68,15 @@ being re-derived from scratch each time someone picks this up.
 - 2026-08-05: Document created. No vendor selected, no engagement
   contracted, no test window set. P1-D's external-pen-test deliverable
   remains fully outstanding pending owner action on steps 1-3 above.
+- 2026-08-10: Owner has no budget for a paid engagement. As an interim
+  compensating measure (explicitly NOT a substitute for this deliverable
+  — see `docs/security/INTERNAL_SECURITY_REVIEW_2026-08-10.md` for the
+  same caveat stated at length), an internal AI-assisted static code
+  review was run against this brief's P0/P1 items and found 1 CRITICAL
+  (`/api/auth/login`: no rate limiting + live hardcoded JWT secret
+  fallback) and 1 HIGH (`/api/grading/[submissionId]/override`: missing
+  school-scope check) finding; remediation status tracked in the review
+  doc. This does not close P1-D's external-pen-test deliverable. Owner is
+  considering a bug-bounty / pay-per-valid-finding model (HackerOne,
+  Bugcrowd, or self-hosted) as a lower-cost path to a genuinely
+  independent test; no such program has been set up yet.

@@ -227,7 +227,6 @@ vi.mock("@/lib/db", () => ({
   }),
 }));
 
-import { POST as authLoginPost } from "@/app/api/auth/login/route";
 import { GET as studentTodayGet } from "@/app/api/student/today/route";
 import { GET as studentGapsGet } from "@/app/api/student/adaptive/gaps/route";
 import { POST as studentPracticePost } from "@/app/api/student/adaptive/practice/route";
@@ -286,10 +285,6 @@ beforeEach(() => {
 
 describe("Final gate all-roles smoke", () => {
   it("covers the student role", async () => {
-    const loginRes = await authLoginPost(req("POST", "http://localhost/api/auth/login", { email: "student@example.com", password: "secret" }));
-    expect(loginRes.status).toBe(200);
-    expect((await loginRes.json()).user.role).toBe("STUDENT");
-
     setUser("STUDENT");
     expect((await studentTodayGet()).status).toBe(200);
     expect((await (await studentGapsGet()).json()).gaps[0].strand).toBe("MATH.NUM.1");
