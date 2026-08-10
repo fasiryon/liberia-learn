@@ -23,6 +23,27 @@ Production execution: Prohibited
 7. Keep a second read-only PostgreSQL session available for lock and index
    monitoring.
 
+### Timeout policy
+
+The timeout settings are embedded in each migration file so they apply to the
+same PostgreSQL session Prisma uses for the DDL:
+
+| Migration | `lock_timeout` | `statement_timeout` | Reason |
+| --- | --- | --- | --- |
+| A | `5s` | `5min` | Additive catalog work must fail promptly on metadata-lock contention and must not run unbounded. |
+| B1 | `5s` | `5min` | The live-table nullable column addition should be brief and must stop on contention. |
+| B2 | `5s` | `0` | Lock acquisition fails promptly, while concurrent index construction has no short statement deadline and uses dedicated progress monitoring. |
+| C | `5s` | `5min` | Trigger/function installation must fail promptly on metadata-lock contention and must not run unbounded. |
+
+Successful migrations reset both session settings. If a statement fails, the
+migration connection closes, so its session-local settings do not persist.
+
+PostgreSQL lock timeout (`SQLSTATE 55P03`) or statement cancellation/timeout
+(`SQLSTATE 57014`) is a mandatory STOP condition. Record the migration row,
+server identity, blocking sessions, locks, and error text. Do not retry or mark
+the migration applied until the blocker and any partial state are understood
+and a reviewer explicitly authorizes the next attempt.
+
 Set the staging URL only in the current PowerShell process. Do not print it:
 
 ```powershell
@@ -45,11 +66,11 @@ contains each migration group. This allows verification between A/B and C.
 1. Formatter proof:
    `246a608fddf4f47e0733cb4b6c598fe44490fe59`
 2. Migration A:
-   `5bd881efbb54210ac46fd53548eacfd8674da4ab`
+   `e4ce9a42aa5e49c0bca909bde9887d13acce162b`
 3. Migrations B1 and B2:
-   `6c6223db5b743dbc070b519b2c471d3b3d315058`
+   `09b53365f5194d5cc3988ed663f847339891b5dc`
 4. Migration C:
-   `52c2fe9abaa0deedf08633bf29bc062c885b5f07`
+   `6888ed6c23f42107aa1e39b4fadc959f2c529f3b`
 
 Do not run `prisma migrate deploy` from a later commit before the preceding
 verification step is complete.
@@ -58,10 +79,10 @@ Approved migration SHA-256 hashes:
 
 | Migration | SHA-256 |
 | --- | --- |
-| A | `8F523E5CF2CF6A9D14B0236BEB081267CD7F92121AFD6FEFE3E4C1F5DBEED5B2` |
-| B1 | `1A39B5CC74747B01D8BC37F570BD05A7F957B3B9F49A5A47CACE71DCEB4F6232` |
-| B2 | `372A60C0CC25A693992FDB94C1953D4BCC34001915ABB64F713C02E98039CADB` |
-| C | `29F04F76657BE6F1B45AB33C9B5AF8B782C70216CE3B1B57257128BA3B57CD17` |
+| A | `D4AB65C9D577A75C1B37D96525971B928EF985926D9AF9CFBA21B5C0DF48C7F7` |
+| B1 | `48C3C49F0F32026D815EC4135D886DE7B7A3D10A80E0CCDDBB3100162C6C7AB7` |
+| B2 | `234B635D51D628A46C24F140C5EF186DB045986FD21594EEE63F6029F4427AE6` |
+| C | `90BE560EB65FB6B5EFBB1AFE15599BB475CD05E38119A21B2808693C0B844097` |
 
 At each detached commit, verify the migration files present there match the
 corresponding approved hashes before running Prisma:
@@ -78,11 +99,15 @@ Only files that exist at the current sequencing commit are expected to hash.
 ## 3. Migration A
 
 ```powershell
-git switch --detach 5bd881efbb54210ac46fd53548eacfd8674da4ab
+git switch --detach e4ce9a42aa5e49c0bca909bde9887d13acce162b
 $env:DATABASE_URL = $env:P2A_STAGING_DATABASE_URL
 npx prisma migrate status
 npx prisma migrate deploy
 ```
+
+Migration A executes with `lock_timeout = '5s'` and
+`statement_timeout = '5min'`. Any timeout stops this runbook. Inspect the
+database and `_prisma_migrations` state before considering a reviewed retry.
 
 Expected newly applied migration:
 
@@ -110,7 +135,7 @@ Do not continue if the assertion fails.
 Check out the exact B commit:
 
 ```powershell
-git switch --detach 6c6223db5b743dbc070b519b2c471d3b3d315058
+git switch --detach 09b53365f5194d5cc3988ed663f847339891b5dc
 npx prisma migrate status
 ```
 
@@ -143,8 +168,11 @@ npx prisma migrate deploy
 ```
 
 Prisma applies B1 before B2 because of the migration directory names. B1 adds
-the nullable column with no default and no backfill. B2 contains no explicit
-transaction statement and executes `CREATE INDEX CONCURRENTLY`.
+the nullable column with no default and no backfill, using a 5-second lock
+timeout and 5-minute statement timeout. If B1 times out, Prisma must stop
+before B2 and the operator must stop this runbook. B2 contains no explicit
+transaction statement, uses a 5-second lock timeout, explicitly disables the
+statement timeout, and executes `CREATE INDEX CONCURRENTLY`.
 
 While B2 runs, use the second read-only session to monitor progress and lock
 waits:
@@ -175,7 +203,8 @@ Pass criteria:
 
 ### 4.2 Interrupted or invalid B2 handling
 
-If B2 fails, do not use `prisma migrate resolve --applied`.
+If B2 fails or times out, stop for review and do not use
+`prisma migrate resolve --applied`.
 
 1. Query `pg_index.indisready` and `pg_index.indisvalid` using the command in
    section 4.1.
@@ -198,14 +227,16 @@ psql "$env:P2A_STAGING_DATABASE_URL" -X -v ON_ERROR_STOP=1 -c 'DROP INDEX CONCUR
 psql "$env:P2A_STAGING_DATABASE_URL" -X -v ON_ERROR_STOP=1 -c 'SELECT to_regclass(''public."AIInteraction_generationCorrelationId_createdAt_idx"'');'
 ```
 
-5. Only when the B2 migration row is failed, with `finished_at IS NULL`, mark
-   that failed attempt rolled back:
+5. Only after the blocker and partial state are understood and a reviewer
+   authorizes a retry, and only when the B2 migration row is failed with
+   `finished_at IS NULL`, mark that failed attempt rolled back:
 
 ```powershell
 npx prisma migrate resolve --rolled-back 20260810_000003_p2a_ai_generation_correlation_index
 ```
 
-6. Rerun `npx prisma migrate deploy`, then repeat the validity query.
+6. Rerun `npx prisma migrate deploy` only under that explicit retry approval,
+   then repeat the validity query.
 
 If Prisma reports B2 as successfully finished while the index is absent or
 invalid, stop and escalate. Do not mark, edit, or reconcile the migration row
@@ -213,13 +244,24 @@ manually. A reviewed forward repair is required.
 
 ## 5. A/B staging verification gate
 
-Before Migration C, run:
+Before Migration C, rerun the rollback-only A invariant assertion:
 
 ```powershell
-psql "$env:P2A_STAGING_DATABASE_URL" -X -v ON_ERROR_STOP=1 -f prisma/migrations/verification/p2a-post-migration-readonly.sql
+psql "$env:P2A_STAGING_DATABASE_URL" -X -v ON_ERROR_STOP=1 -f prisma/migrations/verification/p2a-risk-reasons-null-rejection.sql
 ```
 
-At this point the Migration C row and triggers are expected to be absent. All
+Verify the B1 column, B2 index, and A/B migration rows without expecting the C
+triggers yet:
+
+```powershell
+psql "$env:P2A_STAGING_DATABASE_URL" -X -v ON_ERROR_STOP=1 -c 'SELECT table_schema, table_name, column_name, is_nullable, column_default FROM information_schema.columns WHERE table_schema = ''public'' AND table_name = ''AIInteraction'' AND column_name = ''generationCorrelationId'';'
+psql "$env:P2A_STAGING_DATABASE_URL" -X -v ON_ERROR_STOP=1 -c 'SELECT c.relname, i.indisready, i.indisvalid, pg_get_indexdef(i.indexrelid) FROM pg_class c JOIN pg_index i ON i.indexrelid = c.oid JOIN pg_namespace n ON n.oid = c.relnamespace WHERE n.nspname = ''public'' AND c.relname = ''AIInteraction_generationCorrelationId_createdAt_idx'';'
+psql "$env:P2A_STAGING_DATABASE_URL" -X -v ON_ERROR_STOP=1 -c 'SELECT migration_name, started_at, finished_at, rolled_back_at, logs FROM "_prisma_migrations" WHERE migration_name IN (''20260810_000001_p2a_curriculum_provenance_core'', ''20260810_000002_p2a_ai_generation_correlation'', ''20260810_000003_p2a_ai_generation_correlation_index'') ORDER BY migration_name;'
+```
+
+At this point the Migration C row and triggers are expected to be absent. The
+B1 column must be nullable with no default, the B2 index must be ready and
+valid, and all three A/B migration rows must be finished with no rollback. All
 A/B checks must pass before continuing.
 
 ## 6. Migration C
@@ -227,10 +269,15 @@ A/B checks must pass before continuing.
 Migration C must be active before any provenance writer is enabled.
 
 ```powershell
-git switch --detach 52c2fe9abaa0deedf08633bf29bc062c885b5f07
+git switch --detach 6888ed6c23f42107aa1e39b4fadc959f2c529f3b
 npx prisma migrate status
 npx prisma migrate deploy
 ```
+
+Migration C executes with `lock_timeout = '5s'` and
+`statement_timeout = '5min'`. Any timeout is a STOP condition. Do not retry
+until the blocker and any partial trigger/function state are understood and a
+reviewer explicitly authorizes the next attempt.
 
 Expected newly applied migration:
 
@@ -287,7 +334,10 @@ Remove-Item Env:P2A_STAGING_DATABASE_URL -ErrorAction SilentlyContinue
 ```
 
 3. Leave every provenance writer disabled and undeployed.
-4. Record the command output, timestamps, database identity, migration rows,
+4. Leave curriculum readers, generation flows, and approval flows unchanged.
+5. Do not run a backfill or perform a canonical provenance cutover.
+6. Do not run any production migration.
+7. Record the command output, timestamps, database identity, migration rows,
    index validity, and guard-suite result in the staging execution report.
-5. Stop for the next approval gate. Do not proceed to writers, readers,
+8. Stop for the next approval gate. Do not proceed to writers, readers,
    generation changes, approval changes, backfill, or production migration.

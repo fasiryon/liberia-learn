@@ -40,7 +40,7 @@ The authoritative proposed Prisma schema is `prisma/schema.prisma`. The substant
 
 - Create the 14 enum types above.
 - Create `CurriculumProvenance`, `CurriculumContentRevision`, `CurriculumGovernanceEvent`, and `CurriculumEvidence`.
-- Create 10 foreign keys, all with `ON DELETE RESTRICT` and `ON UPDATE CASCADE`.
+- Create 12 foreign keys, all with `ON DELETE RESTRICT` and `ON UPDATE CASCADE`.
 - Create primary keys, sequence uniqueness within each provenance root, idempotency uniqueness, exact-revision/provenance composite integrity, current-revision uniqueness, evidence supersession uniqueness, and query-supporting indexes.
 - `CurriculumProvenance.curriculumContentId` references the existing `CurriculumContent.id`; the existing table is not altered.
 - Governance author/actor/evidence-adder deletion is restricted as approved.
@@ -239,16 +239,37 @@ Rollback before canonical cutover is additive and straightforward in reverse dep
 | Isolated rerun of the 3 timed-out files | PASS, 3 files and 34 tests |
 | Second exact `npx vitest run` | PASS, 564 files and 4,613 tests |
 | `npm run build` | PASS with exit 0; existing lint, dynamic-render, browsers-list, and observability warnings remain |
-| P2-A migration artifact tests | PASS, 8 tests |
+| P2-A migration artifact tests | PASS, 12 tests |
 | PostgreSQL 16 `riskReasons` integration assertion | PASS in a disposable local container; direct SQL `NULL` rejected and omitted value defaulted to `[]`; transaction rolled back |
+| PostgreSQL 16 `riskReasons` negative assertion | PASS; after intentionally dropping database `NOT NULL`, the verifier exited 1 with `schema permits NULL` |
 | PostgreSQL 16 B1/B2 integration assertion | PASS in a disposable local container; B2 ran outside a transaction and produced `indisready = true`, `indisvalid = true` |
 | PostgreSQL 16 Migration C guard suite | PASS in a disposable local container after correcting the test to reach `BEFORE TRUNCATE` triggers through foreign-key dependencies; transaction rolled back |
+| PostgreSQL 16 Migration C negative assertions | PASS; a missing trigger produced nonzero `unexpectedly succeeded`, and an intentional wrong SQLSTATE/message produced nonzero `unexpected rejection` |
+
+Final staging-precheck gate:
+
+| Check | Result |
+| --- | --- |
+| `npx prisma generate` | PASS, Prisma Client 6.19.3 |
+| `npx tsc --noEmit` | PASS with the exact command |
+| First `npx vitest run` | 560 files and 4,613 tests passed; 4 timeout-only failures in 4 files under full parallel load, with no assertion mismatch |
+| Isolated timeout rerun | PASS, 4 files and 63 tests |
+| Second exact `npx vitest run` | PASS, 564 files and 4,617 tests |
+| First `npm run build` attempt | Tool timeout at 10 minutes, no compiler error and no `BUILD_ID`; not counted as a pass |
+| Second `npm run build` attempt | PASS with exit 0 after 762.9 seconds; `.next/BUILD_ID` `0xNoqCJHjE3MqOkxxZX0A`; existing warnings remain |
 
 No test assertion mismatch was observed. The isolated timeout rerun covered exactly:
 
 - `__tests__/auth/google-sso.test.ts`
 - `__tests__/ops/cronGetAlias.test.ts`
 - `__tests__/student.lesson-delivery.test.ts`
+
+The final staging-precheck isolated rerun covered:
+
+- `__tests__/auth/google-sso.test.ts`
+- `__tests__/ops/cronGetAlias.test.ts`
+- `__tests__/wave4d.visibility.test.ts`
+- `__tests__/autonomous/phase10.replayConsole.test.ts`
 
 ## 10. Prisma-driven adjustments
 
@@ -264,7 +285,7 @@ The generated-SQL reconciliation deliberately overrides Prisma's nullable Postgr
 - No generation, approval, import, writer, reader, or publication behavior changed.
 - No backfill was created or run.
 - No staging, production, shadow, or persistent development database migration was executed.
-- Migration A and Migration C were integration-tested only in disposable local PostgreSQL 16 containers. Test transactions rolled back and both containers were removed.
+- Migrations A, B1, B2, and C plus all final verification SQL were integration-tested only in disposable local PostgreSQL 16 containers. Behavioral test transactions rolled back and every container was removed.
 - No provenance writer was implemented or enabled.
 
 ## 12. Git diff summary
@@ -290,17 +311,17 @@ Final migration SHA-256 hashes:
 
 | Migration | SHA-256 |
 | --- | --- |
-| `20260810_000001_p2a_curriculum_provenance_core` | `8F523E5CF2CF6A9D14B0236BEB081267CD7F92121AFD6FEFE3E4C1F5DBEED5B2` |
-| `20260810_000002_p2a_ai_generation_correlation` | `1A39B5CC74747B01D8BC37F570BD05A7F957B3B9F49A5A47CACE71DCEB4F6232` |
-| `20260810_000003_p2a_ai_generation_correlation_index` | `372A60C0CC25A693992FDB94C1953D4BCC34001915ABB64F713C02E98039CADB` |
-| `20260810_000004_p2a_curriculum_provenance_immutability` | `29F04F76657BE6F1B45AB33C9B5AF8B782C70216CE3B1B57257128BA3B57CD17` |
+| `20260810_000001_p2a_curriculum_provenance_core` | `D4AB65C9D577A75C1B37D96525971B928EF985926D9AF9CFBA21B5C0DF48C7F7` |
+| `20260810_000002_p2a_ai_generation_correlation` | `48C3C49F0F32026D815EC4135D886DE7B7A3D10A80E0CCDDBB3100162C6C7AB7` |
+| `20260810_000003_p2a_ai_generation_correlation_index` | `234B635D51D628A46C24F140C5EF186DB045986FD21594EEE63F6029F4427AE6` |
+| `20260810_000004_p2a_curriculum_provenance_immutability` | `90BE560EB65FB6B5EFBB1AFE15599BB475CD05E38119A21B2808693C0B844097` |
 
 ## 13. Commit structure
 
 1. `246a608fddf4f47e0733cb4b6c598fe44490fe59` `chore(prisma): normalize existing schema formatting`
-2. `5bd881efbb54210ac46fd53548eacfd8674da4ab` `feat(prisma): add P2-A provenance core schema`
-3. `6c6223db5b743dbc070b519b2c471d3b3d315058` `feat(prisma): add AI generation correlation migrations`
-4. `52c2fe9abaa0deedf08633bf29bc062c885b5f07` `feat(prisma): add P2-A immutability guards`
+2. `e4ce9a42aa5e49c0bca909bde9887d13acce162b` `feat(prisma): add P2-A provenance core schema`
+3. `09b53365f5194d5cc3988ed663f847339891b5dc` `feat(prisma): add AI generation correlation migrations`
+4. `6888ed6c23f42107aa1e39b4fadc959f2c529f3b` `feat(prisma): add P2-A immutability guards`
 5. `docs: add P2-A Step 1 schema approval package` recorded after the final documentation commit
 
 The formatter-only commit was proven semantic-neutral before commit. Its only whitespace-insensitive diff was Prisma's ordering of an existing `Timetable` constraint, and `prisma migrate diff` reported an empty physical migration against the pre-format schema.

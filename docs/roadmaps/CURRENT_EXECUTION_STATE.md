@@ -22,9 +22,22 @@ Live execution tracking for the final closeout program.
   `codex/p2a-provenance-step1`. Exact staging-only instructions are in
   `docs/ops/P2A_STAGING_MIGRATION_RUNBOOK.md`. Gate: `npx prisma generate`
   PASS; exact `npx tsc --noEmit` PASS; second exact `npx vitest run` PASS,
-  4,613 tests in 564 files after the first run's 4 timeout-only failures all
-  passed in isolation; `npm run build` PASS. Next: final human review of the
-  runbook, then a separately authorized staging-only execution.
+  4,617 tests in 564 files after the first run's 4 timeout-only failures all
+  passed in isolation; `npm run build` PASS with exit 0 and `.next/BUILD_ID`
+  `0xNoqCJHjE3MqOkxxZX0A`. Next: final human review of the
+  runbook, then a separately authorized staging-only execution. Final staging
+  precheck hardening adds embedded PostgreSQL timeouts: A/B1/C use
+  `lock_timeout=5s` plus `statement_timeout=5min`; B2 uses
+  `lock_timeout=5s`, no statement deadline, and dedicated progress/index
+  validity monitoring. Hardened verification SQL passed end-to-end in
+  disposable PostgreSQL 16, including rejection-type discrimination and a
+  SELECT-only final check of 14 enums, 4 tables, 10 enabled triggers, 12
+  foreign keys, 10 unique indexes, migration state, and the absence of a
+  physical provenance column on `CurriculumContent`. No persistent database
+  was touched. Negative-path tests also proved nonzero exit for a nullable
+  `riskReasons` schema, a missing immutability trigger, and an unexpected
+  trigger SQLSTATE/message. Staging execution remains unauthorized pending
+  review of the final SQL returned to the owner.
 - **AWS account migration: `258048833400` -> `466568847266` (2026-08-07/08).**
   The old account went into an AWS billing hold (past-due invoices; account
   suspended, all API credentials returned `InvalidClientTokenId`) and was
