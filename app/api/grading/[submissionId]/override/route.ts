@@ -19,7 +19,7 @@ export async function PATCH(
 ) {
   try {
     // Only teachers and admins can override grades
-    await requireRole("TEACHER", "ADMIN");
+    const user = await requireRole("TEACHER", "ADMIN");
 
     const body = await req.json().catch(() => null);
     const { score, feedback }: { score?: unknown; feedback?: unknown } = body ?? {};
@@ -33,10 +33,20 @@ export async function PATCH(
 
     const existing = await prisma.gradedSubmission.findUnique({
       where: { id: params.submissionId },
-      select: { id: true, exerciseType: true },
+      select: {
+        id: true,
+        exerciseType: true,
+        student: { select: { user: { select: { schoolId: true } } } },
+      },
     });
     if (!existing) {
       return NextResponse.json({ error: "submission_not_found" }, { status: 404 });
+    }
+    if (
+      existing.student.user.schoolId !== user.schoolId &&
+      !user.isPlatformAdmin
+    ) {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
     const updated = await prisma.gradedSubmission.update({

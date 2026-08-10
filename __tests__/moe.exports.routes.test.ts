@@ -153,7 +153,21 @@ describe("MOE export routes", () => {
     );
   });
 
-  it("returns school cohort CSV and logs audit access", async () => {
+  it("returns per-student school cohort CSV for cohorts of 5 or more, and logs audit access", async () => {
+    mockStudentFindMany.mockResolvedValue(
+      Array.from({ length: 5 }, (_, i) => ({
+        id: `student-${i + 1}`,
+        userId: `user-${i + 1}`,
+        user: { schoolId: "school-1" },
+        currentGrade: 6,
+        placementTests: [{ band: "G4_6" }],
+        examAttempts: [{ score: 0.8 }],
+        assignmentSubmissions: [{ id: `sub-${i + 1}` }],
+        attendance: [{ status: "PRESENT" }, { status: "ABSENT" }],
+        interventionRecommendations: [{ id: `ir-${i + 1}` }],
+      }))
+    );
+
     const { GET } = await import("@/app/api/moe/export/school/[schoolId]/route");
     const response = await GET(new Request("http://localhost"), {
       params: { schoolId: "school-1" },
@@ -172,6 +186,34 @@ describe("MOE export routes", () => {
     expect(body).not.toContain("student-1");
     expect(body).not.toContain("user-1");
     expect(body).toContain("G4_6");
+  });
+
+  it("suppresses per-student rows and returns an aggregate summary for cohorts smaller than MIN_COHORT_SIZE", async () => {
+    mockStudentFindMany.mockResolvedValue([
+      {
+        id: "student-1",
+        userId: "user-1",
+        user: { schoolId: "school-1" },
+        currentGrade: 6,
+        placementTests: [{ band: "G4_6" }],
+        examAttempts: [{ score: 0.8 }],
+        assignmentSubmissions: [{ id: "sub-1" }],
+        attendance: [{ status: "PRESENT" }, { status: "ABSENT" }],
+        interventionRecommendations: [{ id: "ir-1" }],
+      },
+    ]);
+
+    const { GET } = await import("@/app/api/moe/export/school/[schoolId]/route");
+    const response = await GET(new Request("http://localhost"), {
+      params: { schoolId: "school-1" },
+    });
+    const body = await response.text();
+
+    expect(response.status).toBe(200);
+    expect(body).toContain("Cohort Size");
+    expect(body).not.toContain("Student ID");
+    expect(body).not.toContain("G4_6");
+    expect(body).not.toContain("student-1");
   });
 
   it("blocks exports for non-MOE, non-platform users", async () => {

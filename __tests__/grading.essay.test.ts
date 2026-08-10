@@ -316,10 +316,11 @@ describe("POST /api/grading/essay", () => {
 describe("PATCH /api/grading/[submissionId]/override — teacher override", () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    mockRequireRole.mockResolvedValue({ id: "teacher-1", role: "TEACHER" });
+    mockRequireRole.mockResolvedValue({ id: "teacher-1", role: "TEACHER", schoolId: "school-a", isPlatformAdmin: false });
     mockPrisma.gradedSubmission.findUnique.mockResolvedValue({
       id: "sub-1",
       exerciseType: "essay",
+      student: { user: { schoolId: "school-a" } },
     });
     mockPrisma.gradedSubmission.update.mockResolvedValue({
       id: "sub-1",
@@ -343,6 +344,52 @@ describe("PATCH /api/grading/[submissionId]/override — teacher override", () =
     expect(res.status).toBe(200);
     expect(data.ok).toBe(true);
     expect(data.submission.score).toBe(0.9);
+  });
+
+  it("rejects a TEACHER overriding a submission from a different school (cross-school IDOR)", async () => {
+    mockRequireRole.mockResolvedValue({ id: "teacher-1", role: "TEACHER", schoolId: "school-a", isPlatformAdmin: false });
+    mockPrisma.gradedSubmission.findUnique.mockResolvedValue({
+      id: "sub-2",
+      exerciseType: "essay",
+      student: { user: { schoolId: "school-b" } },
+    });
+
+    const { PATCH } = await import(
+      "@/app/api/grading/[submissionId]/override/route"
+    );
+    const req = new Request("http://localhost/api/grading/sub-2/override", {
+      method: "PATCH",
+      body: JSON.stringify({ score: 0.9 }),
+    });
+    const res = await PATCH(req as any, { params: { submissionId: "sub-2" } });
+
+    expect(res.status).toBe(403);
+    expect(mockPrisma.gradedSubmission.update).not.toHaveBeenCalled();
+  });
+
+  it("allows a platform admin to override a submission at any school", async () => {
+    mockRequireRole.mockResolvedValue({ id: "platform-admin-1", role: "ADMIN", schoolId: null, isPlatformAdmin: true });
+    mockPrisma.gradedSubmission.findUnique.mockResolvedValue({
+      id: "sub-3",
+      exerciseType: "essay",
+      student: { user: { schoolId: "school-b" } },
+    });
+    mockPrisma.gradedSubmission.update.mockResolvedValue({
+      id: "sub-3",
+      score: 0.85,
+      status: "graded",
+    });
+
+    const { PATCH } = await import(
+      "@/app/api/grading/[submissionId]/override/route"
+    );
+    const req = new Request("http://localhost/api/grading/sub-3/override", {
+      method: "PATCH",
+      body: JSON.stringify({ score: 0.85 }),
+    });
+    const res = await PATCH(req as any, { params: { submissionId: "sub-3" } });
+
+    expect(res.status).toBe(200);
   });
 
   it("rejects invalid score (> 1)", async () => {
