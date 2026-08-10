@@ -11,4 +11,6 @@ CREATE TABLE "AuditLog" (
   "id" TEXT NOT NULL PRIMARY KEY
 );
 
-INSERT INTO "CurriculumContent" ("id") VALUES ('p2a-local-content');
+INSERT INTO "CurriculumContent" ("id") VALUES
+  ('p2a-local-content-1'),
+  ('p2a-local-content-2');

@@ -29,6 +29,17 @@ const migrationB2 = readFileSync(
   ),
   "utf8"
 );
+const migrationC = readFileSync(
+  resolve(
+    root,
+    "prisma/migrations/20260810_000004_p2a_curriculum_provenance_immutability/migration.sql"
+  ),
+  "utf8"
+);
+const guardAssertion = readFileSync(
+  resolve(root, "prisma/migrations/verification/p2a-immutability-and-root-guards.sql"),
+  "utf8"
+);
 
 describe("P2-A provenance Migration A", () => {
   it("defines the approved 14-enum set", () => {
@@ -95,5 +106,45 @@ describe("P2-A AI generation correlation migrations", () => {
       '"AIInteraction_generationCorrelationId_createdAt_idx"'
     );
     expect(migrationB2).not.toMatch(/^\s*(BEGIN|COMMIT)\s*;/im);
+  });
+});
+
+describe("P2-A immutability and root guards", () => {
+  it("installs mutation rejection and current-revision ownership triggers", () => {
+    expect(migrationC).toContain(
+      "curriculum_content_revision_no_update_or_delete"
+    );
+    expect(migrationC).toContain(
+      "curriculum_governance_event_no_update_or_delete"
+    );
+    expect(migrationC).toContain("curriculum_evidence_no_update_or_delete");
+    expect(migrationC).toContain("curriculum_provenance_no_delete");
+    expect(migrationC).toContain("curriculum_provenance_identity_no_update");
+    expect(migrationC).toContain("curriculum_provenance_current_revision_guard");
+  });
+
+  it("ships rollback-only assertions for every approved staging guard case", () => {
+    const requiredAssertions = [
+      "CurriculumContentRevision UPDATE",
+      "CurriculumContentRevision DELETE",
+      "CurriculumContentRevision TRUNCATE",
+      "CurriculumGovernanceEvent UPDATE",
+      "CurriculumGovernanceEvent DELETE",
+      "CurriculumGovernanceEvent TRUNCATE",
+      "CurriculumEvidence UPDATE",
+      "CurriculumEvidence DELETE",
+      "CurriculumEvidence TRUNCATE",
+      "CurriculumProvenance DELETE",
+      "CurriculumProvenance TRUNCATE",
+      "allowed projection update",
+      "CurriculumProvenance identity update",
+      "cross-root currentRevisionId update",
+      "same-root currentRevisionId update",
+    ];
+
+    for (const assertion of requiredAssertions) {
+      expect(guardAssertion).toContain(assertion);
+    }
+    expect(guardAssertion).toContain("ROLLBACK;");
   });
 });
