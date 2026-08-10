@@ -7,6 +7,24 @@ Live execution tracking for the final closeout program.
 
 - **Canonical plan:** `docs/roadmaps/NATIONAL_ROLLOUT_EXECUTION_PLAN.md`
 - **Escalation contract:** `docs/agents/ADVISOR_ESCALATION_CONTRACT.md`
+- **P2-A Step 1 curriculum provenance schema: APPROVED AND PREPARED,
+  staging execution awaits final runbook review (2026-08-10).** The approved
+  schema has 14 P2-A enums and four provenance tables. Migration A deliberately
+  enforces `CurriculumGovernanceEvent.riskReasons` as
+  `TEXT[] NOT NULL DEFAULT ARRAY[]::TEXT[]`; a PostgreSQL 16 integration test
+  proved direct SQL `NULL` is rejected and omission becomes an empty array.
+  Migrations B1/B2 add the nullable AI generation correlation field and its
+  concurrent index. Migration C installs append-only and root guards before
+  any provenance writer can be enabled. Local disposable PostgreSQL tests
+  passed for all required immutability, identity, projection, and cross-root
+  assertions. No staging or production migration, writer, reader, generation
+  change, approval change, or backfill has executed. Review branch:
+  `codex/p2a-provenance-step1`. Exact staging-only instructions are in
+  `docs/ops/P2A_STAGING_MIGRATION_RUNBOOK.md`. Gate: `npx prisma generate`
+  PASS; exact `npx tsc --noEmit` PASS; second exact `npx vitest run` PASS,
+  4,613 tests in 564 files after the first run's 4 timeout-only failures all
+  passed in isolation; `npm run build` PASS. Next: final human review of the
+  runbook, then a separately authorized staging-only execution.
 - **AWS account migration: `258048833400` -> `466568847266` (2026-08-07/08).**
   The old account went into an AWS billing hold (past-due invoices; account
   suspended, all API credentials returned `InvalidClientTokenId`) and was
