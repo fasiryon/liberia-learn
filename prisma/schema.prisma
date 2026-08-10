@@ -98,6 +98,9 @@ model User {
   editedLessons                   CurriculumContent[]         @relation("LessonEditor")
   lessonVersionsAuthored          LessonVersion[]             @relation("LessonVersionAuthor")
   lessonSharesCreated             LessonShare[]               @relation("LessonShareCreator")
+  curriculumRevisionsAuthored     CurriculumContentRevision[] @relation("CurriculumRevisionAuthor")
+  curriculumGovernanceEvents      CurriculumGovernanceEvent[] @relation("CurriculumGovernanceActor")
+  curriculumEvidenceAdded         CurriculumEvidence[]        @relation("CurriculumEvidenceAddedBy")
   // Sprint 26: student phone for SMS quiz delivery
   phone                           String?
   smsStudentSessions              SmsSession[]                @relation("SmsStudent")
@@ -891,6 +894,7 @@ model AuditLog {
   traceId                   String? // Block 6: request-correlation trace ID
   School                    School?                    @relation(fields: [schoolId], references: [id])
   user                      User?                      @relation(fields: [userId], references: [id], onDelete: SetNull)
+  curriculumGovernanceEvent CurriculumGovernanceEvent? @relation("CurriculumGovernanceAudit")
 
   @@index([resourceType, resourceId])
   @@index([userId, createdAt])
@@ -1913,6 +1917,120 @@ model CurriculumFeedback {
 }
 
 /// / ===== Curriculum Content =====
+enum CurriculumProvenanceCompleteness {
+  VERIFIED
+  PARTIAL
+  UNVERIFIED
+}
+
+enum CurriculumLifecycleState {
+  DRAFT
+  PENDING_REVIEW
+  APPROVED
+  REJECTED
+  REVOKED
+  SUPERSEDED
+}
+
+enum CurriculumRevisionKind {
+  ORIGINAL_GENERATION
+  IMPORT
+  HUMAN_CREATE
+  HUMAN_EDIT
+  FORK
+  AI_REGENERATION
+  AI_UPGRADE
+  AI_ENRICHMENT
+  DETERMINISTIC_ENRICHMENT
+  ALIGNMENT_CHANGE
+  METADATA_CHANGE
+  BACKFILL_SNAPSHOT
+}
+
+enum CurriculumOriginKind {
+  AI_GENERATED
+  DETERMINISTIC_GENERATED
+  IMPORTED
+  HUMAN_AUTHORED
+  FORKED
+  AI_UPGRADED
+  LEGACY_UNKNOWN
+}
+
+enum CurriculumGovernanceEventType {
+  SUBMITTED
+  RISK_ASSESSED
+  APPROVED
+  REJECTED
+  RETURNED_FOR_REVIEW
+  REAPPROVED
+  REVOKED
+  REINSTATED
+  SUPERSEDED
+}
+
+enum CurriculumGovernanceActorType {
+  USER
+  SYSTEM
+  LEGACY_UNKNOWN
+}
+
+enum CurriculumApprovalBasis {
+  HUMAN_REVIEW
+  AUTOMATED_RISK_POLICY
+  ROLE_POLICY
+  SCHOOL_POLICY
+  IMPORT_POLICY
+  LEGACY_UNKNOWN
+}
+
+enum CurriculumReviewAuthority {
+  MOE
+  SCHOOL
+  PLATFORM
+  SYSTEM
+  UNKNOWN
+}
+
+enum CurriculumFutureAssignmentPolicy {
+  BLOCK_NEW
+  REPLACE_WITH_SUCCESSOR
+}
+
+enum CurriculumExistingAssignmentPolicy {
+  KEEP_EXISTING
+  WITHDRAW_EXISTING
+  REPLACE_WITH_SUCCESSOR
+}
+
+enum CurriculumOfflineCachePolicy {
+  NO_INVALIDATION
+  INVALIDATE_ON_NEXT_REFRESH
+  URGENT_INVALIDATE_ON_NEXT_REFRESH
+}
+
+enum CurriculumEvidenceType {
+  URL
+  DOCUMENT
+  CURRICULUM_STANDARD
+  TEXTBOOK
+  REVIEWER_NOTE
+  EXTERNAL_REFERENCE
+}
+
+enum CurriculumEvidencePurpose {
+  FACTUAL_SUPPORT
+  CURRICULUM_AUTHORITY
+  SOURCE_MATERIAL
+  IMPORT_ORIGIN
+  REVIEW_SUPPORT
+}
+
+enum CurriculumEvidenceStatus {
+  ACTIVE
+  WITHDRAWN
+}
+
 model CurriculumContent {
   id                       String                       @id @default(cuid())
   contentId                String                       @unique
@@ -1975,6 +2093,7 @@ model CurriculumContent {
   lessonVersions           LessonVersion[]
   lessonShares             LessonShare[]
   teacherLessonAssignments TeacherLessonAssignment[]
+  provenance               CurriculumProvenance?        @relation("CurriculumContentProvenance")
 
   @@index([grade, subject])
   @@index([contentType, status])
@@ -1983,6 +2102,139 @@ model CurriculumContent {
   @@index([editedById, editReviewStatus])
   @@index([schoolId, visibility])
   @@index([imageCategory, imageGenerationStatus])
+}
+
+model CurriculumProvenance {
+  id                     String                           @id @default(cuid())
+  curriculumContentId    String                           @unique
+  provenanceCompleteness CurriculumProvenanceCompleteness @default(UNVERIFIED)
+  lifecycleState         CurriculumLifecycleState         @default(DRAFT)
+  currentRevisionId      String?                          @unique
+  createdAt              DateTime                         @default(now())
+  updatedAt              DateTime                         @updatedAt
+
+  curriculumContent CurriculumContent           @relation("CurriculumContentProvenance", fields: [curriculumContentId], references: [id], onDelete: Restrict)
+  currentRevision   CurriculumContentRevision?  @relation("CurriculumCurrentRevision", fields: [currentRevisionId], references: [id], onDelete: Restrict)
+  revisions         CurriculumContentRevision[] @relation("CurriculumProvenanceRevisions")
+
+  @@index([lifecycleState])
+  @@index([provenanceCompleteness])
+  @@index([updatedAt])
+}
+
+model CurriculumContentRevision {
+  id                      String                 @id @default(cuid())
+  provenanceId            String
+  sequence                Int
+  revisionKind            CurriculumRevisionKind
+  originKind              CurriculumOriginKind
+  snapshotSchemaVersion   Int
+  contentSnapshot         Json
+  contentHash             String                 @db.VarChar(64)
+  generatorName           String?
+  generatorVersion        String?
+  aiProvider              String?
+  aiModel                 String?
+  generatedAt             DateTime?
+  generationCorrelationId String?
+  primaryPromptKey        String?
+  primaryPromptVersion    String?
+  primaryPromptHash       String?                @db.VarChar(64)
+  authorUserId            String?
+  sourceRevisionId        String?
+  idempotencyKey          String?                @unique
+  backfillRunId           String?
+  createdAt               DateTime               @default(now())
+
+  provenance           CurriculumProvenance        @relation("CurriculumProvenanceRevisions", fields: [provenanceId], references: [id], onDelete: Restrict)
+  currentForProvenance CurriculumProvenance?       @relation("CurriculumCurrentRevision")
+  author               User?                       @relation("CurriculumRevisionAuthor", fields: [authorUserId], references: [id], onDelete: Restrict)
+  sourceRevision       CurriculumContentRevision?  @relation("CurriculumRevisionSource", fields: [sourceRevisionId], references: [id], onDelete: Restrict)
+  derivedRevisions     CurriculumContentRevision[] @relation("CurriculumRevisionSource")
+  governanceEvents     CurriculumGovernanceEvent[] @relation("CurriculumGovernanceTargetRevision")
+  replacementForEvents CurriculumGovernanceEvent[] @relation("CurriculumGovernanceReplacementRevision")
+  evidence             CurriculumEvidence[]
+
+  @@unique([provenanceId, sequence])
+  @@unique([id, provenanceId])
+  @@index([provenanceId, createdAt])
+  @@index([generationCorrelationId])
+  @@index([contentHash])
+  @@index([sourceRevisionId])
+  @@index([backfillRunId])
+}
+
+model CurriculumGovernanceEvent {
+  id                            String                              @id @default(cuid())
+  provenanceId                  String
+  sequence                      Int
+  revisionId                    String
+  eventType                     CurriculumGovernanceEventType
+  actorType                     CurriculumGovernanceActorType
+  actorUserId                   String?
+  actorLabel                    String?
+  approvalBasis                 CurriculumApprovalBasis?
+  reviewAuthority               CurriculumReviewAuthority?
+  reviewerRoleSnapshot          String?
+  reviewerQualificationRef      String?
+  reviewerQualificationSnapshot Json?
+  riskScore                     Int?
+  riskReasons                   String[]                            @default([])
+  reason                        String?                             @db.Text
+  lifecycleResult               CurriculumLifecycleState?
+  replacementRevisionId         String?
+  futureAssignmentPolicy        CurriculumFutureAssignmentPolicy?
+  existingAssignmentPolicy      CurriculumExistingAssignmentPolicy?
+  offlineCachePolicy            CurriculumOfflineCachePolicy?
+  occurredAt                    DateTime
+  auditLogId                    String?                             @unique
+  idempotencyKey                String?                             @unique
+  backfillRunId                 String?
+  createdAt                     DateTime                            @default(now())
+
+  revision            CurriculumContentRevision  @relation("CurriculumGovernanceTargetRevision", fields: [revisionId, provenanceId], references: [id, provenanceId], onDelete: Restrict)
+  replacementRevision CurriculumContentRevision? @relation("CurriculumGovernanceReplacementRevision", fields: [replacementRevisionId], references: [id], onDelete: Restrict)
+  actor               User?                      @relation("CurriculumGovernanceActor", fields: [actorUserId], references: [id], onDelete: Restrict)
+  auditLog            AuditLog?                  @relation("CurriculumGovernanceAudit", fields: [auditLogId], references: [id], onDelete: Restrict)
+
+  @@unique([provenanceId, sequence])
+  @@index([provenanceId, occurredAt])
+  @@index([revisionId, eventType, occurredAt])
+  @@index([eventType, occurredAt])
+  @@index([actorUserId, occurredAt])
+  @@index([replacementRevisionId])
+  @@index([backfillRunId])
+}
+
+model CurriculumEvidence {
+  id                   String                    @id @default(cuid())
+  revisionId           String
+  evidenceType         CurriculumEvidenceType
+  evidencePurpose      CurriculumEvidencePurpose
+  title                String
+  uri                  String?                   @db.Text
+  documentRef          String?
+  citation             String?                   @db.Text
+  publisher            String?
+  locator              String?
+  contentHash          String?                   @db.VarChar(64)
+  license              String?
+  addedByUserId        String?
+  status               CurriculumEvidenceStatus  @default(ACTIVE)
+  supersedesEvidenceId String?                   @unique
+  idempotencyKey       String?                   @unique
+  backfillRunId        String?
+  createdAt            DateTime                  @default(now())
+
+  revision     CurriculumContentRevision @relation(fields: [revisionId], references: [id], onDelete: Restrict)
+  addedBy      User?                     @relation("CurriculumEvidenceAddedBy", fields: [addedByUserId], references: [id], onDelete: Restrict)
+  supersedes   CurriculumEvidence?       @relation("CurriculumEvidenceSupersession", fields: [supersedesEvidenceId], references: [id], onDelete: Restrict)
+  supersededBy CurriculumEvidence?       @relation("CurriculumEvidenceSupersession")
+
+  @@index([revisionId, evidencePurpose, status])
+  @@index([evidenceType, evidencePurpose])
+  @@index([addedByUserId, createdAt])
+  @@index([backfillRunId])
 }
 
 model LessonAudio {
@@ -2632,38 +2884,38 @@ model MisconceptionTag {
 /// Sprint 2: normalized AI interaction provenance.
 /// Complements the aggregate AiInteractionLog table.
 model AIInteraction {
-  id                      String    @id @default(cuid())
-  schoolId                String?
-  userId                  String?
-  studentId               String?
-  route                   String?
-  feature                 String?
-  requestType             String?
-  guidanceLevel           String?
-  subject                 String?
-  strandKey               String?
-  contentId               String?
-  lessonId                String?
-  provider                String?
-  model                   String?
-  tier                    String?
-  hadFallback             Boolean   @default(false)
-  tokensUsed              Int       @default(0)
-  estimatedCostUSD        Float     @default(0)
-  latencyMs               Int?
-  promptVersion           String?
-  contentVersion          String?
-  assessmentVersion       String?
-  calculationVersion      String?
-  promptKey               String?
-  promptHash              String?
-  originalOccurredAt      DateTime?
-  syncReceivedAt          DateTime?
-  clientEventId           String?
-  dedupeKey               String?
-  sourceEventId           String?
-  metadata                Json?
-  createdAt               DateTime  @default(now())
+  id                 String    @id @default(cuid())
+  schoolId           String?
+  userId             String?
+  studentId          String?
+  route              String?
+  feature            String?
+  requestType        String?
+  guidanceLevel      String?
+  subject            String?
+  strandKey          String?
+  contentId          String?
+  lessonId           String?
+  provider           String?
+  model              String?
+  tier               String?
+  hadFallback        Boolean   @default(false)
+  tokensUsed         Int       @default(0)
+  estimatedCostUSD   Float     @default(0)
+  latencyMs          Int?
+  promptVersion      String?
+  contentVersion     String?
+  assessmentVersion  String?
+  calculationVersion String?
+  promptKey          String?
+  promptHash         String?
+  originalOccurredAt DateTime?
+  syncReceivedAt     DateTime?
+  clientEventId      String?
+  dedupeKey          String?
+  sourceEventId      String?
+  metadata           Json?
+  createdAt          DateTime  @default(now())
 
   @@index([createdAt])
   @@index([schoolId, createdAt])
