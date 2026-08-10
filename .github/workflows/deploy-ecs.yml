@@ -10,49 +10,6 @@ permissions:
   contents: read
 
 jobs:
-  push-web-image:
-    runs-on: ubuntu-latest
-    env:
-      AWS_REGION: ${{ vars.AWS_REGION }}
-      ECR_REPOSITORY: liberialearn-web
-      SENTRY_ORG: liberialearn
-      SENTRY_PROJECT: liberialearn-web
-      DATABASE_URL: "postgresql://postgres:postgres@localhost:5432/build"
-      DIRECT_URL: "postgresql://postgres:postgres@localhost:5432/build"
-      NEXTAUTH_SECRET: "ecs-build-secret-not-real"
-      NEXTAUTH_URL: "https://liberialearn.gov.lr"
-    steps:
-      - uses: actions/checkout@v4
-      - id: aws-creds
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          role-to-assume: ${{ secrets.AWS_GITHUB_ACTIONS_ROLE_ARN }}
-          aws-region: ${{ env.AWS_REGION }}
-      - id: login-ecr
-        uses: aws-actions/amazon-ecr-login@v2
-      - name: Build image
-        env:
-          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
-        run: |
-          docker build \
-            --build-arg DATABASE_URL="$DATABASE_URL" \
-            --build-arg DIRECT_URL="$DIRECT_URL" \
-            --build-arg NEXTAUTH_SECRET="$NEXTAUTH_SECRET" \
-            --build-arg NEXTAUTH_URL="$NEXTAUTH_URL" \
-            --build-arg SENTRY_AUTH_TOKEN="$SENTRY_AUTH_TOKEN" \
-            --build-arg SENTRY_ORG="$SENTRY_ORG" \
-            --build-arg SENTRY_PROJECT="$SENTRY_PROJECT" \
-            -t $ECR_REPOSITORY:${GITHUB_SHA} \
-            -t $ECR_REPOSITORY:latest .
-      - name: Tag image
-        run: |
-          docker tag $ECR_REPOSITORY:${GITHUB_SHA} ${{ steps.login-ecr.outputs.registry }}/$ECR_REPOSITORY:${GITHUB_SHA}
-          docker tag $ECR_REPOSITORY:latest ${{ steps.login-ecr.outputs.registry }}/$ECR_REPOSITORY:latest
-      - name: Push image
-        run: |
-          docker push ${{ steps.login-ecr.outputs.registry }}/$ECR_REPOSITORY:${GITHUB_SHA}
-          docker push ${{ steps.login-ecr.outputs.registry }}/$ECR_REPOSITORY:latest
-
   push-worker-image:
     runs-on: ubuntu-latest
     env:
