@@ -2884,38 +2884,39 @@ model MisconceptionTag {
 /// Sprint 2: normalized AI interaction provenance.
 /// Complements the aggregate AiInteractionLog table.
 model AIInteraction {
-  id                 String    @id @default(cuid())
-  schoolId           String?
-  userId             String?
-  studentId          String?
-  route              String?
-  feature            String?
-  requestType        String?
-  guidanceLevel      String?
-  subject            String?
-  strandKey          String?
-  contentId          String?
-  lessonId           String?
-  provider           String?
-  model              String?
-  tier               String?
-  hadFallback        Boolean   @default(false)
-  tokensUsed         Int       @default(0)
-  estimatedCostUSD   Float     @default(0)
-  latencyMs          Int?
-  promptVersion      String?
-  contentVersion     String?
-  assessmentVersion  String?
-  calculationVersion String?
-  promptKey          String?
-  promptHash         String?
-  originalOccurredAt DateTime?
-  syncReceivedAt     DateTime?
-  clientEventId      String?
-  dedupeKey          String?
-  sourceEventId      String?
-  metadata           Json?
-  createdAt          DateTime  @default(now())
+  id                      String    @id @default(cuid())
+  schoolId                String?
+  userId                  String?
+  studentId               String?
+  route                   String?
+  feature                 String?
+  requestType             String?
+  guidanceLevel           String?
+  subject                 String?
+  strandKey               String?
+  contentId               String?
+  lessonId                String?
+  generationCorrelationId String?
+  provider                String?
+  model                   String?
+  tier                    String?
+  hadFallback             Boolean   @default(false)
+  tokensUsed              Int       @default(0)
+  estimatedCostUSD        Float     @default(0)
+  latencyMs               Int?
+  promptVersion           String?
+  contentVersion          String?
+  assessmentVersion       String?
+  calculationVersion      String?
+  promptKey               String?
+  promptHash              String?
+  originalOccurredAt      DateTime?
+  syncReceivedAt          DateTime?
+  clientEventId           String?
+  dedupeKey               String?
+  sourceEventId           String?
+  metadata                Json?
+  createdAt               DateTime  @default(now())
 
   @@index([createdAt])
   @@index([schoolId, createdAt])
@@ -2925,6 +2926,7 @@ model AIInteraction {
   @@index([clientEventId])
   @@index([dedupeKey])
   @@index([sourceEventId])
+  @@index([generationCorrelationId, createdAt])
 }
 
 /// Sprint 2: teacher-originated action record.
