@@ -46,6 +46,8 @@ test-*.log
 .env.production.local
 .env.vercel.production
 .env.preview
+.env.staging
+.env.p2a-staging
 
 # Vercel / local tooling
 .vercel
@@ -94,6 +96,7 @@ scripts/demo-credentials.txt
 
 # Infra outputs
 infra/outputs/
+/artifacts/p2a-staging/
 
 # Local eval artifacts
 evals/results/

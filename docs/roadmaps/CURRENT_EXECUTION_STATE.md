@@ -7,6 +7,28 @@ Live execution tracking for the final closeout program.
 
 - **Canonical plan:** `docs/roadmaps/NATIONAL_ROLLOUT_EXECUTION_PLAN.md`
 - **Escalation contract:** `docs/agents/ADVISOR_ESCALATION_CONTRACT.md`
+- **P2-A staging database foundation: BLOCKED ON EXTERNAL PROJECT SETUP
+  (2026-08-11).** Gate 0 correctly stopped without a database connection
+  because no independent staging target or recovery evidence existed. The
+  repository audit confirms Supabase project `bnphuinpvgpmebcsvmsp` is
+  production and ignored Vercel Preview snapshots use that same project.
+  No separate staging project was discovered. The mini-sprint added a
+  fail-closed application cold-start boundary for Preview/custom staging,
+  a sanitized executable P2-A Gate 0 preflight, a pinned PostgreSQL 16 Docker
+  client wrapper, a staging environment contract, synthetic curriculum-only
+  fixtures, backup evidence schema, and the complete operator design in
+  `docs/ops/STAGING_DATABASE_FOUNDATION.md`. External owners must now create
+  or approve a physically separate staging project, replace Preview database
+  credentials, deploy a stable staging app, establish and restore-test a
+  backup, and provide secure evidence. No P2-A migration, production access,
+  production configuration change, writer, reader, generation/approval
+  change, or backfill occurred. Gate: Prisma generate PASS; focused foundation
+  and environment tests PASS 17/17; exact full Vitest rerun PASS 4,627 tests
+  in 565 files after five first-run timeout-only failures passed 57/57 in
+  isolation; TypeScript PASS with the repository's established 4 GB Node heap
+  after the default 2 GB heap exhausted without diagnostics; synthetic-staging
+  build PASS in 795.9 seconds. PostgreSQL client, dump, and restore tools are
+  pinned and verified at 16.14.
 - **P2-A Step 1 curriculum provenance schema: APPROVED AND PREPARED,
   staging execution awaits final runbook review (2026-08-10).** The approved
   schema has 14 P2-A enums and four provenance tables. Migration A deliberately

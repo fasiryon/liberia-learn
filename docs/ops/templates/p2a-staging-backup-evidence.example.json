@@ -1,0 +1,14 @@
+{
+  "environment": "staging",
+  "projectRef": "replace-with-staging-project-ref",
+  "database": "postgres",
+  "createdAtUtc": "2026-08-11T00:00:00Z",
+  "retentionUntilUtc": "2026-08-18T00:00:00Z",
+  "method": "logical-pg-dump",
+  "owner": "replace-with-database-owner",
+  "evidenceLocation": "replace-with-sanitized-ticket-or-provider-record",
+  "restoreTestStatus": "passed",
+  "restoreTestedAtUtc": "2026-08-11T00:30:00Z",
+  "artifactPath": "artifacts/p2a-staging/pre-p2a.dump",
+  "artifactSha256": "replace-with-uppercase-sha256"
+}

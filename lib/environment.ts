@@ -11,7 +11,10 @@ export function getEnvironment(): AppEnvironment {
   if (process.env.DEMO_MODE === "true") {
     return "demo";
   }
-  if (process.env.VERCEL_ENV === "preview") {
+  if (
+    process.env.VERCEL_ENV === "preview" ||
+    process.env.VERCEL_ENV === "staging"
+  ) {
     return "staging";
   }
   return "production";

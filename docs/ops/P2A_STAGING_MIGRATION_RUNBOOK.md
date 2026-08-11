@@ -1,12 +1,15 @@
 # P2-A Staging Migration Execution Runbook
 
-Status: Prepared, execution awaits final runbook review
+Status: Prepared, execution blocked on dedicated staging foundation evidence
 Scope: Staging database only
 Production execution: Prohibited
 
 ## 1. Preconditions
 
-1. Obtain explicit final approval for this runbook.
+1. Complete `docs/ops/STAGING_DATABASE_FOUNDATION.md`, obtain explicit final
+   approval for this runbook, and run `npm run p2a:staging:preflight`. Stop if
+   the executable preflight does not print `P2-A STAGING GATE 0 PREFLIGHT:
+   PASS`.
 2. Confirm the target is the staging PostgreSQL database by recording
    `current_database()`, `current_user`, `inet_server_addr()`, and server
    version. Stop if the endpoint, project, or database name could be
@@ -44,16 +47,25 @@ server identity, blocking sessions, locks, and error text. Do not retry or mark
 the migration applied until the blocker and any partial state are understood
 and a reviewer explicitly authorizes the next attempt.
 
-Set the staging URL only in the current PowerShell process. Do not print it:
+Set the staging URLs and evidence paths only in the current PowerShell process.
+Do not print them or load ignored production environment files:
 
 ```powershell
 $env:P2A_STAGING_DATABASE_URL = '<approved direct staging URL>'
+$env:DIRECT_URL = $env:P2A_STAGING_DATABASE_URL
+$env:DATABASE_URL = '<approved pooled staging runtime URL>'
+$env:P2A_STAGING_PROJECT_REF = '<approved staging project reference>'
+$env:P2A_STAGING_APP_URL = '<stable staging application URL>'
+$env:P2A_STAGING_DEPLOYMENT_ENV_FILE = '<secure Vercel staging environment pull>'
+$env:P2A_BACKUP_EVIDENCE_PATH = '<verified backup evidence JSON>'
+$env:P2A_PROVENANCE_WRITERS_DISABLED = 'true'
+npm run p2a:staging:preflight
 ```
 
 Record and review the target identity:
 
 ```powershell
-psql "$env:P2A_STAGING_DATABASE_URL" -X -v ON_ERROR_STOP=1 -c 'SELECT current_database(), current_user, inet_server_addr(), current_setting(''server_version'');'
+.\scripts\p2a-psql.ps1 -Command 'SELECT current_database(), current_user, inet_server_addr(), current_setting(''server_version''), (SELECT ssl FROM pg_stat_ssl WHERE pid = pg_backend_pid());'
 ```
 
 Stop if that output has not been positively identified as staging.

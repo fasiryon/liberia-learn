@@ -129,6 +129,18 @@ describe("environment detection", () => {
     expect(shouldShowDemoCredentials()).toBe(false);
   });
 
+  it("detects a Vercel custom staging environment", () => {
+    Object.assign(process.env, {
+      NODE_ENV: "production",
+      DEMO_MODE: "false",
+      VERCEL_ENV: "staging",
+    });
+
+    expect(getEnvironment()).toBe("staging");
+    expect(isStaging()).toBe(true);
+    expect(shouldShowDemoCredentials()).toBe(false);
+  });
+
   it("defaults to production", () => {
     Object.assign(process.env, {
       NODE_ENV: "production",
