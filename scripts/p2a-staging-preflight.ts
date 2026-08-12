@@ -167,7 +167,7 @@ function assertBackupEvidence(path: string, projectRef: string, migration: Sanit
   if (!existsSync(path)) fail("P2A_BACKUP_EVIDENCE_PATH does not exist");
   let evidence: BackupEvidence;
   try {
-    evidence = JSON.parse(readFileSync(path, "utf8")) as BackupEvidence;
+    evidence = JSON.parse(readFileSync(path, "utf8").replace(/^\uFEFF/, "")) as BackupEvidence;
   } catch {
     fail("backup evidence is not valid JSON");
   }

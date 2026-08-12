@@ -195,7 +195,11 @@ try {
     p2aMigrationCount = 0
     provenanceTableCount = 0
   }
-  $evidence | ConvertTo-Json -Depth 4 | Set-Content -LiteralPath $evidencePath -Encoding utf8
+  [IO.File]::WriteAllText(
+    $evidencePath,
+    ($evidence | ConvertTo-Json -Depth 4),
+    [Text.UTF8Encoding]::new($false)
+  )
 
   Write-Output "Backup source project: $approvedStagingRef"
   Write-Output "Backup source database: postgres"

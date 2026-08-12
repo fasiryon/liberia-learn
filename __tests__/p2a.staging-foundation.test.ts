@@ -226,6 +226,7 @@ describe("P2-A staging foundation artifacts", () => {
     expect(backupRestore).toContain("CREATE EXTENSION vector WITH SCHEMA public");
     expect(backupRestore).toContain("--use-list=/tmp/p2a-restore.list");
     expect(backupRestore).toContain("p2a-staging-restore-verify.sql");
+    expect(backupRestore).toContain("[Text.UTF8Encoding]::new($false)");
     const restoreVerification = readFileSync(
       resolve("scripts", "p2a-staging-restore-verify.sql"),
       "utf8"
@@ -271,5 +272,6 @@ describe("P2-A staging foundation artifacts", () => {
     ]) {
       expect(guard).toContain(requirement);
     }
+    expect(guard).toContain('replace(/^\\uFEFF/, "")');
   });
 });
