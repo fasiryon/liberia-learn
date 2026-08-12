@@ -1,6 +1,6 @@
 # P2-A Staging Migration Execution Runbook
 
-Status: APPROVED for B2 forward recovery and continuation through Migration C
+Status: P2-A STAGING COMPLETE; production deployment awaits final authorization
 Scope: Staging database only
 Production execution: Prohibited
 
