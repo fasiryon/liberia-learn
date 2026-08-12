@@ -1,8 +1,17 @@
 # P2-A Staging Migration Execution Runbook
 
-Status: APPROVED for sequential canonical-staging execution
+Status: STOPPED at Migration B2; recovery requires reviewed forward procedure
 Scope: Staging database only
 Production execution: Prohibited
+
+> STOP (2026-08-12): Migration A and B1 applied successfully on canonical
+> staging. Prisma 6.19.2 attempted B2 inside a transaction and PostgreSQL
+> rejected `CREATE INDEX CONCURRENTLY` with SQLSTATE `25001`. The B2 ledger
+> row is unfinished and not rolled back; no index artifact exists. Do not run
+> `migrate resolve`, create the index manually, retry deployment, or add
+> Migration C until a reviewer approves an exact recovery procedure. This is
+> a Prisma execution-boundary incompatibility, not a Supavisor session-mode
+> failure.
 
 The canonical staging bootstrap, reference seed, synthetic fixtures,
 PostgreSQL 17 backup/restore proof, and Gate 0 must pass before Migration A.
@@ -177,8 +186,10 @@ minutes. Do not terminate another session automatically.
 
 ### 4.1 Normal B1/B2 execution
 
-Run Prisma directly. Do not wrap it in `BEGIN`, `COMMIT`, a transactional
-deployment framework, or a shell that adds a transaction:
+The original direct Prisma procedure below is retained as incident evidence
+but is not currently executable. Prisma 6.19.2 wrapped B2 in a transaction in
+the 2026-08-12 staging run. Do not retry it without a reviewed replacement
+procedure:
 
 ```powershell
 npx prisma migrate deploy

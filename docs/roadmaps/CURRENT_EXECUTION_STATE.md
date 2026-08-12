@@ -7,6 +7,25 @@ Live execution tracking for the final closeout program.
 
 - **Canonical plan:** `docs/roadmaps/NATIONAL_ROLLOUT_EXECUTION_PLAN.md`
 - **Escalation contract:** `docs/agents/ADVISOR_ESCALATION_CONTRACT.md`
+- **P2-A canonical staging execution: STOPPED AT MIGRATION B2
+  (2026-08-12).** The approved Supavisor session-mode fallback amendment is
+  implemented and validated. The operator preflight proves the exact staging
+  project `yonpfzjczoffhrgibxkz`, rejects production
+  `bnphuinpvgpmebcsvmsp`, requires SSL and exact port-5432 project routing,
+  proves session persistence, and prohibits port 6543 for migration/native
+  tooling. Canonical PostgreSQL 17 bootstrap, deterministic essential
+  reference seed, two synthetic fixtures, PostgreSQL 17 custom backup/restore
+  proof, stable Preview health, and Gate 0 all passed. Migration A applied and
+  its rollback-only `riskReasons` invariant passed. B1 applied with the
+  nullable, no-default `generationCorrelationId` column. B2 then failed with
+  PostgreSQL SQLSTATE `25001`: Prisma 6.19.2 placed `CREATE INDEX
+  CONCURRENTLY` inside a transaction block. Its Prisma ledger row is
+  unfinished and not rolled back, and read-only inspection proves no index
+  artifact exists. This is a Prisma execution-boundary incompatibility, not a
+  Supavisor session-mode failure. Per the standing STOP contract, no
+  `migrate resolve`, manual index creation, retry, or Migration C was
+  attempted. Production was never connected to or changed. Resume only after
+  review and explicit authorization of an exact B2 forward-recovery procedure.
 - **P2-A pre-baseline repair: ENGINEERING COMPLETE, PERSISTENT STAGING
   BOOTSTRAP AWAITS SEPARATE AUTHORIZATION (2026-08-12).** Founder approved the empty resumed
   Supabase project `yonpfzjczoffhrgibxkz` in `us-east-2` as dedicated staging;
