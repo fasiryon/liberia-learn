@@ -1,23 +1,20 @@
 # P2-A Staging Migration Execution Runbook
 
-Status: BLOCKED pending canonical-staging Gate 0 and a reviewed runbook rewrite
+Status: APPROVED for sequential canonical-staging execution
 Scope: Staging database only
 Production execution: Prohibited
 
-> STOP: Sections 2 through 6 below preserve the previously reviewed P2-A DDL
-> sequence, but their Git checkout and `prisma migrate deploy` commands target
-> the legacy migration root. That root is not replayable and must not be used
-> on canonical staging. First complete the separately authorized canonical
-> staging bootstrap, reference seed, synthetic fixtures, PostgreSQL 17 backup
-> and restore proof, and Gate 0. Then rewrite this runbook to deploy byte-exact
-> copies of A/B1/B2/C from `prisma/canonical/migrations` and obtain a separate
-> founder/advisor authorization. No command in sections 2 through 6 is
-> currently authorized for execution.
+The canonical staging bootstrap, reference seed, synthetic fixtures,
+PostgreSQL 17 backup/restore proof, and Gate 0 must pass before Migration A.
+Execute only the byte-exact approved A/B1/B2/C migration files under
+`prisma/canonical/migrations`, committing each gate to the dedicated staging
+branch before deployment. The legacy `prisma/migrations` root is evidence only
+and must never be supplied to `prisma migrate deploy`.
 
 ## 1. Preconditions
 
-1. Complete `docs/ops/STAGING_DATABASE_FOUNDATION.md`, obtain explicit final
-   approval for this runbook, and run `npm run p2a:staging:preflight`. Stop if
+1. Complete `docs/ops/STAGING_DATABASE_FOUNDATION.md`, confirm the standing
+   P2-A staging authorization, and run `npm run p2a:staging:preflight`. Stop if
    the executable preflight does not print `P2-A STAGING GATE 0 PREFLIGHT:
    PASS`.
 2. Confirm the target is the staging PostgreSQL database by recording
@@ -32,8 +29,8 @@ Production execution: Prohibited
 4. Confirm there are no provenance writers in the deployed application.
    P2-A Step 1 contains no writer implementation, feature flag, generation
    change, approval change, reader change, or backfill.
-5. Confirm the Git worktree is clean and the four reviewed migration commits
-   are available locally.
+5. Confirm the dedicated staging branch is active and each migration added to
+   the canonical root matches its approved hash before it is committed.
 6. Take the normal staging backup or restore-point evidence required by the
    database owner.
 7. Keep a second read-only PostgreSQL session available for lock and index
@@ -90,22 +87,12 @@ Record and review the target identity:
 
 Stop if that output has not been positively identified as staging.
 
-## 2. Reviewed commit sequence
+## 2. Reviewed migration sequence
 
-Apply the migrations by checking out the exact reviewed commit that first
-contains each migration group. This allows verification between A/B and C.
-
-1. Formatter proof:
-   `246a608fddf4f47e0733cb4b6c598fe44490fe59`
-2. Migration A:
-   `e4ce9a42aa5e49c0bca909bde9887d13acce162b`
-3. Migrations B1 and B2:
-   `09b53365f5194d5cc3988ed663f847339891b5dc`
-4. Migration C:
-   `6888ed6c23f42107aa1e39b4fadc959f2c529f3b`
-
-Do not run `prisma migrate deploy` from a later commit before the preceding
-verification step is complete.
+Add and deploy the byte-exact migrations to the canonical root in three
+committed gates: A, then B1/B2, then C. Do not add or deploy a later gate until
+the preceding live verification passes. The original reviewed files under
+`prisma/migrations` remain the hash source of truth.
 
 Approved migration SHA-256 hashes:
 
@@ -116,25 +103,24 @@ Approved migration SHA-256 hashes:
 | B2 | `234B635D51D628A46C24F140C5EF186DB045986FD21594EEE63F6029F4427AE6` |
 | C | `90BE560EB65FB6B5EFBB1AFE15599BB475CD05E38119A21B2808693C0B844097` |
 
-At each detached commit, verify the migration files present there match the
-corresponding approved hashes before running Prisma:
+At each gate, verify the canonical copy and the original reviewed file have
+the same approved hash before running Prisma:
 
 ```powershell
-Get-FileHash -Algorithm SHA256 prisma/migrations/20260810_000001_p2a_curriculum_provenance_core/migration.sql
-Get-FileHash -Algorithm SHA256 prisma/migrations/20260810_000002_p2a_ai_generation_correlation/migration.sql
-Get-FileHash -Algorithm SHA256 prisma/migrations/20260810_000003_p2a_ai_generation_correlation_index/migration.sql
-Get-FileHash -Algorithm SHA256 prisma/migrations/20260810_000004_p2a_curriculum_provenance_immutability/migration.sql
+Get-FileHash -Algorithm SHA256 prisma/canonical/migrations/20260810_000001_p2a_curriculum_provenance_core/migration.sql
+Get-FileHash -Algorithm SHA256 prisma/canonical/migrations/20260810_000002_p2a_ai_generation_correlation/migration.sql
+Get-FileHash -Algorithm SHA256 prisma/canonical/migrations/20260810_000003_p2a_ai_generation_correlation_index/migration.sql
+Get-FileHash -Algorithm SHA256 prisma/canonical/migrations/20260810_000004_p2a_curriculum_provenance_immutability/migration.sql
 ```
 
-Only files that exist at the current sequencing commit are expected to hash.
+Only files added at or before the current gate are expected to exist.
 
 ## 3. Migration A
 
 ```powershell
-git switch --detach e4ce9a42aa5e49c0bca909bde9887d13acce162b
-$env:DATABASE_URL = $env:P2A_STAGING_DATABASE_URL
-npx prisma migrate status
-npx prisma migrate deploy
+git switch codex/p2a-provenance-step1
+npx prisma migrate status --schema prisma/canonical/schema.prisma
+npx prisma migrate deploy --schema prisma/canonical/schema.prisma
 ```
 
 Migration A executes with `lock_timeout = '5s'` and
@@ -149,7 +135,7 @@ Run the database invariant assertion. It creates test rows inside a
 transaction and always rolls back:
 
 ```powershell
-psql "$env:P2A_STAGING_DATABASE_URL" -X -v ON_ERROR_STOP=1 -f prisma/migrations/verification/p2a-risk-reasons-null-rejection.sql
+.\scripts\p2a-psql.ps1 -File prisma/migrations/verification/p2a-risk-reasons-null-rejection.sql
 ```
 
 Pass criteria:
@@ -164,11 +150,10 @@ Do not continue if the assertion fails.
 
 ## 4. Migrations B1 and B2
 
-Check out the exact B commit:
+Confirm the committed B1/B2 canonical copies match the approved hashes:
 
 ```powershell
-git switch --detach 09b53365f5194d5cc3988ed663f847339891b5dc
-npx prisma migrate status
+npx prisma migrate status --schema prisma/canonical/schema.prisma
 ```
 
 Before deployment, inspect any pre-existing index artifact:
