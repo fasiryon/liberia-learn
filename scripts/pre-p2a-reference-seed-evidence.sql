@@ -18,7 +18,7 @@ SELECT jsonb_build_object(
     SELECT count(*) FROM "Standard" WHERE "id" LIKE 'ref-v1-standard-%'
   ),
   'dataHash', md5(
-    (SELECT string_agg(row_to_json(module_row)::text, '' ORDER BY module_row."code")
+    (SELECT string_agg(row_to_json(module_row)::text, '' ORDER BY module_row."code" COLLATE "C")
      FROM (
        SELECT "id", "code", "title", "description", "sortOrder", "estimatedMinutes", "isActive"
        FROM "TrainingModule"
@@ -27,13 +27,13 @@ SELECT jsonb_build_object(
          'l2-grade-feedback', 'l2-message-guardians', 'l3-view-reports', 'l3-guided-tools'
        )
      ) module_row) ||
-    (SELECT string_agg(row_to_json(strand_row)::text, '' ORDER BY strand_row."subject", strand_row."strandKey")
+    (SELECT string_agg(row_to_json(strand_row)::text, '' ORDER BY strand_row."subject"::text COLLATE "C", strand_row."strandKey" COLLATE "C")
      FROM (
        SELECT "id", "subject", "strandKey", "name", "gradeBand", "waecRef", "isActive"
        FROM "StrandCatalog"
        WHERE "id" LIKE 'ref-v1-strand-%'
      ) strand_row) ||
-    (SELECT string_agg(row_to_json(standard_row)::text, '' ORDER BY standard_row."code")
+    (SELECT string_agg(row_to_json(standard_row)::text, '' ORDER BY standard_row."code" COLLATE "C")
      FROM (
        SELECT "id", "code", "description", "subject", "band"
        FROM "Standard"

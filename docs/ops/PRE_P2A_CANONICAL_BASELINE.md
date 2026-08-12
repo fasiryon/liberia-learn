@@ -151,7 +151,10 @@ Disposable PostgreSQL 17 evidence after both the first and second runs was:
 - 8 teacher training modules;
 - 9 Civics/Math strands;
 - 10 Engineering/CS standards;
-- data digest `d334a7fd3c864e761fd9fabf9d6919ab` on both runs.
+- one explicitly C-collated data digest on both runs. The staging bootstrap
+  found and corrected the original evidence query's dependence on the server's
+  default collation before Gate 0; row-level comparison proved the seeded data
+  itself was identical.
 
 ## Permanent PostgreSQL 17 gate
 

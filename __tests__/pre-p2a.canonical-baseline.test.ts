@@ -24,6 +24,12 @@ const postHardeningCatalog = JSON.parse(
 );
 
 describe("canonical pre-P2-A baseline", () => {
+  it("makes reference-seed evidence independent of provider collation", () => {
+    const evidenceQuery = text("scripts/pre-p2a-reference-seed-evidence.sql");
+    expect(evidenceQuery.match(/COLLATE "C"/g)).toHaveLength(4);
+    expect(evidenceQuery).toContain('"subject"::text COLLATE "C"');
+  });
+
   it("freezes every legacy migration through the cutover byte for byte", () => {
     expect(legacyManifest.cutover.lastLegacyMigration).toBe(
       "20260728_000002_teaching_turn_sequence",
