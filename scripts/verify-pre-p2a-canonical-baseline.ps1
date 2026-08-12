@@ -20,6 +20,7 @@ $baselinePath = "/workspace/prisma/canonical/migrations/20260728_000003_canonica
 $catalogQueryPath = "/workspace/scripts/pre-p2a-canonical-catalog.sql"
 $seedPath = "/workspace/prisma/canonical/seeds/20260811_000001_essential_reference_v1.sql"
 $seedEvidencePath = "/workspace/scripts/pre-p2a-reference-seed-evidence.sql"
+$preP2APrismaRoot = Join-Path $resolvedArtifacts "prisma-pre-p2a"
 
 function Invoke-Docker {
   param([Parameter(ValueFromRemainingArguments = $true)][string[]]$Arguments)
@@ -40,6 +41,17 @@ function Assert-HashEqual {
 }
 
 New-Item -ItemType Directory -Path $resolvedArtifacts -Force | Out-Null
+New-Item -ItemType Directory -Path (Join-Path $preP2APrismaRoot "migrations") -Force | Out-Null
+Copy-Item -LiteralPath (Join-Path $repositoryRoot "prisma/canonical/schema.prisma") -Destination (Join-Path $preP2APrismaRoot "schema.prisma") -Force
+Copy-Item -LiteralPath (Join-Path $repositoryRoot "prisma/canonical/migrations/migration_lock.toml") -Destination (Join-Path $preP2APrismaRoot "migrations/migration_lock.toml") -Force
+foreach ($migrationName in @(
+  "20260728_000003_canonical_production_state_baseline",
+  "20260803_000001_privileged_identity_hardening"
+)) {
+  $targetDirectory = Join-Path (Join-Path $preP2APrismaRoot "migrations") $migrationName
+  New-Item -ItemType Directory -Path $targetDirectory -Force | Out-Null
+  Copy-Item -LiteralPath (Join-Path $repositoryRoot "prisma/canonical/migrations/$migrationName/migration.sql") -Destination (Join-Path $targetDirectory "migration.sql") -Force
+}
 $previousDirectUrl = [Environment]::GetEnvironmentVariable("DIRECT_URL", "Process")
 $startedAt = [DateTimeOffset]::UtcNow
 $containerStarted = $false
@@ -94,7 +106,7 @@ try {
   )
   $prismaDeployed = $false
   for ($attempt = 0; $attempt -lt 3; $attempt++) {
-    & npx prisma migrate deploy --schema prisma/canonical/schema.prisma
+    & npx prisma migrate deploy --schema (Join-Path $preP2APrismaRoot "schema.prisma")
     if ($LASTEXITCODE -eq 0) {
       $prismaDeployed = $true
       break

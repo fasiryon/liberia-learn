@@ -147,6 +147,10 @@ describe("canonical pre-P2-A baseline", () => {
     };
     for (const [migration, hash] of Object.entries(expectedHashes)) {
       expect(sha256(`prisma/migrations/${migration}/migration.sql`), migration).toBe(hash);
+      expect(
+        sha256(`prisma/canonical/migrations/${migration}/migration.sql`),
+        `canonical ${migration}`,
+      ).toBe(hash);
     }
 
     type CatalogTable = { name: string; columns: Array<{ name: string }> };
@@ -177,7 +181,7 @@ describe("canonical pre-P2-A baseline", () => {
     ]);
   });
 
-  it("keeps the canonical root isolated from the immutable legacy root", () => {
+  it("extends the canonical root only with the four approved P2-A migrations", () => {
     const canonicalMigrationDirectories = readdirSync(
       join(root, "prisma/canonical/migrations"),
       { withFileTypes: true },
@@ -188,6 +192,10 @@ describe("canonical pre-P2-A baseline", () => {
     expect(canonicalMigrationDirectories).toEqual([
       "20260728_000003_canonical_production_state_baseline",
       "20260803_000001_privileged_identity_hardening",
+      "20260810_000001_p2a_curriculum_provenance_core",
+      "20260810_000002_p2a_ai_generation_correlation",
+      "20260810_000003_p2a_ai_generation_correlation_index",
+      "20260810_000004_p2a_curriculum_provenance_immutability",
     ]);
   });
 });
