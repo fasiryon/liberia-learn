@@ -217,8 +217,9 @@ Gate 0 accepts either:
 
 1. A provider-managed daily backup or PITR restore point bound to the staging
    project, with dashboard evidence and a completed restore test; or
-2. A logical custom-format `pg_dump`, stored outside Git, hashed with SHA-256,
-   and successfully restored into a disposable PostgreSQL instance.
+2. A logical custom-format, application-owned `public` schema `pg_dump`, stored
+   outside Git, hashed with SHA-256, and successfully restored into a disposable
+   PostgreSQL instance. Supabase provider schemas and extensions are excluded.
 
 Free Supabase projects do not currently include automatic backups or PITR.
 Supabase recommends regular logical exports for Free projects. Pro includes

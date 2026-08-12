@@ -219,7 +219,19 @@ describe("P2-A staging foundation artifacts", () => {
     expect(backupRestore).toContain("yonpfzjczoffhrgibxkz");
     expect(backupRestore).toContain("bnphuinpvgpmebcsvmsp");
     expect(backupRestore).toContain("postgres:17-alpine");
+    expect(backupRestore).toContain("pgvector/pgvector:0.8.0-pg17");
     expect(backupRestore).not.toContain("postgres:16-alpine");
+    expect(backupRestore).toContain("--schema=public");
+    expect(backupRestore).toContain("DROP SCHEMA public CASCADE");
+    expect(backupRestore).toContain("CREATE EXTENSION vector WITH SCHEMA public");
+    expect(backupRestore).toContain("--use-list=/tmp/p2a-restore.list");
+    expect(backupRestore).toContain("p2a-staging-restore-verify.sql");
+    const restoreVerification = readFileSync(
+      resolve("scripts", "p2a-staging-restore-verify.sql"),
+      "utf8"
+    );
+    expect(restoreVerification).toContain('public."CurriculumContent"');
+    expect(restoreVerification).toContain("20260803_000001_privileged_identity_hardening");
     expect(backupRestore).toContain("20260803_000001_privileged_identity_hardening");
     expect(backupRestore).toContain("20260728_000003_canonical_production_state_baseline");
     expect(backupRestore).toContain('$expectedMigrationCount = $canonicalMigrations.Count');

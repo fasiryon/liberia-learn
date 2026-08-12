@@ -17,6 +17,7 @@ $migrationBoundary = $canonicalMigrations[-1]
 $expectedMigrationCount = $canonicalMigrations.Count
 $expectedMigrationLedger = $canonicalMigrations -join ","
 $clientImage = "postgres:17-alpine"
+$restoreImage = "pgvector/pgvector:0.8.0-pg17"
 $urlVariable = "P2A_STAGING_DATABASE_URL"
 $projectRef = [Environment]::GetEnvironmentVariable("P2A_STAGING_PROJECT_REF")
 $databaseUrl = [Environment]::GetEnvironmentVariable($urlVariable)
@@ -128,13 +129,13 @@ DROP TABLE p2a_session_backup_probe;
 }
 
 $dumpFileName = Split-Path -Leaf $dumpPath
-& docker run --rm @clientDockerArgs -v "${artifactRoot}:/backup" $clientImage pg_dump --format=custom --no-owner --no-privileges --file "/backup/$dumpFileName"
+& docker run --rm @clientDockerArgs -v "${artifactRoot}:/backup" $clientImage pg_dump --format=custom --schema=public --no-owner --no-privileges --file "/backup/$dumpFileName"
 if ($LASTEXITCODE -ne 0 -or -not (Test-Path -LiteralPath $dumpPath)) { throw "pg_dump failed" }
 $dumpHash = (Get-FileHash -Algorithm SHA256 -LiteralPath $dumpPath).Hash.ToUpperInvariant()
 $createdAt = (Get-Date).ToUniversalTime()
 
 try {
-  & docker run -d --rm --name $containerName -e "POSTGRES_PASSWORD=$localPassword" -v "${artifactRoot}:/backup:ro" $clientImage | Out-Null
+  & docker run -d --rm --name $containerName -e "POSTGRES_PASSWORD=$localPassword" -v "${artifactRoot}:/backup:ro" -v "${repositoryRoot}:/workspace:ro" $restoreImage | Out-Null
   if ($LASTEXITCODE -ne 0) { throw "Disposable PostgreSQL 17 restore container failed to start" }
   $ready = $false
   for ($attempt = 0; $attempt -lt 30; $attempt++) {
@@ -144,24 +145,23 @@ try {
   }
   if (-not $ready) { throw "Disposable PostgreSQL 17 restore container did not become ready" }
 
-  & docker exec $containerName pg_restore --exit-on-error --no-owner --no-privileges -U postgres -d postgres "/backup/$dumpFileName"
+  & docker exec $containerName psql -U postgres -d postgres -X -v ON_ERROR_STOP=1 -c 'DROP SCHEMA public CASCADE;'
+  if ($LASTEXITCODE -ne 0) { throw "Disposable PostgreSQL 17 public-schema preparation failed" }
+  & docker exec $containerName psql -U postgres -d postgres -X -v ON_ERROR_STOP=1 -c 'CREATE SCHEMA public; CREATE EXTENSION vector WITH SCHEMA public;'
+  if ($LASTEXITCODE -ne 0) { throw "Disposable PostgreSQL 17 vector preparation failed" }
+
+  $restoreList = & docker exec $containerName pg_restore --list "/backup/$dumpFileName"
+  if ($LASTEXITCODE -ne 0) { throw "Disposable PostgreSQL 17 restore list failed" }
+  $restoreList = $restoreList | ForEach-Object {
+    if ($_ -match ' SCHEMA - public ') { ";$_" } else { $_ }
+  }
+  $restoreList | & docker exec -i $containerName tee /tmp/p2a-restore.list | Out-Null
+  if ($LASTEXITCODE -ne 0) { throw "Disposable PostgreSQL 17 filtered restore list failed" }
+
+  & docker exec $containerName pg_restore --exit-on-error --no-owner --no-privileges --use-list=/tmp/p2a-restore.list -U postgres -d postgres "/backup/$dumpFileName"
   if ($LASTEXITCODE -ne 0) { throw "Disposable PostgreSQL 17 restore failed" }
 
-  $restoreState = & docker exec $containerName psql -U postgres -d postgres -X -v ON_ERROR_STOP=1 -At -c @"
-SELECT concat_ws('|',
-  (SELECT count(*) FROM public."_prisma_migrations" WHERE finished_at IS NOT NULL AND rolled_back_at IS NULL),
-  (SELECT count(*) FROM public."_prisma_migrations" WHERE migration_name = '$migrationBoundary' AND finished_at IS NOT NULL AND rolled_back_at IS NULL),
-  (SELECT COALESCE(string_agg(migration_name, ',' ORDER BY started_at), '') FROM public."_prisma_migrations" WHERE finished_at IS NOT NULL AND rolled_back_at IS NULL),
-  (SELECT count(*) FROM public."_prisma_migrations" WHERE migration_name LIKE '%p2a%'),
-  (SELECT count(*) FROM public."CurriculumContent" WHERE "contentId" IN ('p2a-staging-fixture-content-1', 'p2a-staging-fixture-content-2')),
-  (SELECT count(*) FROM (VALUES
-    (to_regclass('public."CurriculumProvenance"')),
-    (to_regclass('public."CurriculumContentRevision"')),
-    (to_regclass('public."CurriculumGovernanceEvent"')),
-    (to_regclass('public."CurriculumEvidence"'))
-  ) AS relations(relation_name) WHERE relation_name IS NOT NULL)
-);
-"@
+  $restoreState = & docker exec $containerName psql -U postgres -d postgres -X -q -v ON_ERROR_STOP=1 -At -f /workspace/scripts/p2a-staging-restore-verify.sql
   if ($LASTEXITCODE -ne 0) { throw "Restore verification query failed" }
   $restoreState = ($restoreState | Out-String).Trim()
   if ($restoreState -ne "$expectedMigrationCount|1|$expectedMigrationLedger|0|2|0") {
