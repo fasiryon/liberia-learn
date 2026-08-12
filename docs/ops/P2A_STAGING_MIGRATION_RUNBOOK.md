@@ -1,17 +1,15 @@
 # P2-A Staging Migration Execution Runbook
 
-Status: STOPPED at Migration B2; recovery requires reviewed forward procedure
+Status: APPROVED for B2 forward recovery and continuation through Migration C
 Scope: Staging database only
 Production execution: Prohibited
 
-> STOP (2026-08-12): Migration A and B1 applied successfully on canonical
-> staging. Prisma 6.19.2 attempted B2 inside a transaction and PostgreSQL
-> rejected `CREATE INDEX CONCURRENTLY` with SQLSTATE `25001`. The B2 ledger
-> row is unfinished and not rolled back; no index artifact exists. Do not run
-> `migrate resolve`, create the index manually, retry deployment, or add
-> Migration C until a reviewer approves an exact recovery procedure. This is
-> a Prisma execution-boundary incompatibility, not a Supavisor session-mode
-> failure.
+> RECOVERY APPROVED (2026-08-12): Migration A and B1 applied successfully on
+> canonical staging. Prisma 6.19.2 attempted B2 inside a transaction and
+> PostgreSQL rejected `CREATE INDEX CONCURRENTLY` with SQLSTATE `25001`.
+> The founder approved the exact section 4.2 forward-recovery procedure and
+> continuation through Migration C. This is a Prisma execution-boundary
+> incompatibility, not a Supavisor session-mode failure.
 
 The canonical staging bootstrap, reference seed, synthetic fixtures,
 PostgreSQL 17 backup/restore proof, and Gate 0 must pass before Migration A.
@@ -231,8 +229,8 @@ Pass criteria:
 
 ### 4.2 Interrupted or invalid B2 handling
 
-If B2 fails or times out, stop for review and do not use
-`prisma migrate resolve --applied`.
+The following exact recovery is approved for the 2026-08-12 SQLSTATE `25001`
+failure only. Stop if any stated precondition differs.
 
 1. Query `pg_index.indisready` and `pg_index.indisvalid` using the command in
    section 4.1.
@@ -242,33 +240,36 @@ If B2 fails or times out, stop for review and do not use
 psql "$env:P2A_STAGING_DATABASE_URL" -X -v ON_ERROR_STOP=1 -c 'SELECT migration_name, started_at, finished_at, rolled_back_at, logs FROM "_prisma_migrations" WHERE migration_name = ''20260810_000003_p2a_ai_generation_correlation_index'';'
 ```
 
-3. If the index exists but is invalid, drop only that exact invalid artifact,
-   outside a transaction:
+3. The approved run requires the B1 column to exist as nullable with no
+   default, exactly one unfinished/unrolled-back B2 ledger row, and no B2
+   index artifact. If the index exists, or any other condition differs, stop.
+4. Mark only the failed B2 attempt rolled back:
 
 ```powershell
-psql "$env:P2A_STAGING_DATABASE_URL" -X -v ON_ERROR_STOP=1 -c 'DROP INDEX CONCURRENTLY IF EXISTS "AIInteraction_generationCorrelationId_createdAt_idx";'
+npx prisma migrate resolve --rolled-back 20260810_000003_p2a_ai_generation_correlation_index --schema prisma/canonical/schema.prisma
 ```
 
-4. Confirm `to_regclass` returns null:
+5. Execute the byte-exact canonical B2 file through the session-preserving
+   psql wrapper. psql autocommit keeps `CREATE INDEX CONCURRENTLY` outside a
+   transaction while retaining the same connection for its timeout settings:
 
 ```powershell
-psql "$env:P2A_STAGING_DATABASE_URL" -X -v ON_ERROR_STOP=1 -c 'SELECT to_regclass(''public."AIInteraction_generationCorrelationId_createdAt_idx"'');'
+.\scripts\p2a-psql.ps1 -File prisma/canonical/migrations/20260810_000003_p2a_ai_generation_correlation_index/migration.sql
 ```
 
-5. Only after the blocker and partial state are understood and a reviewer
-   authorizes a retry, and only when the B2 migration row is failed with
-   `finished_at IS NULL`, mark that failed attempt rolled back:
+6. Verify exactly one index row exists, `indisready` and `indisvalid` are
+   true, and the definition is the approved two-column index. Stop before
+   ledger reconciliation if verification fails.
+7. Record the already-proven migration as applied through Prisma so its
+   checksum comes from the unchanged canonical migration file:
 
 ```powershell
-npx prisma migrate resolve --rolled-back 20260810_000003_p2a_ai_generation_correlation_index
+npx prisma migrate resolve --applied 20260810_000003_p2a_ai_generation_correlation_index --schema prisma/canonical/schema.prisma
 ```
 
-6. Rerun `npx prisma migrate deploy` only under that explicit retry approval,
-   then repeat the validity query.
-
-If Prisma reports B2 as successfully finished while the index is absent or
-invalid, stop and escalate. Do not mark, edit, or reconcile the migration row
-manually. A reviewed forward repair is required.
+8. Run `prisma migrate status` and verify B2 history contains exactly one
+   rolled-back failed attempt and exactly one finished, unrolled-back applied
+   record. Never edit `_prisma_migrations` directly.
 
 ## 5. A/B staging verification gate
 
@@ -288,18 +289,19 @@ psql "$env:P2A_STAGING_DATABASE_URL" -X -v ON_ERROR_STOP=1 -c 'SELECT migration_
 ```
 
 At this point the Migration C row and triggers are expected to be absent. The
-B1 column must be nullable with no default, the B2 index must be ready and
-valid, and all three A/B migration rows must be finished with no rollback. All
-A/B checks must pass before continuing.
+B1 column must be nullable with no default and the B2 index must be ready and
+valid. A and B1 must each have one finished record. B2 must have one historical
+rolled-back failed attempt plus one finished, unrolled-back record. All A/B
+checks must pass before continuing.
 
 ## 6. Migration C
 
 Migration C must be active before any provenance writer is enabled.
 
 ```powershell
-git switch --detach 6888ed6c23f42107aa1e39b4fadc959f2c529f3b
-npx prisma migrate status
-npx prisma migrate deploy
+git switch codex/p2a-provenance-step1
+npx prisma migrate status --schema prisma/canonical/schema.prisma
+npx prisma migrate deploy --schema prisma/canonical/schema.prisma
 ```
 
 Migration C executes with `lock_timeout = '5s'` and
@@ -314,7 +316,7 @@ Expected newly applied migration:
 Run the rollback-only behavioral guard suite:
 
 ```powershell
-psql "$env:P2A_STAGING_DATABASE_URL" -X -v ON_ERROR_STOP=1 -f prisma/migrations/verification/p2a-immutability-and-root-guards.sql
+.\scripts\p2a-psql.ps1 -File prisma/migrations/verification/p2a-immutability-and-root-guards.sql
 ```
 
 Pass criteria:
@@ -331,7 +333,7 @@ Pass criteria:
 Then run the complete read-only verification:
 
 ```powershell
-psql "$env:P2A_STAGING_DATABASE_URL" -X -v ON_ERROR_STOP=1 -f prisma/migrations/verification/p2a-post-migration-readonly.sql
+.\scripts\p2a-psql.ps1 -File prisma/migrations/verification/p2a-post-migration-readonly.sql
 ```
 
 Expected final state:
@@ -342,7 +344,9 @@ Expected final state:
 - The AI correlation column is nullable and has no default.
 - The B2 index is ready and valid.
 - All 10 named P2-A triggers exist and are enabled with `tgenabled = O`.
-- All four migration rows have `finished_at` set and `rolled_back_at` null.
+- A, B1, B2, and C each have exactly one finished, unrolled-back record.
+- B2 additionally retains exactly one rolled-back failed attempt as immutable
+  incident history.
 
 ## 7. Final staging hold
 

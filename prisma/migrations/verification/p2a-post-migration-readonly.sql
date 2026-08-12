@@ -277,24 +277,38 @@ WITH expected_migration(migration_name) AS (
 ), migration_result AS (
   SELECT
     expected.migration_name,
-    migration.started_at,
-    migration.finished_at,
-    migration.rolled_back_at,
-    migration.logs
+    count(*) FILTER (
+      WHERE migration.finished_at IS NOT NULL
+        AND migration.rolled_back_at IS NULL
+    )::INTEGER AS applied_count,
+    count(*) FILTER (
+      WHERE migration.finished_at IS NULL
+        AND migration.rolled_back_at IS NOT NULL
+    )::INTEGER AS rolled_back_count,
+    count(*) FILTER (
+      WHERE migration.finished_at IS NULL
+        AND migration.rolled_back_at IS NULL
+    )::INTEGER AS unresolved_count
   FROM expected_migration expected
   LEFT JOIN public."_prisma_migrations" migration
     ON migration.migration_name = expected.migration_name
+  GROUP BY expected.migration_name
 )
 SELECT
   migration_name,
-  started_at,
-  finished_at,
-  rolled_back_at,
-  logs,
+  applied_count,
+  rolled_back_count,
+  unresolved_count,
   1 / CASE
-    WHEN started_at IS NOT NULL
-      AND finished_at IS NOT NULL
-      AND rolled_back_at IS NULL
+    WHEN applied_count = 1
+      AND unresolved_count = 0
+      AND (
+        (migration_name = '20260810_000003_p2a_ai_generation_correlation_index'
+          AND rolled_back_count IN (0, 1))
+        OR
+        (migration_name <> '20260810_000003_p2a_ai_generation_correlation_index'
+          AND rolled_back_count = 0)
+      )
     THEN 1
     ELSE 0
   END AS migration_state_assertion
