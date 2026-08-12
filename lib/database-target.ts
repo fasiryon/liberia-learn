@@ -20,9 +20,8 @@ function parsePort(url: URL): number {
 
 function projectRefFromPoolerUsername(username: string): string | null {
   const decoded = decodeURIComponent(username);
-  const separator = decoded.lastIndexOf(".");
-  if (separator < 1 || separator === decoded.length - 1) return null;
-  return decoded.slice(separator + 1).toLowerCase();
+  const match = decoded.toLowerCase().match(/^postgres\.([a-z0-9]+)$/);
+  return match?.[1] ?? null;
 }
 
 export function parseSupabaseDatabaseTarget(
@@ -62,7 +61,7 @@ export function parseSupabaseDatabaseTarget(
   if (isSharedPooler) {
     const projectRef = projectRefFromPoolerUsername(url.username);
     if (!projectRef) {
-      throw new Error(`${label} pooler username does not contain a project identifier`);
+      throw new Error(`${label} pooler username must route as postgres.<project-ref>`);
     }
     if (port !== 5432 && port !== 6543) {
       throw new Error(`${label} pooler endpoint must use port 5432 or 6543`);
@@ -77,6 +76,38 @@ export function parseSupabaseDatabaseTarget(
   }
 
   throw new Error(`${label} is not a recognized Supabase direct or shared-pooler endpoint`);
+}
+
+export function assertSupabaseMigrationTransport(
+  rawUrl: string,
+  expectedProjectRef: string,
+  label = "migration database URL"
+): SanitizedDatabaseTarget {
+  const normalizedExpectedRef = expectedProjectRef.trim().toLowerCase();
+  if (normalizedExpectedRef === PRODUCTION_SUPABASE_PROJECT_REF) {
+    throw new Error(`${label} expected project matches production`);
+  }
+
+  const target = parseSupabaseDatabaseTarget(rawUrl, label);
+  if (target.projectRef !== normalizedExpectedRef) {
+    throw new Error(`${label} project does not match the approved staging project`);
+  }
+  if (target.projectRef === PRODUCTION_SUPABASE_PROJECT_REF) {
+    throw new Error(`${label} targets production`);
+  }
+  if (target.port !== 5432 || (target.mode !== "direct" && target.mode !== "session-pooler")) {
+    throw new Error(
+      `${label} must use the direct endpoint or Supavisor session mode on port 5432; transaction mode is prohibited`
+    );
+  }
+  const parsed = new URL(rawUrl);
+  if (parsed.searchParams.get("sslmode") !== "require") {
+    throw new Error(`${label} must include sslmode=require`);
+  }
+  if (target.mode === "session-pooler" && parsed.searchParams.get("pgbouncer") === "true") {
+    throw new Error(`${label} session mode must not be marked as transaction pooling`);
+  }
+  return target;
 }
 
 export function parseSupabaseProjectUrl(rawUrl: string, label = "Supabase URL"): string {
@@ -108,40 +139,34 @@ export function assertStagingDatabaseIsolation(
   }
 
   const runtimeUrl = env.DATABASE_URL?.trim();
-  const directUrl = env.DIRECT_URL?.trim();
-  if (!runtimeUrl || !directUrl) {
-    throw new Error("[Startup] DATABASE_URL and DIRECT_URL are required in staging");
+  const migrationUrl = env.DIRECT_URL?.trim();
+  if (!runtimeUrl) {
+    throw new Error("[Startup] DATABASE_URL is required in staging");
   }
 
   const runtime = parseSupabaseDatabaseTarget(runtimeUrl, "DATABASE_URL");
-  const direct = parseSupabaseDatabaseTarget(directUrl, "DIRECT_URL");
 
   if (runtime.mode !== "transaction-pooler" || runtime.port !== 6543) {
     throw new Error("[Startup] staging DATABASE_URL must use the transaction pooler on port 6543");
   }
-  if (direct.mode !== "direct" || direct.port !== 5432) {
-    throw new Error("[Startup] staging DIRECT_URL must use the direct endpoint on port 5432");
-  }
-  if (runtime.projectRef !== expectedRef || direct.projectRef !== expectedRef) {
+  if (runtime.projectRef !== expectedRef) {
     throw new Error("[Startup] staging database target does not match STAGING_SUPABASE_PROJECT_REF");
   }
-  if (
-    runtime.projectRef === PRODUCTION_SUPABASE_PROJECT_REF ||
-    direct.projectRef === PRODUCTION_SUPABASE_PROJECT_REF
-  ) {
+  if (runtime.projectRef === PRODUCTION_SUPABASE_PROJECT_REF) {
     throw new Error("[Startup] staging database target matches production");
-  }
-  if (runtime.database !== direct.database) {
-    throw new Error("[Startup] staging runtime and direct URLs select different databases");
   }
   if (new URL(runtimeUrl).searchParams.get("pgbouncer") !== "true") {
     throw new Error("[Startup] staging DATABASE_URL must include pgbouncer=true");
   }
-  if (
-    new URL(runtimeUrl).searchParams.get("sslmode") !== "require" ||
-    new URL(directUrl).searchParams.get("sslmode") !== "require"
-  ) {
-    throw new Error("[Startup] staging database URLs must include sslmode=require");
+  if (new URL(runtimeUrl).searchParams.get("sslmode") !== "require") {
+    throw new Error("[Startup] staging DATABASE_URL must include sslmode=require");
+  }
+
+  if (migrationUrl) {
+    const migration = assertSupabaseMigrationTransport(migrationUrl, expectedRef, "DIRECT_URL");
+    if (migration.database !== runtime.database) {
+      throw new Error("[Startup] staging runtime and migration URLs select different databases");
+    }
   }
 
   if (env.SUPABASE_URL?.trim()) {

@@ -3,6 +3,7 @@
   "projectRef": "replace-with-staging-project-ref",
   "database": "postgres",
   "databaseHost": "db.replace-with-staging-project-ref.supabase.co",
+  "migrationTransport": "direct",
   "createdAtUtc": "2026-08-11T00:00:00Z",
   "retentionUntilUtc": "2026-08-18T00:00:00Z",
   "method": "logical-pg-dump",

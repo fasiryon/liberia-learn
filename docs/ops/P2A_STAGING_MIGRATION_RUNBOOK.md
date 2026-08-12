@@ -24,8 +24,11 @@ Production execution: Prohibited
    `current_database()`, `current_user`, `inet_server_addr()`, and server
    version. Stop if the endpoint, project, or database name could be
    production.
-3. Use a direct PostgreSQL connection for DDL. Do not use the pooled port
-   6543 connection for migration execution.
+3. Prefer the Supabase direct PostgreSQL endpoint for migrations, `pg_dump`,
+   `pg_restore`, and native PostgreSQL tooling. When the operator environment
+   cannot reach the project's IPv6 direct endpoint, the approved fallback is
+   Supavisor session mode on port 5432. Transaction mode on port 6543 remains
+   prohibited for migration/native DDL operations.
 4. Confirm there are no provenance writers in the deployed application.
    P2-A Step 1 contains no writer implementation, feature flag, generation
    change, approval change, reader change, or backfill.
@@ -61,9 +64,10 @@ Set the staging URLs and evidence paths only in the current PowerShell process.
 Do not print them or load ignored production environment files:
 
 ```powershell
-$env:P2A_STAGING_DATABASE_URL = '<approved direct staging URL>'
+$env:P2A_STAGING_DATABASE_URL = '<approved direct or port-5432 session URL>'
 $env:DIRECT_URL = $env:P2A_STAGING_DATABASE_URL
 $env:DATABASE_URL = '<approved pooled staging runtime URL>'
+$env:P2A_DIRECT_ENDPOINT_UNREACHABLE = 'true' # session fallback only
 $env:P2A_STAGING_PROJECT_REF = '<approved staging project reference>'
 $env:P2A_STAGING_APP_URL = '<stable staging application URL>'
 $env:P2A_STAGING_DEPLOYMENT_ENV_FILE = '<secure Vercel staging environment pull>'
@@ -71,6 +75,12 @@ $env:P2A_BACKUP_EVIDENCE_PATH = '<verified backup evidence JSON>'
 $env:P2A_PROVENANCE_WRITERS_DISABLED = 'true'
 npm run p2a:staging:preflight
 ```
+
+This staging run uses the fallback because the direct endpoint is unavailable
+from the current Docker/operator environment: the Supabase direct host resolves
+IPv6-only, so the approved Supavisor session-mode IPv4 path on port 5432 is
+selected. The preflight reports `session-pooler` and proves SSL, staging project
+routing, and session persistence. It rejects port 6543 for migration use.
 
 Record and review the target identity:
 

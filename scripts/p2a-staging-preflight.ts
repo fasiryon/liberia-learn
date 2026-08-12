@@ -4,6 +4,7 @@ import { existsSync, readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import {
   PRODUCTION_SUPABASE_PROJECT_REF,
+  assertSupabaseMigrationTransport,
   parseSupabaseDatabaseTarget,
   parseSupabaseProjectUrl,
   type SanitizedDatabaseTarget,
@@ -50,6 +51,7 @@ type BackupEvidence = {
   projectRef: string;
   database: string;
   databaseHost: string;
+  migrationTransport: "direct" | "session-pooler";
   createdAtUtc: string;
   retentionUntilUtc: string;
   method: "supabase-daily-backup" | "supabase-pitr" | "logical-pg-dump";
@@ -130,26 +132,19 @@ function assertDeploymentEnv(path: string, projectRef: string): void {
     requiredEnv("DATABASE_URL", deployed),
     "deployed DATABASE_URL"
   );
-  const direct = parseSupabaseDatabaseTarget(
-    requiredEnv("DIRECT_URL", deployed),
-    "deployed DIRECT_URL"
-  );
   const declaredRef = requiredEnv("STAGING_SUPABASE_PROJECT_REF", deployed).toLowerCase();
 
-  if (declaredRef !== projectRef || runtime.projectRef !== projectRef || direct.projectRef !== projectRef) {
+  if (declaredRef !== projectRef || runtime.projectRef !== projectRef) {
     fail("deployed staging environment selects a different project identifier");
   }
   if (runtime.mode !== "transaction-pooler" || runtime.port !== 6543) {
     fail("deployed DATABASE_URL is not the staging transaction pooler on port 6543");
   }
-  if (direct.mode !== "direct" || direct.port !== 5432) {
-    fail("deployed DIRECT_URL is not the staging direct endpoint on port 5432");
+  if (new URL(deployed.DATABASE_URL).searchParams.get("sslmode") !== "require") {
+    fail("deployed staging DATABASE_URL must include sslmode=require");
   }
-  if (
-    new URL(deployed.DATABASE_URL).searchParams.get("sslmode") !== "require" ||
-    new URL(deployed.DIRECT_URL).searchParams.get("sslmode") !== "require"
-  ) {
-    fail("deployed staging database URLs must include sslmode=require");
+  if (deployed.DIRECT_URL || deployed.P2A_STAGING_DATABASE_URL) {
+    fail("migration-only database URLs must not be deployed to the staging application");
   }
   if (deployed.SUPABASE_URL) {
     if (parseSupabaseProjectUrl(deployed.SUPABASE_URL, "deployed SUPABASE_URL") !== projectRef) {
@@ -168,7 +163,7 @@ function assertDeploymentEnv(path: string, projectRef: string): void {
   }
 }
 
-function assertBackupEvidence(path: string, projectRef: string, database: string): void {
+function assertBackupEvidence(path: string, projectRef: string, migration: SanitizedDatabaseTarget): void {
   if (!existsSync(path)) fail("P2A_BACKUP_EVIDENCE_PATH does not exist");
   let evidence: BackupEvidence;
   try {
@@ -179,9 +174,12 @@ function assertBackupEvidence(path: string, projectRef: string, database: string
 
   if (evidence.environment !== "staging") fail("backup evidence is not labeled staging");
   if (evidence.projectRef.toLowerCase() !== projectRef) fail("backup evidence project differs from staging");
-  if (evidence.database !== database) fail("backup evidence database differs from staging");
-  if (evidence.databaseHost !== `db.${projectRef}.supabase.co`) {
+  if (evidence.database !== migration.database) fail("backup evidence database differs from staging");
+  if (evidence.databaseHost !== migration.host) {
     fail("backup evidence host differs from staging");
+  }
+  if (evidence.migrationTransport !== migration.mode) {
+    fail("backup evidence migration transport differs from staging");
   }
   if (!evidence.owner?.trim() || !evidence.evidenceLocation?.trim()) {
     fail("backup evidence owner or evidence location is missing");
@@ -247,10 +245,22 @@ export function validateTopology(env: EnvironmentValues = process.env): Topology
     fail("DIRECT_URL must exactly equal P2A_STAGING_DATABASE_URL in the migration session");
   }
 
-  const migration = parseSupabaseDatabaseTarget(migrationUrl, "P2A_STAGING_DATABASE_URL");
+  let migration: SanitizedDatabaseTarget;
+  try {
+    migration = assertSupabaseMigrationTransport(
+      migrationUrl,
+      projectRef,
+      "P2A_STAGING_DATABASE_URL"
+    );
+  } catch (error) {
+    fail(error instanceof Error ? error.message : String(error));
+  }
   const runtime = parseSupabaseDatabaseTarget(runtimeUrl, "DATABASE_URL");
-  if (migration.mode !== "direct" || migration.port !== 5432) {
-    fail("P2A_STAGING_DATABASE_URL must use db.<project>.supabase.co:5432, not a pooler");
+  if (
+    migration.mode === "session-pooler" &&
+    requiredEnv("P2A_DIRECT_ENDPOINT_UNREACHABLE", env).toLowerCase() !== "true"
+  ) {
+    fail("session-pooler migration fallback requires P2A_DIRECT_ENDPOINT_UNREACHABLE=true");
   }
   if (runtime.mode !== "transaction-pooler" || runtime.port !== 6543) {
     fail("DATABASE_URL must use the transaction pooler on port 6543");
@@ -279,7 +289,7 @@ export function validateTopology(env: EnvironmentValues = process.env): Topology
   assertDeploymentEnv(deploymentEnvPath, projectRef);
 
   const backupEvidencePath = resolve(requiredEnv("P2A_BACKUP_EVIDENCE_PATH", env));
-  assertBackupEvidence(backupEvidencePath, projectRef, migration.database);
+  assertBackupEvidence(backupEvidencePath, projectRef, migration);
 
   if (requiredEnv("P2A_PROVENANCE_WRITERS_DISABLED", env).toLowerCase() !== "true") {
     fail("P2A_PROVENANCE_WRITERS_DISABLED must be true");
@@ -383,25 +393,43 @@ function assertClientTooling(): PostgresClientVersions {
 }
 
 function runPsql(envName: "P2A_STAGING_DATABASE_URL" | "DATABASE_URL", sql: string): string {
-  const shell = 'url="$(printenv "$1")"; shift; exec psql "$url" -X -v ON_ERROR_STOP=1 -At -F "|" "$@"';
+  const rawUrl = process.env[envName];
+  if (!rawUrl) fail(`${envName} is missing`);
+  const parsed = new URL(rawUrl);
+  const userInfo = decodeURIComponent(parsed.username);
+  const password = decodeURIComponent(parsed.password);
+  const clientEnv = {
+    ...process.env,
+    PGHOST: parsed.hostname,
+    PGPORT: parsed.port || "5432",
+    PGUSER: userInfo,
+    PGPASSWORD: password,
+    PGDATABASE: decodeURIComponent(parsed.pathname.replace(/^\//, "")),
+    PGSSLMODE: "require",
+  };
   const result = spawnSync(
     "docker",
     [
       "run",
       "--rm",
       "-i",
-      "-e",
-      envName,
+      "-e", "PGHOST",
+      "-e", "PGPORT",
+      "-e", "PGUSER",
+      "-e", "PGPASSWORD",
+      "-e", "PGDATABASE",
+      "-e", "PGSSLMODE",
       POSTGRES_CLIENT_IMAGE,
-      "sh",
-      "-c",
-      shell,
-      "p2a-psql",
-      envName,
+      "psql",
+      "-X",
+      "-v", "ON_ERROR_STOP=1",
+      "-At",
+      "-q",
+      "-F", "|",
       "-c",
       sql,
     ],
-    { encoding: "utf8", env: process.env }
+    { encoding: "utf8", env: clientEnv }
   );
   if (result.status !== 0) fail(`${envName} connectivity or SQL assertion failed`);
   return result.stdout.trim();
@@ -413,17 +441,37 @@ async function assertLiveEnvironment(topology: Topology): Promise<void> {
            current_setting('server_version'),
            COALESCE((SELECT ssl::text FROM pg_stat_ssl WHERE pid = pg_backend_pid()), 'false');
   `;
-  const directIdentity = runPsql("P2A_STAGING_DATABASE_URL", identitySql);
+  const migrationIdentity = runPsql("P2A_STAGING_DATABASE_URL", identitySql);
   const runtimeIdentity = runPsql("DATABASE_URL", identitySql);
-  const directParts = directIdentity.split("|");
+  const migrationConninfo = runPsql("P2A_STAGING_DATABASE_URL", "\\conninfo");
+  const runtimeConninfo = runPsql("DATABASE_URL", "\\conninfo");
+  const migrationParts = migrationIdentity.split("|");
   const runtimeParts = runtimeIdentity.split("|");
-  const directDatabase = directParts[0];
+  const migrationDatabase = migrationParts[0];
   const runtimeDatabase = runtimeParts[0];
-  if (directDatabase !== topology.migration.database || runtimeDatabase !== topology.runtime.database) {
+  if (migrationDatabase !== topology.migration.database || runtimeDatabase !== topology.runtime.database) {
     fail("live database identity differs from the sanitized URL target");
   }
-  if (directParts[4] !== "true" || runtimeParts[4] !== "true") {
-    fail("direct or runtime database connection is not using SSL");
+  if (!/SSL connection \(protocol: TLS/i.test(migrationConninfo)) {
+    fail("migration database client connection is not using SSL");
+  }
+  if (!/SSL connection \(protocol: TLS/i.test(runtimeConninfo)) {
+    fail("runtime database client connection is not using SSL");
+  }
+
+  if (topology.migration.mode === "session-pooler") {
+    const sessionProbe = runPsql(
+      "P2A_STAGING_DATABASE_URL",
+      `BEGIN;
+       CREATE TEMP TABLE p2a_session_transport_probe(value integer) ON COMMIT PRESERVE ROWS;
+       INSERT INTO p2a_session_transport_probe VALUES (1);
+       COMMIT;
+       SELECT count(*) FROM p2a_session_transport_probe;
+       DROP TABLE p2a_session_transport_probe;`
+    );
+    if (sessionProbe.split(/\r?\n/).at(-1) !== "1") {
+      fail("Supavisor session-mode persistence probe failed");
+    }
   }
 
   const unfinishedMigrations = runPsql(
@@ -486,7 +534,10 @@ async function assertLiveEnvironment(topology: Topology): Promise<void> {
   const health = (await response.json()) as { checks?: { database?: string } };
   if (health.checks?.database !== "ok") fail("staging application database health is not ok");
 
-  console.log(`Direct database identity: ${directIdentity}`);
+  console.log(`Migration database identity: ${migrationIdentity}`);
+  console.log(`Migration transport mode: ${topology.migration.mode}`);
+  console.log("Migration client TLS: PASS");
+  console.log("Runtime client TLS: PASS");
   console.log(`Runtime database identity: ${runtimeIdentity}`);
   console.log("P2-A migration rows before execution: 0");
   console.log("Unfinished Prisma migration rows: 0");
@@ -510,6 +561,7 @@ export async function main(): Promise<void> {
   console.log(
     `Migration target: ${topology.migration.host}:${topology.migration.port}/${topology.migration.database}`
   );
+  console.log(`Migration transport mode: ${topology.migration.mode}`);
   console.log(
     `Runtime target: ${topology.runtime.host}:${topology.runtime.port}/${topology.runtime.database}`
   );

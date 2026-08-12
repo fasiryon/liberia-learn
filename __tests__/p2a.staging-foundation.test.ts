@@ -3,6 +3,7 @@ import { resolve } from "node:path";
 import { describe, expect, it } from "vitest";
 import {
   PRODUCTION_SUPABASE_PROJECT_REF,
+  assertSupabaseMigrationTransport,
   assertStagingDatabaseIsolation,
   parseSupabaseDatabaseTarget,
   parseSupabaseProjectUrl,
@@ -19,6 +20,7 @@ import {
 const stagingRef = "stagingref1234567890";
 const directUrl = `postgresql://postgres:secret@db.${stagingRef}.supabase.co:5432/postgres?sslmode=require`;
 const runtimeUrl = `postgresql://postgres.${stagingRef}:secret@aws-1-us-east-2.pooler.supabase.com:6543/postgres?pgbouncer=true&sslmode=require`;
+const sessionUrl = `postgresql://postgres.${stagingRef}:secret@aws-1-us-east-2.pooler.supabase.com:5432/postgres?sslmode=require`;
 
 describe("P2-A staging database identity", () => {
   it("extracts the staging project from direct and pooled URLs", () => {
@@ -51,6 +53,45 @@ describe("P2-A staging database identity", () => {
     ).not.toThrow();
   });
 
+  it("accepts the guarded port-5432 session-mode migration fallback", () => {
+    expect(assertSupabaseMigrationTransport(directUrl, stagingRef)).toMatchObject({
+      mode: "direct",
+      port: 5432,
+      projectRef: stagingRef,
+    });
+    expect(assertSupabaseMigrationTransport(sessionUrl, stagingRef)).toMatchObject({
+      mode: "session-pooler",
+      port: 5432,
+      projectRef: stagingRef,
+    });
+  });
+
+  it("rejects transaction mode for migration transport", () => {
+    expect(() => assertSupabaseMigrationTransport(runtimeUrl, stagingRef)).toThrow(
+      /transaction mode is prohibited/
+    );
+  });
+
+  it("rejects migration project mismatch and production identity", () => {
+    expect(() => assertSupabaseMigrationTransport(sessionUrl, "differentref123456789")).toThrow(
+      /does not match the approved staging project/
+    );
+    const productionSession = `postgresql://postgres.${PRODUCTION_SUPABASE_PROJECT_REF}:secret@aws-1-us-east-2.pooler.supabase.com:5432/postgres?sslmode=require`;
+    expect(() =>
+      assertSupabaseMigrationTransport(productionSession, PRODUCTION_SUPABASE_PROJECT_REF)
+    ).toThrow(/expected project matches production/);
+  });
+
+  it("rejects incorrect pooler routing and missing migration SSL", () => {
+    const wrongRouting = `postgresql://wrong.${stagingRef}:secret@aws-1-us-east-2.pooler.supabase.com:5432/postgres?sslmode=require`;
+    expect(() => assertSupabaseMigrationTransport(wrongRouting, stagingRef)).toThrow(
+      /must route as postgres\.<project-ref>/
+    );
+    expect(() =>
+      assertSupabaseMigrationTransport(sessionUrl.replace("?sslmode=require", ""), stagingRef)
+    ).toThrow(/must include sslmode=require/);
+  });
+
   it("rejects the known production project in staging", () => {
     const productionDirect = `postgresql://postgres:secret@db.${PRODUCTION_SUPABASE_PROJECT_REF}.supabase.co:5432/postgres`;
     const productionRuntime = `postgresql://postgres.${PRODUCTION_SUPABASE_PROJECT_REF}:secret@aws-1-us-east-2.pooler.supabase.com:6543/postgres?pgbouncer=true&sslmode=require`;
@@ -65,7 +106,7 @@ describe("P2-A staging database identity", () => {
     ).toThrow(/matches production/);
   });
 
-  it("rejects a pooled endpoint used as staging DIRECT_URL", () => {
+  it("rejects transaction pooling used as staging DIRECT_URL", () => {
     expect(() =>
       assertStagingDatabaseIsolation({
         NODE_ENV: "production",
@@ -74,7 +115,18 @@ describe("P2-A staging database identity", () => {
         DATABASE_URL: runtimeUrl,
         DIRECT_URL: runtimeUrl,
       })
-    ).toThrow(/direct endpoint on port 5432/);
+    ).toThrow(/transaction mode is prohibited/);
+  });
+
+  it("does not require migration credentials in the deployed application", () => {
+    expect(() =>
+      assertStagingDatabaseIsolation({
+        NODE_ENV: "production",
+        VERCEL_ENV: "preview",
+        STAGING_SUPABASE_PROJECT_REF: stagingRef,
+        DATABASE_URL: runtimeUrl,
+      })
+    ).not.toThrow();
   });
 });
 
@@ -152,8 +204,10 @@ describe("P2-A staging foundation artifacts", () => {
     const wrapper = readFileSync(resolve("scripts", "p2a-psql.ps1"), "utf8");
     expect(wrapper).toContain('postgres:17-alpine');
     expect(wrapper).not.toContain('postgres:16-alpine');
-    expect(wrapper).toContain('"-e", $UrlVariable');
-    expect(wrapper).toContain('printenv "$1"');
+    expect(wrapper).toContain('PGPASSWORD = [Uri]::UnescapeDataString($userInfo[1])');
+    expect(wrapper).toContain('$dockerArgs += @("-e", $name)');
+    expect(wrapper).toContain('[Environment]::SetEnvironmentVariable($name, $previousEnvironment[$name])');
+    expect(wrapper).not.toContain('"PGPASSWORD=$');
     expect(wrapper).not.toContain("docker @dockerArgs $urlValue");
   });
 
@@ -171,6 +225,9 @@ describe("P2-A staging foundation artifacts", () => {
     expect(backupRestore).toContain('$expectedMigrationCount = $canonicalMigrations.Count');
     expect(backupRestore).toContain("Disposable PostgreSQL 17 restore: PASS");
     expect(backupRestore).toContain("artifactSha256");
+    expect(backupRestore).toContain('migrationTransport = $migrationTransport');
+    expect(backupRestore).toContain("P2A_DIRECT_ENDPOINT_UNREACHABLE");
+    expect(backupRestore).toContain("SSL connection \\(protocol: TLS");
   });
 
   it("keeps clean-replay bypasses explicit and disposable", () => {
@@ -197,6 +254,7 @@ describe("P2-A staging foundation artifacts", () => {
       "P2A_PROVENANCE_WRITERS_DISABLED",
       "PRODUCTION_SUPABASE_PROJECT_REF",
       "pg_stat_activity",
+      "\\conninfo",
       "CurriculumProvenance",
     ]) {
       expect(guard).toContain(requirement);

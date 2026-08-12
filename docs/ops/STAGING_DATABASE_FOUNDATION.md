@@ -70,7 +70,7 @@ Use this topology:
 | Purpose | Endpoint | Secret location |
 | --- | --- | --- |
 | Vercel runtime | Supavisor transaction mode, port 6543, `pgbouncer=true` | Vercel staging or Preview environment only |
-| Prisma migration and native DDL | Direct `db.<staging-ref>.supabase.co`, port 5432 | Operator secret store and process environment only |
+| Prisma migration and native DDL | Prefer direct `db.<staging-ref>.supabase.co:5432`; if IPv6-only and unreachable, Supavisor session mode `*.pooler.supabase.com:5432` | Operator secret store and process environment only |
 | Supabase server API and Storage | Staging project URL plus staging service-role key | Vercel staging server environment only |
 | Supabase public API, if used | Staging project URL plus staging anon key | Vercel staging client-safe environment only |
 
@@ -102,8 +102,9 @@ commit populated values.
 | `STAGING_SUPABASE_PROJECT_REF` | deployed app | server-only, non-secret | Required; differs from production |
 | `P2A_STAGING_PROJECT_REF` | migration operator | non-secret | Required; equals staging project |
 | `DATABASE_URL` | app runtime and Gate 0 runtime probe | server-only secret | Port 6543 transaction pooler |
-| `DIRECT_URL` | Prisma migration | migration-only secret | Direct staging endpoint on 5432 |
+| `DIRECT_URL` | Prisma migration | migration-only secret | Direct staging endpoint on 5432, or approved session-mode 5432 fallback |
 | `P2A_STAGING_DATABASE_URL` | P2-A native DDL and verification | migration-only secret | Exactly equals `DIRECT_URL` in the migration session |
+| `P2A_DIRECT_ENDPOINT_UNREACHABLE` | migration operator | non-secret assertion | Must be `true` only when selecting the session-mode fallback |
 | `SUPABASE_URL` | server Storage/API | server-only, non-secret URL | Staging project only |
 | `SUPABASE_SERVICE_ROLE_KEY` | server Storage/API | server-only secret | Staging key only; never client-visible |
 | `SUPABASE_ANON_KEY` | server fallback | server-only secret | Staging key only |
@@ -243,7 +244,8 @@ PostgreSQL 17 workflow:
 
 ```powershell
 $env:P2A_STAGING_PROJECT_REF = 'yonpfzjczoffhrgibxkz'
-$env:P2A_STAGING_DATABASE_URL = '<direct staging URL from the secret store>'
+$env:P2A_STAGING_DATABASE_URL = '<direct or approved port-5432 session staging URL>'
+$env:P2A_DIRECT_ENDPOINT_UNREACHABLE = 'true' # session fallback only
 .\scripts\p2a-staging-backup-restore.ps1 `
   -Owner '<database owner>' `
   -EvidenceLocation '<sanitized ticket or provider record>'
@@ -323,15 +325,16 @@ npm run p2a:staging:preflight
 - a staging URL, project reference, deployment environment pull, application
   URL, backup evidence, or writer-disabled assertion is missing;
 - staging matches production;
-- DDL uses a pooler or runtime does not use transaction mode;
-- runtime, direct, Supabase API, deployment, or backup targets disagree;
+- DDL uses transaction-mode port 6543, an unapproved pooler route, or the
+  runtime does not use transaction mode;
+- runtime, migration, Supabase API, deployment, or backup targets disagree;
 - Docker or the pinned PostgreSQL client is unavailable;
 - the branch, clean-worktree rule, reviewed ancestor, migration files, or
   migration hashes differ;
 - application provenance writer references exist;
 - any P2-A migration or provenance table already exists before Migration A;
 - a transaction older than 15 minutes needs owner review;
-- direct or pooled connectivity fails, SSL identity cannot be recorded, or the
+- migration or runtime connectivity fails, SSL identity cannot be recorded, or the
   deployed application database health is not `ok`.
 
 The guard outputs project reference, hosts, ports, database name, identity,
@@ -362,7 +365,8 @@ backfill.
 All items must exist before a new migration authorization:
 
 - dedicated staging project reference and proof it differs from production;
-- direct staging connectivity on the project endpoint, port 5432, with SSL;
+- migration connectivity using direct port 5432 or the approved session-mode
+  port-5432 fallback, with SSL and exact project routing;
 - pooled runtime connectivity on transaction mode port 6543;
 - stable staging app with database health `ok`;
 - secure deployed staging environment pull matching the staging project;
@@ -387,9 +391,10 @@ git rev-parse HEAD
 # displaying them. Do not source .env, .env.local, or a production snapshot.
 $env:P2A_STAGING_PROJECT_REF = '<non-secret staging project ref>'
 $env:STAGING_SUPABASE_PROJECT_REF = $env:P2A_STAGING_PROJECT_REF
-$env:P2A_STAGING_DATABASE_URL = '<approved direct staging URL>'
+$env:P2A_STAGING_DATABASE_URL = '<approved direct or port-5432 session URL>'
 $env:DIRECT_URL = $env:P2A_STAGING_DATABASE_URL
 $env:DATABASE_URL = '<approved pooled staging runtime URL>'
+$env:P2A_DIRECT_ENDPOINT_UNREACHABLE = 'true' # session fallback only
 $env:P2A_STAGING_APP_URL = '<stable HTTPS staging URL>'
 $env:P2A_STAGING_DEPLOYMENT_ENV_FILE = '<secure pulled staging env path>'
 $env:P2A_BACKUP_EVIDENCE_PATH = '<signed staging backup evidence JSON path>'
