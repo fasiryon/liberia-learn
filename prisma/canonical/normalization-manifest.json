@@ -1,0 +1,61 @@
+{
+    "schemaVersion":  1,
+    "sourceProjectRef":  "bnphuinpvgpmebcsvmsp",
+    "sourceServerVersion":  "17.6",
+    "sourceCaptureTimestamp":  "2026-08-11T20:53:22.3980538+00:00",
+    "sourceArtifactSha256":  "377e2145a9d4a3dc1fc32e0fc78f4727ce1cd941241a464327dd136f2e373866",
+    "canonicalBaselineMigration":  "20260728_000003_canonical_production_state_baseline",
+    "canonicalBaselinePath":  "prisma/canonical/migrations/20260728_000003_canonical_production_state_baseline/migration.sql",
+    "canonicalBaselineSha256":  "53a20e408463eb7ead872d820c137b2c0420bf969229c776011d573ed16a73f8",
+    "canonicalBaselineBytes":  326632,
+    "includedPgDumpObjectBlocks":  1138,
+    "excludedPgDumpObjects":  [
+                                  {
+                                      "name":  "public",
+                                      "type":  "SCHEMA",
+                                      "schema":  "-",
+                                      "reason":  "Replaced by deterministic CREATE SCHEMA IF NOT EXISTS public"
+                                  },
+                                  {
+                                      "name":  "_prisma_migrations",
+                                      "type":  "TABLE",
+                                      "schema":  "public",
+                                      "reason":  "Prisma owns its migration ledger in each environment"
+                                  },
+                                  {
+                                      "name":  "_prisma_migrations _prisma_migrations_pkey",
+                                      "type":  "CONSTRAINT",
+                                      "schema":  "public",
+                                      "reason":  "Constraint belongs to Prisma-owned migration ledger"
+                                  }
+                              ],
+    "requiredApplicationExtensions":  [
+                                          {
+                                              "name":  "vector",
+                                              "schema":  "public",
+                                              "reason":  "CurriculumContent and RagChunk vector columns plus IVFFLAT indexes"
+                                          }
+                                      ],
+    "providerManagedExtensionsNotReplayed":  [
+                                                 "pg_stat_statements",
+                                                 "supabase_vault"
+                                             ],
+    "installedButNotRequiredByCapturedPublicDdl":  [
+                                                       "pgcrypto",
+                                                       "uuid-ossp"
+                                                   ],
+    "approvedNormalizations":  [
+                                   "Removed randomized pg_dump restrict and unrestrict tokens",
+                                   "Removed dump timestamps and non-deterministic header/footer text",
+                                   "Removed owner and privilege statements at capture time",
+                                   "Replaced CREATE SCHEMA public with CREATE SCHEMA IF NOT EXISTS public",
+                                   "Excluded the Prisma-owned _prisma_migrations table and primary key",
+                                   "Added the required vector extension declaration before public vector objects",
+                                   "Canonical catalog uses logical visible-column order because schema-only restore compacts dropped-column attribute-number gaps",
+                                   "Wrapped application-owned schema creation in a transaction"
+                               ],
+    "containsProductionRows":  false,
+    "containsCredentials":  false,
+    "incorporatesPrivilegedIdentityHardening":  false,
+    "incorporatesP2A":  false
+}

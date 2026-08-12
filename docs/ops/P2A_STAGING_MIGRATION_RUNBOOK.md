@@ -1,8 +1,18 @@
 # P2-A Staging Migration Execution Runbook
 
-Status: Prepared, execution blocked on dedicated staging foundation evidence
+Status: BLOCKED pending canonical-staging Gate 0 and a reviewed runbook rewrite
 Scope: Staging database only
 Production execution: Prohibited
+
+> STOP: Sections 2 through 6 below preserve the previously reviewed P2-A DDL
+> sequence, but their Git checkout and `prisma migrate deploy` commands target
+> the legacy migration root. That root is not replayable and must not be used
+> on canonical staging. First complete the separately authorized canonical
+> staging bootstrap, reference seed, synthetic fixtures, PostgreSQL 17 backup
+> and restore proof, and Gate 0. Then rewrite this runbook to deploy byte-exact
+> copies of A/B1/B2/C from `prisma/canonical/migrations` and obtain a separate
+> founder/advisor authorization. No command in sections 2 through 6 is
+> currently authorized for execution.
 
 ## 1. Preconditions
 

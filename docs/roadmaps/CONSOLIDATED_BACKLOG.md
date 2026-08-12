@@ -46,6 +46,17 @@ When work changes status:
 
 ## National rollout sequence
 
+### P0 security interruption
+
+- **LiberiaLearn Production RLS Exposure Audit and Safe Remediation: VALID,
+  P0 (2026-08-11).** Supabase's read-only inventory reported RLS disabled on
+  197 production public-schema tables. This is not proof that all tables are
+  publicly readable, but requires immediate grant, Data API, access-path, and
+  policy discovery before any production change. No RLS mutation is authorized
+  in the staging-foundation sprint. Acceptance criteria and the staged
+  rollout/rollback contract are tracked in
+  `docs/security/PRODUCTION_RLS_EXPOSURE_AUDIT.md`.
+
 All 19 sprints below remain officially `PENDING`. Execute them in numerical
 order and do not skip the first pending sprint.
 

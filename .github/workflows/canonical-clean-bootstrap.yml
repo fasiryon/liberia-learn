@@ -1,0 +1,46 @@
+name: Canonical clean bootstrap
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - "prisma/migrations/**"
+      - "prisma/canonical/**"
+      - "prisma/legacy-migration-manifest.json"
+      - "scripts/verify-pre-p2a-canonical-baseline.ps1"
+      - "scripts/pre-p2a-canonical-catalog.sql"
+      - "scripts/pre-p2a-reference-seed-evidence.sql"
+      - "__tests__/pre-p2a.canonical-baseline.test.ts"
+      - ".github/workflows/canonical-clean-bootstrap.yml"
+  push:
+    branches: [main]
+    paths:
+      - "prisma/migrations/**"
+      - "prisma/canonical/**"
+      - "prisma/legacy-migration-manifest.json"
+
+permissions:
+  contents: read
+
+jobs:
+  clean-bootstrap-pg17:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - run: docker pull pgvector/pgvector:0.8.0-pg17
+      - run: npx vitest run __tests__/pre-p2a.canonical-baseline.test.ts
+      - name: Verify clean PostgreSQL 17 bootstrap
+        shell: pwsh
+        run: ./scripts/verify-pre-p2a-canonical-baseline.ps1
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: canonical-clean-bootstrap-evidence
+          path: artifacts/pre-p2a-canonical/verification/
+          if-no-files-found: warn

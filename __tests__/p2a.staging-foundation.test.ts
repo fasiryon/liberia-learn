@@ -7,7 +7,14 @@ import {
   parseSupabaseDatabaseTarget,
   parseSupabaseProjectUrl,
 } from "@/lib/database-target";
-import { APPROVED_MIGRATIONS } from "@/scripts/p2a-staging-preflight";
+import {
+  APPROVED_CANONICAL_MIGRATIONS,
+  APPROVED_MIGRATIONS,
+  APPROVED_STAGING_SUPABASE_PROJECT_REF,
+  POSTGRES_CLIENT_IMAGE,
+  REQUIRED_POSTGRES_CLIENT_MAJOR,
+  assertPostgresClientVersions,
+} from "@/scripts/p2a-staging-preflight";
 
 const stagingRef = "stagingref1234567890";
 const directUrl = `postgresql://postgres:secret@db.${stagingRef}.supabase.co:5432/postgres?sslmode=require`;
@@ -72,6 +79,33 @@ describe("P2-A staging database identity", () => {
 });
 
 describe("P2-A staging foundation artifacts", () => {
+  it("pins the founder-approved staging project independently from production", () => {
+    expect(APPROVED_STAGING_SUPABASE_PROJECT_REF).toBe("yonpfzjczoffhrgibxkz");
+    expect(APPROVED_STAGING_SUPABASE_PROJECT_REF).not.toBe(PRODUCTION_SUPABASE_PROJECT_REF);
+  });
+
+  it("requires PostgreSQL 17 psql, pg_dump, and pg_restore clients", () => {
+    expect(POSTGRES_CLIENT_IMAGE).toBe("postgres:17-alpine");
+    expect(REQUIRED_POSTGRES_CLIENT_MAJOR).toBe(17);
+    expect(() =>
+      assertPostgresClientVersions({
+        psql: "psql (PostgreSQL) 17.6",
+        pgDump: "pg_dump (PostgreSQL) 17.6",
+        pgRestore: "pg_restore (PostgreSQL) 17.6",
+      })
+    ).not.toThrow();
+  });
+
+  it("rejects an incompatible PostgreSQL client major version", () => {
+    expect(() =>
+      assertPostgresClientVersions({
+        psql: "psql (PostgreSQL) 17.6",
+        pgDump: "pg_dump (PostgreSQL) 16.14",
+        pgRestore: "pg_restore (PostgreSQL) 17.6",
+      })
+    ).toThrow(/pgDump major version 16 is incompatible; required 17/);
+  });
+
   it("pins all four reviewed migration hashes", () => {
     expect(APPROVED_MIGRATIONS).toHaveLength(4);
     for (const migration of APPROVED_MIGRATIONS) {
@@ -81,6 +115,19 @@ describe("P2-A staging foundation artifacts", () => {
       );
       expect(sql.length).toBeGreaterThan(0);
     }
+  });
+
+  it("pins the exact two-migration canonical pre-P2-A root", () => {
+    expect(APPROVED_CANONICAL_MIGRATIONS).toEqual([
+      {
+        name: "20260728_000003_canonical_production_state_baseline",
+        sha256: "53A20E408463EB7EAD872D820C137B2C0420BF969229C776011D573ED16A73F8",
+      },
+      {
+        name: "20260803_000001_privileged_identity_hardening",
+        sha256: "1D313776B8E54CB4812425F5438CCFF4637B245CF4B74574489371FD2140B211",
+      },
+    ]);
   });
 
   it("keeps the environment template credential-free and production-free", () => {
@@ -103,9 +150,41 @@ describe("P2-A staging foundation artifacts", () => {
 
   it("passes database secrets to the Docker client by variable name", () => {
     const wrapper = readFileSync(resolve("scripts", "p2a-psql.ps1"), "utf8");
+    expect(wrapper).toContain('postgres:17-alpine');
+    expect(wrapper).not.toContain('postgres:16-alpine');
     expect(wrapper).toContain('"-e", $UrlVariable');
     expect(wrapper).toContain('printenv "$1"');
     expect(wrapper).not.toContain("docker @dockerArgs $urlValue");
+  });
+
+  it("keeps backup and restore tooling on the approved PG17 boundary", () => {
+    const backupRestore = readFileSync(
+      resolve("scripts", "p2a-staging-backup-restore.ps1"),
+      "utf8"
+    );
+    expect(backupRestore).toContain("yonpfzjczoffhrgibxkz");
+    expect(backupRestore).toContain("bnphuinpvgpmebcsvmsp");
+    expect(backupRestore).toContain("postgres:17-alpine");
+    expect(backupRestore).not.toContain("postgres:16-alpine");
+    expect(backupRestore).toContain("20260803_000001_privileged_identity_hardening");
+    expect(backupRestore).toContain("20260728_000003_canonical_production_state_baseline");
+    expect(backupRestore).toContain('$expectedMigrationCount = $canonicalMigrations.Count');
+    expect(backupRestore).toContain("Disposable PostgreSQL 17 restore: PASS");
+    expect(backupRestore).toContain("artifactSha256");
+  });
+
+  it("keeps clean-replay bypasses explicit and disposable", () => {
+    const diagnostic = readFileSync(
+      resolve("scripts", "diagnose-pre-p2a-clean-replay.ps1"),
+      "utf8"
+    );
+    expect(diagnostic).toContain("postgres:17-alpine");
+    expect(diagnostic).toContain("20260803_000001_privileged_identity_hardening");
+    expect(diagnostic).toContain("Assert-DisposablePath");
+    expect(diagnostic).toContain("DIAGNOSTIC_BYPASS");
+    expect(diagnostic).toContain("DIAGNOSTIC BYPASS ONLY");
+    expect(diagnostic).not.toContain("bnphuinpvgpmebcsvmsp");
+    expect(diagnostic).not.toContain("yonpfzjczoffhrgibxkz");
   });
 
   it("documents every Gate 0 fail-closed input", () => {

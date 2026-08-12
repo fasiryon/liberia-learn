@@ -32,7 +32,9 @@
     "load-test:peak": "k6 run load-tests/peak.js",
     "load-test:ai-burst": "k6 run load-tests/ai-burst.js",
     "security:break-glass": "tsx scripts/manage-privileged-break-glass.ts",
-    "p2a:staging:preflight": "tsx scripts/p2a-staging-preflight.ts"
+    "p2a:staging:preflight": "tsx scripts/p2a-staging-preflight.ts",
+    "p2a:canonical:verify": "powershell.exe -NoProfile -ExecutionPolicy Bypass -File scripts/verify-pre-p2a-canonical-baseline.ps1",
+    "test:p2a:canonical": "vitest run __tests__/pre-p2a.canonical-baseline.test.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.95.1",

@@ -48,6 +48,8 @@ test-*.log
 .env.preview
 .env.staging
 .env.p2a-staging
+artifacts/p2a-staging/
+artifacts/pre-p2a-canonical/
 
 # Vercel / local tooling
 .vercel

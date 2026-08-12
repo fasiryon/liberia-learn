@@ -1,0 +1,4691 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-08-11T00:00:00.000Z",
+  "cutover": {
+    "lastLegacyMigration": "20260728_000002_teaching_turn_sequence",
+    "canonicalBaselineMigration": "20260728_000003_canonical_production_state_baseline",
+    "productionProjectRef": "bnphuinpvgpmebcsvmsp",
+    "repositoryLegacyCount": 128,
+    "productionUniqueMigrationCount": 146
+  },
+  "legacyMigrations": [
+    {
+      "repositoryOrder": 1,
+      "migrationName": "20260213_222830_baseline_from_existing_db",
+      "repositoryPresent": true,
+      "path": "prisma/migrations/20260213_222830_baseline_from_existing_db/migration.sql",
+      "sha256": "1cd6acbe8bc38bc0f8a22bb123cd8c3f26699db6dcf77488d7b2c8341b8cafd0",
+      "fileBytes": 50256,
+      "encoding": "utf-16le-bom",
+      "gitBlobSha": "23c145411c04424629f75567e354ab52261d64af",
+      "production": {
+        "present": true,
+        "checksums": [
+          "80d8106e3ca15448bd2627e4bda3e3a7be9dfaf14b7c9abf99afdf73f27f7b64"
+        ],
+        "classification": {
+          "executed": false,
+          "resolvedAsApplied": true,
+          "rolledBackAttempts": 0,
+          "unfinishedAttempts": 0
+        },
+        "attempts": [
+          {
+            "startedAt": "2026-02-14 03:30:12.948176+00",
+            "finishedAt": "2026-02-14 03:30:12.948176+00",
+            "rolledBackAt": null,
+            "appliedStepsCount": 0,
+            "checksum": "80d8106e3ca15448bd2627e4bda3e3a7be9dfaf14b7c9abf99afdf73f27f7b64"
+          }
+        ]
+      }
+    },
+    {
+      "repositoryOrder": 2,
+      "migrationName": "20260220_180000_training_reporting",
+      "repositoryPresent": true,
+      "path": "prisma/migrations/20260220_180000_training_reporting/migration.sql",
+      "sha256": "7d96b7e257f1532e01275a43138fd04d91d32f0c9603d8021306f94e9f40feea",
+      "fileBytes": 2641,
+      "encoding": "utf-8-no-bom-or-ascii",
+      "gitBlobSha": "4663639cc91c64b1c8adf9cb4fd9cdfe385ca082",
+      "production": {
+        "present": true,
+        "checksums": [
+          "7d96b7e257f1532e01275a43138fd04d91d32f0c9603d8021306f94e9f40feea"
+        ],
+        "classification": {
+          "executed": false,
+          "resolvedAsApplied": true,
+          "rolledBackAttempts": 1,
+          "unfinishedAttempts": 0
+        },
+        "attempts": [
+          {
+            "startedAt": "2026-02-25 05:01:22.718642+00",
+            "finishedAt": null,
+            "rolledBackAt": "2026-02-25 05:05:42.507015+00",
+            "appliedStepsCount": 0,
+            "checksum": "7d96b7e257f1532e01275a43138fd04d91d32f0c9603d8021306f94e9f40feea"
+          },
+          {
+            "startedAt": "2026-02-25 05:05:42.711515+00",
+            "finishedAt": "2026-02-25 05:05:42.711515+00",
+            "rolledBackAt": null,
+            "appliedStepsCount": 0,
+            "checksum": "7d96b7e257f1532e01275a43138fd04d91d32f0c9603d8021306f94e9f40feea"
+          }
+        ]
+      }
+    },
+    {
+      "repositoryOrder": 3,
+      "migrationName": "20260220_220000_guardian_sms_metrics",
+      "repositoryPresent": true,
+      "path": "prisma/migrations/20260220_220000_guardian_sms_metrics/migration.sql",
+      "sha256": "5f0442a477b37bea45a4281e210b4b198ad8a4e3a5a0bd17052657914eff4542",
+      "fileBytes": 4306,
+      "encoding": "utf-8-no-bom-or-ascii",
+      "gitBlobSha": "df9d44a45fb6544428f0e253e7113a713dd5571b",
+      "production": {
+        "present": true,
+        "checksums": [
+          "5f0442a477b37bea45a4281e210b4b198ad8a4e3a5a0bd17052657914eff4542"
+        ],
+        "classification": {
+          "executed": true,
+          "resolvedAsApplied": false,
+          "rolledBackAttempts": 0,
+          "unfinishedAttempts": 0
+        },
+        "attempts": [
+          {
+            "startedAt": "2026-02-25 12:41:05.034332+00",
+            "finishedAt": "2026-02-25 12:41:05.615439+00",
+            "rolledBackAt": null,
+            "appliedStepsCount": 1,
+            "checksum": "5f0442a477b37bea45a4281e210b4b198ad8a4e3a5a0bd17052657914eff4542"
+          }
+        ]
+      }
+    },
+    {
+      "repositoryOrder": 4,
+      "migrationName": "20260223_000000_mastery_engine_foundation",
+      "repositoryPresent": true,
+      "path": "prisma/migrations/20260223_000000_mastery_engine_foundation/migration.sql",
+      "sha256": "bdbbfe4c67e959133a5195120e629d69c639d6c3fb4fd20ddc79da25239fe570",
+      "fileBytes": 5410,
+      "encoding": "utf-8-no-bom-or-ascii",
+      "gitBlobSha": "8d00b3ef005dcb64f46641c324bdb68d9bf60bef",
+      "production": {
+        "present": true,
+        "checksums": [
+          "bdbbfe4c67e959133a5195120e629d69c639d6c3fb4fd20ddc79da25239fe570"
+        ],
+        "classification": {
+          "executed": true,
+          "resolvedAsApplied": false,
+          "rolledBackAttempts": 0,
+          "unfinishedAttempts": 0
+        },
+        "attempts": [
+          {
+            "startedAt": "2026-02-25 12:41:05.728801+00",
+            "finishedAt": "2026-02-25 12:41:06.249815+00",
+            "rolledBackAt": null,
+            "appliedStepsCount": 1,
+            "checksum": "bdbbfe4c67e959133a5195120e629d69c639d6c3fb4fd20ddc79da25239fe570"
+          }
+        ]
+      }
+    },
+    {
+      "repositoryOrder": 5,
+      "migrationName": "20260224_000000_seed_training_modules",
+      "repositoryPresent": true,
+      "path": "prisma/migrations/20260224_000000_seed_training_modules/migration.sql",
+      "sha256": "d73aed91d93ac561116901d4e918d991c2aebcc3290015bcdff25bf7cc634bb2",
+      "fileBytes": 2214,
+      "encoding": "utf-8-no-bom-or-ascii",
+      "gitBlobSha": "f3eb9e278ab021672053e122e23261fa732e3557",
+      "production": {
+        "present": true,
+        "checksums": [
+          "d73aed91d93ac561116901d4e918d991c2aebcc3290015bcdff25bf7cc634bb2"
+        ],
+        "classification": {
+          "executed": true,
+          "resolvedAsApplied": false,
+          "rolledBackAttempts": 0,
+          "unfinishedAttempts": 0
+        },
+        "attempts": [
+          {
+            "startedAt": "2026-02-25 12:41:07.170771+00",
+            "finishedAt": "2026-02-25 12:41:07.683484+00",
+            "rolledBackAt": null,
+            "appliedStepsCount": 1,
+            "checksum": "d73aed91d93ac561116901d4e918d991c2aebcc3290015bcdff25bf7cc634bb2"
+          }
+        ]
+      }
+    },
+    {
+      "repositoryOrder": 6,
+      "migrationName": "20260224_000003_add_audit_trace_id",
+      "repositoryPresent": true,
+      "path": "prisma/migrations/20260224_000003_add_audit_trace_id/migration.sql",
+      "sha256": "2c479f1b56f68b05a2ef5a4df76ddeb8ff9d7c02df3362a6d39e259056523161",
+      "fileBytes": 279,
+      "encoding": "utf-8-no-bom-or-ascii",
+      "gitBlobSha": "1ab3eb8c5f3809ae9cfb343acf05ce3f13061e18",
+      "production": {
+        "present": true,
+        "checksums": [
+          "2c479f1b56f68b05a2ef5a4df76ddeb8ff9d7c02df3362a6d39e259056523161"
+        ],
+        "classification": {
+          "executed": true,
+          "resolvedAsApplied": false,
+          "rolledBackAttempts": 0,
+          "unfinishedAttempts": 0
+        },
+        "attempts": [
+          {
+            "startedAt": "2026-03-01 15:51:31.7912+00",
+            "finishedAt": "2026-03-01 15:51:32.499417+00",
+            "rolledBackAt": null,
+            "appliedStepsCount": 1,
+            "checksum": "2c479f1b56f68b05a2ef5a4df76ddeb8ff9d7c02df3362a6d39e259056523161"
+          }
+        ]
+      }
+    },
+    {
+      "repositoryOrder": 7,
+      "migrationName": "20260225_120000_ai_interaction_log",
+      "repositoryPresent": true,
+      "path": "prisma/migrations/20260225_120000_ai_interaction_log/migration.sql",
+      "sha256": "c6e9164e6e9d2164e7b1207cb4aeead979a8b9abc8b8cfe11a5abe482a58655c",
+      "fileBytes": 947,
+      "encoding": "utf-8-no-bom-or-ascii",
+      "gitBlobSha": "3a5315be566a120b2feefe03485b9682cc863aba",
+      "production": {
+        "present": true,
+        "checksums": [
+          "c6e9164e6e9d2164e7b1207cb4aeead979a8b9abc8b8cfe11a5abe482a58655c"
+        ],
+        "classification": {
+          "executed": true,
+          "resolvedAsApplied": false,
+          "rolledBackAttempts": 0,
+          "unfinishedAttempts": 0
+        },
+        "attempts": [
+          {
+            "startedAt": "2026-03-01 15:51:32.705261+00",
+            "finishedAt": "2026-03-01 15:51:33.215385+00",
+            "rolledBackAt": null,
+            "appliedStepsCount": 1,
+            "checksum": "c6e9164e6e9d2164e7b1207cb4aeead979a8b9abc8b8cfe11a5abe482a58655c"
+          }
+        ]
+      }
+    },
+    {
+      "repositoryOrder": 8,
+      "migrationName": "20260225_130000_block12_impact_snapshot",
+      "repositoryPresent": true,
+      "path": "prisma/migrations/20260225_130000_block12_impact_snapshot/migration.sql",
+      "sha256": "9a050ec19affed98710e067b0d1070812fbbdf0e9cfccc740dd23e6d6c17b5d8",
+      "fileBytes": 1396,
+      "encoding": "utf-8-no-bom-or-ascii",
+      "gitBlobSha": "78babbeceddcc3a4c4d06f47e9d1490c94699e3f",
+      "production": {
+        "present": true,
+        "checksums": [
+          "9a050ec19affed98710e067b0d1070812fbbdf0e9cfccc740dd23e6d6c17b5d8"
+        ],
+        "classification": {
+          "executed": true,
+          "resolvedAsApplied": false,
+          "rolledBackAttempts": 0,
+          "unfinishedAttempts": 0
+        },
+        "attempts": [
+          {
+            "startedAt": "2026-03-01 15:51:33.420919+00",
+            "finishedAt": "2026-03-01 15:51:33.93246+00",
+            "rolledBackAt": null,
+            "appliedStepsCount": 1,
+            "checksum": "9a050ec19affed98710e067b0d1070812fbbdf0e9cfccc740dd23e6d6c17b5d8"
+          }
+        ]
+      }
+    },
+    {
+      "repositoryOrder": 9,
+      "migrationName": "20260226_000000_add_district_and_intervention_log",
+      "repositoryPresent": true,
+      "path": "prisma/migrations/20260226_000000_add_district_and_intervention_log/migration.sql",
+      "sha256": "cfbd68756d07cc96870595d569f15602ff99efdd5edf56f64a1485acb964e943",
+      "fileBytes": 2166,
+      "encoding": "utf-8-no-bom-or-ascii",
+      "gitBlobSha": "e45263138d79334213043c4f9086c7afabb59c9b",
+      "production": {
+        "present": true,
+        "checksums": [
+          "5dc39b290baf6fa0044fa2ae95ea221605b135d2b8c244c842d319dd1a5f2110",
+          "cfbd68756d07cc96870595d569f15602ff99efdd5edf56f64a1485acb964e943"
+        ],
+        "classification": {
+          "executed": true,
+          "resolvedAsApplied": false,
+          "rolledBackAttempts": 1,
+          "unfinishedAttempts": 0
+        },
+        "attempts": [
+          {
+            "startedAt": "2026-03-01 15:51:34.035243+00",
+            "finishedAt": null,
+            "rolledBackAt": "2026-03-01 15:52:31.904433+00",
+            "appliedStepsCount": 0,
+            "checksum": "5dc39b290baf6fa0044fa2ae95ea221605b135d2b8c244c842d319dd1a5f2110"
+          },
+          {
+            "startedAt": "2026-03-01 15:53:51.262103+00",
+            "finishedAt": "2026-03-01 15:53:51.799502+00",
+            "rolledBackAt": null,
+            "appliedStepsCount": 1,
+            "checksum": "cfbd68756d07cc96870595d569f15602ff99efdd5edf56f64a1485acb964e943"
+          }
+        ]
+      }
+    },
+    {
+      "repositoryOrder": 10,
+      "migrationName": "20260226_120000_block15_longitudinal_growth",
+      "repositoryPresent": true,
+      "path": "prisma/migrations/20260226_120000_block15_longitudinal_growth/migration.sql",
+      "sha256": "376c333a6fc7694a9bbeafa5b50b5c93dbcf9ea44b575ebc8e3b3bceb258f5a6",
+      "fileBytes": 1386,
+      "encoding": "utf-8-no-bom-or-ascii",
+      "gitBlobSha": "0c90ca22584ca7a9bf0a981e364783871eb507fa",
+      "production": {
+        "present": true,
+        "checksums": [
+          "376c333a6fc7694a9bbeafa5b50b5c93dbcf9ea44b575ebc8e3b3bceb258f5a6"
+        ],
+        "classification": {
+          "executed": true,
+          "resolvedAsApplied": false,
+          "rolledBackAttempts": 0,
+          "unfinishedAttempts": 0
+        },
+        "attempts": [
+          {
+            "startedAt": "2026-03-01 15:53:51.878909+00",
+            "finishedAt": "2026-03-01 15:53:52.107425+00",
+            "rolledBackAt": null,
+            "appliedStepsCount": 1,
+            "checksum": "376c333a6fc7694a9bbeafa5b50b5c93dbcf9ea44b575ebc8e3b3bceb258f5a6"
+          }
+        ]
+      }
+    },
+    {
+      "repositoryOrder": 11,
+      "migrationName": "20260227_000001_add_intervention_outcome_fields",
+      "repositoryPresent": true,
+      "path": "prisma/migrations/20260227_000001_add_intervention_outcome_fields/migration.sql",
+      "sha256": "d37246359f7bc223c888d0950a0d407318efc76474a2b3e5b6f7007cd16e0bb2",
+      "fileBytes": 430,
+      "encoding": "utf-8-no-bom-or-ascii",
+      "gitBlobSha": "f7d25b9cfca9ae69c5ca655ce46f8e8e32eb4a05",
+      "production": {
+        "present": true,
+        "checksums": [
+          "d37246359f7bc223c888d0950a0d407318efc76474a2b3e5b6f7007cd16e0bb2"
+        ],
+        "classification": {
+          "executed": true,
+          "resolvedAsApplied": false,
+          "rolledBackAttempts": 0,
+          "unfinishedAttempts": 0
+        },
+        "attempts": [
+          {
+            "startedAt": "2026-03-01 15:53:52.191973+00",
+            "finishedAt": "2026-03-01 15:53:52.417519+00",
+            "rolledBackAt": null,
+            "appliedStepsCount": 1,
+            "checksum": "d37246359f7bc223c888d0950a0d407318efc76474a2b3e5b6f7007cd16e0bb2"
+          }
+        ]
+      }
+    },
+    {
+      "repositoryOrder": 12,
+      "migrationName": "20260227_120000_invitetoken_type_student",
+      "repositoryPresent": true,
+      "path": "prisma/migrations/20260227_120000_invitetoken_type_student/migration.sql",
+      "sha256": "56482ca278f04ec1ead9ce2b57fc15d6196266d093fb6f0ae369a7db1b4a3802",
+      "fileBytes": 376,
+      "encoding": "utf-8-no-bom-or-ascii",
+      "gitBlobSha": "0d97d98f35cb93ffe5eae570173c3116fed9bd15",
+      "production": {
+        "present": true,
+        "checksums": [
+          "56482ca278f04ec1ead9ce2b57fc15d6196266d093fb6f0ae369a7db1b4a3802"
+        ],
+        "classification": {
+          "executed": true,
+          "resolvedAsApplied": false,
+          "rolledBackAttempts": 0,
+          "unfinishedAttempts": 0
+        },
+        "attempts": [
+          {
+            "startedAt": "2026-03-01 15:53:52.492277+00",
+            "finishedAt": "2026-03-01 15:53:52.754189+00",
+            "rolledBackAt": null,
+            "appliedStepsCount": 1,
+            "checksum": "56482ca278f04ec1ead9ce2b57fc15d6196266d093fb6f0ae369a7db1b4a3802"
+          }
+        ]
+      }
+    },
+    {
+      "repositoryOrder": 13,
+      "migrationName": "20260227_180000_rr1_rr3_tokens_session",
+      "repositoryPresent": true,
+      "path": "prisma/migrations/20260227_180000_rr1_rr3_tokens_session/migration.sql",
+      "sha256": "677f8e124691686fdd13bba262a34b8ce4380d3680efe8422b4ade94c5ed928e",
+      "fileBytes": 415,
+      "encoding": "utf-8-no-bom-or-ascii",
+      "gitBlobSha": "0944f0688425842f1bd53efdc60a323dab2d8a30",
+      "production": {
+        "present": true,
+        "checksums": [
+          "677f8e124691686fdd13bba262a34b8ce4380d3680efe8422b4ade94c5ed928e"
+        ],
+        "classification": {
+          "executed": true,
+          "resolvedAsApplied": false,
+          "rolledBackAttempts": 0,
+          "unfinishedAttempts": 0
+        },
+        "attempts": [
+          {
+            "startedAt": "2026-03-01 15:53:52.842539+00",
+            "finishedAt": "2026-03-01 15:53:53.096503+00",
+            "rolledBackAt": null,
+            "appliedStepsCount": 1,
+            "checksum": "677f8e124691686fdd13bba262a34b8ce4380d3680efe8422b4ade94c5ed928e"
+          }
+        ]
+      }
+    },
+    {
+      "repositoryOrder": 14,
+      "migrationName": "20260228_000000_block23_perf_indexes",
+      "repositoryPresent": true,
+      "path": "prisma/migrations/20260228_000000_block23_perf_indexes/migration.sql",
+      "sha256": "f0accaab7fa406130c94f5a3db48f7819e947339928324056bf6173e23c7ff84",
+      "fileBytes": 2185,
+      "encoding": "utf-8-no-bom-or-ascii",
+      "gitBlobSha": "4029d6427856bcd55d29c31b16ae4d48ce843c79",
+      "production": {
+        "present": true,
+        "checksums": [
+          "03bc11847cf2e57db9e9017046f4ec1c3459307cdba4b692ad4e96c2e2ecf40b",
+          "5f39138ab26b4fbb9350f5a867fbdcef79ad11a27dd1673e5de4eeb3833b4d81",
+          "f0accaab7fa406130c94f5a3db48f7819e947339928324056bf6173e23c7ff84"
+        ],
+        "classification": {
+          "executed": true,
+          "resolvedAsApplied": false,
+          "rolledBackAttempts": 2,
+          "unfinishedAttempts": 0
+        },
+        "attempts": [
+          {
+            "startedAt": "2026-03-01 15:53:53.171926+00",
+            "finishedAt": null,
+            "rolledBackAt": "2026-03-01 15:54:45.209153+00",
+            "appliedStepsCount": 0,
+            "checksum": "03bc11847cf2e57db9e9017046f4ec1c3459307cdba4b692ad4e96c2e2ecf40b"
+          },
+          {
+            "startedAt": "2026-03-01 15:54:55.477945+00",
+            "finishedAt": null,
+            "rolledBackAt": "2026-03-01 15:55:45.149+00",
+            "appliedStepsCount": 0,
+            "checksum": "5f39138ab26b4fbb9350f5a867fbdcef79ad11a27dd1673e5de4eeb3833b4d81"
+          },
+          {
+            "startedAt": "2026-03-01 15:55:56.591938+00",
+            "finishedAt": "2026-03-01 15:55:57.100443+00",
+            "rolledBackAt": null,
+            "appliedStepsCount": 1,
+            "checksum": "f0accaab7fa406130c94f5a3db48f7819e947339928324056bf6173e23c7ff84"
+          }
+        ]
+      }
+    },
+    {
+      "repositoryOrder": 15,
+      "migrationName": "20260228_civics_strands",
+      "repositoryPresent": true,
+      "path": "prisma/migrations/20260228_civics_strands/migration.sql",
+      "sha256": "13940e4e009eeb6247a854e93d9318ca17e4bc3817158495b6c2740b17b24e1b",
+      "fileBytes": 1305,
+      "encoding": "utf-8-no-bom-or-ascii",
+      "gitBlobSha": "21338e6e2e463aedf6d3960d860330af95312fb6",
+      "production": {
+        "present": true,
+        "checksums": [
+          "13940e4e009eeb6247a854e93d9318ca17e4bc3817158495b6c2740b17b24e1b"
+        ],
+        "classification": {
+          "executed": true,
+          "resolvedAsApplied": false,
+          "rolledBackAttempts": 0,
+          "unfinishedAttempts": 0
+        },
+        "attempts": [
+          {
+            "startedAt": "2026-03-01 15:55:57.408276+00",
+            "finishedAt": "2026-03-01 15:55:57.920186+00",
+            "rolledBackAt": null,
+            "appliedStepsCount": 1,
+            "checksum": "13940e4e009eeb6247a854e93d9318ca17e4bc3817158495b6c2740b17b24e1b"
+          }
+        ]
+      }
+    },
+    {
+      "repositoryOrder": 16,
+      "migrationName": "20260228_curriculum_feedback",
+      "repositoryPresent": true,
+      "path": "prisma/migrations/20260228_curriculum_feedback/migration.sql",
+      "sha256": "1c2bdbcf2f4dd3acbae48318af6ff2bab0dc4b4abc7296b924dac02cc4567d92",
+      "fileBytes": 950,
+      "encoding": "utf-8-no-bom-or-ascii",
+      "gitBlobSha": "e711d196fad49a0e1c6d87e06def5d4d3f11d7df",
+      "production": {
+        "present": true,
+        "checksums": [
+          "1c2bdbcf2f4dd3acbae48318af6ff2bab0dc4b4abc7296b924dac02cc4567d92"
+        ],
+        "classification": {
+          "executed": true,
+          "resolvedAsApplied": false,
+          "rolledBackAttempts": 0,
+          "unfinishedAttempts": 0
+        },
+        "attempts": [
+          {
+            "startedAt": "2026-03-01 15:55:58.022745+00",
+            "finishedAt": "2026-03-01 15:55:58.53469+00",
+            "rolledBackAt": null,
+            "appliedStepsCount": 1,
+            "checksum": "1c2bdbcf2f4dd3acbae48318af6ff2bab0dc4b4abc7296b924dac02cc4567d92"
+          }
+        ]
+      }
+    },
+    {
+      "repositoryOrder": 17,
+      "migrationName": "20260228_integrated_delivery_engine",
+      "repositoryPresent": true,
+      "path": "prisma/migrations/20260228_integrated_delivery_engine/migration.sql",
+      "sha256": "fb1aa1a900419b1132e2c02bce0c52138d11a1d04f97c0bd96e804db41a04fed",
+      "fileBytes": 5339,
+      "encoding": "utf-8-no-bom-or-ascii",
+      "gitBlobSha": "9e0647450d2c24c2171c3b045a77a3d36fccb695",
+      "production": {
+        "present": true,
+        "checksums": [
+          "a90f7743cbbc6982c692ead4ef6eac61b1d9f7346db72b00d60facca98ed7caa",
+          "fb1aa1a900419b1132e2c02bce0c52138d11a1d04f97c0bd96e804db41a04fed"
+        ],
+        "classification": {
+          "executed": true,
+          "resolvedAsApplied": false,
+          "rolledBackAttempts": 1,
+          "unfinishedAttempts": 0
+        },
+        "attempts": [
+          {
+            "startedAt": "2026-03-01 15:55:58.743235+00",
+            "finishedAt": null,
+            "rolledBackAt": "2026-03-01 15:56:56.939054+00",
+            "appliedStepsCount": 0,
+            "checksum": "a90f7743cbbc6982c692ead4ef6eac61b1d9f7346db72b00d60facca98ed7caa"
+          },
+          {
+            "startedAt": "2026-03-01 15:57:04.763496+00",
+            "finishedAt": "2026-03-01 15:57:05.054258+00",
+            "rolledBackAt": null,
+            "appliedStepsCount": 1,
+            "checksum": "fb1aa1a900419b1132e2c02bce0c52138d11a1d04f97c0bd96e804db41a04fed"
+          }
+        ]
+      }
+    },
+    {
+      "repositoryOrder": 18,
+      "migrationName": "20260228_math_strands",
+      "repositoryPresent": true,
+      "path": "prisma/migrations/20260228_math_strands/migration.sql",
+      "sha256": "2f3dc5de598a5d15faa3e025a5bfdc1164cd24e6c56ded00817f16861c6e4a31",
+      "fileBytes": 1150,
+      "encoding": "utf-8-no-bom-or-ascii",
+      "gitBlobSha": "665d6c7d1f57948d307b2ace6f2394fd73643bd0",
+      "production": {
+        "present": true,
+        "checksums": [
+          "2f3dc5de598a5d15faa3e025a5bfdc1164cd24e6c56ded00817f16861c6e4a31"
+        ],
+        "classification": {
+          "executed": true,
+          "resolvedAsApplied": false,
+          "rolledBackAttempts": 0,
+          "unfinishedAttempts": 0
+        },
+        "attempts": [
+          {
+            "startedAt": "2026-03-01 15:57:05.134221+00",
+            "finishedAt": "2026-03-01 15:57:05.354265+00",
+            "rolledBackAt": null,
+            "appliedStepsCount": 1,
+            "checksum": "2f3dc5de598a5d15faa3e025a5bfdc1164cd24e6c56ded00817f16861c6e4a31"
+          }
+        ]
+      }
+    },
+    {
+      "repositoryOrder": 19,
+      "migrationName": "20260301_000000_block26_perf_indexes",
+      "repositoryPresent": true,
+      "path": "prisma/migrations/20260301_000000_block26_perf_indexes/migration.sql",
+      "sha256": "ef32adfaf0d4fc5aa085b41e5a91d848f978b5019d132f0ffba72cb10f794211",
+      "fileBytes": 2471,
+      "encoding": "utf-8-no-bom-or-ascii",
+      "gitBlobSha": "543219d586a33b61f0eda510d23d559ceafe3951",
+      "production": {
+        "present": true,
+        "checksums": [
+          "ef32adfaf0d4fc5aa085b41e5a91d848f978b5019d132f0ffba72cb10f794211"
+        ],
+        "classification": {
+          "executed": true,
+          "resolvedAsApplied": false,
+          "rolledBackAttempts": 0,
+          "unfinishedAttempts": 0
+        },
+        "attempts": [
+          {
+            "startedAt": "2026-03-15 04:40:01.545986+00",
+            "finishedAt": "2026-03-15 04:40:01.894014+00",
+            "rolledBackAt": null,
+            "appliedStepsCount": 1,
+            "checksum": "ef32adfaf0d4fc5aa085b41e5a91d848f978b5019d132f0ffba72cb10f794211"
+          }
+        ]
+      }
+    },
+    {
+      "repositoryOrder": 20,
+      "migrationName": "20260301_000001_moe_official_role",
+      "repositoryPresent": true,
+      "path": "prisma/migrations/20260301_000001_moe_official_role/migration.sql",
+      "sha256": "7d2ce2d661c7fa2ad71cd123969db68132808624e920213a0b429d1ae54a2c30",
+      "fileBytes": 238,
+      "encoding": "utf-8-no-bom-or-ascii",
+      "gitBlobSha": "fa505c17c5cf68fb200555726a6143bef621189f",
+      "production": {
+        "present": true,
+        "checksums": [
+          "7d2ce2d661c7fa2ad71cd123969db68132808624e920213a0b429d1ae54a2c30"
+        ],
+        "classification": {
+          "executed": true,
+          "resolvedAsApplied": false,
+          "rolledBackAttempts": 0,
+          "unfinishedAttempts": 0
+        },
+        "attempts": [
+          {
+            "startedAt": "2026-03-15 04:40:01.988778+00",
+            "finishedAt": "2026-03-15 04:40:02.230981+00",
+            "rolledBackAt": null,
+            "appliedStepsCount": 1,
+            "checksum": "7d2ce2d661c7fa2ad71cd123969db68132808624e920213a0b429d1ae54a2c30"
+          }
+        ]
+      }
+    },
+    {
+      "repositoryOrder": 21,
+      "migrationName": "20260302_add_auditlog_composite_index",
+      "repositoryPresent": true,
+      "path": "prisma/migrations/20260302_add_auditlog_composite_index/migration.sql",
+      "sha256": "ea35637bfa2ab8b3854d2dfb453be91f223dfe85a99633812af75cc257e07080",
+      "fileBytes": 1014,
+      "encoding": "utf-8-no-bom-or-ascii",
+      "gitBlobSha": "8a428ccd156e8ac5a60bf036bd4b1227a0b09bf4",
+      "production": {
+        "present": true,
+        "checksums": [
+          "ea35637bfa2ab8b3854d2dfb453be91f223dfe85a99633812af75cc257e07080"
+        ],
+        "classification": {
+          "executed": true,
+          "resolvedAsApplied": false,
+          "rolledBackAttempts": 0,
+          "unfinishedAttempts": 0
+        },
+        "attempts": [
+          {
+            "startedAt": "2026-03-15 04:40:02.305931+00",
+            "finishedAt": "2026-03-15 04:40:02.545071+00",
+            "rolledBackAt": null,
+            "appliedStepsCount": 1,
+            "checksum": "ea35637bfa2ab8b3854d2dfb453be91f223dfe85a99633812af75cc257e07080"
+          }
+        ]
+      }
+    },
+    {
+      "repositoryOrder": 22,
+      "migrationName": "20260302_engineering_cs_standards",
+      "repositoryPresent": true,
+      "path": "prisma/migrations/20260302_engineering_cs_standards/migration.sql",
+      "sha256": "c3254055e5e9755796b8a03ca4dbf435edfa9f1fa2d4aa446cbb0f1dcf06ce18",
+      "fileBytes": 3571,
+      "encoding": "utf-8-bom",
+      "gitBlobSha": "7fe52844211ea3ce089490741696049a6c2f12ff",
+      "production": {
+        "present": true,
+        "checksums": [
+          "ccec2ab681ccb0cd2debb5c75b0f7194ab7a66187411742557758ed8d1747813",
+          "c3254055e5e9755796b8a03ca4dbf435edfa9f1fa2d4aa446cbb0f1dcf06ce18"
+        ],
+        "classification": {
+          "executed": false,
+          "resolvedAsApplied": true,
+          "rolledBackAttempts": 1,
+          "unfinishedAttempts": 0
+        },
+        "attempts": [
+          {
+            "startedAt": "2026-03-15 04:40:02.622423+00",
+            "finishedAt": null,
+            "rolledBackAt": "2026-03-15 04:46:29.038925+00",
+            "appliedStepsCount": 0,
+            "checksum": "ccec2ab681ccb0cd2debb5c75b0f7194ab7a66187411742557758ed8d1747813"
+          },
+          {
+            "startedAt": "2026-03-15 04:46:29.243396+00",
+            "finishedAt": "2026-03-15 04:46:29.243396+00",
+            "rolledBackAt": null,
+            "appliedStepsCount": 0,
+            "checksum": "c3254055e5e9755796b8a03ca4dbf435edfa9f1fa2d4aa446cbb0f1dcf06ce18"
+          }
+        ]
+      }
+    },
+    {
+      "repositoryOrder": 23,
+      "migrationName": "20260302_guardian_message",
+      "repositoryPresent": true,
+      "path": "prisma/migrations/20260302_guardian_message/migration.sql",
+      "sha256": "883126dfd7b2bc7f8cefffb1e284a6485d336a5d4fc3d58f49c00cd0df9c98f5",
+      "fileBytes": 1585,
+      "encoding": "utf-8-no-bom-or-ascii",
+      "gitBlobSha": "2d5b96aa82a8cdfcd09b4f20500dd31e6e1fc1a9",
+      "production": {
+        "present": true,
+        "checksums": [
+          "883126dfd7b2bc7f8cefffb1e284a6485d336a5d4fc3d58f49c00cd0df9c98f5"
+        ],
+        "classification": {
+          "executed": true,
+          "resolvedAsApplied": false,
+          "rolledBackAttempts": 0,
+          "unfinishedAttempts": 0
+        },
+        "attempts": [
+          {
+            "startedAt": "2026-03-15 04:46:40.205152+00",
+            "finishedAt": "2026-03-15 04:46:40.815071+00",
+            "rolledBackAt": null,
+            "appliedStepsCount": 1,
+            "checksum": "883126dfd7b2bc7f8cefffb1e284a6485d336a5d4fc3d58f49c00cd0df9c98f5"
+          }
+        ]
+      }
+    },
+    {
+      "repositoryOrder": 24,
+      "migrationName": "20260313_000000_add_lesson_embeddings",
+      "repositoryPresent": true,
+      "path": "prisma/migrations/20260313_000000_add_lesson_embeddings/migration.sql",
+      "sha256": "26a6f67dcc26c6239dd7799c3df5e98e6028b84968b3201cdd72510cbd7f9479",
+      "fileBytes": 335,
+      "encoding": "utf-8-no-bom-or-ascii",
+      "gitBlobSha": "fab9a4719e40095fed33b310827927067b3e9db1",
+      "production": {
+        "present": true,
+        "checksums": [
+          "26a6f67dcc26c6239dd7799c3df5e98e6028b84968b3201cdd72510cbd7f9479"
+        ],
+        "classification": {
+          "executed": true,
+          "resolvedAsApplied": false,
+          "rolledBackAttempts": 0,
+          "unfinishedAttempts": 0
+        },
+        "attempts": [
+          {
+            "startedAt": "2026-03-15 04:46:41.019759+00",
+            "finishedAt": "2026-03-15 04:46:41.532642+00",
+            "rolledBackAt": null,
+            "appliedStepsCount": 1,
+            "checksum": "26a6f67dcc26c6239dd7799c3df5e98e6028b84968b3201cdd72510cbd7f9479"
+          }
+        ]
+      }
+    },
+    {
+      "repositoryOrder": 25,
+      "migrationName": "20260313_010000_add_teacher_created_flag",
+      "repositoryPresent": true,
+      "path": "prisma/migrations/20260313_010000_add_teacher_created_flag/migration.sql",
+      "sha256": "5a154d845bf26e86af22a106d3ad696481d4bc38eb65297a8b4d9cac374bd2dd",
+      "fileBytes": 108,
+      "encoding": "utf-8-no-bom-or-ascii",
+      "gitBlobSha": "72d7d9b41bc1f49b1d8cc281177f5836f598f853",
+      "production": {
+        "present": true,
+        "checksums": [
+          "5a154d845bf26e86af22a106d3ad696481d4bc38eb65297a8b4d9cac374bd2dd"
+        ],
+        "classification": {
+          "executed": true,
+          "resolvedAsApplied": false,
+          "rolledBackAttempts": 0,
+          "unfinishedAttempts": 0
+        },
+        "attempts": [
+          {
+            "startedAt": "2026-03-15 04:46:41.737143+00",
+            "finishedAt": "2026-03-15 04:46:42.248505+00",
+            "rolledBackAt": null,
+            "appliedStepsCount": 1,
+            "checksum": "5a154d845bf26e86af22a106d3ad696481d4bc38eb65297a8b4d9cac374bd2dd"
+          }
+        ]
+      }
+    },
+    {
+      "repositoryOrder": 26,
+      "migrationName": "20260313_020000_add_lesson_ordering_fields",
+      "repositoryPresent": true,
+      "path": "prisma/migrations/20260313_020000_add_lesson_ordering_fields/migration.sql",
+      "sha256": "77db7540e281083474fee12d4483cc480a2dc1c90b81c7bb8b69ae77eb75deac",
+      "fileBytes": 250,
+      "encoding": "utf-8-no-bom-or-ascii",
+      "gitBlobSha": "f90e33c4f1d04f999dae027f2c819eebaed8ae81",
+      "production": {
+        "present": true,
+        "checksums": [
+          "77db7540e281083474fee12d4483cc480a2dc1c90b81c7bb8b69ae77eb75deac"
+        ],
+        "classification": {
+          "executed": true,
+          "resolvedAsApplied": false,
+          "rolledBackAttempts": 0,
+          "unfinishedAttempts": 0
+        },
+        "attempts": [
+          {
+            "startedAt": "2026-03-15 04:46:42.454883+00",
+            "finishedAt": "2026-03-15 04:46:42.965688+00",
+            "rolledBackAt": null,
+            "appliedStepsCount": 1,
+            "checksum": "77db7540e281083474fee12d4483cc480a2dc1c90b81c7bb8b69ae77eb75deac"
+          }
+        ]
+      }
+    },
+    {
+      "repositoryOrder": 27,
+      "migrationName": "20260313_030000_add_placement_ai_analysis",
+      "repositoryPresent": true,
+      "path": "prisma/migrations/20260313_030000_add_placement_ai_analysis/migration.sql",
+      "sha256": "680de2563239ed4f1758b0e00485641c28a398a6a4c35286287d37488e262a0b",
+      "fileBytes": 143,
+      "encoding": "utf-8-no-bom-or-ascii",
+      "gitBlobSha": "e39b5369b0c223b97d0adfaf9ada63b021100652",
+      "production": {
+        "present": true,
+        "checksums": [
+          "680de2563239ed4f1758b0e00485641c28a398a6a4c35286287d37488e262a0b"
+        ],
+        "classification": {
+          "executed": true,
+          "resolvedAsApplied": false,
+          "rolledBackAttempts": 0,
+          "unfinishedAttempts": 0
+        },
+        "attempts": [
+          {
+            "startedAt": "2026-03-15 04:46:43.141343+00",
+            "finishedAt": "2026-03-15 04:46:43.873842+00",
+            "rolledBackAt": null,
+            "appliedStepsCount": 1,
+            "checksum": "680de2563239ed4f1758b0e00485641c28a398a6a4c35286287d37488e262a0b"
+          }
+        ]
+      }
+    },
+    {
+      "repositoryOrder": 28,
+      "migrationName": "20260313_040000_add_placement_teacher_review",
+      "repositoryPresent": true,
+      "path": "prisma/migrations/20260313_040000_add_placement_teacher_review/migration.sql",
+      "sha256": "ed89660ec093ebeadedb5cda8cace3b43c674ec54abc46a96d44d4229db75628",
+      "fileBytes": 320,
+      "encoding": "utf-8-no-bom-or-ascii",
+      "gitBlobSha": "177dfefc4c8de709379c49fd3b3e095494944ffc",
+      "production": {
+        "present": true,
+        "checksums": [
+          "ed89660ec093ebeadedb5cda8cace3b43c674ec54abc46a96d44d4229db75628"
+        ],
+        "classification": {
+          "executed": true,
+          "resolvedAsApplied": false,
+          "rolledBackAttempts": 0,
+          "unfinishedAttempts": 0
+        },
+        "attempts": [
+          {
+            "startedAt": "2026-03-15 04:46:44.091177+00",
+            "finishedAt": "2026-03-15 04:46:44.60388+00",
+            "rolledBackAt": null,
+            "appliedStepsCount": 1,
+            "checksum": "ed89660ec093ebeadedb5cda8cace3b43c674ec54abc46a96d44d4229db75628"
+          }
+        ]
+      }
+    },
+    {
+      "repositoryOrder": 29,
+      "migrationName": "20260313_050000_add_lab_ai_analysis",
+      "repositoryPresent": true,
+      "path": "prisma/migrations/20260313_050000_add_lab_ai_analysis/migration.sql",
+      "sha256": "f6d582b7981039d85b116dc620ececf6a1c998f107ecd3eb42bcc9b84f5bc373",
+      "fileBytes": 58,
+      "encoding": "utf-8-no-bom-or-ascii",
+      "gitBlobSha": "68fe45cc702c3cfc911d3fd003d41abb44f6446f",
+      "production": {
+        "present": true,
+        "checksums": [
+          "f6d582b7981039d85b116dc620ececf6a1c998f107ecd3eb42bcc9b84f5bc373"
+        ],
+        "classification": {
+          "executed": true,
+          "resolvedAsApplied": false,
+          "rolledBackAttempts": 0,
+          "unfinishedAttempts": 0
+        },
+        "attempts": [
+          {
+            "startedAt": "2026-03-15 04:46:44.911878+00",
+            "finishedAt": "2026-03-15 04:46:45.320587+00",
+            "rolledBackAt": null,
+            "appliedStepsCount": 1,
+            "checksum": "f6d582b7981039d85b116dc620ececf6a1c998f107ecd3eb42bcc9b84f5bc373"
+          }
+        ]
+      }
+    },
+    {
+      "repositoryOrder": 30,
+      "migrationName": "20260313_060000_add_school_code",
+      "repositoryPresent": true,
+      "path": "prisma/migrations/20260313_060000_add_school_code/migration.sql",
+      "sha256": "198cbefa4dda78cc83236dd446f0bff2e7d75af5b1634814e2982dc201dbd3c5",
+      "fileBytes": 109,
+      "encoding": "utf-8-no-bom-or-ascii",
+      "gitBlobSha": "8e4ef022880ee648bdd21f9710215e31f95157e6",
+      "production": {
+        "present": true,
+        "checksums": [
+          "198cbefa4dda78cc83236dd446f0bff2e7d75af5b1634814e2982dc201dbd3c5"
+        ],
+        "classification": {
+          "executed": true,
+          "resolvedAsApplied": false,
+          "rolledBackAttempts": 0,
+          "unfinishedAttempts": 0
+        },
+        "attempts": [
+          {
+            "startedAt": "2026-03-15 04:46:45.429537+00",
+            "finishedAt": "2026-03-15 04:46:45.917464+00",
+            "rolledBackAt": null,
+            "appliedStepsCount": 1,
+            "checksum": "198cbefa4dda78cc83236dd446f0bff2e7d75af5b1634814e2982dc201dbd3c5"
+          }
+        ]
+      }
+    },
+    {
+      "repositoryOrder": 31,
+      "migrationName": "20260313_070000_add_must_change_pin",
+      "repositoryPresent": true,
+      "path": "prisma/migrations/20260313_070000_add_must_change_pin/migration.sql",
+      "sha256": "4dc6c3ee35c845d934ce24ddcc15378d800bd87600342a0dde6e2ab6728acfa9",
+      "fileBytes": 80,
+      "encoding": "utf-8-no-bom-or-ascii",
+      "gitBlobSha": "4272fdc3f5f96153fb39ad9eb1df974a4a758d1d",
+      "production": {
+        "present": true,
+        "checksums": [
+          "4dc6c3ee35c845d934ce24ddcc15378d800bd87600342a0dde6e2ab6728acfa9"
+        ],
+        "classification": {
+          "executed": true,
+          "resolvedAsApplied": false,
+          "rolledBackAttempts": 0,
+          "unfinishedAttempts": 0
+        },
+        "attempts": [
+          {
+            "startedAt": "2026-03-15 04:46:46.01006+00",
+            "finishedAt": "2026-03-15 04:46:46.379911+00",
+            "rolledBackAt": null,
+            "appliedStepsCount": 1,
+            "checksum": "4dc6c3ee35c845d934ce24ddcc15378d800bd87600342a0dde6e2ab6728acfa9"
+          }
+        ]
+      }
+    },
+    {
+      "repositoryOrder": 32,
+      "migrationName": "20260313_080000_add_exit_ticket_progress",
+      "repositoryPresent": true,
+      "path": "prisma/migrations/20260313_080000_add_exit_ticket_progress/migration.sql",
+      "sha256": "31f282ee595c18c3ac7990500ccb80422992757ed21a4b77f0cd71ad1da2fbd3",
+      "fileBytes": 111,
+      "encoding": "utf-8-no-bom-or-ascii",
+      "gitBlobSha": "1b72bfa2d02f1014827e1425bf0b06e0aaf0c710",
+      "production": {
+        "present": true,
+        "checksums": [
+          "31f282ee595c18c3ac7990500ccb80422992757ed21a4b77f0cd71ad1da2fbd3"
+        ],
+        "classification": {
+          "executed": true,
+          "resolvedAsApplied": false,
+          "rolledBackAttempts": 0,
+          "unfinishedAttempts": 0
+        },
+        "attempts": [
+          {
+            "startedAt": "2026-03-15 04:46:46.490743+00",
+            "finishedAt": "2026-03-15 04:46:46.810074+00",
+            "rolledBackAt": null,
+            "appliedStepsCount": 1,
+            "checksum": "31f282ee595c18c3ac7990500ccb80422992757ed21a4b77f0cd71ad1da2fbd3"
+          }
+        ]
+      }
+    },
+    {
+      "repositoryOrder": 33,
+      "migrationName": "20260313_090000_expand_assignment_submissions",
+      "repositoryPresent": true,
+      "path": "prisma/migrations/20260313_090000_expand_assignment_submissions/migration.sql",
+      "sha256": "fc43f3a2a457886eea2ac9e804d165f12344e8f540e6f735be8c3fb294892ee2",
+      "fileBytes": 159,
+      "encoding": "utf-8-no-bom-or-ascii",
+      "gitBlobSha": "9de193b296e35ae7e08a42dea65223f6ff0cb4a6",
+      "production": {
+        "present": true,
+        "checksums": [
+          "fc43f3a2a457886eea2ac9e804d165f12344e8f540e6f735be8c3fb294892ee2"
+        ],
+        "classification": {
+          "executed": true,
+          "resolvedAsApplied": false,
+          "rolledBackAttempts": 0,
+          "unfinishedAttempts": 0
+        },
+        "attempts": [
+          {
+            "startedAt": "2026-03-15 04:46:46.914714+00",
+            "finishedAt": "2026-03-15 04:46:47.169322+00",
+            "rolledBackAt": null,
+            "appliedStepsCount": 1,
+            "checksum": "fc43f3a2a457886eea2ac9e804d165f12344e8f540e6f735be8c3fb294892ee2"
+          }
+        ]
+      }
+    },
+    {
+      "repositoryOrder": 34,
+      "migrationName": "20260313_100000_add_adaptive_attempts",
+      "repositoryPresent": true,
+      "path": "prisma/migrations/20260313_100000_add_adaptive_attempts/migration.sql",
+      "sha256": "a0e79e626e51640a7c5ba0ebf4b2941dda0c42876ba81aff12f7feb4c9ab3605",
+      "fileBytes": 864,
+      "encoding": "utf-8-no-bom-or-ascii",
+      "gitBlobSha": "f379bd577075c5d1752abcfc2e7647011098d84c",
+      "production": {
+        "present": true,
+        "checksums": [
+          "a0e79e626e51640a7c5ba0ebf4b2941dda0c42876ba81aff12f7feb4c9ab3605"
+        ],
+        "classification": {
+          "executed": true,
+          "resolvedAsApplied": false,
+          "rolledBackAttempts": 0,
+          "unfinishedAttempts": 0
+        },
+        "attempts": [
+          {
+            "startedAt": "2026-03-15 04:46:47.27013+00",
+            "finishedAt": "2026-03-15 04:46:47.550932+00",
+            "rolledBackAt": null,
+            "appliedStepsCount": 1,
+            "checksum": "a0e79e626e51640a7c5ba0ebf4b2941dda0c42876ba81aff12f7feb4c9ab3605"
+          }
+        ]
+      }
+    },
+    {
+      "repositoryOrder": 35,
+      "migrationName": "20260314_010000_add_exam_system",
+      "repositoryPresent": true,
+      "path": "prisma/migrations/20260314_010000_add_exam_system/migration.sql",
+      "sha256": "4e7cf3282aff3d245161bc6a33ce300124a44cb8e00e9d26f069128418becc65",
+      "fileBytes": 3306,
+      "encoding": "utf-8-no-bom-or-ascii",
+      "gitBlobSha": "6a895036ebacad0acda8a239e6cf061731ee89c2",
+      "production": {
+        "present": true,
+        "checksums": [
+          "4e7cf3282aff3d245161bc6a33ce300124a44cb8e00e9d26f069128418becc65"
+        ],
+        "classification": {
+          "executed": true,
+          "resolvedAsApplied": false,
+          "rolledBackAttempts": 0,
+          "unfinishedAttempts": 0
+        },
+        "attempts": [
+          {
+            "startedAt": "2026-03-15 04:46:47.650627+00",
+            "finishedAt": "2026-03-15 04:46:47.989347+00",
+            "rolledBackAt": null,
+            "appliedStepsCount": 1,
+            "checksum": "4e7cf3282aff3d245161bc6a33ce300124a44cb8e00e9d26f069128418becc65"
+          }
+        ]
+      }
+    },
+    {
+      "repositoryOrder": 36,
+      "migrationName": "20260315_000000_add_login_id_to_user",
+      "repositoryPresent": true,
+      "path": "prisma/migrations/20260315_000000_add_login_id_to_user/migration.sql",
+      "sha256": "692f1b455c27f575ca777b040528bc6304fd8b5a16b2c34edee0816b925c1c97",
+      "fileBytes": 69,
+      "encoding": "utf-8-bom",
+      "gitBlobSha": "c1a2fb97cf1db221bed482b5b7bad253e97700c8",
+      "production": {
+        "present": true,
+        "checksums": [
+          "692f1b455c27f575ca777b040528bc6304fd8b5a16b2c34edee0816b925c1c97"
+        ],
+        "classification": {
+          "executed": false,
+          "resolvedAsApplied": true,
+          "rolledBackAttempts": 0,
+          "unfinishedAttempts": 0
+        },
+        "attempts": [
+          {
+            "startedAt": "2026-03-15 06:12:38.503958+00",
+            "finishedAt": "2026-03-15 06:12:38.503958+00",
+            "rolledBackAt": null,
+            "appliedStepsCount": 0,
+            "checksum": "692f1b455c27f575ca777b040528bc6304fd8b5a16b2c34edee0816b925c1c97"
+          }
+        ]
+      }
+    },
+    {
+      "repositoryOrder": 37,
+      "migrationName": "20260326_000000_add_rag_chunks",
+      "repositoryPresent": true,
+      "path": "prisma/migrations/20260326_000000_add_rag_chunks/migration.sql",
+      "sha256": "2a3381264c75dc20344c72c1b5a8fc263547f8cc2a787bb60c020b036ab8841f",
+      "fileBytes": 1256,
+      "encoding": "utf-8-no-bom-or-ascii",
+      "gitBlobSha": "574e6363d03b9db56e38a6e8b42d12da91e4d653",
+      "production": {
+        "present": true,
+        "checksums": [
+          "6e12735c21ddd84152736d59dd4218066f46c5058e22a71738920667d4e3ff2d"
+        ],
+        "classification": {
+          "executed": true,
+          "resolvedAsApplied": false,
+          "rolledBackAttempts": 0,
+          "unfinishedAttempts": 0
+        },
+        "attempts": [
+          {
+            "startedAt": "2026-03-26 21:12:37.01916+00",
+            "finishedAt": "2026-03-26 21:12:37.489355+00",
+            "rolledBackAt": null,
+            "appliedStepsCount": 1,
+            "checksum": "6e12735c21ddd84152736d59dd4218066f46c5058e22a71738920667d4e3ff2d"
+          }
+        ]
+      }
+    },
+    {
+      "repositoryOrder": 38,
+      "migrationName": "20260327_000000_add_eval_runs",
+      "repositoryPresent": true,
+      "path": "prisma/migrations/20260327_000000_add_eval_runs/migration.sql",
+      "sha256": "42539ac67c074e1cede44b4ceab2df9ac068bca93c560506e1bf567d1b521040",
+      "fileBytes": 580,
+      "encoding": "utf-8-no-bom-or-ascii",
+      "gitBlobSha": "604b7548a95fbbeddefb8b701e9d1fc53acd1047",
+      "production": {
+        "present": true,
+        "checksums": [
+          "42539ac67c074e1cede44b4ceab2df9ac068bca93c560506e1bf567d1b521040"
+        ],
+        "classification": {
+          "executed": true,
+          "resolvedAsApplied": false,
+          "rolledBackAttempts": 0,
+          "unfinishedAttempts": 0
+        },
+        "attempts": [
+          {
+            "startedAt": "2026-04-02 23:55:25.785041+00",
+            "finishedAt": "2026-04-02 23:55:26.400547+00",
+            "rolledBackAt": null,
+            "appliedStepsCount": 1,
+            "checksum": "42539ac67c074e1cede44b4ceab2df9ac068bca93c560506e1bf567d1b521040"
+          }
+        ]
+      }
+    },
+    {
+      "repositoryOrder": 39,
+      "migrationName": "20260327_000000_add_intelligence_layer",
+      "repositoryPresent": true,
+      "path": "prisma/migrations/20260327_000000_add_intelligence_layer/migration.sql",
+      "sha256": "7157cfa921d30c2a2daf81ef550d06c3d949dec944c8fe1e7508f38757dd5740",
+      "fileBytes": 2774,
+      "encoding": "utf-8-no-bom-or-ascii",
+      "gitBlobSha": "4609dd24d3561512cb8f18339d8e68fff73db9ca",
+      "production": {
+        "present": true,
+        "checksums": [
+          "7157cfa921d30c2a2daf81ef550d06c3d949dec944c8fe1e7508f38757dd5740"
+        ],
+        "classification": {
+          "executed": true,
+          "resolvedAsApplied": false,
+          "rolledBackAttempts": 0,
+          "unfinishedAttempts": 0
+        },
+        "attempts": [
+          {
+            "startedAt": "2026-04-02 23:55:26.506457+00",
+            "finishedAt": "2026-04-02 23:55:27.045585+00",
+            "rolledBackAt": null,
+            "appliedStepsCount": 1,
+            "checksum": "7157cfa921d30c2a2daf81ef550d06c3d949dec944c8fe1e7508f38757dd5740"
+          }
+        ]
+      }
+    },
+    {
+      "repositoryOrder": 40,
+      "migrationName": "20260330_add_ai_usage_fields",
+      "repositoryPresent": true,
+      "path": "prisma/migrations/20260330_add_ai_usage_fields/migration.sql",
+      "sha256": "560181063ec6119dfcc7ec5d230b323776c38bf9738a69d93aa0446062d16f91",
+      "fileBytes": 142,
+      "encoding": "utf-8-no-bom-or-ascii",
+      "gitBlobSha": "84ca460dccb0a40c079d57529778ea6b2efb26ba",
+      "production": {
+        "present": true,
+        "checksums": [
+          "560181063ec6119dfcc7ec5d230b323776c38bf9738a69d93aa0446062d16f91"
+        ],
+        "classification": {
+          "executed": true,
+          "resolvedAsApplied": false,
+          "rolledBackAttempts": 0,
+          "unfinishedAttempts": 0
+        },
+        "attempts": [
+          {
+            "startedAt": "2026-04-02 23:55:27.149501+00",
+            "finishedAt": "2026-04-02 23:55:27.483707+00",
+            "rolledBackAt": null,
+            "appliedStepsCount": 1,
+            "checksum": "560181063ec6119dfcc7ec5d230b323776c38bf9738a69d93aa0446062d16f91"
+          }
+        ]
+      }
+    },
+    {
+      "repositoryOrder": 41,
+      "migrationName": "20260331_000000_production_audit_fixes",
+      "repositoryPresent": true,
+      "path": "prisma/migrations/20260331_000000_production_audit_fixes/migration.sql",
+      "sha256": "fd5c61472598f54aae2f100cca1482507f440b54147bf02941f41b7db03e8e45",
+      "fileBytes": 1267,
+      "encoding": "utf-8-no-bom-or-ascii",
+      "gitBlobSha": "c63a0b19f8005f1b0e5faef29fc5044f63645119",
+      "production": {
+        "present": true,
+        "checksums": [
+          "fd5c61472598f54aae2f100cca1482507f440b54147bf02941f41b7db03e8e45"
+        ],
+        "classification": {
+          "executed": true,
+          "resolvedAsApplied": false,
+          "rolledBackAttempts": 0,
+          "unfinishedAttempts": 0
+        },
+        "attempts": [
+          {
+            "startedAt": "2026-04-02 23:55:27.660365+00",
+            "finishedAt": "2026-04-02 23:55:28.216497+00",
+            "rolledBackAt": null,
+            "appliedStepsCount": 1,
+            "checksum": "fd5c61472598f54aae2f100cca1482507f440b54147bf02941f41b7db03e8e45"
+          }
+        ]
+      }
+    },
+    {
+      "repositoryOrder": 42,
+      "migrationName": "20260401_120000_guardian_sms_preferences_json",
+      "repositoryPresent": true,
+      "path": "prisma/migrations/20260401_120000_guardian_sms_preferences_json/migration.sql",
+      "sha256": "eb5971b70215ef37f4da7382597e5eecefdbdda91b74368d1899d98baf880ef2",
+      "fileBytes": 78,
+      "encoding": "utf-8-no-bom-or-ascii",
+      "gitBlobSha": "01b51ea900d1b3ccc2c41b2d7bdd5adbc8b61bd5",
+      "production": {
+        "present": true,
+        "checksums": [
+          "eb5971b70215ef37f4da7382597e5eecefdbdda91b74368d1899d98baf880ef2"
+        ],
+        "classification": {
+          "executed": true,
+          "resolvedAsApplied": false,
+          "rolledBackAttempts": 0,
+          "unfinishedAttempts": 0
+        },
+        "attempts": [
+          {
+            "startedAt": "2026-04-02 23:55:28.377155+00",
+            "finishedAt": "2026-04-02 23:55:28.652302+00",
+            "rolledBackAt": null,
+            "appliedStepsCount": 1,
+            "checksum": "eb5971b70215ef37f4da7382597e5eecefdbdda91b74368d1899d98baf880ef2"
+          }
+        ]
+      }
+    },
+    {
+      "repositoryOrder": 43,
+      "migrationName": "20260403_190000_add_slo_events",
+      "repositoryPresent": true,
+      "path": "prisma/migrations/20260403_190000_add_slo_events/migration.sql",
+      "sha256": "5209a3ccad067fb92241100213a4a069c6cf4ebc6620a0abf06e9686490fae87",
+      "fileBytes": 737,
+      "encoding": "utf-8-no-bom-or-ascii",
+      "gitBlobSha": "8b2d9b4a10664fd4a318788cb70c8f096453397a",
+      "production": {
+        "present": true,
+        "checksums": [
+          "5209a3ccad067fb92241100213a4a069c6cf4ebc6620a0abf06e9686490fae87"
+        ],
+        "classification": {
+          "executed": false,
+          "resolvedAsApplied": true,
+          "rolledBackAttempts": 0,
+          "unfinishedAttempts": 0
+        },
+        "attempts": [
+          {
+            "startedAt": "2026-04-03 19:25:34.805014+00",
+            "finishedAt": "2026-04-03 19:25:34.805014+00",
+            "rolledBackAt": null,
+            "appliedStepsCount": 0,
+            "checksum": "5209a3ccad067fb92241100213a4a069c6cf4ebc6620a0abf06e9686490fae87"
+          }
+        ]
+      }
+    },
+    {
+      "repositoryOrder": 44,
+      "migrationName": "20260403_230000_ai_cost_guardrails",
+      "repositoryPresent": true,
+      "path": "prisma/migrations/20260403_230000_ai_cost_guardrails/migration.sql",
+      "sha256": "e565586bdc52a706ba04bf7e1333c6ccdfecafbc35b83bf3802a1ef68ea892c7",
+      "fileBytes": 431,
+      "encoding": "utf-8-no-bom-or-ascii",
+      "gitBlobSha": "98bf7a2d654398eb764951712caf178c837e7dc4",
+      "production": {
+        "present": true,
+        "checksums": [
+          "e565586bdc52a706ba04bf7e1333c6ccdfecafbc35b83bf3802a1ef68ea892c7"
+        ],
+        "classification": {
+          "executed": true,
+          "resolvedAsApplied": false,
+          "rolledBackAttempts": 0,
+          "unfinishedAttempts": 0
+        },
+        "attempts": [
+          {
+            "startedAt": "2026-04-05 20:25:56.598542+00",
+            "finishedAt": "2026-04-05 20:25:56.978931+00",
+            "rolledBackAt": null,
+            "appliedStepsCount": 1,
+            "checksum": "e565586bdc52a706ba04bf7e1333c6ccdfecafbc35b83bf3802a1ef68ea892c7"
+          }
+        ]
+      }
+    },
+    {
+      "repositoryOrder": 45,
+      "migrationName": "20260405_000000_add_curriculum_title",
+      "repositoryPresent": true,
+      "path": "prisma/migrations/20260405_000000_add_curriculum_title/migration.sql",
+      "sha256": "0c27ac193caaa844cd634dac83cfc714ff85c5c59a98e300258901609b566187",
+      "fileBytes": 57,
+      "encoding": "utf-8-no-bom-or-ascii",
+      "gitBlobSha": "9728065ae99b4b5f667f97c4fce8ca2ed70e19ff",
+      "production": {
+        "present": true,
+        "checksums": [
+          "0c27ac193caaa844cd634dac83cfc714ff85c5c59a98e300258901609b566187"
+        ],
+        "classification": {
+          "executed": true,
+          "resolvedAsApplied": false,
+          "rolledBackAttempts": 0,
+          "unfinishedAttempts": 0
+        },
+        "attempts": [
+          {
+            "startedAt": "2026-04-05 20:25:57.062377+00",
+            "finishedAt": "2026-04-05 20:25:57.280285+00",
+            "rolledBackAt": null,
+            "appliedStepsCount": 1,
+            "checksum": "0c27ac193caaa844cd634dac83cfc714ff85c5c59a98e300258901609b566187"
+          }
+        ]
+      }
+    },
+    {
+      "repositoryOrder": 46,
+      "migrationName": "20260405_191827_phase1_system_of_record",
+      "repositoryPresent": true,
+      "path": "prisma/migrations/20260405_191827_phase1_system_of_record/migration.sql",
+      "sha256": "e844c80d9c9166d8b90e297ab1af9cd2878d0b13c2d0e051a29411cc6c8ffccf",
+      "fileBytes": 5757,
+      "encoding": "utf-8-no-bom-or-ascii",
+      "gitBlobSha": "be07a96fa6a4a6faa1482eb73c0fa79eb499f8b0",
+      "production": {
+        "present": true,
+        "checksums": [
+          "4405ecf30128bcf7127d36eb4fe9f3cb61fdd0a007b9ae2b0d7ad456d8ffd3ae"
+        ],
+        "classification": {
+          "executed": false,
+          "resolvedAsApplied": true,
+          "rolledBackAttempts": 0,
+          "unfinishedAttempts": 0
+        },
+        "attempts": [
+          {
+            "startedAt": "2026-04-09 14:09:34.020457+00",
+            "finishedAt": "2026-04-09 14:09:34.020457+00",
+            "rolledBackAt": null,
+            "appliedStepsCount": 0,
+            "checksum": "4405ecf30128bcf7127d36eb4fe9f3cb61fdd0a007b9ae2b0d7ad456d8ffd3ae"
+          }
+        ]
+      }
+    },
+    {
+      "repositoryOrder": 47,
+      "migrationName": "20260409_124356_phase2_school_operations",
+      "repositoryPresent": true,
+      "path": "prisma/migrations/20260409_124356_phase2_school_operations/migration.sql",
+      "sha256": "dbe9629fff8e79f13e4bed7357013aee0a1a6f7eed84adc3b2c23003f0098bdd",
+      "fileBytes": 4314,
+      "encoding": "utf-8-no-bom-or-ascii",
+      "gitBlobSha": "65a57d0e6cc62a315a1be01e6096d284d5e1bd41",
+      "production": {
+        "present": true,
+        "checksums": [
+          "dbe9629fff8e79f13e4bed7357013aee0a1a6f7eed84adc3b2c23003f0098bdd"
+        ],
+        "classification": {
+          "executed": false,
+          "resolvedAsApplied": true,
+          "rolledBackAttempts": 0,
+          "unfinishedAttempts": 0
+        },
+        "attempts": [
+          {
+            "startedAt": "2026-04-09 16:51:50.68806+00",
+            "finishedAt": "2026-04-09 16:51:50.68806+00",
+            "rolledBackAt": null,
+            "appliedStepsCount": 0,
+            "checksum": "dbe9629fff8e79f13e4bed7357013aee0a1a6f7eed84adc3b2c23003f0098bdd"
+          }
+        ]
+      }
+    },
+    {
+      "repositoryOrder": 48,
+      "migrationName": "20260409_214655_phase3_exam_authority",
+      "repositoryPresent": true,
+      "path": "prisma/migrations/20260409_214655_phase3_exam_authority/migration.sql",
+      "sha256": "dff4df24e83a29132133c336187ff3fa627cefc8583c110a7a44a0670c848d0e",
+      "fileBytes": 1743,
+      "encoding": "utf-8-no-bom-or-ascii",
+      "gitBlobSha": "7dd792f283a0f82dacfaa154fefb6526400ce068",
+      "production": {
+        "present": true,
+        "checksums": [
+          "dff4df24e83a29132133c336187ff3fa627cefc8583c110a7a44a0670c848d0e"
+        ],
+        "classification": {
+          "executed": false,
+          "resolvedAsApplied": true,
+          "rolledBackAttempts": 0,
+          "unfinishedAttempts": 0
+        },
+        "attempts": [
+          {
+            "startedAt": "2026-04-10 13:40:34.194922+00",
+            "finishedAt": "2026-04-10 13:40:34.194922+00",
+            "rolledBackAt": null,
+            "appliedStepsCount": 0,
+            "checksum": "dff4df24e83a29132133c336187ff3fa627cefc8583c110a7a44a0670c848d0e"
+          }
+        ]
+      }
+    },
+    {
+      "repositoryOrder": 49,
+      "migrationName": "20260410_000000_phase2_subject_reconciliation",
+      "repositoryPresent": true,
+      "path": "prisma/migrations/20260410_000000_phase2_subject_reconciliation/migration.sql",
+      "sha256": "8345a8c35d290d2141ae8ad2e743015367815a258bd9dfc2526ce87efe3da75f",
+      "fileBytes": 5552,
+      "encoding": "utf-8-no-bom-or-ascii",
+      "gitBlobSha": "31ae7f95e2777dc96619c706595a6b8e8b2cd667",
+      "production": {
+        "present": true,
+        "checksums": [
+          "8345a8c35d290d2141ae8ad2e743015367815a258bd9dfc2526ce87efe3da75f"
+        ],
+        "classification": {
+          "executed": false,
+          "resolvedAsApplied": true,
+          "rolledBackAttempts": 0,
+          "unfinishedAttempts": 0
+        },
+        "attempts": [
+          {
+            "startedAt": "2026-04-10 13:07:52.995281+00",
+            "finishedAt": "2026-04-10 13:07:52.995281+00",
+            "rolledBackAt": null,
+            "appliedStepsCount": 0,
+            "checksum": "8345a8c35d290d2141ae8ad2e743015367815a258bd9dfc2526ce87efe3da75f"
+          }
+        ]
+      }
+    },
+    {
+      "repositoryOrder": 50,
+      "migrationName": "20260413_180000_sprint2_event_layer",
+      "repositoryPresent": true,
+      "path": "prisma/migrations/20260413_180000_sprint2_event_layer/migration.sql",
+      "sha256": "ac99587a84270c50e5ed790b670779618711bad21920152e29a96d0057843739",
+      "fileBytes": 10547,
+      "encoding": "utf-8-no-bom-or-ascii",
+      "gitBlobSha": "02dbb256d5a5343b3e6b6f3f21d170c1de1293b6",
+      "production": {
+        "present": true,
+        "checksums": [
+          "ac99587a84270c50e5ed790b670779618711bad21920152e29a96d0057843739"
+        ],
+        "classification": {
+          "executed": true,
+          "resolvedAsApplied": false,
+          "rolledBackAttempts": 0,
+          "unfinishedAttempts": 0
+        },
+        "attempts": [
+          {
+            "startedAt": "2026-04-16 18:26:41.790432+00",
+            "finishedAt": "2026-04-16 18:26:42.430259+00",
+            "rolledBackAt": null,
+            "appliedStepsCount": 1,
+            "checksum": "ac99587a84270c50e5ed790b670779618711bad21920152e29a96d0057843739"
+          }
+        ]
+      }
+    },
+    {
+      "repositoryOrder": 51,
+      "migrationName": "20260413_210000_sprint3_intervention_chains",
+      "repositoryPresent": true,
+      "path": "prisma/migrations/20260413_210000_sprint3_intervention_chains/migration.sql",
+      "sha256": "44afeb59f1851a67ab4910a991fdcd8d6f777198c80998b204aa3d6359f9ccd9",
+      "fileBytes": 6219,
+      "encoding": "utf-8-no-bom-or-ascii",
+      "gitBlobSha": "05c4ab5747e70ac56ef28f5fd4d11b63986b15dd",
+      "production": {
+        "present": true,
+        "checksums": [
+          "44afeb59f1851a67ab4910a991fdcd8d6f777198c80998b204aa3d6359f9ccd9"
+        ],
+        "classification": {
+          "executed": true,
+          "resolvedAsApplied": false,
+          "rolledBackAttempts": 0,
+          "unfinishedAttempts": 0
+        },
+        "attempts": [
+          {
+            "startedAt": "2026-04-16 18:26:42.580031+00",
+            "finishedAt": "2026-04-16 18:26:42.895925+00",
+            "rolledBackAt": null,
+            "appliedStepsCount": 1,
+            "checksum": "44afeb59f1851a67ab4910a991fdcd8d6f777198c80998b204aa3d6359f9ccd9"
+          }
+        ]
+      }
+    },
+    {
+      "repositoryOrder": 52,
+      "migrationName": "20260413_230000_sprint4_ai_telemetry_sync_integrity",
+      "repositoryPresent": true,
+      "path": "prisma/migrations/20260413_230000_sprint4_ai_telemetry_sync_integrity/migration.sql",
+      "sha256": "a3ef5dce942cc18e997367e89154caeffbc82488c0c2a4302fb104968ee5a0d6",
+      "fileBytes": 515,
+      "encoding": "utf-8-no-bom-or-ascii",
+      "gitBlobSha": "68eb587a36df3d2300317a88efeaca7679a6d4d2",
+      "production": {
+        "present": true,
+        "checksums": [
+          "a3ef5dce942cc18e997367e89154caeffbc82488c0c2a4302fb104968ee5a0d6"
+        ],
+        "classification": {
+          "executed": true,
+          "resolvedAsApplied": false,
+          "rolledBackAttempts": 0,
+          "unfinishedAttempts": 0
+        },
+        "attempts": [
+          {
+            "startedAt": "2026-04-16 18:26:42.984213+00",
+            "finishedAt": "2026-04-16 18:26:43.293631+00",
+            "rolledBackAt": null,
+            "appliedStepsCount": 1,
+            "checksum": "a3ef5dce942cc18e997367e89154caeffbc82488c0c2a4302fb104968ee5a0d6"
+          }
+        ]
+      }
+    },
+    {
+      "repositoryOrder": 53,
+      "migrationName": "20260415_000000_sprint7_governance_analytics",
+      "repositoryPresent": true,
+      "path": "prisma/migrations/20260415_000000_sprint7_governance_analytics/migration.sql",
+      "sha256": "c80e7cc8fde175270615d2c5e6ab0b33b1a31b61954fa27117cec095068700f4",
+      "fileBytes": 1232,
+      "encoding": "utf-8-no-bom-or-ascii",
+      "gitBlobSha": "00e0cf1599b8c770baf0e94fbf091dcd4bfced12",
+      "production": {
+        "present": true,
+        "checksums": [
+          "c80e7cc8fde175270615d2c5e6ab0b33b1a31b61954fa27117cec095068700f4"
+        ],
+        "classification": {
+          "executed": true,
+          "resolvedAsApplied": false,
+          "rolledBackAttempts": 0,
+          "unfinishedAttempts": 0
+        },
+        "attempts": [
+          {
+            "startedAt": "2026-04-16 18:26:43.407905+00",
+            "finishedAt": "2026-04-16 18:26:43.645663+00",
+            "rolledBackAt": null,
+            "appliedStepsCount": 1,
+            "checksum": "c80e7cc8fde175270615d2c5e6ab0b33b1a31b61954fa27117cec095068700f4"
+          }
+        ]
+      }
+    },
+    {
+      "repositoryOrder": 54,
+      "migrationName": "20260415_210000_sprint12_student_progress_certificates",
+      "repositoryPresent": true,
+      "path": "prisma/migrations/20260415_210000_sprint12_student_progress_certificates/migration.sql",
+      "sha256": "efb819d3e9d4b5fdac68bf9d51fb23f350188a07f212fb555b413d523d1b82a6",
+      "fileBytes": 1260,
+      "encoding": "utf-8-no-bom-or-ascii",
+      "gitBlobSha": "643a31623e1c6516a71258afcb7ac5bf0943b2bf",
+      "production": {
+        "present": true,
+        "checksums": [
+          "efb819d3e9d4b5fdac68bf9d51fb23f350188a07f212fb555b413d523d1b82a6"
+        ],
+        "classification": {
+          "executed": true,
+          "resolvedAsApplied": false,
+          "rolledBackAttempts": 0,
+          "unfinishedAttempts": 0
+        },
+        "attempts": [
+          {
+            "startedAt": "2026-04-16 18:26:43.8127+00",
+            "finishedAt": "2026-04-16 18:26:44.132739+00",
+            "rolledBackAt": null,
+            "appliedStepsCount": 1,
+            "checksum": "efb819d3e9d4b5fdac68bf9d51fb23f350188a07f212fb555b413d523d1b82a6"
+          }
+        ]
+      }
+    },
+    {
+      "repositoryOrder": 55,
+      "migrationName": "20260415_230000_sprint14_school_operations_layer",
+      "repositoryPresent": true,
+      "path": "prisma/migrations/20260415_230000_sprint14_school_operations_layer/migration.sql",
+      "sha256": "c14caac59f1859e1a47c511aaef6dca7059807a627ac7627f9d5aa7c22dcb79c",
+      "fileBytes": 1621,
+      "encoding": "utf-8-no-bom-or-ascii",
+      "gitBlobSha": "6f4ae6f183189ce71bb39eb1ff9260805cf8e621",
+      "production": {
+        "present": true,
+        "checksums": [
+          "c14caac59f1859e1a47c511aaef6dca7059807a627ac7627f9d5aa7c22dcb79c"
+        ],
+        "classification": {
+          "executed": true,
+          "resolvedAsApplied": false,
+          "rolledBackAttempts": 0,
+          "unfinishedAttempts": 0
+        },
+        "attempts": [
+          {
+            "startedAt": "2026-04-16 18:26:44.233152+00",
+            "finishedAt": "2026-04-16 18:26:44.457182+00",
+            "rolledBackAt": null,
+            "appliedStepsCount": 1,
+            "checksum": "c14caac59f1859e1a47c511aaef6dca7059807a627ac7627f9d5aa7c22dcb79c"
+          }
+        ]
+      }
+    },
+    {
+      "repositoryOrder": 56,
+      "migrationName": "20260416_000000_sprint15_sms_types",
+      "repositoryPresent": true,
+      "path": "prisma/migrations/20260416_000000_sprint15_sms_types/migration.sql",
+      "sha256": "0322643ff09d08065553ac6b9f38af700a1e4beaa7090deb836f800c8ebb9c93",
+      "fileBytes": 521,
+      "encoding": "utf-8-no-bom-or-ascii",
+      "gitBlobSha": "e5d357c890ef532c5019bbb5c6507dcf603233b1",
+      "production": {
+        "present": true,
+        "checksums": [
+          "0322643ff09d08065553ac6b9f38af700a1e4beaa7090deb836f800c8ebb9c93"
+        ],
+        "classification": {
+          "executed": true,
+          "resolvedAsApplied": false,
+          "rolledBackAttempts": 0,
+          "unfinishedAttempts": 0
+        },
+        "attempts": [
+          {
+            "startedAt": "2026-04-16 18:26:44.577686+00",
+            "finishedAt": "2026-04-16 18:26:44.885045+00",
+            "rolledBackAt": null,
+            "appliedStepsCount": 1,
+            "checksum": "0322643ff09d08065553ac6b9f38af700a1e4beaa7090deb836f800c8ebb9c93"
+          }
+        ]
+      }
+    },
+    {
+      "repositoryOrder": 57,
+      "migrationName": "20260417_160000_sprint16f_policy_acceptance_ip",
+      "repositoryPresent": true,
+      "path": "prisma/migrations/20260417_160000_sprint16f_policy_acceptance_ip/migration.sql",
+      "sha256": "3309967f8df6e3b840c05f2015f237af260e08680b5ac58fd5b9f2408a6c9915",
+      "fileBytes": 66,
+      "encoding": "utf-8-no-bom-or-ascii",
+      "gitBlobSha": "35691c49d89d9c8c60a781526386e62424237e39",
+      "production": {
+        "present": true,
+        "checksums": [
+          "3309967f8df6e3b840c05f2015f237af260e08680b5ac58fd5b9f2408a6c9915"
+        ],
+        "classification": {
+          "executed": true,
+          "resolvedAsApplied": false,
+          "rolledBackAttempts": 0,
+          "unfinishedAttempts": 0
+        },
+        "attempts": [
+          {
+            "startedAt": "2026-04-17 17:34:56.189756+00",
+            "finishedAt": "2026-04-17 17:34:56.574014+00",
+            "rolledBackAt": null,
+            "appliedStepsCount": 1,
+            "checksum": "3309967f8df6e3b840c05f2015f237af260e08680b5ac58fd5b9f2408a6c9915"
+          }
+        ]
+      }
+    },
+    {
+      "repositoryOrder": 58,
+      "migrationName": "20260418_000000_multimedia_delivery",
+      "repositoryPresent": true,
+      "path": "prisma/migrations/20260418_000000_multimedia_delivery/migration.sql",
+      "sha256": "535756d2df95f66887ba893cadecb66fcb40a946d3c04aff5658f61f5e3995b3",
+      "fileBytes": 1932,
+      "encoding": "utf-8-no-bom-or-ascii",
+      "gitBlobSha": "3d9e1177bb47da1ed135e1dfdd9f509bd403f1e5",
+      "production": {
+        "present": true,
+        "checksums": [
+          "535756d2df95f66887ba893cadecb66fcb40a946d3c04aff5658f61f5e3995b3"
+        ],
+        "classification": {
+          "executed": true,
+          "resolvedAsApplied": false,
+          "rolledBackAttempts": 0,
+          "unfinishedAttempts": 0
+        },
+        "attempts": [
+          {
+            "startedAt": "2026-04-22 03:00:32.19734+00",
+            "finishedAt": "2026-04-22 03:00:32.808293+00",
+            "rolledBackAt": null,
+            "appliedStepsCount": 1,
+            "checksum": "535756d2df95f66887ba893cadecb66fcb40a946d3c04aff5658f61f5e3995b3"
+          }
+        ]
+      }
+    },
+    {
+      "repositoryOrder": 59,
+      "migrationName": "20260424_000001_phase53_action_models",
+      "repositoryPresent": true,
+      "path": "prisma/migrations/20260424_000001_phase53_action_models/migration.sql",
+      "sha256": "000ce3326c86558ca92ac468cbb9e30e69003cd4dffeb26e422da9fab7d35418",
+      "fileBytes": 4600,
+      "encoding": "utf-8-no-bom-or-ascii",
+      "gitBlobSha": "3de827b431268f59c2311dc3556bf42a4fad9643",
+      "production": {
+        "present": true,
+        "checksums": [
+          "000ce3326c86558ca92ac468cbb9e30e69003cd4dffeb26e422da9fab7d35418"
+        ],
+        "classification": {
+          "executed": true,
+          "resolvedAsApplied": false,
+          "rolledBackAttempts": 0,
+          "unfinishedAttempts": 0
+        },
+        "attempts": [
+          {
+            "startedAt": "2026-04-24 20:15:06.580305+00",
+            "finishedAt": "2026-04-24 20:15:08.549423+00",
+            "rolledBackAt": null,
+            "appliedStepsCount": 1,
+            "checksum": "000ce3326c86558ca92ac468cbb9e30e69003cd4dffeb26e422da9fab7d35418"
+          }
+        ]
+      }
+    },
+    {
+      "repositoryOrder": 60,
+      "migrationName": "20260425_000000_teacher_onboarding",
+      "repositoryPresent": true,
+      "path": "prisma/migrations/20260425_000000_teacher_onboarding/migration.sql",
+      "sha256": "fe6f804c9b151ff813b00f86af2a7c543c1eddecb7c6445a5c56d48defb337de",
+      "fileBytes": 198,
+      "encoding": "utf-8-no-bom-or-ascii",
+      "gitBlobSha": "bfde17dd53684979bda25ec233fd7e0b39359920",
+      "production": {
+        "present": true,
+        "checksums": [
+          "fe6f804c9b151ff813b00f86af2a7c543c1eddecb7c6445a5c56d48defb337de"
+        ],
+        "classification": {
+          "executed": true,
+          "resolvedAsApplied": false,
+          "rolledBackAttempts": 0,
+          "unfinishedAttempts": 0
+        },
+        "attempts": [
+          {
+            "startedAt": "2026-04-26 00:47:19.592958+00",
+            "finishedAt": "2026-04-26 00:47:20.19183+00",
+            "rolledBackAt": null,
+            "appliedStepsCount": 1,
+            "checksum": "fe6f804c9b151ff813b00f86af2a7c543c1eddecb7c6445a5c56d48defb337de"
+          }
+        ]
+      }
+    },
+    {
+      "repositoryOrder": 61,
+      "migrationName": "20260425_000001_teacher_sentiment",
+      "repositoryPresent": true,
+      "path": "prisma/migrations/20260425_000001_teacher_sentiment/migration.sql",
+      "sha256": "e82a08c19bdd4bb5e0fbd10bf4bf5bf3618457b490b339e0fcdacb27a7c70511",
+      "fileBytes": 803,
+      "encoding": "utf-8-no-bom-or-ascii",
+      "gitBlobSha": "d08e389f24148c50db179b1c40e05080819af5c2",
+      "production": {
+        "present": true,
+        "checksums": [
+          "e82a08c19bdd4bb5e0fbd10bf4bf5bf3618457b490b339e0fcdacb27a7c70511"
+        ],
+        "classification": {
+          "executed": true,
+          "resolvedAsApplied": false,
+          "rolledBackAttempts": 0,
+          "unfinishedAttempts": 0
+        },
+        "attempts": [
+          {
+            "startedAt": "2026-04-26 00:47:20.398454+00",
+            "finishedAt": "2026-04-26 00:47:20.955894+00",
+            "rolledBackAt": null,
+            "appliedStepsCount": 1,
+            "checksum": "e82a08c19bdd4bb5e0fbd10bf4bf5bf3618457b490b339e0fcdacb27a7c70511"
+          }
+        ]
+      }
+    },
+    {
+      "repositoryOrder": 62,
+      "migrationName": "20260427_000000_academic_year_promotion",
+      "repositoryPresent": true,
+      "path": "prisma/migrations/20260427_000000_academic_year_promotion/migration.sql",
+      "sha256": "915dabf914d91344051e6f23bafefd1d72ae8626b513e27e6ad9e1aac162c585",
+      "fileBytes": 485,
+      "encoding": "utf-8-no-bom-or-ascii",
+      "gitBlobSha": "9aaeec8d91e73fc30f69533adbd549731c86a290",
+      "production": {
+        "present": true,
+        "checksums": [
+          "915dabf914d91344051e6f23bafefd1d72ae8626b513e27e6ad9e1aac162c585"
+        ],
+        "classification": {
+          "executed": true,
+          "resolvedAsApplied": false,
+          "rolledBackAttempts": 0,
+          "unfinishedAttempts": 0
+        },
+        "attempts": [
+          {
+            "startedAt": "2026-04-28 12:19:33.609525+00",
+            "finishedAt": "2026-04-28 12:19:34.203465+00",
+            "rolledBackAt": null,
+            "appliedStepsCount": 1,
+            "checksum": "915dabf914d91344051e6f23bafefd1d72ae8626b513e27e6ad9e1aac162c585"
+          }
+        ]
+      }
+    },
+    {
+      "repositoryOrder": 63,
+      "migrationName": "20260427_000001_timetable",
+      "repositoryPresent": true,
+      "path": "prisma/migrations/20260427_000001_timetable/migration.sql",
+      "sha256": "a3f96a2146fead7e5a5735b428affe55591e8d956d52a2f851ec064f54f25334",
+      "fileBytes": 1626,
+      "encoding": "utf-8-no-bom-or-ascii",
+      "gitBlobSha": "89a57cfb9536a0589356586f4d240a4d31e7d5d6",
+      "production": {
+        "present": true,
+        "checksums": [
+          "a3f96a2146fead7e5a5735b428affe55591e8d956d52a2f851ec064f54f25334"
+        ],
+        "classification": {
+          "executed": true,
+          "resolvedAsApplied": false,
+          "rolledBackAttempts": 0,
+          "unfinishedAttempts": 0
+        },
+        "attempts": [
+          {
+            "startedAt": "2026-04-28 12:19:34.419394+00",
+            "finishedAt": "2026-04-28 12:19:35.022659+00",
+            "rolledBackAt": null,
+            "appliedStepsCount": 1,
+            "checksum": "a3f96a2146fead7e5a5735b428affe55591e8d956d52a2f851ec064f54f25334"
+          }
+        ]
+      }
+    },
+    {
+      "repositoryOrder": 64,
+      "migrationName": "20260428_000000_curriculum_year_mapping",
+      "repositoryPresent": true,
+      "path": "prisma/migrations/20260428_000000_curriculum_year_mapping/migration.sql",
+      "sha256": "286c12b943635133044ed35d16babe1afba4e31e07751ca349ae683fc4924acf",
+      "fileBytes": 3104,
+      "encoding": "utf-8-no-bom-or-ascii",
+      "gitBlobSha": "2bb39aab80e78811c0a79bc4dfb24985b60ce369",
+      "production": {
+        "present": true,
+        "checksums": [
+          "286c12b943635133044ed35d16babe1afba4e31e07751ca349ae683fc4924acf"
+        ],
+        "classification": {
+          "executed": true,
+          "resolvedAsApplied": false,
+          "rolledBackAttempts": 0,
+          "unfinishedAttempts": 0
+        },
+        "attempts": [
+          {
+            "startedAt": "2026-04-28 16:07:50.91361+00",
+            "finishedAt": "2026-04-28 16:07:52.073256+00",
+            "rolledBackAt": null,
+            "appliedStepsCount": 1,
+            "checksum": "286c12b943635133044ed35d16babe1afba4e31e07751ca349ae683fc4924acf"
+          }
+        ]
+      }
+    },
+    {
+      "repositoryOrder": 65,
+      "migrationName": "20260429_000000_textbook_generation_queue",
+      "repositoryPresent": true,
+      "path": "prisma/migrations/20260429_000000_textbook_generation_queue/migration.sql",
+      "sha256": "f8f0d2610653fca6c46c20f31f39671fbaf6df83d6548bb3daf7ca8e5977501b",
+      "fileBytes": 1419,
+      "encoding": "utf-8-no-bom-or-ascii",
+      "gitBlobSha": "e120a2612b8da51b3530bb42e98053f69466cf36",
+      "production": {
+        "present": true,
+        "checksums": [
+          "f8f0d2610653fca6c46c20f31f39671fbaf6df83d6548bb3daf7ca8e5977501b"
+        ],
+        "classification": {
+          "executed": true,
+          "resolvedAsApplied": false,
+          "rolledBackAttempts": 0,
+          "unfinishedAttempts": 0
+        },
+        "attempts": [
+          {
+            "startedAt": "2026-04-29 18:41:14.281417+00",
+            "finishedAt": "2026-04-29 18:41:14.886744+00",
+            "rolledBackAt": null,
+            "appliedStepsCount": 1,
+            "checksum": "f8f0d2610653fca6c46c20f31f39671fbaf6df83d6548bb3daf7ca8e5977501b"
+          }
+        ]
+      }
+    },
+    {
+      "repositoryOrder": 66,
+      "migrationName": "20260429_010000_lesson_audio_parts",
+      "repositoryPresent": true,
+      "path": "prisma/migrations/20260429_010000_lesson_audio_parts/migration.sql",
+      "sha256": "7d2be46623d57918b39f6b3654c602caaec9ffea9da792d0701940233c11edb0",
+      "fileBytes": 57,
+      "encoding": "utf-8-no-bom-or-ascii",
+      "gitBlobSha": "6ee1103cc6a1b4d50f23f8ba01d4f43041ad7d6c",
+      "production": {
+        "present": true,
+        "checksums": [
+          "7d2be46623d57918b39f6b3654c602caaec9ffea9da792d0701940233c11edb0"
+        ],
+        "classification": {
+          "executed": true,
+          "resolvedAsApplied": false,
+          "rolledBackAttempts": 0,
+          "unfinishedAttempts": 0
+        },
+        "attempts": [
+          {
+            "startedAt": "2026-04-29 20:36:15.982594+00",
+            "finishedAt": "2026-04-29 20:36:16.304034+00",
+            "rolledBackAt": null,
+            "appliedStepsCount": 1,
+            "checksum": "7d2be46623d57918b39f6b3654c602caaec9ffea9da792d0701940233c11edb0"
+          }
+        ]
+      }
+    },
+    {
+      "repositoryOrder": 67,
+      "migrationName": "20260430_000000_grade_pipeline_orchestration",
+      "repositoryPresent": true,
+      "path": "prisma/migrations/20260430_000000_grade_pipeline_orchestration/migration.sql",
+      "sha256": "0593d466c5de6ce4434c6e88b80808a8c3082d71cbd45c1caaa754b773bdc8d3",
+      "fileBytes": 1243,
+      "encoding": "utf-8-no-bom-or-ascii",
+      "gitBlobSha": "071d7683e22fa036b47d430cef977aed21a0262b",
+      "production": {
+        "present": true,
+        "checksums": [
+          "0593d466c5de6ce4434c6e88b80808a8c3082d71cbd45c1caaa754b773bdc8d3"
+        ],
+        "classification": {
+          "executed": true,
+          "resolvedAsApplied": false,
+          "rolledBackAttempts": 0,
+          "unfinishedAttempts": 0
+        },
+        "attempts": [
+          {
+            "startedAt": "2026-04-30 20:49:43.723319+00",
+            "finishedAt": "2026-04-30 20:49:44.80052+00",
+            "rolledBackAt": null,
+            "appliedStepsCount": 1,
+            "checksum": "0593d466c5de6ce4434c6e88b80808a8c3082d71cbd45c1caaa754b773bdc8d3"
+          }
+        ]
+      }
+    },
+    {
+      "repositoryOrder": 68,
+      "migrationName": "20260430_010000_add_student_badge_award",
+      "repositoryPresent": true,
+      "path": "prisma/migrations/20260430_010000_add_student_badge_award/migration.sql",
+      "sha256": "70199700b7d828fb3719ff0a145f1f28b5e5b634f73913571ca283ab985e3ec5",
+      "fileBytes": 1270,
+      "encoding": "utf-8-no-bom-or-ascii",
+      "gitBlobSha": "6a0943c73c05651f3f2e4fba34fffc79fe776d9a",
+      "production": {
+        "present": true,
+        "checksums": [
+          "70199700b7d828fb3719ff0a145f1f28b5e5b634f73913571ca283ab985e3ec5"
+        ],
+        "classification": {
+          "executed": true,
+          "resolvedAsApplied": false,
+          "rolledBackAttempts": 0,
+          "unfinishedAttempts": 0
+        },
+        "attempts": [
+          {
+            "startedAt": "2026-04-30 20:49:45.180204+00",
+            "finishedAt": "2026-04-30 20:49:46.096129+00",
+            "rolledBackAt": null,
+            "appliedStepsCount": 1,
+            "checksum": "70199700b7d828fb3719ff0a145f1f28b5e5b634f73913571ca283ab985e3ec5"
+          }
+        ]
+      }
+    },
+    {
+      "repositoryOrder": 69,
+      "migrationName": "20260501_010000_add_moe_policy_governance",
+      "repositoryPresent": true,
+      "path": "prisma/migrations/20260501_010000_add_moe_policy_governance/migration.sql",
+      "sha256": "a14d1684ce7f1f8059b83ce8a9463ff7671e86f9ef3ffe8b2a08b43aafb141df",
+      "fileBytes": 3541,
+      "encoding": "utf-8-no-bom-or-ascii",
+      "gitBlobSha": "a6f4212d86e36be3bb958a7bff4f5595ad253289",
+      "production": {
+        "present": true,
+        "checksums": [
+          "a14d1684ce7f1f8059b83ce8a9463ff7671e86f9ef3ffe8b2a08b43aafb141df"
+        ],
+        "classification": {
+          "executed": true,
+          "resolvedAsApplied": false,
+          "rolledBackAttempts": 0,
+          "unfinishedAttempts": 0
+        },
+        "attempts": [
+          {
+            "startedAt": "2026-05-01 12:22:26.704824+00",
+            "finishedAt": "2026-05-01 12:22:27.601276+00",
+            "rolledBackAt": null,
+            "appliedStepsCount": 1,
+            "checksum": "a14d1684ce7f1f8059b83ce8a9463ff7671e86f9ef3ffe8b2a08b43aafb141df"
+          }
+        ]
+      }
+    },
+    {
+      "repositoryOrder": 70,
+      "migrationName": "20260507_000000_canva_asset_automation",
+      "repositoryPresent": true,
+      "path": "prisma/migrations/20260507_000000_canva_asset_automation/migration.sql",
+      "sha256": "dcf8d125647a97f35f32e16d3c526fb45f565b635c00162fa9bb9ad275dddf76",
+      "fileBytes": 1589,
+      "encoding": "utf-8-no-bom-or-ascii",
+      "gitBlobSha": "102078816c00cf6ae891bbe8b6b7331ecae84c3a",
+      "production": {
+        "present": true,
+        "checksums": [
+          "dcf8d125647a97f35f32e16d3c526fb45f565b635c00162fa9bb9ad275dddf76"
+        ],
+        "classification": {
+          "executed": true,
+          "resolvedAsApplied": false,
+          "rolledBackAttempts": 0,
+          "unfinishedAttempts": 0
+        },
+        "attempts": [
+          {
+            "startedAt": "2026-05-07 20:20:08.929733+00",
+            "finishedAt": "2026-05-07 20:20:10.417312+00",
+            "rolledBackAt": null,
+            "appliedStepsCount": 1,
+            "checksum": "dcf8d125647a97f35f32e16d3c526fb45f565b635c00162fa9bb9ad275dddf76"
+          }
+        ]
+      }
+    },
+    {
+      "repositoryOrder": 71,
+      "migrationName": "20260508_000000_curriculum_regeneration_pipeline",
+      "repositoryPresent": true,
+      "path": "prisma/migrations/20260508_000000_curriculum_regeneration_pipeline/migration.sql",
+      "sha256": "7468aec1b980a08113225d10ad0816e85e26cbad412131169672a22fde5cb989",
+      "fileBytes": 3390,
+      "encoding": "utf-8-no-bom-or-ascii",
+      "gitBlobSha": "c03603a37f6bda0f5bcdd68dfcd5b7d9e8f912ab",
+      "production": {
+        "present": true,
+        "checksums": [
+          "7468aec1b980a08113225d10ad0816e85e26cbad412131169672a22fde5cb989"
+        ],
+        "classification": {
+          "executed": true,
+          "resolvedAsApplied": false,
+          "rolledBackAttempts": 0,
+          "unfinishedAttempts": 0
+        },
+        "attempts": [
+          {
+            "startedAt": "2026-05-08 19:01:56.499643+00",
+            "finishedAt": "2026-05-08 19:01:57.292784+00",
+            "rolledBackAt": null,
+            "appliedStepsCount": 1,
+            "checksum": "7468aec1b980a08113225d10ad0816e85e26cbad412131169672a22fde5cb989"
+          }
+        ]
+      }
+    },
+    {
+      "repositoryOrder": 72,
+      "migrationName": "20260510_000000_autonomous_workflow_foundation",
+      "repositoryPresent": true,
+      "path": "prisma/migrations/20260510_000000_autonomous_workflow_foundation/migration.sql",
+      "sha256": "8205bcd79215417719c5294694d43da97b642523d02e94fed56d85bd8990cbcf",
+      "fileBytes": 10907,
+      "encoding": "utf-8-no-bom-or-ascii",
+      "gitBlobSha": "a3717f033e0494d6dac1a80b3da367320c840a42",
+      "production": {
+        "present": true,
+        "checksums": [
+          "8205bcd79215417719c5294694d43da97b642523d02e94fed56d85bd8990cbcf"
+        ],
+        "classification": {
+          "executed": true,
+          "resolvedAsApplied": false,
+          "rolledBackAttempts": 0,
+          "unfinishedAttempts": 0
+        },
+        "attempts": [
+          {
+            "startedAt": "2026-05-11 17:57:13.664482+00",
+            "finishedAt": "2026-05-11 17:57:15.547603+00",
+            "rolledBackAt": null,
+            "appliedStepsCount": 1,
+            "checksum": "8205bcd79215417719c5294694d43da97b642523d02e94fed56d85bd8990cbcf"
+          }
+        ]
+      }
+    },
+    {
+      "repositoryOrder": 73,
+      "migrationName": "20260511_000000_canva_oauth_pkce",
+      "repositoryPresent": true,
+      "path": "prisma/migrations/20260511_000000_canva_oauth_pkce/migration.sql",
+      "sha256": "945d75438afc30ea8923a5ebbf57850e25153e6f12eb0ccdcabe4cf764f64660",
+      "fileBytes": 606,
+      "encoding": "utf-8-no-bom-or-ascii",
+      "gitBlobSha": "15977b7389e89d1b96b4faa94a4ae2c09f793fbd",
+      "production": {
+        "present": true,
+        "checksums": [
+          "945d75438afc30ea8923a5ebbf57850e25153e6f12eb0ccdcabe4cf764f64660"
+        ],
+        "classification": {
+          "executed": true,
+          "resolvedAsApplied": false,
+          "rolledBackAttempts": 0,
+          "unfinishedAttempts": 0
+        },
+        "attempts": [
+          {
+            "startedAt": "2026-05-11 20:38:21.060162+00",
+            "finishedAt": "2026-05-11 20:38:21.777279+00",
+            "rolledBackAt": null,
+            "appliedStepsCount": 1,
+            "checksum": "945d75438afc30ea8923a5ebbf57850e25153e6f12eb0ccdcabe4cf764f64660"
+          }
+        ]
+      }
+    },
+    {
+      "repositoryOrder": 74,
+      "migrationName": "20260511_000001_phase7_implementation_workflow",
+      "repositoryPresent": true,
+      "path": "prisma/migrations/20260511_000001_phase7_implementation_workflow/migration.sql",
+      "sha256": "58837f4529b351ab2dceb8b27103db3694f7cb4684dc5dcc1480dbec5ed18707",
+      "fileBytes": 5654,
+      "encoding": "utf-8-no-bom-or-ascii",
+      "gitBlobSha": "6c60fdd4067a86b2bd4b5d1ac981a8a443f581ee",
+      "production": {
+        "present": true,
+        "checksums": [
+          "58837f4529b351ab2dceb8b27103db3694f7cb4684dc5dcc1480dbec5ed18707"
+        ],
+        "classification": {
+          "executed": true,
+          "resolvedAsApplied": false,
+          "rolledBackAttempts": 0,
+          "unfinishedAttempts": 0
+        },
+        "attempts": [
+          {
+            "startedAt": "2026-05-11 17:57:15.88647+00",
+            "finishedAt": "2026-05-11 17:57:16.675519+00",
+            "rolledBackAt": null,
+            "appliedStepsCount": 1,
+            "checksum": "58837f4529b351ab2dceb8b27103db3694f7cb4684dc5dcc1480dbec5ed18707"
+          }
+        ]
+      }
+    },
+    {
+      "repositoryOrder": 75,
+      "migrationName": "20260511_010000_canva_oauth_state",
+      "repositoryPresent": true,
+      "path": "prisma/migrations/20260511_010000_canva_oauth_state/migration.sql",
+      "sha256": "018448d752ec731461c32bdd2a6e158cb937603c8057093060c43e205dd1aaca",
+      "fileBytes": 634,
+      "encoding": "utf-8-no-bom-or-ascii",
+      "gitBlobSha": "f6122f02b6e518e94bdfd095f8f0337b655a7d95",
+      "production": {
+        "present": true,
+        "checksums": [
+          "018448d752ec731461c32bdd2a6e158cb937603c8057093060c43e205dd1aaca"
+        ],
+        "classification": {
+          "executed": true,
+          "resolvedAsApplied": false,
+          "rolledBackAttempts": 0,
+          "unfinishedAttempts": 0
+        },
+        "attempts": [
+          {
+            "startedAt": "2026-05-11 21:25:31.799148+00",
+            "finishedAt": "2026-05-11 21:25:32.486973+00",
+            "rolledBackAt": null,
+            "appliedStepsCount": 1,
+            "checksum": "018448d752ec731461c32bdd2a6e158cb937603c8057093060c43e205dd1aaca"
+          }
+        ]
+      }
+    },
+    {
+      "repositoryOrder": 76,
+      "migrationName": "20260511_020000_phase8_schema_gaps",
+      "repositoryPresent": true,
+      "path": "prisma/migrations/20260511_020000_phase8_schema_gaps/migration.sql",
+      "sha256": "f6f412d623b727d08010d2ea82ee38cee98c7dae75f2732bd7a3a5fee48ae119",
+      "fileBytes": 555,
+      "encoding": "utf-8-no-bom-or-ascii",
+      "gitBlobSha": "f34e6c05794d4fc0b826af8c693cfad8c8b7cdf5",
+      "production": {
+        "present": true,
+        "checksums": [
+          "f6f412d623b727d08010d2ea82ee38cee98c7dae75f2732bd7a3a5fee48ae119"
+        ],
+        "classification": {
+          "executed": true,
+          "resolvedAsApplied": false,
+          "rolledBackAttempts": 0,
+          "unfinishedAttempts": 0
+        },
+        "attempts": [
+          {
+            "startedAt": "2026-05-11 22:17:14.945503+00",
+            "finishedAt": "2026-05-11 22:17:15.952023+00",
+            "rolledBackAt": null,
+            "appliedStepsCount": 1,
+            "checksum": "f6f412d623b727d08010d2ea82ee38cee98c7dae75f2732bd7a3a5fee48ae119"
+          }
+        ]
+      }
+    },
+    {
+      "repositoryOrder": 77,
+      "migrationName": "20260512_000000_sprint2_assignment_grading",
+      "repositoryPresent": true,
+      "path": "prisma/migrations/20260512_000000_sprint2_assignment_grading/migration.sql",
+      "sha256": "0a3f7705912020409b34581b7bf2903e125a573730e49b707bebd346b046281a",
+      "fileBytes": 168,
+      "encoding": "utf-8-no-bom-or-ascii",
+      "gitBlobSha": "9d1027bbee272c0163f98c8dd90c9d447dc9cf41",
+      "production": {
+        "present": true,
+        "checksums": [
+          "0a3f7705912020409b34581b7bf2903e125a573730e49b707bebd346b046281a"
+        ],
+        "classification": {
+          "executed": true,
+          "resolvedAsApplied": false,
+          "rolledBackAttempts": 0,
+          "unfinishedAttempts": 0
+        },
+        "attempts": [
+          {
+            "startedAt": "2026-05-12 04:00:08.212621+00",
+            "finishedAt": "2026-05-12 04:00:08.702088+00",
+            "rolledBackAt": null,
+            "appliedStepsCount": 1,
+            "checksum": "0a3f7705912020409b34581b7bf2903e125a573730e49b707bebd346b046281a"
+          }
+        ]
+      }
+    },
+    {
+      "repositoryOrder": 78,
+      "migrationName": "20260512_000001_sprint3_report_cards",
+      "repositoryPresent": true,
+      "path": "prisma/migrations/20260512_000001_sprint3_report_cards/migration.sql",
+      "sha256": "bd1f9b5923b2316f3ac4a16233b53af3a7a645875f78f5ca20d6c3d9da5765d0",
+      "fileBytes": 1590,
+      "encoding": "utf-8-no-bom-or-ascii",
+      "gitBlobSha": "8ff60a7c7ee0a1904f8f77c6d1bbea339192decd",
+      "production": {
+        "present": true,
+        "checksums": [
+          "bd1f9b5923b2316f3ac4a16233b53af3a7a645875f78f5ca20d6c3d9da5765d0"
+        ],
+        "classification": {
+          "executed": true,
+          "resolvedAsApplied": false,
+          "rolledBackAttempts": 0,
+          "unfinishedAttempts": 0
+        },
+        "attempts": [
+          {
+            "startedAt": "2026-05-14 03:46:38.09658+00",
+            "finishedAt": "2026-05-14 03:46:38.867739+00",
+            "rolledBackAt": null,
+            "appliedStepsCount": 1,
+            "checksum": "bd1f9b5923b2316f3ac4a16233b53af3a7a645875f78f5ca20d6c3d9da5765d0"
+          }
+        ]
+      }
+    },
+    {
+      "repositoryOrder": 79,
+      "migrationName": "20260512_000002_sprint4_push_subscriptions",
+      "repositoryPresent": true,
+      "path": "prisma/migrations/20260512_000002_sprint4_push_subscriptions/migration.sql",
+      "sha256": "f25cedf9ea8c6a6532dd302ce8aafab6b49bbab08b511d0f816e7494f78927bc",
+      "fileBytes": 885,
+      "encoding": "utf-8-no-bom-or-ascii",
+      "gitBlobSha": "a375bbfa394d0284279355d01e3255fe2261f173",
+      "production": {
+        "present": true,
+        "checksums": [
+          "f25cedf9ea8c6a6532dd302ce8aafab6b49bbab08b511d0f816e7494f78927bc"
+        ],
+        "classification": {
+          "executed": true,
+          "resolvedAsApplied": false,
+          "rolledBackAttempts": 0,
+          "unfinishedAttempts": 0
+        },
+        "attempts": [
+          {
+            "startedAt": "2026-05-14 03:46:38.968826+00",
+            "finishedAt": "2026-05-14 03:46:39.381493+00",
+            "rolledBackAt": null,
+            "appliedStepsCount": 1,
+            "checksum": "f25cedf9ea8c6a6532dd302ce8aafab6b49bbab08b511d0f816e7494f78927bc"
+          }
+        ]
+      }
+    },
+    {
+      "repositoryOrder": 80,
+      "migrationName": "20260512_000003_phase10_operator_incident_note",
+      "repositoryPresent": true,
+      "path": "prisma/migrations/20260512_000003_phase10_operator_incident_note/migration.sql",
+      "sha256": "9534591e707a1892dbc3fa6b6acb385811967284b10faa54d977df50f675ac24",
+      "fileBytes": 967,
+      "encoding": "utf-8-no-bom-or-ascii",
+      "gitBlobSha": "1569d8f0929c2e1516c9476e5ea38a596045346d",
+      "production": {
+        "present": true,
+        "checksums": [
+          "9534591e707a1892dbc3fa6b6acb385811967284b10faa54d977df50f675ac24"
+        ],
+        "classification": {
+          "executed": true,
+          "resolvedAsApplied": false,
+          "rolledBackAttempts": 0,
+          "unfinishedAttempts": 0
+        },
+        "attempts": [
+          {
+            "startedAt": "2026-05-14 03:46:39.584971+00",
+            "finishedAt": "2026-05-14 03:46:40.008931+00",
+            "rolledBackAt": null,
+            "appliedStepsCount": 1,
+            "checksum": "9534591e707a1892dbc3fa6b6acb385811967284b10faa54d977df50f675ac24"
+          }
+        ]
+      }
+    },
+    {
+      "repositoryOrder": 81,
+      "migrationName": "20260512_000005_sprint5_school_events",
+      "repositoryPresent": true,
+      "path": "prisma/migrations/20260512_000005_sprint5_school_events/migration.sql",
+      "sha256": "297c8ca6828e1a4339af6f1941b73814a7a41418ae05314e6b42088c2850cc56",
+      "fileBytes": 1327,
+      "encoding": "utf-8-no-bom-or-ascii",
+      "gitBlobSha": "f6672e9b1def43d96b0097fd571a1dbed8e77ec6",
+      "production": {
+        "present": true,
+        "checksums": [
+          "297c8ca6828e1a4339af6f1941b73814a7a41418ae05314e6b42088c2850cc56"
+        ],
+        "classification": {
+          "executed": true,
+          "resolvedAsApplied": false,
+          "rolledBackAttempts": 0,
+          "unfinishedAttempts": 0
+        },
+        "attempts": [
+          {
+            "startedAt": "2026-05-14 03:46:40.199321+00",
+            "finishedAt": "2026-05-14 03:46:40.710781+00",
+            "rolledBackAt": null,
+            "appliedStepsCount": 1,
+            "checksum": "297c8ca6828e1a4339af6f1941b73814a7a41418ae05314e6b42088c2850cc56"
+          }
+        ]
+      }
+    },
+    {
+      "repositoryOrder": 82,
+      "migrationName": "20260512_000006_sprint6_live_sessions",
+      "repositoryPresent": true,
+      "path": "prisma/migrations/20260512_000006_sprint6_live_sessions/migration.sql",
+      "sha256": "9c7680ea33a53d20d3db6812bfee39ab68cbf6052e769717e7e4e0934f4246cd",
+      "fileBytes": 1827,
+      "encoding": "utf-8-no-bom-or-ascii",
+      "gitBlobSha": "883647aa84afd746471879613507e1348e503868",
+      "production": {
+        "present": true,
+        "checksums": [
+          "9c7680ea33a53d20d3db6812bfee39ab68cbf6052e769717e7e4e0934f4246cd"
+        ],
+        "classification": {
+          "executed": true,
+          "resolvedAsApplied": false,
+          "rolledBackAttempts": 0,
+          "unfinishedAttempts": 0
+        },
+        "attempts": [
+          {
+            "startedAt": "2026-05-14 03:46:40.915326+00",
+            "finishedAt": "2026-05-14 03:46:41.343571+00",
+            "rolledBackAt": null,
+            "appliedStepsCount": 1,
+            "checksum": "9c7680ea33a53d20d3db6812bfee39ab68cbf6052e769717e7e4e0934f4246cd"
+          }
+        ]
+      }
+    },
+    {
+      "repositoryOrder": 83,
+      "migrationName": "20260512_000007_sprint7_discussion_boards",
+      "repositoryPresent": true,
+      "path": "prisma/migrations/20260512_000007_sprint7_discussion_boards/migration.sql",
+      "sha256": "3f4045cd9d1e29c8f6ef128a461572a7cf842e8653f400c8b3d55566661dac90",
+      "fileBytes": 3888,
+      "encoding": "utf-8-no-bom-or-ascii",
+      "gitBlobSha": "d224fcf18d5ff8bbb9914f774953bc859430c664",
+      "production": {
+        "present": true,
+        "checksums": [
+          "3f4045cd9d1e29c8f6ef128a461572a7cf842e8653f400c8b3d55566661dac90"
+        ],
+        "classification": {
+          "executed": true,
+          "resolvedAsApplied": false,
+          "rolledBackAttempts": 0,
+          "unfinishedAttempts": 0
+        },
+        "attempts": [
+          {
+            "startedAt": "2026-05-14 03:46:41.531242+00",
+            "finishedAt": "2026-05-14 03:46:41.94006+00",
+            "rolledBackAt": null,
+            "appliedStepsCount": 1,
+            "checksum": "3f4045cd9d1e29c8f6ef128a461572a7cf842e8653f400c8b3d55566661dac90"
+          }
+        ]
+      }
+    },
+    {
+      "repositoryOrder": 84,
+      "migrationName": "20260513_000001_sprint9_generated_documents",
+      "repositoryPresent": true,
+      "path": "prisma/migrations/20260513_000001_sprint9_generated_documents/migration.sql",
+      "sha256": "a792ccfe959023045a7bb789197e48196d8f453b748e592aac85c5ce8ec8365d",
+      "fileBytes": 1312,
+      "encoding": "utf-8-no-bom-or-ascii",
+      "gitBlobSha": "b91541f2ce8e7276562d4f9b5cf42b4f4d9d57f1",
+      "production": {
+        "present": true,
+        "checksums": [
+          "a792ccfe959023045a7bb789197e48196d8f453b748e592aac85c5ce8ec8365d"
+        ],
+        "classification": {
+          "executed": true,
+          "resolvedAsApplied": false,
+          "rolledBackAttempts": 0,
+          "unfinishedAttempts": 0
+        },
+        "attempts": [
+          {
+            "startedAt": "2026-05-14 03:46:42.145454+00",
+            "finishedAt": "2026-05-14 03:46:42.758948+00",
+            "rolledBackAt": null,
+            "appliedStepsCount": 1,
+            "checksum": "a792ccfe959023045a7bb789197e48196d8f453b748e592aac85c5ce8ec8365d"
+          }
+        ]
+      }
+    },
+    {
+      "repositoryOrder": 85,
+      "migrationName": "20260513_000002_sprint10_portfolio_capstone",
+      "repositoryPresent": true,
+      "path": "prisma/migrations/20260513_000002_sprint10_portfolio_capstone/migration.sql",
+      "sha256": "8dce9c6ad4dcaa385bca9afe6ac1bf5e58abde2860817e21970769655f58a4a0",
+      "fileBytes": 1844,
+      "encoding": "utf-8-no-bom-or-ascii",
+      "gitBlobSha": "3667ecedb328911a3c395d756e242d8c7ad1bcfe",
+      "production": {
+        "present": true,
+        "checksums": [
+          "8dce9c6ad4dcaa385bca9afe6ac1bf5e58abde2860817e21970769655f58a4a0"
+        ],
+        "classification": {
+          "executed": true,
+          "resolvedAsApplied": false,
+          "rolledBackAttempts": 0,
+          "unfinishedAttempts": 0
+        },
+        "attempts": [
+          {
+            "startedAt": "2026-05-14 03:46:42.963591+00",
+            "finishedAt": "2026-05-14 03:46:43.475884+00",
+            "rolledBackAt": null,
+            "appliedStepsCount": 1,
+            "checksum": "8dce9c6ad4dcaa385bca9afe6ac1bf5e58abde2860817e21970769655f58a4a0"
+          }
+        ]
+      }
+    },
+    {
+      "repositoryOrder": 86,
+      "migrationName": "20260513_000003_sprint12_unified_messaging",
+      "repositoryPresent": true,
+      "path": "prisma/migrations/20260513_000003_sprint12_unified_messaging/migration.sql",
+      "sha256": "a49430964ebec796e1d100e33689f7db0871d260fea8e088b88467c63bd7f64f",
+      "fileBytes": 1525,
+      "encoding": "utf-8-no-bom-or-ascii",
+      "gitBlobSha": "84422dd252a8a5f594c441f2eec0621540c07aff",
+      "production": {
+        "present": true,
+        "checksums": [
+          "a49430964ebec796e1d100e33689f7db0871d260fea8e088b88467c63bd7f64f"
+        ],
+        "classification": {
+          "executed": true,
+          "resolvedAsApplied": false,
+          "rolledBackAttempts": 0,
+          "unfinishedAttempts": 0
+        },
+        "attempts": [
+          {
+            "startedAt": "2026-05-14 03:46:43.68273+00",
+            "finishedAt": "2026-05-14 03:46:44.192724+00",
+            "rolledBackAt": null,
+            "appliedStepsCount": 1,
+            "checksum": "a49430964ebec796e1d100e33689f7db0871d260fea8e088b88467c63bd7f64f"
+          }
+        ]
+      }
+    },
+    {
+      "repositoryOrder": 87,
+      "migrationName": "20260513_000004_sprint13_message_hardening",
+      "repositoryPresent": true,
+      "path": "prisma/migrations/20260513_000004_sprint13_message_hardening/migration.sql",
+      "sha256": "a7acac1543006b27c8a71635a88286883475c0a0d29efde87e657ddce99b2635",
+      "fileBytes": 1036,
+      "encoding": "utf-8-no-bom-or-ascii",
+      "gitBlobSha": "ddeb653ff973d6a3c9905686e2782372f1c61748",
+      "production": {
+        "present": true,
+        "checksums": [
+          "b0fc516adefddf0ac9a0dde0d0b5dd1665bacb268416209d9cacd266f93f8333",
+          "a7acac1543006b27c8a71635a88286883475c0a0d29efde87e657ddce99b2635"
+        ],
+        "classification": {
+          "executed": true,
+          "resolvedAsApplied": false,
+          "rolledBackAttempts": 1,
+          "unfinishedAttempts": 0
+        },
+        "attempts": [
+          {
+            "startedAt": "2026-05-14 04:16:43.459302+00",
+            "finishedAt": null,
+            "rolledBackAt": "2026-05-14 04:17:11.622501+00",
+            "appliedStepsCount": 0,
+            "checksum": "b0fc516adefddf0ac9a0dde0d0b5dd1665bacb268416209d9cacd266f93f8333"
+          },
+          {
+            "startedAt": "2026-05-14 04:17:32.201449+00",
+            "finishedAt": "2026-05-14 04:17:32.707087+00",
+            "rolledBackAt": null,
+            "appliedStepsCount": 1,
+            "checksum": "a7acac1543006b27c8a71635a88286883475c0a0d29efde87e657ddce99b2635"
+          }
+        ]
+      }
+    },
+    {
+      "repositoryOrder": 88,
+      "migrationName": "20260514_000001_sprint14_features",
+      "repositoryPresent": true,
+      "path": "prisma/migrations/20260514_000001_sprint14_features/migration.sql",
+      "sha256": "b5f89670187fa60dedd83bb047fbf60c6932d04f3d4eef9df83364a8445c21f7",
+      "fileBytes": 2368,
+      "encoding": "utf-8-no-bom-or-ascii",
+      "gitBlobSha": "d80373bc85cbb2c8de1acc1139b5742e4bf082ef",
+      "production": {
+        "present": true,
+        "checksums": [
+          "4eaf53b42e8fa07a33ca0d3964c9d7abf462826fddbf3489da028cc339e730ce",
+          "b5f89670187fa60dedd83bb047fbf60c6932d04f3d4eef9df83364a8445c21f7"
+        ],
+        "classification": {
+          "executed": true,
+          "resolvedAsApplied": false,
+          "rolledBackAttempts": 1,
+          "unfinishedAttempts": 0
+        },
+        "attempts": [
+          {
+            "startedAt": "2026-05-17 23:48:39.243965+00",
+            "finishedAt": null,
+            "rolledBackAt": "2026-05-17 23:53:18.035371+00",
+            "appliedStepsCount": 0,
+            "checksum": "4eaf53b42e8fa07a33ca0d3964c9d7abf462826fddbf3489da028cc339e730ce"
+          },
+          {
+            "startedAt": "2026-05-17 23:53:31.303244+00",
+            "finishedAt": "2026-05-17 23:53:32.294728+00",
+            "rolledBackAt": null,
+            "appliedStepsCount": 1,
+            "checksum": "b5f89670187fa60dedd83bb047fbf60c6932d04f3d4eef9df83364a8445c21f7"
+          }
+        ]
+      }
+    },
+    {
+      "repositoryOrder": 89,
+      "migrationName": "20260514_000001_sprint16_school_onboarding",
+      "repositoryPresent": true,
+      "path": "prisma/migrations/20260514_000001_sprint16_school_onboarding/migration.sql",
+      "sha256": "f1685593f7d05bf7b5d9c5d863c46f84bd5658d440f35e28e8a3a1bb3cbeb525",
+      "fileBytes": 935,
+      "encoding": "utf-8-no-bom-or-ascii",
+      "gitBlobSha": "30c5c54a9d0940d9f5ea9f276c4727e884eee48b",
+      "production": {
+        "present": true,
+        "checksums": [
+          "49dc60ce038cc4fb04f38fba6eef31fc28d4f7dd2ef38b2b86fb655500bf89c2",
+          "f1685593f7d05bf7b5d9c5d863c46f84bd5658d440f35e28e8a3a1bb3cbeb525"
+        ],
+        "classification": {
+          "executed": true,
+          "resolvedAsApplied": false,
+          "rolledBackAttempts": 1,
+          "unfinishedAttempts": 0
+        },
+        "attempts": [
+          {
+            "startedAt": "2026-05-17 23:53:32.500619+00",
+            "finishedAt": null,
+            "rolledBackAt": "2026-05-17 23:54:04.040682+00",
+            "appliedStepsCount": 0,
+            "checksum": "49dc60ce038cc4fb04f38fba6eef31fc28d4f7dd2ef38b2b86fb655500bf89c2"
+          },
+          {
+            "startedAt": "2026-05-17 23:54:14.901682+00",
+            "finishedAt": "2026-05-17 23:54:15.404504+00",
+            "rolledBackAt": null,
+            "appliedStepsCount": 1,
+            "checksum": "f1685593f7d05bf7b5d9c5d863c46f84bd5658d440f35e28e8a3a1bb3cbeb525"
+          }
+        ]
+      }
+    },
+    {
+      "repositoryOrder": 90,
+      "migrationName": "20260514_000002_sprint15_features",
+      "repositoryPresent": true,
+      "path": "prisma/migrations/20260514_000002_sprint15_features/migration.sql",
+      "sha256": "86a6443a5020025b659266e2a5e8d9b60470c624d6430092ce0e17008f522403",
+      "fileBytes": 1957,
+      "encoding": "utf-8-no-bom-or-ascii",
+      "gitBlobSha": "55544b137324ca9f188c9c1f2207f2eaa4295de2",
+      "production": {
+        "present": true,
+        "checksums": [
+          "86a6443a5020025b659266e2a5e8d9b60470c624d6430092ce0e17008f522403"
+        ],
+        "classification": {
+          "executed": true,
+          "resolvedAsApplied": false,
+          "rolledBackAttempts": 0,
+          "unfinishedAttempts": 0
+        },
+        "attempts": [
+          {
+            "startedAt": "2026-05-17 23:54:15.610813+00",
+            "finishedAt": "2026-05-17 23:54:16.123929+00",
+            "rolledBackAt": null,
+            "appliedStepsCount": 1,
+            "checksum": "86a6443a5020025b659266e2a5e8d9b60470c624d6430092ce0e17008f522403"
+          }
+        ]
+      }
+    },
+    {
+      "repositoryOrder": 91,
+      "migrationName": "20260515_000001_sprint17_moe_submissions_language",
+      "repositoryPresent": true,
+      "path": "prisma/migrations/20260515_000001_sprint17_moe_submissions_language/migration.sql",
+      "sha256": "9055bfc3c93ce9ded36f73133c0c2dc064f5b68f394ae19a33c948c4afd4e2d0",
+      "fileBytes": 1370,
+      "encoding": "utf-8-no-bom-or-ascii",
+      "gitBlobSha": "75c0bc9564b239e48038a23c8da613a9aa147a66",
+      "production": {
+        "present": true,
+        "checksums": [
+          "a3ed8c80f6a1438f06d6fe3e7534a8b6843f5503879595c611ebc1f793aab8bc",
+          "9055bfc3c93ce9ded36f73133c0c2dc064f5b68f394ae19a33c948c4afd4e2d0"
+        ],
+        "classification": {
+          "executed": true,
+          "resolvedAsApplied": false,
+          "rolledBackAttempts": 1,
+          "unfinishedAttempts": 0
+        },
+        "attempts": [
+          {
+            "startedAt": "2026-05-17 23:54:16.327176+00",
+            "finishedAt": null,
+            "rolledBackAt": "2026-05-17 23:56:47.408103+00",
+            "appliedStepsCount": 0,
+            "checksum": "a3ed8c80f6a1438f06d6fe3e7534a8b6843f5503879595c611ebc1f793aab8bc"
+          },
+          {
+            "startedAt": "2026-05-17 23:56:58.122775+00",
+            "finishedAt": "2026-05-17 23:56:58.629853+00",
+            "rolledBackAt": null,
+            "appliedStepsCount": 1,
+            "checksum": "9055bfc3c93ce9ded36f73133c0c2dc064f5b68f394ae19a33c948c4afd4e2d0"
+          }
+        ]
+      }
+    },
+    {
+      "repositoryOrder": 92,
+      "migrationName": "20260515_000001_sprint18_password_reset_admin_code",
+      "repositoryPresent": true,
+      "path": "prisma/migrations/20260515_000001_sprint18_password_reset_admin_code/migration.sql",
+      "sha256": "8d53d94e686fe09e282a7626d9b429664c44ee6322d8750ebd78b0cb2262f0f5",
+      "fileBytes": 162,
+      "encoding": "utf-8-no-bom-or-ascii",
+      "gitBlobSha": "96535b3da11af356c0115f814ea34e046763de18",
+      "production": {
+        "present": true,
+        "checksums": [
+          "8d53d94e686fe09e282a7626d9b429664c44ee6322d8750ebd78b0cb2262f0f5"
+        ],
+        "classification": {
+          "executed": true,
+          "resolvedAsApplied": false,
+          "rolledBackAttempts": 0,
+          "unfinishedAttempts": 0
+        },
+        "attempts": [
+          {
+            "startedAt": "2026-05-17 23:56:58.833932+00",
+            "finishedAt": "2026-05-17 23:56:59.346326+00",
+            "rolledBackAt": null,
+            "appliedStepsCount": 1,
+            "checksum": "8d53d94e686fe09e282a7626d9b429664c44ee6322d8750ebd78b0cb2262f0f5"
+          }
+        ]
+      }
+    },
+    {
+      "repositoryOrder": 93,
+      "migrationName": "20260516_000001_sprint19_tutor_conversation",
+      "repositoryPresent": true,
+      "path": "prisma/migrations/20260516_000001_sprint19_tutor_conversation/migration.sql",
+      "sha256": "d532fd6256d4b86d725bc829ed26f686b2a3e887b6e30ec97c3e92dfce9843e7",
+      "fileBytes": 2393,
+      "encoding": "utf-8-no-bom-or-ascii",
+      "gitBlobSha": "b2993196f2ad4710c33a2a10431c8a0f4354249e",
+      "production": {
+        "present": true,
+        "checksums": [
+          "d532fd6256d4b86d725bc829ed26f686b2a3e887b6e30ec97c3e92dfce9843e7"
+        ],
+        "classification": {
+          "executed": true,
+          "resolvedAsApplied": false,
+          "rolledBackAttempts": 0,
+          "unfinishedAttempts": 0
+        },
+        "attempts": [
+          {
+            "startedAt": "2026-05-17 23:56:59.559784+00",
+            "finishedAt": "2026-05-17 23:57:00.165153+00",
+            "rolledBackAt": null,
+            "appliedStepsCount": 1,
+            "checksum": "d532fd6256d4b86d725bc829ed26f686b2a3e887b6e30ec97c3e92dfce9843e7"
+          }
+        ]
+      }
+    },
+    {
+      "repositoryOrder": 94,
+      "migrationName": "20260516_000001_sprint20_ai_grading",
+      "repositoryPresent": true,
+      "path": "prisma/migrations/20260516_000001_sprint20_ai_grading/migration.sql",
+      "sha256": "2d344bcebbdb454ba1b81381545737f53317eeb0b11e9dad3c1261dc6b559332",
+      "fileBytes": 688,
+      "encoding": "utf-8-no-bom-or-ascii",
+      "gitBlobSha": "265c2dd3ad3759b64a409dec9a0939791f2736d1",
+      "production": {
+        "present": true,
+        "checksums": [
+          "2d344bcebbdb454ba1b81381545737f53317eeb0b11e9dad3c1261dc6b559332"
+        ],
+        "classification": {
+          "executed": true,
+          "resolvedAsApplied": false,
+          "rolledBackAttempts": 0,
+          "unfinishedAttempts": 0
+        },
+        "attempts": [
+          {
+            "startedAt": "2026-05-17 23:57:00.369882+00",
+            "finishedAt": "2026-05-17 23:57:00.881647+00",
+            "rolledBackAt": null,
+            "appliedStepsCount": 1,
+            "checksum": "2d344bcebbdb454ba1b81381545737f53317eeb0b11e9dad3c1261dc6b559332"
+          }
+        ]
+      }
+    },
+    {
+      "repositoryOrder": 95,
+      "migrationName": "20260516_000002_sprint21_video_microlessons",
+      "repositoryPresent": true,
+      "path": "prisma/migrations/20260516_000002_sprint21_video_microlessons/migration.sql",
+      "sha256": "f4bea39c8c48369ea8a62bf15e2747b2cc5c2f3e128967e8bf685a1d706ddebb",
+      "fileBytes": 2435,
+      "encoding": "utf-8-no-bom-or-ascii",
+      "gitBlobSha": "09a86b49d2531febd6dc731f75519c783550a244",
+      "production": {
+        "present": true,
+        "checksums": [
+          "f4bea39c8c48369ea8a62bf15e2747b2cc5c2f3e128967e8bf685a1d706ddebb"
+        ],
+        "classification": {
+          "executed": true,
+          "resolvedAsApplied": false,
+          "rolledBackAttempts": 0,
+          "unfinishedAttempts": 0
+        },
+        "attempts": [
+          {
+            "startedAt": "2026-05-17 23:57:01.086755+00",
+            "finishedAt": "2026-05-17 23:57:01.598571+00",
+            "rolledBackAt": null,
+            "appliedStepsCount": 1,
+            "checksum": "f4bea39c8c48369ea8a62bf15e2747b2cc5c2f3e128967e8bf685a1d706ddebb"
+          }
+        ]
+      }
+    },
+    {
+      "repositoryOrder": 96,
+      "migrationName": "20260517_000001_sprint22_google_sso",
+      "repositoryPresent": true,
+      "path": "prisma/migrations/20260517_000001_sprint22_google_sso/migration.sql",
+      "sha256": "62f7603c7121b677a07b9c3a8377f6dcc92b25d263c12e88bade2269a2e64452",
+      "fileBytes": 271,
+      "encoding": "utf-8-no-bom-or-ascii",
+      "gitBlobSha": "4b916318d52963b7736a10dfd212aeeb50dd4205",
+      "production": {
+        "present": true,
+        "checksums": [
+          "62f7603c7121b677a07b9c3a8377f6dcc92b25d263c12e88bade2269a2e64452"
+        ],
+        "classification": {
+          "executed": true,
+          "resolvedAsApplied": false,
+          "rolledBackAttempts": 0,
+          "unfinishedAttempts": 0
+        },
+        "attempts": [
+          {
+            "startedAt": "2026-05-17 23:57:01.804262+00",
+            "finishedAt": "2026-05-17 23:57:02.315318+00",
+            "rolledBackAt": null,
+            "appliedStepsCount": 1,
+            "checksum": "62f7603c7121b677a07b9c3a8377f6dcc92b25d263c12e88bade2269a2e64452"
+          }
+        ]
+      }
+    },
+    {
+      "repositoryOrder": 97,
+      "migrationName": "20260517_000002_sprint23_teacher_alert_prefs",
+      "repositoryPresent": true,
+      "path": "prisma/migrations/20260517_000002_sprint23_teacher_alert_prefs/migration.sql",
+      "sha256": "c015694b2a9e01338ed0fd83294fb52dcf2477ec122368cb53eaa7917b1bbc2d",
+      "fileBytes": 839,
+      "encoding": "utf-8-no-bom-or-ascii",
+      "gitBlobSha": "4cdaeefaea59350cac222561a11ba196fcff7701",
+      "production": {
+        "present": true,
+        "checksums": [
+          "c015694b2a9e01338ed0fd83294fb52dcf2477ec122368cb53eaa7917b1bbc2d"
+        ],
+        "classification": {
+          "executed": true,
+          "resolvedAsApplied": false,
+          "rolledBackAttempts": 0,
+          "unfinishedAttempts": 0
+        },
+        "attempts": [
+          {
+            "startedAt": "2026-05-17 23:57:02.520558+00",
+            "finishedAt": "2026-05-17 23:57:03.033694+00",
+            "rolledBackAt": null,
+            "appliedStepsCount": 1,
+            "checksum": "c015694b2a9e01338ed0fd83294fb52dcf2477ec122368cb53eaa7917b1bbc2d"
+          }
+        ]
+      }
+    },
+    {
+      "repositoryOrder": 98,
+      "migrationName": "20260517_000003_sprint24_tour_privacy",
+      "repositoryPresent": true,
+      "path": "prisma/migrations/20260517_000003_sprint24_tour_privacy/migration.sql",
+      "sha256": "b8e1bfd5c1c7dd751532d5c9d61c4c8996c51b46e47d0ab54ebab8c345e400be",
+      "fileBytes": 225,
+      "encoding": "utf-8-no-bom-or-ascii",
+      "gitBlobSha": "f6ce8467d1030c4da59e06eb4c5e4cd8aa8f1d2f",
+      "production": {
+        "present": true,
+        "checksums": [
+          "b8e1bfd5c1c7dd751532d5c9d61c4c8996c51b46e47d0ab54ebab8c345e400be"
+        ],
+        "classification": {
+          "executed": true,
+          "resolvedAsApplied": false,
+          "rolledBackAttempts": 0,
+          "unfinishedAttempts": 0
+        },
+        "attempts": [
+          {
+            "startedAt": "2026-05-17 23:57:03.237319+00",
+            "finishedAt": "2026-05-17 23:57:03.749825+00",
+            "rolledBackAt": null,
+            "appliedStepsCount": 1,
+            "checksum": "b8e1bfd5c1c7dd751532d5c9d61c4c8996c51b46e47d0ab54ebab8c345e400be"
+          }
+        ]
+      }
+    },
+    {
+      "repositoryOrder": 99,
+      "migrationName": "20260517_000004_sprint25_lesson_versions_shares",
+      "repositoryPresent": true,
+      "path": "prisma/migrations/20260517_000004_sprint25_lesson_versions_shares/migration.sql",
+      "sha256": "12dd7bf1dc9dfeb0a4cf864e985a2e098ed6e809b624f103a28b25d776f4e1ed",
+      "fileBytes": 3395,
+      "encoding": "utf-8-no-bom-or-ascii",
+      "gitBlobSha": "a010f0fb3281523584ce726d22dde8f89d078f1a",
+      "production": {
+        "present": true,
+        "checksums": [
+          "12dd7bf1dc9dfeb0a4cf864e985a2e098ed6e809b624f103a28b25d776f4e1ed"
+        ],
+        "classification": {
+          "executed": true,
+          "resolvedAsApplied": false,
+          "rolledBackAttempts": 0,
+          "unfinishedAttempts": 0
+        },
+        "attempts": [
+          {
+            "startedAt": "2026-05-17 23:57:03.955091+00",
+            "finishedAt": "2026-05-17 23:57:04.670365+00",
+            "rolledBackAt": null,
+            "appliedStepsCount": 1,
+            "checksum": "12dd7bf1dc9dfeb0a4cf864e985a2e098ed6e809b624f103a28b25d776f4e1ed"
+          }
+        ]
+      }
+    },
+    {
+      "repositoryOrder": 100,
+      "migrationName": "20260517_000005_sprint26_sms_league_portfolio",
+      "repositoryPresent": true,
+      "path": "prisma/migrations/20260517_000005_sprint26_sms_league_portfolio/migration.sql",
+      "sha256": "59f47a044b4b9abcc9e06baebcabd4842eabc2716957583d9510ad3e75c72d69",
+      "fileBytes": 4718,
+      "encoding": "utf-8-no-bom-or-ascii",
+      "gitBlobSha": "a7162043663f4b17a4fdf770211a83217027d945",
+      "production": {
+        "present": true,
+        "checksums": [
+          "59f47a044b4b9abcc9e06baebcabd4842eabc2716957583d9510ad3e75c72d69"
+        ],
+        "classification": {
+          "executed": true,
+          "resolvedAsApplied": false,
+          "rolledBackAttempts": 0,
+          "unfinishedAttempts": 0
+        },
+        "attempts": [
+          {
+            "startedAt": "2026-05-19 16:35:58.692449+00",
+            "finishedAt": "2026-05-19 16:35:59.855474+00",
+            "rolledBackAt": null,
+            "appliedStepsCount": 1,
+            "checksum": "59f47a044b4b9abcc9e06baebcabd4842eabc2716957583d9510ad3e75c72d69"
+          }
+        ]
+      }
+    },
+    {
+      "repositoryOrder": 101,
+      "migrationName": "20260522_000001_audit_immutability",
+      "repositoryPresent": true,
+      "path": "prisma/migrations/20260522_000001_audit_immutability/migration.sql",
+      "sha256": "cb8585781a5f16cd30ea798bd8f0735f2966a43540ef71a5c5574474629344a5",
+      "fileBytes": 988,
+      "encoding": "utf-8-no-bom-or-ascii",
+      "gitBlobSha": "ad6c638a3fcc5a9d85e705561d9174f1fc6fd656",
+      "production": {
+        "present": true,
+        "checksums": [
+          "cb8585781a5f16cd30ea798bd8f0735f2966a43540ef71a5c5574474629344a5"
+        ],
+        "classification": {
+          "executed": true,
+          "resolvedAsApplied": false,
+          "rolledBackAttempts": 0,
+          "unfinishedAttempts": 0
+        },
+        "attempts": [
+          {
+            "startedAt": "2026-05-22 21:09:21.986075+00",
+            "finishedAt": "2026-05-22 21:09:22.550821+00",
+            "rolledBackAt": null,
+            "appliedStepsCount": 1,
+            "checksum": "cb8585781a5f16cd30ea798bd8f0735f2966a43540ef71a5c5574474629344a5"
+          }
+        ]
+      }
+    },
+    {
+      "repositoryOrder": 102,
+      "migrationName": "20260528_000001_homework_submission_idempotency",
+      "repositoryPresent": true,
+      "path": "prisma/migrations/20260528_000001_homework_submission_idempotency/migration.sql",
+      "sha256": "55c614e805546649429f98a120a6d70028745fd3600fe37822839a6cac20066f",
+      "fileBytes": 471,
+      "encoding": "utf-8-no-bom-or-ascii",
+      "gitBlobSha": "ceb67bc99753ebecc88960af72ae59bbb278f3b6",
+      "production": {
+        "present": true,
+        "checksums": [
+          "55c614e805546649429f98a120a6d70028745fd3600fe37822839a6cac20066f"
+        ],
+        "classification": {
+          "executed": true,
+          "resolvedAsApplied": false,
+          "rolledBackAttempts": 0,
+          "unfinishedAttempts": 0
+        },
+        "attempts": [
+          {
+            "startedAt": "2026-07-13 17:43:08.222496+00",
+            "finishedAt": "2026-07-13 17:43:08.906823+00",
+            "rolledBackAt": null,
+            "appliedStepsCount": 1,
+            "checksum": "55c614e805546649429f98a120a6d70028745fd3600fe37822839a6cac20066f"
+          }
+        ]
+      }
+    },
+    {
+      "repositoryOrder": 103,
+      "migrationName": "20260529_000001_adaptive_engine",
+      "repositoryPresent": true,
+      "path": "prisma/migrations/20260529_000001_adaptive_engine/migration.sql",
+      "sha256": "2cf95ffe5e8d4965e08afad53ac9509fc8f1dcbea9690140996b41ce23367990",
+      "fileBytes": 4477,
+      "encoding": "utf-8-no-bom-or-ascii",
+      "gitBlobSha": "04d72820dabd85c22037b32fe14d3255fd5b302a",
+      "production": {
+        "present": true,
+        "checksums": [
+          "2cf95ffe5e8d4965e08afad53ac9509fc8f1dcbea9690140996b41ce23367990"
+        ],
+        "classification": {
+          "executed": false,
+          "resolvedAsApplied": true,
+          "rolledBackAttempts": 0,
+          "unfinishedAttempts": 0
+        },
+        "attempts": [
+          {
+            "startedAt": "2026-05-29 15:53:12.886443+00",
+            "finishedAt": "2026-05-29 15:53:12.886443+00",
+            "rolledBackAt": null,
+            "appliedStepsCount": 0,
+            "checksum": "2cf95ffe5e8d4965e08afad53ac9509fc8f1dcbea9690140996b41ce23367990"
+          }
+        ]
+      }
+    },
+    {
+      "repositoryOrder": 104,
+      "migrationName": "20260529_000002_graded_submission",
+      "repositoryPresent": true,
+      "path": "prisma/migrations/20260529_000002_graded_submission/migration.sql",
+      "sha256": "1767e15650aa82ea1fdef6728850cda144528fc3f102d60d89bb655c305625bd",
+      "fileBytes": 1611,
+      "encoding": "utf-8-no-bom-or-ascii",
+      "gitBlobSha": "b3b0425ac407e15cd067497c6823efb8f812354d",
+      "production": {
+        "present": true,
+        "checksums": [
+          "1767e15650aa82ea1fdef6728850cda144528fc3f102d60d89bb655c305625bd"
+        ],
+        "classification": {
+          "executed": false,
+          "resolvedAsApplied": true,
+          "rolledBackAttempts": 0,
+          "unfinishedAttempts": 0
+        },
+        "attempts": [
+          {
+            "startedAt": "2026-05-29 21:09:41.31987+00",
+            "finishedAt": "2026-05-29 21:09:41.31987+00",
+            "rolledBackAt": null,
+            "appliedStepsCount": 0,
+            "checksum": "1767e15650aa82ea1fdef6728850cda144528fc3f102d60d89bb655c305625bd"
+          }
+        ]
+      }
+    },
+    {
+      "repositoryOrder": 105,
+      "migrationName": "20260601_000001_code_exercise_ai_literacy",
+      "repositoryPresent": true,
+      "path": "prisma/migrations/20260601_000001_code_exercise_ai_literacy/migration.sql",
+      "sha256": "0c8380a44b8c8130e8a3c50870c76d7c50ad453020e56b83bfc4028f1d7a9681",
+      "fileBytes": 1641,
+      "encoding": "utf-8-no-bom-or-ascii",
+      "gitBlobSha": "199ec387c5d10a5ddc765a662cde82bcccba844e",
+      "production": {
+        "present": true,
+        "checksums": [
+          "0c8380a44b8c8130e8a3c50870c76d7c50ad453020e56b83bfc4028f1d7a9681"
+        ],
+        "classification": {
+          "executed": false,
+          "resolvedAsApplied": true,
+          "rolledBackAttempts": 0,
+          "unfinishedAttempts": 0
+        },
+        "attempts": [
+          {
+            "startedAt": "2026-06-01 20:16:36.548867+00",
+            "finishedAt": "2026-06-01 20:16:36.548867+00",
+            "rolledBackAt": null,
+            "appliedStepsCount": 0,
+            "checksum": "0c8380a44b8c8130e8a3c50870c76d7c50ad453020e56b83bfc4028f1d7a9681"
+          }
+        ]
+      }
+    },
+    {
+      "repositoryOrder": 106,
+      "migrationName": "20260603_000001_hero_discriminator",
+      "repositoryPresent": true,
+      "path": "prisma/migrations/20260603_000001_hero_discriminator/migration.sql",
+      "sha256": "970ef9b164469a6f121c571d923900eb2e91afcbb065f06eec858a80c95e1d09",
+      "fileBytes": 351,
+      "encoding": "utf-8-no-bom-or-ascii",
+      "gitBlobSha": "308e1f1d239566539552c2f3bcb6501b9c53f70f",
+      "production": {
+        "present": true,
+        "checksums": [
+          "970ef9b164469a6f121c571d923900eb2e91afcbb065f06eec858a80c95e1d09"
+        ],
+        "classification": {
+          "executed": false,
+          "resolvedAsApplied": true,
+          "rolledBackAttempts": 0,
+          "unfinishedAttempts": 0
+        },
+        "attempts": [
+          {
+            "startedAt": "2026-06-04 03:27:49.846038+00",
+            "finishedAt": "2026-06-04 03:27:49.846038+00",
+            "rolledBackAt": null,
+            "appliedStepsCount": 0,
+            "checksum": "970ef9b164469a6f121c571d923900eb2e91afcbb065f06eec858a80c95e1d09"
+          }
+        ]
+      }
+    },
+    {
+      "repositoryOrder": 107,
+      "migrationName": "20260604_000001_add_english_to_subject_enum",
+      "repositoryPresent": true,
+      "path": "prisma/migrations/20260604_000001_add_english_to_subject_enum/migration.sql",
+      "sha256": "6037aa52c2718d968ca11c2db5aba3bbfbd1734643a2b42728520835b18cd8ac",
+      "fileBytes": 233,
+      "encoding": "utf-8-no-bom-or-ascii",
+      "gitBlobSha": "7f9a1b378ad284f59dac0baf2a59f98ff08c9213",
+      "production": {
+        "present": true,
+        "checksums": [
+          "6037aa52c2718d968ca11c2db5aba3bbfbd1734643a2b42728520835b18cd8ac"
+        ],
+        "classification": {
+          "executed": false,
+          "resolvedAsApplied": true,
+          "rolledBackAttempts": 0,
+          "unfinishedAttempts": 0
+        },
+        "attempts": [
+          {
+            "startedAt": "2026-06-04 23:14:40.560469+00",
+            "finishedAt": "2026-06-04 23:14:40.560469+00",
+            "rolledBackAt": null,
+            "appliedStepsCount": 0,
+            "checksum": "6037aa52c2718d968ca11c2db5aba3bbfbd1734643a2b42728520835b18cd8ac"
+          }
+        ]
+      }
+    },
+    {
+      "repositoryOrder": 108,
+      "migrationName": "20260605_000001_certificate_share",
+      "repositoryPresent": true,
+      "path": "prisma/migrations/20260605_000001_certificate_share/migration.sql",
+      "sha256": "e3079270341dbedcab8a0dcc6aeb1fe70f2e460fe545aad2066cc7a4b47cd983",
+      "fileBytes": 905,
+      "encoding": "utf-8-no-bom-or-ascii",
+      "gitBlobSha": "dbce02618696861099c5545e6b95dc840fbc5828",
+      "production": {
+        "present": true,
+        "checksums": [
+          "e3079270341dbedcab8a0dcc6aeb1fe70f2e460fe545aad2066cc7a4b47cd983"
+        ],
+        "classification": {
+          "executed": false,
+          "resolvedAsApplied": true,
+          "rolledBackAttempts": 1,
+          "unfinishedAttempts": 0
+        },
+        "attempts": [
+          {
+            "startedAt": "2026-07-13 17:43:09.218231+00",
+            "finishedAt": null,
+            "rolledBackAt": "2026-07-15 14:33:56.214064+00",
+            "appliedStepsCount": 0,
+            "checksum": "e3079270341dbedcab8a0dcc6aeb1fe70f2e460fe545aad2066cc7a4b47cd983"
+          },
+          {
+            "startedAt": "2026-07-15 14:33:56.431882+00",
+            "finishedAt": "2026-07-15 14:33:56.431882+00",
+            "rolledBackAt": null,
+            "appliedStepsCount": 0,
+            "checksum": "e3079270341dbedcab8a0dcc6aeb1fe70f2e460fe545aad2066cc7a4b47cd983"
+          }
+        ]
+      }
+    },
+    {
+      "repositoryOrder": 109,
+      "migrationName": "20260605_000001_league_district_week",
+      "repositoryPresent": true,
+      "path": "prisma/migrations/20260605_000001_league_district_week/migration.sql",
+      "sha256": "0fde7328b1cb8192d45efc0ac07ace9ad5e96be44b02683c3b7491e4f88db91a",
+      "fileBytes": 1014,
+      "encoding": "utf-8-no-bom-or-ascii",
+      "gitBlobSha": "6a12c850d0e4a823c6faef53a9954d5c58fd9bb6",
+      "production": {
+        "present": true,
+        "checksums": [
+          "0fde7328b1cb8192d45efc0ac07ace9ad5e96be44b02683c3b7491e4f88db91a"
+        ],
+        "classification": {
+          "executed": false,
+          "resolvedAsApplied": true,
+          "rolledBackAttempts": 1,
+          "unfinishedAttempts": 0
+        },
+        "attempts": [
+          {
+            "startedAt": "2026-07-28 21:35:52.335003+00",
+            "finishedAt": null,
+            "rolledBackAt": "2026-07-28 21:40:53.459366+00",
+            "appliedStepsCount": 0,
+            "checksum": "0fde7328b1cb8192d45efc0ac07ace9ad5e96be44b02683c3b7491e4f88db91a"
+          },
+          {
+            "startedAt": "2026-07-28 21:40:53.658433+00",
+            "finishedAt": "2026-07-28 21:40:53.658433+00",
+            "rolledBackAt": null,
+            "appliedStepsCount": 0,
+            "checksum": "0fde7328b1cb8192d45efc0ac07ace9ad5e96be44b02683c3b7491e4f88db91a"
+          }
+        ]
+      }
+    },
+    {
+      "repositoryOrder": 110,
+      "migrationName": "20260605_000002_offline_pack",
+      "repositoryPresent": true,
+      "path": "prisma/migrations/20260605_000002_offline_pack/migration.sql",
+      "sha256": "31301571e74e60705a2484dc557b6eaeb647dff37cf051499323637a9276825b",
+      "fileBytes": 983,
+      "encoding": "utf-8-no-bom-or-ascii",
+      "gitBlobSha": "4081f5cd0d74641f0234167614d7d72dfd5ff803",
+      "production": {
+        "present": true,
+        "checksums": [
+          "31301571e74e60705a2484dc557b6eaeb647dff37cf051499323637a9276825b"
+        ],
+        "classification": {
+          "executed": false,
+          "resolvedAsApplied": true,
+          "rolledBackAttempts": 0,
+          "unfinishedAttempts": 0
+        },
+        "attempts": [
+          {
+            "startedAt": "2026-06-05 22:33:56.53313+00",
+            "finishedAt": "2026-06-05 22:33:56.53313+00",
+            "rolledBackAt": null,
+            "appliedStepsCount": 0,
+            "checksum": "31301571e74e60705a2484dc557b6eaeb647dff37cf051499323637a9276825b"
+          }
+        ]
+      }
+    },
+    {
+      "repositoryOrder": 111,
+      "migrationName": "20260608_000001_school_storage_quota_bigint",
+      "repositoryPresent": true,
+      "path": "prisma/migrations/20260608_000001_school_storage_quota_bigint/migration.sql",
+      "sha256": "ba91c23fb1af9b6ae062788d0a297080c66bfc9bfaf4ec21c6ae574424e7c4b6",
+      "fileBytes": 167,
+      "encoding": "utf-8-no-bom-or-ascii",
+      "gitBlobSha": "07559500cb5a9d9584803197936283dc7c2b5ce9",
+      "production": {
+        "present": true,
+        "checksums": [
+          "ba91c23fb1af9b6ae062788d0a297080c66bfc9bfaf4ec21c6ae574424e7c4b6"
+        ],
+        "classification": {
+          "executed": true,
+          "resolvedAsApplied": false,
+          "rolledBackAttempts": 0,
+          "unfinishedAttempts": 0
+        },
+        "attempts": [
+          {
+            "startedAt": "2026-07-28 21:41:44.126657+00",
+            "finishedAt": "2026-07-28 21:41:49.327654+00",
+            "rolledBackAt": null,
+            "appliedStepsCount": 1,
+            "checksum": "ba91c23fb1af9b6ae062788d0a297080c66bfc9bfaf4ec21c6ae574424e7c4b6"
+          }
+        ]
+      }
+    },
+    {
+      "repositoryOrder": 112,
+      "migrationName": "20260608_000001_wave4_teacher_lessons",
+      "repositoryPresent": true,
+      "path": "prisma/migrations/20260608_000001_wave4_teacher_lessons/migration.sql",
+      "sha256": "3f2f4ac0047d0e87915338d61bf24f7eb15dd5d3cfe710ad7a7e1fa70d72eca1",
+      "fileBytes": 2065,
+      "encoding": "utf-8-no-bom-or-ascii",
+      "gitBlobSha": "537335d789648a151c858f620a07c455fdf57cef",
+      "production": {
+        "present": true,
+        "checksums": [
+          "wave4_manual_20260608"
+        ],
+        "classification": {
+          "executed": true,
+          "resolvedAsApplied": false,
+          "rolledBackAttempts": 0,
+          "unfinishedAttempts": 0
+        },
+        "attempts": [
+          {
+            "startedAt": "2026-06-08 22:00:34.054142+00",
+            "finishedAt": "2026-06-08 22:00:34.054142+00",
+            "rolledBackAt": null,
+            "appliedStepsCount": 1,
+            "checksum": "wave4_manual_20260608"
+          }
+        ]
+      }
+    },
+    {
+      "repositoryOrder": 113,
+      "migrationName": "20260608_000002_wave4b_fork_lineage",
+      "repositoryPresent": true,
+      "path": "prisma/migrations/20260608_000002_wave4b_fork_lineage/migration.sql",
+      "sha256": "95faec0f74ef1dc2a5c6ea482547d84ec4fb6419dfafb8a9ac87d2a6fa55ac16",
+      "fileBytes": 151,
+      "encoding": "utf-8-no-bom-or-ascii",
+      "gitBlobSha": "ef13cbebcc0b7bec7d034c18acd6f2236e47d59a",
+      "production": {
+        "present": true,
+        "checksums": [
+          "95faec0f74ef1dc2a5c6ea482547d84ec4fb6419dfafb8a9ac87d2a6fa55ac16"
+        ],
+        "classification": {
+          "executed": false,
+          "resolvedAsApplied": true,
+          "rolledBackAttempts": 0,
+          "unfinishedAttempts": 0
+        },
+        "attempts": [
+          {
+            "startedAt": "2026-06-09 22:57:15.536983+00",
+            "finishedAt": "2026-06-09 22:57:15.536983+00",
+            "rolledBackAt": null,
+            "appliedStepsCount": 0,
+            "checksum": "95faec0f74ef1dc2a5c6ea482547d84ec4fb6419dfafb8a9ac87d2a6fa55ac16"
+          }
+        ]
+      }
+    },
+    {
+      "repositoryOrder": 114,
+      "migrationName": "20260702_000001_waec_syllabus_topics",
+      "repositoryPresent": true,
+      "path": "prisma/migrations/20260702_000001_waec_syllabus_topics/migration.sql",
+      "sha256": "3a278d59606b4721096733c36b30b5dfbb0229184070154f41a36423cff1093a",
+      "fileBytes": 263,
+      "encoding": "utf-8-no-bom-or-ascii",
+      "gitBlobSha": "a9b3d3e8a76fa918fc53e55ce0a935af2ab9e076",
+      "production": {
+        "present": true,
+        "checksums": [
+          "3a278d59606b4721096733c36b30b5dfbb0229184070154f41a36423cff1093a"
+        ],
+        "classification": {
+          "executed": true,
+          "resolvedAsApplied": false,
+          "rolledBackAttempts": 0,
+          "unfinishedAttempts": 0
+        },
+        "attempts": [
+          {
+            "startedAt": "2026-07-28 21:41:49.499659+00",
+            "finishedAt": "2026-07-28 21:41:54.97634+00",
+            "rolledBackAt": null,
+            "appliedStepsCount": 1,
+            "checksum": "3a278d59606b4721096733c36b30b5dfbb0229184070154f41a36423cff1093a"
+          }
+        ]
+      }
+    },
+    {
+      "repositoryOrder": 115,
+      "migrationName": "20260703_000001_waec_practice_item",
+      "repositoryPresent": true,
+      "path": "prisma/migrations/20260703_000001_waec_practice_item/migration.sql",
+      "sha256": "39b0d8b184ef7813ce6c8b94fa023197e1df30f9a5471d5d8524d00a94f430d9",
+      "fileBytes": 627,
+      "encoding": "utf-8-no-bom-or-ascii",
+      "gitBlobSha": "d81a1907d41c8472d82dc6606e48edfae0761f57",
+      "production": {
+        "present": true,
+        "checksums": [
+          "39b0d8b184ef7813ce6c8b94fa023197e1df30f9a5471d5d8524d00a94f430d9"
+        ],
+        "classification": {
+          "executed": true,
+          "resolvedAsApplied": false,
+          "rolledBackAttempts": 0,
+          "unfinishedAttempts": 0
+        },
+        "attempts": [
+          {
+            "startedAt": "2026-07-28 21:41:55.133441+00",
+            "finishedAt": "2026-07-28 21:41:55.561558+00",
+            "rolledBackAt": null,
+            "appliedStepsCount": 1,
+            "checksum": "39b0d8b184ef7813ce6c8b94fa023197e1df30f9a5471d5d8524d00a94f430d9"
+          }
+        ]
+      }
+    },
+    {
+      "repositoryOrder": 116,
+      "migrationName": "20260704_000001_lesson_media",
+      "repositoryPresent": true,
+      "path": "prisma/migrations/20260704_000001_lesson_media/migration.sql",
+      "sha256": "67ba37067958d89322d0bb32d226499e90782794295055971aa684665fb07a0a",
+      "fileBytes": 761,
+      "encoding": "utf-8-no-bom-or-ascii",
+      "gitBlobSha": "ea8656c5665970e8b018f22617e21819dcbdd25e",
+      "production": {
+        "present": true,
+        "checksums": [
+          "67ba37067958d89322d0bb32d226499e90782794295055971aa684665fb07a0a"
+        ],
+        "classification": {
+          "executed": true,
+          "resolvedAsApplied": false,
+          "rolledBackAttempts": 0,
+          "unfinishedAttempts": 0
+        },
+        "attempts": [
+          {
+            "startedAt": "2026-07-28 21:41:55.77058+00",
+            "finishedAt": "2026-07-28 21:41:56.324916+00",
+            "rolledBackAt": null,
+            "appliedStepsCount": 1,
+            "checksum": "67ba37067958d89322d0bb32d226499e90782794295055971aa684665fb07a0a"
+          }
+        ]
+      }
+    },
+    {
+      "repositoryOrder": 117,
+      "migrationName": "20260706_000001_agent_platform_foundation",
+      "repositoryPresent": true,
+      "path": "prisma/migrations/20260706_000001_agent_platform_foundation/migration.sql",
+      "sha256": "77b5eb4ef76aef422fcc98f87b3a5a2863c67de6e0809c68a06e2c2e91654cfd",
+      "fileBytes": 3813,
+      "encoding": "utf-8-no-bom-or-ascii",
+      "gitBlobSha": "d78e3681e09529e8d88b581ca4132c0a57c5a2d3",
+      "production": {
+        "present": true,
+        "checksums": [
+          "77b5eb4ef76aef422fcc98f87b3a5a2863c67de6e0809c68a06e2c2e91654cfd"
+        ],
+        "classification": {
+          "executed": true,
+          "resolvedAsApplied": false,
+          "rolledBackAttempts": 0,
+          "unfinishedAttempts": 0
+        },
+        "attempts": [
+          {
+            "startedAt": "2026-07-28 21:41:56.534271+00",
+            "finishedAt": "2026-07-28 21:41:57.160495+00",
+            "rolledBackAt": null,
+            "appliedStepsCount": 1,
+            "checksum": "77b5eb4ef76aef422fcc98f87b3a5a2863c67de6e0809c68a06e2c2e91654cfd"
+          }
+        ]
+      }
+    },
+    {
+      "repositoryOrder": 118,
+      "migrationName": "20260708_000001_agent_goal_step_fields",
+      "repositoryPresent": true,
+      "path": "prisma/migrations/20260708_000001_agent_goal_step_fields/migration.sql",
+      "sha256": "0ce5a02b2e4f8d9d6596da870dfa9767ec3fb208c90452d23bf5c704470511f1",
+      "fileBytes": 315,
+      "encoding": "utf-8-no-bom-or-ascii",
+      "gitBlobSha": "28bc99bf684749d5c0854b2738686efb26cd25a9",
+      "production": {
+        "present": true,
+        "checksums": [
+          "0ce5a02b2e4f8d9d6596da870dfa9767ec3fb208c90452d23bf5c704470511f1"
+        ],
+        "classification": {
+          "executed": true,
+          "resolvedAsApplied": false,
+          "rolledBackAttempts": 0,
+          "unfinishedAttempts": 0
+        },
+        "attempts": [
+          {
+            "startedAt": "2026-07-28 21:42:02.174886+00",
+            "finishedAt": "2026-07-28 21:42:02.697519+00",
+            "rolledBackAt": null,
+            "appliedStepsCount": 1,
+            "checksum": "0ce5a02b2e4f8d9d6596da870dfa9767ec3fb208c90452d23bf5c704470511f1"
+          }
+        ]
+      }
+    },
+    {
+      "repositoryOrder": 119,
+      "migrationName": "20260708_000002_agent_control",
+      "repositoryPresent": true,
+      "path": "prisma/migrations/20260708_000002_agent_control/migration.sql",
+      "sha256": "8c52cb17cb0c8157ce5dbc78fd77bb04f205cb06db77136b64c561242f4399f1",
+      "fileBytes": 440,
+      "encoding": "utf-8-no-bom-or-ascii",
+      "gitBlobSha": "19f0e666585cb84596b80d0242f5e1024a3c3d15",
+      "production": {
+        "present": true,
+        "checksums": [
+          "8c52cb17cb0c8157ce5dbc78fd77bb04f205cb06db77136b64c561242f4399f1"
+        ],
+        "classification": {
+          "executed": true,
+          "resolvedAsApplied": false,
+          "rolledBackAttempts": 0,
+          "unfinishedAttempts": 0
+        },
+        "attempts": [
+          {
+            "startedAt": "2026-07-28 21:42:02.871361+00",
+            "finishedAt": "2026-07-28 21:42:03.42749+00",
+            "rolledBackAt": null,
+            "appliedStepsCount": 1,
+            "checksum": "8c52cb17cb0c8157ce5dbc78fd77bb04f205cb06db77136b64c561242f4399f1"
+          }
+        ]
+      }
+    },
+    {
+      "repositoryOrder": 120,
+      "migrationName": "20260713_000001_guardian_conversation",
+      "repositoryPresent": true,
+      "path": "prisma/migrations/20260713_000001_guardian_conversation/migration.sql",
+      "sha256": "93ecb44c975666de8e6a433fd8d0cf03797e25353687cfa031de6a300bf69b5d",
+      "fileBytes": 1071,
+      "encoding": "utf-8-no-bom-or-ascii",
+      "gitBlobSha": "dac353e82acaf9ac2adf6c82c82dbe9601ae28c7",
+      "production": {
+        "present": true,
+        "checksums": [
+          "93ecb44c975666de8e6a433fd8d0cf03797e25353687cfa031de6a300bf69b5d"
+        ],
+        "classification": {
+          "executed": true,
+          "resolvedAsApplied": false,
+          "rolledBackAttempts": 0,
+          "unfinishedAttempts": 0
+        },
+        "attempts": [
+          {
+            "startedAt": "2026-07-28 21:42:03.636609+00",
+            "finishedAt": "2026-07-28 21:42:04.05407+00",
+            "rolledBackAt": null,
+            "appliedStepsCount": 1,
+            "checksum": "93ecb44c975666de8e6a433fd8d0cf03797e25353687cfa031de6a300bf69b5d"
+          }
+        ]
+      }
+    },
+    {
+      "repositoryOrder": 121,
+      "migrationName": "20260713_000002_guardian_sms_cost_accounting",
+      "repositoryPresent": true,
+      "path": "prisma/migrations/20260713_000002_guardian_sms_cost_accounting/migration.sql",
+      "sha256": "78acb6d8a871d2a5a353b7af5d235b3480b460b0fdc1fb2f7996290c5776108d",
+      "fileBytes": 643,
+      "encoding": "utf-8-no-bom-or-ascii",
+      "gitBlobSha": "f59a606f031ae894ddc07b3514db6a2aa5de3d12",
+      "production": {
+        "present": true,
+        "checksums": [
+          "78acb6d8a871d2a5a353b7af5d235b3480b460b0fdc1fb2f7996290c5776108d"
+        ],
+        "classification": {
+          "executed": true,
+          "resolvedAsApplied": false,
+          "rolledBackAttempts": 0,
+          "unfinishedAttempts": 0
+        },
+        "attempts": [
+          {
+            "startedAt": "2026-07-28 21:42:13.776365+00",
+            "finishedAt": "2026-07-28 21:42:14.33714+00",
+            "rolledBackAt": null,
+            "appliedStepsCount": 1,
+            "checksum": "78acb6d8a871d2a5a353b7af5d235b3480b460b0fdc1fb2f7996290c5776108d"
+          }
+        ]
+      }
+    },
+    {
+      "repositoryOrder": 122,
+      "migrationName": "20260713_000003_safeguarding_and_student_id",
+      "repositoryPresent": true,
+      "path": "prisma/migrations/20260713_000003_safeguarding_and_student_id/migration.sql",
+      "sha256": "f0aa77599d095dd8dbac75170f6f8ee80d85aa4a6f9a137b51d08850e0cb2932",
+      "fileBytes": 599,
+      "encoding": "utf-8-no-bom-or-ascii",
+      "gitBlobSha": "38d2f6b1af63349b53d20086d0926387e423d869",
+      "production": {
+        "present": true,
+        "checksums": [
+          "f0aa77599d095dd8dbac75170f6f8ee80d85aa4a6f9a137b51d08850e0cb2932"
+        ],
+        "classification": {
+          "executed": false,
+          "resolvedAsApplied": true,
+          "rolledBackAttempts": 1,
+          "unfinishedAttempts": 0
+        },
+        "attempts": [
+          {
+            "startedAt": "2026-07-28 21:42:14.499257+00",
+            "finishedAt": null,
+            "rolledBackAt": "2026-07-28 21:43:27.328773+00",
+            "appliedStepsCount": 0,
+            "checksum": "f0aa77599d095dd8dbac75170f6f8ee80d85aa4a6f9a137b51d08850e0cb2932"
+          },
+          {
+            "startedAt": "2026-07-28 21:43:27.46504+00",
+            "finishedAt": "2026-07-28 21:43:27.46504+00",
+            "rolledBackAt": null,
+            "appliedStepsCount": 0,
+            "checksum": "f0aa77599d095dd8dbac75170f6f8ee80d85aa4a6f9a137b51d08850e0cb2932"
+          }
+        ]
+      }
+    },
+    {
+      "repositoryOrder": 123,
+      "migrationName": "20260715_000001_sprint6_2_content_qa_review",
+      "repositoryPresent": true,
+      "path": "prisma/migrations/20260715_000001_sprint6_2_content_qa_review/migration.sql",
+      "sha256": "f01590fbc80faa0282bb5c22c7ce08bcc58f09768a3b5ed00ae5b90d757735f8",
+      "fileBytes": 778,
+      "encoding": "utf-8-no-bom-or-ascii",
+      "gitBlobSha": "5f8bbeb4d7762f469f22cc4e3ebbe0d9e86d6a3a",
+      "production": {
+        "present": true,
+        "checksums": [
+          "f01590fbc80faa0282bb5c22c7ce08bcc58f09768a3b5ed00ae5b90d757735f8"
+        ],
+        "classification": {
+          "executed": false,
+          "resolvedAsApplied": true,
+          "rolledBackAttempts": 0,
+          "unfinishedAttempts": 0
+        },
+        "attempts": [
+          {
+            "startedAt": "2026-07-16 15:24:02.956514+00",
+            "finishedAt": "2026-07-16 15:24:02.956514+00",
+            "rolledBackAt": null,
+            "appliedStepsCount": 0,
+            "checksum": "f01590fbc80faa0282bb5c22c7ce08bcc58f09768a3b5ed00ae5b90d757735f8"
+          }
+        ]
+      }
+    },
+    {
+      "repositoryOrder": 124,
+      "migrationName": "20260716_000001_sprint6_3_report_draft",
+      "repositoryPresent": true,
+      "path": "prisma/migrations/20260716_000001_sprint6_3_report_draft/migration.sql",
+      "sha256": "47ce7b9165cc0892336b8bd824a5590844c8e10e54bb4d5dfb4cc80360afe71f",
+      "fileBytes": 700,
+      "encoding": "utf-8-no-bom-or-ascii",
+      "gitBlobSha": "bb237d9c0413f1a859b16c7216c02fa33a0b46cf",
+      "production": {
+        "present": true,
+        "checksums": [
+          "47ce7b9165cc0892336b8bd824a5590844c8e10e54bb4d5dfb4cc80360afe71f"
+        ],
+        "classification": {
+          "executed": true,
+          "resolvedAsApplied": false,
+          "rolledBackAttempts": 0,
+          "unfinishedAttempts": 0
+        },
+        "attempts": [
+          {
+            "startedAt": "2026-07-16 18:40:30.530408+00",
+            "finishedAt": "2026-07-16 18:40:30.530408+00",
+            "rolledBackAt": null,
+            "appliedStepsCount": 1,
+            "checksum": "47ce7b9165cc0892336b8bd824a5590844c8e10e54bb4d5dfb4cc80360afe71f"
+          }
+        ]
+      }
+    },
+    {
+      "repositoryOrder": 125,
+      "migrationName": "20260717_000001_sprint6_4_district_update_draft",
+      "repositoryPresent": true,
+      "path": "prisma/migrations/20260717_000001_sprint6_4_district_update_draft/migration.sql",
+      "sha256": "032f30c38c910189c3f7af0ee271814ef6818719ebf851e7b53ccc896177c336",
+      "fileBytes": 634,
+      "encoding": "utf-8-no-bom-or-ascii",
+      "gitBlobSha": "49a21aec8105fbde189dc2972a26bad59c33e0a5",
+      "production": {
+        "present": true,
+        "checksums": [
+          "032f30c38c910189c3f7af0ee271814ef6818719ebf851e7b53ccc896177c336"
+        ],
+        "classification": {
+          "executed": false,
+          "resolvedAsApplied": true,
+          "rolledBackAttempts": 1,
+          "unfinishedAttempts": 0
+        },
+        "attempts": [
+          {
+            "startedAt": "2026-07-28 21:43:38.590176+00",
+            "finishedAt": null,
+            "rolledBackAt": "2026-07-28 21:44:33.414901+00",
+            "appliedStepsCount": 0,
+            "checksum": "032f30c38c910189c3f7af0ee271814ef6818719ebf851e7b53ccc896177c336"
+          },
+          {
+            "startedAt": "2026-07-28 21:44:33.622689+00",
+            "finishedAt": "2026-07-28 21:44:33.622689+00",
+            "rolledBackAt": null,
+            "appliedStepsCount": 0,
+            "checksum": "032f30c38c910189c3f7af0ee271814ef6818719ebf851e7b53ccc896177c336"
+          }
+        ]
+      }
+    },
+    {
+      "repositoryOrder": 126,
+      "migrationName": "20260722_000001_sprint7_4_morning_brief",
+      "repositoryPresent": true,
+      "path": "prisma/migrations/20260722_000001_sprint7_4_morning_brief/migration.sql",
+      "sha256": "0d9222ee56d7470029d1445de693ce95a73fb1ac122fc6fca7b985cec8e7ffaa",
+      "fileBytes": 698,
+      "encoding": "utf-8-no-bom-or-ascii",
+      "gitBlobSha": "26a3c84e4946cde10a8947b0691d6a26058f3d18",
+      "production": {
+        "present": true,
+        "checksums": [
+          "0d9222ee56d7470029d1445de693ce95a73fb1ac122fc6fca7b985cec8e7ffaa"
+        ],
+        "classification": {
+          "executed": false,
+          "resolvedAsApplied": true,
+          "rolledBackAttempts": 1,
+          "unfinishedAttempts": 0
+        },
+        "attempts": [
+          {
+            "startedAt": "2026-07-28 21:45:31.174782+00",
+            "finishedAt": null,
+            "rolledBackAt": "2026-07-28 21:47:37.032769+00",
+            "appliedStepsCount": 0,
+            "checksum": "0d9222ee56d7470029d1445de693ce95a73fb1ac122fc6fca7b985cec8e7ffaa"
+          },
+          {
+            "startedAt": "2026-07-28 21:47:37.205162+00",
+            "finishedAt": "2026-07-28 21:47:37.205162+00",
+            "rolledBackAt": null,
+            "appliedStepsCount": 0,
+            "checksum": "0d9222ee56d7470029d1445de693ce95a73fb1ac122fc6fca7b985cec8e7ffaa"
+          }
+        ]
+      }
+    },
+    {
+      "repositoryOrder": 127,
+      "migrationName": "20260728_000001_teaching_runtime_v1",
+      "repositoryPresent": true,
+      "path": "prisma/migrations/20260728_000001_teaching_runtime_v1/migration.sql",
+      "sha256": "f8d1b308637da65e7b8f65d10c944951adc33f0e69d8f71a884cb4af88d235f6",
+      "fileBytes": 3507,
+      "encoding": "utf-8-no-bom-or-ascii",
+      "gitBlobSha": "d166629b7e5bef943a9400cbff6386ebb554fce2",
+      "production": {
+        "present": true,
+        "checksums": [
+          "f8d1b308637da65e7b8f65d10c944951adc33f0e69d8f71a884cb4af88d235f6"
+        ],
+        "classification": {
+          "executed": true,
+          "resolvedAsApplied": false,
+          "rolledBackAttempts": 0,
+          "unfinishedAttempts": 0
+        },
+        "attempts": [
+          {
+            "startedAt": "2026-07-28 21:47:51.76098+00",
+            "finishedAt": "2026-07-28 21:47:52.34962+00",
+            "rolledBackAt": null,
+            "appliedStepsCount": 1,
+            "checksum": "f8d1b308637da65e7b8f65d10c944951adc33f0e69d8f71a884cb4af88d235f6"
+          }
+        ]
+      }
+    },
+    {
+      "repositoryOrder": 128,
+      "migrationName": "20260728_000002_teaching_turn_sequence",
+      "repositoryPresent": true,
+      "path": "prisma/migrations/20260728_000002_teaching_turn_sequence/migration.sql",
+      "sha256": "b011578555b530275b4b269c554e4e59b8b943d8ab8cd2c12067d7177d6d2374",
+      "fileBytes": 291,
+      "encoding": "utf-8-no-bom-or-ascii",
+      "gitBlobSha": "4b8aa19507a2f9ac64d034dbf51c1e7082201e23",
+      "production": {
+        "present": true,
+        "checksums": [
+          "b011578555b530275b4b269c554e4e59b8b943d8ab8cd2c12067d7177d6d2374"
+        ],
+        "classification": {
+          "executed": true,
+          "resolvedAsApplied": false,
+          "rolledBackAttempts": 0,
+          "unfinishedAttempts": 0
+        },
+        "attempts": [
+          {
+            "startedAt": "2026-07-28 21:47:52.484926+00",
+            "finishedAt": "2026-07-28 21:47:52.821149+00",
+            "rolledBackAt": null,
+            "appliedStepsCount": 1,
+            "checksum": "b011578555b530275b4b269c554e4e59b8b943d8ab8cd2c12067d7177d6d2374"
+          }
+        ]
+      }
+    }
+  ],
+  "repositoryAbsentProductionMigrations": [
+    {
+      "repositoryOrder": null,
+      "migrationName": "20260107015905_add_factory_models",
+      "repositoryPresent": false,
+      "path": null,
+      "sha256": null,
+      "fileBytes": null,
+      "encoding": null,
+      "gitBlobSha": null,
+      "production": {
+        "present": true,
+        "checksums": [
+          "226bd3ccf70b4aa2ac74c1d741675c6835afb5cc2b7174fc5d4a0eceab7cdb36"
+        ],
+        "classification": {
+          "executed": true,
+          "resolvedAsApplied": false,
+          "rolledBackAttempts": 0,
+          "unfinishedAttempts": 0
+        },
+        "attempts": [
+          {
+            "startedAt": "2026-01-08 19:25:12.228454+00",
+            "finishedAt": "2026-01-08 19:25:13.274783+00",
+            "rolledBackAt": null,
+            "appliedStepsCount": 1,
+            "checksum": "226bd3ccf70b4aa2ac74c1d741675c6835afb5cc2b7174fc5d4a0eceab7cdb36"
+          }
+        ]
+      },
+      "evidence": "Production ledger record; repository artifact absent at canonical cutover"
+    },
+    {
+      "repositoryOrder": null,
+      "migrationName": "20260107183409_add_governed_artifact",
+      "repositoryPresent": false,
+      "path": null,
+      "sha256": null,
+      "fileBytes": null,
+      "encoding": null,
+      "gitBlobSha": null,
+      "production": {
+        "present": true,
+        "checksums": [
+          "489e9ac3177da610bcab4391c5dc2ef10dfffa732166b1fbfc3a24bf4ae61fbb"
+        ],
+        "classification": {
+          "executed": true,
+          "resolvedAsApplied": false,
+          "rolledBackAttempts": 0,
+          "unfinishedAttempts": 0
+        },
+        "attempts": [
+          {
+            "startedAt": "2026-01-08 19:25:13.451013+00",
+            "finishedAt": "2026-01-08 19:25:13.911632+00",
+            "rolledBackAt": null,
+            "appliedStepsCount": 1,
+            "checksum": "489e9ac3177da610bcab4391c5dc2ef10dfffa732166b1fbfc3a24bf4ae61fbb"
+          }
+        ]
+      },
+      "evidence": "Production ledger record; repository artifact absent at canonical cutover"
+    },
+    {
+      "repositoryOrder": null,
+      "migrationName": "20260107184538_governed_artifact_unique",
+      "repositoryPresent": false,
+      "path": null,
+      "sha256": null,
+      "fileBytes": null,
+      "encoding": null,
+      "gitBlobSha": null,
+      "production": {
+        "present": true,
+        "checksums": [
+          "ff4ee02b8d6ddd6c0a4bfd6678a871a6b4b399bae694f8b0756d2772987d5f78"
+        ],
+        "classification": {
+          "executed": true,
+          "resolvedAsApplied": false,
+          "rolledBackAttempts": 0,
+          "unfinishedAttempts": 0
+        },
+        "attempts": [
+          {
+            "startedAt": "2026-01-08 19:25:14.10972+00",
+            "finishedAt": "2026-01-08 19:25:14.541538+00",
+            "rolledBackAt": null,
+            "appliedStepsCount": 1,
+            "checksum": "ff4ee02b8d6ddd6c0a4bfd6678a871a6b4b399bae694f8b0756d2772987d5f78"
+          }
+        ]
+      },
+      "evidence": "Production ledger record; repository artifact absent at canonical cutover"
+    },
+    {
+      "repositoryOrder": null,
+      "migrationName": "20260108170506_add_governance_fields_v2",
+      "repositoryPresent": false,
+      "path": null,
+      "sha256": null,
+      "fileBytes": null,
+      "encoding": null,
+      "gitBlobSha": null,
+      "production": {
+        "present": true,
+        "checksums": [
+          "fbae0365ec750861c6bfd30fd5dbec2e0cdd3978e36765fef20f7512569912e5"
+        ],
+        "classification": {
+          "executed": true,
+          "resolvedAsApplied": false,
+          "rolledBackAttempts": 0,
+          "unfinishedAttempts": 0
+        },
+        "attempts": [
+          {
+            "startedAt": "2026-01-08 19:25:14.724616+00",
+            "finishedAt": "2026-01-08 19:25:15.181763+00",
+            "rolledBackAt": null,
+            "appliedStepsCount": 1,
+            "checksum": "fbae0365ec750861c6bfd30fd5dbec2e0cdd3978e36765fef20f7512569912e5"
+          }
+        ]
+      },
+      "evidence": "Production ledger record; repository artifact absent at canonical cutover"
+    },
+    {
+      "repositoryOrder": null,
+      "migrationName": "20260108192837_add_curriculum_content_payload",
+      "repositoryPresent": false,
+      "path": null,
+      "sha256": null,
+      "fileBytes": null,
+      "encoding": null,
+      "gitBlobSha": null,
+      "production": {
+        "present": true,
+        "checksums": [
+          "ad793b8a39d9c0b1ce95d813d6a3bba8f296296d3cb52ac245c3c191bc30313d"
+        ],
+        "classification": {
+          "executed": true,
+          "resolvedAsApplied": false,
+          "rolledBackAttempts": 0,
+          "unfinishedAttempts": 0
+        },
+        "attempts": [
+          {
+            "startedAt": "2026-01-08 19:28:38.410729+00",
+            "finishedAt": "2026-01-08 19:28:38.867509+00",
+            "rolledBackAt": null,
+            "appliedStepsCount": 1,
+            "checksum": "ad793b8a39d9c0b1ce95d813d6a3bba8f296296d3cb52ac245c3c191bc30313d"
+          }
+        ]
+      },
+      "evidence": "Production ledger record; repository artifact absent at canonical cutover"
+    },
+    {
+      "repositoryOrder": null,
+      "migrationName": "20260109044415_grading_os_v1",
+      "repositoryPresent": false,
+      "path": null,
+      "sha256": null,
+      "fileBytes": null,
+      "encoding": null,
+      "gitBlobSha": null,
+      "production": {
+        "present": true,
+        "checksums": [
+          "77f8b72c586b13b6655cf5b0e189f28c1c89c381a4beb65c08c73ad620dd2c3a"
+        ],
+        "classification": {
+          "executed": true,
+          "resolvedAsApplied": false,
+          "rolledBackAttempts": 0,
+          "unfinishedAttempts": 0
+        },
+        "attempts": [
+          {
+            "startedAt": "2026-01-09 04:44:16.157561+00",
+            "finishedAt": "2026-01-09 04:44:16.555757+00",
+            "rolledBackAt": null,
+            "appliedStepsCount": 1,
+            "checksum": "77f8b72c586b13b6655cf5b0e189f28c1c89c381a4beb65c08c73ad620dd2c3a"
+          }
+        ]
+      },
+      "evidence": "Production ledger record; repository artifact absent at canonical cutover"
+    },
+    {
+      "repositoryOrder": null,
+      "migrationName": "20260110150000_baseline",
+      "repositoryPresent": false,
+      "path": null,
+      "sha256": null,
+      "fileBytes": null,
+      "encoding": null,
+      "gitBlobSha": null,
+      "production": {
+        "present": true,
+        "checksums": [
+          "eb7a3d7fa3cfdd215de4171da4721ff2e4537c40baf8702f9190ee698267df10"
+        ],
+        "classification": {
+          "executed": false,
+          "resolvedAsApplied": true,
+          "rolledBackAttempts": 0,
+          "unfinishedAttempts": 0
+        },
+        "attempts": [
+          {
+            "startedAt": "2026-01-10 19:48:18.477678+00",
+            "finishedAt": "2026-01-10 19:48:18.477678+00",
+            "rolledBackAt": null,
+            "appliedStepsCount": 0,
+            "checksum": "eb7a3d7fa3cfdd215de4171da4721ff2e4537c40baf8702f9190ee698267df10"
+          }
+        ]
+      },
+      "evidence": "Production ledger record; repository artifact absent at canonical cutover"
+    },
+    {
+      "repositoryOrder": null,
+      "migrationName": "20260110152000_baseline2",
+      "repositoryPresent": false,
+      "path": null,
+      "sha256": null,
+      "fileBytes": null,
+      "encoding": null,
+      "gitBlobSha": null,
+      "production": {
+        "present": true,
+        "checksums": [
+          "4080836f69ff7d94d68e237910278059fc80a1dee044204534a26c655ef072e6"
+        ],
+        "classification": {
+          "executed": false,
+          "resolvedAsApplied": true,
+          "rolledBackAttempts": 0,
+          "unfinishedAttempts": 0
+        },
+        "attempts": [
+          {
+            "startedAt": "2026-01-10 20:19:07.562506+00",
+            "finishedAt": "2026-01-10 20:19:07.562506+00",
+            "rolledBackAt": null,
+            "appliedStepsCount": 0,
+            "checksum": "4080836f69ff7d94d68e237910278059fc80a1dee044204534a26c655ef072e6"
+          }
+        ]
+      },
+      "evidence": "Production ledger record; repository artifact absent at canonical cutover"
+    },
+    {
+      "repositoryOrder": null,
+      "migrationName": "20260219_150000_add_pilot_metadata_to_school",
+      "repositoryPresent": false,
+      "path": null,
+      "sha256": null,
+      "fileBytes": null,
+      "encoding": null,
+      "gitBlobSha": null,
+      "production": {
+        "present": true,
+        "checksums": [
+          "76fd5da1662a02fc4d9a49e91791ac169ff425cc21c4be663f85b6b9099fbb62"
+        ],
+        "classification": {
+          "executed": true,
+          "resolvedAsApplied": false,
+          "rolledBackAttempts": 0,
+          "unfinishedAttempts": 0
+        },
+        "attempts": [
+          {
+            "startedAt": "2026-02-19 20:03:45.345606+00",
+            "finishedAt": "2026-02-19 20:03:45.689862+00",
+            "rolledBackAt": null,
+            "appliedStepsCount": 1,
+            "checksum": "76fd5da1662a02fc4d9a49e91791ac169ff425cc21c4be663f85b6b9099fbb62"
+          }
+        ]
+      },
+      "evidence": "Production ledger record; repository artifact absent at canonical cutover"
+    },
+    {
+      "repositoryOrder": null,
+      "migrationName": "20260219_170000_add_auditlog_school_id",
+      "repositoryPresent": false,
+      "path": null,
+      "sha256": null,
+      "fileBytes": null,
+      "encoding": null,
+      "gitBlobSha": null,
+      "production": {
+        "present": true,
+        "checksums": [
+          "753bd0691eb9b6cffe7344c47b976e7090aa4d2cfa309da87763c990147f324f"
+        ],
+        "classification": {
+          "executed": true,
+          "resolvedAsApplied": false,
+          "rolledBackAttempts": 0,
+          "unfinishedAttempts": 0
+        },
+        "attempts": [
+          {
+            "startedAt": "2026-02-19 23:39:41.603639+00",
+            "finishedAt": "2026-02-19 23:39:42.017308+00",
+            "rolledBackAt": null,
+            "appliedStepsCount": 1,
+            "checksum": "753bd0691eb9b6cffe7344c47b976e7090aa4d2cfa309da87763c990147f324f"
+          }
+        ]
+      },
+      "evidence": "Production ledger record; repository artifact absent at canonical cutover"
+    },
+    {
+      "repositoryOrder": null,
+      "migrationName": "20260219_170000_add_contact_verification_flags",
+      "repositoryPresent": false,
+      "path": null,
+      "sha256": null,
+      "fileBytes": null,
+      "encoding": null,
+      "gitBlobSha": null,
+      "production": {
+        "present": true,
+        "checksums": [
+          "4bee0aeb684d4f9bcb4545e691632c16d93277bc613e9efc91a4b2776fc26f41"
+        ],
+        "classification": {
+          "executed": true,
+          "resolvedAsApplied": false,
+          "rolledBackAttempts": 0,
+          "unfinishedAttempts": 0
+        },
+        "attempts": [
+          {
+            "startedAt": "2026-02-19 20:48:04.85332+00",
+            "finishedAt": "2026-02-19 20:48:05.370797+00",
+            "rolledBackAt": null,
+            "appliedStepsCount": 1,
+            "checksum": "4bee0aeb684d4f9bcb4545e691632c16d93277bc613e9efc91a4b2776fc26f41"
+          }
+        ]
+      },
+      "evidence": "Production ledger record; repository artifact absent at canonical cutover"
+    },
+    {
+      "repositoryOrder": null,
+      "migrationName": "20260219_180000_add_pilot_checklist",
+      "repositoryPresent": false,
+      "path": null,
+      "sha256": null,
+      "fileBytes": null,
+      "encoding": null,
+      "gitBlobSha": null,
+      "production": {
+        "present": true,
+        "checksums": [
+          "5c0878aea8035f25aa155ae9dcc28dd4754d6facc8913edb2b27ce09de4f1a9e"
+        ],
+        "classification": {
+          "executed": true,
+          "resolvedAsApplied": false,
+          "rolledBackAttempts": 0,
+          "unfinishedAttempts": 0
+        },
+        "attempts": [
+          {
+            "startedAt": "2026-02-19 20:48:05.524385+00",
+            "finishedAt": "2026-02-19 20:48:06.181845+00",
+            "rolledBackAt": null,
+            "appliedStepsCount": 1,
+            "checksum": "5c0878aea8035f25aa155ae9dcc28dd4754d6facc8913edb2b27ce09de4f1a9e"
+          }
+        ]
+      },
+      "evidence": "Production ledger record; repository artifact absent at canonical cutover"
+    },
+    {
+      "repositoryOrder": null,
+      "migrationName": "20260220_090000_teacher_onboarding_training",
+      "repositoryPresent": false,
+      "path": null,
+      "sha256": null,
+      "fileBytes": null,
+      "encoding": null,
+      "gitBlobSha": null,
+      "production": {
+        "present": true,
+        "checksums": [
+          "f00f722d2a27c409dcf05495c4b3830c404085ecfed8d3663a150f857c6b7824"
+        ],
+        "classification": {
+          "executed": true,
+          "resolvedAsApplied": false,
+          "rolledBackAttempts": 0,
+          "unfinishedAttempts": 0
+        },
+        "attempts": [
+          {
+            "startedAt": "2026-02-20 02:18:18.750449+00",
+            "finishedAt": "2026-02-20 02:18:19.568041+00",
+            "rolledBackAt": null,
+            "appliedStepsCount": 1,
+            "checksum": "f00f722d2a27c409dcf05495c4b3830c404085ecfed8d3663a150f857c6b7824"
+          }
+        ]
+      },
+      "evidence": "Production ledger record; repository artifact absent at canonical cutover"
+    },
+    {
+      "repositoryOrder": null,
+      "migrationName": "20260223_120000_adaptive_baseline",
+      "repositoryPresent": false,
+      "path": null,
+      "sha256": null,
+      "fileBytes": null,
+      "encoding": null,
+      "gitBlobSha": null,
+      "production": {
+        "present": true,
+        "checksums": [
+          "1d033be90c001a129efe80227e718a53801c54a35989b595514ae9e842f7634e"
+        ],
+        "classification": {
+          "executed": true,
+          "resolvedAsApplied": false,
+          "rolledBackAttempts": 0,
+          "unfinishedAttempts": 0
+        },
+        "attempts": [
+          {
+            "startedAt": "2026-02-25 12:41:06.45694+00",
+            "finishedAt": "2026-02-25 12:41:06.966825+00",
+            "rolledBackAt": null,
+            "appliedStepsCount": 1,
+            "checksum": "1d033be90c001a129efe80227e718a53801c54a35989b595514ae9e842f7634e"
+          }
+        ]
+      },
+      "evidence": "Production ledger record; repository artifact absent at canonical cutover"
+    },
+    {
+      "repositoryOrder": null,
+      "migrationName": "20260224_130000_monthly_reports",
+      "repositoryPresent": false,
+      "path": null,
+      "sha256": null,
+      "fileBytes": null,
+      "encoding": null,
+      "gitBlobSha": null,
+      "production": {
+        "present": true,
+        "checksums": [
+          "748e729babfae25606a01c227affe933f202a050ff993bb125a1b2e56e696ea1"
+        ],
+        "classification": {
+          "executed": true,
+          "resolvedAsApplied": false,
+          "rolledBackAttempts": 0,
+          "unfinishedAttempts": 0
+        },
+        "attempts": [
+          {
+            "startedAt": "2026-02-25 12:41:07.888244+00",
+            "finishedAt": "2026-02-25 12:41:08.398664+00",
+            "rolledBackAt": null,
+            "appliedStepsCount": 1,
+            "checksum": "748e729babfae25606a01c227affe933f202a050ff993bb125a1b2e56e696ea1"
+          }
+        ]
+      },
+      "evidence": "Production ledger record; repository artifact absent at canonical cutover"
+    },
+    {
+      "repositoryOrder": null,
+      "migrationName": "20260224_200000_attempt_log",
+      "repositoryPresent": false,
+      "path": null,
+      "sha256": null,
+      "fileBytes": null,
+      "encoding": null,
+      "gitBlobSha": null,
+      "production": {
+        "present": true,
+        "checksums": [
+          "466ad15465153f426d85266cd5d72f5eab12f206e71bf45f59e6afb6e505e65d"
+        ],
+        "classification": {
+          "executed": true,
+          "resolvedAsApplied": false,
+          "rolledBackAttempts": 0,
+          "unfinishedAttempts": 0
+        },
+        "attempts": [
+          {
+            "startedAt": "2026-02-25 12:41:08.603879+00",
+            "finishedAt": "2026-02-25 12:41:09.11729+00",
+            "rolledBackAt": null,
+            "appliedStepsCount": 1,
+            "checksum": "466ad15465153f426d85266cd5d72f5eab12f206e71bf45f59e6afb6e505e65d"
+          }
+        ]
+      },
+      "evidence": "Production ledger record; repository artifact absent at canonical cutover"
+    },
+    {
+      "repositoryOrder": null,
+      "migrationName": "20260416_100000_curriculum_version",
+      "repositoryPresent": false,
+      "path": null,
+      "sha256": null,
+      "fileBytes": null,
+      "encoding": null,
+      "gitBlobSha": null,
+      "production": {
+        "present": true,
+        "checksums": [
+          "4d135521fabed294b855fafcf8179dbd1db2ac135cd90272106545ddb3c43896",
+          "5dd2a8604c928c709fbcde06ce23fe43786a3777e8280477eef0c1a8f29f6399"
+        ],
+        "classification": {
+          "executed": true,
+          "resolvedAsApplied": false,
+          "rolledBackAttempts": 1,
+          "unfinishedAttempts": 0
+        },
+        "attempts": [
+          {
+            "startedAt": "2026-04-17 01:28:26.34741+00",
+            "finishedAt": null,
+            "rolledBackAt": "2026-04-17 01:28:47.235138+00",
+            "appliedStepsCount": 0,
+            "checksum": "4d135521fabed294b855fafcf8179dbd1db2ac135cd90272106545ddb3c43896"
+          },
+          {
+            "startedAt": "2026-04-17 01:29:06.294561+00",
+            "finishedAt": "2026-04-17 01:29:06.954669+00",
+            "rolledBackAt": null,
+            "appliedStepsCount": 1,
+            "checksum": "5dd2a8604c928c709fbcde06ce23fe43786a3777e8280477eef0c1a8f29f6399"
+          }
+        ]
+      },
+      "evidence": "Production ledger record; repository artifact absent at canonical cutover"
+    },
+    {
+      "repositoryOrder": null,
+      "migrationName": "20260418_120000_gap_closing_welcome",
+      "repositoryPresent": false,
+      "path": null,
+      "sha256": null,
+      "fileBytes": null,
+      "encoding": null,
+      "gitBlobSha": null,
+      "production": {
+        "present": true,
+        "checksums": [
+          "d9123ef54d00f075e604a600212e8ba7022bd2c63ae2eebbbef172710fe7c257"
+        ],
+        "classification": {
+          "executed": true,
+          "resolvedAsApplied": false,
+          "rolledBackAttempts": 0,
+          "unfinishedAttempts": 0
+        },
+        "attempts": [
+          {
+            "startedAt": "2026-04-19 01:33:16.446218+00",
+            "finishedAt": "2026-04-19 01:33:17.049417+00",
+            "rolledBackAt": null,
+            "appliedStepsCount": 1,
+            "checksum": "d9123ef54d00f075e604a600212e8ba7022bd2c63ae2eebbbef172710fe7c257"
+          }
+        ]
+      },
+      "evidence": "Production ledger record; repository artifact absent at canonical cutover"
+    }
+  ],
+  "forwardMigrations": [
+    {
+      "migrationName": "20260803_000001_privileged_identity_hardening",
+      "path": "prisma/migrations/20260803_000001_privileged_identity_hardening/migration.sql",
+      "sha256": "1d313776b8e54cb4812425f5438ccff4637b245cf4b74574489371fd2140b211",
+      "fileBytes": 2424,
+      "gitBlobSha": "8aa3f2bec3480a25bab97a39d5eaa06a4c7bdb93",
+      "productionPresent": false
+    }
+  ]
+}

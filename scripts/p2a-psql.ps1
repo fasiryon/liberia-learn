@@ -10,7 +10,7 @@ param(
 )
 
 $ErrorActionPreference = "Stop"
-$clientImage = "postgres:16-alpine"
+$clientImage = "postgres:17-alpine"
 $urlValue = [Environment]::GetEnvironmentVariable($UrlVariable)
 if ([string]::IsNullOrWhiteSpace($urlValue)) {
   throw "$UrlVariable is missing"

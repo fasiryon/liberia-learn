@@ -1,0 +1,38 @@
+{
+    "schemaVersion":  1,
+    "migration":  "20260803_000001_privileged_identity_hardening",
+    "migrationSha256":  "1d313776b8e54cb4812425f5438ccff4637b245cf4b74574489371fd2140b211",
+    "addedTables":  [
+                        "PrivilegedIdentity",
+                        "PrivilegedSessionAssurance"
+                    ],
+    "addedEnums":  [
+
+                   ],
+    "addedIndexes":  [
+                         "PrivilegedIdentity_breakGlassUntil_idx",
+                         "PrivilegedIdentity_pkey",
+                         "PrivilegedIdentity_providerSubject_key",
+                         "PrivilegedIdentity_provider_providerSubject_idx",
+                         "PrivilegedIdentity_userId_key",
+                         "PrivilegedSessionAssurance_expiresAt_idx",
+                         "PrivilegedSessionAssurance_identityId_revokedAt_expiresAt_idx",
+                         "PrivilegedSessionAssurance_pkey",
+                         "PrivilegedSessionAssurance_sessionId_key"
+                     ],
+    "addedConstraints":  [
+                             "PrivilegedIdentity_pkey",
+                             "PrivilegedIdentity_userId_fkey",
+                             "PrivilegedSessionAssurance_identityId_fkey",
+                             "PrivilegedSessionAssurance_pkey"
+                         ],
+    "removedObjects":  [
+
+                       ],
+    "unexpectedChanges":  [
+
+                          ],
+    "policyObjectsAdded":  [
+
+                           ]
+}

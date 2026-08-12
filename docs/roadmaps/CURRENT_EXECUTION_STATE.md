@@ -7,7 +7,74 @@ Live execution tracking for the final closeout program.
 
 - **Canonical plan:** `docs/roadmaps/NATIONAL_ROLLOUT_EXECUTION_PLAN.md`
 - **Escalation contract:** `docs/agents/ADVISOR_ESCALATION_CONTRACT.md`
-- **P2-A staging database foundation: BLOCKED ON EXTERNAL PROJECT SETUP
+- **P2-A pre-baseline repair: ENGINEERING COMPLETE, PERSISTENT STAGING
+  BOOTSTRAP AWAITS SEPARATE AUTHORIZATION (2026-08-12).** Founder approved the empty resumed
+  Supabase project `yonpfzjczoffhrgibxkz` in `us-east-2` as dedicated staging;
+  live MCP metadata proved it is healthy, differs from production
+  `bnphuinpvgpmebcsvmsp`, and has zero public tables, Prisma migrations, Auth
+  users, Storage objects, or Edge Functions. Operator tooling now pins
+  `postgres:17-alpine` and fail-closes unless psql, pg_dump, and pg_restore are
+  all major version 17; local clients verified at 17.10 and focused tests pass
+  13/13, including rejection of pg_dump 16. No staging schema mutation ran.
+  Two disposable PostgreSQL 17 migration replays found the repository chain is
+  not safely reproducible: the first baseline SQL is UTF-16 LE and fails with
+  embedded NUL bytes; after temporary UTF-8 normalization, replay stops at
+  `20260224_000000_seed_training_modules` because it inserts three columns not
+  created by the preceding TrainingModule migration (`42703`, Prisma `P3018`).
+  The exact last pre-P2-A legacy boundary is
+  `20260803_000001_privileged_identity_hardening` across 129 migration
+  directories.
+  The follow-up read-only reconciliation found systemic history drift, not two
+  isolated replay defects: production has 162 migration rows for 146 unique
+  names, the repository has 129 pre-P2-A directories, 18 names are
+  production-only, the privileged-identity boundary is repository-only, and
+  four shared migrations have checksum drift. Disposable replay plus a static
+  dependency audit found six foundational tables referenced but never created
+  by the current chain. Production's earlier, repository-absent training
+  migration explains the three TrainingModule seed columns. The complete
+  ledger, schema/raw-object inventory, and seed audit are in
+  `docs/ops/PRE_P2A_MIGRATION_HISTORY_RECONCILIATION.md`. The approved Option C
+  repair is now implemented as a production-derived, schema-only canonical
+  PostgreSQL 17 root under `prisma/canonical/migrations`. It preserves 196
+  application tables, 19 production enums, 702 indexes, 430 application
+  constraints, public functions, both AuditLog immutability triggers, vector
+  0.8.0, production RLS state, `TrendSnapshot`, and `_SkillToStandard`, while
+  excluding row data, credentials, provider schemas, and the environment-owned
+  Prisma ledger. The active clean-bootstrap ledger contains exactly the
+  canonical production-state baseline plus the byte-identical privileged
+  identity hardening migration. Essential reference data is isolated in an
+  idempotent versioned seed. A permanent PostgreSQL 17 CI gate verifies exact
+  catalog hashes, the two-row ledger, reference-seed idempotency, AuditLog
+  triggers, IVFFLAT indexes, custom dump/restore equivalence, and absence of
+  P2-A state. The staging backup and preflight contract now requires this exact
+  two-migration canonical ledger rather than the broken 129-row legacy chain.
+  `docs/ops/P2A_STAGING_MIGRATION_RUNBOOK.md` is fail-closed because its old
+  legacy-root deploy commands are superseded and must be rewritten after Gate
+  0 before any P2-A DDL authorization. Production and staging remained
+  unchanged.
+  Separately, the production RLS inventory finding is tracked as a P0 in
+  `docs/security/PRODUCTION_RLS_EXPOSURE_AUDIT.md`; no production RLS change was
+  made or authorized. Independent database proof in this cycle PASS: the
+  disposable PostgreSQL 17 canonical bootstrap, exact catalog hashes,
+  two-migration ledger, idempotent reference seed, and custom dump/restore all
+  passed. Focused canonical/staging tests PASS 22/22; Prisma generate PASS;
+  TypeScript PASS with the established 6 GB heap. The first mandatory full
+  Vitest run stopped on two timeouts with 4,638 passing tests. Both timed-out
+  cases then passed together in isolation without code changes: lesson body in
+  1.94s under its 15s budget, replay dry-run in 886ms under its 5s budget, 31
+  focused tests total. The exact full gate was restarted: Prisma generate PASS,
+  TypeScript PASS, and full Vitest PASS with 4,640 tests in 566 files. The final
+  `npm run build` first exceeded the 20-minute command ceiling. The operator
+  reran it directly to completion and supplied the successful Next.js route
+  summary. Independent local verification confirmed the rerun produced fresh
+  `.next/BUILD_ID` `t-PFYUBdqxr9faBEUdUMm` at 2026-08-12T17:34:49Z plus valid
+  build and middleware manifests. Build PASS. `git diff --check` PASS. No
+  staging or production mutation occurred. The next persistent action requires explicit
+  authorization for canonical-root deployment to the approved empty staging
+  project, essential reference seeds, two synthetic fixtures, PostgreSQL 17
+  backup/restore evidence, a stable staging app, and Gate 0. It does not
+  authorize P2-A A/B1/B2/C or any production baseline marker.
+- **P2-A staging database foundation original finding: SUPERSEDED
   (2026-08-11).** Gate 0 correctly stopped without a database connection
   because no independent staging target or recovery evidence existed. The
   repository audit confirms Supabase project `bnphuinpvgpmebcsvmsp` is

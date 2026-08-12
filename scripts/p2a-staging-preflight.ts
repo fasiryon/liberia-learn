@@ -11,7 +11,20 @@ import {
 
 const APPROVED_BRANCH = "codex/p2a-provenance-step1";
 const APPROVED_FOUNDATION_ANCESTOR = "ca60392336a4ec2064b2a176984e712cd4282257";
-const POSTGRES_CLIENT_IMAGE = "postgres:16-alpine";
+export const APPROVED_STAGING_SUPABASE_PROJECT_REF = "yonpfzjczoffhrgibxkz";
+export const POSTGRES_CLIENT_IMAGE = "postgres:17-alpine";
+export const REQUIRED_POSTGRES_CLIENT_MAJOR = 17;
+
+export const APPROVED_CANONICAL_MIGRATIONS = [
+  {
+    name: "20260728_000003_canonical_production_state_baseline",
+    sha256: "53A20E408463EB7EAD872D820C137B2C0420BF969229C776011D573ED16A73F8",
+  },
+  {
+    name: "20260803_000001_privileged_identity_hardening",
+    sha256: "1D313776B8E54CB4812425F5438CCFF4637B245CF4B74574489371FD2140B211",
+  },
+] as const;
 
 export const APPROVED_MIGRATIONS = [
   {
@@ -36,6 +49,7 @@ type BackupEvidence = {
   environment: string;
   projectRef: string;
   database: string;
+  databaseHost: string;
   createdAtUtc: string;
   retentionUntilUtc: string;
   method: "supabase-daily-backup" | "supabase-pitr" | "logical-pg-dump";
@@ -45,6 +59,16 @@ type BackupEvidence = {
   restoreTestedAtUtc: string;
   artifactPath?: string;
   artifactSha256?: string;
+  serverVersion: string;
+  psqlVersion: string;
+  pgDumpVersion: string;
+  pgRestoreVersion: string;
+  expectedMigrationBoundary: string;
+  expectedMigrationCount: number;
+  migrationLedger: string[];
+  syntheticFixtureCount: number;
+  p2aMigrationCount: number;
+  provenanceTableCount: number;
 };
 
 type Topology = {
@@ -156,11 +180,33 @@ function assertBackupEvidence(path: string, projectRef: string, database: string
   if (evidence.environment !== "staging") fail("backup evidence is not labeled staging");
   if (evidence.projectRef.toLowerCase() !== projectRef) fail("backup evidence project differs from staging");
   if (evidence.database !== database) fail("backup evidence database differs from staging");
+  if (evidence.databaseHost !== `db.${projectRef}.supabase.co`) {
+    fail("backup evidence host differs from staging");
+  }
   if (!evidence.owner?.trim() || !evidence.evidenceLocation?.trim()) {
     fail("backup evidence owner or evidence location is missing");
   }
   if (evidence.restoreTestStatus !== "passed" || !evidence.restoreTestedAtUtc) {
     fail("backup evidence does not include a passed restore test");
+  }
+  assertPostgresClientVersions({
+    psql: evidence.psqlVersion,
+    pgDump: evidence.pgDumpVersion,
+    pgRestore: evidence.pgRestoreVersion,
+  });
+  if (!/^17\./.test(evidence.serverVersion)) fail("backup source server is not PostgreSQL 17");
+  if (evidence.expectedMigrationBoundary !== APPROVED_CANONICAL_MIGRATIONS[1].name) {
+    fail("backup evidence has the wrong pre-P2-A migration boundary");
+  }
+  if (
+    evidence.expectedMigrationCount !== APPROVED_CANONICAL_MIGRATIONS.length ||
+    evidence.migrationLedger?.join(",") !==
+      APPROVED_CANONICAL_MIGRATIONS.map((item) => item.name).join(",") ||
+    evidence.syntheticFixtureCount !== 2 ||
+    evidence.p2aMigrationCount !== 0 ||
+    evidence.provenanceTableCount !== 0
+  ) {
+    fail("backup restore evidence does not match the approved pre-P2-A state");
   }
   const createdAt = Date.parse(evidence.createdAtUtc);
   const retentionUntil = Date.parse(evidence.retentionUntilUtc);
@@ -189,6 +235,9 @@ export function validateTopology(env: EnvironmentValues = process.env): Topology
   if (!/^[a-z0-9]+$/.test(projectRef)) fail("P2A_STAGING_PROJECT_REF is malformed");
   if (projectRef === PRODUCTION_SUPABASE_PROJECT_REF) {
     fail("staging project identifier matches known production");
+  }
+  if (projectRef !== APPROVED_STAGING_SUPABASE_PROJECT_REF) {
+    fail("staging project identifier does not match the founder-approved project");
   }
 
   const migrationUrl = requiredEnv("P2A_STAGING_DATABASE_URL", env);
@@ -256,6 +305,12 @@ function assertRepository(): void {
     if (sha256(path) !== migration.sha256) fail(`reviewed migration hash differs: ${migration.name}`);
   }
 
+  for (const migration of APPROVED_CANONICAL_MIGRATIONS) {
+    const path = resolve("prisma", "canonical", "migrations", migration.name, "migration.sql");
+    if (!existsSync(path)) fail(`canonical migration is missing: ${migration.name}`);
+    if (sha256(path) !== migration.sha256) fail(`canonical migration hash differs: ${migration.name}`);
+  }
+
   const writerScanResult = spawnSync(
     "git",
     [
@@ -278,7 +333,28 @@ function assertRepository(): void {
   if (writerScan) fail("provenance implementation references exist in application writer paths");
 }
 
-function assertClientTooling(): string {
+type PostgresClientVersions = {
+  psql: string;
+  pgDump: string;
+  pgRestore: string;
+};
+
+function postgresMajor(versionOutput: string, tool: string): number {
+  const match = versionOutput.match(/\(PostgreSQL\)\s+(\d+)(?:\.|\s|$)/i);
+  if (!match) fail(`${tool} returned an unrecognized version string`);
+  return Number.parseInt(match[1], 10);
+}
+
+export function assertPostgresClientVersions(versions: PostgresClientVersions): void {
+  for (const [tool, output] of Object.entries(versions)) {
+    const major = postgresMajor(output, tool);
+    if (major !== REQUIRED_POSTGRES_CLIENT_MAJOR) {
+      fail(`${tool} major version ${major} is incompatible; required ${REQUIRED_POSTGRES_CLIENT_MAJOR}`);
+    }
+  }
+}
+
+function assertClientTooling(): PostgresClientVersions {
   const docker = spawnSync("docker", ["version", "--format", "{{.Server.Version}}"], {
     encoding: "utf8",
   });
@@ -289,11 +365,21 @@ function assertClientTooling(): string {
   if (image.status !== 0) {
     fail(`${POSTGRES_CLIENT_IMAGE} is not present locally; provision it before Gate 0`);
   }
-  const psql = spawnSync("docker", ["run", "--rm", POSTGRES_CLIENT_IMAGE, "psql", "--version"], {
-    encoding: "utf8",
-  });
-  if (psql.status !== 0) fail(`psql is unavailable in ${POSTGRES_CLIENT_IMAGE}`);
-  return psql.stdout.trim();
+  const commands = {
+    psql: ["psql", "--version"],
+    pgDump: ["pg_dump", "--version"],
+    pgRestore: ["pg_restore", "--version"],
+  } as const;
+  const versions = {} as PostgresClientVersions;
+  for (const [tool, command] of Object.entries(commands)) {
+    const result = spawnSync("docker", ["run", "--rm", POSTGRES_CLIENT_IMAGE, ...command], {
+      encoding: "utf8",
+    });
+    if (result.status !== 0) fail(`${tool} is unavailable in ${POSTGRES_CLIENT_IMAGE}`);
+    versions[tool as keyof PostgresClientVersions] = result.stdout.trim();
+  }
+  assertPostgresClientVersions(versions);
+  return versions;
 }
 
 function runPsql(envName: "P2A_STAGING_DATABASE_URL" | "DATABASE_URL", sql: string): string {
@@ -347,6 +433,17 @@ async function assertLiveEnvironment(topology: Topology): Promise<void> {
   );
   if (unfinishedMigrations !== "0") fail("staging has unfinished Prisma migrations");
 
+  const canonicalState = runPsql(
+    "P2A_STAGING_DATABASE_URL",
+    `SELECT COALESCE(string_agg(migration_name, ',' ORDER BY started_at), '')
+     FROM public."_prisma_migrations"
+     WHERE finished_at IS NOT NULL AND rolled_back_at IS NULL;`
+  );
+  const expectedCanonicalState = APPROVED_CANONICAL_MIGRATIONS.map((item) => item.name).join(",");
+  if (canonicalState !== expectedCanonicalState) {
+    fail("staging Prisma ledger is not the exact approved canonical pre-P2-A state");
+  }
+
   const p2aState = runPsql(
     "P2A_STAGING_DATABASE_URL",
     `SELECT count(*) FROM public."_prisma_migrations"
@@ -393,6 +490,7 @@ async function assertLiveEnvironment(topology: Topology): Promise<void> {
   console.log(`Runtime database identity: ${runtimeIdentity}`);
   console.log("P2-A migration rows before execution: 0");
   console.log("Unfinished Prisma migration rows: 0");
+  console.log(`Canonical pre-P2-A migration rows: ${APPROVED_CANONICAL_MIGRATIONS.length}`);
   console.log("P2-A provenance tables before execution: 0");
   console.log("Synthetic P2-A curriculum fixtures: 2");
   console.log("Transactions older than 15 minutes: 0");
@@ -403,7 +501,7 @@ export async function main(): Promise<void> {
   const staticOnly = process.argv.includes("--static-only");
   assertRepository();
   const topology = validateTopology();
-  const psqlVersion = assertClientTooling();
+  const clientVersions = assertClientTooling();
 
   console.log(`Timestamp UTC: ${new Date().toISOString()}`);
   console.log(`Git branch: ${APPROVED_BRANCH}`);
@@ -415,7 +513,9 @@ export async function main(): Promise<void> {
   console.log(
     `Runtime target: ${topology.runtime.host}:${topology.runtime.port}/${topology.runtime.database}`
   );
-  console.log(`PostgreSQL client: ${psqlVersion} via ${POSTGRES_CLIENT_IMAGE}`);
+  console.log(`PostgreSQL psql client: ${clientVersions.psql} via ${POSTGRES_CLIENT_IMAGE}`);
+  console.log(`PostgreSQL pg_dump client: ${clientVersions.pgDump} via ${POSTGRES_CLIENT_IMAGE}`);
+  console.log(`PostgreSQL pg_restore client: ${clientVersions.pgRestore} via ${POSTGRES_CLIENT_IMAGE}`);
   console.log(`Backup evidence: ${topology.backupEvidencePath}`);
   console.log(`Deployment environment evidence: ${topology.deploymentEnvPath}`);
   console.log("Reviewed migration hashes: PASS");

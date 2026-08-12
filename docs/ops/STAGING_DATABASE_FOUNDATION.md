@@ -1,6 +1,8 @@
 # LiberiaLearn Staging Database Foundation
 
-Status: BLOCKED on external staging project and deployment configuration
+Status: canonical baseline repair complete locally; BLOCKED on separate
+persistent staging-bootstrap authorization, staging secrets, and deployment
+configuration
 
 This document defines the environment boundary required before P2-A may return
 to Gate 0. It does not authorize or execute P2-A migrations.
@@ -25,8 +27,14 @@ to Gate 0. It does not authorize or execute P2-A migrations.
 
 ### Confirmed non-production state
 
-- No independent staging Supabase project reference was found in repository,
-  ignored environment snapshots, process variables, CI, or operations docs.
+- Founder-approved staging project: `yonpfzjczoffhrgibxkz`, named
+  `fasiryon's Project`, in `us-east-2`, PostgreSQL 17, `ACTIVE_HEALTHY` after
+  resume on 2026-08-11.
+- Read-only inventory after resume found zero public application tables, zero
+  Prisma migrations, zero Auth users/identities/sessions/tokens, zero Storage
+  buckets/objects, zero Edge Functions, and no customer or production data.
+- The hard identity invariant is
+  `yonpfzjczoffhrgibxkz != bnphuinpvgpmebcsvmsp`.
 - Ignored Preview snapshots select the same production Supabase project.
 - `lib/environment.ts` historically labeled every Vercel Preview deployment as
   staging even though its database was not isolated.
@@ -53,8 +61,9 @@ URL that resolves to the known production project.
 
 ## 2. Smallest safe target architecture
 
-Create a dedicated Supabase project for staging in the same AWS region as the
-application, expected `us-east-1`. Do not use a schema inside production.
+Reuse the founder-approved empty Supabase project `yonpfzjczoffhrgibxkz` as
+the dedicated staging project. Do not create another project and do not use a
+schema inside production.
 
 Use this topology:
 
@@ -165,6 +174,42 @@ require explicit authorization plus deterministic anonymization, stable
 pseudonyms, removal of auth and provider secrets, replacement of all email and
 phone values, child-data minimization, copy audit logs, and deletion controls.
 
+### Pre-P2-A migration boundary and canonical repair
+
+The exact repository boundary immediately before P2-A is
+`20260803_000001_privileged_identity_hardening`. There are 129 migration
+directories from `20260213_222830_baseline_from_existing_db` through that
+boundary. The four migrations beginning with `20260810_000001_p2a_` through
+`20260810_000004_p2a_` are excluded.
+
+Two disposable PostgreSQL 17 replays were attempted before any remote staging
+mutation:
+
+1. The first stopped at the initial baseline because its SQL file is UTF-16 LE
+   and Prisma interpreted embedded NUL bytes. A temporary UTF-8 conversion
+   proved this is an encoding artifact without modifying the historical file.
+2. The second passed the first four migrations, then stopped at
+   `20260224_000000_seed_training_modules`. That migration inserts
+   `TrainingModule.sortOrder`, `estimatedMinutes`, and `isActive`, but the
+   preceding `20260220_180000_training_reporting` migration does not create
+   those columns. PostgreSQL returned `42703` and Prisma returned `P3018`.
+
+The legacy repository migration chain cannot reproduce a clean database safely.
+It remains immutable audit evidence and must never be run against staging.
+
+The approved permanent repair is the production-derived, schema-only canonical
+root documented in `docs/ops/PRE_P2A_CANONICAL_BASELINE.md`. Its active clean
+bootstrap path is `prisma/canonical/migrations` and contains exactly:
+
+1. `20260728_000003_canonical_production_state_baseline`;
+2. `20260803_000001_privileged_identity_hardening`.
+
+Disposable PostgreSQL 17 verification proved exact catalog equivalence,
+byte-identical privileged hardening, idempotent reference seeds, and a logical
+dump/restore round trip. No persistent database was changed. Staging must be
+built only from this canonical root after a separate authorization. The 129
+legacy rows are not expected in a clean canonical staging ledger.
+
 ## 6. Backup, restore, and recovery evidence
 
 Gate 0 accepts either:
@@ -192,6 +237,24 @@ restore; migration operators do not restore automatically. A logical restore
 test must verify `_prisma_migrations` and both synthetic curriculum fixtures in
 a disposable database before evidence is marked passed.
 
+After the canonical root, essential reference seeds, and the two synthetic
+fixtures are separately authorized and installed on staging, run the guarded
+PostgreSQL 17 workflow:
+
+```powershell
+$env:P2A_STAGING_PROJECT_REF = 'yonpfzjczoffhrgibxkz'
+$env:P2A_STAGING_DATABASE_URL = '<direct staging URL from the secret store>'
+.\scripts\p2a-staging-backup-restore.ps1 `
+  -Owner '<database owner>' `
+  -EvidenceLocation '<sanitized ticket or provider record>'
+```
+
+The script refuses non-approved project references and hosts, requires SSL,
+checks a PostgreSQL 17 server and all three PostgreSQL 17 client tools, creates
+a custom-format dump, restores it into a disposable PostgreSQL 17 container,
+verifies the migration boundary, fixtures, and absence of P2-A state, writes
+the evidence JSON, and removes the disposable container.
+
 No staging backup or recovery evidence is currently verified.
 
 ## 7. Local validation evidence
@@ -212,7 +275,11 @@ database target:
   synthetic staging-shaped URLs. Expected failed static-generation queries
   targeted only the nonexistent synthetic project and the build still exited
   zero.
-- `psql`, `pg_dump`, and `pg_restore` from `postgres:16-alpine`: version 16.14.
+- The original local-only foundation check used PostgreSQL 16.14 clients. It
+  is superseded for staging operations because the approved staging server is
+  PostgreSQL 17.
+- `psql`, `pg_dump`, and `pg_restore` from `postgres:17-alpine`: version 17.10,
+  verified on 2026-08-11.
 
 This validates code and tooling shape only. It does not verify a deployed
 staging application, staging connectivity, backup availability, or restore.
@@ -220,10 +287,12 @@ staging application, staging connectivity, backup availability, or restore.
 ## 8. PostgreSQL client tooling
 
 The approved local client path is the pinned official image
-`postgres:16-alpine`. Verified client output on 2026-08-11:
+`postgres:17-alpine`. Verified client output on 2026-08-11:
 
 ```text
-psql (PostgreSQL) 16.14
+psql (PostgreSQL) 17.10
+pg_dump (PostgreSQL) 17.10
+pg_restore (PostgreSQL) 17.10
 ```
 
 Use `scripts/p2a-psql.ps1`. It passes only the selected environment-variable
@@ -233,10 +302,12 @@ in the Docker arguments.
 Version check:
 
 ```powershell
-docker run --rm postgres:16-alpine psql --version
+docker run --rm postgres:17-alpine psql --version
+docker run --rm postgres:17-alpine pg_dump --version
+docker run --rm postgres:17-alpine pg_restore --version
 ```
 
-The PostgreSQL 16 client supports SSL. Staging connections must use
+The PostgreSQL 17 client supports SSL. Staging connections must use
 `sslmode=require`. No local PostgreSQL server is required.
 
 ## 9. Fail-closed guard
@@ -268,9 +339,8 @@ version, SSL state, hashes, and health only. It never outputs credentials.
 
 ## 10. External owner actions
 
-1. Supabase owner: confirm whether a second Free project slot is available or
-   approve a paid project, then create the dedicated staging project in
-   `us-east-1` and record its project reference.
+1. Supabase owner: keep `yonpfzjczoffhrgibxkz` dedicated to staging and do not
+   create or repurpose another project.
 2. Secret owner: store the staging database password, API keys, and service
    role in the password manager. Do not reuse production values.
 3. Vercel team owner: verify plan, create the stable staging target, replace
@@ -278,9 +348,10 @@ version, SSL state, hashes, and health only. It never outputs credentials.
    provide a secure environment pull.
 4. Deployment owner: deploy the reviewed staging branch and record its stable
    URL and commit.
-5. Database owner: apply only the pre-P2-A migration baseline, load the
-   synthetic curriculum fixtures, create the backup, perform the disposable
-   restore test, and sign the evidence.
+5. Database owner: deploy only `prisma/canonical/migrations`, apply the
+   idempotent essential reference seed, load the two synthetic curriculum
+   fixtures, create the backup, perform the disposable restore test, and sign
+   the evidence.
 
 Stop for approval before any paid plan, paid project, production data copy,
 production configuration change, P2-A migration, writer activation, or
@@ -298,6 +369,8 @@ All items must exist before a new migration authorization:
 - valid backup evidence with a passed restore test;
 - pinned PostgreSQL client available;
 - two synthetic curriculum fixtures present;
+- exact canonical Prisma ledger containing the baseline and privileged
+  hardening migrations only;
 - clean `codex/p2a-provenance-step1` worktree containing the reviewed ancestor;
 - four reviewed P2-A migration hashes unchanged;
 - zero P2-A migration rows and zero P2-A provenance tables before Migration A;
@@ -322,7 +395,9 @@ $env:P2A_STAGING_DEPLOYMENT_ENV_FILE = '<secure pulled staging env path>'
 $env:P2A_BACKUP_EVIDENCE_PATH = '<signed staging backup evidence JSON path>'
 $env:P2A_PROVENANCE_WRITERS_DISABLED = 'true'
 
-docker run --rm postgres:16-alpine psql --version
+docker run --rm postgres:17-alpine psql --version
+docker run --rm postgres:17-alpine pg_dump --version
+docker run --rm postgres:17-alpine pg_restore --version
 npm run p2a:staging:preflight
 
 Get-FileHash -Algorithm SHA256 prisma/migrations/20260810_000001_p2a_curriculum_provenance_core/migration.sql
