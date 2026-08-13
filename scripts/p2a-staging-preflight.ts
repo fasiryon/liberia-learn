@@ -103,7 +103,7 @@ function git(args: string[]): string {
   if (result.status !== 0) {
     fail(`git ${args.join(" ")} failed`);
   }
-  return result.stdout.trim();
+  return (result.stdout ?? "").trim();
 }
 
 export function parseEnvFile(path: string): Record<string, string> {
@@ -113,7 +113,7 @@ export function parseEnvFile(path: string): Record<string, string> {
     if (!trimmed || trimmed.startsWith("#")) continue;
     const match = trimmed.match(/^([A-Za-z_][A-Za-z0-9_]*)\s*=\s*(.*)$/);
     if (!match) continue;
-    let value = match[2].trim();
+    let value = (match[2] ?? "").trim();
     if (
       (value.startsWith('"') && value.endsWith('"')) ||
       (value.startsWith("'") && value.endsWith("'"))
@@ -327,7 +327,11 @@ function assertRepository(): void {
     { encoding: "utf8" },
   );
   if (writerScanResult.status !== 0) {
-    fail(`application provenance writer guard failed: ${writerScanResult.stderr.trim()}`);
+    const detail =
+      (writerScanResult.stderr ?? "").trim() ||
+      writerScanResult.error?.message ||
+      `exit status ${String(writerScanResult.status)}`;
+    fail(`application provenance writer guard failed: ${detail}`);
   }
 }
 
@@ -374,7 +378,7 @@ function assertClientTooling(): PostgresClientVersions {
       encoding: "utf8",
     });
     if (result.status !== 0) fail(`${tool} is unavailable in ${POSTGRES_CLIENT_IMAGE}`);
-    versions[tool as keyof PostgresClientVersions] = result.stdout.trim();
+    versions[tool as keyof PostgresClientVersions] = (result.stdout ?? "").trim();
   }
   assertPostgresClientVersions(versions);
   return versions;
@@ -420,7 +424,7 @@ function runPsql(envName: "P2A_STAGING_DATABASE_URL" | "DATABASE_URL", sql: stri
     { encoding: "utf8", env: clientEnv }
   );
   if (result.status !== 0) fail(`${envName} connectivity or SQL assertion failed`);
-  return result.stdout.trim();
+  return (result.stdout ?? "").trim();
 }
 
 async function assertLiveEnvironment(topology: Topology): Promise<void> {
