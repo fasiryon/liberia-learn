@@ -78,7 +78,7 @@ function Invoke-Version([string]$Tool) {
 }
 
 function Invoke-ProductionScalar([string]$Sql) {
-  $result = & docker run --rm -i @clientDockerArgs $clientImage psql -X -q -v ON_ERROR_STOP=1 -At -c $Sql
+  $result = $Sql | & docker run --rm -i @clientDockerArgs $clientImage psql -X -q -v ON_ERROR_STOP=1 -At -f -
   if ($LASTEXITCODE -ne 0) { throw "Production SQL assertion failed" }
   return ($result | Out-String).Trim()
 }
@@ -147,7 +147,7 @@ SELECT concat_ws('|',
   & docker exec $containerName pg_restore --exit-on-error --no-owner --no-privileges --use-list=/tmp/p2a-production-restore.list -U postgres -d postgres "/backup/$dumpFileName"
   if ($LASTEXITCODE -ne 0) { throw "Disposable PostgreSQL 17 restore failed" }
 
-  $restoreState = & docker exec $containerName psql -U postgres -d postgres -X -q -v ON_ERROR_STOP=1 -At -c @"
+  $restoreQuery = @"
 SELECT concat_ws('|',
   (SELECT count(*) FROM public."_prisma_migrations" WHERE finished_at IS NOT NULL AND rolled_back_at IS NULL),
   (SELECT count(*) FROM public."_prisma_migrations" WHERE finished_at IS NULL AND rolled_back_at IS NULL),
@@ -156,6 +156,7 @@ SELECT concat_ws('|',
   (SELECT count(*) FROM public."CurriculumContent")
 );
 "@
+  $restoreState = $restoreQuery | & docker exec -i $containerName psql -U postgres -d postgres -X -q -v ON_ERROR_STOP=1 -At -f -
   if ($LASTEXITCODE -ne 0) { throw "Restored production-state verification failed" }
   $restoreState = ($restoreState | Out-String).Trim()
   if ($restoreState -ne $sourceState) {
@@ -206,7 +207,10 @@ SELECT concat_ws('|',
   Write-Output "Evidence path: $evidencePath"
 } finally {
   if ($containerName.StartsWith("liberialearn-p2a-production-restore-", [StringComparison]::Ordinal)) {
-    & docker rm -f $containerName 2>$null | Out-Null
+    $existingContainer = & docker ps -aq --filter "name=^${containerName}$"
+    if (-not [string]::IsNullOrWhiteSpace(($existingContainer | Out-String))) {
+      & docker rm -f $containerName 2>$null | Out-Null
+    }
   }
   foreach ($name in $clientEnvironment.Keys) {
     [Environment]::SetEnvironmentVariable($name, $previousEnvironment[$name])
