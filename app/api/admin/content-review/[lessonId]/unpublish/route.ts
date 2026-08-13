@@ -3,12 +3,12 @@ import { randomUUID } from "crypto";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { requireRole } from "@/lib/auth";
-import { logAudit } from "@/lib/audit";
 import { prisma } from "@/lib/db";
 import { handleApiError } from "@/lib/errors/apiErrorHandler";
 import { sendPushToUser } from "@/lib/push/sendPush";
+import { revokeCurriculum } from "@/lib/curriculum/mutations/revocationWriter";
 
-const BodySchema = z.object({ reason: z.string().max(500).optional() });
+const BodySchema = z.object({ reason: z.string().trim().min(1).max(500).optional() });
 
 export async function POST(
   req: NextRequest,
@@ -33,19 +33,22 @@ export async function POST(
       );
     }
 
-    await prisma.curriculumContent.update({
-      where: { id: lesson.id },
-      data: { editReviewStatus: "PENDING", status: "draft", publishedAt: null },
-    });
-
-    await logAudit({
-      userId: user.id,
-      action: "teacher.lesson.emergency_unpublish",
-      resourceType: "curriculum",
-      resourceId: lesson.contentId,
+    await revokeCurriculum({
+      contentId: lesson.contentId,
+      actorType: "USER",
+      actorUserId: user.id,
+      reason,
+      urgent: true,
+      reviewAuthority: "PLATFORM",
+      idempotencyKey: `content-review-unpublish:${traceId}`,
       schoolId: user.schoolId ?? null,
       traceId,
-      details: { reason: reason ?? null, adminId: user.id },
+      compatibility: {
+        where: { id: lesson.id },
+        projection: { editReviewStatus: "PENDING", status: "draft", publishedAt: null },
+        auditAction: "teacher.lesson.emergency_unpublish",
+        auditDetails: { reason: reason ?? null, adminId: user.id },
+      },
     });
 
     if (lesson.editedById) {

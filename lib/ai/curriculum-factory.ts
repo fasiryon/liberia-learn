@@ -1,4 +1,5 @@
 // lib/ai/curriculum-factory.ts
+import { randomUUID } from "crypto";
 import { routedCompletion } from "@/lib/ai/router";
 import { getSystemPrompt } from "@/lib/ai/promptRegistry";
 import {
@@ -434,7 +435,8 @@ async function generateTwoPassLessonBody(
   topic: string,
   moeAlignmentCodes: string[] | undefined,
   liberiaContext: boolean,
-  format: "standard" | "block" | "either"
+  format: "standard" | "block" | "either",
+  generationCorrelationId: string,
 ): Promise<{ body: string; model: string; pass1Words: number }> {
   const liberiaNames = liberiaContext
     ? "Boima, Fatu, Zoe, Pewee, Boimah, Kollie"
@@ -500,6 +502,7 @@ TOTAL MINIMUM: 2,500 words. Start writing immediately. Begin with ## 1.`;
       subject,
       requestType: "elite_curriculum_generation",
       promptKey: "lesson.deep",
+      generationCorrelationId,
       metadata: { grade, topic, pass: 1 },
     },
   });
@@ -551,6 +554,8 @@ Return ONLY this JSON (no other text):
       subject,
       requestType: "elite_curriculum_structure",
       provider: "openai",
+      promptKey: "lesson.deep",
+      generationCorrelationId,
     },
   });
 
@@ -607,6 +612,7 @@ export async function generateCurriculumPayload(
   rawInput: GenerateInput
 ): Promise<CurriculumPayload> {
   const input = GenerateInputSchema.parse(rawInput);
+  const generationCorrelationId = input.generationCorrelationId ?? randomUUID();
 
   const moeHint = input.moeAlignmentCodes?.length
     ? `\nMOE alignment codes to reference: ${input.moeAlignmentCodes.join(", ")}`
@@ -714,7 +720,8 @@ ${lessonBodyHint}`;
         input.topic,
         input.moeAlignmentCodes,
         input.liberiaContext ?? true,
-        lessonFormat
+        lessonFormat,
+        generationCorrelationId,
       );
 
       const meta = twoPass as unknown as {
@@ -802,6 +809,7 @@ ${lessonBodyHint}`;
       strandKey: input.moeAlignmentCodes?.[0] ?? "curriculum",
       requestType: "elite_curriculum_generation",
       promptKey: "lesson.deep",
+      generationCorrelationId,
       provider: "openai",
       metadata: {
         grade: input.grade,

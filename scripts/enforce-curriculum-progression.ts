@@ -7,6 +7,8 @@ if (process.env.DIRECT_URL) {
 import { config } from "dotenv";
 import { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/db";
+import { createConservativeCurriculumMaintenanceClient } from "@/lib/curriculum/mutations/maintenanceClient";
+const governedCurriculum = createConservativeCurriculumMaintenanceClient("enforce-curriculum-progression");
 import { buildProgressionPatch, validateProgressionRows } from "@/lib/curriculum/progressionEnforcer";
 
 config({ path: ".env.local" });
@@ -49,7 +51,7 @@ async function main() {
     violationsFixed += changeCount;
 
     if (!dryRun && changeCount > 0) {
-      await prisma.curriculumContent.update({
+      await governedCurriculum.update({
         where: { id: row.id },
         data: {
           orderInUnit: patch.orderInUnit,

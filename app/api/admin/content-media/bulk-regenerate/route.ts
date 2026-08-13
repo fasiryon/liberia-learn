@@ -3,6 +3,8 @@ import { requireRole } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { processLessonMedia } from "@/lib/media/processLesson";
 import { logAssetGenerationTelemetry } from "@/lib/assets/generationTelemetry";
+import { randomUUID } from "crypto";
+import { updateCurriculumContent } from "@/lib/curriculum/mutations/repository";
 
 export const dynamic = "force-dynamic";
 
@@ -11,7 +13,7 @@ const MAX_BULK = 25; // synchronous cap to avoid function timeouts
 
 export async function POST(req: Request) {
   try {
-    await requireRole("ADMIN");
+    const user = await requireRole("ADMIN");
     const body = await req.json().catch(() => ({}));
     const subject = String(body?.subject ?? "").toUpperCase();
     const limit = Math.min(MAX_BULK, Math.max(1, parseInt(String(body?.limit ?? "10"), 10) || 10));
@@ -33,7 +35,23 @@ export async function POST(req: Request) {
         contentId: lesson.contentId, title: lesson.title, subject: lesson.subject,
         grade: lesson.grade, body: lessonBody, topics: lesson.waecSyllabusTopics,
       });
-      await prisma.curriculumContent.update({ where: { contentId: lesson.contentId }, data: outcome.update });
+      const traceId = randomUUID();
+      await updateCurriculumContent(
+        { contentId: lesson.contentId },
+        outcome.update as any,
+        {
+          revisionKind: "DETERMINISTIC_ENRICHMENT",
+          originKind: "DETERMINISTIC_GENERATED",
+          actorUserId: user.id,
+          generatorName: "processLessonMedia",
+          generatorVersion: "1.0.0",
+          requestedCompleteness: "VERIFIED",
+          auditAction: "curriculum.revision.media_bulk_regenerated",
+          idempotencyKey: `media-bulk:${lesson.contentId}:${traceId}`,
+          traceId,
+          schoolId: user.schoolId ?? null,
+        },
+      );
       await logAssetGenerationTelemetry({
         provider: outcome.provider ?? "none", model: outcome.category === "PHOTO" ? "curated" : "flux-schnell",
         assetType: "lesson_media_bulk", tenantId: null, route: "admin.content-media.bulk-regenerate",

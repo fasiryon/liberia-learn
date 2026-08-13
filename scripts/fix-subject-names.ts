@@ -2,8 +2,8 @@
  * Fix subject name mismatches in production DB (CurriculumContent.subject).
  *
  * Renames:
- *   ENGINEERING  → ENGINEERING_FOUNDATIONS
- *   CS           → COMPUTER_SCIENCE  (only if rows exist)
+ *   ENGINEERING  â†’ ENGINEERING_FOUNDATIONS
+ *   CS           â†’ COMPUTER_SCIENCE  (only if rows exist)
  *
  * Usage:
  *   npx dotenv -e .env.production -- npx tsx scripts/fix-subject-names.ts
@@ -14,40 +14,42 @@ if (process.env.DIRECT_URL) {
 }
 
 import { prisma } from "../lib/prisma";
+import { createConservativeCurriculumMaintenanceClient } from "../lib/curriculum/mutations/maintenanceClient";
+const governedCurriculum = createConservativeCurriculumMaintenanceClient("fix-subject-names");
 
 async function main() {
-  // ── Counts first ─────────────────────────────────────────────────────────
+  // â”€â”€ Counts first â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   const engCount = await prisma.curriculumContent.count({
     where: { subject: "ENGINEERING" },
   });
   const csCount = await prisma.curriculumContent.count({
     where: { subject: "CS" },
   });
-  console.log(`Pre-fix counts — ENGINEERING: ${engCount}, CS: ${csCount}`);
+  console.log(`Pre-fix counts â€” ENGINEERING: ${engCount}, CS: ${csCount}`);
 
-  // ── 1. ENGINEERING → ENGINEERING_FOUNDATIONS ─────────────────────────────
+  // â”€â”€ 1. ENGINEERING â†’ ENGINEERING_FOUNDATIONS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   if (engCount > 0) {
-    const r1 = await prisma.curriculumContent.updateMany({
+    const r1 = await governedCurriculum.updateMany({
       where: { subject: "ENGINEERING" },
       data: { subject: "ENGINEERING_FOUNDATIONS" },
     });
-    console.log("Renamed ENGINEERING → ENGINEERING_FOUNDATIONS:", r1.count);
+    console.log("Renamed ENGINEERING â†’ ENGINEERING_FOUNDATIONS:", r1.count);
   } else {
-    console.log("ENGINEERING → ENGINEERING_FOUNDATIONS: skipped (none found)");
+    console.log("ENGINEERING â†’ ENGINEERING_FOUNDATIONS: skipped (none found)");
   }
 
-  // ── 2. CS → COMPUTER_SCIENCE ─────────────────────────────────────────────
+  // â”€â”€ 2. CS â†’ COMPUTER_SCIENCE â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   if (csCount > 0) {
-    const r2 = await prisma.curriculumContent.updateMany({
+    const r2 = await governedCurriculum.updateMany({
       where: { subject: "CS" },
       data: { subject: "COMPUTER_SCIENCE" },
     });
-    console.log("Renamed CS → COMPUTER_SCIENCE:", r2.count);
+    console.log("Renamed CS â†’ COMPUTER_SCIENCE:", r2.count);
   } else {
-    console.log("CS → COMPUTER_SCIENCE: skipped (none found)");
+    console.log("CS â†’ COMPUTER_SCIENCE: skipped (none found)");
   }
 
-  // ── Post-fix verification ─────────────────────────────────────────────────
+  // â”€â”€ Post-fix verification â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   const remaining = await prisma.curriculumContent.groupBy({
     by: ["subject"],
     _count: { subject: true },

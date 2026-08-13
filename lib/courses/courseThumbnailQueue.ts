@@ -2,6 +2,7 @@ import { logAudit } from "@/lib/audit";
 import { prisma } from "@/lib/db";
 import { enqueueJob, JobType } from "@/lib/queue";
 import { isCanvaCourseThumbnailsEnabled } from "@/lib/serverFlags";
+import { updateCurriculumOperationalFields } from "@/lib/curriculum/mutations/repository";
 
 export async function enqueueCourseThumbnailGeneration(input: {
   contentId: string;
@@ -10,10 +11,10 @@ export async function enqueueCourseThumbnailGeneration(input: {
 }) {
   if (typeof isCanvaCourseThumbnailsEnabled !== "function" || !isCanvaCourseThumbnailsEnabled()) return;
 
-  await prisma.curriculumContent.update({
-    where: { contentId: input.contentId },
-    data: { thumbnailStatus: "pending", thumbnailError: null },
-  });
+  await updateCurriculumOperationalFields(
+    { contentId: input.contentId },
+    { thumbnailStatus: "pending", thumbnailError: null },
+  );
 
   await enqueueJob(JobType.GENERATE_COURSE_THUMBNAIL, {
     contentId: input.contentId,

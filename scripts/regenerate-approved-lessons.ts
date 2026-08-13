@@ -1,5 +1,7 @@
 import { config } from "dotenv";
 import { prisma } from "@/lib/db";
+import { createConservativeCurriculumMaintenanceClient } from "@/lib/curriculum/mutations/maintenanceClient";
+const governedCurriculum = createConservativeCurriculumMaintenanceClient("regenerate-approved-lessons");
 import { generateCurriculumPayload } from "@/lib/ai/curriculum-factory";
 import { embedLesson } from "@/lib/ai/rag/embeddingService";
 
@@ -176,7 +178,7 @@ async function main() {
 
       const wordCount = countWords(newPayload.body);
 
-      await prisma.curriculumContent.update({
+      await governedCurriculum.update({
         where: { id: lesson.id },
         data: {
           payload: newPayload,

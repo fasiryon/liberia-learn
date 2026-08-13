@@ -16,6 +16,8 @@ if (process.env.DIRECT_URL) {
 
 import { generateNationalBatch, auditNationalCoverage, validatePayloadQuality } from "../lib/curriculum/nationalFactory";
 import { PrismaClient } from "@prisma/client";
+import { provenanceWritersEnabled, updateCurriculumGovernanceProjectionMany } from "../lib/curriculum/mutations/repository";
+import { appendCurriculumGovernanceEvent } from "../lib/curriculum/mutations/governanceWriter";
 
 const prisma = new PrismaClient();
 
@@ -109,11 +111,30 @@ export async function approveSafely(failed: string[], db: Db = prisma): Promise<
     where.contentId = { notIn: failed };
   }
 
-  const result = await db.curriculumContent.updateMany({
+  if (!provenanceWritersEnabled()) {
+    const result = await updateCurriculumGovernanceProjectionMany(db, where, {
+      status: "APPROVED",
+      updatedAt: new Date(),
+    });
+    return result.count as number;
+  }
+
+  const rows = await db.curriculumContent.findMany({
     where,
-    data: { status: "APPROVED", updatedAt: new Date() },
+    select: { contentId: true },
   });
-  return result.count as number;
+  for (const row of rows as Array<{ contentId: string }>) {
+    await appendCurriculumGovernanceEvent({
+      contentId: row.contentId,
+      eventType: "APPROVED",
+      actorType: "SYSTEM",
+      actorLabel: "factory-gap-closure",
+      approvalBasis: "AUTOMATED_RISK_POLICY",
+      reviewAuthority: "SYSTEM",
+      idempotencyKey: `factory-gap-closure:${row.contentId}:approved`,
+    });
+  }
+  return rows.length;
 }
 
 async function beforeCounts(db: Db = prisma) {

@@ -1,4 +1,5 @@
 import { createHash } from "crypto";
+import { lessonDeepV300 } from "@/lib/ai/prompts/archive/lesson.deep/3.0.0";
 
 export type PromptMetadata = {
   key: string;
@@ -15,7 +16,7 @@ export type RegisteredPrompt = PromptMetadata & {
   template: string;
 };
 
-type PromptRegistration = {
+export type PromptRegistration = {
   key: string;
   version: string;
   template: string;
@@ -24,6 +25,7 @@ type PromptRegistration = {
 };
 
 const registry = new Map<string, RegisteredPrompt>();
+const currentVersions = new Map<string, string>();
 
 const PLACEHOLDER_PATTERN = /\{\{([a-zA-Z0-9_]+)\}\}/g;
 const DEFAULT_CREATED_AT = "2026-04-01T00:00:00.000Z";
@@ -47,6 +49,10 @@ function buildPreview(template: string): string {
 
 function hashTemplate(template: string): string {
   return createHash("sha256").update(template, "utf8").digest("hex");
+}
+
+function compositeKey(key: string, version: string): string {
+  return `${key}@${version}`;
 }
 
 function toPromptMetadata(prompt: RegisteredPrompt): PromptMetadata {
@@ -85,14 +91,23 @@ export function registerPromptDefinition(
     approvedDynamic: definition.approvedDynamic ?? false,
     placeholders: extractPlaceholders(normalizedTemplate),
   };
-  registry.set(definition.key, prompt);
+  const archiveKey = compositeKey(definition.key, definition.version);
+  const existing = registry.get(archiveKey);
+  if (existing && (existing.hash !== prompt.hash || existing.template !== prompt.template)) {
+    throw new Error(`Prompt archive conflict for ${archiveKey}`);
+  }
+  registry.set(archiveKey, prompt);
+  currentVersions.set(definition.key, definition.version);
   return prompt;
 }
 
-export function getPrompt(key: string): RegisteredPrompt {
-  const prompt = registry.get(key);
+export function getPrompt(key: string, version?: string): RegisteredPrompt {
+  const resolvedVersion = version ?? currentVersions.get(key);
+  const prompt = resolvedVersion ? registry.get(compositeKey(key, resolvedVersion)) : null;
   if (!prompt) {
-    throw new Error(`Prompt registry entry not found: ${key}`);
+    throw new Error(
+      `Prompt registry entry not found: ${key}${version ? `@${version}` : ""}`,
+    );
   }
   return prompt;
 }
@@ -130,6 +145,24 @@ export function listPrompts(): PromptMetadata[] {
   return Array.from(registry.values())
     .map(toPromptMetadata)
     .sort((a, b) => a.key.localeCompare(b.key));
+}
+
+export function getPromptByHash(
+  key: string,
+  version: string,
+  hash: string,
+): RegisteredPrompt {
+  const prompt = getPrompt(key, version);
+  if (prompt.hash !== hash) {
+    throw new Error(`Prompt hash mismatch for ${key}@${version}`);
+  }
+  return prompt;
+}
+
+export function getCurrentPromptVersion(key: string): string {
+  const version = currentVersions.get(key);
+  if (!version) throw new Error(`Current prompt version not found: ${key}`);
+  return version;
 }
 
 registerPromptDefinition({
@@ -273,7 +306,7 @@ registerPromptDefinition({
 
 registerPromptDefinition({
   key: "lesson.deep",
-  version: "3.0.0",
+  version: "2.9.legacy",
   approvedDynamic: true,
   template: [
     "You are an elite curriculum architect writing lessons for the LiberiaLearn national education platform.",
@@ -344,6 +377,8 @@ registerPromptDefinition({
     "This prompt is approved dynamic: the curriculum factory appends JSON schema, delivery-profile, lab, tone, and depth blocks at runtime.",
   ].join("\n"),
 });
+
+registerPromptDefinition(lessonDeepV300);
 
 registerPromptDefinition({
   key: "student.tutor.system",

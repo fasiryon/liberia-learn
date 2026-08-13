@@ -1,5 +1,7 @@
 import { config } from "dotenv";
 import { prisma } from "@/lib/db";
+import { createConservativeCurriculumMaintenanceClient } from "@/lib/curriculum/mutations/maintenanceClient";
+const governedCurriculum = createConservativeCurriculumMaintenanceClient("generate-curriculum-coverage");
 import {
   buildCoverageGenerationPlan,
   summarizeCoverageGenerationPlan,
@@ -91,7 +93,7 @@ async function main() {
       continue;
     }
 
-    await prisma.curriculumContent.upsert({
+    await governedCurriculum.upsert({
       where: { contentId: record.contentId },
       update: {
         grade: record.grade,

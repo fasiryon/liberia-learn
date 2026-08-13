@@ -2,9 +2,9 @@
  * scripts/tag-hero-lessons.ts
  *
  * WAVE-1A: Tag all hero-* CurriculumContent records as isHero=true.
- * Excludes the thin G10 Persuasive lesson (saved only 2,006 words — not demo-ready).
+ * Excludes the thin G10 Persuasive lesson (saved only 2,006 words â€” not demo-ready).
  *
- * Idempotent — safe to run multiple times.
+ * Idempotent â€” safe to run multiple times.
  *
  * Usage:
  *   npx dotenv -e .env.production -- npx tsx scripts/tag-hero-lessons.ts
@@ -14,6 +14,8 @@
 if (process.env.DIRECT_URL) process.env.DATABASE_URL = process.env.DIRECT_URL;
 
 import { PrismaClient } from "@prisma/client";
+import { createConservativeCurriculumMaintenanceClient } from "@/lib/curriculum/mutations/maintenanceClient";
+const governedCurriculum = createConservativeCurriculumMaintenanceClient("tag-hero-lessons");
 import { parseArgs } from "node:util";
 
 const prisma = new PrismaClient();
@@ -36,7 +38,7 @@ async function main() {
     orderBy: { contentId: "asc" },
   });
 
-  console.log(`\n▶ WAVE-1A tag-hero-lessons  dryRun=${dryRun}`);
+  console.log(`\nâ–¶ WAVE-1A tag-hero-lessons  dryRun=${dryRun}`);
   console.log(`  Total hero-* records found: ${all.length}`);
   console.log();
 
@@ -48,7 +50,7 @@ async function main() {
     const p = r.payload as Record<string, unknown>;
     const body = typeof p.body === "string" ? p.body : (typeof p.body_standard === "string" ? p.body_standard : "");
     const wc = body.trim().split(/\s+/).filter(Boolean).length;
-    const flag = r.contentId === THIN_CONTENT_ID ? "⊘ THIN-EXCLUDED" : r.isHero ? "✓ already tagged" : "→ will tag";
+    const flag = r.contentId === THIN_CONTENT_ID ? "âŠ˜ THIN-EXCLUDED" : r.isHero ? "âœ“ already tagged" : "â†’ will tag";
     console.log(`  ${flag.padEnd(20)} ${r.contentId.slice(0, 60).padEnd(62)} ${wc}w  status:${r.status}`);
   }
 
@@ -63,11 +65,11 @@ async function main() {
   }
 
   if (toTag.length === 0) {
-    console.log("\n✅ All hero lessons already tagged — nothing to do.");
+    console.log("\nâœ… All hero lessons already tagged â€” nothing to do.");
     return;
   }
 
-  const result = await prisma.curriculumContent.updateMany({
+  const result = await governedCurriculum.updateMany({
     where: {
       contentId: { startsWith: "hero-" },
       NOT: { contentId: THIN_CONTENT_ID },
@@ -75,7 +77,7 @@ async function main() {
     data: { isHero: true },
   });
 
-  console.log(`\n✅ Tagged ${result.count} hero lesson(s) with isHero=true.`);
+  console.log(`\nâœ… Tagged ${result.count} hero lesson(s) with isHero=true.`);
 }
 
 main()

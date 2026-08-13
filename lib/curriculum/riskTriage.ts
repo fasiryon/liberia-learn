@@ -8,10 +8,12 @@
 // app/api/admin/ops/curriculum-review/route.ts). See
 // docs/superpowers/specs/2026-08-03-curriculum-risk-triage-design.md.
 import { prisma } from "@/lib/db";
-import { logAudit } from "@/lib/audit";
+import { appendCurriculumGovernanceEvent } from "@/lib/curriculum/mutations/governanceWriter";
 import { logger } from "@/lib/logger";
 import { APPROVED_STATUSES } from "@/lib/curriculum/coverageShared";
 import { notifyRiskReviewers } from "@/lib/curriculum/riskTriageNotify";
+import { logAudit } from "@/lib/audit";
+import { provenanceWritersEnabled, updateCurriculumContent } from "@/lib/curriculum/mutations/repository";
 
 export type GradeBand = "G1_3" | "G4_6" | "G7_PLUS";
 
@@ -184,6 +186,78 @@ export async function triageAndApprove(
 
   const shouldFlag = worthFlagging && !overBudget;
 
+  if (!provenanceWritersEnabled()) {
+    if (shouldFlag) {
+      await updateCurriculumContent(
+        { contentId: candidate.contentId },
+        {
+          status: "NEEDS_REVIEW",
+          payload: {
+            ...candidate.payload,
+            riskFlagged: true,
+            riskScore: score,
+            riskReasons: reasons,
+          } as any,
+        },
+        {
+          revisionKind: "METADATA_CHANGE",
+          originKind: "LEGACY_UNKNOWN",
+          actorLabel,
+          auditAction: "curriculum.risk.flagged",
+        },
+      );
+      await logAudit({
+        action: "curriculum.risk.flagged",
+        resourceType: "curriculum",
+        resourceId: candidate.contentId,
+        details: { riskScore: score, riskReasons: reasons },
+      });
+      await notifyRiskReviewers(candidate.contentId, score, reasons).catch((error) => {
+        logger.warn("[riskTriage] reviewer notification failed", { contentId: candidate.contentId, error });
+      });
+      return { action: "flagged", contentId: candidate.contentId, riskScore: score, riskReasons: reasons };
+    }
+    if (worthFlagging && overBudget) {
+      logger.warn("[riskTriage] weekly review budget exhausted, auto-approving a high-risk candidate", {
+        contentId: candidate.contentId,
+        riskScore: score,
+        riskReasons: reasons,
+      });
+    }
+    await updateCurriculumContent(
+      { contentId: candidate.contentId },
+      {
+        status: approvedStatus,
+        payload: {
+          ...candidate.payload,
+          ...(candidate.approvalMetadata ?? {}),
+          approvalStatus: "APPROVED",
+          riskScore: score,
+          riskReasons: reasons,
+        } as any,
+      },
+      {
+        revisionKind: "METADATA_CHANGE",
+        originKind: "LEGACY_UNKNOWN",
+        actorLabel,
+        auditAction: "curriculum.risk.autoapproved",
+      },
+    );
+    await logAudit({
+      action: "curriculum.risk.autoapproved",
+      resourceType: "curriculum",
+      resourceId: candidate.contentId,
+      details: { riskScore: score, riskReasons: reasons, budgetExceeded: overBudget },
+    });
+    return {
+      action: "approved",
+      contentId: candidate.contentId,
+      riskScore: score,
+      riskReasons: reasons,
+      budgetExceeded: overBudget,
+    };
+  }
+
   if (worthFlagging && overBudget) {
     logger.warn("[riskTriage] weekly review budget exhausted, auto-approving a high-risk candidate", {
       contentId: candidate.contentId,
@@ -193,24 +267,25 @@ export async function triageAndApprove(
   }
 
   if (shouldFlag) {
-    await prisma.curriculumContent.update({
-      where: { contentId: candidate.contentId },
-      data: {
-        status: "NEEDS_REVIEW",
-        payload: {
-          ...candidate.payload,
-          riskFlagged: true,
-          riskScore: score,
-          riskReasons: reasons,
-          flaggedAt: new Date().toISOString(),
-        },
-      },
+    await appendCurriculumGovernanceEvent({
+      contentId: candidate.contentId,
+      eventType: "RISK_ASSESSED",
+      actorType: "SYSTEM",
+      actorLabel,
+      riskScore: score,
+      riskReasons: reasons,
+      idempotencyKey: `risk:${candidate.contentId}:${score}:${candidate.payload.version ?? "current"}`,
     });
-    await logAudit({
-      action: "curriculum.risk.flagged",
-      resourceType: "curriculum",
-      resourceId: candidate.contentId,
-      details: { riskScore: score, riskReasons: reasons, actor: actorLabel },
+    await appendCurriculumGovernanceEvent({
+      contentId: candidate.contentId,
+      eventType: "RETURNED_FOR_REVIEW",
+      actorType: "SYSTEM",
+      actorLabel,
+      reason: "Risk policy requires human review",
+      reviewAuthority: "PLATFORM",
+      riskScore: score,
+      riskReasons: reasons,
+      idempotencyKey: `risk-return:${candidate.contentId}:${score}:${candidate.payload.version ?? "current"}`,
     });
     await notifyRiskReviewers(candidate.contentId, score, reasons).catch((error) => {
       logger.warn("[riskTriage] reviewer notification failed", {
@@ -221,23 +296,25 @@ export async function triageAndApprove(
     return { action: "flagged", contentId: candidate.contentId, riskScore: score, riskReasons: reasons };
   }
 
-  await prisma.curriculumContent.update({
-    where: { contentId: candidate.contentId },
-    data: {
-      status: approvedStatus,
-      payload: {
-        ...candidate.payload,
-        ...candidate.approvalMetadata,
-        riskScore: score,
-        riskReasons: reasons,
-      },
-    },
+  await appendCurriculumGovernanceEvent({
+    contentId: candidate.contentId,
+    eventType: "RISK_ASSESSED",
+    actorType: "SYSTEM",
+    actorLabel,
+    riskScore: score,
+    riskReasons: reasons,
+    idempotencyKey: `risk:${candidate.contentId}:${score}:${candidate.payload.version ?? "current"}`,
   });
-  await logAudit({
-    action: "curriculum.risk.autoapproved",
-    resourceType: "curriculum",
-    resourceId: candidate.contentId,
-    details: { riskScore: score, riskReasons: reasons, actor: actorLabel, budgetExceeded: overBudget },
+  await appendCurriculumGovernanceEvent({
+    contentId: candidate.contentId,
+    eventType: "APPROVED",
+    actorType: "SYSTEM",
+    actorLabel,
+    approvalBasis: "AUTOMATED_RISK_POLICY",
+    reviewAuthority: "PLATFORM",
+    riskScore: score,
+    riskReasons: reasons,
+    idempotencyKey: `risk-approve:${candidate.contentId}:${score}:${candidate.payload.version ?? "current"}`,
   });
   return {
     action: "approved",

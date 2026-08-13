@@ -23,7 +23,7 @@
  * Flags:
  *   --limit N       process at most N lessons (default: all)
  *   --subject X     SCIENCE | MATH | LITERACY | SOCIAL_STUDIES | CIVICS | any valid subject
- *   --grade N       filter to a specific grade level (1–12)
+ *   --grade N       filter to a specific grade level (1â€“12)
  *   --overwrite     regenerate even when payload.textbook already exists
  */
 
@@ -37,6 +37,8 @@ import { existsSync } from "node:fs";
 import { resolve } from "node:path";
 import { config as loadEnv } from "dotenv";
 import { PrismaClient } from "@prisma/client";
+import { createConservativeCurriculumMaintenanceClient } from "@/lib/curriculum/mutations/maintenanceClient";
+const governedCurriculum = createConservativeCurriculumMaintenanceClient("generate-textbooks-for-approved");
 import OpenAI from "openai";
 
 const localEnvPath = resolve(process.cwd(), ".env.local");
@@ -49,7 +51,7 @@ const BATCH_SIZE = 3;
 const BATCH_DELAY_MS = 3000;
 const MAX_BODY_CHARS = 3000;
 
-// ── CLI args ──────────────────────────────────────────────────────────────────
+// â”€â”€ CLI args â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 function readArg(flag: string): string | undefined {
   const i = process.argv.indexOf(flag);
@@ -70,7 +72,7 @@ async function sleep(ms: number) {
   return new Promise((r) => setTimeout(r, ms));
 }
 
-// ── Body extraction (mirrors lab generator) ───────────────────────────────────
+// â”€â”€ Body extraction (mirrors lab generator) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 function truncateBody(text: string, maxChars: number): string {
   if (text.length <= maxChars) return text;
@@ -84,7 +86,7 @@ function extractBodyText(payload: Record<string, unknown>): string {
   return "";
 }
 
-// ── Types ─────────────────────────────────────────────────────────────────────
+// â”€â”€ Types â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 type TextbookKeyTerm = {
   term: string;
@@ -118,7 +120,7 @@ type GeneratedTextbook = {
   authorNote: string;        // "Authored for Liberia Ministry of Education, Grade X curriculum"
 };
 
-// ── Validation ────────────────────────────────────────────────────────────────
+// â”€â”€ Validation â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 function validateTextbook(tb: unknown): tb is GeneratedTextbook {
   if (!tb || typeof tb !== "object") return false;
@@ -131,7 +133,7 @@ function validateTextbook(tb: unknown): tb is GeneratedTextbook {
   return true;
 }
 
-// ── AI generation ─────────────────────────────────────────────────────────────
+// â”€â”€ AI generation â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 const LIBERIAN_CONTEXT = `
 Liberia-specific grounding rules:
@@ -140,7 +142,7 @@ Liberia-specific grounding rules:
 - Reference Liberian institutions where relevant: Ministry of Education (MOE), University of Liberia, Cuttington University, WAEC exams.
 - Use Liberian cultural context: community meetings, market day in Kakata, the St. John River, Sapo National Park, Firestone Plantation.
 - Currency: Liberian Dollar (LRD). Measurements: metric system.
-- Literacy levels vary — write at accessible Grade-level language but never condescend.
+- Literacy levels vary â€” write at accessible Grade-level language but never condescend.
 - Lessons will be used in schools with limited electricity and internet; examples should reflect this reality.
 `.trim();
 
@@ -158,13 +160,13 @@ ${LIBERIAN_CONTEXT}
 
 Chapter authoring standards:
 1. OVERVIEW: One tight paragraph that orients a student to the chapter and why it matters in their Liberian context.
-2. LEARNING OBJECTIVES: 3–5 SMART objectives. Use Bloom's verbs (identify, explain, calculate, compare, apply, analyse, evaluate).
-3. SECTIONS (3–5): Each section has:
+2. LEARNING OBJECTIVES: 3â€“5 SMART objectives. Use Bloom's verbs (identify, explain, calculate, compare, apply, analyse, evaluate).
+3. SECTIONS (3â€“5): Each section has:
    - A clear HEADING
-   - A substantive BODY of 3–4 paragraphs. Weave in [Lesson: <lesson title>] references where the lesson directly teaches the concept. Use [Activity] or [Lab] inline cues where hands-on work fits.
+   - A substantive BODY of 3â€“4 paragraphs. Weave in [Lesson: <lesson title>] references where the lesson directly teaches the concept. Use [Activity] or [Lab] inline cues where hands-on work fits.
    - A REAL_WORLD_EXAMPLE grounded in a specific Liberian place, person, or event (not generic "Africa").
-4. KEY TERMS: 6–12 terms with precise, grade-appropriate definitions.
-5. REVIEW QUESTIONS: 5–8 questions mixing recall (remember), comprehension (understand), application (apply), and analysis (analyse) types.
+4. KEY TERMS: 6â€“12 terms with precise, grade-appropriate definitions.
+5. REVIEW QUESTIONS: 5â€“8 questions mixing recall (remember), comprehension (understand), application (apply), and analysis (analyse) types.
 6. FURTHER READING: Cite a real or plausible MOE Liberia resource, WAEC study guide, or community knowledge source.
 7. MOE ALIGNMENT NOTE: State which MOE subject strand(s) and grade band this chapter supports.
 8. AUTHOR NOTE: "Authored for Liberia Ministry of Education, Grade [N] [Subject] curriculum."
@@ -197,7 +199,7 @@ Return ONLY valid JSON matching this exact schema (no markdown, no commentary):
   "authorNote": string
 }
 
-Requirements (validation gate — must be met or response is rejected):
+Requirements (validation gate â€” must be met or response is rejected):
 - learningObjectives: at least 3
 - sections: at least 3
 - keyTerms: at least 6
@@ -237,7 +239,7 @@ Write the full textbook chapter for this lesson.`;
   }
 }
 
-// ── Main ──────────────────────────────────────────────────────────────────────
+// â”€â”€ Main â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 async function main() {
   const limitArg = readNumberArg("--limit");
@@ -257,9 +259,9 @@ async function main() {
   if (subjectArg) whereClause.subject = subjectArg;
   if (gradeArg) whereClause.grade = gradeArg;
 
-  console.log(`\nTextbook Pass 1 — Generate chapters for APPROVED lessons`);
+  console.log(`\nTextbook Pass 1 â€” Generate chapters for APPROVED lessons`);
   console.log(`Subject: ${subjectArg ?? "all"} | Grade: ${gradeArg ?? "all"} | Overwrite: ${overwrite} | Limit: ${limitArg ?? "all"}`);
-  console.log("─".repeat(60));
+  console.log("â”€".repeat(60));
 
   const lessons = await prisma.curriculumContent.findMany({
     where: whereClause as Parameters<typeof prisma.curriculumContent.findMany>[0]["where"],
@@ -285,8 +287,8 @@ async function main() {
   const total = limitArg ? Math.min(candidates.length, limitArg) : candidates.length;
   const toProcess = candidates.slice(0, total);
 
-  console.log(`Found ${lessons.length} APPROVED | ${candidates.length} need textbook → processing ${total}`);
-  console.log("─".repeat(60));
+  console.log(`Found ${lessons.length} APPROVED | ${candidates.length} need textbook â†’ processing ${total}`);
+  console.log("â”€".repeat(60));
 
   let ok = 0;
   let fail = 0;
@@ -294,13 +296,13 @@ async function main() {
 
   for (let i = 0; i < toProcess.length; i++) {
     const lesson = toProcess[i];
-    const prefix = `[${i + 1}/${total}] G${lesson.grade} ${lesson.subject} — ${lesson.title}`;
+    const prefix = `[${i + 1}/${total}] G${lesson.grade} ${lesson.subject} â€” ${lesson.title}`;
 
     const payload = (lesson.payload as Record<string, unknown>) ?? {};
     const bodyText = extractBodyText(payload);
 
     if (!bodyText) {
-      console.log(`${prefix} — SKIP (no body text)`);
+      console.log(`${prefix} â€” SKIP (no body text)`);
       skip++;
       continue;
     }
@@ -317,7 +319,7 @@ async function main() {
     });
 
     if (!generated) {
-      console.log(`${prefix} — FAIL (AI returned null)`);
+      console.log(`${prefix} â€” FAIL (AI returned null)`);
       fail++;
       continue;
     }
@@ -329,13 +331,13 @@ async function main() {
       const terms = Array.isArray(g.keyTerms) ? (g.keyTerms as unknown[]).length : 0;
       const qs = Array.isArray(g.reviewQuestions) ? (g.reviewQuestions as unknown[]).length : 0;
       console.log(
-        `${prefix} — FAIL (validation: objs=${objs}/${3}, secs=${secs}/${3}, terms=${terms}/${6}, qs=${qs}/${5})`
+        `${prefix} â€” FAIL (validation: objs=${objs}/${3}, secs=${secs}/${3}, terms=${terms}/${6}, qs=${qs}/${5})`
       );
       fail++;
       continue;
     }
 
-    await prisma.curriculumContent.update({
+    await governedCurriculum.update({
       where: { id: lesson.id },
       data: {
         payload: {
@@ -345,7 +347,7 @@ async function main() {
       },
     });
 
-    console.log(`${prefix} — OK`);
+    console.log(`${prefix} â€” OK`);
     ok++;
 
     if ((i + 1) % BATCH_SIZE === 0 && i < toProcess.length - 1) {
@@ -353,7 +355,7 @@ async function main() {
     }
   }
 
-  console.log("─".repeat(60));
+  console.log("â”€".repeat(60));
   console.log(`Done: ${ok} OK | ${fail} FAIL | ${skip} SKIP`);
 
   await prisma.$disconnect();

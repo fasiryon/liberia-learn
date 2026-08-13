@@ -9,6 +9,7 @@
 if (process.env.DIRECT_URL) process.env.DATABASE_URL = process.env.DIRECT_URL;
 import { prisma } from '@/lib/db';
 import { parseArgs } from 'node:util';
+import { revokeCurriculum } from '@/lib/curriculum/mutations/revocationWriter';
 
 async function main() {
   const { values } = parseArgs({
@@ -38,11 +39,21 @@ async function main() {
     return;
   }
 
-  const { count } = await prisma.curriculumContent.deleteMany({
-    where: { contentId: { startsWith: 'hero-' } },
-  });
+  let count = 0;
+  for (const lesson of heroLessons) {
+    await revokeCurriculum({
+      contentId: lesson.contentId,
+      actorType: 'SYSTEM',
+      actorLabel: 'clear-hero-lessons',
+      reason: 'Hero lesson withdrawn before controlled regeneration',
+      urgent: false,
+      reviewAuthority: 'SYSTEM',
+      idempotencyKey: `clear-hero:${lesson.contentId}`,
+    });
+    count += 1;
+  }
 
-  console.log(`\nDeleted ${count} hero lesson(s).`);
+  console.log(`\nRevoked ${count} hero lesson(s); immutable history was retained.`);
   await prisma.$disconnect();
 }
 

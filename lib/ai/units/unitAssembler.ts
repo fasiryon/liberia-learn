@@ -10,6 +10,12 @@ import { gradeToBand } from "@/lib/moe/alignment-engine";
 import { liberianize } from "@/lib/localization/liberia-context";
 import { standardizeTone } from "@/lib/localization/tone-standardizer";
 import { z } from "zod";
+import { randomUUID } from "crypto";
+import type { CurriculumContent } from "@prisma/client";
+import { buildPrompt, getPromptMetadata } from "@/lib/ai/promptRegistry";
+import { createCurriculumContent, provenanceWritersEnabled, updateCurriculumContent } from "@/lib/curriculum/mutations/repository";
+import { appendCurriculumGovernanceEvent } from "@/lib/curriculum/mutations/governanceWriter";
+import { revokeCurriculum } from "@/lib/curriculum/mutations/revocationWriter";
 
 const SUBJECT_VALUES = [
   "MATH",
@@ -88,9 +94,7 @@ type CurriculumUnitRecord = Awaited<
   ReturnType<typeof prisma.curriculumUnit.create>
 >;
 
-type CurriculumContentRecord = Awaited<
-  ReturnType<typeof prisma.curriculumContent.create>
->;
+type CurriculumContentRecord = CurriculumContent;
 
 export type AssembledUnit = {
   unit: CurriculumUnitRecord;
@@ -105,6 +109,7 @@ export async function assembleUnit(params: {
   schoolId?: string;
   createdById?: string;
 }): Promise<AssembledUnit> {
+  const generationCorrelationId = randomUUID();
   const subject = params.subject.trim().toUpperCase();
   if (!SUBJECT_VALUES.includes(subject as (typeof SUBJECT_VALUES)[number])) {
     throw Object.assign(new Error("Invalid subject"), { status: 400 });
@@ -173,6 +178,7 @@ export async function assembleUnit(params: {
     unitDescription: params.unitDescription,
     standards,
     existingLessons,
+    generationCorrelationId,
   });
 
   const weekStart = (lastUnit?.weekEnd ?? 0) + 1;
@@ -220,15 +226,25 @@ export async function assembleUnit(params: {
           lessonType: selected.lessonType,
         });
 
-        const updated = await prisma.curriculumContent.update({
-          where: { id: selected.id },
-          data: {
+        const updatedWrite = await updateCurriculumContent(
+          { id: selected.id },
+          {
             unitId: unit.unitId,
             orderInUnit,
             lessonType,
           },
-        });
-        persistedLessons.push(updated);
+          {
+            revisionKind: "METADATA_CHANGE",
+            originKind: "HUMAN_AUTHORED",
+            actorUserId: params.createdById,
+            authorUserId: params.createdById,
+            requestedCompleteness: "VERIFIED",
+            auditAction: "curriculum.revision.unit_placement",
+            idempotencyKey: `unit-placement:${unit.id}:${selected.id}:${orderInUnit}`,
+            schoolId: params.schoolId,
+          },
+        );
+        persistedLessons.push(updatedWrite.content);
         continue;
       }
 
@@ -255,6 +271,7 @@ export async function assembleUnit(params: {
               objective: getObjectiveForSlot(lessonType, index, blueprint),
               standardCodes: standards.map((standard) => standard.code),
               createdById: params.createdById,
+              generationCorrelationId,
             });
 
       createdLessonIds.push(created.id);
@@ -272,14 +289,24 @@ export async function assembleUnit(params: {
 
     for (const assignment of previousAssignments.reverse()) {
       try {
-        await prisma.curriculumContent.update({
-          where: { id: assignment.id },
-          data: {
+        await updateCurriculumContent(
+          { id: assignment.id },
+          {
             unitId: assignment.unitId,
             orderInUnit: assignment.orderInUnit,
             lessonType: assignment.lessonType,
           },
-        });
+          {
+            revisionKind: "METADATA_CHANGE",
+            originKind: "HUMAN_AUTHORED",
+            actorUserId: params.createdById,
+            authorUserId: params.createdById,
+            requestedCompleteness: "VERIFIED",
+            auditAction: "curriculum.revision.unit_placement_rollback",
+            idempotencyKey: `unit-placement-rollback:${unit.id}:${assignment.id}`,
+            schoolId: params.schoolId,
+          },
+        );
       } catch (rollbackError) {
         console.error("[UNIT_ASSEMBLY] Failed to rollback lesson assignment", rollbackError);
       }
@@ -287,9 +314,21 @@ export async function assembleUnit(params: {
 
     if (createdLessonIds.length > 0) {
       try {
-        await prisma.curriculumContent.deleteMany({
-          where: { id: { in: createdLessonIds } },
-        });
+        for (const id of createdLessonIds) {
+          const created = await prisma.curriculumContent.findUnique({ where: { id } });
+          if (created) {
+            await revokeCurriculum({
+              contentId: created.contentId,
+              actorType: "SYSTEM",
+              actorLabel: "unit-assembly-rollback",
+              reason: "Unit assembly failed before completion",
+              urgent: false,
+              reviewAuthority: "SYSTEM",
+              idempotencyKey: `unit-assembly-rollback:${unit.id}:${id}`,
+              schoolId: params.schoolId,
+            });
+          }
+        }
       } catch (rollbackError) {
         console.error("[UNIT_ASSEMBLY] Failed to delete generated lessons", rollbackError);
       }
@@ -312,6 +351,7 @@ async function buildBlueprint(params: {
   unitDescription: string;
   standards: Array<{ code: string; description: string }>;
   existingLessons: ExistingLesson[];
+  generationCorrelationId: string;
 }) {
   const standardBlock =
     params.standards.length > 0
@@ -333,24 +373,30 @@ async function buildBlueprint(params: {
     messages: [
       {
         role: "system",
-        content:
-          "You are planning a 7-part school unit for LiberiaLearn. Return only valid JSON with keys introObjective, coreObjectives, practiceFocus, reviewObjective. coreObjectives must contain exactly 3 distinct strings. Keep the plan grounded in Liberia and suitable for the student's grade.",
+        content: buildPrompt("unit.blueprint.system"),
       },
       {
         role: "user",
-        content: `Create a unit blueprint for Subject ${params.subject}, Grade ${params.gradeLevel}.
-Unit title: ${params.unitTitle}
-Unit description: ${params.unitDescription || "None provided"}
-
-MOE standards:
-${standardBlock}
-
-Existing lesson titles that may be reused:
-${existingLessonTitles}`,
+        content: buildPrompt("unit.blueprint.user", {
+          subject: params.subject,
+          gradeLevel: params.gradeLevel,
+          unitTitle: params.unitTitle,
+          unitDescription: params.unitDescription || "None provided",
+          standardBlock,
+          existingLessonTitles,
+        }),
       },
     ],
     maxTokens: 900,
     forceSmartTier: true,
+    aiUsage: {
+      route: "curriculum.unit.blueprint",
+      feature: "curriculum",
+      subject: params.subject,
+      requestType: "unit_blueprint",
+      promptKey: "unit.blueprint.system",
+      generationCorrelationId: params.generationCorrelationId,
+    },
   });
 
   return parseJson(result.content, BlueprintSchema, "unit blueprint");
@@ -367,6 +413,7 @@ async function createGeneratedArtifact(params: {
   objective: string;
   standardCodes: string[];
   createdById: string;
+  generationCorrelationId: string;
 }) {
   const lessonLabel =
     params.lessonType === "practice"
@@ -390,41 +437,47 @@ async function createGeneratedArtifact(params: {
     messages: [
       {
         role: "system",
-        content:
-          "You are generating a LiberiaLearn curriculum artifact. Return only valid JSON with keys title, objectives, body, activities, assessmentQuestions, answerKey, estimatedMinutes, moeAlignments. Use simple grade-appropriate language, Liberian context, and no markdown fences.",
+        content: buildPrompt("unit.artifact.system"),
       },
       {
         role: "user",
-        content: `Generate a ${lessonLabel} for Subject ${params.subject}, Grade ${params.gradeLevel}.
-Unit title: ${params.unitTitle}
-Unit description: ${params.unitDescription || "None provided"}
-Lesson objective: ${params.objective}
-Lesson type: ${params.lessonType}
-MOE alignment codes to reference when relevant: ${params.standardCodes.join(", ") || "none"}
-
-Requirements:
-- ${guidance}
-- body must be at least 3 paragraphs.
-- activities should be practical for a Liberian classroom.
-- assessmentQuestions should include at least 3 short checks for understanding.
-- answerKey should be empty unless the lesson type is practice.`,
+        content: buildPrompt("unit.artifact.user", {
+          lessonLabel,
+          subject: params.subject,
+          gradeLevel: params.gradeLevel,
+          unitTitle: params.unitTitle,
+          unitDescription: params.unitDescription || "None provided",
+          objective: params.objective,
+          lessonType: params.lessonType,
+          standardCodes: params.standardCodes.join(", ") || "none",
+          guidance,
+        }),
       },
     ],
     maxTokens: 1800,
     forceSmartTier: true,
+    aiUsage: {
+      route: "curriculum.unit.artifact",
+      feature: "curriculum",
+      subject: params.subject,
+      requestType: "unit_artifact",
+      promptKey: "unit.artifact.system",
+      generationCorrelationId: params.generationCorrelationId,
+    },
   });
 
   const lesson = parseJson(result.content, GeneratedLessonSchema, params.lessonType);
   const localized = localizeGeneratedLesson(lesson, params.gradeLevel);
 
-  return prisma.curriculumContent.create({
-    data: {
+  const prompt = getPromptMetadata("unit.artifact.system");
+  const write = await createCurriculumContent(
+    {
       contentId: buildAssembledContentId(params.unit.unitId, params.lessonType, params.orderInUnit),
       title: localized.title,
       grade: params.gradeLevel,
       subject: params.subject,
       contentType: "lesson",
-      status: "published",
+      status: "draft",
       version: new Date().toISOString().slice(0, 10),
       unitId: params.unit.unitId,
       orderInUnit: params.orderInUnit,
@@ -440,7 +493,7 @@ Requirements:
         answerKey: params.lessonType === "practice" ? localized.answerKey : [],
         estimatedMinutes: localized.estimatedMinutes,
         moeAlignments: localized.moeAlignments,
-        approvalStatus: "APPROVED",
+        approvalStatus: "DRAFT",
         createdByRole: "ADMIN",
         createdByUserId: params.createdById,
         metadata: {
@@ -452,8 +505,45 @@ Requirements:
         },
       } as any,
       moeAlignments: localized.moeAlignments as any,
+      schoolId: params.unit.schoolId,
     },
-  });
+    {
+      revisionKind: "ORIGINAL_GENERATION",
+      originKind: "AI_GENERATED",
+      actorUserId: params.createdById,
+      authorUserId: params.createdById,
+      generatorName: "unitAssembler",
+      generatorVersion: "1.0.0",
+      aiProvider: result.model.startsWith("llama") ? "groq" : "openai",
+      aiModel: result.model,
+      generatedAt: new Date(),
+      generationCorrelationId: params.generationCorrelationId,
+      primaryPromptKey: prompt.key,
+      primaryPromptVersion: prompt.version,
+      primaryPromptHash: prompt.hash,
+      requestedCompleteness: "VERIFIED",
+      auditAction: "curriculum.revision.unit_artifact_generated",
+      idempotencyKey: `unit-artifact:${params.unit.id}:${params.orderInUnit}`,
+      schoolId: params.unit.schoolId,
+    },
+  );
+  if (write.revision) {
+    await appendCurriculumGovernanceEvent({
+      contentId: write.content.contentId,
+      revisionId: write.revision.id,
+      eventType: "APPROVED",
+      actorType: "USER",
+      actorUserId: params.createdById,
+      approvalBasis: "ROLE_POLICY",
+      reviewAuthority: "SCHOOL",
+      reviewerRoleSnapshot: "ADMIN",
+      idempotencyKey: `unit-artifact-approve:${params.unit.id}:${params.orderInUnit}`,
+      schoolId: params.unit.schoolId,
+    });
+  }
+  return provenanceWritersEnabled()
+    ? prisma.curriculumContent.findUniqueOrThrow({ where: { id: write.content.id } })
+    : write.content;
 }
 
 async function createAssessmentArtifact(params: {
@@ -486,14 +576,15 @@ async function createAssessmentArtifact(params: {
     (item) => `${item.id}: ${item.correctAnswer} (${item.options.find((option) => option.label === item.correctAnswer)?.text ?? ""})`
   );
 
-  return prisma.curriculumContent.create({
-    data: {
+  const generatedAt = new Date();
+  const write = await createCurriculumContent(
+    {
       contentId: buildAssembledContentId(params.unit.unitId, "assessment", params.orderInUnit),
       title: `${params.unitTitle} Unit Assessment`,
       grade: params.gradeLevel,
       subject: params.subject,
       contentType: "assessment",
-      status: "published",
+      status: "draft",
       version: new Date().toISOString().slice(0, 10),
       unitId: params.unit.unitId,
       orderInUnit: params.orderInUnit,
@@ -519,20 +610,51 @@ async function createAssessmentArtifact(params: {
         masteryChecks,
         estimatedMinutes: 45,
         moeAlignments: params.standardCodes,
-        approvalStatus: "APPROVED",
+        approvalStatus: "DRAFT",
         createdByRole: "ADMIN",
         createdByUserId: params.createdById,
         metadata: {
           topic: params.unitTitle,
           locale: "LR",
-          generatedAt: new Date().toISOString(),
+          generatedAt: generatedAt.toISOString(),
           source: "unit_assembly",
           unitTitle: params.unit.name,
         },
       } as any,
       moeAlignments: params.standardCodes as any,
+      schoolId: params.unit.schoolId,
     },
-  });
+    {
+      revisionKind: "ORIGINAL_GENERATION",
+      originKind: "DETERMINISTIC_GENERATED",
+      actorUserId: params.createdById,
+      authorUserId: params.createdById,
+      generatorName: "unitAssessmentAssembler",
+      generatorVersion: "1.0.0",
+      generatedAt,
+      requestedCompleteness: "VERIFIED",
+      auditAction: "curriculum.revision.unit_assessment_generated",
+      idempotencyKey: `unit-assessment:${params.unit.id}:${params.orderInUnit}`,
+      schoolId: params.unit.schoolId,
+    },
+  );
+  if (write.revision) {
+    await appendCurriculumGovernanceEvent({
+      contentId: write.content.contentId,
+      revisionId: write.revision.id,
+      eventType: "APPROVED",
+      actorType: "USER",
+      actorUserId: params.createdById,
+      approvalBasis: "ROLE_POLICY",
+      reviewAuthority: "SCHOOL",
+      reviewerRoleSnapshot: "ADMIN",
+      idempotencyKey: `unit-assessment-approve:${params.unit.id}:${params.orderInUnit}`,
+      schoolId: params.unit.schoolId,
+    });
+  }
+  return provenanceWritersEnabled()
+    ? prisma.curriculumContent.findUniqueOrThrow({ where: { id: write.content.id } })
+    : write.content;
 }
 
 function selectExistingLessons(

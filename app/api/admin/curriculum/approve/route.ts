@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { requireUser } from "@/lib/auth";
 import { assertPermission, PERMISSIONS } from "@/lib/permissions";
 import { prisma } from "@/lib/db";
-import { logAuditRequired } from "@/lib/audit";
+import { appendCurriculumGovernanceEvent } from "@/lib/curriculum/mutations/governanceWriter";
 import { isCurriculumFeedbackEnabled } from "@/lib/serverFlags";
 import { embedLesson } from "@/lib/ai/rag/embeddingService";
 import { syncCurriculumContentRagChunks } from "@/lib/ai/rag/ragIngestionService";
@@ -35,34 +35,43 @@ export async function POST(req: Request) {
 
     const record = await prisma.curriculumContent.findUnique({
       where: { contentId },
+      include: { provenance: { select: { lifecycleState: true } } },
     });
     if (!record) {
       return NextResponse.json({ error: "Not found" }, { status: 404 });
     }
 
     const payload = (record.payload as any) ?? {};
-    const updatedPayload = {
-      ...payload,
-      approvalStatus: "APPROVED",
-      approvedByUserId: user.id,
-      approvedAt: new Date().toISOString(),
-    };
-
-    await prisma.$transaction(async (tx) => {
-      await tx.curriculumContent.update({
-        where: { contentId },
-        data: {
+    const approvedAt = new Date();
+    await appendCurriculumGovernanceEvent({
+      contentId,
+      eventType:
+        record.provenance?.lifecycleState === "REJECTED" ? "REAPPROVED" : "APPROVED",
+      actorType: "USER",
+      actorUserId: user.id,
+      approvalBasis: "HUMAN_REVIEW",
+      reviewAuthority:
+        user.role === "MOE_OFFICIAL" || user.role === "MOE_SUPER_ADMIN"
+          ? "MOE"
+          : user.isPlatformAdmin
+            ? "PLATFORM"
+            : "SCHOOL",
+      reviewerRoleSnapshot: user.role,
+      schoolId: user.schoolId ?? null,
+      idempotencyKey:
+        typeof body.idempotencyKey === "string" ? body.idempotencyKey : undefined,
+      compatibility: {
+        projection: {
           status: "published",
-          payload: updatedPayload,
+          payload: {
+            ...payload,
+            approvalStatus: "APPROVED",
+            approvedByUserId: user.id,
+            approvedAt: approvedAt.toISOString(),
+          },
         },
-      });
-      await logAuditRequired({
-        userId: user.id,
-        action: "curriculum.approve",
-        resourceType: "curriculum",
-        resourceId: contentId,
-        schoolId: user.schoolId ?? undefined,
-      }, tx);
+        auditAction: "curriculum.approve",
+      },
     });
 
     if (isQueueConfigured()) {

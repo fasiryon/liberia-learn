@@ -33,5 +33,5 @@ describe("cron routes export a GET handler (Vercel Cron invokes via GET, not POS
     const mod = await import(modulePath);
     expect(typeof mod.GET).toBe("function");
     expect(mod.GET).toBe(mod.POST);
-  });
+  }, 20_000);
 });

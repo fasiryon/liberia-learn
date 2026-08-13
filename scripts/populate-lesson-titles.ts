@@ -1,4 +1,6 @@
 import { prisma } from "@/lib/db";
+import { createConservativeCurriculumMaintenanceClient } from "@/lib/curriculum/mutations/maintenanceClient";
+const governedCurriculum = createConservativeCurriculumMaintenanceClient("populate-lesson-titles");
 import { extractCurriculumTitle } from "@/lib/curriculum/title";
 
 const BATCH_SIZE = 100;
@@ -36,14 +38,12 @@ async function main() {
       break;
     }
 
-    await prisma.$transaction(
-      candidates.map((row) =>
-        prisma.curriculumContent.update({
-          where: { id: row.id },
-          data: { title: row.title },
-        })
-      )
-    );
+    for (const row of candidates) {
+      await governedCurriculum.update({
+        where: { id: row.id },
+        data: { title: row.title },
+      });
+    }
 
     updated += candidates.length;
     console.log(

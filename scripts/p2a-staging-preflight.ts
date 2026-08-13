@@ -322,25 +322,13 @@ function assertRepository(): void {
   }
 
   const writerScanResult = spawnSync(
-    "git",
-    [
-      "grep",
-      "-n",
-      "-E",
-      "CurriculumProvenance|CurriculumContentRevision|CurriculumGovernanceEvent|CurriculumEvidence",
-      "--",
-      "app",
-      "lib",
-      "worker",
-      "components",
-    ],
-    { encoding: "utf8" }
+    process.platform === "win32" ? "npx.cmd" : "npx",
+    ["tsx", "scripts/p2a-writer-guard.ts"],
+    { encoding: "utf8" },
   );
-  if (writerScanResult.status !== 0 && writerScanResult.status !== 1) {
-    fail("application provenance writer scan could not be completed");
+  if (writerScanResult.status !== 0) {
+    fail(`application provenance writer guard failed: ${writerScanResult.stderr.trim()}`);
   }
-  const writerScan = writerScanResult.stdout.trim();
-  if (writerScan) fail("provenance implementation references exist in application writer paths");
 }
 
 type PostgresClientVersions = {

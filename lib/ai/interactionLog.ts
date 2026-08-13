@@ -37,6 +37,7 @@ export type LogAIInteractionInput = {
   promptKey?: string | null;
   promptVersion?: string | null;
   promptHash?: string | null;
+  generationCorrelationId?: string | null;
   contentVersion?: string | null;
   assessmentVersion?: string | null;
   calculationVersion?: string | null;
@@ -46,6 +47,7 @@ export type LogAIInteractionInput = {
   dedupeKey?: string | null;
   sourceEventId?: string | null;
   metadata?: JsonObject | null;
+  durable?: boolean;
 };
 
 export type RecordAiUsageInput = LogAIInteractionInput;
@@ -160,6 +162,7 @@ export async function logAIInteraction(input: LogAIInteractionInput) {
   }).aIInteraction;
 
   if (!aiInteractionLogModel?.create && !aiInteractionModel?.create) {
+    if (input.durable) throw new Error("AIInteraction persistence is unavailable");
     return null;
   }
 
@@ -186,6 +189,44 @@ export async function logAIInteraction(input: LogAIInteractionInput) {
     ...(input.metadata ?? {}),
   });
 
+  const interactionWrite = aiInteractionModel?.create
+    ? aiInteractionModel.create({
+        data: {
+          schoolId: input.schoolId ?? null,
+          userId: input.userId ?? null,
+          studentId: input.studentId ?? input.userId ?? null,
+          route: input.route,
+          feature,
+          requestType,
+          guidanceLevel: input.guidanceLevel ?? null,
+          subject,
+          strandKey,
+          contentId: input.contentId ?? null,
+          lessonId: input.lessonId ?? null,
+          model: input.model ?? null,
+          provider: inferProvider(input.model, input.provider),
+          tier: input.tier ?? null,
+          hadFallback,
+          tokensUsed,
+          estimatedCostUSD,
+          latencyMs: input.latencyMs ?? null,
+          promptVersion: input.promptVersion ?? null,
+          contentVersion: input.contentVersion ?? null,
+          assessmentVersion: input.assessmentVersion ?? null,
+          calculationVersion: input.calculationVersion ?? null,
+          promptKey: input.promptKey ?? null,
+          promptHash: input.promptHash ?? null,
+          generationCorrelationId: input.generationCorrelationId ?? null,
+          clientEventId: input.clientEventId ?? null,
+          originalOccurredAt: toDate(input.originalTimestamp),
+          syncReceivedAt: toDate(input.syncReceivedAt),
+          dedupeKey: input.dedupeKey ?? null,
+          sourceEventId: input.sourceEventId ?? null,
+          metadata: toJson(metadata),
+        },
+      })
+    : Promise.reject(new Error("AIInteraction persistence is unavailable"));
+
   const [legacyLog] = await Promise.all([
     aiInteractionLogModel?.create
       ? aiInteractionLogModel
@@ -208,44 +249,7 @@ export async function logAIInteraction(input: LogAIInteractionInput) {
           })
           .catch(() => null)
       : Promise.resolve(null),
-    aiInteractionModel?.create
-      ? aiInteractionModel
-          .create({
-            data: {
-              schoolId: input.schoolId ?? null,
-              userId: input.userId ?? null,
-              studentId: input.studentId ?? input.userId ?? null,
-              route: input.route,
-              feature,
-              requestType,
-              guidanceLevel: input.guidanceLevel ?? null,
-              subject,
-              strandKey,
-              contentId: input.contentId ?? null,
-              lessonId: input.lessonId ?? null,
-              model: input.model ?? null,
-              provider: inferProvider(input.model, input.provider),
-              tier: input.tier ?? null,
-              hadFallback,
-              tokensUsed,
-              estimatedCostUSD,
-              latencyMs: input.latencyMs ?? null,
-              promptVersion: input.promptVersion ?? null,
-              contentVersion: input.contentVersion ?? null,
-              assessmentVersion: input.assessmentVersion ?? null,
-              calculationVersion: input.calculationVersion ?? null,
-              promptKey: input.promptKey ?? null,
-              promptHash: input.promptHash ?? null,
-              clientEventId: input.clientEventId ?? null,
-              originalOccurredAt: toDate(input.originalTimestamp),
-              syncReceivedAt: toDate(input.syncReceivedAt),
-              dedupeKey: input.dedupeKey ?? null,
-              sourceEventId: input.sourceEventId ?? null,
-              metadata: toJson(metadata),
-            },
-          })
-          .catch(() => null)
-      : Promise.resolve(null),
+    input.durable ? interactionWrite : interactionWrite.catch(() => null),
     logLearningEvent({
       schoolId: input.schoolId ?? null,
       userId: input.userId ?? null,

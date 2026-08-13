@@ -182,6 +182,7 @@ export const GenerateInputSchema = z.object({
   lessonFormat: z.enum(["standard", "block", "either"]).optional().default("standard"),
   liberiaContext: z.boolean().default(true),
   forceSmartTier: z.boolean().optional(),
+  generationCorrelationId: z.string().uuid().optional(),
 });
 
 export type GenerateInput = z.input<typeof GenerateInputSchema>;

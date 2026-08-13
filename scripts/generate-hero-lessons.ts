@@ -20,14 +20,16 @@ if (process.env.DIRECT_URL && !process.env.DATABASE_URL) {
 }
 
 import { prisma } from '@/lib/db';
+import { createConservativeCurriculumMaintenanceClient } from '@/lib/curriculum/mutations/maintenanceClient';
+const governedCurriculum = createConservativeCurriculumMaintenanceClient('generate-hero-lessons');
 import { generateLessonV2, GenerateLessonV2Error } from '@/lib/curriculum/generateLessonV2';
 import { createHash } from 'crypto';
 import { parseArgs } from 'node:util';
 
-// ─── Hero lessons catalog ─────────────────────────────────────────────────────
+// â”€â”€â”€ Hero lessons catalog â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 const HERO_LESSONS = [
-  // ── WAVE-1A originals (indices 0-19) ─────────────────────────────────────
+  // â”€â”€ WAVE-1A originals (indices 0-19) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   { grade: 2, subject: 'MATH', topic: 'Place Value: Tens and Ones' },
   { grade: 2, subject: 'MATH', topic: 'Addition with Two-Digit Numbers' },
   { grade: 5, subject: 'MATH', topic: 'Understanding Fractions' },
@@ -49,32 +51,32 @@ const HERO_LESSONS = [
   { grade: 6, subject: 'COMPUTER_SCIENCE', topic: 'Introduction to Python Programming' },
   { grade: 9, subject: 'COMPUTER_SCIENCE', topic: 'AI Literacy: How Machine Learning Works' },
 
-  // ── WAVE-1B: Hard gaps — demo blockers (indices 20-24) ───────────────────
+  // â”€â”€ WAVE-1B: Hard gaps â€” demo blockers (indices 20-24) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   { grade: 5, subject: 'CIVICS', topic: 'Rights and Responsibilities in a Liberian Community' },
   { grade: 7, subject: 'CIVICS', topic: 'Democracy and Representation in Liberia' },
   { grade: 9, subject: 'CIVICS', topic: 'Branches of Government and Checks and Balances' },
   { grade: 5, subject: 'ENGLISH', topic: 'Grammar Foundations: Parts of Speech with Liberian Stories' },
   { grade: 7, subject: 'ENGLISH', topic: 'Vocabulary in Context: Reading West African Texts' },
 
-  // ── WAVE-1B: Soft gaps — demo-path subjects (indices 25-29) ─────────────
+  // â”€â”€ WAVE-1B: Soft gaps â€” demo-path subjects (indices 25-29) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   { grade: 5, subject: 'LITERACY', topic: 'Narrative Writing: Personal Stories with Liberian Settings' },
   { grade: 7, subject: 'SOCIAL_STUDIES', topic: 'African Geography and Culture: West Africa in Focus' },
   { grade: 6, subject: 'MATH', topic: 'Ratios and Proportions: Real-World Applications' },
   { grade: 6, subject: 'SCIENCE', topic: 'The Human Body Systems' },
   { grade: 2, subject: 'SCIENCE', topic: 'Living Things and Their Needs' },
 
-  // ── WAVE-1C: ENGINEERING heroes for CHA demo timetable (indices 30-34) ──
+  // â”€â”€ WAVE-1C: ENGINEERING heroes for CHA demo timetable (indices 30-34) â”€â”€
   { grade: 5, subject: 'ENGINEERING', topic: 'Simple Machines: Levers, Pulleys and Inclined Planes in Liberia' },
   { grade: 7, subject: 'ENGINEERING', topic: 'Structural Design: Building Bridges with Local Materials' },
   { grade: 7, subject: 'ENGINEERING', topic: 'Water Systems Engineering: Clean Water Solutions for Communities' },
   { grade: 9, subject: 'ENGINEERING', topic: 'Renewable Energy: Solar and Hydro Power for Rural Liberia' },
   { grade: 5, subject: 'ENGINEERING', topic: 'Problem-Solving with the Engineering Design Process' },
 
-  // ── WAVE-1C patch: second LITERACY G7 hero so P2 and P6 show distinct lessons (index 35) ──
+  // â”€â”€ WAVE-1C patch: second LITERACY G7 hero so P2 and P6 show distinct lessons (index 35) â”€â”€
   { grade: 7, subject: 'LITERACY', topic: 'Poetry and Figurative Language in West African Voices' },
 ];
 
-// ─── Helpers ──────────────────────────────────────────────────────────────────
+// â”€â”€â”€ Helpers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 async function sleep(ms: number) {
   return new Promise(resolve => setTimeout(resolve, ms));
@@ -88,7 +90,7 @@ function makeContentId(grade: number, subject: string, topic: string): string {
   return `hero-${slug}`;
 }
 
-// ─── Main ─────────────────────────────────────────────────────────────────────
+// â”€â”€â”€ Main â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 async function main() {
   const { values } = parseArgs({
@@ -138,7 +140,7 @@ async function main() {
       const hash = createHash('sha256').update(JSON.stringify(payload)).digest('hex').slice(0, 16);
       const payloadJson = payload as any;
 
-      await prisma.curriculumContent.upsert({
+      await governedCurriculum.upsert({
         where: { contentId },
         create: {
           contentId,
@@ -164,12 +166,12 @@ async function main() {
       });
 
       console.log(
-        `  ✓ Saved: "${payload.title}" (${result.wordCount} words, ${result.problemSetsCount} problems, ${result.slidesCount} slides, model: ${result.model})`
+        `  âœ“ Saved: "${payload.title}" (${result.wordCount} words, ${result.problemSetsCount} problems, ${result.slidesCount} slides, model: ${result.model})`
       );
       generated++;
     } catch (error) {
       const msg = error instanceof GenerateLessonV2Error ? error.message : String(error);
-      console.error(`  ✗ Failed: ${msg}`);
+      console.error(`  âœ— Failed: ${msg}`);
       failed++;
     }
 

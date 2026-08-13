@@ -34,6 +34,7 @@ const EXPORT_PATH = resolve(process.cwd(), "archive", "thin-content-purge-export
 
 async function main() {
   const { prisma } = await import("@/lib/db");
+  const { revokeCurriculum } = await import("@/lib/curriculum/mutations/revocationWriter");
 
   if (!existsSync(EXPORT_PATH)) {
     throw new Error(`Export file not found: ${EXPORT_PATH}`);
@@ -96,10 +97,18 @@ async function main() {
 
     for (const row of batch) {
       try {
-        await prisma.$transaction([
-          prisma.ragChunk.deleteMany({ where: { sourceType: "curriculum_content", sourceId: row.id } }),
-          prisma.curriculumContent.delete({ where: { id: row.id } }),
-        ]);
+        await revokeCurriculum({
+          contentId: row.contentId,
+          actorType: "SYSTEM",
+          actorLabel: "thin-content-purge-live",
+          reason: "Thin unattached curriculum withdrawn by reviewed maintenance policy",
+          urgent: false,
+          reviewAuthority: "SYSTEM",
+          idempotencyKey: `thin-content-withdraw:${row.id}`,
+        });
+        await prisma.ragChunk.deleteMany({
+          where: { sourceType: "curriculum_content", sourceId: row.id },
+        });
 
         // Verify THIS row's real DB state immediately
         const [stillThere, orphanChunks] = await Promise.all([
@@ -107,9 +116,15 @@ async function main() {
           prisma.ragChunk.count({ where: { sourceType: "curriculum_content", sourceId: row.id } }),
         ]);
 
-        if (stillThere || orphanChunks > 0) {
+        const revoked = stillThere
+          ? await prisma.curriculumProvenance.findUnique({
+              where: { curriculumContentId: row.id },
+              select: { lifecycleState: true },
+            })
+          : null;
+        if (!stillThere || revoked?.lifecycleState !== "REVOKED" || orphanChunks > 0) {
           batchErrors += 1;
-          console.log(`  [VERIFY-FAIL] ${row.contentId} (${row.id}): stillThere=${Boolean(stillThere)} orphanChunks=${orphanChunks}`);
+          console.log(`  [VERIFY-FAIL] ${row.contentId} (${row.id}): retained=${Boolean(stillThere)} lifecycle=${revoked?.lifecycleState ?? "missing"} orphanChunks=${orphanChunks}`);
         } else {
           batchDeleted += 1;
         }

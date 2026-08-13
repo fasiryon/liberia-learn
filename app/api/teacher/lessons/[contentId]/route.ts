@@ -5,6 +5,7 @@ import { requireRole } from "@/lib/auth";
 import { logAudit } from "@/lib/audit";
 import { prisma } from "@/lib/db";
 import { handleApiError } from "@/lib/errors/apiErrorHandler";
+import { updateCurriculumContent } from "@/lib/curriculum/mutations/repository";
 
 const PatchSchema = z.object({
   title: z.string().trim().min(1).max(200).optional(),
@@ -89,9 +90,9 @@ export async function PATCH(
       ...(body.bodyHtml !== undefined ? { body: body.bodyHtml } : {}),
     };
 
-    const updated = await prisma.curriculumContent.update({
-      where: { id: lesson.id },
-      data: {
+    const governed = await updateCurriculumContent(
+      { id: lesson.id },
+      {
         ...(body.title !== undefined ? { title: body.title } : {}),
         payload: updatePayload,
         editedById: user.id,
@@ -103,7 +104,19 @@ export async function PATCH(
           ? { learningObjectives: body.learningObjectives }
           : {}),
       },
-    });
+      {
+        revisionKind: "HUMAN_EDIT",
+        originKind: "HUMAN_AUTHORED",
+        actorUserId: user.id,
+        authorUserId: user.id,
+        requestedCompleteness: "VERIFIED",
+        auditAction: "curriculum.revision.teacher_edit",
+        schoolId: user.schoolId ?? null,
+        traceId,
+        idempotencyKey: `teacher-body-edit:${traceId}`,
+      },
+    );
+    const updated = governed.content;
 
     await logAudit({
       userId: user.id,

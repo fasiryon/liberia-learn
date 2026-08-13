@@ -3,6 +3,8 @@ import { requireRole } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { lessonMediaPath, uploadLessonImage, signMediaUrl } from "@/lib/media/blobStorage";
 import type { HeroImageMeta } from "@/lib/media/types";
+import { randomUUID } from "crypto";
+import { updateCurriculumContent } from "@/lib/curriculum/mutations/repository";
 
 export const dynamic = "force-dynamic";
 
@@ -11,7 +13,7 @@ const ACCEPTED = new Set(["image/jpeg", "image/png", "image/webp"]);
 
 export async function POST(req: Request, { params }: { params: Promise<{ contentId: string }> }) {
   try {
-    await requireRole("ADMIN");
+    const user = await requireRole("ADMIN");
     const { contentId } = await params;
     const lesson = await prisma.curriculumContent.findUnique({
       where: { contentId },
@@ -36,14 +38,26 @@ export async function POST(req: Request, { params }: { params: Promise<{ content
       credit: null, category: (lesson.imageCategory as any) ?? "VISUAL",
     };
 
-    await prisma.curriculumContent.update({
-      where: { contentId },
-      data: {
+    const traceId = randomUUID();
+    await updateCurriculumContent(
+      { contentId },
+      {
         heroImageUrl: url, heroImageMeta: meta as any,
         imageGenerationStatus: "GENERATED", imageGenerationCost: 0,
         imageCategory: lesson.imageCategory ?? "VISUAL",
       },
-    });
+      {
+        revisionKind: "HUMAN_EDIT",
+        originKind: "HUMAN_AUTHORED",
+        actorUserId: user.id,
+        authorUserId: user.id,
+        requestedCompleteness: "VERIFIED",
+        auditAction: "curriculum.revision.media_upload",
+        idempotencyKey: `media-upload:${contentId}:${traceId}`,
+        traceId,
+        schoolId: user.schoolId ?? null,
+      },
+    );
 
     return NextResponse.json({ ok: true, heroPreview: await signMediaUrl(url) });
   } catch (err: any) {

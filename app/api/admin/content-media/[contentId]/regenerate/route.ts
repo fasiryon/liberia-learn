@@ -4,12 +4,14 @@ import { prisma } from "@/lib/db";
 import { processLessonMedia } from "@/lib/media/processLesson";
 import { signMediaUrl } from "@/lib/media/blobStorage";
 import { logAssetGenerationTelemetry } from "@/lib/assets/generationTelemetry";
+import { randomUUID } from "crypto";
+import { updateCurriculumContent } from "@/lib/curriculum/mutations/repository";
 
 export const dynamic = "force-dynamic";
 
 export async function POST(_req: Request, { params }: { params: Promise<{ contentId: string }> }) {
   try {
-    await requireRole("ADMIN");
+    const user = await requireRole("ADMIN");
     const { contentId } = await params;
     const lesson = await prisma.curriculumContent.findUnique({
       where: { contentId },
@@ -26,7 +28,23 @@ export async function POST(_req: Request, { params }: { params: Promise<{ conten
       grade: lesson.grade, body, topics: lesson.waecSyllabusTopics,
     });
 
-    await prisma.curriculumContent.update({ where: { contentId }, data: outcome.update });
+    const traceId = randomUUID();
+    await updateCurriculumContent(
+      { contentId },
+      outcome.update as any,
+      {
+        revisionKind: "DETERMINISTIC_ENRICHMENT",
+        originKind: "DETERMINISTIC_GENERATED",
+        actorUserId: user.id,
+        generatorName: "processLessonMedia",
+        generatorVersion: "1.0.0",
+        requestedCompleteness: "VERIFIED",
+        auditAction: "curriculum.revision.media_regenerated",
+        idempotencyKey: `media-regenerate:${contentId}:${traceId}`,
+        traceId,
+        schoolId: user.schoolId ?? null,
+      },
+    );
     await logAssetGenerationTelemetry({
       provider: outcome.provider ?? "none", model: outcome.category === "PHOTO" ? "curated" : "flux-schnell",
       assetType: "lesson_media_regenerate", tenantId: null, route: "admin.content-media.regenerate",

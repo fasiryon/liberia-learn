@@ -21,6 +21,7 @@ type LessonDraft = {
   content: string;
   assessmentQuestions: string[];
   estimatedMinutes: number;
+  generationLineage?: Record<string, string>;
 };
 
 type MetadataResponse = {
@@ -159,6 +160,7 @@ export default function TeacherCreateLessonPage() {
         content: data.content,
         assessmentQuestions: data.assessmentQuestions ?? [],
         estimatedMinutes: data.estimatedMinutes,
+        generationLineage: data.generationLineage,
       });
       setContentId(null);
     } catch (err: any) {
@@ -190,6 +192,7 @@ export default function TeacherCreateLessonPage() {
           status: action === "publish" ? "published" : "draft",
           standardCode: form.standardCode || undefined,
           contentId: contentId ?? undefined,
+          generationLineage: draft.generationLineage,
         }),
       });
       const data = await response.json();

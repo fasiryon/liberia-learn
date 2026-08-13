@@ -35,9 +35,13 @@ describe("PATCH /api/admin/content-review/[lessonId] state machine", () => {
           update: updateFn,
         },
         notificationInboxItem: { create: vi.fn(async () => ({})) },
+        $transaction: vi.fn(async (callback: any) => callback({
+          curriculumContent: { update: updateFn },
+        })),
       },
     }));
-    vi.doMock("@/lib/audit", () => ({ logAudit: vi.fn(async () => {}) }));
+    const audit = vi.fn(async () => {});
+    vi.doMock("@/lib/audit", () => ({ logAudit: audit, logAuditRequired: audit, logAuditRequiredWithId: audit }));
     vi.doMock("@/lib/push/sendPush", () => ({ sendPushToUser: vi.fn(async () => {}) }));
   }
 
@@ -105,6 +109,7 @@ describe("PATCH /api/admin/content-review/[lessonId] state machine", () => {
 
   it("approve: creates NotificationInboxItem for teacher", async () => {
     const mockNotif = vi.fn(async () => ({}));
+    const mockUpdate = vi.fn(async () => ({ id: "cc-1", editReviewStatus: "APPROVED", status: "published" }));
     vi.doMock("@/lib/auth", () => ({
       requireRole: vi.fn(async () => ({ id: "admin-1", role: "ADMIN", schoolId: "s-1" })),
     }));
@@ -115,12 +120,16 @@ describe("PATCH /api/admin/content-review/[lessonId] state machine", () => {
             id: "cc-1", contentId: "c-1", title: "Photosynthesis",
             editedById: "teacher-1", editReviewStatus: "PENDING",
           })),
-          update: vi.fn(async () => ({ id: "cc-1", editReviewStatus: "APPROVED", status: "published" })),
+          update: mockUpdate,
         },
         notificationInboxItem: { create: mockNotif },
+        $transaction: vi.fn(async (callback: any) => callback({
+          curriculumContent: { update: mockUpdate },
+        })),
       },
     }));
-    vi.doMock("@/lib/audit", () => ({ logAudit: vi.fn(async () => {}) }));
+    const audit = vi.fn(async () => {});
+    vi.doMock("@/lib/audit", () => ({ logAudit: audit, logAuditRequired: audit, logAuditRequiredWithId: audit }));
     vi.doMock("@/lib/push/sendPush", () => ({ sendPushToUser: vi.fn(async () => {}) }));
     const { PATCH } = await import("@/app/api/admin/content-review/[lessonId]/route");
     await PATCH(makeReq({ editReviewStatus: "APPROVED" }), { params: { lessonId: "cc-1" } });
@@ -174,9 +183,13 @@ describe("POST /api/admin/content-review/[lessonId]/unpublish", () => {
           update: mockUpdate,
         },
         notificationInboxItem: { create: mockNotif },
+        $transaction: vi.fn(async (callback: any) => callback({
+          curriculumContent: { update: mockUpdate },
+        })),
       },
     }));
-    vi.doMock("@/lib/audit", () => ({ logAudit: vi.fn(async () => {}) }));
+    const audit = vi.fn(async () => {});
+    vi.doMock("@/lib/audit", () => ({ logAudit: audit, logAuditRequired: audit, logAuditRequiredWithId: audit }));
     vi.doMock("@/lib/push/sendPush", () => ({ sendPushToUser: vi.fn(async () => {}) }));
     const { POST } = await import("@/app/api/admin/content-review/[lessonId]/unpublish/route");
     const res = await POST(makeReq({ reason: "Factual error" }), { params: { lessonId: "cc-1" } });
@@ -191,6 +204,7 @@ describe("POST /api/admin/content-review/[lessonId]/unpublish", () => {
 
   it("emergency unpublish audit log action is teacher.lesson.emergency_unpublish", async () => {
     const mockAudit = vi.fn(async () => {});
+    const mockUpdate = vi.fn(async () => ({ id: "cc-1" }));
     vi.doMock("@/lib/auth", () => ({ requireRole: vi.fn(async () => ({ id: "a-1", role: "ADMIN", schoolId: "s-1" })) }));
     vi.doMock("@/lib/db", () => ({
       prisma: {
@@ -198,18 +212,26 @@ describe("POST /api/admin/content-review/[lessonId]/unpublish", () => {
           findUnique: vi.fn(async () => ({
             id: "cc-1", contentId: "c-1", editedById: "t-1", editReviewStatus: "APPROVED", title: "L",
           })),
-          update: vi.fn(async () => ({ id: "cc-1" })),
+          update: mockUpdate,
         },
         notificationInboxItem: { create: vi.fn(async () => ({})) },
+        $transaction: vi.fn(async (callback: any) => callback({
+          curriculumContent: { update: mockUpdate },
+        })),
       },
     }));
-    vi.doMock("@/lib/audit", () => ({ logAudit: mockAudit }));
+    vi.doMock("@/lib/audit", () => ({
+      logAudit: mockAudit,
+      logAuditRequired: mockAudit,
+      logAuditRequiredWithId: mockAudit,
+    }));
     vi.doMock("@/lib/push/sendPush", () => ({ sendPushToUser: vi.fn(async () => {}) }));
     const { POST } = await import("@/app/api/admin/content-review/[lessonId]/unpublish/route");
     await POST(makeReq({}), { params: { lessonId: "cc-1" } });
-    expect(mockAudit).toHaveBeenCalledWith(expect.objectContaining({
-      action: "teacher.lesson.emergency_unpublish",
-    }));
+    expect(mockAudit).toHaveBeenCalledWith(
+      expect.objectContaining({ action: "teacher.lesson.emergency_unpublish" }),
+      expect.objectContaining({ curriculumContent: expect.any(Object) }),
+    );
   });
 });
 

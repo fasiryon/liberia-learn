@@ -6,6 +6,7 @@ import { assertPermission, PERMISSIONS } from "@/lib/permissions";
 import { requireMoeActor } from "@/lib/moe/authority";
 import { validateCurriculumApproval } from "@/lib/policy/policyEngine";
 import { transitionMoeDirective } from "@/lib/moe/policyGovernance";
+import { updateCurriculumReleaseProjectionMany } from "@/lib/curriculum/mutations/repository";
 
 export const dynamic = "force-dynamic";
 
@@ -43,12 +44,11 @@ export async function POST(req: NextRequest) {
       });
 
       if (Array.isArray(body.contentIds) && body.contentIds.length > 0) {
-        await scopedTx.curriculumContent.updateMany({
-          where: { contentId: { in: body.contentIds } },
-          data: {
-            versionId: version.id,
-            status: body.archive ? "archived" : "published",
-          },
+        await updateCurriculumReleaseProjectionMany(scopedTx, {
+          contentId: { in: body.contentIds },
+        }, {
+          versionId: version.id,
+          status: body.archive ? "archived" : "published",
         });
       }
 

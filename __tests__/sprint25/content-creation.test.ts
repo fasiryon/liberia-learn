@@ -25,7 +25,11 @@ const mockClassFindMany = vi.hoisted(() => vi.fn());
 const mockLessonShareFindMany = vi.hoisted(() => vi.fn());
 
 vi.mock("@/lib/auth", () => ({ requireRole: mockRequireRole }));
-vi.mock("@/lib/audit", () => ({ logAudit: mockLogAudit }));
+vi.mock("@/lib/audit", () => ({
+  logAudit: mockLogAudit,
+  logAuditRequired: mockLogAudit,
+  logAuditRequiredWithId: mockLogAudit,
+}));
 vi.mock("@/lib/push/sendPush", () => ({ sendPushToUser: mockSendPushToUser }));
 vi.mock("@/lib/db", () => ({
   prisma: {
@@ -58,6 +62,9 @@ vi.mock("@/lib/db", () => ({
     assignment: {
       create: mockAssignmentCreate,
     },
+    $transaction: vi.fn(async (callback: any) => callback({
+      curriculumContent: { update: mockCurriculumContentUpdate },
+    })),
   },
 }));
 

@@ -1,5 +1,5 @@
 /**
- * PHASE 4A — Batch lesson media generation.
+ * PHASE 4A â€” Batch lesson media generation.
  *
  * VISUAL   -> AI hero (+ inline) via Fal.ai Flux schnell, stored in private Blob.
  * PHOTO    -> curated Unsplash/Pexels (cost $0), CDN url + attribution; AI
@@ -21,6 +21,8 @@ cleanEnv("DATABASE_URL");
 import fs from "fs";
 import path from "path";
 import { prisma } from "@/lib/db";
+import { createConservativeCurriculumMaintenanceClient } from "@/lib/curriculum/mutations/maintenanceClient";
+const governedCurriculum = createConservativeCurriculumMaintenanceClient("generate-lesson-media");
 import { categorizeLesson } from "@/lib/media/categorize";
 import { processLessonMedia } from "@/lib/media/processLesson";
 import { logAssetGenerationTelemetry } from "@/lib/assets/generationTelemetry";
@@ -73,7 +75,7 @@ function sleep(ms: number) {
 
 async function persist(contentId: string, data: any) {
   if (dryRun) return;
-  await prisma.curriculumContent.update({ where: { contentId }, data });
+  await governedCurriculum.update({ where: { contentId }, data });
 }
 
 async function main() {
@@ -141,7 +143,7 @@ async function main() {
         curatedPending++;
         consecutivePending++;
         if (consecutivePending >= COOLDOWN_AFTER_CONSECUTIVE_PENDING) {
-          console.log(`\n  … ${consecutivePending} consecutive misses — cooling down ${COOLDOWN_MS / 1000}s (rate limit?)\n`);
+          console.log(`\n  â€¦ ${consecutivePending} consecutive misses â€” cooling down ${COOLDOWN_MS / 1000}s (rate limit?)\n`);
           await sleep(COOLDOWN_MS);
           consecutivePending = 0;
         }
