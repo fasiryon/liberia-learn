@@ -23,6 +23,16 @@ const runtimeUrl = `postgresql://postgres.${stagingRef}:secret@aws-1-us-east-2.p
 const sessionUrl = `postgresql://postgres.${stagingRef}:secret@aws-1-us-east-2.pooler.supabase.com:5432/postgres?sslmode=require`;
 
 describe("P2-A staging database identity", () => {
+  it("retains a distinct post-migration preflight mode", () => {
+    const source = readFileSync(
+      resolve(process.cwd(), "scripts", "p2a-staging-preflight.ts"),
+      "utf8",
+    );
+    expect(source).toContain('process.argv.includes("--post-migration")');
+    expect(source).toContain("14|1|1|1|10|12|10|0");
+    expect(source).toContain("B2 applied/rolled-back incident records: 1|1");
+  });
+
   it("extracts the staging project from direct and pooled URLs", () => {
     expect(parseSupabaseDatabaseTarget(directUrl)).toMatchObject({
       projectRef: stagingRef,

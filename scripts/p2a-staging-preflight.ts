@@ -427,7 +427,7 @@ function runPsql(envName: "P2A_STAGING_DATABASE_URL" | "DATABASE_URL", sql: stri
   return (result.stdout ?? "").trim();
 }
 
-async function assertLiveEnvironment(topology: Topology): Promise<void> {
+async function assertLiveEnvironment(topology: Topology, postMigration: boolean): Promise<void> {
   const identitySql = `
     SELECT current_database(), current_user, COALESCE(inet_server_addr()::text, 'local'),
            current_setting('server_version'),
@@ -473,15 +473,22 @@ async function assertLiveEnvironment(topology: Topology): Promise<void> {
   );
   if (unfinishedMigrations !== "0") fail("staging has unfinished Prisma migrations");
 
-  const canonicalState = runPsql(
+  const activeMigrationState = runPsql(
     "P2A_STAGING_DATABASE_URL",
-    `SELECT COALESCE(string_agg(migration_name, ',' ORDER BY started_at), '')
+    `SELECT COALESCE(string_agg(migration_name, ',' ORDER BY migration_name), '')
      FROM public."_prisma_migrations"
      WHERE finished_at IS NOT NULL AND rolled_back_at IS NULL;`
   );
-  const expectedCanonicalState = APPROVED_CANONICAL_MIGRATIONS.map((item) => item.name).join(",");
-  if (canonicalState !== expectedCanonicalState) {
-    fail("staging Prisma ledger is not the exact approved canonical pre-P2-A state");
+  const expectedActiveMigrations = [
+    ...APPROVED_CANONICAL_MIGRATIONS,
+    ...(postMigration ? APPROVED_MIGRATIONS : []),
+  ].map((item) => item.name).sort().join(",");
+  if (activeMigrationState !== expectedActiveMigrations) {
+    fail(
+      postMigration
+        ? "staging Prisma ledger is not the exact approved canonical plus P2-A state"
+        : "staging Prisma ledger is not the exact approved canonical pre-P2-A state",
+    );
   }
 
   const p2aState = runPsql(
@@ -489,7 +496,9 @@ async function assertLiveEnvironment(topology: Topology): Promise<void> {
     `SELECT count(*) FROM public."_prisma_migrations"
      WHERE migration_name IN (${APPROVED_MIGRATIONS.map((item) => `'${item.name}'`).join(",")});`
   );
-  if (p2aState !== "0") fail("one or more P2-A migrations are already recorded on staging");
+  if (p2aState !== (postMigration ? String(APPROVED_MIGRATIONS.length) : "0")) {
+    fail(postMigration ? "not all approved P2-A migrations are active" : "one or more P2-A migrations are already recorded on staging");
+  }
 
   const relationState = runPsql(
     "P2A_STAGING_DATABASE_URL",
@@ -500,7 +509,81 @@ async function assertLiveEnvironment(topology: Topology): Promise<void> {
        (to_regclass('public."CurriculumEvidence"'))
      ) AS relations(relation_name) WHERE relation_name IS NOT NULL;`
   );
-  if (relationState !== "0") fail("P2-A provenance tables unexpectedly exist before Migration A");
+  if (relationState !== (postMigration ? "4" : "0")) {
+    fail(postMigration ? "P2-A provenance table set is incomplete" : "P2-A provenance tables unexpectedly exist before Migration A");
+  }
+
+  if (postMigration) {
+    const finalSchemaState = runPsql(
+      "P2A_STAGING_DATABASE_URL",
+      `SELECT
+         (SELECT count(*) FROM pg_type WHERE typname IN (
+           'CurriculumProvenanceCompleteness', 'CurriculumLifecycleState',
+           'CurriculumRevisionKind', 'CurriculumOriginKind',
+           'CurriculumGovernanceEventType', 'CurriculumGovernanceActorType',
+           'CurriculumApprovalBasis', 'CurriculumReviewAuthority',
+           'CurriculumFutureAssignmentPolicy', 'CurriculumExistingAssignmentPolicy',
+           'CurriculumOfflineCachePolicy', 'CurriculumEvidenceType',
+           'CurriculumEvidencePurpose', 'CurriculumEvidenceStatus')),
+         (SELECT count(*) FROM information_schema.columns
+          WHERE table_schema = 'public' AND table_name = 'CurriculumGovernanceEvent'
+            AND column_name = 'riskReasons' AND is_nullable = 'NO'
+            AND column_default ILIKE '%ARRAY[]%'),
+         (SELECT count(*) FROM information_schema.columns
+          WHERE table_schema = 'public' AND table_name = 'AIInteraction'
+            AND column_name = 'generationCorrelationId' AND is_nullable = 'YES'
+            AND column_default IS NULL),
+         (SELECT count(*) FROM pg_class c JOIN pg_index i ON i.indexrelid = c.oid
+          JOIN pg_namespace n ON n.oid = c.relnamespace
+          WHERE n.nspname = 'public'
+            AND c.relname = 'AIInteraction_generationCorrelationId_createdAt_idx'
+            AND i.indisready AND i.indisvalid),
+         (SELECT count(*) FROM pg_trigger
+          WHERE tgname IN (
+            'curriculum_content_revision_no_update_or_delete',
+            'curriculum_governance_event_no_update_or_delete',
+            'curriculum_evidence_no_update_or_delete',
+            'curriculum_content_revision_no_truncate',
+            'curriculum_governance_event_no_truncate',
+            'curriculum_evidence_no_truncate',
+            'curriculum_provenance_no_delete',
+            'curriculum_provenance_no_truncate',
+            'curriculum_provenance_identity_no_update',
+            'curriculum_provenance_current_revision_guard')
+            AND tgenabled = 'O'),
+         (SELECT count(*) FROM pg_constraint
+          WHERE contype = 'f' AND convalidated
+            AND conrelid IN (
+              'public."CurriculumProvenance"'::regclass,
+              'public."CurriculumContentRevision"'::regclass,
+              'public."CurriculumGovernanceEvent"'::regclass,
+              'public."CurriculumEvidence"'::regclass)),
+         (SELECT count(*) FROM pg_index
+          WHERE indisunique AND indisvalid
+            AND indrelid IN (
+              'public."CurriculumProvenance"'::regclass,
+              'public."CurriculumContentRevision"'::regclass,
+              'public."CurriculumGovernanceEvent"'::regclass,
+              'public."CurriculumEvidence"'::regclass)),
+         (SELECT count(*) FROM information_schema.columns
+          WHERE table_schema = 'public' AND table_name = 'CurriculumContent'
+            AND column_name = 'provenance');`
+    );
+    if (finalSchemaState !== "14|1|1|1|10|12|10|0") {
+      fail(`post-migration schema invariants differ: ${finalSchemaState}`);
+    }
+    const b2IncidentState = runPsql(
+      "P2A_STAGING_DATABASE_URL",
+      `SELECT
+         count(*) FILTER (WHERE finished_at IS NOT NULL AND rolled_back_at IS NULL),
+         count(*) FILTER (WHERE rolled_back_at IS NOT NULL)
+       FROM public."_prisma_migrations"
+       WHERE migration_name = '20260810_000003_p2a_ai_generation_correlation_index';`,
+    );
+    if (b2IncidentState !== "1|1") {
+      fail(`B2 applied/rolled-back incident history differs: ${b2IncidentState}`);
+    }
+  }
 
   const fixtureCount = runPsql(
     "P2A_STAGING_DATABASE_URL",
@@ -531,10 +614,14 @@ async function assertLiveEnvironment(topology: Topology): Promise<void> {
   console.log("Migration client TLS: PASS");
   console.log("Runtime client TLS: PASS");
   console.log(`Runtime database identity: ${runtimeIdentity}`);
-  console.log("P2-A migration rows before execution: 0");
+  console.log(`Active P2-A migration rows: ${postMigration ? APPROVED_MIGRATIONS.length : 0}`);
   console.log("Unfinished Prisma migration rows: 0");
   console.log(`Canonical pre-P2-A migration rows: ${APPROVED_CANONICAL_MIGRATIONS.length}`);
-  console.log("P2-A provenance tables before execution: 0");
+  console.log(`P2-A provenance tables: ${postMigration ? 4 : 0}`);
+  if (postMigration) {
+    console.log("Post-migration schema invariants: 14|1|1|1|10|12|10|0");
+    console.log("B2 applied/rolled-back incident records: 1|1");
+  }
   console.log("Synthetic P2-A curriculum fixtures: 2");
   console.log("Transactions older than 15 minutes: 0");
   console.log(`Staging application health: ${response.status}, database ok`);
@@ -542,6 +629,7 @@ async function assertLiveEnvironment(topology: Topology): Promise<void> {
 
 export async function main(): Promise<void> {
   const staticOnly = process.argv.includes("--static-only");
+  const postMigration = process.argv.includes("--post-migration");
   assertRepository();
   const topology = validateTopology();
   const clientVersions = assertClientTooling();
@@ -570,8 +658,8 @@ export async function main(): Promise<void> {
     return;
   }
 
-  await assertLiveEnvironment(topology);
-  console.log("P2-A STAGING GATE 0 PREFLIGHT: PASS");
+  await assertLiveEnvironment(topology, postMigration);
+  console.log(postMigration ? "P2-A STAGING POST-MIGRATION PREFLIGHT: PASS" : "P2-A STAGING GATE 0 PREFLIGHT: PASS");
 }
 
 const invokedPath = process.argv[1] ? resolve(process.argv[1]) : "";
