@@ -97,6 +97,12 @@ External actions:
 
 ### P2-A: Immutable lesson provenance and lifecycle
 
+Status: FEATURE COMPLETE IN STAGING as of 2026-08-13 on
+`codex/p2a-provenance-step1`. Production deployment and cutover remain
+prohibited pending final explicit authorization. See
+`CURRENT_EXECUTION_STATE.md` for the live database, backfill, E2E, validation,
+and deployment evidence.
+
 Deliverables:
 
 - Record source standards, generator and model, prompt version, evidence links,

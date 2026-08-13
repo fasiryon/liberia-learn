@@ -7,6 +7,43 @@ Live execution tracking for the final closeout program.
 
 - **Canonical plan:** `docs/roadmaps/NATIONAL_ROLLOUT_EXECUTION_PLAN.md`
 - **Escalation contract:** `docs/agents/ADVISOR_ESCALATION_CONTRACT.md`
+- **P2-A FEATURE COMPLETE IN STAGING; PRODUCTION CUTOVER AWAITS FINAL
+  AUTHORIZATION (2026-08-13).** Application provenance is complete on branch
+  `codex/p2a-provenance-step1`. Commit `ca79bbfc` added the snapshot/hash
+  primitives, immutable revision boundary, governance/evidence/revocation
+  writers, deterministic AI correlation, immutable prompt archive, controlled
+  material-writer convergence, alias-aware writer guard, staging backfill,
+  provenance readers, admin/MOE APIs, explainability contract, and staging E2E.
+  Follow-up commits `769d871c`, `75206043`, `75f33711`, `bb8637dd`, and
+  `bfec9319` hardened the preflight and added an exact post-migration staging
+  proof. Writers are enabled only for Preview branch
+  `codex/p2a-provenance-step1`; Production remains disabled and unchanged.
+  Live post-migration preflight PASS against staging project
+  `yonpfzjczoffhrgibxkz`: exact canonical plus A/B1/B2/C active ledger, one
+  immutable rolled-back B2 incident record, zero unfinished migrations, 14
+  enums, four provenance tables, nullable/no-default AI correlation column,
+  ready/valid B2 index, 10 enabled guards, 12 validated foreign keys, 10 valid
+  non-primary unique indexes, no physical provenance column on
+  `CurriculumContent`, TLS, no transactions older than 15 minutes, and HTTP
+  200 health. The staging backfill run
+  `p2a-staging-backfill-20260813` classified the two legacy fixtures as
+  `LEGACY_UNKNOWN`/UNVERIFIED without fabricating lineage. Final post-E2E
+  verification covers 23 content rows and 23 roots: 18 VERIFIED, 3 PARTIAL,
+  2 UNVERIFIED, zero failures, zero missing roots, zero invalid pointers, and
+  zero duplicate revision sequences. All 26 required staging E2E scenarios
+  PASS, including immutable revision rejection, AI correlation, governance,
+  evidence, revocation/offline invalidation, compatibility mirrors, and
+  explainability. Final code gate: Prisma validate PASS; Prisma generate PASS;
+  TypeScript PASS; first full Vitest run had three timeout-only failures with
+  4,666 tests passing, all three files passed 38/38 unchanged in isolation,
+  and the exact full restart PASS with 4,669 tests in 571 files; production
+  build PASS with BUILD_ID `-nHkuWL_Ptk6UG7jn-RlX`; PostgreSQL 17 canonical
+  clean bootstrap/restore PASS; prompt/migration/provenance focused tests PASS
+  54/54; writer guard PASS; `git diff --check` PASS. Stable staging alias:
+  `https://liberia-learn-git-codex-p2a-pr-915cff-farquema-siryons-projects.vercel.app`.
+  Next: human review and one explicit production authorization before any
+  production deployment, P2-A migration, writer activation, backfill, or
+  reader cutover.
 - **P2-A canonical staging execution: COMPLETE; PRODUCTION DEPLOYMENT AWAITS
   FINAL AUTHORIZATION (2026-08-12).** The Supavisor session-mode fallback,
   canonical PostgreSQL 17 bootstrap, deterministic reference seed, two
