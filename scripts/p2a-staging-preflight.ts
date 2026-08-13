@@ -322,8 +322,8 @@ function assertRepository(): void {
   }
 
   const writerScanResult = spawnSync(
-    process.platform === "win32" ? "npx.cmd" : "npx",
-    ["tsx", "scripts/p2a-writer-guard.ts"],
+    process.execPath,
+    [resolve("node_modules", "tsx", "dist", "cli.mjs"), "scripts/p2a-writer-guard.ts"],
     { encoding: "utf8" },
   );
   if (writerScanResult.status !== 0) {
