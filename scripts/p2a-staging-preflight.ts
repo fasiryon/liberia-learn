@@ -560,7 +560,7 @@ async function assertLiveEnvironment(topology: Topology, postMigration: boolean)
               'public."CurriculumGovernanceEvent"'::regclass,
               'public."CurriculumEvidence"'::regclass)),
          (SELECT count(*) FROM pg_index
-          WHERE indisunique AND indisvalid
+          WHERE indisunique AND indisvalid AND NOT indisprimary
             AND indrelid IN (
               'public."CurriculumProvenance"'::regclass,
               'public."CurriculumContentRevision"'::regclass,
