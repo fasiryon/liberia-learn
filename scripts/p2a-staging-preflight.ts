@@ -494,7 +494,8 @@ async function assertLiveEnvironment(topology: Topology, postMigration: boolean)
   const p2aState = runPsql(
     "P2A_STAGING_DATABASE_URL",
     `SELECT count(*) FROM public."_prisma_migrations"
-     WHERE migration_name IN (${APPROVED_MIGRATIONS.map((item) => `'${item.name}'`).join(",")});`
+     WHERE migration_name IN (${APPROVED_MIGRATIONS.map((item) => `'${item.name}'`).join(",")})
+       AND finished_at IS NOT NULL AND rolled_back_at IS NULL;`
   );
   if (p2aState !== (postMigration ? String(APPROVED_MIGRATIONS.length) : "0")) {
     fail(postMigration ? "not all approved P2-A migrations are active" : "one or more P2-A migrations are already recorded on staging");

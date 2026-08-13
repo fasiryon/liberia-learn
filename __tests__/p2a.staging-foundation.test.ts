@@ -31,6 +31,7 @@ describe("P2-A staging database identity", () => {
     expect(source).toContain('process.argv.includes("--post-migration")');
     expect(source).toContain("14|1|1|1|10|12|10|0");
     expect(source).toContain("B2 applied/rolled-back incident records: 1|1");
+    expect(source).toContain("AND finished_at IS NOT NULL AND rolled_back_at IS NULL");
   });
 
   it("extracts the staging project from direct and pooled URLs", () => {
