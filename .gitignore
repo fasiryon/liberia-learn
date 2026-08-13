@@ -99,6 +99,7 @@ scripts/demo-credentials.txt
 # Infra outputs
 infra/outputs/
 /artifacts/p2a-staging/
+/artifacts/p2a-production/
 
 # Local eval artifacts
 evals/results/
