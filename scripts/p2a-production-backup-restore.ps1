@@ -3,7 +3,10 @@ param(
   [string]$Owner,
 
   [Parameter(Mandatory = $true)]
-  [string]$EvidenceLocation
+  [string]$EvidenceLocation,
+
+  [ValidateSet("pre-p2a-migration-a", "post-p2a-migration-c")]
+  [string]$MigrationBoundary = "pre-p2a-migration-a"
 )
 
 $ErrorActionPreference = "Stop"
@@ -109,8 +112,13 @@ SELECT concat_ws('|',
 );
 "@
   $sourceParts = $sourceState.Split('|')
-  if ($sourceParts.Count -ne 5 -or $sourceParts[1] -ne "0" -or $sourceParts[2] -ne "0") {
-    throw "Production migration boundary is not clean and pre-P2-A"
+  $expectedActiveMigrations = if ($MigrationBoundary -eq "pre-p2a-migration-a") { 146 } else { 6 }
+  $expectedP2ARows = if ($MigrationBoundary -eq "pre-p2a-migration-a") { 0 } else { 5 }
+  if ($sourceParts.Count -ne 5 -or
+      [int]$sourceParts[0] -ne $expectedActiveMigrations -or
+      $sourceParts[1] -ne "0" -or
+      [int]$sourceParts[2] -ne $expectedP2ARows) {
+    throw "Production migration boundary differs from $MigrationBoundary"
   }
 
   $dumpFileName = Split-Path -Leaf $dumpPath
@@ -175,7 +183,7 @@ SELECT concat_ws('|',
     method = "logical-pg-dump"
     owner = $Owner
     evidenceLocation = $EvidenceLocation
-    migrationBoundary = "immediately-before-p2a-migration-a"
+    migrationBoundary = $MigrationBoundary
     restoreTestStatus = "passed"
     restoreTestedAtUtc = $restoreTestedAt.ToString("o")
     artifactPath = $dumpPath
