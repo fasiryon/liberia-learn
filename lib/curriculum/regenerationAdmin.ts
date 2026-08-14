@@ -2,6 +2,7 @@ import { GetQueueAttributesCommand, SQSClient } from "@aws-sdk/client-sqs";
 import { prisma } from "@/lib/db";
 import { validateRegeneratedLesson, extractLessonText } from "@/lib/curriculum/regenerationQualityGate";
 import { appendCurriculumGovernanceEvent } from "@/lib/curriculum/mutations/governanceWriter";
+import { curriculumSchoolScopeWhere } from "@/lib/curriculum/review/tenantScope";
 
 type JsonRecord = Record<string, any>;
 
@@ -231,6 +232,7 @@ export async function listCurriculumDrafts(filters: {
   subject?: string;
   status?: string;
   limit?: number;
+  schoolScope?: string;
 }) {
   const rows = await prisma.curriculumContent.findMany({
     where: {
@@ -238,6 +240,9 @@ export async function listCurriculumDrafts(filters: {
       status: filters.status ?? "DRAFT",
       ...(filters.grade ? { grade: filters.grade } : {}),
       ...(filters.subject ? { subject: filters.subject.toUpperCase() } : {}),
+      ...(filters.schoolScope
+        ? { OR: [{ schoolId: filters.schoolScope }, { schoolId: null, editedBy: { schoolId: filters.schoolScope } }] }
+        : {}),
     },
     orderBy: [{ grade: "asc" }, { subject: "asc" }, { updatedAt: "desc" }],
     take: Math.min(Math.max(filters.limit ?? 50, 1), 100),
@@ -265,13 +270,13 @@ export async function reviewCurriculumDraft(input: {
   contentId?: string;
   contentIds?: string[];
   reason?: string;
-  actor: { id: string; schoolId?: string | null };
+  actor: { id: string; role: string; schoolId?: string | null; isPlatformAdmin?: boolean };
 }) {
   const ids = input.action === "bulk_approve" ? input.contentIds ?? [] : input.contentId ? [input.contentId] : [];
   if (ids.length === 0) throw Object.assign(new Error("contentId required"), { status: 400 });
 
   const records = await prisma.curriculumContent.findMany({
-    where: { contentId: { in: ids }, contentType: "lesson" },
+    where: { contentId: { in: ids }, contentType: "lesson", ...curriculumSchoolScopeWhere(input.actor) },
   });
   const byId = new Map(records.map((record) => [record.contentId, record]));
   const results: Array<{ contentId: string; ok: boolean; status?: string; error?: string }> = [];

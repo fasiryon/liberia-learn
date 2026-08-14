@@ -94,15 +94,14 @@ describe("triageAndApprove", () => {
     expect(mockNotify).toHaveBeenCalledWith("content-high", expect.any(Number), expect.any(Array));
   });
 
-  it("auto-approves high-risk content only after the review budget is exhausted", async () => {
+  it("keeps high-risk content queued after the review budget is exhausted", async () => {
     mockCount.mockResolvedValueOnce(0).mockResolvedValueOnce(WEEKLY_REVIEW_BUDGET);
     const result = await triageAndApprove(HIGH_RISK_CANDIDATE, "system:bulk", "published");
 
-    expect(result.action).toBe("approved");
-    if (result.action === "approved") expect(result.budgetExceeded).toBe(true);
-    expect(mockNotify).not.toHaveBeenCalled();
+    expect(result.action).toBe("flagged");
+    expect(mockNotify).toHaveBeenCalled();
     expect(mockWarn).toHaveBeenCalledWith(
-      "[riskTriage] weekly review budget exhausted, auto-approving a high-risk candidate",
+      "[riskTriage] weekly review budget exhausted, keeping high-risk candidate queued",
       expect.objectContaining({ contentId: "content-high" })
     );
   });

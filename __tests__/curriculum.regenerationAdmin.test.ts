@@ -89,7 +89,7 @@ describe("curriculum regeneration admin helpers", () => {
     const result = await reviewCurriculumDraft({
       action: "approve",
       contentId: "thin",
-      actor: { id: "platform-1" },
+      actor: { id: "platform-1", role: "MOE_SUPER_ADMIN" },
     });
 
     expect(result.ok).toBe(false);
@@ -108,7 +108,7 @@ describe("curriculum regeneration admin helpers", () => {
     const result = await reviewCurriculumDraft({
       action: "bulk_approve",
       contentIds: ["good", "bad"],
-      actor: { id: "platform-1" },
+      actor: { id: "platform-1", role: "MOE_SUPER_ADMIN" },
     });
 
     expect(result.ok).toBe(false);
@@ -134,7 +134,7 @@ describe("curriculum regeneration admin helpers", () => {
       action: "reject",
       contentId: "weak",
       reason: "Too thin",
-      actor: { id: "platform-1", schoolId: null },
+      actor: { id: "platform-1", role: "MOE_SUPER_ADMIN", schoolId: null },
     });
 
     expect(result.ok).toBe(true);

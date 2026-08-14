@@ -181,7 +181,7 @@ describe("canonical pre-P2-A baseline", () => {
     ]);
   });
 
-  it("extends the canonical root only with the four approved P2-A migrations", () => {
+  it("extends the canonical root only with the approved P2-A and additive P2-B migrations", () => {
     const canonicalMigrationDirectories = readdirSync(
       join(root, "prisma/canonical/migrations"),
       { withFileTypes: true },
@@ -196,6 +196,7 @@ describe("canonical pre-P2-A baseline", () => {
       "20260810_000002_p2a_ai_generation_correlation",
       "20260810_000003_p2a_ai_generation_correlation_index",
       "20260810_000004_p2a_curriculum_provenance_immutability",
+      "20260813_000001_p2b_qualified_review_operations",
     ]);
   });
 });

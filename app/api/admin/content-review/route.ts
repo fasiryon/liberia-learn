@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { requireRole } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { handleApiError } from "@/lib/errors/apiErrorHandler";
+import { curriculumSchoolScopeWhere } from "@/lib/curriculum/review/tenantScope";
 
 export const dynamic = "force-dynamic";
 
@@ -17,6 +18,7 @@ export async function GET(req: NextRequest) {
       where: {
         editReviewStatus: status,
         editedById: { not: null },
+        ...curriculumSchoolScopeWhere(user),
       },
       orderBy: { editedAt: "desc" },
       take: 100,
@@ -38,7 +40,11 @@ export async function GET(req: NextRequest) {
     });
 
     const pendingCount = await prisma.curriculumContent.count({
-      where: { editReviewStatus: "PENDING", editedById: { not: null } },
+      where: {
+        editReviewStatus: "PENDING",
+        editedById: { not: null },
+        ...curriculumSchoolScopeWhere(user),
+      },
     });
 
     // Sprint 6.2: attach content-qa agent flags, if any, for the lessons on

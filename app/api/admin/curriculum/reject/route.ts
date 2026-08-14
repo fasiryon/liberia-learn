@@ -8,6 +8,8 @@ import { isCurriculumFeedbackEnabled } from "@/lib/serverFlags";
 import { deleteCurriculumContentRagChunks } from "@/lib/ai/rag/ragIngestionService";
 import { Redis } from "@upstash/redis";
 import { COVERAGE_CACHE_KEY } from "@/app/api/admin/curriculum/coverage/route";
+import { assertCurriculumSchoolScope } from "@/lib/curriculum/review/tenantScope";
+import { enforceLegacyReviewAdapter } from "@/lib/curriculum/review/legacyAdapter";
 
 let redis: Redis | null = null;
 try { redis = Redis.fromEnv(); } catch { /* Redis not configured */ }
@@ -40,10 +42,18 @@ export async function POST(req: Request) {
 
     const record = await prisma.curriculumContent.findUnique({
       where: { contentId },
+      include: { editedBy: { select: { schoolId: true } } },
     });
     if (!record) {
       return NextResponse.json({ error: "Not found" }, { status: 404 });
     }
+    if (Object.prototype.hasOwnProperty.call(record, "schoolId")) assertCurriculumSchoolScope(user, record);
+    await enforceLegacyReviewAdapter({
+      contentId,
+      user,
+      requestedAction: "REJECT",
+      idempotencyKey: typeof body.idempotencyKey === "string" ? body.idempotencyKey : `reject:${contentId}`,
+    });
 
     const payload = (record.payload as any) ?? {};
     const rejectedAt = new Date();

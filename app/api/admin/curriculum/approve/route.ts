@@ -10,6 +10,8 @@ import { enqueueJob, isQueueConfigured, JobType } from "@/lib/queue";
 import { logger } from "@/lib/logger";
 import { Redis } from "@upstash/redis";
 import { COVERAGE_CACHE_KEY } from "@/app/api/admin/curriculum/coverage/route";
+import { assertCurriculumSchoolScope } from "@/lib/curriculum/review/tenantScope";
+import { enforceLegacyReviewAdapter } from "@/lib/curriculum/review/legacyAdapter";
 
 let redis: Redis | null = null;
 try { redis = Redis.fromEnv(); } catch { /* Redis not configured */ }
@@ -35,11 +37,18 @@ export async function POST(req: Request) {
 
     const record = await prisma.curriculumContent.findUnique({
       where: { contentId },
-      include: { provenance: { select: { lifecycleState: true } } },
+      include: { provenance: { select: { lifecycleState: true } }, editedBy: { select: { schoolId: true } } },
     });
     if (!record) {
       return NextResponse.json({ error: "Not found" }, { status: 404 });
     }
+    if (Object.prototype.hasOwnProperty.call(record, "schoolId")) assertCurriculumSchoolScope(user, record);
+    await enforceLegacyReviewAdapter({
+      contentId,
+      user,
+      requestedAction: "APPROVE",
+      idempotencyKey: typeof body.idempotencyKey === "string" ? body.idempotencyKey : `approve:${contentId}`,
+    });
 
     const payload = (record.payload as any) ?? {};
     const approvedAt = new Date();

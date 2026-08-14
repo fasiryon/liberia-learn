@@ -184,7 +184,16 @@ export async function triageAndApprove(
     }
   }
 
-  const shouldFlag = worthFlagging && !overBudget;
+  // Capacity is an operational signal only. Risk never falls because the
+  // weekly human-review budget is exhausted.
+  const shouldFlag = worthFlagging;
+  if (worthFlagging && overBudget) {
+    logger.warn("[riskTriage] weekly review budget exhausted, keeping high-risk candidate queued", {
+      contentId: candidate.contentId,
+      riskScore: score,
+      riskReasons: reasons,
+    });
+  }
 
   if (!provenanceWritersEnabled()) {
     if (shouldFlag) {
@@ -216,13 +225,6 @@ export async function triageAndApprove(
         logger.warn("[riskTriage] reviewer notification failed", { contentId: candidate.contentId, error });
       });
       return { action: "flagged", contentId: candidate.contentId, riskScore: score, riskReasons: reasons };
-    }
-    if (worthFlagging && overBudget) {
-      logger.warn("[riskTriage] weekly review budget exhausted, auto-approving a high-risk candidate", {
-        contentId: candidate.contentId,
-        riskScore: score,
-        riskReasons: reasons,
-      });
     }
     await updateCurriculumContent(
       { contentId: candidate.contentId },
@@ -256,14 +258,6 @@ export async function triageAndApprove(
       riskReasons: reasons,
       budgetExceeded: overBudget,
     };
-  }
-
-  if (worthFlagging && overBudget) {
-    logger.warn("[riskTriage] weekly review budget exhausted, auto-approving a high-risk candidate", {
-      contentId: candidate.contentId,
-      riskScore: score,
-      riskReasons: reasons,
-    });
   }
 
   if (shouldFlag) {

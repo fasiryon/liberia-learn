@@ -7,6 +7,8 @@ import { prisma } from "@/lib/db";
 import { handleApiError } from "@/lib/errors/apiErrorHandler";
 import { sendPushToUser } from "@/lib/push/sendPush";
 import { revokeCurriculum } from "@/lib/curriculum/mutations/revocationWriter";
+import { assertCurriculumSchoolScope } from "@/lib/curriculum/review/tenantScope";
+import { enforceLegacyReviewAdapter } from "@/lib/curriculum/review/legacyAdapter";
 
 const BodySchema = z.object({ reason: z.string().trim().min(1).max(500).optional() });
 
@@ -21,17 +23,24 @@ export async function POST(
 
     const lesson = await prisma.curriculumContent.findUnique({
       where: { id: params.lessonId },
-      select: { id: true, contentId: true, title: true, editedById: true, editReviewStatus: true },
+      select: { id: true, contentId: true, title: true, editedById: true, editReviewStatus: true, schoolId: true, editedBy: { select: { schoolId: true } } },
     });
     if (!lesson) {
       return NextResponse.json({ error: "not_found" }, { status: 404 });
     }
+    if (Object.prototype.hasOwnProperty.call(lesson, "schoolId")) assertCurriculumSchoolScope(user, lesson);
     if (lesson.editReviewStatus !== "APPROVED") {
       return NextResponse.json(
         { error: "invalid_transition", from: lesson.editReviewStatus, to: "PENDING" },
         { status: 409 }
       );
     }
+    await enforceLegacyReviewAdapter({
+      contentId: lesson.contentId,
+      user,
+      requestedAction: "EMERGENCY_REVOKE",
+      idempotencyKey: `content-review-unpublish:${traceId}`,
+    });
 
     await revokeCurriculum({
       contentId: lesson.contentId,

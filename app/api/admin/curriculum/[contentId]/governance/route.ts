@@ -4,6 +4,9 @@ import { requireUser } from "@/lib/auth";
 import { assertPermission, PERMISSIONS } from "@/lib/permissions";
 import { appendCurriculumGovernanceEvent } from "@/lib/curriculum/mutations/governanceWriter";
 import { revokeCurriculum } from "@/lib/curriculum/mutations/revocationWriter";
+import { prisma } from "@/lib/db";
+import { curriculumSchoolScopeWhere } from "@/lib/curriculum/review/tenantScope";
+import { enforceLegacyReviewAdapter } from "@/lib/curriculum/review/legacyAdapter";
 
 const GovernanceSchema = z.object({
   revisionId: z.string().min(1).optional(),
@@ -44,6 +47,21 @@ export async function POST(
   const user = await requireUser();
   assertPermission(user, PERMISSIONS.CURRICULUM_APPROVE);
   const body = GovernanceSchema.parse(await req.json());
+  const scopedContent = await prisma.curriculumContent.findFirst({
+    where: { contentId: params.contentId, ...curriculumSchoolScopeWhere(user) },
+    select: { id: true },
+  });
+  if (!scopedContent) {
+    return NextResponse.json({ error: "Not found" }, { status: 404 });
+  }
+  if (["APPROVED", "REJECTED", "RETURNED_FOR_REVIEW", "REAPPROVED", "REVOKED", "REINSTATED"].includes(body.eventType)) {
+    await enforceLegacyReviewAdapter({
+      contentId: params.contentId,
+      user,
+      requestedAction: body.eventType,
+      idempotencyKey: body.idempotencyKey,
+    });
+  }
   const reviewAuthority =
     user.role === "MOE_OFFICIAL" || user.role === "MOE_SUPER_ADMIN"
       ? ("MOE" as const)

@@ -4,6 +4,7 @@ import { requireUser } from "@/lib/auth";
 import { assertPermission, PERMISSIONS } from "@/lib/permissions";
 import { listCurriculumDrafts, reviewCurriculumDraft } from "@/lib/curriculum/regenerationAdmin";
 import { countRiskFlaggedAwaitingReview } from "@/lib/curriculum/riskTriage";
+import { enforceLegacyReviewAdapter } from "@/lib/curriculum/review/legacyAdapter";
 
 export const dynamic = "force-dynamic";
 
@@ -31,6 +32,10 @@ export async function GET(req: Request) {
         subject: url.searchParams.get("subject") ?? undefined,
         status: url.searchParams.get("status") ?? "DRAFT",
         limit: numberParam(url.searchParams.get("limit")),
+        schoolScope:
+          user.isPlatformAdmin || user.role === "MOE_OFFICIAL" || user.role === "MOE_SUPER_ADMIN"
+            ? undefined
+            : user.schoolId ?? "__none__",
       }),
       countRiskFlaggedAwaitingReview(),
     ]);
@@ -50,6 +55,17 @@ export async function POST(req: Request) {
     const parsed = PostSchema.safeParse(await req.json());
     if (!parsed.success) {
       return NextResponse.json({ error: "Invalid input", details: parsed.error.issues }, { status: 400 });
+    }
+    const contentIds = parsed.data.action === "bulk_approve"
+      ? parsed.data.contentIds ?? []
+      : parsed.data.contentId ? [parsed.data.contentId] : [];
+    for (const contentId of contentIds) {
+      await enforceLegacyReviewAdapter({
+        contentId,
+        user: actor,
+        requestedAction: parsed.data.action.toUpperCase(),
+        idempotencyKey: `ops-review:${contentId}:${parsed.data.action}`,
+      });
     }
     const result = await reviewCurriculumDraft({ ...parsed.data, actor });
     return NextResponse.json(result, { status: result.ok ? 200 : 207 });

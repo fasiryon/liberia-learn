@@ -8,6 +8,8 @@ import { handleApiError } from "@/lib/errors/apiErrorHandler";
 import { sendPushToUser } from "@/lib/push/sendPush";
 import { appendCurriculumGovernanceEvent } from "@/lib/curriculum/mutations/governanceWriter";
 import { provenanceWritersEnabled } from "@/lib/curriculum/mutations/repository";
+import { assertCurriculumSchoolScope } from "@/lib/curriculum/review/tenantScope";
+import { enforceLegacyReviewAdapter } from "@/lib/curriculum/review/legacyAdapter";
 
 // State machine: maps current status → allowed target statuses
 const ALLOWED_TRANSITIONS: Record<string, string[]> = {
@@ -41,11 +43,14 @@ export async function PATCH(
         title: true,
         editedById: true,
         editReviewStatus: true,
+        schoolId: true,
+        editedBy: { select: { schoolId: true } },
       },
     });
     if (!lesson) {
       return NextResponse.json({ error: "not_found" }, { status: 404 });
     }
+    if (Object.prototype.hasOwnProperty.call(lesson, "schoolId")) assertCurriculumSchoolScope(user, lesson);
 
     const currentStatus = lesson.editReviewStatus ?? "null";
     const allowed = ALLOWED_TRANSITIONS[currentStatus] ?? [];
@@ -58,6 +63,14 @@ export async function PATCH(
 
     const isApprove = body.editReviewStatus === "APPROVED";
     const isReject = body.editReviewStatus === "REJECTED";
+    if (isApprove || isReject) {
+      await enforceLegacyReviewAdapter({
+        contentId: lesson.contentId,
+        user,
+        requestedAction: isApprove ? "APPROVE" : "REJECT",
+        idempotencyKey: `content-review:${traceId}`,
+      });
+    }
 
     const rejectionReason = isReject && body.editReviewStatus === "REJECTED" ? body.rejectionReason : undefined;
     const projection = {

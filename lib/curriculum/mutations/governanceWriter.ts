@@ -122,10 +122,18 @@ function validateGovernance(input: GovernanceInput, writersEnabled: boolean): vo
 export async function appendCurriculumGovernanceEvent(
   input: GovernanceInput,
 ): Promise<CurriculumGovernanceEvent | null> {
+  validateGovernance(input, provenanceWritersEnabled());
+  return prisma.$transaction((tx) => appendCurriculumGovernanceEventInTransaction(tx, input));
+}
+
+export async function appendCurriculumGovernanceEventInTransaction(
+  tx: Prisma.TransactionClient,
+  input: GovernanceInput,
+  options?: { auditLogId?: string },
+): Promise<CurriculumGovernanceEvent | null> {
   const writersEnabled = provenanceWritersEnabled();
   validateGovernance(input, writersEnabled);
 
-  return prisma.$transaction(async (tx) => {
     if (!writersEnabled) {
       const lifecycleResult = LIFECYCLE_BY_EVENT[input.eventType] ?? null;
       const defaultProjection: Prisma.CurriculumContentUncheckedUpdateInput = {
@@ -212,26 +220,38 @@ export async function appendCurriculumGovernanceEvent(
       select: { sequence: true },
     });
     const lifecycleResult = LIFECYCLE_BY_EVENT[input.eventType] ?? null;
-    const auditLogId = await logAuditRequiredWithId(
-      {
-        userId: input.actorUserId ?? null,
-        action: `curriculum.governance.${input.eventType.toLowerCase()}`,
-        resourceType: "curriculum",
-        resourceId: input.contentId,
-        schoolId: input.schoolId ?? content.schoolId ?? null,
-        traceId: input.traceId ?? null,
-        details: {
-          revisionId,
-          approvalBasis: input.approvalBasis ?? null,
-          reviewAuthority: input.reviewAuthority ?? null,
-          riskScore: input.riskScore ?? null,
-          riskReasons: input.riskReasons ?? [],
-          reason: input.reason ?? null,
-          replacementRevisionId: input.replacementRevisionId ?? null,
+    let auditLogId = options?.auditLogId;
+    if (auditLogId) {
+      const sharedAudit = await tx.auditLog.findUnique({ where: { id: auditLogId } });
+      if (
+        !sharedAudit ||
+        sharedAudit.resourceType !== "curriculum" ||
+        sharedAudit.resourceId !== input.contentId
+      ) {
+        throw new Error("Shared governance audit row does not match the curriculum decision");
+      }
+    } else {
+      auditLogId = await logAuditRequiredWithId(
+        {
+          userId: input.actorUserId ?? null,
+          action: `curriculum.governance.${input.eventType.toLowerCase()}`,
+          resourceType: "curriculum",
+          resourceId: input.contentId,
+          schoolId: input.schoolId ?? content.schoolId ?? null,
+          traceId: input.traceId ?? null,
+          details: {
+            revisionId,
+            approvalBasis: input.approvalBasis ?? null,
+            reviewAuthority: input.reviewAuthority ?? null,
+            riskScore: input.riskScore ?? null,
+            riskReasons: input.riskReasons ?? [],
+            reason: input.reason ?? null,
+            replacementRevisionId: input.replacementRevisionId ?? null,
+          },
         },
-      },
-      tx,
-    );
+        tx,
+      );
+    }
     const event = await tx.curriculumGovernanceEvent.create({
       data: {
         provenanceId: root.id,
@@ -304,5 +324,4 @@ export async function appendCurriculumGovernanceEvent(
       });
     }
     return event;
-  });
 }

@@ -7,6 +7,8 @@ import { requireMoeActor } from "@/lib/moe/authority";
 import { validateCurriculumApproval } from "@/lib/policy/policyEngine";
 import { transitionMoeDirective } from "@/lib/moe/policyGovernance";
 import { updateCurriculumReleaseProjectionMany } from "@/lib/curriculum/mutations/repository";
+import { isP2bReviewOperationsEnabled } from "@/lib/serverFlags";
+import { assertMoeReleaseReady } from "@/lib/curriculum/review/legacyAdapter";
 
 export const dynamic = "force-dynamic";
 
@@ -20,6 +22,9 @@ export async function POST(req: NextRequest) {
     }
 
     const nextStatus = body.archive ? "ARCHIVED" : "ACTIVE";
+    const releaseContentIds = !body.archive && isP2bReviewOperationsEnabled()
+      ? await assertMoeReleaseReady(body.versionId, body.contentIds)
+      : body.contentIds;
     await validateCurriculumApproval({
       schoolId: user.schoolId ?? null,
       districtId: null,
@@ -43,9 +48,9 @@ export async function POST(req: NextRequest) {
         data: { status: nextStatus },
       });
 
-      if (Array.isArray(body.contentIds) && body.contentIds.length > 0) {
+      if (Array.isArray(releaseContentIds) && releaseContentIds.length > 0) {
         await updateCurriculumReleaseProjectionMany(scopedTx, {
-          contentId: { in: body.contentIds },
+          contentId: { in: releaseContentIds },
         }, {
           versionId: version.id,
           status: body.archive ? "archived" : "published",
