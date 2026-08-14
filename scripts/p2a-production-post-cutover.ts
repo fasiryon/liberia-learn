@@ -124,9 +124,24 @@ async function main() {
     idempotencyKey: `${run}:teacher:reinstated`,
   });
 
-  const { privateKey, publicKey } = generateKeyPairSync("rsa", { modulusLength: 2048 });
-  process.env.CONTENT_MANIFEST_PRIVATE_KEY = privateKey.export({ type: "pkcs8", format: "pem" }).toString();
-  process.env.CONTENT_MANIFEST_KEY_ID = `p2a-safe-${randomUUID()}`;
+  const configuredPrivateKey = process.env.CONTENT_MANIFEST_PRIVATE_KEY?.trim();
+  const configuredPublicKey = process.env.NEXT_PUBLIC_CONTENT_MANIFEST_PUBLIC_KEY?.trim();
+  const configuredKeyId = process.env.CONTENT_MANIFEST_KEY_ID?.trim();
+  const configuredManifestSigning = Boolean(
+    configuredPrivateKey && configuredPublicKey && configuredKeyId,
+  );
+  const ephemeral = configuredManifestSigning
+    ? null
+    : generateKeyPairSync("rsa", { modulusLength: 2048 });
+  if (!configuredManifestSigning && ephemeral) {
+    process.env.CONTENT_MANIFEST_PRIVATE_KEY = ephemeral.privateKey
+      .export({ type: "pkcs8", format: "pem" })
+      .toString();
+    process.env.CONTENT_MANIFEST_KEY_ID = `p2a-safe-${randomUUID()}`;
+  }
+  const publicKeyPem = configuredManifestSigning
+    ? configuredPublicKey!.replace(/\\n/g, "\n")
+    : ephemeral!.publicKey.export({ type: "spki", format: "pem" }).toString();
   const revokedManifest = signContentAvailability({
     contentId: deterministic.contentId,
     version: null,
@@ -135,7 +150,7 @@ async function main() {
   const manifestVerified = revokedManifest
     ? await verifyContentAvailabilityManifest(
         revokedManifest,
-        publicKey.export({ type: "spki", format: "pem" }).toString(),
+        publicKeyPem,
       )
     : false;
 
@@ -206,7 +221,7 @@ async function main() {
       Array.isArray(teacherExplanation?.revisionHistory) &&
       teacherExplanation!.revisionHistory.length >= 2,
     signedOfflineInvalidation:
-      Boolean(revokedManifest?.payload.revoked) && manifestVerified,
+      configuredManifestSigning && Boolean(revokedManifest?.payload.revoked) && manifestVerified,
     immutableHistoryRejected: immutabilityRejected,
     rootsComplete: Number(integrity[0].roots) === 1105,
     pointersValid: Number(integrity[0].missing_pointers) === 0,
