@@ -9,6 +9,7 @@ import { logAuditRequiredWithId } from "@/lib/audit";
 import { appendCurriculumGovernanceEventInTransaction } from "@/lib/curriculum/mutations/governanceWriter";
 import { reviewEligibility } from "./eligibility";
 import { ReviewOperationError } from "./errors";
+import { REVIEW_SERIALIZABLE_TRANSACTION_OPTIONS } from "./transaction";
 
 function recommendationOutcome(
   recommendation: CurriculumReviewRecommendation,
@@ -220,5 +221,5 @@ export async function finalizeReviewTaskIfReady(input: {
       data: { status: "COMPLETED", completedAt: now, version: { increment: 1 } },
     });
     return { status: "FINAL" as const, decision: finalized, governanceEvent };
-  }, { isolationLevel: "Serializable" });
+  }, REVIEW_SERIALIZABLE_TRANSACTION_OPTIONS);
 }

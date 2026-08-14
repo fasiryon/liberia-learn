@@ -88,9 +88,12 @@ function scopeMatches(
   },
 ): boolean {
   const snapshot = task.revision.contentSnapshot as Record<string, unknown>;
-  const subject = String(snapshot.subject ?? "").trim().toUpperCase();
-  const grade = Number(snapshot.grade);
-  const contentType = String(snapshot.contentType ?? "").trim().toLowerCase();
+  const identity = snapshot.identity && typeof snapshot.identity === "object" && !Array.isArray(snapshot.identity)
+    ? snapshot.identity as Record<string, unknown>
+    : {};
+  const subject = String(identity.subject ?? snapshot.subject ?? "").trim().toUpperCase();
+  const grade = Number(identity.grade ?? snapshot.grade);
+  const contentType = String(identity.contentType ?? snapshot.contentType ?? "").trim().toLowerCase();
   if (scope.subject && scope.subject.trim().toUpperCase() !== subject) return false;
   if (scope.gradeMin != null && (grade < scope.gradeMin || grade > (scope.gradeMax ?? scope.gradeMin))) return false;
   if (scope.curriculumTypes.length && !scope.curriculumTypes.map((v) => v.toLowerCase()).includes(contentType)) return false;

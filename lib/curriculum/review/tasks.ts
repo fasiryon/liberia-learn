@@ -3,6 +3,7 @@ import { prisma } from "@/lib/db";
 import { evaluateReviewPolicy, type ReviewPolicyInput } from "./policy";
 import { ReviewOperationError } from "./errors";
 import { logAuditRequired } from "@/lib/audit";
+import { REVIEW_TRANSACTION_OPTIONS } from "./transaction";
 
 export async function enqueueCurriculumReviewTask(input: {
   provenanceId: string;
@@ -119,12 +120,20 @@ export async function cancelTasksForSupersededRevisions(provenanceId: string): P
   return prisma.$transaction(async (tx) => {
     await tx.$queryRaw`SELECT "id" FROM "CurriculumProvenance" WHERE "id" = ${provenanceId} FOR UPDATE`;
     const root = await tx.curriculumProvenance.findUniqueOrThrow({ where: { id: provenanceId } });
-    const cancelled = await tx.curriculumReviewTask.updateMany({
-      where: {
+    const staleWhere = {
         provenanceId,
         revisionId: { not: root.currentRevisionId ?? "__none__" },
         status: { in: ["QUEUED", "CLAIMED", "IN_REVIEW", "AWAITING_SECOND_REVIEW", "DISAGREEMENT", "ESCALATED"] },
-      },
+      } satisfies Prisma.CurriculumReviewTaskWhereInput;
+    const staleTasks = await tx.curriculumReviewTask.findMany({ where: staleWhere, select: { id: true } });
+    if (staleTasks.length) {
+      await tx.curriculumReviewAssignment.updateMany({
+        where: { taskId: { in: staleTasks.map((task) => task.id) }, status: "ACTIVE" },
+        data: { status: "RELEASED", releasedAt: new Date(), releaseReason: "TASK_SUPERSEDED", version: { increment: 1 } },
+      });
+    }
+    const cancelled = await tx.curriculumReviewTask.updateMany({
+      where: staleWhere,
       data: {
         status: "CANCELLED",
         cancelledAt: new Date(),
@@ -207,7 +216,7 @@ export async function reprioritizeReviewTask(input: {
     if (changed.count !== 1) throw new ReviewOperationError("TASK_VERSION_CONFLICT", 409);
     await logAuditRequired({ userId: input.actorUserId, action: "curriculum.review.task.reprioritized", resourceType: "review_task", resourceId: task.id, schoolId: task.schoolId, details: { priorityBand: task.priorityBand, priorityScore: policy.priorityScore } }, tx);
     return tx.curriculumReviewTask.findUniqueOrThrow({ where: { id: task.id } });
-  });
+  }, REVIEW_TRANSACTION_OPTIONS);
 }
 
 export async function cancelReviewTask(input: {
@@ -227,5 +236,5 @@ export async function cancelReviewTask(input: {
     if (changed.count !== 1) throw new ReviewOperationError("TASK_VERSION_CONFLICT", 409);
     await tx.curriculumReviewAssignment.updateMany({ where: { taskId: task.id, status: "ACTIVE" }, data: { status: "OVERRIDDEN", releasedAt: new Date(), releaseReason: "TASK_CANCELLED", version: { increment: 1 } } });
     await logAuditRequired({ userId: input.actorUserId, action: "curriculum.review.task.cancelled", resourceType: "review_task", resourceId: task.id, schoolId: task.schoolId, details: { reason: input.reason, idempotencyKey: input.idempotencyKey } }, tx);
-  });
+  }, REVIEW_TRANSACTION_OPTIONS);
 }

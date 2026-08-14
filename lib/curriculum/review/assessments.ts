@@ -4,6 +4,7 @@ import { reviewEligibility } from "./eligibility";
 import { ReviewOperationError } from "./errors";
 import { validateRubricResponses, type RubricResponses } from "./rubric";
 import { logAuditRequired } from "@/lib/audit";
+import { REVIEW_TRANSACTION_OPTIONS } from "./transaction";
 
 type AssessmentInput = {
   assignmentId: string;
@@ -115,7 +116,7 @@ export async function saveAssessmentDraft(input: AssessmentInput) {
     });
     if (updated.count !== 1) throw new ReviewOperationError("ASSESSMENT_VERSION_CONFLICT", 409);
     return tx.curriculumReviewAssessment.findUniqueOrThrow({ where: { id: existing.id } });
-  });
+  }, REVIEW_TRANSACTION_OPTIONS);
 }
 
 export async function submitAssessment(input: AssessmentInput) {
@@ -229,5 +230,5 @@ export async function submitAssessment(input: AssessmentInput) {
     else if (new Set(independent.map((item) => item.recommendation)).size > 1) nextStatus = "DISAGREEMENT";
     await tx.curriculumReviewTask.update({ where: { id: task.id }, data: { status: nextStatus, version: { increment: 1 } } });
     return tx.curriculumReviewAssessment.findUniqueOrThrow({ where: { id: assessment.id } });
-  });
+  }, REVIEW_TRANSACTION_OPTIONS);
 }

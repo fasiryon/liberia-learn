@@ -4,6 +4,7 @@ import { prisma } from "@/lib/db";
 import { reviewEligibility, type EligibilityUser } from "./eligibility";
 import { ReviewOperationError } from "./errors";
 import { logAuditRequired } from "@/lib/audit";
+import { REVIEW_SERIALIZABLE_TRANSACTION_OPTIONS, REVIEW_TRANSACTION_OPTIONS } from "./transaction";
 
 export const REVIEW_LEASE_MINUTES = 15;
 export const REVIEW_MAX_CONTINUOUS_CLAIM_MINUTES = 120;
@@ -67,7 +68,7 @@ export async function claimReviewTask(input: {
       details: { taskId: input.taskId, slot, credentialId: assignment.credentialId },
     }, tx);
     return assignment;
-  }, { isolationLevel: "Serializable" });
+  }, REVIEW_SERIALIZABLE_TRANSACTION_OPTIONS);
 }
 
 export async function heartbeatReviewClaim(input: {
@@ -97,7 +98,7 @@ export async function heartbeatReviewClaim(input: {
     });
     if (updated.count !== 1) throw new ReviewOperationError("CLAIM_LOST", 409);
     return tx.curriculumReviewAssignment.findUniqueOrThrow({ where: { id: assignment.id } });
-  });
+  }, REVIEW_TRANSACTION_OPTIONS);
 }
 
 export async function releaseReviewClaim(input: {
@@ -136,7 +137,7 @@ export async function releaseReviewClaim(input: {
       schoolId: input.schoolId,
       details: { reason: input.reason ?? null, idempotencyKey: input.idempotencyKey },
     }, tx);
-  });
+  }, REVIEW_TRANSACTION_OPTIONS);
 }
 
 export async function overrideReviewClaim(input: {
@@ -161,5 +162,5 @@ export async function overrideReviewClaim(input: {
       schoolId: input.schoolId,
       details: { reason: input.reason, idempotencyKey: input.idempotencyKey },
     }, tx);
-  });
+  }, REVIEW_TRANSACTION_OPTIONS);
 }

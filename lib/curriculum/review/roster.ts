@@ -10,6 +10,7 @@ import type {
 import { prisma } from "@/lib/db";
 import { logAuditRequiredWithId } from "@/lib/audit";
 import { ReviewOperationError } from "./errors";
+import { REVIEW_SERIALIZABLE_TRANSACTION_OPTIONS, REVIEW_TRANSACTION_OPTIONS } from "./transaction";
 
 type Operator = { id: string; role: Role | string; schoolId?: string | null; isPlatformAdmin?: boolean };
 
@@ -73,7 +74,7 @@ export async function createReviewerProfile(input: {
       details: { idempotencyKey: input.idempotencyKey, authority: profile.authority, subjectQualificationInferred: false },
     }, tx);
     return profile;
-  });
+  }, REVIEW_TRANSACTION_OPTIONS);
 }
 
 export async function updateReviewerAvailability(input: {
@@ -102,7 +103,7 @@ export async function updateReviewerAvailability(input: {
       details: { available: input.available, maxActiveClaims: input.maxActiveClaims },
     }, tx);
     return tx.reviewerProfile.findUniqueOrThrow({ where: { id: profile.id } });
-  });
+  }, REVIEW_TRANSACTION_OPTIONS);
 }
 
 export type CredentialScopeInput = {
@@ -165,7 +166,7 @@ export async function createReviewerCredential(input: {
       details: { idempotencyKey: input.idempotencyKey, credentialType: credential.credentialType, status: credential.status },
     }, tx);
     return credential;
-  });
+  }, REVIEW_TRANSACTION_OPTIONS);
 }
 
 export async function transitionReviewerCredential(input: {
@@ -224,7 +225,7 @@ export async function transitionReviewerCredential(input: {
       },
     });
     return tx.reviewerCredential.findUniqueOrThrow({ where: { id: credential.id }, include: { scopes: true } });
-  }, { isolationLevel: "Serializable" });
+  }, REVIEW_SERIALIZABLE_TRANSACTION_OPTIONS);
 }
 
 export async function imposeReviewerRestriction(input: {
@@ -267,5 +268,5 @@ export async function imposeReviewerRestriction(input: {
         idempotencyKey: input.idempotencyKey,
       },
     });
-  });
+  }, REVIEW_TRANSACTION_OPTIONS);
 }

@@ -4,6 +4,7 @@ import { P2B_POLICY_KEY, P2B_POLICY_VERSION } from "./policy";
 import { P2B_RUBRIC_KEY, P2B_RUBRIC_VERSION, validateRubricResponses, type RubricResponses } from "./rubric";
 import { ReviewOperationError } from "./errors";
 import { logAuditRequired } from "@/lib/audit";
+import { REVIEW_TRANSACTION_OPTIONS } from "./transaction";
 
 export async function createCalibrationSession(input: {
   name: string;
@@ -38,7 +39,7 @@ export async function createCalibrationSession(input: {
       details: { idempotencyKey: input.idempotencyKey, policyKey: session.policyKey, policyVersion: session.policyVersion },
     }, tx);
     return session;
-  });
+  }, REVIEW_TRANSACTION_OPTIONS);
 }
 
 export async function submitCalibrationResult(input: {

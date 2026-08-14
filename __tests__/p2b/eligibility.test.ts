@@ -59,6 +59,11 @@ describe("reviewEligibility", () => {
     await expect(reviewEligibility({ user, taskId: task.id, slot: "FIRST", now: new Date("2026-08-14") }, db())).resolves.toEqual(expect.objectContaining({ eligible: true, credentialId: "credential-1", credentialScopeId: "scope-1" }));
   });
 
+  it("matches scope against the canonical P2-A V1 identity snapshot", async () => {
+    const canonical = { ...task, revision: { ...task.revision, contentSnapshot: { identity: { subject: "MATHEMATICS", grade: 7, contentType: "lesson" } } } };
+    await expect(reviewEligibility({ user, taskId: task.id, slot: "FIRST", now: new Date("2026-08-14") }, db({ task: canonical }))).resolves.toEqual(expect.objectContaining({ eligible: true, credentialId: "credential-1" }));
+  });
+
   it("rejects self review and prior independent reviewers", async () => {
     const authored = { ...task, revision: { ...task.revision, authorUserId: user.id } };
     expect((await reviewEligibility({ user, taskId: task.id, slot: "FIRST" }, db({ task: authored }))).reasons).toContain("AUTHOR_CONFLICT");
