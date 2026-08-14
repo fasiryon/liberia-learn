@@ -69,13 +69,12 @@ export async function enforceLegacyReviewAdapter(input: {
     });
     return;
   }
-  const task = await prisma.curriculumReviewTask.findUnique({
+  const task = await prisma.curriculumReviewTask.findFirst({
     where: {
-      revisionId_policyKey_policyVersion: {
-        revisionId: content.provenance.currentRevision.id,
-        policyKey: policy.policyKey,
-        policyVersion: policy.policyVersion,
-      },
+      revisionId: content.provenance.currentRevision.id,
+      policyKey: policy.policyKey,
+      policyVersion: policy.policyVersion,
+      status: { in: ["QUEUED", "CLAIMED", "IN_REVIEW", "AWAITING_SECOND_REVIEW", "DISAGREEMENT", "ESCALATED"] },
     },
   }) ?? await enqueueCurriculumReviewTask({
     provenanceId: content.provenance.id,

@@ -23,6 +23,8 @@ export async function enqueueCurriculumReviewTask(input: {
   idempotencyKey: string;
   now?: Date;
 }) {
+  const prior = await prisma.curriculumReviewTask.findUnique({ where: { idempotencyKey: input.idempotencyKey } });
+  if (prior) return prior;
   const root = await prisma.curriculumProvenance.findUnique({
     where: { id: input.provenanceId },
     include: {
@@ -56,12 +58,27 @@ export async function enqueueCurriculumReviewTask(input: {
     now: input.now,
   };
   const policy = evaluateReviewPolicy(policyInputs);
+  const existingOpen = await prisma.curriculumReviewTask.findFirst({
+    where: {
+      revisionId: input.revisionId,
+      policyKey: policy.policyKey,
+      policyVersion: policy.policyVersion,
+      status: { in: ["QUEUED", "CLAIMED", "IN_REVIEW", "AWAITING_SECOND_REVIEW", "DISAGREEMENT", "ESCALATED"] },
+    },
+  });
+  if (existingOpen) return existingOpen;
+  const previous = await prisma.curriculumReviewTask.findFirst({
+    where: { revisionId: input.revisionId, policyKey: policy.policyKey, policyVersion: policy.policyVersion },
+    orderBy: { reviewCycle: "desc" },
+    select: { reviewCycle: true },
+  });
   return prisma.curriculumReviewTask.create({
     data: {
       provenanceId: input.provenanceId,
       revisionId: input.revisionId,
       policyKey: policy.policyKey,
       policyVersion: policy.policyVersion,
+      reviewCycle: (previous?.reviewCycle ?? 0) + 1,
       rubricKey: policy.rubricKey,
       rubricVersion: policy.rubricVersion,
       priorityBand: policy.priorityBand,

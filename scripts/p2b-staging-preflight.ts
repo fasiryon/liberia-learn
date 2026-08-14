@@ -7,6 +7,8 @@ import { PRODUCTION_SUPABASE_PROJECT_REF, assertSupabaseMigrationTransport, pars
 const STAGING_REF: string = "yonpfzjczoffhrgibxkz";
 const MIGRATION = "20260813_000001_p2b_qualified_review_operations";
 const MIGRATION_SHA256 = "655AD60067634CAB8277CA0F2DE327B1909BADDCDB3B5C5299E76537283BA1D0";
+const REVIEW_CYCLES_MIGRATION = "20260814_000001_p2b_review_cycles";
+const REVIEW_CYCLES_SHA256 = "3F2FB655B50B9DF524B758993BE22EF5DE1E9C4950077E84A68D99DA186B89C1";
 const REQUIRED_BASE = [
   "20260728_000003_canonical_production_state_baseline",
   "20260803_000001_privileged_identity_hardening",
@@ -58,11 +60,13 @@ function assertStatic(): void {
   if (backup.environment !== "staging" || backup.projectRef !== STAGING_REF || backup.restoreTestStatus !== "passed" || Date.parse(backup.retentionUntilUtc ?? "") <= Date.now()) stop("backup evidence is invalid or expired");
   const path = resolve("prisma", "canonical", "migrations", MIGRATION, "migration.sql");
   if (!existsSync(path) || hash(path) !== MIGRATION_SHA256) stop("P2-B migration hash differs from reviewed local artifact");
+  const cyclesPath = resolve("prisma", "canonical", "migrations", REVIEW_CYCLES_MIGRATION, "migration.sql");
+  if (!existsSync(cyclesPath) || hash(cyclesPath) !== REVIEW_CYCLES_SHA256) stop("P2-B review-cycle migration hash differs from reviewed local artifact");
 }
 
 async function assertLive(postMigration: boolean): Promise<void> {
   const active = runSql(`SELECT COALESCE(string_agg(migration_name, ',' ORDER BY migration_name), '') FROM public."_prisma_migrations" WHERE finished_at IS NOT NULL AND rolled_back_at IS NULL;`);
-  const expected = [...REQUIRED_BASE, ...(postMigration ? [MIGRATION] : [])].sort().join(",");
+  const expected = [...REQUIRED_BASE, ...(postMigration ? [MIGRATION, REVIEW_CYCLES_MIGRATION] : [])].sort().join(",");
   if (active !== expected) stop(`active migration ledger differs: ${active}`);
   if (runSql(`SELECT count(*) FROM public."_prisma_migrations" WHERE finished_at IS NULL AND rolled_back_at IS NULL;`) !== "0") stop("unfinished migration exists");
   if (runSql(`SELECT count(*) FROM (VALUES (to_regclass('public."CurriculumProvenance"')), (to_regclass('public."CurriculumContentRevision"')), (to_regclass('public."CurriculumGovernanceEvent"')), (to_regclass('public."CurriculumEvidence"'))) v(r) WHERE r IS NOT NULL;`) !== "4") stop("P2-A canonical tables are incomplete");
@@ -79,7 +83,7 @@ async function assertLive(postMigration: boolean): Promise<void> {
   if (!health.ok) stop(`staging health returned ${health.status}`);
   console.log(`Staging identity: ${identity}`);
   console.log("Migration client TLS: PASS");
-  console.log(`Active migration rows: ${postMigration ? 7 : 6}`);
+  console.log(`Active migration rows: ${postMigration ? 8 : 6}`);
   console.log(`P2-B tables: ${p2bCount}`);
   console.log(`Staging health: ${health.status}`);
 }
@@ -92,6 +96,7 @@ async function main(): Promise<void> {
   console.log(`Commit: ${git("rev-parse", "HEAD")}`);
   console.log(`Staging project: ${STAGING_REF}`);
   console.log(`P2-B migration SHA-256: ${MIGRATION_SHA256}`);
+  console.log(`P2-B review-cycle migration SHA-256: ${REVIEW_CYCLES_SHA256}`);
   await assertLive(postMigration);
   console.log(postMigration ? "P2-B STAGING POST-MIGRATION PREFLIGHT: PASS" : "P2-B STAGING PRE-MIGRATION PREFLIGHT: PASS");
 }

@@ -2513,6 +2513,7 @@ model CurriculumReviewTask {
   status                 CurriculumReviewTaskStatus   @default(QUEUED)
   policyKey              String
   policyVersion          Int
+  reviewCycle            Int                          @default(1)
   rubricKey              String
   rubricVersion          Int
   priorityBand           CurriculumReviewPriorityBand
@@ -2544,7 +2545,7 @@ model CurriculumReviewTask {
   assessments CurriculumReviewAssessment[]
   decision    CurriculumReviewDecision?
 
-  @@unique([revisionId, policyKey, policyVersion])
+  @@unique([revisionId, policyKey, policyVersion, reviewCycle])
   @@index([status, priorityBand, priorityScore, dueAt, createdAt])
   @@index([provenanceId, revisionId])
   @@index([schoolId, status])

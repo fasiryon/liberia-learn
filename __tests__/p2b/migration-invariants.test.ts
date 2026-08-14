@@ -3,6 +3,7 @@ import { resolve } from "path";
 import { describe, expect, it } from "vitest";
 
 const sql = readFileSync(resolve(process.cwd(), "prisma/canonical/migrations/20260813_000001_p2b_qualified_review_operations/migration.sql"), "utf8");
+const reviewCyclesSql = readFileSync(resolve(process.cwd(), "prisma/canonical/migrations/20260814_000001_p2b_review_cycles/migration.sql"), "utf8");
 
 describe("P2-B database invariants", () => {
   it.each([
@@ -19,4 +20,10 @@ describe("P2-B database invariants", () => {
     "CurriculumReviewTask_revisionId_provenanceId_fkey",
     "CurriculumReviewDecision_integrity_guard",
   ])("contains %s", (guard) => expect(sql).toContain(guard));
+
+  it("supports sequential governed review cycles on an exact revision", () => {
+    expect(reviewCyclesSql).toContain('ADD COLUMN "reviewCycle" INTEGER NOT NULL DEFAULT 1');
+    expect(reviewCyclesSql).toContain('"revisionId", "policyKey", "policyVersion", "reviewCycle"');
+    expect(reviewCyclesSql).toContain('CHECK ("reviewCycle" > 0)');
+  });
 });
