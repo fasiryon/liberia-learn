@@ -4,7 +4,7 @@ import { existsSync, readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { PRODUCTION_SUPABASE_PROJECT_REF, assertSupabaseMigrationTransport, parseSupabaseDatabaseTarget } from "../lib/database-target";
 
-const STAGING_REF = "yonpfzjczoffhrgibxkz";
+const STAGING_REF: string = "yonpfzjczoffhrgibxkz";
 const MIGRATION = "20260813_000001_p2b_qualified_review_operations";
 const MIGRATION_SHA256 = "655AD60067634CAB8277CA0F2DE327B1909BADDCDB3B5C5299E76537283BA1D0";
 const REQUIRED_BASE = [
