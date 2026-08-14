@@ -21,7 +21,8 @@ SELECT
     )) AS archived_ledger_md5
 FROM p2a_legacy_migration_history._prisma_migrations;
 
-SELECT migration_name, checksum, finished_at IS NOT NULL AS finished,
+SELECT migration_name, checksum, started_at, finished_at, rolled_back_at,
+  finished_at IS NOT NULL AS finished,
   rolled_back_at IS NOT NULL AS rolled_back, applied_steps_count
 FROM public._prisma_migrations
 ORDER BY started_at, migration_name;

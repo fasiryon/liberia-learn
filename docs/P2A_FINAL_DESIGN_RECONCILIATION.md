@@ -1,16 +1,19 @@
-# P2-A Final Design Reconciliation Before Schema Approval
+# P2-A Final Design Reconciliation and Execution Program
 
 ## Document status
 
 - Sprint: P2-A Curriculum Provenance
-- Pass: Final design reconciliation
+- Pass: Final design reconciliation and production execution
 - Architecture direction: Dedicated provenance architecture approved
-- Implementation: Not started
-- Schema authorization: Not yet granted
+- Implementation: Complete in production as of 2026-08-14
+- Schema authorization: Granted and executed
 - Alignment normalization: Explicitly deferred beyond initial P2-A
 - Primary discovery source: [`P2A_CURRICULUM_PROVENANCE_DISCOVERY_AND_SCHEMA_PROPOSAL.md`](P2A_CURRICULUM_PROVENANCE_DISCOVERY_AND_SCHEMA_PROPOSAL.md)
+- Production evidence: [`ops/P2A_PRODUCTION_CUTOVER_RECORD.md`](ops/P2A_PRODUCTION_CUTOVER_RECORD.md)
 
-No Prisma schema, migration, backfill, production data, generation flow, approval flow, or application code was changed while producing this design.
+The design statements below remain the approved architecture. Their original
+design-only status is historical. The architecture was implemented, proven in
+staging, and completed in production under the recorded cutover program.
 
 ## 1. Revised architecture
 

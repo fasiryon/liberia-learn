@@ -1,8 +1,8 @@
 # P2-A Staging Migration Execution Runbook
 
-Status: P2-A STAGING COMPLETE; production deployment awaits final authorization
-Scope: Staging database only
-Production execution: Prohibited
+Status: P2-A STAGING AND PRODUCTION COMPLETE
+Scope: Historical staging procedure plus production closure reference
+Production execution: Complete; do not rerun these migration steps
 
 > RECOVERY APPROVED (2026-08-12): Migration A and B1 applied successfully on
 > canonical staging. Prisma 6.19.2 attempted B2 inside a transaction and
@@ -373,3 +373,21 @@ Remove-Item Env:P2A_STAGING_DATABASE_URL -ErrorAction SilentlyContinue
    index validity, and guard-suite result in the staging execution report.
 8. Stop for the next approval gate. Do not proceed to writers, readers,
    generation changes, approval changes, backfill, or production migration.
+# Production closure update
+
+P2-A completed its controlled production cutover on 2026-08-14. The immutable
+execution record, migration timestamps, recovery reference, deployment IDs,
+backfill distribution, validation results, and known debt are in
+[`P2A_PRODUCTION_CUTOVER_RECORD.md`](P2A_PRODUCTION_CUTOVER_RECORD.md).
+
+Production uses the reconciled canonical migration root. Its authoritative
+status command is:
+
+```powershell
+npx prisma migrate status --schema prisma/canonical/schema.prisma
+```
+
+Do not use the superseded legacy `prisma/migrations` directory as a production
+ledger-status comparison. The broad production RLS backlog remains outside
+P2-A and is tracked in
+[`../security/PRODUCTION_RLS_EXPOSURE_AUDIT.md`](../security/PRODUCTION_RLS_EXPOSURE_AUDIT.md).

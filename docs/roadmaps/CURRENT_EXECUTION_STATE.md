@@ -7,6 +7,28 @@ Live execution tracking for the final closeout program.
 
 - **Canonical plan:** `docs/roadmaps/NATIONAL_ROLLOUT_EXECUTION_PLAN.md`
 - **Escalation contract:** `docs/agents/ADVISOR_ESCALATION_CONTRACT.md`
+- **P2-A COMPLETE IN PRODUCTION (2026-08-14).** Production project
+  `bnphuinpvgpmebcsvmsp` was positively identified and staging project
+  `yonpfzjczoffhrgibxkz` excluded. The separately reviewed migration-ledger
+  reconciliation preserved 162 legacy rows in a denied archive and established
+  an unambiguous six-migration canonical ledger. PostgreSQL 17 recovery proof,
+  client-access precheck, A/B1/B2/C, all immutability guards, writers-first-off
+  deployment, controlled smoke writes, dry run, canary and full 1,105-row
+  backfill, reader cutover, evidence, governance, revocation, reinstatement,
+  successor replacement, and signed offline invalidation all PASS. Final
+  distribution: 2 VERIFIED, 1 PARTIAL, 1,102 UNVERIFIED; zero missing roots,
+  bad pointers, duplicate sequences, unaudited events, backfill anomalies,
+  long transactions, or ungranted locks. Final production commit
+  `9f684eb1ba1cedba08f0f8ca7bb9514999bd8d37`, deployment
+  `dpl_FtbWzrqh7QaK2B2YMVsLBYdu8sSD`, build `bld_5ba35sgyb`, stable alias
+  `https://liberia-learn.vercel.app`, Ready. Prisma validate/generate,
+  TypeScript, writer guard, focused tests, PostgreSQL 17 canonical
+  bootstrap/restore, exact production build, and the uncontended full Vitest
+  run at 4,669/4,669 across 571 files PASS. Full evidence is in
+  `docs/ops/P2A_PRODUCTION_CUTOVER_RECORD.md`. The broad 197-table RLS program
+  was not performed and remains tracked separately. Next: resume the canonical
+  rollout plan after P2-A; do not reopen this closed sprint without a new
+  reviewed scope.
 - **P2-A FEATURE COMPLETE IN STAGING; PRODUCTION CUTOVER AWAITS FINAL
   AUTHORIZATION (2026-08-13).** Application provenance is complete on branch
   `codex/p2a-provenance-step1`. Commit `ca79bbfc` added the snapshot/hash
