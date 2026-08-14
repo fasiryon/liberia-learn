@@ -15,7 +15,7 @@ type Operator = { id: string; role: Role | string; schoolId?: string | null; isP
 
 function canAdministerProfile(operator: Operator, authority: CurriculumReviewAuthority, schoolId?: string | null): boolean {
   if (operator.isPlatformAdmin) return true;
-  if (authority === "MOE") return operator.role === "MOE_SUPER_ADMIN";
+  if (authority === "MOE") return operator.role === "MOE_SUPER_ADMIN" || (operator.role === "MOE_OFFICIAL" && operator.isPlatformAdmin === true);
   if (authority === "SCHOOL") return operator.role === "ADMIN" && Boolean(operator.schoolId) && operator.schoolId === schoolId;
   return false;
 }
@@ -26,7 +26,7 @@ function canVerifyCredential(
 ): boolean {
   if (operator.id === credential.reviewerProfile.userId) return false;
   if (credential.credentialType === "WAEC_SUBJECT_REVIEW") return false;
-  if (credential.authority === "MOE") return operator.role === "MOE_SUPER_ADMIN";
+  if (credential.authority === "MOE") return operator.role === "MOE_SUPER_ADMIN" || (operator.role === "MOE_OFFICIAL" && operator.isPlatformAdmin === true);
   if (credential.authority === "SCHOOL") {
     return operator.role === "ADMIN" && Boolean(operator.schoolId) && operator.schoolId === credential.reviewerProfile.schoolId;
   }
