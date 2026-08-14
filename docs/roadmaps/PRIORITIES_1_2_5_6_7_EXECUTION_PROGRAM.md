@@ -245,6 +245,17 @@ Deliverables:
   false positives and false negatives.
 - Release gates and rollback thresholds connected to measured quality.
 
+## Future program: Learner Experience V2 (not started)
+
+`docs/product/LEARNER_EXPERIENCE_V2_INTERACTIVE_RUNTIME.md` is the canonical
+capture of an approved future major program (Learner Experience V2 /
+Interactive Learning Runtime, Curriculum V2, Global Pedagogy Intelligence,
+Teacher Experience V2, adaptive mastery/remediation expansion). It is
+sequenced to start after P2-B, P2-C, and P5-A close, and does not change
+their order. It uses its own `Phase A`-`F` lettering, deliberately distinct from this
+document's `P1`-`P7` scheme, to avoid implying it is next in this specific
+numbered queue. Do not drop it while executing P2/P5/P6/P7.
+
 ## Program-level outcome gate
 
 This program is complete only when:
