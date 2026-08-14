@@ -5,7 +5,7 @@ const expectedRef = "bnphuinpvgpmebcsvmsp";
 const url = process.env.DATABASE_URL;
 if (!url) throw new Error("DATABASE_URL is required");
 const target = parseSupabaseDatabaseTarget(url);
-if (target.projectRef !== expectedRef || target.projectRef === "yonpfzjczoffhrgibxkz") throw new Error("production dry run target guard failed");
+if (target.projectRef !== expectedRef) throw new Error("production dry run target guard failed");
 const prisma = new PrismaClient();
 async function main() {
   const [users, profiles, credentials, revisions, openTasks] = await Promise.all([

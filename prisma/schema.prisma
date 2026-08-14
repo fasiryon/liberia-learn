@@ -1985,12 +1985,14 @@ enum CurriculumGovernanceEventType {
 
 enum CurriculumGovernanceActorType {
   USER
+  AI
   SYSTEM
   LEGACY_UNKNOWN
 }
 
 enum CurriculumApprovalBasis {
   HUMAN_REVIEW
+  AI_PLATFORM_REVIEW
   AUTOMATED_RISK_POLICY
   ROLE_POLICY
   SCHOOL_POLICY
@@ -2096,6 +2098,31 @@ enum CurriculumReviewAssignmentStatus {
 enum CurriculumReviewAssessmentStatus {
   DRAFT
   SUBMITTED
+}
+
+enum CurriculumReviewActorType {
+  HUMAN
+  AI
+}
+
+enum AIReviewSpecialty {
+  SUBJECT_MATTER
+  PEDAGOGY
+  ASSESSMENT
+  LIBERIAN_LOCALIZATION
+  FACT_CHECK
+  ACCESSIBILITY
+  SAFETY
+  HISTORY_CIVICS
+  WAEC_ALIGNMENT
+}
+
+enum AIReviewMode {
+  HUMAN_REQUIRED
+  AI_ALLOWED
+  AI_REQUIRED
+  AI_PLUS_HUMAN
+  EXTERNAL_AUTHORITY_REQUIRED
 }
 
 enum CurriculumReviewRecommendation {
@@ -2309,6 +2336,7 @@ model CurriculumGovernanceEvent {
   eventType                     CurriculumGovernanceEventType
   actorType                     CurriculumGovernanceActorType
   actorUserId                   String?
+  aiReviewAgentId               String?
   actorLabel                    String?
   approvalBasis                 CurriculumApprovalBasis?
   reviewAuthority               CurriculumReviewAuthority?
@@ -2332,6 +2360,7 @@ model CurriculumGovernanceEvent {
   revision            CurriculumContentRevision  @relation("CurriculumGovernanceTargetRevision", fields: [revisionId, provenanceId], references: [id, provenanceId], onDelete: Restrict)
   replacementRevision CurriculumContentRevision? @relation("CurriculumGovernanceReplacementRevision", fields: [replacementRevisionId], references: [id], onDelete: Restrict)
   actor               User?                      @relation("CurriculumGovernanceActor", fields: [actorUserId], references: [id], onDelete: Restrict)
+  aiReviewAgent       AIReviewAgent?            @relation(fields: [aiReviewAgentId], references: [id], onDelete: Restrict)
   auditLog            AuditLog?                  @relation("CurriculumGovernanceAudit", fields: [auditLogId], references: [id], onDelete: Restrict)
   reviewDecision      CurriculumReviewDecision?
 
@@ -2543,6 +2572,7 @@ model CurriculumReviewTask {
   createdBy   User?                        @relation("CurriculumReviewTaskCreator", fields: [createdByUserId], references: [id], onDelete: Restrict)
   assignments CurriculumReviewAssignment[]
   assessments CurriculumReviewAssessment[]
+  aiAssessments CurriculumAIReviewAssessment[]
   decision    CurriculumReviewDecision?
 
   @@unique([revisionId, policyKey, policyVersion, reviewCycle])
@@ -2585,10 +2615,11 @@ model CurriculumReviewAssignment {
 model CurriculumReviewAssessment {
   id                    String                           @id @default(cuid())
   taskId                String
-  assignmentId          String                           @unique
-  reviewerProfileId     String
-  credentialId          String
-  credentialScopeId     String
+  assignmentId          String?                          @unique
+  reviewerProfileId     String?
+  credentialId          String?
+  credentialScopeId     String?
+  actorType             CurriculumReviewActorType       @default(HUMAN)
   status                CurriculumReviewAssessmentStatus @default(DRAFT)
   reviewerRoleSnapshot  String
   qualificationSnapshot Json
@@ -2606,14 +2637,68 @@ model CurriculumReviewAssessment {
   version               Int                              @default(1)
 
   task               CurriculumReviewTask       @relation(fields: [taskId], references: [id], onDelete: Restrict)
-  assignment         CurriculumReviewAssignment @relation(fields: [assignmentId], references: [id], onDelete: Restrict)
-  reviewerProfile    ReviewerProfile            @relation(fields: [reviewerProfileId], references: [id], onDelete: Restrict)
-  credential         ReviewerCredential         @relation(fields: [credentialId], references: [id], onDelete: Restrict)
-  credentialScope    ReviewerCredentialScope    @relation(fields: [credentialScopeId], references: [id], onDelete: Restrict)
+  assignment         CurriculumReviewAssignment? @relation(fields: [assignmentId], references: [id], onDelete: Restrict)
+  reviewerProfile    ReviewerProfile?           @relation(fields: [reviewerProfileId], references: [id], onDelete: Restrict)
+  credential         ReviewerCredential?        @relation(fields: [credentialId], references: [id], onDelete: Restrict)
+  credentialScope    ReviewerCredentialScope?   @relation(fields: [credentialScopeId], references: [id], onDelete: Restrict)
   resolutionDecision CurriculumReviewDecision?  @relation("CurriculumReviewResolverAssessment")
 
   @@index([taskId, status])
   @@index([reviewerProfileId, submittedAt])
+}
+
+model AIReviewAgent {
+  id               String          @id @default(cuid())
+  agentKey         String          @unique
+  name             String
+  specialty        AIReviewSpecialty
+  subjectScope     String[]        @default([])
+  gradeMin         Int?
+  gradeMax         Int?
+  curriculumScope  ReviewerCurriculumScope[] @default([])
+  provider         String
+  model            String
+  promptKey        String
+  promptVersion    String
+  promptHash       String
+  policyKey        String
+  policyVersion    Int
+  rubricKey        String
+  rubricVersion    Int
+  minimumConfidence Int             @default(70)
+  enabled          Boolean         @default(false)
+  createdAt        DateTime        @default(now())
+  updatedAt        DateTime        @updatedAt
+  assessments      CurriculumAIReviewAssessment[]
+  decisions        CurriculumReviewDecision[]
+  governanceEvents  CurriculumGovernanceEvent[]
+
+  @@index([specialty, enabled])
+}
+
+model CurriculumAIReviewAssessment {
+  id                 String                         @id @default(cuid())
+  taskId             String
+  aiReviewAgentId    String
+  status             CurriculumReviewAssessmentStatus @default(SUBMITTED)
+  rubricKey          String
+  rubricVersion      Int
+  rubricResponses    Json
+  recommendation     CurriculumReviewRecommendation?
+  rationale          String                         @db.Text
+  evidenceRefs       Json?
+  confidence         Int
+  aiReviewSnapshot   Json
+  reviewCorrelationId String
+  submittedAt        DateTime                       @default(now())
+  idempotencyKey     String                         @unique
+  createdAt          DateTime                       @default(now())
+
+  task               CurriculumReviewTask @relation(fields: [taskId], references: [id], onDelete: Restrict)
+  aiReviewAgent      AIReviewAgent        @relation(fields: [aiReviewAgentId], references: [id], onDelete: Restrict)
+
+  @@index([taskId, submittedAt])
+  @@index([aiReviewAgentId, submittedAt])
 }
 
 model CurriculumReviewDecision {
@@ -2625,6 +2710,9 @@ model CurriculumReviewDecision {
   resolverAssessmentId  String?                         @unique
   resolverUserId        String?
   qualificationSnapshot Json?
+  actorType             CurriculumReviewActorType @default(HUMAN)
+  aiReviewAgentId       String?
+  aiAssessmentIds       String[] @default([])
   governanceEventId     String?                         @unique
   auditLogId            String                          @unique
   idempotencyKey        String                          @unique
@@ -2636,6 +2724,7 @@ model CurriculumReviewDecision {
   resolver           User?                       @relation("CurriculumReviewDecisionResolver", fields: [resolverUserId], references: [id], onDelete: Restrict)
   governanceEvent    CurriculumGovernanceEvent?  @relation(fields: [governanceEventId], references: [id], onDelete: Restrict)
   auditLog           AuditLog                    @relation("CurriculumReviewDecisionAudit", fields: [auditLogId], references: [id], onDelete: Restrict)
+  aiReviewAgent      AIReviewAgent?              @relation(fields: [aiReviewAgentId], references: [id], onDelete: Restrict)
 }
 
 model ReviewCalibrationSession {

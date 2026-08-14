@@ -5,7 +5,7 @@ param(
   [Parameter(Mandatory = $true)]
   [string]$EvidenceLocation,
 
-  [ValidateSet("pre-p2a-migration-a", "post-p2a-migration-c")]
+  [ValidateSet("pre-p2a-migration-a", "post-p2a-migration-c", "post-p2b-human")]
   [string]$MigrationBoundary = "pre-p2a-migration-a"
 )
 
@@ -112,7 +112,7 @@ SELECT concat_ws('|',
 );
 "@
   $sourceParts = $sourceState.Split('|')
-  $expectedActiveMigrations = if ($MigrationBoundary -eq "pre-p2a-migration-a") { 146 } else { 6 }
+  $expectedActiveMigrations = if ($MigrationBoundary -eq "pre-p2a-migration-a") { 146 } else { if ($MigrationBoundary -eq "post-p2b-human") { 8 } else { 6 } }
   $expectedP2ARows = if ($MigrationBoundary -eq "pre-p2a-migration-a") { 0 } else { 5 }
   if ($sourceParts.Count -ne 5 -or
       [int]$sourceParts[0] -ne $expectedActiveMigrations -or

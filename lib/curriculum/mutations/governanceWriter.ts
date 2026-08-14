@@ -26,6 +26,7 @@ export type GovernanceInput = {
   eventType: CurriculumGovernanceEventType;
   actorType: CurriculumGovernanceActorType;
   actorUserId?: string | null;
+  aiReviewAgentId?: string | null;
   actorLabel?: string | null;
   approvalBasis?: CurriculumApprovalBasis | null;
   reviewAuthority?: CurriculumReviewAuthority | null;
@@ -82,6 +83,9 @@ const REASON_REQUIRED = new Set<CurriculumGovernanceEventType>([
 function validateGovernance(input: GovernanceInput, writersEnabled: boolean): void {
   if (input.actorType === "USER" && !input.actorUserId) {
     throw new Error("USER governance events require actorUserId");
+  }
+  if (input.actorType === "AI" && !input.aiReviewAgentId) {
+    throw new Error("AI governance events require aiReviewAgentId");
   }
   if (input.actorType === "SYSTEM" && !input.actorLabel?.trim()) {
     throw new Error("SYSTEM governance events require actorLabel");
@@ -260,6 +264,7 @@ export async function appendCurriculumGovernanceEventInTransaction(
         eventType: input.eventType,
         actorType: input.actorType,
         actorUserId: input.actorUserId ?? null,
+        aiReviewAgentId: input.aiReviewAgentId ?? null,
         actorLabel: input.actorLabel ?? null,
         approvalBasis: input.approvalBasis ?? null,
         reviewAuthority: input.reviewAuthority ?? null,

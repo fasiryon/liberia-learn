@@ -25,9 +25,17 @@ function run(command, commandArgs, options = {}) {
     cwd: process.cwd(),
     encoding: "utf8",
     stdio: options.capture ? "pipe" : "inherit",
-    env: localTool === "tsc"
-      ? { ...process.env, NODE_OPTIONS: process.env.VALIDATE_CHANGED_NODE_OPTIONS ?? "--max-old-space-size=8192" }
-      : process.env,
+    env: localTool === "prisma"
+      ? {
+          ...process.env,
+          // Schema validation/generation do not connect to a database. Keep the
+          // fast local gate usable when developer secrets are intentionally absent.
+          DATABASE_URL: process.env.DATABASE_URL ?? "postgresql://validate:validate@localhost:5432/validate",
+          DIRECT_URL: process.env.DIRECT_URL ?? "postgresql://validate:validate@localhost:5432/validate",
+        }
+      : localTool === "tsc"
+        ? { ...process.env, NODE_OPTIONS: process.env.VALIDATE_CHANGED_NODE_OPTIONS ?? "--max-old-space-size=8192" }
+        : process.env,
   });
   if (result.error) throw result.error;
   if (result.status !== 0) {

@@ -950,3 +950,8 @@ export function isP2bReviewOperationsEnabled(): boolean {
 export function isP2bReviewShadowEnabled(): boolean {
   return isFlagEnabled("P2B_REVIEW_SHADOW_ENABLED");
 }
+
+/** Platform AI SME review. Default OFF and never grants SCHOOL, MOE, or WAEC authority. */
+export function isP2bAiReviewEnabled(): boolean {
+  return isFlagEnabled("P2B_AI_REVIEW_ENABLED");
+}
