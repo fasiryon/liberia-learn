@@ -5,6 +5,31 @@ Live execution tracking for the final closeout program.
 
 ## Resume here
 
+- **P2-B QUALIFIED REVIEW OPERATIONS FEATURE COMPLETE IN STAGING; PRODUCTION
+  ACTIVATION AWAITS FINAL AUTHORIZATION (2026-08-14).** Option C is implemented
+  on branch `codex/p2b-qualified-review-operations`: P2-A remains canonical;
+  eleven normalized reviewer, credential, task, assessment, decision, and
+  calibration models provide exact-revision operations. Cross-school
+  moderation was remediated first. Deterministic policy/eligibility, scoped
+  credentials, lease concurrency, blind independent review, disagreement and
+  resolver workflows, immutable qualification snapshots, atomic P2-B/P2-A/
+  AuditLog composition, legacy adapters, reviewer UI, notifications,
+  reporting, calibration, and P2-C credential extension points are active only
+  on the dedicated staging Preview. Staging has eight canonical migration rows
+  and eleven P2-B tables; post-migration preflight PASS. Run
+  `p2b-e2e-1786722950519` passed all 33 required scenarios. Final gate: Prisma
+  validate/generate PASS; TypeScript PASS; focused P2-B 30/30 PASS; full
+  Vitest clean restart 4,699/4,699 across 576 files PASS after four unrelated
+  timeout-only cases passed 52/52 unchanged in isolation; production build
+  PASS with BUILD_ID `RJzxDtptoMf0xxTDNyFDF`; branch Preview deployment
+  `dpl_BexakpQ4xR8FKqmo4WRZKBa54nfB` Ready and health HTTP 200. The branch
+  Preview flags are operations=true and shadow=true against approved staging
+  ref `yonpfzjczoffhrgibxkz`. `npm run validate:changed` is now the fast
+  implementation-loop gate; full builds remain final-gate/CI work. Production
+  project `bnphuinpvgpmebcsvmsp` was not changed. Full evidence:
+  `docs/ops/P2B_STAGING_COMPLETION_RECORD.md`. Next: human review and explicit
+  production authorization. Do not migrate production, seed a production
+  roster, or activate production P2-B without that authorization.
 - **Canonical plan:** `docs/roadmaps/NATIONAL_ROLLOUT_EXECUTION_PLAN.md`
 - **Escalation contract:** `docs/agents/ADVISOR_ESCALATION_CONTRACT.md`
 - **P2-A COMPLETE IN PRODUCTION (2026-08-14).** Production project

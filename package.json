@@ -11,6 +11,7 @@
     "generate-icons": "node scripts/generate-icons.mjs",
     "test": "vitest run",
     "test:watch": "vitest",
+    "validate:changed": "node scripts/validate-changed.mjs",
     "seed:demo": "ts-node --compiler-options {\"module\":\"CommonJS\"} scripts/seed-demo.ts",
     "embed:curriculum": "tsx scripts/embed-curriculum.ts",
     "audit:lessons": "tsx scripts/audit-lesson-depth.ts",
