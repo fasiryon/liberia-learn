@@ -940,3 +940,13 @@ export function isReplayConsoleEnabled(): boolean {
 export function isAgentCronEnabled(): boolean {
   return isFlagEnabled("AGENT_CRON_ENABLED");
 }
+
+/** P2-B qualified review operations. DEFAULT OFF in every environment. */
+export function isP2bReviewOperationsEnabled(): boolean {
+  return isFlagEnabled("P2B_REVIEW_OPERATIONS_ENABLED");
+}
+
+/** Computes P2-B policy and parity data without granting decision authority. */
+export function isP2bReviewShadowEnabled(): boolean {
+  return isFlagEnabled("P2B_REVIEW_SHADOW_ENABLED");
+}
