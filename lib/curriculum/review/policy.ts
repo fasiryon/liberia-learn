@@ -20,6 +20,7 @@ export type ReviewPolicyInput = {
   riskReasons?: string[];
   nationalPublication?: boolean;
   waecAuthoritative?: boolean;
+  waecBaselineAlignment?: boolean;
   importedOrLicensed?: boolean;
   sourceRightsRequired?: boolean;
   reinstatementAfterRevocation?: boolean;
@@ -79,6 +80,7 @@ export function evaluateReviewPolicy(input: ReviewPolicyInput): ReviewPolicyOutp
     input.riskBand === "CRITICAL" ||
     input.nationalPublication === true ||
     input.waecAuthoritative === true ||
+    input.waecBaselineAlignment === true ||
     sensitive ||
     input.reinstatementAfterRevocation === true ||
     input.policyException === true;
@@ -89,6 +91,7 @@ export function evaluateReviewPolicy(input: ReviewPolicyInput): ReviewPolicyOutp
       : input.requestedAuthority;
   const specialistCredentialTypes: ReviewerCredentialType[] = [];
   if (input.waecAuthoritative) specialistCredentialTypes.push("WAEC_SUBJECT_REVIEW");
+  if (input.waecBaselineAlignment) specialistCredentialTypes.push("STANDARDS_ALIGNMENT");
   if (input.importedOrLicensed) specialistCredentialTypes.push("LICENSED_SOURCE_REVIEW");
   if (input.sourceRightsRequired) specialistCredentialTypes.push("SOURCE_RIGHTS_VERIFICATION");
   if (["HEALTH", "SAFETY"].includes(subject)) specialistCredentialTypes.push("SAFETY_REVIEW");
@@ -97,6 +100,7 @@ export function evaluateReviewPolicy(input: ReviewPolicyInput): ReviewPolicyOutp
 
   const evidenceReasonCodes: string[] = [];
   if (input.waecAuthoritative) evidenceReasonCodes.push("WAEC_AUTHORITATIVE");
+  if (input.waecBaselineAlignment) evidenceReasonCodes.push("WAEC_BASELINE_ALIGNMENT");
   if (input.importedOrLicensed) evidenceReasonCodes.push("IMPORTED_OR_LICENSED_SOURCE");
   if (input.sourceRightsRequired) evidenceReasonCodes.push("SOURCE_RIGHTS");
   if (input.riskBand === "HIGH" || input.riskBand === "CRITICAL") evidenceReasonCodes.push("HIGH_RISK_FACTUAL_CLAIM");
@@ -124,6 +128,7 @@ export function evaluateReviewPolicy(input: ReviewPolicyInput): ReviewPolicyOutp
     ...(input.riskReasons ?? []),
     ...(input.nationalPublication ? ["NATIONAL_PUBLICATION"] : []),
     ...(input.waecAuthoritative ? ["WAEC_AUTHORITATIVE"] : []),
+    ...(input.waecBaselineAlignment ? ["WAEC_BASELINE_ALIGNMENT"] : []),
     ...(sensitive ? ["SENSITIVE_SUBJECT"] : []),
     ...(!input.provenanceComplete ? ["PROVENANCE_INCOMPLETE"] : []),
     ...(evidenceRequired && (input.evidenceCount ?? 0) === 0 ? ["EVIDENCE_MISSING"] : []),
@@ -133,6 +138,7 @@ export function evaluateReviewPolicy(input: ReviewPolicyInput): ReviewPolicyOutp
     Math.max(0, Math.min(999, input.riskScore ?? 0)) +
     (input.nationalPublication ? 100 : 0) +
     (input.waecAuthoritative ? 100 : 0) +
+    (input.waecBaselineAlignment ? 75 : 0) +
     (sensitive ? 50 : 0) +
     (!input.provenanceComplete ? 75 : 0) +
     (evidenceRequired && (input.evidenceCount ?? 0) === 0 ? 75 : 0);

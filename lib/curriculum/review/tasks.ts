@@ -14,6 +14,7 @@ export async function enqueueCurriculumReviewTask(input: {
   requestedAuthority: ReviewPolicyInput["requestedAuthority"];
   nationalPublication?: boolean;
   waecAuthoritative?: boolean;
+  waecBaselineAlignment?: boolean;
   importedOrLicensed?: boolean;
   sourceRightsRequired?: boolean;
   reinstatementAfterRevocation?: boolean;
@@ -49,6 +50,7 @@ export async function enqueueCurriculumReviewTask(input: {
     riskReasons: input.riskReasons,
     nationalPublication: input.nationalPublication,
     waecAuthoritative: input.waecAuthoritative,
+    waecBaselineAlignment: input.waecBaselineAlignment,
     importedOrLicensed: input.importedOrLicensed,
     sourceRightsRequired: input.sourceRightsRequired,
     reinstatementAfterRevocation: input.reinstatementAfterRevocation,
@@ -95,6 +97,7 @@ export async function enqueueCurriculumReviewTask(input: {
         policyInputs: {
           nationalPublication: Boolean(input.nationalPublication),
           waecAuthoritative: Boolean(input.waecAuthoritative),
+          waecBaselineAlignment: Boolean(input.waecBaselineAlignment),
           importedOrLicensed: Boolean(input.importedOrLicensed),
           sourceRightsRequired: Boolean(input.sourceRightsRequired),
           reinstatementAfterRevocation: Boolean(input.reinstatementAfterRevocation),
@@ -194,6 +197,7 @@ export async function reprioritizeReviewTask(input: {
       riskReasons: task.riskReasons,
       nationalPublication: flags.nationalPublication,
       waecAuthoritative: flags.waecAuthoritative,
+      waecBaselineAlignment: flags.waecBaselineAlignment,
       importedOrLicensed: flags.importedOrLicensed,
       sourceRightsRequired: flags.sourceRightsRequired,
       reinstatementAfterRevocation: flags.reinstatementAfterRevocation,

@@ -2192,6 +2192,160 @@ enum CurriculumEvidenceStatus {
   WITHDRAWN
 }
 
+enum CurriculumAuthorityType {
+  LIBERIA_MOE
+  WAEC_LIBERIA
+  WAEC_REGIONAL
+  GOVERNMENT
+  OTHER_VERIFIED
+}
+
+enum CurriculumAuthoritySourceType {
+  WEB_PAGE
+  PDF
+  ZIP_ARCHIVE
+  REGULATION
+  SYLLABUS
+  EXAM_FRAMEWORK
+  EXAMINER_REPORT
+  OTHER
+}
+
+enum CurriculumAuthoritySourceStatus {
+  ACTIVE
+  SUPERSEDED
+  WITHDRAWN
+  UNAVAILABLE
+}
+
+enum CurriculumRightsStatus {
+  PUBLIC_DOMAIN
+  OPEN_LICENSE
+  PERMISSION_GRANTED
+  LICENSED
+  REFERENCE_ONLY
+  RIGHTS_UNKNOWN
+  PROHIBITED
+  EXPIRED
+  REVOKED
+}
+
+enum CurriculumPermittedAction {
+  CITATION
+  METADATA
+  INTERNAL_ANALYSIS
+  AI_ANALYSIS
+  STORAGE
+  LEARNER_DISPLAY
+  REPRODUCTION
+  OFFLINE_DISTRIBUTION
+  TRANSFORMATION
+}
+
+enum CurriculumExtractionMethod {
+  MANUAL
+  STRUCTURED_IMPORT
+  AI_ASSISTED
+}
+
+enum CurriculumVerificationStatus {
+  VERIFIED
+  PARTIAL
+  UNVERIFIED
+  STALE
+  SOURCE_MISSING
+  RIGHTS_LIMITED
+}
+
+enum AssessmentFrameworkKind {
+  BASELINE
+  BENCHMARK
+}
+
+enum ExternalAuthorityStatus {
+  NOT_CLAIMED
+  VERIFIED_AUTHORIZATION
+}
+
+enum BaselineCompetencyCriticality {
+  CRITICAL
+  HIGH
+  STANDARD
+  OPTIONAL
+}
+
+enum CurriculumTargetLevel {
+  MASTERY
+  EXTENSION
+}
+
+enum CognitiveDemandCategory {
+  RECALL
+  COMPREHENSION
+  PROCEDURAL_FLUENCY
+  APPLICATION
+  ANALYSIS
+  REASONING
+  EVALUATION
+  CREATION
+  TRANSFER
+  PROBLEM_MODELING
+}
+
+enum CurriculumAlignmentRelationship {
+  DIRECT
+  SUPPORTING
+  PREREQUISITE
+  PARTIAL
+  ENRICHMENT
+  NOT_ALIGNED
+  UNKNOWN
+}
+
+enum CurriculumDepthRelation {
+  BELOW_BASELINE
+  MEETS_BASELINE
+  ABOVE_BASELINE
+  SIGNIFICANTLY_ABOVE_BASELINE
+  NOT_COMPARABLE
+  UNKNOWN
+}
+
+enum CurriculumAlignmentStatus {
+  DRAFT
+  AI_ASSESSED
+  PLATFORM_REVIEWED
+  STALE
+  REJECTED
+  SUPERSEDED
+}
+
+enum CurriculumCoverageDegree {
+  NONE
+  PARTIAL
+  FULL
+}
+
+enum CurriculumCoverageStatus {
+  COMPLETE_ABOVE_BASELINE
+  COMPLETE_AT_BASELINE
+  PARTIAL
+  BELOW_BASELINE
+  NOT_APPLICABLE
+  UNKNOWN
+}
+
+enum AlignmentValidityStatus {
+  ACTIVE
+  STALE
+  SUPERSEDED
+}
+
+enum ExamPreparationContentOrigin {
+  LIBERIALEARN_GENERATED_EXAM_STYLE
+  LICENSED_EXTERNAL
+}
+
 model CurriculumContent {
   id                       String                       @id @default(cuid())
   contentId                String                       @unique
@@ -2308,16 +2462,18 @@ model CurriculumContentRevision {
   backfillRunId           String?
   createdAt               DateTime               @default(now())
 
-  provenance           CurriculumProvenance        @relation("CurriculumProvenanceRevisions", fields: [provenanceId], references: [id], onDelete: Restrict)
-  currentForProvenance CurriculumProvenance?       @relation("CurriculumCurrentRevision")
-  author               User?                       @relation("CurriculumRevisionAuthor", fields: [authorUserId], references: [id], onDelete: Restrict)
-  sourceRevision       CurriculumContentRevision?  @relation("CurriculumRevisionSource", fields: [sourceRevisionId], references: [id], onDelete: Restrict)
-  derivedRevisions     CurriculumContentRevision[] @relation("CurriculumRevisionSource")
-  governanceEvents     CurriculumGovernanceEvent[] @relation("CurriculumGovernanceTargetRevision")
-  replacementForEvents CurriculumGovernanceEvent[] @relation("CurriculumGovernanceReplacementRevision")
+  provenance           CurriculumProvenance           @relation("CurriculumProvenanceRevisions", fields: [provenanceId], references: [id], onDelete: Restrict)
+  currentForProvenance CurriculumProvenance?          @relation("CurriculumCurrentRevision")
+  author               User?                          @relation("CurriculumRevisionAuthor", fields: [authorUserId], references: [id], onDelete: Restrict)
+  sourceRevision       CurriculumContentRevision?     @relation("CurriculumRevisionSource", fields: [sourceRevisionId], references: [id], onDelete: Restrict)
+  derivedRevisions     CurriculumContentRevision[]    @relation("CurriculumRevisionSource")
+  governanceEvents     CurriculumGovernanceEvent[]    @relation("CurriculumGovernanceTargetRevision")
+  replacementForEvents CurriculumGovernanceEvent[]    @relation("CurriculumGovernanceReplacementRevision")
   evidence             CurriculumEvidence[]
   reviewTasks          CurriculumReviewTask[]
   calibrationSessions  ReviewCalibrationSession[]
+  benchmarkingTargets  CurriculumLearningTarget[]
+  competencyCoverage   CurriculumCompetencyCoverage[]
 
   @@unique([provenanceId, sequence])
   @@unique([id, provenanceId])
@@ -2360,7 +2516,7 @@ model CurriculumGovernanceEvent {
   revision            CurriculumContentRevision  @relation("CurriculumGovernanceTargetRevision", fields: [revisionId, provenanceId], references: [id, provenanceId], onDelete: Restrict)
   replacementRevision CurriculumContentRevision? @relation("CurriculumGovernanceReplacementRevision", fields: [replacementRevisionId], references: [id], onDelete: Restrict)
   actor               User?                      @relation("CurriculumGovernanceActor", fields: [actorUserId], references: [id], onDelete: Restrict)
-  aiReviewAgent       AIReviewAgent?            @relation(fields: [aiReviewAgentId], references: [id], onDelete: Restrict)
+  aiReviewAgent       AIReviewAgent?             @relation(fields: [aiReviewAgentId], references: [id], onDelete: Restrict)
   auditLog            AuditLog?                  @relation("CurriculumGovernanceAudit", fields: [auditLogId], references: [id], onDelete: Restrict)
   reviewDecision      CurriculumReviewDecision?
 
@@ -2402,6 +2558,319 @@ model CurriculumEvidence {
   @@index([evidenceType, evidencePurpose])
   @@index([addedByUserId, createdAt])
   @@index([backfillRunId])
+}
+
+model CurriculumAuthoritySource {
+  id               String                          @id @default(cuid())
+  authorityType    CurriculumAuthorityType
+  authorityName    String
+  jurisdiction     String
+  title            String
+  sourceType       CurriculumAuthoritySourceType
+  canonicalUrl     String                          @db.Text
+  publisher        String
+  publicationDate  DateTime?
+  effectiveFrom    DateTime?
+  effectiveTo      DateTime?
+  retrievedAt      DateTime
+  currentVersionId String?                         @unique
+  status           CurriculumAuthoritySourceStatus @default(ACTIVE)
+  subject          String?
+  gradeMin         Int?
+  gradeMax         Int?
+  exam             String?
+  rightsStatus     CurriculumRightsStatus          @default(RIGHTS_UNKNOWN)
+  permittedActions CurriculumPermittedAction[]     @default([])
+  rightsBasis      String?                         @db.Text
+  notes            String?                         @db.Text
+  createdAt        DateTime                        @default(now())
+  updatedAt        DateTime                        @updatedAt
+
+  versions       CurriculumAuthoritySourceVersion[] @relation("CurriculumAuthoritySourceVersions")
+  currentVersion CurriculumAuthoritySourceVersion?  @relation("CurriculumAuthorityCurrentVersion", fields: [currentVersionId], references: [id], onDelete: Restrict)
+
+  @@unique([authorityType, jurisdiction, canonicalUrl])
+  @@index([authorityType, jurisdiction, status])
+  @@index([exam, subject, gradeMin, gradeMax])
+  @@index([rightsStatus, status])
+}
+
+model CurriculumAuthoritySourceVersion {
+  id                  String                       @id @default(cuid())
+  sourceId            String
+  versionLabel        String
+  retrievedAt         DateTime
+  contentHash         String                       @db.VarChar(64)
+  evidenceLocator     String?                      @db.Text
+  extractionMethod    CurriculumExtractionMethod
+  verificationStatus  CurriculumVerificationStatus
+  changeSummary       Json?
+  supersedesVersionId String?                      @unique
+  createdAt           DateTime                     @default(now())
+
+  source               CurriculumAuthoritySource          @relation("CurriculumAuthoritySourceVersions", fields: [sourceId], references: [id], onDelete: Restrict)
+  currentForSource     CurriculumAuthoritySource?         @relation("CurriculumAuthorityCurrentVersion")
+  supersedes           CurriculumAuthoritySourceVersion?  @relation("CurriculumAuthorityVersionSupersession", fields: [supersedesVersionId], references: [id], onDelete: Restrict)
+  supersededBy         CurriculumAuthoritySourceVersion?  @relation("CurriculumAuthorityVersionSupersession")
+  moeObjectives        MoeCurriculumObjective[]
+  baselineFrameworks   AssessmentBaselineFramework[]
+  baselineCompetencies AssessmentBaselineCompetency[]
+  validityEvents       CurriculumAlignmentValidityEvent[]
+
+  @@unique([sourceId, versionLabel])
+  @@unique([sourceId, contentHash])
+  @@index([sourceId, retrievedAt])
+  @@index([verificationStatus, retrievedAt])
+}
+
+model MoeCurriculumObjective {
+  id                   String                        @id @default(cuid())
+  sourceVersionId      String
+  code                 String                        @unique
+  grade                Int
+  subject              String
+  domain               String
+  topic                String?
+  authoritativeWording String                        @db.Text
+  normalizedWording    String?                       @db.Text
+  expectedCompetency   String?                       @db.Text
+  evidenceLocator      String                        @db.Text
+  extractionMethod     CurriculumExtractionMethod
+  confidence           Float
+  verificationStatus   CurriculumVerificationStatus
+  criticality          BaselineCompetencyCriticality @default(STANDARD)
+  effectiveFrom        DateTime?
+  effectiveTo          DateTime?
+  createdAt            DateTime                      @default(now())
+
+  sourceVersion      CurriculumAuthoritySourceVersion @relation(fields: [sourceVersionId], references: [id], onDelete: Restrict)
+  baselineAlignments CurriculumBaselineAlignment[]
+  learningTargets    CurriculumLearningTarget[]
+  coverageMappings   CurriculumCompetencyCoverage[]
+
+  @@index([grade, subject, domain])
+  @@index([sourceVersionId, verificationStatus])
+}
+
+model AssessmentBaselineFramework {
+  id                      String                       @id @default(cuid())
+  code                    String                       @unique
+  authority               CurriculumAuthorityType
+  jurisdiction            String
+  exam                    String
+  level                   String
+  kind                    AssessmentFrameworkKind      @default(BASELINE)
+  title                   String
+  sourceVersionId         String
+  effectiveFrom           DateTime?
+  effectiveTo             DateTime?
+  verificationStatus      CurriculumVerificationStatus
+  externalAuthorityStatus ExternalAuthorityStatus      @default(NOT_CLAIMED)
+  createdAt               DateTime                     @default(now())
+
+  sourceVersion CurriculumAuthoritySourceVersion @relation(fields: [sourceVersionId], references: [id], onDelete: Restrict)
+  subjects      AssessmentBaselineSubject[]
+
+  @@index([authority, jurisdiction, exam, kind])
+  @@index([sourceVersionId, verificationStatus])
+}
+
+model AssessmentBaselineSubject {
+  id                  String   @id @default(cuid())
+  frameworkId         String
+  code                String
+  name                String
+  gradeMin            Int
+  gradeMax            Int
+  required            Boolean  @default(false)
+  subjectGroup        String?
+  officialSubjectCode String?
+  componentSummary    Json?
+  gradingSummary      Json?
+  createdAt           DateTime @default(now())
+
+  framework           AssessmentBaselineFramework    @relation(fields: [frameworkId], references: [id], onDelete: Restrict)
+  competencies        AssessmentBaselineCompetency[]
+  preparationProfiles ExamPreparationProfile[]
+
+  @@unique([frameworkId, code])
+  @@index([name, gradeMin, gradeMax])
+}
+
+model AssessmentBaselineCompetency {
+  id                    String                        @id @default(cuid())
+  baselineSubjectId     String
+  sourceVersionId       String
+  code                  String                        @unique
+  domain                String
+  expectation           String                        @db.Text
+  assessmentDepth       CognitiveDemandCategory
+  cognitiveDimensions   CognitiveDemandCategory[]     @default([])
+  officialWeight        Float?
+  weightEvidenceLocator String?                       @db.Text
+  criticality           BaselineCompetencyCriticality @default(STANDARD)
+  evidenceLocator       String                        @db.Text
+  confidence            Float
+  verificationStatus    CurriculumVerificationStatus
+  createdAt             DateTime                      @default(now())
+
+  baselineSubject  AssessmentBaselineSubject        @relation(fields: [baselineSubjectId], references: [id], onDelete: Restrict)
+  sourceVersion    CurriculumAuthoritySourceVersion @relation(fields: [sourceVersionId], references: [id], onDelete: Restrict)
+  moeAlignments    CurriculumBaselineAlignment[]
+  learningTargets  CurriculumLearningTarget[]
+  coverageMappings CurriculumCompetencyCoverage[]
+
+  @@index([baselineSubjectId, domain, criticality])
+  @@index([sourceVersionId, verificationStatus])
+}
+
+model CurriculumBaselineAlignment {
+  id                    String                          @id @default(cuid())
+  moeObjectiveId        String
+  baselineCompetencyId  String
+  relationshipType      CurriculumAlignmentRelationship
+  coverage              CurriculumCoverageDegree
+  depthRelation         CurriculumDepthRelation
+  confidence            Float
+  rationale             String                          @db.Text
+  evidenceRefs          Json
+  actor                 String
+  reviewMethod          String
+  taxonomyVersion       String
+  status                CurriculumAlignmentStatus       @default(DRAFT)
+  authorityClaim        ExternalAuthorityStatus         @default(NOT_CLAIMED)
+  reviewTaskId          String?
+  version               Int                             @default(1)
+  supersedesAlignmentId String?                         @unique
+  createdAt             DateTime                        @default(now())
+
+  moeObjective       MoeCurriculumObjective             @relation(fields: [moeObjectiveId], references: [id], onDelete: Restrict)
+  baselineCompetency AssessmentBaselineCompetency       @relation(fields: [baselineCompetencyId], references: [id], onDelete: Restrict)
+  reviewTask         CurriculumReviewTask?              @relation(fields: [reviewTaskId], references: [id], onDelete: Restrict)
+  supersedes         CurriculumBaselineAlignment?       @relation("CurriculumBaselineAlignmentSupersession", fields: [supersedesAlignmentId], references: [id], onDelete: Restrict)
+  supersededBy       CurriculumBaselineAlignment?       @relation("CurriculumBaselineAlignmentSupersession")
+  validityEvents     CurriculumAlignmentValidityEvent[]
+
+  @@unique([moeObjectiveId, baselineCompetencyId, version])
+  @@index([baselineCompetencyId, status, depthRelation])
+  @@index([moeObjectiveId, status])
+  @@index([reviewTaskId])
+}
+
+model CurriculumAlignmentValidityEvent {
+  id                 String                  @id @default(cuid())
+  alignmentId        String
+  sourceVersionId    String
+  status             AlignmentValidityStatus
+  reason             String                  @db.Text
+  impactedCourseRefs Json?
+  createdAt          DateTime                @default(now())
+
+  alignment     CurriculumBaselineAlignment      @relation(fields: [alignmentId], references: [id], onDelete: Restrict)
+  sourceVersion CurriculumAuthoritySourceVersion @relation(fields: [sourceVersionId], references: [id], onDelete: Restrict)
+
+  @@index([alignmentId, createdAt])
+  @@index([sourceVersionId, status])
+}
+
+model CurriculumLearningTarget {
+  id                   String                       @id @default(cuid())
+  code                 String
+  grade                Int
+  subject              String
+  domain               String
+  targetLevel          CurriculumTargetLevel
+  statement            String                       @db.Text
+  minimumDepth         CognitiveDemandCategory
+  cognitiveDimensions  CognitiveDemandCategory[]    @default([])
+  moeObjectiveId       String?
+  baselineCompetencyId String?
+  curriculumRevisionId String?
+  prerequisiteRefs     Json?
+  misconceptionRefs    Json?
+  evidenceRefs         Json
+  platformVersion      String
+  verificationStatus   CurriculumVerificationStatus
+  reviewTaskId         String?
+  version              Int                          @default(1)
+  supersedesTargetId   String?                      @unique
+  createdAt            DateTime                     @default(now())
+
+  moeObjective       MoeCurriculumObjective?        @relation(fields: [moeObjectiveId], references: [id], onDelete: Restrict)
+  baselineCompetency AssessmentBaselineCompetency?  @relation(fields: [baselineCompetencyId], references: [id], onDelete: Restrict)
+  curriculumRevision CurriculumContentRevision?     @relation(fields: [curriculumRevisionId], references: [id], onDelete: Restrict)
+  reviewTask         CurriculumReviewTask?          @relation(fields: [reviewTaskId], references: [id], onDelete: Restrict)
+  supersedes         CurriculumLearningTarget?      @relation("CurriculumLearningTargetSupersession", fields: [supersedesTargetId], references: [id], onDelete: Restrict)
+  supersededBy       CurriculumLearningTarget?      @relation("CurriculumLearningTargetSupersession")
+  coverageMappings   CurriculumCompetencyCoverage[]
+
+  @@unique([code, version])
+  @@index([grade, subject, targetLevel])
+  @@index([baselineCompetencyId, targetLevel])
+  @@index([curriculumRevisionId])
+}
+
+model CurriculumCompetencyCoverage {
+  id                   String                    @id @default(cuid())
+  curriculumRevisionId String
+  moeObjectiveId       String?
+  baselineCompetencyId String?
+  learningTargetId     String?
+  coverage             CurriculumCoverageDegree
+  depthRelation        CurriculumDepthRelation
+  cognitiveDimensions  CognitiveDemandCategory[] @default([])
+  confidence           Float
+  rationale            String                    @db.Text
+  evidenceRefs         Json
+  reviewMethod         String
+  status               CurriculumAlignmentStatus @default(DRAFT)
+  authorityClaim       ExternalAuthorityStatus   @default(NOT_CLAIMED)
+  reviewTaskId         String?
+  version              Int                       @default(1)
+  supersedesCoverageId String?                   @unique
+  createdAt            DateTime                  @default(now())
+
+  curriculumRevision CurriculumContentRevision     @relation(fields: [curriculumRevisionId], references: [id], onDelete: Restrict)
+  moeObjective       MoeCurriculumObjective?       @relation(fields: [moeObjectiveId], references: [id], onDelete: Restrict)
+  baselineCompetency AssessmentBaselineCompetency? @relation(fields: [baselineCompetencyId], references: [id], onDelete: Restrict)
+  learningTarget     CurriculumLearningTarget?     @relation(fields: [learningTargetId], references: [id], onDelete: Restrict)
+  reviewTask         CurriculumReviewTask?         @relation(fields: [reviewTaskId], references: [id], onDelete: Restrict)
+  supersedes         CurriculumCompetencyCoverage? @relation("CurriculumCompetencyCoverageSupersession", fields: [supersedesCoverageId], references: [id], onDelete: Restrict)
+  supersededBy       CurriculumCompetencyCoverage? @relation("CurriculumCompetencyCoverageSupersession")
+
+  @@index([curriculumRevisionId, status])
+  @@index([baselineCompetencyId, coverage, depthRelation])
+  @@index([moeObjectiveId, coverage])
+  @@index([learningTargetId, coverage])
+}
+
+model ExamPreparationProfile {
+  id                      String                       @id @default(cuid())
+  baselineSubjectId       String
+  code                    String
+  label                   String                       @default("LiberiaLearn WAEC Preparation")
+  grade                   Int
+  courseRef               String?
+  competencyCoverageRefs  Json
+  prerequisiteSkillRefs   Json?
+  revisionSequence        Json
+  readinessRules          Json
+  timedPracticeRules      Json?
+  examModeToolPolicy      Json?
+  masteryThresholds       Json
+  remediationPriorities   Json?
+  contentOrigin           ExamPreparationContentOrigin @default(LIBERIALEARN_GENERATED_EXAM_STYLE)
+  externalAuthorityStatus ExternalAuthorityStatus      @default(NOT_CLAIMED)
+  version                 Int                          @default(1)
+  supersedesProfileId     String?                      @unique
+  createdAt               DateTime                     @default(now())
+
+  baselineSubject AssessmentBaselineSubject @relation(fields: [baselineSubjectId], references: [id], onDelete: Restrict)
+  supersedes      ExamPreparationProfile?   @relation("ExamPreparationProfileSupersession", fields: [supersedesProfileId], references: [id], onDelete: Restrict)
+  supersededBy    ExamPreparationProfile?   @relation("ExamPreparationProfileSupersession")
+
+  @@unique([code, version])
+  @@index([baselineSubjectId, grade])
 }
 
 model ReviewerProfile {
@@ -2566,14 +3035,17 @@ model CurriculumReviewTask {
   updatedAt              DateTime                     @updatedAt
   version                Int                          @default(1)
 
-  provenance  CurriculumProvenance         @relation(fields: [provenanceId], references: [id], onDelete: Restrict)
-  revision    CurriculumContentRevision    @relation(fields: [revisionId, provenanceId], references: [id, provenanceId], onDelete: Restrict)
-  school      School?                      @relation(fields: [schoolId], references: [id], onDelete: Restrict)
-  createdBy   User?                        @relation("CurriculumReviewTaskCreator", fields: [createdByUserId], references: [id], onDelete: Restrict)
-  assignments CurriculumReviewAssignment[]
-  assessments CurriculumReviewAssessment[]
-  aiAssessments CurriculumAIReviewAssessment[]
-  decision    CurriculumReviewDecision?
+  provenance         CurriculumProvenance           @relation(fields: [provenanceId], references: [id], onDelete: Restrict)
+  revision           CurriculumContentRevision      @relation(fields: [revisionId, provenanceId], references: [id, provenanceId], onDelete: Restrict)
+  school             School?                        @relation(fields: [schoolId], references: [id], onDelete: Restrict)
+  createdBy          User?                          @relation("CurriculumReviewTaskCreator", fields: [createdByUserId], references: [id], onDelete: Restrict)
+  assignments        CurriculumReviewAssignment[]
+  assessments        CurriculumReviewAssessment[]
+  aiAssessments      CurriculumAIReviewAssessment[]
+  decision           CurriculumReviewDecision?
+  baselineAlignments CurriculumBaselineAlignment[]
+  learningTargets    CurriculumLearningTarget[]
+  competencyCoverage CurriculumCompetencyCoverage[]
 
   @@unique([revisionId, policyKey, policyVersion, reviewCycle])
   @@index([status, priorityBand, priorityScore, dueAt, createdAt])
@@ -2619,7 +3091,7 @@ model CurriculumReviewAssessment {
   reviewerProfileId     String?
   credentialId          String?
   credentialScopeId     String?
-  actorType             CurriculumReviewActorType       @default(HUMAN)
+  actorType             CurriculumReviewActorType        @default(HUMAN)
   status                CurriculumReviewAssessmentStatus @default(DRAFT)
   reviewerRoleSnapshot  String
   qualificationSnapshot Json
@@ -2636,66 +3108,66 @@ model CurriculumReviewAssessment {
   updatedAt             DateTime                         @updatedAt
   version               Int                              @default(1)
 
-  task               CurriculumReviewTask       @relation(fields: [taskId], references: [id], onDelete: Restrict)
+  task               CurriculumReviewTask        @relation(fields: [taskId], references: [id], onDelete: Restrict)
   assignment         CurriculumReviewAssignment? @relation(fields: [assignmentId], references: [id], onDelete: Restrict)
-  reviewerProfile    ReviewerProfile?           @relation(fields: [reviewerProfileId], references: [id], onDelete: Restrict)
-  credential         ReviewerCredential?        @relation(fields: [credentialId], references: [id], onDelete: Restrict)
-  credentialScope    ReviewerCredentialScope?   @relation(fields: [credentialScopeId], references: [id], onDelete: Restrict)
-  resolutionDecision CurriculumReviewDecision?  @relation("CurriculumReviewResolverAssessment")
+  reviewerProfile    ReviewerProfile?            @relation(fields: [reviewerProfileId], references: [id], onDelete: Restrict)
+  credential         ReviewerCredential?         @relation(fields: [credentialId], references: [id], onDelete: Restrict)
+  credentialScope    ReviewerCredentialScope?    @relation(fields: [credentialScopeId], references: [id], onDelete: Restrict)
+  resolutionDecision CurriculumReviewDecision?   @relation("CurriculumReviewResolverAssessment")
 
   @@index([taskId, status])
   @@index([reviewerProfileId, submittedAt])
 }
 
 model AIReviewAgent {
-  id               String          @id @default(cuid())
-  agentKey         String          @unique
-  name             String
-  specialty        AIReviewSpecialty
-  subjectScope     String[]        @default([])
-  gradeMin         Int?
-  gradeMax         Int?
-  curriculumScope  ReviewerCurriculumScope[] @default([])
-  provider         String
-  model            String
-  promptKey        String
-  promptVersion    String
-  promptHash       String
-  policyKey        String
-  policyVersion    Int
-  rubricKey        String
-  rubricVersion    Int
-  minimumConfidence Int             @default(70)
-  enabled          Boolean         @default(false)
-  createdAt        DateTime        @default(now())
-  updatedAt        DateTime        @updatedAt
-  assessments      CurriculumAIReviewAssessment[]
-  decisions        CurriculumReviewDecision[]
+  id                String                         @id @default(cuid())
+  agentKey          String                         @unique
+  name              String
+  specialty         AIReviewSpecialty
+  subjectScope      String[]                       @default([])
+  gradeMin          Int?
+  gradeMax          Int?
+  curriculumScope   ReviewerCurriculumScope[]      @default([])
+  provider          String
+  model             String
+  promptKey         String
+  promptVersion     String
+  promptHash        String
+  policyKey         String
+  policyVersion     Int
+  rubricKey         String
+  rubricVersion     Int
+  minimumConfidence Int                            @default(70)
+  enabled           Boolean                        @default(false)
+  createdAt         DateTime                       @default(now())
+  updatedAt         DateTime                       @updatedAt
+  assessments       CurriculumAIReviewAssessment[]
+  decisions         CurriculumReviewDecision[]
   governanceEvents  CurriculumGovernanceEvent[]
 
   @@index([specialty, enabled])
 }
 
 model CurriculumAIReviewAssessment {
-  id                 String                         @id @default(cuid())
-  taskId             String
-  aiReviewAgentId    String
-  status             CurriculumReviewAssessmentStatus @default(SUBMITTED)
-  rubricKey          String
-  rubricVersion      Int
-  rubricResponses    Json
-  recommendation     CurriculumReviewRecommendation?
-  rationale          String                         @db.Text
-  evidenceRefs       Json?
-  confidence         Int
-  aiReviewSnapshot   Json
+  id                  String                           @id @default(cuid())
+  taskId              String
+  aiReviewAgentId     String
+  status              CurriculumReviewAssessmentStatus @default(SUBMITTED)
+  rubricKey           String
+  rubricVersion       Int
+  rubricResponses     Json
+  recommendation      CurriculumReviewRecommendation?
+  rationale           String                           @db.Text
+  evidenceRefs        Json?
+  confidence          Int
+  aiReviewSnapshot    Json
   reviewCorrelationId String
-  submittedAt        DateTime                       @default(now())
-  idempotencyKey     String                         @unique
-  createdAt          DateTime                       @default(now())
+  submittedAt         DateTime                         @default(now())
+  idempotencyKey      String                           @unique
+  createdAt           DateTime                         @default(now())
 
-  task               CurriculumReviewTask @relation(fields: [taskId], references: [id], onDelete: Restrict)
-  aiReviewAgent      AIReviewAgent        @relation(fields: [aiReviewAgentId], references: [id], onDelete: Restrict)
+  task          CurriculumReviewTask @relation(fields: [taskId], references: [id], onDelete: Restrict)
+  aiReviewAgent AIReviewAgent        @relation(fields: [aiReviewAgentId], references: [id], onDelete: Restrict)
 
   @@index([taskId, submittedAt])
   @@index([aiReviewAgentId, submittedAt])
@@ -2710,9 +3182,9 @@ model CurriculumReviewDecision {
   resolverAssessmentId  String?                         @unique
   resolverUserId        String?
   qualificationSnapshot Json?
-  actorType             CurriculumReviewActorType @default(HUMAN)
+  actorType             CurriculumReviewActorType       @default(HUMAN)
   aiReviewAgentId       String?
-  aiAssessmentIds       String[] @default([])
+  aiAssessmentIds       String[]                        @default([])
   governanceEventId     String?                         @unique
   auditLogId            String                          @unique
   idempotencyKey        String                          @unique
