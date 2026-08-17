@@ -198,6 +198,8 @@ describe("canonical pre-P2-A baseline", () => {
       "20260810_000004_p2a_curriculum_provenance_immutability",
       "20260813_000001_p2b_qualified_review_operations",
       "20260814_000001_p2b_review_cycles",
+      "20260814_000002_p2b_ai_sme_review",
+      "20260817_000001_p2c_waec_baseline_alignment",
     ]);
   });
 });
