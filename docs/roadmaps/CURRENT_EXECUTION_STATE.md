@@ -5,6 +5,52 @@ Live execution tracking for the final closeout program.
 
 ## Resume here
 
+- **P2-C WAEC BASELINE ALIGNMENT — ARCHITECTURE AND RESEARCH IN PROGRESS ON A
+  DEDICATED BRANCH; NOT STAGED, NOT PRODUCTION (2026-08-17).** Branch
+  `codex/p2c-waec-baseline-alignment`, commits `bb18c33b` then `a9c70561`.
+  Scope is the founder's P2-C redefinition: WAEC is a minimum external
+  competency baseline, never the curriculum authority or ceiling; Liberia
+  MOE stays canonical; no past-paper ingestion or licensing. Built so far:
+  the full P2-C Prisma schema (`CurriculumAuthoritySource` +
+  `CurriculumAuthoritySourceVersion` with content hashing/versioning,
+  `MoeCurriculumObjective`, `AssessmentBaselineFramework/Subject/Competency`,
+  `CurriculumBaselineAlignment`, `CurriculumCompetencyCoverage`,
+  `CurriculumAIReviewAssessment`, and a new `WAEC_ALIGNMENT`
+  `AIReviewSpecialty`), validated as an additive-only diff against the real
+  P2-B staging schema; the `lib/curriculum/benchmarking/` library (cognitive
+  demand depth taxonomy, deterministic gap/coverage engine with an
+  above-baseline guarantee check that never infers COMPLETE from title
+  similarity, fail-closed rights policy, source-version change detection,
+  original-assessment-only exam-prep contract, report-only
+  anti-teach-to-test signal detector, and an `aiWaecAlignment.ts` SME
+  contract that hard-fails on unauthoritative sources, fabricated evidence
+  refs, or any WAEC/MOE-approval claim); a third independent `WAEC_ALIGNMENT`
+  AI reviewer now wired into the real P2-B review pipeline
+  (`lib/curriculum/review/aiReview.ts`), gated on the existing
+  `waecBaselineAlignment` task policy flag; a new disabled-by-default
+  `P2C_CURRICULUM_BENCHMARKING_ENABLED` flag; and real (not fabricated)
+  research on Liberia's current examination ladder — see
+  `docs/research/WAEC_LIBERIA_BASELINE_AND_CURRICULUM_ALIGNMENT.md`, which
+  confirms LNAT (G3) / LPSCE (G6) / LJHSCE (G9) / WASSCE-LSHSCE (G12) via
+  Liberia-specific 2026 news coverage and explicitly records what is
+  **not** yet verified: no actual MOE or WAEC syllabus/competency document
+  has been fetched (`moe.gov.lr` and `waecliberia.org.lr` were reachable
+  as domains but returned a 403 or a non-content portal page this session),
+  so no `AssessmentBaselineCompetency`/`MoeCurriculumObjective` production
+  rows exist yet — only synthetic unit-test fixtures. Gate at this
+  checkpoint: `prisma generate` PASS, `tsc --noEmit` PASS, focused P2-C/P2-B
+  suite 61/61 PASS, full changed-scope Vitest run 3,411/3,413 with the 2
+  failures being the project's known timeout-under-load pattern (both
+  independently re-verified 31/31 passing in isolation), `git diff --check`
+  PASS. Not yet done: Phase 32 real subject pilot (blocked on obtaining
+  actual MOE/WAEC source documents), admin/curriculum-intelligence UI,
+  staging migration and E2E, full production-gate Vitest/build run, and
+  production rollout. `docs/roadmaps/PRIORITIES_1_2_5_6_7_EXECUTION_PROGRAM.md`
+  P2-C section, which still held the old licensed-past-paper scope, is
+  updated to mark that superseded. Next: obtain real MOE/WAEC source
+  documents (manual upload or a working fetch path) before seeding any real
+  baseline competency data; do not fabricate syllabus content to reach
+  dashboard coverage.
 - **P2-B PRODUCTION SCHEMA AND DISABLED DEPLOYMENT COMPLETE; FEATURE ACTIVATION NO-GO (2026-08-14).** Production `bnphuinpvgpmebcsvmsp` passed preflight, recovery, dependency reachability review, additive Migration A/B, postflight invariants, and health validation. Deployment `dpl_nS9JKq2whVyGtVCU8JjsKVaGk1aM` is Ready with P2-B operations and shadow explicitly false. Production has zero reviewer profiles and zero verified credentials, so no credentials or tasks were fabricated and all scopes remain legacy-safe. Platform, school, MOE/national canaries, external walkthroughs, and legacy route cutover await evidence-backed reviewer coverage. Full record: `docs/ops/P2B_PRODUCTION_CUTOVER_RECORD.md`.
 - **P2-B QUALIFIED REVIEW OPERATIONS FEATURE COMPLETE IN STAGING; PRODUCTION
   ACTIVATION AWAITS FINAL AUTHORIZATION (2026-08-14).** Option C is implemented
