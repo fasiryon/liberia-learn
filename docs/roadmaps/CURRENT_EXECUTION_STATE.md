@@ -5,63 +5,101 @@ Live execution tracking for the final closeout program.
 
 ## Resume here
 
-- **P2-C WAEC BASELINE ALIGNMENT — REAL MOE/WAEC SOURCE DOCUMENTS RECOVERED,
-  MATH PILOT PROVEN ON REAL DATA LOCALLY; STILL NOT STAGED, NOT PRODUCTION
-  (2026-08-17).** Branch `codex/p2c-waec-baseline-alignment`, commits
-  `bb18c33b`, `a9c70561`, `bdc35136`, then `3ff74f06`. Scope is the founder's
-  P2-C redefinition: WAEC is a minimum external competency baseline, never
-  the curriculum authority or ceiling; Liberia MOE stays canonical; no
-  past-paper ingestion or licensing. Architecture (schema + benchmarking
-  library + AI reviewer wiring + flag) is unchanged from the prior entry
-  below and remains provisionally accepted. What changed: an earlier
-  conclusion that MOE/WAEC source documents were unavailable was wrong — a
-  real browser session (not the headless fetch tool, which was genuinely
-  blocked) reached `waecliberia.org.lr` directly and read its live
-  `EXAMINATIONS` navigation, and `moe.gov.lr/curriculum-download/`'s own
-  link targets resolved to three unauthenticated ZIP archives
-  (`GRADE-1-6.zip`/`GRADE-7-9.zip`/`Grade-10-12.zip`), curl-fetched and
-  `pdftotext`-extracted into real per-subject curricula. Full detail,
-  exact URLs, and a VERIFIED_FIRST_PARTY/VERIFIED_CORROBORATED/UNVERIFIED/
-  HISTORICAL/CONFLICTING_TERMINOLOGY-tagged evidence record are in
-  `docs/research/WAEC_LIBERIA_BASELINE_AND_CURRICULUM_ALIGNMENT.md`. Key
-  findings: WAEC Liberia's live site currently labels the Grade-12 exam
-  LSHSCE (Regular/Private), not WASSCE (the old `wassce.html` page 404s);
-  a real structural conflict is preserved, not resolved — WAEC Liberia's
-  own LSHSCE(Regular) page describes 2 core subjects and a stanine 1-9
-  scale, which differs from the regional WASSCE reference pattern (4 core
-  subjects, A1-F9); LNAT is classified as an MOE/IPA learning-assessment
-  instrument, not a WAEC exam (absent from WAEC's own live examination
-  menu), and excluded from baseline seeding. New
-  `__tests__/p2c/real-data-pilot.test.ts` (added to the existing 36,
-  39/39 P2-C tests pass) exercises the real architecture against real
-  evidence: MOE Grade 9 "Two-Set Problems" (`Math 7-9.pdf` p37) aligned
-  DIRECT/MEETS_BASELINE to WAEC LJHSCE Mathematics(210), evidenced by WAEC
-  Liberia's own "distillation of the Ministry's Curriculum" statement; a
-  live-database-verified LiberiaLearn mastery-authoring gap (only 3 total
-  Grade 9 MATH rows exist in `CurriculumContent`, none covering sets); MOE
-  Grade 12 Differentiation and Integration (`Maths 10-12.pdf` p67-68) as a
-  hedged (confidence 0.55, not asserted as proven) above-baseline
-  candidate, since WAEC's enumerated LSHSCE subject list has no Further
-  Mathematics; and a real Grade 3 objective (`Math 1-6.pdf` p22) correctly
-  classified NOT_APPLICABLE since LPSCE, WAEC's earliest exam, targets
-  Grade 6. No schema or migration change was needed — the existing
-  `AUTHORITATIVE_HOSTS` set and MOE-objective structure already fit the
-  real data; one optional non-blocking future improvement is noted
-  (an `examAliases` field for the LSHSCE/WASSCE naming question) but not
-  implemented, since no real `AssessmentBaselineFramework` row is seeded
-  yet. Gate at this checkpoint: `prisma validate` PASS, `tsc --noEmit`
-  PASS, full P2-C suite 39/39 PASS, P2-B regression 30/30 PASS,
-  `git diff --check` PASS. Still not done: staging migration/E2E (Phase
-  37, explicitly deferred by this round's instructions until the pilot,
-  provenance, gap engine, and terminology work above were proven — which
-  they now are, pending human review), Grade-9/12 topic-by-topic WAEC
-  syllabus document (only the subject/grading structure was found, not a
-  full WAEC syllabus — `OFFICIAL_SOURCE_DISCOVERED_CONTENT_UNAVAILABLE`,
-  not `SOURCE_MISSING`), admin/curriculum-intelligence UI, full
-  production-gate Vitest/build run, and production rollout. Next: human
-  review of the real-data pilot and the preserved terminology conflict,
-  then Phase 33 subject expansion (English/Language Arts, Science) using
-  the same proven pipeline, then staging migration.
+- **P2-C WAEC BASELINE ALIGNMENT — FEATURE COMPLETE IN STAGING WITH A REAL,
+  EVIDENCE-HONEST MATH PILOT; PRODUCTION ACTIVATION AWAITS FINAL
+  AUTHORIZATION (2026-08-17).** Branch `codex/p2c-waec-baseline-alignment`,
+  commits `bb18c33b` through `11c0f255`. Scope is the founder's P2-C
+  redefinition: WAEC is a minimum external competency baseline, never the
+  curriculum authority or ceiling; Liberia MOE stays canonical; no
+  past-paper ingestion or licensing. `P2C_CURRICULUM_BENCHMARKING_ENABLED`
+  is false everywhere; no code is deployed anywhere as a result of this
+  work — this is a staging database change plus local architecture only.
+
+  **Real sources, not assumptions.** A real browser session reached
+  `waecliberia.org.lr` (the headless fetch tool was genuinely blocked, the
+  site was not) and `moe.gov.lr/curriculum-download/`'s own links resolved
+  to three unauthenticated MOE curriculum ZIP archives, `curl`-fetched and
+  `pdftotext`-extracted. Full evidence, hashes, and a
+  VERIFIED_FIRST_PARTY/VERIFIED_CORROBORATED/UNVERIFIED/HISTORICAL/
+  CONFLICTING_TERMINOLOGY-tagged record: `docs/research/WAEC_LIBERIA_BASELINE_AND_CURRICULUM_ALIGNMENT.md`
+  and `docs/research/P2C_EVIDENCE_MANIFEST.md`. Key findings: WAEC
+  Liberia's live site labels the Grade-12 exam LSHSCE, not WASSCE (the old
+  `wassce.html` page 404s); a real structural conflict is preserved, not
+  resolved — WAEC's own LSHSCE(Regular) page describes 2 core subjects and
+  stanine 1-9 grading, differing from the regional WASSCE pattern (4 core
+  subjects, A1-F9); LNAT is classified an MOE/IPA instrument, not a WAEC
+  exam, and excluded from baseline seeding; MOE archives are dated
+  CURRENTLY_VERIFIED_OFFICIAL_EDITION (content 2020-07, server-reserved
+  2026-07-29), not CURRENT_LATEST_EDITION.
+
+  **Evidence-semantics correction.** An initial pass over-claimed a
+  DIRECT/MEETS_BASELINE alignment from WAEC's general "syllabus is
+  distilled from the Ministry's Curriculum" statement — that is
+  SUBJECT_LEVEL evidence, not TOPIC_LEVEL evidence for any one competency.
+  Corrected in code, not just docs: `AlignmentEvidence` in
+  `lib/curriculum/benchmarking/aiWaecAlignment.ts` gained a required
+  `evidenceSpecificity: "TOPIC_LEVEL" | "SUBJECT_LEVEL"` field, and
+  `validateAiWaecAlignment` now rejects a DIRECT relationship or a definite
+  depth relation without TOPIC_LEVEL WAEC evidence. No Prisma schema change
+  was needed (library-level TS contract only). Both P2-C test fixtures that
+  had this over-claim (including Codex's original one, which cited
+  MOE-only evidence yet claimed DIRECT/MEETS_BASELINE) were corrected to
+  the honest SUPPORTING/PARTIAL/UNKNOWN result; a dedicated regression
+  proves generic distillation evidence cannot create topic-level DIRECT
+  alignment, and its positive counterpart proves genuine TOPIC_LEVEL
+  evidence still can.
+
+  **Staging is live.** Migration `20260817_000001_p2c_waec_baseline_alignment`
+  (113 statements: 20 enums, 13 tables, 45 indexes, 35 FKs, zero
+  destructive statements) is applied to approved staging
+  (`yonpfzjczoffhrgibxkz`; production `bnphuinpvgpmebcsvmsp` untouched). A
+  raw `prisma migrate diff` mixed genuine additions with unrelated,
+  destructive pre-existing staging drift (`DROP TABLE "TrendSnapshot"`,
+  `ALTER TABLE "User" DROP COLUMN "welcomeCompletedAt"`, and more) — that
+  raw diff was not applied; a programmatically filtered, verified-safe
+  migration was built and applied instead. A first `prisma migrate deploy`
+  attempt hit the wrong migrations directory (config bug, now fixed) and
+  left one unfinished ledger row, which was identified, verified isolated,
+  and cleanly removed before the real migration was applied directly via
+  `psql`. A fresh, restore-verified `pg_dump` recovery point was taken
+  first. Post-migration: ledger 10/10, 13/13 new tables, P2-A 4/4 and P2-B
+  11/11 tables unchanged, 229 total tables, 0 unvalidated FKs, TLS 1.3,
+  staging health 200. Full incident/verification record:
+  `docs/ops/P2C_STAGING_COMPLETION_RECORD.md`.
+
+  **Real Math pilot seeded and proven against live staging data**, not
+  local fixtures (`scripts/p2c-staging-real-data-seed.ts`,
+  `-gap-engine-proof.ts`, `-staleness-proof.ts`): MOE Grade 9 "Two-Set
+  Problems" (`Math 7-9.pdf` p37) correctly SUPPORTING/PARTIAL/UNKNOWN to a
+  SUBJECT_LEVEL-evidenced WAEC Mathematics competency (confidence 0.55,
+  verificationStatus PARTIAL — not overclaimed); the real gap engine run
+  live against this data flags it `UNSUPPORTED_MAPPING` (below the
+  engine's own 0.7 confidence threshold) and `NOT_READY`, exactly as it
+  should; a genuine LiberiaLearn mastery-authoring gap confirmed via a
+  live query (staging's `CurriculumContent` has zero Grade 9 or Grade 12
+  MATH rows); MOE Grade 12 Differentiation and Integration (`Maths 10-12.pdf`
+  p67-68) correctly has zero baseline alignment (no WAEC competency for
+  calculus exists) with an EXTENSION learning target instead; a real Grade
+  3 objective (`Math 1-6.pdf` p22) correctly NOT_APPLICABLE (LPSCE, WAEC's
+  earliest exam, targets Grade 6); source staleness/change-detection
+  proven against the real seeded source and alignment row (read-only
+  simulation, no staging mutation).
+
+  **Not done / explicitly deferred:** no topic-by-topic WAEC Mathematics
+  syllabus document exists publicly (only the subject/grading structure —
+  `OFFICIAL_SOURCE_DISCOVERED_CONTENT_UNAVAILABLE`, not `SOURCE_MISSING`);
+  Gate 7 (AI SME live staging workflow) was validated architecturally via
+  the evidence-specificity guard tests, not exercised with real LLM
+  inference (no provider funding/pricing check was performed, and none was
+  authorized for this pass); admin/curriculum-intelligence UI; full
+  production-gate Vitest/build run; subject expansion beyond Math
+  (English/Language Arts, Science); production rollout. Gate at this
+  checkpoint: `prisma validate`/`generate` PASS, `tsc --noEmit` PASS, full
+  P2-C+P2-B+P2-A regression 101/101 PASS, `git diff --check` PASS, clean
+  worktree. Next: human review of the staging state and the preserved
+  terminology conflict, then either Gate 7 with an explicit LLM-spend
+  authorization or Phase 33 subject expansion using the now-proven
+  pipeline, then production authorization.
 - **P2-B PRODUCTION SCHEMA AND DISABLED DEPLOYMENT COMPLETE; FEATURE ACTIVATION NO-GO (2026-08-14).** Production `bnphuinpvgpmebcsvmsp` passed preflight, recovery, dependency reachability review, additive Migration A/B, postflight invariants, and health validation. Deployment `dpl_nS9JKq2whVyGtVCU8JjsKVaGk1aM` is Ready with P2-B operations and shadow explicitly false. Production has zero reviewer profiles and zero verified credentials, so no credentials or tasks were fabricated and all scopes remain legacy-safe. Platform, school, MOE/national canaries, external walkthroughs, and legacy route cutover await evidence-backed reviewer coverage. Full record: `docs/ops/P2B_PRODUCTION_CUTOVER_RECORD.md`.
 - **P2-B QUALIFIED REVIEW OPERATIONS FEATURE COMPLETE IN STAGING; PRODUCTION
   ACTIVATION AWAITS FINAL AUTHORIZATION (2026-08-14).** Option C is implemented
