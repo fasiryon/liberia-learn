@@ -15,6 +15,7 @@ const BASE_AGENTS: Array<{ agentKey: string; name: string; specialty: AIReviewSp
   { agentKey: "platform.ai.subject-sme.v1", name: "Platform AI Subject SME", specialty: "SUBJECT_MATTER", promptKey: "p2b.ai.subject-sme.v1", system: "You are an independent subject-matter curriculum reviewer. Focus on factual correctness, standards alignment, grade appropriateness, worked examples, answer keys, misconceptions, and terminology. Never claim MOE or WAEC approval." },
   { agentKey: "platform.ai.curriculum-sme.v1", name: "Platform AI Curriculum SME", specialty: "PEDAGOGY", promptKey: "p2b.ai.curriculum-sme.v1", system: "You are an independent curriculum and instruction reviewer. Focus on instructional quality, explanations, age appropriateness, assessment alignment, localization, accessibility, clarity, and learner experience. Never claim MOE or WAEC approval." },
   { agentKey: "platform.ai.adjudicator.v1", name: "Platform AI Review Adjudicator", specialty: "FACT_CHECK", promptKey: "p2b.ai.adjudicator.v1", system: "You are an independent adjudicator. Compare two immutable AI review assessments, analyze disagreements using the evidence and rubric, and issue a cautious platform recommendation. Never claim MOE or WAEC approval." },
+  { agentKey: "platform.ai.waec-alignment-sme.v1", name: "Platform AI WAEC Baseline Alignment SME", specialty: "WAEC_ALIGNMENT", promptKey: "p2b.ai.waec-alignment-sme.v1", system: "You are an independent WAEC baseline alignment reviewer. Liberia MOE remains the curriculum authority; WAEC is only a minimum external assessment baseline that LiberiaLearn content must meet or exceed, never a ceiling. Focus the standards_alignment and assessment_alignment dimensions on whether this content covers the applicable WAEC baseline competency at sufficient depth, whether it is over-indexed on exam mechanics instead of broader mastery, and whether depth is at or above baseline. Cite evidence for every claim; if authoritative evidence is unavailable, say so and reduce confidence rather than relying on memory. Never claim WAEC approval, endorsement, licensing, or partnership; your output is AI_ASSESSED_ALIGNMENT only, never WAEC_APPROVED." },
 ];
 
 function promptHash(system: string): string { return createHash("sha256").update(system, "utf8").digest("hex"); }
@@ -82,11 +83,15 @@ export async function runAIReviewTask(taskId: string, options: { correlationId?:
   const correlationId = options.correlationId ?? randomUUID();
   const task = await prisma.curriculumReviewTask.findUniqueOrThrow({ where: { id: taskId } });
   if (task.priorityBand === "CRITICAL") throw new ReviewOperationError("CRITICAL_AI_APPROVAL_DISABLED", 409);
+  const flags = (task.specialistRequirements as { policyInputs?: Record<string, boolean> } | null)?.policyInputs ?? {};
   const first = await runAgent(taskId, "platform.ai.subject-sme.v1", correlationId);
   const second = await runAgent(taskId, "platform.ai.curriculum-sme.v1", correlationId);
+  const waec = flags.waecBaselineAlignment ? await runAgent(taskId, "platform.ai.waec-alignment-sme.v1", correlationId) : null;
+  const independent = [first, second, ...(waec ? [waec] : [])];
+  const disagreement = new Set(independent.map((item) => item.recommendation)).size > 1;
   let adjudicator = null;
-  if (first.recommendation !== second.recommendation) adjudicator = await runAgent(taskId, "platform.ai.adjudicator.v1", correlationId);
-  return finalizeAIReviewTask({ taskId, correlationId, assessmentIds: [first.id, second.id, ...(adjudicator ? [adjudicator.id] : [])], adjudicatorId: adjudicator?.id ?? null });
+  if (disagreement) adjudicator = await runAgent(taskId, "platform.ai.adjudicator.v1", correlationId);
+  return finalizeAIReviewTask({ taskId, correlationId, assessmentIds: [...independent.map((item) => item.id), ...(adjudicator ? [adjudicator.id] : [])], adjudicatorId: adjudicator?.id ?? null });
 }
 
 export async function finalizeAIReviewTask(input: { taskId: string; correlationId: string; assessmentIds: string[]; adjudicatorId?: string | null }) {

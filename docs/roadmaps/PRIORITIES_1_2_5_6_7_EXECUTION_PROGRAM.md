@@ -127,20 +127,49 @@ Deliverables:
 - Required audit writes and conflict-safe review locking.
 - Sampling and calibration reports by reviewer and content cell.
 
-### P2-C: Curated WAEC authority
+### P2-C: WAEC baseline alignment, curriculum benchmarking, and authority/
+evidence governance
 
-Deliverables:
+**SUPERSEDED 2026-08-17.** The scope below (a curated, licensed WAEC
+past-paper import pipeline with a named licensing owner and contracted WAEC
+reviewers) was the original P2-C definition and is explicitly retired. The
+founder redefined P2-C to treat WAEC as a minimum external competency
+baseline, not a content library to license or ingest: no past-paper
+ingestion, no licensing deal, no claimed WAEC partnership or endorsement.
+Liberia MOE remains the sole curriculum authority; LiberiaLearn's own
+mastery target is expected to sit above the WAEC baseline. Full scope,
+phase-by-phase requirements, and hard-stop conditions live in the founder
+decision record captured at the top of the P2-C entry in
+`docs/roadmaps/CURRENT_EXECUTION_STATE.md`, and research evidence is tracked
+in `docs/research/WAEC_LIBERIA_BASELINE_AND_CURRICULUM_ALIGNMENT.md`.
+Current deliverables under the redefined scope:
 
-- Named licensing or curation owner and rights register.
-- Import format with source, year, paper, item rights, answer rationale, topic,
-  difficulty, and reviewer provenance.
-- Generated questions are clearly labeled and never represented as past papers.
-- Duplicate, leakage, ambiguity, and answer-key QA.
+- Authoritative MOE/WAEC source registry with provenance, versioning, and
+  lightweight rights governance (reference-only sources are never
+  redistributed) — `lib/curriculum/benchmarking/rightsPolicy.ts`,
+  `sourceVersioning.ts`, `prisma/schema.prisma` `CurriculumAuthoritySource*`.
+- MOE-to-WAEC-baseline alignment graph with an explicit cognitive-demand
+  depth taxonomy and baseline/mastery/extension distinction —
+  `lib/curriculum/benchmarking/types.ts`, `depth.ts`.
+- AI `WAEC_ALIGNMENT` SME reused from the P2-B independent-review
+  architecture, labeled `AI_ASSESSED_ALIGNMENT` and never `WAEC_APPROVED` —
+  `lib/curriculum/benchmarking/aiWaecAlignment.ts`,
+  `lib/curriculum/review/aiReview.ts`.
+- Deterministic curriculum gap/coverage engine and an above-baseline
+  guarantee check, never based on title-similarity alone —
+  `lib/curriculum/benchmarking/gapEngine.ts`.
+- Original, LiberiaLearn-generated exam-preparation content only; no past
+  papers, no systematic paraphrase of protected items —
+  `lib/curriculum/benchmarking/originalAssessment.ts`.
+- Report-only anti-teach-to-test signals so Curriculum V2 does not later
+  collapse into exam drilling — `lib/curriculum/benchmarking/antiTeachToTest.ts`.
 
-External actions:
+External actions under the redefined scope (optional, future, non-blocking):
 
-- Obtain a license or written permission where required.
-- Contract qualified WAEC subject reviewers.
+- No license or written permission is required for the current scope
+  (public-requirement analysis, not content reproduction).
+- A future formal WAEC relationship remains a future external gate the
+  program does not depend on to close.
 
 ## Offline core architecture
 

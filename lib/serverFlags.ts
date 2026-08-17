@@ -955,3 +955,13 @@ export function isP2bReviewShadowEnabled(): boolean {
 export function isP2bAiReviewEnabled(): boolean {
   return isFlagEnabled("P2B_AI_REVIEW_ENABLED");
 }
+
+/**
+ * P2-C WAEC baseline alignment, curriculum benchmarking, and authority/evidence
+ * governance. DEFAULT OFF in every environment. WAEC remains a minimum external
+ * baseline, never the curriculum authority above Liberia MOE, and this flag
+ * grants no external WAEC approval, endorsement, or partnership.
+ */
+export function isP2cCurriculumBenchmarkingEnabled(): boolean {
+  return isFlagEnabled("P2C_CURRICULUM_BENCHMARKING_ENABLED");
+}
