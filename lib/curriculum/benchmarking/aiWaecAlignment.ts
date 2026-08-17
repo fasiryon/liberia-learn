@@ -45,7 +45,34 @@ export type AlignmentEvidence = {
   locator: string;
   excerpt: string;
   verificationStatus: "VERIFIED" | "PARTIAL" | "UNVERIFIED" | "STALE" | "SOURCE_MISSING" | "RIGHTS_LIMITED";
+  /**
+   * Whether this evidence item speaks to the exact competency being mapped
+   * (TOPIC_LEVEL, e.g. a WAEC syllabus line item for this specific skill) or
+   * only to the surrounding subject/exam applying in general (SUBJECT_LEVEL,
+   * e.g. "Mathematics is an LJHSCE subject" or a general distillation
+   * statement). A general "WAEC's syllabus is distilled from MOE's
+   * curriculum" claim is SUBJECT_LEVEL, not TOPIC_LEVEL, evidence for any
+   * one competency inside that curriculum.
+   */
+  evidenceSpecificity: "TOPIC_LEVEL" | "SUBJECT_LEVEL";
 };
+
+const DIRECT_DEPTH_CLAIMS = new Set(["MEETS_BASELINE", "ABOVE_BASELINE", "SIGNIFICANTLY_ABOVE_BASELINE", "BELOW_BASELINE"]);
+const WAEC_AUTHORITY_TYPES = new Set(["WAEC_LIBERIA", "WAEC_REGIONAL"]);
+
+/**
+ * A WAEC-side evidence set with no TOPIC_LEVEL item only establishes that the
+ * subject/exam applies (e.g. "Mathematics is examined at LJHSCE"), not that
+ * this exact competency was assessed at a known depth. Without topic-level
+ * WAEC evidence, an assessment must not claim DIRECT alignment or a definite
+ * depth relation -- it must fall back to an honest inferred/unknown state
+ * using the existing relationship/depth vocabulary (SUPPORTING, PARTIAL,
+ * PREREQUISITE, ENRICHMENT, or UNKNOWN relationship; UNKNOWN or
+ * NOT_COMPARABLE depth).
+ */
+function hasTopicLevelWaecEvidence(evidence: AlignmentEvidence[]): boolean {
+  return evidence.some((item) => WAEC_AUTHORITY_TYPES.has(item.authorityType) && item.evidenceSpecificity === "TOPIC_LEVEL");
+}
 
 function normalizeTerms(value: string): Set<string> {
   return new Set(value.toLowerCase().match(/[a-z]{4,}/g) ?? []);
@@ -90,6 +117,14 @@ export function validateAiWaecAlignment(input: {
   const permittedEvidenceIds = new Set(input.evidence.map((item) => item.id));
   if (result.evidenceRefs.some((id) => !permittedEvidenceIds.has(id))) {
     throw new Error("AI_ALIGNMENT_FABRICATED_EVIDENCE_REF");
+  }
+  if (!hasTopicLevelWaecEvidence(input.evidence)) {
+    if (result.relationshipType === "DIRECT") {
+      throw new Error("TOPIC_LEVEL_CLAIM_WITHOUT_TOPIC_LEVEL_EVIDENCE:relationshipType");
+    }
+    if (DIRECT_DEPTH_CLAIMS.has(result.depthRelation)) {
+      throw new Error("TOPIC_LEVEL_CLAIM_WITHOUT_TOPIC_LEVEL_EVIDENCE:depthRelation");
+    }
   }
   return result;
 }

@@ -17,6 +17,14 @@ import type { CoverageMapping, GapCompetency, GapObjective, GapTarget } from "@/
  * reflects. No objective, competency, or evidence string here is invented; every
  * wording below is taken from the retrieved MOE PDF text or the live WAEC Liberia
  * pages via curl/browser retrieval, not from model memory.
+ *
+ * Evidence-semantics correction (2026-08-17): only a general WAEC statement that
+ * its syllabus is "distilled from" the MOE curriculum, and a subject/exam entry
+ * showing Mathematics is examined at this grade, were recovered -- no topic-by-
+ * topic WAEC Mathematics syllabus was found. That is SUBJECT_LEVEL evidence, not
+ * TOPIC_LEVEL evidence for this exact competency, so this fixture no longer
+ * claims DIRECT/MEETS_BASELINE from it. See the "evidence-specificity guard"
+ * describe block below for the enforced rule and its positive/negative cases.
  */
 
 const moeG9TwoSetProblems: AlignmentEvidence = {
@@ -28,6 +36,7 @@ const moeG9TwoSetProblems: AlignmentEvidence = {
   excerpt:
     "Learners are able to apply the concepts of sets to solve simple two-set problems using Venn diagram, find the complement of a set and represent it on the Venn diagram. Draw and use Venn diagrams to solve simple two-set problems. Find and write the number of subsets in a set with up to 5 elements.",
   verificationStatus: "VERIFIED",
+  evidenceSpecificity: "TOPIC_LEVEL",
 };
 
 const waecLjhsceMathDistillation: AlignmentEvidence = {
@@ -39,6 +48,9 @@ const waecLjhsceMathDistillation: AlignmentEvidence = {
   excerpt:
     "This document contains the Regulations for the Liberia Senior High School Certificate Examinations (LSHSCE) for Private Candidates. The examination will test the extent to which candidates have covered materials contained in the National Curriculum of the Ministry of Education for senior high schools. The detailed syllabuses for the Examination are distillation of the Ministry's Curriculum.",
   verificationStatus: "VERIFIED",
+  // General distillation statement: applies to every subject and every
+  // competency uniformly, so it cannot be TOPIC_LEVEL for this one.
+  evidenceSpecificity: "SUBJECT_LEVEL",
 };
 
 const waecLjhsceSubjectList: AlignmentEvidence = {
@@ -50,6 +62,25 @@ const waecLjhsceSubjectList: AlignmentEvidence = {
   excerpt:
     "The May Liberia Junior High School Certificate Examination (LJHSCE) is administered to school candidates in the 9th grade. The Four Basic Subjects offered for this examination are Mathematics 210, General Science 220, Language Arts 230, Social Studies 240. All candidates for the examination are to enter for all four subjects offered on the examination.",
   verificationStatus: "VERIFIED",
+  // Confirms Mathematics is an examined LJHSCE subject, not that "two-set
+  // problems" specifically is assessed at any particular depth.
+  evidenceSpecificity: "SUBJECT_LEVEL",
+};
+
+// Hypothetical only, used solely to prove the evidence-specificity guard's
+// positive branch below. No such WAEC Liberia topic-by-topic Mathematics
+// syllabus page was found or retrieved this session -- see the research doc's
+// "what remains genuinely unverified" section. Do not reuse this fixture as
+// if it were real evidence.
+const hypotheticalTopicLevelWaecSyllabus: AlignmentEvidence = {
+  id: "hypothetical-waec-topic-level-syllabus-not-real",
+  authorityType: "WAEC_LIBERIA",
+  canonicalUrl: "https://waecliberia.org.lr/ljhsce/",
+  sourceVersionId: "waec-liberia-ljhsce-2026-08-17",
+  locator: "HYPOTHETICAL -- not a real retrieved document, test fixture only",
+  excerpt: "HYPOTHETICAL topic-level syllabus text for the guard's positive-case test only.",
+  verificationStatus: "VERIFIED",
+  evidenceSpecificity: "TOPIC_LEVEL",
 };
 
 describe("P2-C real-data Math pilot: MOE Grade 9 Two-Set Problems <-> WAEC LJHSCE Mathematics(210)", () => {
@@ -59,19 +90,19 @@ describe("P2-C real-data Math pilot: MOE Grade 9 Two-Set Problems <-> WAEC LJHSC
     ).not.toThrow();
   });
 
-  it("validates a real, evidence-grounded AI alignment assessment without inventing WAEC-approval language", () => {
+  it("validates a real, evidence-grounded AI alignment assessment as INFERRED (SUPPORTING/UNKNOWN), not overclaimed as DIRECT/MEETS_BASELINE", () => {
     const assessment = validateAiWaecAlignment({
       raw: {
-        relationshipType: "DIRECT",
-        coverage: "FULL",
-        depthRelation: "MEETS_BASELINE",
+        relationshipType: "SUPPORTING",
+        coverage: "PARTIAL",
+        depthRelation: "UNKNOWN",
         cognitiveDimensions: ["APPLICATION", "PROBLEM_MODELING"],
         rationale:
-          "The MOE Grade 9 objective requires learners to draw and use Venn diagrams to solve simple two-set problems and find the complement of a set. WAEC Liberia's own LSHSCE-Private page states its detailed syllabuses are a distillation of the Ministry's Curriculum, and Mathematics (210) is one of the four compulsory LJHSCE subjects at this grade, so this MOE objective is squarely within the WAEC Liberia baseline for Grade 9 Mathematics.",
+          "The MOE Grade 9 objective requires learners to draw and use Venn diagrams to solve simple two-set problems and find the complement of a set. WAEC Liberia's own LSHSCE-Private page states its detailed syllabuses are a distillation of the Ministry's Curriculum, and Mathematics (210) is one of the four compulsory LJHSCE subjects at this grade. That is only subject-level evidence: no topic-by-topic WAEC Mathematics syllabus was found, so the exact expected depth for this competency at LJHSCE is unknown, not confirmed as met.",
         objectiveEvidenceTerms: ["venn", "diagrams", "sets", "problems"],
         baselineEvidenceTerms: ["mathematics", "distillation", "curriculum", "candidates"],
         evidenceRefs: [moeG9TwoSetProblems.id, waecLjhsceMathDistillation.id, waecLjhsceSubjectList.id],
-        confidence: 0.82,
+        confidence: 0.55,
         overfitToExamMechanics: false,
         prerequisiteGaps: [],
         authorityLabel: "AI_ASSESSED_ALIGNMENT",
@@ -82,9 +113,9 @@ describe("P2-C real-data Math pilot: MOE Grade 9 Two-Set Problems <-> WAEC LJHSC
       evidence: [moeG9TwoSetProblems, waecLjhsceMathDistillation, waecLjhsceSubjectList],
     });
     expect(assessment).toMatchObject({
-      relationshipType: "DIRECT",
-      coverage: "FULL",
-      depthRelation: "MEETS_BASELINE",
+      relationshipType: "SUPPORTING",
+      coverage: "PARTIAL",
+      depthRelation: "UNKNOWN",
       authorityLabel: "AI_ASSESSED_ALIGNMENT",
       externalApprovalClaimed: false,
     });
@@ -94,9 +125,9 @@ describe("P2-C real-data Math pilot: MOE Grade 9 Two-Set Problems <-> WAEC LJHSC
     expect(() =>
       validateAiWaecAlignment({
         raw: {
-          relationshipType: "DIRECT",
-          coverage: "FULL",
-          depthRelation: "MEETS_BASELINE",
+          relationshipType: "SUPPORTING",
+          coverage: "PARTIAL",
+          depthRelation: "UNKNOWN",
           cognitiveDimensions: ["APPLICATION"],
           rationale: "This mapping is WAEC-approved and confirms official endorsement of the LiberiaLearn Grade 9 Math lesson.",
           objectiveEvidenceTerms: ["venn", "diagrams", "sets"],
@@ -116,7 +147,89 @@ describe("P2-C real-data Math pilot: MOE Grade 9 Two-Set Problems <-> WAEC LJHSC
   });
 });
 
-describe("P2-C real-data Math pilot: baseline layer meets, mastery layer has a genuine authoring gap", () => {
+describe("P2-C evidence-specificity guard: generic 'WAEC derives from MOE curriculum' evidence cannot create topic-level DIRECT alignment", () => {
+  const subjectLevelOnlyEvidence = [moeG9TwoSetProblems, waecLjhsceMathDistillation, waecLjhsceSubjectList];
+
+  it("rejects a DIRECT relationshipType claim when only SUBJECT_LEVEL WAEC evidence is supplied", () => {
+    expect(() =>
+      validateAiWaecAlignment({
+        raw: {
+          relationshipType: "DIRECT",
+          coverage: "PARTIAL",
+          depthRelation: "UNKNOWN",
+          cognitiveDimensions: ["APPLICATION"],
+          rationale:
+            "WAEC's syllabus is distilled from the Ministry's Curriculum and Mathematics is examined at LJHSCE, so this MOE objective must be directly assessed at this exact depth by WAEC.",
+          objectiveEvidenceTerms: ["venn", "diagrams", "sets"],
+          baselineEvidenceTerms: ["mathematics", "distillation"],
+          evidenceRefs: [moeG9TwoSetProblems.id, waecLjhsceMathDistillation.id],
+          confidence: 0.8,
+          overfitToExamMechanics: false,
+          prerequisiteGaps: [],
+          authorityLabel: "AI_ASSESSED_ALIGNMENT",
+          externalApprovalClaimed: false,
+        },
+        moeObjectiveWording: moeG9TwoSetProblems.excerpt,
+        baselineExpectation: `${waecLjhsceMathDistillation.excerpt} ${waecLjhsceSubjectList.excerpt}`,
+        evidence: subjectLevelOnlyEvidence,
+      }),
+    ).toThrow("TOPIC_LEVEL_CLAIM_WITHOUT_TOPIC_LEVEL_EVIDENCE:relationshipType");
+  });
+
+  it("rejects a definite depthRelation claim (MEETS_BASELINE) when only SUBJECT_LEVEL WAEC evidence is supplied, even with a non-DIRECT relationship", () => {
+    expect(() =>
+      validateAiWaecAlignment({
+        raw: {
+          relationshipType: "SUPPORTING",
+          coverage: "FULL",
+          depthRelation: "MEETS_BASELINE",
+          cognitiveDimensions: ["APPLICATION"],
+          rationale:
+            "WAEC's syllabus is distilled from the Ministry's Curriculum, so this competency's depth must already meet the WAEC baseline.",
+          objectiveEvidenceTerms: ["venn", "diagrams", "sets"],
+          baselineEvidenceTerms: ["mathematics", "distillation"],
+          evidenceRefs: [moeG9TwoSetProblems.id, waecLjhsceMathDistillation.id],
+          confidence: 0.8,
+          overfitToExamMechanics: false,
+          prerequisiteGaps: [],
+          authorityLabel: "AI_ASSESSED_ALIGNMENT",
+          externalApprovalClaimed: false,
+        },
+        moeObjectiveWording: moeG9TwoSetProblems.excerpt,
+        baselineExpectation: `${waecLjhsceMathDistillation.excerpt} ${waecLjhsceSubjectList.excerpt}`,
+        evidence: subjectLevelOnlyEvidence,
+      }),
+    ).toThrow("TOPIC_LEVEL_CLAIM_WITHOUT_TOPIC_LEVEL_EVIDENCE:depthRelation");
+  });
+
+  it("allows a DIRECT/MEETS_BASELINE claim once genuine TOPIC_LEVEL WAEC evidence is present (positive case, hypothetical fixture only)", () => {
+    const assessment = validateAiWaecAlignment({
+      raw: {
+        relationshipType: "DIRECT",
+        coverage: "FULL",
+        depthRelation: "MEETS_BASELINE",
+        cognitiveDimensions: ["APPLICATION"],
+        rationale:
+          "A topic-level WAEC syllabus entry (hypothetical fixture) directly specifies this exact two-set-problems competency at Grade 9, matching the MOE objective's depth.",
+        objectiveEvidenceTerms: ["venn", "diagrams", "sets"],
+        baselineEvidenceTerms: ["hypothetical", "syllabus"],
+        evidenceRefs: [moeG9TwoSetProblems.id, hypotheticalTopicLevelWaecSyllabus.id],
+        confidence: 0.85,
+        overfitToExamMechanics: false,
+        prerequisiteGaps: [],
+        authorityLabel: "AI_ASSESSED_ALIGNMENT",
+        externalApprovalClaimed: false,
+      },
+      moeObjectiveWording: moeG9TwoSetProblems.excerpt,
+      baselineExpectation: hypotheticalTopicLevelWaecSyllabus.excerpt,
+      evidence: [moeG9TwoSetProblems, hypotheticalTopicLevelWaecSyllabus],
+    });
+    expect(assessment.relationshipType).toBe("DIRECT");
+    expect(assessment.depthRelation).toBe("MEETS_BASELINE");
+  });
+});
+
+describe("P2-C real-data Math pilot: baseline layer is honestly PARTIAL (subject-level evidence only), mastery layer has a genuine authoring gap", () => {
   const moeObjective: GapObjective = {
     id: "moe-g9-math-two-set-problems",
     code: "MOE.G9.MATH.SETS.TWO_SET_PROBLEMS",
@@ -140,28 +253,32 @@ describe("P2-C real-data Math pilot: baseline layer meets, mastery layer has a g
     code: "LL.G9.MATH.SETS.TWO_SET_PROBLEMS.MASTERY",
     targetLevel: "MASTERY",
   };
+  // coverage PARTIAL / depthRelation UNKNOWN, not FULL / MEETS_BASELINE: the
+  // only WAEC-side evidence recovered is SUBJECT_LEVEL (the distillation
+  // statement and the LJHSCE subject list), so this mapping must not claim a
+  // confirmed baseline match -- see the evidence-specificity guard above.
   const baselineAlignmentMapping: CoverageMapping = {
     id: "align-moe-g9-twoset-waec-ljhsce-math210",
     moeObjectiveId: moeObjective.id,
     baselineCompetencyId: waecCompetency.id,
     learningTargetId: null,
-    coverage: "FULL",
-    depthRelation: "MEETS_BASELINE",
-    confidence: 0.82,
+    coverage: "PARTIAL",
+    depthRelation: "UNKNOWN",
+    confidence: 0.55,
     evidenceRefs: [moeG9TwoSetProblems, waecLjhsceMathDistillation, waecLjhsceSubjectList],
     status: "AI_ASSESSED",
   };
 
-  it("shows the WAEC baseline competency is met at the MOE-curriculum layer", () => {
+  it("does not overclaim COMPLETE_AT_BASELINE when WAEC-side evidence is only subject-level", () => {
     const report = buildCurriculumGapReport({
       moeObjectives: [moeObjective],
       baselineCompetencies: [waecCompetency],
       learningTargets: [],
       mappings: [baselineAlignmentMapping],
     });
-    expect(report.waecBaselineCoverageStatus).toBe("COMPLETE_AT_BASELINE");
-    expect(report.uncoveredBaselineCompetencies).toEqual([]);
-    expect(report.readinessIndicator).toBe("WAEC_BASELINE_READY");
+    expect(report.waecBaselineCoverageStatus).toBe("PARTIAL");
+    expect(report.partiallyCoveredCompetencies).toEqual([waecCompetency.code]);
+    expect(report.readinessIndicator).toBe("NOT_READY");
   });
 
   it("shows a genuine, evidence-based LiberiaLearn mastery-authoring gap for the same competency", () => {
@@ -172,11 +289,13 @@ describe("P2-C real-data Math pilot: baseline layer meets, mastery layer has a g
       learningTargets: [masteryTarget],
       mappings: [baselineAlignmentMapping],
     });
-    expect(report.waecBaselineCoverageStatus).toBe("COMPLETE_AT_BASELINE");
+    expect(report.waecBaselineCoverageStatus).toBe("PARTIAL");
     expect(report.incompleteMasteryTargets).toEqual([masteryTarget.code]);
-    expect(report.noGoReasons).toContain("MASTERY_TARGET_INCOMPLETE");
-    // The gap is real (no LiberiaLearn lesson authored for this MOE objective
-    // yet), not manufactured: the baseline layer above is independently COMPLETE.
+    expect(report.noGoReasons).toEqual(expect.arrayContaining(["MASTERY_TARGET_INCOMPLETE"]));
+    // Two independent, real gaps stack honestly here: the WAEC baseline
+    // mapping itself is only PARTIAL (subject-level evidence only), and on
+    // top of that, no LiberiaLearn lesson has been authored for this MOE
+    // objective yet.
   });
 });
 

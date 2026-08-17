@@ -2,7 +2,53 @@
 
 Status: LIVE RESEARCH RECORD. Written for P2-C
 (`docs/roadmaps/CONSOLIDATED_BACKLOG.md`, PRIORITIES_1_2_5_6_7 program).
-Last updated: 2026-08-17 (recovery pass — see "Recovery pass" note below).
+Last updated: 2026-08-17 (evidence-semantics correction pass — see
+"Evidence-semantics correction" note below; supersedes the same-day
+"Recovery pass" note further down, which is kept for history). Full
+hash-level reproduction manifest: `docs/research/P2C_EVIDENCE_MANIFEST.md`.
+
+## Evidence-semantics correction (2026-08-17, second pass)
+
+The recovery pass below correctly found real MOE and WAEC documents, but
+initially over-claimed what they prove: it treated WAEC Liberia's general
+"detailed syllabuses... are distillation of the Ministry's Curriculum"
+statement, plus a subject/exam-applicability fact (Mathematics is an
+examined LJHSCE/LSHSCE subject), as sufficient to call the MOE Grade 9
+Two-Set-Problems objective a **DIRECT** WAEC alignment that **MEETS_BASELINE**.
+That is wrong: a general distillation statement and a subject-applicability
+fact are **SUBJECT_LEVEL** evidence — they establish that *some* WAEC
+baseline exists for Mathematics at this grade, not that *this specific
+competency* was assessed at a known depth. No topic-by-topic WAEC
+Mathematics syllabus was recovered this session (see "what remains
+genuinely unverified" below), so no **TOPIC_LEVEL** WAEC evidence exists for
+this competency.
+
+The correction, now enforced in code (`lib/curriculum/benchmarking/aiWaecAlignment.ts`,
+`hasTopicLevelWaecEvidence` + the guard inside `validateAiWaecAlignment`),
+not just in this document: an alignment assessment may only claim
+`relationshipType: DIRECT` or a definite `depthRelation` (MEETS_BASELINE /
+ABOVE_BASELINE / SIGNIFICANTLY_ABOVE_BASELINE / BELOW_BASELINE) when at
+least one WAEC-authority evidence item is marked `TOPIC_LEVEL`. Without
+that, the assessment must fall back to `relationshipType: SUPPORTING` (or
+PARTIAL/PREREQUISITE/ENRICHMENT/UNKNOWN as appropriate) and
+`depthRelation: UNKNOWN` (or NOT_COMPARABLE). This is enforced by a new
+required field on the evidence contract, `evidenceSpecificity: "TOPIC_LEVEL"
+| "SUBJECT_LEVEL"` — no Prisma schema change was needed, since this is a
+library-level TS contract, not a database column, and no real
+`CurriculumBaselineAlignment` row has been seeded to production or staging
+yet. See `__tests__/p2c/real-data-pilot.test.ts`, describe block "P2-C
+evidence-specificity guard," for the enforced positive and negative cases,
+and `__tests__/p2c/ai-authority-and-review.test.ts`, which had the same
+over-claiming pattern in its original fixture (no WAEC-authority evidence
+item at all, yet a DIRECT/MEETS_BASELINE claim) and has been corrected the
+same way.
+
+The Math pilot's real, corrected result: the WAEC-baseline layer for
+"Two-Set Problems" is honestly `PARTIAL` coverage / `UNKNOWN` depth (not
+`COMPLETE_AT_BASELINE`), pending either a real topic-level WAEC syllabus
+document or a platform decision to accept subject-level distillation
+evidence as sufficient for a lower-confidence `SUPPORTING` classification
+(the current, corrected state) rather than a `DIRECT` one.
 
 ## Purpose and philosophy
 
@@ -210,11 +256,17 @@ The Grade 10-12 subject set (Biology, Chemistry, Economics, English,
 Geography, History, Literature, Maths, Physics) matches the LSHSCE(Regular)
 subject groups almost exactly, which is direct corroboration of WAEC
 Liberia's own statement that its syllabus is a distillation of this
-curriculum. File metadata shows a 2020-07 revision date across all subject
-PDFs; the ZIP wrapper itself is dated 2019-09 on the server. This is the
-best evidence of currency available this session — no more recent MOE
-curriculum publication was found. Treat as **VERIFIED_FIRST_PARTY for
-content, UNVERIFIED for whether a newer edition exists.**
+curriculum. Two distinct dates were captured for these archives (full detail
+and hashes in `docs/research/P2C_EVIDENCE_MANIFEST.md`): the HTTP
+`Last-Modified` header on all three ZIPs is **2026-07-29** (a recent
+server-side re-upload/re-serve), while the internal per-file timestamps
+inside each ZIP are **2020-07** (when the PDFs were themselves last saved).
+No official MOE statement was found asserting either "this is the current
+curriculum" or "a newer edition exists." Classification:
+**CURRENTLY_VERIFIED_OFFICIAL_EDITION** — the edition actually served by
+`moe.gov.lr` as of this retrieval, with content dated 2020-07 — **not**
+`CURRENT_LATEST_EDITION`, since that would claim knowledge of whether a
+newer edition exists, which this session does not have.
 
 ### Math pilot: real objectives extracted
 
@@ -338,6 +390,14 @@ report the smallest required change; do not redesign preemptively"):
   below work fine with a single canonical `exam: "LSHSCE"` value plus a note
   — this is a recommendation for whoever performs the actual staging seed,
   not a blocking finding.
+- The one real, non-schema change this pass required: an
+  `evidenceSpecificity: "TOPIC_LEVEL" | "SUBJECT_LEVEL"` field on the
+  `AlignmentEvidence` TS contract in `aiWaecAlignment.ts`, plus a guard in
+  `validateAiWaecAlignment` that rejects a `DIRECT` relationship or a
+  definite depth relation when no WAEC-authority evidence item is
+  `TOPIC_LEVEL`. This is a library-level TypeScript contract change, not a
+  Prisma schema/migration change — see the "Evidence-semantics correction"
+  section at the top of this document.
 
 ## What remains genuinely unverified
 
@@ -351,8 +411,10 @@ report the smallest required change; do not redesign preemptively"):
   `lshsceprivate/`) exists, advertises being governed by "detailed
   syllabuses," but does not itself publish or link that document.
 - Whether a newer (post-2020) revision of the MOE curriculum PDFs exists is
-  unverified; the retrieved files are dated 2020-07 with a 2019-09 upload
-  path.
+  unverified; PDF content is dated 2020-07, though the server re-served the
+  archives on 2026-07-29 (see `P2C_EVIDENCE_MANIFEST.md`'s edition
+  classification — recorded as CURRENTLY_VERIFIED_OFFICIAL_EDITION, not
+  CURRENT_LATEST_EDITION).
 - The 39-new-subjects-for-2026 WASSCE expansion claim (from `moeliberia.com`,
   a non-government `.com` news domain, not `moe.gov.lr`) remains
   unverified against a `.gov.lr` or `.org.lr` source.

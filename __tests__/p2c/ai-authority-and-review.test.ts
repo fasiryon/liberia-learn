@@ -2,6 +2,10 @@ import { describe, expect, it } from "vitest";
 import { buildAlignmentReviewTopology, needsAlignmentAdjudication, validateAiWaecAlignment } from "@/lib/curriculum/benchmarking/aiWaecAlignment";
 import { evaluateReviewPolicy } from "@/lib/curriculum/review/policy";
 
+// Only MOE-side evidence is cited here (no WAEC-authority item), so per the
+// evidence-specificity guard in aiWaecAlignment.ts this cannot support a
+// DIRECT/MEETS_BASELINE claim -- see __tests__/p2c/real-data-pilot.test.ts
+// for the real evidence and the guard's dedicated positive/negative cases.
 const evidence = [{
   id: "moe-math-p37",
   authorityType: "LIBERIA_MOE" as const,
@@ -10,18 +14,19 @@ const evidence = [{
   locator: "Math 7-9.pdf, page 37",
   excerpt: "Draw and use Venn diagrams to solve simple two-set problems.",
   verificationStatus: "VERIFIED" as const,
+  evidenceSpecificity: "TOPIC_LEVEL" as const,
 }];
 
 const valid = {
-  relationshipType: "DIRECT",
-  coverage: "FULL",
-  depthRelation: "MEETS_BASELINE",
+  relationshipType: "SUPPORTING",
+  coverage: "PARTIAL",
+  depthRelation: "UNKNOWN",
   cognitiveDimensions: ["APPLICATION"],
-  rationale: "The objective requires learners to draw and use Venn diagrams to solve two-set problems, matching the baseline expectation.",
+  rationale: "The objective requires learners to draw and use Venn diagrams to solve two-set problems, matching the baseline expectation. No WAEC-side evidence is cited here, so this is reported as an inferred, not a directly verified, alignment.",
   objectiveEvidenceTerms: ["venn", "diagrams", "solve"],
   baselineEvidenceTerms: ["venn", "diagrams", "problems"],
   evidenceRefs: ["moe-math-p37"],
-  confidence: 0.84,
+  confidence: 0.6,
   overfitToExamMechanics: false,
   prerequisiteGaps: [],
   authorityLabel: "AI_ASSESSED_ALIGNMENT",
