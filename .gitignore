@@ -50,6 +50,7 @@ test-*.log
 .env.p2a-staging
 artifacts/p2a-staging/
 artifacts/pre-p2a-canonical/
+artifacts/p2c-staging/
 
 # Vercel / local tooling
 .vercel
