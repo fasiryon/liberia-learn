@@ -470,6 +470,32 @@ report the smallest required change; do not redesign preemptively"):
   Prisma schema/migration change — see the "Evidence-semantics correction"
   section at the top of this document.
 
+## Evidence-tier taxonomy (P2-C Phase 4, 2026-08-18)
+
+The subject-expansion sprint specified a five-tier evidence taxonomy
+(`VERIFIED_FIRST_PARTY_TOPIC`, `VERIFIED_FIRST_PARTY_SUBJECT`,
+`VERIFIED_FIRST_PARTY_FRAMEWORK`, `INFERRED_FROM_AUTHORITATIVE_CONTEXT`,
+`UNKNOWN`). Rather than rename the already-accepted, already-proven schema
+this late before a production decision, this pass confirmed the existing
+combination of `AlignmentEvidence.evidenceSpecificity`
+(`TOPIC_LEVEL`/`SUBJECT_LEVEL`/`FRAMEWORK_LEVEL`) and
+`verificationStatus` (`VERIFIED`/`PARTIAL`/etc.) already implements the same
+five-value ladder under different names. The mapping is exact, not
+approximate:
+
+| Phase 4 tier | Existing implementation |
+|---|---|
+| `VERIFIED_FIRST_PARTY_TOPIC` | `evidenceSpecificity: TOPIC_LEVEL` + `verificationStatus: VERIFIED` |
+| `VERIFIED_FIRST_PARTY_SUBJECT` | `evidenceSpecificity: SUBJECT_LEVEL` + `verificationStatus: VERIFIED` |
+| `VERIFIED_FIRST_PARTY_FRAMEWORK` | `evidenceSpecificity: FRAMEWORK_LEVEL` + `verificationStatus: VERIFIED` |
+| `INFERRED_FROM_AUTHORITATIVE_CONTEXT` | any specificity tier with `verificationStatus: PARTIAL`, or the model's fallback relationship/depth values (`SUPPORTING`/`PARTIAL`/`PREREQUISITE`/`ENRICHMENT`/`UNKNOWN` relationship; `UNKNOWN`/`NOT_COMPARABLE` depth) that `curriculum.waecBaselineAlignment.system` v1.1.0+ already requires whenever no `TOPIC_LEVEL` WAEC evidence exists |
+| `UNKNOWN` | `verificationStatus: UNVERIFIED`/`STALE`/`SOURCE_MISSING`, or no evidence item at all |
+
+This is a documentation-only mapping; no code or schema changed. Renaming
+the enum values themselves would be a cosmetic architecture change for zero
+behavioral gain, and is explicitly out of scope per this sprint's own "do
+not reopen P2-C architecture" instruction.
+
 ## What remains genuinely unverified
 
 - No topic-by-topic WAEC Mathematics (210/301) syllabus/exam-specification
