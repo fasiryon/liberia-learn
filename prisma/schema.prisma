@@ -2661,6 +2661,7 @@ model AssessmentBaselineFramework {
   level                   String
   kind                    AssessmentFrameworkKind      @default(BASELINE)
   title                   String
+  examAliases             String[]                     @default([])
   sourceVersionId         String
   effectiveFrom           DateTime?
   effectiveTo             DateTime?

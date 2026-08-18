@@ -177,6 +177,46 @@ export function buildCurriculumGapReport(input: {
   };
 }
 
+/**
+ * A curriculum-content defect (LiberiaLearn hasn't authored or mapped
+ * something) is a different problem from a public-evidence limitation (WAEC
+ * hasn't published topic-level detail we can cite). Conflating the two would
+ * make an honest evidence gap look like a LiberiaLearn quality failure, so
+ * this classification is a separate, additive read of `CurriculumGapReport`
+ * rather than a change to the report itself.
+ */
+export type CurriculumGapCategory =
+  | "CONTENT_GAP"
+  | "EXTERNAL_EVIDENCE_GAP"
+  | "DEPTH_GAP"
+  | "MASTERY_TARGET_GAP"
+  | "EXTENSION_GAP";
+
+export type CurriculumGapCategoryBreakdown = Record<CurriculumGapCategory, string[]>;
+
+/**
+ * Maps the engine's existing gap fields onto the five-category taxonomy:
+ * - CONTENT_GAP: no LiberiaLearn mapping exists at all for a required MOE
+ *   objective or WAEC baseline competency (`uncoveredMoeObjectives`,
+ *   `uncoveredBaselineCompetencies`).
+ * - EXTERNAL_EVIDENCE_GAP: a mapping exists but is unsupported
+ *   (`unsupportedMappingIds`) -- this is a public-evidence limitation, not a
+ *   LiberiaLearn content defect, and must never be reported as one.
+ * - DEPTH_GAP: coverage exists but is partial or below the required depth
+ *   (`partiallyCoveredCompetencies`, `underDepthCompetencies`).
+ * - MASTERY_TARGET_GAP: `incompleteMasteryTargets`.
+ * - EXTENSION_GAP: `missingExtensionTargets`.
+ */
+export function classifyGapCategories(report: CurriculumGapReport): CurriculumGapCategoryBreakdown {
+  return {
+    CONTENT_GAP: [...report.uncoveredMoeObjectives, ...report.uncoveredBaselineCompetencies],
+    EXTERNAL_EVIDENCE_GAP: [...report.unsupportedMappingIds],
+    DEPTH_GAP: [...report.partiallyCoveredCompetencies, ...report.underDepthCompetencies],
+    MASTERY_TARGET_GAP: [...report.incompleteMasteryTargets],
+    EXTENSION_GAP: [...report.missingExtensionTargets],
+  };
+}
+
 export function buildCoverageMatrixRow(input: {
   grade: number;
   subject: string;

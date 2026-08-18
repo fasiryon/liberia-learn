@@ -87,6 +87,73 @@ not versioned documents); treat as CURRENTLY_VERIFIED, re-check before
 relying on them again in a future session since WAEC could edit these
 WordPress pages at any time without a version marker.
 
+### Second independent live capture (P2-C Subject Expansion pass, 2026-08-17)
+
+A separate real browser session, later the same day, independently
+re-fetched all four pages to verify the structural facts in the founder's
+Subject Expansion brief (subject codes, CASS/TASS splits, grading,
+entry/certificate rules, Division I/II/III bands) before seeding them to
+staging, rather than trusting the brief or the manifest rows above at face
+value. Content matched exactly; the captured-render hashes below differ
+from the rows above only because this is a second, independent capture
+(different request, same live WordPress page), not because content
+changed. Only LPSCE and LSHSCE(Regular) were seeded as new
+`CurriculumAuthoritySourceVersion` rows this pass (`scripts/p2c-staging-exam-framework-seed.ts`);
+LJHSCE and LSHSCE(Private) reused the existing source rows from the Math
+pilot rather than re-seeding.
+
+| Page | Canonical URL | Retrieved | Captured-render SHA-256 (this capture) |
+|---|---|---|---|
+| LPSCE | `https://waecliberia.org.lr/examination/` | 2026-08-17 (second browser session) | `68ec91bd02922d5c32ef64fcb8d66d190101825043b061a247a85b6411cd5b4e` |
+| LSHSCE (Regular) | `https://waecliberia.org.lr/lshsceregular/` | 2026-08-17 (second browser session) | `006b02da5b17084d092f1183e5811f2f004053456500e2c37b2fbbceb8299e28` |
+
+Reproduction note: this hash is of the plain-text page body only (everything
+after the tool's own `Title:`/`URL:`/`Source element:` header line and the
+`---` separator), saved to a local file with LF line endings, then
+`sha256sum`'d — a documented, reproducible convention for this specific
+hash, distinct from whatever exact substring the first capture's hash
+covered (that convention was not recorded at the time).
+
+## Subject expansion pilot PDFs (Language Arts, Science, Social Studies, and Grade-12 subjects)
+
+Same three MOE archives as above, ZIP hashes re-verified unchanged this
+pass (no source drift since the Math pilot). Extracted via
+`pdftotext -layout` into a fresh session's scratchpad (not committed to the
+repo; re-derivable from the canonical URLs and hashes below by any
+engineer). One representative objective per subject/grade, matching the
+Math pilot's rigor -- not full-curriculum coverage.
+
+| Subject | Grade | Inside archive | PDF SHA-256 | Page | Topic (verbatim) |
+|---|---|---|---|---|---|
+| Language Arts | 6 | `English 1-6.pdf` | `6065629aa04a1bd630ed0398fafe0fa4a7c295ce0a5376839535193887abc404` | 115-116 | Kinds and Types of Sentences with Related Punctuations / Kinds of Pronouns / Paragraph Writing |
+| Social Studies | 6 | `Social Studies Grade 1-6.pdf` | `5e6330de23f882058415b713cdf9bf28053214cd3e8ea54edb8191e13617a53d` | 66 | The Founding of the Liberian State |
+| General Science | 6 | `General Science1-6.pdf` | `a3cb6c6c8cdb767cc07638359a0b225656042c1264580edad707fc69b68413ff` | 64 | Classification of Plants and Animals |
+| Language Arts | 9 | `English 7-9.pdf` | `8f01d51551438db0e66c8d31c464a20025fb7c66054d4e836a41dc5d6dd02069` | 23 | Composition/Literature and Reading Comprehension |
+| General Science | 9 | `General Science 7-9.pdf` | `79e237c6ecd428f156a617dba074adbf67cba643c3082f81fa4a47ad49440234` | 52 | Magnetism and Electricity |
+| Social Studies | 9 | `Social Studies 7-9.pdf` | `89b1f263f6cd238d4e1c9b31897f85a2ca7cdcece5c78f21ed72f1b8262849bb` | 29 | Regional Geography of West Africa -- Agriculture and Mineral Resources |
+| English (Grammar) | 12 | `ENGLISH GRAMMAR 10-12.pdf` | `20989a1aef7d4f4eebe6001fea3649b1c44257e3d5ea8393406cb97b60cfd883` | 26 | The Three Cases of Pronouns and Verb Usage |
+| Economics | 12 | `Economics 10-12.pdf` | `ee44f53d7cc17d5c98701e6dd8e689222c21427c3d8c212d520a273c62e2a377` | 24 | Economic Development and Planning (the Liberian Economy) |
+| Geography | 12 | `GEOGRAPHY 10-12.pdf` | `50f3f5276668732254f5ba7f1b8165352bf00afb8fe2bce7b120ece60664d6db` | 48 | Practical Geography -- Map Reading, Kinds of Maps and Their Uses |
+| History | 12 | `History 10-12.pdf` | `dc315e831ff3f496fef2f8edc24dd4623a2383eaf74dbdfb1e806bfaef661f30` | 25 | Liberian History -- The First Liberian Civil War (1989-1997) |
+| Literature-in-English | 12 | `LITERATURE 10-12.pdf` | `e0da458734c07a3710417f5fb7f791e70f72e4b0f341ed1ba8b8530909185abc` | 19 | Review African Poems and Figurative Expressions |
+| Biology | 12 | `biology 10-12.pdf` | `985ca5659a086b3c6bd273f818a923a952378e4bacb702e6064cc961e257c931` | 34 | Chordata -- Aves (Birds) and Mammals |
+| Chemistry | 12 | `Chemistry 10-12.pdf` | `cc6caae32d23051470ca4c4d4fb53878ad770ee2859ad86a2921f8bc48a6d4af` | 47 | Chemistry, Industry and the Environment |
+| Physics | 12 | `Physics 10-12.pdf` | `d555ec8e1024dfd7124fb75c820f1fea65f66a651b57c74982e66301154b6329` | 26 | Refraction and Dispersion of Light |
+
+One incidental finding worth recording: the Geography 10-12 PDF's own
+materials list (near p.48) cites "WASSCE Q&A (Papers 1&2)" as a student
+study aid — first-party MOE evidence that WASSCE-branded material
+circulates as ordinary regional reference/practice material in Liberia's
+own curriculum documents, consistent with (not proof of) the WASSCE
+reclassification recorded in `WAEC_LIBERIA_BASELINE_AND_CURRICULUM_ALIGNMENT.md`.
+
+No topic-level WAEC competency evidence exists for any of these 14
+objectives (the same public-evidence limitation as Math) -- every one is
+seeded at MOE-objective level only, honestly left unmapped to any
+TOPIC_LEVEL baseline claim. See the gap engine output in the sprint final
+report for how this is classified (`EXTERNAL_EVIDENCE_GAP`, not a
+LiberiaLearn content defect).
+
 ## Reproduction notes for another engineer
 
 1. MOE archives: `curl -sL -o <name>.zip "<canonical URL>"`, then

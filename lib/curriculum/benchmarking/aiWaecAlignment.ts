@@ -47,14 +47,17 @@ export type AlignmentEvidence = {
   verificationStatus: "VERIFIED" | "PARTIAL" | "UNVERIFIED" | "STALE" | "SOURCE_MISSING" | "RIGHTS_LIMITED";
   /**
    * Whether this evidence item speaks to the exact competency being mapped
-   * (TOPIC_LEVEL, e.g. a WAEC syllabus line item for this specific skill) or
+   * (TOPIC_LEVEL, e.g. a WAEC syllabus line item for this specific skill),
    * only to the surrounding subject/exam applying in general (SUBJECT_LEVEL,
-   * e.g. "Mathematics is an LJHSCE subject" or a general distillation
-   * statement). A general "WAEC's syllabus is distilled from MOE's
-   * curriculum" claim is SUBJECT_LEVEL, not TOPIC_LEVEL, evidence for any
-   * one competency inside that curriculum.
+   * e.g. "Mathematics is an LJHSCE subject"), or only to exam-wide structure
+   * (FRAMEWORK_LEVEL, e.g. CASS/TASS weighting, entry rules, certificate
+   * rules, grading scale -- true and citable, but silent on any specific
+   * competency or even subject). A general "WAEC's syllabus is distilled
+   * from MOE's curriculum" claim is SUBJECT_LEVEL, not TOPIC_LEVEL, evidence
+   * for any one competency inside that curriculum; a CASS/TASS split is
+   * FRAMEWORK_LEVEL evidence for none of them.
    */
-  evidenceSpecificity: "TOPIC_LEVEL" | "SUBJECT_LEVEL";
+  evidenceSpecificity: "TOPIC_LEVEL" | "SUBJECT_LEVEL" | "FRAMEWORK_LEVEL";
 };
 
 const DIRECT_DEPTH_CLAIMS = new Set(["MEETS_BASELINE", "ABOVE_BASELINE", "SIGNIFICANTLY_ABOVE_BASELINE", "BELOW_BASELINE"]);

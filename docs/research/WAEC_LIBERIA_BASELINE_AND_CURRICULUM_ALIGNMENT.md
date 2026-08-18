@@ -228,18 +228,89 @@ into one permanent label; preserve conflict if evidence conflicts.
   aliases of one framework rather than merging them into a single string
   that discards the distinction, if/when real seeding happens.
 - A second **material structural discrepancy** was found and is preserved,
-  not resolved: WAEC Liberia's own LSHSCE(Regular) page describes a
-  **two-core-subject** structure (English Language, Mathematics) with
-  General and Science subject groups and a **stanine 1-9** grading scale,
-  which differs from the regional WASSCE reference material's description
-  of a **four-core-subject** structure (English, Mathematics, Civic
-  Education, plus a fourth core) with an **A1-F9** grading scale. Both are
-  recorded; the first-party Liberia-specific page (stanine, two core
-  subjects) is treated as authoritative for Liberia's actual LSHSCE
-  administration, and the A1-F9/four-core description is treated as
-  describing the broader regional WASSCE pattern that may not apply
-  identically in Liberia. No source found this session reconciles these
-  explicitly; this is a genuine open question, not an oversight.
+  not resolved by evidence alone: WAEC Liberia's own LSHSCE(Regular) page
+  describes a **two-core-subject** structure (English Language,
+  Mathematics) with General and Science subject groups and a **stanine
+  1-9** grading scale, which differs from the regional WASSCE reference
+  material's description of a **four-core-subject** structure (English,
+  Mathematics, Civic Education, plus a fourth core) with an **A1-F9**
+  grading scale. Both are recorded; the first-party Liberia-specific page
+  (stanine, two core subjects) is treated as authoritative for Liberia's
+  actual LSHSCE administration, and the A1-F9/four-core description is
+  treated as describing the broader regional WASSCE pattern that may not
+  apply identically in Liberia. No source found this session (or the
+  P2-C Subject Expansion pass below) reconciles these explicitly at the
+  structural level.
+
+### Reclassification (P2-C Subject Expansion pass, 2026-08-17)
+
+The founder's own first-party findings for this pass state the operative
+decision explicitly, and this document adopts it: the above discrepancy is
+**not** treated as an open current-baseline conflict going forward. LPSCE,
+LJHSCE, and LSHSCE (Regular) are the current verified Liberia baselines for
+Grades 6, 9, and 12 respectively; LSHSCE-Private is the current verified
+private-candidate framework. WASSCE regional rules (four-core, A1-F9) are
+**not** substituted for Liberia's own first-party LSHSCE rules (two-core,
+stanine) under any circumstance, regardless of WASSCE's currency elsewhere
+in the WAEC ecosystem.
+
+The prior label for this discrepancy, `CONFLICTING_TERMINOLOGY`, is
+superseded by **`REGIONAL_FRAMEWORK_NOT_APPLICABLE_TO_CURRENT_VERIFIED_LIBERIA_BASELINE`**.
+This is a decision about which framework governs LiberiaLearn's baseline
+calculations, not a retroactive claim that the structural discrepancy was
+somehow resolved by new evidence -- it was not; the two-core/stanine vs.
+four-core/A1-F9 difference above is preserved verbatim, unedited, exactly
+as originally found. WASSCE is recorded only as an `examAliases` entry
+(`["WASSCE"]`) on the seeded `WAEC.LIBERIA.LSHSCE.REGULAR` baseline
+framework row (`scripts/p2c-staging-exam-framework-seed.ts`) -- a name
+pointer only, not a second, competing framework row that could participate
+in baseline calculations. No dedicated WASSCE `CurriculumAuthoritySource`
+row was created: the only WASSCE-specific Liberia URL previously on record
+(`wassce.html`) still 404s, and fabricating a fresh citation for a source
+never actually re-verified this session would violate this program's own
+evidence-honesty rule. If a future session finds a live, current,
+Liberia-specific WASSCE source, it should be registered as
+`REGIONAL_WAEC_REFERENCE` (still not participating in baseline
+calculations) or, if it explicitly establishes an identity claim with
+LSHSCE, used to promote this reclassification with real evidence rather
+than decision alone.
+
+One piece of real corroborating (not dispositive) evidence surfaced this
+pass: the Grade 10-12 Geography curriculum PDF's own materials list cites
+"WASSCE Q&A (Papers 1&2)" as a student study aid (`GEOGRAPHY 10-12.pdf`,
+p.48 region, MOE archive, see Subject Expansion evidence below) --
+first-party MOE material treating WASSCE-branded resources as ordinary
+regional reference/practice material circulating alongside the Liberia
+curriculum, not as a second governing exam authority. This is consistent
+with, but does not by itself prove, the founder's classification.
+
+### Live re-verification of LPSCE and LSHSCE(Regular), 2026-08-17
+
+The subject/code/CASS-TASS/grading/entry/certificate details below were
+independently re-derived this pass via a real browser session against
+`waecliberia.org.lr` (not reused from memory or this document's earlier
+pass), before being seeded to staging. They match the earlier pass's
+findings and the founder's brief for this sprint exactly, with the
+Division I/II/III aggregate bands (already present above) additionally
+confirmed live rather than assumed.
+
+- **LPSCE** (`https://waecliberia.org.lr/examination/`): Mathematics 310,
+  General Science 320, Language Arts 330, Social Studies 340; all four
+  compulsory; CASS 40% / TASS 60%; 60% minimum pass per subject; certificate
+  requires passing at least 3 of 4 subjects.
+- **LSHSCE (Regular)** (`https://waecliberia.org.lr/lshsceregular/`): Core
+  -- English Language 101, Mathematics 301 (compulsory); General --
+  Economics 201, Geography 202, History 203, Literature-in-English 204;
+  Science -- Biology 401, Chemistry 402, Physics 403; entry 8-9 subjects;
+  stanine 1-9 grading (1 Excellent, 2 Very Good, 3 Good, 4-6 Credit, 7-8
+  Pass, 9 Fail); CASS 30% / TASS 70%; certificate requires passing at
+  least 6 subjects including both Core subjects, at least one General
+  subject, and at least one Science subject; Division I (aggregate <=24,
+  credit in Math+English), Division II (25-36, credit), Division III
+  (37-48, grade 7/8 in Math+English).
+
+Both pages' captured-render SHA-256 hashes and the seed script that
+consumes them are recorded in `docs/research/P2C_EVIDENCE_MANIFEST.md`.
 
 ## Real MOE curriculum content recovered
 
