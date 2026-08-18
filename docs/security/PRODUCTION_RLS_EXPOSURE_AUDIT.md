@@ -1,7 +1,53 @@
 # P0: LiberiaLearn Production RLS Exposure Audit and Safe Remediation
 
-Status: P0 investigation required. No production mutation is authorized by
-this document.
+Status: **P0 RLS EXPOSURE — CONTAINED** (2026-08-18)
+- Default-deny RLS active in staging and production (216/216 production
+  tables, 229/229 staging tables, zero policies).
+- Post-exposure log/integrity review: see the 2026-08-18 record below for
+  results.
+- Fine-grained Data API policy matrix (the full process below) is deferred
+  until a feature genuinely requires direct client-side Supabase access; not
+  needed today because the app never uses `supabase-js`/PostgREST against
+  Postgres (Storage API only, server-side).
+
+## 2026-08-18 interim mitigation record
+
+- Trigger: user forwarded a live Supabase dashboard security alert for the
+  staging project (`yonpfzjczoffhrgibxkz`, "fasiryon's Project"), flagging
+  `rls_disabled_in_public`.
+- Staging discovery: all 229 public tables had RLS disabled AND `anon`/
+  `authenticated` held full `SELECT,INSERT,UPDATE,DELETE,TRUNCATE,REFERENCES,
+  TRIGGER` grants on nearly every table — actively exploitable via the public
+  anon key, not just a theoretical risk.
+- Verified before fixing: `lib/supabaseStorage.ts` is the only Supabase client
+  usage in the codebase, and it only calls the Storage REST API (never
+  PostgREST/`supabase-js` against Postgres tables). `DATABASE_URL`/`DIRECT_URL`
+  connect as the `postgres` role, which has `rolbypassrls = true`.
+- Fix applied to staging: blanket `ALTER TABLE ... ENABLE ROW LEVEL SECURITY`
+  across all public tables, no policies. Verified: `SET ROLE anon` reads 0
+  rows from `User`; the `postgres` role still reads all real rows (87 users)
+  unaffected — the app is unaffected.
+- Production discovery (read-only, no mutation): RLS was disabled on all 216
+  tables, confirming this document's original 2026-08-11 finding was still
+  live. Distinguishing detail: unlike staging, `anon`, `authenticated`, and
+  even `service_role` all lacked `USAGE` on schema `public` in production, so
+  the standard Data API could not reach any table regardless of the RLS flag
+  (`permission denied for schema public`) — production was not actively
+  exploitable via that path at the time of this check, unlike staging.
+- User explicitly approved applying the same interim fix to production as
+  defense-in-depth (the schema-USAGE lock is a single misconfiguration away
+  from reopening full exposure, with no RLS backstop).
+- Fix applied to production: identical blanket `ENABLE ROW LEVEL SECURITY`,
+  no policies. Verified post-change: 216/216 tables show `rowsecurity = true`;
+  `postgres`-role read of `User` still returns all real rows (2,168 users) —
+  app unaffected.
+- Still open: the full discovery-and-policy-matrix process below (grant
+  inventory across all roles, access-path map, PII/safeguarding table
+  classification, per-table reviewed policies) was not performed. Default-deny
+  is safe today only because no legitimate `anon`/`authenticated` Data API
+  consumer exists. If any future feature needs that path, real policies must
+  be designed and reviewed first — do not just add ad hoc `USING (true)`
+  policies to "unblock" a table.
 
 ## Finding
 

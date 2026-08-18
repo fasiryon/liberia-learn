@@ -263,7 +263,13 @@ Live execution tracking for the final closeout program.
   unchanged.
   Separately, the production RLS inventory finding is tracked as a P0 in
   `docs/security/PRODUCTION_RLS_EXPOSURE_AUDIT.md`; no production RLS change was
-  made or authorized. Independent database proof in this cycle PASS: the
+  made or authorized as of this cycle. **Superseded 2026-08-18**: user-approved
+  interim defense-in-depth mitigation applied blanket `ENABLE ROW LEVEL
+  SECURITY` (no policies) to all 216 production tables and all 229 staging
+  tables, after a live Supabase security alert confirmed staging was actively
+  exploitable via the public anon key. See the audit doc's 2026-08-18 record
+  for full detail; the full policy-matrix work it originally specified is
+  still open. Independent database proof in this cycle PASS: the
   disposable PostgreSQL 17 canonical bootstrap, exact catalog hashes,
   two-migration ledger, idempotent reference seed, and custom dump/restore all
   passed. Focused canonical/staging tests PASS 22/22; Prisma generate PASS;
