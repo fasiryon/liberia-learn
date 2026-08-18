@@ -92,14 +92,49 @@ Live execution tracking for the final closeout program.
   the evidence-specificity guard tests, not exercised with real LLM
   inference (no provider funding/pricing check was performed, and none was
   authorized for this pass); admin/curriculum-intelligence UI; full
-  production-gate Vitest/build run; subject expansion beyond Math
-  (English/Language Arts, Science); production rollout. Gate at this
+  production-gate Vitest/build run; production rollout. Gate at this
   checkpoint: `prisma validate`/`generate` PASS, `tsc --noEmit` PASS, full
   P2-C+P2-B+P2-A regression 101/101 PASS, `git diff --check` PASS, clean
-  worktree. Next: human review of the staging state and the preserved
-  terminology conflict, then either Gate 7 with an explicit LLM-spend
-  authorization or Phase 33 subject expansion using the now-proven
-  pipeline, then production authorization.
+  worktree.
+
+  **2026-08-18 update: subject expansion started (commit `ecef55e1`).**
+  Picked up in-progress, previously-uncommitted work found in the tree
+  during an unrelated security session (see the RLS entry above). Added
+  `examAliases` (additive migration `20260817_000002_p2c_assessment_framework_exam_aliases`,
+  applied to staging and verified via the real Prisma migration ledger, not
+  just assumed) so LSHSCE-Regular can record "WASSCE" as a name without a
+  second competing framework row. Seeded and live-verified four
+  properly-separated exam frameworks (LPSCE/LJHSCE/LSHSCE-Regular/
+  LSHSCE-Private) with real subject codes, CASS/TASS splits, grading scales,
+  and entry/certificate rules — the original merged pilot framework row is
+  preserved untouched. Ran the previously-unexecuted subject-expansion seed:
+  14 real, cited MOE objectives beyond Math (Language Arts/General
+  Science/Social Studies at G6/G9; English/Economics/Geography/History/
+  Literature/Biology/Chemistry/Physics at G12) each paired with an honest
+  SUBJECT_LEVEL WAEC competency, plus one extra Math subject-level
+  competency for the G12 calculus case. Live-verified post-seed: 17 total
+  `MoeCurriculumObjective` rows (3 original + 14 new), 16 total
+  `AssessmentBaselineCompetency` rows (all 16 correctly `PARTIAL`, none
+  over-claimed to `DIRECT`). Widened `AlignmentEvidence.evidenceSpecificity`
+  with `FRAMEWORK_LEVEL` (exam-wide facts like CASS/TASS weighting are
+  neither topic- nor subject-level evidence for any competency) and added
+  `gapEngine.classifyGapCategories` to keep a LiberiaLearn content gap
+  distinct from a public WAEC-evidence limitation. Fast gate
+  (`npm run validate:changed`) PASS; focused P2-A+P2-B+P2-C regression
+  380/380 PASS (one allowlist test updated for the new migration directory).
+  Full `tsc --noEmit` was NOT independently re-verified after this pass — it
+  OOM'd twice on this dev machine (known issue, see
+  `feedback_dev_machine_oom_orphaned_builds` pattern), not a code failure;
+  the last clean full run this session covered all these file changes except
+  a single trivially-typed one-line test-array edit made afterward. Staging
+  only (`yonpfzjczoffhrgibxkz`); production untouched.
+  Next: `scripts/p2c-live-ai-sme-proof.ts` (referenced in the seed script's
+  own comments, does not exist yet) is the actual Gate 7 — real live LLM
+  calls to generate the SUPPORTING/PARTIAL/UNKNOWN alignment relationships
+  for all 15 newly-seeded subject-level competencies, which still needs an
+  explicit LLM-spend authorization before it can run. Then human review of
+  the staging state and the preserved terminology conflict, then production
+  authorization.
 - **P2-B PRODUCTION SCHEMA AND DISABLED DEPLOYMENT COMPLETE; FEATURE ACTIVATION NO-GO (2026-08-14).** Production `bnphuinpvgpmebcsvmsp` passed preflight, recovery, dependency reachability review, additive Migration A/B, postflight invariants, and health validation. Deployment `dpl_nS9JKq2whVyGtVCU8JjsKVaGk1aM` is Ready with P2-B operations and shadow explicitly false. Production has zero reviewer profiles and zero verified credentials, so no credentials or tasks were fabricated and all scopes remain legacy-safe. Platform, school, MOE/national canaries, external walkthroughs, and legacy route cutover await evidence-backed reviewer coverage. Full record: `docs/ops/P2B_PRODUCTION_CUTOVER_RECORD.md`.
 - **P2-B QUALIFIED REVIEW OPERATIONS FEATURE COMPLETE IN STAGING; PRODUCTION
   ACTIVATION AWAITS FINAL AUTHORIZATION (2026-08-14).** Option C is implemented
