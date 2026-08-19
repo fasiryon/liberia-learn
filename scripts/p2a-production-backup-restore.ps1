@@ -5,7 +5,7 @@ param(
   [Parameter(Mandatory = $true)]
   [string]$EvidenceLocation,
 
-  [ValidateSet("pre-p2a-migration-a", "post-p2a-migration-c", "post-p2b-human")]
+  [ValidateSet("pre-p2a-migration-a", "post-p2a-migration-c", "post-p2b-human", "post-p2c")]
   [string]$MigrationBoundary = "pre-p2a-migration-a"
 )
 
@@ -108,16 +108,29 @@ SELECT concat_ws('|',
   (SELECT count(*) FROM public."_prisma_migrations" WHERE finished_at IS NULL AND rolled_back_at IS NULL),
   (SELECT count(*) FROM public."_prisma_migrations" WHERE migration_name LIKE '20260810_00000%_p2a_%'),
   (SELECT count(*) FROM information_schema.tables WHERE table_schema = 'public' AND table_type = 'BASE TABLE'),
-  (SELECT count(*) FROM public."CurriculumContent")
+  (SELECT count(*) FROM public."CurriculumContent"),
+  (SELECT count(*) FROM public."_prisma_migrations" WHERE migration_name LIKE '%p2c%')
 );
 "@
   $sourceParts = $sourceState.Split('|')
-  $expectedActiveMigrations = if ($MigrationBoundary -eq "pre-p2a-migration-a") { 146 } else { if ($MigrationBoundary -eq "post-p2b-human") { 8 } else { 6 } }
+  # post-p2c: derived, not guessed, from a live production ledger query run
+  # 2026-08-19 during pre-cutover preparation (active=9, p2aLikeCount=5,
+  # publicTables=216, curriculumContent=1105, p2cLikeCount=0 at that time)
+  # plus the 4 net-new migrations this cutover adds (3 P2-C schema + the
+  # dedupeKey-unique index): 9 + 4 = 13 active, p2cLikeCount becomes 4.
+  # publicTables is expected to become 216 + 13 new P2-C tables = 229,
+  # matching staging's own post-P2C table count exactly -- recorded in the
+  # evidence JSON like the other boundaries, not asserted here, consistent
+  # with how publicTableCount/curriculumContentCount are already handled
+  # for the other three boundaries (captured, not gated).
+  $expectedActiveMigrations = if ($MigrationBoundary -eq "pre-p2a-migration-a") { 146 } elseif ($MigrationBoundary -eq "post-p2b-human") { 8 } elseif ($MigrationBoundary -eq "post-p2c") { 13 } else { 6 }
   $expectedP2ARows = if ($MigrationBoundary -eq "pre-p2a-migration-a") { 0 } else { 5 }
-  if ($sourceParts.Count -ne 5 -or
+  $expectedP2CRows = if ($MigrationBoundary -eq "post-p2c") { 4 } else { 0 }
+  if ($sourceParts.Count -ne 6 -or
       [int]$sourceParts[0] -ne $expectedActiveMigrations -or
       $sourceParts[1] -ne "0" -or
-      [int]$sourceParts[2] -ne $expectedP2ARows) {
+      [int]$sourceParts[2] -ne $expectedP2ARows -or
+      [int]$sourceParts[5] -ne $expectedP2CRows) {
     throw "Production migration boundary differs from $MigrationBoundary"
   }
 
@@ -161,7 +174,8 @@ SELECT concat_ws('|',
   (SELECT count(*) FROM public."_prisma_migrations" WHERE finished_at IS NULL AND rolled_back_at IS NULL),
   (SELECT count(*) FROM public."_prisma_migrations" WHERE migration_name LIKE '20260810_00000%_p2a_%'),
   (SELECT count(*) FROM information_schema.tables WHERE table_schema = 'public' AND table_type = 'BASE TABLE'),
-  (SELECT count(*) FROM public."CurriculumContent")
+  (SELECT count(*) FROM public."CurriculumContent"),
+  (SELECT count(*) FROM public."_prisma_migrations" WHERE migration_name LIKE '%p2c%')
 );
 "@
   $restoreState = $restoreQuery | & docker exec -i $containerName psql -U postgres -d postgres -X -q -v ON_ERROR_STOP=1 -At -f -
@@ -197,6 +211,7 @@ SELECT concat_ws('|',
     p2aMigrationCount = [int]$sourceParts[2]
     publicTableCount = [int]$sourceParts[3]
     curriculumContentCount = [int]$sourceParts[4]
+    p2cMigrationCount = [int]$sourceParts[5]
   }
   [IO.File]::WriteAllText(
     $evidencePath,
