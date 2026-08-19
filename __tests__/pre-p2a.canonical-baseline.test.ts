@@ -1,7 +1,8 @@
 import { createHash } from "node:crypto";
-import { readFileSync, readdirSync, statSync } from "node:fs";
+import { readFileSync, readdirSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
+import { canonicalBlobsBatch } from "../scripts/lib/canonicalMigrationBytes";
 
 const root = process.cwd();
 
@@ -37,10 +38,21 @@ describe("canonical pre-P2-A baseline", () => {
     expect(legacyManifest.legacyMigrations).toHaveLength(128);
     expect(legacyManifest.repositoryAbsentProductionMigrations).toHaveLength(18);
 
+    // Verified against the canonical git blob (via a single `git cat-file
+    // --batch` call), never the checked-out worktree file -- byte length
+    // and content depend on core.autocrlf / .gitattributes checkout
+    // normalization, which differs between a Windows checkout and Linux CI.
+    // Using the git object database directly makes this assertion identical
+    // on every OS. (One batched subprocess instead of 256 individual ones
+    // keeps this fast enough not to need a custom test timeout.)
+    const blobs = canonicalBlobsBatch(
+      legacyManifest.legacyMigrations.map((m: { gitBlobSha: string }) => m.gitBlobSha),
+    );
     for (const migration of legacyManifest.legacyMigrations) {
-      const fullPath = join(root, migration.path);
-      expect(statSync(fullPath).size, migration.migrationName).toBe(migration.fileBytes);
-      expect(sha256(migration.path), migration.migrationName).toBe(migration.sha256);
+      const blob = blobs.get(migration.gitBlobSha);
+      expect(blob, `${migration.migrationName}: git blob ${migration.gitBlobSha} not found`).toBeDefined();
+      expect(blob!.size, migration.migrationName).toBe(migration.fileBytes);
+      expect(blob!.sha256, migration.migrationName).toBe(migration.sha256);
     }
 
     const initial = legacyManifest.legacyMigrations[0];
@@ -202,6 +214,7 @@ describe("canonical pre-P2-A baseline", () => {
       "20260817_000001_p2c_waec_baseline_alignment",
       "20260817_000002_p2c_assessment_framework_exam_aliases",
       "20260818_000001_p2c_evidence_specificity_and_baseline_depth",
+      "20260819_000001_p2c_ai_interaction_dedupekey_unique",
     ]);
   });
 });
