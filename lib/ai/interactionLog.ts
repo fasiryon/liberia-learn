@@ -4,6 +4,15 @@ import { logLearningEvent } from "@/lib/events/logLearningEvent";
 
 export type AiBudgetFeature = "tutor" | "teacherAssist" | "grading" | "curriculum" | "labs";
 
+// Per-process mutex for logAIInteraction's AIInteraction dedup (see
+// resolveInteractionRow below): serializes concurrent create attempts for
+// the same generationCorrelationId so a caller's defensive duplicate write
+// can never race routedCompletion's own internal write into two rows.
+const inFlightInteractionRowsByCorrelationId = new Map<
+  string,
+  Promise<{ id: string; isNew: boolean } | null>
+>();
+
 type JsonObject = Record<string, unknown>;
 
 type AiUsageInput = {
@@ -158,7 +167,10 @@ export async function logAIInteraction(input: LogAIInteractionInput) {
     aiInteractionLog?: { create?: (args: unknown) => Promise<unknown> };
   }).aiInteractionLog;
   const aiInteractionModel = (prisma as typeof prisma & {
-    aIInteraction?: { create?: (args: unknown) => Promise<unknown> };
+    aIInteraction?: {
+      create?: (args: unknown) => Promise<{ id: string }>;
+      findFirst?: (args: unknown) => Promise<{ id: string } | null>;
+    };
   }).aIInteraction;
 
   if (!aiInteractionLogModel?.create && !aiInteractionModel?.create) {
@@ -189,65 +201,149 @@ export async function logAIInteraction(input: LogAIInteractionInput) {
     ...(input.metadata ?? {}),
   });
 
+  // One external provider invocation must produce at most one canonical
+  // AIInteraction row. Callers may legitimately call logAIInteraction more
+  // than once for the same invocation -- e.g. routedCompletion's own
+  // internal write (fire-and-forget unless feature === "curriculum" &&
+  // provenanceWritersEnabled()) plus a caller's own defensive durable write
+  // for a short-lived script that can't rely on that fire-and-forget path.
+  // When a generationCorrelationId repeats, this is a duplicate persistence
+  // attempt for an already-recorded invocation, not a second real call, so
+  // it reuses the existing row instead of inserting a new one. A genuinely
+  // new provider call always gets its own correlation id (routedCompletion
+  // mints a fresh one per invocation), so distinct calls are never
+  // coalesced by this check.
+  //
+  // A find-then-create check alone is not race-safe: when routedCompletion's
+  // internal write is fire-and-forget, a caller's own immediately-following
+  // durable call can start its own findFirst before the internal write's
+  // create() has committed, and both see "not found" and both insert (this
+  // was verified live against staging while building this fix -- see
+  // docs/ops/P2C_LIVE_DEDUP_PROOF.json's first run). No DB-level unique
+  // constraint is added to close this at the database layer: doing so would
+  // require resolving the pre-existing duplicate rows first (24 of them,
+  // from before this fix), which means mutating historical audit evidence --
+  // out of scope for this fix. Instead, an in-process mutex keyed by
+  // correlation id serializes concurrent resolveInteractionRow() calls for
+  // the same id within this process, which is where the actual duplicate
+  // calls originate (routedCompletion and its caller always run in the same
+  // process/request).
+  async function createInteractionRow(
+    correlationId: string | null
+  ): Promise<{ id: string; isNew: boolean } | null> {
+    const created = await aiInteractionModel!.create!({
+      data: {
+        schoolId: input.schoolId ?? null,
+        userId: input.userId ?? null,
+        studentId: input.studentId ?? input.userId ?? null,
+        route: input.route,
+        feature,
+        requestType,
+        guidanceLevel: input.guidanceLevel ?? null,
+        subject,
+        strandKey,
+        contentId: input.contentId ?? null,
+        lessonId: input.lessonId ?? null,
+        model: input.model ?? null,
+        provider: inferProvider(input.model, input.provider),
+        tier: input.tier ?? null,
+        hadFallback,
+        tokensUsed,
+        estimatedCostUSD,
+        latencyMs: input.latencyMs ?? null,
+        promptVersion: input.promptVersion ?? null,
+        contentVersion: input.contentVersion ?? null,
+        assessmentVersion: input.assessmentVersion ?? null,
+        calculationVersion: input.calculationVersion ?? null,
+        promptKey: input.promptKey ?? null,
+        promptHash: input.promptHash ?? null,
+        generationCorrelationId: correlationId,
+        clientEventId: input.clientEventId ?? null,
+        originalOccurredAt: toDate(input.originalTimestamp),
+        syncReceivedAt: toDate(input.syncReceivedAt),
+        dedupeKey: input.dedupeKey ?? null,
+        sourceEventId: input.sourceEventId ?? null,
+        metadata: toJson(metadata),
+      },
+    });
+    return { id: created.id, isNew: true };
+  }
+
+  async function resolveInteractionRow(): Promise<{ id: string; isNew: boolean } | null> {
+    if (!aiInteractionModel?.create) return null;
+    const correlationId = input.generationCorrelationId?.trim() || null;
+
+    if (correlationId) {
+      const alreadyInFlight = inFlightInteractionRowsByCorrelationId.get(correlationId);
+      if (alreadyInFlight) {
+        const row = await alreadyInFlight;
+        return row ? { id: row.id, isNew: false } : null;
+      }
+    }
+
+    const resolution = (async () => {
+      if (correlationId && aiInteractionModel.findFirst) {
+        // generationCorrelationId is not a @unique column (existing
+        // duplicate rows from before this fix would violate that
+        // constraint), but it is covered by the existing
+        // @@index([generationCorrelationId, createdAt]) index, so this
+        // lookup stays indexed without a schema change.
+        const existing = await aiInteractionModel.findFirst({
+          where: { generationCorrelationId: correlationId },
+          orderBy: { createdAt: "asc" },
+        });
+        if (existing) return { id: existing.id, isNew: false };
+      }
+      return createInteractionRow(correlationId);
+    })();
+
+    if (correlationId) {
+      inFlightInteractionRowsByCorrelationId.set(correlationId, resolution);
+    }
+    try {
+      return await resolution;
+    } finally {
+      if (correlationId) inFlightInteractionRowsByCorrelationId.delete(correlationId);
+    }
+  }
+
   const interactionWrite = aiInteractionModel?.create
-    ? aiInteractionModel.create({
-        data: {
-          schoolId: input.schoolId ?? null,
-          userId: input.userId ?? null,
-          studentId: input.studentId ?? input.userId ?? null,
-          route: input.route,
-          feature,
-          requestType,
-          guidanceLevel: input.guidanceLevel ?? null,
-          subject,
-          strandKey,
-          contentId: input.contentId ?? null,
-          lessonId: input.lessonId ?? null,
-          model: input.model ?? null,
-          provider: inferProvider(input.model, input.provider),
-          tier: input.tier ?? null,
-          hadFallback,
-          tokensUsed,
-          estimatedCostUSD,
-          latencyMs: input.latencyMs ?? null,
-          promptVersion: input.promptVersion ?? null,
-          contentVersion: input.contentVersion ?? null,
-          assessmentVersion: input.assessmentVersion ?? null,
-          calculationVersion: input.calculationVersion ?? null,
-          promptKey: input.promptKey ?? null,
-          promptHash: input.promptHash ?? null,
-          generationCorrelationId: input.generationCorrelationId ?? null,
-          clientEventId: input.clientEventId ?? null,
-          originalOccurredAt: toDate(input.originalTimestamp),
-          syncReceivedAt: toDate(input.syncReceivedAt),
-          dedupeKey: input.dedupeKey ?? null,
-          sourceEventId: input.sourceEventId ?? null,
-          metadata: toJson(metadata),
-        },
-      })
+    ? resolveInteractionRow()
     : Promise.reject(new Error("AIInteraction persistence is unavailable"));
+
+  // Never let a rejection from interactionWrite propagate into the legacy-log
+  // branch below (which only needs to know isNew, not whether the caller's
+  // own durable-mode await should see a failure).
+  const interactionOutcome = interactionWrite.then(
+    (row) => ({ ok: true as const, row }),
+    () => ({ ok: false as const, row: null })
+  );
 
   const [legacyLog] = await Promise.all([
     aiInteractionLogModel?.create
-      ? aiInteractionLogModel
-          .create({
-            data: {
-              schoolId: input.schoolId ?? null,
-              userId: input.userId ?? null,
-              feature,
-              subject,
-              strandKey,
-              requestType,
-              endpoint: input.route,
-              guidanceLevel: input.guidanceLevel ?? null,
-              model: input.model ?? null,
-              tier: input.tier ?? null,
-              hadFallback,
-              tokensUsed,
-              estimatedCostUSD,
-            },
-          })
-          .catch(() => null)
+      ? interactionOutcome.then((outcome) =>
+          outcome.ok && outcome.row?.isNew
+            ? aiInteractionLogModel
+                .create({
+                  data: {
+                    schoolId: input.schoolId ?? null,
+                    userId: input.userId ?? null,
+                    feature,
+                    subject,
+                    strandKey,
+                    requestType,
+                    endpoint: input.route,
+                    guidanceLevel: input.guidanceLevel ?? null,
+                    model: input.model ?? null,
+                    tier: input.tier ?? null,
+                    hadFallback,
+                    tokensUsed,
+                    estimatedCostUSD,
+                  },
+                })
+                .catch(() => null)
+            : null
+        )
       : Promise.resolve(null),
     input.durable ? interactionWrite : interactionWrite.catch(() => null),
     logLearningEvent({
