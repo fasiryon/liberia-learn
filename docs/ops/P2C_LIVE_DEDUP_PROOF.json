@@ -1,0 +1,48 @@
+{
+  "startedAt": "2026-08-19T16:33:26.712Z",
+  "stagingProjectRef": "yonpfzjczoffhrgibxkz",
+  "spendCapUSD": 1,
+  "cumulativeSpendUSD": 0.000005399999999999999,
+  "PRE_telemetry": {
+    "interactionCount": 7,
+    "legacyLogCount": 7
+  },
+  "POST_telemetry": {
+    "interactionCount": 9,
+    "legacyLogCount": 9
+  },
+  "telemetryDelta": {
+    "AIInteraction": 2,
+    "AiInteractionLog": 2
+  },
+  "PRE_acceptance": {
+    "alignments": 1,
+    "coverage": 0,
+    "learningTargets": 2,
+    "competencies": 16
+  },
+  "POST_acceptance": {
+    "alignments": 1,
+    "coverage": 0,
+    "learningTargets": 2,
+    "competencies": 16
+  },
+  "acceptanceTablesDelta": {
+    "alignments": 0,
+    "coverage": 0,
+    "learningTargets": 0,
+    "competencies": 0
+  },
+  "call1": {
+    "correlationId": "83a13e5e-d5f6-4a40-b215-33d2ae192695",
+    "canonicalRowCount": 1,
+    "expectedCanonicalRowCount": 1,
+    "dedupWorked": true
+  },
+  "call2": {
+    "correlationId": "a8ffc7b9-40b2-4901-8bc9-64b088ce639d",
+    "canonicalRowCount": 1,
+    "expectedCanonicalRowCount": 1,
+    "remainedDistinctFromCall1": true
+  }
+}

@@ -1,0 +1,222 @@
+{
+  "reconciledAt": "2026-08-19T16:23:16.933Z",
+  "method": "SELECT-only query of AIInteraction (route='curriculum.waecBaselineAlignment', requestType='p2c_live_ai_sme_proof') and count of AiInteractionLog rows with the same endpoint/requestType, on staging (yonpfzjczoffhrgibxkz), no rows deleted or mutated.",
+  "rawAIInteractionRows": 24,
+  "rawAiInteractionLogRows": 24,
+  "distinctProviderInvocations": 12,
+  "duplicatePersistenceRows": 12,
+  "duplicationMechanism": "Prior to the interactionLog.ts idempotency fix in this closure pass, routedCompletion() logged internally via logAIInteraction() (awaited/durable whenever feature==='curriculum' && provenanceWritersEnabled(), true on staging) AND scripts/p2c-live-ai-sme-proof.ts called logAIInteraction() a second time itself (also durable: true) using the same generationCorrelationId, as a defensive measure against routedCompletion's internal write being fire-and-forget in non-curriculum/non-provenance contexts. Both calls unconditionally created a new row with no dedup guard, so every real invocation was persisted twice in AIInteraction and, when the second call also went on to write AiInteractionLog, twice there too. Fixed in this pass: logAIInteraction() now looks up an existing AIInteraction row by generationCorrelationId before creating one, and only writes the legacy AiInteractionLog row when it is actually creating a new canonical AIInteraction row. See lib/ai/interactionLog.ts and __tests__/ai.interactionLog.test.ts (dedup describe block).",
+  "totalProviderCostUSD": 0.0039511500000000005,
+  "documentedTestCases": 4,
+  "documentedRunId": "92a892fc-b57c-44e1-b864-86feb023f134",
+  "documentedRunInvocations": 4,
+  "priorEarlierBatchInvocations": 8,
+  "runs": [
+    {
+      "proofRunId": "a3c9692d-ab4e-4432-a80d-1a3579b6f560",
+      "invocationCount": 4,
+      "cases": [
+        "Case A: Grade 9 Two-Set Problems (SUBJECT_LEVEL WAEC evidence only)",
+        "Case B: Grade 12 Differentiation and Integration (extension case)",
+        "Case C: Grade 3 Review of Operations vs LPSCE Grade 6 (grade-mismatch test)",
+        "Case D: adversarial external-authority-claim injection"
+      ],
+      "firstPersistedAt": "2026-08-18T19:35:00.026Z",
+      "costUSD": 0.00133125
+    },
+    {
+      "proofRunId": "37e87046-b1f4-4ee4-8af6-2305a4a17c03",
+      "invocationCount": 4,
+      "cases": [
+        "Case A: Grade 9 Two-Set Problems (SUBJECT_LEVEL WAEC evidence only)",
+        "Case B: Grade 12 Differentiation and Integration (extension case)",
+        "Case C: Grade 3 Review of Operations vs LPSCE Grade 6 (grade-mismatch test)",
+        "Case D: adversarial external-authority-claim injection"
+      ],
+      "firstPersistedAt": "2026-08-19T15:16:01.759Z",
+      "costUSD": 0.00128025
+    },
+    {
+      "proofRunId": "92a892fc-b57c-44e1-b864-86feb023f134",
+      "invocationCount": 4,
+      "cases": [
+        "Case A: Grade 9 Two-Set Problems (SUBJECT_LEVEL WAEC evidence only)",
+        "Case B: Grade 12 Differentiation and Integration (extension case)",
+        "Case C: Grade 3 Review of Operations vs LPSCE Grade 6 (grade-mismatch test)",
+        "Case D: adversarial external-authority-claim injection"
+      ],
+      "firstPersistedAt": "2026-08-19T15:20:15.584Z",
+      "costUSD": 0.00133965
+    }
+  ],
+  "distinctInvocations": [
+    {
+      "correlationId": "af846179-9da3-4f45-84ab-ba06cbafdef3",
+      "proofRunId": "a3c9692d-ab4e-4432-a80d-1a3579b6f560",
+      "proofCase": "Case A: Grade 9 Two-Set Problems (SUBJECT_LEVEL WAEC evidence only)",
+      "model": "gpt-4o-mini",
+      "tokensUsed": 1687,
+      "estimatedCostUSD": 0.0003489,
+      "firstPersistedAt": "2026-08-18T19:35:00.026Z",
+      "duplicateRowCount": 1,
+      "allRowIds": [
+        "cmsz2axb60001vohkua7jpdqf",
+        "cmsz2axn10002vohkuzharckd"
+      ]
+    },
+    {
+      "correlationId": "6bc667ee-4dc6-4522-9701-2c4cdf140d25",
+      "proofRunId": "a3c9692d-ab4e-4432-a80d-1a3579b6f560",
+      "proofCase": "Case B: Grade 12 Differentiation and Integration (extension case)",
+      "model": "gpt-4o-mini",
+      "tokensUsed": 1696,
+      "estimatedCostUSD": 0.0003498,
+      "firstPersistedAt": "2026-08-18T19:35:06.165Z",
+      "duplicateRowCount": 1,
+      "allRowIds": [
+        "cmsz2b1vy0007vohkfp11eooe",
+        "cmsz2b2z0000bvohkaq70rdrl"
+      ]
+    },
+    {
+      "correlationId": "2dc4cc76-03b8-4b31-ad9f-765825d2f2a1",
+      "proofRunId": "a3c9692d-ab4e-4432-a80d-1a3579b6f560",
+      "proofCase": "Case C: Grade 3 Review of Operations vs LPSCE Grade 6 (grade-mismatch test)",
+      "model": "gpt-4o-mini",
+      "tokensUsed": 1620,
+      "estimatedCostUSD": 0.00032535,
+      "firstPersistedAt": "2026-08-18T19:35:11.809Z",
+      "duplicateRowCount": 1,
+      "allRowIds": [
+        "cmsz2b672000dvohk2xtmuhkk",
+        "cmsz2b79x000hvohkea23tumv"
+      ]
+    },
+    {
+      "correlationId": "b3767a4d-e7d5-4a71-ae1d-d909466e57a1",
+      "proofRunId": "a3c9692d-ab4e-4432-a80d-1a3579b6f560",
+      "proofCase": "Case D: adversarial external-authority-claim injection",
+      "model": "gpt-4o-mini",
+      "tokensUsed": 1589,
+      "estimatedCostUSD": 0.0003072,
+      "firstPersistedAt": "2026-08-18T19:35:17.842Z",
+      "duplicateRowCount": 1,
+      "allRowIds": [
+        "cmsz2bauo000jvohkmv80tgj6",
+        "cmsz2bby6000nvohkx59qw7le"
+      ]
+    },
+    {
+      "correlationId": "5a127624-5d66-4a72-abfa-bfd9e8d4f169",
+      "proofRunId": "37e87046-b1f4-4ee4-8af6-2305a4a17c03",
+      "proofCase": "Case A: Grade 9 Two-Set Problems (SUBJECT_LEVEL WAEC evidence only)",
+      "model": "gpt-4o-mini",
+      "tokensUsed": 1659,
+      "estimatedCostUSD": 0.0003321,
+      "firstPersistedAt": "2026-08-19T15:16:01.759Z",
+      "duplicateRowCount": 1,
+      "allRowIds": [
+        "cmt08hq470000volgjgangryw",
+        "cmt08hrzu0005volgno101ssx"
+      ]
+    },
+    {
+      "correlationId": "35ba5262-0177-4766-924c-d82b543fcb3b",
+      "proofRunId": "37e87046-b1f4-4ee4-8af6-2305a4a17c03",
+      "proofCase": "Case B: Grade 12 Differentiation and Integration (extension case)",
+      "model": "gpt-4o-mini",
+      "tokensUsed": 1684,
+      "estimatedCostUSD": 0.0003426,
+      "firstPersistedAt": "2026-08-19T15:16:09.378Z",
+      "duplicateRowCount": 1,
+      "allRowIds": [
+        "cmt08hw2b0006volgjgu2631u",
+        "cmt08hx2d000avolgef5w1u72"
+      ]
+    },
+    {
+      "correlationId": "03fcdf49-fea8-44b3-83da-2e7c8fe2d8eb",
+      "proofRunId": "37e87046-b1f4-4ee4-8af6-2305a4a17c03",
+      "proofCase": "Case C: Grade 3 Review of Operations vs LPSCE Grade 6 (grade-mismatch test)",
+      "model": "gpt-4o-mini",
+      "tokensUsed": 1578,
+      "estimatedCostUSD": 0.00030015,
+      "firstPersistedAt": "2026-08-19T15:16:15.737Z",
+      "duplicateRowCount": 1,
+      "allRowIds": [
+        "cmt08i14s000dvolgap7rfynh",
+        "cmt08i24v000hvolg0fzvlumm"
+      ]
+    },
+    {
+      "correlationId": "39b647e9-acec-4847-9360-309bd026c718",
+      "proofRunId": "37e87046-b1f4-4ee4-8af6-2305a4a17c03",
+      "proofCase": "Case D: adversarial external-authority-claim injection",
+      "model": "gpt-4o-mini",
+      "tokensUsed": 1586,
+      "estimatedCostUSD": 0.0003053999999999999,
+      "firstPersistedAt": "2026-08-19T15:16:21.368Z",
+      "duplicateRowCount": 1,
+      "allRowIds": [
+        "cmt08i588000ivolg08zfin0t",
+        "cmt08i5ru000kvolgsngzdesv"
+      ]
+    },
+    {
+      "correlationId": "1003dd3e-500a-49bd-863b-62a35599b7b4",
+      "proofRunId": "92a892fc-b57c-44e1-b864-86feb023f134",
+      "proofCase": "Case A: Grade 9 Two-Set Problems (SUBJECT_LEVEL WAEC evidence only)",
+      "model": "gpt-4o-mini",
+      "tokensUsed": 1666,
+      "estimatedCostUSD": 0.0003363,
+      "firstPersistedAt": "2026-08-19T15:20:15.584Z",
+      "duplicateRowCount": 1,
+      "allRowIds": [
+        "cmt08n68d0001vo7oafepdy6r",
+        "cmt08n79m0005vo7ophtrzwrm"
+      ]
+    },
+    {
+      "correlationId": "43f0374a-1ca3-4294-b219-56a0119639e0",
+      "proofRunId": "92a892fc-b57c-44e1-b864-86feb023f134",
+      "proofCase": "Case B: Grade 12 Differentiation and Integration (extension case)",
+      "model": "gpt-4o-mini",
+      "tokensUsed": 1719,
+      "estimatedCostUSD": 0.0003635999999999999,
+      "firstPersistedAt": "2026-08-19T15:20:22.050Z",
+      "duplicateRowCount": 1,
+      "allRowIds": [
+        "cmt08nb730007vo7oqdxo2xfh",
+        "cmt08nc87000bvo7oihvb9sl0"
+      ]
+    },
+    {
+      "correlationId": "d8759f57-973a-4b16-be7c-8773bd58f5e5",
+      "proofRunId": "92a892fc-b57c-44e1-b864-86feb023f134",
+      "proofCase": "Case C: Grade 3 Review of Operations vs LPSCE Grade 6 (grade-mismatch test)",
+      "model": "gpt-4o-mini",
+      "tokensUsed": 1585,
+      "estimatedCostUSD": 0.00030435,
+      "firstPersistedAt": "2026-08-19T15:20:27.528Z",
+      "duplicateRowCount": 1,
+      "allRowIds": [
+        "cmt08nfhm000dvo7osd9etbli",
+        "cmt08ng9o000gvo7oxpkkb3nz"
+      ]
+    },
+    {
+      "correlationId": "2993e45a-9df1-4312-8f1e-af3bc4128962",
+      "proofRunId": "92a892fc-b57c-44e1-b864-86feb023f134",
+      "proofCase": "Case D: adversarial external-authority-claim injection",
+      "model": "gpt-4o-mini",
+      "tokensUsed": 1636,
+      "estimatedCostUSD": 0.0003354,
+      "firstPersistedAt": "2026-08-19T15:20:34.260Z",
+      "duplicateRowCount": 1,
+      "allRowIds": [
+        "cmt08nkma000jvo7opb7oc800",
+        "cmt08nlnn000nvo7o18egflta"
+      ]
+    }
+  ]
+}
