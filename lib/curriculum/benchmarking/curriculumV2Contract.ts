@@ -48,8 +48,22 @@ export function buildCurriculumV2Contract(input: {
   moeObjective: CurriculumV2Contract["moeObjective"];
   framework: CurriculumV2Contract["applicableExamFramework"];
   waecSubject: CurriculumV2Contract["waecSubjectApplicability"];
-  baselineCompetency: { verificationStatus: VerificationStatus } | null;
+  baselineCompetency: {
+    verificationStatus: VerificationStatus;
+    /** Persisted AssessmentBaselineCompetency.evidenceSpecificity, when known. */
+    evidenceSpecificity?: "FRAMEWORK_LEVEL" | "SUBJECT_LEVEL" | "TOPIC_LEVEL";
+  } | null;
   evidence: AlignmentEvidence[];
+  /**
+   * The actual assessed depth relation for this exact moeObjective <->
+   * baselineCompetency pairing (CurriculumBaselineAlignment.depthRelation or
+   * an equivalent explicit depth record), when one exists. This is the ONLY
+   * source verifiedBaselineDepth may come from -- it must never be inferred
+   * from evidenceSpecificity or evidence presence, which answer a different
+   * question ("what level of evidence exists") than "does LiberiaLearn meet
+   * the baseline". Omit or pass null/undefined when no assessment exists yet.
+   */
+  assessedDepthRelation?: DepthRelation | null;
   masteryTarget: CurriculumV2Contract["liberiaLearnMasteryTarget"];
   extensionTarget: CurriculumV2Contract["liberiaLearnExtensionTarget"];
   prerequisiteRefs?: string[];
@@ -62,18 +76,20 @@ export function buildCurriculumV2Contract(input: {
   const hasSubjectLevel = input.evidence.some(
     (item) => (item.authorityType === "WAEC_LIBERIA" || item.authorityType === "WAEC_REGIONAL") && item.evidenceSpecificity === "SUBJECT_LEVEL",
   );
-  const evidenceSpecificity: CurriculumV2Contract["evidenceSpecificity"] = hasTopicLevel
-    ? "TOPIC_LEVEL"
-    : hasSubjectLevel
-      ? "SUBJECT_LEVEL"
-      : input.evidence.length > 0
-        ? "FRAMEWORK_LEVEL"
-        : "NONE";
+  const evidenceSpecificity: CurriculumV2Contract["evidenceSpecificity"] =
+    input.baselineCompetency?.evidenceSpecificity ??
+    (hasTopicLevel ? "TOPIC_LEVEL" : hasSubjectLevel ? "SUBJECT_LEVEL" : input.evidence.length > 0 ? "FRAMEWORK_LEVEL" : "NONE");
+
+  // Evidence specificity answers "what level of evidence exists"; it never
+  // answers "does LiberiaLearn meet the baseline". verifiedBaselineDepth
+  // reflects only an actual assessed depth relation, defaulting to UNKNOWN
+  // when none exists -- even when TOPIC_LEVEL evidence is present.
+  const verifiedBaselineDepth: CurriculumV2Contract["verifiedBaselineDepth"] = input.assessedDepthRelation ?? "UNKNOWN";
 
   const unknownBaselineDetails: string[] = [];
-  if (!hasTopicLevel) {
+  if (verifiedBaselineDepth === "UNKNOWN") {
     unknownBaselineDetails.push(
-      "No topic-level WAEC evidence exists for this exact competency; exact expected depth is unknown, not assumed.",
+      "No assessed baseline depth relation exists yet for this exact objective-to-competency pairing; exact expected depth is unknown, not assumed.",
     );
   }
   if (!input.masteryTarget) {
@@ -88,7 +104,7 @@ export function buildCurriculumV2Contract(input: {
     applicableExamFramework: input.framework,
     waecSubjectApplicability: input.waecSubject,
     evidenceSpecificity,
-    verifiedBaselineDepth: hasTopicLevel ? "MEETS_BASELINE" : "UNKNOWN",
+    verifiedBaselineDepth,
     unknownBaselineDetails,
     liberiaLearnMasteryTarget: input.masteryTarget,
     liberiaLearnExtensionTarget: input.extensionTarget,

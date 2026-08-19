@@ -201,6 +201,7 @@ describe("canonical pre-P2-A baseline", () => {
       "20260814_000002_p2b_ai_sme_review",
       "20260817_000001_p2c_waec_baseline_alignment",
       "20260817_000002_p2c_assessment_framework_exam_aliases",
+      "20260818_000001_p2c_evidence_specificity_and_baseline_depth",
     ]);
   });
 });

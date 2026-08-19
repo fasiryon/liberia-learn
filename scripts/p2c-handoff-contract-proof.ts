@@ -40,6 +40,9 @@ async function main() {
   const extensionTarget = await prisma.curriculumLearningTarget.findFirst({
     where: { targetLevel: "EXTENSION" },
   });
+  const alignment = await prisma.curriculumBaselineAlignment.findFirst({
+    where: { moeObjectiveId: objective.id, baselineCompetencyId: competency.id },
+  });
 
   const evidence: AlignmentEvidence[] = [
     {
@@ -86,8 +89,12 @@ async function main() {
       required: competency.baselineSubject.required,
       subjectGroup: competency.baselineSubject.subjectGroup,
     },
-    baselineCompetency: { verificationStatus: competency.verificationStatus as never },
+    baselineCompetency: {
+      verificationStatus: competency.verificationStatus as never,
+      evidenceSpecificity: (competency as unknown as { evidenceSpecificity: "FRAMEWORK_LEVEL" | "SUBJECT_LEVEL" | "TOPIC_LEVEL" }).evidenceSpecificity,
+    },
     evidence,
+    assessedDepthRelation: (alignment?.depthRelation as never) ?? null,
     masteryTarget: masteryTarget ? { code: masteryTarget.code, statement: masteryTarget.statement } : null,
     extensionTarget: null, // this objective's own extension is a different target (calculus); demonstrates the null-honesty path
     reviewState: "NOT_REVIEWED",
@@ -95,7 +102,7 @@ async function main() {
 
   console.log("=== PHASE 15: CURRICULUM V2 CONTRACT (assembled from real staging data) ===");
   console.log(JSON.stringify(contract, null, 2));
-  console.log(`\nProof point: evidenceSpecificity correctly resolves to SUBJECT_LEVEL (not TOPIC_LEVEL) because hasTopicLevel checks the WAEC-authority evidence item specifically, not the MOE-authority item (which IS topic-level for MOE, correctly irrelevant to the WAEC baseline claim). unknownBaselineDetails is non-empty and honest, not padded to look complete.`);
+  console.log(`\nProof point: evidenceSpecificity resolves from the persisted AssessmentBaselineCompetency.evidenceSpecificity column (SUBJECT_LEVEL). verifiedBaselineDepth is UNKNOWN because it is sourced only from the real CurriculumBaselineAlignment.depthRelation row (which is itself UNKNOWN -- no topic-level WAEC evidence exists), never inferred from evidence presence. unknownBaselineDetails is non-empty and honest, not padded to look complete.`);
 
   // --- P5-A contract: the MOE Grade 7-9 archive source version ---
   const moeSource = await prisma.curriculumAuthoritySource.findFirstOrThrow({

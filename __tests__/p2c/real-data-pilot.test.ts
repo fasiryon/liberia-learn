@@ -242,6 +242,10 @@ describe("P2-C real-data Math pilot: baseline layer is honestly PARTIAL (subject
     criticality: "STANDARD",
     verificationStatus: "VERIFIED",
     applicable: true,
+    // Real classification, not the code suffix: the only WAEC-side evidence
+    // recovered (the distillation statement + LJHSCE subject list) confirms
+    // Mathematics applies at this exam, not this exact topic -- SUBJECT_LEVEL.
+    evidenceSpecificity: "SUBJECT_LEVEL",
   };
   // Real finding, not manufactured: a direct Prisma query against the live
   // CurriculumContent table this session found 3 total Grade 9 MATH rows
@@ -269,16 +273,21 @@ describe("P2-C real-data Math pilot: baseline layer is honestly PARTIAL (subject
     status: "AI_ASSESSED",
   };
 
-  it("does not overclaim COMPLETE_AT_BASELINE when WAEC-side evidence is only subject-level", () => {
+  it("does not overclaim PARTIAL/COMPLETE_AT_BASELINE when WAEC-side evidence is only subject-level -- reports UNKNOWN instead", () => {
     const report = buildCurriculumGapReport({
       moeObjectives: [moeObjective],
       baselineCompetencies: [waecCompetency],
       learningTargets: [],
       mappings: [baselineAlignmentMapping],
     });
-    expect(report.waecBaselineCoverageStatus).toBe("PARTIAL");
-    expect(report.partiallyCoveredCompetencies).toEqual([waecCompetency.code]);
-    expect(report.readinessIndicator).toBe("NOT_READY");
+    // Forensic remediation FIX 4: a SUBJECT_LEVEL-only competency must never
+    // produce a PARTIAL/BELOW_BASELINE/CONTENT_GAP finding -- its coverage
+    // mapping (even a real, honestly-PARTIAL one) does not change that this
+    // is a public-evidence limitation, not an assessable baseline state.
+    expect(report.waecBaselineCoverageStatus).toBe("UNKNOWN");
+    expect(report.partiallyCoveredCompetencies).toEqual([]);
+    expect(report.topicLevelBaselineUnknownCompetencies).toEqual([waecCompetency.code]);
+    expect(report.readinessIndicator).toBe("UNKNOWN");
   });
 
   it("shows a genuine, evidence-based LiberiaLearn mastery-authoring gap for the same competency", () => {
@@ -289,13 +298,14 @@ describe("P2-C real-data Math pilot: baseline layer is honestly PARTIAL (subject
       learningTargets: [masteryTarget],
       mappings: [baselineAlignmentMapping],
     });
-    expect(report.waecBaselineCoverageStatus).toBe("PARTIAL");
+    expect(report.waecBaselineCoverageStatus).toBe("UNKNOWN");
     expect(report.incompleteMasteryTargets).toEqual([masteryTarget.code]);
     expect(report.noGoReasons).toEqual(expect.arrayContaining(["MASTERY_TARGET_INCOMPLETE"]));
     // Two independent, real gaps stack honestly here: the WAEC baseline
-    // mapping itself is only PARTIAL (subject-level evidence only), and on
-    // top of that, no LiberiaLearn lesson has been authored for this MOE
-    // objective yet.
+    // itself is genuinely UNKNOWN at topic level (subject-level evidence
+    // only), and on top of that, no LiberiaLearn lesson has been authored
+    // for this MOE objective yet. Neither gap is fabricated to look
+    // complete, and neither is mislabeled as the other.
   });
 });
 

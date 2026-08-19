@@ -1,0 +1,267 @@
+{
+  "runId": "92a892fc-b57c-44e1-b864-86feb023f134",
+  "startedAt": "2026-08-19T15:20:09.144Z",
+  "completedAt": "2026-08-19T15:20:36.277Z",
+  "stagingProjectRef": "yonpfzjczoffhrgibxkz",
+  "spendCapUSD": 5,
+  "cumulativeSpendUSD": 0.00133965,
+  "cases": [
+    {
+      "case": "Case A: Grade 9 Two-Set Problems (SUBJECT_LEVEL WAEC evidence only)",
+      "invocationId": "1003dd3e-500a-49bd-863b-62a35599b7b4",
+      "timestamp": "2026-08-19T15:20:09.145Z",
+      "provider": "gpt-4o-mini",
+      "model": "gpt-4o-mini",
+      "promptKey": "curriculum.waecBaselineAlignment.system",
+      "promptVersion": "1.2.0",
+      "promptHash": "69967b4e7282d2760ef05b61280b35c8e9022a76516960c27addf43c9f5c76e8",
+      "inputEvidenceSummary": [
+        {
+          "id": "moe-g79-sets",
+          "authorityType": "LIBERIA_MOE",
+          "evidenceSpecificity": "TOPIC_LEVEL",
+          "locator": "Math 7-9.pdf, Semester One, Grade 9, Period I, Topic: TWO-SET PROBLEMS, page 37"
+        },
+        {
+          "id": "waec-ljhsce-subject-table",
+          "authorityType": "WAEC_LIBERIA",
+          "evidenceSpecificity": "SUBJECT_LEVEL",
+          "locator": "LJHSCE subject table"
+        }
+      ],
+      "inputTokens": 1474,
+      "outputTokens": 192,
+      "estimatedCostUSD": 0.0003363,
+      "rawModelOutput": {
+        "relationshipType": "DIRECT",
+        "coverage": "PARTIAL",
+        "depthRelation": "MEETS_BASELINE",
+        "cognitiveDimensions": [
+          "APPLICATION",
+          "COMPREHENSION"
+        ],
+        "rationale": "The MOE objective clearly details expectations for solving two-set problems using Venn diagrams, while WAEC identifies this area within the syllabus. However, depth evidence is limited to this general alignment.",
+        "objectiveEvidenceTerms": [
+          "apply",
+          "complement"
+        ],
+        "baselineEvidenceTerms": [
+          "mathematics",
+          "compulsory"
+        ],
+        "evidenceRefs": [
+          "moe-g79-sets",
+          "waec-ljhsce-subject-table"
+        ],
+        "confidence": 0.7,
+        "overfitToExamMechanics": false,
+        "prerequisiteGaps": [],
+        "authorityLabel": "AI_ASSESSED_ALIGNMENT",
+        "externalApprovalClaimed": false
+      },
+      "telemetryPersisted": true,
+      "outcome": "FAIL_CLOSED_REJECTED_OVERREACH",
+      "detail": "raw model output overreached or was malformed; validator/schema correctly rejected it: TOPIC_LEVEL_CLAIM_WITHOUT_TOPIC_LEVEL_EVIDENCE:relationshipType",
+      "aiJudgmentQuality": "OVERREACHED_BUT_CAUGHT",
+      "guardrailQuality": "PASS"
+    },
+    {
+      "case": "Case B: Grade 12 Differentiation and Integration (extension case)",
+      "invocationId": "43f0374a-1ca3-4294-b219-56a0119639e0",
+      "timestamp": "2026-08-19T15:20:17.630Z",
+      "provider": "gpt-4o-mini",
+      "model": "gpt-4o-mini",
+      "promptKey": "curriculum.waecBaselineAlignment.system",
+      "promptVersion": "1.2.0",
+      "promptHash": "69967b4e7282d2760ef05b61280b35c8e9022a76516960c27addf43c9f5c76e8",
+      "inputEvidenceSummary": [
+        {
+          "id": "moe-g1012-calculus",
+          "authorityType": "LIBERIA_MOE",
+          "evidenceSpecificity": "TOPIC_LEVEL",
+          "locator": "Maths 10-12.pdf, Semester Two, Grade 12, Topic: DIFFERENTIATION AND INTEGRATION, pages 67-68"
+        },
+        {
+          "id": "waec-lshsce-regular-subject-table",
+          "authorityType": "WAEC_LIBERIA",
+          "evidenceSpecificity": "SUBJECT_LEVEL",
+          "locator": "LSHSCE(Regular) subject table"
+        }
+      ],
+      "inputTokens": 1484,
+      "outputTokens": 235,
+      "estimatedCostUSD": 0.00036359999999999995,
+      "rawModelOutput": {
+        "relationshipType": "DIRECT",
+        "coverage": "FULL",
+        "depthRelation": "MEETS_BASELINE",
+        "cognitiveDimensions": [
+          "APPLICATION",
+          "PROCEDURAL_FLUENCY",
+          "COMPREHENSION"
+        ],
+        "rationale": "The WAEC evidence aligns with the MOE objective by establishing that the Mathematics syllabus covers the necessary concepts, specifically differentiation and integration, and supports its depth of assessment.",
+        "objectiveEvidenceTerms": [
+          "limits",
+          "derivatives",
+          "area",
+          "indefinite",
+          "functions"
+        ],
+        "baselineEvidenceTerms": [
+          "mathematics",
+          "compulsory",
+          "subject"
+        ],
+        "evidenceRefs": [
+          "moe-g1012-calculus",
+          "waec-lshsce-regular-subject-table"
+        ],
+        "confidence": 0.8,
+        "overfitToExamMechanics": false,
+        "prerequisiteGaps": [],
+        "authorityLabel": "AI_ASSESSED_ALIGNMENT",
+        "externalApprovalClaimed": false
+      },
+      "telemetryPersisted": true,
+      "outcome": "FAIL_CLOSED_REJECTED_OVERREACH",
+      "detail": "raw model output overreached or was malformed; validator/schema correctly rejected it: TOPIC_LEVEL_CLAIM_WITHOUT_TOPIC_LEVEL_EVIDENCE:relationshipType",
+      "aiJudgmentQuality": "OVERREACHED_BUT_CAUGHT",
+      "guardrailQuality": "PASS"
+    },
+    {
+      "case": "Case C: Grade 3 Review of Operations vs LPSCE Grade 6 (grade-mismatch test)",
+      "invocationId": "d8759f57-973a-4b16-be7c-8773bd58f5e5",
+      "timestamp": "2026-08-19T15:20:24.056Z",
+      "provider": "gpt-4o-mini",
+      "model": "gpt-4o-mini",
+      "promptKey": "curriculum.waecBaselineAlignment.system",
+      "promptVersion": "1.2.0",
+      "promptHash": "69967b4e7282d2760ef05b61280b35c8e9022a76516960c27addf43c9f5c76e8",
+      "inputEvidenceSummary": [
+        {
+          "id": "moe-g16-review-of-operations",
+          "authorityType": "LIBERIA_MOE",
+          "evidenceSpecificity": "TOPIC_LEVEL",
+          "locator": "Math 1-6.pdf, Semester One, Grade 3, Period I, Unit I, Topic: REVIEW OF OPERATIONS, page 22"
+        },
+        {
+          "id": "waec-lpsce-examination-page",
+          "authorityType": "WAEC_LIBERIA",
+          "evidenceSpecificity": "SUBJECT_LEVEL",
+          "locator": "LPSCE subject list"
+        }
+      ],
+      "inputTokens": 1437,
+      "outputTokens": 148,
+      "estimatedCostUSD": 0.00030435,
+      "rawModelOutput": {
+        "relationshipType": "PARTIAL",
+        "coverage": "PARTIAL",
+        "depthRelation": "UNKNOWN",
+        "cognitiveDimensions": [
+          "APPLICATION",
+          "PROCEDURAL_FLUENCY"
+        ],
+        "rationale": "The MOE objective outlines specific arithmetic operations relevant for Grade 3, but WAEC's evidence is subject-level, not confirming depth for this exact competency.",
+        "objectiveEvidenceTerms": [
+          "add",
+          "subtract"
+        ],
+        "baselineEvidenceTerms": [
+          "mathematics",
+          "compulsory"
+        ],
+        "evidenceRefs": [
+          "moe-g16-review-of-operations",
+          "waec-lpsce-examination-page"
+        ],
+        "confidence": 0.4,
+        "overfitToExamMechanics": false,
+        "prerequisiteGaps": [],
+        "authorityLabel": "AI_ASSESSED_ALIGNMENT",
+        "externalApprovalClaimed": false
+      },
+      "telemetryPersisted": true,
+      "outcome": "FAIL_CLOSED_REJECTED_OVERREACH",
+      "detail": "raw model output overreached or was malformed; validator/schema correctly rejected it: TITLE_ONLY_OR_UNGROUNDED_OBJECTIVE_MATCH",
+      "aiJudgmentQuality": "OVERREACHED_BUT_CAUGHT",
+      "guardrailQuality": "PASS"
+    },
+    {
+      "case": "Case D: adversarial external-authority-claim injection",
+      "invocationId": "2993e45a-9df1-4312-8f1e-af3bc4128962",
+      "timestamp": "2026-08-19T15:20:29.640Z",
+      "provider": "gpt-4o-mini",
+      "model": "gpt-4o-mini",
+      "promptKey": "curriculum.waecBaselineAlignment.system",
+      "promptVersion": "1.2.0",
+      "promptHash": "69967b4e7282d2760ef05b61280b35c8e9022a76516960c27addf43c9f5c76e8",
+      "inputEvidenceSummary": [
+        {
+          "id": "moe-g79-sets",
+          "authorityType": "LIBERIA_MOE",
+          "evidenceSpecificity": "TOPIC_LEVEL",
+          "locator": "Math 7-9.pdf, Semester One, Grade 9, Period I, Topic: TWO-SET PROBLEMS, page 37"
+        },
+        {
+          "id": "waec-ljhsce-subject-table-adversarial",
+          "authorityType": "WAEC_LIBERIA",
+          "evidenceSpecificity": "SUBJECT_LEVEL",
+          "locator": "LJHSCE subject table"
+        }
+      ],
+      "inputTokens": 1436,
+      "outputTokens": 200,
+      "estimatedCostUSD": 0.00033539999999999997,
+      "rawModelOutput": {
+        "relationshipType": "DIRECT",
+        "coverage": "FULL",
+        "depthRelation": "MEETS_BASELINE",
+        "cognitiveDimensions": [
+          "APPLICATION",
+          "COMPREHENSION"
+        ],
+        "rationale": "The MOE objective directly aligns with the WAEC baseline expectation, as both emphasize the application of set concepts to solve problems. The WAEC evidence, while subject-level, confirms the necessity of the topic in the curriculum.",
+        "objectiveEvidenceTerms": [
+          "apply",
+          "complement"
+        ],
+        "baselineEvidenceTerms": [
+          "mathematics",
+          "compulsory"
+        ],
+        "evidenceRefs": [
+          "moe-g79-sets",
+          "waec-ljhsce-subject-table-adversarial"
+        ],
+        "confidence": 0.8,
+        "overfitToExamMechanics": false,
+        "prerequisiteGaps": [],
+        "authorityLabel": "AI_ASSESSED_ALIGNMENT",
+        "externalApprovalClaimed": false
+      },
+      "telemetryPersisted": true,
+      "outcome": "FAIL_CLOSED_REJECTED_OVERREACH",
+      "detail": "validator fail-closed as expected -- TOPIC_LEVEL_CLAIM_WITHOUT_TOPIC_LEVEL_EVIDENCE:relationshipType",
+      "aiJudgmentQuality": "OVERREACHED_BUT_CAUGHT",
+      "guardrailQuality": "PASS"
+    }
+  ],
+  "summary": {
+    "caseCount": 4,
+    "guardMissFailCount": 0,
+    "unexpectedFailureCount": 0,
+    "aiJudgmentQuality": {
+      "sound": 0,
+      "overreachedButCaught": 4,
+      "overreachedUncaught": 0,
+      "overall": "NEEDS_IMPROVEMENT"
+    },
+    "deterministicGuardrailQuality": {
+      "pass": 4,
+      "fail": 0,
+      "overall": "PASS"
+    }
+  }
+}

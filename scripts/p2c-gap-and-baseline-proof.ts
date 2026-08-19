@@ -29,7 +29,7 @@ async function main() {
     select: { id: true, code: true, criticality: true, verificationStatus: true, grade: true, subject: true, topic: true },
   });
   const competencies = await prisma.assessmentBaselineCompetency.findMany({
-    select: { id: true, code: true, criticality: true, verificationStatus: true, expectation: true, baselineSubject: { select: { code: true, gradeMin: true, gradeMax: true, framework: { select: { code: true, exam: true } } } } },
+    select: { id: true, code: true, criticality: true, verificationStatus: true, expectation: true, evidenceSpecificity: true, baselineSubject: { select: { code: true, gradeMin: true, gradeMax: true, framework: { select: { code: true, exam: true } } } } },
   });
   const targets = await prisma.curriculumLearningTarget.findMany({
     select: { id: true, code: true, targetLevel: true, statement: true, grade: true, subject: true },
@@ -50,6 +50,7 @@ async function main() {
     criticality: c.criticality as Criticality,
     verificationStatus: c.verificationStatus as VerificationStatus,
     applicable: true,
+    evidenceSpecificity: c.evidenceSpecificity as GapCompetency["evidenceSpecificity"],
   }));
   const gapTargets: GapTarget[] = targets.map((t) => ({
     id: t.id,
@@ -81,7 +82,7 @@ async function main() {
   console.log("\n=== GAP CATEGORY BREAKDOWN ===");
   console.log(JSON.stringify(categories, null, 2));
 
-  console.log(`\nReal, honest reading: ${mappings.length} CurriculumCompetencyCoverage rows exist on staging. This sprint deliberately does not persist AI-generated alignment results as coverage mappings without a human/policy review step (see scripts/p2c-live-ai-sme-proof.ts), so every objective/competency correctly reports as CONTENT_GAP -- this reflects "no reviewed coverage decision exists yet", not "LiberiaLearn has no relevant content". It is not a synthetic pass.`);
+  console.log(`\nReal, honest reading: ${mappings.length} CurriculumCompetencyCoverage rows exist on staging. This sprint deliberately does not persist AI-generated alignment results as coverage mappings without a human/policy review step (see scripts/p2c-live-ai-sme-proof.ts), so every MOE objective correctly reports as CONTENT_GAP ("no reviewed coverage decision exists yet", not "LiberiaLearn has no relevant content"). Every baseline competency is currently SUBJECT_LEVEL only (no topic-level WAEC syllabus was recovered for any of them), so per the forensic-remediation gap-engine fix they correctly report as TOPIC_LEVEL_BASELINE_UNKNOWN, never CONTENT_GAP/BELOW_BASELINE -- a public-evidence limitation, not a LiberiaLearn content defect. It is not a synthetic pass.`);
 
   console.log("\n=== PHASE 8: MOE -> WAEC BASELINE -> LIBERIALEARN MASTERY -> LIBERIALEARN EXTENSION (Mathematics, the one subject with authored Mastery/Extension targets) ===");
   const mathObjective = objectives.find((o) => o.code === "MOE.G9.MATH.SETS.TWO_SET_PROBLEMS");

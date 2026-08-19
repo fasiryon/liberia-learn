@@ -57,6 +57,7 @@ async function main() {
     criticality: competencyRaw!.criticality,
     verificationStatus: competencyRaw!.verificationStatus,
     applicable: true,
+    evidenceSpecificity: competencyRaw!.evidenceSpecificity as GapCompetency["evidenceSpecificity"],
   };
   const mappingInput: CoverageMapping = {
     id: alignmentsRaw[0].id,

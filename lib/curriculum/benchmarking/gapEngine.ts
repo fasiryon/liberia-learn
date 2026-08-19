@@ -50,6 +50,17 @@ export type CurriculumGapReport = {
   unsupportedMappingIds: string[];
   incompleteMasteryTargets: string[];
   missingExtensionTargets: string[];
+  /**
+   * Applicable baseline competencies whose own evidence is only
+   * SUBJECT_LEVEL or FRAMEWORK_LEVEL (see GapCompetency.evidenceSpecificity).
+   * These are a public-evidence limitation ("WAEC's topic-level syllabus for
+   * this competency has not been published/found"), never a LiberiaLearn
+   * content or depth defect, and are deliberately excluded from
+   * uncoveredBaselineCompetencies / partiallyCoveredCompetencies /
+   * underDepthCompetencies / aboveBaselineCompetencies regardless of what
+   * LiberiaLearn coverage exists for them.
+   */
+  topicLevelBaselineUnknownCompetencies: string[];
   sourceFreshness: VerificationStatus;
   readinessIndicator: "WAEC_BASELINE_READY" | "NOT_READY" | "UNKNOWN" | "NOT_APPLICABLE";
   readinessDisclaimer: "NO_PASS_GUARANTEE";
@@ -73,6 +84,7 @@ export function buildCurriculumGapReport(input: {
   const unsupportedMappingIds: string[] = [];
   const incompleteMasteryTargets: string[] = [];
   const missingExtensionTargets: string[] = [];
+  const topicLevelBaselineUnknownCompetencies: string[] = [];
 
   for (const objective of input.moeObjectives) {
     const mapping = bestMapping(input.mappings, "moeObjectiveId", objective.id);
@@ -80,6 +92,14 @@ export function buildCurriculumGapReport(input: {
   }
 
   for (const competency of applicable) {
+    // A SUBJECT_LEVEL/FRAMEWORK_LEVEL competency only establishes that a
+    // subject/exam applies, not a topic-level baseline commitment -- whether
+    // or not LiberiaLearn happens to have mapped content to it, its baseline
+    // depth is genuinely unknown, not a content/depth gap.
+    if (competency.evidenceSpecificity !== "TOPIC_LEVEL") {
+      topicLevelBaselineUnknownCompetencies.push(competency.code);
+      continue;
+    }
     const mapping = bestMapping(input.mappings, "baselineCompetencyId", competency.id);
     if (!mapping || mapping.coverage === "NONE") {
       uncoveredBaselineCompetencies.push(competency.code);
@@ -108,8 +128,9 @@ export function buildCurriculumGapReport(input: {
     if (!mapping || mapping.coverage !== "FULL") missingExtensionTargets.push(target.code);
   }
 
+  const topicLevelApplicable = applicable.filter((competency) => competency.evidenceSpecificity === "TOPIC_LEVEL");
   const criticalCodes = new Set(
-    applicable
+    topicLevelApplicable
       .filter((competency) => competency.criticality === "CRITICAL")
       .map((competency) => competency.code),
   );
@@ -128,9 +149,15 @@ export function buildCurriculumGapReport(input: {
   let waecBaselineCoverageStatus: CoverageStatus;
   if (applicable.length === 0) waecBaselineCoverageStatus = "NOT_APPLICABLE";
   else if (sourceFreshness === "SOURCE_MISSING" || sourceFreshness === "STALE") waecBaselineCoverageStatus = "UNKNOWN";
-  else if (underDepthCompetencies.length > 0) waecBaselineCoverageStatus = "BELOW_BASELINE";
+  else if (topicLevelApplicable.length === 0) {
+    // Only SUBJECT_LEVEL/FRAMEWORK_LEVEL applicability is known; no
+    // topic-level WAEC competency exists to assess coverage or depth
+    // against, so the honest status is UNKNOWN, not a false PARTIAL/
+    // COMPLETE_AT_BASELINE/BELOW_BASELINE claim.
+    waecBaselineCoverageStatus = "UNKNOWN";
+  } else if (underDepthCompetencies.length > 0) waecBaselineCoverageStatus = "BELOW_BASELINE";
   else if (baselineIncomplete) waecBaselineCoverageStatus = "PARTIAL";
-  else if (aboveBaselineCompetencies.length === applicable.length && incompleteMasteryTargets.length === 0) {
+  else if (aboveBaselineCompetencies.length === topicLevelApplicable.length && incompleteMasteryTargets.length === 0) {
     waecBaselineCoverageStatus = "COMPLETE_ABOVE_BASELINE";
   } else waecBaselineCoverageStatus = "COMPLETE_AT_BASELINE";
 
@@ -170,6 +197,7 @@ export function buildCurriculumGapReport(input: {
     unsupportedMappingIds,
     incompleteMasteryTargets,
     missingExtensionTargets,
+    topicLevelBaselineUnknownCompetencies,
     sourceFreshness,
     readinessIndicator,
     readinessDisclaimer: "NO_PASS_GUARANTEE",
@@ -190,22 +218,27 @@ export type CurriculumGapCategory =
   | "EXTERNAL_EVIDENCE_GAP"
   | "DEPTH_GAP"
   | "MASTERY_TARGET_GAP"
-  | "EXTENSION_GAP";
+  | "EXTENSION_GAP"
+  | "TOPIC_LEVEL_BASELINE_UNKNOWN";
 
 export type CurriculumGapCategoryBreakdown = Record<CurriculumGapCategory, string[]>;
 
 /**
- * Maps the engine's existing gap fields onto the five-category taxonomy:
+ * Maps the engine's existing gap fields onto the six-category taxonomy:
  * - CONTENT_GAP: no LiberiaLearn mapping exists at all for a required MOE
- *   objective or WAEC baseline competency (`uncoveredMoeObjectives`,
+ *   objective or TOPIC_LEVEL WAEC baseline competency (`uncoveredMoeObjectives`,
  *   `uncoveredBaselineCompetencies`).
  * - EXTERNAL_EVIDENCE_GAP: a mapping exists but is unsupported
  *   (`unsupportedMappingIds`) -- this is a public-evidence limitation, not a
  *   LiberiaLearn content defect, and must never be reported as one.
- * - DEPTH_GAP: coverage exists but is partial or below the required depth
- *   (`partiallyCoveredCompetencies`, `underDepthCompetencies`).
+ * - DEPTH_GAP: TOPIC_LEVEL coverage exists but is partial or below the
+ *   required depth (`partiallyCoveredCompetencies`, `underDepthCompetencies`).
  * - MASTERY_TARGET_GAP: `incompleteMasteryTargets`.
  * - EXTENSION_GAP: `missingExtensionTargets`.
+ * - TOPIC_LEVEL_BASELINE_UNKNOWN: a competency whose own evidence is only
+ *   SUBJECT_LEVEL/FRAMEWORK_LEVEL (`topicLevelBaselineUnknownCompetencies`)
+ *   -- a public-evidence limitation, not a LiberiaLearn content or depth
+ *   defect, and must never be reported as CONTENT_GAP or DEPTH_GAP.
  */
 export function classifyGapCategories(report: CurriculumGapReport): CurriculumGapCategoryBreakdown {
   return {
@@ -214,6 +247,7 @@ export function classifyGapCategories(report: CurriculumGapReport): CurriculumGa
     DEPTH_GAP: [...report.partiallyCoveredCompetencies, ...report.underDepthCompetencies],
     MASTERY_TARGET_GAP: [...report.incompleteMasteryTargets],
     EXTENSION_GAP: [...report.missingExtensionTargets],
+    TOPIC_LEVEL_BASELINE_UNKNOWN: [...report.topicLevelBaselineUnknownCompetencies],
   };
 }
 

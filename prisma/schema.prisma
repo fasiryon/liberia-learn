@@ -2262,6 +2262,20 @@ enum AssessmentFrameworkKind {
   BENCHMARK
 }
 
+/// Persisted counterpart of AlignmentEvidence.evidenceSpecificity
+/// (lib/curriculum/benchmarking/aiWaecAlignment.ts). Records what an
+/// AssessmentBaselineCompetency row's evidence actually establishes: an
+/// exact topic-level syllabus match (TOPIC_LEVEL), only that the surrounding
+/// subject/exam applies (SUBJECT_LEVEL), or only exam-wide structure such as
+/// CASS/TASS weighting (FRAMEWORK_LEVEL). A SUBJECT_LEVEL or FRAMEWORK_LEVEL
+/// row is a real, honestly-modeled fact -- it is not a topic competency, and
+/// gap-engine / Curriculum V2 logic must not treat it as one.
+enum EvidenceSpecificity {
+  FRAMEWORK_LEVEL
+  SUBJECT_LEVEL
+  TOPIC_LEVEL
+}
+
 enum ExternalAuthorityStatus {
   NOT_CLAIMED
   VERIFIED_AUTHORIZATION
@@ -2662,6 +2676,14 @@ model AssessmentBaselineFramework {
   kind                    AssessmentFrameworkKind      @default(BASELINE)
   title                   String
   examAliases             String[]                     @default([])
+  /// Regional/historical reference labels (e.g. "WASSCE" on LSHSCE-Regular)
+  /// that describe a related regional exam brand WITHOUT asserting current
+  /// first-party equivalence to this Liberia framework. Distinct from
+  /// examAliases, which is reserved for genuine same-exam alternate names
+  /// established by first-party Liberia evidence. Nothing in the baseline,
+  /// gap-engine, or Curriculum V2 code paths reads this field for
+  /// calculation; it exists for provenance/documentation only.
+  regionalReferenceLabels String[]                     @default([])
   sourceVersionId         String
   effectiveFrom           DateTime?
   effectiveTo             DateTime?
@@ -2707,6 +2729,12 @@ model AssessmentBaselineCompetency {
   expectation           String                        @db.Text
   assessmentDepth       CognitiveDemandCategory
   cognitiveDimensions   CognitiveDemandCategory[]     @default([])
+  /// What this row's own evidence actually establishes (see
+  /// EvidenceSpecificity). A SUBJECT_LEVEL or FRAMEWORK_LEVEL row records a
+  /// real applicability/structure fact, not a topic competency -- gap-engine
+  /// and Curriculum V2 logic must exclude it from CONTENT_GAP /
+  /// BELOW_BASELINE / topic-competency calculations.
+  evidenceSpecificity   EvidenceSpecificity
   officialWeight        Float?
   weightEvidenceLocator String?                       @db.Text
   criticality           BaselineCompetencyCriticality @default(STANDARD)

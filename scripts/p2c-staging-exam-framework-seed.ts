@@ -17,14 +17,18 @@ import { PrismaClient } from "@prisma/client";
  * rows under distinct codes; downstream subject-expansion work should use
  * these new rows, not the old merged pilot row.
  *
- * WASSCE is recorded only as an examAlias on the new LSHSCE-Regular
- * framework, not as a separate AssessmentBaselineFramework or
- * CurriculumAuthoritySource row -- no live, current, WASSCE-specific
- * Liberia source was found this session to cite (the old wassce.html page
- * 404s), and fabricating a source citation would violate the evidence-honesty
- * requirement this whole program is built on. This also mechanically
- * guarantees WASSCE cannot participate in baseline calculations: nothing
- * queries AssessmentBaselineFramework.examAliases for competency mapping.
+ * WASSCE is recorded only in regionalReferenceLabels on the new
+ * LSHSCE-Regular framework, not as an examAlias and not as a separate
+ * AssessmentBaselineFramework or CurriculumAuthoritySource row -- no live,
+ * current, WASSCE-specific Liberia source was found this session to cite
+ * (the old wassce.html page 404s), and fabricating a source citation would
+ * violate the evidence-honesty requirement this whole program is built on.
+ * examAliases is reserved for a genuine same-exam alternate name established
+ * by first-party Liberia evidence, which this is not: WASSCE is a related
+ * regional exam brand, not a first-party-confirmed current name for LSHSCE.
+ * regionalReferenceLabels mechanically guarantees WASSCE cannot participate
+ * in baseline calculations: nothing queries it for competency mapping, and a
+ * dedicated regression (__tests__/p2c/wassce-isolation.test.ts) proves it.
  *
  * Uses P2A_STAGING_DATABASE_URL. Refuses to run against production.
  */
@@ -164,7 +168,11 @@ async function main() {
         level: "SENIOR_SECONDARY",
         kind: "BASELINE",
         title: "Liberia Senior High School Certificate Examination (LSHSCE), Grade 12, Regular/School Candidates -- the current verified Liberia Grade-12 baseline",
-        examAliases: ["WASSCE"],
+        examAliases: [],
+        // Regional/historical reference only -- WASSCE is documented as a
+        // related regional exam brand, never as a current first-party
+        // synonym for LSHSCE. See the module comment above.
+        regionalReferenceLabels: ["WASSCE"],
         sourceVersionId: lshsceRegularVersion.id,
         verificationStatus: "VERIFIED",
         externalAuthorityStatus: "NOT_CLAIMED",

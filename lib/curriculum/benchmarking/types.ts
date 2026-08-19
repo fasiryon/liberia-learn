@@ -52,6 +52,16 @@ export type GapObjective = {
 
 export type GapCompetency = GapObjective & {
   applicable: boolean;
+  /**
+   * Persisted AssessmentBaselineCompetency.evidenceSpecificity. A
+   * SUBJECT_LEVEL or FRAMEWORK_LEVEL competency records a real
+   * applicability/structure fact (e.g. "Mathematics is examined at
+   * LJHSCE"), not a topic-level baseline commitment -- gapEngine must never
+   * let it generate a CONTENT_GAP, BELOW_BASELINE status, or a missing-topic
+   * -competency finding. Only TOPIC_LEVEL competencies participate in those
+   * calculations.
+   */
+  evidenceSpecificity: "FRAMEWORK_LEVEL" | "SUBJECT_LEVEL" | "TOPIC_LEVEL";
 };
 
 export type GapTarget = {

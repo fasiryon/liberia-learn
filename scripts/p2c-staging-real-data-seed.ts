@@ -225,6 +225,7 @@ async function main() {
       expectation: "Mathematics is a compulsory WAEC Liberia subject at LJHSCE (210) and LSHSCE (301); WAEC states its detailed syllabus is a distillation of the MOE National Curriculum, which includes a dedicated Sets / Two-Set Problems unit at Grade 9. No topic-by-topic WAEC Mathematics syllabus was recovered to confirm the exact expected depth for this specific competency.",
       assessmentDepth: "APPLICATION",
       cognitiveDimensions: ["APPLICATION", "PROBLEM_MODELING"],
+      evidenceSpecificity: "SUBJECT_LEVEL",
       criticality: "STANDARD",
       evidenceLocator: "waecliberia.org.lr/lshsceprivate/ (distillation statement) + waecliberia.org.lr/ljhsce/ (subject table)",
       confidence: 0.55,
