@@ -5,6 +5,33 @@ Live execution tracking for the final closeout program.
 
 ## Resume here
 
+- **P2-C PRE-CUTOVER PREPARATION COMPLETE — PRODUCTION RUNBOOK FROZEN
+  (2026-08-19, later same day).** Branch `codex/p2c-waec-baseline-alignment`.
+  Full record: `docs/ops/P2C_PRECUTOVER_PREPARATION_RECORD.md`. Follows the
+  final production-authorization audit's `AUTHORIZED_WITH_PRE_CUTOVER_ACTIONS`
+  verdict. All 10 authorized actions closed: PR #86 title/body corrected
+  live; the 5th legacy framework row explicitly excluded from the
+  production seed manifest (`docs/ops/P2C_PRODUCTION_SEED_MANIFEST.md`);
+  a production-safe `CREATE UNIQUE INDEX CONCURRENTLY` dedupeKey
+  application designed and SQL-validated against staging (not executed —
+  Docker unavailable in this environment for a full disposable-Postgres
+  test, disclosed honestly); a `post-p2c` backup boundary added to
+  `scripts/p2a-production-backup-restore.ps1`, derived from a fresh live
+  production ledger query (9 active migrations today + 4 net-new = 13),
+  not guessed; a full 12-phase cutover runbook written
+  (`docs/ops/P2C_PRODUCTION_CUTOVER_RUNBOOK.md`). Two items remain
+  genuinely open going into the next pass: `P2C_CURRICULUM_BENCHMARKING_ENABLED`'s
+  live value is `FEATURE_FLAG_UNVERIFIED` (exhaustively attempted, not a
+  guess — no available tool exposes decrypted env values); and a **new,
+  real finding** -- staging's live `WAEC.LIBERIA.LSHSCE.REGULAR` framework
+  row still carries the pre-fix `examAliases: ["WASSCE"]` value (its own
+  seed script's source code is correct; the already-persisted row was
+  never re-synced) -- the seed manifest specifies the corrected values
+  explicitly rather than copying staging's stale row, and a small,
+  separate staging correction is recommended before/alongside the actual
+  cutover. Next: the controlled production cutover itself, following the
+  frozen runbook.
+
 - **P2-C INFRASTRUCTURE-INVARIANT CLOSURE (2026-08-19, later same day).**
   Branch `codex/p2c-waec-baseline-alignment`. Full record:
   `docs/ops/P2C_INFRASTRUCTURE_CLOSURE_RECORD.md`. Both engineering actions
