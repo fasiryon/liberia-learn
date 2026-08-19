@@ -3956,7 +3956,7 @@ model AIInteraction {
   @@index([feature, createdAt])
   @@index([subject, strandKey, createdAt])
   @@index([clientEventId])
-  @@index([dedupeKey])
+  @@unique([dedupeKey])
   @@index([sourceEventId])
   @@index([generationCorrelationId, createdAt])
 }

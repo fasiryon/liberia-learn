@@ -4,15 +4,6 @@ import { logLearningEvent } from "@/lib/events/logLearningEvent";
 
 export type AiBudgetFeature = "tutor" | "teacherAssist" | "grading" | "curriculum" | "labs";
 
-// Per-process mutex for logAIInteraction's AIInteraction dedup (see
-// resolveInteractionRow below): serializes concurrent create attempts for
-// the same generationCorrelationId so a caller's defensive duplicate write
-// can never race routedCompletion's own internal write into two rows.
-const inFlightInteractionRowsByCorrelationId = new Map<
-  string,
-  Promise<{ id: string; isNew: boolean } | null>
->();
-
 type JsonObject = Record<string, unknown>;
 
 type AiUsageInput = {
@@ -202,35 +193,48 @@ export async function logAIInteraction(input: LogAIInteractionInput) {
   });
 
   // One external provider invocation must produce at most one canonical
-  // AIInteraction row. Callers may legitimately call logAIInteraction more
-  // than once for the same invocation -- e.g. routedCompletion's own
-  // internal write (fire-and-forget unless feature === "curriculum" &&
-  // provenanceWritersEnabled()) plus a caller's own defensive durable write
-  // for a short-lived script that can't rely on that fire-and-forget path.
-  // When a generationCorrelationId repeats, this is a duplicate persistence
-  // attempt for an already-recorded invocation, not a second real call, so
-  // it reuses the existing row instead of inserting a new one. A genuinely
-  // new provider call always gets its own correlation id (routedCompletion
-  // mints a fresh one per invocation), so distinct calls are never
-  // coalesced by this check.
+  // AIInteraction row, enforced by the database, not a per-process check --
+  // the field must behave identically whether the two writes for the same
+  // invocation land in the same Node process (routedCompletion's own
+  // internal write racing a caller's own defensive durable write) or in two
+  // entirely different serverless instances/workers.
   //
-  // A find-then-create check alone is not race-safe: when routedCompletion's
-  // internal write is fire-and-forget, a caller's own immediately-following
-  // durable call can start its own findFirst before the internal write's
-  // create() has committed, and both see "not found" and both insert (this
-  // was verified live against staging while building this fix -- see
-  // docs/ops/P2C_LIVE_DEDUP_PROOF.json's first run). No DB-level unique
-  // constraint is added to close this at the database layer: doing so would
-  // require resolving the pre-existing duplicate rows first (24 of them,
-  // from before this fix), which means mutating historical audit evidence --
-  // out of scope for this fix. Instead, an in-process mutex keyed by
-  // correlation id serializes concurrent resolveInteractionRow() calls for
-  // the same id within this process, which is where the actual duplicate
-  // calls originate (routedCompletion and its caller always run in the same
-  // process/request).
+  // dedupeKey (AIInteraction.dedupeKey) already carries a UNIQUE index
+  // (prisma/canonical/migrations/20260819_000001_p2c_ai_interaction_dedupekey_unique)
+  // and is reused here rather than introducing a third identifier: it was
+  // already the caller-supplied idempotency key for offline-sync dedup on
+  // this exact table (see groundedAnswerService.ts), so a provider
+  // invocation's dedupeKey defaults to its generationCorrelationId only
+  // when the caller hasn't already supplied its own dedupeKey for that
+  // other purpose. Standard Postgres NULL semantics mean any number of NULL
+  // dedupeKey rows (every call that mints neither) are unaffected by the
+  // constraint.
+  //
+  // Idempotent insert: try to create; if the database reports a unique
+  // violation on dedupeKey, another writer already won -- fetch and reuse
+  // that row instead of inserting a second one. This is atomic at the
+  // Postgres engine level (a real conflicting INSERT is guaranteed to fail
+  // with a real error, not a race window), so it is correct across any
+  // number of concurrent processes, not just within one.
+  //
+  // A repeated *persistence attempt* for the same invocation (same
+  // dedupeKey) coalesces to one row. A genuine *new* provider call always
+  // gets its own correlation id from routedCompletion, so distinct real
+  // calls -- even with byte-identical prompt/model/evidence -- are never
+  // coalesced; nothing here dedupes on content.
+  function isDedupeKeyUniqueViolation(error: unknown): boolean {
+    const err = error as { code?: string; meta?: { target?: unknown } } | null;
+    if (!err || err.code !== "P2002") return false;
+    const target = err.meta?.target;
+    if (typeof target === "string") return target.includes("dedupeKey");
+    if (Array.isArray(target)) return target.includes("dedupeKey");
+    return true; // conservative: treat any P2002 on this insert as the dedupeKey constraint
+  }
+
   async function createInteractionRow(
-    correlationId: string | null
-  ): Promise<{ id: string; isNew: boolean } | null> {
+    correlationId: string | null,
+    dedupeKey: string | null
+  ): Promise<{ id: string; isNew: boolean }> {
     const created = await aiInteractionModel!.create!({
       data: {
         schoolId: input.schoolId ?? null,
@@ -261,7 +265,7 @@ export async function logAIInteraction(input: LogAIInteractionInput) {
         clientEventId: input.clientEventId ?? null,
         originalOccurredAt: toDate(input.originalTimestamp),
         syncReceivedAt: toDate(input.syncReceivedAt),
-        dedupeKey: input.dedupeKey ?? null,
+        dedupeKey,
         sourceEventId: input.sourceEventId ?? null,
         metadata: toJson(metadata),
       },
@@ -272,38 +276,22 @@ export async function logAIInteraction(input: LogAIInteractionInput) {
   async function resolveInteractionRow(): Promise<{ id: string; isNew: boolean } | null> {
     if (!aiInteractionModel?.create) return null;
     const correlationId = input.generationCorrelationId?.trim() || null;
+    const dedupeKey = input.dedupeKey?.trim() || correlationId;
 
-    if (correlationId) {
-      const alreadyInFlight = inFlightInteractionRowsByCorrelationId.get(correlationId);
-      if (alreadyInFlight) {
-        const row = await alreadyInFlight;
-        return row ? { id: row.id, isNew: false } : null;
-      }
+    if (!dedupeKey) {
+      // No idempotency key available for this call at all (e.g. a
+      // non-curriculum feature with no correlation id and no caller-supplied
+      // dedupeKey) -- nothing to enforce against, always a fresh row.
+      return createInteractionRow(correlationId, null);
     }
 
-    const resolution = (async () => {
-      if (correlationId && aiInteractionModel.findFirst) {
-        // generationCorrelationId is not a @unique column (existing
-        // duplicate rows from before this fix would violate that
-        // constraint), but it is covered by the existing
-        // @@index([generationCorrelationId, createdAt]) index, so this
-        // lookup stays indexed without a schema change.
-        const existing = await aiInteractionModel.findFirst({
-          where: { generationCorrelationId: correlationId },
-          orderBy: { createdAt: "asc" },
-        });
-        if (existing) return { id: existing.id, isNew: false };
-      }
-      return createInteractionRow(correlationId);
-    })();
-
-    if (correlationId) {
-      inFlightInteractionRowsByCorrelationId.set(correlationId, resolution);
-    }
     try {
-      return await resolution;
-    } finally {
-      if (correlationId) inFlightInteractionRowsByCorrelationId.delete(correlationId);
+      return await createInteractionRow(correlationId, dedupeKey);
+    } catch (error) {
+      if (!isDedupeKeyUniqueViolation(error) || !aiInteractionModel.findFirst) throw error;
+      const existing = await aiInteractionModel.findFirst({ where: { dedupeKey } });
+      if (existing) return { id: existing.id, isNew: false };
+      throw error;
     }
   }
 
