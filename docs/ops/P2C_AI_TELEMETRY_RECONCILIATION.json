@@ -1,5 +1,21 @@
 {
   "reconciledAt": "2026-08-19T16:23:16.933Z",
+  "priorAuditAccountingReconciliation": {
+    "explanation": "The confirmation audit's fork queried only the window 15:15-15:25 UTC on 2026-08-19, which captures runs 37e87046 (first invocation 15:16:01) and 92a892fc (15:20:15) but NOT run a3c9692d (2026-08-18 19:35:00, the prior calendar day) -- that is the entire count discrepancy (8 vs 12). Separately, and independent of the window, the audit's own text says it computed cost as 'sum of all 16 AIInteraction rows' in that window -- i.e. it deduplicated correctly for the INVOCATION COUNT (16 raw rows -> 8 distinct, matching generationCorrelationId pairs) but did NOT deduplicate for the COST figure (summed all 16 raw rows, double-counting each of the 8 distinct invocations once for each of its 2 duplicate rows, from the pre-fix double-write bug). Both numbers below are computed directly from the same per-run costUSD figures recorded in this file's runs[] array.",
+    "priorAuditWindowRuns": ["37e87046-b1f4-4ee4-8af6-2305a4a17c03", "92a892fc-b57c-44e1-b864-86feb023f134"],
+    "priorRawRowCount": 16,
+    "priorDistinctInvocationCount": 8,
+    "priorRawRowCostSumUSD": 0.0052398,
+    "priorRawRowCostSumArithmetic": "2 * (0.00128025 + 0.00133965) = 2 * 0.0026199 = 0.0052398 -- matches the audit's reported '≈0.0052' to the precision it stated",
+    "priorDeduplicatedCostUSD": 0.0026199,
+    "priorDeduplicatedCostArithmetic": "0.00128025 (run 37e87046) + 0.00133965 (run 92a892fc) = 0.0026199 -- what the audit's own window should have reported had it deduplicated cost the same way it deduplicated the invocation count",
+    "currentAllRunRawRowCount": 24,
+    "currentDistinctInvocationCount": 12,
+    "currentRawRowCostSumUSD": 0.0079023,
+    "currentRawRowCostSumArithmetic": "2 * 0.00395115 = 0.0079023 -- the undeduplicated total across all 24 raw rows this session, for comparison only; not a real spend figure",
+    "currentDeduplicatedProviderCostUSD": 0.0039511500000000005,
+    "currentDeduplicatedProviderCostArithmetic": "0.00133125 (run a3c9692d) + 0.00128025 (run 37e87046) + 0.00133965 (run 92a892fc) = 0.00395115 -- the true total real provider spend across the full session, each invocation counted exactly once"
+  },
   "method": "SELECT-only query of AIInteraction (route='curriculum.waecBaselineAlignment', requestType='p2c_live_ai_sme_proof') and count of AiInteractionLog rows with the same endpoint/requestType, on staging (yonpfzjczoffhrgibxkz), no rows deleted or mutated.",
   "rawAIInteractionRows": 24,
   "rawAiInteractionLogRows": 24,

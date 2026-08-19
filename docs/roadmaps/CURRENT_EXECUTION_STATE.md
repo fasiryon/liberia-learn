@@ -5,6 +5,28 @@ Live execution tracking for the final closeout program.
 
 ## Resume here
 
+- **P2-C INFRASTRUCTURE-INVARIANT CLOSURE (2026-08-19, later same day).**
+  Branch `codex/p2c-waec-baseline-alignment`. Full record:
+  `docs/ops/P2C_INFRASTRUCTURE_CLOSURE_RECORD.md`. Both engineering actions
+  explicitly authorized after the blocker-closure pass are done and
+  live-verified: (1) AI-telemetry idempotency is now database-enforced
+  (`AIInteraction.dedupeKey` unique index, migration
+  `20260819_000001_p2c_ai_interaction_dedupekey_unique`), replacing the
+  prior in-process mutex, proven live across two genuinely separate OS
+  processes racing the same key (`docs/ops/P2C_DISTRIBUTED_DEDUP_PROOF.json`,
+  $0 spent); (2) the legacy migration manifest's 38 platform-dependent
+  entries are corrected to canonical git-blob values (re-precheck confirmed
+  exactly 90/38/0/0/0 before writing;
+  `docs/ops/P2C_LEGACY_MANIFEST_PLATFORM_NORMALIZATION_FIXES.json` has the
+  full before/after), and the underlying test now reads canonical git blob
+  bytes instead of the checked-out worktree file so it is platform-
+  independent going forward. The AI-telemetry accounting discrepancy
+  between the original report and the confirmation audit is now
+  arithmetically reconciled, not just described
+  (`docs/ops/P2C_AI_TELEMETRY_RECONCILIATION.json`). Next: push and confirm
+  fresh CI (`CI/build` and `clean-bootstrap-pg17`) is green against the new
+  HEAD before any production authorization decision.
+
 - **P2-C BLOCKER CLOSURE — TELEMETRY/DOCS CLOSED, CI STILL RED, HUMAN DECISION
   PENDING ON THE LEGACY MANIFEST (2026-08-19, later same day).** Branch
   `codex/p2c-waec-baseline-alignment`, on top of `9b7b12c1`/`a2311bee`. PR
