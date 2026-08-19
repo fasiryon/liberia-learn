@@ -5,6 +5,81 @@ Live execution tracking for the final closeout program.
 
 ## Resume here
 
+- **P2-C FORENSIC REMEDIATION COMPLETE — SEMANTIC INTEGRITY VERIFIED; PRODUCTION
+  AUTHORIZATION STILL AWAITS HUMAN REVIEW (2026-08-19).** Branch
+  `codex/p2c-waec-baseline-alignment`, commit `9b7b12c1`, PR
+  https://github.com/fasiryon/liberia-learn/pull/86 (open, not merged). This
+  entry supersedes the 2026-08-18 entry below for current status; the
+  2026-08-18 entry's evidence record is kept for history. Responds to an
+  independent forensic audit (`GO_WITH_REQUIRED_FIXES`) that found the
+  Curriculum V2 depth contract derived `verifiedBaselineDepth` from evidence
+  presence instead of an actual assessed depth relation, evidence
+  specificity existed only as a transient TS distinction / code-suffix
+  convention (not persisted), subject-level WAEC applicability could
+  generate false CONTENT_GAP/BELOW_BASELINE findings, and WASSCE was
+  recorded as an `examAlias` implying unverified first-party equivalence.
+  All four fixed and live-verified against real staging data (not
+  fixtures): `verifiedBaselineDepth` now sources only from
+  `CurriculumBaselineAlignment.depthRelation`; `evidenceSpecificity`
+  (FRAMEWORK_LEVEL/SUBJECT_LEVEL/TOPIC_LEVEL) persisted on
+  `AssessmentBaselineCompetency` via additive migration
+  `20260818_000001_p2c_evidence_specificity_and_baseline_depth` (applied to
+  staging via Prisma raw execution + manual ledger insert, since
+  `prisma/p2c-staging.config.ts` still has no `migrations.path` and would
+  otherwise resolve to the unrelated default `prisma/migrations` directory
+  -- the same class of incident recorded in
+  `docs/ops/P2C_STAGING_COMPLETION_RECORD.md`); all 16 existing staging
+  competency rows individually re-verified against their own evidence text
+  (not just code suffix) and correctly backfilled SUBJECT_LEVEL, none
+  upgraded to TOPIC_LEVEL; gap engine now routes non-TOPIC_LEVEL
+  competencies to a new `TOPIC_LEVEL_BASELINE_UNKNOWN` category instead of
+  CONTENT_GAP/BELOW_BASELINE; WASSCE moved from
+  `AssessmentBaselineFramework.examAliases` to a new, calculation-inert
+  `regionalReferenceLabels` field with a dedicated isolation regression.
+  Live AI SME proof re-run (real spend, hard-capped at $5, actual spend
+  ~$0.004 across all runs this session) with durable telemetry (explicit
+  awaited `AIInteraction` write, not the shared fire-and-forget path) and a
+  committed evidence artifact, `docs/ops/P2C_LIVE_AI_SME_PROOF.json`: all 4
+  live cases had the model attempt an overreach (claiming DIRECT/definite
+  depth from SUBJECT_LEVEL-only evidence); the deterministic guard rejected
+  every one (AI judgment NEEDS_IMPROVEMENT, guardrail PASS, zero
+  GUARD_MISS_FAIL) -- per the founder's explicit acceptance criterion, this
+  is a PASS for P2-C production readiness even though the model itself
+  needs improvement. Revoked anon/authenticated grants on all 13 P2-C
+  staging tables (previously full CRUD grants existed alongside RLS
+  default-deny with zero policies); RLS invariant and the application's own
+  Prisma connection both reverified after the revoke. P2-A (4/4 tables) and
+  P2-B (11/11 tables) reverified unchanged on staging post-migration.
+  Gate: `npx prisma validate`/`generate` PASS; full `npx tsc --noEmit` PASS
+  (no OOM this run); full `npx vitest run` 4756/4758 PASS locally (2
+  timeout-only under this dev machine's resource contention, 31/31
+  unchanged in isolation) -- **on GitHub Actions CI, the same full suite
+  ran 4757/4758 PASS**, i.e. both locally-flaky tests passed cleanly with
+  no contention, confirming they were never real failures. **CI is not
+  fully green**: PR #86's `CI` and `Canonical clean bootstrap` workflows
+  both report exactly one failure, `pre-p2a.canonical-baseline.test.ts`'s
+  byte-exact check on the unrelated, pre-existing (2026-02-20) legacy
+  migration `training_reporting` -- confirmed via `git cat-file -s` that
+  the actual committed git blob is 2573 bytes (LF, matching
+  `.gitattributes`' `eol=lf` for this file) while
+  `prisma/legacy-migration-manifest.json` records `fileBytes: 2641`, which
+  matches only a Windows/CRLF working-tree checkout (`core.autocrlf=true`),
+  not what Linux CI or the canonical git blob actually contain. This
+  predates this branch's changes entirely (this file was never touched by
+  P2-C) and was only exposed now because this PR is the first to touch
+  `prisma/canonical/**`, which path-triggers that workflow. Deliberately
+  NOT touched in this remediation: `prisma/legacy-migration-manifest.json`
+  is a frozen security-audit artifact from the separate, closed P2-A
+  production-cutover forensic reconciliation; correcting it is a real,
+  narrow, likely-safe fix (recompute the LF-normalized byte size/hash) but
+  is out of this remediation's scope and needs its own explicit review, not
+  a silent edit inside a P2-C PR. `npm run build` PASS locally (background
+  run, `--max-old-space-size=4096`, no OOM). Full evidence:
+  `docs/ops/P2C_LIVE_AI_SME_PROOF.json`,
+  `prisma/canonical/migrations/20260818_000001_p2c_evidence_specificity_and_baseline_depth/migration.sql`.
+  Next: human review of PR #86 (including the disclosed CI finding above),
+  then an explicit production authorization decision; do not merge or
+  activate `P2C_CURRICULUM_BENCHMARKING_ENABLED` without it.
 - **P2-C WAEC BASELINE ALIGNMENT — FEATURE COMPLETE IN STAGING WITH A REAL,
   EVIDENCE-HONEST MATH PILOT; PRODUCTION ACTIVATION AWAITS FINAL
   AUTHORIZATION (2026-08-17).** Branch `codex/p2c-waec-baseline-alignment`,
