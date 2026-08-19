@@ -249,4 +249,3 @@ P2-A production schema, writers, backfill, readers, governance, evidence,
 revocation, offline invalidation, explainability, compatibility, and integrity
 gates are complete. Curriculum provenance now has one immutable and auditable
 production history without claiming provenance facts that were never recorded.
-

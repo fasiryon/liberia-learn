@@ -5,6 +5,32 @@ Live execution tracking for the final closeout program.
 
 ## Resume here
 
+- **P2-C BLOCKER CLOSURE — TELEMETRY/DOCS CLOSED, CI STILL RED, HUMAN DECISION
+  PENDING ON THE LEGACY MANIFEST (2026-08-19, later same day).** Branch
+  `codex/p2c-waec-baseline-alignment`, on top of `9b7b12c1`/`a2311bee`. PR
+  https://github.com/fasiryon/liberia-learn/pull/86 is the cumulative,
+  unmerged **P2-A + P2-B + P2-C** delivery (67 commits, 293 files against
+  `main` -- none of that prior work merged separately), not just the
+  forensic-remediation commits below. Full record:
+  `docs/ops/P2C_BLOCKER_CLOSURE_RECORD.md`. Closed: the AI-telemetry
+  double-write bug (`lib/ai/interactionLog.ts`, race-safe fix, live-verified
+  against staging for $0.0000054, see `docs/ops/P2C_LIVE_DEDUP_PROOF.json`);
+  a full, re-queried reconciliation of the live AI proof (12 real
+  invocations / $0.00395 across 3 runs, not the 4/$0.004 previously
+  documented -- `docs/ops/P2C_LIVE_AI_SME_PROOF.json`'s new `reconciliation`
+  field) plus a correction to Case C's mischaracterized failure mode; real
+  `git diff --check` whitespace issues. **Explicitly not closed, per this
+  pass's own hard-stop rule:** the legacy migration manifest
+  (`prisma/legacy-migration-manifest.json`) turns out to have **38 of 128**
+  platform-dependent (CRLF-captured) entries, not the 1 previously found --
+  `docs/ops/P2C_LEGACY_MANIFEST_PLATFORM_AUDIT.json` has the full list. The
+  manifest and the failing test were deliberately left untouched (frozen
+  security-audit evidence, needs an explicit human decision, not a
+  unilateral bulk rewrite), so **CI remains red** on
+  `__tests__/pre-p2a.canonical-baseline.test.ts` and production authorization
+  is still blocked. Next: a human decision on the manifest correction in its
+  own isolated commit, then a fresh CI run before any GO decision.
+
 - **P2-C FORENSIC REMEDIATION COMPLETE — SEMANTIC INTEGRITY VERIFIED; PRODUCTION
   AUTHORIZATION STILL AWAITS HUMAN REVIEW (2026-08-19).** Branch
   `codex/p2c-waec-baseline-alignment`, commit `9b7b12c1`, PR

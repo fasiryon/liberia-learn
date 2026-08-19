@@ -192,7 +192,7 @@ must inventory in depth and design around, not replace on day one.
 - **Age/grade-responsive UX precedent exists, but only on the teacher
   side.** `docs/product/UX_LOW_LITERACY.md` documents a real, shipped
   progressive-disclosure system (Basic/Standard/Advanced density, one
-  codebase, large-font accessibility CSS mode, guided onboarding overlay)  - 
+  codebase, large-font accessibility CSS mode, guided onboarding overlay)  -
   but it targets teachers, not students. Per standing memory
   (`project_visual_redesign_queue`, Doc B item B7), `AccessibilityToggle` is
   **not mounted in the student experience at all**, and Grades 1-4 have real
@@ -248,7 +248,7 @@ must inventory in depth and design around, not replace on day one.
 
 - `docs/vision/NATIONAL_PHASES.md` ("National Phases V1") is a historical,
   superseded phase scheme (`PHASE 1`-`PHASE 4`, numeric, no letter suffix).
-  Its "PHASE 2  -  AI Curriculum & Instruction Engine" and "PHASE 2.5  - 
+  Its "PHASE 2  -  AI Curriculum & Instruction Engine" and "PHASE 2.5  -
   National Adoption & Digital Literacy Infrastructure" cover *some* of the
   same conceptual ground (curriculum synthesis, progressive-disclosure UI,
   accessibility) but predate and do not conflict with this program's `P1`-`P7`

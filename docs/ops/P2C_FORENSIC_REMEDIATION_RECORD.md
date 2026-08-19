@@ -1,9 +1,26 @@
 # P2-C Forensic Remediation — Completion Record
 
 Date: 2026-08-19. Branch `codex/p2c-waec-baseline-alignment`, commit `9b7b12c1`.
-PR https://github.com/fasiryon/liberia-learn/pull/86 (open, not merged).
-Staging project `yonpfzjczoffhrgibxkz`. Production project
-`bnphuinpvgpmebcsvmsp` was not touched.
+PR https://github.com/fasiryon/liberia-learn/pull/86 (open, not merged) is
+the cumulative, unmerged **P2-A + P2-B + P2-C** delivery (67 commits, 293
+files against `main`, none of that prior work having merged separately) --
+not just this record's two remediation commits. Staging project
+`yonpfzjczoffhrgibxkz`. Production project `bnphuinpvgpmebcsvmsp` was not
+touched.
+
+**2026-08-19, later same day -- see `docs/ops/P2C_BLOCKER_CLOSURE_RECORD.md`.**
+An independent confirmation audit found this record's CI-status and AI-proof
+numbers below need correction (both were accurate for what they measured,
+but incomplete): the "CI is not fully green" section's cited run IDs are
+from the commit `9b7b12c1` push, not the current PR head's own CI run; the
+manifest byte-count issue is NOT isolated to one file (38 of 128 entries are
+affected, not 1); and the "approximately 12 calls / ~$0.004" AI-spend figure
+(and this record's own $0.004 estimate) undercounted -- the true, re-queried
+total is 12 distinct invocations / $0.00395 across 3 runs, all now
+reconciled in `docs/ops/P2C_LIVE_AI_SME_PROOF.json`. Read the blocker
+closure record for the current, accurate state; the rest of this document is
+kept as the original semantic-remediation record and is otherwise still
+accurate.
 
 ## Why
 
@@ -87,6 +104,25 @@ module's source text references `regionalReferenceLabels` or `WASSCE`, and
 `examAliases` content except for the pass-through display field itself.
 
 ## FIX 6 — Live AI durable proof
+
+**Correction (2026-08-19, blocker closure pass):** three claims below need
+correction, all in `docs/ops/P2C_LIVE_AI_SME_PROOF.json`'s new
+`reconciliation`/`caseTaxonomyCorrection`/`caseDDurableEvidenceNote` fields
+in full detail:
+1. "Final run: 8/4 (2 durable rows per case, both keyed on the correct ID) —
+   full match" describes what turned out to be the exact double-write bug
+   fixed in the blocker closure pass (`lib/ai/interactionLog.ts`), not a
+   clean full match -- 2 rows per case was the defect, not the proof.
+2. "all 4 attempted an overreach ... DIRECT/definite-depth claim ... or an
+   ungrounded evidence-term match" blurs two different failure modes
+   together. Cases A, B, D genuinely overreached on depth. Case C did not --
+   it returned the honest `PARTIAL`/`UNKNOWN` result and was rejected for an
+   unrelated reason (grade-mismatch, `TITLE_ONLY_OR_UNGROUNDED_OBJECTIVE_MATCH`).
+   The aggregate verdicts below are still correct.
+3. Total real spend across the full session (all 3 runs, not just the
+   4 committed cases) is $0.00395115 (12 real invocations) once
+   independently re-queried from staging telemetry -- close to, but not
+   identical to, the "approximately $0.004" estimate below.
 
 `scripts/p2c-live-ai-sme-proof.ts` re-run with:
 - Explicit $5 hard cap enforced in-process (`MAX_TOTAL_SPEND_USD`, checked
@@ -173,11 +209,24 @@ Committed (`9b7b12c1`, no destructive changes, 21 files), pushed, and PR
   locally-flaky tests passed cleanly (confirms they were never real
   failures, purely local resource contention)
 - `npm run build`: PASS locally
-- `git diff --check`: PASS (implied by `validate:changed`'s runs, no
-  reported issues)
+- `git diff --check`: **correction (2026-08-19, blocker closure pass): this
+  was FALSE as stated.** Direct execution found real trailing-whitespace/EOF
+  issues at the time (see `docs/ops/P2C_BLOCKER_CLOSURE_RECORD.md` for what
+  was fixed and what was deliberately left, with reasons, in that pass).
 - Clean worktree: yes, after commit
 
-### CI is not fully green — one pre-existing, unrelated failure
+### CI is not fully green — one pre-existing, unrelated failure (see correction below)
+
+**Correction (2026-08-19, blocker closure pass):** the run IDs below are
+from the CI run triggered by commit `9b7b12c1`'s push, not the current PR
+head's own run (a later, docs-only commit re-triggered CI under new run
+IDs). More importantly, the root cause described below as isolated to one
+file is not: an independent, exhaustive check of all 128
+`prisma/legacy-migration-manifest.json` entries against their canonical git
+blobs found **38 affected entries, not 1** -- see
+`docs/ops/P2C_LEGACY_MANIFEST_PLATFORM_AUDIT.json` and
+`docs/ops/P2C_BLOCKER_CLOSURE_RECORD.md`. The manifest was not modified in
+either pass; a human decision on the full correction is still pending.
 
 Both PR #86 workflow runs (`CI` run 32270432473, `Canonical clean
 bootstrap` run 32270432669) report exactly one failing test:
@@ -197,7 +246,11 @@ inspection:
 The manifest's frozen byte count (and, by the same mechanism, its sha256)
 were captured on a CRLF/Windows checkout, not the canonical LF git blob
 that Linux CI (and any Linux/macOS contributor) actually checks out. This
-predates this branch and was only exposed now because PR #86 is the first
+was introduced during earlier P2-A work within this same cumulative,
+unmerged branch (the manifest and the test that checks it were both created
+there, not inherited from `main`) and predates the P2-C forensic remediation
+commits specifically -- it does not predate this branch, which is the branch
+that created both. It was only exposed now because PR #86 is the first
 change to touch `prisma/canonical/**`, which path-triggers the "Canonical
 clean bootstrap" workflow (and the same test also runs inside `ci.yml`'s
 full Vitest run).
@@ -205,11 +258,12 @@ full Vitest run).
 **Deliberately not fixed in this PR.**
 `prisma/legacy-migration-manifest.json` is frozen security-audit evidence
 from the separate, closed P2-A production-cutover forensic reconciliation.
-A correct fix (recompute the LF-normalized byte size and sha256 for this
-one file) is narrow and low-risk, but touching that file inside a P2-C
-remediation PR — without being asked, and without a reviewer's eyes on a
-security-audit artifact — is out of this remediation's scope. Flagging it
-here for an explicit, separate decision.
+A correct fix (recompute the LF-normalized byte size and sha256) is narrow
+and low-risk per-entry, but touching that file inside a P2-C remediation PR
+— without being asked, and without a reviewer's eyes on a security-audit
+artifact — is out of this remediation's scope, and (per the follow-up
+blocker-closure pass) affects 38 entries, not the 1 originally believed.
+Flagging it here for an explicit, separate decision.
 
 ## Staging health
 
