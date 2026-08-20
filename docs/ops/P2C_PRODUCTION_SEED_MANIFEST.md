@@ -1,5 +1,22 @@
 # P2-C Production Seed Manifest
 
+## 2026-08-20 integrity addendum
+
+The canonical production seed is now implemented with create-if-absent/upsert
+semantics on stable natural keys and no destructive update branch. The full
+empty-PostgreSQL-17 verifier executes the real script twice and fingerprints
+every seed-owned row after each execution. Verified disposable result:
+
+- first run: 4 frameworks, 7 sources, 7 source versions, 17 subjects, 17 MOE
+  objectives, 16 competencies, 1 alignment, and 2 learning targets;
+- second run: zero semantic changes and no duplicates; and
+- all 16 subject-level competencies use `NOT_ESTABLISHED` assessment depth and
+  an empty external cognitive-dimension list.
+
+This proof applies to the remediated branch. It does not state that the new
+migrations or corrections have already been applied to staging or production.
+The staging WASSCE row described below remains a pending environment write.
+
 Date: 2026-08-19. Deterministic allowlist for the P2-C production data seed —
 not "copy staging." Every count below was freshly re-queried from staging
 (`yonpfzjczoffhrgibxkz`) during this pass, not carried from earlier commit

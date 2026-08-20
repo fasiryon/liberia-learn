@@ -47,6 +47,14 @@ const PRODUCTION_REF = "bnphuinpvgpmebcsvmsp";
 function assertProduction(): void {
   const url = process.env.DATABASE_URL?.trim();
   if (!url) throw new Error("DATABASE_URL is required");
+  if (process.env.P2C_SEED_ALLOW_DISPOSABLE === "true") {
+    const parsed = new URL(url);
+    const databaseName = parsed.pathname.replace(/^\//, "");
+    if (!["localhost", "127.0.0.1"].includes(parsed.hostname) || !databaseName.startsWith("liberialearn_")) {
+      throw new Error("Disposable seed override requires a loopback liberialearn_* database");
+    }
+    return;
+  }
   if (!url.includes(`postgres.${PRODUCTION_REF}`)) throw new Error("DATABASE_URL is not the approved production project");
   if (url.includes(STAGING_REF)) throw new Error("REFUSING: URL touches the staging project ref");
 }
@@ -58,7 +66,7 @@ const RETRIEVED_AT = new Date("2026-08-17T00:00:00.000Z");
 const PERMITTED_ACTIONS = ["CITATION", "METADATA", "INTERNAL_ANALYSIS", "AI_ANALYSIS"] as const;
 
 type CognitiveDemand =
-  | "RECALL" | "COMPREHENSION" | "PROCEDURAL_FLUENCY" | "APPLICATION" | "ANALYSIS"
+  | "NOT_ESTABLISHED" | "RECALL" | "COMPREHENSION" | "PROCEDURAL_FLUENCY" | "APPLICATION" | "ANALYSIS"
   | "REASONING" | "EVALUATION" | "CREATION" | "TRANSFER" | "PROBLEM_MODELING";
 
 type ObjectiveSpec = {
@@ -256,8 +264,10 @@ async function main() {
     const now = new Date();
 
     // --- Category C: 5 sources from the Math pilot ---
-    const moeG16 = await tx.curriculumAuthoritySource.create({
-      data: {
+    const moeG16 = await tx.curriculumAuthoritySource.upsert({
+      where: { authorityType_jurisdiction_canonicalUrl: { authorityType: "LIBERIA_MOE", jurisdiction: "LIBERIA", canonicalUrl: "http://www.moe.gov.lr/wp-content/uploads/2019/09/GRADE-1-6.zip" } },
+      update: {},
+      create: {
         authorityType: "LIBERIA_MOE", authorityName: "Liberia Ministry of Education", jurisdiction: "LIBERIA",
         title: "National Curriculum, Grades 1-6", sourceType: "ZIP_ARCHIVE",
         canonicalUrl: "http://www.moe.gov.lr/wp-content/uploads/2019/09/GRADE-1-6.zip",
@@ -266,18 +276,22 @@ async function main() {
         notes: "CURRENTLY_VERIFIED_OFFICIAL_EDITION, not CURRENT_LATEST_EDITION. HTTP Last-Modified 2026-07-29; PDF content dated 2020-07. See P2C_EVIDENCE_MANIFEST.md.",
       },
     });
-    const moeG16Version = await tx.curriculumAuthoritySourceVersion.create({
-      data: {
+    const moeG16Version = await tx.curriculumAuthoritySourceVersion.upsert({
+      where: { sourceId_versionLabel: { sourceId: moeG16.id, versionLabel: "2020-07-content-2026-07-29-served" } },
+      update: {},
+      create: {
         sourceId: moeG16.id, versionLabel: "2020-07-content-2026-07-29-served", retrievedAt: now,
         contentHash: "82b95c17bf5bdbcdf8614c0c1b2c09f0a103c05fe50b5cb8bedf3cb3d9e429a0",
         evidenceLocator: "GRADE-1-6.zip (whole archive); Math 1-6.pdf sha256 ae569b18b38b48cb936f164a79de053005f214500331364be3399c1c185fa74e, page 22",
         extractionMethod: "MANUAL", verificationStatus: "VERIFIED",
       },
     });
-    await tx.curriculumAuthoritySource.update({ where: { id: moeG16.id }, data: { currentVersionId: moeG16Version.id } });
+    if (moeG16.currentVersionId !== moeG16Version.id) await tx.curriculumAuthoritySource.update({ where: { id: moeG16.id }, data: { currentVersionId: moeG16Version.id } });
 
-    const moeG79 = await tx.curriculumAuthoritySource.create({
-      data: {
+    const moeG79 = await tx.curriculumAuthoritySource.upsert({
+      where: { authorityType_jurisdiction_canonicalUrl: { authorityType: "LIBERIA_MOE", jurisdiction: "LIBERIA", canonicalUrl: "http://www.moe.gov.lr/wp-content/uploads/2019/09/GRADE-7-9.zip" } },
+      update: {},
+      create: {
         authorityType: "LIBERIA_MOE", authorityName: "Liberia Ministry of Education", jurisdiction: "LIBERIA",
         title: "National Curriculum, Grades 7-9", sourceType: "ZIP_ARCHIVE",
         canonicalUrl: "http://www.moe.gov.lr/wp-content/uploads/2019/09/GRADE-7-9.zip",
@@ -286,18 +300,22 @@ async function main() {
         notes: "CURRENTLY_VERIFIED_OFFICIAL_EDITION, not CURRENT_LATEST_EDITION. See P2C_EVIDENCE_MANIFEST.md.",
       },
     });
-    const moeG79Version = await tx.curriculumAuthoritySourceVersion.create({
-      data: {
+    const moeG79Version = await tx.curriculumAuthoritySourceVersion.upsert({
+      where: { sourceId_versionLabel: { sourceId: moeG79.id, versionLabel: "2020-07-content-2026-07-29-served" } },
+      update: {},
+      create: {
         sourceId: moeG79.id, versionLabel: "2020-07-content-2026-07-29-served", retrievedAt: now,
         contentHash: "fffb3aed17eeae7cd2fdd1fabc69ea1c7e1587e04d91b6ea01752b1cd185f425",
         evidenceLocator: "GRADE-7-9.zip (whole archive); Math 7-9.pdf sha256 b8f076e1448671bc4f0e7af91ca69795db273f10d6fa0aba6cfc4e9065d28224, page 37 (Grade 9, Topic: TWO-SET PROBLEMS)",
         extractionMethod: "MANUAL", verificationStatus: "VERIFIED",
       },
     });
-    await tx.curriculumAuthoritySource.update({ where: { id: moeG79.id }, data: { currentVersionId: moeG79Version.id } });
+    if (moeG79.currentVersionId !== moeG79Version.id) await tx.curriculumAuthoritySource.update({ where: { id: moeG79.id }, data: { currentVersionId: moeG79Version.id } });
 
-    const moeG1012 = await tx.curriculumAuthoritySource.create({
-      data: {
+    const moeG1012 = await tx.curriculumAuthoritySource.upsert({
+      where: { authorityType_jurisdiction_canonicalUrl: { authorityType: "LIBERIA_MOE", jurisdiction: "LIBERIA", canonicalUrl: "http://www.moe.gov.lr/wp-content/uploads/2019/09/Grade-10-12.zip" } },
+      update: {},
+      create: {
         authorityType: "LIBERIA_MOE", authorityName: "Liberia Ministry of Education", jurisdiction: "LIBERIA",
         title: "National Curriculum, Grades 10-12", sourceType: "ZIP_ARCHIVE",
         canonicalUrl: "http://www.moe.gov.lr/wp-content/uploads/2019/09/Grade-10-12.zip",
@@ -306,18 +324,22 @@ async function main() {
         notes: "CURRENTLY_VERIFIED_OFFICIAL_EDITION, not CURRENT_LATEST_EDITION. See P2C_EVIDENCE_MANIFEST.md.",
       },
     });
-    const moeG1012Version = await tx.curriculumAuthoritySourceVersion.create({
-      data: {
+    const moeG1012Version = await tx.curriculumAuthoritySourceVersion.upsert({
+      where: { sourceId_versionLabel: { sourceId: moeG1012.id, versionLabel: "2020-07-content-2026-07-29-served" } },
+      update: {},
+      create: {
         sourceId: moeG1012.id, versionLabel: "2020-07-content-2026-07-29-served", retrievedAt: now,
         contentHash: "3b3fed2df4a9a1c3d6576cba8ad9f16cc1e0c19a64dcf358f09429f0767ee8ed",
         evidenceLocator: "Grade-10-12.zip (whole archive); Maths 10-12.pdf sha256 987f937d3c354bcfb036cdac971c0f04a7b40c391b119a827a9d072191250237, pages 67-68 (Grade 12, Topic: DIFFERENTIATION AND INTEGRATION)",
         extractionMethod: "MANUAL", verificationStatus: "VERIFIED",
       },
     });
-    await tx.curriculumAuthoritySource.update({ where: { id: moeG1012.id }, data: { currentVersionId: moeG1012Version.id } });
+    if (moeG1012.currentVersionId !== moeG1012Version.id) await tx.curriculumAuthoritySource.update({ where: { id: moeG1012.id }, data: { currentVersionId: moeG1012Version.id } });
 
-    const waecLjhsce = await tx.curriculumAuthoritySource.create({
-      data: {
+    const waecLjhsce = await tx.curriculumAuthoritySource.upsert({
+      where: { authorityType_jurisdiction_canonicalUrl: { authorityType: "WAEC_LIBERIA", jurisdiction: "LIBERIA", canonicalUrl: "https://waecliberia.org.lr/ljhsce/" } },
+      update: {},
+      create: {
         authorityType: "WAEC_LIBERIA", authorityName: "West African Examinations Council, Liberia National Office", jurisdiction: "LIBERIA",
         title: "The Liberia Junior High Certificate Examination (LJHSCE)", sourceType: "WEB_PAGE",
         canonicalUrl: "https://waecliberia.org.lr/ljhsce/", publisher: "WAEC Liberia", retrievedAt: now, subject: "MATH", gradeMin: 9, gradeMax: 9, exam: "LJHSCE",
@@ -325,18 +347,22 @@ async function main() {
         notes: "Subject/exam-applicability evidence only (SUBJECT_LEVEL). Confirms Mathematics 210 is one of 4 compulsory LJHSCE subjects. Does not itself specify topic-level competencies.",
       },
     });
-    const waecLjhsceVersion = await tx.curriculumAuthoritySourceVersion.create({
-      data: {
+    const waecLjhsceVersion = await tx.curriculumAuthoritySourceVersion.upsert({
+      where: { sourceId_versionLabel: { sourceId: waecLjhsce.id, versionLabel: "captured-2026-08-17" } },
+      update: {},
+      create: {
         sourceId: waecLjhsce.id, versionLabel: "captured-2026-08-17", retrievedAt: now,
         contentHash: "fabd89d5b1051637fdb759ad4db7198dc682f150b69a0d69a8e0456453b6d323",
         evidenceLocator: "waecliberia.org.lr/ljhsce/, BACKGROUND section subject table (captured-render hash, live HTML page, see P2C_EVIDENCE_MANIFEST.md)",
         extractionMethod: "MANUAL", verificationStatus: "VERIFIED",
       },
     });
-    await tx.curriculumAuthoritySource.update({ where: { id: waecLjhsce.id }, data: { currentVersionId: waecLjhsceVersion.id } });
+    if (waecLjhsce.currentVersionId !== waecLjhsceVersion.id) await tx.curriculumAuthoritySource.update({ where: { id: waecLjhsce.id }, data: { currentVersionId: waecLjhsceVersion.id } });
 
-    const waecLshscePrivate = await tx.curriculumAuthoritySource.create({
-      data: {
+    const waecLshscePrivate = await tx.curriculumAuthoritySource.upsert({
+      where: { authorityType_jurisdiction_canonicalUrl: { authorityType: "WAEC_LIBERIA", jurisdiction: "LIBERIA", canonicalUrl: "https://waecliberia.org.lr/lshsceprivate/" } },
+      update: {},
+      create: {
         authorityType: "WAEC_LIBERIA", authorityName: "West African Examinations Council, Liberia National Office", jurisdiction: "LIBERIA",
         title: "The Liberia Senior High School Certificate Examination - Private (LSHSCE - Private)", sourceType: "REGULATION",
         canonicalUrl: "https://waecliberia.org.lr/lshsceprivate/", publisher: "WAEC Liberia", retrievedAt: now, subject: "MATH", gradeMin: 12, gradeMax: 12, exam: "LSHSCE",
@@ -344,19 +370,23 @@ async function main() {
         notes: "General distillation statement (SUBJECT_LEVEL): 'detailed syllabuses...are distillation of the Ministry's Curriculum'. Not a topic-level WAEC syllabus document.",
       },
     });
-    const waecLshscePrivateVersion = await tx.curriculumAuthoritySourceVersion.create({
-      data: {
+    const waecLshscePrivateVersion = await tx.curriculumAuthoritySourceVersion.upsert({
+      where: { sourceId_versionLabel: { sourceId: waecLshscePrivate.id, versionLabel: "captured-2026-08-17" } },
+      update: {},
+      create: {
         sourceId: waecLshscePrivate.id, versionLabel: "captured-2026-08-17", retrievedAt: now,
         contentHash: "8002907b9d237897bc1bad82b339096faf289e11bbd4aa613e14cc045266bc57",
         evidenceLocator: "waecliberia.org.lr/lshsceprivate/, body paragraph 1 (captured-render hash, see P2C_EVIDENCE_MANIFEST.md)",
         extractionMethod: "MANUAL", verificationStatus: "VERIFIED",
       },
     });
-    await tx.curriculumAuthoritySource.update({ where: { id: waecLshscePrivate.id }, data: { currentVersionId: waecLshscePrivateVersion.id } });
+    if (waecLshscePrivate.currentVersionId !== waecLshscePrivateVersion.id) await tx.curriculumAuthoritySource.update({ where: { id: waecLshscePrivate.id }, data: { currentVersionId: waecLshscePrivateVersion.id } });
 
     // --- 2 more sources (category C total: 7) ---
-    const lpscePage = await tx.curriculumAuthoritySource.create({
-      data: {
+    const lpscePage = await tx.curriculumAuthoritySource.upsert({
+      where: { authorityType_jurisdiction_canonicalUrl: { authorityType: "WAEC_LIBERIA", jurisdiction: "LIBERIA", canonicalUrl: "https://waecliberia.org.lr/examination/" } },
+      update: {},
+      create: {
         authorityType: "WAEC_LIBERIA", authorityName: "West African Examinations Council, Liberia", jurisdiction: "LIBERIA",
         title: "The Liberia Primary School Certificate Examination (LPSCE)", sourceType: "WEB_PAGE",
         canonicalUrl: "https://waecliberia.org.lr/examination/", publisher: "WAEC Liberia", retrievedAt: RETRIEVED_AT, subject: null, gradeMin: 6, gradeMax: 6, exam: "LPSCE",
@@ -364,18 +394,22 @@ async function main() {
         notes: "Live browser session this pass, https://waecliberia.org.lr/examination/. Real page, re-check before relying on it again (WAEC could edit this WordPress page without a version marker).",
       },
     });
-    const lpsceVersion = await tx.curriculumAuthoritySourceVersion.create({
-      data: {
+    const lpsceVersion = await tx.curriculumAuthoritySourceVersion.upsert({
+      where: { sourceId_versionLabel: { sourceId: lpscePage.id, versionLabel: "2026-08-17-live-capture" } },
+      update: {},
+      create: {
         sourceId: lpscePage.id, versionLabel: "2026-08-17-live-capture", retrievedAt: RETRIEVED_AT,
         contentHash: "68ec91bd02922d5c32ef64fcb8d66d190101825043b061a247a85b6411cd5b4e",
         evidenceLocator: "https://waecliberia.org.lr/examination/ -- captured <main> text render, this session",
         extractionMethod: "MANUAL", verificationStatus: "VERIFIED",
       },
     });
-    await tx.curriculumAuthoritySource.update({ where: { id: lpscePage.id }, data: { currentVersionId: lpsceVersion.id } });
+    if (lpscePage.currentVersionId !== lpsceVersion.id) await tx.curriculumAuthoritySource.update({ where: { id: lpscePage.id }, data: { currentVersionId: lpsceVersion.id } });
 
-    const lshsceRegularPage = await tx.curriculumAuthoritySource.create({
-      data: {
+    const lshsceRegularPage = await tx.curriculumAuthoritySource.upsert({
+      where: { authorityType_jurisdiction_canonicalUrl: { authorityType: "WAEC_LIBERIA", jurisdiction: "LIBERIA", canonicalUrl: "https://waecliberia.org.lr/lshsceregular/" } },
+      update: {},
+      create: {
         authorityType: "WAEC_LIBERIA", authorityName: "West African Examinations Council, Liberia", jurisdiction: "LIBERIA",
         title: "The Liberia Senior High School Certificate Examination (LSHSCE) -- Regular", sourceType: "WEB_PAGE",
         canonicalUrl: "https://waecliberia.org.lr/lshsceregular/", publisher: "WAEC Liberia", retrievedAt: RETRIEVED_AT, subject: null, gradeMin: 12, gradeMax: 12, exam: "LSHSCE",
@@ -383,41 +417,51 @@ async function main() {
         notes: "Live browser session this pass, https://waecliberia.org.lr/lshsceregular/. Describes 2 core subjects and stanine 1-9 grading, differing from generic regional WASSCE reference material (4 core subjects, A1-F9) -- this is WAEC Liberia's own first-party, current structure and is treated as canonical for LiberiaLearn.",
       },
     });
-    const lshsceRegularVersion = await tx.curriculumAuthoritySourceVersion.create({
-      data: {
+    const lshsceRegularVersion = await tx.curriculumAuthoritySourceVersion.upsert({
+      where: { sourceId_versionLabel: { sourceId: lshsceRegularPage.id, versionLabel: "2026-08-17-live-capture" } },
+      update: {},
+      create: {
         sourceId: lshsceRegularPage.id, versionLabel: "2026-08-17-live-capture", retrievedAt: RETRIEVED_AT,
         contentHash: "006b02da5b17084d092f1183e5811f2f004053456500e2c37b2fbbceb8299e28",
         evidenceLocator: "https://waecliberia.org.lr/lshsceregular/ -- captured <main> text render, this session",
         extractionMethod: "MANUAL", verificationStatus: "VERIFIED",
       },
     });
-    await tx.curriculumAuthoritySource.update({ where: { id: lshsceRegularPage.id }, data: { currentVersionId: lshsceRegularVersion.id } });
+    if (lshsceRegularPage.currentVersionId !== lshsceRegularVersion.id) await tx.curriculumAuthoritySource.update({ where: { id: lshsceRegularPage.id }, data: { currentVersionId: lshsceRegularVersion.id } });
 
     // --- Category B: 4 frameworks, corrected examAliases/regionalReferenceLabels ---
-    const lpsce = await tx.assessmentBaselineFramework.create({
-      data: {
+    const lpsce = await tx.assessmentBaselineFramework.upsert({
+      where: { code: "WAEC.LIBERIA.LPSCE" },
+      update: {},
+      create: {
         code: "WAEC.LIBERIA.LPSCE", authority: "WAEC_LIBERIA", jurisdiction: "LIBERIA", exam: "LPSCE", level: "PRIMARY", kind: "BASELINE",
         title: "Liberia Primary School Certificate Examination (LPSCE), Grade 6", examAliases: [],
         sourceVersionId: lpsceVersion.id, verificationStatus: "VERIFIED", externalAuthorityStatus: "NOT_CLAIMED",
       },
     });
-    const ljhsce = await tx.assessmentBaselineFramework.create({
-      data: {
+    const ljhsce = await tx.assessmentBaselineFramework.upsert({
+      where: { code: "WAEC.LIBERIA.LJHSCE" },
+      update: {},
+      create: {
         code: "WAEC.LIBERIA.LJHSCE", authority: "WAEC_LIBERIA", jurisdiction: "LIBERIA", exam: "LJHSCE", level: "JUNIOR_SECONDARY", kind: "BASELINE",
         title: "Liberia Junior High School Certificate Examination (LJHSCE), Grade 9", examAliases: [],
         sourceVersionId: waecLjhsceVersion.id, verificationStatus: "VERIFIED", externalAuthorityStatus: "NOT_CLAIMED",
       },
     });
-    const lshsceRegular = await tx.assessmentBaselineFramework.create({
-      data: {
+    const lshsceRegular = await tx.assessmentBaselineFramework.upsert({
+      where: { code: "WAEC.LIBERIA.LSHSCE.REGULAR" },
+      update: {},
+      create: {
         code: "WAEC.LIBERIA.LSHSCE.REGULAR", authority: "WAEC_LIBERIA", jurisdiction: "LIBERIA", exam: "LSHSCE", level: "SENIOR_SECONDARY", kind: "BASELINE",
         title: "Liberia Senior High School Certificate Examination (LSHSCE), Grade 12, Regular/School Candidates -- the current verified Liberia Grade-12 baseline",
         examAliases: [], regionalReferenceLabels: ["WASSCE"],
         sourceVersionId: lshsceRegularVersion.id, verificationStatus: "VERIFIED", externalAuthorityStatus: "NOT_CLAIMED",
       },
     });
-    const lshscePrivate = await tx.assessmentBaselineFramework.create({
-      data: {
+    const lshscePrivate = await tx.assessmentBaselineFramework.upsert({
+      where: { code: "WAEC.LIBERIA.LSHSCE.PRIVATE" },
+      update: {},
+      create: {
         code: "WAEC.LIBERIA.LSHSCE.PRIVATE", authority: "WAEC_LIBERIA", jurisdiction: "LIBERIA", exam: "LSHSCE_PRIVATE", level: "SENIOR_SECONDARY_PRIVATE_CANDIDATE", kind: "BASELINE",
         title: "Liberia Senior High School Certificate Examination, Private Candidates (LSHSCE-Private). Tests coverage of the MOE national senior-high curriculum; WAEC's own detailed syllabuses are a distillation of the Ministry curriculum, guidelines not ends in themselves.",
         examAliases: [], sourceVersionId: waecLshscePrivateVersion.id, verificationStatus: "VERIFIED", externalAuthorityStatus: "NOT_CLAIMED",
@@ -435,8 +479,10 @@ async function main() {
     ];
     const lpsceSubjects: Record<string, { id: string; officialSubjectCode: string | null }> = {};
     for (const s of lpsceSubjectSpecs) {
-      const row = await tx.assessmentBaselineSubject.create({
-        data: { frameworkId: lpsce.id, code: s.code, name: s.name, gradeMin: 6, gradeMax: 6, required: true, subjectGroup: "COMPULSORY", officialSubjectCode: s.officialSubjectCode, componentSummary: lpsceComponents, gradingSummary: lpsceGrading },
+      const row = await tx.assessmentBaselineSubject.upsert({
+        where: { frameworkId_code: { frameworkId: lpsce.id, code: s.code } },
+        update: {},
+        create: { frameworkId: lpsce.id, code: s.code, name: s.name, gradeMin: 6, gradeMax: 6, required: true, subjectGroup: "COMPULSORY", officialSubjectCode: s.officialSubjectCode, componentSummary: lpsceComponents, gradingSummary: lpsceGrading },
       });
       lpsceSubjects[s.code] = { id: row.id, officialSubjectCode: row.officialSubjectCode };
     }
@@ -451,8 +497,10 @@ async function main() {
     ];
     const ljhsceSubjects: Record<string, { id: string; officialSubjectCode: string | null }> = {};
     for (const s of ljhsceSubjectSpecs) {
-      const row = await tx.assessmentBaselineSubject.create({
-        data: { frameworkId: ljhsce.id, code: s.code, name: s.name, gradeMin: 9, gradeMax: 9, required: true, subjectGroup: "COMPULSORY", officialSubjectCode: s.officialSubjectCode, componentSummary: ljhsceComponents, gradingSummary: ljhsceGrading },
+      const row = await tx.assessmentBaselineSubject.upsert({
+        where: { frameworkId_code: { frameworkId: ljhsce.id, code: s.code } },
+        update: {},
+        create: { frameworkId: ljhsce.id, code: s.code, name: s.name, gradeMin: 9, gradeMax: 9, required: true, subjectGroup: "COMPULSORY", officialSubjectCode: s.officialSubjectCode, componentSummary: ljhsceComponents, gradingSummary: ljhsceGrading },
       });
       ljhsceSubjects[s.code] = { id: row.id, officialSubjectCode: row.officialSubjectCode };
     }
@@ -481,8 +529,10 @@ async function main() {
     ];
     const lshsceSubjects: Record<string, { id: string; officialSubjectCode: string | null }> = {};
     for (const s of lshsceSubjectSpecs) {
-      const row = await tx.assessmentBaselineSubject.create({
-        data: { frameworkId: lshsceRegular.id, code: s.code, name: s.name, gradeMin: 12, gradeMax: 12, required: s.required, subjectGroup: s.subjectGroup, officialSubjectCode: s.officialSubjectCode, componentSummary: lshsceComponents, gradingSummary: lshsceGrading },
+      const row = await tx.assessmentBaselineSubject.upsert({
+        where: { frameworkId_code: { frameworkId: lshsceRegular.id, code: s.code } },
+        update: {},
+        create: { frameworkId: lshsceRegular.id, code: s.code, name: s.name, gradeMin: 12, gradeMax: 12, required: s.required, subjectGroup: s.subjectGroup, officialSubjectCode: s.officialSubjectCode, componentSummary: lshsceComponents, gradingSummary: lshsceGrading },
       });
       lshsceSubjects[s.code] = { id: row.id, officialSubjectCode: row.officialSubjectCode };
     }
@@ -503,8 +553,10 @@ async function main() {
       const subject = fw.subjects[spec.waecSubjectCode];
       if (!subject) throw new Error(`Missing subject ${spec.waecSubjectCode} under ${spec.frameworkCode}`);
 
-      const objective = await tx.moeCurriculumObjective.create({
-        data: {
+      const objective = await tx.moeCurriculumObjective.upsert({
+        where: { code: spec.code },
+        update: {},
+        create: {
           sourceVersionId: moeVersionByArchive[spec.moeArchive], code: spec.code, grade: spec.grade, subject: spec.subject, domain: spec.domain, topic: spec.topic,
           authoritativeWording: spec.authoritativeWording, evidenceLocator: `${spec.moePdf} sha256 ${spec.moePdfSha256}, page ${spec.moePage}`,
           extractionMethod: "MANUAL", confidence: 0.95, verificationStatus: "VERIFIED", criticality: "STANDARD",
@@ -512,43 +564,53 @@ async function main() {
       });
       createdObjectives.push(objective.code);
 
-      const competency = await tx.assessmentBaselineCompetency.create({
-        data: {
+      const competency = await tx.assessmentBaselineCompetency.upsert({
+        where: { code: spec.competencyCode },
+        update: {},
+        create: {
           baselineSubjectId: subject.id, sourceVersionId: fw.sourceVersionId, code: spec.competencyCode, domain: spec.domain, expectation: spec.competencyExpectation,
-          assessmentDepth: spec.assessmentDepth, cognitiveDimensions: spec.cognitiveDimensions, evidenceSpecificity: "SUBJECT_LEVEL", criticality: "STANDARD",
+          assessmentDepth: "NOT_ESTABLISHED", cognitiveDimensions: [], evidenceSpecificity: "SUBJECT_LEVEL", criticality: "STANDARD",
           evidenceLocator: `${fw.exam} subject table (code ${subject.officialSubjectCode}) + distillation statement`, confidence: 0.55, verificationStatus: "PARTIAL",
         },
       });
       createdCompetencies.push(competency.code);
     }
 
-    const mathSubjectLevel = await tx.assessmentBaselineCompetency.create({
-      data: {
+    const mathSubjectLevel = await tx.assessmentBaselineCompetency.upsert({
+      where: { code: "WAEC.LIBERIA.LSHSCE.MATH.SUBJECT_LEVEL" },
+      update: {},
+      create: {
         baselineSubjectId: lshsceSubjects.MATH.id, sourceVersionId: lshsceRegular.sourceVersionId, code: "WAEC.LIBERIA.LSHSCE.MATH.SUBJECT_LEVEL", domain: "MATHEMATICS_GENERAL",
         expectation: "Mathematics is a compulsory LSHSCE Core subject (301); WAEC states its detailed syllabus is a distillation of the MOE senior-high National Curriculum. No topic-by-topic WAEC Mathematics syllabus was recovered, and no WAEC baseline competency for calculus/differentiation-and-integration specifically was found -- subject-level applicability only.",
-        assessmentDepth: "APPLICATION", cognitiveDimensions: ["APPLICATION", "PROBLEM_MODELING"], evidenceSpecificity: "SUBJECT_LEVEL", criticality: "STANDARD",
+        assessmentDepth: "NOT_ESTABLISHED", cognitiveDimensions: [], evidenceSpecificity: "SUBJECT_LEVEL", criticality: "STANDARD",
         evidenceLocator: "LSHSCE(Regular) subject table (code 301) + distillation statement", confidence: 0.5, verificationStatus: "PARTIAL",
       },
     });
     createdCompetencies.push(mathSubjectLevel.code);
 
     // --- Category F, part 1/2: 3 MOE objectives from the Math pilot (G9/G12/G3) ---
-    const moeG9 = await tx.moeCurriculumObjective.create({
-      data: {
+    const moeG9 = await tx.moeCurriculumObjective.upsert({
+      where: { code: "MOE.G9.MATH.SETS.TWO_SET_PROBLEMS" },
+      update: {},
+      create: {
         sourceVersionId: moeG79Version.id, code: "MOE.G9.MATH.SETS.TWO_SET_PROBLEMS", grade: 9, subject: "MATH", domain: "SETS", topic: "TWO-SET PROBLEMS",
         authoritativeWording: "Learners are able to apply the concepts of sets to solve simple two-set problems using Venn diagram, find the complement of a set and represent it on the Venn diagram. Draw and use Venn diagrams to solve simple two-set problems. Find and write the number of subsets in a set with up to 5 elements. Find the rule of the number of subsets in a set.",
         evidenceLocator: "Math 7-9.pdf, Semester One, Grade 9, Period I, Topic: TWO-SET PROBLEMS, page 37", extractionMethod: "MANUAL", confidence: 0.95, verificationStatus: "VERIFIED", criticality: "STANDARD",
       },
     });
-    const moeG12 = await tx.moeCurriculumObjective.create({
-      data: {
+    const moeG12 = await tx.moeCurriculumObjective.upsert({
+      where: { code: "MOE.G12.MATH.DIFFERENTIATION_AND_INTEGRATION" },
+      update: {},
+      create: {
         sourceVersionId: moeG1012Version.id, code: "MOE.G12.MATH.DIFFERENTIATION_AND_INTEGRATION", grade: 12, subject: "MATH", domain: "CALCULUS", topic: "DIFFERENTIATION AND INTEGRATION",
         authoritativeWording: "Learners are able to apply concepts to find the limits of simple polynomial and trigonometric functions, find the derivatives of simple algebraic and trigonometric functions. They are able to find the area under a curve and the indefinite integrals of simple polynomial and trigonometric functions. Objectives include defining/discussing the difference quotient, limits, differentiation (first principle and rules), and integration (definite area/summation concept, indefinite integrals).",
         evidenceLocator: "Maths 10-12.pdf, Semester Two, Grade 12, Topic: DIFFERENTIATION AND INTEGRATION, pages 67-68", extractionMethod: "MANUAL", confidence: 0.95, verificationStatus: "VERIFIED", criticality: "STANDARD",
       },
     });
-    const moeG3 = await tx.moeCurriculumObjective.create({
-      data: {
+    const moeG3 = await tx.moeCurriculumObjective.upsert({
+      where: { code: "MOE.G3.MATH.REVIEW_OF_OPERATIONS" },
+      update: {},
+      create: {
         sourceVersionId: moeG16Version.id, code: "MOE.G3.MATH.REVIEW_OF_OPERATIONS", grade: 3, subject: "MATH", domain: "ARITHMETIC", topic: "REVIEW OF OPERATIONS",
         authoritativeWording: "Add one and two digit numerals. Subtract one and two digit numerals. Subtract two digit numerals using regrouping. Add two digit numerals. Multiply one and two digit numerals. Identify symbols such as >, <, or =. Name parts of a whole.",
         evidenceLocator: "Math 1-6.pdf, Semester One, Grade 3, Period I, Unit I, Topic: REVIEW OF OPERATIONS, page 22", extractionMethod: "MANUAL", confidence: 0.95, verificationStatus: "VERIFIED", criticality: "STANDARD",
@@ -558,19 +620,23 @@ async function main() {
 
     // --- CORRECTION 2: pilot SETS competency anchored to LJHSCE's own MATH
     // subject (code 210), not a new/excluded framework's MATH subject ---
-    const pilotCompetency = await tx.assessmentBaselineCompetency.create({
-      data: {
+    const pilotCompetency = await tx.assessmentBaselineCompetency.upsert({
+      where: { code: "WAEC.LIBERIA.MATH.SETS.SUBJECT_LEVEL" },
+      update: {},
+      create: {
         baselineSubjectId: ljhsceSubjects.MATH.id, sourceVersionId: waecLshscePrivateVersion.id, code: "WAEC.LIBERIA.MATH.SETS.SUBJECT_LEVEL", domain: "SETS",
         expectation: "Mathematics is a compulsory WAEC Liberia subject at LJHSCE (210) and LSHSCE (301); WAEC states its detailed syllabus is a distillation of the MOE National Curriculum, which includes a dedicated Sets / Two-Set Problems unit at Grade 9. No topic-by-topic WAEC Mathematics syllabus was recovered to confirm the exact expected depth for this specific competency.",
-        assessmentDepth: "APPLICATION", cognitiveDimensions: ["APPLICATION", "PROBLEM_MODELING"], evidenceSpecificity: "SUBJECT_LEVEL", criticality: "STANDARD",
+        assessmentDepth: "NOT_ESTABLISHED", cognitiveDimensions: [], evidenceSpecificity: "SUBJECT_LEVEL", criticality: "STANDARD",
         evidenceLocator: "waecliberia.org.lr/lshsceprivate/ (distillation statement) + waecliberia.org.lr/ljhsce/ (subject table)", confidence: 0.55, verificationStatus: "PARTIAL",
       },
     });
     createdCompetencies.push(pilotCompetency.code);
 
     // --- Category F, part 2/2: 1 alignment + 2 learning targets ---
-    const alignment = await tx.curriculumBaselineAlignment.create({
-      data: {
+    const alignment = await tx.curriculumBaselineAlignment.upsert({
+      where: { moeObjectiveId_baselineCompetencyId_version: { moeObjectiveId: moeG9.id, baselineCompetencyId: pilotCompetency.id, version: 1 } },
+      update: {},
+      create: {
         moeObjectiveId: moeG9.id, baselineCompetencyId: pilotCompetency.id, relationshipType: "SUPPORTING", coverage: "PARTIAL", depthRelation: "UNKNOWN", confidence: 0.55,
         rationale: "The MOE Grade 9 objective requires learners to draw and use Venn diagrams to solve simple two-set problems and find the complement of a set. WAEC Liberia's own LSHSCE-Private page states its detailed syllabuses are a distillation of the Ministry's Curriculum, and Mathematics (210) is one of the four compulsory LJHSCE subjects at this grade. That is only subject-level evidence: no topic-by-topic WAEC Mathematics syllabus was found, so the exact expected depth for this competency at LJHSCE is unknown, not confirmed as met. Per the evidence-specificity guard in lib/curriculum/benchmarking/aiWaecAlignment.ts, a DIRECT relationship or definite depth relation would require TOPIC_LEVEL WAEC evidence, which does not exist yet.",
         evidenceRefs: [
@@ -582,18 +648,22 @@ async function main() {
       },
     });
 
-    const masteryTarget = await tx.curriculumLearningTarget.create({
-      data: {
+    const masteryTarget = await tx.curriculumLearningTarget.upsert({
+      where: { code_version: { code: "LL.G9.MATH.SETS.TWO_SET_PROBLEMS.MASTERY", version: 1 } },
+      update: {},
+      create: {
         code: "LL.G9.MATH.SETS.TWO_SET_PROBLEMS.MASTERY", grade: 9, subject: "MATH", domain: "SETS", targetLevel: "MASTERY",
         statement: "A LiberiaLearn Grade 9 learner at mastery can draw and interpret Venn diagrams for two-set problems, determine set complements, and derive the number-of-subsets rule for sets up to 5 elements, matching MOE's Grade 9 Two-Set-Problems objective.",
         minimumDepth: "APPLICATION", cognitiveDimensions: ["APPLICATION", "PROBLEM_MODELING"], moeObjectiveId: moeG9.id, baselineCompetencyId: pilotCompetency.id,
         evidenceRefs: [{ id: moeG79Version.id, locator: "Math 7-9.pdf page 37" }], platformVersion: "P2C_MATH_PILOT_V1", verificationStatus: "VERIFIED",
       },
     });
-    const extensionTarget = await tx.curriculumLearningTarget.create({
-      data: {
+    const extensionTarget = await tx.curriculumLearningTarget.upsert({
+      where: { code_version: { code: "LL.G12.MATH.DIFFERENTIATION_AND_INTEGRATION.EXTENSION", version: 1 } },
+      update: {},
+      create: {
         code: "LL.G12.MATH.DIFFERENTIATION_AND_INTEGRATION.EXTENSION", grade: 12, subject: "MATH", domain: "CALCULUS", targetLevel: "EXTENSION",
-        statement: "A LiberiaLearn Grade 12 extension learner can define the difference quotient, apply first-principles differentiation and differentiation rules to simple algebraic and trigonometric functions, and evaluate indefinite integrals of simple polynomial and trigonometric functions, matching MOE's Grade 12 Differentiation-and-Integration unit -- content with no independently WAEC-examined subject vehicle (WAEC Liberia's LSHSCE subject list has no Further Mathematics subject).",
+        statement: "A LiberiaLearn Grade 12 extension learner can define the difference quotient, apply first-principles differentiation and differentiation rules to simple algebraic and trigonometric functions, and evaluate indefinite integrals of simple polynomial and trigonometric functions, matching MOE's Grade 12 Differentiation-and-Integration unit. Topic-level WAEC applicability is not currently established from the recovered first-party evidence; this target makes no claim that WAEC does or does not assess the topic.",
         minimumDepth: "ANALYSIS", cognitiveDimensions: ["ANALYSIS", "PROBLEM_MODELING"], moeObjectiveId: moeG12.id, baselineCompetencyId: null,
         evidenceRefs: [{ id: moeG1012Version.id, locator: "Maths 10-12.pdf pages 67-68" }], platformVersion: "P2C_MATH_PILOT_V1", verificationStatus: "VERIFIED",
       },
