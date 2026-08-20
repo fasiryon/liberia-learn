@@ -309,28 +309,25 @@ describe("P2-C real-data Math pilot: baseline layer is honestly PARTIAL (subject
   });
 });
 
-describe("P2-C real-data Math pilot: above-baseline candidate (Grade 12 Differentiation and Integration)", () => {
-  it("classifies MOE Grade 12 calculus content as above the WAEC-examinable core math subject universe, with hedged confidence", () => {
+describe("P2-C real-data Math pilot: unknown topic baseline (Grade 12 Differentiation and Integration)", () => {
+  it("does not infer a WAEC-negative or above-baseline claim from missing topic evidence", () => {
     const assessment = assessDepth({
-      baselineCategory: "PROCEDURAL_FLUENCY",
+      baselineCategory: "NOT_ESTABLISHED",
       observedCategory: "ANALYSIS",
       rationale:
-        "MOE's Grade 12 Mathematics curriculum (Maths 10-12.pdf, pages 67-68) includes a full Differentiation and Integration unit: difference quotient, limits, derivatives by first principle, and indefinite integrals of polynomial and trigonometric functions. WAEC Liberia's own LSHSCE(Regular) page enumerates the complete current subject universe (Core: English, Mathematics; General: Economics, Geography, History, Literature; Science: Biology, Chemistry, Physics) and lists no separate Further Mathematics or calculus-focused subject, so no WAEC-Liberia-administered paper independently examines this content. This does not prove the single compulsory Mathematics(301) paper never touches introductory calculus, since no topic-by-topic WAEC Mathematics syllabus was found this session -- treated as a hedged above-baseline candidate, not a proven one.",
+        "MOE's Grade 12 Mathematics curriculum establishes the Differentiation and Integration objective. Recovered WAEC evidence is subject-level only, so topic-level WAEC applicability and assessed depth are not established.",
       evidenceRefs: [
         "moe.gov.lr Grade-10-12.zip: Maths 10-12.pdf pages 67-68 (Differentiation and Integration)",
-        "waecliberia.org.lr/lshsceregular/ (complete Core/General/Science subject enumeration, no Further Mathematics)",
+        "waecliberia.org.lr/lshsceregular/ (subject-level Mathematics applicability only)",
       ],
       reviewMethod: "PLATFORM_REVIEW_REAL_DATA_PILOT",
       confidence: 0.55,
     });
     expect(assessment).toMatchObject({
-      relation: "ABOVE_BASELINE",
-      precisionNotice: "ORDINAL_JUDGMENT_NOT_SCIENTIFIC_MEASUREMENT",
+      relation: "UNKNOWN",
+      precisionNotice: "BASELINE_DEPTH_NOT_ESTABLISHED",
     });
-    // Confidence is deliberately moderate (not high), matching the research
-    // doc's explicit hedge: this is corroborated, not first-party-proven for
-    // the compulsory paper's exact content boundary.
-    expect(assessment.confidence).toBeLessThan(0.7);
+    expect(assessment.confidence).toBe(0);
   });
 });
 

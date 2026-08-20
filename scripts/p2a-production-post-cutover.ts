@@ -98,9 +98,9 @@ async function main() {
     revisionId: teacher.provenance.currentRevision.id,
     eventType: "APPROVED",
     actorType: "SYSTEM",
-    actorLabel: "p2a-production-safe-human-review",
-    approvalBasis: "HUMAN_REVIEW",
-    reviewAuthority: "PLATFORM",
+    actorLabel: "p2a-production-system-smoke-policy",
+    approvalBasis: "ROLE_POLICY",
+    reviewAuthority: "SYSTEM",
     idempotencyKey: `${run}:teacher:approved`,
   });
   const defaultRevocation = await revokeCurriculum({
@@ -117,9 +117,9 @@ async function main() {
     revisionId: teacher.provenance.currentRevision.id,
     eventType: "REINSTATED",
     actorType: "SYSTEM",
-    actorLabel: "p2a-production-safe-human-review",
-    approvalBasis: "HUMAN_REVIEW",
-    reviewAuthority: "PLATFORM",
+    actorLabel: "p2a-production-system-smoke-policy",
+    approvalBasis: "ROLE_POLICY",
+    reviewAuthority: "SYSTEM",
     reason: "Controlled fixture reinstatement after revocation verification",
     idempotencyKey: `${run}:teacher:reinstated`,
   });

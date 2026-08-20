@@ -246,6 +246,17 @@ export async function POST(req: Request) {
             }
           : {}),
         reviewerRoleSnapshot: user.role,
+        ...(approvalStatus === "APPROVED" && user.role === "ADMIN"
+          ? {
+              reviewerQualificationRef: `platform-admin:${user.id}`,
+              reviewerQualificationSnapshot: {
+                schemaVersion: 1,
+                basis: "PLATFORM_ADMIN_ROLE",
+                userId: user.id,
+                role: user.role,
+              },
+            }
+          : {}),
         idempotencyKey: `full-pack-governance:${contentId}:${traceId}`,
         schoolId: user.schoolId ?? null,
         traceId,

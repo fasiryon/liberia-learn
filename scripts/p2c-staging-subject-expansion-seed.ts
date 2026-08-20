@@ -44,7 +44,7 @@ assertStaging();
 const prisma = new PrismaClient();
 
 type CognitiveDemand =
-  | "RECALL" | "COMPREHENSION" | "PROCEDURAL_FLUENCY" | "APPLICATION" | "ANALYSIS"
+  | "NOT_ESTABLISHED" | "RECALL" | "COMPREHENSION" | "PROCEDURAL_FLUENCY" | "APPLICATION" | "ANALYSIS"
   | "REASONING" | "EVALUATION" | "CREATION" | "TRANSFER" | "PROBLEM_MODELING";
 
 type ObjectiveSpec = {
@@ -289,8 +289,8 @@ async function main() {
           code: spec.competencyCode,
           domain: spec.domain,
           expectation: spec.competencyExpectation,
-          assessmentDepth: spec.assessmentDepth,
-          cognitiveDimensions: spec.cognitiveDimensions,
+          assessmentDepth: "NOT_ESTABLISHED",
+          cognitiveDimensions: [],
           evidenceSpecificity: "SUBJECT_LEVEL",
           criticality: "STANDARD",
           evidenceLocator: `${framework.exam} subject table (code ${subject.officialSubjectCode}) + distillation statement`,
@@ -313,8 +313,8 @@ async function main() {
         code: "WAEC.LIBERIA.LSHSCE.MATH.SUBJECT_LEVEL",
         domain: "MATHEMATICS_GENERAL",
         expectation: "Mathematics is a compulsory LSHSCE Core subject (301); WAEC states its detailed syllabus is a distillation of the MOE senior-high National Curriculum. No topic-by-topic WAEC Mathematics syllabus was recovered, and no WAEC baseline competency for calculus/differentiation-and-integration specifically was found -- subject-level applicability only.",
-        assessmentDepth: "APPLICATION",
-        cognitiveDimensions: ["APPLICATION", "PROBLEM_MODELING"],
+        assessmentDepth: "NOT_ESTABLISHED",
+        cognitiveDimensions: [],
         evidenceSpecificity: "SUBJECT_LEVEL",
         criticality: "STANDARD",
         evidenceLocator: "LSHSCE(Regular) subject table (code 301) + distillation statement",

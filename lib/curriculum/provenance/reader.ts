@@ -19,6 +19,7 @@ export async function getCurriculumProvenanceExplanation(contentId: string) {
                 orderBy: { sequence: "asc" },
                 include: {
                   actor: { select: { id: true, name: true, role: true } },
+                  correctedBy: { select: { id: true, reason: true } },
                 },
               },
             },
@@ -43,7 +44,7 @@ export async function getCurriculumProvenanceExplanation(contentId: string) {
   const root = content.provenance;
   const current = root?.currentRevision ?? null;
   const latestDecision = current?.governanceEvents
-    .filter((event) => event.lifecycleResult !== null)
+    .filter((event) => event.lifecycleResult !== null && event.correctedBy === null)
     .at(-1) ?? null;
   const completenessReason =
     !root
