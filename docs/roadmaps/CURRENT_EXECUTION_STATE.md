@@ -5,6 +5,34 @@ Live execution tracking for the final closeout program.
 
 ## Resume here
 
+- **P2-A/B/C INTEGRITY REMEDIATION AND LAYERED SCHEMA CONVERGENCE IN
+  PROGRESS (2026-08-20).** Work is isolated on
+  `codex/p2abc-integrity-remediation`; production and staging have not been
+  mutated by this branch. The accepted authority model is now layered:
+  Prisma owns supported application declarations, canonical migrations own
+  executable history, and an explicit PostgreSQL manifest owns raw functions,
+  triggers, specialized indexes, integrity constraints, RLS, grants, and
+  extensions. A complete empty PostgreSQL 17 replay applies all 16 migrations,
+  verifies 229/229 RLS-enabled public tables, zero P2-C browser grants, exact
+  ledger checksums, raw-object fingerprints, and all 104 registered Prisma
+  differences. The real production reference seed also passes a two-run
+  disposable proof with zero semantic changes on its second run. This is not
+  a release declaration: staging application, full CI, GitGuardian, Vercel,
+  and production preflight/writes remain gated.
+
+  **DEPLOYED DATA/SCHEMA:** the pre-remediation P2-A/B/C foundation remains in
+  production. The branch adds an additive `InterventionRecommendation.updatedAt`
+  migration, `NOT_ESTABLISHED` external depth semantics, authority enforcement,
+  telemetry reconciliation, reproducible security, and layered drift controls,
+  but none of those new branch migrations has been applied to staging or
+  production yet.
+
+  **RUNTIME FEATURE ACTIVE:** no. The P2-C flag remains required to be false or
+  absent, and no verified application runtime consumer invokes the P2-C flag
+  helper. The accurate classification is data/schema/library foundation with
+  runtime activation not wired. Hold activation until the remaining staging,
+  CI, and production corrective gates complete.
+
 - **P2-C PRODUCTION CUTOVER COMPLETE — FEATURE REMAINS DISABLED — READY FOR
   ACTIVATION DECISION (2026-08-20).** Merged to `main` at `bd570cbd`
   (+ tooling commit `6c420e64`). Full record:
