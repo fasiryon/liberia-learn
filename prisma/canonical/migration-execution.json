@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "defaultMode": "PRISMA_TRANSACTIONAL",
+  "overrides": {
+    "20260810_000003_p2a_ai_generation_correlation_index": {
+      "mode": "PSQL_NON_TRANSACTIONAL_THEN_PRISMA_RESOLVE",
+      "sha256": "234b635d51d628a46c24f140c5ef186db045986fd21594eee63f6029f4427ae6",
+      "reason": "CREATE INDEX CONCURRENTLY is forbidden inside Prisma's PostgreSQL migration transaction. The frozen SQL is executed byte-for-byte outside a transaction before Prisma records it as applied."
+    }
+  }
+}

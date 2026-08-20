@@ -100,7 +100,11 @@ async function main() {
   console.log(`Preflight: ledger rows=${preLedgerCount[0].count}, public tables=${preTableCount[0].count}`);
 
   await prisma.$transaction(
-    statements.map((stmt) => prisma.$executeRawUnsafe(stmt)),
+    async (tx) => {
+      for (const statement of statements) {
+        await tx.$executeRawUnsafe(statement);
+      }
+    },
     { timeout: 60000 }
   );
   console.log(`Applied ${statements.length} DDL statements in one transaction.`);

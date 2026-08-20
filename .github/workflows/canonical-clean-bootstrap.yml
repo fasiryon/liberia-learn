@@ -8,9 +8,14 @@ on:
       - "prisma/canonical/**"
       - "prisma/legacy-migration-manifest.json"
       - "scripts/verify-pre-p2a-canonical-baseline.ps1"
+      - "scripts/verify-full-canonical-bootstrap.ps1"
+      - "scripts/verify-schema-authority-diff.ts"
+      - "lib/db/schemaAuthority.ts"
       - "scripts/pre-p2a-canonical-catalog.sql"
       - "scripts/pre-p2a-reference-seed-evidence.sql"
       - "__tests__/pre-p2a.canonical-baseline.test.ts"
+      - "__tests__/schema-authority.registry.test.ts"
+      - "__tests__/database-roles.test.ts"
       - ".github/workflows/canonical-clean-bootstrap.yml"
   push:
     branches: [main]
@@ -18,6 +23,13 @@ on:
       - "prisma/migrations/**"
       - "prisma/canonical/**"
       - "prisma/legacy-migration-manifest.json"
+      - "scripts/verify-full-canonical-bootstrap.ps1"
+      - "scripts/verify-schema-authority-diff.ts"
+      - "lib/db/schemaAuthority.ts"
+      - "__tests__/pre-p2a.canonical-baseline.test.ts"
+      - "__tests__/schema-authority.registry.test.ts"
+      - "__tests__/database-roles.test.ts"
+      - ".github/workflows/canonical-clean-bootstrap.yml"
 
 permissions:
   contents: read
@@ -34,13 +46,22 @@ jobs:
           cache: npm
       - run: npm ci
       - run: docker pull pgvector/pgvector:0.8.0-pg17
-      - run: npx vitest run __tests__/pre-p2a.canonical-baseline.test.ts
-      - name: Verify clean PostgreSQL 17 bootstrap
+      - run: npx vitest run __tests__/pre-p2a.canonical-baseline.test.ts __tests__/schema-authority.registry.test.ts __tests__/database-roles.test.ts
+      - name: Verify historical pre-P2-A baseline
         shell: pwsh
         run: ./scripts/verify-pre-p2a-canonical-baseline.ps1
+      - name: Verify complete P2-A/P2-B/P2-C PostgreSQL 17 bootstrap
+        shell: pwsh
+        run: ./scripts/verify-full-canonical-bootstrap.ps1
       - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: canonical-clean-bootstrap-evidence
           path: artifacts/pre-p2a-canonical/verification/
           if-no-files-found: warn
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: full-canonical-bootstrap-evidence
+          path: artifacts/full-canonical/verification/
+          if-no-files-found: error

@@ -3,6 +3,7 @@ import { getServerSession } from "next-auth";
 import Auth0Provider from "next-auth/providers/auth0";
 import CredentialsProvider from "next-auth/providers/credentials";
 import GoogleProvider from "next-auth/providers/google";
+import { assertDeployedDatabaseRole } from "@/lib/auth/databaseRoles";
 import bcrypt from "bcryptjs";
 import { randomUUID } from "crypto";
 import { prisma } from "@/lib/db";
@@ -375,11 +376,16 @@ export const authOptions: NextAuthOptions = {
           return "/login?error=InviteRequired";
         }
 
+        const persistedInviteRole = assertDeployedDatabaseRole(invite.role);
+        if (persistedInviteRole !== "TEACHER" && persistedInviteRole !== "ADMIN") {
+          return "/login?error=InviteRoleUnsupported";
+        }
+
         const newUser = await prisma.user.create({
           data: {
             email: user.email!.toLowerCase(),
             name: user.name ?? "New Teacher",
-            role: invite.role as "TEACHER" | "ADMIN",
+            role: persistedInviteRole,
             hashedPwd: "",
             googleId: user.id,
             schoolId: invite.schoolId,

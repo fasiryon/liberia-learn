@@ -20,6 +20,7 @@ model User {
   createdAt                         DateTime                        @default(now())
   updatedAt                         DateTime                        @updatedAt
   passwordChangedAt                 DateTime?
+  welcomeCompletedAt                DateTime?                       @db.Timestamp(3)
   mustChangePIN                     Boolean                         @default(false)
   schoolId                          String?
   isPlatformAdmin                   Boolean                         @default(false)
@@ -1981,6 +1982,7 @@ enum CurriculumGovernanceEventType {
   REVOKED
   REINSTATED
   SUPERSEDED
+  AUTHORITY_CORRECTED
 }
 
 enum CurriculumGovernanceActorType {
@@ -2304,6 +2306,7 @@ enum CognitiveDemandCategory {
   CREATION
   TRANSFER
   PROBLEM_MODELING
+  NOT_ESTABLISHED
 }
 
 enum CurriculumAlignmentRelationship {
@@ -2403,7 +2406,7 @@ model CurriculumContent {
   visibility               String                       @default("class_only")
   parentLessonId           String?
   lessonVersion            Int                          @default(1)
-  publishedAt              DateTime?
+  publishedAt              DateTime?                    @db.Timestamptz(6)
   rejectionReason          String?
   schoolId                 String?
   // Wave 4B: fork lineage tracking
@@ -2525,6 +2528,7 @@ model CurriculumGovernanceEvent {
   auditLogId                    String?                             @unique
   idempotencyKey                String?                             @unique
   backfillRunId                 String?
+  correctsEventId               String?                             @unique
   createdAt                     DateTime                            @default(now())
 
   revision            CurriculumContentRevision  @relation("CurriculumGovernanceTargetRevision", fields: [revisionId, provenanceId], references: [id, provenanceId], onDelete: Restrict)
@@ -2533,6 +2537,8 @@ model CurriculumGovernanceEvent {
   aiReviewAgent       AIReviewAgent?             @relation(fields: [aiReviewAgentId], references: [id], onDelete: Restrict)
   auditLog            AuditLog?                  @relation("CurriculumGovernanceAudit", fields: [auditLogId], references: [id], onDelete: Restrict)
   reviewDecision      CurriculumReviewDecision?
+  correctsEvent       CurriculumGovernanceEvent?  @relation("CurriculumGovernanceAuthorityCorrection", fields: [correctsEventId], references: [id], onDelete: Restrict)
+  correctedBy         CurriculumGovernanceEvent?  @relation("CurriculumGovernanceAuthorityCorrection")
 
   @@unique([provenanceId, sequence])
   @@index([provenanceId, occurredAt])
@@ -3948,7 +3954,10 @@ model AIInteraction {
   dedupeKey               String?
   sourceEventId           String?
   metadata                Json?
+  legacyLogRequired       Boolean   @default(false)
   createdAt               DateTime  @default(now())
+
+  legacyLog               AiInteractionLog?
 
   @@index([createdAt])
   @@index([schoolId, createdAt])
@@ -3959,6 +3968,7 @@ model AIInteraction {
   @@unique([dedupeKey])
   @@index([sourceEventId])
   @@index([generationCorrelationId, createdAt])
+  @@index([legacyLogRequired, createdAt])
 }
 
 /// Sprint 2: teacher-originated action record.
@@ -4309,7 +4319,10 @@ model AiInteractionLog {
   hadFallback      Boolean  @default(false)
   tokensUsed       Int      @default(0)
   estimatedCostUSD Float    @default(0)
+  aiInteractionId  String?  @unique
   timestamp        DateTime @default(now())
+
+  aiInteraction    AIInteraction? @relation(fields: [aiInteractionId], references: [id], onDelete: Restrict)
 
   @@index([timestamp])
   @@index([subject, strandKey])
@@ -5083,7 +5096,7 @@ model LessonHelpFlag {
   resolved   Boolean           @default(false)
   createdAt  DateTime          @default(now())
   flagType   String?
-  resolvedAt DateTime?
+  resolvedAt DateTime?         @db.Timestamptz(6)
   student    User              @relation("LessonHelpFlagStudent", fields: [studentId], references: [id])
   content    CurriculumContent @relation("LessonHelpFlagContent", fields: [contentId], references: [contentId])
 
@@ -5095,8 +5108,8 @@ model TeacherLessonAssignment {
   contentId    String
   classId      String
   assignedById String
-  scheduledFor DateTime?
-  assignedAt   DateTime          @default(now())
+  scheduledFor DateTime?         @db.Timestamptz(6)
+  assignedAt   DateTime          @default(now()) @db.Timestamptz(6)
   content      CurriculumContent @relation(fields: [contentId], references: [contentId], onDelete: Cascade)
   class        Class             @relation(fields: [classId], references: [id], onDelete: Cascade)
   assignedBy   User              @relation("TeacherLessonAssignments", fields: [assignedById], references: [id], onDelete: Cascade)

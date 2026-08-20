@@ -215,6 +215,22 @@ describe("canonical pre-P2-A baseline", () => {
       "20260817_000002_p2c_assessment_framework_exam_aliases",
       "20260818_000001_p2c_evidence_specificity_and_baseline_depth",
       "20260819_000001_p2c_ai_interaction_dedupekey_unique",
+      "20260820_000001_p2abc_integrity_enum_extensions",
+      "20260820_000002_p2abc_integrity_enforcement_security",
+      "20260820_000003_layered_schema_additive_reconciliation",
     ]);
+  });
+
+  it("declares every non-transactional canonical migration explicitly without changing its bytes", () => {
+    const execution = JSON.parse(text("prisma/canonical/migration-execution.json"));
+    expect(execution.defaultMode).toBe("PRISMA_TRANSACTIONAL");
+    expect(Object.keys(execution.overrides)).toEqual([
+      "20260810_000003_p2a_ai_generation_correlation_index",
+    ]);
+    const override = execution.overrides["20260810_000003_p2a_ai_generation_correlation_index"];
+    expect(override.mode).toBe("PSQL_NON_TRANSACTIONAL_THEN_PRISMA_RESOLVE");
+    expect(override.sha256).toBe(
+      sha256("prisma/canonical/migrations/20260810_000003_p2a_ai_generation_correlation_index/migration.sql"),
+    );
   });
 });
