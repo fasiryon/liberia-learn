@@ -268,6 +268,7 @@ export async function logAIInteraction(input: LogAIInteractionInput) {
         dedupeKey,
         sourceEventId: input.sourceEventId ?? null,
         metadata: toJson(metadata),
+        legacyLogRequired: Boolean(aiInteractionLogModel?.create),
       },
     });
     return { id: created.id, isNew: true };
@@ -310,10 +311,11 @@ export async function logAIInteraction(input: LogAIInteractionInput) {
   const [legacyLog] = await Promise.all([
     aiInteractionLogModel?.create
       ? interactionOutcome.then((outcome) =>
-          outcome.ok && outcome.row?.isNew
+          outcome.ok && outcome.row
             ? aiInteractionLogModel
                 .create({
                   data: {
+                    aiInteractionId: outcome.row.id,
                     schoolId: input.schoolId ?? null,
                     userId: input.userId ?? null,
                     feature,
@@ -348,7 +350,7 @@ export async function logAIInteraction(input: LogAIInteractionInput) {
       contentId: input.contentId ?? null,
       lessonId: input.lessonId ?? null,
       clientEventId: input.clientEventId ?? null,
-      dedupeKey: input.dedupeKey ?? null,
+      dedupeKey: input.dedupeKey ?? input.generationCorrelationId ?? null,
       originalOccurredAt: input.originalTimestamp ?? null,
       syncReceivedAt: input.syncReceivedAt ?? null,
       replayOfEventId: input.sourceEventId ?? null,
@@ -381,4 +383,74 @@ export async function logAIInteraction(input: LogAIInteractionInput) {
 
 export async function recordAiUsage(input: RecordAiUsageInput) {
   return logAIInteraction(input);
+}
+
+/**
+ * Repairs the bounded legacy analytics projection from canonical
+ * AIInteraction rows. The canonical row is the billing/source-of-truth
+ * record; a unique AiInteractionLog.aiInteractionId prevents a retry or two
+ * reconcilers from double-counting the projection.
+ */
+export async function reconcileMissingAiInteractionLogs(options: { limit?: number } = {}) {
+  const limit = Math.max(1, Math.min(500, options.limit ?? 100));
+  const rows = await prisma.aIInteraction.findMany({
+    where: { legacyLogRequired: true, legacyLog: null },
+    orderBy: { createdAt: "asc" },
+    take: limit,
+    select: {
+      id: true,
+      schoolId: true,
+      userId: true,
+      feature: true,
+      subject: true,
+      strandKey: true,
+      requestType: true,
+      route: true,
+      guidanceLevel: true,
+      model: true,
+      tier: true,
+      hadFallback: true,
+      tokensUsed: true,
+      estimatedCostUSD: true,
+      createdAt: true,
+    },
+  });
+  let repaired = 0;
+  let alreadyRepaired = 0;
+  const failed: Array<{ aiInteractionId: string; error: string }> = [];
+  for (const row of rows) {
+    try {
+      await prisma.aiInteractionLog.create({
+        data: {
+          aiInteractionId: row.id,
+          schoolId: row.schoolId,
+          userId: row.userId,
+          feature: row.feature,
+          subject: row.subject?.trim() || "general",
+          strandKey: row.strandKey?.trim() || "general",
+          requestType: row.requestType?.trim() || row.feature?.trim() || "curriculum",
+          endpoint: row.route,
+          guidanceLevel: row.guidanceLevel,
+          model: row.model,
+          tier: row.tier,
+          hadFallback: row.hadFallback,
+          tokensUsed: row.tokensUsed,
+          estimatedCostUSD: row.estimatedCostUSD,
+          timestamp: row.createdAt,
+        },
+      });
+      repaired += 1;
+    } catch (error) {
+      const candidate = error as { code?: string };
+      if (candidate.code === "P2002") {
+        alreadyRepaired += 1;
+      } else {
+        failed.push({
+          aiInteractionId: row.id,
+          error: error instanceof Error ? error.message : String(error),
+        });
+      }
+    }
+  }
+  return { scanned: rows.length, repaired, alreadyRepaired, failed };
 }

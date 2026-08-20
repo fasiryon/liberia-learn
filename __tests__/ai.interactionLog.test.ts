@@ -3,6 +3,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 const mockAiInteractionLogCreate = vi.hoisted(() => vi.fn());
 const mockAIInteractionCreate = vi.hoisted(() => vi.fn());
 const mockAIInteractionFindFirst = vi.hoisted(() => vi.fn());
+const mockAIInteractionFindMany = vi.hoisted(() => vi.fn());
 const mockLogLearningEvent = vi.hoisted(() => vi.fn());
 
 vi.mock("@/lib/db", () => ({
@@ -13,6 +14,7 @@ vi.mock("@/lib/db", () => ({
     aIInteraction: {
       create: mockAIInteractionCreate,
       findFirst: mockAIInteractionFindFirst,
+      findMany: mockAIInteractionFindMany,
     },
   },
 }));
@@ -21,7 +23,7 @@ vi.mock("@/lib/events/logLearningEvent", () => ({
   logLearningEvent: mockLogLearningEvent,
 }));
 
-import { logAIInteraction } from "@/lib/ai/interactionLog";
+import { logAIInteraction, reconcileMissingAiInteractionLogs } from "@/lib/ai/interactionLog";
 
 describe("logAIInteraction", () => {
   beforeEach(() => {
@@ -29,6 +31,7 @@ describe("logAIInteraction", () => {
     mockAiInteractionLogCreate.mockResolvedValue({ id: "legacy-1" });
     mockAIInteractionCreate.mockResolvedValue({ id: "norm-1" });
     mockAIInteractionFindFirst.mockResolvedValue(null);
+    mockAIInteractionFindMany.mockResolvedValue([]);
     mockLogLearningEvent.mockResolvedValue({ id: "evt-1" });
   });
 
@@ -77,6 +80,7 @@ describe("logAIInteraction", () => {
           promptKey: "student.tutor.system",
           clientEventId: "client-evt-1",
           dedupeKey: "tutor:science:matter",
+          legacyLogRequired: true,
           metadata: expect.objectContaining({
             traceId: "trace-1",
           }),
@@ -135,6 +139,7 @@ describe("logAIInteraction dedup by dedupeKey (DB-enforced, distributed-safe)", 
     vi.clearAllMocks();
     mockAiInteractionLogCreate.mockResolvedValue({ id: "legacy-1" });
     mockAIInteractionFindFirst.mockResolvedValue(null);
+    mockAIInteractionFindMany.mockResolvedValue([]);
     mockLogLearningEvent.mockResolvedValue({ id: "evt-1" });
   });
 
@@ -186,13 +191,15 @@ describe("logAIInteraction dedup by dedupeKey (DB-enforced, distributed-safe)", 
     void result;
   });
 
-  it("does not create a legacy log row when the database reports a conflicting dedupeKey", async () => {
+  it("repairs a missing legacy log when a duplicate persistence attempt resolves the canonical row", async () => {
     mockAIInteractionCreate.mockRejectedValueOnce(uniqueViolation());
     mockAIInteractionFindFirst.mockResolvedValueOnce({ id: "row-1" });
 
     await logAIInteraction(baseCall({ generationCorrelationId: "corr-3", durable: true }));
 
-    expect(mockAiInteractionLogCreate).not.toHaveBeenCalled();
+    expect(mockAiInteractionLogCreate).toHaveBeenCalledWith(
+      expect.objectContaining({ data: expect.objectContaining({ aiInteractionId: "row-1" }) }),
+    );
   });
 
   it("stays distributed-safe: two writers with the same dedupeKey resolve to exactly one canonical row and one log row", async () => {
@@ -211,7 +218,7 @@ describe("logAIInteraction dedup by dedupeKey (DB-enforced, distributed-safe)", 
     ]);
 
     expect(mockAIInteractionCreate).toHaveBeenCalledTimes(2); // both really attempted to insert
-    expect(mockAiInteractionLogCreate).toHaveBeenCalledTimes(1); // only the winner logged
+    expect(mockAiInteractionLogCreate).toHaveBeenCalledTimes(2); // both may attempt; the DB's unique FK permits one row
     void writerA;
     void writerB;
   });
@@ -292,5 +299,59 @@ describe("logAIInteraction dedup by dedupeKey (DB-enforced, distributed-safe)", 
     await expect(
       logAIInteraction(baseCall({ generationCorrelationId: "corr-vanish", durable: true }))
     ).rejects.toThrow(/Unique constraint/);
+  });
+
+  it("keeps the canonical interaction durable when the legacy projection fails, then repairs it idempotently", async () => {
+    mockAIInteractionCreate.mockResolvedValueOnce({ id: "canonical-repair" });
+    mockAiInteractionLogCreate.mockRejectedValueOnce(new Error("legacy analytics unavailable"));
+    await expect(logAIInteraction(baseCall({ generationCorrelationId: "corr-repair", durable: true }))).resolves.toBeNull();
+
+    mockAIInteractionFindMany.mockResolvedValueOnce([{
+      id: "canonical-repair",
+      schoolId: null,
+      userId: null,
+      feature: "curriculum",
+      subject: "general",
+      strandKey: "general",
+      requestType: "waec_baseline_alignment",
+      route: "curriculum.waecBaselineAlignment",
+      guidanceLevel: null,
+      model: "gpt-4o-mini",
+      tier: null,
+      hadFallback: false,
+      tokensUsed: 120,
+      estimatedCostUSD: 0.0005,
+      createdAt: new Date("2026-08-20T00:00:00Z"),
+    }]);
+    mockAiInteractionLogCreate.mockResolvedValueOnce({ id: "legacy-repaired" });
+    await expect(reconcileMissingAiInteractionLogs()).resolves.toEqual({
+      scanned: 1,
+      repaired: 1,
+      alreadyRepaired: 0,
+      failed: [],
+    });
+    expect(mockAiInteractionLogCreate).toHaveBeenLastCalledWith(
+      expect.objectContaining({ data: expect.objectContaining({ aiInteractionId: "canonical-repair" }) }),
+    );
+
+    mockAIInteractionFindMany.mockResolvedValueOnce([{
+      id: "canonical-repair",
+      schoolId: null,
+      userId: null,
+      feature: "curriculum",
+      subject: "general",
+      strandKey: "general",
+      requestType: "waec_baseline_alignment",
+      route: "curriculum.waecBaselineAlignment",
+      guidanceLevel: null,
+      model: "gpt-4o-mini",
+      tier: null,
+      hadFallback: false,
+      tokensUsed: 120,
+      estimatedCostUSD: 0.0005,
+      createdAt: new Date("2026-08-20T00:00:00Z"),
+    }]);
+    mockAiInteractionLogCreate.mockRejectedValueOnce(Object.assign(new Error("unique"), { code: "P2002" }));
+    await expect(reconcileMissingAiInteractionLogs()).resolves.toMatchObject({ repaired: 0, alreadyRepaired: 1, failed: [] });
   });
 });
