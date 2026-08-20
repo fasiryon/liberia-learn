@@ -123,7 +123,15 @@ SELECT concat_ws('|',
   # evidence JSON like the other boundaries, not asserted here, consistent
   # with how publicTableCount/curriculumContentCount are already handled
   # for the other three boundaries (captured, not gated).
-  $expectedActiveMigrations = if ($MigrationBoundary -eq "pre-p2a-migration-a") { 146 } elseif ($MigrationBoundary -eq "post-p2b-human") { 8 } elseif ($MigrationBoundary -eq "post-p2c") { 13 } else { 6 }
+  # post-p2b-human corrected 8 -> 9 on 2026-08-20: a fresh live query of
+  # production's _prisma_migrations ledger (10 total rows) showed 9 active,
+  # not 8 -- the 10th row is a rolled-back duplicate attempt at
+  # 20260810_000003_p2a_ai_generation_correlation_index (finished_at NULL,
+  # rolled_back_at set) followed by its successful retry (already excluded
+  # by the finished_at/rolled_back_at filter). This is the same benign
+  # duplicate the production authorization audit's Gate 10/11 reconciliation
+  # already explained; the constant here was simply never updated to match.
+  $expectedActiveMigrations = if ($MigrationBoundary -eq "pre-p2a-migration-a") { 146 } elseif ($MigrationBoundary -eq "post-p2b-human") { 9 } elseif ($MigrationBoundary -eq "post-p2c") { 13 } else { 6 }
   $expectedP2ARows = if ($MigrationBoundary -eq "pre-p2a-migration-a") { 0 } else { 5 }
   $expectedP2CRows = if ($MigrationBoundary -eq "post-p2c") { 4 } else { 0 }
   if ($sourceParts.Count -ne 6 -or
