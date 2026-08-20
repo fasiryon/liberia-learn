@@ -1,4 +1,5 @@
 import { Prisma } from "@prisma/client";
+import { clearCurriculumEmbedding, saveCurriculumEmbedding } from "@/lib/curriculum/mutations/repository";
 import { routedEmbedding } from "@/lib/ai/routedCompletion";
 import {
   buildAiCacheKey,
@@ -85,40 +86,11 @@ export async function getLessonEmbeddingSource(lessonId: string): Promise<string
 }
 
 export async function saveLessonEmbedding(lessonId: string, embedding: number[]): Promise<void> {
-  const vectorSql = Prisma.raw(`'${toVectorLiteral(embedding)}'::vector`);
-  const executeRaw = (prisma as { $executeRaw?: typeof prisma.$executeRaw }).$executeRaw;
-
-  if (typeof executeRaw !== "function") {
-    return;
-  }
-
-  await executeRaw.call(
-    prisma,
-    Prisma.sql`
-      UPDATE "CurriculumContent"
-      SET "embedding" = ${vectorSql},
-          "embeddedAt" = NOW()
-      WHERE "id" = ${lessonId}
-    `
-  );
+  await saveCurriculumEmbedding(lessonId, toVectorLiteral(embedding));
 }
 
 export async function clearLessonEmbedding(lessonId: string): Promise<void> {
-  const executeRaw = (prisma as { $executeRaw?: typeof prisma.$executeRaw }).$executeRaw;
-
-  if (typeof executeRaw !== "function") {
-    return;
-  }
-
-  await executeRaw.call(
-    prisma,
-    Prisma.sql`
-      UPDATE "CurriculumContent"
-      SET "embedding" = NULL,
-          "embeddedAt" = NULL
-      WHERE "id" = ${lessonId}
-    `
-  );
+  await clearCurriculumEmbedding(lessonId);
 }
 
 export async function embedText(text: string): Promise<number[]> {

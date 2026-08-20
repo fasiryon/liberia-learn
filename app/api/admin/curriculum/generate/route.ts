@@ -8,7 +8,7 @@ import { liberianize } from "@/lib/localization/liberia-context";
 import { standardizeTone } from "@/lib/localization/tone-standardizer";
 import { logAudit } from "@/lib/audit";
 import { recordMetricEvent } from "@/lib/metrics/events";
-import { createHash } from "crypto";
+import { createHash, randomUUID } from "crypto";
 import { slugify, generateLabs, generateTermPlanPayload, generateUnitPlanPayload } from "@/lib/curriculum-helpers";
 import { gradeToBand } from "@/lib/moe/alignment-engine";
 import { embedLesson } from "@/lib/ai/rag/embeddingService";
@@ -23,6 +23,9 @@ import {
 } from "@/lib/rateLimit";
 import { logger } from "@/lib/logger";
 import { enqueueCourseThumbnailGeneration } from "@/lib/courses/courseThumbnailQueue";
+import { getPrompt } from "@/lib/ai/promptRegistry";
+import { upsertCurriculumContent, provenanceWritersEnabled } from "@/lib/curriculum/mutations/repository";
+import { appendCurriculumGovernanceEvent } from "@/lib/curriculum/mutations/governanceWriter";
 
 const RequestSchema = z.object({
   grade: z.number().int().min(1).max(12),
@@ -126,6 +129,8 @@ export async function POST(req: Request) {
     }
 
     const { grade, subject, topic, moeAlignmentCodes, mode, lessonFormat } = parsed.data;
+    const traceId = randomUUID();
+    const generationCorrelationId = randomUUID();
 
     let enrichedPayload: Record<string, unknown>;
     let contentType = mode;
@@ -172,6 +177,7 @@ export async function POST(req: Request) {
         moeAlignmentCodes,
         lessonFormat,
         liberiaContext: true,
+        generationCorrelationId,
       });
 
       // Apply localization post-processing
@@ -281,23 +287,14 @@ export async function POST(req: Request) {
     const hash = createHash("sha256").update(payloadStr).digest("hex").slice(0, 40);
 
     // Use the DB-level status column for the approval workflow
-    const dbStatus = approvalStatus === "APPROVED" ? "published" : "pending_approval";
+    const writersEnabled = provenanceWritersEnabled();
+    const dbStatus = approvalStatus === "APPROVED" && !writersEnabled ? "published" : "pending_approval";
 
     // Upsert into CurriculumContent
-    const record = await prisma.curriculumContent.upsert({
-      where: { contentId },
-      update: {
-        title: typeof (enrichedPayload as any).title === "string" ? (enrichedPayload as any).title : null,
-        grade,
-        subject,
-        payload: enrichedPayload as any,
-        moeAlignments: (enrichedPayload as any).moeAlignments ?? [],
-        hash,
-        version: new Date().toISOString().slice(0, 10),
-        status: dbStatus,
-        contentType,
-      },
-      create: {
+    const prompt = mode === "lesson" ? getPrompt("lesson.deep") : null;
+    const write = await upsertCurriculumContent(
+      { contentId },
+      {
         contentId,
         title: typeof (enrichedPayload as any).title === "string" ? (enrichedPayload as any).title : null,
         grade,
@@ -309,7 +306,63 @@ export async function POST(req: Request) {
         moeAlignments: (enrichedPayload as any).moeAlignments ?? [],
         hash,
       },
-    });
+      {
+        title: typeof (enrichedPayload as any).title === "string" ? (enrichedPayload as any).title : null,
+        grade,
+        subject,
+        payload: enrichedPayload as any,
+        moeAlignments: (enrichedPayload as any).moeAlignments ?? [],
+        hash,
+        version: new Date().toISOString().slice(0, 10),
+        status: dbStatus,
+        contentType,
+      },
+      {
+        revisionKind: mode === "lesson" ? "ORIGINAL_GENERATION" : "DETERMINISTIC_ENRICHMENT",
+        originKind: mode === "lesson" ? "AI_GENERATED" : "DETERMINISTIC_GENERATED",
+        actorUserId: user.id,
+        ...(prompt
+          ? {
+              generatorName: "generateCurriculumPayload",
+              generatorVersion: "1.0.0",
+              aiProvider: "openai",
+              aiModel: String((enrichedPayload as any).metadata?.model ?? "unknown"),
+              generatedAt: new Date(String((enrichedPayload as any).metadata?.generatedAt ?? new Date().toISOString())),
+              generationCorrelationId,
+              primaryPromptKey: prompt.key,
+              primaryPromptVersion: prompt.version,
+              primaryPromptHash: prompt.hash,
+            }
+          : { generatorName: `generate${mode}`, generatorVersion: "1.0.0" }),
+        requestedCompleteness: "VERIFIED",
+        auditAction: "curriculum.revision.generated",
+        auditDetails: { mode },
+        idempotencyKey: `curriculum-generate:${contentId}:${traceId}`,
+        schoolId: user.schoolId ?? null,
+        traceId,
+      },
+    );
+    let record = write.content;
+    if (writersEnabled) {
+      await appendCurriculumGovernanceEvent({
+        contentId,
+        revisionId: write.revision?.id,
+        eventType: approvalStatus === "APPROVED" ? "APPROVED" : "SUBMITTED",
+        actorType: "USER",
+        actorUserId: user.id,
+        ...(approvalStatus === "APPROVED"
+          ? {
+              approvalBasis: user.role === "ADMIN" ? "HUMAN_REVIEW" as const : "SCHOOL_POLICY" as const,
+              reviewAuthority: user.role === "ADMIN" ? "PLATFORM" as const : "SCHOOL" as const,
+            }
+          : {}),
+        reviewerRoleSnapshot: user.role,
+        idempotencyKey: `curriculum-generate-governance:${contentId}:${traceId}`,
+        schoolId: user.schoolId ?? null,
+        traceId,
+      });
+      record = await prisma.curriculumContent.findUniqueOrThrow({ where: { contentId } });
+    }
 
     if (mode === "lesson" && labs.length > 0) {
       await syncVirtualLabs({

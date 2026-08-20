@@ -27,6 +27,14 @@ historical references and are superseded for live execution.
 8. Stop on code failure
 9. Never weaken RBAC, tenant isolation, audit logging, or cost controls
 
+## Validation cadence
+- During implementation, use `npm run validate:changed` after a coherent edit.
+- The changed-file validator runs focused tests, incremental TypeScript, Prisma
+  checks when schema files changed, and `git diff --check`. It never runs a
+  production build.
+- Run the complete Rule 7 gate once at the final sprint gate, in CI, or before
+  a staging/release decision. Do not repeat full builds after every edit.
+
 ## Output
 - sprint
 - status

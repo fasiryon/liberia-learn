@@ -3,6 +3,7 @@ import { generateCourseThumbnail } from "@/lib/courses/generateCourseThumbnail";
 import { prisma } from "@/lib/db";
 import { isCanvaCourseThumbnailsEnabled } from "@/lib/serverFlags";
 import type { JobDispatchMetadata } from "@/worker/handlers";
+import { updateCurriculumOperationalFields } from "@/lib/curriculum/mutations/repository";
 
 type Payload = {
   contentId: string;
@@ -32,10 +33,10 @@ export async function handleGenerateCourseThumbnailJob(payload: Payload, metadat
     ? await prisma.school.findUnique({ where: { id: payload.schoolId }, select: { name: true } })
     : null;
 
-  await prisma.curriculumContent.update({
-    where: { contentId: payload.contentId },
-    data: { thumbnailStatus: "processing", thumbnailError: null },
-  });
+  await updateCurriculumOperationalFields(
+    { contentId: payload.contentId },
+    { thumbnailStatus: "processing", thumbnailError: null },
+  );
 
   try {
     const payloadTitle = (course.payload as any)?.title;
@@ -51,15 +52,15 @@ export async function handleGenerateCourseThumbnailJob(payload: Payload, metadat
       queueWaitMs: getQueueWaitMs(metadata),
       retryCount: metadata.retryCount ?? null,
     });
-    await prisma.curriculumContent.update({
-      where: { contentId: payload.contentId },
-      data: {
+    await updateCurriculumOperationalFields(
+      { contentId: payload.contentId },
+      {
         thumbnailUrl: generated.canvaUrl,
         thumbnailStatus: "completed",
         thumbnailGeneratedAt: new Date(),
         thumbnailError: null,
       },
-    });
+    );
     await logAudit({
       userId: payload.actorUserId ?? null,
       schoolId: payload.schoolId ?? null,
@@ -68,10 +69,10 @@ export async function handleGenerateCourseThumbnailJob(payload: Payload, metadat
       resourceId: payload.contentId,
     });
   } catch (error: any) {
-    await prisma.curriculumContent.update({
-      where: { contentId: payload.contentId },
-      data: { thumbnailStatus: "failed", thumbnailError: error?.message ?? "Generation failed" },
-    });
+    await updateCurriculumOperationalFields(
+      { contentId: payload.contentId },
+      { thumbnailStatus: "failed", thumbnailError: error?.message ?? "Generation failed" },
+    );
     throw error;
   }
 }

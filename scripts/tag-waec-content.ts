@@ -1,5 +1,5 @@
 /**
- * scripts/tag-waec-content.ts — PHASE 5A Foundation (D2)
+ * scripts/tag-waec-content.ts â€” PHASE 5A Foundation (D2)
  *
  * Tags Grade 9+ CurriculumContent with WAEC syllabus topic ids
  * (CurriculumContent.waecSyllabusTopics) using lib/waec/syllabus.ts.
@@ -7,7 +7,7 @@
  * Strategy:
  *   1. Deterministic keyword match on title + payload text (default, free, fast).
  *   2. Optional LLM fallback (--llm) via routedCompletion() for lessons the
- *      deterministic pass leaves untagged — picks from the subject's topic list only.
+ *      deterministic pass leaves untagged â€” picks from the subject's topic list only.
  *
  * Idempotent: skips already-tagged lessons unless --requeue. --dry-run reports only.
  *
@@ -16,6 +16,8 @@
  *   npx dotenv -e .env.production -- npx tsx scripts/tag-waec-content.ts --llm --requeue --subjects waec_physics
  */
 import { prisma } from "@/lib/db";
+import { createConservativeCurriculumMaintenanceClient } from "@/lib/curriculum/mutations/maintenanceClient";
+const governedCurriculum = createConservativeCurriculumMaintenanceClient("tag-waec-content");
 import {
   contentSubjectToWaec,
   deterministicTopics,
@@ -142,7 +144,7 @@ async function main() {
 
     const changed = JSON.stringify([...topics].sort()) !== JSON.stringify([...row.waecSyllabusTopics].sort());
     if (topics.length > 0 && changed && !dryRun) {
-      await prisma.curriculumContent.update({
+      await governedCurriculum.update({
         where: { id: row.id },
         data: { waecSyllabusTopics: topics },
       });
@@ -174,7 +176,7 @@ async function main() {
   console.log("\nTagged lessons per WAEC subject (cumulative in DB):");
   for (const id of ["waec_math", "waec_english", "waec_physics", "waec_chemistry", "waec_biology", "waec_literature", "waec_geography"] as WaecSubjectId[]) {
     const n = bySubject[id] ?? 0;
-    const flag = n < 20 ? "  ⚠ <20" : "";
+    const flag = n < 20 ? "  âš  <20" : "";
     console.log(`  ${(getWaecSubject(id)?.name ?? id).padEnd(30)} ${n}${flag}`);
   }
 }

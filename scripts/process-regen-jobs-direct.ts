@@ -1,7 +1,7 @@
 /**
  * scripts/process-regen-jobs-direct.ts
  *
- * Processes pending CurriculumRegenerationJob records directly — no SQS/ECS required.
+ * Processes pending CurriculumRegenerationJob records directly â€” no SQS/ECS required.
  * Generates lesson content, validates depth gate, and writes APPROVED lessons to DB.
  *
  * Usage:
@@ -25,6 +25,8 @@ import { existsSync } from "node:fs";
 import { resolve } from "node:path";
 import { config as loadEnv } from "dotenv";
 import { PrismaClient } from "@prisma/client";
+import { createConservativeCurriculumMaintenanceClient } from "@/lib/curriculum/mutations/maintenanceClient";
+const governedCurriculum = createConservativeCurriculumMaintenanceClient("process-regen-jobs-direct");
 import { generateCurriculumPayload } from "@/lib/ai/curriculum-factory";
 import {
   validateLessonDepth,
@@ -128,7 +130,7 @@ async function processJob(
       data: { status: "skipped", lastErrorCode: "not_needs_review", lastErrorMessage: `Skipped: content status is ${lesson?.status ?? "not_found"}` },
     });
     const ms = Date.now() - start;
-    console.log(`${label} — ${job.topic ?? job.curriculumContentId} — SKIP (${msToSecs(ms)})`);
+    console.log(`${label} â€” ${job.topic ?? job.curriculumContentId} â€” SKIP (${msToSecs(ms)})`);
     return { status: "skip", durationMs: ms };
   }
 
@@ -198,7 +200,7 @@ async function processJob(
       });
       const ms = Date.now() - start;
       console.log(
-        `${label} — ${topic} — FAIL (depth: ${depth.slideCount} slides, ${depth.wordCount} words) [${msToSecs(ms)}]`
+        `${label} â€” ${topic} â€” FAIL (depth: ${depth.slideCount} slides, ${depth.wordCount} words) [${msToSecs(ms)}]`
       );
       return { status: "fail", slideCount: depth.slideCount, wordCount: depth.wordCount, durationMs: ms };
     }
@@ -219,17 +221,17 @@ async function processJob(
       },
     };
 
+    await governedCurriculum.update({
+      where: { contentId: job.curriculumContentId },
+      data: {
+        title: generated.title ?? lesson.title,
+        status: "APPROVED",
+        payload: nextPayload as any,
+        hash: contentHash(nextPayload),
+        updatedAt: new Date(),
+      },
+    });
     await prisma.$transaction([
-      prisma.curriculumContent.update({
-        where: { contentId: job.curriculumContentId },
-        data: {
-          title: generated.title ?? lesson.title,
-          status: "APPROVED",
-          payload: nextPayload as any,
-          hash: contentHash(nextPayload),
-          updatedAt: new Date(),
-        },
-      }),
       prisma.curriculumRegenerationJob.update({
         where: { id: job.id },
         data: {
@@ -251,7 +253,7 @@ async function processJob(
 
     const ms = Date.now() - start;
     console.log(
-      `${label} — ${topic} — OK (slides: ${depth.slideCount}, words: ${depth.wordCount}) [${msToSecs(ms)}]`
+      `${label} â€” ${topic} â€” OK (slides: ${depth.slideCount}, words: ${depth.wordCount}) [${msToSecs(ms)}]`
     );
     return { status: "ok", slideCount: depth.slideCount, wordCount: depth.wordCount, durationMs: ms };
   } catch (err) {
@@ -281,7 +283,7 @@ async function processJob(
       },
     });
     const ms = Date.now() - start;
-    console.log(`${label} — ${topic} — ERROR: ${message.slice(0, 120)} [${msToSecs(ms)}]`);
+    console.log(`${label} â€” ${topic} â€” ERROR: ${message.slice(0, 120)} [${msToSecs(ms)}]`);
     return { status: "fail", durationMs: ms };
   }
 }

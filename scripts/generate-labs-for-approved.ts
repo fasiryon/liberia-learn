@@ -24,6 +24,8 @@ import { existsSync } from "node:fs";
 import { resolve } from "node:path";
 import { config as loadEnv } from "dotenv";
 import { PrismaClient } from "@prisma/client";
+import { createConservativeCurriculumMaintenanceClient } from "@/lib/curriculum/mutations/maintenanceClient";
+const governedCurriculum = createConservativeCurriculumMaintenanceClient("generate-labs-for-approved");
 import OpenAI from "openai";
 
 const localEnvPath = resolve(process.cwd(), ".env.local");
@@ -210,9 +212,9 @@ async function main() {
     whereClause.grade = gradeArg;
   }
 
-  console.log(`\nLab Pass 3 — Generate labs for APPROVED lessons`);
+  console.log(`\nLab Pass 3 â€” Generate labs for APPROVED lessons`);
   console.log(`Subjects: ${subjects.join(", ")} | Grade: ${gradeArg ?? "all"} | Limit: ${limitArg ?? "all"}`);
-  console.log("─".repeat(60));
+  console.log("â”€".repeat(60));
 
   const lessons = await prisma.curriculumContent.findMany({
     where: whereClause as Parameters<typeof prisma.curriculumContent.findMany>[0]["where"],
@@ -237,8 +239,8 @@ async function main() {
   const total = limitArg ? Math.min(candidates.length, limitArg) : candidates.length;
   const toProcess = candidates.slice(0, total);
 
-  console.log(`Found ${candidates.length} candidates → processing ${total}`);
-  console.log("─".repeat(60));
+  console.log(`Found ${candidates.length} candidates â†’ processing ${total}`);
+  console.log("â”€".repeat(60));
 
   let ok = 0;
   let fail = 0;
@@ -246,13 +248,13 @@ async function main() {
 
   for (let i = 0; i < toProcess.length; i++) {
     const lesson = toProcess[i];
-    const prefix = `[${i + 1}/${total}] G${lesson.grade} ${lesson.subject} — ${lesson.title}`;
+    const prefix = `[${i + 1}/${total}] G${lesson.grade} ${lesson.subject} â€” ${lesson.title}`;
 
     const payload = (lesson.payload as Record<string, unknown>) ?? {};
     const bodyText = extractBodyText(payload);
 
     if (!bodyText) {
-      console.log(`${prefix} — SKIP (no body text)`);
+      console.log(`${prefix} â€” SKIP (no body text)`);
       skip++;
       continue;
     }
@@ -265,7 +267,7 @@ async function main() {
     });
 
     if (!generated) {
-      console.log(`${prefix} — FAIL (AI returned null)`);
+      console.log(`${prefix} â€” FAIL (AI returned null)`);
       fail++;
       continue;
     }
@@ -276,7 +278,7 @@ async function main() {
       const obsLen = Array.isArray(g.observationForm) ? (g.observationForm as unknown[]).length : 0;
       const qaLen = Array.isArray(g.analysisQuestions) ? (g.analysisQuestions as unknown[]).length : 0;
       console.log(
-        `${prefix} — FAIL (validation: procedure=${procedureLen}/${3}, obs=${obsLen}/${2}, qa=${qaLen}/${2})`
+        `${prefix} â€” FAIL (validation: procedure=${procedureLen}/${3}, obs=${obsLen}/${2}, qa=${qaLen}/${2})`
       );
       fail++;
       continue;
@@ -285,7 +287,7 @@ async function main() {
     // Ensure offlineCapable is true
     generated.offlineCapable = true;
 
-    await prisma.curriculumContent.update({
+    await governedCurriculum.update({
       where: { id: lesson.id },
       data: {
         payload: {
@@ -295,7 +297,7 @@ async function main() {
       },
     });
 
-    console.log(`${prefix} — OK`);
+    console.log(`${prefix} â€” OK`);
     ok++;
 
     if ((i + 1) % BATCH_SIZE === 0 && i < toProcess.length - 1) {
@@ -303,7 +305,7 @@ async function main() {
     }
   }
 
-  console.log("─".repeat(60));
+  console.log("â”€".repeat(60));
   console.log(`Done: ${ok} OK | ${fail} FAIL | ${skip} SKIP`);
 
   await prisma.$disconnect();

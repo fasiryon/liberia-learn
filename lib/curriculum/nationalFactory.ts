@@ -7,6 +7,11 @@ import { createHash, randomUUID } from "crypto";
 import { prisma as defaultPrisma } from "@/lib/db";
 import type { PrismaClient } from "@prisma/client";
 import { buildCoverageGenerationPlan } from "@/lib/curriculum/generationEngine";
+import {
+  createCurriculumContent,
+  provenanceWritersEnabled,
+} from "@/lib/curriculum/mutations/repository";
+import { appendCurriculumGovernanceEvent } from "@/lib/curriculum/mutations/governanceWriter";
 
 export const NATIONAL_LESSON_TARGET = 108; // 36 weeks × 3 lessons/week
 export const FACTORY_STATUS = "pending_approval";
@@ -444,7 +449,55 @@ export async function generateNationalBatch(options: BatchOptions, db: PrismaCli
         continue;
       }
       try {
-        await (db as any).curriculumContent.create({ data: { contentId: record.contentId, title: record.title, grade: record.grade, subject: record.subject, contentType: "lesson", status: FACTORY_STATUS, version: FACTORY_VERSION, unitId: record.unitId, orderInUnit: record.orderInUnit, lessonType: "core", teacherCreated: false, hash: record.hash, payload: { ...record.payload, approvalStatus: FACTORY_STATUS, metadata: { ...(record.payload.metadata as Record<string, unknown> ?? {}), generationBatchId: batchId, sessionId, source: FACTORY_SOURCE, generatedAt: batchStartedAt, estimatedCostUsd: 0, qualityValidated: true } } } });
+        const writersEnabled = provenanceWritersEnabled();
+        const write = await createCurriculumContent({
+          contentId: record.contentId,
+          title: record.title,
+          grade: record.grade,
+          subject: record.subject,
+          contentType: "lesson",
+          status: writersEnabled ? "draft" : FACTORY_STATUS,
+          version: FACTORY_VERSION,
+          unitId: record.unitId,
+          orderInUnit: record.orderInUnit,
+          lessonType: "core",
+          teacherCreated: false,
+          hash: record.hash,
+          payload: {
+            ...record.payload,
+            approvalStatus: writersEnabled ? "DRAFT" : FACTORY_STATUS,
+            metadata: {
+              ...((record.payload.metadata as Record<string, unknown>) ?? {}),
+              generationBatchId: batchId,
+              sessionId,
+              source: FACTORY_SOURCE,
+              generatedAt: batchStartedAt,
+              estimatedCostUsd: 0,
+              qualityValidated: true,
+            },
+          },
+        }, {
+          revisionKind: "ORIGINAL_GENERATION",
+          originKind: "DETERMINISTIC_GENERATED",
+          actorLabel: FACTORY_SOURCE,
+          generatorName: "nationalCurriculumFactory",
+          generatorVersion: FACTORY_VERSION,
+          generatedAt: new Date(batchStartedAt),
+          requestedCompleteness: "VERIFIED",
+          auditAction: "curriculum.revision.national_factory_create",
+          auditDetails: { batchId, sessionId },
+          idempotencyKey: `${batchId}:${record.contentId}`,
+        });
+        if (writersEnabled) {
+          await appendCurriculumGovernanceEvent({
+            contentId: write.content.contentId,
+            revisionId: write.revision?.id,
+            eventType: "SUBMITTED",
+            actorType: "SYSTEM",
+            actorLabel: FACTORY_SOURCE,
+            idempotencyKey: `${batchId}:${record.contentId}:submitted`,
+          });
+        }
         saved += 1; savedContentIds.push(record.contentId);
         items.push({ contentId: record.contentId, title: record.title, outcome: "saved" });
       } catch (err: unknown) {

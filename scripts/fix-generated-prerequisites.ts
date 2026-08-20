@@ -1,5 +1,7 @@
 import { config } from "dotenv";
 import { prisma } from "@/lib/db";
+import { createConservativeCurriculumMaintenanceClient } from "@/lib/curriculum/mutations/maintenanceClient";
+const governedCurriculum = createConservativeCurriculumMaintenanceClient("fix-generated-prerequisites");
 import { buildProgressionPatch, validateProgressionRows } from "@/lib/curriculum/progressionEnforcer";
 
 config({ path: ".env.local" });
@@ -71,7 +73,7 @@ async function main() {
     const bucket = classifyFailure(row, patch.payload.primaryConcept as string, patch.payload.prerequisites as string[]);
     grouped.set(bucket, (grouped.get(bucket) ?? 0) + 1);
 
-    await prisma.curriculumContent.update({
+    await governedCurriculum.update({
       where: { id: row.id },
       data: {
         orderInUnit: patch.orderInUnit,

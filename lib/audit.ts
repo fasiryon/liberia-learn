@@ -29,12 +29,12 @@ async function writeAudit({
   ipAddress,
   traceId,
   schoolId,
-}: AuditEntry, client: AuditWriteClient = prisma): Promise<void> {
+}: AuditEntry, client: AuditWriteClient = prisma): Promise<unknown> {
   if (!client?.auditLog?.create) {
     throw new Error("audit_log_unavailable");
   }
 
-  await client.auditLog.create({
+  return client.auditLog.create({
     data: {
       userId: userId ?? null,
       action,
@@ -65,4 +65,19 @@ export async function logAudit(entry: AuditEntry): Promise<boolean> {
  */
 export async function logAuditRequired(entry: AuditEntry, client: AuditWriteClient = prisma): Promise<void> {
   await writeAudit(entry, client);
+}
+
+export async function logAuditRequiredWithId(
+  entry: AuditEntry,
+  client: AuditWriteClient = prisma,
+): Promise<string> {
+  const created = await writeAudit(entry, client);
+  const id =
+    created && typeof created === "object" && "id" in created
+      ? (created as { id?: unknown }).id
+      : null;
+  if (typeof id !== "string" || id.length === 0) {
+    throw new Error("audit_log_id_unavailable");
+  }
+  return id;
 }

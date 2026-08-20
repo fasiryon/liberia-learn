@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "entries": [
+    {
+      "key": "lesson.deep",
+      "version": "3.0.0",
+      "path": "lib/ai/prompts/archive/lesson.deep/3.0.0.ts",
+      "fileSha256": "6f6bb3cbc005e46148ed9c861a046edac1769c62f34fdfb4b824666ddf62edbf",
+      "promptSha256": "60818affd533438c40f61135b5787f8e8fe792460b9935a5f1901f3422a76cc3"
+    },
+    {
+      "key": "lesson.deep.v2",
+      "version": "1.0.0",
+      "path": "lib/ai/prompts/archive/lesson.deep.v2/1.0.0.ts",
+      "fileSha256": "29d4ea18057df94ec076450e28a11e3592766036d23e13fb3149d1a1ca05862e",
+      "promptSha256": "912cb72260cdf5c7686ff7c1e3526446a67dd7ecb6fc0aa5111f9bc2a7318cbf"
+    }
+  ]
+}

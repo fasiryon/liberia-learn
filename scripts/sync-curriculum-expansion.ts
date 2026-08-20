@@ -6,6 +6,8 @@ if (process.env.DIRECT_URL) {
 
 import { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/db";
+import { createConservativeCurriculumMaintenanceClient } from "@/lib/curriculum/mutations/maintenanceClient";
+const governedCurriculum = createConservativeCurriculumMaintenanceClient("sync-curriculum-expansion");
 import { buildCurriculumExpansionRecords, summarizeCurriculumExpansion } from "@/lib/curriculum/factoryExpansion";
 import { syncCurriculumContentRagChunks } from "@/lib/ai/rag/ragIngestionService";
 import { clearLessonEmbedding } from "@/lib/ai/rag/embeddingService";
@@ -178,7 +180,7 @@ async function main() {
       continue;
     }
 
-    const persisted = await prisma.curriculumContent.upsert({
+    const persisted = await governedCurriculum.upsert({
       where: { contentId: record.contentId },
       update: {
         grade: record.grade,

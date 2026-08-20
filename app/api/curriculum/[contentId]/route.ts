@@ -16,8 +16,8 @@ export async function GET(
     const contentId = params.contentId;
     const statusFilter =
       user.role === "STUDENT"
-        ? { in: ["published", "APPROVED"] }
-        : { in: ["published", "APPROVED", "pending_approval", "rejected"] };
+        ? { in: ["published", "APPROVED", "REVOKED"] }
+        : { in: ["published", "APPROVED", "pending_approval", "rejected", "REVOKED", "SUPERSEDED"] };
 
     const row = await prisma.curriculumContent.findFirst({
       where: {
@@ -74,6 +74,13 @@ export async function GET(
             uploadedBy: true,
           },
         },
+        provenance: {
+          select: {
+            id: true,
+            lifecycleState: true,
+            currentRevisionId: true,
+          },
+        },
         createdAt: true,
         updatedAt: true,
       },
@@ -87,6 +94,36 @@ export async function GET(
           offlineManifest: signContentAvailability({ contentId, version: null, revoked: true }),
         },
         { status: 404 }
+      );
+    }
+
+    if (row.provenance?.lifecycleState === "REVOKED") {
+      const revocation = await prisma.curriculumGovernanceEvent.findFirst({
+        where: {
+          provenanceId: row.provenance.id,
+          eventType: "REVOKED",
+        },
+        orderBy: { occurredAt: "desc" },
+        select: {
+          futureAssignmentPolicy: true,
+          existingAssignmentPolicy: true,
+          offlineCachePolicy: true,
+          replacementRevisionId: true,
+          reason: true,
+        },
+      });
+      return NextResponse.json(
+        {
+          error: "Content revoked",
+          contentId,
+          offlineManifest: signContentAvailability({
+            contentId,
+            version: null,
+            revoked: true,
+          }),
+          revocation,
+        },
+        { status: 410 },
       );
     }
 
@@ -104,6 +141,7 @@ export async function GET(
         teacherAuthorName: row.teacherCreated && row.editedBy?.name
           ? row.editedBy.name
           : null,
+        currentRevisionId: row.provenance?.currentRevisionId ?? null,
         audioStatus:
           row.audioAssets[0]?.contentVersion === row.version
             ? row.audioAssets[0]?.status ?? "NOT_GENERATED"

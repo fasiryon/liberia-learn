@@ -168,4 +168,29 @@ describe("routedCompletion AI usage recording", () => {
       })
     );
   });
+
+  it("creates one deterministic curriculum correlation and resolves prompt lineage", async () => {
+    mockCheckBudget.mockResolvedValue({ allowed: true, remaining: 1 });
+    mockCreateCompletion.mockResolvedValue({
+      choices: [{ message: { content: "{}" } }],
+      usage: { prompt_tokens: 10, completion_tokens: 2 },
+    });
+    const result = await routedCompletion({
+      messages: [{ role: "user", content: "Generate a lesson" }],
+      aiUsage: {
+        route: "curriculum.test",
+        feature: "curriculum",
+        promptKey: "lesson.deep",
+      },
+    });
+    expect(result.generationCorrelationId).toMatch(/^[0-9a-f-]{36}$/);
+    expect(mockLogAIInteraction).toHaveBeenCalledWith(
+      expect.objectContaining({
+        generationCorrelationId: result.generationCorrelationId,
+        promptKey: "lesson.deep",
+        promptVersion: "3.0.0",
+        promptHash: "60818affd533438c40f61135b5787f8e8fe792460b9935a5f1901f3422a76cc3",
+      }),
+    );
+  });
 });

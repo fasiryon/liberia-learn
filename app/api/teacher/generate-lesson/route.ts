@@ -14,6 +14,7 @@ import {
   inferClassGrade,
 } from "@/lib/teacher/lessonAuthoring";
 import { isTeacherGenerationEnabled } from "@/lib/serverFlags";
+import { getPrompt } from "@/lib/ai/promptRegistry";
 
 const SUBJECT_VALUES = [
   "MATH",
@@ -187,6 +188,7 @@ export async function POST(req: NextRequest) {
       standardDescription = standard.description;
     }
 
+    const generationCorrelationId = randomUUID();
     const payload = await generateCurriculumPayload({
       grade: body.gradeLevel,
       subject: body.subject,
@@ -195,7 +197,9 @@ export async function POST(req: NextRequest) {
       lessonFormat: "either",
       moeAlignmentCodes: body.standardCode ? [body.standardCode] : undefined,
       liberiaContext: true,
+      generationCorrelationId,
     });
+    const prompt = getPrompt("lesson.deep");
 
     const assessmentQuestions = deriveAssessmentQuestions({
       objectives: payload.objectives,
@@ -233,6 +237,17 @@ export async function POST(req: NextRequest) {
       assessmentQuestions,
       estimatedMinutes,
       standardCode: body.standardCode ?? null,
+      generationLineage: {
+        generatorName: "generateCurriculumPayload",
+        generatorVersion: "1.0.0",
+        aiProvider: "openai",
+        aiModel: payload.metadata?.model ?? "unknown",
+        generatedAt: payload.metadata?.generatedAt ?? new Date().toISOString(),
+        generationCorrelationId,
+        primaryPromptKey: prompt.key,
+        primaryPromptVersion: prompt.version,
+        primaryPromptHash: prompt.hash,
+      },
     });
   } catch (error: unknown) {
     return handleApiError(error);

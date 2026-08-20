@@ -5,8 +5,528 @@ Live execution tracking for the final closeout program.
 
 ## Resume here
 
+- **P2-C PRE-CUTOVER PREPARATION COMPLETE — PRODUCTION RUNBOOK FROZEN
+  (2026-08-19, later same day).** Branch `codex/p2c-waec-baseline-alignment`.
+  Full record: `docs/ops/P2C_PRECUTOVER_PREPARATION_RECORD.md`. Follows the
+  final production-authorization audit's `AUTHORIZED_WITH_PRE_CUTOVER_ACTIONS`
+  verdict. All 10 authorized actions closed: PR #86 title/body corrected
+  live; the 5th legacy framework row explicitly excluded from the
+  production seed manifest (`docs/ops/P2C_PRODUCTION_SEED_MANIFEST.md`);
+  a production-safe `CREATE UNIQUE INDEX CONCURRENTLY` dedupeKey
+  application designed and SQL-validated against staging (not executed —
+  Docker unavailable in this environment for a full disposable-Postgres
+  test, disclosed honestly); a `post-p2c` backup boundary added to
+  `scripts/p2a-production-backup-restore.ps1`, derived from a fresh live
+  production ledger query (9 active migrations today + 4 net-new = 13),
+  not guessed; a full 12-phase cutover runbook written
+  (`docs/ops/P2C_PRODUCTION_CUTOVER_RUNBOOK.md`). Two items remain
+  genuinely open going into the next pass: `P2C_CURRICULUM_BENCHMARKING_ENABLED`'s
+  live value is `FEATURE_FLAG_UNVERIFIED` (exhaustively attempted, not a
+  guess — no available tool exposes decrypted env values); and a **new,
+  real finding** -- staging's live `WAEC.LIBERIA.LSHSCE.REGULAR` framework
+  row still carries the pre-fix `examAliases: ["WASSCE"]` value (its own
+  seed script's source code is correct; the already-persisted row was
+  never re-synced) -- the seed manifest specifies the corrected values
+  explicitly rather than copying staging's stale row, and a small,
+  separate staging correction is recommended before/alongside the actual
+  cutover. Next: the controlled production cutover itself, following the
+  frozen runbook.
+
+- **P2-C INFRASTRUCTURE-INVARIANT CLOSURE (2026-08-19, later same day).**
+  Branch `codex/p2c-waec-baseline-alignment`. Full record:
+  `docs/ops/P2C_INFRASTRUCTURE_CLOSURE_RECORD.md`. Both engineering actions
+  explicitly authorized after the blocker-closure pass are done and
+  live-verified: (1) AI-telemetry idempotency is now database-enforced
+  (`AIInteraction.dedupeKey` unique index, migration
+  `20260819_000001_p2c_ai_interaction_dedupekey_unique`), replacing the
+  prior in-process mutex, proven live across two genuinely separate OS
+  processes racing the same key (`docs/ops/P2C_DISTRIBUTED_DEDUP_PROOF.json`,
+  $0 spent); (2) the legacy migration manifest's 38 platform-dependent
+  entries are corrected to canonical git-blob values (re-precheck confirmed
+  exactly 90/38/0/0/0 before writing;
+  `docs/ops/P2C_LEGACY_MANIFEST_PLATFORM_NORMALIZATION_FIXES.json` has the
+  full before/after), and the underlying test now reads canonical git blob
+  bytes instead of the checked-out worktree file so it is platform-
+  independent going forward. The AI-telemetry accounting discrepancy
+  between the original report and the confirmation audit is now
+  arithmetically reconciled, not just described
+  (`docs/ops/P2C_AI_TELEMETRY_RECONCILIATION.json`). Next: push and confirm
+  fresh CI (`CI/build` and `clean-bootstrap-pg17`) is green against the new
+  HEAD before any production authorization decision.
+
+- **P2-C BLOCKER CLOSURE — TELEMETRY/DOCS CLOSED, CI STILL RED, HUMAN DECISION
+  PENDING ON THE LEGACY MANIFEST (2026-08-19, later same day).** Branch
+  `codex/p2c-waec-baseline-alignment`, on top of `9b7b12c1`/`a2311bee`. PR
+  https://github.com/fasiryon/liberia-learn/pull/86 is the cumulative,
+  unmerged **P2-A + P2-B + P2-C** delivery (67 commits, 293 files against
+  `main` -- none of that prior work merged separately), not just the
+  forensic-remediation commits below. Full record:
+  `docs/ops/P2C_BLOCKER_CLOSURE_RECORD.md`. Closed: the AI-telemetry
+  double-write bug (`lib/ai/interactionLog.ts`, race-safe fix, live-verified
+  against staging for $0.0000054, see `docs/ops/P2C_LIVE_DEDUP_PROOF.json`);
+  a full, re-queried reconciliation of the live AI proof (12 real
+  invocations / $0.00395 across 3 runs, not the 4/$0.004 previously
+  documented -- `docs/ops/P2C_LIVE_AI_SME_PROOF.json`'s new `reconciliation`
+  field) plus a correction to Case C's mischaracterized failure mode; real
+  `git diff --check` whitespace issues. **Explicitly not closed, per this
+  pass's own hard-stop rule:** the legacy migration manifest
+  (`prisma/legacy-migration-manifest.json`) turns out to have **38 of 128**
+  platform-dependent (CRLF-captured) entries, not the 1 previously found --
+  `docs/ops/P2C_LEGACY_MANIFEST_PLATFORM_AUDIT.json` has the full list. The
+  manifest and the failing test were deliberately left untouched (frozen
+  security-audit evidence, needs an explicit human decision, not a
+  unilateral bulk rewrite), so **CI remains red** on
+  `__tests__/pre-p2a.canonical-baseline.test.ts` and production authorization
+  is still blocked. Next: a human decision on the manifest correction in its
+  own isolated commit, then a fresh CI run before any GO decision.
+
+- **P2-C FORENSIC REMEDIATION COMPLETE — SEMANTIC INTEGRITY VERIFIED; PRODUCTION
+  AUTHORIZATION STILL AWAITS HUMAN REVIEW (2026-08-19).** Branch
+  `codex/p2c-waec-baseline-alignment`, commit `9b7b12c1`, PR
+  https://github.com/fasiryon/liberia-learn/pull/86 (open, not merged). This
+  entry supersedes the 2026-08-18 entry below for current status; the
+  2026-08-18 entry's evidence record is kept for history. Responds to an
+  independent forensic audit (`GO_WITH_REQUIRED_FIXES`) that found the
+  Curriculum V2 depth contract derived `verifiedBaselineDepth` from evidence
+  presence instead of an actual assessed depth relation, evidence
+  specificity existed only as a transient TS distinction / code-suffix
+  convention (not persisted), subject-level WAEC applicability could
+  generate false CONTENT_GAP/BELOW_BASELINE findings, and WASSCE was
+  recorded as an `examAlias` implying unverified first-party equivalence.
+  All four fixed and live-verified against real staging data (not
+  fixtures): `verifiedBaselineDepth` now sources only from
+  `CurriculumBaselineAlignment.depthRelation`; `evidenceSpecificity`
+  (FRAMEWORK_LEVEL/SUBJECT_LEVEL/TOPIC_LEVEL) persisted on
+  `AssessmentBaselineCompetency` via additive migration
+  `20260818_000001_p2c_evidence_specificity_and_baseline_depth` (applied to
+  staging via Prisma raw execution + manual ledger insert, since
+  `prisma/p2c-staging.config.ts` still has no `migrations.path` and would
+  otherwise resolve to the unrelated default `prisma/migrations` directory
+  -- the same class of incident recorded in
+  `docs/ops/P2C_STAGING_COMPLETION_RECORD.md`); all 16 existing staging
+  competency rows individually re-verified against their own evidence text
+  (not just code suffix) and correctly backfilled SUBJECT_LEVEL, none
+  upgraded to TOPIC_LEVEL; gap engine now routes non-TOPIC_LEVEL
+  competencies to a new `TOPIC_LEVEL_BASELINE_UNKNOWN` category instead of
+  CONTENT_GAP/BELOW_BASELINE; WASSCE moved from
+  `AssessmentBaselineFramework.examAliases` to a new, calculation-inert
+  `regionalReferenceLabels` field with a dedicated isolation regression.
+  Live AI SME proof re-run (real spend, hard-capped at $5, actual spend
+  ~$0.004 across all runs this session) with durable telemetry (explicit
+  awaited `AIInteraction` write, not the shared fire-and-forget path) and a
+  committed evidence artifact, `docs/ops/P2C_LIVE_AI_SME_PROOF.json`: all 4
+  live cases had the model attempt an overreach (claiming DIRECT/definite
+  depth from SUBJECT_LEVEL-only evidence); the deterministic guard rejected
+  every one (AI judgment NEEDS_IMPROVEMENT, guardrail PASS, zero
+  GUARD_MISS_FAIL) -- per the founder's explicit acceptance criterion, this
+  is a PASS for P2-C production readiness even though the model itself
+  needs improvement. Revoked anon/authenticated grants on all 13 P2-C
+  staging tables (previously full CRUD grants existed alongside RLS
+  default-deny with zero policies); RLS invariant and the application's own
+  Prisma connection both reverified after the revoke. P2-A (4/4 tables) and
+  P2-B (11/11 tables) reverified unchanged on staging post-migration.
+  Gate: `npx prisma validate`/`generate` PASS; full `npx tsc --noEmit` PASS
+  (no OOM this run); full `npx vitest run` 4756/4758 PASS locally (2
+  timeout-only under this dev machine's resource contention, 31/31
+  unchanged in isolation) -- **on GitHub Actions CI, the same full suite
+  ran 4757/4758 PASS**, i.e. both locally-flaky tests passed cleanly with
+  no contention, confirming they were never real failures. **CI is not
+  fully green**: PR #86's `CI` and `Canonical clean bootstrap` workflows
+  both report exactly one failure, `pre-p2a.canonical-baseline.test.ts`'s
+  byte-exact check on the unrelated, pre-existing (2026-02-20) legacy
+  migration `training_reporting` -- confirmed via `git cat-file -s` that
+  the actual committed git blob is 2573 bytes (LF, matching
+  `.gitattributes`' `eol=lf` for this file) while
+  `prisma/legacy-migration-manifest.json` records `fileBytes: 2641`, which
+  matches only a Windows/CRLF working-tree checkout (`core.autocrlf=true`),
+  not what Linux CI or the canonical git blob actually contain. This
+  predates this branch's changes entirely (this file was never touched by
+  P2-C) and was only exposed now because this PR is the first to touch
+  `prisma/canonical/**`, which path-triggers that workflow. Deliberately
+  NOT touched in this remediation: `prisma/legacy-migration-manifest.json`
+  is a frozen security-audit artifact from the separate, closed P2-A
+  production-cutover forensic reconciliation; correcting it is a real,
+  narrow, likely-safe fix (recompute the LF-normalized byte size/hash) but
+  is out of this remediation's scope and needs its own explicit review, not
+  a silent edit inside a P2-C PR. `npm run build` PASS locally (background
+  run, `--max-old-space-size=4096`, no OOM). Full evidence:
+  `docs/ops/P2C_LIVE_AI_SME_PROOF.json`,
+  `prisma/canonical/migrations/20260818_000001_p2c_evidence_specificity_and_baseline_depth/migration.sql`.
+  Next: human review of PR #86 (including the disclosed CI finding above),
+  then an explicit production authorization decision; do not merge or
+  activate `P2C_CURRICULUM_BENCHMARKING_ENABLED` without it.
+- **P2-C WAEC BASELINE ALIGNMENT — FEATURE COMPLETE IN STAGING WITH A REAL,
+  EVIDENCE-HONEST MATH PILOT; PRODUCTION ACTIVATION AWAITS FINAL
+  AUTHORIZATION (2026-08-17).** Branch `codex/p2c-waec-baseline-alignment`,
+  commits `bb18c33b` through `11c0f255`. Scope is the founder's P2-C
+  redefinition: WAEC is a minimum external competency baseline, never the
+  curriculum authority or ceiling; Liberia MOE stays canonical; no
+  past-paper ingestion or licensing. `P2C_CURRICULUM_BENCHMARKING_ENABLED`
+  is false everywhere; no code is deployed anywhere as a result of this
+  work — this is a staging database change plus local architecture only.
+
+  **Real sources, not assumptions.** A real browser session reached
+  `waecliberia.org.lr` (the headless fetch tool was genuinely blocked, the
+  site was not) and `moe.gov.lr/curriculum-download/`'s own links resolved
+  to three unauthenticated MOE curriculum ZIP archives, `curl`-fetched and
+  `pdftotext`-extracted. Full evidence, hashes, and a
+  VERIFIED_FIRST_PARTY/VERIFIED_CORROBORATED/UNVERIFIED/HISTORICAL/
+  CONFLICTING_TERMINOLOGY-tagged record: `docs/research/WAEC_LIBERIA_BASELINE_AND_CURRICULUM_ALIGNMENT.md`
+  and `docs/research/P2C_EVIDENCE_MANIFEST.md`. Key findings: WAEC
+  Liberia's live site labels the Grade-12 exam LSHSCE, not WASSCE (the old
+  `wassce.html` page 404s); a real structural conflict is preserved, not
+  resolved — WAEC's own LSHSCE(Regular) page describes 2 core subjects and
+  stanine 1-9 grading, differing from the regional WASSCE pattern (4 core
+  subjects, A1-F9); LNAT is classified an MOE/IPA instrument, not a WAEC
+  exam, and excluded from baseline seeding; MOE archives are dated
+  CURRENTLY_VERIFIED_OFFICIAL_EDITION (content 2020-07, server-reserved
+  2026-07-29), not CURRENT_LATEST_EDITION.
+
+  **Evidence-semantics correction.** An initial pass over-claimed a
+  DIRECT/MEETS_BASELINE alignment from WAEC's general "syllabus is
+  distilled from the Ministry's Curriculum" statement — that is
+  SUBJECT_LEVEL evidence, not TOPIC_LEVEL evidence for any one competency.
+  Corrected in code, not just docs: `AlignmentEvidence` in
+  `lib/curriculum/benchmarking/aiWaecAlignment.ts` gained a required
+  `evidenceSpecificity: "TOPIC_LEVEL" | "SUBJECT_LEVEL"` field, and
+  `validateAiWaecAlignment` now rejects a DIRECT relationship or a definite
+  depth relation without TOPIC_LEVEL WAEC evidence. No Prisma schema change
+  was needed (library-level TS contract only). Both P2-C test fixtures that
+  had this over-claim (including Codex's original one, which cited
+  MOE-only evidence yet claimed DIRECT/MEETS_BASELINE) were corrected to
+  the honest SUPPORTING/PARTIAL/UNKNOWN result; a dedicated regression
+  proves generic distillation evidence cannot create topic-level DIRECT
+  alignment, and its positive counterpart proves genuine TOPIC_LEVEL
+  evidence still can.
+
+  **Staging is live.** Migration `20260817_000001_p2c_waec_baseline_alignment`
+  (113 statements: 20 enums, 13 tables, 45 indexes, 35 FKs, zero
+  destructive statements) is applied to approved staging
+  (`yonpfzjczoffhrgibxkz`; production `bnphuinpvgpmebcsvmsp` untouched). A
+  raw `prisma migrate diff` mixed genuine additions with unrelated,
+  destructive pre-existing staging drift (`DROP TABLE "TrendSnapshot"`,
+  `ALTER TABLE "User" DROP COLUMN "welcomeCompletedAt"`, and more) — that
+  raw diff was not applied; a programmatically filtered, verified-safe
+  migration was built and applied instead. A first `prisma migrate deploy`
+  attempt hit the wrong migrations directory (config bug, now fixed) and
+  left one unfinished ledger row, which was identified, verified isolated,
+  and cleanly removed before the real migration was applied directly via
+  `psql`. A fresh, restore-verified `pg_dump` recovery point was taken
+  first. Post-migration: ledger 10/10, 13/13 new tables, P2-A 4/4 and P2-B
+  11/11 tables unchanged, 229 total tables, 0 unvalidated FKs, TLS 1.3,
+  staging health 200. Full incident/verification record:
+  `docs/ops/P2C_STAGING_COMPLETION_RECORD.md`.
+
+  **Real Math pilot seeded and proven against live staging data**, not
+  local fixtures (`scripts/p2c-staging-real-data-seed.ts`,
+  `-gap-engine-proof.ts`, `-staleness-proof.ts`): MOE Grade 9 "Two-Set
+  Problems" (`Math 7-9.pdf` p37) correctly SUPPORTING/PARTIAL/UNKNOWN to a
+  SUBJECT_LEVEL-evidenced WAEC Mathematics competency (confidence 0.55,
+  verificationStatus PARTIAL — not overclaimed); the real gap engine run
+  live against this data flags it `UNSUPPORTED_MAPPING` (below the
+  engine's own 0.7 confidence threshold) and `NOT_READY`, exactly as it
+  should; a genuine LiberiaLearn mastery-authoring gap confirmed via a
+  live query (staging's `CurriculumContent` has zero Grade 9 or Grade 12
+  MATH rows); MOE Grade 12 Differentiation and Integration (`Maths 10-12.pdf`
+  p67-68) correctly has zero baseline alignment (no WAEC competency for
+  calculus exists) with an EXTENSION learning target instead; a real Grade
+  3 objective (`Math 1-6.pdf` p22) correctly NOT_APPLICABLE (LPSCE, WAEC's
+  earliest exam, targets Grade 6); source staleness/change-detection
+  proven against the real seeded source and alignment row (read-only
+  simulation, no staging mutation).
+
+  **Not done / explicitly deferred:** no topic-by-topic WAEC Mathematics
+  syllabus document exists publicly (only the subject/grading structure —
+  `OFFICIAL_SOURCE_DISCOVERED_CONTENT_UNAVAILABLE`, not `SOURCE_MISSING`);
+  Gate 7 (AI SME live staging workflow) was validated architecturally via
+  the evidence-specificity guard tests, not exercised with real LLM
+  inference (no provider funding/pricing check was performed, and none was
+  authorized for this pass); admin/curriculum-intelligence UI; full
+  production-gate Vitest/build run; production rollout. Gate at this
+  checkpoint: `prisma validate`/`generate` PASS, `tsc --noEmit` PASS, full
+  P2-C+P2-B+P2-A regression 101/101 PASS, `git diff --check` PASS, clean
+  worktree.
+
+  **2026-08-18 update: subject expansion started (commit `ecef55e1`).**
+  Picked up in-progress, previously-uncommitted work found in the tree
+  during an unrelated security session (see the RLS entry above). Added
+  `examAliases` (additive migration `20260817_000002_p2c_assessment_framework_exam_aliases`,
+  applied to staging and verified via the real Prisma migration ledger, not
+  just assumed) so LSHSCE-Regular can record "WASSCE" as a name without a
+  second competing framework row. Seeded and live-verified four
+  properly-separated exam frameworks (LPSCE/LJHSCE/LSHSCE-Regular/
+  LSHSCE-Private) with real subject codes, CASS/TASS splits, grading scales,
+  and entry/certificate rules — the original merged pilot framework row is
+  preserved untouched. Ran the previously-unexecuted subject-expansion seed:
+  14 real, cited MOE objectives beyond Math (Language Arts/General
+  Science/Social Studies at G6/G9; English/Economics/Geography/History/
+  Literature/Biology/Chemistry/Physics at G12) each paired with an honest
+  SUBJECT_LEVEL WAEC competency, plus one extra Math subject-level
+  competency for the G12 calculus case. Live-verified post-seed: 17 total
+  `MoeCurriculumObjective` rows (3 original + 14 new), 16 total
+  `AssessmentBaselineCompetency` rows (all 16 correctly `PARTIAL`, none
+  over-claimed to `DIRECT`). Widened `AlignmentEvidence.evidenceSpecificity`
+  with `FRAMEWORK_LEVEL` (exam-wide facts like CASS/TASS weighting are
+  neither topic- nor subject-level evidence for any competency) and added
+  `gapEngine.classifyGapCategories` to keep a LiberiaLearn content gap
+  distinct from a public WAEC-evidence limitation. Fast gate
+  (`npm run validate:changed`) PASS; focused P2-A+P2-B+P2-C regression
+  380/380 PASS (one allowlist test updated for the new migration directory).
+  Full `tsc --noEmit` was NOT independently re-verified after this pass — it
+  OOM'd twice on this dev machine (known issue, see
+  `feedback_dev_machine_oom_orphaned_builds` pattern), not a code failure;
+  the last clean full run this session covered all these file changes except
+  a single trivially-typed one-line test-array edit made afterward. Staging
+  only (`yonpfzjczoffhrgibxkz`); production untouched.
+  Next: `scripts/p2c-live-ai-sme-proof.ts` (referenced in the seed script's
+  own comments, does not exist yet) is the actual Gate 7 — real live LLM
+  calls to generate the SUPPORTING/PARTIAL/UNKNOWN alignment relationships
+  for all 15 newly-seeded subject-level competencies, which still needs an
+  explicit LLM-spend authorization before it can run. Then human review of
+  the staging state and the preserved terminology conflict, then production
+  authorization.
+- **P2-B PRODUCTION SCHEMA AND DISABLED DEPLOYMENT COMPLETE; FEATURE ACTIVATION NO-GO (2026-08-14).** Production `bnphuinpvgpmebcsvmsp` passed preflight, recovery, dependency reachability review, additive Migration A/B, postflight invariants, and health validation. Deployment `dpl_nS9JKq2whVyGtVCU8JjsKVaGk1aM` is Ready with P2-B operations and shadow explicitly false. Production has zero reviewer profiles and zero verified credentials, so no credentials or tasks were fabricated and all scopes remain legacy-safe. Platform, school, MOE/national canaries, external walkthroughs, and legacy route cutover await evidence-backed reviewer coverage. Full record: `docs/ops/P2B_PRODUCTION_CUTOVER_RECORD.md`.
+- **P2-B QUALIFIED REVIEW OPERATIONS FEATURE COMPLETE IN STAGING; PRODUCTION
+  ACTIVATION AWAITS FINAL AUTHORIZATION (2026-08-14).** Option C is implemented
+  on branch `codex/p2b-qualified-review-operations`: P2-A remains canonical;
+  eleven normalized reviewer, credential, task, assessment, decision, and
+  calibration models provide exact-revision operations. Cross-school
+  moderation was remediated first. Deterministic policy/eligibility, scoped
+  credentials, lease concurrency, blind independent review, disagreement and
+  resolver workflows, immutable qualification snapshots, atomic P2-B/P2-A/
+  AuditLog composition, legacy adapters, reviewer UI, notifications,
+  reporting, calibration, and P2-C credential extension points are active only
+  on the dedicated staging Preview. Staging has eight canonical migration rows
+  and eleven P2-B tables; post-migration preflight PASS. Run
+  `p2b-e2e-1786722950519` passed all 33 required scenarios. Final gate: Prisma
+  validate/generate PASS; TypeScript PASS; focused P2-B 30/30 PASS; full
+  Vitest clean restart 4,699/4,699 across 576 files PASS after four unrelated
+  timeout-only cases passed 52/52 unchanged in isolation; production build
+  PASS with BUILD_ID `RJzxDtptoMf0xxTDNyFDF`; branch Preview deployment
+  `dpl_BexakpQ4xR8FKqmo4WRZKBa54nfB` Ready and health HTTP 200. The branch
+  Preview flags are operations=true and shadow=true against approved staging
+  ref `yonpfzjczoffhrgibxkz`. `npm run validate:changed` is now the fast
+  implementation-loop gate; full builds remain final-gate/CI work. Production
+  project `bnphuinpvgpmebcsvmsp` was not changed. Full evidence:
+  `docs/ops/P2B_STAGING_COMPLETION_RECORD.md`. Next: human review and explicit
+  production authorization. Do not migrate production, seed a production
+  roster, or activate production P2-B without that authorization.
 - **Canonical plan:** `docs/roadmaps/NATIONAL_ROLLOUT_EXECUTION_PLAN.md`
 - **Escalation contract:** `docs/agents/ADVISOR_ESCALATION_CONTRACT.md`
+- **P2-A COMPLETE IN PRODUCTION (2026-08-14).** Production project
+  `bnphuinpvgpmebcsvmsp` was positively identified and staging project
+  `yonpfzjczoffhrgibxkz` excluded. The separately reviewed migration-ledger
+  reconciliation preserved 162 legacy rows in a denied archive and established
+  an unambiguous six-migration canonical ledger. PostgreSQL 17 recovery proof,
+  client-access precheck, A/B1/B2/C, all immutability guards, writers-first-off
+  deployment, controlled smoke writes, dry run, canary and full 1,105-row
+  backfill, reader cutover, evidence, governance, revocation, reinstatement,
+  successor replacement, and signed offline invalidation all PASS. Final
+  distribution: 2 VERIFIED, 1 PARTIAL, 1,102 UNVERIFIED; zero missing roots,
+  bad pointers, duplicate sequences, unaudited events, backfill anomalies,
+  long transactions, or ungranted locks. Final production commit
+  `9f684eb1ba1cedba08f0f8ca7bb9514999bd8d37`, deployment
+  `dpl_FtbWzrqh7QaK2B2YMVsLBYdu8sSD`, build `bld_5ba35sgyb`, stable alias
+  `https://liberia-learn.vercel.app`, Ready. Prisma validate/generate,
+  TypeScript, writer guard, focused tests, PostgreSQL 17 canonical
+  bootstrap/restore, exact production build, and the uncontended full Vitest
+  run at 4,669/4,669 across 571 files PASS. Full evidence is in
+  `docs/ops/P2A_PRODUCTION_CUTOVER_RECORD.md`. The broad 197-table RLS program
+  was not performed and remains tracked separately. Next: resume the canonical
+  rollout plan after P2-A; do not reopen this closed sprint without a new
+  reviewed scope.
+- **P2-A FEATURE COMPLETE IN STAGING; PRODUCTION CUTOVER AWAITS FINAL
+  AUTHORIZATION (2026-08-13).** Application provenance is complete on branch
+  `codex/p2a-provenance-step1`. Commit `ca79bbfc` added the snapshot/hash
+  primitives, immutable revision boundary, governance/evidence/revocation
+  writers, deterministic AI correlation, immutable prompt archive, controlled
+  material-writer convergence, alias-aware writer guard, staging backfill,
+  provenance readers, admin/MOE APIs, explainability contract, and staging E2E.
+  Follow-up commits `769d871c`, `75206043`, `75f33711`, `bb8637dd`, and
+  `bfec9319` hardened the preflight and added an exact post-migration staging
+  proof. Writers are enabled only for Preview branch
+  `codex/p2a-provenance-step1`; Production remains disabled and unchanged.
+  Live post-migration preflight PASS against staging project
+  `yonpfzjczoffhrgibxkz`: exact canonical plus A/B1/B2/C active ledger, one
+  immutable rolled-back B2 incident record, zero unfinished migrations, 14
+  enums, four provenance tables, nullable/no-default AI correlation column,
+  ready/valid B2 index, 10 enabled guards, 12 validated foreign keys, 10 valid
+  non-primary unique indexes, no physical provenance column on
+  `CurriculumContent`, TLS, no transactions older than 15 minutes, and HTTP
+  200 health. The staging backfill run
+  `p2a-staging-backfill-20260813` classified the two legacy fixtures as
+  `LEGACY_UNKNOWN`/UNVERIFIED without fabricating lineage. Final post-E2E
+  verification covers 23 content rows and 23 roots: 18 VERIFIED, 3 PARTIAL,
+  2 UNVERIFIED, zero failures, zero missing roots, zero invalid pointers, and
+  zero duplicate revision sequences. All 26 required staging E2E scenarios
+  PASS, including immutable revision rejection, AI correlation, governance,
+  evidence, revocation/offline invalidation, compatibility mirrors, and
+  explainability. Final code gate: Prisma validate PASS; Prisma generate PASS;
+  TypeScript PASS; first full Vitest run had three timeout-only failures with
+  4,666 tests passing, all three files passed 38/38 unchanged in isolation,
+  and the exact full restart PASS with 4,669 tests in 571 files; production
+  build PASS with BUILD_ID `-nHkuWL_Ptk6UG7jn-RlX`; PostgreSQL 17 canonical
+  clean bootstrap/restore PASS; prompt/migration/provenance focused tests PASS
+  54/54; writer guard PASS; `git diff --check` PASS. Stable staging alias:
+  `https://liberia-learn-git-codex-p2a-pr-915cff-farquema-siryons-projects.vercel.app`.
+  Next: human review and one explicit production authorization before any
+  production deployment, P2-A migration, writer activation, backfill, or
+  reader cutover.
+- **P2-A canonical staging execution: COMPLETE; PRODUCTION DEPLOYMENT AWAITS
+  FINAL AUTHORIZATION (2026-08-12).** The Supavisor session-mode fallback,
+  canonical PostgreSQL 17 bootstrap, deterministic reference seed, two
+  synthetic fixtures, PostgreSQL 17 backup/restore proof, stable branch
+  Preview, and Gate 0 all passed against staging project
+  `yonpfzjczoffhrgibxkz`. Production project `bnphuinpvgpmebcsvmsp` was
+  never used or changed. Migration A and B1 applied normally. Prisma 6.19.2
+  initially failed B2 with SQLSTATE `25001` by placing `CREATE INDEX
+  CONCURRENTLY` inside a transaction. After explicit founder authorization,
+  the failed record was marked rolled back, the byte-exact B2 file executed
+  through the session-preserving psql wrapper in autocommit mode, the index
+  was proven ready/valid, and Prisma recorded the proven migration as applied.
+  Final history retains one rolled-back B2 incident record plus one finished
+  B2 record and has zero unresolved migrations. Migration C then applied
+  normally. Rollback-only behavioral verification and final SELECT-only
+  verification passed: 14 P2-A enums, four provenance tables, the nullable
+  no-default AI correlation column, ready/valid B2 index, 10 enabled guards,
+  12 validated foreign keys, 10 valid unique indexes, and no physical
+  provenance column on `CurriculumContent`. The final staging health endpoint
+  returned HTTP 200 with database and migrations OK; provenance writers remain
+  disabled and no backfill or cutover ran. Permanent canonical pre-P2A replay
+  remains isolated and PASS on PostgreSQL 17. Final gate: Prisma generate
+  PASS; TypeScript PASS; first full Vitest run had three timeout-only failures
+  with 4,643 tests passing, all three files passed 50/50 unchanged in
+  isolation, and the exact full restart PASS with 4,646 tests in 566 files;
+  production-mode build PASS with BUILD_ID `W_FtPWABezANtDJTQmDVu`;
+  `git diff --check` PASS. Next: final human authorization is required before
+  any production deployment, writer enablement, reader/generation/approval
+  change, backfill, or provenance cutover.
+- **P2-A pre-baseline repair: ENGINEERING COMPLETE, PERSISTENT STAGING
+  BOOTSTRAP AWAITS SEPARATE AUTHORIZATION (2026-08-12).** Founder approved the empty resumed
+  Supabase project `yonpfzjczoffhrgibxkz` in `us-east-2` as dedicated staging;
+  live MCP metadata proved it is healthy, differs from production
+  `bnphuinpvgpmebcsvmsp`, and has zero public tables, Prisma migrations, Auth
+  users, Storage objects, or Edge Functions. Operator tooling now pins
+  `postgres:17-alpine` and fail-closes unless psql, pg_dump, and pg_restore are
+  all major version 17; local clients verified at 17.10 and focused tests pass
+  13/13, including rejection of pg_dump 16. No staging schema mutation ran.
+  Two disposable PostgreSQL 17 migration replays found the repository chain is
+  not safely reproducible: the first baseline SQL is UTF-16 LE and fails with
+  embedded NUL bytes; after temporary UTF-8 normalization, replay stops at
+  `20260224_000000_seed_training_modules` because it inserts three columns not
+  created by the preceding TrainingModule migration (`42703`, Prisma `P3018`).
+  The exact last pre-P2-A legacy boundary is
+  `20260803_000001_privileged_identity_hardening` across 129 migration
+  directories.
+  The follow-up read-only reconciliation found systemic history drift, not two
+  isolated replay defects: production has 162 migration rows for 146 unique
+  names, the repository has 129 pre-P2-A directories, 18 names are
+  production-only, the privileged-identity boundary is repository-only, and
+  four shared migrations have checksum drift. Disposable replay plus a static
+  dependency audit found six foundational tables referenced but never created
+  by the current chain. Production's earlier, repository-absent training
+  migration explains the three TrainingModule seed columns. The complete
+  ledger, schema/raw-object inventory, and seed audit are in
+  `docs/ops/PRE_P2A_MIGRATION_HISTORY_RECONCILIATION.md`. The approved Option C
+  repair is now implemented as a production-derived, schema-only canonical
+  PostgreSQL 17 root under `prisma/canonical/migrations`. It preserves 196
+  application tables, 19 production enums, 702 indexes, 430 application
+  constraints, public functions, both AuditLog immutability triggers, vector
+  0.8.0, production RLS state, `TrendSnapshot`, and `_SkillToStandard`, while
+  excluding row data, credentials, provider schemas, and the environment-owned
+  Prisma ledger. The active clean-bootstrap ledger contains exactly the
+  canonical production-state baseline plus the byte-identical privileged
+  identity hardening migration. Essential reference data is isolated in an
+  idempotent versioned seed. A permanent PostgreSQL 17 CI gate verifies exact
+  catalog hashes, the two-row ledger, reference-seed idempotency, AuditLog
+  triggers, IVFFLAT indexes, custom dump/restore equivalence, and absence of
+  P2-A state. The staging backup and preflight contract now requires this exact
+  two-migration canonical ledger rather than the broken 129-row legacy chain.
+  `docs/ops/P2A_STAGING_MIGRATION_RUNBOOK.md` is fail-closed because its old
+  legacy-root deploy commands are superseded and must be rewritten after Gate
+  0 before any P2-A DDL authorization. Production and staging remained
+  unchanged.
+  Separately, the production RLS inventory finding is tracked as a P0 in
+  `docs/security/PRODUCTION_RLS_EXPOSURE_AUDIT.md`; no production RLS change was
+  made or authorized as of this cycle. **Superseded 2026-08-18**: user-approved
+  interim defense-in-depth mitigation applied blanket `ENABLE ROW LEVEL
+  SECURITY` (no policies) to all 216 production tables and all 229 staging
+  tables, after a live Supabase security alert confirmed staging was actively
+  exploitable via the public anon key. See the audit doc's 2026-08-18 record
+  for full detail; the full policy-matrix work it originally specified is
+  still open. Independent database proof in this cycle PASS: the
+  disposable PostgreSQL 17 canonical bootstrap, exact catalog hashes,
+  two-migration ledger, idempotent reference seed, and custom dump/restore all
+  passed. Focused canonical/staging tests PASS 22/22; Prisma generate PASS;
+  TypeScript PASS with the established 6 GB heap. The first mandatory full
+  Vitest run stopped on two timeouts with 4,638 passing tests. Both timed-out
+  cases then passed together in isolation without code changes: lesson body in
+  1.94s under its 15s budget, replay dry-run in 886ms under its 5s budget, 31
+  focused tests total. The exact full gate was restarted: Prisma generate PASS,
+  TypeScript PASS, and full Vitest PASS with 4,640 tests in 566 files. The final
+  `npm run build` first exceeded the 20-minute command ceiling. The operator
+  reran it directly to completion and supplied the successful Next.js route
+  summary. Independent local verification confirmed the rerun produced fresh
+  `.next/BUILD_ID` `t-PFYUBdqxr9faBEUdUMm` at 2026-08-12T17:34:49Z plus valid
+  build and middleware manifests. Build PASS. `git diff --check` PASS. No
+  staging or production mutation occurred. The next persistent action requires explicit
+  authorization for canonical-root deployment to the approved empty staging
+  project, essential reference seeds, two synthetic fixtures, PostgreSQL 17
+  backup/restore evidence, a stable staging app, and Gate 0. It does not
+  authorize P2-A A/B1/B2/C or any production baseline marker.
+- **P2-A staging database foundation original finding: SUPERSEDED
+  (2026-08-11).** Gate 0 correctly stopped without a database connection
+  because no independent staging target or recovery evidence existed. The
+  repository audit confirms Supabase project `bnphuinpvgpmebcsvmsp` is
+  production and ignored Vercel Preview snapshots use that same project.
+  No separate staging project was discovered. The mini-sprint added a
+  fail-closed application cold-start boundary for Preview/custom staging,
+  a sanitized executable P2-A Gate 0 preflight, a pinned PostgreSQL 16 Docker
+  client wrapper, a staging environment contract, synthetic curriculum-only
+  fixtures, backup evidence schema, and the complete operator design in
+  `docs/ops/STAGING_DATABASE_FOUNDATION.md`. External owners must now create
+  or approve a physically separate staging project, replace Preview database
+  credentials, deploy a stable staging app, establish and restore-test a
+  backup, and provide secure evidence. No P2-A migration, production access,
+  production configuration change, writer, reader, generation/approval
+  change, or backfill occurred. Gate: Prisma generate PASS; focused foundation
+  and environment tests PASS 17/17; exact full Vitest rerun PASS 4,627 tests
+  in 565 files after five first-run timeout-only failures passed 57/57 in
+  isolation; TypeScript PASS with the repository's established 4 GB Node heap
+  after the default 2 GB heap exhausted without diagnostics; synthetic-staging
+  build PASS in 795.9 seconds. PostgreSQL client, dump, and restore tools are
+  pinned and verified at 16.14.
+- **P2-A Step 1 curriculum provenance schema: APPROVED AND PREPARED,
+  staging execution awaits final runbook review (2026-08-10).** The approved
+  schema has 14 P2-A enums and four provenance tables. Migration A deliberately
+  enforces `CurriculumGovernanceEvent.riskReasons` as
+  `TEXT[] NOT NULL DEFAULT ARRAY[]::TEXT[]`; a PostgreSQL 16 integration test
+  proved direct SQL `NULL` is rejected and omission becomes an empty array.
+  Migrations B1/B2 add the nullable AI generation correlation field and its
+  concurrent index. Migration C installs append-only and root guards before
+  any provenance writer can be enabled. Local disposable PostgreSQL tests
+  passed for all required immutability, identity, projection, and cross-root
+  assertions. No staging or production migration, writer, reader, generation
+  change, approval change, or backfill has executed. Review branch:
+  `codex/p2a-provenance-step1`. Exact staging-only instructions are in
+  `docs/ops/P2A_STAGING_MIGRATION_RUNBOOK.md`. Gate: `npx prisma generate`
+  PASS; exact `npx tsc --noEmit` PASS; second exact `npx vitest run` PASS,
+  4,617 tests in 564 files after the first run's 4 timeout-only failures all
+  passed in isolation; `npm run build` PASS with exit 0 and `.next/BUILD_ID`
+  `0xNoqCJHjE3MqOkxxZX0A`. Next: final human review of the
+  runbook, then a separately authorized staging-only execution. Final staging
+  precheck hardening adds embedded PostgreSQL timeouts: A/B1/C use
+  `lock_timeout=5s` plus `statement_timeout=5min`; B2 uses
+  `lock_timeout=5s`, no statement deadline, and dedicated progress/index
+  validity monitoring. Hardened verification SQL passed end-to-end in
+  disposable PostgreSQL 16, including rejection-type discrimination and a
+  SELECT-only final check of 14 enums, 4 tables, 10 enabled triggers, 12
+  foreign keys, 10 unique indexes, migration state, and the absence of a
+  physical provenance column on `CurriculumContent`. No persistent database
+  was touched. Negative-path tests also proved nonzero exit for a nullable
+  `riskReasons` schema, a missing immutability trigger, and an unexpected
+  trigger SQLSTATE/message. Staging execution remains unauthorized pending
+  review of the final SQL returned to the owner.
 - **AWS account migration: `258048833400` -> `466568847266` (2026-08-07/08).**
   The old account went into an AWS billing hold (past-due invoices; account
   suspended, all API credentials returned `InvalidClientTokenId`) and was

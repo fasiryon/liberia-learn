@@ -1,4 +1,4 @@
-import { createHash } from "crypto";
+import { createHash, randomUUID } from "crypto";
 import { prisma } from "@/lib/db";
 import { logAudit } from "@/lib/audit";
 import { generateCurriculumPayload } from "@/lib/ai/curriculum-factory";
@@ -8,6 +8,11 @@ import { enqueueJob, JobType } from "@/lib/queue";
 import { getSubjectConcurrencyProfile } from "@/lib/curriculum/adaptiveConcurrency";
 import { extractLessonText, validateRegeneratedLesson, validateLessonDepth } from "@/lib/curriculum/regenerationQualityGate";
 import { isCurriculumRegenQueueEnabled } from "@/lib/serverFlags";
+import {
+  updateCurriculumContent,
+  updateCurriculumContentInTransaction,
+} from "@/lib/curriculum/mutations/repository";
+import { getPrompt } from "@/lib/ai/promptRegistry";
 
 export type CurriculumRegenerationJobPayload = {
   runId: string;
@@ -455,6 +460,7 @@ export async function processCurriculumRegenerationLessonJob(payload: Curriculum
     }
 
     const topic = job.topic ?? inferTopic(lesson);
+    const generationCorrelationId = randomUUID();
     const generated = await withProviderRetry(
       { provider: job.provider ?? undefined, operation: "curriculum.regenerate.lesson" },
       () =>
@@ -467,6 +473,7 @@ export async function processCurriculumRegenerationLessonJob(payload: Curriculum
           lessonFormat: "either",
           liberiaContext: true,
           forceSmartTier: true,
+          generationCorrelationId,
         })
     );
     const quality = validateRegeneratedLesson(generated);
@@ -485,9 +492,9 @@ export async function processCurriculumRegenerationLessonJob(payload: Curriculum
       // explicit (rather than dropped) so the intended post-failure status
       // is unambiguous to a future reader, since there is no stored
       // prior-status field on CurriculumContent to fall back on.
-      await prisma.curriculumContent.update({
-        where: { contentId: job.curriculumContentId },
-        data: {
+      await updateCurriculumContent(
+        { contentId: job.curriculumContentId },
+        {
           status: "NEEDS_REVIEW",
           payload: {
             ...((lesson.payload as Record<string, unknown>) ?? {}),
@@ -496,7 +503,18 @@ export async function processCurriculumRegenerationLessonJob(payload: Curriculum
             depthValidationDetails: { slideCount: depth.slideCount, wordCount: depth.wordCount, hasForbidden: depth.hasForbidden },
           } as any,
         },
-      });
+        {
+          revisionKind: "METADATA_CHANGE",
+          originKind: "DETERMINISTIC_GENERATED",
+          actorLabel: "curriculum-regeneration-worker",
+          generatorName: "regenerationDepthGate",
+          generatorVersion: "1.0.0",
+          requestedCompleteness: "PARTIAL",
+          auditAction: "curriculum.revision.regeneration_depth_failed",
+          idempotencyKey: `regen-depth-failed:${job.id}`,
+          schoolId: job.schoolId ?? null,
+        },
+      );
       throw new NonRetryableProviderError(`depth_gate_failure:${reason}`, "quality_gate_failure");
     }
 
@@ -522,16 +540,37 @@ export async function processCurriculumRegenerationLessonJob(payload: Curriculum
       "curriculum.regeneration.lesson.persist",
       () =>
         prisma.$transaction(async (tx) => {
-          await tx.curriculumContent.update({
-            where: { contentId: job.curriculumContentId },
-            data: {
+          const prompt = getPrompt("lesson.deep");
+          await updateCurriculumContentInTransaction(
+            tx,
+            { contentId: job.curriculumContentId },
+            {
               title: generated.title,
               status: "DRAFT",
               payload: nextPayload as any,
               hash: contentHash(nextPayload),
               updatedAt: new Date(),
             },
-          });
+            {
+              revisionKind: "AI_REGENERATION",
+              originKind: "AI_GENERATED",
+              actorUserId: job.requestedBy ?? null,
+              actorLabel: "curriculum-regeneration-worker",
+              generatorName: "curriculumRegenerationQueue",
+              generatorVersion: "1.0.0",
+              aiProvider: job.provider ?? "openai",
+              aiModel: String((generated as any).metadata?.model ?? "unknown"),
+              generatedAt: new Date(String((generated as any).metadata?.generatedAt ?? new Date().toISOString())),
+              generationCorrelationId,
+              primaryPromptKey: prompt.key,
+              primaryPromptVersion: prompt.version,
+              primaryPromptHash: prompt.hash,
+              requestedCompleteness: "VERIFIED",
+              auditAction: "curriculum.revision.ai_regenerated",
+              idempotencyKey: `regen-revision:${job.id}`,
+              schoolId: job.schoolId ?? null,
+            },
+          );
           await tx.curriculumRegenerationJob.update({
             where: { id: job.id },
             data: { status: "approved", lastErrorCode: null, lastErrorMessage: null },

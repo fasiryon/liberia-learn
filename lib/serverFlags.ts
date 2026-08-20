@@ -940,3 +940,28 @@ export function isReplayConsoleEnabled(): boolean {
 export function isAgentCronEnabled(): boolean {
   return isFlagEnabled("AGENT_CRON_ENABLED");
 }
+
+/** P2-B qualified review operations. DEFAULT OFF in every environment. */
+export function isP2bReviewOperationsEnabled(): boolean {
+  return isFlagEnabled("P2B_REVIEW_OPERATIONS_ENABLED");
+}
+
+/** Computes P2-B policy and parity data without granting decision authority. */
+export function isP2bReviewShadowEnabled(): boolean {
+  return isFlagEnabled("P2B_REVIEW_SHADOW_ENABLED");
+}
+
+/** Platform AI SME review. Default OFF and never grants SCHOOL, MOE, or WAEC authority. */
+export function isP2bAiReviewEnabled(): boolean {
+  return isFlagEnabled("P2B_AI_REVIEW_ENABLED");
+}
+
+/**
+ * P2-C WAEC baseline alignment, curriculum benchmarking, and authority/evidence
+ * governance. DEFAULT OFF in every environment. WAEC remains a minimum external
+ * baseline, never the curriculum authority above Liberia MOE, and this flag
+ * grants no external WAEC approval, endorsement, or partnership.
+ */
+export function isP2cCurriculumBenchmarkingEnabled(): boolean {
+  return isFlagEnabled("P2C_CURRICULUM_BENCHMARKING_ENABLED");
+}

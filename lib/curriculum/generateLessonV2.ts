@@ -16,6 +16,15 @@ import {
   type CurriculumPayload,
 } from "@/lib/schemas/curriculumPayload";
 import { parseToSlides } from "@/lib/lessons/parseToSlides";
+import { randomUUID } from "crypto";
+import {
+  buildArchivedExpansionUser,
+  buildArchivedPass1System,
+  buildArchivedPass1User,
+  buildArchivedPass2User,
+  lessonDeepV2Archive,
+  lessonDeepV2PromptHash,
+} from "@/lib/ai/prompts/archive/lesson.deep.v2/1.0.0";
 
 // ─── Custom error ─────────────────────────────────────────────────────────────
 
@@ -44,6 +53,17 @@ export type GenerateLessonV2Result = {
   model: string;
   problemSetsCount: number;
   slidesCount: number;
+  lineage: {
+    generatorName: "generateLessonV2";
+    generatorVersion: "2.0.0";
+    aiProvider: string;
+    aiModel: string;
+    generatedAt: Date;
+    generationCorrelationId: string;
+    primaryPromptKey: "lesson.deep.v2";
+    primaryPromptVersion: "1.0.0";
+    primaryPromptHash: string;
+  };
 };
 
 // ─── Internal types ───────────────────────────────────────────────────────────
@@ -359,6 +379,16 @@ IMPORTANT:
 - Return ONLY the expanded section text, nothing else`;
 }
 
+const LESSON_DEEP_V2_PROMPT_KEY = "lesson.deep.v2" as const;
+const LESSON_DEEP_V2_PROMPT_VERSION = "1.0.0" as const;
+const LESSON_DEEP_V2_PROMPT_HASH = lessonDeepV2PromptHash;
+
+function providerForModel(model: string): string {
+  if (model.startsWith("llama")) return "groq";
+  if (model.startsWith("grok")) return "grok";
+  return "openai";
+}
+
 // ─── Per-section expansion ────────────────────────────────────────────────────
 
 async function expandThinSections(
@@ -367,7 +397,8 @@ async function expandThinSections(
   subject: string,
   topic: string,
   modelOverride: string | undefined,
-  timeoutMs: number
+  timeoutMs: number,
+  generationCorrelationId: string,
 ): Promise<string> {
   let body = rawBody;
   const MAX_EXPANSION_ATTEMPTS = 3;
@@ -401,7 +432,14 @@ async function expandThinSections(
             },
             {
               role: "user",
-              content: buildExpansionUser(group.label, combinedText, group.floor, grade, subject, topic),
+              content: buildArchivedExpansionUser(
+                group.label,
+                combinedText,
+                group.floor,
+                grade,
+                subject,
+                topic,
+              ),
             },
           ],
           maxTokens: 6000,
@@ -412,6 +450,10 @@ async function expandThinSections(
             feature: "curriculum",
             subject,
             requestType: "elite_curriculum_generation",
+            promptKey: LESSON_DEEP_V2_PROMPT_KEY,
+            promptVersion: LESSON_DEEP_V2_PROMPT_VERSION,
+            promptHash: LESSON_DEEP_V2_PROMPT_HASH,
+            generationCorrelationId,
             metadata: { grade, topic, group: group.label, attempt },
           },
         });
@@ -470,12 +512,14 @@ export async function generateLessonV2(
 ): Promise<GenerateLessonV2Result> {
   const { grade, subject, topic, demoReady, moeAlignmentCodes, model: modelOverride } = input;
   const timeoutMs = 240_000;
+  const generatedAt = new Date();
+  const generationCorrelationId = randomUUID();
 
   // ── Pass 1: body generation (text mode, high token budget) ───────────────────
   const pass1Result = await routedCompletion({
     messages: [
-      { role: "system", content: buildPass1System(grade, subject, moeAlignmentCodes) },
-      { role: "user", content: buildPass1User(grade, subject, topic) },
+      { role: "system", content: buildArchivedPass1System(grade, subject, moeAlignmentCodes) },
+      { role: "user", content: buildArchivedPass1User(grade, subject, topic) },
     ],
     maxTokens: 16000,
     forceSmartTier: true,
@@ -485,7 +529,10 @@ export async function generateLessonV2(
       feature: "curriculum",
       subject,
       requestType: "elite_curriculum_generation",
-      promptKey: "lesson.deep.v2",
+      promptKey: lessonDeepV2Archive.key,
+      promptVersion: LESSON_DEEP_V2_PROMPT_VERSION,
+      promptHash: LESSON_DEEP_V2_PROMPT_HASH,
+      generationCorrelationId,
       metadata: { grade, topic, pass: 1 },
     },
   });
@@ -517,7 +564,15 @@ export async function generateLessonV2(
   }
 
   // ── Per-section enforcement (Phase 1) ────────────────────────────────────────
-  rawBody = await expandThinSections(rawBody, grade, subject, topic, modelOverride, timeoutMs);
+  rawBody = await expandThinSections(
+    rawBody,
+    grade,
+    subject,
+    topic,
+    modelOverride,
+    timeoutMs,
+    generationCorrelationId,
+  );
 
   const expandedWords = countWords(rawBody);
   console.log(`[generateLessonV2] After expansion: ${expandedWords} words total`);
@@ -537,7 +592,7 @@ export async function generateLessonV2(
         content:
           "You are a JSON extractor. Read the lesson content provided and return ONLY a compact JSON object with the metadata fields. Do not include the lesson body in your response.",
       },
-      { role: "user", content: buildPass2User(rawBody.slice(0, 6000)) },
+      { role: "user", content: buildArchivedPass2User(rawBody.slice(0, 6000)) },
     ],
     maxTokens: 600,
     forceSmartTier: false,
@@ -548,6 +603,10 @@ export async function generateLessonV2(
       subject,
       requestType: "elite_curriculum_structure",
       provider: "openai",
+      promptKey: LESSON_DEEP_V2_PROMPT_KEY,
+      promptVersion: LESSON_DEEP_V2_PROMPT_VERSION,
+      promptHash: LESSON_DEEP_V2_PROMPT_HASH,
+      generationCorrelationId,
     },
   });
 
@@ -629,5 +688,16 @@ export async function generateLessonV2(
     model: combinedModel,
     problemSetsCount: extractedProblems.length,
     slidesCount: slides.length,
+    lineage: {
+      generatorName: "generateLessonV2",
+      generatorVersion: "2.0.0",
+      aiProvider: providerForModel(pass1Model),
+      aiModel: combinedModel,
+      generatedAt,
+      generationCorrelationId,
+      primaryPromptKey: LESSON_DEEP_V2_PROMPT_KEY,
+      primaryPromptVersion: LESSON_DEEP_V2_PROMPT_VERSION,
+      primaryPromptHash: LESSON_DEEP_V2_PROMPT_HASH,
+    },
   };
 }

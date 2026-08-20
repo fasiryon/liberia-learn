@@ -3,6 +3,11 @@ import { NextRequest, NextResponse } from "next/server";
 import { requireRole } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { handleApiError } from "@/lib/errors/apiErrorHandler";
+import {
+  createCurriculumContent,
+  ensureCurriculumProvenance,
+  provenanceWritersEnabled,
+} from "@/lib/curriculum/mutations/repository";
 
 export async function POST(
   req: NextRequest,
@@ -14,12 +19,7 @@ export async function POST(
 
     const source = await prisma.curriculumContent.findUnique({
       where: { contentId: params.contentId },
-      select: {
-        id: true, contentId: true, title: true, grade: true, subject: true,
-        payload: true, teacherCreated: true, editedById: true,
-        editReviewStatus: true, lessonVersion: true,
-        learningObjectives: true, schoolId: true,
-      },
+      include: { provenance: { select: { currentRevisionId: true } } },
     });
 
     if (!source) return NextResponse.json({ error: "not_found" }, { status: 404 });
@@ -45,8 +45,15 @@ export async function POST(
 
     const newContentId = `fork-${user.id.slice(-8)}-${randomUUID().slice(0, 8)}`;
 
-    const created = await prisma.curriculumContent.create({
-      data: {
+    let sourceRevisionId = source.provenance?.currentRevisionId ?? null;
+    if (provenanceWritersEnabled() && !sourceRevisionId) {
+      const adopted = await prisma.$transaction((tx) =>
+        ensureCurriculumProvenance(tx, source as any),
+      );
+      sourceRevisionId = adopted.currentRevision?.id ?? null;
+    }
+    const governed = await createCurriculumContent(
+      {
         contentId: newContentId,
         title: source.title,
         grade: source.grade,
@@ -64,7 +71,21 @@ export async function POST(
         schoolId: user.schoolId ?? null,
         learningObjectives: source.learningObjectives as any,
       },
-    });
+      {
+        revisionKind: "FORK",
+        originKind: "FORKED",
+        actorUserId: user.id,
+        authorUserId: user.id,
+        sourceRevisionId,
+        requestedCompleteness: sourceRevisionId ? "VERIFIED" : "PARTIAL",
+        auditAction: "curriculum.revision.fork",
+        auditDetails: { sourceContentId: source.contentId },
+        schoolId: user.schoolId ?? null,
+        traceId,
+        idempotencyKey: `teacher-fork:${traceId}`,
+      },
+    );
+    const created = governed.content;
 
     return NextResponse.json({ id: created.id, contentId: created.contentId });
   } catch (error) {

@@ -1,5 +1,7 @@
 // lib/moe/alignment-engine.ts
 import { prisma } from "@/lib/db";
+import { updateCurriculumContent } from "@/lib/curriculum/mutations/repository";
+import { getPrompt } from "@/lib/ai/promptRegistry";
 import type { $Enums } from "@prisma/client";
 import { routedCompletion } from "@/lib/ai/routedCompletion";
 import { buildPrompt } from "@/lib/ai/promptRegistry";
@@ -99,10 +101,19 @@ export async function alignContentToMOE(
       alignedAt: new Date().toISOString(),
       method: "keyword",
     };
-    await prisma.curriculumContent.update({
-      where: { id: contentId },
-      data: { moeAlignments: result as any },
-    });
+    await updateCurriculumContent(
+      { id: contentId },
+      { moeAlignments: result as any },
+      {
+        revisionKind: "ALIGNMENT_CHANGE",
+        originKind: "DETERMINISTIC_GENERATED",
+        generatorName: "moeAlignmentEngine",
+        generatorVersion: "1.0.0",
+        requestedCompleteness: "VERIFIED",
+        auditAction: "curriculum.revision.alignment_empty",
+        idempotencyKey: `alignment:${contentId}:${result.alignedAt}`,
+      },
+    );
     return result;
   }
 
@@ -120,6 +131,7 @@ export async function alignContentToMOE(
   const goodMatches = scored.filter((s) => s.score >= 0.15);
 
   let result: AlignmentResult;
+  let aiLineage: { model: string; generationCorrelationId?: string } | null = null;
 
   if (goodMatches.length > 0) {
     // Keyword matching worked
@@ -163,7 +175,17 @@ export async function alignContentToMOE(
         },
       ],
       maxTokens: 300,
+      aiUsage: {
+        route: "moe.alignment",
+        feature: "curriculum",
+        requestType: "curriculum_alignment",
+        promptKey: "moe.alignment.system",
+      },
     });
+    aiLineage = {
+      model: completion.model,
+      generationCorrelationId: completion.generationCorrelationId,
+    };
 
     const raw = completion.content ?? "[]";
     let matchedCodes: string[] = [];
@@ -190,10 +212,31 @@ export async function alignContentToMOE(
   }
 
   // Save to DB
-  await prisma.curriculumContent.update({
-    where: { id: contentId },
-    data: { moeAlignments: result as any },
-  });
+  const prompt = aiLineage ? getPrompt("moe.alignment.system") : null;
+  await updateCurriculumContent(
+    { id: contentId },
+    { moeAlignments: result as any },
+    {
+      revisionKind: "ALIGNMENT_CHANGE",
+      originKind: aiLineage ? "AI_GENERATED" : "DETERMINISTIC_GENERATED",
+      generatorName: "moeAlignmentEngine",
+      generatorVersion: "1.0.0",
+      ...(aiLineage && prompt
+        ? {
+            aiProvider: aiLineage.model.startsWith("llama") ? "groq" : "openai",
+            aiModel: aiLineage.model,
+            generatedAt: new Date(result.alignedAt),
+            generationCorrelationId: aiLineage.generationCorrelationId,
+            primaryPromptKey: prompt.key,
+            primaryPromptVersion: prompt.version,
+            primaryPromptHash: prompt.hash,
+          }
+        : {}),
+      requestedCompleteness: "VERIFIED",
+      auditAction: "curriculum.revision.alignment_changed",
+      idempotencyKey: `alignment:${contentId}:${result.alignedAt}`,
+    },
+  );
 
   return result;
 }

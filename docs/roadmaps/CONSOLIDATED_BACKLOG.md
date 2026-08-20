@@ -33,6 +33,26 @@ When work changes status:
 4. Do not delete completed findings. Mark them `DONE / STALE MEMORY` so later
    sessions can distinguish completed work from a lost note.
 
+## Future major program (approved, not started)
+
+**Learner Experience V2 / Interactive Learning Runtime** is an approved
+future major program and must not be dropped during P2/P5 execution.
+Canonical document: `docs/product/LEARNER_EXPERIENCE_V2_INTERACTIVE_RUNTIME.md`
+(captured 2026-08-14, documentation only, no code/schema/production change).
+Approved sequence: Phase A (Learner Experience V2 architecture + UX
+prototype) runs before Phase B (Curriculum V2) and Phase C (Global Pedagogy
+Intelligence), so the curriculum-generation contract is designed against a
+known, executable runtime instead of an imagined one; Phase D (Learner
+Experience V2 full build), Phase E (Teacher Experience V2), and Phase F
+(adaptive mastery/remediation expansion) follow. This program starts only
+after P2-B, P2-C, and P5-A close (see `PRIORITIES_1_2_5_6_7_EXECUTION_PROGRAM.md`)
+and does not change their sequencing. The canonical document also records a
+repository discovery pass showing this is not a green field - the Student
+Toolbelt (`components/toolkit/`), a Virtual Lab action/state runtime
+(`lib/labs/runtime/`), offline caching/manifest infrastructure, and a
+mastery/adaptive foundation already exist and must be extended, not
+rebuilt.
+
 ## Status definitions
 
 - **VALID:** Current evidence still shows unfinished work.
@@ -45,6 +65,17 @@ When work changes status:
 - **DEFERRED:** Intentionally waits for a prerequisite or product decision.
 
 ## National rollout sequence
+
+### P0 security interruption
+
+- **LiberiaLearn Production RLS Exposure Audit and Safe Remediation: VALID,
+  P0 (2026-08-11).** Supabase's read-only inventory reported RLS disabled on
+  197 production public-schema tables. This is not proof that all tables are
+  publicly readable, but requires immediate grant, Data API, access-path, and
+  policy discovery before any production change. No RLS mutation is authorized
+  in the staging-foundation sprint. Acceptance criteria and the staged
+  rollout/rollback contract are tracked in
+  `docs/security/PRODUCTION_RLS_EXPOSURE_AUDIT.md`.
 
 All 19 sprints below remain officially `PENDING`. Execute them in numerical
 order and do not skip the first pending sprint.

@@ -10,7 +10,6 @@ import type { Role } from "@prisma/client";
 import { prisma } from "@/lib/db";
 import { sendEmail } from "@/lib/email";
 import { logger } from "@/lib/logger";
-import { PERMISSIONS, ROLE_PERMISSIONS, hasPermission } from "@/lib/permissions";
 
 function reviewUrl(): string {
   const base = process.env.NEXTAUTH_URL ?? "https://liberia-learn.vercel.app";
@@ -22,13 +21,23 @@ export async function notifyRiskReviewers(
   riskScore: number,
   riskReasons: string[]
 ): Promise<void> {
-  const rolesWithApprove = (Object.keys(ROLE_PERMISSIONS) as Role[]).filter((role) =>
-    hasPermission({ role }, PERMISSIONS.CURRICULUM_APPROVE)
-  );
+  const content = await prisma.curriculumContent.findUnique({
+    where: { contentId },
+    select: { schoolId: true, editedBy: { select: { schoolId: true } } },
+  });
+  if (!content) {
+    logger.warn("[riskTriage.notify] content not found", { contentId });
+    return;
+  }
+  const ownerSchoolId = content.schoolId ?? content.editedBy?.schoolId ?? null;
 
   const recipients = await prisma.user.findMany({
     where: {
-      OR: [{ role: { in: rolesWithApprove } }, { isPlatformAdmin: true }],
+      OR: [
+        { isPlatformAdmin: true },
+        { role: { in: ["MOE_OFFICIAL", "MOE_SUPER_ADMIN"] as Role[] } },
+        ...(ownerSchoolId ? [{ role: "ADMIN" as Role, schoolId: ownerSchoolId }] : []),
+      ],
     },
     select: { email: true },
   });

@@ -131,9 +131,17 @@ describe("editReviewStatus state machine — PATCH /api/admin/content-review/[le
           update: updateFn,
         },
         notificationInboxItem: { create: vi.fn(async () => ({})) },
+        $transaction: vi.fn(async (callback: any) => callback({
+          curriculumContent: { update: updateFn },
+        })),
       },
     }));
-    vi.doMock("@/lib/audit", () => ({ logAudit: vi.fn(async () => {}) }));
+    const audit = vi.fn(async () => {});
+    vi.doMock("@/lib/audit", () => ({
+      logAudit: audit,
+      logAuditRequired: audit,
+      logAuditRequiredWithId: audit,
+    }));
     vi.doMock("@/lib/push/sendPush", () => ({ sendPushToUser: vi.fn(async () => {}) }));
   }
 
@@ -213,6 +221,7 @@ describe("editReviewStatus state machine — PATCH /api/admin/content-review/[le
 
   it("approve creates NotificationInboxItem for teacher", async () => {
     const mockNotif = vi.fn(async () => ({}));
+    const mockUpdate = vi.fn(async () => ({ id: "cc-1", editReviewStatus: "APPROVED", status: "published" }));
     vi.doMock("@/lib/auth", () => ({
       requireRole: vi.fn(async () => ({ id: "admin-1", role: "ADMIN", schoolId: "s-1" })),
     }));
@@ -222,12 +231,16 @@ describe("editReviewStatus state machine — PATCH /api/admin/content-review/[le
           findUnique: vi.fn(async () => ({
             id: "cc-1", contentId: "c-1", title: "Photosynthesis", editedById: "teacher-1", editReviewStatus: "PENDING",
           })),
-          update: vi.fn(async () => ({ id: "cc-1", editReviewStatus: "APPROVED", status: "published" })),
+          update: mockUpdate,
         },
         notificationInboxItem: { create: mockNotif },
+        $transaction: vi.fn(async (callback: any) => callback({
+          curriculumContent: { update: mockUpdate },
+        })),
       },
     }));
-    vi.doMock("@/lib/audit", () => ({ logAudit: vi.fn(async () => {}) }));
+    const audit = vi.fn(async () => {});
+    vi.doMock("@/lib/audit", () => ({ logAudit: audit, logAuditRequired: audit, logAuditRequiredWithId: audit }));
     vi.doMock("@/lib/push/sendPush", () => ({ sendPushToUser: vi.fn(async () => {}) }));
     const { PATCH } = await import("@/app/api/admin/content-review/[lessonId]/route");
     await PATCH(makeRequest({ editReviewStatus: "APPROVED" }), { params: { lessonId: "cc-1" } });
@@ -238,6 +251,7 @@ describe("editReviewStatus state machine — PATCH /api/admin/content-review/[le
 
   it("reject creates NotificationInboxItem for teacher with reason", async () => {
     const mockNotif = vi.fn(async () => ({}));
+    const mockUpdate = vi.fn(async () => ({ id: "cc-1", editReviewStatus: "REJECTED" }));
     vi.doMock("@/lib/auth", () => ({
       requireRole: vi.fn(async () => ({ id: "admin-1", role: "ADMIN", schoolId: "s-1" })),
     }));
@@ -247,12 +261,16 @@ describe("editReviewStatus state machine — PATCH /api/admin/content-review/[le
           findUnique: vi.fn(async () => ({
             id: "cc-1", contentId: "c-1", title: "Bad Lesson", editedById: "teacher-1", editReviewStatus: "PENDING",
           })),
-          update: vi.fn(async () => ({ id: "cc-1", editReviewStatus: "REJECTED" })),
+          update: mockUpdate,
         },
         notificationInboxItem: { create: mockNotif },
+        $transaction: vi.fn(async (callback: any) => callback({
+          curriculumContent: { update: mockUpdate },
+        })),
       },
     }));
-    vi.doMock("@/lib/audit", () => ({ logAudit: vi.fn(async () => {}) }));
+    const audit = vi.fn(async () => {});
+    vi.doMock("@/lib/audit", () => ({ logAudit: audit, logAuditRequired: audit, logAuditRequiredWithId: audit }));
     vi.doMock("@/lib/push/sendPush", () => ({ sendPushToUser: vi.fn(async () => {}) }));
     const { PATCH } = await import("@/app/api/admin/content-review/[lessonId]/route");
     await PATCH(

@@ -1,0 +1,29 @@
+{
+  "environment": "staging",
+  "projectRef": "replace-with-staging-project-ref",
+  "database": "postgres",
+  "databaseHost": "db.replace-with-staging-project-ref.supabase.co",
+  "migrationTransport": "direct",
+  "createdAtUtc": "2026-08-11T00:00:00Z",
+  "retentionUntilUtc": "2026-08-18T00:00:00Z",
+  "method": "logical-pg-dump",
+  "owner": "replace-with-database-owner",
+  "evidenceLocation": "replace-with-sanitized-ticket-or-provider-record",
+  "restoreTestStatus": "passed",
+  "restoreTestedAtUtc": "2026-08-11T00:30:00Z",
+  "artifactPath": "artifacts/p2a-staging/pre-p2a.dump",
+  "artifactSha256": "replace-with-uppercase-sha256",
+  "serverVersion": "17.x",
+  "psqlVersion": "psql (PostgreSQL) 17.x",
+  "pgDumpVersion": "pg_dump (PostgreSQL) 17.x",
+  "pgRestoreVersion": "pg_restore (PostgreSQL) 17.x",
+  "expectedMigrationBoundary": "20260803_000001_privileged_identity_hardening",
+  "expectedMigrationCount": 2,
+  "migrationLedger": [
+    "20260728_000003_canonical_production_state_baseline",
+    "20260803_000001_privileged_identity_hardening"
+  ],
+  "syntheticFixtureCount": 2,
+  "p2aMigrationCount": 0,
+  "provenanceTableCount": 0
+}

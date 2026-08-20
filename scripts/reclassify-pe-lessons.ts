@@ -2,14 +2,16 @@
  * Reclassifies all CurriculumContent lessons with subject="PE" to correct subjects.
  *
  * Rules:
- *   - APPROVED G1-G9 genuine PE topics → SOCIAL_STUDIES
- *   - G7/G8 non-APPROVED with literacy-skill titles → LITERACY
- *   - G7/G8 non-APPROVED with physical-PE titles → SOCIAL_STUDIES
+ *   - APPROVED G1-G9 genuine PE topics â†’ SOCIAL_STUDIES
+ *   - G7/G8 non-APPROVED with literacy-skill titles â†’ LITERACY
+ *   - G7/G8 non-APPROVED with physical-PE titles â†’ SOCIAL_STUDIES
  *
  * Run with --dry-run to preview changes without writing.
  */
 
 import { PrismaClient } from '@prisma/client';
+import { createConservativeCurriculumMaintenanceClient } from '@/lib/curriculum/mutations/maintenanceClient';
+const governedCurriculum = createConservativeCurriculumMaintenanceClient('reclassify-pe-lessons');
 
 const prisma = new PrismaClient();
 
@@ -67,7 +69,7 @@ const LITERACY_MARKERS = [
   'main idea',
   'key idea',
   'topic sentence',
-  'explanat',    // "explanation/explanations" (≠ "explain" substring)
+  'explanat',    // "explanation/explanations" (â‰  "explain" substring)
   'retell',
   'narrat',
 ];
@@ -97,7 +99,7 @@ async function main() {
     const isG7orG8 = lesson.grade === 7 || lesson.grade === 8;
 
     if (isApproved || !isG7orG8) {
-      // All APPROVED (any grade) and all non-G7/G8 → genuine PE → SOCIAL_STUDIES
+      // All APPROVED (any grade) and all non-G7/G8 â†’ genuine PE â†’ SOCIAL_STUDIES
       toSocialStudies.push(lesson.id);
     } else {
       // G7/G8 non-APPROVED: keyword-based split
@@ -110,8 +112,8 @@ async function main() {
     }
   }
 
-  console.log(`→ SOCIAL_STUDIES: ${toSocialStudies.length}`);
-  console.log(`→ LITERACY: ${toLiteracy.length}`);
+  console.log(`â†’ SOCIAL_STUDIES: ${toSocialStudies.length}`);
+  console.log(`â†’ LITERACY: ${toLiteracy.length}`);
 
   // Print sample of LITERACY classifications for sanity check
   const literacySample = all
@@ -131,7 +133,7 @@ async function main() {
   }
 
   if (DRY_RUN) {
-    console.log('\nDry run complete — no changes written.');
+    console.log('\nDry run complete â€” no changes written.');
     return;
   }
 
@@ -139,11 +141,11 @@ async function main() {
 
   const BATCH = 100;
 
-  // Reclassify → SOCIAL_STUDIES
+  // Reclassify â†’ SOCIAL_STUDIES
   let ssUpdated = 0;
   for (let i = 0; i < toSocialStudies.length; i += BATCH) {
     const batch = toSocialStudies.slice(i, i + BATCH);
-    const res = await prisma.curriculumContent.updateMany({
+    const res = await governedCurriculum.updateMany({
       where: { id: { in: batch } },
       data: { subject: 'SOCIAL_STUDIES' },
     });
@@ -152,11 +154,11 @@ async function main() {
   }
   console.log(`\n  SOCIAL_STUDIES done: ${ssUpdated} updated`);
 
-  // Reclassify → LITERACY
+  // Reclassify â†’ LITERACY
   let litUpdated = 0;
   for (let i = 0; i < toLiteracy.length; i += BATCH) {
     const batch = toLiteracy.slice(i, i + BATCH);
-    const res = await prisma.curriculumContent.updateMany({
+    const res = await governedCurriculum.updateMany({
       where: { id: { in: batch } },
       data: { subject: 'LITERACY' },
     });

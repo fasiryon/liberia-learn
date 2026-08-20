@@ -2,7 +2,7 @@
  * Phase 2 fix (Item 1): make lesson sequencing visible on the demo path.
  *
  * The demo student (student1@cha.edu.lr) is scheduled `hero-*` showcase lessons,
- * all of which have unitId = null — so the unit-map sidebar and "This week's
+ * all of which have unitId = null â€” so the unit-map sidebar and "This week's
  * units" never appear for the exact lessons a principal opens. This script slots
  * each hero lesson into the front of a real, thematically-matching curriculum
  * unit (same subject + grade) by setting unitId + orderInUnit, WITHOUT touching
@@ -12,6 +12,8 @@
  * Run:  npx dotenv -e .env.production -- npx tsx scripts/phase2-map-hero-units.ts [--apply]
  */
 import { prisma } from "@/lib/db";
+import { createConservativeCurriculumMaintenanceClient } from "@/lib/curriculum/mutations/maintenanceClient";
+const governedCurriculum = createConservativeCurriculumMaintenanceClient("phase2-map-hero-units");
 
 const APPROVED = ["published", "APPROVED"];
 const APPLY = process.argv.includes("--apply");
@@ -60,7 +62,7 @@ async function main() {
       .filter((c) => c.unitId && isCleanUnitSlug(c.unitId) && c.count >= 2);
 
     if (candidates.length === 0) {
-      console.log(`✗ ${hero.contentId} (${hero.subject} G${hero.grade}) — no clean matching unit; leaving unmapped.`);
+      console.log(`âœ— ${hero.contentId} (${hero.subject} G${hero.grade}) â€” no clean matching unit; leaving unmapped.`);
       continue;
     }
 
@@ -79,25 +81,32 @@ async function main() {
     }
 
     console.log(
-      `→ ${hero.contentId}\n    maps to unit "${best.unitId}" (${best.count} lessons, kw-overlap=${Math.floor(bestScore)})` +
+      `â†’ ${hero.contentId}\n    maps to unit "${best.unitId}" (${best.count} lessons, kw-overlap=${Math.floor(bestScore)})` +
         (hero.unitId ? `  [was ${hero.unitId}]` : "")
     );
 
     if (APPLY) {
       // Prepend the hero as the opening lesson of the unit. Shift existing
       // orderInUnit up by 1 so numbering stays 1..N+1 and the hero is lesson 1.
-      await prisma.$transaction([
-        prisma.$executeRaw`UPDATE "CurriculumContent" SET "orderInUnit" = COALESCE("orderInUnit",0) + 1 WHERE "unitId" = ${best.unitId} AND "contentId" <> ${hero.contentId}`,
-        prisma.curriculumContent.update({
+      const existingInUnit = await prisma.curriculumContent.findMany({
+        where: { unitId: best.unitId, contentId: { not: hero.contentId } },
+        select: { id: true, orderInUnit: true },
+      });
+      for (const lesson of existingInUnit) {
+        await governedCurriculum.update({
+          where: { id: lesson.id },
+          data: { orderInUnit: (lesson.orderInUnit ?? 0) + 1 },
+        });
+      }
+      await governedCurriculum.update({
           where: { id: hero.id },
           data: { unitId: best.unitId, orderInUnit: 1 },
-        }),
-      ]);
-      console.log(`    ✓ applied.`);
+      });
+      console.log(`    âœ“ applied.`);
     }
   }
 
-  if (!APPLY) console.log(`\n(dry run — re-run with --apply to write)`);
+  if (!APPLY) console.log(`\n(dry run â€” re-run with --apply to write)`);
 }
 
 main().then(() => process.exit(0)).catch((e) => { console.error(e); process.exit(1); });

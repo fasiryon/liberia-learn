@@ -7,6 +7,8 @@ if (process.env.DIRECT_URL) {
 import { config } from "dotenv";
 import { createHash } from "crypto";
 import { PrismaClient } from "@prisma/client";
+import { createConservativeCurriculumMaintenanceClient } from "@/lib/curriculum/mutations/maintenanceClient";
+const governedCurriculum = createConservativeCurriculumMaintenanceClient("generate-missing-curriculum-content");
 import { routedCompletion } from "@/lib/ai/router";
 import { buildPrompt, getPromptMetadata, getSystemPrompt } from "@/lib/ai/promptRegistry";
 import {
@@ -359,7 +361,7 @@ async function recordNeedsReviewFailure(input: { lesson: PlannedMissingLesson; r
       approved: input.approved,
     },
   };
-  await prisma.curriculumContent.create({
+  await governedCurriculum.create({
     data: {
       contentId: input.lesson.plannedContentId,
       title: `${input.lesson.subject.replace(/_/g, " ")} Week ${input.lesson.weekNumber} Day ${input.lesson.dayNumber}`,
@@ -685,30 +687,17 @@ async function generateLesson(
   };
 
   if (persistenceAction === "created") {
-    await prisma.curriculumContent.create({
+    await governedCurriculum.create({
       data: createData,
     });
   } else if (persistenceAction === "replaced_thin_content") {
-    const preservedPlans = existing?.lessonPlans ?? [];
-    await prisma.$transaction(async (tx) => {
-      await tx.curriculumContent.delete({ where: { contentId: lesson.plannedContentId } });
-      await tx.curriculumContent.create({ data: createData });
-      if (preservedPlans.length > 0) {
-        await tx.curriculumLessonPlan.createMany({
-          data: preservedPlans.map((plan) => ({
-            weekId: plan.weekId,
-            curriculumContentId: lesson.plannedContentId,
-            dayNumber: plan.dayNumber,
-            lessonType: plan.lessonType,
-            mappedSource: plan.mappedSource,
-            orderIndex: plan.orderIndex,
-          })),
-          skipDuplicates: true,
-        });
-      }
+    const { contentId: _contentId, ...updateData } = createData;
+    await governedCurriculum.update({
+      where: { contentId: lesson.plannedContentId },
+      data: updateData,
     });
   } else if (persistenceAction === "updated_existing_phase6_draft") {
-    await prisma.curriculumContent.update({
+    await governedCurriculum.update({
       where: { contentId: lesson.plannedContentId },
       data: {
         ...writeData,

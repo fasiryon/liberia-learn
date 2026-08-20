@@ -37,6 +37,7 @@ export type LogAIInteractionInput = {
   promptKey?: string | null;
   promptVersion?: string | null;
   promptHash?: string | null;
+  generationCorrelationId?: string | null;
   contentVersion?: string | null;
   assessmentVersion?: string | null;
   calculationVersion?: string | null;
@@ -46,6 +47,7 @@ export type LogAIInteractionInput = {
   dedupeKey?: string | null;
   sourceEventId?: string | null;
   metadata?: JsonObject | null;
+  durable?: boolean;
 };
 
 export type RecordAiUsageInput = LogAIInteractionInput;
@@ -156,10 +158,14 @@ export async function logAIInteraction(input: LogAIInteractionInput) {
     aiInteractionLog?: { create?: (args: unknown) => Promise<unknown> };
   }).aiInteractionLog;
   const aiInteractionModel = (prisma as typeof prisma & {
-    aIInteraction?: { create?: (args: unknown) => Promise<unknown> };
+    aIInteraction?: {
+      create?: (args: unknown) => Promise<{ id: string }>;
+      findFirst?: (args: unknown) => Promise<{ id: string } | null>;
+    };
   }).aIInteraction;
 
   if (!aiInteractionLogModel?.create && !aiInteractionModel?.create) {
+    if (input.durable) throw new Error("AIInteraction persistence is unavailable");
     return null;
   }
 
@@ -186,66 +192,148 @@ export async function logAIInteraction(input: LogAIInteractionInput) {
     ...(input.metadata ?? {}),
   });
 
+  // One external provider invocation must produce at most one canonical
+  // AIInteraction row, enforced by the database, not a per-process check --
+  // the field must behave identically whether the two writes for the same
+  // invocation land in the same Node process (routedCompletion's own
+  // internal write racing a caller's own defensive durable write) or in two
+  // entirely different serverless instances/workers.
+  //
+  // dedupeKey (AIInteraction.dedupeKey) already carries a UNIQUE index
+  // (prisma/canonical/migrations/20260819_000001_p2c_ai_interaction_dedupekey_unique)
+  // and is reused here rather than introducing a third identifier: it was
+  // already the caller-supplied idempotency key for offline-sync dedup on
+  // this exact table (see groundedAnswerService.ts), so a provider
+  // invocation's dedupeKey defaults to its generationCorrelationId only
+  // when the caller hasn't already supplied its own dedupeKey for that
+  // other purpose. Standard Postgres NULL semantics mean any number of NULL
+  // dedupeKey rows (every call that mints neither) are unaffected by the
+  // constraint.
+  //
+  // Idempotent insert: try to create; if the database reports a unique
+  // violation on dedupeKey, another writer already won -- fetch and reuse
+  // that row instead of inserting a second one. This is atomic at the
+  // Postgres engine level (a real conflicting INSERT is guaranteed to fail
+  // with a real error, not a race window), so it is correct across any
+  // number of concurrent processes, not just within one.
+  //
+  // A repeated *persistence attempt* for the same invocation (same
+  // dedupeKey) coalesces to one row. A genuine *new* provider call always
+  // gets its own correlation id from routedCompletion, so distinct real
+  // calls -- even with byte-identical prompt/model/evidence -- are never
+  // coalesced; nothing here dedupes on content.
+  function isDedupeKeyUniqueViolation(error: unknown): boolean {
+    const err = error as { code?: string; meta?: { target?: unknown } } | null;
+    if (!err || err.code !== "P2002") return false;
+    const target = err.meta?.target;
+    if (typeof target === "string") return target.includes("dedupeKey");
+    if (Array.isArray(target)) return target.includes("dedupeKey");
+    return true; // conservative: treat any P2002 on this insert as the dedupeKey constraint
+  }
+
+  async function createInteractionRow(
+    correlationId: string | null,
+    dedupeKey: string | null
+  ): Promise<{ id: string; isNew: boolean }> {
+    const created = await aiInteractionModel!.create!({
+      data: {
+        schoolId: input.schoolId ?? null,
+        userId: input.userId ?? null,
+        studentId: input.studentId ?? input.userId ?? null,
+        route: input.route,
+        feature,
+        requestType,
+        guidanceLevel: input.guidanceLevel ?? null,
+        subject,
+        strandKey,
+        contentId: input.contentId ?? null,
+        lessonId: input.lessonId ?? null,
+        model: input.model ?? null,
+        provider: inferProvider(input.model, input.provider),
+        tier: input.tier ?? null,
+        hadFallback,
+        tokensUsed,
+        estimatedCostUSD,
+        latencyMs: input.latencyMs ?? null,
+        promptVersion: input.promptVersion ?? null,
+        contentVersion: input.contentVersion ?? null,
+        assessmentVersion: input.assessmentVersion ?? null,
+        calculationVersion: input.calculationVersion ?? null,
+        promptKey: input.promptKey ?? null,
+        promptHash: input.promptHash ?? null,
+        generationCorrelationId: correlationId,
+        clientEventId: input.clientEventId ?? null,
+        originalOccurredAt: toDate(input.originalTimestamp),
+        syncReceivedAt: toDate(input.syncReceivedAt),
+        dedupeKey,
+        sourceEventId: input.sourceEventId ?? null,
+        metadata: toJson(metadata),
+      },
+    });
+    return { id: created.id, isNew: true };
+  }
+
+  async function resolveInteractionRow(): Promise<{ id: string; isNew: boolean } | null> {
+    if (!aiInteractionModel?.create) return null;
+    const correlationId = input.generationCorrelationId?.trim() || null;
+    const dedupeKey = input.dedupeKey?.trim() || correlationId;
+
+    if (!dedupeKey) {
+      // No idempotency key available for this call at all (e.g. a
+      // non-curriculum feature with no correlation id and no caller-supplied
+      // dedupeKey) -- nothing to enforce against, always a fresh row.
+      return createInteractionRow(correlationId, null);
+    }
+
+    try {
+      return await createInteractionRow(correlationId, dedupeKey);
+    } catch (error) {
+      if (!isDedupeKeyUniqueViolation(error) || !aiInteractionModel.findFirst) throw error;
+      const existing = await aiInteractionModel.findFirst({ where: { dedupeKey } });
+      if (existing) return { id: existing.id, isNew: false };
+      throw error;
+    }
+  }
+
+  const interactionWrite = aiInteractionModel?.create
+    ? resolveInteractionRow()
+    : Promise.reject(new Error("AIInteraction persistence is unavailable"));
+
+  // Never let a rejection from interactionWrite propagate into the legacy-log
+  // branch below (which only needs to know isNew, not whether the caller's
+  // own durable-mode await should see a failure).
+  const interactionOutcome = interactionWrite.then(
+    (row) => ({ ok: true as const, row }),
+    () => ({ ok: false as const, row: null })
+  );
+
   const [legacyLog] = await Promise.all([
     aiInteractionLogModel?.create
-      ? aiInteractionLogModel
-          .create({
-            data: {
-              schoolId: input.schoolId ?? null,
-              userId: input.userId ?? null,
-              feature,
-              subject,
-              strandKey,
-              requestType,
-              endpoint: input.route,
-              guidanceLevel: input.guidanceLevel ?? null,
-              model: input.model ?? null,
-              tier: input.tier ?? null,
-              hadFallback,
-              tokensUsed,
-              estimatedCostUSD,
-            },
-          })
-          .catch(() => null)
+      ? interactionOutcome.then((outcome) =>
+          outcome.ok && outcome.row?.isNew
+            ? aiInteractionLogModel
+                .create({
+                  data: {
+                    schoolId: input.schoolId ?? null,
+                    userId: input.userId ?? null,
+                    feature,
+                    subject,
+                    strandKey,
+                    requestType,
+                    endpoint: input.route,
+                    guidanceLevel: input.guidanceLevel ?? null,
+                    model: input.model ?? null,
+                    tier: input.tier ?? null,
+                    hadFallback,
+                    tokensUsed,
+                    estimatedCostUSD,
+                  },
+                })
+                .catch(() => null)
+            : null
+        )
       : Promise.resolve(null),
-    aiInteractionModel?.create
-      ? aiInteractionModel
-          .create({
-            data: {
-              schoolId: input.schoolId ?? null,
-              userId: input.userId ?? null,
-              studentId: input.studentId ?? input.userId ?? null,
-              route: input.route,
-              feature,
-              requestType,
-              guidanceLevel: input.guidanceLevel ?? null,
-              subject,
-              strandKey,
-              contentId: input.contentId ?? null,
-              lessonId: input.lessonId ?? null,
-              model: input.model ?? null,
-              provider: inferProvider(input.model, input.provider),
-              tier: input.tier ?? null,
-              hadFallback,
-              tokensUsed,
-              estimatedCostUSD,
-              latencyMs: input.latencyMs ?? null,
-              promptVersion: input.promptVersion ?? null,
-              contentVersion: input.contentVersion ?? null,
-              assessmentVersion: input.assessmentVersion ?? null,
-              calculationVersion: input.calculationVersion ?? null,
-              promptKey: input.promptKey ?? null,
-              promptHash: input.promptHash ?? null,
-              clientEventId: input.clientEventId ?? null,
-              originalOccurredAt: toDate(input.originalTimestamp),
-              syncReceivedAt: toDate(input.syncReceivedAt),
-              dedupeKey: input.dedupeKey ?? null,
-              sourceEventId: input.sourceEventId ?? null,
-              metadata: toJson(metadata),
-            },
-          })
-          .catch(() => null)
-      : Promise.resolve(null),
+    input.durable ? interactionWrite : interactionWrite.catch(() => null),
     logLearningEvent({
       schoolId: input.schoolId ?? null,
       userId: input.userId ?? null,

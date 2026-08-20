@@ -1,5 +1,7 @@
 import { config } from "dotenv";
 import { prisma } from "@/lib/db";
+import { createConservativeCurriculumMaintenanceClient } from "@/lib/curriculum/mutations/maintenanceClient";
+const governedCurriculum = createConservativeCurriculumMaintenanceClient("enrich-generated-lessons");
 import { enrichGeneratedLesson, countLessonWords } from "@/lib/curriculum/generatedLessonEnricher";
 
 config({ path: ".env.local" });
@@ -151,7 +153,7 @@ async function main() {
       });
 
       if (!dryRun) {
-        await prisma.curriculumContent.update({
+        await governedCurriculum.update({
           where: { id: row.id },
           data: { payload: result.payload },
         });

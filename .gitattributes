@@ -3,3 +3,22 @@
 *.ps1 text eol=crlf
 *.bat text eol=crlf
 *.cmd text eol=crlf
+
+# git diff --check whitespace exemptions.
+#
+# docs/P2B_QUALIFIED_REVIEW_OPERATIONS_FINAL_DESIGN.md and
+# docs/ops/P2A_PRODUCTION_CUTOVER_RECORD.md use the standard Markdown
+# hard-line-break convention (two trailing spaces at end of line) in their
+# metadata header blocks -- real, intentional formatting, not accidental
+# whitespace. Stripping it would merge those lines into one run-together
+# paragraph when rendered.
+docs/P2B_QUALIFIED_REVIEW_OPERATIONS_FINAL_DESIGN.md -whitespace
+docs/ops/P2A_PRODUCTION_CUTOVER_RECORD.md -whitespace
+
+# prisma/canonical/migrations/20260817_000001_p2c_waec_baseline_alignment is
+# already applied to staging; its checksum is recorded in the staging
+# _prisma_migrations ledger. Editing its bytes (even to drop a trailing
+# blank line) would drift that checksum, so the file is intentionally left
+# byte-for-byte unchanged and exempted here instead. See
+# docs/ops/P2C_BLOCKER_CLOSURE_RECORD.md for the full reasoning.
+prisma/canonical/migrations/20260817_000001_p2c_waec_baseline_alignment/migration.sql -whitespace

@@ -6,6 +6,9 @@ import {
   type LogAIInteractionInput,
 } from "@/lib/ai/interactionLog";
 import { openAiBreaker, groqBreaker } from "@/lib/ai/circuit-breaker";
+import { randomUUID } from "crypto";
+import { provenanceWritersEnabled } from "@/lib/curriculum/mutations/repository";
+import { getPrompt } from "@/lib/ai/promptRegistry";
 
 let _groq: any = null;
 function getGroq() {
@@ -36,6 +39,7 @@ export type AiUsageContext = {
   promptKey?: string | null;
   promptVersion?: string | null;
   promptHash?: string | null;
+  generationCorrelationId?: string | null;
   contentVersion?: string | null;
   assessmentVersion?: string | null;
   calculationVersion?: string | null;
@@ -66,6 +70,7 @@ export interface RouterResult {
   outputTokens: number;
   estimatedCostUSD: number;
   budgetBlocked?: boolean;
+  generationCorrelationId?: string;
 }
 
 function completionTimeoutMs(aiUsage?: AiUsageContext) {
@@ -132,6 +137,15 @@ function buildTelemetryInput(
   },
   fallbackUsed: boolean
 ): LogAIInteractionInput {
+  const registeredPrompt = usage.promptKey
+    ? (() => {
+        try {
+          return getPrompt(usage.promptKey, usage.promptVersion ?? undefined);
+        } catch {
+          return null;
+        }
+      })()
+    : null;
   return {
     route: usage.route,
     feature: usage.feature,
@@ -152,8 +166,9 @@ function buildTelemetryInput(
     tier: completion.tier,
     fallbackUsed,
     promptKey: usage.promptKey ?? null,
-    promptVersion: usage.promptVersion ?? null,
-    promptHash: usage.promptHash ?? null,
+    promptVersion: usage.promptVersion ?? registeredPrompt?.version ?? null,
+    promptHash: usage.promptHash ?? registeredPrompt?.hash ?? null,
+    generationCorrelationId: usage.generationCorrelationId ?? null,
     contentVersion: usage.contentVersion ?? null,
     assessmentVersion: usage.assessmentVersion ?? null,
     calculationVersion: usage.calculationVersion ?? null,
@@ -163,6 +178,7 @@ function buildTelemetryInput(
     dedupeKey: usage.dedupeKey ?? null,
     sourceEventId: usage.sourceEventId ?? null,
     metadata: usage.metadata ?? null,
+    durable: usage.feature === "curriculum" && provenanceWritersEnabled(),
   };
 }
 
@@ -342,6 +358,9 @@ export async function routedEmbedding(
 }
 
 export async function routedCompletion(opts: RouterOptions): Promise<RouterResult> {
+  if (opts.aiUsage?.feature === "curriculum" && !opts.aiUsage.generationCorrelationId) {
+    opts.aiUsage = { ...opts.aiUsage, generationCorrelationId: randomUUID() };
+  }
   const lastUserMsg =
     [...opts.messages].reverse().find((message) => message.role === "user")?.content ?? "";
   const classification = opts.forceSmartTier
@@ -353,7 +372,7 @@ export async function routedCompletion(opts: RouterOptions): Promise<RouterResul
   if (opts.aiUsage) {
     const budget = await checkBudget(opts.aiUsage.feature, opts.aiUsage.schoolId ?? null);
     if (!budget.allowed) {
-      logAIInteraction(
+      const budgetLog = logAIInteraction(
         buildTelemetryInput(
           opts.aiUsage,
           {
@@ -365,7 +384,14 @@ export async function routedCompletion(opts: RouterOptions): Promise<RouterResul
           },
           true
         )
-      ).catch((e) => console.warn("Log skipped:", e instanceof Error ? e.message : String(e)));
+      );
+      if (provenanceWritersEnabled()) {
+        await budgetLog;
+      } else {
+        budgetLog.catch((e) =>
+          console.warn("Log skipped:", e instanceof Error ? e.message : String(e)),
+        );
+      }
 
       return {
         content:
@@ -377,6 +403,7 @@ export async function routedCompletion(opts: RouterOptions): Promise<RouterResul
         outputTokens: 0,
         estimatedCostUSD: 0,
         budgetBlocked: true,
+        generationCorrelationId: opts.aiUsage.generationCorrelationId ?? undefined,
       };
     }
   }
@@ -478,10 +505,20 @@ export async function routedCompletion(opts: RouterOptions): Promise<RouterResul
   }
 
   if (opts.aiUsage) {
-    logAIInteraction(
+    const interactionLog = logAIInteraction(
       buildTelemetryInput(opts.aiUsage, response, providerFallbackUsed)
-    ).catch((e) => console.warn("Log skipped:", e instanceof Error ? e.message : String(e)));
+    );
+    if (opts.aiUsage.feature === "curriculum" && provenanceWritersEnabled()) {
+      await interactionLog;
+    } else {
+      interactionLog.catch((e) =>
+        console.warn("Log skipped:", e instanceof Error ? e.message : String(e)),
+      );
+    }
   }
 
-  return response;
+  return {
+    ...response,
+    generationCorrelationId: opts.aiUsage?.generationCorrelationId ?? undefined,
+  };
 }

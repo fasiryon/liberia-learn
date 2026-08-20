@@ -3,6 +3,9 @@ import { inflateRawSync, inflateSync } from "zlib";
 
 import { prisma } from "@/lib/db";
 import { slugify } from "@/lib/curriculum-helpers";
+import { upsertCurriculumContent } from "@/lib/curriculum/mutations/repository";
+import { appendCurriculumEvidence } from "@/lib/curriculum/mutations/evidenceWriter";
+import { appendCurriculumGovernanceEvent } from "@/lib/curriculum/mutations/governanceWriter";
 
 type ImporterUser = {
   id: string;
@@ -464,22 +467,9 @@ export async function persistImportedCurriculum(params: {
       seenHashes.add(hash);
 
       const contentId = `import-${imported.subject.toLowerCase()}-g${imported.grade}-${slugify(unit.title)}-${lessonIndex + 1}-${hash.slice(0, 8)}`;
-      const record = await prisma.curriculumContent.upsert({
-        where: { contentId },
-        update: {
-          title: lesson.title,
-          grade: imported.grade,
-          subject: imported.subject,
-          contentType: "lesson",
-          status: "pending_approval",
-          version: version.versionName,
-          payload,
-          hash,
-          unitId: `import-${slugify(unit.title)}`,
-          orderInUnit: unitIndex * 100 + lessonIndex + 1,
-          versionId: version.id,
-        },
-        create: {
+      const write = await upsertCurriculumContent(
+        { contentId },
+        {
           contentId,
           title: lesson.title,
           grade: imported.grade,
@@ -495,14 +485,60 @@ export async function persistImportedCurriculum(params: {
           lessonType: "core",
           teacherCreated: user.role === "TEACHER",
           versionId: version.id,
+          schoolId: user.schoolId ?? null,
         },
-        select: {
-          id: true,
-          contentId: true,
-          title: true,
+        {
+          title: lesson.title,
+          grade: imported.grade,
+          subject: imported.subject,
+          contentType: "lesson",
+          status: "pending_approval",
+          version: version.versionName,
+          payload,
+          hash,
+          unitId: `import-${slugify(unit.title)}`,
+          orderInUnit: unitIndex * 100 + lessonIndex + 1,
+          versionId: version.id,
         },
-      });
-      created.push(record);
+        {
+          revisionKind: "IMPORT",
+          originKind: "IMPORTED",
+          actorUserId: user.id,
+          authorUserId: user.id,
+          generatorName: "curriculumImporter",
+          generatorVersion: "1.0.0",
+          hasImportEvidence: true,
+          requestedCompleteness: "PARTIAL",
+          auditAction: "curriculum.revision.imported",
+          auditDetails: { sourceFormat: imported.sourceFormat, sourceFileName: imported.sourceFileName },
+          idempotencyKey: `import:${contentId}:${hash}`,
+          schoolId: user.schoolId ?? null,
+        },
+      );
+      if (write.revision) {
+        await appendCurriculumEvidence({
+          contentId,
+          revisionId: write.revision.id,
+          evidenceType: "DOCUMENT",
+          evidencePurpose: "IMPORT_ORIGIN",
+          title: `Imported source: ${imported.sourceFileName}`,
+          documentRef: imported.sourceFileName,
+          contentHash: imported.rawTextHash,
+          addedByUserId: user.id,
+          idempotencyKey: `import-evidence:${contentId}:${hash}`,
+          schoolId: user.schoolId ?? null,
+        });
+        await appendCurriculumGovernanceEvent({
+          contentId,
+          revisionId: write.revision.id,
+          eventType: "SUBMITTED",
+          actorType: "USER",
+          actorUserId: user.id,
+          idempotencyKey: `import-submitted:${contentId}:${hash}`,
+          schoolId: user.schoolId ?? null,
+        });
+      }
+      created.push({ id: write.content.id, contentId: write.content.contentId, title: write.content.title });
     }
   }
 

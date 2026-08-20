@@ -3,10 +3,13 @@ import { randomUUID } from "crypto";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { requireRole } from "@/lib/auth";
-import { logAudit } from "@/lib/audit";
 import { prisma } from "@/lib/db";
 import { handleApiError } from "@/lib/errors/apiErrorHandler";
 import { sendPushToUser } from "@/lib/push/sendPush";
+import { appendCurriculumGovernanceEvent } from "@/lib/curriculum/mutations/governanceWriter";
+import { provenanceWritersEnabled } from "@/lib/curriculum/mutations/repository";
+import { assertCurriculumSchoolScope } from "@/lib/curriculum/review/tenantScope";
+import { enforceLegacyReviewAdapter } from "@/lib/curriculum/review/legacyAdapter";
 
 // State machine: maps current status → allowed target statuses
 const ALLOWED_TRANSITIONS: Record<string, string[]> = {
@@ -40,11 +43,14 @@ export async function PATCH(
         title: true,
         editedById: true,
         editReviewStatus: true,
+        schoolId: true,
+        editedBy: { select: { schoolId: true } },
       },
     });
     if (!lesson) {
       return NextResponse.json({ error: "not_found" }, { status: 404 });
     }
+    if (Object.prototype.hasOwnProperty.call(lesson, "schoolId")) assertCurriculumSchoolScope(user, lesson);
 
     const currentStatus = lesson.editReviewStatus ?? "null";
     const allowed = ALLOWED_TRANSITIONS[currentStatus] ?? [];
@@ -57,32 +63,50 @@ export async function PATCH(
 
     const isApprove = body.editReviewStatus === "APPROVED";
     const isReject = body.editReviewStatus === "REJECTED";
+    if (isApprove || isReject) {
+      await enforceLegacyReviewAdapter({
+        contentId: lesson.contentId,
+        user,
+        requestedAction: isApprove ? "APPROVE" : "REJECT",
+        idempotencyKey: `content-review:${traceId}`,
+      });
+    }
 
     const rejectionReason = isReject && body.editReviewStatus === "REJECTED" ? body.rejectionReason : undefined;
+    const projection = {
+      editReviewStatus: body.editReviewStatus,
+      status: isApprove ? "published" : "draft",
+      ...(isApprove ? { publishedAt: new Date() } : {}),
+      ...(isReject ? { rejectionReason } : {}),
+    };
 
-    const updated = await prisma.curriculumContent.update({
-      where: { id: lesson.id },
-      data: {
-        editReviewStatus: body.editReviewStatus,
-        status: isApprove ? "published" : "draft",
-        ...(isApprove ? { publishedAt: new Date() } : {}),
-        ...(isReject ? { rejectionReason } : {}),
-      },
-    });
-
-    await logAudit({
-      userId: user.id,
-      action: isApprove
-        ? "teacher.lesson.published"
-        : isReject
-        ? "teacher.lesson.rejected"
-        : "teacher.lesson.resubmit_allowed",
-      resourceType: "curriculum",
-      resourceId: lesson.contentId,
+    await appendCurriculumGovernanceEvent({
+      contentId: lesson.contentId,
+      eventType: isApprove ? "APPROVED" : isReject ? "REJECTED" : "SUBMITTED",
+      actorType: "USER",
+      actorUserId: user.id,
+      ...(isApprove
+        ? { approvalBasis: "HUMAN_REVIEW" as const, reviewAuthority: "PLATFORM" as const }
+        : {}),
+      ...(isReject ? { reason: rejectionReason } : {}),
+      reviewerRoleSnapshot: "ADMIN",
+      idempotencyKey: `content-review:${traceId}`,
       schoolId: user.schoolId ?? null,
       traceId,
-      details: isReject ? { rejectionReason } : {},
+      compatibility: {
+        where: { id: lesson.id },
+        projection,
+        auditAction: isApprove
+          ? "teacher.lesson.published"
+          : isReject
+            ? "teacher.lesson.rejected"
+            : "teacher.lesson.resubmit_allowed",
+        auditDetails: isReject ? { rejectionReason } : {},
+      },
     });
+    const updated = provenanceWritersEnabled()
+      ? await prisma.curriculumContent.findUniqueOrThrow({ where: { id: lesson.id } })
+      : { ...lesson, ...projection };
 
     if (lesson.editedById) {
       const title = lesson.title ?? "Your lesson";

@@ -1,0 +1,55 @@
+{
+  "startedAt": "2026-08-19T17:11:33.640Z",
+  "stagingProjectRef": "yonpfzjczoffhrgibxkz",
+  "sharedDedupeKey": "7c408f26-2b3d-46a4-bb50-17a0732e8737",
+  "distinctDedupeKey": "2248a2c6-dd13-4164-a55e-8e6fce2105ea",
+  "PRE": {
+    "interactionCount": 0,
+    "legacyLogCount": 0
+  },
+  "POST": {
+    "interactionCount": 2,
+    "legacyLogCount": 2
+  },
+  "telemetryDelta": {
+    "AIInteraction": 2,
+    "AiInteractionLog": 2
+  },
+  "writerA": {
+    "exitCode": 0,
+    "output": "{\"writerLabel\":\"WriterA\",\"dedupeKey\":\"7c408f26-2b3d-46a4-bb50-17a0732e8737\",\"result\":{\"id\":\"cmt0cm89s0002vopwr1vsguhu\",\"schoolId\":null,\"userId\":null,\"feature\":\"curriculum\",\"subject\":\"general\",\"strandKey\":\"general\",\"requestType\":\"p2c_distributed_dedup_proof\",\"endpoint\":\"p2c.distributedDedupProof\",\"guidanceLevel\":null,\"model\":\"fixture-gpt-4o-mini\",\"tier\":\"smart\",\"hadFallback\":false,\"tokensUsed\":1700,\"estimatedCostUSD\":0,\"timestamp\":\"2026-08-19T17:11:30.225Z\"}}"
+  },
+  "writerB": {
+    "exitCode": 0,
+    "output": "prisma:error \nInvalid `prisma.aIInteraction.create()` invocation:\n\n\nUnique constraint failed on the fields: (`dedupeKey`)\n{\"writerLabel\":\"WriterB\",\"dedupeKey\":\"7c408f26-2b3d-46a4-bb50-17a0732e8737\",\"result\":null}"
+  },
+  "writerC": {
+    "exitCode": 0,
+    "output": "{\"writerLabel\":\"WriterC\",\"dedupeKey\":\"2248a2c6-dd13-4164-a55e-8e6fce2105ea\",\"result\":{\"id\":\"cmt0cma870002vogk5nr66xja\",\"schoolId\":null,\"userId\":null,\"feature\":\"curriculum\",\"subject\":\"general\",\"strandKey\":\"general\",\"requestType\":\"p2c_distributed_dedup_proof\",\"endpoint\":\"p2c.distributedDedupProof\",\"guidanceLevel\":null,\"model\":\"fixture-gpt-4o-mini\",\"tier\":\"smart\",\"hadFallback\":false,\"tokensUsed\":1700,\"estimatedCostUSD\":0,\"timestamp\":\"2026-08-19T17:11:32.799Z\"}}"
+  },
+  "sharedDedupeKeyRowCount": 1,
+  "sharedDedupeKeyRows": [
+    {
+      "id": "cmt0cm7zf0000vopw4418tfqi",
+      "metadata": {
+        "fixture": true,
+        "writerLabel": "WriterA",
+        "normalizedFeature": "curriculum"
+      },
+      "createdAt": "2026-08-19T17:11:30.025Z"
+    }
+  ],
+  "distinctDedupeKeyRowCount": 1,
+  "distinctDedupeKeyRows": [
+    {
+      "id": "cmt0cma0h0000vogkkdywo7lt",
+      "metadata": {
+        "fixture": true,
+        "writerLabel": "WriterC",
+        "normalizedFeature": "curriculum"
+      },
+      "createdAt": "2026-08-19T17:11:32.657Z"
+    }
+  ],
+  "conflictBehavior": "both writers completed successfully -- one performed the real INSERT, the other received a database-reported unique-constraint conflict and resolved to the same row (see application logs for which)"
+}

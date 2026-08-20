@@ -11,6 +11,7 @@
     "generate-icons": "node scripts/generate-icons.mjs",
     "test": "vitest run",
     "test:watch": "vitest",
+    "validate:changed": "node scripts/validate-changed.mjs",
     "seed:demo": "ts-node --compiler-options {\"module\":\"CommonJS\"} scripts/seed-demo.ts",
     "embed:curriculum": "tsx scripts/embed-curriculum.ts",
     "audit:lessons": "tsx scripts/audit-lesson-depth.ts",
@@ -31,7 +32,13 @@
     "load-test:export-env": "tsx scripts/export-load-test-credentials.ts",
     "load-test:peak": "k6 run load-tests/peak.js",
     "load-test:ai-burst": "k6 run load-tests/ai-burst.js",
-    "security:break-glass": "tsx scripts/manage-privileged-break-glass.ts"
+    "security:break-glass": "tsx scripts/manage-privileged-break-glass.ts",
+    "p2a:staging:preflight": "tsx scripts/p2a-staging-preflight.ts",
+    "p2a:writer-guard": "tsx scripts/p2a-writer-guard.ts",
+    "p2a:backfill": "tsx scripts/p2a-backfill-provenance.ts",
+    "p2a:staging:e2e": "tsx scripts/p2a-staging-e2e.ts",
+    "p2a:canonical:verify": "powershell.exe -NoProfile -ExecutionPolicy Bypass -File scripts/verify-pre-p2a-canonical-baseline.ps1",
+    "test:p2a:canonical": "vitest run __tests__/pre-p2a.canonical-baseline.test.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.95.1",

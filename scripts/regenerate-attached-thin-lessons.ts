@@ -86,6 +86,8 @@ function extractMatchableText(payload: any): string {
 
 async function main() {
   const { prisma } = await import("@/lib/db");
+  const { createConservativeCurriculumMaintenanceClient } = await import("@/lib/curriculum/mutations/maintenanceClient");
+  const governedCurriculum = createConservativeCurriculumMaintenanceClient("regenerate-attached-thin-lessons");
   const { generateCurriculumPayload } = await import("@/lib/ai/curriculum-factory");
   const { validateLessonDepth, extractLessonText } = await import("@/lib/curriculum/regenerationQualityGate");
 
@@ -175,7 +177,7 @@ async function main() {
         const newHash = contentHash(nextPayload);
 
         // Atomic write - ONLY title/payload/hash/updatedAt. status is never touched.
-        await prisma.curriculumContent.update({
+        await governedCurriculum.update({
           where: { id: lesson.id },
           data: {
             title: typeof (generated as any).title === "string" ? (generated as any).title : lesson.title,

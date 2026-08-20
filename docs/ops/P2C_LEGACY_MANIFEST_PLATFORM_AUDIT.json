@@ -1,0 +1,15 @@
+{
+  "verifiedAt": "2026-08-19T17:15:13.285Z",
+  "method": "Read-only: for every prisma/legacy-migration-manifest.json entry, `git rev-parse HEAD:<path>` confirms the recorded gitBlobSha still points to the right object, then `git cat-file -s/-p <gitBlobSha>` (scripts/lib/canonicalMigrationBytes.ts) reads the canonical blob's byte size and content directly from the git object database (never the checked-out worktree file, so this is identical on Windows/Linux/macOS regardless of core.autocrlf or .gitattributes checkout normalization).",
+  "totalEntries": 128,
+  "byStatus": {
+    "MATCH": 128,
+    "BLOB_SHA_DRIFT": 0,
+    "PLATFORM_NORMALIZATION_MISMATCH": 0,
+    "OTHER_HASH_MISMATCH": 0,
+    "BLOB_UNREADABLE": 0
+  },
+  "verdict": "ALL_MATCH",
+  "rootCauseHypothesis": "PLATFORM_NORMALIZATION_MISMATCH entries all show blobShaMatches=true (the recorded gitBlobSha correctly references the real git object) but both bytesMatch=false and sha256Matches=false together, with canonicalBlobBytes consistently smaller than recordedFileBytes -- the signature of CRLF-vs-LF line-ending normalization. The manifest's fileBytes/sha256 fields for these entries were captured from a Windows/CRLF checkout, not the canonical LF git blob.",
+  "nonMatchingEntries": []
+}

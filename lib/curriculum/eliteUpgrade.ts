@@ -1,10 +1,12 @@
-import { createHash } from "crypto";
+import { createHash, randomUUID } from "crypto";
 import { z } from "zod";
 import { prisma } from "@/lib/db";
 import { routedCompletion } from "@/lib/ai/router";
 import { buildPrompt, getPromptMetadata, getSystemPrompt } from "@/lib/ai/promptRegistry";
 import { curriculumFramework } from "@/lib/curriculum/framework";
 import { generateMediaArtifactsBestEffort } from "@/lib/curriculum/mediaGeneration";
+import { createCurriculumContent } from "@/lib/curriculum/mutations/repository";
+import { appendCurriculumGovernanceEvent } from "@/lib/curriculum/mutations/governanceWriter";
 
 export const ELITE_QUALITY_WEIGHTS = {
   clarity: 15,
@@ -797,6 +799,7 @@ async function runEliteUpgradeCompletion(params: {
   sourcePayload: Record<string, any>;
   userId: string;
   schoolId?: string | null;
+  generationCorrelationId: string;
 }) {
   const promptSourcePayload = buildElitePromptSourcePayload(params.sourcePayload);
   const sourceLessonJson = JSON.stringify(
@@ -850,6 +853,7 @@ async function runEliteUpgradeCompletion(params: {
     promptHash: systemMeta.hash,
     contentVersion: params.source.version,
     requestType: "elite_curriculum_upgrade" as const,
+    generationCorrelationId: params.generationCorrelationId,
   };
 
   let lastInvalidJsonContent = "";
@@ -874,6 +878,7 @@ async function runEliteUpgradeCompletion(params: {
       return {
         ...parseEliteUpgradeResponse(completion.content),
         promptMetadata: [systemMeta, userMeta],
+        completionModel: completion.model,
       };
     } catch (error: any) {
       if (!isRetriableEliteUpgradeParseError(error)) {
@@ -943,6 +948,7 @@ async function runEliteUpgradeCompletion(params: {
         return {
           ...parseEliteUpgradeResponse(repaired.content),
           promptMetadata: [systemMeta, userMeta],
+          completionModel: repaired.model,
         };
       } catch (error: any) {
         repairErrorMessage = error?.message ?? String(error);
@@ -961,6 +967,8 @@ async function tryRefineWeakUpgrade(params: {
   source: { contentId: string; subject: string; version: string | null };
   userId: string;
   schoolId?: string | null;
+  generationCorrelationId: string;
+  firstPassModel: string;
 }) {
   if (params.firstScore.total >= 90 || params.firstScore.weakCategories.length === 0) {
     return {
@@ -968,6 +976,7 @@ async function tryRefineWeakUpgrade(params: {
       qualityScore: params.firstScore,
       refinement: { attempted: false, applied: false },
       promptMetadata: [] as ReturnType<typeof getPromptMetadata>[],
+      completionModel: params.firstPassModel,
     };
   }
 
@@ -1000,6 +1009,7 @@ async function tryRefineWeakUpgrade(params: {
         promptHash: refinementMeta.hash,
         contentVersion: params.source.version,
         requestType: "elite_curriculum_refinement",
+        generationCorrelationId: params.generationCorrelationId,
         metadata: {
           systemPromptKey: systemMeta.key,
           weakCategories: params.firstScore.weakCategories,
@@ -1016,6 +1026,7 @@ async function tryRefineWeakUpgrade(params: {
         previousScore: params.firstScore,
       },
       promptMetadata: [systemMeta, refinementMeta],
+      completionModel: completion.model,
     };
   } catch (error: any) {
     return {
@@ -1028,11 +1039,13 @@ async function tryRefineWeakUpgrade(params: {
         previousScore: params.firstScore,
       },
       promptMetadata: [systemMeta, refinementMeta],
+      completionModel: params.firstPassModel,
     };
   }
 }
 
 export async function createEliteUpgradeDraft(input: CreateEliteUpgradeDraftInput) {
+  const generationCorrelationId = randomUUID();
   const source = await prisma.curriculumContent.findUnique({
     where: { contentId: input.contentId },
     select: {
@@ -1065,6 +1078,7 @@ export async function createEliteUpgradeDraft(input: CreateEliteUpgradeDraftInpu
     sourcePayload,
     userId: input.userId,
     schoolId: input.schoolId,
+    generationCorrelationId,
   });
   const firstPassPayload = normalizeUpgradePayload(sourcePayload, firstPass.response, source);
   const firstPassContentScore = scoreLessonQuality(firstPassPayload);
@@ -1074,6 +1088,8 @@ export async function createEliteUpgradeDraft(input: CreateEliteUpgradeDraftInpu
     source,
     userId: input.userId,
     schoolId: input.schoolId,
+    generationCorrelationId,
+    firstPassModel: firstPass.completionModel,
   });
   const upgrade = refined.response;
   const upgradedPayload = normalizeUpgradePayload(sourcePayload, upgrade, source);
@@ -1163,8 +1179,10 @@ export async function createEliteUpgradeDraft(input: CreateEliteUpgradeDraftInpu
     },
   });
 
-  const draft = await prisma.curriculumContent.create({
-    data: {
+  const primaryPrompt = getPromptMetadata("curriculum.lesson_upgrade_elite_v1.system");
+  const completionModel = refined.completionModel ?? firstPass.completionModel ?? null;
+  const write = await createCurriculumContent(
+    {
       contentId,
       title: upgrade.lesson.title,
       grade: source.grade,
@@ -1176,8 +1194,40 @@ export async function createEliteUpgradeDraft(input: CreateEliteUpgradeDraftInpu
       moeAlignments: source.moeAlignments ?? [],
       hash: payloadHash,
       versionId: version.id,
+      schoolId: input.schoolId ?? null,
     },
-  });
+    {
+      revisionKind: "AI_UPGRADE",
+      originKind: "AI_UPGRADED",
+      actorUserId: input.userId,
+      authorUserId: input.userId,
+      generatorName: "createEliteUpgradeDraft",
+      generatorVersion: "1.0.0",
+      aiProvider: completionModel ? (completionModel.startsWith("llama") ? "groq" : "openai") : null,
+      aiModel: completionModel,
+      generatedAt: new Date(),
+      generationCorrelationId,
+      primaryPromptKey: primaryPrompt.key,
+      primaryPromptVersion: primaryPrompt.version,
+      primaryPromptHash: primaryPrompt.hash,
+      requestedCompleteness: completionModel ? "VERIFIED" : "PARTIAL",
+      auditAction: "curriculum.revision.ai_upgrade",
+      idempotencyKey: `elite-upgrade:${contentId}`,
+      schoolId: input.schoolId ?? null,
+    },
+  );
+  const draft = write.content;
+  if (write.revision) {
+    await appendCurriculumGovernanceEvent({
+      contentId: draft.contentId,
+      revisionId: write.revision.id,
+      eventType: "SUBMITTED",
+      actorType: "USER",
+      actorUserId: input.userId,
+      idempotencyKey: `elite-upgrade-submit:${contentId}`,
+      schoolId: input.schoolId ?? null,
+    });
+  }
 
   return {
     ok: true,

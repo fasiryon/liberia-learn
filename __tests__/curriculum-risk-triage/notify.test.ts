@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const mockFindMany = vi.hoisted(() => vi.fn());
+const mockFindUnique = vi.hoisted(() => vi.fn());
 const mockSendEmail = vi.hoisted(() =>
   vi.fn(
     async (_input: Record<string, unknown>): Promise<{ ok: boolean; id?: string }> => ({
@@ -11,7 +12,7 @@ const mockSendEmail = vi.hoisted(() =>
 );
 const mockWarn = vi.hoisted(() => vi.fn());
 
-vi.mock("@/lib/db", () => ({ prisma: { user: { findMany: mockFindMany } } }));
+vi.mock("@/lib/db", () => ({ prisma: { user: { findMany: mockFindMany }, curriculumContent: { findUnique: mockFindUnique } } }));
 vi.mock("@/lib/email", () => ({ sendEmail: mockSendEmail }));
 vi.mock("@/lib/logger", () => ({ logger: { warn: mockWarn, error: vi.fn(), info: vi.fn() } }));
 
@@ -19,22 +20,21 @@ import { notifyRiskReviewers } from "@/lib/curriculum/riskTriageNotify";
 
 beforeEach(() => {
   vi.clearAllMocks();
+  mockFindUnique.mockResolvedValue({ schoolId: "school-1", editedBy: null });
 });
 
 describe("notifyRiskReviewers", () => {
-  it("emails users with curriculum approval permission and platform admins", async () => {
+  it("emails explicit higher-authority and same-school recipients", async () => {
     mockFindMany.mockResolvedValue([{ email: "moe@example.com" }, { email: "admin@example.com" }]);
 
     await notifyRiskReviewers("content-42", 6, ["grade_band_g1_3", "first_of_kind_cell"]);
 
     const callArgs = mockFindMany.mock.calls[0][0];
-    expect(callArgs.where.OR[0].role.in).toEqual(
-      expect.arrayContaining(["ADMIN", "MOE_OFFICIAL", "MOE_SUPER_ADMIN"])
-    );
-    expect(callArgs.where.OR[0].role.in).not.toEqual(
-      expect.arrayContaining(["TEACHER", "STUDENT", "GUARDIAN"])
-    );
-    expect(callArgs.where.OR[1]).toEqual({ isPlatformAdmin: true });
+    expect(callArgs.where.OR).toEqual(expect.arrayContaining([
+      { isPlatformAdmin: true },
+      { role: { in: ["MOE_OFFICIAL", "MOE_SUPER_ADMIN"] } },
+      { role: "ADMIN", schoolId: "school-1" },
+    ]));
     expect(mockSendEmail).toHaveBeenCalledTimes(2);
     expect(mockSendEmail.mock.calls[0]![0]).toEqual(
       expect.objectContaining({

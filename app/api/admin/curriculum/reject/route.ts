@@ -3,18 +3,20 @@ import { z } from "zod";
 import { requireUser } from "@/lib/auth";
 import { assertPermission, PERMISSIONS } from "@/lib/permissions";
 import { prisma } from "@/lib/db";
-import { logAuditRequired } from "@/lib/audit";
+import { appendCurriculumGovernanceEvent } from "@/lib/curriculum/mutations/governanceWriter";
 import { isCurriculumFeedbackEnabled } from "@/lib/serverFlags";
 import { deleteCurriculumContentRagChunks } from "@/lib/ai/rag/ragIngestionService";
 import { Redis } from "@upstash/redis";
 import { COVERAGE_CACHE_KEY } from "@/app/api/admin/curriculum/coverage/route";
+import { assertCurriculumSchoolScope } from "@/lib/curriculum/review/tenantScope";
+import { enforceLegacyReviewAdapter } from "@/lib/curriculum/review/legacyAdapter";
 
 let redis: Redis | null = null;
 try { redis = Redis.fromEnv(); } catch { /* Redis not configured */ }
 
 const RequestSchema = z.object({
   contentId: z.string().min(1),
-  rejectionReason: z.string().max(500).optional(),
+  rejectionReason: z.string().trim().min(1).max(500).optional(),
 });
 
 /**
@@ -40,35 +42,50 @@ export async function POST(req: Request) {
 
     const record = await prisma.curriculumContent.findUnique({
       where: { contentId },
+      include: { editedBy: { select: { schoolId: true } } },
     });
     if (!record) {
       return NextResponse.json({ error: "Not found" }, { status: 404 });
     }
+    if (Object.prototype.hasOwnProperty.call(record, "schoolId")) assertCurriculumSchoolScope(user, record);
+    await enforceLegacyReviewAdapter({
+      contentId,
+      user,
+      requestedAction: "REJECT",
+      idempotencyKey: typeof body.idempotencyKey === "string" ? body.idempotencyKey : `reject:${contentId}`,
+    });
 
     const payload = (record.payload as any) ?? {};
-    const updatedPayload = {
-      ...payload,
-      approvalStatus: "REJECTED",
-      rejectedByUserId: user.id,
-      rejectedAt: new Date().toISOString(),
-    };
-
-    await prisma.$transaction(async (tx) => {
-      await tx.curriculumContent.update({
-        where: { contentId },
-        data: {
+    const rejectedAt = new Date();
+    await appendCurriculumGovernanceEvent({
+      contentId,
+      eventType: "REJECTED",
+      actorType: "USER",
+      actorUserId: user.id,
+      reason: rejectionReason,
+      reviewAuthority:
+        user.role === "MOE_OFFICIAL" || user.role === "MOE_SUPER_ADMIN"
+          ? "MOE"
+          : user.isPlatformAdmin
+            ? "PLATFORM"
+            : "SCHOOL",
+      reviewerRoleSnapshot: user.role,
+      schoolId: user.schoolId ?? null,
+      idempotencyKey:
+        typeof body.idempotencyKey === "string" ? body.idempotencyKey : undefined,
+      compatibility: {
+        projection: {
           status: "rejected",
-          payload: updatedPayload,
+          payload: {
+            ...payload,
+            approvalStatus: "REJECTED",
+            rejectedByUserId: user.id,
+            rejectedAt: rejectedAt.toISOString(),
+          },
         },
-      });
-      await logAuditRequired({
-        userId: user.id,
-        action: "curriculum.reject",
-        resourceType: "curriculum",
-        resourceId: contentId,
-        details: { hasRejectionReason: !!rejectionReason },
-        schoolId: user.schoolId ?? undefined,
-      }, tx);
+        auditAction: "curriculum.reject",
+        auditDetails: { hasRejectionReason: Boolean(rejectionReason) },
+      },
     });
 
     try {

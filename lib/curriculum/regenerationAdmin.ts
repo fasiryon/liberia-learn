@@ -1,7 +1,8 @@
 import { GetQueueAttributesCommand, SQSClient } from "@aws-sdk/client-sqs";
 import { prisma } from "@/lib/db";
-import { logAuditRequired } from "@/lib/audit";
 import { validateRegeneratedLesson, extractLessonText } from "@/lib/curriculum/regenerationQualityGate";
+import { appendCurriculumGovernanceEvent } from "@/lib/curriculum/mutations/governanceWriter";
+import { curriculumSchoolScopeWhere } from "@/lib/curriculum/review/tenantScope";
 
 type JsonRecord = Record<string, any>;
 
@@ -231,6 +232,7 @@ export async function listCurriculumDrafts(filters: {
   subject?: string;
   status?: string;
   limit?: number;
+  schoolScope?: string;
 }) {
   const rows = await prisma.curriculumContent.findMany({
     where: {
@@ -238,6 +240,9 @@ export async function listCurriculumDrafts(filters: {
       status: filters.status ?? "DRAFT",
       ...(filters.grade ? { grade: filters.grade } : {}),
       ...(filters.subject ? { subject: filters.subject.toUpperCase() } : {}),
+      ...(filters.schoolScope
+        ? { OR: [{ schoolId: filters.schoolScope }, { schoolId: null, editedBy: { schoolId: filters.schoolScope } }] }
+        : {}),
     },
     orderBy: [{ grade: "asc" }, { subject: "asc" }, { updatedAt: "desc" }],
     take: Math.min(Math.max(filters.limit ?? 50, 1), 100),
@@ -265,13 +270,13 @@ export async function reviewCurriculumDraft(input: {
   contentId?: string;
   contentIds?: string[];
   reason?: string;
-  actor: { id: string; schoolId?: string | null };
+  actor: { id: string; role: string; schoolId?: string | null; isPlatformAdmin?: boolean };
 }) {
   const ids = input.action === "bulk_approve" ? input.contentIds ?? [] : input.contentId ? [input.contentId] : [];
   if (ids.length === 0) throw Object.assign(new Error("contentId required"), { status: 400 });
 
   const records = await prisma.curriculumContent.findMany({
-    where: { contentId: { in: ids }, contentType: "lesson" },
+    where: { contentId: { in: ids }, contentType: "lesson", ...curriculumSchoolScopeWhere(input.actor) },
   });
   const byId = new Map(records.map((record) => [record.contentId, record]));
   const results: Array<{ contentId: string; ok: boolean; status?: string; error?: string }> = [];
@@ -289,67 +294,92 @@ export async function reviewCurriculumDraft(input: {
         results.push({ contentId, ok: false, error: quality.reason ?? "quality_gate_failed" });
         continue;
       }
-      const payload = {
-        ...((record.payload as JsonRecord) ?? {}),
-        approvalStatus: "APPROVED",
-        approvedByUserId: input.actor.id,
-        approvedAt: new Date().toISOString(),
-      };
-      await prisma.$transaction(async (tx) => {
-        await tx.curriculumContent.update({ where: { contentId }, data: { status: "published", payload } });
-        await logAuditRequired({
-          userId: input.actor.id,
-          action: "curriculum.review.approve",
-          resourceType: "curriculum",
-          resourceId: contentId,
-          schoolId: input.actor.schoolId ?? undefined,
-          details: { bulk: input.action === "bulk_approve", contentLength: quality.contentLength },
-        }, tx);
+      const approvedAt = new Date();
+      await appendCurriculumGovernanceEvent({
+        contentId,
+        eventType: "APPROVED",
+        actorType: "USER",
+        actorUserId: input.actor.id,
+        approvalBasis: "HUMAN_REVIEW",
+        reviewAuthority: "PLATFORM",
+        reviewerRoleSnapshot: "ADMIN",
+        idempotencyKey: `regeneration-approve:${contentId}:${Date.now()}`,
+        schoolId: input.actor.schoolId ?? null,
+        compatibility: {
+          projection: {
+            status: "published",
+            payload: {
+              ...((record.payload as JsonRecord) ?? {}),
+              approvalStatus: "APPROVED",
+              approvedByUserId: input.actor.id,
+              approvedAt: approvedAt.toISOString(),
+            },
+          },
+          auditAction: "curriculum.review.approve",
+          auditDetails: {
+            bulk: input.action === "bulk_approve",
+            contentLength: quality.contentLength,
+          },
+        },
       });
       results.push({ contentId, ok: true, status: "published" });
       continue;
     }
 
     if (input.action === "needs_review") {
-      const payload = {
-        ...((record.payload as JsonRecord) ?? {}),
-        approvalStatus: "NEEDS_REVIEW",
-        sentBackByUserId: input.actor.id,
-        sentBackAt: new Date().toISOString(),
-        sentBackReason: input.reason ?? null,
-      };
-      await prisma.$transaction(async (tx) => {
-        await tx.curriculumContent.update({ where: { contentId }, data: { status: "NEEDS_REVIEW", payload } });
-        await logAuditRequired({
-          userId: input.actor.id,
-          action: "curriculum.review.needs_review",
-          resourceType: "curriculum",
-          resourceId: contentId,
-          schoolId: input.actor.schoolId ?? undefined,
-          details: { hasReason: Boolean(input.reason) },
-        }, tx);
+      if (!input.reason?.trim()) throw Object.assign(new Error("reason required"), { status: 400 });
+      await appendCurriculumGovernanceEvent({
+        contentId,
+        eventType: "RETURNED_FOR_REVIEW",
+        actorType: "USER",
+        actorUserId: input.actor.id,
+        reason: input.reason,
+        reviewerRoleSnapshot: "ADMIN",
+        idempotencyKey: `regeneration-return:${contentId}:${Date.now()}`,
+        schoolId: input.actor.schoolId ?? null,
+        compatibility: {
+          projection: {
+            status: "NEEDS_REVIEW",
+            payload: {
+              ...((record.payload as JsonRecord) ?? {}),
+              approvalStatus: "NEEDS_REVIEW",
+              sentBackByUserId: input.actor.id,
+              sentBackAt: new Date().toISOString(),
+              sentBackReason: input.reason ?? null,
+            },
+          },
+          auditAction: "curriculum.review.needs_review",
+          auditDetails: { hasReason: Boolean(input.reason) },
+        },
       });
       results.push({ contentId, ok: true, status: "NEEDS_REVIEW" });
       continue;
     }
 
-    const payload = {
-      ...((record.payload as JsonRecord) ?? {}),
-      approvalStatus: "REJECTED",
-      rejectedByUserId: input.actor.id,
-      rejectedAt: new Date().toISOString(),
-      rejectionReason: input.reason ?? null,
-    };
-    await prisma.$transaction(async (tx) => {
-      await tx.curriculumContent.update({ where: { contentId }, data: { status: "rejected", payload } });
-      await logAuditRequired({
-        userId: input.actor.id,
-        action: "curriculum.review.reject",
-        resourceType: "curriculum",
-        resourceId: contentId,
-        schoolId: input.actor.schoolId ?? undefined,
-        details: { hasReason: Boolean(input.reason) },
-      }, tx);
+    if (!input.reason?.trim()) throw Object.assign(new Error("reason required"), { status: 400 });
+    await appendCurriculumGovernanceEvent({
+      contentId,
+      eventType: "REJECTED",
+      actorType: "USER",
+      actorUserId: input.actor.id,
+      reason: input.reason,
+      reviewerRoleSnapshot: "ADMIN",
+      idempotencyKey: `regeneration-reject:${contentId}:${Date.now()}`,
+      schoolId: input.actor.schoolId ?? null,
+      compatibility: {
+        projection: {
+          status: "rejected",
+          payload: {
+            ...((record.payload as JsonRecord) ?? {}),
+            approvalStatus: "REJECTED",
+            rejectedByUserId: input.actor.id,
+            rejectedAt: new Date().toISOString(),
+            rejectionReason: input.reason ?? null,
+          },
+        },
+        auditAction: "curriculum.review.reject",
+        auditDetails: { hasReason: Boolean(input.reason) },
+      },
     });
     results.push({ contentId, ok: true, status: "rejected" });
   }

@@ -6,7 +6,7 @@ import { logAudit } from "@/lib/audit";
 import { liberianize } from "@/lib/localization/liberia-context";
 import { standardizeTone } from "@/lib/localization/tone-standardizer";
 import { gradeToBand } from "@/lib/moe/alignment-engine";
-import { createHash } from "crypto";
+import { createHash, randomUUID } from "crypto";
 import {
   slugify,
   generateLabs,
@@ -26,6 +26,8 @@ import {
   rateLimitExceededResponse,
 } from "@/lib/rateLimit";
 import { logger } from "@/lib/logger";
+import { provenanceWritersEnabled, upsertCurriculumContent } from "@/lib/curriculum/mutations/repository";
+import { appendCurriculumGovernanceEvent } from "@/lib/curriculum/mutations/governanceWriter";
 
 export const dynamic = "force-dynamic";
 
@@ -187,22 +189,13 @@ export async function POST(req: Request) {
     const contentId = `full_pack-${subject.toLowerCase()}-g${grade}-${slugify(topic)}`;
     const payloadStr = JSON.stringify(packPayload);
     const hash = createHash("sha256").update(payloadStr).digest("hex").slice(0, 40);
-    const dbStatus = approvalStatus === "APPROVED" ? "published" : "pending_approval";
+    const traceId = randomUUID();
+    const writersEnabled = provenanceWritersEnabled();
+    const dbStatus = approvalStatus === "APPROVED" && !writersEnabled ? "published" : "pending_approval";
 
-    const record = await prisma.curriculumContent.upsert({
-      where: { contentId },
-      update: {
-        title: typeof packPayload.title === "string" ? packPayload.title : null,
-        grade,
-        subject,
-        payload: packPayload as any,
-        moeAlignments: [],
-        hash,
-        version: new Date().toISOString().slice(0, 10),
-        status: dbStatus,
-        contentType: "full_pack",
-      },
-      create: {
+    const write = await upsertCurriculumContent(
+      { contentId },
+      {
         contentId,
         title: typeof packPayload.title === "string" ? packPayload.title : null,
         grade,
@@ -214,7 +207,51 @@ export async function POST(req: Request) {
         moeAlignments: [],
         hash,
       },
-    });
+      {
+        title: typeof packPayload.title === "string" ? packPayload.title : null,
+        grade,
+        subject,
+        payload: packPayload as any,
+        moeAlignments: [],
+        hash,
+        version: new Date().toISOString().slice(0, 10),
+        status: dbStatus,
+        contentType: "full_pack",
+      },
+      {
+        revisionKind: "DETERMINISTIC_ENRICHMENT",
+        originKind: "DETERMINISTIC_GENERATED",
+        actorUserId: user.id,
+        generatorName: "generateFullPack",
+        generatorVersion: "1.0.0",
+        requestedCompleteness: "VERIFIED",
+        auditAction: "curriculum.revision.full_pack_generated",
+        idempotencyKey: `full-pack:${contentId}:${traceId}`,
+        schoolId: user.schoolId ?? null,
+        traceId,
+      },
+    );
+    let record = write.content;
+    if (writersEnabled) {
+      await appendCurriculumGovernanceEvent({
+        contentId,
+        revisionId: write.revision?.id,
+        eventType: approvalStatus === "APPROVED" ? "APPROVED" : "SUBMITTED",
+        actorType: "USER",
+        actorUserId: user.id,
+        ...(approvalStatus === "APPROVED"
+          ? {
+              approvalBasis: user.role === "ADMIN" ? "HUMAN_REVIEW" as const : "SCHOOL_POLICY" as const,
+              reviewAuthority: user.role === "ADMIN" ? "PLATFORM" as const : "SCHOOL" as const,
+            }
+          : {}),
+        reviewerRoleSnapshot: user.role,
+        idempotencyKey: `full-pack-governance:${contentId}:${traceId}`,
+        schoolId: user.schoolId ?? null,
+        traceId,
+      });
+      record = await prisma.curriculumContent.findUniqueOrThrow({ where: { contentId } });
+    }
 
     if (record.status === "published") {
       if (isQueueConfigured()) {

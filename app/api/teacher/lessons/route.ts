@@ -19,6 +19,12 @@ import { enqueueJob, isQueueConfigured, JobType } from "@/lib/queue";
 import { isTeacherGenerationEnabled } from "@/lib/serverFlags";
 import { logger } from "@/lib/logger";
 import { enqueueCourseThumbnailGeneration } from "@/lib/courses/courseThumbnailQueue";
+import {
+  createCurriculumContent,
+  provenanceWritersEnabled,
+  updateCurriculumContent,
+} from "@/lib/curriculum/mutations/repository";
+import { appendCurriculumGovernanceEvent } from "@/lib/curriculum/mutations/governanceWriter";
 
 const TEACHER_SUBJECTS = [
   "MATH",
@@ -44,6 +50,17 @@ const SaveLessonSchema = z.object({
   subject: z.enum(TEACHER_SUBJECTS).optional(),
   grade: z.number().int().min(1).max(12).optional(),
   learningObjectives: z.array(z.string().trim().min(1).max(300)).max(8).optional(),
+  generationLineage: z.object({
+    generatorName: z.string().min(1),
+    generatorVersion: z.string().min(1),
+    aiProvider: z.string().min(1),
+    aiModel: z.string().min(1),
+    generatedAt: z.string().datetime(),
+    generationCorrelationId: z.string().uuid(),
+    primaryPromptKey: z.string().min(1),
+    primaryPromptVersion: z.string().min(1),
+    primaryPromptHash: z.string().regex(/^[a-f0-9]{64}$/),
+  }).optional(),
 });
 
 function teacherGenerationDisabledResponse() {
@@ -126,12 +143,13 @@ export async function POST(req: NextRequest) {
           })
         : null;
 
+    const writersEnabled = provenanceWritersEnabled();
     const payload = {
       title: body.title,
       body: body.content,
       assessmentQuestions: body.assessmentQuestions,
       estimatedMinutes: body.estimatedMinutes,
-      approvalStatus: body.status === "published" ? "APPROVED" : "DRAFT",
+      approvalStatus: body.status === "published" && !writersEnabled ? "APPROVED" : "DRAFT",
       createdByRole: "TEACHER",
       createdByUserId: user.id,
       standardCode: body.standardCode ?? null,
@@ -155,7 +173,7 @@ export async function POST(req: NextRequest) {
       grade: classGrade,
       subject: body.subject ?? classRecord.subject,
       contentType: "lesson",
-      status: body.status === "published" ? "published" : "draft",
+      status: body.status === "published" && !writersEnabled ? "published" : "draft",
       version: new Date().toISOString().slice(0, 10),
       payload: payload as any,
       moeAlignments: standard
@@ -187,17 +205,66 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    const record = existing
-      ? await prisma.curriculumContent.update({
-          where: { contentId: body.contentId! },
-          data: updateData,
-        })
-      : await prisma.curriculumContent.create({
-          data: {
+    const lineage = body.generationLineage;
+    const governed = existing
+      ? await updateCurriculumContent(
+          { contentId: body.contentId! },
+          updateData,
+          {
+            revisionKind: "HUMAN_EDIT",
+            originKind: lineage ? "AI_GENERATED" : "HUMAN_AUTHORED",
+            actorUserId: user.id,
+            authorUserId: user.id,
+            requestedCompleteness: lineage ? "VERIFIED" :
+              (existing.payload as any)?.metadata?.generationMethod === "ai_teacher_cocreation"
+                ? "UNVERIFIED" : "VERIFIED",
+            ...(lineage ? { ...lineage, generatedAt: new Date(lineage.generatedAt) } : {}),
+            auditAction: "curriculum.revision.teacher_edit",
+            auditDetails: { classId: classRecord.id },
+            schoolId: user.schoolId ?? null,
+            traceId,
+            idempotencyKey: `teacher-edit:${traceId}`,
+          },
+        )
+      : await createCurriculumContent(
+          {
             contentId: buildTeacherContentId(body.classId, body.title),
             ...updateData,
           },
-        });
+          {
+            revisionKind: "HUMAN_CREATE",
+            originKind: lineage ? "AI_GENERATED" : "HUMAN_AUTHORED",
+            actorUserId: user.id,
+            authorUserId: user.id,
+            requestedCompleteness: lineage ? "VERIFIED" : "VERIFIED",
+            ...(lineage ? { ...lineage, generatedAt: new Date(lineage.generatedAt) } : {}),
+            auditAction: "curriculum.revision.teacher_create",
+            auditDetails: { classId: classRecord.id },
+            schoolId: user.schoolId ?? null,
+            traceId,
+            idempotencyKey: `teacher-create:${traceId}`,
+          },
+        );
+    let record = governed.content;
+
+    if (body.status === "published" && writersEnabled) {
+      const canPublish = governed.provenance?.provenanceCompleteness === "VERIFIED";
+      await appendCurriculumGovernanceEvent({
+        contentId: record.contentId,
+        revisionId: governed.revision?.id,
+        eventType: canPublish ? "APPROVED" : "SUBMITTED",
+        actorType: "USER",
+        actorUserId: user.id,
+        ...(canPublish
+          ? { approvalBasis: "SCHOOL_POLICY" as const, reviewAuthority: "SCHOOL" as const }
+          : {}),
+        reviewerRoleSnapshot: "TEACHER",
+        idempotencyKey: `teacher-publish:${traceId}`,
+        schoolId: user.schoolId ?? null,
+        traceId,
+      });
+      record = await prisma.curriculumContent.findUniqueOrThrow({ where: { id: record.id } });
+    }
 
     const previousPayload = (existing?.payload ?? {}) as Record<string, unknown>;
     const changedThumbnailInputs =
@@ -216,7 +283,7 @@ export async function POST(req: NextRequest) {
     await runBestEffortAiWork(record.id, record.contentId, record.status);
 
     let scheduledWorkId: string | null = null;
-    if (body.status === "published") {
+    if (record.status === "published") {
       const scheduledWork = await prisma.scheduledWork.create({
         data: {
           contentId: record.contentId,

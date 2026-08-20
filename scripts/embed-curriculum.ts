@@ -7,6 +7,7 @@ if (process.env.DIRECT_URL) {
 import { Prisma } from "@prisma/client";
 import { embedLesson } from "@/lib/ai/rag/embeddingService";
 import { syncCurriculumContentRagChunks } from "@/lib/ai/rag/ragIngestionService";
+import { requeuePublishedCurriculumEmbeddings } from "@/lib/curriculum/mutations/repository";
 import { prisma } from "@/lib/db";
 
 const args = new Set(process.argv.slice(2));
@@ -33,14 +34,7 @@ async function requeuePublishedEmbeddingsIfRequested() {
     return;
   }
 
-  const result = await prisma.$executeRaw(
-    Prisma.sql`
-      UPDATE "CurriculumContent"
-      SET "embedding" = NULL,
-          "embeddedAt" = NULL
-      WHERE LOWER(TRIM("status")) IN ('published', 'approved', 'accepted')
-    `
-  );
+  const result = await requeuePublishedCurriculumEmbeddings();
 
   console.log("[EMBED_CURRICULUM] Requeued published lesson embeddings", {
     updatedRows: Number(result ?? 0),
