@@ -1,0 +1,79 @@
+{
+  "runId": "d9c5b5c6-17e1-43b7-9d66-55322c6a92fa",
+  "startedAt": "2026-08-20T15:23:51.634Z",
+  "completedAt": "2026-08-20T15:24:10.401Z",
+  "productionProjectRef": "bnphuinpvgpmebcsvmsp",
+  "spendCapUSD": 1,
+  "actualCostUSD": 0.00035055,
+  "invocationId": "1149cfda-f6d9-4d86-8d7b-d0219b02a4d4",
+  "timestamp": "2026-08-20T15:23:54.061Z",
+  "provider": "gpt-4o-mini",
+  "tier": "smart",
+  "inputTokens": 1477,
+  "outputTokens": 215,
+  "promptKey": "curriculum.waecBaselineAlignment.system",
+  "promptVersion": "1.2.0",
+  "promptHash": "69967b4e7282d2760ef05b61280b35c8e9022a76516960c27addf43c9f5c76e8",
+  "evidence": [
+    {
+      "id": "moe-g79-sets",
+      "authorityType": "LIBERIA_MOE",
+      "canonicalUrl": "http://www.moe.gov.lr/wp-content/uploads/2019/09/GRADE-7-9.zip",
+      "sourceVersionId": "cmt1nt6l20005vops4gkqbcyu",
+      "locator": "Math 7-9.pdf, Semester One, Grade 9, Period I, Topic: TWO-SET PROBLEMS, page 37",
+      "excerpt": "Learners are able to apply the concepts of sets to solve simple two-set problems using Venn diagram, find the complement of a set and represent it on the Venn diagram.",
+      "verificationStatus": "VERIFIED",
+      "evidenceSpecificity": "TOPIC_LEVEL"
+    },
+    {
+      "id": "waec-ljhsce-subject-table",
+      "authorityType": "WAEC_LIBERIA",
+      "canonicalUrl": "https://waecliberia.org.lr/ljhsce/",
+      "sourceVersionId": "cmt1nt71i000bvopsetunrs7k",
+      "locator": "LJHSCE subject table",
+      "excerpt": "Mathematics (code 210) is one of four compulsory subjects examined at LJHSCE.",
+      "verificationStatus": "VERIFIED",
+      "evidenceSpecificity": "SUBJECT_LEVEL"
+    }
+  ],
+  "rawModelOutput": {
+    "relationshipType": "DIRECT",
+    "coverage": "FULL",
+    "depthRelation": "MEETS_BASELINE",
+    "cognitiveDimensions": [
+      "APPLICATION",
+      "PROCEDURAL_FLUENCY"
+    ],
+    "rationale": "The MOE objective explicitly requires learners to apply concepts of sets and solve two-set problems with Venn diagrams, aligning directly with WAEC's syllabus coverage, which confirms the teaching of Sets at Grade 9.",
+    "objectiveEvidenceTerms": [
+      "apply",
+      "problems"
+    ],
+    "baselineEvidenceTerms": [
+      "mathematics",
+      "subject"
+    ],
+    "evidenceRefs": [
+      "moe-g79-sets",
+      "waec-ljhsce-subject-table"
+    ],
+    "confidence": 0.8,
+    "overfitToExamMechanics": false,
+    "prerequisiteGaps": [],
+    "authorityLabel": "AI_ASSESSED_ALIGNMENT",
+    "externalApprovalClaimed": false
+  },
+  "validatedResult": null,
+  "outcome": "FAIL_CLOSED_REJECTED: guard/schema correctly rejected raw output: TOPIC_LEVEL_CLAIM_WITHOUT_TOPIC_LEVEL_EVIDENCE:relationshipType",
+  "telemetryPersisted": true,
+  "criteria": {
+    "realProviderResponse": true,
+    "exactlyOneAIInteractionRow": true,
+    "exactlyOneAiInteractionLogRow": true,
+    "guardNeverAcceptedOverreach": true,
+    "zeroNewAlignmentRows": true,
+    "zeroNewCoverageRows": true,
+    "zeroNewGovernanceEventRows": true
+  },
+  "allPass": true
+}

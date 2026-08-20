@@ -5,6 +5,33 @@ Live execution tracking for the final closeout program.
 
 ## Resume here
 
+- **P2-C PRODUCTION CUTOVER COMPLETE — FEATURE REMAINS DISABLED — READY FOR
+  ACTIVATION DECISION (2026-08-20).** Merged to `main` at `bd570cbd`
+  (+ tooling commit `6c420e64`). Full record:
+  `docs/ops/P2C_PRODUCTION_CUTOVER_RECORD.md`. All 4 previously-missing
+  P2-C migrations applied live (checksums match canonical files exactly);
+  production seeded per `docs/ops/P2C_PRODUCTION_SEED_MANIFEST.md`
+  categories B-F (4 frameworks / 7 sources+versions / 17 subjects — one
+  fewer than the manifest's stated 18, a necessary consequence of excluding
+  the 5th merged framework, documented in the cutover record / 17
+  objectives / 16 competencies / 1 alignment / 2 learning targets); a real,
+  pre-existing production bug found and fixed in passing (`/api/moe/policies`
+  and `/api/moe/override` were already live on `main` referencing tables
+  that didn't exist in the DB until this cutover's first migration);
+  RLS enabled + anon/authenticated grants revoked on the 13 new tables
+  (RLS was off by default on the new tables — same gap class as the
+  2026-08-18 RLS exposure incident, fixed here for these specifically);
+  `P2C_CURRICULUM_BENCHMARKING_ENABLED` positively re-confirmed absent
+  (resolves false) before and after; one real $1-capped AI canary call
+  ($0.000351 actual) where the model attempted an overreach and the
+  deterministic guard correctly caught it live — PASS on all 7 criteria.
+  Two items explicitly not reached this pass: the small staging-only
+  WASSCE data-hygiene correction (still open, low priority — doesn't
+  affect production), and Sentry MCP verification (needs interactive
+  OAuth). **Next: a separate, explicit human decision on whether to flip
+  `P2C_CURRICULUM_BENCHMARKING_ENABLED` to `true`.** Not automatic, not
+  bundled with this pass.
+
 - **P2-C PRE-CUTOVER PREPARATION COMPLETE — PRODUCTION RUNBOOK FROZEN
   (2026-08-19, later same day).** Branch `codex/p2c-waec-baseline-alignment`.
   Full record: `docs/ops/P2C_PRECUTOVER_PREPARATION_RECORD.md`. Follows the
