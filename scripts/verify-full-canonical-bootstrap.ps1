@@ -48,7 +48,9 @@ function Query-Scalar {
   param([string]$Sql)
   # Windows PowerShell removes embedded double quotes when marshalling native
   # arguments unless they are escaped for the child process command line.
-  $nativeSql = $Sql.Replace('"', '\"')
+  # PowerShell Core on Linux preserves them and would pass the backslashes
+  # through to PostgreSQL as invalid SQL.
+  $nativeSql = if ($env:OS -eq "Windows_NT") { $Sql.Replace('"', '\"') } else { $Sql }
   $output = & docker exec $containerName psql -h 127.0.0.1 -X -At -v ON_ERROR_STOP=1 -U postgres -d $database -c $nativeSql
   if ($LASTEXITCODE -ne 0) { throw "PostgreSQL scalar query failed" }
   return (($output -join "`n").Trim())
