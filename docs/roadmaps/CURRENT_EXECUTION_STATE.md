@@ -5,6 +5,22 @@ Live execution tracking for the final closeout program.
 
 ## Resume here
 
+- **LEARNER EXPERIENCE V2 INTERACTIVE SIMULATION & VIRTUAL LAB RUNTIME:
+  ARCHITECTURE CAPTURED, IMPLEMENTATION DEFERRED (2026-08-20).** Dedicated
+  documentation branch `docs/learner-v2-simulation-runtime`. The canonical
+  `docs/product/LEARNER_EXPERIENCE_V2_INTERACTIVE_RUNTIME.md` now captures a
+  reusable data-driven runtime across Learn/Practice/Assessment modes,
+  action/state/procedure scoring evidence, computing and cross-subject labs,
+  age adaptation, 2D/3D strategy, tool permissions, Curriculum V2/mastery
+  boundaries, offline/accessibility requirements, teacher integration, and
+  P2/P5 governance. Repository reconciliation records three existing seams to
+  converge: 12 typed lab registry entries within 19 public lab identifiers,
+  narrow lesson `SimulationDefinition` rendering, and database-backed assigned
+  practical labs. Documentation only: no runtime code, Prisma schema,
+  migration, database, feature flag, deployment, staging, or production
+  change. This capture does not interrupt or supersede the active P2-A/B/C
+  integrity remediation below and does not authorize Learner V2 Phase A.
+
 - **P2-A/B/C INTEGRITY REMEDIATION AND LAYERED SCHEMA CONVERGENCE IN
   PROGRESS (2026-08-20).** Work is isolated on
   `codex/p2abc-integrity-remediation`; production and staging have not been

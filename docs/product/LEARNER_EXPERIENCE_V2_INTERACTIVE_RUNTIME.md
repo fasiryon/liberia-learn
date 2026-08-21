@@ -4,7 +4,8 @@
 No runtime code, schema, migration, or production configuration changed to
 produce this document.
 
-**Captured:** 2026-08-14.
+**Captured:** 2026-08-14. **Interactive simulation runtime capture added:**
+2026-08-20.
 
 **Do not drop this program during P2/P5 execution.** It is not a duplicate of
 Curriculum V2 or Global Pedagogy Intelligence; it is the rendering layer both
@@ -101,6 +102,438 @@ demonstrate mastery. The experience should adapt to grade, age, subject,
 objective, learner mastery, device, connectivity, accessibility needs, and
 assessment rules.
 
+## Interactive Simulation & Virtual Lab Runtime
+
+### Status and core principle
+
+This section is an architecture capture, not an implementation authorization.
+It refines the future Learner Experience V2 contract while the current
+foundation sequence continues.
+
+> When a concept can meaningfully be learned by doing, LiberiaLearn should
+> allow the learner to do it.
+
+The target learning progression is:
+
+`READ -> WATCH -> EXPLORE -> PRACTICE -> DO -> DEMONSTRATE MASTERY`
+
+It must not collapse to `READ -> MULTIPLE CHOICE -> SCORE`. Multiple choice
+remains useful when recognition is the appropriate evidence, but it is one
+interaction among many. The same authored interactive experience should be
+reusable, under different policies, in lessons, guided practice, assignments,
+quizzes, exams, remediation, mastery checks, and virtual laboratories.
+
+### One definition, three execution modes
+
+The preferred architecture separates the simulation definition from the
+execution policy. One definition should ideally run in all three modes:
+
+| Mode | Guidance and feedback | Attempts | Evidence and integrity |
+|---|---|---|---|
+| `LEARN` | Guided interaction, demonstrations, explanations, narration where appropriate, hints, Help Me Understand, and contextual tools | Unlimited or configurable | Records useful learning signals without treating exploration as a controlled assessment |
+| `PRACTICE` | Reduced guidance with immediate or delayed feedback; optional hints | Configurable | Produces mastery evidence; hint use may lower evidence confidence under a future policy, but no weighting is fixed here |
+| `ASSESSMENT` | Controlled environment; no hints unless policy or accommodation permits | Enforced by assessment policy | Captures action history, state transitions, final state, timing only where pedagogically valid, permitted tools, integrity signals, and scoring evidence |
+
+Mode policy must control hints, feedback timing, retry rules, tool permissions,
+narration, explanations, solution reveal, state reset, accommodations, event
+capture, scoring, and integrity behavior. It must not require three separate
+React implementations of the same environment.
+
+### Interaction taxonomy
+
+The future interaction contract must support at least:
+
+- `MULTIPLE_CHOICE`
+- `MULTI_SELECT`
+- `TRUE_FALSE`
+- `FREE_RESPONSE`
+- `NUMERIC_RESPONSE`
+- `MATCHING`
+- `DRAG_DROP`
+- `ORDERING`
+- `HOTSPOT`
+- `DIAGRAM_LABELING`
+- `GRAPH_INTERACTION`
+- `MEASUREMENT`
+- `CODE_EXECUTION`
+- `SIMULATION`
+- `VIRTUAL_LAB`
+
+Additional primitives found useful during repository and product analysis are
+fill-in-the-blank, dropdown completion, categorization, image selection,
+timeline ordering, table or grid response, equation or symbolic response,
+drawing or construction, voice response, handwriting, file or artifact
+submission, branching scenarios, terminal or command-console interaction,
+data-table and spreadsheet manipulation, packet or log analysis, and
+sensor/time-series interpretation. These are design vocabulary, not an enum
+or database migration in this sprint. Phase A must decide which are base
+primitives, which are composed experiences, and which require specialized
+renderers.
+
+### Simulation execution and evidence model
+
+The conceptual execution loop is:
+
+`Initial State -> Learner Actions -> State Transitions -> Final State -> Validation / Scoring -> Mastery Evidence`
+
+The definition owns allowed objects, controls, actions, transitions, and
+validation rules. The execution policy owns mode-specific permissions. The
+runtime produces a deterministic event record. A scorer interprets that
+record without mutating the simulation itself. Mastery consumes the resulting
+evidence without owning rendering or assessment policy.
+
+A simulation may evaluate any relevant subset of:
+
+- correct final state;
+- correct procedure and required intermediate states;
+- sequence of actions;
+- unsafe or prohibited actions;
+- unnecessary actions;
+- number of attempts or resets;
+- hint and scaffold usage;
+- time only where speed is instructionally relevant;
+- successful diagnosis and troubleshooting;
+- recovery from mistakes;
+- explanation or reasoning after completion; and
+- integrity or accommodation context needed to interpret the attempt fairly.
+
+No activity is required to use every dimension. A Grade 1 manipulative, a
+chemistry safety procedure, and a network troubleshooting exam need different
+evidence policies.
+
+Action capture should eventually distinguish learner intent, accepted or
+rejected action, before-state reference, after-state reference, timestamp or
+logical sequence, tool use, hint/scaffold context, safety consequence, and
+offline synchronization identity. Published definitions and scoring rules
+must be version-addressable so an attempt can always be evaluated against the
+exact contract the learner received.
+
+### Data-driven authoring preference
+
+The target is a reusable, data-driven engine capable of executing thousands of
+authored activities, not a bespoke React application for every question.
+Conceptual responsibilities include:
+
+- `InteractiveActivity`: learning objective, mode eligibility, curriculum and
+  provenance links, accessibility alternatives, and renderer selection.
+- `SimulationDefinition`: environment, objects, controls, starting state,
+  valid actions, rendering requirements, and offline requirements.
+- `SimulationState`: versioned serializable state with explicit derived versus
+  authoritative fields.
+- `SimulationAction`: typed learner intent with validation and safety bounds.
+- `StateTransition`: deterministic accepted transition or explicit rejection.
+- `ValidationRule`: state, procedure, safety, or reasoning condition.
+- `ScoringRule`: policy that converts validated evidence into an assessment
+  result.
+- `FeedbackRule`: mode-aware feedback, hint, explanation, or remediation.
+- `MasteryEvidence`: objective-linked evidence emitted after evaluation.
+
+These are conceptual names only. They are not proposed Prisma models. Phase A
+must first reconcile them with the existing Zod `SimulationDefinitionSchema`,
+the typed `LabDefinition` registry, `VirtualLab`/`LabSession`, assessment
+attempt records, P2 provenance, and P5-A package manifests.
+
+Renderer selection must use a governed registry. Arbitrary renderer names or
+untrusted executable code from generated content must fail closed. Definitions
+may declare objects, controls, starting state, valid actions, transitions,
+success and failure conditions, feedback, scoring, accessibility metadata,
+offline capability, asset budgets, and rendering requirements. Deterministic
+validation must sit between authored data and execution.
+
+### 2D and 3D rendering strategy
+
+Interactive does not mean 3D. Use the least expensive rendering mode that
+preserves the learning objective.
+
+2D is normally preferable for BIOS or UEFI screens, operating-system and
+cloud-console concepts, command lines, networking configuration, packet or
+log analysis, maps, graphs, timelines, code, dashboards, forms, diagrams, and
+many assessment interactions. These experiences need faithful state and
+procedure more than simulated depth.
+
+Use 3D only when spatial manipulation materially improves learning, such as
+laboratory equipment, anatomy, molecules, machinery, engineering systems,
+physical assembly, tools, and spatial science concepts. A 3D definition must
+also declare device capability and asset requirements plus a meaningful 2D,
+guided physical, interactive-diagram, or printable fallback. The current
+repository has 3D planning metadata but no 3D renderer or 3D runtime.
+
+### Domain coverage
+
+The same runtime family must generalize across subjects:
+
+- **Computer and IT:** BIOS/UEFI configuration, Secure Boot, TPM or measured
+  boot comparison, firmware/bootloader/kernel/configuration-state diagnosis,
+  hardware identification, PC assembly, operating-system settings, Windows
+  and Linux administration, command-line exercises, networking, IP
+  configuration, router/switch configuration, cybersecurity logs, packet
+  analysis, troubleshooting, coding, debugging, and governed cloud-console
+  concepts. A learner should sometimes work inside a simulated computer and
+  be assessed on the actions performed and state achieved.
+- **Chemistry:** choose equipment, fill containers, measure liquids, mix
+  substances, manipulate temperature, perform titration, observe reactions,
+  and follow safety procedure.
+- **Physics:** construct circuits, measure voltage/current, explore force and
+  motion, optics, machines, electricity, waves, and experimental measurement.
+- **Biology:** use microscopes, investigate cells and anatomy, model
+  ecosystems and genetics, and inspect specimens.
+- **Mathematics:** manipulate number lines, rulers, protractors, compasses,
+  graphs, coordinate planes, geometry constructions, algebra manipulatives,
+  and measurement.
+- **Engineering and TVET:** electrical wiring, solar systems, engines, tools,
+  construction, plumbing, carpentry, machinery, and fault diagnosis.
+- **Geography:** maps, elevation, weather, climate, population, and geographic
+  datasets.
+- **Social studies and history:** maps, timelines, source and artifact
+  investigation, evidence comparison, and historical decision scenarios.
+
+The list describes capability targets, not a commitment to build every domain
+in Phase A. Licensing, sandboxing, cybersecurity, and subject-safety review
+apply where relevant.
+
+### Age-adaptive experience
+
+Lower grades must not receive a smaller version of a senior-secondary
+interface. Grade 1-4 experiences should use large touch targets, strong visual
+and icon cues, narration where useful, minimal text where appropriate,
+animation with reduced-motion alternatives, direct manipulation, and short,
+developmentally appropriate steps. For example, a Grade 1 learner can drag
+one object into a group of two and observe the total before seeing `2 + 1` as
+abstract notation.
+
+Interaction density, reading load, independence, tool complexity, feedback,
+and navigation should increase progressively across early primary, upper
+primary, junior secondary, and senior secondary. Age adaptation changes the
+experience contract and pedagogy, not only CSS scale.
+
+### Student Toolbelt integration
+
+Reuse `components/toolkit/` and `lib/toolkit/toolRegistry.ts`. The existing
+registry already provides calculators, digital ruler, protractor, coordinate
+grid, number line, fraction visualizer, multiplication table, periodic table,
+unit converter, timer/stopwatch, and dictionary with contextual matching.
+
+Extend that registry, rather than creating a simulation-only toolkit, for
+compass, scratchpad, formula/reference sheets, richer graphing, accessibility
+tools, lab notebook, balance, thermometer, glossary, text-to-speech, zoom,
+and high contrast where required. Assessment policy must explicitly allow,
+deny, or configure tools for each activity and mode. Server category flags are
+deployment controls, not a substitute for per-assessment permission policy.
+Tool availability and relevant tool use must be included in attempt context so
+scores remain interpretable.
+
+### Curriculum V2 boundary
+
+Curriculum V2 determines **what** structured experience should exist:
+objective, pedagogy intent, interaction opportunity, required objects and
+tools, expected observation or response, misconception, accessibility
+adaptation, and fallback. Learner Experience V2 determines **how** an approved
+definition executes on a learner's device. The assessment runtime determines
+mode and integrity policy. The mastery engine determines **what the learner
+demonstrated** from evaluated evidence.
+
+Current curriculum code already contains a narrow, deterministic precedent:
+`PseudoLabSchema`, `SimulationDefinitionSchema`,
+`ThreeDLabDefinitionSchema`, and `generateLessonLabSimulationBundle()` create
+approved templates for a few signaled topics. `LessonDeliveryClient.tsx`
+renders a small set of hard-coded renderer keys. Curriculum V2 must extend and
+govern this seam, not claim it is absent and not treat the current narrow
+shape as the final contract. Future generation should be able to request a
+simulation opportunity, lab, manipulative, diagram interaction, experiment,
+drag/drop activity, guided practice, or assessment simulation without
+emitting executable application code.
+
+### Mastery and adaptive learning boundary
+
+Interactive attempts should emit objective-linked mastery evidence. A learner
+who configures a network successfully may provide stronger evidence than a
+learner who recognizes the correct configuration among four choices, but this
+sprint defines no weights. A future evidence policy must distinguish activity
+type, mode, assistance, procedure quality, validation confidence, provenance,
+and accommodation context before the existing mastery and adaptive engines
+consume the result.
+
+Reuse `lib/mastery/masteryService.ts`, `lib/adaptive/updateMastery.ts`, and
+`lib/student/adaptiveRecommendations.ts`. Do not let each renderer update
+mastery independently. The current assigned-lab path already demonstrates a
+coarse score-to-mastery bridge; Phase A must define a common evidence adapter
+before expanding it.
+
+### Offline-first strategy
+
+Simulations must declare offline capability and asset tiers. Lightweight 2D
+activities should be fully packageable. Downloaded definitions, renderer
+assets, starting state, action logs, checkpoints, answers, and submission
+identity should support offline execution and later idempotent synchronization.
+The exact definition and scoring revision used offline must remain verifiable.
+
+Extend the existing offline queue, IndexedDB patterns, lesson cache, signed
+availability manifests, revocation behavior, and P5-A signed package model.
+Do not create a second simulation-only sync stack. Large 3D assets may use
+optional downloadable packs; when unavailable or revoked, the runtime should
+select the declared lower-resource equivalent without silently changing the
+learning objective or assessment conditions.
+
+### Accessibility and equivalent mastery paths
+
+Accessibility is definition-time and renderer-time work. Each experience must
+consider keyboard operation, programmatic names and state, screen-reader
+semantics where possible, non-color-only indication, captions, narration,
+reduced motion, touch and motor accessibility, low-literacy support,
+alternative controls, and assessment accommodations.
+
+Where the primary simulation cannot be made fully accessible, provide an
+equivalent mastery path that measures the same objective rather than an easier
+or unrelated task. Accommodation policy must be recorded with the attempt and
+must not be confused with integrity failure. Extend the existing accessibility
+mode, tool accessibility patterns, audio player, and low-literacy design
+precedents; the student experience still needs a coherent mounted control and
+simulation-specific standards.
+
+### Teacher Experience V2 connection
+
+Teacher Experience V2 should eventually let an authorized teacher assign and
+preview approved simulations, choose learn/practice/assessment mode, configure
+permitted tools and retry/feedback policy within governance bounds, inspect
+attempts and relevant action histories, understand procedure or misconception
+failures, assign remediation, and inspect mastery evidence. Action histories
+must be role-scoped, tenant-scoped, age-appropriate, and limited to legitimate
+educational need. No teacher UI is implemented in this sprint.
+
+### Authoring, AI safety, and governance
+
+Valid JSON is not trusted assessment content. AI-generated or imported
+definitions require:
+
+- schema validation and a permitted renderer/action registry;
+- deterministic transition, scoring, safety, and resource-budget validation;
+- curriculum objective, standard, source, rights, and provenance linkage;
+- age, subject, accessibility, offline, and assessment-correctness review;
+- adversarial and impossible-state testing;
+- qualified review through P2-B-compatible workflows;
+- P2-C-compatible authority and evidence boundaries;
+- versioned drafts, immutable published revisions, supersession, revocation,
+  and audit evidence; and
+- a reproducible link from every attempt to the exact published definition,
+  scoring policy, runtime version, and accommodation policy used.
+
+Reuse P2-A provenance/version integrity, P2-B qualified review, P2-C authority
+boundaries, existing audit logging, tenant isolation, RBAC, and P5-A
+signed/revocable packages. Do not invent parallel governance. Generated
+definitions remain drafts until the appropriate deterministic and human gates
+approve them.
+
+### Repository reconciliation and disposition
+
+| Existing system | Evidence | Disposition | Learner Experience V2 direction |
+|---|---|---|---|
+| Typed virtual-lab runtime | `lib/labs/runtime/`, `lib/labs/registry.ts`, subject action/state/validator modules | **EXTEND** | Preserve deterministic actions and transitions; adapt to a versioned definition/event/scoring contract |
+| Existing interactive lab components | `components/labs/`, `LabShell`, subject scenes and fallbacks | **REUSE** | Keep as reference renderers and migrate through adapters; do not rewrite all labs before the contract is proven |
+| Lesson simulation schema and renderer | `lib/schemas/labSimulation.ts`, `lib/curriculum/labSimulation.ts`, `LessonDeliveryClient.tsx` | **EXTEND** | Generalize the narrow schema and replace hard-coded renderer branching with a governed registry over time |
+| Assigned practical-lab system | `VirtualLab`, `LabSession`, `LabSessionClient`, student/teacher lab APIs | **EXTEND** | Preserve guided physical lab, observations, teacher review, offline draft, audit, and coarse mastery seams; unify identity and evidence contracts later |
+| Student Toolbelt | `components/toolkit/`, `lib/toolkit/toolRegistry.ts` | **REUSE** | Add missing tools and per-activity assessment policy in the existing registry |
+| Lesson viewer and slide parsing | `LessonDeliveryClient.tsx`, lesson pages, `parseToSlides.ts`, `LessonAudioPlayer.tsx` | **EXTEND** | Extract a first-class player and scene contract without building a parallel lesson product |
+| Lesson quiz, exams, and adaptive practice | `lessonQuiz.ts`, `LessonQuizPanel`, `ExamQuestion`, WAEC/adaptive practice | **EXTEND** | Preserve working MCQ and remediation flows as one interaction adapter inside a broader assessment player |
+| Essay and code grading | `app/api/grading/essay`, `app/api/grading/code`, `GradedSubmission` | **REUSE** | Integrate as specialized free-response and code-execution evidence adapters; keep sandbox and advisory-grade controls |
+| Generic assessment persistence | `Assessment`, `AssessmentItem`, `Submission`, `AssessmentAttempt` | **EXTEND** | Reconcile overlapping attempt shapes during Phase A; do not add another attempt store by default |
+| Mastery engine | `lib/mastery/`, `lib/adaptive/updateMastery.ts` | **EXTEND** | Accept a governed evidence-strength contract instead of renderer-specific direct writes |
+| Adaptive recommendation engine | `lib/student/adaptiveRecommendations.ts`, adaptive practice routes | **EXTEND** | Consume simulation evidence for remediation later; do not invent weighting now |
+| Offline and signed availability infrastructure | lesson cache, offline queues, IndexedDB drafts, content manifests, P5-A direction | **REUSE** | Extend package and sync envelopes to definitions, assets, action logs, and scored submissions |
+| Accessibility and low-literacy foundations | `AccessibilityToggle`, `accessibilityMode.ts`, toolkit semantics, `UX_LOW_LITERACY.md` | **EXTEND** | Mount a coherent student experience and define renderer-level equivalents and accommodations |
+| Help Me Understand | `StudentLessonHelpPanel.tsx` and grounded tutor routes | **EXTEND** | Expose it through learn/practice policy with simulation state context; disable unless assessment policy permits |
+| Legacy/historical roadmaps and demo simulators | Superseded plans and platform demo activity routes | **UNRELATED** | Do not use them as the Learner V2 runtime contract |
+
+No currently reviewed subsystem is marked **REPLACE** or **DEPRECATE** in this
+capture. Phase A should prove migration adapters before making either decision.
+
+### Architectural conflicts and convergence requirements
+
+Repository discovery found real overlap that must be resolved before a full
+build:
+
+1. `LabId` lists 19 identifiers while the typed registry exposes 12. Seven
+   page-specific or legacy identifiers are not registered, including singular
+   and plural naming variants. A canonical identity and alias strategy is
+   required.
+2. Interactive labs, lesson `SimulationDefinition`, and database-backed
+   `VirtualLab`/`LabSession` are three related but separate contracts. They
+   must converge through adapters rather than a fourth runtime.
+3. The lesson simulation renderer is data-fed but still branches on a few
+   hard-coded `rendererKey` values inside `LessonDeliveryClient.tsx`; this
+   cannot safely scale to thousands of authored activities.
+4. The typed lab runtime is deterministic but its general `LabSession` type is
+   not the durable action-event record described here. Database `LabSession`
+   stores observations, conclusions, score, and analysis, not full state
+   transitions.
+5. Main lesson quiz, exam, WAEC, and adaptive practice experiences are MCQ
+   shaped, while essay and code grading exist as separate specialized paths.
+   There is no unified multi-interaction assessment player.
+6. Several overlapping assessment/attempt persistence models exist. Phase A
+   must map ownership and migration before proposing schema changes.
+7. Current curriculum lab templates can be stamped `approved: true` by
+   deterministic generation/factory code. That narrow legacy behavior must
+   not become the trust model for AI-authored assessment simulations.
+8. Toolbelt category flags and contextual matching exist, but a durable
+   per-assessment permission policy does not.
+9. Offline practical-lab drafts and submissions exist, but interactive action
+   histories and definition-version pinning are not yet covered by one signed
+   synchronization contract.
+10. 3D planning schemas exist without a 3D renderer, dependency, device-budget
+    policy, or accessible equivalent contract.
+
+### Architectural dependencies
+
+Implementation remains dependent on:
+
+- closure of the active foundation sequence and explicit authorization to
+  begin Phase A;
+- P2-A provenance and immutable revision semantics;
+- P2-B qualified review and reviewer authority;
+- P2-C source/authority boundaries where curriculum and assessment claims are
+  involved;
+- P5-A signed packs, revocation, asset budgets, and offline synchronization;
+- stable RBAC, tenant isolation, audit, safeguarding, and AI cost controls;
+- a reviewed assessment integrity and accommodations policy;
+- renderer sandbox, licensing, and security decisions for code, operating
+  system, network, packet, and cloud simulations; and
+- device performance budgets for low-end Android hardware and optional 3D.
+
+### Recommended future implementation phases
+
+These phases refine, and do not reorder, the approved major program:
+
+1. **Phase A0, contract convergence:** inventory all three current simulation
+   contracts and overlapping attempt stores; decide canonical identities,
+   definition/version/event envelopes, renderer registry, execution policy,
+   scoring boundary, accessibility metadata, and P5-A package extension.
+2. **Phase A1, one vertical prototype:** prove one definition across learn,
+   practice, and assessment modes with 2D rendering, tool policy, offline
+   action capture, deterministic scoring, accessibility alternative, and
+   mastery-evidence output. Use adapters to current systems. Do not ship a
+   broad lab catalog.
+3. **Pause for Phase B Curriculum V2:** make curriculum authoring target the
+   proven contract and governance flow.
+4. **Phase C Global Pedagogy Intelligence:** select and sequence approved
+   experience types without owning their renderers.
+5. **Phase D runtime build:** expand interaction primitives, assessment player,
+   2D simulation library, computer/IT environments, STEM/TVET labs, and only
+   then justified 3D renderers, each with offline and accessibility gates.
+6. **Phase E Teacher Experience V2:** assignment, preview, policy, attempt
+   review, remediation, and evidence views.
+7. **Phase F adaptive expansion:** calibrate evidence strength and use it for
+   remediation, enrichment, and progression after fairness and validity
+   review.
+
+### Explicit non-goals for this capture sprint
+
+This sprint does not create runtime code, components, APIs, schemas, enums,
+migrations, database rows, feature flags, deployments, generated activities,
+mastery weights, scoring weights, teacher UI, 3D assets, Curriculum V2, or a
+Learner Experience V2 implementation. It does not mutate staging or
+production. It does not alter current P2-A/B/C remediation work or the
+foundation sequence. The sole deliverable is canonical architecture and
+roadmap documentation.
+
 ## Task 1  -  Repository discovery findings
 
 Investigated before writing this document, so the program consolidates prior
@@ -129,30 +562,42 @@ must inventory in depth and design around, not replace on day one.
   *assessment-time tool permission policy* (`calculatorAllowed`,
   `rulerAllowed`, etc. gated by assessment definition) on top of this, and to
   extend the registry with the remaining tools this program lists
-  (stopwatch, thermometer, balance, lab notebook, formula sheet,
+  (compass, thermometer, balance, lab notebook, formula sheet,
   scratchpad, glossary, text-to-speech, zoom, high contrast)  -  not to
   rebuild the tool system.
 - **Virtual Lab Engine (Workstream F)  -  a real object/action/state model
   already exists**, not just descriptions of experiments.
   `lib/labs/runtime/applyLabAction.ts` and
   `lib/labs/runtime/validateLabAction.ts` implement exactly the
-  action-causes-observable-state-change loop Workstream F describes. 16
-  subject-specific lab pages exist under `components/labs/`: pendulum,
-  molecule motion, human heart, cell division, cell structure, chemical
-  reaction, earthquake waves, ecosystem balance, electric circuit, gravity,
-  light and shadow, periodic table, simple machines, tectonic plates, water
-  cycle, wave motion, weather system. Shared shell/chat/fallback components
-  exist (`LabShell.tsx`, `LabChatPanel.tsx`, `LabFallback.tsx`  -  a real
+  action-causes-observable-state-change loop Workstream F describes. The
+  public `LabId` union contains 19 identifiers, while 12 are wired through
+  the typed `labRegistry`; additional page-specific labs and singular/plural
+  aliases exist outside that registry. Subject pages cover pendulum, molecule
+  motion, human heart, cell division, cell structure, chemical reaction,
+  earthquake waves, ecosystem balance, electric circuit, gravity, light and
+  shadow, periodic table, simple machines, tectonic plates, water cycle, wave
+  motion, and weather system. Shared shell/chat/fallback components exist
+  (`LabShell.tsx`, `LabChatPanel.tsx`, `LabFallback.tsx`  -  a real
   low-resource-fallback precedent for Workstream O). AI-assisted lab
   narration/guidance exists at `lib/labs/ai/explainLabState.ts` and
-  `lib/labs/ai/planLabAction.ts` (the live surfaces, per NR-9.5's
-  full-codebase sweep  -  `lib/ai/lab/labAnalyzer.ts` is an older, not-live
-  file, kept for reference only). Lesson-embedded lab panels already exist
+  `lib/labs/ai/planLabAction.ts`. A separate assigned-practical-lab route uses
+  `lib/ai/lab/labAnalyzer.ts` to score submitted observations when that
+  feature path is enabled. Lesson-embedded lab panels already exist
   (`LessonLabPanel.tsx`, `GravityLessonLabPanel.tsx`), which is a working
   precedent for Workstream A's "Activity/Lab" lesson-structure slot. What
-  does **not** exist yet: 3D (Workstream G), a curriculum-generation
-  contract that can *specify* a lab in structured form (Workstream I), and
-  guided-physical-lab mode (Workstream H).
+  does **not** exist yet: 3D rendering (Workstream G), a generalized and
+  governed curriculum-generation contract for arbitrary interactions
+  (Workstream I), or one unified evidence contract across interactive and
+  guided-physical labs (Workstream H).
+- **A narrow data-driven lesson simulation seam already exists.**
+  `lib/schemas/labSimulation.ts` defines `PseudoLabSchema`,
+  `SimulationDefinitionSchema`, and a 3D planning shape;
+  `lib/curriculum/labSimulation.ts` deterministically emits a few topic-bound
+  templates; and `LessonDeliveryClient.tsx` renders their range, toggle,
+  choice, step, and ordering inputs. This is important prior art, but the
+  renderer still hard-codes a few `rendererKey` branches and does not provide
+  the general action-event, mode-policy, scoring, or mastery contract captured
+  in this section.
 - **Offline infrastructure (Workstream N) is substantial**, not a green
   field: `lib/lesson-offline-cache.ts`, `lib/offline-cache.ts`,
   `lib/offline/offlineQueue.ts`, `lib/offline-queue.ts`,
@@ -202,17 +647,20 @@ must inventory in depth and design around, not replace on day one.
   progressive-disclosure pattern as reusable infrastructure to extend to
   students by age band, not a separate design problem.
 
-### Exists only as a single, fixed shape (the real gap)
+### Exists only as narrow or disconnected shapes (the real gap)
 
-- **Question/assessment engine is single-choice MCQ only, today.**
+- **The main learner quiz/exam/practice players are single-choice MCQ shaped.**
   `lib/ai/lessonQuiz.ts` defines exactly one question shape: `{ id,
   question, options: string[], correctIndex: number, explanation }`,
   always exactly 5 AI-generated questions per lesson
   (`components/student/LessonQuizPanel.tsx`, `lib/offline-quiz-attempts.ts`
   for offline attempt queuing). `LessonGapAnalysis` (missed concepts +
   reread suggestion) is a real, working remediation-on-failure precedent
-  worth preserving in the V2 interaction/mastery contract. There is no
-  dedicated assessment-runtime component (numbered navigation,
+  worth preserving in the V2 interaction/mastery contract. Separate essay
+  and sandboxed code-grading APIs exist, and generic assessment submissions
+  accept JSON, but those are not integrated into one multi-interaction
+  learner player. There is no dedicated assessment-runtime component
+  (numbered navigation,
   answered/flagged/review state, autosave/recovery) anywhere in the
   codebase  -  Workstream C (Assessment Player V2) and D (Question/Interaction
   Engine) are genuinely new work, not a re-architecture of something that
@@ -226,13 +674,15 @@ must inventory in depth and design around, not replace on day one.
   progress, resume, or a collapsible outline. Workstream A is real,
   substantial new architecture, not a cosmetic refresh  -  consistent with
   the program's own framing.
-- **No 3D anywhere in the codebase.** Workstream G is entirely new.
-- **No structured curriculum-generation contract for interactions/labs.**
-  Curriculum generation today produces lesson bodies and (separately) the 5
-  AI-generated quiz questions above; it does not emit the structured
-  objective/interaction/objects/actions/mastery contract Workstream I
-  describes. This is the exact gap Phase A exists to close before Curriculum
-  V2 is rebuilt.
+- **No 3D rendering runtime exists.** Planning metadata exists in
+  `ThreeDLabDefinitionSchema`, but Workstream G implementation is entirely
+  new.
+- **The structured curriculum-generation contract is narrow, not absent.**
+  Current curriculum code can emit pseudo labs and a few deterministic
+  `SimulationDefinition` templates, but it does not express the generalized
+  objective/mode/objects/actions/transitions/scoring/mastery contract
+  Workstream I describes. This is the exact seam Phase A must stabilize
+  before Curriculum V2 is rebuilt.
 - **No pedagogy-strategy layer.** `docs/curriculum-framework.md` (26 lines)
   and `docs/MASTERY_AND_RETENTION.md` (30 lines) contain no pedagogy-strategy
   content (Singapore CPA, retrieval practice, worked examples, inquiry, and
@@ -378,8 +828,10 @@ autosave; recovery after connectivity loss.
 
 ### Workstream D  -  Interaction / Question Engine
 
-Today's engine supports exactly one type (single-choice MCQ,
-`lib/ai/lessonQuiz.ts`). Minimum future type set: single-choice MCQ,
+Today's main lesson quiz, exam, and adaptive-practice players support
+single-choice MCQ (`lib/ai/lessonQuiz.ts` and related flows), while separate
+essay and sandboxed code grading paths are not yet unified into the player.
+Minimum future type set: single-choice MCQ,
 multi-select, true/false, short typed response, numeric response, long
 response, fill-in-the-blank, dropdown completion, matching, drag-and-drop,
 ordering/sequencing, categorization, image selection, hotspot/click-region,
@@ -392,7 +844,7 @@ Question-type selection must be instructionally meaningful, not decorative.
 
 **Largely built already**  -  see discovery findings above
 (`components/toolkit/`, `docs/product/CLASSROOM_TOOLKIT.md`). Remaining
-work: extend the registry with stopwatch, thermometer, balance, lab
+work: extend the registry with compass, thermometer, balance, lab
 notebook, formula sheet, scratchpad, glossary, text-to-speech, zoom, high
 contrast, translation/language support; and define assessment-level tool
 permission policy (conceptual shape:
@@ -404,7 +856,8 @@ WAEC-style exam can permit different tools from the same registry.
 
 **Foundation already built**  -  see discovery findings above
 (`lib/labs/runtime/applyLabAction.ts`,
-`lib/labs/runtime/validateLabAction.ts`, 16 subject lab pages). Students
+`lib/labs/runtime/validateLabAction.ts`, 12 typed registry entries plus
+additional page-specific lab implementations). Students
 already perform simulated experiments with observable state changes caused
 by learner actions (e.g. the existing water/displacement-style pendulum and
 chemistry labs). Remaining work is generalizing this into a reusable engine
@@ -428,13 +881,18 @@ Virtual labs complement, not replace, physical science where facilities
 exist. LiberiaLearn provides materials/safety instructions, steps, timers,
 measurement prompts, observation forms, photos, data entry, calculations,
 questions, teacher verification. Enables: learn virtually -> practice
-virtually -> perform physically -> record/analyze digitally. Entirely new;
-`LabFallback.tsx` is a useful low-resource-fallback precedent but does not
-cover physical-lab guidance.
+virtually -> perform physically -> record/analyze digitally. The
+database-backed `VirtualLab`/`LabSession` path and `LabSessionClient` already
+provide a narrow guided-practical foundation with materials, safety notes,
+steps, observations, analysis questions, offline drafts, and teacher review.
+Extend that foundation and reconcile it with the interactive runtime;
+`LabFallback.tsx` is a separate low-resource rendering precedent.
 
 ### Workstream I  -  Curriculum-generated interactions
 
-Curriculum V2 (Phase B) must specify learning experiences, not just text.
+Curriculum V2 (Phase B) must generalize the existing narrow lab/simulation
+seam so it specifies learning experiences, not just text or a few hand-coded
+templates.
 Conceptual generation contract: learning objective, pedagogy strategy,
 interaction type, learner action, required objects/tools, instructions,
 expected observation, expected response, hint, feedback, misconception,

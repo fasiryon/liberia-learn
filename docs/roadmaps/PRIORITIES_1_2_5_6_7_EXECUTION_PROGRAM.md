@@ -285,6 +285,15 @@ their order. It uses its own `Phase A`-`F` lettering, deliberately distinct from
 document's `P1`-`P7` scheme, to avoid implying it is next in this specific
 numbered queue. Do not drop it while executing P2/P5/P6/P7.
 
+The canonical document's **Interactive Simulation & Virtual Lab Runtime**
+section was expanded on 2026-08-20 as a documentation-only capture. It makes
+interactive learning a first-class future capability across lessons,
+practice, assessment, remediation, mastery, computing environments, STEM,
+TVET, mathematics, geography, and source investigation. It does not start
+Phase A. Future work must converge the existing typed lab runtime, lesson
+simulation schema, assigned practical-lab system, Student Toolbelt, mastery,
+and P5-A offline delivery instead of creating a parallel platform.
+
 ## Program-level outcome gate
 
 This program is complete only when:

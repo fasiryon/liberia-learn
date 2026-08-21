@@ -38,7 +38,16 @@ When work changes status:
 **Learner Experience V2 / Interactive Learning Runtime** is an approved
 future major program and must not be dropped during P2/P5 execution.
 Canonical document: `docs/product/LEARNER_EXPERIENCE_V2_INTERACTIVE_RUNTIME.md`
-(captured 2026-08-14, documentation only, no code/schema/production change).
+(captured 2026-08-14; expanded 2026-08-20 with the canonical **Interactive
+Simulation & Virtual Lab Runtime** architecture, documentation only, with no
+runtime/schema/database/production change). The expansion fixes the future
+contract around reusable Learn/Practice/Assessment execution modes,
+action/state/procedure evidence, 2D/3D choice, computing and cross-subject
+simulation coverage, age adaptation, tool policy, offline and accessibility
+requirements, P2/P5 governance reuse, and repository convergence. It records
+that the repository already has three seams to extend rather than duplicate:
+the 12-entry typed lab registry, narrow lesson `SimulationDefinition` support,
+and database-backed assigned practical labs.
 Approved sequence: Phase A (Learner Experience V2 architecture + UX
 prototype) runs before Phase B (Curriculum V2) and Phase C (Global Pedagogy
 Intelligence), so the curriculum-generation contract is designed against a
