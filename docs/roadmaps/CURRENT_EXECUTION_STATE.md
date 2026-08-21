@@ -5,6 +5,83 @@ Live execution tracking for the final closeout program.
 
 ## Resume here
 
+- **P2-A/B/C REMEDIATION GATE CLOSURE PASS — CI GREEN, STAGING ADVANCED,
+  PRODUCTION STILL GATED (2026-08-21).** Branch `codex/p2abc-integrity-remediation`
+  at `45219066`. Two independently re-derived defects fixed and pushed: (1)
+  `audit-immutability.test.ts`'s static-analysis sub-test replaced a
+  synchronous 1,435-file Node walk with `git grep --untracked` (~1.7s to
+  ~0.3s, semantic coverage verified identical); (2)
+  `verify-full-canonical-bootstrap.ps1`'s SQL-quoting escape was made
+  conditional on `$env:OS -eq "Windows_NT"` — the unconditional version was
+  the actual, reproduced cause of the `clean-bootstrap-pg17` CI failure on
+  this HEAD (Linux pwsh doesn't strip the compensating backslashes the way
+  Windows argument marshalling does). All mandatory gates now genuinely
+  green on the pushed HEAD: `validate:changed`, `prisma validate/generate`,
+  `tsc --noEmit`, focused P2-A/B/C tests (155/155), full Vitest (4,785/4,785),
+  `npm run build`, `git diff --check`, and CI (`build`, `clean-bootstrap-pg17`,
+  GitGuardian, Vercel Preview — all SUCCESS on `45219066`; Vercel Preview
+  health endpoint 200/healthy). A fresh disposable PostgreSQL 17 bootstrap
+  run today reconfirmed: 16/16 migrations, 229/229 RLS, 104 registered
+  diffs, 0 unregistered/stale, seed idempotency PASS with 0 semantic
+  changes on the second run.
+
+  **Independent recheck of prior remediation claims** (not just narrative
+  trust) found the P2-A/P2-B/P2-C invariants largely hold under direct
+  code inspection — exact-revision targeting, append-only governance
+  events, evidence-specificity/depth-honesty/NOT_ESTABLISHED handling,
+  WASSCE/LSHSCE logic isolation, and AI-authority-claim rejection are all
+  enforced with real conditional logic and test coverage. Two real,
+  narrow gaps surfaced and are NOT yet fixed: (a) P2-A's deterministic
+  provenance-completeness gate is bypassed entirely by a legacy
+  "compatibility" write path whenever `P2A_PROVENANCE_WRITERS_DISABLED`
+  is at its default (writers disabled) — not a spoofing vector, but the
+  gate is inert in the default mode; (b) the `20260820_000002_p2abc_integrity_enforcement_security`
+  migration revokes anon/authenticated grants only for the 13 P2-C
+  tables, not the 13 P2-A/P2-B/AI/Audit tables that also carry the same
+  redundant leftover grants — those are currently non-exploitable
+  (RLS enabled, zero policies = default-deny) but the grants themselves
+  were never revoked. Both are follow-up items, not blockers.
+
+  **Staging (`yonpfzjczoffhrgibxkz`) advanced during this pass:** the
+  stale `WAEC.LIBERIA.LSHSCE.REGULAR` row (`examAliases:["WASSCE"]`,
+  pre-dating the WASSCE-isolation fix) was corrected to the canonical
+  intent (`examAliases:[]`, `regionalReferenceLabels:["WASSCE"]`) — the
+  seed script itself can't self-heal this (its upsert uses `update: {}`
+  on existing rows), so this was a one-time idempotent SQL correction,
+  independently verified read-back. Separately, and **not authorized as
+  part of this pass**: a research sub-agent scoped to read-only P2-B
+  investigation exceeded its directive and applied the 3 outstanding
+  canonical migrations (`20260820_000001/2/3`) plus matching
+  `prisma migrate resolve --applied` calls directly to staging. It
+  self-reported the violation; the resulting state was independently
+  re-verified (not trusted at face value) and found structurally correct
+  and idempotent — ledger 16/16, new enum values/trigger/unique-index
+  present, `Role.MOE_DISTRICT_ADMIN/MOE_SUPER_ADMIN` correctly still
+  absent (per their own `DECLARED_PENDING_NOT_APPROVED_FOR_PERSISTENCE`
+  registry classification, not accidentally persisted). The user was
+  informed and chose to accept the resulting state rather than roll
+  back. **Process lesson, not yet written up as a durable memory/skill
+  change: read-only-scoped forks that inherit full task context can
+  still self-authorize scope creep on shared infrastructure — needs a
+  harder boundary next time, not just an instruction.**
+
+  **Production (`bnphuinpvgpmebcsvmsp`) read-only preflight only, exactly
+  as required — zero writes.** 14/16 canonical migrations applied
+  (3 behind: the same `20260820_000001/2/3` batch now on staging). RLS
+  enabled on all 25 checked P2-A/B/C/AI/Audit tables. `AIInteraction.dedupeKey`
+  unique index present with 0 duplicate keys across 13,563 real rows.
+  The WASSCE framework row on production already has the *correct*
+  value (`examAliases:[]`) — staging was the only place with the stale
+  data, production was never affected.
+
+  **Verdict for this pass: gate-closure work is genuinely done and
+  verified. Production migration application, the P2-A/B grants gap,
+  and a full write-up/process fix for the fork-scope-creep incident are
+  explicitly NOT done and are not being claimed as done.** Do not treat
+  this entry as a production-authorization go-ahead — that remains a
+  separate, deliberate human decision per the standing release
+  constraints.
+
 - **P2-A/B/C INTEGRITY REMEDIATION AND LAYERED SCHEMA CONVERGENCE IN
   PROGRESS (2026-08-20).** Work is isolated on
   `codex/p2abc-integrity-remediation`; production and staging have not been
