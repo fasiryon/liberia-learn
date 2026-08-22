@@ -186,8 +186,29 @@ export async function appendCurriculumGovernanceEventInTransaction(
   const writersEnabled = provenanceWritersEnabled();
   validateGovernance(input, writersEnabled);
 
-    if (!writersEnabled) {
-      const lifecycleResult = LIFECYCLE_BY_EVENT[input.eventType] ?? null;
+  if (!writersEnabled) {
+      if (
+        input.approvalBasis === "AUTOMATED_RISK_POLICY" ||
+        input.approvalBasis === "ROLE_POLICY" ||
+        input.approvalBasis === "SCHOOL_POLICY"
+      ) {
+        // Compatibility mode may mirror a canonical write, but it must never
+        // become a second, ungated authority path: an automated approval
+        // basis has to clear the same provenance-completeness gate here as
+        // it does on the canonical (writers-enabled) branch below. Content
+        // with no provenance root at all defaults to UNVERIFIED (fail
+        // closed) rather than silently skipping the check.
+        const content = await tx.curriculumContent.findUnique({
+          where: { contentId: input.contentId },
+        });
+        const provenance = content
+          ? await tx.curriculumProvenance.findUnique({
+              where: { curriculumContentId: content.id },
+            })
+          : null;
+        assertAutomatedApprovalAllowed(provenance?.provenanceCompleteness ?? "UNVERIFIED");
+      }
+    const lifecycleResult = LIFECYCLE_BY_EVENT[input.eventType] ?? null;
       const defaultProjection: Prisma.CurriculumContentUncheckedUpdateInput = {
         ...(lifecycleResult ? { status: STATUS_BY_LIFECYCLE[lifecycleResult] } : {}),
         ...(lifecycleResult === "APPROVED" ? { publishedAt: input.occurredAt ?? new Date() } : {}),
@@ -230,9 +251,9 @@ export async function appendCurriculumGovernanceEventInTransaction(
         },
         tx,
       );
-      return null;
-    }
-    if (input.idempotencyKey) {
+    return null;
+  }
+  if (input.idempotencyKey) {
       const prior = await tx.curriculumGovernanceEvent.findUnique({
         where: { idempotencyKey: input.idempotencyKey },
       });

@@ -1,8 +1,8 @@
-import type {
-  CurriculumReviewAuthority,
-  CurriculumReviewSlot,
+import {
   Prisma,
-  Role,
+  type CurriculumReviewAuthority,
+  type CurriculumReviewSlot,
+  type Role,
 } from "@prisma/client";
 import { prisma } from "@/lib/db";
 
@@ -12,10 +12,13 @@ export const REVIEW_ELIGIBILITY_REASON = {
   PROFILE_INACTIVE: "PROFILE_INACTIVE",
   REVIEWER_UNAVAILABLE: "REVIEWER_UNAVAILABLE",
   RBAC_CEILING: "RBAC_CEILING",
+  PROFILE_AUTHORITY_MISMATCH: "PROFILE_AUTHORITY_MISMATCH",
   SCHOOL_SCOPE: "SCHOOL_SCOPE",
   CAPACITY_EXHAUSTED: "CAPACITY_EXHAUSTED",
   CALIBRATION_REQUIRED: "CALIBRATION_REQUIRED",
   CREDENTIAL_MISSING: "CREDENTIAL_MISSING",
+  CREDENTIAL_UNVERIFIED: "CREDENTIAL_UNVERIFIED",
+  CREDENTIAL_INACTIVE: "CREDENTIAL_INACTIVE",
   CREDENTIAL_EXPIRED: "CREDENTIAL_EXPIRED",
   CREDENTIAL_SCOPE_MISMATCH: "CREDENTIAL_SCOPE_MISMATCH",
   SPECIALIST_CREDENTIAL_MISSING: "SPECIALIST_CREDENTIAL_MISSING",
@@ -23,6 +26,7 @@ export const REVIEW_ELIGIBILITY_REASON = {
   AUTHOR_CONFLICT: "AUTHOR_CONFLICT",
   SOURCE_CHAIN_CONFLICT: "SOURCE_CHAIN_CONFLICT",
   PRIOR_REVIEWER_CONFLICT: "PRIOR_REVIEWER_CONFLICT",
+  INITIATOR_CONFLICT: "INITIATOR_CONFLICT",
   LEGACY_CONFLICT_UNRESOLVED: "LEGACY_CONFLICT_UNRESOLVED",
   REVISION_STALE: "REVISION_STALE",
   TASK_CLOSED: "TASK_CLOSED",
@@ -94,10 +98,21 @@ function scopeMatches(
   const subject = String(identity.subject ?? snapshot.subject ?? "").trim().toUpperCase();
   const grade = Number(identity.grade ?? snapshot.grade);
   const contentType = String(identity.contentType ?? snapshot.contentType ?? "").trim().toLowerCase();
+  const taskDomains = [
+    ...(Array.isArray(identity.domains) ? identity.domains : []),
+    ...(Array.isArray(snapshot.domains) ? snapshot.domains : []),
+    ...(typeof identity.domain === "string" ? [identity.domain] : []),
+    ...(typeof snapshot.domain === "string" ? [snapshot.domain] : []),
+  ].map((value) => String(value).trim().toUpperCase()).filter(Boolean);
   if (scope.subject && scope.subject.trim().toUpperCase() !== subject) return false;
   if (scope.gradeMin != null && (grade < scope.gradeMin || grade > (scope.gradeMax ?? scope.gradeMin))) return false;
+  if (scope.gradeMin != null && !Number.isInteger(grade)) return false;
   if (scope.curriculumTypes.length && !scope.curriculumTypes.map((v) => v.toLowerCase()).includes(contentType)) return false;
-  if (task.requiredAuthority === "SCHOOL" && scope.schoolId !== task.schoolId) return false;
+  if (scope.domains.length && !scope.domains.some((domain) => taskDomains.includes(domain.trim().toUpperCase()))) return false;
+  if (
+    task.requiredAuthority === "SCHOOL" &&
+    (scope.schoolId !== task.schoolId || !scope.curriculumScopes.includes("SCHOOL"))
+  ) return false;
   if (task.requiredAuthority === "MOE" && !scope.curriculumScopes.includes("NATIONAL") && !scope.curriculumScopes.includes("WAEC")) return false;
   return true;
 }
@@ -161,6 +176,12 @@ export async function reviewEligibility(
   if (profile.status !== "ACTIVE") return { eligible: false, reasons: [REVIEW_ELIGIBILITY_REASON.PROFILE_INACTIVE], reviewerProfileId: profile.id };
   if (!profile.available) return { eligible: false, reasons: [REVIEW_ELIGIBILITY_REASON.REVIEWER_UNAVAILABLE], reviewerProfileId: profile.id };
   if (profile.restrictions.length) return { eligible: false, reasons: [REVIEW_ELIGIBILITY_REASON.RESTRICTION_ACTIVE], reviewerProfileId: profile.id };
+  if (!credentialAuthorityMatches(profile.authority, task.requiredAuthority)) {
+    return { eligible: false, reasons: [REVIEW_ELIGIBILITY_REASON.PROFILE_AUTHORITY_MISMATCH], reviewerProfileId: profile.id };
+  }
+  if (profile.authority === "SCHOOL" && profile.schoolId !== task.schoolId) {
+    return { eligible: false, reasons: [REVIEW_ELIGIBILITY_REASON.SCHOOL_SCOPE], reviewerProfileId: profile.id };
+  }
 
   const activeClaims = await db.curriculumReviewAssignment.count({
     where: {
@@ -186,6 +207,27 @@ export async function reviewEligibility(
   if (task.revision.sourceRevision?.authorUserId === input.user.id) {
     return { eligible: false, reasons: [REVIEW_ELIGIBILITY_REASON.SOURCE_CHAIN_CONFLICT], reviewerProfileId: profile.id };
   }
+  const sourceChainConflict = await db.$queryRaw<Array<{ conflict: boolean }>>(Prisma.sql`
+    WITH RECURSIVE source_chain AS (
+      SELECT "id", "sourceRevisionId", "authorUserId"
+      FROM "CurriculumContentRevision"
+      WHERE "id" = ${task.revisionId}
+      UNION
+      SELECT source."id", source."sourceRevisionId", source."authorUserId"
+      FROM "CurriculumContentRevision" source
+      JOIN source_chain child ON source."id" = child."sourceRevisionId"
+    )
+    SELECT EXISTS (
+      SELECT 1 FROM source_chain
+      WHERE "id" <> ${task.revisionId} AND "authorUserId" = ${input.user.id}
+    ) AS conflict
+  `);
+  if (sourceChainConflict[0]?.conflict) {
+    return { eligible: false, reasons: [REVIEW_ELIGIBILITY_REASON.SOURCE_CHAIN_CONFLICT], reviewerProfileId: profile.id };
+  }
+  if (task.createdByUserId === input.user.id) {
+    return { eligible: false, reasons: [REVIEW_ELIGIBILITY_REASON.INITIATOR_CONFLICT], reviewerProfileId: profile.id };
+  }
   if (
     !input.ignoreOwnSubmittedAssessment &&
     task.assessments.some((assessment) => assessment.reviewerProfile.userId === input.user.id)
@@ -209,9 +251,23 @@ export async function reviewEligibility(
     const expired = profile.credentials.some(
       (credential) => credential.status === "VERIFIED" && credential.expiresAt != null && credential.expiresAt <= now,
     );
+    const unverified = profile.credentials.some(
+      (credential) => credential.status === "DRAFT" || credential.status === "PENDING_VERIFICATION",
+    );
+    const inactive = profile.credentials.some(
+      (credential) => credential.status === "SUSPENDED" || credential.status === "REVOKED" || credential.status === "SUPERSEDED",
+    );
     return {
       eligible: false,
-      reasons: [expired ? REVIEW_ELIGIBILITY_REASON.CREDENTIAL_EXPIRED : REVIEW_ELIGIBILITY_REASON.CREDENTIAL_MISSING],
+      reasons: [
+        expired
+          ? REVIEW_ELIGIBILITY_REASON.CREDENTIAL_EXPIRED
+          : unverified
+            ? REVIEW_ELIGIBILITY_REASON.CREDENTIAL_UNVERIFIED
+            : inactive
+              ? REVIEW_ELIGIBILITY_REASON.CREDENTIAL_INACTIVE
+              : REVIEW_ELIGIBILITY_REASON.CREDENTIAL_MISSING,
+      ],
       reviewerProfileId: profile.id,
     };
   }

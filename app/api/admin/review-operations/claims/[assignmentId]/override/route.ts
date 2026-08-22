@@ -1,7 +1,6 @@
 import { z } from "zod";
 import { requireUser } from "@/lib/auth";
 import { requireP2bEnabled, requireIdempotencyKey, reviewApiError } from "@/lib/curriculum/review/api";
-import { assertReviewOperationsAdmin } from "@/lib/curriculum/review/access";
 import { overrideReviewClaim } from "@/lib/curriculum/review/claims";
 
 const Body = z.object({ reason: z.string().trim().min(1).max(2000), version: z.number().int().positive(), idempotencyKey: z.string().optional() });
@@ -10,9 +9,8 @@ export async function POST(req: Request, { params }: { params: { assignmentId: s
   try {
     requireP2bEnabled();
     const user = await requireUser();
-    assertReviewOperationsAdmin(user, user.schoolId);
     const body = Body.parse(await req.json());
-    await overrideReviewClaim({ assignmentId: params.assignmentId, actorUserId: user.id, schoolId: user.schoolId, reason: body.reason, expectedVersion: body.version, idempotencyKey: requireIdempotencyKey(req, body) });
+    await overrideReviewClaim({ assignmentId: params.assignmentId, actor: user, reason: body.reason, expectedVersion: body.version, idempotencyKey: requireIdempotencyKey(req, body) });
     return Response.json({ ok: true });
   } catch (error) { return reviewApiError(error); }
 }

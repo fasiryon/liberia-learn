@@ -3,7 +3,6 @@ import type { Prisma, AIReviewSpecialty } from "@prisma/client";
 import { prisma } from "@/lib/db";
 import { routedCompletion } from "@/lib/ai/routedCompletion";
 import { logAuditRequiredWithId } from "@/lib/audit";
-import { appendCurriculumGovernanceEventInTransaction } from "@/lib/curriculum/mutations/governanceWriter";
 import { ReviewOperationError } from "./errors";
 import { REVIEW_SERIALIZABLE_TRANSACTION_OPTIONS } from "./transaction";
 import {
@@ -129,26 +128,42 @@ export async function finalizeAIReviewTask(input: { taskId: string; correlationI
       return !validation || validation.passed !== true;
     });
     const disagreement = new Set(independent.map(aiReviewDisagreementSignature)).size > 1;
-    if (validationBlocked || (disagreement && !input.adjudicatorId)) {
-      await tx.curriculumReviewTask.update({ where: { id: task.id }, data: { status: "ESCALATED", version: { increment: 1 } } });
-      return { status: "ESCALATED" as const, assessments };
-    }
     const deciding = input.adjudicatorId ? assessments.find((item) => item.id === input.adjudicatorId) : assessments[0];
-    if (!deciding?.recommendation || deciding.recommendation === "ESCALATE") { await tx.curriculumReviewTask.update({ where: { id: task.id }, data: { status: "ESCALATED", version: { increment: 1 } } }); return { status: "ESCALATED" as const, assessments }; }
-    const outcome = deciding.recommendation === "APPROVE" ? "APPROVED" : deciding.recommendation === "REJECT" ? "REJECTED" : "RETURNED_FOR_REVISION";
     const evidencePolicy = (task.evidenceRequirements as { approvalBlocked?: boolean } | null) ?? {};
-    if (outcome === "APPROVED" && evidencePolicy.approvalBlocked) {
-      await tx.curriculumReviewTask.update({ where: { id: task.id }, data: { status: "ESCALATED", version: { increment: 1 } } });
-      return { status: "ESCALATED" as const, assessments };
-    }
-    const snapshot = { schemaVersion: 1, actorType: "AI", taskId: task.id, revisionId: task.revisionId, provenanceId: task.provenanceId, policyKey: task.policyKey, policyVersion: task.policyVersion, rubricKey: task.rubricKey, rubricVersion: task.rubricVersion, assessments: assessments.map((item) => ({ assessmentId: item.id, agentId: item.aiReviewAgentId, agentKey: item.aiReviewAgent.agentKey, snapshot: item.aiReviewSnapshot, recommendation: item.recommendation, confidence: item.confidence })), correlationId: input.correlationId, capturedAt: new Date().toISOString() } satisfies Prisma.InputJsonObject;
-    const auditLogId = await logAuditRequiredWithId({ action: `curriculum.review.ai.decision.${outcome.toLowerCase()}`, resourceType: "curriculum", resourceId: task.provenance.curriculumContent.contentId, schoolId: task.schoolId, traceId: input.correlationId, details: { actorType: "AI", taskId: task.id, revisionId: task.revisionId, assessmentIds: input.assessmentIds, reviewAuthority: "PLATFORM" } }, tx);
-    const decision = await tx.curriculumReviewDecision.create({ data: { taskId: task.id, status: "PENDING", outcome, rationale: deciding.rationale, actorType: "AI", aiReviewAgentId: deciding.aiReviewAgentId, aiAssessmentIds: input.assessmentIds, qualificationSnapshot: snapshot, auditLogId, idempotencyKey: `p2b-ai-decision:${input.correlationId}` } });
-    const eventType = outcome === "APPROVED" ? (task.provenance.lifecycleState === "REJECTED" ? "REAPPROVED" : "APPROVED") : outcome === "REJECTED" ? "REJECTED" : "RETURNED_FOR_REVIEW";
-    const event = await appendCurriculumGovernanceEventInTransaction(tx, { contentId: task.provenance.curriculumContent.contentId, revisionId: task.revisionId, eventType, actorType: "AI", aiReviewAgentId: deciding.aiReviewAgentId, actorLabel: "LiberiaLearn AI Quality Review", approvalBasis: eventType === "APPROVED" || eventType === "REAPPROVED" ? "AI_PLATFORM_REVIEW" : null, reviewAuthority: "PLATFORM", reviewerRoleSnapshot: "AI_PLATFORM_REVIEW", reviewerQualificationRef: `p2b-ai-decision:${decision.id}`, reviewerQualificationSnapshot: snapshot, riskScore: task.riskScore, riskReasons: task.riskReasons, reason: eventType === "REJECTED" || eventType === "RETURNED_FOR_REVIEW" ? deciding.rationale : null, schoolId: task.schoolId, traceId: input.correlationId, idempotencyKey: `p2b-ai-governance:${decision.id}` }, { auditLogId });
-    if (!event) throw new ReviewOperationError("P2A_WRITER_DISABLED", 409);
-    const finalized = await tx.curriculumReviewDecision.update({ where: { id: decision.id }, data: { status: "FINAL", governanceEventId: event.id, finalizedAt: new Date() } });
-    await tx.curriculumReviewTask.update({ where: { id: task.id }, data: { status: "COMPLETED", completedAt: new Date(), version: { increment: 1 } } });
-    return { status: "FINAL" as const, decision: finalized, event, assessments };
+    const recommendation = deciding?.recommendation ?? "ESCALATE";
+    const approvalBlocked = recommendation === "APPROVE" && evidencePolicy.approvalBlocked;
+    const escalated =
+      validationBlocked ||
+      (disagreement && !input.adjudicatorId) ||
+      !deciding?.recommendation ||
+      deciding.recommendation === "ESCALATE" ||
+      approvalBlocked;
+    const auditLogId = await logAuditRequiredWithId({
+      action: escalated
+        ? "curriculum.review.ai.assist.escalated"
+        : "curriculum.review.ai.assist.completed",
+      resourceType: "curriculum",
+      resourceId: task.provenance.curriculumContent.contentId,
+      schoolId: task.schoolId,
+      traceId: input.correlationId,
+      details: {
+        actorType: "AI",
+        authority: "ADVISORY_ONLY",
+        taskId: task.id,
+        revisionId: task.revisionId,
+        assessmentIds: input.assessmentIds,
+        recommendation,
+        validationBlocked,
+        disagreement,
+        approvalBlocked,
+      },
+    }, tx);
+    return {
+      status: escalated ? "AI_ASSIST_ESCALATED" as const : "AI_ASSIST_COMPLETE" as const,
+      authority: "ADVISORY_ONLY" as const,
+      recommendation,
+      auditLogId,
+      assessments,
+    };
   }, REVIEW_SERIALIZABLE_TRANSACTION_OPTIONS);
 }

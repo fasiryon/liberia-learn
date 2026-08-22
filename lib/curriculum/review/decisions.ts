@@ -116,7 +116,11 @@ export async function finalizeReviewTaskIfReady(input: {
         },
         tx,
       );
-      if (!eligibility.eligible || eligibility.credentialId !== assessment.credentialId) {
+      if (
+        !eligibility.eligible ||
+        eligibility.credentialId !== assessment.credentialId ||
+        eligibility.credentialScopeId !== assessment.credentialScopeId
+      ) {
         throw new ReviewOperationError("REVIEWER_INELIGIBLE_AT_DECISION", 409, "Reviewer eligibility changed", {
           reviewerProfileId: assessment.reviewerProfileId,
           reasons: eligibility.reasons,

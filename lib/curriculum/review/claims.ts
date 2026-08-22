@@ -5,6 +5,7 @@ import { reviewEligibility, type EligibilityUser } from "./eligibility";
 import { ReviewOperationError } from "./errors";
 import { logAuditRequired } from "@/lib/audit";
 import { REVIEW_SERIALIZABLE_TRANSACTION_OPTIONS, REVIEW_TRANSACTION_OPTIONS } from "./transaction";
+import { assertReviewOperationsAdmin, type ReviewAccessUser } from "./access";
 
 export const REVIEW_LEASE_MINUTES = 15;
 export const REVIEW_MAX_CONTINUOUS_CLAIM_MINUTES = 120;
@@ -15,6 +16,11 @@ async function selectSlot(tx: Prisma.TransactionClient, taskId: string): Promise
     include: { assessments: { where: { status: "SUBMITTED" }, include: { assignment: { select: { slot: true } } } } },
   });
   const submitted = new Set(task.assessments.map((assessment) => assessment.assignment.slot));
+  const active = await tx.curriculumReviewAssignment.findFirst({
+    where: { taskId, status: "ACTIVE" },
+    select: { slot: true },
+  });
+  if (active) throw new ReviewOperationError("CLAIM_SLOT_CONFLICT", 409);
   if (task.status === "DISAGREEMENT" || task.status === "ESCALATED") return "RESOLVER";
   if (!submitted.has("FIRST")) return "FIRST";
   if (task.requiredReviewCount > 1 && !submitted.has("SECOND")) return "SECOND";
@@ -142,24 +148,29 @@ export async function releaseReviewClaim(input: {
 
 export async function overrideReviewClaim(input: {
   assignmentId: string;
-  actorUserId: string;
-  schoolId?: string | null;
+  actor: ReviewAccessUser;
   reason: string;
   expectedVersion: number;
   idempotencyKey: string;
 }) {
   return prisma.$transaction(async (tx) => {
+    const assignment = await tx.curriculumReviewAssignment.findUnique({
+      where: { id: input.assignmentId },
+      include: { task: { select: { schoolId: true } } },
+    });
+    if (!assignment) throw new ReviewOperationError("CLAIM_NOT_FOUND", 404);
+    assertReviewOperationsAdmin(input.actor, assignment.task.schoolId);
     const changed = await tx.curriculumReviewAssignment.updateMany({
       where: { id: input.assignmentId, status: "ACTIVE", version: input.expectedVersion },
       data: { status: "OVERRIDDEN", releasedAt: new Date(), releaseReason: input.reason, version: { increment: 1 } },
     });
     if (changed.count !== 1) throw new ReviewOperationError("CLAIM_VERSION_CONFLICT", 409);
     await logAuditRequired({
-      userId: input.actorUserId,
+      userId: input.actor.id,
       action: "curriculum.review.claim.overridden",
       resourceType: "review_assignment",
       resourceId: input.assignmentId,
-      schoolId: input.schoolId,
+      schoolId: assignment.task.schoolId,
       details: { reason: input.reason, idempotencyKey: input.idempotencyKey },
     }, tx);
   }, REVIEW_TRANSACTION_OPTIONS);

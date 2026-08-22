@@ -4,6 +4,7 @@ import { reviewEligibility } from "@/lib/curriculum/review/eligibility";
 const user = { id: "reviewer-user", role: "TEACHER" as const, schoolId: "school-a", isPlatformAdmin: false };
 const task = {
   id: "task-1",
+  createdByUserId: "task-initiator",
   status: "QUEUED",
   revisionId: "revision-1",
   schoolId: "school-a",
@@ -32,13 +33,15 @@ const credential = {
   expiresAt: new Date("2027-01-01"),
   scopes: [{
     id: "scope-1", subject: "MATHEMATICS", gradeMin: 7, gradeMax: 9,
-    curriculumTypes: ["lesson"], curriculumScopes: ["SCHOOL"], schoolId: "school-a",
+    domains: [], curriculumTypes: ["lesson"], curriculumScopes: ["SCHOOL"], schoolId: "school-a",
   }],
 };
 const profile = {
   id: "profile-1",
   userId: user.id,
   status: "ACTIVE",
+  authority: "SCHOOL",
+  schoolId: "school-a",
   available: true,
   maxActiveClaims: 2,
   calibrationEligibleThrough: new Date("2027-01-01"),
@@ -46,10 +49,11 @@ const profile = {
   credentials: [credential],
 };
 
-function db(overrides: { task?: any; profile?: any; count?: number } = {}) {
+function db(overrides: { task?: any; profile?: any; count?: number; sourceConflict?: boolean } = {}) {
   return {
+    $queryRaw: vi.fn().mockResolvedValue([{ conflict: overrides.sourceConflict ?? false }]),
     curriculumReviewTask: { findUnique: vi.fn().mockResolvedValue(overrides.task ?? task) },
-    reviewerProfile: { findUnique: vi.fn().mockResolvedValue(overrides.profile ?? profile) },
+    reviewerProfile: { findUnique: vi.fn().mockResolvedValue("profile" in overrides ? overrides.profile : profile) },
     curriculumReviewAssignment: { count: vi.fn().mockResolvedValue(overrides.count ?? 0) },
   } as any;
 }
@@ -71,9 +75,39 @@ describe("reviewEligibility", () => {
     expect((await reviewEligibility({ user, taskId: task.id, slot: "SECOND" }, db({ task: prior }))).reasons).toContain("PRIOR_REVIEWER_CONFLICT");
   });
 
+  it("rejects authorship anywhere in the transitive source-revision chain", async () => {
+    expect((await reviewEligibility({ user, taskId: task.id, slot: "FIRST" }, db({ sourceConflict: true }))).reasons)
+      .toContain("SOURCE_CHAIN_CONFLICT");
+  });
+
+  it("rejects the task initiator even when role, profile, credential, and scope otherwise match", async () => {
+    const initiated = { ...task, createdByUserId: user.id };
+    expect((await reviewEligibility({ user, taskId: task.id, slot: "FIRST" }, db({ task: initiated }))).reasons).toContain("INITIATOR_CONFLICT");
+  });
+
+  it.each([
+    ["role but no reviewer profile", null, "PROFILE_MISSING"],
+    ["inactive reviewer profile", { ...profile, status: "SUSPENDED" }, "PROFILE_INACTIVE"],
+    ["active profile with no credential", { ...profile, credentials: [] }, "CREDENTIAL_MISSING"],
+    ["unverified credential", { ...profile, credentials: [{ ...credential, status: "PENDING_VERIFICATION", verifiedAt: null, verifierUserId: null }] }, "CREDENTIAL_UNVERIFIED"],
+  ])("fails closed for %s", async (_label, changedProfile, reason) => {
+    expect((await reviewEligibility({ user, taskId: task.id, slot: "FIRST" }, db({ profile: changedProfile }))).reasons).toContain(reason);
+  });
+
+  it("selects the credential and exact scope that jointly satisfy the policy", async () => {
+    const wrongScope = { ...credential.scopes[0], id: "scope-wrong", subject: "BIOLOGY" };
+    const rightScope = { ...credential.scopes[0], id: "scope-right" };
+    const multiple = { ...profile, credentials: [{ ...credential, scopes: [wrongScope, rightScope] }] };
+    await expect(reviewEligibility({ user, taskId: task.id, slot: "FIRST" }, db({ profile: multiple }))).resolves.toEqual(
+      expect.objectContaining({ eligible: true, credentialId: credential.id, credentialScopeId: "scope-right" }),
+    );
+  });
+
   it.each(["SUSPENDED", "REVOKED"])("rejects a %s credential", async (status) => {
     const changed = { ...profile, credentials: [{ ...credential, status }] };
-    expect((await reviewEligibility({ user, taskId: task.id, slot: "FIRST" }, db({ profile: changed }))).eligible).toBe(false);
+    const result = await reviewEligibility({ user, taskId: task.id, slot: "FIRST" }, db({ profile: changed }));
+    expect(result.eligible).toBe(false);
+    expect(result.reasons).toContain("CREDENTIAL_INACTIVE");
   });
 
   it("rejects expired credentials and scope mismatch", async () => {
@@ -81,6 +115,31 @@ describe("reviewEligibility", () => {
     expect((await reviewEligibility({ user, taskId: task.id, slot: "FIRST", now: new Date("2026-08-14") }, db({ profile: expired }))).reasons).toContain("CREDENTIAL_EXPIRED");
     const mismatch = { ...profile, credentials: [{ ...credential, scopes: [{ ...credential.scopes[0], subject: "BIOLOGY" }] }] };
     expect((await reviewEligibility({ user, taskId: task.id, slot: "FIRST" }, db({ profile: mismatch }))).reasons).toContain("CREDENTIAL_SCOPE_MISMATCH");
+  });
+
+  it("rejects wrong grade, domain, curriculum, profile-authority, and profile-school scope", async () => {
+    const wrongGrade = { ...profile, credentials: [{ ...credential, scopes: [{ ...credential.scopes[0], gradeMin: 8, gradeMax: 9 }] }] };
+    expect((await reviewEligibility({ user, taskId: task.id, slot: "FIRST" }, db({ profile: wrongGrade }))).reasons).toContain("CREDENTIAL_SCOPE_MISMATCH");
+    const wrongDomain = { ...profile, credentials: [{ ...credential, scopes: [{ ...credential.scopes[0], domains: ["SAFETY"] }] }] };
+    expect((await reviewEligibility({ user, taskId: task.id, slot: "FIRST" }, db({ profile: wrongDomain }))).reasons).toContain("CREDENTIAL_SCOPE_MISMATCH");
+    const wrongCurriculum = { ...profile, credentials: [{ ...credential, scopes: [{ ...credential.scopes[0], curriculumScopes: ["WAEC"] }] }] };
+    expect((await reviewEligibility({ user, taskId: task.id, slot: "FIRST" }, db({ profile: wrongCurriculum }))).reasons).toContain("CREDENTIAL_SCOPE_MISMATCH");
+    expect((await reviewEligibility({ user, taskId: task.id, slot: "FIRST" }, db({ profile: { ...profile, schoolId: "school-b" } }))).reasons).toContain("SCHOOL_SCOPE");
+  });
+
+  it("rejects a profile whose authority is below the task authority", async () => {
+    const moeTask = { ...task, requiredAuthority: "MOE", schoolId: null };
+    const moeCredential = {
+      ...credential,
+      authority: "MOE",
+      scopes: [{ ...credential.scopes[0], schoolId: null, curriculumScopes: ["NATIONAL"] }],
+    };
+    const result = await reviewEligibility({
+      user: { id: user.id, role: "MOE_OFFICIAL", schoolId: null },
+      taskId: task.id,
+      slot: "FIRST",
+    }, db({ task: moeTask, profile: { ...profile, authority: "SCHOOL", schoolId: null, credentials: [moeCredential] } }));
+    expect(result.reasons).toContain("PROFILE_AUTHORITY_MISMATCH");
   });
 
   it("rejects cross-school and MOE district decision authority", async () => {
