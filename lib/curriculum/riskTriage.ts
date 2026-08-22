@@ -149,15 +149,14 @@ export type TriageResult =
 
 /**
  * Orchestrates one candidate through risk scoring, the weekly review budget,
- * and the final DB write. Called only from automated/script-driven approval
- * paths - see the module header comment. `approvedStatus` lets each caller
- * keep its own existing "approved" status string ("published" for
- * bulk-approve-published.ts, "APPROVED" for promote-enriched-lessons.ts).
+ * and the governed approval event. Called only from automated/script-driven
+ * approval paths. The legacy status argument remains for caller compatibility;
+ * governance now owns the authoritative projection in every flag state.
  */
 export async function triageAndApprove(
   candidate: TriageCandidate,
   actorLabel: string,
-  approvedStatus: string
+  _approvedStatus: string
 ): Promise<TriageResult> {
   const isFirstOfKind = await isFirstOfKindCell(candidate.grade, candidate.subject);
   const { score, reasons } = computeRiskScore({
@@ -226,38 +225,6 @@ export async function triageAndApprove(
       });
       return { action: "flagged", contentId: candidate.contentId, riskScore: score, riskReasons: reasons };
     }
-    await updateCurriculumContent(
-      { contentId: candidate.contentId },
-      {
-        status: approvedStatus,
-        payload: {
-          ...candidate.payload,
-          ...(candidate.approvalMetadata ?? {}),
-          approvalStatus: "APPROVED",
-          riskScore: score,
-          riskReasons: reasons,
-        } as any,
-      },
-      {
-        revisionKind: "METADATA_CHANGE",
-        originKind: "LEGACY_UNKNOWN",
-        actorLabel,
-        auditAction: "curriculum.risk.autoapproved",
-      },
-    );
-    await logAudit({
-      action: "curriculum.risk.autoapproved",
-      resourceType: "curriculum",
-      resourceId: candidate.contentId,
-      details: { riskScore: score, riskReasons: reasons, budgetExceeded: overBudget },
-    });
-    return {
-      action: "approved",
-      contentId: candidate.contentId,
-      riskScore: score,
-      riskReasons: reasons,
-      budgetExceeded: overBudget,
-    };
   }
 
   if (shouldFlag) {

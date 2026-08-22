@@ -191,7 +191,8 @@ export async function POST(req: Request) {
     const hash = createHash("sha256").update(payloadStr).digest("hex").slice(0, 40);
     const traceId = randomUUID();
     const writersEnabled = provenanceWritersEnabled();
-    const dbStatus = approvalStatus === "APPROVED" && !writersEnabled ? "published" : "pending_approval";
+    if (!writersEnabled) packPayload.approvalStatus = "PENDING_APPROVAL";
+    const dbStatus = "pending_approval";
 
     const write = await upsertCurriculumContent(
       { contentId },

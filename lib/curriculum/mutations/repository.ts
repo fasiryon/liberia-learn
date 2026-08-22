@@ -39,6 +39,30 @@ export function provenanceWritersEnabled(): boolean {
   return process.env.P2A_PROVENANCE_WRITERS_DISABLED?.trim().toLowerCase() === "false";
 }
 
+function scalarString(value: unknown): string | null {
+  if (typeof value === "string") return value;
+  if (value && typeof value === "object" && "set" in value) {
+    const set = (value as { set?: unknown }).set;
+    return typeof set === "string" ? set : null;
+  }
+  return null;
+}
+
+function assertContentWriteIsNonAuthoritative(
+  data: { status?: unknown; editReviewStatus?: unknown; publishedAt?: unknown },
+): void {
+  const status = scalarString(data.status)?.trim().toUpperCase();
+  const editReviewStatus = scalarString(data.editReviewStatus)?.trim().toUpperCase();
+  const publishes = status === "PUBLISHED" || status === "APPROVED";
+  const approvesEdit = editReviewStatus === "APPROVED";
+  const stampsPublication = data.publishedAt !== undefined && data.publishedAt !== null;
+  if (publishes || approvesEdit || stampsPublication) {
+    throw new Error(
+      "P2A_COMPATIBILITY_AUTHORITY_REQUIRED: authoritative curriculum state must be written through governance",
+    );
+  }
+}
+
 function lifecycleFromLegacyStatus(status: string): CurriculumLifecycleState {
   switch (status.trim().toUpperCase()) {
     case "PUBLISHED":
@@ -99,17 +123,6 @@ export async function updateCurriculumGovernanceProjection(
     where: typeof where === "string" ? { id: where } : where,
     data,
   });
-}
-
-export async function updateCurriculumGovernanceProjectionMany(
-  client: Pick<CurriculumTransaction, "curriculumContent">,
-  where: Prisma.CurriculumContentWhereInput,
-  data: Pick<
-    Prisma.CurriculumContentUncheckedUpdateManyInput,
-    "status" | "publishedAt" | "rejectionReason" | "editReviewStatus" | "updatedAt"
-  >,
-): Promise<{ count: number }> {
-  return client.curriculumContent.updateMany({ where, data });
 }
 
 export async function updateCurriculumReleaseProjectionMany(
@@ -234,6 +247,7 @@ export async function createCurriculumContent(
   data: Prisma.CurriculumContentUncheckedCreateInput,
   context: GovernedMutationContext,
 ): Promise<GovernedWriteResult> {
+  assertContentWriteIsNonAuthoritative(data);
   if (!provenanceWritersEnabled()) {
     return { content: await prisma.curriculumContent.create({ data }), provenance: null, revision: null };
   }
@@ -269,6 +283,7 @@ export async function updateCurriculumContent(
   data: Prisma.CurriculumContentUncheckedUpdateInput,
   context: GovernedMutationContext,
 ): Promise<GovernedWriteResult> {
+  assertContentWriteIsNonAuthoritative(data);
   if (!provenanceWritersEnabled()) {
     return { content: await prisma.curriculumContent.update({ where, data }), provenance: null, revision: null };
   }
@@ -281,6 +296,7 @@ export async function updateCurriculumContentInTransaction(
   data: Prisma.CurriculumContentUncheckedUpdateInput,
   context: GovernedMutationContext,
 ): Promise<GovernedWriteResult> {
+  assertContentWriteIsNonAuthoritative(data);
   if (!provenanceWritersEnabled()) {
     return { content: await tx.curriculumContent.update({ where, data }), provenance: null, revision: null };
   }
@@ -323,6 +339,8 @@ export async function upsertCurriculumContent(
   update: Prisma.CurriculumContentUncheckedUpdateInput,
   context: GovernedMutationContext,
 ): Promise<GovernedWriteResult> {
+  assertContentWriteIsNonAuthoritative(create);
+  assertContentWriteIsNonAuthoritative(update);
   if (!provenanceWritersEnabled()) {
     return {
       content: await prisma.curriculumContent.upsert({ where, create, update }),

@@ -16,7 +16,6 @@ if (process.env.DIRECT_URL) {
 
 import { generateNationalBatch, auditNationalCoverage, validatePayloadQuality } from "../lib/curriculum/nationalFactory";
 import { PrismaClient } from "@prisma/client";
-import { provenanceWritersEnabled, updateCurriculumGovernanceProjectionMany } from "../lib/curriculum/mutations/repository";
 import { appendCurriculumGovernanceEvent } from "../lib/curriculum/mutations/governanceWriter";
 
 const prisma = new PrismaClient();
@@ -109,14 +108,6 @@ export async function approveSafely(failed: string[], db: Db = prisma): Promise<
 
   if (failed.length > 0) {
     where.contentId = { notIn: failed };
-  }
-
-  if (!provenanceWritersEnabled()) {
-    const result = await updateCurriculumGovernanceProjectionMany(db, where, {
-      status: "APPROVED",
-      updatedAt: new Date(),
-    });
-    return result.count as number;
   }
 
   const rows = await db.curriculumContent.findMany({

@@ -16,6 +16,14 @@ import {
 export const AI_REVIEW_RUBRIC_KEY = "p2b.rubric.v1";
 export const AI_REVIEW_POLICY_KEY = "p2b.ai-platform.v1";
 
+type AIReviewAssistResult = {
+  status: "AI_ASSIST_ESCALATED" | "AI_ASSIST_COMPLETE";
+  authority: "ADVISORY_ONLY";
+  recommendation: string;
+  auditLogId: string;
+  assessments: Array<{ id: string }>;
+};
+
 const BASE_AGENTS: Array<{ agentKey: string; name: string; specialty: AIReviewSpecialty; promptKey: string; system: string }> = [
   { agentKey: "platform.ai.subject-sme.v1", name: "Platform AI Subject SME", specialty: "SUBJECT_MATTER", promptKey: "p2b.ai.subject-sme.v1", system: "You are an independent subject-matter curriculum reviewer. Focus on factual correctness, standards alignment, grade appropriateness, worked examples, answer keys, misconceptions, and terminology. Never claim MOE or WAEC approval." },
   { agentKey: "platform.ai.curriculum-sme.v1", name: "Platform AI Curriculum SME", specialty: "PEDAGOGY", promptKey: "p2b.ai.curriculum-sme.v1", system: "You are an independent curriculum and instruction reviewer. Focus on instructional quality, explanations, age appropriateness, assessment alignment, localization, accessibility, clarity, and learner experience. Never claim MOE or WAEC approval." },
@@ -104,7 +112,7 @@ export async function runAIReviewTask(taskId: string, options: { correlationId?:
   return finalizeAIReviewTask({ taskId, correlationId, assessmentIds: [...independent.map((item) => item.id), ...(adjudicator ? [adjudicator.id] : [])], adjudicatorId: adjudicator?.id ?? null });
 }
 
-export async function finalizeAIReviewTask(input: { taskId: string; correlationId: string; assessmentIds: string[]; adjudicatorId?: string | null }) {
+export async function finalizeAIReviewTask(input: { taskId: string; correlationId: string; assessmentIds: string[]; adjudicatorId?: string | null }): Promise<AIReviewAssistResult> {
   return prisma.$transaction(async (tx) => {
     await tx.$queryRaw`SELECT "id" FROM "CurriculumReviewTask" WHERE "id" = ${input.taskId} FOR UPDATE`;
     const task = await tx.curriculumReviewTask.findUnique({ where: { id: input.taskId }, include: { provenance: { include: { curriculumContent: true } } } });
@@ -129,6 +137,9 @@ export async function finalizeAIReviewTask(input: { taskId: string; correlationI
     });
     const disagreement = new Set(independent.map(aiReviewDisagreementSignature)).size > 1;
     const deciding = input.adjudicatorId ? assessments.find((item) => item.id === input.adjudicatorId) : assessments[0];
+    if (input.adjudicatorId && (!deciding || deciding.aiReviewAgent.specialty !== "FACT_CHECK")) {
+      throw new ReviewOperationError("AI_ADJUDICATOR_INVALID", 409);
+    }
     const evidencePolicy = (task.evidenceRequirements as { approvalBlocked?: boolean } | null) ?? {};
     const recommendation = deciding?.recommendation ?? "ESCALATE";
     const approvalBlocked = recommendation === "APPROVE" && evidencePolicy.approvalBlocked;

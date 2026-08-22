@@ -95,4 +95,14 @@ describe("P2-B AI authority boundary", () => {
     expect(tx.curriculumReviewDecision.create).not.toHaveBeenCalled();
     expect(tx.curriculumReviewTask.update).not.toHaveBeenCalled();
   });
+
+  it("rejects an independent assessment presented as an adjudicator", async () => {
+    await expect(finalizeAIReviewTask({
+      taskId: "task-1",
+      correlationId: "correlation-3",
+      assessmentIds: ["subject", "pedagogy"],
+      adjudicatorId: "subject",
+    })).rejects.toMatchObject({ code: "AI_ADJUDICATOR_INVALID", status: 409 });
+    expect(logAuditWithId).not.toHaveBeenCalled();
+  });
 });

@@ -5,6 +5,7 @@ const mockUpdate = vi.hoisted(() => vi.fn(async (args: any) => args));
 const mockLogAudit = vi.hoisted(() => vi.fn(async () => {}));
 const mockNotify = vi.hoisted(() => vi.fn(async () => {}));
 const mockWarn = vi.hoisted(() => vi.fn());
+const mockAppendGovernance = vi.hoisted(() => vi.fn(async () => ({ id: "event-1" })));
 
 vi.mock("@/lib/db", () => ({
   prisma: { curriculumContent: { count: mockCount, update: mockUpdate } },
@@ -12,6 +13,9 @@ vi.mock("@/lib/db", () => ({
 vi.mock("@/lib/audit", () => ({ logAudit: mockLogAudit }));
 vi.mock("@/lib/logger", () => ({ logger: { warn: mockWarn, error: vi.fn(), info: vi.fn() } }));
 vi.mock("@/lib/curriculum/riskTriageNotify", () => ({ notifyRiskReviewers: mockNotify }));
+vi.mock("@/lib/curriculum/mutations/governanceWriter", () => ({
+  appendCurriculumGovernanceEvent: mockAppendGovernance,
+}));
 
 import { triageAndApprove, WEEKLY_REVIEW_BUDGET } from "@/lib/curriculum/riskTriage";
 
@@ -36,6 +40,7 @@ const HIGH_RISK_CANDIDATE = {
 
 beforeEach(() => {
   vi.clearAllMocks();
+  process.env.P2A_PROVENANCE_WRITERS_DISABLED = "true";
 });
 
 describe("triageAndApprove", () => {
@@ -50,22 +55,16 @@ describe("triageAndApprove", () => {
       riskReasons: [],
       budgetExceeded: false,
     });
-    expect(mockUpdate).toHaveBeenCalledWith({
-      where: { contentId: "content-low" },
-      data: {
-        status: "published",
-        payload: {
-          existing: "field",
-          approvalStatus: "APPROVED",
-          bulkApproved: true,
-          riskScore: 0,
-          riskReasons: [],
-        },
-      },
-    });
-    expect(mockLogAudit).toHaveBeenCalledWith(
-      expect.objectContaining({ action: "curriculum.risk.autoapproved", resourceId: "content-low" })
-    );
+    expect(mockUpdate).not.toHaveBeenCalled();
+    expect(mockAppendGovernance).toHaveBeenNthCalledWith(1, expect.objectContaining({
+      contentId: "content-low",
+      eventType: "RISK_ASSESSED",
+    }));
+    expect(mockAppendGovernance).toHaveBeenNthCalledWith(2, expect.objectContaining({
+      contentId: "content-low",
+      eventType: "APPROVED",
+      approvalBasis: "AUTOMATED_RISK_POLICY",
+    }));
     expect(mockNotify).not.toHaveBeenCalled();
   });
 
@@ -119,9 +118,11 @@ describe("triageAndApprove", () => {
   it("preserves the promotion pipeline's APPROVED status convention", async () => {
     mockCount.mockResolvedValueOnce(1);
     await triageAndApprove(LOW_RISK_CANDIDATE, "system:promotion", "APPROVED");
-    expect(mockUpdate).toHaveBeenCalledWith(
-      expect.objectContaining({ data: expect.objectContaining({ status: "APPROVED" }) })
-    );
+    expect(mockUpdate).not.toHaveBeenCalled();
+    expect(mockAppendGovernance).toHaveBeenLastCalledWith(expect.objectContaining({
+      eventType: "APPROVED",
+      approvalBasis: "AUTOMATED_RISK_POLICY",
+    }));
   });
 
   it("keeps the status write when reviewer notification fails", async () => {

@@ -195,6 +195,39 @@ try {
   $enumValues = Query-Scalar "SELECT (EXISTS (SELECT 1 FROM pg_enum e JOIN pg_type t ON t.oid=e.enumtypid WHERE t.typname='CognitiveDemandCategory' AND e.enumlabel='NOT_ESTABLISHED'))::int || '|' || (EXISTS (SELECT 1 FROM pg_enum e JOIN pg_type t ON t.oid=e.enumtypid WHERE t.typname='CurriculumGovernanceEventType' AND e.enumlabel='AUTHORITY_CORRECTED'))::int;"
   if ($enumValues -ne "1|1") { throw "Integrity enum verification failed: $enumValues" }
 
+  # Exercise P2-B's database concurrency boundary with genuinely overlapping
+  # PostgreSQL sessions. The first claimant holds its insert transaction open;
+  # the second must lose on the partial unique active-slot index. Follow-up SQL
+  # proves heartbeat versioning, stale-writer rejection, expiry/reclaim, two
+  # independent active slots, and submitted-row immutability.
+  Invoke-Docker -Arguments @("exec", $containerName, "psql", "-h", "127.0.0.1", "-X", "-v", "ON_ERROR_STOP=1", "-U", "postgres", "-d", $database, "-f", "/workspace/scripts/p2b-disposable-db-seed.sql")
+  $claimOneJob = Start-Job -ScriptBlock {
+    param($Container, $Database)
+    $output = & docker exec $Container psql -h 127.0.0.1 -X -v ON_ERROR_STOP=1 -U postgres -d $Database -f /workspace/scripts/p2b-claim-session-1.sql 2>&1
+    [pscustomobject]@{ ExitCode = $LASTEXITCODE; Output = ($output -join "`n") }
+  } -ArgumentList $containerName, $database
+  $firstClaimHolding = $false
+  for ($attempt = 0; $attempt -lt 100; $attempt++) {
+    $holding = Query-Scalar "SELECT count(*) FROM pg_stat_activity WHERE datname='$database' AND pid <> pg_backend_pid() AND state='active' AND query LIKE 'SELECT pg_sleep(8)%';"
+    if ($holding -eq "1") { $firstClaimHolding = $true; break }
+    Start-Sleep -Milliseconds 100
+  }
+  if (-not $firstClaimHolding) {
+    Stop-Job -Job $claimOneJob
+    Remove-Job -Job $claimOneJob -Force
+    throw "P2-B first concurrent claimant never reached its transaction hold point"
+  }
+  $claimTwoOutput = & docker exec $containerName psql -h 127.0.0.1 -X -v ON_ERROR_STOP=1 -U postgres -d $database -f /workspace/scripts/p2b-claim-session-2.sql 2>&1
+  $claimTwoExitCode = $LASTEXITCODE
+  Wait-Job -Job $claimOneJob | Out-Null
+  $claimOneResult = Receive-Job -Job $claimOneJob
+  Remove-Job -Job $claimOneJob -Force
+  if ($claimOneResult.ExitCode -ne 0) { throw "P2-B first concurrent claimant failed: $($claimOneResult.Output)" }
+  if ($claimTwoExitCode -eq 0 -or ($claimTwoOutput -join "`n") -notmatch "CurriculumReviewAssignment_active_slot_key") {
+    throw "P2-B second concurrent claimant did not lose deterministically on the active-slot index"
+  }
+  Invoke-Docker -Arguments @("exec", $containerName, "psql", "-h", "127.0.0.1", "-X", "-v", "ON_ERROR_STOP=1", "-U", "postgres", "-d", $database, "-f", "/workspace/scripts/p2b-post-claim-invariants.sql")
+
   # The production reference-data seed must be a true idempotent operation,
   # not merely an atomic single-use script. Run it twice against the same
   # disposable canonical database and fingerprint every table it owns.
@@ -271,6 +304,17 @@ try {
     rlsEnabledTables = 229
     p2cTables = 13
     p2cAnonAuthenticatedGrants = 0
+    p2bConcurrency = [ordered]@{
+      result = "PASS"
+      overlappingClaimants = 2
+      activeSlotWinners = 1
+      loserConstraint = "CurriculumReviewAssignment_active_slot_key"
+      heartbeatOptimisticVersioning = $true
+      staleWriterRejected = $true
+      expiryReclaim = $true
+      independentActiveSlots = 2
+      submittedAssessmentImmutable = $true
+    }
     schemaParity = "LAYERED_PASS"
     registeredPrismaDifferences = @($diffReport.diffStatementKeys).Count
     declaredPendingDifferences = @($diffReport.declaredPendingKeys)

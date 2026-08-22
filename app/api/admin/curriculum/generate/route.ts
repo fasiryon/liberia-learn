@@ -288,7 +288,8 @@ export async function POST(req: Request) {
 
     // Use the DB-level status column for the approval workflow
     const writersEnabled = provenanceWritersEnabled();
-    const dbStatus = approvalStatus === "APPROVED" && !writersEnabled ? "published" : "pending_approval";
+    if (!writersEnabled) (enrichedPayload as any).approvalStatus = "PENDING_APPROVAL";
+    const dbStatus = "pending_approval";
 
     // Upsert into CurriculumContent
     const prompt = mode === "lesson" ? getPrompt("lesson.deep") : null;

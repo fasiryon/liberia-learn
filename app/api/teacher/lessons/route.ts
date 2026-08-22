@@ -144,12 +144,18 @@ export async function POST(req: NextRequest) {
         : null;
 
     const writersEnabled = provenanceWritersEnabled();
+    if (body.status === "published" && !writersEnabled) {
+      return NextResponse.json(
+        { error: "P2A_PROVENANCE_AUTHORITY_REQUIRED" },
+        { status: 409 },
+      );
+    }
     const payload = {
       title: body.title,
       body: body.content,
       assessmentQuestions: body.assessmentQuestions,
       estimatedMinutes: body.estimatedMinutes,
-      approvalStatus: body.status === "published" && !writersEnabled ? "APPROVED" : "DRAFT",
+      approvalStatus: "DRAFT",
       createdByRole: "TEACHER",
       createdByUserId: user.id,
       standardCode: body.standardCode ?? null,
@@ -173,7 +179,7 @@ export async function POST(req: NextRequest) {
       grade: classGrade,
       subject: body.subject ?? classRecord.subject,
       contentType: "lesson",
-      status: body.status === "published" && !writersEnabled ? "published" : "draft",
+      status: "draft",
       version: new Date().toISOString().slice(0, 10),
       payload: payload as any,
       moeAlignments: standard

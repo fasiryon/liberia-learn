@@ -163,4 +163,31 @@ describe("P2-B final-decision transaction composition", () => {
     });
     expect(tx.curriculumReviewDecision.create).not.toHaveBeenCalled();
   });
+
+  it("rejects a resolver who is one of the independent reviewers", async () => {
+    const second = {
+      ...assessment,
+      id: "assessment-2",
+      recommendation: "REJECT",
+      reviewerProfileId: "profile-2",
+      reviewerProfile: {
+        userId: "reviewer-2",
+        user: { id: "reviewer-2", role: "TEACHER", schoolId: "school-a", isPlatformAdmin: false },
+      },
+      assignment: { id: "assignment-2", slot: "SECOND" },
+    };
+    const resolver = {
+      ...assessment,
+      id: "assessment-resolver",
+      assignment: { id: "assignment-resolver", slot: "RESOLVER" },
+    };
+    tx.curriculumReviewTask.findUnique.mockResolvedValue({
+      ...task,
+      requiredReviewCount: 2,
+      assessments: [assessment, second, resolver],
+    });
+    await expect(finalizeReviewTaskIfReady({ taskId: task.id, idempotencyKey: "decision-key" }))
+      .rejects.toMatchObject({ code: "RESOLVER_SEPARATION_FAILED", status: 409 });
+    expect(logAuditWithId).not.toHaveBeenCalled();
+  });
 });

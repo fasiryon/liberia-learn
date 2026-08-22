@@ -19,6 +19,7 @@ export const REVIEW_ELIGIBILITY_REASON = {
   CREDENTIAL_MISSING: "CREDENTIAL_MISSING",
   CREDENTIAL_UNVERIFIED: "CREDENTIAL_UNVERIFIED",
   CREDENTIAL_INACTIVE: "CREDENTIAL_INACTIVE",
+  CREDENTIAL_NOT_YET_VALID: "CREDENTIAL_NOT_YET_VALID",
   CREDENTIAL_EXPIRED: "CREDENTIAL_EXPIRED",
   CREDENTIAL_SCOPE_MISMATCH: "CREDENTIAL_SCOPE_MISMATCH",
   SPECIALIST_CREDENTIAL_MISSING: "SPECIALIST_CREDENTIAL_MISSING",
@@ -26,6 +27,7 @@ export const REVIEW_ELIGIBILITY_REASON = {
   AUTHOR_CONFLICT: "AUTHOR_CONFLICT",
   SOURCE_CHAIN_CONFLICT: "SOURCE_CHAIN_CONFLICT",
   PRIOR_REVIEWER_CONFLICT: "PRIOR_REVIEWER_CONFLICT",
+  PRIOR_RECUSAL_CONFLICT: "PRIOR_RECUSAL_CONFLICT",
   INITIATOR_CONFLICT: "INITIATOR_CONFLICT",
   LEGACY_CONFLICT_UNRESOLVED: "LEGACY_CONFLICT_UNRESOLVED",
   REVISION_STALE: "REVISION_STALE",
@@ -81,6 +83,7 @@ function scopeMatches(
     subject: string | null;
     gradeMin: number | null;
     gradeMax: number | null;
+    domains: string[];
     curriculumTypes: string[];
     curriculumScopes: string[];
     schoolId: string | null;
@@ -136,6 +139,10 @@ export async function reviewEligibility(
       revision: { include: { sourceRevision: { select: { authorUserId: true } } } },
       assessments: {
         where: { status: "SUBMITTED" },
+        select: { reviewerProfile: { select: { userId: true } } },
+      },
+      assignments: {
+        where: { status: "RECUSED" },
         select: { reviewerProfile: { select: { userId: true } } },
       },
     },
@@ -228,6 +235,9 @@ export async function reviewEligibility(
   if (task.createdByUserId === input.user.id) {
     return { eligible: false, reasons: [REVIEW_ELIGIBILITY_REASON.INITIATOR_CONFLICT], reviewerProfileId: profile.id };
   }
+  if (task.assignments.some((assignment) => assignment.reviewerProfile.userId === input.user.id)) {
+    return { eligible: false, reasons: [REVIEW_ELIGIBILITY_REASON.PRIOR_RECUSAL_CONFLICT], reviewerProfileId: profile.id };
+  }
   if (
     !input.ignoreOwnSubmittedAssessment &&
     task.assessments.some((assessment) => assessment.reviewerProfile.userId === input.user.id)
@@ -249,7 +259,11 @@ export async function reviewEligibility(
   );
   if (!verified.length) {
     const expired = profile.credentials.some(
-      (credential) => credential.status === "VERIFIED" && credential.expiresAt != null && credential.expiresAt <= now,
+      (credential) => credential.status === "EXPIRED" ||
+        (credential.status === "VERIFIED" && credential.expiresAt != null && credential.expiresAt <= now),
+    );
+    const notYetValid = profile.credentials.some(
+      (credential) => credential.status === "VERIFIED" && credential.validFrom != null && credential.validFrom > now,
     );
     const unverified = profile.credentials.some(
       (credential) => credential.status === "DRAFT" || credential.status === "PENDING_VERIFICATION",
@@ -262,11 +276,13 @@ export async function reviewEligibility(
       reasons: [
         expired
           ? REVIEW_ELIGIBILITY_REASON.CREDENTIAL_EXPIRED
-          : unverified
-            ? REVIEW_ELIGIBILITY_REASON.CREDENTIAL_UNVERIFIED
-            : inactive
-              ? REVIEW_ELIGIBILITY_REASON.CREDENTIAL_INACTIVE
-              : REVIEW_ELIGIBILITY_REASON.CREDENTIAL_MISSING,
+          : notYetValid
+            ? REVIEW_ELIGIBILITY_REASON.CREDENTIAL_NOT_YET_VALID
+            : unverified
+              ? REVIEW_ELIGIBILITY_REASON.CREDENTIAL_UNVERIFIED
+              : inactive
+                ? REVIEW_ELIGIBILITY_REASON.CREDENTIAL_INACTIVE
+                : REVIEW_ELIGIBILITY_REASON.CREDENTIAL_MISSING,
       ],
       reviewerProfileId: profile.id,
     };

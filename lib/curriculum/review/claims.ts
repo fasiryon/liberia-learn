@@ -13,7 +13,12 @@ export const REVIEW_MAX_CONTINUOUS_CLAIM_MINUTES = 120;
 async function selectSlot(tx: Prisma.TransactionClient, taskId: string): Promise<CurriculumReviewSlot> {
   const task = await tx.curriculumReviewTask.findUniqueOrThrow({
     where: { id: taskId },
-    include: { assessments: { where: { status: "SUBMITTED" }, include: { assignment: { select: { slot: true } } } } },
+    include: {
+      assessments: {
+        where: { status: "SUBMITTED", recommendation: { not: "ABSTAIN_CONFLICT" } },
+        include: { assignment: { select: { slot: true } } },
+      },
+    },
   });
   const submitted = new Set(task.assessments.map((assessment) => assessment.assignment.slot));
   const active = await tx.curriculumReviewAssignment.findFirst({

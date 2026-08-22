@@ -195,7 +195,12 @@ export async function submitAssessment(input: AssessmentInput) {
     if (submitted.count !== 1) throw new ReviewOperationError("ASSESSMENT_VERSION_CONFLICT", 409);
     await tx.curriculumReviewAssignment.update({
       where: { id: assignment.id },
-      data: { status: "SUBMITTED", releasedAt: now, releaseReason: "ASSESSMENT_SUBMITTED", version: { increment: 1 } },
+      data: {
+        status: input.recommendation === "ABSTAIN_CONFLICT" ? "RECUSED" : "SUBMITTED",
+        releasedAt: now,
+        releaseReason: input.recommendation === "ABSTAIN_CONFLICT" ? "DECLARED_CONFLICT" : "ASSESSMENT_SUBMITTED",
+        version: { increment: 1 },
+      },
     });
     await logAuditRequired({
       userId: input.user.id,

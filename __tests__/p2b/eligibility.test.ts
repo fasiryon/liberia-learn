@@ -21,6 +21,7 @@ const task = {
     contentSnapshot: { subject: "MATHEMATICS", grade: 7, contentType: "lesson" },
   },
   assessments: [],
+  assignments: [],
 };
 const credential = {
   id: "credential-1",
@@ -85,6 +86,12 @@ describe("reviewEligibility", () => {
     expect((await reviewEligibility({ user, taskId: task.id, slot: "FIRST" }, db({ task: initiated }))).reasons).toContain("INITIATOR_CONFLICT");
   });
 
+  it("prevents a recused reviewer from reclaiming the same task", async () => {
+    const recused = { ...task, assignments: [{ reviewerProfile: { userId: user.id } }] };
+    expect((await reviewEligibility({ user, taskId: task.id, slot: "FIRST" }, db({ task: recused }))).reasons)
+      .toContain("PRIOR_RECUSAL_CONFLICT");
+  });
+
   it.each([
     ["role but no reviewer profile", null, "PROFILE_MISSING"],
     ["inactive reviewer profile", { ...profile, status: "SUSPENDED" }, "PROFILE_INACTIVE"],
@@ -115,6 +122,16 @@ describe("reviewEligibility", () => {
     expect((await reviewEligibility({ user, taskId: task.id, slot: "FIRST", now: new Date("2026-08-14") }, db({ profile: expired }))).reasons).toContain("CREDENTIAL_EXPIRED");
     const mismatch = { ...profile, credentials: [{ ...credential, scopes: [{ ...credential.scopes[0], subject: "BIOLOGY" }] }] };
     expect((await reviewEligibility({ user, taskId: task.id, slot: "FIRST" }, db({ profile: mismatch }))).reasons).toContain("CREDENTIAL_SCOPE_MISMATCH");
+  });
+
+  it("rejects a verified credential before its validity window begins", async () => {
+    const future = { ...profile, credentials: [{ ...credential, validFrom: new Date("2026-09-01") }] };
+    expect((await reviewEligibility({
+      user,
+      taskId: task.id,
+      slot: "FIRST",
+      now: new Date("2026-08-14"),
+    }, db({ profile: future }))).reasons).toContain("CREDENTIAL_NOT_YET_VALID");
   });
 
   it("rejects wrong grade, domain, curriculum, profile-authority, and profile-school scope", async () => {

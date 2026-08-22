@@ -1,5 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 
+const mockAppendGovernance = vi.hoisted(() => vi.fn().mockResolvedValue({ id: "event-1" }));
+
 vi.mock("../lib/curriculum/nationalFactory", () => ({
   validatePayloadQuality: vi.fn().mockReturnValue({ passed: true }),
   generateNationalBatch: vi.fn(),
@@ -11,6 +13,9 @@ vi.mock("@prisma/client", () => ({
   PrismaClient: class {
     $disconnect = vi.fn();
   },
+}));
+vi.mock("../lib/curriculum/mutations/governanceWriter", () => ({
+  appendCurriculumGovernanceEvent: mockAppendGovernance,
 }));
 
 import { runQualityGate, approveSafely, passesQualityGate } from "../scripts/factory-gap-closure";
@@ -105,28 +110,32 @@ describe("factory-gap-closure quality gate", () => {
     expect(failed).toHaveLength(2);
   });
 
-  it("approveSafely excludes failed contentIds from updateMany", async () => {
-    const mockUpdateMany = vi.fn().mockResolvedValue({ count: 8 });
-    const mockDb = { curriculumContent: { updateMany: mockUpdateMany } };
+  it("approveSafely excludes failed contentIds and approves each row through governance", async () => {
+    const mockFindMany = vi.fn().mockResolvedValue([{ contentId: "content-pass-1" }, { contentId: "content-pass-2" }]);
+    const mockDb = { curriculumContent: { findMany: mockFindMany } };
 
     const failedIds = ["content-fail-1", "content-fail-2"];
     const count = await approveSafely(failedIds, mockDb);
 
-    expect(count).toBe(8);
-    expect(mockUpdateMany).toHaveBeenCalledOnce();
-    const callArg = mockUpdateMany.mock.calls[0][0];
+    expect(count).toBe(2);
+    expect(mockFindMany).toHaveBeenCalledOnce();
+    const callArg = mockFindMany.mock.calls[0][0];
     expect(callArg.where.contentId).toEqual({ notIn: failedIds });
-    expect(callArg.data.status).toBe("APPROVED");
+    expect(mockAppendGovernance).toHaveBeenCalledTimes(2);
+    expect(mockAppendGovernance).toHaveBeenCalledWith(expect.objectContaining({
+      eventType: "APPROVED",
+      approvalBasis: "AUTOMATED_RISK_POLICY",
+    }));
   });
 
   it("approveSafely does not add contentId filter when no rows failed", async () => {
-    const mockUpdateMany = vi.fn().mockResolvedValue({ count: 120 });
-    const mockDb = { curriculumContent: { updateMany: mockUpdateMany } };
+    const mockFindMany = vi.fn().mockResolvedValue([{ contentId: "content-pass-1" }]);
+    const mockDb = { curriculumContent: { findMany: mockFindMany } };
 
     const count = await approveSafely([], mockDb);
 
-    expect(count).toBe(120);
-    const callArg = mockUpdateMany.mock.calls[0][0];
+    expect(count).toBe(1);
+    const callArg = mockFindMany.mock.calls[0][0];
     expect(callArg.where.contentId).toBeUndefined();
   });
 
