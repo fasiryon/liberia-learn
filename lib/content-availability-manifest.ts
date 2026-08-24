@@ -1,8 +1,24 @@
+export type ManifestContentEntry = {
+  contentId: string;
+  version: string | null;
+};
+
 export type ContentAvailabilityPayload = {
   contentId: string;
   version: string | null;
   revoked: boolean;
   issuedAt: string;
+  // P5-A envelope fields (Phase A: contract/shape only). Optional so every
+  // existing manifest and caller is unaffected. Not yet populated by
+  // signContentAvailability, not yet included in serializeContentAvailability's
+  // signed bytes, and not yet checked by verifyContentAvailabilityManifest —
+  // that wiring is deliberately deferred to later, separately-reviewed P5-A
+  // phases. A manifest carrying these fields today would have them silently
+  // dropped at signing time, not signed or verified.
+  sequence?: number;
+  expiresAt?: string | null;
+  minClientVersion?: string | null;
+  contents?: ManifestContentEntry[];
 };
 
 export type SignedContentAvailabilityManifest = {
