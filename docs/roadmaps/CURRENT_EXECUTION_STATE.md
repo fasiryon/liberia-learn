@@ -5,6 +5,49 @@ Live execution tracking for the final closeout program.
 
 ## Resume here
 
+- **P2-A/B/C REMEDIATION — BOTH PREVIOUSLY-OPEN NARROW GAPS NOW CLOSED IN
+  CODE, EXACT-HEAD CI GREEN (2026-08-22/24, HEAD `ca27c762`).** Two commits
+  (`8d462f8e`, `ca27c762`) landed on top of the 2026-08-21 gate-closure pass
+  below without an accompanying doc update; this entry closes that gap.
+  Both real, narrow gaps the 2026-08-21 entry left open are addressed:
+  (a) the compatibility-mode automated-approval bypass —
+  `governanceWriter.ts`'s `writersEnabled=false` branch now runs the same
+  `assertAutomatedApprovalAllowed()` provenance-completeness gate as the
+  canonical branch for `AUTOMATED_RISK_POLICY`/`ROLE_POLICY`/`SCHOOL_POLICY`
+  approval bases, defaulting to `UNVERIFIED` (fail closed) when no
+  provenance root exists, with new coverage in
+  `__tests__/curriculum/p2a-compatibility-authority-gate.test.ts`; a second
+  hardening pass added an explicit authoritative content-write boundary
+  (`P2A_COMPATIBILITY_AUTHORITY_REQUIRED`) blocking direct
+  create/update/upsert of `published`/approved state through
+  `lib/curriculum/mutations/repository.ts` outside the governance writer,
+  covered by `__tests__/curriculum/p2a-authoritative-write-boundary.test.ts`
+  (this also closes the teacher self-publish bypass path). (b) the P2-A/B
+  grant cleanup — `scripts/p2ab-staging-grant-hardening.ts` now exists,
+  scoped and guarded to the staging project ref only, dry-run by default,
+  requiring both `--apply` and `P2AB_STAGING_GRANT_CHANGE_AUTHORIZED=true`
+  to mutate. **It has been run dry-run only; grants have not actually been
+  revoked on staging or production.** This remains a real, open, non-blocking
+  follow-up, not closed by this entry. Also landed: claims/eligibility/
+  decision-transaction/blinding/AI-authority-boundary test hardening,
+  `factoryGapClosure.test.ts` and `triage-and-approve.test.ts` fixes, and a
+  `canonical-clean-bootstrap.yml` workflow tweak. Exact-head CI for
+  `ca27c762` is independently confirmed green (`CI` run `32745891219` and
+  `Canonical clean bootstrap` run `32745891328`, both `headSha: ca27c762…`,
+  `conclusion: success`) — this is a genuine full-gate pass
+  (`tsc --noEmit`, full `vitest run`, `npm run build`), not a partial or
+  narrative claim. A `.codex-p2abc-checkpoint.md` file was committed
+  mid-work as an emergency low-battery checkpoint (`8d462f8e`); its
+  "push, exact-HEAD CI, and final report remain pending" note is now stale
+  — both happened in the follow-up commit and are confirmed above. No
+  production or staging mutation occurred in either commit beyond what is
+  described here (dry-run only). **Verdict: P2-A/B/C code-level remediation
+  is genuinely done. Open, explicitly non-blocking follow-ups: apply (or
+  formally accept as deferred) the staging/production grant-hardening
+  script; production migration application; the fork-scope-creep incident
+  process write-up. None of these three block starting the next program
+  item.**
+
 - **P2-A/B/C REMEDIATION GATE CLOSURE PASS — CI GREEN, STAGING ADVANCED,
   PRODUCTION STILL GATED (2026-08-21).** Branch `codex/p2abc-integrity-remediation`
   at `45219066`. Two independently re-derived defects fixed and pushed: (1)
