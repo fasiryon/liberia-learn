@@ -54,7 +54,9 @@ export async function cacheLessonContent(
   manifest?: SignedContentAvailabilityManifest | null
 ): Promise<boolean> {
   try {
-    if (!manifest || !(await verifyContentAvailabilityManifest(manifest))) return false;
+    if (!manifest) return false;
+    const previous = await getCachedPack<SignedContentAvailabilityManifest>(LESSON_MANIFEST_SCOPE, contentId);
+    if (!(await verifyContentAvailabilityManifest(manifest, undefined, previous?.payload.sequence))) return false;
     if (manifest.payload.contentId !== contentId || manifest.payload.revoked || !manifest.payload.version) return false;
     const contentVersion = typeof data.metadata?.version === "string" ? data.metadata.version : null;
     if (contentVersion !== manifest.payload.version) return false;
@@ -113,8 +115,10 @@ export async function refreshLessonAvailability(
   manifest: SignedContentAvailabilityManifest
 ): Promise<boolean> {
   try {
-    if (!(await verifyContentAvailabilityManifest(manifest))) return false;
-    const { contentId, version, revoked } = manifest.payload;
+    const { contentId } = manifest.payload;
+    const previous = await getCachedPack<SignedContentAvailabilityManifest>(LESSON_MANIFEST_SCOPE, contentId);
+    if (!(await verifyContentAvailabilityManifest(manifest, undefined, previous?.payload.sequence))) return false;
+    const { version, revoked } = manifest.payload;
     const metadata = await getMetadata();
     const cached = metadata.find((entry) => entry.scope === LESSON_SCOPE && entry.scopeId === contentId);
     if (revoked || !version || (cached && cached.packVersion !== version)) {

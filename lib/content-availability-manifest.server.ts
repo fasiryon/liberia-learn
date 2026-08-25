@@ -22,6 +22,11 @@ export function signContentAvailability(
     version: input.version,
     revoked: input.revoked,
     issuedAt: new Date().toISOString(),
+    // Monotonic per the signing server's clock. A dedicated persisted
+    // counter would need a schema change this phase deliberately avoids;
+    // Date.now() only needs to be non-decreasing across signings, which a
+    // real clock already provides for the rollback check this enables.
+    sequence: Date.now(),
   };
   const signer = createSign("RSA-SHA256");
   signer.update(serializeContentAvailability(payload));
