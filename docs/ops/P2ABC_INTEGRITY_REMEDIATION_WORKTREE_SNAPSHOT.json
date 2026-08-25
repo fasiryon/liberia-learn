@@ -1,0 +1,47 @@
+{
+  "schemaVersion": 1,
+  "capturedAt": "2026-08-20T19:56:29.0088984Z",
+  "branch": "codex/p2abc-integrity-remediation",
+  "head": "02233430901eee0edba32ef836830acbf2f3ac96",
+  "originMain": "02233430901eee0edba32ef836830acbf2f3ac96",
+  "trackedDiff": {
+    "fileCount": 25,
+    "insertions": 565,
+    "deletions": 131
+  },
+  "trackedFiles": [
+    { "path": ".github/workflows/canonical-clean-bootstrap.yml", "sha256": "8681c17c85467cb2be6874df6eaef4f0b1006b1806c759630ec0f635ed175741" },
+    { "path": "__tests__/ai.interactionLog.test.ts", "sha256": "cbf9a8416c66fa6d42e1dc26c7209f47d7ad7afad6005db1ce596a2f6f29ac32" },
+    { "path": "__tests__/pre-p2a.canonical-baseline.test.ts", "sha256": "80c49f1ef3abf1d37805db3f3234866ee62a79f3417f2410bfa6f5e9ef5d408b" },
+    { "path": "app/api/admin/content-review/[lessonId]/route.ts", "sha256": "b9cc5191202596138cb55cfb838281d94a7eb3b8168bc25e512423d4c07c7928" },
+    { "path": "app/api/admin/curriculum/[contentId]/governance/route.ts", "sha256": "d1ec702c63676ae4d74d8b6aa3efa366eddf1b7d14b97c157d0c16ec4314f94d" },
+    { "path": "app/api/admin/curriculum/approve/route.ts", "sha256": "b6c162ad10f0910aae2a5d830c4de2b514b1644cbcb26243a99aa0776654cf67" },
+    { "path": "app/api/admin/curriculum/generate-full-pack/route.ts", "sha256": "c39d4ac131473df88a7d08c665d49be0bf9727065e6df9b6a2eb43d8ea1f25cf" },
+    { "path": "app/api/admin/curriculum/generate/route.ts", "sha256": "e150b2e600094f326ce6c93ba0f4fb99d40ee76edc81a1b0b1dd51916c74274c" },
+    { "path": "app/api/admin/curriculum/reject/route.ts", "sha256": "8a97f0c535caee123b24fa87fa08bb253e525d0c1247eacfd79677f0d22d14a6" },
+    { "path": "lib/ai/interactionLog.ts", "sha256": "c67b63e0c5567c1c492a1662ca311b67b699ae14f63e8297a90cf50bf2ffba9e" },
+    { "path": "lib/curriculum/benchmarking/aiWaecAlignment.ts", "sha256": "6140bb0f7f1bbdc7e7ac85b4f1a994e89d01ccdaeab2151bd59e225f78c0e5fa" },
+    { "path": "lib/curriculum/benchmarking/depth.ts", "sha256": "784ddda527396d8297dc88a47b660471fca7f254a0406234b577c44b01b4dc62" },
+    { "path": "lib/curriculum/benchmarking/types.ts", "sha256": "8de606b0d229e3f8fd4579d488fae20c78e74dc5fc55cbba37ba8e83038f7bd6" },
+    { "path": "lib/curriculum/mutations/governanceWriter.ts", "sha256": "e8796fdebe73d79ada8ead0ee134d7296f0d2de1d73961c68fd9b158652b6fb5" },
+    { "path": "lib/curriculum/provenance/reader.ts", "sha256": "d8dcebb943dcb6576a7d853f0866b8917115ad2900b2c20812a9daf6fa5b5653" },
+    { "path": "lib/curriculum/regenerationAdmin.ts", "sha256": "ad9c1b6e477b18526bc8c40b2b6cdee5e344472abcc57247c445d391057ab9f6" },
+    { "path": "lib/curriculum/review/aiReview.ts", "sha256": "a4987728160a150795ff7a328fcfeafffb79d2da3fde8fe9c0b230c57ce3f2fd" },
+    { "path": "lib/curriculum/review/legacyAdapter.ts", "sha256": "efe040ad90b2152ca72ccb67151223c56199711634141f8bf0d5d07c33f9a3ba" },
+    { "path": "prisma/schema.prisma", "sha256": "44a29fd9258efcd72bb5244813f7ea70f0985bac7c499a9ec7959a48d60f918c" },
+    { "path": "scripts/p2a-production-post-cutover.ts", "sha256": "80ca1ffdded4ed4e07736c123b7de72ad1ad317408dab4b5e96ad0aa82807cd4" },
+    { "path": "scripts/p2a-staging-e2e.ts", "sha256": "6a5a7b3a452b6cc2f157c33a7d28b1ee3df1dc2f93887c1b206887f8144e8e48" },
+    { "path": "scripts/p2c-production-apply-schema-migration.ts", "sha256": "28356796edd0cbaa5188473739bd2c7df69c1f078d8dbd7adfbce36e1c3352b8" },
+    { "path": "scripts/p2c-production-seed.ts", "sha256": "5a060e74c99a935854fce1309d69b9c6d2649300e0ef5aa06c010559647cc63b" },
+    { "path": "scripts/p2c-staging-real-data-seed.ts", "sha256": "78eccfe2134389f5c133853d955f093d2b7110aa9d315b1418f63db1e67f1b7b" },
+    { "path": "scripts/p2c-staging-subject-expansion-seed.ts", "sha256": "de2157347a8f1108d43cb0c959209b2ab23ed3914b29c5bb1a24d17079c4ed1f" }
+  ],
+  "untrackedFiles": [
+    { "path": "__tests__/p2b/ai-evidence-validator.test.ts", "sha256": "e372fae779916926ec909cf790883df0b5ad87d1fc3db17cc59e51fdc8dcaed2" },
+    { "path": "lib/curriculum/review/aiEvidenceValidator.ts", "sha256": "e36ad63d8308b846da2d90c54f7995df569712134733a56c086e219b09f83b85" },
+    { "path": "prisma/canonical/migration-execution.json", "sha256": "582a151e7ea702c879925f6f29eb96bebde4a039dedc2689557c695d66d4ce4c" },
+    { "path": "prisma/canonical/migrations/20260820_000001_p2abc_integrity_enum_extensions/migration.sql", "sha256": "0b8e0be016aaa16ff188d672309db88bda6362cfca4b74b0cfe92be8ae6a80eb" },
+    { "path": "prisma/canonical/migrations/20260820_000002_p2abc_integrity_enforcement_security/migration.sql", "sha256": "54144468c9412776ccc5872ed7256aa9652a1c1f862b8cde6594663fc64461d1" },
+    { "path": "scripts/verify-full-canonical-bootstrap.ps1", "sha256": "b5bfcde6dda7599924ec8b71848b9690c9e094fd42e0a1529bee27235d7dc05c" }
+  ]
+}

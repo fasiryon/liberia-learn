@@ -1,5 +1,6 @@
 import * as fs from "fs";
 import * as path from "path";
+import { spawnSync } from "node:child_process";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
 // ── helpers ──────────────────────────────────────────────────────────────────
@@ -98,30 +99,28 @@ describe("audit immutability", () => {
 describe("static analysis: no production auditLog mutations", () => {
   it("no app code calls auditLog.update or auditLog.delete outside demo and tests", () => {
     const root = path.join(__dirname, "..");
-    const dirsToScan = ["app", "lib", "scripts"].map((d) => path.join(root, d));
-    const violations: string[] = [];
-
-    function scanDir(dir: string) {
-      if (!fs.existsSync(dir)) return;
-      for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
-        const full = path.join(dir, entry.name);
-        if (entry.isDirectory()) {
-          // demo reset is the only permitted exception — it's blocked at DB layer
-          if (entry.name === "demo") continue;
-          scanDir(full);
-        } else if (entry.name.endsWith(".ts") && !entry.name.endsWith(".test.ts")) {
-          const content = fs.readFileSync(full, "utf8");
-          if (
-            /prisma\.auditLog\.(update|delete)/.test(content) ||
-            /auditLog\.(update|delete)/.test(content)
-          ) {
-            violations.push(full.replace(root + path.sep, ""));
-          }
-        }
-      }
-    }
-
-    for (const dir of dirsToScan) scanDir(dir);
+    const scan = spawnSync(
+      "git",
+      [
+        "grep",
+        "--untracked",
+        "-n",
+        "-E",
+        String.raw`auditLog\.(update|delete)`,
+        "--",
+        "app",
+        "lib",
+        "scripts",
+      ],
+      { cwd: root, encoding: "utf8" },
+    );
+    expect([0, 1]).toContain(scan.status);
+    const violations = scan.stdout
+      .split(/\r?\n/)
+      .filter(Boolean)
+      .filter((line) => !line.replaceAll("\\", "/").includes("/demo/"))
+      .filter((line) => line.split(":", 1)[0].endsWith(".ts"))
+      .filter((line) => !line.split(":", 1)[0].endsWith(".test.ts"));
 
     expect(violations).toEqual([]);
   });

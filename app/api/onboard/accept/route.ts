@@ -7,6 +7,7 @@ import { logAudit } from "@/lib/audit";
 import { findInviteByToken } from "@/lib/inviteTokens";
 import { createUniqueHumanReadableStudentId } from "@/lib/students/humanReadableId";
 import { isEnrollmentInvitesEnabled } from "@/lib/serverFlags";
+import { assertDeployedDatabaseRole } from "@/lib/auth/databaseRoles";
 
 const Schema = z.object({
   token: z.string().min(1),
@@ -79,7 +80,11 @@ export async function POST(req: Request) {
 
     const hashedPwd = await bcrypt.hash(parsed.password, 12);
 
-    const role = invite.role as "TEACHER" | "STUDENT" | "GUARDIAN" | "ADMIN";
+    const persistedRole = assertDeployedDatabaseRole(invite.role);
+    if (!["TEACHER", "STUDENT", "GUARDIAN", "ADMIN"].includes(persistedRole)) {
+      return NextResponse.json({ error: "Invite role is not supported" }, { status: 400 });
+    }
+    const role = persistedRole as "TEACHER" | "STUDENT" | "GUARDIAN" | "ADMIN";
     if (invite.tokenType === "GUARDIAN_LINK" && role !== "GUARDIAN") {
       return NextResponse.json({ error: "Invalid guardian invite" }, { status: 400 });
     }

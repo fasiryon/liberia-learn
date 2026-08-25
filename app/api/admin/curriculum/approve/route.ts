@@ -66,6 +66,15 @@ export async function POST(req: Request) {
             ? "PLATFORM"
             : "SCHOOL",
       reviewerRoleSnapshot: user.role,
+      reviewerQualificationRef: `permission:${PERMISSIONS.CURRICULUM_APPROVE}:${user.id}`,
+      reviewerQualificationSnapshot: {
+        schemaVersion: 1,
+        basis: "ROLE_PERMISSION",
+        userId: user.id,
+        role: user.role,
+        permission: PERMISSIONS.CURRICULUM_APPROVE,
+        platformAdmin: Boolean(user.isPlatformAdmin),
+      },
       schoolId: user.schoolId ?? null,
       idempotencyKey:
         typeof body.idempotencyKey === "string" ? body.idempotencyKey : undefined,

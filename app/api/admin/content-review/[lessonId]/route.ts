@@ -10,6 +10,7 @@ import { appendCurriculumGovernanceEvent } from "@/lib/curriculum/mutations/gove
 import { provenanceWritersEnabled } from "@/lib/curriculum/mutations/repository";
 import { assertCurriculumSchoolScope } from "@/lib/curriculum/review/tenantScope";
 import { enforceLegacyReviewAdapter } from "@/lib/curriculum/review/legacyAdapter";
+import { PERMISSIONS } from "@/lib/permissions";
 
 // State machine: maps current status → allowed target statuses
 const ALLOWED_TRANSITIONS: Record<string, string[]> = {
@@ -90,6 +91,18 @@ export async function PATCH(
         : {}),
       ...(isReject ? { reason: rejectionReason } : {}),
       reviewerRoleSnapshot: "ADMIN",
+      ...(isApprove
+        ? {
+            reviewerQualificationRef: `permission:${PERMISSIONS.CURRICULUM_APPROVE}:${user.id}`,
+            reviewerQualificationSnapshot: {
+              schemaVersion: 1,
+              basis: "ROLE_PERMISSION",
+              userId: user.id,
+              role: user.role,
+              permission: PERMISSIONS.CURRICULUM_APPROVE,
+            },
+          }
+        : {}),
       idempotencyKey: `content-review:${traceId}`,
       schoolId: user.schoolId ?? null,
       traceId,

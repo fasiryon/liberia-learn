@@ -1,0 +1,170 @@
+{
+  "schemaVersion": 1,
+  "schema": "public",
+  "authorityLayer": "POSTGRES_MANIFEST",
+  "tables": [
+    {
+      "name": "TrendSnapshot",
+      "classification": "DB_ONLY_DEPRECATED_PENDING_RETENTION_DECISION",
+      "required": true,
+      "environmentScope": ["clean_bootstrap", "staging", "production"],
+      "definitionMd5": "5b4fec4a5cc411fd14e92c2bc9bde49e",
+      "rationale": "Retained physical-only table pending an explicit retention decision."
+    }
+  ],
+  "indexes": [
+    { "name": "CurriculumContent_isHero_idx", "table": "CurriculumContent", "kind": "PARTIAL_BTREE", "required": true, "definitionMd5": "65ca83738fdaa95d6e528b2903034ac1" },
+    { "name": "GradedSubmission_clientSubmissionId_key", "table": "GradedSubmission", "kind": "PARTIAL_UNIQUE_BTREE", "required": true, "definitionMd5": "ae7d027e8d247b79d16a9a7c56c41e41" },
+    { "name": "HomeworkSubmission_clientSubmissionId_key", "table": "HomeworkSubmission", "kind": "PARTIAL_UNIQUE_BTREE", "required": true, "definitionMd5": "7058c7d117ba8b6d77685839d16eacb9" },
+    { "name": "InterventionRecommendation_idempotencyKey_key", "table": "InterventionRecommendation", "kind": "PARTIAL_UNIQUE_BTREE", "required": true, "definitionMd5": "05bcc05fbf7a6198299d01066aee5901" },
+    { "name": "TeacherAlert_idempotencyKey_key", "table": "TeacherAlert", "kind": "PARTIAL_UNIQUE_BTREE", "required": true, "definitionMd5": "6f355260a010fa68ed2ba4322f8bbf5b" },
+    { "name": "curriculum_content_fts", "table": "CurriculumContent", "kind": "EXPRESSION_GIN", "required": true, "definitionMd5": "b87b9ae8070591a0737ba3c328247998" },
+    { "name": "school_event_fts", "table": "SchoolEvent", "kind": "EXPRESSION_GIN", "required": true, "definitionMd5": "98f70cb9269fa903d9f87465312e8bef" },
+    { "name": "curriculum_content_embedding_idx", "table": "CurriculumContent", "kind": "IVFFLAT_VECTOR_COSINE", "required": true, "definitionMd5": "bbd1a4eee5e22c22be26e82919936aa1" },
+    { "name": "rag_chunk_embedding_idx", "table": "RagChunk", "kind": "IVFFLAT_VECTOR_COSINE", "required": true, "definitionMd5": "8502fa0ce983552e748e33e3f454c14d" },
+    { "name": "AssignmentSubmission_turnedInAt_assignmentId_idx", "table": "AssignmentSubmission", "kind": "RETAINED_BTREE", "required": true, "definitionMd5": "3b1c16ca491afe36ef51e36b08440d4f" },
+    { "name": "Attendance_studentId_date_idx", "table": "Attendance", "kind": "RETAINED_BTREE", "required": true, "definitionMd5": "0a517b6a181c7f0106b7327000ebfa3d" },
+    { "name": "Exam_academicYearId_idx", "table": "Exam", "kind": "RETAINED_BTREE", "required": true, "definitionMd5": "4578b81a965eee252fd3c436e7d90ca1" },
+    { "name": "Exam_classId_idx", "table": "Exam", "kind": "RETAINED_BTREE", "required": true, "definitionMd5": "9f49f95c07f7a1c4a9c3e65607c20535" },
+    { "name": "Exam_schoolId_publishedAt_idx", "table": "Exam", "kind": "RETAINED_BTREE", "required": true, "definitionMd5": "99e6b92b4fd8d0bf6e899c823c3bf633" },
+    { "name": "Exam_schoolId_status_idx", "table": "Exam", "kind": "RETAINED_BTREE", "required": true, "definitionMd5": "9e384f84b8b8217ed3e57f7bfdadbbf7" },
+    { "name": "LessonHelpFlag_studentId_contentId_idx", "table": "LessonHelpFlag", "kind": "RETAINED_BTREE", "required": true, "definitionMd5": "83dd46d84332999f3ba9d05f809dde3c" },
+    { "name": "StudentMasteryProfile_studentId_lastAssessedAt_idx", "table": "StudentMasteryProfile", "kind": "RETAINED_BTREE", "required": true, "definitionMd5": "52d4f38a7f93bfaa516498e31f745df5" },
+    { "name": "Timetable_classId_dayOfWeek_idx", "table": "Timetable", "kind": "RETAINED_BTREE", "required": true, "definitionMd5": "57724bd17a75c838cedfaf65f988ca5f" },
+    { "name": "VirtualLab_status_grade_schoolId_idx", "table": "VirtualLab", "kind": "RETAINED_BTREE", "required": true, "definitionMd5": "4c38aef714c8d87b140926d49e7b0bef" },
+    { "name": "ReviewerCredential_id_reviewerProfileId_key", "table": "ReviewerCredential", "kind": "P2B_COMPOSITE_UNIQUE_SUPPORT", "required": true, "definitionMd5": "4daf99d1b2668fc8b6f959945e6894a8" },
+    { "name": "ReviewerCredentialScope_id_credentialId_key", "table": "ReviewerCredentialScope", "kind": "P2B_COMPOSITE_UNIQUE_SUPPORT", "required": true, "definitionMd5": "1779dbf2590d9c14a1d7e7c917870c82" }
+  ],
+  "constraints": [
+    {
+      "name": "CurriculumReviewAssessment_credential_profile_fkey",
+      "table": "CurriculumReviewAssessment",
+      "type": "COMPOSITE_FOREIGN_KEY",
+      "required": true,
+      "validated": true,
+      "definition": "FOREIGN KEY (credentialId, reviewerProfileId) REFERENCES ReviewerCredential(id, reviewerProfileId) ON UPDATE CASCADE ON DELETE RESTRICT",
+      "definitionMd5": "aec01338fbe2df21b7381d3ea2ab9305"
+    },
+    {
+      "name": "CurriculumReviewAssessment_scope_credential_fkey",
+      "table": "CurriculumReviewAssessment",
+      "type": "COMPOSITE_FOREIGN_KEY",
+      "required": true,
+      "validated": true,
+      "definition": "FOREIGN KEY (credentialScopeId, credentialId) REFERENCES ReviewerCredentialScope(id, credentialId) ON UPDATE CASCADE ON DELETE RESTRICT",
+      "definitionMd5": "de62fdd55137a69e444d1429ca7ef751"
+    },
+    {
+      "name": "CurriculumReviewAssignment_credential_profile_fkey",
+      "table": "CurriculumReviewAssignment",
+      "type": "COMPOSITE_FOREIGN_KEY",
+      "required": true,
+      "validated": true,
+      "definition": "FOREIGN KEY (credentialId, reviewerProfileId) REFERENCES ReviewerCredential(id, reviewerProfileId) ON UPDATE CASCADE ON DELETE RESTRICT",
+      "definitionMd5": "aec01338fbe2df21b7381d3ea2ab9305"
+    },
+    {
+      "name": "CurriculumReviewAssignment_scope_credential_fkey",
+      "table": "CurriculumReviewAssignment",
+      "type": "COMPOSITE_FOREIGN_KEY",
+      "required": true,
+      "validated": true,
+      "definition": "FOREIGN KEY (credentialScopeId, credentialId) REFERENCES ReviewerCredentialScope(id, credentialId) ON UPDATE CASCADE ON DELETE RESTRICT",
+      "definitionMd5": "de62fdd55137a69e444d1429ca7ef751"
+    },
+    { "name": "AssignmentSuggestion_schoolId_fkey", "table": "AssignmentSuggestion", "type": "RETAINED_FK_ACTION", "physicalAction": "ON UPDATE NO ACTION ON DELETE NO ACTION", "required": true, "validated": true, "definitionMd5": "60f5093907fd5d1d367236710286d95e" },
+    { "name": "Attendance_markedById_fkey", "table": "Attendance", "type": "RETAINED_FK_ACTION", "physicalAction": "ON UPDATE CASCADE ON DELETE RESTRICT", "required": true, "validated": true, "definitionMd5": "b772b2a3fa5dc9b19ce132085ded2b44" },
+    { "name": "ChangeRequestSignoff_changeRequestId_fkey", "table": "ChangeRequestSignoff", "type": "RETAINED_FK_ACTION", "physicalAction": "ON UPDATE NO ACTION ON DELETE NO ACTION", "required": true, "validated": true, "definitionMd5": "b34b81eec7a6dc38c3f29fe0922d1d6e" },
+    { "name": "CurriculumUnit_createdById_fkey", "table": "CurriculumUnit", "type": "RETAINED_FK_ACTION", "physicalAction": "ON UPDATE NO ACTION ON DELETE NO ACTION", "required": true, "validated": true, "definitionMd5": "7590abe0bdaec0a110f3fd1f8232425f" },
+    { "name": "CurriculumUnit_schoolId_fkey", "table": "CurriculumUnit", "type": "RETAINED_FK_ACTION", "physicalAction": "ON UPDATE NO ACTION ON DELETE NO ACTION", "required": true, "validated": true, "definitionMd5": "60f5093907fd5d1d367236710286d95e" },
+    { "name": "LabSession_schoolId_fkey", "table": "LabSession", "type": "RETAINED_FK_ACTION", "physicalAction": "ON UPDATE NO ACTION ON DELETE NO ACTION", "required": true, "validated": true, "definitionMd5": "60f5093907fd5d1d367236710286d95e" },
+    { "name": "LabSession_studentId_fkey", "table": "LabSession", "type": "RETAINED_FK_ACTION", "physicalAction": "ON UPDATE NO ACTION ON DELETE NO ACTION", "required": true, "validated": true, "definitionMd5": "ab5b38499e6c985d7994490ca137509a" },
+    { "name": "PostChangeEvaluationPlan_changeRequestId_fkey", "table": "PostChangeEvaluationPlan", "type": "RETAINED_FK_ACTION", "physicalAction": "ON UPDATE NO ACTION ON DELETE NO ACTION", "required": true, "validated": true, "definitionMd5": "b34b81eec7a6dc38c3f29fe0922d1d6e" },
+    { "name": "SchoolStorageQuota_schoolId_fkey", "table": "SchoolStorageQuota", "type": "RETAINED_FK_ACTION", "physicalAction": "ON UPDATE NO ACTION ON DELETE CASCADE", "required": true, "validated": true, "definitionMd5": "5ad0d6a9410c9ee68316a11ecdacd6f2" },
+    { "name": "StagedRolloutPlan_changeRequestId_fkey", "table": "StagedRolloutPlan", "type": "RETAINED_FK_ACTION", "physicalAction": "ON UPDATE NO ACTION ON DELETE NO ACTION", "required": true, "validated": true, "definitionMd5": "b34b81eec7a6dc38c3f29fe0922d1d6e" },
+    { "name": "TeacherLessonAssignment_assignedById_fkey", "table": "TeacherLessonAssignment", "type": "RETAINED_FK_ACTION", "physicalAction": "ON UPDATE NO ACTION ON DELETE CASCADE", "required": true, "validated": true, "definitionMd5": "22c2b6070387f5da4fd611017343d776" },
+    { "name": "TeacherLessonAssignment_classId_fkey", "table": "TeacherLessonAssignment", "type": "RETAINED_FK_ACTION", "physicalAction": "ON UPDATE NO ACTION ON DELETE CASCADE", "required": true, "validated": true, "definitionMd5": "473737ecff000e017884ce03f2a88bf8" },
+    { "name": "TeacherLessonAssignment_contentId_fkey", "table": "TeacherLessonAssignment", "type": "RETAINED_FK_ACTION", "physicalAction": "ON UPDATE NO ACTION ON DELETE CASCADE", "required": true, "validated": true, "definitionMd5": "d01fe543791af602316ace62a3b4b83f" },
+    { "name": "VideoWatchEvent_studentId_fkey", "table": "VideoWatchEvent", "type": "RETAINED_FK_ACTION", "physicalAction": "ON UPDATE NO ACTION ON DELETE CASCADE", "required": true, "validated": true, "definitionMd5": "9f248aa588fdfca68c418544a3a77199" },
+    { "name": "VideoWatchEvent_videoId_fkey", "table": "VideoWatchEvent", "type": "RETAINED_FK_ACTION", "physicalAction": "ON UPDATE NO ACTION ON DELETE CASCADE", "required": true, "validated": true, "definitionMd5": "6b47dc4f75b014c4551d5b8e268cc6cc" },
+    { "name": "AssessmentBaselineCompetency_depth_evidence_honesty", "table": "AssessmentBaselineCompetency", "type": "CHECK", "required": true, "validated": true, "definitionMd5": "a49af7f3c6dc1a11d73cbe7da238dcb3" }
+  ],
+  "functions": [
+    { "name": "prevent_audit_delete", "required": true, "definitionMd5": "8a0967f400cfb924020847990494923d" },
+    { "name": "prevent_audit_update", "required": true, "definitionMd5": "de2a59ce8ce3a04afdd89037f7c81a27" },
+    { "name": "p2a_guard_curriculum_provenance_identity", "required": true, "definitionMd5": "fe223eff13bd99d36dcd13acf84179ef" },
+    { "name": "p2a_reject_curriculum_provenance_delete", "required": true, "definitionMd5": "7985bd790fdc71ab4e44aba224a672ba" },
+    { "name": "p2a_reject_immutable_curriculum_history_mutation", "required": true, "definitionMd5": "8affa30cf543698994f2ed1174208f74" },
+    { "name": "p2a_validate_current_curriculum_revision", "required": true, "definitionMd5": "0f398ac3eb421e740b20a3c7473e245f" },
+    { "name": "p2b_ai_assessment_immutable", "required": true, "definitionMd5": "a16b030733c2a698852c38d91fa89901" },
+    { "name": "p2b_assessment_immutable_after_submit", "required": true, "definitionMd5": "b8a60e8b856816ff399c9600448982ed" },
+    { "name": "p2b_credential_core_immutable_after_verified", "required": true, "definitionMd5": "08020816982ee7ab69086089deeafda0" },
+    { "name": "p2b_credential_scope_immutable_after_verified", "required": true, "definitionMd5": "e447296f76f3591829cc42c590406a1c" },
+    { "name": "p2b_decision_immutable_after_final", "required": true, "definitionMd5": "6454c82c3cf2e79cd3e1a337d6a622e9" },
+    { "name": "p2b_reject_update_delete", "required": true, "definitionMd5": "85a464d87f2e0c22aaf266b249fecc45" },
+    { "name": "p2b_validate_final_decision", "required": true, "definitionMd5": "38963d1e05c086341f5d64c6ee6ac641" },
+    { "name": "p2b_verify_credential_transition", "required": true, "definitionMd5": "0722bc3f437c7d2e46f8ef687539e010" },
+    { "name": "p2abc_validate_governance_authority", "required": true, "definitionMd5": "40d3480c24f9773fb56cb293f879c94c" }
+  ],
+  "triggers": [
+    { "name": "audit_log_no_delete", "table": "AuditLog", "required": true, "definitionMd5": "fbcd0bf8f119828be8378c6f24b52594" },
+    { "name": "audit_log_no_update", "table": "AuditLog", "required": true, "definitionMd5": "43e5ca10ade492d11a0bcce3e319e98c" },
+    { "name": "CurriculumAIReviewAssessment_submitted_immutable", "table": "CurriculumAIReviewAssessment", "required": true, "definitionMd5": "e88be68135346d7495787e00a486bbdf" },
+    { "name": "curriculum_content_revision_no_truncate", "table": "CurriculumContentRevision", "required": true, "definitionMd5": "fdf70a9d37d72494d71282bf880567e2" },
+    { "name": "curriculum_content_revision_no_update_or_delete", "table": "CurriculumContentRevision", "required": true, "definitionMd5": "fd0914b1fccfbb48e1dae399ce01fc14" },
+    { "name": "curriculum_evidence_no_truncate", "table": "CurriculumEvidence", "required": true, "definitionMd5": "843b355c7cd23f437a023c9d734bcd43" },
+    { "name": "curriculum_evidence_no_update_or_delete", "table": "CurriculumEvidence", "required": true, "definitionMd5": "6c97692f606d1793819659d65c228d07" },
+    { "name": "CurriculumGovernanceEvent_authority_guard", "table": "CurriculumGovernanceEvent", "required": true, "definitionMd5": "aa9f863ee0253f324feb07c4f308e298" },
+    { "name": "curriculum_governance_event_no_truncate", "table": "CurriculumGovernanceEvent", "required": true, "definitionMd5": "27da0a46d7880ca45bb049e00888dcb6" },
+    { "name": "curriculum_governance_event_no_update_or_delete", "table": "CurriculumGovernanceEvent", "required": true, "definitionMd5": "a7b7411cf02bd993a24eb734e8c37d5f" },
+    { "name": "curriculum_provenance_current_revision_guard", "table": "CurriculumProvenance", "required": true, "definitionMd5": "24d4e66d811b19f11ac7aec9fe970e1d" },
+    { "name": "curriculum_provenance_identity_no_update", "table": "CurriculumProvenance", "required": true, "definitionMd5": "137347edb0df5187f4fc4e3abddd44d1" },
+    { "name": "curriculum_provenance_no_delete", "table": "CurriculumProvenance", "required": true, "definitionMd5": "27591432e20815f31cd3c095c32c09c2" },
+    { "name": "curriculum_provenance_no_truncate", "table": "CurriculumProvenance", "required": true, "definitionMd5": "20927899299ef1f81779dbf9de18cd96" },
+    { "name": "CurriculumReviewAssessment_submitted_immutable", "table": "CurriculumReviewAssessment", "required": true, "definitionMd5": "2cffdd890d51039087b9d86a92205d41" },
+    { "name": "CurriculumReviewDecision_final_immutable", "table": "CurriculumReviewDecision", "required": true, "definitionMd5": "59be82cda2211e5499961e2d26796022" },
+    { "name": "CurriculumReviewDecision_integrity_guard", "table": "CurriculumReviewDecision", "required": true, "definitionMd5": "8afccddc026bbec30d98aaefd0109fc2" },
+    { "name": "ReviewCalibrationResult_immutable", "table": "ReviewCalibrationResult", "required": true, "definitionMd5": "46463ba659b98f1cee126cc1a37af062" },
+    { "name": "ReviewerCredential_verified_core_immutable", "table": "ReviewerCredential", "required": true, "definitionMd5": "429025c204f7c63364a86f24ac7c659d" },
+    { "name": "ReviewerCredential_verify_guard", "table": "ReviewerCredential", "required": true, "definitionMd5": "ee82b0a4e0d04b3cb964a2dc1975f8a1" },
+    { "name": "ReviewerCredentialScope_verified_immutable", "table": "ReviewerCredentialScope", "required": true, "definitionMd5": "22c627a285d41ad83ca8ca2ab74ea44b" },
+    { "name": "ReviewerCredentialStatusEvent_immutable", "table": "ReviewerCredentialStatusEvent", "required": true, "definitionMd5": "6b1a0f87c1e0cd767b196b807d98d993" }
+  ],
+  "security": {
+    "rls": {
+      "schema": "public",
+      "selector": "ALL_PUBLIC_TABLES",
+      "expectedTableCount": 229,
+      "expectedEnabledCount": 229
+    },
+    "p2cServerOnlyTables": [
+      "CurriculumAuthoritySource", "CurriculumAuthoritySourceVersion", "MoeCurriculumObjective",
+      "AssessmentBaselineFramework", "AssessmentBaselineSubject", "AssessmentBaselineCompetency",
+      "CurriculumBaselineAlignment", "CurriculumAlignmentValidityEvent", "CurriculumLearningTarget",
+      "CurriculumCompetencyCoverage", "ExamPreparationProfile", "PolicyConfig", "PolicyOverride"
+    ],
+    "grants": {
+      "production": { "anonAuthenticatedGrantCount": 0, "target": 0 },
+      "staging": { "anonAuthenticatedGrantCount": 3024, "target": 0, "status": "KNOWN_DRIFT_REQUIRES_SEPARATE_PREFLIGHT" },
+      "cleanBootstrap": { "p2cAnonAuthenticatedGrantCount": 0 }
+    },
+    "policies": {
+      "productionPublicPolicyCount": 0,
+      "stagingPublicPolicyCount": 0
+    }
+  },
+  "extensions": {
+    "cleanBootstrap": {
+      "required": ["plpgsql", "vector"],
+      "allowed": ["plpgsql", "vector"]
+    },
+    "production": {
+      "required": ["pg_stat_statements", "pgcrypto", "plpgsql", "supabase_vault", "uuid-ossp", "vector"],
+      "allowed": ["pg_stat_statements", "pgcrypto", "plpgsql", "supabase_vault", "uuid-ossp", "vector"]
+    },
+    "staging": {
+      "required": ["pg_graphql", "pg_stat_statements", "pgcrypto", "plpgsql", "supabase_vault", "uuid-ossp", "vector"],
+      "allowed": ["pg_graphql", "pg_stat_statements", "pgcrypto", "plpgsql", "supabase_vault", "uuid-ossp", "vector"]
+    }
+  }
+}

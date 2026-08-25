@@ -12,6 +12,12 @@ const FORBIDDEN_AUTHORITY_CLAIMS = [
   /waec licensed/i,
 ];
 
+export function assertNoFabricatedExternalAuthorityClaim(text: string): void {
+  if (FORBIDDEN_AUTHORITY_CLAIMS.some((claim) => claim.test(text))) {
+    throw new Error("AI_EXTERNAL_AUTHORITY_CLAIM_PROHIBITED");
+  }
+}
+
 export const AiWaecAlignmentSchema = z.object({
   relationshipType: z.enum(["DIRECT", "SUPPORTING", "PREREQUISITE", "PARTIAL", "ENRICHMENT", "NOT_ALIGNED", "UNKNOWN"]),
   coverage: z.enum(["NONE", "PARTIAL", "FULL"]),
@@ -108,9 +114,7 @@ export function validateAiWaecAlignment(input: {
 }): z.infer<typeof AiWaecAlignmentSchema> {
   assertAuthoritativeAlignmentEvidence(input.evidence);
   const result = AiWaecAlignmentSchema.parse(input.raw);
-  if (FORBIDDEN_AUTHORITY_CLAIMS.some((claim) => claim.test(result.rationale))) {
-    throw new Error("AI_EXTERNAL_AUTHORITY_CLAIM_PROHIBITED");
-  }
+  assertNoFabricatedExternalAuthorityClaim(result.rationale);
   if (!validatesEvidenceTerms(result.objectiveEvidenceTerms, input.moeObjectiveWording)) {
     throw new Error("TITLE_ONLY_OR_UNGROUNDED_OBJECTIVE_MATCH");
   }

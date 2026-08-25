@@ -303,6 +303,13 @@ export async function reviewCurriculumDraft(input: {
         approvalBasis: "HUMAN_REVIEW",
         reviewAuthority: "PLATFORM",
         reviewerRoleSnapshot: "ADMIN",
+        reviewerQualificationRef: `platform-admin:${input.actor.id}`,
+        reviewerQualificationSnapshot: {
+          schemaVersion: 1,
+          basis: "PLATFORM_ADMIN_ROLE",
+          userId: input.actor.id,
+          role: input.actor.role,
+        },
         idempotencyKey: `regeneration-approve:${contentId}:${Date.now()}`,
         schoolId: input.actor.schoolId ?? null,
         compatibility: {

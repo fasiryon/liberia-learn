@@ -214,6 +214,8 @@ async function main() {
     approvalBasis: "HUMAN_REVIEW",
     reviewAuthority: "PLATFORM",
     reviewerRoleSnapshot: "ADMIN",
+    reviewerQualificationRef: `staging-e2e-admin:${actor.id}`,
+    reviewerQualificationSnapshot: { schemaVersion: 1, basis: "STAGING_E2E_ADMIN", userId: actor.id },
     idempotencyKey: `${run}:human-approve`,
   });
   checks.push({ scenario: "12 human approval", passed: true });
@@ -227,7 +229,7 @@ async function main() {
 
   await appendCurriculumGovernanceEvent({ contentId: human.content.contentId, eventType: "RETURNED_FOR_REVIEW", actorType: "USER", actorUserId: actor.id, reason: "Revise one example", idempotencyKey: `${run}:return` });
   checks.push({ scenario: "14 return for review", passed: true });
-  await appendCurriculumGovernanceEvent({ contentId: human.content.contentId, eventType: "REAPPROVED", actorType: "USER", actorUserId: actor.id, approvalBasis: "HUMAN_REVIEW", reviewAuthority: "PLATFORM", idempotencyKey: `${run}:reapprove` });
+  await appendCurriculumGovernanceEvent({ contentId: human.content.contentId, eventType: "REAPPROVED", actorType: "USER", actorUserId: actor.id, approvalBasis: "HUMAN_REVIEW", reviewAuthority: "PLATFORM", reviewerQualificationRef: `staging-e2e-admin:${actor.id}`, reviewerQualificationSnapshot: { schemaVersion: 1, basis: "STAGING_E2E_ADMIN", userId: actor.id }, idempotencyKey: `${run}:reapprove` });
   checks.push({ scenario: "15 reapproval", passed: true });
 
   const evidence = await appendCurriculumEvidence({
@@ -247,7 +249,7 @@ async function main() {
   const revokedEvent = await prisma.curriculumGovernanceEvent.findUnique({ where: { idempotencyKey: `${run}:revoke` } });
   expect(revokedEvent?.offlineCachePolicy === "URGENT_INVALIDATE_ON_NEXT_REFRESH", "offline invalidation policy missing");
   checks.push({ scenario: "18 revocation", passed: true });
-  await appendCurriculumGovernanceEvent({ contentId: human.content.contentId, eventType: "REINSTATED", actorType: "USER", actorUserId: actor.id, approvalBasis: "HUMAN_REVIEW", reviewAuthority: "PLATFORM", idempotencyKey: `${run}:reinstate` });
+  await appendCurriculumGovernanceEvent({ contentId: human.content.contentId, eventType: "REINSTATED", actorType: "USER", actorUserId: actor.id, approvalBasis: "HUMAN_REVIEW", reviewAuthority: "PLATFORM", reviewerQualificationRef: `staging-e2e-admin:${actor.id}`, reviewerQualificationSnapshot: { schemaVersion: 1, basis: "STAGING_E2E_ADMIN", userId: actor.id }, idempotencyKey: `${run}:reinstate` });
   checks.push({ scenario: "19 reinstatement", passed: true });
 
   const successor = await createCurriculumContent(baseData(`${run}-successor`, "Successor lesson"), {

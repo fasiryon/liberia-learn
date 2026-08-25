@@ -92,6 +92,19 @@ export async function POST(
           approvalBasis: body.approvalBasis,
           reviewAuthority,
           reviewerRoleSnapshot: user.role,
+          ...(body.approvalBasis === "HUMAN_REVIEW"
+            ? {
+                reviewerQualificationRef: `permission:${PERMISSIONS.CURRICULUM_APPROVE}:${user.id}`,
+                reviewerQualificationSnapshot: {
+                  schemaVersion: 1,
+                  basis: "ROLE_PERMISSION",
+                  userId: user.id,
+                  role: user.role,
+                  permission: PERMISSIONS.CURRICULUM_APPROVE,
+                  platformAdmin: Boolean(user.isPlatformAdmin),
+                },
+              }
+            : {}),
           reason: body.reason,
           riskScore: body.riskScore,
           riskReasons: body.riskReasons,

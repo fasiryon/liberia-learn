@@ -4,7 +4,7 @@ import {
   type DepthRelation,
 } from "./types";
 
-const DEPTH_RANK: Record<CognitiveDemandCategory, number> = {
+const DEPTH_RANK: Record<Exclude<CognitiveDemandCategory, "NOT_ESTABLISHED">, number> = {
   RECALL: 1,
   COMPREHENSION: 2,
   PROCEDURAL_FLUENCY: 3,
@@ -26,7 +26,9 @@ export type DepthAssessment = {
   evidenceRefs: unknown[];
   reviewMethod: string;
   confidence: number;
-  precisionNotice: "ORDINAL_JUDGMENT_NOT_SCIENTIFIC_MEASUREMENT";
+  precisionNotice:
+    | "ORDINAL_JUDGMENT_NOT_SCIENTIFIC_MEASUREMENT"
+    | "BASELINE_DEPTH_NOT_ESTABLISHED";
 };
 
 export function assessDepth(input: {
@@ -40,6 +42,20 @@ export function assessDepth(input: {
   if (!input.rationale.trim()) throw new Error("DEPTH_RATIONALE_REQUIRED");
   if (input.evidenceRefs.length === 0) throw new Error("DEPTH_EVIDENCE_REQUIRED");
   if (input.confidence < 0 || input.confidence > 1) throw new Error("DEPTH_CONFIDENCE_OUT_OF_RANGE");
+
+  if (input.baselineCategory === "NOT_ESTABLISHED" || input.observedCategory === "NOT_ESTABLISHED") {
+    return {
+      taxonomyVersion: COGNITIVE_DEMAND_TAXONOMY_VERSION,
+      baselineCategory: input.baselineCategory,
+      observedCategory: input.observedCategory,
+      relation: "UNKNOWN",
+      rationale: input.rationale.trim(),
+      evidenceRefs: input.evidenceRefs,
+      reviewMethod: input.reviewMethod,
+      confidence: 0,
+      precisionNotice: "BASELINE_DEPTH_NOT_ESTABLISHED",
+    };
+  }
 
   const difference = DEPTH_RANK[input.observedCategory] - DEPTH_RANK[input.baselineCategory];
   const relation: DepthRelation =

@@ -76,6 +76,7 @@ const validBody = {
 };
 
 beforeEach(() => {
+  process.env.P2A_PROVENANCE_WRITERS_DISABLED = "true";
   vi.clearAllMocks();
   mockRequireRole.mockResolvedValue(teacherUser);
   mockIsTeacherGenerationEnabled.mockReturnValue(true);
@@ -122,22 +123,13 @@ describe("POST /api/teacher/lessons", () => {
     expect(mockScheduledWorkCreate).not.toHaveBeenCalled();
   });
 
-  it("publish creates scheduled lesson record", async () => {
-    mockCurriculumCreate.mockResolvedValue({
-      id: "content-2",
-      contentId: "teacher-class-1-equivalent-fractions-456",
-      status: "published",
-    });
+  it("compatibility mode cannot publish without canonical provenance authority", async () => {
+    const res = await POST(makeReq({ ...validBody, status: "published" }));
 
-    const res = await POST(
-      makeReq({
-        ...validBody,
-        status: "published",
-      })
-    );
-
-    expect(res.status).toBe(200);
-    expect(mockScheduledWorkCreate).toHaveBeenCalledOnce();
+    expect(res.status).toBe(409);
+    await expect(res.json()).resolves.toEqual({ error: "P2A_PROVENANCE_AUTHORITY_REQUIRED" });
+    expect(mockCurriculumCreate).not.toHaveBeenCalled();
+    expect(mockScheduledWorkCreate).not.toHaveBeenCalled();
   });
 
   it("queues embeddings when SQS is configured", async () => {

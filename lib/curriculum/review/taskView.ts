@@ -23,7 +23,7 @@ export async function getReviewTaskView(taskId: string, user: ReviewAccessUser) 
   assertReviewReadScope(user, task.schoolId);
   const ownAssignment = task.assignments.find(
     (assignment) => assignment.reviewerProfile.userId === user.id && assignment.status === "ACTIVE",
-  );
+  ) ?? task.assignments.find((assignment) => assignment.reviewerProfile.userId === user.id);
   const ownSubmitted = task.assessments.some(
     (assessment) => assessment.assignmentId === ownAssignment?.id && assessment.status === "SUBMITTED",
   );
@@ -34,9 +34,9 @@ export async function getReviewTaskView(taskId: string, user: ReviewAccessUser) 
   ).length;
   const blindSecond =
     task.blindSecondReview &&
-    ownAssignment?.slot === "SECOND" &&
     !ownSubmitted &&
-    independentSubmitted < task.requiredReviewCount;
+    independentSubmitted < task.requiredReviewCount &&
+    (!ownAssignment || ownAssignment.slot === "SECOND");
   return {
     ...task,
     assignments: task.assignments.map((assignment) =>
@@ -46,7 +46,7 @@ export async function getReviewTaskView(taskId: string, user: ReviewAccessUser) 
     ),
     assessments: blindSecond
       ? task.assessments
-          .filter((assessment) => assessment.assignmentId === ownAssignment.id)
+          .filter((assessment) => assessment.assignmentId === ownAssignment?.id)
           .map((assessment) => ({ ...assessment }))
       : task.assessments,
     blinding: {

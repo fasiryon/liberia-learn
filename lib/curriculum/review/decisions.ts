@@ -79,6 +79,14 @@ export async function finalizeReviewTaskIfReady(input: {
     if (new Set(independent.map((assessment) => assessment.reviewerProfile.userId)).size < task.requiredReviewCount) {
       throw new ReviewOperationError("TWO_PERSON_INDEPENDENCE_FAILED", 409);
     }
+    if (
+      resolver &&
+      independent.some(
+        (assessment) => assessment.reviewerProfile.userId === resolver.reviewerProfile.userId,
+      )
+    ) {
+      throw new ReviewOperationError("RESOLVER_SEPARATION_FAILED", 409);
+    }
     const recommendations = new Set(independent.map((assessment) => assessment.recommendation));
     if (recommendations.size > 1 && !resolver) {
       await tx.curriculumReviewTask.update({ where: { id: task.id }, data: { status: "DISAGREEMENT", version: { increment: 1 } } });
@@ -116,7 +124,11 @@ export async function finalizeReviewTaskIfReady(input: {
         },
         tx,
       );
-      if (!eligibility.eligible || eligibility.credentialId !== assessment.credentialId) {
+      if (
+        !eligibility.eligible ||
+        eligibility.credentialId !== assessment.credentialId ||
+        eligibility.credentialScopeId !== assessment.credentialScopeId
+      ) {
         throw new ReviewOperationError("REVIEWER_INELIGIBLE_AT_DECISION", 409, "Reviewer eligibility changed", {
           reviewerProfileId: assessment.reviewerProfileId,
           reasons: eligibility.reasons,

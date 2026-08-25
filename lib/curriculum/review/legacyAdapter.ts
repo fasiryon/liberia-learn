@@ -106,7 +106,11 @@ export async function assertMoeReleaseReady(versionId: string, requestedContentI
           currentRevision: {
             include: {
               governanceEvents: {
-                where: { eventType: { in: ["APPROVED", "REAPPROVED", "REINSTATED"] }, reviewAuthority: "MOE" },
+                where: {
+                  eventType: { in: ["APPROVED", "REAPPROVED", "REINSTATED"] },
+                  reviewAuthority: "MOE",
+                  correctedBy: null,
+                },
                 include: { reviewDecision: true },
               },
             },

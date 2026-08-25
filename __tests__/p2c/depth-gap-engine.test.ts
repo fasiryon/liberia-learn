@@ -34,6 +34,14 @@ describe("P2-C cognitive demand taxonomy", () => {
     });
   });
 
+  it("returns an explicit zero-confidence UNKNOWN when assessed baseline depth is not established", () => {
+    expect(assessDepth({ baselineCategory: "NOT_ESTABLISHED", observedCategory: "ANALYSIS", rationale: "Only subject-level external evidence was recovered.", evidenceRefs: ["subject-source:1"], reviewMethod: "PLATFORM_REVIEW", confidence: 0.9 })).toMatchObject({
+      relation: "UNKNOWN",
+      confidence: 0,
+      precisionNotice: "BASELINE_DEPTH_NOT_ESTABLISHED",
+    });
+  });
+
   it("requires rationale, evidence, and bounded confidence", () => {
     expect(() => assessDepth({ baselineCategory: "RECALL", observedCategory: "APPLICATION", rationale: "", evidenceRefs: ["x"], reviewMethod: "AI", confidence: 0.8 })).toThrow("DEPTH_RATIONALE_REQUIRED");
     expect(() => assessDepth({ baselineCategory: "RECALL", observedCategory: "APPLICATION", rationale: "Evidence-backed rationale", evidenceRefs: [], reviewMethod: "AI", confidence: 0.8 })).toThrow("DEPTH_EVIDENCE_REQUIRED");

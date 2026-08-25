@@ -43,6 +43,7 @@ export type GovernanceInput = {
   occurredAt?: Date;
   idempotencyKey?: string | null;
   backfillRunId?: string | null;
+  correctsEventId?: string | null;
   schoolId?: string | null;
   traceId?: string | null;
   compatibility?: {
@@ -78,6 +79,7 @@ const REASON_REQUIRED = new Set<CurriculumGovernanceEventType>([
   "RETURNED_FOR_REVIEW",
   "REVOKED",
   "SUPERSEDED",
+  "AUTHORITY_CORRECTED",
 ]);
 
 function validateGovernance(input: GovernanceInput, writersEnabled: boolean): void {
@@ -105,6 +107,52 @@ function validateGovernance(input: GovernanceInput, writersEnabled: boolean): vo
   }
   if (!approvalEvent && input.approvalBasis) {
     throw new Error(`approvalBasis is not applicable to ${input.eventType}`);
+  }
+  const hasQualification =
+    Boolean(input.reviewerQualificationRef?.trim()) &&
+    input.reviewerQualificationSnapshot != null;
+  if (
+    input.approvalBasis === "HUMAN_REVIEW" &&
+    (input.actorType !== "USER" ||
+      !input.actorUserId ||
+      !hasQualification ||
+      !input.reviewAuthority ||
+      input.reviewAuthority === "SYSTEM" ||
+      input.reviewAuthority === "UNKNOWN")
+  ) {
+    throw new Error(
+      "HUMAN_REVIEW requires an identified qualified USER actor and PLATFORM/SCHOOL/MOE authority",
+    );
+  }
+  if (
+    input.approvalBasis === "AI_PLATFORM_REVIEW" &&
+    (input.actorType !== "AI" ||
+      !input.aiReviewAgentId ||
+      input.reviewAuthority !== "PLATFORM" ||
+      !hasQualification)
+  ) {
+    throw new Error(
+      "AI_PLATFORM_REVIEW requires a qualified AI actor with PLATFORM authority",
+    );
+  }
+  if (
+    input.reviewAuthority === "MOE" &&
+    (input.actorType !== "USER" ||
+      !input.actorUserId ||
+      !hasQualification)
+  ) {
+    throw new Error("MOE authority requires an identified qualified human reviewer");
+  }
+  if (
+    input.eventType === "AUTHORITY_CORRECTED" &&
+    (!input.correctsEventId ||
+      (input.actorType !== "USER" && input.actorType !== "SYSTEM") ||
+      !input.reason?.trim() ||
+      input.approvalBasis != null)
+  ) {
+    throw new Error(
+      "AUTHORITY_CORRECTED requires a linked prior event, USER/SYSTEM actor, and reason without a new approval basis",
+    );
   }
   if (input.eventType === "REVOKED") {
     if (
@@ -138,9 +186,30 @@ export async function appendCurriculumGovernanceEventInTransaction(
   const writersEnabled = provenanceWritersEnabled();
   validateGovernance(input, writersEnabled);
 
-    if (!writersEnabled) {
-      const lifecycleResult = LIFECYCLE_BY_EVENT[input.eventType] ?? null;
-      const defaultProjection: Prisma.CurriculumContentUncheckedUpdateInput = {
+  if (!writersEnabled) {
+    if (
+      input.approvalBasis === "AUTOMATED_RISK_POLICY" ||
+      input.approvalBasis === "ROLE_POLICY" ||
+      input.approvalBasis === "SCHOOL_POLICY"
+    ) {
+      // Compatibility mode may mirror a canonical write, but it must never
+      // become a second, ungated authority path: an automated approval
+      // basis has to clear the same provenance-completeness gate here as
+      // it does on the canonical (writers-enabled) branch below. Content
+      // with no provenance root at all defaults to UNVERIFIED (fail
+      // closed) rather than silently skipping the check.
+      const content = await tx.curriculumContent.findUnique({
+        where: { contentId: input.contentId },
+      });
+      const provenance = content
+        ? await tx.curriculumProvenance.findUnique({
+            where: { curriculumContentId: content.id },
+          })
+        : null;
+      assertAutomatedApprovalAllowed(provenance?.provenanceCompleteness ?? "UNVERIFIED");
+    }
+    const lifecycleResult = LIFECYCLE_BY_EVENT[input.eventType] ?? null;
+    const defaultProjection: Prisma.CurriculumContentUncheckedUpdateInput = {
         ...(lifecycleResult ? { status: STATUS_BY_LIFECYCLE[lifecycleResult] } : {}),
         ...(lifecycleResult === "APPROVED" ? { publishedAt: input.occurredAt ?? new Date() } : {}),
         ...(lifecycleResult === "REJECTED" ? { rejectionReason: input.reason ?? null } : {}),
@@ -151,17 +220,17 @@ export async function appendCurriculumGovernanceEventInTransaction(
             : input.eventType === "SUBMITTED" || input.eventType === "RETURNED_FOR_REVIEW"
               ? { editReviewStatus: "PENDING" }
               : {}),
-      };
-      const compatibilityWhere = input.compatibility?.where ?? { contentId: input.contentId };
-      await updateCurriculumGovernanceProjection(
-        tx,
-        compatibilityWhere,
-        (input.compatibility?.projection ?? defaultProjection) as Parameters<
-          typeof updateCurriculumGovernanceProjection
-        >[2],
-      );
-      await logAuditRequired(
-        {
+    };
+    const compatibilityWhere = input.compatibility?.where ?? { contentId: input.contentId };
+    await updateCurriculumGovernanceProjection(
+      tx,
+      compatibilityWhere,
+      (input.compatibility?.projection ?? defaultProjection) as Parameters<
+        typeof updateCurriculumGovernanceProjection
+      >[2],
+    );
+    await logAuditRequired(
+      {
           userId: input.actorUserId ?? null,
           action:
             input.compatibility?.auditAction ??
@@ -179,18 +248,18 @@ export async function appendCurriculumGovernanceEventInTransaction(
               riskReasons: input.riskReasons ?? [],
               reason: input.reason ?? null,
             },
-        },
-        tx,
-      );
-      return null;
-    }
-    if (input.idempotencyKey) {
-      const prior = await tx.curriculumGovernanceEvent.findUnique({
-        where: { idempotencyKey: input.idempotencyKey },
-      });
-      if (prior) return prior;
-    }
-    const content = await tx.curriculumContent.findUniqueOrThrow({
+      },
+      tx,
+    );
+    return null;
+  }
+  if (input.idempotencyKey) {
+    const prior = await tx.curriculumGovernanceEvent.findUnique({
+      where: { idempotencyKey: input.idempotencyKey },
+    });
+    if (prior) return prior;
+  }
+  const content = await tx.curriculumContent.findUniqueOrThrow({
       where: { contentId: input.contentId },
     });
     await lockCurriculumContent(tx, content.id);
@@ -217,6 +286,15 @@ export async function appendCurriculumGovernanceEventInTransaction(
         where: { id: input.replacementRevisionId },
       });
       if (!replacement) throw new Error("Replacement revision does not exist");
+    }
+    if (input.correctsEventId) {
+      const corrected = await tx.curriculumGovernanceEvent.findUnique({
+        where: { id: input.correctsEventId },
+        select: { id: true, provenanceId: true },
+      });
+      if (!corrected || corrected.provenanceId !== root.id) {
+        throw new Error("Authority correction must reference an event on the same provenance root");
+      }
     }
     const last = await tx.curriculumGovernanceEvent.findFirst({
       where: { provenanceId: root.id },
@@ -251,6 +329,7 @@ export async function appendCurriculumGovernanceEventInTransaction(
             riskReasons: input.riskReasons ?? [],
             reason: input.reason ?? null,
             replacementRevisionId: input.replacementRevisionId ?? null,
+            correctsEventId: input.correctsEventId ?? null,
           },
         },
         tx,
@@ -283,6 +362,7 @@ export async function appendCurriculumGovernanceEventInTransaction(
         auditLogId,
         idempotencyKey: input.idempotencyKey ?? null,
         backfillRunId: input.backfillRunId ?? null,
+        correctsEventId: input.correctsEventId ?? null,
       },
     });
     if (input.eventType === "RISK_ASSESSED") {

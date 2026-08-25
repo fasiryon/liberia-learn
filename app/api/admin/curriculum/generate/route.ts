@@ -288,7 +288,8 @@ export async function POST(req: Request) {
 
     // Use the DB-level status column for the approval workflow
     const writersEnabled = provenanceWritersEnabled();
-    const dbStatus = approvalStatus === "APPROVED" && !writersEnabled ? "published" : "pending_approval";
+    if (!writersEnabled) (enrichedPayload as any).approvalStatus = "PENDING_APPROVAL";
+    const dbStatus = "pending_approval";
 
     // Upsert into CurriculumContent
     const prompt = mode === "lesson" ? getPrompt("lesson.deep") : null;
@@ -357,6 +358,17 @@ export async function POST(req: Request) {
             }
           : {}),
         reviewerRoleSnapshot: user.role,
+        ...(approvalStatus === "APPROVED" && user.role === "ADMIN"
+          ? {
+              reviewerQualificationRef: `platform-admin:${user.id}`,
+              reviewerQualificationSnapshot: {
+                schemaVersion: 1,
+                basis: "PLATFORM_ADMIN_ROLE",
+                userId: user.id,
+                role: user.role,
+              },
+            }
+          : {}),
         idempotencyKey: `curriculum-generate-governance:${contentId}:${traceId}`,
         schoolId: user.schoolId ?? null,
         traceId,
