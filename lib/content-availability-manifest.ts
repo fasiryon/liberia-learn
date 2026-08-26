@@ -105,6 +105,89 @@ function publicKeyFromEnvironment(): string | null {
   return value ? value.replace(/\\n/g, "\n") : null;
 }
 
+type PublicKeyRegistryEntry = { keyId: string; publicKeyPem: string };
+
+type PublicKeyRegistryResolution =
+  | { mode: "legacy" }
+  | { mode: "invalid" }
+  | { mode: "registry"; keys: Record<string, string> };
+
+/**
+ * P5-A Phase C: NEXT_PUBLIC_CONTENT_MANIFEST_PUBLIC_KEYS, a JSON array of
+ * {keyId, publicKeyPem} (must be NEXT_PUBLIC_ since verification runs
+ * client-side, offline, with no server round-trip). Deliberately minimal —
+ * no key metadata, no expiry, no automatic rotation ceremony.
+ *
+ * Three states are kept explicit rather than merged into one fallback chain:
+ *  - unset/blank -> "legacy": every existing single-key deployment (this var
+ *    never configured) is unaffected — manifest.keyId is not consulted at
+ *    all, exactly as before this registry existed.
+ *  - set but malformed (bad JSON, wrong shape, blank id/pem, duplicate
+ *    keyId) -> "invalid": fails closed for every manifest instead of
+ *    silently reverting to the single-key var, which would otherwise mask a
+ *    typo'd rotation as "verification still works".
+ *  - set and well-formed -> "registry": manifest.keyId is looked up
+ *    explicitly; an id absent from the registry fails closed and never
+ *    falls through to the legacy single-key var — that fallback is exactly
+ *    what would stop key retirement from actually retiring a key.
+ */
+function resolvePublicKeyRegistry(): PublicKeyRegistryResolution {
+  const raw = process.env.NEXT_PUBLIC_CONTENT_MANIFEST_PUBLIC_KEYS?.trim();
+  if (!raw) return { mode: "legacy" };
+
+  let parsed: unknown;
+  try {
+    parsed = JSON.parse(raw);
+  } catch {
+    return { mode: "invalid" };
+  }
+  if (!Array.isArray(parsed)) return { mode: "invalid" };
+
+  const keys: Record<string, string> = {};
+  for (const entry of parsed) {
+    if (!entry || typeof entry !== "object" || Array.isArray(entry)) return { mode: "invalid" };
+    const record = entry as Record<string, unknown>;
+    if (Object.keys(record).length !== 2) return { mode: "invalid" };
+    if (typeof record.keyId !== "string" || typeof record.publicKeyPem !== "string") {
+      return { mode: "invalid" };
+    }
+    const keyId = (record as PublicKeyRegistryEntry).keyId.trim();
+    const publicKeyPem = (record as PublicKeyRegistryEntry).publicKeyPem.trim();
+    if (!keyId || !publicKeyPem) return { mode: "invalid" };
+    if (Object.prototype.hasOwnProperty.call(keys, keyId)) return { mode: "invalid" };
+    keys[keyId] = publicKeyPem;
+  }
+  return { mode: "registry", keys };
+}
+
+/**
+ * Resolves the public key to verify a manifest against.
+ *
+ * - Registry unconfigured: the single legacy env var governs every
+ *   manifest, regardless of its keyId — identical to pre-Phase-C behavior.
+ * - Registry configured: only an explicit keyId match in the registry is
+ *   trusted. An unknown keyId — including one that happens to equal the
+ *   legacy var's own key — fails closed. That is what makes retiring a key
+ *   (removing its entry) actually retire it instead of leaving a silent
+ *   back door through the legacy var.
+ * - Registry malformed: nothing verifies, by design — a misconfigured
+ *   rotation must not silently degrade to "verification still works".
+ *
+ * If the resolved key turns out to be the wrong one for this manifest's
+ * actual signature, cryptographic verification itself fails closed — this
+ * function only ever narrows which key is tried, it never widens what
+ * counts as a valid signature. `keyId` is not part of the signed bytes
+ * (see serializeContentAvailability), so tampering with it just selects the
+ * wrong verification key, which the signature check below then rejects.
+ */
+function resolvePublicKeyForManifest(manifest: SignedContentAvailabilityManifest): string | null {
+  const registry = resolvePublicKeyRegistry();
+  if (registry.mode === "legacy") return publicKeyFromEnvironment();
+  if (registry.mode === "invalid") return null;
+  if (!manifest?.keyId) return null;
+  return registry.keys[manifest.keyId] ?? null;
+}
+
 function pemBytes(pem: string): ArrayBuffer {
   const base64 = pem
     .replace(/-----BEGIN PUBLIC KEY-----/g, "")
@@ -128,7 +211,7 @@ function base64Bytes(value: string): ArrayBuffer {
  */
 export async function verifyContentAvailabilityManifest(
   manifest: SignedContentAvailabilityManifest,
-  publicKeyPem: string | null = publicKeyFromEnvironment(),
+  publicKeyPem: string | null = resolvePublicKeyForManifest(manifest),
   trustedManifest?: SignedContentAvailabilityManifest | null,
 ): Promise<boolean> {
   if (!publicKeyPem || !globalThis.crypto?.subtle) return false;
