@@ -2,6 +2,8 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const mockRequireRole = vi.hoisted(() => vi.fn());
 const mockFindContent = vi.hoisted(() => vi.fn());
+const mockFindGovernance = vi.hoisted(() => vi.fn());
+const mockTransaction = vi.hoisted(() => vi.fn());
 const mockFindVideo = vi.hoisted(() => vi.fn());
 const mockUpdateVideo = vi.hoisted(() => vi.fn());
 const mockUpdateManyVideos = vi.hoisted(() => vi.fn());
@@ -21,7 +23,9 @@ vi.mock("@/lib/content-availability-manifest.server", () => ({
 }));
 vi.mock("@/lib/db", () => ({
   prisma: {
+    $transaction: mockTransaction,
     curriculumContent: { findFirst: mockFindContent },
+    curriculumGovernanceEvent: { findFirst: mockFindGovernance },
     lessonVideo: {
       findUnique: mockFindVideo,
       update: mockUpdateVideo,
@@ -37,6 +41,10 @@ import { PATCH as patchVideo } from "@/app/api/teacher/lessons/[contentId]/video
 describe("P1-B tenant-scoped lesson media", () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    mockTransaction.mockImplementation(async (callback) => callback({
+      curriculumContent: { findFirst: mockFindContent },
+      curriculumGovernanceEvent: { findFirst: mockFindGovernance },
+    }));
   });
 
   it("deactivates competing videos only inside the activated video's school", async () => {
