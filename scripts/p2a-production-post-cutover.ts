@@ -92,6 +92,9 @@ async function main() {
     urgent: true,
     idempotencyKey: `${run}:deterministic:revoked`,
   });
+  if (!replacementRevocation) {
+    throw new Error("P2-A post-cutover STOP: revocation event was not persisted");
+  }
 
   await appendCurriculumGovernanceEvent({
     contentId: teacher.contentId,
@@ -146,6 +149,16 @@ async function main() {
     contentId: deterministic.contentId,
     version: null,
     revoked: true,
+    issuedAt: new Date(
+      Math.max(
+        deterministic.provenance.currentRevision.createdAt.getTime(),
+        replacementRevocation.createdAt.getTime(),
+      ),
+    ).toISOString(),
+    sequence: {
+      revision: deterministic.provenance.currentRevision.sequence,
+      governance: replacementRevocation.sequence,
+    },
   });
   const manifestVerified = revokedManifest
     ? await verifyContentAvailabilityManifest(
