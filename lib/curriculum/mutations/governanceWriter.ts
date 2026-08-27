@@ -274,6 +274,10 @@ export async function appendCurriculumGovernanceEventInTransaction(
       where: { id: revisionId, provenanceId: root.id },
     });
     if (!revision) throw new Error("Governance revision does not belong to the content root");
+    const lifecycleResult = LIFECYCLE_BY_EVENT[input.eventType] ?? null;
+    if (lifecycleResult && revisionId !== root.currentRevisionId) {
+      throw new Error("Lifecycle governance must target the current curriculum revision");
+    }
     if (
       input.approvalBasis === "AUTOMATED_RISK_POLICY" ||
       input.approvalBasis === "ROLE_POLICY" ||
@@ -301,7 +305,6 @@ export async function appendCurriculumGovernanceEventInTransaction(
       orderBy: { sequence: "desc" },
       select: { sequence: true },
     });
-    const lifecycleResult = LIFECYCLE_BY_EVENT[input.eventType] ?? null;
     let auditLogId = options?.auditLogId;
     if (auditLogId) {
       const sharedAudit = await tx.auditLog.findUnique({ where: { id: auditLogId } });

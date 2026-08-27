@@ -1,10 +1,11 @@
 "use client";
 
-import { del, get, set } from "idb-keyval";
+import { del, get, set, update as updateValue } from "idb-keyval";
 import { resolveSessionPartition, type SessionPartitionInput } from "@/lib/offline-session";
 
 const CACHE_META_PREFIX = "liberialearn_cache_meta::";
 const CACHE_PACK_PREFIX = "liberialearn_cache_pack::";
+const RETAINED_TRUST_SCOPES = new Set(["lesson-availability"]);
 
 const DEFAULT_TTL_MS = 7 * 24 * 60 * 60 * 1000;
 const DEFAULT_MAX_STORAGE_BYTES = 25 * 1024 * 1024;
@@ -16,6 +17,7 @@ export type CachePackMetadata = {
   createdAt: string;
   lastUsedAt: string;
   sizeBytes: number;
+  retainForTrust?: boolean;
 };
 
 export type CacheStats = {
@@ -61,6 +63,10 @@ function estimateBytes(value: unknown): number {
   return serialized.length * 2;
 }
 
+function isRetainedTrustMetadata(meta: CachePackMetadata): boolean {
+  return meta.retainForTrust === true || RETAINED_TRUST_SCOPES.has(meta.scope);
+}
+
 export async function getMetadata(partition?: SessionPartitionInput): Promise<CachePackMetadata[]> {
   return (await get<CachePackMetadata[]>(metaStoreKey(partition))) ?? [];
 }
@@ -74,7 +80,7 @@ async function enforceMaxStorage(partition?: SessionPartitionInput): Promise<voi
   let total = metas.reduce((acc, meta) => acc + meta.sizeBytes, 0);
   if (total <= lifecyclePolicy.maxStorageBytes) return;
 
-  const ordered = [...metas].sort(
+  const ordered = metas.filter((meta) => !isRetainedTrustMetadata(meta)).sort(
     (a, b) => Date.parse(a.lastUsedAt || a.createdAt) - Date.parse(b.lastUsedAt || b.createdAt)
   );
   const toDelete: CachePackMetadata[] = [];
@@ -131,6 +137,47 @@ export async function cachePack(
   return meta;
 }
 
+/**
+ * Atomically replace one pack only when the caller accepts the currently
+ * stored value. idb-keyval performs the read/decision/write in one IndexedDB
+ * transaction, so separate tabs cannot both overwrite the same trust record
+ * from a stale read.
+ */
+export async function compareAndSwapCachedPack<T>(
+  scope: string,
+  scopeId: string,
+  packVersion: string,
+  payload: T,
+  accept: (current: T | null) => boolean,
+  partition?: SessionPartitionInput,
+  options?: { retainForTrust?: boolean },
+): Promise<boolean> {
+  let accepted = false;
+  await updateValue<T>(packStoreKey(scope, scopeId, partition), (current) => {
+    if (!accept(current ?? null)) return current;
+    accepted = true;
+    return payload;
+  });
+  if (!accepted) return false;
+
+  const createdAt = nowIso();
+  const meta: CachePackMetadata = {
+    scope,
+    scopeId,
+    packVersion,
+    createdAt,
+    lastUsedAt: createdAt,
+    sizeBytes: estimateBytes(payload),
+    retainForTrust: options?.retainForTrust ?? false,
+  };
+  const metas = await getMetadata(partition);
+  await setMetadata([
+    ...metas.filter((item) => !(item.scope === scope && item.scopeId === scopeId)),
+    meta,
+  ], partition);
+  return true;
+}
+
 export async function getCachedPack<T>(
   scope: string,
   scopeId: string,
@@ -162,7 +209,11 @@ export async function purgeExpiredPacks(
   nowMs: number = Date.now()
 ): Promise<number> {
   const metas = await getMetadata(partition);
-  const expired = metas.filter((meta) => nowMs - Date.parse(meta.lastUsedAt || meta.createdAt) > lifecyclePolicy.ttlMs);
+  const expired = metas.filter(
+    (meta) =>
+      !isRetainedTrustMetadata(meta) &&
+      nowMs - Date.parse(meta.lastUsedAt || meta.createdAt) > lifecyclePolicy.ttlMs,
+  );
   if (expired.length === 0) return 0;
 
   for (const meta of expired) {
@@ -178,10 +229,15 @@ export async function purgeExpiredPacks(
 
 export async function purgePartitionPacks(partition?: SessionPartitionInput): Promise<void> {
   const metas = await getMetadata(partition);
-  for (const meta of metas) {
+  const retained = metas.filter(isRetainedTrustMetadata);
+  for (const meta of metas.filter((item) => !isRetainedTrustMetadata(item))) {
     await del(packStoreKey(meta.scope, meta.scopeId, partition));
   }
-  await del(metaStoreKey(partition));
+  if (retained.length > 0) {
+    await setMetadata(retained, partition);
+  } else {
+    await del(metaStoreKey(partition));
+  }
 }
 
 export async function getCacheStats(partition?: SessionPartitionInput): Promise<CacheStats> {
@@ -192,4 +248,3 @@ export async function getCacheStats(partition?: SessionPartitionInput): Promise<
     cacheBytes: metas.reduce((acc, meta) => acc + meta.sizeBytes, 0),
   };
 }
-

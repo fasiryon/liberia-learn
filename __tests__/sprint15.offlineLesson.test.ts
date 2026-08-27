@@ -10,6 +10,9 @@ const store = new Map<string, unknown>();
 vi.mock("idb-keyval", () => ({
   get: vi.fn(async (key: string) => store.get(key) ?? undefined),
   set: vi.fn(async (key: string, value: unknown) => { store.set(key, value); }),
+  update: vi.fn(async (key: string, updater: (value: unknown) => unknown) => {
+    store.set(key, updater(store.get(key)));
+  }),
   del: vi.fn(async (key: string) => { store.delete(key); }),
 }));
 
@@ -18,6 +21,10 @@ vi.mock("@/lib/offline-session", () => ({
   detectAndSetActiveSessionPartition: vi.fn(() => null),
 }));
 vi.mock("@/lib/content-availability-manifest", () => ({
+  acceptsContentAvailabilityManifest: vi.fn(() => true),
+  acceptsManifestPolicy: vi.fn(() => true),
+  isLegacyContentAvailabilityManifest: vi.fn(() => true),
+  hashContentAvailabilityData: vi.fn(async () => null),
   verifyContentAvailabilityManifest: vi.fn(async () => true),
 }));
 

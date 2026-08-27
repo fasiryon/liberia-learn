@@ -18,8 +18,19 @@
  *  - isLessonCached() — quick existence check
  */
 
-import { cachePack, getCachedPack, invalidatePack, getCacheStats, getMetadata } from "@/lib/offline-cache";
 import {
+  cachePack,
+  compareAndSwapCachedPack,
+  getCachedPack,
+  invalidatePack,
+  getCacheStats,
+  getMetadata,
+} from "@/lib/offline-cache";
+import {
+  acceptsContentAvailabilityManifest,
+  acceptsManifestPolicy,
+  hashContentAvailabilityData,
+  isLegacyContentAvailabilityManifest,
   verifyContentAvailabilityManifest,
   type SignedContentAvailabilityManifest,
 } from "@/lib/content-availability-manifest";
@@ -43,6 +54,30 @@ export type CachedLessonEntry = {
   sizeBytes: number;
 };
 
+function manifestPackVersion(manifest: SignedContentAvailabilityManifest): string {
+  const sequence = manifest.payload.sequence;
+  return sequence
+    ? `revision-${sequence.revision}:governance-${sequence.governance}`
+    : manifest.payload.version ?? "legacy-revoked";
+}
+
+async function acceptManifestAtomically(
+  contentId: string,
+  manifest: SignedContentAvailabilityManifest,
+): Promise<boolean> {
+  if (!(await verifyContentAvailabilityManifest(manifest))) return false;
+  if (!acceptsManifestPolicy(manifest)) return false;
+  return compareAndSwapCachedPack<SignedContentAvailabilityManifest>(
+    LESSON_MANIFEST_SCOPE,
+    contentId,
+    manifestPackVersion(manifest),
+    manifest,
+    (current) => acceptsContentAvailabilityManifest(manifest, current),
+    undefined,
+    { retainForTrust: true },
+  );
+}
+
 /**
  * Write lesson content to the local cache after a successful network fetch.
  * Best-effort: never throws.
@@ -55,13 +90,24 @@ export async function cacheLessonContent(
 ): Promise<boolean> {
   try {
     if (!manifest) return false;
-    const previous = await getCachedPack<SignedContentAvailabilityManifest>(LESSON_MANIFEST_SCOPE, contentId);
-    if (!(await verifyContentAvailabilityManifest(manifest, undefined, previous?.payload.sequence))) return false;
     if (manifest.payload.contentId !== contentId || manifest.payload.revoked || !manifest.payload.version) return false;
     const contentVersion = typeof data.metadata?.version === "string" ? data.metadata.version : null;
     if (contentVersion !== manifest.payload.version) return false;
-    await cachePack(LESSON_SCOPE, contentId, contentVersion, data);
-    await cachePack(LESSON_MANIFEST_SCOPE, contentId, contentVersion, manifest);
+    if (!isLegacyContentAvailabilityManifest(manifest.payload)) {
+      const expectedHash = manifest.payload.contents?.find(
+        (entry) => entry.contentId === contentId && entry.version === contentVersion,
+      )?.sha256;
+      const actualHash = await hashContentAvailabilityData({
+        contentId,
+        version: contentVersion,
+        metadata: data.metadata,
+        payload: data.payload,
+        audio: data.audio,
+      });
+      if (!expectedHash || !actualHash || expectedHash !== actualHash) return false;
+    }
+    if (!(await acceptManifestAtomically(contentId, manifest))) return false;
+    await cachePack(LESSON_SCOPE, contentId, manifestPackVersion(manifest), data);
     return true;
   } catch {
     // IndexedDB unavailable (private browsing, quota exceeded) — silently skip
@@ -98,13 +144,35 @@ export async function loadCachedLesson(
       await invalidatePack(LESSON_SCOPE, contentId);
       return null;
     }
-    const metadata = await getMetadata();
-    const lessonMetadata = metadata.find((entry) => entry.scope === LESSON_SCOPE && entry.scopeId === contentId);
-    if (!lessonMetadata || lessonMetadata.packVersion !== manifest.payload.version) {
+    if (!acceptsManifestPolicy(manifest)) {
       await invalidatePack(LESSON_SCOPE, contentId);
       return null;
     }
-    return await getCachedPack<CachedLessonData>(LESSON_SCOPE, contentId);
+    const metadata = await getMetadata();
+    const lessonMetadata = metadata.find((entry) => entry.scope === LESSON_SCOPE && entry.scopeId === contentId);
+    if (!lessonMetadata || lessonMetadata.packVersion !== manifestPackVersion(manifest)) {
+      await invalidatePack(LESSON_SCOPE, contentId);
+      return null;
+    }
+    const lesson = await getCachedPack<CachedLessonData>(LESSON_SCOPE, contentId);
+    if (!lesson) return null;
+    if (!isLegacyContentAvailabilityManifest(manifest.payload)) {
+      const expectedHash = manifest.payload.contents?.find(
+        (entry) => entry.contentId === contentId && entry.version === manifest.payload.version,
+      )?.sha256;
+      const actualHash = await hashContentAvailabilityData({
+        contentId,
+        version: manifest.payload.version,
+        metadata: lesson.metadata,
+        payload: lesson.payload,
+        audio: lesson.audio,
+      });
+      if (!expectedHash || !actualHash || expectedHash !== actualHash) {
+        await invalidatePack(LESSON_SCOPE, contentId);
+        return null;
+      }
+    }
+    return lesson;
   } catch {
     return null;
   }
@@ -116,15 +184,13 @@ export async function refreshLessonAvailability(
 ): Promise<boolean> {
   try {
     const { contentId } = manifest.payload;
-    const previous = await getCachedPack<SignedContentAvailabilityManifest>(LESSON_MANIFEST_SCOPE, contentId);
-    if (!(await verifyContentAvailabilityManifest(manifest, undefined, previous?.payload.sequence))) return false;
+    if (!(await acceptManifestAtomically(contentId, manifest))) return false;
     const { version, revoked } = manifest.payload;
     const metadata = await getMetadata();
     const cached = metadata.find((entry) => entry.scope === LESSON_SCOPE && entry.scopeId === contentId);
-    if (revoked || !version || (cached && cached.packVersion !== version)) {
+    if (revoked || !version || (cached && cached.packVersion !== manifestPackVersion(manifest))) {
       await invalidatePack(LESSON_SCOPE, contentId);
     }
-    await cachePack(LESSON_MANIFEST_SCOPE, contentId, version ?? "revoked", manifest);
     return true;
   } catch {
     return false;
@@ -149,7 +215,8 @@ export async function isLessonCached(contentId: string): Promise<boolean> {
 export async function removeCachedLesson(contentId: string): Promise<void> {
   try {
     await invalidatePack(LESSON_SCOPE, contentId);
-    await invalidatePack(LESSON_MANIFEST_SCOPE, contentId);
+    // Keep the tiny signed trust baseline. Removing lesson bytes, receiving an
+    // HTTP rejection, or ordinary LRU/TTL cleanup must not reopen rollback.
   } catch {
     // Best-effort — never throws
   }

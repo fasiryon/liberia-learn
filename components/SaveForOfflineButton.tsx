@@ -17,6 +17,7 @@ import {
   MAX_CACHED_LESSONS,
   type CachedLessonData,
 } from "@/lib/lesson-offline-cache";
+import type { SignedContentAvailabilityManifest } from "@/lib/content-availability-manifest";
 
 type SaveForOfflineButtonProps = {
   contentId: string;
@@ -33,6 +34,30 @@ export function SaveForOfflineButton({ contentId, lessonData }: SaveForOfflineBu
     isLessonCached(contentId).then(setCached);
   }, [contentId]);
 
+  async function cacheCurrentSignedLesson(): Promise<boolean> {
+    const response = await fetch(`/api/curriculum/${encodeURIComponent(contentId)}`, {
+      cache: "no-store",
+    });
+    if (!response.ok) return false;
+    const current = (await response.json()) as {
+      metadata?: Record<string, unknown> | null;
+      payload?: Record<string, unknown> | null;
+      audio?: Record<string, unknown> | null;
+      offlineManifest?: SignedContentAvailabilityManifest | null;
+    };
+    if (!current.offlineManifest) return false;
+    return cacheLessonContent(
+      contentId,
+      {
+        ...lessonData,
+        metadata: current.metadata ?? null,
+        payload: current.payload ?? null,
+        audio: current.audio ?? null,
+      },
+      current.offlineManifest,
+    );
+  }
+
   async function handleSave() {
     setSaving(true);
     try {
@@ -46,7 +71,7 @@ export function SaveForOfflineButton({ contentId, lessonData }: SaveForOfflineBu
         return;
       }
 
-      const ok = await cacheLessonContent(contentId, lessonData);
+      const ok = await cacheCurrentSignedLesson();
       if (ok) setCached(true);
     } finally {
       setSaving(false);
@@ -65,7 +90,7 @@ export function SaveForOfflineButton({ contentId, lessonData }: SaveForOfflineBu
     setAtCapacity(false);
     setOldestId(null);
     setSaving(true);
-    const ok = await cacheLessonContent(contentId, lessonData);
+    const ok = await cacheCurrentSignedLesson();
     if (ok) setCached(true);
     setSaving(false);
   }

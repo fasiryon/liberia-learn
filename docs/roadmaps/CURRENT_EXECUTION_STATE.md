@@ -3,6 +3,14 @@
 ## Purpose
 Live execution tracking for the final closeout program.
 
+## P5-A Manifest Policy Authority
+
+Status: IN PROGRESS on dedicated branch `feat/p5-a-signed-offline-packs`.
+
+Phase B ordering and Phase C key registry remain preserved. This continuation
+is wiring `expiresAt`, `minClientVersion`, and `contents` into the signed
+canonical statement, then validating the complete client/cache trust path.
+
 ## Resume here
 
 - **P2-A/B/C REMEDIATION — BOTH PREVIOUSLY-OPEN NARROW GAPS NOW CLOSED IN
