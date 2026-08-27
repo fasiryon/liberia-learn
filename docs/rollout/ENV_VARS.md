@@ -73,9 +73,11 @@ Offline lesson signing is fail closed unless the three cryptographic values are 
 The policy-authority envelope also signs:
 
 - `expiresAt`: canonical UTC ISO-8601 timestamp, exactly seven days after the
-  persisted authority issue time. A non-revoked statement is not accepted for
-  new cache trust or offline serving after this instant. A revoked statement
-  remains authoritative after expiry so expiry can never weaken revocation.
+  server issuance time. Issuance is renewable on an authorized curriculum
+  read, while the signed Phase B ordering cursor remains unchanged. A
+  non-revoked statement is not accepted for new cache trust or offline serving
+  after this instant. A revoked statement remains authoritative after expiry
+  so expiry can never weaken revocation.
 - `minClientVersion`: strict `MAJOR.MINOR.PATCH` SemVer with no leading zeros.
   The current browser client must be at least this version; malformed or
   unavailable client versions fail closed. `CONTENT_MANIFEST_MIN_CLIENT_VERSION`

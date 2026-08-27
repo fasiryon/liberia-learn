@@ -171,14 +171,10 @@ export async function GET(
       latestRevision?.id === row.provenance?.currentRevisionId &&
       latestRevision.sequence === currentRevision?.sequence &&
       lifecycleIsCoherent;
-    const trustIssuedAt = currentRevision
-      ? new Date(
-          Math.max(
-            currentRevision.createdAt.getTime(),
-            latestGovernance?.createdAt.getTime() ?? 0,
-          ),
-        ).toISOString()
-      : null;
+    // The ordering cursor is the durable authority. The issuance timestamp is
+    // deliberately renewable so stable approved lessons do not expire forever
+    // merely because their revision is old.
+    const trustIssuedAt = currentRevision ? new Date().toISOString() : null;
     const responseMetadata = {
       contentId: row.contentId,
       grade: row.grade,

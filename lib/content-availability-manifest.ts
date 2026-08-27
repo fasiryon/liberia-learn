@@ -91,6 +91,30 @@ function canonicalContents(contents: ManifestContentEntry[]): ManifestContentEnt
   );
 }
 
+function serializeManifestState(payload: ContentAvailabilityPayload): string {
+  return JSON.stringify({
+    contentId: payload.contentId,
+    version: payload.version,
+    revoked: payload.revoked,
+    sequence: payload.sequence,
+    minClientVersion: payload.minClientVersion,
+    contents: payload.contents === undefined ? undefined : canonicalContents(payload.contents),
+  });
+}
+
+function isRenewalOfSameTrustState(
+  candidate: ContentAvailabilityPayload,
+  trusted: ContentAvailabilityPayload,
+): boolean {
+  if (isLegacyContentAvailabilityManifest(candidate) || isLegacyContentAvailabilityManifest(trusted)) return false;
+  if (serializeManifestState(candidate) !== serializeManifestState(trusted)) return false;
+  const candidateIssuedAt = Date.parse(candidate.issuedAt);
+  const trustedIssuedAt = Date.parse(trusted.issuedAt);
+  const candidateExpiresAt = Date.parse(candidate.expiresAt as string);
+  return candidateIssuedAt > trustedIssuedAt &&
+    candidateExpiresAt - candidateIssuedAt === OFFLINE_MANIFEST_TTL_MS;
+}
+
 /** Canonical bytes covered by the RSA signature. Contents order is semantic-free. */
 export function serializeContentAvailability(payload: ContentAvailabilityPayload): string {
   return JSON.stringify({
@@ -275,7 +299,7 @@ export function acceptsContentAvailabilityManifest(
   return (
     serializeContentAvailability(candidate.payload) ===
     serializeContentAvailability(trusted.payload)
-  );
+  ) || isRenewalOfSameTrustState(candidate.payload, trusted.payload);
 }
 
 function publicKeyFromEnvironment(): string | null {

@@ -14,6 +14,7 @@ import {
 } from "@/lib/content-availability-manifest";
 import {
   cacheLessonContent,
+  isLessonCached,
   loadCachedLesson,
   refreshLessonAvailability,
 } from "@/lib/lesson-offline-cache";
@@ -207,6 +208,26 @@ describe("P5-A manifest policy authority", () => {
     expect(current?.payload.contents?.[0].sha256).toBe(signed.payload.contents?.[0].sha256);
   });
 
+  it("does not report expired cached content as available", async () => {
+    const signed = manifest({ contentId: "lesson-status", version: "1" });
+    const data = contentData("lesson-status", "1");
+    expect(await cacheLessonContent("lesson-status", data, signed)).toBe(true);
+    expect(await isLessonCached("lesson-status")).toBe(true);
+
+    const expired = manifest({
+      contentId: "lesson-status",
+      version: "1",
+      expiresAt: "2026-08-26T00:00:00.000Z",
+    });
+    const { cachePack } = await import("@/lib/offline-cache");
+    await cachePack("lesson-availability", "lesson-status", "revision-1:governance-1", expired, undefined, {
+      retainForTrust: true,
+    });
+
+    expect(await isLessonCached("lesson-status")).toBe(false);
+    expect(await loadCachedLesson("lesson-status")).toBeNull();
+  });
+
   it("keeps Phase B ordering dominant over policy differences", () => {
     const older = manifest({ contentId: "lesson-ordering", version: "1", sequence: { revision: 4, governance: 9 }, minClientVersion: "1.0.0" });
     const newerExpired = manifest({ contentId: "lesson-ordering", version: "2", sequence: { revision: 5, governance: 0 }, expiresAt: "2026-08-26T00:00:00.000Z", minClientVersion: "9.0.0" });
@@ -216,6 +237,23 @@ describe("P5-A manifest policy authority", () => {
 
     const higherStricter = manifest({ contentId: "lesson-ordering", version: "3", sequence: { revision: 6, governance: 0 }, minClientVersion: "99.0.0" });
     expect(acceptsContentAvailabilityManifest(higherStricter, newerExpired)).toBe(true);
+
+    const renewal = manifest({
+      contentId: "lesson-ordering",
+      version: "1",
+      sequence: { revision: 4, governance: 9 },
+      issuedAt: "2026-08-26T00:00:00.000Z",
+      expiresAt: "2026-09-02T00:00:00.000Z",
+    });
+    expect(acceptsContentAvailabilityManifest(renewal, older)).toBe(true);
+    expect(acceptsContentAvailabilityManifest(manifest({
+      contentId: "lesson-ordering",
+      version: "1",
+      sequence: { revision: 4, governance: 9 },
+      issuedAt: "2026-08-26T00:00:00.000Z",
+      expiresAt: "2026-09-02T00:00:00.000Z",
+      minClientVersion: "2.0.0",
+    }), older)).toBe(false);
   });
 
   it("preserves explicit legacy compatibility without treating absent policy as trusted", async () => {

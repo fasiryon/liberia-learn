@@ -68,6 +68,8 @@ function governedRow(status = "published") {
 describe("P5-A Phase B manifest issuance", () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date("2026-08-27T00:00:00.000Z"));
     process.env.P2A_PROVENANCE_WRITERS_DISABLED = "false";
     mockTransaction.mockImplementation(async (callback) => callback({
       curriculumContent: { findFirst: mockFindContent },
@@ -89,11 +91,12 @@ describe("P5-A Phase B manifest issuance", () => {
     mockFindRevision.mockResolvedValue({ id: "revision-5", sequence: 5 });
   });
   afterEach(() => {
+    vi.useRealTimers();
     if (originalWriterFlag === undefined) delete process.env.P2A_PROVENANCE_WRITERS_DISABLED;
     else process.env.P2A_PROVENANCE_WRITERS_DISABLED = originalWriterFlag;
   });
 
-  it("signs the persisted revision/governance cursor and deterministic state time", async () => {
+  it("signs the persisted revision/governance cursor with a renewable issuance time", async () => {
     mockFindContent.mockResolvedValue(governedRow());
 
     const response = await GET(new Request("http://localhost/api/curriculum/lesson-1"), {
@@ -104,7 +107,7 @@ describe("P5-A Phase B manifest issuance", () => {
       contentId: "lesson-1",
       version: "v2",
       revoked: false,
-      issuedAt: "2026-08-25T11:00:00.000Z",
+      issuedAt: "2026-08-27T00:00:00.000Z",
       sequence: { revision: 5, governance: 9 },
       expiresAt: "2026-09-01T00:00:00.000Z",
       minClientVersion: "1.0.0",
@@ -114,6 +117,30 @@ describe("P5-A Phase B manifest issuance", () => {
         sha256: "0".repeat(64),
       }],
     });
+  });
+
+  it("renews an old stable revision without changing its ordering cursor", async () => {
+    mockFindContent.mockResolvedValue({
+      ...governedRow(),
+      updatedAt: new Date("2020-01-01T00:00:00.000Z"),
+      provenance: {
+        ...governedRow().provenance,
+        currentRevision: {
+          sequence: 5,
+          createdAt: new Date("2020-01-01T00:00:00.000Z"),
+        },
+      },
+    });
+
+    await GET(new Request("http://localhost/api/curriculum/lesson-1"), {
+      params: { contentId: "lesson-1" },
+    });
+
+    expect(mockSign).toHaveBeenCalledWith(expect.objectContaining({
+      issuedAt: "2026-08-27T00:00:00.000Z",
+      expiresAt: "2026-09-01T00:00:00.000Z",
+      sequence: { revision: 5, governance: 9 },
+    }));
   });
 
   it("allows a revision-only advance by resetting governance to the new revision stream", async () => {

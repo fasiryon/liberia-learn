@@ -14,9 +14,10 @@ Completed on dedicated branch `feat/p5-a-signed-offline-packs`, commit
   lookup, unknown and retired key rejection, malformed-registry fail closed,
   and legacy single-key fallback only when the registry is absent.
 - `expiresAt` is canonical UTC ISO-8601 with milliseconds, derived as seven
-  days after the persisted authority issue time. Non-revoked manifests are not
-  accepted for new trust or offline serving after expiry. Revocations remain
-  authoritative after expiry.
+  days after the server issuance time. Issuance renews on an authorized
+  curriculum read without changing the signed Phase B ordering cursor. A
+  non-revoked manifest is not accepted for new trust or offline serving after
+  expiry. Revocations remain authoritative after expiry.
 - `minClientVersion` is strict `MAJOR.MINOR.PATCH` SemVer with no leading
   zeros. The browser client must be at least the signed minimum; malformed or
   unknown client versions fail closed. The default client version is `1.0.0`;
