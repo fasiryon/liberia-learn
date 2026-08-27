@@ -5,9 +5,11 @@ Live execution tracking for the final closeout program.
 
 ## Resume here
 
-- **P5-A PHASE C OPERATIONAL CLOSURE (2026-08-27).** Phase C is complete on
-  main at `f4f350d6f7232014d9136f55386880c9e912a7d8`, after PR #90's merge
-  `b72851a1a154402bc03111be170c3712b2902ba7` and PR #89's consolidation.
+- **P5-A PHASE C OPERATIONAL CLOSURE (2026-08-27).** Phase C source is
+  complete on main at `f4f350d6f7232014d9136f55386880c9e912a7d8`, after PR
+  #90's merge `b72851a1a154402bc03111be170c3712b2902ba7` and PR #89's
+  consolidation. The operational closure remediation is now also merged on
+  main at `79ad1f01be9eaea9884e0868c3035a5e2a7174ac` via PR #91.
   Phase A is complete as the manifest-envelope contract shape; its
   `expiresAt`, `minClientVersion`, and `contents` fields remain deliberately
   unsigned/unverified. Phase B is COMPLETE: signed sequence ordering,
@@ -21,7 +23,9 @@ Live execution tracking for the final closeout program.
   and emits an explicit synthetic marker. Production key rotation was NOT
   PERFORMED.
 
-  The exact-main CI, build, Runtime Gate 1, and PR Triage checks passed. The
+  The exact-main CI, build, Runtime Gate 1, and PR Triage checks passed on the
+  closure SHA; the worker-image workflow no longer runs on ordinary main
+  pushes. The
   Supabase Preview app check failed because it compares the remote
   `supabase_migrations.schema_migrations` history against the legacy
   `supabase/migrations` directory, while this repository's documented

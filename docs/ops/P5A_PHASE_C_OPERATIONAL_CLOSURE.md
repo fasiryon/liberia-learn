@@ -1,6 +1,8 @@
 # P5-A Phase C Operational Closure
 
-Status: COMPLETE on main at `f4f350d6f7232014d9136f55386880c9e912a7d8`.
+Status: Phase C source complete at `f4f350d6f7232014d9136f55386880c9e912a7d8`;
+operational closure complete on main at
+`79ad1f01be9eaea9884e0868c3035a5e2a7174ac` via PR #91.
 
 ## Scope
 
@@ -43,8 +45,10 @@ The merge commit `f4f350d6f7232014d9136f55386880c9e912a7d8` has an identical
 tree, so the scanned source content is identical. GitGuardian is PR-triggered;
 no separate push-main result was emitted for `f4f350d6`.
 
-Exact-main CI passed TypeScript, the full Vitest run, and the build. Runtime
-Gate 1 and PR Triage passed.
+Exact-main CI on the closure merge passed TypeScript, the full Vitest run, and
+the build. Runtime Gate 1 and PR Triage passed. GitGuardian, Vercel, and
+Vercel Preview Comments passed on PR #91; Supabase Preview was explicitly
+skipped on the PR and remains non-required on main.
 
 ## Deployment boundary
 
