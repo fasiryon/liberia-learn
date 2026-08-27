@@ -14,10 +14,18 @@ function signContentAvailability(
     sequence?: ContentAvailabilitySequence;
   },
 ) {
+  const issuedAt = input.issuedAt ?? "2026-08-25T00:00:00.000Z";
   return signServerManifest({
     ...input,
-    issuedAt: input.issuedAt ?? "2026-08-25T00:00:00.000Z",
+    issuedAt,
     sequence: input.sequence ?? { revision: 1, governance: 0 },
+    expiresAt: input.expiresAt ?? "2026-09-01T00:00:00.000Z",
+    minClientVersion: input.minClientVersion ?? "1.0.0",
+    contents: input.contents ?? (input.revoked ? [] : [{
+      contentId: input.contentId,
+      version: input.version!,
+      sha256: "0".repeat(64),
+    }]),
   });
 }
 
@@ -75,7 +83,7 @@ describe("P1-B signed content availability manifests", () => {
     } as Parameters<typeof signServerManifest>[0])).toBeNull();
   });
 
-  it("P5-A envelope: sequence is signed and verified (Phase B); expiresAt/minClientVersion/contents remain excluded (not yet wired)", async () => {
+  it("P5-A envelope: policy fields are signed and verified", async () => {
     const { privateKey, publicKey } = generateKeyPairSync("rsa", {
       modulusLength: 2048,
       privateKeyEncoding: { type: "pkcs8", format: "pem" },
@@ -91,7 +99,7 @@ describe("P1-B signed content availability manifests", () => {
       revoked: false,
       expiresAt: "2027-01-01T00:00:00.000Z",
       minClientVersion: "1.4.0",
-      contents: [{ contentId: "lesson-1", version: "7" }],
+      contents: [{ contentId: "lesson-1", version: "7", sha256: "0".repeat(64) }],
     });
 
     expect(withoutEnvelopeFields).not.toBeNull();
@@ -100,12 +108,13 @@ describe("P1-B signed content availability manifests", () => {
     expect(withoutEnvelopeFields!.payload.sequence).toEqual({ revision: 1, governance: 0 });
     expect(withEnvelopeFields!.payload.sequence).toEqual({ revision: 1, governance: 0 });
 
-    // The three still-unwired fields never reached the signed payload.
-    expect((withEnvelopeFields!.payload as Record<string, unknown>).expiresAt).toBeUndefined();
-    expect((withEnvelopeFields!.payload as Record<string, unknown>).minClientVersion).toBeUndefined();
-    expect((withEnvelopeFields!.payload as Record<string, unknown>).contents).toBeUndefined();
+    expect(withEnvelopeFields!.payload.expiresAt).toBe("2027-01-01T00:00:00.000Z");
+    expect(withEnvelopeFields!.payload.minClientVersion).toBe("1.4.0");
+    expect(withEnvelopeFields!.payload.contents).toEqual([
+      { contentId: "lesson-1", version: "7", sha256: "0".repeat(64) },
+    ]);
 
-    // Verification succeeds for both — presence of the still-unwired fields on the input changes nothing.
+    // Both complete, cryptographically authentic policy statements verify.
     await expect(verifyContentAvailabilityManifest(withoutEnvelopeFields!, publicKey)).resolves.toBe(true);
     await expect(verifyContentAvailabilityManifest(withEnvelopeFields!, publicKey)).resolves.toBe(true);
   });

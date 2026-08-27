@@ -2,7 +2,12 @@ import { NextResponse } from "next/server";
 import { head } from "@vercel/blob";
 import { prisma } from "@/lib/db";
 import { requireRole } from "@/lib/auth";
-import { signContentAvailability } from "@/lib/content-availability-manifest.server";
+import {
+  buildContentAvailabilityExpiry,
+  hashContentAvailabilityData,
+  signContentAvailability,
+} from "@/lib/content-availability-manifest.server";
+import { DEFAULT_CLIENT_VERSION } from "@/lib/content-availability-manifest";
 import { provenanceWritersEnabled } from "@/lib/curriculum/mutations/repository";
 
 export const dynamic = "force-dynamic";
@@ -166,16 +171,48 @@ export async function GET(
       latestRevision?.id === row.provenance?.currentRevisionId &&
       latestRevision.sequence === currentRevision?.sequence &&
       lifecycleIsCoherent;
-    const trustIssuedAt = currentRevision
-      ? new Date(
-          Math.max(
-            currentRevision.createdAt.getTime(),
-            latestGovernance?.createdAt.getTime() ?? 0,
-          ),
-        ).toISOString()
-      : null;
+    // The ordering cursor is the durable authority. The issuance timestamp is
+    // deliberately renewable so stable approved lessons do not expire forever
+    // merely because their revision is old.
+    const trustIssuedAt = currentRevision ? new Date().toISOString() : null;
+    const responseMetadata = {
+      contentId: row.contentId,
+      grade: row.grade,
+      subject: row.subject,
+      contentType: row.contentType,
+      status: row.status,
+      version: row.version,
+      createdAt: row.createdAt,
+      updatedAt: row.updatedAt,
+      teacherCreated: row.teacherCreated ?? false,
+      teacherAuthorName: row.teacherCreated && row.editedBy?.name
+        ? row.editedBy.name
+        : null,
+      currentRevisionId: row.provenance?.currentRevisionId ?? null,
+      audioStatus:
+        row.audioAssets[0]?.contentVersion === row.version
+          ? row.audioAssets[0]?.status ?? "NOT_GENERATED"
+          : row.audioAssets[0]?.status === "GENERATED"
+            ? "STALE"
+            : row.audioAssets[0]?.status ?? "NOT_GENERATED",
+    };
+    const responseAudio = row.audioAssets[0] ?? null;
+    const responseData = {
+      metadata: responseMetadata,
+      payload: row.payload,
+      audio: responseAudio,
+    };
+    const contentSha256 = hashContentAvailabilityData({
+      contentId,
+      version: row.version,
+      ...responseData,
+    });
+    const minClientVersion =
+      process.env.CONTENT_MANIFEST_MIN_CLIENT_VERSION?.trim() || DEFAULT_CLIENT_VERSION;
     const signAvailability = (version: string | null, revoked: boolean) =>
-      manifestAuthorityIsCoherent && currentRevision && trustIssuedAt
+      manifestAuthorityIsCoherent && currentRevision && trustIssuedAt &&
+      buildContentAvailabilityExpiry(trustIssuedAt) &&
+      (revoked || contentSha256)
         ? signContentAvailability({
             contentId,
             version,
@@ -185,6 +222,11 @@ export async function GET(
               revision: currentRevision.sequence,
               governance: latestGovernance?.sequence ?? 0,
             },
+            expiresAt: buildContentAvailabilityExpiry(trustIssuedAt)!,
+            minClientVersion,
+            contents: revoked
+              ? []
+              : [{ contentId, version: version!, sha256: contentSha256! }],
           })
         : null;
 
@@ -226,29 +268,9 @@ export async function GET(
     }
 
     return NextResponse.json({
-      metadata: {
-        contentId: row.contentId,
-        grade: row.grade,
-        subject: row.subject,
-        contentType: row.contentType,
-        status: row.status,
-        version: row.version,
-        createdAt: row.createdAt,
-        updatedAt: row.updatedAt,
-        teacherCreated: row.teacherCreated ?? false,
-        teacherAuthorName: row.teacherCreated && row.editedBy?.name
-          ? row.editedBy.name
-          : null,
-        currentRevisionId: row.provenance?.currentRevisionId ?? null,
-        audioStatus:
-          row.audioAssets[0]?.contentVersion === row.version
-            ? row.audioAssets[0]?.status ?? "NOT_GENERATED"
-            : row.audioAssets[0]?.status === "GENERATED"
-              ? "STALE"
-              : row.audioAssets[0]?.status ?? "NOT_GENERATED",
-      },
+      metadata: responseMetadata,
       payload: row.payload,
-      audio: row.audioAssets[0] ?? null,
+      audio: responseAudio,
       offlineManifest: signAvailability(row.version, false),
       videos: await Promise.all(
         row.videoSupplements.map(async (v) => {

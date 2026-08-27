@@ -18,6 +18,9 @@ vi.mock("@/lib/offline-session", () => ({
 }));
 vi.mock("@/lib/content-availability-manifest", () => ({
   acceptsContentAvailabilityManifest: vi.fn(() => true),
+  acceptsManifestPolicy: vi.fn(() => true),
+  isLegacyContentAvailabilityManifest: vi.fn(() => true),
+  hashContentAvailabilityData: vi.fn(async () => null),
   verifyContentAvailabilityManifest: vi.fn(async () => true),
 }));
 

@@ -8,6 +8,7 @@ import { signContentAvailability } from "../lib/content-availability-manifest.se
 import { verifyContentAvailabilityManifest } from "../lib/content-availability-manifest";
 import type {
   ContentAvailabilityPayload,
+  ManifestContentEntry,
   SignedContentAvailabilityManifest,
 } from "../lib/content-availability-manifest";
 
@@ -63,8 +64,12 @@ function assertSigningAvailable(
 }
 
 export async function createManifestSigningProof(
-  input: Omit<ContentAvailabilityPayload, "sequence"> & {
+  input: Omit<ContentAvailabilityPayload, "issuedAt" | "sequence" | "expiresAt" | "minClientVersion" | "contents"> & {
+    issuedAt: string;
     sequence: { revision: number; governance: number };
+    expiresAt: string;
+    minClientVersion: string;
+    contents: ManifestContentEntry[];
   },
 ): Promise<ManifestSigningProof> {
   const signingMode = resolveManifestSigningMode();
@@ -241,6 +246,14 @@ async function main() {
       revision: deterministic.provenance.currentRevision.sequence,
       governance: replacementRevocation.sequence,
     },
+    expiresAt: new Date(
+      Math.max(
+        deterministic.provenance.currentRevision.createdAt.getTime(),
+        replacementRevocation.createdAt.getTime(),
+      ) + 7 * 24 * 60 * 60 * 1000,
+    ).toISOString(),
+    minClientVersion: "1.0.0",
+    contents: [],
   });
 
   let immutabilityRejected = false;

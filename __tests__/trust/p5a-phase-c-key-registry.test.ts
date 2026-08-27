@@ -44,6 +44,9 @@ function sign(
     revoked: boolean;
     issuedAt: string;
     sequence: ContentAvailabilitySequence;
+    expiresAt: string;
+    minClientVersion: string;
+    contents: Array<{ contentId: string; version: string; sha256: string }>;
   }> = {},
 ): SignedContentAvailabilityManifest {
   process.env.CONTENT_MANIFEST_PRIVATE_KEY = privateKey;
@@ -54,6 +57,9 @@ function sign(
     revoked: false,
     issuedAt: "2026-08-25T00:00:00.000Z",
     sequence: { revision: 5, governance: 8 },
+    expiresAt: "2026-09-01T00:00:00.000Z",
+    minClientVersion: "1.0.0",
+    contents: [{ contentId: "lesson-1", version: "7", sha256: "a".repeat(64) }],
     ...overrides,
   });
   if (!manifest) throw new Error("test setup failed to sign a manifest");

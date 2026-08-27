@@ -15,6 +15,8 @@ vi.mock("@vercel/blob", () => ({
   del: vi.fn(async () => undefined),
 }));
 vi.mock("@/lib/content-availability-manifest.server", () => ({
+  buildContentAvailabilityExpiry: vi.fn(() => "2026-09-01T00:00:00.000Z"),
+  hashContentAvailabilityData: vi.fn(() => "0".repeat(64)),
   signContentAvailability: vi.fn((payload) => ({
     payload: { ...payload, issuedAt: "2026-08-03T00:00:00.000Z" },
     signature: "signed",

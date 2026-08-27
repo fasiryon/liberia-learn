@@ -37,7 +37,10 @@ import {
   purgeExpiredPacks,
   purgePartitionPacks,
 } from "@/lib/offline-cache";
-import { signContentAvailability } from "@/lib/content-availability-manifest.server";
+import {
+  hashContentAvailabilityData,
+  signContentAvailability,
+} from "@/lib/content-availability-manifest.server";
 import {
   serializeContentAvailability,
   type ContentAvailabilityPayload,
@@ -56,10 +59,35 @@ function signManifest(input: {
   sequence: ContentAvailabilitySequence;
   issuedAt?: string;
 }) {
+  const titleByContentId: Record<string, string> = {
+    "content-rollback": "Original lesson",
+    "content-recache": "Original lesson",
+    "content-forward": "v1",
+    "content-transition": "sequenced",
+    "content-no-downgrade": "current",
+    "content-idempotent": "same",
+    "content-conflict": "trusted",
+    "content-first-cache": "available offline",
+  };
+  const hash = input.version
+    ? hashContentAvailabilityData({
+        contentId: input.contentId,
+        version: input.version,
+        metadata: { version: input.version },
+        payload: { title: titleByContentId[input.contentId] ?? "test" },
+      })
+    : null;
   return signContentAvailability({
     ...input,
     issuedAt: input.issuedAt ??
       `2026-08-25T00:00:${String(input.sequence.revision + input.sequence.governance).padStart(2, "0")}.000Z`,
+    expiresAt: "2026-09-01T00:00:00.000Z",
+    minClientVersion: "1.0.0",
+    contents: input.revoked ? [] : [{
+      contentId: input.contentId,
+      version: input.version!,
+      sha256: hash!,
+    }],
   });
 }
 

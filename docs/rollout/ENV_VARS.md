@@ -64,14 +64,40 @@ Sentry runtime behavior is now explicit:
 
 ## Offline curriculum signing
 
-Offline lesson caching is fail closed unless all three manifest values are configured:
+Offline lesson signing is fail closed unless the three cryptographic values are configured:
 
 - `CONTENT_MANIFEST_PRIVATE_KEY`: server-only RSA private key in PKCS#8 PEM format.
 - `CONTENT_MANIFEST_KEY_ID`: deployment-controlled identifier for the active key.
 - `NEXT_PUBLIC_CONTENT_MANIFEST_PUBLIC_KEY`: matching RSA public key in SPKI PEM format.
 
-The API signs the lesson ID, content version, revocation state, and issue time.
-The client verifies the signature before writing or opening cached curriculum.
+The policy-authority envelope also signs:
+
+- `expiresAt`: canonical UTC ISO-8601 timestamp, exactly seven days after the
+  server issuance time. Issuance is renewable on an authorized curriculum
+  read, while the signed Phase B ordering cursor remains unchanged. A
+  non-revoked statement is not accepted for new cache trust or offline serving
+  after this instant. A revoked statement remains authoritative after expiry
+  so expiry can never weaken revocation.
+- `minClientVersion`: strict `MAJOR.MINOR.PATCH` SemVer with no leading zeros.
+  The current browser client must be at least this version; malformed or
+  unavailable client versions fail closed. `CONTENT_MANIFEST_MIN_CLIENT_VERSION`
+  overrides the default `1.0.0` for newly issued statements.
+- `contents`: a stable, lexicographically sorted list of unique content IDs.
+  Each entry carries its version and a lowercase 64-hex SHA-256. The hash is
+  over canonical JSON for `{contentId, version, metadata, payload, audio}` as
+  delivered to the offline cache. Reordering is not semantic; duplicates,
+  malformed hashes, and content/hash mismatches are rejected.
+
+The client verifies the signature and these fields before writing or opening
+cached curriculum. Legacy manifests that predate these fields remain usable
+under their existing signed trust and rollback rules, but their unavailable
+policy fields are never treated as trusted and they cannot satisfy new policy
+checks. No new issuer emits a legacy manifest.
+
+`NEXT_PUBLIC_CONTENT_MANIFEST_PUBLIC_KEYS`, when set, is a JSON array of
+`{keyId, publicKeyPem}` entries. It replaces the legacy single-key lookup;
+unknown or removed key IDs fail closed. This preserves Phase C retirement and
+rotation behavior. Changing any `NEXT_PUBLIC_*` value requires a rebuild.
 Changing the public key requires a rebuild because `NEXT_PUBLIC_*` values are
 compiled into the client bundle. Never place the private key in a
 `NEXT_PUBLIC_*` variable.

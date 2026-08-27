@@ -1,6 +1,7 @@
 export type ManifestContentEntry = {
   contentId: string;
-  version: string | null;
+  version: string;
+  sha256: string;
 };
 
 /** Durable P2-A ordering cursor for one CurriculumProvenance stream. */
@@ -14,14 +15,8 @@ export type ContentAvailabilityPayload = {
   version: string | null;
   revoked: boolean;
   issuedAt: string;
-  // P5-A envelope fields. `sequence` is wired (Phase B: signed, verified,
-  // and used for rollback/replay rejection — see verifyContentAvailabilityManifest).
-  // expiresAt/minClientVersion/contents remain contract/shape only: not yet
-  // populated by signContentAvailability, not yet included in
-  // serializeContentAvailability's signed bytes, and not yet checked by
-  // verifyContentAvailabilityManifest — deferred to later, separately-reviewed
-  // P5-A phases. A manifest carrying those three today would have them
-  // silently dropped at signing time, not signed or verified.
+  // P5-A policy fields are optional in the TypeScript shape only because old
+  // signed manifests predate them. New issuers must provide all three.
   sequence?: ContentAvailabilitySequence;
   expiresAt?: string | null;
   minClientVersion?: string | null;
@@ -34,16 +29,99 @@ export type SignedContentAvailabilityManifest = {
   keyId: string;
 };
 
+export const OFFLINE_MANIFEST_TTL_MS = 7 * 24 * 60 * 60 * 1000;
+export const DEFAULT_CLIENT_VERSION = "1.0.0";
+
+const SHA256_PATTERN = /^[0-9a-f]{64}$/;
+const SEMVER_PATTERN = /^(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)$/;
+const UTC_TIMESTAMP_PATTERN = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/;
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return Boolean(value) && typeof value === "object" && !Array.isArray(value);
+}
+
+function isCanonicalUtcTimestamp(value: unknown): value is string {
+  if (typeof value !== "string" || !UTC_TIMESTAMP_PATTERN.test(value)) return false;
+  const parsed = Date.parse(value);
+  return Number.isFinite(parsed) && new Date(parsed).toISOString() === value;
+}
+
+export function isSupportedClientVersion(value: unknown): value is string {
+  return typeof value === "string" && SEMVER_PATTERN.test(value);
+}
+
+function compareVersions(left: string, right: string): number {
+  const a = left.split(".").map(BigInt);
+  const b = right.split(".").map(BigInt);
+  for (let index = 0; index < 3; index += 1) {
+    if (a[index] !== b[index]) return a[index] > b[index] ? 1 : -1;
+  }
+  return 0;
+}
+
+function compareStrings(left: string, right: string): number {
+  if (left === right) return 0;
+  return left < right ? -1 : 1;
+}
+
+function canonicalValue(value: unknown): unknown {
+  if (value === null || typeof value === "string" || typeof value === "boolean") return value;
+  if (typeof value === "number") {
+    if (!Number.isFinite(value)) throw new Error("Manifest content cannot contain non-finite numbers");
+    return Object.is(value, -0) ? 0 : value;
+  }
+  if (value instanceof Date) return value.toISOString();
+  if (Array.isArray(value)) return value.map(canonicalValue);
+  if (isRecord(value)) {
+    return Object.fromEntries(
+      Object.keys(value)
+        .sort()
+        .filter((key) => value[key] !== undefined)
+        .map((key) => [key, canonicalValue(value[key])]),
+    );
+  }
+  throw new Error(`Manifest content cannot contain ${typeof value}`);
+}
+
+function canonicalContents(contents: ManifestContentEntry[]): ManifestContentEntry[] {
+  return [...contents].sort((left, right) =>
+    compareStrings(left.contentId, right.contentId) ||
+    compareStrings(left.version, right.version) ||
+    compareStrings(left.sha256, right.sha256),
+  );
+}
+
+function serializeManifestState(payload: ContentAvailabilityPayload): string {
+  return JSON.stringify({
+    contentId: payload.contentId,
+    version: payload.version,
+    revoked: payload.revoked,
+    sequence: payload.sequence,
+    minClientVersion: payload.minClientVersion,
+    contents: payload.contents === undefined ? undefined : canonicalContents(payload.contents),
+  });
+}
+
+function isRenewalOfSameTrustState(
+  candidate: ContentAvailabilityPayload,
+  trusted: ContentAvailabilityPayload,
+): boolean {
+  if (isLegacyContentAvailabilityManifest(candidate) || isLegacyContentAvailabilityManifest(trusted)) return false;
+  if (serializeManifestState(candidate) !== serializeManifestState(trusted)) return false;
+  const candidateIssuedAt = Date.parse(candidate.issuedAt);
+  const trustedIssuedAt = Date.parse(trusted.issuedAt);
+  const candidateExpiresAt = Date.parse(candidate.expiresAt as string);
+  return candidateIssuedAt > trustedIssuedAt &&
+    candidateExpiresAt - candidateIssuedAt === OFFLINE_MANIFEST_TTL_MS;
+}
+
+/** Canonical bytes covered by the RSA signature. Contents order is semantic-free. */
 export function serializeContentAvailability(payload: ContentAvailabilityPayload): string {
   return JSON.stringify({
     contentId: payload.contentId,
     version: payload.version,
     revoked: payload.revoked,
     issuedAt: payload.issuedAt,
-    // Included so a rollback/replay cannot strip or lower `sequence` without
-    // invalidating the signature. Omitted from the signed bytes entirely
-    // (not signed as null) when absent, so a pre-Phase-B manifest that never
-    // carried a sequence still serializes identically to before.
     ...(payload.sequence !== undefined
       ? {
           sequence: {
@@ -52,11 +130,39 @@ export function serializeContentAvailability(payload: ContentAvailabilityPayload
           },
         }
       : {}),
+    ...(payload.expiresAt !== undefined ? { expiresAt: payload.expiresAt } : {}),
+    ...(payload.minClientVersion !== undefined ? { minClientVersion: payload.minClientVersion } : {}),
+    ...(payload.contents !== undefined ? { contents: canonicalContents(payload.contents) } : {}),
   });
 }
 
+/** Canonical bytes hashed for each contents entry. */
+export function serializeContentAvailabilityData(input: {
+  contentId: string;
+  version: string;
+  metadata: unknown;
+  payload: unknown;
+  audio?: unknown;
+}): string {
+  return JSON.stringify(canonicalValue({
+    contentId: input.contentId,
+    version: input.version,
+    metadata: input.metadata,
+    payload: input.payload,
+    audio: input.audio ?? null,
+  }));
+}
+
+export function isLegacyContentAvailabilityManifest(
+  payload: ContentAvailabilityPayload,
+): boolean {
+  return payload.expiresAt === undefined &&
+    payload.minClientVersion === undefined &&
+    payload.contents === undefined;
+}
+
 function isValidSequence(value: unknown): value is ContentAvailabilitySequence {
-  if (!value || typeof value !== "object" || Array.isArray(value)) return false;
+  if (!isRecord(value)) return false;
   const sequence = value as Partial<ContentAvailabilitySequence>;
   return (
     Number.isSafeInteger(sequence.revision) &&
@@ -66,14 +172,110 @@ function isValidSequence(value: unknown): value is ContentAvailabilitySequence {
   );
 }
 
+function isValidContentEntry(value: unknown): value is ManifestContentEntry {
+  if (!isRecord(value)) return false;
+  return (
+    Object.keys(value).length === 3 &&
+    typeof value.contentId === "string" && value.contentId.trim().length > 0 &&
+    typeof value.version === "string" && value.version.length > 0 &&
+    typeof value.sha256 === "string" && SHA256_PATTERN.test(value.sha256)
+  );
+}
+
+/** Validates both legacy structure and the complete P5-A policy envelope. */
+export function validateContentAvailabilityPayload(payload: unknown): payload is ContentAvailabilityPayload {
+  if (!isRecord(payload)) return false;
+  const allowed = new Set([
+    "contentId", "version", "revoked", "issuedAt", "sequence",
+    "expiresAt", "minClientVersion", "contents",
+  ]);
+  if (Object.keys(payload).some((key) => !allowed.has(key))) return false;
+  if (
+    typeof payload.contentId !== "string" || payload.contentId.trim().length === 0 ||
+    (typeof payload.version !== "string" && payload.version !== null) ||
+    typeof payload.revoked !== "boolean" ||
+    !isCanonicalUtcTimestamp(payload.issuedAt)
+  ) return false;
+  if (payload.sequence !== undefined && !isValidSequence(payload.sequence)) return false;
+
+  if (isLegacyContentAvailabilityManifest(payload as ContentAvailabilityPayload)) return true;
+  if (!isCanonicalUtcTimestamp(payload.expiresAt)) return false;
+  if (Date.parse(payload.expiresAt) <= Date.parse(payload.issuedAt)) return false;
+  if (!isSupportedClientVersion(payload.minClientVersion)) return false;
+  if (!Array.isArray(payload.contents) || payload.contents.length > 1000) return false;
+  if (payload.contents.some((entry) => !isValidContentEntry(entry))) return false;
+  const ids = new Set(payload.contents.map((entry) => entry.contentId));
+  if (ids.size !== payload.contents.length) return false;
+  if (!payload.revoked && (payload.version === null || payload.contents.length === 0)) return false;
+  if (!payload.revoked && !payload.contents.some((entry) =>
+    entry.contentId === payload.contentId && entry.version === payload.version,
+  )) return false;
+  return true;
+}
+
+export function isManifestExpired(
+  manifest: SignedContentAvailabilityManifest,
+  nowMs = Date.now(),
+): boolean {
+  return !isLegacyContentAvailabilityManifest(manifest.payload) &&
+    Date.parse(manifest.payload.expiresAt as string) <= nowMs;
+}
+
+export function isManifestCompatibleWithClient(
+  manifest: SignedContentAvailabilityManifest,
+  clientVersion: string | undefined =
+    (typeof process !== "undefined" ? process.env.NEXT_PUBLIC_LIBERIALEARN_CLIENT_VERSION : undefined) ??
+    DEFAULT_CLIENT_VERSION,
+): boolean {
+  if (!validateContentAvailabilityPayload(manifest.payload)) return false;
+  if (isLegacyContentAvailabilityManifest(manifest.payload) || manifest.payload.revoked) return true;
+  if (!isSupportedClientVersion(clientVersion)) return false;
+  return compareVersions(clientVersion, manifest.payload.minClientVersion as string) >= 0;
+}
+
+/** Policy gate used before a manifest changes local trust or serves content. */
+export function acceptsManifestPolicy(
+  manifest: SignedContentAvailabilityManifest,
+  nowMs = Date.now(),
+  clientVersion?: string,
+): boolean {
+  if (!validateContentAvailabilityPayload(manifest.payload)) return false;
+  if (isLegacyContentAvailabilityManifest(manifest.payload)) return true;
+  // A revocation is authoritative even if its retention window or client
+  // compatibility window has elapsed.
+  if (manifest.payload.revoked) return true;
+  return !isManifestExpired(manifest, nowMs) &&
+    isManifestCompatibleWithClient(manifest, clientVersion);
+}
+
+export async function hashContentAvailabilityData(input: {
+  contentId: string;
+  version: string;
+  metadata: unknown;
+  payload: unknown;
+  audio?: unknown;
+}): Promise<string | null> {
+  if (!globalThis.crypto?.subtle) return null;
+  try {
+    const digest = await globalThis.crypto.subtle.digest(
+      "SHA-256",
+      new TextEncoder().encode(serializeContentAvailabilityData(input)),
+    );
+    return Array.from(new Uint8Array(digest), (byte) => byte.toString(16).padStart(2, "0")).join("");
+  } catch {
+    return null;
+  }
+}
+
 export function acceptsContentAvailabilityManifest(
   candidate: SignedContentAvailabilityManifest,
   trusted?: SignedContentAvailabilityManifest | null,
 ): boolean {
-  if (candidate.payload.sequence !== undefined && !isValidSequence(candidate.payload.sequence)) {
+  if (!validateContentAvailabilityPayload(candidate.payload)) {
     return false;
   }
   if (!trusted) return true;
+  if (!validateContentAvailabilityPayload(trusted.payload)) return false;
 
   const previous = trusted.payload.sequence;
   const incoming = candidate.payload.sequence;
@@ -97,7 +299,7 @@ export function acceptsContentAvailabilityManifest(
   return (
     serializeContentAvailability(candidate.payload) ===
     serializeContentAvailability(trusted.payload)
-  );
+  ) || isRenewalOfSameTrustState(candidate.payload, trusted.payload);
 }
 
 function publicKeyFromEnvironment(): string | null {
@@ -105,36 +307,19 @@ function publicKeyFromEnvironment(): string | null {
   return value ? value.replace(/\\n/g, "\n") : null;
 }
 
-type PublicKeyRegistryEntry = { keyId: string; publicKeyPem: string };
-
 type PublicKeyRegistryResolution =
   | { mode: "legacy" }
   | { mode: "invalid" }
   | { mode: "registry"; keys: Record<string, string> };
 
 /**
- * P5-A Phase C: NEXT_PUBLIC_CONTENT_MANIFEST_PUBLIC_KEYS, a JSON array of
- * {keyId, publicKeyPem} (must be NEXT_PUBLIC_ since verification runs
- * client-side, offline, with no server round-trip). Deliberately minimal —
- * no key metadata, no expiry, no automatic rotation ceremony.
- *
- * Three states are kept explicit rather than merged into one fallback chain:
- *  - unset/blank -> "legacy": every existing single-key deployment (this var
- *    never configured) is unaffected — manifest.keyId is not consulted at
- *    all, exactly as before this registry existed.
- *  - set but malformed (bad JSON, wrong shape, blank id/pem, duplicate
- *    keyId) -> "invalid": fails closed for every manifest instead of
- *    silently reverting to the single-key var, which would otherwise mask a
- *    typo'd rotation as "verification still works".
- *  - set and well-formed -> "registry": manifest.keyId is looked up
- *    explicitly; an id absent from the registry fails closed and never
- *    falls through to the legacy single-key var — that fallback is exactly
- *    what would stop key retirement from actually retiring a key.
+ * Phase C registry. An absent registry preserves the original single-key
+ * behavior. Once configured, only explicit registry entries are trusted, so
+ * removing a retired key cannot fall back to the legacy public-key variable.
  */
 function resolvePublicKeyRegistry(): PublicKeyRegistryResolution {
   const raw = process.env.NEXT_PUBLIC_CONTENT_MANIFEST_PUBLIC_KEYS?.trim();
   if (!raw) return { mode: "legacy" };
-
   let parsed: unknown;
   try {
     parsed = JSON.parse(raw);
@@ -142,49 +327,24 @@ function resolvePublicKeyRegistry(): PublicKeyRegistryResolution {
     return { mode: "invalid" };
   }
   if (!Array.isArray(parsed)) return { mode: "invalid" };
-
   const keys: Record<string, string> = {};
   for (const entry of parsed) {
-    if (!entry || typeof entry !== "object" || Array.isArray(entry)) return { mode: "invalid" };
-    const record = entry as Record<string, unknown>;
-    if (Object.keys(record).length !== 2) return { mode: "invalid" };
-    if (typeof record.keyId !== "string" || typeof record.publicKeyPem !== "string") {
+    if (!isRecord(entry) || Object.keys(entry).length !== 2) return { mode: "invalid" };
+    if (typeof entry.keyId !== "string" || typeof entry.publicKeyPem !== "string") return { mode: "invalid" };
+    const keyId = entry.keyId.trim();
+    const publicKeyPem = entry.publicKeyPem.trim().replace(/\\n/g, "\n");
+    if (!keyId || !publicKeyPem || Object.prototype.hasOwnProperty.call(keys, keyId)) {
       return { mode: "invalid" };
     }
-    const keyId = (record as PublicKeyRegistryEntry).keyId.trim();
-    const publicKeyPem = (record as PublicKeyRegistryEntry).publicKeyPem.trim();
-    if (!keyId || !publicKeyPem) return { mode: "invalid" };
-    if (Object.prototype.hasOwnProperty.call(keys, keyId)) return { mode: "invalid" };
     keys[keyId] = publicKeyPem;
   }
   return { mode: "registry", keys };
 }
 
-/**
- * Resolves the public key to verify a manifest against.
- *
- * - Registry unconfigured: the single legacy env var governs every
- *   manifest, regardless of its keyId — identical to pre-Phase-C behavior.
- * - Registry configured: only an explicit keyId match in the registry is
- *   trusted. An unknown keyId — including one that happens to equal the
- *   legacy var's own key — fails closed. That is what makes retiring a key
- *   (removing its entry) actually retire it instead of leaving a silent
- *   back door through the legacy var.
- * - Registry malformed: nothing verifies, by design — a misconfigured
- *   rotation must not silently degrade to "verification still works".
- *
- * If the resolved key turns out to be the wrong one for this manifest's
- * actual signature, cryptographic verification itself fails closed — this
- * function only ever narrows which key is tried, it never widens what
- * counts as a valid signature. `keyId` is not part of the signed bytes
- * (see serializeContentAvailability), so tampering with it just selects the
- * wrong verification key, which the signature check below then rejects.
- */
 function resolvePublicKeyForManifest(manifest: SignedContentAvailabilityManifest): string | null {
   const registry = resolvePublicKeyRegistry();
   if (registry.mode === "legacy") return publicKeyFromEnvironment();
-  if (registry.mode === "invalid") return null;
-  if (!manifest?.keyId) return null;
+  if (registry.mode === "invalid" || !manifest?.keyId) return null;
   return registry.keys[manifest.keyId] ?? null;
 }
 
@@ -216,6 +376,7 @@ export async function verifyContentAvailabilityManifest(
 ): Promise<boolean> {
   if (!publicKeyPem || !globalThis.crypto?.subtle) return false;
   if (!manifest?.payload?.contentId || !manifest.signature || !manifest.keyId) return false;
+  if (!validateContentAvailabilityPayload(manifest.payload)) return false;
   if (
     trustedManifest?.payload.contentId !== undefined &&
     trustedManifest.payload.contentId !== manifest.payload.contentId

@@ -28,6 +28,9 @@ import {
 } from "@/lib/offline-cache";
 import {
   acceptsContentAvailabilityManifest,
+  acceptsManifestPolicy,
+  hashContentAvailabilityData,
+  isLegacyContentAvailabilityManifest,
   verifyContentAvailabilityManifest,
   type SignedContentAvailabilityManifest,
 } from "@/lib/content-availability-manifest";
@@ -63,6 +66,7 @@ async function acceptManifestAtomically(
   manifest: SignedContentAvailabilityManifest,
 ): Promise<boolean> {
   if (!(await verifyContentAvailabilityManifest(manifest))) return false;
+  if (!acceptsManifestPolicy(manifest)) return false;
   return compareAndSwapCachedPack<SignedContentAvailabilityManifest>(
     LESSON_MANIFEST_SCOPE,
     contentId,
@@ -89,6 +93,19 @@ export async function cacheLessonContent(
     if (manifest.payload.contentId !== contentId || manifest.payload.revoked || !manifest.payload.version) return false;
     const contentVersion = typeof data.metadata?.version === "string" ? data.metadata.version : null;
     if (contentVersion !== manifest.payload.version) return false;
+    if (!isLegacyContentAvailabilityManifest(manifest.payload)) {
+      const expectedHash = manifest.payload.contents?.find(
+        (entry) => entry.contentId === contentId && entry.version === contentVersion,
+      )?.sha256;
+      const actualHash = await hashContentAvailabilityData({
+        contentId,
+        version: contentVersion,
+        metadata: data.metadata,
+        payload: data.payload,
+        audio: data.audio,
+      });
+      if (!expectedHash || !actualHash || expectedHash !== actualHash) return false;
+    }
     if (!(await acceptManifestAtomically(contentId, manifest))) return false;
     await cachePack(LESSON_SCOPE, contentId, manifestPackVersion(manifest), data);
     return true;
@@ -127,13 +144,35 @@ export async function loadCachedLesson(
       await invalidatePack(LESSON_SCOPE, contentId);
       return null;
     }
+    if (!acceptsManifestPolicy(manifest)) {
+      await invalidatePack(LESSON_SCOPE, contentId);
+      return null;
+    }
     const metadata = await getMetadata();
     const lessonMetadata = metadata.find((entry) => entry.scope === LESSON_SCOPE && entry.scopeId === contentId);
     if (!lessonMetadata || lessonMetadata.packVersion !== manifestPackVersion(manifest)) {
       await invalidatePack(LESSON_SCOPE, contentId);
       return null;
     }
-    return await getCachedPack<CachedLessonData>(LESSON_SCOPE, contentId);
+    const lesson = await getCachedPack<CachedLessonData>(LESSON_SCOPE, contentId);
+    if (!lesson) return null;
+    if (!isLegacyContentAvailabilityManifest(manifest.payload)) {
+      const expectedHash = manifest.payload.contents?.find(
+        (entry) => entry.contentId === contentId && entry.version === manifest.payload.version,
+      )?.sha256;
+      const actualHash = await hashContentAvailabilityData({
+        contentId,
+        version: manifest.payload.version,
+        metadata: lesson.metadata,
+        payload: lesson.payload,
+        audio: lesson.audio,
+      });
+      if (!expectedHash || !actualHash || expectedHash !== actualHash) {
+        await invalidatePack(LESSON_SCOPE, contentId);
+        return null;
+      }
+    }
+    return lesson;
   } catch {
     return null;
   }
@@ -164,7 +203,43 @@ export async function refreshLessonAvailability(
 export async function isLessonCached(contentId: string): Promise<boolean> {
   try {
     const pack = await getCachedPack<CachedLessonData>(LESSON_SCOPE, contentId);
-    return pack !== null;
+    if (!pack) return false;
+    const manifest = await getCachedPack<SignedContentAvailabilityManifest>(LESSON_MANIFEST_SCOPE, contentId);
+    if (!manifest || !(await verifyContentAvailabilityManifest(manifest))) {
+      await invalidatePack(LESSON_SCOPE, contentId);
+      return false;
+    }
+    if (manifest.payload.contentId !== contentId || manifest.payload.revoked || !manifest.payload.version) {
+      await invalidatePack(LESSON_SCOPE, contentId);
+      return false;
+    }
+    if (!acceptsManifestPolicy(manifest)) {
+      await invalidatePack(LESSON_SCOPE, contentId);
+      return false;
+    }
+    const metadata = await getMetadata();
+    const lessonMetadata = metadata.find((entry) => entry.scope === LESSON_SCOPE && entry.scopeId === contentId);
+    if (!lessonMetadata || lessonMetadata.packVersion !== manifestPackVersion(manifest)) {
+      await invalidatePack(LESSON_SCOPE, contentId);
+      return false;
+    }
+    if (!isLegacyContentAvailabilityManifest(manifest.payload)) {
+      const expectedHash = manifest.payload.contents?.find(
+        (entry) => entry.contentId === contentId && entry.version === manifest.payload.version,
+      )?.sha256;
+      const actualHash = await hashContentAvailabilityData({
+        contentId,
+        version: manifest.payload.version,
+        metadata: pack.metadata,
+        payload: pack.payload,
+        audio: pack.audio,
+      });
+      if (!expectedHash || !actualHash || expectedHash !== actualHash) {
+        await invalidatePack(LESSON_SCOPE, contentId);
+        return false;
+      }
+    }
+    return true;
   } catch {
     return false;
   }

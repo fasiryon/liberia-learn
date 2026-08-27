@@ -3,6 +3,48 @@
 ## Purpose
 Live execution tracking for the final closeout program.
 
+## P5-A Manifest Policy Authority: COMPLETE
+
+Completed on dedicated branch `feat/p5-a-signed-offline-packs`, with policy
+implementation at `1b1f97d1` and review remediation at `aadf0e69` plus
+`c74d9547`.
+
+- Phase B ordering remains authoritative: revision first, governance second,
+  with equal-cursor conflicts rejected.
+- Phase C public-key registry behavior remains authoritative: explicit registry
+  lookup, unknown and retired key rejection, malformed-registry fail closed,
+  and legacy single-key fallback only when the registry is absent.
+- `expiresAt` is canonical UTC ISO-8601 with milliseconds, derived as seven
+  days after the server issuance time. Issuance renews on an authorized
+  curriculum read without changing the signed Phase B ordering cursor. A
+  non-revoked manifest is not accepted for new trust or offline serving after
+  expiry. Revocations remain authoritative after expiry.
+- `minClientVersion` is strict `MAJOR.MINOR.PATCH` SemVer with no leading
+  zeros. The browser client must be at least the signed minimum; malformed or
+  unknown client versions fail closed. The default client version is `1.0.0`;
+  new issuer policy can override it with
+  `CONTENT_MANIFEST_MIN_CLIENT_VERSION`.
+- `contents` is canonically sorted by content ID, version, and hash. Content
+  IDs are unique. Each entry carries a version and lowercase 64-hex SHA-256
+  over canonical `{contentId, version, metadata, payload, audio}` delivered
+  to the offline cache. Reordering is not semantic; malformed, duplicate, or
+  mismatched content/hash data is rejected.
+- Legacy manifests with absent policy fields remain compatible under their
+  existing signed trust and rollback rules. Their policy fields are
+  unavailable and untrusted; no new issuer emits them, and new policy checks
+  never rely on their absence.
+- No OfflinePack/System2 schema migration was introduced. No production
+  deployment, staging mutation, credential use, or real key rotation occurred.
+
+Validation evidence for this gate: Prisma generate PASS; TypeScript PASS with
+the established 6144 MB heap; changed-file validator PASS; focused trust and
+offline tests PASS (92 tests); full Vitest PASS (4,906 tests in 598 files);
+production build PASS (384 static pages); and `git diff --check` PASS. One
+concurrent full run exposed four inherited timing-sensitive tests; all four
+passed in an isolated rerun, and the subsequent complete run was fully green.
+
+Next roadmap item: P5-B offline synchronization and conflict policy.
+
 ## Resume here
 
 - **P5-A PHASE C OPERATIONAL CLOSURE (2026-08-27).** Phase C source is

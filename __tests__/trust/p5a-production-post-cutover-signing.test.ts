@@ -53,6 +53,9 @@ const proofInput = {
   revoked: true,
   issuedAt: "2026-08-27T00:00:00.000Z",
   sequence: { revision: 1, governance: 1 },
+  expiresAt: "2026-09-03T00:00:00.000Z",
+  minClientVersion: "1.0.0",
+  contents: [],
 };
 
 describe("P2-A post-cutover signing authorization", () => {
