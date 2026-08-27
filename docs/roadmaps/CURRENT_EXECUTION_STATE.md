@@ -5,6 +5,49 @@ Live execution tracking for the final closeout program.
 
 ## Resume here
 
+- **P5-A PHASE C OPERATIONAL CLOSURE (2026-08-27).** Phase C is complete on
+  main at `f4f350d6f7232014d9136f55386880c9e912a7d8`, after PR #90's merge
+  `b72851a1a154402bc03111be170c3712b2902ba7` and PR #89's consolidation.
+  Phase A is complete as the manifest-envelope contract shape; its
+  `expiresAt`, `minClientVersion`, and `contents` fields remain deliberately
+  unsigned/unverified. Phase B is COMPLETE: signed sequence ordering,
+  rollback/replay rejection, equal-cursor semantics, and revocation behavior
+  remain covered by the Phase B trust suite. Phase C is COMPLETE: the static
+  registry performs exact `manifest.keyId` lookup, malformed/duplicate/unknown
+  keys fail closed, and legacy fallback is used only when the registry is
+  unset. The production ops scripts are registry-aware, and their signer
+  state machine is `REAL` / `EPHEMERAL` / `UNAVAILABLE` (STOP); synthetic
+  signing requires the exact string `P2A_ALLOW_SYNTHETIC_SIGNING_PROOF=true`
+  and emits an explicit synthetic marker. Production key rotation was NOT
+  PERFORMED.
+
+  The exact-main CI, build, Runtime Gate 1, and PR Triage checks passed. The
+  Supabase Preview app check failed because it compares the remote
+  `supabase_migrations.schema_migrations` history against the legacy
+  `supabase/migrations` directory, while this repository's documented
+  authoritative migration root is `prisma/canonical/migrations`. No local
+  or remote migration history was rewritten. Main has no branch protection;
+  Supabase Preview is therefore NON-REQUIRED for this Prisma-authoritative
+  repository, and the failure is documented rather than masked as a green
+  migration result. GitGuardian passed on PR #89's exact source tree (`b728…`);
+  `b728…` and `f4f…` have identical trees, while GitGuardian is PR-triggered
+  and has no separate push-main result.
+
+  The previous `Deploy ECS Images` push-on-main trigger published the worker
+  image to ECR under the commit SHA and `latest`, but did not update ECS. The
+  trigger is now `workflow_dispatch` only, so ordinary source merges no
+  longer publish a worker artifact. Explicit dispatch remains a separately
+  controlled artifact publication; it never performs an ECS service update.
+  Vercel main auto-deploy remains the documented application deployment
+  policy. No ECS service deployment, production database mutation, signing-key
+  rotation, KMS mutation, or Secrets Manager mutation occurred in this
+  closure work.
+
+  The next P5-A goal is repo-first discovery and design of the signed
+  manifest policy for `expiresAt`, `minClientVersion`, and `contents`, followed
+  by a separately authorized implementation. Do not assume the unrelated
+  Learner Experience V2 Phase D is next.
+
 - **P2-A/B/C REMEDIATION — BOTH PREVIOUSLY-OPEN NARROW GAPS NOW CLOSED IN
   CODE, EXACT-HEAD CI GREEN (2026-08-22/24, HEAD `ca27c762`).** Two commits
   (`8d462f8e`, `ca27c762`) landed on top of the 2026-08-21 gate-closure pass

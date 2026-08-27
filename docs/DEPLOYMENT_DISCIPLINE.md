@@ -20,7 +20,9 @@ Dirty working tree = failed deploy (learned in 5.3.1)
 
 ## Before Every Production Deploy
 1. `git status` — working tree must be clean
-2. All 4 CI workflows green on latest main
+2. CI, Runtime Gate 1, and PR Triage are green on latest main. Worker-image
+   publication is a separate, explicit workflow dispatch and is not part of
+   an ordinary source merge.
 3. `tsc --noEmit` passes locally
 4. Staging verification if feature is significant
 
