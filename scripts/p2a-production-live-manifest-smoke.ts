@@ -21,10 +21,14 @@ function assertProduction(): void {
 async function main() {
   assertProduction();
   const secret = process.env.NEXTAUTH_SECRET?.trim();
-  const publicKey = process.env.NEXT_PUBLIC_CONTENT_MANIFEST_PUBLIC_KEY
-    ?.trim()
-    .replace(/\\n/g, "\n");
-  if (!secret || !publicKey) {
+  // Accept either the legacy single-key var or the P5-A Phase C registry —
+  // whichever is actually configured in this deployment. The manifest is
+  // verified below via the library's own keyId-aware resolver rather than a
+  // key this script picks itself, so this is just a "is anything configured
+  // at all" guard, not a hardcoded dependency on the legacy var.
+  const hasLegacyKey = Boolean(process.env.NEXT_PUBLIC_CONTENT_MANIFEST_PUBLIC_KEY?.trim());
+  const hasRegistry = Boolean(process.env.NEXT_PUBLIC_CONTENT_MANIFEST_PUBLIC_KEYS?.trim());
+  if (!secret || (!hasLegacyKey && !hasRegistry)) {
     throw new Error("P2-A live manifest STOP: required verification configuration is missing");
   }
   const fixture = await prisma.curriculumContent.findFirstOrThrow({
@@ -75,8 +79,12 @@ async function main() {
       replacementRevisionId?: string | null;
     } | null;
   };
+  // Let the library resolve the verification key from the manifest's own
+  // keyId — exactly what a real client does — instead of this script
+  // hardcoding the legacy single-key var. This is what actually tests a
+  // deployment that has moved to registry-only key rotation.
   const signatureValid = body.offlineManifest
-    ? await verifyContentAvailabilityManifest(body.offlineManifest, publicKey)
+    ? await verifyContentAvailabilityManifest(body.offlineManifest)
     : false;
   const checks = {
     revokedResponse: response.status === 410 && body.error === "Content revoked",
