@@ -6,11 +6,25 @@ import { revokeCurriculum } from "../lib/curriculum/mutations/revocationWriter";
 import { getCurriculumProvenanceExplanation } from "../lib/curriculum/provenance/reader";
 import { signContentAvailability } from "../lib/content-availability-manifest.server";
 import { verifyContentAvailabilityManifest } from "../lib/content-availability-manifest";
+import type {
+  ContentAvailabilityPayload,
+  SignedContentAvailabilityManifest,
+} from "../lib/content-availability-manifest";
 
 const PRODUCTION_PROJECT_REF = "bnphuinpvgpmebcsvmsp";
 const STAGING_PROJECT_REF = "yonpfzjczoffhrgibxkz";
 
-export type ManifestSigningMode = "real" | "ephemeral";
+export type ManifestSigningMode = "REAL" | "EPHEMERAL" | "UNAVAILABLE";
+
+export type ManifestSigningProof = {
+  signingMode: Exclude<ManifestSigningMode, "UNAVAILABLE">;
+  manifest: SignedContentAvailabilityManifest;
+  manifestVerified: boolean;
+  operatorOutput: {
+    SIGNING_MODE: Exclude<ManifestSigningMode, "UNAVAILABLE">;
+    SYNTHETIC_SIGNING_PROOF: boolean;
+  };
+};
 
 /**
  * Decide whether this operator run may sign with production credentials.
@@ -30,18 +44,66 @@ export function resolveManifestSigningMode(input: {
   const hasPrivateKey = Boolean(input.privateKey?.trim());
   const hasKeyId = Boolean(input.keyId?.trim());
 
-  if (hasPrivateKey !== hasKeyId) {
+  if (hasPrivateKey !== hasKeyId) return "UNAVAILABLE";
+  if (hasPrivateKey && hasKeyId) return "REAL";
+
+  if (input.syntheticOptIn === "true") return "EPHEMERAL";
+
+  return "UNAVAILABLE";
+}
+
+function assertSigningAvailable(
+  signingMode: ManifestSigningMode,
+): asserts signingMode is Exclude<ManifestSigningMode, "UNAVAILABLE"> {
+  if (signingMode === "UNAVAILABLE") {
     throw new Error(
-      "P2-A post-cutover STOP: content-manifest signing configuration is incomplete; both CONTENT_MANIFEST_PRIVATE_KEY and CONTENT_MANIFEST_KEY_ID are required",
+      "P2-A post-cutover STOP: real content-manifest signing configuration is absent or incomplete; synthetic signing requires exact P2A_ALLOW_SYNTHETIC_SIGNING_PROOF=true",
     );
   }
-  if (hasPrivateKey && hasKeyId) return "real";
+}
 
-  if (input.syntheticOptIn?.trim() === "true") return "ephemeral";
+export async function createManifestSigningProof(
+  input: Omit<ContentAvailabilityPayload, "sequence"> & {
+    sequence: { revision: number; governance: number };
+  },
+): Promise<ManifestSigningProof> {
+  const signingMode = resolveManifestSigningMode();
+  assertSigningAvailable(signingMode);
 
-  throw new Error(
-    "P2-A post-cutover STOP: real content-manifest signing configuration is absent; synthetic signing is disabled. Set P2A_ALLOW_SYNTHETIC_SIGNING_PROOF=true only for an intentional local/synthetic verification run",
-  );
+  const ephemeral = signingMode === "EPHEMERAL"
+    ? generateKeyPairSync("rsa", { modulusLength: 2048 })
+    : null;
+  if (ephemeral) {
+    process.env.CONTENT_MANIFEST_PRIVATE_KEY = ephemeral.privateKey
+      .export({ type: "pkcs8", format: "pem" })
+      .toString();
+    process.env.CONTENT_MANIFEST_KEY_ID = `p2a-safe-${randomUUID()}`;
+  }
+
+  const manifest = signContentAvailability(input);
+  if (!manifest) {
+    throw new Error("P2-A post-cutover STOP: signed manifest could not be created");
+  }
+
+  const manifestVerified = signingMode === "REAL"
+    ? await verifyContentAvailabilityManifest(manifest)
+    : await verifyContentAvailabilityManifest(
+        manifest,
+        ephemeral!.publicKey.export({ type: "spki", format: "pem" }).toString(),
+      );
+  if (!manifestVerified) {
+    throw new Error(`P2-A post-cutover STOP: ${signingMode} manifest verification failed`);
+  }
+
+  return {
+    signingMode,
+    manifest,
+    manifestVerified,
+    operatorOutput: {
+      SIGNING_MODE: signingMode,
+      SYNTHETIC_SIGNING_PROOF: signingMode === "EPHEMERAL",
+    },
+  };
 }
 
 function assertProduction(): void {
@@ -75,6 +137,7 @@ async function main() {
   // Authorize the signing mode before any production fixture mutation or key
   // generation. Verification env vars are intentionally irrelevant here.
   const signingMode = resolveManifestSigningMode();
+  assertSigningAvailable(signingMode);
   const run = `p2a-production-post-cutover-${Date.now()}`;
   const [deterministic, ai, teacher] = await Promise.all([
     latestFixture("deterministic"),
@@ -164,24 +227,7 @@ async function main() {
     idempotencyKey: `${run}:teacher:reinstated`,
   });
 
-  // Signing config is independent of how verification resolves its key —
-  // whether production verifies via the legacy single-key var or the P5-A
-  // Phase C registry, signing only ever needs the private key + active
-  // keyId. Requiring the legacy public var here (as before) meant a
-  // registry-only deployment looked "unconfigured" and silently fell back
-  // to signing with a disposable ephemeral key, which doesn't prove
-  // anything about the real production signing configuration.
-  const configuredManifestSigning = signingMode === "real";
-  const ephemeral = signingMode === "ephemeral"
-    ? generateKeyPairSync("rsa", { modulusLength: 2048 })
-    : null;
-  if (ephemeral) {
-    process.env.CONTENT_MANIFEST_PRIVATE_KEY = ephemeral.privateKey
-      .export({ type: "pkcs8", format: "pem" })
-      .toString();
-    process.env.CONTENT_MANIFEST_KEY_ID = `p2a-safe-${randomUUID()}`;
-  }
-  const revokedManifest = signContentAvailability({
+  const signingProof = await createManifestSigningProof({
     contentId: deterministic.contentId,
     version: null,
     revoked: true,
@@ -196,19 +242,6 @@ async function main() {
       governance: replacementRevocation.sequence,
     },
   });
-  // Real signing config: let the library resolve the verification key from
-  // the manifest's own keyId (legacy var or registry, whichever the
-  // deployment actually has configured) — the same path a real client uses.
-  // Ephemeral fallback: no such throwaway key exists in any env var, so it
-  // must be passed explicitly.
-  const manifestVerified = revokedManifest
-    ? await verifyContentAvailabilityManifest(
-        revokedManifest,
-        configuredManifestSigning
-          ? undefined
-          : ephemeral!.publicKey.export({ type: "spki", format: "pem" }).toString(),
-      )
-    : false;
 
   let immutabilityRejected = false;
   try {
@@ -277,7 +310,7 @@ async function main() {
       Array.isArray(teacherExplanation?.revisionHistory) &&
       teacherExplanation!.revisionHistory.length >= 2,
     signedOfflineInvalidation:
-      configuredManifestSigning && Boolean(revokedManifest?.payload.revoked) && manifestVerified,
+      Boolean(signingProof.manifest.payload.revoked) && signingProof.manifestVerified,
     immutableHistoryRejected: immutabilityRejected,
     rootsComplete: Number(integrity[0].roots) === 1105,
     pointersValid: Number(integrity[0].missing_pointers) === 0,
@@ -290,6 +323,7 @@ async function main() {
   console.log(JSON.stringify({
     run,
     fixtureContentIds: [deterministic.contentId, ai.contentId, teacher.contentId],
+    ...signingProof.operatorOutput,
     checks,
     policies: {
       replacement: {
