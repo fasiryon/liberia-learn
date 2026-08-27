@@ -8,6 +8,7 @@ import { signContentAvailability } from "../lib/content-availability-manifest.se
 import { verifyContentAvailabilityManifest } from "../lib/content-availability-manifest";
 import type {
   ContentAvailabilityPayload,
+  ManifestContentEntry,
   SignedContentAvailabilityManifest,
 } from "../lib/content-availability-manifest";
 
@@ -63,8 +64,12 @@ function assertSigningAvailable(
 }
 
 export async function createManifestSigningProof(
-  input: Omit<ContentAvailabilityPayload, "sequence"> & {
+  input: Omit<ContentAvailabilityPayload, "issuedAt" | "sequence" | "expiresAt" | "minClientVersion" | "contents"> & {
+    issuedAt: string;
     sequence: { revision: number; governance: number };
+    expiresAt: string;
+    minClientVersion: string;
+    contents: ManifestContentEntry[];
   },
 ): Promise<ManifestSigningProof> {
   const signingMode = resolveManifestSigningMode();

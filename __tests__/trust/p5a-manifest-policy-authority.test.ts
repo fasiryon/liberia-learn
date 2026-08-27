@@ -220,9 +220,7 @@ describe("P5-A manifest policy authority", () => {
       expiresAt: "2026-08-26T00:00:00.000Z",
     });
     const { cachePack } = await import("@/lib/offline-cache");
-    await cachePack("lesson-availability", "lesson-status", "revision-1:governance-1", expired, undefined, {
-      retainForTrust: true,
-    });
+    await cachePack("lesson-availability", "lesson-status", "revision-1:governance-1", expired);
 
     expect(await isLessonCached("lesson-status")).toBe(false);
     expect(await loadCachedLesson("lesson-status")).toBeNull();
