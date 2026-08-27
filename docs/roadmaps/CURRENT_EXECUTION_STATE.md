@@ -5,8 +5,9 @@ Live execution tracking for the final closeout program.
 
 ## P5-A Manifest Policy Authority: COMPLETE
 
-Completed on dedicated branch `feat/p5-a-signed-offline-packs`, commit
-`1b1f97d1`.
+Completed on dedicated branch `feat/p5-a-signed-offline-packs`, with policy
+implementation at `1b1f97d1` and review remediation at `aadf0e69` plus
+`c74d9547`.
 
 - Phase B ordering remains authoritative: revision first, governance second,
   with equal-cursor conflicts rejected.
@@ -36,11 +37,11 @@ Completed on dedicated branch `feat/p5-a-signed-offline-packs`, commit
   deployment, staging mutation, credential use, or real key rotation occurred.
 
 Validation evidence for this gate: Prisma generate PASS; TypeScript PASS with
-the established 6144 MB heap; changed-file validator policy focus PASS (78
-tests); full Vitest PASS (4,862 tests in 596 files); production build PASS
-(384 static pages); and `git diff --check` PASS. The first concurrent full
-run had one inherited timeout that passed in isolation; the rerun was fully
-green.
+the established 6144 MB heap; changed-file validator PASS; focused trust and
+offline tests PASS (92 tests); full Vitest PASS (4,906 tests in 598 files);
+production build PASS (384 static pages); and `git diff --check` PASS. One
+concurrent full run exposed four inherited timing-sensitive tests; all four
+passed in an isolated rerun, and the subsequent complete run was fully green.
 
 Next roadmap item: P5-B offline synchronization and conflict policy.
 
