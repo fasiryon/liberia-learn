@@ -127,12 +127,16 @@ async function main() {
     idempotencyKey: `${run}:teacher:reinstated`,
   });
 
+  // Signing config is independent of how verification resolves its key —
+  // whether production verifies via the legacy single-key var or the P5-A
+  // Phase C registry, signing only ever needs the private key + active
+  // keyId. Requiring the legacy public var here (as before) meant a
+  // registry-only deployment looked "unconfigured" and silently fell back
+  // to signing with a disposable ephemeral key, which doesn't prove
+  // anything about the real production signing configuration.
   const configuredPrivateKey = process.env.CONTENT_MANIFEST_PRIVATE_KEY?.trim();
-  const configuredPublicKey = process.env.NEXT_PUBLIC_CONTENT_MANIFEST_PUBLIC_KEY?.trim();
   const configuredKeyId = process.env.CONTENT_MANIFEST_KEY_ID?.trim();
-  const configuredManifestSigning = Boolean(
-    configuredPrivateKey && configuredPublicKey && configuredKeyId,
-  );
+  const configuredManifestSigning = Boolean(configuredPrivateKey && configuredKeyId);
   const ephemeral = configuredManifestSigning
     ? null
     : generateKeyPairSync("rsa", { modulusLength: 2048 });
@@ -142,9 +146,6 @@ async function main() {
       .toString();
     process.env.CONTENT_MANIFEST_KEY_ID = `p2a-safe-${randomUUID()}`;
   }
-  const publicKeyPem = configuredManifestSigning
-    ? configuredPublicKey!.replace(/\\n/g, "\n")
-    : ephemeral!.publicKey.export({ type: "spki", format: "pem" }).toString();
   const revokedManifest = signContentAvailability({
     contentId: deterministic.contentId,
     version: null,
@@ -160,10 +161,17 @@ async function main() {
       governance: replacementRevocation.sequence,
     },
   });
+  // Real signing config: let the library resolve the verification key from
+  // the manifest's own keyId (legacy var or registry, whichever the
+  // deployment actually has configured) — the same path a real client uses.
+  // Ephemeral fallback: no such throwaway key exists in any env var, so it
+  // must be passed explicitly.
   const manifestVerified = revokedManifest
     ? await verifyContentAvailabilityManifest(
         revokedManifest,
-        publicKeyPem,
+        configuredManifestSigning
+          ? undefined
+          : ephemeral!.publicKey.export({ type: "spki", format: "pem" }).toString(),
       )
     : false;
 
