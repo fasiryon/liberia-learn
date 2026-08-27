@@ -95,7 +95,7 @@
     { "name": "p2a_guard_curriculum_provenance_identity", "required": true, "definitionMd5": "fe223eff13bd99d36dcd13acf84179ef" },
     { "name": "p2a_reject_curriculum_provenance_delete", "required": true, "definitionMd5": "7985bd790fdc71ab4e44aba224a672ba" },
     { "name": "p2a_reject_immutable_curriculum_history_mutation", "required": true, "definitionMd5": "8affa30cf543698994f2ed1174208f74" },
-    { "name": "p2a_validate_current_curriculum_revision", "required": true, "definitionMd5": "0f398ac3eb421e740b20a3c7473e245f" },
+    { "name": "p2a_validate_current_curriculum_revision", "required": true, "definitionMd5": "5d1d2cfb345ec9d90953e651e5a46a0a" },
     { "name": "p2b_ai_assessment_immutable", "required": true, "definitionMd5": "a16b030733c2a698852c38d91fa89901" },
     { "name": "p2b_assessment_immutable_after_submit", "required": true, "definitionMd5": "b8a60e8b856816ff399c9600448982ed" },
     { "name": "p2b_credential_core_immutable_after_verified", "required": true, "definitionMd5": "08020816982ee7ab69086089deeafda0" },

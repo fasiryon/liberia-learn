@@ -3,6 +3,12 @@ export type ManifestContentEntry = {
   version: string | null;
 };
 
+/** Durable P2-A ordering cursor for one CurriculumProvenance stream. */
+export type ContentAvailabilitySequence = {
+  revision: number;
+  governance: number;
+};
+
 export type ContentAvailabilityPayload = {
   contentId: string;
   version: string | null;
@@ -16,7 +22,7 @@ export type ContentAvailabilityPayload = {
   // verifyContentAvailabilityManifest — deferred to later, separately-reviewed
   // P5-A phases. A manifest carrying those three today would have them
   // silently dropped at signing time, not signed or verified.
-  sequence?: number;
+  sequence?: ContentAvailabilitySequence;
   expiresAt?: string | null;
   minClientVersion?: string | null;
   contents?: ManifestContentEntry[];
@@ -38,8 +44,60 @@ export function serializeContentAvailability(payload: ContentAvailabilityPayload
     // invalidating the signature. Omitted from the signed bytes entirely
     // (not signed as null) when absent, so a pre-Phase-B manifest that never
     // carried a sequence still serializes identically to before.
-    ...(payload.sequence !== undefined ? { sequence: payload.sequence } : {}),
+    ...(payload.sequence !== undefined
+      ? {
+          sequence: {
+            revision: payload.sequence.revision,
+            governance: payload.sequence.governance,
+          },
+        }
+      : {}),
   });
+}
+
+function isValidSequence(value: unknown): value is ContentAvailabilitySequence {
+  if (!value || typeof value !== "object" || Array.isArray(value)) return false;
+  const sequence = value as Partial<ContentAvailabilitySequence>;
+  return (
+    Number.isSafeInteger(sequence.revision) &&
+    Number(sequence.revision) >= 1 &&
+    Number.isSafeInteger(sequence.governance) &&
+    Number(sequence.governance) >= 0
+  );
+}
+
+export function acceptsContentAvailabilityManifest(
+  candidate: SignedContentAvailabilityManifest,
+  trusted?: SignedContentAvailabilityManifest | null,
+): boolean {
+  if (candidate.payload.sequence !== undefined && !isValidSequence(candidate.payload.sequence)) {
+    return false;
+  }
+  if (!trusted) return true;
+
+  const previous = trusted.payload.sequence;
+  const incoming = candidate.payload.sequence;
+  if (previous === undefined) {
+    if (incoming !== undefined) return isValidSequence(incoming);
+    return (
+      serializeContentAvailability(candidate.payload) ===
+      serializeContentAvailability(trusted.payload)
+    );
+  }
+  if (!isValidSequence(previous) || !isValidSequence(incoming)) return false;
+
+  if (incoming.revision < previous.revision) return false;
+  if (incoming.revision > previous.revision) return true;
+  if (incoming.governance < previous.governance) return false;
+
+  const sameSequence =
+    incoming.governance === previous.governance;
+  if (!sameSequence) return true;
+
+  return (
+    serializeContentAvailability(candidate.payload) ===
+    serializeContentAvailability(trusted.payload)
+  );
 }
 
 function publicKeyFromEnvironment(): string | null {
@@ -62,31 +120,24 @@ function base64Bytes(value: string): ArrayBuffer {
 }
 
 /**
- * @param previousSequence The `sequence` of a manifest for the same contentId
- * that the caller already trusts more recently than this one (e.g. the
- * manifest currently cached on-device), if any. When provided and the
- * candidate manifest's own `sequence` is a lower number, verification fails —
- * this rejects a captured, still-validly-signed older manifest being replayed
- * to roll a device back to a previously-superseded (e.g. pre-revocation)
- * trust state. Omit when there is nothing to compare against (e.g. first-time
- * caching, or a manifest that predates this field on either side) — the
- * check is opt-in per call site, not a global behavior change.
+ * The optional trusted manifest is the rollback baseline for the same
+ * contentId. Historical unsequenced state may advance once to a sequenced
+ * baseline. After that, revision order is authoritative; governance order is
+ * compared only within the same revision. Unsequenced, regressing, or equal-
+ * but-conflicting state fails closed.
  */
 export async function verifyContentAvailabilityManifest(
   manifest: SignedContentAvailabilityManifest,
   publicKeyPem: string | null = publicKeyFromEnvironment(),
-  previousSequence?: number
+  trustedManifest?: SignedContentAvailabilityManifest | null,
 ): Promise<boolean> {
   if (!publicKeyPem || !globalThis.crypto?.subtle) return false;
   if (!manifest?.payload?.contentId || !manifest.signature || !manifest.keyId) return false;
-  if (previousSequence !== undefined) {
-    // A defined trust baseline must never be overridden by an undated
-    // manifest (one that predates this field) or by a strictly older one —
-    // both are treated as a rollback/replay attempt.
-    if (typeof manifest.payload.sequence !== "number" || manifest.payload.sequence < previousSequence) {
-      return false;
-    }
-  }
+  if (
+    trustedManifest?.payload.contentId !== undefined &&
+    trustedManifest.payload.contentId !== manifest.payload.contentId
+  ) return false;
+  if (!acceptsContentAvailabilityManifest(manifest, trustedManifest)) return false;
 
   try {
     const key = await globalThis.crypto.subtle.importKey(

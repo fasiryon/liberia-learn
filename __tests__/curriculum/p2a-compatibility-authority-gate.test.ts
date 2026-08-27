@@ -185,6 +185,104 @@ describe("P2-A compatibility-path automated-approval authority gate", () => {
     expect(updateProjection).not.toHaveBeenCalled();
   });
 
+  it("canonical lifecycle governance cannot target a historical revision", async () => {
+    process.env.P2A_PROVENANCE_WRITERS_DISABLED = "false";
+    const root = {
+      id: "provenance-1",
+      currentRevisionId: "revision-2",
+      provenanceCompleteness: "VERIFIED",
+      currentRevision: { id: "revision-2" },
+    };
+    const tx = {
+      $queryRaw: vi.fn().mockResolvedValue([]),
+      curriculumContent: {
+        findUniqueOrThrow: vi.fn().mockResolvedValue({
+          id: "content-row-1",
+          contentId: "content-1",
+          schoolId: "school-1",
+        }),
+      },
+      curriculumProvenance: {
+        findUnique: vi.fn().mockResolvedValue(root),
+        findUniqueOrThrow: vi.fn().mockResolvedValue(root),
+      },
+      curriculumContentRevision: {
+        findFirst: vi.fn().mockResolvedValue({ id: "revision-1", provenanceId: "provenance-1" }),
+      },
+    };
+
+    await expect(runWithTx(tx as any, {
+      contentId: "content-1",
+      revisionId: "revision-1",
+      eventType: "REVOKED",
+      actorType: "SYSTEM",
+      actorLabel: "security-policy",
+      reviewAuthority: "SYSTEM",
+      reason: "Historical revision must not change current lifecycle",
+      futureAssignmentPolicy: "BLOCK_NEW",
+      existingAssignmentPolicy: "WITHDRAW_EXISTING",
+      offlineCachePolicy: "INVALIDATE_ON_NEXT_REFRESH",
+    })).rejects.toThrow("Lifecycle governance must target the current curriculum revision");
+    expect(logAuditRequiredWithId).not.toHaveBeenCalled();
+    expect(updateProjection).not.toHaveBeenCalled();
+  });
+
+  it("preserves legitimate reinstatement on the current revision", async () => {
+    process.env.P2A_PROVENANCE_WRITERS_DISABLED = "false";
+    const root = {
+      id: "provenance-1",
+      currentRevisionId: "revision-2",
+      provenanceCompleteness: "VERIFIED",
+      currentRevision: { id: "revision-2" },
+    };
+    const event = {
+      id: "event-8",
+      provenanceId: "provenance-1",
+      revisionId: "revision-2",
+      sequence: 8,
+      eventType: "REINSTATED",
+      lifecycleResult: "APPROVED",
+    };
+    const tx = {
+      $queryRaw: vi.fn().mockResolvedValue([]),
+      curriculumContent: {
+        findUniqueOrThrow: vi.fn().mockResolvedValue({
+          id: "content-row-1",
+          contentId: "content-1",
+          schoolId: "school-1",
+          payload: {},
+        }),
+      },
+      curriculumProvenance: {
+        findUnique: vi.fn().mockResolvedValue(root),
+        findUniqueOrThrow: vi.fn().mockResolvedValue(root),
+        update: vi.fn().mockResolvedValue(root),
+      },
+      curriculumContentRevision: {
+        findFirst: vi.fn().mockResolvedValue({ id: "revision-2", provenanceId: "provenance-1" }),
+      },
+      curriculumGovernanceEvent: {
+        findFirst: vi.fn().mockResolvedValue({ sequence: 7 }),
+        create: vi.fn().mockResolvedValue(event),
+      },
+    };
+
+    await expect(runWithTx(tx as any, {
+      contentId: "content-1",
+      revisionId: "revision-2",
+      eventType: "REINSTATED",
+      actorType: "SYSTEM",
+      actorLabel: "reinstatement-policy",
+      approvalBasis: "ROLE_POLICY",
+      reviewAuthority: "SYSTEM",
+    })).resolves.toEqual(event);
+    expect(tx.curriculumProvenance.update).toHaveBeenCalledWith({
+      where: { id: "provenance-1" },
+      data: { lifecycleState: "APPROVED" },
+    });
+    expect(updateProjection).toHaveBeenCalledTimes(1);
+  });
+
   it("propagates compatibility audit failure from the same transaction after projection mutation", async () => {
     process.env.P2A_PROVENANCE_WRITERS_DISABLED = "true";
     logAuditRequired.mockRejectedValueOnce(new Error("controlled audit failure"));

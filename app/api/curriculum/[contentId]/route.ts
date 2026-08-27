@@ -3,8 +3,29 @@ import { head } from "@vercel/blob";
 import { prisma } from "@/lib/db";
 import { requireRole } from "@/lib/auth";
 import { signContentAvailability } from "@/lib/content-availability-manifest.server";
+import { provenanceWritersEnabled } from "@/lib/curriculum/mutations/repository";
 
 export const dynamic = "force-dynamic";
+
+function projectionMatchesLifecycle(status: string, lifecycleState: string): boolean {
+  const normalized = status.trim().toUpperCase();
+  switch (lifecycleState) {
+    case "APPROVED":
+      return normalized === "PUBLISHED" || normalized === "APPROVED";
+    case "PENDING_REVIEW":
+      return normalized === "NEEDS_REVIEW" || normalized === "PENDING_APPROVAL";
+    case "REJECTED":
+      return normalized === "REJECTED";
+    case "REVOKED":
+      return normalized === "REVOKED";
+    case "SUPERSEDED":
+      return normalized === "SUPERSEDED";
+    case "DRAFT":
+      return normalized === "DRAFT";
+    default:
+      return false;
+  }
+}
 
 // GET /api/curriculum/:contentId
 export async function GET(
@@ -19,10 +40,10 @@ export async function GET(
         ? { in: ["published", "APPROVED", "REVOKED"] }
         : { in: ["published", "APPROVED", "pending_approval", "rejected", "REVOKED", "SUPERSEDED"] };
 
-    const row = await prisma.curriculumContent.findFirst({
+    const { row, latestGovernance, latestLifecycle, latestRevision } = await prisma.$transaction(async (tx) => {
+      const row = await tx.curriculumContent.findFirst({
       where: {
         contentId,
-        status: statusFilter,
         ...(user.isPlatformAdmin
           ? {}
           : {
@@ -79,21 +100,102 @@ export async function GET(
             id: true,
             lifecycleState: true,
             currentRevisionId: true,
+            currentRevision: {
+              select: {
+                sequence: true,
+                createdAt: true,
+              },
+            },
           },
         },
         createdAt: true,
         updatedAt: true,
       },
-    });
+      });
+      if (!row?.provenance) {
+        return { row, latestGovernance: null, latestLifecycle: null, latestRevision: null };
+      }
+      const [latestGovernance, latestLifecycle, latestRevision] = await Promise.all([
+        row.provenance.currentRevisionId
+          ? tx.curriculumGovernanceEvent.findFirst({
+              where: {
+                provenanceId: row.provenance.id,
+                revisionId: row.provenance.currentRevisionId,
+              },
+              orderBy: { sequence: "desc" },
+              select: { sequence: true, createdAt: true },
+            })
+          : Promise.resolve(null),
+        tx.curriculumGovernanceEvent.findFirst({
+          where: { provenanceId: row.provenance.id, lifecycleResult: { not: null } },
+          orderBy: { sequence: "desc" },
+          select: { revisionId: true, lifecycleResult: true, createdAt: true },
+        }),
+        tx.curriculumContentRevision.findFirst({
+          where: { provenanceId: row.provenance.id },
+          orderBy: { sequence: "desc" },
+          select: { id: true, sequence: true },
+        }),
+      ]);
+      return { row, latestGovernance, latestLifecycle, latestRevision };
+    }, { isolationLevel: "RepeatableRead" });
 
     if (!row) {
       return NextResponse.json(
         {
           error: "Not found",
           contentId,
-          offlineManifest: signContentAvailability({ contentId, version: null, revoked: true }),
+          offlineManifest: null,
         },
         { status: 404 }
+      );
+    }
+
+    const currentRevision = row.provenance?.currentRevision ?? null;
+    const lifecycleIsCoherent =
+      Boolean(row.provenance) &&
+      Boolean(currentRevision) &&
+      projectionMatchesLifecycle(row.status, row.provenance!.lifecycleState) &&
+      (!latestLifecycle ||
+        (latestLifecycle.lifecycleResult === row.provenance!.lifecycleState &&
+          (latestLifecycle.revisionId === row.provenance!.currentRevisionId ||
+            latestLifecycle.createdAt.getTime() <= currentRevision!.createdAt.getTime())));
+    const manifestAuthorityIsCoherent =
+      provenanceWritersEnabled() &&
+      Boolean(currentRevision) &&
+      latestRevision?.id === row.provenance?.currentRevisionId &&
+      latestRevision.sequence === currentRevision?.sequence &&
+      lifecycleIsCoherent;
+    const trustIssuedAt = currentRevision
+      ? new Date(
+          Math.max(
+            currentRevision.createdAt.getTime(),
+            latestGovernance?.createdAt.getTime() ?? 0,
+          ),
+        ).toISOString()
+      : null;
+    const signAvailability = (version: string | null, revoked: boolean) =>
+      manifestAuthorityIsCoherent && currentRevision && trustIssuedAt
+        ? signContentAvailability({
+            contentId,
+            version,
+            revoked,
+            issuedAt: trustIssuedAt,
+            sequence: {
+              revision: currentRevision.sequence,
+              governance: latestGovernance?.sequence ?? 0,
+            },
+          })
+        : null;
+
+    if (!statusFilter.in.includes(row.status)) {
+      return NextResponse.json(
+        {
+          error: "Not found",
+          contentId,
+          offlineManifest: signAvailability(null, true),
+        },
+        { status: 404 },
       );
     }
 
@@ -116,11 +218,7 @@ export async function GET(
         {
           error: "Content revoked",
           contentId,
-          offlineManifest: signContentAvailability({
-            contentId,
-            version: null,
-            revoked: true,
-          }),
+          offlineManifest: signAvailability(null, true),
           revocation,
         },
         { status: 410 },
@@ -151,7 +249,7 @@ export async function GET(
       },
       payload: row.payload,
       audio: row.audioAssets[0] ?? null,
-      offlineManifest: signContentAvailability({ contentId: row.contentId, version: row.version, revoked: false }),
+      offlineManifest: signAvailability(row.version, false),
       videos: await Promise.all(
         row.videoSupplements.map(async (v) => {
           const [vHead, tHead] = await Promise.all([
