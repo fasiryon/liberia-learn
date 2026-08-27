@@ -1,0 +1,114 @@
+diff --git a/lib/content-availability-manifest.ts b/lib/content-availability-manifest.ts
+--- a/lib/content-availability-manifest.ts
++++ b/lib/content-availability-manifest.ts
+@@ -104,6 +104,31 @@ function publicKeyFromEnvironment(): string | null {
+   const value = process.env.NEXT_PUBLIC_CONTENT_MANIFEST_PUBLIC_KEY?.trim();
+   return value ? value.replace(/\\n/g, "\n") : null;
+ }
++
++function publicKeyRegistry(): Record<string, string> {
++  const raw = process.env.NEXT_PUBLIC_CONTENT_MANIFEST_PUBLIC_KEYS?.trim();
++  if (!raw) return {};
++  try {
++    const parsed: unknown = JSON.parse(raw);
++    if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) return {};
++    const registry: Record<string, string> = {};
++    for (const [keyId, pem] of Object.entries(parsed as Record<string, unknown>)) {
++      if (typeof pem === "string" && pem.trim()) registry[keyId] = pem;
++    }
++    return registry;
++  } catch {
++    return {};
++  }
++}
++
++function resolvePublicKeyForManifest(
++  manifest: SignedContentAvailabilityManifest,
++): string | null {
++  const fromRegistry = manifest?.keyId
++    ? publicKeyRegistry()[manifest.keyId]
++    : undefined;
++  return fromRegistry ?? publicKeyFromEnvironment();
++}
+ 
+ function pemBytes(pem: string): ArrayBuffer {
+   const base64 = pem
+@@ -128,7 +153,7 @@ function base64Bytes(value: string): ArrayBuffer {
+  */
+ export async function verifyContentAvailabilityManifest(
+   manifest: SignedContentAvailabilityManifest,
+-  publicKeyPem: string | null = publicKeyFromEnvironment(),
++  publicKeyPem: string | null = resolvePublicKeyForManifest(manifest),
+   trustedManifest?: SignedContentAvailabilityManifest | null,
+ ): Promise<boolean> {
+   if (!publicKeyPem || !globalThis.crypto?.subtle) return false;
+diff --git a/__tests__/trust/p5a-phase-c-key-registry.test.ts b/__tests__/trust/p5a-phase-c-key-registry.test.ts
+new file mode 100644
+--- /dev/null
++++ b/__tests__/trust/p5a-phase-c-key-registry.test.ts
+@@ -0,0 +1,65 @@
++import { afterEach, describe, expect, it } from "vitest";
++import { generateKeyPairSync } from "crypto";
++import { signContentAvailability } from "@/lib/content-availability-manifest.server";
++import { verifyContentAvailabilityManifest } from "@/lib/content-availability-manifest";
++
++const originalPrivateKey = process.env.CONTENT_MANIFEST_PRIVATE_KEY;
++const originalKeyId = process.env.CONTENT_MANIFEST_KEY_ID;
++const originalPublicKey = process.env.NEXT_PUBLIC_CONTENT_MANIFEST_PUBLIC_KEY;
++const originalRegistry = process.env.NEXT_PUBLIC_CONTENT_MANIFEST_PUBLIC_KEYS;
++
++afterEach(() => {
++  if (originalPrivateKey === undefined) delete process.env.CONTENT_MANIFEST_PRIVATE_KEY;
++  else process.env.CONTENT_MANIFEST_PRIVATE_KEY = originalPrivateKey;
++  if (originalKeyId === undefined) delete process.env.CONTENT_MANIFEST_KEY_ID;
++  else process.env.CONTENT_MANIFEST_KEY_ID = originalKeyId;
++  if (originalPublicKey === undefined) delete process.env.NEXT_PUBLIC_CONTENT_MANIFEST_PUBLIC_KEY;
++  else process.env.NEXT_PUBLIC_CONTENT_MANIFEST_PUBLIC_KEY = originalPublicKey;
++  if (originalRegistry === undefined) delete process.env.NEXT_PUBLIC_CONTENT_MANIFEST_PUBLIC_KEYS;
++  else process.env.NEXT_PUBLIC_CONTENT_MANIFEST_PUBLIC_KEYS = originalRegistry;
++});
++
++function pair() {
++  return generateKeyPairSync("rsa", {
++    modulusLength: 2048,
++    privateKeyEncoding: { type: "pkcs8", format: "pem" },
++    publicKeyEncoding: { type: "spki", format: "pem" },
++  });
++}
++
++function sign(privateKey: string, keyId: string) {
++  process.env.CONTENT_MANIFEST_PRIVATE_KEY = privateKey;
++  process.env.CONTENT_MANIFEST_KEY_ID = keyId;
++  return signContentAvailability({
++    contentId: "lesson-1",
++    version: "7",
++    revoked: false,
++    issuedAt: "2026-08-25T00:00:00.000Z",
++    sequence: { revision: 1, governance: 0 },
++  })!;
++}
++
++describe("P5-A Phase C key registry", () => {
++  it("resolves a registered key by keyId", async () => {
++    const key = pair();
++    delete process.env.NEXT_PUBLIC_CONTENT_MANIFEST_PUBLIC_KEY;
++    process.env.NEXT_PUBLIC_CONTENT_MANIFEST_PUBLIC_KEYS = JSON.stringify({ selected: key.publicKey });
++    await expect(verifyContentAvailabilityManifest(sign(key.privateKey, "selected"))).resolves.toBe(true);
++  });
++
++  it("keeps old and new keys valid during rotation", async () => {
++    const oldKey = pair();
++    const newKey = pair();
++    delete process.env.NEXT_PUBLIC_CONTENT_MANIFEST_PUBLIC_KEY;
++    process.env.NEXT_PUBLIC_CONTENT_MANIFEST_PUBLIC_KEYS = JSON.stringify({ old: oldKey.publicKey, new: newKey.publicKey });
++    await expect(verifyContentAvailabilityManifest(sign(oldKey.privateKey, "old"))).resolves.toBe(true);
++    await expect(verifyContentAvailabilityManifest(sign(newKey.privateKey, "new"))).resolves.toBe(true);
++  });
++
++  it("falls back to the legacy public key for malformed registry JSON", async () => {
++    const key = pair();
++    process.env.NEXT_PUBLIC_CONTENT_MANIFEST_PUBLIC_KEY = key.publicKey;
++    process.env.NEXT_PUBLIC_CONTENT_MANIFEST_PUBLIC_KEYS = "{invalid";
++    await expect(verifyContentAvailabilityManifest(sign(key.privateKey, "legacy"))).resolves.toBe(true);
++  });
++});
