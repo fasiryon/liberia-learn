@@ -10,6 +10,40 @@ import { verifyContentAvailabilityManifest } from "../lib/content-availability-m
 const PRODUCTION_PROJECT_REF = "bnphuinpvgpmebcsvmsp";
 const STAGING_PROJECT_REF = "yonpfzjczoffhrgibxkz";
 
+export type ManifestSigningMode = "real" | "ephemeral";
+
+/**
+ * Decide whether this operator run may sign with production credentials.
+ * Verification configuration is deliberately not an input here: a public
+ * key registry or legacy public key cannot prove that a private signing key
+ * is available. Partial signing configuration is always a hard stop.
+ */
+export function resolveManifestSigningMode(input: {
+  privateKey?: string;
+  keyId?: string;
+  syntheticOptIn?: string;
+} = {
+  privateKey: process.env.CONTENT_MANIFEST_PRIVATE_KEY,
+  keyId: process.env.CONTENT_MANIFEST_KEY_ID,
+  syntheticOptIn: process.env.P2A_ALLOW_SYNTHETIC_SIGNING_PROOF,
+}): ManifestSigningMode {
+  const hasPrivateKey = Boolean(input.privateKey?.trim());
+  const hasKeyId = Boolean(input.keyId?.trim());
+
+  if (hasPrivateKey !== hasKeyId) {
+    throw new Error(
+      "P2-A post-cutover STOP: content-manifest signing configuration is incomplete; both CONTENT_MANIFEST_PRIVATE_KEY and CONTENT_MANIFEST_KEY_ID are required",
+    );
+  }
+  if (hasPrivateKey && hasKeyId) return "real";
+
+  if (input.syntheticOptIn?.trim() === "true") return "ephemeral";
+
+  throw new Error(
+    "P2-A post-cutover STOP: real content-manifest signing configuration is absent; synthetic signing is disabled. Set P2A_ALLOW_SYNTHETIC_SIGNING_PROOF=true only for an intentional local/synthetic verification run",
+  );
+}
+
 function assertProduction(): void {
   const databaseUrl = process.env.DATABASE_URL ?? "";
   if (process.env.P2A_PRODUCTION_PROJECT_REF !== PRODUCTION_PROJECT_REF) {
@@ -38,6 +72,9 @@ async function latestFixture(kind: "deterministic" | "ai" | "teacher") {
 
 async function main() {
   assertProduction();
+  // Authorize the signing mode before any production fixture mutation or key
+  // generation. Verification env vars are intentionally irrelevant here.
+  const signingMode = resolveManifestSigningMode();
   const run = `p2a-production-post-cutover-${Date.now()}`;
   const [deterministic, ai, teacher] = await Promise.all([
     latestFixture("deterministic"),
@@ -134,13 +171,11 @@ async function main() {
   // registry-only deployment looked "unconfigured" and silently fell back
   // to signing with a disposable ephemeral key, which doesn't prove
   // anything about the real production signing configuration.
-  const configuredPrivateKey = process.env.CONTENT_MANIFEST_PRIVATE_KEY?.trim();
-  const configuredKeyId = process.env.CONTENT_MANIFEST_KEY_ID?.trim();
-  const configuredManifestSigning = Boolean(configuredPrivateKey && configuredKeyId);
-  const ephemeral = configuredManifestSigning
-    ? null
-    : generateKeyPairSync("rsa", { modulusLength: 2048 });
-  if (!configuredManifestSigning && ephemeral) {
+  const configuredManifestSigning = signingMode === "real";
+  const ephemeral = signingMode === "ephemeral"
+    ? generateKeyPairSync("rsa", { modulusLength: 2048 })
+    : null;
+  if (ephemeral) {
     process.env.CONTENT_MANIFEST_PRIVATE_KEY = ephemeral.privateKey
       .export({ type: "pkcs8", format: "pem" })
       .toString();
@@ -272,9 +307,11 @@ async function main() {
   }, (_, value) => typeof value === "bigint" ? Number(value) : value, 2));
 }
 
-main()
-  .catch((error) => {
-    console.error(error instanceof Error ? error.message : String(error));
-    process.exitCode = 1;
-  })
-  .finally(() => prisma.$disconnect());
+if (require.main === module) {
+  main()
+    .catch((error) => {
+      console.error(error instanceof Error ? error.message : String(error));
+      process.exitCode = 1;
+    })
+    .finally(() => prisma.$disconnect());
+}
