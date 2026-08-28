@@ -114,9 +114,10 @@ Android certification is intentionally deferred by founder decision.
 
 ## P5-D Storage and Non-Physical Engineering: COMPLETE
 
-P5-D non-physical engineering is complete on the dedicated branch for this
-gate. P5-A trust, P5-B synchronization, and P5-C browser/PWA lifecycle remain
-complete and authoritative. The storage-management contract is documented in
+P5-D non-physical engineering is complete on main at
+`b39dc1e0ef1a9cd2340780d6d9b1526efeb51f04` via PR #98. P5-A trust, P5-B
+synchronization, and P5-C browser/PWA lifecycle remain complete and
+authoritative. The storage-management contract is documented in
 `docs/ops/OFFLINE_STORAGE_P5D.md`.
 
 - The existing partitioned IndexedDB outbox is `CRITICAL_UNSYNCED` and is not
