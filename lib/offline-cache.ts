@@ -18,6 +18,9 @@ export type CachePackMetadata = {
   lastUsedAt: string;
   sizeBytes: number;
   retainForTrust?: boolean;
+  /** A completed pack is eligible for normal read/eviction flows. */
+  complete?: boolean;
+  retentionClass?: "trust" | "durable" | "downloadable" | "regenerable" | "ephemeral";
 };
 
 export type CacheStats = {
@@ -32,6 +35,9 @@ type CacheLifecyclePolicy = {
 
 type CacheWriteOptions = {
   createdAt?: string;
+  complete?: boolean;
+  retentionClass?: CachePackMetadata["retentionClass"];
+  sizeBytes?: number;
 };
 
 let lifecyclePolicy: CacheLifecyclePolicy = {
@@ -67,8 +73,37 @@ function isRetainedTrustMetadata(meta: CachePackMetadata): boolean {
   return meta.retainForTrust === true || RETAINED_TRUST_SCOPES.has(meta.scope);
 }
 
+function retentionClassForScope(scope: string): NonNullable<CachePackMetadata["retentionClass"]> {
+  if (RETAINED_TRUST_SCOPES.has(scope)) return "trust";
+  if (scope === "lesson" || scope === "lesson-audio") return "downloadable";
+  if (scope === "lesson-session") return "regenerable";
+  return "ephemeral";
+}
+
+function evictionPriority(meta: CachePackMetadata): number {
+  if (isRetainedTrustMetadata(meta)) return Number.POSITIVE_INFINITY;
+  const retentionClass = meta.retentionClass ?? retentionClassForScope(meta.scope);
+  return { ephemeral: 0, regenerable: 1, downloadable: 2, durable: 3, trust: 4 }[retentionClass];
+}
+
 export async function getMetadata(partition?: SessionPartitionInput): Promise<CachePackMetadata[]> {
-  return (await get<CachePackMetadata[]>(metaStoreKey(partition))) ?? [];
+  const raw = await get<unknown>(metaStoreKey(partition));
+  if (!Array.isArray(raw)) return [];
+  return raw.flatMap((item): CachePackMetadata[] => {
+    if (!item || typeof item !== "object") return [];
+    const candidate = item as Partial<CachePackMetadata>;
+    const validRetention = candidate.retentionClass === undefined ||
+      ["trust", "durable", "downloadable", "regenerable", "ephemeral"].includes(candidate.retentionClass);
+    if (!(typeof candidate.scope === "string" && candidate.scope.length > 0 &&
+      typeof candidate.scopeId === "string" && candidate.scopeId.length > 0 &&
+      typeof candidate.packVersion === "string" && candidate.packVersion.length > 0 &&
+      typeof candidate.createdAt === "string" && Number.isFinite(Date.parse(candidate.createdAt)) &&
+      typeof candidate.lastUsedAt === "string" && Number.isFinite(Date.parse(candidate.lastUsedAt)) &&
+      (candidate.complete === undefined || typeof candidate.complete === "boolean") &&
+      (candidate.retainForTrust === undefined || typeof candidate.retainForTrust === "boolean") &&
+      validRetention && Number.isFinite(Number(candidate.sizeBytes)))) return [];
+    return [{ ...candidate, sizeBytes: Math.max(0, Number(candidate.sizeBytes)) } as CachePackMetadata];
+  });
 }
 
 async function setMetadata(items: CachePackMetadata[], partition?: SessionPartitionInput): Promise<void> {
@@ -80,8 +115,9 @@ async function enforceMaxStorage(partition?: SessionPartitionInput): Promise<voi
   let total = metas.reduce((acc, meta) => acc + meta.sizeBytes, 0);
   if (total <= lifecyclePolicy.maxStorageBytes) return;
 
-  const ordered = metas.filter((meta) => !isRetainedTrustMetadata(meta)).sort(
-    (a, b) => Date.parse(a.lastUsedAt || a.createdAt) - Date.parse(b.lastUsedAt || b.createdAt)
+  const ordered = metas.filter((meta) => !isRetainedTrustMetadata(meta)).sort((a, b) =>
+    evictionPriority(a) - evictionPriority(b) ||
+    Date.parse(a.lastUsedAt || a.createdAt) - Date.parse(b.lastUsedAt || b.createdAt)
   );
   const toDelete: CachePackMetadata[] = [];
   for (const meta of ordered) {
@@ -123,15 +159,21 @@ export async function cachePack(
     packVersion,
     createdAt,
     lastUsedAt: nowIso(),
-    sizeBytes: estimateBytes(payload),
+    sizeBytes: Number.isFinite(options?.sizeBytes) ? Math.max(0, Number(options?.sizeBytes)) : estimateBytes(payload),
+    complete: options?.complete ?? true,
+    retentionClass: options?.retentionClass ?? retentionClassForScope(scope),
   };
 
   const metas = await getMetadata(partition);
   const filtered = metas.filter((item) => !(item.scope === scope && item.scopeId === scopeId));
-  filtered.push(meta);
+  const pendingMetas = [...filtered, { ...meta, complete: false }];
 
+  // Mark the replacement incomplete before writing bytes. If either the byte
+  // write or final metadata write fails, readers fail closed instead of
+  // treating a partial replacement as trusted content.
+  await setMetadata(pendingMetas, partition);
   await set(packStoreKey(scope, scopeId, partition), payload);
-  await setMetadata(filtered, partition);
+  await setMetadata(meta.complete === false ? pendingMetas : [...filtered, meta], partition);
   await purgeExpiredPacks(partition);
   await enforceMaxStorage(partition);
   return meta;
@@ -169,6 +211,8 @@ export async function compareAndSwapCachedPack<T>(
     lastUsedAt: createdAt,
     sizeBytes: estimateBytes(payload),
     retainForTrust: options?.retainForTrust ?? false,
+    complete: true,
+    retentionClass: options?.retainForTrust ? "trust" : retentionClassForScope(scope),
   };
   const metas = await getMetadata(partition);
   await setMetadata([
@@ -188,6 +232,8 @@ export async function getCachedPack<T>(
   if (payload == null) return null;
 
   const metas = await getMetadata(partition);
+  const metadata = metas.find((item) => item.scope === scope && item.scopeId === scopeId);
+  if (metadata?.complete === false) return null;
   const updated = metas.map((meta) =>
     meta.scope === scope && meta.scopeId === scopeId ? { ...meta, lastUsedAt: nowIso() } : meta
   );

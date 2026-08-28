@@ -1,6 +1,8 @@
 # PWA Lifecycle and Browser Offline Contract
 
 Status: P5-C engineering complete on the dedicated lifecycle branch (2026-08-28).
+P5-D storage-management hardening is documented in
+`docs/ops/OFFLINE_STORAGE_P5D.md`.
 
 This document records the browser lifecycle behavior layered on the P5-A
 signed-content trust contract and the P5-B synchronization contract.
@@ -99,7 +101,7 @@ This goal does not claim physical-device proof, OS background-sync guarantees,
 native store packaging, push notifications, or complete OfflinePack
 distribution. Those are separate goals.
 
-Recommended next goal: **P5-D physical Android/browser offline validation and
-storage-management hardening**, using a real low-cost device or approved device
-farm when available, then closing the remaining evidence gap for declaring
-offline/PWA COMPLETE.
+Recommended next goal: the next product roadmap sprint selected in
+`docs/roadmaps/CURRENT_EXECUTION_STATE.md`. Physical Android and iOS
+certification remains deferred by founder decision until the mobile
+application-shell phase.

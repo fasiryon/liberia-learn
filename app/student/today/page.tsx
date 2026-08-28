@@ -22,6 +22,7 @@ type TabKey = "schedule" | "catch-up" | "support" | "progress";
 
 type WorkItem = {
   id: string;
+  contentId: string;
   title: string;
   subject: string;
   grade: number;
@@ -593,7 +594,7 @@ function ScheduleTab({
                   <p className="text-xs text-[var(--ll-text-muted)]">
                     {subjectLabel(item.subject)} - {dueLabel(item)}
                   </p>
-                  <OfflineReadyBadge lessonId={item.id} href={item.lessonHref} />
+                  <OfflineReadyBadge lessonId={item.contentId} href={item.lessonHref} />
                 </div>
               </div>
               <Link href={item.lessonHref} className="ll-touch-target inline-flex items-center justify-center rounded-lg bg-[var(--ll-accent)] px-3 py-2 text-sm font-semibold text-[var(--ll-text-faint)]">

@@ -828,8 +828,10 @@ export async function POST(req: NextRequest) {
           const studentModel = (prisma as typeof prisma & {
             student?: { findUnique?: (args: unknown) => Promise<any> };
           }).student;
+          let homeworkStudentId: string | null = null;
           if (homeworkModel?.findFirst && studentModel?.findUnique) {
             const profile = await studentModel.findUnique({ where: { userId: user.id }, select: { id: true } });
+            homeworkStudentId = profile?.id ?? null;
             const homework = await homeworkModel.findFirst({
               where: {
                 id: homeworkId,
@@ -844,6 +846,12 @@ export async function POST(req: NextRequest) {
             }
           }
 
+          // HomeworkSubmission.studentId references Student.id, not User.id.
+          // Keep the profile identity used for authorization bound to the
+          // persistence operation as well, so ordinary user/profile pairs do
+          // not fail replay with a foreign-key violation.
+          const persistedHomeworkStudentId = homeworkStudentId ?? user.id;
+
           const replayOf = await findReplaySourceEvent({
             schoolId: user.schoolId ?? null,
             userId: user.id,
@@ -855,7 +863,7 @@ export async function POST(req: NextRequest) {
             await logLearningEvent({
               schoolId: user.schoolId ?? null,
               userId: user.id,
-              studentId: user.id,
+              studentId: persistedHomeworkStudentId,
               actor: { type: "user", id: user.id, role: "STUDENT" },
               eventType: "offline.sync.replay_deduped",
               source: "/api/student/sync",
@@ -874,7 +882,7 @@ export async function POST(req: NextRequest) {
           }
 
           const existing = await prisma.homeworkSubmission.findUnique({
-            where: { homeworkId_studentId: { homeworkId, studentId: user.id } },
+            where: { homeworkId_studentId: { homeworkId, studentId: persistedHomeworkStudentId } },
           });
 
           const resolution = resolveSubmission(
@@ -893,7 +901,7 @@ export async function POST(req: NextRequest) {
             await logLearningEvent({
               schoolId: user.schoolId ?? null,
               userId: user.id,
-              studentId: user.id,
+              studentId: persistedHomeworkStudentId,
               actor: { type: "user", id: user.id, role: "STUDENT" },
               eventType: "offline.sync.conflict",
               source: "/api/student/sync",
@@ -920,15 +928,15 @@ export async function POST(req: NextRequest) {
           }
 
           await prisma.homeworkSubmission.upsert({
-            where: { homeworkId_studentId: { homeworkId, studentId: user.id } },
+            where: { homeworkId_studentId: { homeworkId, studentId: persistedHomeworkStudentId } },
             update: { answers, submittedAt: resolution.submittedAt },
-            create: { homeworkId, studentId: user.id, answers, submittedAt: resolution.submittedAt },
+            create: { homeworkId, studentId: persistedHomeworkStudentId, answers, submittedAt: resolution.submittedAt },
           });
           synced++;
           await logLearningEvent({
             schoolId: user.schoolId ?? null,
             userId: user.id,
-            studentId: user.id,
+            studentId: persistedHomeworkStudentId,
             actor: { type: "user", id: user.id, role: "STUDENT" },
             target: { type: "submission", id: homeworkId },
             eventId: syncIdentity.clientEventId,
