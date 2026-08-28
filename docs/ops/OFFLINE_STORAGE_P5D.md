@@ -55,12 +55,13 @@ matches, and its content hash verifies.
 
 ## Partial downloads and corruption
 
-Lesson bytes are written before the signed trust reference. If the content
-write, metadata write, hash check, or trust acceptance fails, the lesson is
-not trusted or served offline. Orphaned, incomplete, corrupt, expired,
-revoked, and update-required entries remain identifiable and repairable by
-removing and downloading again. None of these paths touches learner-created
-outbox records.
+The signed trust cursor advances before a replacement body is written, so a
+delayed older response is rejected before it can overwrite newer lesson
+bytes. If the content write, metadata write, hash check, or trust acceptance
+fails, the lesson is not trusted or served offline. Orphaned, incomplete,
+corrupt, expired, revoked, and update-required entries remain identifiable and
+repairable by removing and downloading again. None of these paths touches
+learner-created outbox records.
 
 ## Logout, account switching, and data clearing
 
