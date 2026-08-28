@@ -72,10 +72,17 @@ contract. The canonical implementation is documented in
   paid-service increase occurred.
 
 Validation evidence for this gate: Prisma generate PASS; TypeScript PASS with
-the repository's 4 GB heap allowance; focused offline/sync suites PASS;
-real-IndexedDB durability/isolation tests PASS; full Vitest, production build,
-changed-file validation, and remote exact-head checks are recorded below when
-the final gate completes.
+the repository's 4 GB heap allowance; focused offline/sync suites PASS (68
+tests in 11 files); real-IndexedDB durability/isolation tests PASS; production
+build PASS; and `git diff --check` PASS. The local full run recorded 4,908 of
+4,911 tests before three inherited contention timeouts; the exact pushed
+branch run passed all 4,911 tests in 599 files. PR #94's exact-head CI run
+`33131761462` passed TypeScript, 4,911 Vitest tests, and build; GitGuardian,
+Vercel, and PR triage passed. Supabase Preview was correctly skipped because
+Prisma is authoritative. After merge, main SHA
+`f37069566a7697ef3cd4ce42849259d3745ffc89` passed CI run `33132223604`
+(including TypeScript, 4,911 tests, and build) and Runtime Gate 1 run
+`33132223601`. No production or staging mutation occurred.
 
 P5-A Manifest Policy Authority remains COMPLETE and authoritative.
 
