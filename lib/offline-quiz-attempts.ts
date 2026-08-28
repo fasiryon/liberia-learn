@@ -1,24 +1,23 @@
 "use client";
 
-/**
- * lib/offline-quiz-attempts.ts
- *
- * IndexedDB store for quiz attempts captured while offline.
- * Status lifecycle: PENDING_SYNC → SYNCED | SYNC_FAILED
- *
- * Auto-sync is triggered by SyncManager on reconnection;
- * these records are submitted to /api/student/sync with type "quiz-attempt".
- */
-
-import { get, set } from "idb-keyval";
-
-const STORE_KEY = "liberialearn_offline_quiz_attempts";
+/** Compatibility view over the canonical offline outbox. Quiz attempts are
+ * append-only operations; they do not have a second IndexedDB queue. */
+import {
+  enqueueOfflineOperation,
+  getQueue,
+  markOperationAcknowledged,
+  markSyncSuccess,
+  markSyncTerminalFailure,
+} from "@/lib/offline-queue";
 
 export type OfflineQuizAttemptStatus = "PENDING_SYNC" | "SYNCED" | "SYNC_FAILED";
 
 export type OfflineQuizAttempt = {
   id: string;
   contentId: string;
+  quizId?: string;
+  contentVersion?: string | null;
+  contentHash?: string | null;
   scheduledWorkId?: string;
   answers: Record<string, unknown>;
   score?: number;
@@ -28,74 +27,77 @@ export type OfflineQuizAttempt = {
   syncError?: string | null;
 };
 
-async function readAll(): Promise<OfflineQuizAttempt[]> {
-  return (await get<OfflineQuizAttempt[]>(STORE_KEY)) ?? [];
-}
-
-async function writeAll(attempts: OfflineQuizAttempt[]): Promise<void> {
-  await set(STORE_KEY, attempts);
-}
-
-/**
- * Save a new quiz attempt captured while offline.
- * Idempotent: if an attempt with the same id already exists, it is replaced.
- */
-export async function saveOfflineQuizAttempt(
-  attempt: Omit<OfflineQuizAttempt, "status" | "syncedAt" | "syncError">
-): Promise<OfflineQuizAttempt> {
-  const all = await readAll();
-  const entry: OfflineQuizAttempt = {
-    ...attempt,
-    status: "PENDING_SYNC",
-    syncedAt: null,
-    syncError: null,
+function toAttempt(item: Awaited<ReturnType<typeof getQueue>>[number]): OfflineQuizAttempt {
+  const payload = item.payload ?? {};
+  return {
+    id: item.operationId,
+    contentId: item.contentId ?? String(payload.contentId ?? ""),
+    scheduledWorkId: typeof payload.scheduledWorkId === "string" ? payload.scheduledWorkId : undefined,
+    quizId: typeof payload.quizId === "string" ? payload.quizId : undefined,
+    contentVersion: item.contentVersion,
+    contentHash: item.contentHash,
+    answers: (payload.answers ?? {}) as Record<string, unknown>,
+    score: typeof payload.score === "number" ? payload.score : undefined,
+    submittedAt: item.clientCreatedAt,
+    status: item.status === "acknowledged" ? "SYNCED" : item.status === "failed" ? "SYNC_FAILED" : "PENDING_SYNC",
+    syncedAt: item.status === "acknowledged" ? item.syncReceivedAt : null,
+    syncError: item.lastError ?? null,
   };
-  const existing = all.findIndex((a) => a.id === attempt.id);
-  if (existing >= 0) {
-    all[existing] = entry;
-  } else {
-    all.push(entry);
-  }
-  await writeAll(all);
-  return entry;
 }
 
-/** Return all offline quiz attempts. */
-export async function getOfflineQuizAttempts(): Promise<OfflineQuizAttempt[]> {
-  return readAll();
+async function attemptItems() {
+  return (await getQueue()).filter((item) => item.resourceType === "assessment_attempt");
 }
 
-/** Return only attempts that still need syncing. */
-export async function getPendingQuizAttempts(): Promise<OfflineQuizAttempt[]> {
-  const all = await readAll();
-  return all.filter((a) => a.status === "PENDING_SYNC");
+export async function saveOfflineQuizAttempt(
+  attempt: Omit<OfflineQuizAttempt, "status" | "syncedAt" | "syncError">,
+): Promise<OfflineQuizAttempt> {
+  await enqueueOfflineOperation({
+    operationId: attempt.id,
+    resourceType: "assessment_attempt",
+    resourceId: attempt.quizId ?? attempt.id,
+    operationType: "assessment_attempt.append",
+    contentId: attempt.contentId,
+    contentVersion: attempt.contentVersion,
+    contentHash: attempt.contentHash,
+    payload: {
+      id: attempt.id,
+      quizId: attempt.quizId,
+      contentId: attempt.contentId,
+      scheduledWorkId: attempt.scheduledWorkId,
+      answers: attempt.answers,
+      score: attempt.score,
+    },
+    clientCreatedAt: attempt.submittedAt,
+  });
+  const item = (await attemptItems()).find((candidate) => candidate.operationId === attempt.id);
+  return item ? toAttempt(item) : { ...attempt, status: "PENDING_SYNC", syncedAt: null, syncError: null };
 }
 
-/** Mark an attempt as successfully synced. */
-export async function markQuizAttemptSynced(id: string): Promise<void> {
-  const all = await readAll();
-  const idx = all.findIndex((a) => a.id === id);
-  if (idx < 0) return;
-  all[idx] = { ...all[idx], status: "SYNCED", syncedAt: new Date().toISOString(), syncError: null };
-  await writeAll(all);
+export async function getOfflineQuizAttempts() {
+  return (await attemptItems()).map(toAttempt);
 }
 
-/** Mark an attempt as failed to sync. */
-export async function markQuizAttemptFailed(id: string, error: string): Promise<void> {
-  const all = await readAll();
-  const idx = all.findIndex((a) => a.id === id);
-  if (idx < 0) return;
-  all[idx] = { ...all[idx], status: "SYNC_FAILED", syncError: error };
-  await writeAll(all);
+export async function getPendingQuizAttempts() {
+  return (await getOfflineQuizAttempts()).filter((attempt) => attempt.status === "PENDING_SYNC");
 }
 
-/** Remove a specific attempt (e.g. after confirmed server-side save). */
-export async function removeOfflineQuizAttempt(id: string): Promise<void> {
-  const all = await readAll();
-  await writeAll(all.filter((a) => a.id !== id));
+export async function markQuizAttemptSynced(id: string) {
+  const item = (await attemptItems()).find((candidate) => candidate.operationId === id);
+  if (item) await markOperationAcknowledged([item.id]);
 }
 
-/** Clear all offline quiz attempts. */
-export async function clearOfflineQuizAttempts(): Promise<void> {
-  await writeAll([]);
+export async function markQuizAttemptFailed(id: string, error: string) {
+  const item = (await attemptItems()).find((candidate) => candidate.operationId === id);
+  if (item) await markSyncTerminalFailure([item.id], error);
+}
+
+export async function removeOfflineQuizAttempt(id: string) {
+  const item = (await attemptItems()).find((candidate) => candidate.operationId === id);
+  if (item) await markSyncSuccess([item.id]);
+}
+
+export async function clearOfflineQuizAttempts() {
+  const items = await attemptItems();
+  await markSyncSuccess(items.map((item) => item.id));
 }

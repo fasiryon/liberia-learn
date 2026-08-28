@@ -43,7 +43,46 @@ production build PASS (384 static pages); and `git diff --check` PASS. One
 concurrent full run exposed four inherited timing-sensitive tests; all four
 passed in an isolated rerun, and the subsequent complete run was fully green.
 
-Next roadmap item: P5-B offline synchronization and conflict policy.
+## P5-B Offline Synchronization and Conflict Policy: COMPLETE
+
+Completed on dedicated branch `feat/p5-b-offline-sync` after the P5-A trust
+contract. The canonical implementation is documented in
+`docs/ops/OFFLINE_SYNCHRONIZATION_P5B.md`.
+
+- Supported offline writes are lesson progress/completion, append-only
+  assessment attempts, assignment submissions, homework submissions, lab
+  session merges, and learner attendance marks.
+- The existing partitioned IndexedDB queue is now the canonical outbox with
+  protocol-versioned operations, content provenance, dependency ordering,
+  bounded retry/backoff, leases, explicit acknowledgement, conflict, and
+  terminal-failure states. Assignment drafts remain local editor state and
+  are not a second submission queue.
+- `/api/student/sync` binds accepted work to the authenticated learner and
+  tenant, replays exact operation identities idempotently, rejects semantic
+  idempotency-key reuse, validates queued payloads, and applies resource-level
+  concurrency/conflict rules. No learner-data schema migration was required.
+- Revoked content preserves learner evidence but is not accepted as currently
+  trusted provenance; expired manifests block new trust without deleting work.
+  Auth expiry holds the queue for reauthentication, and logout is held while
+  unsynced/conflicted work remains.
+- Durable progress, quiz drafts, and signed lesson-cache references support
+  refresh, tab close, PWA reopen, and reconnect. Aggregate sync metrics avoid
+  logging answer content.
+- No production/staging mutation, credential use, destructive migration, or
+  paid-service increase occurred.
+
+Validation evidence for this gate: Prisma generate PASS; TypeScript PASS with
+the repository's 4 GB heap allowance; focused offline/sync suites PASS;
+real-IndexedDB durability/isolation tests PASS; full Vitest, production build,
+changed-file validation, and remote exact-head checks are recorded below when
+the final gate completes.
+
+P5-A Manifest Policy Authority remains COMPLETE and authoritative.
+
+Recommended next offline/PWA goal: **P5-C real-device/browser offline E2E and
+PWA lifecycle hardening** — prove install/update/restart behavior and the full
+offline/reconnect flow on representative low-cost Android browsers before
+expanding background sync or OfflinePack distribution.
 
 ## Resume here
 

@@ -18,6 +18,9 @@ import { exitLessonFullscreen } from "@/lib/lesson/fullscreen";
 import { getLessonLabLinks } from "@/lib/lessons/labLinks";
 import { parseToSlides } from "@/lib/lessons/parseToSlides";
 import { enqueueOfflineRequest } from "@/lib/offline-queue";
+import { loadLessonProgress, removeLessonProgress, saveLessonProgress } from "@/lib/offline/lessonProgress";
+import { cacheLessonSession, loadCachedLessonSession } from "@/lib/offline/lessonSession";
+import { loadCachedLesson } from "@/lib/lesson-offline-cache";
 import { SaveForOfflineButton } from "@/components/SaveForOfflineButton";
 import { LessonAudioPlayer, type LessonAudioPart } from "@/components/student/LessonAudioPlayer";
 import { StuckHelper } from "@/components/adaptive/StuckHelper";
@@ -36,6 +39,8 @@ type ExitTicketQuestion = {
 type LessonResponse = {
   id: string;
   contentId: string;
+  contentVersion?: string | null;
+  contentHash?: string | null;
   title: string;
   subject: string;
   grade: number;
@@ -517,8 +522,49 @@ export default function LessonDeliveryClient({ lessonId }: { lessonId: string })
         if (!cancelled) {
           setLesson(data);
           setError(null);
+          void cacheLessonSession(lessonId, data).catch(() => {});
         }
       } catch (loadError: any) {
+        const cachedReference = await loadCachedLessonSession<{
+          contentId: string;
+          contentVersion: string | null;
+          contentHash: string | null;
+        }>(lessonId).catch(() => null);
+        if (cachedReference?.contentId) {
+          const trusted = await loadCachedLesson(cachedReference.contentId);
+          if (trusted && !cancelled) {
+            const metadata = trusted.metadata ?? {};
+            const payload = trusted.payload ?? {};
+            const trustedLesson: LessonResponse = {
+              id: lessonId,
+              contentId: cachedReference.contentId,
+              contentVersion: cachedReference.contentVersion,
+              contentHash: cachedReference.contentHash,
+              title: String(payload.title ?? cachedReference.contentId),
+              subject: String(metadata.subject ?? "GENERAL"),
+              grade: Number(metadata.grade ?? 0),
+              teacherName: "Teacher",
+              classFormat: "standard",
+              schoolName: "School",
+              bodyStandard: typeof payload.body_standard === "string" ? payload.body_standard : typeof payload.body === "string" ? payload.body : null,
+              bodyBlock: typeof payload.body_block === "string" ? payload.body_block : typeof payload.body === "string" ? payload.body : null,
+              body: typeof payload.body === "string" ? payload.body : typeof payload.lessons === "string" ? payload.lessons : JSON.stringify(payload),
+              deliveryProfile: null,
+              objectives: Array.isArray(payload.objectives) ? payload.objectives.map(String) : [],
+              pseudoLabs: Array.isArray(payload.pseudoLabs) ? payload.pseudoLabs as PseudoLab[] : [],
+              simulationDefinitions: Array.isArray(payload.simulationDefinitions) ? payload.simulationDefinitions as SimulationDefinition[] : [],
+              status: "not_started",
+              completedAt: null,
+              audio: (trusted.audio as LessonResponse["audio"]) ?? { status: "NOT_GENERATED" },
+              activeVideo: null,
+              takeawaySummary: typeof payload.takeawaySummary === "string" ? payload.takeawaySummary : null,
+              problemSets: [],
+            };
+            setLesson(trustedLesson);
+            setError(null);
+            return;
+          }
+        }
         if (!cancelled) {
           setError(loadError?.message ?? "Failed to load lesson.");
         }
@@ -607,7 +653,8 @@ export default function LessonDeliveryClient({ lessonId }: { lessonId: string })
       lastReadSection: currentSection,
     };
     persistLessonProgressState(window.sessionStorage, lessonProgressKey, payload);
-  }, [currentSection, lesson, lessonProgressKey]);
+    void saveLessonProgress(lessonId, payload).catch(() => {});
+  }, [currentSection, lesson, lessonId, lessonProgressKey]);
 
   const scrollToSection = useCallback((sectionId: string) => {
     const target = sectionRefs.current[sectionId];
@@ -713,10 +760,9 @@ export default function LessonDeliveryClient({ lessonId }: { lessonId: string })
     hasRestoredProgressRef.current = true;
 
     const saved = window.sessionStorage.getItem(lessonProgressKey);
-    if (!saved) return;
-
-    const parsed = parseLessonProgressState(saved);
-    if (parsed) {
+    void loadLessonProgress(lessonId).then((durable) => {
+      const parsed = durable ?? (saved ? parseLessonProgressState(saved) : null);
+      if (parsed) {
       const savedScrollPosition = parsed.scrollPosition;
       const savedSection = parsed.lastReadSection;
 
@@ -732,10 +778,11 @@ export default function LessonDeliveryClient({ lessonId }: { lessonId: string })
           }
         }, 0);
       });
-    } else {
+      } else if (saved) {
       clearLessonProgressState(window.sessionStorage, lessonProgressKey);
-    }
-  }, [lesson, lessonProgressKey]);
+      }
+    }).catch(() => {});
+  }, [lesson, lessonId, lessonProgressKey]);
 
   useEffect(() => {
     if (!lesson || typeof window === "undefined") return;
@@ -770,24 +817,9 @@ export default function LessonDeliveryClient({ lessonId }: { lessonId: string })
 
     try {
       if (typeof navigator !== "undefined" && !navigator.onLine) {
-        await enqueueOfflineRequest({
-          type: "tutor-interaction",
-          endpoint: "/api/student/tutor",
-          payload: {
-            subject: lesson.subject,
-            strandKey: lesson.subject.toLowerCase(),
-            lessonTitle: lesson.title,
-            lessonContent: renderedBody,
-            lessonId: lesson.id,
-            contentId: lesson.contentId,
-            requestType: "explain",
-            question: prompt,
-          },
-          dedupeKey: `tutor:${lesson.id}:${prompt}`,
-        });
         setTutorMessages((current) => [
           ...current,
-          { role: "assistant", text: "You are offline. Your question has been saved and will sync when you reconnect." },
+          { role: "assistant", text: "Tutor help is unavailable offline. Reconnect to ask this question." },
         ]);
         return;
       }
@@ -852,8 +884,18 @@ export default function LessonDeliveryClient({ lessonId }: { lessonId: string })
       if (typeof navigator !== "undefined" && !navigator.onLine) {
         await enqueueOfflineRequest({
           type: "lesson-complete",
-          endpoint: `/api/student/lessons/${lesson.id}/complete`,
-          payload: { exitTicketAnswers },
+          endpoint: "/api/student/sync",
+          payload: {
+            scheduledWorkId: lesson.id,
+            exitTicketAnswers,
+            clientUpdatedAt: new Date().toISOString(),
+          },
+          resourceType: "lesson_progress",
+          resourceId: lesson.id,
+          operationType: "progress.complete",
+          contentId: lesson.contentId,
+          contentVersion: lesson.contentVersion ?? null,
+          contentHash: lesson.contentHash ?? null,
           dedupeKey: `lesson-complete:${lesson.id}`,
         });
         setSubmitMessage("Saved offline. Will sync when you reconnect.");
@@ -869,6 +911,7 @@ export default function LessonDeliveryClient({ lessonId }: { lessonId: string })
       if (typeof window !== "undefined") {
         clearLessonProgressState(window.sessionStorage, lessonProgressKey);
       }
+      void removeLessonProgress(lessonId).catch(() => {});
       setLesson((current) => (current ? { ...current, status: "completed", completedAt: data?.completedAt ?? new Date().toISOString() } : current));
       setSubmitMessage("Lesson complete! Great work.");
     } catch (submitError: any) {
@@ -1316,7 +1359,13 @@ export default function LessonDeliveryClient({ lessonId }: { lessonId: string })
         </section>
 
         <div id="lesson-quiz">
-          <LessonQuizPanel lessonId={lesson.id} lessonStatus={lesson.status} />
+          <LessonQuizPanel
+            lessonId={lesson.id}
+            lessonStatus={lesson.status}
+            contentId={lesson.contentId}
+            contentVersion={lesson.contentVersion}
+            contentHash={lesson.contentHash}
+          />
           {/* NR-14B: Adaptive stuck detection — mounts alongside the quiz panel */}
           <StuckHelper
             lessonId={lesson.contentId}

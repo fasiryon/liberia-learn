@@ -115,6 +115,7 @@ function scheduledWorkInclude(userId: string) {
         contentType: true,
         status: true,
         version: true,
+        hash: true,
         deliveryProfile: true,
         moeAlignments: true,
         heroImageUrl: true,
@@ -319,6 +320,8 @@ export async function GET(
     return NextResponse.json({
       id: sw.id,
       contentId: sw.content.contentId,
+      contentVersion: sw.content.version,
+      contentHash: sw.content.hash ?? null,
       title: resolveLessonTitle({
         payload,
         subject: String(sw.content.subject),

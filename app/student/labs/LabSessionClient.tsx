@@ -111,15 +111,18 @@ export function LabSessionClient({ lab, sessionId, initialCompleted }: LabSessio
       answer: analysisAnswers[index] ?? "",
     }));
 
-    const payload = { observations, conclusions };
+    const payload = { sessionId, observations, conclusions, clientUpdatedAt: new Date().toISOString() };
 
     if (typeof navigator !== "undefined" && !navigator.onLine) {
       await set(draftKey(sessionId), { observations, analysisAnswers });
       await set(pendingKey(sessionId), payload);
       await enqueueOfflineRequest({
         type: "lab-submission",
-        endpoint: `/api/student/labs/${lab.labId}/session`,
+        endpoint: "/api/student/sync",
         payload,
+        resourceType: "lab_session",
+        resourceId: sessionId,
+        operationType: "lab_session.merge",
         dedupeKey: `lab-submission:${sessionId}`,
       });
       setStatusMessage("Lab saved offline. Will sync when you reconnect.");

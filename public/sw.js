@@ -135,8 +135,15 @@ function writeQueueEntry(key, queue) {
   );
 }
 
-function isReady(item) {
-  if (!item || item.status !== "pending") return false;
+function isReady(item, queue) {
+  if (!item || item.syncState === "AUTH_REQUIRED" || (item.status !== "pending" && !(item.status === "sending" && item.leaseExpiresAt && Date.parse(item.leaseExpiresAt) <= Date.now()))) return false;
+  const dependencies = item.dependencyIds || [];
+  const unresolved = queue.some((candidate) =>
+    candidate.id !== item.id &&
+    candidate.status !== "acknowledged" &&
+    (dependencies.includes(candidate.id) || dependencies.includes(candidate.operationId))
+  );
+  if (unresolved) return false;
   if (!item.nextRetryAt) return true;
   return Date.parse(item.nextRetryAt) <= Date.now();
 }
@@ -144,8 +151,9 @@ function isReady(item) {
 async function flushOfflineQueue() {
   const entries = await readAllQueueEntries();
   let syncedCount = 0;
+  let conflictCount = 0;
   for (const entry of entries) {
-    const readyItems = entry.queue.filter(isReady);
+    const readyItems = entry.queue.filter((item) => isReady(item, entry.queue));
     if (readyItems.length === 0) {
       continue;
     }
@@ -153,14 +161,82 @@ async function flushOfflineQueue() {
     const nextQueue = [...entry.queue];
     for (const item of readyItems) {
       try {
-        const response = await fetch(item.endpoint || "/api/student/sync", {
+        const operation = {
+          protocolVersion: item.protocolVersion || 1,
+          operationId: item.operationId || item.opId || item.id,
+          learnerId: item.learnerId || null,
+          schoolId: item.schoolId || null,
+          resourceType: item.resourceType || (item.entity === "studentProgress" ? "lesson_progress" : item.entity === "submission" ? "homework_submission" : null),
+          resourceId: item.resourceId || item.scheduledWorkId,
+          contentId: item.contentId || null,
+          contentVersion: item.contentVersion || null,
+          contentHash: item.contentHash || null,
+          manifestSequence: item.manifestSequence || null,
+          operationType: item.operationType || null,
+          payload: item.payload || {},
+          clientCreatedAt: item.clientCreatedAt || item.originalTimestamp || item.createdAt,
+          baseServerVersion: item.baseServerVersion || null,
+          idempotencyKey: item.idempotencyKey || item.opId || item.id,
+          dependencyIds: item.dependencyIds || [],
+        };
+        const response = await fetch("/api/student/sync", {
           method: "POST",
           credentials: "include",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(item.payload || {}),
+          body: JSON.stringify({ protocolVersion: 1, items: [operation] }),
         });
+        const resultBody = await response.json().catch(() => null);
+        const result = resultBody && resultBody.results && resultBody.results[0];
+        if (result && result.status === "conflict") {
+          const index = nextQueue.findIndex((candidate) => candidate.id === item.id);
+          if (index >= 0) {
+            nextQueue[index] = {
+              ...nextQueue[index],
+              status: "conflict",
+              syncState: "CONFLICT",
+              nextRetryAt: null,
+              conflict: {
+                entity: result.entity,
+                serverState: result.serverState,
+                clientState: result.clientState || item.payload,
+                resolutionHint: result.resolutionHint,
+              },
+              updatedAt: new Date().toISOString(),
+            };
+          }
+          conflictCount += 1;
+          continue;
+        }
+        if (result && result.status === "rejected" && result.resolutionHint !== "replay_deduped") {
+          const index = nextQueue.findIndex((candidate) => candidate.id === item.id);
+          if (index >= 0) {
+            nextQueue[index] = {
+              ...nextQueue[index],
+              status: "failed",
+              syncState: "TERMINAL_FAILURE",
+              nextRetryAt: null,
+              lastError: result.resolutionHint || "server_rejected_operation",
+              updatedAt: new Date().toISOString(),
+            };
+          }
+          continue;
+        }
         if (!response.ok) {
-          throw new Error(`Sync request failed with status ${response.status}`);
+          const index = nextQueue.findIndex((candidate) => candidate.id === item.id);
+          if (index >= 0) {
+            const retryCount = (nextQueue[index].retryCount || nextQueue[index].attempts || 0) + 1;
+            nextQueue[index] = {
+              ...nextQueue[index],
+              retryCount,
+              attempts: retryCount,
+              status: response.status === 401 || response.status === 403 || retryCount < MAX_ATTEMPTS ? "pending" : "failed",
+              syncState: response.status === 401 || response.status === 403 ? "AUTH_REQUIRED" : retryCount < MAX_ATTEMPTS ? "RETRYABLE_FAILURE" : "TERMINAL_FAILURE",
+              nextRetryAt: retryCount >= MAX_ATTEMPTS || response.status === 401 || response.status === 403 ? null : new Date(Date.now() + computeBackoff(retryCount)).toISOString(),
+              lastError: resultBody && resultBody.error ? resultBody.error : `Sync request failed with status ${response.status}`,
+              updatedAt: new Date().toISOString(),
+            };
+          }
+          continue;
         }
         syncedCount += 1;
         const index = nextQueue.findIndex((candidate) => candidate.id === item.id);
@@ -174,7 +250,8 @@ async function flushOfflineQueue() {
           ...nextQueue[index],
           retryCount,
           attempts: retryCount,
-          status: retryCount >= MAX_ATTEMPTS ? "failed" : "pending",
+              status: retryCount >= MAX_ATTEMPTS ? "failed" : "pending",
+              syncState: retryCount >= MAX_ATTEMPTS ? "TERMINAL_FAILURE" : "RETRYABLE_FAILURE",
           nextRetryAt:
             retryCount >= MAX_ATTEMPTS ? null : new Date(Date.now() + computeBackoff(retryCount)).toISOString(),
           updatedAt: new Date().toISOString(),
@@ -185,7 +262,7 @@ async function flushOfflineQueue() {
   }
 
   const clients = await self.clients.matchAll({ type: "window", includeUncontrolled: true });
-  clients.forEach((client) => client.postMessage({ type: "offline-sync-complete", syncedCount }));
+  clients.forEach((client) => client.postMessage({ type: "offline-sync-complete", syncedCount, conflictCount }));
 }
 
 async function networkFirst(request) {
@@ -332,21 +409,14 @@ async function deleteDraftEntry(key) {
 }
 
 async function syncAssignmentDrafts() {
+  // Assignment submissions are replayed only by the canonical outbox. These
+  // entries are editor drafts, not a second submission queue; retaining them
+  // prevents a legacy service worker from creating a duplicate submission.
   const drafts = await readAllDraftEntries();
-  for (const draft of drafts) {
-    if (!draft.assignmentId || !draft.body) continue;
-    try {
-      const response = await fetch(`/api/student/assignments/${draft.assignmentId}/submit`, {
-        method: "POST",
-        credentials: "include",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ content: draft.body }),
-      });
-      if (response.ok) {
-        await deleteDraftEntry(draft.key);
-      }
-    } catch {
-      // leave in queue for next sync attempt
+  if (drafts.length && self.clients) {
+    const clients = await self.clients.matchAll({ type: "window", includeUncontrolled: true });
+    for (const client of clients) {
+      client.postMessage({ type: "offline-draft-pending", count: drafts.length });
     }
   }
 }

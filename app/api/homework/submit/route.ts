@@ -48,6 +48,18 @@ export async function POST(req: Request) {
           where: { clientSubmissionId },
         });
         if (existing) {
+          if (existing.studentId !== student.id || existing.homeworkId !== homeworkId) {
+            return NextResponse.json(
+              { error: "Idempotency key is already bound to a different submission", resolutionHint: "idempotency_key_payload_mismatch" },
+              { status: 409 },
+            );
+          }
+          if (JSON.stringify(existing.answers) !== JSON.stringify(answers)) {
+            return NextResponse.json(
+              { error: "Idempotency key was reused with a different payload", resolutionHint: "idempotency_key_payload_mismatch" },
+              { status: 409 },
+            );
+          }
           return NextResponse.json({ ok: true, submission: existing }, { status: 200 });
         }
       } catch {

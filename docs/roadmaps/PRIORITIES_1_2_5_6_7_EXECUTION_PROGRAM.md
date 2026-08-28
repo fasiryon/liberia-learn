@@ -185,6 +185,14 @@ Deliverables:
 
 ### P5-B: Offline synchronization and conflict policy
 
+Status: COMPLETE in engineering on `feat/p5-b-offline-sync` (2026-08-27).
+
+The canonical contract, supported writes, outbox states, idempotency behavior,
+trust interaction, conflict policy, auth-expiry behavior, and unsupported
+actions are documented in `docs/ops/OFFLINE_SYNCHRONIZATION_P5B.md` and tracked
+in `CURRENT_EXECUTION_STATE.md`. No schema migration or production/staging
+mutation was required.
+
 Deliverables:
 
 - Idempotent event IDs, resumable upload cursors, retry budgets, and dead-letter

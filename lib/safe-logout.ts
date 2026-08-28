@@ -1,7 +1,7 @@
 "use client";
 
 import { purgePartitionPacks } from "@/lib/offline-cache";
-import { purgeQueuePartition } from "@/lib/offline-queue";
+import { getQueue, purgeQueuePartition } from "@/lib/offline-queue";
 import {
   clearActiveSessionPartition,
   clearStoredSessionIdentity,
@@ -14,7 +14,12 @@ export type SafeLogoutOptions = {
   flushPendingSyncAttempt?: (() => Promise<void>) | null;
 };
 
-export async function safeLogout(options?: SafeLogoutOptions): Promise<void> {
+export type SafeLogoutResult = {
+  completed: boolean;
+  unsyncedCount: number;
+};
+
+export async function safeLogout(options?: SafeLogoutOptions): Promise<SafeLogoutResult> {
   if (options?.flushPendingSyncAttempt) {
     try {
       await options.flushPendingSyncAttempt();
@@ -24,10 +29,16 @@ export async function safeLogout(options?: SafeLogoutOptions): Promise<void> {
   }
 
   const partition = resolveSessionPartition(options?.partition);
+  const unsyncedCount = (await getQueue(partition)).filter((item) => item.status !== "acknowledged").length;
+  if (unsyncedCount > 0) {
+    return { completed: false, unsyncedCount };
+  }
+
   await purgeQueuePartition(partition);
   await purgePartitionPacks(partition);
 
   clearActiveSessionPartition();
   clearStoredSessionIdentity();
+  return { completed: true, unsyncedCount: 0 };
 }
 
