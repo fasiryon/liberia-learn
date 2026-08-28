@@ -32,4 +32,12 @@ describe("service worker cache rules", () => {
     expect(sw).toContain("staleWhileRevalidate(event.request, CONTENT_CACHE)");
     expect(sw).toContain('await caches.match("/offline.html")');
   });
+
+  it("cleans only versioned Cache Storage and never deletes IndexedDB", () => {
+    const sw = fs.readFileSync(swPath, "utf8");
+    expect(sw).toMatch(/\.filter\(\(key\) => key\.startsWith\(CACHE_PREFIX\)/);
+    expect(sw).toContain("caches.delete(key)");
+    expect(sw).not.toContain("indexedDB.deleteDatabase");
+    expect(sw).not.toMatch(/indexedDB[\s\S]{0,160}\.delete\s*\(/);
+  });
 });

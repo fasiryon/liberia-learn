@@ -3,6 +3,7 @@
 import { signOut } from "next-auth/react";
 import { useState } from "react";
 import { safeLogout } from "@/lib/safe-logout";
+import { flushSubmissionQueue } from "@/lib/offline/flushQueue";
 
 export default function LogoutButton() {
   const [message, setMessage] = useState<string | null>(null);
@@ -12,7 +13,9 @@ export default function LogoutButton() {
       {message && <span className="text-xs text-amber-200">{message}</span>}
       <button
         onClick={async () => {
-          const result = await safeLogout();
+          const result = await safeLogout({
+            flushPendingSyncAttempt: async () => { await flushSubmissionQueue(); },
+          });
           if (!result.completed) {
             setMessage(`${result.unsyncedCount} offline item${result.unsyncedCount === 1 ? "" : "s"} still need to sync.`);
             return;

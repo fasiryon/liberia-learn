@@ -86,10 +86,10 @@ Prisma is authoritative. After merge, main SHA
 
 P5-A Manifest Policy Authority remains COMPLETE and authoritative.
 
-Recommended next offline/PWA goal: **P5-C real-device/browser offline E2E and
-PWA lifecycle hardening** — prove install/update/restart behavior and the full
-offline/reconnect flow on representative low-cost Android browsers before
-expanding background sync or OfflinePack distribution.
+Recommended next LiberiaLearn goal: **NR-12 - Critical Grade Deserts (G2,
+G9)**, the first pending national rollout sprint after the completed
+offline/PWA engineering work. Physical mobile certification remains a future
+application-shell gate and is not the active sprint.
 
 ## P5-C PWA Lifecycle and Real-Browser Offline E2E: COMPLETE
 
@@ -109,13 +109,54 @@ Chromium and Pixel 5 emulation; the full Vitest gate passed 600 files and 4,914
 tests; `npx prisma generate`, TypeScript, build, and `npm run validate:changed`
 passed. Post-merge CI run `33147542267`, Runtime Gate 1 run `33147542143`, and
 PR Triage run `33147542183` passed. No production or staging mutation
-occurred. The next offline/PWA goal is P5-D physical Android/browser offline
-validation and storage-management hardening.
+occurred. P5-D storage-management hardening is recorded below; physical
+Android certification is intentionally deferred by founder decision.
+
+## P5-D Storage and Non-Physical Engineering: COMPLETE
+
+P5-D non-physical engineering is complete on the dedicated branch for this
+gate. P5-A trust, P5-B synchronization, and P5-C browser/PWA lifecycle remain
+complete and authoritative. The storage-management contract is documented in
+`docs/ops/OFFLINE_STORAGE_P5D.md`.
+
+- The existing partitioned IndexedDB outbox is `CRITICAL_UNSYNCED` and is not
+  an application-controlled eviction target.
+- Lesson bytes are `RE_DOWNLOADABLE`; trust metadata remains governed by
+  P5-A; shell/runtime caches are replaceable by the service worker.
+- Storage accounting uses `navigator.storage.estimate()` where supported and
+  reports measured downloaded lesson bytes and protected unsynced work.
+- The learner storage page supports deterministic safe removal and displays
+  trusted, expired, revoked, update-required, incomplete, and corrupt states.
+- Partial writes, malformed metadata, hash failures, quota errors, and cache
+  failures do not create trusted incomplete content or false queued-success
+  states.
+- Logout is held while unsynced work remains, and account partitions remain
+  isolated. Browser, operating-system, and user data clearing remains an
+  unavoidable platform boundary.
+- No production or staging mutation, credential use, paid infrastructure, or
+  learner-data migration occurred.
+
+Physical Android certification is `DEFERRED BY FOUNDER DECISION`, not failed
+and not complete. Existing Pixel 5 Playwright coverage is browser emulation
+only. The future mobile application-shell gate must reopen physical Android
+and iOS validation with install, offline launch, trusted lesson, offline
+activity, kill/reopen, reconnect/sync, update, and storage-pressure checks.
+
+Offline/PWA engineering: `COMPLETE`.
+
+Browser/PWA validation: `COMPLETE`.
+
+Physical mobile certification: `DEFERRED` to the Android/iOS
+application-shell phase.
+
+Recommended next goal: **NR-12 - Critical Grade Deserts (G2, G9)**. This is
+the first pending national rollout sprint and has higher product value than
+starting mobile packaging before its planned phase.
 
 ## Resume here
 
 The entries below are historical execution records. Their embedded next-goal
-instructions are superseded by the active P5-C resume target above.
+instructions are superseded by the active NR-12 resume target above.
 
 - **P5-A PHASE C OPERATIONAL CLOSURE (2026-08-27).** Phase C source is
   complete on main at `f4f350d6f7232014d9136f55386880c9e912a7d8`, after PR

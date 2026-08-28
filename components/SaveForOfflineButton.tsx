@@ -10,10 +10,10 @@
 import { useEffect, useState } from "react";
 import {
   cacheLessonContent,
+  evictSafeCachedLessons,
   isLessonCached,
   removeCachedLesson,
   getCachedLessonCount,
-  listCachedLessons,
   MAX_CACHED_LESSONS,
   type CachedLessonData,
 } from "@/lib/lesson-offline-cache";
@@ -28,7 +28,7 @@ export function SaveForOfflineButton({ contentId, lessonData }: SaveForOfflineBu
   const [cached, setCached] = useState(false);
   const [saving, setSaving] = useState(false);
   const [atCapacity, setAtCapacity] = useState(false);
-  const [oldestId, setOldestId] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     isLessonCached(contentId).then(setCached);
@@ -60,12 +60,10 @@ export function SaveForOfflineButton({ contentId, lessonData }: SaveForOfflineBu
 
   async function handleSave() {
     setSaving(true);
+    setError(null);
     try {
       const count = await getCachedLessonCount();
       if (!cached && count >= MAX_CACHED_LESSONS) {
-        const list = await listCachedLessons();
-        const oldest = list[list.length - 1];
-        if (oldest) setOldestId(oldest.contentId);
         setAtCapacity(true);
         setSaving(false);
         return;
@@ -73,26 +71,38 @@ export function SaveForOfflineButton({ contentId, lessonData }: SaveForOfflineBu
 
       const ok = await cacheCurrentSignedLesson();
       if (ok) setCached(true);
+      else setError("Offline download could not complete. Reconnect and try again, or remove a downloaded lesson first.");
+    } catch {
+      setError("Offline download could not complete. Reconnect and try again, or remove a downloaded lesson first.");
     } finally {
       setSaving(false);
     }
   }
 
   async function handleRemove() {
-    await removeCachedLesson(contentId);
-    setCached(false);
+    const removed = await removeCachedLesson(contentId);
+    if (removed) setCached(false);
+    else setError("This download could not be removed. Your saved learner work remains protected.");
   }
 
   async function handleEvictAndSave() {
-    if (oldestId) {
-      await removeCachedLesson(oldestId);
-    }
+    setError(null);
+    const evicted = await evictSafeCachedLessons({ maxItems: 1 });
     setAtCapacity(false);
-    setOldestId(null);
     setSaving(true);
-    const ok = await cacheCurrentSignedLesson();
-    if (ok) setCached(true);
-    setSaving(false);
+    try {
+      if (evicted.removed.length === 0) {
+        setError("No downloaded lesson is available for safe removal.");
+        return;
+      }
+      const ok = await cacheCurrentSignedLesson();
+      if (ok) setCached(true);
+      else setError("Offline download could not complete after freeing space.");
+    } catch {
+      setError("Offline download could not complete after freeing space. Reconnect and try again.");
+    } finally {
+      setSaving(false);
+    }
   }
 
   if (atCapacity) {
@@ -104,13 +114,15 @@ export function SaveForOfflineButton({ contentId, lessonData }: SaveForOfflineBu
         </p>
         <div className="flex gap-2">
           <button
+            type="button"
             onClick={handleEvictAndSave}
             className="rounded-md px-3 py-1 text-xs font-medium bg-[var(--ll-yellow-soft)] hover:bg-[var(--ll-yellow-soft)] text-[var(--ll-text)]"
           >
             Remove oldest &amp; save
           </button>
           <button
-            onClick={() => { setAtCapacity(false); setOldestId(null); }}
+            type="button"
+            onClick={() => setAtCapacity(false)}
             className="rounded-md px-3 py-1 text-xs font-medium bg-[var(--ll-surface-muted)] hover:bg-[var(--ll-surface-muted)] text-[var(--ll-text)]"
           >
             Cancel
@@ -120,9 +132,25 @@ export function SaveForOfflineButton({ contentId, lessonData }: SaveForOfflineBu
     );
   }
 
+  if (error) {
+    return (
+      <div className="space-y-2 rounded-xl border border-amber-500/30 bg-[var(--ll-yellow-soft)] px-4 py-3 text-sm">
+        <p className="text-[var(--ll-yellow)]">{error}</p>
+        <button
+          type="button"
+          onClick={() => setError(null)}
+          className="rounded-md bg-[var(--ll-surface-muted)] px-3 py-1 text-xs font-medium text-[var(--ll-text)]"
+        >
+          Dismiss
+        </button>
+      </div>
+    );
+  }
+
   if (cached) {
     return (
       <button
+        type="button"
         onClick={handleRemove}
         className="flex items-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-medium bg-[var(--ll-yellow-soft)] border border-emerald-600/40 text-[var(--ll-yellow)] hover:bg-[var(--ll-yellow-soft)]"
       >
@@ -135,8 +163,10 @@ export function SaveForOfflineButton({ contentId, lessonData }: SaveForOfflineBu
 
   return (
     <button
+      type="button"
       onClick={handleSave}
       disabled={saving}
+      aria-busy={saving}
       className="flex items-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-medium bg-[var(--ll-surface-muted)]/60 border border-[var(--ll-border)]/40 text-[var(--ll-text)] hover:bg-[var(--ll-surface-muted)] disabled:opacity-50"
     >
       {saving ? "Saving…" : "Save for offline"}
