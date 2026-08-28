@@ -4,6 +4,7 @@ import { beforeEach, describe, expect, it } from "vitest";
 
 import {
   enqueueOfflineOperation,
+  enqueueOfflineRequest,
   getQueue,
   getReadyQueue,
   markSyncConflict,
@@ -102,5 +103,43 @@ describe("P5-B durable outbox on IndexedDB", () => {
     const second = operation({ payload: { a: 1, b: 2 } });
     expect(offlineOperationFingerprint(first)).toBe(offlineOperationFingerprint(second));
     expect(offlineOperationFingerprint(operation({ payload: { a: 3 } }))).not.toBe(offlineOperationFingerprint(first));
+  });
+
+  it("coalesces only pending lesson edits and allocates a new operation after acknowledgement", async () => {
+    const first = await enqueueOfflineRequest({
+      type: "lesson-complete",
+      endpoint: "/api/student/sync",
+      payload: { scheduledWorkId: "lesson-1", completedAt: "2026-08-27T12:00:00.000Z" },
+      dedupeKey: "lesson:lesson-1",
+      resourceType: "lesson_progress",
+      resourceId: "lesson-1",
+      operationType: "progress.complete",
+      coalesceKey: "lesson_progress:lesson-1",
+    }, partitionA);
+    const pendingReplacement = await enqueueOfflineRequest({
+      type: "lesson-complete",
+      endpoint: "/api/student/sync",
+      payload: { scheduledWorkId: "lesson-1", completedAt: "2026-08-27T12:01:00.000Z" },
+      dedupeKey: "lesson:lesson-1",
+      resourceType: "lesson_progress",
+      resourceId: "lesson-1",
+      operationType: "progress.complete",
+      coalesceKey: "lesson_progress:lesson-1",
+    }, partitionA);
+    expect(pendingReplacement.operationId).toBe(first.operationId);
+
+    const { markSyncSuccess } = await import("@/lib/offline-queue");
+    await markSyncSuccess([first.id], partitionA);
+    const laterSubmission = await enqueueOfflineRequest({
+      type: "lesson-complete",
+      endpoint: "/api/student/sync",
+      payload: { scheduledWorkId: "lesson-1", completedAt: "2026-08-27T12:02:00.000Z" },
+      dedupeKey: "lesson:lesson-1",
+      resourceType: "lesson_progress",
+      resourceId: "lesson-1",
+      operationType: "progress.complete",
+      coalesceKey: "lesson_progress:lesson-1",
+    }, partitionA);
+    expect(laterSubmission.operationId).not.toBe(first.operationId);
   });
 });

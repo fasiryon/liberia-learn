@@ -38,21 +38,27 @@ export default function SyncManager({
   }
 
   async function doSync() {
-    const result = await flushSubmissionQueue(partition ?? undefined);
-    if (result.flushed > 0) {
-      setSyncing(true);
-      setSyncResult(`${result.flushed} item${result.flushed > 1 ? "s" : ""} synced`);
-      setTimeout(() => setSyncResult(null), 5000);
+    setSyncing(true);
+    setSyncResult(null);
+    try {
+      const result = await flushSubmissionQueue(partition ?? undefined);
+      if (result.flushed > 0) {
+        setSyncResult(`${result.flushed} item${result.flushed > 1 ? "s" : ""} synced`);
+        setTimeout(() => setSyncResult(null), 5000);
+      }
+      if (result.conflicts > 0) {
+        setSyncResult(`${result.conflicts} item${result.conflicts > 1 ? "s" : ""} need${result.conflicts === 1 ? "s" : ""} review`);
+        setTimeout(() => setSyncResult(null), 5000);
+      } else if (result.blocked > 0) {
+        setSyncResult("Sign in again to sync saved offline work");
+        setTimeout(() => setSyncResult(null), 5000);
+      }
+      await refreshStats(partition);
+    } catch {
+      setSyncResult("Offline work could not sync yet. It remains saved on this device.");
+    } finally {
       setSyncing(false);
     }
-    if (result.conflicts > 0) {
-      setSyncResult(`${result.conflicts} item${result.conflicts > 1 ? "s" : ""} need${result.conflicts === 1 ? "s" : ""} review`);
-      setTimeout(() => setSyncResult(null), 5000);
-    } else if (result.blocked > 0) {
-      setSyncResult("Sign in again to sync saved offline work");
-      setTimeout(() => setSyncResult(null), 5000);
-    }
-    await refreshStats(partition);
   }
 
   useEffect(() => {

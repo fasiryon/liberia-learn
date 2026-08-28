@@ -74,9 +74,13 @@ export default function StudentHomeworkTake({
           score: data?.score,
           feedback: data?.feedback,
         });
-      } else {
+      } else if (result.status === "queued") {
         // Queued for later sync
         setSubmitStatus({ kind: "queued" });
+      } else if (result.status === "storage_error") {
+        setSubmitStatus({ kind: "error", message: "This device could not save your work. Keep this page open and reconnect before leaving." });
+      } else {
+        setSubmitStatus({ kind: "error", message: "This submission type is unavailable offline. Reconnect and try again." });
       }
     } catch (err) {
       console.error(err);

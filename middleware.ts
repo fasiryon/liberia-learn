@@ -32,6 +32,7 @@ const PUBLIC_PATHS = [
   "/data-policy",
   "/contact",
   "/help",
+  "/offline",
   "/register",
   "/guardian/register",
   "/share/certificate",
@@ -146,6 +147,11 @@ export async function middleware(req: NextRequest) {
   if (
     pathname.startsWith("/_next") ||
     pathname === "/favicon.ico" ||
+    pathname === "/manifest.json" ||
+    pathname === "/sw.js" ||
+    pathname === "/offline.html" ||
+    pathname.startsWith("/icons/") ||
+    pathname.startsWith("/screenshots/") ||
     pathname === "/robots.txt" ||
     pathname === "/sitemap.xml" ||
     pathname.startsWith("/assets") ||

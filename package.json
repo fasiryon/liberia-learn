@@ -10,6 +10,7 @@
     "lint": "next lint",
     "generate-icons": "node scripts/generate-icons.mjs",
     "test": "vitest run",
+    "test:e2e:pwa": "playwright test e2e/p5c-pwa-lifecycle.spec.ts",
     "test:watch": "vitest",
     "validate:changed": "node scripts/validate-changed.mjs",
     "seed:demo": "ts-node --compiler-options {\"module\":\"CommonJS\"} scripts/seed-demo.ts",

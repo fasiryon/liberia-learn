@@ -38,3 +38,7 @@ jobs:
       - run: npx tsc --noEmit
       - run: npx vitest run --reporter=dot
       - run: npm run build
+      - name: Install Chromium for PWA E2E
+        run: npx playwright install --with-deps chromium
+      - name: Run real-browser PWA E2E
+        run: npm run test:e2e:pwa

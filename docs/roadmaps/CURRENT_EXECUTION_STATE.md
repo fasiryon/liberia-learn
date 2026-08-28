@@ -91,7 +91,30 @@ PWA lifecycle hardening** — prove install/update/restart behavior and the full
 offline/reconnect flow on representative low-cost Android browsers before
 expanding background sync or OfflinePack distribution.
 
+## P5-C PWA Lifecycle and Real-Browser Offline E2E: COMPLETE
+
+The P5-C implementation is complete on dedicated branch
+`feat/p5-c-pwa-lifecycle-e2e`, pending normal PR delivery and exact merged-main
+verification. P5-A trust and P5-B synchronization remain complete and
+authoritative. The lifecycle work adds deterministic manifest and service-worker
+asset routing, separated shell/runtime/content caches, explicit update and
+storage-failure UI, mobile-like Playwright coverage, and real IndexedDB/Cache
+Storage browser-context restart coverage. The P5-B review remediations are
+included: homework entity mapping, object-shaped quiz answers, assignment
+targeting, retryable service-worker results, explicit storage-error handling,
+and fresh operation IDs after acknowledged writes.
+
+Local gate evidence: the P5-C Playwright suite passed 4 tests across desktop
+Chromium and Pixel 5 emulation; the full Vitest gate passed 600 files and 4,914
+tests; `npx prisma generate`, TypeScript, build, and `npm run validate:changed`
+passed. No production or staging mutation occurred. The next offline/PWA goal
+is P5-D physical Android/browser offline validation and storage-management
+hardening.
+
 ## Resume here
+
+The entries below are historical execution records. Their embedded next-goal
+instructions are superseded by the active P5-C resume target above.
 
 - **P5-A PHASE C OPERATIONAL CLOSURE (2026-08-27).** Phase C source is
   complete on main at `f4f350d6f7232014d9136f55386880c9e912a7d8`, after PR
