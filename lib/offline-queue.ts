@@ -3,19 +3,42 @@
 
 import { get, set, del } from "idb-keyval";
 import { resolveSessionPartition, type SessionPartitionInput } from "@/lib/offline-session";
+import {
+  OFFLINE_SYNC_PROTOCOL_VERSION,
+  inferOfflineResource,
+  type OfflineOperationType,
+  type OfflineResourceType,
+} from "@/lib/offline/syncProtocol";
 
 const QUEUE_KEY_PREFIX = "liberialearn_offline_queue::";
 
-const MAX_ATTEMPTS = 5;
+const MAX_ATTEMPTS = 3;
 const BASE_BACKOFF_MS = 5000;
 const MAX_BACKOFF_MS = 5 * 60 * 1000;
 
 export type QueueItem = {
   id: string;
+  operationId: string;
+  protocolVersion: number;
+  learnerId: string | null;
+  schoolId: string | null;
+  resourceType: OfflineResourceType | null;
+  resourceId: string;
+  operationType: OfflineOperationType | null;
+  contentId: string | null;
+  contentVersion: string | null;
+  contentHash: string | null;
+  manifestSequence: { revision: number; governance: number } | null;
+  clientCreatedAt: string;
+  baseServerVersion: string | null;
+  idempotencyKey: string;
+  dependencyIds: string[];
+  syncState: "LOCAL_PENDING" | "SENDING" | "ACKNOWLEDGED" | "CONFLICT" | "RETRYABLE_FAILURE" | "AUTH_REQUIRED" | "TERMINAL_FAILURE";
+  leaseExpiresAt?: string | null;
   clientEventId?: string;
   originalTimestamp?: string;
   syncReceivedAt?: string | null;
-  type?: "lesson-complete" | "assignment-submission" | "lab-submission" | "tutor-interaction";
+  type?: "lesson-complete" | "assignment-submission" | "homework" | "lab-submission" | "assessment-attempt" | "attendance" | "tutor-interaction";
   endpoint?: string;
   payload?: Record<string, unknown>;
   queuedAt?: string;
@@ -26,7 +49,7 @@ export type QueueItem = {
   completedAt: string;
   attempts: number;
   nextRetryAt: string | null;
-  status: "pending" | "failed" | "conflict";
+  status: "pending" | "sending" | "acknowledged" | "failed" | "conflict";
   lastError?: string | null;
   conflict?: {
     entity?: string;
@@ -57,77 +80,152 @@ function queueKey(partition?: SessionPartitionInput) {
   return `${QUEUE_KEY_PREFIX}${resolveSessionPartition(partition).key}`;
 }
 
+let queueMutation: Promise<unknown> = Promise.resolve();
+
+async function withQueueLock<T>(fn: () => Promise<T>): Promise<T> {
+  const previous = queueMutation;
+  let release!: () => void;
+  queueMutation = new Promise<void>((resolve) => { release = resolve; });
+  await previous;
+  try {
+    if (typeof navigator !== "undefined" && navigator.locks?.request) {
+      return await navigator.locks.request("liberialearn-offline-queue", fn);
+    }
+    return await fn();
+  } finally {
+    release();
+  }
+}
+
 export async function enqueueOfflineRequest(
   item: {
-    type: "lesson-complete" | "assignment-submission" | "lab-submission" | "tutor-interaction";
+    type: "lesson-complete" | "assignment-submission" | "homework" | "lab-submission" | "assessment-attempt" | "attendance" | "tutor-interaction";
     endpoint: string;
     payload: Record<string, unknown>;
     dedupeKey: string;
+    operationId?: string;
+    resourceType?: OfflineResourceType;
+    resourceId?: string;
+    operationType?: OfflineOperationType;
+    contentId?: string | null;
+    contentVersion?: string | null;
+    contentHash?: string | null;
+    manifestSequence?: { revision: number; governance: number } | null;
+    baseServerVersion?: string | null;
+    dependencyIds?: string[];
     clientEventId?: string;
     originalTimestamp?: string;
+    clientCreatedAt?: string;
   },
   partition?: SessionPartitionInput
 ): Promise<QueueItem> {
-  const queue = await getQueue(partition);
-  const existing = queue.find(
-    (entry) =>
-      entry.type === item.type &&
-      entry.endpoint === item.endpoint &&
-      entry.opId === item.dedupeKey &&
-      entry.status !== "failed"
-  );
-  if (existing) {
-    existing.payload = {
-      ...item.payload,
-      clientEventId: existing.clientEventId,
-      originalTimestamp: existing.originalTimestamp,
+  return withQueueLock(async () => {
+    const queue = await getQueue(partition);
+    const operationId = item.operationId ?? item.dedupeKey;
+    const inferred = inferOfflineResource(item.type);
+    const resourceType = item.resourceType ?? inferred?.resourceType ?? null;
+    const operationType = item.operationType ?? inferred?.operationType ?? null;
+    const resourceId = item.resourceId ?? String(item.payload.scheduledWorkId ?? item.payload.assignmentId ?? item.payload.homeworkId ?? item.payload.sessionId ?? operationId);
+    const existing = queue.find((entry) => entry.operationId === operationId && entry.status !== "failed");
+    const clientEventId = item.clientEventId ?? operationId;
+    const originalTimestamp = item.clientCreatedAt ?? item.originalTimestamp ?? String(item.payload.originalTimestamp ?? item.payload.completedAt ?? item.payload.clientUpdatedAt ?? nowIso());
+    const common = {
+      operationId,
+      protocolVersion: OFFLINE_SYNC_PROTOCOL_VERSION,
+      learnerId: resolveSessionPartition(partition).userId,
+      schoolId: resolveSessionPartition(partition).schoolId === "unknown-school" ? null : resolveSessionPartition(partition).schoolId,
+      resourceType,
+      resourceId,
+      operationType,
+      contentId: item.contentId ?? (typeof item.payload.contentId === "string" ? item.payload.contentId : null),
+      contentVersion: item.contentVersion ?? (typeof item.payload.contentVersion === "string" ? item.payload.contentVersion : null),
+      contentHash: item.contentHash ?? (typeof item.payload.contentHash === "string" ? item.payload.contentHash : null),
+      manifestSequence: item.manifestSequence ?? null,
+      clientCreatedAt: originalTimestamp,
+      baseServerVersion: item.baseServerVersion ?? null,
+      idempotencyKey: operationId,
+      dependencyIds: item.dependencyIds ?? [],
     };
-    existing.retryCount = 0;
-    existing.attempts = 0;
-    existing.updatedAt = nowIso();
-    existing.nextRetryAt = null;
-    existing.status = "pending";
-    await set(queueKey(partition), queue);
-    return existing;
-  }
-
-  const clientEventId =
-    item.clientEventId ??
-    (typeof crypto !== "undefined" && "randomUUID" in crypto
-      ? crypto.randomUUID()
-      : `${Date.now()}-${Math.random()}`);
-  const originalTimestamp =
-    item.originalTimestamp ??
-    String(item.payload.originalTimestamp ?? item.payload.completedAt ?? item.payload.clientUpdatedAt ?? nowIso());
-  const created: QueueItem = {
-    id: typeof crypto !== "undefined" && "randomUUID" in crypto ? crypto.randomUUID() : `${Date.now()}-${Math.random()}`,
-    clientEventId,
-    originalTimestamp,
-    syncReceivedAt: null,
-    type: item.type,
-    endpoint: item.endpoint,
-    payload: {
-      ...item.payload,
+    if (existing) {
+      existing.payload = { ...item.payload, clientEventId: existing.clientEventId, originalTimestamp: existing.originalTimestamp };
+      Object.assign(existing, common);
+      existing.retryCount = 0;
+      existing.attempts = 0;
+      existing.updatedAt = nowIso();
+      existing.nextRetryAt = null;
+      existing.status = "pending";
+      existing.syncState = "LOCAL_PENDING";
+      existing.leaseExpiresAt = null;
+      await set(queueKey(partition), queue);
+      return existing;
+    }
+    const createdAt = nowIso();
+    const created: QueueItem = {
+      id: typeof crypto !== "undefined" && "randomUUID" in crypto ? crypto.randomUUID() : `${Date.now()}-${Math.random()}`,
+      ...common,
       clientEventId,
       originalTimestamp,
-    },
-    queuedAt: nowIso(),
-    retryCount: 0,
-    opId: item.dedupeKey,
-    entity: "submission",
-    scheduledWorkId: String(item.payload.scheduledWorkId ?? item.payload.assignmentId ?? item.payload.sessionId ?? item.dedupeKey),
-    completedAt: String(item.payload.completedAt ?? nowIso()),
-    attempts: 0,
-    nextRetryAt: null,
-    status: "pending",
-    lastError: null,
-    conflict: null,
-    createdAt: nowIso(),
-    updatedAt: nowIso(),
-  };
-  queue.push(created);
-  await set(queueKey(partition), queue);
-  return created;
+      syncReceivedAt: null,
+      type: item.type,
+      endpoint: item.endpoint,
+      payload: { ...item.payload, clientEventId, originalTimestamp },
+      queuedAt: createdAt,
+      retryCount: 0,
+      opId: operationId,
+      entity: resourceType === "lesson_progress" ? "studentProgress" : resourceType === "attendance" ? "attendance" : resourceType === "homework_submission" ? "submission" : "submission",
+      scheduledWorkId: resourceId,
+      completedAt: String(item.payload.completedAt ?? createdAt),
+      attempts: 0,
+      nextRetryAt: null,
+      status: "pending",
+      syncState: "LOCAL_PENDING",
+      leaseExpiresAt: null,
+      lastError: null,
+      conflict: null,
+      createdAt,
+      updatedAt: createdAt,
+    };
+    queue.push(created);
+    await set(queueKey(partition), queue);
+    return created;
+  });
+}
+
+export async function enqueueOfflineOperation(
+  operation: {
+    operationId?: string;
+    resourceType: OfflineResourceType;
+    resourceId: string;
+    operationType: OfflineOperationType;
+    payload: Record<string, unknown>;
+    contentId?: string | null;
+    contentVersion?: string | null;
+    contentHash?: string | null;
+    manifestSequence?: { revision: number; governance: number } | null;
+    baseServerVersion?: string | null;
+    dependencyIds?: string[];
+    clientCreatedAt?: string;
+  },
+  partition?: SessionPartitionInput,
+): Promise<QueueItem> {
+  const operationId = operation.operationId ?? (typeof crypto !== "undefined" && "randomUUID" in crypto ? crypto.randomUUID() : `${Date.now()}-${Math.random()}`);
+  return enqueueOfflineRequest({
+    type: operation.resourceType === "assessment_attempt" ? "assessment-attempt" : operation.resourceType === "lab_session" ? "lab-submission" : operation.resourceType === "assignment_submission" ? "assignment-submission" : operation.resourceType === "homework_submission" ? "homework" : operation.resourceType === "attendance" ? "attendance" : "lesson-complete",
+    endpoint: "/api/student/sync",
+    payload: operation.payload,
+    dedupeKey: operationId,
+    operationId,
+    resourceType: operation.resourceType,
+    resourceId: operation.resourceId,
+    operationType: operation.operationType,
+    contentId: operation.contentId,
+    contentVersion: operation.contentVersion,
+    contentHash: operation.contentHash,
+    manifestSequence: operation.manifestSequence,
+    baseServerVersion: operation.baseServerVersion,
+    dependencyIds: operation.dependencyIds,
+    originalTimestamp: operation.clientCreatedAt,
+  }, partition);
 }
 
 export async function addToQueue(
@@ -146,7 +244,7 @@ export async function enqueueCompletion(
   const entry = await enqueueOfflineRequest(
     {
       type: "lesson-complete",
-      endpoint: `/api/student/lessons/${scheduledWorkId}/complete`,
+      endpoint: "/api/student/sync",
       payload: { scheduledWorkId, completedAt },
       dedupeKey: `lesson-complete:${scheduledWorkId}`,
     },
@@ -165,9 +263,55 @@ export async function getQueue(partition?: SessionPartitionInput): Promise<Queue
 export async function getReadyQueue(partition?: SessionPartitionInput): Promise<QueueItem[]> {
   const queue = await getQueue(partition);
   const now = Date.now();
+  const unresolved = new Set(
+    queue
+      .filter((q) => q.status !== "acknowledged")
+      .flatMap((q) => [q.id, q.operationId]),
+  );
   return queue
-    .filter((q) => q.status === "pending" && (!q.nextRetryAt || Date.parse(q.nextRetryAt) <= now))
+    .filter((q) =>
+      (q.status === "pending" || (q.status === "sending" && !!q.leaseExpiresAt && Date.parse(q.leaseExpiresAt) <= now)) &&
+      q.syncState !== "AUTH_REQUIRED" &&
+      (!q.nextRetryAt || Date.parse(q.nextRetryAt) <= now) &&
+      !(q.dependencyIds ?? []).some((dependencyId) => unresolved.has(dependencyId)),
+    )
     .sort((a, b) => Date.parse(a.createdAt) - Date.parse(b.createdAt));
+}
+
+export async function markSyncSending(ids: string[], partition?: SessionPartitionInput): Promise<void> {
+  if (ids.length === 0) return;
+  await withQueueLock(async () => {
+    const queue = await getQueue(partition);
+    const lease = new Date(Date.now() + 60_000).toISOString();
+    for (const item of queue) if (ids.includes(item.id) && item.status === "pending") {
+      item.status = "sending";
+      item.syncState = "SENDING";
+      item.leaseExpiresAt = lease;
+      item.updatedAt = nowIso();
+    }
+    await set(queueKey(partition), queue);
+  });
+}
+
+export function toSyncOperation(item: QueueItem) {
+  return {
+    protocolVersion: item.protocolVersion ?? OFFLINE_SYNC_PROTOCOL_VERSION,
+    operationId: item.operationId ?? item.opId ?? item.id,
+    learnerId: item.learnerId ?? null,
+    schoolId: item.schoolId ?? null,
+    resourceType: item.resourceType ?? (item.entity === "studentProgress" ? "lesson_progress" : item.entity === "attendance" ? "attendance" : item.entity === "submission" ? "homework_submission" : null),
+    resourceId: item.resourceId ?? item.scheduledWorkId,
+    contentId: item.contentId ?? null,
+    contentVersion: item.contentVersion ?? null,
+    contentHash: item.contentHash ?? null,
+    manifestSequence: item.manifestSequence ?? null,
+    operationType: item.operationType ?? inferOfflineResource(item.type ?? "")?.operationType,
+    payload: item.payload ?? {},
+    clientCreatedAt: item.clientCreatedAt ?? item.originalTimestamp ?? item.createdAt,
+    baseServerVersion: item.baseServerVersion ?? null,
+    idempotencyKey: item.idempotencyKey ?? item.opId ?? item.id,
+    dependencyIds: item.dependencyIds ?? [],
+  };
 }
 
 export async function getConflicts(partition?: SessionPartitionInput): Promise<QueueItem[]> {
@@ -177,9 +321,28 @@ export async function getConflicts(partition?: SessionPartitionInput): Promise<Q
 
 export async function markSyncSuccess(ids: string[], partition?: SessionPartitionInput): Promise<void> {
   if (ids.length === 0) return;
-  const queue = await getQueue(partition);
-  const remaining = queue.filter((q) => !ids.includes(q.id));
-  await set(queueKey(partition), remaining);
+  await withQueueLock(async () => {
+    const queue = await getQueue(partition);
+    const remaining = queue.filter((q) => !ids.includes(q.id));
+    await set(queueKey(partition), remaining);
+  });
+}
+
+/** Retain an acknowledged append-only evidence record for the learner's
+ * local history. Ordinary projections are removed by markSyncSuccess. */
+export async function markOperationAcknowledged(ids: string[], partition?: SessionPartitionInput): Promise<void> {
+  if (ids.length === 0) return;
+  await withQueueLock(async () => {
+    const queue = await getQueue(partition);
+    for (const item of queue) if (ids.includes(item.id)) {
+      item.status = "acknowledged";
+      item.syncState = "ACKNOWLEDGED";
+      item.leaseExpiresAt = null;
+      item.syncReceivedAt = nowIso();
+      item.updatedAt = nowIso();
+    }
+    await set(queueKey(partition), queue);
+  });
 }
 
 export async function markSyncFailure(
@@ -188,9 +351,10 @@ export async function markSyncFailure(
   partition?: SessionPartitionInput
 ): Promise<void> {
   if (ids.length === 0) return;
-  const queue = await getQueue(partition);
-  const now = Date.now();
-  for (const item of queue) {
+  await withQueueLock(async () => {
+    const queue = await getQueue(partition);
+    const now = Date.now();
+    for (const item of queue) {
     if (!ids.includes(item.id)) continue;
     if (item.status === "conflict") continue;
     item.syncReceivedAt = nowIso();
@@ -200,14 +364,65 @@ export async function markSyncFailure(
     item.updatedAt = nowIso();
     if ((item.retryCount ?? item.attempts) >= 3) {
       item.status = "failed";
+      item.syncState = "TERMINAL_FAILURE";
       item.nextRetryAt = null;
     } else {
       item.status = "pending";
+      item.syncState = "RETRYABLE_FAILURE";
       const backoff = computeBackoff(item.retryCount ?? item.attempts);
       item.nextRetryAt = new Date(now + backoff).toISOString();
     }
-  }
-  await set(queueKey(partition), queue);
+    }
+    await set(queueKey(partition), queue);
+  });
+}
+
+/** Hold work after auth expiry without consuming the retry budget. */
+export async function markSyncAuthRequired(ids: string[], error: string, partition?: SessionPartitionInput): Promise<void> {
+  if (ids.length === 0) return;
+  await withQueueLock(async () => {
+    const queue = await getQueue(partition);
+    for (const item of queue) {
+      if (!ids.includes(item.id) || item.status === "conflict") continue;
+      item.status = "pending";
+      item.syncState = "AUTH_REQUIRED";
+      item.lastError = error;
+      item.nextRetryAt = null;
+      item.leaseExpiresAt = null;
+      item.updatedAt = nowIso();
+    }
+    await set(queueKey(partition), queue);
+  });
+}
+
+export async function releaseAuthBlockedOperations(partition?: SessionPartitionInput): Promise<void> {
+  await withQueueLock(async () => {
+    const queue = await getQueue(partition);
+    for (const item of queue) {
+      if (item.syncState !== "AUTH_REQUIRED") continue;
+      item.syncState = "LOCAL_PENDING";
+      item.lastError = null;
+      item.updatedAt = nowIso();
+    }
+    await set(queueKey(partition), queue);
+  });
+}
+
+export async function markSyncTerminalFailure(ids: string[], error: string, partition?: SessionPartitionInput): Promise<void> {
+  if (ids.length === 0) return;
+  await withQueueLock(async () => {
+    const queue = await getQueue(partition);
+    for (const item of queue) {
+      if (!ids.includes(item.id) || item.status === "conflict") continue;
+      item.status = "failed";
+      item.syncState = "TERMINAL_FAILURE";
+      item.lastError = error;
+      item.nextRetryAt = null;
+      item.leaseExpiresAt = null;
+      item.updatedAt = nowIso();
+    }
+    await set(queueKey(partition), queue);
+  });
 }
 
 export async function markSyncConflict(
@@ -227,6 +442,7 @@ export async function markSyncConflict(
     const conflict = byId.get(item.id);
     if (!conflict) continue;
     item.status = "conflict";
+    item.syncState = "CONFLICT";
     item.syncReceivedAt = nowIso();
     item.nextRetryAt = null;
     item.conflict = {
@@ -246,6 +462,7 @@ export async function retryConflicts(ids?: string[], partition?: SessionPartitio
   for (const item of queue) {
     if (!targetIds.includes(item.id)) continue;
     item.status = "pending";
+    item.syncState = "LOCAL_PENDING";
     item.attempts = 0;
     item.nextRetryAt = null;
     item.conflict = null;

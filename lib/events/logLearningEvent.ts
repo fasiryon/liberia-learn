@@ -22,6 +22,9 @@ export type LearningEventTarget = {
 };
 
 export type LogLearningEventInput = {
+  /** Optional stable operation id. Used by offline sync to make the event
+   * itself the server-side idempotency record without a second table. */
+  eventId?: string | null;
   workflowRunId?: string | null;
   workflowTraceId?: string | null;
   correlationId?: string | null;
@@ -78,6 +81,7 @@ export async function logLearningEvent(
   try {
     return await learningEventModel.create({
       data: {
+        id: input.eventId ?? undefined,
         workflowRunId: input.workflowRunId ?? null,
         workflowTraceId: input.workflowTraceId ?? null,
         correlationId: input.correlationId ?? null,

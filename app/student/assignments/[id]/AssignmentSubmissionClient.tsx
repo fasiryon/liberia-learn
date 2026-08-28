@@ -59,16 +59,18 @@ export default function AssignmentSubmissionClient(props: Props) {
       if (typeof navigator !== "undefined" && !navigator.onLine) {
         await enqueueOfflineRequest({
           type: "assignment-submission",
-          endpoint: `/api/student/assignments/${props.assignmentId}/submit`,
-          payload: { content },
+          endpoint: "/api/student/sync",
+          payload: {
+            assignmentId: props.assignmentId,
+            content,
+            clientUpdatedAt: new Date().toISOString(),
+          },
+          resourceType: "assignment_submission",
+          resourceId: props.assignmentId,
+          operationType: "assignment.submit",
           dedupeKey: `assignment-submission:${props.assignmentId}`,
         });
         saveDraftOffline(props.assignmentId, content);
-        if (typeof navigator !== "undefined" && "serviceWorker" in navigator) {
-          navigator.serviceWorker.ready
-            .then((reg) => (reg as any).sync?.register("submit-assignment-drafts"))
-            .catch(() => null);
-        }
         setStatus("Saved offline — will submit when reconnected");
         return;
       }

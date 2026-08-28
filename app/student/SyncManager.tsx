@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { getQueueStats } from "@/lib/offline-queue";
+import { getQueueStats, releaseAuthBlockedOperations } from "@/lib/offline-queue";
 import { flushSubmissionQueue } from "@/lib/offline/flushQueue";
 import { getCacheStats, purgeExpiredPacks, purgePartitionPacks } from "@/lib/offline-cache";
 import { detectAndSetActiveSessionPartition, type SessionPartition } from "@/lib/offline-session";
@@ -45,12 +45,20 @@ export default function SyncManager({
       setTimeout(() => setSyncResult(null), 5000);
       setSyncing(false);
     }
+    if (result.conflicts > 0) {
+      setSyncResult(`${result.conflicts} item${result.conflicts > 1 ? "s" : ""} need${result.conflicts === 1 ? "s" : ""} review`);
+      setTimeout(() => setSyncResult(null), 5000);
+    } else if (result.blocked > 0) {
+      setSyncResult("Sign in again to sync saved offline work");
+      setTimeout(() => setSyncResult(null), 5000);
+    }
     await refreshStats(partition);
   }
 
   useEffect(() => {
     detectAndSetActiveSessionPartition().then(async (detected) => {
       setPartition(detected);
+      await releaseAuthBlockedOperations(detected);
       await purgeExpiredPacks(detected);
       await refreshStats(detected);
     });

@@ -65,21 +65,22 @@ describe("offline cache/session primitives", () => {
     expect(cacheB).toBeNull();
   });
 
-  it("safeLogout purges the correct partition only", async () => {
+  it("safeLogout retains unsynced work and isolates the other partition", async () => {
     await enqueueCompletion("sw-a", "2026-02-20T10:00:00.000Z", partitionA);
     await enqueueCompletion("sw-b", "2026-02-20T10:01:00.000Z", partitionB);
     await cachePack("scheduledWork", "sw-a", "v1", { body: "A" }, partitionA);
     await cachePack("scheduledWork", "sw-b", "v1", { body: "B" }, partitionB);
 
-    await safeLogout({ partition: partitionA });
+    const result = await safeLogout({ partition: partitionA });
 
     const queueAfterA = await getQueue(partitionA);
     const queueAfterB = await getQueue(partitionB);
     const cacheAfterA = await getCacheStats(partitionA);
     const cacheAfterB = await getCacheStats(partitionB);
 
-    expect(queueAfterA).toHaveLength(0);
-    expect(cacheAfterA.cachePacksCount).toBe(0);
+    expect(result).toEqual({ completed: false, unsyncedCount: 1 });
+    expect(queueAfterA).toHaveLength(1);
+    expect(cacheAfterA.cachePacksCount).toBe(1);
     expect(queueAfterB).toHaveLength(1);
     expect(cacheAfterB.cachePacksCount).toBe(1);
   });

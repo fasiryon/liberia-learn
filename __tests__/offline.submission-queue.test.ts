@@ -268,7 +268,7 @@ describe("flushSubmissionQueue", () => {
     expect(await getQueue()).toHaveLength(0);
   });
 
-  it("9. removes 4xx action immediately (client errors never succeed on retry)", async () => {
+  it("9. retains 4xx action as a terminal failure for inspection", async () => {
     vi.stubGlobal("navigator", { onLine: true });
     vi.stubGlobal(
       "fetch",
@@ -286,10 +286,13 @@ describe("flushSubmissionQueue", () => {
     const { flushSubmissionQueue } = await import("@/lib/offline/flushQueue");
     const result = await flushSubmissionQueue();
 
-    // 4xx → removed immediately; counted as failed (not flushed)
+    // Client rejection is retained so learner work and the failure reason are inspectable.
     expect(result.flushed).toBe(0);
     expect(result.failed).toBe(1);
-    expect(await getQueue()).toHaveLength(0);
+    const retained = await getQueue();
+    expect(retained).toHaveLength(1);
+    expect(retained[0].status).toBe("failed");
+    expect(retained[0].syncState).toBe("TERMINAL_FAILURE");
   });
 
   it("10. stops processing remaining items on network error (loop break)", async () => {

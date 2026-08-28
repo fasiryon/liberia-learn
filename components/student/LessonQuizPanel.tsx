@@ -1,8 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import WhatsAppShareButton from "@/components/student/WhatsAppShareButton";
+import { saveOfflineQuizAttempt } from "@/lib/offline-quiz-attempts";
+import { loadQuizDraft, removeQuizDraft, saveQuizDraft } from "@/lib/offline/quizDraft";
 
 type LessonQuizQuestion = {
   id: string;
@@ -51,9 +53,15 @@ type LessonQuiz = {
 export function LessonQuizPanel({
   lessonId,
   lessonStatus,
+  contentId,
+  contentVersion,
+  contentHash,
 }: {
   lessonId: string;
   lessonStatus: "not_started" | "in_progress" | "completed";
+  contentId?: string;
+  contentVersion?: string | null;
+  contentHash?: string | null;
 }) {
   const [loading, setLoading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
@@ -70,6 +78,15 @@ export function LessonQuizPanel({
     return quiz.questions.every((question) => Number.isInteger(answers[question.id]));
   }, [answers, quiz]);
 
+  useEffect(() => {
+    void loadQuizDraft<LessonQuiz & { answers?: Record<string, number>; startedAt?: string }>(lessonId).then((draft) => {
+      if (!draft || !Array.isArray(draft.questions)) return;
+      setQuiz({ quizId: draft.quizId, questions: draft.questions });
+      setAnswers(draft.answers ?? {});
+      setStartedAt(draft.startedAt ?? null);
+    }).catch(() => {});
+  }, [lessonId]);
+
   async function handleGenerateQuiz() {
     try {
       setLoading(true);
@@ -84,7 +101,9 @@ export function LessonQuizPanel({
       }
       setQuiz(payload);
       setAnswers({});
-      setStartedAt(new Date().toISOString());
+      const nextStartedAt = new Date().toISOString();
+      setStartedAt(nextStartedAt);
+      void saveQuizDraft(lessonId, { ...payload, answers: {}, startedAt: nextStartedAt }).catch(() => {});
     } catch (quizError: any) {
       setError(quizError?.message ?? "Failed to generate quiz.");
     } finally {
@@ -97,9 +116,54 @@ export function LessonQuizPanel({
       return;
     }
 
+    async function saveOfflineAttempt() {
+      const submittedAt = new Date().toISOString();
+      const evaluated = quiz.questions.map((question) => ({
+        question,
+        selectedIndex: answers[question.id],
+        isCorrect: answers[question.id] === question.correctIndex,
+      }));
+      const correctCount = evaluated.filter((answer) => answer.isCorrect).length;
+      const score = correctCount / Math.max(evaluated.length, 1);
+      const attemptId = typeof crypto !== "undefined" && "randomUUID" in crypto ? crypto.randomUUID() : `${Date.now()}-${Math.random()}`;
+      await saveOfflineQuizAttempt({
+        id: attemptId,
+        contentId: contentId ?? lessonId,
+        quizId: quiz.quizId,
+        answers,
+        score,
+        submittedAt,
+        contentVersion,
+        contentHash,
+      });
+      await removeQuizDraft(lessonId).catch(() => {});
+      setResult({
+        attemptId,
+        score,
+        scorePercent: Math.round(score * 100),
+        correctCount,
+        totalQuestions: evaluated.length,
+        explanations: evaluated.map(({ question, selectedIndex }) => ({
+          questionId: question.id,
+          question: question.question,
+          explanation: question.explanation,
+          correctIndex: question.correctIndex,
+          selectedIndex: selectedIndex ?? null,
+          options: question.options,
+        })),
+        gapAnalysis: null,
+        gapAnalysisError: null,
+        congratulatoryMessage: "Saved on this device. Your attempt will sync when you reconnect.",
+      });
+    }
+
     try {
       setSubmitting(true);
       setError(null);
+      if (typeof navigator !== "undefined" && !navigator.onLine) {
+        await saveOfflineAttempt();
+        return;
+      }
       const response = await fetch(`/api/student/lessons/${lessonId}/quiz/submit`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -118,8 +182,18 @@ export function LessonQuizPanel({
         throw new Error(payload?.error ?? "Failed to submit quiz.");
       }
       setResult(payload);
+      await removeQuizDraft(lessonId).catch(() => {});
     } catch (submitError: any) {
-      setError(submitError?.message ?? "Failed to submit quiz.");
+      if (typeof navigator !== "undefined" && !navigator.onLine) {
+        try {
+          await saveOfflineAttempt();
+          return;
+        } catch {
+          setError("Your device could not save this attempt. Keep this page open and try again.");
+        }
+      } else {
+        setError(submitError?.message ?? "Failed to submit quiz.");
+      }
     } finally {
       setSubmitting(false);
     }
@@ -187,12 +261,14 @@ export function LessonQuizPanel({
                       key={`${question.id}-${optionIndex}`}
                       type="button"
                       disabled={Boolean(result)}
-                      onClick={() =>
-                        setAnswers((current) => ({
-                          ...current,
+                      onClick={() => {
+                        const nextAnswers = {
+                          ...answers,
                           [question.id]: optionIndex,
-                        }))
-                      }
+                        };
+                        setAnswers(nextAnswers);
+                        void saveQuizDraft(lessonId, { ...quiz, answers: nextAnswers, startedAt }).catch(() => {});
+                      }}
                       className={`min-h-12 rounded-xl border px-4 py-3 text-left text-sm leading-6 transition-colors ${
                         showReview
                           ? isCorrect
