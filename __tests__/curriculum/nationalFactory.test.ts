@@ -129,6 +129,11 @@ describe("buildGenerationPlan", () => {
     expect(plan.every(e => e.grade === 2)).toBe(true);
     expect(plan.some(e => e.subject === "BIOLOGY")).toBe(false);
   });
+  it("includes the NR-12 Grade 2 CIVICS cell in the factory map", () => {
+    const plan = buildGenerationPlan({ grade: 2, subject: "CIVICS" });
+    expect(plan).toHaveLength(1);
+    expect(plan[0]).toMatchObject({ grade: 2, subject: "CIVICS", totalLessonsToGenerate: 40 });
+  });
   it("filters by subject", () => {
     const plan = buildGenerationPlan({ subject: "BIOLOGY" });
     expect(plan.every(e => e.subject === "BIOLOGY")).toBe(true);
