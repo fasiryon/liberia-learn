@@ -1,15 +1,18 @@
-// Audited Sprint 1 - single cache registration,
-// single fetch handler, offline queue verified.
-const CACHE_NAME = "liberialearn-v2";
+// P5-C lifecycle contract. Cache Storage is split by retention policy so an
+// app update can remove re-fetchable bytes without touching signed content or
+// the IndexedDB learner outbox.
+const SW_VERSION = "p5c-2026-08-27-1";
+const SHELL_CACHE = `liberialearn-shell-${SW_VERSION}`;
+const RUNTIME_CACHE = `liberialearn-runtime-${SW_VERSION}`;
+const CONTENT_CACHE = `liberialearn-content-${SW_VERSION}`;
+const CACHE_PREFIX = "liberialearn-";
 const APP_SHELL = [
   "/",
   "/offline",
   "/offline.html",
-  "/student/dashboard",
-  "/student/lessons",
-  "/student/today",
-  "/student/assignments",
-  "/student/portfolio",
+  "/manifest.json",
+  "/icons/icon-192.png",
+  "/icons/icon-512.png",
 ];
 const SYNC_TAG = "liberialearn-sync";
 const ASSIGNMENT_DRAFT_SYNC_TAG = "submit-assignment-drafts";
@@ -22,17 +25,48 @@ const BASE_BACKOFF_MS = 5000;
 const MAX_BACKOFF_MS = 5 * 60 * 1000;
 
 self.addEventListener("install", (event) => {
-  event.waitUntil(caches.open(CACHE_NAME).then((cache) => cache.addAll(APP_SHELL)));
-  self.skipWaiting();
+  event.waitUntil(
+    caches.open(SHELL_CACHE).then((cache) => cache.addAll(APP_SHELL)).then(async () => {
+      // First install may activate immediately. An update waits for the
+      // registration UI to request activation, preserving the old shell while
+      // learner work is pending.
+      if (!self.registration.active) await self.skipWaiting();
+      else await notifyClients({ type: "pwa-update-available", version: SW_VERSION });
+    }),
+  );
 });
 
 self.addEventListener("activate", (event) => {
   event.waitUntil(
     caches.keys().then((keys) =>
-      Promise.all(keys.filter((key) => key !== CACHE_NAME).map((key) => caches.delete(key)))
-    )
+      Promise.all(
+        keys
+          .filter((key) => key.startsWith(CACHE_PREFIX) && ![SHELL_CACHE, RUNTIME_CACHE, CONTENT_CACHE].includes(key))
+          .map((key) => caches.delete(key)),
+      ),
+    ),
   );
   self.clients.claim();
+});
+
+async function notifyClients(message) {
+  const windows = await self.clients.matchAll({ type: "window", includeUncontrolled: true });
+  windows.forEach((client) => client.postMessage(message));
+}
+
+self.addEventListener("message", (event) => {
+  if (event.data?.type === "ACTIVATE_UPDATE") {
+    event.waitUntil(self.skipWaiting());
+    return;
+  }
+  if (event.data?.type === "GET_PWA_STATE") {
+    event.source?.postMessage({
+      type: "pwa-state",
+      version: SW_VERSION,
+      shellCache: SHELL_CACHE,
+      contentCache: CONTENT_CACHE,
+    });
+  }
 });
 
 function isProtectedRoute(pathname) {
@@ -71,6 +105,23 @@ function isLessonFont(request, pathname) {
 function computeBackoff(attempts) {
   const backoff = BASE_BACKOFF_MS * Math.pow(2, Math.max(0, attempts - 1));
   return Math.min(backoff, MAX_BACKOFF_MS);
+}
+
+function retryOrDeadLetter(item, error) {
+  const retryCount = (item.retryCount || item.attempts || 0) + 1;
+  return {
+    ...item,
+    retryCount,
+    attempts: retryCount,
+    status: retryCount >= MAX_ATTEMPTS ? "failed" : "pending",
+    syncState: retryCount >= MAX_ATTEMPTS ? "TERMINAL_FAILURE" : "RETRYABLE_FAILURE",
+    nextRetryAt: retryCount >= MAX_ATTEMPTS
+      ? null
+      : new Date(Date.now() + computeBackoff(retryCount)).toISOString(),
+    lastError: error,
+    leaseExpiresAt: null,
+    updatedAt: new Date().toISOString(),
+  };
 }
 
 function openQueueDatabase() {
@@ -210,14 +261,17 @@ async function flushOfflineQueue() {
         if (result && result.status === "rejected" && result.resolutionHint !== "replay_deduped") {
           const index = nextQueue.findIndex((candidate) => candidate.id === item.id);
           if (index >= 0) {
-            nextQueue[index] = {
-              ...nextQueue[index],
-              status: "failed",
-              syncState: "TERMINAL_FAILURE",
-              nextRetryAt: null,
-              lastError: result.resolutionHint || "server_rejected_operation",
-              updatedAt: new Date().toISOString(),
-            };
+            const retryable = ["retryable_server_failure", "concurrent_duplicate_retry"].includes(result.resolutionHint);
+            nextQueue[index] = retryable
+              ? retryOrDeadLetter(nextQueue[index], result.resolutionHint)
+              : {
+                  ...nextQueue[index],
+                  status: "failed",
+                  syncState: "TERMINAL_FAILURE",
+                  nextRetryAt: null,
+                  lastError: result.resolutionHint || "server_rejected_operation",
+                  updatedAt: new Date().toISOString(),
+                };
           }
           continue;
         }
@@ -265,24 +319,24 @@ async function flushOfflineQueue() {
   clients.forEach((client) => client.postMessage({ type: "offline-sync-complete", syncedCount, conflictCount }));
 }
 
-async function networkFirst(request) {
+async function networkFirst(request, cacheName = RUNTIME_CACHE) {
   try {
     const response = await fetch(request);
 
     if (request.method === "GET") {
-      const cache = await caches.open(CACHE_NAME);
-      await cache.put(request, response.clone());
+      const cache = await caches.open(cacheName);
+      await cache.put(request, response.clone()).catch(() => null);
     }
 
     return response;
   } catch (error) {
-    const cached = await caches.match(request);
+    const cached = await caches.match(request, { cacheName });
     if (cached) {
       return cached;
     }
 
     if (request.mode === "navigate") {
-      const offlinePage = await caches.match("/offline");
+      const offlinePage = await caches.match("/offline", { cacheName: SHELL_CACHE });
       if (offlinePage) {
         return offlinePage;
       }
@@ -292,24 +346,24 @@ async function networkFirst(request) {
   }
 }
 
-async function cacheFirst(request) {
-  const cached = await caches.match(request);
+async function cacheFirst(request, cacheName = RUNTIME_CACHE) {
+  const cached = await caches.match(request, { cacheName });
   if (cached) return cached;
   const response = await fetch(request);
   if (response && response.ok) {
-    const cache = await caches.open(CACHE_NAME);
-    await cache.put(request, response.clone());
+    const cache = await caches.open(cacheName);
+    await cache.put(request, response.clone()).catch(() => null);
   }
   return response;
 }
 
-async function staleWhileRevalidate(request) {
-  const cache = await caches.open(CACHE_NAME);
+async function staleWhileRevalidate(request, cacheName = CONTENT_CACHE) {
+  const cache = await caches.open(cacheName);
   const cached = await cache.match(request);
   const networkPromise = fetch(request)
     .then((response) => {
       if (response && response.ok) {
-        cache.put(request, response.clone());
+        cache.put(request, response.clone()).catch(() => null);
       }
       return response;
     })
@@ -324,17 +378,17 @@ async function staleWhileRevalidate(request) {
     return networkResponse;
   }
 
-  return caches.match("/offline.html");
+  return caches.match("/offline.html", { cacheName: SHELL_CACHE });
 }
 
 self.addEventListener("fetch", (event) => {
   const url = new URL(event.request.url);
   if (event.request.method !== "GET") return;
-  if (isProtectedRoute(url.pathname)) {
+  if (isProtectedRoute(url.pathname) && !isLessonPage(url.pathname)) {
     return;
   }
   if (url.pathname.startsWith("/_next/static/")) {
-    event.respondWith(cacheFirst(event.request));
+    event.respondWith(cacheFirst(event.request, RUNTIME_CACHE));
     return;
   }
   if (
@@ -347,17 +401,17 @@ self.addEventListener("fetch", (event) => {
   }
 
   if (isLessonFont(event.request, url.pathname) || isLessonImage(event.request, url.pathname)) {
-    event.respondWith(cacheFirst(event.request));
+    event.respondWith(cacheFirst(event.request, CONTENT_CACHE));
     return;
   }
 
   if (isLessonPage(url.pathname)) {
-    event.respondWith(staleWhileRevalidate(event.request));
+    event.respondWith(staleWhileRevalidate(event.request, CONTENT_CACHE));
     return;
   }
 
   event.respondWith(
-    networkFirst(event.request).catch(
+    networkFirst(event.request, SHELL_CACHE).catch(
       async () =>
         (await caches.match("/offline.html")) ||
         new Response("Offline fallback unavailable", {

@@ -5,6 +5,7 @@ import { logAudit } from "@/lib/audit";
 import { resolveAttendance, resolveSubmission } from "@/lib/offline-sync/policies";
 import { recordMetricEvent } from "@/lib/metrics/events";
 import { logLearningEvent } from "@/lib/events/logLearningEvent";
+import { getAssignmentTargetStudentIds } from "@/lib/assignments/targeting";
 import {
   OFFLINE_SYNC_PROTOCOL_VERSION,
   offlineOperationFingerprint,
@@ -271,7 +272,9 @@ export async function POST(req: NextRequest) {
               ? "assessmentAttempt"
               : canonical?.resourceType === "lab_session"
                 ? "labSession"
-                : legacyEntity;
+                : canonical?.resourceType === "homework_submission"
+                  ? "submission"
+                  : legacyEntity;
       const effectiveEntity = canonicalEntity;
       const entity = effectiveEntity;
       const acceptedEventType = effectiveEntity === "studentProgress"
@@ -665,6 +668,12 @@ export async function POST(req: NextRequest) {
             results.push({ opId: opKey, entity, status: "rejected", resolutionHint: "assignment_enrollment_required" });
             continue;
           }
+          const targetStudentIds = await getAssignmentTargetStudentIds(assignmentId);
+          if (targetStudentIds.length > 0 && !targetStudentIds.includes(student.id)) {
+            skipped++;
+            results.push({ opId: opKey, entity, status: "rejected", resolutionHint: "assignment_target_mismatch" });
+            continue;
+          }
           const existing = await prisma.assignmentSubmission.findUnique({
             where: { assignmentId_studentId: { assignmentId, studentId: student.id } },
           });
@@ -701,7 +710,8 @@ export async function POST(req: NextRequest) {
         if (effectiveEntity === "assessmentAttempt") {
           const quizId = typeof payload?.quizId === "string" ? payload.quizId : canonical?.resourceId;
           const answers = payload?.answers;
-          if (!quizId || !Array.isArray(answers)) {
+          const answersAreObject = Boolean(answers) && typeof answers === "object" && !Array.isArray(answers);
+          if (!quizId || (!Array.isArray(answers) && !answersAreObject)) {
             skipped++;
             results.push({ opId: opKey, entity, status: "rejected", resolutionHint: "invalid_assessment_attempt" });
             continue;

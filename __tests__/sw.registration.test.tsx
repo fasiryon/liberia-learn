@@ -58,7 +58,7 @@ describe("ServiceWorkerRegistration", () => {
 
     await Promise.resolve();
 
-    expect(registerMock).toHaveBeenCalledWith("/sw.js");
+    expect(registerMock).toHaveBeenCalledWith("/sw.js", { updateViaCache: "none" });
     expect(syncRegisterMock).toHaveBeenCalledWith("liberialearn-sync");
   });
 });

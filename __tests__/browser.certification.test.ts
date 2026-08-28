@@ -19,7 +19,7 @@ describe("browser certification", () => {
     const sw = fs.readFileSync(swPath, "utf8");
     expect(sw).toContain('pathname.startsWith("/api/")');
     expect(sw).toContain("isLessonPage(url.pathname)");
-    expect(sw).toContain("staleWhileRevalidate(event.request)");
+    expect(sw).toContain("staleWhileRevalidate(event.request, CONTENT_CACHE)");
     expect(sw).toContain('caches.match("/offline.html")');
   });
 

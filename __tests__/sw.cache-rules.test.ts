@@ -29,7 +29,7 @@ describe("service worker cache rules", () => {
     expect(sw).toContain('"/offline.html"');
     expect(sw).toContain('url.pathname.startsWith("/_next/static/")');
     expect(sw).toContain("isLessonPage(url.pathname)");
-    expect(sw).toContain("staleWhileRevalidate(event.request)");
+    expect(sw).toContain("staleWhileRevalidate(event.request, CONTENT_CACHE)");
     expect(sw).toContain('await caches.match("/offline.html")');
   });
 });

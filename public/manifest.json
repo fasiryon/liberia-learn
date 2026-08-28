@@ -2,8 +2,13 @@
   "name": "LiberiaLearn",
   "short_name": "LiberiaLearn",
   "description": "AI-powered K-12 education for Liberia",
+  "id": "/",
   "start_url": "/",
+  "scope": "/",
+  "lang": "en",
+  "dir": "ltr",
   "display": "standalone",
+  "display_override": ["window-controls-overlay", "standalone"],
   "background_color": "#0a0a0a",
   "theme_color": "#f5c518",
   "icons": [

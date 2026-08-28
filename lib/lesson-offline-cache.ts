@@ -34,6 +34,7 @@ import {
   verifyContentAvailabilityManifest,
   type SignedContentAvailabilityManifest,
 } from "@/lib/content-availability-manifest";
+import { reportOfflineStorageError } from "@/lib/offline/storageSignals";
 
 const LESSON_SCOPE = "lesson";
 const LESSON_AUDIO_SCOPE = "lesson-audio";
@@ -109,8 +110,9 @@ export async function cacheLessonContent(
     if (!(await acceptManifestAtomically(contentId, manifest))) return false;
     await cachePack(LESSON_SCOPE, contentId, manifestPackVersion(manifest), data);
     return true;
-  } catch {
-    // IndexedDB unavailable (private browsing, quota exceeded) — silently skip
+  } catch (error) {
+    reportOfflineStorageError("cache-lesson", error);
+    // IndexedDB unavailable (private browsing, quota exceeded).
     return false;
   }
 }
@@ -122,7 +124,8 @@ export async function cacheLessonAudio(
   try {
     await cachePack(LESSON_AUDIO_SCOPE, contentId, audio.contentVersion ?? "1", audio);
     return true;
-  } catch {
+  } catch (error) {
+    reportOfflineStorageError("cache-lesson-audio", error);
     return false;
   }
 }

@@ -33,6 +33,8 @@ export type QueueItem = {
   baseServerVersion: string | null;
   idempotencyKey: string;
   dependencyIds: string[];
+  /** Only groups still-pending edits; acknowledged operations keep their IDs. */
+  coalesceKey?: string | null;
   syncState: "LOCAL_PENDING" | "SENDING" | "ACKNOWLEDGED" | "CONFLICT" | "RETRYABLE_FAILURE" | "AUTH_REQUIRED" | "TERMINAL_FAILURE";
   leaseExpiresAt?: string | null;
   clientEventId?: string;
@@ -69,6 +71,12 @@ export type QueueStats = {
 
 function nowIso() {
   return new Date().toISOString();
+}
+
+function newOperationId(): string {
+  return typeof crypto !== "undefined" && "randomUUID" in crypto
+    ? crypto.randomUUID()
+    : `${Date.now()}-${Math.random()}`;
 }
 
 function computeBackoff(attempts: number) {
@@ -116,17 +124,22 @@ export async function enqueueOfflineRequest(
     clientEventId?: string;
     originalTimestamp?: string;
     clientCreatedAt?: string;
+    coalesceKey?: string;
   },
   partition?: SessionPartitionInput
 ): Promise<QueueItem> {
   return withQueueLock(async () => {
     const queue = await getQueue(partition);
-    const operationId = item.operationId ?? item.dedupeKey;
+    const requestedOperationId = item.operationId ?? newOperationId();
     const inferred = inferOfflineResource(item.type);
     const resourceType = item.resourceType ?? inferred?.resourceType ?? null;
     const operationType = item.operationType ?? inferred?.operationType ?? null;
-    const resourceId = item.resourceId ?? String(item.payload.scheduledWorkId ?? item.payload.assignmentId ?? item.payload.homeworkId ?? item.payload.sessionId ?? operationId);
-    const existing = queue.find((entry) => entry.operationId === operationId && entry.status !== "failed");
+    const resourceId = item.resourceId ?? String(item.payload.scheduledWorkId ?? item.payload.assignmentId ?? item.payload.homeworkId ?? item.payload.sessionId ?? requestedOperationId);
+    const existing = queue.find((entry) =>
+      item.coalesceKey && entry.coalesceKey === item.coalesceKey &&
+      entry.status !== "failed" && entry.status !== "acknowledged" && entry.status !== "conflict",
+    );
+    const operationId = existing?.operationId ?? requestedOperationId;
     const clientEventId = item.clientEventId ?? operationId;
     const originalTimestamp = item.clientCreatedAt ?? item.originalTimestamp ?? String(item.payload.originalTimestamp ?? item.payload.completedAt ?? item.payload.clientUpdatedAt ?? nowIso());
     const common = {
@@ -145,6 +158,7 @@ export async function enqueueOfflineRequest(
       baseServerVersion: item.baseServerVersion ?? null,
       idempotencyKey: operationId,
       dependencyIds: item.dependencyIds ?? [],
+      coalesceKey: item.coalesceKey ?? null,
     };
     if (existing) {
       existing.payload = { ...item.payload, clientEventId: existing.clientEventId, originalTimestamp: existing.originalTimestamp };
@@ -161,7 +175,7 @@ export async function enqueueOfflineRequest(
     }
     const createdAt = nowIso();
     const created: QueueItem = {
-      id: typeof crypto !== "undefined" && "randomUUID" in crypto ? crypto.randomUUID() : `${Date.now()}-${Math.random()}`,
+      id: newOperationId(),
       ...common,
       clientEventId,
       originalTimestamp,
@@ -225,6 +239,9 @@ export async function enqueueOfflineOperation(
     baseServerVersion: operation.baseServerVersion,
     dependencyIds: operation.dependencyIds,
     originalTimestamp: operation.clientCreatedAt,
+    coalesceKey: operation.resourceType === "lesson_progress"
+      ? `${operation.resourceType}:${operation.resourceId}`
+      : undefined,
   }, partition);
 }
 
@@ -247,6 +264,7 @@ export async function enqueueCompletion(
       endpoint: "/api/student/sync",
       payload: { scheduledWorkId, completedAt },
       dedupeKey: `lesson-complete:${scheduledWorkId}`,
+      coalesceKey: `lesson-progress:${scheduledWorkId}`,
     },
     partition
   );

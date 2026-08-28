@@ -5,6 +5,7 @@ import "./globals.css";
 import { ServiceWorkerRegistration } from "@/components/ServiceWorkerRegistration";
 import { ConsentGate } from "@/components/ConsentGate";
 import { CookieNotice } from "@/components/CookieNotice";
+import { PwaLifecycleStatus } from "@/components/PwaLifecycleStatus";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -34,6 +35,7 @@ export default function RootLayout({
         <ConsentGate />
         <CookieNotice />
         <ServiceWorkerRegistration />
+        <PwaLifecycleStatus />
       </body>
     </html>
   );

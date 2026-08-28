@@ -20,6 +20,7 @@
 
 import { enqueueOfflineRequest } from "@/lib/offline-queue";
 import type { OfflineResourceType } from "@/lib/offline/syncProtocol";
+import { reportOfflineStorageError } from "@/lib/offline/storageSignals";
 
 /** Background Sync tag used by public/sw.js `flushOfflineQueue()`. */
 const SYNC_TAG = "liberialearn-sync";
@@ -103,8 +104,10 @@ export async function submitWithQueue(params: {
       contentVersion: params.contentVersion ?? (typeof params.body.contentVersion === "string" ? params.body.contentVersion : null),
       contentHash: params.contentHash ?? (typeof params.body.contentHash === "string" ? params.body.contentHash : null),
       baseServerVersion: params.baseServerVersion,
+      coalesceKey: params.type === "lesson-complete" ? `${resourceType}:${resourceId}` : undefined,
     });
   } catch (error) {
+    reportOfflineStorageError("enqueue-operation", error);
     return {
       status: "storage_error",
       clientSubmissionId,
