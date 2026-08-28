@@ -12,7 +12,7 @@ import {
   provenanceWritersEnabled,
 } from "@/lib/curriculum/mutations/repository";
 import { appendCurriculumGovernanceEvent } from "@/lib/curriculum/mutations/governanceWriter";
-import { validateNr12Lesson, type Nr12GenerationRecord } from "@/lib/curriculum/nr12GradeDeserts";
+import { NR12_VERSION, validateNr12Lesson, type Nr12GenerationRecord } from "@/lib/curriculum/nr12GradeDeserts";
 
 export const NATIONAL_LESSON_TARGET = 108; // 36 weeks × 3 lessons/week
 export const FACTORY_STATUS = "pending_approval";
@@ -67,7 +67,7 @@ const NATIONAL_MAP: NationalSubjectDefinition[] = [
     lessonsPerUnit: 5, unitsPerYear: 8, useCatalog: false,
   },
   // ── Upper Primary Grade 5 — CIVICS + COMPUTER_SCIENCE gap closure ────────
-  { grades: [5, 6], storageSubject: "CIVICS", displayName: "Civics and Citizenship", unitThemes: [], lessonsPerUnit: 5, unitsPerYear: 8, useCatalog: true },
+  { grades: [2, 5, 6], storageSubject: "CIVICS", displayName: "Civics and Citizenship", unitThemes: [], lessonsPerUnit: 5, unitsPerYear: 8, useCatalog: true },
   {
     grades: [5],
     storageSubject: "COMPUTER_SCIENCE",
@@ -469,6 +469,8 @@ export async function generateNationalBatch(options: BatchOptions, db: PrismaCli
       }
       try {
         const writersEnabled = provenanceWritersEnabled();
+        const isNr12 = (record.payload.metadata as Record<string, unknown> | undefined)?.nr === "NR-12";
+        const generationVersion = isNr12 ? String(record.payload.version ?? NR12_VERSION) : FACTORY_VERSION;
         const write = await createCurriculumContent({
           contentId: record.contentId,
           title: record.title,
@@ -476,7 +478,7 @@ export async function generateNationalBatch(options: BatchOptions, db: PrismaCli
           subject: record.subject,
           contentType: "lesson",
           status: writersEnabled ? "draft" : FACTORY_STATUS,
-          version: FACTORY_VERSION,
+          version: generationVersion,
           unitId: record.unitId,
           orderInUnit: record.orderInUnit,
           lessonType: "core",
@@ -500,7 +502,7 @@ export async function generateNationalBatch(options: BatchOptions, db: PrismaCli
           originKind: "DETERMINISTIC_GENERATED",
           actorLabel: FACTORY_SOURCE,
           generatorName: "nationalCurriculumFactory",
-          generatorVersion: FACTORY_VERSION,
+          generatorVersion: generationVersion,
           generatedAt: new Date(batchStartedAt),
           requestedCompleteness: "VERIFIED",
           auditAction: "curriculum.revision.national_factory_create",

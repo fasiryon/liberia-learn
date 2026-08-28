@@ -32,6 +32,9 @@ async function run() {
       });
       summaries.push(summary);
       const batch = summary.batches[0];
+      if (!batch || batch.grade !== grade || batch.subject !== subject || (action === "dry_run" && batch.attempted !== 15)) {
+        throw new Error(`NR-12 runner produced no complete batch for G${grade} ${subject}`);
+      }
       console.log(`G${grade} ${subject}: attempted=${batch?.attempted ?? 0} passed=${batch?.passed ?? 0} failed=${batch?.failed ?? 0} mode=${action}`);
     }
   }
@@ -39,7 +42,7 @@ async function run() {
   if (action !== "full") return;
 
   const pending = await prisma.curriculumContent.findMany({
-    where: { version: NR12_VERSION, status: { in: ["pending_approval", "DRAFT"] } },
+    where: { version: NR12_VERSION, status: { in: ["pending_approval", "draft", "DRAFT"] } },
     select: { contentId: true, grade: true, subject: true, payload: true },
     orderBy: [{ grade: "asc" }, { subject: "asc" }, { contentId: "asc" }],
   });
