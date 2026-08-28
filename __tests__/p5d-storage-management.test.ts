@@ -24,7 +24,7 @@ vi.mock("@/lib/offline-session", () => ({
 vi.mock("@/lib/content-availability-manifest", () => ({
   acceptsContentAvailabilityManifest: vi.fn(() => true),
   acceptsManifestPolicy: vi.fn(() => true),
-  hashContentAvailabilityData: vi.fn(async () => null),
+  hashContentAvailabilityData: vi.fn(async (input: { contentId: string; version: string }) => `${input.contentId}:${input.version}`),
   isLegacyContentAvailabilityManifest: vi.fn((payload: { policy?: boolean }) => !payload.policy),
   isManifestCompatibleWithClient: vi.fn((manifest: { payload: { minClientVersion?: string } }) => manifest.payload.minClientVersion !== "99.0.0"),
   isManifestExpired: vi.fn((manifest: { payload: { expiresAt?: string } }) => manifest.payload.expiresAt === "expired"),
@@ -45,6 +45,7 @@ import {
   getOfflineStorageSnapshot,
   storageUsagePercent,
 } from "@/lib/offline/storageManagement";
+import { hashContentAvailabilityData } from "@/lib/content-availability-manifest";
 
 const partition = { userId: "student-1", schoolId: "school-1", deviceId: "device-1" };
 
@@ -58,6 +59,7 @@ function manifest(contentId: string, options: { revoked?: boolean; expiresAt?: s
       expiresAt: options.expiresAt ?? "2026-09-01T00:00:00.000Z",
       minClientVersion: options.minClientVersion ?? "1.0.0",
       sequence: { revision: 1, governance: 1 },
+      contents: options.revoked ? [] : [{ contentId, version: "1", sha256: `${contentId}:1` }],
       policy: true,
     },
     signature: "signature",
@@ -70,6 +72,7 @@ describe("P5-D storage management", () => {
 
   beforeEach(() => {
     store.clear();
+    vi.mocked(hashContentAvailabilityData).mockImplementation(async (input: { contentId: string; version: string }) => `${input.contentId}:${input.version}`);
     vi.mocked(idbSet).mockImplementation(async (key: string, value: unknown) => { store.set(key, value); });
     configureCacheLifecycle({ ttlMs: 7 * 24 * 60 * 60 * 1000, maxStorageBytes: 25 * 1024 * 1024 });
     originalNavigator = Object.getOwnPropertyDescriptor(globalThis, "navigator");
@@ -160,6 +163,31 @@ describe("P5-D storage management", () => {
     ]);
     await expect(listCachedLessons(partition)).resolves.toEqual([
       expect.objectContaining({ contentId: "valid", status: "incomplete" }),
+    ]);
+  });
+
+  it("does not touch LRU timestamps while inspecting the storage inventory", async () => {
+    await cachePack("lesson", "lru-lesson", "revision-1:governance-1", { body: "lesson" }, partition);
+    await cachePack("lesson-availability", "lru-lesson", "revision-1:governance-1", manifest("lru-lesson"), partition);
+    const oldLastUsedAt = "2026-08-27T00:00:00.000Z";
+    const metadata = await getMetadata(partition);
+    await idbSet(
+      "liberialearn_cache_meta::u:student-1|s:school-1|d:device-1",
+      metadata.map((entry) => entry.scope === "lesson" ? { ...entry, lastUsedAt: oldLastUsedAt } : entry),
+    );
+
+    await listCachedLessons(partition);
+
+    expect((await getMetadata(partition)).find((entry) => entry.scope === "lesson")?.lastUsedAt).toBe(oldLastUsedAt);
+  });
+
+  it("classifies lesson bytes as corrupt when their signed content hash no longer matches", async () => {
+    await cachePack("lesson", "tampered", "revision-1:governance-1", { body: "tampered" }, partition);
+    await cachePack("lesson-availability", "tampered", "revision-1:governance-1", manifest("tampered"), partition);
+    vi.mocked(hashContentAvailabilityData).mockResolvedValue("not-the-signed-hash");
+
+    await expect(listCachedLessons(partition)).resolves.toEqual([
+      expect.objectContaining({ contentId: "tampered", status: "corrupt" }),
     ]);
   });
 

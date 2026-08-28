@@ -225,7 +225,8 @@ export async function compareAndSwapCachedPack<T>(
 export async function getCachedPack<T>(
   scope: string,
   scopeId: string,
-  partition?: SessionPartitionInput
+  partition?: SessionPartitionInput,
+  options?: { touch?: boolean },
 ): Promise<T | null> {
   await purgeExpiredPacks(partition);
   const payload = await get<T>(packStoreKey(scope, scopeId, partition));
@@ -234,10 +235,12 @@ export async function getCachedPack<T>(
   const metas = await getMetadata(partition);
   const metadata = metas.find((item) => item.scope === scope && item.scopeId === scopeId);
   if (metadata?.complete === false) return null;
-  const updated = metas.map((meta) =>
-    meta.scope === scope && meta.scopeId === scopeId ? { ...meta, lastUsedAt: nowIso() } : meta
-  );
-  await setMetadata(updated, partition);
+  if (options?.touch !== false) {
+    const updated = metas.map((meta) =>
+      meta.scope === scope && meta.scopeId === scopeId ? { ...meta, lastUsedAt: nowIso() } : meta
+    );
+    await setMetadata(updated, partition);
+  }
   return payload;
 }
 

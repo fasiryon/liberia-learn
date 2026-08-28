@@ -211,6 +211,38 @@ describe("P5-A Phase B: real rollback/replay rejection through the actual consum
     expect(await loadCachedLesson("content-recache")).toBeNull();
   });
 
+  it("rejects a stale lesson response before it can overwrite a newer cached body", async () => {
+    const older = signManifest({
+      contentId: "content-stale-cache",
+      version: "1",
+      revoked: false,
+      sequence: { revision: 1, governance: 1 },
+    });
+    const newer = signManifest({
+      contentId: "content-stale-cache",
+      version: "2",
+      revoked: false,
+      sequence: { revision: 2, governance: 1 },
+    });
+    expect(await cacheLessonContent(
+      "content-stale-cache",
+      { metadata: { version: "1" }, payload: { title: "test" } },
+      older,
+    )).toBe(true);
+    expect(await cacheLessonContent(
+      "content-stale-cache",
+      { metadata: { version: "2" }, payload: { title: "test" } },
+      newer,
+    )).toBe(true);
+
+    expect(await cacheLessonContent(
+      "content-stale-cache",
+      { metadata: { version: "1" }, payload: { title: "test" } },
+      older,
+    )).toBe(false);
+    expect((await loadCachedLesson("content-stale-cache"))?.metadata?.version).toBe("2");
+  });
+
   it("a genuinely newer manifest is still accepted and correctly evicts the lesson (no false-positive rollback rejection)", async () => {
     const first = signManifest({
       contentId: "content-forward",

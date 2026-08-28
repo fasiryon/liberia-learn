@@ -37,11 +37,11 @@ function formatDate(iso: string | null): string {
 
 const statusLabels: Record<CachedLessonEntry["status"], string> = {
   "trusted-current": "Trusted and current",
-  expired: "Expired — download a current version when online",
-  revoked: "Revoked — not served as trusted content",
+  expired: "Expired: download a current version when online",
+  revoked: "Revoked: not served as trusted content",
   "update-required": "Update required before use",
-  incomplete: "Incomplete — safe to remove and download again",
-  corrupt: "Integrity check failed — safe to remove and repair",
+  incomplete: "Incomplete: safe to remove and download again",
+  corrupt: "Integrity check failed: safe to remove and repair",
 };
 
 export default function OfflineLessonsPage() {
