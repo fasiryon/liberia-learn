@@ -421,7 +421,7 @@ export const curriculumFramework: CurriculumFramework = CurriculumFrameworkSchem
     waecAlignment: {
       required: true,
       examStyle: "waec_preparatory",
-      referenceCodes: ["WAEC-ALIGN-PLACEHOLDER"],
+      referenceCodes: [],
     },
     weicTags: ["W", "E", "I", "C"],
     teacherExplanation: "Teacher explanation is concept-first, example-rich, and written so it can be taught with minimal prep.",

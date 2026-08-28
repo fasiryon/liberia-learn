@@ -12,6 +12,7 @@ import {
   type CanonicalSubjectCode,
 } from "@/lib/curriculum/subjectTaxonomy";
 import { inferConceptMetadata } from "@/lib/curriculum/conceptGraph";
+import { buildNr12GenerationPlan, isNr12Cell } from "@/lib/curriculum/nr12GradeDeserts";
 
 export const COVERAGE_ENGINE_VERSION = "coverage-engine-2026.1";
 export const GENERATED_CURRICULUM_STATUS = "generated";
@@ -245,7 +246,7 @@ function buildLessonPayload(entry: CoverageCatalogEntry, unitTitle: string, orde
   };
 }
 
-function buildRecord(entry: CoverageCatalogEntry, unitTitle: string, unitIndex: number, orderInUnit: number, term?: string) {
+function buildRecord(entry: CoverageCatalogEntry, unitTitle: string, unitIndex: number, orderInUnit: number, term?: string): GeneratedCoverageRecord {
   const unitSlug = slugify(unitTitle);
   const unitId = `${entry.subject.toLowerCase()}-g${entry.grade}-${unitIndex}-${unitSlug}`;
   const lessonSlug = slugify(buildLessonTitle(unitTitle, orderInUnit));
@@ -302,12 +303,14 @@ function selectCatalogEntries(options: GenerationOptions) {
 
 export function buildCoverageGenerationPlan(options: GenerationOptions) {
   const entries = selectCatalogEntries(options);
-  let records = entries.flatMap((entry) =>
-    buildUnitTitles(entry).flatMap(({ unitIndex, unitTitle }) =>
-      Array.from({ length: entry.lessonsPerUnit }, (_, lessonIndex) =>
-        buildRecord(entry, unitTitle, unitIndex, lessonIndex + 1, options.term)
-      )
-    )
+  let records: GeneratedCoverageRecord[] = entries.flatMap((entry): GeneratedCoverageRecord[] =>
+    isNr12Cell(entry.grade, entry.subject)
+      ? buildNr12GenerationPlan(entry.grade, entry.subject)
+      : buildUnitTitles(entry).flatMap(({ unitIndex, unitTitle }) =>
+          Array.from({ length: entry.lessonsPerUnit }, (_, lessonIndex) =>
+            buildRecord(entry, unitTitle, unitIndex, lessonIndex + 1, options.term)
+          )
+        )
   );
 
   if (options.limit != null && options.limit > 0) {
