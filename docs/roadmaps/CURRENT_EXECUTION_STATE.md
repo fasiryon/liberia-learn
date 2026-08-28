@@ -93,23 +93,24 @@ expanding background sync or OfflinePack distribution.
 
 ## P5-C PWA Lifecycle and Real-Browser Offline E2E: COMPLETE
 
-The P5-C implementation is complete on dedicated branch
-`feat/p5-c-pwa-lifecycle-e2e`, pending normal PR delivery and exact merged-main
-verification. P5-A trust and P5-B synchronization remain complete and
-authoritative. The lifecycle work adds deterministic manifest and service-worker
-asset routing, separated shell/runtime/content caches, explicit update and
-storage-failure UI, mobile-like Playwright coverage, and real IndexedDB/Cache
-Storage browser-context restart coverage. The P5-B review remediations are
-included: homework entity mapping, object-shaped quiz answers, assignment
-targeting, retryable service-worker results, explicit storage-error handling,
-and fresh operation IDs after acknowledged writes.
+The P5-C implementation and exact merged-main verification are complete on
+main at `0ecbebbee362e10929bb708ad93593a90412777d`, delivered through PR #96.
+P5-A trust and P5-B synchronization remain complete and authoritative. The
+lifecycle work adds deterministic manifest and service-worker asset routing,
+separated shell/runtime/content caches, explicit update and storage-failure UI,
+mobile-like Playwright coverage, and real IndexedDB/Cache Storage
+browser-context restart coverage. The P5-B review remediations are included:
+homework entity mapping, object-shaped quiz answers, assignment targeting,
+retryable service-worker results, explicit storage-error handling, and fresh
+operation IDs after acknowledged writes.
 
 Local gate evidence: the P5-C Playwright suite passed 4 tests across desktop
 Chromium and Pixel 5 emulation; the full Vitest gate passed 600 files and 4,914
 tests; `npx prisma generate`, TypeScript, build, and `npm run validate:changed`
-passed. No production or staging mutation occurred. The next offline/PWA goal
-is P5-D physical Android/browser offline validation and storage-management
-hardening.
+passed. Post-merge CI run `33147542267`, Runtime Gate 1 run `33147542143`, and
+PR Triage run `33147542183` passed. No production or staging mutation
+occurred. The next offline/PWA goal is P5-D physical Android/browser offline
+validation and storage-management hardening.
 
 ## Resume here
 
