@@ -1,4 +1,5 @@
 import { config } from "dotenv";
+import type { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/db";
 import { createConservativeCurriculumMaintenanceClient } from "@/lib/curriculum/mutations/maintenanceClient";
 const governedCurriculum = createConservativeCurriculumMaintenanceClient("generate-curriculum-coverage");
@@ -105,7 +106,7 @@ async function main() {
         unitId: record.unitId,
         orderInUnit: record.orderInUnit,
         lessonType: record.lessonType,
-        payload: record.payload,
+        payload: record.payload as Prisma.InputJsonValue,
       },
       create: {
         contentId: record.contentId,
@@ -118,7 +119,7 @@ async function main() {
         unitId: record.unitId,
         orderInUnit: record.orderInUnit,
         lessonType: record.lessonType,
-        payload: record.payload,
+        payload: record.payload as Prisma.InputJsonValue,
       },
     });
 

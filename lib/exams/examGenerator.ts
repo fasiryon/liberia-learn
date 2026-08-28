@@ -180,6 +180,18 @@ async function requestExam(
     if (!params.moeStandards.includes(question.moeCode)) {
       throw new Error(`Question moeCode ${question.moeCode} was not in the requested MOE standards.`);
     }
+    if (
+      /^review question\b/i.test(question.prompt) ||
+      question.options.some((option) => /^option [a-d]$/i.test(option))
+    ) {
+      throw new Error("exam_placeholder_content");
+    }
+  }
+
+  const coveredStandards = new Set(exam.questions.map((question) => question.moeCode));
+  const missingStandards = params.moeStandards.filter((standard) => !coveredStandards.has(standard));
+  if (missingStandards.length > 0) {
+    throw new Error(`Exam omitted requested standards: ${missingStandards.join(", ")}`);
   }
 
   return {

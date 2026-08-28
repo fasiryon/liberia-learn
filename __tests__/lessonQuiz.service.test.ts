@@ -84,4 +84,26 @@ describe("lesson quiz AI services", () => {
     expect(analysis.missedConcepts[0]?.concept).toBe("Equal denominators");
     expect(analysis.closingMessage).toContain("Review");
   });
+
+  it("uses authored lesson quiz items instead of generating a shell", async () => {
+    const { generateLessonQuiz } = await import("@/lib/ai/lessonQuiz");
+    const questions = Array.from({ length: 5 }, (_, index) => ({
+      id: `authored-${index + 1}`,
+      question: `Which concrete check belongs to question ${index + 1}?`,
+      options: ["The mapped answer", "A different operation", "An unrelated fact", "No evidence"],
+      correctIndex: 0,
+      explanation: "The mapped answer measures the lesson objective.",
+    }));
+
+    const quiz = await generateLessonQuiz({
+      lessonTitle: "Number and Place Value",
+      lessonContent: "A complete authored lesson body.",
+      subject: "MATH",
+      gradeLevel: 2,
+      preAuthoredQuestions: questions,
+    });
+
+    expect(mockRoutedCompletion).not.toHaveBeenCalled();
+    expect(quiz.questions).toEqual(questions);
+  });
 });

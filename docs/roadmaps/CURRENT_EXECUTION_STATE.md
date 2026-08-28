@@ -150,14 +150,63 @@ Browser/PWA validation: `COMPLETE`.
 Physical mobile certification: `DEFERRED` to the Android/iOS
 application-shell phase.
 
-Recommended next goal: **NR-12 - Critical Grade Deserts (G2, G9)**. This is
-the first pending national rollout sprint and has higher product value than
-starting mobile packaging before its planned phase.
+## NR-12 Critical Grade Deserts (G2, G9): COMPLETE
+
+Completed on dedicated branch `feat/nr-12-g2-g9-grade-deserts` on 2026-08-28.
+The repository-first audit found the critical desert in the ten Grade 2/9
+core-subject cells (MATH, LITERACY, SCIENCE, SOCIAL_STUDIES, and CIVICS):
+each cell was below the roadmap threshold and did not have a deterministic,
+substantive lesson-generation contract. NR-12 closes the authorized repo
+coverage target with exactly 15 deterministic, authored lessons per cell
+(150 lessons total), with unit, lesson, practice, assessment, prerequisite,
+and authority traceability.
+
+- Grade 2: 5/5 cells complete, 15/15 lessons each; age-adapted concrete
+  examples, short instructions, scaffolding, and simple assessment wording.
+- Grade 9: 5/5 cells complete, 15/15 lessons each; conceptual progression,
+  worked reasoning, prerequisite continuity, error analysis, and independent
+  practice.
+- Authority: existing repo MOE standard records plus verified Liberia MOE
+  G2 Social Studies and G9 Math, Language Arts, General Science, and Social
+  Studies objective records. No unsupported WAEC standard or invented MOE
+  authority was added.
+- Generation: `lib/curriculum/nr12GradeDeserts.ts` is the NR-12 canonical
+  authored plan. It rejects shell content, records deterministic hashes,
+  preserves grade/subject identity, and routes approval through the existing
+  risk-triage/governance path. The international techniques in
+  `lib/curriculum/framework.ts` remain pedagogy choices subordinate to
+  Liberia MOE/WAEC authority.
+- Assessments: lesson quiz = 5 items with four options; unit quiz = 10
+  items; term-exam blueprint = 30 items. These are LiberiaLearn delivery
+  defaults, not claims that the MOE or WAEC mandates those exact counts.
+  Items map to the lesson authority code, use deterministic answer keys,
+  plausible distractors, rotated answer positions, and concept/application
+  coverage. Numerical values may vary only when the measured skill remains
+  unchanged.
+- Runtime: pre-authored lesson quizzes flow through the existing lesson quiz
+  route/player; exam generation rejects shells and missing requested-standard
+  coverage. No P5-A/P5-B/PWA contract or schema migration changed.
+- Validation: `npx prisma generate` PASS; `npx tsc --noEmit` PASS;
+  full Vitest PASS (4,932 tests in 602 files); production build PASS (384
+  static pages); NR-12 audit PASS; `git diff --check` PASS. No production or
+  staging mutation occurred. A fresh live database count was not used because
+  the working environment could not reach the configured pooler; repo
+  generation and coverage evidence are the authoritative NR-12 engineering
+  gate for this change.
+
+The lesson-generation operating contract is documented in
+`docs/roadmaps/NR12_LESSON_GENERATION_GUIDELINES.md`. Existing generic
+non-NR-12 generators remain a follow-up convergence item; NR-13 should apply
+the same authored-plan contract to its cells.
+
+Recommended next goal: **NR-13 - Grades 5–8 Gap Closure + ENGLISH**. Physical
+mobile certification remains a future application-shell gate and is not the
+next national rollout goal.
 
 ## Resume here
 
 The entries below are historical execution records. Their embedded next-goal
-instructions are superseded by the active NR-12 resume target above.
+instructions are superseded by the active NR-13 resume target above.
 
 - **P5-A PHASE C OPERATIONAL CLOSURE (2026-08-27).** Phase C source is
   complete on main at `f4f350d6f7232014d9136f55386880c9e912a7d8`, after PR

@@ -31,6 +31,7 @@ export async function POST(
         lessonContent: lesson.body,
         subject: lesson.subject,
         gradeLevel: lesson.grade,
+        preAuthoredQuestions: lesson.lessonQuizQuestions,
       },
       {
         route: "/api/student/lessons/[id]/quiz",

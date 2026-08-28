@@ -12,6 +12,7 @@ import {
   provenanceWritersEnabled,
 } from "@/lib/curriculum/mutations/repository";
 import { appendCurriculumGovernanceEvent } from "@/lib/curriculum/mutations/governanceWriter";
+import { validateNr12Lesson, type Nr12GenerationRecord } from "@/lib/curriculum/nr12GradeDeserts";
 
 export const NATIONAL_LESSON_TARGET = 108; // 36 weeks × 3 lessons/week
 export const FACTORY_STATUS = "pending_approval";
@@ -295,6 +296,24 @@ export function validatePayloadQuality(payload: Record<string, unknown>): Qualit
     if (bodyText.includes(ph) || title.toLowerCase().includes(ph)) {
       return { passed: false, reason: "placeholder_content" };
     }
+  }
+
+  if ((payload.metadata as Record<string, unknown> | undefined)?.nr === "NR-12") {
+    const result = validateNr12Lesson({
+      contentId: String(payload.contentId ?? "nr12-validation"),
+      grade: Number(payload.grade),
+      subject: String(payload.subject),
+      canonicalSubject: String(payload.canonicalSubject) as Nr12GenerationRecord["canonicalSubject"],
+      contentType: "lesson",
+      status: "generated",
+      version: String(payload.version ?? "nr12-2026.1"),
+      hash: "validation",
+      unitId: String(payload.unitId ?? "nr12-validation"),
+      orderInUnit: Number(payload.orderInUnit ?? 1),
+      lessonType: "core",
+      payload,
+    });
+    if (!result.passed) return { passed: false, reason: `nr12_${result.reasons[0]}` };
   }
   return { passed: true };
 }

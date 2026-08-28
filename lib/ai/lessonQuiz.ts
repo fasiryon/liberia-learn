@@ -166,9 +166,17 @@ export async function generateLessonQuiz(
     lessonContent: string;
     subject: string;
     gradeLevel: number;
+    preAuthoredQuestions?: LessonQuizQuestion[];
   },
   usageContext?: AiUsageContext
 ): Promise<LessonQuiz> {
+  if (input.preAuthoredQuestions?.length === 5) {
+    return {
+      quizId: `lesson-quiz-${input.lessonTitle.toLowerCase().replace(/[^a-z0-9]+/g, "-").slice(0, 48)}`,
+      questions: input.preAuthoredQuestions,
+    };
+  }
+
   const lessonExcerpt = buildLessonPromptExcerpt(input.lessonContent);
   const fallbackQuestions = JSON.stringify({
     questions: Array.from({ length: 5 }, (_, index) => ({
@@ -205,6 +213,13 @@ export async function generateLessonQuiz(
       fallbackQuestions
     ),
   });
+
+  if (questions.some((question) =>
+    /^(review question|option [a-d])\b/i.test(question.question) ||
+    question.options.some((option) => /^option [a-d]$/i.test(option))
+  )) {
+    throw new Error("invalid_quiz_placeholder_content");
+  }
 
   return {
     quizId: randomUUID(),

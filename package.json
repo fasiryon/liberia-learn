@@ -16,6 +16,8 @@
     "seed:demo": "ts-node --compiler-options {\"module\":\"CommonJS\"} scripts/seed-demo.ts",
     "embed:curriculum": "tsx scripts/embed-curriculum.ts",
     "audit:lessons": "tsx scripts/audit-lesson-depth.ts",
+    "audit:nr12": "tsx scripts/audit-nr12-grade-deserts.ts",
+    "run:nr12": "tsx scripts/nr12-grade-deserts.ts",
     "regen:lessons": "tsx scripts/regenerate-approved-lessons.ts",
     "generate:curriculum": "tsx scripts/generate-curriculum-coverage.ts",
     "enrich:generated-lessons": "tsx scripts/enrich-generated-lessons.ts",
