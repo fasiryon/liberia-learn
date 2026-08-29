@@ -9,10 +9,10 @@ import {
   CORE_SUBJECTS,
   getStorageSubject,
   normalizeSubject,
-  type CanonicalSubjectCode,
 } from "@/lib/curriculum/subjectTaxonomy";
 import { inferConceptMetadata } from "@/lib/curriculum/conceptGraph";
 import { buildNr12GenerationPlan, isNr12Cell } from "@/lib/curriculum/nr12GradeDeserts";
+import { buildNr13GenerationPlan, isNr13Cell, type Nr13Subject } from "@/lib/curriculum/nr13Grades58";
 
 export const COVERAGE_ENGINE_VERSION = "coverage-engine-2026.1";
 export const GENERATED_CURRICULUM_STATUS = "generated";
@@ -31,7 +31,7 @@ export type GeneratedCoverageRecord = {
   contentId: string;
   grade: number;
   subject: string;
-  canonicalSubject: CanonicalSubjectCode;
+  canonicalSubject: string;
   contentType: "lesson";
   status: typeof GENERATED_CURRICULUM_STATUS;
   version: string;
@@ -302,16 +302,25 @@ function selectCatalogEntries(options: GenerationOptions) {
 }
 
 export function buildCoverageGenerationPlan(options: GenerationOptions) {
+  const normalizedSubject = options.subject ? normalizeSubject(options.subject) : null;
+  if (options.grade != null && normalizedSubject?.code === "LITERACY" && isNr13Cell(options.grade, "ENGLISH")) {
+    let records = buildNr13GenerationPlan(options.grade, "ENGLISH");
+    if (options.limit != null && options.limit > 0) records = records.slice(0, options.limit);
+    return records;
+  }
+
   const entries = selectCatalogEntries(options);
-  let records: GeneratedCoverageRecord[] = entries.flatMap((entry): GeneratedCoverageRecord[] =>
-    isNr12Cell(entry.grade, entry.subject)
-      ? buildNr12GenerationPlan(entry.grade, entry.subject)
-      : buildUnitTitles(entry).flatMap(({ unitIndex, unitTitle }) =>
-          Array.from({ length: entry.lessonsPerUnit }, (_, lessonIndex) =>
-            buildRecord(entry, unitTitle, unitIndex, lessonIndex + 1, options.term)
-          )
-        )
-  );
+  let records: GeneratedCoverageRecord[] = entries.flatMap((entry): GeneratedCoverageRecord[] => {
+    const entrySubject = String(entry.subject);
+    const nr13Subject = entrySubject === "LITERACY" ? "ENGLISH" : (entrySubject as Nr13Subject);
+    if (isNr12Cell(entry.grade, entry.subject)) return buildNr12GenerationPlan(entry.grade, entry.subject);
+    if (isNr13Cell(entry.grade, nr13Subject)) return buildNr13GenerationPlan(entry.grade, nr13Subject);
+    return buildUnitTitles(entry).flatMap(({ unitIndex, unitTitle }) =>
+      Array.from({ length: entry.lessonsPerUnit }, (_, lessonIndex) =>
+        buildRecord(entry, unitTitle, unitIndex, lessonIndex + 1, options.term)
+      )
+    );
+  });
 
   if (options.limit != null && options.limit > 0) {
     records = records.slice(0, options.limit);

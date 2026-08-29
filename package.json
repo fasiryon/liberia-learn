@@ -18,6 +18,8 @@
     "audit:lessons": "tsx scripts/audit-lesson-depth.ts",
     "audit:nr12": "tsx scripts/audit-nr12-grade-deserts.ts",
     "run:nr12": "tsx scripts/nr12-grade-deserts.ts",
+    "audit:nr13": "tsx scripts/audit-nr13-grades58.ts",
+    "run:nr13": "tsx scripts/nr13-grades58.ts",
     "regen:lessons": "tsx scripts/regenerate-approved-lessons.ts",
     "generate:curriculum": "tsx scripts/generate-curriculum-coverage.ts",
     "enrich:generated-lessons": "tsx scripts/enrich-generated-lessons.ts",

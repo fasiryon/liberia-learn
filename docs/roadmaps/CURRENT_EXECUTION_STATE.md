@@ -203,6 +203,44 @@ Recommended next goal: **NR-13 - Grades 5–8 Gap Closure + ENGLISH**. Physical
 mobile certification remains a future application-shell gate and is not the
 next national rollout goal.
 
+## NR-13 Grades 5-8 Gap Closure + English: COMPLETE
+
+Completed on dedicated branch `feat/nr-13-grades-5-8-english` on 2026-08-28.
+NR-13 closes the repository-authorized Grade 5, 6, 7, and 8 cells for MATH,
+ENGLISH, SCIENCE, SOCIAL_STUDIES, and CIVICS with 15 deterministic authored
+lessons per cell: 20 cells and 300 lessons total. Liberia MOE remains the
+authority boundary; pedagogy and lesson design are the LiberiaLearn improvement
+layer, targeting a materially stronger authored experience than the source
+guideline baseline.
+
+- Matrix: `docs/roadmaps/NR13_COVERAGE_MATRIX.md` and `npm run audit:nr13`
+  report COMPLETE for every practice, assessment, prerequisite, next-concept,
+  authority, and quality cell.
+- Quality uplift: every lesson includes a real objective, explicit skill,
+  worked examples, guided and independent transfer, misconception repair,
+  remediation, extension, teacher guidance, home support, evidence recording,
+  and mapped assessment. Combined standard/block bodies meet the 3,500-word
+  shared approval floor and pass semantic shell prevention; word count alone
+  cannot pass the validator.
+- English is standalone `ENGLISH` content with MOE Language Arts (`LR-LIT-*`)
+  traceability and grade progression across reading, vocabulary, grammar,
+  composition, oral language, literature, mechanics, usage, and research.
+  Social Studies is separate, with distinct strands/objectives and verified
+  2011 Liberia MOE source locators; it is not English filler.
+- Grade 5 bridges from Grade 4, Grade 6 from Grade 5, Grade 7 from Grade 6,
+  Grade 8 from Grade 7, and Grade 8 explicitly bridges to the existing Grade 9
+  pathway. Each lesson has five deterministic mapped items; unit and term
+  blueprints contain 10 and 30 questions.
+- `scripts/nr13-grades58.ts` is dry-run by default and requires
+  `NR13_ALLOW_WRITE=true` for persistence. No production or staging mutation
+  occurred.
+- Validation: NR-13 audit PASS; focused curriculum tests PASS (8 tests);
+  TypeScript PASS. Full Prisma, Vitest, build, and browser/PWA gates remain
+  required at the sprint gate.
+
+Recommended next goal: **NR-14 - National Audio Pipeline Completion**. NR-13
+does not begin NR-14 work.
+
 ## Resume here
 
 The entries below are historical execution records. Their embedded next-goal

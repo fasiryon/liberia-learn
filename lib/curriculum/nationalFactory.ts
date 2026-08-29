@@ -13,6 +13,7 @@ import {
 } from "@/lib/curriculum/mutations/repository";
 import { appendCurriculumGovernanceEvent } from "@/lib/curriculum/mutations/governanceWriter";
 import { NR12_VERSION, validateNr12Lesson, type Nr12GenerationRecord } from "@/lib/curriculum/nr12GradeDeserts";
+import { NR13_VERSION, validateNr13Lesson, type Nr13GenerationRecord } from "@/lib/curriculum/nr13Grades58";
 
 export const NATIONAL_LESSON_TARGET = 108; // 36 weeks × 3 lessons/week
 export const FACTORY_STATUS = "pending_approval";
@@ -314,6 +315,23 @@ export function validatePayloadQuality(payload: Record<string, unknown>): Qualit
       payload,
     });
     if (!result.passed) return { passed: false, reason: `nr12_${result.reasons[0]}` };
+  }
+  if ((payload.metadata as Record<string, unknown> | undefined)?.nr === "NR-13") {
+    const result = validateNr13Lesson({
+      contentId: String(payload.contentId ?? "nr13-validation"),
+      grade: Number(payload.grade),
+      subject: String(payload.subject),
+      canonicalSubject: String(payload.canonicalSubject) as Nr13GenerationRecord["canonicalSubject"],
+      contentType: "lesson",
+      status: "generated",
+      version: String(payload.version ?? NR13_VERSION),
+      hash: "validation",
+      unitId: String(payload.unitId ?? "nr13-validation"),
+      orderInUnit: Number(payload.orderInUnit ?? 1),
+      lessonType: "core",
+      payload,
+    });
+    if (!result.passed) return { passed: false, reason: `nr13_${result.reasons[0]}` };
   }
   return { passed: true };
 }
