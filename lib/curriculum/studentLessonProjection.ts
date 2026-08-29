@@ -24,6 +24,75 @@ function numbered(values: string[]): string {
   return values.map((value, index) => `${index + 1}. ${value}`).join("\n");
 }
 
+function approvedArtifacts(value: unknown): unknown[] {
+  if (!Array.isArray(value)) return [];
+  return value.flatMap((item) => {
+    if (!item || typeof item !== "object" || Array.isArray(item)) return [];
+    const record = item as LessonPayloadRecord;
+    if (record.approved !== true || record.renderStatus !== "ready") return [];
+    const { teacherGuide: _teacherGuide, ...safeRecord } = record;
+    return [safeRecord];
+  });
+}
+
+function safeLabs(value: unknown): unknown[] {
+  if (!Array.isArray(value)) return [];
+  return value.flatMap((item) => {
+    if (!item || typeof item !== "object" || Array.isArray(item)) return [];
+    const lab = item as LessonPayloadRecord;
+    const procedure = Array.isArray(lab.procedure)
+      ? lab.procedure.flatMap((step) => {
+          if (!step || typeof step !== "object" || Array.isArray(step)) return [];
+          const record = step as LessonPayloadRecord;
+          const { teacherNote: _teacherNote, ...safeStep } = record;
+          return [safeStep];
+        })
+      : [];
+    const observationForm = Array.isArray(lab.observationForm)
+      ? lab.observationForm
+      : [];
+    const analysisQuestions = Array.isArray(lab.analysisQuestions)
+      ? lab.analysisQuestions.flatMap((question) => {
+          if (!question || typeof question !== "object" || Array.isArray(question)) return [];
+          const record = question as LessonPayloadRecord;
+          const { expectedAnswer: _expectedAnswer, scoringRubric: _scoringRubric, ...safeQuestion } = record;
+          return [safeQuestion];
+        })
+      : [];
+    const {
+      id,
+      title,
+      type,
+      durationMinutes,
+      subject,
+      gradeLevel,
+      labObjective,
+      materialsNeeded,
+      safetyNotes,
+      connectionToLesson,
+      offlineCapable,
+      virtualAlternative,
+    } = lab;
+    return [{
+      id,
+      title,
+      type,
+      durationMinutes,
+      subject,
+      gradeLevel,
+      labObjective,
+      materialsNeeded,
+      safetyNotes,
+      procedure,
+      observationForm,
+      analysisQuestions,
+      connectionToLesson,
+      offlineCapable,
+      virtualAlternative,
+    }];
+  });
+}
+
 function labForLearner(value: unknown): string {
   if (!value || typeof value !== "object" || Array.isArray(value)) return "";
   const lab = value as Record<string, unknown>;
@@ -112,6 +181,10 @@ export function projectStudentLessonPayload(payload: unknown): LessonPayloadReco
       body_block: text(source.body_block) || legacyBody,
       assessment: legacyAssessment,
       moeAlignments: list(source.moeAlignments),
+      labs: safeLabs(source.labs),
+      pseudoLabs: approvedArtifacts(source.pseudoLabs),
+      simulationDefinitions: approvedArtifacts(source.simulationDefinitions),
+      takeawaySummary: text(source.takeawaySummary),
       studentReady: true,
     };
   }
@@ -122,6 +195,13 @@ export function projectStudentLessonPayload(payload: unknown): LessonPayloadReco
   const homework = list(materials?.homework);
   const project = text(materials?.project);
   const lab = labForLearner(materials?.lab);
+  const labs = safeLabs(
+    Array.isArray(source.labs)
+      ? source.labs
+      : materials?.lab
+        ? [materials.lab]
+        : [],
+  );
   const groupWork = guided.length
     ? `Discuss the material with your group. Take turns explaining which words or details support each answer. Then complete your own response.\n\n${numbered(guided)}`
     : "Discuss the material with your group, explain your evidence, and complete your own response afterward.";
@@ -156,6 +236,10 @@ export function projectStudentLessonPayload(payload: unknown): LessonPayloadReco
     body_block: learnerSections,
     assessment,
     moeAlignments: list(source.moeAlignments),
+    labs,
+    pseudoLabs: approvedArtifacts(source.pseudoLabs),
+    simulationDefinitions: approvedArtifacts(source.simulationDefinitions),
+    takeawaySummary: text(source.takeawaySummary),
     studentReady: true,
   };
 }

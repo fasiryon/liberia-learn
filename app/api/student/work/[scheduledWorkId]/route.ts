@@ -9,10 +9,28 @@ import { signHero, signInlineIllustrations } from "@/lib/media/blobStorage";
 import type { HeroImageMeta, InlineIllustration } from "@/lib/media/types";
 import { readMoeAlignmentCodes } from "@/lib/moe/alignmentReader";
 
-function isRenderableArtifact(value: unknown): boolean {
-  if (!value || typeof value !== "object") return false;
-  const artifact = value as Record<string, unknown>;
-  return artifact.approved === true && artifact.renderStatus === "ready";
+function projectStudentDeliveryProfile(value: unknown) {
+  if (!value || typeof value !== "object" || Array.isArray(value)) return null;
+  const source = value as Record<string, unknown>;
+  const exitTicket = source.exitTicket;
+  if (!exitTicket || typeof exitTicket !== "object" || Array.isArray(exitTicket)) return null;
+  const questions = (exitTicket as Record<string, unknown>).questions;
+  if (!Array.isArray(questions)) return null;
+  const safeQuestions = questions.flatMap((question) => {
+    if (!question || typeof question !== "object" || Array.isArray(question)) return [];
+    const item = question as Record<string, unknown>;
+    const prompt = typeof item.question === "string" ? item.question.trim() : "";
+    if (!prompt) return [];
+    return [{
+      question: prompt,
+      ...(item.type === "mcq" || item.type === "short_answer" ? { type: item.type } : {}),
+      ...(Array.isArray(item.choices)
+        ? { choices: item.choices.filter((choice): choice is string => typeof choice === "string") }
+        : {}),
+      ...(typeof item.standardCode === "string" ? { standardCode: item.standardCode } : {}),
+    }];
+  });
+  return { exitTicket: { questions: safeQuestions } };
 }
 
 export const dynamic = "force-dynamic";
@@ -253,7 +271,9 @@ export async function GET(
     }
 
     const payload = sw.content.payload as any;
-    const deliveryProfile = (sw.content.deliveryProfile as any) ?? payload?.deliveryProfile ?? null;
+    const studentPayload = projectStudentLessonPayload(payload);
+    const deliveryProfileSource = (sw.content.deliveryProfile as any) ?? payload?.deliveryProfile ?? null;
+    const deliveryProfile = projectStudentDeliveryProfile(deliveryProfileSource);
     const latestAudio = sw.content.audioAssets[0] ?? null;
 
     // NR-14D: fetch exercises for CS lessons in parallel
@@ -331,15 +351,15 @@ export async function GET(
       subject: sw.content.subject,
       grade: sw.content.grade,
       contentType: sw.content.contentType,
-      body: payload?.body || payload?.lessons || payload,
-      bodyStandard: (projectStudentLessonPayload(payload).body_standard as string | undefined) ?? null,
-      bodyBlock: (projectStudentLessonPayload(payload).body_block as string | undefined) ?? null,
-      objectives: payload?.objectives || payload?.learningObjectives || [],
-      activities: payload?.activities || [],
-      labs: payload?.labs || [],
-      pseudoLabs: Array.isArray(payload?.pseudoLabs) ? payload.pseudoLabs.filter(isRenderableArtifact) : [],
-      simulationDefinitions: Array.isArray(payload?.simulationDefinitions)
-        ? payload.simulationDefinitions.filter(isRenderableArtifact)
+      body: (studentPayload.body as string | undefined) ?? null,
+      bodyStandard: (studentPayload.body_standard as string | undefined) ?? null,
+      bodyBlock: (studentPayload.body_block as string | undefined) ?? null,
+      objectives: Array.isArray(studentPayload.objectives) ? studentPayload.objectives : [],
+      activities: Array.isArray(studentPayload.activities) ? studentPayload.activities : [],
+      labs: Array.isArray(studentPayload.labs) ? studentPayload.labs : [],
+      pseudoLabs: Array.isArray(studentPayload.pseudoLabs) ? studentPayload.pseudoLabs : [],
+      simulationDefinitions: Array.isArray(studentPayload.simulationDefinitions)
+        ? studentPayload.simulationDefinitions
         : [],
       threeDLabDefinitions: [],
       durationMins: payload?.durationMins || 45,
@@ -378,7 +398,9 @@ export async function GET(
       startedAt: progress?.startedAt || null,
       codeExercises,
       aiLiteracyExercises,
-      takeawaySummary: (payload as any)?.takeawaySummary ?? null,
+      takeawaySummary: typeof studentPayload.takeawaySummary === "string"
+        ? studentPayload.takeawaySummary
+        : null,
       problemSets: Array.isArray((payload as any)?.problemSets)
         ? (payload as any).problemSets.map((ps: any) => ({
             id: ps.id,
