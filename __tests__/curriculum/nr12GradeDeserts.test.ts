@@ -7,6 +7,7 @@ import {
   isNr12Cell,
   validateNr12Lesson,
 } from "@/lib/curriculum/nr12GradeDeserts";
+import { isCompleteNr12Batch } from "../../scripts/nr12-grade-deserts";
 
 describe("NR-12 Grade 2 and Grade 9 lesson generation", () => {
   it("builds exactly 15 deterministic lessons for every core subject cell", () => {
@@ -28,6 +29,22 @@ describe("NR-12 Grade 2 and Grade 9 lesson generation", () => {
     expect(isNr12Cell(3, "MATH")).toBe(false);
     expect(isNr12Cell(2, "UNKNOWN")).toBe(false);
     expect(buildNr12GenerationPlan(3, "MATH")).toEqual([]);
+  });
+
+  it("fails the operational gate when any lesson fails", () => {
+    const dryRunBatch = {
+      grade: 2, subject: "CIVICS", attempted: 15, passed: 15, failed: 0,
+      items: Array.from({ length: 15 }, () => ({ outcome: "dry_run" })),
+    } as any;
+    expect(isCompleteNr12Batch("dry_run", 2, "CIVICS", dryRunBatch)).toBe(true);
+    expect(isCompleteNr12Batch("dry_run", 2, "CIVICS", { ...dryRunBatch, failed: 1 })).toBe(false);
+    expect(isCompleteNr12Batch("generate", 2, "CIVICS", {
+      ...dryRunBatch,
+      attempted: 15,
+      passed: 14,
+      failed: 1,
+      items: [...Array.from({ length: 14 }, () => ({ outcome: "saved" })), { outcome: "quality_failed" }],
+    })).toBe(false);
   });
 
   it("makes every generated lesson substantive and assessment-ready", () => {

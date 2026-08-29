@@ -7,13 +7,31 @@
  * script is intentionally not run by the repository audit or CI.
  */
 import { generateNationalBatch } from "../lib/curriculum/nationalFactory";
-import { NR12_SUBJECTS, NR12_VERSION } from "../lib/curriculum/nr12GradeDeserts";
+import type { BatchResult } from "../lib/curriculum/nationalFactory";
+import { NR12_SUBJECTS, NR12_TARGET_LESSONS, NR12_VERSION } from "../lib/curriculum/nr12GradeDeserts";
 import { triageAndApprove } from "../lib/curriculum/riskTriage";
 import { prisma } from "../lib/db";
 import { countLessonWords } from "../lib/curriculum/generatedLessonEnricher";
 
 const action = process.argv[2] ?? "dry_run";
 const canWrite = process.env.NR12_ALLOW_WRITE === "true";
+
+export function isCompleteNr12Batch(runAction: string, grade: number, subject: string, batch: BatchResult | undefined): boolean {
+  const completedOutcomes = batch?.items.filter((item) => item.outcome === "saved" || item.outcome === "skipped_duplicate").length ?? 0;
+  const dryRunComplete = runAction === "dry_run"
+    && !!batch
+    && batch.attempted === NR12_TARGET_LESSONS
+    && batch.passed === NR12_TARGET_LESSONS
+    && batch.failed === 0
+    && batch.items.length === NR12_TARGET_LESSONS
+    && batch.items.every((item) => item.outcome === "dry_run");
+  const persistedComplete = runAction !== "dry_run"
+    && !!batch
+    && batch.failed === 0
+    && batch.items.length === NR12_TARGET_LESSONS
+    && completedOutcomes === NR12_TARGET_LESSONS;
+  return !!batch && batch.grade === grade && batch.subject === subject && (dryRunComplete || persistedComplete);
+}
 
 async function run() {
   if (action !== "dry_run" && !canWrite) {
@@ -32,8 +50,9 @@ async function run() {
       });
       summaries.push(summary);
       const batch = summary.batches[0];
-      if (!batch || batch.grade !== grade || batch.subject !== subject || (action === "dry_run" && batch.attempted !== 15)) {
-        throw new Error(`NR-12 runner produced no complete batch for G${grade} ${subject}`);
+      const completedOutcomes = batch?.items.filter((item) => item.outcome === "saved" || item.outcome === "skipped_duplicate").length ?? 0;
+      if (!isCompleteNr12Batch(action, grade, subject, batch)) {
+        throw new Error(`NR-12 runner produced an incomplete batch for G${grade} ${subject}: attempted=${batch?.attempted ?? 0} passed=${batch?.passed ?? 0} failed=${batch?.failed ?? 0} completed=${completedOutcomes}`);
       }
       console.log(`G${grade} ${subject}: attempted=${batch?.attempted ?? 0} passed=${batch?.passed ?? 0} failed=${batch?.failed ?? 0} mode=${action}`);
     }
@@ -67,9 +86,12 @@ async function run() {
   void summaries;
 }
 
-run().catch((error) => {
-  console.error(error);
-  process.exitCode = 1;
-}).finally(async () => {
-  if (action !== "dry_run") await prisma.$disconnect();
-});
+const invokedScript = process.argv[1]?.replace(/\\/g, "/");
+if (invokedScript?.endsWith("/scripts/nr12-grade-deserts.ts") || invokedScript?.endsWith("/scripts/nr12-grade-deserts.js")) {
+  run().catch((error) => {
+    console.error(error);
+    process.exitCode = 1;
+  }).finally(async () => {
+    if (action !== "dry_run") await prisma.$disconnect();
+  });
+}
