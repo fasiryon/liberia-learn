@@ -243,3 +243,11 @@ export function projectStudentLessonPayload(payload: unknown): LessonPayloadReco
     studentReady: true,
   };
 }
+
+/**
+ * Project a standalone virtual-lab payload for the student lab route.
+ * Teacher notes and answer/rubric fields remain server-side for evaluation.
+ */
+export function projectStudentLabPayload(payload: unknown): LessonPayloadRecord {
+  return (safeLabs([payload])[0] as LessonPayloadRecord | undefined) ?? {};
+}
