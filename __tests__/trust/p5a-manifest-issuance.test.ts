@@ -119,6 +119,33 @@ describe("P5-A Phase B manifest issuance", () => {
     });
   });
 
+  it("returns the learner projection instead of teacher-only payload fields", async () => {
+    mockFindContent.mockResolvedValue({
+      ...governedRow(),
+      payload: {
+        title: "Learner lesson",
+        body: "## Teacher Guidance\nKeep this planning note private.",
+        studentMaterials: {
+          learnerMaterial: "Read the passage and identify two supporting details.",
+          guidedItems: ["Which detail supports the main idea?"],
+          independentItems: ["Write the main idea in your own words."],
+          masteryTask: "State the main idea and cite two details.",
+        },
+      },
+    });
+
+    const response = await GET(new Request("http://localhost/api/curriculum/lesson-1"), {
+      params: { contentId: "lesson-1" },
+    });
+    const body = await response.json();
+
+    expect(response.status).toBe(200);
+    expect(body.payload.body).toContain("Read the passage");
+    expect(body.payload.body).not.toContain("Teacher Guidance");
+    expect(body.payload).not.toHaveProperty("studentMaterials");
+    expect(body.payload.studentReady).toBe(true);
+  });
+
   it("renews an old stable revision without changing its ordering cursor", async () => {
     mockFindContent.mockResolvedValue({
       ...governedRow(),

@@ -14,6 +14,7 @@ import {
 import { LessonAudioPlayer, type LessonAudioPart } from "@/components/student/LessonAudioPlayer";
 import { getLessonLabLinks } from "@/lib/lessons/labLinks";
 import { looksLikeHtml, renderSimpleMarkdown } from "@/lib/lessons";
+import { projectStudentLessonPayload } from "@/lib/curriculum/studentLessonProjection";
 import { UnitSequenceSidebar } from "@/components/student/UnitSequenceSidebar";
 import { LessonFullscreenButton } from "@/components/lesson/LessonFullscreenButton";
 
@@ -101,7 +102,7 @@ export default function LessonViewerPage() {
         const cached = await loadCachedLesson(contentId);
         if (cached) {
           setMetadata(cached.metadata);
-          setPayload(cached.payload);
+          setPayload(projectStudentLessonPayload(cached.payload));
           setAudio((cached.audio as LessonAudio | undefined) ?? null);
           setServedFromCache(true);
         } else {
@@ -206,13 +207,11 @@ export default function LessonViewerPage() {
             objectives.length > 0
               ? objectives
               : [standardBodyText.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim().slice(0, 180)],
-          teacherNote: "Use the full lesson text for detail.",
         },
         ...activities.slice(0, 5).map((activity, index) => ({
           slideNumber: index + 2,
           title: `Activity ${index + 1}`,
           bullets: [activity],
-          teacherNote: "Pause for student explanation.",
         })),
       ].filter((slide) => slide.bullets.some((bullet: string) => bullet.trim().length > 0));
   const currentSlide = slides[currentSlideIndex] ?? slides[0] ?? null;
@@ -381,11 +380,6 @@ export default function LessonViewerPage() {
                       </li>
                     ))}
                   </ul>
-                  {currentSlide.teacherNote ? (
-                    <p className="mt-5 rounded-lg border border-[var(--ll-border)] bg-[var(--ll-bg)]/60 p-3 text-sm text-[var(--ll-text-muted)]">
-                      {currentSlide.teacherNote}
-                    </p>
-                  ) : null}
                 </div>
                 <div className="flex items-center justify-between gap-3">
                   <button

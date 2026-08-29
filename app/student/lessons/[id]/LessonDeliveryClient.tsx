@@ -21,6 +21,7 @@ import { enqueueOfflineRequest } from "@/lib/offline-queue";
 import { loadLessonProgress, removeLessonProgress, saveLessonProgress } from "@/lib/offline/lessonProgress";
 import { cacheLessonSession, loadCachedLessonSession } from "@/lib/offline/lessonSession";
 import { loadCachedLesson } from "@/lib/lesson-offline-cache";
+import { projectStudentLessonPayload } from "@/lib/curriculum/studentLessonProjection";
 import { SaveForOfflineButton } from "@/components/SaveForOfflineButton";
 import { LessonAudioPlayer, type LessonAudioPart } from "@/components/student/LessonAudioPlayer";
 import { StuckHelper } from "@/components/adaptive/StuckHelper";
@@ -534,7 +535,7 @@ export default function LessonDeliveryClient({ lessonId }: { lessonId: string })
           const trusted = await loadCachedLesson(cachedReference.contentId);
           if (trusted && !cancelled) {
             const metadata = trusted.metadata ?? {};
-            const payload = trusted.payload ?? {};
+            const payload = projectStudentLessonPayload(trusted.payload);
             const trustedLesson: LessonResponse = {
               id: lessonId,
               contentId: cachedReference.contentId,
