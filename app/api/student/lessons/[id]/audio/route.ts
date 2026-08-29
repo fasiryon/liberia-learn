@@ -3,6 +3,7 @@ import { requireRole } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { selectLessonBody } from "@/lib/lessons";
 import { getCurrentLessonAudio, queueLessonAudioGeneration } from "@/lib/lessons/audioGeneration";
+import { projectStudentLessonPayload } from "@/lib/curriculum/studentLessonProjection";
 
 export const dynamic = "force-dynamic";
 
@@ -42,11 +43,19 @@ export async function POST(
     }
 
     const payload = sw.content.payload as any;
+    const studentPayload = projectStudentLessonPayload(payload);
+    const learnerBody = typeof studentPayload.body === "string" ? studentPayload.body : "";
+    const learnerStandardBody = typeof studentPayload.body_standard === "string"
+      ? studentPayload.body_standard
+      : learnerBody;
+    const learnerBlockBody = typeof studentPayload.body_block === "string"
+      ? studentPayload.body_block
+      : learnerBody;
     const text = selectLessonBody(
       {
-        body: payload?.body,
-        body_standard: payload?.body_standard ?? payload?.body,
-        body_block: payload?.body_block ?? payload?.body,
+        body: learnerBody,
+        body_standard: learnerStandardBody,
+        body_block: learnerBlockBody,
       },
       sw.classFormat ?? "standard"
     );
