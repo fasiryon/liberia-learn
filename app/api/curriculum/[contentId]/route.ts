@@ -270,7 +270,7 @@ export async function GET(
 
     return NextResponse.json({
       metadata: responseMetadata,
-      payload: row.payload,
+      payload: responseData.payload,
       audio: responseAudio,
       offlineManifest: signAvailability(row.version, false),
       videos: await Promise.all(
