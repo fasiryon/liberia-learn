@@ -578,15 +578,172 @@ type LearningPackage = StudentMaterials & {
   lab?: string;
 };
 
-function buildLearningPackage(topic: Topic, grade: number, subject: Nr13Subject, stage: string): LearningPackage {
-  const materials = buildStudentMaterials(topic, grade, subject, stage);
+function applyStageLearningMaterials(
+  topic: Topic,
+  materials: StudentMaterials,
+  subject: Nr13Subject,
+  stage: string,
+): StudentMaterials {
+  if (stage === "Concept build") return materials;
+
+  const subjectLabel = subject === "SOCIAL_STUDIES" ? "social-studies" : subject.toLowerCase();
+  if (stage === "Guided application") {
+    return {
+      ...materials,
+      learnerMaterial: `${materials.learnerMaterial}\n\nApplication case:\n${topic.examples[1]}\n\nUse this changed ${subjectLabel} case beside the first case. Mark what stays constant, what changes, and which evidence still supports the same concept before writing your conclusion.`,
+      guidedItems: [
+        `Compare the first worked case with the application case: ${topic.examples[1]}`,
+        "Complete a change-and-evidence table before choosing a method or interpretation.",
+        ...materials.guidedItems,
+      ],
+      independentItems: [
+        `Solve or interpret the application case without copying the first example, then explain which step transferred: ${topic.examples[1]}`,
+        ...materials.independentItems,
+      ],
+      masteryTask: `${materials.masteryTask} Include a comparison with the application case and identify one detail that would change your conclusion.`,
+    };
+  }
+
   return {
     ...materials,
-    classwork: materials.guidedItems,
-    groupWork: subject === "SOCIAL_STUDIES"
-      ? "In groups, assign map reader or source reader, evidence checker, recorder, and reporter. Each group must cite two packet details, name one limitation, and invite a different perspective before reporting."
-      : `In groups, assign facilitator, evidence checker, recorder, and reporter. Groups must solve or discuss the supplied material, explain one choice, and give every learner an individual response afterward.`,
-    homework: materials.independentItems.map((item) => `${item} Bring the work back with the evidence, correction, or revision marked.`),
+    learnerMaterial: `${materials.learnerMaterial}\n\nTransfer challenge:\nUse the two supplied cases as a reference, then work on a new ${subjectLabel} case of your own design. Include the starting evidence, the representation or method, the conclusion, and one limitation so another learner can check your reasoning.`,
+    guidedItems: [
+      "Choose the representation or method before solving the new case and explain why it fits the evidence.",
+      "Exchange your new case with a partner and identify the exact evidence needed for a correct response.",
+      ...materials.guidedItems,
+    ],
+    independentItems: [
+      `Design and complete a new ${subjectLabel} case that measures ${topic.concept}; show the evidence, method, conclusion, and one repaired misconception.`,
+      ...materials.independentItems,
+    ],
+    masteryTask: `${materials.masteryTask} Transfer the skill to a new case, defend the evidence you selected, and explain one boundary of the conclusion.`,
+  };
+}
+
+function buildClasswork(topic: Topic, subject: Nr13Subject): string[] {
+  if (subject === "ENGLISH") {
+    if (/Literary analysis/i.test(topic.strand)) {
+      return [
+        "Annotate the supplied story: mark one image, one character action, and one change or contrast.",
+        "Complete a claim-evidence-effect chart for the lesson's literary device.",
+        "Write a six-sentence response that uses one precise detail and explains its effect.",
+      ];
+    }
+    if (/Grammar|mechanics|usage/i.test(topic.strand)) {
+      return [
+        "Edit the supplied sentence set and explain one agreement, reference, or punctuation repair.",
+        "Rewrite two sentences so their purpose and meaning are clear to a reader.",
+        "Read your edits aloud and mark the word or punctuation that carries the change.",
+      ];
+    }
+    if (/Research/i.test(topic.strand)) {
+      return [
+        "Complete a source-note table for each supplied source: source type, evidence, limitation, and next question.",
+        "Write a two-source synthesis that preserves the difference between the sources.",
+        "Underline the sentence in your synthesis that is directly supported by both sources.",
+      ];
+    }
+    if (/Vocabulary/i.test(topic.strand)) {
+      return [
+        "Annotate the language set by marking each context clue and shared word part.",
+        "Write two sentences that show the difference between an evidence-based inference and a guess.",
+        "Check one inferred meaning with a dictionary and record what the check confirmed or changed.",
+      ];
+    }
+    return [
+      "Annotate the supplied text by marking the central idea and three directly supporting details.",
+      "Write one careful conclusion and one conclusion the text does not establish.",
+      "Revise a summary so it preserves the evidence and limitation without copying the text.",
+    ];
+  }
+  if (subject === "MATH") {
+    return [
+      `Solve the first worked case and show each decision: ${topic.examples[0]}`,
+      "Represent the result with a labeled diagram, table, number line, graph, or equation.",
+      `Write a correction for this error and show a check: ${topic.correction}`,
+    ];
+  }
+  if (subject === "SCIENCE") {
+    return [
+      "Complete an observation table for the supplied cases before writing an explanation.",
+      "Label the changed condition, the comparison that remains fair, and the evidence still needed.",
+      "Write a conclusion that separates what was observed from what is only a possible explanation.",
+    ];
+  }
+  if (subject === "SOCIAL_STUDIES") {
+    return [
+      "Annotate the supplied map, timeline, table, or source note and cite two exact details.",
+      "Write one claim supported by the packet and one claim that requires more evidence.",
+      "Create a labeled map, timeline, table, or case diagram that makes the evidence visible.",
+    ];
+  }
+  return [
+    "Sort the supplied case statements into authority, responsibility, evidence, and opinion.",
+    "Write a claim-evidence-reasoning response that names an affected perspective without speaking for everyone.",
+    `Revise one overconfident civic claim using this repair: ${topic.correction}`,
+  ];
+}
+
+function buildGroupWork(topic: Topic, subject: Nr13Subject): string {
+  if (subject === "SOCIAL_STUDIES") {
+    return "In groups, assign a map or source reader, evidence checker, recorder, and reporter. Use the supplied packet to agree on one claim, cite two details, name one limitation, and invite a different perspective before reporting. Each learner then writes an individual conclusion.";
+  }
+  if (subject === "SCIENCE") {
+    return "In groups, assign investigator, recorder, safety checker, and reporter. Compare the supplied observations, agree on what the evidence supports, and identify one test that would improve the explanation. Each learner then records an individual conclusion.";
+  }
+  if (subject === "MATH") {
+    return "In groups, compare two solution paths for the supplied problem. The checker must ask which representation and unit support the answer, and the reporter must explain one corrected error. Each learner then completes an individual changed case.";
+  }
+  if (subject === "ENGLISH") {
+    return `In groups, assign reader or editor, evidence checker, recorder, and reporter. Discuss the supplied ${topic.strand.toLowerCase()} material, cite the exact word, sentence, or source detail that supports one choice, and revise one response after a partner's question. Each learner then submits an individual response.`;
+  }
+  return "In groups, assign facilitator, evidence checker, recorder, and reporter. Examine the supplied civic case, distinguish evidence from opinion, include an affected perspective, and agree on a question for accountability. Each learner then writes an individual response.";
+}
+
+function buildHomework(topic: Topic, subject: Nr13Subject): string[] {
+  const subjectLabel = subject === "SOCIAL_STUDIES" ? "social-studies" : subject.toLowerCase();
+  if (subject === "ENGLISH") {
+    return [
+      `Create a new ${topic.strand.toLowerCase()} example from a safe school, home, or community setting and label the evidence for your choice.`,
+      "Explain your example aloud or in writing to a family member or study partner, then record one question they asked.",
+      `Revise your response to ${topic.concept} after checking whether every sentence, word, or source detail supports the purpose.`,
+    ];
+  }
+  if (subject === "SCIENCE") {
+    return [
+      `Use paper data or a safe observation to record one new ${topic.concept} case; do not taste or handle unknown substances.`,
+      "Draw or describe the comparison and identify what changed, what stayed constant, and what remains uncertain.",
+      "Write a short evidence-based conclusion and one safe next test.",
+    ];
+  }
+  if (subject === "MATH") {
+    return [
+      `Create and solve one new ${topic.concept} problem using different values from the worked examples.`,
+      "Show a representation, label the units, and explain why the answer is reasonable.",
+      `Write one sentence explaining how your work avoids this error: ${topic.misconception}`,
+    ];
+  }
+  if (subject === "SOCIAL_STUDIES") {
+    return [
+      `Use a safe, supplied source or hand-drawn ${subjectLabel} organizer to make one claim about ${topic.concept}.`,
+      "Cite two details, identify one limitation, and write one question that needs further evidence.",
+      "Ask a study partner to challenge one assumption and revise your conclusion if the evidence requires it.",
+    ];
+  }
+  return [
+    `Write a short civic response about ${topic.concept} with a claim, two case details, and one accountability question.`,
+    "Name one responsibility and one affected perspective without making an unsupported claim about a whole group.",
+    `Revise your response so it addresses this error: ${topic.misconception}`,
+  ];
+}
+
+function buildLearningPackage(topic: Topic, grade: number, subject: Nr13Subject, stage: string): LearningPackage {
+  const materials = applyStageLearningMaterials(topic, buildStudentMaterials(topic, grade, subject, stage), subject, stage);
+  return {
+    ...materials,
+    classwork: buildClasswork(topic, subject),
+    groupWork: buildGroupWork(topic, subject),
+    homework: buildHomework(topic, subject),
     project: subject === "ENGLISH"
       ? `Create a short ${/Literary analysis/i.test(topic.strand) ? "literary analysis" : "language or evidence portfolio"} using an original text or school question. Include a draft, revision record, source or text evidence, and a two-minute oral explanation.`
       : subject === "SOCIAL_STUDIES"
