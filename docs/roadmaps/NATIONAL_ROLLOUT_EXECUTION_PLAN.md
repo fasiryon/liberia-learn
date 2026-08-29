@@ -38,7 +38,7 @@ This plan governs the path from **current production baseline** to **world-class
 | NR-10 | Student Fail-Closed Curriculum Routing | 3 | Content | PENDING | NOT RUN |
 | NR-11 | MOE Published Backlog Approval Sprint | 3 | Content | PENDING | NOT RUN |
 | NR-12 | Critical Grade Deserts (G2, G9) | 3 | Content | COMPLETE | PASS (2026-08-28: repository audit 15/15 authored lessons in each of 10 G2/G9 core-subject cells; 4,932 tests/602 files and build green) |
-| NR-13 | Grades 5–8 Gap Closure + ENGLISH | 3 | Content | COMPLETE | PASS (2026-08-28: 20-cell authored matrix, 300 lessons, English/Social Studies separation, authority and shell audits green) |
+| NR-13 | Grades 5–8 Gap Closure + ENGLISH | 3 | Content | PENDING | AUTHORED MATRIX PASS; APPROVED coverage and dashboard verification pending (no production/staging mutation) |
 | NR-14 | National Audio Pipeline Completion | 3 | Content | PENDING | NOT RUN |
 | NR-14.5 | Auto-Grading Fairness Review | 3 | Content | PENDING | NOT RUN |
 | NR-15 | Unified Ops Dashboard + Alerting | 4 | Ops | PENDING | NOT RUN |
@@ -313,15 +313,20 @@ feat: NR-[N] complete — [sprint name]
 
 ### NR-13 — Grades 5–8 Gap Closure + ENGLISH
 
-> **Execution note (2026-08-28): COMPLETE.** The repository-first NR-13
-> audit produced 20 complete Grade 5-8 cells and 300 deterministic authored
-> lessons. English is a standalone delivery subject mapped to Liberia MOE
-> Language Arts records. Social Studies is separate, mapped to verified
-> Liberia MOE Social Studies source locators, and is not English filler. All
-> lessons pass the NR-12-derived authored contract, assessment contract,
-> authority checks, shell prevention, and Grade 5-9 progression checks. The
-> governed runner remains dry-run by default; no production or staging
-> mutation occurred.
+> **Execution note (2026-08-28): IMPLEMENTATION COMPLETE; APPROVAL GATE
+> PENDING.** The repository-first NR-13 audit produced 20 complete Grade 5-8
+> cells and 300 deterministic authored lessons. English is a standalone
+> delivery subject mapped to Liberia MOE Language Arts records. Social Studies
+> is separate, mapped to verified Liberia MOE Social Studies source locators,
+> and is not English filler. All authored lessons pass the NR-12-derived
+> authored contract, assessment contract, authority checks, shell prevention,
+> and Grade 5-9 progression checks. NR-13 remains PENDING until at least 15
+> APPROVED lessons per Grade 5-8 subject and a green coverage dashboard are
+> verified in the governed content state. The governed runner remains dry-run
+> by default; no production or staging mutation occurred. The corrected
+> material contract requires actual learner-facing text, data, problem, source,
+> or case packets, worked solutions, classwork, discussion, homework, projects,
+> and subject-appropriate labs rather than teacher instructions alone.
 
 - **Branch:** `feat/nr-13-grades-5-8`
 - **Target:** G5–G8 ≥15 APPROVED per subject; ENGLISH &gt; 0 nationally; SOCIAL_STUDIES 5–9 filled

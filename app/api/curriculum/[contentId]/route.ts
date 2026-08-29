@@ -9,6 +9,7 @@ import {
 } from "@/lib/content-availability-manifest.server";
 import { DEFAULT_CLIENT_VERSION } from "@/lib/content-availability-manifest";
 import { provenanceWritersEnabled } from "@/lib/curriculum/mutations/repository";
+import { projectStudentLessonPayload } from "@/lib/curriculum/studentLessonProjection";
 
 export const dynamic = "force-dynamic";
 
@@ -199,7 +200,7 @@ export async function GET(
     const responseAudio = row.audioAssets[0] ?? null;
     const responseData = {
       metadata: responseMetadata,
-      payload: row.payload,
+      payload: user.role === "STUDENT" ? projectStudentLessonPayload(row.payload) : row.payload,
       audio: responseAudio,
     };
     const contentSha256 = hashContentAvailabilityData({
