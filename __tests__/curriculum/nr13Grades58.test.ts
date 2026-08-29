@@ -66,7 +66,9 @@ describe("NR-13 Grade 5-8 authored coverage", () => {
     expect(new Set(lessons.map((lesson) => lesson.hash)).size).toBe(3);
     expect(new Set(lessons.map((lesson) => (lesson.payload as any).body_standard)).size).toBe(3);
     expect(new Set(lessons.map((lesson) => (lesson.payload as any).objective)).size).toBe(3);
-    expect(new Set(lessons.flatMap((lesson) => (lesson.payload as any).activities)).size).toBe(16);
+    expect(new Set(lessons.map((lesson) => (lesson.payload as any).studentMaterials.learnerMaterial)).size).toBe(3);
+    expect(new Set(lessons.flatMap((lesson) => (lesson.payload as any).studentMaterials.independentItems)).size).toBeGreaterThanOrEqual(4);
+    expect(new Set(lessons.flatMap((lesson) => (lesson.payload as any).activities)).size).toBeGreaterThan(16);
     expect((buildNr13GenerationPlan(5, "SCIENCE")[0].payload as any).labs).toHaveLength(1);
   });
 
