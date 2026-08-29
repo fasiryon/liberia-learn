@@ -33,7 +33,7 @@ describe("curriculum generation engine", () => {
     }
   });
 
-  it("supports subject alias selection and plan summaries", () => {
+  it("supports the English subject alias and plan summaries", () => {
     const records = buildCoverageGenerationPlan({
       grade: 7,
       subject: "english",
@@ -46,10 +46,10 @@ describe("curriculum generation engine", () => {
     });
 
     expect(records).toHaveLength(5);
-    expect(records.every((record) => record.subject === "LITERACY")).toBe(true);
+    expect(records.every((record) => record.subject === "ENGLISH")).toBe(true);
     expect(summary.selectedLessons).toBe(5);
-    expect(summary.selectedUnits).toBe(1);
-    expect(summary.bySubject.LITERACY).toBe(5);
+    expect(summary.selectedUnits).toBe(2);
+    expect(summary.bySubject.ENGLISH).toBe(5);
     expect(summary.byGrade["7"]).toBe(5);
   });
 });
