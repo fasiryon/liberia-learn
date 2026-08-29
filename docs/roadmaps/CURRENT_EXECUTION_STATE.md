@@ -206,7 +206,9 @@ next national rollout goal.
 ## NR-13 Grades 5-8 Gap Closure + English: IMPLEMENTATION COMPLETE; APPROVAL PENDING
 
 Authored implementation completed on dedicated branch
-`feat/nr-13-grades-5-8-english` on 2026-08-28. NR-13 closes the
+`feat/nr-13-grades-5-8-english` on 2026-08-28, with the learner-material
+correction merged to main in PR #104 at `1c9fd9408225a7e2f4482e78157ca6d83f5cb928`.
+NR-13 closes the
 repository-authorized Grade 5, 6, 7, and 8 cells for MATH,
 ENGLISH, SCIENCE, SOCIAL_STUDIES, and CIVICS with 15 deterministic authored
 lessons per cell: 20 cells and 300 lessons total. Liberia MOE remains the
@@ -224,6 +226,11 @@ guideline baseline.
   home support, evidence recording, and mapped assessment. Combined
   standard/block bodies meet the 3,500-word shared approval floor and pass
   semantic shell prevention; word count alone cannot pass the validator.
+- Student safety: authored NR-13 payloads are projected through an explicit
+  learner allow-list before the student lesson and scheduled-work APIs return
+  them. Teacher guidance, answer guides, authority audit metadata, and answer
+  keys are withheld from the student response and its offline cache. Legacy
+  teacher-only shells are withheld until regenerated as learner-ready content.
 - English is standalone `ENGLISH` content with MOE Language Arts (`LR-LIT-*`)
   traceability and grade progression across reading, vocabulary, grammar,
   composition, oral language, literature, mechanics, usage, and research.
@@ -239,12 +246,15 @@ guideline baseline.
 - Approval gate: repository-authored coverage is not database approval. Keep
   NR-13 PENDING until at least 15 APPROVED lessons per Grade 5-8 subject and a
   green coverage dashboard are verified in the governed content state.
-- Validation: NR-13 audit PASS; focused curriculum tests PASS (10 tests);
-  TypeScript PASS. Full Prisma, Vitest, build, and browser/PWA gates remain
-  required at the sprint gate.
+- Validation: NR-13 audit PASS; focused curriculum and projection tests PASS;
+  Prisma generate PASS; TypeScript PASS; full Vitest PASS; build PASS; merged
+  main Runtime Gate 1 and real-browser PWA E2E PASS. The local worktree still
+  preserves the pre-existing untracked `artifacts/` directory and has not
+  mutated production or staging.
 
-Next canonical goal remains the NR-13 approval gate. Do not begin NR-14 until
-approved coverage and dashboard evidence are verified.
+Next canonical goal remains the NR-13 approval gate. NR-14 - National Audio
+Pipeline Completion is queued as the next implementation goal, but must not
+begin until approved coverage and dashboard evidence are verified.
 
 ## Resume here
 
