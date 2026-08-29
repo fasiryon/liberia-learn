@@ -405,9 +405,9 @@ export type GenerationRunSummary = { sessionId: string; batches: BatchResult[]; 
 function buildComboRecords(def: NationalSubjectDefinition, grade: number) {
   if (def.useCatalog) {
     const catalogRecords = buildCoverageGenerationPlan({ grade, subject: def.storageSubject });
-    return catalogRecords.map(rec => ({ contentId: rec.contentId, title: String((rec.payload as any).title ?? rec.contentId), grade: rec.grade, subject: rec.subject, unitId: rec.unitId, orderInUnit: rec.orderInUnit, payload: rec.payload as Record<string, unknown>, hash: rec.hash }));
+    return catalogRecords.map(rec => ({ contentId: rec.contentId, title: String((rec.payload as any).title ?? rec.contentId), grade: rec.grade, subject: rec.subject, unitId: rec.unitId, orderInUnit: rec.orderInUnit, payload: rec.payload as Record<string, unknown>, hash: rec.hash, version: rec.version }));
   }
-  const records: Array<{ contentId: string; title: string; grade: number; subject: string; unitId: string; orderInUnit: number; payload: Record<string, unknown>; hash: string }> = [];
+  const records: Array<{ contentId: string; title: string; grade: number; subject: string; unitId: string; orderInUnit: number; payload: Record<string, unknown>; hash: string; version?: string }> = [];
   def.unitThemes.slice(0, def.unitsPerYear).forEach((unitTheme, unitIdx) => {
     const unitIndex = unitIdx + 1;
     for (let lessonIdx = 0; lessonIdx < def.lessonsPerUnit; lessonIdx++) {
@@ -487,8 +487,12 @@ export async function generateNationalBatch(options: BatchOptions, db: PrismaCli
       }
       try {
         const writersEnabled = provenanceWritersEnabled();
-        const isNr12 = (record.payload.metadata as Record<string, unknown> | undefined)?.nr === "NR-12";
-        const generationVersion = isNr12 ? String(record.payload.version ?? NR12_VERSION) : FACTORY_VERSION;
+        const nr = (record.payload.metadata as Record<string, unknown> | undefined)?.nr;
+        const generationVersion = nr === "NR-12"
+          ? String(record.version ?? record.payload.version ?? NR12_VERSION)
+          : nr === "NR-13"
+            ? String(record.version ?? record.payload.version ?? NR13_VERSION)
+            : FACTORY_VERSION;
         const write = await createCurriculumContent({
           contentId: record.contentId,
           title: record.title,

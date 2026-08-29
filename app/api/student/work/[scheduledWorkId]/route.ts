@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { head } from "@vercel/blob";
 import { requireRole } from "@/lib/auth";
 import { prisma } from "@/lib/db";
+import { projectStudentLessonPayload } from "@/lib/curriculum/studentLessonProjection";
 import { resolveLessonTitle } from "@/lib/lessons/resolveLessonTitle";
 import { logProductSignal } from "@/lib/autonomous/signals/productSignalService";
 import { signHero, signInlineIllustrations } from "@/lib/media/blobStorage";
@@ -331,8 +332,8 @@ export async function GET(
       grade: sw.content.grade,
       contentType: sw.content.contentType,
       body: payload?.body || payload?.lessons || payload,
-      bodyStandard: payload?.body_standard ?? payload?.body ?? null,
-      bodyBlock: payload?.body_block ?? payload?.body ?? null,
+      bodyStandard: (projectStudentLessonPayload(payload).body_standard as string | undefined) ?? null,
+      bodyBlock: (projectStudentLessonPayload(payload).body_block as string | undefined) ?? null,
       objectives: payload?.objectives || payload?.learningObjectives || [],
       activities: payload?.activities || [],
       labs: payload?.labs || [],

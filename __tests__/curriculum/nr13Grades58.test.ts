@@ -44,9 +44,43 @@ describe("NR-13 Grade 5-8 authored coverage", () => {
     expect(social.metadata.englishSkillArea).toBeUndefined();
     expect(english.strand).not.toBe(social.strand);
     expect(english.body_standard).toContain("Worked Example 1");
+    expect(english.body_standard).toContain("Learner Materials");
+    expect(english.body_standard).toContain("Model annotation");
+    expect(english.studentMaterials.materialType).toContain("original");
+    expect(english.studentMaterials.learnerMaterial).toContain("Gbarnga");
     expect(social.body_standard).toContain("Worked Example 1");
+    expect(social.body_standard).toContain("Group Work and Discussion");
+    expect(social.studentMaterials.materialType).toContain("evidence packet");
+    expect(social.studentMaterials.learnerMaterial).toContain("Map key");
     expect(english.body_standard).not.toContain("read this passage and answer questions");
     expect(social.body_standard).not.toContain("read this passage and answer questions");
+  });
+
+  it("builds distinct stage lessons instead of triplicating one body", () => {
+    const lessons = buildNr13GenerationPlan(5, "MATH").slice(0, 3);
+    expect(lessons.map((lesson) => (lesson.payload as any).lessonStage)).toEqual([
+      "Concept build",
+      "Guided application",
+      "Independent transfer",
+    ]);
+    expect(new Set(lessons.map((lesson) => lesson.hash)).size).toBe(3);
+    expect(new Set(lessons.map((lesson) => (lesson.payload as any).body_standard)).size).toBe(3);
+    expect(new Set(lessons.map((lesson) => (lesson.payload as any).objective)).size).toBe(3);
+    expect(new Set(lessons.flatMap((lesson) => (lesson.payload as any).activities)).size).toBe(16);
+    expect((buildNr13GenerationPlan(5, "SCIENCE")[0].payload as any).labs).toHaveLength(1);
+  });
+
+  it("creates four unique assessment options with the answer in its declared position", () => {
+    for (const lesson of buildNr13GenerationPlan(6, "ENGLISH")) {
+      const items = ((lesson.payload as any).assessmentPlan.lessonQuiz.items as Array<any>);
+      for (const item of items) {
+        expect(item.options).toHaveLength(4);
+        expect(new Set(item.options).size).toBe(4);
+        expect(item.options[item.correctIndex]).toBe(item.answerKey);
+        expect(item.options.filter((option: string) => option === item.answerKey)).toHaveLength(1);
+        expect(item.options.join(" ")).not.toContain("This does not match the stated evidence.");
+      }
+    }
   });
 
   it("preserves authority traceability and cross-grade bridges", () => {
@@ -72,6 +106,7 @@ describe("NR-13 Grade 5-8 authored coverage", () => {
     expect(records).toHaveLength(15);
     expect(records.every((record) => record.subject === "ENGLISH")).toBe(true);
     expect(records.every((record) => (record.payload as any).metadata.nr === "NR-13")).toBe(true);
+    expect(records.every((record) => record.version === "nr13-2026.1")).toBe(true);
   });
 
   it("enforces the governed dry-run completion gate", () => {
@@ -86,4 +121,24 @@ describe("NR-13 Grade 5-8 authored coverage", () => {
     expect(matrix).toHaveLength(20);
     expect(matrix.every((row) => row.lessons === 15 && row.units === 5 && row.practice === "COMPLETE" && row.assessment === "COMPLETE" && row.prerequisite === "COMPLETE" && row.nextConcept === "COMPLETE" && row.authority === "COMPLETE" && row.qualityStatus === "COMPLETE")).toBe(true);
   });
+});
+import { projectStudentLessonPayload } from "@/lib/curriculum/studentLessonProjection";
+it("projects NR-13 learner content without teacher guidance or answer keys", () => {
+  const lesson = buildNr13GenerationPlan(5, "ENGLISH")[0];
+  const projected = projectStudentLessonPayload(lesson.payload);
+  const body = String(projected.body_standard ?? "");
+  expect(body).toContain("The school garden committee noticed");
+  expect(body).toContain("## Your Independent Work");
+  expect(body).not.toContain("## Teacher Explanation");
+  expect(body).not.toContain("## Teacher Guidance");
+  expect(body).not.toContain("## Answer Guide");
+  expect(projected).not.toHaveProperty("studentMaterials");
+  expect(projected.assessment).toBeUndefined();
+  expect(projected.problemSets).toBeUndefined();
+  const rejected = projectStudentLessonPayload({
+    title: "Legacy lesson",
+    body_standard: "## Teacher Guidance\nAsk the class to discuss the topic.",
+  });
+  expect(rejected.studentReady).toBe(false);
+  expect(rejected.body_standard).toBe("");
 });

@@ -61,6 +61,16 @@ type AssessmentItem = {
   points: number;
 };
 
+type StudentMaterials = {
+  materialType: string;
+  learnerMaterial: string;
+  workedSolution: string;
+  guidedItems: string[];
+  independentItems: string[];
+  answerGuide: string[];
+  masteryTask: string;
+};
+
 export type Nr13GenerationRecord = {
   contentId: string;
   grade: number;
@@ -369,17 +379,20 @@ function buildAssessmentPlan(topic: Topic, lessonIndex: number) {
   const distractors = [topic.misconception, topic.examples[0], `A response that ignores the vocabulary of ${topic.concept}.`];
   const items: AssessmentItem[] = stems.map((prompt, index) => {
     const correctIndex = answerPositions[(lessonIndex + index) % answerPositions.length];
-    const options = [correctAnswers[index], distractors[0], distractors[1], distractors[2]].map((value, optionIndex) => optionIndex === correctIndex ? correctAnswers[index] : value);
-    const uniqueOptions = options.map((value, optionIndex) => value === options[correctIndex] && optionIndex !== correctIndex ? `${value} This does not match the stated evidence.` : value);
+    const options = Array.from({ length: 4 }, (_, optionIndex) => {
+      if (optionIndex === correctIndex) return correctAnswers[index];
+      const distractorIndex = optionIndex > correctIndex ? optionIndex - 1 : optionIndex;
+      return distractors[distractorIndex];
+    });
     return {
       id: `nr13-q${index + 1}`,
       type: "mcq" as const,
       standardCode: topic.standardCodes[index % topic.standardCodes.length],
       concept: topic.concept,
       prompt,
-      options: uniqueOptions,
+      options,
       correctIndex,
-      answerKey: uniqueOptions[correctIndex],
+      answerKey: options[correctIndex],
       explanation: `The correct response is supported by the objective, worked example, and evidence for ${topic.concept}. Revisit the correction if the response was not secure.`,
       points: index === 4 ? 2 : 1,
     };
@@ -391,7 +404,203 @@ function buildAssessmentPlan(topic: Topic, lessonIndex: number) {
   };
 }
 
+function stageProfile(stage: string) {
+  if (stage === "Concept build") {
+    return {
+      focus: "construct the idea from a visible representation and secure the first correct explanation",
+      objective: "Learners will first identify the essential relationship before attempting the changed case.",
+      teacherMove: "The teacher models the first decision slowly, names why it is valid, and checks an oral rehearsal before releasing the next step.",
+      exampleMove: "Annotate the first example together and mark the evidence that makes the conclusion valid.",
+      guidedMove: "Keep the representation and sentence frame visible while pairs complete the first decisions with teacher prompts.",
+      independentMove: "Complete a closely related case and show the representation, key term, and first reasoning step independently.",
+      extensionMove: "Create a second representation of the same idea and explain why both representations preserve the target.",
+    };
+  }
+  if (stage === "Guided application") {
+    return {
+      focus: "apply the idea across a changed case while responsibility moves from teacher modeling to learner explanation",
+      objective: "Learners will compare the familiar and changed cases and justify which evidence still matters.",
+      teacherMove: "The teacher models only the first decision, then asks learners to predict, justify, and check the remaining decisions against the evidence.",
+      exampleMove: "Place the two examples side by side and annotate what changed, what stayed constant, and how that affects the response.",
+      guidedMove: "Fade the prompt after each round: learners select the representation, explain the method, and question a partner before teacher confirmation.",
+      independentMove: "Solve a changed case without the worked-example sequence, then explain which part of the method transferred and which part had to change.",
+      extensionMove: "Compare two valid approaches to the changed case and defend the more efficient or precise one using the authority target.",
+    };
+  }
+  return {
+    focus: "transfer the idea to a new context, diagnose an error, and defend an independent conclusion",
+    objective: "Learners will retrieve the method, repair a plausible error, and transfer the skill to a less familiar case.",
+    teacherMove: "The teacher begins with retrieval and an error contrast, asks learners to defend a decision, and intervenes only when evidence shows a barrier.",
+    exampleMove: "Hide part of the second example, ask learners to supply the missing decision, and discuss why the evidence rules out the tempting error.",
+    guidedMove: "Use peer checking and brief teacher conferences while learners choose the representation, test the claim, and revise their explanation.",
+    independentMove: "Complete a novel case, identify the likely misconception, and defend the final response with evidence rather than copying a model.",
+    extensionMove: "Design a new case that measures the same skill, state the evidence a strong response must include, and explain one limitation.",
+  };
+}
+
+function buildStudentMaterials(topic: Topic, _grade: number, subject: Nr13Subject, _stage: string): StudentMaterials {
+
+  if (subject === "ENGLISH") {
+    if (/Literary analysis/i.test(topic.strand)) {
+      const story = `Original classroom story: When the first rain reached Gbarnga, Satta noticed that the school bell sounded different against the zinc roof. She marked the puddles beside the garden instead of running inside. Her friend Kweku wanted to move the seed trays immediately, but Satta measured where the water collected and drew a small channel with a stick. By afternoon, the trays were safe and the channel carried water toward the dry beds. Kweku said the rain had solved the problem. Satta disagreed: the rain created the water, but their observation and design made the water useful. The next morning, they compared the wet soil with the dry bed and changed the channel again.`;
+      return {
+        materialType: "original literary text and annotation set",
+        learnerMaterial: `${story}\n\nAnnotation task: underline one image, circle one action that reveals character, and box one sentence that shows a change or contrast.`,
+        workedSolution: `Model annotation: the zinc roof is sensory imagery because it lets the reader hear the rain; Satta's measurement and channel show problem-solving through action; the contrast between rain creating water and the learners making it useful develops the theme that observation supports responsible action.`,
+        guidedItems: ["With a partner, identify one image and explain the feeling or idea it creates.", "Complete a character-action-evidence chart for Satta and Kweku.", "Write one sentence explaining how the contrast near the end develops the story's theme."],
+        independentItems: ["Write a paragraph with a claim about the story's theme, two quoted or precisely referenced details, and reasoning connecting each detail to the claim.", "Rewrite one sentence to create a different mood without changing the event."],
+        answerGuide: ["A strong theme claim must be broader than a plot summary and must be supported by at least two details.", "Imagery is identified from sensory language; character evidence is identified from an action, choice, or speech.", "A changed mood must be explained through specific word choices, not only asserted."],
+        masteryTask: "Analyze a new six-sentence original story, identify one literary device, and explain its effect with two precise details.",
+      };
+    }
+    if (/Grammar|mechanics|usage/i.test(topic.strand)) {
+      const sentences = "1. The nurses prepared the clinic, and they arranged the chairs.\n2. When Amina spoke to Kumba, Amina smiled.\n3. The children carried their books carefully.\n4. Where will the team meet after practice?\n5. Please label the map before you submit it.";
+      return {
+        materialType: "language set and editing workshop",
+        learnerMaterial: `${sentences}\n\nEditing marks: underline the subject, circle each pronoun, label each sentence by purpose, and put a star beside any sentence that could confuse a reader.`,
+        workedSolution: `Model: In sentence 1, nurses is plural, so they agrees and has one clear antecedent. Sentence 2 repeats Amina instead of using an unclear she, so the reader knows who smiled. Sentence 4 is interrogative because it asks a question; sentence 5 is imperative because it gives a direction.`,
+        guidedItems: ["Repair one pronoun reference while keeping the meaning unchanged.", "Sort the five sentences as declarative, interrogative, or imperative and justify two choices.", "Add a comma or conjunction to join two short ideas clearly."],
+        independentItems: ["Edit this paragraph: 'The learners brought a map. It was folded. When Mariama gave it to Fatu, she opened it.' Make every reference clear and explain each change.", "Write one sentence of each practiced type about a school or community activity."],
+        answerGuide: ["A pronoun must match its antecedent in number and must leave one clear referent.", "Sentence purpose is determined by what the sentence does, not only by its punctuation.", "An edit earns credit when the meaning is clear and the writer can explain the change."],
+        masteryTask: "Edit a new five-sentence paragraph for agreement, reference, punctuation, and sentence purpose, then annotate the repairs.",
+      };
+    }
+    if (/Composition|Argument writing/i.test(topic.strand)) {
+      const draft = "Our class should protect the school garden. The garden gives us a place to observe plants and practice responsibility. In our two-week classroom record, groups that used a watering schedule found the soil moist on four of five checks, while unscheduled groups found it moist on two of five checks. The record is small, so it does not prove what every garden needs, but it supports a trial schedule. We should post a rota, check the soil before watering, and review the result after two weeks.";
+      return {
+        materialType: "model writing and evidence workshop",
+        learnerMaterial: `Model draft:\n${draft}\n\nWriter's task: label the claim, reasons, evidence, limitation, and proposed action.`,
+        workedSolution: "Model analysis: the first sentence is the claim; the observation record is evidence; the sentence beginning 'The record is small' is a limitation; the final sentence is an actionable conclusion. The evidence is useful but not universal because the sample is limited.",
+        guidedItems: ["Color-code the model claim, reason, evidence, limitation, and conclusion.", "Replace one vague word with a precise word and explain the improvement.", "Add a transition that makes the relationship between the record and the recommendation clear."],
+        independentItems: ["Write a three-paragraph response to a school improvement question using one claim, two reasons, one labeled piece of classroom evidence, and one limitation.", "Revise your conclusion so it names an action and a way to check its result."],
+        answerGuide: ["Evidence must support the claim and must not be presented as stronger than the record allows.", "A paragraph is organized when each sentence advances the stated purpose.", "A limitation improves credibility because it identifies what the evidence cannot establish."],
+        masteryTask: "Produce and revise a short evidence-based composition for a new school issue; underline the claim and label the evidence and limitation.",
+      };
+    }
+    if (/Research/i.test(topic.strand)) {
+      const sources = "Source A - Classroom observation log: In a five-day practice log, the class recorded 12, 15, 11, 16, and 14 learners using the reading corner. The log records visits, not reading quality.\nSource B - Learner interview summary: Four interviewed learners said a quiet corner helped them focus; the interview did not include every learner and did not measure test scores.";
+      return {
+        materialType: "original source set and research notes",
+        learnerMaterial: `${sources}\n\nResearch task: record the author or source type, evidence, limitation, and a question requiring more information for each source.`,
+        workedSolution: "Model comparison: Source A provides a five-day count, while Source B provides learner perspectives. Neither source proves that the corner raises achievement. A careful conclusion is that the corner was used and some interviewed learners found it helpful; a stronger causal claim needs broader evidence.",
+        guidedItems: ["Separate observation, interview report, inference, and unsupported claim.", "Write one sentence that combines both sources without pretending they measure the same thing.", "Draft a research question that could be answered with a larger, ethical data collection plan."],
+        independentItems: ["Create a two-source research note on a school question using claim, evidence, source label, limitation, and next question.", "Write a three-sentence synthesis that agrees or disagrees with a claim and cites both source details."],
+        answerGuide: ["A source note identifies what the source actually records, not what the learner wishes it proved.", "Synthesis explains a relationship between sources and preserves important differences.", "A research question must be specific enough to investigate and must respect privacy and safety."],
+        masteryTask: "Evaluate two new original source cards and write a cautious, source-supported conclusion with one unresolved question.",
+      };
+    }
+    if (/Vocabulary/i.test(topic.strand)) {
+      const languageSet = "1. The footpath was narrow, so the learners walked in a single line.\n2. The teacher asked them to infer the meaning of unfamiliar from the sentence.\n3. A careful reader checks a dictionary after using context clues.\n4. The word transport shares a root with transportation and transportable.";
+      return {
+        materialType: "context-clue and word-structure language set",
+        learnerMaterial: `${languageSet}\n\nLearner task: underline the clue for unfamiliar, box the shared root in transport words, and write a sentence that shows the difference between infer and guess.`,
+        workedSolution: "Model: narrow and the phrase 'walked in a single line' suggest that narrow means not wide. Transport, transportation, and transportable share transport, so their meanings are related to carrying or moving. An inference is supported by clues; a guess may have no evidence.",
+        guidedItems: ["Use two words in the language set to infer the meaning of a new word from a sentence.", "Sort three words into a family and explain which part carries the shared meaning.", "Check one inference with a dictionary and compare the dictionary meaning with the context meaning."],
+        independentItems: ["Annotate a new paragraph for three context clues and explain each inferred meaning.", "Replace two vague words with precise vocabulary and explain how the paragraph changes."],
+        answerGuide: ["A context clue must be named and connected to the inferred meaning.", "A word family is not proved by spelling alone; the shared part and related meaning must both be explained.", "A dictionary check confirms or refines an inference rather than replacing the reasoning."],
+        masteryTask: "Infer three word meanings in a new paragraph, identify the evidence for each, and use two precise words in original sentences.",
+      };
+    }
+    const passage = "The school garden committee noticed that the western bed dried faster than the shaded bed. Over three mornings, learners recorded the soil condition before watering and marked the amount of shade on a simple sketch. They did not claim that shade was the only cause. Their notes showed that the western bed was dry on all three checks, while the shaded bed was dry once. The committee proposed adding leaf mulch to the western bed and checking both beds for another week. The new plan made a testable change and kept the observation record for comparison.";
+    const secondPassage = "In a second classroom case, learners compared two covered water jars after a warm afternoon. Jar A was placed near a window and Jar B was placed under a desk. Both jars began with the same amount of water. At the end of the afternoon, Jar A had less water, but the class repeated the check before deciding why. The result supports a difference in the observation; it does not by itself prove that sunlight was the only factor.";
+    return {
+      materialType: "original informational passage and evidence set",
+      learnerMaterial: `${passage}\n\nWord bank: central idea - the most important message of the whole text; supporting detail - information that directly helps prove or explain the central idea; observation - what was noticed or recorded; limitation - what the evidence does not prove.\n\nReading task A: write the central idea, underline three supporting details, and cross out one conclusion the passage does not prove.\n\n${secondPassage}\n\nReading task B: write one sentence comparing the two observations. Identify one conclusion that is supported and one conclusion that is too strong.`,
+      workedSolution: "Model summary for case A: The committee used repeated observations to compare two garden beds and proposed a testable change. The three-day record supports the difference in observed soil condition, but it does not prove shade was the only cause or that mulch will solve it. Model comparison for case B: Both cases compare recorded conditions and avoid a claim stronger than the evidence. The jar result supports a difference in water remaining, but it does not prove sunlight was the only cause.",
+      guidedItems: ["Sort eight statements into central idea, supporting detail, observation, or unsupported conclusion.", "Combine two details into one accurate sentence without copying the passage.", "Explain why the word 'only' makes one conclusion too strong in both cases.", "Complete an evidence table with claim, exact detail, and limitation for each passage.", "With a partner, replace one overconfident conclusion with a careful conclusion and explain the change."],
+      independentItems: ["Summarize case A in three sentences, preserving the observation, action, and limitation.", "Summarize case B in three sentences and compare it with case A.", "Write a central idea and two directly supporting details for a new classroom passage.", "Write one supported conclusion and one conclusion the evidence does not establish; label both."],
+      answerGuide: ["The central idea must cover the whole passage, not just its first sentence.", "A supporting detail must be directly traceable to the passage.", "A limitation identifies what the evidence does not establish."],
+      masteryTask: "Read a new original informational passage, write a one-sentence central idea, cite two exact supporting details, and state one careful limitation.",
+    };
+  }
+
+  if (subject === "SOCIAL_STUDIES") {
+    const sourcePacket = /history|founding|settlement|independence/i.test(topic.strand)
+      ? `Original classroom historical evidence packet - not a Liberia MOE authority source:\nSource A, sequence cards: ${topic.examples[0]}\nSource B, perspective note: ${topic.examples[1]}\nTimeline record:\nStage 1 | documented event or condition | source detail required\nStage 2 | change or decision | source detail required\nStage 3 | consequence or continuing question | source detail required\nResearch rule: distinguish what the supplied account states from an interpretation about causes, motives, or effects.`
+      : /geography|topography|weather|climate/i.test(topic.strand)
+        ? `Original classroom geographic evidence packet - not a Liberia MOE authority source:\nMap key: solid line = boundary; blue line = water feature; shaded area = relief or region; dot = recorded place.\nSource A, map observation: ${topic.examples[0]}\nSource B, comparison note: ${topic.examples[1]}\nEvidence table:\nFeature | location or pattern | evidence in the key | question the map cannot answer\nLearner rule: use the title, direction, labels, scale, and legend before making a geographic claim.`
+        : /agriculture|resource|livelihood|economic/i.test(topic.strand)
+          ? `Original classroom economic and resource evidence packet - not a Liberia MOE authority source:\nCase A: ${topic.examples[0]}\nCase B: ${topic.examples[1]}\nComparison table:\nCase | land or resource | labor or use | benefit claimed | cost or evidence still needed\nLearner rule: classify the activity from its stated purpose and conditions; do not infer value, safety, or sustainability from a label alone.`
+          : /population|community/i.test(topic.strand)
+            ? `Original classroom population and settlement evidence packet - not a Liberia MOE authority source:\nSource A, settlement table:\nPlace | people or service pattern | evidence recorded | explanation still needed\nRiver area | travel connection noted | crossing appears on the sketch | seasonal access data\nMarket area | exchange activity noted | market label and route | range of goods and users\nSource B, interview note: ${topic.examples[1]}\nLearner rule: separate a measured pattern from a proposed explanation and protect personal information.`
+            : `Original classroom civic evidence packet - not a Liberia MOE authority source:\nCase file: ${topic.concept}\nEvidence card 1: ${topic.examples[0]}\nEvidence card 2: ${topic.examples[1]}\nRole cards: affected learner, family member, teacher, public institution, and reviewer.\nEvidence table:\nClaim | source detail | affected group | responsibility or authority | unresolved fact`;
+    return {
+      materialType: "social studies evidence packet with source-specific organizer",
+      learnerMaterial: `${sourcePacket}\n\nEvidence task: use the packet's timeline, map, table, case card, or source note to make one supported claim, one claim requiring more evidence, and one question for field investigation.`,
+      workedSolution: `Model: identify what the packet explicitly records before explaining it. Use the relevant label, sequence, table row, or source detail as evidence. The packet cannot establish facts it does not record, so a careful conclusion names the missing information. Apply the lesson correction: ${topic.correction}`,
+      guidedItems: ["Annotate the packet's timeline, map, table, case card, or source note and cite one exact detail.", "Distinguish observation or source fact, interpretation, and unsupported assumption in three statements.", "Build a claim-evidence-reasoning paragraph using two different packet details."],
+      independentItems: ["Analyze a new classroom map, timeline, table, or source packet provided by the teacher and write two evidence-supported observations plus one limitation.", "Write a respectful two-paragraph explanation of how the mapped place, institution, resource, or historical development affects people, separating source fact from interpretation."],
+      answerGuide: ["A social-studies claim must cite the relevant key, label, row, sequence card, or stated source detail.", "A source limitation is part of accurate social-studies reasoning, not an extra opinion.", "A conclusion must distinguish what the source shows from a question that needs additional evidence."],
+      masteryTask: "Evaluate a new original social-studies source packet, construct a supported claim, compare two pieces of evidence, and identify one unresolved question.",
+    };
+  }
+
+  if (subject === "MATH") {
+    return {
+      materialType: "worked problem set and mathematical representations",
+      learnerMaterial: `Problem set for ${topic.concept}:\n1. Rework the first numerical or graphical example and show each place-value, unit, scale, or equation decision.\n2. Change one value in the second example and predict how the result changes before calculating.\n3. Create a labeled table, diagram, number line, graph, or ratio representation for the two examples.\n4. Write one sentence explaining why the tempting misconception is not valid.`,
+      workedSolution: `Model solution: ${topic.examples[0]} Then check the result against the representation and units. For the changed case, identify the changed quantity first, apply the same rule or relationship, and verify whether the result is reasonable. A complete solution shows the method, not only the final number.`,
+      guidedItems: [topic.guidedPractice, "Compare two solution paths and identify the step at which they agree or diverge.", "Use the representation to explain the answer to a partner before recording the calculation."],
+      independentItems: [topic.independentPractice, "Write a new problem with the same mathematical structure and solve it, including a reasonableness check."],
+      answerGuide: ["Credit requires a correct representation and method as well as a final answer.", `Repair the documented error: ${topic.correction}`, "A changed case tests whether the relationship was understood rather than memorized."],
+      masteryTask: `Solve a new ${topic.concept} problem, show a representation, explain the method, and repair the named misconception in a second case.`,
+    };
+  }
+
+  if (subject === "SCIENCE") {
+    return {
+      materialType: "observation protocol and investigation record",
+      learnerMaterial: `Investigation record for ${topic.concept}:\nQuestion: What evidence would help us explain the lesson phenomenon?\nObservation 1: ${topic.examples[0]}\nObservation 2: ${topic.examples[1]}\nRecord table: observation | measurement or visible feature | possible explanation | evidence still needed\nSafety rule: use only the listed safe materials and do not taste or handle unknown substances.`,
+      workedSolution: `Model reasoning: describe what the observation shows before naming a cause. Compare the two observations, identify the changed condition, and state whether the evidence supports, weakens, or cannot decide the explanation. The correction is: ${topic.correction}`,
+      guidedItems: [topic.guidedPractice, "Separate observation from inference in the two supplied examples.", "Design one fair comparison by changing one condition and naming what must remain constant."],
+      independentItems: [topic.independentPractice, "Complete an evidence table for a new classroom observation and state one limitation of the investigation."],
+      answerGuide: ["An observation records evidence; an explanation must be supported by evidence.", "A fair comparison identifies the changed condition and relevant controls.", "A limitation states what the investigation cannot establish."],
+      masteryTask: `Interpret a new ${topic.concept} observation set, construct an evidence-based explanation, and identify the next safe test.`,
+    };
+  }
+
+  return {
+    materialType: "civic case file and source analysis",
+    learnerMaterial: `Civic case file for ${topic.concept}:\nCase: A school committee must decide how to respond to a shared community issue.\nEvidence card 1: ${topic.examples[0]}\nEvidence card 2: ${topic.examples[1]}\nRole cards: affected learner, family member, teacher, public institution, and reviewer.\nTask: distinguish the authority, responsibility, evidence, and unresolved question before proposing action.`,
+    workedSolution: `Model analysis: identify the action first, match it to the relevant role or institution, and separate the evidence cards from assumptions. The case supports a cautious recommendation, not a claim about every community. Apply the correction: ${topic.correction}`,
+    guidedItems: [topic.guidedPractice, "Sort the case statements into authority, responsibility, evidence, and opinion.", "Use a claim-evidence-reasoning frame to explain one affected perspective without speaking for an entire group."],
+    independentItems: [topic.independentPractice, "Write a short civic brief with a claim, two case details, one limitation, and a transparent question for accountability review."],
+    answerGuide: ["A civic claim must identify the relevant evidence and its source or role.", "Authority, responsibility, and opinion are different categories.", "A responsible recommendation names limits and leaves room for review."],
+    masteryTask: `Analyze a new ${topic.concept} case file, support a recommendation with evidence, and identify the accountability question that should be reviewed.`,
+  };
+}
+
+type LearningPackage = StudentMaterials & {
+  classwork: string[];
+  groupWork: string;
+  homework: string[];
+  project: string;
+  lab?: string;
+};
+
+function buildLearningPackage(topic: Topic, grade: number, subject: Nr13Subject, stage: string): LearningPackage {
+  const materials = buildStudentMaterials(topic, grade, subject, stage);
+  return {
+    ...materials,
+    classwork: materials.guidedItems,
+    groupWork: subject === "SOCIAL_STUDIES"
+      ? "In groups, assign map reader or source reader, evidence checker, recorder, and reporter. Each group must cite two packet details, name one limitation, and invite a different perspective before reporting."
+      : `In groups, assign facilitator, evidence checker, recorder, and reporter. Groups must solve or discuss the supplied material, explain one choice, and give every learner an individual response afterward.`,
+    homework: materials.independentItems.map((item) => `${item} Bring the work back with the evidence, correction, or revision marked.`),
+    project: subject === "ENGLISH"
+      ? `Create a short ${/Literary analysis/i.test(topic.strand) ? "literary analysis" : "language or evidence portfolio"} using an original text or school question. Include a draft, revision record, source or text evidence, and a two-minute oral explanation.`
+      : subject === "SOCIAL_STUDIES"
+        ? "Create a source-based community place, history, citizenship, or resource brief with a map, timeline, table, or case diagram, two cited evidence points, one limitation, and a respectful conclusion."
+        : `Create a ${subject === "SCIENCE" ? "safe investigation poster" : subject === "MATH" ? "worked-problem portfolio" : "civic evidence portfolio"} for ${topic.concept}. Show the question, evidence, method, revision, and final explanation.`,
+    lab: subject === "SCIENCE"
+      ? `Safe mini-lab: use ${topic.materials.join(", ")} or paper alternatives to investigate ${topic.concept}. State the question, one changed condition, what remains constant, observations, evidence table, conclusion, and safety check. Do not taste or handle unknown substances.`
+      : undefined,
+  };
+}
+
 function buildBodies(topic: Topic, grade: number, subject: Nr13Subject, stage: string, prior: string, next: string) {
+  const profile = stageProfile(stage);
+  const materials = buildLearningPackage(topic, grade, subject, stage);
   const vocabulary = topic.vocabulary.map((word) => `${word}: define it in the lesson context, use it in a sentence, and ask learners to distinguish it from the nearest everyday meaning.`).join("\n");
   const depthSections = [
     ["Teacher Talk", `Say: We are studying ${topic.concept}. First identify what the task asks, then select the evidence or operation that answers it. I will show my thinking, not only my final response. In the first example I notice ${topic.examples[0]} In the second example I notice ${topic.examples[1]} Ask learners to repeat the key relationship in their own words before they begin.`],
@@ -428,16 +637,25 @@ function buildBodies(topic: Topic, grade: number, subject: Nr13Subject, stage: s
     ["Evidence Calibration", `During review, separate source authority from instructional design. The source establishes the ${topic.concept} objective; the examples, prompts, feedback, and local classroom analogies are teaching supports. Remove any claim that cannot be supported by the cited authority or the evidence in the task, and invite learners to distinguish observation, inference, and conclusion.`],
   ].map(([heading, text]) => `## ${heading}\n${text}`).join("\n\n");
   const standardBody = [
-    `## Objective\nBy the end of this Grade ${grade} ${subject === "ENGLISH" ? "English" : subject.replace(/_/g, " ")} lesson, learners will ${topic.objective.toLowerCase()}`,
+    `## Objective\nBy the end of this Grade ${grade} ${subject === "ENGLISH" ? "English" : subject.replace(/_/g, " ")} lesson, learners will ${topic.objective.toLowerCase()} ${profile.objective}`,
+    `## Stage Focus\nThis ${stage} lesson should ${profile.focus}. ${profile.teacherMove}`,
     `## Prerequisite Retrieval\nBegin with ${prior}. Ask learners to recall one example, explain what they already know, and identify the part that is still uncertain. State that today's work extends that idea toward ${topic.concept}. Do not mark a guess as evidence; record the response and return to it after modeling.`,
     `## Key Vocabulary\n${vocabulary}`,
-    `## Teacher Explanation\nTeach ${topic.concept} through a concrete or textual representation before naming the formal idea. The teacher should say what is being noticed, show why the step or interpretation is valid, and connect the lesson to a Liberian school, home, market, map, community, or environmental context. Learners should explain the relationship rather than copy a definition.`,
-    `## Worked Example 1\n${topic.examples[0]}\n\nTeacher moves: identify the question, underline the relevant information, model each decision, name the vocabulary, and ask learners to predict the next step before revealing it. Check that the conclusion answers the original question and state the evidence that makes it reasonable.`,
-    `## Worked Example 2\n${topic.examples[1]}\n\nCompare this case with the first. Ask what stayed the same, what changed, and why the same standard still applies. Invite a learner to explain the reasoning using ${topic.vocabulary.slice(0, 2).join(" and ")}. Correct the reasoning at the step where it changed, not only at the final answer.`,
-    `## Guided Practice\n${topic.guidedPractice}\n\nUse I do, we do, you do release. Pause after the representation, method, and conclusion. Partners must point to evidence, ask one checking question, and give the speaker time to repair an error. The teacher records whether the difficulty is vocabulary, representation, process, or transfer.`,
-    `## Independent Practice\n${topic.independentPractice}\n\nLearners complete the task without copying the worked example, show the representation or source evidence, and write or say why the response is reasonable. Require a changed case so success cannot come from memorizing one number, sentence, map, or scenario.`,
+    `## Learner Materials\n${materials.learnerMaterial}`,
+    `## Teacher Explanation\nTeach ${topic.concept} through a concrete or textual representation before naming the formal idea. The teacher should say what is being noticed, show why the step or interpretation is valid, and connect the lesson to a Liberian school, home, market, map, community, or environmental context. Learners should explain the relationship rather than copy a definition. ${profile.teacherMove}`,
+    `## Worked Example 1\n${topic.examples[0]}\n\nTeacher moves: identify the question, underline the relevant information, model each decision, name the vocabulary, and ask learners to predict the next step before revealing it. Check that the conclusion answers the original question and state the evidence that makes it reasonable. ${profile.exampleMove}`,
+    `## Worked Example 2\n${topic.examples[1]}\n\nCompare this case with the first. Ask what stayed the same, what changed, and why the same standard still applies. Invite a learner to explain the reasoning using ${topic.vocabulary.slice(0, 2).join(" and ")}. Correct the reasoning at the step where it changed, not only at the final answer. ${profile.exampleMove}`,
+    `## Worked Solution\n${materials.workedSolution}`,
+    `## Guided Practice\n${materials.guidedItems.map((item, index) => `${index + 1}. ${item}`).join("\n")}\n\nUse I do, we do, you do release. Pause after the representation, method, and conclusion. Partners must point to evidence, ask one checking question, and give the speaker time to repair an error. The teacher records whether the difficulty is vocabulary, representation, process, or transfer. ${profile.guidedMove}`,
+    `## Independent Practice\n${materials.independentItems.map((item, index) => `${index + 1}. ${item}`).join("\n")}\n\nLearners complete the task without copying the worked example, show the representation or source evidence, and write or say why the response is reasonable. Require a changed case so success cannot come from memorizing one number, sentence, map, or scenario. ${profile.independentMove}`,
+    `## Answer Guide\n${materials.answerGuide.map((item, index) => `${index + 1}. ${item}`).join("\n")}`,
+    `## Classwork\n${materials.classwork.map((item, index) => `${index + 1}. ${item}`).join("\n")}`,
+    `## Group Work and Discussion\n${materials.groupWork}`,
+    `## Assignment and Homework\n${materials.homework.map((item, index) => `${index + 1}. ${item}`).join("\n")}`,
+    `## Project\n${materials.project}`,
+    `## Lab or Investigation\n${materials.lab ?? `No separate laboratory is required for this ${subject.replace(/_/g, " ")} lesson. Use the supplied evidence or case material as the investigation and record the reasoning.`}`,
     `## Misconception and Error Repair\nCommon misconception: ${topic.misconception}\nRepair: ${topic.correction}\nAsk learners to locate the exact step where the misconception fails, test the claim against both worked examples, and complete a corrected version. A correction is complete only when the learner can explain why the repaired method or interpretation is stronger.`,
-    `## Mastery Check\nUse two exit checks: one representation or vocabulary response and one application or transfer response. Secure work includes the stated objective, accurate use of ${topic.vocabulary.slice(0, 2).join(" and ")}, visible reasoning or evidence, and a conclusion that answers the task. The stored five-item quiz samples objective, example, misconception repair, evidence, and transfer.`,
+    `## Mastery Check\n${materials.masteryTask}\n\nUse two exit checks: one representation or vocabulary response and one application or transfer response. Secure work includes the stated objective, accurate use of ${topic.vocabulary.slice(0, 2).join(" and ")}, visible reasoning or evidence, and a conclusion that answers the task. The stored five-item quiz samples objective, example, misconception repair, evidence, and transfer.`,
     `## Remediation\nReturn to ${topic.materials[0]} and the smallest successful step. Rehearse the vocabulary orally, provide a partially completed representation, model the decision aloud, and ask the learner to finish the next step. If the learner can perform the step but cannot explain it, use a sentence frame. Retry a changed case before moving on.`,
     `## Extension\n${topic.extension}\n\nThe extension deepens the same authority target. It must require a comparison, justification, new evidence, or changed condition, not a topic beyond the grade's authority. Ask the learner to state an assumption or limitation when the evidence does not support a universal claim.`,
     `## Teacher Guidance\nPrepare ${topic.materials.join(", ")}. Use a low-resource alternative if a listed item is unavailable. Read directions aloud when reading is not the target, allow oral rehearsal before writing, and accept a diagram or labeled demonstration when it provides valid evidence. Keep the formal vocabulary visible and use the same meaning throughout the lesson.`,
@@ -449,11 +667,13 @@ function buildBodies(topic: Topic, grade: number, subject: Nr13Subject, stage: s
   ].join("\n\n");
 
   const blockBody = [
-    `## Block Lesson Opening\nRetrieve ${prior}, state the objective, and display the success check for ${topic.concept}. Learners make a prediction before the teacher model so the class can revisit the prediction with evidence.`,
-    `## Block Lesson Model\n${topic.examples[0]}\n\nModel the complete response, including vocabulary, representation, evidence, and conclusion. Then work through ${topic.examples[1]} and name the changed condition.`,
-    `## Block Lesson Workshop\n${topic.guidedPractice}\n\nGroups use roles for reader or observer, recorder, checker, and reporter. The checker must ask why the evidence supports the response. Each learner completes an individual changed case after the group task.`,
+    `## Block Lesson Opening\nRetrieve ${prior}, state the objective, and display the success check for ${topic.concept}. Learners make a prediction before the teacher model so the class can revisit the prediction with evidence. This block is designed to ${profile.focus}.`,
+    `## Block Lesson Model\n${materials.learnerMaterial}\n\n${topic.examples[0]}\n\nModel the complete response, including vocabulary, representation, evidence, and conclusion. Then work through ${topic.examples[1]} and name the changed condition. ${materials.workedSolution} ${profile.exampleMove}`,
+    `## Block Lesson Workshop\n${materials.guidedItems.join("\n")}\n\nGroups use roles for reader or observer, recorder, checker, and reporter. The checker must ask why the evidence supports the response. Each learner completes an individual changed case after the group task. ${profile.guidedMove}`,
+    `## Block Lesson Discussion and Project\n${materials.groupWork}\nProject deliverable: ${materials.project}`,
     `## Block Lesson Error Analysis\nTest the misconception '${topic.misconception}' against the correction '${topic.correction}'. Groups must identify the failed step and write a repair. Do not award mastery for repeating the teacher's correction without applying it.`,
-    `## Block Lesson Independent Response\n${topic.independentPractice}\n\nRequire a labeled representation or source reference, the result or interpretation, and a two-sentence explanation. Confer with learners whose work shows a vocabulary, process, or transfer barrier.`,
+    `## Block Lesson Independent Response\n${materials.independentItems.join("\n")}\n\nRequire a labeled representation or source reference, the result or interpretation, and a two-sentence explanation. Confer with learners whose work shows a vocabulary, process, or transfer barrier.`,
+    `## Block Lesson Homework and Lab\nHomework: ${materials.homework.join(" ")} ${materials.lab ?? "Use the source packet or problem set as the investigation record."}`,
     `## Block Lesson Assessment\nUse the two exit checks and the five-item lesson quiz blueprint. The first check measures recall or representation; the second measures application. Record which standard code and concept were secure, developing, or not yet secure.`,
     `## Block Lesson Support and Extension\nSupport uses ${topic.materials.join(", ")}, oral rehearsal, a partially worked example, and one decision at a time. Extension asks learners to ${topic.extension.toLowerCase()} Keep both paths on the same grade-level standard.`,
     `## Block Lesson Home Connection\nExplain ${topic.concept} with a safe local example, ask a family member one evidence question, and bring back an observation or short explanation. Home support is optional enrichment and does not penalize learners without materials.`,
@@ -477,6 +697,8 @@ export function buildNr13GenerationPlan(grade: number, subject: Nr13Subject): Nr
     const title = `Unit ${topicIndex + 1}: ${topic.unitTitle} - ${stage}`;
     const unitId = `nr13-${subject.toLowerCase()}-g${grade}-u${topicIndex + 1}-${slugify(topic.unitTitle)}`;
     const contentId = `${unitId}-l${stageIndex + 1}`;
+    const profile = stageProfile(stage);
+    const materials = buildLearningPackage(topic, grade, subject, stage);
     const bodies = buildBodies(topic, grade, subject, stage, prior, next);
     const assessmentPlan = buildAssessmentPlan(topic, index + 1);
     const payload = CurriculumPayloadSchema.parse({
@@ -484,26 +706,57 @@ export function buildNr13GenerationPlan(grade: number, subject: Nr13Subject): Nr
       grade,
       subject,
       lessonFormat: "either",
-      objectives: [topic.objective],
+      objectives: [`${topic.objective} ${profile.objective}`],
       body: bodies.standard,
       body_standard: bodies.standard,
       body_block: bodies.block,
-      activities: [topic.guidedPractice, topic.independentPractice, topic.extension],
-      labs: [],
+      activities: [
+        ...materials.classwork.map((item) => `${profile.guidedMove} Classwork: ${item}`),
+        materials.groupWork,
+        ...materials.homework.map((item) => `${profile.independentMove} Homework: ${item}`),
+      ],
+      labs: subject === "SCIENCE" ? [{
+        id: `${unitId}-lab`,
+        title: `${topic.unitTitle} investigation`,
+        type: "guided_walkthrough",
+        durationMinutes: 30,
+        subject,
+        gradeLevel: grade,
+        labObjective: topic.objective,
+        materialsNeeded: topic.materials,
+        safetyNotes: "Use only the listed safe materials. Do not taste or handle unknown substances.",
+        procedure: [
+          { stepNumber: 1, instruction: `State the question and predict what evidence would show ${topic.concept}.`, teacherNote: "Check that the prediction can be observed or recorded.", durationMinutes: 5 },
+          { stepNumber: 2, instruction: "Change one condition, keep the comparison fair, and record observations in the table.", teacherNote: "Prompt learners to distinguish observation from inference.", durationMinutes: 15 },
+          { stepNumber: 3, instruction: "Compare the observations, write a conclusion, and identify one limitation or next test.", teacherNote: "Do not accept a cause claim without evidence.", durationMinutes: 10 },
+        ],
+        observationForm: [
+          { field: "observation", prompt: "What did you observe or measure?", inputType: "text" },
+          { field: "comparison", prompt: "What changed and what stayed constant?", inputType: "text" },
+        ],
+        analysisQuestions: [
+          { question: "Which observation best supports your conclusion?", expectedAnswer: "The learner cites a specific recorded observation and links it to the conclusion.", scoringRubric: "2 points for evidence and link; 1 for evidence without link; 0 for unsupported claim." },
+          { question: "What could the investigation not establish?", expectedAnswer: "The learner names a limitation such as one trial, one condition, or missing measurement.", scoringRubric: "2 points for a relevant limitation; 1 for a vague limitation; 0 for no limitation." },
+        ],
+        connectionToLesson: `The investigation provides evidence for the ${topic.concept} explanation and the named misconception repair.`,
+        offlineCapable: true,
+        virtualAlternative: "Use the same observation table with teacher-supplied paper data when materials are unavailable.",
+      }] : [],
       moeAlignments: topic.standardCodes,
       metadata: { topic: topic.unitTitle, locale: "LR", generatedAt: NR13_VERSION, model: "nr13-authored-deterministic-generator" },
     });
     const enrichedPayload: Record<string, unknown> = {
       ...payload,
       assessmentPlan,
-      objective: topic.objective,
-      explanation: `Teach ${topic.concept} through the stated examples, vocabulary, guided evidence, independent transfer, and error repair.`,
-      workedExamples: [...topic.examples],
-      guidedPractice: [topic.guidedPractice],
-      independentPractice: [topic.independentPractice],
+      studentMaterials: materials,
+      objective: `${topic.objective} ${profile.objective}`,
+      explanation: `Teach ${topic.concept} through the ${stage.toLowerCase()} sequence: ${profile.focus}. Use the stated examples, vocabulary, guided evidence, independent transfer, and error repair.`,
+      workedExamples: topic.examples.map((example, exampleIndex) => `${example} Stage move: ${exampleIndex === 0 ? profile.exampleMove : profile.teacherMove}`),
+      guidedPractice: [`${profile.guidedMove} Core task: ${topic.guidedPractice}`],
+      independentPractice: [`${profile.independentMove} Core task: ${topic.independentPractice}`],
       assessment: "Five mapped multiple-choice items plus two exit checks measure recall, application, misconception repair, evidence, and transfer.",
       remediation: `Use ${topic.materials[0]} and the repair: ${topic.correction}`,
-      extension: topic.extension,
+      extension: `${profile.extensionMove} Core task: ${topic.extension}`,
       guardianSupport: `Explain ${topic.concept} at home with one safe local example and an evidence question.`,
       primaryConcept: topic.concept,
       conceptTag: `${subject.toLowerCase()}.${slugify(topic.concept)}`,
@@ -568,12 +821,14 @@ export function validateNr13Lesson(record: Nr13GenerationRecord) {
   if (!Array.isArray(payload.authorityTrace) || payload.authorityTrace.length === 0) reasons.push("missing_authority_trace");
   if (!payload.prerequisites?.length || !payload.nextConcepts?.length) reasons.push("missing_progression_links");
   if (!plan || plan.lessonQuiz?.questionCount !== 5 || plan.lessonQuiz.items.length !== 5 || plan.unitQuiz?.questionCount !== 10 || plan.termExam?.questionCount !== 30) reasons.push("assessment_count_contract");
+  const materials = payload.studentMaterials as StudentMaterials & { classwork?: string[]; groupWork?: string; homework?: string[]; project?: string } | undefined;
+  if (!materials?.learnerMaterial || !materials.workedSolution || !materials.guidedItems?.length || !materials.independentItems?.length || !materials.answerGuide?.length || !materials.masteryTask || !materials.classwork?.length || !materials.groupWork || !materials.homework?.length || !materials.project) reasons.push("missing_student_materials");
   if (plan?.lessonQuiz) {
     const alignments = new Set(payload.moeAlignments);
     if (plan.lessonQuiz.items.some((item) => item.options.length !== 4 || new Set(item.options).size !== 4 || !alignments.has(item.standardCode) || item.options[item.correctIndex] !== item.answerKey)) reasons.push("assessment_traceability");
     if (new Set(plan.lessonQuiz.items.map((item) => item.correctIndex)).size < 3) reasons.push("answer_position_variation");
   }
-  for (const heading of ["Objective", "Prerequisite Retrieval", "Key Vocabulary", "Worked Example 1", "Worked Example 2", "Guided Practice", "Independent Practice", "Misconception and Error Repair", "Mastery Check", "Remediation", "Extension", "Teacher Guidance", "Guardian and Home Support"]) {
+  for (const heading of ["Objective", "Prerequisite Retrieval", "Key Vocabulary", "Learner Materials", "Worked Example 1", "Worked Example 2", "Worked Solution", "Guided Practice", "Independent Practice", "Answer Guide", "Classwork", "Group Work and Discussion", "Assignment and Homework", "Project", "Misconception and Error Repair", "Mastery Check", "Remediation", "Extension", "Teacher Guidance", "Guardian and Home Support"]) {
     if (!new RegExp(`##\\s+${heading}`, "i").test(body)) reasons.push(`missing_${slugify(heading)}`);
   }
   if (/\b(todo|tbd|placeholder|option a|review question|day-1 lesson shell|demonstrate the key idea)\b/i.test(body)) reasons.push("placeholder_content");

@@ -1,6 +1,6 @@
 # NR-13 Grade 5-8 Coverage Matrix
 
-Status: authored and validator-complete
+Status: authored and validator-complete; approval state remains pending
 Version: `nr13-2026.1`
 
 NR-13 uses Liberia Ministry of Education curriculum authority as the scope
@@ -11,6 +11,14 @@ guidance, home support, evidence recording, and mapped assessment. A lesson
 does not pass on word count alone. The shared approval floor is 3,500 combined
 standard/block body words plus the structural and semantic checks in
 `validateNr13Lesson`.
+
+The learner-material contract is also required: every lesson carries an actual
+student-facing material packet, worked solution, guided and independent items,
+answer guide, mastery task, classwork, group discussion, homework, and a
+subject-appropriate project. Science lessons additionally carry a safe lab or
+investigation record. These are authored learning materials, not a replacement
+for the teacher guide, and English and Social Studies use separate material
+types and content pathways.
 
 ## Scope decision
 
