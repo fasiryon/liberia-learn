@@ -142,3 +142,17 @@ it("projects NR-13 learner content without teacher guidance or answer keys", () 
   expect(rejected.studentReady).toBe(false);
   expect(rejected.body_standard).toBe("");
 });
+
+it("projects standalone lab payloads without teacher notes or answer keys", async () => {
+  const { projectStudentLabPayload } = await import("@/lib/curriculum/studentLessonProjection");
+  const projected = projectStudentLabPayload({
+    title: "Evidence lab",
+    teacherSecret: "do not expose",
+    procedure: [{ instruction: "Record the observation.", teacherNote: "Teacher prompt" }],
+    analysisQuestions: [{ question: "What changed?", expectedAnswer: "The correct answer", scoringRubric: "Teacher rubric" }],
+  });
+  expect(projected).not.toHaveProperty("teacherSecret");
+  expect((projected.procedure as any[])[0]).not.toHaveProperty("teacherNote");
+  expect((projected.analysisQuestions as any[])[0]).not.toHaveProperty("expectedAnswer");
+  expect((projected.analysisQuestions as any[])[0]).not.toHaveProperty("scoringRubric");
+});

@@ -38,7 +38,28 @@ function scheduledWork(id = "sw-created") {
     },
     content: {
       contentId: "content-123",
-      payload: { title: "Timetable Lesson", body: "Read this lesson" },
+      payload: {
+        title: "Timetable Lesson",
+        body: "## Teacher Guidance\nNever expose this planning note.",
+        activities: ["Teacher-only planning note"],
+        labs: [{
+          title: "Evidence lab",
+          type: "guided_walkthrough",
+          secretAnswer: "hidden",
+          procedure: [{ instruction: "Record one observation.", teacherNote: "teacher secret" }],
+          analysisQuestions: [{ question: "What did you observe?", expectedAnswer: "hidden answer", scoringRubric: "teacher rubric" }],
+        }],
+        objectives: ["Use evidence from the passage."],
+        studentMaterials: {
+          learnerMaterial: "Read the passage and underline two details that support its central idea.",
+          guidedItems: ["Which detail supports the central idea?"],
+          independentItems: ["Write the central idea in your own words."],
+          masteryTask: "State the central idea and cite two details.",
+          classwork: ["Sort the details into supports and does not support."],
+          homework: ["Find one short paragraph at home and identify its central idea."],
+          project: "Create a one-page evidence chart.",
+        },
+      },
       subject: "MATH",
       grade: 4,
       contentType: "lesson",
@@ -85,6 +106,18 @@ describe("student timetable contentId lesson routing", () => {
     expect(res.status).toBe(200);
     expect(data.id).toBe("sw-created");
     expect(data.contentId).toBe("content-123");
+    expect(data.body).toContain("Read the passage");
+    expect(data.body).not.toContain("Teacher Guidance");
+    expect(data.body).not.toContain("Teacher-only planning note");
+    expect(data.body).not.toContain("hidden");
+    expect(data.bodyStandard).toBe(data.body);
+    expect(data.activities).toContain("Sort the details into supports and does not support.");
+    expect(data.activities).not.toContain("Teacher-only planning note");
+    expect(data.labs).toHaveLength(1);
+    expect(data.labs[0]).not.toHaveProperty("secretAnswer");
+    expect(data.labs[0].procedure[0]).not.toHaveProperty("teacherNote");
+    expect(data.labs[0].analysisQuestions[0]).not.toHaveProperty("expectedAnswer");
+    expect(data.labs[0].analysisQuestions[0]).not.toHaveProperty("scoringRubric");
     expect(mockScheduledWorkCreate).toHaveBeenCalledWith(expect.objectContaining({
       data: expect.objectContaining({ contentId: "content-123", classId: "class-1" }),
     }));

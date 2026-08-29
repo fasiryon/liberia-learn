@@ -3,6 +3,7 @@ import { ArrowLeft } from "lucide-react";
 import { requireRole } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { LabSessionClient } from "@/app/student/labs/LabSessionClient";
+import { projectStudentLabPayload } from "@/lib/curriculum/studentLessonProjection";
 
 export const dynamic = "force-dynamic";
 
@@ -68,7 +69,7 @@ export default async function StudentLabDetailPage({
               labId: lab.labId,
               title: lab.title,
               estimatedMinutes: lab.estimatedMinutes,
-              payload: (lab.payload as any) ?? {},
+              payload: projectStudentLabPayload(lab.payload),
             }}
             sessionId={session.id}
             initialCompleted={Boolean(session.completedAt)}
