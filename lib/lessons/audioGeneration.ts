@@ -1,9 +1,16 @@
-import OpenAI from "openai";
 import { prisma } from "@/lib/db";
 import { logAIInteraction } from "@/lib/ai/interactionLog";
 import { enqueueJob, isQueueConfigured, JobType } from "@/lib/queue";
 import { uploadBinaryToSupabase } from "@/lib/supabaseStorage";
 import { chunkTextForTTS } from "@/lib/audio/chunkText";
+import { selectStudentLessonAudioText } from "@/lib/curriculum/studentLessonProjection";
+import {
+  buildLessonAudioIntegrity,
+  isLessonAudioIntegrityCurrent,
+  readLessonAudioIntegrityFromParts,
+  sha256Text,
+} from "@/lib/audio/lessonAudioIntegrity";
+import { createOpenAiLessonAudioProvider, type LessonAudioProvider } from "@/lib/audio/lessonAudioProvider";
 
 export const LESSON_AUDIO_BUCKET = "lesson-audio";
 export const DEFAULT_TTS_VOICE = "alloy";
@@ -34,9 +41,15 @@ export function lessonAudioStoragePath(input: {
 type AudioPart = {
   partNumber: number;
   storageUrl?: string;
-  status: "GENERATED" | "FAILED";
+  status: "PENDING" | "GENERATED" | "FAILED";
   charLength: number;
   error?: string;
+  sourceTextHash?: string;
+  assetSha256?: string;
+  language?: string;
+  format?: string;
+  generatorVersion?: string;
+  byteLength?: number;
 };
 
 function parseAudioParts(value: unknown): AudioPart[] {
@@ -48,13 +61,22 @@ function parseAudioParts(value: unknown): AudioPart[] {
     : [];
 }
 
-export async function getCurrentLessonAudio(lessonId: string, contentVersion: string, voice = DEFAULT_TTS_VOICE) {
+export async function getCurrentLessonAudio(
+  lessonId: string,
+  contentVersion: string,
+  voice = DEFAULT_TTS_VOICE,
+  sourceText?: string,
+) {
   const audio = await prisma.lessonAudio.findFirst({
     where: { lessonId, voice },
     orderBy: { generatedAt: "desc" },
   });
   if (!audio) return { status: "NOT_GENERATED" as AudioStatus, audio: null };
-  if (audio.contentVersion !== contentVersion && audio.status === "GENERATED") {
+  if (
+    audio.status === "GENERATED" &&
+    (audio.contentVersion !== contentVersion ||
+      (sourceText !== undefined && !isLessonAudioIntegrityCurrent(audio.audioParts, sourceText)))
+  ) {
     return { status: "STALE" as AudioStatus, audio };
   }
   return { status: audio.status as AudioStatus, audio };
@@ -78,7 +100,7 @@ export async function queueLessonAudioGeneration(input: {
       },
     },
   });
-  if (existing?.status === "GENERATED") return existing;
+  if (existing?.status === "GENERATED" && isLessonAudioIntegrityCurrent(existing.audioParts, input.text)) return existing;
 
   const estimatedCostUsd = estimateTtsCostUsd(input.text);
   const record = await prisma.lessonAudio.upsert({
@@ -90,8 +112,14 @@ export async function queueLessonAudioGeneration(input: {
       },
     },
     update: {
-      status: existing?.status === "GENERATED" ? existing.status : "PENDING",
+      status: "PENDING",
       estimatedCostUsd,
+      audioParts: [{
+        partNumber: 0,
+        status: "PENDING",
+        charLength: input.text.length,
+        ...buildLessonAudioIntegrity({ sourceText: input.text }),
+      }],
     },
     create: {
       lessonId: input.lessonId,
@@ -99,6 +127,12 @@ export async function queueLessonAudioGeneration(input: {
       voice,
       status: "PENDING",
       estimatedCostUsd,
+      audioParts: [{
+        partNumber: 0,
+        status: "PENDING",
+        charLength: input.text.length,
+        ...buildLessonAudioIntegrity({ sourceText: input.text }),
+      }],
     },
   });
 
@@ -137,15 +171,12 @@ export async function generateLessonAudioNow(input: {
   subject?: string;
   schoolId?: string | null;
   userId?: string | null;
+  provider?: LessonAudioProvider;
 }) {
-  const apiKey = process.env.OPENAI_API_KEY;
-  if (!apiKey) {
-    throw new Error("OPENAI_API_KEY is required for direct lesson audio generation.");
-  }
-
   const voice = input.voice ?? DEFAULT_TTS_VOICE;
   const estimatedCostUsd = estimateTtsCostUsd(input.text);
-  const chunks = chunkTextForTTS(input.text);
+  const sourceText = input.text.trim();
+  const chunks = chunkTextForTTS(sourceText);
   if (chunks.length === 0) {
     throw new Error("Lesson has no readable text.");
   }
@@ -158,10 +189,12 @@ export async function generateLessonAudioNow(input: {
       },
     },
   });
-  if (existing?.status === "GENERATED" && existing.storageUrl) {
+  if (existing?.status === "GENERATED" && existing.storageUrl && isLessonAudioIntegrityCurrent(existing.audioParts, sourceText)) {
     return existing;
   }
-  const existingParts = parseAudioParts(existing?.audioParts);
+  const existingParts = isLessonAudioIntegrityCurrent(existing?.audioParts, sourceText)
+    ? parseAudioParts(existing?.audioParts)
+    : [];
 
   await prisma.lessonAudio.upsert({
     where: {
@@ -187,7 +220,7 @@ export async function generateLessonAudioNow(input: {
     },
   });
 
-  const client = new OpenAI({ apiKey });
+  const provider = input.provider ?? createOpenAiLessonAudioProvider();
   const audioParts: AudioPart[] = [];
   let totalBytes = 0;
 
@@ -200,14 +233,7 @@ export async function generateLessonAudioNow(input: {
     }
 
     try {
-      const response = await client.audio.speech.create({
-        model: TTS_MODEL,
-        voice: voice as "alloy",
-        input: chunks[index],
-        response_format: "mp3",
-      });
-
-      const audioBuffer = Buffer.from(await response.arrayBuffer());
+      const audioBuffer = await provider.generateMp3({ text: chunks[index], voice });
       totalBytes += audioBuffer.byteLength;
       const path = lessonAudioStoragePath({
         lessonId: input.lessonId,
@@ -222,7 +248,13 @@ export async function generateLessonAudioNow(input: {
         contentType: "audio/mpeg",
         body: audioBuffer,
       });
-      audioParts.push({ partNumber, storageUrl, status: "GENERATED", charLength: chunks[index].length });
+      audioParts.push({
+        partNumber,
+        storageUrl,
+        status: "GENERATED",
+        charLength: chunks[index].length,
+        ...buildLessonAudioIntegrity({ sourceText, audio: audioBuffer }),
+      });
     } catch (error: any) {
       const message = error?.message ?? "Audio part generation failed.";
       const failedParts = [
@@ -318,11 +350,19 @@ export async function processPendingLessonAudio(limit = 1) {
   const results: Array<{ lessonId: string; status: string; error?: string }> = [];
   for (const row of pending) {
     try {
-      const payload = row.lesson.payload as { body_standard?: string; body?: string; title?: string } | null;
-      const text = payload?.body_standard ?? payload?.body ?? "";
+      const text = selectStudentLessonAudioText(row.lesson.payload);
       if (!text.trim()) {
         await prisma.lessonAudio.update({ where: { id: row.id }, data: { status: "FAILED" } });
         results.push({ lessonId: row.lessonId, status: "FAILED", error: "Lesson has no readable text." });
+        continue;
+      }
+      const queuedIntegrity = readLessonAudioIntegrityFromParts(row.audioParts);
+      if (
+        row.contentVersion !== row.lesson.version ||
+        (queuedIntegrity && queuedIntegrity.sourceTextHash !== sha256Text(text))
+      ) {
+        await prisma.lessonAudio.update({ where: { id: row.id }, data: { status: "STALE" } });
+        results.push({ lessonId: row.lessonId, status: "STALE", error: "Lesson version or narration source changed." });
         continue;
       }
       await generateLessonAudioNow({

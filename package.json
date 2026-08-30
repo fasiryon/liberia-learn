@@ -19,6 +19,7 @@
     "audit:nr12": "tsx scripts/audit-nr12-grade-deserts.ts",
     "run:nr12": "tsx scripts/nr12-grade-deserts.ts",
     "audit:nr13": "tsx scripts/audit-nr13-grades58.ts",
+    "audit:audio": "tsx scripts/audio-coverage-audit.ts",
     "preview:nr13": "tsx scripts/preview-nr13.ts",
     "preview:nr13:learner": "tsx scripts/preview-nr13-learner.ts",
     "run:nr13": "tsx scripts/nr13-grades58.ts",

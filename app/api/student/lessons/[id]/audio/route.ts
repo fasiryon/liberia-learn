@@ -37,11 +37,6 @@ export async function POST(
     });
     if (!enrollment) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
 
-    const current = await getCurrentLessonAudio(sw.content.contentId, sw.content.version);
-    if (current.audio?.status === "GENERATED") {
-      return NextResponse.json({ status: current.status, audio: current.audio });
-    }
-
     const payload = sw.content.payload as any;
     const studentPayload = projectStudentLessonPayload(payload);
     const learnerBody = typeof studentPayload.body === "string" ? studentPayload.body : "";
@@ -59,6 +54,10 @@ export async function POST(
       },
       sw.classFormat ?? "standard"
     );
+    const current = await getCurrentLessonAudio(sw.content.contentId, sw.content.version, undefined, text);
+    if (current.audio?.status === "GENERATED") {
+      return NextResponse.json({ status: current.status, audio: current.audio });
+    }
     const audio = await queueLessonAudioGeneration({
       lessonId: sw.content.contentId,
       contentVersion: sw.content.version,

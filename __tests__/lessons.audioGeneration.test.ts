@@ -1,7 +1,10 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { buildLessonAudioIntegrity } from "@/lib/audio/lessonAudioIntegrity";
 
 const mockFindUnique = vi.hoisted(() => vi.fn());
 const mockFindFirst = vi.hoisted(() => vi.fn());
+const mockFindMany = vi.hoisted(() => vi.fn());
+const mockUpdate = vi.hoisted(() => vi.fn());
 const mockUpsert = vi.hoisted(() => vi.fn());
 const mockEnqueueJob = vi.hoisted(() => vi.fn());
 const mockIsQueueConfigured = vi.hoisted(() => vi.fn());
@@ -14,6 +17,8 @@ vi.mock("@/lib/db", () => ({
     lessonAudio: {
       findUnique: mockFindUnique,
       findFirst: mockFindFirst,
+      findMany: mockFindMany,
+      update: mockUpdate,
       upsert: mockUpsert,
     },
   },
@@ -53,7 +58,16 @@ describe("lesson audio generation", () => {
 
   it("reuses generated audio for the current version", async () => {
     const { queueLessonAudioGeneration } = await import("@/lib/lessons/audioGeneration");
-    mockFindUnique.mockResolvedValueOnce({ id: "audio-1", status: "GENERATED" });
+    mockFindUnique.mockResolvedValueOnce({
+      id: "audio-1",
+      status: "GENERATED",
+      audioParts: [{
+        partNumber: 1,
+        status: "GENERATED",
+        charLength: "Full lesson text".length,
+        ...buildLessonAudioIntegrity({ sourceText: "Full lesson text", audio: Buffer.from("mp3") }),
+      }],
+    });
     const result = await queueLessonAudioGeneration({
       lessonId: "lesson-1",
       contentVersion: "v1",
@@ -100,6 +114,40 @@ describe("lesson audio generation", () => {
     mockFindFirst.mockResolvedValueOnce({ id: "audio-1", contentVersion: "old", status: "GENERATED" });
     const result = await getCurrentLessonAudio("lesson-1", "new");
     expect(result.status).toBe("STALE");
+  });
+
+  it("processes pending audio from learner-safe projected text", async () => {
+    mockFindMany.mockResolvedValueOnce([{
+      id: "audio-1",
+      lessonId: "lesson-1",
+      contentVersion: "v1",
+      voice: "alloy",
+      lesson: {
+        contentId: "lesson-1",
+        version: "v1",
+        grade: 5,
+        subject: "ENGLISH",
+        payload: {
+          body_standard: "## Teacher Guidance\nSECRET ANSWER",
+          studentMaterials: {
+            learnerMaterial: "Read the learner passage aloud.",
+            guidedItems: ["Underline the key sentence."],
+            independentItems: ["Write one response."],
+            masteryTask: "Explain your evidence.",
+          },
+        },
+      },
+    }]);
+    mockUpdate.mockResolvedValue({});
+    mockFindUnique.mockResolvedValueOnce(null);
+    const { processPendingLessonAudio } = await import("@/lib/lessons/audioGeneration");
+    const result = await processPendingLessonAudio(1);
+
+    expect(result[0]).toMatchObject({ lessonId: "lesson-1", status: "GENERATED" });
+    expect(mockSpeechCreate).toHaveBeenCalled();
+    const narration = mockSpeechCreate.mock.calls[0][0].input as string;
+    expect(narration).toContain("Read the learner passage aloud.");
+    expect(narration).not.toContain("SECRET ANSWER");
   });
 
   it("generates long lesson audio as multiple parts under 3500 characters", async () => {

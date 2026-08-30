@@ -6,6 +6,12 @@ import {
   generateLessonAudioNow,
 } from "@/lib/lessons/audioGeneration";
 import { isTtsGenerationStopped } from "@/lib/serverFlags";
+import { selectStudentLessonAudioText } from "@/lib/curriculum/studentLessonProjection";
+import {
+  isLessonAudioIntegrityCurrent,
+  readLessonAudioIntegrityFromParts,
+  sha256Text,
+} from "@/lib/audio/lessonAudioIntegrity";
 
 const MAX_BATCH_SIZE = 5;
 
@@ -30,16 +36,10 @@ export type QueueStatus = {
 export type ProcessResult = {
   jobId: string;
   lessonId: string;
-  status: "GENERATED" | "FAILED";
+  status: "GENERATED" | "FAILED" | "STALE";
   url?: string;
   error?: string;
 };
-
-type LessonPayload = {
-  body_standard?: string;
-  body?: string;
-  audioScriptSpecs?: Array<{ script?: string }>;
-} | null;
 
 async function notifyGradeOrchestrator(input: {
   grade?: number | null;
@@ -60,11 +60,7 @@ async function notifyGradeOrchestrator(input: {
 }
 
 function extractAudioText(payload: unknown): string {
-  const p = payload as LessonPayload;
-  const scripts = Array.isArray(p?.audioScriptSpecs)
-    ? p!.audioScriptSpecs.map((e) => e?.script?.trim()).filter(Boolean).join("\n\n")
-    : "";
-  return (scripts || p?.body_standard || p?.body || "").trim();
+  return selectStudentLessonAudioText(payload);
 }
 
 export async function enqueueLessonAudio(
@@ -92,7 +88,7 @@ export async function enqueueLessonAudio(
         where: { voice },
         orderBy: { generatedAt: "desc" },
         take: 1,
-        select: { status: true, contentVersion: true },
+        select: { status: true, contentVersion: true, audioParts: true },
       },
     },
   });
@@ -101,14 +97,18 @@ export async function enqueueLessonAudio(
   let skipped = 0;
 
   for (const lesson of lessons) {
-    const existing = lesson.audioAssets[0];
-    if (existing?.status === "GENERATED" && existing.contentVersion === lesson.version) {
+    const text = extractAudioText(lesson.payload);
+    if (!text) {
       skipped++;
       continue;
     }
 
-    const text = extractAudioText(lesson.payload);
-    if (!text) {
+    const existing = lesson.audioAssets[0];
+    if (
+      existing?.status === "GENERATED" &&
+      existing.contentVersion === lesson.version &&
+      isLessonAudioIntegrityCurrent(existing.audioParts, text)
+    ) {
       skipped++;
       continue;
     }
@@ -192,6 +192,15 @@ export async function processAudioJob(jobId: string): Promise<ProcessResult> {
       errorMessage: "Lesson has no readable text.",
     });
     return { jobId, lessonId: row.lessonId, status: "FAILED", error: "Lesson has no readable text." };
+  }
+
+  const queuedIntegrity = readLessonAudioIntegrityFromParts(row.audioParts);
+  if (
+    row.contentVersion !== row.lesson.version ||
+    (queuedIntegrity && queuedIntegrity.sourceTextHash !== sha256Text(text))
+  ) {
+    await prisma.lessonAudio.update({ where: { id: jobId }, data: { status: "STALE" } });
+    return { jobId, lessonId: row.lessonId, status: "STALE", error: "Lesson version or narration source changed." };
   }
 
   try {

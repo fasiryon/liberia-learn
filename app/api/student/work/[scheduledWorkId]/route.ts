@@ -3,6 +3,8 @@ import { head } from "@vercel/blob";
 import { requireRole } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { projectStudentLessonPayload } from "@/lib/curriculum/studentLessonProjection";
+import { selectStudentLessonAudioText } from "@/lib/curriculum/studentLessonProjection";
+import { isLessonAudioIntegrityCurrent } from "@/lib/audio/lessonAudioIntegrity";
 import { resolveLessonTitle } from "@/lib/lessons/resolveLessonTitle";
 import { logProductSignal } from "@/lib/autonomous/signals/productSignalService";
 import { signHero, signInlineIllustrations } from "@/lib/media/blobStorage";
@@ -272,6 +274,7 @@ export async function GET(
 
     const payload = sw.content.payload as any;
     const studentPayload = projectStudentLessonPayload(payload);
+    const learnerAudioText = selectStudentLessonAudioText(payload);
     const deliveryProfileSource = (sw.content.deliveryProfile as any) ?? payload?.deliveryProfile ?? null;
     const deliveryProfile = projectStudentDeliveryProfile(deliveryProfileSource);
     const latestAudio = sw.content.audioAssets[0] ?? null;
@@ -324,8 +327,11 @@ export async function GET(
         (c) => ({ key: c.key, label: c.label, weight: c.weight })
       ),
     }));
+    const audioCurrent =
+      latestAudio?.contentVersion === sw.content.version &&
+      (latestAudio.status !== "GENERATED" || isLessonAudioIntegrityCurrent(latestAudio.audioParts, learnerAudioText));
     const audioStatus =
-      latestAudio?.contentVersion === sw.content.version
+      audioCurrent
         ? latestAudio.status
         : latestAudio?.status === "GENERATED"
           ? "STALE"
@@ -344,7 +350,7 @@ export async function GET(
       contentVersion: sw.content.version,
       contentHash: sw.content.hash ?? null,
       title: resolveLessonTitle({
-        payload,
+        payload: studentPayload,
         subject: String(sw.content.subject),
         fallbackTitle: sw.content.contentId,
       }),
@@ -362,7 +368,7 @@ export async function GET(
         ? studentPayload.simulationDefinitions
         : [],
       threeDLabDefinitions: [],
-      durationMins: payload?.durationMins || 45,
+      durationMins: typeof studentPayload.durationMins === "number" ? studentPayload.durationMins : 45,
       teacherName: sw.class.Teacher?.name ?? "Teacher",
       schoolName: sw.class.School?.name ?? "School",
       className: sw.class.name,
@@ -401,8 +407,8 @@ export async function GET(
       takeawaySummary: typeof studentPayload.takeawaySummary === "string"
         ? studentPayload.takeawaySummary
         : null,
-      problemSets: Array.isArray((payload as any)?.problemSets)
-        ? (payload as any).problemSets.map((ps: any) => ({
+      problemSets: Array.isArray(studentPayload.problemSets)
+        ? (studentPayload.problemSets as any[]).map((ps: any) => ({
             id: ps.id,
             sectionId: ps.sectionId,
             label: ps.label ?? null,

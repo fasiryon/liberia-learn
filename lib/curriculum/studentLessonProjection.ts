@@ -4,6 +4,7 @@ type StudentMaterials = {
   independentItems?: unknown;
   masteryTask?: unknown;
   classwork?: unknown;
+  groupWork?: unknown;
   homework?: unknown;
   project?: unknown;
   lab?: unknown;
@@ -22,6 +23,59 @@ function list(value: unknown): string[] {
 
 function numbered(values: string[]): string {
   return values.map((value, index) => `${index + 1}. ${value}`).join("\n");
+}
+
+const LEGACY_TEACHER_ONLY_HEADINGS = new Set([
+  "answer guide",
+  "assessment alignment",
+  "evidence record",
+  "extension branch",
+  "lesson study notes",
+  "metadata",
+  "remediation branch",
+  "teacher checkpoints",
+  "teacher explanation",
+  "teacher guidance",
+  "teacher notes",
+  "teacher planning record",
+  "teacher talk",
+]);
+
+/**
+ * Legacy lessons predate studentMaterials and often mix learner content with
+ * teacher planning sections. Keep the usable learner sections while removing
+ * known teacher-only or answer-bearing sections.
+ */
+function projectLegacyBody(value: unknown): string {
+  const body = text(value);
+  if (!body) return "";
+
+  const lines = body.split(/\r?\n/);
+  let include = true;
+  const kept: string[] = [];
+  for (const line of lines) {
+    const heading = line.match(/^##\s+(.+?)\s*$/)?.[1]?.trim().toLowerCase();
+    if (heading) include = !LEGACY_TEACHER_ONLY_HEADINGS.has(heading);
+    if (include) kept.push(line);
+  }
+  return kept.join("\n").replace(/\n{3,}/g, "\n\n").trim();
+}
+
+function safeProblemSets(value: unknown): unknown[] {
+  if (!Array.isArray(value)) return [];
+  return value.flatMap((item) => {
+    if (!item || typeof item !== "object" || Array.isArray(item)) return [];
+    const source = item as LessonPayloadRecord;
+    const { id, sectionId, label, studentPrompt, workingSpace } = source;
+    if (typeof studentPrompt !== "string" || !studentPrompt.trim()) return [];
+    return [{
+      id,
+      sectionId,
+      label: typeof label === "string" ? label : null,
+      studentPrompt: studentPrompt.trim(),
+      workingSpace: typeof workingSpace === "string" ? workingSpace : null,
+    }];
+  });
 }
 
 function approvedArtifacts(value: unknown): unknown[] {
@@ -129,8 +183,6 @@ function labForLearner(value: unknown): string {
   return sections.join("\n\n");
 }
 
-const TEACHER_ONLY_SECTION_RE = /##\s*(?:Teacher Explanation|Teacher Guidance|Teacher Talk|Teacher Checkpoints|Teacher Planning Record|Assessment Alignment|Evidence Record|Remediation Branch|Extension Branch|Lesson Study Notes)\b/i;
-
 /**
  * Build the learner-safe projection for a curriculum payload.
  *
@@ -146,8 +198,8 @@ export function projectStudentLessonPayload(payload: unknown): LessonPayloadReco
   const hasAuthoredMaterials = Boolean(materials && typeof materials === "object" && text(materials.learnerMaterial));
 
   if (!hasAuthoredMaterials) {
-    const legacyBody = text(source.body_standard) || text(source.body) || text(source.content);
-    if (TEACHER_ONLY_SECTION_RE.test(legacyBody)) {
+    const legacyBody = projectLegacyBody(source.body_standard) || projectLegacyBody(source.body) || projectLegacyBody(source.lessons) || projectLegacyBody(source.content);
+    if (!legacyBody) {
       return {
         title: source.title,
         grade: source.grade,
@@ -178,13 +230,15 @@ export function projectStudentLessonPayload(payload: unknown): LessonPayloadReco
       activities: list(source.activities),
       body: legacyBody,
       body_standard: legacyBody,
-      body_block: text(source.body_block) || legacyBody,
+      body_block: projectLegacyBody(source.body_block) || legacyBody,
       assessment: legacyAssessment,
       moeAlignments: list(source.moeAlignments),
       labs: safeLabs(source.labs),
       pseudoLabs: approvedArtifacts(source.pseudoLabs),
       simulationDefinitions: approvedArtifacts(source.simulationDefinitions),
       takeawaySummary: text(source.takeawaySummary),
+      durationMins: typeof source.durationMins === "number" ? source.durationMins : undefined,
+      problemSets: safeProblemSets(source.problemSets),
       studentReady: true,
     };
   }
@@ -192,6 +246,7 @@ export function projectStudentLessonPayload(payload: unknown): LessonPayloadReco
   const guided = list(materials?.guidedItems);
   const independent = list(materials?.independentItems);
   const classwork = list(materials?.classwork);
+  const authoredGroupWork = text(materials?.groupWork);
   const homework = list(materials?.homework);
   const project = text(materials?.project);
   const lab = labForLearner(materials?.lab);
@@ -202,9 +257,9 @@ export function projectStudentLessonPayload(payload: unknown): LessonPayloadReco
         ? [materials.lab]
         : [],
   );
-  const groupWork = guided.length
+  const groupWork = authoredGroupWork || (guided.length
     ? `Discuss the material with your group. Take turns explaining which words or details support each answer. Then complete your own response.\n\n${numbered(guided)}`
-    : "Discuss the material with your group, explain your evidence, and complete your own response afterward.";
+    : "Discuss the material with your group, explain your evidence, and complete your own response afterward.");
   const learnerSections = [
     text(materials?.learnerMaterial),
     guided.length ? `## Try It Together\n${numbered(guided)}` : "",
@@ -240,8 +295,20 @@ export function projectStudentLessonPayload(payload: unknown): LessonPayloadReco
     pseudoLabs: approvedArtifacts(source.pseudoLabs),
     simulationDefinitions: approvedArtifacts(source.simulationDefinitions),
     takeawaySummary: text(source.takeawaySummary),
+    durationMins: typeof source.durationMins === "number" ? source.durationMins : undefined,
+    problemSets: safeProblemSets(source.problemSets),
     studentReady: true,
   };
+}
+
+/**
+ * Return only text that is already safe for learner delivery. Audio workers
+ * reload curriculum rows independently of the student request, so they must
+ * apply the same projection before selecting narration text.
+ */
+export function selectStudentLessonAudioText(payload: unknown): string {
+  const projected = projectStudentLessonPayload(payload);
+  return text(projected.body_standard) || text(projected.body) || text(projected.body_block);
 }
 
 /**
