@@ -1,14 +1,15 @@
 import { config } from "dotenv";
 import { mkdir, writeFile } from "fs/promises";
 import path from "path";
-import OpenAI from "openai";
 import { prisma } from "@/lib/db";
 import {
   DEFAULT_TTS_VOICE,
-  TTS_MODEL,
   estimateTtsCostUsd,
 } from "@/lib/lessons/audioGeneration";
 import { uploadLessonAudioToSupabase } from "@/lib/supabaseStorage";
+import { selectStudentLessonAudioText } from "@/lib/curriculum/studentLessonProjection";
+import { buildLessonAudioIntegrity } from "@/lib/audio/lessonAudioIntegrity";
+import { createOpenAiLessonAudioProvider } from "@/lib/audio/lessonAudioProvider";
 
 config({ path: ".env.local" });
 config();
@@ -76,25 +77,11 @@ function asPayload(value: unknown): LessonPayload {
 }
 
 export function lessonAudioText(payloadValue: unknown) {
-  const payload = asPayload(payloadValue);
-  const scripts = Array.isArray(payload.audioScriptSpecs)
-    ? payload.audioScriptSpecs.map((entry) => entry?.script?.trim()).filter(Boolean)
-    : [];
-  const text = scripts.length > 0 ? scripts.join("\n\n") : payload.body_standard ?? payload.body ?? "";
-  return text.trim();
+  return selectStudentLessonAudioText(payloadValue);
 }
 
 async function openAiTtsBuffer(input: { text: string; voice: string }) {
-  const apiKey = process.env.OPENAI_API_KEY;
-  if (!apiKey) throw new Error("OPENAI_API_KEY is required for OpenAI TTS.");
-  const client = new OpenAI({ apiKey });
-  const response = await client.audio.speech.create({
-    model: TTS_MODEL,
-    voice: input.voice as "alloy",
-    input: input.text,
-    response_format: "mp3",
-  });
-  return Buffer.from(await response.arrayBuffer());
+  return createOpenAiLessonAudioProvider().generateMp3(input);
 }
 
 async function uploadAudio(input: { grade: number; subject: string; lessonId: string; voice: string; body: Buffer }) {
@@ -161,7 +148,7 @@ export async function processLessonAudioBatch(options: ProcessLessonAudioOptions
         where: { voice },
         orderBy: { generatedAt: "desc" },
         take: 1,
-        select: { id: true, status: true, storageUrl: true, contentVersion: true, voice: true },
+        select: { id: true, status: true, storageUrl: true, contentVersion: true, voice: true, audioParts: true },
       },
     },
   });
@@ -174,6 +161,11 @@ export async function processLessonAudioBatch(options: ProcessLessonAudioOptions
     const audio = lesson.audioAssets[0];
     if (!audio) {
       rows.push({ lessonId: lesson.contentId, status: "SKIPPED", error: "No matching LessonAudio row." });
+      continue;
+    }
+    if (audio.contentVersion !== lesson.version) {
+      if (!options.dryRun) await prisma.lessonAudio.update({ where: { id: audio.id }, data: { status: "STALE" } });
+      rows.push({ lessonId: lesson.contentId, status: "STALE", error: "Lesson version changed before processing." });
       continue;
     }
     if (audio.status === "GENERATED" && !options.force) {
@@ -212,6 +204,13 @@ export async function processLessonAudioBatch(options: ProcessLessonAudioOptions
           storageUrl: uploaded.url,
           generatedAt: new Date(),
           estimatedCostUsd: costUsd,
+          audioParts: [{
+            partNumber: 1,
+            storageUrl: uploaded.url,
+            status: "GENERATED",
+            charLength: text.length,
+            ...buildLessonAudioIntegrity({ sourceText: text, audio: mp3 }),
+          }],
           durationSeconds: asPayload(lesson.payload).audioScriptSpecs?.reduce((sum, entry) => sum + Number(entry.durationTargetSeconds ?? 0), 0) || null,
         },
       });

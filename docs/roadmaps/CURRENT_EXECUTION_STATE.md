@@ -252,9 +252,44 @@ guideline baseline.
   preserves the pre-existing untracked `artifacts/` directory and has not
   mutated production or staging.
 
-Next canonical goal remains the NR-13 approval gate. NR-14 - National Audio
-Pipeline Completion is queued as the next implementation goal, but must not
-begin until approved coverage and dashboard evidence are verified.
+NR-13 repository implementation is COMPLETE. Its governed content promotion
+and dashboard closure remain DEFERRED / PENDING AUTHORIZED EXTERNAL MUTATION;
+no production or staging curriculum state was changed. The exact authored
+candidate IDs, deterministic lesson hashes, 20-cell matrix, dry-run command,
+write guard, and post-promotion verification are retained in the NR-13 matrix,
+runner, and audit artifacts for a future authorized deployment.
+
+## NR-14 National Audio Pipeline: REPOSITORY COMPLETE; GOVERNED RUN PENDING
+
+NR-14 repository engineering is complete on the active implementation branch.
+The roadmap scope is all APPROVED lesson audio coverage, with an explicit
+`audioOptOut` exception where authorized, plus worker/batch operation and the
+standard code gate. The repository now uses learner-safe lesson text as the
+single narration source, binds audio to lesson version and source text hash,
+records asset SHA-256/language/format/generator metadata in the existing
+`LessonAudio.audioParts` envelope, detects stale or malformed assets, and keeps
+generation separate from curriculum approval/publication.
+
+- Queue, pending-worker, batch CLI, admin, teacher, and legacy audio paths use
+  the same learner-safe source projection; answer keys and teacher-only sections
+  are not narrated.
+- `scripts/audio-coverage-audit.ts` is read-only and reports eligible, ready,
+  missing, stale, failed, opted-out, and unresolved counts. It does not mutate
+  curriculum or audio state.
+- Existing lesson-player and IndexedDB/PWA audio behavior remains additive:
+  text remains available when audio is missing, failed, stale, offline, or
+  evicted. Audio is re-downloadable and does not displace unsynced work.
+- Provider credentials and paid generation are not required for CI; tests use
+  deterministic/fake generation boundaries. No production or staging mutation
+  occurred.
+
+The governed NR-14 coverage/publication run remains pending authorized
+operation. Do not mark generated audio as governed/public solely because a
+provider returned bytes. Physical mobile certification remains deferred to the
+app-shell phase.
+
+Next canonical goal after the governed NR-14 run is **NR-14.5 - Auto-Grading
+Fairness Review**; do not begin it in this cycle.
 
 ## Resume here
 

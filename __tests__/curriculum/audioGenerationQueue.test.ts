@@ -1,4 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { buildLessonAudioIntegrity } from "@/lib/audio/lessonAudioIntegrity";
 
 const mockCurriculumFindMany = vi.hoisted(() => vi.fn());
 const mockAudioFindMany = vi.hoisted(() => vi.fn());
@@ -82,7 +83,19 @@ describe("audioGenerationQueue", () => {
     it("skips lessons that already have a GENERATED audio for the current version", async () => {
       mockCurriculumFindMany.mockResolvedValueOnce([
         approvedLesson({
-          audioAssets: [{ status: "GENERATED", contentVersion: "v1" }],
+          audioAssets: [{
+            status: "GENERATED",
+            contentVersion: "v1",
+            audioParts: [{
+              partNumber: 1,
+              status: "GENERATED",
+              charLength: "Grade 5 English lesson body.".length,
+              ...buildLessonAudioIntegrity({
+                sourceText: "Grade 5 English lesson body.",
+                audio: Buffer.from("mp3"),
+              }),
+            }],
+          }],
         }),
       ]);
       const { enqueueLessonAudio } = await import("@/lib/audio/audioGenerationQueue");
@@ -230,6 +243,63 @@ describe("audioGenerationQueue", () => {
 
       expect(result).toMatchObject({ status: "FAILED", error: "Lesson has no readable text." });
       expect(mockGenerateLessonAudioNow).not.toHaveBeenCalled();
+    });
+
+    it("narrates the learner projection rather than teacher-only payload text", async () => {
+      mockAudioFindUnique.mockResolvedValueOnce({
+        id: "audio-1",
+        lessonId: "lesson-1",
+        voice: "alloy",
+        contentVersion: "v1",
+        lesson: {
+          contentId: "lesson-1",
+          version: "v1",
+          grade: 5,
+          subject: "ENGLISH",
+          payload: {
+            body_standard: "## Teacher Guidance\nSECRET ANSWER AND TEACHER SCRIPT",
+            studentMaterials: {
+              learnerMaterial: "Read the passage and cite two details.",
+              guidedItems: ["Underline the supporting details."],
+              independentItems: ["Write the central idea."],
+              masteryTask: "Explain your evidence.",
+            },
+          },
+        },
+      });
+      mockGenerateLessonAudioNow.mockResolvedValueOnce({ storageUrl: "audio.mp3" });
+      const { processAudioJob } = await import("@/lib/audio/audioGenerationQueue");
+
+      await processAudioJob("audio-1");
+
+      expect(mockGenerateLessonAudioNow).toHaveBeenCalledWith(expect.objectContaining({
+        text: expect.stringContaining("Read the passage and cite two details."),
+      }));
+      expect(mockGenerateLessonAudioNow.mock.calls[0][0].text).not.toContain("SECRET ANSWER");
+    });
+
+    it("does not generate a queued job after the lesson version changes", async () => {
+      mockAudioFindUnique.mockResolvedValueOnce({
+        id: "audio-1",
+        lessonId: "lesson-1",
+        voice: "alloy",
+        contentVersion: "v1",
+        audioParts: [],
+        lesson: {
+          contentId: "lesson-1",
+          version: "v2",
+          grade: 5,
+          subject: "ENGLISH",
+          payload: { body: "Current learner text." },
+        },
+      });
+      const { processAudioJob } = await import("@/lib/audio/audioGenerationQueue");
+
+      const result = await processAudioJob("audio-1");
+
+      expect(result).toMatchObject({ status: "STALE", lessonId: "lesson-1" });
+      expect(mockGenerateLessonAudioNow).not.toHaveBeenCalled();
+      expect(mockAudioUpdate).toHaveBeenCalledWith({ where: { id: "audio-1" }, data: { status: "STALE" } });
     });
 
     it("returns FAILED when job id does not exist", async () => {

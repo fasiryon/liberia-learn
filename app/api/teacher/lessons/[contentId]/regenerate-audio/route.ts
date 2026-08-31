@@ -3,7 +3,9 @@ import { requireRole } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { logAudit } from "@/lib/audit";
 import { selectLessonBody } from "@/lib/lessons";
-import { generateSpeech, lessonToNarrationText, estimateElevenLabsCostUsd } from "@/lib/elevenlabs";
+import { projectStudentLessonPayload } from "@/lib/curriculum/studentLessonProjection";
+import { buildLessonAudioIntegrity } from "@/lib/audio/lessonAudioIntegrity";
+import { generateSpeech, estimateElevenLabsCostUsd } from "@/lib/elevenlabs";
 import { uploadBinaryToSupabase } from "@/lib/supabaseStorage";
 
 export const dynamic = "force-dynamic";
@@ -50,8 +52,13 @@ export async function POST(
     }
 
     const payload = lesson.payload as any;
+    const studentPayload = projectStudentLessonPayload(payload);
     const bodyText = selectLessonBody(
-      { body: payload?.body, body_standard: payload?.body_standard, body_block: payload?.body_block },
+      {
+        body: studentPayload.body as string | undefined,
+        body_standard: studentPayload.body_standard as string | undefined,
+        body_block: studentPayload.body_block as string | undefined,
+      },
       "standard"
     );
 
@@ -59,11 +66,7 @@ export async function POST(
       return NextResponse.json({ error: "Lesson has no readable content" }, { status: 422 });
     }
 
-    const narrationText = lessonToNarrationText({
-      title: lesson.title ?? lesson.subject,
-      body_standard: payload?.body_standard,
-      body: payload?.body,
-    });
+    const narrationText = bodyText;
 
     const voice = "elevenlabs-rachel";
 
@@ -110,7 +113,13 @@ export async function POST(
         storageUrl,
         generatedAt: new Date(),
         audioParts: [
-          { partNumber: 1, storageUrl, status: "GENERATED", charLength: narrationText.length },
+          {
+            partNumber: 1,
+            storageUrl,
+            status: "GENERATED",
+            charLength: narrationText.length,
+            ...buildLessonAudioIntegrity({ sourceText: narrationText, audio: mp3 }),
+          },
         ],
       },
     });

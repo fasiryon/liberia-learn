@@ -136,13 +136,40 @@ it("projects NR-13 learner content without teacher guidance or answer keys", () 
   expect(body).not.toContain("## Answer Guide");
   expect(projected).not.toHaveProperty("studentMaterials");
   expect(projected.assessment).toBeUndefined();
-  expect(projected.problemSets).toBeUndefined();
+  expect(projected.problemSets).toEqual([]);
+  expect(String(projected.body)).toContain("In groups, assign reader or editor");
+  expect(String(projected.body)).not.toContain("Discuss the material with your group. Take turns explaining");
   const rejected = projectStudentLessonPayload({
     title: "Legacy lesson",
     body_standard: "## Teacher Guidance\nAsk the class to discuss the topic.",
   });
   expect(rejected.studentReady).toBe(false);
   expect(rejected.body_standard).toBe("");
+});
+
+it("preserves learner sections when projecting legacy lessons", () => {
+  const projected = projectStudentLessonPayload({
+    title: "Legacy reading lesson",
+    lessons: ["not a string"],
+    body_standard: [
+      "## Objective",
+      "Identify the central idea of a short passage.",
+      "",
+      "## Teacher Explanation",
+      "SECRET: use the answer key and tell learners the response.",
+      "",
+      "## Independent Practice",
+      "Write the central idea and cite two details.",
+      "",
+      "## Teacher Notes",
+      "SECRET: mark everyone correct.",
+    ].join("\n"),
+  });
+
+  expect(projected.studentReady).toBe(true);
+  expect(projected.body).toContain("Identify the central idea");
+  expect(projected.body).toContain("Write the central idea");
+  expect(projected.body).not.toContain("SECRET");
 });
 
 it("projects standalone lab payloads without teacher notes or answer keys", async () => {

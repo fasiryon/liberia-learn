@@ -56,6 +56,7 @@ function scheduledWork(id = "sw-created") {
           independentItems: ["Write the central idea in your own words."],
           masteryTask: "State the central idea and cite two details.",
           classwork: ["Sort the details into supports and does not support."],
+          groupWork: "In groups, compare the passage evidence and report one supported claim.",
           homework: ["Find one short paragraph at home and identify its central idea."],
           project: "Create a one-page evidence chart.",
         },
@@ -113,6 +114,8 @@ describe("student timetable contentId lesson routing", () => {
     expect(data.bodyStandard).toBe(data.body);
     expect(data.activities).toContain("Sort the details into supports and does not support.");
     expect(data.activities).not.toContain("Teacher-only planning note");
+    expect(data.body).toContain("In groups, compare the passage evidence");
+    expect(data.body).not.toContain("Discuss the material with your group. Take turns explaining");
     expect(data.labs).toHaveLength(1);
     expect(data.labs[0]).not.toHaveProperty("secretAnswer");
     expect(data.labs[0].procedure[0]).not.toHaveProperty("teacherNote");

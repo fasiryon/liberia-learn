@@ -2,7 +2,38 @@
 
 > Sprint: NR-14 — National Audio Pipeline  
 > Date started: 2026-05-28  
-> Status: **IN PROGRESS**  
+> Repository status: **COMPLETE**
+> Governed coverage/publication status: **PENDING AUTHORIZED RUN**
+> No production or staging mutation is performed by repository validation.
+
+## Current canonical contract
+
+The roadmap scope is all APPROVED lesson audio, with an explicit
+`payload.audioOptOut === true` exception where authorized. A lesson counts as
+ready only when its `LessonAudio` record is `GENERATED`, matches the current
+lesson version, and carries integrity metadata in its existing `audioParts`
+envelope: learner-safe source text SHA-256, asset SHA-256, `en` language,
+`mp3` format, and the NR-14 generator version. Missing, failed, stale,
+malformed, or metadata-incomplete audio is not ready.
+
+Narration source is the same learner-safe projection used by student delivery.
+It includes learner materials and visible practice, but excludes answer keys,
+teacher-only sections, internal metadata, and assessment solutions. The text
+lesson remains usable when audio is missing, unavailable, offline, or evicted.
+
+Read-only coverage audit:
+
+```bash
+npm run audit:audio
+```
+
+The audit reports eligible, ready, missing, stale, failed, and opted-out
+lessons without changing database state. Generation and validation do not grant
+curriculum approval or publication; those remain separate governed actions.
+
+The older batch notes below are historical operational planning. They must not
+be interpreted as executed production work or as a bypass of the NR-13
+governed-promotion gate.
 > Gate: G1-G6 core subjects (MATH/SCIENCE/LITERACY) ≥ 50% audio coverage
 
 ---

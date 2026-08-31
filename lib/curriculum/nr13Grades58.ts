@@ -69,6 +69,7 @@ type StudentMaterials = {
   independentItems: string[];
   answerGuide: string[];
   masteryTask: string;
+  groupWork?: string;
 };
 
 export type Nr13GenerationRecord = {
