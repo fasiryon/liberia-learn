@@ -6,7 +6,7 @@
 
 ## Event contract and evolution
 
-Every governed event uses the `governed.*` namespace and schema version 1. It includes a stable `eventId`, `schoolId`, event time, actor type, source classification, and metadata validated against the one registry. Replayable events also carry `operationId` or `sourceEventId`; ingestion deduplicates on that identity before `eventId`. Event time represents the learner action, server decision, or human review shown in the registry. Receipt time may be retained operationally but never replaces trustworthy event time in a metric window.
+Every governed event uses the `governed.*` namespace and schema version 1. It includes a stable `eventId`, `schoolId`, event time, actor type, source classification, and metadata validated against the one registry. Replayable events also carry `operationId` or `sourceEventId`; ingestion deduplicates on tenant-scoped event name plus that identity before `eventId`. Metadata is an allowlist with type and range validation, so free text and unregistered fields are quarantined. `calculateMetric` always invokes this validation and ingestion path; no consumer can bypass it. Event time represents the learner action, server decision, or human review shown in the registry. Receipt time may be retained operationally but never replaces trustworthy event time in a metric window.
 
 Version 1 is accepted explicitly. A breaking semantic change requires a new version and consumer support. Unknown names, unsupported versions, missing required metadata, and invalid envelopes are quarantined with a reason and never enter a governed metric. Telemetry validation is non-transactional: it must not fail a learner action. An adapter must expose quarantine counts/reasons through the existing operational telemetry path.
 
@@ -20,7 +20,7 @@ The only P7-A cohort dimensions are existing tenant-safe dimensions: school, dis
 
 The registry defines version, owner, source events, numerator, denominator, eligibility, window, missing-data policy, synthetic exclusion, grain, unit, directionality, and caveat for learning dosage, retention, mastery movement, teacher adoption, workflow completion, tutor helpfulness, AI grounding, hallucination, and safety decisions.
 
-Missing data is excluded and reported as unknown unless the metric explicitly says otherwise. It is never silently changed to zero. Offline delayed events use their trustworthy `occurredAt`; duplicate replay cannot inflate a metric. Results carry metric version, input event schema versions, window, tenant scope, excluded synthetic count, and missing-data count as provenance.
+Missing data is excluded and reported as unknown unless the metric explicitly says otherwise. It is never silently changed to zero. Retention includes only entrants with a fully observable seven-day window and only returns after entry within that window. Workflow completion requires a matching workflow, actor, and completion after its start within 24 hours. Safety coverage uses required moderation interactions as its denominator. Offline delayed events use their trustworthy `occurredAt`; duplicate replay cannot inflate a metric. Results carry metric version, input event schema versions, window, tenant scope, excluded synthetic, quarantine, duplicate, and missing-data counts as provenance.
 
 ## Consumer rule and P7-B handoff
 
