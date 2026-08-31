@@ -1,5 +1,10 @@
 # Event Taxonomy
 
+> Governed measurement authority: P7-A events and metrics are defined in
+> `lib/measurement/governedMeasurement.ts` and documented in
+> `docs/P7A_GOVERNED_MEASUREMENT_FOUNDATION.md`. This legacy inventory is not
+> authority for governed product metrics.
+
 ## Purpose
 `LearningEvent` is the append-only event backbone for analytics, replay safety, and provenance.
 
