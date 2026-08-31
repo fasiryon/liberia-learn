@@ -14,7 +14,6 @@ import { useState, useCallback } from "react";
 
 type TestCaseInput = {
   stdin: string;
-  expectedStdout: string;
   label?: string; // optional human-readable label, e.g. "Sample 1"
 };
 
@@ -74,10 +73,6 @@ export function CodeSubmit({
           promptId,
           sourceCode: code,
           languageId: LANGUAGE_IDS[language],
-          testCases: testCases.map(({ stdin, expectedStdout }) => ({
-            stdin,
-            expectedStdout,
-          })),
           clientSubmissionId,
         }),
       });

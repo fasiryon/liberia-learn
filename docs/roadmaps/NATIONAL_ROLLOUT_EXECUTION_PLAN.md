@@ -40,7 +40,7 @@ This plan governs the path from **current production baseline** to **world-class
 | NR-12 | Critical Grade Deserts (G2, G9) | 3 | Content | COMPLETE | PASS (2026-08-28: repository audit 15/15 authored lessons in each of 10 G2/G9 core-subject cells; 4,932 tests/602 files and build green) |
 | NR-13 | Grades 5–8 Gap Closure + ENGLISH | 3 | Content | PENDING | AUTHORED MATRIX PASS; APPROVED coverage and dashboard verification pending (no production/staging mutation) |
 | NR-14 | National Audio Pipeline Completion | 3 | Content | PENDING | REPOSITORY PIPELINE COMPLETE; governed coverage/publication run pending authorization |
-| NR-14.5 | Auto-Grading Fairness Review | 3 | Content | PENDING | NOT RUN |
+| NR-14.5 | Auto-Grading Fairness Review | 3 | Content | COMPLETE | PASS (2026-08-31, PR #110: answer-key integrity remediation, server-held code-test authority, bounded AI prompts, 4,936 Vitest tests, build and PWA regression green) |
 | NR-15 | Unified Ops Dashboard + Alerting | 4 | Ops | PENDING | NOT RUN |
 | NR-16 | Playwright CI + Phase 6 Close on Main | 4 | Ops | PENDING | NOT RUN |
 | NR-17 | DR Drill + Export Circuit Breaker Under Load | 4 | Ops | PENDING | NOT RUN |

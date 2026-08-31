@@ -3,6 +3,26 @@
 ## Purpose
 Live execution tracking for the final closeout program.
 
+## NR-14.5 Auto-Grading Fairness Review: COMPLETE
+
+Completed in repository on `feat/nr-14-5-auto-grading-fairness` at
+`dedcced802815580c3dfda2fd84880c58030fbdd` through PR #110. The audit found
+and remediated two assessment-integrity defects: client-supplied lesson-quiz
+answer keys and client-supplied code expected output. Lesson keys are now held
+in a short-lived encrypted HttpOnly session, code grading loads validated
+server-held cases, hidden-case feedback is withheld, and AI grading prompts
+treat learner responses as untrusted data. Offline quiz work remains honestly
+pending review rather than receiving a fabricated local score. The detailed
+path, authority, fairness, and safety matrix is in
+`docs/roadmaps/NR14_5_GRADING_FAIRNESS_AUDIT.md`.
+
+Exact-head CI passed TypeScript, 4,936 Vitest tests, production build, and the
+real-browser PWA regression. Vercel, GitGuardian, and PR triage passed;
+Supabase Preview was skipped under the established Prisma-authoritative
+configuration. No production or staging mutation occurred. NR-13 governed
+promotion remains deferred. The next canonical goal remains NR-15, Unified Ops
+Dashboard + Alerting.
+
 ## P5-A Manifest Policy Authority: COMPLETE
 
 Completed on dedicated branch `feat/p5-a-signed-offline-packs`, with policy

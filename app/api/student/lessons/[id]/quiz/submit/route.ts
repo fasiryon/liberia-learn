@@ -11,19 +11,13 @@ import { tagMisconception } from "@/lib/intelligence/misconceptions";
 import { recordPerformanceEvent } from "@/lib/intelligence/recordPerformanceEvent";
 import { resolveScheduledLessonContext } from "@/lib/student/resolveScheduledLessonContext";
 import { recordAnswer, buildSkillKey } from "@/lib/adaptive/updateMastery";
+import { openLessonQuizSession } from "@/lib/grading/lessonQuizSession";
 
 type QuizSubmissionBody = {
   quizId?: string;
   answers?: Array<{
     questionId?: string;
     selectedIndex?: number;
-  }>;
-  questions?: Array<{
-    id?: string;
-    question?: string;
-    options?: string[];
-    correctIndex?: number;
-    explanation?: string;
   }>;
   startedAt?: string;
 };
@@ -32,32 +26,10 @@ function normalizeSubmission(body: QuizSubmissionBody) {
   if (
     typeof body.quizId !== "string" ||
     !Array.isArray(body.answers) ||
-    !Array.isArray(body.questions) ||
-    body.questions.length !== 5
+    body.answers.length !== 5
   ) {
     throw Object.assign(new Error("invalid_payload"), { status: 400 });
   }
-
-  const questions = body.questions.map((question, index) => {
-    if (
-      typeof question?.id !== "string" ||
-      typeof question?.question !== "string" ||
-      !Array.isArray(question?.options) ||
-      question.options.length !== 4 ||
-      !Number.isInteger(question?.correctIndex) ||
-      typeof question?.explanation !== "string"
-    ) {
-      throw Object.assign(new Error(`invalid_question_${index + 1}`), { status: 400 });
-    }
-
-    return {
-      id: question.id,
-      question: question.question,
-      options: question.options.map((option) => String(option)),
-      correctIndex: Number(question.correctIndex),
-      explanation: question.explanation,
-    };
-  });
 
   const answers = body.answers.map((answer) => {
     if (typeof answer?.questionId !== "string" || !Number.isInteger(answer?.selectedIndex)) {
@@ -72,7 +44,6 @@ function normalizeSubmission(body: QuizSubmissionBody) {
 
   return {
     quizId: body.quizId,
-    questions,
     answers,
     startedAt: typeof body.startedAt === "string" ? body.startedAt : null,
   };
@@ -86,9 +57,20 @@ export async function POST(
     const user = await requireRole("STUDENT");
     const submission = normalizeSubmission((await req.json()) as QuizSubmissionBody);
     const lesson = await resolveScheduledLessonContext(user, params.id);
+    const session = openLessonQuizSession(req.cookies.get("lesson_quiz_session")?.value ?? "", user.id, params.id);
+    if (!session || session.quizId !== submission.quizId) {
+      throw Object.assign(new Error("quiz_session_invalid_or_expired"), { status: 400 });
+    }
+    const submittedQuestionIds = new Set(submission.answers.map((answer) => answer.questionId));
+    if (
+      submittedQuestionIds.size !== session.questions.length ||
+      !session.questions.every((question) => submittedQuestionIds.has(question.id))
+    ) {
+      throw Object.assign(new Error("invalid_quiz_answers"), { status: 400 });
+    }
 
     const questionMap = new Map(
-      submission.questions.map((question) => [question.id, question] as const)
+      session.questions.map((question) => [question.id, question] as const)
     );
     const evaluatedAnswers = submission.answers.map((answer) => {
       const question = questionMap.get(answer.questionId);
@@ -184,7 +166,7 @@ export async function POST(
           answers: submission.answers,
         },
         evaluation: {
-          questions: submission.questions.map((question) => ({
+          questions: session.questions.map((question) => ({
             id: question.id,
             question: question.question,
             correctIndex: question.correctIndex,
@@ -193,7 +175,7 @@ export async function POST(
           incorrectAnswers,
           score,
           correctCount,
-          totalQuestions: submission.questions.length,
+          totalQuestions: session.questions.length,
           gapAnalysis,
           gapAnalysisError,
         },
@@ -238,7 +220,7 @@ export async function POST(
         categoryCode: "lesson_quiz_incorrect_response",
         categoryLabel: "Lesson Quiz Incorrect Response",
         categoryDescription: "Incorrect response pattern captured from a lesson-end quiz.",
-        confidence: incorrectAnswers.length / submission.questions.length,
+        confidence: incorrectAnswers.length / session.questions.length,
         evidence: {
           contentId: lesson.contentId,
           incorrectQuestionIds: incorrectAnswers.map((answer) => answer.questionId),
@@ -346,13 +328,13 @@ export async function POST(
       quizScore: score,
     });
 
-    return NextResponse.json({
+    const response = NextResponse.json({
       attemptId: assessmentAttempt.id,
       score,
       scorePercent: Math.round(score * 100),
       correctCount,
-      totalQuestions: submission.questions.length,
-      explanations: submission.questions.map((question) => ({
+      totalQuestions: session.questions.length,
+      explanations: session.questions.map((question) => ({
         questionId: question.id,
         question: question.question,
         explanation: question.explanation,
@@ -372,6 +354,8 @@ export async function POST(
       // NR-14B: mastery hint for client (non-blocking; may be null if update was async)
       adaptive: { masteryUpdated: true },
     });
+    response.cookies.set("lesson_quiz_session", "", { path: `/api/student/lessons/${params.id}/quiz/submit`, maxAge: 0 });
+    return response;
   } catch (error: any) {
     return NextResponse.json(
       { error: error?.message ?? "Failed to submit quiz" },
