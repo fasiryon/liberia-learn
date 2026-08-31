@@ -39,6 +39,7 @@ type ExitTicketQuestion = {
 
 type LessonResponse = {
   id: string;
+  curriculumContentId?: string;
   contentId: string;
   contentVersion?: string | null;
   contentHash?: string | null;
@@ -93,7 +94,7 @@ type LessonResponse = {
     description: string;
     starterCode: string;
     languageId: number;
-    testCases: Array<{ stdin: string; expectedStdout: string }>;
+    testCases: Array<{ stdin: string }>;
     difficulty: string;
   }>;
   aiLiteracyExercises?: Array<{
@@ -1219,13 +1220,12 @@ export default function LessonDeliveryClient({ lessonId }: { lessonId: string })
             {lesson.codeExercises!.map((ex) => (
               <CodeSubmit
                 key={ex.id}
-                lessonId={lesson.id}
+                lessonId={lesson.curriculumContentId ?? lesson.id}
                 promptId={ex.promptId}
                 prompt={`${ex.title}\n\n${ex.description}`}
                 language="python"
                 testCases={ex.testCases.map((tc, i) => ({
                   stdin: tc.stdin,
-                  expectedStdout: tc.expectedStdout,
                   label: `Sample ${i + 1}`,
                 }))}
               />

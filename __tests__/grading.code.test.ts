@@ -23,6 +23,7 @@ vi.mock("@/lib/db", () => ({
       create: vi.fn(),
       update: vi.fn(),
     },
+    codeExercise: { findUnique: vi.fn() },
   },
 }));
 
@@ -175,6 +176,10 @@ describe("POST /api/grading/code", () => {
     });
     mockPrisma.gradedSubmission.findUnique.mockResolvedValue(null);
     mockPrisma.gradedSubmission.create.mockResolvedValue({ id: "sub-1", status: "pending" });
+    mockPrisma.codeExercise.findUnique.mockResolvedValue({
+      lessonId: "lesson-1", languageId: 71, validatedAt: new Date(),
+      testCases: [{ stdin: "", expectedStdout: "hello", hidden: false }],
+    });
     mockPrisma.gradedSubmission.update.mockResolvedValue({
       id: "sub-1", score: 1.0, feedback: "All test cases passed — excellent work!",
       gradedAt: new Date(),
@@ -193,7 +198,7 @@ describe("POST /api/grading/code", () => {
         lessonId: "lesson-1",
         sourceCode: "print('hello')",
         languageId: 71,
-        testCases: [{ stdin: "", expectedStdout: "hello" }],
+        promptId: "exercise-1",
       }),
     });
     const res = await POST(req as any);
@@ -213,7 +218,7 @@ describe("POST /api/grading/code", () => {
         lessonId: "lesson-1",
         sourceCode: "console.log('hi')",
         languageId: 63, // Node.js — not allowed
-        testCases: [{ stdin: "", expectedStdout: "hi" }],
+        promptId: "exercise-1",
       }),
     });
     const res = await POST(req as any);
@@ -232,7 +237,7 @@ describe("POST /api/grading/code", () => {
         lessonId: "lesson-1",
         sourceCode: "print('hello')",
         languageId: 71,
-        testCases: [{ stdin: "", expectedStdout: "hello" }],
+        promptId: "exercise-1",
       }),
     });
     const res = await POST(req as any);
@@ -250,7 +255,7 @@ describe("POST /api/grading/code", () => {
         lessonId: "lesson-1",
         sourceCode: "print('hello')",
         languageId: 71,
-        testCases: [{ stdin: "", expectedStdout: "hello" }],
+        promptId: "already-sent",
         clientSubmissionId: "already-sent",
       }),
     });
@@ -273,10 +278,26 @@ describe("POST /api/grading/code", () => {
         lessonId: "lesson-1",
         sourceCode: "print('hello')",
         languageId: 71,
-        testCases: [{ stdin: "", expectedStdout: "hello" }],
+        promptId: "exercise-1",
       }),
     });
     const res = await POST(req as any);
     expect(res.status).toBe(503);
+  });
+
+  it("uses server-held cases and never accepts learner supplied expected output", async () => {
+    const { POST } = await import("@/app/api/grading/code/route");
+    const req = new Request("http://localhost/api/grading/code", {
+      method: "POST",
+      body: JSON.stringify({
+        lessonId: "lesson-1", promptId: "exercise-1", sourceCode: "print('hello')", languageId: 71,
+        testCases: [{ stdin: "", expectedStdout: "forged answer" }],
+      }),
+    });
+    const res = await POST(req as any);
+    expect(res.status).toBe(200);
+    const callBody = JSON.parse(mockFetch.mock.calls[0][1].body);
+    expect(callBody.expected_output).toBe("hello");
+    expect(callBody.expected_output).not.toBe("forged answer");
   });
 });

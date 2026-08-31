@@ -318,7 +318,7 @@ export async function GET(
       ...ex,
       testCases: (ex.testCases as Array<{ stdin: string; expectedStdout: string; hidden: boolean }>)
         .filter((tc) => !tc.hidden)
-        .map((tc) => ({ stdin: tc.stdin, expectedStdout: tc.expectedStdout })),
+        .map((tc) => ({ stdin: tc.stdin })),
     }));
 
     const aiLiteracyExercises = rawAILiteracyExercises.map((ex) => ({
@@ -346,6 +346,7 @@ export async function GET(
 
     return NextResponse.json({
       id: sw.id,
+      curriculumContentId: sw.content.id,
       contentId: sw.content.contentId,
       contentVersion: sw.content.version,
       contentHash: sw.content.hash ?? null,

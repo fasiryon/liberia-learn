@@ -3,6 +3,13 @@
 ## Purpose
 Live execution tracking for the final closeout program.
 
+## NR-14.5 Auto-Grading Fairness Review: IN PROGRESS
+
+Repository audit and remediation are in progress on
+`feat/nr-14-5-auto-grading-fairness`. No production or staging mutation has
+occurred. The final gate, PR CI, merge, and exact-head verification remain
+required before this sprint can be marked complete.
+
 ## P5-A Manifest Policy Authority: COMPLETE
 
 Completed on dedicated branch `feat/p5-a-signed-offline-packs`, with policy

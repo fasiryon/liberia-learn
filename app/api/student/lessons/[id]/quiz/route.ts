@@ -7,6 +7,7 @@ import { checkAiRateLimit } from "@/lib/ai/rateLimitGuard";
 import { getRateLimitHeaders, rateLimitExceededResponse } from "@/lib/rateLimit";
 import { logLearningEvent } from "@/lib/events/logLearningEvent";
 import { resolveScheduledLessonContext } from "@/lib/student/resolveScheduledLessonContext";
+import { projectQuizForLearner, sealLessonQuizSession } from "@/lib/grading/lessonQuizSession";
 
 export async function POST(
   _req: NextRequest,
@@ -84,9 +85,19 @@ export async function POST(
       },
     });
 
-    return NextResponse.json(quiz, {
+    const response = NextResponse.json({
+      quizId: quiz.quizId,
+      questions: projectQuizForLearner(quiz.questions),
+    }, {
       headers: getRateLimitHeaders(rateLimit),
     });
+    response.cookies.set("lesson_quiz_session", sealLessonQuizSession({
+      lessonId: params.id,
+      quizId: quiz.quizId,
+      questions: quiz.questions,
+      userId: user.id,
+    }), { httpOnly: true, sameSite: "lax", secure: process.env.NODE_ENV === "production", path: `/api/student/lessons/${params.id}/quiz/submit`, maxAge: 2 * 60 * 60 });
+    return response;
   } catch (error: any) {
     return NextResponse.json(
       {

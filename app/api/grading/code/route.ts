@@ -15,7 +15,6 @@
  *   promptId?: string,
  *   sourceCode: string,
  *   languageId: number,   // must be in ALLOWED_LANGUAGE_ID_SET
- *   testCases: { stdin: string; expectedStdout: string }[],
  *   clientSubmissionId?: string
  * }
  */
@@ -29,7 +28,6 @@ import { recordAnswer, buildSkillKey } from "@/lib/adaptive/updateMastery";
 
 const RATE_LIMIT_WINDOW_MS = 3_600_000; // 1 hour
 const RATE_LIMIT_COUNT = 20;            // 20 submissions / student / hour
-const MAX_TEST_CASES = 20;
 const MASTERY_SCORE_THRESHOLD = 1.0;    // all tests pass = mastery for code
 
 export async function POST(req: Request) {
@@ -60,20 +58,18 @@ export async function POST(req: Request) {
       promptId,
       sourceCode,
       languageId,
-      testCases,
       clientSubmissionId,
     }: {
       lessonId?: string;
       promptId?: string;
       sourceCode?: string;
       languageId?: unknown;
-      testCases?: unknown;
       clientSubmissionId?: string;
     } = body ?? {};
 
-    if (!lessonId || typeof sourceCode !== "string" || !Array.isArray(testCases)) {
+    if (!lessonId || !promptId || typeof sourceCode !== "string") {
       return NextResponse.json(
-        { error: "lessonId, sourceCode, and testCases are required" },
+        { error: "lessonId, promptId, and sourceCode are required" },
         { status: 400 }
       );
     }
@@ -85,26 +81,6 @@ export async function POST(req: Request) {
         },
         { status: 400 }
       );
-    }
-
-    if (testCases.length > MAX_TEST_CASES) {
-      return NextResponse.json(
-        { error: `Maximum ${MAX_TEST_CASES} test cases per submission` },
-        { status: 400 }
-      );
-    }
-
-    // Validate test case shape
-    for (const tc of testCases as unknown[]) {
-      if (
-        typeof (tc as any)?.stdin !== "string" ||
-        typeof (tc as any)?.expectedStdout !== "string"
-      ) {
-        return NextResponse.json(
-          { error: "Each test case must have { stdin: string; expectedStdout: string }" },
-          { status: 400 }
-        );
-      }
     }
 
     // Idempotency — NR-14A pattern
@@ -126,6 +102,23 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "lesson_not_found" }, { status: 404 });
     }
 
+    // Assessment authority is server-held. Learners may name an exercise but
+    // never supply its expected outputs or hidden cases.
+    const exercise = await prisma.codeExercise.findUnique({
+      where: { promptId },
+      select: { lessonId: true, languageId: true, testCases: true, validatedAt: true },
+    });
+    if (!exercise || exercise.lessonId !== lessonId || !exercise.validatedAt) {
+      return NextResponse.json({ error: "validated_code_exercise_not_found" }, { status: 404 });
+    }
+    if (exercise.languageId !== languageId) {
+      return NextResponse.json({ error: "language_does_not_match_exercise" }, { status: 400 });
+    }
+    const authoritativeCases = exercise.testCases as Array<{ stdin: string; expectedStdout: string; hidden?: boolean }>;
+    if (!Array.isArray(authoritativeCases) || authoritativeCases.length === 0 || authoritativeCases.length > 20) {
+      return NextResponse.json({ error: "invalid_code_exercise_contract" }, { status: 500 });
+    }
+
     // Create pending submission
     const submission = await prisma.gradedSubmission.create({
       data: {
@@ -143,7 +136,7 @@ export async function POST(req: Request) {
     const gradeResult = await gradeCode({
       sourceCode,
       languageId,
-      testCases: testCases as { stdin: string; expectedStdout: string }[],
+      testCases: authoritativeCases.map(({ stdin, expectedStdout }) => ({ stdin, expectedStdout })),
     });
 
     // Update submission with results
@@ -186,7 +179,9 @@ export async function POST(req: Request) {
       score: updated.score,
       passed: gradeResult.passed,
       total: gradeResult.total,
-      results: gradeResult.results,
+      // Hidden expected output stays server-side. Visible cases may provide
+      // formative feedback after submission; hidden cases only affect totals.
+      results: gradeResult.results.filter((_, index) => !authoritativeCases[index]?.hidden),
       feedback: updated.feedback,
       gradedAt: updated.gradedAt,
     });

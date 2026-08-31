@@ -10,8 +10,6 @@ type LessonQuizQuestion = {
   id: string;
   question: string;
   options: string[];
-  correctIndex: number;
-  explanation: string;
 };
 
 type LessonQuizResult = {
@@ -118,20 +116,12 @@ export function LessonQuizPanel({
 
     async function saveOfflineAttempt() {
       const submittedAt = new Date().toISOString();
-      const evaluated = quiz.questions.map((question) => ({
-        question,
-        selectedIndex: answers[question.id],
-        isCorrect: answers[question.id] === question.correctIndex,
-      }));
-      const correctCount = evaluated.filter((answer) => answer.isCorrect).length;
-      const score = correctCount / Math.max(evaluated.length, 1);
       const attemptId = typeof crypto !== "undefined" && "randomUUID" in crypto ? crypto.randomUUID() : `${Date.now()}-${Math.random()}`;
       await saveOfflineQuizAttempt({
         id: attemptId,
         contentId: contentId ?? lessonId,
         quizId: quiz.quizId,
         answers,
-        score,
         submittedAt,
         contentVersion,
         contentHash,
@@ -139,21 +129,14 @@ export function LessonQuizPanel({
       await removeQuizDraft(lessonId).catch(() => {});
       setResult({
         attemptId,
-        score,
-        scorePercent: Math.round(score * 100),
-        correctCount,
-        totalQuestions: evaluated.length,
-        explanations: evaluated.map(({ question, selectedIndex }) => ({
-          questionId: question.id,
-          question: question.question,
-          explanation: question.explanation,
-          correctIndex: question.correctIndex,
-          selectedIndex: selectedIndex ?? null,
-          options: question.options,
-        })),
+        score: 0,
+        scorePercent: 0,
+        correctCount: 0,
+        totalQuestions: quiz.questions.length,
+        explanations: [],
         gapAnalysis: null,
         gapAnalysisError: null,
-        congratulatoryMessage: "Saved on this device. Your attempt will sync when you reconnect.",
+        congratulatoryMessage: "Saved on this device. It will be reviewed when you reconnect.",
       });
     }
 
@@ -170,7 +153,6 @@ export function LessonQuizPanel({
         body: JSON.stringify({
           quizId: quiz.quizId,
           startedAt,
-          questions: quiz.questions,
           answers: quiz.questions.map((question) => ({
             questionId: question.id,
             selectedIndex: answers[question.id],
