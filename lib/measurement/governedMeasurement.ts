@@ -9,7 +9,11 @@
  */
 
 export const GOVERNED_EVENT_SCHEMA_VERSION = 1 as const;
-export const GOVERNED_METRIC_VERSION = 1 as const;
+// Version 2 introduces corrected eligibility and observation semantics for
+// retention, teacher adoption, workflow completion, and safety coverage.
+// Version 1 results remain historically interpretable but must not be mixed
+// with version 2 results.
+export const GOVERNED_METRIC_VERSION = 2 as const;
 
 export type MeasurementFamily =
   | "learning_dosage" | "retention" | "mastery_movement" | "teacher_adoption"
@@ -150,23 +154,26 @@ export function validateGovernedEvent(input: unknown): ValidationResult {
   return { ok: true, event: event as GovernedEvent };
 }
 
-export type IngestionResult = { accepted: GovernedEvent[]; quarantined: Array<{ event: unknown; reason: string }>; duplicates: number };
+export type IngestionResult = { accepted: GovernedEvent[]; quarantined: Array<{ event: unknown; reason: string }>; duplicates: number; duplicateRecords: GovernedEvent[] };
 export function ingestGovernedEvents(inputs: unknown[]): IngestionResult {
-  const accepted: GovernedEvent[] = []; const quarantined: IngestionResult["quarantined"] = []; const identities = new Set<string>(); let duplicates = 0;
+  const accepted: GovernedEvent[] = []; const quarantined: IngestionResult["quarantined"] = []; const duplicateRecords: GovernedEvent[] = []; const identities = new Set<string>(); let duplicates = 0;
   for (const input of inputs) {
     const result = validateGovernedEvent(input);
     if (result.ok === false) { quarantined.push({ event: input, reason: result.reason }); continue; }
     const identity = `${result.event.schoolId}:${result.event.name}:${result.event.operationId || result.event.sourceEventId || result.event.eventId}`;
-    if (identities.has(identity)) { duplicates += 1; continue; }
+    if (identities.has(identity)) { duplicates += 1; duplicateRecords.push(result.event); continue; }
     identities.add(identity); accepted.push(result.event);
   }
-  return { accepted, quarantined, duplicates };
+  return { accepted, quarantined, duplicates, duplicateRecords };
 }
 
-export type MetricResult = { metricId: MeasurementFamily; metricVersion: number; numerator: number; denominator: number; value: number | null; includedEventSchemaVersions: number[]; excludedSyntheticEvents: number; missingDataEvents: number; quarantinedEvents: number; duplicateEvents: number; schoolId: string; window: { start: string; end: string } };
-export function calculateMetric(metricId: MeasurementFamily, inputs: unknown[], schoolId: string, window: { start: string; end: string }): MetricResult {
+export type MetricCalculationOptions = { coverageEnd?: string };
+export type MetricResult = { metricId: MeasurementFamily; metricVersion: number; numerator: number; denominator: number; value: number | null; includedEventSchemaVersions: number[]; excludedSyntheticEvents: number; missingDataEvents: number; quarantinedEvents: number; duplicateEvents: number; schoolId: string; window: { start: string; end: string }; coverageEnd: string };
+export function calculateMetric(metricId: MeasurementFamily, inputs: unknown[], schoolId: string, window: { start: string; end: string }, options: MetricCalculationOptions = {}): MetricResult {
   const start = Date.parse(window.start), end = Date.parse(window.end);
   if (Number.isNaN(start) || Number.isNaN(end) || end < start) throw new Error("invalid_metric_window");
+  const coverageEnd = Date.parse(options.coverageEnd ?? new Date().toISOString());
+  if (Number.isNaN(coverageEnd)) throw new Error("invalid_metric_coverage_end");
   const ingestion = ingestGovernedEvents(inputs);
   const accepted = ingestion.accepted;
   const inWindow = accepted.filter((e) => e.schoolId === schoolId && e.syntheticSource === "production" && Date.parse(e.occurredAt) >= start && Date.parse(e.occurredAt) <= end);
@@ -174,7 +181,7 @@ export function calculateMetric(metricId: MeasurementFamily, inputs: unknown[], 
   const named = (name: string) => inWindow.filter((e) => e.name === name);
   let numerator = 0, denominator = 0, missingDataEvents = 0;
   if (metricId === "learning_dosage") { const rows = named("governed.learning.activity"); const valid = rows.filter((e) => typeof e.metadata.activeSeconds === "number" && Number(e.metadata.activeSeconds) > 0); numerator = valid.reduce((sum, e) => sum + Number(e.metadata.activeSeconds), 0); denominator = new Set(valid.map((e) => e.actorId).filter(Boolean)).size; missingDataEvents = rows.length - valid.length; }
-  if (metricId === "retention") { const returns = named("governed.retention.learning_day").filter((e) => e.actorId); for (const entry of named("governed.retention.cohort_entered").filter((e) => e.actorId)) { const entryAt = Date.parse(entry.occurredAt), observableEnd = entryAt + 7 * 24 * 60 * 60 * 1000; if (observableEnd > end) { missingDataEvents++; continue; } denominator++; if (returns.some((candidate) => candidate.actorId === entry.actorId && Date.parse(candidate.occurredAt) > entryAt && Date.parse(candidate.occurredAt) <= observableEnd)) numerator++; } }
+  if (metricId === "retention") { const returns = named("governed.retention.learning_day").filter((e) => e.actorId); const observedThrough = Math.min(end, coverageEnd); for (const entry of named("governed.retention.cohort_entered").filter((e) => e.actorId)) { const entryAt = Date.parse(entry.occurredAt), observableEnd = entryAt + 7 * 24 * 60 * 60 * 1000; if (observableEnd > observedThrough) { missingDataEvents++; continue; } denominator++; if (returns.some((candidate) => candidate.actorId === entry.actorId && Date.parse(candidate.occurredAt) > entryAt && Date.parse(candidate.occurredAt) <= observableEnd)) numerator++; } }
   if (metricId === "mastery_movement") { const groups = new Map<string, GovernedEvent[]>(); for (const e of named("governed.mastery.snapshot")) { const key = `${e.actorId}:${String(e.metadata.strandId ?? "")}`; groups.set(key, [...(groups.get(key) ?? []), e]); } for (const rows of groups.values()) { const valid = rows.filter((e) => typeof e.metadata.mastery === "number" && typeof e.metadata.assessmentVersion === "string").sort((a,b) => a.occurredAt.localeCompare(b.occurredAt)); const ending = valid[valid.length - 1]; if (valid.length < 2 || valid[0].metadata.assessmentVersion !== ending?.metadata.assessmentVersion) { missingDataEvents += rows.length; continue; } denominator++; if (Number(ending.metadata.mastery) > Number(valid[0].metadata.mastery)) numerator++; } }
   if (metricId === "teacher_adoption") { const eligible = new Set(named("governed.teacher.eligible").map((e) => e.actorId).filter(Boolean)); const adopters = new Set(named("governed.teacher.meaningful_action").filter((e) => eligible.has(e.actorId)).map((e) => e.actorId)); denominator = eligible.size; numerator = adopters.size; }
   if (metricId === "workflow_completion") { const completed = named("governed.workflow.completed"); const starts = named("governed.workflow.started"); denominator = starts.length; numerator = starts.filter((entry) => completed.some((done) => done.actorId === entry.actorId && done.metadata.workflow === entry.metadata.workflow && done.metadata.workflowId === entry.metadata.workflowId && Date.parse(done.occurredAt) > Date.parse(entry.occurredAt) && Date.parse(done.occurredAt) <= Date.parse(entry.occurredAt) + 24 * 60 * 60 * 1000)).length; }
@@ -182,5 +189,6 @@ export function calculateMetric(metricId: MeasurementFamily, inputs: unknown[], 
   if (metricId === "ai_grounding") { const rows = named("governed.ai.grounding_evaluated").filter((e) => typeof e.metadata.grounded === "boolean" && e.metadata.approvedContextAvailable === true && typeof e.metadata.evaluatorVersion === "string"); denominator = rows.length; numerator = rows.filter((e) => e.metadata.grounded === true).length; }
   if (metricId === "hallucination") { const rows = named("governed.ai.hallucination_evaluated").filter((e) => typeof e.metadata.unsupportedClaim === "boolean" && typeof e.metadata.evaluatorVersion === "string" && typeof e.metadata.category === "string"); denominator = rows.length; numerator = rows.filter((e) => e.metadata.unsupportedClaim === true).length; }
   if (metricId === "safety_decisions") { const decisions = new Set(named("governed.safety.decision").map((e) => String(e.metadata.interactionId))); const required = named("governed.safety.required"); denominator = required.length; numerator = required.filter((e) => decisions.has(String(e.metadata.interactionId))).length; }
-  return { metricId, metricVersion: GOVERNED_METRIC_VERSION, numerator, denominator, value: denominator ? numerator / denominator : null, includedEventSchemaVersions: [GOVERNED_EVENT_SCHEMA_VERSION], excludedSyntheticEvents, missingDataEvents, quarantinedEvents: ingestion.quarantined.length, duplicateEvents: ingestion.duplicates, schoolId, window };
+  const isRequestedSchool = (event: unknown) => Boolean(event && typeof event === "object" && (event as { schoolId?: unknown }).schoolId === schoolId);
+  return { metricId, metricVersion: GOVERNED_METRIC_VERSION, numerator, denominator, value: denominator ? numerator / denominator : null, includedEventSchemaVersions: [GOVERNED_EVENT_SCHEMA_VERSION], excludedSyntheticEvents, missingDataEvents, quarantinedEvents: ingestion.quarantined.filter((item) => isRequestedSchool(item.event)).length, duplicateEvents: ingestion.duplicateRecords.filter((event) => event.schoolId === schoolId).length, schoolId, window, coverageEnd: new Date(Math.min(end, coverageEnd)).toISOString() };
 }
