@@ -53,14 +53,14 @@ export async function dispatchJob(jobType: JobType, payload: unknown, metadata: 
     case JobType.HEALTH_CHECK:
       console.log("[HEALTH_CHECK] Worker alive:", new Date().toISOString());
       return { status: "ok", ts: new Date().toISOString() };
-    // Known-but-unhandled types: ack without crashing so they don't fill the DLQ.
+    // Known-but-unhandled types are rejected by the worker and eventually DLQed.
     case JobType.GENERATE_LESSON_AUDIO:
     case JobType.AUTONOMOUS_WORKFLOW_RUN:
-      console.warn(`[WORKER] Job type ${jobType} not yet implemented; acking without processing`);
+      console.warn(`[WORKER] Job type ${jobType} not yet implemented; rejecting for retry/DLQ`);
       return { status: "noop", jobType };
     default:
-      // Unknown types are acked (not re-queued) to prevent DLQ flooding.
-      console.warn(`[WORKER] Unknown job type: ${jobType}; acking`);
+      // Unknown types are rejected by the worker and eventually DLQed.
+      console.warn(`[WORKER] Unknown job type: ${jobType}; rejecting for retry/DLQ`);
       return { status: "unknown", jobType };
   }
 }

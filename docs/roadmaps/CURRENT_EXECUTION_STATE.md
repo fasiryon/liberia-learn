@@ -3,6 +3,19 @@
 ## Purpose
 Live execution tracking for the final closeout program.
 
+## P1/P2/P5/P7 Recertification: RECONCILED (2026-08-31)
+
+The historical records below remain preserved, but their old completion wording
+is superseded for current planning by
+`docs/audits/P1_P2_P5_P7_RECERTIFICATION_2026-08-31.md`. The audit re-ran
+current P1, P2, and P5 source contracts and remediated the P1-D 500-job
+threshold plus worker noop/unknown false-success handling. It records P1-C,
+P1-D, P2-B, P2-C, P5-A, and original P5-C external gates without fabricating
+operations. It also establishes that P7-A and P7-C are PARTIAL and P7-B is NOT
+STARTED. Do not begin NR-15 until the repository-local P7 gaps are addressed
+in an authorized goal. Physical device and classroom-hub field proof remain
+separate external gates.
+
 ## NR-14.5 Auto-Grading Fairness Review: COMPLETE
 
 Completed in repository on `feat/nr-14-5-auto-grading-fairness` at
