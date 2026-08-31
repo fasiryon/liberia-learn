@@ -1,6 +1,6 @@
-// Flood test: sends exactly 200 HEALTH_CHECK messages and measures queue drain.
-// 200 matches the literal NR-2 flood test being re-run, not P1-D's higher-load
-// variant; see project session notes for why this count was chosen deliberately.
+// Flood test: sends exactly 500 HEALTH_CHECK messages and measures queue drain.
+// 500 is the NR-2 and P1-D acceptance threshold. A prior 200-message live
+// run remains historical evidence only and cannot satisfy this threshold.
 // Run OUTSIDE school hours (not Mon-Fri 08:00-15:00 GMT).
 // Usage: npx dotenv -e .env.production -- npx tsx scripts/flood-test-queue.ts
 //   or with local AWS credentials: npx tsx scripts/flood-test-queue.ts
@@ -17,7 +17,7 @@ const QUEUE_URL =
   process.env.SQS_QUEUE_URL ||
   "https://sqs.us-east-1.amazonaws.com/466568847266/liberialearn-jobs.fifo";
 const BATCH_SIZE = 10;
-export const TOTAL = 200;
+export const TOTAL = 500;
 const POLL_INTERVAL_MS = 5_000;
 const DRAIN_TIMEOUT_MS = 15 * 60_000;
 

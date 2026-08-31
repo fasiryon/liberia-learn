@@ -48,7 +48,7 @@ describe("worker job-completion metrics", () => {
     expect(sqsMock.commandCalls(DeleteMessageCommand)).toHaveLength(1);
   });
 
-  it("reports WorkerJobNoop (not WorkerJobCompleted) for a known-but-unimplemented job", async () => {
+  it("reports WorkerJobNoop and does not acknowledge a known-but-unimplemented job", async () => {
     mocks.dispatchJob.mockResolvedValueOnce({ status: "noop", jobType: "GENERATE_LESSON_AUDIO" });
     queueOneMessage("GENERATE_LESSON_AUDIO");
 
@@ -60,11 +60,10 @@ describe("worker job-completion metrics", () => {
     expect(mocks.publishMetric).not.toHaveBeenCalledWith(
       expect.objectContaining({ metricName: "WorkerJobCompleted" })
     );
-    // Still acked, so it doesn't pile up or hit the DLQ.
-    expect(sqsMock.commandCalls(DeleteMessageCommand)).toHaveLength(1);
+    expect(sqsMock.commandCalls(DeleteMessageCommand)).toHaveLength(0);
   });
 
-  it("reports WorkerJobUnknown (not WorkerJobCompleted) for an unrecognized job type", async () => {
+  it("reports WorkerJobUnknown and does not acknowledge an unrecognized job type", async () => {
     mocks.dispatchJob.mockResolvedValueOnce({ status: "unknown", jobType: "SOME_FUTURE_TYPE" });
     queueOneMessage("SOME_FUTURE_TYPE");
 
@@ -76,6 +75,6 @@ describe("worker job-completion metrics", () => {
     expect(mocks.publishMetric).not.toHaveBeenCalledWith(
       expect.objectContaining({ metricName: "WorkerJobCompleted" })
     );
-    expect(sqsMock.commandCalls(DeleteMessageCommand)).toHaveLength(1);
+    expect(sqsMock.commandCalls(DeleteMessageCommand)).toHaveLength(0);
   });
 });
