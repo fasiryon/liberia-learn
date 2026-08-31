@@ -16,6 +16,24 @@ STARTED. Do not begin NR-15 until the repository-local P7 gaps are addressed
 in an authorized goal. Physical device and classroom-hub field proof remain
 separate external gates.
 
+## P7-A Governed Measurement Foundation: COMPLETE AND CERTIFIED (2026-08-31)
+
+Merged through PR #112 at `e4e93cd16bfc89f5fac05f219dc34f65143a5599`.
+The canonical versioned event and metric authority is
+`lib/measurement/governedMeasurement.ts`, with the operating contract in
+`docs/P7A_GOVERNED_MEASUREMENT_FOUNDATION.md`. It covers learning dosage,
+learning retention, mastery movement, meaningful teacher adoption, workflow
+completion, tutor helpfulness, AI grounding, unsupported-claim measurement,
+and safety decisions. The shared calculator provides schema-version rejection,
+stable replay identity, tenant-safe school scope, mandatory synthetic-source
+exclusion, explicit missing-data handling, event-time windows, and result
+provenance. Focused golden fixtures and the full exact-head CI gate passed.
+
+P7-B remains NOT STARTED. P7-C remains PARTIAL. NR-15 remains blocked by its
+separate operational monitoring, alert delivery, on-call ownership, and
+incident-drill gates. The next repository-local goal is P7-B, Controlled
+Experiment Runtime; do not implement it without a separate authorization.
+
 ## NR-14.5 Auto-Grading Fairness Review: COMPLETE
 
 Completed in repository on `feat/nr-14-5-auto-grading-fairness` at
