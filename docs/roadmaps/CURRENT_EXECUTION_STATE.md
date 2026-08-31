@@ -11,10 +11,10 @@ is superseded for current planning by
 current P1, P2, and P5 source contracts and remediated the P1-D 500-job
 threshold plus worker noop/unknown false-success handling. It records P1-C,
 P1-D, P2-B, P2-C, P5-A, and original P5-C external gates without fabricating
-operations. It also establishes that P7-A and P7-C are PARTIAL and P7-B is NOT
-STARTED. Do not begin NR-15 until the repository-local P7 gaps are addressed
-in an authorized goal. Physical device and classroom-hub field proof remain
-separate external gates.
+operations. Its P7 findings were the authorization baseline: P7-A and P7-C
+were PARTIAL and P7-B was NOT STARTED. The P7-A certification record below
+supersedes that P7-A finding; P7-B and P7-C still block NR-15. Physical device
+and classroom-hub field proof remain separate external gates.
 
 ## P7-A Governed Measurement Foundation: COMPLETE AND CERTIFIED (2026-08-31)
 
