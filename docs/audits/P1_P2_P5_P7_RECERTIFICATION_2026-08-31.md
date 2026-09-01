@@ -38,7 +38,7 @@ original acceptance criteria remain in
 | P5 | P5-C later browser/PWA lifecycle program | Service-worker lifecycle, offline reload, persistence, update and browser E2E | `docs/ops/PWA_LIFECYCLE_P5C.md`, `e2e/p5c-pwa-lifecycle.spec.ts`, and current P5 contract tests demonstrate browser implementation | Pixel 5 emulation is not a physical Android device | COMPLETE AND CERTIFIED | This is a parallel later program and does not close original P5-C. |
 | P5 | P5-D later storage hardening | Non-physical offline storage safety | `lib/offline/storage*`, `docs/ops/OFFLINE_STORAGE_P5D.md`, and P5 tests cover protected unsynced work, storage failures and safe eviction | Founder explicitly defers physical certification to app-shell phase | COMPLETE AND CERTIFIED | Reopen physical tests only in the app-shell phase. |
 | P7 | P7-A | Versioned governed taxonomy for dosage, retention, mastery, adoption, workflow, helpfulness, grounding, hallucination and safety; privacy cohorts, synthetic exclusion and complete metric definitions | **SUPERSEDED 2026-08-31 by merged P7-A PRs #112 and #113.** `lib/measurement/governedMeasurement.ts` now enforces a versioned registry, strict metadata allowlists, validation/quarantine, scoped replay identity, synthetic exclusion, tenant scope, explicit metric windows, and reproducible provenance; contract fixtures cover every required family | No P7 operational evidence is required to define this repository contract | COMPLETE AND CERTIFIED | P7-B may build on this contract. |
-| P7 | P7-B | School/class assignment, holdouts, exposure logs, guardrails, sample-ratio checks, early stop, safety restrictions, uncertainty | Repository-wide source audit found no controlled experiment runtime, assignment/holdout store, sample-ratio monitor, or early-stop engine | No experiment operational evidence exists | NOT STARTED | Build and test the controlled experiment runtime as an authorized repository program. |
+| P7 | P7-B | School/class assignment, holdouts, exposure logs, guardrails, sample-ratio checks, early stop, safety restrictions, uncertainty | **SUPERSEDED 2026-09-01 by merged P7-B PR #116.** `lib/experiments/controlledExperiment.ts` enforces deterministic school/class-only assignment, P7-A governed exposure, synthetic exclusion, tenant-bound exposure, allocation and lifecycle validation, safety-policy rejection, conflicts, SRM, early stop, and uncertainty-bearing provenance | No experiment operational evidence is required to certify this repository runtime | COMPLETE AND CERTIFIED | P7-C is the next repository-local P7 gap. |
 | P7 | P7-C | Red-team/regression sets by age/subject/language/safety, human sampling, helpfulness/hallucination/moderation FP/FN review, release gates and rollback thresholds | AI quality and NR-14.5 fairness tests strengthen narrow quality controls. They do not form the required sampled quality-operations program or measured rollback gates | Human review sampling and release operations are absent | PARTIAL | Build the governed quality review and release-gate program; do not equate fairness fixtures with P7-C completion. |
 
 ## Cross-program reconciliation
@@ -60,8 +60,8 @@ original acceptance criteria remain in
 
 ## NR-15 gate
 
-**WAIT FOR REPOSITORY-LOCAL P7 GAPS.** P7-B and P7-C are not complete. P7-A
-was certified after this recertification through PRs #112 and #113.
+**WAIT FOR REPOSITORY-LOCAL P7 GAPS.** P7-C is not complete. P7-A and P7-B
+were certified after this recertification through PRs #112 through #116.
 External P1/P2/P5 gates are listed above and must not be misrepresented, but
 they do not authorize skipping the repository-local measurement, experiment,
 and quality-engine work.
