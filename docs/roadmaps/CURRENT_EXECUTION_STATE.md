@@ -54,7 +54,7 @@ blocked by P7-C and its external operational gates. The next repository-local
 goal is P7-C, Quality Operations; do not implement it without a separate
 authorization.
 
-## P7-C Quality Operations: PARTIAL — statistical evaluator core complete (2026-09-01)
+## P7-C Quality Operations: PARTIAL (statistical evaluator core complete, 2026-09-01)
 
 Merged through PR #118 at `bbfef482da615e357045ab2b38f25bfc58f719a9`.
 The canonical read-only quality evaluator is
@@ -79,15 +79,15 @@ This is a real, independently useful statistical-safety foundation, but it is
 the merged evaluator does not implement any of them end to end:
 
 1. Red-team and regression sets by age, subject, language, and safety
-   category — **not started**. No fixture registry, no red-team taxonomy, no
+   category: **not started**. No fixture registry, no red-team taxonomy, no
    preserved regression-fixture history exist in the repository.
 2. Human review sampling for tutor helpfulness, hallucination, and moderation
-   false positives/negatives — **not started**. `qualityOperations.ts` defines
+   false positives/negatives: **not started**. `qualityOperations.ts` defines
    a `QualityReview` input shape and can require authorized review dimensions
    before returning `READY`, but there is no sampling policy, review task
    lifecycle, reviewer scoping, or calibration mechanism that produces those
    reviews.
-3. Release gates and rollback thresholds connected to measured quality —
+3. Release gates and rollback thresholds connected to measured quality:
    **not started**. There is no versioned release-gate model, no threshold
    authority, and no rollback-candidate model consuming `QualityState`.
 
