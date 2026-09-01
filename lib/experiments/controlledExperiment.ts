@@ -8,14 +8,23 @@ export type Guardrail = { metricId: MeasurementFamily; direction: "MAX" | "MIN";
 export type EarlyStopPolicy = { minimumSample: number; srmThreshold: number; guardrails: Guardrail[] };
 export type ExperimentDefinition = { experimentId: string; version: number; metricVersion: number; name: string; description: string; owner: string; status: ExperimentStatus; unitOfAssignment: AssignmentUnit; eligiblePopulation: Eligibility; arms: ExperimentArm[]; controlArm: string; startAt: string; endAt: string; conflictDomains: string[]; primaryMetrics: MeasurementFamily[]; secondaryMetrics: MeasurementFamily[]; guardrails: Guardrail[]; earlyStopPolicy: EarlyStopPolicy; createdAt: string; safetyPolicyVariable?: boolean };
 export type AssignmentContext = { schoolId: string; classId?: string; grade?: number; subject?: string; clientVersion?: string; syntheticSource?: string; internal?: boolean; now?: string };
-export type Assignment = { experimentId: string; experimentVersion: number; definitionHash: string; algorithmVersion: "fnv1a-v1"; assignmentUnit: AssignmentUnit; assignmentId: string; armId: string; armKind: ExperimentArm["kind"]; assignedAt: string; eligibilityReason: string };
+export type Assignment = { experimentId: string; experimentVersion: number; definitionHash: string; algorithmVersion: "fnv1a-v1"; schoolId: string; assignmentUnit: AssignmentUnit; assignmentId: string; armId: string; armKind: ExperimentArm["kind"]; assignedAt: string; eligibilityReason: string };
 export type Resolution = { eligible: false; reason: string } | { eligible: true; assignment: Assignment };
-export type ExposureInput = { assignment: Assignment; schoolId: string; actorType: GovernedEvent["actorType"]; actorId?: string; occurredAt: string; sessionId?: string; featureKey: string; contentVersion?: string; offline?: boolean };
+export type ExposureInput = { assignment: Assignment; schoolId: string; actorType: GovernedEvent["actorType"]; actorId?: string; occurredAt: string; sessionId?: string; featureKey: string; contentVersion?: string; offline?: boolean; syntheticSource?: GovernedEvent["syntheticSource"] };
 
 const metricIds = new Set(METRIC_REGISTRY.map((metric) => metric.id));
 const validStatuses = new Set<ExperimentStatus>(["DRAFT", "READY", "RUNNING", "PAUSED", "STOPPED", "COMPLETED", "CANCELLED"]);
 const hash = (input: string) => { let value = 2166136261; for (let index = 0; index < input.length; index++) { value ^= input.charCodeAt(index); value = Math.imul(value, 16777619); } return value >>> 0; };
-const definitionHash = (definition: ExperimentDefinition) => hash(JSON.stringify({ ...definition, createdAt: undefined })).toString(16);
+const definitionHash = (definition: ExperimentDefinition) => hash(JSON.stringify({ ...definition, status: undefined, createdAt: undefined })).toString(16);
+const parseSemver = (value: string) => {
+  const match = /^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)$/.exec(value);
+  return match ? match.slice(1).map(Number) as [number, number, number] : null;
+};
+const atLeastSemver = (actual: string, minimum: string) => {
+  const parsedActual = parseSemver(actual), parsedMinimum = parseSemver(minimum);
+  if (!parsedActual || !parsedMinimum) return false;
+  return parsedActual.some((part, index) => part !== parsedMinimum[index] && part > parsedMinimum[index]) || parsedActual.every((part, index) => part === parsedMinimum[index]);
+};
 
 export function validateExperimentDefinition(definition: ExperimentDefinition): string[] {
   const errors: string[] = [];
@@ -33,7 +42,16 @@ export function validateExperimentDefinition(definition: ExperimentDefinition): 
   for (const metric of [...definition.primaryMetrics, ...definition.secondaryMetrics, ...definition.guardrails.map((guardrail) => guardrail.metricId), ...definition.earlyStopPolicy.guardrails.map((guardrail) => guardrail.metricId)]) if (!metricIds.has(metric)) errors.push(`unknown_metric:${metric}`);
   if (!definition.primaryMetrics.length) errors.push("missing_primary_metric");
   if (definition.earlyStopPolicy.minimumSample < 1 || definition.earlyStopPolicy.srmThreshold <= 0) errors.push("invalid_early_stop_policy");
+  if (definition.eligiblePopulation.minClientVersion && !parseSemver(definition.eligiblePopulation.minClientVersion)) errors.push("invalid_min_client_version");
   return errors;
+}
+
+/** Material definition changes are a new experiment version, never a rewrite of history. */
+export function validateExperimentVersionTransition(previous: ExperimentDefinition, next: ExperimentDefinition): string[] {
+  if (previous.experimentId !== next.experimentId) return ["experiment_id_immutable"];
+  if (next.version < previous.version) return ["experiment_version_cannot_decrease"];
+  if (next.version === previous.version && definitionHash(previous) !== definitionHash(next)) return ["material_change_requires_new_version"];
+  return [];
 }
 
 function isEligible(definition: ExperimentDefinition, context: AssignmentContext): string | null {
@@ -47,7 +65,7 @@ function isEligible(definition: ExperimentDefinition, context: AssignmentContext
   if (definition.eligiblePopulation.classIds && (!context.classId || !definition.eligiblePopulation.classIds.includes(context.classId))) return "class_ineligible";
   if (definition.eligiblePopulation.grades && (!context.grade || !definition.eligiblePopulation.grades.includes(context.grade))) return "grade_ineligible";
   if (definition.eligiblePopulation.subjects && (!context.subject || !definition.eligiblePopulation.subjects.includes(context.subject))) return "subject_ineligible";
-  if (definition.eligiblePopulation.minClientVersion && (!context.clientVersion || context.clientVersion < definition.eligiblePopulation.minClientVersion)) return "client_version_ineligible";
+  if (definition.eligiblePopulation.minClientVersion && (!context.clientVersion || !atLeastSemver(context.clientVersion, definition.eligiblePopulation.minClientVersion))) return "client_version_ineligible";
   return null;
 }
 
@@ -58,7 +76,7 @@ export function resolveExperimentTreatment(definition: ExperimentDefinition, con
   const bucket = hash(`${definition.experimentId}:${definition.version}:${definition.unitOfAssignment}:${context.schoolId}:${assignmentId}`) % 10000;
   let cursor = 0; const arm = definition.arms.find((candidate) => { cursor += candidate.allocationBps; return bucket < cursor; });
   if (!arm) return { eligible: false, reason: "allocation_resolution_failed" };
-  return { eligible: true, assignment: { experimentId: definition.experimentId, experimentVersion: definition.version, definitionHash: definitionHash(definition), algorithmVersion: "fnv1a-v1", assignmentUnit: definition.unitOfAssignment, assignmentId, armId: arm.id, armKind: arm.kind, assignedAt: context.now ?? new Date().toISOString(), eligibilityReason: "eligible" } };
+  return { eligible: true, assignment: { experimentId: definition.experimentId, experimentVersion: definition.version, definitionHash: definitionHash(definition), algorithmVersion: "fnv1a-v1", schoolId: context.schoolId, assignmentUnit: definition.unitOfAssignment, assignmentId, armId: arm.id, armKind: arm.kind, assignedAt: context.now ?? new Date().toISOString(), eligibilityReason: "eligible" } };
 }
 
 export function findExperimentConflicts(candidate: ExperimentDefinition, active: ExperimentDefinition[]): string[] {
@@ -74,7 +92,8 @@ export function transitionExperimentLifecycle(definition: ExperimentDefinition, 
 }
 
 export function createExposureEvent(input: ExposureInput): GovernedEvent {
-  const session = input.sessionId ?? "single"; const event: GovernedEvent = { eventId: `exp:${input.assignment.experimentId}:${input.assignment.experimentVersion}:${input.assignment.assignmentId}:${input.assignment.armId}:${session}:${input.featureKey}`, name: "governed.experiment.exposure", schemaVersion: 1, occurredAt: input.occurredAt, schoolId: input.schoolId, actorType: input.actorType, actorId: input.actorId, sessionId: input.sessionId, operationId: `exposure:${input.assignment.experimentId}:${input.assignment.experimentVersion}:${input.assignment.assignmentId}:${input.assignment.armId}:${session}:${input.featureKey}`, syntheticSource: "production", metadata: { experimentId: input.assignment.experimentId, experimentVersion: input.assignment.experimentVersion, armId: input.assignment.armId, assignmentUnit: input.assignment.assignmentUnit, assignmentId: input.assignment.assignmentId, featureKey: input.featureKey, ...(input.contentVersion ? { contentVersion: input.contentVersion } : {}), ...(input.offline ? { offline: true } : {}) } };
+  if (input.schoolId !== input.assignment.schoolId) throw new Error("cross_school_exposure_rejected");
+  const session = input.sessionId ?? "single"; const event: GovernedEvent = { eventId: `exp:${input.assignment.experimentId}:${input.assignment.experimentVersion}:${input.assignment.assignmentId}:${input.assignment.armId}:${session}:${input.featureKey}`, name: "governed.experiment.exposure", schemaVersion: 1, occurredAt: input.occurredAt, schoolId: input.schoolId, actorType: input.actorType, actorId: input.actorId, sessionId: input.sessionId, operationId: `exposure:${input.assignment.experimentId}:${input.assignment.experimentVersion}:${input.assignment.assignmentId}:${input.assignment.armId}:${session}:${input.featureKey}`, syntheticSource: input.syntheticSource ?? "production", metadata: { experimentId: input.assignment.experimentId, experimentVersion: input.assignment.experimentVersion, armId: input.assignment.armId, assignmentUnit: input.assignment.assignmentUnit, assignmentId: input.assignment.assignmentId, featureKey: input.featureKey, ...(input.contentVersion ? { contentVersion: input.contentVersion } : {}), ...(input.offline ? { offline: true } : {}) } };
   const result = validateGovernedEvent(event); if (result.ok === false) throw new Error(`invalid_exposure:${result.reason}`); return event;
 }
 
