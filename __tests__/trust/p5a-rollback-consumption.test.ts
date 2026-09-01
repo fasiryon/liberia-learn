@@ -113,6 +113,10 @@ function signLegacyManifest(input: {
 describe("P5-A Phase B: real rollback/replay rejection through the actual consumption path (unmocked crypto)", () => {
   beforeEach(() => {
     store.clear();
+    // The test manifests are intentionally valid at this fixed instant. Keep
+    // rollback coverage independent of the date on which CI happens to run.
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date("2026-08-31T12:00:00.000Z"));
     const { privateKey, publicKey } = generateKeyPairSync("rsa", {
       modulusLength: 2048,
       privateKeyEncoding: { type: "pkcs8", format: "pem" },
