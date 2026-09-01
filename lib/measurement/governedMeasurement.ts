@@ -42,7 +42,7 @@ export type GovernedEvent = {
 
 export type EventDefinition = {
   name: string;
-  family: MeasurementFamily;
+  family?: MeasurementFamily;
   actorTypes: readonly GovernedEvent["actorType"][];
   requiredMetadata: readonly string[];
   optionalMetadata: readonly string[];
@@ -74,6 +74,7 @@ export const EVENT_REGISTRY: readonly EventDefinition[] = [
   definition({ name: "governed.safety.required", family: "safety_decisions", actorTypes: ["system"], requiredMetadata: ["interactionId"], optionalMetadata: [], sourceSubsystem: "safety moderation", privacy: "restricted", timestampSemantics: "server_decision" }),
   definition({ name: "governed.safety.decision", family: "safety_decisions", actorTypes: ["system", "reviewer"], requiredMetadata: ["interactionId", "decision", "classifierVersion"], optionalMetadata: ["reviewOutcome"], sourceSubsystem: "safety moderation", privacy: "restricted", timestampSemantics: "server_decision" }),
   definition({ name: "governed.safety.review", family: "safety_decisions", actorTypes: ["reviewer"], requiredMetadata: ["reviewOutcome", "classifierVersion"], optionalMetadata: ["decision"], sourceSubsystem: "safety moderation", privacy: "restricted", timestampSemantics: "human_review" }),
+  definition({ name: "governed.experiment.exposure", actorTypes: ["learner", "teacher", "system"], requiredMetadata: ["experimentId", "experimentVersion", "armId", "assignmentUnit", "assignmentId", "featureKey"], optionalMetadata: ["contentVersion", "offline"], sourceSubsystem: "controlled experiment runtime", privacy: "pseudonymous", timestampSemantics: "learner_action" }),
 ] as const;
 
 export type MetricDefinition = {
@@ -131,6 +132,7 @@ const METADATA_VALIDATORS: Record<string, Record<string, (value: unknown) => boo
   "governed.safety.required": { interactionId: isString },
   "governed.safety.decision": { interactionId: isString, decision: enumValue(["allowed", "blocked", "escalated", "classifier_unavailable", "classifier_malformed"]), classifierVersion: isString, reviewOutcome: enumValue(["false_positive", "false_negative", "confirmed"]) },
   "governed.safety.review": { reviewOutcome: enumValue(["false_positive", "false_negative", "confirmed"]), classifierVersion: isString, decision: enumValue(["allowed", "blocked", "escalated", "classifier_unavailable", "classifier_malformed"]) },
+  "governed.experiment.exposure": { experimentId: isString, experimentVersion: isPositiveNumber, armId: isString, assignmentUnit: enumValue(["SCHOOL", "CLASS"]), assignmentId: isString, featureKey: isString, contentVersion: isString, offline: isBoolean },
 };
 export function validateGovernedEvent(input: unknown): ValidationResult {
   if (!input || typeof input !== "object") return { ok: false, reason: "event_not_object" };
