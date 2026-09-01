@@ -84,6 +84,10 @@ function manifest(input: {
 describe("P5-A manifest policy authority", () => {
   beforeEach(() => {
     store.clear();
+    // The current-policy fixtures intentionally expire on September 1. Fix
+    // the clock so their validity does not depend on the CI calendar date.
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date("2026-08-31T12:00:00.000Z"));
     const pair = generateKeyPairSync("rsa", {
       modulusLength: 2048,
       privateKeyEncoding: { type: "pkcs8", format: "pem" },
@@ -97,6 +101,7 @@ describe("P5-A manifest policy authority", () => {
   });
 
   afterEach(() => {
+    vi.useRealTimers();
     if (originalPrivateKey === undefined) delete process.env.CONTENT_MANIFEST_PRIVATE_KEY;
     else process.env.CONTENT_MANIFEST_PRIVATE_KEY = originalPrivateKey;
     if (originalKeyId === undefined) delete process.env.CONTENT_MANIFEST_KEY_ID;
