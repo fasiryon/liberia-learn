@@ -12,8 +12,8 @@ current P1, P2, and P5 source contracts and remediated the P1-D 500-job
 threshold plus worker noop/unknown false-success handling. It records P1-C,
 P1-D, P2-B, P2-C, P5-A, and original P5-C external gates without fabricating
 operations. Its P7 findings were the authorization baseline: P7-A and P7-C
-were PARTIAL and P7-B was NOT STARTED. The P7-A certification record below
-supersedes that P7-A finding; P7-B and P7-C still block NR-15. Physical device
+were PARTIAL and P7-B was NOT STARTED. The P7-A and P7-B certification records
+below supersede those findings; P7-C still blocks NR-15. Physical device
 and classroom-hub field proof remain separate external gates.
 
 ## P7-A Governed Measurement Foundation: COMPLETE AND CERTIFIED (2026-08-31)
@@ -29,10 +29,30 @@ stable replay identity, tenant-safe school scope, mandatory synthetic-source
 exclusion, explicit missing-data handling, event-time windows, and result
 provenance. Focused golden fixtures and the full exact-head CI gate passed.
 
-P7-B remains NOT STARTED. P7-C remains PARTIAL. NR-15 remains blocked by its
-separate operational monitoring, alert delivery, on-call ownership, and
-incident-drill gates. The next repository-local goal is P7-B, Controlled
-Experiment Runtime; do not implement it without a separate authorization.
+P7-C remains PARTIAL. NR-15 remains blocked by P7-C plus its separate
+operational monitoring, alert delivery, on-call ownership, and incident-drill
+gates. The next repository-local goal is P7-C, Quality Operations; do not
+implement it without a separate authorization.
+
+## P7-B Controlled Experiment Runtime: COMPLETE AND CERTIFIED (2026-09-01)
+
+Merged through PR #116 at `80eba52e346ec641a37da83f4c0437358d1b4dbb`.
+The canonical runtime is `lib/experiments/controlledExperiment.ts`, with the
+operating contract in `docs/P7B_CONTROLLED_EXPERIMENT_RUNTIME.md`. It supports
+only deterministic school and class assignment, explicit control/treatment/
+holdout allocation, eligibility and synthetic exclusion, tenant-bound
+assignment/exposure, P7-A governed exposure events, replay-safe offline
+exposure, conflict domains, safety-policy rejection, immutable semantic
+versions, lifecycle audit records, SRM detection, deterministic early-stop
+evaluation, and uncertainty-bearing results. Exact-head and merged-main CI
+passed TypeScript, 4,978 Vitest tests, production build, browser PWA
+regression, Runtime Gate, Vercel, and GitGuardian. No production or staging
+assignment or mutation occurred.
+
+P7-A and P7-B are complete and certified. P7-C remains PARTIAL. NR-15 remains
+blocked by P7-C and its external operational gates. The next repository-local
+goal is P7-C, Quality Operations; do not implement it without a separate
+authorization.
 
 ## NR-14.5 Auto-Grading Fairness Review: COMPLETE
 
