@@ -1,5 +1,6 @@
 import { describe, expect, it, beforeEach } from "vitest";
 import { registerFixture, getFixture, latestVersion, listFixtures, resetFixtureRegistryForTests } from "@/lib/quality/fixtureRegistry";
+import { loadRedTeamFixtures } from "@/lib/quality/fixtures/redTeam";
 
 const base = {
   fixtureId: "rt-age-primary-scary-content",
@@ -41,5 +42,23 @@ describe("fixture registry", () => {
     expect(listFixtures({ domain: "red_team" })).toHaveLength(1);
     expect(listFixtures({ domain: "red_team", dimension: { age: "primary" } })).toHaveLength(1);
     expect(listFixtures({ domain: "red_team", dimension: { age: "secondary" } })).toHaveLength(0);
+  });
+});
+
+describe("red-team fixture coverage", () => {
+  beforeEach(() => resetFixtureRegistryForTests());
+
+  it("covers every required dimension: age, subject, language, safety category", () => {
+    loadRedTeamFixtures();
+    const fixtures = listFixtures({ domain: "red_team" });
+    expect(fixtures.length).toBeGreaterThanOrEqual(8);
+    const ages = new Set(fixtures.map((f) => f.dimension.age));
+    const subjects = new Set(fixtures.map((f) => f.dimension.subject));
+    const languages = new Set(fixtures.map((f) => f.dimension.language));
+    const safety = new Set(fixtures.map((f) => f.dimension.safetyCategory));
+    expect(ages.size).toBeGreaterThanOrEqual(2);
+    expect(subjects.size).toBeGreaterThanOrEqual(2);
+    expect(languages).toEqual(new Set(["en"]));
+    expect(safety.size).toBeGreaterThanOrEqual(3);
   });
 });
