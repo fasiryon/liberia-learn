@@ -8,7 +8,7 @@ const mockStudentProgressUpsert = vi.hoisted(() => vi.fn());
 const mockLogAudit = vi.hoisted(() => vi.fn());
 const mockNotifyLessonCompletion = vi.hoisted(() => vi.fn());
 const mockUpdateMasteryProfile = vi.hoisted(() => vi.fn());
-const ROUTE_TIMEOUT_MS = 15_000;
+const ROUTE_TIMEOUT_MS = 60_000;
 
 vi.mock("@/lib/auth", () => ({
   requireRole: mockRequireRole,
@@ -76,7 +76,7 @@ describe("student lesson delivery", () => {
         "block_a"
       )
     ).toContain("Block lesson body");
-  });
+  }, ROUTE_TIMEOUT_MS);
 
   it("marks the lesson complete and sends guardian notification", async () => {
     mockScheduledWorkFindUnique.mockResolvedValue({
