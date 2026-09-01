@@ -54,6 +54,27 @@ blocked by P7-C and its external operational gates. The next repository-local
 goal is P7-C, Quality Operations; do not implement it without a separate
 authorization.
 
+## P7-C Quality Operations: COMPLETE AND CERTIFIED (2026-09-01)
+
+Merged through PR #118 at `bbfef482da615e357045ab2b38f25bfc58f719a9`.
+The canonical read-only quality evaluator is
+`lib/experiments/qualityOperations.ts`, with its operating contract in
+`docs/P7C_QUALITY_OPERATIONS.md`. It evaluates immutable SHA-256-governed
+evidence snapshots without activating or mutating an experiment. It reconciles
+assignment, exposure, and cluster outcomes; rejects malformed, synthetic,
+replayed, cross-school, version-mismatched, future, and out-of-window evidence;
+reports missingness and freshness; enforces predeclared sequential checkpoints,
+SRM, guardrails, authorized human review, and cluster-level SCHOOL/CLASS
+analysis with multiple-comparison-aware intervals. A confidence interval that
+crosses neutral is never a confirmed improvement, and guardrail harm or SRM
+stops interpretation.
+
+The exact merged main passed CI run `33550043560` (TypeScript, full Vitest,
+production build, and browser PWA E2E), Runtime Gate 1 run `33550043625`, and
+PR Triage. No production or staging mutation occurred. NR-15 remains blocked
+by separate operational monitoring, alert delivery, on-call ownership, and
+incident-drill gates.
+
 ## NR-14.5 Auto-Grading Fairness Review: COMPLETE
 
 Completed in repository on `feat/nr-14-5-auto-grading-fairness` at
