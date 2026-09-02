@@ -239,8 +239,18 @@ function toGateReview(domain: string, assessment: { outcome: string }): { domain
   return { domain, outcome: assessment.outcome === "PASS" ? "PASS" : "FAIL" };
 }
 
+// NOTE: `evaluateReleaseGate` has no severity awareness at all (confirmed:
+// `blockingSeverities` is read nowhere in lib/quality/releaseGate.ts, only
+// declared on the type). When this helper folds a severity decision into
+// `fixtureFailures`, `evaluateReleaseGate` will label it in `gate.reasons` as
+// `regression_fixture_failed:<id>`, identically to a real fixture failure,
+// because from evaluateReleaseGate's point of view there is no difference:
+// it is the same hard-block branch (`fixtureFailures.length > 0`) either way.
+// The `caller_policy_block:` prefix below exists so a synthesized id can
+// never be misread as a real `regr-*`/fixture-registry id if it shows up in
+// a failure message or `gate.reasons` output.
 function blockingIdsFor(definition: ReleaseGateDefinition, assessment: { id: string; severity: string }): string[] {
-  return definition.blockingSeverities.includes(assessment.severity) ? [`review_severity_block:${assessment.id}`] : [];
+  return definition.blockingSeverities.includes(assessment.severity) ? [`caller_policy_block:${assessment.id}`] : [];
 }
 
 function setupClaimedTask(taskId: string, domain: string) {
@@ -270,6 +280,12 @@ describe("P7-C golden quality-operations scenarios", () => {
   it("scenario 1: a clean release (passing fixtures, healthy experiment evidence, a helpful review) composes end to end to PASS", async () => {
     loadRegressionFixtures();
     loadRedTeamFixtures();
+    // Guard against a silent loader no-op: `toEqual([])` below would pass
+    // trivially if the registry ended up empty, so first confirm both
+    // domains actually registered a non-empty fixture set.
+    expect(listFixtures().length).toBeGreaterThan(0);
+    expect(listFixtures({ domain: "regression" }).length).toBeGreaterThan(0);
+    expect(listFixtures({ domain: "red_team" }).length).toBeGreaterThan(0);
     const fixtureResults = await Promise.all(listFixtures().map(evaluateFixtureDeterministically));
     const fixtureFailures = fixtureResults.filter((result) => !result.passed).map((result) => result.fixtureId);
     expect(fixtureFailures).toEqual([]);
@@ -338,6 +354,9 @@ describe("P7-C golden quality-operations scenarios", () => {
     expect(gate.rollbackRecommended).toBe(false);
   });
 
+  // This BLOCK is driven by test-authored caller policy (blockingIdsFor
+  // folding the assessment's severity into fixtureFailures), not by any
+  // severity logic inside evaluateReleaseGate itself, which has none.
   it("scenario 2: a hallucination regression assessment feeds evaluateReleaseGate to a BLOCK", async () => {
     setupClaimedTask("task-hallucination-1", "HALLUCINATION");
     const assessment = await recordHallucinationDecision({
@@ -360,8 +379,18 @@ describe("P7-C golden quality-operations scenarios", () => {
       "2026-09-01T00:00:00.000Z",
     );
     expect(gate.result).toBe("BLOCK");
+    // Make the caller-synthesized nature of this block explicit: evaluateReleaseGate
+    // has no concept of "review severity", so it reports this exactly like a real
+    // regression-fixture failure. Assert on the actual reason string so this
+    // mislabeling is visible in the suite rather than silently indistinguishable
+    // from scenarios 7/8's genuine fixture failures.
+    expect(gate.reasons).toContain(`regression_fixture_failed:${fixtureFailures[0]}`);
+    expect(fixtureFailures[0]).toMatch(/^caller_policy_block:/);
   });
 
+  // This BLOCK is driven by test-authored caller policy (blockingIdsFor
+  // folding the assessment's real severity into fixtureFailures), not by any
+  // severity logic inside evaluateReleaseGate itself, which has none.
   it("scenario 3: a grounding regression (misrepresented source) blocks release under a grounding-safety gate", async () => {
     setupClaimedTask("task-grounding-1", "GROUNDING");
     const assessment = await recordGroundingDecision({
@@ -391,6 +420,9 @@ describe("P7-C golden quality-operations scenarios", () => {
     expect(gate.result).toBe("BLOCK");
   });
 
+  // This BLOCK is driven by test-authored caller policy (blockingIdsFor
+  // folding the assessment's severity into fixtureFailures), not by any
+  // severity logic inside evaluateReleaseGate itself, which has none.
   it("scenario 4: a moderation false positive warns when non-critical but blocks when the assessed severity is CRITICAL", async () => {
     setupClaimedTask("task-fp-1", "MODERATION_FALSE_POSITIVE");
     const nonCritical = await recordModerationFalsePositive({
@@ -410,6 +442,12 @@ describe("P7-C golden quality-operations scenarios", () => {
     expect(warnGate.result).toBe("WARN");
 
     setupClaimedTask("task-fp-2", "MODERATION_FALSE_POSITIVE");
+    // The real recordModerationFalsePositive domain helper hardcodes severity
+    // "HIGH" for a confirmed false positive and can never itself produce
+    // "CRITICAL" (see reviewTasks.ts). This calls the general decideQualityReviewTask
+    // primitive directly with a hand-constructed severity:"CRITICAL" purely to
+    // demonstrate where blockingIdsFor's BLOCK threshold sits, not to claim the
+    // false-positive domain helper ever emits CRITICAL in production.
     const critical = await decideQualityReviewTask({
       operator: { id: "op-golden-4b", role: "ADMIN" },
       taskId: "task-fp-2",
@@ -427,6 +465,9 @@ describe("P7-C golden quality-operations scenarios", () => {
     expect(blockGate.result).toBe("BLOCK");
   });
 
+  // This BLOCK is driven by test-authored caller policy (blockingIdsFor
+  // folding the assessment's severity into fixtureFailures), not by any
+  // severity logic inside evaluateReleaseGate itself, which has none.
   it("scenario 5: a confirmed moderation false negative blocks release and opens a quality incident", async () => {
     setupClaimedTask("task-fn-1", "MODERATION_FALSE_NEGATIVE");
     const assessment = await recordModerationFalseNegative({
@@ -465,6 +506,9 @@ describe("P7-C golden quality-operations scenarios", () => {
     expect(incidents[0].status).toBe("OPEN");
   });
 
+  // This BLOCK is driven by test-authored caller policy (blockingIdsFor
+  // folding the assessment's real severity into fixtureFailures), not by any
+  // severity logic inside evaluateReleaseGate itself, which has none.
   it("scenario 6: tutor helpfulness decline warns for a moderate finding and blocks for a critical (unsafe) one", async () => {
     setupClaimedTask("task-help-1", "TUTOR_HELPFULNESS");
     const notHelpful = await recordHelpfulnessDecision({
