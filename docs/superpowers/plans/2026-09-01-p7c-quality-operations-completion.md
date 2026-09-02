@@ -795,17 +795,50 @@ git commit -m "feat: add conflict-safe quality review task claim/decide lifecycl
 
 - [ ] **Step 1: Write the failing test**
 
+Append to `__tests__/quality/reviewTasks.test.ts` (it already has a `vi.mock("@/lib/db", ...)` factory from Task 7 with `qualityReviewTask: { findUnique, findFirst, updateMany, create }`, `qualityReviewAssessment: { findUnique, create }`, `reviewerRestriction: { findFirst }`, and `vi.mock("@/lib/audit", ...)` — reuse that exact factory, do not redeclare it):
+
 ```typescript
 import { recordHelpfulnessDecision } from "@/lib/quality/reviewTasks";
 
-it("maps a helpfulness rubric outcome to FAIL when unsafe", async () => {
-  // arrange decideQualityReviewTask mock as in Task B3
-  // act
-  // assert the underlying outcome passed through is FAIL and rubricDetail records "unsafe"
+describe("quality review domain helpers", () => {
+  beforeEach(() => vi.clearAllMocks());
+
+  it("maps an unsafe helpfulness rubric outcome to a CRITICAL FAIL decision with rubric detail preserved in notes", async () => {
+    (prisma.$transaction as any).mockImplementation(async (fn: any) => fn(prisma));
+    (prisma.qualityReviewTask.findUnique as any).mockResolvedValue({
+      id: "t1", domain: "TUTOR_HELPFULNESS", schoolId: null, status: "CLAIMED", claimedByProfileId: "rp-1", version: 1,
+    });
+    (prisma.qualityReviewAssessment.findUnique as any).mockResolvedValue(null);
+    (prisma.qualityReviewTask.updateMany as any).mockResolvedValue({ count: 1 });
+    (prisma.qualityReviewAssessment.create as any).mockImplementation(async ({ data }: any) => ({ id: "a1", ...data }));
+
+    const result = await recordHelpfulnessDecision({
+      operator: { id: "op-1", role: "ADMIN" }, taskId: "t1", outcome: "unsafe", idempotencyKey: "decide-unsafe-1",
+    });
+
+    expect(result.outcome).toBe("FAIL");
+    expect(result.severity).toBe("CRITICAL");
+    expect(JSON.parse(result.notes)).toMatchObject({ rubric: "helpfulness", outcome: "unsafe" });
+  });
+
+  it("maps a helpful outcome to a PASS decision", async () => {
+    (prisma.$transaction as any).mockImplementation(async (fn: any) => fn(prisma));
+    (prisma.qualityReviewTask.findUnique as any).mockResolvedValue({
+      id: "t2", domain: "TUTOR_HELPFULNESS", schoolId: null, status: "CLAIMED", claimedByProfileId: "rp-1", version: 1,
+    });
+    (prisma.qualityReviewAssessment.findUnique as any).mockResolvedValue(null);
+    (prisma.qualityReviewTask.updateMany as any).mockResolvedValue({ count: 1 });
+    (prisma.qualityReviewAssessment.create as any).mockImplementation(async ({ data }: any) => ({ id: "a2", ...data }));
+
+    const result = await recordHelpfulnessDecision({
+      operator: { id: "op-1", role: "ADMIN" }, taskId: "t2", outcome: "helpful", idempotencyKey: "decide-helpful-1",
+    });
+
+    expect(result.outcome).toBe("PASS");
+    expect(result.severity).toBe("MEDIUM");
+  });
 });
 ```
-
-(Fill in the arrange/act/assert using the same `vi.mock("@/lib/db", ...)` pattern as Task B3 — this step is intentionally a stub to flag it needs the executor's live decideQualityReviewTask mock wiring, but must be written out fully, not left as a comment, before Step 2.)
 
 - [ ] **Step 2: Run test to verify it fails**
 
