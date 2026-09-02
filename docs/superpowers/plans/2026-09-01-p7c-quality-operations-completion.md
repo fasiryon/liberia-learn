@@ -2,7 +2,7 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Close the two remaining canonical P7-C deliverables — (1) red-team/regression fixture sets by age, subject, language, and safety category, and (2) human review sampling for tutor helpfulness, hallucination, and moderation false positives/negatives — and connect both, plus the already-merged statistical evaluator, into (3) release gates and rollback thresholds, so P7-C can honestly move from PARTIAL to COMPLETE AND CERTIFIED.
+**Goal:** Close the two remaining canonical P7-C deliverables: (1) red-team/regression fixture sets by age, subject, language, and safety category, and (2) human review sampling for tutor helpfulness, hallucination, and moderation false positives/negatives; and connect both, plus the already-merged statistical evaluator, into (3) release gates and rollback thresholds, so P7-C can honestly move from PARTIAL to COMPLETE AND CERTIFIED.
 
 **Architecture:** Three additive layers on top of the existing, unmodified `lib/experiments/qualityOperations.ts` evaluator: a deterministic, git-tracked fixture registry with a CI-safe regression gate; a human-review task/sampling/calibration layer that reuses the existing curriculum-review reviewer identity infrastructure (`ReviewerProfile`, `ReviewerCredential`, `ReviewerRestriction`) rather than inventing a parallel one; and a release-gate/rollback/incident layer that composes the evaluator's `QualityReport`, the review layer's outcomes, and the fixture layer's regression results into a single versioned PASS/WARN/BLOCK/INSUFFICIENT_EVIDENCE decision, wired as a one-way signal into P7-B's `evaluateEarlyStop`.
 
@@ -12,10 +12,10 @@
 
 ## Global Constraints
 
-- Do not modify `lib/experiments/qualityOperations.ts`'s public behavior or its existing 5 tests — only compose it from new callers. It is the certified P7-A/P7-B/P7-C statistical foundation; extend around it.
-- No production or staging mutation. No paid provider calls in CI — any AI-evaluator step must use a deterministic, injectable adapter and must be advisory only.
+- Do not modify `lib/experiments/qualityOperations.ts`'s public behavior or its existing 5 tests; only compose it from new callers. It is the certified P7-A/P7-B/P7-C statistical foundation; extend around it.
+- No production or staging mutation. No paid provider calls in CI: any AI-evaluator step must use a deterministic, injectable adapter and must be advisory only.
 - Reuse, don't duplicate, the existing reviewer identity/qualification/restriction system in `prisma/schema.prisma` (`ReviewerProfile`, `ReviewerCredential`, `ReviewerRestriction`) and its service patterns in `lib/curriculum/review/roster.ts` (idempotency keys, optimistic `version` locking via `updateMany` + count check, `logAuditRequiredWithId` inside the same transaction, `ReviewOperationError` for domain errors, `REVIEW_TRANSACTION_OPTIONS` / `REVIEW_SERIALIZABLE_TRANSACTION_OPTIONS` from `lib/curriculum/review/transaction.ts`).
-- Reuse `MeasurementFamily` from `lib/measurement/governedMeasurement.ts` and `ExperimentDefinition` / `Assignment` / `evaluateEarlyStop` from `lib/experiments/controlledExperiment.ts` — never redefine a parallel metric or experiment type.
+- Reuse `MeasurementFamily` from `lib/measurement/governedMeasurement.ts` and `ExperimentDefinition` / `Assignment` / `evaluateEarlyStop` from `lib/experiments/controlledExperiment.ts`; never redefine a parallel metric or experiment type.
 - No fabricated counts. If evidence is missing, the returned state must say so (`INSUFFICIENT_EVIDENCE`), never `PASS`.
 - Immutable history: fixture versions and quality-incident records are never edited in place; a change creates a new version/record with a pointer back to what it replaces.
 - Every new Prisma model needs a migration generated with `npx prisma migrate dev` (or `migrate diff` if working headless) and must pass `npx prisma generate` + `npx tsc --noEmit` before the task's commit.
@@ -119,7 +119,7 @@ describe("fixture registry", () => {
 - [ ] **Step 2: Run test to verify it fails**
 
 Run: `npx vitest run __tests__/quality/fixtureRegistry.test.ts`
-Expected: FAIL — `Cannot find module '@/lib/quality/fixtureRegistry'`
+Expected: FAIL: `Cannot find module '@/lib/quality/fixtureRegistry'`
 
 - [ ] **Step 3: Write minimal implementation**
 
@@ -205,9 +205,9 @@ git commit -m "feat: add versioned quality fixture registry"
 
 **Interfaces:**
 - Consumes: `QualityFixture`, `registerFixture` from Task A1.
-- Produces: `export function loadRedTeamFixtures(): void` — registers every seed fixture into the registry.
+- Produces: `export function loadRedTeamFixtures(): void`: registers every seed fixture into the registry.
 
-**Ground truth to respect:** the learner runtime is English-only in production (per `[[project_...]]` history and `lib/i18n` usage elsewhere) — do not invent unsupported languages; use `"en"` for the language dimension and record the single-language reality honestly in fixture notes rather than fabricating `kpe`/`bss` red-team coverage that doesn't exist yet. Safety categories must match `lib/agents/moderation.ts`'s actual taxonomy — read `ModerationVerdict`/category handling in that file before writing fixtures so categories aren't invented.
+**Ground truth to respect:** the learner runtime is English-only in production (per `[[project_...]]` history and `lib/i18n` usage elsewhere). Do not invent unsupported languages; use `"en"` for the language dimension and record the single-language reality honestly in fixture notes rather than fabricating `kpe`/`bss` red-team coverage that doesn't exist yet. Safety categories must match `lib/agents/moderation.ts`'s actual taxonomy; read `ModerationVerdict`/category handling in that file before writing fixtures so categories aren't invented.
 
 - [ ] **Step 1: Write the failing test** (append to `__tests__/quality/fixtureRegistry.test.ts`)
 
@@ -236,11 +236,11 @@ describe("red-team fixture coverage", () => {
 - [ ] **Step 2: Run test to verify it fails**
 
 Run: `npx vitest run __tests__/quality/fixtureRegistry.test.ts`
-Expected: FAIL — module not found
+Expected: FAIL: module not found
 
 - [ ] **Step 3: Write minimal implementation**
 
-Before writing fixture content, read `lib/agents/moderation.ts` in full to confirm real category names, and read `lib/agents/safeguarding/*` for the actual safeguarding category vocabulary. Populate at minimum: `unsafe_content`, `prompt_injection`, `answer_key_leakage`, `pii_leakage`, `cross_tenant_leakage` (map each to whatever the moderation module actually calls it — do not invent a name it doesn't use). Two age bands (`primary`, `secondary`), two subjects (e.g. `mathematics`, `english_language_arts`), single language `en`.
+Before writing fixture content, read `lib/agents/moderation.ts` in full to confirm real category names, and read `lib/agents/safeguarding/*` for the actual safeguarding category vocabulary. Populate at minimum: `unsafe_content`, `prompt_injection`, `answer_key_leakage`, `pii_leakage`, `cross_tenant_leakage` (map each to whatever the moderation module actually calls it; do not invent a name it doesn't use). Two age bands (`primary`, `secondary`), two subjects (e.g. `mathematics`, `english_language_arts`), single language `en`.
 
 ```typescript
 // lib/quality/fixtures/redTeam.ts
@@ -299,9 +299,9 @@ git commit -m "feat: seed red-team fixtures across age/subject/language/safety d
 - Consumes: `registerFixture`, `QualityFixture`, `listFixtures` from Task A1.
 - Produces: `export function loadRegressionFixtures(): void`.
 
-Before writing content, re-derive each historical defect from the actual commit/PR, not from memory paraphrase — `git log --grep` and `git show` the fix commits named below to get the real before/after behavior:
-- Moderation fail-open bug (NR-9.5, `groundedAnswerService.ts` / `planLabAction.ts` / `explainLabState.ts` — missing prompt-registry import caused `moderateText` to fail open).
-- Assignment moderation display-gate bypass (NR-9.6 — raw unmoderated `aiFeedback` shown before the 72h release timer).
+Before writing content, re-derive each historical defect from the actual commit/PR, not from memory paraphrase: `git log --grep` and `git show` the fix commits named below to get the real before/after behavior:
+- Moderation fail-open bug (NR-9.5, `groundedAnswerService.ts` / `planLabAction.ts` / `explainLabState.ts`: missing prompt-registry import caused `moderateText` to fail open).
+- Assignment moderation display-gate bypass (NR-9.6: raw unmoderated `aiFeedback` shown before the 72h release timer).
 - Cross-school grading IDOR (P1-D, PR #85).
 - Hardcoded-JWT-secret password oracle (P1-D, PR #85).
 - Client-supplied answer key / code expected-output trust bug (NR-14.5, PR #110).
@@ -332,7 +332,7 @@ describe("regression fixture set", () => {
 - [ ] **Step 2: Run test to verify it fails**
 
 Run: `npx vitest run __tests__/quality/regressionGate.test.ts`
-Expected: FAIL — module not found
+Expected: FAIL: module not found
 
 - [ ] **Step 3: Write minimal implementation**
 
@@ -387,8 +387,8 @@ git commit -m "feat: preserve real historical defects as regression fixtures"
 - Modify: `__tests__/quality/regressionGate.test.ts`
 
 **Interfaces:**
-- Consumes: `QualityFixture` from Task A1; the real `moderateText` from `lib/agents/moderation.ts` (read its exact signature first — `ModerationOptions`, `ModerationResult`).
-- Produces: `export async function evaluateFixtureDeterministically(fixture: QualityFixture): Promise<{ fixtureId: string; passed: boolean; actualVerdict: string }>` using only `moderateText`'s deterministic/rule-based path (no live provider key required in CI — confirm by reading `moderation.ts` whether it already has an offline/rule-based fallback branch; if it only calls a paid provider, this adapter must stub that provider call behind a deterministic classifier so CI never spends money, and must clearly label the fixture's `expectedBehavior.verdict` mapping as advisory per the mega-spec's evaluator rule).
+- Consumes: `QualityFixture` from Task A1; the real `moderateText` from `lib/agents/moderation.ts` (read its exact signature first: `ModerationOptions`, `ModerationResult`).
+- Produces: `export async function evaluateFixtureDeterministically(fixture: QualityFixture): Promise<{ fixtureId: string; passed: boolean; actualVerdict: string }>` using only `moderateText`'s deterministic/rule-based path (no live provider key required in CI; confirm by reading `moderation.ts` whether it already has an offline/rule-based fallback branch; if it only calls a paid provider, this adapter must stub that provider call behind a deterministic classifier so CI never spends money, and must clearly label the fixture's `expectedBehavior.verdict` mapping as advisory per the mega-spec's evaluator rule).
 
 - [ ] **Step 1: Write the failing test** (append)
 
@@ -410,11 +410,11 @@ describe("CI regression gate", () => {
 - [ ] **Step 2: Run test to verify it fails**
 
 Run: `npx vitest run __tests__/quality/regressionGate.test.ts`
-Expected: FAIL — module not found
+Expected: FAIL: module not found
 
 - [ ] **Step 3: Write minimal implementation**
 
-Read `lib/agents/moderation.ts` fully first. Implement `evaluateFixtureDeterministically` against whatever deterministic path actually exists there (do not fabricate one if none exists — if `moderateText` always calls a paid provider, implement a narrow deterministic keyword/pattern check here scoped only to what each fixture's `input.prompt` needs, and document in a comment that it is a CI proxy, not the production moderation path).
+Read `lib/agents/moderation.ts` fully first. Implement `evaluateFixtureDeterministically` against whatever deterministic path actually exists there (do not fabricate one if none exists; if `moderateText` always calls a paid provider, implement a narrow deterministic keyword/pattern check here scoped only to what each fixture's `input.prompt` needs, and document in a comment that it is a CI proxy, not the production moderation path).
 
 ```typescript
 // lib/quality/qualityGate.test-adapter.ts
@@ -467,7 +467,7 @@ git commit -m "feat: add deterministic CI regression gate for quality fixtures"
 
 **Files:**
 - Modify: `prisma/schema.prisma` (add near the existing `CurriculumReviewTask`/`ReviewerProfile` block, e.g. after `ReviewCalibrationResult`)
-- Migration: run `npx prisma migrate dev --name add_quality_review_tasks` (or the repo's headless equivalent — check `package.json` for a `migrate` script first, this repo may use `prisma migrate diff` + manual SQL per `docs/*` migration conventions; follow whatever P7-A/P7-B used, since neither added Prisma models — check `docs/roadmaps/NR14_5_GRADING_FAIRNESS_AUDIT.md` or the PR #110 diff for the most recent real migration pattern in this repo before running anything)
+- Migration: run `npx prisma migrate dev --name add_quality_review_tasks` (or the repo's headless equivalent; check `package.json` for a `migrate` script first, this repo may use `prisma migrate diff` + manual SQL per `docs/*` migration conventions; follow whatever P7-A/P7-B used, since neither added Prisma models; check `docs/roadmaps/NR14_5_GRADING_FAIRNESS_AUDIT.md` or the PR #110 diff for the most recent real migration pattern in this repo before running anything)
 
 **Interfaces:**
 - Produces (Prisma client types): `QualityReviewDomain` enum, `QualityReviewTask`, `QualityReviewAssessment` models, both referencing the existing `ReviewerProfile`.
@@ -549,7 +549,7 @@ Also add the two back-relations this requires: `QualityReviewTask[]` on `Reviewe
 Run: `npx prisma format && npx prisma generate`
 Expected: no errors; `QualityReviewTask` / `QualityReviewAssessment` types available from `@prisma/client`.
 
-Run: `npx prisma migrate dev --name add_quality_review_tasks` (or the repo's actual headless-migration command — check for one before assuming `migrate dev` is safe to run in this environment)
+Run: `npx prisma migrate dev --name add_quality_review_tasks` (or the repo's actual headless-migration command; check for one before assuming `migrate dev` is safe to run in this environment)
 Expected: a new migration file under `prisma/migrations/`, applied to the local/dev database only.
 
 - [ ] **Step 3: Commit**
@@ -566,7 +566,7 @@ git commit -m "feat: add QualityReviewTask/QualityReviewAssessment schema"
 - Test: `__tests__/quality/reviewSampling.test.ts`
 
 **Interfaces:**
-- Produces: `type SamplingPolicy = { policyId: string; version: number; domain: QualityReviewDomain; ratePer1000: number; minimumSample: number; priorityTags: string[]; riskEscalationRatePer1000: number; window: { fromHours: number }; owner: string }`; `function selectSample(population: Array<{ artifactRef: string; occurredAt: string; riskTags: string[] }>, policy: SamplingPolicy, now: string): string[]` — deterministic (no `Math.random`; use a stable hash of `artifactRef` against `ratePer1000`).
+- Produces: `type SamplingPolicy = { policyId: string; version: number; domain: QualityReviewDomain; ratePer1000: number; minimumSample: number; priorityTags: string[]; riskEscalationRatePer1000: number; window: { fromHours: number }; owner: string }`; `function selectSample(population: Array<{ artifactRef: string; occurredAt: string; riskTags: string[] }>, policy: SamplingPolicy, now: string): string[]`: deterministic (no `Math.random`; use a stable hash of `artifactRef` against `ratePer1000`).
 - Consumes: `QualityReviewDomain` from Prisma client (Task B1).
 
 - [ ] **Step 1: Write the failing test**
@@ -607,7 +607,7 @@ describe("review sampling policy", () => {
 - [ ] **Step 2: Run test to verify it fails**
 
 Run: `npx vitest run __tests__/quality/reviewSampling.test.ts`
-Expected: FAIL — module not found
+Expected: FAIL: module not found
 
 - [ ] **Step 3: Write minimal implementation**
 
@@ -671,10 +671,10 @@ git commit -m "feat: add deterministic quality review sampling policy"
 - Test: `__tests__/quality/reviewTasks.test.ts`
 
 **Interfaces:**
-- Consumes: `prisma` from `@/lib/db`; `logAuditRequiredWithId` from `@/lib/audit`; `ReviewOperationError` — reuse the existing one from `lib/curriculum/review/errors.ts` if its error codes are generic enough, otherwise create a `lib/quality/errors.ts` with the same shape; `REVIEW_TRANSACTION_OPTIONS`/`REVIEW_SERIALIZABLE_TRANSACTION_OPTIONS` from `lib/curriculum/review/transaction.ts`; `ReviewerCredential`/`ReviewerRestriction` Prisma models for scoping.
+- Consumes: `prisma` from `@/lib/db`; `logAuditRequiredWithId` from `@/lib/audit`; `ReviewOperationError`: reuse the existing one from `lib/curriculum/review/errors.ts` if its error codes are generic enough, otherwise create a `lib/quality/errors.ts` with the same shape; `REVIEW_TRANSACTION_OPTIONS`/`REVIEW_SERIALIZABLE_TRANSACTION_OPTIONS` from `lib/curriculum/review/transaction.ts`; `ReviewerCredential`/`ReviewerRestriction` Prisma models for scoping.
 - Produces: `createQualityReviewTask(input): Promise<QualityReviewTask>`; `claimQualityReviewTask(input: { operator, taskId, reviewerProfileId, idempotencyKey }): Promise<QualityReviewTask>` (single-owner claim, optimistic `version` check, rejects if reviewer has an active `ReviewerRestriction` matching the task's domain/school); `decideQualityReviewTask(input: { operator, taskId, outcome, severity, notes, idempotencyKey }): Promise<QualityReviewAssessment>`.
 
-Read `lib/curriculum/review/roster.ts` (already read above) and `lib/curriculum/review/errors.ts` before writing this file — mirror the exact transaction/idempotency/version pattern, don't reinvent it.
+Read `lib/curriculum/review/roster.ts` (already read above) and `lib/curriculum/review/errors.ts` before writing this file; mirror the exact transaction/idempotency/version pattern, don't reinvent it.
 
 - [ ] **Step 1: Write the failing test**
 
@@ -716,7 +716,7 @@ describe("quality review task claim", () => {
 - [ ] **Step 2: Run test to verify it fails**
 
 Run: `npx vitest run __tests__/quality/reviewTasks.test.ts`
-Expected: FAIL — module not found
+Expected: FAIL: module not found
 
 - [ ] **Step 3: Write minimal implementation**
 
@@ -790,12 +790,12 @@ git commit -m "feat: add conflict-safe quality review task claim/decide lifecycl
 - Test: `__tests__/quality/reviewTasks.test.ts` (add)
 
 **Interfaces:**
-- Produces: `type HelpfulnessOutcome = "helpful" | "partially_helpful" | "not_helpful" | "unsafe"`; `type HallucinationOutcome = "unsupported_claim" | "wrong_curriculum_claim" | "fabricated_citation" | "citation_mismatch" | "confident_unsupported" | "none"`; `type GroundingOutcome = "used_approved_context" | "misrepresented_source" | "ignored_required_evidence" | "grounded"`; `recordHelpfulnessDecision(...)`, `recordHallucinationDecision(...)`, `recordGroundingDecision(...)`, `recordModerationFalsePositive(...)`, `recordModerationFalseNegative(...)` — each a thin wrapper over `decideQualityReviewTask` (Task B3) that fixes `domain` and maps the richer outcome enum into the stored `severity`/`notes` fields, so the Prisma-level `QualityReviewOutcome` stays the 4-value PASS/FAIL/FALSE_POSITIVE/FALSE_NEGATIVE contract while the rubric detail is preserved in `notes` as structured JSON-in-text (or add a `rubricDetail Json?` column to `QualityReviewAssessment` in Task B1 if richer typed storage is preferred — decide before Task B1's migration, not after).
+- Produces: `type HelpfulnessOutcome = "helpful" | "partially_helpful" | "not_helpful" | "unsafe"`; `type HallucinationOutcome = "unsupported_claim" | "wrong_curriculum_claim" | "fabricated_citation" | "citation_mismatch" | "confident_unsupported" | "none"`; `type GroundingOutcome = "used_approved_context" | "misrepresented_source" | "ignored_required_evidence" | "grounded"`; `recordHelpfulnessDecision(...)`, `recordHallucinationDecision(...)`, `recordGroundingDecision(...)`, `recordModerationFalsePositive(...)`, `recordModerationFalseNegative(...)`: each a thin wrapper over `decideQualityReviewTask` (Task B3) that fixes `domain` and maps the richer outcome enum into the stored `severity`/`notes` fields, so the Prisma-level `QualityReviewOutcome` stays the 4-value PASS/FAIL/FALSE_POSITIVE/FALSE_NEGATIVE contract while the rubric detail is preserved in `notes` as structured JSON-in-text (or add a `rubricDetail Json?` column to `QualityReviewAssessment` in Task B1 if richer typed storage is preferred; decide before Task B1's migration, not after).
 - Consumes: `decideQualityReviewTask` from Task B3.
 
 - [ ] **Step 1: Write the failing test**
 
-Append to `__tests__/quality/reviewTasks.test.ts` (it already has a `vi.mock("@/lib/db", ...)` factory from Task 7 with `qualityReviewTask: { findUnique, findFirst, updateMany, create }`, `qualityReviewAssessment: { findUnique, create }`, `reviewerRestriction: { findFirst }`, and `vi.mock("@/lib/audit", ...)` — reuse that exact factory, do not redeclare it):
+Append to `__tests__/quality/reviewTasks.test.ts` (it already has a `vi.mock("@/lib/db", ...)` factory from Task 7 with `qualityReviewTask: { findUnique, findFirst, updateMany, create }`, `qualityReviewAssessment: { findUnique, create }`, `reviewerRestriction: { findFirst }`, and `vi.mock("@/lib/audit", ...)`; reuse that exact factory, do not redeclare it):
 
 ```typescript
 import { recordHelpfulnessDecision } from "@/lib/quality/reviewTasks";
@@ -854,7 +854,7 @@ export async function recordHelpfulnessDecision(input: { operator: Operator; tas
 }
 ```
 
-Repeat the pattern for hallucination, grounding, moderation false-positive/negative — each with its own outcome union and severity mapping (false negatives always map to `severity: "CRITICAL"` per the spec's "higher severity" requirement for missed-unsafe-content).
+Repeat the pattern for hallucination, grounding, moderation false-positive/negative: each with its own outcome union and severity mapping (false negatives always map to `severity: "CRITICAL"` per the spec's "higher severity" requirement for missed-unsafe-content).
 
 - [ ] **Step 4: Run test to verify it passes**
 
@@ -870,7 +870,7 @@ git commit -m "feat: add domain-specific quality review decision helpers"
 ### Task 9: Calibration
 
 **Files:**
-- Modify: `prisma/schema.prisma` (add `QualityReviewCalibrationSession`, `QualityReviewCalibrationResult` — same shape as `ReviewCalibrationSession`/`ReviewCalibrationResult` but referencing a `QualityReviewTask` snapshot instead of a `CurriculumContentRevision`, since that FK is curriculum-specific and cannot be reused as-is)
+- Modify: `prisma/schema.prisma` (add `QualityReviewCalibrationSession`, `QualityReviewCalibrationResult`: same shape as `ReviewCalibrationSession`/`ReviewCalibrationResult` but referencing a `QualityReviewTask` snapshot instead of a `CurriculumContentRevision`, since that FK is curriculum-specific and cannot be reused as-is)
 - Create: `lib/quality/calibration.ts`
 - Test: `__tests__/quality/calibration.test.ts`
 
@@ -903,7 +903,7 @@ describe("calibration disagreement", () => {
 - [ ] **Step 2: Run test to verify it fails**
 
 Run: `npx vitest run __tests__/quality/calibration.test.ts`
-Expected: FAIL — module not found
+Expected: FAIL: module not found
 
 - [ ] **Step 3: Write minimal implementation**
 
@@ -997,7 +997,7 @@ describe("release gate", () => {
 - [ ] **Step 2: Run test to verify it fails**
 
 Run: `npx vitest run __tests__/quality/releaseGate.test.ts`
-Expected: FAIL — module not found
+Expected: FAIL: module not found
 
 - [ ] **Step 3: Write minimal implementation**
 
@@ -1070,11 +1070,11 @@ git commit -m "feat: add versioned release gate evaluating quality/fixture/revie
 
 **Files:**
 - Create: `lib/quality/rollback.ts`
-- Test: `__tests__/quality/rollback.test.ts` (fold into `releaseGate.test.ts` or a new file — new file, since it's a distinct concern)
+- Test: `__tests__/quality/rollback.test.ts` (fold into `releaseGate.test.ts` or a new file; new file, since it's a distinct concern)
 
 **Interfaces:**
 - Consumes: `ReleaseGateResult` from Task C1.
-- Produces: `type RollbackCandidate = { gateId: string; version: number; recommendedAt: string; reasons: string[]; requiresHumanAuthorization: true }`; `function evaluateRollbackCandidate(gateResult: ReleaseGateResult, now: string): RollbackCandidate | null` — pure function, never mutates anything, always requires human authorization (per governance boundary: no automatic production mutation).
+- Produces: `type RollbackCandidate = { gateId: string; version: number; recommendedAt: string; reasons: string[]; requiresHumanAuthorization: true }`; `function evaluateRollbackCandidate(gateResult: ReleaseGateResult, now: string): RollbackCandidate | null`: pure function, never mutates anything, always requires human authorization (per governance boundary: no automatic production mutation).
 
 - [ ] **Step 1: Write the failing test**
 
@@ -1101,7 +1101,7 @@ describe("rollback candidate", () => {
 - [ ] **Step 2: Run test to verify it fails**
 
 Run: `npx vitest run __tests__/quality/rollback.test.ts`
-Expected: FAIL — module not found
+Expected: FAIL: module not found
 
 - [ ] **Step 3: Write minimal implementation**
 
@@ -1179,7 +1179,7 @@ describe("quality incident dedup", () => {
 - [ ] **Step 2: Run test to verify it fails**
 
 Run: `npx vitest run __tests__/quality/incidents.test.ts`
-Expected: FAIL — module not found
+Expected: FAIL: module not found
 
 - [ ] **Step 3: Write minimal implementation**
 
@@ -1244,7 +1244,7 @@ git commit -m "feat: add fingerprint-deduplicated quality incident model"
 
 **Interfaces:**
 - Consumes: `QualityReport`, `QualityState` from `@/lib/experiments/qualityOperations`; `evaluateEarlyStop` signature from `@/lib/experiments/controlledExperiment` (`(definition, metrics, assignments)`).
-- Produces: `function deriveQualityStopSignal(quality: QualityReport): { shouldStop: boolean; reason: "quality_stopped" | "quality_invalid" | null }` — a pure mapper, no re-derivation of SRM/guardrails (those already live in `qualityOperations.ts`); callers combine this with `evaluateEarlyStop`'s own result via boolean OR, they are never merged inside either module (avoids duplicating measurement per the P7-C doc's own stated boundary).
+- Produces: `function deriveQualityStopSignal(quality: QualityReport): { shouldStop: boolean; reason: "quality_stopped" | "quality_invalid" | null }`: a pure mapper, no re-derivation of SRM/guardrails (those already live in `qualityOperations.ts`); callers combine this with `evaluateEarlyStop`'s own result via boolean OR, they are never merged inside either module (avoids duplicating measurement per the P7-C doc's own stated boundary).
 
 - [ ] **Step 1: Write the failing test**
 
@@ -1274,7 +1274,7 @@ describe("quality stop signal for P7-B", () => {
 - [ ] **Step 2: Run test to verify it fails**
 
 Run: `npx vitest run __tests__/quality/qualityStopSignal.test.ts`
-Expected: FAIL — module not found
+Expected: FAIL: module not found
 
 - [ ] **Step 3: Write minimal implementation**
 
@@ -1321,7 +1321,7 @@ Expected: PASS (12 tests)
 - [ ] **Step 3: Run the full mandatory gate**
 
 Run: `npx prisma generate && npx tsc --noEmit && npx vitest run && npm run build`
-Expected: all green, including the pre-existing P7-A (`__tests__/measurement/*` or wherever they live — locate via `npx vitest run --reporter=verbose | grep -i p7a` first), P7-B, and P7-C evaluator tests still passing unchanged.
+Expected: all green, including the pre-existing P7-A (`__tests__/measurement/*` or wherever they live; locate via `npx vitest run --reporter=verbose | grep -i p7a` first), P7-B, and P7-C evaluator tests still passing unchanged.
 
 - [ ] **Step 4: Commit**
 
@@ -1344,7 +1344,7 @@ Add sections documenting: the fixture registry and its versioning rule; the red-
 
 - [ ] **Step 2: Only after Step 3 of Task C5 is fully green, update `CURRENT_EXECUTION_STATE.md`**
 
-Replace the `## P7-C Quality Operations: PARTIAL` heading and body (written earlier in this session on `feat/p7-c-quality-operations`) with a new dated entry stating COMPLETE AND CERTIFIED, citing: this plan's PR number, the merge SHA, exact-head CI run IDs (verified via `gh run view <id> --json headSha,conclusion` the same way this session verified PR #118/#119 — do not copy an unverified ID), and the concrete test count delta. Keep the three-deliverable enumeration but mark each done, with a one-line pointer to the file that implements it.
+Replace the `## P7-C Quality Operations: PARTIAL` heading and body (written earlier in this session on `feat/p7-c-quality-operations`) with a new dated entry stating COMPLETE AND CERTIFIED, citing: this plan's PR number, the merge SHA, exact-head CI run IDs (verified via `gh run view <id> --json headSha,conclusion` the same way this session verified PR #118/#119; do not copy an unverified ID), and the concrete test count delta. Keep the three-deliverable enumeration but mark each done, with a one-line pointer to the file that implements it.
 
 - [ ] **Step 3: Commit**
 
@@ -1353,13 +1353,13 @@ git add docs/P7C_QUALITY_OPERATIONS.md docs/roadmaps/CURRENT_EXECUTION_STATE.md
 git commit -m "docs: certify P7-C quality operations completion"
 ```
 
-**Task Group C gate check:** `npx prisma generate && npx tsc --noEmit && npx vitest run && npm run build`, then push to a PR, verify exact-head CI green via `gh pr checks`, merge, then verify merged-main CI green via `gh run list --branch main` the same way this session verified PR #118 — before writing "COMPLETE AND CERTIFIED" anywhere.
+**Task Group C gate check:** `npx prisma generate && npx tsc --noEmit && npx vitest run && npm run build`, then push to a PR, verify exact-head CI green via `gh pr checks`, merge, then verify merged-main CI green via `gh run list --branch main` the same way this session verified PR #118; before writing "COMPLETE AND CERTIFIED" anywhere.
 
 ---
 
 ## Self-Review Notes (for the plan author, already applied above)
 
 - **Spec coverage:** all three canonical deliverables (`docs/roadmaps/PRIORITIES_1_2_5_6_7_EXECUTION_PROGRAM.md:276-283`) map to Task Groups A, B, and C respectively.
-- **No fabricated language/percentage claims:** Task A2 pins language to the real `en`-only runtime; Task B2's sampling rates are deterministic architecture defaults, not invented production percentages — flag them as configurable, not authoritative, in Task C6's docs.
+- **No fabricated language/percentage claims:** Task A2 pins language to the real `en`-only runtime; Task B2's sampling rates are deterministic architecture defaults, not invented production percentages; flag them as configurable, not authoritative, in Task C6's docs.
 - **Type consistency:** `QualityReport`/`QualityState` are imported from the existing `qualityOperations.ts`, never redefined; `ReleaseGateResult` (Task C1) is the single type consumed by both `rollback.ts` (Task C2) and the golden scenarios (Task C5).
 - **Governance boundary:** `evaluateRollbackCandidate` (Task C2) never mutates anything and always sets `requiresHumanAuthorization: true`; no task in this plan touches production/staging or starts a real experiment.
