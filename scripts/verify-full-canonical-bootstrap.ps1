@@ -181,7 +181,7 @@ try {
   }
 
   $tableRls = Query-Scalar "SELECT count(*) || '|' || count(*) FILTER (WHERE rowsecurity) FROM pg_tables WHERE schemaname='public';"
-  if ($tableRls -ne "229|229") { throw "Expected 229/229 public tables with RLS, received $tableRls" }
+  if ($tableRls -ne "233|233") { throw "Expected 233/233 public tables with RLS, received $tableRls" }
 
   $p2cTableCount = Query-Scalar "SELECT count(*) FROM pg_tables WHERE schemaname='public' AND tablename IN ('CurriculumAuthoritySource','CurriculumAuthoritySourceVersion','MoeCurriculumObjective','AssessmentBaselineFramework','AssessmentBaselineSubject','AssessmentBaselineCompetency','CurriculumBaselineAlignment','CurriculumAlignmentValidityEvent','CurriculumLearningTarget','CurriculumCompetencyCoverage','ExamPreparationProfile','PolicyConfig','PolicyOverride');"
   if ($p2cTableCount -ne "13") { throw "P2-C table count mismatch: $p2cTableCount" }
@@ -300,8 +300,8 @@ try {
     migrationCount = $migrationNames.Count
     migrationLedger = $migrationNames
     nonTransactionalMigration = [ordered]@{ name = $specialMigration; sha256 = $specialHash; executedBeforeResolve = $true }
-    publicTables = 229
-    rlsEnabledTables = 229
+    publicTables = 233
+    rlsEnabledTables = 233
     p2cTables = 13
     p2cAnonAuthenticatedGrants = 0
     p2bConcurrency = [ordered]@{
@@ -332,7 +332,7 @@ try {
   $evidenceFile = Join-Path $resolvedArtifacts "verification-evidence.json"
   [IO.File]::WriteAllText($evidenceFile, ($evidence | ConvertTo-Json -Depth 8) + "`n", [Text.UTF8Encoding]::new($false))
   Write-Output "Full canonical PostgreSQL 17 bootstrap: PASS"
-  Write-Output "migrations=$($migrationNames.Count) tables=229 rls=229 p2cGrants=0 layeredDiffs=$(@($diffReport.diffStatementKeys).Count)"
+  Write-Output "migrations=$($migrationNames.Count) tables=233 rls=233 p2cGrants=0 layeredDiffs=$(@($diffReport.diffStatementKeys).Count)"
   Write-Output "evidence=$evidenceFile"
 }
 finally {

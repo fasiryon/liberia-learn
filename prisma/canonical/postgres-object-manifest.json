@@ -134,8 +134,8 @@
     "rls": {
       "schema": "public",
       "selector": "ALL_PUBLIC_TABLES",
-      "expectedTableCount": 229,
-      "expectedEnabledCount": 229
+      "expectedTableCount": 233,
+      "expectedEnabledCount": 233
     },
     "p2cServerOnlyTables": [
       "CurriculumAuthoritySource", "CurriculumAuthoritySourceVersion", "MoeCurriculumObjective",

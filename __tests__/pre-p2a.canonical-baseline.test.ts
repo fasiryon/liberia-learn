@@ -219,6 +219,8 @@ describe("canonical pre-P2-A baseline", () => {
       "20260820_000002_p2abc_integrity_enforcement_security",
       "20260820_000003_layered_schema_additive_reconciliation",
       "20260826_000001_p5a_manifest_trust_order",
+      "20260901_000001_add_quality_review_tasks",
+      "20260901_000002_add_quality_review_calibration",
     ]);
   });
 

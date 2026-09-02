@@ -10,41 +10,41 @@ datasource db {
 
 /// / ===== Core Identity & Org =====
 model User {
-  id                                String                          @id @default(cuid())
-  email                             String                          @unique
-  loginId                           String?                         @unique
+  id                                String                            @id @default(cuid())
+  email                             String                            @unique
+  loginId                           String?                           @unique
   emailVerified                     DateTime?
   hashedPwd                         String?
   name                              String?
   role                              Role
-  createdAt                         DateTime                        @default(now())
-  updatedAt                         DateTime                        @updatedAt
+  createdAt                         DateTime                          @default(now())
+  updatedAt                         DateTime                          @updatedAt
   passwordChangedAt                 DateTime?
-  welcomeCompletedAt                DateTime?                       @db.Timestamp(3)
-  mustChangePIN                     Boolean                         @default(false)
+  welcomeCompletedAt                DateTime?                         @db.Timestamp(3)
+  mustChangePIN                     Boolean                           @default(false)
   schoolId                          String?
-  isPlatformAdmin                   Boolean                         @default(false)
-  guardianCountryCode               String                          @default("+231")
+  isPlatformAdmin                   Boolean                           @default(false)
+  guardianCountryCode               String                            @default("+231")
   guardianPhone                     String?
   guardianPhoneE164                 String?
-  preferredChannel                  String                          @default("EMAIL")
-  smsOptIn                          Boolean                         @default(false)
+  preferredChannel                  String                            @default("EMAIL")
+  smsOptIn                          Boolean                           @default(false)
   guardianSmsPreferences            Json?
   accounts                          Account[]
   auditLogs                         AuditLog[]
-  teacherOf                         Class[]                         @relation("TeacherClasses")
-  markedAttendance                  Attendance[]                    @relation("AttendanceMarkedBy")
-  timetableEntries                  Timetable[]                     @relation("TimetableTeacher")
-  timetableAssignments              TimetableAssignment[]           @relation("TimetableAssignmentBy")
-  textbookJobs                      TextbookGenerationJob[]         @relation("TextbookGenerationRequestedBy")
-  teacherAssignments                TeacherAssignment[]             @relation("TeacherAssignmentTeacher")
+  teacherOf                         Class[]                           @relation("TeacherClasses")
+  markedAttendance                  Attendance[]                      @relation("AttendanceMarkedBy")
+  timetableEntries                  Timetable[]                       @relation("TimetableTeacher")
+  timetableAssignments              TimetableAssignment[]             @relation("TimetableAssignmentBy")
+  textbookJobs                      TextbookGenerationJob[]           @relation("TextbookGenerationRequestedBy")
+  teacherAssignments                TeacherAssignment[]               @relation("TeacherAssignmentTeacher")
   homework                          Homework[]
-  messagesSent                      Message[]                       @relation("MessagesSent")
-  messagesReceived                  Message[]                       @relation("MessagesReceived")
+  messagesSent                      Message[]                         @relation("MessagesSent")
+  messagesReceived                  Message[]                         @relation("MessagesReceived")
   messageReadReceipts               MessageReadReceipt[]
   notificationLogs                  NotificationLog[]
-  guardianConsents                  GuardianConsent[]               @relation("GuardianConsentGuardian")
-  smsDeliveryLogs                   SMSDeliveryLog[]                @relation("SMSDeliveryLogGuardian")
+  guardianConsents                  GuardianConsent[]                 @relation("GuardianConsentGuardian")
+  smsDeliveryLogs                   SMSDeliveryLog[]                  @relation("SMSDeliveryLogGuardian")
   exportRecords                     ExportRecord[]
   metricEvents                      MetricEvent[]
   passwordResetTokens               PasswordResetToken[]
@@ -53,68 +53,69 @@ model User {
   student                           Student?
   guardianOf                        StudentGuardian[]
   studentProgress                   StudentProgress[]
-  designatedSafetyStaffForSchools   School[]                        @relation("SchoolDesignatedSafetyStaff")
+  designatedSafetyStaffForSchools   School[]                          @relation("SchoolDesignatedSafetyStaff")
   TeacherProfile                    TeacherProfile?
   TrainingProgress                  TrainingProgress[]
-  school                            School?                         @relation(fields: [schoolId], references: [id])
+  school                            School?                           @relation(fields: [schoolId], references: [id])
   // Part 4: units created by this user
-  curriculumUnits                   CurriculumUnit[]                @relation("CurriculumUnitCreatedBy")
-  curriculumVersionsCreated         CurriculumVersion[]             @relation("CurriculumVersionCreatedBy")
-  policyConfigsCreated              PolicyConfig[]                  @relation("PolicyConfigCreatedBy")
-  policyConfigsUpdated              PolicyConfig[]                  @relation("PolicyConfigUpdatedBy")
-  policyOverridesCreated            PolicyOverride[]                @relation("PolicyOverrideCreatedBy")
-  moePolicyDirectivesCreated        MoePolicyDirective[]            @relation("MoePolicyDirectiveCreatedBy")
-  moePolicyDirectivesApproved       MoePolicyDirective[]            @relation("MoePolicyDirectiveApprovedBy")
-  moePolicyDirectivesUpdated        MoePolicyDirective[]            @relation("MoePolicyDirectiveUpdatedBy")
+  curriculumUnits                   CurriculumUnit[]                  @relation("CurriculumUnitCreatedBy")
+  curriculumVersionsCreated         CurriculumVersion[]               @relation("CurriculumVersionCreatedBy")
+  policyConfigsCreated              PolicyConfig[]                    @relation("PolicyConfigCreatedBy")
+  policyConfigsUpdated              PolicyConfig[]                    @relation("PolicyConfigUpdatedBy")
+  policyOverridesCreated            PolicyOverride[]                  @relation("PolicyOverrideCreatedBy")
+  moePolicyDirectivesCreated        MoePolicyDirective[]              @relation("MoePolicyDirectiveCreatedBy")
+  moePolicyDirectivesApproved       MoePolicyDirective[]              @relation("MoePolicyDirectiveApprovedBy")
+  moePolicyDirectivesUpdated        MoePolicyDirective[]              @relation("MoePolicyDirectiveUpdatedBy")
   // Part 7: lab sessions for this user
-  labSessions                       LabSession[]                    @relation("LabSessionStudent")
+  labSessions                       LabSession[]                      @relation("LabSessionStudent")
   // Guardian messaging
-  sentGuardianMessages              GuardianMessage[]               @relation("GuardianMessageGuardian")
-  receivedGuardianMessages          GuardianMessage[]               @relation("GuardianMessageTeacher")
-  lessonVideos                      LessonVideo[]                   @relation("LessonVideoTeacher")
-  videoWatchEvents                  VideoWatchEvent[]               @relation("VideoWatchEvents")
-  googleId                          String?                         @unique
+  sentGuardianMessages              GuardianMessage[]                 @relation("GuardianMessageGuardian")
+  receivedGuardianMessages          GuardianMessage[]                 @relation("GuardianMessageTeacher")
+  lessonVideos                      LessonVideo[]                     @relation("LessonVideoTeacher")
+  videoWatchEvents                  VideoWatchEvent[]                 @relation("VideoWatchEvents")
+  googleId                          String?                           @unique
   tourCompletedAt                   DateTime?
   privacyAcceptedAt                 DateTime?
   teacherAlertPrefs                 TeacherAlertPreference?
   teacherWelcomeCompletedAt         DateTime?
   teacherSentiments                 TeacherSentiment[]
-  createdReportCards                ReportCard[]                    @relation("ReportCardCreator")
+  createdReportCards                ReportCard[]                      @relation("ReportCardCreator")
   studentStreak                     StudentStreak?
   pushSubscriptions                 PushSubscription[]
-  hostMeetings                      Meeting[]                       @relation("MeetingHost")
-  meetingAttendances                MeetingAttendee[]               @relation("MeetingAttendees")
-  discussionThreads                 DiscussionThread[]              @relation("DiscussionThreadAuthor")
-  discussionPosts                   DiscussionPost[]                @relation("DiscussionPostAuthor")
+  hostMeetings                      Meeting[]                         @relation("MeetingHost")
+  meetingAttendances                MeetingAttendee[]                 @relation("MeetingAttendees")
+  discussionThreads                 DiscussionThread[]                @relation("DiscussionThreadAuthor")
+  discussionPosts                   DiscussionPost[]                  @relation("DiscussionPostAuthor")
   discussionUpvotes                 DiscussionUpvote[]
   discussionLastReads               DiscussionLastRead[]
-  requestedDocuments                GeneratedDocument[]             @relation("DocumentRequester")
-  studentDocuments                  GeneratedDocument[]             @relation("DocumentStudent")
-  capstoneReviews                   CapstoneProject[]               @relation("CapstoneTeacher")
-  announcements                     Announcement[]                  @relation("AnnouncementAuthor")
+  requestedDocuments                GeneratedDocument[]               @relation("DocumentRequester")
+  studentDocuments                  GeneratedDocument[]               @relation("DocumentStudent")
+  capstoneReviews                   CapstoneProject[]                 @relation("CapstoneTeacher")
+  announcements                     Announcement[]                    @relation("AnnouncementAuthor")
   notificationInboxItems            NotificationInboxItem[]
-  languagePreference                String?                         @default("en")
-  tutorConversations                TutorConversation[]             @relation("TutorConversationStudent")
-  lessonHelpFlags                   LessonHelpFlag[]                @relation("LessonHelpFlagStudent")
-  editedLessons                     CurriculumContent[]             @relation("LessonEditor")
-  lessonVersionsAuthored            LessonVersion[]                 @relation("LessonVersionAuthor")
-  lessonSharesCreated               LessonShare[]                   @relation("LessonShareCreator")
-  curriculumRevisionsAuthored       CurriculumContentRevision[]     @relation("CurriculumRevisionAuthor")
-  curriculumGovernanceEvents        CurriculumGovernanceEvent[]     @relation("CurriculumGovernanceActor")
-  curriculumEvidenceAdded           CurriculumEvidence[]            @relation("CurriculumEvidenceAddedBy")
+  languagePreference                String?                           @default("en")
+  tutorConversations                TutorConversation[]               @relation("TutorConversationStudent")
+  lessonHelpFlags                   LessonHelpFlag[]                  @relation("LessonHelpFlagStudent")
+  editedLessons                     CurriculumContent[]               @relation("LessonEditor")
+  lessonVersionsAuthored            LessonVersion[]                   @relation("LessonVersionAuthor")
+  lessonSharesCreated               LessonShare[]                     @relation("LessonShareCreator")
+  curriculumRevisionsAuthored       CurriculumContentRevision[]       @relation("CurriculumRevisionAuthor")
+  curriculumGovernanceEvents        CurriculumGovernanceEvent[]       @relation("CurriculumGovernanceActor")
+  curriculumEvidenceAdded           CurriculumEvidence[]              @relation("CurriculumEvidenceAddedBy")
   reviewerProfile                   ReviewerProfile?
-  reviewerCredentialsVerified       ReviewerCredential[]            @relation("ReviewerCredentialVerifier")
-  reviewerCredentialStatusEvents    ReviewerCredentialStatusEvent[] @relation("ReviewerCredentialStatusActor")
-  reviewerRestrictionsImposed       ReviewerRestriction[]           @relation("ReviewerRestrictionImposedBy")
-  curriculumReviewTasksCreated      CurriculumReviewTask[]          @relation("CurriculumReviewTaskCreator")
-  curriculumReviewDecisionsResolved CurriculumReviewDecision[]      @relation("CurriculumReviewDecisionResolver")
-  reviewCalibrationSessionsCreated  ReviewCalibrationSession[]      @relation("ReviewCalibrationSessionCreator")
+  reviewerCredentialsVerified       ReviewerCredential[]              @relation("ReviewerCredentialVerifier")
+  reviewerCredentialStatusEvents    ReviewerCredentialStatusEvent[]   @relation("ReviewerCredentialStatusActor")
+  reviewerRestrictionsImposed       ReviewerRestriction[]             @relation("ReviewerRestrictionImposedBy")
+  curriculumReviewTasksCreated      CurriculumReviewTask[]            @relation("CurriculumReviewTaskCreator")
+  curriculumReviewDecisionsResolved CurriculumReviewDecision[]        @relation("CurriculumReviewDecisionResolver")
+  reviewCalibrationSessionsCreated  ReviewCalibrationSession[]        @relation("ReviewCalibrationSessionCreator")
+  qualityCalibrationSessionsCreated QualityReviewCalibrationSession[] @relation("QualityReviewCalibrationSessionCreator")
   // Sprint 26: student phone for SMS quiz delivery
   phone                             String?
-  smsStudentSessions                SmsSession[]                    @relation("SmsStudent")
+  smsStudentSessions                SmsSession[]                      @relation("SmsStudent")
   portfolioCredentials              PortfolioCredential[]
   // Wave 4A
-  teacherLessonAssignments          TeacherLessonAssignment[]       @relation("TeacherLessonAssignments")
+  teacherLessonAssignments          TeacherLessonAssignment[]         @relation("TeacherLessonAssignments")
 }
 
 model District {
@@ -226,6 +227,7 @@ model School {
   lessonShares                LessonShare[]
   // Sprint 26: league table snapshots
   leagueSnapshots             LeagueSnapshot[]
+  qualityReviewTasks          QualityReviewTask[]
 }
 
 model Class {
@@ -910,6 +912,7 @@ model AuditLog {
   reviewerCredentialStatusEvent ReviewerCredentialStatusEvent? @relation("ReviewerCredentialStatusAudit")
   reviewerRestriction           ReviewerRestriction?           @relation("ReviewerRestrictionAudit")
   curriculumReviewDecision      CurriculumReviewDecision?      @relation("CurriculumReviewDecisionAudit")
+  qualityReviewAssessment       QualityReviewAssessment?       @relation("QualityReviewAssessmentAudit")
 
   @@index([resourceType, resourceId])
   @@index([userId, createdAt])
@@ -2537,8 +2540,8 @@ model CurriculumGovernanceEvent {
   aiReviewAgent       AIReviewAgent?             @relation(fields: [aiReviewAgentId], references: [id], onDelete: Restrict)
   auditLog            AuditLog?                  @relation("CurriculumGovernanceAudit", fields: [auditLogId], references: [id], onDelete: Restrict)
   reviewDecision      CurriculumReviewDecision?
-  correctsEvent       CurriculumGovernanceEvent?  @relation("CurriculumGovernanceAuthorityCorrection", fields: [correctsEventId], references: [id], onDelete: Restrict)
-  correctedBy         CurriculumGovernanceEvent?  @relation("CurriculumGovernanceAuthorityCorrection")
+  correctsEvent       CurriculumGovernanceEvent? @relation("CurriculumGovernanceAuthorityCorrection", fields: [correctsEventId], references: [id], onDelete: Restrict)
+  correctedBy         CurriculumGovernanceEvent? @relation("CurriculumGovernanceAuthorityCorrection")
 
   @@unique([provenanceId, sequence])
   @@index([provenanceId, occurredAt])
@@ -2926,13 +2929,16 @@ model ReviewerProfile {
   version                    Int                       @default(1)
   creationIdempotencyKey     String                    @unique
 
-  user               User                         @relation(fields: [userId], references: [id], onDelete: Restrict)
-  school             School?                      @relation(fields: [schoolId], references: [id], onDelete: Restrict)
-  credentials        ReviewerCredential[]
-  restrictions       ReviewerRestriction[]
-  assignments        CurriculumReviewAssignment[]
-  assessments        CurriculumReviewAssessment[]
-  calibrationResults ReviewCalibrationResult[]
+  user                      User                             @relation(fields: [userId], references: [id], onDelete: Restrict)
+  school                    School?                          @relation(fields: [schoolId], references: [id], onDelete: Restrict)
+  credentials               ReviewerCredential[]
+  restrictions              ReviewerRestriction[]
+  assignments               CurriculumReviewAssignment[]
+  assessments               CurriculumReviewAssessment[]
+  calibrationResults        ReviewCalibrationResult[]
+  qualityReviewClaims       QualityReviewTask[]
+  qualityReviewAssessments  QualityReviewAssessment[]
+  qualityCalibrationResults QualityReviewCalibrationResult[]
 
   @@index([status, available])
   @@index([authority, schoolId])
@@ -3270,6 +3276,117 @@ model ReviewCalibrationResult {
 
   session         ReviewCalibrationSession @relation(fields: [sessionId], references: [id], onDelete: Restrict)
   reviewerProfile ReviewerProfile          @relation(fields: [reviewerProfileId], references: [id], onDelete: Restrict)
+
+  @@unique([sessionId, reviewerProfileId])
+  @@index([reviewerProfileId, submittedAt])
+}
+
+enum QualityReviewDomain {
+  TUTOR_HELPFULNESS
+  HALLUCINATION
+  GROUNDING
+  MODERATION_FALSE_POSITIVE
+  MODERATION_FALSE_NEGATIVE
+}
+
+enum QualityReviewTaskStatus {
+  QUEUED
+  CLAIMED
+  DECIDED
+  CANCELLED
+}
+
+enum QualityReviewOutcome {
+  PASS
+  FAIL
+  FALSE_POSITIVE
+  FALSE_NEGATIVE
+}
+
+model QualityReviewTask {
+  id                 String                    @id @default(cuid())
+  domain             QualityReviewDomain
+  artifactRef        String
+  fixtureId          String?
+  fixtureVersion     Int?
+  status             QualityReviewTaskStatus   @default(QUEUED)
+  requiredAuthority  CurriculumReviewAuthority
+  schoolId           String?
+  claimedByProfileId String?
+  claimedAt          DateTime?
+  dueAt              DateTime
+  idempotencyKey     String                    @unique
+  createdAt          DateTime                  @default(now())
+  updatedAt          DateTime                  @updatedAt
+  version            Int                       @default(1)
+
+  claimedBy           ReviewerProfile?                  @relation(fields: [claimedByProfileId], references: [id], onDelete: SetNull)
+  school              School?                           @relation(fields: [schoolId], references: [id], onDelete: Restrict)
+  assessment          QualityReviewAssessment?
+  calibrationSessions QualityReviewCalibrationSession[]
+
+  @@index([domain, status, dueAt])
+  @@index([schoolId])
+}
+
+model QualityReviewAssessment {
+  id                String               @id @default(cuid())
+  taskId            String               @unique
+  reviewerProfileId String
+  outcome           QualityReviewOutcome
+  severity          String
+  notes             String?              @db.Text
+  auditLogId        String               @unique
+  idempotencyKey    String               @unique
+  decidedAt         DateTime             @default(now())
+
+  task            QualityReviewTask @relation(fields: [taskId], references: [id], onDelete: Restrict)
+  reviewerProfile ReviewerProfile   @relation(fields: [reviewerProfileId], references: [id], onDelete: Restrict)
+  auditLog        AuditLog          @relation("QualityReviewAssessmentAudit", fields: [auditLogId], references: [id], onDelete: Restrict)
+
+  @@index([reviewerProfileId, decidedAt])
+}
+
+enum QualityReviewCalibrationSessionStatus {
+  DRAFT
+  OPEN
+  CLOSED
+  CANCELLED
+}
+
+model QualityReviewCalibrationSession {
+  id                String                                @id @default(cuid())
+  name              String
+  status            QualityReviewCalibrationSessionStatus @default(DRAFT)
+  domain            QualityReviewDomain
+  referenceTaskId   String
+  referenceSnapshot Json
+  opensAt           DateTime?
+  closesAt          DateTime?
+  createdByUserId   String
+  createdAt         DateTime                              @default(now())
+  updatedAt         DateTime                              @updatedAt
+  idempotencyKey    String                                @unique
+
+  referenceTask QualityReviewTask                @relation(fields: [referenceTaskId], references: [id], onDelete: Restrict)
+  createdBy     User                             @relation("QualityReviewCalibrationSessionCreator", fields: [createdByUserId], references: [id], onDelete: Restrict)
+  results       QualityReviewCalibrationResult[]
+
+  @@index([status, opensAt, closesAt])
+  @@index([domain])
+}
+
+model QualityReviewCalibrationResult {
+  id                 String   @id @default(cuid())
+  sessionId          String
+  reviewerProfileId  String
+  assessmentSnapshot Json
+  comparisonResult   Json
+  submittedAt        DateTime @default(now())
+  idempotencyKey     String   @unique
+
+  session         QualityReviewCalibrationSession @relation(fields: [sessionId], references: [id], onDelete: Restrict)
+  reviewerProfile ReviewerProfile                 @relation(fields: [reviewerProfileId], references: [id], onDelete: Restrict)
 
   @@unique([sessionId, reviewerProfileId])
   @@index([reviewerProfileId, submittedAt])
@@ -3957,15 +4074,15 @@ model AIInteraction {
   legacyLogRequired       Boolean   @default(false)
   createdAt               DateTime  @default(now())
 
-  legacyLog               AiInteractionLog?
+  legacyLog AiInteractionLog?
 
+  @@unique([dedupeKey])
   @@index([createdAt])
   @@index([schoolId, createdAt])
   @@index([userId, createdAt])
   @@index([feature, createdAt])
   @@index([subject, strandKey, createdAt])
   @@index([clientEventId])
-  @@unique([dedupeKey])
   @@index([sourceEventId])
   @@index([generationCorrelationId, createdAt])
   @@index([legacyLogRequired, createdAt])
@@ -4322,7 +4439,7 @@ model AiInteractionLog {
   aiInteractionId  String?  @unique
   timestamp        DateTime @default(now())
 
-  aiInteraction    AIInteraction? @relation(fields: [aiInteractionId], references: [id], onDelete: Restrict)
+  aiInteraction AIInteraction? @relation(fields: [aiInteractionId], references: [id], onDelete: Restrict)
 
   @@index([timestamp])
   @@index([subject, strandKey])
