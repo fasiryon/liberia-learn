@@ -226,6 +226,7 @@ model School {
   lessonShares                LessonShare[]
   // Sprint 26: league table snapshots
   leagueSnapshots             LeagueSnapshot[]
+  qualityReviewTasks          QualityReviewTask[]
 }
 
 model Class {
@@ -910,6 +911,7 @@ model AuditLog {
   reviewerCredentialStatusEvent ReviewerCredentialStatusEvent? @relation("ReviewerCredentialStatusAudit")
   reviewerRestriction           ReviewerRestriction?           @relation("ReviewerRestrictionAudit")
   curriculumReviewDecision      CurriculumReviewDecision?      @relation("CurriculumReviewDecisionAudit")
+  qualityReviewAssessment       QualityReviewAssessment?       @relation("QualityReviewAssessmentAudit")
 
   @@index([resourceType, resourceId])
   @@index([userId, createdAt])
@@ -2926,13 +2928,15 @@ model ReviewerProfile {
   version                    Int                       @default(1)
   creationIdempotencyKey     String                    @unique
 
-  user               User                         @relation(fields: [userId], references: [id], onDelete: Restrict)
-  school             School?                      @relation(fields: [schoolId], references: [id], onDelete: Restrict)
-  credentials        ReviewerCredential[]
-  restrictions       ReviewerRestriction[]
-  assignments        CurriculumReviewAssignment[]
-  assessments        CurriculumReviewAssessment[]
-  calibrationResults ReviewCalibrationResult[]
+  user                     User                         @relation(fields: [userId], references: [id], onDelete: Restrict)
+  school                   School?                      @relation(fields: [schoolId], references: [id], onDelete: Restrict)
+  credentials              ReviewerCredential[]
+  restrictions             ReviewerRestriction[]
+  assignments              CurriculumReviewAssignment[]
+  assessments              CurriculumReviewAssessment[]
+  calibrationResults       ReviewCalibrationResult[]
+  qualityReviewClaims      QualityReviewTask[]
+  qualityReviewAssessments QualityReviewAssessment[]
 
   @@index([status, available])
   @@index([authority, schoolId])
@@ -3273,6 +3277,71 @@ model ReviewCalibrationResult {
 
   @@unique([sessionId, reviewerProfileId])
   @@index([reviewerProfileId, submittedAt])
+}
+
+enum QualityReviewDomain {
+  TUTOR_HELPFULNESS
+  HALLUCINATION
+  GROUNDING
+  MODERATION_FALSE_POSITIVE
+  MODERATION_FALSE_NEGATIVE
+}
+
+enum QualityReviewTaskStatus {
+  QUEUED
+  CLAIMED
+  DECIDED
+  CANCELLED
+}
+
+enum QualityReviewOutcome {
+  PASS
+  FAIL
+  FALSE_POSITIVE
+  FALSE_NEGATIVE
+}
+
+model QualityReviewTask {
+  id                 String                    @id @default(cuid())
+  domain             QualityReviewDomain
+  artifactRef        String
+  fixtureId          String?
+  fixtureVersion     Int?
+  status             QualityReviewTaskStatus   @default(QUEUED)
+  requiredAuthority  CurriculumReviewAuthority
+  schoolId           String?
+  claimedByProfileId String?
+  claimedAt          DateTime?
+  dueAt              DateTime
+  idempotencyKey     String                    @unique
+  createdAt          DateTime                  @default(now())
+  updatedAt          DateTime                  @updatedAt
+  version            Int                       @default(1)
+
+  claimedBy  ReviewerProfile?         @relation(fields: [claimedByProfileId], references: [id], onDelete: SetNull)
+  school     School?                  @relation(fields: [schoolId], references: [id], onDelete: Restrict)
+  assessment QualityReviewAssessment?
+
+  @@index([domain, status, dueAt])
+  @@index([schoolId])
+}
+
+model QualityReviewAssessment {
+  id                String               @id @default(cuid())
+  taskId            String               @unique
+  reviewerProfileId String
+  outcome           QualityReviewOutcome
+  severity          String
+  notes             String?              @db.Text
+  auditLogId        String               @unique
+  idempotencyKey    String               @unique
+  decidedAt         DateTime             @default(now())
+
+  task            QualityReviewTask @relation(fields: [taskId], references: [id], onDelete: Restrict)
+  reviewerProfile ReviewerProfile   @relation(fields: [reviewerProfileId], references: [id], onDelete: Restrict)
+  auditLog        AuditLog          @relation("QualityReviewAssessmentAudit", fields: [auditLogId], references: [id], onDelete: Restrict)
+
+  @@index([reviewerProfileId, decidedAt])
 }
 
 model LessonAudio {
