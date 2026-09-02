@@ -615,7 +615,13 @@ describe("P7-C golden quality-operations scenarios", () => {
       return null;
     });
     (prisma.qualityReviewCalibrationSession.create as any).mockImplementation(async ({ data }: any) => {
-      sessionState = { id: "session-golden-1", status: "OPEN", ...data };
+      // Honest with the real schema default: createCalibrationSession's data
+      // object never sets status, so Prisma applies the QualityReviewCalibrationSession
+      // default of DRAFT, not OPEN. See docs/P7C_QUALITY_OPERATIONS.md's calibration
+      // lifecycle note: no code path in this repository currently transitions a
+      // session from DRAFT to OPEN (the same gap already documented for the
+      // curriculum-review calibration module this one mirrors).
+      sessionState = { id: "session-golden-1", ...data, status: "DRAFT" };
       return sessionState;
     });
     (prisma.qualityReviewCalibrationResult.findUnique as any).mockResolvedValue(null);
@@ -632,7 +638,14 @@ describe("P7-C golden quality-operations scenarios", () => {
       createdByUserId: "user-golden-1",
       idempotencyKey: "golden-calibration-session-1",
     });
-    expect(session.status).toBe("OPEN");
+    expect(session.status).toBe("DRAFT");
+
+    // recordCalibrationResult requires an OPEN session. Since no production code
+    // path performs that DRAFT -> OPEN transition, simulate it directly on the
+    // mocked session state here (an out-of-band admin action, not something
+    // createCalibrationSession itself does) so the rest of this scenario can
+    // exercise recordCalibrationResult/computeDisagreement in isolation.
+    sessionState.status = "OPEN";
 
     const agreeing = await recordCalibrationResult({
       sessionId: session.id,
