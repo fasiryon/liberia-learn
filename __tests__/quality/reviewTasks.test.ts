@@ -26,6 +26,47 @@ describe("quality review task claim", () => {
     ).rejects.toThrow(ReviewOperationError);
   });
 
+  it("rejects a claim from a reviewer with a restriction that is active now but has a future effectiveUntil (fail-open case)", async () => {
+    // Simulates real Prisma findFirst semantics against a single restriction row,
+    // so this test actually exercises the where-clause predicate rather than just
+    // a hardcoded mock return value. The restriction here is currently active
+    // (effectiveFrom in the past, liftedAt null) but has an effectiveUntil far in
+    // the future -- a naive `effectiveUntil: null` filter would miss it entirely
+    // (fail-open), which is exactly the bug this test guards against.
+    const restriction = {
+      id: "r1",
+      reviewerProfileId: "rp-1",
+      schoolId: "school-1",
+      effectiveFrom: new Date("2026-01-01T00:00:00.000Z"),
+      effectiveUntil: new Date("2099-01-01T00:00:00.000Z"),
+      liftedAt: null,
+    };
+
+    function matchesClause(record: any, where: any): boolean {
+      return Object.entries(where as Record<string, any>).every(([key, condition]: [string, any]) => {
+        if (key === "AND") return (condition as any[]).every((sub) => matchesClause(record, sub));
+        if (key === "OR") return (condition as any[]).some((sub) => matchesClause(record, sub));
+        const value = record[key];
+        if (condition === null) return value === null || value === undefined;
+        if (condition instanceof Date) return value instanceof Date && value.getTime() === condition.getTime();
+        if (typeof condition === "object") {
+          if ("lte" in condition) return value != null && value.getTime() <= condition.lte.getTime();
+          if ("gt" in condition) return value != null && value.getTime() > condition.gt.getTime();
+          return false;
+        }
+        return value === condition;
+      });
+    }
+
+    (prisma.$transaction as any).mockImplementation(async (fn: any) => fn(prisma));
+    (prisma.qualityReviewTask.findUnique as any).mockResolvedValue({ id: "t1", domain: "TUTOR_HELPFULNESS", schoolId: "school-1", status: "QUEUED", version: 1 });
+    (prisma.reviewerRestriction.findFirst as any).mockImplementation(async ({ where }: any) => (matchesClause(restriction, where) ? restriction : null));
+
+    await expect(
+      claimQualityReviewTask({ operator: { id: "op-1", role: "ADMIN" }, taskId: "t1", reviewerProfileId: "rp-1", idempotencyKey: "claim-future-until" }),
+    ).rejects.toThrow(ReviewOperationError);
+  });
+
   it("rejects a claim on a version conflict (already claimed)", async () => {
     (prisma.$transaction as any).mockImplementation(async (fn: any) => fn(prisma));
     (prisma.qualityReviewTask.findUnique as any).mockResolvedValue({ id: "t1", domain: "TUTOR_HELPFULNESS", schoolId: null, status: "QUEUED", version: 1 });

@@ -60,11 +60,16 @@ export async function claimQualityReviewTask(input: {
   return prisma.$transaction(async (tx) => {
     const task = await tx.qualityReviewTask.findUnique({ where: { id: input.taskId } });
     if (!task || task.status !== "QUEUED") throw new ReviewOperationError("TASK_NOT_CLAIMABLE", 409);
+    const now = new Date();
     const restriction = await tx.reviewerRestriction.findFirst({
       where: {
         reviewerProfileId: input.reviewerProfileId,
-        OR: [{ schoolId: task.schoolId }, { schoolId: null }],
-        effectiveUntil: null,
+        liftedAt: null,
+        effectiveFrom: { lte: now },
+        AND: [
+          { OR: [{ schoolId: task.schoolId }, { schoolId: null }] },
+          { OR: [{ effectiveUntil: null }, { effectiveUntil: { gt: now } }] },
+        ],
       },
     });
     if (restriction) throw new ReviewOperationError("REVIEWER_RESTRICTED", 403);
