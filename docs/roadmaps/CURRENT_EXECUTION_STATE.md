@@ -12,8 +12,9 @@ current P1, P2, and P5 source contracts and remediated the P1-D 500-job
 threshold plus worker noop/unknown false-success handling. It records P1-C,
 P1-D, P2-B, P2-C, P5-A, and original P5-C external gates without fabricating
 operations. Its P7 findings were the authorization baseline: P7-A and P7-C
-were PARTIAL and P7-B was NOT STARTED. The P7-A and P7-B certification records
-below supersede those findings; P7-C still blocks NR-15. Physical device
+were PARTIAL and P7-B was NOT STARTED. The P7-A, P7-B, and P7-C certification
+records below supersede those findings; P7-C's remaining blockers are
+external operational gates only, not repository-local work. Physical device
 and classroom-hub field proof remain separate external gates.
 
 ## P7-A Governed Measurement Foundation: COMPLETE AND CERTIFIED (2026-08-31)
@@ -29,10 +30,9 @@ stable replay identity, tenant-safe school scope, mandatory synthetic-source
 exclusion, explicit missing-data handling, event-time windows, and result
 provenance. Focused golden fixtures and the full exact-head CI gate passed.
 
-P7-C remains PARTIAL. NR-15 remains blocked by P7-C plus its separate
-operational monitoring, alert delivery, on-call ownership, and incident-drill
-gates. The next repository-local goal is P7-C, Quality Operations; do not
-implement it without a separate authorization.
+P7-C is complete and certified (see below). NR-15's remaining blockers are
+external operational gates only (monitoring, alert delivery, on-call
+ownership, incident-drill), not repository-local work.
 
 ## P7-B Controlled Experiment Runtime: COMPLETE AND CERTIFIED (2026-09-01)
 
@@ -49,10 +49,98 @@ passed TypeScript, 4,978 Vitest tests, production build, browser PWA
 regression, Runtime Gate, Vercel, and GitGuardian. No production or staging
 assignment or mutation occurred.
 
-P7-A and P7-B are complete and certified. P7-C remains PARTIAL. NR-15 remains
-blocked by P7-C and its external operational gates. The next repository-local
-goal is P7-C, Quality Operations; do not implement it without a separate
-authorization.
+P7-A and P7-B are complete and certified. P7-C is complete and certified (see
+below). NR-15's remaining blockers are external operational gates only.
+
+## P7-C Quality Operations: COMPLETE AND CERTIFIED (2026-09-02)
+
+Merged to `main` through PR #120 at merge commit
+`88868f8efb7ddddeb4ae01c8a25d3ccde4b61b2d` (head commit `f708fce8`), building
+on PR #118 at `bbfef482da615e357045ab2b38f25bfc58f719a9` (the statistical
+evaluator, `lib/experiments/qualityOperations.ts`). PR #119 proposed
+correcting an earlier premature "COMPLETE AND CERTIFIED" claim for PR #118
+alone down to PARTIAL; that correction is superseded by this entry and PR
+#119 was closed without merging, since PR #120 fully supersedes its content
+with the real completion.
+
+The three canonical P7-C deliverables in
+`docs/roadmaps/PRIORITIES_1_2_5_6_7_EXECUTION_PROGRAM.md:276-283` are now
+implemented:
+
+1. **Red-team and regression sets** by age, subject, language, and safety
+   category: `lib/quality/fixtureRegistry.ts` (versioned registry),
+   `lib/quality/fixtures/redTeam.ts` (8 fixtures spanning 2 age bands, 2
+   subjects, `en`-only language matching the real learner runtime, 5 safety
+   categories, 3 of which are grounded in `lib/agents/moderation.ts`'s real
+   taxonomy and 2 of which are honestly documented as enforced by RBAC/
+   tenant-scoping/release-timer logic rather than the content classifier),
+   `lib/quality/fixtures/regression.ts` (5 fixtures from real historical
+   defects: PR #62/commit b3dde0d9, PR #64/commit 18b904b2, PR #85 twice, PR
+   #110), and `lib/quality/qualityGate.test-adapter.ts` (a deterministic,
+   CI-safe keyword-pattern gate; no paid provider calls).
+2. **Human review sampling and task lifecycle** for tutor helpfulness,
+   hallucination, grounding, and moderation false positives/negatives:
+   `lib/quality/reviewSampling.ts` (deterministic SHA-256 hash sampling, no
+   `Math.random`), `lib/quality/reviewTasks.ts` (conflict-safe claim/decide
+   lifecycle reusing `ReviewerProfile`/`ReviewerCredential`/
+   `ReviewerRestriction` and their idempotency/audit/version conventions),
+   `lib/quality/calibration.ts` (reviewer disagreement tracking). New Prisma
+   models `QualityReviewTask`, `QualityReviewAssessment`,
+   `QualityReviewCalibrationSession`, `QualityReviewCalibrationResult`, each
+   with Row Level Security enabled from creation and no anon/authenticated
+   grants, applied and verified by the real canonical bootstrap check
+   (`clean-bootstrap-pg17`, disposable PostgreSQL 17, not staging or
+   production).
+3. **Release gates, rollback signaling, and incident tracking**:
+   `lib/quality/releaseGate.ts` (PASS/WARN/BLOCK/INSUFFICIENT_EVIDENCE,
+   correctly dispositive over all 6 real `QualityState` values, hard fixture
+   failures and guardrail/SRM stops always override good statistics),
+   `lib/quality/rollback.ts` (rollback candidates always require human
+   authorization, never mutate anything), `lib/quality/incidents.ts`
+   (fingerprint-deduplicated, OPEN-only dedup), and
+   `lib/experiments/qualityStopSignal.ts` (a one-way bridge into P7-B's
+   early-stop evaluation that never re-derives SRM/guardrail logic).
+   `lib/experiments/qualityOperations.ts` and
+   `lib/experiments/controlledExperiment.ts` are unmodified by this work.
+
+Built via 15 planned tasks plus one unplanned but necessary fix (moving two
+migrations into this repository's canonical schema-authority ledger,
+`prisma/canonical/migrations/`, and enabling RLS on all 4 new tables, after
+the real `clean-bootstrap-pg17` CI check caught that they had been placed in
+a superseded legacy migration directory during development, when no live
+database was available to catch it earlier). Each task was independently
+reviewed, five with fix rounds; a final whole-branch review found and fixed
+5 additional cross-cutting issues (a fail-open reviewer-restriction check, a
+release-gate reason mislabeling a failed review as missing, a duplicate
+error class that would have silently broken HTTP error mapping, a golden
+scenario test asserting behavior a schema default could not produce, and
+stray em dashes in the plan document).
+
+Exact-head CI on PR #120 at `f708fce8` and merged-main CI at `88868f8e` both
+passed `CI` (TypeScript, full Vitest: 618 files / 5033 tests, production
+build), `Canonical clean bootstrap` (`clean-bootstrap-pg17`: 233/233 public
+tables with RLS enabled, zero P2-C anon/authenticated grants, zero
+unregistered or stale schema-authority differences, P2-B concurrency and
+P2-C seed idempotency both passing), Runtime Gate, PR Triage, GitGuardian,
+and Vercel, independently re-verified via `gh run view` at each stage (not
+merged on trust). No production or staging mutation occurred; both
+migrations are applied only in the disposable CI bootstrap and remain a
+separate, deliberate application decision for any real database.
+
+Full documentation, including honestly-disclosed known limitations (no
+authorization gate yet exists on task creation/decision beyond
+`claimQualityReviewTask`'s restriction check; no `FOR UPDATE` row lock,
+matching an identical pre-existing gap in the mirrored curriculum-review
+pattern; `ReleaseGateDefinition.blockingSeverities` is declared but not read
+by production code; the calibration session's DRAFT-to-OPEN transition has
+no code path, matching an identical pre-existing gap in the curriculum
+calibration module), is in `docs/P7C_QUALITY_OPERATIONS.md`.
+
+**P7 program: repository-local work is complete.** NR-15's remaining
+blockers are external operational gates (live reviewer roster, real sampled
+traffic, applied migrations against a real database, operational monitoring,
+alert delivery, on-call ownership, incident-drill), tracked separately, not
+repository-local P7 work.
 
 ## NR-14.5 Auto-Grading Fairness Review: COMPLETE
 
