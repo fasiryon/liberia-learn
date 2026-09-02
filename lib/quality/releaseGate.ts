@@ -31,14 +31,19 @@ export function evaluateReleaseGate(
   if (fixtureFailures.length > 0) reasons.push(...fixtureFailures.map((id) => `regression_fixture_failed:${id}`));
   if (quality.state === "STOPPED" || quality.state === "INVALID") reasons.push(`quality_state:${quality.state}`);
   if (quality.state === "DEGRADED" || quality.state === "PENDING_REVIEW") reasons.push(`quality_state:${quality.state}`);
-  const missingReviews = definition.requiredReviewDomains.filter((domain) => !reviews.some((review) => review.domain === domain && review.outcome === "PASS"));
-  if (missingReviews.length) reasons.push(...missingReviews.map((domain) => `review_missing:${domain}`));
+  const unsatisfiedReviewDomains = definition.requiredReviewDomains.filter(
+    (domain) => !reviews.some((review) => review.domain === domain && review.outcome === "PASS"));
+  const missingReviewDomains = unsatisfiedReviewDomains.filter(
+    (domain) => !reviews.some((review) => review.domain === domain));
+  const failedReviewDomains = unsatisfiedReviewDomains.filter((domain) => !missingReviewDomains.includes(domain));
+  if (missingReviewDomains.length) reasons.push(...missingReviewDomains.map((domain) => `review_missing:${domain}`));
+  if (failedReviewDomains.length) reasons.push(...failedReviewDomains.map((domain) => `review_failed:${domain}`));
 
   const hardBlock = fixtureFailures.length > 0 || quality.state === "STOPPED" || quality.state === "INVALID";
   const insufficientEvidence = quality.state === "INSUFFICIENT";
   const degradedOrPendingReview = quality.state === "DEGRADED" || quality.state === "PENDING_REVIEW";
 
-  const result: ReleaseGateResult["result"] = hardBlock ? "BLOCK" : insufficientEvidence ? "INSUFFICIENT_EVIDENCE" : degradedOrPendingReview || missingReviews.length ? "WARN" : "PASS";
+  const result: ReleaseGateResult["result"] = hardBlock ? "BLOCK" : insufficientEvidence ? "INSUFFICIENT_EVIDENCE" : degradedOrPendingReview || unsatisfiedReviewDomains.length ? "WARN" : "PASS";
 
   return {
     gateId: definition.gateId,

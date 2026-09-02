@@ -33,6 +33,13 @@ describe("release gate", () => {
     expect(result.result).toBe("WARN");
   });
 
+  it("labels a present-but-failed required review as review_failed, not review_missing", () => {
+    const result = evaluateReleaseGate(definition, readyReport, [], [{ domain: "TUTOR_HELPFULNESS", outcome: "FAIL" }], "2026-09-01T00:00:00.000Z");
+    expect(result.result).toBe("WARN");
+    expect(result.reasons).toContain("review_failed:TUTOR_HELPFULNESS");
+    expect(result.reasons).not.toContain("review_missing:TUTOR_HELPFULNESS");
+  });
+
   it("warns when quality state is DEGRADED with no other issues (freshness/latency concerns prevent pass)", () => {
     const result = evaluateReleaseGate(definition, { ...readyReport, state: "DEGRADED" }, [], [{ domain: "TUTOR_HELPFULNESS", outcome: "PASS" }], "2026-09-01T00:00:00.000Z");
     expect(result.result).toBe("WARN");
