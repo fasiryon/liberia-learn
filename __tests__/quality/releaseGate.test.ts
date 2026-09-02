@@ -32,4 +32,16 @@ describe("release gate", () => {
     const result = evaluateReleaseGate(definition, readyReport, [], [], "2026-09-01T00:00:00.000Z");
     expect(result.result).toBe("WARN");
   });
+
+  it("warns when quality state is DEGRADED with no other issues (freshness/latency concerns prevent pass)", () => {
+    const result = evaluateReleaseGate(definition, { ...readyReport, state: "DEGRADED" }, [], [{ domain: "TUTOR_HELPFULNESS", outcome: "PASS" }], "2026-09-01T00:00:00.000Z");
+    expect(result.result).toBe("WARN");
+    expect(result.rollbackRecommended).toBe(false);
+  });
+
+  it("warns when quality state is PENDING_REVIEW with no other issues (human review not yet authorized)", () => {
+    const result = evaluateReleaseGate(definition, { ...readyReport, state: "PENDING_REVIEW" }, [], [{ domain: "TUTOR_HELPFULNESS", outcome: "PASS" }], "2026-09-01T00:00:00.000Z");
+    expect(result.result).toBe("WARN");
+    expect(result.rollbackRecommended).toBe(false);
+  });
 });
