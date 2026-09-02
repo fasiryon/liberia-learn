@@ -1,5 +1,7 @@
 -- P7-C Task 5: additive quality review task/assessment tables.
--- Prepared in Step 1 only. Do not apply without separate database approval.
+-- Canonical migration. RLS is enabled from creation and no anon/authenticated
+-- privileges are granted, matching this repository's server-only table
+-- convention.
 
 -- Fail promptly on metadata-lock contention and cap total statement time.
 SET lock_timeout = '5s';
@@ -101,6 +103,25 @@ ALTER TABLE "QualityReviewAssessment"
   ADD CONSTRAINT "QualityReviewAssessment_auditLogId_fkey"
   FOREIGN KEY ("auditLogId") REFERENCES "AuditLog"("id")
   ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- Security convergence from creation. These tables are server-only and carry
+-- no anon/authenticated table privileges by default; the explicit revoke is
+-- defense in depth. Roles are optional in a plain PostgreSQL bootstrap image.
+ALTER TABLE "QualityReviewTask" ENABLE ROW LEVEL SECURITY;
+ALTER TABLE "QualityReviewAssessment" ENABLE ROW LEVEL SECURITY;
+
+DO $$
+DECLARE role_name text;
+DECLARE table_list constant text := '"QualityReviewTask", "QualityReviewAssessment"';
+BEGIN
+  FOREACH role_name IN ARRAY ARRAY['anon', 'authenticated']
+  LOOP
+    IF EXISTS (SELECT 1 FROM pg_roles WHERE rolname = role_name) THEN
+      EXECUTE format('REVOKE ALL ON TABLE %s FROM %I', table_list, role_name);
+    END IF;
+  END LOOP;
+END;
+$$;
 
 RESET statement_timeout;
 RESET lock_timeout;
