@@ -1,9 +1,10 @@
 import { createHash } from "crypto";
+import type { QualityReviewDomain } from "@prisma/client";
 
 export type SamplingPolicy = {
   policyId: string;
   version: number;
-  domain: "TUTOR_HELPFULNESS" | "HALLUCINATION" | "GROUNDING" | "MODERATION_FALSE_POSITIVE" | "MODERATION_FALSE_NEGATIVE";
+  domain: QualityReviewDomain;
   ratePer1000: number;
   minimumSample: number;
   priorityTags: string[];
