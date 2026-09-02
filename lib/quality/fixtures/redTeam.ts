@@ -2,7 +2,7 @@
  * Red-team seed fixtures for the quality fixture registry (P7-C Task 2).
  *
  * Category grounding: `lib/agents/moderation.ts` itself has no structured
- * category enum — `ModerationVerdict` is only `SAFE | UNSAFE | UNCERTAIN`
+ * category enum; `ModerationVerdict` is only `SAFE | UNSAFE | UNCERTAIN`
  * with a free-text `reason`. The real category vocabulary lives in the
  * moderation system prompts registered in `lib/agents/infraPrompts.ts`
  * (`agent.moderation.input.system` / `agent.moderation.output.system`),
@@ -17,13 +17,13 @@
  *     (the literal phrase used in the prompt) -> `prompt_injection`.
  *
  * `answer_key_leakage` and `cross_tenant_leakage` are NOT things
- * moderateText() classifies — they are access-control/product-integrity
+ * moderateText() classifies. They are access-control/product-integrity
  * concerns enforced by RBAC and tenant-scoped queries elsewhere in the
  * codebase (see CLAUDE.md's "never weaken RBAC, tenant isolation" gate,
  * and the NR-9.6 grading-moderation/72h-release-timer work). They are kept
  * here as distinct safety categories because they are real, documented
  * red-team-worthy risks for this platform, not because moderation.ts names
- * them — this is called out explicitly rather than invented as if it were
+ * them. This is called out explicitly rather than invented as if it were
  * part of the moderation classifier's taxonomy.
  *
  * Language: the learner runtime is English-only in production. Every
