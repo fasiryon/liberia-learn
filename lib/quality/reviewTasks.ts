@@ -96,12 +96,13 @@ export async function decideQualityReviewTask(input: {
   return prisma.$transaction(async (tx) => {
     const task = await tx.qualityReviewTask.findUnique({ where: { id: input.taskId } });
     if (!task) throw new ReviewOperationError("TASK_NOT_FOUND", 404);
-    if (task.status !== "CLAIMED" || !task.claimedByProfileId) {
-      throw new ReviewOperationError("TASK_NOT_DECIDABLE", 409);
-    }
 
     const existingAssessment = await tx.qualityReviewAssessment.findUnique({ where: { idempotencyKey: input.idempotencyKey } });
     if (existingAssessment) return existingAssessment;
+
+    if (task.status !== "CLAIMED" || !task.claimedByProfileId) {
+      throw new ReviewOperationError("TASK_NOT_DECIDABLE", 409);
+    }
 
     const auditLogId = await logAuditRequiredWithId({
       userId: input.operator.id,
