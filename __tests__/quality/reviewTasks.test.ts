@@ -11,7 +11,7 @@ vi.mock("@/lib/db", () => ({
 vi.mock("@/lib/audit", () => ({ logAuditRequiredWithId: vi.fn().mockResolvedValue("audit-1") }));
 
 import { prisma } from "@/lib/db";
-import { claimQualityReviewTask, decideQualityReviewTask } from "@/lib/quality/reviewTasks";
+import { claimQualityReviewTask, decideQualityReviewTask, recordHelpfulnessDecision } from "@/lib/quality/reviewTasks";
 import { ReviewOperationError } from "@/lib/quality/errors";
 
 describe("quality review task claim", () => {
@@ -98,5 +98,44 @@ describe("quality review task decide", () => {
         idempotencyKey: "decide-2",
       }),
     ).rejects.toMatchObject({ code: "TASK_NOT_DECIDABLE" });
+  });
+});
+
+describe("quality review domain helpers", () => {
+  beforeEach(() => vi.clearAllMocks());
+
+  it("maps an unsafe helpfulness rubric outcome to a CRITICAL FAIL decision with rubric detail preserved in notes", async () => {
+    (prisma.$transaction as any).mockImplementation(async (fn: any) => fn(prisma));
+    (prisma.qualityReviewTask.findUnique as any).mockResolvedValue({
+      id: "t1", domain: "TUTOR_HELPFULNESS", schoolId: null, status: "CLAIMED", claimedByProfileId: "rp-1", version: 1,
+    });
+    (prisma.qualityReviewAssessment.findUnique as any).mockResolvedValue(null);
+    (prisma.qualityReviewTask.updateMany as any).mockResolvedValue({ count: 1 });
+    (prisma.qualityReviewAssessment.create as any).mockImplementation(async ({ data }: any) => ({ id: "a1", ...data }));
+
+    const result = await recordHelpfulnessDecision({
+      operator: { id: "op-1", role: "ADMIN" }, taskId: "t1", outcome: "unsafe", idempotencyKey: "decide-unsafe-1",
+    });
+
+    expect(result.outcome).toBe("FAIL");
+    expect(result.severity).toBe("CRITICAL");
+    expect(JSON.parse(result.notes)).toMatchObject({ rubric: "helpfulness", outcome: "unsafe" });
+  });
+
+  it("maps a helpful outcome to a PASS decision", async () => {
+    (prisma.$transaction as any).mockImplementation(async (fn: any) => fn(prisma));
+    (prisma.qualityReviewTask.findUnique as any).mockResolvedValue({
+      id: "t2", domain: "TUTOR_HELPFULNESS", schoolId: null, status: "CLAIMED", claimedByProfileId: "rp-1", version: 1,
+    });
+    (prisma.qualityReviewAssessment.findUnique as any).mockResolvedValue(null);
+    (prisma.qualityReviewTask.updateMany as any).mockResolvedValue({ count: 1 });
+    (prisma.qualityReviewAssessment.create as any).mockImplementation(async ({ data }: any) => ({ id: "a2", ...data }));
+
+    const result = await recordHelpfulnessDecision({
+      operator: { id: "op-1", role: "ADMIN" }, taskId: "t2", outcome: "helpful", idempotencyKey: "decide-helpful-1",
+    });
+
+    expect(result.outcome).toBe("PASS");
+    expect(result.severity).toBe("MEDIUM");
   });
 });

@@ -137,3 +137,135 @@ export async function decideQualityReviewTask(input: {
     });
   }, REVIEW_SERIALIZABLE_TRANSACTION_OPTIONS);
 }
+
+export type HelpfulnessOutcome = "helpful" | "partially_helpful" | "not_helpful" | "unsafe";
+
+export async function recordHelpfulnessDecision(input: {
+  operator: Operator;
+  taskId: string;
+  outcome: HelpfulnessOutcome;
+  notes?: string;
+  idempotencyKey: string;
+}): Promise<QualityReviewAssessment> {
+  const mapped: QualityReviewOutcome = input.outcome === "helpful" ? "PASS" : "FAIL";
+  const severity = input.outcome === "unsafe" ? "CRITICAL" : "MEDIUM";
+  return decideQualityReviewTask({
+    operator: input.operator,
+    taskId: input.taskId,
+    outcome: mapped,
+    severity,
+    notes: JSON.stringify({ rubric: "helpfulness", outcome: input.outcome, notes: input.notes ?? null }),
+    idempotencyKey: input.idempotencyKey,
+  });
+}
+
+export type HallucinationOutcome =
+  | "unsupported_claim"
+  | "wrong_curriculum_claim"
+  | "fabricated_citation"
+  | "citation_mismatch"
+  | "confident_unsupported"
+  | "none";
+
+const HALLUCINATION_SEVERITY: Record<HallucinationOutcome, string> = {
+  none: "LOW",
+  citation_mismatch: "MEDIUM",
+  unsupported_claim: "MEDIUM",
+  wrong_curriculum_claim: "HIGH",
+  fabricated_citation: "CRITICAL",
+  confident_unsupported: "CRITICAL",
+};
+
+export async function recordHallucinationDecision(input: {
+  operator: Operator;
+  taskId: string;
+  outcome: HallucinationOutcome;
+  notes?: string;
+  idempotencyKey: string;
+}): Promise<QualityReviewAssessment> {
+  const mapped: QualityReviewOutcome = input.outcome === "none" ? "PASS" : "FAIL";
+  return decideQualityReviewTask({
+    operator: input.operator,
+    taskId: input.taskId,
+    outcome: mapped,
+    severity: HALLUCINATION_SEVERITY[input.outcome],
+    notes: JSON.stringify({ rubric: "hallucination", outcome: input.outcome, notes: input.notes ?? null }),
+    idempotencyKey: input.idempotencyKey,
+  });
+}
+
+export type GroundingOutcome =
+  | "used_approved_context"
+  | "misrepresented_source"
+  | "ignored_required_evidence"
+  | "grounded";
+
+const GROUNDING_SEVERITY: Record<GroundingOutcome, string> = {
+  grounded: "LOW",
+  used_approved_context: "LOW",
+  ignored_required_evidence: "MEDIUM",
+  misrepresented_source: "HIGH",
+};
+
+export async function recordGroundingDecision(input: {
+  operator: Operator;
+  taskId: string;
+  outcome: GroundingOutcome;
+  notes?: string;
+  idempotencyKey: string;
+}): Promise<QualityReviewAssessment> {
+  const mapped: QualityReviewOutcome =
+    input.outcome === "grounded" || input.outcome === "used_approved_context" ? "PASS" : "FAIL";
+  return decideQualityReviewTask({
+    operator: input.operator,
+    taskId: input.taskId,
+    outcome: mapped,
+    severity: GROUNDING_SEVERITY[input.outcome],
+    notes: JSON.stringify({ rubric: "grounding", outcome: input.outcome, notes: input.notes ?? null }),
+    idempotencyKey: input.idempotencyKey,
+  });
+}
+
+export type ModerationFalsePositiveOutcome = "confirmed_false_positive" | "correctly_moderated";
+
+export async function recordModerationFalsePositive(input: {
+  operator: Operator;
+  taskId: string;
+  outcome: ModerationFalsePositiveOutcome;
+  notes?: string;
+  idempotencyKey: string;
+}): Promise<QualityReviewAssessment> {
+  const mapped: QualityReviewOutcome = input.outcome === "confirmed_false_positive" ? "FALSE_POSITIVE" : "PASS";
+  const severity = input.outcome === "confirmed_false_positive" ? "HIGH" : "LOW";
+  return decideQualityReviewTask({
+    operator: input.operator,
+    taskId: input.taskId,
+    outcome: mapped,
+    severity,
+    notes: JSON.stringify({ rubric: "moderation_false_positive", outcome: input.outcome, notes: input.notes ?? null }),
+    idempotencyKey: input.idempotencyKey,
+  });
+}
+
+export type ModerationFalseNegativeOutcome = "confirmed_false_negative" | "correctly_moderated";
+
+export async function recordModerationFalseNegative(input: {
+  operator: Operator;
+  taskId: string;
+  outcome: ModerationFalseNegativeOutcome;
+  notes?: string;
+  idempotencyKey: string;
+}): Promise<QualityReviewAssessment> {
+  const mapped: QualityReviewOutcome = input.outcome === "confirmed_false_negative" ? "FALSE_NEGATIVE" : "PASS";
+  return decideQualityReviewTask({
+    operator: input.operator,
+    taskId: input.taskId,
+    outcome: mapped,
+    // Moderation false-negative review tasks always carry CRITICAL severity: missed-unsafe-
+    // content risk is treated as maximally severe regardless of whether the reviewer confirms
+    // or overturns the automated flag.
+    severity: "CRITICAL",
+    notes: JSON.stringify({ rubric: "moderation_false_negative", outcome: input.outcome, notes: input.notes ?? null }),
+    idempotencyKey: input.idempotencyKey,
+  });
+}
