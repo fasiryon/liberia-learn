@@ -169,7 +169,10 @@ describe("P5-D storage management", () => {
   it("does not touch LRU timestamps while inspecting the storage inventory", async () => {
     await cachePack("lesson", "lru-lesson", "revision-1:governance-1", { body: "lesson" }, partition);
     await cachePack("lesson-availability", "lru-lesson", "revision-1:governance-1", manifest("lru-lesson"), partition);
-    const oldLastUsedAt = "2026-08-27T00:00:00.000Z";
+    // Keep the fixture safely inside the configured TTL. This test verifies
+    // that inventory reads preserve LRU metadata; it must not depend on the
+    // calendar date at which the suite happens to run.
+    const oldLastUsedAt = new Date(Date.now() - 60_000).toISOString();
     const metadata = await getMetadata(partition);
     await idbSet(
       "liberialearn_cache_meta::u:student-1|s:school-1|d:device-1",
