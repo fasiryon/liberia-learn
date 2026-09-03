@@ -24,7 +24,7 @@ export function evaluateReleaseGate(
   definition: ReleaseGateDefinition,
   quality: QualityReport,
   fixtureFailures: string[],
-  reviews: Array<{ domain: string; outcome: string }>,
+  reviews: Array<{ domain: string; outcome: string; severity?: string }>,
   now: string,
 ): ReleaseGateResult {
   const reasons: string[] = [];
@@ -38,8 +38,10 @@ export function evaluateReleaseGate(
   const failedReviewDomains = unsatisfiedReviewDomains.filter((domain) => !missingReviewDomains.includes(domain));
   if (missingReviewDomains.length) reasons.push(...missingReviewDomains.map((domain) => `review_missing:${domain}`));
   if (failedReviewDomains.length) reasons.push(...failedReviewDomains.map((domain) => `review_failed:${domain}`));
+  const blockingReviews = reviews.filter((review) => review.severity && definition.blockingSeverities.includes(review.severity));
+  if (blockingReviews.length) reasons.push(...blockingReviews.map((review) => `review_blocking_severity:${review.domain}:${review.severity}`));
 
-  const hardBlock = fixtureFailures.length > 0 || quality.state === "STOPPED" || quality.state === "INVALID";
+  const hardBlock = fixtureFailures.length > 0 || quality.state === "STOPPED" || quality.state === "INVALID" || blockingReviews.length > 0;
   const insufficientEvidence = quality.state === "INSUFFICIENT";
   const degradedOrPendingReview = quality.state === "DEGRADED" || quality.state === "PENDING_REVIEW";
 

@@ -10,8 +10,58 @@ import { prisma } from "@/lib/db";
 import { logAuditRequiredWithId } from "@/lib/audit";
 import { ReviewOperationError } from "@/lib/quality/errors";
 import { REVIEW_SERIALIZABLE_TRANSACTION_OPTIONS, REVIEW_TRANSACTION_OPTIONS } from "@/lib/curriculum/review/transaction";
+import { assertReviewOperationsAdmin } from "@/lib/curriculum/review/access";
 
-type Operator = { id: string; role: Role | string; schoolId?: string | null; isPlatformAdmin?: boolean };
+export type Operator = { id: string; role: Role | string; schoolId?: string | null; isPlatformAdmin?: boolean };
+
+function operatorHasRequiredAuthority(operator: Operator, requiredAuthority: CurriculumReviewAuthority, schoolId: string | null): boolean {
+  if (requiredAuthority === "PLATFORM") return operator.isPlatformAdmin === true;
+  if (requiredAuthority === "MOE") return operator.role === "MOE_OFFICIAL" || operator.role === "MOE_SUPER_ADMIN";
+  if (requiredAuthority === "SCHOOL") {
+    return operator.isPlatformAdmin === true || operator.role === "MOE_OFFICIAL" || operator.role === "MOE_SUPER_ADMIN" ||
+      ((operator.role === "ADMIN" || operator.role === "TEACHER") && Boolean(operator.schoolId) && operator.schoolId === schoolId);
+  }
+  return false;
+}
+
+function authorityMatches(requiredAuthority: CurriculumReviewAuthority, actualAuthority: CurriculumReviewAuthority): boolean {
+  return requiredAuthority === "SCHOOL"
+    ? ["SCHOOL", "MOE", "PLATFORM"].includes(actualAuthority)
+    : actualAuthority === requiredAuthority;
+}
+
+async function assertQualityReviewerEligible(tx: any, input: { operator: Operator; reviewerProfileId: string; task: QualityReviewTask }): Promise<void> {
+  if (!operatorHasRequiredAuthority(input.operator, input.task.requiredAuthority, input.task.schoolId)) {
+    throw new ReviewOperationError("QUALITY_REVIEWER_FORBIDDEN", 403);
+  }
+  const profile = await tx.reviewerProfile.findUnique({
+    where: { id: input.reviewerProfileId },
+    include: { credentials: true },
+  });
+  if (!profile || profile.userId !== input.operator.id || profile.status !== "ACTIVE" || !profile.available) {
+    throw new ReviewOperationError("QUALITY_REVIEWER_FORBIDDEN", 403);
+  }
+  if (!authorityMatches(input.task.requiredAuthority, profile.authority) ||
+    (input.task.requiredAuthority === "SCHOOL" && profile.authority === "SCHOOL" && profile.schoolId !== input.task.schoolId)) {
+    throw new ReviewOperationError("QUALITY_REVIEWER_FORBIDDEN", 403);
+  }
+  const now = new Date();
+  const restriction = await tx.reviewerRestriction.findFirst({
+    where: {
+      reviewerProfileId: profile.id,
+      liftedAt: null,
+      effectiveFrom: { lte: now },
+      AND: [{ OR: [{ schoolId: input.task.schoolId }, { schoolId: null }] }, { OR: [{ effectiveUntil: null }, { effectiveUntil: { gt: now } }] }],
+    },
+  });
+  if (restriction) throw new ReviewOperationError("REVIEWER_RESTRICTED", 403);
+  const credential = profile.credentials.some((candidate: any) =>
+    candidate.status === "VERIFIED" && candidate.verifiedAt != null && candidate.verifierUserId != null &&
+    (!candidate.validFrom || candidate.validFrom <= now) && (!candidate.expiresAt || candidate.expiresAt > now) &&
+    authorityMatches(input.task.requiredAuthority, candidate.authority),
+  );
+  if (!credential) throw new ReviewOperationError("QUALITY_REVIEWER_FORBIDDEN", 403);
+}
 
 export async function createQualityReviewTask(input: {
   operator: Operator;
@@ -25,6 +75,7 @@ export async function createQualityReviewTask(input: {
   idempotencyKey: string;
 }): Promise<QualityReviewTask> {
   return prisma.$transaction(async (tx) => {
+    assertReviewOperationsAdmin(input.operator, input.schoolId ?? null);
     const existing = await tx.qualityReviewTask.findUnique({ where: { idempotencyKey: input.idempotencyKey } });
     if (existing) return existing;
     const task = await tx.qualityReviewTask.create({
@@ -60,19 +111,7 @@ export async function claimQualityReviewTask(input: {
   return prisma.$transaction(async (tx) => {
     const task = await tx.qualityReviewTask.findUnique({ where: { id: input.taskId } });
     if (!task || task.status !== "QUEUED") throw new ReviewOperationError("TASK_NOT_CLAIMABLE", 409);
-    const now = new Date();
-    const restriction = await tx.reviewerRestriction.findFirst({
-      where: {
-        reviewerProfileId: input.reviewerProfileId,
-        liftedAt: null,
-        effectiveFrom: { lte: now },
-        AND: [
-          { OR: [{ schoolId: task.schoolId }, { schoolId: null }] },
-          { OR: [{ effectiveUntil: null }, { effectiveUntil: { gt: now } }] },
-        ],
-      },
-    });
-    if (restriction) throw new ReviewOperationError("REVIEWER_RESTRICTED", 403);
+    await assertQualityReviewerEligible(tx, { operator: input.operator, reviewerProfileId: input.reviewerProfileId, task });
     const changed = await tx.qualityReviewTask.updateMany({
       where: { id: task.id, version: task.version, status: "QUEUED" },
       data: { status: "CLAIMED", claimedByProfileId: input.reviewerProfileId, claimedAt: new Date(), version: { increment: 1 } },
@@ -108,6 +147,7 @@ export async function decideQualityReviewTask(input: {
     if (task.status !== "CLAIMED" || !task.claimedByProfileId) {
       throw new ReviewOperationError("TASK_NOT_DECIDABLE", 409);
     }
+    await assertQualityReviewerEligible(tx, { operator: input.operator, reviewerProfileId: task.claimedByProfileId, task });
 
     const auditLogId = await logAuditRequiredWithId({
       userId: input.operator.id,
