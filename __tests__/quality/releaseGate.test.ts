@@ -17,6 +17,13 @@ describe("release gate", () => {
     expect(result.rollbackRecommended).toBe(true);
   });
 
+  it("blocks when a review reaches a configured blocking severity", () => {
+    const result = evaluateReleaseGate(definition, readyReport, [], [{ domain: "TUTOR_HELPFULNESS", outcome: "FAIL", severity: "CRITICAL" }], "2026-09-01T00:00:00.000Z");
+    expect(result.result).toBe("BLOCK");
+    expect(result.rollbackRecommended).toBe(true);
+    expect(result.reasons).toContain("review_blocking_severity:TUTOR_HELPFULNESS:CRITICAL");
+  });
+
   it("returns INSUFFICIENT_EVIDENCE rather than PASS when quality state is INSUFFICIENT", () => {
     const result = evaluateReleaseGate(definition, { ...readyReport, state: "INSUFFICIENT" }, [], [{ domain: "TUTOR_HELPFULNESS", outcome: "PASS" }], "2026-09-01T00:00:00.000Z");
     expect(result.result).toBe("INSUFFICIENT_EVIDENCE");

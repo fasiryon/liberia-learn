@@ -20,6 +20,7 @@ vi.mock("@/lib/db", () => ({
       create: vi.fn(),
     },
     qualityReviewAssessment: { findUnique: vi.fn(), create: vi.fn() },
+    reviewerProfile: { findUnique: vi.fn() },
     reviewerRestriction: { findFirst: vi.fn() },
     qualityReviewCalibrationSession: { findUnique: vi.fn(), create: vi.fn() },
     qualityReviewCalibrationResult: { findUnique: vi.fn(), create: vi.fn() },
@@ -253,18 +254,21 @@ function blockingIdsFor(definition: ReleaseGateDefinition, assessment: { id: str
   return definition.blockingSeverities.includes(assessment.severity) ? [`caller_policy_block:${assessment.id}`] : [];
 }
 
-function setupClaimedTask(taskId: string, domain: string) {
+function setupClaimedTask(taskId: string, domain: string, operatorId: string) {
   (prisma.$transaction as any).mockImplementation(async (fn: any) => fn(prisma));
   (prisma.qualityReviewTask.findUnique as any).mockResolvedValue({
     id: taskId,
     domain,
     schoolId: null,
+    requiredAuthority: "PLATFORM",
     status: "CLAIMED",
     claimedByProfileId: "reviewer-golden-1",
     version: 1,
   });
   (prisma.qualityReviewAssessment.findUnique as any).mockResolvedValue(null);
   (prisma.qualityReviewTask.updateMany as any).mockResolvedValue({ count: 1 });
+  (prisma.reviewerProfile.findUnique as any).mockResolvedValue({ id: "reviewer-golden", userId: operatorId, status: "ACTIVE", available: true, authority: "PLATFORM", schoolId: null, credentials: [{ status: "VERIFIED", verifiedAt: new Date(), verifierUserId: "verifier-golden", validFrom: null, expiresAt: null, authority: "PLATFORM" }] });
+  (prisma.reviewerRestriction.findFirst as any).mockResolvedValue(null);
   (prisma.qualityReviewAssessment.create as any).mockImplementation(async ({ data }: any) => ({
     id: `assessment-${taskId}`,
     ...data,
@@ -316,7 +320,8 @@ describe("P7-C golden quality-operations scenarios", () => {
       ...data,
     }));
 
-    const operator = { id: "op-golden-1", role: "ADMIN" };
+    const operator = { id: "op-golden-1", role: "ADMIN", isPlatformAdmin: true };
+    (prisma.reviewerProfile.findUnique as any).mockResolvedValue({ id: "reviewer-golden-1", userId: operator.id, status: "ACTIVE", available: true, authority: "PLATFORM", schoolId: null, credentials: [{ status: "VERIFIED", verifiedAt: new Date(), verifierUserId: "verifier-golden", validFrom: null, expiresAt: null, authority: "PLATFORM" }] });
     const task = await createQualityReviewTask({
       operator,
       domain: "TUTOR_HELPFULNESS",
@@ -358,9 +363,9 @@ describe("P7-C golden quality-operations scenarios", () => {
   // folding the assessment's severity into fixtureFailures), not by any
   // severity logic inside evaluateReleaseGate itself, which has none.
   it("scenario 2: a hallucination regression assessment feeds evaluateReleaseGate to a BLOCK", async () => {
-    setupClaimedTask("task-hallucination-1", "HALLUCINATION");
+    setupClaimedTask("task-hallucination-1", "HALLUCINATION", "op-golden-2");
     const assessment = await recordHallucinationDecision({
-      operator: { id: "op-golden-2", role: "ADMIN" },
+      operator: { id: "op-golden-2", role: "ADMIN", isPlatformAdmin: true },
       taskId: "task-hallucination-1",
       outcome: "confident_unsupported",
       idempotencyKey: "golden-hallucination-1",
@@ -392,9 +397,9 @@ describe("P7-C golden quality-operations scenarios", () => {
   // folding the assessment's real severity into fixtureFailures), not by any
   // severity logic inside evaluateReleaseGate itself, which has none.
   it("scenario 3: a grounding regression (misrepresented source) blocks release under a grounding-safety gate", async () => {
-    setupClaimedTask("task-grounding-1", "GROUNDING");
+    setupClaimedTask("task-grounding-1", "GROUNDING", "op-golden-3");
     const assessment = await recordGroundingDecision({
-      operator: { id: "op-golden-3", role: "ADMIN" },
+      operator: { id: "op-golden-3", role: "ADMIN", isPlatformAdmin: true },
       taskId: "task-grounding-1",
       outcome: "misrepresented_source",
       idempotencyKey: "golden-grounding-1",
@@ -424,9 +429,9 @@ describe("P7-C golden quality-operations scenarios", () => {
   // folding the assessment's severity into fixtureFailures), not by any
   // severity logic inside evaluateReleaseGate itself, which has none.
   it("scenario 4: a moderation false positive warns when non-critical but blocks when the assessed severity is CRITICAL", async () => {
-    setupClaimedTask("task-fp-1", "MODERATION_FALSE_POSITIVE");
+    setupClaimedTask("task-fp-1", "MODERATION_FALSE_POSITIVE", "op-golden-4a");
     const nonCritical = await recordModerationFalsePositive({
-      operator: { id: "op-golden-4a", role: "ADMIN" },
+      operator: { id: "op-golden-4a", role: "ADMIN", isPlatformAdmin: true },
       taskId: "task-fp-1",
       outcome: "confirmed_false_positive",
       idempotencyKey: "golden-fp-1",
@@ -441,7 +446,7 @@ describe("P7-C golden quality-operations scenarios", () => {
     );
     expect(warnGate.result).toBe("WARN");
 
-    setupClaimedTask("task-fp-2", "MODERATION_FALSE_POSITIVE");
+    setupClaimedTask("task-fp-2", "MODERATION_FALSE_POSITIVE", "op-golden-4b");
     // The real recordModerationFalsePositive domain helper hardcodes severity
     // "HIGH" for a confirmed false positive and can never itself produce
     // "CRITICAL" (see reviewTasks.ts). This calls the general decideQualityReviewTask
@@ -449,7 +454,7 @@ describe("P7-C golden quality-operations scenarios", () => {
     // demonstrate where blockingIdsFor's BLOCK threshold sits, not to claim the
     // false-positive domain helper ever emits CRITICAL in production.
     const critical = await decideQualityReviewTask({
-      operator: { id: "op-golden-4b", role: "ADMIN" },
+      operator: { id: "op-golden-4b", role: "ADMIN", isPlatformAdmin: true },
       taskId: "task-fp-2",
       outcome: "FALSE_POSITIVE",
       severity: "CRITICAL",
@@ -469,9 +474,9 @@ describe("P7-C golden quality-operations scenarios", () => {
   // folding the assessment's severity into fixtureFailures), not by any
   // severity logic inside evaluateReleaseGate itself, which has none.
   it("scenario 5: a confirmed moderation false negative blocks release and opens a quality incident", async () => {
-    setupClaimedTask("task-fn-1", "MODERATION_FALSE_NEGATIVE");
+    setupClaimedTask("task-fn-1", "MODERATION_FALSE_NEGATIVE", "op-golden-5");
     const assessment = await recordModerationFalseNegative({
-      operator: { id: "op-golden-5", role: "ADMIN" },
+      operator: { id: "op-golden-5", role: "ADMIN", isPlatformAdmin: true },
       taskId: "task-fn-1",
       outcome: "confirmed_false_negative",
       idempotencyKey: "golden-fn-1",
@@ -510,9 +515,9 @@ describe("P7-C golden quality-operations scenarios", () => {
   // folding the assessment's real severity into fixtureFailures), not by any
   // severity logic inside evaluateReleaseGate itself, which has none.
   it("scenario 6: tutor helpfulness decline warns for a moderate finding and blocks for a critical (unsafe) one", async () => {
-    setupClaimedTask("task-help-1", "TUTOR_HELPFULNESS");
+    setupClaimedTask("task-help-1", "TUTOR_HELPFULNESS", "op-golden-6a");
     const notHelpful = await recordHelpfulnessDecision({
-      operator: { id: "op-golden-6a", role: "ADMIN" },
+      operator: { id: "op-golden-6a", role: "ADMIN", isPlatformAdmin: true },
       taskId: "task-help-1",
       outcome: "not_helpful",
       idempotencyKey: "golden-help-1",
@@ -527,9 +532,9 @@ describe("P7-C golden quality-operations scenarios", () => {
     );
     expect(warnGate.result).toBe("WARN");
 
-    setupClaimedTask("task-help-2", "TUTOR_HELPFULNESS");
+    setupClaimedTask("task-help-2", "TUTOR_HELPFULNESS", "op-golden-6b");
     const unsafe = await recordHelpfulnessDecision({
-      operator: { id: "op-golden-6b", role: "ADMIN" },
+      operator: { id: "op-golden-6b", role: "ADMIN", isPlatformAdmin: true },
       taskId: "task-help-2",
       outcome: "unsafe",
       idempotencyKey: "golden-help-2",

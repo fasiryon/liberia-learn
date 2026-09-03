@@ -9,6 +9,8 @@ import { prisma } from "@/lib/db";
 import { logAuditRequired } from "@/lib/audit";
 import { ReviewOperationError } from "@/lib/quality/errors";
 import { REVIEW_TRANSACTION_OPTIONS } from "@/lib/curriculum/review/transaction";
+import { assertReviewOperationsAdmin } from "@/lib/curriculum/review/access";
+import type { Operator } from "@/lib/quality/reviewTasks";
 
 export function computeDisagreement(
   results: Array<{ reviewerProfileId: string; outcome: string }>,
@@ -98,4 +100,28 @@ export async function recordCalibrationResult(input: {
       idempotencyKey: input.idempotencyKey,
     },
   });
+}
+
+export async function openCalibrationSession(input: {
+  operator: Operator;
+  sessionId: string;
+}): Promise<QualityReviewCalibrationSession> {
+  assertReviewOperationsAdmin(input.operator, null);
+  return prisma.$transaction(async (tx) => {
+    const session = await tx.qualityReviewCalibrationSession.findUnique({ where: { id: input.sessionId } });
+    if (!session || session.status !== "DRAFT") throw new ReviewOperationError("CALIBRATION_NOT_OPENABLE", 409);
+    const changed = await tx.qualityReviewCalibrationSession.updateMany({
+      where: { id: session.id, status: "DRAFT" },
+      data: { status: "OPEN", opensAt: session.opensAt ?? new Date() },
+    });
+    if (changed.count !== 1) throw new ReviewOperationError("CALIBRATION_NOT_OPENABLE", 409);
+    await logAuditRequired({
+      userId: input.operator.id,
+      action: "quality_review.calibration.session.opened",
+      resourceType: "quality_review_calibration_session",
+      resourceId: session.id,
+      details: { domain: session.domain },
+    }, tx);
+    return tx.qualityReviewCalibrationSession.findUniqueOrThrow({ where: { id: session.id } });
+  }, REVIEW_TRANSACTION_OPTIONS);
 }

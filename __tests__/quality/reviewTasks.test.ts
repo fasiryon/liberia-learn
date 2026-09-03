@@ -5,25 +5,43 @@ vi.mock("@/lib/db", () => ({
     $transaction: vi.fn(),
     qualityReviewTask: { findUnique: vi.fn(), findFirst: vi.fn(), updateMany: vi.fn(), create: vi.fn() },
     qualityReviewAssessment: { findUnique: vi.fn(), create: vi.fn() },
+    reviewerProfile: { findUnique: vi.fn() },
     reviewerRestriction: { findFirst: vi.fn() },
   },
 }));
 vi.mock("@/lib/audit", () => ({ logAuditRequiredWithId: vi.fn().mockResolvedValue("audit-1") }));
 
 import { prisma } from "@/lib/db";
-import { claimQualityReviewTask, decideQualityReviewTask, recordHelpfulnessDecision } from "@/lib/quality/reviewTasks";
+import { claimQualityReviewTask, createQualityReviewTask, decideQualityReviewTask, recordHelpfulnessDecision } from "@/lib/quality/reviewTasks";
 import { ReviewOperationError } from "@/lib/quality/errors";
 
 describe("quality review task claim", () => {
-  beforeEach(() => vi.clearAllMocks());
+  beforeEach(() => {
+    vi.clearAllMocks();
+    (prisma.reviewerProfile.findUnique as any).mockResolvedValue({ id: "rp-1", userId: "op-1", status: "ACTIVE", available: true, authority: "SCHOOL", schoolId: "school-1", credentials: [{ status: "VERIFIED", verifiedAt: new Date(), verifierUserId: "verifier-1", validFrom: null, expiresAt: null, authority: "SCHOOL" }] });
+  });
 
   it("rejects a claim from a reviewer with an active matching restriction", async () => {
     (prisma.$transaction as any).mockImplementation(async (fn: any) => fn(prisma));
-    (prisma.qualityReviewTask.findUnique as any).mockResolvedValue({ id: "t1", domain: "TUTOR_HELPFULNESS", schoolId: "school-1", status: "QUEUED", version: 1 });
+    (prisma.qualityReviewTask.findUnique as any).mockResolvedValue({ id: "t1", domain: "TUTOR_HELPFULNESS", schoolId: "school-1", requiredAuthority: "SCHOOL", status: "QUEUED", version: 1 });
     (prisma.reviewerRestriction.findFirst as any).mockResolvedValue({ id: "r1", schoolId: "school-1", effectiveUntil: null });
     await expect(
-      claimQualityReviewTask({ operator: { id: "op-1", role: "ADMIN" }, taskId: "t1", reviewerProfileId: "rp-1", idempotencyKey: "claim-1" }),
+      claimQualityReviewTask({ operator: { id: "op-1", role: "ADMIN", schoolId: "school-1" }, taskId: "t1", reviewerProfileId: "rp-1", idempotencyKey: "claim-1" }),
     ).rejects.toThrow(ReviewOperationError);
+  });
+
+  it("fails closed when the claimed profile belongs to another user", async () => {
+    (prisma.$transaction as any).mockImplementation(async (fn: any) => fn(prisma));
+    (prisma.qualityReviewTask.findUnique as any).mockResolvedValue({ id: "t1", domain: "TUTOR_HELPFULNESS", schoolId: "school-1", requiredAuthority: "SCHOOL", status: "QUEUED", version: 1 });
+    (prisma.reviewerProfile.findUnique as any).mockResolvedValue({ id: "rp-1", userId: "other-user", status: "ACTIVE", available: true, authority: "SCHOOL", schoolId: "school-1", credentials: [] });
+    await expect(claimQualityReviewTask({ operator: { id: "op-1", role: "ADMIN", schoolId: "school-1" }, taskId: "t1", reviewerProfileId: "rp-1", idempotencyKey: "claim-wrong-user" })).rejects.toMatchObject({ code: "QUALITY_REVIEWER_FORBIDDEN" });
+  });
+
+  it("rejects task creation outside the operator's school scope", async () => {
+    await expect(createQualityReviewTask({
+      operator: { id: "op-1", role: "ADMIN", schoolId: "school-1" }, domain: "TUTOR_HELPFULNESS", artifactRef: "a1",
+      requiredAuthority: "SCHOOL", schoolId: "school-2", dueAt: new Date(), idempotencyKey: "create-cross-school",
+    })).rejects.toMatchObject({ code: "REVIEW_ADMIN_FORBIDDEN" });
   });
 
   it("rejects a claim from a reviewer with a restriction that is active now but has a future effectiveUntil (fail-open case)", async () => {
@@ -59,34 +77,37 @@ describe("quality review task claim", () => {
     }
 
     (prisma.$transaction as any).mockImplementation(async (fn: any) => fn(prisma));
-    (prisma.qualityReviewTask.findUnique as any).mockResolvedValue({ id: "t1", domain: "TUTOR_HELPFULNESS", schoolId: "school-1", status: "QUEUED", version: 1 });
+    (prisma.qualityReviewTask.findUnique as any).mockResolvedValue({ id: "t1", domain: "TUTOR_HELPFULNESS", schoolId: "school-1", requiredAuthority: "SCHOOL", status: "QUEUED", version: 1 });
     (prisma.reviewerRestriction.findFirst as any).mockImplementation(async ({ where }: any) => (matchesClause(restriction, where) ? restriction : null));
 
     await expect(
-      claimQualityReviewTask({ operator: { id: "op-1", role: "ADMIN" }, taskId: "t1", reviewerProfileId: "rp-1", idempotencyKey: "claim-future-until" }),
+      claimQualityReviewTask({ operator: { id: "op-1", role: "ADMIN", schoolId: "school-1" }, taskId: "t1", reviewerProfileId: "rp-1", idempotencyKey: "claim-future-until" }),
     ).rejects.toThrow(ReviewOperationError);
   });
 
   it("rejects a claim on a version conflict (already claimed)", async () => {
     (prisma.$transaction as any).mockImplementation(async (fn: any) => fn(prisma));
-    (prisma.qualityReviewTask.findUnique as any).mockResolvedValue({ id: "t1", domain: "TUTOR_HELPFULNESS", schoolId: null, status: "QUEUED", version: 1 });
+    (prisma.qualityReviewTask.findUnique as any).mockResolvedValue({ id: "t1", domain: "TUTOR_HELPFULNESS", schoolId: "school-1", requiredAuthority: "SCHOOL", status: "QUEUED", version: 1 });
     (prisma.reviewerRestriction.findFirst as any).mockResolvedValue(null);
     (prisma.qualityReviewTask.updateMany as any).mockResolvedValue({ count: 0 });
     await expect(
-      claimQualityReviewTask({ operator: { id: "op-1", role: "ADMIN" }, taskId: "t1", reviewerProfileId: "rp-1", idempotencyKey: "claim-2" }),
+      claimQualityReviewTask({ operator: { id: "op-1", role: "ADMIN", schoolId: "school-1" }, taskId: "t1", reviewerProfileId: "rp-1", idempotencyKey: "claim-2" }),
     ).rejects.toThrow(/version/i);
   });
 });
 
 describe("quality review task decide", () => {
-  beforeEach(() => vi.clearAllMocks());
+  beforeEach(() => {
+    vi.clearAllMocks();
+    (prisma.reviewerProfile.findUnique as any).mockResolvedValue({ id: "rp-1", userId: "op-1", status: "ACTIVE", available: true, authority: "SCHOOL", schoolId: "school-1", credentials: [{ status: "VERIFIED", verifiedAt: new Date(), verifierUserId: "verifier-1", validFrom: null, expiresAt: null, authority: "SCHOOL" }] });
+  });
 
   it("returns the existing assessment on an idempotent replay, even after the task is DECIDED", async () => {
     (prisma.$transaction as any).mockImplementation(async (fn: any) => fn(prisma));
     (prisma.qualityReviewTask.findUnique as any).mockResolvedValue({
       id: "t1",
       domain: "TUTOR_HELPFULNESS",
-      schoolId: null,
+      schoolId: "school-1", requiredAuthority: "SCHOOL",
       status: "DECIDED",
       claimedByProfileId: "rp-1",
       version: 2,
@@ -104,7 +125,7 @@ describe("quality review task decide", () => {
     (prisma.qualityReviewAssessment.findUnique as any).mockResolvedValue(existingAssessment);
 
     const result = await decideQualityReviewTask({
-      operator: { id: "op-1", role: "ADMIN" },
+      operator: { id: "op-1", role: "ADMIN", schoolId: "school-1" },
       taskId: "t1",
       outcome: "PASS",
       severity: "LOW",
@@ -122,7 +143,7 @@ describe("quality review task decide", () => {
     (prisma.qualityReviewTask.findUnique as any).mockResolvedValue({
       id: "t1",
       domain: "TUTOR_HELPFULNESS",
-      schoolId: null,
+      schoolId: "school-1", requiredAuthority: "SCHOOL",
       status: "QUEUED",
       claimedByProfileId: null,
       version: 1,
@@ -131,7 +152,7 @@ describe("quality review task decide", () => {
 
     await expect(
       decideQualityReviewTask({
-        operator: { id: "op-1", role: "ADMIN" },
+        operator: { id: "op-1", role: "ADMIN", schoolId: "school-1" },
         taskId: "t1",
         outcome: "PASS",
         severity: "LOW",
@@ -143,19 +164,23 @@ describe("quality review task decide", () => {
 });
 
 describe("quality review domain helpers", () => {
-  beforeEach(() => vi.clearAllMocks());
+  beforeEach(() => {
+    vi.clearAllMocks();
+    (prisma.reviewerProfile.findUnique as any).mockResolvedValue({ id: "rp-1", userId: "op-1", status: "ACTIVE", available: true, authority: "SCHOOL", schoolId: "school-1", credentials: [{ status: "VERIFIED", verifiedAt: new Date(), verifierUserId: "verifier-1", validFrom: null, expiresAt: null, authority: "SCHOOL" }] });
+    (prisma.reviewerRestriction.findFirst as any).mockResolvedValue(null);
+  });
 
   it("maps an unsafe helpfulness rubric outcome to a CRITICAL FAIL decision with rubric detail preserved in notes", async () => {
     (prisma.$transaction as any).mockImplementation(async (fn: any) => fn(prisma));
     (prisma.qualityReviewTask.findUnique as any).mockResolvedValue({
-      id: "t1", domain: "TUTOR_HELPFULNESS", schoolId: null, status: "CLAIMED", claimedByProfileId: "rp-1", version: 1,
+      id: "t1", domain: "TUTOR_HELPFULNESS", schoolId: "school-1", requiredAuthority: "SCHOOL", status: "CLAIMED", claimedByProfileId: "rp-1", version: 1,
     });
     (prisma.qualityReviewAssessment.findUnique as any).mockResolvedValue(null);
     (prisma.qualityReviewTask.updateMany as any).mockResolvedValue({ count: 1 });
     (prisma.qualityReviewAssessment.create as any).mockImplementation(async ({ data }: any) => ({ id: "a1", ...data }));
 
     const result = await recordHelpfulnessDecision({
-      operator: { id: "op-1", role: "ADMIN" }, taskId: "t1", outcome: "unsafe", idempotencyKey: "decide-unsafe-1",
+      operator: { id: "op-1", role: "ADMIN", schoolId: "school-1" }, taskId: "t1", outcome: "unsafe", idempotencyKey: "decide-unsafe-1",
     });
 
     expect(result.outcome).toBe("FAIL");
@@ -166,14 +191,14 @@ describe("quality review domain helpers", () => {
   it("maps a helpful outcome to a PASS decision", async () => {
     (prisma.$transaction as any).mockImplementation(async (fn: any) => fn(prisma));
     (prisma.qualityReviewTask.findUnique as any).mockResolvedValue({
-      id: "t2", domain: "TUTOR_HELPFULNESS", schoolId: null, status: "CLAIMED", claimedByProfileId: "rp-1", version: 1,
+      id: "t2", domain: "TUTOR_HELPFULNESS", schoolId: "school-1", requiredAuthority: "SCHOOL", status: "CLAIMED", claimedByProfileId: "rp-1", version: 1,
     });
     (prisma.qualityReviewAssessment.findUnique as any).mockResolvedValue(null);
     (prisma.qualityReviewTask.updateMany as any).mockResolvedValue({ count: 1 });
     (prisma.qualityReviewAssessment.create as any).mockImplementation(async ({ data }: any) => ({ id: "a2", ...data }));
 
     const result = await recordHelpfulnessDecision({
-      operator: { id: "op-1", role: "ADMIN" }, taskId: "t2", outcome: "helpful", idempotencyKey: "decide-helpful-1",
+      operator: { id: "op-1", role: "ADMIN", schoolId: "school-1" }, taskId: "t2", outcome: "helpful", idempotencyKey: "decide-helpful-1",
     });
 
     expect(result.outcome).toBe("PASS");

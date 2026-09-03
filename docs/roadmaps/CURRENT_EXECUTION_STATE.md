@@ -127,14 +127,11 @@ merged on trust). No production or staging mutation occurred; both
 migrations are applied only in the disposable CI bootstrap and remain a
 separate, deliberate application decision for any real database.
 
-Full documentation, including honestly-disclosed known limitations (no
-authorization gate yet exists on task creation/decision beyond
-`claimQualityReviewTask`'s restriction check; no `FOR UPDATE` row lock,
-matching an identical pre-existing gap in the mirrored curriculum-review
-pattern; `ReleaseGateDefinition.blockingSeverities` is declared but not read
-by production code; the calibration session's DRAFT-to-OPEN transition has
-no code path, matching an identical pre-existing gap in the curriculum
-calibration module), is in `docs/P7C_QUALITY_OPERATIONS.md`.
+Full documentation, including honestly-disclosed remaining limitations (no
+`FOR UPDATE` row lock, matching an identical pre-existing gap in the mirrored
+curriculum-review pattern; no live reviewer roster, sampled production
+traffic, release-pipeline integration, incident closure workflow, or real
+database migration application), is in `docs/P7C_QUALITY_OPERATIONS.md`.
 
 **P7 program: repository-local work is complete.** NR-15's remaining
 blockers are external operational gates (live reviewer roster, real sampled
