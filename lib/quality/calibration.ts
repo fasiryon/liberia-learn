@@ -108,8 +108,12 @@ export async function openCalibrationSession(input: {
 }): Promise<QualityReviewCalibrationSession> {
   assertReviewOperationsAdmin(input.operator, null);
   return prisma.$transaction(async (tx) => {
-    const session = await tx.qualityReviewCalibrationSession.findUnique({ where: { id: input.sessionId } });
+    const session = await tx.qualityReviewCalibrationSession.findUnique({
+      where: { id: input.sessionId },
+      include: { referenceTask: { select: { schoolId: true } } },
+    });
     if (!session || session.status !== "DRAFT") throw new ReviewOperationError("CALIBRATION_NOT_OPENABLE", 409);
+    if (session.referenceTask) assertReviewOperationsAdmin(input.operator, session.referenceTask.schoolId);
     const changed = await tx.qualityReviewCalibrationSession.updateMany({
       where: { id: session.id, status: "DRAFT" },
       data: { status: "OPEN", opensAt: session.opensAt ?? new Date() },

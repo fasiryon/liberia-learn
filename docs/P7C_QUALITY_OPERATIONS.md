@@ -93,7 +93,7 @@ Lifecycle functions:
 `evaluateReleaseGate(definition, quality, fixtureFailures, reviews, now)` composes three inputs into one `ReleaseGateResult`:
 - `fixtureFailures`: a list of fixture ids that failed (from the deterministic gate adapter, or any other source a caller chooses).
 - `quality`: a `QualityReport` from the P7-C experiment evaluator (`lib/experiments/qualityOperations.ts`).
-- `reviews`: a flat `{ domain, outcome }[]` used only to check that every domain in `definition.requiredReviewDomains` has at least one `PASS`.
+- `reviews`: `{ domain, outcome, severity }[]`; every review carries severity so configured `blockingSeverities` can be enforced by the gate.
 
 Result contract, in priority order:
 - **BLOCK**: any fixture failure, `quality.state` is `STOPPED` or `INVALID`, or a supplied review has a severity named by `definition.blockingSeverities`.
@@ -105,7 +105,7 @@ Result contract, in priority order:
 
 `rollbackRecommended` is `true` exactly when the result is a hard `BLOCK` (a fixture failure or `STOPPED`/`INVALID` quality state), never for `WARN` or `INSUFFICIENT_EVIDENCE`.
 
-**`blockingSeverities`, `minimumSamples`, and `requiredMetricIds` are declared but unused.** `ReleaseGateDefinition` includes these three fields, but `evaluateReleaseGate()` itself never reads any of them; grep confirms `blockingSeverities` is only ever referenced by golden-scenario test glue (`blockingIdsFor()` in `__tests__/quality/goldenScenarios.test.ts`), not by production code. Any severity-based blocking behavior seen in the golden scenarios (for example, a `HIGH`-severity finding blocking one gate but only warning on another) exists purely because the test file folds that decision into `fixtureFailures` before calling `evaluateReleaseGate`; it is test-file-only glue standing in for logic a real caller would have to implement, not a capability of the gate function itself. A production integration of this release gate must implement its own severity-to-block-decision policy; it cannot rely on `ReleaseGateDefinition.blockingSeverities` doing that work automatically.
+The release gate enforces `requiredMetricIds`, `minimumSamples`, and `blockingSeverities` directly. Missing required metrics or insufficient exposed samples produce `INSUFFICIENT_EVIDENCE`; a non-PASS review whose severity is configured as blocking produces `BLOCK`.
 
 ## Rollback (`lib/quality/rollback.ts`)
 

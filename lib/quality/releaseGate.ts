@@ -28,6 +28,10 @@ export function evaluateReleaseGate(
   now: string,
 ): ReleaseGateResult {
   const reasons: string[] = [];
+  const evaluatedMetricIds = quality.metricIds ?? quality.comparisons.map((comparison) => comparison.metricId).filter(Boolean);
+  const missingMetrics = quality.metricIds ? definition.requiredMetricIds.filter((metricId) => !evaluatedMetricIds.includes(metricId as never)) : [];
+  if (missingMetrics.length) reasons.push(...missingMetrics.map((metricId) => `metric_missing:${metricId}`));
+  if (quality.reconciliation.exposed < definition.minimumSamples) reasons.push(`minimum_samples_not_met:${quality.reconciliation.exposed}/${definition.minimumSamples}`);
   if (fixtureFailures.length > 0) reasons.push(...fixtureFailures.map((id) => `regression_fixture_failed:${id}`));
   if (quality.state === "STOPPED" || quality.state === "INVALID") reasons.push(`quality_state:${quality.state}`);
   if (quality.state === "DEGRADED" || quality.state === "PENDING_REVIEW") reasons.push(`quality_state:${quality.state}`);
@@ -38,11 +42,11 @@ export function evaluateReleaseGate(
   const failedReviewDomains = unsatisfiedReviewDomains.filter((domain) => !missingReviewDomains.includes(domain));
   if (missingReviewDomains.length) reasons.push(...missingReviewDomains.map((domain) => `review_missing:${domain}`));
   if (failedReviewDomains.length) reasons.push(...failedReviewDomains.map((domain) => `review_failed:${domain}`));
-  const blockingReviews = reviews.filter((review) => review.severity && definition.blockingSeverities.includes(review.severity));
+  const blockingReviews = reviews.filter((review) => review.outcome !== "PASS" && review.severity && definition.blockingSeverities.includes(review.severity));
   if (blockingReviews.length) reasons.push(...blockingReviews.map((review) => `review_blocking_severity:${review.domain}:${review.severity}`));
 
   const hardBlock = fixtureFailures.length > 0 || quality.state === "STOPPED" || quality.state === "INVALID" || blockingReviews.length > 0;
-  const insufficientEvidence = quality.state === "INSUFFICIENT";
+  const insufficientEvidence = quality.state === "INSUFFICIENT" || missingMetrics.length > 0 || quality.reconciliation.exposed < definition.minimumSamples;
   const degradedOrPendingReview = quality.state === "DEGRADED" || quality.state === "PENDING_REVIEW";
 
   const result: ReleaseGateResult["result"] = hardBlock ? "BLOCK" : insufficientEvidence ? "INSUFFICIENT_EVIDENCE" : degradedOrPendingReview || unsatisfiedReviewDomains.length ? "WARN" : "PASS";

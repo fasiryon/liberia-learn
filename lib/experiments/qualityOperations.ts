@@ -1,5 +1,5 @@
 import { createHash } from "crypto";
-import { ingestGovernedEvents, type GovernedEvent, type MeasurementFamily } from "@/lib/measurement/governedMeasurement";
+import { ingestGovernedEvents, METRIC_REGISTRY, type GovernedEvent, type MeasurementFamily } from "@/lib/measurement/governedMeasurement";
 import { detectSampleRatioMismatch, validateExperimentDefinition, type Assignment, type ExperimentDefinition } from "@/lib/experiments/controlledExperiment";
 
 /**
@@ -61,6 +61,7 @@ export type QualityAuditRecord = {
 };
 export type ClusterComparison = {
   armId: string;
+  metricId?: MeasurementFamily;
   clusters: number;
   difference: number | null;
   confidenceInterval95: [number, number] | null;
@@ -75,6 +76,7 @@ export type QualityReport = {
   srm: ReturnType<typeof detectSampleRatioMismatch>;
   comparisons: ClusterComparison[];
   reviews: { required: string[]; missing: string[]; unauthorized: number; failures: number };
+  metricIds?: MeasurementFamily[];
   audit: QualityAuditRecord[];
 };
 
@@ -84,7 +86,7 @@ const canonical = (value: unknown): string => {
   return JSON.stringify(value);
 };
 const evidenceHash = (snapshot: QualitySnapshot) => createHash("sha256").update(canonical(snapshot)).digest("hex");
-const zForComparisons = (count: number) => count <= 1 ? 1.96 : count === 2 ? 2.241 : count === 3 ? 2.394 : 2.576;
+const zForComparisons = (count: number) => ({ 1: 1.96, 2: 2.241, 3: 2.394, 4: 2.498, 5: 2.576, 6: 2.638, 7: 2.685, 8: 2.724, 9: 2.756, 10: 2.782 } as Record<number, number>)[Math.max(1, Math.min(10, Math.ceil(count)))] ?? 2.782;
 
 function clusterComparison(control: ClusterOutcome[], treatment: ClusterOutcome[], armId: string, policy: QualityPolicy): ClusterComparison {
   if (control.length < policy.minimumClustersPerArm || treatment.length < policy.minimumClustersPerArm) return { armId, clusters: treatment.length, difference: null, confidenceInterval95: null, conclusion: "INSUFFICIENT" };
@@ -93,7 +95,8 @@ function clusterComparison(control: ClusterOutcome[], treatment: ClusterOutcome[
   const c = mean(control), t = mean(treatment), difference = t - c;
   const margin = zForComparisons(policy.comparisonCount ?? 1) * Math.sqrt(variance(control, c) / control.length + variance(treatment, t) / treatment.length);
   const interval: [number, number] = [difference - margin, difference + margin];
-  const conclusion = interval[0] <= 0 && interval[1] >= 0 ? "NEUTRAL" : interval[0] > 0 ? "POSITIVE" : "HARMFUL";
+  const metric = METRIC_REGISTRY.find((candidate) => candidate.id === treatment[0]?.metricId);
+  const conclusion = interval[0] <= 0 && interval[1] >= 0 ? "NEUTRAL" : metric?.directionality === "lower_is_better" ? (interval[1] < 0 ? "POSITIVE" : "HARMFUL") : (interval[0] > 0 ? "POSITIVE" : "HARMFUL");
   return { armId, clusters: treatment.length, difference, confidenceInterval95: interval, conclusion };
 }
 
@@ -106,7 +109,7 @@ export function evaluateExperimentQuality(snapshot: QualitySnapshot, policy: Qua
   const assignments = snapshot.assignments.filter((assignment) => assignment.experimentId === snapshot.definition.experimentId && assignment.experimentVersion === snapshot.definition.version);
   const assignmentById = new Map(assignments.map((assignment) => [assignment.assignmentId, assignment]));
   const ingestion = ingestGovernedEvents(snapshot.exposures);
-  const exposureRows = ingestion.accepted.filter((event) => event.name === "governed.experiment.exposure");
+  const exposureRows = ingestion.accepted.filter((event) => event.name === "governed.experiment.exposure" && event.syntheticSource === "production");
   let crossSchool = 0, exposureWithoutAssignment = 0, outOfWindow = 0, futureDated = 0, late = 0;
   const exposedAssignments = new Set<string>();
   for (const exposure of exposureRows) {
@@ -115,6 +118,7 @@ export function evaluateExperimentQuality(snapshot: QualitySnapshot, policy: Qua
     if (!assignment || metadata.experimentId !== snapshot.definition.experimentId || metadata.experimentVersion !== snapshot.definition.version || metadata.armId !== assignment.armId) { exposureWithoutAssignment++; continue; }
     if (exposure.schoolId !== assignment.schoolId) { crossSchool++; continue; }
     const occurredAt = Date.parse(exposure.occurredAt);
+    if (Number.isNaN(occurredAt)) { exposureWithoutAssignment++; continue; }
     if (occurredAt > evaluatedAt + policy.maximumFutureSkewMs) futureDated++;
     if (occurredAt < startAt || occurredAt >= endAt) outOfWindow++;
     if (evaluatedAt - occurredAt > policy.maximumLateMs) late++;
@@ -122,10 +126,10 @@ export function evaluateExperimentQuality(snapshot: QualitySnapshot, policy: Qua
   }
   const metricIngestion = ingestGovernedEvents(snapshot.metricEvents);
   const syntheticOutcomes = snapshot.outcomes.filter((outcome) => outcome.source !== "production").length;
-  const invalidOutcomes = snapshot.outcomes.filter((outcome) => outcome.schoolId !== assignmentById.get(outcome.assignmentId)?.schoolId || outcome.metricVersion !== snapshot.definition.metricVersion || outcome.definitionVersion !== snapshot.definition.version || outcome.value === null || !Number.isFinite(outcome.value) || Date.parse(outcome.occurredAt) > evaluatedAt + policy.maximumFutureSkewMs || Date.parse(outcome.occurredAt) < startAt || Date.parse(outcome.occurredAt) >= endAt);
+  const invalidOutcomes = snapshot.outcomes.filter((outcome) => { const assignment = assignmentById.get(outcome.assignmentId); const occurredAt = Date.parse(outcome.occurredAt); return !assignment || outcome.schoolId !== assignment.schoolId || outcome.armId !== assignment.armId || outcome.metricVersion !== snapshot.definition.metricVersion || outcome.definitionVersion !== snapshot.definition.version || outcome.value === null || !Number.isFinite(outcome.value) || Number.isNaN(occurredAt) || occurredAt > evaluatedAt + policy.maximumFutureSkewMs || occurredAt < startAt || occurredAt >= endAt; });
   const productionOutcomes = snapshot.outcomes.filter((outcome) => outcome.source === "production" && !invalidOutcomes.includes(outcome));
   const uniqueOutcomeKeys = new Set<string>();
-  const replayedOutcomes = productionOutcomes.filter((outcome) => { const key = `${outcome.assignmentId}:${outcome.metricId}:${outcome.occurredAt}`; if (uniqueOutcomeKeys.has(key)) return true; uniqueOutcomeKeys.add(key); return false; });
+  const replayedOutcomes = productionOutcomes.filter((outcome) => { const key = `${outcome.assignmentId}:${outcome.metricId}`; if (uniqueOutcomeKeys.has(key)) return true; uniqueOutcomeKeys.add(key); return false; });
   const usableOutcomes = productionOutcomes.filter((outcome) => !replayedOutcomes.includes(outcome));
   const missingOutcomes = [...exposedAssignments].filter((id) => !usableOutcomes.some((outcome) => outcome.assignmentId === id)).length;
   const missingRate = exposedAssignments.size ? missingOutcomes / exposedAssignments.size : 1;
@@ -135,9 +139,11 @@ export function evaluateExperimentQuality(snapshot: QualitySnapshot, policy: Qua
   const reviews = snapshot.reviews.filter((review) => Date.parse(review.sampledAt) <= evaluatedAt);
   const missingReviews = policy.requireReviewDimensions.filter((dimension) => !reviews.some((review) => review.dimension === dimension && review.authorized && review.outcome === "PASS"));
   const reviewFailures = reviews.filter((review) => review.outcome === "FAIL" || review.outcome === "FALSE_NEGATIVE").length;
-  const outcomesByArm = new Map(snapshot.definition.arms.map((arm) => [arm.id, usableOutcomes.filter((outcome) => outcome.metricId === snapshot.definition.primaryMetrics[0] && outcome.armId === arm.id)]));
-  const control = outcomesByArm.get(snapshot.definition.controlArm) ?? [];
-  const comparisons = snapshot.definition.arms.filter((arm) => arm.id !== snapshot.definition.controlArm).map((arm) => clusterComparison(control, outcomesByArm.get(arm.id) ?? [], arm.id, policy));
+  const comparisons = snapshot.definition.primaryMetrics.flatMap((metricId) => {
+    const outcomesByArm = new Map(snapshot.definition.arms.map((arm) => [arm.id, usableOutcomes.filter((outcome) => outcome.metricId === metricId && outcome.armId === arm.id)]));
+    const control = outcomesByArm.get(snapshot.definition.controlArm) ?? [];
+    return snapshot.definition.arms.filter((arm) => arm.id !== snapshot.definition.controlArm).map((arm) => ({ ...clusterComparison(control, outcomesByArm.get(arm.id) ?? [], arm.id, policy), metricId }));
+  });
   const guardrailFailures = usableOutcomes.some((outcome) => snapshot.definition.guardrails.some((guardrail) => guardrail.metricId === outcome.metricId && (guardrail.direction === "MAX" ? outcome.value! > guardrail.threshold : outcome.value! < guardrail.threshold)));
   if (ingestion.quarantined.length || metricIngestion.quarantined.length || ingestion.duplicates || metricIngestion.duplicates || crossSchool || exposureWithoutAssignment || futureDated || outOfWindow || invalidOutcomes.length || replayedOutcomes.length || syntheticOutcomes) reasons.push("invalid_evidence");
   if (srm.status === "SRM_DETECTED") reasons.push("sample_ratio_mismatch");
@@ -146,11 +152,11 @@ export function evaluateExperimentQuality(snapshot: QualitySnapshot, policy: Qua
   if (missingReviews.length || reviews.some((review) => !review.authorized)) reasons.push("human_review_pending");
   if (reviewFailures) reasons.push("human_review_failure");
   if (comparisons.some((comparison) => comparison.conclusion === "INSUFFICIENT") || policy.minimumDetectableEffect !== undefined && comparisons.some((comparison) => comparison.difference !== null && Math.abs(comparison.difference) < policy.minimumDetectableEffect)) reasons.push("insufficient_statistical_readiness");
-  const fatal = reasons.some((reason) => ["invalid_evidence", "sample_ratio_mismatch", "guardrail_breach", "human_review_failure", "invalid_definition:mandatory_safety_policy_cannot_vary"].includes(reason));
+  const fatal = reasons.some((reason) => reason === "invalid_evidence" || reason === "sample_ratio_mismatch" || reason === "guardrail_breach" || reason === "human_review_failure" || reason.startsWith("invalid_definition:"));
   const state: QualityState = fatal ? (guardrailFailures || srm.status === "SRM_DETECTED" ? "STOPPED" : "INVALID") : reasons.includes("degraded_data_freshness") ? "DEGRADED" : reasons.length ? (reasons.includes("insufficient_statistical_readiness") ? "INSUFFICIENT" : "PENDING_REVIEW") : "READY";
   const hash = evidenceHash(snapshot);
   const audit: QualityAuditRecord[] = [{ action: "experiment.quality_evaluated", snapshotId: snapshot.snapshotId, evidenceHash: hash, occurredAt: policy.evaluatedAt, reasons }];
   if (state === "INVALID") audit.push({ action: "experiment.quality_invalidated", snapshotId: snapshot.snapshotId, evidenceHash: hash, occurredAt: policy.evaluatedAt, reasons });
   if (state === "STOPPED") audit.push({ action: "experiment.quality_stop_recommended", snapshotId: snapshot.snapshotId, evidenceHash: hash, occurredAt: policy.evaluatedAt, reasons });
-  return { state, evidenceHash: hash, reasons, reconciliation: { assigned: assignments.length, exposed: exposedAssignments.size, assignmentWithoutExposure, exposureWithoutAssignment, duplicates: ingestion.duplicates + metricIngestion.duplicates + replayedOutcomes.length, malformed: ingestion.quarantined.length + metricIngestion.quarantined.length, crossSchool }, freshness: { late, futureDated, outOfWindow, missingOutcomes, missingRate, maximumLatencyMs }, srm, comparisons, reviews: { required: policy.requireReviewDimensions, missing: missingReviews, unauthorized: reviews.filter((review) => !review.authorized).length, failures: reviewFailures }, audit };
+  return { state, evidenceHash: hash, reasons, reconciliation: { assigned: assignments.length, exposed: exposedAssignments.size, assignmentWithoutExposure, exposureWithoutAssignment, duplicates: ingestion.duplicates + metricIngestion.duplicates + replayedOutcomes.length, malformed: ingestion.quarantined.length + metricIngestion.quarantined.length, crossSchool }, freshness: { late, futureDated, outOfWindow, missingOutcomes, missingRate, maximumLatencyMs }, srm, comparisons, reviews: { required: policy.requireReviewDimensions, missing: missingReviews, unauthorized: reviews.filter((review) => !review.authorized).length, failures: reviewFailures }, metricIds: snapshot.definition.primaryMetrics, audit };
 }

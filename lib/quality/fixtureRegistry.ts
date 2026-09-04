@@ -20,6 +20,8 @@ export type QualityFixture = {
 
 const registry = new Map<string, Map<number, QualityFixture>>();
 
+const clone = <T>(value: T): T => structuredClone(value);
+
 export function resetFixtureRegistryForTests(): void {
   registry.clear();
 }
@@ -30,21 +32,22 @@ export function registerFixture(fixture: QualityFixture): void {
   if (existing && JSON.stringify(existing) !== JSON.stringify(fixture)) {
     throw new Error(`fixture_version_immutable:${fixture.fixtureId}@${fixture.version}`);
   }
-  versions.set(fixture.version, fixture);
+  versions.set(fixture.version, clone(fixture));
   registry.set(fixture.fixtureId, versions);
 }
 
 export function getFixture(fixtureId: string, version?: number): QualityFixture | undefined {
   const versions = registry.get(fixtureId);
   if (!versions) return undefined;
-  if (version !== undefined) return versions.get(version);
+  if (version !== undefined) return versions.get(version) ? clone(versions.get(version)!) : undefined;
   return latestVersion(fixtureId);
 }
 
 export function latestVersion(fixtureId: string): QualityFixture | undefined {
   const versions = registry.get(fixtureId);
   if (!versions || versions.size === 0) return undefined;
-  return [...versions.values()].sort((a, b) => b.version - a.version)[0];
+  const fixture = [...versions.values()].sort((a, b) => b.version - a.version)[0];
+  return fixture ? clone(fixture) : undefined;
 }
 
 function matchesDimension(fixture: QualityFixture, filter?: Partial<QualityFixtureDimension>): boolean {

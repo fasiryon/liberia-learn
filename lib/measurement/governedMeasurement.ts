@@ -174,7 +174,8 @@ export type MetricResult = { metricId: MeasurementFamily; metricVersion: number;
 export function calculateMetric(metricId: MeasurementFamily, inputs: unknown[], schoolId: string, window: { start: string; end: string }, options: MetricCalculationOptions = {}): MetricResult {
   const start = Date.parse(window.start), end = Date.parse(window.end);
   if (Number.isNaN(start) || Number.isNaN(end) || end < start) throw new Error("invalid_metric_window");
-  const coverageEnd = Date.parse(options.coverageEnd ?? new Date().toISOString());
+  const coverageEndInput = options.coverageEnd ?? (metricId === "retention" ? "" : window.end);
+  const coverageEnd = Date.parse(coverageEndInput);
   if (Number.isNaN(coverageEnd)) throw new Error("invalid_metric_coverage_end");
   const ingestion = ingestGovernedEvents(inputs);
   const accepted = ingestion.accepted;

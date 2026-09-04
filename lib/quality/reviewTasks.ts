@@ -36,7 +36,7 @@ async function assertQualityReviewerEligible(tx: any, input: { operator: Operato
   }
   const profile = await tx.reviewerProfile.findUnique({
     where: { id: input.reviewerProfileId },
-    include: { credentials: true },
+    include: { credentials: { include: { scopes: true } } },
   });
   if (!profile || profile.userId !== input.operator.id || profile.status !== "ACTIVE" || !profile.available) {
     throw new ReviewOperationError("QUALITY_REVIEWER_FORBIDDEN", 403);
@@ -58,7 +58,12 @@ async function assertQualityReviewerEligible(tx: any, input: { operator: Operato
   const credential = profile.credentials.some((candidate: any) =>
     candidate.status === "VERIFIED" && candidate.verifiedAt != null && candidate.verifierUserId != null &&
     (!candidate.validFrom || candidate.validFrom <= now) && (!candidate.expiresAt || candidate.expiresAt > now) &&
-    authorityMatches(input.task.requiredAuthority, candidate.authority),
+    authorityMatches(input.task.requiredAuthority, candidate.authority) &&
+    (candidate.scopes ? candidate.scopes.some((scope: any) =>
+      (!input.task.schoolId || scope.schoolId === input.task.schoolId) &&
+      (scope.domains.length === 0 || scope.domains.some((domain: string) => domain.trim().toUpperCase() === input.task.domain)) &&
+      (input.task.requiredAuthority !== "SCHOOL" || scope.curriculumScopes.includes("SCHOOL")),
+    ) : true),
   );
   if (!credential) throw new ReviewOperationError("QUALITY_REVIEWER_FORBIDDEN", 403);
 }
@@ -75,6 +80,9 @@ export async function createQualityReviewTask(input: {
   idempotencyKey: string;
 }): Promise<QualityReviewTask> {
   return prisma.$transaction(async (tx) => {
+    if (input.operator.role === "ADMIN" && !input.operator.isPlatformAdmin && !input.schoolId) {
+      throw new ReviewOperationError("REVIEW_ADMIN_FORBIDDEN", 403);
+    }
     assertReviewOperationsAdmin(input.operator, input.schoolId ?? null);
     const existing = await tx.qualityReviewTask.findUnique({ where: { idempotencyKey: input.idempotencyKey } });
     if (existing) return existing;
