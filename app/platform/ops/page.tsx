@@ -1,29 +1,17 @@
 import { redirect } from "next/navigation";
 import { requireUser } from "@/lib/auth";
-import { getOpsDashboardData } from "@/lib/ops/dashboard";
-
-function statusClass(status: string) {
-  if (status === "healthy") return "border-emerald-500/30 bg-[var(--ll-yellow)]/10 text-[var(--ll-yellow)]";
-  if (status === "degraded") return "border-amber-500/30 bg-[var(--ll-yellow-soft)] text-[var(--ll-yellow)]";
-  return "border-red-500/30 bg-red-500/10 text-red-200";
-}
-
-function percent(value: number) {
-  return `${(value * 100).toFixed(1)}%`;
-}
+import { UnifiedOpsDashboard } from "@/components/ops/UnifiedOpsDashboard";
+import { getOperationalSnapshot } from "@/lib/ops/operationalSnapshot";
+import { operationalSourceReaders } from "@/lib/ops/operationalSources";
 
 export const dynamic = "force-dynamic";
 
 export default async function PlatformOpsPage() {
   const user = await requireUser();
-  if (!user.isPlatformAdmin) {
-    redirect("/platform");
-  }
-
-  const data = await getOpsDashboardData();
-
-  return (
-    <div className="space-y-6">
+  if (!user.isPlatformAdmin) redirect("/platform");
+  const snapshot = await getOperationalSnapshot({ scope: { kind: "NATIONAL" }, readers: operationalSourceReaders });
+  return <UnifiedOpsDashboard snapshot={snapshot} />;
+/*
       <div>
         <h1 className="text-2xl font-bold">Platform Ops</h1>
         <p className="mt-1 text-sm text-[var(--ll-text-muted)]">
@@ -111,5 +99,5 @@ export default async function PlatformOpsPage() {
         </div>
       </section>
     </div>
-  );
+  );*/
 }

@@ -105,7 +105,7 @@ order and do not skip the first pending sprint.
 | NR-13 Grades 5–8 Gap Closure | **VALID.** Requires live coverage evidence, including English and Social Studies. |
 | NR-14 National Audio Pipeline | **VALID.** Requires provider funding verification and less than 1% unexplained audio gaps. |
 | NR-14.5 Auto-Grading Fairness Review | **VALID — new 2026-07-30**, folds C35. |
-| NR-15 Unified Ops Dashboard | **VALID.** Monitoring, alert delivery, on-call ownership, and an incident drill remain. |
+| NR-15 Unified Ops Dashboard | **COMPLETE AND CERTIFIED (repository-local).** Unified operational snapshot, tenant-scoped dashboard, typed alert lifecycle/dedup/recovery, freshness/provenance, truthful external-gate panel, and no-op notification boundary are implemented. Live provider delivery and external gates remain open. |
 | NR-16 Playwright CI + Phase Close | **VALID / PARTIAL.** Unit/typecheck CI exists; the specified production Playwright gate remains. |
 | NR-17 DR Drill + Export Isolation | **VALID.** Restore/rollback drill and concurrent export-isolation proof remain. |
 | NR-17.5 Data Retention + Minors Legal Mapping | **VALID — new 2026-07-30**, folds B24 + C14. |

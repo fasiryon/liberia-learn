@@ -2,14 +2,15 @@ import { GetQueueAttributesCommand, SQSClient } from "@aws-sdk/client-sqs";
 import { prisma } from "@/lib/db";
 
 export type QueueSnapshot = {
-  mainQueue: { depth: number | null; configured: boolean };
+  observedAt: string;
+  mainQueue: { depth: number | null; processing: number | null; delayed: number | null; configured: boolean };
   dlq: { depth: number | null; configured: boolean };
   regenRunsActive: number;
   note: string;
 };
 
-async function getSqsDepth(queueUrl: string): Promise<number | null> {
-  if (!queueUrl) return null;
+async function getSqsState(queueUrl: string): Promise<{ depth: number | null; processing: number | null; delayed: number | null }> {
+  if (!queueUrl) return { depth: null, processing: null, delayed: null };
   try {
     const client = new SQSClient({
       region: process.env.AWS_REGION ?? process.env.AWS_DEFAULT_REGION ?? "us-east-1",
@@ -17,13 +18,13 @@ async function getSqsDepth(queueUrl: string): Promise<number | null> {
     const res = await client.send(
       new GetQueueAttributesCommand({
         QueueUrl: queueUrl,
-        AttributeNames: ["ApproximateNumberOfMessages"],
+        AttributeNames: ["ApproximateNumberOfMessages", "ApproximateNumberOfMessagesNotVisible", "ApproximateNumberOfMessagesDelayed"],
       })
     );
-    const raw = res.Attributes?.ApproximateNumberOfMessages;
-    return typeof raw === "string" ? parseInt(raw, 10) || 0 : null;
+    const parse = (value: string | undefined) => typeof value === "string" ? parseInt(value, 10) || 0 : null;
+    return { depth: parse(res.Attributes?.ApproximateNumberOfMessages), processing: parse(res.Attributes?.ApproximateNumberOfMessagesNotVisible), delayed: parse(res.Attributes?.ApproximateNumberOfMessagesDelayed) };
   } catch {
-    return null;
+    return { depth: null, processing: null, delayed: null };
   }
 }
 
@@ -31,18 +32,19 @@ export async function getQueueDepths(): Promise<QueueSnapshot> {
   const mainUrl = process.env.SQS_QUEUE_URL?.trim() ?? "";
   const dlqUrl = process.env.SQS_DLQ_URL?.trim() ?? "";
 
-  const [mainDepth, dlqDepth, regenRunsActive] = await Promise.all([
-    getSqsDepth(mainUrl),
-    getSqsDepth(dlqUrl),
+  const [mainState, dlqState, regenRunsActive] = await Promise.all([
+    getSqsState(mainUrl),
+    getSqsState(dlqUrl),
     prisma.curriculumRegenerationRun
       .count({ where: { status: "running" } })
       .catch(() => 0),
   ]);
 
   return {
-    mainQueue: { depth: mainDepth, configured: mainUrl.length > 0 },
-    dlq: { depth: dlqDepth, configured: dlqUrl.length > 0 },
+    observedAt: new Date().toISOString(),
+    mainQueue: { ...mainState, configured: mainUrl.length > 0 },
+    dlq: { depth: dlqState.depth, configured: dlqUrl.length > 0 },
     regenRunsActive,
-    note: "Client-side offline queue (NR-14A) is not visible to the server — that number is always 0 here.",
+    note: "Client-side offline queue (NR-14A) is not visible to the server, so this source never reports it as zero.",
   };
 }

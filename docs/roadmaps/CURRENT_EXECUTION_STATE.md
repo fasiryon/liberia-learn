@@ -2478,3 +2478,13 @@ Full build plan: `docs/roadmaps/ONLINE_SCHOOL_BUILD.md`
 - Commit: `64b98f0`
 - Gate: `npx tsc --noEmit` PASS (0 errors), `npx vitest run` PASS (2712 tests / 355 files), `npm run build` PASS
 - 9 new tests in `__tests__/sprint5.events.test.ts`
+## NR-15 Unified Ops Dashboard and Alerting: COMPLETE AND CERTIFIED (repository-local, 2026-09-05)
+
+NR-15 repository engineering is complete on the dedicated branch. The unified
+operational snapshot composes existing health, queue, offline telemetry,
+curriculum governance, P7 quality/experiment authorities, incidents, tenant
+state, readiness gates, and typed alert lifecycle. The dashboard is read-only,
+tenant-scoped, privacy-safe, freshness/provenance-labelled, and fails closed
+to UNKNOWN on missing subsystem evidence. Notification delivery is explicitly
+NO_EXTERNAL_DELIVERY. Live reviewer, provider, migration, signing, field,
+penetration-test, and other external gates remain separately open.

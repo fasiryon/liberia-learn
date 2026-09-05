@@ -10,6 +10,12 @@ export default async function OpsIndexPage() {
 
   const sections = [
     {
+      href: "/admin/ops/readiness",
+      title: "Unified Operational Readiness",
+      desc: "NR-15 health, queues, sync, quality, experiments, incidents, alerts, and external gates",
+      disabled: false,
+    },
+    {
       href: "/admin/ops/health",
       title: "System Health",
       desc: "DB, Redis, AI spend, pipeline, usage, and queue — one-glance platform health",
