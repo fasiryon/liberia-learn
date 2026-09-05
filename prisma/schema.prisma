@@ -1713,6 +1713,11 @@ model WorkflowRun {
   createdAt         DateTime  @default(now())
   updatedAt         DateTime  @updatedAt
   version           Int       @default(1)
+  objective          String?
+  scope              Json?
+  constraints        Json?
+  acceptanceCriteria Json?
+  dependsOnRunIds    Json?
 
   @@index([schoolId, status, createdAt])
   @@index([tenantId, status, createdAt])
@@ -1730,6 +1735,7 @@ model WorkflowRun {
 model WorkflowStep {
   id                String    @id @default(cuid())
   workflowRunId     String
+  workflowPhaseId   String?
   stepKey           String
   status            String    @default("pending")
   sequence          Int       @default(0)
@@ -1752,6 +1758,7 @@ model WorkflowStep {
   @@index([workflowRunId, status])
   @@index([stepKey, status, createdAt])
   @@index([nextRetryAt, status])
+  @@index([workflowPhaseId])
 }
 
 /// Autonomous OS Phase 1: append-only checkpoints for recovery and replay.
@@ -1780,6 +1787,7 @@ model WorkflowCheckpoint {
 model AgentRun {
   id                String    @id @default(cuid())
   workflowRunId     String
+  workflowPhaseId   String?
   agentId           String
   tenantId          String?
   schoolId          String?
@@ -1802,6 +1810,7 @@ model AgentRun {
   @@index([workflowRunId, createdAt])
   @@index([agentId, status, createdAt])
   @@index([schoolId, status, createdAt])
+  @@index([workflowPhaseId])
 }
 
 /// Autonomous OS Phase 1: explainable recommendation or decision output.
@@ -1916,6 +1925,46 @@ model ExecutionTrace {
   @@index([workflowRunId, startedAt])
   @@index([schoolId, status, startedAt])
   @@index([spanType, status, startedAt])
+}
+
+/// Manager Loop Sub-project 1: a bounded, human-reviewable unit of work within a mission
+/// WorkflowRun. Distinct from WorkflowStep (a flat atomic-retry unit used by detectors) —
+/// a Phase has a title/objective/acceptance-criteria/checklist container concept that
+/// WorkflowStep does not.
+model WorkflowPhase {
+  id                 String    @id @default(cuid())
+  workflowRunId      String
+  sequence           Int
+  title              String
+  objective          String
+  acceptanceCriteria Json
+  status             String    @default("NOT_STARTED")
+  dependsOnPhaseIds  Json      @default("[]")
+  attempt            Int       @default(0)
+  lastProgressAt     DateTime?
+  blockedReason      String?
+  startedAt          DateTime?
+  completedAt        DateTime?
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+
+  @@index([workflowRunId, sequence])
+  @@index([workflowRunId, status])
+}
+
+/// Manager Loop Sub-project 1: a single checklist item within a WorkflowPhase.
+model WorkflowChecklistItem {
+  id              String    @id @default(cuid())
+  workflowPhaseId String
+  label           String
+  required        Boolean   @default(true)
+  status          String    @default("PENDING")
+  evidenceRef     Json?
+  completedAt     DateTime?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  @@index([workflowPhaseId, status])
 }
 
 /// / ===== Curriculum Feedback (AI quality feedback loop) =====
