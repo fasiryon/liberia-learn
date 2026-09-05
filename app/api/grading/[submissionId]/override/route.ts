@@ -13,6 +13,8 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { requireRole } from "@/lib/auth";
 
+// route-policy: auth=session; scope=tenant; authority=school-membership; rationale=grade override is limited to the submission school
+
 export async function PATCH(
   req: Request,
   { params }: { params: { submissionId: string } }
@@ -65,7 +67,7 @@ export async function PATCH(
     return NextResponse.json({ ok: true, submission: updated });
   } catch (err: unknown) {
     const msg = err instanceof Error ? err.message : "internal_error";
-    const status = msg.includes("Unauthorized") ? 403 : 500;
+    const status = msg.includes("Unauthorized") || msg.includes("Forbidden") ? 403 : 500;
     return NextResponse.json({ error: msg }, { status });
   }
 }

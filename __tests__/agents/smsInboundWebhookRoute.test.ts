@@ -21,6 +21,16 @@ function formReq(fields: Record<string, string>, headers: Record<string, string>
   }) as never;
 }
 
+function signedFormReq(fields: Record<string, string>) {
+  const body = new URLSearchParams(fields).toString();
+  const signature = createHmac("sha256", "test-secret").update(body).digest("hex");
+  return new Request("http://x/api/webhooks/sms-inbound", {
+    method: "POST",
+    headers: { "content-type": "application/x-www-form-urlencoded", "x-at-signature": signature },
+    body,
+  }) as never;
+}
+
 const originalSecret = process.env.AT_WEBHOOK_SECRET;
 afterEach(() => {
   if (originalSecret === undefined) delete process.env.AT_WEBHOOK_SECRET;
@@ -38,11 +48,11 @@ describe("POST /api/webhooks/sms-inbound", () => {
       response: "hi",
       invocationId: "inv-1",
     });
-    delete process.env.AT_WEBHOOK_SECRET;
+    process.env.AT_WEBHOOK_SECRET = "test-secret";
   });
 
   it("parses Africa's Talking form-urlencoded fields and routes to the guardian handler", async () => {
-    const res = await POST(formReq({ from: "+231770000111", text: "Hi", id: "at-msg-1" }));
+    const res = await POST(signedFormReq({ from: "+231770000111", text: "Hi", id: "at-msg-1" }));
     expect(res.status).toBe(200);
     const json = await res.json();
     expect(json.ok).toBe(true);
@@ -50,9 +60,11 @@ describe("POST /api/webhooks/sms-inbound", () => {
     expect(mockHandleGuardianInbound).toHaveBeenCalledWith({ from: "+231770000111", text: "Hi" });
   });
 
-  it("skips signature validation when AT_WEBHOOK_SECRET is not set", async () => {
+  it("fails closed when AT_WEBHOOK_SECRET is not set", async () => {
+    delete process.env.AT_WEBHOOK_SECRET;
     const res = await POST(formReq({ from: "+231770000111", text: "Hi" }));
-    expect(res.status).toBe(200);
+    expect(res.status).toBe(503);
+    expect(mockHandleGuardianInbound).not.toHaveBeenCalled();
   });
 
   it("rejects requests with a missing signature when AT_WEBHOOK_SECRET is set", async () => {

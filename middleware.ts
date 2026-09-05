@@ -10,6 +10,7 @@ import {
   isPrivilegedMfaEnforced,
   isSensitivePrivilegedRequest,
 } from "@/lib/auth/privilegedIdentity";
+import { buildContentSecurityPolicy } from "@/lib/security/contentSecurityPolicy";
 
 const PUBLIC_PATHS = [
   "/",
@@ -64,10 +65,20 @@ function privilegedStepUpResponse(req: NextRequest, token: Record<string, unknow
 
 export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
+  const nonce = crypto.randomUUID().replaceAll("-", "");
+  const csp = buildContentSecurityPolicy(nonce);
+  const requestHeaders = new Headers(req.headers);
+  requestHeaders.set("x-nonce", nonce);
+  requestHeaders.set("Content-Security-Policy", csp);
+  const finalize = <T extends NextResponse>(response: T): T => {
+    response.headers.set("Content-Security-Policy", csp);
+    return response;
+  };
+  const next = () => finalize(NextResponse.next({ request: { headers: requestHeaders } }));
 
   // /moe/login is always public; the page renders portal availability inline.
   if (pathname === "/moe/login") {
-    return NextResponse.next();
+    return next();
   }
 
   // /api/admin/* and /api/platform/* authentication backstop. This is
@@ -82,11 +93,11 @@ export async function middleware(req: NextRequest) {
   if (pathname.startsWith("/api/admin/") || pathname.startsWith("/api/platform/")) {
     const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
     if (!token) {
-      return NextResponse.json({ ok: false, error: "Unauthorized" }, { status: 401 });
+      return finalize(NextResponse.json({ ok: false, error: "Unauthorized" }, { status: 401 }));
     }
     const stepUpResponse = privilegedStepUpResponse(req, token as any);
-    if (stepUpResponse) return stepUpResponse;
-    return NextResponse.next();
+    if (stepUpResponse) return finalize(stepUpResponse);
+    return next();
   }
 
   // Protected portals. Single getToken call.
@@ -107,14 +118,14 @@ export async function middleware(req: NextRequest) {
       if (!token) {
         const url = req.nextUrl.clone();
         url.pathname = "/moe/login";
-        return NextResponse.redirect(url);
+        return finalize(NextResponse.redirect(url));
       }
       if (!isMoeAuthorized(token as any)) {
         const url = req.nextUrl.clone();
         url.pathname = roleDefaultPortal((token as any).role);
-        return NextResponse.redirect(url);
+        return finalize(NextResponse.redirect(url));
       }
-      return NextResponse.next();
+      return next();
     }
 
     // /admin/* and /platform/* unauthenticated requests go to /login.
@@ -122,25 +133,25 @@ export async function middleware(req: NextRequest) {
       const url = req.nextUrl.clone();
       url.pathname = "/login";
       url.searchParams.set("next", pathname);
-      return NextResponse.redirect(url);
+      return finalize(NextResponse.redirect(url));
     }
 
     if (pathname === "/admin" || pathname.startsWith("/admin/")) {
       if ((token as any).role !== "ADMIN" && !(token as any).isPlatformAdmin) {
         const url = req.nextUrl.clone();
         url.pathname = "/unauthorized";
-        return NextResponse.redirect(url);
+        return finalize(NextResponse.redirect(url));
       }
-      return NextResponse.next();
+      return next();
     }
 
     if (pathname === "/platform" || pathname.startsWith("/platform/")) {
       if (!(token as any).isPlatformAdmin) {
         const url = req.nextUrl.clone();
         url.pathname = "/unauthorized";
-        return NextResponse.redirect(url);
+        return finalize(NextResponse.redirect(url));
       }
-      return NextResponse.next();
+      return next();
     }
   }
   // Allow Next internals/static + health checks
@@ -159,7 +170,7 @@ export async function middleware(req: NextRequest) {
     pathname.startsWith("/api/health") ||
     pathname === "/api/healthz"
   ) {
-    return NextResponse.next();
+    return next();
   }
 
   // Cron routes authenticate themselves via a CRON_SECRET Bearer header, not
@@ -170,12 +181,12 @@ export async function middleware(req: NextRequest) {
   // prefixes independently checks CRON_SECRET - confirmed for all 24 routes
   // before adding this bypass.
   if (pathname.startsWith("/api/cron/") || pathname.startsWith("/api/crons/")) {
-    return NextResponse.next();
+    return next();
   }
 
   // Allow public paths
   if (isPublicPath(pathname)) {
-    return NextResponse.next();
+    return next();
   }
 
   // Require auth for everything else
@@ -185,13 +196,13 @@ export async function middleware(req: NextRequest) {
     url.pathname = "/login";
     url.searchParams.set("next", pathname);
     if (req.nextUrl.pathname.startsWith("/api/")) {
-  return NextResponse.json({ ok: false, error: "Unauthorized" }, { status: 401 });
+  return finalize(NextResponse.json({ ok: false, error: "Unauthorized" }, { status: 401 }));
 }
-    return NextResponse.redirect(url);
+    return finalize(NextResponse.redirect(url));
   }
 
   const stepUpResponse = privilegedStepUpResponse(req, token as any);
-  if (stepUpResponse) return stepUpResponse;
+  if (stepUpResponse) return finalize(stepUpResponse);
 
   if (
     (token as any).role === "STUDENT" &&
@@ -201,7 +212,7 @@ export async function middleware(req: NextRequest) {
   ) {
     const url = req.nextUrl.clone();
     url.pathname = "/student/change-pin";
-    return NextResponse.redirect(url);
+    return finalize(NextResponse.redirect(url));
   }
 
   if (
@@ -212,10 +223,10 @@ export async function middleware(req: NextRequest) {
   ) {
     const url = req.nextUrl.clone();
     url.pathname = "/teacher/change-password";
-    return NextResponse.redirect(url);
+    return finalize(NextResponse.redirect(url));
   }
 
-  return NextResponse.next();
+  return next();
 }
 
 export const config = {

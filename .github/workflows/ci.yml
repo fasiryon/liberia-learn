@@ -35,6 +35,8 @@ jobs:
           path: ~/.npm
           key: ${{ runner.os }}-node-${{ hashFiles('package-lock.json') }}
       - run: npm ci
+      - name: Enforce explicit API route auth and scope policy
+        run: npm run audit:api-routes
       - run: npx tsc --noEmit
       - run: npx vitest run --reporter=dot
       - run: npm run build
