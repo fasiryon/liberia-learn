@@ -119,6 +119,8 @@ else {
   run("git", ["diff", "--cached", "--check"]);
 }
 
+run(process.execPath, ["scripts/audit-api-route-policies.mjs"]);
+
 if (schemaChanged) {
   run("npx", ["prisma", "validate"]);
   run("npx", ["prisma", "generate"]);

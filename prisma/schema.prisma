@@ -5313,6 +5313,7 @@ model SmsResponse {
   @@index([sessionId])
 }
 
+
 /// Sprint 26: weekly school performance snapshot for the national league table.
 model LeagueSnapshot {
   id               String   @id @default(cuid())

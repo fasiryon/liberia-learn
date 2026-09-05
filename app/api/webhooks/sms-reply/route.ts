@@ -2,6 +2,9 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { sendSMS } from "@/lib/sms";
 import { sendPushToUser } from "@/lib/push/sendPush";
+import { authenticateAfricaTalkingWebhook, claimAfricaTalkingMessage, readAfricaTalkingBody } from "@/lib/webhooks/africasTalking";
+
+// route-policy: auth=provider; scope=none; authority=africas-talking-hmac; rationale=grade-affecting SMS quiz replies
 
 export const dynamic = "force-dynamic";
 
@@ -24,23 +27,16 @@ function buildNextQuestionSms(q: QuestionItem, total: number): string {
 }
 
 export async function POST(req: NextRequest) {
-  let from: string;
-  let text: string;
-
-  const contentType = req.headers.get("content-type") ?? "";
-
-  if (contentType.includes("application/x-www-form-urlencoded") || contentType.includes("multipart/form-data")) {
-    const fd = await req.formData().catch(() => null);
-    if (!fd) return new NextResponse("", { status: 200 });
-    from = (fd.get("from") as string | null) ?? "";
-    text = ((fd.get("text") as string | null) ?? "").trim().toUpperCase();
-  } else {
-    const body = await req.json().catch(() => ({}));
-    from = body.from ?? "";
-    text = (body.text ?? "").trim().toUpperCase();
+  const body = await readAfricaTalkingBody(req);
+  const auth = authenticateAfricaTalkingWebhook(body, req);
+  if (!auth.ok) return NextResponse.json({ error: auth.error }, { status: auth.status });
+  const from = body.fields.from ?? "";
+  const text = (body.fields.text ?? "").trim().toUpperCase();
+  const messageId = body.fields.id ?? "";
+  if (!from || !messageId) return NextResponse.json({ error: "malformed_payload" }, { status: 400 });
+  if (!(await claimAfricaTalkingMessage(messageId))) {
+    return NextResponse.json({ error: "replayed_message" }, { status: 409 });
   }
-
-  if (!from) return new NextResponse("", { status: 200 });
 
   const session = await prisma.smsSession.findFirst({
     where: { studentPhone: from, status: "ACTIVE" },

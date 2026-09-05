@@ -8,6 +8,9 @@ import { PushPermissionPrompt } from "@/components/PushPermissionPrompt";
 import { PwaInstallPrompt } from "@/components/PwaInstallPrompt";
 import { StudentTourMount } from "@/components/tours/TourMount";
 import { PrivacyGateMount } from "@/components/PrivacyGateMount";
+import { StudentAccessibilityControl } from "@/components/student/StudentAccessibilityControl";
+
+const A11Y_ENABLED = process.env.NEXT_PUBLIC_ENABLE_ACCESSIBILITY_MODE === "true";
 
 export default async function StudentLayout({
   children,
@@ -40,6 +43,7 @@ export default async function StudentLayout({
       <PwaInstallPrompt />
       <PrivacyGateMount showGate={showPrivacyGate} />
       <StudentTourMount showTour={showTour} />
+      {A11Y_ENABLED && <StudentAccessibilityControl />}
     </>
   );
 }

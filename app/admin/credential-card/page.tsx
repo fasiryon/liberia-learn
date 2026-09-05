@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import { requireRole } from "@/lib/auth";
 import { prisma } from "@/lib/db";
+import { PrintOnMount } from "@/components/PrintOnMount";
 
 export const dynamic = "force-dynamic";
 
@@ -39,7 +40,7 @@ export default async function CredentialCardPage({ searchParams }: PageProps) {
 
   return (
     <main className="min-h-screen bg-white p-4 text-[var(--ll-text-faint)] print:p-0">
-      <script dangerouslySetInnerHTML={{ __html: "window.print();" }} />
+      <PrintOnMount />
       <style>{`
         @media print {
           @page { size: A4; margin: 10mm; }
@@ -75,4 +76,3 @@ function CredentialCard(input: { schoolName: string; name: string; loginId: stri
     </section>
   );
 }
-

@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import type { NextRequest } from "next/server";
+import { createHmac } from "crypto";
 
 // ── Hoisted mocks ─────────────────────────────────────────────────────────────
 
@@ -108,14 +109,20 @@ function cronRequest(): NextRequest {
 }
 
 function formRequest(fields: Record<string, string>): NextRequest {
-  const fd = new FormData();
-  for (const [k, v] of Object.entries(fields)) fd.append(k, v);
-  return new Request("http://localhost/test", { method: "POST", body: fd }) as unknown as NextRequest;
+  const withId = { id: `at-${fields.text}`, ...fields };
+  const body = new URLSearchParams(withId).toString();
+  const signature = createHmac("sha256", "test-at-secret").update(body).digest("hex");
+  return new Request("http://localhost/test", {
+    method: "POST",
+    headers: { "content-type": "application/x-www-form-urlencoded", "x-at-signature": signature },
+    body,
+  }) as unknown as NextRequest;
 }
 
 beforeEach(() => {
   vi.clearAllMocks();
   process.env.CRON_SECRET = "test-cron-secret";
+  process.env.AT_WEBHOOK_SECRET = "test-at-secret";
 
   mockRequireRole.mockResolvedValue(mockTeacher);
 

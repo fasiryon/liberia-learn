@@ -1,8 +1,9 @@
 # LiberiaLearn Consolidated Backlog
 
 **Status:** Canonical project-wide backlog  
-**Reconciled:** 2026-08-03  
-**Next national sprint:** NR-13, Grades 5–8 Gap Closure + ENGLISH. NR-12,
+**Reconciled:** 2026-09-04
+**Next national sprint:** NR-15, Unified Ops Dashboard + Alerting, after the
+bounded pre-NR15 repository audit-remediation gate. NR-12,
 Critical Grade Deserts (G2, G9), is COMPLETE in the repository on 2026-08-28;
 see `CURRENT_EXECUTION_STATE.md` for the evidence record.
 NR-3, NR-6, NR-7, NR-8, NR-10, and NR-11 are all COMPLETE and merged (NR-11
@@ -14,6 +15,11 @@ immutability deliverable is done and live-verified in production; its
 external-pen-test deliverable is deferred pending a real vendor engagement
 (see the NR-9 row below). See `NATIONAL_ROLLOUT_EXECUTION_PLAN.md` and
 `CURRENT_EXECUTION_STATE.md` for full detail.
+
+P7-A is **COMPLETE AND CERTIFIED** through PR #112. P7-B is **COMPLETE AND
+CERTIFIED** through PR #116. P7-C is **COMPLETE AND CERTIFIED** through PR
+#120. The P7 composition closure is **COMPLETE** through PR #122. These
+certifications preserve and supersede the older partial-state history below.
 
 ## Authority and maintenance
 
@@ -118,13 +124,13 @@ Sources:
 
 | ID | Reconciled status |
 |---|---|
-| B1 Inbound SMS webhook authentication | **VALID.** No verified provider-signature/authentication boundary. |
+| B1 Inbound SMS webhook authentication | **DONE (pre-NR15 closure, 2026-09-04).** Both Africa's Talking webhook routes use one fail-closed raw-body HMAC authority; grade-affecting replies claim a hashed provider message ID before mutation to reject replay. |
 | B2 Per-IP login throttling | **VALID.** Credential login is still principally identifier-limited. |
-| B3 CSP enforcement | **VALID.** Policy remains report-only or contains `unsafe-inline` allowances. |
+| B3 CSP enforcement | **DONE (pre-NR15 closure, 2026-09-04).** Per-request nonce CSP is enforcing; `script-src` has no `unsafe-inline`; credential printing and low-bandwidth initialization no longer inject executable inline HTML. |
 | B4 Alert drills | **VALID.** No completed real alert drill evidence. |
 | B5 Database restore test | **VALID.** Backup-related code is not evidence of a successful restore. |
 | B6 Cron freshness monitoring | **PARTIAL.** Some agents/cron paths publish heartbeats; full scheduled-job coverage does not exist. |
-| B7 Student large-font control | **VALID.** Accessibility toggle is not mounted in the student experience. |
+| B7 Student large-font control | **DONE (pre-NR15 closure, 2026-09-04).** The existing persisted accessibility toggle is mounted in the student shell behind the existing feature flag. |
 | B8 Audio coverage | **VALID.** Principally covered by NR-14. |
 | B9 Serve-time lesson quality gate | **VALID.** Principally covered by NR-10 and NR-11. |
 | B10 Per-message SMS cost accounting | **PARTIAL.** Guardian-agent SMS has segment/cost controls, but general delivery records lack complete cost accounting. |

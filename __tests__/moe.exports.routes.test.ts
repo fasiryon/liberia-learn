@@ -235,6 +235,6 @@ describe("MOE export routes", () => {
     expect(response.status).toBe(200);
     expect(response.headers.get("Content-Type")).toContain("text/html");
     expect(body).toContain("National Education Platform Summary Report");
-    expect(body).toContain("window.print()");
+    expect(body).not.toContain("<script>");
   });
 });

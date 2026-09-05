@@ -13,6 +13,7 @@
     "test:e2e:pwa": "playwright test e2e/p5c-pwa-lifecycle.spec.ts",
     "test:watch": "vitest",
     "validate:changed": "node scripts/validate-changed.mjs",
+    "audit:api-routes": "node scripts/audit-api-route-policies.mjs",
     "seed:demo": "ts-node --compiler-options {\"module\":\"CommonJS\"} scripts/seed-demo.ts",
     "embed:curriculum": "tsx scripts/embed-curriculum.ts",
     "audit:lessons": "tsx scripts/audit-lesson-depth.ts",

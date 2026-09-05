@@ -4,6 +4,8 @@ import { prisma } from "@/lib/db";
 import { requireMoeExportUser } from "@/lib/moe/exportUtils";
 import { assertPermission, PERMISSIONS } from "@/lib/permissions";
 
+// route-policy: auth=session; scope=national; authority=elevated; rationale=MOE aggregate export requires governance export permission
+
 export const dynamic = "force-dynamic";
 
 function escapeHtml(value: string) {
@@ -160,7 +162,6 @@ export async function GET() {
       @media print { body { background: white; } .page { padding: 20px 12px 24px; } }
       @media (max-width: 720px) { .grid { grid-template-columns: 1fr 1fr; } .bar-row { grid-template-columns: 120px 1fr 52px; } }
     </style>
-    <script>window.onload = () => window.print()</script>
   </head>
   <body>
     <div class="page">
