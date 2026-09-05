@@ -41,7 +41,7 @@ This plan governs the path from **current production baseline** to **world-class
 | NR-13 | Grades 5–8 Gap Closure + ENGLISH | 3 | Content | PENDING | AUTHORED MATRIX PASS; APPROVED coverage and dashboard verification pending (no production/staging mutation) |
 | NR-14 | National Audio Pipeline Completion | 3 | Content | PENDING | REPOSITORY PIPELINE COMPLETE; governed coverage/publication run pending authorization |
 | NR-14.5 | Auto-Grading Fairness Review | 3 | Content | COMPLETE | PASS (2026-08-31, PR #110: answer-key integrity remediation, server-held code-test authority, bounded AI prompts, 4,936 Vitest tests, build and PWA regression green) |
-| NR-15 | Unified Ops Dashboard + Alerting | 4 | Ops | PENDING | NOT RUN |
+| NR-15 | Unified Ops Dashboard + Alerting | 4 | Ops | COMPLETE AND CERTIFIED | PR pending merge |
 | NR-16 | Playwright CI + Phase 6 Close on Main | 4 | Ops | PENDING | NOT RUN |
 | NR-17 | DR Drill + Export Circuit Breaker Under Load | 4 | Ops | PENDING | NOT RUN |
 | NR-17.5 | Data Retention Enforcement + Minors Legal Mapping | 4 | Ops/MOE | PENDING | NOT RUN |
