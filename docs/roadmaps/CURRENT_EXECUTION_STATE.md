@@ -6,8 +6,10 @@ Repository-local gaps for SMS webhook authentication, enforcing nonce CSP,
 changed-route auth/scope backstop, student accessibility access, grading
 override error mapping, backlog currency, and grading-security documentation
 are closed and validated on branch `fix/pre-nr15-audit-remediation` from base
-`84dd5417`. No production or staging mutation occurred. NR-15 remains the
-next sprint and has not started.
+`84dd5417`. No production or staging mutation occurred. NR-15 is complete and
+certified; PR #124 merged to `main` at
+`54f3a33232cd05861007c1f40011b5a8c03de7a9`. The next canonical sprint is
+NR-16, Playwright CI + Phase 6 Close on Main.
 
 ## Purpose
 Live execution tracking for the final closeout program.
@@ -165,8 +167,8 @@ Exact-head CI passed TypeScript, 4,936 Vitest tests, production build, and the
 real-browser PWA regression. Vercel, GitGuardian, and PR triage passed;
 Supabase Preview was skipped under the established Prisma-authoritative
 configuration. No production or staging mutation occurred. NR-13 governed
-promotion remains deferred. The next canonical goal remains NR-15, Unified Ops
-Dashboard + Alerting.
+promotion remains deferred. NR-15 is complete and certified. The next
+canonical sprint is NR-16, Playwright CI + Phase 6 Close on Main.
 
 ## P5-A Manifest Policy Authority: COMPLETE
 
@@ -2488,3 +2490,8 @@ tenant-scoped, privacy-safe, freshness/provenance-labelled, and fails closed
 to UNKNOWN on missing subsystem evidence. Notification delivery is explicitly
 NO_EXTERNAL_DELIVERY. Live reviewer, provider, migration, signing, field,
 penetration-test, and other external gates remain separately open.
+
+PR #124 is merged. NR-15 is present on `main` at
+`54f3a33232cd05861007c1f40011b5a8c03de7a9`. The next canonical sprint is
+NR-16, Playwright CI + Phase 6 Close on Main; NR-16 remains pending and has not
+started.
