@@ -3,6 +3,8 @@
 on:
   push:
     branches: [main]
+  pull_request:
+    branches: [main]
 
 jobs:
   runtime-gate:
@@ -12,7 +14,8 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '20.19.5'
+          cache: npm
       - run: npm ci
       - name: Smoke test critical routes
         env:

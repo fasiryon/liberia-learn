@@ -1,0 +1,53 @@
+name: Playwright Production
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: playwright-production
+  # Only the newest main SHA can remain on the moving production alias.
+  cancel-in-progress: true
+
+jobs:
+  production-smoke:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      PLAYWRIGHT_PRODUCTION: '1'
+      PLAYWRIGHT_BASE_URL: ${{ vars.PLAYWRIGHT_BASE_URL }}
+      PLAYWRIGHT_EXPECTED_SHA: ${{ github.sha }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20.19.5'
+          cache: npm
+      - run: npm ci
+      - name: Validate production authority and test selection
+        env:
+          E2E_DEMO_STUDENT_EMAIL: config-check@example.invalid
+          E2E_DEMO_STUDENT_PASSWORD: config-check-not-used
+        run: npx playwright test --list
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Wait for the actual main deployment
+        run: node scripts/wait-for-production.mjs
+      - name: Enforce production browser smoke
+        env:
+          E2E_DEMO_STUDENT_EMAIL: ${{ secrets.E2E_DEMO_STUDENT_EMAIL }}
+          E2E_DEMO_STUDENT_PASSWORD: ${{ secrets.E2E_DEMO_STUDENT_PASSWORD }}
+        run: npx playwright test
+      - name: Record deployment evidence
+        if: success()
+        env:
+          VERIFIED_SHA: ${{ github.sha }}
+        run: |
+          printf 'Production Playwright PASS\n\nVerified deployment SHA: `%s`\n' "$VERIFIED_SHA" >> "$GITHUB_STEP_SUMMARY"
+      # Auth/session/learner payloads must never be uploaded as trace/video/HTML.
+      # The static test name and sanitized assertion failures remain in job logs.
