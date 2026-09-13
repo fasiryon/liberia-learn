@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+// route-policy: auth=session; scope=tenant; authority=student-membership; rationale=offline operations are rebound to the authenticated learner and school
 import { requireRole } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { logAudit } from "@/lib/audit";
@@ -274,6 +275,8 @@ export async function POST(req: NextRequest) {
                 ? "labSession"
                 : canonical?.resourceType === "homework_submission"
                   ? "submission"
+                  : canonical?.resourceType === "learning_observation"
+                    ? "learningObservation"
                   : legacyEntity;
       const effectiveEntity = canonicalEntity;
       const entity = effectiveEntity;
@@ -283,6 +286,8 @@ export async function POST(req: NextRequest) {
           ? "offline.sync.attendance.accepted"
           : effectiveEntity === "submission"
             ? "offline.sync.submission.accepted"
+            : effectiveEntity === "learningObservation"
+              ? "learning.observation.received"
             : `offline.sync.${effectiveEntity}.accepted`;
       const operationFingerprint = canonical ? offlineOperationFingerprint(canonical) : null;
 
@@ -338,6 +343,54 @@ export async function POST(req: NextRequest) {
       }
 
       try {
+        if (effectiveEntity === "learningObservation" && canonical) {
+          const claimedMastery = canonical.payload.mastery ?? canonical.payload.masteryScore ?? canonical.payload.canonicalMastery;
+          if (claimedMastery !== undefined) {
+            skipped++;
+            results.push({ opId: opKey, entity, status: "rejected", resolutionHint: "offline_client_cannot_assert_mastery" });
+            continue;
+          }
+          const student = await prisma.student.findFirst({
+            where: { userId: user.id, user: { schoolId: user.schoolId ?? null } },
+            select: { id: true },
+          });
+          if (!student || (canonical.learnerId && canonical.learnerId !== user.id) || canonical.schoolId !== user.schoolId) {
+            skipped++;
+            results.push({ opId: opKey, entity, status: "rejected", resolutionHint: "tenant_or_student_identity_mismatch" });
+            continue;
+          }
+          await logLearningEvent({
+            schoolId: user.schoolId ?? null,
+            userId: user.id,
+            studentId: student.id,
+            actor: { type: "user", id: user.id, role: "STUDENT" },
+            target: { type: "learning_observation", id: canonical.resourceId },
+            eventId: syncIdentity.clientEventId,
+            eventType: "learning.observation.received",
+            source: "/api/student/sync",
+            status: "raw_observation",
+            clientEventId: syncIdentity.clientEventId,
+            dedupeKey: syncIdentity.dedupeKey,
+            originalOccurredAt: syncIdentity.originalTimestamp,
+            syncReceivedAt: syncIdentity.syncReceivedAt,
+            metadata: {
+              itemId: typeof canonical.payload.itemId === "string" ? canonical.payload.itemId : null,
+              itemVersion: typeof canonical.payload.itemVersion === "string" ? canonical.payload.itemVersion : null,
+              toolPolicyVersion: typeof canonical.payload.toolPolicyVersion === "string" ? canonical.payload.toolPolicyVersion : null,
+              toolsUsed: Array.isArray(canonical.payload.toolsUsed)
+                ? canonical.payload.toolsUsed.filter((tool): tool is string => typeof tool === "string")
+                : [],
+              hintsUsed: typeof canonical.payload.hintsUsed === "number" ? canonical.payload.hintsUsed : null,
+              aiAssisted: canonical.payload.aiAssisted === true,
+              operationFingerprint,
+              evidenceAdmission: "NOT_AUTOMATIC",
+            },
+          }, { throwOnError: true });
+          synced++;
+          results.push({ opId: opKey, entity, status: "synced", resolutionHint: "raw_observation_recorded" });
+          continue;
+        }
+
         if (effectiveEntity === "studentProgress") {
           if (!scheduledWorkId) {
             skipped++;
@@ -777,13 +830,21 @@ export async function POST(req: NextRequest) {
             results.push({ status: "conflict", opId: opKey, entity, serverState: session, clientState: payload, resolutionHint: "completed_lab_session_requires_review" });
             continue;
           }
+          const provisionalScore = payload?.score;
+          if (provisionalScore !== undefined &&
+            (typeof provisionalScore !== "number" || !Number.isFinite(provisionalScore) || provisionalScore < 0 || provisionalScore > 100)) {
+            skipped++;
+            results.push({ status: "rejected", opId: opKey, entity, resolutionHint: "invalid_provisional_lab_score" });
+            continue;
+          }
           await labModel?.update?.({
             where: { id: sessionId },
             data: {
               observations: payload?.observations,
               conclusions: payload?.conclusions,
-              score: typeof payload?.score === "number" ? payload.score : undefined,
+              score: typeof provisionalScore === "number" ? provisionalScore : undefined,
               completedAt: typeof payload?.completedAt === "string" ? new Date(payload.completedAt) : undefined,
+              masteryUpdated: false,
             },
           });
           synced++;
@@ -800,7 +861,16 @@ export async function POST(req: NextRequest) {
             dedupeKey: syncIdentity.dedupeKey,
             originalOccurredAt: syncIdentity.originalTimestamp,
             syncReceivedAt: syncIdentity.syncReceivedAt,
-            metadata: { entity, sessionId, operationFingerprint, contentTrust: contentTrust.status },
+            status: "provisional",
+            metadata: {
+              entity,
+              sessionId,
+              operationFingerprint,
+              contentTrust: contentTrust.status,
+              provisionalScore: typeof provisionalScore === "number" ? provisionalScore : null,
+              evidenceAdmission: "NOT_AUTOMATIC",
+              masteryUpdated: false,
+            },
           });
           results.push({ opId: opKey, entity, status: "synced" });
           continue;

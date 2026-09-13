@@ -375,11 +375,10 @@ describe("National Scale Smoke Test — 10 parallel school contexts", () => {
     expect(new Set(sessionIds).size).toBe(10);
   });
 
-  it("Step 4 — Student completes lab: 10 completions with mastery update, no cross-school data", async () => {
+  it("Step 4 — Student completes lab: 10 provisional completions, no cross-school data", async () => {
     const schools = Array.from({ length: 10 }, (_, i) => makeSchoolContext(i));
 
-    // labSession.update is called TWICE per request: once for score, once for masteryUpdated:true.
-    // Use mockImplementation (arg-based) so concurrent calls don't interleave the Once queue.
+    // labSession.update is called once per request and always keeps masteryUpdated false.
     mockLabSessionFindUnique.mockImplementation(async (args: any) => {
       const id = args.where?.id;
       const ctx = schools.find((s) => s.sessionId === id);
@@ -392,9 +391,6 @@ describe("National Scale Smoke Test — 10 parallel school contexts", () => {
     });
     mockLabSessionUpdate.mockImplementation(async (args: any) => {
       const id = args.where?.id;
-      if (args.data?.masteryUpdated === true) {
-        return { id, masteryUpdated: true };
-      }
       const ctx = schools.find((s) => s.sessionId === id);
       const scoreVal = ctx ? 70 + (schools.indexOf(ctx) * 3) : 75;
       // Include labId and scheduledWorkId so triggerMasteryUpdate can walk the chain
@@ -408,19 +404,6 @@ describe("National Scale Smoke Test — 10 parallel school contexts", () => {
         schoolId: ctx?.schoolId ?? "school-0",
       };
     });
-    // Mastery chain — arg-based so concurrent calls resolve correctly
-    mockStudentFindUnique.mockImplementation(async (args: any) => ({
-      id: `student-record-${args.where?.userId}`,
-    }));
-    mockScheduledWorkFindUnique.mockImplementation(async (args: any) => {
-      const id = args.where?.id;
-      const ctx = schools.find((s) => s.swId === id);
-      if (!ctx) return null;
-      return { id, content: { subject: "MATH", grade: 7, moeAlignments: [{ code: "MATH-G7-NUM-01" }] } };
-    });
-    mockStrandCatalogFindFirst.mockResolvedValue({ strandKey: "number_operations" });
-    mockUpdateMasteryProfile.mockResolvedValue(undefined);
-
     const results = await Promise.all(
       schools.map(async (ctx) => {
         const score = 70 + (schools.indexOf(ctx) * 3); // unique score per school
@@ -447,8 +430,9 @@ describe("National Scale Smoke Test — 10 parallel school contexts", () => {
       expect(r.body.session.schoolId).toBe(r.ctx.schoolId);
     });
 
-    // Mastery was triggered for all 10 schools
-    expect(mockUpdateMasteryProfile).toHaveBeenCalledTimes(10);
+    // Client lab scores remain provisional and never trigger mastery.
+    expect(mockUpdateMasteryProfile).not.toHaveBeenCalled();
+    results.forEach((r) => expect(r.body).toMatchObject({ evidenceStatus: "PROVISIONAL", masteryUpdated: false }));
   });
 
   it("Step 5 — Teacher views delivery report: 10 schedule GETs with compliance data scoped", async () => {

@@ -289,7 +289,7 @@ describe("Final gate all-roles smoke", () => {
     expect((await studentTodayGet()).status).toBe(200);
     expect((await (await studentGapsGet()).json()).gaps[0].strand).toBe("MATH.NUM.1");
     expect((await (await studentPracticePost(req("POST", "http://localhost/api/student/adaptive/practice", { strandCode: "MATH.NUM.1" }))).json()).practice.questions).toHaveLength(5);
-    expect((await (await studentAdaptiveSubmitPost(req("POST", "http://localhost/api/student/adaptive/submit", { strandCode: "MATH.NUM.1", practiceSetId: "practice-1", answers: [1, 1, 1, 1, 1], correctAnswers: [1, 1, 1, 1, 1] }))).json()).passed).toBe(true);
+    expect((await (await studentAdaptiveSubmitPost(req("POST", "http://localhost/api/student/adaptive/submit", { strandCode: "MATH.NUM.1", practiceSetId: "practice-1", answers: [1, 1, 1, 1, 1], correctAnswers: [1, 1, 1, 1, 1] }))).json()).error).toBe("adaptive_practice_session_invalid_or_expired");
     expect((await (await studentExamsGet()).json()).exams[0].questions[0].correctIndex).toBeUndefined();
     expect((await (await studentExamStartPost(req("POST", "http://localhost/api/student/exams/exam-1/start"), { params: { examId: "exam-1" } })).json()).attemptId).toBe("attempt-1");
     expect((await (await studentExamSubmitPost(req("POST", "http://localhost/api/student/exams/exam-1/submit", { attemptId: "attempt-1", answers: [1, 1, 1, 1, 1] }), { params: { examId: "exam-1" } })).json()).certCode).toContain("CERT-");

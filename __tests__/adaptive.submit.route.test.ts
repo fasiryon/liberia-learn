@@ -43,16 +43,32 @@ vi.mock("@/lib/db", () => ({
 }));
 
 import { POST } from "@/app/api/student/adaptive/submit/route";
+import { sealAdaptivePracticeSession } from "@/lib/adaptive/practiceSession";
 
-function makeRequest(body: unknown) {
-  return new Request("http://localhost/api/student/adaptive/submit", {
+function makeRequest(body: typeof baseBody, authoritativeAnswers = [0, 1, 2, 3, 0]) {
+  const sealed = sealAdaptivePracticeSession({
+    userId: "user-1",
+    strandCode: body.strandCode,
+    questions: authoritativeAnswers.map((correctIndex, index) => ({
+      id: `question-${index}`,
+      prompt: `Question ${index}`,
+      options: ["A", "B", "C", "D"],
+      correctIndex,
+      explanation: "Server held",
+      hintText: "Hint",
+    })),
+  });
+  body = { ...body, practiceSetId: sealed.practiceSetId };
+  const request = new Request("http://localhost/api/student/adaptive/submit", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(body),
   }) as any;
+  request.cookies = { get: () => ({ value: sealed.token }) };
+  return request;
 }
 
-const body = {
+const baseBody = {
   strandCode: "fractions",
   practiceSetId: "practice-1",
   answers: [0, 1, 2, 3, 0],
@@ -112,19 +128,21 @@ beforeEach(() => {
 });
 
 describe("POST /api/student/adaptive/submit", () => {
-  it("saves attempt and returns score", async () => {
-    const response = await POST(makeRequest(body));
+  it("returns a server score without writing unbound learning state", async () => {
+    const response = await POST(makeRequest(baseBody));
     expect(response.status).toBe(200);
     const payload = await response.json();
     expect(payload.score).toBe(1);
-    expect(mockAdaptiveAttemptCreate).toHaveBeenCalled();
-    expect(mockAssessmentAttemptCreate).toHaveBeenCalled();
-    expect(mockAppendMasterySnapshot).toHaveBeenCalled();
-    expect(mockAppendDerivedStudentProgress).toHaveBeenCalled();
+    expect(payload.evidenceStatus).toBe("PROVISIONAL_UNBOUND");
+    expect(mockAdaptiveAttemptCreate).not.toHaveBeenCalled();
+    expect(mockAssessmentAttemptCreate).not.toHaveBeenCalled();
+    expect(mockUpdateMasteryProfile).not.toHaveBeenCalled();
+    expect(mockAppendMasterySnapshot).not.toHaveBeenCalled();
+    expect(mockAppendDerivedStudentProgress).not.toHaveBeenCalled();
   });
 
   it("passed=true when score >= 0.70", async () => {
-    const response = await POST(makeRequest(body));
+    const response = await POST(makeRequest(baseBody));
     const payload = await response.json();
     expect(payload.passed).toBe(true);
   });
@@ -152,24 +170,36 @@ describe("POST /api/student/adaptive/submit", () => {
 
     const response = await POST(
       makeRequest({
-        ...body,
+        ...baseBody,
         answers: [0, 1, 1, 3, 2],
-      })
+      }, [1, 0, 0, 0, 0])
     );
     const payload = await response.json();
     expect(payload.passed).toBe(false);
-    expect(mockTagMisconception).toHaveBeenCalled();
+    expect(mockTagMisconception).not.toHaveBeenCalled();
   });
 
   it("returns nextTier in response", async () => {
-    const response = await POST(makeRequest(body));
+    const response = await POST(makeRequest(baseBody));
     const payload = await response.json();
     expect(payload).toHaveProperty("nextTier");
   });
 
   it("requires STUDENT session", async () => {
     mockRequireRole.mockRejectedValueOnce(Object.assign(new Error("Unauthorized"), { status: 401 }));
-    const response = await POST(makeRequest(body));
+    const response = await POST(makeRequest(baseBody));
     expect(response.status).toBe(401);
+  });
+
+  it("ignores a forged client correctAnswers array", async () => {
+    const response = await POST(makeRequest({
+      ...baseBody,
+      answers: [3, 3, 3, 3, 3],
+      correctAnswers: [3, 3, 3, 3, 3],
+    }, [0, 1, 2, 0, 1]));
+    const payload = await response.json();
+    expect(payload.score).toBe(0);
+    expect(payload.masteryUpdated).toBe(false);
+    expect(mockUpdateMasteryProfile).not.toHaveBeenCalled();
   });
 });

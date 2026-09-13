@@ -543,7 +543,7 @@ describe("Step 4 — Mastery updates after lab session (PATCH /api/student/labs/
     mockLogAudit.mockResolvedValue(undefined);
   });
 
-  it("happy path — calls updateMasteryProfile with normalized score when completing with score", async () => {
+  it("happy path — records a provisional score without mastery", async () => {
     const req = makePatchReq({
       score: 85,
       completedAt: "2026-03-10T10:00:00Z",
@@ -555,32 +555,20 @@ describe("Step 4 — Mastery updates after lab session (PATCH /api/student/labs/
 
     expect(res.status).toBe(200);
     expect(body).toHaveProperty("session");
-    expect(mockUpdateMasteryProfile).toHaveBeenCalledWith(
-      expect.objectContaining({
-        studentId: "student-rec-a-1",
-        schoolId: SCHOOL_A,
-        subject: "SCIENCE",
-        strandKey: "ecosystems",
-        gradeBand: "G4_6",
-        newScore: 0.85,
-        wasAiAssisted: false,
-      })
-    );
+    expect(mockUpdateMasteryProfile).not.toHaveBeenCalled();
+    expect(body).toMatchObject({ evidenceStatus: "PROVISIONAL", masteryUpdated: false });
   });
 
-  it("score normalisation — score 100 → newScore 1.0, score 0 → newScore 0.0", async () => {
+  it("score completion remains provisional and never updates mastery", async () => {
     const req100 = makePatchReq({ score: 100, completedAt: "2026-03-10T10:00:00Z" });
     await labSessionPatch(req100, { params: { sessionId: "session-1" } });
-    expect(mockUpdateMasteryProfile).toHaveBeenLastCalledWith(
-      expect.objectContaining({ newScore: 1.0 })
-    );
+    expect(mockUpdateMasteryProfile).not.toHaveBeenCalled();
 
     mockLabSessionFindUnique.mockResolvedValue({ ...BASE_SESSION, masteryUpdated: false });
     const req0 = makePatchReq({ score: 0, completedAt: "2026-03-10T10:00:00Z" });
-    await labSessionPatch(req0, { params: { sessionId: "session-1" } });
-    expect(mockUpdateMasteryProfile).toHaveBeenLastCalledWith(
-      expect.objectContaining({ newScore: 0.0 })
-    );
+    const res0 = await labSessionPatch(req0, { params: { sessionId: "session-1" } });
+    expect(mockUpdateMasteryProfile).not.toHaveBeenCalled();
+    expect(await res0.json()).toMatchObject({ evidenceStatus: "PROVISIONAL", masteryUpdated: false });
   });
 
   it("does NOT call updateMasteryProfile for a partial update (no completedAt)", async () => {

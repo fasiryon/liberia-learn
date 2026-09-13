@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+// route-policy: auth=session; scope=tenant; authority=student-membership; rationale=practice generation is bound to the authenticated learner and school
 import { requireRole } from "@/lib/auth";
 import { logAudit } from "@/lib/audit";
 import { checkAiRateLimit } from "@/lib/ai/rateLimitGuard";
@@ -12,6 +13,7 @@ import {
 } from "@/lib/adaptive/difficultyAdapter";
 import { generateTargetedPracticeWithUsage } from "@/lib/adaptive/practiceGenerator";
 import { logger } from "@/lib/logger";
+import { projectAdaptivePracticeForLearner, sealAdaptivePracticeSession } from "@/lib/adaptive/practiceSession";
 
 export const dynamic = "force-dynamic";
 
@@ -87,10 +89,26 @@ export async function POST(req: NextRequest) {
       },
     });
 
-    return NextResponse.json(
-      { practice: generation.practice, hadFallback: generation.hadFallback === true },
+    const sealed = sealAdaptivePracticeSession({
+      userId: user.id,
+      strandCode: gap.strand,
+      questions: generation.practice.questions,
+    });
+    const response = NextResponse.json(
+      {
+        practice: projectAdaptivePracticeForLearner(generation.practice, sealed.practiceSetId),
+        hadFallback: generation.hadFallback === true,
+      },
       { headers: getRateLimitHeaders(rateLimit) }
     );
+    response.cookies.set("adaptive_practice_session", sealed.token, {
+      httpOnly: true,
+      sameSite: "strict",
+      secure: process.env.NODE_ENV === "production",
+      path: "/api/student/adaptive/submit",
+      maxAge: 2 * 60 * 60,
+    });
+    return response;
   } catch (error: any) {
     logger.error("[adaptive.practice.POST]", {
       route: "/api/student/adaptive/practice",

@@ -470,21 +470,13 @@ describe("PATCH /api/student/labs/sessions/[sessionId]", () => {
     expect(res.status).toBe(404);
   });
 
-  it("completes session with score and sets masteryUpdated=true", async () => {
-    // First update returns the session; second update sets masteryUpdated=true
-    mockLabSessionUpdate
-      .mockResolvedValueOnce({
-        ...LAB_SESSION_RECORD,
-        score: 85,
-        completedAt: new Date("2026-03-01T10:00:00Z"),
-        masteryUpdated: false,
-      })
-      .mockResolvedValueOnce({
-        ...LAB_SESSION_RECORD,
-        score: 85,
-        completedAt: new Date("2026-03-01T10:00:00Z"),
-        masteryUpdated: true,
-      });
+  it("completes session with a provisional score without mastery", async () => {
+    mockLabSessionUpdate.mockResolvedValueOnce({
+      ...LAB_SESSION_RECORD,
+      score: 85,
+      completedAt: new Date("2026-03-01T10:00:00Z"),
+      masteryUpdated: false,
+    });
 
     const res = await updateSessionPatch(
       makeRequest("PATCH", "http://localhost/api/student/labs/sessions/sess-1", {
@@ -495,12 +487,10 @@ describe("PATCH /api/student/labs/sessions/[sessionId]", () => {
     );
 
     expect(res.status).toBe(200);
-    // Mastery service should have been called
-    expect(mockUpdateMasteryProfile).toHaveBeenCalledOnce();
-    // Second labSession.update call sets masteryUpdated=true
-    expect(mockLabSessionUpdate).toHaveBeenCalledTimes(2);
-    const masteryUpdateCall = mockLabSessionUpdate.mock.calls[1][0];
-    expect(masteryUpdateCall.data.masteryUpdated).toBe(true);
+    expect(mockUpdateMasteryProfile).not.toHaveBeenCalled();
+    expect(mockLabSessionUpdate).toHaveBeenCalledTimes(1);
+    expect(mockLabSessionUpdate.mock.calls[0][0].data.masteryUpdated).toBe(false);
+    await expect(res.json()).resolves.toMatchObject({ evidenceStatus: "PROVISIONAL", masteryUpdated: false });
   });
 
   it("does not call mastery service when session was already masteryUpdated", async () => {

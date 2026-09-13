@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import type { Subject } from "@prisma/client";
+// route-policy: auth=session; scope=tenant; authority=student-membership; rationale=server-scored practice is bound to the learner, school, and sealed item session
 import { requireRole } from "@/lib/auth";
 import { logAudit } from "@/lib/audit";
 import { prisma } from "@/lib/db";
@@ -9,15 +9,8 @@ import {
   type AttemptRecord,
 } from "@/lib/adaptive/difficultyAdapter";
 import { isAdaptiveEngineEnabled } from "@/lib/serverFlags";
-import { recordPerformanceEvent } from "@/lib/intelligence/recordPerformanceEvent";
-import {
-  appendDerivedStudentProgress,
-  appendMasterySnapshot,
-} from "@/lib/intelligence/derivedProgress";
-import { tagMisconception } from "@/lib/intelligence/misconceptions";
-import { updateMasteryProfile } from "@/lib/mastery/masteryService";
-import { gradeToBand } from "@/lib/moe/alignment-engine";
 import { logger } from "@/lib/logger";
+import { openAdaptivePracticeSession, scoreAdaptiveAnswers } from "@/lib/adaptive/practiceSession";
 
 export const dynamic = "force-dynamic";
 
@@ -25,32 +18,11 @@ type SubmitBody = {
   strandCode?: string;
   practiceSetId?: string;
   answers?: number[];
-  correctAnswers?: number[];
+  correctAnswers?: number[]; // Legacy compatibility only. Never authoritative.
   durationSeconds?: number;
   aiAssistUsed?: boolean;
   attempts?: number;
 };
-
-function computeScore(answers: number[], correctAnswers: number[]): number {
-  if (answers.length === 0 || answers.length !== correctAnswers.length) {
-    throw Object.assign(new Error("Invalid adaptive attempt payload"), { status: 400 });
-  }
-
-  const correct = answers.reduce((count, answer, index) => {
-    return count + (answer === correctAnswers[index] ? 1 : 0);
-  }, 0);
-
-  return Math.round((correct / answers.length) * 10000) / 10000;
-}
-
-function findIncorrectAnswerIndices(answers: number[], correctAnswers: number[]): number[] {
-  return answers.reduce<number[]>((indices, answer, index) => {
-    if (answer !== correctAnswers[index]) {
-      indices.push(index);
-    }
-    return indices;
-  }, []);
-}
 
 async function resolveAttemptContext(studentId: string, strandCode: string, defaultGrade: number) {
   const gaps = await detectMasteryGaps(studentId);
@@ -136,14 +108,20 @@ export async function POST(req: NextRequest) {
     if (
       typeof body?.strandCode !== "string" ||
       typeof body?.practiceSetId !== "string" ||
-      !Array.isArray(body?.answers) ||
-      !Array.isArray(body?.correctAnswers)
+      !Array.isArray(body?.answers)
     ) {
       return NextResponse.json({ error: "invalid_payload" }, { status: 400 });
     }
 
-    const score = computeScore(body.answers, body.correctAnswers);
-    const incorrectAnswerIndices = findIncorrectAnswerIndices(body.answers, body.correctAnswers);
+    const practiceSession = openAdaptivePracticeSession(
+      req.cookies.get("adaptive_practice_session")?.value ?? "",
+      user.id,
+      body.practiceSetId
+    );
+    if (!practiceSession || practiceSession.strandCode !== body.strandCode) {
+      return NextResponse.json({ error: "adaptive_practice_session_invalid_or_expired" }, { status: 400 });
+    }
+    const { score, incorrectAnswerIndices } = scoreAdaptiveAnswers(body.answers, practiceSession.questions);
     const context = await resolveAttemptContext(student.id, body.strandCode, student.currentGrade ?? 0);
 
     const recentAttemptsBeforeWrite = await (prisma as any).studentAdaptiveAttempt.findMany({
@@ -154,153 +132,10 @@ export async function POST(req: NextRequest) {
     });
 
     const difficultyTier = computeDifficultyTier(context, recentAttemptsBeforeWrite as AttemptRecord[]);
-
-    await (prisma as any).studentAdaptiveAttempt.create({
-      data: {
-        studentId: student.id,
-        strandCode: context.strand,
-        subject: context.subject,
-        grade: context.grade,
-        score,
-        difficultyTier,
-      },
-    });
-
-    const assessmentAttempt = await prisma.assessmentAttempt.create({
-      data: {
-        assessmentId: body.practiceSetId,
-        studentId: student.id,
-        userId: user.id,
-        schoolId: user.schoolId ?? null,
-        subject: context.subject,
-        grade: context.grade,
-        attemptNumber: Math.max(1, Number(body.attempts ?? 1)),
-        status: "completed",
-        score,
-        maxScore: 1,
-        aiAssisted: body.aiAssistUsed === true,
-        rawResponse: {
-          answers: body.answers,
-        },
-        evaluation: {
-          correctAnswers: body.correctAnswers,
-          incorrectAnswerIndices,
-          correctCount: body.answers.length - incorrectAnswerIndices.length,
-          totalQuestions: body.answers.length,
-          passed: score >= 0.7,
-          difficultyTier,
-        },
-        metadata: {
-          strandCode: context.strand,
-          practiceSetId: body.practiceSetId,
-        },
-        source: "student.adaptive.submit",
-        submittedAt: new Date(),
-      },
-      select: { id: true },
-    });
-
-    const recentAttempts = await (prisma as any).studentAdaptiveAttempt.findMany({
-      where: { studentId: student.id, strandCode: context.strand },
-      orderBy: { completedAt: "desc" },
-      take: 10,
-      select: { score: true, completedAt: true },
-    });
-
-    try {
-      const mastery = await updateMasteryProfile({
-        studentId: student.id,
-        schoolId: user.schoolId!,
-        subject: context.subject as Subject,
-        strandKey: context.strand,
-        gradeBand: gradeToBand(context.grade || 1),
-        newScore: score,
-        wasAiAssisted: false,
-        totalAttempts: recentAttempts.length,
-        aiAssistedAttempts: 0,
-        recentScores: recentAttempts
-          .slice()
-          .reverse()
-          .map((attempt: { score: number }) => attempt.score),
-      });
-
-      if (mastery?.profileId) {
-        const baselineScore = mastery.currentScore - mastery.growthDelta;
-
-        const snapshot = await appendMasterySnapshot({
-          studentId: student.id,
-          schoolId: user.schoolId ?? null,
-          subject: String(context.subject),
-          strandKey: context.strand,
-          sourceProfileId: mastery.profileId,
-          sourceAttemptId: assessmentAttempt.id,
-          snapshotType: "adaptive_attempt",
-          currentScore: mastery.currentScore,
-          baselineScore,
-          proficiencyState: mastery.proficiencyState,
-          masteryState: mastery.masteryState,
-          sustainabilityIndex: mastery.sustainabilityIndex,
-          decayRate: mastery.decayRate,
-          aiRelianceRate: mastery.aiRelianceRate,
-          hybridScore: mastery.hybridScore,
-          growthDelta: mastery.growthDelta,
-          metadata: {
-            difficultyTier,
-            incorrectAnswerCount: incorrectAnswerIndices.length,
-          },
-        });
-
-        await appendDerivedStudentProgress({
-          studentId: student.id,
-          schoolId: user.schoolId ?? null,
-          subject: String(context.subject),
-          strandKey: context.strand,
-          sourceProfileId: mastery.profileId,
-          sourceAttemptId: assessmentAttempt.id,
-          sourceSnapshotId: snapshot.id,
-          derivationType: "adaptive_attempt",
-          progressVersion: "sprint3",
-          currentScore: mastery.currentScore,
-          baselineScore,
-          growthDelta: mastery.growthDelta,
-          hybridScore: mastery.hybridScore,
-          sustainabilityIndex: mastery.sustainabilityIndex,
-          decayRate: mastery.decayRate,
-          aiRelianceRate: mastery.aiRelianceRate,
-          proficiencyState: mastery.proficiencyState,
-          masteryState: mastery.masteryState,
-          metadata: {
-            practiceSetId: body.practiceSetId,
-            difficultyTier,
-          },
-        });
-      }
-
-      if (incorrectAnswerIndices.length > 0) {
-        await tagMisconception({
-          studentId: student.id,
-          schoolId: user.schoolId ?? null,
-          subject: String(context.subject),
-          strandKey: context.strand,
-          assessmentAttemptId: assessmentAttempt.id,
-          taggedByUserId: user.id,
-          categoryCode: "adaptive_incorrect_response",
-          categoryLabel: "Adaptive Incorrect Response",
-          categoryDescription: "Incorrect response pattern captured from adaptive practice.",
-          confidence: incorrectAnswerIndices.length / Math.max(body.answers.length, 1),
-          evidence: {
-            incorrectAnswerIndices,
-            totalQuestions: body.answers.length,
-            difficultyTier,
-            practiceSetId: body.practiceSetId,
-          },
-          createCategoryIfMissing: true,
-        });
-      }
-    } catch (error) {
-      logger.error("[adaptive.submit.masteryRefresh]", { error });
-      throw error;
-    }
+    const recentAttempts = [
+      { score, completedAt: new Date() },
+      ...recentAttemptsBeforeWrite,
+    ].slice(0, 10);
 
     const averageScore =
       recentAttempts.reduce((sum: number, attempt: { score: number }) => sum + attempt.score, 0) /
@@ -323,31 +158,18 @@ export async function POST(req: NextRequest) {
       resourceId: body.practiceSetId,
       details: {
         strandCode: context.strand,
-        score,
-        passed: score >= 0.7,
+        provisionalScore: score,
+        evidenceStatus: "PROVISIONAL_UNBOUND",
         nextTier,
       },
-    });
-
-    void recordPerformanceEvent({
-      studentId: student.id,
-      schoolId: user.schoolId!,
-      subject: context.subject,
-      gradeLevel: context.grade,
-      eventType: "practice_attempt",
-      score,
-      durationSeconds: Math.max(0, Number(body.durationSeconds ?? 0)),
-      attempts: Math.max(1, Number(body.attempts ?? recentAttempts.length)),
-      aiAssistUsed: body.aiAssistUsed === true,
-      lessonId: body.practiceSetId,
-    }).catch((error) => {
-      logger.warn("[adaptive.submit.performanceEvent]", { error });
     });
 
     return NextResponse.json({
       score,
       passed: score >= 0.7,
       nextTier,
+      evidenceStatus: "PROVISIONAL_UNBOUND",
+      masteryUpdated: false,
     });
   } catch (error: any) {
     logger.error("[adaptive.submit.POST]", {

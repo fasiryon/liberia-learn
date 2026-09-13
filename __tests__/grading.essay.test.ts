@@ -14,6 +14,7 @@ vi.mock("@/lib/db", () => ({
     student: { findFirst: vi.fn() },
     curriculumContent: { findUnique: vi.fn() },
     gradedSubmission: {
+      findFirst: vi.fn(),
       findUnique: vi.fn(),
       create: vi.fn(),
       update: vi.fn(),
@@ -22,15 +23,16 @@ vi.mock("@/lib/db", () => ({
 }));
 
 vi.mock("@/lib/auth", () => ({
-  requireRole: vi.fn().mockResolvedValue({ id: "user-1", role: "STUDENT" }),
+  requireRole: vi.fn().mockResolvedValue({ id: "user-1", role: "STUDENT", schoolId: "school-1" }),
 }));
 
 vi.mock("@/lib/ai/router", () => ({
   routedCompletion: vi.fn(),
 }));
 
+const mockRecordAnswer = vi.hoisted(() => vi.fn());
 vi.mock("@/lib/adaptive/updateMastery", () => ({
-  recordAnswer: vi.fn().mockResolvedValue({ score: 0.8, mastered: false }),
+  recordAnswer: mockRecordAnswer,
   buildSkillKey: vi
     .fn()
     .mockReturnValue("ENGLISH:G8:unit-essay"),
@@ -219,7 +221,7 @@ describe("POST /api/grading/essay", () => {
   beforeEach(() => {
     mockPrisma.student.findFirst.mockResolvedValue(mockStudent);
     mockPrisma.curriculumContent.findUnique.mockResolvedValue(mockLesson);
-    mockPrisma.gradedSubmission.findUnique.mockResolvedValue(null);
+    mockPrisma.gradedSubmission.findFirst.mockResolvedValue(null);
     mockPrisma.gradedSubmission.create.mockResolvedValue({ id: "sub-1", status: "pending" });
     mockPrisma.gradedSubmission.update.mockResolvedValue({
       id: "sub-1",
@@ -257,12 +259,14 @@ describe("POST /api/grading/essay", () => {
     expect(res.status).toBe(200);
     expect(data.ok).toBe(true);
     expect(data.advisory).toBe(true);
+    expect(data.masteryUpdated).toBe(false);
     expect(typeof data.score).toBe("number");
+    expect(mockRecordAnswer).not.toHaveBeenCalled();
   });
 
   it("idempotency: same clientSubmissionId returns existing submission", async () => {
     const existingSubmission = { id: "sub-existing", score: 0.8, status: "graded" };
-    mockPrisma.gradedSubmission.findUnique.mockResolvedValue(existingSubmission);
+    mockPrisma.gradedSubmission.findFirst.mockResolvedValue(existingSubmission);
 
     const { POST } = await import("@/app/api/grading/essay/route");
     const req = new Request("http://localhost/api/grading/essay", {
@@ -278,6 +282,9 @@ describe("POST /api/grading/essay", () => {
 
     expect(res.status).toBe(200);
     expect(data.submission.id).toBe("sub-existing");
+    expect(mockPrisma.gradedSubmission.findFirst).toHaveBeenCalledWith({
+      where: { clientSubmissionId: "already-submitted", studentId: "student-1" },
+    });
     // AI must NOT be called for duplicate submissions
     expect(mockRouted).not.toHaveBeenCalled();
   });
