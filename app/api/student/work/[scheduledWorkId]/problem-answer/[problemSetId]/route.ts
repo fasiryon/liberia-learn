@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
+// route-policy: auth=session; scope=tenant; authority=enrollment-and-release-policy; rationale=answer access requires enrollment and explicit server release state
 import { requireRole } from "@/lib/auth";
 import { prisma } from "@/lib/db";
+import { mayReleaseStudentAnswer, type StudentAnswerReleasePolicy } from "@/lib/learning-authority/answerRelease";
 
 export const dynamic = "force-dynamic";
 
@@ -14,8 +16,8 @@ export async function GET(
     const user = await requireRole("STUDENT");
     const { scheduledWorkId, problemSetId } = await params;
 
-    const student = await prisma.student.findUnique({
-      where: { userId: user.id },
+    const student = await prisma.student.findFirst({
+      where: { userId: user.id, user: { schoolId: user.schoolId ?? null } },
       select: { id: true },
     });
     if (!student) return NextResponse.json({ error: "Not found" }, { status: 404 });
@@ -26,6 +28,11 @@ export async function GET(
         classId: true,
         content: { select: { payload: true, status: true } },
         class: { select: { schoolId: true } },
+        progress: {
+          where: { studentId: user.id },
+          select: { completedAt: true },
+          take: 1,
+        },
       },
     });
 
@@ -43,10 +50,27 @@ export async function GET(
     });
     if (!enrollment) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
 
-    const payload = sw.content.payload as { problemSets?: Array<{ id: string; answerKey?: string }> } | null;
+    const payload = sw.content.payload as {
+      problemSets?: Array<{
+        id: string;
+        answerKey?: string;
+        answerRelease?: StudentAnswerReleasePolicy;
+      }>;
+    } | null;
     const problemSet = payload?.problemSets?.find((ps) => ps.id === problemSetId);
 
-    return NextResponse.json({ answerKey: problemSet?.answerKey ?? null });
+    if (!problemSet || !mayReleaseStudentAnswer({
+      role: user.role,
+      authenticatedSchoolId: user.schoolId,
+      activitySchoolId: sw.class.schoolId,
+      enrolled: true,
+      completedAt: sw.progress[0]?.completedAt ?? null,
+      policy: problemSet.answerRelease,
+    })) {
+      return NextResponse.json({ error: "Answer not released" }, { status: 403 });
+    }
+
+    return NextResponse.json({ answerKey: problemSet.answerKey ?? null });
   } catch (error: any) {
     if (error?.status === 401) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     return NextResponse.json({ error: "Failed to fetch answer" }, { status: 500 });

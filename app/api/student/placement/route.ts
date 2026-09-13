@@ -1,5 +1,6 @@
 // app/api/student/placement/route.ts
 import { NextResponse } from "next/server";
+// route-policy: auth=session; scope=tenant; authority=student-membership; rationale=diagnostic placement is tenant-bound and cannot change administrative grade
 import { requireRole } from "@/lib/auth";
 import { logAudit } from "@/lib/audit";
 import { prisma } from "@/lib/db";
@@ -9,7 +10,11 @@ export async function POST(req: Request) {
     const user = await requireRole("STUDENT");
 
     const student = await prisma.student.findFirst({
-      where: { userId: user.id },
+      where: {
+        userId: user.id,
+        user: { schoolId: user.schoolId ?? null },
+      },
+      select: { id: true, currentGrade: true },
     });
 
     if (!student) {
@@ -56,13 +61,9 @@ export async function POST(req: Request) {
       aiAnalysis: aiAnalysis ?? null,
     };
 
-    const [placement, updatedStudent] = await prisma.$transaction([
-      prisma.placementTest.create({ data: placementData }),
-      prisma.student.update({
-        where: { id: student.id },
-        data: { currentGrade: estimatedGrade },
-      }),
-    ]);
+    // Placement is diagnostic evidence only. Administrative grade changes
+    // remain behind teacher review and the enrollment/promotion authority.
+    const placement = await prisma.placementTest.create({ data: placementData });
 
     await logAudit({
       userId: user.id,
@@ -82,7 +83,9 @@ export async function POST(req: Request) {
       {
         ok: true,
         placement,
-        currentGrade: updatedStudent.currentGrade,
+        currentGrade: student.currentGrade,
+        recommendedGrade: estimatedGrade,
+        administrativeGradeChanged: false,
       },
       { status: 200 }
     );

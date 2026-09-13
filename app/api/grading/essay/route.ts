@@ -11,19 +11,17 @@
  */
 
 import { NextResponse } from "next/server";
+// route-policy: auth=session; scope=record; authority=student-identity; rationale=essay submission is bound to the authenticated Student record and remains advisory
 import { prisma } from "@/lib/db";
 import { requireRole } from "@/lib/auth";
 import { gradeEssay, isEssayGradeResult } from "@/lib/grading/gradeEssay";
-import { recordAnswer, buildSkillKey } from "@/lib/adaptive/updateMastery";
-
-const MASTERY_SCORE_THRESHOLD = 0.70; // essay score ≥ 0.70 counts as a correct answer for mastery
 
 export async function POST(req: Request) {
   try {
     const user = await requireRole("STUDENT");
 
     const student = await prisma.student.findFirst({
-      where: { userId: user.id },
+      where: { userId: user.id, user: { schoolId: user.schoolId ?? null } },
       select: { id: true },
     });
     if (!student) {
@@ -53,7 +51,7 @@ export async function POST(req: Request) {
     // Idempotency — NR-14A pattern
     if (clientSubmissionId) {
       const existing = await prisma.gradedSubmission
-        .findUnique({ where: { clientSubmissionId } })
+        .findFirst({ where: { clientSubmissionId, studentId: student.id } })
         .catch(() => null);
       if (existing) {
         return NextResponse.json({ ok: true, submission: existing }, { status: 200 });
@@ -121,26 +119,6 @@ export async function POST(req: Request) {
       },
     });
 
-    // Fire-and-forget: feed into AdaptiveMasteryRecord
-    // Essay score ≥ 0.70 = correct answer equivalent for skill tracking
-    void (async () => {
-      try {
-        const skillKey = buildSkillKey({
-          subject: lesson.subject,
-          grade: lesson.grade,
-          unitId: lesson.unitId,
-          contentId: lesson.contentId,
-        });
-        await recordAnswer({
-          studentId: student.id,
-          skillKey,
-          correct: gradeResult.score >= MASTERY_SCORE_THRESHOLD,
-        });
-      } catch {
-        // Non-critical — grading still succeeded
-      }
-    })();
-
     return NextResponse.json({
       ok: true,
       submissionId: update.id,
@@ -149,6 +127,7 @@ export async function POST(req: Request) {
       rubricBreakdown: update.rubricBreakdown,
       gradedAt: update.gradedAt,
       advisory: true, // always remind client this is advisory
+      masteryUpdated: false,
     });
   } catch (err: unknown) {
     const status =

@@ -15,8 +15,6 @@ type PracticeQuestion = {
   id: string;
   prompt: string;
   options: string[];
-  correctIndex: number;
-  explanation: string;
   hintText: string;
 };
 
@@ -25,6 +23,7 @@ type PracticeSet = {
   difficultyTier: string;
   questions: PracticeQuestion[];
   generatedAt: string;
+  practiceSetId: string;
 };
 
 type SubmissionResult = {
@@ -152,9 +151,8 @@ export default function AdaptivePracticeClient() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           strandCode: practice.strand,
-          practiceSetId: crypto.randomUUID(),
+          practiceSetId: practice.practiceSetId,
           answers: nextAnswers,
-          correctAnswers: practice.questions.map((question) => question.correctIndex),
         }),
       });
 

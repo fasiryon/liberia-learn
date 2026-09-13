@@ -1,37 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
+// route-policy: auth=session; scope=record; authority=student-session-ownership; rationale=lab observations require matching learner and school ownership
 import { requireRole } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { logAudit } from "@/lib/audit";
 import { isVirtualLabsEnabled } from "@/lib/serverFlags";
-import { gradeToBand } from "@/lib/moe/alignment-engine";
-import { readMoeAlignmentCodes } from "@/lib/moe/alignmentReader";
-import { updateMasteryProfile } from "@/lib/mastery/masteryService";
 import { enqueue } from "@/lib/offline/offlineQueue";
-import type { Subject } from "@prisma/client";
 
 export const dynamic = "force-dynamic";
 
-const SUBJECT_MAP: Record<string, Subject> = {
-  MATH: "MATH",
-  MATHEMATICS: "MATH",
-  SCIENCE: "SCIENCE",
-  COMPUTER_SCIENCE: "COMPUTER_SCIENCE",
-  CS: "COMPUTER_SCIENCE",
-  ENGINEERING: "ENGINEERING",
-  LITERACY: "LITERACY",
-  ENGLISH: "LITERACY",
-  CIVICS: "CIVICS",
-  ARTS: "ARTS",
-  PE: "PE",
-  CAREER: "CAREER",
-};
-
-/**
- * PATCH /api/student/labs/sessions/[sessionId]
- * Part 7: Update a lab session with observations, conclusions, score, completion.
- * When completedAt + score are provided, triggers mastery update.
- * Body: { observations?, conclusions?, score?, completedAt? }
- */
+/** Client lab scores are provisional observations and never update mastery. */
 export async function PATCH(
   req: NextRequest,
   { params }: { params: { sessionId: string } }
@@ -43,7 +20,6 @@ export async function PATCH(
   try {
     const user = await requireRole("STUDENT");
     const { sessionId } = params;
-
     const session = await prisma.labSession.findUnique({ where: { id: sessionId } });
 
     if (!session) {
@@ -55,9 +31,11 @@ export async function PATCH(
 
     const body = await req.json();
     const { observations, conclusions, score, completedAt } = body;
+    if (score !== undefined && (!Number.isFinite(score) || score < 0 || score > 100)) {
+      return NextResponse.json({ error: "Invalid provisional score" }, { status: 400 });
+    }
 
-    const isCompleting = !!completedAt && score != null;
-
+    const isCompleting = Boolean(completedAt) && score != null;
     const updated = await prisma.labSession.update({
       where: { id: sessionId },
       data: {
@@ -65,108 +43,39 @@ export async function PATCH(
         conclusions: conclusions !== undefined ? conclusions : undefined,
         score: score !== undefined ? score : undefined,
         completedAt: completedAt ? new Date(completedAt) : undefined,
+        masteryUpdated: false,
       },
     });
 
     await logAudit({
       userId: user.id,
-      action: isCompleting ? "lab.session.complete" : "lab.session.update",
+      action: isCompleting ? "lab.session.complete.provisional" : "lab.session.update",
       resourceType: "labSession",
       resourceId: sessionId,
       schoolId: session.schoolId,
-      details: { score: score ?? null, isCompleting },
+      details: { provisionalScore: score ?? null, isCompleting, masteryUpdated: false },
     });
 
-    // Fire-and-forget: record in offline queue for idempotent sync tracking.
     try {
       enqueue("lab.session.update", sessionId, {
         userId: user.id,
-        score: score ?? null,
+        provisionalScore: score ?? null,
         isCompleting,
         updatedAt: new Date().toISOString(),
       });
-    } catch { /* noop */ }
-
-    // Mastery integration when completing with a score
-    if (isCompleting && !session.masteryUpdated) {
-      try {
-        await triggerMasteryUpdate(updated, user.id, session.schoolId);
-        await prisma.labSession.update({
-          where: { id: sessionId },
-          data: { masteryUpdated: true },
-        });
-      } catch {
-        // Mastery update failures are non-fatal — session still completes
-      }
+    } catch {
+      // The durable browser outbox is best-effort for an already persisted row.
     }
 
-    return NextResponse.json({ session: updated });
+    return NextResponse.json({
+      session: updated,
+      evidenceStatus: isCompleting ? "PROVISIONAL" : "RAW_OBSERVATION",
+      masteryUpdated: false,
+    });
   } catch (err: any) {
     return NextResponse.json(
       { error: err?.message ?? "Failed to update session" },
       { status: err?.status ?? 500 }
     );
   }
-}
-
-async function triggerMasteryUpdate(
-  session: { labId: string; scheduledWorkId?: string | null; score: number | null },
-  userId: string,
-  schoolId: string
-) {
-  if (session.score == null) return;
-
-  // Resolve student record (mastery uses Student.id not User.id)
-  const student = await prisma.student.findUnique({
-    where: { userId },
-    select: { id: true },
-  });
-  if (!student) return;
-
-  // Load content for subject + grade via scheduledWork chain
-  let subject: string | null = null;
-  let grade: number | null = null;
-  let codes: string[] = [];
-
-  if (session.scheduledWorkId) {
-    const sw = await prisma.scheduledWork.findUnique({
-      where: { id: session.scheduledWorkId },
-      include: {
-        content: { select: { subject: true, grade: true, moeAlignments: true } },
-      },
-    });
-    if (sw) {
-      subject = sw.content.subject;
-      grade = sw.content.grade;
-      codes = readMoeAlignmentCodes(sw.content.moeAlignments);
-    }
-  }
-
-  if (!subject || !grade) return;
-
-  const prismaSubject = SUBJECT_MAP[subject.toUpperCase()];
-  if (!prismaSubject) return;
-
-  const gradeBand = gradeToBand(grade);
-  const normalizedScore = Math.min(1, Math.max(0, session.score / 100));
-  if (codes.length === 0) return;
-
-  // Look up a strand in StrandCatalog that matches subject + gradeBand
-  const strand = await prisma.strandCatalog.findFirst({
-    where: { subject: prismaSubject, gradeBand, isActive: true },
-    select: { strandKey: true },
-  });
-  if (!strand) return;
-
-  await updateMasteryProfile({
-    studentId: student.id,
-    schoolId,
-    subject: prismaSubject,
-    strandKey: strand.strandKey,
-    gradeBand,
-    newScore: normalizedScore,
-    wasAiAssisted: false,
-    totalAttempts: 1,
-    aiAssistedAttempts: 0,
-  });
 }

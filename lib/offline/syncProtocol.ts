@@ -20,6 +20,7 @@ export type OfflineResourceType =
   | "lab_session"
   | "attendance"
   | "mastery_event"
+  | "learning_observation"
   | "simulation_state";
 
 export type OfflineOperationType =
@@ -31,6 +32,7 @@ export type OfflineOperationType =
   | "lab_session.merge"
   | "attendance.mark"
   | "mastery_event.append"
+  | "learning_observation.append"
   | "simulation_state.merge";
 
 export type OfflineSyncStatus =
@@ -76,7 +78,8 @@ export const OFFLINE_WRITE_POLICIES: Record<OfflineResourceType, OfflineWritePol
   homework_submission: "REQUIRES_CONFLICT_REVIEW",
   lab_session: "MERGEABLE",
   attendance: "REQUIRES_CONFLICT_REVIEW",
-  mastery_event: "APPEND_ONLY",
+  mastery_event: "NOT_SUPPORTED_OFFLINE",
+  learning_observation: "APPEND_ONLY",
   simulation_state: "MERGEABLE",
 };
 
@@ -89,6 +92,7 @@ const OPERATION_TYPES_BY_RESOURCE: Record<OfflineResourceType, OfflineOperationT
   lab_session: "lab_session.merge",
   attendance: "attendance.mark",
   mastery_event: "mastery_event.append",
+  learning_observation: "learning_observation.append",
   simulation_state: "simulation_state.merge",
 };
 

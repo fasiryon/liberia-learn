@@ -401,11 +401,12 @@ describe("Audit Gate 2 — Category 4: logAudit patch verification", () => {
       expect(mockLogAudit).toHaveBeenCalledOnce();
 
       const auditArg = mockLogAudit.mock.calls[0][0];
-      expect(auditArg.action).toBe("lab.session.complete");
+      expect(auditArg.action).toBe("lab.session.complete.provisional");
       expect(auditArg.resourceType).toBe("labSession");
       expect(auditArg.resourceId).toBe("sess-1");
       expect(auditArg.schoolId).toBe("school-1");
       expect(auditArg.details?.isCompleting).toBe(true);
+      expect(auditArg.details?.masteryUpdated).toBe(false);
     });
 
     it("calls logAudit with action lab.session.update for partial update (no score/completedAt)", async () => {
