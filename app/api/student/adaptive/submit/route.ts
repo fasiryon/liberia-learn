@@ -121,7 +121,7 @@ export async function POST(req: NextRequest) {
     if (!practiceSession || practiceSession.strandCode !== body.strandCode) {
       return NextResponse.json({ error: "adaptive_practice_session_invalid_or_expired" }, { status: 400 });
     }
-    const { score, incorrectAnswerIndices } = scoreAdaptiveAnswers(body.answers, practiceSession.questions);
+    const { score, incorrectAnswerIndices } = scoreAdaptiveAnswers(body.answers, practiceSession.correctIndices);
     const context = await resolveAttemptContext(student.id, body.strandCode, student.currentGrade ?? 0);
 
     const recentAttemptsBeforeWrite = await (prisma as any).studentAdaptiveAttempt.findMany({

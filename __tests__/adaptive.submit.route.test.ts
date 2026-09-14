@@ -43,7 +43,10 @@ vi.mock("@/lib/db", () => ({
 }));
 
 import { POST } from "@/app/api/student/adaptive/submit/route";
-import { sealAdaptivePracticeSession } from "@/lib/adaptive/practiceSession";
+import {
+  openAdaptivePracticeSession,
+  sealAdaptivePracticeSession,
+} from "@/lib/adaptive/practiceSession";
 
 function makeRequest(body: typeof baseBody, authoritativeAnswers = [0, 1, 2, 3, 0]) {
   const sealed = sealAdaptivePracticeSession({
@@ -128,6 +131,27 @@ beforeEach(() => {
 });
 
 describe("POST /api/student/adaptive/submit", () => {
+  it("keeps the sealed answer key below cookie limits regardless of practice text size", () => {
+    const verboseText = "x".repeat(20_000);
+    const sealed = sealAdaptivePracticeSession({
+      userId: "user-1",
+      strandCode: "fractions",
+      questions: Array.from({ length: 5 }, (_, index) => ({
+        id: `question-${index}`,
+        prompt: verboseText,
+        options: [verboseText, verboseText, verboseText, verboseText],
+        correctIndex: index % 4,
+        explanation: verboseText,
+        hintText: verboseText,
+      })),
+    });
+
+    expect(sealed.token.length).toBeLessThan(1_000);
+    expect(
+      openAdaptivePracticeSession(sealed.token, "user-1", sealed.practiceSetId)?.correctIndices
+    ).toEqual([0, 1, 2, 3, 0]);
+  });
+
   it("returns a server score without writing unbound learning state", async () => {
     const response = await POST(makeRequest(baseBody));
     expect(response.status).toBe(200);
