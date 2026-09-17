@@ -1,47 +1,42 @@
-# Advisor / Orchestrator Escalation Contract
+# Advisor and parallel-work escalation contract
 
-Standing context for LiberiaLearn sprints. Advisor mode is the default. Orchestrator mode is used only when work is clearly parallel. Every sprint dispatch inherits this file.
+Load this contract only for schema/migration work, explicitly gated sprints, or
+work that is likely to require parallel execution. Universal boundaries live
+in `CORE_AGENT_RULES.md`.
 
-## Modes
+## Execution mode
 
-**Advisor (default).** A single executor runs the work under a defined escalation contract. It stops and requests review at the named decision points below, and proceeds without escalation everywhere else.
+- Use one executor by default.
+- Use subagents only for independent parallel work or specialized review whose
+  benefit exceeds coordination cost. Do not delegate tiny reads, edits, or
+  routine reasoning.
+- When parallelizing, give each worker a narrow scope and deliverable. The main
+  executor owns synthesis and validation.
 
-**Orchestrator (clearly parallel work only).** Work shards into independent chunks with a synthesis step. The planner produces chunk definitions, a per-chunk spec, a synthesis contract, and quality-gate criteria. Workers receive a chunk spec plus shared context (schema, style, existing code) and a deliverable format, with no cross-chunk coordination (a worker that discovers cross-chunk impact escalates to the planner, not to another worker). The planner collects outputs, runs the quality gate, assembles the deliverable, and reports the chunk-quality distribution.
+## Stop and request a decision
 
-## Advisor escalation points (STOP and request review if)
+Stop only when the next action would:
 
-1. A schema change touches any table currently in production use. Safe to add or alter without review: the agent-platform tables (AgentInvocation, AgentGoal, AgentControl, EscalationQueue, AgentCostAccounting). Require review before changing: Student, Guardian, User, StudentProgress, and any table serving live users.
-2. Debugging exceeds 45 minutes of investigation without an identified root cause.
-3. A conventional carry-forward pattern must be broken for a specific reason (see Carry-forward rules).
-4. Projected cost per invocation exceeds $0.005 (signals that model or tool routing needs reconsideration).
-5. A decision would require rewriting more than 200 lines of prior work if the wrong path is taken.
-6. Sprint 6.1 Guardian agent additions: the identity-verification flow, the guardian phone-number update flow, multi-guardian household edge cases, per-guardian SMS cost accounting, and escalation-queue integration for safeguarding / child-safety concerns.
+1. Change a production-used schema or cross an explicit migration gate.
+2. Mutate staging or production, require unavailable real credentials, or
+   increase paid-resource spend.
+3. Resolve a material architecture, security, privacy, child-safety,
+   curriculum-governance, or educational-authority conflict.
+4. Break an explicitly documented compatibility contract or named sprint gate.
+5. Perform a destructive shared-worktree or history operation.
 
-For everything else, proceed without escalation. Record any escalation (reason plus reviewer response) in the sprint report.
+Ordinary implementation mistakes, local test/type/build failures, normal code
+or schema defects, and routine conflicts in an isolated branch are not stop
+conditions. Diagnose, fix, and rerun the affected checks.
 
-## Confirmed pattern gates (2026-07)
+Record the reason and the human decision when an escalation occurs. A named
+model or advisor in an older document means the human decision owner when that
+model is unavailable; never proceed silently through a named gate.
 
-- Sprint 6.0 bundled deploy verification: advisor, 45-minute investigation cap; escalate on root-cause-not-found, a fix that touches a production-live table, or a broken carry-forward rule.
-- Sprint 6.1 Guardian agent: advisor, with the five named Guardian escalation points above.
-- End-of-features curriculum generation (approximately 5,905 lessons times media types, roughly 17,000 generation tasks): orchestrator, sharded by grade and subject, planner quality-gates each chunk.
+## Domain notes
 
-## Carry-forward rules (apply in every session)
-
-1. contentId in URLs, not scheduledWork.id (sw.id).
-2. Hero content lives in payload.body.
-3. DIRECT_URL (port 5432) is intermittently unreachable from this working
-   environment (most recently confirmed 2026-07-30 via a direct Prisma
-   connection test against production). Test it fresh each session before
-   relying on it; do not assume it works from a stale note. When
-   unreachable, use the pooled DATABASE_URL (port 6543, pgbouncer=true,
-   connection_limit=1) for batch writes of any size, sequential (not
-   concurrent, to avoid starving the single pooled connection) — this has
-   been confirmed to handle several thousand real production writes
-   reliably. Prefer DIRECT_URL for large batch writes only when it is
-   confirmed reachable that session.
-4. .trim() on Vercel env vars (learned from the AI tutor CRLF bug).
-5. No em dashes in any output or file.
-
-## How "escalate to Fable" maps when a single model executes directly
-
-When one model is executing (no separate Fable process), "escalate to Fable" means: stop, surface the decision to the human with the escalation reason and the options, and wait for a call. Optionally spawn a Fable-model review agent for a second opinion. Never proceed silently past a named escalation point.
+- Guardian identity verification, phone changes, multi-household behavior,
+  safeguarding escalation, and per-guardian cost accounting remain explicit
+  review points when that workflow is changed.
+- Large governed curriculum generation may be parallelized by grade and
+  subject, but publication and approval remain human-governed.

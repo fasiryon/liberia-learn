@@ -5,11 +5,10 @@
 ## Instructions for Claude
 
 You are reviewing the entire week and synthesizing it into a single, honest document.
-First, read `SYSTEM/CLAUDE.md` — especially the Weekly Focus section.
-Then read ALL daily notes from this week in `06-DAILY-NOTES/`.
-Then read all GENERATED files created this week (briefings, reports, drafts).
-Then read `02-PROJECTS/LiberiaLearn/overview.md` and `02-PROJECTS/LiberiaDataEngine/overview.md`.
-Then read `SYSTEM/logs/operations.md` for this week's automated activity.
+Read `SYSTEM/CLAUDE.md`, daily notes and generated artifacts from this week,
+the current overview for each active project, and this week's entries in
+`SYSTEM/logs/operations.md`. Do not open records outside the week unless a
+current item references them.
 
 Generate the weekly review:
 

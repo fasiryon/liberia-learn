@@ -5,16 +5,13 @@
 ## Instructions for Claude
 
 You are closing a sprint and generating the official review document.
-First, read `SYSTEM/CLAUDE.md`.
-Then read all daily notes from the sprint period in `06-DAILY-NOTES/`.
-Then read `02-PROJECTS/LiberiaLearn/overview.md`.
-Then read the triggering QUEUE file for the sprint number and date range.
+Read `SYSTEM/CLAUDE.md`, the triggering QUEUE file, the current project
+overview, and daily notes within the specified sprint date range.
 
 LiberiaLearn sprint context:
-- Sprints 1–16C are complete (history in CLAUDE.md)
-- Current sprint numbering follows the phase system (sprint N or phase M.N)
-- Test count is tracked per sprint — delta matters
-- Deployment is Vercel auto-deploy on git push to main
+- Treat the triggering request and current project record as authoritative for
+  sprint identity and status.
+- Report test or deployment claims only when the sprint evidence records them.
 
 Look for patterns in daily notes:
 - DONE: entries = completed work

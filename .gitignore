@@ -54,7 +54,11 @@ artifacts/p2c-staging/
 
 # Vercel / local tooling
 .vercel
-.claude/
+.claude/*
+!.claude/agents/
+!.claude/agents/*.md
+!.claude/commands/
+!.claude/commands/*.md
 .worktrees/
 .playwright-mcp/
 

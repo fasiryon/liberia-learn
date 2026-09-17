@@ -5,10 +5,9 @@
 ## Instructions for Claude
 
 You are preparing a government stakeholder briefing for a Ministry of Education meeting.
-First, read `SYSTEM/CLAUDE.md` completely — especially the MOE stakeholder section.
-Then read `01-CLIENTS/MOE/overview.md`.
-Then read ALL files in `01-CLIENTS/MOE/communications/` sorted by date, newest first.
-Then read the triggering QUEUE file for any specific agenda items requested.
+Read `SYSTEM/CLAUDE.md`, `01-CLIENTS/MOE/overview.md`, and the triggering QUEUE
+file. Read communications since the previous meeting, newest first. Open older
+communications only when a current record references them.
 
 Generate a pre-meeting brief with exactly this structure:
 
@@ -27,13 +26,11 @@ Generate a pre-meeting brief with exactly this structure:
 **Pilot readiness status:** [Red / Yellow / Green with one-sentence reason]
 
 ## Metrics to Present
-**Platform version:** 1.0.0 (released 2026-03-01)
-**Test coverage:** 363 test files, 2712+ tests passing
-**MOE standard coverage:** 94% (50/53 standard codes with content)
-**Audit gate status:** Gate 1 passed; Gate 2 passed; Gate 3 certified
-**Key capabilities ready:** Multi-tenant isolation, AI curriculum generation, governance exports,
-  offline mode (service worker + IndexedDB), guardian SMS notifications, live class sessions,
-  national MOE oversight portal (5 read-only routes), disaster recovery runbook
+**Platform version:** [Current evidence, or Unknown]
+**Validation status:** [Current evidence with date, or Unknown]
+**MOE standard coverage:** [Current governed evidence, or Unknown]
+**Audit gate status:** [Current signed or recorded evidence, or Unknown]
+**Key capabilities ready:** [Only capabilities supported by current evidence]
 
 ## Suggested Agenda (3 items)
 1. [Most critical business item]
@@ -41,10 +38,10 @@ Generate a pre-meeting brief with exactly this structure:
 3. Pilot school selection criteria and next steps timeline
 
 ## Key Points to Make
-- Platform has been production-ready since v1.0.0 (2026-03-01)
-- 53 MOE curriculum standards aligned; 94% standard coverage
-- National oversight portal live: MOE officials can view aggregate data without school PII
-- Offline-first design: works on 2G and intermittent connectivity (service worker + sync)
+- [Most important evidence-backed readiness point]
+- [Current curriculum-alignment evidence, if verified]
+- [National oversight capability, only if current evidence confirms aggregate-only output]
+- [Offline behavior, only if current evidence confirms the claimed conditions]
 - [Any additional point from the triggering QUEUE file]
 
 ## Things NOT to say
@@ -57,9 +54,9 @@ Generate a pre-meeting brief with exactly this structure:
 - What is the timeline for school onboarding?
 - How is student data protected?
 - Can MOE officials access individual student records?
-  → Answer: No — MOE portal shows only aggregate national/district data, zero PII
+  → Answer from current access-control and response-shape evidence; never expose PII
 - What happens when connectivity is lost?
-  → Answer: Offline-first design; lessons cached; sync resumes when connection returns
+  → Answer from current offline-delivery and synchronization evidence
 - [Additional questions based on communications history]
 
 ---
