@@ -50,12 +50,19 @@ and uncertainty, and permanently expose `mayChangeAdministrativeGrade: false`.
 
 ## Legacy compatibility
 
-This mission does not delete legacy mastery tables or introduce a new mastery
-engine. Affected unsafe writers are stopped. Existing mastery readers continue
-to serve historical compatibility data. The bounded evidence admission result
-sets `legacyMasteryProjectionAllowed: false`, so there is no dual canonical
-write. A later Student Learning Model mission may define a one-way governed
-projection after calibration and human approval.
+This mission does not delete legacy mastery tables. Affected unsafe writers
+remain stopped and existing mastery readers continue to serve historical
+compatibility data. The evidence admission result still sets
+`legacyMasteryProjectionAllowed: false`, so admission itself never performs a
+dual write.
+
+Student Learning Model V1 now supplies the single canonical writer for this
+governed slice in `lib/learning-state/masteryWriter.ts`. It persists only the
+reserved versioned canonical event and derives state by deterministic replay.
+Legacy stores are excluded from replay inputs. The optional compatibility
+projection in `studentLearningModel.ts` is one-way and read-only; it does not
+write legacy tables. See `STUDENT_LEARNING_MODEL_V1.md` for reducer,
+retention, misconception, calibration, and DecisionModel contracts.
 
 Current compatibility writers remain in `lib/mastery/masteryService.ts`,
 `lib/adaptive/updateMastery.ts`, scheduled lesson completion, WAEC practice,
@@ -70,7 +77,8 @@ decision-support readers treat those records as consequential inputs.
 
 The bounded authority uses minimum necessary identifiers and never copies tutor
 conversation into evidence. Tenant, authenticated User, and Student identities
-must agree. Raw LearningEvent telemetry is not accepted evidence. No production
+must agree. Raw LearningEvent telemetry is not accepted evidence. Only the
+reserved canonical event written after governed admission is replayed. No production
 or staging mutation, live migration, deployment, or Vercel certification is
 part of this mission.
 
