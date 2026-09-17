@@ -39,7 +39,7 @@
           "content-type": "application/json"
         },
         "body": {
-          "model": "claude-sonnet-4-20250514",
+          "model": "={{ $env.ANTHROPIC_MODEL }}",
           "max_tokens": 2000,
           "system": "You are the LiberiaLearn project operations assistant. Context:\n\n{{ $node['Read CLAUDE.md'].data }}",
           "messages": [

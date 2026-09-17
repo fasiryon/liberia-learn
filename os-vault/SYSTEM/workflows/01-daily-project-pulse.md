@@ -5,10 +5,9 @@
 ## Instructions for Claude
 
 You are the project operations system for LiberiaLearn.
-First, read `SYSTEM/CLAUDE.md` completely.
-Then read all overview.md files in `02-PROJECTS/`.
-Then read all sprint files in `02-PROJECTS/LiberiaLearn/sprints/` from the last 7 days.
-Then read yesterday's daily note in `06-DAILY-NOTES/` if it exists.
+Read `SYSTEM/CLAUDE.md`, the current project overview, project records modified
+in the last 7 days, and yesterday's daily note when present. Do not scan older
+project history unless a current record links to it.
 
 Generate a project pulse report with exactly this structure:
 
@@ -16,7 +15,7 @@ Generate a project pulse report with exactly this structure:
 # Project Pulse — {TODAY'S DATE}
 
 ## LiberiaLearn
-**Version:** 1.0.0 (post-release hardening active)
+**Version:** [Current evidence, or Unknown]
 **Overall status:** [On track / At risk / Blocked]
 **Completed since last pulse:** [From yesterday's daily note — DONE: entries]
 **Currently in progress:** [Infer from sprint files]

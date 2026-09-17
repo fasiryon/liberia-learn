@@ -4,18 +4,18 @@
 
 ## Instructions for Claude
 
-You are running a security audit on the LiberiaLearn codebase.
-First, read `SYSTEM/CLAUDE.md` — especially the operating rules about tenant isolation.
-Read the QUEUE file to determine audit scope: auth / pii / database / infrastructure / full.
+Read `SYSTEM/CLAUDE.md` and the QUEUE file to determine the exact audit scope:
+auth, PII, database, infrastructure, or an explicitly requested full audit.
+Inspect only the selected scope and directly related guards or callers.
 
 LiberiaLearn-specific security context:
-- Multi-tenant: every Prisma query MUST include schoolId or districtId scoping
-- JWT_SECRET must NEVER have a hardcoded fallback (sprint 16B fix)
-- Password reset tokens: query by tokenHash ONLY, never raw token (sprint 16B fix)
-- AI-heavy routes and auth routes are rate-limited via @upstash/ratelimit
-- PII must never appear in AI prompts (verified by test suite pattern)
-- CSP header is set in next.config.js for all routes
-- MOE routes: aggregate only, zero student PII exposure
+- Tenant-owned reads and writes must enforce the caller's governed scope.
+- Secrets must come from approved secret storage with no runtime fallback.
+- Password reset tokens must be stored and queried by a non-reversible hash.
+- Sensitive and cost-bearing endpoints require appropriate abuse controls.
+- Child PII must not enter AI prompts, logs, or national aggregate views.
+- Treat prior audit claims as hypotheses until current code or live evidence
+  verifies them.
 
 ### AUTH AUDIT
 Read: app/api/auth/*, middleware.ts, lib/auth.ts, lib/permissions.ts, lib/serverFlags.ts

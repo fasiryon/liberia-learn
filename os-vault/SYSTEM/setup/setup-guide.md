@@ -34,7 +34,8 @@ Import each workflow stub from `SYSTEM/setup/n8n-workflows/`.
 For each workflow, update:
 - `VAULT_PATH` → absolute path on your machine (e.g., `C:\Users\fasir\liberia-learn\os-vault`)
 - `ANTHROPIC_API_KEY` → your key from .env.local
-- `ANTHROPIC_MODEL` → `claude-sonnet-4-20250514` (set in ANTHROPIC_CANVA_MODEL env)
+- `ANTHROPIC_MODEL` → a currently supported model selected in the deployment
+  environment; do not pin model routing in repository instructions
 - Cron schedule → adjust timezone to **WAT (West Africa Time, UTC+1)**
 
 ## Step 4 — Schedules
