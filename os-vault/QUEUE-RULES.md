@@ -35,6 +35,9 @@ documentation, data-schema, and common text configuration formats. Each file
 and request has a bounded size and file count; omitted or missing sources are
 declared to the model and must be reported as `Unknown`.
 
+Hidden files and directories are denied by default; `.github` is the sole
+exception so governed workflow sources can be audited when explicitly named.
+
 Security audits must enumerate the code and configuration files in scope.
 Sprint reviews should enumerate the sprint record and any daily notes outside
 the automatically attached vault notes. Research jobs may enumerate existing

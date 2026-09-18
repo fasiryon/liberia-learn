@@ -59,14 +59,19 @@ test('queue routes attach their prompt, request, and declared repository inputs'
   const f = await fixture()
   t.after(() => fs.rm(f.root, { recursive: true, force: true }))
   await f.write('app/api/example/route.ts', 'export const governed = true')
+  await f.write('.github/workflows/ci.yml', 'name: governed-ci')
   const queue = await f.write('os-vault/QUEUE/AUDIT-auth.md', [
     '# Auth audit',
     '## Context Inputs',
     '- `app/api/example/route.ts`',
+    '- `.github/workflows/ci.yml`',
   ].join('\n'))
 
   const context = await buildWorkflowContext({ vaultPath: f.vault, route: 'audit', queuePath: queue })
-  assert.deepEqual(context.sources.map((source) => source.path), ['app/api/example/route.ts'])
+  assert.deepEqual(context.sources.map((source) => source.path), [
+    'app/api/example/route.ts',
+    '.github/workflows/ci.yml',
+  ])
   assert.match(context.user, /audit prompt/)
   assert.match(context.user, /TRIGGERING REQUEST/)
   assert.match(context.user, /export const governed = true/)
@@ -99,6 +104,12 @@ test('queue context rejects traversal and secret-bearing paths before an API req
   const docker = await f.write('os-vault/QUEUE/AUDIT-docker.md', '## Context Inputs\n- `.docker/config.json`')
   await assert.rejects(
     buildWorkflowContext({ vaultPath: f.vault, route: 'audit', queuePath: docker }),
+    /context_input_path_denied/,
+  )
+  await f.write('.config/doctl/config.yaml', 'credential material must never be attached')
+  const doctl = await f.write('os-vault/QUEUE/AUDIT-doctl.md', '## Context Inputs\n- `.config/doctl/config.yaml`')
+  await assert.rejects(
+    buildWorkflowContext({ vaultPath: f.vault, route: 'audit', queuePath: doctl }),
     /context_input_path_denied/,
   )
 })
