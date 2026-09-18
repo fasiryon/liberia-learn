@@ -6,11 +6,60 @@ import {
   GRADE4_MATH_ONTOLOGY_RELEASE,
   deterministicReleaseIdentity,
 } from "@/lib/learning-authority/governedGrade4Math";
-import { appendGovernedMisconceptionReview } from "@/lib/learning-state/masteryWriter";
+import {
+  appendGovernedMisconceptionReview,
+  readCanonicalStudentConceptState,
+} from "@/lib/learning-state/masteryWriter";
 import { GRADE4_MATH_MISCONCEPTION_POLICY } from "@/lib/learning-state/misconceptionPolicy";
 import { toDecisionModelLearnerState } from "@/lib/learning-state/studentLearningModel";
 
 export const dynamic = "force-dynamic";
+
+export async function GET(req: NextRequest) {
+  const actor = await requireRole("TEACHER", "ADMIN");
+  if (!actor.schoolId) return NextResponse.json({ error: "school_scope_required" }, { status: 403 });
+  const studentId = req.nextUrl.searchParams.get("studentId");
+  if (!studentId) return NextResponse.json({ error: "student_id_required" }, { status: 400 });
+  const student = await prisma.student.findFirst({
+    where: {
+      id: studentId,
+      user: { schoolId: actor.schoolId },
+      ...(actor.role === "TEACHER" ? {
+        enrollments: { some: { Class: { schoolId: actor.schoolId, teacherId: actor.id } } },
+      } : {}),
+    },
+    select: { id: true, userId: true },
+  });
+  if (!student) return NextResponse.json({ error: "student_not_found" }, { status: 404 });
+  const asOf = new Date().toISOString();
+  const states = await Promise.all(GRADE4_MATH_ONTOLOGY_RELEASE.concepts.map((concept) =>
+    readCanonicalStudentConceptState({
+      scope: {
+        schoolId: actor.schoolId!,
+        studentId: student.id,
+        studentUserId: student.userId,
+        conceptId: concept.id,
+        ontologyReleaseId: GRADE4_MATH_ONTOLOGY_RELEASE.id,
+        ontologyReleaseIdentity: deterministicReleaseIdentity(GRADE4_MATH_ONTOLOGY_RELEASE),
+      },
+      asOf,
+    })
+  ));
+  return NextResponse.json({
+    studentId: student.id,
+    asOf,
+    suspectedSignals: states.flatMap((state) => state.misconceptions.map((signal) => ({
+      conceptId: state.scope.conceptId,
+      signalId: signal.signalId,
+      status: signal.status,
+      evidenceIds: signal.signalEvidenceIds,
+      confirmingReviewIds: signal.confirmingReviewIds,
+      rejectingReviewIds: signal.rejectingReviewIds,
+      teacherExplanation: state.teacherExplanation,
+    }))),
+    administrativeGradeMayChange: false,
+  });
+}
 
 export async function POST(req: NextRequest) {
   const actor = await requireRole("TEACHER", "ADMIN");
@@ -27,7 +76,13 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "governed_concept_or_signal_not_found" }, { status: 400 });
   }
   const student = await prisma.student.findFirst({
-    where: { id: body.studentId, user: { schoolId: actor.schoolId } },
+    where: {
+      id: body.studentId,
+      user: { schoolId: actor.schoolId },
+      ...(actor.role === "TEACHER" ? {
+        enrollments: { some: { Class: { schoolId: actor.schoolId, teacherId: actor.id } } },
+      } : {}),
+    },
     select: { id: true, userId: true },
   });
   if (!student) return NextResponse.json({ error: "student_not_found" }, { status: 404 });

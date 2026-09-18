@@ -30,9 +30,17 @@ one exact released item without its answer key. The server derives Initial or
 Continuous kind and fixes a bounded attempt identity. POST rejects client
 scoring, policy-context, accommodation, idempotency, or session-authority
 claims; scores the sealed item on the server; applies exact binding, evidence,
-and tool policy; and records a tenant-bound admission audit. The LearningEvent
-remains an audit envelope and explicitly declares that it is not canonical
-evidence.
+and tool policy; and records a tenant-bound admission audit plus the reserved
+canonical mastery event. The response uses the learner-safe state projection;
+misconception policy, evidence identifiers, teacher explanations, and the
+DecisionModel handoff are not returned to the student.
+
+For session continuity only, GET recognizes a pre-V1 accepted initial
+diagnostic audit when no canonical diagnostic exists. That legacy event can
+select the Continuous item, but it is never admitted to canonical mastery
+replay. Teacher/Admin misconception review uses a separate same-school GET to
+discover suspected signals and their opaque evidence identifiers before a
+governed confirmation or rejection.
 
 The release contains three revisioned concepts in an acyclic prerequisite
 sequence, three exact item bindings, three evidence policies, and four tool

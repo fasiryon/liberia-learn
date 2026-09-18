@@ -5,6 +5,7 @@ import {
   projectLegacyMasteryRead,
   replayStudentConceptState,
   toDecisionModelLearnerState,
+  toLearnerSafeStudentConceptState,
   type GovernedMasteryEvidence,
   type LearnerStateScope,
 } from "@/lib/learning-state/studentLearningModel";
@@ -247,6 +248,19 @@ describe("Student Learning Model V1 calibration fixtures", () => {
       validCandidateActions: [],
       governedPolicyResolution: { actionPolicyStatus: "NOT_IMPLEMENTED_IN_THIS_MISSION", requiresDecisionAuthority: true },
     });
+  });
+
+  it("keeps misconception policy, evidence IDs, and teacher explanations out of learner projections", () => {
+    const signaled = evidence({
+      result: "INCORRECT",
+      selectedAnswerIndex: 3,
+      misconceptionSignalId: "g4-fractions-numerator-denominator-reversal",
+    });
+    const projection = toLearnerSafeStudentConceptState(replay([signaled]));
+    expect(projection).toMatchObject({ authority: { canonical: true, learnerMayWrite: false } });
+    expect("misconceptions" in projection).toBe(false);
+    expect("teacherExplanation" in projection).toBe(false);
+    expect("positiveEvidenceIds" in projection.conflict).toBe(false);
   });
 
   it("keeps legacy compatibility one-way and read-only", () => {

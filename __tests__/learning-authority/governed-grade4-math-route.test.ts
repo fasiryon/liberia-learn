@@ -90,6 +90,16 @@ describe("governed Grade 4 Math live authority", () => {
     });
   });
 
+  it("uses legacy admission only as a one-way diagnostic-kind fallback", async () => {
+    mockEventFindFirst.mockResolvedValueOnce(null).mockResolvedValueOnce({ id: "legacy-initial-evidence" });
+    const issued = await issue();
+    expect(issued.data).toMatchObject({ kind: "CONTINUOUS", item: { id: "g4-frac-diagnostic-compare" } });
+    expect(mockEventFindFirst).toHaveBeenNthCalledWith(2, expect.objectContaining({
+      where: expect.objectContaining({ eventType: "learning.evidence_admission.recorded" }),
+    }));
+    expect(mockEventFindMany).not.toHaveBeenCalled();
+  });
+
   it("server-scores and writes canonical learning state without changing administrative grade", async () => {
     const issued = await issue();
     const response = await POST(submit(issued));
@@ -112,11 +122,11 @@ describe("governed Grade 4 Math live authority", () => {
         confidence: { level: "LOW" },
         authority: { canonical: true, mayChangeAdministrativeGrade: false },
       },
-      decisionModelInput: {
-        validCandidateActions: [],
-        governedPolicyResolution: { actionPolicyStatus: "NOT_IMPLEMENTED_IN_THIS_MISSION" },
-      },
     });
+    expect(data.decisionModelInput).toBeUndefined();
+    expect(data.learnerState.misconceptions).toBeUndefined();
+    expect(data.learnerState.teacherExplanation).toBeUndefined();
+    expect(data.learnerState.conflict.positiveEvidenceIds).toBeUndefined();
     expect(mockEventCreate).toHaveBeenCalledWith(expect.objectContaining({
       data: expect.objectContaining({
         eventType: "learning.canonical.mastery_update.v1",

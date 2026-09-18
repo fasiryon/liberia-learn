@@ -4,16 +4,20 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 const mockRequireRole = vi.hoisted(() => vi.fn());
 const mockStudentFindFirst = vi.hoisted(() => vi.fn());
 const mockAppendReview = vi.hoisted(() => vi.fn());
+const mockReadState = vi.hoisted(() => vi.fn());
 
 vi.mock("@/lib/auth", () => ({ requireRole: mockRequireRole }));
 vi.mock("@/lib/db", () => ({ prisma: { student: { findFirst: mockStudentFindFirst } } }));
-vi.mock("@/lib/learning-state/masteryWriter", () => ({ appendGovernedMisconceptionReview: mockAppendReview }));
+vi.mock("@/lib/learning-state/masteryWriter", () => ({
+  appendGovernedMisconceptionReview: mockAppendReview,
+  readCanonicalStudentConceptState: mockReadState,
+}));
 vi.mock("@/lib/learning-state/studentLearningModel", async (importOriginal) => {
   const original = await importOriginal<typeof import("@/lib/learning-state/studentLearningModel")>();
   return { ...original, toDecisionModelLearnerState: vi.fn(() => ({ contractVersion: "decision-model-learner-state/1.0.0" })) };
 });
 
-import { POST } from "@/app/api/teacher/learning-authority/grade4-math/misconceptions/route";
+import { GET, POST } from "@/app/api/teacher/learning-authority/grade4-math/misconceptions/route";
 
 function request(overrides: Record<string, unknown> = {}) {
   return new NextRequest("http://localhost/api/teacher/learning-authority/grade4-math/misconceptions", {
@@ -39,6 +43,17 @@ describe("governed misconception review route", () => {
       duplicate: false,
       update: { state: { authority: { canonical: true, mayChangeAdministrativeGrade: false } } },
     });
+    mockReadState.mockImplementation(async ({ scope }: { scope: { conceptId: string } }) => ({
+      scope,
+      misconceptions: scope.conceptId === "g4-fractions-equal-parts" ? [{
+        signalId: "g4-fractions-numerator-denominator-reversal",
+        status: "SUSPECTED",
+        signalEvidenceIds: ["evidence-a"],
+        confirmingReviewIds: [],
+        rejectingReviewIds: [],
+      }] : [],
+      teacherExplanation: ["Evidence covers one released item."],
+    }));
   });
 
   it("derives tenant, learner User, release, actor, and policy authority on the server", async () => {
@@ -53,6 +68,29 @@ describe("governed misconception review route", () => {
       scope: expect.objectContaining({ schoolId: "school-a", studentId: "student-a", studentUserId: "student-user-a" }),
       actorUserId: "teacher-a",
       signalId: "g4-fractions-numerator-denominator-reversal",
+    }));
+  });
+
+  it("lets a same-school teacher discover suspected signals and canonical evidence IDs", async () => {
+    const response = await GET(new NextRequest(
+      "http://localhost/api/teacher/learning-authority/grade4-math/misconceptions?studentId=student-a"
+    ));
+    expect(response.status).toBe(200);
+    expect(await response.json()).toMatchObject({
+      studentId: "student-a",
+      suspectedSignals: [{
+        conceptId: "g4-fractions-equal-parts",
+        signalId: "g4-fractions-numerator-denominator-reversal",
+        status: "SUSPECTED",
+        evidenceIds: ["evidence-a"],
+      }],
+      administrativeGradeMayChange: false,
+    });
+    expect(mockReadState).toHaveBeenCalledTimes(3);
+    expect(mockStudentFindFirst).toHaveBeenCalledWith(expect.objectContaining({
+      where: expect.objectContaining({
+        enrollments: { some: { Class: { schoolId: "school-a", teacherId: "teacher-a" } } },
+      }),
     }));
   });
 

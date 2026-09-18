@@ -15,7 +15,7 @@ import {
   sealDiagnosticSession,
 } from "@/lib/learning-authority/diagnosticSession";
 import { appendCanonicalMasteryUpdate } from "@/lib/learning-state/masteryWriter";
-import { CANONICAL_MASTERY_EVENT_TYPE, toDecisionModelLearnerState } from "@/lib/learning-state/studentLearningModel";
+import { CANONICAL_MASTERY_EVENT_TYPE, toLearnerSafeStudentConceptState } from "@/lib/learning-state/studentLearningModel";
 
 export const dynamic = "force-dynamic";
 
@@ -32,7 +32,7 @@ export async function GET() {
   const { user, student } = await learner();
   if (!student || !user.schoolId) return NextResponse.json({ error: "student_not_found" }, { status: 404 });
 
-  const initialEvidence = await prisma.learningEvent.findFirst({
+  const canonicalEvidence = await prisma.learningEvent.findFirst({
     where: {
       schoolId: user.schoolId,
       userId: user.id,
@@ -41,7 +41,16 @@ export async function GET() {
     },
     select: { id: true },
   });
-  const kind: DiagnosticKind = initialEvidence ? "CONTINUOUS" : "INITIAL";
+  const legacyInitialEvidence = canonicalEvidence ? null : await prisma.learningEvent.findFirst({
+    where: {
+      schoolId: user.schoolId,
+      userId: user.id,
+      eventType: "learning.evidence_admission.recorded",
+      metadata: { path: ["diagnosticKind"], equals: "INITIAL" },
+    },
+    select: { id: true },
+  });
+  const kind: DiagnosticKind = canonicalEvidence || legacyInitialEvidence ? "CONTINUOUS" : "INITIAL";
   const item = kind === "INITIAL"
     ? GRADE4_MATH_ONTOLOGY_RELEASE.items.find((candidate) => candidate.id === "g4-frac-diagnostic-equal-parts")
     : GRADE4_MATH_ONTOLOGY_RELEASE.items.find((candidate) => candidate.id === "g4-frac-diagnostic-compare");
@@ -174,8 +183,7 @@ export async function POST(req: NextRequest) {
     admission,
     diagnosticSession,
     masteryUpdated: true,
-    learnerState: mastery.update.state,
-    decisionModelInput: toDecisionModelLearnerState(mastery.update.state),
+    learnerState: toLearnerSafeStudentConceptState(mastery.update.state),
     administrativeGradeChanged: false,
   });
 }

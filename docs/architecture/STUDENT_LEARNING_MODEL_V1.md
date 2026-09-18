@@ -66,7 +66,9 @@ The separately versioned LiberiaLearn educational-policy overlay contains one
 exact known distractor mapping: choosing `4/3` when asked for three equal parts
 out of four may signal numerator / denominator reversal. The immutable
 published MOE ontology release and item versions are unchanged, and the learner
-response never receives the overlay.
+response never receives the overlay. The student route uses an explicit
+learner-safe projection that also omits canonical evidence IDs, human reviews,
+teacher explanations, and the internal DecisionModel handoff.
 
 One governed wrong answer creates only `SUSPECTED`. Confirmation or rejection
 uses the authenticated teacher/admin endpoint and requires a same-tenant human
@@ -74,6 +76,12 @@ review referencing the exact canonical evidence ID. Both decisions are
 preserved; conflicting human reviews produce `CONFLICTED`. Generic wrong
 answers, legacy tags, AI gap analysis, and mutable taxonomy labels cannot
 confirm or reject canonical misconception state.
+
+Teachers obtain those opaque identifiers from the same endpoint's scoped GET,
+which limits teachers to students enrolled in their own same-school classes
+(and Admins to their school) and returns suspected signals with their canonical
+evidence IDs. A client-supplied identifier is
+still revalidated against canonical replay before any review is appended.
 
 ## DecisionModel handoff
 

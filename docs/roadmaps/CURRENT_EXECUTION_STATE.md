@@ -23,11 +23,21 @@ outcome validation. The Grade 4 slice has one released item per concept, so
 same-item repetition remains low-confidence. Full gate and merge evidence will
 be recorded through the PR and merged-main checks. Pre-PR certification:
 `npx prisma generate` PASS; `npx tsc --noEmit` PASS; focused hostile/calibration
-tests PASS (59 tests / 5 files); full Vitest PASS (5,148 tests / 631 files);
+tests PASS (53 application tests / 5 files plus 3 vault assembler tests); full
+Vitest PASS (5,153 tests / 632 files);
 production build PASS (385 static pages); `npm run validate:changed` and
 `git diff --check` PASS. The build required network access for the repository's
 configured Google Font and reported only established optional-environment /
 baseline warnings.
+
+PR review remediation keeps teacher review usable without weakening the
+authority boundary: an assigned-class Teacher or same-school Admin read exposes
+suspected signals and canonical evidence IDs; student responses use an explicit safe projection;
+and pre-V1 initial diagnostic audit rows remain a one-way session-kind fallback
+that never enters mastery replay. A separate vault automation compatibility fix
+now assembles each workflow's named inputs into one bounded request for both
+the queue daemon and daily n8n path, with traversal/secret denial and explicit
+Unknown handling for absent inputs.
 
 ## Pre-NR15 Security and Accessibility Closure: COMPLETE (2026-09-04)
 

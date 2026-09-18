@@ -19,6 +19,7 @@
 docker run -d -p 5678:5678 --name n8n \
   -e N8N_HOST=localhost \
   -v ~/.n8n:/home/node/.n8n \
+  -v /absolute/path/to/liberia-learn:/workspace/liberia-learn:ro \
   n8nio/n8n
 ```
 
@@ -31,6 +32,11 @@ Add credentials in N8N:
 ## Step 3 — Wire the Workflows
 
 Import each workflow stub from `SYSTEM/setup/n8n-workflows/`.
+The daily workflow runs `daemon/build-context.mjs` first. That command attaches
+the workflow prompt, both project overviews, recent project records, and the
+prior WAT daily note in one bounded request. If assembly fails, the API node is
+not called. It requires a self-hosted runner with the repository mounted; N8N
+Cloud needs an equivalent authenticated source provider before use.
 For each workflow, update:
 - `VAULT_PATH` → absolute path on your machine (e.g., `C:\Users\fasir\liberia-learn\os-vault`)
 - `ANTHROPIC_API_KEY` → your key from .env.local

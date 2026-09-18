@@ -42,6 +42,23 @@ export type CanonicalMasteryWriteResult = Readonly<{
   update: MasteryUpdate;
 }>;
 
+export async function readCanonicalStudentConceptState(input: {
+  scope: LearnerStateScope;
+  asOf: string;
+}) {
+  const membership = await prisma.student.findFirst({
+    where: {
+      id: input.scope.studentId,
+      userId: input.scope.studentUserId,
+      user: { schoolId: input.scope.schoolId },
+    },
+    select: { id: true },
+  });
+  if (!membership) throw new Error("canonical_mastery_student_membership_invalid");
+  const events = await loadConceptEvents(input.scope, input.asOf);
+  return replayStudentConceptState(events, { asOf: input.asOf, expectedScope: input.scope });
+}
+
 function canonicalEventId(input: AppendGovernedMasteryInput): string {
   return "mastery-v1-" + createHash("sha256")
     .update([input.schoolId, input.studentId, input.studentUserId, input.sessionId, input.itemId, input.itemVersion].join(":"))

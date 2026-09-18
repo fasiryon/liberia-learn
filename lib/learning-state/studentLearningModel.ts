@@ -190,6 +190,22 @@ export type DecisionModelLearnerState = Readonly<{
   }>;
 }>;
 
+export type LearnerSafeStudentConceptState = Readonly<{
+  modelVersion: typeof STUDENT_LEARNING_MODEL_VERSION;
+  reducerVersion: typeof MASTERY_REDUCER_VERSION;
+  asOf: string;
+  mastery: StudentConceptState["mastery"];
+  confidence: StudentConceptState["confidence"];
+  retention: StudentConceptState["retention"];
+  recency: StudentConceptState["recency"];
+  conflict: Readonly<{ present: boolean; score: number }>;
+  authority: Readonly<{
+    canonical: true;
+    mayChangeAdministrativeGrade: false;
+    learnerMayWrite: false;
+  }>;
+}>;
+
 const contextStrength: Readonly<Record<EvidenceContext, number>> = Object.freeze({
   DIAGNOSTIC: 1,
   PRACTICE: 0.7,
@@ -508,6 +524,24 @@ export function toDecisionModelLearnerState(state: StudentConceptState): Decisio
       retentionModelVersion: RETENTION_MODEL_VERSION,
       actionPolicyStatus: "NOT_IMPLEMENTED_IN_THIS_MISSION" as const,
       requiresDecisionAuthority: true as const,
+    }),
+  });
+}
+
+export function toLearnerSafeStudentConceptState(state: StudentConceptState): LearnerSafeStudentConceptState {
+  return Object.freeze({
+    modelVersion: state.modelVersion,
+    reducerVersion: state.reducerVersion,
+    asOf: state.asOf,
+    mastery: state.mastery,
+    confidence: state.confidence,
+    retention: state.retention,
+    recency: state.recency,
+    conflict: Object.freeze({ present: state.conflict.present, score: state.conflict.score }),
+    authority: Object.freeze({
+      canonical: true as const,
+      mayChangeAdministrativeGrade: false as const,
+      learnerMayWrite: false as const,
     }),
   });
 }
