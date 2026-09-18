@@ -14,7 +14,11 @@ const DENIED_CREDENTIAL_FILES = new Set([
   '.dockercfg', '.netrc', '.npmrc', '.pypirc', '.yarnrc', '_netrc',
   'auth.json', 'config.gcloud', 'service-account.json',
 ])
-const DENIED_CREDENTIAL_DIRECTORIES = new Set(['.aws', '.azure', '.gnupg', '.kube', '.ssh'])
+const DENIED_CREDENTIAL_DIRECTORIES = new Set([
+  '.aws', '.azure', '.docker', '.gnupg', '.kube', '.password-store', '.pulumi',
+  '.sops', '.ssh', '.terraform.d',
+])
+const DENIED_CREDENTIAL_PATH_PREFIXES = ['.config/gh/', '.config/gcloud/', '.config/glab-cli/']
 
 export const CONTEXT_ROUTES = Object.freeze({
   'daily-pulse': { prompt: 'os-vault/SYSTEM/workflows/01-daily-project-pulse.md', queue: false },
@@ -39,9 +43,11 @@ function normalizeRelative(value) {
   const lowerSegments = segments.map((segment) => segment.toLowerCase())
   const basename = lowerSegments.at(-1) ?? ''
   const extension = path.posix.extname(basename)
+  const lowerPath = lowerSegments.join('/') + '/'
   if (segments.includes('..') || lowerSegments.includes('.git') || lowerSegments.includes('node_modules') ||
     lowerSegments.some((segment) => segment.startsWith('.env')) ||
     lowerSegments.some((segment) => DENIED_CREDENTIAL_DIRECTORIES.has(segment)) ||
+    DENIED_CREDENTIAL_PATH_PREFIXES.some((prefix) => lowerPath.startsWith(prefix) || lowerPath.includes(`/${prefix}`)) ||
     DENIED_CREDENTIAL_FILES.has(basename) ||
     lowerSegments.some((segment) => /credential|secret/i.test(segment)) ||
     ['.key', '.p12', '.pem', '.pfx'].includes(extension) ||

@@ -95,6 +95,12 @@ test('queue context rejects traversal and secret-bearing paths before an API req
     buildWorkflowContext({ vaultPath: f.vault, route: 'audit', queuePath: npmrc }),
     /context_input_path_denied/,
   )
+  await f.write('.docker/config.json', '{"auths":{"registry.example":{"auth":"do-not-send"}}}')
+  const docker = await f.write('os-vault/QUEUE/AUDIT-docker.md', '## Context Inputs\n- `.docker/config.json`')
+  await assert.rejects(
+    buildWorkflowContext({ vaultPath: f.vault, route: 'audit', queuePath: docker }),
+    /context_input_path_denied/,
+  )
 })
 
 test('resolved source paths cannot disguise denied repository secrets', async (t) => {
