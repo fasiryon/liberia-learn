@@ -20,8 +20,14 @@ docker run -d -p 5678:5678 --name n8n \
   -e N8N_HOST=localhost \
   -v ~/.n8n:/home/node/.n8n \
   -v /absolute/path/to/liberia-learn:/workspace/liberia-learn:ro \
+  -v /absolute/path/to/liberia-learn/os-vault/GENERATED:/workspace/liberia-learn/os-vault/GENERATED \
+  -v /absolute/path/to/liberia-learn/os-vault/SYSTEM/logs:/workspace/liberia-learn/os-vault/SYSTEM/logs \
   n8nio/n8n
 ```
+
+The repository remains read-only inside the container; the two narrower mounts
+make only generated artifacts and the operations log writable. Create both host
+directories before starting the container.
 
 **Option B: N8N Cloud** — n8n.io (managed, no server needed)
 

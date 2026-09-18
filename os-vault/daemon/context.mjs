@@ -26,7 +26,7 @@ function normalizeRelative(value) {
   }
   const segments = normalized.split('/')
   if (segments.includes('..') || segments.includes('.git') || segments.includes('node_modules') ||
-    segments.some((segment) => segment === '.env' || segment.startsWith('.env.')) ||
+    segments.some((segment) => segment.startsWith('.env')) ||
     segments.some((segment) => /credential|secret/i.test(segment))) {
     throw new Error(`context_input_path_denied:${value}`)
   }
