@@ -21,6 +21,19 @@ async function fixture() {
   return { root, vault, write }
 }
 
+async function symlinkOrSkip(t, target, link) {
+  try {
+    await fs.symlink(target, link, 'file')
+    return true
+  } catch (error) {
+    if (error?.code === 'EPERM') {
+      t.skip('file symlinks require Windows Developer Mode; exercised on Linux CI')
+      return false
+    }
+    throw error
+  }
+}
+
 test('daily pulse attaches current overviews, recent records, and the prior WAT note', async (t) => {
   const f = await fixture()
   t.after(() => fs.rm(f.root, { recursive: true, force: true }))
@@ -71,5 +84,34 @@ test('queue context rejects traversal and secret-bearing paths before an API req
   await assert.rejects(
     buildWorkflowContext({ vaultPath: f.vault, route: 'audit', queuePath: secret }),
     /context_input_path_denied/,
+  )
+})
+
+test('resolved source paths cannot disguise denied repository secrets', async (t) => {
+  const f = await fixture()
+  t.after(() => fs.rm(f.root, { recursive: true, force: true }))
+  const secret = await f.write('.env.local', 'ANTHROPIC_API_KEY=do-not-send')
+  const alias = path.join(f.root, 'docs', 'safe.md')
+  await fs.mkdir(path.dirname(alias), { recursive: true })
+  if (!await symlinkOrSkip(t, secret, alias)) return
+  const queue = await f.write('os-vault/QUEUE/AUDIT-alias.md', '## Context Inputs\n- `docs/safe.md`')
+
+  await assert.rejects(
+    buildWorkflowContext({ vaultPath: f.vault, route: 'audit', queuePath: queue }),
+    /context_input_path_denied/,
+  )
+})
+
+test('queue-file symlinks cannot escape the governed queue directory', async (t) => {
+  const f = await fixture()
+  t.after(() => fs.rm(f.root, { recursive: true, force: true }))
+  const outside = await f.write('outside-request.md', 'send this external file')
+  const queue = path.join(f.vault, 'QUEUE', 'AUDIT-escape.md')
+  await fs.mkdir(path.dirname(queue), { recursive: true })
+  if (!await symlinkOrSkip(t, outside, queue)) return
+
+  await assert.rejects(
+    buildWorkflowContext({ vaultPath: f.vault, route: 'audit', queuePath: queue }),
+    /queue_path_symlink_escape/,
   )
 })

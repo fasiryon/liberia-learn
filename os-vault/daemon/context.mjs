@@ -89,6 +89,7 @@ export async function buildWorkflowContext({ vaultPath, route, queuePath, now = 
   if (!routeConfig) throw new Error(`context_route_unknown:${route}`)
   const resolvedVault = path.resolve(vaultPath)
   const repositoryRoot = path.resolve(resolvedVault, '..')
+  const realRepositoryRoot = await fs.realpath(repositoryRoot)
   const systemPath = path.join(resolvedVault, 'SYSTEM', 'CLAUDE.md')
   const systemBase = await readRequired(systemPath, 'SYSTEM/CLAUDE.md')
   const workflowPrompt = routeConfig.prompt
@@ -100,10 +101,23 @@ export async function buildWorkflowContext({ vaultPath, route, queuePath, now = 
   if (routeConfig.queue) {
     if (!queuePath) throw new Error(`queue_context_required:${route}`)
     const resolvedQueue = path.resolve(queuePath)
-    const queueRoot = path.join(resolvedVault, 'QUEUE') + path.sep
-    if (!resolvedQueue.startsWith(queueRoot)) throw new Error('queue_path_outside_vault')
-    queueContent = await readRequired(resolvedQueue, path.relative(repositoryRoot, resolvedQueue).replaceAll('\\', '/'))
-    queueRelative = path.relative(repositoryRoot, resolvedQueue).replaceAll('\\', '/')
+    const queueRoot = path.join(resolvedVault, 'QUEUE')
+    const lexicalQueueRelative = path.relative(queueRoot, resolvedQueue)
+    if (lexicalQueueRelative.startsWith('..') || path.isAbsolute(lexicalQueueRelative)) {
+      throw new Error('queue_path_outside_vault')
+    }
+    const [realQueueRoot, realQueue] = await Promise.all([fs.realpath(queueRoot), fs.realpath(resolvedQueue)])
+    const realQueueRelative = path.relative(realQueueRoot, realQueue)
+    if (realQueueRelative.startsWith('..') || path.isAbsolute(realQueueRelative)) {
+      throw new Error('queue_path_symlink_escape')
+    }
+    const realRepositoryRelative = path.relative(realRepositoryRoot, realQueue).replaceAll('\\', '/')
+    if (realRepositoryRelative.startsWith('../') || path.isAbsolute(realRepositoryRelative)) {
+      throw new Error('queue_path_outside_repository')
+    }
+    normalizeRelative(realRepositoryRelative)
+    queueContent = await readRequired(realQueue, realRepositoryRelative)
+    queueRelative = realRepositoryRelative
   }
 
   const requested = []
@@ -150,8 +164,9 @@ export async function buildWorkflowContext({ vaultPath, route, queuePath, now = 
     }
     try {
       const real = await fs.realpath(absolute)
-      const realRelative = path.relative(repositoryRoot, real).replaceAll('\\', '/')
+      const realRelative = path.relative(realRepositoryRoot, real).replaceAll('\\', '/')
       if (realRelative.startsWith('../') || path.isAbsolute(realRelative)) throw new Error(`context_input_symlink_escape:${relative}`)
+      normalizeRelative(realRelative)
       const stat = await fs.stat(real)
       if (!stat.isFile()) throw new Error('not_a_file')
       if (stat.size > MAX_FILE_BYTES || totalBytes + stat.size > MAX_TOTAL_BYTES) {
