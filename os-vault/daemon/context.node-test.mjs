@@ -90,6 +90,11 @@ test('queue context rejects traversal and secret-bearing paths before an API req
     buildWorkflowContext({ vaultPath: f.vault, route: 'audit', queuePath: envrc }),
     /context_input_path_denied/,
   )
+  const npmrc = await f.write('os-vault/QUEUE/AUDIT-npmrc.md', '## Context Inputs\n- `.npmrc`')
+  await assert.rejects(
+    buildWorkflowContext({ vaultPath: f.vault, route: 'audit', queuePath: npmrc }),
+    /context_input_path_denied/,
+  )
 })
 
 test('resolved source paths cannot disguise denied repository secrets', async (t) => {

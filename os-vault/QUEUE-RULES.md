@@ -28,10 +28,12 @@ an MOE brief). List every additional source the job must inspect under a
 - `app/api/example/route.ts`
 ```
 
-Paths are repository-relative. Absolute paths, traversal, secrets, credentials,
-`.env*`, `.git`, and `node_modules` are rejected. Each file and request has a
-bounded size and file count; omitted or missing sources are declared to the
-model and must be reported as `Unknown`.
+Paths are repository-relative. Absolute paths, traversal, secrets, standard
+credential stores, private-key formats, `.env*`, `.git`, `node_modules`, and
+unsupported file types are rejected. The bounded allowlist covers source,
+documentation, data-schema, and common text configuration formats. Each file
+and request has a bounded size and file count; omitted or missing sources are
+declared to the model and must be reported as `Unknown`.
 
 Security audits must enumerate the code and configuration files in scope.
 Sprint reviews should enumerate the sprint record and any daily notes outside

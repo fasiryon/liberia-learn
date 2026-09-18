@@ -4,6 +4,17 @@ import path from 'path'
 const MAX_FILES = 40
 const MAX_FILE_BYTES = 64 * 1024
 const MAX_TOTAL_BYTES = 512 * 1024
+const ALLOWED_CONTEXT_EXTENSIONS = new Set([
+  '.cjs', '.css', '.csv', '.go', '.gql', '.graphql', '.html', '.js', '.json',
+  '.md', '.mjs', '.prisma', '.ps1', '.py', '.rs', '.sh', '.sql', '.toml',
+  '.ts', '.tsx', '.txt', '.xml', '.yaml', '.yml',
+])
+const ALLOWED_EXTENSIONLESS_FILES = new Set(['dockerfile', 'procfile'])
+const DENIED_CREDENTIAL_FILES = new Set([
+  '.dockercfg', '.netrc', '.npmrc', '.pypirc', '.yarnrc', '_netrc',
+  'auth.json', 'config.gcloud', 'service-account.json',
+])
+const DENIED_CREDENTIAL_DIRECTORIES = new Set(['.aws', '.azure', '.gnupg', '.kube', '.ssh'])
 
 export const CONTEXT_ROUTES = Object.freeze({
   'daily-pulse': { prompt: 'os-vault/SYSTEM/workflows/01-daily-project-pulse.md', queue: false },
@@ -25,9 +36,16 @@ function normalizeRelative(value) {
     throw new Error(`context_input_path_invalid:${value}`)
   }
   const segments = normalized.split('/')
-  if (segments.includes('..') || segments.includes('.git') || segments.includes('node_modules') ||
-    segments.some((segment) => segment.startsWith('.env')) ||
-    segments.some((segment) => /credential|secret/i.test(segment))) {
+  const lowerSegments = segments.map((segment) => segment.toLowerCase())
+  const basename = lowerSegments.at(-1) ?? ''
+  const extension = path.posix.extname(basename)
+  if (segments.includes('..') || lowerSegments.includes('.git') || lowerSegments.includes('node_modules') ||
+    lowerSegments.some((segment) => segment.startsWith('.env')) ||
+    lowerSegments.some((segment) => DENIED_CREDENTIAL_DIRECTORIES.has(segment)) ||
+    DENIED_CREDENTIAL_FILES.has(basename) ||
+    lowerSegments.some((segment) => /credential|secret/i.test(segment)) ||
+    ['.key', '.p12', '.pem', '.pfx'].includes(extension) ||
+    (!ALLOWED_CONTEXT_EXTENSIONS.has(extension) && !ALLOWED_EXTENSIONLESS_FILES.has(basename))) {
     throw new Error(`context_input_path_denied:${value}`)
   }
   return normalized.replace(/^\.\//, '')

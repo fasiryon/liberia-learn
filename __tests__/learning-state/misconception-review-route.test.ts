@@ -106,4 +106,11 @@ describe("governed misconception review route", () => {
     expect((await POST(request({ evidenceIds: [] }))).status).toBe(400);
     expect(mockAppendReview).not.toHaveBeenCalled();
   });
+
+  it("returns a client error for evidence references outside canonical replay", async () => {
+    mockAppendReview.mockRejectedValueOnce(new Error("misconception_review_evidence_invalid"));
+    const response = await POST(request({ evidenceIds: ["wrong-concept-evidence"] }));
+    expect(response.status).toBe(400);
+    expect(await response.json()).toEqual({ error: "invalid_evidence_references" });
+  });
 });

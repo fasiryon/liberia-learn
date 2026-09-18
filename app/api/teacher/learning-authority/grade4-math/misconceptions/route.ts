@@ -87,21 +87,29 @@ export async function POST(req: NextRequest) {
   });
   if (!student) return NextResponse.json({ error: "student_not_found" }, { status: 404 });
 
-  const result = await appendGovernedMisconceptionReview({
-    scope: {
-      schoolId: actor.schoolId,
-      studentId: student.id,
-      studentUserId: student.userId,
-      conceptId: body.conceptId,
-      ontologyReleaseId: GRADE4_MATH_ONTOLOGY_RELEASE.id,
-      ontologyReleaseIdentity: deterministicReleaseIdentity(GRADE4_MATH_ONTOLOGY_RELEASE),
-    },
-    signalId: body.signalId,
-    decision: body.decision as "CONFIRMED" | "REJECTED",
-    evidenceIds: body.evidenceIds as string[],
-    actorUserId: actor.id,
-    occurredAt: new Date().toISOString(),
-  });
+  let result: Awaited<ReturnType<typeof appendGovernedMisconceptionReview>>;
+  try {
+    result = await appendGovernedMisconceptionReview({
+      scope: {
+        schoolId: actor.schoolId,
+        studentId: student.id,
+        studentUserId: student.userId,
+        conceptId: body.conceptId,
+        ontologyReleaseId: GRADE4_MATH_ONTOLOGY_RELEASE.id,
+        ontologyReleaseIdentity: deterministicReleaseIdentity(GRADE4_MATH_ONTOLOGY_RELEASE),
+      },
+      signalId: body.signalId,
+      decision: body.decision as "CONFIRMED" | "REJECTED",
+      evidenceIds: body.evidenceIds as string[],
+      actorUserId: actor.id,
+      occurredAt: new Date().toISOString(),
+    });
+  } catch (error) {
+    if (error instanceof Error && error.message === "misconception_review_evidence_invalid") {
+      return NextResponse.json({ error: "invalid_evidence_references" }, { status: 400 });
+    }
+    throw error;
+  }
   return NextResponse.json({
     duplicate: result.duplicate,
     learnerState: result.update.state,
