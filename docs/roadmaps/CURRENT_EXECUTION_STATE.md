@@ -23,7 +23,7 @@ outcome validation. The Grade 4 slice has one released item per concept, so
 same-item repetition remains low-confidence. Full gate and merge evidence will
 be recorded through the PR and merged-main checks. Pre-PR certification:
 `npx prisma generate` PASS; `npx tsc --noEmit` PASS; focused hostile/calibration
-tests PASS (53 application tests / 5 files plus 3 vault assembler tests); full
+tests PASS (53 application tests / 5 files plus 5 vault assembler tests); full
 Vitest PASS (5,153 tests / 632 files);
 production build PASS (385 static pages); `npm run validate:changed` and
 `git diff --check` PASS. The build required network access for the repository's

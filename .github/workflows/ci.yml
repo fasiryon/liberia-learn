@@ -39,6 +39,8 @@ jobs:
         run: npm run audit:api-routes
       - run: npx tsc --noEmit
       - run: npx vitest run --reporter=dot
+      - name: Run OS vault context security tests
+        run: npm --prefix os-vault/daemon test
       - run: npm run build
       - name: Install Chromium for PWA E2E
         run: npx playwright install --with-deps chromium
