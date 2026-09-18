@@ -18,6 +18,7 @@
 ```bash
 docker run -d -p 5678:5678 --name n8n \
   -e N8N_HOST=localhost \
+  -e NODES_EXCLUDE="[]" \
   -v ~/.n8n:/home/node/.n8n \
   -v /absolute/path/to/liberia-learn:/workspace/liberia-learn:ro \
   -v /absolute/path/to/liberia-learn/os-vault/GENERATED:/workspace/liberia-learn/os-vault/GENERATED \
@@ -28,6 +29,12 @@ docker run -d -p 5678:5678 --name n8n \
 The repository remains read-only inside the container; the two narrower mounts
 make only generated artifacts and the operations log writable. Create both host
 directories before starting the container.
+
+`NODES_EXCLUDE="[]"` is required because n8n 2.x blocks Execute Command by
+default, while this governed workflow uses it to run the bounded context
+assembler. Use this container only with trusted workflow administrators; do not
+offer workflow editing to untrusted users. See n8n's
+[Execute Command security guidance](https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.executecommand/).
 
 **Option B: N8N Cloud** — n8n.io (managed, no server needed)
 

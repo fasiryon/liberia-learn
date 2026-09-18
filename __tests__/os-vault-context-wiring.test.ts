@@ -23,4 +23,12 @@ describe("OS vault governed context wiring", () => {
     expect(watcher).toContain("contextRouteForQueueFilename");
     expect(watcher).not.toContain("fs.readFile(SYSTEM_MD");
   });
+
+  it("documents the explicit n8n 2.x opt-in required by the assembler node", () => {
+    const setup = fs.readFileSync(path.join(
+      repositoryRoot, "os-vault", "SYSTEM", "setup", "setup-guide.md"
+    ), "utf8");
+    expect(setup).toContain('-e NODES_EXCLUDE="[]"');
+    expect(setup).toContain("trusted workflow administrators");
+  });
 });
