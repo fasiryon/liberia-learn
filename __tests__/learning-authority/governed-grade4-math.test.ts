@@ -138,7 +138,7 @@ describe("governed Grade 4 mathematics authority", () => {
       schoolId: "school-1",
       studentId: "student-1",
       studentUserId: "user-1",
-      conceptObservations: [{ conceptId: "g4-fractions-equal-parts", confidence: 0.4 }],
+      conceptObservations: [{ conceptId: "g4-fractions-equal-parts", observedPerformance: 1, confidence: 0.4 }],
       recommendedPrerequisiteConceptIds: ["g4-fractions-equal-parts"],
     })).toMatchObject({
       sessionAuthority: "INSTRUCTIONAL_DIAGNOSTIC",
@@ -151,7 +151,7 @@ describe("governed Grade 4 mathematics authority", () => {
       schoolId: "school-1",
       studentId: "student-1",
       studentUserId: "user-1",
-      conceptObservations: [{ conceptId: "g4-fractions-equal-parts", confidence: 1.1 }],
+      conceptObservations: [{ conceptId: "g4-fractions-equal-parts", observedPerformance: 0, confidence: 1.1 }],
       recommendedPrerequisiteConceptIds: [],
     })).toThrow("diagnostic_confidence_invalid");
   });

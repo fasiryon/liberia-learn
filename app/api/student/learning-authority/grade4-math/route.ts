@@ -1,9 +1,7 @@
-import { createHash } from "crypto";
 import { NextRequest, NextResponse } from "next/server";
 // route-policy: auth=session; scope=tenant; authority=student-membership; rationale=server-issued diagnostic sessions bind released items, policy, learner, and tenant
 import { requireRole } from "@/lib/auth";
 import { prisma } from "@/lib/db";
-import { logLearningEvent } from "@/lib/events/logLearningEvent";
 import {
   admitEvidence,
   createDiagnosticResult,
@@ -16,6 +14,8 @@ import {
   openDiagnosticSession,
   sealDiagnosticSession,
 } from "@/lib/learning-authority/diagnosticSession";
+import { appendCanonicalMasteryUpdate } from "@/lib/learning-state/masteryWriter";
+import { CANONICAL_MASTERY_EVENT_TYPE, toLearnerSafeStudentConceptState } from "@/lib/learning-state/studentLearningModel";
 
 export const dynamic = "force-dynamic";
 
@@ -32,7 +32,16 @@ export async function GET() {
   const { user, student } = await learner();
   if (!student || !user.schoolId) return NextResponse.json({ error: "student_not_found" }, { status: 404 });
 
-  const initialEvidence = await prisma.learningEvent.findFirst({
+  const canonicalEvidence = await prisma.learningEvent.findFirst({
+    where: {
+      schoolId: user.schoolId,
+      userId: user.id,
+      eventType: CANONICAL_MASTERY_EVENT_TYPE,
+      metadata: { path: ["canonicalEvent", "context"], equals: "DIAGNOSTIC" },
+    },
+    select: { id: true },
+  });
+  const legacyInitialEvidence = canonicalEvidence ? null : await prisma.learningEvent.findFirst({
     where: {
       schoolId: user.schoolId,
       userId: user.id,
@@ -41,7 +50,7 @@ export async function GET() {
     },
     select: { id: true },
   });
-  const kind: DiagnosticKind = initialEvidence ? "CONTINUOUS" : "INITIAL";
+  const kind: DiagnosticKind = canonicalEvidence || legacyInitialEvidence ? "CONTINUOUS" : "INITIAL";
   const item = kind === "INITIAL"
     ? GRADE4_MATH_ONTOLOGY_RELEASE.items.find((candidate) => candidate.id === "g4-frac-diagnostic-equal-parts")
     : GRADE4_MATH_ONTOLOGY_RELEASE.items.find((candidate) => candidate.id === "g4-frac-diagnostic-compare");
@@ -94,7 +103,8 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "invalid_payload" }, { status: 400 });
   }
   const clientAuthorityFields = [
-    "correctAnswer", "score", "mastery", "sessionKind", "idempotencyKey",
+    "correctAnswer", "score", "mastery", "confidence", "retention", "misconception",
+    "reducerVersion", "policyVersion", "sessionKind", "idempotencyKey",
     "toolsUsed", "hintsUsed", "aiAssisted", "accommodationOverride",
   ];
   if (clientAuthorityFields.some((field) => body[field] !== undefined)) {
@@ -120,14 +130,6 @@ export async function POST(req: NextRequest) {
   }
 
   const idempotencyKey = session.sessionId + ":" + item.id;
-  const eventId = "g4math-" + createHash("sha256")
-    .update([session.schoolId, session.studentUserId, idempotencyKey].join(":"))
-    .digest("hex");
-  const prior = await prisma.learningEvent.findFirst({
-    where: { id: eventId, schoolId: user.schoolId, userId: user.id },
-    select: { id: true },
-  });
-  if (prior) return NextResponse.json({ duplicate: true, admission: "NOT_REPEATED" });
 
   const admission = admitEvidence({
     idempotencyKey,
@@ -158,51 +160,30 @@ export async function POST(req: NextRequest) {
         studentId: session.studentId,
         studentUserId: session.studentUserId,
         releaseId: session.ontologyReleaseId,
-        conceptObservations: [{ conceptId: binding.conceptId, confidence: correct ? 1 : 0 }],
+        conceptObservations: [{ conceptId: binding.conceptId, observedPerformance: correct ? 1 : 0, confidence: 0.25 }],
         recommendedPrerequisiteConceptIds: correct ? [] : [binding.conceptId],
       })
     : null;
 
-  try {
-    await logLearningEvent({
-      eventId,
-      schoolId: session.schoolId,
-      userId: session.studentUserId,
-      studentId: session.studentId,
-      actor: { type: "user", id: session.studentUserId, role: "STUDENT" },
-      target: { type: "governed_grade4_math_item", id: item.id },
-      eventType: "learning.evidence_admission.recorded",
-      source: "/api/student/learning-authority/grade4-math",
-      status: "evidence_admission_recorded",
-      dedupeKey: idempotencyKey,
-      metadata: {
-        diagnosticSessionId: session.sessionId,
-        diagnosticKind: session.kind,
-        ontologyReleaseId: session.ontologyReleaseId,
-        ontologyReleaseIdentity: session.ontologyReleaseIdentity,
-        itemVersion: item.version,
-        bindingId: admission.bindingId ?? null,
-        evidenceDecision: admission.decision,
-        evidenceReason: admission.reason,
-        serverScored: true,
-        correct,
-        toolPolicyContext: "SERVER_ISSUED_NO_ASSISTANCE",
-        learningEventIsCanonicalEvidence: false,
-        masteryUpdated: false,
-      },
-    }, { throwOnError: true });
-  } catch (error: unknown) {
-    if (typeof error === "object" && error !== null && "code" in error && error.code === "P2002") {
-      return NextResponse.json({ duplicate: true, admission: "NOT_REPEATED" });
-    }
-    throw error;
-  }
+  const mastery = await appendCanonicalMasteryUpdate({
+    schoolId: session.schoolId,
+    studentId: session.studentId,
+    studentUserId: session.studentUserId,
+    sessionId: idempotencyKey,
+    itemId: item.id,
+    itemVersion: item.version,
+    selectedAnswerIndex: body.answerIndex as number,
+    occurredAt: new Date().toISOString(),
+    admission,
+  });
+  if (mastery.duplicate) return NextResponse.json({ duplicate: true, admission: "NOT_REPEATED" });
 
   return NextResponse.json({
     correct,
     admission,
     diagnosticSession,
-    masteryUpdated: false,
+    masteryUpdated: true,
+    learnerState: toLearnerSafeStudentConceptState(mastery.update.state),
     administrativeGradeChanged: false,
   });
 }

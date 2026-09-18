@@ -4,7 +4,8 @@
   "type": "module",
   "scripts": {
     "start": "node watcher.mjs",
-    "dev": "node --watch watcher.mjs"
+    "dev": "node --watch watcher.mjs",
+    "test": "node --test context.node-test.mjs"
   },
   "dependencies": {
     "chokidar": "^3.6.0",
