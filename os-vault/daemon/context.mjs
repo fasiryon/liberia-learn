@@ -130,7 +130,7 @@ export async function buildWorkflowContext({ vaultPath, route, queuePath, now = 
     if (realRepositoryRelative.startsWith('../') || path.isAbsolute(realRepositoryRelative)) {
       throw new Error('queue_path_outside_repository')
     }
-    normalizeRelative(realRepositoryRelative)
+    if (path.extname(realQueue).toLowerCase() !== '.md') throw new Error('queue_file_type_invalid')
     queueContent = await readRequired(realQueue, realRepositoryRelative)
     queueRelative = realRepositoryRelative
   }

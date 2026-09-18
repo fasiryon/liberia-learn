@@ -77,6 +77,16 @@ test('queue routes attach their prompt, request, and declared repository inputs'
   assert.match(context.user, /export const governed = true/)
 })
 
+test('sensitive-topic queue filenames remain valid after realpath confinement', async (t) => {
+  const f = await fixture()
+  t.after(() => fs.rm(f.root, { recursive: true, force: true }))
+  const queue = await f.write('os-vault/QUEUE/AUDIT-password-reset.md', '# Password reset audit')
+
+  const context = await buildWorkflowContext({ vaultPath: f.vault, route: 'audit', queuePath: queue })
+  assert.match(context.user, /Password reset audit/)
+  assert.match(context.user, /AUDIT-password-reset\.md/)
+})
+
 test('queue context rejects traversal and secret-bearing paths before an API request', async (t) => {
   const f = await fixture()
   t.after(() => fs.rm(f.root, { recursive: true, force: true }))
