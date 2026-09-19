@@ -1,4 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { selectLessonBody } from "@/lib/lessons";
 
 const mockRequireRole = vi.hoisted(() => vi.fn());
 const mockScheduledWorkFindUnique = vi.hoisted(() => vi.fn());
@@ -48,12 +49,10 @@ describe("student lesson delivery", () => {
     mockStrandFindFirst.mockResolvedValue({ strandKey: "fractions_decimals" });
   });
 
-  // First test in this file to dynamically import @/lib/lessons, which now
-  // pulls in isomorphic-dompurify (jsdom) for HTML sanitization. The cold jsdom
-  // import can exceed the default 5s budget under full-suite parallel load, so
-  // this case gets the same generous timeout the route tests use.
-  it("selects the standard lesson body for standard formats", async () => {
-    const { selectLessonBody } = await import("@/lib/lessons");
+  // Import this pure selector at module load. lib/lessons also initializes the
+  // HTML sanitizer, which can be slow under full-suite worker contention and
+  // must not consume an individual behavioral test's timeout.
+  it("selects the standard lesson body for standard formats", () => {
     expect(
       selectLessonBody(
         {
@@ -65,8 +64,7 @@ describe("student lesson delivery", () => {
     ).toContain("Standard lesson body");
   }, ROUTE_TIMEOUT_MS);
 
-  it("selects the block lesson body for block formats", async () => {
-    const { selectLessonBody } = await import("@/lib/lessons");
+  it("selects the block lesson body for block formats", () => {
     expect(
       selectLessonBody(
         {

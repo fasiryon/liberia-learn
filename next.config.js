@@ -45,6 +45,14 @@ const nextConfig = {
           { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
           { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=()" },
           { key: "Strict-Transport-Security", value: "max-age=63072000; includeSubDomains; preload" },
+          // Public source identity lets deployment smoke verify the production alias.
+          ...(process.env.VERCEL_ENV?.trim() === "production" &&
+          /^[a-f0-9]{40}$/i.test((process.env.VERCEL_GIT_COMMIT_SHA ?? "").trim())
+            ? [
+                { key: "X-Deployment-Environment", value: "production" },
+                { key: "X-Deployment-Sha", value: process.env.VERCEL_GIT_COMMIT_SHA.trim() },
+              ]
+            : []),
           // The enforcing, per-request nonce CSP is attached in middleware.
         ],
       },

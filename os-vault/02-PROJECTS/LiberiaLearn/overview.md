@@ -65,7 +65,7 @@ See: `docs/architecture/SYSTEM_OVERVIEW.md`, `docs/architecture/TENANCY_ISOLATIO
 ## Test Health
 **Current:** 371 test files, 2945+ tests passing (sprint 17, 2026-05-15)
 **Test command:** `npx vitest run`
-**E2E tests:** `npx playwright test --config=playwright-audit.config.ts` (13 tests)
+**E2E tests:** `PLAYWRIGHT_AUDIT=1 PLAYWRIGHT_BASE_URL=<target> npx playwright test` (13 tests)
 
 ## Deployment
 - **Production URL:** [User to populate — Vercel URL]
