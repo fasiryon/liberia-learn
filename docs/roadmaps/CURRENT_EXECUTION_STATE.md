@@ -3,7 +3,7 @@
 ## Mastery / Retention / Misconception Calibration V1: IMPLEMENTATION COMPLETE
 
 Built from verified `main` SHA `ce903841961d7efb21b702d72e838aae9cf30b03`
-on isolated branch `feat/mastery-retention-misconception-v1`. The governed
+on isolated branch `feat/mastery-retention-misconception-v1-certified`. The governed
 Grade 4 mathematics slice now has one versioned canonical mastery writer over
 the existing append-only LearningEvent authority, deterministic replay,
 separate mastery and confidence, explicit conflict and recency, an independent
@@ -23,8 +23,8 @@ outcome validation. The Grade 4 slice has one released item per concept, so
 same-item repetition remains low-confidence. Full gate and merge evidence will
 be recorded through the PR and merged-main checks. Pre-PR certification:
 `npx prisma generate` PASS; `npx tsc --noEmit` PASS; focused hostile/calibration
-tests PASS (53 application tests / 5 files plus 5 vault assembler tests); full
-Vitest PASS (5,153 tests / 632 files);
+tests PASS (66 tests / 6 files plus 6 native vault assembler tests); full
+Vitest PASS (5,155 tests / 632 files);
 production build PASS (385 static pages); `npm run validate:changed` and
 `git diff --check` PASS. The build required network access for the repository's
 configured Google Font and reported only established optional-environment /

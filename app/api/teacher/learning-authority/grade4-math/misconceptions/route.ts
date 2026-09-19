@@ -12,24 +12,32 @@ import {
 } from "@/lib/learning-state/masteryWriter";
 import { GRADE4_MATH_MISCONCEPTION_POLICY } from "@/lib/learning-state/misconceptionPolicy";
 import { toDecisionModelLearnerState } from "@/lib/learning-state/studentLearningModel";
+import { listAuthorizedClassIdsForTeacher } from "@/lib/records/schoolOperations";
 
 export const dynamic = "force-dynamic";
+
+async function findAuthorizedStudent(actor: { id: string; role: string; schoolId: string }, studentId: string) {
+  const authorizedClassIds = actor.role === "TEACHER"
+    ? await listAuthorizedClassIdsForTeacher(actor.id, actor.schoolId)
+    : null;
+  return prisma.student.findFirst({
+    where: {
+      id: studentId,
+      user: { schoolId: actor.schoolId },
+      ...(authorizedClassIds ? {
+        enrollments: { some: { Class: { schoolId: actor.schoolId, id: { in: authorizedClassIds } } } },
+      } : {}),
+    },
+    select: { id: true, userId: true },
+  });
+}
 
 export async function GET(req: NextRequest) {
   const actor = await requireRole("TEACHER", "ADMIN");
   if (!actor.schoolId) return NextResponse.json({ error: "school_scope_required" }, { status: 403 });
   const studentId = req.nextUrl.searchParams.get("studentId");
   if (!studentId) return NextResponse.json({ error: "student_id_required" }, { status: 400 });
-  const student = await prisma.student.findFirst({
-    where: {
-      id: studentId,
-      user: { schoolId: actor.schoolId },
-      ...(actor.role === "TEACHER" ? {
-        enrollments: { some: { Class: { schoolId: actor.schoolId, teacherId: actor.id } } },
-      } : {}),
-    },
-    select: { id: true, userId: true },
-  });
+  const student = await findAuthorizedStudent({ ...actor, schoolId: actor.schoolId }, studentId);
   if (!student) return NextResponse.json({ error: "student_not_found" }, { status: 404 });
   const asOf = new Date().toISOString();
   const states = await Promise.all(GRADE4_MATH_ONTOLOGY_RELEASE.concepts.map((concept) =>
@@ -75,16 +83,7 @@ export async function POST(req: NextRequest) {
     !GRADE4_MATH_MISCONCEPTION_POLICY.definitions.some((signal) => signal.id === body.signalId)) {
     return NextResponse.json({ error: "governed_concept_or_signal_not_found" }, { status: 400 });
   }
-  const student = await prisma.student.findFirst({
-    where: {
-      id: body.studentId,
-      user: { schoolId: actor.schoolId },
-      ...(actor.role === "TEACHER" ? {
-        enrollments: { some: { Class: { schoolId: actor.schoolId, teacherId: actor.id } } },
-      } : {}),
-    },
-    select: { id: true, userId: true },
-  });
+  const student = await findAuthorizedStudent({ ...actor, schoolId: actor.schoolId }, body.studentId);
   if (!student) return NextResponse.json({ error: "student_not_found" }, { status: 404 });
 
   let result: Awaited<ReturnType<typeof appendGovernedMisconceptionReview>>;

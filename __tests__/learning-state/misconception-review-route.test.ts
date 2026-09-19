@@ -5,12 +5,16 @@ const mockRequireRole = vi.hoisted(() => vi.fn());
 const mockStudentFindFirst = vi.hoisted(() => vi.fn());
 const mockAppendReview = vi.hoisted(() => vi.fn());
 const mockReadState = vi.hoisted(() => vi.fn());
+const mockListAuthorizedClassIds = vi.hoisted(() => vi.fn());
 
 vi.mock("@/lib/auth", () => ({ requireRole: mockRequireRole }));
 vi.mock("@/lib/db", () => ({ prisma: { student: { findFirst: mockStudentFindFirst } } }));
 vi.mock("@/lib/learning-state/masteryWriter", () => ({
   appendGovernedMisconceptionReview: mockAppendReview,
   readCanonicalStudentConceptState: mockReadState,
+}));
+vi.mock("@/lib/records/schoolOperations", () => ({
+  listAuthorizedClassIdsForTeacher: mockListAuthorizedClassIds,
 }));
 vi.mock("@/lib/learning-state/studentLearningModel", async (importOriginal) => {
   const original = await importOriginal<typeof import("@/lib/learning-state/studentLearningModel")>();
@@ -39,6 +43,7 @@ describe("governed misconception review route", () => {
     vi.clearAllMocks();
     mockRequireRole.mockResolvedValue({ id: "teacher-a", role: "TEACHER", schoolId: "school-a" });
     mockStudentFindFirst.mockResolvedValue({ id: "student-a", userId: "student-user-a" });
+    mockListAuthorizedClassIds.mockResolvedValue(["owned-class", "assigned-class", "timetable-class"]);
     mockAppendReview.mockResolvedValue({
       duplicate: false,
       update: { state: { authority: { canonical: true, mayChangeAdministrativeGrade: false } } },
@@ -71,7 +76,7 @@ describe("governed misconception review route", () => {
     }));
   });
 
-  it("lets a same-school teacher discover suspected signals and canonical evidence IDs", async () => {
+  it("lets an authorized assigned teacher discover suspected signals and canonical evidence IDs", async () => {
     const response = await GET(new NextRequest(
       "http://localhost/api/teacher/learning-authority/grade4-math/misconceptions?studentId=student-a"
     ));
@@ -87,9 +92,13 @@ describe("governed misconception review route", () => {
       administrativeGradeMayChange: false,
     });
     expect(mockReadState).toHaveBeenCalledTimes(3);
+    expect(mockListAuthorizedClassIds).toHaveBeenCalledWith("teacher-a", "school-a");
     expect(mockStudentFindFirst).toHaveBeenCalledWith(expect.objectContaining({
       where: expect.objectContaining({
-        enrollments: { some: { Class: { schoolId: "school-a", teacherId: "teacher-a" } } },
+        enrollments: { some: { Class: {
+          schoolId: "school-a",
+          id: { in: ["owned-class", "assigned-class", "timetable-class"] },
+        } } },
       }),
     }));
   });
