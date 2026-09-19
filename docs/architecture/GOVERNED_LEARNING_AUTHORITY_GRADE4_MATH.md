@@ -30,9 +30,17 @@ one exact released item without its answer key. The server derives Initial or
 Continuous kind and fixes a bounded attempt identity. POST rejects client
 scoring, policy-context, accommodation, idempotency, or session-authority
 claims; scores the sealed item on the server; applies exact binding, evidence,
-and tool policy; and records a tenant-bound admission audit. The LearningEvent
-remains an audit envelope and explicitly declares that it is not canonical
-evidence.
+and tool policy; and records a tenant-bound admission audit plus the reserved
+canonical mastery event. The response uses the learner-safe state projection;
+misconception policy, evidence identifiers, teacher explanations, and the
+DecisionModel handoff are not returned to the student.
+
+For session continuity only, GET recognizes a pre-V1 accepted initial
+diagnostic audit when no canonical diagnostic exists. That legacy event can
+select the Continuous item, but it is never admitted to canonical mastery
+replay. Teacher/Admin misconception review uses a separate same-school GET to
+discover suspected signals and their opaque evidence identifiers before a
+governed confirmation or rejection.
 
 The release contains three revisioned concepts in an acyclic prerequisite
 sequence, three exact item bindings, three evidence policies, and four tool
@@ -50,12 +58,19 @@ and uncertainty, and permanently expose `mayChangeAdministrativeGrade: false`.
 
 ## Legacy compatibility
 
-This mission does not delete legacy mastery tables or introduce a new mastery
-engine. Affected unsafe writers are stopped. Existing mastery readers continue
-to serve historical compatibility data. The bounded evidence admission result
-sets `legacyMasteryProjectionAllowed: false`, so there is no dual canonical
-write. A later Student Learning Model mission may define a one-way governed
-projection after calibration and human approval.
+This mission does not delete legacy mastery tables. Affected unsafe writers
+remain stopped and existing mastery readers continue to serve historical
+compatibility data. The evidence admission result still sets
+`legacyMasteryProjectionAllowed: false`, so admission itself never performs a
+dual write.
+
+Student Learning Model V1 now supplies the single canonical writer for this
+governed slice in `lib/learning-state/masteryWriter.ts`. It persists only the
+reserved versioned canonical event and derives state by deterministic replay.
+Legacy stores are excluded from replay inputs. The optional compatibility
+projection in `studentLearningModel.ts` is one-way and read-only; it does not
+write legacy tables. See `STUDENT_LEARNING_MODEL_V1.md` for reducer,
+retention, misconception, calibration, and DecisionModel contracts.
 
 Current compatibility writers remain in `lib/mastery/masteryService.ts`,
 `lib/adaptive/updateMastery.ts`, scheduled lesson completion, WAEC practice,
@@ -70,7 +85,8 @@ decision-support readers treat those records as consequential inputs.
 
 The bounded authority uses minimum necessary identifiers and never copies tutor
 conversation into evidence. Tenant, authenticated User, and Student identities
-must agree. Raw LearningEvent telemetry is not accepted evidence. No production
+must agree. Raw LearningEvent telemetry is not accepted evidence. Only the
+reserved canonical event written after governed admission is replayed. No production
 or staging mutation, live migration, deployment, or Vercel certification is
 part of this mission.
 

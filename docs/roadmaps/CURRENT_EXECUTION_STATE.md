@@ -1,5 +1,44 @@
 # CURRENT EXECUTION STATE
 
+## Mastery / Retention / Misconception Calibration V1: IMPLEMENTATION COMPLETE
+
+Built from verified `main` SHA `ce903841961d7efb21b702d72e838aae9cf30b03`
+on isolated branch `feat/mastery-retention-misconception-v1-certified`. The governed
+Grade 4 mathematics slice now has one versioned canonical mastery writer over
+the existing append-only LearningEvent authority, deterministic replay,
+separate mastery and confidence, explicit conflict and recency, an independent
+as-of retention projection, governed human misconception confirmation /
+rejection, teacher-readable explanations, a one-way legacy read projection,
+and a provider-neutral DecisionModel handoff that deliberately selects no
+actions. No schema migration, production/staging mutation, orchestrator,
+provider dependency, or broader curriculum coverage was introduced.
+
+The reducer is `mastery-reducer/1.0.0`; retention is
+`exponential-half-life/1.0.0` with a documented 30-day policy half-life and
+seven-day minimum delayed-retrieval interval. Misconception interpretation is
+a separate `misconception-signal-policy/1.0.0` overlay, so the published MOE
+ontology release remains byte-for-byte semantically unchanged.
+Calibration evidence is deterministic fixture evidence, not empirical learner
+outcome validation. The Grade 4 slice has one released item per concept, so
+same-item repetition remains low-confidence. Full gate and merge evidence will
+be recorded through the PR and merged-main checks. Pre-PR certification:
+`npx prisma generate` PASS; `npx tsc --noEmit` PASS; focused hostile/calibration
+tests PASS (66 tests / 6 files plus 6 native vault assembler tests); full
+Vitest PASS (5,155 tests / 632 files);
+production build PASS (385 static pages); `npm run validate:changed` and
+`git diff --check` PASS. The build required network access for the repository's
+configured Google Font and reported only established optional-environment /
+baseline warnings.
+
+PR review remediation keeps teacher review usable without weakening the
+authority boundary: an assigned-class Teacher or same-school Admin read exposes
+suspected signals and canonical evidence IDs; student responses use an explicit safe projection;
+and pre-V1 initial diagnostic audit rows remain a one-way session-kind fallback
+that never enters mastery replay. A separate vault automation compatibility fix
+now assembles each workflow's named inputs into one bounded request for both
+the queue daemon and daily n8n path, with traversal/secret denial and explicit
+Unknown handling for absent inputs.
+
 ## Pre-NR15 Security and Accessibility Closure: COMPLETE (2026-09-04)
 
 Repository-local gaps for SMS webhook authentication, enforcing nonce CSP,

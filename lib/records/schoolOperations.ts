@@ -425,7 +425,7 @@ export async function deleteTimetableForSchool(schoolId: string, timetableId: st
   await prisma.timetable.delete({ where: { id: timetableId } });
 }
 
-async function listAuthorizedClassIdsForTeacher(userId: string, schoolId: string) {
+async function listAssignedClassIdsForTeacher(userId: string, schoolId: string) {
   const teacherAssignmentModel = (prisma as any).teacherAssignment;
   const timetableModel = (prisma as any).timetable;
   const [assignments, timetables] = await Promise.all([
@@ -452,6 +452,17 @@ async function listAuthorizedClassIdsForTeacher(userId: string, schoolId: string
       ...safeTimetables.map((item) => item.classId),
     ])
   );
+}
+
+export async function listAuthorizedClassIdsForTeacher(userId: string, schoolId: string) {
+  const [ownedClasses, assignedClassIds] = await Promise.all([
+    prisma.class.findMany({
+      where: { schoolId, teacherId: userId },
+      select: { id: true },
+    }),
+    listAssignedClassIdsForTeacher(userId, schoolId),
+  ]);
+  return Array.from(new Set([...ownedClasses.map((item) => item.id), ...assignedClassIds]));
 }
 
 export async function listTeacherScheduleForUser(user: {
@@ -482,7 +493,7 @@ export async function listTeacherScheduleForUser(user: {
       orderBy: { name: "asc" },
     });
     const ownedClassIds = ownedClasses.map((row) => row.id);
-    const extraClassIds = await listAuthorizedClassIdsForTeacher(user.id, user.schoolId);
+    const extraClassIds = await listAssignedClassIdsForTeacher(user.id, user.schoolId);
     const missingClassIds = extraClassIds.filter((classId) => !ownedClassIds.includes(classId));
 
     if (missingClassIds.length === 0) {

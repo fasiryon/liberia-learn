@@ -4,16 +4,23 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 const mockRequireRole = vi.hoisted(() => vi.fn());
 const mockStudentFindFirst = vi.hoisted(() => vi.fn());
 const mockEventFindFirst = vi.hoisted(() => vi.fn());
-const mockLogLearningEvent = vi.hoisted(() => vi.fn());
+const mockEventCreate = vi.hoisted(() => vi.fn());
+const mockEventFindMany = vi.hoisted(() => vi.fn());
+const mockEventFindUnique = vi.hoisted(() => vi.fn());
+const eventStore = vi.hoisted(() => ({ rows: [] as Record<string, any>[] }));
 
 vi.mock("@/lib/auth", () => ({ requireRole: mockRequireRole }));
 vi.mock("@/lib/db", () => ({
   prisma: {
     student: { findFirst: mockStudentFindFirst },
-    learningEvent: { findFirst: mockEventFindFirst },
+    learningEvent: {
+      findFirst: mockEventFindFirst,
+      create: mockEventCreate,
+      findMany: mockEventFindMany,
+      findUnique: mockEventFindUnique,
+    },
   },
 }));
-vi.mock("@/lib/events/logLearningEvent", () => ({ logLearningEvent: mockLogLearningEvent }));
 
 import { GET, POST } from "@/app/api/student/learning-authority/grade4-math/route";
 
@@ -23,6 +30,16 @@ describe("governed Grade 4 Math live authority", () => {
     mockRequireRole.mockResolvedValue({ id: "user-1", role: "STUDENT", schoolId: "school-1" });
     mockStudentFindFirst.mockResolvedValue({ id: "student-1" });
     mockEventFindFirst.mockResolvedValue(null);
+    eventStore.rows.length = 0;
+    mockEventCreate.mockImplementation(async ({ data }: { data: Record<string, any> }) => {
+      if (eventStore.rows.some((row) => row.id === data.id)) throw Object.assign(new Error("duplicate"), { code: "P2002" });
+      eventStore.rows.push(data);
+      return data;
+    });
+    mockEventFindMany.mockImplementation(async ({ where }: { where: { occurredAt?: { lte?: Date } } }) =>
+      eventStore.rows.filter((row) => !where.occurredAt?.lte || row.occurredAt <= where.occurredAt.lte).map((row) => ({ ...row }))
+    );
+    mockEventFindUnique.mockImplementation(async ({ where }: { where: { id: string } }) => eventStore.rows.find((row) => row.id === where.id) ?? null);
   });
 
   async function issue() {
@@ -58,6 +75,7 @@ describe("governed Grade 4 Math live authority", () => {
       item: { id: "g4-frac-diagnostic-equal-parts" },
     });
     expect(issued.data.item.correctIndex).toBeUndefined();
+    expect(issued.data.item.misconceptionSignalByAnswerIndex).toBeUndefined();
     expect(issued.data.item.toolPolicy.prohibited).toContain("calculator");
     expect(issued.cookie).toContain("g4_math_diagnostic_session=");
     expect(issued.cookie).toContain("HttpOnly");
@@ -72,7 +90,17 @@ describe("governed Grade 4 Math live authority", () => {
     });
   });
 
-  it("server-scores and admits the sealed diagnostic without changing grade or mastery", async () => {
+  it("uses legacy admission only as a one-way diagnostic-kind fallback", async () => {
+    mockEventFindFirst.mockResolvedValueOnce(null).mockResolvedValueOnce({ id: "legacy-initial-evidence" });
+    const issued = await issue();
+    expect(issued.data).toMatchObject({ kind: "CONTINUOUS", item: { id: "g4-frac-diagnostic-compare" } });
+    expect(mockEventFindFirst).toHaveBeenNthCalledWith(2, expect.objectContaining({
+      where: expect.objectContaining({ eventType: "learning.evidence_admission.recorded" }),
+    }));
+    expect(mockEventFindMany).not.toHaveBeenCalled();
+  });
+
+  it("server-scores and writes canonical learning state without changing administrative grade", async () => {
     const issued = await issue();
     const response = await POST(submit(issued));
     const data = await response.json();
@@ -87,19 +115,30 @@ describe("governed Grade 4 Math live authority", () => {
         studentUserId: "user-1",
         mayChangeAdministrativeGrade: false,
       },
-      masteryUpdated: false,
+      masteryUpdated: true,
       administrativeGradeChanged: false,
+      learnerState: {
+        mastery: { observedScore: 1, level: "INSUFFICIENT_EVIDENCE" },
+        confidence: { level: "LOW" },
+        authority: { canonical: true, mayChangeAdministrativeGrade: false },
+      },
     });
-    expect(mockLogLearningEvent).toHaveBeenCalledWith(expect.objectContaining({
-      status: "evidence_admission_recorded",
+    expect(data.decisionModelInput).toBeUndefined();
+    expect(data.learnerState.misconceptions).toBeUndefined();
+    expect(data.learnerState.teacherExplanation).toBeUndefined();
+    expect(data.learnerState.conflict.positiveEvidenceIds).toBeUndefined();
+    expect(mockEventCreate).toHaveBeenCalledWith(expect.objectContaining({
+      data: expect.objectContaining({
+        eventType: "learning.canonical.mastery_update.v1",
+        calculationVersion: "mastery-reducer/1.0.0",
       metadata: expect.objectContaining({
-        diagnosticKind: "INITIAL",
-        serverScored: true,
-        toolPolicyContext: "SERVER_ISSUED_NO_ASSISTANCE",
-        learningEventIsCanonicalEvidence: false,
-        masteryUpdated: false,
+          canonicalEvent: expect.objectContaining({
+            authority: "SERVER_GOVERNED_EVIDENCE_GATEWAY",
+            admissionDecision: "ACCEPTED",
+          }),
+        }),
       }),
-    }), { throwOnError: true });
+    }));
   });
 
   it("rejects every client attempt to assert scoring, policy context, or session authority", async () => {
@@ -117,25 +156,35 @@ describe("governed Grade 4 Math live authority", () => {
     }));
     expect(response.status).toBe(400);
     expect(await response.json()).toEqual({ error: "client_cannot_assert_session_scoring_or_policy_context" });
-    expect(mockLogLearningEvent).not.toHaveBeenCalled();
+    expect(mockEventCreate).not.toHaveBeenCalled();
   });
+
+  it.each(["mastery", "confidence", "retention", "misconception", "reducerVersion", "policyVersion"])(
+    "rejects a client-authored %s claim on its own",
+    async (field) => {
+      const issued = await issue();
+      const response = await POST(submit(issued, { [field]: "forged" }));
+      expect(response.status).toBe(400);
+      expect(mockEventCreate).not.toHaveBeenCalled();
+    }
+  );
 
   it("rejects a forged item version or tampered session binding", async () => {
     const issued = await issue();
     const response = await POST(submit(issued, { itemVersion: "forged" }));
     expect(response.status).toBe(400);
     expect(await response.json()).toEqual({ error: "diagnostic_session_invalid_or_expired" });
-    expect(mockLogLearningEvent).not.toHaveBeenCalled();
+    expect(mockEventCreate).not.toHaveBeenCalled();
   });
 
   it("does not permit answer probing to overwrite the first sealed attempt", async () => {
     const issued = await issue();
     const first = await POST(submit(issued, { answerIndex: 0 }));
     expect((await first.json()).correct).toBe(false);
-    mockEventFindFirst.mockResolvedValue({ id: "first-attempt" });
     const replay = await POST(submit(issued, { answerIndex: 2 }));
     expect(await replay.json()).toEqual({ duplicate: true, admission: "NOT_REPEATED" });
-    expect(mockLogLearningEvent).toHaveBeenCalledTimes(1);
+    expect(mockEventCreate).toHaveBeenCalledTimes(2);
+    expect(eventStore.rows).toHaveLength(1);
   });
 
   it("fails closed when User and tenant cannot resolve one Student", async () => {

@@ -18,9 +18,23 @@
 ```bash
 docker run -d -p 5678:5678 --name n8n \
   -e N8N_HOST=localhost \
+  -e NODES_EXCLUDE="[]" \
   -v ~/.n8n:/home/node/.n8n \
+  -v /absolute/path/to/liberia-learn:/workspace/liberia-learn:ro \
+  -v /absolute/path/to/liberia-learn/os-vault/GENERATED:/workspace/liberia-learn/os-vault/GENERATED \
+  -v /absolute/path/to/liberia-learn/os-vault/SYSTEM/logs:/workspace/liberia-learn/os-vault/SYSTEM/logs \
   n8nio/n8n
 ```
+
+The repository remains read-only inside the container; the two narrower mounts
+make only generated artifacts and the operations log writable. Create both host
+directories before starting the container.
+
+`NODES_EXCLUDE="[]"` is required because n8n 2.x blocks Execute Command by
+default, while this governed workflow uses it to run the bounded context
+assembler. Use this container only with trusted workflow administrators; do not
+offer workflow editing to untrusted users. See n8n's
+[Execute Command security guidance](https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.executecommand/).
 
 **Option B: N8N Cloud** — n8n.io (managed, no server needed)
 
@@ -31,6 +45,11 @@ Add credentials in N8N:
 ## Step 3 — Wire the Workflows
 
 Import each workflow stub from `SYSTEM/setup/n8n-workflows/`.
+The daily workflow runs `daemon/build-context.mjs` first. That command attaches
+the workflow prompt, both project overviews, recent project records, and the
+prior WAT daily note in one bounded request. If assembly fails, the API node is
+not called. It requires a self-hosted runner with the repository mounted; N8N
+Cloud needs an equivalent authenticated source provider before use.
 For each workflow, update:
 - `VAULT_PATH` → absolute path on your machine (e.g., `C:\Users\fasir\liberia-learn\os-vault`)
 - `ANTHROPIC_API_KEY` → your key from .env.local

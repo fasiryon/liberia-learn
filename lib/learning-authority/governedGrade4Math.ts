@@ -354,7 +354,7 @@ export function createDiagnosticResult(input: {
   studentId: string;
   studentUserId: string;
   releaseId?: string;
-  conceptObservations: readonly { conceptId: string; confidence: number }[];
+  conceptObservations: readonly { conceptId: string; observedPerformance: 0 | 1; confidence: number }[];
   recommendedPrerequisiteConceptIds: readonly string[];
 }, release: CurriculumOntologyRelease = GRADE4_MATH_ONTOLOGY_RELEASE) {
   validateOntologyRelease(release);
@@ -367,6 +367,9 @@ export function createDiagnosticResult(input: {
   const conceptIds = new Set(release.concepts.map((concept) => concept.id));
   for (const observation of input.conceptObservations) {
     if (!conceptIds.has(observation.conceptId)) throw new Error("diagnostic_concept_not_released");
+    if (observation.observedPerformance !== 0 && observation.observedPerformance !== 1) {
+      throw new Error("diagnostic_performance_invalid");
+    }
     if (!Number.isFinite(observation.confidence) || observation.confidence < 0 || observation.confidence > 1) {
       throw new Error("diagnostic_confidence_invalid");
     }

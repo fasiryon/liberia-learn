@@ -3,12 +3,12 @@ import Anthropic from '@anthropic-ai/sdk'
 import fs from 'fs/promises'
 import path from 'path'
 import { fileURLToPath } from 'url'
+import { buildWorkflowContext, contextRouteForQueueFilename } from './context.mjs'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const VAULT = path.resolve(__dirname, '..')
 const QUEUE = path.join(VAULT, 'QUEUE')
 const GENERATED = path.join(VAULT, 'GENERATED')
-const SYSTEM_MD = path.join(VAULT, 'SYSTEM/CLAUDE.md')
 
 const client = new Anthropic({
   apiKey: process.env.ANTHROPIC_API_KEY
@@ -38,10 +38,11 @@ async function processFile(filePath) {
   console.log(`[OS] Processing: ${filename}`)
 
   try {
-    const [systemPrompt, fileContent] = await Promise.all([
-      fs.readFile(SYSTEM_MD, 'utf8').catch(() => ''),
-      fs.readFile(filePath, 'utf8')
-    ])
+    const context = await buildWorkflowContext({
+      vaultPath: VAULT,
+      route: contextRouteForQueueFilename(filename),
+      queuePath: filePath,
+    })
 
     const folder = getRoute(filename)
     const outputDir = path.join(GENERATED, folder)
@@ -50,8 +51,8 @@ async function processFile(filePath) {
     const response = await client.messages.create({
       model: 'claude-sonnet-4-6',
       max_tokens: 4000,
-      system: systemPrompt || 'You are a strategic AI assistant for LiberiaLearn.',
-      messages: [{ role: 'user', content: fileContent }]
+      system: context.system,
+      messages: [{ role: 'user', content: context.user }]
     })
 
     const output = response.content
@@ -62,7 +63,8 @@ async function processFile(filePath) {
     const outputName = filename.replace('.md', `-OUTPUT-${Date.now()}.md`)
     const outputPath = path.join(outputDir, outputName)
 
-    await fs.writeFile(outputPath, `# Output: ${filename}\n\n${output}`)
+    const sourceManifest = context.sources.map((source) => `- ${source.path}`).join('\n') || '- None'
+    await fs.writeFile(outputPath, `# Output: ${filename}\n\n## Context sources\n${sourceManifest}\n\n${output}`)
 
     await fs.rename(filePath, filePath.replace('.md', '_DONE.md'))
 
