@@ -62,7 +62,21 @@ const child = spawn(process.execPath, [join(standaloneRoot, "server.js")], {
   stdio: "inherit",
 });
 
+let stopping = false;
+for (const signal of ["SIGINT", "SIGTERM"]) {
+  process.on(signal, () => {
+    if (stopping) return;
+    stopping = true;
+    child.kill(signal);
+    const forcedExit = setTimeout(() => child.kill("SIGKILL"), 5_000);
+    forcedExit.unref();
+  });
+}
+
 child.on("exit", (code, signal) => {
+  if (stopping) {
+    process.exit(0);
+  }
   if (signal) {
     process.kill(process.pid, signal);
     return;
