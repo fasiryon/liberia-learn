@@ -171,9 +171,9 @@ export function createGovernedMisconceptionReview(input: {
 }
 
 export type DecisionModelLearnerState = Readonly<{
-  contractVersion: "decision-model-learner-state/1.0.0";
+  contractVersion: "decision-model-learner-state/1.0.0" | "decision-model-learner-state/1.1.0";
   authoritativeLearnerState: StudentConceptState;
-  validCandidateActions: readonly never[];
+  validCandidateActions: readonly Readonly<{ id: string; conceptId: string; itemId: string; kind: "DIAGNOSTIC" | "PRACTICE"; reason: string }>[];
   decisionIntelligence: Readonly<{
     uncertaintyReasons: readonly string[];
     conflictingEvidence: boolean;
@@ -185,10 +185,30 @@ export type DecisionModelLearnerState = Readonly<{
     ontologyReleaseIdentity: string;
     reducerVersion: typeof MASTERY_REDUCER_VERSION;
     retentionModelVersion: typeof RETENTION_MODEL_VERSION;
-    actionPolicyStatus: "NOT_IMPLEMENTED_IN_THIS_MISSION";
+    actionPolicyStatus: "NOT_IMPLEMENTED_IN_THIS_MISSION" | "GOVERNED_GRADE4_V1";
     requiresDecisionAuthority: true;
   }>;
 }>;
+
+/** The single provider-neutral contract. Providers rank server-supplied actions only. */
+export type DecisionModelInput = Readonly<{
+  contractVersion: "decision-model-input/1.0.0";
+  authoritativeState: readonly DecisionModelLearnerState[];
+  candidates: DecisionModelLearnerState["validCandidateActions"];
+  learnerStateRevision: string;
+  ontologyReleaseIdentity: string;
+}>;
+
+export type DecisionModelOutput = Readonly<{
+  modelId: string;
+  rankedCandidates: readonly Readonly<{ id: string; probability: number }>[];
+  confidence: number;
+}>;
+
+export interface DecisionModel {
+  readonly id: string;
+  rank(input: DecisionModelInput): Promise<DecisionModelOutput>;
+}
 
 export type LearnerSafeStudentConceptState = Readonly<{
   modelVersion: typeof STUDENT_LEARNING_MODEL_VERSION;
@@ -506,11 +526,14 @@ export function replayStudentConceptState(
   });
 }
 
-export function toDecisionModelLearnerState(state: StudentConceptState): DecisionModelLearnerState {
+export function toDecisionModelLearnerState(
+  state: StudentConceptState,
+  candidates: DecisionModelLearnerState["validCandidateActions"] = [],
+): DecisionModelLearnerState {
   return Object.freeze({
-    contractVersion: "decision-model-learner-state/1.0.0" as const,
+    contractVersion: candidates.length ? "decision-model-learner-state/1.1.0" as const : "decision-model-learner-state/1.0.0" as const,
     authoritativeLearnerState: state,
-    validCandidateActions: Object.freeze([]) as readonly never[],
+    validCandidateActions: Object.freeze([...candidates]),
     decisionIntelligence: Object.freeze({
       uncertaintyReasons: state.confidence.reasons,
       conflictingEvidence: state.conflict.present,
@@ -522,7 +545,7 @@ export function toDecisionModelLearnerState(state: StudentConceptState): Decisio
       ontologyReleaseIdentity: state.scope.ontologyReleaseIdentity,
       reducerVersion: MASTERY_REDUCER_VERSION,
       retentionModelVersion: RETENTION_MODEL_VERSION,
-      actionPolicyStatus: "NOT_IMPLEMENTED_IN_THIS_MISSION" as const,
+      actionPolicyStatus: candidates.length ? "GOVERNED_GRADE4_V1" as const : "NOT_IMPLEMENTED_IN_THIS_MISSION" as const,
       requiresDecisionAuthority: true as const,
     }),
   });
