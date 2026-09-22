@@ -46,8 +46,15 @@ export type CurriculumConstructBinding = Readonly<{
   standardCode: string;
   evidencePolicyId: string;
   toolPolicyId: string;
-  /** Exact reviewed content ID, when this release binds an instructional lesson. */
-  lessonContentId?: string;
+}>;
+
+export type CurriculumContentBinding = Readonly<{
+  id: string;
+  conceptId: string;
+  contentId: string;
+  contentVersion: string;
+  contentType: "LESSON" | "TEXTBOOK" | "LAB" | "SIMULATION";
+  toolPolicyId: string;
 }>;
 
 export type CurriculumOntologyRelease = Readonly<{
@@ -63,6 +70,7 @@ export type CurriculumOntologyRelease = Readonly<{
   concepts: readonly Concept[];
   prerequisites: readonly ConceptPrerequisiteEdge[];
   bindings: readonly CurriculumConstructBinding[];
+  contentBindings: readonly CurriculumContentBinding[];
   evidencePolicies: readonly EvidencePolicy[];
   toolPolicies: readonly ToolPolicy[];
 }>;
@@ -164,6 +172,10 @@ const bindings = [
   },
 ] as const satisfies readonly CurriculumConstructBinding[];
 
+// Intentionally empty until curriculum authority approves and binds an exact
+// CurriculumContent revision to this release. Runtime code must not infer one.
+const contentBindings = [] as const satisfies readonly CurriculumContentBinding[];
+
 function deepFreeze<T>(value: T): T {
   if (value && typeof value === "object" && !Object.isFrozen(value)) {
     for (const child of Object.values(value as Record<string, unknown>)) deepFreeze(child);
@@ -188,6 +200,7 @@ export const GRADE4_MATH_ONTOLOGY_RELEASE: CurriculumOntologyRelease = deepFreez
     { fromConceptId: "g4-fractions-equivalence", toConceptId: "g4-fractions-compare", rationale: "Equivalence supports valid comparison." },
   ],
   bindings,
+  contentBindings,
   evidencePolicies,
   toolPolicies,
 });
@@ -196,6 +209,7 @@ export function deterministicReleaseIdentity(release: CurriculumOntologyRelease)
   const pinned = {
     authority: release.authority,
     bindings: release.bindings,
+    contentBindings: release.contentBindings,
     concepts: release.concepts,
     evidencePolicies: release.evidencePolicies,
     grade: release.grade,
@@ -227,9 +241,6 @@ export function validateOntologyRelease(release: CurriculumOntologyRelease): voi
     if (bindingIds.has(binding.id)) throw new Error("ontology_binding_duplicate");
     bindingIds.add(binding.id);
     if (!ids.has(binding.conceptId)) throw new Error("ontology_binding_unknown_concept");
-    if (binding.lessonContentId !== undefined && !binding.lessonContentId.trim()) {
-      throw new Error("ontology_binding_lesson_invalid");
-    }
     const item = itemsById.get(binding.itemId);
     if (!item || item.version !== binding.itemVersion) throw new Error("ontology_binding_unknown_item");
     if (!evidencePolicyIds.has(binding.evidencePolicyId) || !toolPolicyIds.has(binding.toolPolicyId)) {
@@ -237,6 +248,15 @@ export function validateOntologyRelease(release: CurriculumOntologyRelease): voi
     }
     const evidencePolicy = release.evidencePolicies.find((policy) => policy.id === binding.evidencePolicyId);
     if (evidencePolicy?.context !== item.context) throw new Error("ontology_binding_context_mismatch");
+  }
+  const contentBindingIds = new Set<string>();
+  for (const binding of release.contentBindings) {
+    if (contentBindingIds.has(binding.id)) throw new Error("ontology_content_binding_duplicate");
+    contentBindingIds.add(binding.id);
+    if (!ids.has(binding.conceptId)) throw new Error("ontology_content_binding_unknown_concept");
+    if (!binding.contentId.trim() || !binding.contentVersion.trim()) throw new Error("ontology_content_binding_identity_invalid");
+    const toolPolicy = release.toolPolicies.find((policy) => policy.id === binding.toolPolicyId);
+    if (!toolPolicy || toolPolicy.context !== "INSTRUCTION") throw new Error("ontology_content_binding_policy_invalid");
   }
   const outgoing = new Map<string, string[]>();
   for (const edge of release.prerequisites) {

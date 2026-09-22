@@ -43,11 +43,15 @@ export async function GET() {
     const binding = release.bindings.find((candidate) => candidate.itemId === item?.id && candidate.itemVersion === item.version);
     const policy = release.toolPolicies.find((candidate) => candidate.id === binding?.toolPolicyId);
     if (!item || !binding || !policy) throw new Error("governed_item_unavailable");
+    const lessonBinding = release.contentBindings.find((candidate) =>
+      candidate.conceptId === action.conceptId && candidate.contentType === "LESSON");
     let lessonHref: string | null = null;
-    if (binding.lessonContentId) {
+    if (lessonBinding) {
       const lesson = await prisma.curriculumContent.findFirst({ where: {
-        contentId: binding.lessonContentId, grade: release.grade, subject: release.subject,
+        contentId: lessonBinding.contentId, version: lessonBinding.contentVersion,
+        grade: release.grade, subject: release.subject,
         schoolId: null, status: { in: ["published", "APPROVED"] },
+        provenance: { lifecycleState: "APPROVED", currentRevisionId: { not: null } },
       }, select: { contentId: true } });
       if (!lesson) throw new Error("governed_lesson_unavailable");
       lessonHref = `/student/lesson/${encodeURIComponent(lesson.contentId)}`;

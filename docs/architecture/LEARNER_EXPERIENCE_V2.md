@@ -29,14 +29,22 @@ for a fresh online session. No offline cache writes canonical evidence.
 `publishedReleases.ts` is the executable release registry. Reusable release,
 decision, evidence, and state validation accept grade and subject from any
 registered published ontology release. A binding may pin an exact reviewed
-`lessonContentId`; the learner page then links to the existing lesson player.
+`contentBindings` collection distinct from assessment `bindings`; an approved
+`LESSON` binding pins concept, exact `contentId`, exact content version, and
+instruction ToolPolicy. The learner page then links to the existing lesson player.
 No such binding is present in the current Grade 4 fractions release, so this
 mission does not claim a certified lesson transition for that slice. The
 repository contains no explicit approved CurriculumContent binding for release
 `lr-moe-g4-math-fractions-2026.1`; standard `LR-MATH-G4_6-02` appears only in
 generic standards and seed records. Choosing which lesson to approve is an
 educational-content decision reserved for founder/MOE review, not inferred from
-title, grade, or standard. Other
+title, grade, or standard. Repository candidates are not Grade 4 lessons:
+`math-g5-fractions` is Grade 5 sample content; `wk_mca7a_mon_p1` and
+`wk_mca7a_mon_p5` are Grade 7 demo lessons; and
+`lab-fraction-multiplication` is a Grade 4 lab rather than an approved lesson.
+The configured curriculum database could not be audited because its supplied
+Supabase tenant credentials fail with `tenant/user ... not found`; no live
+candidate or approval claim is made. Other
 grades have no registered governed release yet and continue to show assigned
 schoolwork rather than a fabricated governed action. Full curriculum expansion
 must register approved releases and exact lesson bindings, then certify their
