@@ -560,6 +560,8 @@ export default function GlobalAssistantShell({
     }
   }
 
+  if (pathname === "/student/learn") return null;
+
   return (
     <div
       className={`fixed z-50 flex flex-col gap-2 ${

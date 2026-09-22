@@ -36,7 +36,9 @@ export async function POST(req: NextRequest) {
       duplicate: result.duplicate });
   } catch (error) {
     const message = error instanceof Error ? error.message : "learning_override_unavailable";
-    const status = message === "decision_candidate_not_governed" ? 400 : message === "learner_state_stale" ? 409 : 503;
+    const authStatus = typeof error === "object" && error !== null && "status" in error ? error.status : null;
+    const status = authStatus === 401 || authStatus === 403 ? authStatus :
+      message === "decision_candidate_not_governed" ? 400 : message === "learner_state_stale" ? 409 : 503;
     return NextResponse.json({ error: message }, { status });
   }
 }

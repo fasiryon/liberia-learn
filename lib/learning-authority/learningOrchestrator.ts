@@ -103,20 +103,23 @@ export function generateLearningCandidates(input: {
 }
 
 /** Read-only offline pack fallback when no trusted learner-state snapshot is available. */
-export function offlineGrade4CurriculumFallback(): LearningAction {
-  const release = GRADE4_MATH_ONTOLOGY_RELEASE;
+export function offlineCurriculumFallback(release: CurriculumOntologyRelease): LearningAction {
   validateOntologyRelease(release);
   const entry = release.bindings.find((binding) =>
     !release.prerequisites.some((edge) => edge.toConceptId === binding.conceptId) &&
     release.items.some((item) => item.id === binding.itemId && item.version === binding.itemVersion && item.context === "DIAGNOSTIC") &&
     release.toolPolicies.some((policy) => policy.id === binding.toolPolicyId && policy.context === "DIAGNOSTIC"));
-  if (!entry) throw new Error("offline_grade4_entry_unavailable");
+  if (!entry) throw new Error("offline_entry_unavailable");
   return Object.freeze({ id: `${entry.id}:diagnostic`, conceptId: entry.conceptId,
     itemId: entry.itemId, kind: "DIAGNOSTIC", reason: "Published grade-level offline entry action." });
 }
 
+export function offlineGrade4CurriculumFallback(): LearningAction {
+  return offlineCurriculumFallback(GRADE4_MATH_ONTOLOGY_RELEASE);
+}
+
 export const deterministicDecisionModel: DecisionModel = Object.freeze({
-  id: "deterministic-grade4-v1",
+  id: "deterministic-learning-v1",
   async rank(input: DecisionModelInput): Promise<DecisionModelOutput> {
     const state = new Map(input.authoritativeState.map((entry) => [entry.authoritativeLearnerState.scope.conceptId, entry.authoritativeLearnerState]));
     const ordered = [...input.candidates].sort((a, b) => {

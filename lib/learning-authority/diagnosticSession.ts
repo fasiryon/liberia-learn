@@ -13,6 +13,7 @@ export type GovernedDiagnosticSession = Readonly<{
   ontologyReleaseIdentity: string;
   itemId: string;
   itemVersion: string;
+  decisionId?: string;
   expiresAt: number;
 }>;
 
