@@ -268,7 +268,7 @@ describe("student today layered school day", () => {
     expect(body.schoolDay.note).toBe("No school day schedule has been configured yet.");
   });
 
-  it("keeps adaptive recommendation separate from school-day primary CTA", async () => {
+  it("keeps legacy adaptive signals out of the school-day authority", async () => {
     mockScheduledWorkFindMany
       .mockResolvedValueOnce([scheduledWork()])
       .mockResolvedValueOnce([]);
@@ -277,6 +277,7 @@ describe("student today layered school day", () => {
     const body = await (await GET()).json();
 
     expect(body.todayFocus.primaryHref).toBe("/student/lessons/content-1");
-    expect(body.adaptivePlan.orderedActions.some((action: any) => action.source === "learning_intelligence")).toBe(true);
+    expect(body.adaptivePlan.orderedActions.every((action: any) => action.source !== "learning_intelligence")).toBe(true);
+    expect(body.recommendation).toBeNull();
   });
 });

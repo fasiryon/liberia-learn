@@ -31,6 +31,7 @@ vi.mock("@/lib/db", () => {
   };
   return { prisma: {
     student: { findFirst: vi.fn(async () => ({ id: "student-e2e", currentGrade: 4 })) },
+    curriculumContent: { findFirst: vi.fn(async () => ({ contentId: "ll-g4-math-fractions-equal-parts-2026.1" })) },
     learningEvent,
     $transaction: vi.fn(async (callback: any) => callback({ learningEvent })),
   } };

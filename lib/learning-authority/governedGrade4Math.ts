@@ -172,9 +172,20 @@ const bindings = [
   },
 ] as const satisfies readonly CurriculumConstructBinding[];
 
-// Intentionally empty until curriculum authority approves and binds an exact
-// CurriculumContent revision to this release. Runtime code must not infer one.
-const contentBindings = [] as const satisfies readonly CurriculumContentBinding[];
+// Exact repository-local founder-reviewed lesson authority. The content is
+// created and published by scripts/author-grade4-fractions-authority.ts using
+// the existing provenance/governance workflow; runtime never infers this from
+// title, grade, or standard.
+const contentBindings = [
+  {
+    id: "g4-frac-content-bind-equal-parts-v1",
+    conceptId: "g4-fractions-equal-parts",
+    contentId: "ll-g4-math-fractions-equal-parts-2026.1",
+    contentVersion: "1.0.0",
+    contentType: "LESSON",
+    toolPolicyId: "g4-math-instruction-tools",
+  },
+] as const satisfies readonly CurriculumContentBinding[];
 
 function deepFreeze<T>(value: T): T {
   if (value && typeof value === "object" && !Object.isFrozen(value)) {

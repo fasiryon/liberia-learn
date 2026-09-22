@@ -1,23 +1,17 @@
 import { NextResponse } from "next/server";
+// route-policy: auth=session; scope=tenant; authority=learning-orchestrator-or-schoolwork; rationale=governed releases use the orchestrator and unregistered learners use schedule, assignments, and published lessons only
 import { requireRole } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { getLessonLabLinks } from "@/lib/lessons/labLinks";
-import { buildStudentLearningIntelligence } from "@/lib/student/learningIntelligence";
-import { getAdaptiveRecommendations } from "@/lib/student/adaptiveRecommendations";
-import { generateStudentActions, getActiveStudentAction } from "@/lib/intelligence/actionEngine";
 import { getTimetableForStudent } from "@/lib/timetable/timetableService";
 import { withRedisCache, FALLBACK_LIMIT_EXCEEDED, getCachedValue, setCachedValue } from "@/lib/cache/redisCache";
-import { isWaecEligible } from "@/lib/waec/eligibility";
-import { getStudentWaecReadinessAll, type SubjectReadiness } from "@/lib/waec/readiness";
-import { waecSlug } from "@/lib/waec/syllabus";
 import { getCertificateProximity } from "@/lib/certificates/certificateProgress";
+import { learnerExperienceAuthority } from "@/lib/student/learnerExperienceAuthority";
 import {
   rankNextBestActions,
   scoreRevisitPrerequisite,
   scoreOverdue,
-  scoreCriticalMastery,
   scoreScheduledToday,
-  scoreWaecPractice,
   scoreRetryAssessment,
   scoreReview,
   CONTINUE_PRIORITY,
@@ -225,33 +219,12 @@ async function _computeToday(): Promise<NextResponse> {
     }
 
     const { id: studentId, classIds, currentGrade } = studentMeta;
-    if (classIds.length === 0) {
-      // No class enrollment yet, but WAEC readiness is computed straight from
-      // mastery data and never depended on class enrollment. A WAEC-eligible
-      // student in this state should still get a real recommendation instead
-      // of a bare empty page (Sprint 6.7 Deliverable 1: this was the exact
-      // gap found in the real walkthrough of a Grade 11 WAEC-track student).
-      const emptyStatePayload: Record<string, unknown> = { items: [], adaptivePlan: emptyAdaptivePlan() };
-      if (isWaecEligible(currentGrade)) {
-        const readiness = await getStudentWaecReadinessAll(studentId).catch(() => [] as SubjectReadiness[]);
-        const weakest = readiness
-          .filter((s) => s.available && s.readiness != null && s.readiness < 75)
-          .sort((a, b) => (a.readiness as number) - (b.readiness as number))[0];
-        if (weakest && weakest.readiness != null) {
-          const reason = `Your ${weakest.name} readiness is ${weakest.readiness}%${weakest.nextFocusName ? `, next focus: ${weakest.nextFocusName}` : ""}.`;
-          emptyStatePayload.heroRecommendation = {
-            type: "WAEC_PRACTICE",
-            label: `${weakest.name} practice`,
-            reason,
-            href: `/student/waec/${waecSlug(weakest.subjectId)}/practice`,
-            subject: weakest.name,
-            priority: scoreWaecPractice(weakest.readiness),
-          };
-          emptyStatePayload.waecSecondaryCard = null;
-        }
-      }
-      return NextResponse.json(emptyStatePayload);
-    }
+    if (classIds.length === 0) return NextResponse.json({ items: [], adaptivePlan: emptyAdaptivePlan() });
+
+    // Today is deliberately limited to the governed orchestrator or ordinary
+    // schoolwork. Legacy adaptive signals are never a learner next-action
+    // authority, including when no governed release is registered.
+    const experienceAuthority = learnerExperienceAuthority(currentGrade);
 
     // Today's date range (UTC)
     const now = new Date();
@@ -263,7 +236,7 @@ async function _computeToday(): Promise<NextResponse> {
     const todayData = await withRedisCache(cacheKey, 900, async () => {
     const catchUpStart = new Date(startOfDay.getTime() - 14 * 86400000);
 
-    const [scheduledWork, catchUpWork, assignments, overdueAssignments, intelligence, adaptiveResult, waecReadiness] = await Promise.all([
+    const [scheduledWork, catchUpWork, assignments, overdueAssignments] = await Promise.all([
       prisma.scheduledWork.findMany({
         where: {
           classId: { in: classIds },
@@ -342,67 +315,20 @@ async function _computeToday(): Promise<NextResponse> {
         orderBy: { dueAt: "desc" },
         take: 5,
       }).catch(() => []),
-      buildStudentLearningIntelligence(user).catch(() => ({
-        generatedAt: new Date().toISOString(),
-        masteryBySubject: [],
-        weaknesses: [],
-        recommendedNextActions: [],
-      })),
-      getAdaptiveRecommendations(studentId, user.schoolId, user.id).catch(() => ({
-        recommendation: null,
-        candidates: [],
-        masteryAlerts: [],
-        contentGap: false,
-        pacingSignal: "on_track" as const,
-        weakTopicSequence: [],
-      })),
-      isWaecEligible(currentGrade)
-        ? getStudentWaecReadinessAll(studentId).catch(() => [])
-        : Promise.resolve([]),
     ]);
-
-    // Fire-and-forget: persist adaptive signals as trackable actions
-    generateStudentActions(studentId, user.schoolId ?? "", {
-      recommendation: adaptiveResult.recommendation,
-      masteryAlerts: adaptiveResult.masteryAlerts,
-      contentGap: adaptiveResult.contentGap,
-      grade: adaptiveResult.recommendation?.grade ?? null,
-    }).catch(() => null);
 
     // Run in parallel and cache so DB is not hit on every request at 1K VUs.
     // Action TTL=60s (changes when resolved/generated); timetable TTL=300s (day-stable).
-    const [activeAction, timetable] = await Promise.all([
-      withRedisCache(
-        `cache:action:${studentId}:${dateStr}`,
-        60,
-        () => getActiveStudentAction(studentId).catch(() => null)
-      ),
-      withRedisCache(
+    const timetable = await withRedisCache(
         `cache:timetable:${studentId}:${dateStr}`,
         300,
         () => getTimetableForStudent(studentId, new Date()).catch(() => null)
-      ),
-    ]);
+      );
 
     const safeAssignments = asArray(assignments);
-    const safeIntelligence = {
-      generatedAt:
-        typeof intelligence.generatedAt === "string"
-          ? intelligence.generatedAt
-          : new Date().toISOString(),
-      weaknesses: asArray(intelligence.weaknesses),
-      recommendedNextActions: asArray(intelligence.recommendedNextActions),
-    };
-    const safeAdaptiveResult = {
-      recommendation: adaptiveResult.recommendation ?? null,
-      candidates: asArray((adaptiveResult as { candidates?: unknown[] }).candidates),
-      masteryAlerts: asArray(adaptiveResult.masteryAlerts),
-      contentGap: Boolean(adaptiveResult.contentGap),
-      pacingSignal: adaptiveResult.pacingSignal ?? "on_track",
-      weakTopicSequence: asArray(adaptiveResult.weakTopicSequence),
-    };
+    const safeIntelligence = { generatedAt: new Date().toISOString(), weaknesses: [], recommendedNextActions: [] };
+    const safeAdaptiveResult = { recommendation: null, candidates: [], masteryAlerts: [], contentGap: false, pacingSignal: "on_track", weakTopicSequence: [] };
     const safeOverdueAssignments = asArray(overdueAssignments);
-    const safeWaecReadiness = asArray(waecReadiness);
 
     const overdueWorkIds = safeOverdueAssignments
       .map((a) => a.scheduledWorkId)
@@ -635,10 +561,6 @@ async function _computeToday(): Promise<NextResponse> {
           priority: item.status === "in_progress" ? 110 : 105 - item.order,
           source: "scheduled_work",
         })),
-      ...safeIntelligence.recommendedNextActions.map((action) => ({
-        ...action,
-        source: "learning_intelligence",
-      })),
     ]
       .sort((left, right) => right.priority - left.priority)
       .filter(
@@ -781,40 +703,7 @@ async function _computeToday(): Promise<NextResponse> {
       });
     }
 
-    // Critical mastery: the single weakest subject, when it has a real lesson to point to.
-    const topAlert = safeAdaptiveResult.masteryAlerts[0];
-    const topWeakLesson = safeAdaptiveResult.weakTopicSequence[0];
-    if (topAlert?.tier === "critical" && topWeakLesson?.lessonId) {
-      nextBestCandidates.push({
-        type: "CRITICAL_MASTERY",
-        priority: scoreCriticalMastery(topAlert.score),
-        label: `Review ${topAlert.subject}`,
-        reason: topWeakLesson.reason,
-        href: `/student/lessons/${topWeakLesson.lessonId}`,
-        subject: topAlert.subject,
-        masteryPercent: topAlert.score,
-        lastSignalAt: null,
-      });
-    }
-
-    // WAEC practice: weakest assessed subject below the practice threshold (Grade 9+ only).
-    const weakestWaec = (safeWaecReadiness as SubjectReadiness[])
-      .filter((s) => s.available && s.readiness != null && s.readiness < 75)
-      .sort((a, b) => (a.readiness as number) - (b.readiness as number))[0];
-    if (weakestWaec && weakestWaec.readiness != null) {
-      nextBestCandidates.push({
-        type: "WAEC_PRACTICE",
-        priority: scoreWaecPractice(weakestWaec.readiness),
-        label: `${weakestWaec.name} practice`,
-        reason: `Your ${weakestWaec.name} readiness is ${weakestWaec.readiness}%${weakestWaec.nextFocusName ? `, next focus: ${weakestWaec.nextFocusName}` : ""}.`,
-        href: `/student/waec/${waecSlug(weakestWaec.subjectId)}/practice`,
-        subject: weakestWaec.name,
-        masteryPercent: weakestWaec.readiness,
-        lastSignalAt: null,
-      });
-    }
-
-    const { hero: heroCandidate, waecSecondary } = rankNextBestActions(nextBestCandidates);
+    const { hero: heroCandidate } = rankNextBestActions(nextBestCandidates);
 
     let unlocks: Awaited<ReturnType<typeof getCertificateProximity>> = null;
     if (heroCandidate && currentGrade != null) {
@@ -881,16 +770,8 @@ async function _computeToday(): Promise<NextResponse> {
       contentGap: safeAdaptiveResult.contentGap,
       pacingSignal: safeAdaptiveResult.pacingSignal,
       weakTopicSequence: safeAdaptiveResult.weakTopicSequence,
-      activeAction: activeAction
-        ? {
-            id: activeAction.id,
-            actionType: activeAction.actionType,
-            reason: activeAction.reason,
-            severity: activeAction.severity,
-            href: activeAction.href,
-            sourceSignal: activeAction.sourceSignal,
-          }
-        : null,
+      activeAction: null,
+      learningAuthority: experienceAuthority,
       adaptivePlan: {
         generatedAt: safeIntelligence.generatedAt,
         smartContinueHref: smartContinue?.href ?? "/student/lessons",
@@ -916,14 +797,7 @@ async function _computeToday(): Promise<NextResponse> {
             priority: heroCandidate.priority,
           }
         : null,
-      waecSecondaryCard: waecSecondary
-        ? {
-            label: waecSecondary.label,
-            reason: waecSecondary.reason,
-            href: waecSecondary.href,
-            subject: waecSecondary.subject,
-          }
-        : null,
+      waecSecondaryCard: null,
       unlocks,
       timetable: timetable ?? null,
       schoolId: user.schoolId ?? null,
