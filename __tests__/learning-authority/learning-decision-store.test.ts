@@ -28,6 +28,7 @@ vi.mock("@/lib/learning-state/masteryWriter", () => ({
 }));
 
 import { decideGrade4LearningAction } from "@/lib/learning-authority/learningDecisionStore";
+import { prisma } from "@/lib/db";
 
 const input = { schoolId: "school-a", studentId: "student-a", studentUserId: "user-a", idempotencyKey: "stable-request" };
 
@@ -54,9 +55,29 @@ describe("learning decision event persistence", () => {
     expect(db.rows).toHaveLength(0);
   });
 
+  it("counts only canonical events from the active release", async () => {
+    await decideGrade4LearningAction(input);
+    expect(prisma.learningEvent.count).toHaveBeenCalledWith({ where: expect.objectContaining({
+      metadata: { path: ["canonicalEvent", "scope", "ontologyReleaseIdentity"],
+        equals: deterministicReleaseIdentity(GRADE4_MATH_ONTOLOGY_RELEASE) },
+    }) });
+  });
+
+  it("recovers a concurrent committed triplet as a duplicate", async () => {
+    const transaction = vi.mocked(prisma.$transaction);
+    const original = transaction.getMockImplementation()!;
+    transaction.mockImplementationOnce(async (callback: any) => {
+      await original(callback);
+      throw Object.assign(new Error("serialization conflict"), { code: "P2034" });
+    });
+    const result = await decideGrade4LearningAction(input);
+    expect(result.duplicate).toBe(true);
+    expect(db.rows).toHaveLength(3);
+  });
+
   it("rejects cross-tenant or missing student membership", async () => {
     db.member = false;
-    await expect(decideGrade4LearningAction(input)).rejects.toThrow("grade4_student_membership_invalid");
+    await expect(decideGrade4LearningAction(input)).rejects.toThrow("student_release_membership_invalid");
     expect(db.rows).toHaveLength(0);
   });
 
@@ -68,6 +89,19 @@ describe("learning decision event persistence", () => {
     expect(learner.decision.id).toBe(teacher.decision.id);
     expect(learner.resolution.teacherOverride?.actorId).toBe("teacher-a");
     expect(db.rows).toHaveLength(3);
+  });
+
+  it("does not replay a teacher override with an old release identity", async () => {
+    await decideGrade4LearningAction({ ...input, idempotencyKey: "teacher-override",
+      teacherOverride: { candidateId: "g4-frac-bind-equal-parts-v1:diagnostic", actorId: "teacher-a",
+        role: "TEACHER", reason: "Observed need" } });
+    for (const row of db.rows) {
+      if (["learning.recommendation.v1", "learning.decision.v1"].includes(row.eventType)) {
+        row.metadata = { record: { ...row.metadata.record, ontologyReleaseIdentity: "old-release" } };
+      }
+    }
+    const learner = await decideGrade4LearningAction({ ...input, idempotencyKey: "student-next-action-v2" });
+    expect(learner.resolution.teacherOverride).toBeNull();
   });
 
   it("does not replay a teacher override after canonical state advances", async () => {

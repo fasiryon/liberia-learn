@@ -3,7 +3,7 @@ import { createHash } from "crypto";
 export type EvidenceContext = "DIAGNOSTIC" | "PRACTICE" | "TEACHER_OBSERVATION";
 export type EvidenceDecision = "ACCEPTED" | "PROVISIONAL" | "REJECTED";
 export type DiagnosticKind = "INITIAL" | "CONTINUOUS";
-export type ToolKey = "calculator" | "fraction_strips" | "number_line";
+export type ToolKey = string;
 export type OntologyReleaseStatus = "DRAFT" | "IN_REVIEW" | "PUBLISHED";
 export type OntologyReviewStatus = "PENDING" | "APPROVED" | "REJECTED";
 
@@ -46,6 +46,8 @@ export type CurriculumConstructBinding = Readonly<{
   standardCode: string;
   evidencePolicyId: string;
   toolPolicyId: string;
+  /** Exact reviewed content ID, when this release binds an instructional lesson. */
+  lessonContentId?: string;
 }>;
 
 export type CurriculumOntologyRelease = Readonly<{
@@ -55,9 +57,9 @@ export type CurriculumOntologyRelease = Readonly<{
   reviewStatus: OntologyReviewStatus;
   authority: "LIBERIA_MOE";
   provenanceRef: string;
-  grade: 4;
-  subject: "MATH";
-  items: readonly GovernedGrade4MathItem[];
+  grade: number;
+  subject: string;
+  items: readonly GovernedItem[];
   concepts: readonly Concept[];
   prerequisites: readonly ConceptPrerequisiteEdge[];
   bindings: readonly CurriculumConstructBinding[];
@@ -65,14 +67,20 @@ export type CurriculumOntologyRelease = Readonly<{
   toolPolicies: readonly ToolPolicy[];
 }>;
 
-export type GovernedGrade4MathItem = Readonly<{
+export type GovernedItem = Readonly<{
   id: string;
   version: string;
   context: "DIAGNOSTIC" | "PRACTICE";
   prompt: string;
   options: readonly string[];
   correctIndex: number;
+  /** Reviewed support text, released only after scoring. */
+  hint?: string;
+  workedExample?: string;
 }>;
+
+/** Compatibility name for the first published slice. */
+export type GovernedGrade4MathItem = GovernedItem;
 
 export const GOVERNED_GRADE4_MATH_ITEMS: readonly GovernedGrade4MathItem[] = deepFreeze([
   {
@@ -219,6 +227,9 @@ export function validateOntologyRelease(release: CurriculumOntologyRelease): voi
     if (bindingIds.has(binding.id)) throw new Error("ontology_binding_duplicate");
     bindingIds.add(binding.id);
     if (!ids.has(binding.conceptId)) throw new Error("ontology_binding_unknown_concept");
+    if (binding.lessonContentId !== undefined && !binding.lessonContentId.trim()) {
+      throw new Error("ontology_binding_lesson_invalid");
+    }
     const item = itemsById.get(binding.itemId);
     if (!item || item.version !== binding.itemVersion) throw new Error("ontology_binding_unknown_item");
     if (!evidencePolicyIds.has(binding.evidencePolicyId) || !toolPolicyIds.has(binding.toolPolicyId)) {
@@ -309,7 +320,8 @@ export function admitEvidence(
   }
   const policy = release.evidencePolicies.find((candidate) => candidate.id === binding.evidencePolicyId);
   const toolPolicy = release.toolPolicies.find((candidate) => candidate.id === binding.toolPolicyId);
-  if (!policy || !toolPolicy || policy.context !== observation.context) {
+  if (!policy || !toolPolicy || policy.context !== observation.context ||
+    (observation.context !== "TEACHER_OBSERVATION" && toolPolicy.context !== observation.context)) {
     return { decision: "REJECTED", reason: "governed_policy_mismatch", legacyMasteryProjectionAllowed: false };
   }
   if (policy.requiresServerScoring && !context.serverScored) {
@@ -319,6 +331,9 @@ export function admitEvidence(
     return { decision: "REJECTED", reason: "human_authority_required", legacyMasteryProjectionAllowed: false };
   }
   for (const tool of observation.toolsUsed) {
+    if (!toolPolicy.allowed.includes(tool) && !toolPolicy.prohibited.includes(tool)) {
+      return { decision: "REJECTED", reason: "tool_not_in_policy", legacyMasteryProjectionAllowed: false };
+    }
     if (!toolPolicy.prohibited.includes(tool)) continue;
     const override = context.accommodationOverride;
     if (!override || override.tool !== tool || !toolPolicy.accommodationOverrideRoles.includes(override.approvedByRole)) {

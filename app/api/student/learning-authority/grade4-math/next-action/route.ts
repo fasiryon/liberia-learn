@@ -29,6 +29,8 @@ export async function GET() {
     });
   } catch (error) {
     const message = error instanceof Error ? error.message : "learning_decision_unavailable";
-    return NextResponse.json({ error: message }, { status: message === "learner_state_stale" ? 409 : 503 });
+    const authStatus = typeof error === "object" && error !== null && "status" in error ? error.status : null;
+    const status = authStatus === 401 || authStatus === 403 ? authStatus : message === "learner_state_stale" ? 409 : 503;
+    return NextResponse.json({ error: message }, { status });
   }
 }

@@ -18,6 +18,9 @@ export default function TeacherStudentIntelligenceClient({
     hasGuardianSupportRecommendation: boolean;
   } | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [governedSignals, setGovernedSignals] = useState<Array<{
+    signalId: string; status: string; teacherExplanation: string[];
+  }>>([]);
 
   useEffect(() => {
     let active = true;
@@ -41,6 +44,15 @@ export default function TeacherStudentIntelligenceClient({
     };
   }, [studentId]);
 
+  useEffect(() => {
+    let active = true;
+    fetch(`/api/teacher/learning-authority/grade4-math/misconceptions?studentId=${encodeURIComponent(studentId)}`, { cache: "no-store" })
+      .then((response) => response.ok ? response.json() : null)
+      .then((payload) => { if (active && Array.isArray(payload?.suspectedSignals)) setGovernedSignals(payload.suspectedSignals); })
+      .catch(() => {});
+    return () => { active = false; };
+  }, [studentId]);
+
   if (error) {
     return (
       <div className="rounded-xl border border-red-500/30 bg-red-500/10 p-4 text-sm text-red-300">
@@ -54,6 +66,14 @@ export default function TeacherStudentIntelligenceClient({
   }
 
   return (
+    <div className="space-y-5">
+    {governedSignals.length > 0 && <section className="rounded-xl border border-amber-400/40 bg-amber-400/10 p-4" aria-label="Governed learning handoff">
+      <h2 className="font-semibold">Learning evidence for teacher review</h2>
+      <p className="mt-1 text-sm">These signals need your professional judgment before any misconception is confirmed.</p>
+      <ul className="mt-3 space-y-2">{governedSignals.map((signal) => <li key={signal.signalId} className="rounded-lg border border-amber-400/20 p-3 text-sm">
+        <strong>{signal.status.replaceAll("_", " ").toLowerCase()}</strong>: {signal.teacherExplanation.join(" ")}
+      </li>)}</ul>
+    </section>}
     <TeacherStudentIntelligenceScreen
       student={data.student}
       summary={data.summary}
@@ -61,5 +81,6 @@ export default function TeacherStudentIntelligenceClient({
       interventions={data.interventions.filter((item) => item.status === "pending")}
       hasGuardianSupportRecommendation={data.hasGuardianSupportRecommendation}
     />
+    </div>
   );
 }

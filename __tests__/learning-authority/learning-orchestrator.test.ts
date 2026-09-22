@@ -59,7 +59,7 @@ describe("governed learning orchestrator hostile boundaries", () => {
 
   it("keeps the deterministic baseline provider independent and separates three records", async () => {
     const result = await decide();
-    expect(result.recommendation.modelId).toBe("deterministic-grade4-v1");
+    expect(result.recommendation.modelId).toBe("deterministic-learning-v1");
     expect(result.resolution.recommendationId).toBe(result.recommendation.id);
     expect(result.decision.resolutionId).toBe(result.resolution.id);
     expect(result.decision.mayWriteCanonicalMastery).toBe(false);
@@ -78,7 +78,7 @@ describe("governed learning orchestrator hostile boundaries", () => {
       rankedCandidates: [{ id: input.candidates[0].id, probability: 1 }] }) };
     expect((await decide(states(), { model: uncertain })).recommendation.fallbackReason).toBe("MODEL_UNAVAILABLE_OR_INVALID");
     const outage: DecisionModel = { id: "outage", rank: async () => { throw new Error("unavailable"); } };
-    expect((await decide(states(), { model: outage })).recommendation.modelId).toBe("deterministic-grade4-v1");
+    expect((await decide(states(), { model: outage })).recommendation.modelId).toBe("deterministic-learning-v1");
   });
 
   it("ignores shadow output for the effective decision", async () => {
@@ -86,7 +86,7 @@ describe("governed learning orchestrator hostile boundaries", () => {
       rankedCandidates: [{ id: input.candidates.at(-1)!.id, probability: 1 }] }) };
     const result = await decide(states([release.concepts[0].id]), { shadowModel: shadow });
     expect(result.recommendation.shadowOutput?.modelId).toBe("shadow");
-    expect(result.recommendation.modelId).toBe("deterministic-grade4-v1");
+    expect(result.recommendation.modelId).toBe("deterministic-learning-v1");
   });
 
   it("fails closed when learner state changes before resolution", async () => {
