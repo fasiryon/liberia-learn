@@ -72,8 +72,8 @@ beforeEach(() => {
   mockGetTimetableForStudent.mockResolvedValue(null);
 });
 
-describe("GET /api/student/today — adaptive fields", () => {
-  it("includes priority, recommendation and masteryAlerts in response", async () => {
+describe("GET /api/student/today — learner authority boundary", () => {
+  it("uses ordinary scheduled schoolwork and excludes legacy adaptive authority", async () => {
     mockUser();
     mockGetAdaptiveRecommendations.mockResolvedValueOnce({
       recommendation: {
@@ -100,19 +100,18 @@ describe("GET /api/student/today — adaptive fields", () => {
     const body = await res.json();
 
     expect(res.status).toBe(200);
-    expect(body.priority).toBe("RETRY_ASSESSMENT");
-    expect(body.recommendation).not.toBeNull();
-    expect(body.recommendation.type).toBe("RETRY_ASSESSMENT");
-    expect(body.recommendation.masteryPercent).toBe(45);
-    expect(body.recommendation.sourceSignal).toBe("assessment_attempt.low_score");
-    expect(body.masteryAlerts).toHaveLength(1);
-    expect(body.masteryAlerts[0].tier).toBe("at_risk");
+    expect(body.priority).toBeNull();
+    expect(body.recommendation).toBeNull();
+    expect(body.masteryAlerts).toHaveLength(0);
     expect(body.contentGap).toBe(false);
-    expect(body.pacingSignal).toBe("slightly_behind");
-    expect(body.weakTopicSequence).toEqual([{ lessonId: "lesson1", reason: "Review fractions", priorityOrder: 1 }]);
+    expect(body.pacingSignal).toBe("on_track");
+    expect(body.weakTopicSequence).toEqual([]);
+    expect(mockGetAdaptiveRecommendations).not.toHaveBeenCalled();
+    expect(mockBuildStudentLearningIntelligence).not.toHaveBeenCalled();
+    expect(mockGenerateStudentActions).not.toHaveBeenCalled();
   });
 
-  it("returns null priority and recommendation when no signals", async () => {
+  it("does not restore legacy recommendations when the adaptive engine reports a gap", async () => {
     mockUser();
     mockGetAdaptiveRecommendations.mockResolvedValueOnce({
       recommendation: null,
@@ -125,39 +124,12 @@ describe("GET /api/student/today — adaptive fields", () => {
     const res = await GET();
     const body = await res.json();
 
-    expect(body.priority).toBeNull();
-    expect(body.recommendation).toBeNull();
-    expect(body.masteryAlerts).toHaveLength(0);
-    expect(body.pacingSignal).toBe("on_track");
-    expect(body.weakTopicSequence).toHaveLength(0);
-  });
-
-  it("returns contentGap=true for grade 9 student", async () => {
-    mockUser();
-    mockGetAdaptiveRecommendations.mockResolvedValueOnce({
-      recommendation: null,
-      masteryAlerts: [],
-      contentGap: true,
-      pacingSignal: "on_track",
-      weakTopicSequence: [],
-    });
-
-    const res = await GET();
-    const body = await res.json();
-
-    expect(body.contentGap).toBe(true);
-  });
-
-  it("survives adaptive engine failure gracefully", async () => {
-    mockUser();
-    mockGetAdaptiveRecommendations.mockRejectedValueOnce(new Error("DB error"));
-
-    const res = await GET();
-    const body = await res.json();
-
     expect(res.status).toBe(200);
     expect(body.priority).toBeNull();
     expect(body.recommendation).toBeNull();
     expect(body.masteryAlerts).toHaveLength(0);
+    expect(body.contentGap).toBe(false);
+    expect(body.heroRecommendation).toBeNull();
+    expect(mockGetAdaptiveRecommendations).not.toHaveBeenCalled();
   });
 });

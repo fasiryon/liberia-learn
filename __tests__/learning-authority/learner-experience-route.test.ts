@@ -7,7 +7,10 @@ const student = vi.hoisted(() => vi.fn());
 const decide = vi.hoisted(() => vi.fn());
 const append = vi.hoisted(() => vi.fn());
 vi.mock("@/lib/auth", () => ({ requireRole: role }));
-vi.mock("@/lib/db", () => ({ prisma: { student: { findFirst: student } } }));
+vi.mock("@/lib/db", () => ({ prisma: {
+  student: { findFirst: student },
+  curriculumContent: { findFirst: vi.fn(async () => ({ contentId: "ll-g4-math-fractions-equal-parts-2026.1" })) },
+} }));
 vi.mock("@/lib/learning-authority/learningDecisionStore", () => ({ decideLearningAction: decide }));
 vi.mock("@/lib/learning-state/masteryWriter", () => ({ appendCanonicalMasteryUpdate: append }));
 

@@ -106,7 +106,7 @@ describe("student today nextBestAction wiring (Sprint 6.7)", () => {
     expect(body.heroRecommendation?.reason).toContain("3 days ago");
   });
 
-  it("Grade 11 WAEC-eligible student with a severe gap and nothing else scheduled gets WAEC_PRACTICE as the hero", async () => {
+  it("Grade 11 WAEC readiness cannot become an unauthorised learner hero", async () => {
     mockStudentFindUnique.mockResolvedValue({
       id: "student-1",
       currentGrade: 11,
@@ -131,12 +131,11 @@ describe("student today nextBestAction wiring (Sprint 6.7)", () => {
     const { GET } = await import("@/app/api/student/today/route");
     const body = await (await GET()).json();
 
-    expect(body.heroRecommendation?.type).toBe("WAEC_PRACTICE");
-    expect(body.heroRecommendation?.href).toBe("/student/waec/literature/practice");
+    expect(body.heroRecommendation).toBeNull();
     expect(body.waecSecondaryCard).toBeNull();
   });
 
-  it("Grade 11 student with a mild WAEC gap plus a routine scheduled item: WAEC loses the hero slot but still gets a guaranteed secondary card", async () => {
+  it("Grade 11 student keeps ordinary scheduled work without a WAEC recommendation", async () => {
     mockStudentFindUnique.mockResolvedValue({
       id: "student-1",
       currentGrade: 11,
@@ -181,8 +180,7 @@ describe("student today nextBestAction wiring (Sprint 6.7)", () => {
     const body = await (await GET()).json();
 
     expect(body.heroRecommendation?.type).toBe("SCHEDULED_TODAY");
-    expect(body.waecSecondaryCard).not.toBeNull();
-    expect(body.waecSecondaryCard?.reason).toContain("70%");
+    expect(body.waecSecondaryCard).toBeNull();
   });
 
   it("not WAEC-eligible (grade 7): readiness is never fetched and no WAEC candidate appears", async () => {
@@ -195,12 +193,7 @@ describe("student today nextBestAction wiring (Sprint 6.7)", () => {
     expect(mockGetStudentWaecReadinessAll).not.toHaveBeenCalled();
   });
 
-  // Sprint 6.7 Deliverable 1's real walkthrough found this exact case empty:
-  // a Grade 11 WAEC-track student with real readiness data but zero class
-  // enrollment got a bare "no lessons available" page. WAEC readiness is
-  // computed straight from mastery data and never depended on enrollment, so
-  // this case must still surface it.
-  it("Grade 11 WAEC-eligible student with NO class enrollment still gets the WAEC gap as the hero", async () => {
+  it("Grade 11 student with NO class enrollment gets ordinary browse fallback", async () => {
     mockStudentFindUnique.mockResolvedValue({
       id: "student-1",
       currentGrade: 11,
@@ -224,9 +217,8 @@ describe("student today nextBestAction wiring (Sprint 6.7)", () => {
     const body = await (await GET()).json();
 
     expect(body.items).toEqual([]);
-    expect(body.heroRecommendation?.type).toBe("WAEC_PRACTICE");
-    expect(body.heroRecommendation?.href).toBe("/student/waec/literature/practice");
-    expect(body.waecSecondaryCard).toBeNull();
+    expect(body.heroRecommendation).toBeUndefined();
+    expect(body.waecSecondaryCard).toBeUndefined();
   });
 
   it("Grade 7 (not WAEC-eligible) student with NO class enrollment gets the plain empty state, unchanged", async () => {

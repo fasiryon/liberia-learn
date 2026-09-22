@@ -56,7 +56,13 @@ describe("governed Grade 4 mathematics authority", () => {
     expect(deterministicReleaseIdentity(GRADE4_MATH_ONTOLOGY_RELEASE)).toBe(deterministicReleaseIdentity(GRADE4_MATH_ONTOLOGY_RELEASE));
     expect(Object.isFrozen(GRADE4_MATH_ONTOLOGY_RELEASE)).toBe(true);
     expect(Object.isFrozen(GRADE4_MATH_ONTOLOGY_RELEASE.concepts[0])).toBe(true);
-    expect(GRADE4_MATH_ONTOLOGY_RELEASE.contentBindings).toEqual([]);
+    expect(GRADE4_MATH_ONTOLOGY_RELEASE.contentBindings).toEqual([expect.objectContaining({
+      conceptId: "g4-fractions-equal-parts",
+      contentId: "ll-g4-math-fractions-equal-parts-2026.1",
+      contentVersion: "1.0.0",
+      contentType: "LESSON",
+      toolPolicyId: "g4-math-instruction-tools",
+    })]);
     const changedPolicy = {
       ...GRADE4_MATH_ONTOLOGY_RELEASE,
       toolPolicies: GRADE4_MATH_ONTOLOGY_RELEASE.toolPolicies.map((policy) =>
