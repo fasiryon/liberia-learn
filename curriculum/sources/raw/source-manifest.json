@@ -1,0 +1,57 @@
+{
+  "manifestVersion": "1.0.0",
+  "retrievedAt": "2026-09-23",
+  "policy": {
+    "bytesAreUnmodified": true,
+    "moeApprovalOfLiberiaLearnMappings": false,
+    "intermediateOnly": true,
+    "unresolvedSources": []
+  },
+  "sources": [
+    {
+      "id": "liberia-moe-grade-1-6-archive",
+      "title": "Liberia MOE Grade 1-6 curriculum archive",
+      "publisher": "Liberia Ministry of Education",
+      "authority": "VERIFIED_LIBERIA_MOE_SOURCE",
+      "sourceUri": "http://www.moe.gov.lr/wp-content/uploads/2019/09/GRADE-1-6.zip",
+      "localPath": "curriculum/sources/raw/GRADE-1-6.zip",
+      "retrievedAt": "2026-09-23",
+      "fileType": "application/zip",
+      "byteLength": 5884359,
+      "sha256": "82b95c17bf5bdbcdf8614c0c1b2c09f0a103c05fe50b5cb8bedf3cb3d9e429a0",
+      "grades": [1, 2, 3, 4, 5, 6],
+      "subjects": ["ENGLISH", "FRENCH", "GENERAL_SCIENCE", "MATH", "PHYSICAL_EDUCATION", "RELIGIOUS_MORAL_EDUCATION", "SOCIAL_STUDIES"],
+      "members": ["English 1-6.pdf", "FRENCH 1-6.pdf", "General Science1-6.pdf", "Math 1-6.pdf", "Physical Education 1-6.pdf", "Religious & Moral Education 1-6.pdf", "Social Studies Grade 1-6.pdf"]
+    },
+    {
+      "id": "liberia-moe-grade-7-9-archive",
+      "title": "Liberia MOE Grade 7-9 curriculum archive",
+      "publisher": "Liberia Ministry of Education",
+      "authority": "VERIFIED_LIBERIA_MOE_SOURCE",
+      "sourceUri": "http://www.moe.gov.lr/wp-content/uploads/2019/09/GRADE-7-9.zip",
+      "localPath": "curriculum/sources/raw/GRADE-7-9.zip",
+      "retrievedAt": "2026-09-23",
+      "fileType": "application/zip",
+      "byteLength": 3291956,
+      "sha256": "fffb3aed17eeae7cd2fdd1fabc69ea1c7e1587e04d91b6ea01752b1cd185f425",
+      "grades": [7, 8, 9],
+      "subjects": ["ENGLISH", "FRENCH", "GENERAL_SCIENCE", "MATH", "PHYSICAL_EDUCATION", "RELIGIOUS_MORAL_EDUCATION", "SOCIAL_STUDIES"],
+      "members": ["English 7-9.pdf", "French.pdf", "General Science 7-9.pdf", "Math 7-9.pdf", "Physical Education.pdf", "Religious & Moral Education.pdf", "Social Studies 7-9.pdf"]
+    },
+    {
+      "id": "liberia-moe-grade-10-12-archive",
+      "title": "Liberia MOE Grade 10-12 curriculum archive",
+      "publisher": "Liberia Ministry of Education",
+      "authority": "VERIFIED_LIBERIA_MOE_SOURCE",
+      "sourceUri": "http://www.moe.gov.lr/wp-content/uploads/2019/09/Grade-10-12.zip",
+      "localPath": "curriculum/sources/raw/Grade-10-12.zip",
+      "retrievedAt": "2026-09-23",
+      "fileType": "application/zip",
+      "byteLength": 6916974,
+      "sha256": "3b3fed2df4a9a1c3d6576cba8ad9f16cc1e0c19a64dcf358f09429f0767ee8ed",
+      "grades": [10, 11, 12],
+      "subjects": ["BIOLOGY", "CHEMISTRY", "ECONOMICS", "ENGLISH_GRAMMAR", "FRENCH", "GEOGRAPHY", "HISTORY", "LITERATURE", "MATH", "PHYSICAL_EDUCATION", "PHYSICS"],
+      "members": ["biology 10-12.pdf", "Chemistry 10-12.pdf", "Economics 10-12.pdf", "ENGLISH GRAMMAR 10-12.pdf", "French 10-12.pdf", "GEOGRAPHY 10-12.pdf", "History 10-12.pdf", "LITERATURE 10-12.pdf", "Maths 10-12.pdf", "Physical Education 10-12.pdf", "Physics 10-12.pdf"]
+    }
+  ]
+}

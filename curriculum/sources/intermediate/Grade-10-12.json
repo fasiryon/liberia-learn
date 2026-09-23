@@ -1,0 +1,336 @@
+{
+  "source": {
+    "id": "liberia-moe-grade-10-12-archive",
+    "document": "Grade-10-12.zip",
+    "localPath": "curriculum/sources/raw/Grade-10-12.zip",
+    "sourceUri": "http://www.moe.gov.lr/wp-content/uploads/2019/09/Grade-10-12.zip",
+    "authority": "VERIFIED_LIBERIA_MOE_SOURCE",
+    "gradeMin": 10,
+    "gradeMax": 12
+  },
+  "manifests": [
+    {
+      "manifestVersion": "1.0.0",
+      "status": "INTERMEDIATE_REVIEW_ONLY",
+      "source": {
+        "archiveId": "liberia-moe-grade-10-12-archive",
+        "archiveDocument": "Grade-10-12.zip",
+        "archivePath": "curriculum/sources/raw/Grade-10-12.zip",
+        "sourceUri": "http://www.moe.gov.lr/wp-content/uploads/2019/09/Grade-10-12.zip",
+        "authority": "VERIFIED_LIBERIA_MOE_SOURCE",
+        "sourceMember": "Grade -10-12/biology  10-12.pdf",
+        "sourceChecksum": "3b3fed2df4a9a1c3d6576cba8ad9f16cc1e0c19a64dcf358f09429f0767ee8ed"
+      },
+      "scope": {
+        "gradeMin": 10,
+        "gradeMax": 12,
+        "subject": "SCIENCE"
+      },
+      "extraction": {
+        "parser": "deterministic-pdf-text-v1",
+        "extractedLineCount": 1647,
+        "standards": [],
+        "objectives": [],
+        "sequencing": [],
+        "assessmentReferences": [],
+        "resourceReferences": []
+      }
+    },
+    {
+      "manifestVersion": "1.0.0",
+      "status": "INTERMEDIATE_REVIEW_ONLY",
+      "source": {
+        "archiveId": "liberia-moe-grade-10-12-archive",
+        "archiveDocument": "Grade-10-12.zip",
+        "archivePath": "curriculum/sources/raw/Grade-10-12.zip",
+        "sourceUri": "http://www.moe.gov.lr/wp-content/uploads/2019/09/Grade-10-12.zip",
+        "authority": "VERIFIED_LIBERIA_MOE_SOURCE",
+        "sourceMember": "Grade -10-12/Chemistry 10-12.pdf",
+        "sourceChecksum": "3b3fed2df4a9a1c3d6576cba8ad9f16cc1e0c19a64dcf358f09429f0767ee8ed"
+      },
+      "scope": {
+        "gradeMin": 10,
+        "gradeMax": 12,
+        "subject": "SCIENCE"
+      },
+      "extraction": {
+        "parser": "deterministic-pdf-text-v1",
+        "extractedLineCount": 1838,
+        "standards": [],
+        "objectives": [],
+        "sequencing": [],
+        "assessmentReferences": [],
+        "resourceReferences": []
+      }
+    },
+    {
+      "manifestVersion": "1.0.0",
+      "status": "INTERMEDIATE_REVIEW_ONLY",
+      "source": {
+        "archiveId": "liberia-moe-grade-10-12-archive",
+        "archiveDocument": "Grade-10-12.zip",
+        "archivePath": "curriculum/sources/raw/Grade-10-12.zip",
+        "sourceUri": "http://www.moe.gov.lr/wp-content/uploads/2019/09/Grade-10-12.zip",
+        "authority": "VERIFIED_LIBERIA_MOE_SOURCE",
+        "sourceMember": "Grade -10-12/Economics 10-12.pdf",
+        "sourceChecksum": "3b3fed2df4a9a1c3d6576cba8ad9f16cc1e0c19a64dcf358f09429f0767ee8ed"
+      },
+      "scope": {
+        "gradeMin": 10,
+        "gradeMax": 12,
+        "subject": "UNMAPPED_SOURCE_SUBJECT"
+      },
+      "extraction": {
+        "parser": "deterministic-pdf-text-v1",
+        "extractedLineCount": 1046,
+        "standards": [],
+        "objectives": [],
+        "sequencing": [],
+        "assessmentReferences": [],
+        "resourceReferences": []
+      }
+    },
+    {
+      "manifestVersion": "1.0.0",
+      "status": "INTERMEDIATE_REVIEW_ONLY",
+      "source": {
+        "archiveId": "liberia-moe-grade-10-12-archive",
+        "archiveDocument": "Grade-10-12.zip",
+        "archivePath": "curriculum/sources/raw/Grade-10-12.zip",
+        "sourceUri": "http://www.moe.gov.lr/wp-content/uploads/2019/09/Grade-10-12.zip",
+        "authority": "VERIFIED_LIBERIA_MOE_SOURCE",
+        "sourceMember": "Grade -10-12/ENGLISH GRAMMAR 10-12.pdf",
+        "sourceChecksum": "3b3fed2df4a9a1c3d6576cba8ad9f16cc1e0c19a64dcf358f09429f0767ee8ed"
+      },
+      "scope": {
+        "gradeMin": 10,
+        "gradeMax": 12,
+        "subject": "LITERACY"
+      },
+      "extraction": {
+        "parser": "deterministic-pdf-text-v1",
+        "extractedLineCount": 867,
+        "standards": [],
+        "objectives": [],
+        "sequencing": [
+          {
+            "text": "lesson",
+            "locator": {
+              "member": "Grade -10-12/ENGLISH GRAMMAR 10-12.pdf",
+              "line": 378,
+              "page": null
+            }
+          },
+          {
+            "text": "lesson",
+            "locator": {
+              "member": "Grade -10-12/ENGLISH GRAMMAR 10-12.pdf",
+              "line": 412,
+              "page": null
+            }
+          }
+        ],
+        "assessmentReferences": [],
+        "resourceReferences": []
+      }
+    },
+    {
+      "manifestVersion": "1.0.0",
+      "status": "INTERMEDIATE_REVIEW_ONLY",
+      "source": {
+        "archiveId": "liberia-moe-grade-10-12-archive",
+        "archiveDocument": "Grade-10-12.zip",
+        "archivePath": "curriculum/sources/raw/Grade-10-12.zip",
+        "sourceUri": "http://www.moe.gov.lr/wp-content/uploads/2019/09/Grade-10-12.zip",
+        "authority": "VERIFIED_LIBERIA_MOE_SOURCE",
+        "sourceMember": "Grade -10-12/French 10-12.pdf",
+        "sourceChecksum": "3b3fed2df4a9a1c3d6576cba8ad9f16cc1e0c19a64dcf358f09429f0767ee8ed"
+      },
+      "scope": {
+        "gradeMin": 10,
+        "gradeMax": 12,
+        "subject": "UNMAPPED_SOURCE_SUBJECT"
+      },
+      "extraction": {
+        "parser": "deterministic-pdf-text-v1",
+        "extractedLineCount": 645,
+        "standards": [],
+        "objectives": [],
+        "sequencing": [],
+        "assessmentReferences": [],
+        "resourceReferences": []
+      }
+    },
+    {
+      "manifestVersion": "1.0.0",
+      "status": "INTERMEDIATE_REVIEW_ONLY",
+      "source": {
+        "archiveId": "liberia-moe-grade-10-12-archive",
+        "archiveDocument": "Grade-10-12.zip",
+        "archivePath": "curriculum/sources/raw/Grade-10-12.zip",
+        "sourceUri": "http://www.moe.gov.lr/wp-content/uploads/2019/09/Grade-10-12.zip",
+        "authority": "VERIFIED_LIBERIA_MOE_SOURCE",
+        "sourceMember": "Grade -10-12/GEOGRAPHY 10-12.pdf",
+        "sourceChecksum": "3b3fed2df4a9a1c3d6576cba8ad9f16cc1e0c19a64dcf358f09429f0767ee8ed"
+      },
+      "scope": {
+        "gradeMin": 10,
+        "gradeMax": 12,
+        "subject": "SOCIAL_STUDIES"
+      },
+      "extraction": {
+        "parser": "deterministic-pdf-text-v1",
+        "extractedLineCount": 1550,
+        "standards": [],
+        "objectives": [],
+        "sequencing": [],
+        "assessmentReferences": [],
+        "resourceReferences": []
+      }
+    },
+    {
+      "manifestVersion": "1.0.0",
+      "status": "INTERMEDIATE_REVIEW_ONLY",
+      "source": {
+        "archiveId": "liberia-moe-grade-10-12-archive",
+        "archiveDocument": "Grade-10-12.zip",
+        "archivePath": "curriculum/sources/raw/Grade-10-12.zip",
+        "sourceUri": "http://www.moe.gov.lr/wp-content/uploads/2019/09/Grade-10-12.zip",
+        "authority": "VERIFIED_LIBERIA_MOE_SOURCE",
+        "sourceMember": "Grade -10-12/History 10-12.pdf",
+        "sourceChecksum": "3b3fed2df4a9a1c3d6576cba8ad9f16cc1e0c19a64dcf358f09429f0767ee8ed"
+      },
+      "scope": {
+        "gradeMin": 10,
+        "gradeMax": 12,
+        "subject": "SOCIAL_STUDIES"
+      },
+      "extraction": {
+        "parser": "deterministic-pdf-text-v1",
+        "extractedLineCount": 1130,
+        "standards": [],
+        "objectives": [],
+        "sequencing": [],
+        "assessmentReferences": [],
+        "resourceReferences": []
+      }
+    },
+    {
+      "manifestVersion": "1.0.0",
+      "status": "INTERMEDIATE_REVIEW_ONLY",
+      "source": {
+        "archiveId": "liberia-moe-grade-10-12-archive",
+        "archiveDocument": "Grade-10-12.zip",
+        "archivePath": "curriculum/sources/raw/Grade-10-12.zip",
+        "sourceUri": "http://www.moe.gov.lr/wp-content/uploads/2019/09/Grade-10-12.zip",
+        "authority": "VERIFIED_LIBERIA_MOE_SOURCE",
+        "sourceMember": "Grade -10-12/LITERATURE    10-12.pdf",
+        "sourceChecksum": "3b3fed2df4a9a1c3d6576cba8ad9f16cc1e0c19a64dcf358f09429f0767ee8ed"
+      },
+      "scope": {
+        "gradeMin": 10,
+        "gradeMax": 12,
+        "subject": "UNMAPPED_SOURCE_SUBJECT"
+      },
+      "extraction": {
+        "parser": "deterministic-pdf-text-v1",
+        "extractedLineCount": 629,
+        "standards": [],
+        "objectives": [],
+        "sequencing": [],
+        "assessmentReferences": [],
+        "resourceReferences": []
+      }
+    },
+    {
+      "manifestVersion": "1.0.0",
+      "status": "INTERMEDIATE_REVIEW_ONLY",
+      "source": {
+        "archiveId": "liberia-moe-grade-10-12-archive",
+        "archiveDocument": "Grade-10-12.zip",
+        "archivePath": "curriculum/sources/raw/Grade-10-12.zip",
+        "sourceUri": "http://www.moe.gov.lr/wp-content/uploads/2019/09/Grade-10-12.zip",
+        "authority": "VERIFIED_LIBERIA_MOE_SOURCE",
+        "sourceMember": "Grade -10-12/Maths 10-12.pdf",
+        "sourceChecksum": "3b3fed2df4a9a1c3d6576cba8ad9f16cc1e0c19a64dcf358f09429f0767ee8ed"
+      },
+      "scope": {
+        "gradeMin": 10,
+        "gradeMax": 12,
+        "subject": "MATH"
+      },
+      "extraction": {
+        "parser": "deterministic-pdf-text-v1",
+        "extractedLineCount": 2334,
+        "standards": [],
+        "objectives": [],
+        "sequencing": [],
+        "assessmentReferences": [],
+        "resourceReferences": []
+      }
+    },
+    {
+      "manifestVersion": "1.0.0",
+      "status": "INTERMEDIATE_REVIEW_ONLY",
+      "source": {
+        "archiveId": "liberia-moe-grade-10-12-archive",
+        "archiveDocument": "Grade-10-12.zip",
+        "archivePath": "curriculum/sources/raw/Grade-10-12.zip",
+        "sourceUri": "http://www.moe.gov.lr/wp-content/uploads/2019/09/Grade-10-12.zip",
+        "authority": "VERIFIED_LIBERIA_MOE_SOURCE",
+        "sourceMember": "Grade -10-12/Physical Education 10-12.pdf",
+        "sourceChecksum": "3b3fed2df4a9a1c3d6576cba8ad9f16cc1e0c19a64dcf358f09429f0767ee8ed"
+      },
+      "scope": {
+        "gradeMin": 10,
+        "gradeMax": 12,
+        "subject": "UNMAPPED_SOURCE_SUBJECT"
+      },
+      "extraction": {
+        "parser": "deterministic-pdf-text-v1",
+        "extractedLineCount": 451,
+        "standards": [],
+        "objectives": [],
+        "sequencing": [],
+        "assessmentReferences": [],
+        "resourceReferences": []
+      }
+    },
+    {
+      "manifestVersion": "1.0.0",
+      "status": "INTERMEDIATE_REVIEW_ONLY",
+      "source": {
+        "archiveId": "liberia-moe-grade-10-12-archive",
+        "archiveDocument": "Grade-10-12.zip",
+        "archivePath": "curriculum/sources/raw/Grade-10-12.zip",
+        "sourceUri": "http://www.moe.gov.lr/wp-content/uploads/2019/09/Grade-10-12.zip",
+        "authority": "VERIFIED_LIBERIA_MOE_SOURCE",
+        "sourceMember": "Grade -10-12/Physics 10-12.pdf",
+        "sourceChecksum": "3b3fed2df4a9a1c3d6576cba8ad9f16cc1e0c19a64dcf358f09429f0767ee8ed"
+      },
+      "scope": {
+        "gradeMin": 10,
+        "gradeMax": 12,
+        "subject": "SCIENCE"
+      },
+      "extraction": {
+        "parser": "deterministic-pdf-text-v1",
+        "extractedLineCount": 985,
+        "standards": [],
+        "objectives": [],
+        "sequencing": [
+          {
+            "text": "TOPIC",
+            "locator": {
+              "member": "Grade -10-12/Physics 10-12.pdf",
+              "line": 8,
+              "page": null
+            }
+          }
+        ],
+        "assessmentReferences": [],
+        "resourceReferences": []
+      }
+    }
+  ]
+}

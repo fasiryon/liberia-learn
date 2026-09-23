@@ -15,10 +15,15 @@
       "gradeMin": 1,
       "gradeMax": 6,
       "subjects": ["ENGLISH", "FRENCH", "GENERAL_SCIENCE", "MATH", "PHYSICAL_EDUCATION", "RELIGIOUS_MORAL_EDUCATION", "SOCIAL_STUDIES"],
-      "sourceCompleteness": "METADATA_ONLY",
-      "importability": "NOT_IMPORTABLE",
-      "contentPresentInRepository": false,
-      "reviewState": "SOURCE_BYTES_REQUIRED"
+      "sourceCompleteness": "ARCHIVE_ACQUIRED",
+      "importability": "IMPORTABLE",
+      "contentPresentInRepository": true,
+      "reviewState": "ACQUIRED_UNREVIEWED",
+      "localPath": "curriculum/sources/raw/GRADE-1-6.zip",
+      "retrievedAt": "2026-09-23",
+      "fileType": "application/zip",
+      "byteLength": 5884359,
+      "sha256": "82b95c17bf5bdbcdf8614c0c1b2c09f0a103c05fe50b5cb8bedf3cb3d9e429a0"
     },
     {
       "id": "liberia-moe-grade-7-9-archive",
@@ -28,10 +33,15 @@
       "gradeMin": 7,
       "gradeMax": 9,
       "subjects": ["ENGLISH", "FRENCH", "GENERAL_SCIENCE", "MATH", "PHYSICAL_EDUCATION", "RELIGIOUS_MORAL_EDUCATION", "SOCIAL_STUDIES"],
-      "sourceCompleteness": "METADATA_ONLY",
-      "importability": "NOT_IMPORTABLE",
-      "contentPresentInRepository": false,
-      "reviewState": "SOURCE_BYTES_REQUIRED"
+      "sourceCompleteness": "ARCHIVE_ACQUIRED",
+      "importability": "IMPORTABLE",
+      "contentPresentInRepository": true,
+      "reviewState": "ACQUIRED_UNREVIEWED",
+      "localPath": "curriculum/sources/raw/GRADE-7-9.zip",
+      "retrievedAt": "2026-09-23",
+      "fileType": "application/zip",
+      "byteLength": 3291956,
+      "sha256": "fffb3aed17eeae7cd2fdd1fabc69ea1c7e1587e04d91b6ea01752b1cd185f425"
     },
     {
       "id": "liberia-moe-grade-10-12-archive",
@@ -41,10 +51,15 @@
       "gradeMin": 10,
       "gradeMax": 12,
       "subjects": ["BIOLOGY", "CHEMISTRY", "ECONOMICS", "ENGLISH_GRAMMAR", "FRENCH", "GEOGRAPHY", "HISTORY", "LITERATURE", "MATH", "PHYSICAL_EDUCATION", "PHYSICS"],
-      "sourceCompleteness": "METADATA_ONLY",
-      "importability": "NOT_IMPORTABLE",
-      "contentPresentInRepository": false,
-      "reviewState": "SOURCE_BYTES_REQUIRED"
+      "sourceCompleteness": "ARCHIVE_ACQUIRED",
+      "importability": "IMPORTABLE",
+      "contentPresentInRepository": true,
+      "reviewState": "ACQUIRED_UNREVIEWED",
+      "localPath": "curriculum/sources/raw/Grade-10-12.zip",
+      "retrievedAt": "2026-09-23",
+      "fileType": "application/zip",
+      "byteLength": 6916974,
+      "sha256": "3b3fed2df4a9a1c3d6576cba8ad9f16cc1e0c19a64dcf358f09429f0767ee8ed"
     }
   ]
 }
