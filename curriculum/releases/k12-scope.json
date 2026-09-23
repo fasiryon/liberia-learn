@@ -1,0 +1,30 @@
+{
+  "manifestVersion": "1.0.0",
+  "scope": {
+    "grades": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
+    "subjects": [
+      "MATH", "LITERACY", "SCIENCE", "SOCIAL_STUDIES", "CIVICS",
+      "COMPUTER_SCIENCE", "DIGITAL_LITERACY", "ENGINEERING_FOUNDATIONS",
+      "BUSINESS_ENTREPRENEURSHIP", "FINANCIAL_LITERACY", "CAREER_EXPLORATION",
+      "COMMUNICATION_SKILLS", "PROBLEM_SOLVING", "CREATIVITY_INNOVATION",
+      "AGRICULTURE", "ENVIRONMENTAL_STUDIES", "AI_LITERACY", "DATA_LITERACY",
+      "ENERGY_INFRASTRUCTURE"
+    ]
+  },
+  "registeredReleases": [
+    {
+      "releaseId": "lr-moe-g4-math-fractions-2026.1",
+      "grade": 4,
+      "subject": "MATH",
+      "sourceRef": "docs/architecture/GOVERNED_LEARNING_AUTHORITY_GRADE4_MATH.md",
+      "authority": "LIBERIALEARN_FOUNDER_REVIEW",
+      "moeApprovalStatus": "NOT_CLAIMED",
+      "execution": "registered_fixture_requires_existing_governance_review"
+    }
+  ],
+  "policy": {
+    "missingContent": "explicit_gap",
+    "fabricateApproval": false,
+    "runtimeMode": "generic_release_registry"
+  }
+}

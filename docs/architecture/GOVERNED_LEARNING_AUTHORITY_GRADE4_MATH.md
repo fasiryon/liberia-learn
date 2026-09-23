@@ -44,8 +44,10 @@ governed confirmation or rejection.
 
 The release contains three revisioned concepts in an acyclic prerequisite
 sequence, three exact item bindings, three evidence policies, and four tool
-policies. Only `PUBLISHED` plus `APPROVED` releases with Liberia MOE provenance
-execute. Static keyword inference from `conceptGraph.ts` is not consulted.
+policies. Only `PUBLISHED` plus `APPROVED` releases with explicit validated
+authority and provenance execute. This fixture is
+`LIBERIALEARN_FOUNDER_REVIEW`; it does not claim Liberia MOE approval. Static
+keyword inference from `conceptGraph.ts` is not consulted.
 
 Evidence admission distinguishes `ACCEPTED`, `PROVISIONAL`, and `REJECTED`.
 It fails closed on tenant or Student/User mismatch, missing binding, invalid
