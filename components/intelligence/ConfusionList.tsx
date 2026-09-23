@@ -11,7 +11,7 @@ export type TeacherConfusionItem = {
   confusionType: string;
   severity: string;
   detectedAt: string;
-  evidence?: { status: "recent" | "weak" | "missing"; summary: string; recordedAt?: string };
+  evidence?: { status: "recent" | "weak" | "missing" | "unavailable"; summary: string; recordedAt?: string };
   whyFlagged?: string;
 };
 

@@ -31,7 +31,7 @@ export async function GET(
       return NextResponse.json({ error: "Student not found" }, { status: 404 });
     }
 
-    const [summary, signals, interventions, evidenceRowsRaw] = await Promise.all([
+    const [summary, signals, interventions, evidenceResult] = await Promise.all([
       getStudentPerformanceSummary(params.studentId, user.schoolId),
       (prisma as any).confusionSignal.findMany({
         where: { studentId: params.studentId, schoolId: user.schoolId },
@@ -60,21 +60,23 @@ export async function GET(
           expiresAt: true,
         },
       }),
-      ((prisma as any).studentPerformanceEvent?.findMany?.({
-        where: { studentId: params.studentId, schoolId: user.schoolId },
-        orderBy: { createdAt: "desc" },
-        take: 30,
-        select: { lessonId: true, score: true, attempts: true, eventType: true, createdAt: true },
-      }) ?? Promise.resolve([])).catch(() => []),
+      (async () => {
+        const findPerformanceEvents = (prisma as any).studentPerformanceEvent?.findMany;
+        if (typeof findPerformanceEvents !== "function") return { available: false, rows: [] };
+        try {
+          const rows = await findPerformanceEvents({
+            where: { studentId: params.studentId, schoolId: user.schoolId },
+            orderBy: { createdAt: "desc" },
+            take: 30,
+            select: { lessonId: true, score: true, attempts: true, eventType: true, createdAt: true },
+          });
+          return { available: Array.isArray(rows), rows: Array.isArray(rows) ? rows : [] };
+        } catch {
+          return { available: false, rows: [] };
+        }
+      })(),
     ]);
-    const evidenceRows = Array.isArray(evidenceRowsRaw) ? evidenceRowsRaw : [];
-
-    const evidenceByLesson = new Map<string, (typeof evidenceRows)[number]>();
-    for (const evidence of evidenceRows) {
-      if (!evidenceByLesson.has(evidence.lessonId ?? "general")) {
-        evidenceByLesson.set(evidence.lessonId ?? "general", evidence);
-      }
-    }
+    const evidenceRows = evidenceResult.rows;
 
     return NextResponse.json({
       student: {
@@ -84,11 +86,15 @@ export async function GET(
         className: scopedStudent.className,
       },
       summary,
+      evidenceAvailable: evidenceResult.available,
       signals: signals.map((signal: any) => ({
         ...signal,
         conceptLabel: signal.conceptTag.split("::")[1] ?? signal.conceptTag,
         evidence: (() => {
-          const evidence = evidenceByLesson.get(signal.lessonId ?? "general");
+          if (!evidenceResult.available) return { status: "unavailable", summary: "Performance evidence is temporarily unavailable." };
+          const evidence = evidenceRows
+            .filter((candidate: any) => candidate.lessonId === signal.lessonId && new Date(candidate.createdAt) <= new Date(signal.detectedAt))
+            .sort((a: any, b: any) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())[0];
           if (!evidence) return { status: "missing", summary: "No matching performance evidence is available yet." };
           const scorePct = Math.round(evidence.score * 100);
           return { status: scorePct < 60 ? "weak" : "recent", summary: `${evidence.eventType.replace(/_/g, " ")} evidence: ${scorePct}% across ${evidence.attempts} attempt${evidence.attempts === 1 ? "" : "s"}.`, recordedAt: evidence.createdAt };

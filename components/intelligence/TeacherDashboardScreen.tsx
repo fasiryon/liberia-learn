@@ -137,6 +137,24 @@ export function TeacherDashboardScreen({
   const topAttentionItems = filteredConfusions.slice(0, 3);
   const classInsights = summary?.classInsights ?? [];
 
+  if (!busy && !available) {
+    return (
+      <div className="space-y-6">
+        <div>
+          <h1 className="text-2xl font-bold text-[var(--ll-text)]">Teacher Dashboard</h1>
+          <p className="mt-1 text-sm text-[var(--ll-text-muted)]">Governed learning intelligence is unavailable.</p>
+        </div>
+        {error ? <div className="rounded-xl border border-red-500/30 bg-red-500/10 p-4 text-sm text-red-300">{error}</div> : null}
+        <Card className="border-amber-500/30 bg-amber-500/10 p-4">
+          <p className="text-sm font-semibold text-[var(--ll-yellow)]">Learning intelligence unavailable</p>
+          <p className="mt-1 text-sm text-[var(--ll-text-muted)]">
+            No intervention, misconception, mastery, or class conclusion is shown until the governed evidence services are available again.
+          </p>
+        </Card>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-6">
       <div>
@@ -150,15 +168,6 @@ export function TeacherDashboardScreen({
         <div className="rounded-xl border border-red-500/30 bg-red-500/10 p-4 text-sm text-red-300">
           {error}
         </div>
-      ) : null}
-
-      {!busy && !available ? (
-        <Card className="border-amber-500/30 bg-amber-500/10 p-4">
-          <p className="text-sm font-semibold text-[var(--ll-yellow)]">Learning intelligence unavailable</p>
-          <p className="mt-1 text-sm text-[var(--ll-text-muted)]">
-            No intervention or misconception conclusion is shown until the governed evidence services are available again.
-          </p>
-        </Card>
       ) : null}
 
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">

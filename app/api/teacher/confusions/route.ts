@@ -52,18 +52,26 @@ export async function GET(req: NextRequest) {
       },
       take: 50,
     });
-    const evidenceRowsRaw = await ((prisma as any).studentPerformanceEvent?.findMany?.({
-      where: { schoolId: user.schoolId, studentId: { in: scope.studentIds } },
-      orderBy: { createdAt: "desc" },
-      take: 500,
-      select: { studentId: true, lessonId: true, score: true, attempts: true, eventType: true, createdAt: true },
-    }) ?? Promise.resolve([])).catch(() => []);
-    const evidenceRows = Array.isArray(evidenceRowsRaw) ? evidenceRowsRaw : [];
-    const evidenceByKey = new Map<string, (typeof evidenceRows)[number]>();
-    for (const evidence of evidenceRows) {
-      const key = `${evidence.studentId}:${evidence.lessonId ?? "general"}`;
-      if (!evidenceByKey.has(key)) evidenceByKey.set(key, evidence);
+    let evidenceAvailable = true;
+    let evidenceRowsRaw: unknown[] = [];
+    const findPerformanceEvents = (prisma as any).studentPerformanceEvent?.findMany;
+    if (typeof findPerformanceEvents !== "function") {
+      evidenceAvailable = false;
+    } else {
+      try {
+        const result = await findPerformanceEvents({
+          where: { schoolId: user.schoolId, studentId: { in: scope.studentIds } },
+          orderBy: { createdAt: "desc" },
+          take: 500,
+          select: { studentId: true, lessonId: true, score: true, attempts: true, eventType: true, createdAt: true },
+        });
+        if (Array.isArray(result)) evidenceRowsRaw = result;
+        else evidenceAvailable = false;
+      } catch {
+        evidenceAvailable = false;
+      }
     }
+    const evidenceRows = Array.isArray(evidenceRowsRaw) ? evidenceRowsRaw : [];
 
     rows.sort((a: any, b: any) => {
       const severityDiff = severityWeight(b.severity) - severityWeight(a.severity);
@@ -82,7 +90,10 @@ export async function GET(req: NextRequest) {
         severity: row.severity,
         detectedAt: row.detectedAt,
         evidence: (() => {
-          const evidence = evidenceByKey.get(`${row.studentId}:${row.lessonId ?? "general"}`);
+          if (!evidenceAvailable) return { status: "unavailable", summary: "Performance evidence is temporarily unavailable." };
+          const evidence = evidenceRows
+            .filter((candidate: any) => candidate.studentId === row.studentId && candidate.lessonId === row.lessonId && new Date(candidate.createdAt) <= new Date(row.detectedAt))
+            .sort((a: any, b: any) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())[0];
           if (!evidence) return { status: "missing", summary: "No matching performance evidence is available yet." };
           const scorePct = Math.round(evidence.score * 100);
           return { status: scorePct < 60 ? "weak" : "recent", summary: `${evidence.eventType.replace(/_/g, " ")} evidence: ${scorePct}% across ${evidence.attempts} attempt${evidence.attempts === 1 ? "" : "s"}.`, recordedAt: evidence.createdAt };
