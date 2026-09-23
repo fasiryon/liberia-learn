@@ -10,7 +10,7 @@
   },
   "manifests": [
     {
-      "manifestVersion": "1.0.0",
+      "manifestVersion": "1.1.0",
       "status": "INTERMEDIATE_REVIEW_ONLY",
       "source": {
         "archiveId": "liberia-moe-grade-7-9-archive",
@@ -27,8 +27,367 @@
         "subject": "LITERACY"
       },
       "extraction": {
-        "parser": "deterministic-pdf-text-v1",
+        "parser": "deterministic-pdf-page-text-v2",
         "extractedLineCount": 0,
+        "pageCount": 32,
+        "decodedPageCount": 0,
+        "unreadablePageCount": 32,
+        "reviewQueue": [
+          {
+            "page": 1,
+            "reason": "No decodable text stream.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 2,
+            "reason": "No decodable text stream.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 3,
+            "reason": "No decodable text stream.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 4,
+            "reason": "No decodable text stream.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 5,
+            "reason": "No decodable text stream.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 6,
+            "reason": "No decodable text stream.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 7,
+            "reason": "No decodable text stream.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 8,
+            "reason": "No decodable text stream.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 9,
+            "reason": "No decodable text stream.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 10,
+            "reason": "No decodable text stream.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 11,
+            "reason": "No decodable text stream.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 12,
+            "reason": "No decodable text stream.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 13,
+            "reason": "No decodable text stream.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 14,
+            "reason": "No decodable text stream.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 15,
+            "reason": "No decodable text stream.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 16,
+            "reason": "No decodable text stream.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 17,
+            "reason": "No decodable text stream.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 18,
+            "reason": "No decodable text stream.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 19,
+            "reason": "No decodable text stream.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 20,
+            "reason": "No decodable text stream.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 21,
+            "reason": "No decodable text stream.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 22,
+            "reason": "No decodable text stream.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 23,
+            "reason": "No decodable text stream.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 24,
+            "reason": "No decodable text stream.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 25,
+            "reason": "No decodable text stream.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 26,
+            "reason": "No decodable text stream.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 27,
+            "reason": "No decodable text stream.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 28,
+            "reason": "No decodable text stream.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 29,
+            "reason": "No decodable text stream.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 30,
+            "reason": "No decodable text stream.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 31,
+            "reason": "No decodable text stream.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 32,
+            "reason": "No decodable text stream.",
+            "confidence": "LOW"
+          }
+        ],
+        "pages": [
+          {
+            "page": 1,
+            "rawText": "",
+            "status": "UNREADABLE",
+            "candidates": []
+          },
+          {
+            "page": 2,
+            "rawText": "",
+            "status": "UNREADABLE",
+            "candidates": []
+          },
+          {
+            "page": 3,
+            "rawText": "",
+            "status": "UNREADABLE",
+            "candidates": []
+          },
+          {
+            "page": 4,
+            "rawText": "",
+            "status": "UNREADABLE",
+            "candidates": []
+          },
+          {
+            "page": 5,
+            "rawText": "",
+            "status": "UNREADABLE",
+            "candidates": []
+          },
+          {
+            "page": 6,
+            "rawText": "",
+            "status": "UNREADABLE",
+            "candidates": []
+          },
+          {
+            "page": 7,
+            "rawText": "",
+            "status": "UNREADABLE",
+            "candidates": []
+          },
+          {
+            "page": 8,
+            "rawText": "",
+            "status": "UNREADABLE",
+            "candidates": []
+          },
+          {
+            "page": 9,
+            "rawText": "",
+            "status": "UNREADABLE",
+            "candidates": []
+          },
+          {
+            "page": 10,
+            "rawText": "",
+            "status": "UNREADABLE",
+            "candidates": []
+          },
+          {
+            "page": 11,
+            "rawText": "",
+            "status": "UNREADABLE",
+            "candidates": []
+          },
+          {
+            "page": 12,
+            "rawText": "",
+            "status": "UNREADABLE",
+            "candidates": []
+          },
+          {
+            "page": 13,
+            "rawText": "",
+            "status": "UNREADABLE",
+            "candidates": []
+          },
+          {
+            "page": 14,
+            "rawText": "",
+            "status": "UNREADABLE",
+            "candidates": []
+          },
+          {
+            "page": 15,
+            "rawText": "",
+            "status": "UNREADABLE",
+            "candidates": []
+          },
+          {
+            "page": 16,
+            "rawText": "",
+            "status": "UNREADABLE",
+            "candidates": []
+          },
+          {
+            "page": 17,
+            "rawText": "",
+            "status": "UNREADABLE",
+            "candidates": []
+          },
+          {
+            "page": 18,
+            "rawText": "",
+            "status": "UNREADABLE",
+            "candidates": []
+          },
+          {
+            "page": 19,
+            "rawText": "",
+            "status": "UNREADABLE",
+            "candidates": []
+          },
+          {
+            "page": 20,
+            "rawText": "",
+            "status": "UNREADABLE",
+            "candidates": []
+          },
+          {
+            "page": 21,
+            "rawText": "",
+            "status": "UNREADABLE",
+            "candidates": []
+          },
+          {
+            "page": 22,
+            "rawText": "",
+            "status": "UNREADABLE",
+            "candidates": []
+          },
+          {
+            "page": 23,
+            "rawText": "",
+            "status": "UNREADABLE",
+            "candidates": []
+          },
+          {
+            "page": 24,
+            "rawText": "",
+            "status": "UNREADABLE",
+            "candidates": []
+          },
+          {
+            "page": 25,
+            "rawText": "",
+            "status": "UNREADABLE",
+            "candidates": []
+          },
+          {
+            "page": 26,
+            "rawText": "",
+            "status": "UNREADABLE",
+            "candidates": []
+          },
+          {
+            "page": 27,
+            "rawText": "",
+            "status": "UNREADABLE",
+            "candidates": []
+          },
+          {
+            "page": 28,
+            "rawText": "",
+            "status": "UNREADABLE",
+            "candidates": []
+          },
+          {
+            "page": 29,
+            "rawText": "",
+            "status": "UNREADABLE",
+            "candidates": []
+          },
+          {
+            "page": 30,
+            "rawText": "",
+            "status": "UNREADABLE",
+            "candidates": []
+          },
+          {
+            "page": 31,
+            "rawText": "",
+            "status": "UNREADABLE",
+            "candidates": []
+          },
+          {
+            "page": 32,
+            "rawText": "",
+            "status": "UNREADABLE",
+            "candidates": []
+          }
+        ],
         "standards": [],
         "objectives": [],
         "sequencing": [],
@@ -37,7 +396,7 @@
       }
     },
     {
-      "manifestVersion": "1.0.0",
+      "manifestVersion": "1.1.0",
       "status": "INTERMEDIATE_REVIEW_ONLY",
       "source": {
         "archiveId": "liberia-moe-grade-7-9-archive",
@@ -54,8 +413,444 @@
         "subject": "UNMAPPED_SOURCE_SUBJECT"
       },
       "extraction": {
-        "parser": "deterministic-pdf-text-v1",
+        "parser": "deterministic-pdf-page-text-v2",
         "extractedLineCount": 0,
+        "pageCount": 39,
+        "decodedPageCount": 0,
+        "unreadablePageCount": 39,
+        "reviewQueue": [
+          {
+            "page": 1,
+            "reason": "No decodable text stream.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 2,
+            "reason": "No decodable text stream.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 3,
+            "reason": "No decodable text stream.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 4,
+            "reason": "No decodable text stream.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 5,
+            "reason": "No decodable text stream.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 6,
+            "reason": "No decodable text stream.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 7,
+            "reason": "No decodable text stream.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 8,
+            "reason": "No decodable text stream.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 9,
+            "reason": "No decodable text stream.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 10,
+            "reason": "No decodable text stream.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 11,
+            "reason": "No decodable text stream.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 12,
+            "reason": "No decodable text stream.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 13,
+            "reason": "No decodable text stream.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 14,
+            "reason": "No decodable text stream.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 15,
+            "reason": "No decodable text stream.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 16,
+            "reason": "No decodable text stream.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 17,
+            "reason": "No decodable text stream.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 18,
+            "reason": "No decodable text stream.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 19,
+            "reason": "No decodable text stream.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 20,
+            "reason": "No decodable text stream.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 21,
+            "reason": "No decodable text stream.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 22,
+            "reason": "No decodable text stream.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 23,
+            "reason": "No decodable text stream.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 24,
+            "reason": "No decodable text stream.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 25,
+            "reason": "No decodable text stream.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 26,
+            "reason": "No decodable text stream.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 27,
+            "reason": "No decodable text stream.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 28,
+            "reason": "No decodable text stream.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 29,
+            "reason": "No decodable text stream.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 30,
+            "reason": "No decodable text stream.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 31,
+            "reason": "No decodable text stream.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 32,
+            "reason": "No decodable text stream.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 33,
+            "reason": "No decodable text stream.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 34,
+            "reason": "No decodable text stream.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 35,
+            "reason": "No decodable text stream.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 36,
+            "reason": "No decodable text stream.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 37,
+            "reason": "No decodable text stream.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 38,
+            "reason": "No decodable text stream.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 39,
+            "reason": "No decodable text stream.",
+            "confidence": "LOW"
+          }
+        ],
+        "pages": [
+          {
+            "page": 1,
+            "rawText": "",
+            "status": "UNREADABLE",
+            "candidates": []
+          },
+          {
+            "page": 2,
+            "rawText": "",
+            "status": "UNREADABLE",
+            "candidates": []
+          },
+          {
+            "page": 3,
+            "rawText": "",
+            "status": "UNREADABLE",
+            "candidates": []
+          },
+          {
+            "page": 4,
+            "rawText": "",
+            "status": "UNREADABLE",
+            "candidates": []
+          },
+          {
+            "page": 5,
+            "rawText": "",
+            "status": "UNREADABLE",
+            "candidates": []
+          },
+          {
+            "page": 6,
+            "rawText": "",
+            "status": "UNREADABLE",
+            "candidates": []
+          },
+          {
+            "page": 7,
+            "rawText": "",
+            "status": "UNREADABLE",
+            "candidates": []
+          },
+          {
+            "page": 8,
+            "rawText": "",
+            "status": "UNREADABLE",
+            "candidates": []
+          },
+          {
+            "page": 9,
+            "rawText": "",
+            "status": "UNREADABLE",
+            "candidates": []
+          },
+          {
+            "page": 10,
+            "rawText": "",
+            "status": "UNREADABLE",
+            "candidates": []
+          },
+          {
+            "page": 11,
+            "rawText": "",
+            "status": "UNREADABLE",
+            "candidates": []
+          },
+          {
+            "page": 12,
+            "rawText": "",
+            "status": "UNREADABLE",
+            "candidates": []
+          },
+          {
+            "page": 13,
+            "rawText": "",
+            "status": "UNREADABLE",
+            "candidates": []
+          },
+          {
+            "page": 14,
+            "rawText": "",
+            "status": "UNREADABLE",
+            "candidates": []
+          },
+          {
+            "page": 15,
+            "rawText": "",
+            "status": "UNREADABLE",
+            "candidates": []
+          },
+          {
+            "page": 16,
+            "rawText": "",
+            "status": "UNREADABLE",
+            "candidates": []
+          },
+          {
+            "page": 17,
+            "rawText": "",
+            "status": "UNREADABLE",
+            "candidates": []
+          },
+          {
+            "page": 18,
+            "rawText": "",
+            "status": "UNREADABLE",
+            "candidates": []
+          },
+          {
+            "page": 19,
+            "rawText": "",
+            "status": "UNREADABLE",
+            "candidates": []
+          },
+          {
+            "page": 20,
+            "rawText": "",
+            "status": "UNREADABLE",
+            "candidates": []
+          },
+          {
+            "page": 21,
+            "rawText": "",
+            "status": "UNREADABLE",
+            "candidates": []
+          },
+          {
+            "page": 22,
+            "rawText": "",
+            "status": "UNREADABLE",
+            "candidates": []
+          },
+          {
+            "page": 23,
+            "rawText": "",
+            "status": "UNREADABLE",
+            "candidates": []
+          },
+          {
+            "page": 24,
+            "rawText": "",
+            "status": "UNREADABLE",
+            "candidates": []
+          },
+          {
+            "page": 25,
+            "rawText": "",
+            "status": "UNREADABLE",
+            "candidates": []
+          },
+          {
+            "page": 26,
+            "rawText": "",
+            "status": "UNREADABLE",
+            "candidates": []
+          },
+          {
+            "page": 27,
+            "rawText": "",
+            "status": "UNREADABLE",
+            "candidates": []
+          },
+          {
+            "page": 28,
+            "rawText": "",
+            "status": "UNREADABLE",
+            "candidates": []
+          },
+          {
+            "page": 29,
+            "rawText": "",
+            "status": "UNREADABLE",
+            "candidates": []
+          },
+          {
+            "page": 30,
+            "rawText": "",
+            "status": "UNREADABLE",
+            "candidates": []
+          },
+          {
+            "page": 31,
+            "rawText": "",
+            "status": "UNREADABLE",
+            "candidates": []
+          },
+          {
+            "page": 32,
+            "rawText": "",
+            "status": "UNREADABLE",
+            "candidates": []
+          },
+          {
+            "page": 33,
+            "rawText": "",
+            "status": "UNREADABLE",
+            "candidates": []
+          },
+          {
+            "page": 34,
+            "rawText": "",
+            "status": "UNREADABLE",
+            "candidates": []
+          },
+          {
+            "page": 35,
+            "rawText": "",
+            "status": "UNREADABLE",
+            "candidates": []
+          },
+          {
+            "page": 36,
+            "rawText": "",
+            "status": "UNREADABLE",
+            "candidates": []
+          },
+          {
+            "page": 37,
+            "rawText": "",
+            "status": "UNREADABLE",
+            "candidates": []
+          },
+          {
+            "page": 38,
+            "rawText": "",
+            "status": "UNREADABLE",
+            "candidates": []
+          },
+          {
+            "page": 39,
+            "rawText": "",
+            "status": "UNREADABLE",
+            "candidates": []
+          }
+        ],
         "standards": [],
         "objectives": [],
         "sequencing": [],
@@ -64,7 +859,7 @@
       }
     },
     {
-      "manifestVersion": "1.0.0",
+      "manifestVersion": "1.1.0",
       "status": "INTERMEDIATE_REVIEW_ONLY",
       "source": {
         "archiveId": "liberia-moe-grade-7-9-archive",
@@ -81,8 +876,664 @@
         "subject": "SCIENCE"
       },
       "extraction": {
-        "parser": "deterministic-pdf-text-v1",
+        "parser": "deterministic-pdf-page-text-v2",
         "extractedLineCount": 1446,
+        "pageCount": 59,
+        "decodedPageCount": 59,
+        "unreadablePageCount": 0,
+        "reviewQueue": [
+          {
+            "page": 1,
+            "reason": "Readable text lacks a reliable standards/objectives heading; human review required.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 2,
+            "reason": "Readable text lacks a reliable standards/objectives heading; human review required.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 3,
+            "reason": "Readable text lacks a reliable standards/objectives heading; human review required.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 4,
+            "reason": "Readable text lacks a reliable standards/objectives heading; human review required.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 5,
+            "reason": "Readable text lacks a reliable standards/objectives heading; human review required.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 6,
+            "reason": "Readable text lacks a reliable standards/objectives heading; human review required.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 7,
+            "reason": "Readable text lacks a reliable standards/objectives heading; human review required.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 8,
+            "reason": "Readable text lacks a reliable standards/objectives heading; human review required.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 9,
+            "reason": "Readable text lacks a reliable standards/objectives heading; human review required.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 10,
+            "reason": "Readable text lacks a reliable standards/objectives heading; human review required.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 11,
+            "reason": "Readable text lacks a reliable standards/objectives heading; human review required.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 12,
+            "reason": "Readable text lacks a reliable standards/objectives heading; human review required.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 13,
+            "reason": "Readable text lacks a reliable standards/objectives heading; human review required.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 14,
+            "reason": "Readable text lacks a reliable standards/objectives heading; human review required.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 15,
+            "reason": "Readable text lacks a reliable standards/objectives heading; human review required.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 16,
+            "reason": "Readable text lacks a reliable standards/objectives heading; human review required.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 17,
+            "reason": "Readable text lacks a reliable standards/objectives heading; human review required.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 18,
+            "reason": "Readable text lacks a reliable standards/objectives heading; human review required.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 19,
+            "reason": "Readable text lacks a reliable standards/objectives heading; human review required.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 20,
+            "reason": "Readable text lacks a reliable standards/objectives heading; human review required.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 21,
+            "reason": "Readable text lacks a reliable standards/objectives heading; human review required.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 22,
+            "reason": "Readable text lacks a reliable standards/objectives heading; human review required.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 23,
+            "reason": "Readable text lacks a reliable standards/objectives heading; human review required.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 24,
+            "reason": "Readable text lacks a reliable standards/objectives heading; human review required.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 25,
+            "reason": "Readable text lacks a reliable standards/objectives heading; human review required.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 26,
+            "reason": "Readable text lacks a reliable standards/objectives heading; human review required.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 27,
+            "reason": "Readable text lacks a reliable standards/objectives heading; human review required.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 28,
+            "reason": "Readable text lacks a reliable standards/objectives heading; human review required.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 29,
+            "reason": "Readable text lacks a reliable standards/objectives heading; human review required.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 30,
+            "reason": "Readable text lacks a reliable standards/objectives heading; human review required.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 31,
+            "reason": "Readable text lacks a reliable standards/objectives heading; human review required.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 32,
+            "reason": "Readable text lacks a reliable standards/objectives heading; human review required.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 33,
+            "reason": "Readable text lacks a reliable standards/objectives heading; human review required.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 34,
+            "reason": "Readable text lacks a reliable standards/objectives heading; human review required.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 35,
+            "reason": "Readable text lacks a reliable standards/objectives heading; human review required.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 36,
+            "reason": "Readable text lacks a reliable standards/objectives heading; human review required.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 37,
+            "reason": "Readable text lacks a reliable standards/objectives heading; human review required.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 38,
+            "reason": "Readable text lacks a reliable standards/objectives heading; human review required.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 39,
+            "reason": "Readable text lacks a reliable standards/objectives heading; human review required.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 40,
+            "reason": "Readable text lacks a reliable standards/objectives heading; human review required.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 41,
+            "reason": "Readable text lacks a reliable standards/objectives heading; human review required.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 42,
+            "reason": "Readable text lacks a reliable standards/objectives heading; human review required.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 43,
+            "reason": "Readable text lacks a reliable standards/objectives heading; human review required.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 44,
+            "reason": "Readable text lacks a reliable standards/objectives heading; human review required.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 45,
+            "reason": "Readable text lacks a reliable standards/objectives heading; human review required.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 46,
+            "reason": "Readable text lacks a reliable standards/objectives heading; human review required.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 47,
+            "reason": "Readable text lacks a reliable standards/objectives heading; human review required.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 48,
+            "reason": "Readable text lacks a reliable standards/objectives heading; human review required.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 49,
+            "reason": "Readable text lacks a reliable standards/objectives heading; human review required.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 50,
+            "reason": "Readable text lacks a reliable standards/objectives heading; human review required.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 51,
+            "reason": "Readable text lacks a reliable standards/objectives heading; human review required.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 52,
+            "reason": "Readable text lacks a reliable standards/objectives heading; human review required.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 53,
+            "reason": "Readable text lacks a reliable standards/objectives heading; human review required.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 54,
+            "reason": "Readable text lacks a reliable standards/objectives heading; human review required.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 55,
+            "reason": "Readable text lacks a reliable standards/objectives heading; human review required.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 56,
+            "reason": "Readable text lacks a reliable standards/objectives heading; human review required.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 57,
+            "reason": "Readable text lacks a reliable standards/objectives heading; human review required.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 58,
+            "reason": "Readable text lacks a reliable standards/objectives heading; human review required.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 59,
+            "reason": "Readable text lacks a reliable standards/objectives heading; human review required.",
+            "confidence": "LOW"
+          }
+        ],
+        "pages": [
+          {
+            "page": 1,
+            "rawText": "1\n \n \n \n \n \n \n \n \n \n1.\n \n \n2.\n \n \n3.\n \n \n4.\n \n \n5.\n \n \n-\n \n \n \n \n \u0013",
+            "status": "DECODED",
+            "candidates": []
+          },
+          {
+            "page": 2,
+            "rawText": "2\n \n \nONE\n \n \n7\n \n \nI\n \n \n \n  \n-\n \n \n \n \n \n \n \n \n \nto\n: \n \n \n \n \n \n \n \n \n \n1.\n \nand \n \n \n2.\n \n \n \n \n3.\n \n \n \n \n4.\n \n \n \n5.\n \n \n1.\n \n \n \n \n \n \n \n \n \n \n \n \n-\n \n \n-\n \n \n-\n \n \n \n2.\n \n \n \n \n \n \n \n \n.\n \n \n1.\n \nbet\n \n \n1.3\n-\nand how \nA.\n \n \n \n-\n \n-\n \nJ\n \n \n \n \nA \n \n \n-\n  \n \n1 \n \n \n \nB.\n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n(\n)\n \n. \n \n \n \n \n \n \n \n \n \n \nð·\nð·\nð·\nð·\nð·\nð·\nð·\nð·\nð·\nð·\nð·\nð·\nð·\nð·",
+            "status": "DECODED",
+            "candidates": []
+          },
+          {
+            "page": 3,
+            "rawText": "3\n \n \n \n \n6.\n \n \n \n7.\n \n \n \n8.\n \ns, \n \n \n9.\n \n \n \n \n \n3.\n \n \n \n-\nr \n \n \n \n \n \n \n \n \n \n \n \n \n4.\n \n \n \n \n \n \n \n \n \n \n \n \n \nin\n \n \n \n \n \n \n \n \n \ne\n \n \n \n \n \n \n \n \n \n \n \n \n \n \nð·\nð·\nð·\nð·\n \u0013\nð·\nð·\nð·\nð·",
+            "status": "DECODED",
+            "candidates": []
+          },
+          {
+            "page": 4,
+            "rawText": "4\n \n \n5.\n \nbe \n \n \n \n \n-\n \n \nf\n \n: \n \n \n ",
+            "status": "DECODED",
+            "candidates": []
+          },
+          {
+            "page": 5,
+            "rawText": "5\n \n \nA.\n \n \n \nB.\n \n \n \n \n1.\n \n \n \na.\n \n \n \nb.\n \n \n \nc.\n \n ",
+            "status": "DECODED",
+            "candidates": []
+          },
+          {
+            "page": 6,
+            "rawText": "6\n \n \n \n \n \n-\n \n \n \n \n \n \n \n \n \n \n \n \n-\n \n \n \n \n \n \n1.\n \n \n \n2.\n \n \n \n3.\n \n \n \n4.\n \n \n \n5.\n \n1.\n \n \nnon\n-\n \n \n \na.\n \n \n \nR\n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \nA.\n \n \n \nB.\n \n \n \n: \n \n \n-\n \n-\n \nJ\n \n \n \n \nA \n \n \n-\n  \n \n1 \n \n \n \nB.\n \n \n \n \n \n \n \n \n \n \nC.\n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n(\n)\n. \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n-\n \nð·\nð·\n \u0013\nð·\n \u0013\nð·\nð·\nð·\nð·\nð·\nð·\nð·\nð·\nð·\nð·\nð·\nð·\nð·",
+            "status": "DECODED",
+            "candidates": []
+          },
+          {
+            "page": 7,
+            "rawText": "7\n \n \nnon\n-\n \n \n6.\n \nnon\n-\n \n \n7.\n \n \n \n8.\n \n \n \n9.\n \n \n \n10.\n \n \n \n11.\n \n \n \n \n \n \n \n2.\n \n \n  \n \na)\n \n \n \nb)\n \n \n \nc)\n \n \n \n \n \nd)\n \n \n \n \na)\n \n \n \n \nb)\n \nb)\n \n \n \nc)\n \n \n \n \n \n \nd)\n \n \n \n \n \n \n \n \n \n \ngroup. \n \n \n \n-\n \n \n-\n-\n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \nð·\nð·\n \u0013\n \u0013\n \u0013\n \u0013\n \u0013\n \u0013\n \u0013\n \u0013\nð·\nð·\nð·\nð·\nð·",
+            "status": "DECODED",
+            "candidates": []
+          },
+          {
+            "page": 8,
+            "rawText": "8\n \n \n \n \n12.\n \n \n \n13.\n \n \n \n14.\n \n-\n \n \n15.\n \n \n \n \n \n \n  \n \n \n \n \n \n \n \n \n \n \n \n3.\n \n.\n \n-\n \n \n \n \n \n \n \n \n \n \n \n \n \n \n-\n \n \n \n \u0013\n \u0013\nð·\nð·",
+            "status": "DECODED",
+            "candidates": []
+          },
+          {
+            "page": 9,
+            "rawText": "9\n \n \n \n \n-\n \n \n \n \n-\n \n \n \n4.\n \nchanges\n \n \n \n \n \n \n \n \n \n \n \n5.\n \n \n \n \n \n \n6.\n \n \n \n \n \n \n \nCo\n \n \n \n \n \n \n \n \n \n \n \n \n \n \nð·\nð·\nð·\nð·\nð·\nð·\nð·\n \u0013",
+            "status": "DECODED",
+            "candidates": []
+          },
+          {
+            "page": 10,
+            "rawText": "10\n \n \n \n \n \n   \n    \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n1.\n \n \n \n2.\n \n \n \n3.\n \n \n \n4.\n \n \n \n5.\n \n \n \n6.\n \n1.\n \n \n \n \n2.\n \n \na)\n \n \n \nb)\n \n \n \n \n3.\n \n \na)\n \n \n \n4.\n \n \na)\n \n \nb)\n \n \nc)\n \n \nd)\n \n \ne)\n \n \n \n \n \n \n1.\n \n \n \n \n2.\n \n \n \n \n3.\n \n \n \n \n-\n \n-\n \nJ\n \n \n \n \n \n \n-\n  \n \n \n \nB.\n \n \n \n \n \n \n \nC.\n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n(\n)\n \n \n \n \n \n \n \n \n \n \n \nð·\nð·\nð·\nð·\nð·\nð·\nð·\nð·\nð·\nð·",
+            "status": "DECODED",
+            "candidates": []
+          },
+          {
+            "page": 11,
+            "rawText": "11\n \n \n \n \n7.\n \n \n \n8.\n \n \n \n9.\n \n \n \n10.\n \n \n \n11.\n \n \n \n12.\n \n \n \nf)\n \n \n \n5.\n \n \na)\n \n \nb)\n \n \n \n \n \n4.\n \n \n \n5.\n \n \n \n6.\n \n \n \n \n7.\n \n \n \n \n8.\n \n \n \n \n \n \n \n \n \n \n \n \n \n.\n \n \n \n \n \n \n \n \n(\n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \nð·\nð·\nð·\nð·\nð·\nð·\nð·\nð·\nð·\nð·\nð·\nð·",
+            "status": "DECODED",
+            "candidates": []
+          },
+          {
+            "page": 12,
+            "rawText": "12\n \n \n \n \n \n7\n \n \nIV\n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \nthat \n \n \n \n \n \n1.\n \n \n \n \n2.\n \n \n \n3.\n \n \n \n1.\n \n \n \n \n \n \n \n \n \n2.\n \n \n \n3.\n \n \n \n4.\n \n \n \n5.\n \n \n \n \n \n \n \n1.\n \n \n \n \n2.\n \n \n \n3.\n \n \n \n \n4.\n \n \n \n \n-\n \n-\n \nJ\n \n \n \n \nM.B. \nA \n \n \n-\n  \n \n1 \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \nbe \n \n \n(\n)\n \n \n \n \n \n \n \n \n \n \nð·\nð·\nð·\nð·\nð·\nð·\nð·\nð·\nð·\nð·\nð·\nð·\nð·",
+            "status": "DECODED",
+            "candidates": []
+          },
+          {
+            "page": 13,
+            "rawText": "13\n \n \n4.\n \n \n \n5.\n \n \n \n6.\n \n \n \n7.\n \n \n \n \n8.\n \n \n \n9.\n \nand t\n \n \n10.\n \n \n \n \n \n \n6.\n \n \n \n7.\n \n \n \n8.\n \nF\n \n \n9.\n \n \n \n10.\n \n \n \n \n11.\n \n \n \n \nuse\n \n \n \n \n \n \n \n \n \n \n \n \n5.\n \n \n \n6.\n \n \n \n7.\n \n \n \n \nA.\n \n \n \nB.\n \n \n \nC.\n \n-\n \n \nD.\n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \nð·\nð·\nð·\nð·\nð·\nð·\nð·\nð·\nð·\nð·\nð·\nð·\nð·\nð·\nð·\nð·\nð·\nð·",
+            "status": "DECODED",
+            "candidates": []
+          },
+          {
+            "page": 14,
+            "rawText": "14\n \n \n \n \n11.\n \nbody\n \n \n12.\n \n \n \n13.\n \n \n12.\n \n \n \n13.\n \n: \n \na.\n \n \n \nb.\n \n \n \nc.\n \nNo\n-\n \n \n \n \n \n \n \n8.\n \n \n \n9.\n \n \n \n \nar\n \n \n \n \n \n \n \n \n \nne \n-\n \n ",
+            "status": "DECODED",
+            "candidates": []
+          },
+          {
+            "page": 15,
+            "rawText": "15\n \n \n \n \n \n \n         \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n1.\n \n \n \n \n2.\n \n \n \n3.\n \n \n \n1.\n \n \n \na)\n \n \nb)\n \n \n \n \n2.\n \n \n \na)\n \n \nb)\n \n \nc)\n \n \nd)\n \n \ne)\n \n \n \n \n \n \na)\n \n \nb)\n \n \nc)\n \n \nd)\n \n \n \n \n \n \n \n1.\n \n:\n \n \n \n \n2.\n \n \n \n3.\n \n:\n \n \n \n \n-\n \n-\n \nJ\n \n \n \nA\n \n \n \n-\n  \n \n1 \n \n \n \nB.\n \n \n \n \n \n \n \n \n \n \nC.\n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \nbe \n \n \n(\n)\n \n \n \n \n \n \n-\n \n \nð·\nð·\nð·\nð·\nð·\nð·\nð·\nð·",
+            "status": "DECODED",
+            "candidates": []
+          },
+          {
+            "page": 16,
+            "rawText": "16\n \n \n4.\n \n \n \n5.\n \n \n \n6.\n \n \n \n7.\n \n \n \n8.\n \n \ne)\n \n \n \n \n3.\n \n \n \n-\n \n \n \n \n \n \nA.\n \n \n \ni.\n \n \nii.\n \n \niii.\n \n \niv.\n \n \n \nB.\n \n \n \ni.\n \n \n \n \nii.\n \n \niii.\n \n \n \niv.\n \n \nv.\n \n \nvi.\n \n \n \n \n \n \n4.\n \n \n \n \n \n5.\n \n \n \nd\n \n \n \n6.\n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n-\n \n \n \n \n \n \n \n \n \n \n \n-\n \n \n \n \n \n \n \n \n \n \n \nð·\nð·\nð·\nð·\nð·\nð·\nð·\nð·\nð·",
+            "status": "DECODED",
+            "candidates": []
+          },
+          {
+            "page": 17,
+            "rawText": "17\n \n \n5.\n \n \n \n \n \n \n \n \n6.\n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n7.\n \n \n \n \ne.  \n \n \n \n \n \n \n \n \n \n \n \n \n \n   \n \n \n \nð·\nð·\nð·",
+            "status": "DECODED",
+            "candidates": []
+          },
+          {
+            "page": 18,
+            "rawText": "18\n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n1.\n \n \n \n2.\n \n \n \n3.\n \n \nand\n \n \n4.\n \n \n \n \na)\n \n \n \nb)\n \n \n \n \n \n \nc)\n \n \n \ni\n \n \n \nii\n \nBi\n \n \niii\n \nP\n \n \n \n \nd)\n \n \n \ne)\n \n \n \n \n \n \n \n1.\n \n \n \n \n \n \n2.\n \n-\n \n \n \n \n3.\n \n \n \n \n \n-\n \n-\n \n \n \n \n \n \nA \n \n \n-\n  \n \n1 \n \n \n \nB.\n \n \n \n \n \n \n \n \n \n \nC.\n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \nbe \n \n \n(\n)\n \n \n \n \n \n \n \n \n \u0013\n \u0013\n \u0013\n \u0013\nð·\nð·\nð·\nð·\nð·\nð·\nð·\nð·",
+            "status": "DECODED",
+            "candidates": []
+          },
+          {
+            "page": 19,
+            "rawText": "19\n \n \nf)\n \nh  \n-\n \n \n-\n \n \n-\n \n \n-\n \n \n \ng)\n \n \n-\n \n \n-\n \n \n-\n \n \n-\n \n \n-\n \n \n-\n \n \n-\n \n \n-\n \n \n-\n \n \n-\n \n \n-\n \n \n \nh)\n \n \n \n-\n \n \n-\n \n \n \n \n4.\n \n \n \n \n \n5.\n \n \n \n \n6.\n \n \n \n \n \n7.\n \n: \n \n \n8.\n \n \nA.\n \n \nJSS \n \n \n \n \n \n.\n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n-\n \n \n \n \n. \n \n \n \n \n \u0013\nð·\nð·\nð·\nð·\nð·\nð·\nð·\nð·\nð·\nð·\nð·\nð·",
+            "status": "DECODED",
+            "candidates": []
+          },
+          {
+            "page": 20,
+            "rawText": "20\n \n \n-\n \n \n-\n \n \n \ni)\n \nty\n \n-\n \n \n-\n \nC\n \n-\n \n \n \nj)\n \n \n \n \n \n9.\n \n \n \n10.\n \n \n \n \n11.\n \n \nA.\n \n \n \n \n12.\n \n \n \n \n \n ",
+            "status": "DECODED",
+            "candidates": []
+          },
+          {
+            "page": 21,
+            "rawText": "21\n \n \n \n \n \n \n-\n \n \n \n \n \n/ \n \n \n \n \n \n \n \n \n. \n \n \n1.\n \n \n \n2.\n \n \n \n3.\n \n \n \n4.\n \n \n \n5.\n \n1.\n \n: \n \na)\n \n \n \nb)\n \n \n \n \nc)\n \n \n \nd)\n \n \n \n \n2.\n \n-\n \n  \n \na)\n \n \n \n \n \n1.\n \n \n \n \n2.\n \n \no \n \na)\n \nabout\n \n \nb)\n \n \nA.\n \n \n \nW. K\n-\n \n-\n \n \n \n \n \n \n-\n  \n \n \n \n \nB.\n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n(\n)\n \n \n \n \n \n \n \n \n \n \n \n \n \n \nð·\nð·\nð·\nð·\nð·\nð·\nð·\nð·\nð·\nð·\nð·",
+            "status": "DECODED",
+            "candidates": []
+          },
+          {
+            "page": 22,
+            "rawText": "22\n \n \n \n \n6.\n \n \n \n \n7.\n \n \n \n \n \n \nb)\n \nE\n \n \nc)\n \n \n \nd)\n \n \n \nc)\n \n \n \nd)\n \n \n \n3.\n \n \nA.\n \n \n \nB.\n \n \n \n \n4.\n \n-\n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \nð·\nð·\nð·\nð·\nð·\nð·",
+            "status": "DECODED",
+            "candidates": []
+          },
+          {
+            "page": 23,
+            "rawText": "23\n \n \n5.\n \n:\n \nA.\n \n \n \nB.\n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n ",
+            "status": "DECODED",
+            "candidates": []
+          },
+          {
+            "page": 24,
+            "rawText": "24\n \n \n \n8\n \n \nII\n \n \n \n \n \n \n \n \n \n \n  \n \n \n \n \n \n \n \n \n \n1.\n \n \n \n2.\n \n \n \n3.\n \n \n \n4.\n \n \n \n5.\n \n \n \nC\n \n \ni\n \n \n \n \nii\n \n \n \niii\n \n \n \n \na)\n \n \nb)\n \n \nc)\n \n \n \nd)\n \n, \n \n \ne)\n \n \n-\n \n \n \n \n \n \n \n1. \n \n \n \n \n \n-\n \n \n \n \n2.\n \n \n \na.\n \n \nb.\n \n \n-\n \n \n-\n \n \n \n-\n \n-\n \nJ\n \n \n \n \nA \n \n \n-\n  \n \n2 \n \n \n \nB.\n \n \n \n \n \n \n \n \n \n \n \n \n \n \n-\n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n(\n)\n \n \n \n \n \n \n \n \n-\n-\n \n \n \nð·\nð·\nð·\nð·\nð·\nð·\nð·\nð·\nð·\nð·",
+            "status": "DECODED",
+            "candidates": []
+          },
+          {
+            "page": 25,
+            "rawText": "25\n \n \n6.\n \n \n \n7.\n \n \n \n8.\n \n \n \n \n9.\n \n \n \nf)\n \n \n \n \ng)\n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n3.\n \n-\n \n \n-\n \n \n-\n \n \n \n \n \n4.\n \n \n \na)\n \n \n \n5.\n \n  \n \n \n \n \n \n6.\n \n-\non \n-\n-\n \n-\n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \nð·\nð·\nð·\nð·\nð·\nð·\nð·\nð·\nð·\nð·\nð·\nð·\nð·\nð·\nð·",
+            "status": "DECODED",
+            "candidates": []
+          },
+          {
+            "page": 26,
+            "rawText": "26\n \n \n \n \n \n7.\n \n  \n \n \n8.\n \n \n \n9.\n \n  \n \n \n \n \n \n \n \n \n \n \nû\u0000",
+            "status": "DECODED",
+            "candidates": []
+          },
+          {
+            "page": 27,
+            "rawText": "27\n \n \n \n \nIII\n \n \n \n \n \n \n \n \n \n \n \n \n \n \n1.\n \nan\n \n \n2.\n \n \n \n3.\n \n \n \n4.\n \n \n \n \n \n \n-\n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n:\n \n \n \n \n-\n \n-\n \nJ\n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \nbe \n(\n)\n \n \n \n \n \n \n \n \n \nð·\nð·\nð·\nð·\nð·\nð·\nð·\nð·",
+            "status": "DECODED",
+            "candidates": []
+          },
+          {
+            "page": 28,
+            "rawText": "28\n \n \n \n \n \n \n \n \n \n \n \n \n \na)\n \n \nb)\n \n \nc)\n \n \nd)\n \n \ne)\n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n  \n \n \n \n \n \n \n \n \n \n \n \n \n-\n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \u0013\nð·\nð·\nð·\nð·\nð·\nð·\nð·\nð·",
+            "status": "DECODED",
+            "candidates": []
+          },
+          {
+            "page": 29,
+            "rawText": "29\n \n \n \n \n \n \n \n \n ",
+            "status": "DECODED",
+            "candidates": []
+          },
+          {
+            "page": 30,
+            "rawText": "30\n \n \n \n \n \n \n8\n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n1.\n \n \n \n2.\n \n \n \n3.\n \n \n4.\n \n-\n \n-\n)\n \n \n. \n \n \n \na)\n \n \nb)\n \n \n \n \n \n \n \n \na)\n \n \n \n \n \n \n1.\n \n \n \n \n \n2.\n \n \n \n3.\n \n \n \n \n-\n \n-\n \nJ\n \n \n \n \n \n-\n  \n \n2 \n \n \nB.\n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n(\n)\n \n \n \n \n \n \n \n \n \n \n \n \n \nð·\nð·\nð·\nð·\nð·\nð·\nð·\nð·\nð·\nð·\nð·\nð·",
+            "status": "DECODED",
+            "candidates": []
+          },
+          {
+            "page": 31,
+            "rawText": "31\n \n \n  \n \n5.\n \n \n6.\n \n \n7.\n \n \n8.\n \n  \n \n9.\n \n \n \n \nb)\n \n \nc)\n \n \n \n \n \na)\n \n \nn \n-\n \n \nb)\n \n \n \n-\n \n \n-\n \n \n-\n \n \n-\n \n \n-\n \n \n-\n \n \n-\n \n \n \n \n \n \n \n \n4.\n \n \npe\n \n \n5.\n \n \nnon\n-\n \n \n \n \n \n6.\n \n \n \n \n \n7.\n \n-\n \n-\n \n \n \n-\n \n \n \n \n \n \n \n \n \n \n \ng\n \n  \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \u0013\nð·\nð·\nð·\nð·\nð·\nð·\nð·\nð·\nð·\nð·\nð·\nð·",
+            "status": "DECODED",
+            "candidates": []
+          },
+          {
+            "page": 32,
+            "rawText": "32\n \n \n \n \n \n \n \n \n \n \n \na.\n \n \nb.\n \n \nc.\n \n \nb)\n \n \n \n \n \n \n \n \n \n-\n \n: \n-\n \n \n \n \n \n \n ",
+            "status": "DECODED",
+            "candidates": []
+          },
+          {
+            "page": 33,
+            "rawText": "33\n \n \n \n \n \n \n: \n \n \n \n \n \n-\n \n \n \n ",
+            "status": "DECODED",
+            "candidates": []
+          },
+          {
+            "page": 34,
+            "rawText": "34\n \n \n-\n \n-\n \n \n \n-\n \n \n \n ",
+            "status": "DECODED",
+            "candidates": []
+          },
+          {
+            "page": 35,
+            "rawText": "35\n \n \n \n \n \n \n \n \n \n ",
+            "status": "DECODED",
+            "candidates": []
+          },
+          {
+            "page": 36,
+            "rawText": "36\n \n \n \n8\n \n \n \n \n \n \n \n \n \n \n \n. \n \n \n \n \n \n \n \n \n1.\n \n \n \n2.\n \n \n \n3.\n \n \n \n4.\n \n \n \n5.\n \n \n \n1.\n \n \nA.\n \n \n \nB.\n \n \na)\n \n \nb)\n \n \nc)\n \n \nd)\n \n \ne)\n \n \nC.\n \n  \n \n \n \n \n \n2.\n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \nA.\n \n \n \nK\n-\n \n-\n \nJ\n \n \n \n \n \n \n-\n  \n \n \n \n \nB.\n \n \n \n \n \nJSS\n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n(\n)\n \n \n \n \n \n \n \n \n \n \n \u0013\n \u0013\n \"\n \"\nð·\nð·\nð·\nð·\nð·\nð·\nð·\nð·\nð·",
+            "status": "DECODED",
+            "candidates": []
+          },
+          {
+            "page": 37,
+            "rawText": "37\n \n \n6.\n \n \n \n7.\n \n \n \n8.\n \n \n \n9.\n \n \n-\n      \n \n \n \n3.\n \n \n \na)\n \n \n \nb)\n \n \n \n \nc)\n \n \n \n \nd)\n \n \n \ne)\n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \nand \n \n \n \n \n \n \n \n \n \n \n \n  \n \n \n \n \n \n \n \n \n \n    \n \n \n \n \n \n \n \nð·\nð·\nð·",
+            "status": "DECODED",
+            "candidates": []
+          },
+          {
+            "page": 38,
+            "rawText": "38\n \n \n \n \n \n \nVI\n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n1.\n \n \n \n2.\n \nD\n \n \n3.\n \n \n \n4.\n \n \n \n1.\n \n \n2.\n \n \n \n3.\n \n \n \n \n \n4.\n \n \n \n \n5.\n \n \n \n \n6.\n \n \n  \n \n \n \n \n \n1.\n \n \n \n \n \n \n \n \n \n \n \n \n \n \n-\n \n-\n \nJ\n \n \n \n \n \n \nA \n \n \n-\n  \n \n2 \n \n \n \nB.\n \n \n \n \n \n \n \n \n \n \nC.\n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n(\n)\n \n \n \n \n \n \n \n \n \n \n \nð·\nð·\nð·\nð·\nð·\nð·\nð·\nð·\nð·\nð·",
+            "status": "DECODED",
+            "candidates": []
+          },
+          {
+            "page": 39,
+            "rawText": "39\n \n \n \n \n \n \n \n \n \n \n \n \n \nJSS \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \u0013\nð·\nð·\nð·",
+            "status": "DECODED",
+            "candidates": []
+          },
+          {
+            "page": 40,
+            "rawText": "40\n \n \n \n \n \n9\n \n \n \n \n \n-\n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n1.\n \n \n \n2.\n \n \n \n3.\n \n \n \n4.\n \n \n \n5.\n \n \n \na)\n \n \n \nb)\n \n \n \nc)\n \nand \n \n \nd)\n \n \n \n-\n \n \na)\n \n \n \n \n \nb)\n \n \n \n \n \n \n \n \n \n \nA.\n \n \n \n-\n \n-\n \nJ\n \n \n \nB.\n \nA \n \n \n-\n  \n \n3 \n \n \n \nB.\n \n \n \n \n \n \n \n \n \nC.\n \n \n \n \n \n \n \nENC\n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \nbe \n \n \n(\n)\n \n \n \n \n \n \n \u0013\nð·\nð·\nð·\nð·\nð·\nð·\nð·",
+            "status": "DECODED",
+            "candidates": []
+          },
+          {
+            "page": 41,
+            "rawText": "41\n \n \n6.\n \n \n \n7.\n \n \n \n8.\n \n \n \nc)\n \n \n \nd)\n \n \n \ne)\n \n \n \nf)\n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n1.\n \n \n(H\n2\nSO\n4\n3\n \nNa\n2\nCO\n3\n; \n3\n \n \n \n2.\n \n \n \n3.\n \nLead \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n  \n \n \n \nð·\nð·\nð·\nð·\nð·\nð·\nð·\nð·\nð·",
+            "status": "DECODED",
+            "candidates": []
+          },
+          {
+            "page": 42,
+            "rawText": "42\n \n \n \n \n \n9\n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n1.\n \n \n2.\n \n \n3.\n \n \n4.\n \n \n5.\n \n1.\n \n \na)\n \n \nb)\n \n \nc)\n \nC\n \n \n2.\n \n \na)\n \n \nb)\n \n \n \n3.\n \n \n \na)\n \n \nb)\n \n \n \n \n4.\n \n \n \n \n5.\n \n \n \n \n6.\n \n-\n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n-\n \n-\n \nJ\n \n \n \n \nA \n \n \n-\n  \n \n3 \n \n \n \n \n \n \n \n  \n \n \n \n \nJSS \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \nbe \n(\n)\n \n \n \n \n \n \n \n \u0013\nð·\nð·\nð·\nð·\nð·\nð·\nð·\nð·",
+            "status": "DECODED",
+            "candidates": []
+          },
+          {
+            "page": 43,
+            "rawText": "43\n \n \n \n6.\n \n \n7.\n \n \n8.\n \n \n \n \na)\n \n \nb)\n \n \n \n \n7.\n \n \na)\n \n \nb)\n \n \n \n \n8.\n \n \na)\n \n \nb)\n \n \n \n \n9.\n \nPub\n \na)\n \n \nb)\n \n \n \n \n10.\n \n \n \n \n \nA.\n \n \n \n \n \n \n \n \n \n \n \n \n \n: \n \nA.\n \nim\n-\n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \nð·\nð·\nð·\nð·\n \u0013\nð·\nð·",
+            "status": "DECODED",
+            "candidates": []
+          },
+          {
+            "page": 44,
+            "rawText": "44\n \n \nB.\n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n-\n: \n \n \n \n \n \n \n ",
+            "status": "DECODED",
+            "candidates": []
+          },
+          {
+            "page": 45,
+            "rawText": "45\n \n \n \n \n \n9\n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n1.\n \n \n \n2.\n \n \n \n3.\n \n \n \n4.\n \n \n \n5.\n \n \n \n \n \n \n \n \n \n \n \n \na)\n \n \nb)\n \n \nc)\n \n \nd)\n \n \ne)\n \n \nf)\n \n \n \n \n \n \na)\n \n \nb)\n \n \n \n \n \n-\n \n \n \n \n \n \n \n \n \n \n \n \n \nhe \n \n \n \n \n \n-\n \n-\n \nJ\n \n \n \n \nA \n \n \n-\n  \n \n3 \n \n  \n \n \n \n \n  \n \n \n \n \nJSS \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n(\n)\n \n \n \n \n \n \n \n \u0013\nð·\nð·\nð·\nð·\nð·\nð·\nð·\nð·",
+            "status": "DECODED",
+            "candidates": []
+          },
+          {
+            "page": 46,
+            "rawText": "46\n \n \n \n \n6.\n \n \n \n7.\n \n \n \n8.\n \n \n \n \n \n \n \n-\n \n \n-\n \n \n-\n \ns\n \n \n-\n \n \n \n-\n \n \n \n \na)\n \n \nb)\n \n \nc)\n \n \nd)\n \n \n \n \n-\n \n \n-\n \n \n-\n \n \n-\n \n-\n \n \n \n \n \n \n \n \n \n \n \n \n \n \n; \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n   \n \n \n \n \n \n \u0013\nð·\nð·\nð·\nð·\nð·\nð·\nð·",
+            "status": "DECODED",
+            "candidates": []
+          },
+          {
+            "page": 47,
+            "rawText": "47\n \n \n \n \n \n \n \n: \n \na)\n \n \nb)\n \n \n \n \n \na)\n \n \nb)\n \n \n \n \n \n \n \n \n \nD\n:\n \ni\n \n \n \n \n \n \n \n \n \n \n \n \n \n \n ",
+            "status": "DECODED",
+            "candidates": []
+          },
+          {
+            "page": 48,
+            "rawText": "48\n \n \n \n9\n \n \n \n \n \n. \n \n \n \n \n \n \n \n \n \n \n \n  \n \nand \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n1.\n \n \n \n2.\n \n \n \n3.\n \n \n \n \n4.\n \no\nC \nand \no\nF\n \n \n1.\n \n \n \na)\n \n \n \n \nb)\n \n \n \nc)\n \n \n \nd)\n \n \n \n \n2.\n \n \n \na)\n \n \n-\n \n \n-\n \no\no\nF \n \n-\n \n \n \n \n \n \n \n-\n \n \n \n \n \n \n \n \n \nA.\n \n \n \n \n-\n \n-\n \nJ\n \n \n \n \n \n-\n  \n \n \nB.\n \n \n \n \n \n  \n \n \n \nC.\n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \nbe \n \n \n(\n)\n \n \n \n \n \n \n \u0013\nð·\nð·\nð·\nð·\nð·\nð·\nð·\nð·",
+            "status": "DECODED",
+            "candidates": []
+          },
+          {
+            "page": 49,
+            "rawText": "49\n \n \n5.\n \n \n \n6.\n \n \n \n7.\n \n \n \n8.\n \n \n \n \nb)\n \n \n \n \nc)\n \n-\n \n \n \n \n3.\n \n \n \na)\n \n \n \nb)\n \n \n \nc)\n \n \n \nd)\n \n \n \n \n4.\n \n \na)\n \n \n \nb)\n \n \nc)\n \n \n \n \n \n \n \n \n \n \n \n \n \n \n-\n \n \n \n: \nnon\n-\n \n \n \n \n \n \n \n \nto\n \n \n \n \n \n \n \n \n \n \nww\n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \u0013\nð·\nð·\nð·\nð·\nð·\nð·\nð·",
+            "status": "DECODED",
+            "candidates": []
+          },
+          {
+            "page": 50,
+            "rawText": "50\n \n \nd)\n \n \n \ne)\n \n-\n \n \n \nf)\n \n \n-\n \n \n-\n \n \n \nd)\n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n ",
+            "status": "DECODED",
+            "candidates": []
+          },
+          {
+            "page": 51,
+            "rawText": "51\n \n \na\n \n \n \nb\n \n \n \n \n \n \n \n \n \na\n \n \n \n \nb\n \n \n \nc\n \n \n \nWork\n:\n \n \n \n \n \n \n \n ",
+            "status": "DECODED",
+            "candidates": []
+          },
+          {
+            "page": 52,
+            "rawText": "52\n \n \n \n \n \n \n9\n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n1.\n \n \n \n2.\n \n \n \n3.\n \nand non\n-\n1.\n \n \n \na)\n \n \nb)\n \n \nc)\n \n \nd)\n \n \n \n \n2.\n \n \n \na)\n \n-\n \nb)\n \n \nc)\n \n-\n \nd)\n \n \n \n \n3.\n \n-\n \n \n \n4.\n \n \n \n5.\n \n \n \n6.\n \n \na)\n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n-\n \n-\n \nJ\n \n \n \n \n \n-\n  \n \n3 \n \n \n \n \n \n  \n \n \n \n \n \n \n \nFac\n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \nbe \n \n \n(\n)\n \n \n \n \n \n \n \n \n \nð·\nð·\nð·\nð·\nð·\nð·\nð·\nð·\nð·",
+            "status": "DECODED",
+            "candidates": []
+          },
+          {
+            "page": 53,
+            "rawText": "53\n \n \n \n \n4.\n \n \n \n5.\n \n \n \n6.\n \n-\na\nand\n \n \n7.\n \n \nb)\n \nand non\n-\n \n \n \n7.\n \n  \n \n \n8.\n \n \n \n9.\n \n \n \n10.\n \n \na)\n \n-\nup \n \nb)\n \n-\n \n \n \n11.\n \n \na)\n \n \nb)\n \n \n \n \n12.\n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \nA.\n \ne \n \n \nB.\n \n \n \nC.\n \n \n \nD.\n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \nð·\nð·\nð·\nð·\nð·\nð·",
+            "status": "DECODED",
+            "candidates": []
+          },
+          {
+            "page": 54,
+            "rawText": "5\n4\n \n \n \n \n \n \n \n \n \n-\n \n \n \n:\n \nA.\n \nLead\n \n \n \nB.\n \n \n \nC.\n \n \n \n ",
+            "status": "DECODED",
+            "candidates": []
+          },
+          {
+            "page": 55,
+            "rawText": "55\n \n \n \nLead \n \n \n \n \n \n ",
+            "status": "DECODED",
+            "candidates": []
+          },
+          {
+            "page": 56,
+            "rawText": "56\n \n \n \n9\n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \nin\n \n \n \n \n \n \n1.\n \n.\n \n \n2.\n \nand \n \n \n3.\n \n \n \n4.\n \n \n \n5.\n \n \n \n6.\n \n \n1.\n \n \na)\n \n \n-\n \n \n-\n \n \n \nb)\n \n \n-\n \n \n-\n \n \n-\n \n \n \n \n \n2.\n \n \na)\n \n-\n \n \n-\n \n \n-\n \n \n-\n \n \n-\n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n-\n \n-\n \nJ\n \n \n \n \nA \n \n \n-\n  \n \n3 \n \n \n \n \n \n \n  \n \n \n \n \nJSS \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \nbe \n \n \n(\n)\n \n \n \n \n \n \n \n \n \n \n \u0013\nð·\nð·\nð·\nð·\nð·\nð·\nð·\nð·\nð·",
+            "status": "DECODED",
+            "candidates": []
+          },
+          {
+            "page": 57,
+            "rawText": "57\n \n \n7.\n \n \n \n8.\n \n \n \n9.\n \n \n \n10.\n \n \n \n11.\n \nand\n \n \n \nb)\n \n \nT\n \n \nc)\n \n \n \n \nd)\n \n \n-\n \n \n-\n \n \n-\n \n \n \n \ne)\n \n \n \n \n \n \nf)\n \n \n \n \n3.\n \n \n \na)\n \n \nb)\n \n \n \nc)\n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \nto\n \n \n \n \n \n \n \n \n \n \n-\n \n \n-\n \n-\n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \u0013\n \u0013\n \u0013\nð·\nð·\nð·\nð·\nð·\nð·",
+            "status": "DECODED",
+            "candidates": []
+          },
+          {
+            "page": 58,
+            "rawText": "58\n \n \n \n4.\n \n \na)\n \n \nb)\n \n \n-\n \n \n-\n \n-\n \n \n \n \n \n \n \n \n \n \n \n \n \nWork\n:\n \n \n \n \n \n: \n \n \n ",
+            "status": "DECODED",
+            "candidates": []
+          },
+          {
+            "page": 59,
+            "rawText": "59\n \n \n-\non \n \n-\n \nhands\n-\n \n \n \n \n \n \n \n \n \n \n \n ",
+            "status": "DECODED",
+            "candidates": []
+          }
+        ],
         "standards": [],
         "objectives": [],
         "sequencing": [],
@@ -91,7 +1542,7 @@
       }
     },
     {
-      "manifestVersion": "1.0.0",
+      "manifestVersion": "1.1.0",
       "status": "INTERMEDIATE_REVIEW_ONLY",
       "source": {
         "archiveId": "liberia-moe-grade-7-9-archive",
@@ -108,8 +1559,609 @@
         "subject": "MATH"
       },
       "extraction": {
-        "parser": "deterministic-pdf-text-v1",
-        "extractedLineCount": 1394,
+        "parser": "deterministic-pdf-page-text-v2",
+        "extractedLineCount": 1368,
+        "pageCount": 54,
+        "decodedPageCount": 54,
+        "unreadablePageCount": 0,
+        "reviewQueue": [
+          {
+            "page": 1,
+            "reason": "Readable text lacks a reliable standards/objectives heading; human review required.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 2,
+            "reason": "Readable text lacks a reliable standards/objectives heading; human review required.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 3,
+            "reason": "Readable text lacks a reliable standards/objectives heading; human review required.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 4,
+            "reason": "Readable text lacks a reliable standards/objectives heading; human review required.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 5,
+            "reason": "Readable text lacks a reliable standards/objectives heading; human review required.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 6,
+            "reason": "Readable text lacks a reliable standards/objectives heading; human review required.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 7,
+            "reason": "Readable text lacks a reliable standards/objectives heading; human review required.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 8,
+            "reason": "Readable text lacks a reliable standards/objectives heading; human review required.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 9,
+            "reason": "Readable text lacks a reliable standards/objectives heading; human review required.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 10,
+            "reason": "Readable text lacks a reliable standards/objectives heading; human review required.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 11,
+            "reason": "Readable text lacks a reliable standards/objectives heading; human review required.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 12,
+            "reason": "Readable text lacks a reliable standards/objectives heading; human review required.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 13,
+            "reason": "Readable text lacks a reliable standards/objectives heading; human review required.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 14,
+            "reason": "Readable text lacks a reliable standards/objectives heading; human review required.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 15,
+            "reason": "Readable text lacks a reliable standards/objectives heading; human review required.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 16,
+            "reason": "Readable text lacks a reliable standards/objectives heading; human review required.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 17,
+            "reason": "Readable text lacks a reliable standards/objectives heading; human review required.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 18,
+            "reason": "Readable text lacks a reliable standards/objectives heading; human review required.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 19,
+            "reason": "Readable text lacks a reliable standards/objectives heading; human review required.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 20,
+            "reason": "Readable text lacks a reliable standards/objectives heading; human review required.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 21,
+            "reason": "Readable text lacks a reliable standards/objectives heading; human review required.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 22,
+            "reason": "Readable text lacks a reliable standards/objectives heading; human review required.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 23,
+            "reason": "Readable text lacks a reliable standards/objectives heading; human review required.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 24,
+            "reason": "Readable text lacks a reliable standards/objectives heading; human review required.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 25,
+            "reason": "Readable text lacks a reliable standards/objectives heading; human review required.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 26,
+            "reason": "Readable text lacks a reliable standards/objectives heading; human review required.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 27,
+            "reason": "Readable text lacks a reliable standards/objectives heading; human review required.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 28,
+            "reason": "Readable text lacks a reliable standards/objectives heading; human review required.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 29,
+            "reason": "Readable text lacks a reliable standards/objectives heading; human review required.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 30,
+            "reason": "Readable text lacks a reliable standards/objectives heading; human review required.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 31,
+            "reason": "Readable text lacks a reliable standards/objectives heading; human review required.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 32,
+            "reason": "Readable text lacks a reliable standards/objectives heading; human review required.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 33,
+            "reason": "Readable text lacks a reliable standards/objectives heading; human review required.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 34,
+            "reason": "Readable text lacks a reliable standards/objectives heading; human review required.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 35,
+            "reason": "Readable text lacks a reliable standards/objectives heading; human review required.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 36,
+            "reason": "Readable text lacks a reliable standards/objectives heading; human review required.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 37,
+            "reason": "Readable text lacks a reliable standards/objectives heading; human review required.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 38,
+            "reason": "Readable text lacks a reliable standards/objectives heading; human review required.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 39,
+            "reason": "Readable text lacks a reliable standards/objectives heading; human review required.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 40,
+            "reason": "Readable text lacks a reliable standards/objectives heading; human review required.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 41,
+            "reason": "Readable text lacks a reliable standards/objectives heading; human review required.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 42,
+            "reason": "Readable text lacks a reliable standards/objectives heading; human review required.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 43,
+            "reason": "Readable text lacks a reliable standards/objectives heading; human review required.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 44,
+            "reason": "Readable text lacks a reliable standards/objectives heading; human review required.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 45,
+            "reason": "Readable text lacks a reliable standards/objectives heading; human review required.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 46,
+            "reason": "Readable text lacks a reliable standards/objectives heading; human review required.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 47,
+            "reason": "Readable text lacks a reliable standards/objectives heading; human review required.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 48,
+            "reason": "Readable text lacks a reliable standards/objectives heading; human review required.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 49,
+            "reason": "Readable text lacks a reliable standards/objectives heading; human review required.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 50,
+            "reason": "Readable text lacks a reliable standards/objectives heading; human review required.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 51,
+            "reason": "Readable text lacks a reliable standards/objectives heading; human review required.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 52,
+            "reason": "Readable text lacks a reliable standards/objectives heading; human review required.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 53,
+            "reason": "Readable text lacks a reliable standards/objectives heading; human review required.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 54,
+            "reason": "Readable text lacks a reliable standards/objectives heading; human review required.",
+            "confidence": "LOW"
+          }
+        ],
+        "pages": [
+          {
+            "page": 1,
+            "rawText": "1\n \n \n \n \n \n \n \n \n9\n \n \n1.\n \n \n2.\n \n \n3.\n \n-\n \n4.\n \n-\n \n-\n \n \n                                                                  \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \u0013",
+            "status": "DECODED",
+            "candidates": []
+          },
+          {
+            "page": 2,
+            "rawText": "2\n \n \n \n               \n \n             \n \n \n       \n       \n \n \n \n \n \n \n \n \n \n \n \n \n \n1.\n \n \n \n \n2.\n \n \n \n \n3.\n \n100. \n \n \n4.\n \n \n \n5.\n \n \n \n6.\n \n \n \n7.\n \n \n \n \n1.\n \n \n \n2.\n \n \n \n3.\n \n \n \n4.\n \n \n \n \n \n: \n \n \n \n1.\n \n \n \n2.\n \n \n \n3.\n \nand 100.\n \n \n4.\n \n \nA.\n \n \n \n \n \n \n \n \n \nB.\n \n \n \n \n \n-\n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \nA\n \n \n \n \n \n \n \n \n \n \n \"\nð·\nð·\nð·\nð·\nð·\nð·\nð·\nð·",
+            "status": "DECODED",
+            "candidates": []
+          },
+          {
+            "page": 3,
+            "rawText": "3\n \n \n \n \n \n \n \n \n \n \n \n5.\n \n \n \n6.\n \n \n \n7.\n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \nð·\nð·\nð·\nð·\nð·\nð·\nð·",
+            "status": "DECODED",
+            "candidates": []
+          },
+          {
+            "page": 4,
+            "rawText": "4\n \n \n \n               \n \n               \n \n               \n \n \n \n \n \n \n \n \n \n: \n \n \n \n \n \n \no\n \n \n,  \n5 and  \n \n \n \n \n \n \n:\n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n1.\n \n \n \n \n1.1\n \n \n \n1.2\n \n \n)\n \n \n1.3\n \n \n \n1.4\n \n \n \n1.5\n \n \n: \n \n \n \n1.\n \n \n \n2.\n \n \n \n3.\n \n-\n \n \n4.\n \n \nhe \n \n \n5.\n \n \n \n \n \n \n \n \n \n \n \nS  \n \n \n \n \n \n \n \n \n \n \n \n:\n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \nðv\nðv\nðv\nðv\nðv\nð·\nð·\nð·\nð·\nð·\nð·\nð·\nð·\nð·",
+            "status": "DECODED",
+            "candidates": []
+          },
+          {
+            "page": 5,
+            "rawText": "5\n \n \n \nand \n \n \n \n \n \n \n \n \nS \n26}\n \n \nA \n \n \n \n6.\n \n \na.\n \ns\n \nb.\n \ns\n \nc.\n \ns\n \nd.\n \nE\n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \nP \n \nP \nQ \n \nQ \nP \nis\n \nQ\n.\n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \nðv\nð·\nð·\nð·\nð·\nð·\nð·\nð·\nð·",
+            "status": "DECODED",
+            "candidates": []
+          },
+          {
+            "page": 6,
+            "rawText": "6\n \n \n \n \nA\n \n \nB \n= \n{\n}; \nA \nB\n.\n \nand \nQ \nA\n \nB \n \n \n \n.\n \n \n{1, \n} and \nB \n= {\n \n,9\n}, \nB \nA\n.\n \n \n \nA \n \n \n \n \n \n \n \n \n \n \nðÍ\nðÍ",
+            "status": "DECODED",
+            "candidates": []
+          },
+          {
+            "page": 7,
+            "rawText": "7\n \n \n \n \nB.\n \n \n  \nr\n  \n \n  \n \n \n \n  \nas \n \nRRRRRRR\nA\n \n \n \n \n \n \nA \n \nB.\n \n \n \n \n \n \n\u0005ë\n\u0005ë\n׫",
+            "status": "DECODED",
+            "candidates": []
+          },
+          {
+            "page": 8,
+            "rawText": "8\n \n \nONE\n \n                 \n7\n \n \n                \nII\n   \n \n \n              \n \n \n \n \n \n \n \n \n \n \n \na\nnd\n \n \n \n \n \n1.\n \n \n \n2.\n \n  \n \n \n \n3.\n \n \n \n \n \n \n \n \n1.\n \n \non \n \n \n2.\n \n \n \n3.\n \n \n \n4.\n \n \n \n5.\n \n \n \n: \n \n \n \n \n1.\n \ndo :\n \n \n \n \n2.\n \n \n \n3.\n \n \n \n \n \n \n \n \n \n \n \nA.\n \n \n \n \n \n-\n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \nð·\nð·\nð·\nð·\nð·\nð·\nð·\nð·\nð·",
+            "status": "DECODED",
+            "candidates": []
+          },
+          {
+            "page": 9,
+            "rawText": "9\n \n \n \n \n  \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \nð·\nð·\nð·\nð·\nð·\nð·",
+            "status": "DECODED",
+            "candidates": []
+          },
+          {
+            "page": 10,
+            "rawText": "10\n \n \nONE\n \n \n \n \n \n                 \nIII\n  \n \n \n                 \n \n \n \n \n \n \n \n \nand \n \n \n \n1.\n \n \n \n2.\n \n \n \n \nand     \n \n         \n \n \n \n \n \nand\n \n \n \n \n \n \nand \n \n: \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \nA.\n \n \n \n \n \n-\n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n276906944\n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \nð·\nð·\nð·\nð·\nð·\nð·\n \"\n \"\n \"\nð·\nð·\nð·\nð·\nð·\nð·\nð·\nð·\nð·\nð·\nð·",
+            "status": "DECODED",
+            "candidates": []
+          },
+          {
+            "page": 11,
+            "rawText": "11\n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \nð·\nð·\nð·\nð·\nð·",
+            "status": "DECODED",
+            "candidates": []
+          },
+          {
+            "page": 12,
+            "rawText": "12\n \n \n \n \n \n7\n \n \n \n \nIV\n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \nan\nd \n \non \n \n \n \n \n \n \n \nsy\n \n \n \n-\n \n \n \nd \n1.\n \n \n \n2.\n \n \n \n3.\n \n \n \nb. \n \n-\n \n \n \n4.\n \nA\n \n \n5.\n \n \n \n \n \n: \n \n \n \n \n1.\n \n, \ned\n \n \n \n2.\n \n \n \n \n3.\n \nde\n \n \n \n4.\n \n \n \n5.\n \n \n \n: \n \n \n \n \n \n \n \n \n \n \nB.\n \n \n \n \n-\n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \"\n \"\n \"\n \"\n \"\n \"\nð·\nð·\nð·\nð·\nð·\nð·\nð·\nð·",
+            "status": "DECODED",
+            "candidates": []
+          },
+          {
+            "page": 13,
+            "rawText": "13\n \n \non\n \n \n \n \n \n \n \n \n \n \n \n6.\n \n \n \n \n3.\n \n \n:\n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n4.\n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \"\n \"\n \"\n \"\n \"\n \"\n \"\n \"\n \"\n \"\n \"\n \"\n \"\n \"\n \"\n \"\n \"\nð·\nð·\nð·\nð·\nð·\nð·\nð·",
+            "status": "DECODED",
+            "candidates": []
+          },
+          {
+            "page": 14,
+            "rawText": "14\n \n \n  \n \n \n            \n7\n \n \n \n        \n  \nV\n \n \n \n          \n \n \n \n \n \n \n \n \n \n \n \n \n \nI\n \n \n \n \n \n \n \n \n \n  \n \n \n \n \n \n \nA.\n \n \n \nB.\n \n \nP\n \n \n \nC.\n \n \n: \n \n \n \n \n \n \ni\n \n \n \n \n \n \n \nf\nen \nit \n \n: \n \n \n \n \n \n1\n \n \n \n \nA.\n \n \n \n \n-\n \n \n \n \n \n  \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \nð·\nð·\nð·\nð·\nðv\nðv\nðv\n \"\n \"\n \"\nð·\nð·\nð·\nð·\nð·\nð·\nð·\nð·",
+            "status": "DECODED",
+            "candidates": []
+          },
+          {
+            "page": 15,
+            "rawText": "15\n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \nð·\nð·\nð·\nð·\nð·\nð·\nð·",
+            "status": "DECODED",
+            "candidates": []
+          },
+          {
+            "page": 16,
+            "rawText": "16\n \n \n \n            \n7\n \n \n      \n     \nVI\n \n \n \n          \n    \nCO\n-\n \n \n \n \n \n \nC\n \n \nand \n \ns\n \nopen \nin\n \n \n     \n  \n \n \n \n \n \nCo\n-\n \nco\n-\n \n1.\n \n  \n \n \na.\n \n \n \nb.\n \n \n \n \n2.\n \n \nCo\n-\n; \n \n \na.\n \n-\n \n \nb.\n \n \n  \n: \n \n \n \n \n \n \n \n \n1.\n \n \n-\n \n \n \n2.\n \n \n \n3.\n \n \n \ns\n \n \n4.\n \n \n \n \n \n \n \n \n1\n \n \n \n \n \n-\n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \"\n \"\n \"\nð·\nð·\nð·\nð·\nð·\nð·\nð·\nð·",
+            "status": "DECODED",
+            "candidates": []
+          },
+          {
+            "page": 17,
+            "rawText": "17\n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \nð·\nð·\nð·\nð·\nð·\nð·\nð·",
+            "status": "DECODED",
+            "candidates": []
+          },
+          {
+            "page": 18,
+            "rawText": "18\n \n \nONE\n \n \n      \n8\n \n \n \n      \nI\n \n \n \n      \n \n \n \n \n \n \n/\n \n \n \n \n \n \nand \nand\n \n \n \n \n \n \n1.\n \n: \n \n \na)\n \n \n  \n \nb)\n \n \n \n \n \n2.\n \n \n       \n \n3.\n \n \n \n4.\n \n \n \n \n \n \n \na.\n \n \n \n \n2.\n \n \n3.\n \n \n \n4.\n \n \n \n5.\n \n \n \nO\n \n-\n \n-\n \n: \n \n \n \n1.\n \n \n \n \n2.\n \n \n \n3.\n \ne  \n \n \n4.\n \nin\n \n \n5.\n \n \n \n \n \n \n \n \n \n \n \n \n \n-\n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \"\n \"\n \"\n \"\n \"\nð·\nð·\nð·\nð·\nð·\nð·\nð·\nð·",
+            "status": "DECODED",
+            "candidates": []
+          },
+          {
+            "page": 19,
+            "rawText": "19\n \n \n \nO\n \n-\n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n  \n \n \n \n \nð·\nð·\nð·\nð·\nð·\nð·\nð·",
+            "status": "DECODED",
+            "candidates": []
+          },
+          {
+            "page": 20,
+            "rawText": "20\n \n \n \n             \n \n             \n \nI\n \n             \n  \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \na.\n \n \n \nb.\n \n \n \nc.\n \n \n \n \nd.\n \n \n \n \n \n \n \n \n.\n \n \n \n \n \n \n,\n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \nð·\nð·\nð·\nð·\nð·\nð·\nð·\nð·\nð·\nð·\nð·\nð·",
+            "status": "DECODED",
+            "candidates": []
+          },
+          {
+            "page": 21,
+            "rawText": "21\n \n \n \n \n \n \n \n \n \n \n \n \n \n.\n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \nð·\nð·\nð·\nð·\nð·\nð·\nð·",
+            "status": "DECODED",
+            "candidates": []
+          },
+          {
+            "page": 22,
+            "rawText": "22\n \n \nONE\n \n         \n      \n8 \n \n         \n     \nII  \n \n     \n    \n  \n         \nII \n \n         \n         \n \n \n \n \n \n \n \n \n \n1. L\n \n \n \n1.\n \n \n \n2.\n \n \n \n3.\n \n \n \n4.\n \n \n \n5.\n \n1.\n \n \n \n2.\n \n \n \n3.\n \n \n \n4.\n \n \n \n5.\n \n \n \n6.\n \n \n \n7.\n \n: \n \n \n \n \n1.\n \n \n \n \n2.\n \n \n \n \n3.\n \n \n \n \n \n4.\n \n \n \n \n \n2 \n \n \n \nA.\n \n \n \n \n-\n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \nn \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \u0013\n \"\n \"\n \"\n \"\n \"\nð·\nð·\nð·\nð·\nð·\nð·\nð·\nð·\nð·",
+            "status": "DECODED",
+            "candidates": []
+          },
+          {
+            "page": 23,
+            "rawText": "23\n \n \n \n \n \n \n \n \n \n5.\n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n      \n \nð·\nð·\nð·\nð·\nð·\nð·",
+            "status": "DECODED",
+            "candidates": []
+          },
+          {
+            "page": 24,
+            "rawText": "24\n \n \n                                                                                    \n \n      \n  \nONE\n \n \n    \n                  \n8\n \n \n                     \n \nIII\n  \n \n                      \n \n \n \n \n \n \n \n \n \n \n \na\n \n \n \n \n \n1.\n \n \n \n \n2.\n \n.\n \n \n \n3.\n \n \n \n4.\n \ndiscount, \n \n \n5.\n \n1.\n \n \n \n2.\n \n \nof \n \n \n3.\n \n \n \n4.\n \n \n \n5.\n \nor loss\n \n \n6.\n \n \n \n7.\n \n: \n \n \n  \n \n1.\n \n \n \n \n \n2.\n \n \n \n \n3.\n \nOp\n \n \n \n4.\n \n \n \n \n \n \n \n \n \n \nA.\n \n \n \n \n \n-\n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \u0013\nð·\nð·\nð·\nð·\nð·\nð·\nð·\nð·",
+            "status": "DECODED",
+            "candidates": []
+          },
+          {
+            "page": 25,
+            "rawText": "25\n \n \n \n6.\n \n \n \n \nsolve \n \n \n \n \n \n \n \n \n \n \n \n5.\n \n \n \n6.\n \n \n \n \n \n \n \non/276906944\n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n      \n \n \n \nð·\nð·\nð·\nð·\nð·\nð·\nð·",
+            "status": "DECODED",
+            "candidates": []
+          },
+          {
+            "page": 26,
+            "rawText": "26\n \n \n                                                                        \n              \n  \n    \n \n \n            \n8\n \n \n          \n \nIV\n \n \n          \n \n \n             \n             \n  \n \n \n \n \n \n \n \n \n \nts and \n \n \nn\numbe\n \ndomains\n \nof \n \ns\n \n.\n \n \n \n \n1.\n \n \n \n2.\n \n \n \n3.\n \n \n \n4.\n \n \n  \n \n \n \n1.\n \ns\n \n \n2.\n \n \n \n3.\n \n \n \n4.\n \n \n \n5.\n \n \n \n6.\n \n \n \n7.\n \nI\n \n \n8.\n \n \na.\n \n \n: \n \n \n  \n \n1.\n \n \ns\nolve \n \n \n2.\n \nc\n \n \n3.\n \nd\n \n \n4.\n \nd\n \n \n \nA.\n \n: \n \n \n \n \n \n \n \n \n \nB.\n \n \n \nof  \n-\n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \nS\n:\n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \"\n \"\n \"\n \"\nð·\nð·\nð·\nð·\nð·\nð·\nð·\nð·",
+            "status": "DECODED",
+            "candidates": []
+          },
+          {
+            "page": 27,
+            "rawText": "27\n \n \n5.\n \n \n    \n \n6.\n \n \n \n      \n                \n      \n    \n \nb.\n \n \n5.\n \nind \n \n \n \ntwo \n \nb. \ntwo \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n   \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \"\nð·\nð·\nð·\nð·\nð·\nð·\nð·\nð·",
+            "status": "DECODED",
+            "candidates": []
+          },
+          {
+            "page": 28,
+            "rawText": "28\n \n \n                                                                                                                 \n \n  \n \n \n   \n \n    \n \n    \n \n \n \n \n \n \nMA\n \n \n \n \n \n \n \n5.1\n \n \n \n5.2\n \n \n \n5.3\n \n \n \n5.4\n \non \n \n \n \n1.\n \n \n \n1.1\n \n \n \n1.2\n \n \n \n1.3\n \n \n \n1.4\n \n \n \n \n \n \n \n \n \n: \n \n \n  \n \n \n \n \n \ns \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n-\nof\n-\n-\n-\n-\nof\n-\n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \"\n \"\n \"\nð·\nð·\nð·\nð·\nð·\nð·\nð·\nð·",
+            "status": "DECODED",
+            "candidates": []
+          },
+          {
+            "page": 29,
+            "rawText": "29\n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \nð·\nð·\nð·\nð·\nð·\nð·\nð·",
+            "status": "DECODED",
+            "candidates": []
+          },
+          {
+            "page": 30,
+            "rawText": "30\n \n \n \n           \n8\n \n \n \n          \nV\n \n \n \n         \n \n \n \n \n \n \n \n \n \n \n \n, \nand \n \n \n \n1.\n \nand \n) \n \n \n2.\n \n \n \n3.\n \n \n \n4.\n \n \n \n5.\n \n \n \n6.\n \n \n \n                 \n \n1.\n \n \na.\n \n \nb.\n \n \nc.\n \nand \n \n \n2.\n \n \n(\n \n \n3.\n \n \n \n \n4.\n \n \n \n5.\n \n \n \n6.\n \n \n(\n \n: \n \n \n  \n \n1.\n \n \n \n, \nand\n \n \n \n \n2.\n \n \n \n \n3.\n \n \n \n \n \n \n \n \n \nA.\n \n \n \n \n \n \n \n \nB.\n \n \n \n \n-\n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \"\u0000 \nð·\nð·\nð·\nð·\nð·\nð·\nð·\nð·",
+            "status": "DECODED",
+            "candidates": []
+          },
+          {
+            "page": 31,
+            "rawText": "31\n \n \n \n \n \n4.\n \n \n \n \n \n \n5.\n \n \n \n \n \n \n \n6.\n \n \n \n \n \n7.\n \n \n \n \n \n8.\n \n \nand s\n \n \n9.\n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \nð·\nð·\nð·\nð·\nð·\nð·\nð·",
+            "status": "DECODED",
+            "candidates": []
+          },
+          {
+            "page": 32,
+            "rawText": "32\n \n \nph\n \n                                                                                                \n \n \n ",
+            "status": "DECODED",
+            "candidates": []
+          },
+          {
+            "page": 33,
+            "rawText": "33\n \n \n \n           \n8\n \n \n \n          \n \n \n          \n \n \n \n \n \n \n \n \n \n \no \n \nand \n \n \n-\n \n1.\n \n \n \n1.\n \n \n \n2.\n \n \n \n \n3.\n \n \n \n4.\n \n \n \n5.\n \nP\n \n1.\n \n \n \n2.\n \n \n \n3.\n \ns\n \n \n \n4.\n \n \n \n5.\n \n \n \n6.\n \n: \n \n \n \n \n1.\n \n \n \n \nag\n \n(1\n-\n \n \n \n2.\n \n \n  \n \n \n \n3.\n \nand\n \n \n \n \n4.\n \n \n \n \nA.\n \n \n \n \n \n \n \nB.\n \n \n \n-\n \n \n \n  \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n:\n \n \n \n-\n \n \n-\n \n \n-\n \n \n-\n \nð·\nð·\nð·\nð·\nð·\nð·\nð·\nð·\nð·\nð·\nð·\nð·\nð·\nð·\nð·",
+            "status": "DECODED",
+            "candidates": []
+          },
+          {
+            "page": 34,
+            "rawText": "34\n \n \n \n6.\n \n \n \n7.\n \n \n \n \n8.\n \n \n \n \n9.\n \n \n   \n        \n \n \n \n-\n \n \n \n).\n \n \n5.\n \n \n \n \n6.\n \n \n \n \n7.\n \n-\n \no\n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n-\n \n \n-\n \n \n-\n \n \n-\n \n \n-\n \n \n \n \n \u0013\nð·\nð·\nð·\nð·\nð·",
+            "status": "DECODED",
+            "candidates": []
+          },
+          {
+            "page": 35,
+            "rawText": "35\n \n \n \n        \n8\n \n      \n \nVI\n \n       \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n1.0\n \n \n1.1\n \n \n \n1.2\n \n \n \n1.3\n \n \n \n1.4\n \n \n \n1.5\n \n \n \n \n \n \n \n \n \n \n  \n \n \n: \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n-\n.\n \n \nP\n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \nð·\nð·\nð·\nð·\nð·\n\u0003u\u0003u\u0003u\u0000°\n\u0012;\nሻ\n\u0000,\n\u0003u\u00006\u0003u\u0000°\n\u0000,\nͳͺ\u0003u\u0000°\n\u0000 \nØ5ÜNØ5Ü[Ø5ÜQ\n\u0000 \nʹ͹\u0003u\u0000°\nðü\nðü\nð·\nð·\nð·\nð·\nð·\nð·\nð·\nð·\nð·",
+            "status": "DECODED",
+            "candidates": []
+          },
+          {
+            "page": 36,
+            "rawText": "36\n \n \n \n \nA\n \nB\n \n \n \n \n \n \n \n \n \n-\n \n \n-\n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \nð·\nð·\nð·\nð·\nð·\nð·\nð·\nð·\nð·\nð·",
+            "status": "DECODED",
+            "candidates": []
+          },
+          {
+            "page": 37,
+            "rawText": "37\n \n \n \n   \n         \n            \n9\n \n            \n           \n \nI\n \n            \n \n           \n \n-\n \n \n \n \n \n \n \n \n \n-\n \n \n \n \n-\n \n \n \n \n \n \nset\n \n \n \n1.\n \n-\n \n \n2.\n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n: \n \n \n \n \n \n \n \n \n-\n \n \n \nt \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \nð·\nð·\nð·\nð·\nð·\nð·\nð·\nð·\nð·\nð·\nð·\nð·\nð·\nð·",
+            "status": "DECODED",
+            "candidates": []
+          },
+          {
+            "page": 38,
+            "rawText": "38\n \n \n \n \n \n \n \n \n \n \n  \n  \n2\n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \nð·\nð·\nð·\nð·\nð·\nð·\nð·\nð·\nð·",
+            "status": "DECODED",
+            "candidates": []
+          },
+          {
+            "page": 39,
+            "rawText": "39\n \n \n \nONE\n \n           \n     \n9\n \n \n          \n \n      \n \nI\n \n \n           \n     \n \n \n \n \n \n \n \n \n \n, \n \n   \n \n \n1.\n \n \n \n2.\n \n \n \n3.\n \n \n \n \n4.\n \n \n \n5.\n \n \n \n \n  \n \n1.\n \n \n \n2.\n \n \n \n3.\n \n \n \n4.\n \n \n \n5.\n \n \n \n6.\n \n \n \n \n \n, and \n \n \n1.\n \ni\n \n \n2.\n \na\n \n \n3.\n \n \ni\ny\n \n \n \nA.\n \n \n \n \n \n \n \n \n \nB.\n \n \n \n \n \n-\n \n \n1\n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \nE\n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \nð·\nð·\nð·\nð·\nð·\nð·\nð·\nð·\nð·\nð·\nð·\nð·\nð·",
+            "status": "DECODED",
+            "candidates": []
+          },
+          {
+            "page": 40,
+            "rawText": "40\n \n \n4.\n \nu\n \n \n5.\n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \nð·\nð·\nð·\nð·\nð·\nð·\nð·",
+            "status": "DECODED",
+            "candidates": []
+          },
+          {
+            "page": 41,
+            "rawText": "41\n \n \nONE\n \n           \n9\n \n \n         \n \n      \n \nII\n \n           \n      \n \n \n \n \n \n \n \n \n \non \n-\n \n \n1.\n \n \n \n2.\n \n \n \n3.\n \n \n \n4.\n \n \n \n5.\n \n \n \na.\n \n \nb.\n \n \n \n6.\n \n \n \n1.\n \n \n \n2.\n \n \n \n3.\n \n \n \n4.\n \n \n \n5.\n \n \na.\n \n \nb.\n \n \n \n \n6.\n \n \n \n7.\n \n \n \n \n \n \n \n \n1.\n \n \nand \n \n \n \n \n2.\n \n \n.\n \n \n3.\n \n \n \n4.\n \n \n \nA.\n \n: \n \n \n3\n \n \n \n \nB.\n \n \n \n \n \n-\n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \nMe\n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \"\n \"\n \"\n \"\n \"\n \"\n \"\n \"\nð·\nð·\nð·\nð·\nð·\nð·\nð·\nð·\nð·",
+            "status": "DECODED",
+            "candidates": []
+          },
+          {
+            "page": 42,
+            "rawText": "42\n \n \n8.\n \n \n \n \n5.\n \n \nand \n \n \n6.\n \n \n \n \n \n7.\n \n \n \n \n \n8.\n \n \n \n \n9.\n \n \n \n \n10.\n \n \n \n \n-\n \n-\n \n \n \n-\n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \u0013\n \u0013\n \"\n \"\n \"\n \"\nð·\nð·\nð·\nð·\nð·\nð·",
+            "status": "DECODED",
+            "candidates": []
+          },
+          {
+            "page": 43,
+            "rawText": "43\n \n \n \nONE\n \n9\n \n \nIII\n \n \n \n \n \n \n \n \n \n \n \n \ns\n \n \n \n \n \n \n \n \n  \n \n \n1.\n \n \n2.\n \n \n3.\n \n \n4.\n \n \n \n5.\n \n \n6.\n \n \n1.\n \n \n2.\n \n \n3.\n \n \n4.\n \n \n5.\n \n \n6.\n \n \n7.\n \n \n \n8.\n \nand y\n-\n \n \ng\n \n \n \nf\n \nand B=\n \n \nuse\n \n \n \n \n1.\n \n \nA.\n \n \n \n \n \n \n \n \n \nB.\n \n \n \n \n \n-\n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \u0013\n%ª\n%ª\n%ª\n%ª\n%ª\n%ª\n%ª\n%ª\nð·\nð·\nð·\nð·\nð·\nð·\nð·\nð·\nð·\nð·",
+            "status": "DECODED",
+            "candidates": []
+          },
+          {
+            "page": 44,
+            "rawText": "44\n \n \n7.\n \n \n \n \n \n \n \n \n \n2.\n \n \n \n3.\n \ne\n \n \n \n4.\n \n  \nd\n \n \n \n5.\n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \u0013\n%ª\n%ª\n%ª\n%ª\nð·\nð·\nð·\nð·\nð·",
+            "status": "DECODED",
+            "candidates": []
+          },
+          {
+            "page": 45,
+            "rawText": "45\n \n \n \n              \n \n              \n \n              \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n:\n \n \n1.\n \n \n \n2.\n \n \n \n3.\n \n \n \n4.\n \n \n5.\n \n \n \n \n5.1\n \n \n \n5.2\n \n \n \n5.3\n \n \n \n5.4\n \n \n \n \n \n \n \n \n \n \n.\n \n \n \n \n.\n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n:\n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \"\n \"\n \"\nð·\nð·\nð·\nð·\nð·\nð·\nð·\nð·",
+            "status": "DECODED",
+            "candidates": []
+          },
+          {
+            "page": 46,
+            "rawText": "46\n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n   \n \n \n \nð·\nð·\nð·\nð·\nð·\nð·\nð·",
+            "status": "DECODED",
+            "candidates": []
+          },
+          {
+            "page": 47,
+            "rawText": "47\n \n \n \n9\n \n \nIV\n \n \n \n \n \n \n \n \n \n \n \n \ns , \n \n \n1.\n \nan\n \ns, \n \n \n2.\n \n \n \n3.\n \n \n \n4.\n \n \n \n5.\n \n \n1.\n \n \n \n2.\n \n \n \n \n3.\n \n \n \n4.\n \n \n \n5.\n \n \n \n6.\n \n \n \n7.\n \n \na.\n \n \nb.\n \n \nc.\n \nand \n \n \n \n \n1.\n \n \n \na.\n \nand \n \n, \n \n \nb.\n \n \nand \n \nc.\n \n \n \n \n \n: \n \n \n \n \n \n \n \n \n \n \n \n \n \n-\n \nBook 1\n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \ns \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \nð·\nð·\nð·\nð·\nð·\nð·\nð·\nð·",
+            "status": "DECODED",
+            "candidates": []
+          },
+          {
+            "page": 48,
+            "rawText": "48\n \n \n \n \n6.\n \n \n \n7.\n \nand \n \n \n \n \n \n2.\n \n \na.\n \n \n \n3.\n \n \n \n4.\n \n \n \n.\n \n \n5.\n \n \n \n6.\n \n \n \n7.\n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \nð·\nð·\nð·\nð·\nð·\nð·\nð·",
+            "status": "DECODED",
+            "candidates": []
+          },
+          {
+            "page": 49,
+            "rawText": "49\n \n \n \n \n \n \n \n   \n \n          \n \n   \nB.\n  \n \n \n \n \n \n \n \n \n \n1.\n \nabl\n \n \n \n2.\n \ns \n \n \n3.\n \nand c\n \na.\n \n \n \n \n \n1.\n \n \n \n \n2.\n \n \n \n3.\n \n \na.\n \n \n \n \nb.\n \n \n1.\n \n \n \n2.\n \n \n \n3.\n \n \n \n4.\n \n \n \n5.\n \n \n \n6.\n \n \n \n7.\n \n \n \n \n \n \n \n \n1.\n \nd\n \n \n \n2.\n \n \n \n \n \n3.\n \n \n \n \n4.\n \n \n \n \nA.\n \n \n \n \n \n \nB.\n \n \n-\n \nPup\n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n,\n  \n          \n    \n \n \n \n \n \n \n \n \n \n \"\n \"\n \"\n \"\n \"\n \"\n \"\n \"\nð·\nð·\nð·\nð·\nð·\nð·\nð·\nð·",
+            "status": "DECODED",
+            "candidates": []
+          },
+          {
+            "page": 50,
+            "rawText": "50\n \n \nc.\n \n \n \n \n4.\n \n \n \n5.\n \n \n \n6.\n \n \n \n7.\n \n \n \n \n5.\n \n \n \nto\n \n \na \n \n \n6.\n \n \n \n7.\n \n \n \n8.\n \n \n \n9.\n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \nand \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \"\n \"\n \"\n \"\nð·\nð·\nð·\nð·\nð·\nð·\nð·",
+            "status": "DECODED",
+            "candidates": []
+          },
+          {
+            "page": 51,
+            "rawText": "51\n \n \n \n \n \n  \n9\n \n \n \nVI\n  \n \n \n \n \n \n \n \n \n \n \n1.\n \n \n \n \n \n2.\n \n \n \n3.\n \n \n \n \n4.\n \n \n \n5.\n \n \n \n \n \n \n1.\n \n \n \n \n2.\n \nand \n \n \n \n3.\n \n, \n \nand \n \n \n \n4.\n \n \n \n \n5.\n \n \n \n \n6.\n \n \n \n7.\n \n \n \n \n1.\n \n \n \n2.\n \n \n \n3.\n \nand \n \n \n4.\n \n \n \n5.\n \n \n \n6.\n \n \n \n7.\n \n \n \n8.\n \n \n \n \n \n1.\n \n \n \n2.\n \n \n \n3.\n \n \na.\n \n \nb.\n \n \n \n \n4.\n \n \n \nA.\n \n: \n \n \n \n \n \nJu\n \n \n \n \nB.\n \n \n-\n \n \nBook\n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n    \n \n \n \n \n \n \n \n \n \nð·\nð·\nð·\nð·\nð·\nð·\nð·\nð·",
+            "status": "DECODED",
+            "candidates": []
+          },
+          {
+            "page": 52,
+            "rawText": "52\n \n \n6.\n \n \n8.\n \n \n \n \n \n \n5.\n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \nð·\nð·\nð·\nð·\nð·\nð·\nð·",
+            "status": "DECODED",
+            "candidates": []
+          },
+          {
+            "page": 53,
+            "rawText": "53\n \n \n \n \n \n \n \n \n \n \n \nRCES\n \n \n \n \n \n \n1.\n \n \n1.\n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n2012\n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \nðü\nðü\nð·\nð·\nð·\nð·\nð·\nð·\nð·\nð·\nð·",
+            "status": "DECODED",
+            "candidates": []
+          },
+          {
+            "page": 54,
+            "rawText": "54\n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \nð·\nð·\nð·\nð·\nð·\nð·",
+            "status": "DECODED",
+            "candidates": []
+          }
+        ],
         "standards": [],
         "objectives": [],
         "sequencing": [],
@@ -118,7 +2170,7 @@
       }
     },
     {
-      "manifestVersion": "1.0.0",
+      "manifestVersion": "1.1.0",
       "status": "INTERMEDIATE_REVIEW_ONLY",
       "source": {
         "archiveId": "liberia-moe-grade-7-9-archive",
@@ -135,8 +2187,312 @@
         "subject": "UNMAPPED_SOURCE_SUBJECT"
       },
       "extraction": {
-        "parser": "deterministic-pdf-text-v1",
+        "parser": "deterministic-pdf-page-text-v2",
         "extractedLineCount": 0,
+        "pageCount": 27,
+        "decodedPageCount": 0,
+        "unreadablePageCount": 27,
+        "reviewQueue": [
+          {
+            "page": 1,
+            "reason": "No decodable text stream.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 2,
+            "reason": "No decodable text stream.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 3,
+            "reason": "No decodable text stream.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 4,
+            "reason": "No decodable text stream.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 5,
+            "reason": "No decodable text stream.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 6,
+            "reason": "No decodable text stream.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 7,
+            "reason": "No decodable text stream.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 8,
+            "reason": "No decodable text stream.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 9,
+            "reason": "No decodable text stream.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 10,
+            "reason": "No decodable text stream.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 11,
+            "reason": "No decodable text stream.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 12,
+            "reason": "No decodable text stream.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 13,
+            "reason": "No decodable text stream.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 14,
+            "reason": "No decodable text stream.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 15,
+            "reason": "No decodable text stream.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 16,
+            "reason": "No decodable text stream.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 17,
+            "reason": "No decodable text stream.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 18,
+            "reason": "No decodable text stream.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 19,
+            "reason": "No decodable text stream.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 20,
+            "reason": "No decodable text stream.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 21,
+            "reason": "No decodable text stream.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 22,
+            "reason": "No decodable text stream.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 23,
+            "reason": "No decodable text stream.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 24,
+            "reason": "No decodable text stream.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 25,
+            "reason": "No decodable text stream.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 26,
+            "reason": "No decodable text stream.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 27,
+            "reason": "No decodable text stream.",
+            "confidence": "LOW"
+          }
+        ],
+        "pages": [
+          {
+            "page": 1,
+            "rawText": "",
+            "status": "UNREADABLE",
+            "candidates": []
+          },
+          {
+            "page": 2,
+            "rawText": "",
+            "status": "UNREADABLE",
+            "candidates": []
+          },
+          {
+            "page": 3,
+            "rawText": "",
+            "status": "UNREADABLE",
+            "candidates": []
+          },
+          {
+            "page": 4,
+            "rawText": "",
+            "status": "UNREADABLE",
+            "candidates": []
+          },
+          {
+            "page": 5,
+            "rawText": "",
+            "status": "UNREADABLE",
+            "candidates": []
+          },
+          {
+            "page": 6,
+            "rawText": "",
+            "status": "UNREADABLE",
+            "candidates": []
+          },
+          {
+            "page": 7,
+            "rawText": "",
+            "status": "UNREADABLE",
+            "candidates": []
+          },
+          {
+            "page": 8,
+            "rawText": "",
+            "status": "UNREADABLE",
+            "candidates": []
+          },
+          {
+            "page": 9,
+            "rawText": "",
+            "status": "UNREADABLE",
+            "candidates": []
+          },
+          {
+            "page": 10,
+            "rawText": "",
+            "status": "UNREADABLE",
+            "candidates": []
+          },
+          {
+            "page": 11,
+            "rawText": "",
+            "status": "UNREADABLE",
+            "candidates": []
+          },
+          {
+            "page": 12,
+            "rawText": "",
+            "status": "UNREADABLE",
+            "candidates": []
+          },
+          {
+            "page": 13,
+            "rawText": "",
+            "status": "UNREADABLE",
+            "candidates": []
+          },
+          {
+            "page": 14,
+            "rawText": "",
+            "status": "UNREADABLE",
+            "candidates": []
+          },
+          {
+            "page": 15,
+            "rawText": "",
+            "status": "UNREADABLE",
+            "candidates": []
+          },
+          {
+            "page": 16,
+            "rawText": "",
+            "status": "UNREADABLE",
+            "candidates": []
+          },
+          {
+            "page": 17,
+            "rawText": "",
+            "status": "UNREADABLE",
+            "candidates": []
+          },
+          {
+            "page": 18,
+            "rawText": "",
+            "status": "UNREADABLE",
+            "candidates": []
+          },
+          {
+            "page": 19,
+            "rawText": "",
+            "status": "UNREADABLE",
+            "candidates": []
+          },
+          {
+            "page": 20,
+            "rawText": "",
+            "status": "UNREADABLE",
+            "candidates": []
+          },
+          {
+            "page": 21,
+            "rawText": "",
+            "status": "UNREADABLE",
+            "candidates": []
+          },
+          {
+            "page": 22,
+            "rawText": "",
+            "status": "UNREADABLE",
+            "candidates": []
+          },
+          {
+            "page": 23,
+            "rawText": "",
+            "status": "UNREADABLE",
+            "candidates": []
+          },
+          {
+            "page": 24,
+            "rawText": "",
+            "status": "UNREADABLE",
+            "candidates": []
+          },
+          {
+            "page": 25,
+            "rawText": "",
+            "status": "UNREADABLE",
+            "candidates": []
+          },
+          {
+            "page": 26,
+            "rawText": "",
+            "status": "UNREADABLE",
+            "candidates": []
+          },
+          {
+            "page": 27,
+            "rawText": "",
+            "status": "UNREADABLE",
+            "candidates": []
+          }
+        ],
         "standards": [],
         "objectives": [],
         "sequencing": [],
@@ -145,7 +2501,7 @@
       }
     },
     {
-      "manifestVersion": "1.0.0",
+      "manifestVersion": "1.1.0",
       "status": "INTERMEDIATE_REVIEW_ONLY",
       "source": {
         "archiveId": "liberia-moe-grade-7-9-archive",
@@ -162,8 +2518,290 @@
         "subject": "UNMAPPED_SOURCE_SUBJECT"
       },
       "extraction": {
-        "parser": "deterministic-pdf-text-v1",
+        "parser": "deterministic-pdf-page-text-v2",
         "extractedLineCount": 0,
+        "pageCount": 25,
+        "decodedPageCount": 0,
+        "unreadablePageCount": 25,
+        "reviewQueue": [
+          {
+            "page": 1,
+            "reason": "No decodable text stream.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 2,
+            "reason": "No decodable text stream.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 3,
+            "reason": "No decodable text stream.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 4,
+            "reason": "No decodable text stream.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 5,
+            "reason": "No decodable text stream.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 6,
+            "reason": "No decodable text stream.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 7,
+            "reason": "No decodable text stream.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 8,
+            "reason": "No decodable text stream.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 9,
+            "reason": "No decodable text stream.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 10,
+            "reason": "No decodable text stream.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 11,
+            "reason": "No decodable text stream.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 12,
+            "reason": "No decodable text stream.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 13,
+            "reason": "No decodable text stream.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 14,
+            "reason": "No decodable text stream.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 15,
+            "reason": "No decodable text stream.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 16,
+            "reason": "No decodable text stream.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 17,
+            "reason": "No decodable text stream.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 18,
+            "reason": "No decodable text stream.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 19,
+            "reason": "No decodable text stream.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 20,
+            "reason": "No decodable text stream.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 21,
+            "reason": "No decodable text stream.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 22,
+            "reason": "No decodable text stream.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 23,
+            "reason": "No decodable text stream.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 24,
+            "reason": "No decodable text stream.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 25,
+            "reason": "No decodable text stream.",
+            "confidence": "LOW"
+          }
+        ],
+        "pages": [
+          {
+            "page": 1,
+            "rawText": "",
+            "status": "UNREADABLE",
+            "candidates": []
+          },
+          {
+            "page": 2,
+            "rawText": "",
+            "status": "UNREADABLE",
+            "candidates": []
+          },
+          {
+            "page": 3,
+            "rawText": "",
+            "status": "UNREADABLE",
+            "candidates": []
+          },
+          {
+            "page": 4,
+            "rawText": "",
+            "status": "UNREADABLE",
+            "candidates": []
+          },
+          {
+            "page": 5,
+            "rawText": "",
+            "status": "UNREADABLE",
+            "candidates": []
+          },
+          {
+            "page": 6,
+            "rawText": "",
+            "status": "UNREADABLE",
+            "candidates": []
+          },
+          {
+            "page": 7,
+            "rawText": "",
+            "status": "UNREADABLE",
+            "candidates": []
+          },
+          {
+            "page": 8,
+            "rawText": "",
+            "status": "UNREADABLE",
+            "candidates": []
+          },
+          {
+            "page": 9,
+            "rawText": "",
+            "status": "UNREADABLE",
+            "candidates": []
+          },
+          {
+            "page": 10,
+            "rawText": "",
+            "status": "UNREADABLE",
+            "candidates": []
+          },
+          {
+            "page": 11,
+            "rawText": "",
+            "status": "UNREADABLE",
+            "candidates": []
+          },
+          {
+            "page": 12,
+            "rawText": "",
+            "status": "UNREADABLE",
+            "candidates": []
+          },
+          {
+            "page": 13,
+            "rawText": "",
+            "status": "UNREADABLE",
+            "candidates": []
+          },
+          {
+            "page": 14,
+            "rawText": "",
+            "status": "UNREADABLE",
+            "candidates": []
+          },
+          {
+            "page": 15,
+            "rawText": "",
+            "status": "UNREADABLE",
+            "candidates": []
+          },
+          {
+            "page": 16,
+            "rawText": "",
+            "status": "UNREADABLE",
+            "candidates": []
+          },
+          {
+            "page": 17,
+            "rawText": "",
+            "status": "UNREADABLE",
+            "candidates": []
+          },
+          {
+            "page": 18,
+            "rawText": "",
+            "status": "UNREADABLE",
+            "candidates": []
+          },
+          {
+            "page": 19,
+            "rawText": "",
+            "status": "UNREADABLE",
+            "candidates": []
+          },
+          {
+            "page": 20,
+            "rawText": "",
+            "status": "UNREADABLE",
+            "candidates": []
+          },
+          {
+            "page": 21,
+            "rawText": "",
+            "status": "UNREADABLE",
+            "candidates": []
+          },
+          {
+            "page": 22,
+            "rawText": "",
+            "status": "UNREADABLE",
+            "candidates": []
+          },
+          {
+            "page": 23,
+            "rawText": "",
+            "status": "UNREADABLE",
+            "candidates": []
+          },
+          {
+            "page": 24,
+            "rawText": "",
+            "status": "UNREADABLE",
+            "candidates": []
+          },
+          {
+            "page": 25,
+            "rawText": "",
+            "status": "UNREADABLE",
+            "candidates": []
+          }
+        ],
         "standards": [],
         "objectives": [],
         "sequencing": [],
@@ -172,7 +2810,7 @@
       }
     },
     {
-      "manifestVersion": "1.0.0",
+      "manifestVersion": "1.1.0",
       "status": "INTERMEDIATE_REVIEW_ONLY",
       "source": {
         "archiveId": "liberia-moe-grade-7-9-archive",
@@ -189,8 +2827,433 @@
         "subject": "SOCIAL_STUDIES"
       },
       "extraction": {
-        "parser": "deterministic-pdf-text-v1",
+        "parser": "deterministic-pdf-page-text-v2",
         "extractedLineCount": 0,
+        "pageCount": 38,
+        "decodedPageCount": 0,
+        "unreadablePageCount": 38,
+        "reviewQueue": [
+          {
+            "page": 1,
+            "reason": "No decodable text stream.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 2,
+            "reason": "No decodable text stream.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 3,
+            "reason": "No decodable text stream.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 4,
+            "reason": "No decodable text stream.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 5,
+            "reason": "No decodable text stream.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 6,
+            "reason": "No decodable text stream.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 7,
+            "reason": "No decodable text stream.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 8,
+            "reason": "No decodable text stream.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 9,
+            "reason": "No decodable text stream.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 10,
+            "reason": "No decodable text stream.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 11,
+            "reason": "No decodable text stream.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 12,
+            "reason": "No decodable text stream.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 13,
+            "reason": "No decodable text stream.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 14,
+            "reason": "No decodable text stream.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 15,
+            "reason": "No decodable text stream.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 16,
+            "reason": "No decodable text stream.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 17,
+            "reason": "No decodable text stream.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 18,
+            "reason": "No decodable text stream.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 19,
+            "reason": "No decodable text stream.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 20,
+            "reason": "No decodable text stream.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 21,
+            "reason": "No decodable text stream.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 22,
+            "reason": "No decodable text stream.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 23,
+            "reason": "No decodable text stream.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 24,
+            "reason": "No decodable text stream.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 25,
+            "reason": "No decodable text stream.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 26,
+            "reason": "No decodable text stream.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 27,
+            "reason": "No decodable text stream.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 28,
+            "reason": "No decodable text stream.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 29,
+            "reason": "No decodable text stream.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 30,
+            "reason": "No decodable text stream.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 31,
+            "reason": "No decodable text stream.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 32,
+            "reason": "No decodable text stream.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 33,
+            "reason": "No decodable text stream.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 34,
+            "reason": "No decodable text stream.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 35,
+            "reason": "No decodable text stream.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 36,
+            "reason": "No decodable text stream.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 37,
+            "reason": "No decodable text stream.",
+            "confidence": "LOW"
+          },
+          {
+            "page": 38,
+            "reason": "No decodable text stream.",
+            "confidence": "LOW"
+          }
+        ],
+        "pages": [
+          {
+            "page": 1,
+            "rawText": "",
+            "status": "UNREADABLE",
+            "candidates": []
+          },
+          {
+            "page": 2,
+            "rawText": "",
+            "status": "UNREADABLE",
+            "candidates": []
+          },
+          {
+            "page": 3,
+            "rawText": "",
+            "status": "UNREADABLE",
+            "candidates": []
+          },
+          {
+            "page": 4,
+            "rawText": "",
+            "status": "UNREADABLE",
+            "candidates": []
+          },
+          {
+            "page": 5,
+            "rawText": "",
+            "status": "UNREADABLE",
+            "candidates": []
+          },
+          {
+            "page": 6,
+            "rawText": "",
+            "status": "UNREADABLE",
+            "candidates": []
+          },
+          {
+            "page": 7,
+            "rawText": "",
+            "status": "UNREADABLE",
+            "candidates": []
+          },
+          {
+            "page": 8,
+            "rawText": "",
+            "status": "UNREADABLE",
+            "candidates": []
+          },
+          {
+            "page": 9,
+            "rawText": "",
+            "status": "UNREADABLE",
+            "candidates": []
+          },
+          {
+            "page": 10,
+            "rawText": "",
+            "status": "UNREADABLE",
+            "candidates": []
+          },
+          {
+            "page": 11,
+            "rawText": "",
+            "status": "UNREADABLE",
+            "candidates": []
+          },
+          {
+            "page": 12,
+            "rawText": "",
+            "status": "UNREADABLE",
+            "candidates": []
+          },
+          {
+            "page": 13,
+            "rawText": "",
+            "status": "UNREADABLE",
+            "candidates": []
+          },
+          {
+            "page": 14,
+            "rawText": "",
+            "status": "UNREADABLE",
+            "candidates": []
+          },
+          {
+            "page": 15,
+            "rawText": "",
+            "status": "UNREADABLE",
+            "candidates": []
+          },
+          {
+            "page": 16,
+            "rawText": "",
+            "status": "UNREADABLE",
+            "candidates": []
+          },
+          {
+            "page": 17,
+            "rawText": "",
+            "status": "UNREADABLE",
+            "candidates": []
+          },
+          {
+            "page": 18,
+            "rawText": "",
+            "status": "UNREADABLE",
+            "candidates": []
+          },
+          {
+            "page": 19,
+            "rawText": "",
+            "status": "UNREADABLE",
+            "candidates": []
+          },
+          {
+            "page": 20,
+            "rawText": "",
+            "status": "UNREADABLE",
+            "candidates": []
+          },
+          {
+            "page": 21,
+            "rawText": "",
+            "status": "UNREADABLE",
+            "candidates": []
+          },
+          {
+            "page": 22,
+            "rawText": "",
+            "status": "UNREADABLE",
+            "candidates": []
+          },
+          {
+            "page": 23,
+            "rawText": "",
+            "status": "UNREADABLE",
+            "candidates": []
+          },
+          {
+            "page": 24,
+            "rawText": "",
+            "status": "UNREADABLE",
+            "candidates": []
+          },
+          {
+            "page": 25,
+            "rawText": "",
+            "status": "UNREADABLE",
+            "candidates": []
+          },
+          {
+            "page": 26,
+            "rawText": "",
+            "status": "UNREADABLE",
+            "candidates": []
+          },
+          {
+            "page": 27,
+            "rawText": "",
+            "status": "UNREADABLE",
+            "candidates": []
+          },
+          {
+            "page": 28,
+            "rawText": "",
+            "status": "UNREADABLE",
+            "candidates": []
+          },
+          {
+            "page": 29,
+            "rawText": "",
+            "status": "UNREADABLE",
+            "candidates": []
+          },
+          {
+            "page": 30,
+            "rawText": "",
+            "status": "UNREADABLE",
+            "candidates": []
+          },
+          {
+            "page": 31,
+            "rawText": "",
+            "status": "UNREADABLE",
+            "candidates": []
+          },
+          {
+            "page": 32,
+            "rawText": "",
+            "status": "UNREADABLE",
+            "candidates": []
+          },
+          {
+            "page": 33,
+            "rawText": "",
+            "status": "UNREADABLE",
+            "candidates": []
+          },
+          {
+            "page": 34,
+            "rawText": "",
+            "status": "UNREADABLE",
+            "candidates": []
+          },
+          {
+            "page": 35,
+            "rawText": "",
+            "status": "UNREADABLE",
+            "candidates": []
+          },
+          {
+            "page": 36,
+            "rawText": "",
+            "status": "UNREADABLE",
+            "candidates": []
+          },
+          {
+            "page": 37,
+            "rawText": "",
+            "status": "UNREADABLE",
+            "candidates": []
+          },
+          {
+            "page": 38,
+            "rawText": "",
+            "status": "UNREADABLE",
+            "candidates": []
+          }
+        ],
         "standards": [],
         "objectives": [],
         "sequencing": [],

@@ -1,6 +1,6 @@
 import { getCanonicalSubjectCode } from "@/lib/curriculum/subjectTaxonomy";
 import { publishedReleases } from "./publishedReleases";
-import { documentedSourceCells, sourceBackedCells } from "./repositorySourceInventory";
+import { documentedSourceCells, repositoryExtractionSummary, sourceBackedCells } from "./repositorySourceInventory";
 
 export type AuthoritySourceRecord = Readonly<{
   id: string;
@@ -64,6 +64,7 @@ export type CurriculumCoverageProgramReport = Readonly<{
     evidencePolicyGaps: number;
     toolPolicyGaps: number;
   }>;
+  extraction: ReturnType<typeof repositoryExtractionSummary>;
   cells: readonly CoverageProgramCell[];
 }>;
 
@@ -89,9 +90,11 @@ export function buildRepositoryOnlyCoverageReport(input: {
     evidencePolicyGaps: number;
     toolPolicyGaps: number;
   };
+  extraction: ReturnType<typeof repositoryExtractionSummary>;
   cells: readonly Readonly<{ grade: number; subject: string; executableRelease: boolean; gaps: readonly string[]; reviewQueue: Readonly<{ kind: "SOURCE_IMPORT" | "CONTENT_REVIEW" | "ASSESSMENT_BINDING"; reason: string }> }>[];
 }> {
   const releases = publishedReleases();
+  const extraction = repositoryExtractionSummary();
   const documentedCells = new Set(documentedSourceCells(input.scope));
   const sourceCells = new Set(sourceBackedCells(input.scope));
   const cells = input.scope.grades.flatMap((grade) => input.scope.subjects.map((subject) => {
@@ -133,6 +136,7 @@ export function buildRepositoryOnlyCoverageReport(input: {
       evidencePolicyGaps: cells.filter((cell) => cell.gaps.includes("EVIDENCE_POLICY")).length,
       toolPolicyGaps: cells.filter((cell) => cell.gaps.includes("TOOL_POLICY")).length,
     },
+    extraction,
     cells,
   };
 }
@@ -168,6 +172,7 @@ export function buildCurriculumCoverageProgramReport(input: {
   content: readonly ContentCoverageRecord[];
 }): CurriculumCoverageProgramReport {
   const releases = publishedReleases();
+  const extraction = repositoryExtractionSummary();
   const cells = input.scope.grades.flatMap((grade) => input.scope.subjects.map((subject) => {
     const sources = input.sources.filter((source) => sourceCovers(source, grade, subject));
     const objectives = input.objectives.filter((objective) => objective.grade === grade && subjectMatches(objective.subject, subject) && objective.verificationStatus === "VERIFIED");
@@ -219,6 +224,7 @@ export function buildCurriculumCoverageProgramReport(input: {
       evidencePolicyGaps: cells.filter((cell) => cell.gaps.includes("EVIDENCE_POLICY")).length,
       toolPolicyGaps: cells.filter((cell) => cell.gaps.includes("TOOL_POLICY")).length,
     },
+    extraction,
     cells,
   };
 }
