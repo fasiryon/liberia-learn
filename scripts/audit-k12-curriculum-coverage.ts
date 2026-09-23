@@ -35,7 +35,7 @@ const report = buildCurriculumCoverageProgramReport({
     provenanceCompleteness: item.provenance?.provenanceCompleteness ?? null,
     lifecycleState: item.provenance?.lifecycleState ?? null,
     originKind: item.provenance?.currentRevision?.originKind ?? null,
-    reviewAuthorities: item.provenance?.currentRevision?.governanceEvents.map((event) => event.reviewAuthority).filter((value): value is string => Boolean(value)) ?? [],
+    reviewAuthorities: item.provenance?.currentRevision?.governanceEvents.map((event) => event.reviewAuthority).filter((value) => Boolean(value)) ?? [],
   })),
 });
 process.stdout.write(JSON.stringify(report, null, 2) + "\n");

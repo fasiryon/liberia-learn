@@ -1,0 +1,202 @@
+{
+  "source": {
+    "id": "liberia-moe-grade-7-9-archive",
+    "document": "GRADE-7-9.zip",
+    "localPath": "curriculum/sources/raw/GRADE-7-9.zip",
+    "sourceUri": "http://www.moe.gov.lr/wp-content/uploads/2019/09/GRADE-7-9.zip",
+    "authority": "VERIFIED_LIBERIA_MOE_SOURCE",
+    "gradeMin": 7,
+    "gradeMax": 9
+  },
+  "manifests": [
+    {
+      "manifestVersion": "1.0.0",
+      "status": "INTERMEDIATE_REVIEW_ONLY",
+      "source": {
+        "archiveId": "liberia-moe-grade-7-9-archive",
+        "archiveDocument": "GRADE-7-9.zip",
+        "archivePath": "curriculum/sources/raw/GRADE-7-9.zip",
+        "sourceUri": "http://www.moe.gov.lr/wp-content/uploads/2019/09/GRADE-7-9.zip",
+        "authority": "VERIFIED_LIBERIA_MOE_SOURCE",
+        "sourceMember": "GRADE 7-9/English 7-9.pdf",
+        "sourceChecksum": "fffb3aed17eeae7cd2fdd1fabc69ea1c7e1587e04d91b6ea01752b1cd185f425"
+      },
+      "scope": {
+        "gradeMin": 7,
+        "gradeMax": 9,
+        "subject": "LITERACY"
+      },
+      "extraction": {
+        "parser": "deterministic-pdf-text-v1",
+        "extractedLineCount": 0,
+        "standards": [],
+        "objectives": [],
+        "sequencing": [],
+        "assessmentReferences": [],
+        "resourceReferences": []
+      }
+    },
+    {
+      "manifestVersion": "1.0.0",
+      "status": "INTERMEDIATE_REVIEW_ONLY",
+      "source": {
+        "archiveId": "liberia-moe-grade-7-9-archive",
+        "archiveDocument": "GRADE-7-9.zip",
+        "archivePath": "curriculum/sources/raw/GRADE-7-9.zip",
+        "sourceUri": "http://www.moe.gov.lr/wp-content/uploads/2019/09/GRADE-7-9.zip",
+        "authority": "VERIFIED_LIBERIA_MOE_SOURCE",
+        "sourceMember": "GRADE 7-9/French.pdf",
+        "sourceChecksum": "fffb3aed17eeae7cd2fdd1fabc69ea1c7e1587e04d91b6ea01752b1cd185f425"
+      },
+      "scope": {
+        "gradeMin": 7,
+        "gradeMax": 9,
+        "subject": "UNMAPPED_SOURCE_SUBJECT"
+      },
+      "extraction": {
+        "parser": "deterministic-pdf-text-v1",
+        "extractedLineCount": 0,
+        "standards": [],
+        "objectives": [],
+        "sequencing": [],
+        "assessmentReferences": [],
+        "resourceReferences": []
+      }
+    },
+    {
+      "manifestVersion": "1.0.0",
+      "status": "INTERMEDIATE_REVIEW_ONLY",
+      "source": {
+        "archiveId": "liberia-moe-grade-7-9-archive",
+        "archiveDocument": "GRADE-7-9.zip",
+        "archivePath": "curriculum/sources/raw/GRADE-7-9.zip",
+        "sourceUri": "http://www.moe.gov.lr/wp-content/uploads/2019/09/GRADE-7-9.zip",
+        "authority": "VERIFIED_LIBERIA_MOE_SOURCE",
+        "sourceMember": "GRADE 7-9/General Science 7-9.pdf",
+        "sourceChecksum": "fffb3aed17eeae7cd2fdd1fabc69ea1c7e1587e04d91b6ea01752b1cd185f425"
+      },
+      "scope": {
+        "gradeMin": 7,
+        "gradeMax": 9,
+        "subject": "SCIENCE"
+      },
+      "extraction": {
+        "parser": "deterministic-pdf-text-v1",
+        "extractedLineCount": 1446,
+        "standards": [],
+        "objectives": [],
+        "sequencing": [],
+        "assessmentReferences": [],
+        "resourceReferences": []
+      }
+    },
+    {
+      "manifestVersion": "1.0.0",
+      "status": "INTERMEDIATE_REVIEW_ONLY",
+      "source": {
+        "archiveId": "liberia-moe-grade-7-9-archive",
+        "archiveDocument": "GRADE-7-9.zip",
+        "archivePath": "curriculum/sources/raw/GRADE-7-9.zip",
+        "sourceUri": "http://www.moe.gov.lr/wp-content/uploads/2019/09/GRADE-7-9.zip",
+        "authority": "VERIFIED_LIBERIA_MOE_SOURCE",
+        "sourceMember": "GRADE 7-9/Math 7-9.pdf",
+        "sourceChecksum": "fffb3aed17eeae7cd2fdd1fabc69ea1c7e1587e04d91b6ea01752b1cd185f425"
+      },
+      "scope": {
+        "gradeMin": 7,
+        "gradeMax": 9,
+        "subject": "MATH"
+      },
+      "extraction": {
+        "parser": "deterministic-pdf-text-v1",
+        "extractedLineCount": 1394,
+        "standards": [],
+        "objectives": [],
+        "sequencing": [],
+        "assessmentReferences": [],
+        "resourceReferences": []
+      }
+    },
+    {
+      "manifestVersion": "1.0.0",
+      "status": "INTERMEDIATE_REVIEW_ONLY",
+      "source": {
+        "archiveId": "liberia-moe-grade-7-9-archive",
+        "archiveDocument": "GRADE-7-9.zip",
+        "archivePath": "curriculum/sources/raw/GRADE-7-9.zip",
+        "sourceUri": "http://www.moe.gov.lr/wp-content/uploads/2019/09/GRADE-7-9.zip",
+        "authority": "VERIFIED_LIBERIA_MOE_SOURCE",
+        "sourceMember": "GRADE 7-9/Physical Education.pdf",
+        "sourceChecksum": "fffb3aed17eeae7cd2fdd1fabc69ea1c7e1587e04d91b6ea01752b1cd185f425"
+      },
+      "scope": {
+        "gradeMin": 7,
+        "gradeMax": 9,
+        "subject": "UNMAPPED_SOURCE_SUBJECT"
+      },
+      "extraction": {
+        "parser": "deterministic-pdf-text-v1",
+        "extractedLineCount": 0,
+        "standards": [],
+        "objectives": [],
+        "sequencing": [],
+        "assessmentReferences": [],
+        "resourceReferences": []
+      }
+    },
+    {
+      "manifestVersion": "1.0.0",
+      "status": "INTERMEDIATE_REVIEW_ONLY",
+      "source": {
+        "archiveId": "liberia-moe-grade-7-9-archive",
+        "archiveDocument": "GRADE-7-9.zip",
+        "archivePath": "curriculum/sources/raw/GRADE-7-9.zip",
+        "sourceUri": "http://www.moe.gov.lr/wp-content/uploads/2019/09/GRADE-7-9.zip",
+        "authority": "VERIFIED_LIBERIA_MOE_SOURCE",
+        "sourceMember": "GRADE 7-9/Religious & Moral Education.pdf",
+        "sourceChecksum": "fffb3aed17eeae7cd2fdd1fabc69ea1c7e1587e04d91b6ea01752b1cd185f425"
+      },
+      "scope": {
+        "gradeMin": 7,
+        "gradeMax": 9,
+        "subject": "UNMAPPED_SOURCE_SUBJECT"
+      },
+      "extraction": {
+        "parser": "deterministic-pdf-text-v1",
+        "extractedLineCount": 0,
+        "standards": [],
+        "objectives": [],
+        "sequencing": [],
+        "assessmentReferences": [],
+        "resourceReferences": []
+      }
+    },
+    {
+      "manifestVersion": "1.0.0",
+      "status": "INTERMEDIATE_REVIEW_ONLY",
+      "source": {
+        "archiveId": "liberia-moe-grade-7-9-archive",
+        "archiveDocument": "GRADE-7-9.zip",
+        "archivePath": "curriculum/sources/raw/GRADE-7-9.zip",
+        "sourceUri": "http://www.moe.gov.lr/wp-content/uploads/2019/09/GRADE-7-9.zip",
+        "authority": "VERIFIED_LIBERIA_MOE_SOURCE",
+        "sourceMember": "GRADE 7-9/Social Studies 7-9.pdf",
+        "sourceChecksum": "fffb3aed17eeae7cd2fdd1fabc69ea1c7e1587e04d91b6ea01752b1cd185f425"
+      },
+      "scope": {
+        "gradeMin": 7,
+        "gradeMax": 9,
+        "subject": "SOCIAL_STUDIES"
+      },
+      "extraction": {
+        "parser": "deterministic-pdf-text-v1",
+        "extractedLineCount": 0,
+        "standards": [],
+        "objectives": [],
+        "sequencing": [],
+        "assessmentReferences": [],
+        "resourceReferences": []
+      }
+    }
+  ]
+}
