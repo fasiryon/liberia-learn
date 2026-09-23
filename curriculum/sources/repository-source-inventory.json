@@ -1,0 +1,50 @@
+{
+  "inventoryVersion": "1.0.0",
+  "evidenceRef": "docs/research/WAEC_LIBERIA_BASELINE_AND_CURRICULUM_ALIGNMENT.md",
+  "policy": {
+    "sourceBytesRequiredForImport": true,
+    "metadataOnlyIsNotImportable": true,
+    "moeApprovalClaimed": false
+  },
+  "sources": [
+    {
+      "id": "liberia-moe-grade-1-6-archive",
+      "document": "GRADE-1-6.zip",
+      "sourceUri": "http://www.moe.gov.lr/wp-content/uploads/2019/09/GRADE-1-6.zip",
+      "authority": "VERIFIED_LIBERIA_MOE_SOURCE",
+      "gradeMin": 1,
+      "gradeMax": 6,
+      "subjects": ["ENGLISH", "FRENCH", "GENERAL_SCIENCE", "MATH", "PHYSICAL_EDUCATION", "RELIGIOUS_MORAL_EDUCATION", "SOCIAL_STUDIES"],
+      "sourceCompleteness": "METADATA_ONLY",
+      "importability": "NOT_IMPORTABLE",
+      "contentPresentInRepository": false,
+      "reviewState": "SOURCE_BYTES_REQUIRED"
+    },
+    {
+      "id": "liberia-moe-grade-7-9-archive",
+      "document": "GRADE-7-9.zip",
+      "sourceUri": "http://www.moe.gov.lr/wp-content/uploads/2019/09/GRADE-7-9.zip",
+      "authority": "VERIFIED_LIBERIA_MOE_SOURCE",
+      "gradeMin": 7,
+      "gradeMax": 9,
+      "subjects": ["ENGLISH", "FRENCH", "GENERAL_SCIENCE", "MATH", "PHYSICAL_EDUCATION", "RELIGIOUS_MORAL_EDUCATION", "SOCIAL_STUDIES"],
+      "sourceCompleteness": "METADATA_ONLY",
+      "importability": "NOT_IMPORTABLE",
+      "contentPresentInRepository": false,
+      "reviewState": "SOURCE_BYTES_REQUIRED"
+    },
+    {
+      "id": "liberia-moe-grade-10-12-archive",
+      "document": "Grade-10-12.zip",
+      "sourceUri": "http://www.moe.gov.lr/wp-content/uploads/2019/09/Grade-10-12.zip",
+      "authority": "VERIFIED_LIBERIA_MOE_SOURCE",
+      "gradeMin": 10,
+      "gradeMax": 12,
+      "subjects": ["BIOLOGY", "CHEMISTRY", "ECONOMICS", "ENGLISH_GRAMMAR", "FRENCH", "GEOGRAPHY", "HISTORY", "LITERATURE", "MATH", "PHYSICAL_EDUCATION", "PHYSICS"],
+      "sourceCompleteness": "METADATA_ONLY",
+      "importability": "NOT_IMPORTABLE",
+      "contentPresentInRepository": false,
+      "reviewState": "SOURCE_BYTES_REQUIRED"
+    }
+  ]
+}
