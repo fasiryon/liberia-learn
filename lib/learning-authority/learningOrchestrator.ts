@@ -1,8 +1,9 @@
 import { createHash } from "crypto";
 import {
-  deterministicReleaseIdentity, GRADE4_MATH_ONTOLOGY_RELEASE, validateOntologyRelease,
+  deterministicReleaseIdentity, validateOntologyRelease,
   type CurriculumOntologyRelease, type ToolKey,
 } from "@/lib/learning-authority/governedGrade4Math";
+import { compatibilityRelease } from "@/lib/learning-authority/compatibilityRelease";
 import {
   toDecisionModelLearnerState, type StudentConceptState, type DecisionModelLearnerState,
   type DecisionModel, type DecisionModelInput, type DecisionModelOutput,
@@ -56,7 +57,7 @@ function digest(value: unknown): string {
   return createHash("sha256").update(JSON.stringify(value)).digest("hex");
 }
 
-export function learnerStateRevision(states: readonly StudentConceptState[], release = GRADE4_MATH_ONTOLOGY_RELEASE): string {
+export function learnerStateRevision(states: readonly StudentConceptState[], release = compatibilityRelease()): string {
   const expected = new Set(release.concepts.map((concept) => concept.id));
   if (states.length !== expected.size) throw new Error("learner_state_incomplete");
   const identity = deterministicReleaseIdentity(release);
@@ -76,7 +77,7 @@ export function generateLearningCandidates(input: {
   release?: CurriculumOntologyRelease;
   prohibitedTools?: readonly ToolKey[];
 }): readonly LearningAction[] {
-  const release = input.release ?? GRADE4_MATH_ONTOLOGY_RELEASE;
+  const release = input.release ?? compatibilityRelease();
   validateOntologyRelease(release);
   learnerStateRevision(input.states, release);
   const byConcept = new Map(input.states.map((state) => [state.scope.conceptId, state]));
@@ -115,7 +116,7 @@ export function offlineCurriculumFallback(release: CurriculumOntologyRelease): L
 }
 
 export function offlineGrade4CurriculumFallback(): LearningAction {
-  return offlineCurriculumFallback(GRADE4_MATH_ONTOLOGY_RELEASE);
+  return offlineCurriculumFallback(compatibilityRelease());
 }
 
 export const deterministicDecisionModel: DecisionModel = Object.freeze({
@@ -162,7 +163,7 @@ export async function resolveLearningDecision(input: {
   prohibitedTools?: readonly ToolKey[];
   idempotencyKey: string;
 }): Promise<{ recommendation: LearningRecommendation; resolution: LearningPolicyResolution; decision: LearningDecision }> {
-  const release = input.release ?? GRADE4_MATH_ONTOLOGY_RELEASE;
+  const release = input.release ?? compatibilityRelease();
   const revision = learnerStateRevision(input.states, release);
   const candidates = generateLearningCandidates(input);
   if (!candidates.length) throw new Error("no_governed_learning_action");

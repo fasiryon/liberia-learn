@@ -15,13 +15,13 @@ import {
 } from "@/lib/learning-state/studentLearningModel";
 import {
   deterministicReleaseIdentity,
-  GRADE4_MATH_ONTOLOGY_RELEASE,
   validateOntologyRelease,
   type EvidenceAdmissionResult,
   type CurriculumOntologyRelease,
 } from "@/lib/learning-authority/governedGrade4Math";
+import { publishedRelease } from "@/lib/learning-authority/publishedReleases";
+import { compatibilityRelease } from "@/lib/learning-authority/compatibilityRelease";
 import {
-  GRADE4_MATH_MISCONCEPTION_POLICY,
   MISCONCEPTION_SIGNAL_POLICY_VERSION,
   resolveGovernedMisconceptionSignal,
 } from "@/lib/learning-state/misconceptionPolicy";
@@ -68,7 +68,7 @@ function canonicalEventId(input: AppendGovernedMasteryInput): string {
 }
 
 export function createGovernedMasteryEvidence(input: AppendGovernedMasteryInput): GovernedMasteryEvidence {
-  const release = input.release ?? GRADE4_MATH_ONTOLOGY_RELEASE;
+  const release = input.release ?? compatibilityRelease();
   validateOntologyRelease(release);
   if (input.admission.decision !== "ACCEPTED" || !input.admission.bindingId ||
     !input.admission.policyVersion || !input.admission.toolPolicyVersion) {
@@ -113,7 +113,7 @@ export function createGovernedMasteryEvidence(input: AppendGovernedMasteryInput)
     authority: "SERVER_GOVERNED_EVIDENCE_GATEWAY",
     retentionProbe: false,
     misconceptionSignalId: resolveGovernedMisconceptionSignal({
-      ontologyReleaseId: GRADE4_MATH_ONTOLOGY_RELEASE.id,
+      ontologyReleaseId: release.id,
       ontologyReleaseIdentity: releaseIdentity,
       bindingId: binding.id,
       itemId: item.id,
@@ -252,9 +252,9 @@ export async function appendCanonicalMasteryUpdate(input: AppendGovernedMasteryI
         status: "accepted",
         occurredAt: new Date(evidence.occurredAt),
         dedupeKey: evidence.independenceKey,
-        subject: (input.release ?? GRADE4_MATH_ONTOLOGY_RELEASE).subject,
-        grade: (input.release ?? GRADE4_MATH_ONTOLOGY_RELEASE).grade,
-        curriculumVersion: (input.release ?? GRADE4_MATH_ONTOLOGY_RELEASE).version,
+        subject: (input.release ?? compatibilityRelease()).subject,
+        grade: (input.release ?? compatibilityRelease()).grade,
+        curriculumVersion: (input.release ?? compatibilityRelease()).version,
         assessmentVersion: evidence.itemVersion,
         calculationVersion: MASTERY_REDUCER_VERSION,
         metadata: { canonicalEvent: evidence },
@@ -287,7 +287,8 @@ export async function appendGovernedMisconceptionReview(input: {
   actorUserId: string;
   occurredAt: string;
 }): Promise<CanonicalMasteryWriteResult> {
-  if (!GRADE4_MATH_MISCONCEPTION_POLICY.definitions.some((signal) => signal.id === input.signalId)) {
+  const release = publishedRelease(input.scope.ontologyReleaseId);
+  if (!release || deterministicReleaseIdentity(release) !== input.scope.ontologyReleaseIdentity || !input.signalId.trim()) {
     throw new Error("misconception_signal_not_governed");
   }
   const actor = await prisma.user.findFirst({
@@ -340,9 +341,9 @@ export async function appendGovernedMisconceptionReview(input: {
         status: review.decision.toLowerCase(),
         occurredAt: new Date(review.occurredAt),
         dedupeKey: review.reviewId,
-        subject: "MATH",
-        grade: 4,
-        curriculumVersion: GRADE4_MATH_ONTOLOGY_RELEASE.version,
+        subject: release.subject,
+        grade: release.grade,
+        curriculumVersion: release.version,
         calculationVersion: MASTERY_REDUCER_VERSION,
         metadata: { canonicalEvent: review },
       },

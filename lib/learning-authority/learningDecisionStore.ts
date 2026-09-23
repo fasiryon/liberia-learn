@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/db";
-import { deterministicReleaseIdentity, GRADE4_MATH_ONTOLOGY_RELEASE, type CurriculumOntologyRelease, validateOntologyRelease } from "@/lib/learning-authority/governedGrade4Math";
+import { deterministicReleaseIdentity, type CurriculumOntologyRelease, validateOntologyRelease } from "@/lib/learning-authority/governedGrade4Math";
+import { compatibilityRelease } from "@/lib/learning-authority/compatibilityRelease";
 import { generateLearningCandidates, learnerStateRevision, resolveLearningDecision, type DecisionModel, type TeacherOverride,
   type LearningRecommendation, type LearningPolicyResolution, type LearningDecision } from "@/lib/learning-authority/learningOrchestrator";
 import { readCanonicalStudentConceptState } from "@/lib/learning-state/masteryWriter";
@@ -17,7 +18,7 @@ async function decideLearningActionOnce(input: {
   release?: CurriculumOntologyRelease;
 }) {
   if (!input.idempotencyKey || input.idempotencyKey.length > 128) throw new Error("decision_idempotency_key_invalid");
-  const release = input.release ?? GRADE4_MATH_ONTOLOGY_RELEASE;
+  const release = input.release ?? compatibilityRelease();
   validateOntologyRelease(release);
   const membership = await prisma.student.findFirst({
     where: { id: input.studentId, userId: input.studentUserId, currentGrade: release.grade, user: { schoolId: input.schoolId } },

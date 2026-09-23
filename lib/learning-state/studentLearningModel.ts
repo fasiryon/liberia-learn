@@ -1,11 +1,9 @@
 import { createHash } from "crypto";
 import {
-  GRADE4_MATH_ONTOLOGY_RELEASE,
   deterministicReleaseIdentity,
 } from "@/lib/learning-authority/governedGrade4Math";
 import { publishedRelease } from "@/lib/learning-authority/publishedReleases";
 import {
-  GRADE4_MATH_MISCONCEPTION_POLICY,
   MISCONCEPTION_SIGNAL_POLICY_VERSION,
   resolveGovernedMisconceptionSignal,
 } from "@/lib/learning-state/misconceptionPolicy";
@@ -186,7 +184,7 @@ export type DecisionModelLearnerState = Readonly<{
     ontologyReleaseIdentity: string;
     reducerVersion: typeof MASTERY_REDUCER_VERSION;
     retentionModelVersion: typeof RETENTION_MODEL_VERSION;
-    actionPolicyStatus: "NOT_IMPLEMENTED_IN_THIS_MISSION" | "GOVERNED_GRADE4_V1";
+    actionPolicyStatus: "NOT_IMPLEMENTED_IN_THIS_MISSION" | "GOVERNED_RELEASE_V1";
     requiresDecisionAuthority: true;
   }>;
 }>;
@@ -329,8 +327,8 @@ export function validateCanonicalLearningStateEvent(event: CanonicalLearningStat
     if (event.misconceptionPolicyVersion !== MISCONCEPTION_SIGNAL_POLICY_VERSION ||
       event.misconceptionSignalId !== expectedSignal) throw new Error("governed_evidence_misconception_policy_invalid");
   } else {
-    if (event.scope.ontologyReleaseId !== GRADE4_MATH_ONTOLOGY_RELEASE.id ||
-      event.scope.ontologyReleaseIdentity !== deterministicReleaseIdentity(GRADE4_MATH_ONTOLOGY_RELEASE)) {
+    const release = publishedRelease(event.scope.ontologyReleaseId);
+    if (!release || event.scope.ontologyReleaseIdentity !== deterministicReleaseIdentity(release)) {
       throw new Error("misconception_review_release_invalid");
     }
     if (!event.reviewId || !event.signalId || !event.actor.userId ||
@@ -339,7 +337,7 @@ export function validateCanonicalLearningStateEvent(event: CanonicalLearningStat
       event.policyVersion !== "misconception-review/1.0.0" ||
       event.evidenceIds.length === 0 ||
       (event.decision !== "CONFIRMED" && event.decision !== "REJECTED") ||
-      !GRADE4_MATH_MISCONCEPTION_POLICY.definitions.some((definition) => definition.id === event.signalId)) {
+      !event.signalId.trim()) {
       throw new Error("misconception_review_authority_invalid");
     }
   }
@@ -484,8 +482,7 @@ export function replayStudentConceptState(
   if (retentionStatus !== "UNKNOWN") explanation.push(`Retention is a policy estimate (${retentionStatus.toLowerCase()}) based on the latest success ${reinforcementAgeDays} day${reinforcementAgeDays === 1 ? "" : "s"} ago; the latest evidence was ${ageDays} day${ageDays === 1 ? "" : "s"} ago as of ${options.asOf}. It is not an observed fact or an administrative grade decision.`);
   if (lastProbe) explanation.push(`The latest governed retrieval probe was ${lastProbe.result.toLowerCase()} on ${lastProbe.occurredAt}.`);
   for (const signal of misconceptions) {
-    const label = GRADE4_MATH_MISCONCEPTION_POLICY.definitions.find((definition) => definition.id === signal.signalId)?.label ?? signal.signalId;
-    explanation.push(`Misconception signal "${label}" is ${signal.status.toLowerCase()} under governed review.`);
+    explanation.push(`Misconception signal "${signal.signalId}" is ${signal.status.toLowerCase()} under governed review.`);
   }
 
   return Object.freeze({
@@ -542,12 +539,12 @@ export function toDecisionModelLearnerState(
       retentionStatus: state.retention.status,
       confirmedMisconceptionIds: Object.freeze(state.misconceptions.filter((entry) => entry.status === "CONFIRMED").map((entry) => entry.signalId)),
     }),
-    governedPolicyResolution: Object.freeze({
+      governedPolicyResolution: Object.freeze({
       ontologyReleaseId: state.scope.ontologyReleaseId,
       ontologyReleaseIdentity: state.scope.ontologyReleaseIdentity,
       reducerVersion: MASTERY_REDUCER_VERSION,
       retentionModelVersion: RETENTION_MODEL_VERSION,
-      actionPolicyStatus: candidates.length ? "GOVERNED_GRADE4_V1" as const : "NOT_IMPLEMENTED_IN_THIS_MISSION" as const,
+      actionPolicyStatus: candidates.length ? "GOVERNED_RELEASE_V1" as const : "NOT_IMPLEMENTED_IN_THIS_MISSION" as const,
       requiresDecisionAuthority: true as const,
     }),
   });
