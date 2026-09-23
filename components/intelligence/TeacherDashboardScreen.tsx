@@ -74,12 +74,14 @@ export function TeacherDashboardScreen({
   error,
   busy,
   onAction,
+  available = true,
 }: {
   summary: TeacherDashboardSummary | null;
   confusions: TeacherConfusionItem[];
   interventions: TeacherInterventionItem[];
   error?: string | null;
   busy?: boolean;
+  available?: boolean;
   onAction?: (id: string, status: "actioned" | "dismissed") => Promise<void>;
 }) {
   const [selectedStudentId, setSelectedStudentId] = useState("");
@@ -148,6 +150,15 @@ export function TeacherDashboardScreen({
         <div className="rounded-xl border border-red-500/30 bg-red-500/10 p-4 text-sm text-red-300">
           {error}
         </div>
+      ) : null}
+
+      {!busy && !available ? (
+        <Card className="border-amber-500/30 bg-amber-500/10 p-4">
+          <p className="text-sm font-semibold text-[var(--ll-yellow)]">Learning intelligence unavailable</p>
+          <p className="mt-1 text-sm text-[var(--ll-text-muted)]">
+            No intervention or misconception conclusion is shown until the governed evidence services are available again.
+          </p>
+        </Card>
       ) : null}
 
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">

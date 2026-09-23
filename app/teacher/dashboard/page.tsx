@@ -122,6 +122,7 @@ type WeeklyPlan = {
 export default function TeacherDashboardPage() {
   const [data, setData] = useState<DashboardData | null>(null);
   const [loading, setLoading] = useState(true);
+  const [dashboardError, setDashboardError] = useState<string | null>(null);
   const [lastUpdatedAt, setLastUpdatedAt] = useState<string | null>(null);
   const [newSubmissionCount, setNewSubmissionCount] = useState(0);
   const [weeklyPlan, setWeeklyPlan] = useState<WeeklyPlan | null>(null);
@@ -149,6 +150,7 @@ export default function TeacherDashboardPage() {
   }
 
   const loadDashboard = useCallback(async (source: "page" | "poll" = "page") => {
+    if (source === "page") setDashboardError(null);
     const response = await fetch("/api/teacher/dashboard", { cache: "no-store" });
     const nextData = (await response.json()) as DashboardData;
     if (!response.ok) throw new Error("Failed to load dashboard");
@@ -159,6 +161,7 @@ export default function TeacherDashboardPage() {
     }
     pendingGradingRef.current = nextPending;
     setData(nextData);
+    setDashboardError(null);
     setLastUpdatedAt(new Date().toISOString());
   }, []);
 
@@ -166,12 +169,12 @@ export default function TeacherDashboardPage() {
     if (typeof window !== "undefined") {
       window.localStorage.setItem(teacherWelcomeStorageKey, "true");
     }
-    loadDashboard("page").finally(() => setLoading(false));
+    loadDashboard("page").catch((error: Error) => setDashboardError(error.message)).finally(() => setLoading(false));
   }, [loadDashboard]);
 
   useEffect(() => {
     const interval = setInterval(() => {
-      loadDashboard("poll").catch(() => null);
+      loadDashboard("poll").catch((error: Error) => setDashboardError(error.message));
     }, 60000);
     return () => clearInterval(interval);
   }, [loadDashboard]);
@@ -282,6 +285,13 @@ export default function TeacherDashboardPage() {
 
         <AnnouncementBanner />
 
+        {dashboardError ? (
+          <div className="ll-notice ll-notice-error" role="alert">
+            <p className="font-semibold">Teacher dashboard unavailable</p>
+            <p className="mt-1 text-sm">Live class data could not be loaded. Counts below are not presented as zero.</p>
+          </div>
+        ) : null}
+
         {(() => {
           const greeting = getTeacherGreeting({
             teacherName: data?.schoolName ?? undefined,
@@ -329,7 +339,7 @@ export default function TeacherDashboardPage() {
               <SkeletonCard key={i} />
             ))}
           </div>
-        ) : (
+        ) : dashboardError ? null : (
           <div data-testid="teacher-classes-loaded" className="contents">
             {/* Warning banner */}
             {data?.classesWithoutLesson && data.classesWithoutLesson.length > 0 && (

@@ -99,7 +99,7 @@ function decodePdfHexString(value: string, unicodeMap: UnicodeMap = new Map()): 
 }
 
 function decodePdfTextArray(value: string, unicodeMap: UnicodeMap): string {
-  const tokens = value.match(/\((?:\\.|[^\\)])*\)|<(?:[0-9a-f]+)>|-?\d+(?:\.\d+)?/gi) ?? [];
+  const tokens: string[] = value.match(/\((?:\\.|[^\\)])*\)|<(?:[0-9a-f]+)>|-?\d+(?:\.\d+)?/gi) ?? [];
   return tokens.filter((token) => token.startsWith("(") || token.startsWith("<"))
     .map((token) => token.startsWith("(") ? decodePdfString(token.slice(1, -1)) : decodePdfHexString(token.slice(1, -1), unicodeMap))
     .join("");

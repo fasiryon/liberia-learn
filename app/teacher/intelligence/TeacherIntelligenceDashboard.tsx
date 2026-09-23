@@ -12,6 +12,7 @@ export default function TeacherIntelligenceDashboard() {
   const [interventions, setInterventions] = useState<TeacherInterventionItem[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(true);
+  const [available, setAvailable] = useState(true);
 
   async function load() {
     setBusy(true);
@@ -39,8 +40,10 @@ export default function TeacherIntelligenceDashboard() {
       setSummary(await summaryRes.json());
       setConfusions(await confusionsRes.json());
       setInterventions(await interventionsRes.json());
+      setAvailable(true);
     } catch (loadError: any) {
       setError(loadError?.message ?? "Failed to load intelligence dashboard");
+      setAvailable(false);
     } finally {
       setBusy(false);
     }
@@ -88,6 +91,7 @@ export default function TeacherIntelligenceDashboard() {
       interventions={interventions}
       error={error}
       busy={busy}
+      available={available}
       onAction={handleAction}
     />
   );
