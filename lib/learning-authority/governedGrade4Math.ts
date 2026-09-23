@@ -62,7 +62,7 @@ export type CurriculumOntologyRelease = Readonly<{
   version: string;
   status: OntologyReleaseStatus;
   reviewStatus: OntologyReviewStatus;
-  authority: "LIBERIA_MOE";
+  authority: "LIBERIA_MOE" | "LIBERIALEARN_FOUNDER_REVIEW" | "PLATFORM_REVIEW";
   provenanceRef: string;
   grade: number;
   subject: string;
@@ -200,7 +200,7 @@ export const GRADE4_MATH_ONTOLOGY_RELEASE: CurriculumOntologyRelease = deepFreez
   version: "2026.1",
   status: "PUBLISHED",
   reviewStatus: "APPROVED",
-  authority: "LIBERIA_MOE",
+  authority: "LIBERIALEARN_FOUNDER_REVIEW",
   provenanceRef: "Standard:LR-MATH-G4_6-02",
   grade: 4,
   subject: "MATH",
@@ -240,7 +240,7 @@ export function validateOntologyRelease(release: CurriculumOntologyRelease): voi
   if (release.status !== "PUBLISHED" || release.reviewStatus !== "APPROVED") {
     throw new Error("ontology_release_not_executable");
   }
-  if (release.authority !== "LIBERIA_MOE" || !release.provenanceRef) {
+  if (!release.provenanceRef || !["LIBERIA_MOE", "LIBERIALEARN_FOUNDER_REVIEW", "PLATFORM_REVIEW"].includes(release.authority)) {
     throw new Error("ontology_release_missing_authority");
   }
   const ids = new Set(release.concepts.map((concept) => concept.id));
