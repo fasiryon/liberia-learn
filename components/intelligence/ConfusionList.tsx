@@ -11,6 +11,8 @@ export type TeacherConfusionItem = {
   confusionType: string;
   severity: string;
   detectedAt: string;
+  evidence?: { status: "recent" | "weak" | "missing"; summary: string; recordedAt?: string };
+  whyFlagged?: string;
 };
 
 function badgeClasses(severity: string) {
@@ -70,6 +72,12 @@ export function ConfusionList({
               <p className="text-sm font-semibold text-[var(--ll-text)]">{item.conceptLabel}</p>
               <p className="text-xs uppercase tracking-wide text-[var(--ll-text-faint)]">
                 {item.confusionType.replace(/_/g, " ")}
+              </p>
+              <p className="text-sm text-[var(--ll-text-muted)]">
+                Why flagged: {item.whyFlagged ?? "This signal is advisory and requires teacher review."}
+              </p>
+              <p className="text-xs text-[var(--ll-text-faint)]">
+                Evidence: {item.evidence?.summary ?? "Evidence detail unavailable."}
               </p>
             </div>
             <div className="grid gap-1 text-xs text-[var(--ll-text-faint)] lg:text-right">
