@@ -18,6 +18,7 @@ import {
   GRADE4_MATH_ONTOLOGY_RELEASE,
   validateOntologyRelease,
   type EvidenceAdmissionResult,
+  type CurriculumOntologyRelease,
 } from "@/lib/learning-authority/governedGrade4Math";
 import {
   GRADE4_MATH_MISCONCEPTION_POLICY,
@@ -26,6 +27,7 @@ import {
 } from "@/lib/learning-state/misconceptionPolicy";
 
 type AppendGovernedMasteryInput = Readonly<{
+  release?: CurriculumOntologyRelease;
   schoolId: string;
   studentId: string;
   studentUserId: string;
@@ -66,22 +68,23 @@ function canonicalEventId(input: AppendGovernedMasteryInput): string {
 }
 
 export function createGovernedMasteryEvidence(input: AppendGovernedMasteryInput): GovernedMasteryEvidence {
-  validateOntologyRelease(GRADE4_MATH_ONTOLOGY_RELEASE);
+  const release = input.release ?? GRADE4_MATH_ONTOLOGY_RELEASE;
+  validateOntologyRelease(release);
   if (input.admission.decision !== "ACCEPTED" || !input.admission.bindingId ||
     !input.admission.policyVersion || !input.admission.toolPolicyVersion) {
     throw new Error("canonical_mastery_requires_accepted_evidence");
   }
-  const item = GRADE4_MATH_ONTOLOGY_RELEASE.items.find((candidate) => candidate.id === input.itemId);
-  const binding = GRADE4_MATH_ONTOLOGY_RELEASE.bindings.find((candidate) => candidate.id === input.admission.bindingId);
-  const evidencePolicy = GRADE4_MATH_ONTOLOGY_RELEASE.evidencePolicies.find((candidate) => candidate.id === binding?.evidencePolicyId);
-  const toolPolicy = GRADE4_MATH_ONTOLOGY_RELEASE.toolPolicies.find((candidate) => candidate.id === binding?.toolPolicyId);
+  const item = release.items.find((candidate) => candidate.id === input.itemId);
+  const binding = release.bindings.find((candidate) => candidate.id === input.admission.bindingId);
+  const evidencePolicy = release.evidencePolicies.find((candidate) => candidate.id === binding?.evidencePolicyId);
+  const toolPolicy = release.toolPolicies.find((candidate) => candidate.id === binding?.toolPolicyId);
   if (!item || !binding || binding.itemId !== item.id || binding.itemVersion !== input.itemVersion ||
     item.version !== input.itemVersion || !Number.isInteger(input.selectedAnswerIndex) ||
     input.selectedAnswerIndex < 0 || input.selectedAnswerIndex >= item.options.length ||
     evidencePolicy?.version !== input.admission.policyVersion || toolPolicy?.version !== input.admission.toolPolicyVersion) {
     throw new Error("canonical_mastery_binding_invalid");
   }
-  const releaseIdentity = deterministicReleaseIdentity(GRADE4_MATH_ONTOLOGY_RELEASE);
+  const releaseIdentity = deterministicReleaseIdentity(release);
   const evidence: GovernedMasteryEvidence = Object.freeze({
     type: "GOVERNED_EVIDENCE",
     schemaVersion: 1,
@@ -92,7 +95,7 @@ export function createGovernedMasteryEvidence(input: AppendGovernedMasteryInput)
       studentId: input.studentId,
       studentUserId: input.studentUserId,
       conceptId: binding.conceptId,
-      ontologyReleaseId: GRADE4_MATH_ONTOLOGY_RELEASE.id,
+      ontologyReleaseId: release.id,
       ontologyReleaseIdentity: releaseIdentity,
     }),
     bindingId: binding.id,
@@ -249,9 +252,9 @@ export async function appendCanonicalMasteryUpdate(input: AppendGovernedMasteryI
         status: "accepted",
         occurredAt: new Date(evidence.occurredAt),
         dedupeKey: evidence.independenceKey,
-        subject: "MATH",
-        grade: 4,
-        curriculumVersion: GRADE4_MATH_ONTOLOGY_RELEASE.version,
+        subject: (input.release ?? GRADE4_MATH_ONTOLOGY_RELEASE).subject,
+        grade: (input.release ?? GRADE4_MATH_ONTOLOGY_RELEASE).grade,
+        curriculumVersion: (input.release ?? GRADE4_MATH_ONTOLOGY_RELEASE).version,
         assessmentVersion: evidence.itemVersion,
         calculationVersion: MASTERY_REDUCER_VERSION,
         metadata: { canonicalEvent: evidence },

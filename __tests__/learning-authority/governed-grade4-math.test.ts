@@ -56,6 +56,13 @@ describe("governed Grade 4 mathematics authority", () => {
     expect(deterministicReleaseIdentity(GRADE4_MATH_ONTOLOGY_RELEASE)).toBe(deterministicReleaseIdentity(GRADE4_MATH_ONTOLOGY_RELEASE));
     expect(Object.isFrozen(GRADE4_MATH_ONTOLOGY_RELEASE)).toBe(true);
     expect(Object.isFrozen(GRADE4_MATH_ONTOLOGY_RELEASE.concepts[0])).toBe(true);
+    expect(GRADE4_MATH_ONTOLOGY_RELEASE.contentBindings).toEqual([expect.objectContaining({
+      conceptId: "g4-fractions-equal-parts",
+      contentId: "ll-g4-math-fractions-equal-parts-2026.1",
+      contentVersion: "1.0.0",
+      contentType: "LESSON",
+      toolPolicyId: "g4-math-instruction-tools",
+    })]);
     const changedPolicy = {
       ...GRADE4_MATH_ONTOLOGY_RELEASE,
       toolPolicies: GRADE4_MATH_ONTOLOGY_RELEASE.toolPolicies.map((policy) =>
@@ -72,6 +79,18 @@ describe("governed Grade 4 mathematics authority", () => {
       ),
     } as CurriculumOntologyRelease;
     expect(deterministicReleaseIdentity(changedItem)).not.toBe(deterministicReleaseIdentity(GRADE4_MATH_ONTOLOGY_RELEASE));
+    const changedContentBinding = {
+      ...GRADE4_MATH_ONTOLOGY_RELEASE,
+      contentBindings: [{ id: "content-binding-1", conceptId: "g4-fractions-equal-parts",
+        contentId: "approved-content-id", contentVersion: "1.0.0", contentType: "LESSON" as const,
+        toolPolicyId: "g4-math-instruction-tools" }],
+    } as CurriculumOntologyRelease;
+    expect(() => validateOntologyRelease(changedContentBinding)).not.toThrow();
+    expect(deterministicReleaseIdentity(changedContentBinding))
+      .not.toBe(deterministicReleaseIdentity(GRADE4_MATH_ONTOLOGY_RELEASE));
+    expect(() => validateOntologyRelease({ ...changedContentBinding,
+      contentBindings: [{ ...changedContentBinding.contentBindings[0], toolPolicyId: "g4-math-diagnostic-tools" }],
+    })).toThrow("ontology_content_binding_policy_invalid");
   });
 
   it("pins construct binding and item version", () => {

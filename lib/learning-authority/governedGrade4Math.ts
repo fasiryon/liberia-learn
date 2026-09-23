@@ -3,7 +3,7 @@ import { createHash } from "crypto";
 export type EvidenceContext = "DIAGNOSTIC" | "PRACTICE" | "TEACHER_OBSERVATION";
 export type EvidenceDecision = "ACCEPTED" | "PROVISIONAL" | "REJECTED";
 export type DiagnosticKind = "INITIAL" | "CONTINUOUS";
-export type ToolKey = "calculator" | "fraction_strips" | "number_line";
+export type ToolKey = string;
 export type OntologyReleaseStatus = "DRAFT" | "IN_REVIEW" | "PUBLISHED";
 export type OntologyReviewStatus = "PENDING" | "APPROVED" | "REJECTED";
 
@@ -48,6 +48,15 @@ export type CurriculumConstructBinding = Readonly<{
   toolPolicyId: string;
 }>;
 
+export type CurriculumContentBinding = Readonly<{
+  id: string;
+  conceptId: string;
+  contentId: string;
+  contentVersion: string;
+  contentType: "LESSON" | "TEXTBOOK" | "LAB" | "SIMULATION";
+  toolPolicyId: string;
+}>;
+
 export type CurriculumOntologyRelease = Readonly<{
   id: string;
   version: string;
@@ -55,24 +64,31 @@ export type CurriculumOntologyRelease = Readonly<{
   reviewStatus: OntologyReviewStatus;
   authority: "LIBERIA_MOE";
   provenanceRef: string;
-  grade: 4;
-  subject: "MATH";
-  items: readonly GovernedGrade4MathItem[];
+  grade: number;
+  subject: string;
+  items: readonly GovernedItem[];
   concepts: readonly Concept[];
   prerequisites: readonly ConceptPrerequisiteEdge[];
   bindings: readonly CurriculumConstructBinding[];
+  contentBindings: readonly CurriculumContentBinding[];
   evidencePolicies: readonly EvidencePolicy[];
   toolPolicies: readonly ToolPolicy[];
 }>;
 
-export type GovernedGrade4MathItem = Readonly<{
+export type GovernedItem = Readonly<{
   id: string;
   version: string;
   context: "DIAGNOSTIC" | "PRACTICE";
   prompt: string;
   options: readonly string[];
   correctIndex: number;
+  /** Reviewed support text, released only after scoring. */
+  hint?: string;
+  workedExample?: string;
 }>;
+
+/** Compatibility name for the first published slice. */
+export type GovernedGrade4MathItem = GovernedItem;
 
 export const GOVERNED_GRADE4_MATH_ITEMS: readonly GovernedGrade4MathItem[] = deepFreeze([
   {
@@ -156,6 +172,21 @@ const bindings = [
   },
 ] as const satisfies readonly CurriculumConstructBinding[];
 
+// Exact repository-local founder-reviewed lesson authority. The content is
+// created and published by scripts/author-grade4-fractions-authority.ts using
+// the existing provenance/governance workflow; runtime never infers this from
+// title, grade, or standard.
+const contentBindings = [
+  {
+    id: "g4-frac-content-bind-equal-parts-v1",
+    conceptId: "g4-fractions-equal-parts",
+    contentId: "ll-g4-math-fractions-equal-parts-2026.1",
+    contentVersion: "1.0.0",
+    contentType: "LESSON",
+    toolPolicyId: "g4-math-instruction-tools",
+  },
+] as const satisfies readonly CurriculumContentBinding[];
+
 function deepFreeze<T>(value: T): T {
   if (value && typeof value === "object" && !Object.isFrozen(value)) {
     for (const child of Object.values(value as Record<string, unknown>)) deepFreeze(child);
@@ -180,6 +211,7 @@ export const GRADE4_MATH_ONTOLOGY_RELEASE: CurriculumOntologyRelease = deepFreez
     { fromConceptId: "g4-fractions-equivalence", toConceptId: "g4-fractions-compare", rationale: "Equivalence supports valid comparison." },
   ],
   bindings,
+  contentBindings,
   evidencePolicies,
   toolPolicies,
 });
@@ -188,6 +220,7 @@ export function deterministicReleaseIdentity(release: CurriculumOntologyRelease)
   const pinned = {
     authority: release.authority,
     bindings: release.bindings,
+    contentBindings: release.contentBindings,
     concepts: release.concepts,
     evidencePolicies: release.evidencePolicies,
     grade: release.grade,
@@ -226,6 +259,15 @@ export function validateOntologyRelease(release: CurriculumOntologyRelease): voi
     }
     const evidencePolicy = release.evidencePolicies.find((policy) => policy.id === binding.evidencePolicyId);
     if (evidencePolicy?.context !== item.context) throw new Error("ontology_binding_context_mismatch");
+  }
+  const contentBindingIds = new Set<string>();
+  for (const binding of release.contentBindings) {
+    if (contentBindingIds.has(binding.id)) throw new Error("ontology_content_binding_duplicate");
+    contentBindingIds.add(binding.id);
+    if (!ids.has(binding.conceptId)) throw new Error("ontology_content_binding_unknown_concept");
+    if (!binding.contentId.trim() || !binding.contentVersion.trim()) throw new Error("ontology_content_binding_identity_invalid");
+    const toolPolicy = release.toolPolicies.find((policy) => policy.id === binding.toolPolicyId);
+    if (!toolPolicy || toolPolicy.context !== "INSTRUCTION") throw new Error("ontology_content_binding_policy_invalid");
   }
   const outgoing = new Map<string, string[]>();
   for (const edge of release.prerequisites) {
@@ -309,7 +351,8 @@ export function admitEvidence(
   }
   const policy = release.evidencePolicies.find((candidate) => candidate.id === binding.evidencePolicyId);
   const toolPolicy = release.toolPolicies.find((candidate) => candidate.id === binding.toolPolicyId);
-  if (!policy || !toolPolicy || policy.context !== observation.context) {
+  if (!policy || !toolPolicy || policy.context !== observation.context ||
+    (observation.context !== "TEACHER_OBSERVATION" && toolPolicy.context !== observation.context)) {
     return { decision: "REJECTED", reason: "governed_policy_mismatch", legacyMasteryProjectionAllowed: false };
   }
   if (policy.requiresServerScoring && !context.serverScored) {
@@ -319,6 +362,9 @@ export function admitEvidence(
     return { decision: "REJECTED", reason: "human_authority_required", legacyMasteryProjectionAllowed: false };
   }
   for (const tool of observation.toolsUsed) {
+    if (!toolPolicy.allowed.includes(tool) && !toolPolicy.prohibited.includes(tool)) {
+      return { decision: "REJECTED", reason: "tool_not_in_policy", legacyMasteryProjectionAllowed: false };
+    }
     if (!toolPolicy.prohibited.includes(tool)) continue;
     const override = context.accommodationOverride;
     if (!override || override.tool !== tool || !toolPolicy.accommodationOverrideRoles.includes(override.approvedByRole)) {

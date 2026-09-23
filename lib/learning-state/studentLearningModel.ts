@@ -3,6 +3,7 @@ import {
   GRADE4_MATH_ONTOLOGY_RELEASE,
   deterministicReleaseIdentity,
 } from "@/lib/learning-authority/governedGrade4Math";
+import { publishedRelease } from "@/lib/learning-authority/publishedReleases";
 import {
   GRADE4_MATH_MISCONCEPTION_POLICY,
   MISCONCEPTION_SIGNAL_POLICY_VERSION,
@@ -300,13 +301,14 @@ export function validateCanonicalLearningStateEvent(event: CanonicalLearningStat
       throw new Error("governed_evidence_answer_invalid");
     }
     if (!Object.prototype.hasOwnProperty.call(contextStrength, event.context)) throw new Error("governed_evidence_context_invalid");
-    const releaseIdentity = deterministicReleaseIdentity(GRADE4_MATH_ONTOLOGY_RELEASE);
-    if (event.scope.ontologyReleaseId !== GRADE4_MATH_ONTOLOGY_RELEASE.id ||
+    const release = publishedRelease(event.scope.ontologyReleaseId);
+    const releaseIdentity = release && deterministicReleaseIdentity(release);
+    if (!release ||
       event.scope.ontologyReleaseIdentity !== releaseIdentity) throw new Error("governed_evidence_release_invalid");
-    const binding = GRADE4_MATH_ONTOLOGY_RELEASE.bindings.find((candidate) => candidate.id === event.bindingId);
-    const item = GRADE4_MATH_ONTOLOGY_RELEASE.items.find((candidate) => candidate.id === event.itemId);
-    const evidencePolicy = GRADE4_MATH_ONTOLOGY_RELEASE.evidencePolicies.find((candidate) => candidate.id === binding?.evidencePolicyId);
-    const toolPolicy = GRADE4_MATH_ONTOLOGY_RELEASE.toolPolicies.find((candidate) => candidate.id === binding?.toolPolicyId);
+    const binding = release.bindings.find((candidate) => candidate.id === event.bindingId);
+    const item = release.items.find((candidate) => candidate.id === event.itemId);
+    const evidencePolicy = release.evidencePolicies.find((candidate) => candidate.id === binding?.evidencePolicyId);
+    const toolPolicy = release.toolPolicies.find((candidate) => candidate.id === binding?.toolPolicyId);
     if (!binding || !item || binding.conceptId !== event.scope.conceptId || binding.itemId !== item.id ||
       binding.itemVersion !== event.itemVersion || item.version !== event.itemVersion || item.context !== event.context ||
       event.selectedAnswerIndex >= item.options.length || evidencePolicy?.version !== event.evidencePolicyVersion ||
@@ -382,9 +384,9 @@ export function replayStudentConceptState(
   const scope = options.expectedScope ?? events[0]?.scope;
   if (!scope) throw new Error("student_concept_scope_required");
   validateScope(scope);
-  if (scope.ontologyReleaseId !== GRADE4_MATH_ONTOLOGY_RELEASE.id ||
-    scope.ontologyReleaseIdentity !== deterministicReleaseIdentity(GRADE4_MATH_ONTOLOGY_RELEASE) ||
-    !GRADE4_MATH_ONTOLOGY_RELEASE.concepts.some((concept) => concept.id === scope.conceptId)) {
+  const release = publishedRelease(scope.ontologyReleaseId);
+  if (!release || scope.ontologyReleaseIdentity !== deterministicReleaseIdentity(release) ||
+    !release.concepts.some((concept) => concept.id === scope.conceptId)) {
     throw new Error("student_concept_scope_not_governed");
   }
   for (const event of events) {

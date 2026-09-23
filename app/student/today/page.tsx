@@ -114,6 +114,13 @@ type TodayResponse = {
   } | null;
 };
 
+type GovernedNextAction = {
+  available: true;
+  action: { kind: "DIAGNOSTIC" | "PRACTICE"; reason: string };
+  conceptLabel?: string;
+  subject: string;
+};
+
 function fallbackTodayResponse(): TodayResponse {
   return {
     items: [],
@@ -193,6 +200,8 @@ type StreakData = { currentStreak: number; longestStreak: number; optOut: boolea
 export default function StudentTodayPage() {
   const router = useRouter();
   const [data, setData] = useState<TodayResponse | null>(null);
+  const [governed, setGoverned] = useState<GovernedNextAction | null>(null);
+  const [governedLoading, setGovernedLoading] = useState(true);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [lastUpdatedAt, setLastUpdatedAt] = useState<string | null>(null);
@@ -257,6 +266,14 @@ export default function StudentTodayPage() {
   }, [loadToday]);
 
   useEffect(() => {
+    fetch("/api/student/learning-authority/next-action", { cache: "no-store" })
+      .then((response) => response.ok ? response.json() : null)
+      .then((payload) => setGoverned(payload?.available ? payload : null))
+      .catch(() => setGoverned(null))
+      .finally(() => setGovernedLoading(false));
+  }, []);
+
+  useEffect(() => {
     fetch("/api/student/streak", { cache: "no-store" })
       .then((r) => (r.ok ? r.json() : null))
       .then((d) => { if (d) setStreak(d); })
@@ -309,49 +326,30 @@ export default function StudentTodayPage() {
   const schoolDay = data?.schoolDay;
   const scheduleItems = safeArray(schoolDay?.items);
   const assignedWork = safeArray(data?.items).filter((item) => item.status !== "completed");
-  const adaptiveAction = data?.adaptivePlan?.orderedActions?.[0] ?? null;
+  const adaptiveAction = null as AdaptiveAction | null;
   const currentOrNext = useMemo(
     () => scheduleItems.find((item) => item.status === "current") ?? scheduleItems.find((item) => item.status === "upcoming") ?? scheduleItems[0] ?? null,
     [scheduleItems]
   );
-  const hero = data?.heroRecommendation ?? null;
-  // The ranked hero (lib/student/nextBestAction.ts) is the authoritative "what's
-  // next" signal: it already weighs schedule, overdue work, mastery gaps, and
-  // WAEC readiness together. The chain below is only a fallback for payloads
-  // without it (e.g. a stale cached response from before this ranking existed).
   const priorityTitle =
-    hero?.label ??
+    (governed ? governed.conceptLabel ?? `${subjectLabel(governed.subject)} learning` : null) ??
     currentOrNext?.title ??
     assignedWork[0]?.title ??
-    adaptiveAction?.label ??
-    data?.todayFocus?.currentOrNext ??
     "No lessons scheduled yet";
   const priorityReason =
-    hero?.reason ??
+    governed?.action.reason ??
     (currentOrNext
       ? `${formatTimeRange(currentOrNext.timeRange)} - ${subjectLabel(currentOrNext.subject)}`
       : assignedWork[0]
         ? `${subjectLabel(assignedWork[0].subject)} - ${dueLabel(assignedWork[0])}`
-        : adaptiveAction?.reason ?? "Check assignments or browse the curriculum.");
+        : "Check assignments or browse the curriculum.");
   const priorityHref =
-    hero?.href ??
+    (governed ? "/student/learn" : null) ??
     currentOrNext?.primaryAction.href ??
     assignedWork[0]?.lessonHref ??
-    adaptiveAction?.href ??
-    data?.todayFocus?.primaryHref ??
     "/student/lessons";
-  const priorityLabel =
-    hero
-      ? hero.type === "CONTINUE"
-        ? "Continue"
-        : hero.type === "RETRY_ASSESSMENT"
-          ? "Retry quiz"
-          : hero.type === "OVERDUE"
-            ? "Open"
-            : "Start"
-      : currentOrNext?.primaryAction.label ??
-        (assignedWork[0] ? "Open lesson" : adaptiveAction ? "Start lesson" : "Browse curriculum");
-  const waecSecondaryCard = data?.waecSecondaryCard ?? null;
+  const priorityLabel = governed ? (governed.action.kind === "DIAGNOSTIC" ? "Check understanding" : "Practice") :
+    currentOrNext?.primaryAction.label ?? (assignedWork[0] ? "Open lesson" : "Browse curriculum");
   const unlocks = data?.unlocks ?? null;
   const dateLabel = new Date().toLocaleDateString("en-LR", {
     weekday: "long",
@@ -406,7 +404,7 @@ export default function StudentTodayPage() {
           </div>
         ) : null}
 
-        {loading ? (
+        {loading || governedLoading ? (
           <div className="space-y-3">
             {[1, 2, 3].map((index) => <SkeletonCard key={index} />)}
           </div>
@@ -414,7 +412,7 @@ export default function StudentTodayPage() {
           <>
             <LiveSessionBanner />
 
-            <WaecTodayCta />
+            {!governed && <WaecTodayCta />}
 
             <section className="grid gap-3 rounded-lg border border-[var(--ll-accent)]/35 bg-[var(--ll-accent-soft)] p-4 sm:grid-cols-[1fr_auto] sm:items-center">
               <div>
@@ -435,21 +433,6 @@ export default function StudentTodayPage() {
                 {priorityLabel}
               </Link>
             </section>
-
-            {waecSecondaryCard ? (
-              <Link
-                href={waecSecondaryCard.href}
-                data-testid="waec-secondary-card"
-                className="flex items-center gap-3 rounded-xl border border-[var(--ll-yellow)]/40 bg-gradient-to-r from-[var(--ll-yellow)]/10 to-transparent px-4 py-3 transition hover:border-[var(--ll-yellow)]"
-              >
-                <div className="flex-1">
-                  <p className="text-sm font-semibold text-[var(--ll-text)]">Also worth doing: {waecSecondaryCard.label}</p>
-                  <p className="text-xs text-[var(--ll-text-muted)]">{waecSecondaryCard.reason}</p>
-                </div>
-              </Link>
-            ) : (
-              <WaecTodayCta />
-            )}
 
             <div data-testid="today-schedule-loaded" className="-mx-1 flex gap-2 overflow-x-auto px-1 pb-1">
               {[
@@ -487,7 +470,7 @@ export default function StudentTodayPage() {
               {activeTab === "support" ? (
                 <SupportTab
                   adaptiveAction={adaptiveAction}
-                  weakTopicSequence={safeArray(data.weakTopicSequence)}
+                  weakTopicSequence={[]}
                   masteryAlerts={safeArray(data.masteryAlerts)}
                   pacingSignal={data.pacingSignal}
                 />
