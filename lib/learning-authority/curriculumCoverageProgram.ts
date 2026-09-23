@@ -1,5 +1,6 @@
 import { getCanonicalSubjectCode } from "@/lib/curriculum/subjectTaxonomy";
 import { publishedReleases } from "./publishedReleases";
+import { documentedSourceCells, sourceBackedCells } from "./repositorySourceInventory";
 
 export type AuthoritySourceRecord = Readonly<{
   id: string;
@@ -50,6 +51,19 @@ export type CurriculumCoverageProgramReport = Readonly<{
   generatedAt: string;
   scope: Readonly<{ grades: readonly number[]; subjects: readonly string[]; combinations: number }>;
   counts: Readonly<{ populated: number; authoritativeSource: number; founderReviewed: number; unresolvedSourceGaps: number; lessonGaps: number; assessmentGaps: number }>;
+  coverage: Readonly<{
+    totalCombinations: number;
+    sourceBackedCombinations: number;
+    importedManifestCombinations: number;
+    executableReleaseCombinations: number;
+    founderReviewedCombinations: number;
+    moeApprovedCombinations: number | null;
+    unresolvedCombinations: number;
+    lessonGaps: number;
+    assessmentGaps: number;
+    evidencePolicyGaps: number;
+    toolPolicyGaps: number;
+  }>;
   cells: readonly CoverageProgramCell[];
 }>;
 
@@ -61,10 +75,25 @@ export function buildRepositoryOnlyCoverageReport(input: {
   availability: { mode: "REPOSITORY_ONLY"; database: "UNAVAILABLE"; reason: string };
   scope: { grades: readonly number[]; subjects: readonly string[]; combinations: number };
   repository: { populatedCombinations: number; registeredReleaseCombinations: number };
-  databaseDependent: { authoritativeSourceCount: null; verifiedObjectiveCount: null; approvedLessonCount: null; founderReviewedContentCount: null };
+  databaseDependent: { authoritativeSourceCount: null; verifiedObjectiveCount: null; approvedLessonCount: null; founderReviewedContentCount: null; moeApprovedContentCount: null };
+  coverage: {
+    totalCombinations: number;
+    sourceBackedCombinations: number;
+    importedManifestCombinations: number;
+    executableReleaseCombinations: number;
+    founderReviewedCombinations: number;
+    moeApprovedCombinations: null;
+    unresolvedCombinations: number;
+    lessonGaps: number;
+    assessmentGaps: number;
+    evidencePolicyGaps: number;
+    toolPolicyGaps: number;
+  };
   cells: readonly Readonly<{ grade: number; subject: string; executableRelease: boolean; gaps: readonly string[]; reviewQueue: Readonly<{ kind: "SOURCE_IMPORT" | "CONTENT_REVIEW" | "ASSESSMENT_BINDING"; reason: string }> }>[];
 }> {
   const releases = publishedReleases();
+  const documentedCells = new Set(documentedSourceCells(input.scope));
+  const sourceCells = new Set(sourceBackedCells(input.scope));
   const cells = input.scope.grades.flatMap((grade) => input.scope.subjects.map((subject) => {
     const release = releases.find((candidate) => candidate.grade === grade && candidate.subject === subject);
     const gaps = release
@@ -79,7 +108,9 @@ export function buildRepositoryOnlyCoverageReport(input: {
       grade, subject, executableRelease: Boolean(release), gaps,
       reviewQueue: release
         ? { kind: "CONTENT_REVIEW" as const, reason: "Repository release exists; live content/source evidence is unavailable." }
-        : { kind: "SOURCE_IMPORT" as const, reason: "Database unavailable; source presence is UNKNOWN, not absent." },
+        : documentedCells.has(`${grade}:${subject}`)
+          ? { kind: "SOURCE_IMPORT" as const, reason: sourceCells.has(`${grade}:${subject}`) ? "Repository source bytes are importable." : "Repository contains source provenance metadata, but source bytes are not committed; import remains unresolved." }
+          : { kind: "SOURCE_IMPORT" as const, reason: "Database unavailable; source presence is UNKNOWN, not absent." },
     };
   }));
   const registeredReleaseCombinations = cells.filter((cell) => cell.executableRelease).length;
@@ -88,7 +119,20 @@ export function buildRepositoryOnlyCoverageReport(input: {
     availability: { mode: "REPOSITORY_ONLY", database: "UNAVAILABLE", reason: input.databaseError },
     scope: { ...input.scope, combinations: input.scope.grades.length * input.scope.subjects.length },
     repository: { populatedCombinations: registeredReleaseCombinations, registeredReleaseCombinations },
-    databaseDependent: { authoritativeSourceCount: null, verifiedObjectiveCount: null, approvedLessonCount: null, founderReviewedContentCount: null },
+    databaseDependent: { authoritativeSourceCount: null, verifiedObjectiveCount: null, approvedLessonCount: null, founderReviewedContentCount: null, moeApprovedContentCount: null },
+    coverage: {
+      totalCombinations: cells.length,
+      sourceBackedCombinations: documentedCells.size,
+      importedManifestCombinations: 0,
+      executableReleaseCombinations: registeredReleaseCombinations,
+      founderReviewedCombinations: registeredReleaseCombinations,
+      moeApprovedCombinations: null,
+      unresolvedCombinations: cells.filter((cell) => cell.gaps.length > 0).length,
+      lessonGaps: cells.filter((cell) => cell.gaps.includes("LESSON")).length,
+      assessmentGaps: cells.filter((cell) => cell.gaps.includes("ASSESSMENT")).length,
+      evidencePolicyGaps: cells.filter((cell) => cell.gaps.includes("EVIDENCE_POLICY")).length,
+      toolPolicyGaps: cells.filter((cell) => cell.gaps.includes("TOOL_POLICY")).length,
+    },
     cells,
   };
 }
@@ -161,6 +205,19 @@ export function buildCurriculumCoverageProgramReport(input: {
       unresolvedSourceGaps: cells.filter((cell) => cell.gaps.includes("AUTHORITATIVE_SOURCE")).length,
       lessonGaps: cells.filter((cell) => cell.gaps.includes("LESSON")).length,
       assessmentGaps: cells.filter((cell) => cell.gaps.includes("ASSESSMENT")).length,
+    },
+    coverage: {
+      totalCombinations: cells.length,
+      sourceBackedCombinations: cells.filter((cell) => cell.authoritativeSourceCount > 0).length,
+      importedManifestCombinations: 0,
+      executableReleaseCombinations: cells.filter((cell) => cell.executableReleaseCount > 0).length,
+      founderReviewedCombinations: cells.filter((cell) => cell.founderReviewedCount > 0).length,
+      moeApprovedCombinations: cells.filter((cell) => cell.moeReviewedCount > 0).length,
+      unresolvedCombinations: cells.filter((cell) => cell.gaps.length > 0).length,
+      lessonGaps: cells.filter((cell) => cell.gaps.includes("LESSON")).length,
+      assessmentGaps: cells.filter((cell) => cell.gaps.includes("ASSESSMENT")).length,
+      evidencePolicyGaps: cells.filter((cell) => cell.gaps.includes("EVIDENCE_POLICY")).length,
+      toolPolicyGaps: cells.filter((cell) => cell.gaps.includes("TOOL_POLICY")).length,
     },
     cells,
   };
