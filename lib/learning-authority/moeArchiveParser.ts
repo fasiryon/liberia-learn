@@ -12,7 +12,7 @@ export type MoeArchiveSource = Readonly<{
 }>;
 
 export type IntermediateMoeManifest = Readonly<{
-  manifestVersion: "1.1.0";
+  manifestVersion: "1.2.0";
   status: "INTERMEDIATE_REVIEW_ONLY";
   source: Readonly<{
     archiveId: string;
@@ -25,7 +25,7 @@ export type IntermediateMoeManifest = Readonly<{
   }>;
   scope: Readonly<{ gradeMin: number; gradeMax: number; subject: string }>;
   extraction: Readonly<{
-    parser: "deterministic-pdf-page-text-v2";
+    parser: "deterministic-pdf-page-text-v3";
     extractedLineCount: number;
     pageCount: number;
     decodedPageCount: number;
@@ -98,20 +98,25 @@ function decodePdfHexString(value: string, unicodeMap: UnicodeMap = new Map()): 
   return bytes.toString("latin1");
 }
 
-function extractPdfStreamText(stream: Buffer, unicodeMap: UnicodeMap = new Map()): string {
+function decodePdfTextArray(value: string, unicodeMap: UnicodeMap): string {
+  const tokens = value.match(/\((?:\\.|[^\\)])*\)|<(?:[0-9a-f]+)>|-?\d+(?:\.\d+)?/gi) ?? [];
+  return tokens.filter((token) => token.startsWith("(") || token.startsWith("<"))
+    .map((token) => token.startsWith("(") ? decodePdfString(token.slice(1, -1)) : decodePdfHexString(token.slice(1, -1), unicodeMap))
+    .join("");
+}
+
+function extractPdfStreamText(stream: Buffer, unicodeMap: UnicodeMap = new Map(), fontMaps: ReadonlyMap<string, UnicodeMap> = new Map()): string {
   const text = stream.toString("latin1");
   const parts: string[] = [];
-  for (const match of text.matchAll(/\((?:\\.|[^\\)])*\)\s*Tj/g)) {
-    parts.push(decodePdfString(match[0].replace(/\)\s*Tj$/, "").slice(1)));
-  }
-  for (const match of text.matchAll(/<([0-9a-f]+)>\s*Tj/gi)) parts.push(decodePdfHexString(match[1], unicodeMap));
-  for (const match of text.matchAll(/\[((?:\((?:\\.|[^\\)])*\)\s*)+)\]\s*TJ/g)) {
-    const strings = match[1].match(/\((?:\\.|[^\\)])*\)/g) ?? [];
-    parts.push(strings.map((item) => decodePdfString(item.slice(1, -1))).join(""));
-  }
-  for (const match of text.matchAll(/\[((?:<(?:[0-9a-f]+)>\s*)+)\]\s*TJ/gi)) {
-    const strings = match[1].match(/<(?:[0-9a-f]+)>/gi) ?? [];
-    parts.push(strings.map((item) => decodePdfHexString(item.slice(1, -1), unicodeMap)).join(""));
+  const fonts = [...text.matchAll(/\/([^\s]+)\s+[-\d.]+\s+Tf/g)];
+  const operators = /(?:\((?:\\.|[^\\)])*\)\s*Tj|<(?:[0-9a-f]+)>\s*Tj|\[((?:\\.|[^\]])*)\]\s*TJ)/gi;
+  for (const match of text.matchAll(operators)) {
+    const activeFont = fonts.filter((font) => (font.index ?? 0) < (match.index ?? 0)).at(-1)?.[1];
+    const activeMap = (activeFont && fontMaps.get(activeFont)) ?? unicodeMap;
+    const value = match[0];
+    if (/\]\s*TJ$/i.test(value)) parts.push(decodePdfTextArray(value.slice(1, value.lastIndexOf("]")), activeMap));
+    else if (/^</.test(value)) parts.push(decodePdfHexString(value.slice(1, value.indexOf(">")), activeMap));
+    else parts.push(decodePdfString(value.slice(1, value.lastIndexOf(")"))));
   }
   return parts.join("\n");
 }
@@ -122,7 +127,7 @@ function pdfObjects(buffer: Buffer): PdfObject[] {
 }
 
 function decodePdfStream(body: string): Buffer {
-  const match = body.match(/<<(.*?)>>\s*stream\r?\n([\s\S]*?)\r?\nendstream/);
+  const match = body.match(/<<([\s\S]*?)>>\s*stream\r?\n([\s\S]*?)\r?\nendstream/);
   if (!match) return Buffer.from(body, "latin1");
   const raw = Buffer.from(match[2], "latin1");
   if (/FlateDecode/.test(match[1])) {
@@ -141,10 +146,23 @@ function unicodeMaps(objects: readonly PdfObject[]): ReadonlyMap<string, Unicode
     if (!cmapObject) continue;
     const text = decodePdfStream(cmapObject.body).toString("latin1");
     const map = new Map<number, string>();
-    for (const match of text.matchAll(/<([0-9a-f]+)>\s*<([0-9a-f]+)>/gi)) {
-      const code = Number.parseInt(match[1], 16);
-      const value = Buffer.from(match[2], "hex");
-      map.set(code, value.length >= 2 && value[0] === 0xfe && value[1] === 0xff ? String.fromCharCode(...Array.from({ length: Math.floor((value.length - 2) / 2) }, (_, i) => value.readUInt16BE(2 + i * 2))) : value.toString("latin1"));
+    const destination = (hex: string) => {
+      const value = Buffer.from(hex, "hex");
+      const start = value.length >= 2 && value[0] === 0xfe && value[1] === 0xff ? 2 : 0;
+      if (value.length - start >= 2) return String.fromCharCode(...Array.from({ length: Math.floor((value.length - start) / 2) }, (_, i) => value.readUInt16BE(start + i * 2)));
+      return value.toString("latin1");
+    };
+    for (const block of text.matchAll(/beginbfchar([\s\S]*?)endbfchar/gi)) {
+      for (const match of block[1].matchAll(/<([0-9a-f]+)>\s*<([0-9a-f]+)>/gi)) map.set(Number.parseInt(match[1], 16), destination(match[2]));
+    }
+    for (const block of text.matchAll(/beginbfrange([\s\S]*?)endbfrange/gi)) {
+      for (const match of block[1].matchAll(/<([0-9a-f]+)>\s*<([0-9a-f]+)>\s*(?:<([0-9a-f]+)>|\[((?:\s*<[0-9a-f]+>\s*)+)\])/gi)) {
+        const start = Number.parseInt(match[1], 16);
+        const end = Number.parseInt(match[2], 16);
+        const values = match[4]?.match(/<([0-9a-f]+)>/gi)?.map((item) => destination(item.slice(1, -1))) ?? [];
+        const base = match[3] ? Number.parseInt(match[3], 16) : 0;
+        for (let code = start; code <= end; code++) map.set(code, values.length ? values[code - start] : String.fromCodePoint(base + code - start));
+      }
     }
     result.set(object.id, map);
   }
@@ -156,13 +174,25 @@ function extractPdfText(buffer: Buffer): string {
   const objects = pdfObjects(buffer);
   const maps = unicodeMaps(objects);
   const streams: Buffer[] = [];
-  for (const match of source.matchAll(/<<(.*?)>>\s*stream\r?\n([\s\S]*?)\r?\nendstream/g)) {
+  for (const match of source.matchAll(/<<([\s\S]*?)>>\s*stream\r?\n([\s\S]*?)\r?\nendstream/g)) {
     const raw = Buffer.from(match[2], "latin1");
     if (/FlateDecode/.test(match[1])) {
       try { streams.push(inflateSync(raw)); } catch { streams.push(raw); }
     } else streams.push(raw);
   }
   return streams.map((stream) => extractPdfStreamText(stream, maps.values().next().value ?? new Map())).filter(Boolean).join("\n") || extractPdfStreamText(buffer);
+}
+
+function pageFontMaps(pageObject: PdfObject, byId: ReadonlyMap<string, PdfObject>, maps: ReadonlyMap<string, UnicodeMap>) {
+  const resourcesRef = pageObject.body.match(/\/Resources\s+(\d+)\s+(\d+)\s+R/);
+  const resources = resourcesRef ? byId.get(`${resourcesRef[1]} ${resourcesRef[2]}`)?.body ?? "" : pageObject.body;
+  const fontBlock = resources.match(/\/Font\s*<<([\s\S]*?)>>/);
+  const result = new Map<string, UnicodeMap>();
+  for (const match of (fontBlock?.[1] ?? "").matchAll(/\/([^\s]+)\s+(\d+)\s+(\d+)\s+R/g)) {
+    const map = maps.get(`${match[2]} ${match[3]}`);
+    if (map) result.set(match[1], map);
+  }
+  return result;
 }
 
 export function extractMoePdfText(buffer: Buffer): string {
@@ -181,9 +211,10 @@ function extractPdfPages(buffer: Buffer): PdfPageText[] {
   const parsed = pages.map((pageObject, index) => {
     const contents = pageObject.body.match(/\/Contents\s*(?:\[([\s\S]*?)\]|(\d+\s+\d+\s+R))/);
     const references = (contents?.[1] ?? contents?.[2] ?? "").match(/\d+\s+\d+\s+R/g) ?? [];
-    const streams = references.map((reference) => byId.get(reference.replace(/\s+R$/, "").replace(/\s+/, " "))).filter(Boolean).map((object) => extractPdfStreamText(decodePdfStream(object!.body), combinedMap));
+    const fontMaps = pageFontMaps(pageObject, byId, maps);
+    const streams = references.map((reference) => byId.get(reference.replace(/\s+R$/, "").replace(/\s+/, " "))).filter(Boolean).map((object) => extractPdfStreamText(decodePdfStream(object!.body), combinedMap, fontMaps));
     const rawText = streams.filter(Boolean).join("\n");
-    return { page: index + 1, rawText, status: rawText.trim() ? (combinedMap.size ? "DECODED" : "PARTIAL") : "UNREADABLE" } satisfies PdfPageText;
+    return { page: index + 1, rawText, status: rawText.trim() ? (fontMaps.size ? "DECODED" : "PARTIAL") : "UNREADABLE" } satisfies PdfPageText;
   });
   if (parsed.length) return parsed;
   const fallback = extractPdfText(buffer);
@@ -234,7 +265,7 @@ export function parseMoeArchive(source: MoeArchiveSource, buffer: Buffer): Inter
     const standards = candidates.filter((candidate) => candidate.kind === "STANDARD");
     const objectives = candidates.filter((candidate) => candidate.kind === "OBJECTIVE");
     return {
-      manifestVersion: "1.1.0",
+      manifestVersion: "1.2.0",
       status: "INTERMEDIATE_REVIEW_ONLY",
       source: {
         archiveId: source.id, archiveDocument: source.document, archivePath: source.localPath,
@@ -243,7 +274,7 @@ export function parseMoeArchive(source: MoeArchiveSource, buffer: Buffer): Inter
       },
       scope: { gradeMin: source.gradeMin, gradeMax: source.gradeMax, subject: subjectFromMember(entry.name) },
       extraction: {
-        parser: "deterministic-pdf-page-text-v2",
+        parser: "deterministic-pdf-page-text-v3",
         extractedLineCount: pageRecords.reduce((total, page) => total + cleanLines(page.rawText).length, 0),
         pageCount: pageRecords.length,
         decodedPageCount: pageRecords.filter((page) => page.status === "DECODED").length,

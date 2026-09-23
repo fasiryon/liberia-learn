@@ -26,5 +26,7 @@ describe("Liberia MOE archive parser", () => {
     expect(first[0].extraction.pageCount).toBeGreaterThan(1);
     expect(first[0].extraction.pages[0].page).toBe(1);
     expect(first[0].extraction.reviewQueue.length).toBeGreaterThan(0);
+    expect(first.reduce((total, manifest) => total + manifest.extraction.objectives.length, 0)).toBeGreaterThan(0);
+    expect(first.reduce((total, manifest) => total + manifest.extraction.standards.length, 0)).toBeGreaterThan(0);
   });
 });
