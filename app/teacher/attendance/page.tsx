@@ -288,7 +288,7 @@ export default function TeacherAttendancePage() {
           type="button"
           onClick={save}
           disabled={saving || students.length === 0 || !classId}
-          className="rounded-xl bg-[var(--ll-yellow)] px-6 py-3 text-sm font-semibold text-[var(--ll-text-faint)] hover:bg-[var(--ll-yellow-soft)] disabled:opacity-60"
+          className="rounded-xl bg-[var(--ll-yellow)] px-6 py-3 text-sm font-semibold text-[var(--ll-bg)] hover:opacity-90 disabled:opacity-60"
         >
           {saving ? "Saving..." : "Save Attendance"}
         </button>

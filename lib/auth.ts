@@ -110,11 +110,14 @@ async function findUserForCredentials(credentials: Record<string, string>) {
   });
 }
 
-function resolveCredentialIdentifier(credentials: Record<string, string>) {
+/** Per-account rate-limit key. Empty identifiers must fall through (`||`,
+ * not `??`): otherwise every email login shares one global bucket and ten
+ * attempts anywhere lock out all email sign-ins. */
+export function resolveCredentialIdentifier(credentials: Record<string, string>) {
   const phone = credentials.phone ? normalizeCredentialPhone(credentials.phone) : null;
   const studentId = credentials.studentId ? normalizeLoginId(credentials.studentId) : "";
   const email = credentials.email?.trim().toLowerCase() ?? "";
-  return (phone ?? studentId ?? normalizeLoginId(email) ?? "missing")
+  return (phone || studentId || (email ? `email:${email}` : "") || "missing")
     .replace(/[^a-zA-Z0-9@._:+-]/g, "_")
     .slice(0, 160);
 }

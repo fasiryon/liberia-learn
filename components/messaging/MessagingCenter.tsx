@@ -330,7 +330,7 @@ export function MessagingCenter({ role, emptyState }: MessagingCenterProps) {
                 <div
                   className={`max-w-[85%] rounded-xl px-4 py-3 text-sm ${
                     ownMessage
-                      ? "bg-[var(--ll-yellow)] text-[var(--ll-text-faint)]"
+                      ? "bg-[var(--ll-yellow)] text-[var(--ll-bg)]"
                       : "bg-[var(--ll-surface-muted)] text-[var(--ll-text-faint)]"
                   }`}
                 >
@@ -357,7 +357,7 @@ export function MessagingCenter({ role, emptyState }: MessagingCenterProps) {
               type="button"
               onClick={handleSend}
               disabled={sending || !draft.trim()}
-              className="min-h-11 rounded-xl bg-[var(--ll-yellow)] px-5 py-3 text-sm font-semibold text-[var(--ll-text-faint)] hover:bg-[var(--ll-yellow-soft)] disabled:opacity-60"
+              className="min-h-11 rounded-xl bg-[var(--ll-yellow)] px-5 py-3 text-sm font-semibold text-[var(--ll-bg)] hover:opacity-90 disabled:opacity-60"
             >
               {sending ? "Sending..." : "Send"}
             </button>

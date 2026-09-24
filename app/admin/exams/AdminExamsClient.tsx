@@ -130,7 +130,7 @@ export default function AdminExamsClient() {
             ))}
           </select>
           <input name="moeStandards" placeholder="MOE codes comma-separated" required className="rounded-xl border border-[var(--ll-border)] bg-white/5 px-3 py-2 text-sm md:col-span-6" />
-          <button type="submit" disabled={submitting} className="rounded-xl bg-[var(--ll-yellow)] px-4 py-2 text-sm font-semibold text-[var(--ll-text-faint)] disabled:opacity-60">
+          <button type="submit" disabled={submitting} className="rounded-xl bg-[var(--ll-yellow)] px-4 py-2 text-sm font-semibold text-[var(--ll-bg)] disabled:opacity-60">
             {submitting ? "Generating..." : "Generate Exam"}
           </button>
         </form>
@@ -184,7 +184,7 @@ export default function AdminExamsClient() {
                     <td className="px-4 py-3">
                       <div className="flex flex-wrap gap-2">
                         {exam.status !== "PUBLISHED" ? (
-                          <button type="button" onClick={() => void postAction(`/api/admin/exams/${exam.id}/publish`).catch((err) => setError(err.message))} className="rounded-xl bg-[var(--ll-yellow)] px-3 py-2 text-xs font-semibold text-[var(--ll-text-faint)]">
+                          <button type="button" onClick={() => void postAction(`/api/admin/exams/${exam.id}/publish`).catch((err) => setError(err.message))} className="rounded-xl bg-[var(--ll-yellow)] px-3 py-2 text-xs font-semibold text-[var(--ll-bg)]">
                             Publish
                           </button>
                         ) : null}

@@ -364,7 +364,7 @@ export default function TeacherPlacementReviewPage({ params }: { params: { place
               type="button"
               disabled={submitting || (decision === "override" && overrideReason.trim().length < 20)}
               onClick={submitReview}
-              className="rounded-xl bg-[var(--ll-yellow)] px-5 py-3 font-semibold text-[var(--ll-text-faint)] hover:bg-[var(--ll-yellow-soft)] disabled:cursor-not-allowed disabled:opacity-60"
+              className="rounded-xl bg-[var(--ll-yellow)] px-5 py-3 font-semibold text-[var(--ll-bg)] hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
             >
               {submitting ? "Saving..." : decision === "confirm" ? "Confirm Placement" : `Override to Grade ${overrideGrade}`}
             </button>

@@ -77,7 +77,7 @@ export function PushPermissionPrompt() {
           </button>
           <button
             onClick={enable}
-            className="rounded-full bg-[var(--ll-yellow)] px-3 py-1.5 text-xs font-semibold text-[var(--ll-text-faint)]"
+            className="rounded-full bg-[var(--ll-yellow)] px-3 py-1.5 text-xs font-semibold text-[var(--ll-bg)]"
           >
             Turn on
           </button>

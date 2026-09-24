@@ -171,7 +171,7 @@ export default async function StudentLabsPage() {
                           <p className="mt-3 flex-1 text-sm leading-6 text-[var(--ll-text-muted)]">{lab.description}</p>
                           <Link
                             href={`/student/labs/${lab.id}`}
-                            className="mt-5 inline-flex min-h-11 items-center justify-center rounded-lg bg-[var(--ll-accent)] px-4 py-2 text-sm font-semibold text-[var(--ll-text-faint)] hover:opacity-90"
+                            className="mt-5 inline-flex min-h-11 items-center justify-center rounded-lg bg-[var(--ll-accent)] px-4 py-2 text-sm font-semibold text-[var(--ll-bg)] hover:opacity-90"
                           >
                             Open Lab
                           </Link>
@@ -223,7 +223,7 @@ export default async function StudentLabsPage() {
 
                     <Link
                       href={`/student/labs/${lab.labId}`}
-                      className="mt-4 inline-flex rounded-lg bg-[var(--ll-accent)] px-4 py-2 text-sm font-semibold text-[var(--ll-text-faint)] hover:opacity-90"
+                      className="mt-4 inline-flex rounded-lg bg-[var(--ll-accent)] px-4 py-2 text-sm font-semibold text-[var(--ll-bg)] hover:opacity-90"
                     >
                       {session.completedAt ? "Review Lab" : "Start Lab"}
                     </Link>

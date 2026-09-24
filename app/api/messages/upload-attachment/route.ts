@@ -1,3 +1,4 @@
+// route-policy: auth=session; scope=record; authority=uploader-self; rationale=stores the caller own attachment under their id at an unguessable URL
 import { NextRequest, NextResponse } from "next/server";
 import { requireUser } from "@/lib/auth";
 
@@ -43,6 +44,8 @@ export async function POST(req: NextRequest) {
       const safeName = blob.name.replace(/[^a-zA-Z0-9._-]/g, "_");
       const blobResult = await put(`message-attachments/${user.id}/${Date.now()}_${safeName}`, blob, {
         access: "public",
+        // Unguessable URL: the path alone would reveal sender id and upload time.
+        addRandomSuffix: true,
       });
       url = blobResult.url;
     } catch (err: any) {

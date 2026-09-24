@@ -72,7 +72,7 @@ export default function StudentExamsClient() {
               {readiness.nextBestAction ? (
                 <Link
                   href={readiness.nextBestAction.href}
-                  className="inline-flex min-h-11 items-center justify-center rounded-xl bg-[var(--ll-yellow)] px-4 py-2 text-sm font-semibold text-[var(--ll-text-faint)]"
+                  className="inline-flex min-h-11 items-center justify-center rounded-xl bg-[var(--ll-yellow)] px-4 py-2 text-sm font-semibold text-[var(--ll-bg)]"
                 >
                   {readiness.nextBestAction.label}
                 </Link>
@@ -93,7 +93,7 @@ export default function StudentExamsClient() {
               </div>
               <Link
                 href={`/student/exams/${exam.id}`}
-                className="mt-5 inline-flex min-h-11 items-center rounded-xl bg-[var(--ll-yellow)] px-4 py-2 text-sm font-semibold text-[var(--ll-text-faint)] hover:bg-[var(--ll-yellow-soft)]"
+                className="mt-5 inline-flex min-h-11 items-center rounded-xl bg-[var(--ll-yellow)] px-4 py-2 text-sm font-semibold text-[var(--ll-bg)] hover:opacity-90"
               >
                 Start Exam
               </Link>

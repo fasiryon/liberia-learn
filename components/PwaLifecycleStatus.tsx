@@ -74,7 +74,7 @@ export function PwaLifecycleStatus() {
     <div role="status" aria-live="polite" className="fixed bottom-4 left-4 z-50 max-w-sm rounded-xl border border-[var(--ll-border)] bg-[var(--ll-surface)] px-4 py-3 text-sm text-[var(--ll-text)] shadow-xl">
       <p>{copy}</p>
       {(state === "update" || state === "required") && registration?.waiting && (
-        <button type="button" onClick={activateUpdate} className="mt-2 rounded-lg bg-[var(--ll-yellow)] px-3 py-1.5 text-xs font-semibold text-[var(--ll-text-faint)]">
+        <button type="button" onClick={activateUpdate} className="mt-2 rounded-lg bg-[var(--ll-yellow)] px-3 py-1.5 text-xs font-semibold text-[var(--ll-bg)]">
           Update LiberiaLearn
         </button>
       )}

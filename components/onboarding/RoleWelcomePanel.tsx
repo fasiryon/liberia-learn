@@ -92,7 +92,7 @@ export function RoleWelcomePanel({
       <div className="mt-3">
         <Link
           href={primaryAction.href}
-          className="inline-flex min-h-10 items-center justify-center rounded-lg bg-[var(--ll-accent)] px-5 py-2.5 text-sm font-semibold text-[var(--ll-text-faint)] transition-opacity hover:opacity-90"
+          className="inline-flex min-h-10 items-center justify-center rounded-lg bg-[var(--ll-accent)] px-5 py-2.5 text-sm font-semibold text-[var(--ll-bg)] transition-opacity hover:opacity-90"
         >
           {primaryAction.label}
         </Link>

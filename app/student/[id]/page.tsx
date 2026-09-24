@@ -110,7 +110,7 @@ export default function StudentProfilePage({ params }: StudentProfilePageProps) 
             </p>
             <Link
               href="/placement"
-              className="inline-flex w-full items-center justify-center rounded-xl bg-[var(--ll-yellow)] px-4 py-2.5 text-sm font-semibold text-[var(--ll-text-faint)] hover:bg-[var(--ll-yellow-soft)] transition-colors"
+              className="inline-flex w-full items-center justify-center rounded-xl bg-[var(--ll-yellow)] px-4 py-2.5 text-sm font-semibold text-[var(--ll-bg)] hover:opacity-90 transition-colors"
             >
               View / Run Placement Test
             </Link>

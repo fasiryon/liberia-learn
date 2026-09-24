@@ -207,7 +207,7 @@ export default function GuardianLinkPage() {
               <button
                 type="submit"
                 disabled={submitting}
-                className="rounded-xl bg-[var(--ll-yellow)] px-6 py-2.5 text-sm font-semibold text-[var(--ll-text-faint)] shadow-lg shadow-emerald-500/40 hover:bg-[var(--ll-yellow-soft)] disabled:opacity-60"
+                className="rounded-xl bg-[var(--ll-yellow)] px-6 py-2.5 text-sm font-semibold text-[var(--ll-bg)] shadow-lg shadow-emerald-500/40 hover:opacity-90 disabled:opacity-60"
               >
                 {submitting ? "Linking..." : "Link Guardian"}
               </button>

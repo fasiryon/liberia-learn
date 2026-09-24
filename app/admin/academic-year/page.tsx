@@ -336,7 +336,7 @@ export default function AcademicYearPage() {
               <button
                 type="submit"
                 disabled={saving}
-                className="rounded-xl bg-[var(--ll-yellow)] px-6 py-3 text-sm font-semibold text-[var(--ll-text-faint)] disabled:opacity-60"
+                className="rounded-xl bg-[var(--ll-yellow)] px-6 py-3 text-sm font-semibold text-[var(--ll-bg)] disabled:opacity-60"
               >
                 {saving ? "Saving..." : "Create Academic Year"}
               </button>
@@ -506,7 +506,7 @@ export default function AcademicYearPage() {
                     type="button"
                     onClick={() => runPromotion("promote")}
                     disabled={promoLoading || !promoTargetYearId}
-                    className="rounded-xl bg-[var(--ll-yellow)] px-5 py-2.5 text-sm font-semibold text-[var(--ll-text-faint)] disabled:opacity-50"
+                    className="rounded-xl bg-[var(--ll-yellow)] px-5 py-2.5 text-sm font-semibold text-[var(--ll-bg)] disabled:opacity-50"
                   >
                     {promoLoading ? "Working..." : "Promote Selected"}
                   </button>

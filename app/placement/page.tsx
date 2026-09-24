@@ -297,7 +297,7 @@ export default function PlacementTestPage() {
       <main className="flex min-h-screen items-center justify-center bg-[var(--ll-bg)] px-4 text-[var(--ll-text)]">
         <div className="w-full max-w-2xl">
           <div className="mb-8 text-center">
-            <div className="mb-4 inline-flex h-16 w-16 items-center justify-center rounded-xl bg-[var(--ll-yellow)] text-2xl font-black text-[var(--ll-text-faint)]">
+            <div className="mb-4 inline-flex h-16 w-16 items-center justify-center rounded-xl bg-[var(--ll-yellow)] text-2xl font-black text-[var(--ll-bg)]">
               L
             </div>
             <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-[var(--ll-yellow)]">
@@ -326,7 +326,7 @@ export default function PlacementTestPage() {
             </p>
             <button
               onClick={startTest}
-              className="w-full rounded-xl bg-[var(--ll-yellow)] px-6 py-3 font-semibold text-[var(--ll-text-faint)] transition-colors hover:bg-[var(--ll-yellow-soft)]"
+              className="w-full rounded-xl bg-[var(--ll-yellow)] px-6 py-3 font-semibold text-[var(--ll-bg)] transition-colors hover:opacity-90"
             >
               Start AI Placement Test
             </button>
@@ -543,7 +543,7 @@ export default function PlacementTestPage() {
             </Link>
             <button
               onClick={startTest}
-              className="w-full rounded-xl bg-[var(--ll-yellow)] px-6 py-3 font-semibold text-[var(--ll-text-faint)] transition-colors hover:bg-[var(--ll-yellow-soft)]"
+              className="w-full rounded-xl bg-[var(--ll-yellow)] px-6 py-3 font-semibold text-[var(--ll-bg)] transition-colors hover:opacity-90"
             >
               Retake placement test
             </button>
@@ -669,7 +669,7 @@ export default function PlacementTestPage() {
               <button
                 onClick={submitAnswer}
                 disabled={selectedAnswer === null}
-                className="w-full rounded-xl bg-[var(--ll-yellow)] px-6 py-3 font-semibold text-[var(--ll-text-faint)] transition-colors hover:bg-[var(--ll-yellow-soft)] disabled:cursor-not-allowed disabled:opacity-50"
+                className="w-full rounded-xl bg-[var(--ll-yellow)] px-6 py-3 font-semibold text-[var(--ll-bg)] transition-colors hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
               >
                 Submit answer
               </button>
@@ -688,7 +688,7 @@ export default function PlacementTestPage() {
             <p className="mt-2 text-sm text-[var(--ll-text-muted)]">Start the assessment again to continue.</p>
             <button
               onClick={startTest}
-              className="mt-4 rounded-xl bg-[var(--ll-yellow)] px-6 py-3 font-semibold text-[var(--ll-text-faint)] transition-colors hover:bg-[var(--ll-yellow-soft)]"
+              className="mt-4 rounded-xl bg-[var(--ll-yellow)] px-6 py-3 font-semibold text-[var(--ll-bg)] transition-colors hover:opacity-90"
             >
               Restart test
             </button>

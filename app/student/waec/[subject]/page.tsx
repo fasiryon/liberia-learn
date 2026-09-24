@@ -96,7 +96,7 @@ export default async function WaecSubjectDetailPage({ params }: { params: { subj
                 </div>
                 <Link
                   href={`/student/waec/${slug}/practice`}
-                  className="inline-flex items-center justify-center gap-2 rounded-lg bg-[var(--ll-yellow)] px-4 py-2.5 text-sm font-semibold text-[var(--ll-text-faint)] hover:opacity-90"
+                  className="inline-flex items-center justify-center gap-2 rounded-lg bg-[var(--ll-yellow)] px-4 py-2.5 text-sm font-semibold text-[var(--ll-bg)] hover:opacity-90"
                 >
                   {r.readiness == null ? "Take a placement assessment" : "Start practice"}
                   <ArrowRight className="h-4 w-4" />

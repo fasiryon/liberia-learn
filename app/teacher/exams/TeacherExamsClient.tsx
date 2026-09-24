@@ -146,7 +146,7 @@ export default function TeacherExamsClient() {
           <button
             type="submit"
             disabled={submitting}
-            className="rounded-xl bg-[var(--ll-yellow)] px-4 py-2 text-sm font-semibold text-[var(--ll-text-faint)] disabled:opacity-60"
+            className="rounded-xl bg-[var(--ll-yellow)] px-4 py-2 text-sm font-semibold text-[var(--ll-bg)] disabled:opacity-60"
           >
             {submitting ? "Generating..." : "Generate New Exam"}
           </button>

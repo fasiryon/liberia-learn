@@ -11,7 +11,7 @@ export default function AdminError({ error, reset }: { error: Error; reset: () =
         )}
         <div className="flex gap-3 justify-center">
           <button onClick={reset} className="rounded-xl bg-[var(--ll-surface-muted)] px-4 py-2 text-sm text-[var(--ll-text)] hover:bg-[var(--ll-surface-muted)]">Try Again</button>
-          <a href="/admin" className="rounded-xl bg-[var(--ll-yellow)] px-4 py-2 text-sm text-[var(--ll-text)] hover:bg-[var(--ll-yellow-soft)]">Return to Console</a>
+          <a href="/admin" className="rounded-xl bg-[var(--ll-yellow)] px-4 py-2 text-sm text-[var(--ll-bg)] hover:opacity-90">Return to Console</a>
         </div>
       </div>
     </div>

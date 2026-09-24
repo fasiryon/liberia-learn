@@ -118,7 +118,7 @@ export function GuidedOnboarding({ reopenKey = 0, onClose }: GuidedOnboardingPro
         {/* Action */}
         <button
           onClick={handleNext}
-          className="w-full rounded-xl bg-[var(--ll-yellow)] px-5 py-3.5 text-sm font-semibold text-[var(--ll-text-faint)] hover:bg-[var(--ll-yellow-soft)] active:scale-[0.98] transition-all"
+          className="w-full rounded-xl bg-[var(--ll-yellow)] px-5 py-3.5 text-sm font-semibold text-[var(--ll-bg)] hover:opacity-90 active:scale-[0.98] transition-all"
         >
           {last ? "Got it — let's go!" : "Next →"}
         </button>

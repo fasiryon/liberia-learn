@@ -452,7 +452,7 @@ export default function TeacherSchedulePage() {
             <button onClick={nextWeek} className="rounded-xl border border-[var(--ll-border)] px-3 py-1.5 text-xs text-[var(--ll-text)] hover:bg-[var(--ll-surface)]">Next &rarr;</button>
             <button
               onClick={() => setShowForm((v) => !v)}
-              className="rounded-xl bg-[var(--ll-yellow)] px-3 py-1.5 text-xs font-semibold text-[var(--ll-text-faint)] hover:bg-[var(--ll-yellow-soft)]"
+              className="rounded-xl bg-[var(--ll-yellow)] px-3 py-1.5 text-xs font-semibold text-[var(--ll-bg)] hover:opacity-90"
             >
               {showForm ? "Close" : "Schedule Lesson"}
             </button>
@@ -587,7 +587,7 @@ export default function TeacherSchedulePage() {
             <button
               type="submit"
               disabled={saving}
-              className="rounded-xl bg-[var(--ll-yellow)] px-6 py-2.5 text-sm font-semibold text-[var(--ll-text-faint)] hover:bg-[var(--ll-yellow-soft)] disabled:opacity-60"
+              className="rounded-xl bg-[var(--ll-yellow)] px-6 py-2.5 text-sm font-semibold text-[var(--ll-bg)] hover:opacity-90 disabled:opacity-60"
             >
               {saving ? "Scheduling..." : "Schedule Lesson"}
             </button>

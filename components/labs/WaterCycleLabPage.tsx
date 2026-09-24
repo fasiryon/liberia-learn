@@ -247,7 +247,7 @@ export default function WaterCycleLabPage() {
           <button
             type="button"
             onClick={() => setPaused((p) => !p)}
-            className="inline-flex min-h-10 items-center gap-1.5 rounded-xl bg-[var(--ll-accent)] px-4 py-2 text-sm font-semibold text-[var(--ll-text-faint)]"
+            className="inline-flex min-h-10 items-center gap-1.5 rounded-xl bg-[var(--ll-accent)] px-4 py-2 text-sm font-semibold text-[var(--ll-bg)]"
           >
             {paused ? <><Play className="h-4 w-4" />Play</> : <><Pause className="h-4 w-4" />Pause</>}
           </button>

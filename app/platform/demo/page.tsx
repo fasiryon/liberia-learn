@@ -65,7 +65,7 @@ export default function DemoModePage() {
           <button
             onClick={() => handleAction("simulate-activity", "Simulate")}
             disabled={loading !== null}
-            className="rounded-xl bg-[var(--ll-yellow)] px-5 py-2.5 text-sm font-semibold text-[var(--ll-text)] hover:bg-[var(--ll-yellow-soft)] disabled:opacity-50"
+            className="rounded-xl bg-[var(--ll-yellow)] px-5 py-2.5 text-sm font-semibold text-[var(--ll-bg)] hover:opacity-90 disabled:opacity-50"
           >
             {loading === "simulate-activity" ? "Simulating..." : "Simulate Student Activity"}
           </button>

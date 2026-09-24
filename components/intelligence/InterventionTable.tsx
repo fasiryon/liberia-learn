@@ -89,7 +89,7 @@ export function InterventionTable({
                     void onAction?.(item.id, "actioned");
                   })
                 }
-                className="min-h-10 rounded-full bg-[var(--ll-yellow)] px-4 py-2 text-xs font-semibold text-[var(--ll-text-faint)] disabled:opacity-50"
+                className="min-h-10 rounded-full bg-[var(--ll-yellow)] px-4 py-2 text-xs font-semibold text-[var(--ll-bg)] disabled:opacity-50"
               >
                 Mark actioned
               </button>

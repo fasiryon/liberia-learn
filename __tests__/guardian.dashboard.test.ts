@@ -709,3 +709,33 @@ describe("PATCH /api/guardian/messages/[id]/read", () => {
     );
   });
 });
+
+// ─── December assurance: unreviewed AI homework scores ──────────────────────
+
+describe("GET /api/guardian/dashboard — AI score release", () => {
+  function homework(id: string, overrides: Record<string, unknown>) {
+    return {
+      id,
+      submittedAt: new Date("2026-11-01T10:00:00Z"),
+      teacherScore: null,
+      aiScore: null,
+      aiReviewed: false,
+      Homework: { title: `Homework ${id}`, Class: { subject: "MATH" } },
+      ...overrides,
+    };
+  }
+
+  it("does not show an AI score before the submission is reviewed", async () => {
+    mockHomeworkSubmissionFindMany.mockResolvedValue([
+      homework("unreviewed", { aiScore: 35, aiReviewed: false }),
+      homework("reviewed", { aiScore: 80, aiReviewed: true }),
+      homework("teacher", { teacherScore: 90 }),
+    ]);
+    const res = await dashboardGET();
+    const data = await res.json();
+    const titles = data.children[0].recentGrades.map((g: { assignmentTitle: string }) => g.assignmentTitle);
+    expect(titles).not.toContain("Homework unreviewed");
+    expect(titles).toEqual(expect.arrayContaining(["Homework reviewed", "Homework teacher"]));
+    expect(JSON.stringify(data)).not.toContain('"score":35');
+  });
+});

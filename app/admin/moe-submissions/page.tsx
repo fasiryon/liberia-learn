@@ -124,7 +124,7 @@ export default function MoeSubmissionsPage() {
             <h1 className="text-2xl font-semibold text-[var(--ll-text)]">MOE Submissions</h1>
             <button
               onClick={() => { setShowForm(!showForm); setError(null); setSuccess(null); }}
-              className="rounded-xl bg-[var(--ll-yellow)] px-4 py-2 text-sm font-semibold text-[var(--ll-text)] hover:opacity-90"
+              className="rounded-xl bg-[var(--ll-yellow)] px-4 py-2 text-sm font-semibold text-[var(--ll-bg)] hover:opacity-90"
             >
               {showForm ? "Cancel" : "New Submission"}
             </button>
@@ -213,7 +213,7 @@ export default function MoeSubmissionsPage() {
             <button
               type="submit"
               disabled={submitting}
-              className="rounded-xl bg-[var(--ll-yellow)] px-5 py-2 text-sm font-semibold text-[var(--ll-text)] hover:opacity-90 disabled:opacity-40"
+              className="rounded-xl bg-[var(--ll-yellow)] px-5 py-2 text-sm font-semibold text-[var(--ll-bg)] hover:opacity-90 disabled:opacity-40"
             >
               {submitting ? "Uploading…" : "Submit to MOE"}
             </button>

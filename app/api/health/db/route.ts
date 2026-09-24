@@ -1,3 +1,4 @@
+// route-policy: auth=public; scope=none; authority=liveness-probe; rationale=unauthenticated readiness probe that returns no driver error text outside development
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { logger } from "@/lib/logger";
@@ -38,8 +39,11 @@ export async function GET() {
   } catch (err: unknown) {
     const message = err instanceof Error ? err.message : String(err);
     logger.error("[health/db] query failed", { errorMessage: message });
-    const errResponse: Record<string, unknown> = { ok: false, error: message, ts: new Date().toISOString() };
+    // Public, unauthenticated endpoint: driver errors can name the database
+    // host, so the raw message stays in the server log outside development.
+    const errResponse: Record<string, unknown> = { ok: false, error: "database_unreachable", ts: new Date().toISOString() };
     if (process.env.NODE_ENV === "development") {
+      errResponse.error = message;
       errResponse.conn = conn;
     }
     return NextResponse.json(errResponse, { status: 503 });

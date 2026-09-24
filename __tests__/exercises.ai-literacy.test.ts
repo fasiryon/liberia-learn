@@ -369,6 +369,7 @@ describe("POST /api/grading/ai-literacy", () => {
     mockPrisma.student.findFirst.mockResolvedValue({ id: "student-1" });
     mockPrisma.gradedSubmission.findUnique.mockResolvedValue({
       id: "existing-sub",
+      studentId: "student-1",
       score: 0.75,
       status: "graded",
     });

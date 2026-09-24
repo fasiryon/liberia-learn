@@ -65,7 +65,7 @@ export default async function HomePage() {
               Ministry Officials
             </Link>
             <Link href="/login">
-              <span className="ll-interactive inline-flex min-h-11 items-center gap-1.5 rounded-lg bg-[var(--ll-accent)] px-5 py-2 font-semibold text-[var(--ll-text-faint)]">
+              <span className="ll-interactive inline-flex min-h-11 items-center gap-1.5 rounded-lg bg-[var(--ll-accent)] px-5 py-2 font-semibold text-[var(--ll-bg)]">
                 <LogIn className="h-4 w-4" strokeWidth={1.5} />
                 Log in
               </span>

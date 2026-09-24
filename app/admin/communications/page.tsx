@@ -32,7 +32,7 @@ export default function AdminCommunicationsPage() {
     <main className="ll-dashboard-shell px-4 py-5 text-[var(--ll-text)]">
       <div className="ll-page-enter mx-auto max-w-5xl space-y-5">
         <Link
-          href="/admin/dashboard"
+          href="/admin"
           className="inline-flex items-center gap-1 text-sm text-[var(--ll-text-muted)] hover:text-[var(--ll-yellow)] mb-4 transition-colors"
         >
           <ChevronLeft className="w-4 h-4" />

@@ -245,7 +245,7 @@ describe("POST /api/grading/code", () => {
   });
 
   it("idempotency: same clientSubmissionId returns existing submission", async () => {
-    const existing = { id: "sub-existing", score: 0.5, status: "graded" };
+    const existing = { id: "sub-existing", studentId: "student-1", score: 0.5, status: "graded" };
     mockPrisma.gradedSubmission.findUnique.mockResolvedValueOnce(existing);
 
     const { POST } = await import("@/app/api/grading/code/route");

@@ -137,7 +137,7 @@ export default function TeacherPlacementsPage() {
                       <td className="px-4 py-4">
                         <Link
                           href={`/teacher/placements/${placement.id}`}
-                          className="inline-flex rounded-xl bg-[var(--ll-yellow)] px-4 py-2 font-semibold text-[var(--ll-text-faint)] hover:bg-[var(--ll-yellow-soft)]"
+                          className="inline-flex rounded-xl bg-[var(--ll-yellow)] px-4 py-2 font-semibold text-[var(--ll-bg)] hover:opacity-90"
                         >
                           Review
                         </Link>

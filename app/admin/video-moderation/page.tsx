@@ -97,7 +97,7 @@ export default function VideoModerationPage() {
   return (
     <main className="ll-page-enter min-h-screen bg-[var(--ll-bg)] px-4 py-8 text-[var(--ll-text)]">
       <div className="ll-dashboard-shell mx-auto max-w-5xl space-y-6">
-        <Link href="/admin/dashboard" className="text-sm text-[var(--ll-yellow)] hover:opacity-80">
+        <Link href="/admin" className="text-sm text-[var(--ll-yellow)] hover:opacity-80">
           &larr; Dashboard
         </Link>
         <AdminNav />

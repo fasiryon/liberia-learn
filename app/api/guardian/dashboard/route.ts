@@ -1,3 +1,4 @@
+// route-policy: auth=session; scope=record; authority=guardian-link; rationale=returns only linked children; AI scores appear only after review
 // app/api/guardian/dashboard/route.ts
 //
 // GET /api/guardian/dashboard
@@ -130,11 +131,13 @@ export async function GET() {
 
         const recentGrades = [
           ...hwSubmissions
-            .filter((s) => s.teacherScore !== null || s.aiScore !== null)
+            // An AI score is shown only once the submission is marked
+            // reviewed, matching the other guardian and student surfaces.
+            .filter((s) => s.teacherScore !== null || (s.aiReviewed && s.aiScore !== null))
             .map((s) => ({
               subject: String(s.Homework.Class.subject),
               assignmentTitle: s.Homework.title,
-              score: s.teacherScore ?? s.aiScore ?? 0,
+              score: s.teacherScore ?? (s.aiReviewed ? s.aiScore : null) ?? 0,
               maxScore: 100,
               date: s.submittedAt.toISOString(),
             })),

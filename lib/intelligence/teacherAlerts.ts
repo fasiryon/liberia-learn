@@ -120,7 +120,7 @@ function buildTeacherAlertAction(row: TeacherAlertRowLike): TeacherAlertActionPa
         label: "Prepare remediation",
         actionType: "ASSIGN_REMEDIATION_REVIEW",
         status: row.studentId && row.weakLesson ? "available" : "needs_review",
-        href: row.studentId ? `/teacher/students/${row.studentId}` : "/teacher/interventions",
+        href: row.studentId ? `/teacher/students/${row.studentId}` : "/teacher/intelligence",
       };
     case "INACTIVE_STUDENT":
       return {
@@ -128,7 +128,7 @@ function buildTeacherAlertAction(row: TeacherAlertRowLike): TeacherAlertActionPa
         label: "Record follow-up",
         actionType: "RECORD_FOLLOW_UP",
         status: row.studentId ? "available" : "needs_review",
-        href: row.studentId ? `/teacher/students/${row.studentId}` : "/teacher/interventions",
+        href: row.studentId ? `/teacher/students/${row.studentId}` : "/teacher/intelligence",
       };
     case "UNRESOLVED_INTERVENTION":
       return {
@@ -136,7 +136,7 @@ function buildTeacherAlertAction(row: TeacherAlertRowLike): TeacherAlertActionPa
         label: "Review intervention",
         actionType: "REVIEW_INTERVENTION",
         status: row.studentId ? "available" : "needs_review",
-        href: "/teacher/interventions",
+        href: "/teacher/intelligence",
       };
     case "ASSIGNMENT_MISSED_BY_GROUP":
       return {

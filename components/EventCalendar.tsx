@@ -160,7 +160,7 @@ function CompactView({
             <span className="text-[10px] text-[var(--ll-text-faint)]">{dayLabel[day.getDay()]}</span>
             <div className={`flex h-7 w-7 items-center justify-center rounded-full text-xs font-semibold ${
               isToday(day)
-                ? "bg-[var(--ll-accent)] text-[var(--ll-text-faint)]"
+                ? "bg-[var(--ll-accent)] text-[var(--ll-bg)]"
                 : "text-[var(--ll-text-muted)]"
             }`}>
               {day.getDate()}
@@ -253,11 +253,11 @@ function FullView({
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <button type="button" onClick={prevMonth} className="rounded-lg border border-[var(--ll-border)] p-1.5 text-[var(--ll-text-muted)] hover:text-[var(--ll-text)]">
+        <button type="button" onClick={prevMonth} aria-label="Previous month" className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-lg border border-[var(--ll-border)] p-1.5 text-[var(--ll-text-muted)] hover:text-[var(--ll-text)]">
           <ChevronLeft className="h-4 w-4" strokeWidth={1.5} />
         </button>
         <h2 className="text-base font-semibold text-[var(--ll-text)]">{monthLabel}</h2>
-        <button type="button" onClick={nextMonth} className="rounded-lg border border-[var(--ll-border)] p-1.5 text-[var(--ll-text-muted)] hover:text-[var(--ll-text)]">
+        <button type="button" onClick={nextMonth} aria-label="Next month" className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-lg border border-[var(--ll-border)] p-1.5 text-[var(--ll-text-muted)] hover:text-[var(--ll-text)]">
           <ChevronRight className="h-4 w-4" strokeWidth={1.5} />
         </button>
       </div>
