@@ -1,113 +1,23 @@
-// app/api/student/placement/route.ts
+// route-policy: auth=session; scope=record; authority=retired-client-placement; rationale=client-computed placement results are no longer accepted; replaced by /api/student/placement/sessions
 import { NextResponse } from "next/server";
-// route-policy: auth=session; scope=tenant; authority=student-membership; rationale=diagnostic placement is tenant-bound and cannot change administrative grade
 import { requireRole } from "@/lib/auth";
-import { logAudit } from "@/lib/audit";
-import { prisma } from "@/lib/db";
-import { getPlacementBand, placementBandLabels } from "@/lib/placement";
 
-export async function POST(req: Request) {
+export const dynamic = "force-dynamic";
+
+// Retired by server-authoritative placement V1: the browser no longer
+// receives answer keys, decides correctness, or submits score/band/grade.
+export async function POST() {
   try {
-    const user = await requireRole("STUDENT");
-
-    const student = await prisma.student.findFirst({
-      where: {
-        userId: user.id,
-        user: { schoolId: user.schoolId ?? null },
-      },
-      select: { id: true, currentGrade: true },
-    });
-
-    if (!student) {
-      return NextResponse.json({ error: "Student record not found" }, { status: 404 });
-    }
-
-    const body = await req.json();
-
-    const {
-      estimatedGrade,
-      rawScore,
-      totalQuestions,
-      details,
-      questions,
-      answers,
-      aiAnalysis,
-    } = body ?? {};
-
-    // The score is still client-computed (answer custody is client-side), but
-    // it must be internally consistent and in range before it becomes
-    // evidence a teacher can confirm into Student.currentGrade. The band is
-    // derived here, never accepted from the client.
-    if (
-      !Number.isInteger(estimatedGrade) ||
-      estimatedGrade < 1 ||
-      estimatedGrade > 12 ||
-      !Number.isInteger(rawScore) ||
-      !Number.isInteger(totalQuestions) ||
-      totalQuestions < 1 ||
-      totalQuestions > 200 ||
-      rawScore < 0 ||
-      rawScore > totalQuestions ||
-      (Array.isArray(answers) && answers.length !== totalQuestions)
-    ) {
-      return NextResponse.json(
-        { error: "Missing or invalid placement payload" },
-        { status: 400 }
-      );
-    }
-
-    const band = getPlacementBand(rawScore, totalQuestions);
-    const levelLabel = placementBandLabels[band];
-
-    const placementData: any = {
-      studentId: student.id,
-      band,
-      levelLabel,
-      estimatedGrade,
-      rawScore,
-      totalQuestions,
-      details: details ?? null,
-      questions: questions ?? null,
-      answers: answers ?? null,
-      aiAnalysis: aiAnalysis ?? null,
-    };
-
-    // Placement is diagnostic evidence only. Administrative grade changes
-    // remain behind teacher review and the enrollment/promotion authority.
-    const placement = await prisma.placementTest.create({ data: placementData });
-
-    await logAudit({
-      userId: user.id,
-      schoolId: user.schoolId ?? null,
-      action: "student.placement.created",
-      resourceType: "placement_test",
-      resourceId: placement.id,
-      details: {
-        band,
-        estimatedGrade,
-        rawScore,
-        totalQuestions,
-      },
-    });
-
-    return NextResponse.json(
-      {
-        ok: true,
-        placement,
-        currentGrade: student.currentGrade,
-        recommendedGrade: estimatedGrade,
-        administrativeGradeChanged: false,
-      },
-      { status: 200 }
-    );
+    await requireRole("STUDENT");
   } catch (err: any) {
-    if (err?.status === 401 || err?.status === 403) {
-      return NextResponse.json({ error: err.message }, { status: err.status });
-    }
-    console.error("Placement API error:", err);
-    return NextResponse.json(
-      { error: "Failed to record placement test" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: err?.message ?? "Unauthorized" }, { status: err?.status ?? 401 });
   }
+  return NextResponse.json(
+    {
+      error: "This placement endpoint has been retired. Use the server-held placement session.",
+      code: "placement_endpoint_retired",
+      replacement: "/api/student/placement/sessions",
+    },
+    { status: 410 }
+  );
 }

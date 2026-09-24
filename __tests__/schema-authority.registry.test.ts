@@ -93,8 +93,8 @@ describe("layered schema authority registry", () => {
     );
     expect(postgresManifest.security.rls).toMatchObject({
       selector: "ALL_PUBLIC_TABLES",
-      expectedTableCount: 233,
-      expectedEnabledCount: 233,
+      expectedTableCount: 237,
+      expectedEnabledCount: 237,
     });
     expect(postgresManifest.security.grants.production.anonAuthenticatedGrantCount).toBe(0);
     expect(postgresManifest.security.grants.cleanBootstrap.p2cAnonAuthenticatedGrantCount).toBe(0);

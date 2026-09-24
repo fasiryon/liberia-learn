@@ -570,15 +570,6 @@ export default function OnboardingPage() {
                 ))}
               </div>
 
-              <a
-                href="/student/today"
-                target="_blank"
-                rel="noreferrer"
-                className="flex items-center justify-center gap-2 rounded-xl border border-[var(--ll-border)] px-6 py-3 text-sm font-medium text-[var(--ll-text)] hover:border-[var(--ll-border-strong)]"
-              >
-                Preview Student Experience ↗
-              </a>
-
               <button
                 onClick={handleComplete}
                 disabled={saving}

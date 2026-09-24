@@ -78,6 +78,12 @@ export const PERMISSIONS = {
   COHORT_SUPPRESS: "cohort:reporting:suppress",
   /** View the agent platform admin surfaces (invocations, cost, goals, escalations). */
   AGENT_PLATFORM_VIEW: "agent:platform:view",
+
+  //  Placement (server-authoritative placement V1)
+  /** Inspect a placement result and record an instructional recommendation. Never changes grade. */
+  PLACEMENT_REVIEW: "placement:result:review",
+  /** Make the official placement decision that sets Student.currentGrade. */
+  PLACEMENT_CONFIRM: "placement:grade:confirm",
 } as const;
 
 export type Permission = (typeof PERMISSIONS)[keyof typeof PERMISSIONS];
@@ -119,6 +125,9 @@ export const ROLE_PERMISSIONS: Record<string, ReadonlySet<Permission>> = {
     PERMISSIONS.DASHBOARD_SCHOOL_IMPACT,
     PERMISSIONS.DASHBOARD_SCHOOL_INTERVENTIONS,
     PERMISSIONS.VIEW_SCHOOL_DASHBOARD,
+    // School placement/enrollment authority
+    PERMISSIONS.PLACEMENT_REVIEW,
+    PERMISSIONS.PLACEMENT_CONFIRM,
   ]),
   DISTRICT_ADMIN: new Set<Permission>([
     PERMISSIONS.DASHBOARD_SCHOOL_IMPACT,
@@ -166,7 +175,8 @@ export const ROLE_PERMISSIONS: Record<string, ReadonlySet<Permission>> = {
     PERMISSIONS.DASHBOARD_SCHOOL_IMPACT,
     PERMISSIONS.DASHBOARD_SCHOOL_INTERVENTIONS,
   ]),
-  TEACHER: new Set<Permission>([]),
+  // Teachers review placements; they do not hold official-grade authority.
+  TEACHER: new Set<Permission>([PERMISSIONS.PLACEMENT_REVIEW]),
   STUDENT: new Set<Permission>([]),
   GUARDIAN: new Set<Permission>([]),
 } as const;

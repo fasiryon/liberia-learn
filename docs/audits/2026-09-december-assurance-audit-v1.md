@@ -65,3 +65,9 @@ No new learner-state writer or parallel educational authority was added:
 - `lib/discussion/access.ts` reuses the existing scope rule from the discussion list and create routes.
 - `evidenceCount` is read-only metadata.
 - Lesson replay protection removes duplicate evidence and adds no new evidence.
+
+## Follow-up: closed by server-authoritative placement V1
+
+- Closed: D01, F11, D04, D07, D08, D09 and D10.
+- Landed as explicit policy: D03 (the MOE live display stays authenticated) and D06 (no anonymous portfolio sharing).
+- Details: `docs/SERVER_AUTHORITATIVE_PLACEMENT_V1.md`.

@@ -3,249 +3,606 @@
   "base": "bec602d859fed1b101fcbc6f4895da999f70b0b7",
   "date": "2026-09-24",
   "method": "Static repository audit (route/page/service reading, heuristic sweeps for unscoped IDs, nav reachability scan, token contrast computation) plus focused and hostile Vitest. No live Supabase/Vercel access; no staging/production mutation.",
-  "severityCounts": { "P0": 3, "P1": 6, "P2": 10, "P3": 7 },
+  "severityCounts": {
+    "P0": 3,
+    "P1": 6,
+    "P2": 10,
+    "P3": 7
+  },
   "findings": [
     {
-      "id": "F01", "lens": ["child-privacy-security", "teacher", "student"], "severity": "P0",
+      "id": "F01",
+      "lens": [
+        "child-privacy-security",
+        "teacher",
+        "student"
+      ],
+      "severity": "P0",
       "finding": "Discussion per-ID routes had no tenant/class scope: any TEACHER/ADMIN could approve moderation-held Grade 1-6 posts, delete, lock or pin threads in any school; a school ADMIN could read another school's thread posts; any STUDENT could flag/upvote/delete-own in classes they are not enrolled in.",
-      "affectedRole": ["TEACHER", "ADMIN", "STUDENT"],
-      "location": ["app/api/discussion/posts/[postId]/approve/route.ts", "app/api/discussion/posts/[postId]/flag/route.ts", "app/api/discussion/posts/[postId]/route.ts", "app/api/discussion/posts/[postId]/upvote/route.ts", "app/api/discussion/threads/[threadId]/lock/route.ts", "app/api/discussion/threads/[threadId]/pin/route.ts", "app/api/discussion/threads/[threadId]/route.ts", "app/api/discussion/threads/[threadId]/posts/route.ts"],
+      "affectedRole": [
+        "TEACHER",
+        "ADMIN",
+        "STUDENT"
+      ],
+      "location": [
+        "app/api/discussion/posts/[postId]/approve/route.ts",
+        "app/api/discussion/posts/[postId]/flag/route.ts",
+        "app/api/discussion/posts/[postId]/route.ts",
+        "app/api/discussion/posts/[postId]/upvote/route.ts",
+        "app/api/discussion/threads/[threadId]/lock/route.ts",
+        "app/api/discussion/threads/[threadId]/pin/route.ts",
+        "app/api/discussion/threads/[threadId]/route.ts",
+        "app/api/discussion/threads/[threadId]/posts/route.ts"
+      ],
       "evidence": "Routes called requireRole then acted on params id with findUnique/update and no class/school predicate; list/create routes already enforced enrollment/same-school.",
       "impact": "Cross-tenant bypass of the child-post moderation hold and cross-tenant read of children's posts.",
-      "fixStatus": "FIXED", "fix": "lib/discussion/access.ts applies the list/create scope rule to every per-ID route.",
+      "fixStatus": "FIXED",
+      "fix": "lib/discussion/access.ts applies the list/create scope rule to every per-ID route.",
       "closureTest": "__tests__/sprint7.discussion.test.ts (describe: discussion routes - tenant/class scope (hostile))",
       "externalDependency": null
     },
     {
-      "id": "F02", "lens": ["child-privacy-security", "student"], "severity": "P0",
+      "id": "F02",
+      "lens": [
+        "child-privacy-security",
+        "student"
+      ],
+      "severity": "P0",
       "finding": "POST /api/packs/week trusted body.audience and body.classId: a STUDENT sending audience=teacher received an unstripped pack (answerKey, correctAnswer, modelAnswer, teacherNotes); any role could pack another school's class; a teacher with no classId generated an unscoped platform-wide pack.",
-      "affectedRole": ["STUDENT", "TEACHER", "ADMIN"],
-      "location": ["app/api/packs/week/route.ts", "lib/packs/generatePack.ts"],
+      "affectedRole": [
+        "STUDENT",
+        "TEACHER",
+        "ADMIN"
+      ],
+      "location": [
+        "app/api/packs/week/route.ts",
+        "lib/packs/generatePack.ts"
+      ],
       "evidence": "generatePack strips keys only when pack.audience === 'student'; scheduledWork query omits classId filter when classId is null.",
       "impact": "Answer-key exposure to learners and cross-tenant access to school-private lessons.",
-      "fixStatus": "FIXED", "fix": "Students are forced to the student edition and to an enrolled class; staff classId must be in their school; no class -> 400.",
+      "fixStatus": "FIXED",
+      "fix": "Students are forced to the student edition and to an enrolled class; staff classId must be in their school; no class -> 400.",
       "closureTest": "__tests__/packs/packWeek.authz.test.ts; __tests__/packs/packs.test.ts",
       "externalDependency": null
     },
     {
-      "id": "F03", "lens": ["teacher", "child-privacy-security"], "severity": "P0",
+      "id": "F03",
+      "lens": [
+        "teacher",
+        "child-privacy-security"
+      ],
+      "severity": "P0",
       "finding": "/teacher/student/[id] rendered any student's name, email, community/county, grades, homework and placement to any TEACHER nationally; the roster check was commented out ('For now just let them in'). It also displayed a fabricated default location ('New Kru Town, Montserrado') for students without one.",
-      "affectedRole": ["TEACHER"],
-      "location": ["app/teacher/student/[id]/page.tsx"],
+      "affectedRole": [
+        "TEACHER"
+      ],
+      "location": [
+        "app/teacher/student/[id]/page.tsx"
+      ],
       "evidence": "teachesStudent computed but its redirect was commented out.",
       "impact": "National cross-tenant child PII read; misleading learner data.",
-      "fixStatus": "FIXED", "fix": "Enforces the getTeacherScope rule (enrolled in a class the teacher teaches at their school); shows 'Location not recorded'.",
+      "fixStatus": "FIXED",
+      "fix": "Enforces the getTeacherScope rule (enrolled in a class the teacher teaches at their school); shows 'Location not recorded'.",
       "closureTest": "__tests__/teacher/teacherStudentProfile.authz.test.ts",
       "externalDependency": null
     },
     {
-      "id": "F04", "lens": ["child-privacy-security", "admin-moe"], "severity": "P1",
+      "id": "F04",
+      "lens": [
+        "child-privacy-security",
+        "admin-moe"
+      ],
+      "severity": "P1",
       "finding": "POST /api/certificates/[id]/share let a school ADMIN mint a public share link (containing the learner's name) for any school's certificate.",
-      "affectedRole": ["ADMIN"],
-      "location": ["app/api/certificates/[id]/share/route.ts"],
+      "affectedRole": [
+        "ADMIN"
+      ],
+      "location": [
+        "app/api/certificates/[id]/share/route.ts"
+      ],
       "evidence": "Ownership check applied only to role STUDENT.",
       "impact": "Cross-tenant publication of a child's name via a public URL.",
-      "fixStatus": "FIXED", "fix": "Non-platform ADMIN must share the learner's school.",
+      "fixStatus": "FIXED",
+      "fix": "Non-platform ADMIN must share the learner's school.",
       "closureTest": "__tests__/certificates/share.test.ts",
       "externalDependency": null
     },
     {
-      "id": "F05", "lens": ["admin-moe", "child-privacy-security"], "severity": "P1",
+      "id": "F05",
+      "lens": [
+        "admin-moe",
+        "child-privacy-security"
+      ],
+      "severity": "P1",
       "finding": "GET /api/moe/waec-readiness (reachable by MOE and school ADMIN) returned exact per-county and per-subject readiness averages for cohorts of 1-4 learners, unlike every other MOE aggregate which suppresses cohorts under 5.",
-      "affectedRole": ["MOE_OFFICIAL", "MOE_SUPER_ADMIN", "ADMIN"],
-      "location": ["lib/waec/aggregate.ts#getNationalWaecReadiness", "components/waec/WaecPanels.tsx"],
+      "affectedRole": [
+        "MOE_OFFICIAL",
+        "MOE_SUPER_ADMIN",
+        "ADMIN"
+      ],
+      "location": [
+        "lib/waec/aggregate.ts#getNationalWaecReadiness",
+        "components/waec/WaecPanels.tsx"
+      ],
       "evidence": "No MIN_COHORT check; county rows built from any n > 0.",
       "impact": "Small-cell re-identification of individual learners' readiness.",
-      "fixStatus": "FIXED", "fix": "Applies the existing 5-learner minimum; suppressed rows carry suppressed=true and render 'Fewer than 5 students'; zero stays 'no data'.",
+      "fixStatus": "FIXED",
+      "fix": "Applies the existing 5-learner minimum; suppressed rows carry suppressed=true and render 'Fewer than 5 students'; zero stays 'no data'.",
       "closureTest": "__tests__/waec/nationalAggregate.suppression.test.ts",
       "externalDependency": null
     },
     {
-      "id": "F06", "lens": ["guardian"], "severity": "P1",
+      "id": "F06",
+      "lens": [
+        "guardian"
+      ],
+      "severity": "P1",
       "finding": "Guardian progress presented 'no evidence' as a zero score: a child with no scored work got avgScore 0 -> 'struggling' and home-intervention advice.",
-      "affectedRole": ["GUARDIAN"],
-      "location": ["app/api/guardian/performance/route.ts", "lib/intelligence/performanceAggregator.ts"],
+      "affectedRole": [
+        "GUARDIAN"
+      ],
+      "location": [
+        "app/api/guardian/performance/route.ts",
+        "lib/intelligence/performanceAggregator.ts"
+      ],
       "evidence": "average([]) returns 0; masteryLevelForScore(0) = 'struggling'.",
       "impact": "Misleading family-facing educational judgement (unavailable != zero).",
-      "fixStatus": "FIXED", "fix": "Aggregator exposes evidenceCount; route returns hasEvidence=false and the existing empty state renders.",
+      "fixStatus": "FIXED",
+      "fix": "Aggregator exposes evidenceCount; route returns hasEvidence=false and the existing empty state renders.",
       "closureTest": "__tests__/intelligence.guardian-route.test.ts",
       "externalDependency": null
     },
     {
-      "id": "F07", "lens": ["guardian"], "severity": "P2",
+      "id": "F07",
+      "lens": [
+        "guardian"
+      ],
+      "severity": "P2",
       "finding": "Guardian progress always showed an arbitrary first linked child (no child switching) and queried evidence with the guardian's schoolId instead of the child's school.",
-      "affectedRole": ["GUARDIAN"],
-      "location": ["app/api/guardian/performance/route.ts", "app/guardian/progress/GuardianProgressClient.tsx"],
+      "affectedRole": [
+        "GUARDIAN"
+      ],
+      "location": [
+        "app/api/guardian/performance/route.ts",
+        "app/guardian/progress/GuardianProgressClient.tsx"
+      ],
       "evidence": "studentGuardian.findFirst without studentId/order; getStudentPerformanceSummary(link.studentId, user.schoolId).",
       "impact": "Multi-child families cannot see each child; children at other schools show empty data.",
-      "fixStatus": "FIXED", "fix": "?studentId selection verified against links, deterministic default, child's school used, child selector in UI.",
+      "fixStatus": "FIXED",
+      "fix": "?studentId selection verified against links, deterministic default, child's school used, child selector in UI.",
       "closureTest": "__tests__/intelligence.guardian-route.test.ts",
       "externalDependency": null
     },
     {
-      "id": "F08", "lens": ["child-privacy-security"], "severity": "P2",
+      "id": "F08",
+      "lens": [
+        "child-privacy-security"
+      ],
+      "severity": "P2",
       "finding": "GET /api/packs/[packId]/download let any TEACHER/ADMIN download any pack by id (teacher packs contain answer keys and school-private lessons); the sibling metadata route already restricted to the requester.",
-      "affectedRole": ["TEACHER", "ADMIN"],
-      "location": ["app/api/packs/[packId]/download/route.ts"],
+      "affectedRole": [
+        "TEACHER",
+        "ADMIN"
+      ],
+      "location": [
+        "app/api/packs/[packId]/download/route.ts"
+      ],
       "evidence": "Requester check applied only to STUDENT.",
       "impact": "Cross-tenant IDOR on private curriculum content.",
-      "fixStatus": "FIXED", "fix": "Requester-only, 404 otherwise.",
+      "fixStatus": "FIXED",
+      "fix": "Requester-only, 404 otherwise.",
       "closureTest": "__tests__/packs/packDownload.authz.test.ts",
       "externalDependency": null
     },
     {
-      "id": "F09", "lens": ["student", "child-privacy-security"], "severity": "P2",
+      "id": "F09",
+      "lens": [
+        "student",
+        "child-privacy-security"
+      ],
+      "severity": "P2",
       "finding": "Legacy /assignments/[id] page let any student view any school's homework; POST /api/student/homework/[id]/submit accepted submissions to any class in the student's school.",
-      "affectedRole": ["STUDENT"],
-      "location": ["app/assignments/[id]/page.tsx", "app/api/student/homework/[id]/submit/route.ts"],
+      "affectedRole": [
+        "STUDENT"
+      ],
+      "location": [
+        "app/assignments/[id]/page.tsx",
+        "app/api/student/homework/[id]/submit/route.ts"
+      ],
       "evidence": "homework.findUnique by id only; submit scoped by schoolId only.",
       "impact": "Cross-tenant content read; submissions attached to classes the learner does not belong to.",
-      "fixStatus": "FIXED", "fix": "Both require enrollment in the homework's class (same rule as /student/assignments/[id]).",
+      "fixStatus": "FIXED",
+      "fix": "Both require enrollment in the homework's class (same rule as /student/assignments/[id]).",
       "closureTest": "__tests__/student/homeworkSubmit.authz.test.ts",
       "externalDependency": null
     },
     {
-      "id": "F10", "lens": ["failure-recovery", "student", "guardian"], "severity": "P1",
+      "id": "F10",
+      "lens": [
+        "failure-recovery",
+        "student",
+        "guardian"
+      ],
+      "severity": "P1",
       "finding": "Lesson completion was not idempotent: a double-tap or retry after a lost response re-ran mastery update, streak, certificate check and guardian/teacher notification.",
-      "affectedRole": ["STUDENT", "GUARDIAN"],
-      "location": ["lib/student/completeScheduledLesson.ts", "app/api/student/lessons/[id]/complete/route.ts"],
+      "affectedRole": [
+        "STUDENT",
+        "GUARDIAN"
+      ],
+      "location": [
+        "lib/student/completeScheduledLesson.ts",
+        "app/api/student/lessons/[id]/complete/route.ts"
+      ],
       "evidence": "StudentProgress upsert was idempotent but every side effect ran unconditionally.",
       "impact": "One lesson counted as multiple mastery evidence events; duplicate paid SMS to guardians.",
-      "fixStatus": "FIXED", "fix": "Identical resubmission of an already-completed lesson returns the stored result with no side effects. Whether a changed resubmission should count is left to educational policy.",
+      "fixStatus": "FIXED",
+      "fix": "Identical resubmission of an already-completed lesson returns the stored result with no side effects. Whether a changed resubmission should count is left to educational policy.",
       "closureTest": "__tests__/student.lesson-delivery.test.ts",
       "externalDependency": null
     },
     {
-      "id": "F11", "lens": ["student", "teacher", "admin-moe"], "severity": "P1",
+      "id": "F11",
+      "lens": [
+        "student",
+        "teacher",
+        "admin-moe"
+      ],
+      "severity": "P1",
       "finding": "POST /api/student/placement accepted any client band/levelLabel/estimatedGrade/rawScore (e.g. grade 12, rawScore > totalQuestions); a single teacher 'confirm' copies estimatedGrade into Student.currentGrade.",
-      "affectedRole": ["STUDENT", "TEACHER"],
-      "location": ["app/api/student/placement/route.ts", "app/api/teacher/placements/[id]/review/route.ts"],
+      "affectedRole": [
+        "STUDENT",
+        "TEACHER"
+      ],
+      "location": [
+        "app/api/student/placement/route.ts",
+        "app/api/teacher/placements/[id]/review/route.ts"
+      ],
       "evidence": "Only typeof checks; band/label stored as sent.",
       "impact": "Forged diagnostic evidence one click from an administrative grade change.",
-      "fixStatus": "PARTIALLY FIXED", "fix": "Server now enforces integer grade 1-12, 0 <= rawScore <= totalQuestions <= 200, answers length consistency, and derives band/label itself. Residual custody gap tracked as D01.",
-      "closureTest": "__tests__/placement.contract.test.ts",
-      "externalDependency": null
+      "fixStatus": "CLOSED",
+      "fix": "Superseded by server-authoritative placement V1; client payload endpoint retired (410).",
+      "closureTest": "__tests__/placement/serverAuthoritativePlacement.test.ts",
+      "externalDependency": null,
+      "closedBy": "feat/server-authoritative-placement-v1"
     },
     {
-      "id": "F12", "lens": ["operations-support"], "severity": "P2",
+      "id": "F12",
+      "lens": [
+        "operations-support"
+      ],
+      "severity": "P2",
       "finding": "Credential login failures were silent and indistinguishable (rate limited, unknown identifier, wrong PIN, inactive school, privileged MFA required).",
-      "affectedRole": ["SUPPORT", "ALL"],
-      "location": ["lib/auth.ts#authorizeCredentials"],
+      "affectedRole": [
+        "SUPPORT",
+        "ALL"
+      ],
+      "location": [
+        "lib/auth.ts#authorizeCredentials"
+      ],
       "evidence": "Every branch returned null with no record.",
       "impact": "Support cannot tell a deactivated-school tenant outage or lockout from a mistyped PIN.",
-      "fixStatus": "FIXED", "fix": "Fire-and-forget metric auth.login.failed with a reason code and schoolId only (never identifier or secret); login still fails closed if the metric write fails.",
+      "fixStatus": "FIXED",
+      "fix": "Fire-and-forget metric auth.login.failed with a reason code and schoolId only (never identifier or secret); login still fails closed if the metric write fails.",
       "closureTest": "__tests__/auth.loginFailureDiagnostics.test.ts",
       "externalDependency": null
     },
     {
-      "id": "F13", "lens": ["product-reachability"], "severity": "P2",
+      "id": "F13",
+      "lens": [
+        "product-reachability"
+      ],
+      "severity": "P2",
       "finding": "Portal links to pages that do not exist: /admin/dashboard (8 pages), /teacher/homework/create, /teacher/class, /guardian/lessons, /moe/audit, /student/leaderboard (sidebar).",
-      "affectedRole": ["ADMIN", "TEACHER", "GUARDIAN", "MOE_OFFICIAL", "STUDENT"],
-      "location": ["app/admin/*", "app/teacher/homework/page.tsx", "app/teacher/student/[id]/page.tsx", "app/guardian/GuardianDashboardClient.tsx", "app/moe/dashboard/page.tsx", "components/StudentSidebar.tsx"],
+      "affectedRole": [
+        "ADMIN",
+        "TEACHER",
+        "GUARDIAN",
+        "MOE_OFFICIAL",
+        "STUDENT"
+      ],
+      "location": [
+        "app/admin/*",
+        "app/teacher/homework/page.tsx",
+        "app/teacher/student/[id]/page.tsx",
+        "app/guardian/GuardianDashboardClient.tsx",
+        "app/moe/dashboard/page.tsx",
+        "components/StudentSidebar.tsx"
+      ],
       "evidence": "Static scan of literal hrefs against app/ page files.",
       "impact": "Navigation dead ends (404) in every portal.",
-      "fixStatus": "FIXED", "fix": "Repointed to existing pages; removed the MOE audit link (no MOE audit surface exists; see D11); added /student/leaderboard index that routes to the student's class board.",
+      "fixStatus": "FIXED",
+      "fix": "Repointed to existing pages; removed the MOE audit link (no MOE audit surface exists; see D11); added /student/leaderboard index that routes to the student's class board.",
       "closureTest": "__tests__/reachability.portalLinks.test.ts",
       "externalDependency": null
     },
     {
-      "id": "F14", "lens": ["accessibility-low-end"], "severity": "P2",
+      "id": "F14",
+      "lens": [
+        "accessibility-low-end"
+      ],
+      "severity": "P2",
       "finding": "134 solid yellow/accent surfaces (primary buttons incl. Sign out, placement, onboarding) used --ll-text-faint text: 3.15:1 contrast, below WCAG AA 4.5:1; many hovered to an 11%-alpha yellow, making text nearly invisible.",
-      "affectedRole": ["ALL"],
-      "location": ["app/**", "components/**"],
+      "affectedRole": [
+        "ALL"
+      ],
+      "location": [
+        "app/**",
+        "components/**"
+      ],
       "evidence": "Computed from app/globals.css tokens (#6b6460 on #E8B84B = 3.15:1; --ll-bg on yellow = 9.45:1).",
       "impact": "Illegible primary actions on low-end screens and in sunlight.",
-      "fixStatus": "FIXED", "fix": "Token swap to --ll-bg text (the pairing already used by the MOE dashboard) and hover:opacity-90 on those surfaces; no palette change.",
+      "fixStatus": "FIXED",
+      "fix": "Token swap to --ll-bg text (the pairing already used by the MOE dashboard) and hover:opacity-90 on those surfaces; no palette change.",
       "closureTest": "__tests__/a11y.accentContrast.test.ts",
       "externalDependency": null
     },
     {
-      "id": "F15", "lens": ["accessibility-low-end"], "severity": "P3",
+      "id": "F15",
+      "lens": [
+        "accessibility-low-end"
+      ],
+      "severity": "P3",
       "finding": "NotificationBell: link items called markRead twice (unread count dropped by 2); non-link items were click-only divs (not keyboard operable); panel could overflow a 320px viewport.",
-      "affectedRole": ["STUDENT", "TEACHER"],
-      "location": ["components/NotificationBell.tsx"],
+      "affectedRole": [
+        "STUDENT",
+        "TEACHER"
+      ],
+      "location": [
+        "components/NotificationBell.tsx"
+      ],
       "evidence": "Nested onClick on Link and inner div; div onClick without role/tabindex; fixed w-80.",
       "impact": "Wrong unread badge; keyboard users cannot dismiss.",
-      "fixStatus": "FIXED", "fix": "Single handler; non-link items are buttons; max-w-[calc(100vw-2rem)].",
+      "fixStatus": "FIXED",
+      "fix": "Single handler; non-link items are buttons; max-w-[calc(100vw-2rem)].",
       "closureTest": "No DOM testing library in repo; covered by TypeScript and production build only.",
       "externalDependency": null
     },
     {
-      "id": "D01", "lens": ["student", "teacher"], "severity": "P1",
+      "id": "D01",
+      "lens": [
+        "student",
+        "teacher"
+      ],
+      "severity": "P1",
       "finding": "Placement answer custody is client-side: /api/placement/generate-question returns correctAnswer before the learner answers, correctness is decided in the browser, and calculate-grade trusts client 'correct' booleans.",
-      "affectedRole": ["STUDENT", "TEACHER"],
-      "location": ["app/placement/page.tsx", "components/PlacementTest.tsx", "app/api/placement/generate-question/route.ts", "app/api/placement/calculate-grade/route.ts"],
+      "affectedRole": [
+        "STUDENT",
+        "TEACHER"
+      ],
+      "location": [
+        "app/placement/page.tsx",
+        "components/PlacementTest.tsx",
+        "app/api/placement/generate-question/route.ts",
+        "app/api/placement/calculate-grade/route.ts"
+      ],
       "evidence": "submitAnswer compares selectedAnswer to currentQuestion.correctAnswer client-side.",
       "impact": "Placement evidence remains forgeable within the now-enforced consistency bounds.",
-      "fixStatus": "TRUE STOP - DOCUMENTED", "fix": "Needs a server-held placement session/item custody design (educational-authority and architecture decision).",
-      "closureTest": null, "externalDependency": "Product/architecture decision"
+      "fixStatus": "CLOSED",
+      "fix": "Server-authoritative placement V1: server-held session, answer custody, server scoring.",
+      "closureTest": "__tests__/placement/serverAuthoritativePlacement.test.ts",
+      "externalDependency": "Product/architecture decision",
+      "closedBy": "feat/server-authoritative-placement-v1"
     },
     {
-      "id": "D02", "lens": ["operations-support", "failure-recovery"], "severity": "P2",
+      "id": "D02",
+      "lens": [
+        "operations-support",
+        "failure-recovery"
+      ],
+      "severity": "P2",
       "finding": "No support view for a single learner's offline sync state; only school-level gauges (offline.queue.pending/conflicts/dead_letter) and per-op resolutionHint returned to the device.",
-      "affectedRole": ["SUPPORT", "ADMIN"], "location": ["app/api/student/sync/route.ts"],
+      "affectedRole": [
+        "SUPPORT",
+        "ADMIN"
+      ],
+      "location": [
+        "app/api/student/sync/route.ts"
+      ],
       "evidence": "Metrics recorded per request; no admin surface reads them per learner.",
       "impact": "Stuck-sync and offline-conflict tickets cannot be diagnosed without DB access.",
-      "fixStatus": "DOCUMENTED", "fix": "New admin surface - product decision.", "closureTest": null, "externalDependency": null
+      "fixStatus": "DOCUMENTED",
+      "fix": "New admin surface - product decision.",
+      "closureTest": null,
+      "externalDependency": null
     },
     {
-      "id": "D03", "lens": ["product-reachability"], "severity": "P3",
+      "id": "D03",
+      "lens": [
+        "product-reachability"
+      ],
+      "severity": "P3",
       "finding": "/moe/live?token= signed display link cannot work unauthenticated: middleware requires a session for /moe/* and /api/moe/live before the token check runs.",
-      "affectedRole": ["MOE_OFFICIAL"], "location": ["middleware.ts", "app/api/moe/live/route.ts", "app/api/moe/live-token/route.ts"],
-      "evidence": "Neither path is in PUBLIC_PATHS.", "impact": "Projector/TV display feature is dead.",
-      "fixStatus": "DOCUMENTED", "fix": "Making national data viewable without a session is a privacy policy decision.", "closureTest": null, "externalDependency": null
+      "affectedRole": [
+        "MOE_OFFICIAL"
+      ],
+      "location": [
+        "middleware.ts",
+        "app/api/moe/live/route.ts",
+        "app/api/moe/live-token/route.ts"
+      ],
+      "evidence": "Neither path is in PUBLIC_PATHS.",
+      "impact": "Projector/TV display feature is dead.",
+      "fixStatus": "POLICY LANDED",
+      "fix": "MOE live display remains authenticated; signed display tokens are rejected and the issuer returns 410 until a kiosk credential is approved.",
+      "closureTest": "__tests__/security/portal-role-gates.test.ts",
+      "externalDependency": null,
+      "closedBy": "feat/server-authoritative-placement-v1"
     },
     {
-      "id": "D04", "lens": ["admin-moe"], "severity": "P2",
+      "id": "D04",
+      "lens": [
+        "admin-moe"
+      ],
+      "severity": "P2",
       "finding": "School ADMIN can read national/county WAEC readiness (/api/moe/waec-readiness ALLOWED includes ADMIN).",
-      "affectedRole": ["ADMIN"], "location": ["app/api/moe/waec-readiness/route.ts"],
-      "evidence": "ALLOWED = MOE_OFFICIAL, MOE_SUPER_ADMIN, ADMIN.", "impact": "Aggregate-only after F05; whether school admins see national data is policy.",
-      "fixStatus": "DOCUMENTED", "fix": null, "closureTest": null, "externalDependency": null
+      "affectedRole": [
+        "ADMIN"
+      ],
+      "location": [
+        "app/api/moe/waec-readiness/route.ts"
+      ],
+      "evidence": "ALLOWED = MOE_OFFICIAL, MOE_SUPER_ADMIN, ADMIN.",
+      "impact": "Aggregate-only after F05; whether school admins see national data is policy.",
+      "fixStatus": "CLOSED",
+      "fix": "National WAEC readiness restricted to MOE roles (PR #142).",
+      "closureTest": "__tests__/december-assurance/moe-aggregate-privacy.test.ts",
+      "externalDependency": null,
+      "closedBy": "feat/server-authoritative-placement-v1"
     },
     {
-      "id": "D05", "lens": ["child-privacy-security"], "severity": "P3",
+      "id": "D05",
+      "lens": [
+        "child-privacy-security"
+      ],
+      "severity": "P3",
       "finding": "GET /api/adaptive/scaffold/[variantId] returns any lesson variant body to any student.",
-      "affectedRole": ["STUDENT"], "location": ["app/api/adaptive/scaffold/[variantId]/route.ts"],
-      "evidence": "No lesson/class check.", "impact": "Content only, no PII.", "fixStatus": "DOCUMENTED", "fix": null, "closureTest": null, "externalDependency": null
+      "affectedRole": [
+        "STUDENT"
+      ],
+      "location": [
+        "app/api/adaptive/scaffold/[variantId]/route.ts"
+      ],
+      "evidence": "No lesson/class check.",
+      "impact": "Content only, no PII.",
+      "fixStatus": "DOCUMENTED",
+      "fix": null,
+      "closureTest": null,
+      "externalDependency": null
     },
     {
-      "id": "D06", "lens": ["product-reachability", "child-privacy-security"], "severity": "P3",
+      "id": "D06",
+      "lens": [
+        "product-reachability",
+        "child-privacy-security"
+      ],
+      "severity": "P3",
       "finding": "/api/portfolio/[shareCode] is not public (middleware requires a session) although it is a share link; any authenticated user with the code can read the portfolio summary.",
-      "affectedRole": ["ALL"], "location": ["app/api/portfolio/[shareCode]/route.ts", "middleware.ts"],
-      "evidence": "Not in PUBLIC_PATHS; no role check.", "impact": "Share intent unclear.", "fixStatus": "DOCUMENTED", "fix": "Policy decision on portfolio sharing audience.", "closureTest": null, "externalDependency": null
+      "affectedRole": [
+        "ALL"
+      ],
+      "location": [
+        "app/api/portfolio/[shareCode]/route.ts",
+        "middleware.ts"
+      ],
+      "evidence": "Not in PUBLIC_PATHS; no role check.",
+      "impact": "Share intent unclear.",
+      "fixStatus": "POLICY LANDED",
+      "fix": "No anonymous portfolio sharing: share codes require a session.",
+      "closureTest": "__tests__/security/portal-role-gates.test.ts",
+      "externalDependency": null,
+      "closedBy": "feat/server-authoritative-placement-v1"
     },
     {
-      "id": "D07", "lens": ["admin-moe", "child-privacy-security"], "severity": "P2",
+      "id": "D07",
+      "lens": [
+        "admin-moe",
+        "child-privacy-security"
+      ],
+      "severity": "P2",
       "finding": "District-update and MOE-report agent tools aggregate WAEC readiness without small-cell suppression before feeding LLM drafts.",
-      "affectedRole": ["MOE_OFFICIAL", "DISTRICT_ADMIN"], "location": ["lib/agents/tools/districtupdate.tools.ts", "lib/agents/tools/moereport.tools.ts"],
-      "evidence": "aggregateWaecForStudents has no cohort minimum.", "impact": "Small cohorts may appear in human-reviewed drafts.",
-      "fixStatus": "DOCUMENTED", "fix": "Agent output is human-reviewed; applying suppression changes agent evidence contracts.", "closureTest": null, "externalDependency": null
+      "affectedRole": [
+        "MOE_OFFICIAL",
+        "DISTRICT_ADMIN"
+      ],
+      "location": [
+        "lib/agents/tools/districtupdate.tools.ts",
+        "lib/agents/tools/moereport.tools.ts"
+      ],
+      "evidence": "aggregateWaecForStudents has no cohort minimum.",
+      "impact": "Small cohorts may appear in human-reviewed drafts.",
+      "fixStatus": "CLOSED",
+      "fix": "Agent report tools apply lib/waec/suppression.ts (cohort < 5 withheld).",
+      "closureTest": "__tests__/agents/districtupdateTools.test.ts",
+      "externalDependency": null,
+      "closedBy": "feat/server-authoritative-placement-v1"
     },
     {
-      "id": "D08", "lens": ["student"], "severity": "P3",
+      "id": "D08",
+      "lens": [
+        "student"
+      ],
+      "severity": "P3",
       "finding": "POST /api/discussion/posts does not verify parentPostId belongs to the same thread.",
-      "affectedRole": ["STUDENT"], "location": ["app/api/discussion/posts/route.ts"],
-      "evidence": "parentPostId stored as sent.", "impact": "Orphaned reply linkage; no data exposure.", "fixStatus": "DOCUMENTED", "fix": null, "closureTest": null, "externalDependency": null
+      "affectedRole": [
+        "STUDENT"
+      ],
+      "location": [
+        "app/api/discussion/posts/route.ts"
+      ],
+      "evidence": "parentPostId stored as sent.",
+      "impact": "Orphaned reply linkage; no data exposure.",
+      "fixStatus": "CLOSED",
+      "fix": "Reply parentPostId must belong to the same thread.",
+      "closureTest": "__tests__/sprint7.discussion.test.ts",
+      "externalDependency": null,
+      "closedBy": "feat/server-authoritative-placement-v1"
     },
     {
-      "id": "D09", "lens": ["child-privacy-security"], "severity": "P3",
+      "id": "D09",
+      "lens": [
+        "child-privacy-security"
+      ],
+      "severity": "P3",
       "finding": "/student, /teacher and /guardian layouts do not role-gate; every page/API must check its own role (F03 was a page that did not scope).",
-      "affectedRole": ["ALL"], "location": ["app/student/layout.tsx", "app/teacher/layout.tsx", "app/guardian/layout.tsx", "middleware.ts"],
-      "evidence": "Middleware role-gates only /admin, /moe, /platform.", "impact": "Defense-in-depth gap.",
-      "fixStatus": "DOCUMENTED", "fix": "Portal-level role gating changes cross-role flows (e.g. platform admin previews) - architecture decision.", "closureTest": null, "externalDependency": null
+      "affectedRole": [
+        "ALL"
+      ],
+      "location": [
+        "app/student/layout.tsx",
+        "app/teacher/layout.tsx",
+        "app/guardian/layout.tsx",
+        "middleware.ts"
+      ],
+      "evidence": "Middleware role-gates only /admin, /moe, /platform.",
+      "impact": "Defense-in-depth gap.",
+      "fixStatus": "CLOSED",
+      "fix": "Middleware portal role gates for /student, /teacher, /guardian (defense in depth).",
+      "closureTest": "__tests__/security/portal-role-gates.test.ts",
+      "externalDependency": null,
+      "closedBy": "feat/server-authoritative-placement-v1"
     },
     {
-      "id": "D10", "lens": ["teacher", "admin-moe"], "severity": "P2",
+      "id": "D10",
+      "lens": [
+        "teacher",
+        "admin-moe"
+      ],
+      "severity": "P2",
       "finding": "Any TEACHER in the school, not only the learner's teacher, can confirm/override a placement that sets Student.currentGrade.",
-      "affectedRole": ["TEACHER"], "location": ["app/api/teacher/placements/[id]/review/route.ts"],
-      "evidence": "Scope check is same-school only; audited.", "impact": "Promotion authority breadth is a policy question.",
-      "fixStatus": "DOCUMENTED", "fix": null, "closureTest": null, "externalDependency": null
+      "affectedRole": [
+        "TEACHER"
+      ],
+      "location": [
+        "app/api/teacher/placements/[id]/review/route.ts"
+      ],
+      "evidence": "Scope check is same-school only; audited.",
+      "impact": "Promotion authority breadth is a policy question.",
+      "fixStatus": "CLOSED",
+      "fix": "Official grade requires PLACEMENT_CONFIRM (school ADMIN); teachers hold PLACEMENT_REVIEW only.",
+      "closureTest": "__tests__/placement/serverAuthoritativePlacement.test.ts",
+      "externalDependency": null,
+      "closedBy": "feat/server-authoritative-placement-v1"
     },
     {
-      "id": "D11", "lens": ["operations-support", "admin-moe"], "severity": "P3",
+      "id": "D11",
+      "lens": [
+        "operations-support",
+        "admin-moe"
+      ],
+      "severity": "P3",
       "finding": "MOE dashboard advertised a 'National audit trail' but no MOE audit surface exists (link removed in F13).",
-      "affectedRole": ["MOE_OFFICIAL"], "location": ["app/moe/dashboard/page.tsx"],
-      "evidence": "No app/moe/audit page.", "impact": "Whether MOE may read the audit log is policy.", "fixStatus": "DOCUMENTED", "fix": null, "closureTest": null, "externalDependency": null
+      "affectedRole": [
+        "MOE_OFFICIAL"
+      ],
+      "location": [
+        "app/moe/dashboard/page.tsx"
+      ],
+      "evidence": "No app/moe/audit page.",
+      "impact": "Whether MOE may read the audit log is policy.",
+      "fixStatus": "DOCUMENTED",
+      "fix": null,
+      "closureTest": null,
+      "externalDependency": null
     }
   ],
   "lensPassEvidence": {
@@ -260,12 +617,30 @@
     "reachability": "Literal portal links now all resolve (F13, regression test); redirect()/router.push targets verified; MOE live display unreachable (D03)."
   },
   "coreJourneys": [
-    { "journey": "Student: today -> lesson -> exit ticket -> completion -> mastery", "result": "PASS (after F10)" },
-    { "journey": "Student: placement -> teacher review -> grade", "result": "PARTIAL (F11 fixed, D01 open)" },
-    { "journey": "Teacher: dashboard -> student profile -> evidence -> intervention", "result": "PASS (after F03)" },
-    { "journey": "Guardian: child selection -> attendance/assignments -> progress -> message", "result": "PASS (after F06/F07)" },
-    { "journey": "School admin: school-scoped dashboards and certificate share", "result": "PASS (after F04)" },
-    { "journey": "MOE: national aggregates with small-cell protection", "result": "PASS (after F05)" }
+    {
+      "journey": "Student: today -> lesson -> exit ticket -> completion -> mastery",
+      "result": "PASS (after F10)"
+    },
+    {
+      "journey": "Student: placement -> teacher review -> grade",
+      "result": "PARTIAL (F11 fixed, D01 open)"
+    },
+    {
+      "journey": "Teacher: dashboard -> student profile -> evidence -> intervention",
+      "result": "PASS (after F03)"
+    },
+    {
+      "journey": "Guardian: child selection -> attendance/assignments -> progress -> message",
+      "result": "PASS (after F06/F07)"
+    },
+    {
+      "journey": "School admin: school-scoped dashboards and certificate share",
+      "result": "PASS (after F04)"
+    },
+    {
+      "journey": "MOE: national aggregates with small-cell protection",
+      "result": "PASS (after F05)"
+    }
   ],
   "noNewEducationalAuthority": "No new learner-state writers were added. lib/discussion/access.ts reuses the existing class/school scope rule; the evidenceCount field is read-only metadata.",
   "externalOnlyReadiness": [

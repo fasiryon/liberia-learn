@@ -121,6 +121,25 @@ export function serializePlacementDetail(placement: {
   teacherGrade: number | null;
   teacherReason: string | null;
   reviewedAt: Date | null;
+  source?: string | null;
+  reviews?: Array<{
+    id: string;
+    reviewerId: string;
+    recommendation: string;
+    recommendedGrade: number;
+    note: string | null;
+    createdAt: Date;
+  }>;
+  decision?: {
+    id: string;
+    finalGrade: number;
+    recommendedGrade: number;
+    previousGrade: number | null;
+    isOverride: boolean;
+    reason: string | null;
+    decidedById: string;
+    createdAt: Date;
+  } | null;
   student: {
     id: string;
     currentGrade: number | null;
@@ -151,6 +170,29 @@ export function serializePlacementDetail(placement: {
     teacherReason: placement.teacherReason,
     reviewedAt: placement.reviewedAt?.toISOString() ?? null,
     status: getPlacementReviewStatus(placement.teacherDecision),
+    // "server_session" results were scored by the server; "legacy_client"
+    // results were computed in the browser and are untrusted evidence.
+    source: placement.source ?? "legacy_client",
+    reviews: (placement.reviews ?? []).map((review) => ({
+      id: review.id,
+      reviewerId: review.reviewerId,
+      recommendation: review.recommendation,
+      recommendedGrade: review.recommendedGrade,
+      note: review.note,
+      createdAt: review.createdAt.toISOString(),
+    })),
+    decision: placement.decision
+      ? {
+          id: placement.decision.id,
+          finalGrade: placement.decision.finalGrade,
+          recommendedGrade: placement.decision.recommendedGrade,
+          previousGrade: placement.decision.previousGrade,
+          isOverride: placement.decision.isOverride,
+          reason: placement.decision.reason,
+          decidedById: placement.decision.decidedById,
+          decidedAt: placement.decision.createdAt.toISOString(),
+        }
+      : null,
     student: {
       id: placement.student.id,
       name: placement.student.user.name ?? placement.student.user.email ?? "Student",

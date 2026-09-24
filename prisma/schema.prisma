@@ -285,6 +285,7 @@ model Student {
   masteryProfiles             StudentMasteryProfile[]
   adaptiveAttempts            StudentAdaptiveAttempt[]
   placementTests              PlacementTest[]
+  placementSessions           PlacementSession[]
   portfolioItems              PortfolioItem[]
   reviews                     ReviewSchedule[]
   user                        User                         @relation(fields: [userId], references: [id])
@@ -1143,7 +1144,7 @@ model BlockScheduleTemplate {
 
 /// / ===== Placement Tests (NEW) =====
 model PlacementTest {
-  id              String    @id @default(cuid())
+  id              String             @id @default(cuid())
   studentId       String
   band            String
   levelLabel      String
@@ -1159,11 +1160,100 @@ model PlacementTest {
   teacherReason   String?
   reviewedAt      DateTime?
   reviewedBy      String?
-  createdAt       DateTime  @default(now())
-  student         Student   @relation(fields: [studentId], references: [id])
+  createdAt       DateTime           @default(now())
+  /// "server_session" when scored by PlacementSession; "legacy_client" for
+  /// historical client-computed results (never trusted without a reason).
+  source          String             @default("legacy_client")
+  sessionId       String?            @unique
+  scoringVersion  String?
+  student         Student            @relation(fields: [studentId], references: [id])
+  reviews         PlacementReview[]
+  decision        PlacementDecision?
 
   @@index([studentId, createdAt])
   @@index([teacherDecision, createdAt])
+}
+
+/// Server-issued placement assessment. Items and answer keys never leave the
+/// server before a response is recorded.
+model PlacementSession {
+  id                String                 @id @default(cuid())
+  studentId         String
+  schoolId          String
+  assessmentVersion String
+  gradeMin          Int                    @default(1)
+  gradeMax          Int                    @default(12)
+  maxItems          Int
+  status            String                 @default("ACTIVE")
+  expiresAt         DateTime
+  completedAt       DateTime?
+  placementTestId   String?                @unique
+  createdAt         DateTime               @default(now())
+  updatedAt         DateTime               @updatedAt
+  student           Student                @relation(fields: [studentId], references: [id])
+  items             PlacementSessionItem[]
+
+  @@index([studentId, status])
+  @@index([schoolId, createdAt])
+}
+
+/// One issued item. The response columns are written once (null -> value).
+model PlacementSessionItem {
+  id                  String           @id @default(cuid())
+  sessionId           String
+  sequence            Int
+  itemVersion         String
+  source              String
+  difficulty          Int
+  subject             String
+  strand              String
+  moeStandard         String?
+  prompt              String
+  options             Json
+  correctIndex        Int
+  explanation         String
+  issuedAt            DateTime         @default(now())
+  selectedIndex       Int?
+  isCorrect           Boolean?
+  responseOperationId String?          @unique
+  respondedAt         DateTime?
+  session             PlacementSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+
+  @@unique([sessionId, sequence])
+}
+
+/// Append-only instructional review (PLACEMENT_REVIEW). Never changes grade.
+model PlacementReview {
+  id               String        @id @default(cuid())
+  placementTestId  String
+  schoolId         String
+  reviewerId       String
+  recommendation   String
+  recommendedGrade Int
+  note             String?
+  createdAt        DateTime      @default(now())
+  placementTest    PlacementTest @relation(fields: [placementTestId], references: [id])
+
+  @@index([placementTestId, createdAt])
+}
+
+/// Official placement decision (PLACEMENT_CONFIRM). One per placement result.
+model PlacementDecision {
+  id               String        @id @default(cuid())
+  placementTestId  String        @unique
+  studentId        String
+  schoolId         String
+  decidedById      String
+  recommendedGrade Int
+  finalGrade       Int
+  previousGrade    Int?
+  isOverride       Boolean
+  reason           String?
+  assessmentSource String
+  createdAt        DateTime      @default(now())
+  placementTest    PlacementTest @relation(fields: [placementTestId], references: [id])
+
+  @@index([schoolId, createdAt])
 }
 
 /// / ===== AI AGENT MODELS (NEW) =====
@@ -5312,7 +5402,6 @@ model SmsResponse {
 
   @@index([sessionId])
 }
-
 
 /// Sprint 26: weekly school performance snapshot for the national league table.
 model LeagueSnapshot {

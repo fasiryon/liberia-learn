@@ -22,6 +22,7 @@ const {
     },
     discussionPost: {
       findMany: vi.fn(),
+      findFirst: vi.fn(),
       findUnique: vi.fn(),
       create: vi.fn(),
       update: vi.fn(),
@@ -673,5 +674,33 @@ describe("discussion routes — tenant/class scope (hostile)", () => {
     const res = await PATCH(makeReq("/x", { method: "PATCH" }), { params: { threadId: "thread-1" } } as any);
     expect(res.status).toBe(403);
     expect(mockPrisma.class.findFirst).not.toHaveBeenCalled();
+  });
+});
+
+describe("POST /api/discussion/posts — reply parent must be in the same thread (hostile)", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    mockCheckRateLimit.mockResolvedValue({ allowed: true });
+  });
+
+  it("rejects a reply whose parent belongs to another thread", async () => {
+    mockRequireRole.mockResolvedValueOnce(STUDENT_USER);
+    mockPrisma.discussionThread.findUnique.mockResolvedValueOnce({ ...THREAD, class: { gradeLevel: 8 } });
+    mockPrisma.enrollment.findFirst.mockResolvedValueOnce({ id: "enr-1" });
+    mockPrisma.discussionPost.count.mockResolvedValueOnce(0);
+    mockPrisma.discussionPost.findFirst.mockResolvedValueOnce(null);
+
+    const { POST } = await import("@/app/api/discussion/posts/route");
+    const res = await POST(
+      makeReq("/api/discussion/posts", {
+        method: "POST",
+        body: { threadId: "thread-1", body: "reply", parentPostId: "post-in-other-thread" },
+      })
+    );
+    expect(res.status).toBe(400);
+    expect(mockPrisma.discussionPost.findFirst).toHaveBeenCalledWith(
+      expect.objectContaining({ where: { id: "post-in-other-thread", threadId: "thread-1" } })
+    );
+    expect(mockPrisma.discussionPost.create).not.toHaveBeenCalled();
   });
 });

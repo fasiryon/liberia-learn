@@ -1,3 +1,4 @@
+// route-policy: auth=session; scope=tenant; authority=placement-confirm; rationale=a school admin reads full placement evidence reviews and decision only for learners in their own school
 import { NextResponse } from "next/server";
 import { requireUser } from "@/lib/auth";
 import { prisma } from "@/lib/db";
@@ -24,6 +25,8 @@ export async function GET(
     const placement = await prisma.placementTest.findUnique({
       where: { id },
       include: {
+        reviews: { orderBy: { createdAt: "desc" } },
+        decision: true,
         student: {
           include: {
             user: {

@@ -90,9 +90,9 @@ export default function TeacherPlacementReviewPage({ params }: { params: { place
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          decision,
-          overrideGrade: decision === "override" ? overrideGrade : undefined,
-          overrideReason: decision === "override" ? overrideReason : undefined,
+          recommendation: decision === "confirm" ? "endorse" : "adjust",
+          recommendedGrade: decision === "override" ? overrideGrade : undefined,
+          note: decision === "override" ? overrideReason : undefined,
         }),
       });
       const payload = await response.json().catch(() => ({}));
@@ -100,24 +100,12 @@ export default function TeacherPlacementReviewPage({ params }: { params: { place
         throw new Error(payload?.error ?? "Failed to submit teacher review");
       }
 
-      setData((current) =>
-        current
-          ? {
-              ...current,
-              status: decision === "confirm" ? "confirmed" : "overridden",
-              teacherDecision: decision === "confirm" ? "confirmed" : "overridden",
-              teacherGrade: decision === "override" ? overrideGrade : null,
-              teacherReason: decision === "override" ? overrideReason.trim() : null,
-              reviewedAt: payload?.placement?.reviewedAt ?? new Date().toISOString(),
-              student: {
-                ...current.student,
-                currentGrade: payload?.finalGrade ?? current.student.currentGrade,
-              },
-            }
-          : current
-      );
+      // A review is a recommendation; the school placement authority makes
+      // the official decision, so the student's grade is unchanged here.
       setSuccessMessage(
-        decision === "confirm" ? "Placement confirmed." : `Placement overridden to Grade ${overrideGrade}.`
+        decision === "confirm"
+          ? `Recommendation recorded: Grade ${data.estimatedGrade}. Your school will confirm the official placement.`
+          : `Recommendation recorded: Grade ${overrideGrade}. Your school will confirm the official placement.`
       );
     } catch (err: any) {
       setError(err?.message ?? "Failed to submit teacher review");
@@ -290,14 +278,15 @@ export default function TeacherPlacementReviewPage({ params }: { params: { place
         </section>
 
         <section className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/80 p-6">
-          <h2 className="text-lg font-semibold">Your Decision</h2>
+          <h2 className="text-lg font-semibold">Your recommendation</h2>
+          <p className="mt-1 text-sm text-[var(--ll-text-muted)]">Your review is recorded for the school. Only the school placement authority can change the student&apos;s official grade.</p>
           <div className="mt-4 grid gap-4 lg:grid-cols-2">
             <label className="rounded-xl border border-green-500/30 bg-green-500/10 p-4">
               <div className="flex items-start gap-3">
                 <input type="radio" name="decision" checked={decision === "confirm"} onChange={() => setDecision("confirm")} className="mt-1" />
                 <div>
-                  <p className="font-semibold text-green-200">Confirm Grade {data.estimatedGrade} placement</p>
-                  <p className="mt-1 text-sm text-[var(--ll-text)]">Accept the AI recommendation as the final placement.</p>
+                  <p className="font-semibold text-green-200">Recommend Grade {data.estimatedGrade}</p>
+                  <p className="mt-1 text-sm text-[var(--ll-text)]">Agree with the server-scored recommendation.</p>
                 </div>
               </div>
             </label>
@@ -305,8 +294,8 @@ export default function TeacherPlacementReviewPage({ params }: { params: { place
               <div className="flex items-start gap-3">
                 <input type="radio" name="decision" checked={decision === "override"} onChange={() => setDecision("override")} className="mt-1" />
                 <div>
-                  <p className="font-semibold text-[var(--ll-silver)]">Override to different grade</p>
-                  <p className="mt-1 text-sm text-[var(--ll-text)]">Record a different placement with a required reason.</p>
+                  <p className="font-semibold text-[var(--ll-silver)]">Recommend a different grade</p>
+                  <p className="mt-1 text-sm text-[var(--ll-text)]">Suggest a different grade with a required reason.</p>
                 </div>
               </div>
             </label>
@@ -346,7 +335,7 @@ export default function TeacherPlacementReviewPage({ params }: { params: { place
                 </div>
               </div>
               <label className="block">
-                <span className="text-sm font-semibold text-[var(--ll-text)]">Reason for override</span>
+                <span className="text-sm font-semibold text-[var(--ll-text)]">Reason for a different grade</span>
                 <textarea
                   value={overrideReason}
                   onChange={(event) => setOverrideReason(event.target.value)}
@@ -366,7 +355,7 @@ export default function TeacherPlacementReviewPage({ params }: { params: { place
               onClick={submitReview}
               className="rounded-xl bg-[var(--ll-yellow)] px-5 py-3 font-semibold text-[var(--ll-bg)] hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
             >
-              {submitting ? "Saving..." : decision === "confirm" ? "Confirm Placement" : `Override to Grade ${overrideGrade}`}
+              {submitting ? "Saving..." : decision === "confirm" ? "Record recommendation" : `Recommend Grade ${overrideGrade}`}
             </button>
           </div>
         </section>

@@ -46,6 +46,27 @@ function isPublicPath(pathname: string) {
   return false;
 }
 
+const PORTAL_ROLES: Array<{ prefix: string; roles: string[] }> = [
+  { prefix: "/student", roles: ["STUDENT"] },
+  { prefix: "/teacher", roles: ["TEACHER", "ADMIN"] },
+  { prefix: "/guardian", roles: ["GUARDIAN"] },
+];
+
+/** Returns the caller's own portal when they open another role's portal page. */
+export function portalRoleRedirect(
+  pathname: string,
+  token: { role?: string; isPlatformAdmin?: boolean } | null
+): string | null {
+  if (!token || token.isPlatformAdmin) return null;
+  const portal = PORTAL_ROLES.find((p) => pathname === p.prefix || pathname.startsWith(p.prefix + "/"));
+  if (!portal) return null;
+  if (portal.roles.includes(token.role ?? "")) return null;
+  const home = roleDefaultPortal(token.role);
+  // Never bounce into the portal being denied (avoids redirect loops).
+  if (home === "/login" || home === portal.prefix || home.startsWith(portal.prefix + "/")) return "/unauthorized";
+  return home;
+}
+
 function privilegedStepUpResponse(req: NextRequest, token: Record<string, unknown>) {
   if (!isPrivilegedMfaEnforced()) return null;
   if (!isSensitivePrivilegedRequest(req.nextUrl.pathname, req.method)) return null;
@@ -203,6 +224,17 @@ export async function middleware(req: NextRequest) {
 
   const stepUpResponse = privilegedStepUpResponse(req, token as any);
   if (stepUpResponse) return finalize(stepUpResponse);
+
+  // Defense-in-depth portal role gates. Every page and API still enforces its
+  // own authorization; this keeps a page that forgets to check from rendering
+  // another role's portal. Platform admins may open any portal.
+  const portalRedirect = portalRoleRedirect(pathname, token as any);
+  if (portalRedirect) {
+    const url = req.nextUrl.clone();
+    url.pathname = portalRedirect;
+    url.search = "";
+    return finalize(NextResponse.redirect(url));
+  }
 
   if (
     (token as any).role === "STUDENT" &&

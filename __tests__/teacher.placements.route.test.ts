@@ -7,6 +7,7 @@ const mockPlacementUpdate = vi.hoisted(() => vi.fn());
 const mockStudentUpdate = vi.hoisted(() => vi.fn());
 const mockTransaction = vi.hoisted(() => vi.fn());
 const mockLogAudit = vi.hoisted(() => vi.fn());
+const mockReviewCreate = vi.hoisted(() => vi.fn());
 const mockNotifyPlacementConfirmation = vi.hoisted(() => vi.fn());
 
 vi.mock("@/lib/auth", () => ({
@@ -27,6 +28,9 @@ vi.mock("@/lib/db", () => ({
       findMany: mockPlacementFindMany,
       findUnique: mockPlacementFindUnique,
       update: mockPlacementUpdate,
+    },
+    placementReview: {
+      create: mockReviewCreate,
     },
     student: {
       update: mockStudentUpdate,
@@ -98,218 +102,64 @@ describe("teacher placements routes", () => {
     expect(payload.placements[0].studentName).toBe("Korto Doe");
   });
 
-  it("blocks placement review for a different school", async () => {
-    mockPlacementFindUnique.mockResolvedValue({
+  function placement(schoolId: string) {
+    return {
       id: "placement-2",
       studentId: "student-2",
       estimatedGrade: 5,
+      source: "server_session",
+      decision: null,
       student: {
-        user: {
-          id: "student-user-2",
-          name: "Other Student",
-          schoolId: "school-other",
-          guardianPhoneE164: null,
-          school: { name: "Other School" },
-        },
+        id: "student-2",
+        currentGrade: 4,
         guardians: [],
+        user: { id: "student-user-2", name: "Student", schoolId, guardianPhoneE164: null, school: { name: "School" } },
       },
-    });
+    };
+  }
 
+  async function review(body: unknown) {
     const { POST } = await import("@/app/api/teacher/placements/[id]/review/route");
-    const response = await POST(
+    return POST(
       new Request("http://localhost/api/teacher/placements/placement-2/review", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ decision: "confirm" }),
+        body: JSON.stringify(body),
       }),
       { params: Promise.resolve({ id: "placement-2" }) }
     );
+  }
 
-    expect(response.status).toBe(403);
+  it("hides a placement from another school (hostile)", async () => {
+    mockPlacementFindUnique.mockResolvedValue(placement("school-other"));
+    const response = await review({ recommendation: "endorse" });
+    expect(response.status).toBe(404);
+    expect(mockReviewCreate).not.toHaveBeenCalled();
+  });
+
+  it("records a recommendation and never writes the official grade", async () => {
+    mockPlacementFindUnique.mockResolvedValue(placement("school-cha"));
+    mockReviewCreate.mockImplementation(async ({ data }: any) => ({ id: "review-1", createdAt: new Date(), ...data }));
+    const response = await review({ recommendation: "endorse" });
+    const payload = await response.json();
+    expect(response.status).toBe(200);
+    expect(payload).toMatchObject({ officialGradeChanged: false, review: { recommendation: "endorse", recommendedGrade: 5 } });
+    expect(mockStudentUpdate).not.toHaveBeenCalled();
     expect(mockPlacementUpdate).not.toHaveBeenCalled();
+    expect(mockNotifyPlacementConfirmation).not.toHaveBeenCalled();
   });
 
-  it("confirm decision sets teacherDecision and updates student grade", async () => {
-    mockPlacementFindUnique.mockResolvedValue({
-      id: "placement-3",
-      studentId: "student-3",
-      estimatedGrade: 7,
-      student: {
-        user: {
-          id: "student-user-3",
-          name: "Korto Doe",
-          schoolId: "school-cha",
-          guardianPhoneE164: "+231770000111",
-          school: { name: "Camp Johnson School" },
-        },
-        guardians: [{ guardianId: "guardian-3", guardian: { name: "Ma Korto" } }],
-      },
-    });
-    mockPlacementUpdate.mockResolvedValue({
-      id: "placement-3",
-      teacherDecision: "confirmed",
-      teacherGrade: null,
-      teacherReason: null,
-      reviewedAt: new Date("2026-03-13T12:00:00.000Z"),
-    });
-    mockStudentUpdate.mockResolvedValue({ id: "student-3", currentGrade: 7 });
-
-    const { POST } = await import("@/app/api/teacher/placements/[id]/review/route");
-    const response = await POST(
-      new Request("http://localhost/api/teacher/placements/placement-3/review", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ decision: "confirm" }),
-      }),
-      { params: Promise.resolve({ id: "placement-3" }) }
-    );
-
-    const payload = await response.json();
-    expect(response.status).toBe(200);
-    expect(mockPlacementUpdate).toHaveBeenCalledWith(
-      expect.objectContaining({
-        data: expect.objectContaining({
-          teacherDecision: "confirmed",
-          teacherGrade: null,
-          teacherReason: null,
-          reviewedBy: "teacher-1",
-        }),
-      })
-    );
-    expect(mockStudentUpdate).toHaveBeenCalledWith({
-      where: { id: "student-3" },
-      data: { currentGrade: 7 },
-    });
-    expect(mockLogAudit).toHaveBeenCalledWith(
-      expect.objectContaining({
-        action: "teacher.placement.reviewed",
-        resourceId: "placement-3",
-      })
-    );
-    expect(mockNotifyPlacementConfirmation).toHaveBeenCalledWith(
-      expect.objectContaining({
-        schoolId: "school-cha",
-        finalGrade: 7,
-        student: expect.objectContaining({
-          id: "student-3",
-          userId: "student-user-3",
-          phone: "+231770000111",
-        }),
-      })
-    );
-    expect(payload.finalGrade).toBe(7);
+  it("an adjusted recommendation needs a different grade and a 20-character note", async () => {
+    mockPlacementFindUnique.mockResolvedValue(placement("school-cha"));
+    expect((await review({ recommendation: "adjust", recommendedGrade: 6, note: "too short" })).status).toBe(400);
+    expect((await review({ recommendation: "adjust", recommendedGrade: 5, note: "x".repeat(30) })).status).toBe(400);
+    expect(mockReviewCreate).not.toHaveBeenCalled();
   });
 
-  it("override requires a reason with at least 20 characters", async () => {
-    const { POST } = await import("@/app/api/teacher/placements/[id]/review/route");
-    const response = await POST(
-      new Request("http://localhost/api/teacher/placements/placement-4/review", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ decision: "override", overrideGrade: 8, overrideReason: "Too short" }),
-      }),
-      { params: Promise.resolve({ id: "placement-4" }) }
-    );
-
+  it("the retired confirm/override body no longer changes anything", async () => {
+    mockPlacementFindUnique.mockResolvedValue(placement("school-cha"));
+    const response = await review({ decision: "confirm" });
     expect(response.status).toBe(400);
-    expect(mockPlacementFindUnique).not.toHaveBeenCalled();
-  });
-
-  it("override stores teacher grade and reason, then updates student grade", async () => {
-    mockPlacementFindUnique.mockResolvedValue({
-      id: "placement-5",
-      studentId: "student-5",
-      estimatedGrade: 6,
-      student: {
-        user: {
-          id: "student-user-5",
-          name: "Musu Doe",
-          schoolId: "school-cha",
-          guardianPhoneE164: null,
-          school: { name: "Camp Johnson School" },
-        },
-        guardians: [{ guardianId: "guardian-5", guardian: { name: "Pa Doe" } }],
-      },
-    });
-    mockPlacementUpdate.mockResolvedValue({
-      id: "placement-5",
-      teacherDecision: "overridden",
-      teacherGrade: 8,
-      teacherReason: "Student demonstrated stronger mastery during live review.",
-      reviewedAt: new Date("2026-03-13T12:00:00.000Z"),
-    });
-    mockStudentUpdate.mockResolvedValue({ id: "student-5", currentGrade: 8 });
-
-    const { POST } = await import("@/app/api/teacher/placements/[id]/review/route");
-    const response = await POST(
-      new Request("http://localhost/api/teacher/placements/placement-5/review", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          decision: "override",
-          overrideGrade: 8,
-          overrideReason: "Student demonstrated stronger mastery during live review.",
-        }),
-      }),
-      { params: Promise.resolve({ id: "placement-5" }) }
-    );
-
-    const payload = await response.json();
-    expect(response.status).toBe(200);
-    expect(mockPlacementUpdate).toHaveBeenCalledWith(
-      expect.objectContaining({
-        data: expect.objectContaining({
-          teacherDecision: "overridden",
-          teacherGrade: 8,
-          teacherReason: "Student demonstrated stronger mastery during live review.",
-        }),
-      })
-    );
-    expect(mockStudentUpdate).toHaveBeenCalledWith({
-      where: { id: "student-5" },
-      data: { currentGrade: 8 },
-    });
-    expect(payload.finalGrade).toBe(8);
-  });
-
-  it("returns success even if placement notifications fail", async () => {
-    mockPlacementFindUnique.mockResolvedValue({
-      id: "placement-6",
-      studentId: "student-6",
-      estimatedGrade: 6,
-      student: {
-        user: {
-          id: "student-user-6",
-          name: "Finda Doe",
-          schoolId: "school-cha",
-          guardianPhoneE164: "+231770000222",
-          school: { name: "Camp Johnson School" },
-        },
-        guardians: [{ guardianId: "guardian-6", guardian: { name: "Ma Finda" } }],
-      },
-    });
-    mockPlacementUpdate.mockResolvedValue({
-      id: "placement-6",
-      teacherDecision: "confirmed",
-      teacherGrade: null,
-      teacherReason: null,
-      reviewedAt: new Date("2026-03-13T12:00:00.000Z"),
-    });
-    mockStudentUpdate.mockResolvedValue({ id: "student-6", currentGrade: 6 });
-    mockNotifyPlacementConfirmation.mockRejectedValue(new Error("sms provider unavailable"));
-
-    const { POST } = await import("@/app/api/teacher/placements/[id]/review/route");
-    const response = await POST(
-      new Request("http://localhost/api/teacher/placements/placement-6/review", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ decision: "confirm" }),
-      }),
-      { params: Promise.resolve({ id: "placement-6" }) }
-    );
-
-    const payload = await response.json();
-    expect(response.status).toBe(200);
-    expect(payload.finalGrade).toBe(6);
+    expect(mockStudentUpdate).not.toHaveBeenCalled();
   });
 });
