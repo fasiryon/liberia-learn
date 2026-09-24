@@ -184,7 +184,7 @@ export default function StudentPassportPage() {
                 {passport.examReadiness.nextBestAction ? (
                   <Link
                     href={passport.examReadiness.nextBestAction.href}
-                    className="mt-4 inline-flex min-h-10 items-center rounded-full bg-[var(--ll-yellow)] px-4 text-sm font-semibold text-[var(--ll-text-faint)]"
+                    className="mt-4 inline-flex min-h-10 items-center rounded-full bg-[var(--ll-yellow)] px-4 text-sm font-semibold text-[var(--ll-bg)]"
                   >
                     {passport.examReadiness.nextBestAction.label}
                   </Link>

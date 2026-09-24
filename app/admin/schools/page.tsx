@@ -93,7 +93,7 @@ export default async function AdminSchoolsPage() {
               <div className="md:col-span-2 flex justify-end">
                 <button
                   type="submit"
-                  className="rounded-xl bg-[var(--ll-yellow)] px-4 py-2 text-xs font-semibold text-[var(--ll-text-faint)] hover:bg-[var(--ll-yellow-soft)]"
+                  className="rounded-xl bg-[var(--ll-yellow)] px-4 py-2 text-xs font-semibold text-[var(--ll-bg)] hover:opacity-90"
                 >
                   Add school
                 </button>

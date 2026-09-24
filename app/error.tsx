@@ -20,8 +20,8 @@ export default function Error({
         Something went wrong
       </h1>
       <p className="max-w-md text-sm text-[var(--ll-text-faint)]">
-        An unexpected error occurred. Your work has been saved.
-        Please try again or contact your school administrator.
+        An unexpected error occurred. Please try again. If it keeps happening,
+        tell your school administrator and share the error reference below.
       </p>
       {error.digest && (
         <p className="text-xs text-[var(--ll-text-faint)]">
@@ -32,7 +32,7 @@ export default function Error({
         <button
           type="button"
           onClick={reset}
-          className="inline-flex min-h-[44px] items-center justify-center rounded-xl bg-[var(--ll-yellow)] px-5 py-2 text-sm font-semibold text-[var(--ll-text-faint)] hover:bg-[var(--ll-yellow-soft)]"
+          className="inline-flex min-h-[44px] items-center justify-center rounded-xl bg-[var(--ll-yellow)] px-5 py-2 text-sm font-semibold text-[var(--ll-bg)] hover:opacity-90"
         >
           Try again
         </button>

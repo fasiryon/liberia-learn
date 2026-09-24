@@ -141,7 +141,7 @@ export function ModulePlayer({ module }: Props) {
 
           <Link
             href="/teacher/training"
-            className="block rounded-xl bg-[var(--ll-yellow)] px-5 py-4 text-base font-bold text-[var(--ll-text-faint)] hover:bg-[var(--ll-yellow-soft)] transition-colors"
+            className="block rounded-xl bg-[var(--ll-yellow)] px-5 py-4 text-base font-bold text-[var(--ll-bg)] hover:opacity-90 transition-colors"
           >
             Back to Training Center →
           </Link>
@@ -209,7 +209,7 @@ export function ModulePlayer({ module }: Props) {
         <button
           onClick={handleMarkComplete}
           disabled={completing}
-          className="w-full rounded-xl bg-[var(--ll-yellow)] px-5 py-4 text-base font-bold text-[var(--ll-text-faint)] hover:bg-[var(--ll-yellow-soft)] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          className="w-full rounded-xl bg-[var(--ll-yellow)] px-5 py-4 text-base font-bold text-[var(--ll-bg)] hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
         >
           {completing ? "Saving…" : "✅ Mark as Complete"}
         </button>

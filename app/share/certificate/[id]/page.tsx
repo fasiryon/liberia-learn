@@ -159,7 +159,7 @@ export default async function ShareCertificatePage({
             Verify this certificate
           </Link>
           <Link
-            href="/register"
+            href="/guardian/register"
             className="flex-1 rounded-lg border border-[var(--ll-yellow)]/40 px-4 py-3 text-center text-sm font-semibold text-[var(--ll-yellow)] transition-opacity hover:opacity-80"
           >
             Sign up your child free →

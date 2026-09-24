@@ -486,7 +486,7 @@ export function PlacementTest({ studentId }: { studentId: string }) {
           type="button"
           onClick={handleNext}
           disabled={!selectedOption}
-          className="rounded-full bg-[var(--ll-yellow)] px-6 py-2 text-sm font-semibold text-[var(--ll-text-faint)] disabled:opacity-60"
+          className="rounded-full bg-[var(--ll-yellow)] px-6 py-2 text-sm font-semibold text-[var(--ll-bg)] disabled:opacity-60"
         >
           {questionNumber === TOTAL_QUESTIONS ? "Finish test" : "Next question"}
         </button>

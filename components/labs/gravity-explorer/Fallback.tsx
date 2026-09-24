@@ -93,7 +93,7 @@ export default function GravityFallback({
         <button
           type="button"
           onClick={() => onAction(state.paused ? { type: "PLAY" } : { type: "PAUSE" })}
-          className="ll-interactive inline-flex min-h-11 items-center justify-center gap-1.5 rounded-xl bg-[var(--ll-accent)] px-3 py-2 text-sm font-semibold text-[var(--ll-text-faint)]"
+          className="ll-interactive inline-flex min-h-11 items-center justify-center gap-1.5 rounded-xl bg-[var(--ll-accent)] px-3 py-2 text-sm font-semibold text-[var(--ll-bg)]"
         >
           {state.paused
             ? <><Play className="h-4 w-4" strokeWidth={1.5} />Play</>

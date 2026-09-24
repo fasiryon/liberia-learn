@@ -100,7 +100,7 @@ export function SubmitHomeworkForm({
       <button
         type="submit"
         disabled={submitting}
-        className="w-full rounded-xl bg-[var(--ll-yellow)] px-6 py-3 font-semibold text-[var(--ll-text-faint)] transition-colors hover:bg-[var(--ll-yellow-soft)] disabled:cursor-not-allowed disabled:opacity-50"
+        className="w-full rounded-xl bg-[var(--ll-yellow)] px-6 py-3 font-semibold text-[var(--ll-bg)] transition-colors hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
       >
         {submitting ? "Submitting..." : "Submit Homework"}
       </button>

@@ -64,7 +64,7 @@ export function PwaInstallPrompt() {
         <button
           type="button"
           onClick={handleInstall}
-          className="flex-1 rounded-lg bg-[var(--ll-yellow)] py-2 text-sm font-semibold text-[var(--ll-text-faint)]"
+          className="flex-1 rounded-lg bg-[var(--ll-yellow)] py-2 text-sm font-semibold text-[var(--ll-bg)]"
         >
           Add to Home Screen
         </button>

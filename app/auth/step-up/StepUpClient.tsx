@@ -2,10 +2,10 @@
 
 import { signIn } from "next-auth/react";
 import { useSearchParams } from "next/navigation";
+import { isSafeInternalPath } from "@/lib/auth/safeRedirect";
 
 function safeCallbackUrl(value: string | null): string {
-  if (!value || !value.startsWith("/") || value.startsWith("//")) return "/admin";
-  return value;
+  return isSafeInternalPath(value) ? value : "/admin";
 }
 
 export default function StepUpClient({ auth0Configured }: { auth0Configured: boolean }) {
@@ -30,7 +30,7 @@ export default function StepUpClient({ auth0Configured }: { auth0Configured: boo
           <button
             type="button"
             onClick={() => signIn("auth0-step-up", { callbackUrl })}
-            className="flex min-h-12 w-full items-center justify-center rounded-xl bg-[var(--ll-yellow)] px-4 py-3 font-semibold text-[var(--ll-text-faint)]"
+            className="flex min-h-12 w-full items-center justify-center rounded-xl bg-[var(--ll-yellow)] px-4 py-3 font-semibold text-[var(--ll-bg)]"
           >
             Verify with MFA
           </button>

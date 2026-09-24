@@ -1,3 +1,4 @@
+// route-policy: auth=session; scope=tenant; authority=school-admin; rationale=publishes a card of the admin school once, via a conditional claim
 import { NextRequest, NextResponse } from "next/server";
 import { requireRole } from "@/lib/auth";
 import { prisma } from "@/lib/db";
@@ -20,10 +21,17 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
       return NextResponse.json({ error: "Already published" }, { status: 400 });
     }
 
-    const updated = await prisma.reportCard.update({
-      where: { id: params.id },
-      data: { status: "PUBLISHED", publishedAt: new Date() },
+    // Conditional claim: of two concurrent publishes (double-click, retry),
+    // only one transitions the card, so notifications go out once.
+    const publishedAt = new Date();
+    const claimed = await prisma.reportCard.updateMany({
+      where: { id: params.id, schoolId: card.schoolId, status: { not: "PUBLISHED" } },
+      data: { status: "PUBLISHED", publishedAt },
     });
+    if (claimed.count === 0) {
+      return NextResponse.json({ error: "Already published" }, { status: 400 });
+    }
+    const updated = { ...card, status: "PUBLISHED" as const, publishedAt };
 
     void logAudit({
       userId: user.id,

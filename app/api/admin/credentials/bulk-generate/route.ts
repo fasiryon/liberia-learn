@@ -1,3 +1,4 @@
+// route-policy: auth=session; scope=tenant; authority=school-admin; rationale=generates transcripts only for learners of the admin school; blobs use unguessable URLs
 import { NextRequest, NextResponse } from "next/server";
 import { requireRole } from "@/lib/auth";
 import { prisma } from "@/lib/db";
@@ -125,7 +126,9 @@ export async function POST(req: NextRequest) {
         const blobResult = await put(
           `portfolios/${student.id}/${term}/transcript.html`,
           Buffer.from(html, "utf-8"),
-          { access: "public", contentType: "text/html; charset=utf-8" },
+          // Random suffix: the URL must not be derivable from the learner id, and
+          // a regenerated transcript must not collide with the previous blob.
+          { access: "public", contentType: "text/html; charset=utf-8", addRandomSuffix: true },
         );
 
         await prisma.portfolioCredential.update({

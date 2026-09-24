@@ -100,7 +100,7 @@ export default function AdminClassesPage() {
           <button
             onClick={create}
             disabled={busy}
-            className="rounded-xl bg-[var(--ll-yellow)] hover:bg-[var(--ll-yellow-soft)] disabled:opacity-60 text-black font-semibold px-4 py-3"
+            className="rounded-xl bg-[var(--ll-yellow)] hover:opacity-90 disabled:opacity-60 text-black font-semibold px-4 py-3"
           >
             {busy ? "..." : "Create Class"}
           </button>

@@ -191,7 +191,7 @@ export function LabSessionClient({ lab, sessionId, initialCompleted }: LabSessio
           <button
             type="button"
             onClick={beginLab}
-            className="ll-interactive mt-6 rounded-xl bg-[var(--ll-accent)] px-5 py-3 text-sm font-semibold text-[var(--ll-text-faint)]"
+            className="ll-interactive mt-6 rounded-xl bg-[var(--ll-accent)] px-5 py-3 text-sm font-semibold text-[var(--ll-bg)]"
           >
             Begin Lab
           </button>
@@ -222,7 +222,7 @@ export function LabSessionClient({ lab, sessionId, initialCompleted }: LabSessio
           <button
             type="button"
             onClick={() => setStepIndex((current) => current + 1)}
-            className="ll-interactive mt-5 rounded-xl bg-[var(--ll-accent)] px-5 py-3 text-sm font-semibold text-[var(--ll-text-faint)]"
+            className="ll-interactive mt-5 rounded-xl bg-[var(--ll-accent)] px-5 py-3 text-sm font-semibold text-[var(--ll-bg)]"
           >
             Next Step
           </button>
@@ -288,7 +288,7 @@ export function LabSessionClient({ lab, sessionId, initialCompleted }: LabSessio
             type="button"
             onClick={submitLab}
             disabled={submitting}
-            className="ll-interactive mt-5 rounded-xl bg-[var(--ll-accent)] px-5 py-3 text-sm font-semibold text-[var(--ll-text-faint)] disabled:cursor-not-allowed disabled:opacity-60"
+            className="ll-interactive mt-5 rounded-xl bg-[var(--ll-accent)] px-5 py-3 text-sm font-semibold text-[var(--ll-bg)] disabled:cursor-not-allowed disabled:opacity-60"
           >
             {submitting ? "Submitting Lab..." : "Submit Lab"}
           </button>

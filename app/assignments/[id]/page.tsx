@@ -203,7 +203,7 @@ export default async function HomeworkDetailPage({ params }: PageProps) {
                 </p>
                 <button
                   type="submit"
-                  className="rounded-full bg-[var(--ll-yellow)] px-4 py-2 text-xs font-semibold text-[var(--ll-text-faint)] hover:bg-[var(--ll-yellow-soft)]"
+                  className="rounded-full bg-[var(--ll-yellow)] px-4 py-2 text-xs font-semibold text-[var(--ll-bg)] hover:opacity-90"
                 >
                   {submission ? "Update submission" : "Submit homework"}
                 </button>

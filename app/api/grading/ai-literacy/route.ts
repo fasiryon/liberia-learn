@@ -1,3 +1,4 @@
+// route-policy: auth=session; scope=record; authority=student-self; rationale=grades the authenticated learner own response; idempotency keys replay only that learner submission
 /**
  * app/api/grading/ai-literacy/route.ts  — NR-14D Phase 4
  *
@@ -92,6 +93,14 @@ export async function POST(req: Request) {
         .findUnique({ where: { clientSubmissionId } })
         .catch(() => null);
       if (existing) {
+        // An idempotency key replays only the caller's own submission; a key
+        // bound to another learner must never return that learner's work.
+        if (existing.studentId !== student.id) {
+          return NextResponse.json(
+            { error: "Idempotency key is already bound to a different submission", resolutionHint: "idempotency_key_payload_mismatch" },
+            { status: 409 },
+          );
+        }
         return NextResponse.json({ ok: true, submission: existing }, { status: 200 });
       }
     }

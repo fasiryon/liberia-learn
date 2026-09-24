@@ -3,7 +3,7 @@
 // re-fetchable bytes without touching signed content or the IndexedDB learner
 // outbox. Learner-rendered pages are private: they live only in a cache bound
 // to the active learner partition and are deleted when that learner changes.
-const SW_VERSION = "p5e-2026-09-23-1";
+const SW_VERSION = "p5e-2026-09-24-1";
 const SHELL_CACHE = `liberialearn-shell-${SW_VERSION}`;
 const RUNTIME_CACHE = `liberialearn-runtime-${SW_VERSION}`;
 const CONTENT_CACHE = `liberialearn-content-${SW_VERSION}`;

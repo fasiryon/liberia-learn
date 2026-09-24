@@ -1,3 +1,4 @@
+// route-policy: auth=session; scope=national; authority=elevated; rationale=MOE aggregate with small-cell suppression of free-text override reasons
 import { NextResponse } from "next/server";
 import { requireUser } from "@/lib/auth";
 import { prisma } from "@/lib/db";
@@ -7,6 +8,9 @@ import { withRequestLogging } from "@/lib/logging/requestLogger";
 import { isMoeSuperRole } from "@/lib/moe/rbac";
 
 export const dynamic = "force-dynamic";
+
+/** Small-cell rule shared with the MOE county dashboard (cohorts < 5 suppressed). */
+const MIN_SHARED_REASON_COUNT = 5;
 
 function confidenceToScore(value: unknown) {
   const scores = {
@@ -108,13 +112,18 @@ async function placementsGET() {
   }
 
   const byDistrict = Array.from(districtRollups.values()).map((entry) => {
-    const overrideRate = entry.reviewedCount > 0 ? Math.round((entry.overriddenCount / entry.reviewedCount) * 100) : 0;
+    // No reviewed placements means the rate is unknown, not 0%.
+    const overrideRate = entry.reviewedCount > 0 ? Math.round((entry.overriddenCount / entry.reviewedCount) * 100) : null;
     const reasonCounts = new Map<string, number>();
     for (const reason of entry.overrideReasons) {
       reasonCounts.set(reason, (reasonCounts.get(reason) ?? 0) + 1);
     }
+    // Override reasons are free text written about one child. A reason is
+    // published nationally only when enough overrides share it to be a
+    // pattern rather than an individual learner's note.
+    const topReasonEntry = Array.from(reasonCounts.entries()).sort((left, right) => right[1] - left[1])[0];
     const topOverrideReason =
-      Array.from(reasonCounts.entries()).sort((left, right) => right[1] - left[1])[0]?.[0] ?? null;
+      topReasonEntry && topReasonEntry[1] >= MIN_SHARED_REASON_COUNT ? topReasonEntry[0] : null;
 
     return {
       districtId: entry.districtId,
@@ -129,7 +138,7 @@ async function placementsGET() {
             )
           : null,
       topOverrideReason,
-      warning: overrideRate > 30 ? `AI may need recalibration for ${entry.districtName}` : null,
+      warning: overrideRate != null && overrideRate > 30 ? `AI may need recalibration for ${entry.districtName}` : null,
     };
   });
 
@@ -154,7 +163,7 @@ async function placementsGET() {
   return NextResponse.json({
     totalStudentsPlaced: placements.length,
     averageAiConfidence,
-    nationalOverrideRate: totalReviewed > 0 ? Math.round((totalOverridden / totalReviewed) * 100) : 0,
+    nationalOverrideRate: totalReviewed > 0 ? Math.round((totalOverridden / totalReviewed) * 100) : null,
     mostCommonPlacementBand,
     byDistrict,
   });

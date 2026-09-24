@@ -160,7 +160,7 @@ export default function AdminEventsPage() {
     <main className="ll-dashboard-shell px-4 py-5">
       <div className="ll-page-enter mx-auto max-w-5xl space-y-5">
         <Link
-          href="/admin/dashboard"
+          href="/admin"
           className="inline-flex items-center gap-1 text-sm text-[var(--ll-text-muted)] hover:text-[var(--ll-yellow)] mb-4 transition-colors"
         >
           <ChevronLeft className="w-4 h-4" />
@@ -174,7 +174,7 @@ export default function AdminEventsPage() {
           <button
             type="button"
             onClick={openCreate}
-            className="inline-flex items-center gap-2 rounded-lg bg-[var(--ll-accent)] px-4 py-2 text-sm font-semibold text-[var(--ll-text-faint)]"
+            className="inline-flex items-center gap-2 rounded-lg bg-[var(--ll-accent)] px-4 py-2 text-sm font-semibold text-[var(--ll-bg)]"
           >
             <Plus className="h-4 w-4" strokeWidth={2} />
             New Event
@@ -292,7 +292,7 @@ export default function AdminEventsPage() {
                 type="button"
                 disabled={saving}
                 onClick={() => handleSave(true)}
-                className="inline-flex items-center gap-2 rounded-lg bg-[var(--ll-accent)] px-4 py-2 text-sm font-semibold text-[var(--ll-text-faint)] disabled:opacity-60"
+                className="inline-flex items-center gap-2 rounded-lg bg-[var(--ll-accent)] px-4 py-2 text-sm font-semibold text-[var(--ll-bg)] disabled:opacity-60"
               >
                 <Check className="h-4 w-4" strokeWidth={2} />
                 Publish

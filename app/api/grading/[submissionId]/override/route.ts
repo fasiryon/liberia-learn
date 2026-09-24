@@ -12,6 +12,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { requireRole } from "@/lib/auth";
+import { logAudit } from "@/lib/audit";
 
 // route-policy: auth=session; scope=tenant; authority=school-membership; rationale=grade override is limited to the submission school
 
@@ -38,6 +39,8 @@ export async function PATCH(
       select: {
         id: true,
         exerciseType: true,
+        score: true,
+        studentId: true,
         student: { select: { user: { select: { schoolId: true } } } },
       },
     });
@@ -61,6 +64,22 @@ export async function PATCH(
             : undefined,
         status: "graded",
         gradedAt: new Date(),
+      },
+    });
+
+    // A human override replaces an AI-suggested score; keep who changed it and
+    // from what, so the change is reviewable rather than silent.
+    await logAudit({
+      userId: user.id,
+      schoolId: existing.student.user.schoolId ?? user.schoolId ?? null,
+      action: "grading.submission.override",
+      resourceType: "graded_submission",
+      resourceId: existing.id,
+      details: {
+        studentId: existing.studentId,
+        exerciseType: existing.exerciseType,
+        previousScore: existing.score ?? null,
+        newScore: score,
       },
     });
 

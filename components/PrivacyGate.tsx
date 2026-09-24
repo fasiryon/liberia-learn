@@ -27,7 +27,7 @@ export function PrivacyGate({ onAccepted }: { onAccepted: () => void }) {
     >
       <div className="w-full max-w-md rounded-2xl border border-[var(--ll-border)] bg-[var(--ll-bg)] p-6 shadow-2xl space-y-5">
         <div className="text-center space-y-2">
-          <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-xl bg-[var(--ll-accent)] text-xl font-black text-[var(--ll-text-faint)]">
+          <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-xl bg-[var(--ll-accent)] text-xl font-black text-[var(--ll-bg)]">
             L
           </div>
           <h2 id="privacy-gate-title" className="text-xl font-bold text-[var(--ll-text)]">
@@ -67,7 +67,7 @@ export function PrivacyGate({ onAccepted }: { onAccepted: () => void }) {
           type="button"
           disabled={!checked || loading}
           onClick={handleAccept}
-          className="mt-2 flex w-full min-h-12 items-center justify-center rounded-xl bg-[var(--ll-yellow)] px-4 py-3 text-base font-semibold text-[var(--ll-text-faint)] shadow-lg shadow-emerald-500/30 hover:bg-[var(--ll-yellow-soft)] disabled:opacity-50 transition"
+          className="mt-2 flex w-full min-h-12 items-center justify-center rounded-xl bg-[var(--ll-yellow)] px-4 py-3 text-base font-semibold text-[var(--ll-bg)] shadow-lg shadow-emerald-500/30 hover:opacity-90 disabled:opacity-50 transition"
         >
           {loading ? "Saving…" : "Continue to LiberiaLearn"}
         </button>

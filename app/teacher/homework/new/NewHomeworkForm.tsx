@@ -141,7 +141,7 @@ export default function NewHomeworkForm({ classes }: { classes: ClassOption[] })
       <button
         type="submit"
         disabled={submitting}
-        className="rounded-lg bg-[var(--ll-yellow)] px-4 py-2 text-sm font-semibold text-[var(--ll-text-faint)] hover:bg-[var(--ll-yellow-soft)] disabled:opacity-60"
+        className="rounded-lg bg-[var(--ll-yellow)] px-4 py-2 text-sm font-semibold text-[var(--ll-bg)] hover:opacity-90 disabled:opacity-60"
       >
         {submitting ? "Creating..." : "Create Homework"}
       </button>

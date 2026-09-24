@@ -24,7 +24,7 @@ export default function SignOutPage() {
               onClick={confirmLogoutKeepingWork}
               disabled={busy}
               aria-busy={busy}
-              className="w-full rounded-lg bg-[var(--ll-accent)] px-4 py-2.5 text-sm font-semibold text-[var(--ll-text-faint)] hover:opacity-90"
+              className="w-full rounded-lg bg-[var(--ll-accent)] px-4 py-2.5 text-sm font-semibold text-[var(--ll-bg)] hover:opacity-90"
             >
               {busy ? "Signing out..." : "Sign out and keep my work for later"}
             </button>
@@ -34,7 +34,7 @@ export default function SignOutPage() {
               onClick={logout}
               disabled={busy}
               aria-busy={busy}
-              className="w-full rounded-lg bg-[var(--ll-accent)] px-4 py-2.5 text-sm font-semibold text-[var(--ll-text-faint)] hover:opacity-90"
+              className="w-full rounded-lg bg-[var(--ll-accent)] px-4 py-2.5 text-sm font-semibold text-[var(--ll-bg)] hover:opacity-90"
             >
               {busy ? "Checking offline work..." : "Sign out"}
             </button>

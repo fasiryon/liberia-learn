@@ -99,8 +99,8 @@ export default async function TeacherHomeworkList({
           </div>
 
           <Link
-            href="/teacher/homework/create"
-            className="rounded-full bg-[var(--ll-yellow)] px-4 py-2 text-sm font-semibold text-[var(--ll-text-faint)] hover:bg-[var(--ll-yellow-soft)]"
+            href="/teacher/homework/new"
+            className="rounded-full bg-[var(--ll-yellow)] px-4 py-2 text-sm font-semibold text-[var(--ll-bg)] hover:opacity-90"
           >
             + Create Homework
           </Link>
@@ -138,8 +138,8 @@ export default async function TeacherHomeworkList({
                 Create your first homework assignment for {selectedClassName}.
               </p>
               <Link
-                href="/teacher/homework/create"
-                className="inline-block rounded-full bg-[var(--ll-yellow)] px-6 py-2 text-sm font-semibold text-[var(--ll-text-faint)] hover:bg-[var(--ll-yellow-soft)]"
+                href="/teacher/homework/new"
+                className="inline-block rounded-full bg-[var(--ll-yellow)] px-6 py-2 text-sm font-semibold text-[var(--ll-bg)] hover:opacity-90"
               >
                 + Create Homework
               </Link>

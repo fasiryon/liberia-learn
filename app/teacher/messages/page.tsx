@@ -156,7 +156,7 @@ function StudentMessagesTab() {
                   isRetracted
                     ? "bg-[var(--ll-surface-muted)]/50 text-[var(--ll-text-faint)] italic"
                     : mine
-                    ? "bg-[var(--ll-yellow)] text-[var(--ll-text-faint)]"
+                    ? "bg-[var(--ll-yellow)] text-[var(--ll-bg)]"
                     : "bg-[var(--ll-surface-muted)] text-[var(--ll-text-faint)]"
                 }`}>
                   <p className="text-[11px] opacity-70 mb-1">{timeAgo(msg.createdAt)}</p>
@@ -190,7 +190,7 @@ function StudentMessagesTab() {
               type="button"
               onClick={handleReply}
               disabled={sending || !draft.trim()}
-              className="self-end rounded-xl bg-[var(--ll-yellow)] px-4 py-2.5 text-sm font-semibold text-[var(--ll-text-faint)] hover:opacity-90 disabled:opacity-50"
+              className="self-end rounded-xl bg-[var(--ll-yellow)] px-4 py-2.5 text-sm font-semibold text-[var(--ll-bg)] hover:opacity-90 disabled:opacity-50"
             >
               {sending ? "…" : <Send className="h-4 w-4" strokeWidth={1.5} />}
             </button>

@@ -253,7 +253,7 @@ export default function AdminStudentsPage() {
             </div>
 
             <div className="md:col-span-2 flex flex-wrap items-center gap-3">
-              <button type="submit" disabled={saving} className="rounded-xl bg-[var(--ll-yellow)] px-6 py-3 text-sm font-semibold text-[var(--ll-text-faint)] hover:bg-[var(--ll-yellow-soft)] disabled:opacity-60">
+              <button type="submit" disabled={saving} className="rounded-xl bg-[var(--ll-yellow)] px-6 py-3 text-sm font-semibold text-[var(--ll-bg)] hover:opacity-90 disabled:opacity-60">
                 {saving ? "Saving..." : "Add Student"}
               </button>
               {error && <p className="text-xs text-red-300">{error}</p>}

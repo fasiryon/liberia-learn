@@ -141,7 +141,7 @@ export default function AdminReportCardsPage() {
     <main className="ll-dashboard-shell px-4 py-5 text-[var(--ll-text)]">
       <div className="ll-page-enter mx-auto max-w-5xl space-y-6">
         <Link
-          href="/admin/dashboard"
+          href="/admin"
           className="inline-flex items-center gap-1 text-sm text-[var(--ll-text-muted)] hover:text-[var(--ll-yellow)] mb-4 transition-colors"
         >
           <ChevronLeft className="w-4 h-4" />
@@ -201,7 +201,7 @@ export default function AdminReportCardsPage() {
               type="button"
               onClick={handleGenerate}
               disabled={busy}
-              className="min-h-11 rounded-full bg-[var(--ll-yellow)] px-5 text-sm font-semibold text-[var(--ll-text-faint)] disabled:opacity-60"
+              className="min-h-11 rounded-full bg-[var(--ll-yellow)] px-5 text-sm font-semibold text-[var(--ll-bg)] disabled:opacity-60"
             >
               {busy ? "Working…" : "Generate Report Cards"}
             </button>

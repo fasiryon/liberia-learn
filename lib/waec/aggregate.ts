@@ -79,7 +79,11 @@ export async function getTeacherWaecReadiness(teacherUserId: string): Promise<{ 
   return { studentCount: studentIds.length, subjects: await aggregateWaecForStudents(studentIds) };
 }
 
-export type CountyAggregate = { county: string; assessedStudents: number; avgReadiness: number | null };
+export type CountyAggregate = { county: string; assessedStudents: number | null; avgReadiness: number | null; suppressed?: boolean };
+
+/** Same small-cell rule as the MOE county dashboard: a county average over
+ * fewer than this many assessed learners is withheld, not published. */
+export const WAEC_COUNTY_MIN_COHORT = 5;
 
 /** National WAEC readiness + per-county ranking. */
 export async function getNationalWaecReadiness(): Promise<{
@@ -114,7 +118,10 @@ export async function getNationalWaecReadiness(): Promise<{
     c.sum += overall; c.n++; countyMap.set(county, c);
   }
   const byCounty = Array.from(countyMap.entries())
-    .map(([county, v]) => ({ county, assessedStudents: v.n, avgReadiness: v.n > 0 ? Math.round(v.sum / v.n) : null }))
+    .map(([county, v]): CountyAggregate =>
+      v.n < WAEC_COUNTY_MIN_COHORT
+        ? { county, assessedStudents: null, avgReadiness: null, suppressed: true }
+        : { county, assessedStudents: v.n, avgReadiness: Math.round(v.sum / v.n) })
     .sort((a, b) => (b.avgReadiness ?? -1) - (a.avgReadiness ?? -1));
 
   return { studentCount: studentIds.length, subjects, byCounty };

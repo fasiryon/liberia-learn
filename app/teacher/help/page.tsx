@@ -24,7 +24,7 @@ export default async function TeacherHelpPage() {
               href={guideUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="mt-4 inline-flex items-center gap-2 rounded-xl bg-[var(--ll-yellow)] px-5 py-2.5 text-sm font-semibold text-[var(--ll-text-faint)] shadow-lg shadow-emerald-500/30 hover:bg-[var(--ll-yellow-soft)] transition"
+              className="mt-4 inline-flex items-center gap-2 rounded-xl bg-[var(--ll-yellow)] px-5 py-2.5 text-sm font-semibold text-[var(--ll-bg)] shadow-lg shadow-emerald-500/30 hover:opacity-90 transition"
             >
               Download Quick-Start Guide (PDF)
             </a>

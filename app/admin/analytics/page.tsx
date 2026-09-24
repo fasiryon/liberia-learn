@@ -125,7 +125,7 @@ export default function AdminAnalyticsPage() {
                 onClick={() => setDays(d)}
                 className={`rounded-full px-4 py-1.5 text-xs font-medium transition ${
                   days === d
-                    ? "bg-[var(--ll-yellow)] text-[var(--ll-text-faint)]"
+                    ? "bg-[var(--ll-yellow)] text-[var(--ll-bg)]"
                     : "border border-[var(--ll-border)] text-[var(--ll-text)] hover:border-[var(--ll-border)]"
                 }`}
               >

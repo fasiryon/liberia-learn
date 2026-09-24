@@ -7,7 +7,7 @@ type SubjectAggregate = {
   subjectId: string; name: string; assessedStudents: number;
   avgReadiness: number | null; atRisk: number; onTrack: number;
 };
-type CountyAggregate = { county: string; assessedStudents: number; avgReadiness: number | null };
+type CountyAggregate = { county: string; assessedStudents: number | null; avgReadiness: number | null; suppressed?: boolean };
 
 function readinessColor(v: number | null): string {
   if (v == null) return "var(--ll-text-faint)";
@@ -92,7 +92,7 @@ export function WaecMoePanel() {
               <div key={c.county} className="flex items-center justify-between text-sm">
                 <span className="text-[var(--ll-text-muted)]">{i + 1}. {c.county}</span>
                 <span className="font-semibold" style={{ color: readinessColor(c.avgReadiness) }}>
-                  {c.avgReadiness == null ? "—" : `${c.avgReadiness}%`}
+                  {c.suppressed ? "Too few learners to show" : c.avgReadiness == null ? "—" : `${c.avgReadiness}%`}
                 </span>
               </div>
             ))}
